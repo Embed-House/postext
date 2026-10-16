@@ -1,0 +1,390 @@
+{/* docs/configuration-page-flow-de.mdx */}
+
+export const metadata = {
+  title: 'Konfiguration: Witwen, Waisen und Spaltenausgleich',
+  sidebarTitle: 'Witwen, Waisen und Spaltenausgleich',
+  description: 'Die Regeln, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten, und die Hebel, mit denen jede Spalte auf gleicher Höhe endet',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '21 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Diese Seite erklärt, wie Postext entscheidet, wo eine Spalte oder eine Seite endet. Eine einzelne Zeile eines Absatzes sollte nicht allein oben oder unten in einer Spalte stehen, und eine Überschrift sollte nicht ohne ihren Text bleiben. Diese Regeln können eine Spalte kürzer machen als die anderen. Dann nimmt Postext in einer festen Reihenfolge kleine Änderungen vor, damit alle Spalten auf derselben Höhe enden. Die Seite führt jede Regel und jede Änderung auf und zeigt, wie Sie sehen, welche gegriffen hat.",
+};
+
+# Konfiguration: Witwen, Waisen und Spaltenausgleich
+
+
+## Waisen, Witwen, zu kurze Ausgangszeilen und Regeln zum Zusammenhalten
+
+Die Mechanik hinter diesen Strafpunkten erklärt [Silbentrennung und Blocksatz](/de/docs/justification). Dieser Abschnitt ist die Referenz der Schlüssel von `bodyText`, die sie steuern.
+
+Über Silbentrennung und Abstandsgrenzen hinaus stellt die Konfiguration des Fließtexts die weichen Regeln bereit, die strukturell ungeschickte Absatzumbrüche verhindern. Sie alle gehen als Strafpunkte in den Zeilenumbruch-Algorithmus von Knuth-Plass ein – sie lenken das Layout zu sauberen Umbrüchen, ohne je eine harte Regel zu erzwingen. Setzen Sie die Werte `*Penalty` auf `0`, um eine von ihnen praktisch abzuschalten.
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>avoidOrphans</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Wirkt dem entgegen, dass ein Absatz mit weniger als <code>orphanMinLines</code> Zeilen oben in der nächsten Spalte endet. Auf einem Zeichenraster (<code>cjk.grid</code>) in der Region <code>japan</code> ist der Standard <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Mindestzahl der Zeilen oben in der nächsten Spalte, wenn ein Absatz geteilt wird. Nur wirksam, wenn <code>avoidOrphans</code> <code>true</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>orphanPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Strafpunkte, die hinzukommen, wenn die Bedingung gegen Waisen verletzt wird. Höhere Werte lenken den Algorithmus stärker gegen Waisen; <code>0</code> schaltet die Strafe ab.</td>
+    </tr>
+    <tr>
+      <td><code>avoidOrphansInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Mit <code>true</code> erhalten auch Listenpunkte den Schutz vor Waisen (nicht nur Absätze). Nur wirksam, wenn <code>avoidOrphans</code> <code>true</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidows</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Wirkt dem entgegen, dass ein Absatz mit weniger als <code>widowMinLines</code> Zeilen unten in der aktuellen Spalte beginnt. Auf einem Zeichenraster (<code>cjk.grid</code>) ist der Standard <code>false</code>: Die Seite fasst die Zeilen, die ihr Raster zählt.</td>
+    </tr>
+    <tr>
+      <td><code>widowMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Mindestzahl der Zeilen unten in der aktuellen Spalte, wenn ein Absatz geteilt wird. Nur wirksam, wenn <code>avoidWidows</code> <code>true</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>widowPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Strafpunkte, die hinzukommen, wenn die Bedingung gegen Witwen verletzt wird. <code>0</code> schaltet die Strafe ab.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidowsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Mit <code>true</code> erhalten auch Listenpunkte den Schutz vor Witwen. Nur wirksam, wenn <code>avoidWidows</code> <code>true</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Eine kurze Liste, die zwischen zwei Spalten oder Seiten geteilt wird: eine Liste mit bis zu <code>shortListMaxItems</code> Punkten im laufenden Text, etwa eine mit drei Punkten, aufgeteilt in 1 + 2. <code>avoidOrphansInLists</code> und <code>avoidWidowsInLists</code> halten die Zeilen eines Punkts zusammen; diese Regel hält die Punkte einer Liste zusammen. <code>'allow'</code> teilt eine solche Liste wie jede andere dort, wo die Spalte endet. <code>'warn'</code> setzt sie ebenso und meldet jede geteilte Liste (eine Warnung <code>shortListSplit</code>, siehe <a href="/de/docs/configuration-programmatic-usage#warnungen-im-dokument">Warnungen im Dokument</a>). <code>'avoid'</code> setzt die Liste ungeteilt: Passt sie nicht unter das, was die Spalte fasst, eröffnet sie die nächste Spalte, und die Überschriften direkt über ihr und die Doppelpunktzeile, die sie einleitet (<code>keepColonWithList</code>), gehen mit. Eine Liste, die höher als eine leere Spalte ist, wird wie jede andere geteilt und gemeldet. Listen in einem <code>:::callout</code> folgen den eigenen Teilungsregeln des Kastens, und die Einträge von <code>:::toc</code> und <code>:::index</code> sind keine Listen. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Die Höchstzahl an Punkten, bis zu der eine Liste für <code>shortListSplit</code> als kurz gilt, die Punkte ihrer verschachtelten Listen eingeschlossen. Eine ganze Zahl, mindestens 1. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Wirkt dem entgegen, dass Absätze mit einer sehr kurzen letzten Zeile enden – einer <em>zu kurzen Ausgangszeile</em>, z. B. einem einzelnen kurzen Wort. Mit <code>optimalRagged</code> auch im Flattersatz. Ein chinesischer, japanischer oder koreanischer Absatz endet nicht auf einer Zeile mit einem einzigen Zeichen, allein oder mit seinen schließenden Zeichen (孤字): Die Zeile darüber gibt ihr ihr letztes Zeichen, wenn diese Zeile sich noch innerhalb der Laufweitengrenze in Blocksatz bringen lässt. Eine links, rechts oder zentriert gesetzte Zeile gibt das Zeichen ebenfalls ab und steht ein Zeichen kürzer; mit <code>cjk.grid.fullLines</code> (Manuskriptpapier) behält sie jedes Kästchen, und der Absatz darf auf einem Zeichen enden.</td>
+    </tr>
+    <tr>
+      <td><code>runtMinCharacters</code></td>
+      <td><code>number</code></td>
+      <td><code>20</code></td>
+      <td>Schwelle für die letzte Zeile eines Absatzes, gezählt in Wortzwischenräumen, nicht in Buchstaben: Die Zeile ist zu kurz, wenn sie schmaler als <code>runtMinCharacters × normalSpaceWidth</code> Pixel ist. Ein Wortzwischenraum misst in den meisten Textschriften ein Viertel bis ein Drittel Geviert, etwa einen halben Kleinbuchstaben, sodass der Standard 20 letzte Zeilen unter 4 bis 7 em erfasst – grob 8 bis 12 Buchstaben. Um die letzten Zeilen unter etwa N Buchstaben zu erfassen, setzen Sie den Wert auf etwa 2 × N.</td>
+    </tr>
+    <tr>
+      <td><code>runtPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Äquivalente Schlechtigkeit (badness), die in die quadrierte Strafpunktformel von Knuth-Plass eingespeist wird (auf derselben Skala wie die <em>badness</em> einer Zeile, die bei 10000 sättigt). <code>0</code> schaltet die Strafe ab.</td>
+    </tr>
+    <tr>
+      <td><code>gradedRuntPenalty</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Staffelt die Strafe für zu kurze Ausgangszeilen danach, wie kurz die letzte Zeile ausfällt: Eine letzte Zeile der Breite <em>w</em> unter der Schwelle <em>t</em> kostet <code>runtPenalty × (1 − w / t)</code> statt der ganzen Strafe. Ein Ausgang aus zwei Wörtern kostet dann weniger als einer aus einem Wort, und der Umbruch zieht ein Wort hinunter, wenn eine Zeile darüber es entbehren kann („…sallies of“ / „our minds.“ statt „…sallies of our“ / „minds.“). Standardmäßig aus: Jede zu kurze Ausgangszeile kostet gleich viel, und der Umbruch behält die engeren Zeilen darüber.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRuntsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Mit <code>true</code> erhalten auch Listenpunkte die Strafe für zu kurze Ausgangszeilen. Nur wirksam, wenn <code>avoidRunts</code> <code>true</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>tightenRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Konnte die Strafe eine zu kurze Ausgangszeile nicht vermeiden, wird der Absatz stattdessen eine Zeile kürzer gesetzt: Die Wortabstände werden enger (nie unter <code>minWordSpacing</code>), und reicht das allein nicht, um die Zeile aufzunehmen, kommt eine kleine negative Laufweite hinzu. Ein kürzerer Satz wird verworfen, und die zu kurze Ausgangszeile bleibt, wenn er eine Blocksatzzeile über <code>maxWordSpacing</code> hinaus dehnen würde oder, wenn der Absatz bereits eine lockerere Blocksatzzeile hat, über diese hinaus, oder wenn er mehr Zeilen im Flattersatz (über das 3-Fache des normalen Leerzeichens hinaus) setzen würde, als der Absatz hatte. Die Wortabstände im Flattersatz behalten ihre Breite, dort wirkt also nur die Laufweite mit. Erfordert <code>optimalLineBreaking</code> und <code>avoidRunts</code> (und für Flattersatz <code>optimalRagged</code>).</td>
+    </tr>
+    <tr>
+      <td><code>maxRuntTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Höchste Laufweite, die die Korrektur einer zu kurzen Ausgangszeile nehmen darf, in Tausendstel eines Gevierts (die InDesign-Einheit: 10 = 0,01 em pro Zeichen), angewandt als Verengung. <code>0</code> überlässt die Korrektur allein dem Wortabstand.</td>
+    </tr>
+    <tr>
+      <td><code>slackWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Gewicht der quadrierten Kosten für „ungenutzten Spaltenraum“. Höhere Werte lassen das Layout eng gefüllte Spalten bevorzugen; <code>0</code> schaltet den Druck durch ungenutzten Raum ganz ab.</td>
+    </tr>
+    <tr>
+      <td><code>keepColonWithList</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Endet ein Absatz mit einem Doppelpunkt, der unmittelbar eine Liste einleitet, bleibt die letzte Zeile mit dem Doppelpunkt mit der Liste verbunden: Ließe das Platzieren des Absatzes keinen Raum, damit der erste Listenpunkt in derselben Spalte bzw. auf derselben Seite beginnt, wird die letzte Zeile (oder der ganze Absatz, wenn er nur eine Zeile hat) zusammen mit der Liste in die nächste Spalte verschoben. Wie viel Raum genügt, legt <code>colonListRoom</code> fest. Würde diese Regel den ganzen Absatz verschieben und steht direkt davor in der Spalte eine Folge von Überschriften, werden diese ebenfalls mitgezogen, damit <code>headings.keepWithNext</code> weiter gilt.</td>
+    </tr>
+    <tr>
+      <td><code>colonListRoom</code></td>
+      <td><code>'item' | 'line'</code></td>
+      <td><code>'item'</code></td>
+      <td>Der Raum, den <code>keepColonWithList</code> unter der Doppelpunktzeile verlangt. <code>'item'</code>: was die Regeln gegen Waisen und Witwen in Listen vom ersten Punkt am Fuß der Spalte übrig ließen, eine Zeile, wenn er dort geteilt werden darf, der ganze Punkt, wenn sie ihn zusammenhalten (etwa ein zweizeiliger Punkt). <code>'line'</code>: eine Zeile, wie bis postext 1.4; ein erster Punkt, den diese Regeln zusammenhalten, geht dann allein in die nächste Spalte weiter und lässt die Doppelpunktzeile am Fuß zurück. Eine vor <code>configVersion</code> 6 gespeicherte Konfiguration in einem Buch, das eine Liste mit einem Doppelpunkt einleitet, wird mit <code>'line'</code> gelesen (siehe <a href="/de/docs/configuration-bundles#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>). Jeder andere Wert wird als <code>'item'</code> gelesen.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateAcrossColumns</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt, dass eine Spalte oder eine Seite auf einem getrennten Wort endet (<em>Silbentrennung über Spalten hinweg</em> in InDesign). <code>false</code> bricht den Absatz, der den Spaltenumbruch überquert, erneut um, sodass seine letzte Zeile in der Spalte auf einem ganzen Wort endet; die Wortabstände der Zeilen darüber nehmen den Unterschied auf, innerhalb von <code>maxWordSpacing</code> und <code>minWordSpacing</code>. Es ist eine Vorliebe: Wo kein Umbruch innerhalb dieser Grenzen es vermeidet, bleibt der Trennstrich. Die Option probiert jeden Spaltenumbruch eines Absatzes: den ersten und die späteren, die dort liegen, wo eine volle Spalte endet, in einem neuen Umbruch; und einen späteren Umbruch, der woanders liegt (eine gehaltene Witwe, eine ausgeglichene Schnittkante eines Bands), in einem weiteren ab dieser Spalte, der die bereits in den vorigen Spalten gesetzten Zeilen an ihren Umbrüchen lässt und nur den Rest umbricht. <code>'withinPage'</code> schützt die Zeilen, die eine Seite schließen, und keine anderen: Ein Wort darf zwischen zwei Spalten einer Seite getrennt werden, und die letzte Zeile einer Seite endet auf einem ganzen Wort, wo immer die Grenzen es zulassen. Die Option ändert weniger Zeilen als <code>false</code>, was bei drei oder mehr Spalten zählt, wo zwei von drei Spaltenenden innerhalb der Seite liegen; in einer einzigen Spalte ergeben beide Werte dieselben Zeilen. Eine Spalte schließt ihre Seite, wenn keine spätere Spalte der Seite Text aufnimmt: Eine für Gleitobjekte freigehaltene Seitenspalte tut es nicht, ebenso wenig eine Spalte, die eine Tabelle oder Abbildung gefüllt hat. Kastentexte sind nicht betroffen. Mit <code>optimalRagged</code> wird ein Absatz im Flattersatz auf dieselbe Weise neu umbrochen: Seine Wortabstände behalten ihre Breite, sodass sich nur die Enden seiner Zeilen verschieben. Jeder neue Umbruch misst den Absatz noch einmal, ein Buch mit vielen Trennstrichen am Spaltenende wird also etwas langsamer gesetzt. Erfordert <code>optimalLineBreaking</code> und für Flattersatz <code>optimalRagged</code>.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphContainerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td><code>'collapse'</code></td>
+      <td>Der Abstand unter einem Container <code>:::paragraphs</code>, der mit einem Absatz schließt, zwischen diesem Absatz und dem Block danach (siehe <a href="/de/docs/configuration-styles#der-container-paragraphs">Der Container <code>:::paragraphs</code></a>). <code>'collapse'</code>: der größere Wert aus <code>spaceBetween</code> und <code>marginBottom</code> des Formats und dem Absatzabstand des Texts um den Container (eine Zeile mit <code>paragraphSpacing</code>; in einem Kasten der des Kastens), zusammengeführt mit dem Abstand, den der nächste Block über sich hält, wie zwischen zwei Absätzen des laufenden Texts: Eine Überschrift unter einem Literaturverzeichnis steht ihr eigenes <code>marginTop</code> darunter, nicht diesen Rand plus den Abstand der Einträge. <code>'add'</code>: wie bis postext 1.4 wird der Abstand des Formats allein unter die letzte Zeile gesetzt, bevor auf das Raster eingerastet wird, der eigene obere Abstand des nächsten Blocks darunter addiert und der Absatzabstand weggelassen, sodass der Absatz nach dem Container ihm näher stehen konnte als jedem anderen. Eine vor <code>configVersion</code> 8 gespeicherte Konfiguration, die ein Absatzformat deklariert, in einem Buch mit einem solchen Container, wird mit <code>'add'</code> gelesen (siehe <a href="/de/docs/configuration-bundles#pakete-die-postext-14-oder-früher-geschrieben-hat">Pakete, die postext 1.4 oder früher geschrieben hat</a>). Ein negatives <code>marginBottom</code> zieht den nächsten Block in jedem Fall hinauf. Ein Absatzformat kann für seine Container eine eigene Regel setzen (<code>containerSpacing</code>, seit postext 1.28).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Zu kurze Ausgangszeilen.** Eine zu kurze Ausgangszeile hat ein Absatz, dessen letzte Zeile zu kurz ist, um als richtige Textzeile zu wirken – typischerweise ein oder zwei kurze Wörter, die am Ende eines Absatzes gestrandet sind. Da die Prüfung auf der Länge der Zeile in Pixeln relativ zur normalen Leerzeichenbreite beruht, passt sich `runtMinCharacters` automatisch der aktuellen Schriftgröße an. Ein kurzes Wort, das optisch breiter als `runtMinCharacters × spaceWidth` ist, ist in Ordnung; ein Wort, das schmaler ist (oder wirklich allein steht), zieht die Strafe auf sich. Die Schwelle zählt Wortzwischenräume, die etwa halb so breit wie Buchstaben sind: Der Standard 20 entspricht einer letzten Zeile von grob 8 bis 12 Buchstaben. Jede zu kurze Ausgangszeile kostet die ganze Strafe, sodass der Umbruch von zwei Ausgängen unter der Schwelle die engeren Zeilen darüber behält; `gradedRuntPenalty` bewertet jeden stattdessen nach seinem Fehlbetrag, und der längere Ausgang gewinnt. Für mathematisch Interessierte: Beim Standardwert 1000 für `runtPenalty` überwiegt das Vermeiden einer zu kurzen Ausgangszeile jede andere Wahl der Umbrüche, die eine Dehnung des Wortabstands bis etwa r≈2,15 erfordert.
+
+**Weich, nicht hart.** Keine dieser Regeln kann einen Umbruch *verhindern* – die Engine liefert immer ein Layout. Es sind Strafpunkte: Der Algorithmus wägt Schlechtigkeit, Trennkosten, Gleichmäßigkeit der Fitness-Klassen und diese strukturellen Strafen in einer einzigen globalen Optimierung gegeneinander ab und wählt die Umbrüche mit den geringsten Gesamtkosten. Brauchen Sie eine härtere Garantie, erhöhen Sie die Strafe; liest sich ein bestimmtes Dokument mit einer gelockerten Strafe besser, senken Sie sie.
+
+
+## Spaltenausgleich
+
+Verlage erwarten, dass jede Spalte oben auf der Seite beginnt und bündig mit ihrem Fuß endet. Umbruchregeln (Schutz vor Waisen und Witwen, mit ihrem Text zusammengehaltene Überschriften, unteilbare Abbildungen) hinterlassen naturgemäß kurze Spalten – eine oder mehrere leere Zeilen des Grundlinienrasters am Fuß. Ist der Ausgleich aktiviert, tut die Engine, was ein Setzer täte, und setzt ihre Hebel in redaktioneller Rangfolge ein:
+
+1. **Ein Kasten, der die Spalte schließt** – ein Kasten am Ende einer kurzen Spalte wird um genau den Raum unter seinem Fuß nach unten geschoben, sodass seine Unterkante auf dem letzten Rasterplatz der Seite landet, auf gleicher Höhe mit der letzten Zeile der Spalte daneben. Er nimmt diesen Raum auch dann, wenn er kleiner als eine Zeile ist, solange nichts in eine andere Spalte rückt. Standardmäßig läuft er vor jedem anderen Hebel und nimmt die ganze Lücke, sodass ein Kasten, der den Absatz darüber kommentiert, mehrere Zeilen unter ihm landen kann; `closingBox: 'last'` lässt die Überschriften, die Listenenden und die übrigen Abstandshebel zuerst die ganzen Zeilen nehmen und dem Kasten nur, was sie übrig lassen, und `closingBox: 'off'` bewegt ihn nie.
+2. **Bilder mit Sicherheitsbereich** – ein Bild mit Sicherheitsbereich (`Resource.safeArea`, siehe [Dokumentformat › Sicherheitsbereich](/de/docs/document-format-resources#sicherheitsbereich)), das inline in der kurzen Spalte steht oder an ihrem Kopf oder Fuß allein über dieser Spalte gleitet, wächst um ganze Rasterzeilen, beschnitten innerhalb seines Sicherheitsbereichs, bis die Spalte voll ist oder der Beschnitt den Sicherheitsbereich erreicht. Ein höheres Bild hinterlässt kein Loch auf der Seite, daher läuft dieser Hebel, bevor Abstand hinzugefügt wird; ein Gleitobjekt am Kopf einer Spalte auf einer Seite oder in einem Band, dessen Spaltenköpfe auf gleicher Höhe bleiben (siehe unten), wächst nicht. Gespeichert als `flexFigure`. Er hat keine eigene Einstellung: Nur ein Bild, dessen Ressource einen Sicherheitsbereich markiert, kann wachsen.
+3. **Überschriften** – ganze Rasterzeilen werden dem oberen Rand der Überschriften in der kurzen Spalte hinzugefügt. Werden mehrere Zeilen gebraucht und enthält die Spalte mehrere Überschriften, werden die Zeilen auf sie verteilt, wobei die wichtigste Überschrift stets den größten Anteil erhält (eine `h2` erhält mehr als eine `h3`). Überschriften ganz oben in einer Spalte erhalten nie zusätzlichen Abstand, damit Spalten weiter am Seitenkopf beginnen – außer einer Überschrift direkt unter einer Abbildung oder Tabelle, die ihre Spalte auf einer weiterlaufenden Seite anführt: Der Raum kommt über diese Überschrift, unter die Abbildung. Eine Überschrift nimmt auf diese Weise höchstens `maxLinesBeforeLoose` Zeilen (standardmäßig zwei), bevor die Hebel weiter unten probiert werden, und ihre weiteren Zeilen bis `maxLinesPerHeading` nur, wenn jene nichts mehr zu geben haben.
+4. **Listenenden** – können die Überschriften nicht die ganze Lücke aufnehmen, wird dort eine Rasterzeile eingefügt, wo eine Liste oder Aufzählung endet (Abstand nach einer Liste wirkt natürlich), begrenzt pro Listenende.
+5. **Unter Formeln, Kästen und Abbildungen** – dann kommt eine Rasterzeile unter eine abgesetzte Formel oder einen Kasten, nach dem der Text weiterläuft (`stretchAfterDisplays`; sie wirkt wie der eigene Rand des Elements), und unter eine Abbildung oder Tabelle, die die Spalte anführt (`stretchAfterFloats`, begrenzt durch `maxLinesAfterFloat`).
+6. **Lockere Absätze** – als letztes Mittel wird ein Absatz der Spalte eine Zeile länger neu umbrochen (`\looseness=+1` in TeX), wobei der längste Absatz gewählt wird, damit sich der zusätzliche Wortabstand unsichtbar verteilt. Die lockere Lösung wird nur angenommen, wenn jede Zeile **unter `bodyText.maxWordSpacing`** bleibt – der Grauwert überschreitet nie die Grenze, die Sie bereits eingestellt haben. Erfordert `bodyText.optimalLineBreaking`.
+
+Auf einem Zeichenraster (`cjk.grid`, siehe [Chinesischer Satz › Das Zeichenraster](/de/docs/chinese-layout#das-zeichenraster)) steht jedes Zeichen in einer Zelle von einem Geviert Breite und jede Zeile im Zeilenschritt des Rasters, der auch das Grundlinienraster ist. Der Ausgleich ist dort standardmäßig aus, wie im vertikalen Text: Eine Seite, die Zeile für Zeile auf einem Raster gesetzt ist, so wie GB/T 9704 22 Zeilen zu 28 Zeichen zählt, lässt eine kurze Spalte kurz. Eine Konfiguration mit `enabled: true` erhält Hebel, die das Raster einhalten: Überschriften, Listenenden, abgesetzte Elemente und Abbildungen nehmen ganze Rasterzeilen, sodass sich der Text darunter um ganze Zeilen verschiebt, und `gridLines: 'off'` hält diese für einen Standard heraus, der keine leere Zeile herzugeben hat. Ein chinesischer oder japanischer Absatz läuft nur dann eine Zeile länger, wenn sich keine Lücke zwischen zwei seiner Zeichen über `maxTracking` hinaus dehnt, und nimmt keine Laufweite auf seine Buchstaben: Eine Zeile, der ein Zeichen fehlt, verteilt ein Geviert auf ihre Lücken, weit über den Standard von 0,01 em hinaus, sodass der Hebel für lockere Absätze auf einem Raster aus ganzen Zellen meist nichts findet. Der Kasten, der eine Spalte schließt, und die Bilder mit Sicherheitsbereich liegen bewusst außerhalb des Rasters und funktionieren wie überall.
+
+Die letzte Spalte einer Seite wird nur ausgeglichen, wenn die Seite natürlich in die nächste weiterläuft – die Schlussseite eines Kapitels endet zu Recht kurz. Eine solche Seite und ein von `trailing` auf gleicher Höhe abgeschnittenes Schlussband halten auch ihre Spaltenköpfe auf gleicher Höhe: Unter einer Abbildung oder Tabelle, die eine ihrer Spalten anführt, wird keine Zeile hinzugefügt (der Hebel nach Gleitobjekten), und eine Überschrift oder ein Kasten, der unter einer solchen Abbildung eine Spalte eröffnet, bleibt an ihrem Kopf, was auch immer `stretchAfterFloats` sagt, ebenso wie die Überschrift direkt unter einem Auftakt mit `span: 'page'` in dessen eigener Spalte, sodass eine Spalte nie tiefer beginnt als die daneben, nur damit die Füße fluchten.
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ob die Spaltenfüße ausgeglichen werden. Standardmäßig aus in vertikalem Text (<code>layout.writingMode: 'vertical-rl'</code>) und auf einem Zeichenraster (<code>cjk.grid.enabled</code>, seit postext 1.25); <code>true</code> schaltet ihn auch dort ein.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesPerHeading</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>Höchstzahl zusätzlicher Rasterzeilen, die über einer einzelnen Überschrift eingefügt werden dürfen.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Rasterzeilen, die eine Überschrift nehmen darf, bevor die Hebel nach ihr probiert werden: die Listenenden, die Formeln und Kästen, die Abbildungen und die lockeren Absätze. Ihre weiteren Zeilen bis <code>maxLinesPerHeading</code> erhält eine Überschrift nur, wenn jene nichts mehr zu geben haben, sodass eine Seite mit einer Überschrift nicht vier Zeilen über ihr aufreißt, während ihre Absätze eine Zeile länger laufen könnten. Ein Wert ab <code>maxLinesPerHeading</code> gibt den Überschriften zuerst alle ihre Zeilen, wie bis postext 1.27; <code>0</code> probiert die anderen Hebel, bevor irgendeine Zeile über eine Überschrift kommt. Seit postext 1.28; früher gespeicherte Dokumente behalten die alte Reihenfolge (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt zusätzliche Rasterzeilen am Ende einer Liste, wenn Überschriften nicht die ganze Lücke aufnehmen können.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterList</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Höchstzahl zusätzlicher Rasterzeilen nach einem einzelnen Listenende.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt in der kurzen Spalte nach dem Hebel für Listenenden eine zusätzliche Rasterzeile unter einer abgesetzten Formel und unter einem Kasten: Der Block danach rückt eine Zeile nach unten. Setzen Sie die Option auf <code>false</code>, um den Abstand unter Formeln und Kästen so zu lassen, wie ihre eigenen Ränder ihn setzen; die Lücke geht an die Hebel nach diesem weiter, und die Spalte endet kurz, wenn sie sie nicht schließen. Seit postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterFloats</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Erlaubt nach dem Hebel für Listenenden zusätzliche Rasterzeilen unter einer Abbildung oder Tabelle, die die kurze Spalte anführt (ein Gleitobjekt oben), sodass der Text darunter nach unten rückt, statt dass die Spalte kurz endet. Nie auf einer Seite, die nicht weiterläuft (der Schlussseite eines Kapitels), und nie in einem von <code>trailing</code> auf gleicher Höhe abgeschnittenen Schlussband: Dort bleiben die Spaltenköpfe auf gleicher Höhe, und die letzte Spalte darf eine Zeile kürzer enden. Der erste Block unter der Abbildung kann der Rest eines Absatzes sein, der auf der vorigen Seite begonnen hat: Er rückt trotzdem nach unten, um die Zeile, die die Umbruchregeln am Fuß der Spalte freigelassen haben (eine Zeile, die die Witwenregel leer gehalten hat, oder ein Absatzabstand ohne Platz für Text danach). Setzen Sie die Option auf <code>false</code>, um den Text direkt unter der Abbildung zu halten. Unter einem Gleitobjekt über mehrere Spalten bewegen sich die Spalten gemeinsam oder gar nicht, siehe <code>stretchAfterWideFloats</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterFloat</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Höchstzahl zusätzlicher Rasterzeilen unter einem einzelnen Gleitobjekt oben.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Unter einer Abbildung oder Tabelle, die über zwei oder mehr Textspalten steht. Mit <code>'flush'</code> rückt eine Spalte darunter nur dann nach unten, wenn jede Textspalte unter dem Gleitobjekt dieselben Zeilen nimmt, sodass ihre Köpfe auf gleicher Höhe bleiben, oder wenn die Zeilen diese Spalte bündig abschließen; eine Zeile, die den Kopf einer Spalte senken und sie dennoch kurz lassen würde, wird nicht eingefügt, und die Lücke geht an die lockeren Absätze weiter. <code>'always'</code> dehnt eine solche Spalte wie unter jedem Gleitobjekt, wie bis postext 1.27. Jeder andere Wert wird als <code>'flush'</code> gelesen. Seit postext 1.28; früher gespeicherte Dokumente behalten <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Letztes Mittel: Absätze einer kurzen Spalte eine Zeile lockerer neu umbrechen (je eine zusätzliche Zeile), innerhalb von <code>bodyText.maxWordSpacing</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLooseParagraphs</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Wie viele Absätze einer kurzen Spalte eine Zeile länger laufen dürfen, die längsten zuerst.</td>
+    </tr>
+    <tr>
+      <td><code>trackParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Kann der Wortabstand allein die Zeile nicht gewinnen, darf ein lockerer Absatz auch die kleinste positive Laufweite (Sperrung) nehmen, die es schafft.</td>
+    </tr>
+    <tr>
+      <td><code>maxTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Obergrenze dieser Laufweite, in Tausendstel eines Gevierts pro Zeichen (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>trailing</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Gleicht das Schlussband eines Kapitels und des Dokuments aus: Endet der Textfluss, bevor die Seite voll ist (an einem Kapitelauftakt, einem <code>:::part</code>, einem kapitelschließenden Kasten mit <code>placement: 'fixed'</code> oder am Ende des Dokuments), und sind seine Spalten ungleich, werden sie auf gleicher Höhe abgeschnitten – eine Bandgrenze von <code>ceil(Σ used / N / grid)</code> Zeilen, aufgelöst, nachdem die Hebel oben die früheren Seiten festgelegt haben –, sodass ein kurzes Literaturverzeichnis in jeder Spalte auf derselben Höhe endet, statt die erste Spalte zu füllen und die letzte halb leer zu lassen. Der Schnitt hält die Regeln ein, die ein ungeschnittenes Band einhält: Würde ein Block, der nicht über ihn hinweg geteilt werden kann (ein Absatzende, das die Mindestzeilen gegen Waisen und Witwen zusammenhalten, ein zusammenzuhaltender Kasten), über ihn hinauslaufen – und seine letzten Zeilen verlieren, da die Renderer eine Spalte auf ihren Rahmen zuschneiden – oder würde eine Überschrift eine Spalte schließen, während ihr Text die nächste eröffnet (mit <code>headings.keepWithNext</code>, dem Standard), wird der Schnitt eine Zeile tiefer gesetzt, bis zu dreimal, und sonst verworfen. Ein Block, der in den Zeilen, die der Schnitt unter einer eine Spalte anführenden Abbildung lässt, nicht beginnen kann (ein Absatz braucht dort sein Mindestmaß gegen Waisen), geht stattdessen in die nächste Spalte des Bands weiter, wie er es aus einer ungeschnittenen Spalte täte, und die Abbildung steht allein in ihrer Spalte. Spalten, deren Füße sich um eine Rasterzeile oder weniger unterscheiden, bleiben, wie sie sind: Ein Schlussband, dessen letzte Spalte eine Zeile kürzer endet, ist der übliche Abschluss, und ihn zu schneiden würde nur eine Zeile verschieben. Der Schnitt gilt dem Band, in dem er gemessen wurde, ebenso wie der Schnitt, den ein Kasten über die ganze Seitenbreite mitten auf der Seite verlangt: Bis postext 1.4 wurde der Schnitt, wenn der erste Text der Schlussseite zuerst einem Band ohne Platz dafür angeboten worden war (einer Seite, die ein Gleitobjekt ganz einnimmt, dem schmalen Band, das ein Kasten über die ganze Seitenbreite am Fuß der vorigen Seite lässt), an dieses Band vergeben, und die Schlussseite behielt jede Zeile in ihrer ersten Spalte. Spalten unterschiedlicher Breite (ein Anderthalb-Spalten-Layout mit Text in beiden) werden nach Fläche geschnitten, die Höhe jeder Spalte gewichtet mit ihrer Breite, da eine Zeile der schmalen Spalte weniger Text fasst. Nur wirksam, wenn <code>enabled</code> true ist.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>Die Einheit des Ausgleichsschnitts, den <code>trailing</code> nimmt (und des Schnitts, den <code>beforeSpan</code> hinter einem weiterrückenden Kasten nimmt). <code>'lines'</code>: Ein Band, dessen Text auf einem eigenen Zeilenabstand gesetzt ist (ein Register, ein Literaturverzeichnis, ein Container in kleiner Schrift), wird in ganzen Zeilen dieses Zeilenabstands geschnitten und neu versucht: der Höhe, die die meisten Zeilen des Bands teilen, Überschriften und Kästen beiseite. Seine Spalten enden dann innerhalb einer Zeile voneinander, wie ein Band aus Fließtext. Ein Band aus Fließtext und eines, das zwei Zeilenabstände zu gleichen Teilen mischt, wird wie bisher auf dem Grundlinienraster geschnitten. Ebenso ein Band, dessen Zeilen eine Höhe teilen und einen Zeilenbruchteil auseinanderstehen (Literaturangaben mit Abstand zwischen den Einträgen, Registergruppen auf einem von Hand gesetzten Rand): Vier von fünf Zeilen jeder Spalte müssen eine ganze Zahl von Zeilen voneinander entfernt sein. <code>'grid'</code>: Jeder Schnitt ist eine ganze Zahl von Zeilen des Grundlinienrasters, wie bis postext 1.27, wo ein Schnitt auf dem Raster eine Zeile mehr in eine Spalte eines Bands außerhalb des Rasters ließ und ein misslungener Schnitt um mehr als eine seiner Zeilen gesenkt wurde (Spalten bis zu drei Zeilen auseinander). Jeder andere Wert wird als <code>'lines'</code> gelesen. Seit postext 1.28; früher gespeicherte Dokumente behalten <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
+    </tr>
+    <tr>
+      <td><code>beforeSpan</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Gleicht das Band aus, das ein Block über die ganze Seitenbreite hinter sich lässt: Passt ein Kasten mit <code>span: 'page'</code> auch nach einem Ausgleichsschnitt nicht unter die aktuellen Spalten und muss er auf die nächste Seite rücken oder geteilt werden (<code>calloutStyles[].keepTogether: false</code>), werden die Spalten, die er unterbricht, auf gleicher Höhe abgeschnitten – mit derselben Grenze, die ein Schlussband erhält –, statt dass die erste die Seite füllt und die letzte kurz endet. Die Seite wird als ausdrücklicher Umbruch belassen, damit die Hebel oben ihre letzte Spalte nicht wieder bis zum Seitenfuß dehnen; der Kasten oder der Teil davon, der passt, steht dann unter den ausgeglichenen Spalten. Nur wirksam, wenn <code>enabled</code> true ist.</td>
+    </tr>
+    <tr>
+      <td><code>closingBox</code></td>
+      <td><code>'first' | 'last' | 'off'</code></td>
+      <td><code>'first'</code></td>
+      <td>Wann ein Kasten, der eine kurze Spalte schließt, den Raum unter seinem Fuß nimmt (Hebel 1, gespeichert als <code>trailingCallout</code>). <code>'first'</code>: vor jedem anderen Hebel, wie bis postext 1.4 – der Kasten nimmt die ganze Lücke, auch mehrere Zeilen, und die Überschriften darüber erhalten nichts. <code>'last'</code>: nach den Hebeln für Überschriften, Listenenden, abgesetzte Elemente und Gleitobjekte, die zuerst ganze Zeilen nehmen; der Kasten rückt mit dem Text darüber nach unten und nimmt dann nur, was sie übrig ließen, meist einen Zeilenbruchteil, sodass sein Fuß dennoch den letzten Rasterplatz trifft und er nah am Text bleibt, den er kommentiert. <code>'off'</code>: nie; der Kasten behält den Raum unter seinem Fuß, auch wenn die anderen Hebel ihn um ganze Zeilen nach unten bewegen können, wenn sie Abstand über ihm einfügen, und der Zeilenbruchteil unter ihm bleibt. Auf einer Schlussseite, wo der Kasten der einzige Hebel ist, der seinen Fuß mit der Spalte daneben fluchten lässt, lässt <code>'off'</code> ihn dort, wo der Textfluss ihn hingesetzt hat. Jeder andere Wert wird als <code>'first'</code> gelesen. Ein Kasten, der die einzige Textspalte seines Bands schließt (eine einspaltige Seite, die früh endet und deren nächster Block die nächste Seite eröffnet), wird nie bewegt: Es gibt keine Spalte daneben, mit der er fluchten müsste (seit postext 1.19).</td>
+    </tr>
+    <tr>
+      <td><code>gridLines</code></td>
+      <td><code>'allow' | 'off'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Auf einem Zeichenraster: ob die Hebel laufen dürfen, die ganze Rasterzeilen einfügen (über einer Überschrift, am Ende einer Liste, unter einem abgesetzten Element oder einem Kasten, unter einer die Spalte anführenden Abbildung). Sie halten jedes Zeichen in seiner Zelle; <code>'off'</code> passt zu einem Standard, der die Zeilen einer Seite zählt, und lässt die Spalte stattdessen kurz. Ohne Wirkung außerhalb des Rasters. Jeder andere Wert wird als <code>'allow'</code> gelesen. Seit postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Welcher Hebel gegriffen hat
+
+Das Layout speichert jeden angewandten Hebel an dem Block, auf den er angewandt wurde: `block.balancing` im VDT, den `buildDocument` zurückgibt. Ein Korrekturbogen, ein Test oder ein Bericht kann so sagen, warum eine Spalte bündig endet – und welche Spalten kein Hebel schließen konnte. Blöcke, die der Ausgleich unberührt ließ, tragen kein `balancing`, und ein mit `enabled: false` gebautes Dokument hat keines.
+
+Auf einem Zeichenraster sagt das Dokument, warum eine Spalte kurz enden darf: `doc.gridBalancing` ist `{ off: true }`, wenn der Ausgleich aus ist, weil die Seite auf einem Raster steht und die Konfiguration ihn nicht einschaltet, und `{ gridLines: 'off' }`, wenn er ohne die Hebel für ganze Zeilen läuft; eine noch kurze Spalte trägt `column.gridRefused`, die Hebel, die das Raster ihr vorenthielt (`'looseParagraph'`, wenn ein Absatz seine Zeile nur gewinnen könnte, indem er seine Zeichen aus ihren Zellen schiebt, die Hebel für ganze Zeilen unter `gridLines: 'off'`). Beide fehlen außerhalb des Rasters.
+
+```ts
+interface VDTBalancing {
+  levers: BalanceLever[]; // usually one: a paragraph after a list can take the list-end line and run a line long too
+  spaceAbove: number;     // px the spacing levers added above the block (0 when only looseParagraph or flexFigure fired)
+  bodyGrowth?: number;    // flexFigure: px the picture grew, cropped within its safe area
+  extraLines?: number;    // looseParagraph: lines the paragraph gained
+  tracking?: number;      // looseParagraph: the tracking that gained them, in thousandths of an em (0 = word spacing alone)
+}
+type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Hebel</th>
+      <th>Gespeichert an</th>
+      <th>Was er bewirkt hat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>trailingCallout</code></td>
+      <td>dem Rahmenblock des Kastens</td>
+      <td>Ein Kasten, der die Spalte schließt, ist um genau den Raum unter seinem Fuß nach unten gerückt (<code>spaceAbove</code>; ein Zeilenbruchteil ist zulässig).</td>
+    </tr>
+    <tr>
+      <td><code>flexFigure</code></td>
+      <td>dem Block (inline) oder Gleitobjekt des Bilds</td>
+      <td>Ein Bild mit Sicherheitsbereich, um <code>bodyGrowth</code> px höher gesetzt, in ganzen Rasterzeilen, innerhalb des Sicherheitsbereichs beschnitten. <code>bodySource</code> des Ressourcenblocks ist der gezeigte Teil und <code>bodyFlex.delta</code> dasselbe Wachstum.</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>der Überschrift</td>
+      <td>Ganze Rasterzeilen über der Überschrift, bis <code>maxLinesPerHeading</code>.</td>
+    </tr>
+    <tr>
+      <td><code>listEnd</code></td>
+      <td>dem ersten Block nach der Liste</td>
+      <td>Eine Rasterzeile am Ende einer Liste, bis <code>maxLinesAfterList</code>.</td>
+    </tr>
+    <tr>
+      <td><code>afterDisplay</code></td>
+      <td>dem Block nach der Formel oder dem Kasten</td>
+      <td>Eine Rasterzeile unter einer abgesetzten Formel oder einem Kasten.</td>
+    </tr>
+    <tr>
+      <td><code>afterFloat</code></td>
+      <td>dem ersten Block der Spalte</td>
+      <td>Eine Rasterzeile zwischen einem Gleitobjektband, das die Spalte anführt, und ihrem Text, bis <code>maxLinesAfterFloat</code>.</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraph</code></td>
+      <td>dem Absatz</td>
+      <td>Der Absatz wurde um <code>extraLines</code> länger neu umbrochen, mit der kleinsten Laufweite, die es schaffte (<code>tracking</code>; <code>block.letterSpacing</code> ist derselbe Wert in px).</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Ausgleichsschnitte werden an den Spalten gespeichert, die sie schneiden: `column.bandCapped` ist an jeder auf gleicher Höhe geschnittenen Spalte true (das Band, das ein Kasten über die ganze Seitenbreite hinter sich lässt, ein Schlussband), und `column.trailingCap` markiert zusätzlich das Schlussband eines Kapitels oder des Dokuments (`trailing`).
+
+```ts
+import { buildDocument } from 'postext';
+
+const doc = buildDocument(content, config);
+for (const page of doc.pages) {
+  page.columns.forEach((column, i) => {
+    const levers: string[] = column.blocks.flatMap((block) => block.balancing?.levers ?? []);
+    if (column.trailingCap) levers.push('closing band cut level');
+    else if (column.bandCapped) levers.push('band cut level');
+    if (levers.length > 0) console.log(`page ${page.index + 1}, column ${i + 1}: ${levers.join(', ')}`);
+  });
+}
+// page 3, column 1: heading, heading
+// page 3, column 2: listEnd, looseParagraph
+```

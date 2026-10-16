@@ -18,7 +18,7 @@ Neuf pages d’*Afoot*, une anthologie de poche de trois essais sur la marche, d
 
 <Excerpt region="opener" />
 
-Le `numberingTemplate: '{1:I}'` du niveau numérote les essais I, II et III, et `{number}` imprime le numéro au-dessus du titre ([étendue et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). `minHeight` réserve 12 lignes de 14 pt et le filet fin s’arrête 7 mm plus haut : sous un titre d’une ligne, le texte commence à 79 mm du bord supérieur sur chaque ouverture. Une deuxième ligne de titre en 26 pt ajoute 9,9 mm et repousse le texte d’une ligne de grille ; avec `SINK = 14`, les titres d’une et de deux lignes font commencer leur texte sur la même ligne. `marginBottom: pt(0)` empêche la marge par défaut du titre de s’ajouter à la réserve.
+Le `numberingTemplate: '{1:I}'` du niveau numérote les essais I, II et III, et `{number}` imprime le numéro au-dessus du titre ([étendue et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)). `minHeight` réserve 12 lignes de 14 pt et le filet fin s’arrête 7 mm plus haut : sous un titre d’une ligne, le texte commence à 79 mm du bord supérieur sur chaque ouverture. Une deuxième ligne de titre en 26 pt ajoute 9,9 mm et repousse le texte d’une ligne de grille ; avec `SINK = 14`, les titres d’une et de deux lignes font commencer leur texte sur la même ligne. `marginBottom: pt(0)` empêche la marge par défaut du titre de s’ajouter à la réserve.
 
 ### 2 · Laissez la table des matières se remplir seule
 
@@ -30,7 +30,7 @@ Le `numberingTemplate: '{1:I}'` du niveau numérote les essais I, II et III, et 
 
 <Excerpt region="running-heads" />
 
-Chaque titre courant est ancré à la page, à 11 mm du bord supérieur, et `parity` choisit le côté : le folio s’aligne sur le bord extérieur du texte et le nom ou le titre se place 7 mm plus à l’intérieur. Le `pages: 'body'` de `head()` tient les titres courants à l’écart des ouvertures, où la signature nomme déjà l’auteur, et le `pages: 'opener'` du pied de page y imprime à la place un folio en pied ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). `{chapterTitle}` imprime le titre de l’essai sans son numéro.
+Chaque titre courant est ancré à la page, à 11 mm du bord supérieur, et `parity` choisit le côté : le folio s’aligne sur le bord extérieur du texte et le nom ou le titre se place 7 mm plus à l’intérieur. Le `pages: 'body'` de `head()` tient les titres courants à l’écart des ouvertures, où la signature nomme déjà l’auteur, et le `pages: 'opener'` du pied de page y imprime à la place un folio en pied ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)). `{chapterTitle}` imprime le titre de l’essai sans son numéro.
 
 ### 4 · Tenez la couverture et la table des matières hors du décompte
 

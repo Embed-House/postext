@@ -16,7 +16,7 @@ Ein kleiner zweisprachiger Band mit Tang-Gedichten, gesetzt, wie Paralleltextaus
 
 ### 1 · Ein Überschriftenformat für jede Seite der Doppelseite
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht besteht aus zwei Überschriften der Ebene 1: `# Night Thoughts {style="en" …}` mit Giles’ Versen, dann `# 靜夜思 {style="zh" …}` mit dem Gedicht. Das Format `en` bricht auf die nächste gerade Seite um, eine linke; das Format `zh` auf die nächste ungerade, die rechte Seite gegenüber. Solange jedes Gedicht auf seine Seite passt, kommt keine leere Seite hinzu; eine englische Fassung, die überliefe, schöbe ihr Original auf die folgende rechte Seite, hinter eine leere linke ([Umbruch davor](/de/docs/configuration-text#umbruch-davor)). Beide Gestaltungen reservieren sechs Rasterzeilen, sodass Englisch und Chinesisch auf derselben Zeile beginnen. Das chinesische Format hat `span: 'page'`, weil sein erstes Element, ein Kasten in Seitengröße, das getönte Blatt ist, und eine in der Spalte gehaltene Gestaltung am Fuß der Spalte endet ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)).
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht besteht aus zwei Überschriften der Ebene 1: `# Night Thoughts {style="en" …}` mit Giles’ Versen, dann `# 靜夜思 {style="zh" …}` mit dem Gedicht. Das Format `en` bricht auf die nächste gerade Seite um, eine linke; das Format `zh` auf die nächste ungerade, die rechte Seite gegenüber. Solange jedes Gedicht auf seine Seite passt, kommt keine leere Seite hinzu; eine englische Fassung, die überliefe, schöbe ihr Original auf die folgende rechte Seite, hinter eine leere linke ([Umbruch davor](/de/docs/configuration-headings#umbruch-davor)). Beide Gestaltungen reservieren sechs Rasterzeilen, sodass Englisch und Chinesisch auf derselben Zeile beginnen. Das chinesische Format hat `span: 'page'`, weil sein erstes Element, ein Kasten in Seitengröße, das getönte Blatt ist, und eine in der Spalte gehaltene Gestaltung am Fuß der Spalte endet ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Seite 2: Das Englische beginnt auf der linken Seite sechs Zeilen tiefer, auf der Rasterzeile, auf der das Chinesische auf Seite 3 beginnt." />
 
@@ -36,7 +36,7 @@ Die Glossen sind Fußnoten, eine pro Reihe: `疑是地上霜。[^bed]` schließt
 
 <Excerpt region="heads" />
 
-Jede Seite dieses Buches beginnt mit einer Überschrift, jede Seite ist also eine Eröffnungsseite, und die Kolumnentitel verwenden `pages: 'opener'`. Eine durch einen Umbruch eingefügte leere Seite bliebe leer, und das Titelblatt räumt sie mit einer eigenen leeren Kopfzeile ab. Die linke Seite nimmt den Buchtitel aus `subtitle` im Frontmatter, das jede Ausgabe in ihrer Sprache schreibt; die rechte nimmt den Namen des Dichters aus dem Attribut `name` der chinesischen Überschrift ([Kopf- und Fußzeilen](/de/docs/configuration-page-layout#kopf--und-fußzeilen)).
+Jede Seite dieses Buches beginnt mit einer Überschrift, jede Seite ist also eine Eröffnungsseite, und die Kolumnentitel verwenden `pages: 'opener'`. Eine durch einen Umbruch eingefügte leere Seite bliebe leer, und das Titelblatt räumt sie mit einer eigenen leeren Kopfzeile ab. Die linke Seite nimmt den Buchtitel aus `subtitle` im Frontmatter, das jede Ausgabe in ihrer Sprache schreibt; die rechte nimmt den Namen des Dichters aus dem Attribut `name` der chinesischen Überschrift ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)).
 
 ### 5 · Ein Titelblatt auf einem Mond
 
@@ -48,7 +48,7 @@ Auch das Titelblatt ist ein Überschriftenformat, mit `runningChapter: false`, d
 
 <Excerpt region="voices" />
 
-Fontsource zerlegt jede chinesische Schrift nach Zeichenbereichen in etwa hundert Dateien, und `loadCjkFonts` holt nur die Dateien, die ihr Text braucht ([Chinesische, japanische und koreanische Schriften](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften)). Die Kai bekommt die Gedichte und das Siegel, die Hei die Dichterzeilen und Namen, die fette Song die vier Titel und die Stichwörter der Fußnoten und ihr schwarzer Schnitt die zwei Zeichen des Titelblatts.
+Fontsource zerlegt jede chinesische Schrift nach Zeichenbereichen in etwa hundert Dateien, und `loadCjkFonts` holt nur die Dateien, die ihr Text braucht ([Chinesische, japanische und koreanische Schriften](/de/docs/configuration-pdf-output#chinesische-japanische-und-koreanische-schriften)). Die Kai bekommt die Gedichte und das Siegel, die Hei die Dichterzeilen und Namen, die fette Song die vier Titel und die Stichwörter der Fußnoten und ihr schwarzer Schnitt die zwei Zeichen des Titelblatts.
 
 ## Varianten
 

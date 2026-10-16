@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Os tipos de recurso e sua numeração, os estilos de tabela e de legenda, os diagramas em uma só tinta e os vídeos impressos',
   lang: 'pt',
   lastUpdated: '2026-10-10',
-  readingTime: '5 min',
-  order: 8,
+  readingTime: '44 min',
+  order: 14,
   parent: 'configuration',
   plainSummary: "Esta página reúne os ajustes de figuras, tabelas, diagramas e vídeos. O Postext os chama de recursos e numera cada tipo separadamente. Você define a aparência das tabelas: fios, fundos, tipografia e como elas se dividem entre páginas. Define como se escreve a legenda de uma figura ou de uma tabela. Também pode imprimir os diagramas em uma só tinta e escolher como um vídeo aparece no papel.",
 };
@@ -19,9 +19,9 @@ export const metadata = {
 
 Um **tipo de recurso** é uma categoria que você mesmo define (*Figura*, *Tabela*, *Diagrama*, *Listagem*…) e que determina como os recursos daquele tipo são numerados, legendados e referenciados. A lista fica em `config.resourceTypes`; no Sandbox, ela é editada em **Design → Figuras e tabelas → Numeração e posicionamento**.
 
-Quando `config.resourceTypes` não está definido, o Postext traz três tipos padrão embutidos: **Figura**, **Tabela** e **Vídeo**, cada um numerado separadamente como `{h1}.{n}` (reiniciando a cada título de nível 1) com contadores decimais. Uma lista sem o tipo `video` (a de um livro salvo antes de existirem vídeos) continua numerando os recursos de vídeo com tipo `video`: o tipo embutido Vídeo é acrescentado para eles (`effectiveResourceTypes(config, resources)`), e `defaultVideoResourceType(locale)` devolve esse tipo isoladamente. Os nomes seguem o idioma do documento: `config.locale`, senão `bodyText.hyphenation.locale`, senão o inglês (veja [Idioma do documento](/pt/docs/configuration-text#idioma-do-documento)).
+Quando `config.resourceTypes` não está definido, o Postext traz três tipos padrão embutidos: **Figura**, **Tabela** e **Vídeo**, cada um numerado separadamente como `{h1}.{n}` (reiniciando a cada título de nível 1) com contadores decimais. Uma lista sem o tipo `video` (a de um livro salvo antes de existirem vídeos) continua numerando os recursos de vídeo com tipo `video`: o tipo embutido Vídeo é acrescentado para eles (`effectiveResourceTypes(config, resources)`), e `defaultVideoResourceType(locale)` devolve esse tipo isoladamente. Os nomes seguem o idioma do documento: `config.locale`, senão `bodyText.hyphenation.locale`, senão o inglês (veja [Idioma do documento](/pt/docs/configuration-language#idioma-do-documento)).
 
-Os tipos padrão embutidos acompanham o idioma. A função exportada `defaultResourceTypes(locale = 'en')` traduz os nomes dos tipos, os rótulos curtos e os prefixos de legenda para o idioma do documento: o inglês gera *Figure*/*Fig.* e *Table*/*Tab.*; o espanhol gera *Figura*/*Fig.* e *Tabla*/*Tabla*; francês, alemão, italiano, português, catalão e holandês também têm os seus (a tabela em [Idioma do documento](/pt/docs/configuration-text#idioma-do-documento) traz todos). Etiquetas regionais como `es-ES` são resolvidas pelo idioma, e qualquer idioma sem tradução recai no inglês. O comportamento da numeração (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, contadores decimais) não depende do idioma. Cada chamada devolve objetos novos, então você pode modificar o resultado à vontade:
+Os tipos padrão embutidos acompanham o idioma. A função exportada `defaultResourceTypes(locale = 'en')` traduz os nomes dos tipos, os rótulos curtos e os prefixos de legenda para o idioma do documento: o inglês gera *Figure*/*Fig.* e *Table*/*Tab.*; o espanhol gera *Figura*/*Fig.* e *Tabla*/*Tabla*; francês, alemão, italiano, português, catalão e holandês também têm os seus (a tabela em [Idioma do documento](/pt/docs/configuration-language#idioma-do-documento) traz todos). Etiquetas regionais como `es-ES` são resolvidas pelo idioma, e qualquer idioma sem tradução recai no inglês. O comportamento da numeração (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, contadores decimais) não depende do idioma. Cada chamada devolve objetos novos, então você pode modificar o resultado à vontade:
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -68,15 +68,15 @@ interface ResourceType {
 }
 ```
 
-`ResourcePlacement` tem a mesma forma que um recurso define no seu próprio `placement`. `position` escolhe o tipo de espaço livre que um flutuante pode ocupar: `auto` (o padrão) fica com o primeiro depois da primeira referência, `top` / `bottom` o restringem a esse tipo de faixa, `here` insere o recurso em linha. `span` define a extensão do flutuante: uma coluna, a largura total do conteúdo ou a coluna lateral só de flutuantes de uma diagramação de coluna e meia. `rotate` gira o recurso um quarto de volta e o transforma em flutuante de página inteira, numa página só para ele. `width` estreita o flutuante a uma fração da coluna (ou da página, num flutuante de página inteira), por exemplo uma tabela pequena numa coluna larga. `align` diz onde esse flutuante mais estreito fica (à esquerda por padrão, centralizado ou à direita) e também onde fica uma imagem mais estreita que o seu espaço: um bitmap menor que a coluna, ou uma imagem que `layout.fitFiguresToPage` reduziu. A legenda e a nota mantêm a medida do espaço. (Até o postext 1.4, uma imagem assim sempre ficava alinhada à esquerda.) `captionSide` põe a legenda ao lado da figura, na coluna lateral só de flutuantes de uma diagramação de coluna e meia (`layout.sideColumnRole: 'floats'`), alinhada com o topo da figura (com a base, num flutuante inferior); vale para flutuantes de coluna e, desde o postext 1.28, para um recurso posto no texto (`position: 'here'`, de uma coluna, sem texto ao redor), cuja legenda e cuja nota vão para a coluna lateral na altura do topo do seu corpo onde essa coluna está livre ao seu lado, e sob o corpo onde não está (`layout.inlineCaptionSide`, ativado por padrão; `false` deixa as legendas laterais só para os flutuantes de coluna); numa página sem essa coluna a legenda continua embaixo da figura. Quando nem o recurso nem o seu tipo definem um posicionamento, o padrão embutido é `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) e `minScale` (0.7 quando não definido) reduzem uma imagem flutuante ao espaço da sua posição em vez de levá-la adiante, e `captionMeasure: 'body'` compõe a legenda e a nota de uma imagem mais estreita que o seu espaço na largura da imagem (veja [Formato do documento › Posicionamento](/pt/docs/document-format#posicionamento)); `layout.floatShrink` dá o padrão do documento para os dois primeiros. `wrap` põe uma inserção em linha ou um flutuante de uma coluna de um lado da coluna com o texto composto ao lado, a `wrapGap` de distância; `layout.wrap` guarda os padrões (veja [Formato do documento › Contorno de texto](/pt/docs/document-format#contorno-de-texto)). `citingPage` deixa um flutuante `top` ou `auto` encabeçar a página ou a coluna onde cai a linha que o cita em vez de ocupar o primeiro espaço livre depois dela; `layout.floatsAtCitingPage` dá o padrão do documento e `layout.maxTopFraction` a fração da coluna que ele pode ocupar (veja [Formato do documento › Posicionamento](/pt/docs/document-format#posicionamento)).
+`ResourcePlacement` tem a mesma forma que um recurso define no seu próprio `placement`. `position` escolhe o tipo de espaço livre que um flutuante pode ocupar: `auto` (o padrão) fica com o primeiro depois da primeira referência, `top` / `bottom` o restringem a esse tipo de faixa, `here` insere o recurso em linha. `span` define a extensão do flutuante: uma coluna, a largura total do conteúdo ou a coluna lateral só de flutuantes de uma diagramação de coluna e meia. `rotate` gira o recurso um quarto de volta e o transforma em flutuante de página inteira, numa página só para ele. `width` estreita o flutuante a uma fração da coluna (ou da página, num flutuante de página inteira), por exemplo uma tabela pequena numa coluna larga. `align` diz onde esse flutuante mais estreito fica (à esquerda por padrão, centralizado ou à direita) e também onde fica uma imagem mais estreita que o seu espaço: um bitmap menor que a coluna, ou uma imagem que `layout.fitFiguresToPage` reduziu. A legenda e a nota mantêm a medida do espaço. (Até o postext 1.4, uma imagem assim sempre ficava alinhada à esquerda.) `captionSide` põe a legenda ao lado da figura, na coluna lateral só de flutuantes de uma diagramação de coluna e meia (`layout.sideColumnRole: 'floats'`), alinhada com o topo da figura (com a base, num flutuante inferior); vale para flutuantes de coluna e, desde o postext 1.28, para um recurso posto no texto (`position: 'here'`, de uma coluna, sem texto ao redor), cuja legenda e cuja nota vão para a coluna lateral na altura do topo do seu corpo onde essa coluna está livre ao seu lado, e sob o corpo onde não está (`layout.inlineCaptionSide`, ativado por padrão; `false` deixa as legendas laterais só para os flutuantes de coluna); numa página sem essa coluna a legenda continua embaixo da figura. Quando nem o recurso nem o seu tipo definem um posicionamento, o padrão embutido é `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) e `minScale` (0.7 quando não definido) reduzem uma imagem flutuante ao espaço da sua posição em vez de levá-la adiante, e `captionMeasure: 'body'` compõe a legenda e a nota de uma imagem mais estreita que o seu espaço na largura da imagem (veja [Formato do documento › Posicionamento](/pt/docs/document-format-resources#posicionamento)); `layout.floatShrink` dá o padrão do documento para os dois primeiros. `wrap` põe uma inserção em linha ou um flutuante de uma coluna de um lado da coluna com o texto composto ao lado, a `wrapGap` de distância; `layout.wrap` guarda os padrões (veja [Formato do documento › Contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). `citingPage` deixa um flutuante `top` ou `auto` encabeçar a página ou a coluna onde cai a linha que o cita em vez de ocupar o primeiro espaço livre depois dela; `layout.floatsAtCitingPage` dá o padrão do documento e `layout.maxTopFraction` a fração da coluna que ele pode ocupar (veja [Formato do documento › Posicionamento](/pt/docs/document-format-resources#posicionamento)).
 
 `columns` (desde o postext 1.18) estende um flutuante `span: 'column'` por esse número de colunas vizinhas numa página de várias colunas: uma foto ocupando duas das cinco colunas de um jornal. A sua medida são essas colunas mais as medianizes entre elas. Ele ocupa o topo de uma sequência de colunas vazias que começam na mesma altura, ou o pé da coluna que o cita e das colunas vazias seguintes; com tantas colunas quantas a página tem, ou mais, vira um flutuante de página inteira. É ignorado nos spans `'page'` e `'side'`, num recurso girado (`rotate`) e numa inserção em linha (`here`), e `captionSide` só vale para um flutuante de uma coluna de largura.
 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '180px' }}>Tipo</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -124,7 +124,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code> (opcional)</td>
-      <td>Posicionamento usado pelos recursos deste tipo que não definem o próprio <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> e <code>columns</code>, cada um resolvido separadamente. Quando nem o recurso nem o tipo definem um campo, vale o padrão embutido: <code>auto</code> / <code>column</code>, sem giro, largura total, alinhado à esquerda, legenda embaixo da figura. Veja <a href="#numeração-e-referências">Numeração e referências</a> abaixo para a cadeia de resolução e <a href="/pt/docs/document-format#recursos">Formato do documento › Recursos</a> para o que cada valor faz, inclusive nos recursos girados.</td>
+      <td>Posicionamento usado pelos recursos deste tipo que não definem o próprio <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> e <code>columns</code>, cada um resolvido separadamente. Quando nem o recurso nem o tipo definem um campo, vale o padrão embutido: <code>auto</code> / <code>column</code>, sem giro, largura total, alinhado à esquerda, legenda embaixo da figura. Veja <a href="#numeração-e-referências">Numeração e referências</a> abaixo para a cadeia de resolução e <a href="/pt/docs/document-format-resources#recursos">Formato do documento › Recursos</a> para o que cada valor faz, inclusive nos recursos girados.</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -136,7 +136,7 @@ interface ResourceType {
 
 ### Tokens do modelo
 
-`numberingTemplate` é processado pelo mesmo mecanismo da numeração de títulos (veja [Títulos](/pt/docs/configuration-text#títulos)). Ele reconhece dois tipos de token:
+`numberingTemplate` é processado pelo mesmo mecanismo da numeração de títulos (veja [Títulos](/pt/docs/configuration-headings#títulos)). Ele reconhece dois tipos de token:
 
 - `{n}`: o contador do tipo, formatado conforme `counterFormat`. É o valor que aumenta a cada recurso e reinicia de acordo com `resetOn`.
 - `{h1}` … `{h6}`: os números de título vigentes no ponto da primeira referência, em decimal, a menos que o token indique um estilo. `{h1}` é o número do título de nível 1 atual, `{h2}` o de nível 2, e assim por diante.
@@ -149,8 +149,8 @@ Um modelo vazio (`''`) não imprime número, embora o tipo continue contando os 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Modelo</th>
-      <th style={{ width: '180px' }}>Com <code>h1 = 2</code>, contador = 3</th>
+      <th>Modelo</th>
+      <th>Com <code>h1 = 2</code>, contador = 3</th>
       <th>Observações</th>
     </tr>
   </thead>
@@ -182,7 +182,7 @@ Um modelo vazio (`''`) não imprime número, embora o tipo continue contando os 
 
 ### Numeração e referências
 
-O número que um tipo de recurso produz é o que `:ref` imprime e o que vem depois do prefixo da legenda. `:ref{id}` é a forma principal: a primeira referência na ordem de leitura **incorpora** o recurso, que flutua para o primeiro espaço livre depois dela, seja o pé da coluna que o cita, o topo ou o pé da próxima coluna vazia, ou uma faixa da página seguinte (conforme o posicionamento resolvido: `position: 'auto' | 'top' | 'bottom' | 'here'` e `span: 'column' | 'page' | 'side'`, mais `rotate`, `width`, `align` e `captionSide`, resolvidos primeiro no recurso, depois no `defaultPlacement` do tipo e por fim no padrão embutido `auto` / `column`; `'top'` / `'bottom'` restringem a busca a esse tipo de espaço). A inserção em bloco `::resource{id}` é opcional e só é necessária para `placement.position: 'here'`, uma inserção em linha, sem flutuar, num ponto exato do fluxo. A gramática completa do lado do documento (as duas formas, mais as opções `style` e `text` de `:ref`) está documentada em [Formato do documento › Recursos](/pt/docs/document-format#recursos), inclusive como a ordem das primeiras referências define a contagem.
+O número que um tipo de recurso produz é o que `:ref` imprime e o que vem depois do prefixo da legenda. `:ref{id}` é a forma principal: a primeira referência na ordem de leitura **incorpora** o recurso, que flutua para o primeiro espaço livre depois dela, seja o pé da coluna que o cita, o topo ou o pé da próxima coluna vazia, ou uma faixa da página seguinte (conforme o posicionamento resolvido: `position: 'auto' | 'top' | 'bottom' | 'here'` e `span: 'column' | 'page' | 'side'`, mais `rotate`, `width`, `align` e `captionSide`, resolvidos primeiro no recurso, depois no `defaultPlacement` do tipo e por fim no padrão embutido `auto` / `column`; `'top'` / `'bottom'` restringem a busca a esse tipo de espaço). A inserção em bloco `::resource{id}` é opcional e só é necessária para `placement.position: 'here'`, uma inserção em linha, sem flutuar, num ponto exato do fluxo. A gramática completa do lado do documento (as duas formas, mais as opções `style` e `text` de `:ref`) está documentada em [Formato do documento › Recursos](/pt/docs/document-format-resources#recursos), inclusive como a ordem das primeiras referências define a contagem.
 
 Isso espelha a numeração de títulos: assim como um nível de título tem um `numberingTemplate`, um tipo de recurso também tem, mas o contador do recurso (`{n}`) avança a cada primeira referência, e não a cada título, e `resetOn` o amarra de volta à hierarquia de títulos.
 
@@ -231,9 +231,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Propriedade</th>
-      <th style={{ width: '140px' }}>Tipo</th>
-      <th style={{ width: '160px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -440,7 +440,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Texto desse aviso, alinhado à direita embaixo da parte, na tipografia das notas (veja <a href="#estilo-de-legenda">estilo de legenda</a>). O padrão acompanha o idioma do documento (veja <a href="/pt/docs/configuration-text#idioma-do-documento">Idioma do documento</a> para os oito idiomas).</td>
+      <td>Texto desse aviso, alinhado à direita embaixo da parte, na tipografia das notas (veja <a href="#estilo-de-legenda">estilo de legenda</a>). O padrão acompanha o idioma do documento (veja <a href="/pt/docs/configuration-language#idioma-do-documento">Idioma do documento</a> para os oito idiomas).</td>
     </tr>
   </tbody>
 </table>
@@ -532,7 +532,7 @@ Uma tabela flutuante que não cabe na página nova que lhe é oferecida não é 
 
 **Tabelas colocadas no texto.** Uma tabela posicionada `here` (incorporada com `::resource`) segue as mesmas regras desde o postext 1.25 (`splitInline`, ativado por padrão). Quando não cabe no espaço que resta na sua coluna, é cortada entre linhas: a primeira parte mantém o vão de flutuante acima dela e pelo menos as linhas de cabeçalho e duas linhas do corpo (com menos, a tabela inteira começa na coluna seguinte, como antes); cada parte seguinte abre a coluna seguinte sem vão acima dela, composta na largura dessa coluna (num layout de coluna e meia, uma parte que cai na coluna estreita é composta na largura dela), e o texto depois da linha `::resource` vem depois da última parte. A repetição do cabeçalho, a legenda com o sufixo, o marcador, a nota na última parte, o mínimo de três linhas na parte final e os cortes que respeitam as células mescladas e as linhas que encabeçam um grupo são os de uma tabela flutuante. Uma tabela com menos de cinco linhas do corpo nunca é cortada. `'clip'` mantém as linhas iniciais de uma tabela em linha mais alta que uma coluna, posicionada no alto de uma coluna; `'hide'` deixa essa tabela de fora; uma mais baixa passa inteira para a coluna seguinte nos dois modos. Uma página que uma tabela em linha abre só reserva, livre dos flutuantes que recebe, o espaço da primeira parte, de modo que uma figura de página inteira que estava à espera encabeça essa página e a tabela continua embaixo dela. As tabelas em linha numa página vertical e as tabelas dentro de um boxe não são cortadas. `splitInline: false` leva uma tabela em linha inteira para a coluna seguinte, como até o postext 1.24.
 
-Os textos de continuação têm padrão por idioma do documento (`locale`, senão o idioma de hifenização): inglês `(cont.)` / `Continued`, espanhol `(cont.)` / `Continúa`, e da mesma forma em francês, alemão, italiano, português, catalão e holandês (listados em [Idioma do documento](/pt/docs/configuration-text#idioma-do-documento)).
+Os textos de continuação têm padrão por idioma do documento (`locale`, senão o idioma de hifenização): inglês `(cont.)` / `Continued`, espanhol `(cont.)` / `Continúa`, e da mesma forma em francês, alemão, italiano, português, catalão e holandês (listados em [Idioma do documento](/pt/docs/configuration-language#idioma-do-documento)).
 
 O conteúdo das células é markdown em linha, e uma quebra de linha dentro de uma célula (uma nova linha, ou `\\` como nas legendas e notas) começa um novo parágrafo. Um parágrafo que começa com um marcador ou travessão (`•`, `-`, `*`, `–`) ou com um número (`1.`, `1)`) seguido de espaço é composto como item de lista: o marcador é pintado como foi escrito, o texto se pendura nele com o `unorderedLists.gap` do documento, as linhas seguintes se alinham com o texto, e dois espaços iniciais aninham um nível. Assim, uma célula escrita como `• Ofrece elección\n• Acomoda a personas diestras y zurdas` sai como uma lista de dois itens. Uma linha só com espaços comuns não acrescenta nada; uma linha com um espaço não separável (U+00A0) é uma linha da célula, como no CommonMark, então `1\n` seguido de um espaço não separável faz a linha da tabela ter duas linhas de altura. Um espaço não separável no fim do texto de uma célula mantém a sua largura: `760` e um espaço não separável, alinhados à direita sobre `(231)`, terminam um espaço antes da borda, o que aproxima o 0 do 1. Os algarismos só se alinham exatamente onde o espaço é tão largo quanto o parêntese, e na maioria das fontes ele é mais estreito. (Até o postext 1.4, ambos eram descartados.)
 
@@ -593,9 +593,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propriedade</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -704,9 +704,9 @@ O subobjeto `note` define o estilo de `Resource.note`, um trecho curto (fonte, c
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propriedade</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -763,9 +763,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '200px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -871,7 +871,7 @@ Para cada cor que a passada sobre o código reescreve (valores hexadecimais, `rg
 
 ### Fontes no texto dos SVG
 
-Uma imagem SVG é exibida por meio de uma imagem: um `<img>` no canvas, no HTML e no EPUB. Um documento de imagem não enxerga as fontes web da página, então `<text font-family="IBM Plex Sans">` cairia numa fonte do sistema. Desde o postext 1.25, o motor incorpora na marcação as variantes que o texto nomeia antes de a imagem ser decodificada ou entregue como URL: uma regra `@font-face` por arquivo de fonte, com os bytes numa URI de dados, num `<style>` logo depois da tag `<svg>` raiz. O PDF não precisa de nada disso: ele compõe o texto dos SVG como texto real nas suas fontes incorporadas (veja [Bytes de recursos e matrizes de impressão](/pt/docs/configuration-programmatic-usage#bytes-de-recursos-e-matrizes-de-impressão)).
+Uma imagem SVG é exibida por meio de uma imagem: um `<img>` no canvas, no HTML e no EPUB. Um documento de imagem não enxerga as fontes web da página, então `<text font-family="IBM Plex Sans">` cairia numa fonte do sistema. Desde o postext 1.25, o motor incorpora na marcação as variantes que o texto nomeia antes de a imagem ser decodificada ou entregue como URL: uma regra `@font-face` por arquivo de fonte, com os bytes numa URI de dados, num `<style>` logo depois da tag `<svg>` raiz. O PDF não precisa de nada disso: ele compõe o texto dos SVG como texto real nas suas fontes incorporadas (veja [Bytes de recursos e matrizes de impressão](/pt/docs/configuration-pdf-output#bytes-de-recursos-e-matrizes-de-impressão)).
 
 O que o texto pede é lido de `font-family`, `font-weight`, `font-style` e `font`, como atributos, dentro de atributos `style` e herdado dos grupos que o envolvem; uma regra de `<style>` que nomeia uma família também conta. As famílias genéricas (`serif`, `sans-serif`…) e o texto dentro de `<title>` ou `<desc>` ficam de fora, e uma família que o próprio SVG declara com `@font-face` não é mexida. Cada trecho percorre a sua lista `font-family` até a primeira família que tenha uma variante. A recoloração da tinta única vem primeiro; depois, as fontes.
 
@@ -889,7 +889,7 @@ Onde isso acontece:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` recolore (`inkHex`), incorpora as fontes (`fonts`, um provedor; `inlineFonts: false` pula essa etapa), decodifica e registra a imagem como fonte vetorial, e resolve com o que aconteceu a cada variante. `registerBundleImages(bundle)` faz o mesmo com os SVGs de um pacote, a partir das variantes do próprio pacote primeiro. `prepareSvgMarkup(svgText, options)` devolve a marcação preparada para um host que decodifica por conta própria.
 - **HTML.** `bundleImageUrl(bundle)` serve a marcação SVG com as variantes do pacote incorporadas. `renderToHtml(doc, { inlineSvgFonts: true })` incorpora as fontes nas URIs `data:` de SVG que `resourceImageUrl` devolve, a partir das variantes que o registro guarda na memória (ou `inlineSvgFonts: { fonts, maxBytes, withhold }`). Uma URL de objeto não pode ser lida de forma síncrona, então um host que serve URLs blob incorpora as fontes antes de criá-las.
-- **EPUB.** O `postext-epub` incorpora a partir das `fonts` do livro e, depois, de `svgFonts.provider`, antes de gravar um SVG (veja [Livros EPUB](/pt/docs/configuration-programmatic-usage#livros-epub-postext-epub)).
+- **EPUB.** O `postext-epub` incorpora a partir das `fonts` do livro e, depois, de `svgFonts.provider`, antes de gravar um SVG (veja [Livros EPUB](/pt/docs/configuration-html-folio-epub#livros-epub-postext-epub)).
 - **PDF.** O texto dos SVG é composto como texto real nas fontes incorporadas. Um `<style>` que contém só regras `@font-face` (variantes que o autor incorporou) já não faz a figura cair numa rasterização. Quando uma figura cai mesmo nela (um filtro, um gradiente), a rasterização é feita com as variantes incorporadas a partir do `fontProvider` do PDF.
 
 As funções de nível mais baixo também são exportadas: `svgFontRequests(svgText)` lista as famílias, o peso, o estilo e os caracteres de cada trecho; `inlineSvgFonts(svgText, provider, options)` e `inlineSvgFontsSync(svgText, syncProvider, options)` devolvem a marcação; `inlineSvgFontsDetailed` acrescenta um relatório de cada variante (`inlined`, `declared`, `unavailable`, `withheld`, `tooLarge`).
@@ -897,9 +897,9 @@ As funções de nível mais baixo também são exportadas: `svgFontRequests(svgT
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Opção</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Opção</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -938,7 +938,7 @@ As funções de nível mais baixo também são exportadas: `svgFontRequests(svgT
 
 ## Estilo de vídeo
 
-A propriedade `videoStyle` define como os [recursos de vídeo](/pt/docs/document-format#vídeos) são impressos (a marca de reprodução e o código QR sobre o pôster, e se o pôster é um link para o vídeo) e o que os players oferecem no visualizador HTML e no EPUB.
+A propriedade `videoStyle` define como os [recursos de vídeo](/pt/docs/document-format-resources#vídeos) são impressos (a marca de reprodução e o código QR sobre o pôster, e se o pôster é um link para o vídeo) e o que os players oferecem no visualizador HTML e no EPUB.
 
 ```ts
 const config: PostextConfig = {
@@ -953,9 +953,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -998,9 +998,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -1021,9 +1021,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Padrão</th>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -1049,9 +1049,9 @@ O código é gerado pelo próprio motor (`encodeQr(text, level)`: modo byte, UTF
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propriedade</th>
-      <th style={{ width: '120px' }}>Padrão</th>
-      <th style={{ width: '170px' }}>Respeitada por</th>
+      <th>Propriedade</th>
+      <th>Padrão</th>
+      <th>Respeitada por</th>
       <th>Descrição</th>
     </tr>
   </thead>
@@ -1073,7 +1073,7 @@ O código é gerado pelo próprio motor (`encodeQr(text, level)`: modo byte, UTF
 
 Um EPUB mantém só os atributos que o seu esquema conhece: um arquivo toca com <code>controls</code>, <code>autoplay</code>, <code>muted</code>, <code>loop</code>, <code>playsinline</code> e <code>preload</code>, mais a marca <code>data-pt-alongside</code>, e o sistema de leitura decide o resto.
 
-Um vídeo que não é exclusivo leva `data-pt-alongside` na saída HTML. `coordinateVideoPlayback(root)` faz os players sob `root` (o elemento que contém a saída de `renderToHtml`) seguirem a regra: iniciar um vídeo exclusivo pausa todos os outros que estiverem tocando, e iniciar um que toca junto pausa só os exclusivos. Devolve uma função que para de escutar. `playsAlongside(el)` e `videosToPause(started, videos, alongside)` dão a mesma regra a um host com players próprios. No [Folio](/pt/docs/document-format#vídeos-nas-páginas-do-folio), um vídeo que toca sozinho e junto com os outros (`autoplay` com `exclusive: false`) começa, sem som, cada vez que a sua página entra em vista e para quando a página é virada, vários ao mesmo tempo, e `loop` o faz tocar de novo desde o início. Uma página ou capítulo de EPUB com vídeos a coordenar (dois ou mais, um deles exclusivo) vincula a mesma regra como um pequeno script, `scripts/videos.js` (a exportação `VIDEO_PLAYBACK_SCRIPT`), e o pacote declara esse documento como `scripted`. Um sistema de leitura que executa scripts faz os vídeos desse documento seguirem a regra, mas não os de uma página oposta, que é outro documento; um que não executa scripts toca cada vídeo por conta própria, como os players do YouTube e do Vimeo sempre fazem.
+Um vídeo que não é exclusivo leva `data-pt-alongside` na saída HTML. `coordinateVideoPlayback(root)` faz os players sob `root` (o elemento que contém a saída de `renderToHtml`) seguirem a regra: iniciar um vídeo exclusivo pausa todos os outros que estiverem tocando, e iniciar um que toca junto pausa só os exclusivos. Devolve uma função que para de escutar. `playsAlongside(el)` e `videosToPause(started, videos, alongside)` dão a mesma regra a um host com players próprios. No [Folio](/pt/docs/document-format-resources#vídeos-nas-páginas-do-folio), um vídeo que toca sozinho e junto com os outros (`autoplay` com `exclusive: false`) começa, sem som, cada vez que a sua página entra em vista e para quando a página é virada, vários ao mesmo tempo, e `loop` o faz tocar de novo desde o início. Uma página ou capítulo de EPUB com vídeos a coordenar (dois ou mais, um deles exclusivo) vincula a mesma regra como um pequeno script, `scripts/videos.js` (a exportação `VIDEO_PLAYBACK_SCRIPT`), e o pacote declara esse documento como `scripted`. Um sistema de leitura que executa scripts faz os vídeos desse documento seguirem a regra, mas não os de uma página oposta, que é outro documento; um que não executa scripts toca cada vídeo por conta própria, como os players do YouTube e do Vimeo sempre fazem.
 
 O resolvedor e o redutor seguem o padrão das outras seções, junto com os tipos `VideoStyleConfig` / `ResolvedVideoStyleConfig`:
 

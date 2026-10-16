@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Unità, colori e tavolozza, font personalizzati, visualizzatore HTML, PDF e produzione di stampa, visualizzatore Folio e sovrimpressioni di debug',
   lang: 'it',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '40 min',
+  order: 19,
   parent: 'configuration',
   plainSummary: "Questa pagina tratta le impostazioni comuni a tutto il libro e quelle di ogni tipo di output. Spiega come scrivere una misura e un colore, e come dare un nome ai colori di una tavolozza. Mostra come aggiungere i tuoi font. Poi tratta la vista web, il file PDF, i file che chiede una tipografia e il libro in 3D. L’ultima sezione attiva le guide e gli avvisi che aiutano mentre lavori.",
 };
@@ -247,9 +247,9 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-Vedi [Integrare il visualizzatore HTML](/it/docs/configuration-programmatic-usage#integrare-il-visualizzatore-html) più avanti per un esempio completo.
+Vedi [Integrare il visualizzatore HTML](/it/docs/configuration-html-folio-epub#integrare-il-visualizzatore-html) più avanti per un esempio completo.
 
 
 ## Generazione del PDF (configurazione)
@@ -336,9 +336,9 @@ interface PdfGenerationConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-Vedi [Generare i PDF](/it/docs/configuration-programmatic-usage#generare-pdf) più avanti per la ricetta completa di esportazione.
+Vedi [Generare i PDF](/it/docs/configuration-pdf-output#generare-pdf) più avanti per la ricetta completa di esportazione.
 
 
 ## Produzione di stampa (configurazione)
@@ -428,9 +428,9 @@ interface CustomOutputProfile {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Proprietà</th>
-      <th style={{ width: '170px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -508,10 +508,10 @@ print: {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Id</th>
+      <th>Id</th>
       <th>Condizione</th>
-      <th style={{ width: '150px' }}>Nome nel registro</th>
-      <th style={{ width: '90px' }}>Limite d’inchiostro</th>
+      <th>Nome nel registro</th>
+      <th>Limite d’inchiostro</th>
     </tr>
   </thead>
   <tbody>
@@ -576,9 +576,9 @@ interface PrintBlackConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '140px' }}>Tipo</th>
-      <th style={{ width: '170px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -644,9 +644,9 @@ interface PrintPreflightConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Proprietà</th>
-      <th style={{ width: '110px' }}>Tipo</th>
-      <th style={{ width: '100px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -729,9 +729,9 @@ interface ContrastConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Proprietà</th>
-      <th style={{ width: '110px' }}>Tipo</th>
-      <th style={{ width: '100px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -755,8 +755,8 @@ Il rapporto che un testo deve raggiungere dipende dal suo corpo e dal suo peso, 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Livello</th>
-      <th style={{ width: '120px' }}>Testo</th>
+      <th>Livello</th>
+      <th>Testo</th>
       <th>Testo grande</th>
     </tr>
   </thead>
@@ -818,6 +818,66 @@ Le misure sono esportate per i tuoi strumenti:
 Resolver e stripper si comportano come nelle altre sezioni: `resolveContrastConfig` e `stripContrastDefaults`, con `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` e `CONTRAST_MODES`.
 
 
+## Controllo del contenuto (configurazione)
+
+La proprietà `checks` raccoglie i controlli che leggono la configurazione stessa. Oggi ne ha uno, `contentInConfig`, che avvisa quando un design tiene il testo del libro. Un titolo corrente, il design di un titolo, una pagina di parte e la riga di una parte nell’indice sono forma: contengono segnaposto (`{chapterTitle}`, `{titleText}`, `{number}`) e al massimo una o due parole proprie, come *Capitolo* davanti a `{chapterNumber}`. Il testo che fa parte del libro va nel Markdown, dove lo vedono l’indice, la ricerca, le traduzioni, il PDF con tag e l’EPUB. L’impaginazione non lo legge, quindi cambiarlo non sposta mai una riga.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Proprietà</th>
+      <th style={{ width: '110px' }}>Tipo</th>
+      <th style={{ width: '100px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Esegue il controllo.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Frasi che un design può ripetere di qualsiasi lunghezza: il titolo del libro, il nome dell’editore. Si confrontano senza maiuscole, spazi né la punteggiatura attorno alle parole, e una frase trovata dentro un testo più lungo si toglie prima di contare il resto.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Quante parole al massimo può contenere un testo di design oltre ai segnaposto.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Quante lettere e cifre al massimo può contenere un testo di design oltre ai segnaposto. Un carattere cinese, giapponese, coreano o thai conta tre, quindi ne passano circa otto.</td></tr>
+  </tbody>
+</table>
+
+### Come si legge un testo di design
+
+- Il suo testo letterale è il suo `content` senza alcun segnaposto (`{name}`, `{attr.key}`, `{firstMark.key}`), con gli escape `{{` e `}}` letti come parentesi graffe e `\n` come a capo.
+- Un testo senza lettere né cifre (una fila di puntini di guida, un ornamento, un `·`) non è mai contenuto.
+- Una parola è ciò che sta fra due spazi e contiene una lettera o una cifra: un `·` o una `|` isolati non sono parole, e un indirizzo come `postext.dev` è una parola.
+- Prima si tolgono le frasi di `allow`, e anche `title`, `subtitle`, `author` e `publisher` dei metadati del documento (il suo front matter), che un titolo corrente ripete spesso.
+- Ciò che resta è contenuto quando ha più di `maxWords` parole o più di `maxChars` lettere e cifre.
+
+Si leggono tutti gli slot di design: `header`, `footer`, l’`advancedDesign.slot` di ogni livello di titolo, l’`advancedDesign.slot`, l’`header` e il `footer` di ogni stile di titolo, `parts.design`, `parts.versoDesign`, `toc.parts.design`, e gli stessi dentro `htmlViewer.overrides`. `configDesignSlots(config)` li elenca con i loro percorsi, e `designTextLiteral(content)` restituisce il testo letterale di un modello.
+
+### L’avviso
+
+`collectConfigWarnings` (e `VDTDocument.configWarnings`) dà un avviso `contentInConfig` per ogni impostazione che contiene contenuto: uno stile di titolo (con il suo `id` in `ownerId`), un livello di titolo, l’intestazione, il design delle parti. `path` nomina l’impostazione, `count` i testi di design coinvolti, `chars` le loro lettere e cifre, `elements` il percorso di ciascuno (i primi 20) e `value` l’inizio del primo (al massimo 40 caratteri). Passa i metadati del documento come secondo argomento per ammetterne titolo e autore; un’impaginazione lo fa da sola.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Soluzione:** sposta il testo nel Markdown, come titolo, riquadro o paragrafo del capitolo a cui appartiene, e lascia solo segnaposto nel design. Un valore che cambia a ogni capitolo può viaggiare sulla riga del titolo ed essere letto con `{attr.key}`: `# Carte {kicker="Lezione 4"}` e `{attr.kicker}` nel design. Una frase che è forma, come il nome dell’editore in un titolo corrente, va in `allow`.
+
+La Sandbox mostra l’avviso nel pannello **Verifiche** e offre il controllo in **Grafica → Avanzate → Contenuto nella configurazione**; `postext check` lo stampa.
+
+
 ## Visualizzatore Folio (configurazione)
 
 La proprietà `folio` stabilisce come il visualizzatore Folio (`postext-folio`) presenta il libro stampato in 3D: l’angolo della vista, la carta, la legatura, la superficie su cui poggia il libro e la luce. L’impaginazione la ignora, e così gli output canvas, HTML e PDF. `buildDocument` porta le impostazioni risolte nel VDT come `doc.config.folio` quando la configurazione ne imposta qualcuna, così un documento senza di esse mantiene il suo hash di impaginazione.
@@ -859,9 +919,9 @@ interface FolioConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -930,7 +990,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>; <code>'folded'</code> su un formato da giornale</td>
-      <td><code>hardcover</code>: cartonato, con i piatti leggermente più grandi delle pagine. <code>paperback</code>: brossura fresata (fresata e incollata), si apre meno piatta. <code>sewn</code>: una brossura con segnature cucite. <code>layflat</code>: si apre piatta, senza avvallamento al margine interno. <code>saddleStitch</code>: fogli piegati e graffati lungo la piega, come una rivista o un opuscolo; nessun dorso piatto. <code>folded</code> (da postext 1.18): un giornale, fogli piegati una volta e inseriti uno nell’altro senza niente che li tenga; niente punti metallici, niente dorso e niente piatti di copertina, e la prima pagina è la prima di copertina. Una sequenza <a href="/it/docs/document-format#paper"><code>:::paper</code></a> con uno <code>shade</code> stampa una sezione, per esempio le pagine economiche, su carta da giornale salmone.</td>
+      <td><code>hardcover</code>: cartonato, con i piatti leggermente più grandi delle pagine. <code>paperback</code>: brossura fresata (fresata e incollata), si apre meno piatta. <code>sewn</code>: una brossura con segnature cucite. <code>layflat</code>: si apre piatta, senza avvallamento al margine interno. <code>saddleStitch</code>: fogli piegati e graffati lungo la piega, come una rivista o un opuscolo; nessun dorso piatto. <code>folded</code> (da postext 1.18): un giornale, fogli piegati una volta e inseriti uno nell’altro senza niente che li tenga; niente punti metallici, niente dorso e niente piatti di copertina, e la prima pagina è la prima di copertina. Una sequenza <a href="/it/docs/document-format-directives#paper"><code>:::paper</code></a> con uno <code>shade</code> stampa una sezione, per esempio le pagine economiche, su carta da giornale salmone.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1109,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-Nella Sandbox queste impostazioni sono il gruppo **Folio** del pannello Grafica (**Grafica → Folio → Visualizzatore Folio (3D)**), e la scheda Folio le mostra mentre le modifichi, senza reimpaginare il libro. Vedi [Un libro in 3D](/it/docs/configuration-programmatic-usage#un-libro-in-3d-postext-folio) per il visualizzatore stesso, e [Formato del documento › `:::paper`](/it/docs/document-format#paper) per una sequenza di pagine su un’altra carta.
+Nella Sandbox queste impostazioni sono il gruppo **Folio** del pannello Grafica (**Grafica → Folio → Visualizzatore Folio (3D)**), e la scheda Folio le mostra mentre le modifichi, senza reimpaginare il libro. Vedi [Un libro in 3D](/it/docs/configuration-html-folio-epub#un-libro-in-3d-postext-folio) per il visualizzatore stesso, e [Formato del documento › `:::paper`](/it/docs/document-format-directives#paper) per una sequenza di pagine su un’altra carta.
 
 ## Debug
 
@@ -1058,8 +1118,8 @@ La proprietà `debug` raccoglie due tipi di aiuti alla composizione: sovrapposiz
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '200px' }}>Tipo</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1097,9 +1157,9 @@ La proprietà `debug` raccoglie due tipi di aiuti alla composizione: sovrapposiz
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Proprietà</th>
-      <th style={{ width: '120px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1210,9 +1270,9 @@ interface WarningsToggleConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '120px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1283,7 +1343,9 @@ Otto errori nella configurazione stessa non passano mai sotto silenzio, e nessun
 - **Impostazione dei titoli sconosciuta**: una chiave che `headings`, `headings.balancing`, un livello di titolo, uno stile di titolo o uno stile di paragrafo non hanno: un `letterSpacng` scritto male, un `tracking` preso da un altro strumento, un `level` in uno stile di titolo, un `fontStyle: 'italic'` in uno stile di paragrafo (che accetta `italic: true`). Una tabulazione viene controllata allo stesso modo (un `leaders` al posto di `leader`). Il motore la ignora (fino a postext 1.4 lo faceva senza dire nulla). `value` è la chiave, `used` è vuoto, e `suggestion` indica l’impostazione più vicina, quando ce n’è una che dista una o due lettere o che differisce solo per maiuscole e minuscole (`unknownConfigKey`).
 - **Valore di impostazione sconosciuto**: un’impostazione che accetta una tra poche parole e ne contiene un’altra, come `direction: 'right'` (accetta `auto`, `ltr` o `rtl`). Il motore legge invece il valore predefinito, e `used` indica a che cosa corrisponde: per `direction`, la direzione della lingua del documento (`unknownConfigValue`). L’`align` di una tabulazione che non è nessuna delle sue quattro parole viene letto come `'start'`, e una `position` che non è né una lunghezza, né `'end'`, né una percentuale tralascia la tabulazione (`used` è `'none'`). Vengono controllate anche le parole delle impostazioni dei fumetti ([Fumetti › Avvisi dei fumetti](/it/docs/comics#avvisi-dei-fumetti)): `used` è il valore a cui l’impostazione si è risolta (il predefinito proprio di uno stile di nuvoletta, per uno stile incorporato), e `suggestion` indica la parola più vicina al valore, quando ce n’è una vicina. Il `level` e il `mode` della verifica del contrasto vengono controllati allo stesso modo: `used` è `'AA'` o `'auto'`.
 - **Numeri di riga nel testo verticale**: `lineNumbers.enabled: true` in un documento composto in verticale (`layout.writingMode: 'vertical-rl'`). Le pagine verticali non hanno numeri di riga, e `used` è `false` (`lineNumbersUnsupported`; vedi [Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga)).
-- **Scontorno nel testo verticale**: il `defaultPlacement.wrap` di un tipo di risorsa in un documento composto in verticale. Le pagine verticali non compongono testo accanto a una figura, e `used` è `none` (`wrapUnsupported`; vedi [Formato del documento › Scontornatura](/it/docs/document-format#testo-intorno-alle-immagini)). Un `wrap` che non indica nessun lato è un valore di impostazione sconosciuto.
+- **Scontorno nel testo verticale**: il `defaultPlacement.wrap` di un tipo di risorsa in un documento composto in verticale. Le pagine verticali non compongono testo accanto a una figura, e `used` è `none` (`wrapUnsupported`; vedi [Formato del documento › Scontornatura](/it/docs/document-format-resources#testo-intorno-alle-immagini)). Un `wrap` che non indica nessun lato è un valore di impostazione sconosciuto.
+- **Modelli di pagina e stili delle etichette**: un problema in `pageTemplates` o `labelStyles`: un id o un nome ripetuto, `extends`, ancoraggi o cornici concatenate che girano in cerchio, uno stile, una cornice o un modello che non esiste, un minimo maggiore del suo massimo, uno stile di etichetta di un ancoraggio che `labelStyles` non ha (controllato quando si passano le risorse: `collectConfigWarnings(config, { resources })`). Il loro `path` è un puntatore JSON (`/pageTemplates/3/frames/2/style`); ogni tipo è descritto con causa e rimedio in [Avvisi dei modelli di pagina](/it/docs/configuration-composed-pages#avvisi-dei-modelli-di-pagina).
+- **Contenuto in un design**: un elemento di testo di design il cui testo, oltre ai segnaposto, è più lungo di un’etichetta breve, cioè il testo del libro tenuto nella configurazione. Un avviso per impostazione (uno stile di titolo, l’intestazione, il design delle parti), con il percorso di ogni testo (`contentInConfig`; vedi [Controllo del contenuto](#controllo-del-contenuto-configurazione)). A differenza degli altri, si può disattivare: `checks.contentInConfig.enabled: false`.
 
 La Sandbox li elenca nel pannello **Verifiche** con il percorso dell’impostazione. Nel codice, `buildDocument` li mette sul documento come `configWarnings` (assente quando la configurazione è pulita), e `collectConfigWarnings(config)` li restituisce senza impaginare nulla:
 

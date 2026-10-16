@@ -1,0 +1,270 @@
+{/* docs/document-format-notes-references-en.mdx */}
+
+export const metadata = {
+  title: 'Document format: notes and references',
+  sidebarTitle: 'Notes and references',
+  description: 'Footnotes, cross-references and anchors, citations and the bibliography, and the marks of the back-of-book index',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '14 min',
+  order: 28,
+  parent: 'document-format',
+  plainSummary: "This page covers the marks that point somewhere else in the book or outside it. A footnote mark sends the reader to a note at the bottom of the page. A cross-reference names a figure, a section or a page by its number. A citation names a book or an article you quote, and the bibliography lists them all. Index marks choose the words that the index at the back of the book lists with their pages.",
+};
+
+# Document format: notes and references
+
+
+## Footnotes
+
+A footnote has two parts: the marker `[^id]` where the note is cited, and the definition, a paragraph of its own that opens with `[^id]:` anywhere in the chapter.
+
+```md
+The keeper climbed the tower every evening.[^steps] The wind put out his candle,
+so he learned to count the steps in the dark.
+
+[^steps]: The cast-iron staircase has 112 steps; the tower was built in 1861.
+```
+
+- **Marker.** `[^id]` prints the note's number as a superscript, glued to the word before it (write it after the punctuation, as above). The id takes letters, digits, `-`, `_`, `.` and `:`. The marker works in paragraphs, list items, blockquotes and callouts; in headings, captions and table cells it prints as written.
+- **Definition.** A paragraph that starts with `[^id]:`; its text runs to the next blank line and takes the usual inline marks (bold, italics, links, `:ref`, formulas, chips). Definitions leave the flow wherever they are written, so they can sit under the paragraph that cites them or all together at the end of the chapter. The first definition of an id wins.
+- **Numbers.** Notes are numbered in the order they are first cited, starting again at each chapter (a level-1 heading, and each document of a book); a note cited twice keeps its first number and is set once. `footnotes.numbering: 'document'` runs the numbers on through the book, and `'page'` starts them again on every page, as Chinese books do; `footnotes.numberFormat: 'circled-decimal'` writes ① ② ③ on the baseline. `footnotes.numberFormat: 'symbols'` marks them `*`, `†`, `‡`, `§`, `‖`, `¶`, then doubled, starting again on every page, as journals do.
+- **Japanese text.** Write the marker before a sentence-final 。 (`先生[^1]。`): it stays with the character before it, and 。 never opens a line. A Japanese vertical book sets its markers （1） right of the line and its notes after the chapter by default; `footnotes.markerPosition: 'side'` sets a small marker beside the word, taking no room in the line, and `footnotes.placement: 'spread'` sets the notes beside the text of each spread (see [Configuration › Footnotes](/en/docs/configuration-notes-references#footnotes)).
+- **Where the note goes.** By default at the foot of the column that holds the line citing it, under a short rule: the line and its note always share a column, and a line whose note does not fit moves on with it. In a one-column layout that is the foot of the page. `footnotes.placement: 'chapterEnd'` sets all the notes of a chapter after its last block instead, by default at the foot of the column they close. See [Footnotes](/en/docs/configuration-notes-references#footnotes) in the configuration reference for the sizes, the rule and the spacing.
+- **Checks.** A marker with no definition (`undefinedFootnote`) prints its number over an empty note; a definition no marker cites (`unusedFootnote`) is not set. The Sandbox lists both in the Checks panel.
+
+
+## Cross-references and anchors
+
+A cross-reference names a place in the book and prints its number, its title or its page: *see section 3.2*, *as chapter 4 explains*, *on p. 112*. The words and numbers follow the text, so moving a section, renumbering the chapters or reflowing the book updates every reference. In the PDF, the HTML and the Sandbox previews each reference is a link: a click takes the reader to its target, in another chapter too.
+
+**Anchors.** A reference needs something to point at:
+
+- **A heading** with an identifier: `## Method {#sec-method}` (Pandoc's form; `id="sec-method"` works too).
+- **A box or other container** opened with one: `:::callout{#box-safety title="Safety"}`. A box of a numbered style (a theorem) is referred to by its label and number: *Theorem 2*.
+- **A display formula** with a `\label{eq:x}` (see [Mathematical formulas](/en/docs/document-format-inline#mathematical-formulas)): a reference prints its number as the formula does, *(3)*.
+- **A point in the text**: `:anchor{#key-idea}` sets an invisible anchor; `[the key idea]{#key-idea}` keeps its words and names them.
+
+An identifier takes letters, digits, `-`, `_`, `.` and `:`. It must be unique in the book: the Checks panel lists one set twice (`duplicateAnchor`), and references reach its first setting.
+
+**References.** `:ref{id="…"}` names an anchor the way it names a figure or a table:
+
+```md
+## Method {#sec-method}
+
+The results of :ref{id="sec-method"} hold on :ref{id="sec-method" style=page}.
+```
+
+<table>
+<thead><tr><th><code>style</code></th><th>prints</th></tr></thead>
+<tbody>
+<tr><td><em>(none)</em></td><td>a numbered heading by its word and number (<em>section 3.2</em>, <em>chapter 4</em>), an unnumbered heading by its title, an anchor by its text, an equation by its number as printed (<em>(3)</em>), a numbered box by its label and number (<em>Theorem 2</em>)</td></tr>
+<tr><td><code>number</code></td><td>the number alone (<em>3.2</em>, <em>3</em>, <em>2</em>)</td></tr>
+<tr><td><code>title</code></td><td>the heading's title, the anchor's text or the box's <code>title</code></td></tr>
+<tr><td><code>page</code></td><td>the page it landed on (<em>p. 112</em>)</td></tr>
+<tr><td><code>pageNumber</code></td><td>the page number alone (<em>112</em>)</td></tr>
+</tbody>
+</table>
+
+LaTeX's `\eqref{x}` and `\ref{x}` work in the text too: `\eqref` as a reference with no style, `\ref` as `style=number`, so `\ref{thm:main}` prints *2* and `\ref{fig:map}` a figure's number. A `~` right before one is a no-break space (`Theorem~\ref{thm:main}`). Inside `$…$` they belong to the formula.
+
+`text="…"` prints your own words and still links; `case=capitalize` starts the label with a capital (*Section 3.2* at the start of a sentence). The words follow the document language (*sección 3.2*, *第3.2节*, *S. 112*) and can be changed in [Cross-references](/en/docs/configuration-notes-references#cross-references) in the configuration; a heading number its template already spells out (*Chapter 4*, *第四章*) prints as it is.
+
+**Line breaks.** A reference that prints words breaks at its spaces like the text around it: the text of an anchor (`[close the lever so that it points backwards]{#step}`), a title, your own `text="…"`. Its spaces are spaces of the line, so on a justified line they stretch with the others, and the reference stays one link, in two pieces when it runs over two lines. Its words are never hyphenated. Inside such a label a number, a Roman numeral or a single letter keeps to the word before it, so `text="Fig. 1a"` or `text="plate IV"` is never parted. A label that carries a number or a page (*section 3.2*, *p. 112*, *Fig. 1.7*, *Theorem 2*) never breaks, whatever space its template holds, and a no-break space inside a label glues as anywhere. `crossRefs.breakLabels: false` keeps every label whole, as up to postext 1.27, when a label was one word that could not come up to the line before it; see [Cross-references](/en/docs/configuration-notes-references#cross-references).
+
+**Page references** are known only once the book is laid out. The engine lays the document out again with the pages of the previous pass until they hold, as it does for the contents; until then a page prints *?*.
+
+**pandoc-crossref.** Text written for pandoc-crossref reads the same: `@sec:method`, `[@fig:map]`, and `[-@tbl:data]` for the number alone. The prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) may be part of the identifier (`{#sec:method}`) or left off it (`{#method}`). An `@` glued to a word, as in an e-mail address, stays text.
+
+A reference to an id nothing sets prints *?* and the Checks panel lists it (`unknownResourceId`). In the Sandbox editor, `@` offers the book's figures, tables, headings with an id and anchors.
+
+
+## Citations and bibliography
+
+Write citations the way Pandoc reads them, keep the references in the document, and choose the citation style in the settings: switching from APA to IEEE, or to Chicago notes, changes the style setting, not the text. Every citation links to its entry in the bibliography.
+
+### Citing
+
+```md
+As [@garcia2020, p. 33] shows, reading on paper is faster [see @lopez2019, chap. 2; @bringhurst2004].
+@garcia2020 [p. 4] says it plainly; the 2020 study [-@garcia2020] agrees.
+```
+
+- **`[@key]`** cites in parentheses; several works go in one pair of brackets, separated by `;`.
+- **Locator:** after a comma, `p. 33`, `pp. 4–6`, `chap. 2`, `sec. IV`, `fig. 3`, `vol. 2`, `n. 12`, `l. 4`, `§ 4.2`; a bare number is a page. Spanish (`pág.`, `cap.`) and Chinese (`页`, `章`) words work too. A range takes an en dash or the two hyphens of TeX: `pp. 4--6` prints *4–6*.
+- **Prefix and suffix:** text before the `@` (`see`) and after the key or the locator (`, emphasis added`). The suffix keeps the comma written before it, with a locator or without one: `[@brown2020, inter alia]` prints *(Brown et al., 2020, inter alia)*, as Pandoc does; written without a comma (`[@brown2020 inter alia]`) it has none. Emphasis in a prefix or a suffix is set as emphasis in every style: `[*e.g.*, @brown2020, *inter alia*]`.
+- **`[-@key]`** leaves the author out, for a sentence that names the author already.
+- **`@key`** cites in the sentence (*García (2020)*); `@key [p. 4]` adds a locator.
+- **In captions:** the caption of a figure or a table, and its note, cite as the text does (`Prior best from [@cobbe2021].`). Their works go into the bibliography with no `nocite`, and a numbered style numbers them where the resource is placed: after the citations of the paragraph that first refers to it (its `::resource` block or first `:ref`). A citation in a table cell stays text.
+- An `@` glued to a letter or a digit (an e-mail address), an `@` in inline code and `\@` are text. A citation the book has no reference for prints as written, so a document without references reads as before. In a citation of several works, a key no reference defines is printed in bold after the others (`(Glen, 1955) **@nye1953**`), so the missing work shows on the page as well as among the warnings. A colon after a citation is text: `[@french2018]: the land…`.
+- In Chinese, Japanese and Korean text a citation follows the last character with no space (`周明远@zhou2019认为`), and an author-date citation takes the full-width marks of the text around it: `（施雅风等，1988；刘时银等，2015）`.
+
+### References
+
+References are written in the document, in CSL form (the data model of Zotero and Pandoc):
+
+```md
+---
+references:
+  - id: garcia2020
+    type: book
+    author: [{family: García, given: Ana}]
+    title: Tipografía y lectura
+    issued: 2020
+    publisher: Trea
+nocite: "@lopez2019"
+---
+```
+
+or in a `:::references` block, in BibTeX (a Zotero, JabRef or Google Scholar export), CSL-JSON or CSL-YAML:
+
+```md
+:::references{format=bibtex}
+@article{lopez2019, author = {López, Luis and Ruiz, Eva}, title = {Leer en pantalla},
+  journal = {Revista de Letras}, year = 2019, volume = 12, pages = {45--67}, doi = {10.1000/xyz}}
+:::
+```
+
+The block prints nothing. `nocite` lists works without citing them (`@*`: all of them). In a book, references written in any chapter count for the whole book.
+
+In a BibTeX name list, `and others` stands for the names left out (`author = {Tan, Wei and others}`): every style prints *et al.* in its place. In YAML, write `others` as the last name of the list.
+
+### The bibliography
+
+`:::bibliography` sets the list of works cited where it stands; without one, the list follows the last chapter, titled in the document language (*References*, *Referencias*, *参考文献*). `:::bibliography{title="Works cited"}` changes the title and `title=""` leaves it out; `scope=chapter` lists the works the chapter cites (an edited volume). Each entry is an anchor (`ref-<key>`), so a Markdown link to `#ref-garcia2020` reaches it, and the PDF tags it as a `BibEntry`.
+
+`scope=new` lists the works cited so far in the document that no list before it printed, in the style's order and with its numbers: a `:::bibliography{scope=new}` after the main text and another after the Methods give the two lists of a Nature paper, the second numbered on from the first. A numbered style counts its citations through the book; with `citations.numbering: 'chapter'` each chapter (each document, and each level-1 heading after a citation) numbers its own from 1, and its chapter list takes those numbers, as the reports of a bulletin or the papers of proceedings do.
+
+### Styles
+
+The style decides what a citation and an entry say. The bundled styles are listed below; any other CSL style (there are more than ten thousand in the Zotero style repository) can be loaded from its `.csl` file in **Settings → Citations**.
+
+<table>
+  <thead>
+    <tr><th><code>citations.style</code></th><th>Name</th><th>System</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>apa</code></td><td>APA 7</td><td>author-date</td></tr>
+    <tr><td><code>chicago-author-date</code></td><td>Chicago (author-date)</td><td>author-date</td></tr>
+    <tr><td><code>harvard-cite-them-right</code></td><td>Harvard</td><td>author-date</td></tr>
+    <tr><td><code>iso690-author-date-en</code>, <code>iso690-author-date-es</code></td><td>ISO 690</td><td>author-date</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-author-date</code></td><td>GB/T 7714—2025 著者-出版年</td><td>author-date</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-author-date</code></td><td>GB/T 7714—2015 著者-出版年</td><td>author-date</td></tr>
+    <tr><td><code>modern-language-association</code></td><td>MLA 9</td><td>author-page</td></tr>
+    <tr><td><code>ieee</code></td><td>IEEE</td><td>numbered</td></tr>
+    <tr><td><code>elsevier-vancouver</code></td><td>Vancouver</td><td>numbered</td></tr>
+    <tr><td><code>american-medical-association</code></td><td>AMA</td><td>numbered</td></tr>
+    <tr><td><code>nature</code></td><td>Nature</td><td>numbered</td></tr>
+    <tr><td><code>iso690-numeric-en</code></td><td>ISO 690</td><td>numbered</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-numeric</code></td><td>GB/T 7714—2025 顺序编码</td><td>numbered</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-numeric</code></td><td>GB/T 7714—2015 顺序编码</td><td>numbered</td></tr>
+    <tr><td><code>sist02</code></td><td>SIST 02 参照文献の書き方</td><td>numbered</td></tr>
+    <tr><td><code>chicago-notes-bibliography</code></td><td>Chicago (notes)</td><td>notes</td></tr>
+    <tr><td><code>oscola</code></td><td>OSCOLA</td><td>notes</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-note</code></td><td>GB/T 7714—2025 注释</td><td>notes</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-note</code></td><td>GB/T 7714—2015 注释</td><td>notes</td></tr>
+  </tbody>
+</table>
+
+With a **note style** each citation becomes a footnote, placed and numbered as the footnote settings say; later citations of the same work take a short form. In Chinese text, `citations.notes: 'warichu'` sets them as two-row notes inside the line (夹注); a note followed by a Chinese mark (`，`, `。`) drops its own full stop.
+
+**Chinese.** The GB/T 7714-2015 styles write the document-type codes (`[M]`, `[J]`, `[D]`, `[EB/OL]`), keep Chinese names whole and write `等` after three authors of a Chinese work and `et al.` after those of a Western one, choosing by each work's `language`. In vertical text a superscript number stands to the right of its character; `citations.marker: 'corner'` writes `〔1〕`, which stays upright.
+
+**Engine.** Citations are formatted by the `postext-citeproc` package (citeproc-js and the CSL styles). The Sandbox loads it for documents that cite; in your own code, register it before laying out:
+
+```ts
+import 'postext-citeproc/register';
+```
+
+The Checks panel lists a key no reference defines (`unknownCitationKey`) and a references block that cannot be read (`referencesUnreadable`).
+
+
+## Back-of-book index
+
+A back-of-book index lists the terms of a book with the pages they appear on. Mark each term where the text discusses it and print the index with `:::index` where it belongs, usually in a chapter of its own at the end. The engine finds the page of every mark after layout, so the numbers follow the text: add a paragraph, move a chapter or change the trim, and the index prints the new pages.
+
+```md
+Iron-deficiency :index[anaemia] is the most common kind.
+The pulse is taken at the wrist.:index{term="Pulse!radial" main}
+
+# Index {style="index"}
+
+:::index
+```
+
+### Index marks
+
+- **`:index[text]`** prints `text` and files it under its own words. Inline marks inside it print and are dropped from the entry. Attributes after the bracket file it elsewhere: `:index[iron deficiency]{term="Anaemia!iron-deficiency"}`.
+- **`:index{term="…"}`** prints nothing. The mark takes the page of the word written just before it on its line, or, when it opens a line, of the word after it. A line that holds only marks is removed, so a mark on a line of its own never splits a paragraph or adds space.
+- **Where.** Paragraphs, headings, list items, blockquotes, callouts and footnote definitions. In captions, table cells and design elements a mark prints as written. Inside inline code, and after a backslash (`\:index`), it is text.
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Effect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>term</code></td>
+      <td>The entry, its levels separated by <code>!</code>: <code>term="Heart!valves!mitral"</code> files the page under <em>mitral</em>, a sub-entry of <em>valves</em> under <em>Heart</em>. A level may carry inline marks (<code>term="&#42;Escherichia coli&#42;"</code>); it is sorted without them. Without <code>term</code>, <code>:index[text]</code> uses its text.</td>
+    </tr>
+    <tr>
+      <td><code>sub</code></td>
+      <td>A level added after <code>term</code>: <code>term="Heart" sub="valves"</code> is <code>term="Heart!valves"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>sort</code></td>
+      <td>The sort key of the last level when it should sort by other letters: <code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>, <code>term="20th century" sort="twentieth century"</code>. A Chinese index sorts and groups by the reading the collator gives a character. For a polyphonic one read the other way, write the key in characters that have only the reading you want: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> files 重阳 under C, between 程 and 崔, not under Z. A pinyin key (<code>sort="chong yang"</code>) reaches C too, but sorts after all of its Chinese entries, because the collator sets Latin letters after Chinese characters (see <a href="/en/docs/configuration-notes-references#back-of-book-index">Configuration › Back-of-book index</a>, <code>groupBy</code>).</td>
+    </tr>
+    <tr>
+      <td><code>yomi</code>, <code>reading</code></td>
+      <td>The reading of the last level in kana, by which a Japanese index sorts and groups it: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> files under な, in the な行. Without it, a mark whose text carries furigana in kana is read through them (<code>:index[&#123;東京|とう|きょう&#125;]</code> sorts as とうきょう), then <code>sort</code>, then the text; an entry still headed by a kanji is reported as <code>indexReadingMissing</code>. In an index in another language <code>yomi</code> acts as <code>sort</code>. Write furigana inside a mark in the compact form: a <code>:ruby[…]</code> would need its brackets escaped. Since postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>main</code></td>
+      <td>A flag: the principal discussion of the term. Its page number is set bold (<code>index.main</code>). A page marked both ways is bold.</td>
+    </tr>
+    <tr>
+      <td><code>range</code></td>
+      <td><code>range="start"</code> and <code>range="end"</code>, with the same term, bound a discussion that runs over several pages: the entry prints <code>34–37</code>. A start with no end, or an end with no start, prints its one page and raises <code>indexRangeUnclosed</code>.</td>
+    </tr>
+    <tr>
+      <td><code>see</code></td>
+      <td>A cross-reference instead of a page number: <code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code> prints <em>Cardiac insufficiency. See Heart failure</em>. Levels of the target are separated by <code>!</code> and print with a colon (<em>See Heart: valves</em>). A target that is no entry of the index raises <code>indexSeeUnknown</code>.</td>
+    </tr>
+    <tr>
+      <td><code>seealso</code></td>
+      <td>A cross-reference after the entry's page numbers: <em>Heart, 12, 40. See also Circulation</em>. The mark's own page counts like any other mark's, so one mark can index a passage and point to a related entry; a <code>see</code> mark adds no page.</td>
+    </tr>
+    <tr>
+      <td><code>index</code></td>
+      <td>The name of a separate index: <code>index="names"</code> files the mark in the index that <code>:::index&#123;index="names"&#125;</code> prints, not in the main one.</td>
+    </tr>
+  </tbody>
+</table>
+
+A mark with no term (`:index{}` or `:index{see="…"}` alone) indexes nothing and raises `indexMarkInvalid`.
+
+### Printing the index
+
+`:::index` prints the main index where it stands, and `:::index{index="names"}` a named one. The directive expands into ordinary blocks, one per entry, that flow through columns and pages like text: under a heading whose [heading style](/en/docs/configuration-styles#heading-styles) sets a two-column `layout`, it gives the usual two-column index. A click on an entry lands on the directive line.
+
+```md
+# Index of names {style="index"}
+
+:::index{index="names"}
+
+# Index of subjects {style="index"}
+
+:::index
+```
+
+- **Order.** Entries sort in the alphabetical order of the document language (`locale`, or `index.locale`): an accented letter files with its base letter (*Árbol* under A), and in Spanish *ñ* comes after *n*, under a head of its own. Entries that start with a symbol come first, then those that start with a digit, then the letters. Sub-entries sort the same way under their entry, indented one step per level. A Japanese index sorts by reading in the order of JIS X 4061 and groups by gojūon row (あ行, か行…), its Latin entries before the kana (see [Japanese layout › Index in gojūon order](/en/docs/japanese-layout#index-in-gojūon-order)).
+- **Groups.** Each new first letter opens a group: a letter head (`index.groups`) and one line of space above it (none above the first group). The head is set in one block with the group's first entry, so it never ends a column alone; an entry with no page of its own (one that only heads its sub-entries) is set with its first sub-entry for the same reason.
+- **Page numbers.** The labels the pages print, roman ones in the front matter included. An entry's pages are sorted and each is listed once; consecutive pages join into a range (`12–14`, `index.mergeRanges`), a page that falls inside a range of the same entry folds into it (a main page there makes the range bold), and `index.rangeFormat: 'chicago'` shortens the second number (`234–37`). Bold (main) pages stay apart. In the PDF each number links to its page.
+- **Cross-references** close the entry: *Term. See Target* when the entry has no pages, *Term, 12. See also Target* when it has. The labels follow the document language (*See*, *Véase*…) and can be set in `index.see`.
+- **Books.** In a book laid out chapter by chapter (the Sandbox, `buildBundle`) the chapter printing the index receives every chapter's marks with their pages, and it is laid out again only when one of them moves. A document holding both its marks and its index is laid out again until the numbers settle, as with `:::toc`.
+
+See [Back-of-book index](/en/docs/configuration-notes-references#back-of-book-index) in the configuration reference for the typography, the indents and the separators.

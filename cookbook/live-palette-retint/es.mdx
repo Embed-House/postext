@@ -30,13 +30,13 @@ El azul del motor es una entrada de la paleta, `main-color` (#295AA3), y [por de
 
 <Excerpt region="opener" />
 
-La apertura es una [ranura de diseño](/es/docs/configuration-page-layout#elementos-de-caja) con una caja a sangre por el borde superior, 29 barras redondeadas para la onda y tres textos: el propio título, más el antetítulo y la entradilla, que salen de sus atributos. Las barras son cajas y no un SVG, así que su relleno es otro enlace a `tint` que sigue a la paleta; un SVG habría que redibujarlo y registrarlo de nuevo para cada combinación. Con la caja de la banda sola, el texto empezaría en la línea de la rejilla base que queda 2,4 mm por debajo; `minHeight`, 18 líneas u 85,1 mm bajo el margen superior, reserva más espacio y baja la primera línea a 7 mm de la banda.
+La apertura es una [ranura de diseño](/es/docs/configuration-headers-footers#elementos-de-caja) con una caja a sangre por el borde superior, 29 barras redondeadas para la onda y tres textos: el propio título, más el antetítulo y la entradilla, que salen de sus atributos. Las barras son cajas y no un SVG, así que su relleno es otro enlace a `tint` que sigue a la paleta; un SVG habría que redibujarlo y registrarlo de nuevo para cada combinación. Con la caja de la banda sola, el texto empezaría en la línea de la rejilla base que queda 2,4 mm por debajo; `minHeight`, 18 líneas u 85,1 mm bajo el margen superior, reserva más espacio y baja la primera línea a 7 mm de la banda.
 
 ### 4 · Deja que la paleta rellene la tabla
 
 <Excerpt region="grid" />
 
-La cuadrícula es un recurso de tabla y queda fuera de la configuración. Aun así, sus [rellenos de celda](/es/docs/document-format#inserción-en-bloque-opcional-colocación-en-línea-explícita) llevan ids de paleta, y el motor los resuelve con la paleta del documento al componer la tabla; los `:swatch{color="band"}` y `:swatch{color="tint"}` de la leyenda, en la nota de la tabla, se resuelven igual. Los chips de la programación usan los mismos dos ids, así que la casilla rellena, el chip junto a cada hora y la muestra de la leyenda coinciden en todas las combinaciones.
+La cuadrícula es un recurso de tabla y queda fuera de la configuración. Aun así, sus [rellenos de celda](/es/docs/document-format-resources#inserción-en-bloque-opcional-colocación-en-línea-explícita) llevan ids de paleta, y el motor los resuelve con la paleta del documento al componer la tabla; los `:swatch{color="band"}` y `:swatch{color="tint"}` de la leyenda, en la nota de la tabla, se resuelven igual. Los chips de la programación usan los mismos dos ids, así que la casilla rellena, el chip junto a cada hora y la muestra de la leyenda coinciden en todas las combinaciones.
 
 ### 5 · Cambia la paleta y vuelve a componer
 

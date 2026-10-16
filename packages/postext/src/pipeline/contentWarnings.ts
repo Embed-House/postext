@@ -34,6 +34,9 @@ import { planHeadingSections, sectionWritingMode } from './headingStyles';
 import { comicSourceWarnings } from '../comics/warnings';
 import { resolvedComics } from '../defaults/comics';
 import { effectiveResourceTypes } from '../defaults/resourceTypes';
+import { composedPages } from '../composed/document';
+import { checkComposedSlots } from '../composed/slotChecks';
+import type { ComposedPagesConfigKeys } from '../composed/types';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
  *  does not take as a fence — an unknown name, or text after the name — is
@@ -280,6 +283,12 @@ export function collectContentWarnings(
         break;
       }
       case 'directive': {
+        // `:::page{template=…}`: a composed page written with three colons
+        // (#854) is read as a comic page; its fence line is the range.
+        if (b.comic && b.directiveName === 'page' && b.comic.attrs.template !== undefined) {
+          const fenceEnd = body.indexOf('\n', b.sourceStart);
+          out.push({ kind: 'pageFenceLength', ...abs({ start: b.sourceStart, end: fenceEnd < 0 || fenceEnd > b.sourceEnd ? b.sourceEnd : fenceEnd }) });
+        }
         // A comic page (#555): its split, panels, script and pictures.
         if (b.comic) {
           comics ??= resolvedComics(resolveAllConfig(config));
@@ -324,6 +333,11 @@ export function collectContentWarnings(
         break;
     }
     scanSpans(b);
+  }
+
+  // Composed pages (#854): templates, slots and frames left empty.
+  for (const w of checkComposedSlots(composedPages(blocks), config as ComposedPagesConfigKeys | undefined)) {
+    out.push({ ...w, ...abs({ start: w.sourceStart ?? 0, end: w.sourceEnd ?? 0 }) });
   }
 
   // Markup typed with fullwidth characters, and attribute keys outside
@@ -788,6 +802,20 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'unknownCalloutType':
       text = `Unknown callout type "${w.type}" — the box takes the first callout style`;
       break;
+    case 'templateUnknown':
+      text = w.template === ''
+        ? '::::page names no template — write ::::page{template="…"}; its content is set in the flow'
+        : `Unknown page template "${w.template}" — no pageTemplates entry has this id; the page's content is set in the flow`;
+      break;
+    case 'slotUnknown':
+      text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame`;
+      break;
+    case 'slotEmpty':
+      text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
+      break;
+    case 'pageFenceLength':
+      text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
+      break;
     case 'columnsFlowUnknown':
       text = `Unknown flow "${w.value}" for :::columns — the group fills its columns in turn ("snake"), or stream by stream ("parallel") when it sets breaks`;
       break;
@@ -898,6 +926,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'unplaced':
       text = `${w.resourceId !== undefined ? `The resource "${w.resourceId}"` : 'A box'} found no slot before the layout ended — it is on no page`;
       break;
+    case 'tocGroupSplit':
+      text = `The contents block "${w.title}" is cut between ${w.columns} columns — it is taller than a full column, or its column is too short to hold it; list fewer levels (:::toc{levels="1"}), head the blocks with a lower level (toc.groups.head) or make the rows smaller`;
+      break;
     case 'shortListSplit':
       text = `A list of ${w.items} ${w.items === 1 ? 'item' : 'items'} is cut between two columns — bodyText.shortListSplit: "avoid" sets a short list whole when a column can hold it`;
       break;
@@ -987,8 +1018,52 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'wrapUnsupported':
       text = `${w.path}: text wraps in horizontal text only — in this vertical document "${w.value}" is ignored and the figures keep their bands whole`;
       break;
+    case 'contentInConfig': {
+      const n = w.count ?? 1;
+      text = `${w.path}${w.ownerId ? ` (${w.ownerId})` : ''}: ${n} design text${n === 1 ? '' : 's'} hold${n === 1 ? 's' : ''} ${w.chars ?? 0} characters of content ("${w.value}") — move the text into the Markdown and keep only placeholders in the design`;
+      break;
+    }
     case 'cjkGridClamped':
       text = `${w.path}: ${w.value} ${w.path.endsWith('charsPerLine') ? 'characters per line' : 'lines'} do not fit inside the margins — the grid is set with ${w.used}`;
+      break;
+    // Page templates (#853): `path` is a JSON pointer.
+    case 'templateDuplicate':
+      text = `${w.path}: another template already has the id "${w.value}" — this one is ignored`;
+      break;
+    case 'templateExtendsCycle':
+      text = `${w.path}: the templates extend each other in a loop (${w.value}) — the template is dropped`;
+      break;
+    case 'templateExtendsUnknown':
+      text = `${w.path}: no template has the id "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the template stands alone`;
+      break;
+    case 'frameDuplicate':
+      text = `${w.path}: the name "${w.value}" is already taken by a frame or group of this template — this one is ignored`;
+      break;
+    case 'frameStyleUnknown':
+      text = `${w.path}: no callout style has the id "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the frame is drawn without a box`;
+      break;
+    case 'frameAnchorUnknown':
+      text = w.value.includes(' → ')
+        ? `${w.path}: the frames are anchored to each other in a loop (${w.value}) — this anchor reads as the area`
+        : `${w.path}: the template has no frame, group or element "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the anchor reads as the area`;
+      break;
+    case 'frameMinMax':
+      text = `${w.path}: ${w.value} — the frame takes ${w.used}`;
+      break;
+    case 'groupFrameUnknown':
+      text = `${w.path}: the template has no frame "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the group skips it`;
+      break;
+    case 'groupFrameTwice':
+      text = `${w.path}: the frame "${w.value}" is already in a group — a frame belongs to one group, this listing is skipped`;
+      break;
+    case 'frameChainLoop':
+      text = `${w.path}: the frames continue into each other in a loop (${w.value}) — this link is dropped`;
+      break;
+    case 'overflowTargetUnknown':
+      text = `${w.path}: "${w.value}" names no frame or template${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the content does not continue there`;
+      break;
+    case 'labelStyleUnknown':
+      text = `${w.path}: an anchor of "${w.resourceId ?? ''}" names the label style "${w.value}", which labelStyles does not have${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — its labels take the default look`;
       break;
     default:
       // A kind this build does not know (a VDT from a newer engine).

@@ -14,7 +14,8 @@ export function DocOpener({
   color,
 }: {
   id?: string;
-  number: number;
+  /** "3", or "3.2" for a page of a chapter. */
+  number: string;
   kicker: string;
   title: string;
   lead?: string;
@@ -26,7 +27,10 @@ export function DocOpener({
       <div className="relative px-6 pt-8 pb-7 md:px-8 md:pt-10 md:pb-8">
         <span
           aria-hidden="true"
-          className="display pointer-events-none absolute -top-1 end-5 select-none text-[6rem] leading-[0.85] md:end-7 md:text-[8.5rem]"
+          className={cn(
+            "display pointer-events-none absolute -top-1 end-5 select-none leading-[0.85] md:end-7",
+            number.includes(".") ? "text-[4rem] md:text-[6rem]" : "text-[6rem] md:text-[8.5rem]",
+          )}
         >
           {number}
         </span>

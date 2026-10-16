@@ -18,7 +18,7 @@ Le due facciate di un pieghevole turistico DL, 99 × 210 mm, per un mulino a mar
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` comprime in zip il capitolo, la configurazione, le risorse e ogni file che nominano; `openBundle` riceve soltanto quei byte. I caratteri arrivano da `loadBundleFonts`, i disegni da `registerBundleImages` e il progetto grafico da `bundle.config`. Un carattere lasciato fuori da `files` si stampa nel font di ripiego del browser, e un disegno lasciato fuori viene scartato con un avviso e il suo rimando stampa (?). Dentro lo zip ogni `fileId` diventa un percorso (`mill.svg` ora è `resources/mill.svg`), e le risorse e i `customFonts` restituiti da `openBundle` usano già i nuovi nomi ([aprire un pacchetto](/it/docs/configuration-programmatic-usage#aprire-un-pacchetto)).
+`createBundle` comprime in zip il capitolo, la configurazione, le risorse e ogni file che nominano; `openBundle` riceve soltanto quei byte. I caratteri arrivano da `loadBundleFonts`, i disegni da `registerBundleImages` e il progetto grafico da `bundle.config`. Un carattere lasciato fuori da `files` si stampa nel font di ripiego del browser, e un disegno lasciato fuori viene scartato con un avviso e il suo rimando stampa (?). Dentro lo zip ogni `fileId` diventa un percorso (`mill.svg` ora è `resources/mill.svg`), e le risorse e i `customFonts` restituiti da `openBundle` usano già i nuovi nomi ([aprire un pacchetto](/it/docs/configuration-bundles#aprire-un-pacchetto)).
 
 ### 2 · Metti i caratteri nel file
 
@@ -42,7 +42,7 @@ Un lettore costruisce i tipi predefiniti nella lingua del file: senza `resourceT
 
 <Excerpt region="handoff" />
 
-Il link offre i `bytes` da cui sono state impaginate le pagine, 132 KB con i font. Importato nella Sandbox (*Libri → Nuovo → Apri un file .postext…*), il file diventa un libro spagnolo o inglese con la ruota come immagine, presa da `thumbnail`. Il PDF prende i caratteri da `bundleFontProvider`, che restituisce il carattere del pacchetto più vicino per peso, nello stesso stile quando c’è, e i disegni da `bundleResourceBytes`, così nessun font e nessuna immagine vengono scaricati una seconda volta ([impaginare e renderizzare un pacchetto](/it/docs/configuration-programmatic-usage#impaginare-e-disegnare-un-pacchetto)).
+Il link offre i `bytes` da cui sono state impaginate le pagine, 132 KB con i font. Importato nella Sandbox (*Libri → Nuovo → Apri un file .postext…*), il file diventa un libro spagnolo o inglese con la ruota come immagine, presa da `thumbnail`. Il PDF prende i caratteri da `bundleFontProvider`, che restituisce il carattere del pacchetto più vicino per peso, nello stesso stile quando c’è, e i disegni da `bundleResourceBytes`, così nessun font e nessuna immagine vengono scaricati una seconda volta ([impaginare e renderizzare un pacchetto](/it/docs/configuration-bundles#impaginare-e-disegnare-un-pacchetto)).
 
 ### 6 · Disegna il fronte con un solo titolo
 
@@ -72,4 +72,4 @@ Senza i tipi il lettore li costruisce nella lingua del file con la numerazione p
 
 ## Errori frequenti
 
-- Qui ogni edizione è un file a sé. Per portare entrambe le lingue in un solo file, passa a `createBundle` una mappa `localized` ([pacchetti bilingui](/it/docs/configuration-programmatic-usage#pacchetti-bilingui)); `openBundle(bytes, { locale })` legge poi l’una o l’altra edizione.
+- Qui ogni edizione è un file a sé. Per portare entrambe le lingue in un solo file, passa a `createBundle` una mappa `localized` ([pacchetti bilingui](/it/docs/configuration-bundles#pacchetti-bilingui)); `openBundle(bytes, { locale })` legge poi l’una o l’altra edizione.

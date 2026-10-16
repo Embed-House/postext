@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-ar.mdx */}
+
+export const metadata = {
+  title: 'الإعدادات: الصفحات المركّبة',
+  sidebarTitle: 'إعدادات الصفحات المركّبة',
+  description: 'قوالب الصفحات المركّبة: الخانات والمجموعات والزخرفة والوراثة ومتغيّرات الصفحة الفردية والزوجية، وأنماط تسميات المراسي في الصور، والتحذيرات التي قد يصدرها القالب',
+  lang: 'ar',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 دقائق',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "تتناول هذه الصفحة قوالب الصفحات. القالب صفحة مرسومة في الإعدادات: صناديق لها أسماء تُسمّى الخانات، ولكل منها موضعها وأقصى ما يمكن أن تكبر إليه وهيئتها. ثم يملأ نص Markdown في الصفحة المركّبة هذه الخانات بأسمائها، فلا يحمل النص مواضع أبدًا ولا تحمل الإعدادات نصًا أبدًا. ويمكن أن يبدأ القالب من قالب آخر فلا يغيّر إلا بعض الخانات، ويمكن أن يختلف بين الصفحة اليسرى والصفحة اليمنى. وتسرد الصفحة أيضًا أنماط التسميات للكلمات المكتوبة على الصور، وكل تحذير قد يصدره القالب مع طريقة إصلاحه.",
+};
+
+# الإعدادات: الصفحات المركّبة
+
+
+## قوالب الصفحات
+
+الصفحة المركّبة صفحة تأتي هيئتها من **قالب** في الإعدادات، ويأتي محتواها من نص Markdown داخل السياج `::::page{template="…"}`. يسمّي القالب مستطيلات تُدعى **الخانات**، ويرسل Markdown كل قطعة من المحتوى إلى خانة باسمها (اسم موضعها، أي slot). فلا تظهر الأبعاد والمواضع في Markdown أبدًا، ولا يظهر نص المحتوى في القالب أبدًا. وتحمل الخاصية `pageTemplates` قوالب الكتاب:
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+القالب الذي لا يحدّد إلا `id` وخانة واحدة صفحةٌ كاملة تملأ فيها تلك الخانة منطقة النص. وكل حقل آخر اختياري:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الخاصية</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>إلزامي</td>
+      <td>الاسم الذي يطلبه سياج الصفحة (<code>template="tema-cajas"</code>). وهو فريد بين القوالب: يُتجاهل القالب الثاني الذي يحمل المعرّف نفسه.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>المعرّف</td>
+      <td>الاسم المعروض في Sandbox. ولا يقرؤه الإخراج أبدًا.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>معرّف القالب الذي يبدأ منه هذا القالب. انظر <a href="#الوراثة-والمتغيّرات">الوراثة والمتغيّرات</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>المستطيل الذي تُقاس منه مواضع الخانات. <code>'content'</code> منطقة النص في الصفحة، وتنعكس بين الصفحة اليسرى واليمنى كما ينعكس النص الجاري؛ و<code>'trim'</code> الصفحة بعد القص؛ و<code>'bleed'</code> الصفحة مع النزف.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>لا شيء</td>
+      <td>يقسم المنطقة إلى خلايا، فتوضع الخانة أو المجموعة بالخلية (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>، والعدّ من 1) بدلًا من <code>placement</code>. والفواصل افتراضيًا <code>0</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>الخانات بترتيب القالب: وهو الترتيب الذي تُقاس به أولًا، والذي يحسم التعادل. انظر <a href="#الخانات">الخانات</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>أعمدة وصفوف من الخانات تتقاسم المساحة. انظر <a href="#المجموعات">المجموعات</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>لا شيء</td>
+      <td>صور وخطوط فاصلة وصناديق تُرسم مع الصفحة، بلغة العناصر نفسها المستعملة في <a href="/ar/docs/configuration-headers-footers#رؤوس-الصفحات-وتذييلاتها">رؤوس الصفحات وتذييلاتها</a>. ولا تحمل عناصر النص إلا عناصر نائبة (<code>&#123;pageNumber&#125;</code> و<code>&#123;chapterTitle&#125;</code> و<code>&#123;attr.x&#125;</code> لسمة من سمات سياج الصفحة). ويمكن أن يُثبَّت العنصر إلى خانة أو مجموعة (<code>'#dinero'</code>) فيتحرك معها. وتوضع الزخرفة بعد الخانات ولا تدفع النص أبدًا.</td>
+    </tr>
+    <tr>
+      <td><code>header</code> و<code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>موروثة</td>
+      <td>ترويسة الصفحة ورقمها. إن لم تُحدَّدا احتفظت الصفحة بترويسة فصلها ورقمه؛ و<code>false</code> تخفيهما.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يصف القالب صفحتين متقابلتين تُصفّان ورقةً واحدة. وتبدأ الصفحة المزدوجة دائمًا في صفحة يسرى في الكتاب المكتوب من اليسار إلى اليمين (وفي صفحة يمنى في الكتاب المكتوب من اليمين إلى اليسار)، وتُضاف قبلها صفحة بيضاء عند الحاجة.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>في الصفحة المزدوجة، الشريط المجاور للكعب الذي تبتعد عنه الخانات، إلا إذا حدّدت <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>لا شيء</td>
+      <td>تغييرات للصفحة اليمنى (<code>recto</code>) أو للصفحة اليسرى (<code>verso</code>)، تُكتب كما يُكتب القالب نفسه. والجهة هي الجهة المادية، فيعمل ذلك في الكتب المكتوبة من اليسار إلى اليمين ومن اليمين إلى اليسار على السواء.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>هذا القالب</td>
+      <td>قالب الصفحات التي تُضاف حين تستمر خانة في الصفحة التالية (<code>overflow.continueIn: 'next-page'</code>). وإن لم يُحدَّد استعملت الصفحة المضافة هذا القالب ولم تُملأ فيها إلا الخانات المستمرة.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>نمط فقرة لنص الصفحة، كما في أنماط العناوين.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>تجاوز للوحة الألوان في الصفحة، كما في أنماط العناوين والأجزاء.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>دور الصفحة الذي تراه عناصر التصميم التي لها مرشّح <code>pages</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### الخانات
+
+الخانة مستطيل له اسم يستقبل محتوى منضَّدًا. والحقل `name` هو اسم الموضع الذي يطلبه Markdown، وهو فريد في قالبه (ولا يجوز أن تأخذ مجموعةٌ اسمَ خانة أيضًا، لأن نقاط التثبيت تسمّي الاثنين بالطريقة نفسها).
+
+توضع الخانة بخلية `grid` حين يكون للقالب شبكة، وإلا فبحقلها `placement` الذي يعمل كتموضع عنصر التصميم: نقطة تثبيت (`'container'` هي المنطقة، أو `'page'`، أو `'bleed'`، أو `'#name'` لخانة أخرى أو مجموعة)، وحافة، وإزاحة، وحجم. والخانة المثبّتة إلى خانة أخرى تتحرك معها. وإن لم يوجد أي منهما أخذت الخانة المنطقة كلها.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الخاصية</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>إلزامي</td>
+      <td>اسم الموضع.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>المنطقة كلها</td>
+      <td>نقطة التثبيت والحافة والإزاحة والحجم، كما في <a href="/ar/docs/configuration-headers-footers#تموضع-العناصر">تموضع العناصر</a>. ويُتجاهل حين تضع خليةٌ من الشبكة الخانة.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>لا شيء</td>
+      <td>خلية من شبكة القالب، والعدّ من 1، تمتد على <code>cols</code> × <code>rows</code> من الخلايا (1 افتراضيًا). والخلية الواقعة خارج الشبكة تُعاد إلى داخلها. ويُتجاهل حين لا يكون للقالب شبكة.</td>
+    </tr>
+    <tr>
+      <td><code>width</code> و<code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code> و<code>'auto'</code></td>
+      <td>طول ثابت، أو نسبة مئوية من المنطقة (من 0 إلى 100)، أو <code>'auto'</code> (حجم المحتوى نفسه)، أو <code>'fill'</code> (ما يبقى حتى الحافة التي ثُبّتت إليها الخانة). وإن لم يُحدَّد قرأت الخانة <code>placement.size</code>، ثم القيمة الافتراضية: العرض كله، والارتفاع بقدر المحتوى. وخانة النص تحتاج إلى عرض سطر، فلا معنى للعرض <code>'auto'</code> إلا في خانة تحمل صورة واحدة (عرض الصورة عند ارتفاع الخانة). والقيمة التي لا يستطيع المحرّك استعمالها (طول سالب، أو وحدة غير معروفة) تُقرأ على أنها القيمة الافتراضية.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code> و<code>maxWidth</code> و<code>minHeight</code> و<code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>لا شيء</td>
+      <td>حدود للحجم <code>'auto'</code> أو <code>'fill'</code>، وللمساحة التي تعطيها المجموعة أو تأخذها. ويغلب الحدّ الأدنى الحدَّ الأقصى، ويُعاد الحجم الثابت الواقع خارجهما إلى ما بينهما (ويحذّر <code>frameMinMax</code> من الحالتين).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>بلا إطار</td>
+      <td>معرّف <a href="/ar/docs/configuration-callouts#أنماط-الإطارات">نمط إطار</a>: تُرسم الخانات بأنماط الإطارات (الخلفية، والحدّ، والحشو، والشريط الجانبي، والأيقونة، ولسان التسمية، والعنوان). وتأتي كلمات اللسان من Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). أما إعدادات الإطار التي تحدّد مكان الصندوق في النص الجاري (<code>placement</code> و<code>span</code> و<code>columns</code> و<code>width</code> و<code>fixed</code>…) فلا تنطبق على الخانة.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>قيمة النمط</td>
+      <td>يتجاوز حشو النمط جهةً جهة: لترك مكان للصور الموضوعة فوق صندوق، مثلًا.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>ترتيب الرسم. الزخرفة في الطبقة 0، والطبقة السالبة تُرسم تحتها.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>بالدرجات، في اتجاه عقارب الساعة. ويدور الصندوق ومحتواه معًا.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>موضع المحتوى في خانة أطول منه.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code> و<code>columnGap</code></td>
+      <td><code>number</code> و<code>Dimension</code></td>
+      <td><code>1</code> وقيمة النمط</td>
+      <td>الأعمدة داخل الخانة.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>: يلتفّ نص الخانات الأخرى حول مستطيل هذه الخانة.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>تستقبل الخانة المحتوى الذي لا يسمّي موضعًا.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>لا شيء</td>
+      <td>تستقبل الخانة أول عنوان من ذلك المستوى لا يسمّي موضعًا، فيكفي لعنوان الصفحة أن يُكتب <code># Title</code> في أعلى السياج.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>سلسلة: المحتوى الذي لا يتسع يستمر في الخانة التي تحمل ذلك الاسم، في الصفحة نفسها.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>أين يستمر المحتوى الذي لا يتسع: <code>'#frame'</code> (خانة أخرى في الصفحة، كما في <code>next</code>)، أو <code>'next-page'</code> (الخانة نفسها في صفحة تُضاف بعد هذه)، أو <code>'template:&lt;id&gt;'</code> (صفحة من ذلك القالب).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>بحسب اللغة</td>
+      <td>العلامة في نهاية الجزء المقطوع. وإن لم تُحدَّد فهي كلمة المتابعة في لغة المستند (كما في الجداول المقسومة)؛ و<code>false</code> لا تضع شيئًا.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>حين لا يجعل شيءٌ آخر المحتوى يتسع، يجوز أن يُنضَّد نصه أصغر.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>أصغر مقياس للنص، أكبر من 0 ولا يزيد على 1 (والقيمة الأكبر تُقرأ 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code> و<code>fit.imageMinScale</code></td>
+      <td><code>boolean</code> و<code>number</code></td>
+      <td><code>true</code> و<code>0.8</code></td>
+      <td>هل يجوز تصغير الصور التي في الخانة، وإلى أي مقياس.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>لا تتحرك الخانة ولا يتغيّر حجمها أبدًا، وذلك للصندوق الذي يجب أن يبقى محاذيًا للرسم. وتلتفّ المجموعة حولها.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code> و<code>shrink</code> و<code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>كيف تتقاسم الخانة مساحة مجموعتها: <code>grow</code> يأخذ حصة من المساحة الفائضة، و<code>shrink</code> يسمح للخانة بأن تتنازل عن مساحة، والخانات ذات <code>priority</code> الأدنى تتنازل أولًا.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>لا يصدر تحذير حين لا يرسل Markdown شيئًا إلى الخانة.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>في الصفحة المزدوجة، يجوز للخانة أن تعبر شريط الكعب.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code> و<code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code> و<code>'ltr' | 'rtl'</code></td>
+      <td>قيمة الصفحة</td>
+      <td>صندوق عمودي في صفحة أفقية، أو العكس.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>في قالب يوسّع قالبًا آخر، أو في متغيّر: يحذف الخانة الموروثة التي تحمل هذا الاسم.</td>
+    </tr>
+  </tbody>
+</table>
+
+### المجموعات
+
+المجموعة عمود (من الأعلى إلى الأسفل) أو صف (من البداية إلى النهاية) من الخانات التي تتقاسم المساحة وتتحرك معًا. وداخل المجموعة يُتجاهل موضع الخانات نفسها على امتداد اتجاه المجموعة: فالمجموعة ترصفها بالترتيب، وبين كل اثنتين `gap`. وحين يطول نص إحدى الخانات تتحرك الخانات التي بعدها معها. والمجموعة صندوق يمكن أن تُثبَّت إليه الخانات والزخرفة (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الخاصية</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>إلزامي</td>
+      <td>فريد بين خانات القالب ومجموعاته.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>من الأعلى إلى الأسفل، أو من البداية إلى النهاية.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>خانات المجموعة، بترتيبها في الصفحة. ولا تنتمي الخانة إلى أكثر من مجموعة واحدة؛ ويُتخطّى الاسم الذي ليس خانة في القالب، والخانة التي سبق إدراجها.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>المسافة بين خانتين متجاورتين في المجموعة.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code> و<code>grid</code></td>
+      <td>كما في الخانات</td>
+      <td>صندوق خاناتها</td>
+      <td>صندوق المجموعة نفسها. وإن لم يُحدَّد فهو الصندوق المحيط بالصناديق المصرَّح بها لخاناتها.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>أين تذهب المساحة الفائضة حين لا تكبر أي خانة في المجموعة.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>في قالب يوسّع قالبًا آخر، أو في متغيّر: يحذف المجموعة الموروثة.</td>
+    </tr>
+  </tbody>
+</table>
+
+### الوراثة والمتغيّرات
+
+القالب الذي له `extends` يبدأ من القالب الذي يسمّيه (وقد يوسّع ذلك القالب بدوره قالبًا آخر)، ولا يغيّر إلا ما يكتبه:
+
+- الحقل مثل `area` أو `header` أو `overflowTemplate` يحلّ محل حقل الأصل. ويُدمج `grid` مفتاحًا مفتاحًا. وتُورث `spread` و`gutter` و`role` أيضًا؛ أما `id` و`name` و`extends` فخاصة بالقالب نفسه.
+- تُدمج `frames` و`groups` **بالاسم**: المدخل الذي يحمل اسم مدخل موروث يغيّر الحقول التي يكتبها ويبقي الباقي (تُدمج `fit` و`overflow` و`padding` مفتاحًا مفتاحًا، ويُستبدل `placement` كاملًا)؛ و`remove: true` يحذفه؛ والاسم الجديد يُضاف بعد المداخل الموروثة.
+- تُدمج عناصر الزخرفة بالمعرّف `id` بالطريقة نفسها؛ ويُضاف العنصر الذي له معرّف جديد أو لا معرّف له.
+
+يُكتب `variants.recto` و`variants.verso` كما يُكتب القالب، ويُدمجان بالطريقة نفسها، في الصفحة اليمنى أو اليسرى. ويُطبَّقان بعد سلسلة `extends` كلها، ومتغيّر القالب الجذر أولًا. وللصفحة المزدوجة الجهتان معًا، فلا يُطبَّق عليها أي متغيّر.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+حين يحفظ Sandbox قالبًا لا يُسقط أبدًا قيمةً تساوي القيمة الافتراضية: ففي قالب يوسّع قالبًا آخر، أو في متغيّر، تتجاوز تلك القيمة قيمة الأصل.
+
+ومن الشيفرة، تعيد `resolvePageTemplate(config, id, { parity })` قالبًا دُمجت سلسلته، وطُبّق عليه متغيّر الجهة، ومُلئت فيه كل القيم الافتراضية، وحُسمت فيه كل إحالة كما تصف التحذيرات أدناه؛ وتعيد `validatePageTemplates(config)` التحذيرات.
+
+## أنماط التسميات
+
+تسمّي الخاصية `labelStyles` هيئات التسميات المكتوبة على صورة: البحار والمدن في خريطة، وأجزاء الرسم التوضيحي. وتقف التسمية عند مرساة في الصورة (نقطة محفوظة مع المورد، كما تُحفظ نقاط المتكلمين في القصص المصورة)، وتأخذ النمط الذي تسمّيه المرساة أو التسمية.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الخاصية</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>إلزامي</td>
+      <td>الاسم الذي تستعمله المراسي والتسميات.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>المعرّف</td>
+      <td>الاسم المعروض في Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>نمط فقرة تستعير التسمية خطّه؛ والحقول أدناه تتجاوزه.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code> و<code>fontSize</code> و<code>fontWeight</code></td>
+      <td><code>string</code> و<code>Dimension</code> و<code>number</code></td>
+      <td>قيمة نص المتن</td>
+      <td>خط التسمية وحجمه ووزنه.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>قائم أو مائل.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>لون نص المتن</td>
+      <td>لون الحروف.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>الحروف الكبيرة، كما تكتب الخرائط أسماء البحار والبلدان في الكتابة اللاتينية.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>مسافة إضافية بين الحروف، بوحدات em.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>لا شيء</td>
+      <td>حدّ محيط خلف الحروف، لتُقرأ فوق صورة مزدحمة.</td>
+    </tr>
+    <tr>
+      <td><code>background</code> و<code>padding</code></td>
+      <td><code>ColorValue</code> و<code>Dimension</code></td>
+      <td>لا شيء</td>
+      <td>لوح خلف التسمية، والمسافة حول نصها.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>أصغر ما يجوز أن تُنضَّد به التسمية حين لا تتسع لعرضها.</td>
+    </tr>
+  </tbody>
+</table>
+
+### حقول التسمية في المرساة
+
+تأخذ مراسي الصورة (`Resource.anchors`، وهي النقاط التي تستعملها القصص المصورة للمتكلمين) بضعة حقول اختيارية للتسميات. وهي نسب من الصورة، فتبقى صحيحة في كل لغة ومع أي قصّ للصورة. وتتجاهلها القصص المصورة.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الحقل</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>عرض التسمية نفسها</td>
+      <td>عرض سطر التسمية، نسبةً من عرض الصورة: الاسم الطويل ينكسر داخله على سطرين.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>أي جانب من التسمية يقف عند نقطة المرساة.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>أي حافة من التسمية تقف عند ارتفاع المرساة.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>بالدرجات، في اتجاه عقارب الساعة، حول نقطة المرساة: كاسم نهر يُكتب على امتداد مجراه.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>معرّف من <code>labelStyles</code>. والتسمية التي تسمّي نمطها الخاص تتجاوزه.</td>
+    </tr>
+  </tbody>
+</table>
+
+## تحذيرات قوالب الصفحات
+
+في غير هذا الموضع يتجاهل المحرّك المفتاح الذي لا يعرفه. أما قوالب الصفحات وأنماط التسميات فتُفحص، وكل مشكلة فيها تحذير إعدادات يظهر في `postext check` وفي لوحة **الفحوص** في Sandbox. والحقل `path` في هذه التحذيرات مؤشر JSON إلى الحقل المخطئ: `/pageTemplates/3/frames/2/style`، و`/pageTemplates/0/variants/recto/frames/1/next`، و`/resources/4/anchors/0/style`. وحين يكون الحقل موروثًا يسمّي المؤشر القالب الذي كتبه. والتحذير الذي يذكر معرّفًا أو اسمًا غير موجود يقترح أيضًا أقرب معرّف أو اسم موجود.
+
+المفتاح المكتوب خطأً في قالب أو خانة أو مجموعة أو شبكة أو `fit` أو `overflow` أو متغيّر أو نمط تسمية هو `unknownConfigKey`؛ والكلمة الخارجة عن خيارات إعداد ما (`area` و`verticalAlign` و`exclude` و`takes` و`kind` و`align` و`writingMode` و`direction` و`fontStyle` و`textTransform`) هي `unknownConfigValue`، ويحتفظ الإعداد بقيمته الافتراضية. ويُتجاهل القالب الذي لا `id` له، والخانة أو المجموعة التي لا `name` لها، مع `unknownConfigValue` عند ذلك الحقل.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>التحذير</th>
+      <th>السبب</th>
+      <th>الحل</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>لقالبين المعرّف <code>id</code> نفسه. يُستعمل الأول ويُتجاهل اللاحق.</td>
+      <td>غيّر اسم أحدهما، أو احذف النسخة.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>تتبُّع <code>extends</code> يعود إلى القالب نفسه (<code>a → b → a</code>). فيُسقط كل قالب في الحلقة، وكل قالب يوسّع واحدًا منها: لا تستطيع أي صفحة أن تستعمله.</td>
+      <td>احذف <code>extends</code> من قالب واحد في الحلقة.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td>يسمّي <code>extends</code> معرّفًا لا يحمله أي قالب. فيُستعمل القالب وحده، بلا شيء موروث.</td>
+      <td>صحّح المعرّف (يقترح التحذير أقربها)، أو أضف القالب الأصل.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>لخانتين، أو لمجموعتين، في قائمة واحدة الاسم <code>name</code> نفسه، أو لمجموعة اسم خانة. يُتجاهل المدخل اللاحق؛ والتثبيت إلى ذلك الاسم يقرأ الخانة.</td>
+      <td>أعطِ كل خانة وكل مجموعة اسمًا خاصًا بها. ولتغيير خانة موروثة، اكتب مدخلًا واحدًا باسمها.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>لا يسمّي <code>style</code> في الخانة أي نمط إطار. فتُرسم الخانة بلا صندوق.</td>
+      <td>صحّح المعرّف، أو أضف النمط إلى <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>خانة أو مجموعة أو عنصر زخرفة مثبّت إلى <code>'#name'</code>، وليس في القالب خانة أو مجموعة أو عنصر بهذا الاسم؛ أو خانات ومجموعات مثبّت بعضها إلى بعض في حلقة (ويشمل ذلك المرور بمجموعة غير مثبّتة إلى شيء من عندها، صندوقها صندوق خاناتها). فتُقرأ نقطة التثبيت على أنها <code>'container'</code>، أي المنطقة.</td>
+      <td>ثبّت إلى خانة أو مجموعة موجودة، أو اكسر الحلقة بتثبيت إحداها إلى المنطقة.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>الحدّ الأدنى أكبر من الحدّ الأقصى (<code>minHeight 40mm &gt; maxHeight 30mm</code>)، أو يقع <code>width</code> أو <code>height</code> الثابت خارجهما. فيغلب الحدّ الأدنى، ويُعاد الحجم الثابت إلى ما بين الحدّين، ويذكر <code>used</code> ما تأخذه الخانة. وتُقارن الأطوال ذات الوحدات المختلفة بدقة الصفحة، ووحدات em بحجم نص المتن.</td>
+      <td>اجعل الحدّ الأدنى لا يزيد على الحدّ الأقصى، أو احذف الحدّ الذي يناقضه الحجم الثابت.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>تُدرج <code>frames</code> في مجموعة اسمًا ليس خانة في القالب (ربما حذفه قالب فرعي أو متغيّر). فتتخطّاه المجموعة.</td>
+      <td>صحّح الاسم، أو احذفه من القائمة.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>خانة مُدرجة في مجموعتين، أو مرتين في مجموعة واحدة. ولا تنتمي الخانة إلا إلى مجموعة واحدة: يُتخطّى الإدراج اللاحق.</td>
+      <td>أبقِ الخانة في المجموعة الواحدة التي تتحرك معها.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>خانات يستمر بعضها في بعض في حلقة عبر <code>next</code> أو <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). فيُسقط الرابط الذي يغلق الحلقة، وتنتهي السلسلة عند الخانة التي قبله.</td>
+      <td>أنهِ السلسلة عند آخر خانة فيها: احذف <code>next</code> منها، أو اجعلها تستمر في الصفحة التالية.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td><code>next</code> لا يسمّي خانة في القالب؛ أو <code>overflow.continueIn</code> لا يسمّي خانة (<code>'#x'</code>) أو قالبًا (<code>'template:x'</code>)، أو لا يأتي على أيّ من الصيغ <code>'#frame'</code> و<code>'next-page'</code> و<code>'template:&lt;id&gt;'</code>؛ أو <code>overflowTemplate</code> لا يسمّي قالبًا. فلا يستمر هناك المحتوى الذي لا يتسع.</td>
+      <td>صحّح الاسم أو المعرّف، أو اكتب إحدى الصيغ الثلاث.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>تسمّي مرساة في صورة <code>style</code> ليس في <code>labelStyles</code>. ويذكر التحذير المورد. وتأخذ التسميات عند تلك المرساة الهيئة الافتراضية.</td>
+      <td>صحّح معرّف النمط في المرساة، أو أضف النمط إلى <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+إصدار الإعدادات هو 15 منذ قوالب الصفحات (والحزم المكتوبة قبل ذلك تبقى تُحمَّل دون تغيير: لا يتغيّر معنى أي شيء تقوله إعدادات أقدم).

@@ -56,6 +56,10 @@ import editorial as ed  # noqa: E402
 import fonts as fontkit  # noqa: E402
 from _common import at, mm, pt  # noqa: E402
 
+# Phrases the design repeats that are form, not content: the title, the
+# author or a brand line in a running head (#849, `contentInConfig`).
+CONTENT_CHECKS = {"contentInConfig": {"allow": ["紅樓夢", "红楼梦", "Hung Lou Meng", "The Dream of the Red Chamber", "H. Bencraft Joly"]}}
+
 SOURCE = os.path.join(HERE, "source")
 WORK = os.path.join(HERE, "work")
 PRESET_ID = "hongloumeng"
@@ -1688,7 +1692,7 @@ def write_manifest(out: str, chapters: dict, shared: list[dict], wording: dict, 
         # 120 chapters read as one novel: the canvas opens on the whole book.
         "view": {"canvasScope": "book"},
         "chapters": chapters,
-        "config": base,
+        "config": {**base, "checks": CONTENT_CHECKS},
         "localized": {lang: ({"config": localized_config(base, configs[lang])} if lang != "zh-Hant" else {}) | {"resources": wording[lang]} | LOCALE_VIEW.get(lang, {}) for lang in LANGS},
         "resources": shared,
         "fonts": fonts,

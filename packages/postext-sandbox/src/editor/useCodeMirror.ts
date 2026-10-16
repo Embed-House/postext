@@ -16,6 +16,7 @@ import { verseHighlight, verseTheme } from './verseSyntax';
 import { hardBreakHighlight, hardBreakTheme } from './hardBreakSyntax';
 import { tabHighlight, tabTheme } from './tabSyntax';
 import { comicHighlight, comicTheme } from './comicSyntax';
+import { composedHighlight, composedTheme } from './composedSyntax';
 import { annotationHighlight, annotationTheme } from './annotationSyntax';
 import { indexHighlight, indexTheme } from './indexSyntax';
 import { codeFenceHighlight, codeFenceTheme } from './codeFences';
@@ -110,6 +111,8 @@ export function useCodeMirror({ initialValue, externalValue, onChange, onSelecti
       tabHighlight,
       comicTheme,
       comicHighlight,
+      composedTheme,
+      composedHighlight,
       annotationTheme,
       annotationHighlight,
       indexTheme,

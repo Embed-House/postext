@@ -1,0 +1,576 @@
+{/* docs/configuration-lists-math-zh.mdx */}
+
+export const metadata = {
+  title: '配置：列表与数学公式',
+  sidebarTitle: '列表与数学公式',
+  description: '无序列表和有序列表的标记、缩进与嵌套，任务列表，以及数学公式的大小、颜色和间距',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '12分钟',
+  order: 11,
+  parent: 'configuration',
+  plainSummary: "本页讲列表和公式。无序列表用一个符号标出每一项，有序列表用数字或字母给各项计数。你可以设定每种列表的标记、缩进和间距，并为列表里的列表另行设定。任务列表会画一个可以打勾的方框。最后一节设定数学公式的大小、颜色和周围的空白。",
+};
+
+# 配置：列表与数学公式
+
+
+## 无序列表
+
+`unorderedLists`属性控制项目符号列表（`-`、`*`、`+`）和GFM任务列表（`- [ ]`、`- [x]`）的渲染方式。最多支持五层嵌套。
+
+### 无序列表默认值
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>沿用<code>bodyText.fontFamily</code></td>
+      <td>列表项文字所用的字体。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>主色（<code>#295AA3</code>）</td>
+      <td>列表项文字和项目符号的颜色。绑定到默认调色板的<code>main-color</code>条目。</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>列表项文字的字重（100–900）。项目符号沿用这一字重，除非在某一层单独覆盖。</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>用斜体排列表项文字。</td>
+    </tr>
+    <tr>
+      <td><code>bulletChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'•'</code></td>
+      <td>用作项目符号的字形。</td>
+    </tr>
+    <tr>
+      <td><code>bulletFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>项目符号字形的大小。相对单位随正文字号缩放。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>项目符号与列表项文字之间的水平间距。</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>第1层的基础缩进。更深的层级从上一层文字的起点开始级联，除非单独覆盖（见下文）。</td>
+    </tr>
+    <tr>
+      <td><code>bulletVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>微调项目符号的垂直位置。负值把符号上移，正值下移。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>整个列表前后的间距。</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>在行距之外、插在列表项之间的额外垂直间距。一个列表嵌套在另一个列表的某一项中时，嵌套列表两侧都用外层列表的间距：嵌套列表第一项之前和最后一项之后（postext 1.4及以前，嵌套列表之后的那一项用的是嵌套列表的间距）。</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>把列表上方的间距向上取整，使第一个项目符号落在基线网格上，和标题下的正文一样；此时<code>marginTop</code>是最小值。无论是否开启，列表结束时版面流都会重新回到网格上，所以<code>itemSpacing</code>为0时，每一项都与旁边一栏的文字对齐。默认关闭，与postext 1.4及以前一致：<code>marginTop</code>不是整数行时，列表项会偏离网格，直到列表结束。标注框内部不在网格上，框内的列表不受影响。</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>开启时，折行与第一个文字字符对齐，而不是排到项目符号下面。</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>UnorderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>第1–5层的逐层覆盖。见下文。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 任务列表扩展
+
+GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选框代替项目符号。方框由引擎自己绘制：一个方形轮廓，任务完成时加一个勾。它不向任何字体索取字形，所以在每台机器上，在画布、PDF、HTML和EPUB里都一样，辅助技术读出`☐`或`☑`。方框的边长是标记字号（`bulletFontSize`，或该层级的`fontSize`）的0.6 em，这也是它在`gap`之前所占的宽度；标记与正文同字号时，方框立在列表项首行的基线上。线条粗细随标记的`fontWeight`，颜色随标记的`color`。以下字段只作用于任务项：
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>taskCheckboxChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☐'</code></td>
+      <td>未完成任务的字符。默认字符不作为文字排出：方框由引擎绘制。其他任何字符都按列表的字体作为文字排出，该字体须含有这个字符。</td>
+    </tr>
+    <tr>
+      <td><code>taskCheckedChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☑'</code></td>
+      <td>已完成任务的字符。默认字符同样由引擎绘制，是带勾的方框；其他任何字符都按列表的字体作为文字排出。</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>两个默认字符的排法。<code>'drawn'</code>：方框由引擎绘制。<code>'character'</code>：<code>☐</code>和<code>☑</code>按列表的字体作为文字排出，与postext 1.28及更早版本一样；字体里没有这两个字符时，浏览器改用系统里的某个字体，列表项的文字就从那个字体给出的宽度之后开始。版本13之前保存的配置按<code>'character'</code>读取，所以它的各行留在原处。</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedStrikethrough</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>在已完成任务的文字上画删除线。</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>沿用列表项颜色</td>
+      <td>可选，用于已完成任务文字的颜色。省略时使用普通列表项的颜色。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 无序列表的逐层覆盖
+
+`levels`中的每一项针对一个层级（1–5），可以覆盖以下任意字段：
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bulletChar</code></td><td><code>string</code></td><td>该层的项目符号字形。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>该层列表项的字体。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>该层项目符号字形的大小。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>列表项颜色。</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td>列表项字重。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td>斜体开关。</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td>该层项目符号的显式缩进。见下文的级联规则。</td></tr>
+    <tr><td><code>verticalOffset</code></td><td><code>Dimension</code></td><td>该层项目符号的垂直微调。</td></tr>
+  </tbody>
+</table>
+
+**缩进级联**。第1层总是从通用的`indent`值开始（默认`0 em`，项目符号贴住栏的边缘）。对第2–5层，如果不设`indent`，引擎把项目符号放在*上一层*文字的起点（上一层缩进 + 项目符号宽度 + `gap`）。在某一层显式设置`indent`，就会打断级联，把这一层固定在你想要的任何位置。
+
+```ts
+unorderedLists: {
+  bulletChar: '—',
+  gap: { value: 0.4, unit: 'em' },
+  hangingIndent: true,
+  levels: [
+    { level: 2, bulletChar: '·' },
+    { level: 3, bulletChar: '◦', color: { hex: '#666666', model: 'hex' } },
+  ],
+}
+```
+
+
+## 有序列表
+
+`orderedLists`属性控制编号列表（`1.`、`2)`等）。最多支持五层嵌套，每一层可以使用不同的编号格式。
+
+### 有序列表默认值
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>沿用<code>bodyText.fontFamily</code></td>
+      <td>列表项文字和编号所用的字体。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>主色（<code>#295AA3</code>）</td>
+      <td>列表项文字和编号的颜色。绑定到默认调色板的<code>main-color</code>条目。</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>列表项文字和编号的字重（100–900）。</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>用斜体排列表项文字。</td>
+    </tr>
+    <tr>
+      <td><code>numberFormat</code></td>
+      <td><code>OrderedListNumberFormat</code></td>
+      <td><code>'arabic'</code></td>
+      <td>编号样式：<code>'arabic'</code>、<code>'lower-alpha'</code>、<code>'upper-alpha'</code>、<code>'lower-roman'</code>、<code>'upper-roman'</code>。其他设置里的写法也能用（<code>'decimal'</code>、<code>'roman-lower'</code>、<code>'i'</code>……；见<a href="/zh/docs/configuration-page-layout#编号格式的写法">编号格式的写法</a>）；无法识别的值按阿拉伯数字编号，并报告出来。</td>
+    </tr>
+    <tr>
+      <td><code>prefix</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>排在编号前面的文字，样式与分隔符相同：这里设<code>'（'</code>、分隔符设<code>'）'</code>，中文列表就排成（一）、（二）。分隔符单独绘制时，前缀也单独绘制，紧挨在编号之前。</td>
+    </tr>
+    <tr>
+      <td><code>separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>放在编号和文字之间的字符，通常是<code>'.'</code>或<code>')'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontFamily</code></td>
+      <td><code>string</code></td>
+      <td>沿用<code>fontFamily</code></td>
+      <td>分隔符的字体。分隔符的任一样式与编号不同时，分隔符单独绘制在（右对齐的）编号之后，例如黑色Optima Bold的<code>1</code>后面跟一个蓝色DIN Pro Bold的<code>•</code>。</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontWeight</code></td>
+      <td><code>number</code></td>
+      <td>沿用<code>fontWeight</code></td>
+      <td>分隔符的字重（100–900）。</td>
+    </tr>
+    <tr>
+      <td><code>separatorItalic</code></td>
+      <td><code>boolean</code></td>
+      <td>沿用<code>italic</code></td>
+      <td>用斜体排分隔符。</td>
+    </tr>
+    <tr>
+      <td><code>separatorColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>沿用<code>color</code></td>
+      <td>分隔符的颜色。支持调色板引用。</td>
+    </tr>
+    <tr>
+      <td><code>separatorGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>编号与分隔符之间的间距。列表项文字仍在分隔符之后隔<code>gap</code>开始。</td>
+    </tr>
+    <tr>
+      <td><code>numberFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>编号的大小。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>编号与列表项文字之间的水平间距。</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>第1层的基础缩进；更深的层级从上一层文字的起点开始级联，除非单独覆盖。</td>
+    </tr>
+    <tr>
+      <td><code>numberVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>微调编号的垂直位置。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>整个列表前后的间距。</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>列表项之间的额外垂直间距。一个列表嵌套在另一个列表的某一项中时，嵌套列表两侧都用外层列表的间距：嵌套列表第一项之前和最后一项之后（postext 1.4及以前，嵌套列表之后的那一项用的是嵌套列表的间距）。</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>把列表上方的间距向上取整，使第一个编号落在基线网格上，和标题下的正文一样；此时<code>marginTop</code>是最小值。无论是否开启，列表结束时版面流都会重新回到网格上，所以<code>itemSpacing</code>为0时，每一项都与旁边一栏的文字对齐。默认关闭，与postext 1.4及以前一致：<code>marginTop</code>不是整数行时，列表项会偏离网格，直到列表结束。标注框内部不在网格上，框内的列表不受影响。</td>
+    </tr>
+    <tr>
+      <td><code>numberWidth</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
+      <td><code>'run'</code></td>
+      <td>列表项编号栏的宽度，它决定文字从哪里开始；编号在这一栏里右对齐。<code>'run'</code>：取该项所在连续段中最宽的编号。连续段指同一层级的若干项，它们之间只隔着更深层级的项。两项之间出现图、段落或框，就开始一个新的连续段，所以表后面的<code>ii)</code>的文字可能比表前面的<code>i)</code>稍微靠右，九项的列表的文字也比十二项的列表靠左。<code>'level'</code>：取整个文档（在书中是整章）里该层级最宽的编号，这样每个列表，以及被打断的列表的每一部分，文字都从同一位置开始，与更深层级的缩进已有的做法一致。<code>'item'</code>：取该项自己的编号，每项文字从自己的编号之后隔一个<code>gap</code>开始：<span lang="ja" className="font-body">第九條</span>和<span lang="ja" className="font-body">第十一條</span>后面的空白相同，文字的起点各不相同，日本《官报》刊印法律条文就是这样排的。转行遵循<code>hangingIndent</code>：<code>false</code>时回到列表的缩进，<code>true</code>时悬挂在该项自己的文字之下。更深层级的缩进仍然每级只有一个值。自postext 1.28起。</td>
+    </tr>
+    <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自 postext 1.26 起提供。设<code>numberWidth: 'item'</code>时，编号栏就是编号本身，两个值排出的列表相同。</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>折行与第一个文字字符对齐，而不是排到编号下面。</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>OrderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>第1–5层的逐层覆盖。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 有序列表的逐层覆盖
+
+`levels`中的每一项可以覆盖`numberFormat`、`prefix`、`separator`、`fontFamily`、`fontSize`、`color`、`fontWeight`、`italic`、`indent`、`verticalOffset`以及分隔符样式（`separatorFontFamily`、`separatorFontWeight`、`separatorItalic`、`separatorColor`、`separatorGap`），缩进级联规则与无序列表相同。某一层的分隔符样式沿用该层自己的编号样式，除非给出了整个列表的分隔符设置。
+
+**右对齐**。排版流程会测量一个连续段中格式化后最宽的编号，并据此缩进该段的所有列表项，使编号的右边缘对齐。十项的列表渲染为`1.`–`10.`时，一位数编号的右侧会补齐，使分隔符保持在同一列。
+
+```ts
+orderedLists: {
+  numberFormat: 'arabic',
+  separator: '.',
+  levels: [
+    { level: 2, numberFormat: 'lower-alpha' },
+    { level: 3, numberFormat: 'lower-roman', separator: ')' },
+  ],
+}
+```
+
+得到的是经典的混合嵌套：
+
+```
+1. First item
+   a. Sub-item
+      i) Deep note
+   b. Sub-item
+2. Second item
+```
+
+中文公文的层次序数（GB/T 15834—2011，附录B.3）共五层，依次为“一、”“（一）”“1.”“（1）”“①”：
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'simp-chinese-informal', separator: '、' },
+    { level: 2, numberFormat: 'simp-chinese-informal', prefix: '（', separator: '）' },
+    { level: 3, numberFormat: 'arabic', separator: '.' },
+    { level: 4, numberFormat: 'arabic', prefix: '（', separator: '）' },
+    { level: 5, numberFormat: 'circled-decimal', separator: '' },
+  ],
+}
+```
+
+
+## 数学公式
+
+`math`属性控制如何解析和渲染写在`$...$`（行内）和`$$...$$`（独立）定界符之间的LaTeX公式。底层引擎是MathJax（`mathjax-full`包），以SVG模式输出，在Canvas上栅格化，在PDF中以可缩放的字形嵌入。
+
+```ts
+interface MathConfig {
+  enabled?: boolean;        // 渲染LaTeX。为false时，公式片段按原样输出TeX源码。
+  fontSizeScale?: number;   // × 周围文字的字号（独立公式以正文字号为准）。
+  color?: ColorValue;       // 公式颜色；省略时沿用正文颜色。
+  marginTop?: Dimension;    // 独立公式块上方的间距。
+  marginBottom?: Dimension; // 下方的最小间距；对齐基线网格时可能变大。
+  indentAfterDisplay?: boolean; // 独立公式之后的段落首行缩进。
+  keepWithLeadIn?: boolean; // 让独立公式与引出它的那一行在一起。
+  equationNumbering?: {      // 为带\label的独立公式编号。
+    enabled?: boolean;           // 默认true
+    numberingTemplate?: string;  // '{n}'；'{h1}.{n}'按章编号
+    resetOn?: ResourceCounterReset; // 'never' | 'h1' … 'h6'
+    counterFormat?: ResourceCounterFormat; // 'decimal'
+    format?: string;             // '({n})'：公式和\eqref印出的形式
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>为false时，`$...$`和`$$...$$`片段仍会解析（所以定界符未闭合的警告照样触发），但按TeX源码原样渲染。内容里本来就有美元符号，或者想完全关闭公式渲染时，这个选项很有用。</td>
+    </tr>
+    <tr>
+      <td><code>fontSizeScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1.0</code></td>
+      <td>渲染前作用于周围文字字号的倍数：公式TeX字体的1 em等于该字号 × `fontSizeScale`。对独立公式和正文中的行内公式，该字号是`bodyText.fontSize`；对标题、段落样式、题注或标注框正文中的行内公式，是所在块的字号。1.0与周围文字一致；数学字体看上去比正文字体略大或略小时，常用0.9–1.1之间的值。**postext 1.5起有变化**：1.4及以前，公式比这个大小约大13%（见下文）。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>沿用正文颜色</td>
+      <td>渲染出的公式的颜色。省略则沿用`bodyText.color`。想让公式的颜色与正文不同时显式设置，例如与标题的强调色一致。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>独立公式块上方的间距。对行内公式无效。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>独立公式块下方的间距。这是**最小值**：对齐网格时可能把它加大，使下一条基线落在网格线上（无论<code>page.baselineGrid</code>是否画出网格）。</td>
+    </tr>
+    <tr>
+      <td><code>indentAfterDisplay</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>独立公式之后的段落像其他段落一样首行缩进。设为<code>false</code>时，紧跟在独立公式后面的每个段落都顶格排，作为被公式打断的那句话的延续（“其中<em>L</em>是……”）。写在段落内部的公式（上下都没有空行）后面总是顶格排：它的闭合<code>$$</code>下面的文字延续这个段落，从不缩进（见<a href="/zh/docs/document-format-inline#数学公式">数学公式</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>keepWithLeadIn</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>让独立公式与引出它的那一行留在同一栏，相当于TeX的predisplay penalty。公式在前一段最后一行下面排不下时，这一行和公式一起移到下一栏或下一页；如果留下的行少于<code>bodyText.widowMinLines</code>（<code>bodyText.avoidWidows</code>关闭时为少于一行），就把在该栏开始的段落整段移走（按<code>headings.keepWithNext</code>，连同该段上方收尾这一栏的标题）。带过去的那一行单独位于下一栏的栏顶，不论段末孤行（orphan）规则如何要求。设为<code>false</code>时只移走公式，引出它的那一行可能收尾上一栏，或者位于下一栏栏首的图的上方。</td>
+    </tr>
+    <tr>
+      <td><code>equationNumbering</code></td>
+      <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
+      <td><code>true</code>、<code>'&#123;n&#125;'</code>、<code>'never'</code>、<code>'decimal'</code>、<code>'(&#123;n&#125;)'</code></td>
+      <td>带<code>\label</code>的独立公式如何编号（见下文的<em>带编号的公式</em>）。<code>numberingTemplate</code>、<code>resetOn</code>和<code>counterFormat</code>与资源类型中的同名字段作用相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为(2.1)、(2.2)……，<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。<code>format</code>是公式和<code>\eqref</code>印出编号的形式，其中<code>&#123;n&#125;</code>代表编号：<code>'[&#123;n&#125;]'</code>排出[3]。<code>enabled: false</code>时不为任何公式编号：<code>\label</code>被舍弃，对它的引用印出它所在的页码。标记同样可以在冒号后写样式（<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>：在字母编号的附录里是(A.1)）。</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+math: {
+  enabled: true,
+  fontSizeScale: 1.0,
+  color: { hex: '#295AA3', model: 'hex' },
+  marginTop: { value: 1, unit: 'em' },
+  marginBottom: { value: 1, unit: 'em' },
+}
+```
+
+<strong>公式大小，postext 1.5起有变化。</strong>MathJax以`ex`给出公式的框，而它的TeX字体的1 `ex`等于0.442 em。postext 1.4及以前，引擎把它当作半个em，所以每个公式都比`bodyText.fontSize × fontSizeScale`大约13%。现在公式按文档说明的大小排出，含公式的行和页面会重新排版。为1.4用代码写的配置，可以把它原样传给`postext/bundle`中的`pinLegacyMathSize`一次，保留1.4的公式大小：
+
+```ts
+import { pinLegacyMathSize } from 'postext/bundle';
+
+config = pinLegacyMathSize(config); // 公式及独立公式周围的间距，按1.4的排法
+```
+
+1.5的其他规则变化也可能让页面移动：标题的断行、行内图周围的间距（正文中和框内）、标题的行内标记、首字下沉的大小、冒号行之下为它引出的列表保留的空间、框的切口在段落或列表项中留下的行数、破折号之后的断行、齐左文字的断行、标题下段落的拆分、复合词连字符之后的断行，以及`:::paragraphs`容器下方的间距。`migrateConfig`与配置所排的markdown一起运行一次，就会固定这段文字需要的那些规则，公式大小也包括在内（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)）：
+
+```ts
+import { migrateConfig } from 'postext/bundle';
+
+config = migrateConfig(config, undefined, { content: markdown }); // 标题断行、公式、行内间距、标题标记、首字下沉、冒号行、框的切口、破折号断行、复合词断行、齐左断行、标题下的拆分和容器间距，按1.4的排法
+```
+
+这样能挡住这些规则变化会造成的移动，但不能保住1.4的每一页。1.5还修正了排版错误，而修正没有固定开关：旧配置和新配置一样会得到修正，所以受影响的页面仍可能移动。其中包括：没有自己版面设计的通栏标题按整页宽度测量，并用所在层级的行距排；标题版面设计中，首字下沉的基线下面不再预留空间；首字下沉采用该部分的调色板颜色，即使设计文字的`overflow`不是`'wrap'`也会排出，此时文字折行；框内的段落按测量时的字距绘制；拆分的框在每个片段上都保留图标栏；框内某一行如果要把空格拉宽到3倍以上，就改为齐左，与正文一样；松散段落的调节手段不会让两端对齐的行宽于`maxWordSpacing`所允许的宽度；浮动的框保留比浮动体间距更大的`marginBottom`（在顶部区域）或`marginTop`（在底部区域）；带字距的居中或右对齐设计文字（书眉、章首页标题）按字母定位，不计最后一个字母之后的字距；在通栏章首页之下，第二栏开头的文字从紧接章首页下方的文字所在位置开始，章首页后面跟着标题时也是如此；在会把连续圆点的字偶间距拉开的字体中，目录的引导点也停在页码之前；书眉按标题的原文读取，标题某一行在连字符或破折号之后结束、或结束在因宽度而切开的单词内部时，不留空格（`MEDIOAMBIENTALES`，而不是`MEDIOAMBIENTALE S`），标题版面设计的`{titleText}`也同样读取（`thousand-colour`，而不是`thousand- colour`）；锚定在标题版面设计色带底部或中部的文字，会让色带保持足够的高度来容纳它，不再压到标题上方的文字上；比所在行更宽、在自带的连字符旁被切开的单词，从这个连字符之后切开，不再加第二个连字符；嵌套在另一列表中的列表之后的那一项，用它自己所在列表的`itemSpacing`，而不是嵌套列表的；因比所在行更宽而被切开的单词，其余部分保留自己的断点，所以网址继续在连接处断开，复合词继续在连字符处断开，而不是按词典的音节断开。
+
+`pinLegacyMathSize`把缩放比例乘以1.1312（0.5 ÷ 0.442），并把以`em`计的独立公式外边距除以同一系数。对含独立公式的书，只改缩放比例不够：它们的外边距是以公式自身大小计的长度，会同样增大13%，把下面的文字往下推。按默认外边距写出来，这三个值是：
+
+```ts
+math: {
+  fontSizeScale: 1.131,
+  marginTop: { value: 0.7072, unit: 'em' },
+  marginBottom: { value: 0.7072, unit: 'em' },
+} // 公式与1.4排出的一样大，周围留出1.4留的间距
+```
+
+对于已保存的配置，引擎能识别出来并替你完成这一步：`openBundle` / `readBundle`处理1.5之前写出的`.postext`文件包（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)），沙盒处理当时保存的书、工作副本和`postext-config.json`文件（见**沙盒 → 持久化**）。它们都经过`migrateConfig`读取，由它固定公式大小（`pinLegacyMathSize`）：`fontSizeScale`变为保存的缩放比例（未设置时为1）× 1.1312，以`em`或`rem`计的独立公式外边距（以公式自身大小计的长度）除以同一系数，所以独立公式周围的间距保持1.4的样子（默认的0.8 em变为0.7072 em）。以页面单位（`pt`、`mm`……）计的外边距保持不变，`enabled: false`的配置或书中没有`$`的配置也保持不变。这样旧书就按1.4的方式排版，它的`math`部分显示实际使用的大小。要按现在的大小排这样的书，就把这些值重置：在沙盒中是**公式 → 缩放比例**、*独立公式上边距*和*独立公式下边距*，在代码中是：
+
+```ts
+math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // 现在的大小和外边距
+```
+
+**带编号的公式**。带编号的独立公式占满它的行长（所在的栏，或所在标注框的内宽）：公式居中，编号右对齐排在公式所在的行上，`align`中每个带编号的行都是如此。编号来自`\label{eq:x}`（postext 1.19起）：带标签的公式，以及`align`、`gather`、`alignat`、`flalign`或`eqnarray`中带标签的行，按阅读顺序依`equationNumbering`编号，除非该行写了`\nonumber`或`\notag`。`equation`之类的环境本身不编号：没有标签的公式就没有编号。`\tag{…}`把你给的标签加上括号打印出来，`\tag*{…}`按原样打印；两者都不参与计数，与它并列的`\label`为它命名。比行长更宽的带编号公式向右溢出，与其他独立公式一样。（postext 1.4及以前，带`\tag`的公式根本不会绘制；1.18及以前，只有`\tag`能为公式编号。）
+
+正文中的`\eqref{eq:x}`按`format`印出编号(3)，`\ref{eq:x}`印出不带括号的编号；`:ref{id="eq:x"}`和`@eq:x`也是如此（见[交叉引用](/zh/docs/document-format-notes-references#交叉引用与锚点)）。在公式内部，`\eqref`把编号作为文字印出。逐章排版的书中，计数器接着上一章继续：`continuationAfter`通过`LayoutContinuation.statementCounters`（`equation`）把它带过去，全书大纲为每个标签给出编号（`OutlineEntry.numberLabel`），所以对另一章中公式的引用也能印出编号。
+
+```ts
+math: {
+  equationNumbering: { numberingTemplate: '{h1}.{n}', resetOn: 'h1' }, // (1.1)、(1.2)……(2.1)
+}
+```
+
+解析函数和精简函数与其他部分一致：
+
+```ts
+import {
+  DEFAULT_MATH_CONFIG,
+  resolveMathConfig,
+  stripMathDefaults,
+} from 'postext';
+
+const resolved = resolveMathConfig(config.math);
+const minimal  = stripMathDefaults(config.math);
+```
+
+### 启动公式引擎
+
+MathJax按需加载，不随引擎的其他部分一起加载。在主线程上排版时，要在构建含公式的文档之前启动它：
+
+```ts
+import { buildDocument, initMathEngine, renderPage } from 'postext';
+
+await initMathEngine(); // 只加载一次MathJax；之后的调用立即完成
+const doc = buildDocument({ markdown: 'Euler: $e^{i\\pi}+1=0$.' }, config);
+document.body.append(renderPage(doc.pages[0], doc));
+```
+
+- <strong>引擎运行之前，公式是占位符。</strong>每个公式排成一个估计大小的灰色框。如果在从未调用`initMathEngine()`的情况下排版含公式的文档，控制台会显示一条警告说明这一点。
+- **排版工作线程会替你启动它。**`postext/worker`中的构建在markdown包含`$`时会自行调用`initMathEngine()`。
+- **先排版，就绪后再排一次。**`isMathReady()`告诉你引擎是否在运行。`onMathReady(fn)`在引擎就绪后调用`fn`一次（已经就绪则立即调用），并返回一个取消这次调用的函数。编辑器可以先显示占位符，等MathJax加载完再重新排版；`initMathEngine()`加载期间不会打印警告。
+- **失败**。MathJax无法加载时，`initMathEngine()`返回的Promise会被拒绝，之后再次调用会重试。
+- <strong>任何打包工具、Node或CDN。</strong>MathJax作为一个预先打包的模块随包发布（压缩前约1.8 MB，只由`initMathEngine`获取）。直接写`import { initMathEngine } from 'https://esm.sh/postext'`就能用，不需要`?bundle`。`mathjax-full`包只在构建postext时需要，所以安装postext不会安装它。MathJax及其打包的mhchem解析器采用Apache-2.0许可证：它们的声明和许可证文本随模块一起发布，位于`dist/math/THIRD_PARTY_LICENSES.txt`。
+- **一个页面一个引擎**。同一JavaScript realm中所有导入`postext`的代码共享引擎及其已渲染公式的缓存（见[同一页面共享的全局状态](/zh/docs/configuration-programmatic-usage#同一页面中共享的全局状态)）。
+
+文档一侧的语法（`$...$`、`$$...$$`、转义美元符号本身）见[文档格式](/zh/docs/document-format-inline#数学公式)。

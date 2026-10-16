@@ -33,6 +33,7 @@ import {
   resolvePdfGenerationConfig,
   resolvePrintConfig,
   resolveContrastConfig,
+  resolveChecksConfig,
   resolveFolioConfig,
   resolveComicsConfig,
   comicReadingDirection,
@@ -49,6 +50,7 @@ import { directionOf, localeScript, presentTag, resolveNumerals } from '../local
 import { configFingerprint } from '../util/stableHash';
 import { forgetFlowColorValues } from './partPalette';
 import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt';
+import { resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates';
 
 // Resolved configs are never mutated (derived variants spread them), so
 // one resolution per config object serves every pass of a build and every
@@ -155,7 +157,7 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     footer: resolveHeaderFooterConfig(config?.footer, 'footer'),
     parts: resolvePartsConfig(config?.parts, page, bodyText, unorderedLists, orderedLists),
     headingStyles: resolveHeadingStylesConfig(config?.headingStyles, page, bodyText, unorderedLists, orderedLists, layout),
-    toc: resolveTocConfig(config?.toc, bodyText),
+    toc: resolveTocConfig(config?.toc, bodyText, config?.locale),
     index: resolveIndexConfig(config?.index, bodyText, documentLocale),
     footnotes: resolveFootnotesConfig(config?.footnotes, documentLocale, layout.writingMode),
     crossRefs: resolveCrossRefsConfig(config?.crossRefs, documentLocale),
@@ -182,6 +184,9 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     ...(config?.print ? { print: resolvePrintConfig(config.print) } : {}),
     // The contrast check's settings: `contrastDocument` reads them.
     ...(config?.contrast ? { contrast: resolveContrastConfig(config.contrast) } : {}),
+    // The checks of the configuration itself (#849): `collectConfigWarnings`
+    // reads them from the raw config; carried for hosts that show them.
+    ...(config?.checks ? { checks: resolveChecksConfig(config.checks) } : {}),
     // Not used by layout either: the Folio 3D viewer reads it.
     ...(config?.folio ? { folio: resolveFolioConfig(config.folio, page.sizePreset) } : {}),
     // Line numbers (#621): only a config that sets the section carries
@@ -194,6 +199,17 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     // Comic pages: only a config that sets the section carries it (a
     // `:::page` without one reads the defaults, `resolvedComics`).
     ...(config?.comics ? { comics: resolveComicsConfig(config.comics, documentLocale) } : {}),
+    // Composed pages (#853): only a config that sets templates or label
+    // styles carries them, so a document without resolves (and hashes) as
+    // before. The templates are kept as written, as a copy of their own
+    // (`resolvePageTemplate` memoises per list): each page resolves its
+    // template with the variant of its side.
+    ...(Array.isArray(config?.pageTemplates) && config.pageTemplates.length > 0
+      ? { pageTemplates: stripPageTemplatesDefaults(config.pageTemplates) }
+      : {}),
+    ...(Array.isArray(config?.labelStyles) && config.labelStyles.length > 0
+      ? { labelStyles: resolveLabelStyles(config.labelStyles) }
+      : {}),
   };
   return applyPaletteToResolvedConfig(resolved, rawConfig?.colorPalette);
 }

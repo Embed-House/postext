@@ -1,0 +1,390 @@
+{/* docs/configuration-page-flow-it.mdx */}
+
+export const metadata = {
+  title: 'Configurazione: vedove, orfane e bilanciamento',
+  sidebarTitle: 'Vedove, orfane e bilanciamento',
+  description: 'Le regole che tengono unite righe e blocchi a cavallo di un’interruzione di colonna, e le leve che fanno finire ogni colonna alla stessa altezza',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '24 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Questa pagina spiega come Postext decide dove finisce una colonna o una pagina. Una riga di un paragrafo non dovrebbe restare da sola in cima o in fondo a una colonna, e un titolo non dovrebbe restare senza il suo testo. Queste regole possono lasciare una colonna più corta delle altre. Allora Postext fa piccoli cambiamenti, in un ordine fisso, perché tutte le colonne finiscano alla stessa altezza. La pagina elenca ogni regola e ogni cambiamento, e spiega come vedere quale è stato usato.",
+};
+
+# Configurazione: vedove, orfane e bilanciamento
+
+
+## Orfane, vedove, righe finali corte e regole per tenere unito
+
+Vedi [Sillabazione e giustificazione](/it/docs/justification) per i meccanismi dietro queste penalità. Questa sezione è il riferimento per le chiavi di `bodyText` che le governano.
+
+Oltre ai limiti di sillabazione e di spaziatura, la configurazione del testo corrente espone le regole morbide che evitano divisioni dei paragrafi strutturalmente goffe. Tutte entrano nell’algoritmo di divisione in righe di Knuth-Plass come penalità (demerit): orientano l’impaginazione verso divisioni pulite senza mai imporre una regola rigida. Imposta a `0` i valori `*Penalty` per disattivare di fatto una qualsiasi di esse.
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>avoidOrphans</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Scoraggia un paragrafo dal finire con meno di <code>orphanMinLines</code> righe in cima alla colonna successiva. Su una griglia di caratteri (<code>cjk.grid</code>) nella regione <code>japan</code> il valore predefinito è <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Numero minimo di righe richieste in cima alla colonna successiva quando un paragrafo viene diviso. Attivo solo quando <code>avoidOrphans</code> è <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Penalità aggiunta quando un vincolo sulle orfane viene violato. Valori più alti spingono l’algoritmo con più forza contro le orfane; <code>0</code> disattiva la penalità.</td>
+    </tr>
+    <tr>
+      <td><code>avoidOrphansInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se <code>true</code>, anche le voci di elenco ricevono la protezione dalle orfane (non solo i paragrafi). Ha effetto solo quando <code>avoidOrphans</code> è <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidows</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Scoraggia un paragrafo dal cominciare con meno di <code>widowMinLines</code> righe in fondo alla colonna corrente. Su una griglia di caratteri (<code>cjk.grid</code>) il valore predefinito è <code>false</code>: la pagina contiene le righe che conta la sua griglia.</td>
+    </tr>
+    <tr>
+      <td><code>widowMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Numero minimo di righe richieste in fondo alla colonna corrente quando un paragrafo viene diviso. Attivo solo quando <code>avoidWidows</code> è <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>widowPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Penalità aggiunta quando un vincolo sulle vedove viene violato. <code>0</code> disattiva la penalità.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidowsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se <code>true</code>, anche le voci di elenco ricevono la protezione dalle vedove. Ha effetto solo quando <code>avoidWidows</code> è <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Un elenco breve diviso tra due colonne o pagine: un elenco di al massimo <code>shortListMaxItems</code> voci nel testo corrente, come uno di tre voci composto 1 + 2. <code>avoidOrphansInLists</code> e <code>avoidWidowsInLists</code> tengono unite le righe di una voce; questa regola tiene unite le voci di un elenco. <code>'allow'</code> divide un elenco del genere dove finisce la colonna, come qualsiasi altro. <code>'warn'</code> lo impagina allo stesso modo e segnala ogni elenco diviso (un avviso <code>shortListSplit</code>, vedi <a href="/it/docs/configuration-programmatic-usage#avvisi-nel-documento">Avvisi nel documento</a>). <code>'avoid'</code> compone l’elenco intero: quando non ci sta nello spazio rimasto nella colonna apre la colonna successiva, e i titoli subito sopra e la riga con i due punti che lo introduce (<code>keepColonWithList</code>) lo seguono. Un elenco più alto di una colonna vuota viene diviso come qualsiasi altro, e segnalato. Gli elenchi dentro un <code>:::callout</code> seguono le regole di divisione del riquadro, e le voci di <code>:::toc</code> e <code>:::index</code> non sono elenchi. Da postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Il numero massimo di voci che un elenco può avere per contare come breve ai fini di <code>shortListSplit</code>, comprese le voci dei suoi elenchi annidati. Un numero intero, almeno 1. Da postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Scoraggia i paragrafi dal finire con un’ultima riga molto corta (in inglese <em>runt</em>), per esempio una sola parola breve isolata. Anche il testo in bandiera, con <code>optimalRagged</code>. Un paragrafo cinese, giapponese o coreano non termina su una riga che contiene un solo carattere, da solo o con i suoi segni di chiusura (孤字): la riga precedente gli cede il suo ultimo carattere quando quella riga può ancora essere giustificata entro il limite di tracking. Anche una riga allineata a sinistra, a destra o centrata cede il carattere e resta più corta di un carattere; con <code>cjk.grid.fullLines</code> (carta da manoscritto) conserva ogni quadretto, e il paragrafo può terminare su un carattere.</td>
+    </tr>
+    <tr>
+      <td><code>runtMinCharacters</code></td>
+      <td><code>number</code></td>
+      <td><code>20</code></td>
+      <td>Soglia per l’ultima riga di un paragrafo, contata in spazi tra parole, non in lettere: la riga è troppo corta quando è più stretta di <code>runtMinCharacters × normalSpaceWidth</code> pixel. Uno spazio tra parole è da un quarto a un terzo di em nella maggior parte dei caratteri da testo, circa mezza lettera minuscola, quindi il valore predefinito 20 coglie le ultime righe sotto 4–7 em, cioè all’incirca da 8 a 12 lettere. Per cogliere le ultime righe sotto circa N lettere, impostalo intorno a 2 × N.</td>
+    </tr>
+    <tr>
+      <td><code>runtPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Badness equivalente inserita nella formula delle penalità al quadrato di Knuth–Plass (sulla stessa scala della <em>badness</em> della riga, che satura a 10000). <code>0</code> disattiva la penalità.</td>
+    </tr>
+    <tr>
+      <td><code>gradedRuntPenalty</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Gradua la penalità per la riga finale corta in base a quanto è corta l’ultima riga: un’ultima riga di larghezza <em>w</em> sotto la soglia <em>t</em> costa <code>runtPenalty × (1 − w / t)</code> invece dell’intera penalità. Una chiusa di due parole costa allora meno di una di una parola, e l’algoritmo porta giù una parola quando una riga sopra può cederla ('…sallies of' / 'our minds.' invece di '…sallies of our' / 'minds.'). Disattivato per impostazione predefinita: ogni riga finale corta costa lo stesso, e l’algoritmo mantiene le righe più strette sopra.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRuntsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se <code>true</code>, anche le voci di elenco ricevono la penalità per la riga finale corta. Ha effetto solo quando <code>avoidRunts</code> è <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>tightenRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quando la penalità non è riuscita a evitare una riga finale corta, compone invece il paragrafo con una riga in meno: gli spazi tra le parole si stringono (mai oltre <code>minWordSpacing</code>) e, se questo da solo non basta a far rientrare la riga, si aggiunge un po’ di tracking negativo. Una composizione più corta viene rifiutata, e la riga corta resta, quando allargherebbe una riga giustificata oltre <code>maxWordSpacing</code> o, quando il paragrafo ha già una riga giustificata più lasca, oltre quella riga, oppure quando comporrebbe in bandiera più righe (oltre 3× lo spazio normale) di quante ne avesse il paragrafo. Gli spazi tra le parole del testo in bandiera mantengono la loro larghezza, quindi lì interviene solo il tracking. Richiede <code>optimalLineBreaking</code> e <code>avoidRunts</code> (e <code>optimalRagged</code> per il testo in bandiera).</td>
+    </tr>
+    <tr>
+      <td><code>maxRuntTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Tracking massimo che la correzione di una riga finale corta può prendere, in millesimi di em (l’unità di InDesign: 10 = 0,01 em per carattere), applicato come restringimento. <code>0</code> lascia la correzione alla sola spaziatura tra le parole.</td>
+    </tr>
+    <tr>
+      <td><code>slackWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Peso applicato al costo al quadrato dello «spazio di colonna inutilizzato». Valori più alti fanno preferire all’impaginazione colonne riempite in modo serrato; <code>0</code> disattiva del tutto questa pressione.</td>
+    </tr>
+    <tr>
+      <td><code>keepColonWithList</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quando un paragrafo termina con i due punti che introducono direttamente un elenco, tiene l’ultima riga con i due punti unita all’elenco: se collocare il paragrafo non lasciasse spazio perché la prima voce dell’elenco cominci nella stessa colonna o pagina, l’ultima riga (o l’intero paragrafo, se è di una sola riga) viene spostata nella colonna successiva insieme all’elenco. Quanto spazio basta lo stabilisce <code>colonListRoom</code>. Quando questa regola spingerebbe avanti l’intero paragrafo e una serie di titoli lo precede subito nella colonna, anche quei titoli vengono portati avanti, così <code>headings.keepWithNext</code> continua a valere.</td>
+    </tr>
+    <tr>
+      <td><code>colonListRoom</code></td>
+      <td><code>'item' | 'line'</code></td>
+      <td><code>'item'</code></td>
+      <td>Lo spazio che <code>keepColonWithList</code> chiede sotto la riga con i due punti. <code>'item'</code>: ciò che le regole delle orfane e delle vedove per gli elenchi lascerebbero della prima voce al piede della colonna, una riga quando la voce si può dividere lì, tutta la voce quando la tengono intera (una voce di due righe, per esempio). <code>'line'</code>: una riga, come fino a postext 1.4; una prima voce che quelle regole tengono intera passa allora da sola alla colonna successiva e lascia al piede la riga con i due punti. Una configurazione salvata prima di <code>configVersion</code> 6, in un libro che introduce un elenco con i due punti, viene letta con <code>'line'</code> (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>). Qualsiasi altro valore viene letto come <code>'item'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateAcrossColumns</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
+      <td><code>true</code></td>
+      <td>Consente a una colonna o a una pagina di terminare con una parola sillabata (il <em>Hyphenate Across Column</em> di InDesign). <code>false</code> divide di nuovo in righe il paragrafo che attraversa il cambio di colonna, in modo che la sua ultima riga nella colonna termini con una parola intera; gli spazi tra le parole delle righe sopra assorbono la differenza, entro <code>maxWordSpacing</code> e <code>minWordSpacing</code>. È una preferenza: dove nessuna divisione entro quei limiti lo evita, il trattino resta. Prova ogni cambio di colonna di un paragrafo: il primo, e quelli successivi che cadono dove finisce una colonna piena, in una nuova divisione; e un cambio successivo che cade altrove (una vedova conservata, un livellamento di fascia) in un’altra, a partire da quella colonna, che lascia ai loro a capo le righe già composte nelle colonne precedenti e divide solo il resto. <code>'withinPage'</code> protegge le righe che chiudono una pagina e nessun’altra: una parola può essere divisa tra due colonne di una stessa pagina, e l’ultima riga di una pagina termina con una parola intera ovunque i limiti lo consentano. Cambia meno righe di <code>false</code>, il che conta con tre o più colonne, dove due fine colonna su tre stanno dentro la pagina; in una sola colonna i due valori danno le stesse righe. Una colonna chiude la sua pagina quando nessuna colonna successiva della pagina riceve testo: non la riceve una colonna laterale riservata agli elementi flottanti, né una colonna riempita da una tabella o da una figura. I corpi dei riquadri non sono interessati. Con <code>optimalRagged</code>, un paragrafo in bandiera viene diviso di nuovo allo stesso modo: i suoi spazi tra le parole mantengono la loro larghezza, quindi si spostano solo le estremità delle righe. Ogni nuova divisione misura il paragrafo un’altra volta, quindi un libro con molti trattini a fine colonna si impagina un po’ più lentamente. Richiede <code>optimalLineBreaking</code>, e <code>optimalRagged</code> per il testo in bandiera.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphContainerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td><code>'collapse'</code></td>
+      <td>Lo spazio sotto un contenitore <code>:::paragraphs</code> che si chiude su un paragrafo, tra quel paragrafo e il blocco che segue (vedi <a href="/it/docs/configuration-styles#il-contenitore-paragraphs">Il contenitore <code>:::paragraphs</code></a>). <code>'collapse'</code>: il maggiore tra lo <code>spaceBetween</code> e il <code>marginBottom</code> dello stile e la spaziatura tra paragrafi del testo intorno al contenitore (una riga con <code>paragraphSpacing</code>; in un riquadro, quella del riquadro), fuso con lo spazio che il blocco successivo tiene sopra di sé, come tra due paragrafi del testo corrente: un titolo sotto una bibliografia sta al suo <code>marginTop</code> sotto di essa, non a quel margine più la spaziatura delle voci. <code>'add'</code>: come fino a postext 1.4, sotto l’ultima riga viene messo solo lo spazio dello stile prima dell’allineamento alla griglia, lo spazio proprio del blocco successivo viene aggiunto sotto, e la spaziatura tra paragrafi viene esclusa, quindi il paragrafo dopo il contenitore poteva finire più vicino a esso che a qualsiasi altro. Una configurazione salvata prima di <code>configVersion</code> 8 che dichiara uno stile di paragrafo, in un libro che contiene un contenitore del genere, viene letta con <code>'add'</code> (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>). Un <code>marginBottom</code> negativo tira su il blocco successivo in entrambi i casi. Uno stile di paragrafo può impostare una regola propria per i suoi contenitori (<code>containerSpacing</code>, da postext 1.28).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Le righe finali troppo corte.** Una riga finale troppo corta (runt) è l’ultima riga di un paragrafo troppo breve per sembrare una vera riga di testo: di solito una o due parole brevi rimaste isolate alla fine del paragrafo. Poiché la verifica si basa sulla lunghezza in pixel della riga rispetto alla larghezza normale dello spazio, `runtMinCharacters` si adatta automaticamente al corpo del carattere in uso. Una parola breve visivamente più larga di `runtMinCharacters × spaceWidth` va bene; una parola più stretta (o davvero isolata) attira la penalità. La soglia conta spazi tra parole, larghi circa la metà delle lettere: il valore predefinito 20 corrisponde a un’ultima riga di circa 8–12 lettere. Ogni riga finale corta costa l’intera penalità, quindi tra due chiuse sotto la soglia l’algoritmo mantiene le righe più strette sopra; `gradedRuntPenalty` invece le valuta in base a quanto sono corte, e vince la chiusa più lunga. Per chi è curioso della matematica: con la `runtPenalty` predefinita di 1000, evitare una riga finale corta prevale su qualsiasi insieme alternativo di a capo che richieda un allargamento della spaziatura tra le parole fino a circa r≈2,15.
+
+**Morbide, non rigide.** Nessuna di queste regole può *impedire* una divisione: il motore produce sempre un’impaginazione. Sono penalità: l’algoritmo bilancia badness, costo della sillabazione, regolarità delle classi di riempimento e queste penalità strutturali in un’unica ottimizzazione globale e sceglie l’insieme di a capo con il costo totale più basso. Se ti serve una garanzia più forte, alza la penalità; se un certo documento si legge meglio con la penalità allentata, abbassala.
+
+
+## Bilanciamento delle colonne
+
+Gli editori si aspettano che ogni colonna cominci in cima alla pagina e finisca a filo con il suo fondo. Le regole di interruzione (protezione da orfane e vedove, titoli tenuti con il loro testo, figure indivisibili) lasciano per natura colonne corte: una o più righe vuote della griglia della linea di base in fondo. Quando il bilanciamento è attivo, il motore fa ciò che farebbe un compositore, applicando le sue leve in ordine di priorità editoriale:
+
+1. **Un riquadro che chiude la colonna**: un riquadro che termina una colonna corta viene spinto in basso esattamente dello spazio che ha sotto il piede, così il suo bordo inferiore cade sull’ultima posizione della griglia della pagina, alla stessa altezza dell’ultima riga della colonna accanto. Prende quello spazio anche quando è meno di una riga, purché nulla passi in un’altra colonna. Per impostazione predefinita agisce prima di ogni altra leva e prende l’intero vuoto, quindi un riquadro che commenta il paragrafo sopra di esso può finire diverse righe più in basso; `closingBox: 'last'` lascia che i titoli, le fine degli elenchi e le altre leve di spaziatura prendano prima le righe intere, e al riquadro solo ciò che lasciano, e `closingBox: 'off'` non lo sposta mai.
+2. **Immagini con una zona sicura**: un’immagine con una zona sicura (`Resource.safeArea`, vedi [Formato del documento › Zona sicura](/it/docs/document-format-resources#zona-sicura)) composta in linea nella colonna corta, o flottante in testa o al piede di essa sopra quella sola colonna, cresce di righe intere della griglia, ritagliata entro la sua zona sicura, finché la colonna non è piena o il ritaglio non raggiunge la zona sicura. Un’immagine più alta non lascia buchi nella pagina, quindi agisce prima che si aggiunga qualsiasi spazio; un elemento flottante in testa a una colonna in una pagina o in una banda le cui teste di colonna restano allineate (vedi sotto) non cresce. Registrata come `flexFigure`. Non ha un’impostazione propria: può crescere solo un’immagine la cui risorsa indica una zona sicura.
+3. **Titoli**: si aggiungono righe intere della griglia al margine superiore dei titoli all’interno della colonna corta. Quando servono più righe e la colonna contiene più titoli, le righe vengono distribuite tra di essi, dando sempre la quota maggiore al titolo più importante (un `h2` ne riceve più di un `h3`). I titoli che stanno proprio in cima a una colonna non ricevono mai spazio extra, così le colonne continuano a cominciare in cima alla pagina, tranne un titolo subito sotto una figura o una tabella in testa alla sua colonna in una pagina che prosegue: lo spazio va sopra quel titolo, sotto la figura. Un titolo prende al massimo `maxLinesBeforeLoose` righe in questo modo (due per impostazione predefinita) prima di provare le leve sottostanti, e le righe ulteriori, fino a `maxLinesPerHeading`, solo quando queste non hanno più nulla da dare.
+4. **Fine degli elenchi**: quando i titoli non riescono ad assorbire l’intero vuoto, si aggiunge una riga della griglia dove finisce un elenco o un’enumerazione (lo spazio dopo un elenco risulta naturale), con un limite per ogni fine di elenco.
+5. **Sotto formule, riquadri e figure**: poi una riga della griglia va sotto una formula in display o un riquadro dopo cui il testo riprende (`stretchAfterDisplays`; si legge come il margine proprio dell’elemento), e sotto una figura o una tabella in testa alla colonna (`stretchAfterFloats`, limitato da `maxLinesAfterFloat`).
+6. **Paragrafi allargati**: come ultima risorsa, un paragrafo della colonna viene ridiviso con una riga in più (il `\looseness=+1` di TeX), scegliendo il paragrafo più lungo così che la spaziatura extra tra le parole si diluisca senza vedersi. La soluzione allargata viene accettata solo quando ogni riga resta **sotto `bodyText.maxWordSpacing`**: il colore tipografico non supera mai il limite che hai già configurato. Richiede `bodyText.optimalLineBreaking`.
+
+Su una griglia dei caratteri (`cjk.grid`, vedi [Impaginazione cinese › La griglia dei caratteri](/it/docs/chinese-layout#la-griglia-dei-caratteri)) ogni carattere sta in una cella larga un em e ogni riga sul passo di riga della griglia, che è anche la griglia della linea di base. Lì il bilanciamento è disattivato per impostazione predefinita, come nel testo verticale: una pagina composta riga per riga su una griglia, come la GB/T 9704 conta 22 righe di 28 caratteri, lascia corta una colonna corta. Una configurazione che imposta `enabled: true` ottiene leve che rispettano la griglia: titoli, fine degli elenchi, formule in display e figure prendono righe intere della griglia, così il testo sotto di essi si sposta di righe intere, e `gridLines: 'off'` le esclude per uno standard che non ha righe vuote da cedere. Un paragrafo cinese o giapponese si allunga di una riga solo quando nessuno spazio tra due dei suoi caratteri si allarga oltre `maxTracking`, e non prende tracking sulle lettere: una riga a cui manca un carattere distribuisce un em sui suoi spazi, molto oltre il valore predefinito di 0,01 em, quindi su una griglia di celle intere la leva dei paragrafi allargati di solito non trova nulla. Il riquadro che chiude una colonna e le immagini con una zona sicura sono per costruzione fuori griglia e funzionano come ovunque.
+
+L’ultima colonna di una pagina viene bilanciata solo quando la pagina prosegue naturalmente nella successiva: la pagina di chiusura di un capitolo può legittimamente finire corta. Una pagina del genere, e una banda di chiusura livellata da `trailing`, mantiene anche le teste di colonna allineate: non si aggiunge alcuna riga sotto una figura o una tabella in testa a una delle sue colonne (la leva dopo gli elementi flottanti), e un titolo o un riquadro che apre una colonna sotto una figura del genere resta in testa, qualunque cosa dica `stretchAfterFloats`, come il titolo composto subito sotto un’apertura `span: 'page'` nella colonna propria dell’apertura, così una colonna non comincia mai più in basso di quella accanto solo per allineare i piedi.
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se bilanciare il fondo delle colonne. Disattivato per impostazione predefinita nel testo verticale (<code>layout.writingMode: 'vertical-rl'</code>) e su una griglia dei caratteri (<code>cjk.grid.enabled</code>, da postext 1.25); <code>true</code> lo attiva anche lì.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesPerHeading</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>Numero massimo di righe extra della griglia che si possono aggiungere sopra un singolo titolo.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Righe della griglia che un titolo può prendere prima di provare le leve che lo seguono: le fine degli elenchi, le formule e i riquadri, le figure e i paragrafi allargati. Un titolo ottiene le righe ulteriori, fino a <code>maxLinesPerHeading</code>, solo quando quelle non hanno più nulla da dare, così una pagina con un solo titolo non apre quattro righe sopra di esso mentre i suoi paragrafi potrebbero allungarsi di una riga. Un valore pari o superiore a <code>maxLinesPerHeading</code> dà prima ai titoli tutte le loro righe, come fino a postext 1.27; <code>0</code> prova le altre leve prima che qualsiasi riga vada sopra un titolo. Da postext 1.28; i documenti salvati in precedenza mantengono il vecchio ordine (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permette righe extra della griglia dove finisce un elenco, quando i titoli non riescono ad assorbire l’intero vuoto.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterList</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Numero massimo di righe extra della griglia dopo la fine di un singolo elenco.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permette una riga extra della griglia sotto una formula in display, e sotto un riquadro, nella colonna corta, dopo la leva della fine degli elenchi: il blocco che segue scende di una riga. Impostalo su <code>false</code> per lasciare lo spazio sotto formule e riquadri come lo stabiliscono i loro margini; il vuoto passa alle leve successive, e la colonna finisce corta se non lo chiudono. Da postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterFloats</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permette righe extra della griglia sotto una figura o una tabella in testa alla colonna corta (un elemento flottante in alto), dopo la leva della fine degli elenchi, così il testo sotto di essa scende invece di lasciare corta la colonna. Mai in una pagina che non prosegue (la pagina di chiusura di un capitolo) né in una banda di chiusura livellata da <code>trailing</code>: lì le teste di colonna restano allineate e l’ultima colonna può finire una riga più corta. Il primo blocco sotto la figura può essere il resto di un paragrafo cominciato nella pagina precedente: scende comunque, della riga che le regole di interruzione hanno lasciato libera al piede della colonna (una riga che la regola delle vedove ha tenuto vuota, o uno spazio tra paragrafi senza spazio per il testo successivo). Impostalo su <code>false</code> per tenere il testo subito sotto la figura. Sotto un elemento flottante su più colonne le colonne si spostano insieme o per niente, vedi <code>stretchAfterWideFloats</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterFloat</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Numero massimo di righe extra della griglia sotto un singolo elemento flottante in alto.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Sotto una figura o una tabella che sta sopra due o più colonne di testo. Con <code>'flush'</code> una colonna scende sotto di essa solo quando ogni colonna di testo sotto l’elemento flottante prende le stesse righe, così le loro teste restano allineate, o quando le righe fanno finire quella colonna a filo; una riga che abbasserebbe la testa di una colonna lasciandola comunque corta non viene aggiunta, e il vuoto passa ai paragrafi allargati. <code>'always'</code> allunga una colonna del genere come sotto qualsiasi elemento flottante, come fino a postext 1.27. Qualsiasi altro valore si legge come <code>'flush'</code>. Da postext 1.28; i documenti salvati in precedenza mantengono <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ultima risorsa: ridivide i paragrafi di una colonna corta in modo più largo (una riga in più ciascuno), entro <code>bodyText.maxWordSpacing</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLooseParagraphs</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Quanti paragrafi di una colonna corta possono allungarsi di una riga, a partire dal più lungo.</td>
+    </tr>
+    <tr>
+      <td><code>trackParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quando la sola spaziatura tra le parole non basta a guadagnare la riga, un paragrafo allargato può prendere anche il tracking (spaziatura tra lettere) positivo più piccolo che ci riesce.</td>
+    </tr>
+    <tr>
+      <td><code>maxTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Limite superiore di quel tracking, in millesimi di em per carattere (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>trailing</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Livella la banda di chiusura di un capitolo e del documento: quando il flusso finisce prima che la pagina sia piena (a un’apertura di capitolo, a un <code>:::part</code>, a un riquadro <code>placement: 'fixed'</code> che chiude il capitolo o alla fine del documento) con le colonne disuguali, queste vengono tagliate alla stessa altezza (un limite di banda di <code>ceil(Σ used / N / grid)</code> righe, risolto dopo che le leve sopra hanno sistemato le pagine precedenti), così una bibliografia breve finisce alla stessa altezza in ogni colonna invece di riempire la prima colonna e lasciare l’ultima mezza vuota. Il taglio rispetta le regole che rispetta una banda non tagliata: quando un blocco che non può dividersi sul taglio (la coda di un paragrafo che i minimi di orfane e vedove tengono intera, un riquadro da tenere unito) lo supererebbe (e perderebbe le ultime righe, dato che i renderer ritagliano una colonna al suo riquadro) o un titolo chiuderebbe una colonna mentre il suo testo apre la successiva (con <code>headings.keepWithNext</code>, il valore predefinito), il taglio viene spostato una riga più in basso, fino a tre volte, e altrimenti abbandonato. Un blocco che non può cominciare nelle righe che il taglio lascia sotto una figura in testa a una colonna (lì un paragrafo ha bisogno del suo minimo di orfane) passa invece alla colonna successiva della banda, come farebbe da una colonna non tagliata, e la figura resta da sola nella sua colonna. Le colonne i cui piedi differiscono di una riga della griglia o meno restano come sono: una banda di chiusura la cui ultima colonna finisce una riga più corta è la conclusione abituale, e tagliarla sposterebbe solo una riga. Il taglio va alla banda in cui è stato misurato, e così il taglio che un riquadro a tutta larghezza chiede a metà pagina: fino a postext 1.4, quando il primo testo della pagina di chiusura era stato prima proposto a una banda senza spazio per esso (una pagina occupata per intero da un elemento flottante, la banda sottile che un riquadro a tutta larghezza lascia al piede della pagina precedente), il taglio veniva speso su quella banda e la pagina di chiusura teneva tutte le righe nella prima colonna. Le colonne di larghezze diverse (un’impaginazione a colonna e mezza con testo in entrambe) vengono tagliate per area, con l’altezza di ogni colonna pesata sulla sua larghezza, dato che una riga della colonna stretta contiene meno testo. Attivo solo quando <code>enabled</code> è true.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>L’unità del taglio livellato che prende <code>trailing</code> (e del taglio che prende <code>beforeSpan</code> dietro un riquadro che si sposta oltre). <code>'lines'</code>: una banda il cui testo è composto con un’interlinea propria (un indice analitico, una bibliografia, un contenitore in corpo minore) viene tagliata, e ritentata, per righe intere di quell’interlinea: l’altezza condivisa dalla maggior parte delle righe della banda, titoli e riquadri esclusi. Le sue colonne finiscono allora entro una riga l’una dall’altra, come fa una banda di testo del corpo. Una banda di testo del corpo, e una che mescola due interlinee in parti uguali, viene tagliata sulla griglia della linea di base come prima. Così anche una banda le cui righe hanno la stessa altezza e distano tra loro una frazione di riga (voci bibliografiche con uno spazio tra una voce e l’altra, gruppi di un indice su un margine impostato a mano): quattro righe su cinque di ogni colonna devono distare tra loro un numero intero di righe. <code>'grid'</code>: ogni taglio è un numero intero di righe della griglia della linea di base, come fino a postext 1.27, quando un taglio sulla griglia lasciava entrare una riga in più in una colonna di una banda fuori griglia e un taglio fallito veniva abbassato di più di una delle sue righe (colonne distanti fino a tre righe). Qualsiasi altro valore si legge come <code>'lines'</code>. Da postext 1.28; i documenti salvati in precedenza mantengono <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
+    </tr>
+    <tr>
+      <td><code>beforeSpan</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Livella la banda che un blocco a tutta larghezza lascia dietro di sé: quando un riquadro <code>span: 'page'</code> non entra sotto le colonne correnti nemmeno dopo un taglio livellato, e deve passare alla pagina successiva o dividersi (<code>calloutStyles[].keepTogether: false</code>), le colonne che interrompe vengono tagliate alla stessa altezza (lo stesso limite finale che riceve una banda di chiusura) invece di avere la prima che riempie la pagina e l’ultima che finisce corta. La pagina viene lasciata come interruzione esplicita, così le leve sopra non riallungano la sua ultima colonna fino al fondo della pagina; il riquadro, o la parte che ne entra, si colloca poi sotto le colonne livellate. Attivo solo quando <code>enabled</code> è true.</td>
+    </tr>
+    <tr>
+      <td><code>closingBox</code></td>
+      <td><code>'first' | 'last' | 'off'</code></td>
+      <td><code>'first'</code></td>
+      <td>Quando un riquadro che chiude una colonna corta prende lo spazio sotto il suo piede (leva 1, registrata come <code>trailingCallout</code>). <code>'first'</code>: prima di ogni altra leva, come fino a postext 1.4; il riquadro prende l’intero vuoto, anche di diverse righe, e i titoli sopra di esso non ne ricevono. <code>'last'</code>: dopo le leve dei titoli, delle fine degli elenchi, delle formule in display e degli elementi flottanti, che prendono prima le righe intere; il riquadro scende con il testo sopra di esso e poi prende solo ciò che hanno lasciato, di solito una frazione di riga, così il suo piede raggiunge comunque l’ultima posizione della griglia e resta vicino al testo che commenta. <code>'off'</code>: mai; il riquadro mantiene lo spazio sotto il suo piede, anche se le altre leve possono comunque spostarlo in basso di righe intere quando aggiungono spazio sopra di esso, e la frazione di riga lasciata sotto rimane. In una pagina di chiusura, dove il riquadro è l’unica leva che allinea il suo piede con la colonna accanto, <code>'off'</code> lo lascia dove lo ha messo il flusso. Qualsiasi altro valore si legge come <code>'first'</code>. Un riquadro che chiude l’unica colonna di testo della sua banda (una pagina a una colonna che finisce prima, con il blocco successivo che apre la pagina seguente) non viene mai spostato: non c’è alcuna colonna accanto con cui allinearsi (da postext 1.19).</td>
+    </tr>
+    <tr>
+      <td><code>gridLines</code></td>
+      <td><code>'allow' | 'off'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Su una griglia dei caratteri: se possono agire le leve che aggiungono righe intere della griglia (sopra un titolo, dove finisce un elenco, sotto una formula in display o un riquadro, sotto una figura in testa alla colonna). Mantengono ogni carattere nella sua cella; <code>'off'</code> è adatto a uno standard che conta le righe di una pagina, e lascia invece corta la colonna. Nessun effetto fuori dalla griglia. Qualsiasi altro valore si legge come <code>'allow'</code>. Da postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Quale leva è intervenuta
+
+L’impaginazione registra ogni leva che ha applicato, sul blocco a cui l’ha applicata: `block.balancing` nel VDT che restituisce `buildDocument`. Una bozza, un test o un rapporto possono dire perché una colonna finisce a filo, e quali colonne nessuna leva è riuscita a chiudere. I blocchi che il bilanciamento ha lasciato stare non portano alcun `balancing`, e un documento costruito con `enabled: false` non ne ha.
+
+Su una griglia dei caratteri il documento dice perché una colonna può finire corta: `doc.gridBalancing` è `{ off: true }` quando il bilanciamento è disattivato perché la pagina è su una griglia e la configurazione non lo attiva, e `{ gridLines: 'off' }` quando agisce senza le leve a righe intere; una colonna ancora corta porta `column.gridRefused`, le leve che la griglia le ha negato (`'looseParagraph'` quando un paragrafo poteva guadagnare la sua riga solo spostando i caratteri fuori dalle loro celle, le leve a righe intere con `gridLines: 'off'`). Entrambi sono assenti fuori dalla griglia.
+
+```ts
+interface VDTBalancing {
+  levers: BalanceLever[]; // usually one: a paragraph after a list can take the list-end line and run a line long too
+  spaceAbove: number;     // px the spacing levers added above the block (0 when only looseParagraph or flexFigure fired)
+  bodyGrowth?: number;    // flexFigure: px the picture grew, cropped within its safe area
+  extraLines?: number;    // looseParagraph: lines the paragraph gained
+  tracking?: number;      // looseParagraph: the tracking that gained them, in thousandths of an em (0 = word spacing alone)
+}
+type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Leva</th>
+      <th>Registrata su</th>
+      <th>Che cosa ha fatto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>trailingCallout</code></td>
+      <td>il blocco cornice del riquadro</td>
+      <td>Un riquadro che chiude la colonna è sceso esattamente dello spazio sotto il suo piede (<code>spaceAbove</code>; una frazione di riga va bene).</td>
+    </tr>
+    <tr>
+      <td><code>flexFigure</code></td>
+      <td>il blocco dell’immagine (in linea) o l’elemento flottante</td>
+      <td>Un’immagine con una zona sicura composta <code>bodyGrowth</code> px più alta, per righe intere della griglia, ritagliata entro la zona sicura. Il <code>bodySource</code> del blocco della risorsa è la parte mostrata e <code>bodyFlex.delta</code> la stessa crescita.</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>il titolo</td>
+      <td>Righe intere della griglia sopra il titolo, fino a <code>maxLinesPerHeading</code>.</td>
+    </tr>
+    <tr>
+      <td><code>listEnd</code></td>
+      <td>il primo blocco dopo l’elenco</td>
+      <td>Una riga della griglia dove finisce un elenco, fino a <code>maxLinesAfterList</code>.</td>
+    </tr>
+    <tr>
+      <td><code>afterDisplay</code></td>
+      <td>il blocco dopo la formula o il riquadro</td>
+      <td>Una riga della griglia sotto una formula in display o un riquadro.</td>
+    </tr>
+    <tr>
+      <td><code>afterFloat</code></td>
+      <td>il primo blocco della colonna</td>
+      <td>Una riga della griglia tra una banda di elementi flottanti in testa alla colonna e il suo testo, fino a <code>maxLinesAfterFloat</code>.</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraph</code></td>
+      <td>il paragrafo</td>
+      <td>Il paragrafo ridiviso con <code>extraLines</code> righe in più, con il tracking più piccolo che ci è riuscito (<code>tracking</code>; <code>block.letterSpacing</code> è lo stesso valore in px).</td>
+    </tr>
+  </tbody>
+</table>
+
+I tagli livellati vengono registrati sulle colonne che tagliano: `column.bandCapped` è true su ogni colonna tagliata alla stessa altezza (la banda che lascia un riquadro a tutta larghezza, una banda di chiusura), e `column.trailingCap` segna inoltre la banda di chiusura di un capitolo o del documento (`trailing`).
+
+```ts
+import { buildDocument } from 'postext';
+
+const doc = buildDocument(content, config);
+for (const page of doc.pages) {
+  page.columns.forEach((column, i) => {
+    const levers: string[] = column.blocks.flatMap((block) => block.balancing?.levers ?? []);
+    if (column.trailingCap) levers.push('closing band cut level');
+    else if (column.bandCapped) levers.push('band cut level');
+    if (levers.length > 0) console.log(`page ${page.index + 1}, column ${i + 1}: ${levers.join(', ')}`);
+  });
+}
+// page 3, column 1: heading, heading
+// page 3, column 2: listEnd, looseParagraph
+```

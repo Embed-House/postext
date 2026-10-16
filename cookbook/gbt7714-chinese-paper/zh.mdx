@@ -22,7 +22,7 @@ pageNotes: { "1": "第1页：虚构期刊《示例出版研究》的一篇论文
 
 ### 2 · 用CSL-YAML块提供文献数据
 
-文献数据写在Markdown末尾的`:::references{format=csl-yaml}`块里，格式与Zotero导出的CSL YAML相同（[参考文献数据](/zh/docs/document-format#参考文献数据)）。文献类型标识由CSL类型决定：`book`印[M]，`article-journal`印[J]，`thesis`印[D]，`paper-conference`印[C]，后接“//”和论文集，`webpage`印[EB/OL]，引用日期放在方括号里。带DOI的期刊文章按标准标为[J/OL]，并保留DOI。中文姓名写在`literal`里，样式就不会把它拆成姓和名。`:::bibliography{title=""}`把文献表放在不编号的标题“参考文献”之下，`labelWidth`让每条文献的转行与正文对齐，而不是缩得更深。
+文献数据写在Markdown末尾的`:::references{format=csl-yaml}`块里，格式与Zotero导出的CSL YAML相同（[参考文献数据](/zh/docs/document-format-notes-references#参考文献数据)）。文献类型标识由CSL类型决定：`book`印[M]，`article-journal`印[J]，`thesis`印[D]，`paper-conference`印[C]，后接“//”和论文集，`webpage`印[EB/OL]，引用日期放在方括号里。带DOI的期刊文章按标准标为[J/OL]，并保留DOI。中文姓名写在`literal`里，样式就不会把它拆成姓和名。`:::bibliography{title=""}`把文献表放在不编号的标题“参考文献”之下，`labelWidth`让每条文献的转行与正文对齐，而不是缩得更深。
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="第2页：西文文献著者姓氏大写，用et al.；中文文献用“等”；每条都有文献类型标识。" />
 
@@ -30,7 +30,7 @@ pageNotes: { "1": "第1页：虚构期刊《示例出版研究》的一篇论文
 
 <Excerpt region="masthead" />
 
-题名区是一级标题的设计，所用标题样式跨两栏通排。色带是锚定在裁切边上的方框，刊名用白色压在上面。题名、作者和作者单位取自标题及其属性，每一项放在上一项之下（`#title`、`below`），题名排成三行时，下面各项会随之下移（[通栏与高级设计](/zh/docs/configuration-text#通栏与高级设计)）。
+题名区是一级标题的设计，所用标题样式跨两栏通排。色带是锚定在裁切边上的方框，刊名用白色压在上面。题名、作者和作者单位取自标题及其属性，每一项放在上一项之下（`#title`、`below`），题名排成三行时，下面各项会随之下移（[通栏与高级设计](/zh/docs/configuration-headings#通栏与高级设计)）。
 
 ### 4 · 摘要及其标签
 

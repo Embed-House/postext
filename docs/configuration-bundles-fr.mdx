@@ -1,0 +1,295 @@
+{/* docs/configuration-bundles-fr.mdx */}
+
+export const metadata = {
+  title: 'Utilisation programmatique : paquets .postext',
+  sidebarTitle: 'Paquets .postext',
+  description: 'Ouvrir, mettre en page, rendre et créer des fichiers .postext depuis le code, les paquets bilingues, les fichiers des anciennes versions et l’API de bas niveau',
+  lang: 'fr',
+  lastUpdated: '2026-10-16',
+  readingTime: '30 min',
+  order: 23,
+  parent: 'configuration',
+  plainSummary: "Cette page s’adresse aux personnes qui écrivent du code. Un fichier .postext contient un livre entier en un seul fichier : son texte, ses réglages, ses polices et ses images. La page montre comment ouvrir un tel fichier, composer ses pages et les dessiner. Elle montre comment créer un nouveau fichier à partir de votre propre texte, et comment garder deux langues d’un même livre dans un seul fichier. Elle explique aussi comment Postext lit les fichiers créés par ses anciennes versions.",
+};
+
+# Utilisation programmatique : paquets .postext
+
+
+## Paquets (fichiers `.postext`)
+
+Un **fichier `.postext`** est un livre entier en un seul fichier : une archive zip qui contient un manifeste `preset.json`, un fichier Markdown par chapitre, les contenus des ressources (bitmaps, SVG, originaux d’impression PDF) et les fichiers des polices que nomme la configuration. Le [Sandbox](/fr/docs/sandbox-books-saving#export-et-import) l’exporte et l’importe, et le [skill d’agent](/fr/docs/skill) le livre. Le paquet `postext` sait aussi le créer et l’ouvrir, si bien qu’un livre peut circuler entre ces outils et votre propre programme sans rien perdre.
+
+```
+my-book.postext
+├── preset.json            manifest: name, locale, chapters, config, resources, fonts
+├── chapters/01-dusk.md
+├── chapters/02-night.md
+├── resources/lantern.svg
+└── fonts/ebgaramond-400-normal.woff2
+```
+
+Le manifeste est décrit champ par champ dans l’annexe [Format des paquets de préréglages](/fr/docs/sandbox-embedding#format-des-paquets-de-préréglage) du Sandbox. Un fichier peut aussi contenir `layouts.json`, les nombres de pages du Sandbox, afin que le livre s’y ouvre déjà paginé, ou un par édition d’un livre multilingue (`layouts.zh-Hant.json`, lu en premier). `openBundle` les ignore.
+
+L’API est exportée par `postext` lui-même et par le sous-chemin `postext/bundle`, qui ajoute les fonctions de bas niveau. Importez depuis `postext` quand vous faites aussi le rendu. Les adaptateurs de paquets et les moteurs de rendu partagent ainsi une seule instance de module, ce qui compte sur un CDN comme esm.sh, où chaque point d’entrée est un build distinct.
+
+### Ouvrir un paquet
+
+`openBundle` prend les octets du fichier (un `Uint8Array`, un `ArrayBuffer`, ou un `Blob` / `File` issu d’un `<input type="file">`) et renvoie tout ce dont le moteur et ses sorties ont besoin :
+
+```ts
+import { openBundle } from 'postext';
+
+const bundle = await openBundle(await file.arrayBuffer(), { locale: 'es' });
+
+bundle.chapters;   // [{ title, file, markdown }, …] in book order
+bundle.config;     // PostextConfig, ready for buildDocument
+bundle.resources;  // Resource[]
+bundle.files;      // Map<path, Uint8Array>: every file of the bundle
+```
+
+<table>
+  <thead>
+    <tr><th>Champ</th><th>Contenu</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>manifest</code></td><td>Le <code>preset.json</code> validé.</td></tr>
+    <tr><td><code>id</code>, <code>name</code>, <code>description</code></td><td>Tirés du manifeste.</td></tr>
+    <tr><td><code>locale</code>, <code>locales</code></td><td>La langue dans laquelle le contenu a été lu, et toutes les langues que contient un paquet bilingue. <code>options.locale</code> en choisit une : d’abord l’étiquette exacte, puis la langue de base, puis la langue propre du paquet.</td></tr>
+    <tr><td><code>chapters</code></td><td><code>&#123; title, file, markdown &#125;</code> par chapitre. Un chapitre sans titre dans le manifeste prend le texte de son premier titre <code>#</code>.</td></tr>
+    <tr><td><code>config</code></td><td>La palette de couleurs par défaut et les types de ressources dans la langue du paquet, puis la <code>config</code> du manifeste, puis les surcharges de la langue. La langue du paquet est le <code>locale</code> ci-dessus : un paquet dans une langue reçoit donc ses propres libellés quoi que demande <code>options.locale</code>. Un manifeste qui ne nomme aucune langue prend celle que fixe sa <code>config</code> (<code>locale</code>, puis la langue de césure), sinon <code>options.locale</code>. <code>customFonts</code> liste les familles de polices du paquet. C’est la même configuration que celle avec laquelle le Sandbox ouvre le paquet.</td></tr>
+    <tr><td><code>resources</code></td><td>Les ressources, avec les légendes de la langue choisie. Une taille absente du manifeste est lue dans le fichier.</td></tr>
+    <tr><td><code>fonts</code></td><td>Une entrée par fonte : <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
+    <tr><td><code>files</code></td><td>Chaque fichier de l’archive, indexé par son chemin.</td></tr>
+    <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>Le chemin de l’image de couverture, et la façon dont le paquet demande à être affiché : la <code>view</code> du manifeste, surchargée par le <code>localized[…].view</code> de la langue servie.</td></tr>
+    <tr><td><code>start</code></td><td>Où commence le livre, pour un paquet qui contient une partie d’un ouvrage plus long : le <code>start</code> du manifeste, ou le <code>localized[…].start</code> de la langue servie. Absent pour un livre qui commence à son début.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problèmes non bloquants : un fichier de police non pris en charge, un original d’impression manquant.</td></tr>
+  </tbody>
+</table>
+
+Le **`fileId` d’un contenu est son chemin dans le paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` et le `fileId` de chaque variante de `customFonts` peuvent être cherchés directement dans `bundle.files`. `openBundle` lève une exception quand les octets ne sont pas un zip, quand il n’y a pas de `preset.json` valide (à la racine ou dans un unique dossier de premier niveau), ou quand un fichier que nomme le manifeste est absent.
+
+#### Paquets écrits par postext 1.4 ou antérieur
+
+Chaque manifeste qu’écrivent `createBundle` et le Sandbox porte `configVersion: 14` : les règles de configuration pour lesquelles sa `config` a été écrite. Un manifeste qui ne le porte pas a été écrit par postext 1.4 ou antérieur, qui réglait dix-huit choses autrement :
+
+- **Les sauts aux titres** (règles 3) : jusqu’à la 1.4, un objet `headings` sans saut pour le H1 n’en avait aucun (voir [Surcharges par niveau](/fr/docs/configuration-headings#réglages-par-niveau)).
+- **Le corps des formules** (règles 4) : jusqu’à la 1.4, les formules sortaient 1,131 fois plus grandes que ne l’indique `fontSizeScale` (voir [Taille des formules](/fr/docs/configuration-lists-math#mathématiques)).
+- **L’espace sous une ressource en ligne** (règles 5) : jusqu’à la 1.4, le texte qui suit une figure ou un tableau en `placement.position: 'here'` reprenait à la ligne de grille suivante, sans espace de flottant en dessous (voir `layout.inlineResourceGap` dans [Mise en page](/fr/docs/configuration-page-layout#mise-en-page)).
+- **L’espace autour d’une ressource en ligne dans un encadré** (règles 6) : jusqu’à la 1.4, une telle ressource était collée au texte de l’encadré qui l’entoure (voir `layout.inlineResourceGapInBoxes` dans [Mise en page](/fr/docs/configuration-page-layout#mise-en-page)).
+- **Les marques en ligne dans les titres** (règles 6) : jusqu’à la 1.4, un titre imprimait les mots de ses marques `*italic*`, `**bold**` et autres dans son propre style simple (voir `headings.inlineMarks` dans [Titres](/fr/docs/configuration-headings#titres)).
+- **La taille d’une lettrine** (règles 6) : jusqu’à la 1.4, la `dropCap` d’un texte de maquette sans `fontSize` était aussi haute que toutes les boîtes de lignes qu’elle couvre, son sommet au-dessus de la première ligne (voir `dropCap` dans [Éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)).
+- **La place sous une ligne terminée par un deux-points** (règles 6) : jusqu’à la 1.4, `keepColonWithList` jugeait suffisante pour la liste une ligne de place sous la ligne finissant par un deux-points, et un premier élément de deux lignes, que les règles des orphelines et des veuves gardent entier, passait à la colonne suivante sans elle (voir `bodyText.colonListRoom`).
+- **Les lignes que laisse la coupure d’un encadré** (règles 6) : jusqu’à la 1.4, un encadré coupé à l’intérieur d’un paragraphe ou d’un élément de liste pouvait en laisser une seule ligne d’un côté, pourvu que chaque côté de l’encadré contienne en tout ses `splitMinLines` lignes (voir `layout.boxChildSplitMinLines` dans [Mise en page](/fr/docs/configuration-page-layout#mise-en-page)).
+- **Les coupures de ligne à un tiret** (règles 7) : jusqu’à la 1.4, Knuth-Plass ne terminait jamais une ligne après un tiret cadratin ou demi-cadratin collé entre deux mots (`say—that’s`), et l’algorithme ligne à ligne du texte mis en forme seulement entre deux lettres (voir `bodyText.breakAfterDashes` dans [Texte courant](/fr/docs/configuration-text#texte-courant)).
+- **Le texte en drapeau** (règles 7) : jusqu’à la 1.4, le texte courant en drapeau était composé ligne à ligne, chaque ligne remplie avant la suivante, quoi qu’indique `optimalLineBreaking` (voir `bodyText.optimalRagged` dans [Texte courant](/fr/docs/configuration-text#texte-courant)).
+- **La coupure sous un titre** (règles 8) : jusqu’à la 1.4, le paragraphe sous un titre en pied de colonne gardait autant de lignes qu’il en tenait là, si peu qu’il en passe à la colonne suivante (voir `headings.keepWithNextSplit` dans [Titres](/fr/docs/configuration-headings#titres)).
+- **L’espace sous un conteneur `:::paragraphs`** (règles 8) : jusqu’à la 1.4, l’espace du style était placé sous le dernier paragraphe avant l’alignement sur la grille, l’espace au-dessus du bloc suivant (le `marginTop` d’un titre) s’y ajoutait, et l’espacement entre paragraphes du texte était omis (voir `bodyText.paragraphContainerSpacing` dans [Texte courant](/fr/docs/configuration-text#texte-courant)).
+- **Les coupures de ligne au trait d’union d’un mot composé** (règles 8) : jusqu’à la 1.4, Knuth-Plass ne terminait jamais une ligne justifiée après un trait d’union entre deux lettres (`well-known`) dans un paragraphe sans mise en forme en ligne, alors qu’il le faisait dans un paragraphe mis en forme (voir `bodyText.breakAfterHyphens` dans [Texte courant](/fr/docs/configuration-text#texte-courant)).
+- **Les poèmes sans séparateur** (règles 9) : jusqu’à la 1.22, un poème `:::verse` dont les vers ne portaient pas de `||` était composé en hémistiches isolés, chaque vers centré (voir `bodyText.verse.layout` dans [Vers](/fr/docs/configuration-text#vers)).
+- **Un retrait de première ligne à côté d’un retrait négatif** (règles 9) : jusqu’à la 1.22, le `hangingIndent` d’un style de paragraphe remplaçait son `firstLineIndent`, et la première ligne commençait à `indent` (voir [Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)).
+- **Une barre oblique inverse en fin de ligne** (règles 9) : jusqu’à la 1.22, une barre oblique inverse qui terminait une ligne d’un paragraphe, d’une citation ou d’un élément de liste, ainsi que `\\` devant une espace, s’imprimaient, et les lignes étaient jointes par une espace (voir `bodyText.hardLineBreaks` dans [Texte courant](/fr/docs/configuration-text#texte-courant)).
+- **Les blocs de code délimités** (règles 9) : jusqu’à la 1.22, une clôture ```` ``` ```` ou `~~~` et les lignes qu’elle contient étaient lues comme du Markdown : lignes jointes en paragraphes, une ligne `#` devenue titre, clôtures imprimées (voir `codeStyle.blocks` dans [Listings de code](/fr/docs/configuration-styles#listings-de-code)).
+- **Les vers reportés** (règles 10) : en 1.23, un vers d’un poème composé ligne à ligne et plus large que la justification était reporté à son espacement naturel entre les mots, si peu qu’il déborde (voir `bodyText.verse.tighten` dans [Vers](/fr/docs/configuration-text#vers)).
+
+`openBundle` et `readBundle` lisent la `config` d’un tel manifeste, et la configuration `localized` de chaque langue, au moyen de `migrateConfig`, qui écrit en clair les sauts que la 1.4 mettait en page et multiplie l’échelle des formules par 1,131 (ses marges d’affichage en `em` étant divisées par ce facteur). Un manifeste marqué de `3` à `7`, écrit par une préversion de la 1.5, ne reçoit que les épinglages des règles postérieures à sa marque. Avec `3`, ce sont le corps des formules, l’espace en ligne, les cinq épinglages des règles 6, les deux des règles 7 et les trois des règles 8 ; avec `4`, l’espace en ligne et les épinglages des règles 6, 7 et 8 ; avec `5`, les épinglages des règles 6, 7 et 8 ; avec `6`, les épinglages des règles 7 et 8 ; avec `7`, les seuls épinglages des règles 8. La coupure sous un titre (`pinLegacyHeadingSplit`) est écrite sous la forme `headings.keepWithNextSplit: 'fill'` sur les `headings` que les couches laissent en vigueur, quand un chapitre lu contient un titre et que la configuration ne nomme aucune valeur propre, garde `headings.keepWithNext` activé et ne désactive pas `bodyText.avoidOrphans`. Les coupures aux mots composés (`pinLegacyHyphenBreaks`) sont écrites sous la forme `bodyText.breakAfterHyphens: false` sur le `bodyText` en vigueur, quand un chapitre lu compose un trait d’union entre deux lettres et que la configuration ne le fixe pas déjà et ne désactive pas `optimalLineBreaking`. L’espace sous les conteneurs (`pinLegacyParagraphContainerSpacing`) est écrit sous la forme `bodyText.paragraphContainerSpacing: 'add'` sur le `bodyText` en vigueur, quand la configuration déclare un style de paragraphe (dans `paragraphStyles` ou dans les surcharges de la visionneuse HTML), qu’un chapitre lu ouvre un conteneur `:::paragraphs` sur une ligne à part et que la configuration ne le fixe pas déjà. Les coupures aux tirets (`pinLegacyDashBreaks`) sont écrites sous la forme `bodyText.breakAfterDashes: false` sur le `bodyText` en vigueur, quand un chapitre lu compose un tiret cadratin ou demi-cadratin collé entre deux mots (une lettre, un chiffre ou une ponctuation fermante avant lui, une lettre, un chiffre ou une parenthèse ou un guillemet ouvrant après lui ; un guillemet avant lui compte quand une lettre, un chiffre, une ponctuation fermante ou une espace insécable précède le guillemet, comme dans `"no"—and`, et non dans `said "—Hola` ; une marque en ligne qui touche le tiret ou le guillemet, comme les `**` de `**riddles.**—I`, compte d’un côté comme de l’autre) et que la configuration ne le fixe pas déjà. La composition en drapeau (`pinLegacyRaggedBreaking`) est écrite sous la forme `bodyText.optimalRagged: false` sur le `bodyText` en vigueur, quand la configuration compose en drapeau une partie du texte courant (un `textAlign` autre que `'justify'` sur le texte courant, un style de paragraphe, le corps d’un encadré, le corps d’une partie ou le corps d’un style de section (`headingStyles[].bodyStyle`), ou dans les surcharges de la visionneuse HTML), ne le fixe pas déjà et ne désactive pas `optimalLineBreaking`. L’espace dans les encadrés (`pinLegacyBoxResourceGap`) est écrit sous la forme `layout.inlineResourceGapInBoxes: false` sur le `layout` en vigueur, quand une ressource est incorporée sur une ligne à part à l’intérieur d’un `:::callout` des chapitres lus et que la configuration ne le fixe pas déjà. La coupure des encadrés (`pinLegacyBoxChildCut`) est écrite sous la forme `layout.boxChildSplitMinLines: 1` sur le `layout` en vigueur, quand un chapitre lu ouvre un `:::callout` sur une ligne à part et que la configuration ne le fixe pas déjà. Les marques des titres (`pinLegacyHeadingMarks`) sont écrites sous la forme `headings.inlineMarks: false` sur les `headings` que les couches laissent en vigueur, quand un titre des chapitres lus porte une marque (`*`, `_`, `^`, `~`, `:smallcaps[` ou un lien dans son intitulé) et que la configuration ne nomme aucune valeur propre. Les lettrines (`pinLegacyDropCapSize`) voient leur taille de la 1.4 écrite en clair sous la forme `dropCap.fontSize`, où qu’elles se trouvent : dans l’unité de l’interlignage de l’élément quand c’est une longueur, sinon dans l’unité de son corps. La place sous une ligne terminée par un deux-points (`pinLegacyColonListRoom`) est écrite sous la forme `bodyText.colonListRoom: 'line'` sur le `bodyText` en vigueur, quand une liste des chapitres lus suit une ligne qui finit par un deux-points (des lignes vides entre les deux étant admises) et que la configuration ne nomme pas de place et ne désactive pas `keepColonWithList`. L’espace en ligne (`pinLegacyInlineGap`) est écrit sous la forme `layout.inlineResourceGap: 'above'` sur le `layout` que les couches laissent en vigueur, quand une ligne des chapitres lus incorpore une ressource (`::resource{id="…"}` seul sur sa ligne, tel que le lit l’analyseur : une mention dans le texte courant ou dans un code en ligne ne compte pas) et que la configuration ne nomme aucun espace propre. Le corps des formules est épinglé sur le `math` que les couches laissent en vigueur (le `math` propre d’une langue remplace celui qui est partagé), et seulement quand les chapitres lus contiennent un `$` : un paquet sans formules garde sa `config` telle qu’elle a été écrite. Quand ni le manifeste ni la langue ne nomment de `math`, celui qui est en vigueur est le `baseConfig` de `readBundle` (celui du lecteur), et il est épinglé lui aussi, puisque la 1.4 composait les formules du paquet à ce corps : un `fontSizeScale: 1.5` de base se lit comme 1,5 × 1,1312. Les sauts aux titres de la base sont pris tels quels. Un ancien paquet garde donc ce que ces règles mettaient en page, et `bundle.config` montre les sauts, le corps des formules, les espaces, les marques des titres, les tailles des lettrines, la place sous une ligne terminée par un deux-points, la coupure des encadrés, les coupures aux tirets, les coupures aux mots composés, la composition en drapeau, la coupure sous un titre et l’espace sous les conteneurs avec lesquels il est mis en page. Les corrections de mise en page de la 1.5 n’ont pas d’épinglage et s’appliquent à lui comme à n’importe quel livre, si bien qu’une page qu’elles touchent peut encore bouger (voir [Taille des formules](/fr/docs/configuration-lists-math#mathématiques) pour la liste). Un `preset.json` écrit à la main pour les règles actuelles fixe `"configVersion": 14` ; marquer ainsi le manifeste d’un ancien paquet est aussi la façon, en une ligne, de le lire avec les règles actuelles (un paquet sans version perd alors aussi son épinglage des sauts aux titres). Un manifeste marqué `8`, écrit par postext 1.5 à 1.22, reçoit les seuls quatre épinglages des règles 9, comme tous les manifestes plus anciens : la disposition des vers (`pinLegacyVerseLayout`) est écrite sous la forme `bodyText.verse.layout: 'bayt'` sur le `bodyText` en vigueur, quand un chapitre lu compose un poème `:::verse` dont la clôture ne nomme aucune disposition et dont les vers ne portent aucun séparateur d’hémistiches, et que la configuration ne le fixe pas déjà ; les retraits appariés (`pinLegacyPairedIndents`) suppriment le `firstLineIndent` de chaque style de paragraphe (dans `paragraphStyles` ou dans les surcharges de la visionneuse HTML) qui fixe aussi un `hangingIndent` non nul ; les sauts de ligne forcés (`pinLegacyHardBreaks`) sont écrits sous la forme `bodyText.hardLineBreaks: false` sur le `bodyText` en vigueur, quand un chapitre lu termine par une barre oblique inverse une ligne d’un paragraphe, d’une citation ou d’un élément de liste dont le bloc continue en dessous, ou compose `\\` devant une espace suivie d’autre texte (hors code et formules en ligne, formules centrées, titres et poèmes `:::verse`), et que la configuration ne le fixe pas déjà ; enfin, les blocs de code délimités (`pinLegacyCodeBlocks`) sont écrits sous la forme `codeStyle.blocks: false`, quand un chapitre lu ouvre une clôture ```` ``` ```` ou `~~~` (trois caractères ou plus, avec au plus trois espaces de retrait) et que la configuration ne le fixe pas déjà. Un manifeste marqué `9`, écrit par postext 1.23, reçoit le seul épinglage des règles 10, comme tous les manifestes plus anciens : les vers reportés (`pinLegacyVerseTightening`) sont écrits sous la forme `bodyText.verse.tighten: false` sur le `bodyText` en vigueur, quand un chapitre lu compose un poème ligne à ligne (une clôture `:::verse` qui nomme `layout=lines`, ou qui ne nomme aucune disposition sur des vers sans séparateur d’hémistiches alors que la configuration ne compose pas ces poèmes en bayts) et que la configuration ne le fixe pas déjà. Un manifeste marqué `10`, écrit par postext 1.24, reçoit le seul épinglage des règles 11, comme tous les manifestes plus anciens : l’équilibrage d’une grille de caractères (`pinLegacyGridBalancing`) est écrit sous la forme `headings.balancing.enabled: true` sur les `headings` en vigueur, quand la configuration fusionnée active `cjk.grid.enabled` en texte horizontal et ne fixe pas elle-même `enabled`, puisque la 1.24 équilibrait une telle page par défaut. Les règles 11 évitent aussi aux titres d’œuvres les coupures d’un seul caractère, composent les nombres cerclés comme des caractères chinois et composent le texte de maquette CJK selon les règles du texte courant (#637) : un manifeste marqué `10` ou antérieur reçoit `cjk.titleMinChars: 1` (`pinLegacyTitleBreaks`) quand un chapitre lu compose un titre d’œuvre (《 〈 ou `:book[`), `cjk.circledNumbers: 'western'` (`pinLegacyCircledNumbers`) quand un chapitre compose un nombre cerclé (U+2460–U+24FF, U+2776–U+2793), et `cjk.composeDesignText: false` (`pinLegacyDesignText`) quand un chapitre lu ou la configuration elle-même contient du texte CJK, chacun sur le `cjk` en vigueur et seulement quand la configuration ne le fixe pas déjà. Elles coupent aussi les tableaux en ligne et composent `:::columns` dans le texte courant (#634) : un manifeste marqué `10` ou antérieur reçoit `tableStyle.splitInline: false` (`pinLegacyInlineTableSplit`) sur le `tableStyle` en vigueur quand un chapitre lu incorpore une ressource, et `layout.flowColumns: false` (`pinLegacyFlowColumns`) sur le `layout` en vigueur quand un chapitre lu ouvre une clôture `:::columns` sur une ligne à part, chacun seulement quand la configuration ne le fixe pas déjà. Elles offrent aussi à un flottant le haut de la colonne propre d’une ouverture sur toute la largeur de la page (#639) : un manifeste marqué `10` ou antérieur reçoit `layout.floatsUnderOpener: false` (`pinLegacyOpenerHeadFloats`) sur le `layout` en vigueur quand la configuration fusionnée fixe un niveau ou un style de titre avec `span: 'page'` et qu’un chapitre lu contient un titre, seulement quand la configuration ne le fixe pas déjà. Les règles 12 permettent à une page sur grille de caractères de tenir ses lignes (#717) : un manifeste marqué `11` ou antérieur dont la configuration fusionnée active `cjk.grid.enabled` reçoit `bodyText.avoidWidows: true`, et dans la région `japan` `bodyText.avoidOrphans: true` (`pinLegacyGridBreakRules`), sur le `bodyText` en vigueur, chacun seulement quand la configuration ne le fixe pas déjà. Elles gardent aussi deux caractères d’une note sur deux rangs de part et d’autre d’un saut de ligne (#720) : un tel manifeste reçoit `cjk.warichu.minChars: 1` (`pinLegacyNoteBreaks`) sur le `cjk` en vigueur quand un chapitre lu compose une note `:warichu[` ou que la configuration fusionnée fixe `citations.notes: 'warichu'`, seulement quand la configuration ne le fixe pas déjà. Et dans la région Japon, un mot occidental prend l’espace han–latin à côté de ses parenthèses et de ses signes (#721) : un manifeste marqué `11` ou antérieur dont la configuration fusionnée se résout en région Japon reçoit `cjk.latinSpacingEdge: 'letters'` (`pinLegacyLatinSpacingEdge`) sur le `cjk` en vigueur quand un chapitre lu contient des kana ou des kanji, seulement quand la configuration ne le fixe pas déjà. Enfin, une ressource placée dans le texte prend `placement.captionSide` comme le fait un flottant de colonne (#729) : un manifeste marqué `11` ou antérieur dont la configuration fusionnée fixe `layout.layoutType: 'oneAndHalf'` reçoit `layout.inlineCaptionSide: false` (`pinLegacyInlineCaptionSide`) quand un chapitre lu incorpore une ressource, seulement quand la configuration ne le fixe pas déjà.
+
+Les règles 12 changent aussi la façon d’équilibrer une colonne courte, et un manifeste marqué `11` ou antérieur garde ce avec quoi il a été mis en page. L’ordre des leviers (#707) : il reçoit `headings.balancing.maxLinesBeforeLoose` fixé à son propre `maxLinesPerHeading`, ou à `4` s’il n’en fixe aucun (`pinLegacyLooseOrder`), sur les `headings` en vigueur, quand un chapitre lu contient un titre et que la configuration fusionnée équilibre ses colonnes, permet à un titre d’occuper plus de deux lignes et ne fixe pas déjà la clé. La ligne sous une figure qui s’étend sur plusieurs colonnes (#708) : il reçoit `headings.balancing.stretchAfterWideFloats: 'always'` (`pinLegacyWideFloatStretch`) sur les `headings` en vigueur, quand un chapitre lu incorpore ou cite une ressource ou fait flotter un encadré, et que la configuration fusionnée équilibre ses colonnes, ne désactive pas `stretchAfterFloats` et ne fixe pas déjà la clé. Les coupures à l’intérieur des groupes d’un index (#712) : il reçoit `index.groups.splitMinEntries: 1` (`pinLegacyIndexGroupSplit`) sur l’`index` en vigueur, quand un chapitre lu compose une clôture `:::index` sur une ligne à part et que la configuration ne fixe pas déjà la clé. L’unité de la coupe de niveau (#711) : il reçoit `headings.balancing.trailingStep: 'grid'` (`pinLegacyTrailingStep`) sur les `headings` en vigueur, quand un chapitre lu peut composer du texte hors de l’interlignage du texte courant (une clôture `:::`, un bloc de code délimité, une citation, une liste, une formule centrée ou une citation bibliographique), et que la configuration fusionnée équilibre ses colonnes, garde `trailing` ou `beforeSpan` activé et ne fixe pas déjà la clé.
+
+Les règles 12 coupent le libellé d’un renvoi à ses espaces quand ce libellé est fait de mots (#702). Un manifeste marqué `11` ou antérieur reçoit `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) sur les `crossRefs` en vigueur, quand un chapitre lu contient un renvoi (`:ref{…}`, `\ref{…}`, `\eqref{…}` ou un `@id` pandoc-crossref) et que la configuration ne nomme pas ce réglage : chaque libellé reste le mot unique sous lequel il a été mis en page.
+
+Les règles 12 façonnent un mot sans lettre (`46.`, `1367)`) dans l’écriture du texte qui l’entoure (#725). Un manifeste marqué `11` ou antérieur reçoit `bodyText.scriptContext: false` (`pinLegacyScriptContext`) sur le `bodyText` en vigueur, quel que soit le contenu de ses chapitres, quand la configuration ne nomme pas ce réglage : un tel mot est façonné seul, comme il a été mis en page. La règle agit dans une fonte qui dessine sa ponctuation selon l’écriture, et on ne sait pas quelles fontes un livre charge au moment où son manifeste est lu.
+
+Les règles 13 font de la langue dans laquelle le texte est façonné un réglage (#764), et les règles 14 lui donnent pour valeur par défaut la langue propre du document (#770). Un manifeste marqué `13` ou antérieur reçoit `bodyText.shapingLanguage: 'host'` (`pinLegacyShapingLanguage`) sur le `bodyText` en vigueur, quel que soit le contenu de ses chapitres, quand la configuration ne nomme pas ce réglage ; un manifeste qui nomme une valeur la garde. Son texte est mesuré dans la langue de la page qui héberge la mise en page, et sans langue dans un worker, comme il a été mis en page. Un manifeste marqué `13` a été écrit par postext 1.29 : les versions 1.29.1 et 1.29.2 mettaient en page dans la langue de l’hôte un livre qui ne nomme aucune valeur, comme le fait l’épinglage ; la 1.29.0, dont la valeur par défaut était `'document'`, le mettait en page dans celle du document avec un canvas et un PDF qui ne suivaient pas la mesure, et il se lit lui aussi avec `'host'`. Un manifeste marqué `14` qui ne nomme aucune valeur est mis en page dans la langue du document.
+
+Les règles 13 dessinent aussi la case d’un élément de tâche (`- [ ]`, `- [x]`) : un carré que dessine le moteur, coché quand l’élément est fait, qui occupe une place à lui avant le texte de l’élément (#765). Un manifeste marqué `12` ou antérieur reçoit `unorderedLists.taskBox: 'character'` (`pinLegacyTaskBox`) sur les `unorderedLists` en vigueur, quand un chapitre contient un élément de tâche et que la configuration ne nomme pas ce réglage. Sa case reste le caractère `☐` ou `☑` composé dans la fonte de la liste, et le texte de l’élément commence après la largeur de ce caractère, comme il a été mis en page. Cette largeur venait de la police, quelle qu’elle soit, qui contenait le caractère, une police du système dans la plupart des livres, et on ne la connaît pas au moment où le manifeste est lu.
+
+```ts
+import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
+
+migrateConfig({ headings: { fontFamily: 'Georgia' } }, undefined, { content: 'A book with no maths.' });
+// => { headings: { fontFamily: 'Georgia', levels: [{ level: 1, breakBefore: { enabled: false } }] } }
+migrateConfig({ math: { fontSizeScale: 1.2 } }, 3);
+// => { math: { fontSizeScale: 1.35746…, marginTop: { value: 0.7072, unit: 'em' }, marginBottom: { value: 0.7072, unit: 'em' } },
+//      layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 },
+//      headings: { inlineMarks: false, keepWithNextSplit: 'fill' }, bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false } }
+migrateConfig({ layout: { layoutType: 'single' } }, 4, { content: 'Text.\n\n::resource{id="fig"}' });
+// => { layout: { layoutType: 'single', inlineResourceGap: 'above' } }
+migrateConfig({ layout: { layoutType: 'single' } }, 5, { content: ':::callout\nText.\n\n::resource{id="fig"}\n:::' });
+// => { layout: { layoutType: 'single', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1 } }
+migrateConfig({ bodyText: { textAlign: 'left' } }, 6, { content: 'I say—that is all.' });
+// => { bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false } }
+migrateConfig({ paragraphStyles: [{ id: 'verse' }] }, 7, { content: ':::paragraphs{style="verse"}\nA line.\n:::' });
+// => { paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphContainerSpacing: 'add' } }
+migrateConfig({ bodyText: { fontFamily: 'Georgia' } }, 7, { content: 'A well-known tale.' });
+// => { bodyText: { fontFamily: 'Georgia', breakAfterHyphens: false } }
+migrateConfig(config, CONFIG_VERSION); // today's rules: `config` itself
+```
+
+`content` est le Markdown que la configuration met en page (une chaîne ou une liste de chapitres). Sans lui, le corps des formules est épinglé dès que les formules sont activées, l’espace sous les conteneurs dès que la configuration déclare un style de paragraphe, et les deux espaces, les marques des titres, la place sous une ligne terminée par un deux-points, la coupure des encadrés, les coupures aux tirets, la coupure sous un titre et les coupures aux mots composés toujours, puisque le moteur ne peut pas savoir si le livre contient une formule, un conteneur `:::paragraphs`, une figure en ligne, un titre comportant une marque, une liste introduite par un deux-points, un encadré, un tiret collé, un titre ou un mot composé. La composition en drapeau est épinglée par la seule configuration, avec ou sans contenu. Migrez une configuration stockée une seule fois et stockez-la de nouveau sous `CONFIG_VERSION` : l’épinglage des formules multiplie l’échelle, si bien qu’une configuration migrée deux fois grandirait deux fois. La disposition des vers et les blocs de code délimités sont épinglés sans lui eux aussi, puisque le livre peut contenir un poème `:::verse` sans séparateur ou une clôture, et les retraits appariés sont épinglés par la seule configuration. Il en va de même des vers reportés de la 1.23, puisque le livre peut composer un poème ligne à ligne.
+
+### Mettre en page et rendre un paquet
+
+Quatre fonctions relient un paquet ouvert au moteur et aux sorties :
+
+- **`loadBundleFonts(bundle)`** enregistre les fontes du paquet dans `document.fonts`, et leurs octets dans le registre de polices du moteur pour les images SVG (`registerFontBytes`). Attendez sa fin avant la mise en page, car celle-ci mesure le texte avec les polices dont dispose le navigateur. Les familles que le paquet nomme sans les contenir (Google Fonts) restent à charger par vos soins, comme pour tout autre document.
+- **`registerBundleImages(bundle)`** décode les images pour la sortie canvas (`renderPage`, `renderToCanvas`), affiches des vidéos comprises. **`bundleImageUrl(bundle)`** est le résolveur `resourceImageUrl` de `renderToHtml`, et **`bundleVideoUrl(bundle)`** son résolveur `resourceVideoUrl` pour les fichiers vidéo que contient un paquet. Les deux recolorent les figures SVG quand `diagramStyle.singleInk` est activé, une seule fois : ils recolorent le balisage et marquent les images pour qu’aucune sortie ne les teinte de nouveau (voir [Encre unique sur le canvas et en HTML](/fr/docs/configuration-resources#encre-unique-sur-le-canvas-et-en-html)). Les deux incorporent aussi dans chaque SVG les fontes que nomme son texte, d’abord à partir des polices propres du paquet, puis des fontes enregistrées auprès du moteur (voir [Polices dans le texte SVG](/fr/docs/configuration-resources#polices-du-texte-svg)) ; `registerBundleImages(bundle, { onWarning })` et `bundleImageUrl(bundle, { onWarning })` signalent une famille sans fonte.
+- **`buildBundle(bundle)`** met les chapitres en page dans l’ordre et renvoie un `VDTDocument` par chapitre. Chaque chapitre continue le précédent : compteurs de titres et de ressources, partie ouverte, parité et numérotation des pages. Un chapitre qui imprime la table des matières (`:::toc`) ou l’index (`:::index`) reçoit le plan du livre entier. Il accepte les mêmes options que `buildDocument`, plus `config` pour remplacer la configuration du paquet, `cache` pour partager un cache de mesures et `metadata` (voir plus bas).
+- **`bundleResourceBytes(bundle)`** et **`bundleFontProvider(bundle, { decodeWoff2, fallback })`** sont les options `resourceBytes` et `fontProvider` du `renderToPdf` de `postext-pdf`. Le fournisseur de polices choisit dans le paquet la graisse la plus proche du style demandé. Pour une fonte `.woff2`, il a besoin de `decompressWoff2`, et pour une famille que le paquet ne contient pas, il appelle `fallback` avec les arguments du moteur de rendu, `request` compris, et transmet ce qu’il renvoie. Une fonction de secours qui ne télécharge que le fichier `latin` d’une famille imprime sous forme de boîtes vides une famille chinoise que le paquet n’incorpore pas ; une fonction de secours qui répond avec des tranches, comme `sliceFontProvider` dans [Polices chinoises, japonaises et coréennes](/fr/docs/configuration-pdf-output#polices-chinoises-japonaises-et-coréennes), l’imprime en entier.
+
+```ts
+import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
+  bundleResourceBytes, bundleFontProvider } from 'postext';
+import { renderToPdf, decompressWoff2 } from 'postext-pdf';
+
+const bundle = await openBundle(bytes);
+await loadBundleFonts(bundle);
+await registerBundleImages(bundle);
+
+const docs = buildBundle(bundle);                        // one VDTDocument per chapter
+const firstPage = renderPage(docs[0].pages[0], docs[0]); // a <canvas>
+
+const pdf = await renderToPdf(docs, {                    // the whole book
+  fontProvider: bundleFontProvider(bundle, { decodeWoff2: decompressWoff2, fallback: fontsource }),
+  resourceBytes: bundleResourceBytes(bundle),
+});
+```
+
+Pour mettre en page un seul chapitre vous-même, passez `bundle.chapters[i].markdown`, `bundle.resources` et `bundle.config` à `buildDocument`, comme pour n’importe quel document.
+
+**Les métadonnées du livre.** Comme dans le Sandbox, l’en-tête de métadonnées (front matter) du premier chapitre est celui du livre : `buildBundle` transmet son `title`, son `author` et le reste à chaque chapitre, si bien que les titres courants `{title}` et `{author}` tiennent sur toutes les pages et que le `doc.metadata` de chaque chapitre les porte. Un bloc de métadonnées en tête d’un chapitre ultérieur est ignoré : il est repéré par ses lignes `---` et effacé sans être analysé, si bien qu’un YAML que l’analyseur rejetterait ne fait aucun mal. `options.metadata` fournit les valeurs que l’en-tête de métadonnées ne fixe pas (l’en-tête l’emporte). Le nombre de pages du livre parvient aussi à chaque chapitre : `{bookTotalPages}` l’imprime, alors que `{totalPages}` compte les pages du chapitre (voir [Nombre de pages du livre](/fr/docs/configuration-headers-footers#nombre-de-pages-du-livre)).
+
+```ts
+const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
+docs[3].metadata.title;   // the first chapter's `title:`
+```
+
+**Où commence le livre.** Un paquet peut contenir une partie d’une publication plus longue : les pages 58 à 61 d’un numéro, le chapitre 4 d’un manuel. Son `start` dit ce qui le précède, dans les termes de la `continuation` de `buildDocument` : les pages qui précèdent la première (`pageIndexOffset`, qui décide du côté où tombe la page 1, et avec lui des marges en miroir et des titres courants pairs et impairs), la numérotation des pages en vigueur (`pageNumbering`), les compteurs de titres (`headings`), la partie ouverte (`part`) et les compteurs de ressources, d’énoncés, de notes de bas de page et de lignes. `createBundle` l’écrit comme `start` de `preset.json`, `openBundle` le renvoie sous forme de `bundle.start`, et `buildBundle` met en page le premier chapitre avec lui, comme le ferait `buildDocument({ markdown, continuation: start }, config)`, puis enchaîne les chapitres suivants à partir de là ; `{bookTotalPages}` compte aussi les pages qui précèdent le livre. Un manifeste sans `start` se lit comme avant, et un lecteur qui ne connaît pas ce champ l’ignore. `bookPageCount` n’en fait pas partie : c’est le lecteur qui compte les pages. Dans un paquet en plusieurs langues, `localized[…].start` donne à une édition son propre début.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Page 58, an even page, in chapter 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
+### Exemple en direct : ouvrir un paquet
+
+Le pen charge depuis le dépôt un livre d’exemple de deux chapitres (`lantern.postext`, avec son propre caractère, une figure SVG et un tableau). Il enregistre les polices et les images du paquet, met le livre en page avec `buildBundle` et peint chaque page. *Make the PDF* rend les mêmes documents avec `postext-pdf`, en incorporant les polices du paquet. Choisissez un fichier `.postext` à vous, exporté du Sandbox par exemple, pour le voir de la même façon.
+
+<CodePenExample name="open-bundle" title="Postext · ouvrir un paquet .postext" description="Ouvrir un fichier .postext avec postext, mettre le livre en page et le rendre en canvas et en PDF." height={640} />
+
+### Créer un paquet
+
+`createBundle` écrit un fichier `.postext` à partir d’un document : ses chapitres, sa configuration, ses ressources et les contenus auxquels elles font référence.
+
+```ts
+import { createBundle } from 'postext';
+
+const { bytes, manifest, warnings } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [
+    { markdown: '# Dusk\n\nIt is drawn in :ref{id="lantern"}.' },
+    { title: 'Night', markdown: '# Night\n\n…' },
+  ],
+  config,
+  resources: [{
+    id: 'lantern', typeId: 'figure', kind: 'svg', caption: 'The lantern.',
+    svg: { fileId: 'lantern.svg', width: 240, height: 150 },
+    createdAt: 0, updatedAt: 0,
+  }],
+  files: { 'lantern.svg': svgMarkup, 'garamond-regular': fontBytes },
+});
+```
+
+<table>
+  <thead>
+    <tr><th>Entrée</th><th>Signification</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>name</code>, <code>id</code>, <code>description</code>, <code>locale</code></td><td>Les métadonnées du manifeste. <code>id</code> vaut par défaut une version normalisée (slug) de <code>name</code>.</td></tr>
+    <tr><td><code>chapters</code> ou <code>markdown</code></td><td>Le livre, un <code>&#123; title?, markdown &#125;</code> par chapitre, ou un document unique.</td></tr>
+    <tr><td><code>config</code></td><td>La <code>PostextConfig</code>. Les valeurs égales aux valeurs par défaut sont omises du manifeste.</td></tr>
+    <tr><td><code>resources</code></td><td>Les ressources. Une image désigne son contenu par <code>bitmap.fileId</code> / <code>svg.fileId</code> (et <code>svg.pdfFileId</code> pour un original d’impression).</td></tr>
+    <tr><td><code>files</code></td><td>Les contenus par <code>fileId</code> (un objet ou une <code>Map</code>) : les images auxquelles font référence les ressources et les fichiers de polices auxquels font référence les variantes de <code>config.customFonts</code>. Les valeurs peuvent être un <code>Uint8Array</code>, un <code>ArrayBuffer</code>, un <code>Blob</code> ou une chaîne (balisage SVG).</td></tr>
+    <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code> : une image de couverture (PNG, JPEG, WebP, GIF ou SVG).</td></tr>
+    <tr><td><code>canvasScope</code></td><td><code>'book'</code> demande aux visionneuses de mettre en page le livre entier sur un seul canvas.</td></tr>
+    <tr><td><code>start</code></td><td>Où commence le livre, pour un paquet qui contient une partie d’un ouvrage plus long : la <code>continuation</code> avec laquelle un document unique serait construit. Écrit comme <code>start</code> du manifeste.</td></tr>
+    <tr><td><code>mtime</code></td><td>La date de modification écrite sur chaque fichier de l’archive (une <code>Date</code>, un horodatage ou une chaîne de date). Omise, c’est l’heure de l’appel, si bien que deux appels avec la même entrée donnent des octets différents. Passez une date fixe et la même entrée donne les mêmes octets, que vous pouvez hacher ou comparer. Un zip conserve une date et une heure sans fuseau horaire, par pas de deux secondes, de 1980 à 2099, et la date est écrite dans l’heure locale de la machine. Pour des octets identiques sur toutes les machines, construisez la date à partir de champs locaux, comme <code>new Date(1980, 0, 1)</code> : un horodatage ou une chaîne finissant par <code>Z</code> désigne un instant, qui tombe sur une heure locale différente dans chaque fuseau horaire (<code>'1980-01-01T00:00:00Z'</code> est encore en 1979 à l’ouest d’UTC). Une date hors de ces années, en heure locale, lève une exception.</td></tr>
+    <tr><td><code>localized</code></td><td>D’autres langues du même livre, par étiquette de langue : <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. Les entrées ci-dessus sont alors le contenu de <code>locale</code>, qui devient obligatoire. Voir <a href="#paquets-bilingues">Paquets bilingues</a>.</td></tr>
+  </tbody>
+</table>
+
+Il renvoie les `bytes` de l’archive, le `manifest` écrit sous forme de `preset.json`, chaque fichier dans `files` (chemin → octets) et une liste de `warnings`. Les fichiers sont nommés d’après l’identifiant de leur ressource (`resources/lantern.svg`) ou le nom de leur fichier de police (`fonts/…`), et les chapitres d’après leur ordre et leur titre (`chapters/01-dusk.md`). Les polices sont déclarées dans les `fonts` du manifeste, jamais dans `config.customFonts`. Certains éléments sont laissés de côté, chacun avec un avertissement :
+- une ressource ou une fonte dont le contenu n’est pas dans `files`
+- une fonte `.woff` (la sortie PDF ne sait pas l’incorporer)
+- une famille marquée `redistributable: false`
+
+Dans le navigateur, passez `bytes` à un lien de téléchargement : `URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`. Sous Node, écrivez-les avec `fs.writeFile`. `createBundle` et `openBundle` n’ont pas besoin de DOM. Les dist utilisent des chemins de modules sans extension : sous Node seul, sans bundler, il leur faut un hook de résolution. Le fichier `docs/examples/open-bundle/build-sample.mjs` du dépôt en montre un en quelques lignes.
+
+### Paquets bilingues
+
+Un fichier `.postext` peut contenir un livre en plusieurs langues, et `openBundle(bytes, { locale })` le lit dans n’importe laquelle d’entre elles. `createBundle` en écrit un à partir de `localized` : une entrée par langue supplémentaire, chacune avec ce qui diffère du contenu principal (l’entrée `locale`) :
+
+```ts
+const { bytes, manifest } = await createBundle({
+  name: 'The Lantern',
+  locale: 'en',
+  chapters: [{ markdown: '# Dusk\n\n…' }, { markdown: '# Night\n\n…' }],
+  config,
+  resources: [lanternFigure, hoursTable],
+  files: { 'lantern.svg': svgEn, 'lantern-es.svg': svgEs },
+  localized: {
+    es: {
+      chapters: [{ markdown: '# Anochecer\n\n…' }, { markdown: '# Noche\n\n…' }],
+      config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] } },
+      resources: [
+        { id: 'lantern', caption: 'El farol.', svg: { fileId: 'lantern-es.svg', width: 240, height: 150 } },
+        { id: 'hours', caption: 'Horas de luz.' },
+      ],
+    },
+  },
+});
+
+const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, config and captions
+```
+
+- **`chapters`** : le livre dans cette langue. Les fichiers des chapitres vont dans un dossier par langue (`chapters/en/01-dusk.md`, `chapters/es/01-anochecer.md`) et les `chapters` du manifeste deviennent une table langue → chapitres. Une langue sans `chapters` lit les chapitres principaux ; quand aucune langue n’a ses propres chapitres, ceux-ci restent une liste unique.
+- **`config`** : la configuration pour cette langue. Chaque clé de premier niveau remplace en bloc la clé partagée quand le paquet est lu dans cette langue : `headings`, ci-dessus, remplace tout l’objet `headings`. Les clés omises, ou égales aux clés partagées, sont partagées et ne sont pas écrites : passer la configuration complète de la langue fonctionne donc aussi bien que passer les quelques clés qui changent. Une clé fixée à ses valeurs par défaut alors que la clé partagée ne l’est pas (`layout: {}`) est écrite telle quelle, et réinitialise donc la valeur partagée. Les polices sont partagées : les familles du `customFonts` d’une langue rejoignent les `fonts` du paquet.
+- **`resources`** : le texte des ressources partagées, apparié par `id` : `caption`, `note`, `altText` et le `table` d’un tableau. Une image qui contient du texte peut avoir sa propre illustration : `bitmap.fileId` ou `svg.fileId` (et `svg.pdfFileId`) désignent un autre contenu dans `files`, écrit sous `resources/es/lantern.svg`. Les autres champs, comme le type ou le placement, sont partagés. Un identifiant qui ne figure pas dans `resources` est laissé de côté avec un avertissement, et une image de langue absente laisse la langue sur l’image partagée, avec un avertissement également.
+
+Le manifeste liste toutes les langues dans `locales` (`['en', 'es']`), garde la langue principale comme `locale` et range les autres sous `localized`. `openBundle` sans langue lit la langue principale.
+
+**Quelle langue reçoit un lecteur.** `openBundle(bytes, { locale })` sert la langue exacte, sinon sa langue de base (`es-MX` lit `es`), sinon la langue principale, et `bundle.locale` indique celle qu’il a servie. Les chapitres et le texte viennent toujours de la même langue. La langue principale garde le texte partagé même quand `localized` contient une variante régionale de celle-ci : un paquet `pt-PT` avec une entrée `pt-BR` lit les légendes brésiliennes pour `pt-BR` seulement, et les légendes partagées pour `pt-PT` et `pt`.
+
+### Exemple en direct : créer un paquet
+
+Le pen construit un livre de deux chapitres avec une figure SVG et liste les fichiers que `createBundle` a écrits, ainsi que le manifeste. Il propose l’archive en téléchargement, puis la rouvre avec `openBundle` et peint sa première page : l’aller-retour complet en quelques lignes. Importez le fichier téléchargé dans le Sandbox pour continuer à y travailler.
+
+<CodePenExample name="create-bundle" title="Postext · créer un paquet .postext" description="Écrire un fichier .postext avec createBundle de postext, le télécharger et le rouvrir." height={640} />
+
+### Travailler avec des paquets
+
+Comme le Sandbox, le skill d’agent et le paquet `postext` lisent et écrivent tous le même fichier, un fichier `.postext` est un moyen commode de faire passer un livre d’un outil à l’autre :
+
+- **Partir d’un paquet.** Portez une publication existante avec le [skill d’agent](/fr/docs/skill), ou concevez un livre dans le [Sandbox](/fr/sandbox) et exportez-le (**Télécharger (.postext)** dans le menu ⋯ de sa ligne, dans le panneau Livres). Chargez le fichier depuis votre programme avec `openBundle` pour le rendre en canvas, en HTML ou en PDF. Gardez le fichier comme source du livre : modifiez les chapitres, la configuration ou les ressources dans le code et réécrivez-le avec `createBundle`, ou rechargez-le simplement chaque fois qu’il change.
+- **Déboguer et peaufiner dans le Sandbox.** Quand quelque chose dans la sortie de votre programme demande du travail (une figure qui tombe sur la mauvaise page, un style de titre, l’équilibrage des colonnes), exportez avec `createBundle` ce que votre programme met en page. Importez ce fichier dans le Sandbox (*Livres → Nouveau → Ouvrir un fichier .postext…*), corrigez le texte, la maquette ou les figures avec l’aperçu en direct, le panneau Vérifications et la vue PDF, puis exportez-le à nouveau. Votre programme charge alors le fichier corrigé avec `openBundle`. Vous pouvez aussi reporter dans votre code ce qui a changé : la `config` du manifeste ne contient que les valeurs qui diffèrent des valeurs par défaut, et se lit donc comme un court diff.
+
+### API de bas niveau
+
+`postext/bundle` exporte aussi les briques qui se trouvent derrière `openBundle` et `createBundle`, pour les hôtes qui stockent ou servent les paquets à leur façon (un répertoire décompressé servi en HTTP, des enregistrements dans une base de données) :
+
+- **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`** : la couche d’archive. L’ouverture tolère un dossier de premier niveau et ignore les entrées `__MACOSX` et les fichiers cachés. Les chemins qui sortent du paquet sont refusés. `mtime` date les fichiers comme le fait l’entrée de `createBundle`.
+- **`readBundle(manifest, readFile, options)`** lit un manifeste, avec un rappel `readFile(path)`, et en tire chapitres, configuration, ressources, images et polices. `options` fixe la langue, la façon de nommer les identifiants de fichiers (`ids`), la configuration de base (`baseConfig`, sous celle du manifeste ; par défaut la palette et les types de ressources de `bundleBaseConfig` dans la langue du paquet, que renvoie `resolveBundleConfigLocale(manifest, locale)`, et un hôte qui passe son propre `baseConfig` devrait le localiser dans cette langue ; sous un manifeste antérieur à `configVersion: 4`, son `math` est épinglé avec celui du paquet, sous un manifeste antérieur à 5 l’espace en ligne de son `layout`, sous un manifeste antérieur à 6 l’espace dans les encadrés de son `layout`, la place sous une ligne terminée par un deux-points de son `bodyText`, les marques en ligne de ses `headings` et les tailles de ses lettrines, sous un manifeste antérieur à 7 les coupures aux tirets et la composition en drapeau de son `bodyText`, et sous un manifeste antérieur à 8 la coupure sous un titre de ses `headings` et les coupures aux mots composés et l’espace sous les conteneurs `:::paragraphs` de son `bodyText` ; voir [Paquets écrits par postext 1.4 ou antérieur](#paquets-écrits-par-postext-14-ou-antérieur)) et la façon de mesurer les tailles intrinsèques. `readResolution` lit la résolution de chaque bitmap dans son fichier et la place dans `bitmap.fileResolution` ; il vaut true par défaut quand le paquet fixe `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`** : le côté écriture, divisé en un plan pur (noms de fichiers et manifeste) et la résolution des octets au moyen des rappels `readBlob` / `readFont`.
+- **`isBundleManifest(value)`**, les sélecteurs de langue (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (les pixels d’un bitmap et la résolution qu’indique son fichier), et les types du format (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
+- **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)` et `LEGACY_MATH_SIZE`** (0,5 ÷ 0,442) : une configuration stockée exprimée dans les termes actuels (voir [Paquets écrits par postext 1.4 ou antérieur](#paquets-écrits-par-postext-14-ou-antérieur)). `readBundle` l’applique ; un hôte qui stocke les configurations à sa façon peut le faire aussi, une fois par copie stockée.
+
+Le Sandbox repose sur ces fonctions. Il y ajoute ses propres identifiants de stockage et les enregistrements de pages `layouts.json`.

@@ -1,0 +1,576 @@
+{/* docs/configuration-lists-math-ar.mdx */}
+
+export const metadata = {
+  title: 'الإعدادات: القوائم والصيغ الرياضية',
+  sidebarTitle: 'القوائم والصيغ الرياضية',
+  description: 'القوائم المرقّمة وغير المرقّمة، وعلاماتها وإزاحاتها وتداخلها، وقوائم المهام، وحجم الصيغ الرياضية ولونها والمسافات حولها',
+  lang: 'ar',
+  lastUpdated: '2026-10-16',
+  readingTime: '18 دقيقة',
+  order: 11,
+  parent: 'configuration',
+  plainSummary: "تتناول هذه الصفحة القوائم والصيغ. تضع القائمة غير المرقّمة رمزًا أمام كل بند، وتعدّ القائمة المرقّمة بنودها بالأرقام أو الحروف. تحدد علامة كل قائمة وإزاحتها ومسافاتها، وتغيّرها للقوائم الموضوعة داخل قوائم أخرى. وترسم قوائم المهام مربعًا يمكن التأشير عليه. ويضبط القسم الأخير حجم الصيغ الرياضية ولونها والمسافة حولها.",
+};
+
+# الإعدادات: القوائم والصيغ الرياضية
+
+
+## القوائم غير المرقّمة
+
+تتحكم الخاصية `unorderedLists` في طريقة إخراج القوائم النقطية (`-`، `*`، `+`) وقوائم المهام بصيغة GFM (`- [ ]`، `- [x]`). يمكن أن تتداخل القوائم حتى خمسة مستويات.
+
+### القيم الافتراضية للقوائم غير المرقّمة
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>ترث <code>bodyText.fontFamily</code></td>
+      <td>الخط المستخدم لنص البند.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>اللون الرئيسي (<code>#295AA3</code>)</td>
+      <td>لون نص البنود ونقاطها. مربوط بالمُدخل <code>main-color</code> في لوحة الألوان الافتراضية.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>وزن خط نص البند (100–900). ترث النقاط هذا الوزن ما لم يُتجاوز في مستوى بعينه.</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يُخرج نص البند بخط مائل.</td>
+    </tr>
+    <tr>
+      <td><code>bulletChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'•'</code></td>
+      <td>الرمز (glyph) المستخدم علامةً للنقطة.</td>
+    </tr>
+    <tr>
+      <td><code>bulletFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>حجم رمز النقطة. تتغير الوحدات النسبية بتغير حجم خط المتن.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>المسافة الأفقية بين النقطة ونص البند.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>الإزاحة الأساسية للمستوى 1. تتسلسل المستويات الأعمق من موضع بداية نص المستوى الأب ما لم تُتجاوز (انظر أدناه).</td>
+    </tr>
+    <tr>
+      <td><code>bulletVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>ضبط دقيق للموضع الرأسي للنقطة. القيم السالبة ترفع النقطة، والموجبة تخفضها.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>المسافة قبل القائمة كلها وبعدها.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>مسافة رأسية إضافية تُدرج بين البنود فوق ارتفاع السطر. حول قائمة متداخلة في بند من قائمة أخرى، تُطبَّق مسافة القائمة الخارجية على الجانبين: قبل البند الأول من القائمة المتداخلة وبعد آخر بند فيها (حتى postext 1.4 كان البند التالي لقائمة متداخلة يأخذ مسافة القائمة المتداخلة).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يقرّب المسافة فوق القائمة إلى الأعلى كي تستقر نقطتها الأولى على شبكة خطوط الأساس، كما يفعل النص تحت العنوان؛ وتصبح <code>marginTop</code> حينئذ حدًّا أدنى. نهاية القائمة تعيد التدفق إلى الشبكة في الحالتين، فإذا كانت <code>itemSpacing</code> تساوي 0 اصطفّ كل بند مع النص في العمود المجاور. معطّل افتراضيًا، كما كان حتى postext 1.4: قيمة <code>marginTop</code> التي لا تساوي عددًا صحيحًا من الأسطر تُبقي البنود خارج الشبكة حتى نهاية القائمة. لا يتأثر بذلك القوائم داخل الإطارات (callout)، إذ إن دواخلها خارج الشبكة أصلًا.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>عند تفعيله، تصطف الأسطر الملتفّة مع أول حرف من النص بدلًا من أن تبدأ تحت النقطة.</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>UnorderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>تجاوزات لكل عمق من المستويات 1–5. انظر أدناه.</td>
+    </tr>
+  </tbody>
+</table>
+
+### امتدادات قوائم المهام
+
+تُخرَج بنود المهام بصيغة GFM (`- [ ] …`، `- [x] …`) بنودًا غير مرقّمة يحل فيها مربع اختيار محل النقطة. يرسم المحرّك المربع بنفسه: إطار مربع، وفيه علامة صح إذا أُنجزت المهمة. لا يُطلب من أي خط، فهو واحد على كل جهاز، في اللوحة وفي PDF وفي HTML وفي EPUB، وتقرؤه التقنيات المساعدة `☐` أو `☑`. طول ضلعه 0.6 em من حجم العلامة (`bulletFontSize`، أو `fontSize` للمستوى)، وهذا هو الحيّز الذي يأخذه قبل `gap`؛ وعند حجم النص يقف على خط الأساس لأول سطر في البند. سُمك خطه يتبع `fontWeight` للعلامة، ولونه يتبع `color` للعلامة. الحقول الآتية لا تنطبق إلا على بنود المهام:
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>taskCheckboxChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☐'</code></td>
+      <td>حرف المهمة غير المنجزة. الحرف الافتراضي لا يُصفّ نصًّا: المحرّك يرسم المربع. وأي حرف آخر يُصفّ نصًّا بخط القائمة، وعلى هذا الخط أن يحتويه.</td>
+    </tr>
+    <tr>
+      <td><code>taskCheckedChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☑'</code></td>
+      <td>حرف المهمة المنجزة. الحرف الافتراضي يُرسم كذلك، مربعًا فيه علامة صح؛ وأي حرف آخر يُصفّ نصًّا بخط القائمة.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>طريقة صفّ الحرفين الافتراضيين. <code>'drawn'</code>: المحرّك يرسم المربع. <code>'character'</code>: يُصفّ <code>☐</code> و<code>☑</code> نصًّا بخط القائمة، كما كان حتى postext 1.28؛ فإذا خلا الخط منهما اختار المتصفح خطًّا من خطوط النظام، وبدأ نص البند بعد العرض الذي يعطيه ذلك الخط. والإعداد المحفوظ قبل الإصدار 13 يُقرأ بقيمة <code>'character'</code>، فتبقى سطوره في مواضعها.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedStrikethrough</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>يرسم خط شطب عبر نص المهام المنجزة.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>يرث لون البند</td>
+      <td>لون اختياري يُطبَّق على نص المهام المنجزة. إذا أُغفل استُخدم لون البند المعتاد.</td>
+    </tr>
+  </tbody>
+</table>
+
+### تجاوزات كل مستوى في القوائم غير المرقّمة
+
+كل مُدخل في `levels` يستهدف عمقًا واحدًا (1–5) ويمكنه أن يتجاوز أيًّا مما يلي:
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bulletChar</code></td><td><code>string</code></td><td>رمز النقطة لهذا العمق.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>عائلة خط البند لهذا العمق.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>حجم رمز النقطة لهذا العمق.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون البند.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td>وزن خط البند.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td>تفعيل الخط المائل أو تعطيله.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td>إزاحة صريحة للنقطة في هذا العمق. انظر قاعدة التسلسل أدناه.</td></tr>
+    <tr><td><code>verticalOffset</code></td><td><code>Dimension</code></td><td>ضبط رأسي دقيق للنقطة في هذا العمق.</td></tr>
+  </tbody>
+</table>
+
+**تسلسل الإزاحة.** يبدأ المستوى 1 دائمًا عند قيمة `indent` العامة (وهي افتراضيًا `0 em`، أي أن النقاط مثبّتة عند حافة العمود). في المستويات 2–5، إذا تركت `indent` دون تعريف وضع المحرّك النقطة عند موضع بداية نص المستوى *السابق* (إزاحة الأب + عرض النقطة + `gap`). عيّن `indent` صريحة لمستوى ما لتقطع التسلسل وتثبّت ذلك العمق حيث تشاء.
+
+```ts
+unorderedLists: {
+  bulletChar: '—',
+  gap: { value: 0.4, unit: 'em' },
+  hangingIndent: true,
+  levels: [
+    { level: 2, bulletChar: '·' },
+    { level: 3, bulletChar: '◦', color: { hex: '#666666', model: 'hex' } },
+  ],
+}
+```
+
+
+## القوائم المرقّمة
+
+تتحكم الخاصية `orderedLists` في القوائم المرقّمة (`1.`، `2)`، إلخ). يمكن أن تتداخل القوائم حتى خمسة مستويات، ويمكن لكل عمق أن يستخدم تنسيق ترقيم مختلفًا.
+
+### القيم الافتراضية للقوائم المرقّمة
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>ترث <code>bodyText.fontFamily</code></td>
+      <td>الخط المستخدم لنص البند ولعلامة الرقم.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>اللون الرئيسي (<code>#295AA3</code>)</td>
+      <td>لون نص البنود وعلامات أرقامها. مربوط بالمُدخل <code>main-color</code> في لوحة الألوان الافتراضية.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>وزن خط نص البند وعلامات الأرقام (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يُخرج نص البند بخط مائل.</td>
+    </tr>
+    <tr>
+      <td><code>numberFormat</code></td>
+      <td><code>OrderedListNumberFormat</code></td>
+      <td><code>'arabic'</code></td>
+      <td>نمط الترقيم: <code>'arabic'</code>، <code>'lower-alpha'</code>، <code>'upper-alpha'</code>، <code>'lower-roman'</code>، <code>'upper-roman'</code>. تعمل كذلك الكتابات المستخدمة في الإعدادات الأخرى (<code>'decimal'</code>، <code>'roman-lower'</code>، <code>'i'</code>…؛ انظر <a href="/ar/docs/configuration-page-layout#صيغ-كتابة-أنماط-الترقيم">صيغ كتابة تنسيق الترقيم</a>)؛ والقيمة غير المعروفة تُرقّم بالأرقام العربية (0–9) ويُبلَّغ عنها.</td>
+    </tr>
+    <tr>
+      <td><code>prefix</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>نص يوضع قبل الرقم، بنمط الفاصل: مع <code>'（'</code> هنا و<code>'）'</code> فاصلًا تُقرأ القائمة الصينية （一）، （二）. وحين يُرسم الفاصل مقطعًا مستقلًا، تُرسم البادئة مقطعًا مستقلًا كذلك، قبل الرقم مباشرة.</td>
+    </tr>
+    <tr>
+      <td><code>separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>الحرف الموضوع بين الرقم والنص، وهو عادةً <code>'.'</code> أو <code>')'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontFamily</code></td>
+      <td><code>string</code></td>
+      <td>ترث <code>fontFamily</code></td>
+      <td>خط الفاصل. إذا اختلف أي جانب من نمط الفاصل عن نمط الرقم، رُسم الفاصل مقطعًا مستقلًا بعد الرقم (المحاذى إلى اليمين)، مثل <code>1</code> بخط Optima Bold أسود يليه <code>•</code> بخط DIN Pro Bold أزرق.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontWeight</code></td>
+      <td><code>number</code></td>
+      <td>ترث <code>fontWeight</code></td>
+      <td>وزن خط الفاصل (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>separatorItalic</code></td>
+      <td><code>boolean</code></td>
+      <td>ترث <code>italic</code></td>
+      <td>يُخرج الفاصل بخط مائل.</td>
+    </tr>
+    <tr>
+      <td><code>separatorColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>ترث <code>color</code></td>
+      <td>لون الفاصل. تُحترم الإشارات إلى لوحة الألوان.</td>
+    </tr>
+    <tr>
+      <td><code>separatorGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>المسافة بين الرقم والفاصل. يبقى نص البند يبدأ على بُعد <code>gap</code> بعد الفاصل.</td>
+    </tr>
+    <tr>
+      <td><code>numberFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>حجم علامة الرقم.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>المسافة الأفقية بين الرقم ونص البند.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>الإزاحة الأساسية للمستوى 1؛ تتسلسل المستويات الأعمق من موضع بداية نص المستوى الأب ما لم تُتجاوز.</td>
+    </tr>
+    <tr>
+      <td><code>numberVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>ضبط دقيق للموضع الرأسي لعلامة الرقم.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>المسافة قبل القائمة كلها وبعدها.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>مسافة رأسية إضافية بين البنود. حول قائمة متداخلة في بند من قائمة أخرى، تُطبَّق مسافة القائمة الخارجية على الجانبين: قبل البند الأول من القائمة المتداخلة وبعد آخر بند فيها (حتى postext 1.4 كان البند التالي لقائمة متداخلة يأخذ مسافة القائمة المتداخلة).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يقرّب المسافة فوق القائمة إلى الأعلى كي يستقر رقمها الأول على شبكة خطوط الأساس، كما يفعل النص تحت العنوان؛ وتصبح <code>marginTop</code> حينئذ حدًّا أدنى. نهاية القائمة تعيد التدفق إلى الشبكة في الحالتين، فإذا كانت <code>itemSpacing</code> تساوي 0 اصطفّ كل بند مع النص في العمود المجاور. معطّل افتراضيًا، كما كان حتى postext 1.4: قيمة <code>marginTop</code> التي لا تساوي عددًا صحيحًا من الأسطر تُبقي البنود خارج الشبكة حتى نهاية القائمة. لا يتأثر بذلك القوائم داخل الإطارات (callout)، إذ إن دواخلها خارج الشبكة أصلًا.</td>
+    </tr>
+    <tr>
+      <td><code>numberWidth</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
+      <td><code>'run'</code></td>
+      <td>عرض عمود الرقم في البند، وهو ما يحدد موضع بداية نصه؛ وتُصفّ الأرقام فيه محاذاةً إلى اليمين. <code>'run'</code>: أعرض رقم في السلسلة التي ينتمي إليها البند، أي بنود العمق الواحد التي لا يفصل بينها إلا بنود أعمق. الشكل أو الفقرة أو الإطار بين بندين يبدأ سلسلة جديدة، فقد يبدأ نص <code>ii)</code> بعد جدول أبعد قليلًا إلى اليمين من نص <code>i)</code> قبله، وتبدأ قائمة من تسعة بنود نصها إلى يسار نص قائمة من اثني عشر بندًا. <code>'level'</code>: أعرض رقم في عمق البند في المستند كله (الفصل، في الكتاب)، فتبدأ كل قائمة، وكل جزء من قائمة متقطعة، نصها في الموضع نفسه، كما تفعل أصلًا إزاحات المستويات الأعمق. <code>'item'</code>: رقم البند نفسه، فيبدأ نص كل بند بعد تسميته بمقدار <code>gap</code> واحد: يتبع <span lang="ja" className="font-body">第九條</span> و<span lang="ja" className="font-body">第十一條</span> الفراغُ نفسه وتبدأ نصوصهما من موضعين مختلفين، كما تطبع الجريدة الرسمية اليابانية مواد القانون. والأسطر التالية تتبع <code>hangingIndent</code>: مع <code>false</code> تعود إلى إزاحة القائمة، ومع <code>true</code> تتدلى تحت نص البند نفسه. وإزاحة المستوى الأعمق تبقى قيمة واحدة لكل مستوى. منذ postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>موضع الرقم في عموده. <code>'end'</code>: بجوار النص، فتنتهي أرقام السلسلة عند موضع واحد وتتحاذى نقطتا <code>9.</code> و<code>10.</code>. <code>'start'</code>: في أول العمود (اليسار في صفحة تُقرأ من اليسار إلى اليمين، واليمين في صفحة تُقرأ من اليمين إلى اليسار، ورأس السطر في النص العمودي)، فتبدأ التسميات المختلفة الطول من موضع واحد، كما تبدأ مواد القانون (<span lang="ja" className="font-body">第九條</span>، <span lang="ja" className="font-body">第十一條</span>). يحتفظ العمود بالعرض الذي يحدده <code>numberWidth</code>، فيبدأ نص البنود من الموضع نفسه في الحالتين؛ وإذا كان للفاصل نمط خاص به تبع الفاصل رقمه. منذ postext 1.26. ومع <code>numberWidth: 'item'</code> يكون العمود هو الرقم نفسه، فتُنضّد القيمتان القائمة نفسها.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>تصطف الأسطر الملتفّة مع أول حرف من النص بدلًا من أن تبدأ تحت الرقم.</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>OrderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>تجاوزات لكل عمق من المستويات 1–5.</td>
+    </tr>
+  </tbody>
+</table>
+
+### تجاوزات كل مستوى في القوائم المرقّمة
+
+يمكن لكل مُدخل في `levels` أن يتجاوز `numberFormat` و`prefix` و`separator` و`fontFamily` و`fontSize` و`color` و`fontWeight` و`italic` و`indent` و`verticalOffset` ونمط الفاصل (`separatorFontFamily`، `separatorFontWeight`، `separatorItalic`، `separatorColor`، `separatorGap`)، وتنطبق قاعدة تسلسل الإزاحة نفسها المطبقة على القوائم غير المرقّمة. يرث نمط الفاصل في مستوى ما نمط الرقم في المستوى نفسه، ما لم يُعطَ إعداد الفاصل على مستوى القائمة كلها.
+
+**المحاذاة إلى اليمين.** يقيس المسار أعرض رقم منسَّق داخل السلسلة ويزيح كل بنود تلك السلسلة كي تصطف علامات الأرقام على حافتها اليمنى. في قائمة من عشرة بنود تُخرج من `1.` إلى `10.`، تُحشى الأرقام ذات الخانة الواحدة من جهة اليمين كي يبقى الفاصل في العمود نفسه.
+
+```ts
+orderedLists: {
+  numberFormat: 'arabic',
+  separator: '.',
+  levels: [
+    { level: 2, numberFormat: 'lower-alpha' },
+    { level: 3, numberFormat: 'lower-roman', separator: ')' },
+  ],
+}
+```
+
+ينتج عن ذلك المزيج المتداخل المألوف:
+
+```
+1. First item
+   a. Sub-item
+      i) Deep note
+   b. Sub-item
+2. Second item
+```
+
+تراتبية المستندات الصينية (GB/T 15834—2011، الملحق B.3) تتألف من خمسة مستويات: 一、 ثم （一） ثم 1. ثم （1） ثم ①:
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'simp-chinese-informal', separator: '、' },
+    { level: 2, numberFormat: 'simp-chinese-informal', prefix: '（', separator: '）' },
+    { level: 3, numberFormat: 'arabic', separator: '.' },
+    { level: 4, numberFormat: 'arabic', prefix: '（', separator: '）' },
+    { level: 5, numberFormat: 'circled-decimal', separator: '' },
+  ],
+}
+```
+
+
+## الصيغ الرياضية
+
+تتحكم الخاصية `math` في طريقة تحليل صيغ LaTeX وإخراجها، سواء داخل المحدِّدين `$...$` (ضمن السطر) أو `$$...$$` (صيغة منفصلة، display). المحرّك الذي تقوم عليه هو MathJax (الحزمة `mathjax-full`) في وضع الإخراج SVG، ويُحوَّل إلى صورة نقطية في Canvas ويُضمَّن في PDF رموزًا قابلة للتحجيم.
+
+```ts
+interface MathConfig {
+  enabled?: boolean;        // Render LaTeX. When false, spans pass through as literal TeX.
+  fontSizeScale?: number;   // × the surrounding text's size (the body size for display maths).
+  color?: ColorValue;       // Formula colour; inherits body colour if omitted.
+  marginTop?: Dimension;    // Space above display math blocks.
+  marginBottom?: Dimension; // Minimum space below; baseline grid snap may enlarge it.
+  indentAfterDisplay?: boolean; // Indent a paragraph that follows a display formula.
+  keepWithLeadIn?: boolean; // Keep a display formula with the line that leads into it.
+  equationNumbering?: {      // Number the display formulas that carry a \label.
+    enabled?: boolean;           // default true
+    numberingTemplate?: string;  // '{n}'; '{h1}.{n}' numbers by chapter
+    resetOn?: ResourceCounterReset; // 'never' | 'h1' … 'h6'
+    counterFormat?: ResourceCounterFormat; // 'decimal'
+    format?: string;             // '({n})': what the formula and \eqref print
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>عند القيمة false تبقى مقاطع `$...$` و`$$...$$` تُحلَّل (فتظل تحذيرات المحدِّدات غير المغلقة تُطلق)، لكنها تُخرج بنص TeX المصدري كما هو. يفيد ذلك حين يحتوي المحتوى على علامات الدولار عمدًا، أو حين تريد تعطيل إخراج الرياضيات تمامًا.</td>
+    </tr>
+    <tr>
+      <td><code>fontSizeScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1.0</code></td>
+      <td>معامل يُضرب في حجم النص المحيط قبل الإخراج: الـ em الواحد من خط TeX في الصيغة يساوي ذلك الحجم × `fontSizeScale`، والحجم هو `bodyText.fontSize` للصيغة المنفصلة وللرياضيات ضمن السطر في نص المتن، وحجم الكتلة الحاوية للرياضيات ضمن السطر في عنوان أو نمط فقرة أو تعليق أو متن إطار. القيمة 1.0 تطابق النص المحيط؛ والقيم بين 0.9 و1.1 شائعة حين يبدو خط الرياضيات أكبر قليلًا أو أصغر قليلًا من خط النثر. **تغيّر في postext 1.5:** حتى 1.4 كانت الصيغ تخرج أكبر من ذلك بنحو 13% (انظر أدناه).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>يرث لون المتن</td>
+      <td>لون الصيغة المُخرجة. أغفله ليرث `bodyText.color`. عيّنه صراحةً حين تريد للصيغ لونًا مختلفًا عن النثر، كأن يطابق لون إبراز العناوين.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>المسافة فوق كتلة الصيغة المنفصلة. تُهمل في الرياضيات ضمن السطر.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>المسافة تحت كتلة الصيغة المنفصلة. وهي **حد أدنى**: قد يمدّها الالتصاق بالشبكة كي يقع خط الأساس التالي على أحد خطوط الشبكة (سواء رسمت <code>page.baselineGrid</code> الشبكة أم لا).</td>
+    </tr>
+    <tr>
+      <td><code>indentAfterDisplay</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>يزيح السطر الأول من الفقرة التي تلي صيغة منفصلة، كأي فقرة أخرى. أما <code>false</code> فتجعل كل فقرة تلي صيغة منفصلة مباشرةً بلا إزاحة، بوصفها تتمة للجملة التي قطعتها الصيغة ("where <em>L</em> is…"). والصيغة المكتوبة داخل فقرة، بلا سطر فارغ فوقها ولا تحتها، يليها دائمًا نص بلا إزاحة: النص الواقع تحت <code>$$</code> الختامية يتابع تلك الفقرة ولا يُزاح أبدًا (انظر <a href="/ar/docs/document-format-inline#الصيغ-الرياضية">الصيغ الرياضية</a>).</td>
+    </tr>
+    <tr>
+      <td><code>keepWithLeadIn</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يُبقي الصيغة المنفصلة في عمود السطر الذي يمهّد لها، وهو ما يسميه TeX جزاء ما قبل الصيغة (predisplay penalty). حين لا تتسع الصيغة تحت السطر الأخير من الفقرة التي قبلها، ينتقل ذلك السطر مع الصيغة إلى العمود أو الصفحة التالية؛ وحين يكون عدد الأسطر المتروكة خلفه أقل من <code>bodyText.widowMinLines</code> (أقل من سطر واحد حين يكون <code>bodyText.avoidWidows</code> معطّلًا)، تنتقل الفقرة التي تبدأ في ذلك العمود كاملةً (مع العناوين التي تختم العمود فوقها، بحسب <code>headings.keepWithNext</code>). يقف السطر المنقول وحده في رأس العمود التالي، أيًّا كان ما تطلبه قاعدة الأسطر اليتيمة (orphans). ومع <code>false</code> تنتقل الصيغة وحدها، وقد يختم السطرُ الذي يقدّمها العمودَ السابق، أو يقع فوق شكل يتصدر العمود التالي.</td>
+    </tr>
+    <tr>
+      <td><code>equationNumbering</code></td>
+      <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
+      <td><code>true</code>، <code>'&#123;n&#125;'</code>، <code>'never'</code>، <code>'decimal'</code>، <code>'(&#123;n&#125;)'</code></td>
+      <td>طريقة ترقيم الصيغ المنفصلة التي تحمل <code>\label</code> (انظر <em>المعادلات المرقّمة</em> أدناه). تعمل <code>numberingTemplate</code> و<code>resetOn</code> و<code>counterFormat</code> كما تعمل في نوع المورد: <code>'&#123;h1&#125;.&#123;n&#125;'</code> مع <code>resetOn: 'h1'</code> يرقّم (2.1)، (2.2)… بحسب الفصل، و<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> مع <code>'h2'</code> بحسب القسم. و<code>format</code> هو الرقم كما تطبعه الصيغة و<code>\eqref</code>، ويقوم فيه <code>&#123;n&#125;</code> مقام الرقم: <code>'[&#123;n&#125;]'</code> يطبع [3]. ومع <code>enabled: false</code> لا يُرقَّم شيء: يُسقَط <code>\label</code>، وتطبع الإحالة إليه صفحته. ويقبل الرمز نمطًا بعد نقطتين أيضًا (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) في ملحق مرقّم بالحروف).</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+math: {
+  enabled: true,
+  fontSizeScale: 1.0,
+  color: { hex: '#295AA3', model: 'hex' },
+  marginTop: { value: 1, unit: 'em' },
+  marginBottom: { value: 1, unit: 'em' },
+}
+```
+
+**حجم الصيغ، تغيّر في postext 1.5.** يعطي MathJax صندوق الصيغة بوحدة `ex`، والـ `ex` الواحد من خط TeX فيها يساوي 0.442 em. حتى postext 1.4 كان المحرّك يعدّه نصف em، فكانت كل صيغة تُنضَّد أكبر بنحو 13% من `bodyText.fontSize × fontSizeScale`. صارت الصيغ الآن تخرج بالحجم الموثَّق، فيُعاد تدفق الأسطر والصفحات التي فيها رياضيات. والإعدادات المكتوبة برمجيًا للإصدار 1.4 تحتفظ بحجم صيغ 1.4 إذا مُرّرت عبر `pinLegacyMathSize` من `postext/bundle`، مرة واحدة، كما كُتبت:
+
+```ts
+import { pinLegacyMathSize } from 'postext/bundle';
+
+config = pinLegacyMathSize(config); // formulas, and the space around display formulas, as 1.4 set them
+```
+
+وثمة تغييرات أخرى في القواعد في 1.5 قد تحرّك صفحاتها أيضًا: فواصل أسطر العناوين، والمسافة حول الشكل ضمن السطر (في النص الجاري وفي الإطارات)، والعلامات المضمَّنة في عناوينها، وحجم حروفها الاستهلالية، والحيّز المحجوز تحت سطر ينتهي بنقطتين للقائمة التي يقدّمها، والأسطر التي يتركها قطع الإطار من فقرة أو بند قائمة، وفواصل الأسطر بعد الشَّرطة، وتقسيم أسطر النص غير المضبوط، وانقسام الفقرة تحت العنوان، وفواصل الأسطر بعد واصلة الكلمة المركّبة، والمسافة تحت الحاوية `:::paragraphs`. الدالة `migrateConfig`، إذا شُغّلت مرة واحدة مع نص Markdown الذي يُخرجه الإعداد، تثبّت ما يحتاجه هذا النص من تلك التغييرات، بما فيها حجم الصيغ (انظر [الحزم التي كتبها postext 1.4 أو ما قبله](/ar/docs/configuration-bundles#الحزم-التي-كتبها-postext-14-أو-ما-قبله)):
+
+```ts
+import { migrateConfig } from 'postext/bundle';
+
+config = migrateConfig(config, undefined, { content: markdown }); // heading breaks, formulas, inline gaps, heading marks, drop caps, colon lines, box cuts, dash breaks, compound breaks, ragged breaking, splits under a heading and container space as 1.4 set them
+```
+
+يمنع ذلك ما كانت تغييرات القواعد هذه ستحرّكه، لكنه لا يحفظ كل صفحة من صفحات 1.4. فالإصدار 1.5 يصلح أيضًا أخطاء في الإخراج، والإصلاح لا يُثبَّت: يحصل عليه الإعداد القديم كما يحصل عليه الجديد، فقد تتحرك صفحة يمسّها. ومن هذه الإصلاحات: العنوان الممتد عبر الصفحة بلا تصميم خاص به يُقاس على عرض الصفحة ويُنضَّد بتباعد أسطر مستواه؛ لا يُحجز شيء تحت خط أساس الحرف الاستهلالي في تصميم العنوان؛ يأخذ الحرف الاستهلالي لون لوحة القسم، ويُنضَّد حتى في نص التصميم الذي ليست قيمة `overflow` فيه `'wrap'`، فيلتف النص حينئذ؛ الفقرة داخل الإطار تُرسم بالتتبّع الذي قيست به؛ الإطار المقسوم يحتفظ بعمود أيقونته في كل جزء منه؛ سطر الإطار الذي كانت مسافاته ستتمدد إلى أكثر من 3× يُنضَّد غير مضبوط، كما في النص الجاري؛ أداة الفقرة المرخاة لا تجعل أبدًا سطرًا مضبوطًا أعرض مما تسمح به `maxWordSpacing`؛ الإطار العائم يحتفظ بقيمة `marginBottom` (في الشريط العلوي) أو `marginTop` (في الشريط السفلي) إذا كانت أعرض من فجوة العناصر العائمة؛ نص التصميم المتوسّط أو المحاذى إلى اليمين الذي فيه تتبّع (كالترويسة أو عنوان صفحة الافتتاح) يوضع بحسب حروفه، دون التتبّع الذي بعد الحرف الأخير؛ تحت عنوان افتتاح ممتد عبر الصفحة، يبدأ النص الذي يفتتح العمود الثاني حيث كان سيبدأ النص الواقع مباشرة تحت عنوان الافتتاح، حتى حين يلي عنوانٌ عنوانَ الافتتاح؛ تتوقف نقاط جدول المحتويات قبل رقم الصفحة في الخط الذي يباعد بتقنين الأزواج (kerning) بين النقاط المتتالية؛ تقرأ الترويسة العنوان كما كُتب، بلا مسافة حيث ينتهي أحد أسطره بعد واصلة أو شَرطة أو داخل كلمة قُطعت لضيق العرض (`MEDIOAMBIENTALES` لا `MEDIOAMBIENTALE S`)، ويقرؤه `{titleText}` في تصميم العنوان بالطريقة نفسها (`thousand-colour` لا `thousand- colour`)؛ النص المثبَّت في أسفل شريط تصميم العنوان أو وسطه يُبقي الشريط طويلًا بما يكفي لاحتوائه، فلم يعد يرتفع فوق النص الذي يعلو العنوان؛ الكلمة الأعرض من سطرها، إذا قُطعت بجوار واصلة تحملها، تُقطع بعد تلك الواصلة ولا تُضاف إليها واصلة ثانية؛ البند التالي لقائمة متداخلة في أخرى يأخذ `itemSpacing` قائمته هو، لا قيمة القائمة المتداخلة؛ وبقية الكلمة المقطوعة لأنها أعرض من سطرها تحتفظ بمواضع القطع الخاصة بها، فيظل عنوان الويب ينقطع عند مفاصله والكلمة المركّبة عند واصلاتها، بدلًا من مقاطع القاموس.
+
+تضرب `pinLegacyMathSize` المقياس في 1.1312 (0.5 ÷ 0.442) وتقسم هوامش الصيغ المنفصلة المعبَّر عنها بوحدة `em` على المعامل نفسه. المقياس وحده لا يكفي لكتاب فيه صيغ منفصلة: فهوامشها أطوال بمقياس حجم الصيغة نفسها، فكانت ستكبر بنسبة الـ 13% نفسها وتدفع النص الذي تحتها إلى الأسفل. وهذه هي القيم الثلاث مكتوبةً للهوامش الافتراضية:
+
+```ts
+math: {
+  fontSizeScale: 1.131,
+  marginTop: { value: 0.7072, unit: 'em' },
+  marginBottom: { value: 0.7072, unit: 'em' },
+} // formulas as large as 1.4 set them, with the space 1.4 left around them
+```
+
+حيث يكون الإعداد مخزَّنًا، يستطيع المحرّك أن يتعرّف على ذلك ويقوم به عنك: `openBundle` / `readBundle` لحزمة `.postext` كُتبت قبل 1.5 (انظر [الحزم التي كتبها postext 1.4 أو ما قبله](/ar/docs/configuration-bundles#الحزم-التي-كتبها-postext-14-أو-ما-قبله))، وSandbox للكتب ونسخة العمل وملفات `postext-config.json` المحفوظة آنذاك (انظر **Sandbox › حفظ العمل**). تُقرأ هذه عبر `migrateConfig`، التي تثبّت الحجم (`pinLegacyMathSize`): تصبح `fontSizeScale` مساويةً للمقياس المخزَّن (1 إن لم يُعيَّن) × 1.1312، ويُقسَم هامش الصيغة المنفصلة المعبَّر عنه بوحدة `em` أو `rem`، وهو طول بمقياس حجم الصيغة نفسها، على المعامل نفسه، فتبقى المسافة حول الصيغة المنفصلة كما تركها 1.4 (تصبح القيمة الافتراضية 0.8 em هي 0.7072 em). أما الهامش بوحدة من وحدات الصفحة (`pt`، `mm`…) فيُترك كما هو، وكذلك الإعداد الذي فيه `enabled: false` أو الذي ليس في كتابه أي `$`. عندئذ يُخرَج الكتاب القديم كما أخرجه 1.4، ويُظهر قسم `math` فيه الحجم الذي يُنضَّد به. ولتنضيد هذا الكتاب بحجم اليوم بدلًا من ذلك، أعد تعيين تلك القيم: **الصيغ الرياضية › معامل الحجم** و*الهامش العلوي للصيغة المعروضة* و*الهامش السفلي للصيغة المعروضة* في Sandbox، أو برمجيًا:
+
+```ts
+math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // today's size and margins
+```
+
+**المعادلات المرقّمة.** الصيغة المنفصلة ذات الرقم تمتد على عرض قياسها (العمود، أو العرض الداخلي للإطار الذي تقع فيه): تُوسَّط المعادلة ويُصفّ رقمها محاذىً إلى اليمين على سطر المعادلة، في كل صف مرقّم من بيئة `align`. ويأتي الرقم من `\label{eq:x}` (منذ postext 1.19): تُرقَّم الصيغ التي تحمل `\label`، والصفوف التي تحمله في `align` أو `gather` أو `alignat` أو `flalign` أو `eqnarray`، بترتيب القراءة وفق `equationNumbering`، ما لم يحمل الصف `\nonumber` أو `\notag`. والبيئات مثل `equation` لا تُرقَّم من تلقاء نفسها: فالصيغة التي لا تسمية لها لا رقم لها. ويطبع `\tag{…}` التسمية التي تعطيها له بين قوسين، و`\tag*{…}` كما كُتبت؛ ولا يدخل أيٌّ منهما في العدّ، و`\label` المجاور لأحدهما يسمّيه. والمعادلة المرقّمة الأعرض من قياسها تفيض إلى اليمين، كأي صيغة منفصلة. (حتى postext 1.4 لم تكن الصيغة التي فيها `\tag` تُرسم أصلًا؛ وحتى 1.18 لم يكن يرقّمها إلا `\tag`.)
+
+يطبع `\eqref{eq:x}` في النص الرقمَ بصيغة `format`، أي (3)، ويطبع `\ref{eq:x}` الرقم مجرّدًا؛ وكذلك يفعل `:ref{id="eq:x"}` و`@eq:x` (انظر [الإحالات](/ar/docs/document-format-notes-references#الإحالات-والمراسي))، وداخل الصيغة يطبع `\eqref` الرقم نصًا. وفي كتاب يُخرَج فصلًا فصلًا يستمر العدّاد من الفصل السابق: تحمله `continuationAfter` في `LayoutContinuation.statementCounters` (`equation`)، ويعطي مخطّط الكتاب كل تسمية رقمها (`OutlineEntry.numberLabel`)، فتطبعه الإحالة إلى معادلة في فصل آخر.
+
+```ts
+math: {
+  equationNumbering: { numberingTemplate: '{h1}.{n}', resetOn: 'h1' }, // (1.1), (1.2)… (2.1)
+}
+```
+
+دالتا الحل والتجريد مماثلتان لنظيراتهما في الأقسام الأخرى:
+
+```ts
+import {
+  DEFAULT_MATH_CONFIG,
+  resolveMathConfig,
+  stripMathDefaults,
+} from 'postext';
+
+const resolved = resolveMathConfig(config.math);
+const minimal  = stripMathDefaults(config.math);
+```
+
+### تشغيل محرّك الرياضيات
+
+يُحمَّل MathJax عند الطلب، لا مع بقية المحرّك. حين تُجري الإخراج على الخيط الرئيسي، شغّله قبل بناء مستند فيه صيغ:
+
+```ts
+import { buildDocument, initMathEngine, renderPage } from 'postext';
+
+await initMathEngine(); // loads MathJax once; later calls resolve at once
+const doc = buildDocument({ markdown: 'Euler: $e^{i\\pi}+1=0$.' }, config);
+document.body.append(renderPage(doc.pages[0], doc));
+```
+
+- **إلى أن يعمل المحرّك، تكون الصيغ عناصر نائبة.** تُخرَج كل صيغة صندوقًا رماديًا بحجم تقديري. وإذا أُخرج مستند فيه رياضيات قبل أن تُستدعى `initMathEngine()` ولو مرة، أظهرت وحدة التحكم تحذيرًا واحدًا بذلك.
+- **عامل الإخراج (worker) يشغّله عنك.** البناء في `postext/worker` يستدعي `initMathEngine()` بنفسه حين يحتوي نص Markdown على `$`.
+- **أخرج الآن، ثم أعد الإخراج حين يجهز.** تخبرك `isMathReady()` هل المحرّك يعمل. وتستدعي `onMathReady(fn)` الدالة `fn` حين يجهز (فورًا إن كان جاهزًا) وتعيد دالة تلغي الاستدعاء. يستطيع المحرّر أن يعرض العناصر النائبة فورًا ثم يعيد الإخراج حين يصل MathJax؛ ولا يُطبع أي تحذير ما دامت `initMathEngine()` قيد التنفيذ.
+- **الإخفاق.** ترفض `initMathEngine()` (reject) حين يتعذر تحميل MathJax، والاستدعاء اللاحق يحاول من جديد.
+- **أي مُجمِّع (bundler)، أو Node، أو CDN.** يأتي MathJax داخل الحزمة وحدةً واحدة مجمَّعة مسبقًا (نحو 1.8 MB قبل الضغط، ولا تجلبها إلا `initMathEngine`). يعمل الاستيراد البسيط `import { initMathEngine } from 'https://esm.sh/postext'`؛ ولا حاجة إلى `?bundle`. الحزمة `mathjax-full` لا تلزم إلا لبناء postext، فتثبيت postext لا يثبّتها. MathJax ومحلّل mhchem المضمَّن فيه مرخّصان بترخيص Apache-2.0: تأتي إشعاراتهما ونص الترخيص بجوار الوحدة، في `dist/math/THIRD_PARTY_LICENSES.txt`.
+- **محرّك واحد لكل صفحة.** يتشارك المحرّك وذاكرته المؤقتة للصيغ المُخرجة كلُّ ما يستورد `postext` في نطاق JavaScript نفسه (انظر [الحالة العامة المشتركة في صفحة واحدة](/ar/docs/configuration-programmatic-usage#الحالة-العامة-المشتركة-في-صفحة-واحدة)).
+
+لقواعد الكتابة في جانب المستند (`$...$`، `$$...$$`، تهريب علامة الدولار الحرفية)، انظر [صيغة المستند](/ar/docs/document-format-inline#الصيغ-الرياضية).

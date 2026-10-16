@@ -18,7 +18,7 @@ pageNotes: { "1": "表紙。黒いコンデンス体の大文字と小文字で1
 
 <Excerpt region="build" />
 
-レイアウトはすべての語を`document.fonts`にある書体で計測します。そのため[手短な答え](#手短な答え)の`loadBrandFonts()`は、各ファイルを一度だけ取得してバイト列を保持し、そのバイト列から作った`FontFace`を`buildDocument`の実行前に登録します。キットの`kitFonts`はFontsourceからしか取得しませんが、ブランドは自社のサーバーでファイルを配信しています。`renderToPdf`はページが描く書体だけを要求し、`brandFontProvider`は取得済みのバイト列で各要求に答えます。ブランドにないウェイトやイタリックを求められたら、同じファミリーで最も近いファイルを返します（[なぜフォントプロバイダーが必要か](/ja/docs/configuration-programmatic-usage#なぜフォントプロバイダーが必要か)）。PDFにはCanvasが計測した6ファイルが、それぞれ一度だけ埋め込まれます。
+レイアウトはすべての語を`document.fonts`にある書体で計測します。そのため[手短な答え](#手短な答え)の`loadBrandFonts()`は、各ファイルを一度だけ取得してバイト列を保持し、そのバイト列から作った`FontFace`を`buildDocument`の実行前に登録します。キットの`kitFonts`はFontsourceからしか取得しませんが、ブランドは自社のサーバーでファイルを配信しています。`renderToPdf`はページが描く書体だけを要求し、`brandFontProvider`は取得済みのバイト列で各要求に答えます。ブランドにないウェイトやイタリックを求められたら、同じファミリーで最も近いファイルを返します（[なぜフォントプロバイダーが必要か](/ja/docs/configuration-pdf-output#なぜフォントプロバイダーが必要か)）。PDFにはCanvasが計測した6ファイルが、それぞれ一度だけ埋め込まれます。
 
 ### 2 · 色の体系は1つのリスト
 
@@ -42,7 +42,7 @@ pageNotes: { "1": "表紙。黒いコンデンス体の大文字と小文字で1
 
 <Excerpt region="bundle" />
 
-`createBundle`は`config.customFonts`を読み、各バリアントのバイト列を`fileId`をもとに`files`から探して`fonts/`の下に書き込み、マニフェストに`fonts`項目を加えます。ディスプレイ書体のファミリーには`redistributable: false`が付いています。これはファイルを他者に渡すことを禁じるライセンスの代役です（Big Shoulders Display自体はOFLです）。そのファイルはバンドルに入らず、`warnings`がファミリー名を挙げます。81 KBのファイルには、章、設定、3点の図、5つのフォントファイルが収まります。レイアウトは`customFonts`を読まないので、これがなくてもページは同じに仕上がります（[バンドルを作成する](/ja/docs/configuration-programmatic-usage#バンドルを作成する)）。
+`createBundle`は`config.customFonts`を読み、各バリアントのバイト列を`fileId`をもとに`files`から探して`fonts/`の下に書き込み、マニフェストに`fonts`項目を加えます。ディスプレイ書体のファミリーには`redistributable: false`が付いています。これはファイルを他者に渡すことを禁じるライセンスの代役です（Big Shoulders Display自体はOFLです）。そのファイルはバンドルに入らず、`warnings`がファミリー名を挙げます。81 KBのファイルには、章、設定、3点の図、5つのフォントファイルが収まります。レイアウトは`customFonts`を読まないので、これがなくてもページは同じに仕上がります（[バンドルを作成する](/ja/docs/configuration-bundles#バンドルを作成する)）。
 
 ## アレンジ
 

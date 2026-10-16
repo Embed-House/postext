@@ -6962,6 +6962,13 @@
    "lighting": {
     "environment": "lamp"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "ألف ليلة وليلة"
+    ]
+   }
   }
  },
  "localized": {

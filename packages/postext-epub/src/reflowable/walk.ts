@@ -629,6 +629,9 @@ class DocWalker {
       return;
     }
     if (isTocRow(block)) {
+      // A head row repeated where a cut contents block goes on (#850):
+      // the reflowed contents is not cut.
+      if (block.tocEntry?.continued || block.tocPart?.continued) return;
       this.tocRow(block, root, key);
       return;
     }

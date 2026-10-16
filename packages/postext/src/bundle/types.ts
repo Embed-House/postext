@@ -135,8 +135,9 @@ interface BundleManifestBase extends BundleShowcaseMeta {
    *  at zero. A reader that does not know the field ignores it. */
   start?: BundleStart;
   /** The configuration rules `config` and each `localized[…].config` are
-   *  written for (`CONFIG_VERSION`: 8 since postext 1.5, which writes it on
-   *  every manifest). A manifest without it was written by postext 1.4 or
+   *  written for (`CONFIG_VERSION`, which every writer since postext 1.5
+   *  sets: 8 from 1.5, 14 from 1.30, 15 since composed pages (#853), whose
+   *  `pageTemplates` and `labelStyles` an older reader ignores). A manifest without it was written by postext 1.4 or
    *  earlier, and `readBundle` reads its configuration with the heading
    *  breaks, the maths size, the space around inline resources (in the
    *  text and inside boxes), the heading marks, the drop-cap sizes, the
@@ -151,7 +152,7 @@ interface BundleManifestBase extends BundleShowcaseMeta {
    *  `pinLegacyRaggedBreaking`, `pinLegacyHeadingSplit`,
    *  `pinLegacyParagraphContainerSpacing`); one stamped 3 to 7 (a 1.5
    *  prerelease) gets the pins of the rules after it only. A manifest
-   *  written by hand for today's rules sets it to 8. */
+   *  written by hand for today's rules sets it to `CONFIG_VERSION`. */
   configVersion?: number;
   config?: PostextConfig;
   resources?: BundleResourceSpec[];

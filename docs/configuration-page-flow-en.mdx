@@ -1,0 +1,390 @@
+{/* docs/configuration-page-flow-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: widows, orphans and balancing',
+  sidebarTitle: 'Widows, orphans and balancing',
+  description: 'The rules that keep lines and blocks together across a column break, and the levers that make every column end level',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '22 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "This page covers how Postext decides where a column or a page ends. A single line of a paragraph should not be left alone at the top or the bottom of a column, and a heading should not be left without its text. These rules can leave a column shorter than the others. Postext then makes small changes, in a fixed order, so that every column ends at the same height. The page lists each rule and each change, and how to see which one was used.",
+};
+
+# Configuration: widows, orphans and balancing
+
+
+## Orphans, widows, runts, and keep-together rules
+
+See [Hyphenation & Justification](/en/docs/justification) for the mechanics behind these demerits. This section is the reference for the `bodyText` keys that drive them.
+
+Beyond hyphenation and spacing bounds, the body-text configuration exposes the soft rules that prevent structurally awkward paragraph breaks. All of these are fed into the Knuth-Plass line-breaking algorithm as demerits — they bias the layout toward clean breaks without ever forcing a hard rule. Set the `*Penalty` values to `0` to effectively disable any one of them.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>avoidOrphans</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Discourage a paragraph from ending with fewer than <code>orphanMinLines</code> lines at the top of the next column. On a character grid (<code>cjk.grid</code>) in the <code>japan</code> region the default is <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Minimum lines required at the top of the next column when a paragraph is split. Only active when <code>avoidOrphans</code> is <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Demerit added when an orphan constraint is violated. Higher values bias the algorithm more strongly against orphans; <code>0</code> disables the penalty.</td>
+    </tr>
+    <tr>
+      <td><code>avoidOrphansInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code>, list items also receive orphan protection (not just paragraphs). Only effective when <code>avoidOrphans</code> is <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidows</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Discourage a paragraph from starting with fewer than <code>widowMinLines</code> lines at the bottom of the current column. On a character grid (<code>cjk.grid</code>) the default is <code>false</code>: the page holds the lines its grid counts.</td>
+    </tr>
+    <tr>
+      <td><code>widowMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Minimum lines required at the bottom of the current column when a paragraph is split. Only active when <code>avoidWidows</code> is <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>widowPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Demerit added when a widow constraint is violated. <code>0</code> disables the penalty.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidowsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code>, list items also receive widow protection. Only effective when <code>avoidWidows</code> is <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>A short list cut between two columns or pages: a list of up to <code>shortListMaxItems</code> items in the running text, such as one of three items set 1 + 2. <code>avoidOrphansInLists</code> and <code>avoidWidowsInLists</code> keep the lines of one item together; this rule keeps the items of one list together. <code>'allow'</code> cuts such a list where the column ends, as any other. <code>'warn'</code> lays it out the same and reports each list cut (a <code>shortListSplit</code> warning, see <a href="/en/docs/configuration-programmatic-usage#warnings-in-the-document">Warnings in the document</a>). <code>'avoid'</code> sets the list whole: when it does not fit under what the column holds it opens the next column, and the headings right above it and the colon line that introduces it (<code>keepColonWithList</code>) go with it. A list taller than an empty column is cut as any other, and reported. Lists inside a <code>:::callout</code> follow the box's own cut rules, and the entries of <code>:::toc</code> and <code>:::index</code> are not lists. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>The most items a list has to count as short for <code>shortListSplit</code>, the items of its nested lists included. A whole number, at least 1. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Discourage paragraphs from ending with a very short last line — a <em>runt</em>, e.g. a single short word alone. Ragged text too, with <code>optimalRagged</code>. A Chinese, Japanese or Korean paragraph does not end on a line holding one character, alone or with its closing marks (孤字): the line above gives it its last character when that line can still be justified within the tracking cap. A line set left, right or centred gives the character up too and stands one character short; with <code>cjk.grid.fullLines</code> (manuscript paper) it keeps every square, and the paragraph may end on one character.</td>
+    </tr>
+    <tr>
+      <td><code>runtMinCharacters</code></td>
+      <td><code>number</code></td>
+      <td><code>20</code></td>
+      <td>Threshold for the last line of a paragraph, counted in word spaces, not letters: the line is a runt when it is narrower than <code>runtMinCharacters × normalSpaceWidth</code> pixels. A word space is a quarter to a third of an em in most text faces, about half a lowercase letter, so the default 20 catches last lines under 4 to 7 em — roughly 8 to 12 letters. To catch the last lines under about N letters, set it near 2 × N.</td>
+    </tr>
+    <tr>
+      <td><code>runtPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Equivalent-badness injected into the Knuth–Plass squared demerit formula (same scale as line <em>badness</em>, which saturates at 10000). <code>0</code> disables the penalty.</td>
+    </tr>
+    <tr>
+      <td><code>gradedRuntPenalty</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Scale the runt penalty by how short the last line falls: a last line of width <em>w</em> under the threshold <em>t</em> costs <code>runtPenalty × (1 − w / t)</code> instead of the whole penalty. A two-word ending then costs less than a one-word one, and the breaker pulls a word down when a line above can spare it ('…sallies of' / 'our minds.' rather than '…sallies of our' / 'minds.'). Off by default: every runt costs the same, and the breaker keeps the tighter lines above.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRuntsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code>, list items also receive the runt penalty. Only effective when <code>avoidRunts</code> is <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>tightenRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When the penalty could not avoid a runt, set the paragraph one line shorter instead: the word spaces tighten (never past <code>minWordSpacing</code>) and, if that alone does not carry the line, a little negative tracking joins in. A shorter setting is refused, and the runt stays, when it would stretch a justified line past <code>maxWordSpacing</code> or, when the paragraph already has a looser justified line, past that line, or when it would set more lines ragged (past 3× the normal space) than the paragraph had. The word spaces of ragged text keep their width, so there only the tracking takes part. Needs <code>optimalLineBreaking</code> and <code>avoidRunts</code> (and <code>optimalRagged</code> for ragged text).</td>
+    </tr>
+    <tr>
+      <td><code>maxRuntTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Most tracking a runt fix may take, in thousandths of an em (the InDesign unit: 10 = 0.01 em per character), applied as a tightening. <code>0</code> leaves the fix to word spacing alone.</td>
+    </tr>
+    <tr>
+      <td><code>slackWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Weight applied to the squared "unused column space" cost. Higher values make the layout prefer filling columns tightly; <code>0</code> disables the slack pressure entirely.</td>
+    </tr>
+    <tr>
+      <td><code>keepColonWithList</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When a paragraph ends with a colon that directly introduces a list, keep the colon-bearing last line joined to the list: if placing the paragraph would leave no room for the first list item to start in the same column/page, the last line (or the whole paragraph, if it is a single line) is moved to the next column together with the list. How much room counts as enough is <code>colonListRoom</code>. When this rule would push the whole paragraph and a run of headings immediately precedes it in the column, those headings are pulled forward too so <code>headings.keepWithNext</code> keeps holding.</td>
+    </tr>
+    <tr>
+      <td><code>colonListRoom</code></td>
+      <td><code>'item' | 'line'</code></td>
+      <td><code>'item'</code></td>
+      <td>The room <code>keepColonWithList</code> asks for under the colon line. <code>'item'</code>: what the orphan and widow rules for lists would leave of the first item at the foot of the column, a line when it may split there, all of it when they keep it whole (a two-line item, say). <code>'line'</code>: one line, as up to postext 1.4; a first item those rules keep whole then goes on to the next column alone and leaves the colon line at the foot. A configuration stored before <code>configVersion</code> 6, in a book that introduces a list with a colon, reads with <code>'line'</code> (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). Any other value reads as <code>'item'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateAcrossColumns</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
+      <td><code>true</code></td>
+      <td>Let a column or a page end on a hyphenated word (InDesign's <em>Hyphenate Across Column</em>). <code>false</code> breaks the paragraph that crosses the column break again, so that its last line in the column ends on a whole word; the word spaces of the lines above take up the difference, within <code>maxWordSpacing</code> and <code>minWordSpacing</code>. It is a preference: where no break within those limits avoids it, the hyphen stays. It tries every column break of a paragraph: the first, and the later ones that fall where a full column ends, in one re-break; and a later break that falls elsewhere (a widow kept, a band cut level) in another, from that column, which keeps the lines already set in the columns before at their breaks and breaks only the rest. <code>'withinPage'</code> guards the lines that close a page and no other: a word may be divided between two columns of one page, and the last line of a page ends on a whole word wherever the limits allow it. It changes fewer lines than <code>false</code>, which matters in three or more columns, where two column ends in three stand inside the page; in a single column the two values give the same lines. A column closes its page when no later column of the page takes text: a side column kept for floats does not, nor does a column a table or a figure has filled. Box bodies are not affected. With <code>optimalRagged</code>, a ragged paragraph is broken again the same way: its word spaces keep their width, so only the ends of its lines move. Each re-break measures the paragraph once more, so a book with many column-end hyphens lays out a little slower. Needs <code>optimalLineBreaking</code>, and <code>optimalRagged</code> for ragged text.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphContainerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td><code>'collapse'</code></td>
+      <td>The space under a <code>:::paragraphs</code> container that closes on a paragraph, between that paragraph and the block after it (see <a href="/en/docs/configuration-styles#the-paragraphs-container">The <code>:::paragraphs</code> container</a>). <code>'collapse'</code>: the larger of the style's <code>spaceBetween</code> and <code>marginBottom</code> and the paragraph spacing of the text around the container (a line with <code>paragraphSpacing</code>; in a box, the box's), merged with the space the next block keeps above itself, as between two paragraphs of running text: a heading under a bibliography sits its own <code>marginTop</code> below it, not that margin plus the entries' spacing. <code>'add'</code>: as up to postext 1.4, the style's space alone is set under the last line before the grid snap, the next block's own space above is added under it, and the paragraph spacing is left out, so the paragraph after the container could sit closer to it than to any other. A configuration stored before <code>configVersion</code> 8 that declares a paragraph style, in a book that holds such a container, reads with <code>'add'</code> (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). A negative <code>marginBottom</code> pulls the next block up either way. A paragraph style can set its own rule for its containers (<code>containerSpacing</code>, since postext 1.28).</td>
+    </tr>
+  </tbody>
+</table>
+
+**About runts.** A runt is a paragraph whose last line is too short to feel like a proper line of text — typically one or two short words marooned at the end of a paragraph. Because the check is based on the pixel length of the line relative to the normal space width, `runtMinCharacters` adapts automatically to the current font size. A short word that is visually wider than `runtMinCharacters × spaceWidth` is fine; a word that is narrower than that (or truly alone) attracts the runt penalty. The threshold counts word spaces, which are about half as wide as letters: the default 20 is a last line of roughly 8 to 12 letters. Every runt costs the whole penalty, so among two endings under the threshold the breaker keeps the tighter lines above; `gradedRuntPenalty` prices each by its shortfall instead, and the longer ending wins. For the mathematically curious: at the default `runtPenalty` of 1000, avoiding a runt dominates any alternative break set requiring up to roughly r≈2.15 word-spacing stretch.
+
+**Soft, not hard.** None of these rules can *prevent* a break — the engine will always produce a layout. They are demerits: the algorithm trades off badness, hyphenation cost, fitness-class smoothness, and these structural penalties in a single global optimisation and picks the break set with the lowest total cost. If you need a harder guarantee, raise the penalty; if a given document reads better with the penalty relaxed, lower it.
+
+
+## Column balancing
+
+Publishers expect every column to start at the top of the page and end flush with its bottom. Break rules (orphan/widow protection, headings kept with their text, unsplittable figures) naturally leave short columns — one or more empty baseline-grid lines at the bottom. When balancing is enabled, the engine does what a compositor would, applying its levers in editorial priority order:
+
+1. **A box closing the column** — a callout that ends a short column is pushed down by the exact room under its foot, so its bottom edge lands on the last grid slot of the page, level with the last line of the column beside it. It takes that room even when it is less than a line, as long as nothing moves into another column. By default it runs before every other lever and takes the whole gap, so a box that annotates the paragraph above it can end up several lines below it; `closingBox: 'last'` lets the headings, the list ends and the other spacing levers take the whole lines first, and the box only what they leave, and `closingBox: 'off'` never moves it.
+2. **Pictures with a safe area** — a picture with a safe area (`Resource.safeArea`, see [Document format › Safe area](/en/docs/document-format-resources#safe-area)) set inline in the short column, or floated at its head or its foot over that column alone, grows by whole grid lines, cropped within its safe area, until the column is full or the crop reaches the safe area. A taller picture leaves no hole on the page, so it runs before any space is added; a float at the head of a column on a page or band whose column heads stay level (see below) does not grow. Recorded as `flexFigure`. It has no setting of its own: only a picture whose resource marks a safe area can grow.
+3. **Headings** — whole grid lines are added to the top margin of the headings inside the short column. When several lines are needed and the column holds several headings, the lines are distributed among them, always giving the largest share to the most important heading (an `h2` receives more than an `h3`). Headings sitting at the very top of a column never receive extra space, so columns keep starting at the page top — except a heading right under a figure or table that heads its column on a page that flows on: the room goes above that heading, under the figure. A heading takes at most `maxLinesBeforeLoose` lines this way (two by default) before the levers below are tried, and its further lines, up to `maxLinesPerHeading`, only when they have nothing left to give.
+4. **List ends** — when the headings cannot absorb the whole gap, a grid line is added where a list/enumeration ends (space after a list reads naturally), capped per list end.
+5. **Under formulas, boxes and figures** — then one grid line goes under a display formula or a callout box the text resumes after (`stretchAfterDisplays`; it reads as the element's own margin), and under a figure or table that heads the column (`stretchAfterFloats`, capped by `maxLinesAfterFloat`).
+6. **Loose paragraphs** — as a last resort, one paragraph of the column is re-broken one line longer (TeX's `\looseness=+1`), choosing the longest paragraph so the extra word spacing dilutes invisibly. The loose solution is only accepted when every line stays **below `bodyText.maxWordSpacing`** — type colour never exceeds the limit you already configured. Requires `bodyText.optimalLineBreaking`.
+
+On a character grid (`cjk.grid`, see [Chinese layout › The character grid](/en/docs/chinese-layout#the-character-grid)) every character stands in a cell one em wide and every line on the grid's line pitch, which is also the baseline grid. Balancing is off there by default, as in vertical text: a page set line by line on a grid, the way GB/T 9704 counts 22 lines of 28 characters, leaves a short column short. A configuration that sets `enabled: true` gets levers that keep the grid: headings, list ends, displays and figures take whole grid lines, so the text below them moves by whole rows, and `gridLines: 'off'` keeps those out for a standard that has no empty row to give. A Chinese or Japanese paragraph runs a line long only when no gap between two of its characters spreads past `maxTracking`, and takes no tracking on its letters: a line a character short spreads an em over its gaps, far past the default 0.01 em, so on a grid of whole cells the loose lever usually finds nothing. The box closing a column and the pictures with a safe area are off the grid by design and work as anywhere.
+
+The last column of a page is only balanced when the page flows naturally into the next one — a chapter's closing page legitimately ends short. Such a page, and a closing band cut level by `trailing`, also keeps its column heads level: no line is added under a figure or table heading one of its columns (the after-float lever), and a heading or a box that opens a column under such a figure stays at its head, whatever `stretchAfterFloats` says, as does the heading set right under a `span: 'page'` opener in the opener's own column, so a column never starts lower than the one beside it just to line the feet up.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether to balance column bottoms. Off by default in vertical text (<code>layout.writingMode: 'vertical-rl'</code>) and on a character grid (<code>cjk.grid.enabled</code>, since postext 1.25); <code>true</code> turns it on there too.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesPerHeading</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>Maximum extra grid lines that may be added above a single heading.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Grid lines a heading may take before the levers after it are tried: the list ends, the formulas and boxes, the figures and the loose paragraphs. A heading gets its further lines, up to <code>maxLinesPerHeading</code>, only when those have nothing left to give, so a page with one heading does not open four lines above it while its paragraphs could run a line long. A value at or above <code>maxLinesPerHeading</code> gives the headings all their lines first, as up to postext 1.27; <code>0</code> tries the other levers before any line goes above a heading. Since postext 1.28; documents stored earlier keep the old order (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Allow extra grid lines where a list ends, when headings cannot absorb the whole gap.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterList</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Maximum extra grid lines after a single list end.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Allow one extra grid line under a display formula, and under a callout box, in the short column, after the list-end lever: the block after it moves down a line. Set it to <code>false</code> to leave the space under formulas and boxes as their own margins set it; the gap goes on to the levers after this one, and the column ends short if they do not close it. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterFloats</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Allow extra grid lines under a figure or table that heads the short column (a top float), after the list-end lever, so the text below it moves down instead of the column ending short. Never on a page that does not flow on (a chapter's closing page) nor in a closing band cut level by <code>trailing</code>: there the column heads stay level and the last column may end a line short. The first block under the figure may be the rest of a paragraph begun on the page before: it moves down all the same, by the line the break rules left free at the column's foot (a line the widow rule kept empty, or a paragraph space with no room for text after it). Set it to <code>false</code> to keep the text right under the figure. Under a float over several columns the columns move together or not at all, see <code>stretchAfterWideFloats</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterFloat</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Maximum extra grid lines under a single top float.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Under a figure or table that stands over two or more text columns. With <code>'flush'</code> a column moves down under it only when every text column under the float takes the same lines, so their heads stay level, or when the lines end that column flush; a line that would lower one column's head and still leave it short is not added, and the gap goes on to the loose paragraphs. <code>'always'</code> stretches such a column as under any float, as up to postext 1.27. Any other value reads as <code>'flush'</code>. Since postext 1.28; documents stored earlier keep <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Last resort: re-break paragraphs of a short column one line looser (one extra line each), within <code>bodyText.maxWordSpacing</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLooseParagraphs</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>How many paragraphs of one short column may run a line long, longest first.</td>
+    </tr>
+    <tr>
+      <td><code>trackParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When word spacing alone cannot gain the line, a loose paragraph may also take the smallest positive tracking (letter spacing) that does.</td>
+    </tr>
+    <tr>
+      <td><code>maxTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Upper limit for that tracking, in thousandths of an em per character (10 = 0.01 em).</td>
+    </tr>
+    <tr>
+      <td><code>trailing</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Level the closing band of a chapter and of the document: when the flow ends before the page is full (at a chapter opener, a <code>:::part</code>, a chapter-closing <code>placement: 'fixed'</code> box or the end of the document) with its columns uneven, they are cut level — a band cap of <code>ceil(Σ used / N / grid)</code> lines, resolved after the levers above have settled the earlier pages — so a short bibliography ends at the same height in every column instead of filling the first column and leaving the last one half empty. The cut keeps the rules an uncut band keeps: when a block that cannot split across it (a paragraph tail the orphan and widow minimums keep whole, a keep-together box) would run past it — and lose its last lines, since the renderers clip a column to its box — or a heading would close a column while its text opens the next (with <code>headings.keepWithNext</code>, the default), the cut is taken a line lower, up to three times, and otherwise dropped. A block that cannot start in the lines the cut leaves under a figure heading a column (a paragraph needs its orphan minimum there) goes on to the next column of the band instead, as it would from an uncut column, and the figure stands alone in its column. Columns whose feet differ by one grid line or less are left as they are: a closing band whose last column ends a line short is the usual finish, and cutting it would only move a line. The cut goes to the band it was measured in, and so does the cut a page-span box asks for mid-page: up to postext 1.4, when the first text of the closing page had first been offered to a band with no room for it (a page a float takes whole, the thin band a page-span box leaves at the foot of the page before), the cut was spent on that band and the closing page kept every line in its first column. Columns of different widths (a one-and-a-half layout with text in both) are cut by area, each column's height weighted by its width, since a line of the narrow column holds less of the text. Only active when <code>enabled</code> is true.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>The unit of the level cut <code>trailing</code> takes (and of the cut <code>beforeSpan</code> takes behind a box that moves on). <code>'lines'</code>: a band whose text is set on a leading of its own (an index, a list of references, a container of small type) is cut, and retried, by whole lines of that leading: the height most lines of the band share, headings and boxes aside. Its columns then end within a line of each other, as a band of body text does. A band of body text, and one that mixes two leadings in equal parts, is cut on the baseline grid as before. So is a band whose lines share a height and stand a fraction of a line apart (references with a gap between entries, index groups on a hand-set margin): four lines in five of each column must be a whole number of lines from one another. <code>'grid'</code>: every cut is a whole number of baseline-grid lines, as up to postext 1.27, where a cut on the grid let one line more into a column of an off-grid band and a failed cut was lowered by more than one of its lines (columns up to three lines apart). Any other value reads as <code>'lines'</code>. Since postext 1.28; documents stored earlier keep <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
+    </tr>
+    <tr>
+      <td><code>beforeSpan</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Level the band a page-span block leaves behind: when a <code>span: 'page'</code> callout does not fit under the current columns even after a level cut, and has to move to the next page or split (<code>calloutStyles[].keepTogether: false</code>), the columns it interrupts are cut level — the same trailing cap a closing band gets — instead of the first filling the page and the last ending short. The page is left as an explicit break so the levers above do not stretch its last column back to the page bottom; the box, or the part of it that fits, then sits under the levelled columns. Only active when <code>enabled</code> is true.</td>
+    </tr>
+    <tr>
+      <td><code>closingBox</code></td>
+      <td><code>'first' | 'last' | 'off'</code></td>
+      <td><code>'first'</code></td>
+      <td>When a box closing a short column takes the room under its foot (lever 1, recorded as <code>trailingCallout</code>). <code>'first'</code>: before any other lever, as up to postext 1.4 — the box takes the whole gap, even several lines, and the headings above it get none. <code>'last'</code>: after the heading, list-end, display and float levers, which take whole lines first; the box moves down with the text above it and then takes only what they left, usually a fraction of a line, so its foot still meets the last grid slot and it stays close to the text it annotates. <code>'off'</code>: never; the box keeps the room under its foot, though the other levers can still move it down by whole lines when they add space above it, and the fraction of a line left under it stays. On a closing page, where the box is the only lever that lines its foot up with the column beside it, <code>'off'</code> leaves it where the flow put it. Any other value reads as <code>'first'</code>. A box closing the only text column of its band (a one-column page that ends early, its next block opening the next page) is never moved: there is no column beside it to line up with (since postext 1.19).</td>
+    </tr>
+    <tr>
+      <td><code>gridLines</code></td>
+      <td><code>'allow' | 'off'</code></td>
+      <td><code>'allow'</code></td>
+      <td>On a character grid: whether the levers that add whole grid lines (above a heading, where a list ends, under a display or a box, under a figure heading the column) may run. They keep every character in its cell; <code>'off'</code> suits a standard that counts the lines of a page, and leaves the column short instead. No effect off the grid. Any other value reads as <code>'allow'</code>. Since postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Which lever fired
+
+The layout records every lever it applied, on the block it applied to: `block.balancing` in the VDT that `buildDocument` returns. A proof sheet, a test or a report can say why a column ends flush — and which columns no lever could close. Blocks the balancing left alone carry no `balancing`, and a document built with `enabled: false` has none.
+
+On a character grid the document says why a column may end short: `doc.gridBalancing` is `{ off: true }` when balancing is off because the page is on a grid and the configuration does not turn it on, and `{ gridLines: 'off' }` when it runs without the whole-line levers; a column still short carries `column.gridRefused`, the levers the grid kept from it (`'looseParagraph'` when a paragraph could gain its line only by spreading its characters off their cells, the whole-line levers under `gridLines: 'off'`). Both are absent off the grid.
+
+```ts
+interface VDTBalancing {
+  levers: BalanceLever[]; // usually one: a paragraph after a list can take the list-end line and run a line long too
+  spaceAbove: number;     // px the spacing levers added above the block (0 when only looseParagraph or flexFigure fired)
+  bodyGrowth?: number;    // flexFigure: px the picture grew, cropped within its safe area
+  extraLines?: number;    // looseParagraph: lines the paragraph gained
+  tracking?: number;      // looseParagraph: the tracking that gained them, in thousandths of an em (0 = word spacing alone)
+}
+type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Lever</th>
+      <th>Recorded on</th>
+      <th>What it did</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>trailingCallout</code></td>
+      <td>the callout's frame block</td>
+      <td>A box closing the column moved down by the exact room under its foot (<code>spaceAbove</code>; a fraction of a line is fine).</td>
+    </tr>
+    <tr>
+      <td><code>flexFigure</code></td>
+      <td>the picture's block (inline) or float</td>
+      <td>A picture with a safe area set <code>bodyGrowth</code> px taller, by whole grid lines, cropped within the safe area. The resource block's <code>bodySource</code> is the part shown and <code>bodyFlex.delta</code> the same growth.</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>the heading</td>
+      <td>Whole grid lines above the heading, up to <code>maxLinesPerHeading</code>.</td>
+    </tr>
+    <tr>
+      <td><code>listEnd</code></td>
+      <td>the first block after the list</td>
+      <td>A grid line where a list ends, up to <code>maxLinesAfterList</code>.</td>
+    </tr>
+    <tr>
+      <td><code>afterDisplay</code></td>
+      <td>the block after the formula or box</td>
+      <td>A grid line under a display formula or a callout box.</td>
+    </tr>
+    <tr>
+      <td><code>afterFloat</code></td>
+      <td>the column's first block</td>
+      <td>A grid line between a float band heading the column and its text, up to <code>maxLinesAfterFloat</code>.</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraph</code></td>
+      <td>the paragraph</td>
+      <td>The paragraph re-broken <code>extraLines</code> longer, with the smallest tracking that did it (<code>tracking</code>; <code>block.letterSpacing</code> is the same value in px).</td>
+    </tr>
+  </tbody>
+</table>
+
+The level cuts are recorded on the columns they cut: `column.bandCapped` is true on every column cut level (the band a page-span box leaves, a closing band), and `column.trailingCap` also marks the closing band of a chapter or of the document (`trailing`).
+
+```ts
+import { buildDocument } from 'postext';
+
+const doc = buildDocument(content, config);
+for (const page of doc.pages) {
+  page.columns.forEach((column, i) => {
+    const levers: string[] = column.blocks.flatMap((block) => block.balancing?.levers ?? []);
+    if (column.trailingCap) levers.push('closing band cut level');
+    else if (column.bandCapped) levers.push('band cut level');
+    if (levers.length > 0) console.log(`page ${page.index + 1}, column ${i + 1}: ${levers.join(', ')}`);
+  });
+}
+// page 3, column 1: heading, heading
+// page 3, column 2: listEnd, looseParagraph
+```

@@ -34,13 +34,13 @@ As duas edições usam o mesmo design, então qualquer diferença entre as duas 
 
 <Excerpt region="bench" />
 
-Um boxe compõe todas as colunas de um grupo [`:::columns`](/pt/docs/document-format#columns) com um só estilo de texto, então cada ficha é um boxe aninhado com o seu próprio `body`, e `breaks="3"` empilha na primeira coluna a ficha alinhada à esquerda e a ficha sem hifenização. A ficha alinhada à esquerda dispensa `hyphenation: false`: texto alinhado à esquerda só é hifenizado quando `bodyText.hyphenation.ragged` está ligado. A bancada flutua para o pé da página 3 com `placement: 'bottom'`, e o seu espaçamento interno inferior repete a moldura de 4 mm porque o `marginBottom` da última ficha é descartado no fim do boxe.
+Um boxe compõe todas as colunas de um grupo [`:::columns`](/pt/docs/document-format-directives#columns) com um só estilo de texto, então cada ficha é um boxe aninhado com o seu próprio `body`, e `breaks="3"` empilha na primeira coluna a ficha alinhada à esquerda e a ficha sem hifenização. A ficha alinhada à esquerda dispensa `hyphenation: false`: texto alinhado à esquerda só é hifenizado quando `bodyText.hyphenation.ragged` está ligado. A bancada flutua para o pé da página 3 com `placement: 'bottom'`, e o seu espaçamento interno inferior repete a moldura de 4 mm porque o `marginBottom` da última ficha é descartado no fim do boxe.
 
 ### 5 · Desenhe o modelo na abertura
 
 <Excerpt region="opener" />
 
-O diagrama é um [elemento de imagem](/pt/docs/configuration-page-layout#elementos-de-imagem) do design do H1. Como figura, seria um flutuante `top` na largura da página, e um flutuante `top` citado na página 1 abre a página 2. A faixa desce além do diagrama, e uma abertura reserva altura até o seu elemento mais baixo, então o texto começa sob a faixa sem `minHeight`, uma linha mais abaixo por causa do `marginBottom` padrão do H1. Os rótulos são texto de design posto sobre as coordenadas do próprio desenho, composto e espacejado como os outros rótulos da abertura.
+O diagrama é um [elemento de imagem](/pt/docs/configuration-headers-footers#elementos-de-imagem) do design do H1. Como figura, seria um flutuante `top` na largura da página, e um flutuante `top` citado na página 1 abre a página 2. A faixa desce além do diagrama, e uma abertura reserva altura até o seu elemento mais baixo, então o texto começa sob a faixa sem `minHeight`, uma linha mais abaixo por causa do `marginBottom` padrão do H1. Os rótulos são texto de design posto sobre as coordenadas do próprio desenho, composto e espacejado como os outros rótulos da abertura.
 
 ## Variações
 

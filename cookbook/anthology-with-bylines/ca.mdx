@@ -18,7 +18,7 @@ Nou pàgines d'*Afoot*, una antologia de butxaca amb tres assaigs sobre caminar,
 
 <Excerpt region="opener" />
 
-El `numberingTemplate: '{1:I}'` del nivell numera els assaigs I, II i III, i `{number}` imprimeix el numeral damunt del títol ([span i disseny avançat](/ca/docs/configuration-text#span-i-disseny-avançat)). `minHeight` reserva 12 línies de 14 pt i el filet fi acaba 7 mm per sobre d'aquest límit, així que, amb un títol d'una línia, el text comença a 79 mm de la vora superior en totes les obertures. Una segona línia de títol, a 26 pt, hi afegeix 9,9 mm i baixa el text una línia de la retícula; amb `SINK = 14`, el text comença a la mateixa alçada sota títols d'una i de dues línies. El `marginBottom: pt(0)` del nivell impedeix que el marge per defecte del títol se sumi a aquesta reserva.
+El `numberingTemplate: '{1:I}'` del nivell numera els assaigs I, II i III, i `{number}` imprimeix el numeral damunt del títol ([span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)). `minHeight` reserva 12 línies de 14 pt i el filet fi acaba 7 mm per sobre d'aquest límit, així que, amb un títol d'una línia, el text comença a 79 mm de la vora superior en totes les obertures. Una segona línia de títol, a 26 pt, hi afegeix 9,9 mm i baixa el text una línia de la retícula; amb `SINK = 14`, el text comença a la mateixa alçada sota títols d'una i de dues línies. El `marginBottom: pt(0)` del nivell impedeix que el marge per defecte del títol se sumi a aquesta reserva.
 
 ### 2 · Un índex que s'omple sol
 
@@ -30,7 +30,7 @@ El `numberingTemplate: '{1:I}'` del nivell numera els assaigs I, II i III, i `{n
 
 <Excerpt region="running-heads" />
 
-Cada capçalera s'ancora a la pàgina, a 11 mm de la vora superior, i `parity` tria el costat: el foli s'alinea amb la vora exterior del text, i el nom o el títol queda 7 mm més endins. El `pages: 'body'` de `head()` deixa les capçaleres fora de les obertures, on la signatura ja anomena l'autor, i l'element del peu amb `pages: 'opener'` hi imprimeix el foli, centrat sota el text ([elements de text](/ca/docs/configuration-page-layout#elements-de-text)). `{chapterTitle}` imprimeix el títol de l'assaig sense el numeral.
+Cada capçalera s'ancora a la pàgina, a 11 mm de la vora superior, i `parity` tria el costat: el foli s'alinea amb la vora exterior del text, i el nom o el títol queda 7 mm més endins. El `pages: 'body'` de `head()` deixa les capçaleres fora de les obertures, on la signatura ja anomena l'autor, i l'element del peu amb `pages: 'opener'` hi imprimeix el foli, centrat sota el text ([elements de text](/ca/docs/configuration-headers-footers#elements-de-text)). `{chapterTitle}` imprimeix el títol de l'assaig sense el numeral.
 
 ### 4 · La coberta i l'índex no compten
 

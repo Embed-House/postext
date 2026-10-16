@@ -30,13 +30,13 @@ The engine's blue is a palette entry, `main-color` (#295AA3), and [its defaults]
 
 <Excerpt region="opener" />
 
-The opener is a [design slot](/en/docs/configuration-page-layout#box-elements) holding a box bled off the top edge, 29 rounded bars for the waveform and three text elements: the heading's own text as the title, and the kicker and standfirst from its attributes. The bars are boxes rather than an SVG, so their fill is one more `tint` link that follows the palette; an SVG would have to be redrawn and registered again for every colourway. On its own, the band box would start the text on the grid line 2.4 mm under the band; `minHeight`, 18 lines or 85.1 mm below the top margin, reserves more and moves the first line to 7 mm under it.
+The opener is a [design slot](/en/docs/configuration-headers-footers#box-elements) holding a box bled off the top edge, 29 rounded bars for the waveform and three text elements: the heading's own text as the title, and the kicker and standfirst from its attributes. The bars are boxes rather than an SVG, so their fill is one more `tint` link that follows the palette; an SVG would have to be redrawn and registered again for every colourway. On its own, the band box would start the text on the grid line 2.4 mm under the band; `minHeight`, 18 lines or 85.1 mm below the top margin, reserves more and moves the first line to 7 mm under it.
 
 ### 4 · Let the palette fill the table
 
 <Excerpt region="grid" />
 
-The grid is a table resource, outside the config. Its [cell fills](/en/docs/document-format#block-embed-optional-explicit-inline-placement) carry palette ids all the same, and the engine resolves them from the document palette when it lays out the table; the `:swatch{color="band"}` and `:swatch{color="tint"}` of the key in the table note resolve the same way. The chips in the listings use the same two ids, so a filled square, the chip beside a time and the key's swatch agree in every colourway.
+The grid is a table resource, outside the config. Its [cell fills](/en/docs/document-format-resources#block-embed-optional-explicit-inline-placement) carry palette ids all the same, and the engine resolves them from the document palette when it lays out the table; the `:swatch{color="band"}` and `:swatch{color="tint"}` of the key in the table note resolve the same way. The chips in the listings use the same two ids, so a filled square, the chip beside a time and the key's swatch agree in every colourway.
 
 ### 5 · Swap the palette and build again
 

@@ -16,7 +16,7 @@ Un pequeño libro bilingüe de poemas Tang, compuesto como las ediciones biling�
 
 ### 1 · Un estilo de título para cada lado del pliego
 
-El código está en [la respuesta corta](#la-respuesta-corta), más arriba. Cada poema son dos títulos de nivel 1: `# Night Thoughts {style="en" …}` con los versos de Giles y después `# 靜夜思 {style="zh" …}` con el poema. El estilo `en` salta a la siguiente página par; el `zh`, a la siguiente impar, la que queda enfrente. Mientras cada poema quepa en su página no entra ninguna página en blanco; una versión inglesa que se pasara de página empujaría su original a la impar siguiente, detrás de una par en blanco ([Saltar antes](/es/docs/configuration-text#saltar-antes)). Los dos diseños reservan seis líneas de la retícula, así que el inglés y el chino empiezan en la misma línea. El estilo chino lleva `span: 'page'` porque su primer elemento, una caja del tamaño de la página, es la hoja teñida, y un diseño que se queda en la columna se corta al pie de la columna ([Span y diseño avanzado](/es/docs/configuration-text#span-y-diseño-avanzado)).
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. Cada poema son dos títulos de nivel 1: `# Night Thoughts {style="en" …}` con los versos de Giles y después `# 靜夜思 {style="zh" …}` con el poema. El estilo `en` salta a la siguiente página par; el `zh`, a la siguiente impar, la que queda enfrente. Mientras cada poema quepa en su página no entra ninguna página en blanco; una versión inglesa que se pasara de página empujaría su original a la impar siguiente, detrás de una par en blanco ([Saltar antes](/es/docs/configuration-headings#saltar-antes)). Los dos diseños reservan seis líneas de la retícula, así que el inglés y el chino empiezan en la misma línea. El estilo chino lleva `span: 'page'` porque su primer elemento, una caja del tamaño de la página, es la hoja teñida, y un diseño que se queda en la columna se corta al pie de la columna ([Span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Página 2: el inglés empieza en la página par seis líneas más abajo, en la misma línea de la retícula en que empieza el chino en la página 3." />
 
@@ -36,7 +36,7 @@ Las notas son notas al pie, una por renglón: `疑是地上霜。[^bed]` cierra 
 
 <Excerpt region="heads" />
 
-Todas las páginas de este libro empiezan con un título, así que todas son aperturas, y las cabeceras llevan `pages: 'opener'`. Una página en blanco que añadiera un salto quedaría limpia, y la portada las quita con una cabecera vacía propia. La página par toma el título del libro del `subtitle` del frontmatter, que cada edición escribe en su lengua; la impar toma el nombre del poeta del atributo `name` del título chino ([Encabezados y pies](/es/docs/configuration-page-layout#encabezados-y-pies)).
+Todas las páginas de este libro empiezan con un título, así que todas son aperturas, y las cabeceras llevan `pages: 'opener'`. Una página en blanco que añadiera un salto quedaría limpia, y la portada las quita con una cabecera vacía propia. La página par toma el título del libro del `subtitle` del frontmatter, que cada edición escribe en su lengua; la impar toma el nombre del poeta del atributo `name` del título chino ([Encabezados y pies](/es/docs/configuration-headers-footers#encabezados-y-pies)).
 
 ### 5 · Una portada sobre una luna
 
@@ -48,7 +48,7 @@ La portada también es un estilo de título, con `runningChapter: false` para qu
 
 <Excerpt region="voices" />
 
-Fontsource parte cada fuente china en unos cien archivos por rangos de caracteres, y `loadCjkFonts` descarga solo los que necesita su texto ([Fuentes chinas, japonesas y coreanas](/es/docs/configuration-programmatic-usage#fuentes-chinas-japonesas-y-coreanas)). La Kai recibe los poemas y el sello; la Hei, los nombres de los poetas; la Song en negrita, los cuatro títulos y las palabras glosadas de las notas, y su peso más negro, los dos caracteres de la portada.
+Fontsource parte cada fuente china en unos cien archivos por rangos de caracteres, y `loadCjkFonts` descarga solo los que necesita su texto ([Fuentes chinas, japonesas y coreanas](/es/docs/configuration-pdf-output#fuentes-chinas-japonesas-y-coreanas)). La Kai recibe los poemas y el sello; la Hei, los nombres de los poetas; la Song en negrita, los cuatro títulos y las palabras glosadas de las notas, y su peso más negro, los dos caracteres de la portada.
 
 ## Variantes
 

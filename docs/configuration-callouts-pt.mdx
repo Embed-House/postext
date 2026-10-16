@@ -1,0 +1,414 @@
+{/* docs/configuration-callouts-pt.mdx */}
+
+export const metadata = {
+  title: 'Configuração: boxes',
+  sidebarTitle: 'Boxes',
+  description: 'Estilos nomeados para boxes :::callout: moldura, fundo, faixa, título, ícone e marcador, enunciados numerados, tipografia dentro do boxe e boxes divididos entre páginas',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '27 min',
+  order: 16,
+  parent: 'configuration',
+  plainSummary: "Esta página trata dos boxes que separam do texto uma nota, uma dica, um alerta ou uma lista de objetivos. Você dá a cada tipo de boxe um nome e uma aparência: o fundo, a borda, uma faixa colorida, um título e um ícone. Um boxe pode ter um número, como um teorema ou um exemplo num livro didático. Você escolhe as fontes dentro do boxe. Quando um boxe longo continua na página seguinte, você escolhe o que marca a quebra.",
+};
+
+# Configuração: boxes
+
+
+## Estilos de boxe
+
+A propriedade `calloutStyles` declara os estilos de boxe nomeados que um documento aplica com um contêiner `:::callout{type="…"}`: notas, dicas, avisos, objetivos de aprendizagem, qualquer conteúdo separado do texto corrido em um boxe com fundo ou contorno. Um estilo neutro, `note`, vem por padrão (fundo cinza-claro, sem contorno, sem faixa, sem ícone, sem título), de modo que `:::callout` funciona sem nenhuma configuração; declarar `calloutStyles` substitui essa lista padrão.
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [
+    { id: 'note', name: 'Note' },
+    {
+      id: 'objectives',
+      name: 'Learning objectives',
+      title: 'Objectives',
+      stripe: { enabled: true, side: 'left' },
+      icon: { kind: 'glyph', glyph: '✓' },
+      titleStyle: { textTransform: 'uppercase' },
+      lists: { bulletChar: '–' },
+    },
+    {
+      id: 'warning',
+      title: 'Warning',
+      backgroundEnabled: false,
+      border: { enabled: true, color: { hex: '#AA0000', model: 'hex' }, width: { value: 1, unit: 'pt' } },
+      borderRadius: { value: 1, unit: 'mm' },
+      titleStyle: { color: { hex: '#AA0000', model: 'hex' } },
+    },
+  ],
+};
+```
+
+```md
+:::callout{type="objectives"}
+- Describe the parts of the lantern.
+- Trim the wick at dusk.
+:::
+
+:::callout{type="warning" title="Do not touch the lens"}
+The glass stays hot for an hour after the flame is out.
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Identificador escolhido por <code>:::callout&#123;type="…"&#125;</code>. Um delimitador com <code>type</code> desconhecido ou ausente usa o primeiro estilo configurado (o Sandbox sinaliza os tipos desconhecidos).</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>Nome legível (só na interface do editor).</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Texto padrão do título; vazio significa sem título. O atributo <code>title</code> do delimitador o substitui em cada ocorrência.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page' | 'side'</code></td>
+      <td><code>'column'</code></td>
+      <td>Extensão horizontal: a coluna, a largura total do conteúdo ou a coluna lateral reservada a flutuantes de um layout de coluna e meia (<code>layout.sideColumnRole: 'floats'</code>); nesse caso o boxe sai do fluxo e se empilha nessa coluna, ao lado do texto que interrompe. Pode ser substituído em cada ocorrência pelo atributo <code>span</code>. Em layouts de várias colunas, um boxe <code>'page'</code> vira um <em>bloco de largura de página</em>: divide a página em faixas de colunas e ocupa uma coluna própria de largura total (veja a seção sobre o contêiner, abaixo). Um boxe lateral que não cabe na coluna lateral da sua página ocupa a da página seguinte; se o capítulo (ou o documento) termina antes, cada boxe ainda à espera é composto na coluna lateral de uma página depois do texto, na ordem dos seus delimitadores, e a diagramação avisa (<code>afterText</code>; até o postext 1.24 os boxes depois da primeira dessas páginas se perdiam).</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Quantas colunas adjacentes um boxe flutuante (<code>placement</code> <code>'auto'</code>, <code>'top'</code> ou <code>'bottom'</code>, com <code>span: 'column'</code>) ocupa, como faz <code>placement.columns</code> para uma figura: o boxe de uma matéria em três das cinco colunas de um jornal. Tantas colunas quantas a página tiver, ou mais, fazem dele um boxe da largura da página. Um boxe composto no fluxo (<code>'here'</code>) fica na sua coluna. Pode ser substituído em cada ocorrência pelo atributo <code>columns</code>. Desde o postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'here' | 'auto' | 'top' | 'bottom' | 'fixed'</code></td>
+      <td><code>'here'</code></td>
+      <td>Onde o boxe fica. <code>'here'</code> o compõe em linha, no fluxo; <code>'top'</code> / <code>'bottom'</code> o fazem <strong>flutuar</strong> como um recurso (<code>'auto'</code> toma a faixa que ficar livre primeiro, no alto ou no pé): ele sai do fluxo onde aparece e toma a primeira faixa livre a partir desse ponto (o pé da página atual, ou o alto / o pé da próxima página que o fluxo abrir), e o texto que vem depois preenche a página em volta dele; <code>'fixed'</code> o ancora em coordenadas da página por meio de <code>fixed</code>, abaixo, fora do fluxo das colunas. Os detalhes estão na seção sobre o contêiner. Pode ser substituído em cada ocorrência pelo atributo <code>placement</code>.</td>
+    </tr>
+    <tr>
+      <td><code>sideAtColumnEnd</code></td>
+      <td><code>'before' | 'after'</code></td>
+      <td><code>'before'</code></td>
+      <td>Onde fica um boxe lateral (<code>span: 'side'</code>) quando o texto depois do seu delimitador não continua na mesma coluna: a coluna não tem mais espaço para ele, ou as regras de quebra o mandam adiante (um parágrafo que as regras de viúvas e órfãs movem inteiro, um título mantido com o seu texto). <code>'before'</code> o mantém no seu delimitador, nessa página, ao lado do texto anterior, subindo a partir do pé da coluna quando não cabe abaixo do delimitador: o lugar de uma glosa escrita depois do trecho que explica. <code>'after'</code> o alinha com a primeira linha do texto depois do delimitador, na coluna lateral da página em que esse texto continua: o lugar de um número de linha ou de um título marginal escrito antes da sua linha. Quando o texto continua na mesma coluna, os dois põem o boxe no seu delimitador. Um boxe que não é seguido de nada no seu capítulo fica com o texto anterior em qualquer caso, e boxes laterais delimitados um depois do outro mantêm a sua ordem. Até o postext 1.4 todo boxe lateral se comportava como <code>'before'</code>, que continua sendo o padrão: um estilo para glosas mantém os seus boxes na página do trecho que explicam.</td>
+    </tr>
+    <tr>
+      <td><code>fixed</code></td>
+      <td><code>{'{ anchor?, offset? }'}</code></td>
+      <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
+      <td>Posição de um boxe <code>'fixed'</code>: um <code>ElementAnchor</code> (<code>to</code>: <code>'container'</code> = a área de conteúdo da página, espelhada nas páginas pares; <code>'page'</code> = a caixa de refile; <code>'bleed'</code> = a caixa de sangria; <code>edge</code>: uma das nove bordas do contêiner) mais um <code>offset</code> opcional (dimensões <code>x</code> / <code>y</code>).</td>
+    </tr>
+    <tr>
+      <td><code>floatBarrier</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Torna o boxe uma barreira de flutuantes: toda figura ou tabela referenciada antes dele é colocada antes dele (nos espaços livres da página ou, se não houver, em páginas abertas antes do boxe), de modo que nenhum flutuante escapa para depois do boxe que fecha um capítulo (normalmente um resumo de “pontos-chave”). Aberturas de capítulo, <code>:::part</code> e o fim do documento são sempre barreiras.</td>
+    </tr>
+    <tr>
+      <td colSpan="4">Um boxe <code>span: 'page'</code> em uma página de várias colunas corta a faixa sob o texto que ele segue; uma figura de largura total referenciada antes dele fica com esse corte primeiro: o texto é nivelado, a figura se assenta logo onde ele terminou e o boxe continua abaixo dela (ou na página seguinte, quando já não cabe). Uma figura alta demais para vir depois do texto nivelado abre a página seguinte, com o boxe depois dela, e a faixa que ela deixou termina nivelada mesmo assim. Um boxe divisível (<code>keepTogether: false</code>) começa sob o texto e a figura com tantos itens quantos couberem, e o resto continua na página seguinte.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>'fill' | 'auto'</code></td>
+      <td><code>'fill'</code></td>
+      <td><code>'fill'</code> ocupa a largura disponível; <code>'auto'</code> se ajusta ao título (uso como selo) e ignora os filhos.</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code> / <code>background</code></td>
+      <td><code>boolean</code> / <code>ColorValue</code></td>
+      <td><code>true</code> / <code>#f4f4f4</code></td>
+      <td>Preenchimento do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
+      <td>Contorno do boxe, traçado por dentro da borda do boxe, como a borda de um elemento de caixa (veja <a href="/pt/docs/configuration-headers-footers#elementos-de-caixa">Elementos de caixa</a>).</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Raio dos cantos do fundo / do contorno (limitado à metade da largura e da altura do boxe). A faixa o acompanha: em um boxe arredondado, a faixa é recortada pelo quadro arredondado, como o CSS recorta um <code>border-left</code> pelo <code>border-radius</code>. A aba <code>label</code> mantém os cantos retos.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top, right, bottom, left &#125;</code></td>
+      <td><code>0.75em</code> cada</td>
+      <td>Recuo entre a borda do boxe e o seu conteúdo. Os valores em <code>em</code> são relativos ao tamanho do corpo do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>stripe</code></td>
+      <td><code>&#123; enabled, side, width, color &#125;</code></td>
+      <td><code>false</code>, <code>'left'</code>, <code>1.5em</code>, cor principal</td>
+      <td>Faixa sólida ao longo de uma borda. Uma faixa <code>'left'</code> / <code>'right'</code> estreita o conteúdo; uma faixa <code>'top'</code> o empurra para baixo. <code>'left'</code> e <code>'right'</code> são lados do fluxo do corpo (em um livro da direita para a esquerda, <code>'left'</code> é o lado direito da folha); <code>'start'</code> e <code>'end'</code> seguem a direção do próprio boxe, de modo que um <code>:::callout&#123;dir=ltr&#125;</code> em um livro árabe põe uma faixa <code>'start'</code> à esquerda. Em um boxe com <code>borderRadius</code>, os seus cantos externos são arredondados com os do quadro (até o postext 1.4 ficavam retos e passavam do arredondamento).</td>
+    </tr>
+    <tr>
+      <td><code>icon</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
+      <td><code>'none'</code>, fonte dos títulos, <code>400</code>, <code>1.5em</code>, cor principal, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
+      <td>Um glifo de texto (<code>kind: 'glyph'</code>) ou um recurso bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) ao lado do conteúdo. Com uma faixa lateral, o ícone é centralizado sobre a faixa; caso contrário, reserva uma coluna própria (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> o centraliza verticalmente em relação ao conteúdo. Uma imagem de recurso é ajustada dentro do quadrado mantendo a proporção, ou dentro de uma caixa <code>width</code> × <code>size</code> quando <code>width</code> está definido (uma tira larga de ícones); um ícone mais alto que o conteúdo faz o boxe crescer para contê-lo (e, com <code>align: 'center'</code>, centraliza o conteúdo nele). <code>position: 'corner'</code> pendura o ícone em um canto superior como um selo, com metade dele para fora da borda, sem tirar espaço do conteúdo; um ícone largo (<code>width</code>) é centralizado no canto pela largura com que é desenhado, e no canto esquerdo o título começa depois da sua metade interna (até o postext 1.4 era posicionado pela altura, de modo que uma tira larga ficava pendurada para fora do boxe e sobre o título); <code>cornerSide</code> escolhe o canto: <code>'right'</code> / <code>'left'</code>, ou <code>'outer'</code> / <code>'inner'</code>, que seguem a paridade da página das margens espelhadas (externo = direita em uma página ímpar, esquerda em uma par).</td>
+    </tr>
+    <tr>
+      <td><code>marker</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule &#125;</code></td>
+      <td><code>'none'</code>, fonte dos títulos, <code>400</code>, <code>1.5em</code>, cor principal, <code>'center'</code>, <code>0.5em</code>, fio desligado (<code>0.5pt</code>, cor principal, comprimento <code>0</code>)</td>
+      <td>Um segundo ícone desenhado <em>fora</em> do boxe, em uma coluna à esquerda dele, com um <code>rule</code> (fio vertical) opcional entre ele e o boxe: a mãozinha de “toque aqui” ao lado de um selo de autoavaliação. O quadro passa a ser <code>[marker][rule][gap][box]</code>, com a altura do mais alto dos três; <code>align</code> os centraliza entre si ou os alinha pelo alto. <code>rule.length</code> é um mínimo: o fio sempre cobre pelo menos a altura do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>titleStyle</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, italic, color, textTransform, gap, letterSpacing, indent, lineHeight &#125;</code></td>
+      <td>fonte dos títulos, tamanho do corpo, <code>700</code>, <code>false</code>, cor principal, <code>'none'</code>, <code>0.5em</code>, <code>0</code>, <code>0</code>, <code>1.2em</code></td>
+      <td>Tipografia do título. <code>gap</code> é o espaço entre o título e o primeiro filho (e o espaço da coluna do ícone). <code>lineHeight</code> é a entrelinha das linhas do título, com o <code>em</code> contado sobre o tamanho do próprio título; a linha de base fica a 0,8 dela abaixo do topo de cada linha, como no texto corrido, de modo que um título na entrelinha do corpo (<code>lineHeight: 12pt</code> sobre uma grade de 12 pt) mantém o boxe com um número inteiro de linhas e o título na grade, enquanto o padrão de 1,2 em acrescenta uma fração de linha a cada boxe. <code>textTransform: 'uppercase'</code> preserva o comprimento. <code>letterSpacing</code> aplica tracking ao título (<code>letterSpacing</code> do canvas / <code>Tc</code> do PDF); <code>indent</code> o afasta para a direita da borda interna do boxe. Um selo de canto pendurado do lado do título (o canto esquerdo) reserva primeiro o seu próprio espaço (a metade interna do selo mais <code>gap</code>), para que o título não o toque em qualquer página em que caia; <code>indent</code> só soma além disso.</td>
+    </tr>
+    <tr>
+      <td><code>body</code></td>
+      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
+      <td>herda <code>bodyText</code>; <code>italic</code> / <code>smallCaps</code> <code>false</code></td>
+      <td>Tipografia dos parágrafos e itens de lista dentro do boxe. Todo campo não definido herda o texto do corpo; <code>italicColor</code> define a cor dos trechos em itálico (uma citação em destaque em itálico na cor do boxe). <code>fontWeight</code> / <code>boldFontWeight</code> definem os pesos dos trechos regulares e em negrito; <code>italic</code> compõe o boxe em itálico, com os trechos <code>*…*</code> voltando ao redondo; <code>smallCaps</code> o compõe em versaletes; <code>tabStops</code> e <code>tabInterval</code> substituem os do corpo dentro do boxe (veja <a href="/pt/docs/configuration-text#paradas-de-tabulação">Paradas de tabulação</a>). Veja <a href="#tipografia-dentro-de-um-boxe">Tipografia dentro de um boxe</a> para o que mais o texto do boxe recebe.</td>
+    </tr>
+    <tr>
+      <td><code>lists</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td>herda <code>unorderedLists</code></td>
+      <td>Tipografia das listas dentro do boxe (<code>color</code>, <code>indent</code>, <code>gap</code> e <code>itemSpacing</code> também valem para as listas numeradas). <code>bulletFontSize</code> / <code>bulletFontWeight</code> compõem o glifo do marcador na fonte do corpo do boxe nesse tamanho e peso (um marcador colorido e pesado).</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td>não definido (sem aba)</td>
+      <td>Uma aba na borda superior do boxe que imprime o atributo <code>label</code> do delimitador: o número de um boxe numerado (“BOXE 1-1”). Ela encosta no canto indicado por <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>), recuada em <code>inset</code>, sobe <code>offset</code> acima do topo do boxe (esse espaço faz parte do bloco, somado a <code>marginTop</code>, para que a aba o mantenha também no alto de uma coluna), tem <code>height</code> de altura com <code>paddingX</code> de cada lado do texto e pode levar um recurso <code>icon</code> ao lado (<code>&#123; resourceId, width, gap &#125;</code>, do lado oposto ao canto) e um <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) ao longo da borda superior, do canto oposto até ela. Padrões: fonte dos títulos, tamanho do corpo, <code>700</code>, branco sobre a cor principal, <code>1.4em</code> de altura, <code>0.6em</code> de margem interna. A aba é uma forma própria apoiada sobre o quadro, por isso mantém os cantos retos qualquer que seja o <code>borderRadius</code> do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5em</code></td>
+      <td>Espaço entre as colunas de um grupo <code>:::columns</code> dentro do boxe (veja a seção sobre o contêiner, abaixo).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.75em</code> / <code>0.75em</code></td>
+      <td>Espaço acima do boxe (funde-se com a margem do bloco anterior) e espaço mínimo abaixo dele (o espaço exato com <code>snapToGrid: false</code>). Um boxe flutuante (<code>placement: 'top'</code>, <code>'bottom'</code> ou <code>'auto'</code>) mantém o espaço de flutuante, uma linha do corpo, entre a sua faixa e o texto; um <code>marginBottom</code> maior que isso define o espaço sob um boxe em uma faixa superior, e um <code>marginTop</code> maior, o espaço sobre um boxe em uma faixa inferior, arredondado para cima até a grade junto com a faixa. Até o postext 1.4 um boxe flutuante ignorava as suas margens.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Com <code>true</code>, o fluxo depois do boxe volta a se encaixar na grade de linhas de base, de modo que o espaço sob ele é <code>marginBottom</code> arredondado para cima até linhas inteiras da grade. Com <code>false</code>, o boxe mantém o seu <code>marginBottom</code> exato, que se funde com a margem superior do bloco seguinte (dois boxes seguidos de um estilo assim ficam exatamente a <code>max(marginBottom, marginTop)</code> um do outro), e o texto depois dele pode ficar fora da grade até o próximo ponto de encaixe (um título, o fim de uma lista), como depois de um título com <code>headings.snapToGrid: false</code>. Pensado para documentos feitos de boxes empilhados (fichas de exercícios, formulários). Vale para os boxes no fluxo; os boxes de largura de página em um layout de várias colunas e os boxes flutuantes, fixos e laterais mantêm a grade, porque as faixas de colunas e as zonas de flutuantes são dispostas sobre ela. As alavancas de equilíbrio de colunas não mudam: um boxe que fecha uma coluna continua sendo empurrado até a última posição da grade da coluna.</td>
+    </tr>
+    <tr>
+      <td><code>keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Com <code>true</code>, o boxe é mantido inteiro: um boxe que não cabe no espaço restante passa inteiro para a coluna ou página seguinte. Só um boxe mais alto que uma coluna vazia e completa (uma página inteira para um boxe <code>span: 'page'</code>) não pode ser mantido inteiro: ele se divide pelas regras de <code>false</code> abaixo em vez de transbordar, começando onde aparece, e uma continuação que caiba em uma coluna passa inteira adiante; um boxe flutuante (<code>placement: 'top' | 'bottom' | 'auto'</code>) com essa altura não flutua, fica no fluxo onde aparece. Com <code>false</code>, qualquer boxe pode quebrar entre os seus blocos filhos ou entre as linhas de um parágrafo ou item de lista: o corte mais fundo que couber fecha a coluna atual (ou, para um boxe <code>span: 'page'</code>, a página, rente ao pé das colunas) e o resto continua no alto da seguinte, em um boxe próprio (mesmo quadro e faixa, sem ícone e sem título, a menos que <code>repeatTitle</code> o repita), dividindo-se de novo se ainda for alto demais. O texto de cada fragmento mantém, vazia, a coluna que um ícone em linha ocupa no primeiro trecho, para que o boxe tenha uma única medida em todas as páginas. Um corte dentro de um item de lista deixa o marcador com o primeiro trecho. O quadro de cada fragmento compartilha o <code>contentIndex</code> / <code>containerId</code> do delimitador e registra <code>callout.part</code> / <code>callout.continued</code>. Use-o em um boxe longo de “pontos-chave” no fim do capítulo junto com <code>headings.balancing.beforeSpan</code>, ou em um estilo de nota cujos boxes nunca devem empurrar uma figura para fora da página. Um boxe aninhado (um <code>:::callout</code> dentro de outro) é um filho do seu pai: um corte pode cair antes ou depois dele, e dentro dele só quando o seu próprio estilo permite a divisão (<code>keepTogether: false</code>, ou mais alto que uma coluna completa), segundo o seu próprio <code>splitMinLines</code>.</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Número mínimo de linhas de texto que um fragmento de um boxe dividido (<code>keepTogether: false</code>, ou um boxe indivisível mais alto que uma coluna completa) mantém de cada lado do corte. Ele protege apenas o texto: um lado que contenha pelo menos uma figura, tabela, fórmula em destaque ou boxe aninhado é aceitável qualquer que seja o seu número de linhas, de modo que um boxe de imagens pode deixar uma só em uma página. Um corte dentro de um parágrafo ou item de lista continua contando todas as linhas de cada lado (uma figura ou fórmula ali conta como uma linha) e também deixa pelo menos <code>layout.boxChildSplitMinLines</code> linhas desse parágrafo ou item de cada lado (duas por padrão; este mínimo quando for menor, de modo que 1 permite uma). Com os padrões, um item de duas ou três linhas nunca é dividido, e um de quatro só se divide em duas e duas. Com o padrão, nenhum boxe quebra deixando uma linha de texto solitária no pé de uma coluna ou no alto da seguinte; quando nenhum corte satisfaz o mínimo, o boxe passa inteiro. (Antes do postext 1.5, um corte dentro de um parágrafo verificava só as linhas do lado inteiro, de modo que um item de duas linhas podia se dividir em uma e uma quando outras linhas do boxe completavam o mínimo.)</td>
+    </tr>
+    <tr>
+      <td><code>repeatTitle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Repete o título no alto de cada continuação de um boxe dividido, seguido de <code>continuedSuffix</code> (“Pontos-chave (cont.)”). A repetição usa o estilo do título. Um boxe sem título não repete nada. Veja <a href="#marcas-em-um-boxe-dividido">Marcas em um boxe dividido</a>.</td>
+    </tr>
+    <tr>
+      <td><code>continuedSuffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'(cont.)'</code></td>
+      <td>Texto depois do título repetido, no idioma do documento (<code>locale</code> ou, na falta dele, o idioma de hifenização), como o de uma tabela dividida, e unido ao título como o de uma tabela.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerEnabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Põe <code>continuesMarker</code> sob a última linha de cada parte de um boxe dividido que continua, dentro do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarker</code></td>
+      <td><code>string</code></td>
+      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
+      <td>Texto dessa marca (o “(MORE)” de um roteiro), na fonte e no tamanho do corpo do boxe, conforme o idioma do documento.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerAlign</code></td>
+      <td><code>'left' | 'center' | 'right'</code></td>
+      <td><code>'right'</code></td>
+      <td>Onde a marca fica na largura interna do boxe.</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerItalic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Compõe a marca em itálico.</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>&#123; label, counter, numberingTemplate, resetOn, counterFormat, placement, bold, italic, suffix &#125;</code></td>
+      <td>não definido</td>
+      <td>Conta os boxes deste estilo como enunciados numerados: teoremas, lemas, definições. Veja <a href="#enunciados-numerados-e-demonstrações">Enunciados numerados e demonstrações</a>.</td>
+    </tr>
+    <tr>
+      <td><code>endMark</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Uma marca alinhada à direita no fim da última linha do boxe, como uma demonstração termina com <code>'∎'</code> ou <code>'□'</code>: na última linha quando cabe depois de um espaço, senão em uma linha própria. Um boxe que termina em uma fórmula em destaque sem número a recebe como etiqueta da fórmula. Com a matemática ativada, os quadrados (∎ □ ■ ▪ ◻ ▫) são desenhados com os glifos do próprio TeX, de modo que uma fonte que não os tenha (os arquivos latin da Fontsource) também os imprime; com a matemática desativada, são compostos na fonte do corpo do boxe.</td>
+    </tr>
+  </tbody>
+</table>
+
+### O contêiner `:::callout`
+
+Uma linha `:::callout{type="<id>"}` abre o boxe e uma linha `:::` sozinha o fecha. O delimitador aceita cinco atributos, `type` (o id do estilo), `title` (substitui o título do estilo), `span`, `placement` e `columns` (substituem os valores do estilo), e o conteúdo entre as duas linhas é composto dentro do boxe: um título opcional e depois os parágrafos, listas, citações, fórmulas ou recursos incorporados, cada um com a tipografia `body` / `lists` do estilo (os títulos mantêm os seus estilos habituais). As margens entre os filhos se fundem como no texto corrido; o interior sai da grade de linhas de base, e o fluxo volta a ela depois do boxe com pelo menos `marginBottom` abaixo (a grade prevalece; a margem é um mínimo, a mesma convenção que os recursos seguem). Um estilo com `snapToGrid: false` mantém, em vez disso, o `marginBottom` exato, e o texto depois do boxe fica fora da grade até o próximo título ou fim de lista. Um título imediatamente antes de um boxe fica junto dele.
+
+Limites desta versão:
+
+- Um boxe é mantido inteiro, a menos que o seu estilo defina `keepTogether: false`. Quando não cabe no espaço restante da coluna, passa inteiro para a coluna ou página seguinte, inclusive saindo de uma coluna vazia que as faixas de flutuantes ou um limite de faixa encurtaram, desde que uma coluna completa o comportasse. Um boxe mais alto que uma coluna completa se divide em vez disso, como um divisível; só aquele que nenhum corte consegue dividir (uma figura ou tabela mais alta que a coluna, ou um `splitMinLines` que nenhum corte satisfaz) é colocado mesmo assim e transborda; o layout registra então um aviso `calloutOverflow` (`VDTDocument.warnings`), que o Sandbox lista. Um grupo `:::columns` é cortado como o boxe que o envolve, entre as suas subcolunas (desde o postext 1.25); ele só fica inteiro, e pode transbordar do mesmo modo, com `layout.flowColumns: false` ou dentro de um boxe aninhado. Um boxe divisível deixa para trás a parte que cabe (filhos inteiros, ou as linhas de um parágrafo até `splitMinLines` de cada lado; uma figura, tabela ou fórmula em destaque sozinha basta para um lado) e continua em um boxe sem ícone na coluna ou página seguinte, sem o título a menos que o estilo o repita e, opcionalmente, com uma marca sob a parte que deixa (veja [Marcas em um boxe dividido](#marcas-em-um-boxe-dividido)).
+- Os flutuantes cedem a um boxe indivisível. Quando o bloco logo depois da referência a uma figura é um boxe `keepTogether`, um espaço que deixaria o boxe sem nenhuma coluna da faixa atual onde cair (a coluna da referência ou uma vazia depois dela, que o comportava antes do flutuante) não é tomado: a figura passa para o seu próximo espaço, normalmente a página seguinte, e o boxe continua no fluxo, como um compositor o comporia, em vez de empurrar o boxe para fora da página e deixar a coluna só com a figura.
+- `span: 'page'` em um layout de várias colunas faz do boxe um **bloco de largura de página**: ele é composto na largura total do conteúdo e divide a página em faixas de colunas. As colunas de texto acima dele são fechadas na linha de corte, o boxe ocupa uma coluna própria de largura total e uma nova faixa de colunas de texto se abre abaixo dele, de modo que o fluxo continua sob o boxe em todas as colunas. Onde as colunas estão *niveladas* (no alto de uma página, logo abaixo de um título de abertura `span: 'page'`, logo abaixo de outro bloco de largura de página ou logo abaixo de uma faixa de flutuantes superior), o boxe simplesmente corta ali. Chegando no meio da página, com as colunas desiguais, ele é composto como um compositor faria: o texto acima é cortado nivelado em todas as colunas (o motor refaz a colocação com as colunas da faixa encurtadas para o mesmo número de linhas da grade, de modo que o texto passa de coluna em coluna naturalmente e todas as regras de órfãs, viúvas e manter com o seguinte continuam valendo), o boxe ocupa a largura da página e as colunas continuam abaixo dele. O corte custa algumas passadas extras de colocação; quando a linha de corte não deixaria espaço para o boxe mais o mínimo de linhas do corpo para viúvas abaixo dele, ou nenhuma disposição cabe depois de algumas tentativas, o boxe passa para o alto da página seguinte. O texto acima respeita o corte: um parágrafo que não consegue começar nas poucas linhas que uma coluna mantém acima, sob uma figura, passa para a coluna seguinte (a figura fica então sozinha na sua coluna), e quando um bloco ainda ultrapassaria o corte, o corte é feito uma linha abaixo em vez de onde esse bloco termina. Um boxe dividido que abre a faixa também é cortado ali, de modo que o resto dele nunca ultrapassa o corte. Com `headings.balancing.beforeSpan` (o padrão), a faixa que ele deixa é cortada nivelada atrás dele, como a faixa de fechamento de um capítulo, e, quando o estilo permite a divisão (`keepTogether: false`), a parte do boxe que cabe sob as colunas niveladas fecha a página e o resto abre a seguinte; com `beforeSpan: false`, a página que ele deixa é simplesmente equilibrada como de costume, sem forçar uma quebra de página. Um título logo antes de um bloco de largura de página não o acompanha. Em layouts de uma coluna, `span: 'page'` é simplesmente em linha.
+- `placement: 'fixed'` tira o boxe do fluxo: ele é composto (`width: 'auto'` se ajusta ao título; `'fill'` toma a largura da coluna de texto sob o ponto de ancoragem) e fixado na página em que aparece no fluxo, na posição descrita por `fixed.anchor` / `fixed.offset` (por padrão, o canto inferior esquerdo da área de conteúdo). As colunas de texto que ele cobre cedem essa zona (cortada por baixo, ou por cima quando a coluna ainda está vazia), exatamente como uma faixa de flutuantes; quando a zona já contém texto, um flutuante ou um bloco de largura de página, o boxe passa para a página seguinte. Um boxe fixo que fecha o capítulo (o bloco seguinte é uma abertura de capítulo, um `:::part`, um boxe barreira de flutuantes ou o fim do documento) primeiro nivela as colunas acima dele (`headings.balancing.trailing`), de modo que uma página final curta termina nivelada, com o selo embaixo. O quadro e os filhos ficam em `page.floats` e são renderizados fora do recorte das colunas em todos os renderizadores.
+- `placement: 'top' | 'bottom'` faz o boxe **flutuar** como um recurso: ele sai do fluxo onde aparece e toma a primeira faixa livre depois desse ponto, isto é, o pé da página atual (`'bottom'`) ou o alto / o pé da próxima página que o fluxo abrir, na largura da coluna (`span: 'column'`) ou na largura total do conteúdo (`span: 'page'`); o texto que vem depois preenche a página que ele deixou. O seu quadro e os seus filhos vão para `page.floats`, como os de um boxe fixo. Um boxe flutuante no alto de uma página nova é colocado antes das figuras que esperam por essa página, e uma figura citada em uma página anterior que então caiba sob ele fica com o resto da página, mesmo que restem menos de três linhas de texto (uma página de galeria: boxe mais figura, sem texto entre eles). Um boxe `span: 'side'` nunca flutua: ele se empilha ao lado do texto, qualquer que seja a sua posição. Com `columns` acima de 1 (no estilo ou como atributo do delimitador, desde o postext 1.18), um boxe `span: 'column'` ocupa esse número de colunas adjacentes: o alto de uma sequência de colunas vazias que começam niveladas, ou o pé da coluna atual e das vazias depois dela, como em `:::callout{placement="top" columns="2"}`.
+- `width: 'auto'` se ajusta só ao título; os filhos são ignorados.
+- Um `:::callout` aninhado dentro de outro boxe é um boxe próprio: é composto com o seu próprio estilo (fundo, contorno, raio, margem interna, faixa, título, ícone, marcador, aba, tipografia) na largura interna total do pai e se empilha como um filho dele, com o seu `marginTop` / `marginBottom` se fundindo com os vizinhos. O seu `span` e o seu `placement` (do delimitador ou do estilo) são ignorados (um boxe aninhado sempre flui dentro do pai), assim como `floatBarrier` e `snapToGrid`. Os boxes se aninham em qualquer profundidade e podem ficar dentro de um grupo `:::columns` (cada um inteiro, em uma coluna). Quando o pai se divide, o corte cai antes ou depois de um boxe aninhado, ou dentro dele quando o estilo aninhado permite a divisão; cada fragmento redesenha os quadros que atravessa, e um boxe aninhado que continua do fragmento anterior perde o título e o ícone, como uma continuação de primeiro nível.
+- Um grupo `:::columns{count=N}` … `:::` entre os filhos compõe esses filhos em `N` colunas de mesma largura, separadas por `columnGap`, dentro do boxe: a sequência é cortada nos limites de bloco ou de linha que melhor nivelam as colunas (um parágrafo ou item de lista cortado no meio continua no alto da coluna seguinte sem o marcador), cada coluna começa no alto do grupo e o grupo tem a altura da coluna mais alta; os filhos depois dele voltam à largura total. Um boxe que se divide (`keepTogether: false`, ou mais alto que uma coluna) também corta dentro de um grupo, entre as suas colunas: um grupo em serpentina (`snake`) preenche as colunas uma após a outra e continua no fragmento seguinte, e um paralelo (`breaks`) continua fluxo por fluxo (desde o postext 1.25; veja [Formato do documento › `:::columns`](/pt/docs/document-format-directives#columns)). Um `gap` no delimitador substitui `columnGap` para esse grupo, e `rule` traça um fio ao longo de cada medianiz. Use-o para um resumo de pontos-chave em duas colunas, ou para as tabelas de um boxe largo postas lado a lado.
+- O sexto atributo do delimitador, `label`, é impresso na aba de rótulo do estilo (veja `label` acima): `:::callout{type="box" label="BOX 1-1" title="The octet rule"}`; sem um estilo `label`, o atributo é ignorado.
+
+No VDT, o boxe é um bloco de quadro `type: 'callout'` cuja decoração (fundo, faixa, ícone, título) fica em `designOverlay`, seguido dos seus blocos filhos na mesma coluna; o quadro e cada filho levam o `containerId` do delimitador. Um boxe aninhado é um quadro `type: 'callout'` próprio entre os filhos, seguido dos seus blocos; eles mantêm o `containerId` do delimitador de primeiro nível (a colocação e o equilíbrio continuam vendo uma só unidade) e acrescentam `calloutPath`, os ids de contêiner dos delimitadores aninhados em volta deles, do mais externo para o mais interno (o id do próprio quadro aninhado é a última entrada). O PDF com tags dá a cada boxe aninhado um `Div` dentro daquele do pai. As imagens de ícone são resolvidas como as imagens de recursos: o registro de imagens do canvas, a opção `resourceImageUrl` do HTML e o provedor `resourceBytes` do PDF.
+
+```ts
+const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
+// => todo campo herdado é preenchido a partir das seções resolvidas; o locale
+//    opcional escolhe o idioma das strings de continuação
+
+const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
+// => undefined para o padrão `note` embutido; os padrões estáticos são removidos
+```
+
+### Enunciados numerados e demonstrações
+
+Um estilo com `numbering` conta os seus boxes, como o `amsthm` do LaTeX conta os ambientes de teorema (desde o postext 1.19). Cada boxe imprime o seu rótulo e número (“**Theorem 2.**” abrindo o primeiro parágrafo), e o `title` do delimitador vem depois do número, entre parênteses: `:::callout{type="theorem" title="Bradley–Terry"}` começa com “**Theorem 2** (Bradley–Terry)**.**”. Um boxe aberto com um identificador (`{#thm:main}`) é alvo de referências cruzadas, que imprimem “Theorem 2” (`:ref{id="thm:main"}`), e `\ref{thm:main}` ou `style=number` imprime 2.
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>A palavra antes do número: <code>'Theorem'</code>, <code>'Lemma'</code>, <code>'Definición'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>counter</code></td>
+      <td><code>string | false</code></td>
+      <td>o <code>id</code> do estilo</td>
+      <td>O contador que os boxes incrementam. Estilos que indicam o mesmo contador o compartilham, como faz <code>\newtheorem&#123;lemma&#125;[theorem]</code>: Teorema 1, Lema 2, Teorema 3. <code>'equation'</code> conta junto com as equações rotuladas. <code>false</code> imprime o rótulo sem número (o “<em>Demonstração.</em>” de uma demonstração).</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
+      <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
+      <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
+      <td>Como os de um tipo de recurso: <code>'&#123;h1&#125;.&#123;n&#125;'</code> com <code>resetOn: 'h1'</code> numera Teorema 2.1, 2.2… por capítulo; <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> com <code>'h2'</code>, por seção. Um contador compartilhado por vários estilos conta sobre o que os modelos deles imprimirem. Um token aceita um estilo depois de dois-pontos, como o de um tipo de recurso: <code>'&#123;h1:A&#125;.&#123;n&#125;'</code> imprime <em>Teorema A.1</em> num apêndice com letra.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'runIn' | 'title'</code></td>
+      <td><code>'runIn'</code></td>
+      <td><code>'runIn'</code> abre o primeiro parágrafo do boxe com o rótulo (um boxe que começa com uma lista, uma fórmula ou outro boxe ganha um parágrafo para ele); <code>'title'</code> faz do rótulo o título do boxe, no seu <code>titleStyle</code>: “Theorem 2 (Bradley–Terry)”.</td>
+    </tr>
+    <tr>
+      <td><code>bold</code> / <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code> / <code>false</code></td>
+      <td>O estilo do rótulo em linha e do seu sufixo, qualquer que seja o corpo do boxe: um corpo em itálico (<code>body.italic</code>) mantém redondo um rótulo redondo. O título entre parênteses é composto em redondo, no peso regular.</td>
+    </tr>
+    <tr>
+      <td><code>suffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>Colocado depois do rótulo em linha e do seu título.</td>
+    </tr>
+  </tbody>
+</table>
+
+Uma demonstração é um estilo com um rótulo sem número e uma marca final:
+
+```ts
+calloutStyles: [
+  { id: 'theorem', numbering: { label: 'Theorem' }, body: { italic: true } },
+  { id: 'lemma', numbering: { label: 'Lemma', counter: 'theorem' }, body: { italic: true } },
+  { id: 'definition', numbering: { label: 'Definition' } },
+  { id: 'proof', backgroundEnabled: false, endMark: '□',
+    numbering: { label: 'Proof', counter: false, bold: false, italic: true } },
+]
+```
+
+Em um livro diagramado capítulo por capítulo, os contadores continuam a partir do capítulo anterior (`LayoutContinuation.statementCounters`, que `continuationAfter` preenche), e o esboço do livro dá à âncora de cada boxe numerado o seu rótulo (`OutlineEntry.numberLabel`), para que uma referência vinda de outro capítulo o imprima.
+
+### Tipografia dentro de um boxe
+
+Um boxe compõe o seu conteúdo com a sua própria tipografia `body` e `lists`; todo o resto mantém os estilos do documento:
+
+- **Parágrafos** recebem o `body` do boxe: fonte, tamanho, entrelinha, cor, cores de ênfase, pesos, `italic`, `smallCaps`, alinhamento, hifenização, recuo e espaçamento entre parágrafos. Um campo não definido herda `bodyText`. Uma cor de ênfase herdada mantém o vínculo com a paleta, de modo que o negrito, o itálico e os rótulos de `:ref` em um boxe mudam com `colorPalette` como mudam fora dele. (Até o postext 1.4, o negrito em um boxe ficava `#295AA3` qualquer que fosse a cor principal.)
+- **Listas com marcadores** recebem o `lists` do boxe (caractere do marcador, cor, tamanho e peso do glifo, recuo, espaço, espaçamento entre itens) por cima de `unorderedLists`, e o texto delas é o texto do corpo do boxe. Um `lists.bulletChar` ou `lists.color` diferente do documento (`unorderedLists`) substitui o marcador ou a cor de todos os níveis; um que o repita, ou que fique sem definir, deixa a cada nível o seu (`unorderedLists.levels`), de modo que os travessões aninhados se mantêm no boxe.
+- **Listas numeradas** recebem `lists.indent`, `gap` e `itemSpacing`, e `lists.color` sempre que o estilo a define, inclusive quando é a cor dos marcadores do documento; um estilo que a deixa sem definir mantém os números em `orderedLists.color`. (Até o postext 1.4, a cor só chegava aos números quando era diferente de `unorderedLists.color`, de modo que defini-la com essa mesma cor não fazia nada.) O número em si (a sua fonte, tamanho e separador) vem do `orderedLists` global, já que `lists` só tem campos de marcador: estilize ali os números de um boxe.
+- **`:::paragraphs` dentro de um boxe** usam o seu estilo de parágrafo, também em boxes aninhados. Os campos que o estilo deixa sem definir herdam o `bodyText` do documento, não o `body` do boxe (nem o seu itálico ou versaletes).
+- **Grupos `:::columns`** não têm estilo próprio: todas as colunas compartilham a tipografia de corpo e de listas do boxe, e `columnGap` define o espaço entre elas.
+- **Citações** recebem a fonte, o tamanho e os pesos do corpo do boxe (em itálico e cinza, como no texto corrido), e os seus versaletes. **Títulos** mantêm os estilos de título; **fórmulas em destaque**, as configurações de matemática.
+- **Figuras e tabelas** mantêm os estilos de legenda e de tabela do documento, na largura interna do boxe; os seus pesos regular e negrito seguem os pesos do `body` do boxe.
+- **Chips** mantêm o seu estilo de chip; um tamanho em `em` é medido sobre o tamanho do corpo do boxe.
+- **`:::space`** é medido em linhas do corpo do boxe (veja [`:::space`](/pt/docs/document-format-directives#space) para saber onde ele é descartado).
+- **Um boxe aninhado** recebe o seu próprio estilo por inteiro; o seu `span`, `placement`, `floatBarrier` e `snapToGrid` são ignorados.
+
+### Marcas em um boxe dividido
+
+Quando um boxe se divide entre colunas ou páginas (`keepTogether: false`, ou um boxe mais alto que uma coluna), cada parte depois da primeira começa sem o título e sem o ícone e, por padrão, nada avisa o leitor de que o boxe continua. Duas opções acrescentam as marcas que um livro ou um roteiro usa:
+
+- **`repeatTitle: true`** repete o título no alto de cada continuação, seguido de `continuedSuffix` (“Pontos-chave (cont.)” por padrão). A repetição usa o estilo do título, de modo que, com `textTransform: 'uppercase'`, ela dá o “HAMLET (CONT'D)” de um roteiro. O ícone e a aba de rótulo ficam na primeira parte.
+- **`continuesMarkerEnabled: true`** põe `continuesMarker` (“Continued”, ou “Continúa” em um documento em espanhol) sob a última linha de cada parte que continua, dentro do boxe, na fonte e no tamanho do corpo do boxe: em itálico a menos que `continuesMarkerItalic` seja `false`, alinhado à direita a menos que `continuesMarkerAlign` diga `'left'` ou `'center'`. A marca ocupa espaço na parte que fecha, e o corte é escolhido de modo que ela caiba.
+
+```ts
+calloutStyles: [{
+  id: 'speech',
+  keepTogether: false,
+  titleStyle: { textTransform: 'uppercase' },
+  repeatTitle: true,
+  continuedSuffix: "(CONT'D)",
+  continuesMarkerEnabled: true,
+  continuesMarker: '(MORE)',
+  continuesMarkerAlign: 'center',
+  continuesMarkerItalic: false,
+}],
+```
+
+```md
+:::callout{type="speech" title="Hamlet"}
+A speech long enough to run over the foot of the page…
+:::
+```
+
+A parte que fecha a página termina com “(MORE)”, e a página seguinte começa com “HAMLET (CONT'D)”. As duas são elementos de paginação: em um PDF acessível são artefatos e no HTML ficam ocultas para as tecnologias assistivas, de modo que o título é lido uma só vez. No VDT são blocos de texto de `designOverlay` marcados com `artifact: true`.

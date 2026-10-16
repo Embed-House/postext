@@ -22,13 +22,13 @@ O código está na [resposta curta](#a-resposta-curta), mais acima. Um haicai é
 
 <Excerpt region="tanka" />
 
-Os tankas de Takuboku formam um bloco `:::verse`, cada tanka uma estrofe: os seus três versos são três linhas do Markdown, e a linha em branco entre dois tankas do texto deixa uma linha em branco da grade entre os poemas. O estilo do poema dá o recuo de dois caracteres e a linha embaixo do grupo, e os versos pendem do alto como qualquer coluna. `keepStanzas=3` mantém inteira cada estrofe de três versos: na página 5 o terceiro tanka não cabe embaixo do título da parte e dos dois primeiros, então abre inteiro a página 6 em vez de deixar para trás o primeiro verso. O ornamento entre dois grupos apresenta o seguinte, então passa com o seu primeiro tanka em vez de ficar sozinho no pé de uma página ([`:::verse`](/pt/docs/document-format#verse)).
+Os tankas de Takuboku formam um bloco `:::verse`, cada tanka uma estrofe: os seus três versos são três linhas do Markdown, e a linha em branco entre dois tankas do texto deixa uma linha em branco da grade entre os poemas. O estilo do poema dá o recuo de dois caracteres e a linha embaixo do grupo, e os versos pendem do alto como qualquer coluna. `keepStanzas=3` mantém inteira cada estrofe de três versos: na página 5 o terceiro tanka não cabe embaixo do título da parte e dos dois primeiros, então abre inteiro a página 6 em vez de deixar para trás o primeiro verso. O ornamento entre dois grupos apresenta o seguinte, então passa com o seu primeiro tanka em vez de ficar sozinho no pé de uma página ([`:::verse`](/pt/docs/document-format-directives#verse)).
 
 ### 3 · Espace os nomes de lugar até a mesma largura
 
 <Excerpt region="places" />
 
-As estações do caminho de Bashō são títulos de nível 2 com a altura de duas linhas do texto (2行取り), para que a prosa e os haicais seguintes fiquem na grade. `jidori: 3` espaça um nome mais curto até ocupar três dos seus próprios caracteres (字取り): 平泉 sai 平　泉, com um caractere inteiro entre eles, e todos os nomes terminam na mesma altura que 立石寺 e 最上川. Um nome que já tem três caracteres fica como está ([Ajustes por nível](/pt/docs/configuration-text#sobrescritas-por-nível)).
+As estações do caminho de Bashō são títulos de nível 2 com a altura de duas linhas do texto (2行取り), para que a prosa e os haicais seguintes fiquem na grade. `jidori: 3` espaça um nome mais curto até ocupar três dos seus próprios caracteres (字取り): 平泉 sai 平　泉, com um caractere inteiro entre eles, e todos os nomes terminam na mesma altura que 立石寺 e 最上川. Um nome que já tem três caracteres fica como está ([Ajustes por nível](/pt/docs/configuration-headings#sobrescritas-por-nível)).
 
 ### 4 · Abra cada parte numa página própria
 
@@ -40,7 +40,7 @@ Cada parte é um título de nível 1 cujo design põe o título, um pequeno （�
 
 <Excerpt region="voices" />
 
-A prosa de Bashō escreve palavras repetidas com o antigo sinal de iteração 〻 (日〻, 人〻), e textos mais antigos também usam o longo くの字点 〳〵. A Zen Old Mincho não tem nenhum dos dois: o canvas os pegaria de uma fonte do sistema e o PDF desenharia caixas vazias. Shippori Mincho, Noto Serif JP e Shippori Mincho B1 têm os dois, então os poemas são compostos em Shippori Mincho ([Fontes chinesas, japonesas e coreanas](/pt/docs/configuration-programmatic-usage#fontes-chinesas-japonesas-e-coreanas)). O texto do Aozora também mantém as notas do editor sobre grafias antigas, `とら{え|（へ）}て`, que imprimem o kana esperado ao lado daquele que Bashō escreveu.
+A prosa de Bashō escreve palavras repetidas com o antigo sinal de iteração 〻 (日〻, 人〻), e textos mais antigos também usam o longo くの字点 〳〵. A Zen Old Mincho não tem nenhum dos dois: o canvas os pegaria de uma fonte do sistema e o PDF desenharia caixas vazias. Shippori Mincho, Noto Serif JP e Shippori Mincho B1 têm os dois, então os poemas são compostos em Shippori Mincho ([Fontes chinesas, japonesas e coreanas](/pt/docs/configuration-pdf-output#fontes-chinesas-japonesas-e-coreanas)). O texto do Aozora também mantém as notas do editor sobre grafias antigas, `とら{え|（へ）}て`, que imprimem o kana esperado ao lado daquele que Bashō escreveu.
 
 ## Variações
 

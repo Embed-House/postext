@@ -392,7 +392,7 @@ The full async integration pattern (font shipping, cancellation, measurement
 cache reuse) is documented under
 [Running layout in a Web Worker](https://postext.dev/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker).
 For an end-to-end HTML-viewer integration (multi-column, resize-aware, Shadow DOM),
-see [Integrating the HTML viewer](https://postext.dev/en/docs/configuration-programmatic-usage#integrating-the-html-viewer).
+see [Integrating the HTML viewer](https://postext.dev/en/docs/configuration-html-folio-epub#integrating-the-html-viewer).
 
 ---
 

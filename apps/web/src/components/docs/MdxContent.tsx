@@ -5,6 +5,7 @@ import { compileDocsMdx } from "@/lib/mdx";
 import * as illustrations from "./illustrations";
 import { CodePenExample } from "./CodePenExample";
 import { TutorialVideo } from "./TutorialVideo";
+import { TableFit } from "./TableFit";
 import { NewTabNote } from "@/components/ui/NewTabNote";
 
 /** The plain text of rendered children (inline code, emphasis and all). */
@@ -122,6 +123,7 @@ export async function MdxContent({ source, skipTitle, components: extra, locale,
   return (
     <div className="docs-content prose prose-invert max-w-none">
       {content}
+      <TableFit />
     </div>
   );
 }

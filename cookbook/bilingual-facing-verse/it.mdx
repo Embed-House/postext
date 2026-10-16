@@ -16,13 +16,13 @@ Una plaquette bilingue di cinque poesie su una salina del sud della Spagna, 156 
 
 ### 1 · Una poesia è un riquadro con un salto di colonna fisso
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è un riquadro attorno a un gruppo `:::columns`; il suo stile elimina il riempimento e il padding e stampa il `title` del blocco, il numerale ([`:::columns`](/it/docs/document-format#columns)). Senza `breaks`, il gruppo taglia dove le sue due colonne risultano pari. Le due metà di queste poesie hanno la stessa altezza, quindi il taglio cade comunque sul titolo inglese; allunga due versi di *The Rake* finché vanno a capo, e il taglio scende di un blocco e lascia «THE RAKE» al piede della colonna spagnola. `breaks="5"` nomina il blocco che apre la seconda colonna, così il titolo inglese la intesta qualunque sia l’altezza delle due metà.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è un riquadro attorno a un gruppo `:::columns`; il suo stile elimina il riempimento e il padding e stampa il `title` del blocco, il numerale ([`:::columns`](/it/docs/document-format-directives#columns)). Senza `breaks`, il gruppo taglia dove le sue due colonne risultano pari. Le due metà di queste poesie hanno la stessa altezza, quindi il taglio cade comunque sul titolo inglese; allunga due versi di *The Rake* finché vanno a capo, e il taglio scende di un blocco e lascia «THE RAKE» al piede della colonna spagnola. `breaks="5"` nomina il blocco che apre la seconda colonna, così il titolo inglese la intesta qualunque sia l’altezza delle due metà.
 
 ### 2 · Un blocco :::verse per colonna, una riga bianca per ogni cambio di strofa
 
 <Excerpt region="verse" />
 
-Ogni metà di una poesia è un blocco `:::verse`: un verso per ogni riga del Markdown, a bandiera e mai sillabato, e una riga bianca tra le strofe, che lascia una riga bianca nella colonna ([`:::verse`](/it/docs/document-format#verse)). Ogni strofa è un blocco, quindi `breaks` conta le strofe, non i versi. L’inglese *each one standing on its own reflection.* è troppo lungo per la sua colonna di 55 mm e va a capo rientrato di 2 em; la metà spagnola chiude il suo blocco dopo la strofa di fronte e mette un `:::space{lines=2}` prima della successiva, così le strofe seguenti cominciano sulla stessa riga. Un `:::space` non è un blocco, e `breaks` non lo conta ([`:::space`](/it/docs/document-format#space)).
+Ogni metà di una poesia è un blocco `:::verse`: un verso per ogni riga del Markdown, a bandiera e mai sillabato, e una riga bianca tra le strofe, che lascia una riga bianca nella colonna ([`:::verse`](/it/docs/document-format-directives#verse)). Ogni strofa è un blocco, quindi `breaks` conta le strofe, non i versi. L’inglese *each one standing on its own reflection.* è troppo lungo per la sua colonna di 55 mm e va a capo rientrato di 2 em; la metà spagnola chiude il suo blocco dopo la strofa di fronte e mette un `:::space{lines=2}` prima della successiva, così le strofe seguenti cominciano sulla stessa riga. Un `:::space` non è un blocco, e `breaks` non lo conta ([`:::space`](/it/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="La poesia I a pagina 3: «reflection.» va a capo nell’inglese, e la strofa spagnola finisce con due righe bianche invece di una." />
 
@@ -42,7 +42,7 @@ Ciascuno è un titolo di livello 1 con uno stile proprio ([stili dei titoli](/it
 
 <Excerpt region="heads" />
 
-Il verso porta il titolo spagnolo e il recto quello inglese, nell’ordine delle colonne. `pages: 'body'` le tiene lontane dalle tre pagine che si aprono con un titolo. La nota e l’acquerello hanno invece un folio al piede, e lo stile del frontespizio svuota la sua intestazione e il suo piè di pagina ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)).
+Il verso porta il titolo spagnolo e il recto quello inglese, nell’ordine delle colonne. `pages: 'body'` le tiene lontane dalle tre pagine che si aprono con un titolo. La nota e l’acquerello hanno invece un folio al piede, e lo stile del frontespizio svuota la sua intestazione e il suo piè di pagina ([elementi di testo](/it/docs/configuration-headers-footers#elementi-di-testo)).
 
 ## Varianti
 

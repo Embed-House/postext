@@ -20,7 +20,7 @@ const FEATURE_DOCS: Record<FeatureKey, DocAnchor> = {
     heading: { en: "Knuth-Plass: Seeing the Whole Paragraph", es: "Knuth-Plass: ver el párrafo completo", ca: "Knuth-Plass: veure el paràgraf sencer", zh: "Knuth-Plass：通观整个段落", ar: "Knuth-Plass: النظر إلى الفقرة كاملة", ja: "Knuth-Plass：段落全体を見渡す", pt: "Knuth-Plass: o parágrafo inteiro de uma vez", fr: "Knuth-Plass : voir le paragraphe entier", de: "Knuth-Plass: der Blick auf den ganzen Absatz", it: "Knuth-Plass: vedere l’intero paragrafo" },
   },
   resources: {
-    slug: "document-format",
+    slug: "document-format-resources",
     heading: { en: "Resources", es: "Recursos", ca: "Recursos", zh: "资源", ar: "الموارد", ja: "リソース", pt: "Recursos", fr: "Ressources", de: "Ressourcen", it: "Risorse" },
   },
   tables: {
@@ -32,7 +32,7 @@ const FEATURE_DOCS: Record<FeatureKey, DocAnchor> = {
     heading: { en: "Diagram style", es: "Estilo de diagramas", ca: "Estil dels diagrames", zh: "图示样式", ar: "نمط المخططات", ja: "ダイアグラムスタイル", pt: "Estilo de diagramas", fr: "Style des diagrammes", de: "Diagrammstil", it: "Stile dei diagrammi" },
   },
   math: {
-    slug: "document-format",
+    slug: "document-format-inline",
     heading: { en: "Mathematical formulas", es: "Fórmulas matemáticas", ca: "Fórmules matemàtiques", zh: "数学公式", ar: "الصيغ الرياضية", ja: "数式", pt: "Fórmulas matemáticas", fr: "Formules mathématiques", de: "Mathematische Formeln", it: "Formule matematiche" },
   },
   output: {

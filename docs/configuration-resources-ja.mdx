@@ -6,8 +6,8 @@ export const metadata = {
   description: 'リソースの種類とその番号付け、表とキャプションのスタイル、単色のダイアグラム、紙面上の動画',
   lang: 'ja',
   lastUpdated: '2026-10-10',
-  readingTime: '5分',
-  order: 8,
+  readingTime: '44分',
+  order: 14,
   parent: 'configuration',
   plainSummary: "このページでは、図、表、ダイアグラム、動画の設定を説明します。Postextはこれらをリソースと呼び、種類ごとに番号を付けます。罫線、塗り、文字、ページをまたぐときの分け方など、表の見た目を決めます。図や表に付けるキャプションの書き方を決めます。ダイアグラムを1色のインキで刷ることや、動画を紙の上でどう見せるかも選べます。",
 };
@@ -19,9 +19,9 @@ export const metadata = {
 
 **リソースの種類**は、ユーザーが定義できる分類です。たとえば「図」「表」「ダイアグラム」「コードリスト」などで、その種類のリソースにどう番号を付け、キャプションを付け、参照するかを決めます。リストは`config.resourceTypes`にあり、Sandboxでは**デザイン → 図と表 → 番号付けと配置**で編集します。
 
-`config.resourceTypes`が未設定の場合、Postextは3つの組み込みの既定の種類、**図**（Figure）、**表**（Table）、**動画**（Video）を用意します。それぞれ独自の`{h1}.{n}`で番号を付け（レベル1の見出しのたびにリセット）、カウンターは10進数です。`video`の種類を含まないリスト（動画が導入される前に保存された本）でも、種類が`video`の動画リソースには番号が付きます。そのために組み込みの動画の種類が追加されます（`effectiveResourceTypes(config, resources)`）。`defaultVideoResourceType(locale)`はこの種類だけを返します。名前は文書の言語で付きます。`config.locale`、なければ`bodyText.hyphenation.locale`、それもなければ英語です（[文書の言語](/ja/docs/configuration-text#文書の言語)を参照）。
+`config.resourceTypes`が未設定の場合、Postextは3つの組み込みの既定の種類、**図**（Figure）、**表**（Table）、**動画**（Video）を用意します。それぞれ独自の`{h1}.{n}`で番号を付け（レベル1の見出しのたびにリセット）、カウンターは10進数です。`video`の種類を含まないリスト（動画が導入される前に保存された本）でも、種類が`video`の動画リソースには番号が付きます。そのために組み込みの動画の種類が追加されます（`effectiveResourceTypes(config, resources)`）。`defaultVideoResourceType(locale)`はこの種類だけを返します。名前は文書の言語で付きます。`config.locale`、なければ`bodyText.hyphenation.locale`、それもなければ英語です（[文書の言語](/ja/docs/configuration-language#文書の言語)を参照）。
 
-組み込みの既定値はロケールに対応しています。エクスポートされた`defaultResourceTypes(locale = 'en')`は、種類の名前、略称、キャプションの接頭辞を文書のロケールに合わせてローカライズします。英語では「*Figure*/*Fig.*」と「*Table*/*Tab.*」、スペイン語では「*Figura*/*Fig.*」と「*Tabla*/*Tabla*」になり、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にもそれぞれの名前があります（一覧は[文書の言語](/ja/docs/configuration-text#文書の言語)の表にあります）。`es-ES`のような地域付きのタグは言語で解決され、翻訳のないロケールは英語にフォールバックします。番号付けの動作（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、10進数のカウンター）は言語に依存しません。呼び出すたびに新しいオブジェクトを返すので、結果は自由に変更できます。
+組み込みの既定値はロケールに対応しています。エクスポートされた`defaultResourceTypes(locale = 'en')`は、種類の名前、略称、キャプションの接頭辞を文書のロケールに合わせてローカライズします。英語では「*Figure*/*Fig.*」と「*Table*/*Tab.*」、スペイン語では「*Figura*/*Fig.*」と「*Tabla*/*Tabla*」になり、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にもそれぞれの名前があります（一覧は[文書の言語](/ja/docs/configuration-language#文書の言語)の表にあります）。`es-ES`のような地域付きのタグは言語で解決され、翻訳のないロケールは英語にフォールバックします。番号付けの動作（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、10進数のカウンター）は言語に依存しません。呼び出すたびに新しいオブジェクトを返すので、結果は自由に変更できます。
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -68,15 +68,15 @@ interface ResourceType {
 }
 ```
 
-`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、本文領域の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートに適用され、postext 1.28からは本文中に置いたリソース（`position: 'here'`、1段幅、回り込みなし）にも適用されます。その横でサイド段が空いていればキャプションと注を本体の上端の高さでサイド段に置き、空いていなければ本体の下に置きます（`layout.inlineCaptionSide`、既定でオン。`false`ではサイド段のキャプションは段幅のフロートだけになります）。そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図版を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図版のキャプションと注を図版の幅で組みます（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。前の2つのドキュメント既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや 1 段幅のフロートを段の片側に置き、`wrapGap`離して本文を横に組みます。既定値は`layout.wrap`にあります（[文書の書式 › 回り込み](/ja/docs/document-format#回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。
+`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、本文領域の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートに適用され、postext 1.28からは本文中に置いたリソース（`position: 'here'`、1段幅、回り込みなし）にも適用されます。その横でサイド段が空いていればキャプションと注を本体の上端の高さでサイド段に置き、空いていなければ本体の下に置きます（`layout.inlineCaptionSide`、既定でオン。`false`ではサイド段のキャプションは段幅のフロートだけになります）。そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図版を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図版のキャプションと注を図版の幅で組みます（[ドキュメント形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。前の2つのドキュメント既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや 1 段幅のフロートを段の片側に置き、`wrapGap`離して本文を横に組みます。既定値は`layout.wrap`にあります（[文書の書式 › 回り込み](/ja/docs/document-format-resources#回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[ドキュメント形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。
 
 `columns`（postext 1.18以降）は、複数の段があるページで、`span: 'column'`のフロートを指定した数の隣り合う段にまたがって置きます。新聞の5段のうち2段にまたがる写真などです。幅はそれらの段とその間の段間を合わせたものです。上端のそろった空の段の並びの頭か、引用した段とその後の空の段の足に置かれます。ページの段数以上を指定すると、ページ幅のフロートになります。`'page'`と`'side'`のspan、回転したリソース（`rotate`）、インラインの埋め込み（`here`）では無視され、`captionSide`は1段幅のフロートにだけ効きます。
 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '180px' }}>型</th>
+      <th>プロパティ</th>
+      <th>型</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -124,7 +124,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code>（省略可）</td>
-      <td>自身の<code>placement</code>を設定しない、この種類のリソースが使う配置です。<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>、<code>columns</code>はそれぞれ個別に解決されます。リソースも種類もあるフィールドを設定しない場合は、組み込みの既定値が適用されます。<code>auto</code>／<code>column</code>、回転なし、全幅、左そろえ、キャプションは図の下です。解決の順序は下の<a href="#番号付けと参照">番号付けと参照</a>を、回転したリソースを含む各値の動作は<a href="/ja/docs/document-format#リソース">文書形式 › リソース</a>を参照してください。</td>
+      <td>自身の<code>placement</code>を設定しない、この種類のリソースが使う配置です。<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>、<code>columns</code>はそれぞれ個別に解決されます。リソースも種類もあるフィールドを設定しない場合は、組み込みの既定値が適用されます。<code>auto</code>／<code>column</code>、回転なし、全幅、左そろえ、キャプションは図の下です。解決の順序は下の<a href="#番号付けと参照">番号付けと参照</a>を、回転したリソースを含む各値の動作は<a href="/ja/docs/document-format-resources#リソース">文書形式 › リソース</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -136,7 +136,7 @@ interface ResourceType {
 
 ### テンプレートのトークン
 
-`numberingTemplate`は、見出しの番号付けと同じエンジンで表示されます（[見出し](/ja/docs/configuration-text#見出し)を参照）。認識するトークンは2種類です。
+`numberingTemplate`は、見出しの番号付けと同じエンジンで表示されます（[見出し](/ja/docs/configuration-headings#見出し)を参照）。認識するトークンは2種類です。
 
 - `{n}`：種類ごとのカウンターで、`counterFormat`に従って書式化されます。リソースごとに増え、`resetOn`に従ってリセットされる値です。
 - `{h1}`〜`{h6}`：最初の参照の位置で有効な見出し番号で、トークンが書式を指定しないかぎり10進数で表示されます。`{h1}`は現在のレベル1の見出しの番号、`{h2}`はレベル2の番号、以下同様です。
@@ -149,8 +149,8 @@ interface ResourceType {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>テンプレート</th>
-      <th style={{ width: '180px' }}><code>h1 = 2</code>、カウンターが3のとき</th>
+      <th>テンプレート</th>
+      <th><code>h1 = 2</code>、カウンターが3のとき</th>
       <th>備考</th>
     </tr>
   </thead>
@@ -182,7 +182,7 @@ interface ResourceType {
 
 ### 番号付けと参照
 
-リソースの種類が生成する番号は、`:ref`が表示し、キャプションの接頭辞の後に続くものです。基本の形は`:ref{id}`です。読む順で最初の参照がリソースを**取り込み**、リソースはその参照の後にある最初の空き位置へフロートとして配置されます。参照している段の下端、次の空いた段の上端または下端、あるいは次のページの帯です（解決された配置に従います。`position: 'auto' | 'top' | 'bottom' | 'here'`と`span: 'column' | 'page' | 'side'`、さらに`rotate`、`width`、`align`、`captionSide`は、リソースごと、次に種類の`defaultPlacement`、最後に組み込みの`auto`／`column`の順に解決されます。`'top'`／`'bottom'`はその種類の空き位置に探索を限定します）。ブロックとして埋め込む`::resource{id}`は省略可能で、`placement.position: 'here'`のとき、つまり流れの中の正確な位置にフロートさせずにインラインで埋め込むときにだけ必要です。文書側の完全な文法（両方の形と、`:ref`の`style`および`text`オプション）は、最初の参照の順序が番号にどう影響するかも含めて[文書形式 › リソース](/ja/docs/document-format#リソース)で説明しています。
+リソースの種類が生成する番号は、`:ref`が表示し、キャプションの接頭辞の後に続くものです。基本の形は`:ref{id}`です。読む順で最初の参照がリソースを**取り込み**、リソースはその参照の後にある最初の空き位置へフロートとして配置されます。参照している段の下端、次の空いた段の上端または下端、あるいは次のページの帯です（解決された配置に従います。`position: 'auto' | 'top' | 'bottom' | 'here'`と`span: 'column' | 'page' | 'side'`、さらに`rotate`、`width`、`align`、`captionSide`は、リソースごと、次に種類の`defaultPlacement`、最後に組み込みの`auto`／`column`の順に解決されます。`'top'`／`'bottom'`はその種類の空き位置に探索を限定します）。ブロックとして埋め込む`::resource{id}`は省略可能で、`placement.position: 'here'`のとき、つまり流れの中の正確な位置にフロートさせずにインラインで埋め込むときにだけ必要です。文書側の完全な文法（両方の形と、`:ref`の`style`および`text`オプション）は、最初の参照の順序が番号にどう影響するかも含めて[文書形式 › リソース](/ja/docs/document-format-resources#リソース)で説明しています。
 
 これは見出しの番号付けと対応しています。見出しのレベルが`numberingTemplate`を持つのと同じように、リソースの種類もテンプレートを持ちます。ただしリソースのカウンター（`{n}`）は見出しごとではなく最初の参照ごとに進み、`resetOn`によって見出しの階層と結び付きます。
 
@@ -231,9 +231,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>プロパティ</th>
-      <th style={{ width: '140px' }}>型</th>
-      <th style={{ width: '160px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -440,7 +440,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>そのマーカーの文字列で、部分の下に注記の書体で右そろえに組みます（<a href="#キャプションスタイル">キャプションスタイル</a>を参照）。既定値は文書の言語に従います（8つの言語については<a href="/ja/docs/configuration-text#文書の言語">文書の言語</a>を参照）。</td>
+      <td>そのマーカーの文字列で、部分の下に注記の書体で右そろえに組みます（<a href="#キャプションスタイル">キャプションスタイル</a>を参照）。既定値は文書の言語に従います（8つの言語については<a href="/ja/docs/configuration-language#文書の言語">文書の言語</a>を参照）。</td>
     </tr>
   </tbody>
 </table>
@@ -532,7 +532,7 @@ const resource: Resource = {
 
 **本文中に置いた表**。`here`に置いた表（`::resource`で埋め込んだもの）も、postext 1.25から同じ規則に従います（`splitInline`、既定でオン）。段に残った余地に収まらないときは、行の間で切ります。最初の部分は上のフロートのアキを保ち、少なくとも見出し行と本体の2行を含みます（それに満たなければ、これまでどおり表全体が次の段から始まります）。続く各部分は、上にアキを取らずに次の段の頭から始まり、その段の幅で組まれます（1段半レイアウトで部分が狭い段に入れば、その幅で組みます）。`::resource`の行の後のテキストは、最後の部分の後に続きます。見出し行の繰り返し、接尾辞を付けたキャプション、続きの印、最後の部分の注記、3行以上の末尾、結合セルや見出しとなる行を避ける分割位置は、フロートの表と同じです。本体が5行未満の表は切りません。`'clip'`は段より高いインラインの表の先頭の収まる行を残し、段の頭に組みます。`'hide'`はそうした表を省きます。それより低い表は、どちらのモードでも丸ごと次の段に移ります。インラインの表が始めるページでは、そのページが受け取るフロートから空けておくのは最初の部分の余地だけなので、待っている全幅の図がそのページの頭に来て、表はその下に続きます。縦組みのページのインラインの表と、囲みの中の表は切りません。`splitInline: false`にすると、postext 1.24までと同じく、インラインの表を丸ごと次の段に移します。
 
-続きの文字列の既定値は文書の言語（`locale`、なければハイフネーションのロケール）によって決まります。英語は`(cont.)` / `Continued`、スペイン語は`(cont.)` / `Continúa`で、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にも同様の既定値があります（[文書の言語](/ja/docs/configuration-text#文書の言語)に一覧があります）。
+続きの文字列の既定値は文書の言語（`locale`、なければハイフネーションのロケール）によって決まります。英語は`(cont.)` / `Continued`、スペイン語は`(cont.)` / `Continúa`で、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にも同様の既定値があります（[文書の言語](/ja/docs/configuration-language#文書の言語)に一覧があります）。
 
 セルの内容はインラインのMarkdownで、セル内の改行（改行文字、またはキャプションや注記と同じく`\\`）は新しい段落を始めます。行頭記号かダッシュ（`•`、`-`、`*`、`–`）または番号（`1.`、`1)`）の後にスペースが続く段落は、リストの項目として組まれます。記号は書かれたとおりに描かれ、テキストは文書の`unorderedLists.gap`だけ離れてぶら下がり、折り返した行はテキストにそろい、先頭のスペース2つで1段階入れ子になります。そのため、`• Ofrece elección\n• Acomoda a personas diestras y zurdas`と書いたセルは2項目のリストになります。通常のスペースだけの行は何も加えません。ノーブレークスペース（U+00A0）を含む行は、CommonMarkと同じくセルの1行になるため、`1\n`の後にノーブレークスペースを続けると、その行は2行分の高さになります。セルのテキスト末尾のノーブレークスペースは幅を保ちます。`760`とノーブレークスペースを`(231)`の上に右ぞろえで置くと、端からスペース1つ分手前で終わり、0が1に近づきます。数字が正確にそろうのは、スペースが括弧と同じ幅の場合だけで、たいていの書体ではスペースのほうが狭くなります（postext 1.4までは、どちらも取り除かれていました）。
 
@@ -593,9 +593,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>プロパティ</th>
-      <th style={{ width: '180px' }}>型</th>
-      <th style={{ width: '140px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -704,9 +704,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>プロパティ</th>
-      <th style={{ width: '180px' }}>型</th>
-      <th style={{ width: '140px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -763,9 +763,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '160px' }}>型</th>
-      <th style={{ width: '200px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -871,7 +871,7 @@ const html = renderToHtml(doc, { resourceImageUrl: urlFor, singleInk: true });
 
 ### SVGの文字のフォント
 
-SVGの画像は、キャンバス、HTML、EPUBのいずれでも`<img>`という画像として表示されます。画像の文書からはページのWebフォントが見えないため、`<text font-family="IBM Plex Sans">`はシステムのフォントに置き換わってしまいます。postext 1.25以降、エンジンは画像をデコードする前、またはURLとして渡す前に、文字が指定するフェイスをマークアップに埋め込みます。フォントファイル1つにつき1つの`@font-face`規則を作り、そのバイト列をデータURIにして、ルートの`<svg>`タグの直後の`<style>`に入れます。PDFにはこの処理は要りません。PDFはSVGの文字を、埋め込んだフォントで実際のテキストとして組みます（[リソースのバイト列と印刷用マスター](/ja/docs/configuration-programmatic-usage#リソースのバイト列と印刷用マスター)を参照）。
+SVGの画像は、キャンバス、HTML、EPUBのいずれでも`<img>`という画像として表示されます。画像の文書からはページのWebフォントが見えないため、`<text font-family="IBM Plex Sans">`はシステムのフォントに置き換わってしまいます。postext 1.25以降、エンジンは画像をデコードする前、またはURLとして渡す前に、文字が指定するフェイスをマークアップに埋め込みます。フォントファイル1つにつき1つの`@font-face`規則を作り、そのバイト列をデータURIにして、ルートの`<svg>`タグの直後の`<style>`に入れます。PDFにはこの処理は要りません。PDFはSVGの文字を、埋め込んだフォントで実際のテキストとして組みます（[リソースのバイト列と印刷用マスター](/ja/docs/configuration-pdf-output#リソースのバイト列と印刷用マスター)を参照）。
 
 文字が求めるフェイスは、`font-family`、`font-weight`、`font-style`、`font`から読み取ります。属性に書かれたもの、`style`属性の中にあるもの、外側のグループから継承したもののいずれも対象です。ファミリーを指定する`<style>`の規則も数えます。総称ファミリー（`serif`、`sans-serif`など）と、`<title>`や`<desc>`の中の文字は除きます。SVG自身が`@font-face`で宣言しているファミリーには手を加えません。各テキストは`font-family`のリストを順にたどり、フェイスのある最初のファミリーを使います。単色刷りの色変換が先で、フォントの埋め込みはその後です。
 
@@ -889,7 +889,7 @@ const canvas = renderPage(doc.pages[0], doc);
 
 - **キャンバス**：`registerSvgImage(fileId, svgText, options)`は、画像を色変換し（`inkHex`）、フォントを埋め込み（`fonts`はプロバイダー。`inlineFonts: false`で省略）、デコードしてベクターのソースとして登録し、各フェイスがどう扱われたかを返します。`registerBundleImages(bundle)`はバンドルのSVGに同じことを行い、まずバンドル自身のフェイスを使います。自分でデコードするホストには、`prepareSvgMarkup(svgText, options)`が処理済みのマークアップを返します。
 - **HTML**：`bundleImageUrl(bundle)`は、バンドルのフェイスを埋め込んだSVGマークアップを返します。`renderToHtml(doc, { inlineSvgFonts: true })`は、`resourceImageUrl`が返すSVGの`data:` URIに、レジストリがメモリに持つフェイスを埋め込みます（`inlineSvgFonts: { fonts, maxBytes, withhold }`の形でも指定できます）。オブジェクトURLは同期的に読めないので、blob URLを渡すホストはURLを作る前に埋め込んでください。
-- **EPUB**：`postext-epub`は、SVGを書き出す前に、本の`fonts`から、次に`svgFonts.provider`からフェイスを埋め込みます（[EPUBの本](/ja/docs/configuration-programmatic-usage#epubの本postext-epub)を参照）。
+- **EPUB**：`postext-epub`は、SVGを書き出す前に、本の`fonts`から、次に`svgFonts.provider`からフェイスを埋め込みます（[EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)を参照）。
 - **PDF**：SVGの文字は、埋め込んだフォントで実際のテキストとして組まれます。`@font-face`規則だけを含む`<style>`（作者が埋め込んだフェイス）があっても、図はもうラスターに切り替わりません。図がラスターになる場合（フィルターやグラデーション）は、PDFの`fontProvider`から得たフェイスを埋め込んでからラスターを作ります。
 
 下位の関数もエクスポートされています。`svgFontRequests(svgText)`は各テキストのファミリー、ウェイト、スタイル、文字を列挙します。`inlineSvgFonts(svgText, provider, options)`と`inlineSvgFontsSync(svgText, syncProvider, options)`はマークアップを返し、`inlineSvgFontsDetailed`はそれに各フェイスの結果（`inlined`、`declared`、`unavailable`、`withheld`、`tooLarge`）を加えて返します。
@@ -897,9 +897,9 @@ const canvas = renderPage(doc.pages[0], doc);
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>オプション</th>
-      <th style={{ width: '160px' }}>型</th>
-      <th style={{ width: '120px' }}>既定値</th>
+      <th>オプション</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -938,7 +938,7 @@ const canvas = renderPage(doc.pages[0], doc);
 
 ## 動画スタイル
 
-`videoStyle`プロパティは、[動画リソース](/ja/docs/document-format#動画)の印刷のされ方（ポスター画像に重ねる再生マークとQRコード、ポスター画像を動画へのリンクにするかどうか）と、HTMLビューアーとEPUBでプレーヤーが提供する機能を設定します。
+`videoStyle`プロパティは、[動画リソース](/ja/docs/document-format-resources#動画)の印刷のされ方（ポスター画像に重ねる再生マークとQRコード、ポスター画像を動画へのリンクにするかどうか）と、HTMLビューアーとEPUBでプレーヤーが提供する機能を設定します。
 
 ```ts
 const config: PostextConfig = {
@@ -953,9 +953,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '200px' }}>型</th>
-      <th style={{ width: '140px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -998,9 +998,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '200px' }}>型</th>
-      <th style={{ width: '140px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -1021,9 +1021,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '200px' }}>型</th>
-      <th style={{ width: '140px' }}>既定値</th>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -1049,9 +1049,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>プロパティ</th>
-      <th style={{ width: '120px' }}>既定値</th>
-      <th style={{ width: '170px' }}>対応</th>
+      <th>プロパティ</th>
+      <th>既定値</th>
+      <th>対応</th>
       <th>説明</th>
     </tr>
   </thead>
@@ -1073,7 +1073,7 @@ const config: PostextConfig = {
 
 EPUBはスキーマが認める属性だけを残します。ファイルは<code>controls</code>、<code>autoplay</code>、<code>muted</code>、<code>loop</code>、<code>playsinline</code>、<code>preload</code>付きで再生され、<code>data-pt-alongside</code>の印も残ります。それ以外はリーディングシステムが決めます。
 
-排他的でない動画には、HTML出力で`data-pt-alongside`が付きます。`coordinateVideoPlayback(root)`は、`root`（`renderToHtml`の出力を収める要素）の下のプレーヤーにこの規則を守らせます。排他的な動画を再生すると再生中のほかの動画がすべて一時停止し、同時に再生する動画を再生すると排他的な動画だけが一時停止します。戻り値は監視をやめる関数です。`playsAlongside(el)`と`videosToPause(started, videos, alongside)`は、独自のプレーヤーを持つホストに同じ規則を提供します。[Folio](/ja/docs/document-format#folioのページで再生する動画)では、自動再生でほかの動画と同時に再生する動画（`autoplay`と`exclusive: false`）は、そのページが表示されるたびに無音で始まり、ページがめくられると止まります。何本でも同時に再生され、`loop`を付けると最後まで行ったあと最初から繰り返します。EPUBでは、調整が必要な動画（2本以上で、そのうち少なくとも1本が排他的）を含むページや章が、同じ規則を小さなスクリプト`scripts/videos.js`（エクスポートされている`VIDEO_PLAYBACK_SCRIPT`）として読み込み、パッケージはその文書を`scripted`と宣言します。スクリプトを実行するリーディングシステムでは、その文書の動画がこの規則に従います。ただし、向かいのページは別の文書なので対象外です。スクリプトを実行しないリーディングシステムは、YouTubeやVimeoのプレーヤーと同じく、それぞれの決まりで動画を再生します。
+排他的でない動画には、HTML出力で`data-pt-alongside`が付きます。`coordinateVideoPlayback(root)`は、`root`（`renderToHtml`の出力を収める要素）の下のプレーヤーにこの規則を守らせます。排他的な動画を再生すると再生中のほかの動画がすべて一時停止し、同時に再生する動画を再生すると排他的な動画だけが一時停止します。戻り値は監視をやめる関数です。`playsAlongside(el)`と`videosToPause(started, videos, alongside)`は、独自のプレーヤーを持つホストに同じ規則を提供します。[Folio](/ja/docs/document-format-resources#folioのページで再生する動画)では、自動再生でほかの動画と同時に再生する動画（`autoplay`と`exclusive: false`）は、そのページが表示されるたびに無音で始まり、ページがめくられると止まります。何本でも同時に再生され、`loop`を付けると最後まで行ったあと最初から繰り返します。EPUBでは、調整が必要な動画（2本以上で、そのうち少なくとも1本が排他的）を含むページや章が、同じ規則を小さなスクリプト`scripts/videos.js`（エクスポートされている`VIDEO_PLAYBACK_SCRIPT`）として読み込み、パッケージはその文書を`scripted`と宣言します。スクリプトを実行するリーディングシステムでは、その文書の動画がこの規則に従います。ただし、向かいのページは別の文書なので対象外です。スクリプトを実行しないリーディングシステムは、YouTubeやVimeoのプレーヤーと同じく、それぞれの決まりで動画を再生します。
 
 解決関数と既定値の除去関数は、ほかのセクションと同じ形で、型`VideoStyleConfig` / `ResolvedVideoStyleConfig`とともに提供されます。
 

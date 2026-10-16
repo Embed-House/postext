@@ -54,6 +54,10 @@ sys.path.insert(0, os.path.dirname(HERE))
 import _common  # noqa: E402
 import fonts as fontkit  # noqa: E402
 
+# Phrases the design repeats that are form, not content: the title, the
+# author or a brand line in a running head (#849, `contentInConfig`).
+CONTENT_CHECKS = {"contentInConfig": {"allow": ["www.peppercarrot.com · CC BY 4.0"]}}
+
 PRESET_ID = "pepper-carrot"
 OUT = os.path.join(_common.PRESETS_ROOT, PRESET_ID)
 CONFIG_VERSION = 8
@@ -767,7 +771,7 @@ def write_manifest(out: str, chapters: dict, shared: list[dict], fonts: list[dic
         # Eight pages: the canvas shows the whole book.
         "view": {"canvasScope": "book"},
         "chapters": chapters,
-        "config": cfg,
+        "config": {**cfg, "checks": CONTENT_CHECKS},
         "localized": localized,
         "resources": shared,
         "fonts": fonts,

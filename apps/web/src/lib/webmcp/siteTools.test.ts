@@ -13,7 +13,7 @@ function harness(over: Partial<SiteToolDeps> = {}) {
   const deps: SiteToolDeps = {
     locale: () => "en",
     path: () => "/docs/sandbox",
-    address: () => "/docs/sandbox#props",
+    address: () => "/docs/sandbox-embedding#props",
     title: () => "The Sandbox",
     navigate: (path, locale) => { went.push({ path, locale }); },
     theme: { get: () => theme, set: (t) => { theme = t; } },
@@ -117,7 +117,7 @@ describe("the site's WebMCP tools", () => {
     expect(await call("site_set_preferences", { theme: "light" })).toEqual({ ok: true, language: "en", theme: "light" });
     expect(theme()).toBe("light");
     await call("site_set_preferences", { language: "ja" });
-    expect(went).toEqual([{ path: "/docs/sandbox#props", locale: "ja" }]);
+    expect(went).toEqual([{ path: "/docs/sandbox-embedding#props", locale: "ja" }]);
     expect((await call("site_set_preferences", {})).error).toMatch(/Give a language, a theme, or both/);
     expect((await call("site_set_preferences", { language: "nl" })).error).toMatch(/Invalid arguments/);
   });

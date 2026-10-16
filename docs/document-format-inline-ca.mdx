@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-ca.mdx */}
+
+export const metadata = {
+  title: 'Format del document: format en línia i fórmules',
+  sidebarTitle: 'Format en línia i fórmules',
+  description: 'Les marques dins de la línia: èmfasi, enllaços, xips, versaletes, tabuladors, text vertical, marques xineses i japoneses, direcció del text i fórmules LaTeX',
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '28 min',
+  order: 27,
+  parent: 'document-format',
+  plainSummary: "Aquesta pàgina explica les marques que es fan servir dins d'una línia de text. Posen paraules en negreta o en cursiva, afegeixen enllaços, dibuixen etiquetes petites, componen versaletes i alineen el text a les tabulacions. Altres marques serveixen per als llibres en xinès i en japonès, com les lectures petites que van damunt d'un caràcter, o per a una frase que va en una altra direcció, com un text en anglès dins d'un llibre en àrab. L'última secció ensenya a escriure fórmules matemàtiques.",
+};
+
+# Format del document: format en línia i fórmules
+
+
+## Format en línia
+
+El marcatge en línia es reconeix dins de qualsevol bloc de text (encapçalaments, paràgrafs, cites, elements de llista). En un encapçalament depèn de `headings.inlineMarks`, activat per defecte: la cursiva, la negreta, els superíndexs i subíndexs, les versaletes i els enllaços del títol s'imprimeixen com en un paràgraf, i un tram en cursiva dins d'un encapçalament en cursiva surt en rodona. Si es desactiva, es treuen els marcadors i el títol s'imprimeix amb l'estil de l'encapçalament; així es llegeixen les configuracions desades per postext 1.4 o anterior amb encapçalaments que porten marques (vegeu [Configuració › Encapçalaments](/ca/docs/configuration-headings#encapçalaments)). El disseny d'un encapçalament imprimeix `{titleText}` com a text sense marques en tots dos casos.
+
+<Illustration name="InlineFormatting" data='{"title": "Format en línia d’un cop d’ull", "desc": "Comparativa de markdown a resultat per a negreta, cursiva, negreta cursiva, codi en línia i enllaç.", "caption": "Markdown a l’esquerra, resultat renderitzat a la dreta.", "rows": [{"markdown": "**negreta**", "rendered": "negreta", "style": "bold"}, {"markdown": "*cursiva*", "rendered": "cursiva", "style": "italic"}, {"markdown": "***totes dues***", "rendered": "totes dues", "style": "bold-italic"}, {"markdown": "`código`", "rendered": "código", "style": "code"}, {"markdown": "[enllaç](https://…)", "rendered": "enllaç", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>Marcatge</th>
+      <th>Sintaxi</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Negreta</td>
+      <td><code>**negrita**</code> o <code>__negrita__</code></td>
+      <td>Es renderitza amb <code>bodyText.boldFontWeight</code>. Un <code>bodyText.boldColor</code> opcional anul·la el color general del cos per als trams en negreta.</td>
+    </tr>
+    <tr>
+      <td>Cursiva</td>
+      <td><code>*cursiva*</code> o <code>_cursiva_</code></td>
+      <td>Es renderitza amb la variant cursiva de la font actual. Un <code>bodyText.italicColor</code> opcional anul·la el color general del cos per als trams en cursiva. Un guió baix marca èmfasi només en un límit de paraula, com en CommonMark: un entre dues lletres o xifres —<code>nombre_con_guiones</code>, el <code>SR_AIR_EN.pdf</code> d'una URL— és text (també per a <code>__negrita__</code>); dins d'una paraula, fes servir asteriscs (<code>in*creí*ble</code>). Les lletres xineses, japoneses i coreanes no compten aquí, perquè aquestes escriptures no separen les paraules amb espais: <code>中文_斜体_中文</code> i <code>中文__粗体__中文</code> surten en cursiva i en negreta. Un <code>__</code> que no arriba a negreta mai no es converteix en cursiva: <code>foo__bar__baz</code> queda com a text.</td>
+    </tr>
+    <tr>
+      <td>Negreta cursiva</td>
+      <td><code>***ambas***</code> o <code>___ambas___</code></td>
+      <td>Es combinen tots dos estils.</td>
+    </tr>
+    <tr>
+      <td>Superíndex</td>
+      <td><code>^texto^</code></td>
+      <td>Es compon al 58 % del cos i elevat un terç d'aquest — un exponent (<code>10^-8^</code>), la càrrega d'un ió (<code>Na^+^</code>). El text marcat comença i acaba en un caràcter que no és un espai; un accent circumflex solt a la prosa es manté literal, igual que les caretes <code>^_^</code> i <code>^o^</code> (<code>n.^o^</code> i <code>1^o^</code> continuen sent superíndexs).</td>
+    </tr>
+    <tr>
+      <td>Subíndex</td>
+      <td><code>~texto~</code></td>
+      <td>La mateixa mida, baixat 0,15 del cos, de manera que no passa dels descendents — un índex químic (<code>H~2~O</code>, <code>p<em>K</em>~a~</code>). Una titlla amb una xifra a cada costat és un interval i es manté literal: <code>3~5 días</code>, <code>需要3~5天</code>. També la que va entre dues paraules xineses, que no obre subíndex: <code>周一~周五</code>, <code>北京~上海</code>; un subíndex sí que es tanca davant d'un caràcter xinès (<code>F~合~等于</code>). Es combina amb negreta i cursiva (<code>**H~2~O**</code>). Un subíndex i un superíndex escrits junts, sense res entre ells, s'apilen com en una fórmula: <code>*T*~0~^2^</code> compon el 2 sobre el 0, vagi primer el que vagi, amb el subíndex baixat 0,25 del cos per deixar lloc al superíndex, i el parell ocupa el que ocupa el més ample dels dos. Un espai o una lletra entre ells els compon l'un darrere l'altre; també un unidor de paraules (U+2060), sense que es vegi res entre ells. Un parell apilat mai no se separa en un canvi de línia: una paraula que no cap a la línia es talla abans del parell.</td>
+    </tr>
+    <tr>
+      <td>Versaletes</td>
+      <td><code>:smallcaps[texto]</code></td>
+      <td>Les minúscules es componen com a majúscules al 70 % del cos — el nom d'un personatge en una obra de teatre, una sigla al text corrent. Admet altres marques a dins i al voltant; vegeu <a href="#versaletes">Versaletes</a>.</td>
+    </tr>
+    <tr>
+      <td>Orientació en text vertical</td>
+      <td><code>:tcy[12]</code>, <code>:upright[GDP]</code>, <code>:sideways[12]</code></td>
+      <td>En text vertical: una casella dreta (tate-chu-yoko), cada caràcter dret a la seva pròpia casella, o el tram sencer ajagut. No canvien res en text horitzontal; vegeu <a href="#orientació-en-text-vertical">Orientació en text vertical</a>.</td>
+    </tr>
+    <tr>
+      <td>Marques xineses</td>
+      <td><code>:dots[不可]</code>, <code>:name[賈寶玉]</code>, <code>:book[石頭記]</code></td>
+      <td>Punts d'èmfasi (着重号), la línia de nom propi (专名号) i la marca de títol (书名号: 《》 o una línia ondulada, segons <code>cjk.bookTitleMark</code>). El text queda tal com s'escriu; vegeu <a href="#marques-xineses-ruby-i-warichu">Marques xineses, ruby i warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Ruby</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code> o <code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>Lectures en pinyin o zhuyin a sobre (o al costat) dels caràcters base. La forma compacta necessita una base amb un caràcter han, kana o bopomofo, així que <code>&#123;x|x&gt;0&#125;</code> continua sent text.</td>
+    </tr>
+    <tr>
+      <td>Warichu</td>
+      <td><code>:warichu[nota]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>Una nota composta en dues files de mig cos dins de la línia (双行夹注), que es talla entre línies i pàgines.</td>
+    </tr>
+    <tr>
+      <td>Codi en línia</td>
+      <td><code>`código`</code></td>
+      <td>Les cometes inverses s'eliminen; el tram es renderitza com a text pla, tal com es va escriure: un <code>{':ref{…}'}</code>, un xip, una fórmula, un enllaç o un signe de marca a dins s'imprimeixen literalment, que és com un text mostra la sintaxi. Es compon en la lletra del text o, amb <code>codeStyle.inline</code>, en la lletra del codi com una sola unitat (vegeu <a href="/ca/docs/configuration-styles#llistats-de-codi">Configuració › Llistats de codi</a>). Un llistat va en un <a href="/ca/docs/document-format#blocs-de-codi">bloc de codi</a>.</td>
+    </tr>
+    <tr>
+      <td>Escapament</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
+      <td>Una barra inversa compon el mateix caràcter marcador — l'asterisc d'una nota de taula (<code>{'\\* pOH = −log [OH^−^]'}</code>), un accent circumflex literal, un signe de dòlar que no obre cap fórmula — en comptes d'obrir un tram. Val al cos, als xips i als peus, les cel·les i les notes. (Fins a postext 1.4 els peus, les cel·les, les notes i els xips imprimien la barra de <code>{'\\$'}</code>).</td>
+    </tr>
+    <tr>
+      <td>Espai de no separació</td>
+      <td>el mateix caràcter: U+00A0, U+202F, U+2007</td>
+      <td>Uneix les paraules de tots dos costats, de manera que la línia mai no es talla entre elles: un nombre i la seva unitat (37 °C), una referència de pàgina (p. 12), un grup de milers (225 000). L'espai de no separació (U+00A0), l'espai fi de no separació (U+202F) i l'espai de xifra (U+2007) uneixen —al cos, als peus, a les cel·les, als requadres i a les capçaleres— i cadascun conserva la seva pròpia amplada: la justificació només estira els espais entre paraules. Moltes fonts no tenen glif per a l'espai fi de no separació ni per a l'espai de xifra; llavors es componen com ho fan els navegadors, igual al canvas, a l'HTML i al PDF: amb la meitat d'un espai entre paraules i amb l'amplada d'una xifra. Pràcticament totes les fonts tenen U+00A0, així que és l'opció segura. Un grup unit així que és més ample que tota la línia es talla al seu últim espai de no separació abans que dins d'una paraula. L'unidor de paraules (U+2060) uneix sense ocupar lloc. Escriu el mateix caràcter: una entitat HTML com <code>{'&nbsp;'}</code> s'imprimeix tal com està escrita. Vegeu <a href="/ca/docs/justification#on-no-es-talla-mai-una-línia">On no es talla mai una línia</a>.</td>
+    </tr>
+    <tr>
+      <td>Guionet tou</td>
+      <td>el mateix caràcter: U+00AD</td>
+      <td>Un lloc per on la paraula es pot dividir, amb un guionet afegit quan una línia hi acaba: només entre dues lletres o xifres. La paraula que en porta un no rep cap altre tall del diccionari, de manera que el guionet tou n'és l'única divisió; escrit davant de la primera lletra d'una paraula no divideix res i manté sencera aquella aparició. Al costat d'un parèntesi, d'unes cometes o d'un signe de puntuació no fa res. Vegeu <a href="/ca/docs/justification#on-no-es-talla-mai-una-línia">On no es talla mai una línia</a>.</td>
+    </tr>
+    <tr>
+      <td>Enllaç</td>
+      <td><code>[texto](https://…)</code></td>
+      <td>El text visible es manté al flux, compost exactament igual que sense l'enllaç. La URL converteix aquestes paraules en un enllaç actiu a la sortida HTML i PDF; consulta <a href="#enllaços">Enllaços</a>.</td>
+    </tr>
+    <tr>
+      <td>Imatge</td>
+      <td><code>![alt](src)</code></td>
+      <td>El markdown d'imatge en línia s'<strong>elimina</strong> del text. Les imatges s'han de declarar a <code>PostextContent.resources</code> perquè el motor les col·loqui segons les regles de <code>resourcePlacement</code>.</td>
+    </tr>
+    <tr>
+      <td>Xip</td>
+      <td><code>:chip[texto]</code></td>
+      <td>Un fragment de text en una caixa que passa de línia com una unitat: un banc de paraules, una tecla, una etiqueta. En defineixen l'estil els <code>chipStyles</code>; vegeu <a href="#xips-en-línia">Xips en línia</a>.</td>
+    </tr>
+    <tr>
+      <td>Tabulador</td>
+      <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>Porta les paraules que el segueixen a la tabulació següent: una de les tabulacions de l'estil del paràgraf, o la que fixen els seus atributs. Un caràcter de tabulació escrit al text només és un tabulador on l'estil fixa tabulacions. Vegeu <a href="#tabuladors-i-tabulacions">Tabuladors i tabulacions</a>.</td>
+    </tr>
+    <tr>
+      <td>Matemàtiques en línia</td>
+      <td><code>$…$</code></td>
+      <td>Una fórmula LaTeX que flueix amb el text que l'envolta, p. ex. <code>$e^{'{i\\pi}'}+1=0$</code>. Es compon amb MathJax i es renderitza com a traços vectorials a tots els backends. Fes servir <code>\\$</code> per a un signe de dòlar literal. L'escalat, la forma en bloc (<code>$$ … $$</code>) i la gestió d'errors es descriuen a <a href="#fórmules-matemàtiques">Fórmules matemàtiques</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Enllaços
+
+Un enllaç Markdown, `[texto](url)`, manté el seu text al flux exactament com es compondria sense ell: l'enllaç mai no canvia els talls de línia, l'espaiat ni el color. Conserva la seva URL per a les sortides que la poden seguir:
+
+- **HTML** (`renderToHtml`): les paraules enllaçades s'embolcallen en `<a href="…" rel="noopener noreferrer">`, que pren el color del text i no se subratlla. Hi ha una àncora per cada tram de paraules enllaçades d'una línia.
+- **PDF** (`postext-pdf`): cada tram de paraules enllaçades d'una línia es converteix en una anotació d'enllaç URI on es pot fer clic. En un PDF etiquetat és un element `Link` el text del qual són les paraules enllaçades.
+- **Canvas**: es pinta com a text normal, perquè un canvas no té cap superfície on fer clic.
+
+```markdown
+Llegeix la [guia de configuració](https://postext.dev/ca/docs/configuration "Configuració")
+o escriu [a l'equip](mailto:equipo@example.com).
+```
+
+- La destinació pot portar un títol, que s'ignora (`[texto](https://example.com "Título")`). També pot anar entre parèntesis angulars, on els espais passen a ser `%20` (`[texto](<https://example.com/a b>)`).
+- Només es conserven destinacions segures: `http:`, `https:`, `mailto:`, `tel:`, `ftp:` i URL relatives (`../guia`, `#inicio`). Qualsevol altre esquema (`javascript:`, `data:`, `file:`…) compon el text sense enllaç. El PDF només enllaça URL absolutes.
+- La destinació pot contenir parèntesis sempre que estiguin equilibrats, com en CommonMark: `[foto](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)` enllaça la URL sencera. Una barra inversa escapa un caràcter (`\(`, `\_`). Si els parèntesis no estan equilibrats, la destinació acaba al primer `)` i el text es compon sense enllaç; codifica un parèntesi solt com a `%28` o `%29`. Un espai també acaba la destinació, tret que vagi entre parèntesis angulars.
+- Una paraula enganxada al text de l'enllaç comparteix l'enllaç. A `mira [el sitio](https://example.com).` el punt forma part de la zona on es pot fer clic.
+- El text de l'enllaç pot portar èmfasi (`[paraules en **negreta**](…)`) i pot anar dins d'un èmfasi (`**[palabras](…)**`).
+- Els enllaços funcionen en paràgrafs, elements de llista, cites, caixes, llegendes, notes i cel·les de taula, i als encapçalaments mentre `headings.inlineMarks` estigui activat (ho està per defecte). Els titolets, l'esquema i les files de l'índex que surten d'un encapçalament conserven només el text, igual que el text d'un `:chip[…]`.
+- No es reconeixen els enllaços per referència (`[texto][id]`) ni els autoenllaços (`<https://…>`) (consulta [Què NO s'admet](/ca/docs/document-format#què-no-sadmet)).
+
+Al VDT la destinació és a cada segment enllaçat, com a `VDTLineSegment.href`. L'analitzador desa els enllaços d'un tram com a intervals del seu text, a `InlineSpan.links`, i mai no parteix un tram per un enllaç; per això un enllaç no pot canviar la composició.
+
+### Xips en línia
+
+`:chip[texto]` compon `texto` en una caixa —un «xip» arrodonit i tenyit— que flueix amb la línia: les paraules d'un banc de paraules o d'un exercici de classificar, tecles, etiquetes. `:chip[texto]{style="tecla"}` tria un estil amb nom de `chipStyles` (vegeu la referència de configuració); sense `style`, o amb un id que cap estil no declara, el xip pren el primer estil (un estil `chip` integrat quan la configuració no en té cap; el sandbox avisa d'un id desconegut).
+
+```markdown
+Classifica: :chip[pila] :chip[cable] :chip[interruptor] :chip[bombeta]
+
+Prem :chip[Ctrl]{style="tecla"} + :chip[C]{style="tecla"} per copiar.
+```
+
+- **Una unitat.** Un xip mai no es parteix ni es divideix amb guionet per dins; la línia es talla entre xips, als espais que els envolten. Un xip més ample que tota la línia la desborda en lloc de partir-se.
+- **Amplada.** El seu avanç és el text més el farciment horitzontal i el contorn a tots dos costats. La justificació només estira els espais entre paraules, mai l'interior d'un xip. El `gap` de l'estil és l'espai mínim entre la caixa i la paraula o el xip veí a través d'un espai: un espai més estret es completa (no a la vora de la línia, ni al costat de la puntuació enganxada, com a `:chip[a],`).
+- **Alçada.** La caixa és una banda al voltant de la línia de base, 0,8 em per sobre i 0,25 em per sota al cos del xip, que creix amb el farciment vertical i el contorn. El farciment vertical es pinta fora de la caixa de línia i mai no canvia l'interlineat, així que la retícula es manté; una caixa més alta que l'interlineat pot envair un xip de la línia de sobre o de sota, i el sandbox assenyala dos xips de línies diferents que se superposen («Els xips toquen la línia següent») perquè redueixis el farciment, el contorn o el cos.
+- **Text.** El text del xip admet les seves pròpies marques (`:chip[**negrita** palabra]`, `:chip[x^2^]`) i l'èmfasi que l'envolta (`**:chip[a]**`); l'estil pot fixar-ne la família, el cos, el color, la negreta i la cursiva. Escriu `\]` per a un claudàtor literal a dins. Les referències, les mostres de color i les fórmules dins d'un xip queden com a text literal, i `\$` imprimeix un signe de dòlar (fins a postext 1.4 imprimia també la barra).
+- **Buit.** Un xip fet només d'espais (`:chip[ ]`, espais de no separació inclosos) és una caixa buida —un buit per a la resposta, una marca de final—: tan ampla com el farciment horitzontal i el contorn del seu estil, tan alta com un xip amb paraules. Dona mida al buit amb el `paddingX` d'un estil (`:chip[ ]{style="hueco"}`). Sense res entre els claudàtors, `:chip[]` queda com a text literal.
+- **On.** Paràgrafs, elements de llista, cites, requadres, cel·les de taula, llegendes i notes. Als encapçalaments `:chip[…]` queda com a text literal.
+- **Sortida.** Canvas, HTML i PDF pinten la caixa i componen les paraules com a text real: seleccionable a l'HTML, extraïble i en ordre de lectura al PDF (en un PDF etiquetat la caixa és un artefacte de maquetació i les paraules pertanyen al paràgraf).
+
+### Versaletes
+
+`:smallcaps[texto]` compon `texto` en versaletes — els noms dels personatges d'una obra de teatre, una sigla al text corrent, les primeres paraules d'un capítol. Les minúscules es componen com a majúscules al 70 % del cos, mentre que les majúscules, les xifres i la puntuació conserven la mida completa, de manera que `:smallcaps[Hamlet]` imprimeix una H de mida completa seguida d'AMLET en versaletes.
+
+```markdown
+Entren :smallcaps[Hamlet] i :smallcaps[Horaci], llegint.
+
+L'informe de la :smallcaps[unesco] i les pautes de l':smallcaps[oms].
+```
+
+- **Sintetitzades.** Les versaletes es dibuixen amb les majúscules de la mateixa font, de la mateixa manera al canvas, a l'HTML i al PDF, així que el text mesura i talla igual a tot arreu. No es fan servir les versaletes reals d'una font (la característica OpenType `smcp`); per a aquestes, compon el text en una família de versaletes (una amb un nom que acabi en «SC», per exemple) mitjançant un estil de paràgraf.
+- **Marques.** El text admet les seves pròpies marques en línia (`:smallcaps[**Ofelia**]`) i l'èmfasi que l'envolta (`*:smallcaps[Acto I]*`); escriu `\]` per a un claudàtor literal a dins. Una referència o un xip a dins es componen també en versaletes, i la referència continua sent un sol enllaç a l'HTML i al PDF; una fórmula, no.
+- **Talls.** Les paraules passen de línia i es divideixen amb guionet com sempre; la partició de mots llegeix cada paraula tal com està escrita.
+- **On.** Paràgrafs, elements de llista, cites, requadres, cel·les de taula, llegendes i notes, i encapçalaments mentre `headings.inlineMarks` estigui activat (ho està per defecte); si es desactiva, el marcatge s'elimina de l'encapçalament i el text s'imprimeix tal qual.
+- **Paràgrafs sencers.** Un estil de paràgraf o el cos d'un requadre amb `smallCaps: true` componen així tot el seu text (vegeu [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf)).
+- **Text.** El canvas, l'HTML i el PDF porten les lletres tal com es pinten: en copiar `:smallcaps[Hamlet]` s'obté «HAMLET».
+
+### Tabuladors i tabulacions
+
+Un tabulador porta les paraules que el segueixen a una tabulació de la línia: el preu d'un plat arran del final de la mesura darrere d'una filera de punts, l'actor després del paper en un repartiment, la puntuació d'una pregunta d'examen al marge. Escriu `:tab` on va el tabulador; els espais que l'envolten hi queden inclosos. Les tabulacions es fixen a la configuració: `bodyText.tabStops` per a tots els paràgrafs, elements de llista i cites, els `tabStops` d'un estil de paràgraf per als paràgrafs d'un grup `:::paragraphs`, i el `body.tabStops` d'un estil de requadre dins de les seves caixes (vegeu [Configuració › Tabulacions](/ca/docs/configuration-text#tabulacions)). Un menú amb els preus arran del final de la mesura, darrere de punts:
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+Sopa de ceba :tab 8,50
+
+Orada a la brasa amb fonoll i llimona :tab 21,00
+:::
+```
+
+`:tab{…}` fixa una tabulació només per a aquell tabulador, sense cap estil: el buit d'un formulari fins al final de la línia, un import alineat a la coma decimal.
+
+```markdown
+Nom i cognoms :tab{at=end leader=rule}
+
+Total a pagar :tab{at=80% align=decimal} 1.234,50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Significat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>On és la tabulació, des de la vora d'inici de la mesura del paràgraf: una longitud (<code>120mm</code>, <code>4cm</code>, <code>2em</code>; un nombre sol és en punts), <code>end</code> per al final de la mesura, o una part de la mesura (<code>60%</code>). Sense <code>at</code>, <code>:tab&#123;…&#125;</code> va a les tabulacions de l'estil, com un <code>:tab</code> sol.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code> (per defecte): el text que segueix el tabulador comença a la tabulació. <code>end</code>: hi acaba (el text fins al tabulador següent o fins al final del paràgraf). <code>center</code>: s'hi centra. <code>decimal</code>: el seu separador decimal queda a la tabulació; un tram sense separador hi acaba.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>El farciment: un text que es repeteix al llarg de l'espai abans de la tabulació, <code>"."</code>, <code>". "</code>, <code>"·"</code>, <code>"_"</code>, <code>"-"</code> o un altre text breu, amb la lletra i el color del paràgraf. <code>rule</code> traça una línia una mica per sota de la línia de base, el buit d'un formulari. Per defecte, cap.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>L'espai que es deixa entre el farciment i el text a cada costat. Per defecte <code>0.5em</code> del cos del paràgraf; un nombre sol és en punts.</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td>El separador amb què s'alinea una tabulació <code>decimal</code>. Per defecte, el de la llengua del document: <code>.</code> en anglès, xinès, japonès i àrab, <code>,</code> en castellà, català, portuguès, francès, alemany i altres.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **On va un tabulador.** A la primera tabulació que queda més enllà del text que el precedeix, entre les que segueixen la que ha pres el tabulador anterior de la línia, de manera que el segon tabulador d'una línia sol anar a la segona tabulació. Passada l'última, `tabInterval` fixa més tabulacions a cada interval des de l'inici de la mesura; sense aquest valor, el tabulador és un espai entre paraules.
+- **Caràcters de tabulació.** Un tabulador escrit al text (U+0009) només és un tabulador en un paràgraf l'estil del qual fixa `tabStops` o `tabInterval`. A tot arreu més és l'espai entre paraules que sempre ha estat, de manera que un document escrit amb tabuladors en lloc d'espais conserva la seva composició. Diversos caràcters de tabulació seguits avancen tantes tabulacions. Un tabulador al començament d'una línia del text es retalla amb els altres blancs inicials de la línia: escriu `:tab` per començar una línia en una tabulació.
+- **El que queda com a text.** Un `:tab` seguit d'una lletra (`3:table`), i un `:tab` dins de codi en línia, d'una fórmula, de l'adreça d'un enllaç o dels atributs d'una directiva.
+- **On.** Paràgrafs, elements de llista, cites, requadres i grups `:::paragraphs`. Els encapçalaments, els peus, les cel·les de taula i el text dels dissenys (obertures, capçaleres) no tenen tabulacions.
+- **Text que passa de la tabulació.** Quan el text anterior a un tabulador ja ha passat totes les tabulacions que queden a la seva línia, una tabulació `end`, `center` o `decimal` s'emporta l'última paraula anterior al tabulador a la línia següent juntament amb el text de la tabulació, i el text anterior es compon més estret, com una línia de l'índex general fa saltar el títol per conservar el número de pàgina. Una tabulació `start` talla la línia abans del tabulador, i el text que el segueix comença la línia següent a la seva tabulació. Un tabulador que obre la seva línia i tampoc no troba cap tabulació no ocupa espai.
+- **Farciments.** Un farciment omple l'espai que hi ha abans de la seva tabulació i acaba arran del final d'aquest espai, de manera que els punts de diverses línies queden alineats sigui quin sigui el text que els precedeix. `gap` el separa del text pels dos costats; no hi ha separació abans quan el tabulador obre la línia, ni després quan no el segueix res. Un farciment porta tres repeticions o més; un espai on només n'hi caben una o dues queda buit, com a l'índex.
+- **Tall de línies.** Un paràgraf amb un tabulador es compon línia a línia, mai amb Knuth-Plass. En text justificat només els espais entre paraules que segueixen l'últim tabulador d'una línia absorbeixen el sobrant, i l'última línia del paràgraf no s'estira (vegeu [Partició de mots i justificació › Línies amb tabulador](/ca/docs/justification#línies-amb-tabulador)). Un paràgraf centrat o alineat a la dreta compon les línies amb tabulador des del costat d'inici, perquè les tabulacions són posicions de la mesura. De dreta a esquerra, les tabulacions es mesuren des de la dreta i una tabulació `end` queda a l'esquerra (vegeu [Composició àrab](/ca/docs/arabic-layout#índex-general-i-índex-analític)). En text vertical un tabulador és un espai entre paraules, i un `:tab` hi genera l'avís de contingut `tabInVerticalText`.
+- **Text i sortides.** El text pla porta un caràcter de tabulació (`\t`) a cada tabulador; els farciments no són text, i les còpies, les cerques i el mapa del text font els ometen. El canvas, el visor HTML i l'EPUB de maquetació fixa els pinten (ocults als lectors de pantalla a l'HTML); un PDF etiquetat els marca com a artefactes, així que el seu text diu `Sopa de ceba 8,50`. L'EPUB adaptable no pot conservar les tabulacions exactes: cada línia d'un paràgraf amb tabuladors es converteix en una fila de les parts que hi ha entre els seus tabuladors, on una tabulació `end`, `center` o `decimal`, o una amb farciment, empeny la part següent al final de la fila (el seu farciment, una vora puntejada o contínua), i una tabulació `start` manté la part anterior amb la seva amplada impresa. Una exportació a Word escriu `:tab` com un tabulador de Word, i la importació de Word torna a llegir un tabulador del text corrent com a `:tab` amb la tabulació que Word li havia fixat (vegeu [Sandbox › Documents de Word](/ca/docs/sandbox-books-saving#documents-de-word)).
+
+### Orientació en text vertical
+
+En text vertical (`layout.writingMode: 'vertical-rl'`) els caràcters xinesos queden drets, les paraules llatines i els nombres llargs van ajaguts, i un nombre de dues xifres com a màxim queda dret en una sola casella, excepte dins d'una frase llatina, les paraules de la qual segueix (vegeu [Configuració › Nombres en text vertical](/ca/docs/configuration-east-asian#nombres-en-text-vertical)). Tres marques separen un tram a mà:
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]` (tate-chu-yoko, 縱中橫) compon el seu text amb els caràcters l'un al costat de l'altre en una casella dreta d'un quadratí, estrenyit si és més ample: `:tcy[120]`, `:tcy[3.0]`, `:tcy[A+]`. Fins a uns quatre caràcters es llegeixen bé.
+- `:upright[…]` posa dret cada caràcter a la seva pròpia casella, amb les lletres llatines centrades: una sigla que es llegeix lletra a lletra columna avall. Una línia mai no es talla a dins.
+- `:sideways[…]` ajau el tram sencer amb la línia, també els caràcters xinesos: un nombre de dues xifres que l'autor vol de costat.
+- El text continua al text pla; les marques admeten altres marques en línia a dins (`:tcy[**12**]`), un enllaç (`:sideways[[iPhone](https://…)]`) i les unes a les altres, i guanya la més interna (`:tcy[:upright[AB]]` posa A i B drets), i `\]` per a un claudàtor literal. En text horitzontal no canvien res.
+- Una referència, una crida de nota, una fórmula, un xip o una mostra de color dins d'una marca conserva la seva pròpia composició: `:sideways[iPhone[^1]]` ajau iPhone i deixa la crida com es componen totes; el número d'una referència queda en una casella per `cjk.uprightDigits` com qualsevol nombre curt.
+- Un element de text de disseny amb `inlineMarks: true` també les admet quan es compon en vertical (vegeu [Configuració › Elements de text verticals](/ca/docs/configuration-headers-footers#elements-de-text-verticals)).
+- Per tallar i justificar, una casella `:tcy` i cada caràcter d'`:upright` compten com a caràcters xinesos, i no porten espai entre xinès i llatí al costat.
+
+
+### Marques xineses, ruby i warichu
+
+Les edicions xineses i japoneses marquen el text entre línies en comptes de fer-ho amb cursiva o subratllat, glossen els caràcters amb la seva lectura i componen el comentari dins de la línia. Set directives ho fan. [Composició xinesa](/ca/docs/chinese-layout) i [Composició japonesa](/ca/docs/japanese-layout) expliquen les convencions que hi ha darrere. Conserven el seu text: els caràcters entre claudàtors continuen al paràgraf (la cerca, l'índex general, les àncores de l'índex analític i el text copiat els llegeixen tal com es van escriure), i admeten les altres marques en línia a dins i al voltant, incloses les niuades. Escriu `\]` per a un claudàtor literal.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- **`:dots[texto]`** posa un punt d'èmfasi (着重号) sota cada caràcter en text horitzontal, a la seva dreta en vertical, i no en posa cap a la puntuació ni als espais. `style="dot|circle|sesame"` (per defecte `dot`), `fill="open"` per al contorn, `pos="over|under"` per a l'altre costat. L'èmfasi de Markdown `*…*` sobre caràcters xinesos o japonesos fa el mateix amb `cjk.emphasis: 'dots'`, el valor per defecte en un document en xinès o en japonès; les lletres llatines del mateix èmfasi continuen en cursiva. Els atributs que falten es prenen de `cjk.emphasisMark`: un punt sota el text en xinès, un sèsam a sobre (a la seva dreta en vertical) en japonès.
+- **`:name[texto]`** traça la línia de nom propi (专名号) sota el text (a la seva esquerra en vertical), i **`:book[texto]`** la marca de títol (书名号): 《》 al voltant del títol (〈〉 per a un títol dins d'un altre), la línia ondulada de les edicions clàssiques i de Taiwan, o res, segons `cjk.bookTitleMark` (per defecte, signes a la Xina continental i al Japó, i línia ondulada a Taiwan i Hong Kong). En un document japonès els signes són 『』, i 「」 per a un títol dins d'un altre (`cjk.bookTitleBrackets`). Una mateixa font serveix per a una edició continental moderna i per a una de clàssica. Dos noms o títols seguits mantenen les seves línies separades.
+- **`:ruby[base]{rt="…"}`** posa lectures a sobre de la base (pinyin) o a la dreta de cada caràcter (zhuyin, cosa que es fa per defecte amb lectures en bopomofo). Amb tantes lectures com caràcters, separades per espais o `|`, cada caràcter rep la seva i la línia es pot tallar entre ells (ruby mono); `group`, o un nombre que no coincideix, posa una lectura centrada sobre tota la base, que mai no es talla. `pos="over|under|right"` tria el costat. La forma compacta `{紅樓|hóng|lóu}` (una lectura per `|`) o `{紅樓|hónglóu}` (una lectura per a tota la base) es llegeix igual, només quan la base té un caràcter han, kana o bopomofo i fora de les fórmules, el codi i els atributs, de manera que `{x|x>0}` en prosa llatina continua sent text. Una barra inversa davant de la clau o de la barra vertical en deixa una en xinès com a text: `\{紅|hóng}` i `{紅\|hóng}` imprimeixen `{紅|hóng}`. Una base que obre o tanca una línia s'alinea amb aquesta vora juntament amb la seva lectura. `mode=mono|group|jukugo` tria com van les lectures sobre la base (`mode=group` equival a `group`), i `align=center|jis|start` com s'espaia una lectura més curta que la seva base. En un document japonès, la forma per caràcter d'una paraula de dos o més caràcters (`{東京|とう|きょう}`, `rt="とう|きょう"`) és ruby jukugo: cada caràcter conserva la seva lectura, que pot envair el caràcter següent de la paraula, la línia es pot tallar entre ells, i les lectures s'espaien i envaeixen els kana segons diguin `cjk.ruby.align` i `cjk.ruby.overhang`; una sola lectura per a tota la base (`{紫陽花|あじさい}`, el `《》` d'Aozora) és ruby de grup; `mode=mono` manté una lectura per caràcter sense envair els veïns.
+- **`:sideline[text]`** traça una línia lateral (傍線) al costat del text, puntuació i espais inclosos: a sota en text horitzontal i a la seva dreta en vertical. `style="solid|double|wavy|dotted"` (per defecte `solid`), `pos="over|under"` (en text vertical, over és la dreta i under l'esquerra; també val `position=`). Funciona en qualsevol escriptura, també en una frase anglesa subratllada.
+- **`:warichu[nota]`** compon una nota (双行夹注) en dues files a mig cos dins de la línia; la de dalt es llegeix primer (la de la dreta en text vertical). Una nota llarga omple el que queda de línia i continua a la línia, la columna o la pàgina següents, amb almenys dos dels seus caràcters a cada costat del tall (`cjk.warichu.minChars`). `open` i `close` l'envolten de signes a la mida del text; `cjk.warichu` fixa la mida, el color i els signes per defecte (（） en un document japonès). Una nota en escriptura llatina es talla entre les seves paraules.
+- **`:kunten[字]{kaeri="…" okuri="…" tate}`** posa les marques de kanbun de l'últim caràcter entre els claudàtors: `kaeri` la marca de retorn (レ, 一 二 三, 上 中 下, 甲 乙 丙, 天 地 人, i 一レ 上レ 甲レ 天レ; els punts de codi ㆑ ㆒ … es llegeixen igual), `okuri` els okurigana (els parèntesis d'Aozora `（ヲ）` es descarten) i l'indicador `tate` el tatesen que l'uneix al caràcter següent. El text no es reordena: les marques es componen a mig cos al seu costat (`cjk.kunten`), i el text copiat es llegeix 學ビテ而時ニ習フ之ヲ, amb els okurigana i sense les marques de retorn. Un ruby a dins serveix per als caràcters que es llegeixen dues vegades: `:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`.
+
+El pas de línia no canvia mai: marques i lectures viuen a l'interlineat, i la composició avisa quan el buit entre les línies d'un paràgraf és massa estret per a elles (`cjkMarksExceedLeading`, `rubyExceedsLeading`, `kuntenExceedsLeading`), i quan les marques sota una línia i les lectures sobre la següent no caben juntes al buit que comparteixen, en un mateix paràgraf o entre dos. Dona als paràgrafs anotats un estil de paràgraf amb més interlineat. Les marques, lectures i notes es dibuixen en paràgrafs, títols, elements de llista, cites i requadres, i també als peus de figura, les cel·les i les notes de taula, l'interlineat dels quals es comprova igual; als encapçalaments i dissenys el text s'imprimeix sense elles. Amb `cjk.bookTitleMark: 'brackets'` els 《》 d'un títol són puntuació del text: els peus, les cel·les, les notes, les files de l'índex general, els marcadors del PDF i les entrades de l'índex alfabètic els conserven. Vegeu [Configuració › Marques, ruby i warichu](/ca/docs/configuration-east-asian#marques-ruby-i-warichu).
+
+
+### Direcció del text al marcatge
+
+Un document va en la direcció que implica el seu `locale` (`direction` a la configuració: de dreta a esquerra per a l'àrab, el persa, l'urdú o l'hebreu). Dins del document, el marcatge fixa la direcció d'un bloc o d'un tram de text, per a una cita anglesa en un llibre àrab o una d'àrab en un llibre anglès.
+
+- **Un títol o un contenidor**: `{dir=ltr}` o `{dir=rtl}` als seus atributs, `# Introduction {dir=ltr}`, `:::paragraphs{dir=ltr}`, `:::callout{dir=rtl}`. Tots els blocs d'un contenidor prenen aquesta direcció, fins a un contenidor niat o un títol que en fixi una altra. Un paràgraf normal, una llista o una cita no tenen atributs propis: embolcalla'ls en `:::paragraphs{dir=…}`. Els altres valors s'ignoren. El `lang` d'un contenidor (`:::paragraphs{dir=ltr lang=en}`) indica de la mateixa manera la llengua dels blocs que conté: les seves llistes numerades fan servir les xifres d'aquesta llengua.
+- **Un tram de text**: `:ltr[…]` i `:rtl[…]` aïllen el seu text (els LRI…PDI i RLI…PDI de l'algorisme bidireccional d'Unicode): s'ordena per dins, i el paràgraf que l'envolta hi veu un sol caràcter neutre. `{lang=…}` marca la llengua del tram a l'HTML i al PDF. Una crida de nota, un `:ref` o una fórmula a dins formen part de l'aïllament, i els aïllaments es nien.
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+Un bloc compost en contra de la direcció del document conserva el seu propi costat d'inici: el sagnat, els marcadors de llista i el final alineat de l'última línia passen al costat per on comença el seu text. Fes servir un aïllament quan un títol llatí acaba en un caràcter neutre (un punt, un parèntesi) que, si no, s'uniria a l'àrab que l'envolta. També es respecten els caràcters de control d'Unicode (U+2066–2069, U+202A–202E, U+200E, U+200F, U+061C). A l'editor del Sandbox cada línia va en la direcció de la seva primera lletra. Vegeu [Composició àrab](/ca/docs/arabic-layout#direcció-i-algorisme-bidireccional).
+
+
+## Fórmules matemàtiques
+
+El suport matemàtic forma part del format de document de primer nivell. Postext analitza `$…$` per a fórmules en línia i `$$…$$` per a fórmules en bloc, i les renderitza amb [MathJax](https://www.mathjax.org/) en mode SVG. Els mateixos traços vectorials alimenten els tres backends, de manera que la previsualització al canvas, l'exportació HTML i la sortida PDF coincideixen píxel a píxel — i el PDF es manté completament vectorial sigui quin sigui el nivell de zoom.
+
+- **En línia:** `$…$`. Es reconeix dins de qualsevol bloc de text (paràgraf, encapçalament, citació, element de llista). Aporta a la línia una única caixa atòmica que no es pot partir; Knuth-Plass la tracta com una paraula que no es pot dividir. Si l'alçada natural de la fórmula trencaria la caixa de línia, s'escala uniformement per conservar la retícula de línia de base — les expressions molt altes han d'anar en una fórmula en bloc.
+- **En bloc:** `$$…$$`. O bé en una línia pròpia (`$$\int_0^1 x^2\,dx$$`), o bé delimitada en diverses línies amb marcadors `$$` en línies pròpies. Es renderitza centrada a la columna i ajustada a la retícula de línia de base amb marges superior i inferior configurables (`math.marginTop`, `math.marginBottom`) — exactament la mateixa correcció que fan servir els encapçalaments, de manera que el paràgraf següent torna a caure sobre la retícula.
+- **El text al voltant d'una fórmula en bloc:** una fórmula en bloc escrita en una línia pròpia interromp un paràgraf encara que no hi hagi cap línia en blanc a sobre. El text anterior és un paràgraf que la introdueix; el text escrit just sota el `$$` de tancament, sense línia en blanc, continua el paràgraf interromput i es compon sense sagnat de primera línia, com TeX compon el «on …» després d'una fórmula en bloc. Una fórmula separada del text de sobre per una línia en blanc (o que segueix una llista, una citació o un encapçalament) no interromp res: el text que la segueix és un paràgraf nou, sagnat com sempre, hi hagi línia en blanc o no (`math.indentAfterDisplay: false` també el compon sense sagnat). Només una fórmula en bloc completa interromp un paràgraf —una sola fórmula a la línia, o un bloc delimitat per `$$` que es tanca abans de la línia en blanc següent—; una línia com `$$a$$ y $$b$$` continua sent text. `math.keepWithLeadIn` manté una fórmula a la columna de la línia que la introdueix. (Fins a postext 1.4, una línia `$$…$$` sense línia en blanc a sobre es llegia com a part del paràgraf i s'imprimia tal com estava escrita).
+- **Números d'equació:** un `\label{eq:x}` en una fórmula en bloc la numera, en ordre de lectura: (1), (2)… Una fórmula amb número ocupa la columna (o l'amplada interior del requadre), amb l'equació centrada i el número alineat a la dreta a la seva línia. En un `align`, `gather`, `alignat`, `flalign` o `eqnarray`, cada fila que porta un `\label` rep el seu propi número, tret que la fila digui `\nonumber` o `\notag`. Una fórmula sense `\label` no es numera, com no es va numerar mai `$$…$$`. `\tag{…}` continua numerant una fórmula amb el text que li donis (`\tag*{…}`, sense els parèntesis) i no compta; un `\label` al seu costat dona nom a aquest text. El format, els números per capítol o per secció (2.3) i els reinicis es fixen a [`math.equationNumbering`](/ca/docs/configuration-lists-math#matemàtiques). Posa el `\label` al nivell superior de la fórmula o de la seva fila, no dins d'`aligned`, `split` ni `cases`.
+- **Referències a equacions:** `\eqref{eq:x}` al text imprimeix el número com l'imprimeix la fórmula, (3), i `\ref{eq:x}`, el número sol, 3; totes dues són enllaços, com tota [referència creuada](/ca/docs/document-format-notes-references#referències-creuades-i-àncores). `Eq.~\eqref{eq:x}` conserva la `~` com a LaTeX: un espai de no separació. `:ref{id="eq:x"}` i `@eq:x` també imprimeixen (3). Dins d'una fórmula, `\eqref` i `\ref` imprimeixen el número (sense enllaç). Una etiqueta que res no defineix s'imprimeix com a *?* i apareix al tauler Revisió.
+- **Escapament:** `\$` és un signe de dòlar literal. Un delimitador `$` o `$$` sense tancar produeix una entrada `unclosedMath` al tauler Revisió del Sandbox amb una àncora de font a la qual pots saltar amb un clic.
+- **Peus, notes i cel·les de taula** també componen fórmules en línia (des de postext 1.19), a la línia amb el text, amb l'alineació de la cel·la i a la mida d'aquest text. Allà un `$` només obre una fórmula segons la regla de Pandoc: sense espai després del `$` que obre, sense espai davant del que tanca i sense cap xifra just després d'aquest, de manera que els preus de *$5 a $10* es queden en text; `\$` imprimeix un signe de dòlar, així que una mateixa cadena escapada es llegeix igual al text i en una taula. L'etiqueta d'un chip no admet fórmules. Fins a postext 1.18, un `$` s'hi imprimia sempre tal qual.
+- **Errors:** el codi TeX que MathJax rebutja (macros no definides, errors de sintaxi) es reflecteix com un avís `invalidMath`. La fórmula se substitueix per una petita caixa vermella perquè la geometria del layout continuï sent vàlida.
+- **Configuració:** la secció `math` de la configuració exposa `enabled`, `fontSizeScale` (relatiu a la mida del text que l'envolta: amb 1.0, un em de la fórmula fa aquesta mida — la del cos per a les fórmules en bloc i per a les fórmules en línia del text de cos; des de postext 1.5, que compon les fórmules al voltant d'un 13 % més petites que la 1.4, tot i que els paquets i els llibres del Sandbox desats amb la 1.4 conserven la seva mida — vegeu [Mida de les fórmules](/ca/docs/configuration-lists-math#matemàtiques)), `color` (s'hereta del cos si s'omet) i els marges de les fórmules en bloc.
+- **El motor:** MathJax es carrega a demanda. El Sandbox i el worker de composició l'engeguen pel seu compte; en el teu propi codi, crida `await initMathEngine()` abans de `buildDocument`, o cada fórmula es compondrà com una caixa grisa provisional (consulta [Engegar el motor de fórmules](/ca/docs/configuration-lists-math#arrencar-el-motor-de-fórmules)).
+
+```md
+La identitat d'Euler $e^{i\pi}+1=0$ enllaça les cinc constants fonamentals.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+Una fórmula enmig d'una frase, i la frase que la segueix sense sagnat:
+
+```md
+Per a un pèndol de longitud $L$, el període és
+$$T_0 = 2\pi\sqrt{L/g}$$
+on $g$ és l'acceleració de la caiguda lliure.
+```
+
+Equacions numerades i les referències que s'hi fan:
+
+```md
+L'energia es conserva,
+$$
+\begin{align}
+E &= T + V \label{eq:energia} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+i l'eq.~\eqref{eq:energia} es compleix a cada instant.
+```
+
+**Teoremes, lemes i demostracions.** Un estil de requadre amb `numbering` compta les seves caixes, com el paquet `amsthm` de LaTeX compta els entorns de teorema: cada caixa comença amb el seu rètol i el seu número en negreta, «**Teorema 2.**», amb el `title` de la tanca després del número i entre parèntesis, «**Teorema 2** (Bradley–Terry)**.**», i una referència al seu `{#id}` imprimeix «Teorema 2» (`\ref{thm:x}` o `style=number`, el 2 sol). Els estils que anomenen un mateix comptador el comparteixen, així que un lema que segueix un teorema és el Lema 3. L'`endMark` d'un estil de demostració tanca les seves caixes amb ∎ o □, alineat a la dreta a l'última línia. Els estils es descriuen a [Enunciats numerats i demostracions](/ca/docs/configuration-callouts#enunciats-numerats-i-demostracions).
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Cada classe de recompenses conté una recompensa reparametritzada.
+:::
+
+:::callout{type="proof"}
+Aplica la projecció de \eqref{eq:projeccio} a qualsevol membre de la classe.
+:::
+
+Per :ref{id="thm:main"}, l'objectiu no canvia.
+```

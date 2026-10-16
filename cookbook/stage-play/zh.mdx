@@ -18,13 +18,13 @@ pageNotes: { "1": "书名页：一张梅紫色的底页，外有双重金色边�
 
 <Excerpt region="acts" />
 
-幕标题是一个一级标题，用24 pt的Abril Fatface，没有版面设计槽位。`textTransform`把它排成大写，13.6 pt的三条网格线让大写字母位于版心顶部以下5.5 mm处（[标题](/zh/docs/configuration-text#标题)）。`textAlign: 'center'`不能按级别设置，所以角色表的标题和*Scene*标签也会居中。parity为`'odd'`的`breakBefore`让这一幕从右页开始，与角色表相对。默认值`'always-odd'`会在两者之间留下两个空白页（[分页前置](/zh/docs/configuration-text#前置分页)）。
+幕标题是一个一级标题，用24 pt的Abril Fatface，没有版面设计槽位。`textTransform`把它排成大写，13.6 pt的三条网格线让大写字母位于版心顶部以下5.5 mm处（[标题](/zh/docs/configuration-headings#标题)）。`textAlign: 'center'`不能按级别设置，所以角色表的标题和*Scene*标签也会居中。parity为`'odd'`的`breakBefore`让这一幕从右页开始，与角色表相对。默认值`'always-odd'`会在两者之间留下两个空白页（[分页前置](/zh/docs/configuration-headings#前置分页)）。
 
 ### 2 · 角色表用一行点引到每位演员
 
 <Excerpt region="cast" />
 
-每个角色是`person`样式的一个段落，演员名写在`:tab`之后（[制表符与制表位](/zh/docs/document-format#制表符与制表位)）。这个样式只有一个制表位，位于`'end'`即行长末端，设了`align: 'end'`，演员名就止于那里。它的`leader: '.'`用句点填满制表位之前的空白，与角色和演员名各隔半个em；`spaceBetween`让每个角色占一行半。角色名是粗体，所以印成梅紫色，和对白中说话人的名字一样。首演阵容、剧院和日期用`bill-head`样式排在名单上方，以Playfair Display SC居中，这款字体的小写字母就是小型大写字母。场景表用两个制表位：`:tab Act I :tab …`让*Act I*止于第一个制表位（距行首15 mm，`align: 'end'`），所以三幕在一栏中右对齐；地点从第二个制表位开始，再往后2 mm。剧情时间是一行居中的文字，用舞台提示的样式。
+每个角色是`person`样式的一个段落，演员名写在`:tab`之后（[制表符与制表位](/zh/docs/document-format-inline#制表符与制表位)）。这个样式只有一个制表位，位于`'end'`即行长末端，设了`align: 'end'`，演员名就止于那里。它的`leader: '.'`用句点填满制表位之前的空白，与角色和演员名各隔半个em；`spaceBetween`让每个角色占一行半。角色名是粗体，所以印成梅紫色，和对白中说话人的名字一样。首演阵容、剧院和日期用`bill-head`样式排在名单上方，以Playfair Display SC居中，这款字体的小写字母就是小型大写字母。场景表用两个制表位：`:tab Act I :tab …`让*Act I*止于第一个制表位（距行首15 mm，`align: 'end'`），所以三幕在一栏中右对齐；地点从第二个制表位开始，再往后2 mm。剧情时间是一行居中的文字，用舞台提示的样式。
 
 ### 3 · 不带编号和题注的装饰图
 
@@ -36,7 +36,7 @@ pageNotes: { "1": "书名页：一张梅紫色的底页，外有双重金色边�
 
 <Excerpt region="playbill" />
 
-`# The Importance of Being Earnest {style="playbill" …}`把标题分放在四个属性中，版面设计用两种字体排出：名词用40 pt和60 pt的Abril Fatface，*The*和*of Being*用17 pt的Libre Baskerville斜体（[标题属性](/zh/docs/document-format#标题属性)）。梅紫色底、边框和康乃馨是一张用代码画出的SVG，锚定在出血边上（[图片元素](/zh/docs/configuration-page-layout#图像元素)）。这本书只有一栏，但样式仍设了`span: 'page'`。如果留在栏内，版面设计会在版心底部被裁掉，即纸张底边以上23.3 mm处。样式中空的`header`让书眉不出现在属于同一节的角色表上，空的`footer`让页脚页码不出现在书名页上，否则它会以梅紫色印在梅紫色底上（[标题样式](/zh/docs/configuration-styles#标题样式)）。
+`# The Importance of Being Earnest {style="playbill" …}`把标题分放在四个属性中，版面设计用两种字体排出：名词用40 pt和60 pt的Abril Fatface，*The*和*of Being*用17 pt的Libre Baskerville斜体（[标题属性](/zh/docs/document-format#标题属性)）。梅紫色底、边框和康乃馨是一张用代码画出的SVG，锚定在出血边上（[图片元素](/zh/docs/configuration-headers-footers#图像元素)）。这本书只有一栏，但样式仍设了`span: 'page'`。如果留在栏内，版面设计会在版心底部被裁掉，即纸张底边以上23.3 mm处。样式中空的`header`让书眉不出现在属于同一节的角色表上，空的`footer`让页脚页码不出现在书名页上，否则它会以梅紫色印在梅紫色底上（[标题样式](/zh/docs/configuration-styles#标题样式)）。
 
 底图是一个图片元素，而首页标题会把高度预留到图片底边，所以这个标题占满整张纸：无论书名页上各行放在哪里，标题后面不写`:::pagebreak`，*The Persons of the Play*也从第2页开始。设了`letterSpacing`的居中行也不用修正：居中时不计最后一个字母后面的字距，*OSCAR WILDE*正好落在页面中线上。
 
@@ -44,7 +44,7 @@ pageNotes: { "1": "书名页：一张梅紫色的底页，外有双重金色边�
 
 <Excerpt region="heads" />
 
-左页书眉印frontmatter中的剧名，右页印来自`{chapterTitle}`的幕名，都用Playfair Display SC大写，页码用梅紫色排在外侧（[文字元素](/zh/docs/configuration-page-layout#文本元素)）。每幕的第一页算作首页，因为它的第一个块是一个分页的标题，所以`pages: 'body'`让书眉不出现在这一页，页脚则为它印一个页脚页码。
+左页书眉印frontmatter中的剧名，右页印来自`{chapterTitle}`的幕名，都用Playfair Display SC大写，页码用梅紫色排在外侧（[文字元素](/zh/docs/configuration-headers-footers#文本元素)）。每幕的第一页算作首页，因为它的第一个块是一个分页的标题，所以`pages: 'body'`让书眉不出现在这一页，页脚则为它印一个页脚页码。
 
 <Note>
 电影剧本不是悬挂缩进台词，而是从两侧缩进：<RecipeLink slug="screenplay-format">电影剧本格式</RecipeLink>把每段台词排成一个无边框的框，用内边距把它收窄到对白区的宽度。

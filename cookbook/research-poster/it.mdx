@@ -24,13 +24,13 @@ Ai 300 dpi predefiniti il poster va a capo in ogni riga dove ci va a 72 dpi, ma 
 
 <Excerpt region="band" />
 
-L’H1 porta il convegno, il numero del poster, gli autori e le affiliazioni come attributi, e il suo disegno li colloca sopra un riquadro verde ancorato alla pagina, profondo 158 mm ([span e disegno avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). Il riquadro finisce 133 mm sotto il margine superiore. Senza un `minHeight` il riassunto comincerebbe 0,9 mm sotto il verde; un `minHeight` di undici righe della griglia lascia 14 mm. I segni di affiliazione sono i caratteri ¹ ² ³, le sole cifre in apice nell’intervallo Latin-1.
+L’H1 porta il convegno, il numero del poster, gli autori e le affiliazioni come attributi, e il suo disegno li colloca sopra un riquadro verde ancorato alla pagina, profondo 158 mm ([span e disegno avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)). Il riquadro finisce 133 mm sotto il margine superiore. Senza un `minHeight` il riassunto comincerebbe 0,9 mm sotto il verde; un `minHeight` di undici righe della griglia lascia 14 mm. I segni di affiliazione sono i caratteri ¹ ² ³, le sole cifre in apice nell’intervallo Latin-1.
 
 ### 3 · Componi i pannelli in un gruppo su tutta la pagina
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-Il testo scorre in due colonne e i pannelli in tre, quindi la griglia è un gruppo `:::columns{count=3}` aperto direttamente nel testo, e `span="page"` lo colloca su entrambe le colonne del testo, sotto il riassunto, con l’intercolonna della pagina tra le sue colonne ([`:::columns`](/it/docs/document-format#columns)). Da solo, un gruppo nel testo è seguito da una riga di spaziatura tra paragrafi, qui 38 pt, e la striscia delle parole chiave passerebbe a una seconda pagina; `marginBottom="0.75em"` sul blocco prende il posto di quella riga (postext 1.28), e la striscia sta al piede della pagina. Ogni pannello è un riquadro nel gruppo: prende il suo stile, la larghezza di 175 mm della colonna e 18 mm di `marginTop` sotto il pannello sopra ([il contenitore `:::callout`](/it/docs/configuration-styles#il-contenitore-callout)). `breaks="3,4"` manda il terzo pannello, Results, in testa alla colonna centrale e il quarto, Conclusions, in testa all’ultima. Senza, il gruppo si bilancia e taglia al pannello più vicino a ogni terzo della pila. Con questo testo i tagli cadono sugli stessi due pannelli; l’attributo li tiene lì quando il testo cambia.
+Il testo scorre in due colonne e i pannelli in tre, quindi la griglia è un gruppo `:::columns{count=3}` aperto direttamente nel testo, e `span="page"` lo colloca su entrambe le colonne del testo, sotto il riassunto, con l’intercolonna della pagina tra le sue colonne ([`:::columns`](/it/docs/document-format-directives#columns)). Da solo, un gruppo nel testo è seguito da una riga di spaziatura tra paragrafi, qui 38 pt, e la striscia delle parole chiave passerebbe a una seconda pagina; `marginBottom="0.75em"` sul blocco prende il posto di quella riga (postext 1.28), e la striscia sta al piede della pagina. Ogni pannello è un riquadro nel gruppo: prende il suo stile, la larghezza di 175 mm della colonna e 18 mm di `marginTop` sotto il pannello sopra ([il contenitore `:::callout`](/it/docs/configuration-callouts#il-contenitore-callout)). `breaks="3,4"` manda il terzo pannello, Results, in testa alla colonna centrale e il quarto, Conclusions, in testa all’ultima. Senza, il gruppo si bilancia e taglia al pannello più vicino a ogni terzo della pila. Con questo testo i tagli cadono sugli stessi due pannelli; l’attributo li tiene lì quando il testo cambia.
 
 ### 4 · Tieni ogni figura nel suo pannello
 
@@ -42,7 +42,7 @@ Una figura collocata `'here'` resta nel pannello in cui `::resource` la mette; c
 
 <Excerpt region="palette" />
 
-Le celle della mappa di calore e le quattro sequenze `:swatch{color="…"}` della sua legenda nominano le stesse voci della tavolozza, così un nuovo valore per `cool` ridipinge insieme la mappa e la legenda ([formattazione in linea](/it/docs/document-format#formattazione-in-linea)). La legenda è un secondo gruppo `:::columns`, due voci per colonna, dentro il pannello Results.
+Le celle della mappa di calore e le quattro sequenze `:swatch{color="…"}` della sua legenda nominano le stesse voci della tavolozza, così un nuovo valore per `cool` ridipinge insieme la mappa e la legenda ([formattazione in linea](/it/docs/document-format-inline#formattazione-in-linea)). La legenda è un secondo gruppo `:::columns`, due voci per colonna, dentro il pannello Results.
 
 ### 6 · Componi la cifra principale in uno stile di paragrafo
 

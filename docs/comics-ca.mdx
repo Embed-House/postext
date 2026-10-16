@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Com compon Postext còmics i manga a partir de Markdown: pàgines de còmic tallades per un arbre de divisió, dibuixos de vinyeta retallats al voltant de la zona segura, retolació generada a partir d’un guió (diàleg, pensament, xiuxiueig, crit, ràdio, cartel·les, onomatopeies), estils de bafarada, àncores dels personatges sobre els dibuixos, tires dins del text, dobles pàgines, lectura de dreta a esquerra i retolació vertical, traduccions, i les sortides en canvas, PDF, HTML i EPUB',
   lang: 'ca',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '43 min',
+  order: 33,
   plainSummary: "Aquesta pàgina explica com es fa un còmic amb Postext. Els dibuixos són les vinyetes, i tot el que els personatges diuen, pensen o senten s'escriu com a text al fitxer Markdown. Postext col·loca les vinyetes a la pàgina i dibuixa tot sol les bafarades, les cartel·les i les onomatopeies al voltant de les paraules. Per traduir el còmic només cal reescriure les paraules, i Postext torna a retolar la llengua nova: el japonès en columnes, l'àrab de dreta a esquerra. La pàgina també tracta les tires dins d'un llibre, les pàgines que ocupen dues cares enfrontades, les sortides i els límits que queden.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 Un còmic a Postext és un conjunt de dibuixos i un guió. Els dibuixos són recursos corrents, de mapa de bits o SVG, dibuixats sense cap retolació. El guió viu al Markdown del capítol: un bloc `:::page` talla una pàgina en vinyetes, dona a cada vinyeta el seu dibuix i hi enumera, línia per línia, les bafarades, les cartel·les i les onomatopeies. Postext disposa les vinyetes, retalla cada dibuix a la seva cel·la sense tocar el que importa, compon el text amb la lletra de retolació del llibre en un sol cos, hi dibuixa una bafarada al voltant, n'adreça la cua al personatge que parla i col·loca les bafarades en ordre de lectura allà on no tapen cap cara. Una traducció és un altre fitxer Markdown amb les mateixes vinyetes i altres paraules; Postext la torna a retolar de cap i de nou, en columnes per al japonès i de dreta a esquerra per a l'àrab.
 
-Els còmics són opcionals: un document sense `:::page` ni `:::strip` es compon exactament igual que abans. Els ajustos són a la [secció `comics` de la configuració](/ca/docs/configuration-comics#còmics), i el marcatge es resumeix a [Format del document › Còmics](/ca/docs/document-format#còmics).
+Els còmics són opcionals: un document sense `:::page` ni `:::strip` es compon exactament igual que abans. Els ajustos són a la [secció `comics` de la configuració](/ca/docs/configuration-comics#còmics), i el marcatge es resumeix a [Format del document › Còmics](/ca/docs/document-format-directives#còmics).
 
 ## Pàgines de còmic
 
@@ -48,7 +48,7 @@ Els atributs de la línia d'obertura:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Atribut</th>
+      <th>Atribut</th>
       <th>Efecte</th>
     </tr>
   </thead>
@@ -87,7 +87,7 @@ Algunes divisions:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Divisió</th>
+      <th>Divisió</th>
       <th>Pàgina</th>
     </tr>
   </thead>
@@ -136,7 +136,7 @@ Una línia `::panel{…}` comença una vinyeta; el seu guió arriba fins a la l�
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Atribut</th>
+      <th>Atribut</th>
       <th>Efecte</th>
     </tr>
   </thead>
@@ -159,7 +159,7 @@ Una línia `::panel{…}` comença una vinyeta; el seu guió arriba fins a la l�
 
 ### Retallar el dibuix a la seva cel·la
 
-El dibuix d'una vinyeta es fa sense saber quina forma tindrà la cel·la on acabarà: una pàgina es pot tornar a dividir, un separador es pot arrossegar, una traducció pot necessitar una filera més alta. La **zona segura** del dibuix (`Resource.safeArea`, vegeu [Format del document › Zona segura](/ca/docs/document-format#zona-segura)) diu què ha de quedar a la vista, i el retall es calcula per a cada cel·la:
+El dibuix d'una vinyeta es fa sense saber quina forma tindrà la cel·la on acabarà: una pàgina es pot tornar a dividir, un separador es pot arrossegar, una traducció pot necessitar una filera més alta. La **zona segura** del dibuix (`Resource.safeArea`, vegeu [Format del document › Zona segura](/ca/docs/document-format-resources#zona-segura)) diu què ha de quedar a la vista, i el retall es calcula per a cada cel·la:
 
 1. Amb `fit=cover`, la finestra visible té les proporcions de la cel·la i és tan gran com permet el dibuix.
 2. Es col·loca de manera que la zona segura hi quedi dins. Allà on això deixa marge, la finestra es centra en `focus` si la vinyeta n'indica un; si no, els marges de fora de la zona segura es retallen en proporció a la seva mida, de manera que un motiu a l'esquerra del centre continua a l'esquerra del centre.
@@ -204,7 +204,7 @@ Els atributs d'una línia de guió:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Atribut</th>
+      <th>Atribut</th>
       <th>Efecte</th>
     </tr>
   </thead>
@@ -261,7 +261,7 @@ sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Llengua</th>
+      <th>Llengua</th>
       <th>Retolació</th>
       <th>Onomatopeies</th>
     </tr>
@@ -298,9 +298,9 @@ Un estil de bafarada és un tipus de bafarada: el seu contorn, la seva cua i la 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Estil</th>
-      <th style={{ width: '170px' }}>Contorn</th>
-      <th style={{ width: '120px' }}>Cua</th>
+      <th>Estil</th>
+      <th>Contorn</th>
+      <th>Cua</th>
       <th>A més</th>
     </tr>
   </thead>
@@ -388,7 +388,7 @@ sfx: PLAF
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Atribut</th>
+      <th>Atribut</th>
       <th>Efecte</th>
     </tr>
   </thead>
@@ -484,7 +484,7 @@ El peu d'una tira es pinta amb el text, com el d'una figura. En un PDF etiquetat
 
 ## Editar còmics al Sandbox
 
-Al canvas, a les pàgines HTML i al mode *Seleccionar text* de Folio, una pàgina de còmic es pot editar amb el punter, i cada canvi s'escriu al Markdown del capítol (la [guia del Sandbox](/ca/docs/sandbox#editar-còmics) en dona els detalls):
+Al canvas, a les pàgines HTML i al mode *Seleccionar text* de Folio, una pàgina de còmic es pot editar amb el punter, i cada canvi s'escriu al Markdown del capítol (la [guia del Sandbox](/ca/docs/sandbox-books-saving#editar-còmics) en dona els detalls):
 
 - **Separadors.** Damunt d'un carrer, el punter es converteix en un cursor de canvi de mida. Arrossegar-lo mou la línia de divisió; en deixar-lo anar, el percentatge nou s'escriu al valor `split` de la pàgina (l'atribut s'afegeix si la pàgina no en té), i la pàgina es torna a compondre. Maj ajusta a passos del 5 %, Alt només mou l'extrem més proper i inclina la línia, i cap cel·la no queda més estreta del 5 %. Mentre s'arrossega, es marca la vinyeta el dibuix de la qual quedaria amb bandes. Cada separador és també un element separador enfocable: les fletxes el mouen un 1 % (un 5 % amb Maj), Retorn n'escriu la posició i Esc el torna on era.
 - **Vinyetes.** Una petita barra d'eines damunt d'una vinyeta la divideix amb una línia horitzontal o vertical, i afegeix un `::panel` buit per a la cel·la nova just després, o l'uneix amb la vinyeta següent: la línia de divisió desapareix, i la vinyeta unida conserva el dibuix de la primera i els guions de totes dues.
@@ -503,7 +503,7 @@ Cada avís indica la línia o l'atribut a què es refereix, i el tauler Revisió
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Avís</th>
+      <th>Avís</th>
       <th>Causa</th>
       <th>Solució</th>
     </tr>

@@ -34,6 +34,10 @@ from _common import (  # noqa: E402
 )
 from fetch import PDFS, PHOTOS  # noqa: E402
 
+# Phrases the design repeats that are form, not content: the title, the
+# author or a brand line in a running head (#849, `contentInConfig`).
+CONTENT_CHECKS = {"contentInConfig": {"allow": ["Señales 2020 · Hacia una contaminación cero en Europa", "Signals 2020 · Towards zero pollution in Europe"]}}
+
 SOURCE = os.path.join(HERE, "source")
 PRESET_ID = "senales"
 OUT = os.path.join(PRESETS_ROOT, PRESET_ID)
@@ -630,7 +634,7 @@ def write_manifest(chapters, resources, wording, fonts, photos) -> dict:
         # The magazine is read straight through, so the sandbox opens it with
         # the canvas laying out the whole book (and the PDF defaulting to it).
         "version": 2, **meta, "view": {"canvasScope": "book"},
-        "chapters": chapters, "config": shared_config(photos),
+        "chapters": chapters, "config": {**shared_config(photos), "checks": CONTENT_CHECKS},
         "localized": {lang: {"config": localized_config(lang), "resources": wording[lang]} for lang in LANGS},
         "resources": resources, "fonts": fonts,
     }

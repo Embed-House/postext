@@ -1,0 +1,386 @@
+{/* docs/configuration-pdf-output-ar.mdx */}
+
+export const metadata = {
+  title: 'الاستخدام البرمجي: ملفات PDF',
+  sidebarTitle: 'ملفات PDF',
+  description: 'postext-pdf من الشيفرة: التثبيت، والواجهة البرمجية، ومزوّدو الخطوط في المتصفح وفي Node، وخطوط CJK، وبايتات الموارد، والنص العمودي، والتشغيل في عامل، والملفات الجاهزة للطباعة',
+  lang: 'ar',
+  lastUpdated: '2026-10-16',
+  readingTime: '21 دقيقة',
+  order: 21,
+  parent: 'configuration',
+  plainSummary: "هذه الصفحة لمن يكتبون الشيفرة ويريدون ملف PDF. تبيّن كيف تثبّت حزمة PDF وتحوّل كتابًا مُخرَجًا إلى ملف ببضعة أسطر. وتحتاج الحزمة إلى ملفات الخطوط، فتشرح الصفحة كيف تعطيها إياها في المتصفح أو على الخادم. وتتناول خطوط الصينية واليابانية والكورية، والصور، والنص المكتوب من الأعلى إلى الأسفل، والروابط. وتنتهي بمثال كامل وبملفات جاهزة للمطبعة.",
+};
+
+# الاستخدام البرمجي: ملفات PDF
+
+
+## توليد ملفات PDF
+
+يقع إخراج PDF في حزمة منفصلة، **`postext-pdf`**، كي لا تتحمّل عمليات الدمج المخصّصة للويب وحده كلفة `pdf-lib` و`@pdf-lib/fontkit`. لا يعيد مُخرِج PDF قياس النص: فهو يستهلك `VDTDocument` نفسه تمامًا الذي تمرّره إلى `renderToCanvas` أو `renderToHtml`، ويحوّل إحداثياته المقيسة بالبكسل إلى نقاط PDF. لذلك تتطابق المخرجات الثلاثة حتمًا في فواصل الأسطر وارتفاعات الأعمدة ومواضع الموارد.
+
+> **في المتصفح، ابنِ شجرة VDT عبر [عامل الويب (Web Worker)](/ar/docs/configuration-programmatic-usage#تشغيل-الإخراج-في-web-worker).** الدالة `renderToPdf` نفسها سريعة متى وُجدت شجرة VDT، فالجزء المكلف هو مسار الإخراج الذي أنتجها. تشغيل هذا المسار في العامل يُبقي الواجهة مستجيبة، ويتيح لتصدير PDF أن يعيد استخدام ذاكرة القياس المؤقتة نفسها التي سبق أن هيّأتها المعاينة الحية. راجع [قيادة تصدير PDF من العامل](/ar/docs/configuration-programmatic-usage#تصدير-pdf-انطلاقًا-من-العامل) لترى المسار الموصى به. الأمثلة أدناه، التي تعمل على الخيط الرئيسي، هي المرجع لـ*معنى الوسائط*؛ أما في شيفرة الواجهة فابنِ شجرة VDT في العامل أولًا، ولا تستدعِ مباشرةً إلا `renderToPdf`.
+
+### التثبيت
+
+```bash
+npm install postext postext-pdf
+```
+
+`postext` تبعية نظيرة (peer dependency) للحزمة `postext-pdf`. يحتاج كل إصدار من `postext-pdf` إلى إصدار `postext` الذي صدر معه، أو إلى إصدار لاحق من الإصدار الرئيسي نفسه (نطاقه النظير هو `^` متبوعة بذلك الإصدار، أي `^1.5.0` للإصدار 1.5.0)، لأنه يستورد دوالّ مساعدة أضافتها `postext` في ذلك الإصدار. حدّث الحزمتين معًا، وثبّتهما على شبكة CDN على الإصدار نفسه.
+
+### الواجهة البرمجية العامة
+
+تعرض الحزمة نقطة دخول واحدة وعددًا قليلًا من الأنواع:
+
+- **`renderToPdf(doc, options): Promise<Uint8Array>`** — تأخذ `VDTDocument` (أو فصول كتاب في مصفوفة منها) وتعيد بايتات PDF الخام.
+- **`PdfFontProvider`** — توقيع دالة الاستدعاء `(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>` التي تستخدمها `renderToPdf` لطلب بايتات الخط حين تحتاج إلى تضمين تركيبة جديدة من العائلة والوزن والنمط. يحمل `request.codePoints` الحروف التي تنضّدها الصفحات بوجه الخط (face) ذاك؛ والجواب ملف واحد، أو عدة ملفات تشكّل الوجه معًا (انظر [خطوط الصينية واليابانية والكورية](#خطوط-الصينية-واليابانية-والكورية)).
+- **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`** — ملف من ملفات الوجه يذكر كيف أعلنته الصفحة: قيمة `unicode-range` في قاعدته `@font-face` وموضعه في ترتيب الإعلان. و`PdfFontFile` هو `Uint8Array` فيه هاتان الخاصيتان الاختياريتان (انظر [خطوط الصينية واليابانية والكورية](#خطوط-الصينية-واليابانية-والكورية)). منذ postext-pdf 1.30.
+- **`RenderToPdfOptions`** — `{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`. تأخذ `outlines` و`accessible` و`colorSpace` قيمتها من `pdfGeneration` في المستند حين تُترك (انظر [توليد PDF (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#إنتاج-pdf-الإعدادات)). يُشرح `resourceBytes` في [بايتات الموارد والنسخ الأصلية للطباعة](#بايتات-الموارد-والنسخ-الأصلية-للطباعة)، و`onWarning` في [الوجوه التي يُسأل عنها المزوّد](#الوجوه-التي-يُسأل-عنها-المزوّد) و[التحذيرات في المستند](/ar/docs/configuration-programmatic-usage#التحذيرات-في-المستند). يطبع `characterGrid: true` الشبكة التي يرسمها `cjk.grid.show` على الشاشة، والتي يُسقطها ملف PDF في غير ذلك (انظر [شبكة الحروف](/ar/docs/configuration-east-asian#شبكة-الحروف)). ويحدّد `harfbuzzWasm` المكان الذي يُحمَّل منه الملف `harfbuzz.wasm` الخاص بـ HarfBuzz (عنوان URL نسبي إلى الصفحة، أو بايتات الملف) لمستند فيه نص من اليمين إلى اليسار أو نص متصل الحروف؛ وإن تُرك، فالنسخة الموجودة بجانب وحدة postext-pdf، ثم إصدار harfbuzzjs نفسه من jsDelivr ثم من esm.sh. يأخذ `print` إعدادات الإخراج للطباعة (معيار PDF/X، وملف التعريف اللوني للإخراج، والأسود، والفحص قبل الطباعة)، وإن لم يُمرَّر أُخذ `print` المستند؛ ومع معيار PDF/X، أو مع `colorSpace: 'cmyk'`، يُفصَل كل لون عبر ملف ICC للإخراج، الذي تعطي `outputProfile` بايتاته (وإلا جُلب من `profileBaseUrl`، وافتراضيًا نسخة مجلد `icc/` من postext على شبكة npm). والخيار `date` (كائن `Date` أو زمن بالمللي ثانية أو تاريخ مكتوب، مثل `mtime` في `createBundle`) هو تاريخ إنشاء الملف وتاريخ تعديله، وفي ملف PDF/X هو أيضًا تواريخ حزمة XMP ومنه يُشتق معرّف المستند: المستند نفسه إذا وُلّد مرتين بقيمة `date` واحدة أعطى البايتات نفسها. وإذا تُرك حمل الملف وقت الاستدعاء. والتاريخ غير الصالح يرمي خطأ.
+- **`PdfWarning`** — مشكلة غير قاتلة يُبلَّغ عنها عبر `onWarning`؛ ميّز نوعها بالحقل `kind`: `'fontFallback'` (`PdfFontFallbackWarning`)، وجه نُضّد بوجه آخر من عائلته؛ `'missingGlyph'` (`PdfMissingGlyphWarning`)، حروف لا يحوي أي ملف من ملفات الوجه رسمًا (glyph) لها؛ `'variableFontDefaultInstance'` (`PdfVariableFontWarning`)، خط متغيّر طُلب بوزن غير وزن نسخته الافتراضية؛ `'cffEmbeddedWhole'` (`PdfCffEmbeddedWholeWarning`)، وجه CFF يتجاوز 2 MB ضُمِّن كاملًا؛ `'complexShapingUnavailable'` (`PdfComplexShapingWarning`)، نص من اليمين إلى اليسار أو متصل الحروف رُسم دون HarfBuzz لتعذّر تحميله (يسرد `reason` الأماكن التي بُحث فيها عنه)، فتقع العلامات العربية في غير مواضعها؛ أو `'missingImage'`، صورة بلا بايتات رُسم مكانها عنصر نائب (لا يُبلَّغ عنه إلا إلى `onWarning` تمرّره أنت؛ أما تحذيرات الخطوط فتذهب، في غيابها، إلى `console.warn`).
+- **`decompressWoff2(bytes): Uint8Array`** — دالة مساعدة تحوّل ملف WOFF2 إلى بايتات TTF، وهي الصيغة التي تستطيع `pdf-lib` تضمينها مباشرةً.
+- **`createPdfWorker(options?)`**، من `postext-pdf/worker` — الإنتاج نفسه في عامل ويب؛ انظر [إنتاج ملف PDF في عامل](#إنتاج-ملف-pdf-في-عامل).
+
+### مثال مختصر
+
+```ts
+import { buildDocument } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+
+const vdt = buildDocument(
+  { markdown: '# Chapter One\n\nThe story begins here…' },
+  {
+    page: { sizePreset: '17x24' },
+    layout: { layoutType: 'double' },
+    bodyText: { fontFamily: 'EB Garamond', fontSize: { value: 9, unit: 'pt' } }, // 9 pt overrides the 8 pt default
+  },
+);
+
+const pdfBytes = await renderToPdf(vdt, {
+  fontProvider: async (family, weight, style) => {
+    // Return TTF bytes for this family/weight/style.
+    // See the "Font provider" section below for a real implementation.
+    const res = await fetch(`/fonts/${family}-${weight}${style === 'italic' ? 'i' : ''}.ttf`);
+    return new Uint8Array(await res.arrayBuffer());
+  },
+});
+
+// `pdfBytes` is a Uint8Array — save, download, or stream it.
+const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url);
+```
+
+### لماذا مزوّد الخطوط؟
+
+تضمّن `pdf-lib` ملفات خطوط حقيقية داخل ملف PDF: فالخطوط المثبّتة في المتصفح غير متاحة وقت الإنتاج، والخط الذي حمّلته لقياس النص على الشاشة فقط لا يكفي وحده لإنتاج ملف PDF مكتفٍ بذاته. تمسح `renderToPdf` الصفحات بحثًا عن كل وجه ترسمه (وجه لكل تركيبة `family|weight|style`؛ انظر [الوجوه التي يُسأل عنها المزوّد](#الوجوه-التي-يُسأل-عنها-المزوّد)) وتستدعي المزوّد مرة واحدة لكل تركيبة فريدة. يعيد المزوّد `Uint8Array` من بايتات **TTF أو OTF**، أو قائمة منها لوجه يُقدَّم في عدة ملفات (انظر [خطوط الصينية واليابانية والكورية](#خطوط-الصينية-واليابانية-والكورية))؛ وتقتطع `pdf-lib` من مخططات TrueType المجموعة الفرعية (subset) المستخدمة، وتضمّن ملفات CFF (`.otf`) كاملة. والوجوه التي يجيب عنها المزوّد بالملف نفسه، كوجه عادي يحلّ محل الوجه العريض الذي تفتقر إليه العائلة، تتشارك خطًا مضمَّنًا واحدًا. أما الوجه الذي لا ترسم به أي صفحة في النهاية، كوجه نص شكل SVG حين يُرسم الشكل صورةً، فيُستبعد من الملف.
+
+**استخدم خطوطًا ثابتة لكل وزن، لا خطًا متغيّرًا واحدًا.** كثيرًا ما تقدّم Google Fonts ملف WOFF2 متغيّرًا واحدًا لكل عائلة يغطي محور الوزن كله. ولا تستطيع `pdf-lib` أن تضمّن من الملف المتغيّر إلا نسخته الافتراضية، فتُطبع الفقرة العريضة بالوزن العادي. تنشر Fontsource ملفات WOFF2 ثابتة لكل وزن تحل هذه المشكلة حلًا نظيفًا، وهذا هو النمط الذي يتبعه Sandbox، بيئة التجربة في المتصفح. ويُبلَّغ عن الملف المتغيّر المطلوب بوزن غير وزن نسخته الافتراضية بتحذير `variableFontDefaultInstance`.
+
+**كل كلمة من النص تقع حيث وضعها الإخراج.** في الفقرات وعناصر القوائم والاقتباسات والإطارات وغيرها من النص المتدفق، تبدأ كل كلمة في الموضع الذي قاسته شجرة VDT، فلا يتراكم على امتداد السطر أي فرق بين عروض المتصفح وعروض الوجه المضمَّن. يُرسم السطر الخالي من التنسيق الداخلي كائنًا نصيًا واحدًا يحرّك القلم بين الكلمات؛ أما الأسطر المضبوطة والمتوسّطة والأسطر ذات التنسيق فتُرسم كلمةً كلمة. والحرف الذي ليس للوجه رسم له، والذي قاسه المتصفح بخط آخر ويرسمه ملف PDF مربعَ الرسم المفقود في ذلك الوجه، لا يُزيح أيًّا من الكلمات التي تليه، ويُبلَّغ عنه مرة واحدة لكل وجه بتحذير `missingGlyph`. والمسافة التي يفتقر إليها الوجه، كالمسافة الضيقة غير القابلة للكسر أو مسافة الأرقام، تأخذ العرض الذي أعطاها إياه المتصفح، ولا تُرسم الحروف غير المرئية كرابط الكلمات (word joiner) والمسافة الصفرية العرض. أما الواصلة غير القابلة للكسر (U+2011) التي يفتقر إليها الوجه فتُرسم بواصلة الوجه (U+2010)، أو بعلامة الواصلة والناقص (hyphen-minus) إن لم تكن فيه واصلة أيضًا، كما يعرضها المتصفح؛ ومن الخطوط التي تفتقر إلى الاثنتين Open Sans وOutfit. ولا تُعدّ أيّ من الحالتين رسمًا مفقودًا. وثمة استثناءان. فالسطر الذي فيه حروف من اليمين إلى اليسار يُرسم سلسلةً واحدة على أي حال (انظر [اللغات وأنظمة الكتابة](/ar/docs/configuration-language#اللغات-وأنظمة-الكتابة)). والنص الذي يضعه التصميم (الترويسات العلوية والسفلية، وصفحات الافتتاح، وعناوين الإطارات، وغيرها من عناصر التصميم) يُنضَّد بعروض الوجه المضمَّن نفسه، فالرسم الذي يفتقر إليه الوجه هناك يظل يُزيح باقي سطره.
+
+### الوجوه التي يُسأل عنها المزوّد
+
+تمرّ `renderToPdf` على الصفحات بالطريقة التي ترسمها بها، ولا تسأل المزوّد إلا عن الوجوه التي ترسم بها:
+
+- الوجه العادي لكل كتلة تنضّد أي سطر، والوجه العريض أو المائل أو العريض المائل لكل سلسلة نُضّدت فعلًا بتلك الطريقة؛
+- سلاسل الشارات (chips)، وعلامات القوائم، ونص خانات التصميم (الترويسات، وأرقام الصفحات، وأشرطة صفحات الافتتاح والأجزاء)؛
+- نص التعليق والملاحظة وخلايا الجداول لكل مورد؛
+- الوجوه التي يسمّيها `<text>` في شكل SVG، حين يُضمَّن الشكل. والعائلة التي لا يستطيع المزوّد توفيرها إطلاقًا يُنتقل منها إلى العائلة التالية في قائمة `font-family` في ملف SVG.
+
+فلا يُسأل أبدًا عن الوجه المائل لعائلة عناوين لا يُميلها أحد، ولا يحتاج شكل بلا ملاحظة إلى وجوه الملاحظات.
+
+حين يرفض المزوّد وجهًا، يستمر الإنتاج. يُضمَّن مكانه وجه آخر من العائلة نفسها، ويُبلَّغ عن `PdfWarning`. والبديل هو أول وجه يُحمَّل، بتجربة الأوزان القياسية التسعة (من 100 إلى 900) بالترتيب الذي تتبعه مطابقة الخطوط في CSS، وهو أيضًا الوجه الذي يعرضه المتصفح في المعاينة:
+
+1. النمط نفسه أولًا. للوزن من 400 إلى 500، تأتي الأوزان حتى 500 أولًا، ثم الأخف بدءًا من الأقرب نزولًا، ثم الأثقل بدءًا من 600 صعودًا. وللوزن الأقل من 400، تأتي الأوزان الأخف أولًا بدءًا من الأقرب نزولًا، ثم الأثقل. وللوزن الأكبر من 500، تأتي الأوزان الأثقل أولًا، ثم الأخف؛
+2. ثم النمط الآخر، المائل بدل القائم والقائم بدل المائل، بالوزن المطلوب ثم بالأوزان الأخرى بالترتيب نفسه.
+
+لذلك تنضّد العائلة التي لا مائل فيها سلاسلها المائلة قائمةً، وتأخذ العائلة التي لا تقدّم إلا 400 و700 الوزن 600 على أنه 700، وتنضّد العائلة التي لا تقدّم إلا وجهًا واحدًا كل شيء به. ويُسأل المزوّد عن وجه واحد في كل مرة، بذلك الترتيب، ولا يُسأل مرتين عن الوجه نفسه، فلا يُضمَّن أبدًا وجه لا يستخدمه شيء. والعائلة التي لا يستطيع المزوّد توفيرها إطلاقًا يُسأل عن كل وجه من وجوهها الثمانية عشر هذه قبل أن يفشل الإنتاج.
+
+```ts
+const bytes = await renderToPdf(doc, {
+  fontProvider,
+  onWarning: (w) => {
+    // { kind: 'fontFallback', family: 'Oswald', weight: 700, style: 'italic',
+    //   fallback: { weight: 700, style: 'normal' }, reason: '…', message: '…' }
+    console.info(w.message);
+  },
+});
+```
+
+في غياب `onWarning`، تذهب الرسالة إلى `console.warn`. يحتفظ النص بمواضعه، وهي مأخوذة من شجرة VDT وقيست بالوجوه التي كانت لدى المتصفح، لذا قد يبدو البديل ذو العروض المختلفة متراصًّا أو متخلخلًا. وفّر الوجه الحقيقي لإصلاح ذلك. ولا يفشل الإنتاج (`postext-pdf: failed to load font(s): …`) إلا حين لا يستطيع المزوّد توفير أي وجه لعائلة ما بوزن قياسي، قائمًا كان أو مائلًا.
+
+### مزوّد الخطوط في المتصفح (Fontsource + WOFF2)
+
+يأتي Sandbox مع `createPdfFontProvider()` (`packages/postext-sandbox/src/viewport/pdfFontProvider.ts`)، ويمكنك نسخها إلى أي تطبيق يعمل في المتصفح. هذه أساسياتها:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+const bytesCache = new Map<string, Promise<Uint8Array>>();
+
+function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+function fontsourceWoff2Url(
+  family: string,
+  weight: number,
+  style: 'normal' | 'italic',
+): string {
+  const id = fontsourceId(family);
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
+}
+
+export function createPdfFontProvider(): PdfFontProvider {
+  return async (family, weight, style) => {
+    const key = `${family}|${weight}|${style}`;
+    const cached = bytesCache.get(key);
+    if (cached) return cached;
+
+    const promise = (async (): Promise<Uint8Array> => {
+      const url = fontsourceWoff2Url(family, weight, style);
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error(`font fetch failed: ${res.status} ${url}`);
+      // pdf-lib needs TTF bytes, so decompress the WOFF2 wrapper client-side.
+      return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    })();
+
+    bytesCache.set(key, promise);
+    return promise;
+  };
+}
+```
+
+ينبغي لنسخة الإنتاج أيضًا أن:
+
+- **تستعلم عن الأوزان المتاحة** (عبر `https://api.fontsource.org/v1/fonts/{id}`) وتقرّب الوزن المطلوب إلى أقرب وزن تقدّمه العائلة فعلًا، فينجح طلب `weight: 600` على عائلة لا تملك إلا `{400, 700}`.
+- **تعود من المائل إلى العادي** حين لا يكون للعائلة وجه مائل بالوزن المطلوب، بدل إفشال الإنتاج كله.
+- **تعيد استخدام الذاكرة المؤقتة بين عمليات الإنتاج** (أبقِ `bytesCache` على مستوى الوحدة، لا داخل كل استدعاء)، فتصبح إعادة توليد ملف PDF بعد تغيير في الإعدادات شبه مجانية.
+
+### خطوط الصينية واليابانية والكورية
+
+لا يأتي وجه CJK في ملف صغير واحد. تقدّم Fontsource الخط Noto Serif SC في نحو مئة ملف لكل وزن، يحمل كل منها جزءًا من الحروف، ويُعلَن عنه في ورقة أنماط العائلة مع نطاقه `unicode-range` (`@fontsource/noto-serif-sc/400.css`)؛ ويُنزّل المتصفح الملفات التي يمسّها نص الصفحة. وملف `latin` الذي يجلبه المزوّد أعلاه لا يحوي أي حرف من حروف الهان (Han) على الإطلاق، والمجموعات الفرعية المسمّاة ناقصة: فالمجموعة `chinese-simplified` من Noto Serif SC تفتقر إلى 釵، والمجموعة `chinese-traditional` من Noto Serif TC لا تحوي أيًّا من العلامات كاملة العرض （），！？：；.
+
+لذا يجوز للمزوّد أن يجيب عن الوجه بعدة ملفات. تمرّر إليه `renderToPdf` الحروف التي تنضّدها الصفحات بذلك الوجه (`request.codePoints`)، مجموعةً من كل الفصول قبل رسم أي شيء، ويعيد المزوّد الملفات التي تحملها، بالترتيب الذي يبحث به المتصفح فيها. يُضمَّن كل ملف مجموعةً فرعية مستقلة، ويُرسم كل حرف من أول ملف فيه رسم له: فالفصل الذي يمسّ 60 شريحة يضمّن 60 مجموعة فرعية صغيرة. والوجه الذي يُطلب مرة أخرى، لنص شكل SVG مثلًا، لا يُسأل عنه إلا للحروف التي تفتقر إليها ملفاته. والمزوّد الذي يعيد `Uint8Array` واحدة يعمل كما كان. يقرأ مزوّد Sandbox ورقة أنماط Fontsource الخاصة بالوزن والنمط، ويجلب الملفات التي تحوي نطاقاتها النص؛ وهذا جوهره:
+
+```ts
+import type { PdfFontProvider } from 'postext-pdf';
+import { decompressWoff2 } from 'postext-pdf';
+
+type Slice = { url: string; ranges: Array<[number, number]> };
+
+async function fontsourceSlices(family: string, weight: number, style: 'normal' | 'italic'): Promise<Slice[]> {
+  const id = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = await (await fetch(cssUrl)).text();
+  return [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, rule]) => ({
+    url: new URL(/url\(\.?\/?([^)]+\.woff2)\)/.exec(rule)![1], cssUrl).href,
+    ranges: /unicode-range:\s*([^;]+);/.exec(rule)![1].split(',').map((part) => {
+      const [lo, hi = lo] = part.trim().slice(2).split('-');
+      return [parseInt(lo, 16), parseInt(hi, 16)] as [number, number];
+    }),
+  }));
+}
+
+export const sliceFontProvider: PdfFontProvider = async (family, weight, style, request) => {
+  // Where ranges overlap, the browser tries the last rule first.
+  const slices = (await fontsourceSlices(family, weight, style)).reverse();
+  const picked = new Set<Slice>();
+  for (const cp of request?.codePoints ?? []) {
+    const slice = slices.find((s) => s.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+    if (slice) picked.add(slice);
+  }
+  if (picked.size === 0) picked.add(slices[0]!);
+  return Promise.all(slices.filter((s) => picked.has(s)).map(async (s) =>
+    decompressWoff2(new Uint8Array(await (await fetch(s.url)).arrayBuffer()))));
+};
+```
+
+وتمرّ العائلة اللاتينية بالشيفرة نفسها: يأخذ النص الإنجليزي ملفه `latin` وحده، ويأخذ النص التشيكي `latin` و`latin-ext`.
+
+والمتصفح لا يكتفي بأول ملف فيه رسم. فهو يصفّ الحرف من الملف المعلَن أخيرًا بين الملفات التي يشمله `unicode-range` فيها، وملفات العائلة تتداخل: يكرّر Fontsource حروف ASCII في Noto Serif JP في ملفه `latin` وفي شرائحه المرقّمة. ولا تقنين أزواج (kerning) بين حرفين مصفوفين من ملفين، فالملف يحدّد العرض: يصفّ Chrome 154 `Shift_JIS` بعرض 4.25 em إذا أُعلنت الشرائح بعد `latin`، والملف `latin` وحده، وهو يقنّن `t_` و`_J`، يصفّها بعرض 4.32 em. ومنذ postext-pdf 1.30 يجوز للمزوّد أن يذكر كيف أعلنت الصفحة كل ملف: تعيد `declaredFontFile(bytes, { unicodeRange, order })` البايتات نفسها ومعها قيمة `unicode-range` في قاعدة الملف، كما تكتبها CSS، وموضع تلك القاعدة بين قواعد الوجه، وهو أي عدد يكبر مع ترتيب الإعلان (والأكبر هو المعلَن أخيرًا).
+
+```ts
+import { declaredFontFile } from 'postext-pdf';
+
+declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order: 0 });
+```
+
+وإذا حملت ملفات الوجه نطاقاتها، ففي مستند يُشكَّل بلغته ([`bodyText.shapingLanguage: 'document'`](/ar/docs/configuration-text#نص-المتن)، وهي القيمة الافتراضية) يُرسم كل حرف من الملف المعلَن أخيرًا بين الملفات التي يشمله نطاقها وفيها رسم له، كما يختار المتصفح بين قواعد `@font-face`، ويبقى الحرف وعلاماته المركّبة في ملف واحد. والحرف الذي لا يشمله أي نطاق يُرسم من أول ملف فيه رسم له. أما الملفات التي لا تحمل هذه البيانات، وكل ملفات مستند يستعمل `'host'`، فتُقرأ بالترتيب المعطى كما كانت، فالمزوّد الذي يصف ملفاته يظل يضع المعلَن أخيرًا في أول القائمة. والوجه الموصوف هكذا يُسأل عنه مرة أخرى لكل حرف لم يُسأل عنه من قبل، فقد يحمله ملف أُعلن لاحقًا. ومزوّد Sandbox يصف ملفاته.
+
+الحروف التي لا يحوي أي ملف من ملفات الوجه رسمًا لها تُرسم بالرسم `.notdef` في الخط (مربع فارغ في معظم الخطوط)، وتبلّغ `renderToPdf` عنها مرة واحدة لكل وجه بعد رسم الصفحات:
+
+```ts
+// { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal',
+//   characters: ['，', '！', '？'], message: '…' }
+```
+
+يسرد Sandbox هذه الحروف، والتحذيرين الواردين أدناه، في لوحة الفحوص (Checks) بعد كل ملف PDF يولّده. وحين يتغيّر الكتاب أو إعداداته أو موارده، تُعلَّم على أنها آتية من ملف PDF سابق إلى أن يحل محلها الملف التالي؛ وفتح كتاب آخر يمسحها.
+
+- **الوجه العريض يحتاج إلى ملف ثابت لكل وزن.** تقدّم Fontsource كل وزن من Noto Serif SC وTC في ملفات ثابتة منفصلة، لذا يعمل الوجه العريض في Sandbox. أما ملفات Google Fonts (`NotoSerifSC[wght].ttf`، 25 MB) فهي خطوط متغيّرة: تضمّن pdf-lib نسختها الافتراضية، فيُطبع الوجه 700 بالوزن 400، وتبلّغ `renderToPdf` عن ذلك بتحذير `variableFontDefaultInstance`. ولحزمة الكتاب، اقتطع نسخة ثابتة لكل وزن بأداة fontTools (`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`) ثم اقتطع منها المجموعة الفرعية لحروف الكتاب بالأداة `pyftsubset`.
+- **استخدم إصدارات TrueType.** ملفات `.otf` من Source Han Serif وNoto Serif CJK ذات مخططات CFF، وتضمّنها postext-pdf كاملة، من 8 إلى 25 MB لكل وزن؛ ويُبلَّغ عن وجه CFF يتجاوز 2 MB بتحذير `cffEmbeddedWhole`. أما إصدارات TrueType (Google Fonts، Fontsource) فتُقتطع منها الرسوم المستخدمة فقط. وللّغة اليابانية تأتي Noto Serif JP وNoto Sans JP (من Google Fonts، أو الشرائح المرقّمة في Fontsource) وShippori Mincho وZen Old Mincho وBIZ UDMincho بصيغة TrueType؛ أما Source Han Serif JP وملفات `.otf` ذات اللاحقة `JP` من Noto Serif CJK فهي CFF.
+- **الأشكال اليابانية في الخطوط الشاملة للغات الصينية واليابانية والكورية.** قد تُرسم نقطة الترميز الواحدة لحرف هاني أو لعلامة ترقيم أو لعلامة اقتباس على نحو في اليابان وعلى نحو آخر في الصين، والخط الشامل (Source Han، Noto CJK) يحوي الشكلين. يُشكّل ملف PDF المستندَ الياباني (`locale: 'ja'`)، والمقطعَ المعزول المكتوب باليابانية (`:ltr[…]{lang=ja}`) في أي مستند، بنظام اللغة `JAN ` في OpenType، فتطبع خاصية `locl` في الخط الأشكالَ اليابانية التي تطبعها اللوحة وHTML عبر `lang`. أما المقطع المعزول بلغة أخرى داخل كتاب ياباني فيُشكَّل بأشكال تلك اللغة (الأشكال الافتراضية للخط في حالة الصينية مع `'host'`) ويُوسَم بعنصر `Span` يحمل `/Lang` الخاص به. ومع [`bodyText.shapingLanguage: 'document'`](/ar/docs/configuration-text#نص-المتن)، وهي القيمة الافتراضية منذ postext 1.30، يُشكَّل كل مستند وكل مقطع معزول بلغته (`ZHS` للصينية المبسطة)، كما قاسه التخطيط؛ أما مع `'host'` فتُشكَّل المستندات الصينية وغيرها بالأشكال الافتراضية للخط كما كانت. والخط المصمَّم لليابانية مثل Noto Serif JP أشكاله الافتراضية يابانية أصلًا، لكنه يضع “ ” في النص الياباني بشكلها `JAN `.
+
+لا يؤخذ الحرف المفقود من عائلة ما من عائلة أخرى: فلا تستعير Noto Serif TC من Noto Serif SC. احسم التغطية عند بناء ملفات الخطوط؛ فنموذج العرض 红楼梦 ينسخ إلى مجموعاته الفرعية من TC الرسوم التي تفتقر إليها، آخذًا إياها من وجه SC.
+
+### مزوّد الخطوط على الخادم (Node، ملفات محلية)
+
+في Node يمكنك تجاوز خطوة WOFF2 كليًا وقراءة ملفات TTF/OTF من القرص:
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { PdfFontProvider } from 'postext-pdf';
+
+const FONT_DIR = '/path/to/fonts';
+
+function filename(family: string, weight: number, style: 'normal' | 'italic'): string {
+  const slug = family.replace(/\s+/g, '');
+  const styleSuffix = style === 'italic' ? 'Italic' : '';
+  const weightName =
+    weight >= 700 ? 'Bold'
+    : weight >= 600 ? 'SemiBold'
+    : weight >= 500 ? 'Medium'
+    : weight >= 300 ? 'Light'
+    : 'Regular';
+  return `${slug}-${weightName}${styleSuffix}.ttf`;
+}
+
+export const localFontProvider: PdfFontProvider = async (family, weight, style) => {
+  const buf = await readFile(join(FONT_DIR, filename(family, weight, style)));
+  return new Uint8Array(buf);
+};
+```
+
+### بايتات الموارد والنسخ الأصلية للطباعة
+
+تعيد `resourceBytes(fileId)` البايتات الخام لصورة، ويتعرّف المُخرِج على صيغتها من البايتات:
+
+- تُضمَّن صور PNG وJPEG وGIF وWebP صورًا؛
+- تُرسم شيفرة SVG مسارات متجهية، ويُنضَّد `text` فيها نصًا حقيقيًا بالخطوط المضمَّنة في المستند، أو تُحوَّل إلى صورة نقطية بدقة 600 dpi في المتصفح حين تستخدم ميزات خارج المجموعة المتجهية المدعومة. ويُتخطّى `<style>` لا يحوي إلا قواعد `@font-face` (أوجهًا ضمّنها المؤلف) فيبقى الشكل متجهيًا (منذ postext-pdf 1.25)؛ أما أي ورقة أنماط أخرى فتجعله صورة نقطية، تُصنع والأوجه التي يسمّيها نصه مضمَّنة فيها من `fontProvider` (ما لم تكن `diagramStyle.inlineFonts` أو `svg.inlineFonts` الخاصة بالمورد `false`)؛
+- ملف PDF تُضمَّن صفحته الأولى كما هي، في هيئة form XObject.
+
+تُخزَّن كل صورة في الملف مرة واحدة، مهما تكرر رسمها. يصبح ملف SVG المرسوم مسارات متجهية form XObject ترسمه كل صفحة، فالإطار أو الشعار في تصميم صفحات مستند من ثلاثين صفحة يُكتب مرة واحدة لا ثلاثين مرة؛ وتضيف كل صفحة إضافية بضع مئات من البايتات. وحتى الإصدار 1.4 من postext-pdf، كانت كل صفحة تحمل نسختها الخاصة من المسارات.
+
+يمكن لشكل SVG أن يسمّي **نسخة أصلية للطباعة** (print master) في `svg.pdfFileId`: ملف PDF من صفحة واحدة للشكل نفسه، وهو عادةً الأصل الذي صُدِّر منه ملف SVG. تسأل `renderToPdf` الدالة `resourceBytes` عن معرّف النسخة الأصلية أولًا. وتضمّن تلك الصفحة مكان ملف SVG، بخطوطها وتدرّجاتها وفضاءات ألوانها سليمةً، أينما رُسم ملف SVG: شكلًا، أو صورةً في خلية جدول (`TableCell.image`)، أو صورةَ تصميم، أو أيقونةَ إطار (وعلامته `marker` كذلك). تحمل شجرة VDT معرّف النسخة الأصلية في كل استخدام من هذه الاستخدامات (`svg.pdfFileId` على مورد الشكل، و`pdfFileId` على صورة الخلية وعلى كتلة صورة التصميم)، فيحصل كل فصل من فصول الكتاب على النسخة الأصلية. ويواصل مُخرِجا canvas وHTML رسم ملف SVG. وتُستخدم بايتات ملف SVG نفسه بدلًا منها في ثلاث حالات: حين تكون النسخة الأصلية مفقودة، أو حين لا تكون ملف PDF، أو حين يكون الحبر الواحد مفعّلًا (`diagramStyle.singleInk` يعيد تلوين شيفرة SVG وحدها).
+
+```ts
+const resources: Resource[] = [{
+  id: 'map', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'map.svg', width: 800, height: 600, pdfFileId: 'map.pdf' },
+}];
+const files = new Map([['map.svg', svgBytes], ['map.pdf', masterPdfBytes]]);
+const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
+  fontProvider,
+  resourceBytes: (fileId) => files.get(fileId),
+});
+```
+
+يمكن للمضيف أيضًا أن يعيد بايتات النسخة الأصلية لمعرّف ملف SVG نفسه، كما تفعل `bundleResourceBytes`؛ والطريقتان تعملان.
+
+### النص العمودي في ملف PDF
+
+تُرسم الصفحة العمودية (`layout.writingMode: 'vertical-rl'`) عبر إطار مُدار ربع دورة، كما ترسمها Canvas، ويُنضَّد نصها نزولًا في العمود:
+
+- **الحروف القائمة** تُعرض عبر خط Type0 ثانٍ من الملف المضمَّن نفسه: الخط CIDFont نفسه والعروض نفسها وجدول ToUnicode نفسه، مع `Encoding /Identity-V` (الوضع العمودي). كل سلسلة من الحروف كائن نصي واحد تتقدّم رسومه بنفسها مسافة em واحدة نزولًا في العمود (`DW2 [880 −1000]`)، فتحدّد برامج القراءة العمود وتستخرجه سطرًا واحدًا. تُشكَّل الرسوم بخاصيتَي OpenType المسمّاتين `vert` و`fwid`، ما يعطي الأقواس وعلامات الاقتباس وعلامات الوقف الصينية القارية وعلامات الحذف والشرطات أشكالها العمودية؛ والحرف الذي يقف قائمًا كما هو يحتفظ برسمه الأفقي. ولا يُضمَّن أي شيء من الخط مرتين.
+- **الكلمات اللاتينية والأعداد الطويلة** تجري جانبيًا بالخط الأفقي؛ و**العدد المنضَّد في خلية واحدة** يقف قائمًا، مضغوطًا عرضًا إلى مقدار em حين يكون أعرض منه؛ والعلامة التي ليس لها في الخط شكل عمودي تُدار أو تُزاح، كما في Canvas.
+- **التتبّع** بين الحروف يُكتب أعدادًا في `TJ`، وهي في الوضع العمودي تحرّك القلم نزولًا في العمود.
+- **كل سطر عمودي** يُعلَّم بـ `/ActualText` يحمل نصه، فيقرؤه النسخ واستخراج النص كما كُتب. يقرأ `pdftotext` وpdf.js الأعمدة من الأعلى إلى الأسفل ومن اليمين إلى اليسار؛ ويبدأ pdf.js سطرًا جديدًا عند عدد منضَّد في خلية واحدة.
+- **الروابط والإشارات المرجعية والوجهات** تُسقَط على الورقة: الرابط فوق سطر عمودي مستطيل طويل رفيع، والإشارة المرجعية تفتح الصفحة عند أعلى عمود عنوانها.
+- **ملف PDF الموسوم** (tagged) يصرّح بنمط الكتابة في عنصره `Document` (السمة `WritingMode /TbRl` من سمات Layout، وترثها كل العناصر)؛ ويجتاز الفصل العمودي التحقق من PDF/UA-1 (veraPDF).
+- **برامج العرض:** تعرض Acrobat وPreview وChrome (PDFium) وpdf.js وPoppler الخطوط العمودية. والكتاب المجلّد من اليمين (`page.binding`) يطلب أيضًا من برامج العرض أن تعرض صفحاته المتقابلة من اليمين إلى اليسار (`/Direction /R2L`، `/PageLayout /TwoPageRight`)؛ وتلتزم بذلك Acrobat وFoxit، ولا يلتزم به Chrome.
+
+يبلغ حجم فصل من 43 صفحة منضَّد بخط Noto Serif TC (حروف الكتاب، TrueType) نحو 820 KB، معظمها للمجموعتين الفرعيتين من الخط.
+
+### الروابط في ملف PDF
+
+تصبح كلمات رابط Markdown (انظر [صيغة المستند › الروابط](/ar/docs/document-format-inline#الروابط)) تعليقات روابط توضيحية (annotations) من نوع URI، واحدًا لكل سلسلة من الكلمات المرتبطة في السطر. يغطي كل منها صندوق السطر، ولا إطار له. وفي الإنتاج الميسَّر الوصول، تكون كل سلسلة عنصر `Link` قيمة `/Contents` فيه هي نصه. لا تُربط إلا الوجهات المطلقة `http:` و`https:` و`mailto:` و`tel:` و`ftp:`، لأن عنوان URL النسبي لا أساس له داخل ملف PDF. وتُرمَّز الحروف الواقعة خارج ASCII القابل للطباعة بترميز النسبة المئوية. وتحتفظ استشهادات `:ref` وصفوف جدول المحتويات بروابطها داخل المستند.
+
+### مثال كامل في المتصفح: البناء والإنتاج والتنزيل
+
+بجمع كل ما سبق: ابنِ شجرة VDT، وأنتج ملف PDF، وأطلق تنزيلًا من المتصفح:
+
+```tsx
+import { buildDocument, createMeasurementCache } from 'postext';
+import { renderToPdf } from 'postext-pdf';
+import { createPdfFontProvider } from './pdfFontProvider';
+
+const fontProvider = createPdfFontProvider();
+
+export async function downloadPdf(markdown: string, config: PostextConfig) {
+  const cache = createMeasurementCache();
+  const vdt = buildDocument({ markdown }, config, cache);
+
+  const bytes = await renderToPdf(vdt, { fontProvider });
+
+  const blob = new Blob([bytes.slice().buffer], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+```
+
+**مهم:** استدعِ `ensureConfigFontsLoaded(config)` (أو ما يعادلها) *قبل* `buildDocument` حين تشير إعداداتك إلى خطوط ويب. يُقاس الإخراج بمقاييس الخط المتوفرة لدى المتصفح لتلك العائلة في تلك اللحظة؛ فإن لم يصل الخط الحقيقي بعد، قيست شجرة VDT بخط بديل ولن يطابق ملف PDF مخرجات Canvas أو HTML. يفعل Sandbox ذلك صراحةً قبل كل إنتاج (انظر `packages/postext-sandbox/src/viewport/PdfViewport.tsx`).
+
+### مثال حي: ملف PDF في المتصفح
+
+المسار الكامل أعلاه، يعمل في المتصفح: يستورد هذا المثال على CodePen الحزمتين `postext` و`postext-pdf` من شبكة CDN، ويحمّل خطوط الويب، ويبني المستند، ويضمّن وجوه Fontsource عبر مزوّد الخطوط، ويسلّم البايتات إلى رابط يفتح الملف في تبويب جديد، وإلى رابط تنزيل. ولملف PDF الناتج فواصل الأسطر نفسها التي في مخرجات Canvas وHTML، وخطوط حقيقية مضمَّنة، وإشارات مرجعية في المخطط التفصيلي.
+
+<CodePenExample name="render-pdf" title="Postext · توليد ملف PDF في المتصفح" description="نضّد مستند Markdown باستخدام postext وأنتج منه ملف PDF باستخدام postext-pdf." height={600} />
+
+### إنتاج ملف PDF في عامل
+
+تنقل `postext-pdf/worker` الدالة `renderToPdf` خارج الخيط الرئيسي. يكتب العامل النص والأشكال المتجهية وشجرة البنية والملف نفسه. وتحتاج مهمتان إلى الصفحة، فيطلبهما العامل من الخيط الرئيسي: جلب الخطوط، وتحويل SVG إلى صورة نقطية عبر `<img>`. ففي كتاب من مئات الصفحات يستغرق الإنتاج ثواني كانت ستجمّد الصفحة لولا ذلك؛ أما لبضع صفحات فاستدعاء `renderToPdf` مباشرةً أبسط.
+
+```ts
+import { createPdfWorker } from 'postext-pdf/worker';
+
+const pdfWorker = createPdfWorker();
+const bytes = await pdfWorker.render(docs, {
+  fontProvider,                                     // runs on this thread
+  resourceBytes: new Map([['map.svg', svgBytes]]),  // a Map; its buffers move to the worker
+  onProgress: ({ phase, pages, totalPages }) => showProgress(phase, pages, totalPages),
+  onWarning: (w) => console.info(w.message),
+});
+pdfWorker.dispose();
+```
+
+- تأخذ `render(docs, options)` مستندًا واحدًا أو مصفوفة مستندات فصول كتاب. وتأخذ خيارات `renderToPdf`، مع فرقين. فـ `resourceBytes` هنا `Map<string, Uint8Array>` تُنقل مخازنها المؤقتة (buffers) إلى العامل، فمرّر نسخًا من البايتات التي تحتفظ بها. و`rasterizeSvg`، إن أُعطيت، تعمل على الخيط الرئيسي؛ وافتراضيًا يتولى المهمة `Image` ولوحة canvas الخاصان بالصفحة.
+- المقبض الواحد يُنتج مستندًا واحدًا في كل مرة. وتُنهي `dispose()` العامل وترفض أي إنتاج لا يزال معلّقًا.
+- تأخذ `createPdfWorker({ worker })` كائن `Worker` تنشئه أنت، لأدوات البناء التي تتحكم في عناوين العمّال. ويجب أن يشغّل ذلك العامل `postext-pdf/worker/entry`.
+
+**من شبكة CDN.** افتراضيًا يُحمَّل سكربت العامل من عنوان الحزمة نفسها (`new URL('./pdf.worker.js', import.meta.url)`). وقد لا تستطيع صفحة على أصل (origin) آخر تشغيله: فعند الاستيراد من `esm.sh`، ترمي `createPdfWorker()` الخطأ `Failed to construct 'Worker': Script at 'https://esm.sh/postext-pdf@…/pdf.worker.js' cannot be accessed from origin …`. شغّل بدلًا من ذلك عامل وحدة (module worker) من الأصل نفسه يستورد نقطة الدخول (وإن ثبّتّ إصدارًا، فثبّت الإصدار نفسه في العنوانين):
+
+```js
+import { createPdfWorker } from 'https://esm.sh/postext-pdf/worker';
+
+const entry = URL.createObjectURL(new Blob(
+  ["import 'https://esm.sh/postext-pdf/worker/entry';"],
+  { type: 'text/javascript' },
+));
+const pdfWorker = createPdfWorker({ worker: new Worker(entry, { type: 'module' }) });
+```
+
+ويحتاج عامل الإخراج من `postext/worker` إلى الغلاف نفسه حول `postext/worker/entry` (انظر [تشغيل الإخراج في عامل ويب](/ar/docs/configuration-programmatic-usage#تشغيل-الإخراج-في-web-worker)).
+
+### ملفات PDF جاهزة للطباعة
+
+لسير عمل الطباعة الإنتاجية، اضبط خيارات الإعدادات هذه قبل الإنتاج:
+
+- **`page.cutLines.enabled: true`** — يضيف منطقة النزف وعلامات القص حول حدّ القص، ويعطي كل صفحة TrimBox وBleedBox. انظر [خطوط القص](/ar/docs/configuration-page-layout#خطوط-القص).
+- **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`** (أو `'pdfx1a'`) — ملف PDF/X فيه نية الإخراج والتعريف والمربعات التي تتحقق منها المطبعة؛ ويُفصَل كل لون وكل صورة RGB عبر ملف تعريف ICC، ويُطبع الأسود 100% K فوق الألوان، وتُطبع المساحات السوداء الكبيرة بالأسود الغني. انظر [الإنتاج الطباعي (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#الإنتاج-الطباعي-الإعدادات).
+- **`colorSpace: 'cmyk'`** (أو `pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`) — الفصل نفسه من غير تعريف PDF/X (وعلامات القص بلون التسجيل دائمًا). وتُضمَّن نسخ PDF الأصلية للطباعة كما هي.
+- **`page.dpi: 300`** — عدد بكسلات الإخراج في البوصة: الصورة النقطية التي ليست لها دقة خاصة بها تُطبع بهذه الدقة بمقاسها الطبيعي. ويبلّغ [الفحص قبل الطباعة](/ar/docs/configuration-fonts-colors-viewers#الفحص-قبل-الطباعة) عن الصور التي تقل دقتها عن 300 ppi بحجمها المطبوع.
+- **`ColorValue.cmyk`** — يُطبع اللون المعرّف بقيم CMYK بقيمه الدقيقة.
+- **`{ pageNegative: true }`** في `RenderToPdfOptions` — يعكس منطقة حدّ القص باستخدام نمط الدمج Difference (وتبقى علامات القص غير معكوسة). مفيد لفحوص ما قبل الطباعة (preflight) على الطباعة الداكنة فوق الفاتح.
+
+### التنفيذ المرجعي
+
+يربط مكوّن `PdfViewport` في Sandbox (`packages/postext-sandbox/src/viewport/PdfViewport.tsx`) القطع أعلاه في معاينة حية بأزرار لإعادة التوليد والتنزيل والطباعة، وهو نقطة انطلاق جيدة لأي دمج لـ PDF داخل المتصفح. يبني شجرة VDT عبر عامل الإخراج المشترك (انظر [تشغيل الإخراج في عامل ويب](/ar/docs/configuration-programmatic-usage#تشغيل-الإخراج-في-web-worker))، فلا يجمّد النقر على *إعادة الحساب* الواجهةَ أثناء عمل المسار؛ ولا يتولى الخيط الرئيسي إلا `renderToPdf` (وهي سريعة أصلًا متى وُجدت شجرة VDT).

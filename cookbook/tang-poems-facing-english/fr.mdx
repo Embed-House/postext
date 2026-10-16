@@ -16,7 +16,7 @@ Un petit recueil bilingue de poèmes Tang, composé comme les éditions en texte
 
 ### 1 · Un style de titre pour chaque côté de la double page
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est formé de deux titres de niveau 1 : `# Night Thoughts {style="en" …}` avec les vers de Giles, puis `# 靜夜思 {style="zh" …}` avec le poème. Le style `en` saute à la page paire suivante, un verso ; le style `zh` à la page impaire suivante, le recto en face. Tant que chaque poème tient sur sa page, aucune page blanche ne s’insère ; une version anglaise trop longue repousserait son original au recto suivant, derrière un verso blanc ([saut avant](/fr/docs/configuration-text#saut-avant)). Les deux maquettes réservent six lignes de la grille : l’anglais et le chinois commencent donc sur la même ligne. Le style chinois a `span: 'page'` parce que son premier élément, une boîte de la taille de la page, est le feuillet teinté, et qu’une maquette gardée dans la colonne s’arrête au pied de la colonne ([largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)).
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est formé de deux titres de niveau 1 : `# Night Thoughts {style="en" …}` avec les vers de Giles, puis `# 靜夜思 {style="zh" …}` avec le poème. Le style `en` saute à la page paire suivante, un verso ; le style `zh` à la page impaire suivante, le recto en face. Tant que chaque poème tient sur sa page, aucune page blanche ne s’insère ; une version anglaise trop longue repousserait son original au recto suivant, derrière un verso blanc ([saut avant](/fr/docs/configuration-headings#saut-avant)). Les deux maquettes réservent six lignes de la grille : l’anglais et le chinois commencent donc sur la même ligne. Le style chinois a `span: 'page'` parce que son premier élément, une boîte de la taille de la page, est le feuillet teinté, et qu’une maquette gardée dans la colonne s’arrête au pied de la colonne ([largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Page 2 : l’anglais ouvre le verso six lignes plus bas, sur la ligne de grille où le chinois s’ouvre en page 3." />
 
@@ -36,7 +36,7 @@ Les gloses sont des notes de bas de page, une par rangée : `疑是地上霜。
 
 <Excerpt region="heads" />
 
-Chaque page de ce livre s’ouvre sur un titre : chaque page est donc une ouverture, et les titres courants utilisent `pages: 'opener'`. Une page blanche ajoutée par un saut resterait nue, et la page de titre les efface par un en-tête vide qui lui est propre. Le verso prend le titre du livre dans le `subtitle` du frontmatter, que chaque édition écrit dans sa langue ; le recto prend le nom du poète dans l’attribut `name` du titre chinois ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)).
+Chaque page de ce livre s’ouvre sur un titre : chaque page est donc une ouverture, et les titres courants utilisent `pages: 'opener'`. Une page blanche ajoutée par un saut resterait nue, et la page de titre les efface par un en-tête vide qui lui est propre. Le verso prend le titre du livre dans le `subtitle` du frontmatter, que chaque édition écrit dans sa langue ; le recto prend le nom du poète dans l’attribut `name` du titre chinois ([en-têtes et pieds de page](/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page)).
 
 ### 5 · Une page de titre sur une lune
 
@@ -48,7 +48,7 @@ La page de titre est elle aussi un style de titre, avec `runningChapter: false` 
 
 <Excerpt region="voices" />
 
-Fontsource découpe chaque caractère chinois en une centaine de fichiers par plage de caractères, et `loadCjkFonts` ne télécharge que les fichiers dont son texte a besoin ([polices chinoises, japonaises et coréennes](/fr/docs/configuration-programmatic-usage#polices-chinoises-japonaises-et-coréennes)). Le Kai reçoit les poèmes et le sceau, le Hei les lignes des poètes et les noms, le Song gras les quatre titres et les mots glosés des notes, et sa graisse noire les deux caractères de la page de titre.
+Fontsource découpe chaque caractère chinois en une centaine de fichiers par plage de caractères, et `loadCjkFonts` ne télécharge que les fichiers dont son texte a besoin ([polices chinoises, japonaises et coréennes](/fr/docs/configuration-pdf-output#polices-chinoises-japonaises-et-coréennes)). Le Kai reçoit les poèmes et le sceau, le Hei les lignes des poètes et les noms, le Song gras les quatre titres et les mots glosés des notes, et sa graisse noire les deux caractères de la page de titre.
 
 ## Variantes
 

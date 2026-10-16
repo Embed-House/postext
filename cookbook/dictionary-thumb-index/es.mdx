@@ -22,7 +22,7 @@ El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `TAB
 
 <Excerpt region="running-heads" />
 
-Las cabeceras son elementos de texto anclados a la página y filtrados por `parity` y por `pages: 'body'` ([elementos de texto](/es/docs/configuration-page-layout#elementos-de-texto)). El título de la página 1 abarca las dos columnas, y eso la convierte en página de apertura. Las cabeceras no salen en ella, y su folio lo pone el pie, un elemento con `pages: 'opener'` que se imprime 6 mm por debajo de la caja. En las impares, `{chapterTitle}` imprime la letra del último título de nivel 1 que hay en la página o antes de ella, *Letra C*. `{firstMark.<clave>}` y `{lastMark.<clave>}` imprimen en su lugar el primer y el último lema de la página, las palabras guía que llevan casi todos los diccionarios; esta receta conserva la letra, que es lo que indexan sus pestañas.
+Las cabeceras son elementos de texto anclados a la página y filtrados por `parity` y por `pages: 'body'` ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). El título de la página 1 abarca las dos columnas, y eso la convierte en página de apertura. Las cabeceras no salen en ella, y su folio lo pone el pie, un elemento con `pages: 'opener'` que se imprime 6 mm por debajo de la caja. En las impares, `{chapterTitle}` imprime la letra del último título de nivel 1 que hay en la página o antes de ella, *Letra C*. `{firstMark.<clave>}` y `{lastMark.<clave>}` imprimen en su lugar el primer y el último lema de la página, las palabras guía que llevan casi todos los diccionarios; esta receta conserva la letra, que es lo que indexan sus pestañas.
 
 ### 3 · Color para los lemas y nada más
 
@@ -40,7 +40,7 @@ Cada entrada es un párrafo de un bloque `:::paragraphs{style="entry"}`, con san
 
 <Excerpt region="title" />
 
-El estilo del título abarca la página con una banda que reúne el ancla, el nombre, un subtítulo y una firma tomados de atributos del título, y un filete doble ([span y diseño avanzado](/es/docs/configuration-text#span-y-diseño-avanzado)). El filete fino acaba 45,1 mm por debajo del borde superior de la caja, así que la banda se ajusta a 13 líneas de la rejilla, 47,7 mm. El filete de columna empieza debajo de la banda, en la línea donde empieza el texto de las dos columnas.
+El estilo del título abarca la página con una banda que reúne el ancla, el nombre, un subtítulo y una firma tomados de atributos del título, y un filete doble ([span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)). El filete fino acaba 45,1 mm por debajo del borde superior de la caja, así que la banda se ajusta a 13 líneas de la rejilla, 47,7 mm. El filete de columna empieza debajo de la banda, en la línea donde empieza el texto de las dos columnas.
 
 ## Variantes
 

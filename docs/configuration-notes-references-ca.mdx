@@ -6,8 +6,8 @@ export const metadata = {
   description: "Les notes a peu de pàgina, la numeració de línies, les referències creuades i les cites, l'índex de continguts i l'índex analític",
   lang: 'ca',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '29 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres de les parts del llibre que remeten a un altre lloc. Les notes van a peu de pàgina i els números de línia van al marge. Les referències creuades anomenen una figura, una secció o una pàgina, i les cites anomenen les obres que esmentes. L'índex de continguts enumera els capítols i l'índex analític, al final, enumera termes amb les seves pàgines. Cada secció explica l'aspecte d'aquestes peces i com es numeren.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Notes a peu de pàgina
 
-La propietat `footnotes` fixa on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen. El marcatge es descriu a [Format del document](/ca/docs/document-format#notes-a-peu-de-pàgina).
+La propietat `footnotes` fixa on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen. El marcatge es descriu a [Format del document](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina).
 
 ```ts
 interface FootnotesConfig {
@@ -50,9 +50,9 @@ interface FootnotesConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '160px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -256,9 +256,9 @@ interface LineNumbersConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '160px' }}>Propietat</th>
-      <th style={{ width: '200px' }}>Tipus</th>
-      <th style={{ width: '160px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -378,7 +378,7 @@ Què es compta i què no:
 
 - **No es compten mai** els encapçalaments, els peus, les taules i les imatges, les fórmules en bloc, el text de disseny (obertures, capçaleres), les notes a peu de pàgina i les notes de final de capítol, l'índex de continguts, les entrades de l'índex alfabètic i de la bibliografia, ni les pàgines en blanc.
 - **Requadres i prosa.** El text d'un requadre no es compta, i amb `count: 'verse'` tampoc la prosa, llevat que l'estil de paràgraf amb què es compon digui `lineNumbers: true`; un estil amb `lineNumbers: false` no es compta mai (vegeu [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf)).
-- **Un poema.** L'obertura d'un poema admet `numbered=false` (els seus versos no es compten), `lineStart=N` (el seu primer vers és l'N, i el compte torna a començar aquí) i `interval=N`. `:::numbering{lines=N}` dona el número N a la línia comptada següent, sigui on sigui. Vegeu [Format del document › `:::verse`](/ca/docs/document-format#verse) i [`:::numbering`](/ca/docs/document-format#numbering).
+- **Un poema.** L'obertura d'un poema admet `numbered=false` (els seus versos no es compten), `lineStart=N` (el seu primer vers és l'N, i el compte torna a començar aquí) i `interval=N`. `:::numbering{lines=N}` dona el número N a la línia comptada següent, sigui on sigui. Vegeu [Format del document › `:::verse`](/ca/docs/document-format-directives#verse) i [`:::numbering`](/ca/docs/document-format-directives#numbering).
 
 En un llibre compost capítol a capítol, `restart: 'document'` porta el compte d'un capítol al següent a `continuation.lineNumber`. `continuationAfter` compta els versos a partir del text; amb `count: 'all'` el compte depèn de la composició, així que l'aplicació passa el `lastLineNumber` del document del capítol anterior, com fa el Sandbox.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // font, pes i c
 
 ## Referències creuades
 
-La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que pren un `:ref` que no n'indica cap. Cada plantilla porta `{n}` on va el número; una que no el porta rep el número després d'un espai no separable (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
+La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format-notes-references#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que pren un `:ref` que no n'indica cap. Cada plantilla porta `{n}` on va el número; una que no el porta rep el número després d'un espai no separable (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
 
 ```ts
 interface CrossRefsConfig {
@@ -414,9 +414,9 @@ interface CrossRefsConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '160px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Deixa que una línia es talli pels espais d'una referència el rètol de la qual són paraules: el text d'una àncora <code>[paraules]{'{#id}'}</code>, el text d'un títol o el títol d'una caixa, un <code>text="…"</code> propi (també en una referència a una figura o a una taula). Els espais del rètol s'estiren i s'encongeixen llavors amb la línia, i la referència continua sent un sol enllaç; les seves paraules no es parteixen amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior (<code>Fig. 1a</code>, <code>làmina IV</code>). Un rètol amb un número o una pàgina (<em>secció 3.2</em>, <em>pàg. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no es talla mai, ni tan sols quan la seva plantilla porta un espai normal. <code>false</code> compon cada rètol com una sola paraula, sense cap tall de línia a dins, com fins a postext 1.27. Una configuració desada abans de <code>configVersion</code> 12 el text de la qual conté una referència es llegeix amb <code>false</code>, així que les seves línies es queden on eren (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
+      <td>Deixa que una línia es talli pels espais d'una referència el rètol de la qual són paraules: el text d'una àncora <code>[paraules]{'{#id}'}</code>, el text d'un títol o el títol d'una caixa, un <code>text="…"</code> propi (també en una referència a una figura o a una taula). Els espais del rètol s'estiren i s'encongeixen llavors amb la línia, i la referència continua sent un sol enllaç; les seves paraules no es parteixen amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior (<code>Fig. 1a</code>, <code>làmina IV</code>). Un rètol amb un número o una pàgina (<em>secció 3.2</em>, <em>pàg. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no es talla mai, ni tan sols quan la seva plantilla porta un espai normal. <code>false</code> compon cada rètol com una sola paraula, sense cap tall de línia a dins, com fins a postext 1.27. Una configuració desada abans de <code>configVersion</code> 12 el text de la qual conté una referència es llegeix amb <code>false</code>, així que les seves línies es queden on eren (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ Les referències prenen el color, el pes i la inclinació de totes les referènc
 
 ## Cites
 
-La propietat `citations` tria l'estil de cita i com es veuen les cites i la bibliografia. El marcatge es descriu a [Cites i bibliografia](/ca/docs/document-format#citacions-i-bibliografia); l'estil l'aplica el paquet `postext-citeproc`.
+La propietat `citations` tria l'estil de cita i com es veuen les cites i la bibliografia. El marcatge es descriu a [Cites i bibliografia](/ca/docs/document-format-notes-references#citacions-i-bibliografia); l'estil l'aplica el paquet `postext-citeproc`.
 
 ```ts
 interface CitationsConfig {
@@ -491,9 +491,9 @@ interface CitationsConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>L'id d'un estil inclòs (vegeu <a href="/ca/docs/document-format#estils">Estils</a>) o <code>'custom'</code>. L'estil decideix el que diuen les cites i les entrades: noms, dates, ordre, puntuació i si les cites són notes.</td>
+      <td>L'id d'un estil inclòs (vegeu <a href="/ca/docs/document-format-notes-references#estils">Estils</a>) o <code>'custom'</code>. L'estil decideix el que diuen les cites i les entrades: noms, dates, ordre, puntuació i si les cites són notes.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet que el diccionari divideixi els noms dels autors citats. <code>false</code> deixa sencer el cognom de cada persona de les referències (autors, editors, traductors) i tot nom donat com una sola cadena, allà on aparegui amb la seva majúscula: en una citació, en el text corregut i a la llista, de manera que cap línia no acaba en <code>(Lup-</code>. Un cognom doble es llegeix part per part, i un autor que es diu Baker no deixa sencera la paraula <code>baker</code>. Vegeu <a href="/ca/docs/configuration-text#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+      <td>Permet que el diccionari divideixi els noms dels autors citats. <code>false</code> deixa sencer el cognom de cada persona de les referències (autors, editors, traductors) i tot nom donat com una sola cadena, allà on aparegui amb la seva majúscula: en una citació, en el text corregut i a la llista, de manera que cap línia no acaba en <code>(Lup-</code>. Un cognom doble es llegeix part per part, i un autor que es diu Baker no deixa sencera la paraula <code>baker</code>. Vegeu <a href="/ca/docs/configuration-language#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -628,7 +628,7 @@ interface CitationsConfig {
 </table>
 ## Índex de continguts
 
-La propietat `toc` configura el que imprimeix una directiva `:::toc` (vegeu [Format del document](/ca/docs/document-format#toc)). L'índex es munta a partir de l'**esquema** del document — cada encapçalament amb el seu número i la seva etiqueta de pàgina, cada `:::part` — de manera que segueix els capítols: canvia el nom d'un, mou-lo a una altra part, canvia'n els autors, i les entrades canvien amb ell. Una entrada és el número de l'encapçalament en una columna pròpia, el títol, una línia de punts i l'etiqueta de pàgina a la vora dreta, i després una línia de subtítol opcional; una part és una fila dissenyada per `parts.design`.
+La propietat `toc` configura el que imprimeix una directiva `:::toc` (vegeu [Format del document](/ca/docs/document-format-directives#toc)). L'índex es munta a partir de l'**esquema** del document — cada encapçalament amb el seu número i la seva etiqueta de pàgina, cada `:::part` — de manera que segueix els capítols: canvia el nom d'un, mou-lo a una altra part, canvia'n els autors, i les entrades canvien amb ell. Una entrada és el número de l'encapçalament en una columna pròpia, el títol, una línia de punts i l'etiqueta de pàgina a la vora dreta, i després una línia de subtítol opcional; una part és una fila dissenyada per `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -650,9 +650,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -711,6 +711,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Alçada de la fila i espai al seu voltant. <code>em</code> és el cos del text, així que la fila per defecte fa el doble del cos, no dues línies de text: amb un text de 9,5/13,5 pt fa 19 pt. Per a una fila de dues línies de text, dona l'alçada en <code>pt</code> (<code>27pt</code> en aquest cas).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Manté cada bloc de l'índex en una sola columna i pàgina: una fila de capçalera (vegeu <code>groups.head</code>) i totes les entrades que en depenen, fins a la capçalera següent del mateix rang o d'un de superior. Un bloc que no cap a l'espai que queda a la seva columna passa a la columna o la pàgina següent amb la seva fila de capçalera, i la columna que deixa acaba curta. Els encapçalaments que hi ha just damunt de l'índex (el seu propi títol) se'n van amb el primer bloc quan aquest es mou. Un bloc més alt que una columna sencera es parteix: comença on hi caben la capçalera i <code>groups.minEntriesAfterHead</code> entrades, i cada columna on continua s'obre de nou amb la seva fila de capçalera (<code>groups.continuation</code>). Cada bloc partit entre columnes es notifica amb un avís <code>tocGroupSplit</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#avisos-del-document">Avisos del document</a>). Un <code>:::toc{'{keep="…"}'}</code> el substitueix en un índex concret (vegeu <a href="/ca/docs/document-format-directives#toc">Format del document</a>). Des de postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Què encapçala un bloc: una fila de part (<code>'part'</code>: una part i els seus capítols) o l'entrada d'un nivell d'encapçalament (<code>1</code>: un capítol i les seves seccions; perquè hi surtin les seccions, <code>levels</code> o <code>:::toc{'{levels="1-2"}'}</code> les han de llistar). Amb un nivell d'encapçalament, la fila de part que hi ha just damunt de la capçalera va amb el seu bloc, de manera que una fila de part mai no queda sola al peu d'una columna; les entrades de rang superior al de la capçalera (un capítol quan la capçalera és <code>2</code>) van soltes. Una capçalera sense entrades a sota no forma bloc. Qualsevol altre valor es llegeix com <code>'part'</code> i es notifica.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>El mínim d'entrades que un bloc partit manté amb la seva fila de capçalera: si la capçalera i aquestes entrades no hi caben a l'espai que queda, el bloc comença a la columna següent. Amb <code>0</code>, una capçalera pot tancar sola una columna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>objecte</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La fila de capçalera que es repeteix al principi de cada columna on continua un bloc partit: el número i el títol seguits de <code>mark</code>, en cursiva, sense línia de punts ni número de pàgina (en una fila de part, la marca forma part de <code>{'{titleText}'}</code>, composta amb la tipografia del mateix disseny, i <code>{'{pageNumber}'}</code> no imprimeix res). Per defecte, <code>mark</code> és el sufix de taula continuada de la llengua del document: <em>(cont.)</em> en anglès, castellà, català i portuguès, <em>(suite)</em> en francès, <em>(Forts.)</em> en alemany, <em>(segue)</em> en italià, <em>（续）</em> en xinès, <em>（続き）</em> en japonès i <em>(تابع)</em> en àrab. Una marca que comença per un caràcter d'amplada completa va enganxada al títol. La repetició queda fora de la navegació de l'EPUB i de l'índex de l'EPUB de maquetació fluida. <code>enabled: false</code> parteix el bloc sense repetir la capçalera.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -718,7 +742,7 @@ Les etiquetes de pàgina són les que imprimeix el document. `buildDocument()` t
 
 ## Índex analític
 
-La propietat `index` configura el que imprimeix una directiva `:::index` (vegeu [Format del document](/ca/docs/document-format#índex-analític)): els termes marcats amb `:index[…]` i `:index{term="…"}` al text, ordenats, agrupats per inicial (en xinès, per la inicial del pinyin o per traços, i en japonès per files del gojūon; vegeu `groupBy`) i cadascun amb les pàgines on cau. Una entrada és el seu terme, un separador i els seus números de pàgina; al darrere van les seves subentrades, amb un pas de sagnat per nivell, i les línies que continuen una entrada pengen `turnoverIndent` per no alinear-se mai amb una subentrada.
+La propietat `index` configura el que imprimeix una directiva `:::index` (vegeu [Format del document](/ca/docs/document-format-notes-references#índex-analític)): els termes marcats amb `:index[…]` i `:index{term="…"}` al text, ordenats, agrupats per inicial (en xinès, per la inicial del pinyin o per traços, i en japonès per files del gojūon; vegeu `groupBy`) i cadascun amb les pàgines on cau. Una entrada és el seu terme, un separador i els seus números de pàgina; al darrere van les seves subentrades, amb un pas de sagnat per nivell, i les línies que continuen una entrada pengen `turnoverIndent` per no alinear-se mai amb una subentrada.
 
 ```ts
 const config: PostextConfig = {
@@ -738,9 +762,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>

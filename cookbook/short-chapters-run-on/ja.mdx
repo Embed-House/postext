@@ -18,7 +18,7 @@ pageNotes: { "1": "表紙。プラムの帯にクリーム色の大文字で「M
 
 <Excerpt region="answer" highlight="17-24" />
 
-章のレベルでは改ページをオフにし、`marginTop`で各見出しを前の章の最終行から2行下に置きます。そのデザインには`span`がないので、見出しは段の中に3行分の深さのブロックとして描かれ、その下の本文はグリッドに乗ったままです（[前で改ページ](/ja/docs/configuration-text#前で改ページ)、[幅と詳細デザイン](/ja/docs/configuration-text#幅と詳細デザイン)）。ページをまたぐときの保持の規則は既定値のままです。CXIXとCXXIの下にある4行の段落は、それぞれページの下端に2行を残し、2行を次のページへ送ります。`avoidOrphans: false`にすると3行と1行に分かれ、214ページと215ページは1行だけで始まります（[オーファン、ウィドウ、ラント](/ja/docs/configuration-text#オーファンウィドウラント分割禁止の規則)）。段末そろえがCXIXの上に3行目の空きを加え、213ページが33行目で終わるようにします（[段末そろえ](/ja/docs/configuration-text#段末そろえ)）。
+章のレベルでは改ページをオフにし、`marginTop`で各見出しを前の章の最終行から2行下に置きます。そのデザインには`span`がないので、見出しは段の中に3行分の深さのブロックとして描かれ、その下の本文はグリッドに乗ったままです（[前で改ページ](/ja/docs/configuration-headings#前で改ページ)、[幅と詳細デザイン](/ja/docs/configuration-headings#幅と詳細デザイン)）。ページをまたぐときの保持の規則は既定値のままです。CXIXとCXXIの下にある4行の段落は、それぞれページの下端に2行を残し、2行を次のページへ送ります。`avoidOrphans: false`にすると3行と1行に分かれ、214ページと215ページは1行だけで始まります（[オーファン、ウィドウ、ラント](/ja/docs/configuration-page-flow#オーファンウィドウラント分割禁止の規則)）。段末そろえがCXIXの上に3行目の空きを加え、213ページが33行目で終わるようにします（[段末そろえ](/ja/docs/configuration-page-flow#段末そろえ)）。
 
 <PageShot page={3} crop="0,.683,1,.317" caption="213ページ。第CXIX章はCXVIIIの終わりから3行下で始まり、ページの下端に本文の2行を保ちます。" />
 
@@ -32,7 +32,7 @@ pageNotes: { "1": "表紙。プラムの帯にクリーム色の大文字で「M
 
 <Excerpt region="heads" />
 
-`{title}`はフロントマターの題を、`{chapterTitle}`はそのページかそれより前で始まった最後の章を印刷します。そのため217ページの柱は216ページで始まったCXXIIIの名を示します（[テキスト要素](/ja/docs/configuration-page-layout#テキスト要素)）。213ページの柱は、最初の25行でCXVIIIを締めくくっているにもかかわらず、下端で始まるCXIXの名を示します。`{chapterTitleAtTop}`ならページの頭が属する章を示しますが、この抜粋にはCXVIIIの見出しがありません。`SHIFT`は柱を版面の中央へ移します。のどの余白が小口より2mm広いので、ページの中央から1mmずれます。
+`{title}`はフロントマターの題を、`{chapterTitle}`はそのページかそれより前で始まった最後の章を印刷します。そのため217ページの柱は216ページで始まったCXXIIIの名を示します（[テキスト要素](/ja/docs/configuration-headers-footers#テキスト要素)）。213ページの柱は、最初の25行でCXVIIIを締めくくっているにもかかわらず、下端で始まるCXIXの名を示します。`{chapterTitleAtTop}`ならページの頭が属する章を示しますが、この抜粋にはCXVIIIの見出しがありません。`SHIFT`は柱を版面の中央へ移します。のどの余白が小口より2mm広いので、ページの中央から1mmずれます。
 
 ### 4 · 表紙と口絵を見出しとして描く
 
@@ -44,7 +44,7 @@ pageNotes: { "1": "表紙。プラムの帯にクリーム色の大文字で「M
 
 <Excerpt region="excerpt" />
 
-`continuation.headings`は、抜粋が始まる時点の見出しのカウンターを与えます。`h1: 118`で最初の番号付き見出しが第CXIX章になります。これがないと5つの章はIからVと番号が振られます。章のレベルの`numberingTemplate: '{1:I}'`がその番号をローマ数字にし、デザインは`{number}`でそれを印刷します。表紙の改ページの後にある`:::numbering{startAt=212}`は、口絵を212、本文のページを213から217とします（[番号付け](/ja/docs/document-format#numbering)）。
+`continuation.headings`は、抜粋が始まる時点の見出しのカウンターを与えます。`h1: 118`で最初の番号付き見出しが第CXIX章になります。これがないと5つの章はIからVと番号が振られます。章のレベルの`numberingTemplate: '{1:I}'`がその番号をローマ数字にし、デザインは`{number}`でそれを印刷します。表紙の改ページの後にある`:::numbering{startAt=212}`は、口絵を212、本文のページを213から217とします（[番号付け](/ja/docs/document-format-directives#numbering)）。
 
 ## アレンジ
 

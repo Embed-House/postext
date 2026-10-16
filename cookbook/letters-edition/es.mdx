@@ -22,13 +22,13 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. Cada carta es
 
 <Excerpt region="letters" />
 
-Con `breakBefore` desactivado, cada carta empieza dos líneas de la rejilla (`marginTop`) por debajo de aquella en la que termina la anterior. En la <PageRef page={4}>página 4</PageRef>, la posdata, con 12,6 pt de interlineado, acaba entre dos líneas de la rejilla, y sobre la carta III quedan unas tres líneas en blanco. En la página 2, la carta I llega hasta el pie y la II abre la página 3. Con el valor por defecto del nivel 1, cada carta empezaría en página impar ([saltar antes](/es/docs/configuration-text#saltar-antes)). `numberingTemplate: '{1:I}'` numera las cartas de la I a la III, y el encabezamiento imprime el numeral con `{number}`.
+Con `breakBefore` desactivado, cada carta empieza dos líneas de la rejilla (`marginTop`) por debajo de aquella en la que termina la anterior. En la <PageRef page={4}>página 4</PageRef>, la posdata, con 12,6 pt de interlineado, acaba entre dos líneas de la rejilla, y sobre la carta III quedan unas tres líneas en blanco. En la página 2, la carta I llega hasta el pie y la II abre la página 3. Con el valor por defecto del nivel 1, cada carta empezaría en página impar ([saltar antes](/es/docs/configuration-headings#saltar-antes)). `numberingTemplate: '{1:I}'` numera las cartas de la I a la III, y el encabezamiento imprime el numeral con `{number}`.
 
 ### 3 · La fecha de la carta en la cabecera impar
 
 <Excerpt region="running-heads" />
 
-En una cabecera, `{attr.date}` toma el atributo del último título de nivel 1 que empieza en esa página o antes. La página 3 lleva 12 juin 1740, y la 5, donde sigue la carta de Voltaire empezada en la 4, lleva 1er avril 1778 con la terminación volada ([elementos de texto](/es/docs/configuration-page-layout#elementos-de-texto)). Las cabeceras van 12 mm por debajo del borde superior de la página, con el folio en el margen exterior y el texto 8 mm más adentro. `pages: 'body'` las quita de la cubierta, que cuenta como página de apertura porque su título abarca el ancho de la página. La fecha va en la misma cursiva de Crimson Pro que la de la carta, y los nombres de la página par, en las versalitas de los números de carta.
+En una cabecera, `{attr.date}` toma el atributo del último título de nivel 1 que empieza en esa página o antes. La página 3 lleva 12 juin 1740, y la 5, donde sigue la carta de Voltaire empezada en la 4, lleva 1er avril 1778 con la terminación volada ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). Las cabeceras van 12 mm por debajo del borde superior de la página, con el folio en el margen exterior y el texto 8 mm más adentro. `pages: 'body'` las quita de la cubierta, que cuenta como página de apertura porque su título abarca el ancho de la página. La fecha va en la misma cursiva de Crimson Pro que la de la carta, y los nombres de la página par, en las versalitas de los números de carta.
 
 ### 4 · Haz de la cubierta un título
 

@@ -18,7 +18,7 @@ Der Anfang von Kapitel 1 der Jiaxu-Handschrift der *Geschichte des Steins*, der 
 
 Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine senkrechte Seite ist eine waagerechte Seite, um eine Vierteldrehung gedreht; so wird die Seitenspalte eines [anderthalbspaltigen Layouts](/de/docs/configuration-page-layout#layout-typen) zu einer Leiste quer über die Seite, und `sideColumnSide: 'left'` setzt diese Leiste an den Kopf ([Senkrechte Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) rundet `sideColumnPercent: 19` auf 10 Zeichen des Grundtexts, 120 pt, und den Spaltenabstand auf zwei; die Spaltenlinie wird zur Haarlinie zwischen Kommentaren und Text. Das Kommentarformat hat keinen Kasten: Kai zu 7 pt, 17 Zeichen je Spalte, eine Größe, bei der keiner der zehn Kommentare mit einer Spalte aus einem einzigen Zeichen endet, und `snapToGrid: false`, damit sich die Kommentare in ihrem eigenen Abstand von 10 pt stapeln statt in den 21 pt des Grundtexts.
 
-Beide Arten von Kommentar sind dort ausgezeichnet, wo die Handschrift sie hat. Ein Seitenkommentar ist ein Span [`:warichu[…]`](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu), den `cjk.warichu` einfärbt; ein Kopfstegkommentar ist ein Kasten, mit `span="side"` direkt vor der Passage eingefasst, die er bespricht:
+Beide Arten von Kommentar sind dort ausgezeichnet, wo die Handschrift sie hat. Ein Seitenkommentar ist ein Span [`:warichu[…]`](/de/docs/document-format-inline#chinesische-zeichen-ruby-und-warichu), den `cjk.warichu` einfärbt; ein Kopfstegkommentar ist ein Kasten, mit `span="side"` direkt vor der Passage eingefasst, die er bespricht:
 
 ```markdown
 :::callout{type="meipi" span="side"}
@@ -38,7 +38,7 @@ Auf einer senkrechten Seite wird ein Auftakt im Bezugsrahmen des Flusses angeleg
 
 <Excerpt region="fore-edge" />
 
-Das sind die Kolumnentitel am Außensteg aus [Senkrechte Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente): `anchor.to: 'outer'` ist der Rand fern vom Bund, in einem rechts gebundenen Buch links auf einer rechten und rechts auf einer linken Seite, und `writingMode: 'vertical-rl'` setzt den Text die Seite hinab. Der Satzspiegel schließt hier die Kommentarleiste ein; „vier Zeichen unter dem Kopf“ wird also ab der Oberkante der roten Kommentare gemessen. `trad-chinese-informal` druckt die Paginas 一 bis 六.
+Das sind die Kolumnentitel am Außensteg aus [Senkrechte Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente): `anchor.to: 'outer'` ist der Rand fern vom Bund, in einem rechts gebundenen Buch links auf einer rechten und rechts auf einer linken Seite, und `writingMode: 'vertical-rl'` setzt den Text die Seite hinab. Der Satzspiegel schließt hier die Kommentarleiste ein; „vier Zeichen unter dem Kopf“ wird also ab der Oberkante der roten Kommentare gemessen. `trad-chinese-informal` druckt die Paginas 一 bis 六.
 
 ### 4 · Jede Stimme mit dem Text laden, den sie setzt
 

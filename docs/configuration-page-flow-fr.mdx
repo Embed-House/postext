@@ -1,0 +1,390 @@
+{/* docs/configuration-page-flow-fr.mdx */}
+
+export const metadata = {
+  title: 'Configuration : veuves, orphelines et équilibrage',
+  sidebarTitle: 'Veuves, orphelines et équilibrage',
+  description: 'Les règles qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne, et les leviers qui font finir chaque colonne au même niveau',
+  lang: 'fr',
+  lastUpdated: '2026-10-16',
+  readingTime: '25 min',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "Cette page explique comment Postext décide de l’endroit où finit une colonne ou une page. Une ligne d’un paragraphe ne doit pas rester seule en haut ou en bas d’une colonne, et un titre ne doit pas être séparé de son texte. Ces règles peuvent laisser une colonne plus courte que les autres. Postext fait alors de petits changements, dans un ordre fixe, pour que toutes les colonnes finissent à la même hauteur. La page liste chaque règle et chaque changement, et explique comment voir lequel a servi.",
+};
+
+# Configuration : veuves, orphelines et équilibrage
+
+
+## Orphelines, veuves, lignes creuses et règles de maintien
+
+Voir [Césure et justification](/fr/docs/justification) pour le mécanisme de ces pénalités. Cette section est la référence des clés de `bodyText` qui les pilotent.
+
+Au-delà de la césure et des limites d’espacement, la configuration du texte courant expose les règles souples qui empêchent les coupures de paragraphe maladroites du point de vue de la structure. Toutes sont injectées comme pénalités (demerits) dans l’algorithme de coupure des lignes de Knuth-Plass : elles orientent la mise en page vers des coupures propres sans jamais imposer de règle stricte. Réglez les valeurs `*Penalty` sur `0` pour désactiver en pratique l’une d’entre elles.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>avoidOrphans</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Décourage un paragraphe de se terminer par moins de <code>orphanMinLines</code> lignes en haut de la colonne suivante. Sur une grille de caractères (<code>cjk.grid</code>) dans la région <code>japan</code>, la valeur par défaut est <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Nombre minimal de lignes exigées en haut de la colonne suivante quand un paragraphe est coupé. Actif seulement quand <code>avoidOrphans</code> vaut <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>orphanPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Pénalité ajoutée quand une contrainte d’orpheline n’est pas respectée. Des valeurs plus élevées orientent plus fortement l’algorithme contre les orphelines ; <code>0</code> désactive la pénalité.</td>
+    </tr>
+    <tr>
+      <td><code>avoidOrphansInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Avec <code>true</code>, les éléments de liste reçoivent aussi la protection contre les orphelines (pas seulement les paragraphes). Efficace seulement quand <code>avoidOrphans</code> vaut <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidows</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Décourage un paragraphe de commencer par moins de <code>widowMinLines</code> lignes en bas de la colonne en cours. Sur une grille de caractères (<code>cjk.grid</code>), la valeur par défaut est <code>false</code> : la page contient les lignes que compte sa grille.</td>
+    </tr>
+    <tr>
+      <td><code>widowMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Nombre minimal de lignes exigées en bas de la colonne en cours quand un paragraphe est coupé. Actif seulement quand <code>avoidWidows</code> vaut <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>widowPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Pénalité ajoutée quand une contrainte de veuve n’est pas respectée. <code>0</code> désactive la pénalité.</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidowsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Avec <code>true</code>, les éléments de liste reçoivent aussi la protection contre les veuves. Efficace seulement quand <code>avoidWidows</code> vaut <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Une liste courte coupée entre deux colonnes ou deux pages : une liste d’au plus <code>shortListMaxItems</code> éléments dans le texte courant, comme une liste de trois éléments composée 1 + 2. <code>avoidOrphansInLists</code> et <code>avoidWidowsInLists</code> gardent ensemble les lignes d’un élément ; cette règle garde ensemble les éléments d’une liste. <code>'allow'</code> coupe une telle liste là où la colonne se termine, comme toute autre. <code>'warn'</code> la met en page de la même façon et signale chaque liste coupée (un avertissement <code>shortListSplit</code>, voir <a href="/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document">Avertissements dans le document</a>). <code>'avoid'</code> compose la liste entière : quand elle ne tient pas dans ce que contient la colonne, elle ouvre la colonne suivante, et les titres juste au-dessus d’elle ainsi que la ligne à deux-points qui l’introduit (<code>keepColonWithList</code>) l’accompagnent. Une liste plus haute qu’une colonne vide est coupée comme toute autre, et signalée. Les listes à l’intérieur d’un <code>:::callout</code> suivent les règles de coupure propres de l’encadré, et les entrées de <code>:::toc</code> et de <code>:::index</code> ne sont pas des listes. Depuis postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Le nombre maximal d’éléments qu’une liste peut compter pour être courte au sens de <code>shortListSplit</code>, éléments de ses listes imbriquées compris. Un nombre entier, au moins 1. Depuis postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Décourage les paragraphes de se terminer par une dernière ligne très courte, une <em>ligne creuse</em> (fin de paragraphe trop courte), par exemple un seul mot court isolé. Le texte en drapeau aussi, avec <code>optimalRagged</code>. Un paragraphe chinois, japonais ou coréen ne se termine pas sur une ligne d’un seul caractère, seul ou avec ses signes fermants (孤字) : la ligne du dessus lui donne son dernier caractère quand cette ligne peut encore être justifiée dans la limite d’approche. Une ligne alignée à gauche, à droite ou centrée cède aussi le caractère et reste plus courte d’un caractère ; avec <code>cjk.grid.fullLines</code> (papier manuscrit), elle garde toutes ses cases, et le paragraphe peut se terminer sur un seul caractère.</td>
+    </tr>
+    <tr>
+      <td><code>runtMinCharacters</code></td>
+      <td><code>number</code></td>
+      <td><code>20</code></td>
+      <td>Seuil de la dernière ligne d’un paragraphe, compté en espaces entre les mots, pas en lettres : la ligne est creuse quand elle est plus étroite que <code>runtMinCharacters × normalSpaceWidth</code> pixels. Une espace entre les mots mesure d’un quart à un tiers de cadratin dans la plupart des caractères de texte, environ la moitié d’une lettre minuscule : la valeur par défaut de 20 détecte les dernières lignes de moins de 4 à 7 em, soit environ 8 à 12 lettres. Pour détecter les dernières lignes de moins d’environ N lettres, réglez-la vers 2 × N.</td>
+    </tr>
+    <tr>
+      <td><code>runtPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Équivalent de « badness » injecté dans la formule des pénalités au carré de Knuth–Plass (même échelle que la <em>badness</em> de ligne, qui sature à 10 000). <code>0</code> désactive la pénalité.</td>
+    </tr>
+    <tr>
+      <td><code>gradedRuntPenalty</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Module la pénalité de ligne creuse selon le manque de longueur de la dernière ligne : une dernière ligne de largeur <em>w</em> sous le seuil <em>t</em> coûte <code>runtPenalty × (1 − w / t)</code> au lieu de la pénalité entière. Une fin de deux mots coûte alors moins qu’une fin d’un mot, et le moteur de coupure fait descendre un mot quand une ligne du dessus peut s’en passer (« …sallies of » / « our minds. » plutôt que « …sallies of our » / « minds. »). Désactivé par défaut : toutes les lignes creuses coûtent la même chose, et le moteur de coupure garde les lignes plus serrées au-dessus.</td>
+    </tr>
+    <tr>
+      <td><code>avoidRuntsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Avec <code>true</code>, les éléments de liste reçoivent aussi la pénalité de ligne creuse. Efficace seulement quand <code>avoidRunts</code> vaut <code>true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>tightenRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quand la pénalité n’a pas pu éviter une ligne creuse, compose plutôt le paragraphe sur une ligne de moins : les espaces entre les mots se resserrent (jamais en deçà de <code>minWordSpacing</code>) et, si cela ne suffit pas à absorber la ligne, un peu d’approche négative s’y ajoute. Une composition plus courte est refusée, et la ligne creuse reste, quand elle étirerait une ligne justifiée au-delà de <code>maxWordSpacing</code> ou, si le paragraphe a déjà une ligne justifiée plus lâche, au-delà de cette ligne, ou quand elle composerait en drapeau plus de lignes (au-delà de 3× l’espace normale) que le paragraphe n’en avait. Les espaces du texte en drapeau gardent leur largeur : seule l’approche y intervient. Nécessite <code>optimalLineBreaking</code> et <code>avoidRunts</code> (et <code>optimalRagged</code> pour le texte en drapeau).</td>
+    </tr>
+    <tr>
+      <td><code>maxRuntTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Approche maximale que peut prendre la correction d’une ligne creuse, en millièmes de cadratin (l’unité d’InDesign : 10 = 0,01 em par caractère), appliquée comme un resserrement. <code>0</code> laisse la correction au seul espacement des mots.</td>
+    </tr>
+    <tr>
+      <td><code>slackWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Poids appliqué au coût au carré de « l’espace de colonne inutilisé ». Des valeurs plus élevées font préférer à la mise en page des colonnes bien remplies ; <code>0</code> supprime entièrement cette pression.</td>
+    </tr>
+    <tr>
+      <td><code>keepColonWithList</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quand un paragraphe se termine par un deux-points qui introduit directement une liste, garde la dernière ligne qui porte le deux-points avec la liste : si placer le paragraphe ne laissait pas la place au premier élément de la liste de commencer dans la même colonne ou la même page, la dernière ligne (ou le paragraphe entier, s’il tient sur une ligne) passe à la colonne suivante avec la liste. La place jugée suffisante est donnée par <code>colonListRoom</code>. Quand cette règle repousserait le paragraphe entier et qu’une suite de titres le précède immédiatement dans la colonne, ces titres sont avancés eux aussi pour que <code>headings.keepWithNext</code> reste respecté.</td>
+    </tr>
+    <tr>
+      <td><code>colonListRoom</code></td>
+      <td><code>'item' | 'line'</code></td>
+      <td><code>'item'</code></td>
+      <td>La place que <code>keepColonWithList</code> demande sous la ligne à deux-points. <code>'item'</code> : ce que les règles d’orphelines et de veuves des listes laisseraient du premier élément au pied de la colonne, une ligne quand il peut s’y couper, la totalité quand elles le gardent entier (un élément de deux lignes, par exemple). <code>'line'</code> : une ligne, comme jusqu’à postext 1.4 ; un premier élément que ces règles gardent entier passe alors seul à la colonne suivante et laisse la ligne à deux-points au pied. Une configuration enregistrée avant la <code>configVersion</code> 6, dans un livre qui introduit une liste par un deux-points, est lue avec <code>'line'</code> (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>). Toute autre valeur est lue comme <code>'item'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateAcrossColumns</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
+      <td><code>true</code></td>
+      <td>Permet à une colonne ou à une page de se terminer sur un mot coupé (le <em>Hyphenate Across Column</em> d’InDesign). <code>false</code> recoupe le paragraphe qui franchit le changement de colonne, pour que sa dernière ligne dans la colonne se termine sur un mot entier ; les espaces des lignes du dessus absorbent la différence, dans les limites de <code>maxWordSpacing</code> et de <code>minWordSpacing</code>. C’est une préférence : là où aucune coupure dans ces limites ne l’évite, le trait d’union reste. Le réglage essaie chaque changement de colonne d’un paragraphe : le premier, et les suivants qui tombent là où se termine une colonne pleine, en une seule recoupe ; et un changement ultérieur qui tombe ailleurs (une veuve gardée, une bande coupée à niveau) en une autre, à partir de cette colonne, qui garde à leurs coupures les lignes déjà composées dans les colonnes précédentes et ne recoupe que le reste. <code>'withinPage'</code> protège les lignes qui ferment une page et aucune autre : un mot peut être partagé entre deux colonnes d’une même page, et la dernière ligne d’une page se termine sur un mot entier partout où les limites le permettent. Il modifie moins de lignes que <code>false</code>, ce qui compte à partir de trois colonnes, où deux fins de colonne sur trois se trouvent à l’intérieur de la page ; sur une seule colonne, les deux valeurs donnent les mêmes lignes. Une colonne ferme sa page quand aucune colonne suivante de la page ne reçoit de texte : ce n’est pas le cas d’une colonne latérale réservée aux flottants, ni d’une colonne qu’un tableau ou une figure a remplie. Les corps d’encadrés ne sont pas concernés. Avec <code>optimalRagged</code>, un paragraphe en drapeau est recoupé de la même façon : ses espaces gardent leur largeur, seules les fins de ses lignes bougent. Chaque recoupe mesure le paragraphe une fois de plus : un livre avec beaucoup de traits d’union en fin de colonne se met en page un peu plus lentement. Nécessite <code>optimalLineBreaking</code>, et <code>optimalRagged</code> pour le texte en drapeau.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphContainerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td><code>'collapse'</code></td>
+      <td>L’espace sous un conteneur <code>:::paragraphs</code> qui se termine par un paragraphe, entre ce paragraphe et le bloc qui le suit (voir <a href="/fr/docs/configuration-styles#le-conteneur-paragraphs">Le conteneur <code>:::paragraphs</code></a>). <code>'collapse'</code> : la plus grande valeur entre le <code>spaceBetween</code> et le <code>marginBottom</code> du style et l’espacement de paragraphe du texte qui entoure le conteneur (une ligne avec <code>paragraphSpacing</code> ; dans un encadré, celui de l’encadré), fusionnée avec l’espace que le bloc suivant garde au-dessus de lui, comme entre deux paragraphes du texte courant : un titre placé sous une bibliographie se place à son propre <code>marginTop</code> en dessous d’elle, et non à cette marge plus l’espacement des entrées. <code>'add'</code> : comme jusqu’à postext 1.4, l’espace du style seul est placé sous la dernière ligne avant l’alignement sur la grille, l’espace propre du bloc suivant au-dessus de lui s’y ajoute, et l’espacement de paragraphe est omis : le paragraphe qui suit le conteneur pouvait donc se trouver plus près de lui que de tout autre. Une configuration enregistrée avant la <code>configVersion</code> 8 qui déclare un style de paragraphe, dans un livre qui contient un tel conteneur, est lue avec <code>'add'</code> (voir <a href="/fr/docs/configuration-bundles#paquets-écrits-par-postext-14-ou-antérieur">Paquets écrits par postext 1.4 ou antérieur</a>). Un <code>marginBottom</code> négatif remonte le bloc suivant dans les deux cas. Un style de paragraphe peut définir sa propre règle pour ses conteneurs (<code>containerSpacing</code>, depuis postext 1.28).</td>
+    </tr>
+  </tbody>
+</table>
+
+**À propos des lignes creuses.** Une ligne creuse est la dernière ligne d’un paragraphe trop courte pour passer pour une vraie ligne de texte : en général un ou deux mots courts échoués en fin de paragraphe. Comme la vérification repose sur la longueur en pixels de la ligne rapportée à la largeur normale de l’espace, `runtMinCharacters` s’adapte automatiquement au corps en cours. Un mot court visuellement plus large que `runtMinCharacters × spaceWidth` ne pose pas de problème ; un mot plus étroit (ou vraiment isolé) attire la pénalité de ligne creuse. Le seuil compte des espaces entre les mots, qui sont environ deux fois moins larges que les lettres : la valeur par défaut de 20 correspond à une dernière ligne d’environ 8 à 12 lettres. Toute ligne creuse coûte la pénalité entière : entre deux fins sous le seuil, le moteur de coupure garde les lignes plus serrées au-dessus ; `gradedRuntPenalty` évalue plutôt chacune selon ce qui lui manque, et la fin la plus longue l’emporte. Pour les esprits mathématiques : avec la `runtPenalty` par défaut de 1000, éviter une ligne creuse l’emporte sur tout autre jeu de coupures qui demanderait un étirement de l’espacement des mots allant jusqu’à environ r≈2,15.
+
+**Souples, pas strictes.** Aucune de ces règles ne peut *empêcher* une coupure : le moteur produit toujours une mise en page. Ce sont des pénalités : l’algorithme met en balance la « badness », le coût de la césure, la régularité des classes d’ajustement et ces pénalités structurelles dans une seule optimisation globale, et retient le jeu de coupures au coût total le plus bas. Si vous avez besoin d’une garantie plus ferme, augmentez la pénalité ; si un document se lit mieux avec une pénalité relâchée, diminuez-la.
+
+
+## Équilibrage des colonnes
+
+Les éditeurs attendent que chaque colonne commence en haut de la page et se termine au ras de son bas. Les règles de coupure (protection contre les veuves et les orphelines, titres gardés avec leur texte, figures indivisibles) laissent naturellement des colonnes courtes, avec une ou plusieurs lignes vides de la grille de ligne de base en bas. Quand l’équilibrage est activé, le moteur fait ce que ferait un compositeur, en appliquant ses leviers par ordre de priorité éditoriale :
+
+1. **Un encadré qui ferme la colonne** : un encadré qui termine une colonne courte est descendu exactement de la place libre sous son pied, si bien que son bord inférieur tombe sur la dernière case de la grille de la page, à la hauteur de la dernière ligne de la colonne voisine. Il prend cette place même quand elle fait moins d’une ligne, tant que rien ne passe dans une autre colonne. Par défaut, ce levier passe avant tous les autres et prend tout l’écart, si bien qu’un encadré qui annote le paragraphe au-dessus de lui peut se retrouver plusieurs lignes plus bas ; `closingBox: 'last'` laisse les titres, les fins de liste et les autres leviers d’espacement prendre d’abord les lignes entières, l’encadré ne prenant que ce qu’ils laissent, et `closingBox: 'off'` ne le déplace jamais.
+2. **Images avec zone sûre** : une image dotée d’une zone sûre (`Resource.safeArea`, voir [Format de document › Zone sûre](/fr/docs/document-format-resources#zone-de-sécurité)) placée en ligne dans la colonne courte, ou flottant en tête ou au pied de cette seule colonne, grandit par lignes entières de la grille, recadrée dans sa zone sûre, jusqu’à ce que la colonne soit pleine ou que le recadrage atteigne la zone sûre. Une image plus haute ne laisse aucun trou sur la page : ce levier passe donc avant tout ajout d’espace ; un flottant en tête de colonne sur une page ou une bande dont les têtes de colonne restent alignées (voir plus bas) ne grandit pas. Enregistré comme `flexFigure`. Il n’a pas de réglage propre : seule une image dont la ressource marque une zone sûre peut grandir.
+3. **Titres** : des lignes entières de la grille sont ajoutées à la marge supérieure des titres de la colonne courte. Quand plusieurs lignes sont nécessaires et que la colonne contient plusieurs titres, les lignes sont réparties entre eux, la plus grande part allant toujours au titre le plus important (un `h2` reçoit plus qu’un `h3`). Les titres placés tout en haut d’une colonne ne reçoivent jamais d’espace supplémentaire, pour que les colonnes continuent de commencer en haut de la page, sauf un titre placé juste sous une figure ou un tableau qui ouvre sa colonne sur une page dont le flux continue : la place va au-dessus de ce titre, sous la figure. Un titre prend au plus `maxLinesBeforeLoose` lignes de cette façon (deux par défaut) avant que les leviers suivants soient essayés, et ses lignes supplémentaires, jusqu’à `maxLinesPerHeading`, seulement quand ceux-ci n’ont plus rien à donner.
+4. **Fins de liste** : quand les titres ne peuvent pas absorber tout l’écart, une ligne de la grille est ajoutée là où se termine une liste ou une énumération (un espace après une liste se lit naturellement), avec un plafond par fin de liste.
+5. **Sous les formules, les encadrés et les figures** : ensuite, une ligne de la grille va sous une formule hors texte ou un encadré après lesquels le texte reprend (`stretchAfterDisplays` ; elle se lit comme la marge propre de l’élément), et sous une figure ou un tableau qui ouvre la colonne (`stretchAfterFloats`, plafonné par `maxLinesAfterFloat`).
+6. **Paragraphes lâches** : en dernier recours, un paragraphe de la colonne est recoupé avec une ligne de plus (le `\looseness=+1` de TeX), en choisissant le paragraphe le plus long pour que l’espacement supplémentaire entre les mots se dilue de façon invisible. La solution lâche n’est acceptée que si chaque ligne reste **sous `bodyText.maxWordSpacing`** : le gris typographique ne dépasse jamais la limite que vous avez déjà configurée. Nécessite `bodyText.optimalLineBreaking`.
+
+Sur une grille de caractères (`cjk.grid`, voir [Composition chinoise › La grille de caractères](/fr/docs/chinese-layout#la-grille-de-caractères)), chaque caractère occupe une case d’un em de large et chaque ligne suit le pas de ligne de la grille, qui est aussi la grille de ligne de base. L’équilibrage y est désactivé par défaut, comme en texte vertical : une page composée ligne à ligne sur une grille, à la manière dont GB/T 9704 compte 22 lignes de 28 caractères, laisse une colonne courte telle quelle. Une configuration qui pose `enabled: true` obtient des leviers qui respectent la grille : les titres, les fins de liste, les formules hors texte et les figures prennent des lignes entières de la grille, de sorte que le texte qui les suit se déplace par rangées entières, et `gridLines: 'off'` les exclut pour une norme qui n’a aucune rangée vide à donner. Un paragraphe chinois ou japonais ne s’allonge d’une ligne que si aucun intervalle entre deux de ses caractères ne s’élargit au-delà de `maxTracking`, et ses lettres ne reçoivent aucune approche : une ligne à qui il manque un caractère répartit un em sur ses intervalles, bien au-delà des 0,01 em par défaut, si bien que sur une grille de cases entières le levier des paragraphes lâches ne trouve généralement rien. L’encadré qui ferme une colonne et les images avec zone sûre sont hors grille par conception et fonctionnent comme partout ailleurs.
+
+La dernière colonne d’une page n’est équilibrée que si la page se poursuit naturellement sur la suivante : la page de fin d’un chapitre se termine légitimement plus court. Une telle page, ainsi qu’une bande finale coupée à niveau par `trailing`, garde aussi ses têtes de colonne alignées : aucune ligne n’est ajoutée sous une figure ou un tableau qui ouvre l’une de ses colonnes (le levier après flottant), et un titre ou un encadré qui ouvre une colonne sous une telle figure reste en tête, quoi que dise `stretchAfterFloats`, de même que le titre placé juste sous une ouverture `span: 'page'` dans la colonne de l’ouverture, de sorte qu’une colonne ne commence jamais plus bas que sa voisine dans le seul but d’aligner les pieds.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Indique s’il faut équilibrer le bas des colonnes. Désactivé par défaut en texte vertical (<code>layout.writingMode: 'vertical-rl'</code>) et sur une grille de caractères (<code>cjk.grid.enabled</code>, depuis postext 1.25) ; <code>true</code> l’active là aussi.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesPerHeading</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>Nombre maximal de lignes de la grille pouvant être ajoutées au-dessus d’un même titre.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Lignes de la grille qu’un titre peut prendre avant que les leviers suivants soient essayés : les fins de liste, les formules et les encadrés, les figures et les paragraphes lâches. Un titre ne reçoit ses lignes supplémentaires, jusqu’à <code>maxLinesPerHeading</code>, que lorsque ceux-ci n’ont plus rien à donner, si bien qu’une page avec un seul titre n’ouvre pas quatre lignes au-dessus de lui alors que ses paragraphes pourraient s’allonger d’une ligne. Une valeur égale ou supérieure à <code>maxLinesPerHeading</code> donne d’abord aux titres toutes leurs lignes, comme jusqu’à postext 1.27 ; <code>0</code> essaie les autres leviers avant qu’aucune ligne n’aille au-dessus d’un titre. Depuis postext 1.28 ; les documents enregistrés plus tôt gardent l’ancien ordre (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Autorise des lignes de la grille supplémentaires à la fin d’une liste, quand les titres ne peuvent pas absorber tout l’écart.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterList</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Nombre maximal de lignes de la grille supplémentaires après une même fin de liste.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Autorise une ligne de la grille supplémentaire sous une formule hors texte, et sous un encadré, dans la colonne courte, après le levier des fins de liste : le bloc qui suit descend d’une ligne. Mettez-le à <code>false</code> pour laisser l’espace sous les formules et les encadrés tel que leurs propres marges le fixent ; l’écart passe aux leviers suivants, et la colonne se termine court s’ils ne le comblent pas. Depuis postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterFloats</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Autorise des lignes de la grille supplémentaires sous une figure ou un tableau qui ouvre la colonne courte (un flottant en haut), après le levier des fins de liste, pour que le texte qui le suit descende au lieu que la colonne se termine court. Jamais sur une page dont le flux ne continue pas (la page de fin d’un chapitre) ni dans une bande finale coupée à niveau par <code>trailing</code> : là, les têtes de colonne restent alignées et la dernière colonne peut se terminer une ligne plus court. Le premier bloc sous la figure peut être la suite d’un paragraphe commencé à la page précédente : il descend tout de même, de la ligne que les règles de coupure ont laissée libre au pied de la colonne (une ligne que la règle des veuves a gardée vide, ou un espace de paragraphe sans place pour du texte après lui). Mettez-le à <code>false</code> pour garder le texte juste sous la figure. Sous un flottant qui couvre plusieurs colonnes, les colonnes descendent ensemble ou pas du tout, voir <code>stretchAfterWideFloats</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterFloat</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Nombre maximal de lignes de la grille supplémentaires sous un même flottant en haut.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Sous une figure ou un tableau qui couvre deux colonnes de texte ou plus. Avec <code>'flush'</code>, une colonne ne descend sous le flottant que si toutes les colonnes de texte sous celui-ci prennent les mêmes lignes, pour que leurs têtes restent alignées, ou si ces lignes font finir cette colonne au ras du bas ; une ligne qui abaisserait la tête d’une colonne tout en la laissant courte n’est pas ajoutée, et l’écart passe aux paragraphes lâches. <code>'always'</code> étire une telle colonne comme sous n’importe quel flottant, comme jusqu’à postext 1.27. Toute autre valeur se lit comme <code>'flush'</code>. Depuis postext 1.28 ; les documents enregistrés plus tôt gardent <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Dernier recours : recoupe des paragraphes d’une colonne courte de façon plus lâche (une ligne de plus chacun), dans la limite de <code>bodyText.maxWordSpacing</code>.</td>
+    </tr>
+    <tr>
+      <td><code>maxLooseParagraphs</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Nombre de paragraphes d’une même colonne courte qui peuvent s’allonger d’une ligne, les plus longs d’abord.</td>
+    </tr>
+    <tr>
+      <td><code>trackParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quand l’espacement des mots ne suffit pas à gagner la ligne, un paragraphe lâche peut aussi prendre la plus petite approche positive (interlettrage) qui y parvient.</td>
+    </tr>
+    <tr>
+      <td><code>maxTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>Limite supérieure de cette approche, en millièmes d’em par caractère (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>trailing</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Met à niveau la bande finale d’un chapitre et du document : quand le flux s’arrête avant que la page soit pleine (à une ouverture de chapitre, un <code>:::part</code>, un encadré <code>placement: 'fixed'</code> qui ferme un chapitre ou la fin du document) avec des colonnes inégales, elles sont coupées à niveau (un plafond de bande de <code>ceil(Σ used / N / grid)</code> lignes, calculé une fois que les leviers ci-dessus ont réglé les pages précédentes), si bien qu’une bibliographie courte se termine à la même hauteur dans chaque colonne au lieu de remplir la première et de laisser la dernière à moitié vide. La coupe respecte les règles d’une bande non coupée : quand un bloc qui ne peut pas se diviser à cet endroit (une fin de paragraphe que les minimums d’orphelines et de veuves gardent entière, un encadré à garder ensemble) la dépasserait (et perdrait ses dernières lignes, puisque les moteurs de rendu rognent une colonne à sa boîte) ou qu’un titre fermerait une colonne tandis que son texte ouvrirait la suivante (avec <code>headings.keepWithNext</code>, le défaut), la coupe est prise une ligne plus bas, jusqu’à trois fois, puis abandonnée. Un bloc qui ne peut pas commencer dans les lignes que la coupe laisse sous une figure ouvrant une colonne (un paragraphe y a besoin de son minimum d’orphelines) passe plutôt à la colonne suivante de la bande, comme il le ferait depuis une colonne non coupée, et la figure reste seule dans sa colonne. Les colonnes dont les pieds diffèrent d’une ligne de la grille ou moins restent telles quelles : une bande finale dont la dernière colonne se termine une ligne plus court est la finition habituelle, et la couper ne ferait que déplacer une ligne. La coupe va à la bande où elle a été mesurée, de même que la coupe qu’un encadré sur toute la largeur de la page demande en milieu de page : jusqu’à postext 1.4, quand le premier texte de la page finale avait d’abord été proposé à une bande sans place pour lui (une page qu’un flottant occupe entièrement, la bande étroite qu’un encadré sur toute la largeur de la page laisse au pied de la page précédente), la coupe était dépensée sur cette bande et la page finale gardait toutes ses lignes dans sa première colonne. Les colonnes de largeurs différentes (une maquette à colonne et demie avec du texte dans les deux) sont coupées à la surface, la hauteur de chaque colonne étant pondérée par sa largeur, puisqu’une ligne de la colonne étroite contient moins de texte. Actif uniquement quand <code>enabled</code> vaut true.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>Unité de la coupe à niveau que prend <code>trailing</code> (et de la coupe que prend <code>beforeSpan</code> derrière un encadré qui passe plus loin). <code>'lines'</code> : une bande dont le texte est composé sur un interlignage propre (un index, une liste de références, un conteneur en petit corps) est coupée, et retentée, par lignes entières de cet interlignage, c’est-à-dire la hauteur que partagent la plupart des lignes de la bande, titres et encadrés mis à part. Ses colonnes se terminent alors à moins d’une ligne l’une de l’autre, comme une bande de texte courant. Une bande de texte courant, et une bande qui mêle deux interlignages à parts égales, est coupée sur la grille de ligne de base comme avant. De même pour une bande dont les lignes partagent une hauteur et sont espacées d’une fraction de ligne (des références avec un espace entre les entrées, des groupes d’index avec une marge réglée à la main) : quatre lignes sur cinq de chaque colonne doivent être séparées l’une de l’autre par un nombre entier de lignes. <code>'grid'</code> : chaque coupe est un nombre entier de lignes de la grille de ligne de base, comme jusqu’à postext 1.27, où une coupe sur la grille laissait entrer une ligne de plus dans une colonne d’une bande hors grille et où une coupe ratée était abaissée de plus d’une de ses lignes (colonnes jusqu’à trois lignes d’écart). Toute autre valeur se lit comme <code>'lines'</code>. Depuis postext 1.28 ; les documents enregistrés plus tôt gardent <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
+    </tr>
+    <tr>
+      <td><code>beforeSpan</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Met à niveau la bande qu’un bloc sur toute la largeur de la page laisse derrière lui : quand un encadré <code>span: 'page'</code> ne tient pas sous les colonnes en cours, même après une coupe à niveau, et doit passer à la page suivante ou se diviser (<code>calloutStyles[].keepTogether: false</code>), les colonnes qu’il interrompt sont coupées à niveau (le même plafond final que reçoit une bande finale) au lieu que la première remplisse la page et que la dernière se termine court. La page est laissée comme un saut explicite pour que les leviers ci-dessus ne réétirent pas sa dernière colonne jusqu’en bas de la page ; l’encadré, ou la partie qui en tient, se place alors sous les colonnes mises à niveau. Actif uniquement quand <code>enabled</code> vaut true.</td>
+    </tr>
+    <tr>
+      <td><code>closingBox</code></td>
+      <td><code>'first' | 'last' | 'off'</code></td>
+      <td><code>'first'</code></td>
+      <td>Moment où un encadré qui ferme une colonne courte prend la place sous son pied (levier 1, enregistré comme <code>trailingCallout</code>). <code>'first'</code> : avant tout autre levier, comme jusqu’à postext 1.4 ; l’encadré prend tout l’écart, même plusieurs lignes, et les titres au-dessus de lui n’en reçoivent aucune. <code>'last'</code> : après les leviers des titres, des fins de liste, des formules hors texte et des flottants, qui prennent d’abord les lignes entières ; l’encadré descend avec le texte au-dessus de lui puis ne prend que ce qu’ils ont laissé, en général une fraction de ligne, si bien que son pied rejoint toujours la dernière case de la grille et qu’il reste proche du texte qu’il annote. <code>'off'</code> : jamais ; l’encadré garde la place sous son pied, même si les autres leviers peuvent encore le descendre par lignes entières quand ils ajoutent de l’espace au-dessus de lui, et la fraction de ligne laissée sous lui demeure. Sur une page finale, où l’encadré est le seul levier qui aligne son pied sur la colonne voisine, <code>'off'</code> le laisse là où le flux l’a placé. Toute autre valeur se lit comme <code>'first'</code>. Un encadré qui ferme la seule colonne de texte de sa bande (une page à une colonne qui se termine tôt, son bloc suivant ouvrant la page suivante) n’est jamais déplacé : il n’y a pas de colonne voisine sur laquelle l’aligner (depuis postext 1.19).</td>
+    </tr>
+    <tr>
+      <td><code>gridLines</code></td>
+      <td><code>'allow' | 'off'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Sur une grille de caractères : indique si les leviers qui ajoutent des lignes entières de la grille (au-dessus d’un titre, à la fin d’une liste, sous une formule hors texte ou un encadré, sous une figure qui ouvre la colonne) peuvent agir. Ils gardent chaque caractère dans sa case ; <code>'off'</code> convient à une norme qui compte les lignes d’une page, et laisse plutôt la colonne courte. Sans effet hors de la grille. Toute autre valeur se lit comme <code>'allow'</code>. Depuis postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Quel levier a agi
+
+La mise en page enregistre chaque levier qu’elle a appliqué, sur le bloc auquel elle l’a appliqué : `block.balancing` dans le VDT que renvoie `buildDocument`. Une épreuve, un test ou un rapport peut ainsi dire pourquoi une colonne se termine au ras du bas, et quelles colonnes aucun levier n’a pu fermer. Les blocs que l’équilibrage n’a pas touchés ne portent pas de `balancing`, et un document construit avec `enabled: false` n’en a aucun.
+
+Sur une grille de caractères, le document dit pourquoi une colonne peut se terminer court : `doc.gridBalancing` vaut `{ off: true }` quand l’équilibrage est désactivé parce que la page est sur une grille et que la configuration ne l’active pas, et `{ gridLines: 'off' }` quand il tourne sans les leviers à lignes entières ; une colonne restée courte porte `column.gridRefused`, les leviers que la grille lui a refusés (`'looseParagraph'` quand un paragraphe ne pouvait gagner sa ligne qu’en écartant ses caractères hors de leurs cases, les leviers à lignes entières avec `gridLines: 'off'`). Les deux sont absents hors grille.
+
+```ts
+interface VDTBalancing {
+  levers: BalanceLever[]; // usually one: a paragraph after a list can take the list-end line and run a line long too
+  spaceAbove: number;     // px the spacing levers added above the block (0 when only looseParagraph or flexFigure fired)
+  bodyGrowth?: number;    // flexFigure: px the picture grew, cropped within its safe area
+  extraLines?: number;    // looseParagraph: lines the paragraph gained
+  tracking?: number;      // looseParagraph: the tracking that gained them, in thousandths of an em (0 = word spacing alone)
+}
+type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Levier</th>
+      <th>Enregistré sur</th>
+      <th>Ce qu’il a fait</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>trailingCallout</code></td>
+      <td>le bloc du cadre de l’encadré</td>
+      <td>Un encadré qui ferme la colonne est descendu exactement de la place libre sous son pied (<code>spaceAbove</code> ; une fraction de ligne est admise).</td>
+    </tr>
+    <tr>
+      <td><code>flexFigure</code></td>
+      <td>le bloc de l’image (en ligne) ou le flottant</td>
+      <td>Une image avec zone sûre composée <code>bodyGrowth</code> px plus haute, par lignes entières de la grille, recadrée dans la zone sûre. Le <code>bodySource</code> du bloc de ressource est la partie affichée et <code>bodyFlex.delta</code> la même croissance.</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>le titre</td>
+      <td>Des lignes entières de la grille au-dessus du titre, jusqu’à <code>maxLinesPerHeading</code>.</td>
+    </tr>
+    <tr>
+      <td><code>listEnd</code></td>
+      <td>le premier bloc après la liste</td>
+      <td>Une ligne de la grille à la fin d’une liste, jusqu’à <code>maxLinesAfterList</code>.</td>
+    </tr>
+    <tr>
+      <td><code>afterDisplay</code></td>
+      <td>le bloc qui suit la formule ou l’encadré</td>
+      <td>Une ligne de la grille sous une formule hors texte ou un encadré.</td>
+    </tr>
+    <tr>
+      <td><code>afterFloat</code></td>
+      <td>le premier bloc de la colonne</td>
+      <td>Une ligne de la grille entre une bande de flottants qui ouvre la colonne et son texte, jusqu’à <code>maxLinesAfterFloat</code>.</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraph</code></td>
+      <td>le paragraphe</td>
+      <td>Le paragraphe recoupé avec <code>extraLines</code> lignes de plus, avec la plus petite approche qui y parvient (<code>tracking</code> ; <code>block.letterSpacing</code> est la même valeur en px).</td>
+    </tr>
+  </tbody>
+</table>
+
+Les coupes à niveau sont enregistrées sur les colonnes qu’elles coupent : `column.bandCapped` vaut true sur chaque colonne coupée à niveau (la bande qu’un encadré sur toute la largeur de la page laisse derrière lui, une bande finale), et `column.trailingCap` marque en plus la bande finale d’un chapitre ou du document (`trailing`).
+
+```ts
+import { buildDocument } from 'postext';
+
+const doc = buildDocument(content, config);
+for (const page of doc.pages) {
+  page.columns.forEach((column, i) => {
+    const levers: string[] = column.blocks.flatMap((block) => block.balancing?.levers ?? []);
+    if (column.trailingCap) levers.push('closing band cut level');
+    else if (column.bandCapped) levers.push('band cut level');
+    if (levers.length > 0) console.log(`page ${page.index + 1}, column ${i + 1}: ${levers.join(', ')}`);
+  });
+}
+// page 3, column 1: heading, heading
+// page 3, column 2: listEnd, looseParagraph
+```

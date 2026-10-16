@@ -1,0 +1,576 @@
+{/* docs/configuration-lists-math-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: lists and maths',
+  sidebarTitle: 'Lists and maths',
+  description: 'Bulleted and numbered lists, their markers, indents and nesting, task lists, and the size, colour and spacing of mathematical formulas',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '17 min',
+  order: 11,
+  parent: 'configuration',
+  plainSummary: "This page covers lists and formulas. A bulleted list marks each item with a symbol, and a numbered list counts its items with numbers or letters. You set the marker, the indent and the space of each list, and change them for lists inside lists. Task lists draw a box that can be ticked. The last section sets the size, the colour and the space around mathematical formulas.",
+};
+
+# Configuration: lists and maths
+
+
+## Unordered Lists
+
+The `unorderedLists` property controls how bullet lists (`-`, `*`, `+`) and GFM task lists (`- [ ]`, `- [x]`) are rendered. Up to five levels of nesting are supported.
+
+### Unordered list defaults
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>inherits <code>bodyText.fontFamily</code></td>
+      <td>Font used for the item text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Main Color (<code>#295AA3</code>)</td>
+      <td>Text and bullet color for items. Bound to the default palette's <code>main-color</code> entry.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Weight for item text (100–900). Bullets inherit this weight unless overridden per-level.</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Render item text in italic.</td>
+    </tr>
+    <tr>
+      <td><code>bulletChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'•'</code></td>
+      <td>Glyph used as the bullet marker.</td>
+    </tr>
+    <tr>
+      <td><code>bulletFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>Size of the bullet glyph. Relative units scale with the body font size.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Horizontal space between the bullet and the item text.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Base indent for level 1. Deeper levels cascade from the parent's text-start unless overridden (see below).</td>
+    </tr>
+    <tr>
+      <td><code>bulletVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Fine-tune bullet vertical position. Negative values move the bullet up, positive values move it down.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Space before and after the list as a whole.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Extra vertical space inserted between items on top of the line height. Around a list nested in an item of another, the outer list's spacing applies on both sides, before the nested list's first item and after its last (up to postext 1.4 the item after a nested list took the nested list's spacing).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Round the space above the list up so its first bullet sits on the baseline grid, as the text under a heading does; <code>marginTop</code> is then a minimum. The end of a list snaps the flow back onto the grid either way, so with <code>itemSpacing</code> at 0 every item lines up with the text in the column beside it. Off by default, as up to postext 1.4: a <code>marginTop</code> that is not a whole number of lines leaves the items off the grid until the list ends. Lists inside callout boxes, whose interiors are off the grid, are not affected.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When enabled, wrapped lines align with the first text character rather than under the bullet.</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>UnorderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>Per-depth overrides for levels 1–5. See below.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Task list extensions
+
+GFM task items (`- [ ] …`, `- [x] …`) are rendered as unordered items with a checkbox in place of the bullet. The engine draws the box itself, a square outline with a tick when the item is done: no font is asked for it, so it is the same on every machine, on the canvas, in the PDF, in the HTML and in the EPUB, and assistive technology reads `☐` or `☑`. Its side is 0.6 em of the marker's size (`bulletFontSize`, or the level's `fontSize`), and that is the room it takes before the `gap`; at the text's size it stands on the baseline of the item's first line. Its stroke follows the marker's `fontWeight` and its colour the marker's `color`. The following fields only apply to task items:
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>taskCheckboxChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☐'</code></td>
+      <td>Character of an unchecked task. The default is not set as text: the engine draws the box. Any other character is set as text in the list's face, which then has to hold it.</td>
+    </tr>
+    <tr>
+      <td><code>taskCheckedChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☑'</code></td>
+      <td>Character of a completed task. The default is drawn too, as a box with a tick; any other character is set as text in the list's face.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>How the two default characters are set. <code>'drawn'</code>: the engine draws the box. <code>'character'</code>: <code>☐</code> and <code>☑</code> are text in the list's face, as up to postext 1.28; in a face that lacks them the browser picks a font of the system, and the item's text starts after the width that font gives. A configuration stored before version 13 reads with <code>'character'</code>, so its lines stay where they were.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedStrikethrough</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Draw a strikethrough line across the text of completed tasks.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>inherits item color</td>
+      <td>Optional color applied to completed task text. When omitted, the regular item color is used.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Unordered per-level overrides
+
+Each entry in `levels` targets one depth (1–5) and can override any of the following:
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bulletChar</code></td><td><code>string</code></td><td>Bullet glyph for this depth.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>Item font family for this depth.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>Bullet glyph size for this depth.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>Item color.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td>Item weight.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td>Italic toggle.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td>Explicit indent for the bullet at this depth. See the cascade rule below.</td></tr>
+    <tr><td><code>verticalOffset</code></td><td><code>Dimension</code></td><td>Vertical fine-tune for the bullet at this depth.</td></tr>
+  </tbody>
+</table>
+
+**Indent cascade.** Level 1 always starts at the general `indent` value (by default `0 em` — bullets are pinned to the column edge). For levels 2–5, if you leave `indent` undefined the engine places the bullet at the *previous* level's text-start (parent indent + bullet width + `gap`). Set an explicit `indent` on a level to break the cascade and pin that depth anywhere you like.
+
+```ts
+unorderedLists: {
+  bulletChar: '—',
+  gap: { value: 0.4, unit: 'em' },
+  hangingIndent: true,
+  levels: [
+    { level: 2, bulletChar: '·' },
+    { level: 3, bulletChar: '◦', color: { hex: '#666666', model: 'hex' } },
+  ],
+}
+```
+
+
+## Ordered Lists
+
+The `orderedLists` property controls numbered lists (`1.`, `2)`, etc.). Up to five levels of nesting are supported and each depth can use a different number format.
+
+### Ordered list defaults
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>inherits <code>bodyText.fontFamily</code></td>
+      <td>Font used for the item text and the number marker.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Main Color (<code>#295AA3</code>)</td>
+      <td>Text and number-marker color for items. Bound to the default palette's <code>main-color</code> entry.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Weight for item text and number markers (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Render item text in italic.</td>
+    </tr>
+    <tr>
+      <td><code>numberFormat</code></td>
+      <td><code>OrderedListNumberFormat</code></td>
+      <td><code>'arabic'</code></td>
+      <td>Number style: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. The other settings' spellings work too (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; see <a href="/en/docs/configuration-page-layout#numbering-format-spellings">Numbering format spellings</a>); an unknown value numbers in arabic and is reported.</td>
+    </tr>
+    <tr>
+      <td><code>prefix</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Text set before the number, in the separator's style: with <code>'（'</code> here and <code>'）'</code> as the separator a Chinese list reads （一）, （二）. When the separator is drawn as its own run, the prefix is one too, just before the number.</td>
+    </tr>
+    <tr>
+      <td><code>separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>Character placed between the number and the text — typically <code>'.'</code> or <code>')'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontFamily</code></td>
+      <td><code>string</code></td>
+      <td>inherits <code>fontFamily</code></td>
+      <td>Font of the separator. When any separator style differs from the number's, the separator is drawn as its own run after the (right-aligned) number — e.g. <code>1</code> in Optima Bold black followed by <code>•</code> in DIN Pro Bold blue.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontWeight</code></td>
+      <td><code>number</code></td>
+      <td>inherits <code>fontWeight</code></td>
+      <td>Weight of the separator (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>separatorItalic</code></td>
+      <td><code>boolean</code></td>
+      <td>inherits <code>italic</code></td>
+      <td>Render the separator in italic.</td>
+    </tr>
+    <tr>
+      <td><code>separatorColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>inherits <code>color</code></td>
+      <td>Colour of the separator. Palette references are honoured.</td>
+    </tr>
+    <tr>
+      <td><code>separatorGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Space between the number and the separator. The item text still starts <code>gap</code> after the separator.</td>
+    </tr>
+    <tr>
+      <td><code>numberFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>Size of the number marker.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Horizontal space between the number and the item text.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Base indent for level 1; deeper levels cascade from the parent's text-start unless overridden.</td>
+    </tr>
+    <tr>
+      <td><code>numberVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Fine-tune the vertical position of the number marker.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Space before and after the list as a whole.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Extra vertical space between items. Around a list nested in an item of another, the outer list's spacing applies on both sides, before the nested list's first item and after its last (up to postext 1.4 the item after a nested list took the nested list's spacing).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Round the space above the list up so its first number sits on the baseline grid, as the text under a heading does; <code>marginTop</code> is then a minimum. The end of a list snaps the flow back onto the grid either way, so with <code>itemSpacing</code> at 0 every item lines up with the text in the column beside it. Off by default, as up to postext 1.4: a <code>marginTop</code> that is not a whole number of lines leaves the items off the grid until the list ends. Lists inside callout boxes, whose interiors are off the grid, are not affected.</td>
+    </tr>
+    <tr>
+      <td><code>numberWidth</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
+      <td><code>'run'</code></td>
+      <td>How wide the number column of an item is, which sets where its text starts; the numbers are set flush right in it. <code>'run'</code>: the widest number of the item's own run, the items of one depth with nothing but deeper items between them. A figure, a paragraph or a box between two items starts a new run, so <code>ii)</code> after a table can start its text a little further right than <code>i)</code> before it, and a list of nine items sets its text left of a list of twelve. <code>'level'</code>: the widest number at the item's depth in the whole document (the chapter, in a book), so every list, and every part of an interrupted one, starts its text at the same place, as the indents of the deeper levels already do. <code>'item'</code>: the item's own number, so the text of each item starts one <code>gap</code> after its own label: <span lang="ja" className="font-body">第九條</span> and <span lang="ja" className="font-body">第十一條</span> are each followed by the same space and their texts start at different places, as the Japanese Official Gazette prints the articles of a law. Turnover lines follow <code>hangingIndent</code>: <code>false</code> returns them to the list's indent, <code>true</code> hangs them under the item's own text. The indent of a deeper level stays one value per level. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>How a number sits in its column. <code>'end'</code>: against the text, so the numbers of a run end together and <code>9.</code> and <code>10.</code> line up on their full stops. <code>'start'</code>: at the start of the column (the left on a left-to-right page, the right on a right-to-left one, the head of the line in vertical text), so labels of different lengths begin together, as the articles of a statute do (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). The column keeps the width <code>numberWidth</code> gives it, so the text of the items starts at the same place either way; with a separator in a style of its own, the separator follows its number. Since postext 1.26. Under <code>numberWidth: 'item'</code> the column is the number itself, so both values set the same list.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Wrapped lines align with the first text character rather than under the number.</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>OrderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>Per-depth overrides for levels 1–5.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Ordered per-level overrides
+
+Each entry in `levels` can override `numberFormat`, `prefix`, `separator`, `fontFamily`, `fontSize`, `color`, `fontWeight`, `italic`, `indent`, `verticalOffset` and the separator style (`separatorFontFamily`, `separatorFontWeight`, `separatorItalic`, `separatorColor`, `separatorGap`) — the same indent cascade as unordered lists applies. A level's separator style inherits its own number style unless the list-wide separator setting is given.
+
+**Right alignment.** The pipeline measures the widest formatted number within a run and indents all items in that run so the number markers line up on their right edge. A list of ten items rendered as `1.` – `10.` has the single-digit numbers right-padded so the separator stays in the same column.
+
+```ts
+orderedLists: {
+  numberFormat: 'arabic',
+  separator: '.',
+  levels: [
+    { level: 2, numberFormat: 'lower-alpha' },
+    { level: 3, numberFormat: 'lower-roman', separator: ')' },
+  ],
+}
+```
+
+This yields the classic nested mix:
+
+```
+1. First item
+   a. Sub-item
+      i) Deep note
+   b. Sub-item
+2. Second item
+```
+
+The hierarchy of Chinese documents (GB/T 15834—2011, Annex B.3) takes five levels, 一、 then （一） then 1. then （1） then ①:
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'simp-chinese-informal', separator: '、' },
+    { level: 2, numberFormat: 'simp-chinese-informal', prefix: '（', separator: '）' },
+    { level: 3, numberFormat: 'arabic', separator: '.' },
+    { level: 4, numberFormat: 'arabic', prefix: '（', separator: '）' },
+    { level: 5, numberFormat: 'circled-decimal', separator: '' },
+  ],
+}
+```
+
+
+## Math
+
+The `math` property controls how LaTeX formulas inside `$...$` (inline) and `$$...$$` (display) delimiters are parsed and rendered. The underlying engine is MathJax (the `mathjax-full` package) in SVG output mode, rasterised to the canvas and embedded as scalable glyphs in the PDF.
+
+```ts
+interface MathConfig {
+  enabled?: boolean;        // Render LaTeX. When false, spans pass through as literal TeX.
+  fontSizeScale?: number;   // × the surrounding text's size (the body size for display maths).
+  color?: ColorValue;       // Formula colour; inherits body colour if omitted.
+  marginTop?: Dimension;    // Space above display math blocks.
+  marginBottom?: Dimension; // Minimum space below; baseline grid snap may enlarge it.
+  indentAfterDisplay?: boolean; // Indent a paragraph that follows a display formula.
+  keepWithLeadIn?: boolean; // Keep a display formula with the line that leads into it.
+  equationNumbering?: {      // Number the display formulas that carry a \label.
+    enabled?: boolean;           // default true
+    numberingTemplate?: string;  // '{n}'; '{h1}.{n}' numbers by chapter
+    resetOn?: ResourceCounterReset; // 'never' | 'h1' … 'h6'
+    counterFormat?: ResourceCounterFormat; // 'decimal'
+    format?: string;             // '({n})': what the formula and \eqref print
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When false, `$...$` and `$$...$$` spans are still parsed (so unclosed-delimiter warnings still fire) but are rendered as their literal TeX source. Useful when the content intentionally contains dollar signs or when you want to disable math rendering entirely.</td>
+    </tr>
+    <tr>
+      <td><code>fontSizeScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1.0</code></td>
+      <td>Multiplier applied to the size of the surrounding text before rendering: one em of the formula's TeX font is that size × `fontSizeScale` — `bodyText.fontSize` for a display formula and for inline maths in body text, the enclosing block's size for inline maths in a heading, a paragraph style, a caption or a callout body. 1.0 matches the surrounding text; values in the 0.9–1.1 range are typical when the math font looks slightly larger or smaller than the prose font. **Changed in postext 1.5:** up to 1.4 formulas came out about 13% larger than this (see below).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>inherits body colour</td>
+      <td>Colour of the rendered formula. Omit to inherit `bodyText.color`. Set explicitly when you want formulas tinted differently from prose — e.g. matching a heading accent.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Space above a display math block. Ignored for inline math.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Space below a display math block. It is a **minimum**: the grid snap may extend it so the next baseline falls on a grid line (whether or not <code>page.baselineGrid</code> draws the grid).</td>
+    </tr>
+    <tr>
+      <td><code>indentAfterDisplay</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Indent the first line of a paragraph that follows a display formula, as any other paragraph. <code>false</code> sets every paragraph right after a display formula flush, as the continuation of the sentence the formula interrupted ("where <em>L</em> is…"). A formula written inside a paragraph — with no blank line above it nor below it — is always followed flush: the text under its closing <code>$$</code> continues that paragraph and is never indented (see <a href="/en/docs/document-format-inline#mathematical-formulas">Mathematical formulas</a>).</td>
+    </tr>
+    <tr>
+      <td><code>keepWithLeadIn</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Keep a display formula in the column of the line that leads into it — TeX's predisplay penalty. When the formula does not fit under the last line of the paragraph before it, that line goes to the next column or page with the formula; when the lines left behind would be fewer than <code>bodyText.widowMinLines</code> (fewer than one when <code>bodyText.avoidWidows</code> is off), a paragraph that opens in that column moves on whole (with the headings closing the column above it, under <code>headings.keepWithNext</code>). The line carried over stands alone at the head of the next column, whatever the orphan rule asks. With <code>false</code> the formula alone moves on, and the line that introduces it can close the column above, or sit over a figure heading the next one.</td>
+    </tr>
+    <tr>
+      <td><code>equationNumbering</code></td>
+      <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
+      <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
+      <td>How the display formulas that carry a <code>\label</code> are numbered (see <em>Numbered equations</em> below). <code>numberingTemplate</code>, <code>resetOn</code> and <code>counterFormat</code> work as a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers (2.1), (2.2)… by chapter, <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. <code>format</code> is the number as the formula and <code>\eqref</code> print it, <code>&#123;n&#125;</code> standing for the number: <code>'[&#123;n&#125;]'</code> sets [3]. <code>enabled: false</code> numbers nothing: a <code>\label</code> is dropped and a reference to it prints its page. A token takes a style after a colon too (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) in a lettered appendix).</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+math: {
+  enabled: true,
+  fontSizeScale: 1.0,
+  color: { hex: '#295AA3', model: 'hex' },
+  marginTop: { value: 1, unit: 'em' },
+  marginBottom: { value: 1, unit: 'em' },
+}
+```
+
+**Formula size, changed in postext 1.5.** MathJax gives a formula's box in `ex`, and one `ex` of its TeX font is 0.442 em. Up to postext 1.4 the engine took it as half an em, so every formula was set about 13% larger than `bodyText.fontSize × fontSizeScale`. Formulas now come out at the documented size, and lines and pages with maths reflow. A configuration written in code for 1.4 keeps the 1.4 formula size by passing through `pinLegacyMathSize` from `postext/bundle`, once, as written:
+
+```ts
+import { pinLegacyMathSize } from 'postext/bundle';
+
+config = pinLegacyMathSize(config); // formulas, and the space around display formulas, as 1.4 set them
+```
+
+Other rule changes in 1.5 can also move its pages: the heading breaks, the space around an inline figure (in the running text and in boxes), the inline marks of its headings, the size of its drop caps, the room kept under a colon line for the list it introduces, the lines a box cut leaves of a paragraph or list item, the line breaks after a dash, the breaking of ragged text, the split of a paragraph under a heading, the line breaks after a compound's hyphen and the space under a `:::paragraphs` container. `migrateConfig`, run once with the markdown the configuration lays out, pins those this text needs, the formula size included (see [Bundles written by postext 1.4 or earlier](/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier)):
+
+```ts
+import { migrateConfig } from 'postext/bundle';
+
+config = migrateConfig(config, undefined, { content: markdown }); // heading breaks, formulas, inline gaps, heading marks, drop caps, colon lines, box cuts, dash breaks, compound breaks, ragged breaking, splits under a heading and container space as 1.4 set them
+```
+
+That holds back what these rule changes would move, but it does not keep every 1.4 page. Version 1.5 also fixes layout bugs, and a fix has no pin: an old configuration gets it as a new one does, so a page it touches can still move. Among them: a page-span heading without a design of its own is measured across the page and set in its level's leading; nothing is reserved under a drop cap's baseline in a heading design; a drop cap takes the section's palette colour, and is set even on a design text whose `overflow` is not `'wrap'`, which then wraps; a paragraph in a box paints the tracking it was measured with; a split box keeps its icon column on every fragment; a box line that would stretch its spaces past 3× is set ragged, as in running text; the loose-paragraph lever never sets a justified line wider than `maxWordSpacing` allows; a floated box keeps a `marginBottom` (in a top band) or `marginTop` (in a bottom band) wider than the float gap; a centred or right-aligned design text with tracking (a running head, an opener title) is placed by its letters, without the tracking after the last one; under a page-span opener, the text that opens the second column starts where text right under the opener would, also when a heading follows the opener; the contents' dots stop before the page number in a face that kerns a run of dots apart; a running head reads a heading as written, with no space where one of its lines ends after a hyphen or a dash or inside a word cut for width (`MEDIOAMBIENTALES`, not `MEDIOAMBIENTALE S`), and a heading design's `{titleText}` reads it the same way (`thousand-colour`, not `thousand- colour`); a text anchored to the foot or the middle of a heading design's band keeps the band tall enough to hold it, so it no longer rises over the text above the heading; a word wider than its line, cut next to a hyphen it carries, is cut after that hyphen and gets no second one; the item after a list nested in another takes its own list's `itemSpacing`, not the nested list's; and the rest of a word cut for being wider than its line keeps its own break points, so a web address goes on breaking at its joints and a compound at its hyphens instead of at the dictionary's syllables.
+
+`pinLegacyMathSize` multiplies the scale by 1.1312 (0.5 ÷ 0.442) and divides the display margins in `em` by the same factor. The scale alone is not enough for a book with display formulas: their margins are lengths of the formula's own size, so they would grow by the same 13% and push the text below them down. Written out for the default margins, the three values are:
+
+```ts
+math: {
+  fontSizeScale: 1.131,
+  marginTop: { value: 0.7072, unit: 'em' },
+  marginBottom: { value: 0.7072, unit: 'em' },
+} // formulas as large as 1.4 set them, with the space 1.4 left around them
+```
+
+Where the configuration was stored, the engine can tell and does it for you: `openBundle` / `readBundle` for a `.postext` bundle written before 1.5 (see [Bundles written by postext 1.4 or earlier](/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier)), and the Sandbox for the books, working copy and `postext-config.json` files saved then (see **Sandbox → Persistence**). They are read through `migrateConfig`, which pins the size (`pinLegacyMathSize`): `fontSizeScale` becomes the stored scale (1 when unset) × 1.1312, and a display margin in `em` or `rem` — a length of the formula's own size — is divided by the same factor, so the space around a display formula stays as 1.4 left it (the default 0.8 em becomes 0.7072 em). A margin in a page unit (`pt`, `mm`…) is left as it is, and so is a configuration with `enabled: false` or one whose book has no `$`. The old book then lays out as 1.4 laid it out, and its `math` section shows the size it is set at. To set such a book at today's size instead, reset those values — **Formulas → Size scale**, *Display margin top* and *Display margin bottom* in the Sandbox, or in code:
+
+```ts
+math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // today's size and margins
+```
+
+**Numbered equations.** A display formula with a number spans its measure (the column, or the inner width of the callout it sits in): the equation is centred and its number set flush right on the equation's line, on every numbered row of an `align`. A number comes from a `\label{eq:x}` (since postext 1.19): the labelled formulas, and the labelled rows of an `align`, `gather`, `alignat`, `flalign` or `eqnarray`, are numbered in reading order with `equationNumbering`, unless a row says `\nonumber` or `\notag`. Environments such as `equation` are not numbered by themselves: a formula without a label has no number. `\tag{…}` prints the label you give it, in parentheses, and `\tag*{…}` as written; neither is counted, and a `\label` beside one names it. A numbered equation wider than its measure overflows to the right, like any display formula. (Up to postext 1.4 a formula with `\tag` was not drawn at all; up to 1.18 only `\tag` numbered one.)
+
+`\eqref{eq:x}` in the text prints the number in its `format`, (3), and `\ref{eq:x}` the bare number; so do `:ref{id="eq:x"}` and `@eq:x` (see [Cross-references](/en/docs/document-format-notes-references#cross-references-and-anchors)), and inside a formula `\eqref` prints it as text. In a book laid out chapter by chapter the counter goes on from the previous chapter: `continuationAfter` carries it in `LayoutContinuation.statementCounters` (`equation`), and the book outline gives every label its number (`OutlineEntry.numberLabel`), so a reference to an equation of another chapter prints it.
+
+```ts
+math: {
+  equationNumbering: { numberingTemplate: '{h1}.{n}', resetOn: 'h1' }, // (1.1), (1.2)… (2.1)
+}
+```
+
+Resolver and stripper match the other sections:
+
+```ts
+import {
+  DEFAULT_MATH_CONFIG,
+  resolveMathConfig,
+  stripMathDefaults,
+} from 'postext';
+
+const resolved = resolveMathConfig(config.math);
+const minimal  = stripMathDefaults(config.math);
+```
+
+### Starting the math engine
+
+MathJax is loaded on demand, not with the rest of the engine. When you lay out on the main thread, start it before building a document that has formulas:
+
+```ts
+import { buildDocument, initMathEngine, renderPage } from 'postext';
+
+await initMathEngine(); // loads MathJax once; later calls resolve at once
+const doc = buildDocument({ markdown: 'Euler: $e^{i\\pi}+1=0$.' }, config);
+document.body.append(renderPage(doc.pages[0], doc));
+```
+
+- **Until the engine runs, formulas are placeholders.** Each one is laid out as a grey box of an estimated size. If a document with math is laid out before `initMathEngine()` was ever called, the console shows one warning saying so.
+- **The layout worker starts it for you.** A build in `postext/worker` calls `initMathEngine()` itself when the markdown contains a `$`.
+- **Lay out now, again when it is ready.** `isMathReady()` tells whether the engine is running. `onMathReady(fn)` calls `fn` once it is (at once if it already is) and returns a function that cancels the call. An editor can show placeholders right away and lay out again when MathJax arrives; no warning is printed while `initMathEngine()` is in flight.
+- **Failure.** `initMathEngine()` rejects when MathJax cannot be loaded, and a later call tries again.
+- **Any bundler, Node or a CDN.** MathJax ships inside the package as one pre-bundled module (about 1.8 MB before compression, fetched only by `initMathEngine`). The plain `import { initMathEngine } from 'https://esm.sh/postext'` works; no `?bundle` is needed. The `mathjax-full` package is only needed to build postext, so installing postext does not install it. MathJax and the mhchem parser it bundles are Apache-2.0 licensed: their notices and the licence text ship next to the module, as `dist/math/THIRD_PARTY_LICENSES.txt`.
+- **One engine per page.** The engine and its cache of rendered formulas are shared by everything that imports `postext` in the same JavaScript realm (see [Global state shared in one page](/en/docs/configuration-programmatic-usage#global-state-shared-in-one-page)).
+
+For the document-side grammar (`$...$`, `$$...$$`, escaping a literal dollar), see [Document format](/en/docs/document-format-inline#mathematical-formulas).

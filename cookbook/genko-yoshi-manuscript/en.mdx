@@ -28,7 +28,7 @@ The last line of a paragraph needs one more setting. Postext keeps a paragraph f
 
 <Excerpt region="heading" />
 
-The title is a heading the size and face of the text, so it fills squares like any other line: `lineSpan: 1` keeps it on one line of the grid and `indent: em(2)` leaves two empty squares above it ([Per-level overrides](/en/docs/configuration-text#per-level-overrides)). The name is a paragraph with `textAlign: 'end'` and `endIndent: em(1)`, which ends it one square above the foot, and the Markdown writes the blank square between family and given name as an ideographic space: `夏目　漱石`. The text starts on the third line, each paragraph after one empty square from `firstLineIndent: em(1)`.
+The title is a heading the size and face of the text, so it fills squares like any other line: `lineSpan: 1` keeps it on one line of the grid and `indent: em(2)` leaves two empty squares above it ([Per-level overrides](/en/docs/configuration-headings#per-level-overrides)). The name is a paragraph with `textAlign: 'end'` and `endIndent: em(1)`, which ends it one square above the foot, and the Markdown writes the blank square between family and given name as an ideographic space: `夏目　漱石`. The text starts on the third line, each paragraph after one empty square from `firstLineIndent: em(1)`.
 
 ### 4 · Print the sheet around the squares
 
@@ -40,7 +40,7 @@ The header's elements are drawn on the sheet itself: on a vertical page `x` runs
 
 <Excerpt region="pen" />
 
-Klee One is drawn with a pen and keeps the Japanese forms of the kanji, so the sheets read as handwriting without the irregularity of a scan. Its vertical forms put 、。 in the upper right of their square and turn ー and the brackets, which is where a writer puts them. Like every Japanese family on Fontsource it comes as about 120 files, and `loadCjkFonts` fetches the ones the text needs ([Chinese, Japanese and Korean fonts](/en/docs/configuration-programmatic-usage#chinese-japanese-and-korean-fonts)).
+Klee One is drawn with a pen and keeps the Japanese forms of the kanji, so the sheets read as handwriting without the irregularity of a scan. Its vertical forms put 、。 in the upper right of their square and turn ー and the brackets, which is where a writer puts them. Like every Japanese family on Fontsource it comes as about 120 files, and `loadCjkFonts` fetches the ones the text needs ([Chinese, Japanese and Korean fonts](/en/docs/configuration-pdf-output#chinese-japanese-and-korean-fonts)).
 
 ## Variations
 

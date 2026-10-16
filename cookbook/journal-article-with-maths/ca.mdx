@@ -16,7 +16,7 @@ Un article de recerca del número de setembre de *Measure*, revista fictícia de
 
 ### 1 · Engega MathJax i numera les equacions
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Les [matemàtiques](/ca/docs/configuration-text#matemàtiques) les compon MathJax, que ve dins del paquet: `initMathEngine` s'importa de `https://esm.sh/postext` amb la resta de símbols, i cal esperar `initMathEngine()` abans de la primera composició; si no, cada fórmula surt com una caixa grisa. A partir d'aquí, `$…$` compon matemàtiques en línia i `$$…$$` fórmules destacades, i `renderToPdf` escriu cada fórmula com a traçats vectorials. Un `\tag{1}` al final d'una fórmula destacada la numera: la fórmula ocupa l'amplada de la seva columna, amb l'equació centrada i el número enganxat a la dreta a la mateixa línia. Aquí els números s'escriuen a mà, i el text els cita tal com són, «Eq. (6)».
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Les [matemàtiques](/ca/docs/configuration-lists-math#matemàtiques) les compon MathJax, que ve dins del paquet: `initMathEngine` s'importa de `https://esm.sh/postext` amb la resta de símbols, i cal esperar `initMathEngine()` abans de la primera composició; si no, cada fórmula surt com una caixa grisa. A partir d'aquí, `$…$` compon matemàtiques en línia i `$$…$$` fórmules destacades, i `renderToPdf` escriu cada fórmula com a traçats vectorials. Un `\tag{1}` al final d'una fórmula destacada la numera: la fórmula ocupa l'amplada de la seva columna, amb l'equació centrada i el número enganxat a la dreta a la mateixa línia. Aquí els números s'escriuen a mà, i el text els cita tal com són, «Eq. (6)».
 
 ### 2 · Dibuixa el bloc del títol amb un estil de títol
 

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Note a piè di pagina, numeri di riga, rimandi e citazioni, l’indice dei contenuti e l’indice analitico',
   lang: 'it',
   lastUpdated: '2026-10-10',
-  readingTime: '4 min',
-  order: 6,
+  readingTime: '29 min',
+  order: 12,
   parent: 'configuration',
   plainSummary: "Questa pagina riguarda le impostazioni delle parti di un libro che rimandano altrove. Le note a piè di pagina stanno in fondo alla pagina, e i numeri di riga stanno nel margine. I rimandi indicano una figura, una sezione o una pagina, e le citazioni indicano le opere che citi. Il sommario elenca i capitoli, e l’indice analitico in fondo al libro elenca i termini con le loro pagine. Ogni sezione spiega l’aspetto di questi elementi e come vengono numerati.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Note a piè di pagina
 
-La proprietà `footnotes` stabilisce dove vanno le note citate con `[^id]`, come sono numerate e che aspetto hanno. Il markup è descritto in [Formato del documento](/it/docs/document-format#note-a-piè-di-pagina).
+La proprietà `footnotes` stabilisce dove vanno le note citate con `[^id]`, come sono numerate e che aspetto hanno. Il markup è descritto in [Formato del documento](/it/docs/document-format-notes-references#note-a-piè-di-pagina).
 
 ```ts
 interface FootnotesConfig {
@@ -50,9 +50,9 @@ interface FootnotesConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '160px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -256,9 +256,9 @@ interface LineNumbersConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '160px' }}>Proprietà</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '160px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -378,7 +378,7 @@ Che cosa si conta e che cosa no:
 
 - **Mai contati**: titoli, didascalie, tabelle e immagini, formule in evidenza, testi del progetto grafico (aperture, testatine), note a piè di pagina e note di fine capitolo, il sommario, le voci dell’indice analitico e della bibliografia, e le pagine bianche.
 - **Riquadri e prosa.** Il testo di un riquadro non si conta, e con `count: 'verse'` nemmeno la prosa, a meno che lo stile di paragrafo in cui è composta non indichi `lineNumbers: true`; uno stile con `lineNumbers: false` non si conta mai (vedi [Stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo)).
-- **Una poesia.** Il recinto di una poesia accetta `numbered=false` (i suoi versi non si contano), `lineStart=N` (il suo primo verso è N, e il conteggio ricomincia lì) e `interval=N`. `:::numbering{lines=N}` assegna il numero N alla successiva riga contata, ovunque si trovi. Vedi [Formato del documento › `:::verse`](/it/docs/document-format#verse) e [`:::numbering`](/it/docs/document-format#numbering).
+- **Una poesia.** Il recinto di una poesia accetta `numbered=false` (i suoi versi non si contano), `lineStart=N` (il suo primo verso è N, e il conteggio ricomincia lì) e `interval=N`. `:::numbering{lines=N}` assegna il numero N alla successiva riga contata, ovunque si trovi. Vedi [Formato del documento › `:::verse`](/it/docs/document-format-directives#verse) e [`:::numbering`](/it/docs/document-format-directives#numbering).
 
 In un libro impaginato capitolo per capitolo, `restart: 'document'` porta il conteggio da un capitolo al successivo tramite `continuation.lineNumber`. `continuationAfter` conta i versi a partire dal testo; con `count: 'all'` il conteggio dipende dall’impaginazione, quindi l’host passa il `lastLineNumber` del documento del capitolo precedente, come fa la Sandbox.
 
@@ -399,7 +399,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Rimandi
 
-La proprietà `crossRefs` stabilisce le parole che un [rimando](/it/docs/document-format#rimandi-e-ancore) stampa attorno a un numero o a una pagina, e lo stile che prende un `:ref` quando non ne imposta uno. Ogni modello contiene `{n}` dove va il numero; uno senza riceve il numero dopo uno spazio indivisibile (`"§"` stampa *§ 3.2*). Un modello non impostato segue la lingua del documento: *chapter / section / p.* in inglese, *capítulo / sección / pág.* in spagnolo, `第{n}章` / `第{n}节` / `第{n}页` in cinese, e così via per francese, tedesco, italiano, portoghese, catalano e olandese.
+La proprietà `crossRefs` stabilisce le parole che un [rimando](/it/docs/document-format-notes-references#rimandi-e-ancore) stampa attorno a un numero o a una pagina, e lo stile che prende un `:ref` quando non ne imposta uno. Ogni modello contiene `{n}` dove va il numero; uno senza riceve il numero dopo uno spazio indivisibile (`"§"` stampa *§ 3.2*). Un modello non impostato segue la lingua del documento: *chapter / section / p.* in inglese, *capítulo / sección / pág.* in spagnolo, `第{n}章` / `第{n}节` / `第{n}页` in cinese, e così via per francese, tedesco, italiano, portoghese, catalano e olandese.
 
 ```ts
 interface CrossRefsConfig {
@@ -414,9 +414,9 @@ interface CrossRefsConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '160px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Consente di andare a capo negli spazi di un rimando la cui etichetta è fatta di parole: il testo di un’ancora <code>[words]{'{#id}'}</code>, il titolo di un titolo o di un riquadro, una sostituzione <code>text="…"</code> (anche su un rimando a una figura o a una tabella). Gli spazi dell’etichetta si allargano e si stringono allora con la riga, e il rimando resta un unico link; le sue parole non vengono sillabate. Un numero, un numero romano o una singola lettera dentro un’etichetta del genere resta con la parola che lo precede (<code>Fig. 1a</code>, <code>plate IV</code>). Un’etichetta con un numero o una pagina (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) non va mai a capo, anche quando il suo modello contiene uno spazio normale. <code>false</code> compone ogni etichetta come un’unica parola, senza a capo all’interno, come fino a postext 1.27. Una configurazione salvata prima di <code>configVersion</code> 12 il cui testo contiene un rimando si legge con <code>false</code>, così le sue righe restano dove erano (vedi <a href="/it/docs/configuration-programmatic-usage#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>).</td>
+      <td>Consente di andare a capo negli spazi di un rimando la cui etichetta è fatta di parole: il testo di un’ancora <code>[words]{'{#id}'}</code>, il titolo di un titolo o di un riquadro, una sostituzione <code>text="…"</code> (anche su un rimando a una figura o a una tabella). Gli spazi dell’etichetta si allargano e si stringono allora con la riga, e il rimando resta un unico link; le sue parole non vengono sillabate. Un numero, un numero romano o una singola lettera dentro un’etichetta del genere resta con la parola che lo precede (<code>Fig. 1a</code>, <code>plate IV</code>). Un’etichetta con un numero o una pagina (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) non va mai a capo, anche quando il suo modello contiene uno spazio normale. <code>false</code> compone ogni etichetta come un’unica parola, senza a capo all’interno, come fino a postext 1.27. Una configurazione salvata prima di <code>configVersion</code> 12 il cui testo contiene un rimando si legge con <code>false</code>, così le sue righe restano dove erano (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +458,7 @@ I rimandi prendono il colore, il peso e l’inclinazione comuni a tutti i rimand
 
 ## Citazioni
 
-La proprietà `citations` sceglie lo stile delle citazioni e l’aspetto delle citazioni e della bibliografia. Il markup è descritto in [Citazioni e bibliografia](/it/docs/document-format#citazioni-e-bibliografia); lo stile viene applicato dal pacchetto `postext-citeproc`.
+La proprietà `citations` sceglie lo stile delle citazioni e l’aspetto delle citazioni e della bibliografia. Il markup è descritto in [Citazioni e bibliografia](/it/docs/document-format-notes-references#citazioni-e-bibliografia); lo stile viene applicato dal pacchetto `postext-citeproc`.
 
 ```ts
 interface CitationsConfig {
@@ -491,9 +491,9 @@ interface CitationsConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -502,7 +502,7 @@ interface CitationsConfig {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td><code>'apa'</code></td>
-      <td>L’id di uno stile incluso (vedi <a href="/it/docs/document-format#stili">Stili</a>) o <code>'custom'</code>. Lo stile decide che cosa dicono le citazioni e le voci: nomi, date, ordine, punteggiatura, e se le citazioni sono note.</td>
+      <td>L’id di uno stile incluso (vedi <a href="/it/docs/document-format-notes-references#stili">Stili</a>) o <code>'custom'</code>. Lo stile decide che cosa dicono le citazioni e le voci: nomi, date, ordine, punteggiatura, e se le citazioni sono note.</td>
     </tr>
     <tr>
       <td><code>customStyle</code></td>
@@ -550,7 +550,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Lascia che il dizionario divida i nomi degli autori citati. <code>false</code> tiene interi il cognome di ogni persona nei riferimenti (autori, curatori, traduttori) e ogni nome dato come stringa unica, ovunque compaia con la sua maiuscola: in una citazione, nel testo corrente e nell’elenco, così nessuna riga termina con <code>(Lup-</code>. Un doppio nome si legge parte per parte, e un autore che si chiama Baker non tiene intera la parola <code>baker</code>. Vedi <a href="/it/docs/configuration-text#parole-tenute-intere">Parole tenute intere</a>.</td>
+      <td>Lascia che il dizionario divida i nomi degli autori citati. <code>false</code> tiene interi il cognome di ogni persona nei riferimenti (autori, curatori, traduttori) e ogni nome dato come stringa unica, ovunque compaia con la sua maiuscola: in una citazione, nel testo corrente e nell’elenco, così nessuna riga termina con <code>(Lup-</code>. Un doppio nome si legge parte per parte, e un autore che si chiama Baker non tiene intera la parola <code>baker</code>. Vedi <a href="/it/docs/configuration-language#parole-tenute-intere">Parole tenute intere</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -629,7 +629,7 @@ interface CitationsConfig {
 
 ## Indice dei contenuti
 
-La proprietà `toc` configura ciò che stampa una direttiva `:::toc` (vedi [Formato del documento](/it/docs/document-format#toc)). Il sommario si costruisce a partire dalla **struttura** del documento (ogni titolo con il suo numero e la sua etichetta di pagina, ogni `:::part`), quindi segue i capitoli: rinominane uno, spostalo in un’altra parte, cambiane gli autori, e le voci cambiano di conseguenza. Una voce è il numero del titolo in una colonna propria, il titolo, una linea di guida e l’etichetta di pagina al margine destro, poi una riga facoltativa di sottotitolo; una parte è una riga disegnata da `parts.design`.
+La proprietà `toc` configura ciò che stampa una direttiva `:::toc` (vedi [Formato del documento](/it/docs/document-format-directives#toc)). Il sommario si costruisce a partire dalla **struttura** del documento (ogni titolo con il suo numero e la sua etichetta di pagina, ogni `:::part`), quindi segue i capitoli: rinominane uno, spostalo in un’altra parte, cambiane gli autori, e le voci cambiano di conseguenza. Una voce è il numero del titolo in una colonna propria, il titolo, una linea di guida e l’etichetta di pagina al margine destro, poi una riga facoltativa di sottotitolo; una parte è una riga disegnata da `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -651,9 +651,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Altezza della riga e spazio attorno a essa. <code>em</code> è il corpo del testo corrente, quindi la riga predefinita è alta il doppio del corpo, non due righe di testo: con un testo corrente 9,5/13,5 pt è di 19 pt. Per una riga di due righe di testo, indica l’altezza in <code>pt</code> (lì <code>27pt</code>).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Tiene ogni blocco dell’indice in una sola colonna e pagina: una riga di testa (vedi <code>groups.head</code>) e tutte le voci che le stanno sotto, fino alla testa successiva di pari rango o di rango superiore. Un blocco che non entra nello spazio rimasto nella sua colonna apre la colonna o la pagina successiva insieme alla sua riga di testa, e la colonna che lascia finisce corta. I titoli subito sopra l’indice (il suo stesso titolo) seguono il primo blocco quando questo si sposta. Un blocco più alto di una colonna intera viene tagliato: comincia dove entrano la sua testa e <code>groups.minEntriesAfterHead</code> voci, e ogni colonna in cui prosegue si apre di nuovo con la sua riga di testa (<code>groups.continuation</code>). Ogni blocco tagliato tra due colonne viene segnalato con un avviso <code>tocGroupSplit</code> (vedi <a href="/it/docs/configuration-programmatic-usage#avvisi-nel-documento">Avvisi nel documento</a>). Un <code>:::toc{'{keep="…"}'}</code> lo sostituisce per un singolo indice (vedi <a href="/it/docs/document-format-directives#toc">Formato del documento</a>). Da postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Che cosa apre un blocco: una riga di parte (<code>'part'</code>: una parte e i suoi capitoli) o la voce di un livello di titolo (<code>1</code>: un capitolo e le sue sezioni; perché le sezioni compaiano, <code>levels</code> o <code>:::toc{'{levels="1-2"}'}</code> devono elencarle). Con un livello di titolo, una riga di parte subito sopra la testa segue il suo blocco, così una riga di parte non resta mai da sola in fondo a una colonna; le voci di rango superiore alla testa (un capitolo quando la testa è <code>2</code>) restano a sé. Una testa senza voci sotto non forma un blocco. Qualsiasi altro valore viene letto come <code>'part'</code> e segnalato.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Il numero minimo di voci che un blocco tagliato tiene con la sua riga di testa: se la testa e quelle voci non entrano nello spazio rimasto, il blocco comincia nella colonna successiva. Con <code>0</code> una testa può chiudere da sola una colonna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>oggetto</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La riga di testa ripetuta in cima a ogni colonna in cui prosegue un blocco tagliato: il suo numero e il suo titolo seguiti da <code>mark</code>, in corsivo, senza linea di guida né numero di pagina (in una riga di parte la dicitura fa parte di <code>{'{titleText}'}</code>, composta con la tipografia del design stesso, e <code>{'{pageNumber}'}</code> non stampa nulla). Per impostazione predefinita <code>mark</code> è il suffisso di tabella continuata della lingua del documento: <em>(cont.)</em> in inglese, spagnolo, catalano e portoghese, <em>(suite)</em> in francese, <em>(Forts.)</em> in tedesco, <em>(segue)</em> in italiano, <em>（续）</em> in cinese, <em>（続き）</em> in giapponese, <em>(تابع)</em> in arabo. Una dicitura che comincia con un carattere a larghezza piena viene composta attaccata al titolo. La ripetizione resta fuori dalla navigazione dell’EPUB e dall’indice dell’EPUB a layout fluido. <code>enabled: false</code> taglia il blocco senza ripetere la riga di testa.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -719,7 +743,7 @@ Le etichette di pagina sono quelle che il documento stampa. `buildDocument()` re
 
 ## Indice analitico
 
-La proprietà `index` configura ciò che stampa una direttiva `:::index` (vedi [Formato del documento](/it/docs/document-format#indice-analitico)): i termini marcati con `:index[…]` e `:index{term="…"}` nel testo, ordinati, raggruppati per lettera iniziale (per iniziale pinyin o numero di tratti in cinese, per riga del gojūon in giapponese, vedi `groupBy`), ciascuno con le pagine in cui compare. Una voce è il suo termine, un separatore e i suoi numeri di pagina; seguono le sue sottovoci, con un gradino di rientro per livello, e le righe che vanno a capo sporgono di `turnoverIndent` così da non allinearsi mai con una sottovoce.
+La proprietà `index` configura ciò che stampa una direttiva `:::index` (vedi [Formato del documento](/it/docs/document-format-notes-references#indice-analitico)): i termini marcati con `:index[…]` e `:index{term="…"}` nel testo, ordinati, raggruppati per lettera iniziale (per iniziale pinyin o numero di tratti in cinese, per riga del gojūon in giapponese, vedi `groupBy`), ciascuno con le pagine in cui compare. Una voce è il suo termine, un separatore e i suoi numeri di pagina; seguono le sue sottovoci, con un gradino di rientro per livello, e le righe che vanno a capo sporgono di `turnoverIndent` così da non allinearsi mai con una sottovoce.
 
 ```ts
 const config: PostextConfig = {
@@ -739,9 +763,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>

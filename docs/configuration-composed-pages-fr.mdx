@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-fr.mdx */}
+
+export const metadata = {
+  title: 'Configuration : pages composées',
+  sidebarTitle: 'Réglages des pages composées',
+  description: 'Les gabarits des pages composées : blocs, groupes, décor, héritage et variantes recto/verso, styles d’étiquette des ancrages d’image, et avertissements qu’un gabarit peut donner',
+  lang: 'fr',
+  lastUpdated: '2026-10-16',
+  readingTime: '6 min',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "Cette page présente les gabarits de page. Un gabarit est une page dessinée dans les réglages : des boîtes nommées, appelées blocs, la place de chacune, la taille qu’elle peut prendre et son apparence. Le Markdown d’une page composée remplit ensuite les blocs par leur nom, si bien que le texte ne contient jamais de positions et que les réglages ne contiennent jamais de texte. Un gabarit peut partir d’un autre et ne changer que quelques blocs, et il peut différer entre les pages de gauche et de droite. La page liste aussi les styles d’étiquette des mots posés sur les images, ainsi que chaque avertissement qu’un gabarit peut donner, avec la façon de le corriger.",
+};
+
+# Configuration : pages composées
+
+
+## Gabarits de page
+
+Une page composée est une page dont la forme vient d’un **gabarit** de la configuration et dont le contenu vient du Markdown d’une clôture `::::page{template="…"}`. Le gabarit nomme des rectangles, appelés **blocs** ; le Markdown envoie chaque morceau de contenu vers un bloc par son nom (son emplacement). La géométrie n’apparaît jamais dans le Markdown, et le texte du contenu n’apparaît jamais dans le gabarit. La propriété `pageTemplates` contient les gabarits du livre :
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce bloc remplit la zone de contenu. Tous les autres champs sont facultatifs :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Le nom que demande une clôture de page (<code>template="tema-cajas"</code>). Unique parmi les gabarits : un second gabarit avec le même id est ignoré.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l’id</td>
+      <td>Le nom affiché dans le Sandbox. La mise en page ne le lit jamais.</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>L’id du gabarit dont celui-ci part. Voir <a href="#héritage-et-variantes">Héritage et variantes</a>.</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>Le rectangle auquel se rapportent les positions des blocs. <code>'content'</code> est la zone de contenu de la page, en miroir sur les pages de gauche et de droite comme le texte courant ; <code>'trim'</code> est la page rognée ; <code>'bleed'</code> la page avec son fond perdu.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>aucune</td>
+      <td>Divise la zone en cellules, pour qu’un bloc ou un groupe se place par cellule (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, en comptant à partir de 1) plutôt que par <code>placement</code>. Les espacements valent <code>0</code> par défaut.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Les blocs, dans l’ordre du gabarit : celui dans lequel ils sont mesurés et celui qui départage les égalités. Voir <a href="#blocs">Blocs</a>.</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>Des piles et des rangées de blocs qui se partagent l’espace. Voir <a href="#groupes">Groupes</a>.</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>aucun</td>
+      <td>Des images, des filets et des boîtes peints avec la page, dans le langage d’éléments des <a href="/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page">en-têtes et pieds de page</a>. Les éléments de texte ne contiennent que des variables (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> pour un attribut de la clôture de page). Un élément peut s’ancrer à un bloc ou à un groupe (<code>'#dinero'</code>) et se déplace alors avec lui. Le décor est posé après les blocs et ne repousse jamais le texte.</td>
+    </tr>
+    <tr>
+      <td><code>header</code>, <code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>hérité</td>
+      <td>Le titre courant et le folio de la page. Non définis, la page garde ceux de son chapitre ; <code>false</code> les masque.</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Le gabarit décrit deux pages en vis-à-vis posées comme une seule feuille. Une double page commence toujours sur une page de gauche dans un livre de gauche à droite (sur une page de droite dans un livre de droite à gauche), avec une page blanche ajoutée avant elle si nécessaire.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Sur une double page, la bande au dos que les blocs laissent libre, sauf s’ils fixent <code>crossGutter: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>aucune</td>
+      <td>Des changements pour une page de droite (<code>recto</code>) ou de gauche (<code>verso</code>), écrits comme le gabarit lui-même. Le côté est le côté physique, si bien que les livres de gauche à droite et de droite à gauche fonctionnent tous deux.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>ce gabarit</td>
+      <td>Le gabarit des pages ajoutées quand un bloc continue sur la page suivante (<code>overflow.continueIn: 'next-page'</code>). Non défini, la page ajoutée utilise ce gabarit, avec seulement les blocs continués remplis.</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un style de paragraphe pour le texte de la page, comme en ont les styles de titre.</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>aucune</td>
+      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties.</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>Le rôle de page que voient les éléments de maquette dotés d’un filtre <code>pages</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Blocs
+
+Un bloc est un rectangle nommé qui reçoit du contenu composé. Son `name` est l’emplacement que demande le Markdown, et il est unique dans son gabarit (un groupe ne peut pas non plus prendre le nom d’un bloc, puisque les ancrages nomment les deux de la même façon).
+
+Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par son `placement`, qui fonctionne comme celui d’un élément de maquette : un ancrage (`'container'` est la zone, `'page'`, `'bleed'`, ou `'#name'` pour un autre bloc ou groupe), un bord, un décalage et une taille. Un bloc ancré à un autre se déplace avec lui. Sans l’un ni l’autre, le bloc prend toute la zone.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Le nom de l’emplacement.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>toute la zone</td>
+      <td>Ancrage, bord, décalage et taille, comme dans le <a href="/fr/docs/configuration-headers-footers#placement-des-éléments">placement des éléments</a>. Ignoré quand une cellule de la grille place le bloc.</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>aucune</td>
+      <td>Une cellule de la grille du gabarit, en comptant à partir de 1, qui s’étend sur <code>cols</code> × <code>rows</code> cellules (1 par défaut). Une cellule au-delà de la grille y est ramenée. Ignoré quand le gabarit n’a pas de grille.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>, <code>'auto'</code></td>
+      <td>Une longueur fixe, un pourcentage de la zone (de 0 à 100), <code>'auto'</code> (la taille propre du contenu) ou <code>'fill'</code> (ce qui reste jusqu’au bord auquel le bloc est ancré). Non défini, le bloc lit <code>placement.size</code>, puis la valeur par défaut : toute la largeur, aussi haut que son contenu. Un bloc de texte a besoin d’une justification, donc une largeur <code>'auto'</code> n’a de sens que pour un bloc qui contient une seule image (la largeur de l’image à la hauteur du bloc). Une valeur que le moteur ne peut pas utiliser (une longueur négative, une unité inconnue) est lue comme la valeur par défaut.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>aucune</td>
+      <td>Des limites pour une taille <code>'auto'</code> ou <code>'fill'</code> et pour l’espace qu’un groupe donne ou reprend. Le minimum l’emporte sur le maximum, et une taille fixe hors de ces limites est ramenée entre elles (<code>frameMinMax</code> signale les deux cas).</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>sans encadré</td>
+      <td>Un id de <a href="/fr/docs/configuration-callouts#styles-dencadré">style d’encadré</a> : les blocs se dessinent avec les styles d’encadré (fond, bordure, marge intérieure, bande, icône, onglet d’étiquette, titre). Les mots d’un onglet viennent du Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Les réglages d’encadré qui décident où va une boîte dans le texte courant (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) ne s’appliquent pas à un bloc.</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>celle du style</td>
+      <td>Remplace la marge intérieure du style, côté par côté : de la place pour les photos posées sur une boîte, par exemple.</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>L’ordre de peinture. Le décor est le calque 0 ; un calque négatif se peint en dessous.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>En degrés, dans le sens des aiguilles d’une montre. La boîte et son contenu tournent ensemble.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>La position du contenu dans un bloc plus haut que lui.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>, <code>columnGap</code></td>
+      <td><code>number</code>, <code>Dimension</code></td>
+      <td><code>1</code>, celle du style</td>
+      <td>Des colonnes à l’intérieur du bloc.</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code> : le texte des autres blocs habille le rectangle de celui-ci.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Le bloc reçoit le contenu qui ne nomme aucun emplacement.</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>aucun</td>
+      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture.</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un chaînage : le contenu qui ne tient pas continue dans le bloc de ce nom, sur la même page.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Où continue le contenu qui ne tient pas : <code>'#frame'</code> (un autre bloc de la page, comme <code>next</code>), <code>'next-page'</code> (le même bloc sur une page ajoutée après celle-ci) ou <code>'template:&lt;id&gt;'</code> (une page de ce gabarit).</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>celle de la langue</td>
+      <td>La marque à la fin d’un morceau coupé. Non définie, le mot de suite de la langue du document (celui des tableaux coupés) ; <code>false</code> n’en met aucune.</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quand rien d’autre ne fait tenir le contenu, son texte peut être composé plus petit.</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>La plus petite échelle du texte, au-dessus de 0 et au plus 1 (une valeur plus grande est lue comme 1).</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>, <code>number</code></td>
+      <td><code>true</code>, <code>0.8</code></td>
+      <td>Si les images du bloc peuvent être réduites, et jusqu’à quelle échelle.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Le bloc ne bouge jamais et ne change jamais de taille, pour une boîte qui doit rester alignée sur l’illustration. Un groupe se répartit autour de lui.</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>La façon dont le bloc partage l’espace de son groupe : <code>grow</code> prend une part de l’espace libre, <code>shrink</code> permet au bloc de rendre de l’espace, et les blocs de <code>priority</code> plus basse le rendent en premier.</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Pas d’avertissement quand le Markdown n’envoie rien au bloc.</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Sur une double page, le bloc peut traverser la bande du dos.</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>, <code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
+      <td>ceux de la page</td>
+      <td>Une boîte verticale sur une page horizontale, ou l’inverse.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le bloc hérité de ce nom.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Groupes
+
+Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de blocs qui se partagent l’espace et se déplacent ensemble. Dans un groupe, la position propre des blocs dans le sens du groupe est ignorée : le groupe les dispose dans l’ordre, avec `gap` entre eux. Quand le texte d’un bloc s’allonge, les blocs qui le suivent se décalent. Un groupe est une boîte à laquelle les blocs et le décor peuvent s’ancrer (`'#pagina'`).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Unique parmi les blocs et les groupes du gabarit.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>De haut en bas, ou du début à la fin.</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>Les blocs du groupe, dans leur ordre sur la page. Un bloc appartient à un groupe au plus ; un nom qui n’est aucun bloc du gabarit, ou un bloc déjà listé, est sauté.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>L’espace entre deux blocs du groupe.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>grid</code></td>
+      <td>comme pour les blocs</td>
+      <td>la boîte de ses blocs</td>
+      <td>La boîte propre du groupe. Non définie, la boîte qui entoure les boîtes déclarées de ses blocs.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>Où va l’espace libre quand aucun bloc du groupe ne grandit.</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le groupe hérité.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Héritage et variantes
+
+Un gabarit doté d’`extends` part du gabarit qu’il nomme (qui peut lui-même en étendre un autre) et ne change que ce qu’il écrit :
+
+- Un champ comme `area`, `header` ou `overflowTemplate` remplace celui du parent. `grid` se fusionne clé par clé. `spread`, `gutter` et `role` sont hérités aussi ; `id`, `name` et `extends` sont propres au gabarit.
+- `frames` et `groups` se fusionnent **par nom** : une entrée qui porte le nom d’une entrée héritée change les champs qu’elle écrit et garde les autres (`fit`, `overflow` et `padding` se fusionnent clé par clé ; `placement` est remplacé en entier) ; `remove: true` la supprime ; un nom nouveau s’ajoute après les entrées héritées.
+- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute.
+
+`variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le Sandbox enregistre un gabarit : dans un gabarit qui en étend un autre, ou dans une variante, elle remplace la valeur du parent.
+
+Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
+
+## Styles d’étiquette
+
+La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette.
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriété</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>obligatoire</td>
+      <td>Le nom qu’utilisent les ancrages et les étiquettes.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>l’id</td>
+      <td>Le nom affiché dans le Sandbox.</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un style de paragraphe dont l’étiquette emprunte la typographie ; les champs ci-dessous le remplacent.</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>ceux du texte courant</td>
+      <td>La typographie de l’étiquette.</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>Romain ou italique.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>couleur du texte courant</td>
+      <td>La couleur des lettres.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Des capitales, comme les cartes écrivent les mers et les pays.</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>L’espace ajouté entre les lettres, en cadratins.</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>aucun</td>
+      <td>Un contour derrière les lettres, pour qu’elles se lisent sur une image chargée.</td>
+    </tr>
+    <tr>
+      <td><code>background</code>, <code>padding</code></td>
+      <td><code>ColorValue</code>, <code>Dimension</code></td>
+      <td>aucun</td>
+      <td>Un fond derrière l’étiquette, et l’espace autour de son texte.</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>La taille minimale à laquelle une étiquette peut être réduite quand elle ne tient pas dans sa largeur.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Champs d’étiquette d’un ancrage
+
+Les ancrages d’une image (`Resource.anchors`, les points que la bande dessinée utilise pour les locuteurs) acceptent quelques champs facultatifs pour les étiquettes. Ce sont des fractions de l’image : ils restent valables dans toutes les langues et quel que soit le recadrage de l’image. La bande dessinée les ignore.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Champ</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>celle de l’étiquette</td>
+      <td>La justification de l’étiquette, en fraction de la largeur de l’image : un nom long s’y coupe sur deux lignes.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>Le côté de l’étiquette qui se place au point d’ancrage.</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>Le bord de l’étiquette qui se place à la hauteur de l’ancrage.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>En degrés, dans le sens des aiguilles d’une montre, autour du point d’ancrage : le nom d’un fleuve le long de son cours.</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un id de <code>labelStyles</code>. Une étiquette qui nomme son propre style le remplace.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Avertissements des gabarits de page
+
+Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur nomme le gabarit qui l’a écrit. Un avertissement qui nomme un id ou un nom inexistant propose aussi le plus proche qui existe.
+
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Avertissement</th>
+      <th>Cause</th>
+      <th>Correction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>Deux gabarits ont le même <code>id</code>. Le premier est utilisé et le suivant est ignoré.</td>
+      <td>Renommer l’un des deux, ou supprimer la copie.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>En suivant <code>extends</code>, on revient au même gabarit (<code>a → b → a</code>). Tous les gabarits de la boucle, et tous ceux qui étendent l’un d’eux, sont écartés : aucune page ne peut les utiliser.</td>
+      <td>Retirer l’<code>extends</code> d’un gabarit de la boucle.</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code> nomme un id qu’aucun gabarit n’a. Le gabarit est utilisé seul, sans rien hériter.</td>
+      <td>Corriger l’id (l’avertissement propose le plus proche), ou ajouter le gabarit parent.</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>Deux blocs, ou deux groupes, d’une même liste ont le même <code>name</code>, ou un groupe porte le nom d’un bloc. L’entrée suivante est ignorée ; un ancrage à ce nom lit le bloc.</td>
+      <td>Donner à chaque bloc et à chaque groupe un nom qui lui soit propre. Pour changer un bloc hérité, écrire une seule entrée avec son nom.</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>Le <code>style</code> d’un bloc ne nomme aucun style d’encadré. Le bloc est dessiné sans boîte.</td>
+      <td>Corriger l’id, ou ajouter le style à <code>calloutStyles</code>.</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>Un bloc, un groupe ou un élément de décor est ancré à <code>'#name'</code> et le gabarit n’a aucun bloc, groupe ou élément de ce nom ; ou des blocs et des groupes sont ancrés les uns aux autres en boucle (y compris par un groupe sans ancrage propre, dont la boîte est celle de ses blocs). L’ancrage est lu comme <code>'container'</code>, la zone.</td>
+      <td>Ancrer à un bloc ou à un groupe qui existe, ou casser la boucle en ancrant l’un d’eux à la zone.</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>Un minimum dépasse son maximum (<code>minHeight 40mm &gt; maxHeight 30mm</code>), ou une <code>width</code> ou une <code>height</code> fixe se trouve hors des limites. Le minimum l’emporte, une taille fixe est ramenée entre les limites, et <code>used</code> indique ce que prend le bloc. Les longueurs en unités différentes se comparent à la résolution de la page, les cadratins au corps du texte courant.</td>
+      <td>Rendre le minimum inférieur ou égal au maximum, ou supprimer la limite que contredit la taille fixe.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>Les <code>frames</code> d’un groupe listent un nom qui n’est aucun bloc du gabarit (peut-être supprimé par un gabarit enfant ou par une variante). Le groupe le saute.</td>
+      <td>Corriger le nom, ou le retirer de la liste.</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>Un bloc est listé dans deux groupes, ou deux fois dans le même. Un bloc n’appartient qu’à un seul groupe : la mention suivante est sautée.</td>
+      <td>Garder le bloc dans le seul groupe avec lequel il se déplace.</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>Des blocs se continuent les uns dans les autres en boucle par <code>next</code> ou <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). Le lien qui ferme la boucle est écarté : la chaîne s’arrête au bloc qui le précède.</td>
+      <td>Terminer la chaîne à son dernier bloc : retirer son <code>next</code>, ou le faire continuer sur la page suivante.</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>Un <code>next</code> ne nomme aucun bloc du gabarit ; un <code>overflow.continueIn</code> ne nomme aucun bloc (<code>'#x'</code>) ou aucun gabarit (<code>'template:x'</code>), ou n’a aucune des formes <code>'#frame'</code>, <code>'next-page'</code> et <code>'template:&lt;id&gt;'</code> ; ou <code>overflowTemplate</code> ne nomme aucun gabarit. Le contenu qui ne tient pas n’y continue pas.</td>
+      <td>Corriger le nom ou l’id, ou écrire l’une des trois formes.</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>Un ancrage d’une image nomme un <code>style</code> que <code>labelStyles</code> n’a pas. L’avertissement nomme la ressource. Les étiquettes de cet ancrage prennent l’apparence par défaut.</td>
+      <td>Corriger l’id du style sur l’ancrage, ou ajouter le style à <code>labelStyles</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+La version de la configuration est 15 depuis les gabarits de page (les bundles écrits avant continuent de se charger sans changement : rien de ce que dit une configuration plus ancienne ne change de sens).

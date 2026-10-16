@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-en.mdx */}
+
+export const metadata = {
+  title: 'Document format: inline formatting and formulas',
+  sidebarTitle: 'Inline formatting and formulas',
+  description: 'Marks inside a line: emphasis, links, chips, small capitals, tabs, vertical text, Chinese and Japanese marks, text direction, and LaTeX formulas',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '25 min',
+  order: 27,
+  parent: 'document-format',
+  plainSummary: "This page covers the marks you use inside a line of text. They make words bold or italic, add links, draw small labels, set small capitals and line text up at tab stops. Other marks are for Chinese and Japanese books, such as small readings above a character, or for a phrase in another direction, such as English in an Arabic book. The last section shows how to write mathematical formulas.",
+};
+
+# Document format: inline formatting and formulas
+
+
+## Inline formatting
+
+Inline markup is recognised inside any text block (headings, paragraphs, blockquotes, list items). In a heading it follows `headings.inlineMarks`, on by default: the title's italic, bold, scripts, small capitals and links print as in a paragraph, and an italic run in an italic heading comes out upright. With it off the markers are dropped and the title prints in the heading's own style; configurations stored by postext 1.4 or earlier whose headings carry marks are read that way (see [Configuration › Headings](/en/docs/configuration-headings#headings)). A heading design prints `{titleText}` as plain text either way.
+
+<Illustration name="InlineFormatting" data='{"title": "Inline formatting at a glance", "desc": "Markdown-to-rendered comparison for bold, italic, bold italic, inline code, and links.", "caption": "Markdown on the left, rendered result on the right.", "rows": [{"markdown": "**bold**", "rendered": "bold", "style": "bold"}, {"markdown": "*italic*", "rendered": "italic", "style": "italic"}, {"markdown": "***both***", "rendered": "both", "style": "bold-italic"}, {"markdown": "`code`", "rendered": "code", "style": "code"}, {"markdown": "[link](https://…)", "rendered": "link", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>Markup</th>
+      <th>Syntax</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bold</td>
+      <td><code>**bold**</code> or <code>__bold__</code></td>
+      <td>Rendered with <code>bodyText.boldFontWeight</code>. An optional <code>bodyText.boldColor</code> overrides the default body color for bold spans.</td>
+    </tr>
+    <tr>
+      <td>Italic</td>
+      <td><code>*italic*</code> or <code>_italic_</code></td>
+      <td>Rendered with the italic variant of the current font family. An optional <code>bodyText.italicColor</code> overrides the default body color for italic spans. An underscore marks emphasis only at a word boundary, as in CommonMark: one between two letters or digits — <code>snake_case_name</code>, a URL's <code>SR_AIR_EN.pdf</code> — is text (also for <code>__bold__</code>); inside a word, use asterisks (<code>un*believ*able</code>). Chinese, Japanese and Korean letters do not count here, since those scripts have no spaces: <code>中文_斜体_中文</code> and <code>中文__粗体__中文</code> are italic and bold. A <code>__</code> that does not make bold never turns into italics: <code>foo__bar__baz</code> stays text.</td>
+    </tr>
+    <tr>
+      <td>Bold italic</td>
+      <td><code>***both***</code> or <code>___both___</code></td>
+      <td>Both flags combine.</td>
+    </tr>
+    <tr>
+      <td>Superscript</td>
+      <td><code>^text^</code></td>
+      <td>Set at 58% of the text size and raised a third of it — an exponent (<code>10^-8^</code>), an ion charge (<code>Na^+^</code>). The marked text starts and ends with a non-space character; a lone caret in prose stays literal, and so do the faces <code>^_^</code> and <code>^o^</code> (<code>n.^o^</code> and <code>1^o^</code> are still superscripts).</td>
+    </tr>
+    <tr>
+      <td>Subscript</td>
+      <td><code>~text~</code></td>
+      <td>Same size, lowered 0.15 of the text size, so it stays within the descenders — a chemical index (<code>H~2~O</code>, <code>p<em>K</em>~a~</code>). A tilde with a digit on each side is a range and stays literal: <code>3~5 days</code>, <code>需要3~5天</code>. So is one between two Chinese words, which opens no subscript: <code>周一~周五</code>, <code>北京~上海</code>; a subscript still closes before a Chinese character (<code>F~合~等于</code>). Combines with bold and italic (<code>**H~2~O**</code>). A subscript and a superscript written together, with nothing between them, are stacked as in a formula: <code>*T*~0~^2^</code> sets the 2 over the 0, whichever comes first, the subscript lowered 0.25 of the text size to clear the superscript, and the pair takes the width of the wider one. A space or a letter between them sets them one after the other; a word joiner (U+2060) does too, with nothing visible between them. A stacked pair never parts at a line break: a word too wide for the line breaks before the pair.</td>
+    </tr>
+    <tr>
+      <td>Small caps</td>
+      <td><code>:smallcaps[text]</code></td>
+      <td>Lowercase letters set as capitals at 70% of the text size — a character's name in a play, an acronym in running text. Takes other marks inside and around it; see <a href="#small-capitals">Small capitals</a>.</td>
+    </tr>
+    <tr>
+      <td>Orientation in vertical text</td>
+      <td><code>:tcy[12]</code>, <code>:upright[GDP]</code>, <code>:sideways[12]</code></td>
+      <td>In vertical text: one upright cell (tate-chu-yoko), each character upright in a cell of its own, or the whole run turned. No effect in horizontal text; see <a href="#orientation-in-vertical-text">Orientation in vertical text</a>.</td>
+    </tr>
+    <tr>
+      <td>Chinese marks</td>
+      <td><code>:dots[不可]</code>, <code>:name[賈寶玉]</code>, <code>:book[石頭記]</code></td>
+      <td>Emphasis dots (着重号), the proper-name line (专名号) and the book-title mark (书名号: 《》 or a wavy line, per <code>cjk.bookTitleMark</code>). The text stays as written; see <a href="#chinese-marks-ruby-and-warichu">Chinese marks, ruby and warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Ruby</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code> or <code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>Pinyin or zhuyin readings over (or beside) the base characters. The compact form needs a Han, kana or bopomofo base, so <code>&#123;x|x&gt;0&#125;</code> stays text.</td>
+    </tr>
+    <tr>
+      <td>Warichu</td>
+      <td><code>:warichu[note]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>A note set in two half-size rows inside the line (双行夹注), broken across lines and pages.</td>
+    </tr>
+    <tr>
+      <td>Inline code</td>
+      <td><code>`code`</code></td>
+      <td>Backticks are stripped; the span is rendered as plain text, exactly as written: a <code>{':ref{…}'}</code>, a chip, maths, a link or an emphasis marker inside it prints literally, which is how a text shows the syntax. It is set in the text's face, or, with <code>codeStyle.inline</code>, in the code face as one unit (see <a href="/en/docs/configuration-styles#code-listings">Configuration › Code listings</a>). A listing goes in a <a href="/en/docs/document-format#code-blocks">code block</a>.</td>
+    </tr>
+    <tr>
+      <td>Escape</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
+      <td>A backslash sets the marker character itself — the asterisk of a table footnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), a literal caret, a dollar sign that opens no formula — instead of opening a span. Works in the body, in chips and in captions, cells and notes. (Up to postext 1.4 captions, cells, notes and chips printed the backslash of <code>{'\\$'}</code>.)</td>
+    </tr>
+    <tr>
+      <td>No-break space</td>
+      <td>the character itself: U+00A0, U+202F, U+2007</td>
+      <td>Glues the words on either side, so a line never breaks between them: a number and its unit (37 °C), a page reference (p. 12), a group of thousands (225 000). The no-break space (U+00A0), the narrow no-break space (U+202F) and the figure space (U+2007) all glue — in the body, captions, cells, boxes and running heads — and each keeps its own width: justification stretches the word spaces only. Many faces have no glyph for the narrow no-break space or the figure space; they are then set as browsers set them, in the canvas, the HTML and the PDF alike: half a word space and the width of a digit. Practically every face has U+00A0, so it is the safe choice. A group glued this way that is wider than the whole line breaks at its last no-break space rather than inside a word. The word joiner (U+2060) glues without taking room. Type the character itself: an HTML entity such as <code>{'&nbsp;'}</code> prints as it is written. See <a href="/en/docs/justification#where-a-line-never-breaks">Where a line never breaks</a>.</td>
+    </tr>
+    <tr>
+      <td>Soft hyphen</td>
+      <td>the character itself: U+00AD</td>
+      <td>A place where the word may be divided, with a hyphen added when a line ends there: between two letters or digits only. A word that carries one gets no other break from the dictionary, so the soft hyphen is its one division; typed before the first letter of a word it divides nothing and keeps that occurrence whole. Next to a bracket, a quotation mark or punctuation it does nothing. See <a href="/en/docs/justification#where-a-line-never-breaks">Where a line never breaks</a>.</td>
+    </tr>
+    <tr>
+      <td>Link</td>
+      <td><code>[text](https://…)</code></td>
+      <td>The visible text is kept in the flow, set exactly as without the link. The URL makes the words a live link in the HTML and PDF output; see <a href="#links">Links</a>.</td>
+    </tr>
+    <tr>
+      <td>Image</td>
+      <td><code>![alt](src)</code></td>
+      <td>Inline image markdown is <strong>removed</strong> from the text. Images must be declared on <code>PostextContent.resources</code> so the layout engine can place them according to <code>resourcePlacement</code> rules.</td>
+    </tr>
+    <tr>
+      <td>Chip</td>
+      <td><code>:chip[text]</code></td>
+      <td>A boxed run of text that wraps as one unit — a word bank, a key, a tag. Styled by <code>chipStyles</code>; see <a href="#inline-chips">Inline chips</a>.</td>
+    </tr>
+    <tr>
+      <td>Tab</td>
+      <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>Sends the words after it to the next tab stop: one of the stops of the paragraph's style, or the one its attributes set. A tab character typed in the text is a tab only where the style sets stops. See <a href="#tabs-and-tab-stops">Tabs and tab stops</a>.</td>
+    </tr>
+    <tr>
+      <td>Inline math</td>
+      <td><code>$…$</code></td>
+      <td>A LaTeX formula that flows with the surrounding text, e.g. <code>$e^{'{i\\pi}'}+1=0$</code>. Typeset by MathJax and rendered as vector paths on every backend. Use <code>\\$</code> for a literal dollar sign. Scaling, the display (<code>$$ … $$</code>) form, and error handling are covered under <a href="#mathematical-formulas">Mathematical formulas</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Links
+
+A Markdown link, `[text](url)`, keeps its text in the flow exactly as the text would be set without it: the link never changes line breaks, spacing or colour. It keeps its URL for the outputs that can follow it:
+
+- **HTML** (`renderToHtml`): the linked words are wrapped in `<a href="…" rel="noopener noreferrer">`, which takes the text colour and has no underline. There is one anchor per run of linked words on a line.
+- **PDF** (`postext-pdf`): each run of linked words on a line becomes a clickable URI link annotation. In a tagged PDF it is a `Link` element whose text is the linked words.
+- **Canvas**: painted as plain text, since a canvas has no click surface.
+
+```markdown
+Read the [configuration guide](https://postext.dev/en/docs/configuration "Configuration")
+or write to [the team](mailto:team@example.com).
+```
+
+- The destination may carry a title, which is ignored (`[text](https://example.com "Title")`). It may also be wrapped in angle brackets, where spaces become `%20` (`[text](<https://example.com/a b>)`).
+- Only safe targets are kept: `http:`, `https:`, `mailto:`, `tel:`, `ftp:` and relative URLs (`../guide`, `#top`). Any other scheme (`javascript:`, `data:`, `file:`…) sets the text without a link. The PDF links absolute URLs only.
+- The destination may contain parentheses as long as they balance, as in CommonMark: `[photo](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)` links the whole URL. A backslash escapes a character (`\(`, `\_`). When the parentheses do not balance, the destination ends at its first `)` and the text is set without a link; encode a lone parenthesis as `%28` or `%29`. A space also ends the destination unless it is wrapped in angle brackets.
+- A word glued to the link text shares the link. In `see [the site](https://example.com).` the full stop is part of the clickable area.
+- The link text may carry emphasis (`[**bold** words](…)`) and may sit inside it (`**[words](…)**`).
+- Links work in paragraphs, list items, blockquotes, callouts, captions, notes and table cells, and in headings while `headings.inlineMarks` is on (the default). The running heads, the outline and the contents rows made from a heading keep the text only, and so does the text of a `:chip[…]`.
+- Reference-style links (`[text][id]`) and autolinks (`<https://…>`) are not recognised (see [What is NOT supported](/en/docs/document-format#what-is-not-supported)).
+
+In the VDT the target is on each linked segment, as `VDTLineSegment.href`. The parser keeps a span's links as ranges of its text, in `InlineSpan.links`, and never splits a span for a link, which is why a link cannot change the layout.
+
+### Inline chips
+
+`:chip[text]` sets `text` in a box — a rounded, tinted "chip" — that flows with the line: the words of a word bank or a classify exercise, keyboard keys, tags. `:chip[text]{style="key"}` picks a named style from `chipStyles` (see the configuration reference); without `style`, or with an id no style declares, the chip takes the first style (a built-in `chip` style when the configuration has none; the sandbox warns about an unknown id).
+
+```markdown
+Classify: :chip[battery] :chip[cable] :chip[switch] :chip[bulb]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
+```
+
+- **One unit.** A chip is never broken or hyphenated inside; the line breaks between chips, at the word spaces around them. A chip wider than the whole line overflows it rather than splitting.
+- **Width.** Its advance is the text plus the horizontal padding and the outline on both sides. Justification stretches the word spaces only, never the inside of a chip. The style's `gap` is the least room kept between the box and a neighbouring word or chip across a space — a narrower space is topped up (not at a line edge, and not against glued punctuation such as `:chip[a],`).
+- **Height.** The box is a band around the baseline, 0.8 em above and 0.25 em below at the chip's size, grown by the vertical padding and the outline. The vertical padding paints outside the line box and never changes the line height, so the baseline grid holds; a box taller than the line pitch can run into a chip on the line above or below, and the sandbox flags two chips on different lines that overlap ("Chips touch the next line") so the padding, outline or size can be reduced.
+- **Text.** The chip text takes its own inline marks (`:chip[**bold** word]`, `:chip[x^2^]`) and the emphasis around it (`**:chip[a]**`); the style may set its family, size, colour, bold and italic. Write `\]` for a literal bracket inside. References, swatches and math inside a chip stay literal, and `\$` prints a dollar sign (up to postext 1.4 it printed the backslash too).
+- **Empty.** A chip of spaces alone (`:chip[ ]`, no-break spaces included) is an empty box — an answer blank, an end mark: as wide as its style's horizontal padding and outline, as tall as a chip with words. Size the blank with a style's `paddingX` (`:chip[ ]{style="blank"}`). With nothing at all between the brackets, `:chip[]` stays literal text.
+- **Where.** Paragraphs, list items, blockquotes, callouts, table cells, captions and notes. Headings keep `:chip[…]` as literal text.
+- **Output.** Canvas, HTML and PDF paint the box and set the words as real text: selectable in the HTML, extractable and in reading order in the PDF (in a tagged PDF the box is a layout artifact and the words belong to the paragraph).
+
+### Small capitals
+
+`:smallcaps[text]` sets `text` in small capitals — the names of the characters in a play, an acronym in running text, the first words of a chapter. Lowercase letters are set as capitals at 70% of the text size, while capitals, digits and punctuation keep the full size, so `:smallcaps[Hamlet]` prints a full-size H followed by a small-capital AMLET.
+
+```markdown
+Enter :smallcaps[Hamlet] and :smallcaps[Horatio], reading.
+
+The :smallcaps[unesco] report and the :smallcaps[who] guidelines.
+```
+
+- **Synthesised.** The small capitals are drawn from the face's own capitals, the same way on the canvas, in the HTML and in the PDF, so the text measures and breaks identically everywhere. A face's real small caps (the OpenType `smcp` feature) are not used; for them, set the text in a small-caps family (a family whose name ends in "SC", for example) through a paragraph style.
+- **Marks.** The text takes its own inline marks (`:smallcaps[**Ophelia**]`) and the emphasis around it (`*:smallcaps[Act I]*`); write `\]` for a literal bracket inside. A reference or a chip inside it is set in small capitals too, and a reference stays one link in the HTML and the PDF; a formula is not.
+- **Breaking.** Words wrap and hyphenate as usual; hyphenation reads each word in its own case.
+- **Where.** Paragraphs, list items, blockquotes, callouts, table cells, captions and notes, and headings while `headings.inlineMarks` is on (the default); with it off, the markup is removed from a heading and the text prints as written.
+- **Whole paragraphs.** A paragraph style or a callout body with `smallCaps: true` sets all its text this way (see [Paragraph styles](/en/docs/configuration-styles#paragraph-styles)).
+- **Text.** The canvas, the HTML and the PDF carry the letters as painted: copying `:smallcaps[Hamlet]` gives "HAMLET".
+
+### Tabs and tab stops
+
+A tab sends the words after it to a stop on the line: the price of a dish flush with the end of the measure behind a row of dots, the actor after the part in a cast list, the marks of an exam question at the margin. Write `:tab` where the tab goes; the spaces around it are taken into it. The stops are set in the configuration: `bodyText.tabStops` for every paragraph, list item and quotation, a paragraph style's `tabStops` for the paragraphs of a `:::paragraphs` group, and a callout style's `body.tabStops` inside its boxes (see [Configuration › Tab stops](/en/docs/configuration-text#tab-stops)). A menu whose prices end at the end of the measure, behind dots:
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+Onion soup :tab 8.50
+
+Grilled sea bream with fennel and lemon :tab 21.00
+:::
+```
+
+`:tab{…}` sets a stop for that one tab, with no style: a form's blank to the end of the line, an amount on its decimal point.
+
+```markdown
+Name and surname :tab{at=end leader=rule}
+
+Total due :tab{at=80% align=decimal} 1,234.50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>Where the stop stands, from the start edge of the paragraph's measure: a length (<code>120mm</code>, <code>4cm</code>, <code>2em</code>; a bare number is in points), <code>end</code> for the end of the measure, or a share of it (<code>60%</code>). Without <code>at</code>, <code>:tab&#123;…&#125;</code> goes to the style's stops as a bare <code>:tab</code> does.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code> (the default): the text after the tab starts at the stop. <code>end</code>: it ends there (the text up to the next tab or the end of the paragraph). <code>center</code>: it is centred on the stop. <code>decimal</code>: its decimal separator sits on the stop; a run with none ends there.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>Text repeated over the room before the stop: <code>"."</code>, <code>". "</code>, <code>"·"</code>, <code>"_"</code>, <code>"-"</code> or another short text, in the paragraph's face and colour. <code>rule</code> draws a line a little under the baseline, a form's blank. Default none.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>Room kept between the leader and the text on either side. Default <code>0.5em</code> of the paragraph's size; a bare number is in points.</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td>The separator a <code>decimal</code> stop aligns on. Default the document language's: <code>.</code> in English, Chinese, Japanese and Arabic, <code>,</code> in Spanish, Catalan, Portuguese, French, German and others.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Where a tab goes.** To the first stop past the text before it, among the stops after the one the line's previous tab took, so the second tab of a line usually takes the second stop. Past the last stop, `tabInterval` sets more stops every interval from the start of the measure; without it the tab is a word space.
+- **Tab characters.** A tab typed in the text (U+0009) is a tab only in a paragraph whose style sets `tabStops` or `tabInterval`. Everywhere else it is the word space it always was, so a document written with tabs for spaces keeps its layout. Tab characters in a row go on that many stops. A tab at the start of a source line is trimmed with the line's other leading blanks: write `:tab` to start a line at a stop.
+- **What stays text.** A `:tab` followed by a letter (`3:table`), and a `:tab` in inline code, in a formula, in a link's address or in a directive's attributes.
+- **Where.** Paragraphs, list items, quotations, boxes and `:::paragraphs` groups. Headings, captions, table cells and the text of designs (openers, running heads) have no tab stops.
+- **Text past the stop.** When the text before a tab has already passed every stop left on its line, an `end`, `center` or `decimal` stop takes the last word before the tab down to the next line with the text at the stop, and the text before it is set narrower, as a contents row wraps its title to keep the page number. A `start` stop breaks the line before the tab, and the text after it starts the next line at its stop. A tab that opens its line and still finds no stop takes no room.
+- **Leaders.** A leader fills the room before its stop and ends flush with the end of that room, so the dots of several lines line up whatever the text before them. `gap` keeps it clear of the text on both sides; there is no gap before it when the tab opens the line, and none after it when nothing follows. A leader is set with three repeats or more; a room for one or two is left empty, as in the contents.
+- **Line breaking.** A paragraph that holds a tab is set line by line, never with Knuth–Plass. In justified text only the word spaces after a line's last tab take the slack, and the paragraph's last line is not stretched (see [Justification › Tabbed lines](/en/docs/justification#tabbed-lines)). A centred or right-aligned paragraph sets its tabbed lines from the start side, since the stops are positions on the measure. Right to left, the stops are measured from the right and an `end` stop sits at the left (see [Arabic layout](/en/docs/arabic-layout#contents-and-index)). In vertical text a tab is a word space, and a `:tab` there raises the content warning `tabInVerticalText`.
+- **Text and outputs.** The plain text has a tab character (`\t`) at each tab; the leaders are not text, and copies, searches and the source map leave them out. The canvas, the HTML viewer and the fixed-layout EPUB paint them (hidden from screen readers in the HTML); a tagged PDF marks them as artifacts, so its text reads `Onion soup 8.50`. The reflowable EPUB cannot keep the stops exactly: each line of a tabbed paragraph becomes a row of the parts between its tabs, where an `end`, `center` or `decimal` stop, or one with a leader, pushes the next part to the end of the row (its leader a dotted or solid border), and a `start` stop keeps the part before it at its printed width. A Word export writes `:tab` as a Word tab, and the Word import reads a tab in body text back as `:tab` with the stop Word set for it (see [Sandbox › Word documents](/en/docs/sandbox-books-saving#word-documents)).
+
+### Orientation in vertical text
+
+In vertical text (`layout.writingMode: 'vertical-rl'`) Chinese characters stand upright, Latin words and long numbers are turned sideways, and a number of at most two digits stands upright in one cell, unless it sits in a Latin sentence, whose words it follows (see [Configuration › Numbers in vertical text](/en/docs/configuration-east-asian#numbers-in-vertical-text)). Three marks set a run apart by hand:
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]` (tate-chu-yoko, 縱中橫) sets its text side by side in one upright cell of one em, squeezed across when it is wider: `:tcy[120]`, `:tcy[3.0]`, `:tcy[A+]`. Up to about four characters read well.
+- `:upright[…]` stands each character upright in a cell of its own, Latin letters centred in it: an acronym read letter by letter down the column. A line never breaks inside it.
+- `:sideways[…]` turns the whole run with the line, Chinese characters too: a two-digit number the author wants on its side.
+- The text stays in the plain text; the marks take other inline marks inside (`:tcy[**12**]`), a link (`:sideways[[iPhone](https://…)]`) and each other, the innermost winning (`:tcy[:upright[AB]]` stands A and B upright), and write `\]` for a literal bracket. In horizontal text they change nothing.
+- A reference, a note marker, a formula, a chip or a swatch inside a mark keeps its own setting: `:sideways[iPhone[^1]]` turns iPhone and leaves the note number as every note number is set; a reference's number stands in one cell by `cjk.uprightDigits` like any short number.
+- A design text element with `inlineMarks: true` takes them too when it is set vertically (see [Configuration › Vertical text elements](/en/docs/configuration-headers-footers#vertical-text-elements)).
+- For breaking and justifying, a `:tcy` cell and each `:upright` character count as Chinese characters, and no Han–Latin space is set next to them.
+
+
+### Chinese marks, ruby and warichu
+
+Chinese and Japanese editions mark text between the lines rather than with italics or underlining, gloss characters with their readings, and set commentary inside the line. Seven directives do it. [Chinese layout](/en/docs/chinese-layout) and [Japanese layout](/en/docs/japanese-layout) explain the conventions behind them. They keep their text: the characters between the brackets stay in the paragraph (search, the contents, index anchors and copied text read them as written), and the directives take the other inline marks inside and around them, nested ones included. Write `\]` for a literal bracket.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- **`:dots[text]`** sets an emphasis dot (着重号) under each character in horizontal text, right of it in vertical text, and none on punctuation or spaces. `style="dot|circle|sesame"` (default `dot`), `fill="open"` for an outline, `pos="over|under"` for the other side. Markdown emphasis `*…*` on Chinese or Japanese characters does the same under `cjk.emphasis: 'dots'`, the default in a Chinese or Japanese document; Latin letters in the same emphasis stay italic. Attributes left out take `cjk.emphasisMark`: a dot under the text in Chinese, a sesame over it (right of it in vertical text) in Japanese.
+- **`:name[text]`** draws the proper-name line (专名号) under the text (left of it in vertical text), and **`:book[text]`** the book-title mark (书名号): 《》 around the title (〈〉 for a title inside another), the wavy line of classical and Taiwan editions, or nothing, as `cjk.bookTitleMark` says (by default brackets on the mainland and in Japan, the wavy line in Taiwan and Hong Kong). In a Japanese document the brackets are 『』, and 「」 for a title inside another (`cjk.bookTitleBrackets`). One source serves a modern mainland edition and a classical one. Two names or titles side by side keep their lines apart.
+- **`:ruby[base]{rt="…"}`** sets readings over the base (pinyin), or right of each character (zhuyin, the default for bopomofo readings). With as many readings as characters, split on spaces or `|`, each character gets its own and a line may break between them (mono ruby); `group`, or a count that does not match, sets one reading centred over the whole base, which never breaks. `pos="over|under|right"` picks the side. The compact form `{紅樓|hóng|lóu}` (one reading per `|`) or `{紅樓|hónglóu}` (one reading for the whole base) reads the same, only when the base holds a Han, kana or bopomofo character, outside maths, code and attributes, so `{x|x>0}` in Latin prose stays text. A backslash before the brace or the bar keeps a Chinese one as text: `\{紅|hóng}` and `{紅\|hóng}` print `{紅|hóng}`. A base that opens or closes a line aligns to that edge together with its reading. `mode=mono|group|jukugo` chooses how the readings go over the base (`mode=group` is the same as `group`), and `align=center|jis|start` how a reading shorter than its base is spaced. In a Japanese document the per-character form of a word of two or more characters (`{東京|とう|きょう}`, `rt="とう|きょう"`) is jukugo ruby: each character keeps its reading, which may run onto the next character of the word, the line may break between them, and the readings are spaced and run onto kana as `cjk.ruby.align` and `cjk.ruby.overhang` say; one reading for the whole base (`{紫陽花|あじさい}`, Aozora's `《》`) is group ruby; `mode=mono` keeps a reading per character with no running onto the neighbours.
+- **`:sideline[text]`** draws a side line (傍線) beside the text, punctuation and spaces included: under it in horizontal text and right of it in vertical text. `style="solid|double|wavy|dotted"` (default `solid`), `pos="over|under"` (in vertical text over is right, under is left; `position=` works too). It works in any script, an underlined English phrase included.
+- **`:warichu[note]`** sets a note (双行夹注) in two rows at half the text size inside the line, the upper row read first (the right one in vertical text). A long note fills what is left of the line and goes on with the next line, column or page, with at least two of its characters on each side of the break (`cjk.warichu.minChars`). `open` and `close` wrap it in brackets at the text size; `cjk.warichu` sets the size, colour and default brackets (（） in a Japanese document). A note in Latin script breaks between its words.
+- **`:kunten[字]{kaeri="…" okuri="…" tate}`** sets the kanbun marks of the last character between the brackets: `kaeri` the return mark (レ, 一 二 三, 上 中 下, 甲 乙 丙, 天 地 人, and 一レ 上レ 甲レ 天レ; the code points ㆑ ㆒ … read the same), `okuri` the okurigana (Aozora's parentheses `（ヲ）` are dropped), and the flag `tate` the tatesen that joins it to the next character. The text is not reordered: the marks are set at half size beside it (`cjk.kunten`), and copied text reads 學ビテ而時ニ習フ之ヲ, with the okurigana and without the return marks. A ruby inside works for the characters read twice: `:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`.
+
+The line pitch never changes: marks and readings live in the leading, and the build warns when a paragraph's line gap is too narrow for them (`cjkMarksExceedLeading`, `rubyExceedsLeading`, `kuntenExceedsLeading`), and when the marks under one line and the readings over the next do not fit in the gap they share, in one paragraph or across two. Give annotated paragraphs a paragraph style with more leading. Marks, readings and notes are drawn in paragraphs, headings, list items, blockquotes and boxes, and in captions, table cells and notes too, whose leading is checked the same way; in running heads and designs the text prints without them. Under `cjk.bookTitleMark: 'brackets'` the 《》 of a title are punctuation of the text: captions, cells, notes, contents rows, bookmarks and index entries keep them. See [Configuration › Marks, ruby and warichu](/en/docs/configuration-east-asian#marks-ruby-and-warichu).
+
+
+### Text direction in the markup
+
+A document runs in the direction its `locale` implies (`direction` in the configuration: right to left for Arabic, Persian, Urdu or Hebrew). Inside it, the markup sets the direction of a block or of a run of text, for an English quotation in an Arabic book or an Arabic one in an English book.
+
+- **A heading or a container**: `{dir=ltr}` or `{dir=rtl}` in its attributes, `# Introduction {dir=ltr}`, `:::paragraphs{dir=ltr}`, `:::callout{dir=rtl}`. Every block inside a container takes the direction, down to a nested container or heading that sets another. A plain paragraph, a list or a quote has no attributes of its own: wrap it in `:::paragraphs{dir=…}`. Other values are ignored. A container's `lang` (`:::paragraphs{dir=ltr lang=en}`) names the language of the blocks inside it the same way: their ordered lists number in that language's digits.
+- **A run of text**: `:ltr[…]` and `:rtl[…]` isolate their text (the LRI…PDI and RLI…PDI of the Unicode Bidirectional Algorithm): it is ordered inside, and the paragraph around it sees one neutral character. `{lang=…}` tags the run's language in the HTML and the PDF. A note marker, a `:ref` or a formula inside is part of the isolate, and isolates nest.
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+A block set against the document's direction keeps its own start side: its indent, list markers and the flush end of its last line move to the side its text starts on. Use an isolate when a Latin title ends in a neutral character (a full stop, a bracket) that would otherwise join the Arabic around it. The Unicode controls themselves (U+2066–2069, U+202A–202E, U+200E, U+200F, U+061C) are honoured too. In the Sandbox editor each line runs in the direction of its first letter. See [Arabic layout](/en/docs/arabic-layout#direction-and-the-bidirectional-algorithm).
+
+
+## Mathematical formulas
+
+Math support is a first-class part of the document format. Postext parses `$…$` for inline formulas and `$$…$$` for display (block) formulas, and renders them via [MathJax](https://www.mathjax.org/) in SVG mode. The same vector paths drive all three backends, so the canvas preview, the HTML export, and the PDF output are pixel-for-pixel consistent — and the PDF stays fully vectorial regardless of the zoom level.
+
+- **Inline:** `$…$`. Recognised inside any text block (paragraph, heading, blockquote, list item). Contributes a single atomic, non-breaking box to the line; Knuth-Plass treats it like a word that must not be split. If the formula's natural height would break the line box, it is scaled down uniformly so the baseline grid is preserved — very tall expressions belong in display mode.
+- **Display:** `$$…$$`. Either on its own line (`$$\int_0^1 x^2\,dx$$`) or fenced across multiple lines with `$$` markers on their own lines. Rendered centred on the column and snapped to the baseline grid with configurable top and bottom margins (`math.marginTop`, `math.marginBottom`) — exactly the same correction mechanism headings use, so the paragraph after the formula lands back on the grid.
+- **Text around a display:** a display formula on its own line interrupts a paragraph even with no blank line above it. The text before it is a paragraph that leads into it; text written right under the closing `$$`, with no blank line, continues the interrupted paragraph and is set with no first-line indent, as TeX sets the "where …" after a display. A formula set off from the text above it by a blank line (or following a list, a quotation or a heading) interrupts nothing: the text after it is a new paragraph, indented as usual, blank line or not (`math.indentAfterDisplay: false` sets it flush too). Only a whole display interrupts a paragraph — one formula on the line, or a `$$` fence closed before the next blank line; a line such as `$$a$$ and $$b$$` stays text. `math.keepWithLeadIn` keeps a formula in the column of the line that introduces it. (Up to postext 1.4 a `$$…$$` line with no blank line above it was read as part of the paragraph and printed as it was written.)
+- **Equation numbers:** `\label{eq:x}` in a display formula numbers it, in reading order: (1), (2)… A formula with a number spans the column (or the callout's inner width), the equation centred and its number flush right on its line. In an `align`, `gather`, `alignat`, `flalign` or `eqnarray` each row that carries a `\label` gets its own number, unless the row says `\nonumber` or `\notag`. A formula without a `\label` is not numbered, as `$$…$$` never was. `\tag{…}` still numbers a formula with the text you give it (`\tag*{…}` without the parentheses) and is not counted; a `\label` beside it names that text. The format, chapter or section numbers (2.3) and restarts are set in [`math.equationNumbering`](/en/docs/configuration-lists-math#math). Put the `\label` at the top level of the formula or of its row: not inside `aligned`, `split` or `cases`.
+- **References to equations:** `\eqref{eq:x}` in the text prints the number as the formula does, (3), and `\ref{eq:x}` the bare number, 3; both are links, like every [cross-reference](/en/docs/document-format-notes-references#cross-references-and-anchors). `Eq.~\eqref{eq:x}` keeps the `~` as LaTeX does: a no-break space. `:ref{id="eq:x"}` and `@eq:x` print (3) too. Inside a formula, `\eqref` and `\ref` print the number (not a link). A label nothing sets prints *?* and is listed in the Checks panel.
+- **Escaping:** `\$` is a literal dollar sign. Unmatched `$` or `$$` delimiters produce an `unclosedMath` entry in the Sandbox's Checks panel with a click-to-focus source anchor.
+- **Captions, notes and table cells** set inline maths too (since postext 1.19), in the line with the text and with the cell's alignment, in the snippet's size. There a `$` opens a formula only by Pandoc's rule: no space after the opening `$`, no space before the closing one and no digit right after it, so the prices of *$5 to $10* stay text; `\$` prints a dollar sign, so one escaped string reads the same in the text and in a table. A chip's label takes no maths. Up to postext 1.18 a `$` there always printed as it was.
+- **Errors:** TeX source that MathJax rejects (undefined macros, syntax errors) surfaces as an `invalidMath` warning. The formula is replaced by a small red placeholder so the layout geometry stays valid.
+- **Configuration:** the `math` section of the config exposes `enabled`, `fontSizeScale` (relative to the size of the surrounding text: at 1.0 one em of the formula is that size — the body size for display formulas and for inline maths in body text; since postext 1.5, which sets formulas about 13% smaller than 1.4 did, while bundles and Sandbox books saved by 1.4 keep their size — see [Formula size](/en/docs/configuration-lists-math#math)), `color` (inherits the body colour when unset), and the display margins.
+- **The engine:** MathJax loads on demand. The Sandbox and the layout worker start it themselves; in your own code, `await initMathEngine()` before `buildDocument`, or every formula is laid out as a grey placeholder box (see [Starting the math engine](/en/docs/configuration-lists-math#starting-the-math-engine)).
+
+```md
+The Euler identity $e^{i\pi}+1=0$ links the five fundamental constants.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+A formula in the middle of a sentence, and the sentence going on after it with no indent:
+
+```md
+For a pendulum of length $L$ the period is
+$$T_0 = 2\pi\sqrt{L/g}$$
+where $g$ is the acceleration of free fall.
+```
+
+Numbered equations and the references to them:
+
+```md
+The energy is conserved,
+$$
+\begin{align}
+E &= T + V \label{eq:energy} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+and Eq.~\eqref{eq:energy} holds at every instant.
+```
+
+**Theorems, lemmas and proofs.** A callout style with `numbering` counts its boxes, as LaTeX's `amsthm` counts theorem environments: each box opens with its label and number in bold, "**Theorem 2.**", the fence's `title` after the number in parentheses, "**Theorem 2** (Bradley–Terry)**.**", and a reference to its `{#id}` prints "Theorem 2" (`\ref{thm:x}` or `style=number` the bare 2). Styles that name one counter share it, so a lemma after a theorem is Lemma 3. A proof style's `endMark` ends its boxes with ∎ or □, flush right on the last line. See [Numbered statements and proofs](/en/docs/configuration-callouts#numbered-statements-and-proofs) for the styles.
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Every reward class holds one reparameterised reward.
+:::
+
+:::callout{type="proof"}
+Apply the projection of \eqref{eq:projection} to any member of the class.
+:::
+
+By :ref{id="thm:main"}, the objective is unchanged.
+```

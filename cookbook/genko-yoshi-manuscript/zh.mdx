@@ -28,7 +28,7 @@ pageNotes: { "1": "第一张稿纸，独自位于左侧：红褐色双线框围�
 
 <Excerpt region="heading" />
 
-标题是一个与正文字号、字体相同的标题，所以它像其他行一样填格子：`lineSpan: 1`让它保持在网格的一行里，`indent: em(2)`在它上方留两个空格（[按级别覆盖](/zh/docs/configuration-text#按级别覆盖)）。姓名是一个段落，设`textAlign: 'end'`和`endIndent: em(1)`，让它在底端上方一格结束；姓与名之间的空格在Markdown里写作全角空格：`夏目　漱石`。正文从第三行开始，`firstLineIndent: em(1)`让每段空一格开始。
+标题是一个与正文字号、字体相同的标题，所以它像其他行一样填格子：`lineSpan: 1`让它保持在网格的一行里，`indent: em(2)`在它上方留两个空格（[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)）。姓名是一个段落，设`textAlign: 'end'`和`endIndent: em(1)`，让它在底端上方一格结束；姓与名之间的空格在Markdown里写作全角空格：`夏目　漱石`。正文从第三行开始，`firstLineIndent: em(1)`让每段空一格开始。
 
 ### 4 · 在方格周围印出稿纸
 
@@ -40,7 +40,7 @@ pageNotes: { "1": "第一张稿纸，独自位于左侧：红褐色双线框围�
 
 <Excerpt region="pen" />
 
-Klee One以钢笔书写为基础，汉字保留日本的字形，所以稿纸读起来像手写的，又没有扫描件的那种参差。它的竖排字形把、。放在格子的右上方，并把ー和括号转过来，写作者也正是把它们写在那里。和Fontsource上的所有日文字体一样，它拆成大约120个文件，`loadCjkFonts`只取文本用到的那些（[中文、日文和韩文字体](/zh/docs/configuration-programmatic-usage#中文日文和韩文字体)）。
+Klee One以钢笔书写为基础，汉字保留日本的字形，所以稿纸读起来像手写的，又没有扫描件的那种参差。它的竖排字形把、。放在格子的右上方，并把ー和括号转过来，写作者也正是把它们写在那里。和Fontsource上的所有日文字体一样，它拆成大约120个文件，`loadCjkFonts`只取文本用到的那些（[中文、日文和韩文字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)）。
 
 ## 变化
 

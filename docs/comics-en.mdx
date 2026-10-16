@@ -6,8 +6,8 @@ export const metadata = {
   description: 'How Postext sets comics and manga from Markdown: comic pages cut by a split tree, panel pictures cropped around their safe area, lettering generated from a script (speech, thought, whisper, shout, radio, captions, sound effects), balloon styles, speaker anchors on the pictures, strips in the text, two-page spreads, right-to-left reading and vertical lettering, translations, and the canvas, PDF, HTML and EPUB outputs',
   lang: 'en',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '38 min',
+  order: 33,
   plainSummary: "This page explains how to make a comic with Postext. The pictures are the panels, and everything the characters say, think or hear is written as text in the Markdown file. Postext places the panels on the page and draws the speech balloons, captions and sound effects around the words by itself. To translate the comic you rewrite only the words, and Postext letters the new language again: Japanese in columns, Arabic from right to left. The page also covers comic strips inside a book, pages across two facing pages, the outputs and the limits that remain.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 A comic in Postext is a set of pictures and a script. The pictures are ordinary bitmap or SVG resources, drawn with no lettering on them. The script lives in the chapter's Markdown: a `:::page` block cuts a page into panels, gives each panel its picture and lists, line by line, the balloons, captions and sound effects of that panel. Postext lays out the panels, crops each picture to its cell without cutting into what matters, sets the text in the book's lettering face at one size, draws a balloon around it, points the tail at the speaker and places the balloons in reading order where they cover no face. A translation is another Markdown file with the same panels and other words; Postext letters it again from scratch, in columns for Japanese and from right to left for Arabic.
 
-Comics are opt-in: a document without `:::page` or `:::strip` lays out exactly as before. The settings live in the [`comics` section of the configuration](/en/docs/configuration-comics#comics), and the markup is summed up in [Document format › Comics](/en/docs/document-format#comics).
+Comics are opt-in: a document without `:::page` or `:::strip` lays out exactly as before. The settings live in the [`comics` section of the configuration](/en/docs/configuration-comics#comics), and the markup is summed up in [Document format › Comics](/en/docs/document-format-directives#comics).
 
 ## Comic pages
 
@@ -48,7 +48,7 @@ The attributes of the opening line:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Attribute</th>
+      <th>Attribute</th>
       <th>Effect</th>
     </tr>
   </thead>
@@ -87,7 +87,7 @@ Some splits:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Split</th>
+      <th>Split</th>
       <th>Page</th>
     </tr>
   </thead>
@@ -136,7 +136,7 @@ A `::panel{…}` line starts a panel; its script runs to the next `::panel` line
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attribute</th>
+      <th>Attribute</th>
       <th>Effect</th>
     </tr>
   </thead>
@@ -159,7 +159,7 @@ A `::panel{…}` line starts a panel; its script runs to the next `::panel` line
 
 ### Cropping the picture to its cell
 
-Panel art is drawn with no regard to the shape of the cell it ends up in: a page can be split again, a splitter dragged, a translation can need a taller tier. The picture's **safe area** (`Resource.safeArea`, see [Document format › Safe area](/en/docs/document-format#safe-area)) says what must stay in view, and the crop is computed for each cell:
+Panel art is drawn with no regard to the shape of the cell it ends up in: a page can be split again, a splitter dragged, a translation can need a taller tier. The picture's **safe area** (`Resource.safeArea`, see [Document format › Safe area](/en/docs/document-format-resources#safe-area)) says what must stay in view, and the crop is computed for each cell:
 
 1. With `fit=cover` the visible window has the cell's proportions and is as large as the picture allows.
 2. It is placed so that the safe area is inside it. Where that leaves room, the window is centred on `focus` when the panel sets one; otherwise the margins outside the safe area are cut in proportion to their sizes, so a subject left of centre stays left of centre.
@@ -204,7 +204,7 @@ The attributes of a script line:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Attribute</th>
+      <th>Attribute</th>
       <th>Effect</th>
     </tr>
   </thead>
@@ -261,7 +261,7 @@ sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Language</th>
+      <th>Language</th>
       <th>Lettering</th>
       <th>Sound effects</th>
     </tr>
@@ -298,9 +298,9 @@ A balloon style is a kind of balloon: its outline, its tail and its lettering. N
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Style</th>
-      <th style={{ width: '170px' }}>Outline</th>
-      <th style={{ width: '120px' }}>Tail</th>
+      <th>Style</th>
+      <th>Outline</th>
+      <th>Tail</th>
       <th>Otherwise</th>
     </tr>
   </thead>
@@ -388,7 +388,7 @@ sfx: SPLOSH
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attribute</th>
+      <th>Attribute</th>
       <th>Effect</th>
     </tr>
   </thead>
@@ -484,7 +484,7 @@ A strip's caption is painted with the text, as a figure's is. In a tagged PDF it
 
 ## Editing comics in the Sandbox
 
-In the canvas, the HTML pages and the Folio's select mode, a comic page can be edited with the pointer, and every edit is written back into the chapter's Markdown (the [Sandbox guide](/en/docs/sandbox#editing-comics) has the details):
+In the canvas, the HTML pages and the Folio's select mode, a comic page can be edited with the pointer, and every edit is written back into the chapter's Markdown (the [Sandbox guide](/en/docs/sandbox-books-saving#editing-comics) has the details):
 
 - **Splitters.** Over a gutter the pointer turns into a resize cursor. Dragging it moves the split line; on release the new percentage is written into the page's `split` value (the attribute is added when the page has none), and the page is laid out again. Shift snaps to steps of 5 %, Alt moves only the nearer end, slanting the line, and no cell gets narrower than 5 %. While dragging, a panel whose picture would be letterboxed is marked. Each splitter is also a focusable separator: the arrow keys move it by 1 % (5 % with Shift), Enter writes the position, Escape puts it back.
 - **Panels.** A small toolbar over a panel splits it with a horizontal or a vertical line, adding an empty `::panel` for the new cell after it, or merges it with the next panel: the split line goes, and the merged panel keeps the first panel's picture and both scripts.
@@ -503,7 +503,7 @@ Every warning names the line or attribute it concerns, and the Sandbox's Checks 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Warning</th>
+      <th>Warning</th>
       <th>Cause</th>
       <th>Fix</th>
     </tr>

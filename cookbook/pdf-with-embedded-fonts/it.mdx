@@ -28,7 +28,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Postext misur
 
 <Excerpt region="pdf" />
 
-`renderToPdf` chiama `onProgress` in tre fasi: `prepare` una volta incorporati i font e la copertina, `pages` dopo ogni pagina, e `save` prima di scrivere il file. Chiede al provider solo i caratteri che le pagine dipingono, qui cinque. La riga di stato elenca i cinque file serviti dal provider, esattamente quelli di `FONTS`, e nessun sostituto. Un sostituto indica un carattere che manca in `FONTS`. Se togli Crimson Text 600, la riga segnala `Crimson Text 600 → 400` e il grassetto *The Harbour Consort* di pagina 4 si stampa in tondo. L’anteprima di CodePen non può mostrare un PDF, quindi l’`offerPdf` del kit sostituisce il pulsante con due link, uno che apre il PDF in una nuova scheda e uno che lo scarica ([Generare PDF](/it/docs/configuration-programmatic-usage#generare-pdf)).
+`renderToPdf` chiama `onProgress` in tre fasi: `prepare` una volta incorporati i font e la copertina, `pages` dopo ogni pagina, e `save` prima di scrivere il file. Chiede al provider solo i caratteri che le pagine dipingono, qui cinque. La riga di stato elenca i cinque file serviti dal provider, esattamente quelli di `FONTS`, e nessun sostituto. Un sostituto indica un carattere che manca in `FONTS`. Se togli Crimson Text 600, la riga segnala `Crimson Text 600 → 400` e il grassetto *The Harbour Consort* di pagina 4 si stampa in tondo. L’anteprima di CodePen non può mostrare un PDF, quindi l’`offerPdf` del kit sostituisce il pulsante con due link, uno che apre il PDF in una nuova scheda e uno che lo scarica ([Generare PDF](/it/docs/configuration-pdf-output#generare-pdf)).
 
 ### 4 · L’albero dei titoli è l’albero dei segnalibri
 
@@ -69,4 +69,4 @@ Punta la fetch alle tue copie degli stessi file WOFF2 statici, uno per peso e st
 
 Elenca in `FONTS` ogni carattere che le tue pagine usano, compresi il grassetto e il corsivo del testo. Se ne manca uno, lo schermo sembra comunque corretto, perché il kit carica il carattere senza avvisi, ma il PDF stampa il carattere più vicino del provider, e solo i sostituti nella riga di stato rivelano lo scambio.
 
-Usa file statici, uno per peso e stile. Da un WOFF2 variabile il PDF incorpora solo l’istanza predefinita, quindi un tratto in grassetto si stamperebbe in tondo ([Perché un provider di font?](/it/docs/configuration-programmatic-usage#perché-un-provider-di-font)).
+Usa file statici, uno per peso e stile. Da un WOFF2 variabile il PDF incorpora solo l’istanza predefinita, quindi un tratto in grassetto si stamperebbe in tondo ([Perché un provider di font?](/it/docs/configuration-pdf-output#perché-un-provider-di-font)).

@@ -9,6 +9,7 @@ import {
   resolvePdfGenerationConfig,
   resolvePrintConfig,
   resolveContrastConfig,
+  resolveChecksConfig,
   stripConfigDefaults,
 } from '../../defaults';
 import { resolveAllConfig } from '../../pipeline/config';
@@ -82,6 +83,7 @@ function read(config: PostextConfig): string {
     pdfGeneration: resolvePdfGenerationConfig(config.pdfGeneration),
     print: resolvePrintConfig(config.print),
     contrast: resolveContrastConfig(config.contrast),
+    checks: resolveChecksConfig(config.checks),
     folio: resolveFolioConfig(config.folio, resolved.page.sizePreset),
     lineNumbers: resolveLineNumbersConfig(config.lineNumbers, resolved.bodyText),
     codeStyle: resolveCodeStyleConfig(config.codeStyle, resolved.bodyText),
@@ -277,6 +279,7 @@ const RICH: PostextConfig = {
   pdfGeneration: { colorSpace: 'cmyk' },
   print: { black: { text: 'k' } },
   contrast: { level: 'AAA' },
+  checks: { contentInConfig: { allow: ['Editorial Cometa'], maxWords: 3 } },
   folio: { cover: { stiffness: 0.9 } },
   debug: { pageOutline: { enabled: true } },
   htmlViewer: { fitFiguresToPage: false },

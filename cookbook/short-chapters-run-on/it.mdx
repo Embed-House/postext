@@ -18,7 +18,7 @@ Cinque pagine di testo verso la fine di *Dom Casmurro*, il romanzo di Machado de
 
 <Excerpt region="answer" highlight="17-24" />
 
-Il livello del capitolo ha l’interruzione disattivata, e `marginTop` mette ogni titolo due righe sotto l’ultima riga del capitolo precedente. Il suo design non ha `span`, quindi il titolo è disegnato nella colonna, in un blocco alto tre righe, e il testo sotto resta sulla griglia ([interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo), [span e design avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). Le regole di tenuta restano ai valori predefiniti. I paragrafi di quattro righe sotto CXIX e CXXI lasciano ciascuno due righe al piede della loro pagina e ne portano due alla successiva; con `avoidOrphans: false` si dividerebbero in tre e una, e le pagine 214 e 215 si aprirebbero su una riga isolata ([orfane, vedove, righe corte](/it/docs/configuration-text#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito)). Il bilanciamento delle colonne aggiunge una terza riga di spazio sopra CXIX, così la pagina 213 finisce sulla riga 33 ([bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne)).
+Il livello del capitolo ha l’interruzione disattivata, e `marginTop` mette ogni titolo due righe sotto l’ultima riga del capitolo precedente. Il suo design non ha `span`, quindi il titolo è disegnato nella colonna, in un blocco alto tre righe, e il testo sotto resta sulla griglia ([interruzione prima](/it/docs/configuration-headings#interruzione-prima-del-titolo), [span e design avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)). Le regole di tenuta restano ai valori predefiniti. I paragrafi di quattro righe sotto CXIX e CXXI lasciano ciascuno due righe al piede della loro pagina e ne portano due alla successiva; con `avoidOrphans: false` si dividerebbero in tre e una, e le pagine 214 e 215 si aprirebbero su una riga isolata ([orfane, vedove, righe corte](/it/docs/configuration-page-flow#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito)). Il bilanciamento delle colonne aggiunge una terza riga di spazio sopra CXIX, così la pagina 213 finisce sulla riga 33 ([bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne)).
 
 <PageShot page={3} crop="0,.683,1,.317" caption="Pagina 213: il capitolo CXIX comincia tre righe sotto la fine di CXVIII e tiene due righe del suo testo al piede." />
 
@@ -32,7 +32,7 @@ Il margine di piede è di 16,3 mm, ciò che l’altezza di 178 mm lascia dopo il
 
 <Excerpt region="heads" />
 
-`{title}` stampa il titolo del frontmatter, e `{chapterTitle}` l’ultimo capitolo che comincia nella pagina o prima, così la pagina 217 nomina CXXIII, che è cominciato a pagina 216 ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). La pagina 213 nomina CXIX, che comincia al suo piede, anche se le sue prime 25 righe chiudono CXVIII. `{chapterTitleAtTop}` nomina invece il capitolo in cui una pagina si apre, ma questo estratto non contiene un titolo per CXVIII. `SHIFT` sposta le testatine sul centro della gabbia del testo, 1 mm fuori dal centro della pagina perché il margine interno è 2 mm più largo di quello esterno.
+`{title}` stampa il titolo del frontmatter, e `{chapterTitle}` l’ultimo capitolo che comincia nella pagina o prima, così la pagina 217 nomina CXXIII, che è cominciato a pagina 216 ([elementi di testo](/it/docs/configuration-headers-footers#elementi-di-testo)). La pagina 213 nomina CXIX, che comincia al suo piede, anche se le sue prime 25 righe chiudono CXVIII. `{chapterTitleAtTop}` nomina invece il capitolo in cui una pagina si apre, ma questo estratto non contiene un titolo per CXVIII. `SHIFT` sposta le testatine sul centro della gabbia del testo, 1 mm fuori dal centro della pagina perché il margine interno è 2 mm più largo di quello esterno.
 
 ### 4 · Disegna la copertina e la tavola come titoli
 
@@ -44,7 +44,7 @@ Entrambe sono [stili di titolo](/it/docs/configuration-styles#stili-dei-titoli) 
 
 <Excerpt region="excerpt" />
 
-`continuation.headings` dà i contatori dei titoli da cui parte l’estratto. Con `h1: 118` il primo titolo numerato è il capitolo CXIX; senza, i cinque capitoli sono numerati da I a V. `numberingTemplate: '{1:I}'` nel livello del capitolo compone quei numeri in numeri romani, e il design li stampa con `{number}`. `:::numbering{startAt=212}`, dopo la copertina, numera la tavola 212 e le pagine di testo da 213 a 217 ([numerazione](/it/docs/document-format#numbering)).
+`continuation.headings` dà i contatori dei titoli da cui parte l’estratto. Con `h1: 118` il primo titolo numerato è il capitolo CXIX; senza, i cinque capitoli sono numerati da I a V. `numberingTemplate: '{1:I}'` nel livello del capitolo compone quei numeri in numeri romani, e il design li stampa con `{number}`. `:::numbering{startAt=212}`, dopo la copertina, numera la tavola 212 e le pagine di testo da 213 a 217 ([numerazione](/it/docs/document-format-directives#numbering)).
 
 ## Varianti
 

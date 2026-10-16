@@ -16,7 +16,7 @@ Ein Forschungsaufsatz aus der Septemberausgabe von *Measure*, einer erfundenen O
 
 ### 1 · MathJax starten und die Gleichungen nummerieren
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). [Mathematik](/de/docs/configuration-text#mathematik) setzt MathJax, das im Paket enthalten ist: `initMathEngine` wird mit allen anderen Symbolen aus `https://esm.sh/postext` importiert, und `await initMathEngine()` muss vor dem ersten Build laufen, sonst erscheint jede Formel als grauer Kasten. Von da an setzt `$…$` Formeln im Text und `$$…$$` abgesetzte Formeln, und `renderToPdf` schreibt jede Formel als Vektorpfade. Ein `\tag{1}` am Ende einer abgesetzten Formel nummeriert sie: Die Formel nimmt die Breite ihrer Spalte ein, die Gleichung zentriert und die Nummer rechtsbündig auf ihrer Zeile. Die Nummern sind hier von Hand getippt, und der Text zitiert sie, wie sie geschrieben sind, „Eq. (6)“.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). [Mathematik](/de/docs/configuration-lists-math#mathematik) setzt MathJax, das im Paket enthalten ist: `initMathEngine` wird mit allen anderen Symbolen aus `https://esm.sh/postext` importiert, und `await initMathEngine()` muss vor dem ersten Build laufen, sonst erscheint jede Formel als grauer Kasten. Von da an setzt `$…$` Formeln im Text und `$$…$$` abgesetzte Formeln, und `renderToPdf` schreibt jede Formel als Vektorpfade. Ein `\tag{1}` am Ende einer abgesetzten Formel nummeriert sie: Die Formel nimmt die Breite ihrer Spalte ein, die Gleichung zentriert und die Nummer rechtsbündig auf ihrer Zeile. Die Nummern sind hier von Hand getippt, und der Text zitiert sie, wie sie geschrieben sind, „Eq. (6)“.
 
 ### 2 · Den Titelblock aus einem Überschriftenformat zeichnen
 

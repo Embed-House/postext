@@ -380,6 +380,26 @@ export function remapParseOffsets(
       if (s.math) s.math = { ...s.math, sourceStart: toOriginal(s.math.sourceStart), sourceEnd: toOriginal(s.math.sourceEnd) };
     }
     if (b.comic) remapComicSource(b.comic, toOriginal);
+    // Composed pages (#854): slots, page fences, figures and their labels.
+    const range = (r: { sourceStart: number; sourceEnd: number }): void => {
+      r.sourceStart = toOriginal(r.sourceStart);
+      r.sourceEnd = toOriginal(r.sourceEnd);
+    };
+    if (b.slot) range(b.slot);
+    if (b.composedPage) Object.values(b.composedPage.attrSources).forEach(range);
+    if (b.figure) {
+      Object.values(b.figure.attrSources).forEach(range);
+      for (const label of b.figure.labels) {
+        range(label);
+        label.textStart = toOriginal(label.textStart);
+        label.textEnd = toOriginal(label.textEnd);
+        for (let i = 0; i < label.sourceMap.length; i++) label.sourceMap[i] = toOriginal(label.sourceMap[i]!);
+        Object.values(label.attrSources).forEach(range);
+        for (const s of label.spans) {
+          if (s.math) s.math = { ...s.math, sourceStart: toOriginal(s.math.sourceStart), sourceEnd: toOriginal(s.math.sourceEnd) };
+        }
+      }
+    }
   }
   for (const issue of result.issues) {
     issue.sourceStart = toOriginal(issue.sourceStart);

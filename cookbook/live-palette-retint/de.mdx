@@ -30,13 +30,13 @@ Das Blau der Engine ist ein Paletteneintrag, `main-color` (#295AA3), und [ihre V
 
 <Excerpt region="opener" />
 
-Der Auftakt ist ein [Gestaltungsplatz](/de/docs/configuration-page-layout#kastenelemente) mit einem Kasten, der über die obere Kante randabfallend läuft, 29 abgerundeten Balken für die Wellenform und drei Textelementen: dem eigenen Text der Überschrift als Titel sowie Dachzeile und Vorspann aus ihren Attributen. Die Balken sind Kästen statt eines SVG, also ist ihre Füllung eine weitere Verknüpfung mit `tint`, die der Palette folgt; ein SVG müsste für jede Farbvariante neu gezeichnet und neu registriert werden. Für sich allein ließe der Bandkasten den Text auf der Rasterlinie 2,4 mm unter dem Band beginnen; `minHeight`, 18 Zeilen oder 85,1 mm unter dem oberen Rand, reserviert mehr und rückt die erste Zeile auf 7 mm darunter.
+Der Auftakt ist ein [Gestaltungsplatz](/de/docs/configuration-headers-footers#kastenelemente) mit einem Kasten, der über die obere Kante randabfallend läuft, 29 abgerundeten Balken für die Wellenform und drei Textelementen: dem eigenen Text der Überschrift als Titel sowie Dachzeile und Vorspann aus ihren Attributen. Die Balken sind Kästen statt eines SVG, also ist ihre Füllung eine weitere Verknüpfung mit `tint`, die der Palette folgt; ein SVG müsste für jede Farbvariante neu gezeichnet und neu registriert werden. Für sich allein ließe der Bandkasten den Text auf der Rasterlinie 2,4 mm unter dem Band beginnen; `minHeight`, 18 Zeilen oder 85,1 mm unter dem oberen Rand, reserviert mehr und rückt die erste Zeile auf 7 mm darunter.
 
 ### 4 · Die Palette die Tabelle füllen lassen
 
 <Excerpt region="grid" />
 
-Das Raster ist eine Tabellenressource außerhalb der Konfiguration. Ihre [Zellfüllungen](/de/docs/document-format#blockeinbettung-optional-ausdrückliche-platzierung-im-text) tragen dennoch Paletten-IDs, und die Engine löst sie aus der Palette des Dokuments auf, wenn sie die Tabelle setzt; `:swatch{color="band"}` und `:swatch{color="tint"}` der Legende in der Tabellennotiz werden genauso aufgelöst. Die Chips in den Auflistungen verwenden dieselben zwei IDs, sodass ein gefülltes Quadrat, der Chip neben einer Uhrzeit und das Farbfeld der Legende in jeder Farbvariante übereinstimmen.
+Das Raster ist eine Tabellenressource außerhalb der Konfiguration. Ihre [Zellfüllungen](/de/docs/document-format-resources#blockeinbettung-optional-ausdrückliche-platzierung-im-text) tragen dennoch Paletten-IDs, und die Engine löst sie aus der Palette des Dokuments auf, wenn sie die Tabelle setzt; `:swatch{color="band"}` und `:swatch{color="tint"}` der Legende in der Tabellennotiz werden genauso aufgelöst. Die Chips in den Auflistungen verwenden dieselben zwei IDs, sodass ein gefülltes Quadrat, der Chip neben einer Uhrzeit und das Farbfeld der Legende in jeder Farbvariante übereinstimmen.
 
 ### 5 · Die Palette tauschen und neu bauen
 

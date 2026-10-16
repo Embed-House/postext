@@ -18,7 +18,7 @@ Les deux faces d’un dépliant de visite DL, 99 × 210 mm, pour un moulin à ma
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` met dans un zip le chapitre, la configuration, les ressources et chaque fichier qu’ils nomment ; `openBundle` ne reçoit rien d’autre que ces octets. Les polices viennent de `loadBundleFonts`, les dessins de `registerBundleImages` et la maquette de `bundle.config`. Une police absente de `files` s’imprime dans la police de secours du navigateur, et un dessin absent est retiré avec un avertissement, son renvoi imprimant (?). Dans le zip, chaque `fileId` devient un chemin (`mill.svg` devient `resources/mill.svg`), et les ressources et les `customFonts` que renvoie `openBundle` utilisent déjà les nouveaux noms ([ouvrir un paquet](/fr/docs/configuration-programmatic-usage#ouvrir-un-paquet)).
+`createBundle` met dans un zip le chapitre, la configuration, les ressources et chaque fichier qu’ils nomment ; `openBundle` ne reçoit rien d’autre que ces octets. Les polices viennent de `loadBundleFonts`, les dessins de `registerBundleImages` et la maquette de `bundle.config`. Une police absente de `files` s’imprime dans la police de secours du navigateur, et un dessin absent est retiré avec un avertissement, son renvoi imprimant (?). Dans le zip, chaque `fileId` devient un chemin (`mill.svg` devient `resources/mill.svg`), et les ressources et les `customFonts` que renvoie `openBundle` utilisent déjà les nouveaux noms ([ouvrir un paquet](/fr/docs/configuration-bundles#ouvrir-un-paquet)).
 
 ### 2 · Mettre les polices dans le fichier
 
@@ -42,7 +42,7 @@ Un lecteur construit les types intégrés dans la langue que sert le fichier : 
 
 <Excerpt region="handoff" />
 
-Le lien propose les `bytes` à partir desquels les pages ont été mises en page, 132 Ko avec les polices. Importé dans le Sandbox (*Livres → Nouveau → Ouvrir un fichier .postext…*), le fichier devient un livre espagnol ou anglais avec la roue pour image, tirée de `thumbnail`. Le PDF prend ses polices dans `bundleFontProvider`, qui renvoie la police du paquet la plus proche en graisse, dans le même style quand il y en a une, et ses dessins dans `bundleResourceBytes` : aucune police ni aucune image n’est téléchargée une seconde fois ([mettre en page et rendre un paquet](/fr/docs/configuration-programmatic-usage#mettre-en-page-et-rendre-un-paquet)).
+Le lien propose les `bytes` à partir desquels les pages ont été mises en page, 132 Ko avec les polices. Importé dans le Sandbox (*Livres → Nouveau → Ouvrir un fichier .postext…*), le fichier devient un livre espagnol ou anglais avec la roue pour image, tirée de `thumbnail`. Le PDF prend ses polices dans `bundleFontProvider`, qui renvoie la police du paquet la plus proche en graisse, dans le même style quand il y en a une, et ses dessins dans `bundleResourceBytes` : aucune police ni aucune image n’est téléchargée une seconde fois ([mettre en page et rendre un paquet](/fr/docs/configuration-bundles#mettre-en-page-et-rendre-un-paquet)).
 
 ### 6 · Dessiner le recto avec un seul titre
 
@@ -72,4 +72,4 @@ Sans les types, le lecteur les construit dans la langue du fichier avec la numé
 
 ## Erreurs fréquentes
 
-- Chaque édition est ici un fichier à part. Pour porter les deux langues dans un seul fichier, donnez à `createBundle` une table `localized` ([Paquets bilingues](/fr/docs/configuration-programmatic-usage#paquets-bilingues)) ; `openBundle(bytes, { locale })` lit alors l’une ou l’autre édition.
+- Chaque édition est ici un fichier à part. Pour porter les deux langues dans un seul fichier, donnez à `createBundle` une table `localized` ([Paquets bilingues](/fr/docs/configuration-bundles#paquets-bilingues)) ; `openBundle(bytes, { locale })` lit alors l’une ou l’autre édition.

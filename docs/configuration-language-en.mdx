@@ -1,0 +1,253 @@
+{/* docs/configuration-language-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: hyphenation and language',
+  sidebarTitle: 'Hyphenation and language',
+  description: 'Hyphenation patterns and exceptions, ragged text, the document language and its digits and direction, and the scripts Postext sets',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '20 min',
+  order: 8,
+  parent: 'configuration',
+  plainSummary: "This page covers how words are split at the end of a line and how Postext knows the language of a book. You turn hyphenation on or off, and list the words that must never be split. You can leave the right edge of the text uneven instead of straight. The document language decides the hyphenation rules, the names of figures and tables, the digits and the direction of the text. The last sections say which writing systems Postext can set and how Arabic text is handled.",
+};
+
+# Configuration: hyphenation and language
+
+
+## Hyphenation
+
+When text alignment is set to `'justify'`, hyphenation prevents excessive word spacing by breaking long words at syllable boundaries. The engine uses TeX/Liang patterns to find natural break points at syllable boundaries. See [Hyphenation & Justification](/en/docs/justification) for a detailed explanation. Ragged text is only hyphenated when you ask for it: see [Ragged text](#ragged-text) below.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether to allow hyphenation.</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>LocaleTag</code></td>
+      <td>top-level <code>locale</code>, else <code>'en-us'</code></td>
+      <td>Language rules for syllable boundaries: one of the supported locales below, or any BCP 47 tag (<code>'es-ES'</code>, <code>'pt-BR'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>ragged</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Also hyphenate ragged text (left, right or centre aligned), within the <code>zone</code>. See <a href="#ragged-text">Ragged text</a>.</td>
+    </tr>
+    <tr>
+      <td><code>zone</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>3em</code></td>
+      <td>Hyphenation zone of ragged text: a word that does not fit is divided only when sending it whole to the next line would leave a gap wider than this. <code>em</code> is relative to the text's own font size. Ignored for justified text.</td>
+    </tr>
+    <tr>
+      <td><code>compounds</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let the dictionary divide the words of a compound, a word with a hyphen between two letters (<code>af-ter-dinner</code>). <code>false</code> keeps such a word whole but for its own hyphen, where the line may still end (<code>after-</code> · <code>dinner</code>), as TeX does. A soft hyphen typed in the word still breaks, and a compound wider than the whole line is still divided. It applies to the running text, headings, lists, blockquotes and boxes; captions, notes, table cells and the contents keep dividing compounds. See <a href="/en/docs/justification#compound-words">Compound words</a>.</td>
+    </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>none</td>
+      <td>Words the dictionary must not divide, or may divide only where the entry says: <code>'Alice'</code> is never divided, <code>'You-Tube'</code> only at its hyphen. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide capitalised words like any other. <code>false</code> keeps every word that starts with a capital whole (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), the first word of a sentence included. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Supported locales:** `'en-us'` (English), `'es'` (Spanish), `'fr'` (French), `'de'` (German), `'it'` (Italian), `'pt'` (Portuguese), `'ca'` (Catalan), `'nl'` (Dutch).
+
+Region, script and variant subtags are ignored when the patterns are picked, and so are letter case and `_` separators: `'es-ES'`, `'es-MX'` and `'es_419'` hyphenate with `'es'`, `'pt-BR'` with `'pt'`, and every English tag (`'en'`, `'en-GB'`) with `'en-us'` — the only English patterns bundled, so British text gets American breaks. A language with no bundled patterns (`'sv'`, `'pl'`, `'fi'`…) is hyphenated with the `'en-us'` patterns, which gives wrong breaks rather than none; the engine reports it once per tag with a `console.warn`, and the Sandbox lists it in its Checks panel. Set `enabled: false` for such a document; that silences the warning too. Chinese, Japanese and Korean (`zh`, `ja`, `ko`, whatever the region or script) need no patterns and print no warning: a document in one of them is set without hyphenation. To divide the Latin words quoted in it, set `enabled: true` and name their language in `locale` (`'en-us'` for English). `enabled: true` with no `locale`, or with a Chinese, Japanese or Korean one, leaves hyphenation off and says so once on the console. `matchHyphenationLocale(tag)` returns the bundled locale a tag maps to (`undefined` when there is none), and `HYPHENATION_LOCALES` lists the bundled ones. The resolved configuration (`doc.config.bodyText.hyphenation`) names the patterns actually used in `locale`, and keeps the tag you gave in `tag` when it differs. The PDF backend declares the document language from the top-level `locale`, and from this tag only when `locale` is unset (see [Document language](#document-language)).
+
+```ts
+import { matchHyphenationLocale } from 'postext';
+
+matchHyphenationLocale('es-MX'); // 'es'
+matchHyphenationLocale('en-GB'); // 'en-us'
+matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a console warning
+```
+
+Words shorter than 5 characters are never hyphenated. The engine requires at least 2 characters before and 3 characters after a break point.
+
+### Words kept whole
+
+A dictionary divides a name as it divides any word: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Three settings keep words whole, and all three default to what the dictionary does.
+
+`hyphenation.exceptions` is a list of words, as in TeX's `\hyphenation{…}`. An entry written without a hyphen is never divided; an entry written with hyphens is divided only there, so `'You-Tube'` gives `You-` · `Tube` and nothing else. An entry matches a run of letters, whatever stands around it: `'Alice'` covers `(Alice,` and `Alice’s`, and a compound is matched part by part (`Blender-based` matches `'Blender'`). An inflected form is another word and needs its own entry. An entry in lower case matches the word in any case (`'blender'` covers `Blender` and `BLENDER`); an entry with an initial capital matches only the occurrences that start with a capital, so `'Rose'` keeps the name whole and leaves `rose` to the dictionary. Entries hold letters and hyphens only; anything else is dropped.
+
+`hyphenation.capitalized: false` keeps every word that starts with a capital whole: names, acronyms, and the first word of each sentence too. It is the "Hyphenate Capitalized Words" switch of InDesign turned off, and TeX's `\uchyph=0`. An entry of `exceptions` with hyphens still divides its word at them. German capitalises every noun, so the switch would leave a German text with hardly a word to divide: name the words in `exceptions` there, or use `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` keeps the family names of the authors the document cites whole, wherever they stand: in a citation, in the running text and in the list of references. See [Citations](/en/docs/configuration-notes-references#citations).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+The three reach every text the dictionary divides: body, headings, lists, boxes, captions, table cells, notes, running heads and the other design text. That is wider than `compounds`, which the captions, notes, cells and contents ignore. Two things stay as they are. A soft hyphen typed in an occurrence of a word still decides that occurrence, and a soft hyphen before the first letter keeps one occurrence whole without a list (see [Where a line never breaks](/en/docs/justification#where-a-line-never-breaks)). And a word wider than its whole measure is still divided: at the points of its entry when it has some, else at the dictionary's syllables. Fewer divided words leave a narrow justified column fewer ways to fill its lines, so look at the word spacing after switching `capitalized` off in a three-column page. The reflowable EPUB leaves hyphenation to the reading system, which knows nothing of these rules.
+
+### Ragged text
+
+By default only justified text is hyphenated: with `textAlign: 'left'`, and in paragraph styles set left, centred or right, every word is kept whole however ragged the edge gets, except at a soft hyphen (U+00AD) typed in the text. Set `hyphenation.ragged: true` to hyphenate ragged text too.
+
+A ragged line is never stretched, so dividing every word that does not fit would fringe the edge with hyphens. The **hyphenation zone** limits it, the way a desktop-publishing single-line composer does. When a word does not fit at the end of a line, the engine looks at the gap that sending it whole to the next line would leave. If that gap is wider than `zone`, the word is divided at the last syllable that fits; otherwise it goes down whole. A zone in `em` is relative to the text's own font size. The default, `3em`, divides only the words that would leave a noticeably short line. A wider zone gives fewer hyphens and a more ragged edge; `0` divides every word that does not fit. Set line by line, no more than two lines in a row end on a syllable. Hard hyphens (`enseñanza-aprendizaje`), URL joints, soft hyphens typed in the text and words wider than the whole line break as they always do: the zone and the two-line limit only govern the dictionary's syllables.
+
+The setting is document-wide. It applies to the body text and blockquotes when they are ragged, and to every ragged paragraph style and callout body whose own `hyphenation` is on (it defaults to the body's `hyphenation.enabled`), so `hyphenation: false` keeps one style's words whole. Headings, captions, notes, table cells and the table of contents are not hyphenated; there, as everywhere, only a word wider than the whole measure is divided. Design text — running heads, openers, part pages — follows each text element's own `hyphenate` flag, which the built-in full-page openers and part pages set, and uses the document's dictionary as well. Justified text ignores `ragged` and `zone`.
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    textAlign: 'left',
+    // A little more hyphenation than the 3 em default.
+    hyphenation: { ragged: true, zone: { value: 2, unit: 'em' } },
+  },
+};
+```
+
+With `optimalRagged` (the default) ragged running text is broken with Knuth-Plass, and the zone keeps its meaning there: a word is divided only when it does not fit the rest of the line and sending it down whole would leave more than the zone empty. Two syllables in a row are not refused but cost what two hyphens in a row cost in justified text, so a third is rare. With `optimalRagged: false`, or `optimalLineBreaking: false`, each line is filled before the next, as up to postext 1.4.
+
+Ragged hyphenation lays paragraphs out with the line breaker that paragraphs with inline formatting (bold, italics, links, maths) always use, so turning it on can move a few breaks other than hyphens. On a ragged line, besides spaces and the dictionary's syllables, that breaker breaks after a hard hyphen or a dash between two words (`largas—separadas`; with `breakAfterDashes`, any dash set closed between words, `riddles.—I` and `riddles—*and*` too), at URL joints and between ideographs, and it keeps a word set in several runs together (`**Nota**:`, `(*véase*`). Without ragged hyphenation, a ragged paragraph with no formatting is broken by Knuth-Plass when `optimalRagged` is on (the default): at word spaces, after a hard hyphen between two letters (`meta-` · `analyses`), as the other breaker does, and, with `breakAfterDashes`, after closed dashes. Set line by line, it goes through pretext's breaker, which differs in three ways: it may also break before a dash that closes an aside or after one that opens it (`él` · `— y`), after a slash when hyphenating (`km/` · `h`), and it cuts a word wider than the line at any character without a hyphen, where the other breaker divides it at a syllable first.
+
+In the Sandbox the switch is **Hyphenate ragged text**, under the paragraph alignment of the Body text section, with the zone below it. Under a justified body the same switch sits with the justification settings, for the ragged paragraph styles and boxes.
+
+
+## Document language
+
+The top-level `locale` is the language of the document as a whole. It takes the same values as `hyphenation.locale` and is the fallback when that field is unset, so a Spanish book only needs `locale: 'es'` to hyphenate in Spanish. It also picks the language of the built-in continuation strings of tables and split callouts (`(cont.)` / *Continued* versus *Continúa*, see [Tables taller than the page](/en/docs/configuration-resources#tables-taller-than-the-page) and [Marks on a split box](/en/docs/configuration-callouts#marks-on-a-split-box)) and of spelled-out heading numbers (*Chapter One* versus *Capítulo uno*, see [Spelled-out numbers](/en/docs/configuration-headings#spelled-out-numbers)), and is the language tagged into an accessible PDF. Unset, the engine assumes `'en-us'`; the Sandbox falls back to the interface language and sets the field under **Design › Writing system**.
+
+It picks the built-in resource types too. When `resourceTypes` is not set, `buildDocument` numbers and captions with `defaultResourceTypes(locale)`, so `locale: 'de'` alone gives *Abbildung 1.1* and *Tabelle 1.1*. When `locale` is unset, the hyphenation locale stands in for it, for the resource types and the table strings alike. An explicit `resourceTypes` list always wins. Earlier versions used the English types whatever the `locale` unless you passed `defaultResourceTypes(locale)` yourself; a document that sets `locale` and wants to keep the English labels passes `resourceTypes: defaultResourceTypes('en')`. Sandbox books and bundles carry their own list, so they are not affected.
+
+Any BCP 47 tag works here as in `hyphenation.locale`: `'de-AT'` gets the German strings. The built-in strings exist in the eight languages hyphenation supports, in Chinese (in Simplified and in Traditional characters), in Japanese and in Arabic; any other language gets the English ones.
+
+Chinese takes `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`, `zh-MO` and the long forms (`zh-Hant-TW`), in any case and with `-` or `_`. The strings follow the script, read with `Intl.Locale(tag).maximize()`: `zh`, `zh-CN` and `zh-SG` are Simplified, `zh-TW`, `zh-HK` and `zh-MO` Traditional. The typographic defaults that depend on the language follow the region instead, as [clreq §1.2](https://www.w3.org/TR/clreq/#x1-2-basic-features-of-chinese-script) recommends: CN, SG and MY count as the mainland, TW as Taiwan, HK and MO as Hong Kong, and a tag without a region goes by its script (`zh-Hant` is Taiwan, `zh` and `zh-Hans` the mainland). Japanese takes `ja`, `ja-JP`, `ja-Jpan` and any other `ja` tag (`isJapaneseLanguage(tag)`); since postext 1.16 it has its own strings and its own region, `japan`, whose typographic defaults follow JLReq (see [Japanese layout](/en/docs/japanese-layout)). A table of strings with no Japanese entry gives English, never Chinese. `localeScript(tag)`, `cjkRegionOf(tag)`, `stringsKeyOf(tag)` and `sameContentLocale(a, b)` give these readings, and `DOCUMENT_LANGUAGES` lists the languages with built-in strings, each named in its own language (日本語 between the Chinese entries and العربية), as the Sandbox's Document language select shows them.
+
+<table>
+  <thead>
+    <tr>
+      <th>Language</th>
+      <th>Figure: name, plural, short label</th>
+      <th>Table: name, plural, short label</th>
+      <th>Table continuation: <code>continuedSuffix</code>, <code>continuesMarker</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>English (<code>en</code>)</td><td>Figure, Figures, Fig.</td><td>Table, Tables, Tab.</td><td>(cont.), Continued</td></tr>
+    <tr><td>Spanish (<code>es</code>)</td><td>Figura, Figuras, Fig.</td><td>Tabla, Tablas, Tabla</td><td>(cont.), Continúa</td></tr>
+    <tr><td>French (<code>fr</code>)</td><td>Figure, Figures, Fig.</td><td>Tableau, Tableaux, Tabl.</td><td>(suite), À suivre</td></tr>
+    <tr><td>German (<code>de</code>)</td><td>Abbildung, Abbildungen, Abb.</td><td>Tabelle, Tabellen, Tab.</td><td>(Forts.), Wird fortgesetzt</td></tr>
+    <tr><td>Italian (<code>it</code>)</td><td>Figura, Figure, Fig.</td><td>Tabella, Tabelle, Tab.</td><td>(segue), Continua</td></tr>
+    <tr><td>Portuguese (<code>pt</code>)</td><td>Figura, Figuras, Fig.</td><td>Tabela, Tabelas, Tab.</td><td>(cont.), Continua</td></tr>
+    <tr><td>Catalan (<code>ca</code>)</td><td>Figura, Figures, Fig.</td><td>Taula, Taules, Taula</td><td>(cont.), Continua</td></tr>
+    <tr><td>Dutch (<code>nl</code>)</td><td>Figuur, Figuren, Fig.</td><td>Tabel, Tabellen, Tab.</td><td>(vervolg), Wordt vervolgd</td></tr>
+    <tr><td>Chinese, Simplified (<code>zh-Hans</code>, <code>zh</code>, <code>zh-CN</code>)</td><td>图, 图, 图</td><td>表, 表, 表</td><td>（续）, 接下页</td></tr>
+    <tr><td>Chinese, Traditional (<code>zh-Hant</code>, <code>zh-TW</code>, <code>zh-HK</code>)</td><td>圖, 圖, 圖</td><td>表, 表, 表</td><td>（續）, 接下頁</td></tr>
+    <tr><td>Japanese (<code>ja</code>, <code>ja-JP</code>)</td><td>図, 図, 図</td><td>表, 表, 表</td><td>（続き）, 次ページへ続く</td></tr>
+    <tr><td>Arabic (<code>ar</code>, <code>ar-EG</code>, <code>ar-MA</code>…)</td><td>شكل, أشكال, شكل</td><td>جدول, جداول, جدول</td><td>(تابع), يتبع</td></tr>
+  </tbody>
+</table>
+
+The caption prefix is the type's name (*Figure 1.1.*). The Chinese types number within the chapter with a hyphen, `{h1}-{n}` (图 1-1); with the caption settings `labelNumberGap: ''` and `labelSeparator: '　'` the caption reads 图1-1　标题 (see [Caption style](/en/docs/configuration-resources#caption-style)). The back-of-book index follows the language too: 见 and 另见 before a cross-reference, 符号 and 数字 over the symbols and the numbers in Simplified; 見, 另見, 符號 and 數字 in Traditional. Japanese numbers its types the same way and sets its captions 図1-1　題 without the two settings, writes cross-references as 第3章, 2.3節 and 12ページ, titles the bibliography 参考文献, and its index prints 記号 and 数字 over symbols and numbers and writes its cross-references with an arrow, `→夏目漱石` for *see* and `→夏目漱石、森鷗外も見よ` after the pages for *see also*, the labels upright. Arabic numbers its types the same way, `{h1}-{n}` (شكل 2-3), writes cross-references as الفصل 3, القسم 2-1 and ص 12, titles the bibliography المراجع, and its index prints انظر / انظر أيضًا, رموز and أرقام, with the Arabic comma and semicolon (، ؛).
+
+A Chinese, Japanese or Korean document declares its language in the HTML output (`lang` on the `.pt-doc` root, `zh-Hant-TW` kept whole) and on the canvas it paints (`ctx.lang`, in Chrome 136 and later), so the browser draws the region's glyph forms: Unicode unifies the Han characters, and one code point looks different in a Taiwanese and in a Japanese font. Since postext 1.30 every other document does too, in the language its text is shaped in ([`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text), the default); with `'host'` the other documents carry no `lang`, and every canvas paints in the language of the page that hosts it. The PDF declares `/Lang` from `locale` for every document, tagged or not, with its script and region. A document in a language written right to left (Arabic, Persian, Urdu, Hebrew…) declares its language too: the font's language forms (`locl`) and the fallback font follow it.
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: { textAlign: 'justify', hyphenation: { enabled: true } }, // hyphenates in Spanish
+};
+```
+
+### Document digits
+
+The top-level `numerals` sets the digits of every number the engine writes: page numbers and the page labels of the contents, the index and page references; ordered-list and footnote numbers; heading and chapter counters, `{chapterNumber}`; the `{h1}` and `{n}` of a figure number and of a reference to it; `{totalPages}`, `{bookTotalPages}` and `{numberDecimal}`. `'latn'` writes 0–9, `'arab'` the Arabic-Indic digits ٠–٩ and `'arabext'` the Persian digits ۰–۹. Only the decimal format changes — `decimal`, the lists' `arabic`, or a setting left at its default — so a format the author names prints as named: `lower-roman` stays i, ii, iii, and `arabic-indic` in a Latin document still writes ١, ٢, ٣. The text of the document is never rewritten.
+
+The default, `'auto'`, takes the digits of `locale` (`defaultNumeralsFor(tag)`): `'arab'` for Arabic with no region or with any region outside the Maghreb (`ar`, `ar-EG`, `ar-SA`, `ar-AE`…), `'latn'` for `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` and `ar-EH`, `'arabext'` for Persian (`fa`), Pashto (`ps`) and the Urdu of India (`ur-IN`), and `'latn'` for everything else, the Urdu of Pakistan included. CLDR gives `latn` for a bare `ar` and for `ar-AE`; Arabic books of the Mashriq and the Gulf print ٠–٩, which is what Postext follows. A tag that names its digits keeps them: `ar-MA-u-nu-arab`. A page numbered in the document digits records `arabic-indic` or `persian` as its `pageNumberFormat`, so the PDF page labels show the same digits. An unknown value follows the language and is reported as `unknownNumerals`.
+
+Numbers the author types are read in any of the three systems: a list item `٣.` starts at 3, and `{startAt=٥}`, `:::numbering{startAt=٥}`, `:::space{lines=٢}` and `:::part{number="٣"}` (for `{numberDecimal}`) read the value.
+
+```ts
+const config: PostextConfig = { locale: 'ar' };                     // ١، ٢، ٣
+const maghreb: PostextConfig = { locale: 'ar-MA' };                 // 1, 2, 3
+const forced: PostextConfig = { locale: 'ar', numerals: 'latn' };   // 1, 2, 3
+```
+
+### Text direction
+
+The top-level `direction` sets the base direction of the document: `'ltr'`, `'rtl'`, or `'auto'` (the default), which is `'rtl'` when the script of `locale` is written right to left (Arabic, Persian, Urdu, Hebrew, Syriac, Thaana, N'Ko, Adlam…, read by `directionOf(tag)`) and `'ltr'` otherwise. A right-to-left document is laid out in a mirrored frame: its lines start on the right, its first column is the right one, its indents, list markers, floats, footnotes and boxes stand on the right, and [`page.binding: 'auto'`](/en/docs/configuration-page-layout#binding) binds it on the right. The resolved config carries `direction: 'rtl'` only for such a document, so a left-to-right document resolves as before. An unknown value is read as `'auto'` and reported as `unknownConfigValue`. The Unicode Bidirectional Algorithm (UAX #9) orders each line's runs in either direction: an Arabic quotation in an English book reads right to left in place.
+
+Inside the document, a heading or a `:::` container takes `{dir=ltr}` or `{dir=rtl}`, and the inline `:ltr[…]` and `:rtl[…]` isolate a run of text (see [Text direction in the markup](/en/docs/document-format-inline#text-direction-in-the-markup)); a table resource takes `table.direction`. A block set against the document's direction keeps its own start side: its indent, list markers and the flush end of its last line move to the side its text starts on.
+
+A setting that names a side means a side of the text or of the body flow, never of the sheet, so a design made for an English book works when the book is switched to Arabic. `'start'` and `'end'` are accepted as explicit names:
+
+<table>
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th><code>'left'</code> / <code>'right'</code></th>
+      <th><code>'start'</code> / <code>'end'</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>textAlign</code> of the body, headings, paragraph styles, parts, footnotes and callout bodies; caption and caption note <code>align</code></td><td>The sides of the text: <code>'left'</code> is the side a line starts on, the right of an Arabic paragraph, where a justified paragraph's last line goes.</td><td>Synonyms of <code>'left'</code> and <code>'right'</code>. Resolved configs carry <code>'left'</code> / <code>'right'</code>; saved configs keep what was written.</td></tr>
+    <tr><td>Table cell <code>align</code></td><td>The sides of the cell's text, read in the table's direction (<code>table.direction</code>).</td><td>Synonyms, read in the table's direction.</td></tr>
+    <tr><td><code>placement.align</code> (floats, narrow figures)</td><td>The sides of the body flow: in a right-to-left book <code>'left'</code> is the sheet's right.</td><td>Synonyms.</td></tr>
+    <tr><td>Callout <code>stripe.side</code>, <code>icon.cornerSide</code>, <code>labelTab.position</code> (<code>'top-start'</code>, <code>'top-end'</code>)</td><td>The sides of the body flow, the same for every box of the page.</td><td>The box's own direction (a <code>:::callout&#123;dir=ltr&#125;</code> in an Arabic book starts on the sheet's left).</td></tr>
+    <tr><td>Header and footer slots; design elements anchored to the sheet</td><td>The sheet's sides.</td><td>Text elements only: the start and end of the element's own <code>direction</code>.</td></tr>
+  </tbody>
+</table>
+
+`placement.rotate` keeps its physical meaning on a mirrored page: a figure turned clockwise is turned clockwise on the sheet. A host reading the layout finds the mirrored frame on each page (`VDTPage.flow` with `direction: 'rtl'`, `pageIsMirrored(page)`) and the visual order of each line's segments in `VDTLine.order`; `flowToPage` and `pageToFlow` map between the flow and the sheet. See [Arabic layout](/en/docs/arabic-layout#direction-and-the-bidirectional-algorithm).
+
+```ts
+const arabic: PostextConfig = { locale: 'ar' };                        // right to left, bound on the right
+const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced; rarely what you want
+```
+
+
+## Languages and scripts
+
+Postext sets alphabetic scripts written left to right, and Chinese and Japanese across the page and down it. [Chinese layout](/en/docs/chinese-layout) and [Japanese layout](/en/docs/japanese-layout) explain how they are set and which settings control them; the keys are under [East Asian typography](/en/docs/configuration-east-asian#east-asian-typography), [Vertical writing](/en/docs/configuration-page-layout#vertical-writing) and [Binding](/en/docs/configuration-page-layout#binding). What each script gets:
+
+- **Chinese** is set by the CJK composer when a paragraph holds more CJK characters than word spaces: its lines break between characters under the line-start and line-end rules of `cjk.lineBreak` (no line starts with 。、」 or ー, none ends with 「 or （), keep —— and ……, a number with its signs and a Latin word whole, and a justified line is spread between its characters to the measure. Punctuation widths, hanging punctuation, the space between Han and Latin, the character grid, emphasis dots, the proper-name and book-title marks, ruby and warichu notes follow the region of `locale`, across the line or down it (`layout.writingMode: 'vertical-rl'`). A Latin paragraph that quotes a few CJK words keeps optimal line breaking and may break next to them; a CJK bracket, the middle dot or a fullwidth sign quoted in Latin text (〈h〉, ％) changes nothing.
+- **Japanese** goes through the same composer with rules of its own since postext 1.16, those of the W3C *Requirements for Japanese Text Layout* (JLReq) and JIS X 4051: a `ja` locale gives the `japan` region, whose auto values set the JLReq kinsoku levels (small kana and ー never open a line), full-width punctuation with pair compression, an em after ？！, the bracket that opens a paragraph in the second half of the indent, sesame emphasis marks over the text, 『』 book titles, furigana spaced 1:2:1, Japanese counters, notes and an index sorted by reading. Earlier versions set Japanese with the mainland Chinese defaults.
+- **Korean** goes through the same composer and is set without hyphenation, but with the mainland Chinese defaults: its own rules (KLREQ) are not implemented. Korean text breaks between syllables as well as at its spaces.
+- **Arabic and other right-to-left scripts** (Persian, Urdu, Hebrew…) are set right to left: [Arabic layout](/en/docs/arabic-layout) explains how. The document's [`direction`](#text-direction) comes from the script of `locale`, the Unicode Bidirectional Algorithm orders the Latin words and numbers inside each line, the book is bound on the right with its first column on the right, and every number the engine writes takes the region's [digits](#document-digits). A word that holds an Arabic-script letter is never hyphenated, letter-spaced or cut, and a justified Arabic line is stretched at its spaces and with kashidas. Vowel marks, emphasis, footnotes and the strings of Arabic are under [Arabic text](#arabic-text). Persian, Urdu and Hebrew get the direction, the digits and the whole-word rules, but no built-in strings of their own.
+
+Hyphenation patterns ship for eight languages (`en-us`, `es`, `fr`, `de`, `it`, `pt`, `ca`, `nl`); the built-in resource types and continuation strings exist in those eight, in Chinese, in Japanese and in Arabic. Chinese, Japanese, Korean and the languages written right to left are set without hyphenation. Any other language is hyphenated with the US English patterns, with a console warning, and gets the English strings. For such a document, set `hyphenation.enabled: false` and pass `resourceTypes` and the `tableStyle` continuation strings in its language.
+
+
+## Arabic text
+
+These settings serve text in Arabic script; none changes a document written in another script. [Arabic layout](/en/docs/arabic-layout) explains them with the rest of an Arabic book: direction, binding, digits, verse, contents and index.
+
+- **Vowel marks and leading.** The vowel marks of a vocalised text (fatḥa, kasra, shadda, tanwīn, the dagger alef, the Qurʾānic signs) stack over and under the letters, in the leading, which never grows for them. Each line that holds marks records how far their ink reaches (`VDTLine.markInk`), and the renderers' column clip takes in the marks of a column's first and last lines. When a mark over a word meets the letters or marks hanging under the word above it, the build reports the paragraph (`arabicMarksExceedLeading`, in the Sandbox's Checks panel). Only words standing over each other are compared. Partly vocalised text wants about 1.7–1.85 em of `lineHeight`, fully vocalised verse 1.9–2.1 em.
+- **Emphasis.** Arabic type has no italics, so in a document whose `locale` is written in Arabic script `*…*` is set in bold by default (`bodyText.emphasis: 'auto'`). `'color'` sets it upright in `italicColor`, and `'overline'` draws a rule over the words, the khaṭṭ fawqī of Arabic books. The setting reaches every text set in the body's faces: paragraphs, lists, blockquotes, paragraph styles, callout bodies, notes and headings. Captions, table cells, the contents and the index keep their own italic settings. Whatever is chosen, the engine never slants Arabic letters: the Arabic words of a run set in italics stand upright and its Latin words keep their italics. A blockquote is upright by default in such a document.
+- **Tashkīl.** `bodyText.tashkil: 'strip'` takes the vowel and Qurʾānic marks out of the text the layout sets, for an unvocalised edition made from a vocalised source: fatḥa, ḍamma, kasra and their tanwīn, sukūn, shadda, the dagger alef (هٰذا becomes هذا) and the marks U+0656–U+065F and U+06D6–U+06ED. `'strip-vowels'` keeps the shadda, as most modern books print it. Hamza and madda stay (أ إ آ are letters, also when typed with combining marks). The source keeps its marks; the lines, the headings and the contents are set without them, and every character set still maps to its place in the source.
+- **Footnotes.** `footnotes.markerTemplate: '({n})'` writes the markers «(١)» in the document digits, `numbering: 'page'` starts them again on every page, and `noteNumberPosition: 'inline'` sets the note's own number on the line. The separator rule and the note numbers stand at the start of the column, on the right in a right-to-left book.
+- **Whole words.** A word that holds an Arabic-script letter is never hyphenated, cut or letter-spaced, in an Arabic book or quoted in another. A style that sets `letterSpacing` on Arabic text is reported (`joiningScriptLetterSpacing`), and a word wider than its line overflows it and is reported (`unbreakableWordOverflow`). See [Arabic layout](/en/docs/arabic-layout#shaping-and-whole-words).
+- **Kashida and verse.** A justified line of Arabic is stretched with kashidas as well as at its spaces (`bodyText.kashida`, see [Kashida in Arabic text](/en/docs/justification#kashida-in-arabic-text)), and a classical poem is set one bayt a line in two hemistichs of one width with `:::verse` (see [`:::verse`](/en/docs/document-format-directives#verse)).
+- **Index.** An index in Arabic sorts in alphabetical order and ignores the article ال (`index.ignoreArticle`), the vowel marks and the hamza seats; see [Back-of-book index](/en/docs/configuration-notes-references#back-of-book-index).

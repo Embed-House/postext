@@ -63,8 +63,13 @@ describe('kokoro in the Sandbox', () => {
   });
 
   it('has nothing to say about a part, an instalment, its readings and a scene plate', () => {
-    const warnings = computeWarnings({ markdown: CHAPTER, config: manifest.config, doc: null, resources: manifest.resources as unknown as Resource[] }).map((w) => JSON.stringify(w.payload));
+    const all = computeWarnings({ markdown: CHAPTER, config: manifest.config, doc: null, resources: manifest.resources as unknown as Resource[] });
+    const warnings = all.filter((w) => w.payload.kind !== 'contentInConfig').map((w) => JSON.stringify(w.payload));
     expect(warnings).toEqual([]);
+    // The colophon and the frontispiece captions still set their wording in
+    // the design (#849): it moves to the Markdown with the composed pages
+    // (#846).
+    expect(all.flatMap((w) => (w.payload.kind === 'contentInConfig' ? [w.payload.ownerId] : []))).toEqual(['colophon', 'frontis-kami', 'frontis-shimo']);
   });
 
   it('names only heading styles, paragraph styles and resources the bundle has', async () => {

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Les unitats, els colors i la paleta, les fonts personalitzades, el visor HTML, el PDF i la producció per a impremta, el visor Folio i la depuració',
   lang: 'ca',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '41 min',
+  order: 19,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres que comparteix tot el llibre i els de cada tipus de sortida. Explica com s'escriu una mida i un color, i com es dona nom als colors d'una paleta. Ensenya a afegir les teves pròpies fonts. Després tracta la vista web, el fitxer PDF, els fitxers que demana una impremta i el llibre en 3D. L'última secció activa les guies i els advertiments que ajuden mentre treballes.",
 };
@@ -246,9 +246,9 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -306,7 +306,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined quan tot coincideix amb els valors per defecte
 ```
 
-Consulta [Integrar el visor HTML](/ca/docs/configuration-programmatic-usage#integrar-el-visor-html) més avall per veure'n un exemple complet.
+Consulta [Integrar el visor HTML](/ca/docs/configuration-html-folio-epub#integrar-el-visor-html) més avall per veure'n un exemple complet.
 
 
 ## Generació de PDF (configuració)
@@ -335,9 +335,9 @@ interface PdfGenerationConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '180px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -394,7 +394,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined quan tot coincideix amb els valors per defecte
 ```
 
-Consulta [Generació de PDF](/ca/docs/configuration-programmatic-usage#generació-de-pdf) més avall per a la recepta completa d'exportació.
+Consulta [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) més avall per a la recepta completa d'exportació.
 
 
 ## Producció per a impremta (configuració)
@@ -427,9 +427,9 @@ interface CustomOutputProfile {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Propietat</th>
-      <th style={{ width: '170px' }}>Tipus</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -507,10 +507,10 @@ print: {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Id</th>
+      <th>Id</th>
       <th>Condició</th>
-      <th style={{ width: '150px' }}>Nom al registre</th>
-      <th style={{ width: '90px' }}>Límit de tinta</th>
+      <th>Nom al registre</th>
+      <th>Límit de tinta</th>
     </tr>
   </thead>
   <tbody>
@@ -575,9 +575,9 @@ interface PrintBlackConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '140px' }}>Tipus</th>
-      <th style={{ width: '170px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -643,9 +643,9 @@ interface PrintPreflightConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Propietat</th>
-      <th style={{ width: '110px' }}>Tipus</th>
-      <th style={{ width: '100px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -728,9 +728,9 @@ interface ContrastConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Propietat</th>
-      <th style={{ width: '110px' }}>Tipus</th>
-      <th style={{ width: '100px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -754,8 +754,8 @@ La ràtio a què ha d'arribar un text depèn del seu cos i del seu pes, com a WC
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Nivell</th>
-      <th style={{ width: '120px' }}>Text</th>
+      <th>Nivell</th>
+      <th>Text</th>
       <th>Text gran</th>
     </tr>
   </thead>
@@ -817,6 +817,66 @@ Les mesures s'exporten per a les teves pròpies eines:
 El resolver i l'stripper segueixen el patró de les altres seccions: `resolveContrastConfig` i `stripContrastDefaults`, amb `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` i `CONTRAST_MODES`.
 
 
+## Comprovació del contingut (configuració)
+
+La propietat `checks` aplega les comprovacions que llegeixen la mateixa configuració. Avui en té una, `contentInConfig`, que avisa quan un disseny desa el text del llibre. Un títol corrent, el disseny d'un títol, una pàgina de part i la fila d'una part a l'índex són forma: porten marcadors (`{chapterTitle}`, `{titleText}`, `{number}`) i com a molt una o dues paraules pròpies, com *Capítol* davant de `{chapterNumber}`. El text que forma part del llibre va al Markdown, on el veuen l'índex, la cerca, les traduccions, el PDF etiquetat i l'EPUB. La composició no la llegeix, així que canviar-la no mou mai cap línia.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Propietat</th>
+      <th style={{ width: '110px' }}>Tipus</th>
+      <th style={{ width: '100px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Fa la comprovació.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Frases que un disseny pot repetir sense límit de llargada: el títol del llibre, el nom de l'editorial. Es comparen sense majúscules, espais ni la puntuació que envolta les paraules, i una frase que apareix dins d'un text més llarg es treu abans de comptar la resta.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Paraules que pot dur com a màxim un text de disseny a més dels marcadors.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Lletres i xifres que pot dur com a màxim un text de disseny a més dels marcadors. Un caràcter xinès, japonès, coreà o tai compta per tres, així que en passen uns vuit.</td></tr>
+  </tbody>
+</table>
+
+### Com es llegeix un text de disseny
+
+- El seu text literal és el `content` sense cap marcador (`{name}`, `{attr.key}`, `{firstMark.key}`), amb els escapaments `{{` i `}}` llegits com a claus i `\n` com a salt de línia.
+- Un text sense lletres ni xifres (una filera de punts guia, un ornament, un `·`) no és mai contingut.
+- Una paraula és el que queda entre espais i porta una lletra o una xifra: un `·` o una `|` solts no són paraules, i una adreça com `postext.dev` n'és una.
+- Primer es treuen les frases d'`allow`, i també el `title`, el `subtitle`, l'`author` i el `publisher` de les metadades del document (el seu front matter), que un títol corrent sol repetir.
+- El que queda és contingut quan té més de `maxWords` paraules o més de `maxChars` lletres i xifres.
+
+Es llegeixen totes les ranures de disseny: `header`, `footer`, l'`advancedDesign.slot` de cada nivell de títol, l'`advancedDesign.slot`, el `header` i el `footer` de cada estil de títol, `parts.design`, `parts.versoDesign`, `toc.parts.design`, i el mateix dins d'`htmlViewer.overrides`. `configDesignSlots(config)` les enumera amb els seus camins, i `designTextLiteral(content)` torna el text literal d'una plantilla.
+
+### L'avís
+
+`collectConfigWarnings` (i `VDTDocument.configWarnings`) dona un avís `contentInConfig` per cada ajust que desa contingut: un estil de títol (amb el seu `id` a `ownerId`), un nivell de títol, la capçalera, el disseny de les parts. `path` anomena l'ajust, `count` els textos de disseny afectats, `chars` les seves lletres i xifres, `elements` el camí de cadascun (els 20 primers) i `value` el començament del primer (40 caràcters com a molt). Passa les metadades del document com a segon argument per permetre'n el títol i l'autor; una composició ho fa tota sola.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Solució:** porta el text al Markdown, com a títol, requadre o paràgraf del capítol a què pertany, i deixa només marcadors al disseny. Un valor que canvia a cada capítol pot anar a la línia del títol i llegir-se amb `{attr.key}`: `# Mapes {kicker="Lliçó 4"}` i `{attr.kicker}` al disseny. Una frase que és forma, com el nom de l'editorial en un títol corrent, va a `allow`.
+
+El Sandbox mostra l'avís al tauler **Revisió** i té la comprovació a **Disseny → Avançat → Contingut a la configuració**; `postext check` l'imprimeix.
+
+
 ## Visor Folio (configuració)
 
 La propietat `folio` decideix com presenta el visor Folio (`postext-folio`) el llibre imprès en 3D: l'angle de la vista, el paper, l'enquadernació, la superfície sobre la qual reposa el llibre i la llum. La composició la ignora, igual que la sortida canvas, HTML i PDF. `buildDocument` porta els ajustos resolts al VDT, com a `doc.config.folio`, quan la configuració en fixa algun, així que un document sense ajustos conserva el hash de la seva composició.
@@ -858,9 +918,9 @@ interface FolioConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '180px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -929,7 +989,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>; <code>'folded'</code> en un format de diari</td>
-      <td><code>hardcover</code>: tapa dura (cartoné), tapes una mica més grans que les pàgines. <code>paperback</code>: rústica fresada (llom fresat i encolat), s'obre menys. <code>sewn</code>: rústica cosida. <code>layflat</code>: enquadernació plana, s'obre sense enfonsar-se al llom. <code>saddleStitch</code>: grapat a cavallet, plecs doblegats i grapats pel plec, com una revista o un fullet; sense llom pla. <code>folded</code> (des de postext 1.18): un diari, plecs doblegats un cop i posats l'un dins de l'altre sense res que els subjecti; sense grapes, sense llom i sense tapes, i la primera pàgina és la portada. Un tram <a href="/ca/docs/document-format#paper"><code>:::paper</code></a> amb <code>shade</code> imprimeix una secció, per exemple les pàgines d'economia, en paper de diari salmó.</td>
+      <td><code>hardcover</code>: tapa dura (cartoné), tapes una mica més grans que les pàgines. <code>paperback</code>: rústica fresada (llom fresat i encolat), s'obre menys. <code>sewn</code>: rústica cosida. <code>layflat</code>: enquadernació plana, s'obre sense enfonsar-se al llom. <code>saddleStitch</code>: grapat a cavallet, plecs doblegats i grapats pel plec, com una revista o un fullet; sense llom pla. <code>folded</code> (des de postext 1.18): un diari, plecs doblegats un cop i posats l'un dins de l'altre sense res que els subjecti; sense grapes, sense llom i sense tapes, i la primera pàgina és la portada. Un tram <a href="/ca/docs/document-format-directives#paper"><code>:::paper</code></a> amb <code>shade</code> imprimeix una secció, per exemple les pàgines d'economia, en paper de diari salmó.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1048,7 +1108,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-Al Sandbox aquests ajustos formen el grup **Folio** del tauler Disseny (**Disseny → Folio → Visor Folio (3D)**), i la pestanya Folio els mostra a mesura que els canvies, sense tornar a compondre el llibre. El visor en si es descriu a [Un llibre en 3D](/ca/docs/configuration-programmatic-usage#un-llibre-en-3d-postext-folio), i una tanda de pàgines en un altre paper, a [Format del document › `:::paper`](/ca/docs/document-format#paper).
+Al Sandbox aquests ajustos formen el grup **Folio** del tauler Disseny (**Disseny → Folio → Visor Folio (3D)**), i la pestanya Folio els mostra a mesura que els canvies, sense tornar a compondre el llibre. El visor en si es descriu a [Un llibre en 3D](/ca/docs/configuration-html-folio-epub#un-llibre-en-3d-postext-folio), i una tanda de pàgines en un altre paper, a [Format del document › `:::paper`](/ca/docs/document-format-directives#paper).
 
 
 ## Depuració
@@ -1058,8 +1118,8 @@ La propietat `debug` agrupa dos tipus d'ajudes d'autoria: superposicions visuals
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '200px' }}>Tipus</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1096,9 +1156,9 @@ La propietat `debug` agrupa dos tipus d'ajudes d'autoria: superposicions visuals
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Propietat</th>
-      <th style={{ width: '120px' }}>Tipus</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1209,9 +1269,9 @@ interface WarningsToggleConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '120px' }}>Tipus</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1282,7 +1342,9 @@ Vuit errors de la configuració mateixa no passen mai en silenci, i cap interrup
 - **Ajust d'encapçalament desconegut**: una clau que no existeix a `headings`, `headings.balancing`, un nivell d'encapçalament, un estil d'encapçalament o un estil de paràgraf: un `letterSpacng` mal escrit, un `tracking` pres d'una altra eina, un `level` en un estil d'encapçalament, un `fontStyle: 'italic'` en un estil de paràgraf (que porta `italic: true`). Una tabulació es comprova igual (un `leaders` per `leader`). El motor la ignora (fins a postext 1.4 ho feia sense dir res). `value` és la clau, `used` va buit i `suggestion` anomena l'ajust al qual s'assembla més, quan en dista una o dues lletres o només canvia en majúscules (`unknownConfigKey`).
 - **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`.
 - **Números de línia en text vertical**: `lineNumbers.enabled: true` en un document compost en vertical (`layout.writingMode: 'vertical-rl'`). Les pàgines verticals no porten números de línia, i `used` és `false` (`lineNumbersUnsupported`; vegeu [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
-- **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
+- **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format-resources#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
+- **Plantilles de pàgina i estils de rètol** — un problema a `pageTemplates` o `labelStyles`: un id o un nom repetit, `extends`, ancoratges o marcs encadenats que formen un bucle, un estil, marc o plantilla que no existeix, un mínim més gran que el seu màxim, un estil de rètol d'un ancoratge que `labelStyles` no té (es comprova quan es passen els recursos: `collectConfigWarnings(config, { resources })`). El seu `path` és un punter JSON (`/pageTemplates/3/frames/2/style`); cada tipus apareix amb la causa i la solució a [Avisos de les plantilles de pàgina](/ca/docs/configuration-composed-pages#avisos-de-les-plantilles-de-pàgina).
+- **Contingut en un disseny** — un element de text de disseny el text del qual, a més dels marcadors, és més llarg que una etiqueta breu: el text del llibre desat a la configuració. Un avís per ajust (un estil de títol, la capçalera, el disseny de les parts), amb el camí de cada text (`contentInConfig`; vegeu [Comprovació del contingut](#comprovació-del-contingut-configuració)). A diferència dels altres, es pot desactivar: `checks.contentInConfig.enabled: false`.
 
 El Sandbox els mostra al tauler **Revisió** amb la ruta de l'ajust. En codi, `buildDocument` els deixa al document com a `configWarnings` (absent quan la configuració està neta), i `collectConfigWarnings(config)` els retorna sense compondre res:
 

@@ -24,13 +24,13 @@ Nos 300 dpi padrão, o pôster quebra cada linha no mesmo lugar que a 72 dpi, ma
 
 <Excerpt region="band" />
 
-O H1 leva como atributos o encontro, o número do pôster, os autores e as afiliações, e o seu design os compõe sobre uma caixa verde ancorada à página, com 158 mm de altura ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). A caixa termina 133 mm abaixo da margem superior. Sem `minHeight`, o resumo começaria 0,9 mm abaixo do verde; um `minHeight` de onze linhas da grade deixa 14 mm. As marcas de afiliação são os caracteres ¹ ² ³, os únicos algarismos sobrescritos da faixa Latin-1.
+O H1 leva como atributos o encontro, o número do pôster, os autores e as afiliações, e o seu design os compõe sobre uma caixa verde ancorada à página, com 158 mm de altura ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). A caixa termina 133 mm abaixo da margem superior. Sem `minHeight`, o resumo começaria 0,9 mm abaixo do verde; um `minHeight` de onze linhas da grade deixa 14 mm. As marcas de afiliação são os caracteres ¹ ² ³, os únicos algarismos sobrescritos da faixa Latin-1.
 
 ### 3 · Componha os painéis num grupo na largura da página
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-O corpo corre em duas colunas e os painéis em três, então a grade é um grupo `:::columns{count=3}` escrito direto no texto, e `span="page"` o estende sobre as duas colunas do corpo, sob o resumo, com a medianiz da página entre as suas colunas ([`:::columns`](/pt/docs/document-format#columns)). Sem mais nada, um grupo no texto é seguido por uma linha de espaço entre parágrafos, aqui 38 pt, e a faixa de palavras-chave passaria para uma segunda página; `marginBottom="0.75em"` na cerca fica no lugar dessa linha (postext 1.28), e a faixa cabe no pé da página. Cada painel é um callout dentro do grupo: recebe o seu próprio estilo, os 175 mm de largura da coluna e 18 mm de `marginTop` sob o painel de cima ([o contêiner `:::callout`](/pt/docs/configuration-styles#o-contêiner-callout)). `breaks="3,4"` manda o terceiro painel, Results, para o alto da coluna do meio e o quarto, Conclusions, para o alto da última. Sem ele, o grupo se equilibra e corta no painel mais próximo de cada terço da pilha. Com este texto, os cortes caem nos mesmos dois painéis; o atributo os mantém ali quando o texto mudar.
+O corpo corre em duas colunas e os painéis em três, então a grade é um grupo `:::columns{count=3}` escrito direto no texto, e `span="page"` o estende sobre as duas colunas do corpo, sob o resumo, com a medianiz da página entre as suas colunas ([`:::columns`](/pt/docs/document-format-directives#columns)). Sem mais nada, um grupo no texto é seguido por uma linha de espaço entre parágrafos, aqui 38 pt, e a faixa de palavras-chave passaria para uma segunda página; `marginBottom="0.75em"` na cerca fica no lugar dessa linha (postext 1.28), e a faixa cabe no pé da página. Cada painel é um callout dentro do grupo: recebe o seu próprio estilo, os 175 mm de largura da coluna e 18 mm de `marginTop` sob o painel de cima ([o contêiner `:::callout`](/pt/docs/configuration-callouts#o-contêiner-callout)). `breaks="3,4"` manda o terceiro painel, Results, para o alto da coluna do meio e o quarto, Conclusions, para o alto da última. Sem ele, o grupo se equilibra e corta no painel mais próximo de cada terço da pilha. Com este texto, os cortes caem nos mesmos dois painéis; o atributo os mantém ali quando o texto mudar.
 
 ### 4 · Mantenha cada figura no seu painel
 
@@ -42,7 +42,7 @@ Uma figura com posicionamento `'here'` fica no painel em que `::resource` a põe
 
 <Excerpt region="palette" />
 
-As células do mapa de calor e os quatro trechos `:swatch{color="…"}` da legenda apontam para as mesmas entradas da paleta, então um novo valor para `cool` repinta o mapa e a legenda juntos ([formatação inline](/pt/docs/document-format#formatação-em-linha)). A legenda é um segundo grupo `:::columns`, com duas entradas por coluna, dentro do painel Results.
+As células do mapa de calor e os quatro trechos `:swatch{color="…"}` da legenda apontam para as mesmas entradas da paleta, então um novo valor para `cool` repinta o mapa e a legenda juntos ([formatação inline](/pt/docs/document-format-inline#formatação-em-linha)). A legenda é um segundo grupo `:::columns`, com duas entradas por coluna, dentro do painel Results.
 
 ### 6 · Componha o número de destaque com um estilo de parágrafo
 

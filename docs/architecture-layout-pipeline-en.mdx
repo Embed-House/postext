@@ -1,0 +1,277 @@
+{/* docs/architecture-layout-pipeline-en.mdx */}
+
+export const metadata = {
+  title: 'Architecture: the layout pipeline',
+  sidebarTitle: 'The layout pipeline',
+  description: 'The placement pass and its rounds: how the engine places lines, floats, notes and columns, and repeats until the layout settles',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '26 min',
+  order: 3,
+  parent: 'architecture',
+  plainSummary: "This page is for programmers who want to know how Postext places things on the page. It goes through the text from start to end and puts every line, picture, table, note and box in its place. When a later step changes something earlier, such as a page number in a reference, it starts the pass again. It stops when nothing moves any more. The page lists each step, what it decides and how many times it can run.",
+};
+
+# Architecture: the layout pipeline
+
+
+## Layout Pipeline
+
+One placement pass, run as many times as the layout needs. That is the entire layout pipeline.
+
+The pass (`placeDocumentPass`, in `packages/postext/src/pipeline/build.ts`) walks the content from the first block to the last. For each block it does everything it takes to set it: measure it at the width of the column it is about to enter, see whether it fits, split it or move it on under the break and keep rules, offer the floats it cites a slot, and put the flow back on the baseline grid (see [Vertical Rhythm System](/en/docs/architecture#vertical-rhythm-system)). Floats, widows and the grid have no pass of their own: they are settled as each block lands.
+
+Some decisions cannot be taken inside one walk, because they depend on where the walk ends up: the page numbers a table of contents prints, the height at which a page-span box cuts the columns above it, the lines a short column still needs. For those, `buildDocument` runs the pass again with *hints* taken from the result of the pass before. The five stages below follow a block through the pass; [The Pass Driver](#the-pass-driver) and [Column Balancing](#column-balancing) cover the re-runs.
+
+### Stage 1: Content Structuring
+
+- **Input:** Raw `PostextContent`
+- **Action:** Parse the markdown into content blocks, resolve resource references against `resources[]` by ID, take the footnote definitions (`[^id]:`) out of the flow and number their markers in citation order, number the headings, and plan the floats: which resources float, and after which block (`notes[]` is not read)
+- **Output:** A flat list of content blocks (typed and content-filled, but with no page or column assignment) and the float plan
+- **Runs:** at the start of every placement pass. The parse is read from its memo after the first pass; the rest is worked out again
+
+### Stage 2: Text Measurement
+
+- **Input:** A content block with text, and the width of the column it is about to enter
+- **Action:** Measure the block's lines at that width through the dedicated **measure module** (`packages/postext/src/measure/`), which layers hyphenation, justification, rich inline runs, and Knuth-Plass line breaking on top of Pretext. The result is the block's `VDTLine[]` and its total height
+- **Key detail:** Measurement is cached. `cachedMeasureBlock` / `cachedMeasureRichBlock` (in `measure/cache.ts`) key on the text, fonts, width, and every layout-affecting option, so re-measuring an unchanged paragraph is a map lookup
+- **Output:** The block's lines, with precise pixel dimensions
+- **Runs:** as the walk reaches the block, not ahead of it, because the width depends on where the block lands: a column beside a side column, the lines beside a wrapped figure, the sub-columns of a `:::columns` group. A block that moves on to a column of another width is measured again at that width
+
+The module splits cleanly by responsibility: `plain.ts` measures plain runs, `rich.ts` measures mixed bold/italic/math spans, `font.ts` builds font strings and owns cache lifecycle, and `canvas.ts` wraps the raw canvas text-width primitives. One lifecycle detail matters in practice: glyph widths measured against a fallback font must not outlive the real font's arrival. `canvas.ts` keeps its widths per font string and a measurement generation; `evictFontFamilies` (called when a build finds that a family's faces changed, by `watchFonts`, `prepareFonts` and `loadBundleFonts`) drops the widths of those families and clears Pretext's cache, and a `MeasurementCache` filled under an older generation drops its blocks in those families at its next lookup. `clearMeasurementCache()` does the same for every family. The faces themselves are loaded before layout by `fonts/prepare.ts` (`prepareFonts`), and `fonts/faces.ts` reads back the faces a laid-out document used, for the `fontFallback` warnings.
+
+Chinese, Japanese and Korean paragraphs take another route through the same module. A paragraph with more CJK characters than word spaces goes to the **CJK composer** (`cjkCompose.ts`). It cuts the text into units (a character, a run of Latin text, a two-em dash or ellipsis, an atomic box such as a chip or a note marker), measures each unit once, and fills the lines first-fit under the line-start and line-end rules of `cjkClasses.ts`: a line takes in a mark that may not open the next line by giving up punctuation blank (`cjkPunctuation.ts`) before it carries a character down. A justified line is then spread between its characters. The output is ordinary `VDTLine`s whose segments carry what the renderers need to paint them exactly as measured: `tracking` (pixels after each character, already in the segment's width), `inkOffset` for a mark that gave up blank, `hangs`, the Han–Latin spaces as `autospace` segments, and the marks, ruby readings and warichu rows of Chinese annotations. In a Japanese document the same composer follows JLReq: the kinsoku classes of the Japanese levels are read from the edge characters of each unit at break time, the punctuation blanks are compressed and given back in the JLReq order, furigana are laid out by `rubyJis.ts` (1:2:1 spacing, overhang onto kana, jukugo words), and kanbun marks widen the unit of their character. The cost is linear in the paragraph's length: chapter 1 of 紅樓夢 (6,949 characters) is set by measuring 1,298 characters, each distinct character once, where measuring prefixes of the paragraph took 636,948. See [Chinese layout](/en/docs/chinese-layout).
+
+Underneath, this is where Pretext earns its keep. The `prepare()` call is the expensive part — it analyzes the text using the canvas font engine and caches the result. But the `layout()` call? Pure arithmetic, nearly free. That split is everything. Once text is prepared, the engine can break it again at negligible cost: at another width, for a paragraph that continues in a narrower column, or one line longer, for a paragraph that column balancing loosens. Prepare once, layout as many times as you need.
+
+```typescript
+// Simplified: how the measure module uses pretext internally
+const prepared = prepare(paragraphText, '16px/1.5 Inter');
+const { height } = layout(prepared, columnWidth, 24); // 24px line-height
+// => "This paragraph is 168px tall at 320px column width — that's 7 lines."
+```
+
+### Stage 3: Page and Column Placement
+
+- **Input:** A measured block
+- **Action:** Set the block in the current column. Create `VDTPage` and `VDTColumn` nodes as the flow needs them. Track `availableHeight` per column. When a block does not fit, split it (Stage 5) or advance to the next column or page
+- **Strategy:** Greedy first-fit placement. Column and page breaks follow the simplest valid assignment
+- **Output:** The block has `pageIndex`, `columnIndex`, and `bbox` assigned
+
+This is the moment the VDT becomes a real document. Before this stage a block is an entry in a flat list, with no address. Placement assigns each one to a page and column, like pouring water into a grid of containers: fill column 1 until it overflows, spill into column 2, when the page is full start a new one.
+
+Before any content blocks land on a page, the pass reserves space for structural elements — running headers and footers (laid out as design slots from `config.header` / `config.footer`) and any float bands already pending for the freshly opened page. These reservations reduce the `availableHeight` of each column, so when content blocks start flowing in, the engine already knows exactly how much room is available.
+
+**Column bands and span columns.** `page.columns` is a flat array in reading order, but a page is not always a single row of columns. In a multi-column layout a page-span inline block cuts the page into stacked *bands*. Four things count as one: a `:::callout` whose style or fence sets `span: 'page'`, a `:::columns{span="page"}` group in the running text, an inline `::resource` whose placement resolves to `{ position: 'here', span: 'page' }`, and a comic strip set across the page where it is written (`:::strip{span=page}`). The last three are wrapped in a frameless page-span box before placement (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), so one mechanism sets all four. At the cut, the text columns of the current band are closed at the cut line (their height clamped, `availableHeight` zero), the block gets its own full-width column with `kind: 'span'`, and a fresh band of text columns (`band + 1`, same x and width, same bottom as the band it replaces) is appended below it. Columns are only ever appended, so `columnIndex` keeps addressing `page.columns[i]`, and renderers need no special drawing: each column clips to its own bbox (widened by `columnClipRect` — 2pt for glyph ink plus however far the column's design overlays, such as a heading tab or a callout badge, hang past its sides, and however far a heading's design reaches above its top; its foot stays the edge — the same rectangle in the canvas and PDF backends), and the column rule is drawn per band between adjacent text columns, starting under the band a page-span heading holds at the head of the page (`columnRuleSegments`), in the page's own rule when a styled section sets one (`VDTPage.columnRule`, read through `pageColumnRule`). Column balancing ignores span columns, side columns and zero-height bands. A span block cuts directly where the band is level (page top, right after an opener heading, another span block or a top float band); arriving in an uneven band it proposes a *band cap* instead (`packages/postext/src/pipeline/bandCaps.ts`) — the columns of the band that opens with a given content block are shortened to `ceil(Σ used / N / grid)` lines — and `buildDocument` re-runs the placement pass with the cap (growing it one line at a time when the capped band overflows, up to `MAX_BAND_CAP_RETRIES` = 3 times, then dropping it, so the block falls back to the top of the next page), so the text fills the shortened columns under every placement rule, ends level at the cut, and the closed columns keep whatever slack remains as `availableHeight` for balancing to absorb. The same mechanism levels the *closing* band of a chapter and of the document (`headings.balancing.trailing`): a chapter opener, a `:::part`, a chapter-closing `placement: 'fixed'` callout or the end of the document reached with the current band's columns uneven proposes a `kind: 'trailing'` cap, keyed by the boundary block; because a cap is keyed by the block that opens its band — and that block moves whenever an earlier page absorbs extra balancing lines — trailing caps are resolved *after* column balancing has settled, with the balancing hints frozen, and a short polish round then lets the levers fill what the cut left short. `placement: 'fixed'` callouts leave the flow: the box is anchored to the page content area / trim box / bleed box, the text columns it covers give up that zone (cut from the bottom or the top like a float band, moving to the next page on a conflict), and frame plus children go to `page.floats`.
+
+**Vertical pages.** With `layout.writingMode: 'vertical-rl'` the pass lays out a horizontal page turned a quarter turn clockwise. On such a page the content area, columns, blocks, lines, floats and footnote areas are in **flow coordinates**, and `VDTPage.flow` carries the rotation that takes them to the sheet: a flow point (x, y) lands at (page width − y, x). Nothing downstream needs to know: breaking, floats, keep-together rules and balancing work in the flow frame as on any page, a column of the flow is a tier on the sheet, and each backend applies the rotation when it paints (`flowToPage` and `pageToFlow` map points both ways). Running heads, folios, crop marks and the background stay in sheet coordinates. Figures and tables are laid out as upright blocks turned back inside the frame, and characters that stand upright are turned back one by one at paint time.
+
+### Stage 4: Resource Placement
+
+- **Input:** The float plan of Stage 1, and the pages as placed so far
+- **Action:** Float each referenced resource into the first free slot after its first reference — the bottom of the referencing column, the top / bottom of the next empty column, or a band of the next page (`packages/postext/src/pipeline/floatPlacement.ts` plans the floats, `pipeline/floatSlots.ts` enumerates and measures the slots; the placement pass reserves the bands as it walks)
+- **Runs:** as soon as the block holding the first reference has landed, inside the same walk; the text placed after that flows past the band
+- **Placement resolution:** Per resource, the engine resolves `resource.placement` → the type's `resourceType.defaultPlacement` → the built-in default `{ position: 'auto', span: 'column' }`
+
+<table>
+  <thead>
+    <tr>
+      <th>Placement field</th>
+      <th>Behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position: 'auto'</code></td>
+      <td>The resource takes the first free slot after its reference, top or bottom — the default</td>
+    </tr>
+    <tr>
+      <td><code>position: 'top'</code></td>
+      <td>Only top slots: a band at the top of the next empty column or page, pushing the column content below it</td>
+    </tr>
+    <tr>
+      <td><code>position: 'bottom'</code></td>
+      <td>Only bottom slots: a band at the bottom of a column or page, shortening the column above it</td>
+    </tr>
+    <tr>
+      <td><code>position: 'here'</code></td>
+      <td>Opts out of floating: the resource embeds inline at its <code>::resource</code> directive, exactly where it appears in the flow</td>
+    </tr>
+    <tr>
+      <td><code>span: 'column'</code></td>
+      <td>The band occupies a single column (on a freshly opened page the engine picks the column with the most room left)</td>
+    </tr>
+    <tr>
+      <td><code>span: 'page'</code></td>
+      <td>The band spans the full content width across all columns, breaking the column flow — full-width bands are reserved first, so column-span floats nest inside the remaining space</td>
+    </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>The resource is set in the side column of a one-and-a-half layout that keeps that column for floats (<code>layout.sideColumnRole: 'floats'</code>), stacked beside the paragraph that first cites it. On a page without such a column it behaves as <code>'column'</code></td>
+    </tr>
+  </tbody>
+</table>
+
+`ResourcePlacement` has more fields than these two: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` and `citingPage`. [Configuration → Resource types](/en/docs/configuration-resources#resource-types) and [Document format › Placement](/en/docs/document-format-resources#placement) say what each one does.
+
+- **Deferred placement:** A float that fits in no slot of the current page waits for the next page the flow opens and, at a chapter boundary, is drained onto pages opened ahead of the boundary. A picture keeps its size unless `placement.shrink` (or the document's `layout.floatShrink`) lets it scale down to the room a slot has. A table too tall for a fresh page is cut between rows and continues on the following pages with its header rows repeated (`tableStyle.overflow: 'split'`, the default)
+- **Output:** Resources positioned in page bands (`page.floats`), with the affected columns' heights reduced so text flows around the bands
+
+Resource placement is where things get interesting, because floats do not just occupy space — they reshape the space around them. Once the block holding a reference has landed, the pending float is offered the free slots of the current page after it — the bottom of that column, then the top and bottom of the next empty column (a page-span float: the page bottom, when every column still has room); what fits nowhere waits for the next page, where pending floats claim their bands before any text flows in. The columns shrink to fit between the bands, the text flows through the narrowed columns uninterrupted, and the reader sees the figure near (but not exactly at) the point where it is mentioned. This is standard practice in professional typesetting; books do it constantly.
+
+**Placement rules.** Beyond the placement dispatch, floats follow strict editorial constraints:
+
+- **After-reference rule.** A float lands in the first free slot *after* its first reference in the text, never before it. The reader encounters the reference first, then sees the resource. If a float does not fit, it defers forward to a later slot or page, never backward.
+- **Reference order within a sequence.** Pending floats are offered each slot in first-reference order, and one that fits nowhere holds up the ones behind it in its numbering sequence: table 3 never lands after table 4, figure 12 never before figure 11. The sequences do not hold each other up — a waiting table lets a later figure through. So that a long table need not wait for a fresh page, one offered the head of an empty column is cut to that column and continues in the next slot (the column beside it, or the next page's bands), with its header rows repeated.
+- **Chapter barrier.** Floats never escape their chapter. At a chapter opener (a heading level with `breakBefore` or `span: 'page'`), a `:::part`, a callout style with `floatBarrier: true` and the end of the document, every pending float is placed first — in the page's free slots, then on pages opened ahead of the boundary (each force-placing at least one float) — before the boundary's own page break. Before opening such a page, a figure or table still pending is offered the current page's free slots once more whatever its `position` — a head-of-page float cited on a chapter's closing page takes the foot of that page, under the balanced columns, rather than a page of its own (floated callouts keep their placement). A `:::pagebreak` sends pending floats to the page that follows it, after any parity padding.
+- **Minimum text room.** On a freshly opened page a band is only reserved if at least 3 body lines of text still fit in the affected columns — with one exception: an oversized float may be force-placed into a band that is still all-text, so a dominating figure cannot stall the queue forever. A slot on the current page must fit in the column's remaining height; the 3-line rule applies there only next to another float band.
+- **Breathing room.** One body-line-height gap separates a band from the text beside it.
+- **Baseline-grid alignment.** Top bands are rounded *up* to a multiple of the baseline grid (growing the gap below the float), so every displaced line still lands on the grid. Bottom floats are anchored so the caption's last baseline sits on the grid — the caption shares its baseline with the last text line of the neighbouring columns, and pages end at the same height across columns and facing pages.
+
+**Typed first-reference numbering.** Resources are *not* numbered in the markdown. `pipeline/resourceNumbering.ts` assigns each resource its number the first time it is referenced in reading order, using the resource's `ResourceType`: the `numberingTemplate` combines the per-type counter `{n}` with the heading counters `{h1}`..`{h6}` in effect at the reference (e.g. `'{h1}.{n}'` → "1.7"), `resetOn` controls when the counter restarts (`'never'` or at any heading level), and `counterFormat` picks decimal, roman, or alphabetic numerals. The built-in *Figure* and *Table* types come from `defaultResourceTypes(locale)`, localized to the document's language. Because numbering follows first-reference order, inserting a new figure mid-document renumbers everything after it automatically — no source edits required.
+
+### Stage 5: Breaks and Keep Rules
+
+This is the stage that separates a layout engine from a text dumper. It enforces the editorial quality rules that professional typesetters have applied by hand for centuries — and that naive text rendering completely ignores.
+
+Three mechanisms share the work, each acting where the information it needs exists: a **runt penalty** inside the line breaker, a **scored split** where a paragraph meets the end of a column, and **structural keep-together rules** between blocks.
+
+#### Widows, orphans and runts
+
+**Widows and orphans** are the most visible signs of amateur typesetting:
+
+- A **widow** is a single line of a paragraph left alone at the bottom of a column. The paragraph
+  continues in the next column, but that lone line looks stranded (as if the column ended
+  prematurely).
+- An **orphan** is a single line of a paragraph stranded at the top of a column. The bulk of the
+  paragraph is in the previous column, but one line spilled over (it looks disconnected from its
+  context).
+- A **runt** is a paragraph whose last line is a single short word (or two) — visually far too short to feel like a proper line of text. Less structurally severe than a widow, but just as jarring to a careful reader.
+
+**Runts are settled in the line breaker.** A runt belongs to the paragraph alone: its last line is as short wherever the paragraph lands. So it is the one rule of the three that the Knuth-Plass line breaker sees. When a set of breaks would end the paragraph on a line whose content is narrower than `runtMinCharacters × normalSpaceWidth` (default `runtMinCharacters` 20: twenty word spaces of content, about 8 to 12 letters), the breaker adds `runtPenalty` (default 1000) to that line's badness inside the squared demerit formula, so it competes on the same scale as line badness (which saturates at 10000) rather than being dwarfed by it. The penalty sits alongside the usual demerits (badness, hyphenation cost, fitness-class mismatch) in a single global optimisation, and the breaker almost always finds a set of breaks without a runt. Where it does not, `bodyText.tightenRunts` sets the paragraph one line shorter when its word spaces, and a little negative tracking, can take up the difference. The measure module hands the penalty to the breaker (`measure/plain.ts`, `measure/rich.ts`) and `knuthPlass/breakpoints.ts` applies it.
+
+**Widows and orphans are settled at the column end.** The line breaker breaks a paragraph for a width. It does not know where on the page the paragraph will sit, so it cannot know which of its lines will close a column. The placement pass does. When the lines of a paragraph do not all fit in what is left of the column, `chooseParagraphSplit` (in `pipeline/orphanWidow.ts`) tries every split `k` of the lines already broken, from 0 to the number that fit: `k` lines stay and the rest open the next column. Each candidate is scored:
+
+- `slackWeight · slack²` for the lines it leaves empty at the foot of the column, `slack` being the lines that fit minus `k` (default `slackWeight` 10);
+- plus `widowPenalty` (default 1000) when it leaves fewer than `widowMinLines` lines at the bottom of the column;
+- plus `orphanPenalty` (default 1000) when it carries fewer than `orphanMinLines` lines to the top of the next one.
+
+The split with the lowest score wins, and `k = 0` moves the paragraph whole. The rules are soft, and the numbers say how soft: a penalty of 1000 is the slack cost of ten empty lines (10 · 10² = 1000), so with the defaults a split that honours both rules wins whenever it leaves fewer than ten lines of the column empty. Past that, a widow or an orphan can be the cheaper choice. The split chooses among the lines the line breaker already made; it does not break the paragraph again. List items go through the same split via `avoidOrphansInLists` and `avoidWidowsInLists`, and take the runt penalty via `avoidRuntsInLists` (all `true` by default).
+
+All of this is tunable on `BodyTextConfig` — see [Configuration → Orphans, widows, runts, and keep-together rules](/en/docs/configuration-page-flow#orphans-widows-runts-and-keep-together-rules). Setting any `*Penalty` to `0` effectively disables that rule.
+
+#### Structural keep-together rules
+
+Some groupings are bigger than a single paragraph — they span adjacent blocks and cannot be addressed by line-breaking alone. The placement pass enforces these as each block lands, moving entire groups forward when they would otherwise split across a column or page break:
+
+- **Heading with its first paragraph.** A heading must never appear at the bottom of a column if the paragraph it introduces would start in the next column. Enforced by `headings.keepWithNext` (default `true`): if there is not room for the heading *plus* the body's widow minimum (`bodyText.widowMinLines`, default `2`) of the next block — or just one line when `avoidWidows` is off — the heading is pushed forward to travel with its text.
+- **Consecutive headings.** When multiple headings appear in sequence (e.g., an h2 followed by an h3 followed by a paragraph), the entire group must stay together. None of the headings can be left stranded at the bottom of a column without the content they introduce.
+- **Colon-introduced lists.** When a paragraph ends with a colon that directly introduces a list, the colon-bearing line must stay with the start of the list. Enforced by `bodyText.keepColonWithList` (default `true`): if placing the paragraph would leave no room for the first list item to start (all of it when the orphan and widow rules for lists keep it whole; one line with `bodyText.colonListRoom: 'line'`, as up to postext 1.4), the colon-bearing last line (or the whole paragraph, if it is one line) moves forward together with the list. Whenever this rule has to push the whole paragraph and a run of headings immediately precedes it in the column, those headings are pulled forward too so `keepWithNext` is not silently violated; the only exception is when the column contains just the heading(s) that an earlier move already brought forward, in which case the engine keeps the paragraph with the heading and accepts the softer colon/list separation to avoid looping.
+- **Figure with its caption.** A figure and its caption are an inseparable unit. They always move together.
+
+When a keep-together violation is detected, the engine pushes the entire group to the next column or page. The column it left then ends short, by the lines the group would have taken. Filling it is the job of [Column Balancing](#column-balancing).
+
+These corrections are invisible when done well (a reader should never notice them). But their *absence* is immediately obvious to anyone who reads carefully: that awkward single line at the top of a column, those uneven gaps where the engine gave up trying to make text fit. Professional publishers have entire style guides about preventing exactly these problems. Postext automates them.
+
+### The Pass Driver
+
+<Illustration name="ConvergenceLoop" data='{"title": "The placement pass and its re-runs", "desc": "One placement pass takes the content through five stages: structure, measure, place, floats, and breaks and keep rules. buildDocument runs the whole pass again with hints from the pass before: a band cap, balancing levers, a closing-band cut, settled page labels or note numbers.", "caption": "One pass places the whole document. buildDocument runs it again with hints until each round settles or reaches its limit.", "passBadges": [{"num": "Stage 1", "name": "structure"}, {"num": "Stage 2", "name": "measure"}, {"num": "Stage 3", "name": "place"}, {"num": "Stage 4", "name": "floats"}, {"num": "Stage 5", "name": "breaks, keep rules"}], "loopBadge": "one placement pass", "loopCondition": "run again with hints: band caps, balancing levers, closing-band cuts"}' />
+
+`buildDocument` is a driver around the placement pass (`buildDocumentGen` and `buildDocumentBalanced`, in `pipeline/build.ts`). It runs the pass once. Then it reads what the pass reported, and where a decision needs a second look it runs the pass again, whole, with hints (`PassHints`): the caps, extra lines and numbers the next pass is to apply. When none of the conditions in the table below arises, that first pass is the whole build.
+
+The re-runs come in rounds, one kind of decision each, in this order:
+
+<table>
+  <thead>
+    <tr>
+      <th>Round</th>
+      <th>Runs when</th>
+      <th>The next pass is told</th>
+      <th>Limit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Contents</strong></td>
+      <td>The document prints page numbers the host did not supply: a <code>:::toc</code> or an <code>:::index</code> with no <code>outline</code> in the content, or a reference that prints the page of an anchor</td>
+      <td>The outline with the page labels of the build before</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 builds beyond the first</td>
+    </tr>
+    <tr>
+      <td><strong>2. Note numbers</strong></td>
+      <td><code>footnotes.numbering</code> is <code>'page'</code>, <code>'column'</code> or <code>'spread'</code> and the notes stand at the foot of the column or of the spread, so the number of a note depends on where the layout sets it</td>
+      <td>The number each note got in the build before (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 builds beyond the first</td>
+    </tr>
+    <tr>
+      <td><strong>3. Side captions</strong></td>
+      <td>A side box or a side float ran over the caption a figure set in the side column (<code>placement.captionSide</code>)</td>
+      <td>Those captions go under their figures (<code>captionUnder</code>)</td>
+      <td>3 passes</td>
+    </tr>
+    <tr>
+      <td><strong>4. Floats at the citing page</strong></td>
+      <td>A float with <code>placement.citingPage</code> landed on a page or column after the line that cites it</td>
+      <td>That page, or column, opens with the float at its head (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 rounds of proposals, then a pass for each batch of floats a pass could not keep there</td>
+    </tr>
+    <tr>
+      <td><strong>5. Band caps</strong></td>
+      <td>A page-span block arrived in a band whose columns are uneven (see <a href="#stage-3-page-and-column-placement">Stage 3</a>)</td>
+      <td>The height to cut that band at (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passes of proposals and retries. A cap grows by a line up to 3 times (<code>MAX_BAND_CAP_RETRIES</code>), then it is dropped</td>
+    </tr>
+    <tr>
+      <td><strong>6. Column balancing</strong></td>
+      <td><code>headings.balancing.enabled</code> is on and a balanceable column ends short</td>
+      <td>Extra grid lines per block and the paragraphs to break a line longer (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 attempts per segment. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 passes per document</td>
+    </tr>
+    <tr>
+      <td><strong>7. Closing bands</strong></td>
+      <td>Balancing is on with <code>headings.balancing.trailing</code>, and a chapter or the document ends in a band whose columns are uneven</td>
+      <td>A trailing cap for that band, with the balancing hints frozen</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passes of proposals and retries, each cap with its 3 retries</td>
+    </tr>
+    <tr>
+      <td><strong>8. Polish</strong></td>
+      <td>Round 7 kept a trailing cap</td>
+      <td>Column balancing once more, on the capped layout, with new segments</td>
+      <td>10 attempts per segment and 30 passes, counted afresh</td>
+    </tr>
+  </tbody>
+</table>
+
+Rounds 3 to 8 run one after another inside one build (`buildDocumentBalanced`). Rounds 1 and 2 are outside it: a contents round or a note-number round is a whole build, with its own rounds 3 to 8. There is no limit on a build as a whole, only these.
+
+**Every re-run is a full placement.** A hint does not patch the tree of the pass before. The pass places the document again with the hint in force, so a heading with two more lines above it, or a band cut six lines up, goes through the same break and keep rules as everything else. The driver then checks the result: a band cap whose box did not land on the cut is grown or dropped, and a balancing pass that did not improve a segment is discarded for that segment. What the driver returns is made of pages that a pass placed: the whole of one pass, or, after column balancing, the pages of each segment from the best pass that segment had.
+
+**What the document reports.** `doc.iterationCount` counts the placement passes behind the returned layout: the first one and those of the band-cap, balancing and closing-band rounds. The side-caption and citing-page passes are not in it, and neither are the earlier builds of a contents or note-number round; `BuildDocumentOptions.onPass` is called for every pass, with its wall time. `doc.converged` is about column balancing alone. It is `true` when every segment ended with no empty line in its balanceable columns or with no lever left to propose, and `false` when a segment stopped on a pass that did not improve it, or ran out of attempts, with a gap still open. With balancing off it is `true`. A document with `converged: false` is complete: it holds the best layout the driver found, and some column of it ends short.
+
+### Column Balancing
+
+- **Runs:** as rounds 6 and 8 of the driver (on by default; `headings.balancing.enabled: false` turns it off, and it is off by default in vertical text and on a character grid, see [Configuration → Column balancing](/en/docs/configuration-page-flow#column-balancing))
+- **Input:** The best layout so far and the empty grid lines at the foot of each balanceable column (`collectColumnGaps`, in `pipeline/columnBalancing.ts`)
+- **Action:** Propose levers that fill each short column in place, run the placement pass with them, and keep the result for a segment when its gap score fell
+- **Output:** Columns that end on the last grid line of the page, with every lever recorded on the block it was applied to (`VDTBlock.balancing`)
+
+You notice unbalanced columns immediately. Break rules leave them all the time: a heading moved on to stay with its text, a paragraph moved whole to avoid a widow, a figure that did not fit. A column that stops two lines above the one beside it looks unfinished — like the layout gave up halfway through.
+
+No block changes column to fix that. A column break is bound to the element that did not fit: the block that opens the next column was too tall for the room that was left, and it is still too tall for a smaller room. So a short column can be filled from inside, by at most its gap, and nothing crosses into the next column. The adjustment is local, which is what a compositor does by hand: add a line of space where the eye accepts it. A column is balanceable when content flowed past it into a later column of the same page, or, for the last column of a page, when the page flows on into the next one. The last page of a chapter may end short; its closing band is cut level by a trailing cap instead (see [Stage 3](#stage-3-page-and-column-placement)).
+
+For each gap the levers are proposed in editorial priority order, the same order [Configuration → Column balancing](/en/docs/configuration-page-flow#column-balancing) gives them:
+
+1. **A box closing the column** takes the room under its foot as space above it, so its foot lands on the last grid line of the page, level with the last line of the column beside it. Recorded as `trailingCallout`.
+2. **A picture with a safe area** (`Resource.safeArea`), set inline in the column or floated at its head or foot over that column alone, grows by whole grid lines, cropped within its safe area. A taller picture leaves no hole on the page, so this runs before any space is added. Recorded as `flexFigure`.
+3. **Headings** take whole grid lines above them, one line at a time in turn, the most important heading (the lowest level) first, so it gets the largest share. A heading at the very top of a column takes none, so columns keep starting at the page top. A heading takes only its first lines this way before the levers below are tried, and more, up to its cap, when those have nothing left to give. Recorded as `heading`.
+4. **List ends** take a grid line where a list ends. Recorded as `listEnd`.
+5. **Formulas, boxes and top floats** take a grid line under them: under a display formula or a callout box the text resumes after (`afterDisplay`), and between a figure or table at the head of the column and the text under it (`afterFloat`).
+6. **Loose paragraphs** are the last resort. Paragraphs of the column, the longest first, are each broken one line longer (TeX's `\looseness=+1`, through the `looseness` option of the Knuth-Plass breaker), and the longer setting is accepted only while every line stays within `bodyText.maxWordSpacing`. When word spacing alone cannot gain the line, the paragraph may also take the smallest positive tracking that does, under a cap. Recorded as `looseParagraph`.
+
+The caps, the switches and the exceptions (a character grid, the closing pages, a float over several columns) are keys of `headings.balancing`. The Configuration page lists them and is kept up to date with them; this page does not repeat them.
+
+A proposal is checked by placing it. The pass that applies the levers is a full placement, and now and then a lever does move content across a column break after all: a split paragraph whose head no longer fits, a float that lost its slot. The pages after that point flow differently and gaps open elsewhere. The driver sees it in the score, discards the pass for that segment, and blacklists the levers newly applied in the first column that changed, so the next proposal keeps the levers that worked and leaves out the one that cascaded.
+
+**Balancing converges per segment.** The pages between explicit breaks — a chapter opener, a `:::pagebreak` — are laid out independently of one another: nothing flows across such a break, so a balancing lever inside one run of pages can never move a line of another. The column-balancing loop therefore judges every such *segment* on its own. Its gap score is the number of empty grid lines at the foot of its balanceable columns. A pass still places the whole document, but each segment keeps or rejects its share of the levers by its own gap score, blacklists its own cascades, plateaus on its own and spends its own budget of attempts; a segment whose retry regressed gets its pages back from the best pass it had while the others move on. A book of thirty chapters thus balances exactly as its chapters would one by one — the whole-book PDF and the single-chapter PDF of the same chapter are identical — instead of one cascade anywhere costing every page of the book a pass.
+
+The limits are a safety valve. Some columns cannot be closed: one that holds only short paragraphs has no lever to pull, and one whose levers each push a block across the column break has none that can be kept. The engine keeps the best layout it found and leaves that column short. Because the levers are recorded on the blocks, a proof sheet or a test can list the columns that nothing closed (see [Configuration → Which lever fired](/en/docs/configuration-page-flow#which-lever-fired)).

@@ -1,0 +1,575 @@
+{/* docs/configuration-lists-math-ca.mdx */}
+
+export const metadata = {
+  title: 'Configuració: llistes i matemàtiques',
+  sidebarTitle: 'Llistes i matemàtiques',
+  description: "Les llistes amb pics i les numerades, les seves marques, els sagnats i la imbricació, les llistes de tasques, i la mida, el color i l'espaiat de les fórmules matemàtiques",
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '19 min',
+  order: 11,
+  parent: 'configuration',
+  plainSummary: "Aquesta pàgina reuneix les llistes i les fórmules. Una llista amb pics marca cada element amb un símbol, i una llista numerada compta els elements amb números o lletres. Fixes la marca, el sagnat i l'espai de cada llista, i els canvies per a les llistes que van dins d'altres llistes. Les llistes de tasques dibuixen una casella que es pot marcar. L'última secció fixa la mida, el color i l'espai al voltant de les fórmules matemàtiques.",
+};
+
+# Configuració: llistes i matemàtiques
+
+
+## Llistes no ordenades
+
+La propietat `unorderedLists` controla com es renderitzen les llistes amb pics (`-`, `*`, `+`) i les llistes de tasques d'estil GFM (`- [ ]`, `- [x]`). S'admeten fins a cinc nivells d'imbricació.
+
+### Valors per defecte de les llistes no ordenades
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>hereta <code>bodyText.fontFamily</code></td>
+      <td>Font del text dels elements.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Color principal (<code>#295AA3</code>)</td>
+      <td>Color del text i dels pics dels elements. Enllaçat a l'entrada <code>main-color</code> de la paleta per defecte.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Pes del text dels elements (100–900). Els pics hereten aquest pes tret que se sobreescrigui per nivell.</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Renderitza el text dels elements en cursiva.</td>
+    </tr>
+    <tr>
+      <td><code>bulletChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'•'</code></td>
+      <td>Glif utilitzat com a pic.</td>
+    </tr>
+    <tr>
+      <td><code>bulletFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>Mida del glif del pic. Les unitats relatives s'escalen amb la mida del cos de text.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Espai horitzontal entre el pic i el text de l'element.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Sagnat base per al nivell 1. Els nivells més profunds s'encadenen des de l'inici del text del nivell anterior tret que s'especifiqui (vegeu més avall).</td>
+    </tr>
+    <tr>
+      <td><code>bulletVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Ajust fi vertical del pic. Els valors negatius el pugen; els positius l'abaixen.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Espai abans i després del bloc de llista.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Espai vertical extra entre elements, afegit a l'alçada de línia. Al voltant d'una llista imbricada en un element d'una altra s'aplica, a tots dos costats, el de la llista exterior: abans del primer element de la llista imbricada i després de l'últim (fins a postext 1.4, l'element que seguia una llista imbricada prenia l'espai d'aquesta).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Arrodoneix cap amunt l'espai damunt de la llista perquè el seu primer element quedi a la retícula de base, com el text sota un encapçalament; <code>marginTop</code> passa a ser un mínim. El final de la llista retorna el flux a la retícula en qualsevol cas, així que amb <code>itemSpacing</code> a 0 tots els elements queden alineats amb el text de la columna contigua. Desactivat per defecte, com fins a postext 1.4: un <code>marginTop</code> que no és un nombre enter de línies deixa els elements fora de la retícula fins que acaba la llista. No afecta les llistes dins de requadres, l'interior dels quals queda fora de la retícula.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quan està actiu, les línies ajustades s'alineen amb el primer caràcter de text en lloc de fer-ho sota el pic (sagnat francès).</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>UnorderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>Sobreescriptures per profunditat per als nivells 1–5. Vegeu més avall.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Extensions per a llistes de tasques
+
+Els elements de tasca GFM (`- [ ] …`, `- [x] …`) es renderitzen com a elements de llista no ordenada amb una casella en lloc del pic. El motor dibuixa la casella ell mateix, un quadrat en contorn amb una marca quan la tasca està feta: no es demana a cap font, de manera que és igual a totes les màquines, al canvas, al PDF, a l'HTML i a l'EPUB, i les tecnologies de suport llegeixen `☐` o `☑`. El costat fa 0,6 em de la mida del marcador (`bulletFontSize`, o el `fontSize` del nivell), i aquest és l'espai que ocupa abans del `gap`; a la mida del text es recolza sobre la línia de base de la primera línia de l'element. El traç segueix el `fontWeight` del marcador i el color, el `color` del marcador. Els camps següents només s'apliquen a les tasques:
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>taskCheckboxChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☐'</code></td>
+      <td>Caràcter d'una tasca no marcada. El predeterminat no es compon com a text: el motor dibuixa la casella. Qualsevol altre caràcter es compon com a text en la font de la llista, que aleshores l'ha de contenir.</td>
+    </tr>
+    <tr>
+      <td><code>taskCheckedChar</code></td>
+      <td><code>string</code></td>
+      <td><code>'☑'</code></td>
+      <td>Caràcter d'una tasca completada. El predeterminat també es dibuixa, com a casella amb marca; qualsevol altre caràcter es compon com a text en la font de la llista.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>Com es componen els dos caràcters predeterminats. <code>'drawn'</code>: el motor dibuixa la casella. <code>'character'</code>: <code>☐</code> i <code>☑</code> són text en la font de la llista, com fins a postext 1.28; en una font que no els té, el navegador tria una font del sistema, i el text de l'element comença després de l'amplada que dona aquesta font. Una configuració desada abans de la versió 13 es llegeix amb <code>'character'</code>, de manera que les seves línies continuen on eren.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedStrikethrough</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Dibuixa una línia que ratlla el text de les tasques completades.</td>
+    </tr>
+    <tr>
+      <td><code>taskCompletedColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>hereta el color de l'element</td>
+      <td>Color opcional aplicat al text de les tasques completades. Quan s'omet, es fa servir el color habitual de l'element.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Sobreescriptures per nivell (llistes no ordenades)
+
+Cada entrada de `levels` apunta a una profunditat (1–5) i pot sobreescriure qualsevol de les propietats següents:
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bulletChar</code></td><td><code>string</code></td><td>Glif de pic per a aquesta profunditat.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>Font del text en aquesta profunditat.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>Mida del glif de pic en aquesta profunditat.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>Color del text de l'element.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td>Pes del text de l'element.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td>Activa la cursiva.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td>Sagnat explícit del pic en aquesta profunditat. Vegeu la regla d'encadenament a continuació.</td></tr>
+    <tr><td><code>verticalOffset</code></td><td><code>Dimension</code></td><td>Ajust fi vertical del pic en aquesta profunditat.</td></tr>
+  </tbody>
+</table>
+
+**Encadenament de sagnats.** El nivell 1 arrenca sempre amb l'`indent` general (per defecte `0 em` — els pics queden enganxats a la vora de la columna). Per als nivells 2–5, si deixes `indent` sense definir, el motor col·loca el pic a l'inici de text del nivell anterior (sagnat del pare + amplada del pic + `gap`). Defineix un `indent` explícit en un nivell per trencar l'encadenament i fixar aquesta profunditat on prefereixis.
+
+```ts
+unorderedLists: {
+  bulletChar: '—',
+  gap: { value: 0.4, unit: 'em' },
+  hangingIndent: true,
+  levels: [
+    { level: 2, bulletChar: '·' },
+    { level: 3, bulletChar: '◦', color: { hex: '#666666', model: 'hex' } },
+  ],
+}
+```
+
+
+## Llistes ordenades
+
+La propietat `orderedLists` controla les llistes numerades (`1.`, `2)`, etc.). S'admeten fins a cinc nivells d'imbricació i cada profunditat pot fer servir un format de numeració diferent.
+### Valors per defecte de les llistes ordenades
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td>hereta <code>bodyText.fontFamily</code></td>
+      <td>Font del text i del marcador numèric.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Color principal (<code>#295AA3</code>)</td>
+      <td>Color del text i del marcador numèric. Enllaçat a l'entrada <code>main-color</code> de la paleta per defecte.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Gruix del text i del marcador numèric (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Mostra el text en cursiva.</td>
+    </tr>
+    <tr>
+      <td><code>numberFormat</code></td>
+      <td><code>OrderedListNumberFormat</code></td>
+      <td><code>'arabic'</code></td>
+      <td>Estil de numeració: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. També valen les grafies de les altres opcions (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; consulta <a href="/ca/docs/configuration-page-layout#grafies-dels-formats-de-numeració">Grafies dels formats de numeració</a>); un valor desconegut numera en aràbics i s'avisa.</td>
+    </tr>
+    <tr>
+      <td><code>prefix</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Text que precedeix el número, amb l'estil del separador: amb <code>'（'</code> aquí i <code>'）'</code> com a separador, una llista xinesa es numera （一）, （二）. Quan el separador es dibuixa com un tram propi, el prefix també, just abans del número.</td>
+    </tr>
+    <tr>
+      <td><code>separator</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>Caràcter situat entre el número i el text — normalment <code>'.'</code> o <code>')'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontFamily</code></td>
+      <td><code>string</code></td>
+      <td>hereta <code>fontFamily</code></td>
+      <td>Font del separador. Quan algun estil del separador difereix del del número, el separador es dibuixa com un tram propi després del número (alineat a la dreta) — p. ex. <code>1</code> en Optima Bold negre seguit de <code>•</code> en DIN Pro Bold blau.</td>
+    </tr>
+    <tr>
+      <td><code>separatorFontWeight</code></td>
+      <td><code>number</code></td>
+      <td>hereta <code>fontWeight</code></td>
+      <td>Gruix del separador (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>separatorItalic</code></td>
+      <td><code>boolean</code></td>
+      <td>hereta <code>italic</code></td>
+      <td>Mostra el separador en cursiva.</td>
+    </tr>
+    <tr>
+      <td><code>separatorColor</code></td>
+      <td><code>ColorValue</code></td>
+      <td>hereta <code>color</code></td>
+      <td>Color del separador. Es respecten les referències a la paleta.</td>
+    </tr>
+    <tr>
+      <td><code>separatorGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Espai entre el número i el separador. El text de l'element continua començant <code>gap</code> després del separador.</td>
+    </tr>
+    <tr>
+      <td><code>numberFontSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1 em</code></td>
+      <td>Mida del marcador numèric.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Espai horitzontal entre el número i el text de l'element.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Sagnat base per al nivell 1; els nivells més profunds s'encadenen des de l'inici del text del nivell anterior, tret que s'especifiqui una altra cosa.</td>
+    </tr>
+    <tr>
+      <td><code>numberVerticalOffset</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Ajust fi vertical del marcador numèric.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Espai abans i després del bloc de llista.</td>
+    </tr>
+    <tr>
+      <td><code>itemSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0 em</code></td>
+      <td>Espai vertical addicional entre elements. Al voltant d'una llista niada dins d'un element d'una altra s'aplica, a tots dos costats, el de la llista exterior: abans del primer element de la llista niada i després de l'últim (fins a postext 1.4, l'element que seguia una llista niada prenia l'espai d'aquesta).</td>
+    </tr>
+    <tr>
+      <td><code>snapTopToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Arrodoneix cap amunt l'espai sobre la llista perquè el seu primer número quedi a la retícula de base, com el text sota un encapçalament; <code>marginTop</code> passa a ser un mínim. El final de la llista torna el flux a la retícula en qualsevol cas, de manera que amb <code>itemSpacing</code> a 0 tots els elements queden alineats amb el text de la columna del costat. Desactivat per defecte, com fins a postext 1.4: un <code>marginTop</code> que no és un nombre enter de línies deixa els elements fora de la retícula fins que acaba la llista. No afecta les llistes dins de requadres, l'interior dels quals queda fora de la retícula.</td>
+    </tr>
+    <tr>
+      <td><code>numberWidth</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
+      <td><code>'run'</code></td>
+      <td>L'amplada de la columna de números d'un element, que fixa on comença el seu text; els números s'alineen a la dreta dins d'aquesta columna. <code>'run'</code>: el número més ample del tram mateix de l'element, és a dir, els elements d'una mateixa profunditat sense res més que elements més profunds entre ells. Una figura, un paràgraf o un requadre entre dos elements obre un tram nou, de manera que <code>ii)</code> després d'una taula pot començar el text una mica més a la dreta que <code>i)</code> abans de la taula, i una llista de nou elements compon el text més a l'esquerra que una de dotze. <code>'level'</code>: el número més ample d'aquella profunditat en tot el document (el capítol, en un llibre), de manera que totes les llistes, i cada part d'una llista interrompuda, comencen el text al mateix lloc, com ja fan els sagnats dels nivells més profunds. <code>'item'</code>: el número del mateix element, de manera que el text de cada element comença un <code>gap</code> després de la seva pròpia etiqueta: <span lang="ja" className="font-body">第九條</span> i <span lang="ja" className="font-body">第十一條</span> porten darrere el mateix espai i els seus textos comencen en llocs diferents, com imprimeix el Butlletí Oficial japonès els articles d'una llei. Les línies següents obeeixen <code>hangingIndent</code>: amb <code>false</code> tornen al sagnat de la llista, amb <code>true</code> pengen sota el text del mateix element. El sagnat d'un nivell més profund continua sent un sol valor per nivell. Des de postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>Com se situa un número a la seva columna. <code>'end'</code>: al costat del text, de manera que els números d'un tram acaben a la mateixa alçada i <code>9.</code> i <code>10.</code> alineen els punts. <code>'start'</code>: al principi de la columna (l'esquerra en una pàgina d'esquerra a dreta, la dreta en una de dreta a esquerra, el cap de la línia en text vertical), de manera que les etiquetes de llargada diferent comencen a la mateixa alçada, com els articles d'una llei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). La columna conserva l'amplada que li dona <code>numberWidth</code>, de manera que el text dels elements comença al mateix lloc en tots dos casos; amb un separador d'estil propi, el separador segueix el seu número. Des de postext 1.26. Amb <code>numberWidth: 'item'</code> la columna és el mateix número, de manera que tots dos valors componen la mateixa llista.</td>
+    </tr>
+    <tr>
+      <td><code>hangingIndent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Les línies de continuació s'alineen amb el primer caràcter del text, no sota el número.</td>
+    </tr>
+    <tr>
+      <td><code>levels</code></td>
+      <td><code>OrderedListLevelConfig[]</code></td>
+      <td>—</td>
+      <td>Sobreescriptures per profunditat per als nivells 1–5.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Sobreescriptures per nivell (llistes ordenades)
+
+Cada entrada de `levels` pot sobreescriure `numberFormat`, `prefix`, `separator`, `fontFamily`, `fontSize`, `color`, `fontWeight`, `italic`, `indent`, `verticalOffset` i l'estil del separador (`separatorFontFamily`, `separatorFontWeight`, `separatorItalic`, `separatorColor`, `separatorGap`) — s'hi aplica el mateix encadenament de sagnats que a les llistes no ordenades. L'estil del separador d'un nivell hereta l'estil del seu propi número, tret que s'indiqui l'opció general del separador.
+
+**Alineació a la dreta.** El pipeline mesura el número formatat més ample dins de cada tram i sagna tots els elements d'aquest tram perquè els marcadors quedin alineats per la vora dreta. Una llista de deu elements mostrada com `1.` – `10.` desplaça els números d'una xifra cap a la dreta perquè el separador caigui sempre a la mateixa columna.
+
+```ts
+orderedLists: {
+  numberFormat: 'arabic',
+  separator: '.',
+  levels: [
+    { level: 2, numberFormat: 'lower-alpha' },
+    { level: 3, numberFormat: 'lower-roman', separator: ')' },
+  ],
+}
+```
+
+Això produeix la clàssica combinació niada:
+
+```
+1. Primer element
+   a. Subelement
+      i) Nota profunda
+   b. Subelement
+2. Segon element
+```
+
+La jerarquia dels documents xinesos (GB/T 15834—2011, annex B.3) té cinc nivells: 一、, després （一）, després 1., després （1） i després ①:
+
+```ts
+orderedLists: {
+  levels: [
+    { level: 1, numberFormat: 'simp-chinese-informal', separator: '、' },
+    { level: 2, numberFormat: 'simp-chinese-informal', prefix: '（', separator: '）' },
+    { level: 3, numberFormat: 'arabic', separator: '.' },
+    { level: 4, numberFormat: 'arabic', prefix: '（', separator: '）' },
+    { level: 5, numberFormat: 'circled-decimal', separator: '' },
+  ],
+}
+```
+
+
+## Matemàtiques
+
+La propietat `math` controla com s'analitzen i es mostren les fórmules LaTeX escrites entre delimitadors `$...$` (en línia) i `$$...$$` (en bloc). El motor subjacent és MathJax (el paquet `mathjax-full`) en mode de sortida SVG, rasteritzat al canvas i incrustat com a glifs escalables al PDF.
+
+```ts
+interface MathConfig {
+  enabled?: boolean;        // Mostrar el LaTeX. Si és false, els spans surten com a TeX literal.
+  fontSizeScale?: number;   // × la mida del text que envolta la fórmula (la del cos en les fórmules en bloc).
+  color?: ColorValue;       // Color de la fórmula; hereta el del cos si s'omet.
+  marginTop?: Dimension;    // Espai damunt de les fórmules en bloc.
+  marginBottom?: Dimension; // Espai mínim a sota; l'ajust a la retícula el pot augmentar.
+  indentAfterDisplay?: boolean; // Sagnar el paràgraf que segueix una fórmula en bloc.
+  keepWithLeadIn?: boolean; // Mantenir una fórmula en bloc amb la línia que la introdueix.
+  equationNumbering?: {      // Numerar les fórmules en bloc que porten un \label.
+    enabled?: boolean;           // per defecte true
+    numberingTemplate?: string;  // '{n}'; '{h1}.{n}' numera per capítol
+    resetOn?: ResourceCounterReset; // 'never' | 'h1' … 'h6'
+    counterFormat?: ResourceCounterFormat; // 'decimal'
+    format?: string;             // '({n})': el que imprimeixen la fórmula i \eqref
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Quan és `false`, els spans `$...$` i `$$...$$` encara s'analitzen (els avisos per delimitadors sense tancar es continuen emetent), però es mostren com el seu codi TeX literal. Útil quan el contingut conté signes de dòlar a propòsit o quan vols desactivar del tot la representació matemàtica.</td>
+    </tr>
+    <tr>
+      <td><code>fontSizeScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1.0</code></td>
+      <td>Multiplicador aplicat a la mida del text que envolta la fórmula abans de representar-la: un em de la font TeX de la fórmula mesura aquesta mida × `fontSizeScale` — `bodyText.fontSize` per a una fórmula en bloc i per a les fórmules en línia del text de cos, la mida del bloc que la conté per a una fórmula en línia en un encapçalament, un estil de paràgraf, un peu o el cos d'un requadre. 1.0 la iguala al text que l'envolta; els valors entre 0.9 i 1.1 són habituals quan la font matemàtica sembla lleugerament més gran o més petita que la font del text. **Canvia a postext 1.5:** fins a la 1.4 les fórmules sortien al voltant d'un 13 % més grans (consulta més avall).</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>hereta el del cos</td>
+      <td>Color de la fórmula representada. Omet-lo per heretar `bodyText.color`. Fixa'l explícitament quan vulguis tenyir les fórmules d'una manera diferent del text — per exemple perquè coincideixin amb l'accent dels encapçalaments.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Espai per sobre d'una fórmula en bloc. S'ignora en les fórmules en línia.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.8em</code></td>
+      <td>Espai per sota d'una fórmula en bloc. És un **mínim**: l'ajust a la retícula el pot ampliar perquè la línia de base següent caigui en una línia de la retícula (tant si <code>page.baselineGrid</code> dibuixa la retícula com si no).</td>
+    </tr>
+    <tr>
+      <td><code>indentAfterDisplay</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Sagna la primera línia del paràgraf que segueix una fórmula en bloc, com qualsevol altre paràgraf. Amb <code>false</code>, tot paràgraf just després d'una fórmula en bloc es compon sense sagnat, com a continuació de la frase que la fórmula ha interromput («on <em>L</em> és…»). Després d'una fórmula escrita dins d'un paràgraf —sense cap línia en blanc ni a sobre ni a sota— el text no se sagna mai: el que s'escriu sota el seu <code>$$</code> de tancament continua aquell paràgraf (consulta <a href="/ca/docs/document-format-inline#fórmules-matemàtiques">Fórmules matemàtiques</a>).</td>
+    </tr>
+    <tr>
+      <td><code>keepWithLeadIn</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Manté una fórmula en bloc a la columna de la línia que la introdueix, com la penalització <code>\predisplaypenalty</code> de TeX. Quan la fórmula no cap sota l'última línia del paràgraf anterior, aquesta línia passa amb la fórmula a la columna o pàgina següent; quan les línies que quedarien enrere són menys de <code>bodyText.widowMinLines</code> (menys d'una si <code>bodyText.avoidWidows</code> està desactivat), un paràgraf que comença en aquella columna passa sencer (amb els encapçalaments que tanquen la columna per damunt, segons <code>headings.keepWithNext</code>). La línia que passa queda sola a dalt de tot de la columna següent, digui el que digui la regla de les òrfenes. Amb <code>false</code>, la fórmula passa sola, i la línia que la introdueix pot tancar la columna de dalt o quedar sobre una figura que encapçala la següent.</td>
+    </tr>
+    <tr>
+      <td><code>equationNumbering</code></td>
+      <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
+      <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
+      <td>Com es numeren les fórmules en bloc que porten un <code>\label</code> (vegeu <em>Equacions numerades</em> més avall). <code>numberingTemplate</code>, <code>resetOn</code> i <code>counterFormat</code> funcionen com els d'un tipus de recurs: <code>'&#123;h1&#125;.&#123;n&#125;'</code> amb <code>resetOn: 'h1'</code> numera (2.1), (2.2)… per capítol, i <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> amb <code>'h2'</code>, per secció. <code>format</code> és el número tal com l'imprimeixen la fórmula i <code>\eqref</code>, amb <code>&#123;n&#125;</code> al lloc del número: <code>'[&#123;n&#125;]'</code> compon [3]. <code>enabled: false</code> no numera res: un <code>\label</code> es descarta i una referència que hi apunta n'imprimeix la pàgina. Un token admet també un estil després de dos punts (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) en un apèndix amb lletra).</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+math: {
+  enabled: true,
+  fontSizeScale: 1.0,
+  color: { hex: '#295AA3', model: 'hex' },
+  marginTop: { value: 1, unit: 'em' },
+  marginBottom: { value: 1, unit: 'em' },
+}
+```
+
+**Mida de les fórmules, canvia a postext 1.5.** MathJax dona la caixa de cada fórmula en `ex`, i un `ex` de la seva font TeX mesura 0,442 em. Fins a postext 1.4 el motor el prenia per mig em, de manera que cada fórmula es componia al voltant d'un 13 % més gran que `bodyText.fontSize × fontSizeScale`. Ara les fórmules surten de la mida documentada, i les línies i pàgines amb matemàtiques es recomponen. Una configuració escrita en codi per a la 1.4 conserva la mida de les fórmules de la 1.4 si passa per `pinLegacyMathSize`, de `postext/bundle`, una sola vegada i tal com està escrita:
+
+```ts
+import { pinLegacyMathSize } from 'postext/bundle';
+
+config = pinLegacyMathSize(config); // fórmules, i l'espai al voltant de les fórmules en bloc, com les componia la 1.4
+```
+
+Hi ha altres canvis de regles a la 1.5 que també poden moure les teves pàgines: els salts dels encapçalaments, l'espai al voltant d'una figura en línia (en el text corregut i en els requadres), les marques en línia dels encapçalaments, la mida de les caplletres, el lloc que es deixa sota una línia acabada en dos punts per a la llista que introdueix, les línies que el tall d'una caixa deixa d'un paràgraf o d'un element de llista, els salts de línia després d'un guió llarg, la composició del text en bandera, la divisió d'un paràgraf sota un encapçalament, els salts de línia després del guionet d'un compost i l'espai sota un contenidor `:::paragraphs`. `migrateConfig`, aplicada una sola vegada amb el markdown que compon la configuració, fixa els que aquest text necessita, també la mida de les fórmules (consulta [Paquets escrits per postext 1.4 o anterior](/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior)):
+
+```ts
+import { migrateConfig } from 'postext/bundle';
+
+config = migrateConfig(config, undefined, { content: markdown }); // salts d'encapçalament, fórmules, espais en línia, marques dels encapçalaments, caplletres, dos punts, talls de les caixes, guions llargs, compostos, text en bandera, divisions sota un encapçalament i espai sota els contenidors com els componia la 1.4
+```
+
+Així s'evita el que moverien aquests canvis de regles, però no es conserven totes les pàgines de la 1.4. La 1.5 corregeix a més errors de composició, i una correcció no té fixació: una configuració antiga la rep igual que una de nova, de manera que una pàgina afectada encara es pot moure. Entre aquestes correccions: un encapçalament a tota la pàgina sense disseny propi es mesura a l'amplada de la pàgina i es compon amb l'interlineat del seu nivell; en un disseny d'encapçalament no es reserva res sota la línia de base d'una caplletra; una caplletra pren el color de la paleta de la secció i es compon també en un text de disseny el `overflow` del qual no és `'wrap'`, que llavors salta de línia; un paràgraf dins d'una caixa pinta el tracking amb què es va mesurar; una caixa partida conserva la columna de la icona a cada fragment; una línia d'una caixa que estiraria els espais més de 3× es compon en bandera, com en el text corregut; la palanca dels paràgrafs fluixos no deixa mai una línia justificada més ampla del que permet `maxWordSpacing`; una caixa flotant conserva un `marginBottom` (en una banda superior) o un `marginTop` (en una banda inferior) més gran que l'espai dels flotants; un text de disseny centrat o alineat a la dreta amb tracking (un titolet, el títol d'una obertura) es col·loca per les seves lletres, sense el tracking que segueix l'última; sota una obertura a tota la pàgina, el text que obre la segona columna comença on començaria el text just a sota de l'obertura, també quan l'obertura va seguida d'un encapçalament; la línia de punts de l'índex s'atura abans del número de pàgina en una font el kerning de la qual separa una sèrie de punts; un titolet llegeix l'encapçalament tal com està escrit, sense espai on una de les seves línies acaba després d'un guionet o un guió llarg o dins d'una paraula tallada per l'amplada (`MEDIOAMBIENTALES`, no `MEDIOAMBIENTALE S`), i el `{titleText}` del disseny d'un encapçalament el llegeix igual (`thousand-colour`, no `thousand- colour`); un text ancorat al peu o al centre de la franja d'un disseny d'encapçalament manté la franja prou alta per contenir-lo, de manera que ja no puja sobre el text que precedeix l'encapçalament; una paraula més ampla que la seva línia, tallada al costat d'un guionet que ja porta, es talla darrere d'aquest guionet i no en rep cap altre; l'element que segueix una llista niada dins d'una altra pren l'`itemSpacing` de la seva pròpia llista, no el de la niada; i la resta d'una paraula tallada per ser més ampla que la seva línia conserva els seus propis punts de tall, de manera que una adreça web continua tallant-se per les juntures i un compost pels guionets en lloc de per les síl·labes del diccionari.
+
+`pinLegacyMathSize` multiplica l'escala per 1,1312 (0,5 ÷ 0,442) i divideix pel mateix factor els marges de les fórmules en bloc en `em`. Amb l'escala sola no n'hi ha prou en un llibre amb fórmules en bloc: els seus marges són mesures de la mida de la fórmula mateixa, de manera que creixerien el mateix 13 % i empènyerien cap avall el text que les segueix. Escrits per als marges per defecte, els tres valors són:
+
+```ts
+math: {
+  fontSizeScale: 1.131,
+  marginTop: { value: 0.7072, unit: 'em' },
+  marginBottom: { value: 0.7072, unit: 'em' },
+} // fórmules tan grans com les componia la 1.4, amb l'espai que els deixava al voltant
+```
+
+On la configuració estava desada, el motor ho pot saber i ho fa per tu: `openBundle` / `readBundle` amb un paquet `.postext` escrit abans de la 1.5 (consulta [Paquets escrits per postext 1.4 o anterior](/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior)), i el Sandbox amb els llibres, la configuració de treball i els fitxers `postext-config.json` que va desar llavors (consulta **Sandbox → Persistència**). Es llegeixen a través de `migrateConfig`, que fixa la mida (`pinLegacyMathSize`): `fontSizeScale` passa a ser l'escala desada (1 si no n'hi havia) × 1,1312, i un marge de les fórmules en bloc en `em` o `rem` — una mesura de la mida de la fórmula mateixa — es divideix pel mateix factor, de manera que l'espai al voltant d'una fórmula en bloc queda com el deixava la 1.4 (els 0,8 em per defecte passen a 0,7072 em). Un marge en una unitat de pàgina (`pt`, `mm`…) es queda com està, i també una configuració amb `enabled: false` o una el llibre de la qual no té cap `$`. Llavors el llibre antic es compon com el componia la 1.4, i la seva secció `math` mostra la mida amb què es compon. Per compondre aquell llibre a la mida actual, restableix aquests valors: **Fórmules → Escala de mida**, *Marge superior de les fórmules en bloc* i *Marge inferior de les fórmules en bloc* al Sandbox, o en codi:
+
+```ts
+math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // mida i marges actuals
+```
+
+**Equacions numerades.** Una fórmula en bloc amb número ocupa tota la seva mesura (la columna, o l'amplada interior del requadre que la conté): l'equació va centrada i el seu número alineat a la dreta, a la línia de l'equació, a cada fila numerada d'un `align`. El número surt d'un `\label{eq:x}` (des de postext 1.19): les fórmules amb etiqueta, i les files amb etiqueta d'un `align`, `gather`, `alignat`, `flalign` o `eqnarray`, es numeren en ordre de lectura segons `equationNumbering`, tret que una fila digui `\nonumber` o `\notag`. Entorns com `equation` no es numeren per si sols: una fórmula sense etiqueta no porta número. `\tag{…}` imprimeix el text que li donis, entre parèntesis, i `\tag*{…}`, tal qual; cap dels dos no compta, i un `\label` al seu costat li dona nom. Una equació numerada més ampla que la seva mesura desborda per la dreta, com qualsevol fórmula en bloc. (Fins a postext 1.4, una fórmula amb `\tag` no s'arribava a dibuixar; fins a la 1.18, només `\tag` numerava una fórmula.)
+
+`\eqref{eq:x}` al text imprimeix el número en el seu `format`, (3), i `\ref{eq:x}`, el número sol; el mateix fan `:ref{id="eq:x"}` i `@eq:x` (vegeu [Referències creuades](/ca/docs/document-format-notes-references#referències-creuades-i-àncores)), i dins d'una fórmula `\eqref` l'imprimeix com a text. En un llibre compost capítol a capítol, el comptador continua des del capítol anterior: `continuationAfter` el porta a `LayoutContinuation.statementCounters` (`equation`), i l'esquema del llibre dona a cada etiqueta el seu número (`OutlineEntry.numberLabel`), de manera que una referència a una equació d'un altre capítol l'imprimeix.
+
+```ts
+math: {
+  equationNumbering: { numberingTemplate: '{h1}.{n}', resetOn: 'h1' }, // (1.1), (1.2)… (2.1)
+}
+```
+
+El resolver i l'stripper segueixen el mateix patró que les altres seccions:
+
+```ts
+import {
+  DEFAULT_MATH_CONFIG,
+  resolveMathConfig,
+  stripMathDefaults,
+} from 'postext';
+
+const resolved = resolveMathConfig(config.math);
+const minimal  = stripMathDefaults(config.math);
+```
+
+### Arrencar el motor de fórmules
+
+MathJax es carrega a demanda, no amb la resta del motor. Quan compons al fil principal, arrenca'l abans de construir un document amb fórmules:
+
+```ts
+import { buildDocument, initMathEngine, renderPage } from 'postext';
+
+await initMathEngine(); // carrega MathJax una vegada; les crides següents es resolen a l'instant
+const doc = buildDocument({ markdown: 'Euler: $e^{i\\pi}+1=0$.' }, config);
+document.body.append(renderPage(doc.pages[0], doc));
+```
+
+- **Fins que el motor arrenca, les fórmules són provisionals.** Cadascuna es compon com una caixa grisa de mida estimada. Si un document amb fórmules es compon sense haver cridat mai `initMathEngine()`, la consola mostra un avís, una sola vegada.
+- **El worker de composició l'arrenca per tu.** Un build a `postext/worker` crida `initMathEngine()` pel seu compte quan el markdown conté un `$`.
+- **Compondre ja, i un altre cop quan estigui a punt.** `isMathReady()` indica si el motor està en marxa. `onMathReady(fn)` crida `fn` tan bon punt ho està (a l'instant si ja ho estava) i retorna una funció que cancel·la la crida. Un editor pot mostrar les caixes provisionals de seguida i tornar a compondre quan arriba MathJax; mentre `initMathEngine()` està en curs no s'imprimeix cap avís.
+- **Errors.** `initMathEngine()` es rebutja si MathJax no es pot carregar, i una crida posterior ho torna a intentar.
+- **Amb qualsevol bundler, a Node o des d'una CDN.** MathJax viatja dins del paquet com un únic mòdul preempaquetat (uns 1,8 MB sense comprimir, que només baixa `initMathEngine`). L'`import { initMathEngine } from 'https://esm.sh/postext'` de sempre funciona; no cal `?bundle`. El paquet `mathjax-full` només cal per compilar postext, de manera que instal·lar postext no l'instal·la. MathJax i l'analitzador mhchem que inclou tenen llicència Apache-2.0: els seus avisos i el text de la llicència viatgen al costat del mòdul, a `dist/math/THIRD_PARTY_LICENSES.txt`.
+- **Un motor per pàgina.** El motor i la seva memòria cau de fórmules representades són compartits per tot el que importa `postext` en el mateix context de JavaScript (consulta [Estat global compartit en una pàgina](/ca/docs/configuration-programmatic-usage#estat-global-compartit-en-una-pàgina)).
+
+Per a la gramàtica del document (`$...$`, `$$...$$`, com escapar un dòlar literal), consulta [Format del document](/ca/docs/document-format-inline#fórmules-matemàtiques).

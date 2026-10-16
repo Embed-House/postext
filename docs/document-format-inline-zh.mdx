@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-zh.mdx */}
+
+export const metadata = {
+  title: '文档格式：行内格式与数学公式',
+  sidebarTitle: '行内格式与数学公式',
+  description: '行内的标记：强调、链接、行内标签、小型大写字母、制表符、竖排、中文和日文标记、文本方向，以及LaTeX公式',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '18分钟',
+  order: 27,
+  parent: 'document-format',
+  plainSummary: "本页讲在一行文字里使用的标记。它们可以把字变成粗体或斜体，加上链接，画出小标签，排成小型大写字母，或让文字在制表位上对齐。还有一些标记用于中文和日文书，比如字上方的小号注音，或者用于方向不同的短语，比如阿拉伯文书里的英文。最后一节说明怎样写数学公式。",
+};
+
+# 文档格式：行内格式与数学公式
+
+
+## 行内格式
+
+行内标记在任何文本块（标题、段落、引用块、列表项）中都能识别。在标题中，它遵循`headings.inlineMarks`，默认开启：标题里的斜体、粗体、上下标、小型大写字母和链接都按段落中的样子印出，斜体标题中的斜体片段则排成正体。关闭后，标记符号被去掉，标题按标题自身的样式印出；postext 1.4及更早版本保存、标题中带有标记的配置也按这种方式读取（见[配置 › 标题](/zh/docs/configuration-headings#标题)）。无论开关如何，标题的版面设计都把`{titleText}`作为纯文本印出。
+
+<Illustration name="InlineFormatting" data='{"title": "行内格式一览", "desc": "粗体、斜体、粗斜体、行内代码和链接的Markdown与渲染结果对照。", "caption": "左侧为Markdown，右侧为渲染结果。", "rows": [{"markdown": "**粗体**", "rendered": "粗体", "style": "bold"}, {"markdown": "*斜体*", "rendered": "斜体", "style": "italic"}, {"markdown": "***两者***", "rendered": "两者", "style": "bold-italic"}, {"markdown": "`代码`", "rendered": "代码", "style": "code"}, {"markdown": "[链接](https://…)", "rendered": "链接", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>标记</th>
+      <th>语法</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>粗体</td>
+      <td><code>**bold**</code>或<code>__bold__</code></td>
+      <td>以<code>bodyText.boldFontWeight</code>渲染。可选的<code>bodyText.boldColor</code>为粗体片段替换默认正文颜色。</td>
+    </tr>
+    <tr>
+      <td>斜体</td>
+      <td><code>*italic*</code>或<code>_italic_</code></td>
+      <td>以当前字体家族的斜体渲染。可选的<code>bodyText.italicColor</code>为斜体片段替换默认正文颜色。与CommonMark一样，下划线只在词边界处表示强调：夹在两个字母或数字之间的下划线（<code>snake_case_name</code>、URL中的<code>SR_AIR_EN.pdf</code>）是普通文本（<code>__bold__</code>同理）；词内强调请用星号（<code>un*believ*able</code>）。中文、日文和韩文字符在这里不算字母，因为这些文字不用空格分词：<code>中文_斜体_中文</code>和<code>中文__粗体__中文</code>分别是斜体和粗体。没有构成粗体的<code>__</code>也不会变成斜体：<code>foo__bar__baz</code>仍是文本。</td>
+    </tr>
+    <tr>
+      <td>粗斜体</td>
+      <td><code>***both***</code>或<code>___both___</code></td>
+      <td>两种标志叠加。</td>
+    </tr>
+    <tr>
+      <td>上标</td>
+      <td><code>^text^</code></td>
+      <td>字号为正文的58%，升高正文字号的三分之一：指数（<code>10^-8^</code>）、离子电荷（<code>Na^+^</code>）。被标记的文本首尾都必须是非空白字符；正文中单独的脱字符保持原样，表情<code>^_^</code>和<code>^o^</code>也一样（<code>n.^o^</code>和<code>1^o^</code>仍是上标）。</td>
+    </tr>
+    <tr>
+      <td>下标</td>
+      <td><code>~text~</code></td>
+      <td>字号与上标相同，下降正文字号的0.15，因此不超出下伸部：化学式的下标（<code>H~2~O</code>、<code>p<em>K</em>~a~</code>）。两侧都是数字的波浪号表示范围，保持原样：<code>3~5 days</code>、<code>需要3~5天</code>。夹在两个中文词之间的波浪号也一样，不会开启下标：<code>周一~周五</code>、<code>北京~上海</code>；但下标仍可在中文字符前结束（<code>F~合~等于</code>）。可与粗体和斜体组合（<code>**H~2~O**</code>）。下标和上标连写、中间没有任何字符时，像公式那样上下叠放：<code>*T*~0~^2^</code>把2排在0的上方，不论谁先写；此时下标下降正文字号的0.25，以避开上标，这一对占据两者中较宽者的宽度。两者之间有空格或字母时，依次排列；插入词连接符（U+2060）也会依次排列，且中间不显示任何东西。叠放的一对在断行处不会分开：过宽的词会在这一对之前断行。</td>
+    </tr>
+    <tr>
+      <td>小型大写字母</td>
+      <td><code>:smallcaps[text]</code></td>
+      <td>小写字母排成正文字号70%的大写字母：剧本中的人物名、正文里的缩写词。内部和外围都可以带其他标记；见<a href="#小型大写字母">小型大写字母</a>。</td>
+    </tr>
+    <tr>
+      <td>竖排中的文字方向</td>
+      <td><code>:tcy[12]</code>、<code>:upright[GDP]</code>、<code>:sideways[12]</code></td>
+      <td>用于竖排：一个直立的字格（纵中横）、每个字符各占一格直立，或整段横躺。在横排中不起作用；见<a href="#竖排中的文字方向">竖排中的文字方向</a>。</td>
+    </tr>
+    <tr>
+      <td>中文标记</td>
+      <td><code>:dots[不可]</code>、<code>:name[賈寶玉]</code>、<code>:book[石頭記]</code></td>
+      <td>着重号、专名号和书名号（按<code>cjk.bookTitleMark</code>排成《》或波浪线）。文本保持原样；见<a href="#中文标记注音和双行夹注">中文标记、注音和双行夹注</a>。</td>
+    </tr>
+    <tr>
+      <td>注音</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code>或<code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>在基字上方（或旁边）标注拼音或注音符号。简写形式要求基字含有汉字、假名或注音符号，因此<code>&#123;x|x&gt;0&#125;</code>仍是文本。</td>
+    </tr>
+    <tr>
+      <td>双行夹注</td>
+      <td><code>:warichu[note]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>在行内以两行半字号排出的注文（双行夹注），可跨行、跨页断开。</td>
+    </tr>
+    <tr>
+      <td>行内代码</td>
+      <td><code>`code`</code></td>
+      <td>去掉反引号，片段按原样以纯文本渲染：其中的<code>{':ref{…}'}</code>、行内标签、公式、链接或强调符号都照字面印出，正文要展示语法时就这样写。它用正文字体排，设了<code>codeStyle.inline</code>时则用代码字体，作为一个整体排出（见<a href="/zh/docs/configuration-styles#代码清单">配置 › 代码清单</a>）。代码清单写在<a href="/zh/docs/document-format#代码块">代码块</a>中。</td>
+    </tr>
+    <tr>
+      <td>转义</td>
+      <td><code>{'\\*'}</code>、<code>{'\\_'}</code>、<code>{'\\^'}</code>、<code>{'\\~'}</code>、<code>{'\\`'}</code>、<code>{'\\$'}</code></td>
+      <td>反斜杠让标记字符本身印出，而不开启一个片段：表注的星号（<code>{'\\* pOH = −log [OH^−^]'}</code>）、字面的脱字符、不开启公式的美元符号。在正文、行内标签、题注、表格单元格和注释中都有效。（postext 1.4及以前，题注、单元格、注释和行内标签会把<code>{'\\$'}</code>中的反斜杠也印出来。）</td>
+    </tr>
+    <tr>
+      <td>不换行空格</td>
+      <td>直接输入字符本身：U+00A0、U+202F、U+2007</td>
+      <td>把两侧的词粘在一起，使行不会在它们之间断开：数字与单位（37 °C）、页码引用（p. 12）、千位分组（225 000）。不换行空格（U+00A0）、窄不换行空格（U+202F）和数字空格（U+2007）都有粘连作用，在正文、题注、单元格、框和书眉中均如此，并各自保持原有宽度：两端对齐只拉伸词间空格。许多字体没有窄不换行空格或数字空格的字形，这时Canvas、HTML和PDF都按浏览器的方式排：分别为半个词间空格和一个数字的宽度。几乎所有字体都有U+00A0，因此它最稳妥。这样粘连起来、比整行还宽的一组，会在最后一个不换行空格处断开，而不在词内断开。词连接符（U+2060）起粘连作用但不占宽度。请直接输入字符本身：<code>{'&nbsp;'}</code>之类的HTML实体会照写法印出。见<a href="/zh/docs/justification#行从不断开的地方">行不会断开的地方</a>。</td>
+    </tr>
+    <tr>
+      <td>软连字符</td>
+      <td>直接输入字符本身：U+00AD</td>
+      <td>词可以在此处划分，行在这里结束时会加上连字符：只限于两个字母或数字之间。带有软连字符的词不再从词典获得其他断点，所以软连字符就是它唯一的划分处；输入在词的首字母之前时，它不划分任何东西，并让这一处的词保持完整。紧挨括号、引号或标点时，它不起任何作用。见<a href="/zh/docs/justification#行从不断开的地方">行不会断开的地方</a>。</td>
+    </tr>
+    <tr>
+      <td>链接</td>
+      <td><code>[text](https://…)</code></td>
+      <td>可见文本留在文字流中，排法与没有链接时完全相同。在HTML和PDF输出中，URL让这些词成为可点击的链接；见<a href="#链接">链接</a>。</td>
+    </tr>
+    <tr>
+      <td>图片</td>
+      <td><code>![alt](src)</code></td>
+      <td>行内图片的Markdown会从文本中<strong>移除</strong>。图片必须在<code>PostextContent.resources</code>中声明，排版引擎才能按<code>resourcePlacement</code>规则放置它们。</td>
+    </tr>
+    <tr>
+      <td>行内标签</td>
+      <td><code>:chip[text]</code></td>
+      <td>带框的一段文字，作为一个整体换行：词库、按键、标签。样式由<code>chipStyles</code>设定；见<a href="#行内标签">行内标签</a>。</td>
+    </tr>
+    <tr>
+      <td>制表符</td>
+      <td><code>:tab</code>、<code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>把其后的文字送到下一个制表位：段落样式的某个制表位，或由它的属性设定的制表位。在文字中输入的制表符字符只在样式设了制表位的地方才是制表符。见<a href="#制表符与制表位">制表符与制表位</a>。</td>
+    </tr>
+    <tr>
+      <td>行内公式</td>
+      <td><code>$…$</code></td>
+      <td>随周围文本排列的LaTeX公式，例如<code>$e^{'{i\\pi}'}+1=0$</code>。由MathJax排版，在所有后端都渲染为矢量路径。字面的美元符号写作<code>\\$</code>。缩放、独立公式（<code>$$ … $$</code>）形式和错误处理见<a href="#数学公式">数学公式</a>。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 链接
+
+Markdown链接`[text](url)`把文本留在文字流中，排法与没有链接时完全一样：链接从不改变断行、间距或颜色。它保留URL，供能跟随链接的输出使用：
+
+- **HTML**（`renderToHtml`）：链接的词包在`<a href="…" rel="noopener noreferrer">`中，沿用文本颜色，不加下划线。同一行上每一段连续的链接词对应一个锚点。
+- **PDF**（`postext-pdf`）：同一行上每一段连续的链接词成为一个可点击的URI链接注释。在带标签的PDF中，它是一个`Link`元素，其文本就是这些链接词。
+- **Canvas**：作为纯文本绘制，因为Canvas没有可点击的区域。
+
+```markdown
+Read the [configuration guide](https://postext.dev/zh/docs/configuration "Configuration")
+or write to [the team](mailto:team@example.com).
+```
+
+- 链接目标可以带标题，标题会被忽略（`[text](https://example.com "Title")`）。目标也可以用尖括号括起，其中的空格变为`%20`（`[text](<https://example.com/a b>)`）。
+- 只保留安全的目标：`http:`、`https:`、`mailto:`、`tel:`、`ftp:`和相对URL（`../guide`、`#top`）。其他协议（`javascript:`、`data:`、`file:`……）的文本照排，但不加链接。PDF只链接绝对URL。
+- 与CommonMark一样，目标中可以含括号，只要括号配对：`[photo](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)`链接整个URL。反斜杠可转义字符（`\(`、`\_`）。括号不配对时，目标在第一个`)`处结束，文本照排但不加链接；单独的括号请编码为`%28`或`%29`。空格也会结束目标，除非目标用尖括号括起。
+- 紧贴链接文本的词共享该链接。在`see [the site](https://example.com).`中，句号也属于可点击区域。
+- 链接文本可以带强调（`[**bold** words](…)`），也可以位于强调之内（`**[words](…)**`）。
+- 链接可用于段落、列表项、引用块、标注框、题注、注释和表格单元格，在`headings.inlineMarks`开启（默认）时也可用于标题。由标题生成的书眉、大纲和目录条目只保留文本，`:chip[…]`的文本也一样。
+- 不识别引用式链接（`[text][id]`）和自动链接（`<https://…>`）（见[不支持的内容](/zh/docs/document-format#不支持的内容)）。
+
+在VDT中，目标位于每个链接片段上，即`VDTLineSegment.href`。解析器把一个片段的链接作为其文本的区间保存在`InlineSpan.links`中，从不为链接拆分片段，所以链接不会改变版面。
+
+### 行内标签
+
+`:chip[text]`把`text`排在一个框里，即一个圆角、带底色的“标签”，随行排列：词库或分类练习中的词、键盘按键、标签。`:chip[text]{style="key"}`从`chipStyles`中选用一个具名样式（见配置参考）；没有`style`，或所给id没有对应的样式时，行内标签采用第一个样式（配置中没有样式时，采用内置的`chip`样式；遇到未知id，沙盒会发出警告）。
+
+```markdown
+Classify: :chip[battery] :chip[cable] :chip[switch] :chip[bulb]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
+```
+
+- **一个整体**。行内标签内部从不断开或断词；行在标签之间、在其两侧的词间空格处断开。比整行还宽的标签会溢出该行，而不是被拆开。
+- **宽度**。其步进宽度为文本加上两侧的水平内边距和轮廓线。两端对齐只拉伸词间空格，从不拉伸标签内部。样式的`gap`是框与隔着空格的相邻词或标签之间至少保留的距离，空格不够宽时会补足（行首行尾不补，紧贴的标点如`:chip[a],`也不补）。
+- **高度**。框是围绕基线的一条带，以标签字号计，基线以上0.8 em、以下0.25 em，再加上垂直内边距和轮廓线。垂直内边距画在行框之外，从不改变行距，因此基线网格保持不变；比行距还高的框可能碰到上一行或下一行的标签，沙盒会标出不同行上相互重叠的两个标签（“行内标签碰到相邻行”），以便减小内边距、轮廓线或字号。
+- **文本**。标签文本可带自身的行内标记（`:chip[**bold** word]`、`:chip[x^2^]`），也可处于外围的强调中（`**:chip[a]**`）；样式可以设定字体家族、字号、颜色、粗体和斜体。内部的字面方括号写作`\]`。标签内的引用、色块和公式保持字面，`\$`印出美元符号（postext 1.4及以前会连反斜杠一起印出）。
+- **空标签**。只含空格（包括不换行空格）的标签（`:chip[ ]`）是一个空框，可用作答题空白或结束符：宽度为样式的水平内边距加轮廓线，高度与有文字的标签相同。用样式的`paddingX`设定空白的宽度（`:chip[ ]{style="blank"}`）。方括号之间什么都没有时，`:chip[]`保持为字面文本。
+- **适用位置**。段落、列表项、引用块、标注框、表格单元格、题注和注释。标题中的`:chip[…]`保持为字面文本。
+- **输出**。Canvas、HTML和PDF都绘制框，并把文字作为真正的文本排出：在HTML中可以选中，在PDF中可以提取且符合阅读顺序（在带标签的PDF中，框是版式工件，文字属于所在段落）。
+
+### 小型大写字母
+
+`:smallcaps[text]`把`text`排成小型大写字母，用于剧本中的人物名、正文里的缩写词、章节的开头几个词。小写字母排成正文字号70%的大写字母，大写字母、数字和标点保持原字号，因此`:smallcaps[Hamlet]`印出一个原字号的H，后接小型大写的AMLET。
+
+```markdown
+Enter :smallcaps[Hamlet] and :smallcaps[Horatio], reading.
+
+The :smallcaps[unesco] report and the :smallcaps[who] guidelines.
+```
+
+- **合成**。小型大写字母由字体自身的大写字母生成，在Canvas、HTML和PDF中方式相同，因此文本在各处的度量和断行完全一致。不使用字体真正的小型大写字母（OpenType的`smcp`特性）；需要时，请通过段落样式把文本设为小型大写字母字体家族（例如名称以“SC”结尾的家族）。
+- **标记**。文本可带自身的行内标记（`:smallcaps[**Ophelia**]`），也可处于外围的强调中（`*:smallcaps[Act I]*`）；内部的字面方括号写作`\]`。其中的引用或行内标签也排成小型大写字母，引用在HTML和PDF中仍是一个链接；公式则不受影响。
+- **断行**。词照常换行和断词；断词时按每个词原本的大小写读取。
+- **适用位置**。段落、列表项、引用块、标注框、表格单元格、题注和注释，以及`headings.inlineMarks`开启（默认）时的标题；关闭时，标题中的标记被移除，文本按原样印出。
+- **整段。**`smallCaps: true`的段落样式或标注框正文会把全部文本这样排（见[段落样式](/zh/docs/configuration-styles#段落样式)）。
+- **文本**。Canvas、HTML和PDF承载的是画出的字母：复制`:smallcaps[Hamlet]`得到“HAMLET”。
+
+### 制表符与制表位
+
+制表符把其后的文字送到行上的一个制表位：菜单里菜品的价格排在一行点之后，与版心末端对齐；演员表里角色之后的演员名；试题的分值排在页边。在制表符的位置写`:tab`，它两侧的空格并入制表符。制表位在配置中设置：`bodyText.tabStops`用于每个段落、列表项和引文，段落样式的`tabStops`用于`:::paragraphs`组中的段落，标注框样式的`body.tabStops`用于它的框内（见[配置 › 制表位](/zh/docs/configuration-text#制表位)）。下面的菜单让价格止于版心末端，前面是一行点：
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+洋葱汤 :tab 8.50
+
+茴香柠檬烤鲷鱼 :tab 21.00
+:::
+```
+
+`:tab{…}`只为这一个制表符设一个制表位，不需要样式：表单上一直延伸到行末的填写横线，按小数点对齐的金额。
+
+```markdown
+姓名 :tab{at=end leader=rule}
+
+应付总额 :tab{at=80% align=decimal} 1,234.50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>制表位所在的位置，从段落版心的起始边量起：一个长度（<code>120mm</code>、<code>4cm</code>、<code>2em</code>；纯数字以点为单位）、表示版心末端的<code>end</code>，或版心宽度的一个比例（<code>60%</code>）。没有<code>at</code>时，<code>:tab&#123;…&#125;</code>与单独的<code>:tab</code>一样跳到样式的制表位。</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code>（默认）：制表符后的文字从制表位开始。<code>end</code>：文字在这里结束（到下一个制表符或段落末尾为止的文字）。<code>center</code>：文字以制表位为中心。<code>decimal</code>：文字的小数点落在制表位上；没有小数点的文字在这里结束。</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>在制表位前的空白中重复排出的文字：<code>"."</code>、<code>". "</code>、<code>"·"</code>、<code>"_"</code>、<code>"-"</code>或另一小段文字，使用段落的字体和颜色。<code>rule</code>在基线稍下方画一条线，即表单上的填写横线。默认没有。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>前导符与两侧文字之间保留的空白。默认为段落字号的<code>0.5em</code>；纯数字以点为单位。</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td><code>decimal</code>制表位所对齐的小数点字符。默认取文档语言的：英语、中文、日语和阿拉伯语为<code>.</code>，西班牙语、加泰罗尼亚语、葡萄牙语、法语、德语等为<code>,</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+- **制表符跳到哪里**。跳到越过它前面文字的第一个制表位，只在该行上一个制表符所用制表位之后的制表位中找，所以一行的第二个制表符通常落在第二个制表位上。越过最后一个制表位后，`tabInterval`从版心起始边起每隔一个间隔再设一个制表位；没有它时，制表符是一个词间空格。
+- **制表符字符**。在文字中输入的制表符（U+0009）只在样式设了`tabStops`或`tabInterval`的段落中才是制表符。在其他地方，它仍是原来的词间空格，所以用制表符代替空格写成的文档版面不变。连续几个制表符字符跳过同样多个制表位。源文本行首的制表符与该行其他的行首空白一起被去掉：要让一行从制表位开始，请写`:tab`。
+- **仍是文字的情形**。后接字母的`:tab`（`3:table`），以及行内代码、公式、链接地址或指令属性中的`:tab`。
+- **适用位置**。段落、列表项、引文、标注框和`:::paragraphs`组。标题、题注、表格单元格和设计文字（章首页、书眉）没有制表位。
+- **越过制表位的文字**。制表符前的文字已经越过该行剩下的所有制表位时，`end`、`center`或`decimal`制表位把制表符前的最后一个词连同制表位处的文字一起带到下一行，制表符前的文字排得窄一些，就像目录行为了保住页码而让标题换行一样。`start`制表位在制表符之前断行，制表符后的文字在下一行从它的制表位开始。位于行首的制表符仍找不到制表位时，不占空间。
+- **前导符**。前导符填满制表位前的空白，末端与这段空白的末端齐平，所以不论前面的文字如何，各行的点都上下对齐。`gap`让它与两侧的文字保持距离；制表符位于行首时，前导符前面没有间隙，后面没有文字时，后面也没有间隙。前导符至少重复三次；只放得下一两次的空白留空，目录也是这样。
+- **断行**。含有制表符的段落逐行排，从不用Knuth-Plass。两端对齐的文字中，只有一行最后一个制表符之后的词间空格分担多余的空白，段落的末行不拉伸（见[断词与两端对齐 › 含制表符的行](/zh/docs/justification#含制表符的行)）。居中或右对齐的段落从起始一侧排含制表符的行，因为制表位是版心上的位置。从右到左时，制表位从右边量起，`end`制表位在左边（见[阿拉伯文排版](/zh/docs/arabic-layout#目录与索引)）。竖排文字中制表符是一个词间空格，那里的`:tab`会引发内容警告`tabInVerticalText`。
+- **文本与输出**。纯文本在每个制表符处有一个制表符字符（`\t`）；前导符不是文字，复制、搜索和源映射都不包括它们。Canvas、HTML查看器和固定版式EPUB绘制前导符（在HTML中对屏幕阅读器隐藏）；带标签的PDF把它们标为版式工件，所以其文本读作`洋葱汤 8.50`。流式EPUB无法精确保留制表位：含制表符的段落的每一行变成由各制表符之间的部分组成的一行，`end`、`center`或`decimal`制表位以及带前导符的制表位把下一部分推到这一行的末端（前导符变成点线或实线边框），`start`制表位让它前面的部分保持印刷时的宽度。导出到Word时，`:tab`写成Word制表符；从Word导入时，正文中的制表符读回为`:tab`，并带上Word为它设的制表位（见[沙盒 › Word文档](/zh/docs/sandbox-books-saving#word文档)）。
+
+### 竖排中的文字方向
+
+在竖排（`layout.writingMode: 'vertical-rl'`）中，汉字直立，拉丁词和较长的数字横躺，最多两位的数字在一个字格中直立，除非它位于拉丁语句子中，那时随句中的词排列（见[配置 › 竖排中的数字](/zh/docs/configuration-east-asian#竖排中的数字)）。有三种标记可手动指定一段文字的方向：
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]`（纵中横，縱中橫）把文本并排放进一个1 em的直立字格，过宽时横向压缩：`:tcy[120]`、`:tcy[3.0]`、`:tcy[A+]`。最多约四个字符时效果较好。
+- `:upright[…]`让每个字符各占一格直立，拉丁字母在格中居中：适合沿栏逐字母阅读的缩写词。行不会在其内部断开。
+- `:sideways[…]`让整段随行横躺，汉字也一样：适合作者希望横躺的两位数。
+- 文本保留在纯文本中；这些标记内部可带其他行内标记（`:tcy[**12**]`）、链接（`:sideways[[iPhone](https://…)]`）以及彼此嵌套，以最内层为准（`:tcy[:upright[AB]]`让A和B直立）；字面方括号写作`\]`。在横排中它们不起任何作用。
+- 标记内的引用、注释标号、公式、行内标签或色块保持各自的排法：`:sideways[iPhone[^1]]`让iPhone横躺，注释编号则像所有注释编号一样排；引用的编号像其他短数字一样，按`cjk.uprightDigits`在一个字格中直立。
+- `inlineMarks: true`的设计文本元素竖排时也接受这些标记（见[配置 › 竖排文本元素](/zh/docs/configuration-headers-footers#竖排文本元素)）。
+- 在断行和两端对齐时，`:tcy`字格和`:upright`的每个字符都按汉字计算，它们旁边不加汉字与拉丁文字之间的间距。
+
+
+### 中文标记、注音和双行夹注
+
+中文和日文书籍用字行之间的标记代替斜体或下划线，为汉字标注读音，并在行内排注文。这由七个指令完成。[中文排版](/zh/docs/chinese-layout)和[日文排版](/zh/docs/japanese-layout)解释了它们背后的规范。这些指令保留文本：方括号内的字符留在段落中（搜索、目录、索引锚点和复制的文本都按原样读取），指令内部和外围都可带其他行内标记，包括嵌套的标记。字面方括号写作`\]`。
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- <strong>`:dots[text]`</strong>在横排中于每个字符下方、竖排中于其右侧加着重号，标点和空格不加。`style="dot|circle|sesame"`（默认`dot`），`fill="open"`为空心，`pos="over|under"`换到另一侧。在`cjk.emphasis: 'dots'`下（中文和日文文档的默认设置），中文或日文字符上的Markdown强调`*…*`效果相同；同一强调中的拉丁字母仍为斜体。省略的属性取`cjk.emphasisMark`：中文为文字下方的圆点，日文为文字上方（竖排时在右侧）的芝麻点。
+- <strong>`:name[text]`</strong>在文本下方（竖排时在左侧）画专名号，<strong>`:book[text]`</strong>加书名号：按`cjk.bookTitleMark`的设定，在书名两侧加《》（书名中的书名用〈〉），或用古籍和台湾版本的波浪线，或什么都不加（默认在大陆和日本用括号，在台湾和香港用波浪线）。在日文文档中，括号是『』，书名中的书名用「」（`cjk.bookTitleBrackets`）。同一份源文件可同时用于现代大陆版本和古籍版本。并排的两个专名或书名，线条彼此分开。
+- <strong>`:ruby[base]{rt="…"}`</strong>在基字上方标注读音（拼音），或在每个字右侧标注（注音符号读音默认如此）。读音数与字数相同时（以空格或`|`分隔），每个字各得一个读音，行可在它们之间断开（单字注音）；使用`group`或数量不符时，一个读音居中排在整个基字上方，且不会断开。`pos="over|under|right"`选择标注的一侧。简写形式`{紅樓|hóng|lóu}`（每个`|`后一个读音）或`{紅樓|hónglóu}`（整个基字一个读音）效果相同，但仅当基字含有汉字、假名或注音符号，且不在公式、代码和属性中时才生效，因此拉丁文正文中的`{x|x>0}`仍是文本。在花括号或竖线前加反斜杠，可让中文的这类写法保持为文本：`\{紅|hóng}`和`{紅\|hóng}`印出`{紅|hóng}`。位于行首或行尾的基字连同读音一起对齐到该边。`mode=mono|group|jukugo`选择读音怎样分配到基字上（`mode=group`与`group`相同），`align=center|jis|start`选择比基字短的读音怎样排开。在日文文档中，两个及以上字符的词按字分配读音的写法（`{東京|とう|きょう}`、`rt="とう|きょう"`）是熟语注音：每个字保留自己的读音，读音可以伸到词中下一个字上，行可以在字之间断开，读音按`cjk.ruby.align`和`cjk.ruby.overhang`排开并伸到假名上；整个基字一个读音（`{紫陽花|あじさい}`，青空文库的`《》`）是整词注音；`mode=mono`每个字一个读音，不伸到相邻字上。
+- <strong>`:sideline[text]`</strong>在文字旁画傍线（傍線），穿过标点和空格：横排时在下方，竖排时在右侧。`style="solid|double|wavy|dotted"`（默认`solid`），`pos="over|under"`（竖排时over在右侧，under在左侧；也可以写`position=`）。它适用于任何文字，包括加下划线的英文短语。
+- <strong>`:warichu[note]`</strong>在行内以正文一半的字号分两行排注文（双行夹注），先读上行（竖排时为右行）。长注文填满本行剩余部分，再接到下一行、下一栏或下一页，断点两侧至少各留两个字（`cjk.warichu.minChars`）。`open`和`close`在注文两侧加正文字号的括号；`cjk.warichu`设定字号、颜色和默认括号（日文文档中默认为一对全角圆括号）。拉丁文字的注文在词间断开。
+- <strong>`:kunten[字]{kaeri="…" okuri="…" tate}`</strong>为方括号中的最后一个字标注汉文训读记号：`kaeri`是返点（レ，一 二 三，上 中 下，甲 乙 丙，天 地 人，以及一レ 上レ 甲レ 天レ；码位㆑ ㆒ …读法相同），`okuri`是送假名（青空文库的括号`（ヲ）`会被去掉），开关`tate`是把它和下一个字连起来的竖点。文字不重新排序：记号以一半字号排在字旁（`cjk.kunten`），复制的文字读作學ビテ而時ニ習フ之ヲ，带送假名，不带返点。里面可以嵌套注音，用于读两次的字：`:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`。
+
+行距始终不变：标记和读音都放在行间空白中；当段落的行间空白不足以容纳它们时（`cjkMarksExceedLeading`、`rubyExceedsLeading`、`kuntenExceedsLeading`），以及当一行下方的标记与下一行上方的读音放不进共用的空白时（无论在同一段内还是跨两段），构建都会发出警告。请为带注的段落设置行距更大的段落样式。标记、读音和注文在段落、标题、列表项、引用块和框中绘制，在题注、表格单元格和注释中也同样绘制，其行间空白按同样方式检查；在书眉和版面设计中，文本印出但不带它们。在`cjk.bookTitleMark: 'brackets'`下，书名的《》属于文本中的标点：题注、单元格、注释、目录条目、书签和索引条目都保留它们。见[配置 › 标记、注音和双行夹注](/zh/docs/configuration-east-asian#着重号注音与夹注)。
+
+
+### 标记中的文本方向
+
+文档按其`locale`所隐含的方向排版（即配置中的`direction`：阿拉伯文、波斯文、乌尔都文或希伯来文从右到左）。在文档内部，可以用标记设定某个块或某段文字的方向，例如阿拉伯文书中的英文引文，或英文书中的阿拉伯文引文。
+
+- **标题或容器**：在属性中写`{dir=ltr}`或`{dir=rtl}`，如`# Introduction {dir=ltr}`、`:::paragraphs{dir=ltr}`、`:::callout{dir=rtl}`。容器内的每个块都采用这个方向，直到某个嵌套容器或标题另行设定。普通段落、列表和引用块没有自己的属性：用`:::paragraphs{dir=…}`把它们包起来。其他取值会被忽略。容器的`lang`（`:::paragraphs{dir=ltr lang=en}`）以同样方式注明其中各块的语言：其中的编号列表使用该语言的数字。
+- **一段文字**：`:ltr[…]`和`:rtl[…]`把其中的文字隔离开（相当于Unicode双向算法的LRI…PDI和RLI…PDI）：文字在内部排序，外面的段落只把它看作一个中性字符。`{lang=…}`在HTML和PDF中标明这段文字的语言。其中的注码、`:ref`或公式都属于这个隔离段，隔离段可以嵌套。
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+与文档方向相反的块保留自己的起始侧：它的缩进、列表标记和末行的齐边都移到其文字开始的一侧。拉丁文标题以中性字符（句点、括号）结尾，而这个字符原本会归入周围的阿拉伯文时，就用隔离段。源文本中的Unicode控制字符本身（U+2066–2069、U+202A–202E、U+200E、U+200F、U+061C）同样有效。在沙盒编辑器中，每一行按其第一个字母的方向排列。见[阿拉伯文排版](/zh/docs/arabic-layout#文字方向与双向算法)。
+
+
+## 数学公式
+
+数学公式是文档格式中的一等功能。Postext把`$…$`解析为行内公式，把`$$…$$`解析为独立（块级）公式，并通过SVG模式的[MathJax](https://www.mathjax.org/)渲染。三个后端使用同样的矢量路径，因此Canvas预览、HTML导出和PDF输出逐像素一致，PDF无论放大多少倍都保持矢量。
+
+- **行内：**`$…$`。在任何文本块（段落、标题、引用块、列表项）中都能识别。它在行中占一个不可分割、不可断开的框；Knuth-Plass把它当作不能拆分的词。若公式的自然高度会撑破行框，就等比缩小，以保持基线网格；很高的表达式应使用独立公式。
+- **独立公式：**`$$…$$`。可以单独占一行（`$$\int_0^1 x^2\,dx$$`），也可以用各自独占一行的`$$`标记围住多行。公式在栏内居中渲染，并对齐到基线网格，上下外边距可配置（`math.marginTop`、`math.marginBottom`），这与标题使用的校正机制完全相同，因此公式后的段落会回到网格上。
+- **独立公式周围的文本**：单独占一行的独立公式即使上方没有空行，也会打断段落。公式前的文本是引出它的段落；紧接在结束的`$$`下方、中间没有空行的文本，是被打断段落的延续，排版时首行不缩进，就像TeX排独立公式之后的“where …”那样。与上方文本以空行隔开（或位于列表、引文或标题之后）的公式不打断任何段落：其后的文本是新段落，无论有无空行都照常缩进（`math.indentAfterDisplay: false`让它也顶格）。只有完整的独立公式才会打断段落，即一行只有一个公式，或在下一个空行之前闭合的`$$`围栏；像`$$a$$ and $$b$$`这样的行仍是文本。`math.keepWithLeadIn`让公式与引出它的那一行留在同一栏。（postext 1.4及以前，上方没有空行的`$$…$$`行被当作段落的一部分，照写法印出。）
+- **公式编号**：独立公式中的`\label{eq:x}`为它编号，按阅读顺序排为(1)、(2)……带编号的公式占满栏宽（或标注框的内宽），公式居中，编号在所在行右对齐。在`align`、`gather`、`alignat`、`flalign`或`eqnarray`中，每个带`\label`的行各有自己的编号，除非该行写了`\nonumber`或`\notag`。没有`\label`的公式不编号，`$$…$$`向来如此。`\tag{…}`仍用你给出的文字为公式编号（`\tag*{…}`不加括号），且不参与计数；与它并列的`\label`为这段文字命名。格式、按章或按节的编号（2.3）以及重新计数在[`math.equationNumbering`](/zh/docs/configuration-lists-math#数学公式)中设置。`\label`要写在公式或其所在行的顶层，不能写在`aligned`、`split`或`cases`内部。
+- **公式的引用**：正文中的`\eqref{eq:x}`印出与公式相同的编号(3)，`\ref{eq:x}`印出不带括号的编号3；两者都是链接，与所有[交叉引用](/zh/docs/document-format-notes-references#交叉引用与锚点)一样。`Eq.~\eqref{eq:x}`中的`~`与LaTeX中一样，是不断行空格。`:ref{id="eq:x"}`和`@eq:x`同样印出(3)。在公式内部，`\eqref`和`\ref`印出编号（不是链接）。没有任何公式设置的标签印为“?”，并在检查面板中列出。
+- **转义：**`\$`是字面的美元符号。未配对的`$`或`$$`定界符会在沙盒的检查面板中产生一条`unclosedMath`记录，并带有可点击定位的源文本锚点。
+- **题注、注释和表格单元格**也排行内公式（postext 1.19起），公式与文字同在一行，遵循单元格的对齐方式，字号与所在片段相同。在这些地方，`$`只按Pandoc的规则打开公式：开头的`$`之后没有空格，结尾的`$`之前没有空格，且其后不紧跟数字，所以“$5 to $10”这样的价格仍是文本；`\$`印出美元符号，因此同一个转义字符串在正文和表格中读法相同。行内标签（chip）的文字不排公式。postext 1.18及以前，这些地方的`$`总是照原样印出。
+- **错误**：MathJax拒绝的TeX源码（未定义的宏、语法错误）会以`invalidMath`警告的形式报出。该公式被替换为一个红色小占位框，版面几何仍然有效。
+- **配置**：配置中的`math`部分提供`enabled`、`fontSizeScale`（相对于周围文本的字号：为1.0时，公式的一个em等于该字号，对独立公式和正文中的行内公式而言就是正文字号；自postext 1.5起，公式比1.4时约小13%，而1.4保存的文件包和沙盒图书保持原有大小，见[公式字号](/zh/docs/configuration-lists-math#数学公式)）、`color`（未设置时沿用正文颜色）以及独立公式的外边距。
+- **引擎**：MathJax按需加载。沙盒和排版工作线程会自行启动它；在你自己的代码中，要在`buildDocument`之前`await initMathEngine()`，否则每个公式都会排成一个灰色占位框（见[启动数学引擎](/zh/docs/configuration-lists-math#启动公式引擎)）。
+
+```md
+The Euler identity $e^{i\pi}+1=0$ links the five fundamental constants.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+句子中间的公式，以及公式之后不缩进、继续下去的句子：
+
+```md
+For a pendulum of length $L$ the period is
+$$T_0 = 2\pi\sqrt{L/g}$$
+where $g$ is the acceleration of free fall.
+```
+
+带编号的公式及对它们的引用：
+
+```md
+The energy is conserved,
+$$
+\begin{align}
+E &= T + V \label{eq:energy} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+and Eq.~\eqref{eq:energy} holds at every instant.
+```
+
+**定理、引理与证明**。带`numbering`的标注框样式会为它的框计数，就像LaTeX的`amsthm`为定理环境计数：每个框以粗体的标签和编号开头，即“**定理2.**”，围栏的`title`以括号跟在编号之后，即“**定理2**（Bradley–Terry）**.**”；对它的`{#id}`的引用印出“定理2”（`\ref{thm:x}`或`style=number`只印2）。指定同一个计数器的样式共用这个计数器，所以定理之后的引理是引理3。证明样式的`endMark`在框的最后一行右对齐排出∎或□，结束这个框。样式的设置见[编号的命题与证明](/zh/docs/configuration-callouts#编号的命题与证明)。
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Every reward class holds one reparameterised reward.
+:::
+
+:::callout{type="proof"}
+Apply the projection of \eqref{eq:projection} to any member of the class.
+:::
+
+By :ref{id="thm:main"}, the objective is unchanged.
+```

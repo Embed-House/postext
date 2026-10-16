@@ -2424,6 +2424,13 @@
    "lighting": {
     "environment": "daylight"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "Miguel de Cervantes"
+    ]
+   }
   }
  },
  "localized": {

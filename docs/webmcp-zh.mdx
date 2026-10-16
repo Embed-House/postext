@@ -6,8 +6,8 @@ export const metadata = {
   description: '浏览器里的AI智能体借助沙盒的36个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
   lastUpdated: '2026-10-13',
-  readingTime: '14分钟',
-  order: 23,
+  readingTime: '9分钟',
+  order: 43,
   plainSummary: "本页写给想让AI助手替自己在沙盒里处理一本书的人。沙盒打开时，会交给助手一套工具，用来查看任意一页、修改设计、编辑文字、添加图片和表格、找出问题和保存文件。你用自己的话提出要求，比如“把字稍微放大一点，再看看书是不是还能排在40页以内”，助手就去使用这些工具，并把页面给你看。一切都留在你的浏览器里。本页说明怎样接入助手、它能做什么，以及每个工具怎样调用。",
 };
 
@@ -454,7 +454,7 @@ await browser.close();
 
 ## 嵌入沙盒时
 
-`<PostextSandbox>`在挂载期间注册这些工具；`webmcp={false}`则不注册（见[属性](/zh/docs/sandbox#属性)）。宿主页面可以通过同一个模块添加自己的工具：
+`<PostextSandbox>`在挂载期间注册这些工具；`webmcp={false}`则不注册（见[属性](/zh/docs/sandbox-embedding#属性)）。宿主页面可以通过同一个模块添加自己的工具：
 
 ```ts
 import { registerWebMcpTools } from 'postext-sandbox/webmcp';

@@ -1,0 +1,372 @@
+{/* docs/document-format-inline-pt.mdx */}
+
+export const metadata = {
+  title: 'Formato do documento: formatação em linha e fórmulas',
+  sidebarTitle: 'Formatação em linha e fórmulas',
+  description: 'Marcas dentro da linha: ênfase, links, chips, versaletes, tabulações, texto vertical, marcas chinesas e japonesas, direção do texto e fórmulas LaTeX',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '28 min',
+  order: 27,
+  parent: 'document-format',
+  plainSummary: "Esta página trata das marcas que você usa dentro de uma linha de texto. Elas deixam palavras em negrito ou itálico, acrescentam links, desenham pequenas etiquetas, compõem versaletes e alinham o texto em paradas de tabulação. Outras marcas são para livros em chinês e japonês, como as pequenas leituras sobre um caractere, ou para uma frase em outra direção, como um trecho em inglês num livro em árabe. A última seção mostra como escrever fórmulas matemáticas.",
+};
+
+# Formato do documento: formatação em linha e fórmulas
+
+
+## Formatação em linha
+
+A marcação em linha é reconhecida dentro de qualquer bloco de texto (títulos, parágrafos, citações em bloco, itens de lista). Num título ela segue `headings.inlineMarks`, ativado por padrão: o itálico, o negrito, os sobrescritos e subscritos, os versaletes e os links do título saem impressos como num parágrafo, e um trecho em itálico dentro de um título em itálico sai em redondo. Com a opção desativada, os marcadores são descartados e o título sai no estilo do próprio título; é assim que se leem as configurações salvas pelo postext 1.4 ou anterior cujos títulos tenham marcas (veja [Configuração › Títulos](/pt/docs/configuration-headings#títulos)). O design de um título imprime `{titleText}` como texto simples em qualquer caso.
+
+<Illustration name="InlineFormatting" data='{"title": "Formatação em linha num relance", "desc": "Comparação entre o Markdown e o resultado renderizado para negrito, itálico, negrito itálico, código em linha e links.", "caption": "Markdown à esquerda, resultado renderizado à direita.", "rows": [{"markdown": "**negrito**", "rendered": "negrito", "style": "bold"}, {"markdown": "*itálico*", "rendered": "itálico", "style": "italic"}, {"markdown": "***ambos***", "rendered": "ambos", "style": "bold-italic"}, {"markdown": "`code`", "rendered": "code", "style": "code"}, {"markdown": "[link](https://…)", "rendered": "link", "style": "link"}]}' />
+
+<table>
+  <thead>
+    <tr>
+      <th>Marcação</th>
+      <th>Sintaxe</th>
+      <th>Observações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Negrito</td>
+      <td><code>**negrito**</code> ou <code>__negrito__</code></td>
+      <td>Renderizado com <code>bodyText.boldFontWeight</code>. Um <code>bodyText.boldColor</code> opcional substitui a cor padrão do corpo nos trechos em negrito.</td>
+    </tr>
+    <tr>
+      <td>Itálico</td>
+      <td><code>*itálico*</code> ou <code>_itálico_</code></td>
+      <td>Renderizado com a variante itálica da família tipográfica atual. Um <code>bodyText.italicColor</code> opcional substitui a cor padrão do corpo nos trechos em itálico. O sublinhado marca ênfase só num limite de palavra, como no CommonMark: entre duas letras ou dígitos (<code>snake_case_name</code>, o <code>SR_AIR_EN.pdf</code> de uma URL) ele é texto (o mesmo vale para <code>__bold__</code>); dentro de uma palavra, use asteriscos (<code>un*believ*able</code>). Letras chinesas, japonesas e coreanas não contam aqui, já que essas escritas não têm espaços: <code>中文_斜体_中文</code> e <code>中文__粗体__中文</code> saem em itálico e em negrito. Um <code>__</code> que não forma negrito nunca vira itálico: <code>foo__bar__baz</code> continua texto.</td>
+    </tr>
+    <tr>
+      <td>Negrito itálico</td>
+      <td><code>***ambos***</code> ou <code>___ambos___</code></td>
+      <td>As duas marcas se combinam.</td>
+    </tr>
+    <tr>
+      <td>Sobrescrito</td>
+      <td><code>^texto^</code></td>
+      <td>Composto a 58% do tamanho do texto e elevado um terço dele: um expoente (<code>10^-8^</code>), a carga de um íon (<code>Na^+^</code>). O texto marcado começa e termina com um caractere que não é espaço; um acento circunflexo solto na prosa continua literal, assim como as carinhas <code>^_^</code> e <code>^o^</code> (<code>n.^o^</code> e <code>1^o^</code> continuam sendo sobrescritos).</td>
+    </tr>
+    <tr>
+      <td>Subscrito</td>
+      <td><code>~texto~</code></td>
+      <td>Mesmo tamanho, rebaixado 0,15 do tamanho do texto para ficar dentro das descendentes: o índice de uma fórmula química (<code>H~2~O</code>, <code>p<em>K</em>~a~</code>). Um til com um dígito de cada lado é um intervalo e continua literal: <code>3~5 days</code>, <code>需要3~5天</code>. O mesmo vale para um til entre duas palavras chinesas, que não abre subscrito: <code>周一~周五</code>, <code>北京~上海</code>; um subscrito ainda se fecha antes de um caractere chinês (<code>F~合~等于</code>). Combina com negrito e itálico (<code>**H~2~O**</code>). Um subscrito e um sobrescrito escritos juntos, sem nada entre eles, ficam empilhados como numa fórmula: <code>*T*~0~^2^</code> põe o 2 sobre o 0, seja qual for o primeiro, com o subscrito rebaixado 0,25 do tamanho do texto para não bater no sobrescrito, e o par ocupa a largura do mais largo. Um espaço ou uma letra entre eles os compõe um depois do outro; um word joiner (U+2060) também, sem nada visível entre eles. Um par empilhado nunca se separa numa quebra de linha: uma palavra larga demais para a linha quebra antes do par.</td>
+    </tr>
+    <tr>
+      <td>Versaletes</td>
+      <td><code>:smallcaps[texto]</code></td>
+      <td>Letras minúsculas compostas como maiúsculas a 70% do tamanho do texto: o nome de uma personagem numa peça de teatro, uma sigla no texto corrido. Aceita outras marcas dentro e em volta; veja <a href="#versaletes">Versaletes</a>.</td>
+    </tr>
+    <tr>
+      <td>Orientação no texto vertical</td>
+      <td><code>:tcy[12]</code>, <code>:upright[GDP]</code>, <code>:sideways[12]</code></td>
+      <td>No texto vertical: uma única célula em pé (tate-chu-yoko), cada caractere em pé numa célula própria, ou o trecho inteiro girado. Não têm efeito no texto horizontal; veja <a href="#orientação-no-texto-vertical">Orientação no texto vertical</a>.</td>
+    </tr>
+    <tr>
+      <td>Marcas chinesas</td>
+      <td><code>:dots[不可]</code>, <code>:name[賈寶玉]</code>, <code>:book[石頭記]</code></td>
+      <td>Pontos de ênfase (着重号), a linha de nome próprio (专名号) e a marca de título de obra (书名号: 《》 ou uma linha ondulada, conforme <code>cjk.bookTitleMark</code>). O texto fica como foi escrito; veja <a href="#marcas-chinesas-rubi-e-warichu">Marcas chinesas, rubi e warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Rubi</td>
+      <td><code>:ruby[紅樓]&#123;rt="hóng lóu"&#125;</code> ou <code>&#123;紅樓|hóng|lóu&#125;</code></td>
+      <td>Leituras em pinyin ou zhuyin sobre (ou ao lado de) os caracteres-base. A forma compacta exige uma base em han, kana ou bopomofo, de modo que <code>&#123;x|x&gt;0&#125;</code> continua texto.</td>
+    </tr>
+    <tr>
+      <td>Warichu</td>
+      <td><code>:warichu[nota]&#123;open="〔" close="〕"&#125;</code></td>
+      <td>Uma nota composta em duas linhas de meio corpo dentro da linha (双行夹注), quebrada entre linhas e páginas.</td>
+    </tr>
+    <tr>
+      <td>Código em linha</td>
+      <td><code>`code`</code></td>
+      <td>Os acentos graves são removidos; o trecho é renderizado como texto simples, exatamente como foi escrito: um <code>{':ref{…}'}</code>, um chip, uma fórmula, um link ou um marcador de ênfase dentro dele sai literal, e é assim que um texto mostra a sintaxe. Ele é composto na fonte do texto ou, com <code>codeStyle.inline</code>, na fonte de código, como uma unidade (veja <a href="/pt/docs/configuration-styles#listagens-de-código">Configuração › Listagens de código</a>). Uma listagem vai num <a href="/pt/docs/document-format#blocos-de-código">bloco de código</a>.</td>
+    </tr>
+    <tr>
+      <td>Escape</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
+      <td>Uma barra invertida compõe o próprio caractere marcador (o asterisco de uma nota de tabela, <code>{'\\* pOH = −log [OH^−^]'}</code>, um circunflexo literal, um cifrão que não abre fórmula) em vez de abrir um trecho. Funciona no corpo, nos chips e em legendas, células e notas. (Até o postext 1.4, legendas, células, notas e chips imprimiam a barra invertida de <code>{'\\$'}</code>.)</td>
+    </tr>
+    <tr>
+      <td>Espaço inseparável</td>
+      <td>o próprio caractere: U+00A0, U+202F, U+2007</td>
+      <td>Cola as palavras de um lado e do outro, de modo que a linha nunca quebra entre elas: um número e sua unidade (37 °C), uma referência de página (p. 12), um grupo de milhares (225 000). O espaço inseparável (U+00A0), o espaço inseparável estreito (U+202F) e o espaço de algarismo (U+2007) colam todos (no corpo, em legendas, células, boxes e cabeços) e cada um mantém sua própria largura: a justificação estica só os espaços entre palavras. Muitas fontes não têm glifo para o espaço inseparável estreito nem para o espaço de algarismo; nesse caso eles são compostos como os navegadores os compõem, no canvas, no HTML e no PDF igualmente: meio espaço de palavra e a largura de um dígito. Praticamente toda fonte tem U+00A0, então ele é a escolha segura. Um grupo colado assim que seja mais largo que a linha inteira quebra no seu último espaço inseparável, e não dentro de uma palavra. O word joiner (U+2060) cola sem ocupar espaço. Digite o próprio caractere: uma entidade HTML como <code>{'&nbsp;'}</code> sai impressa como foi escrita. Veja <a href="/pt/docs/justification#onde-uma-linha-nunca-quebra">Onde uma linha nunca quebra</a>.</td>
+    </tr>
+    <tr>
+      <td>Hífen discricionário</td>
+      <td>o próprio caractere: U+00AD</td>
+      <td>Um lugar onde a palavra pode ser dividida, com um hífen acrescentado quando uma linha termina ali: só entre duas letras ou algarismos. A palavra que traz um não recebe nenhuma outra quebra do dicionário, de modo que o hífen discricionário é a sua única divisão; digitado antes da primeira letra de uma palavra, não divide nada e mantém inteira aquela ocorrência. Ao lado de um parêntese, de aspas ou de pontuação não faz nada. Veja <a href="/pt/docs/justification#onde-uma-linha-nunca-quebra">Onde uma linha nunca quebra</a>.</td>
+    </tr>
+    <tr>
+      <td>Link</td>
+      <td><code>[texto](https://…)</code></td>
+      <td>O texto visível fica no fluxo, composto exatamente como seria sem o link. A URL transforma as palavras num link ativo no HTML e no PDF; veja <a href="#links">Links</a>.</td>
+    </tr>
+    <tr>
+      <td>Imagem</td>
+      <td><code>![alt](src)</code></td>
+      <td>O Markdown de imagem em linha é <strong>removido</strong> do texto. As imagens precisam ser declaradas em <code>PostextContent.resources</code> para que o motor de layout possa posicioná-las segundo as regras de <code>resourcePlacement</code>.</td>
+    </tr>
+    <tr>
+      <td>Chip</td>
+      <td><code>:chip[texto]</code></td>
+      <td>Um trecho de texto dentro de uma caixa que quebra como uma unidade só: um banco de palavras, uma tecla, uma etiqueta. Estilizado por <code>chipStyles</code>; veja <a href="#chips-em-linha">Chips em linha</a>.</td>
+    </tr>
+    <tr>
+      <td>Tabulação</td>
+      <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
+      <td>Leva as palavras que vêm depois dela até a próxima parada de tabulação: uma das paradas do estilo do parágrafo, ou a que os seus atributos definem. Um caractere de tabulação digitado no texto só é uma tabulação onde o estilo define paradas. Veja <a href="#tabulações-e-paradas-de-tabulação">Tabulações e paradas de tabulação</a>.</td>
+    </tr>
+    <tr>
+      <td>Fórmula em linha</td>
+      <td><code>$…$</code></td>
+      <td>Uma fórmula LaTeX que flui com o texto em volta, por exemplo <code>$e^{'{i\\pi}'}+1=0$</code>. Composta pelo MathJax e renderizada como contornos vetoriais em todos os renderizadores. Use <code>\\$</code> para um cifrão literal. A escala, a forma destacada (<code>$$ … $$</code>) e o tratamento de erros estão em <a href="#fórmulas-matemáticas">Fórmulas matemáticas</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Links
+
+Um link Markdown, `[text](url)`, mantém o texto no fluxo exatamente como ele seria composto sem o link: o link nunca altera quebras de linha, espaçamento nem cor. Ele guarda a URL para as saídas capazes de segui-la:
+
+- **HTML** (`renderToHtml`): as palavras com link ficam envolvidas em `<a href="…" rel="noopener noreferrer">`, que herda a cor do texto e não tem sublinhado. Há uma âncora por trecho de palavras com link em cada linha.
+- **PDF** (`postext-pdf`): cada trecho de palavras com link numa linha vira uma anotação de link URI clicável. Num PDF com tags, é um elemento `Link` cujo texto são as palavras com link.
+- **Canvas**: pintado como texto simples, já que um canvas não tem superfície de clique.
+
+```markdown
+Read the [configuration guide](https://postext.dev/en/docs/configuration "Configuration")
+or write to [the team](mailto:team@example.com).
+```
+
+- O destino pode trazer um título, que é ignorado (`[text](https://example.com "Title")`). Também pode vir entre sinais de menor e maior, e nesse caso os espaços viram `%20` (`[text](<https://example.com/a b>)`).
+- Só destinos seguros são mantidos: `http:`, `https:`, `mailto:`, `tel:`, `ftp:` e URLs relativas (`../guide`, `#top`). Qualquer outro esquema (`javascript:`, `data:`, `file:`…) compõe o texto sem link. O PDF só cria links para URLs absolutas.
+- O destino pode conter parênteses, desde que estejam balanceados, como no CommonMark: `[photo](https://commons.wikimedia.org/wiki/File:Bike_(Unsplash).jpg)` liga a URL inteira. Uma barra invertida escapa um caractere (`\(`, `\_`). Quando os parênteses não se balanceiam, o destino termina no primeiro `)` e o texto é composto sem link; codifique um parêntese solto como `%28` ou `%29`. Um espaço também encerra o destino, a menos que ele esteja entre sinais de menor e maior.
+- Uma palavra colada ao texto do link compartilha o link. Em `see [the site](https://example.com).` o ponto final faz parte da área clicável.
+- O texto do link pode ter ênfase (`[**bold** words](…)`) e pode estar dentro dela (`**[words](…)**`).
+- Os links funcionam em parágrafos, itens de lista, citações em bloco, boxes, legendas, notas e células de tabela, e em títulos enquanto `headings.inlineMarks` estiver ativado (o padrão). Os cabeços, o sumário de navegação e as linhas do sumário geradas a partir de um título guardam só o texto, assim como o texto de um `:chip[…]`.
+- Links no estilo de referência (`[text][id]`) e autolinks (`<https://…>`) não são reconhecidos (veja [O que NÃO é suportado](/pt/docs/document-format#o-que-não-é-suportado)).
+
+Na VDT o destino fica em cada segmento com link, como `VDTLineSegment.href`. O parser guarda os links de um trecho como intervalos do seu texto, em `InlineSpan.links`, e nunca divide um trecho por causa de um link; por isso um link não pode mudar o layout.
+
+### Chips em linha
+
+`:chip[text]` compõe `text` dentro de uma caixa (um “chip” arredondado e colorido) que flui com a linha: as palavras de um banco de palavras ou de um exercício de classificação, teclas do teclado, etiquetas. `:chip[text]{style="key"}` escolhe um estilo nomeado de `chipStyles` (veja a referência de configuração); sem `style`, ou com um id que nenhum estilo declara, o chip usa o primeiro estilo (um estilo `chip` embutido quando a configuração não tem nenhum; o Sandbox avisa quando o id é desconhecido).
+
+```markdown
+Classify: :chip[battery] :chip[cable] :chip[switch] :chip[bulb]
+
+Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
+```
+
+- **Uma unidade.** Um chip nunca é quebrado nem hifenizado por dentro; a linha quebra entre os chips, nos espaços entre palavras em volta deles. Um chip mais largo que a linha inteira transborda dela em vez de se dividir.
+- **Largura.** O avanço do chip é o texto mais o preenchimento horizontal e o contorno dos dois lados. A justificação estica só os espaços entre palavras, nunca o interior de um chip. O `gap` do estilo é o espaço mínimo mantido entre a caixa e uma palavra ou chip vizinho do outro lado de um espaço; um espaço mais estreito é completado (exceto na borda de uma linha e junto a uma pontuação colada, como em `:chip[a],`).
+- **Altura.** A caixa é uma faixa em volta da linha de base, 0,8 em acima e 0,25 em abaixo no tamanho do chip, acrescida do preenchimento vertical e do contorno. O preenchimento vertical é pintado fora da caixa da linha e nunca altera a entrelinha, de modo que a grade de linhas de base se mantém; uma caixa mais alta que o passo de linha pode encostar num chip da linha de cima ou de baixo, e o Sandbox sinaliza dois chips em linhas diferentes que se sobrepõem (“Chips encostam na linha vizinha”) para que se possa reduzir o preenchimento, o contorno ou o tamanho.
+- **Texto.** O texto do chip aceita marcas em linha próprias (`:chip[**bold** word]`, `:chip[x^2^]`) e a ênfase em volta (`**:chip[a]**`); o estilo pode definir família, tamanho, cor, negrito e itálico. Escreva `\]` para um colchete literal dentro dele. Referências, amostras de cor e fórmulas dentro de um chip ficam literais, e `\$` imprime um cifrão (até o postext 1.4 imprimia também a barra invertida).
+- **Vazio.** Um chip só de espaços (`:chip[ ]`, espaços inseparáveis incluídos) é uma caixa vazia (uma lacuna para resposta, um sinal de fim): tão larga quanto o preenchimento horizontal e o contorno do seu estilo, tão alta quanto um chip com palavras. Dimensione a lacuna com o `paddingX` de um estilo (`:chip[ ]{style="blank"}`). Sem nada entre os colchetes, `:chip[]` continua texto literal.
+- **Onde.** Parágrafos, itens de lista, citações em bloco, boxes, células de tabela, legendas e notas. Os títulos mantêm `:chip[…]` como texto literal.
+- **Saída.** Canvas, HTML e PDF pintam a caixa e compõem as palavras como texto real: selecionável no HTML, extraível e na ordem de leitura no PDF (num PDF com tags, a caixa é um artefato de layout e as palavras pertencem ao parágrafo).
+
+### Versaletes
+
+`:smallcaps[text]` compõe `text` em versaletes: os nomes das personagens numa peça de teatro, uma sigla no texto corrido, as primeiras palavras de um capítulo. As letras minúsculas são compostas como maiúsculas a 70% do tamanho do texto, enquanto maiúsculas, dígitos e pontuação mantêm o tamanho cheio, de modo que `:smallcaps[Hamlet]` imprime um H de tamanho cheio seguido de AMLET em versaletes.
+
+```markdown
+Enter :smallcaps[Hamlet] and :smallcaps[Horatio], reading.
+
+The :smallcaps[unesco] report and the :smallcaps[who] guidelines.
+```
+
+- **Sintetizados.** Os versaletes são desenhados a partir das próprias maiúsculas da fonte, do mesmo jeito no canvas, no HTML e no PDF, de modo que o texto mede e quebra de forma idêntica em todos eles. Os versaletes reais de uma fonte (o recurso OpenType `smcp`) não são usados; para eles, componha o texto numa família de versaletes (uma família cujo nome termina em “SC”, por exemplo) por meio de um estilo de parágrafo.
+- **Marcas.** O texto aceita marcas em linha próprias (`:smallcaps[**Ophelia**]`) e a ênfase em volta (`*:smallcaps[Act I]*`); escreva `\]` para um colchete literal dentro dele. Uma referência ou um chip dentro dele também sai em versaletes, e uma referência continua sendo um único link no HTML e no PDF; uma fórmula, não.
+- **Quebra.** As palavras quebram e são hifenizadas normalmente; a hifenização lê cada palavra na sua própria caixa (maiúscula ou minúscula).
+- **Onde.** Parágrafos, itens de lista, citações em bloco, boxes, células de tabela, legendas e notas, e títulos enquanto `headings.inlineMarks` estiver ativado (o padrão); com ele desativado, a marcação é removida do título e o texto sai como foi escrito.
+- **Parágrafos inteiros.** Um estilo de parágrafo ou o corpo de um boxe com `smallCaps: true` compõe todo o seu texto assim (veja [Estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)).
+- **Texto.** O canvas, o HTML e o PDF guardam as letras como foram pintadas: copiar `:smallcaps[Hamlet]` dá “HAMLET”.
+
+### Tabulações e paradas de tabulação
+
+Uma tabulação leva as palavras que vêm depois dela até uma parada na linha: o preço de um prato rente ao fim da medida, atrás de uma fileira de pontos, o ator depois do papel numa lista de elenco, a pontuação de uma questão de prova na margem. Escreva `:tab` onde vai a tabulação; os espaços em volta dela ficam dentro dela. As paradas são definidas na configuração: `bodyText.tabStops` para todos os parágrafos, itens de lista e citações, o `tabStops` de um estilo de parágrafo para os parágrafos de um grupo `:::paragraphs`, e o `body.tabStops` de um estilo de boxe dentro dos seus boxes (veja [Configuração › Paradas de tabulação](/pt/docs/configuration-text#paradas-de-tabulação)). Um cardápio cujos preços terminam no fim da medida, atrás de pontos:
+
+```ts
+paragraphStyles: [
+  { id: 'menu', firstLineIndent: { value: 0, unit: 'em' }, tabStops: [{ position: 'end', align: 'end', leader: '. ' }] },
+],
+```
+
+```markdown
+:::paragraphs{style="menu"}
+Sopa de cebola :tab 8,50
+
+Pargo grelhado com erva-doce e limão :tab 21,00
+:::
+```
+
+`:tab{…}` define uma parada só para aquela tabulação, sem estilo: a lacuna de um formulário até o fim da linha, um valor alinhado pela vírgula decimal.
+
+```markdown
+Nome e sobrenome :tab{at=end leader=rule}
+
+Total a pagar :tab{at=80% align=decimal} 1.234,50
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Atributo</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>at</code></td>
+      <td>Onde fica a parada, a partir da borda inicial da medida do parágrafo: um comprimento (<code>120mm</code>, <code>4cm</code>, <code>2em</code>; um número sem unidade é em pontos), <code>end</code> para o fim da medida, ou uma porcentagem dela (<code>60%</code>). Sem <code>at</code>, <code>:tab&#123;…&#125;</code> vai para as paradas do estilo, como um <code>:tab</code> simples.</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>start</code> (o padrão): o texto depois da tabulação começa na parada. <code>end</code>: termina nela (o texto até a próxima tabulação ou até o fim do parágrafo). <code>center</code>: fica centralizado nela. <code>decimal</code>: o seu separador decimal fica sobre a parada; um trecho sem separador termina nela.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td>Texto repetido no espaço antes da parada (o preenchimento): <code>"."</code>, <code>". "</code>, <code>"·"</code>, <code>"_"</code>, <code>"-"</code> ou outro texto curto, na fonte e na cor do parágrafo. <code>rule</code> traça uma linha um pouco abaixo da linha de base, a lacuna de um formulário. Padrão: nenhum.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>Espaço mantido entre o preenchimento e o texto de cada lado. Padrão: <code>0.5em</code> do corpo do parágrafo; um número sem unidade é em pontos.</td>
+    </tr>
+    <tr>
+      <td><code>decimal</code></td>
+      <td>O separador em que uma parada <code>decimal</code> se alinha. Padrão: o do idioma do documento, <code>.</code> em inglês, chinês, japonês e árabe, <code>,</code> em espanhol, catalão, português, francês, alemão e outros.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Para onde vai uma tabulação.** Para a primeira parada depois do texto que vem antes dela, entre as paradas posteriores à que a tabulação anterior da linha ocupou; assim, a segunda tabulação de uma linha costuma ocupar a segunda parada. Depois da última parada, `tabInterval` define mais paradas a cada intervalo a partir do início da medida; sem ele, a tabulação é um espaço entre palavras.
+- **Caracteres de tabulação.** Uma tabulação digitada no texto (U+0009) só é uma tabulação num parágrafo cujo estilo define `tabStops` ou `tabInterval`. Em qualquer outro lugar é o espaço entre palavras que sempre foi, de modo que um documento escrito com tabulações no lugar de espaços mantém a sua diagramação. Vários caracteres de tabulação seguidos vão para outras tantas paradas. Uma tabulação no início de uma linha do texto de origem é cortada com os outros brancos iniciais da linha: escreva `:tab` para começar uma linha numa parada.
+- **O que continua texto.** Um `:tab` seguido de uma letra (`3:table`), e um `:tab` em código na linha, numa fórmula, no endereço de um link ou nos atributos de uma diretiva.
+- **Onde.** Parágrafos, itens de lista, citações, boxes e grupos `:::paragraphs`. Títulos, legendas, células de tabela e o texto dos designs (aberturas, cabeços) não têm paradas de tabulação.
+- **Texto que passa da parada.** Quando o texto antes de uma tabulação já passou de todas as paradas que restam na sua linha, uma parada `end`, `center` ou `decimal` leva a última palavra antes da tabulação para a linha seguinte junto com o texto da parada, e o texto antes dela é composto mais estreito, como uma linha do sumário quebra o título para manter o número da página. Uma parada `start` quebra a linha antes da tabulação, e o texto depois dela começa a linha seguinte na sua parada. Uma tabulação que abre a sua linha e mesmo assim não encontra parada não ocupa espaço.
+- **Preenchimentos.** Um preenchimento ocupa o espaço antes da sua parada e termina rente ao fim desse espaço, de modo que os pontos de várias linhas ficam alinhados, seja qual for o texto antes deles. `gap` o mantém afastado do texto dos dois lados; não há espaço antes dele quando a tabulação abre a linha, nem depois quando nada vem em seguida. Um preenchimento leva três repetições ou mais; um espaço onde só cabem uma ou duas fica vazio, como no sumário.
+- **Quebra de linha.** Um parágrafo que contém uma tabulação é composto linha a linha, nunca com Knuth–Plass. No texto justificado, só os espaços entre palavras depois da última tabulação de uma linha absorvem a folga, e a última linha do parágrafo não é esticada (veja [Justificação › Linhas com tabulação](/pt/docs/justification#linhas-com-tabulação)). Um parágrafo centralizado ou alinhado à direita compõe as suas linhas com tabulação a partir do lado inicial, já que as paradas são posições na medida. Da direita para a esquerda, as paradas são medidas a partir da direita e uma parada `end` fica à esquerda (veja [Composição árabe](/pt/docs/arabic-layout#sumário-e-índice-remissivo)). No texto vertical, uma tabulação é um espaço entre palavras, e um `:tab` ali gera o aviso de conteúdo `tabInVerticalText`.
+- **Texto e saídas.** O texto simples tem um caractere de tabulação (`\t`) em cada tabulação; os preenchimentos não são texto, e as cópias, as buscas e o mapa de origem os deixam de fora. O canvas, o visualizador HTML e o EPUB de layout fixo os pintam (ocultos para os leitores de tela no HTML); um PDF com tags os marca como artefatos, de modo que o seu texto diz `Sopa de cebola 8,50`. O EPUB refluível não consegue manter as paradas exatamente: cada linha de um parágrafo com tabulações vira uma fileira das partes entre as suas tabulações, em que uma parada `end`, `center` ou `decimal`, ou uma com preenchimento, empurra a parte seguinte para o fim da fileira (o preenchimento vira uma borda pontilhada ou contínua), e uma parada `start` mantém a parte anterior na sua largura impressa. Uma exportação para o Word escreve `:tab` como uma tabulação do Word, e a importação do Word lê de volta uma tabulação do texto corrido como `:tab` com a parada que o Word definiu para ela (veja [Sandbox › Documentos do Word](/pt/docs/sandbox-books-saving#documentos-do-word)).
+
+### Orientação no texto vertical
+
+No texto vertical (`layout.writingMode: 'vertical-rl'`) os caracteres chineses ficam em pé, palavras latinas e números longos são girados de lado, e um número de no máximo dois dígitos fica em pé numa única célula, a menos que esteja numa frase latina, cujas palavras ele acompanha (veja [Configuração › Números no texto vertical](/pt/docs/configuration-east-asian#números-em-texto-vertical)). Três marcas destacam um trecho manualmente:
+
+```markdown
+第:tcy[120]回，:upright[GDP]增長:sideways[12]倍。
+```
+
+- `:tcy[…]` (tate-chu-yoko, 縱中橫) compõe o texto lado a lado numa única célula em pé de um em, comprimido na horizontal quando é mais largo: `:tcy[120]`, `:tcy[3.0]`, `:tcy[A+]`. Até uns quatro caracteres ficam legíveis.
+- `:upright[…]` põe cada caractere em pé numa célula própria, com as letras latinas centralizadas nela: uma sigla lida letra a letra coluna abaixo. A linha nunca quebra dentro dela.
+- `:sideways[…]` gira o trecho inteiro com a linha, caracteres chineses inclusive: um número de dois dígitos que o autor quer deitado.
+- O texto continua no texto simples; as marcas aceitam outras marcas em linha dentro delas (`:tcy[**12**]`), um link (`:sideways[[iPhone](https://…)]`) e umas às outras, prevalecendo a mais interna (`:tcy[:upright[AB]]` põe A e B em pé), e escreva `\]` para um colchete literal. No texto horizontal elas não mudam nada.
+- Uma referência, um marcador de nota, uma fórmula, um chip ou uma amostra de cor dentro de uma marca mantém sua própria composição: `:sideways[iPhone[^1]]` gira iPhone e deixa o número da nota como todo número de nota é composto; o número de uma referência fica em pé numa célula por `cjk.uprightDigits`, como qualquer número curto.
+- Um elemento de texto de design com `inlineMarks: true` também as aceita quando é composto na vertical (veja [Configuração › Elementos de texto vertical](/pt/docs/configuration-headers-footers#elementos-de-texto-verticais)).
+- Para a quebra e a justificação, uma célula `:tcy` e cada caractere de `:upright` contam como caracteres chineses, e nenhum espaço han–latino é inserido ao lado deles.
+
+
+### Marcas chinesas, rubi e warichu
+
+As edições chinesas e japonesas marcam o texto entre as linhas em vez de usar itálico ou sublinhado, anotam os caracteres com suas leituras e compõem comentários dentro da linha. Sete diretivas fazem isso. [Diagramação em chinês](/pt/docs/chinese-layout) e [Diagramação em japonês](/pt/docs/japanese-layout) explicam as convenções por trás delas. Elas preservam o texto: os caracteres entre os colchetes ficam no parágrafo (a busca, o sumário, as âncoras do índice e o texto copiado os leem como foram escritos), e as diretivas aceitam as outras marcas em linha dentro e em volta delas, inclusive as aninhadas. Escreva `\]` para um colchete literal.
+
+```markdown
+此事:dots[不可]輕忽。:name[賈寶玉]與:name[林黛玉]讀:book[西廂記]。
+
+{滿紙|mǎn|zhǐ}荒唐言，:ruby[一把]{rt="yì bǎ"}辛酸淚！:ruby[都]{rt="ㄉㄡ"}云作者痴。
+
+寶玉:warichu[甲戌側批：此是第一首標題詩。]{open="〔" close="〕"}道：……
+
+{東京|とう|きょう}の:ruby[紫陽花]{rt="あじさい"}は*とんと*:sideline[見事]だ。:book[こころ]を読む。
+
+:kunten[學]{okuri="ビテ"}而:kunten[時]{okuri="ニ"}:kunten[習]{kaeri="二" okuri="フ"}:kunten[之]{kaeri="一" okuri="ヲ"}。
+```
+
+- **`:dots[text]`** põe um ponto de ênfase (着重号) sob cada caractere no texto horizontal, à direita dele no texto vertical, e nenhum na pontuação nem nos espaços. `style="dot|circle|sesame"` (padrão `dot`), `fill="open"` para um contorno, `pos="over|under"` para o outro lado. A ênfase Markdown `*…*` sobre caracteres chineses ou japoneses faz o mesmo com `cjk.emphasis: 'dots'`, o padrão num documento chinês ou japonês; letras latinas na mesma ênfase continuam em itálico. Os atributos omitidos vêm de `cjk.emphasisMark`: um ponto sob o texto em chinês, um gergelim sobre ele (à direita, no texto vertical) em japonês.
+- **`:name[text]`** traça a linha de nome próprio (专名号) sob o texto (à esquerda dele no texto vertical), e **`:book[text]`** a marca de título de obra (书名号): 《》 em volta do título (〈〉 para um título dentro de outro), a linha ondulada das edições clássicas e de Taiwan, ou nada, conforme `cjk.bookTitleMark` (por padrão, colchetes na China continental e no Japão, a linha ondulada em Taiwan e Hong Kong). Num documento japonês os colchetes são 『』, e 「」 para um título dentro de outro (`cjk.bookTitleBrackets`). Uma única fonte serve a uma edição moderna do continente e a uma clássica. Dois nomes ou títulos lado a lado mantêm suas linhas separadas.
+- **`:ruby[base]{rt="…"}`** compõe leituras sobre a base (pinyin), ou à direita de cada caractere (zhuyin, o padrão para leituras em bopomofo). Com tantas leituras quanto caracteres, separadas por espaços ou `|`, cada caractere recebe a sua e a linha pode quebrar entre eles (rubi mono); `group`, ou uma contagem que não bate, compõe uma única leitura centralizada sobre a base inteira, que nunca quebra. `pos="over|under|right"` escolhe o lado. A forma compacta `{紅樓|hóng|lóu}` (uma leitura por `|`) ou `{紅樓|hónglóu}` (uma leitura para a base inteira) tem o mesmo efeito, mas só quando a base contém um caractere han, kana ou bopomofo, fora de fórmulas, código e atributos, de modo que `{x|x>0}` na prosa latina continua texto. Uma barra invertida antes da chave ou da barra vertical mantém uma forma chinesa como texto: `\{紅|hóng}` e `{紅\|hóng}` imprimem `{紅|hóng}`. Uma base que abre ou fecha uma linha se alinha a essa borda junto com sua leitura. `mode=mono|group|jukugo` escolhe como as leituras se distribuem sobre a base (`mode=group` equivale a `group`), e `align=center|jis|start` como se espaça uma leitura mais curta que sua base. Num documento japonês, a forma por caractere de uma palavra de dois ou mais caracteres (`{東京|とう|きょう}`, `rt="とう|きょう"`) é rubi jukugo: cada caractere mantém sua leitura, que pode avançar sobre o caractere seguinte da palavra, a linha pode quebrar entre eles, e as leituras são espaçadas e avançam sobre kana conforme `cjk.ruby.align` e `cjk.ruby.overhang`; uma leitura para a base inteira (`{紫陽花|あじさい}`, o `《》` do Aozora) é rubi de grupo; `mode=mono` mantém uma leitura por caractere sem avançar sobre os vizinhos.
+- **`:sideline[text]`** traça uma linha lateral (傍線) ao lado do texto, pontuação e espaços incluídos: embaixo dele no texto horizontal e à direita no texto vertical. `style="solid|double|wavy|dotted"` (padrão `solid`), `pos="over|under"` (no texto vertical, over é a direita e under a esquerda; `position=` também funciona). Funciona em qualquer escrita, inclusive numa frase em inglês sublinhada.
+- **`:warichu[note]`** compõe uma nota (双行夹注) em duas linhas com metade do tamanho do texto dentro da linha, lendo-se primeiro a linha de cima (a da direita no texto vertical). Uma nota longa preenche o que resta da linha e continua na linha, coluna ou página seguinte, com pelo menos dois dos seus caracteres de cada lado da quebra (`cjk.warichu.minChars`). `open` e `close` a envolvem em colchetes no tamanho do texto; `cjk.warichu` define o tamanho, a cor e os colchetes padrão (（） num documento japonês). Uma nota em escrita latina quebra entre as palavras.
+- **`:kunten[字]{kaeri="…" okuri="…" tate}`** compõe as marcas de kanbun do último caractere entre os colchetes: `kaeri` a marca de retorno (レ, 一 二 三, 上 中 下, 甲 乙 丙, 天 地 人, e 一レ 上レ 甲レ 天レ; os code points ㆑ ㆒ … funcionam igual), `okuri` o okurigana (os parênteses do Aozora, `（ヲ）`, são descartados), e a flag `tate` o tatesen que o liga ao caractere seguinte. O texto não é reordenado: as marcas são compostas em meio corpo ao lado dele (`cjk.kunten`), e o texto copiado fica 學ビテ而時ニ習フ之ヲ, com o okurigana e sem as marcas de retorno. Um rubi dentro funciona para os caracteres lidos duas vezes: `:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`.
+
+O passo de linha nunca muda: marcas e leituras ficam no espaço da entrelinha, e a composição avisa quando o espaço entre as linhas de um parágrafo é estreito demais para elas (`cjkMarksExceedLeading`, `rubyExceedsLeading`, `kuntenExceedsLeading`), e quando as marcas sob uma linha e as leituras sobre a seguinte não cabem no espaço que dividem, num mesmo parágrafo ou entre dois. Dê aos parágrafos anotados um estilo de parágrafo com mais entrelinha. Marcas, leituras e notas são desenhadas em parágrafos, títulos, itens de lista, citações em bloco e boxes, e também em legendas, células de tabela e notas, cuja entrelinha é verificada do mesmo modo; em cabeços e designs o texto sai sem elas. Com `cjk.bookTitleMark: 'brackets'`, os 《》 de um título são pontuação do texto: legendas, células, notas, linhas do sumário, marcadores e entradas de índice os mantêm. Veja [Configuração › Marcas, rubi e warichu](/pt/docs/configuration-east-asian#marcas-rubi-e-warichu).
+
+
+### Direção do texto na marcação
+
+Um documento corre na direção que seu `locale` implica (`direction` na configuração: da direita para a esquerda em árabe, persa, urdu ou hebraico). Dentro dele, a marcação define a direção de um bloco ou de um trecho de texto, para uma citação em inglês num livro em árabe ou uma em árabe num livro em inglês.
+
+- **Um título ou um contêiner**: `{dir=ltr}` ou `{dir=rtl}` nos seus atributos, `# Introduction {dir=ltr}`, `:::paragraphs{dir=ltr}`, `:::callout{dir=rtl}`. Todo bloco dentro de um contêiner assume essa direção, até um contêiner aninhado ou um título que defina outra. Um parágrafo simples, uma lista ou uma citação não têm atributos próprios: envolva-os em `:::paragraphs{dir=…}`. Outros valores são ignorados. O `lang` de um contêiner (`:::paragraphs{dir=ltr lang=en}`) indica do mesmo modo o idioma dos blocos dentro dele: suas listas numeradas usam os algarismos desse idioma.
+- **Um trecho de texto**: `:ltr[…]` e `:rtl[…]` isolam seu texto (os LRI…PDI e RLI…PDI do algoritmo bidirecional do Unicode): ele é ordenado por dentro, e o parágrafo em volta o vê como um único caractere neutro. `{lang=…}` marca o idioma do trecho no HTML e no PDF. Um marcador de nota, um `:ref` ou uma fórmula dentro dele fazem parte do isolamento, e os isolamentos podem se aninhar.
+
+```markdown
+:::paragraphs{dir=ltr}
+The opening of the *Nights* in Lane's translation.
+:::
+
+ترجمها :ltr[Edward William Lane]{lang=en} سنة ١٨٣٩.
+```
+
+Um bloco composto contra a direção do documento mantém seu próprio lado de início: o recuo, os marcadores de lista e o final alinhado da última linha passam para o lado em que o texto começa. Use um isolamento quando um título latino terminar num caractere neutro (um ponto final, um parêntese) que, sem isso, se juntaria ao árabe em volta. Os próprios caracteres de controle do Unicode (U+2066–2069, U+202A–202E, U+200E, U+200F, U+061C) também são respeitados. No editor do Sandbox, cada linha corre na direção da sua primeira letra. Veja [Diagramação em árabe](/pt/docs/arabic-layout#direção-e-algoritmo-bidirecional).
+
+
+## Fórmulas matemáticas
+
+O suporte a fórmulas matemáticas é parte integral do formato do documento. O Postext lê `$…$` para fórmulas em linha e `$$…$$` para fórmulas destacadas (em bloco), e as renderiza com o [MathJax](https://www.mathjax.org/) no modo SVG. Os mesmos contornos vetoriais alimentam os três renderizadores, de modo que a visualização no canvas, a exportação HTML e a saída PDF coincidem pixel a pixel, e o PDF continua totalmente vetorial em qualquer nível de zoom.
+
+- **Em linha:** `$…$`. Reconhecida dentro de qualquer bloco de texto (parágrafo, título, citação em bloco, item de lista). Entra na linha como uma única caixa atômica e inquebrável; o Knuth-Plass a trata como uma palavra que não pode ser dividida. Se a altura natural da fórmula romper a caixa da linha, ela é reduzida por igual para preservar a grade de linhas de base; expressões muito altas pedem o modo destacado.
+- **Destacada:** `$$…$$`. Numa linha própria (`$$\int_0^1 x^2\,dx$$`) ou em várias linhas, delimitada por marcadores `$$` em linhas próprias. É renderizada centralizada na coluna e encaixada na grade de linhas de base, com margens superior e inferior configuráveis (`math.marginTop`, `math.marginBottom`): exatamente o mesmo mecanismo de correção que os títulos usam, de modo que o parágrafo depois da fórmula volta para a grade.
+- **Texto em volta de uma fórmula destacada:** uma fórmula destacada numa linha própria interrompe um parágrafo mesmo sem linha em branco acima dela. O texto anterior é um parágrafo que a introduz; o texto escrito logo abaixo do `$$` de fechamento, sem linha em branco, continua o parágrafo interrompido e é composto sem recuo de primeira linha, como o TeX compõe o “onde …” depois de uma fórmula destacada. Uma fórmula separada do texto acima por uma linha em branco (ou que vem depois de uma lista, de uma citação ou de um título) não interrompe nada: o texto depois dela é um parágrafo novo, recuado como de costume, com ou sem linha em branco (`math.indentAfterDisplay: false` o compõe sem recuo também). Só uma fórmula destacada inteira interrompe um parágrafo: uma fórmula sozinha na linha, ou um bloco `$$` fechado antes da próxima linha em branco; uma linha como `$$a$$ and $$b$$` continua texto. `math.keepWithLeadIn` mantém a fórmula na coluna da linha que a introduz. (Até o postext 1.4, uma linha `$$…$$` sem linha em branco acima era lida como parte do parágrafo e impressa como foi escrita.)
+- **Números de equação:** `\label{eq:x}` numa fórmula destacada a numera, na ordem de leitura: (1), (2)… Uma fórmula com número ocupa a coluna (ou a largura interna do boxe), com a equação centralizada e o número alinhado à direita na mesma linha. Num `align`, `gather`, `alignat`, `flalign` ou `eqnarray`, cada linha que tem um `\label` recebe seu próprio número, a menos que a linha diga `\nonumber` ou `\notag`. Uma fórmula sem `\label` não é numerada, como `$$…$$` nunca foi. `\tag{…}` continua numerando uma fórmula com o texto que você der (`\tag*{…}` sem os parênteses) e não entra na contagem; um `\label` ao lado dá nome a esse texto. O formato, os números de capítulo ou de seção (2.3) e os recomeços se definem em [`math.equationNumbering`](/pt/docs/configuration-lists-math#matemática). Ponha o `\label` no nível superior da fórmula ou da linha: não dentro de `aligned`, `split` ou `cases`.
+- **Referências a equações:** `\eqref{eq:x}` no texto imprime o número como a fórmula o imprime, (3), e `\ref{eq:x}` só o número, 3; ambos são links, como toda [referência cruzada](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras). `Eq.~\eqref{eq:x}` mantém o `~` como faz o LaTeX: um espaço inseparável. `:ref{id="eq:x"}` e `@eq:x` também imprimem (3). Dentro de uma fórmula, `\eqref` e `\ref` imprimem o número (sem link). Um rótulo que nada define imprime *?* e aparece no painel Verificações.
+- **Escape:** `\$` é um cifrão literal. Delimitadores `$` ou `$$` sem par geram uma entrada `unclosedMath` no painel Verificações do Sandbox, com uma âncora para a origem que leva até ela com um clique.
+- **Legendas, notas e células de tabela** também compõem fórmulas em linha (desde o postext 1.19), na linha junto com o texto e com o alinhamento da célula, no tamanho do trecho. Ali um `$` só abre fórmula pela regra do Pandoc: nenhum espaço depois do `$` de abertura, nenhum espaço antes do de fechamento e nenhum dígito logo depois dele, de modo que os preços de *$5 to $10* continuam texto; `\$` imprime um cifrão, de modo que uma mesma string com escape é lida igual no texto e numa tabela. O rótulo de um chip não aceita fórmulas. Até o postext 1.18, um `$` ali sempre saía como foi escrito.
+- **Erros:** um código TeX que o MathJax rejeita (macros indefinidas, erros de sintaxe) aparece como um aviso `invalidMath`. A fórmula é substituída por um pequeno marcador vermelho para que a geometria do layout continue válida.
+- **Configuração:** a seção `math` da configuração expõe `enabled`, `fontSizeScale` (relativo ao tamanho do texto em volta: em 1.0, um em da fórmula tem esse tamanho, o do corpo para fórmulas destacadas e para fórmulas em linha no texto corrido; desde o postext 1.5, que compõe as fórmulas cerca de 13% menores que o 1.4, enquanto os pacotes e os livros do Sandbox salvos pelo 1.4 mantêm seu tamanho; veja [Tamanho das fórmulas](/pt/docs/configuration-lists-math#matemática)), `color` (herda a cor do corpo quando não definido) e as margens das fórmulas destacadas.
+- **O motor:** o MathJax é carregado sob demanda. O Sandbox e o worker de layout o iniciam por conta própria; no seu próprio código, chame `await initMathEngine()` antes de `buildDocument`, ou cada fórmula será diagramada como uma caixa cinza de marcação (veja [Como iniciar o motor de fórmulas](/pt/docs/configuration-lists-math#inicializar-o-motor-de-fórmulas)).
+
+```md
+The Euler identity $e^{i\pi}+1=0$ links the five fundamental constants.
+
+$$
+\int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$
+```
+
+Uma fórmula no meio de uma frase, e a frase continuando depois dela sem recuo:
+
+```md
+For a pendulum of length $L$ the period is
+$$T_0 = 2\pi\sqrt{L/g}$$
+where $g$ is the acceleration of free fall.
+```
+
+Equações numeradas e as referências a elas:
+
+```md
+The energy is conserved,
+$$
+\begin{align}
+E &= T + V \label{eq:energy} \\
+  &= \tfrac12 m v^2 + m g h \nonumber
+\end{align}
+$$
+and Eq.~\eqref{eq:energy} holds at every instant.
+```
+
+**Teoremas, lemas e demonstrações.** Um estilo de boxe com `numbering` conta seus boxes, como o `amsthm` do LaTeX conta os ambientes de teorema: cada boxe abre com o rótulo e o número em negrito, “**Teorema 2.**”, com o `title` do bloco depois do número entre parênteses, “**Teorema 2** (Bradley–Terry)**.**”, e uma referência ao seu `{#id}` imprime “Teorema 2” (`\ref{thm:x}` ou `style=number`, só o 2). Os estilos que indicam o mesmo contador o compartilham, de modo que um lema depois de um teorema é o Lema 3. O `endMark` de um estilo de demonstração encerra seus boxes com ∎ ou □, alinhado à direita na última linha. Veja [Enunciados numerados e demonstrações](/pt/docs/configuration-callouts#enunciados-numerados-e-demonstrações) para os estilos.
+
+```md
+:::callout{type="theorem" #thm:main title="Bradley–Terry"}
+Every reward class holds one reparameterised reward.
+:::
+
+:::callout{type="proof"}
+Apply the projection of \eqref{eq:projection} to any member of the class.
+:::
+
+By :ref{id="thm:main"}, the objective is unchanged.
+```

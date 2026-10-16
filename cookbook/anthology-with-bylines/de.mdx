@@ -18,7 +18,7 @@ Neun Seiten aus *Afoot*, einer Taschenanthologie mit drei Essays über das Gehen
 
 <Excerpt region="opener" />
 
-`numberingTemplate: '{1:I}'` der Ebene nummeriert die Essays mit I, II und III, und `{number}` druckt die Ziffer über dem Titel ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). `minHeight` reserviert 12 Zeilen zu 14 pt, und die Haarlinie endet 7 mm darüber; unter einem einzeiligen Titel beginnt der Text daher auf jedem Auftakt 79 mm unter der Oberkante. Eine zweite Titelzeile in 26 pt fügt 9,9 mm hinzu und schiebt den Text eine Rasterzeile tiefer; mit `SINK = 14` beginnen ein- und zweizeilige Titel ihren Text auf derselben Zeile. `marginBottom: pt(0)` verhindert, dass der Standardabstand der Überschrift zur Reserve hinzukommt.
+`numberingTemplate: '{1:I}'` der Ebene nummeriert die Essays mit I, II und III, und `{number}` druckt die Ziffer über dem Titel ([Span und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)). `minHeight` reserviert 12 Zeilen zu 14 pt, und die Haarlinie endet 7 mm darüber; unter einem einzeiligen Titel beginnt der Text daher auf jedem Auftakt 79 mm unter der Oberkante. Eine zweite Titelzeile in 26 pt fügt 9,9 mm hinzu und schiebt den Text eine Rasterzeile tiefer; mit `SINK = 14` beginnen ein- und zweizeilige Titel ihren Text auf derselben Zeile. `marginBottom: pt(0)` verhindert, dass der Standardabstand der Überschrift zur Reserve hinzukommt.
 
 ### 2 · Das Inhaltsverzeichnis sich selbst füllen lassen
 
@@ -30,7 +30,7 @@ Neun Seiten aus *Afoot*, einer Taschenanthologie mit drei Essays über das Gehen
 
 <Excerpt region="running-heads" />
 
-Jeder Kolumnentitel ist an der Seite verankert, 11 mm unter der Oberkante, und `parity` wählt die Seite: Die Pagina fluchtet mit der Außenkante des Textes, Name oder Titel stehen 7 mm weiter innen. `pages: 'body'` in `head()` hält die Kolumnentitel von den Auftakten fern, wo die Autorenzeile den Autor bereits nennt, und `pages: 'opener'` der Fußzeile druckt dort stattdessen eine Pagina am Fuß ([Textelemente](/de/docs/configuration-page-layout#textelemente)). `{chapterTitle}` druckt den Titel des Essays ohne seine Ziffer.
+Jeder Kolumnentitel ist an der Seite verankert, 11 mm unter der Oberkante, und `parity` wählt die Seite: Die Pagina fluchtet mit der Außenkante des Textes, Name oder Titel stehen 7 mm weiter innen. `pages: 'body'` in `head()` hält die Kolumnentitel von den Auftakten fern, wo die Autorenzeile den Autor bereits nennt, und `pages: 'opener'` der Fußzeile druckt dort stattdessen eine Pagina am Fuß ([Textelemente](/de/docs/configuration-headers-footers#textelemente)). `{chapterTitle}` druckt den Titel des Essays ohne seine Ziffer.
 
 ### 4 · Umschlag und Inhaltsverzeichnis aus der Zählung nehmen
 

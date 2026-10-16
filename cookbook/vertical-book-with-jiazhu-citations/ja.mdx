@@ -24,7 +24,7 @@ pageNotes: { "1": "背の左側にある最初のページ。右から、太い�
 
 ### 2 · 章末の引用文献
 
-`:::bibliography{title="本章引用書目" scope=chapter}`は、書いた位置に一覧を組み、この章が引用した文献だけを並べます（[参考文献の一覧](/ja/docs/document-format#参考文献の一覧)）。文献はBibTeXのブロックから取ります。各項目は`langid`に`chinese`か`english`を持ち、スタイルはそれを文献の言語として読みます。漢字で書かれた人名は分けずにそのまま残ります。一覧は初出の順に番号が振られ、項目の折り返しの行はラベルの下から始まります。
+`:::bibliography{title="本章引用書目" scope=chapter}`は、書いた位置に一覧を組み、この章が引用した文献だけを並べます（[参考文献の一覧](/ja/docs/document-format-notes-references#参考文献の一覧)）。文献はBibTeXのブロックから取ります。各項目は`langid`に`chinese`か`english`を持ち、スタイルはそれを文献の言語として読みます。漢字で書かれた人名は分けずにそのまま残ります。一覧は初出の順に番号が振られ、項目の折り返しの行はラベルの下から始まります。
 
 ### 3 · 繁体字を本土の規則で
 
@@ -36,7 +36,7 @@ pageNotes: { "1": "背の左側にある最初のページ。右から、太い�
 
 <Excerpt region="opener" />
 
-縦組みのページでは、見出しのデザインは流れの枠の中に組まれます。`x`は行を下へ、`y`はページの右端から横へ進むので、`'horizontal'`の罫は紙面では縦の線になります。3本の罫が、30.4pt離れた2つの行を囲みます。1行目に太い黒体の「第三章」、2行目に楷書の題が立ちます（[幅と詳細デザイン](/ja/docs/configuration-text#幅と詳細デザイン)）。章番号は見出しの`startAt=3`とテンプレート`第{1:一}章`から、ノンブルは`pageNumbering`の`trad-chinese-informal`で45から振ります。柱とノンブルは<RecipeLink slug="vertical-novel-right-bound">No. 075</RecipeLink>と同じく小口に沿って縦に入ります（[縦組みのテキスト要素](/ja/docs/configuration-page-layout#縦組みのテキスト要素)）。
+縦組みのページでは、見出しのデザインは流れの枠の中に組まれます。`x`は行を下へ、`y`はページの右端から横へ進むので、`'horizontal'`の罫は紙面では縦の線になります。3本の罫が、30.4pt離れた2つの行を囲みます。1行目に太い黒体の「第三章」、2行目に楷書の題が立ちます（[幅と詳細デザイン](/ja/docs/configuration-headings#幅と詳細デザイン)）。章番号は見出しの`startAt=3`とテンプレート`第{1:一}章`から、ノンブルは`pageNumbering`の`trad-chinese-informal`で45から振ります。柱とノンブルは<RecipeLink slug="vertical-novel-right-bound">No. 075</RecipeLink>と同じく小口に沿って縦に入ります（[縦組みのテキスト要素](/ja/docs/configuration-headers-footers#縦組みのテキスト要素)）。
 
 <Excerpt region="palette" />
 

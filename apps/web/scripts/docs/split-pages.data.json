@@ -1,0 +1,1793 @@
+{
+  "$comment": "Prose of the pages split-pages.mjs writes (#884): for each page split (`from`), the new metadata of the page that stays and the title, sidebar title, description and In short summary of each new page, whose `sections` are English heading paths; the Configuration entry page's description, summary and index lead, and the index lines of sections the index did not list. Ten languages.",
+  "order": [
+    "introduction",
+    "architecture",
+    "architecture-layout-pipeline",
+    "configuration",
+    "configuration-page-layout",
+    "configuration-headers-footers",
+    "configuration-text",
+    "configuration-language",
+    "configuration-headings",
+    "configuration-page-flow",
+    "configuration-lists-math",
+    "configuration-notes-references",
+    "configuration-east-asian",
+    "configuration-resources",
+    "configuration-styles",
+    "configuration-callouts",
+    "configuration-comics",
+    "configuration-composed-pages",
+    "configuration-fonts-colors-viewers",
+    "configuration-programmatic-usage",
+    "configuration-pdf-output",
+    "configuration-html-folio-epub",
+    "configuration-bundles",
+    "justification",
+    "document-format",
+    "document-format-directives",
+    "document-format-inline",
+    "document-format-notes-references",
+    "document-format-resources",
+    "chinese-layout",
+    "arabic-layout",
+    "japanese-layout",
+    "comics",
+    "contributing",
+    "sandbox",
+    "sandbox-design-checks",
+    "sandbox-previews",
+    "sandbox-books-saving",
+    "sandbox-embedding",
+    "skill",
+    "command-line",
+    "webmcp"
+  ],
+  "splits": [
+    {
+      "from": "architecture",
+      "entry": {
+        "en": {
+          "description": "Technical architecture of the Postext layout engine: its concepts, the document tree, rhythm, backends and performance",
+          "plainSummary": "This page explains how Postext works inside, and it is written for programmers. First, Postext measures every word without drawing anything on screen, which makes it very fast. Then it works out where every line, picture and column goes, and keeps that plan in memory. Last, it draws the finished pages as a web page, a canvas image or a PDF file. When you change a word, it lays the pages out again and reuses the measurements of the paragraphs that did not change. The next page explains, step by step, how the lines and pictures are placed."
+        },
+        "es": {
+          "description": "Arquitectura técnica del motor de composición tipográfica Postext: sus conceptos, el árbol del documento, el ritmo vertical, los backends y el rendimiento",
+          "plainSummary": "Esta página explica cómo funciona Postext por dentro, y está escrita para programadores. Primero, Postext mide cada palabra sin dibujar nada en pantalla, y por eso es muy rápido. Después calcula dónde va cada línea, cada imagen y cada columna, y guarda ese plan en memoria. Al final dibuja las páginas terminadas como página web, como imagen en un canvas o como archivo PDF. Si cambias una palabra, vuelve a componer las páginas y aprovecha las medidas de los párrafos que no han cambiado. La página siguiente explica, paso a paso, cómo se colocan las líneas y las imágenes."
+        },
+        "ca": {
+          "description": "Arquitectura tècnica del motor de composició tipogràfica Postext: els seus conceptes, l'arbre del document, el ritme vertical, els backends i el rendiment",
+          "plainSummary": "Aquesta pàgina explica com funciona Postext per dins, i està escrita per a programadors. Primer, Postext mesura cada paraula sense dibuixar res a la pantalla, i per això és molt ràpid. Després calcula on va cada línia, cada imatge i cada columna, i desa aquest pla a la memòria. Al final dibuixa les pàgines acabades com a pàgina web, com a imatge en un canvas o com a fitxer PDF. Si canvies una paraula, torna a compondre les pàgines i aprofita les mesures dels paràgrafs que no han canviat. La pàgina següent explica, pas a pas, com es col·loquen les línies i les imatges."
+        },
+        "zh": {
+          "description": "Postext排版引擎的技术架构：核心概念、文档树、垂直韵律、后端与性能",
+          "plainSummary": "本页讲解Postext的内部工作原理，面向程序员。首先，Postext在不往屏幕上画任何东西的情况下测量每个词，所以速度很快。然后它算出每一行、每张图和每一栏的位置，并把这份排版方案保存在内存里。最后，它把排好的页面输出为网页、Canvas图像或PDF文件。你改动一个词时，它会把各页重新排一遍，并沿用未改动段落的测量结果。下一页一步步说明各行和各张图是怎样放上去的。"
+        },
+        "ar": {
+          "description": "البنية التقنية لمحرّك الإخراج في Postext: مفاهيمه، وشجرة المستند، والإيقاع العمودي، والمُخرِجات، والأداء",
+          "plainSummary": "تشرح هذه الصفحة كيف يعمل Postext من الداخل، وهي مكتوبة للمبرمجين. أولًا يقيس Postext كل كلمة دون أن يرسم شيئًا على الشاشة، وهذا يجعله سريعًا جدًا. ثم يحسب موضع كل سطر وكل صورة وكل عمود، ويحفظ هذه الخطة في الذاكرة. وأخيرًا يرسم الصفحات الجاهزة صفحةَ ويب أو صورةً مرسومة في المتصفح أو ملف PDF. وحين تغيّر كلمة، يُخرج الصفحات من جديد ويعيد استعمال قياسات الفقرات التي لم تتغيّر. وتشرح الصفحة التالية خطوةً خطوة كيف توضع الأسطر والصور."
+        },
+        "ja": {
+          "description": "Postext組版エンジンの技術的なアーキテクチャー：基本概念、文書ツリー、垂直リズム、バックエンド、パフォーマンス",
+          "plainSummary": "このページでは、Postextが内部でどう動いているかを、プログラマー向けに説明します。Postextはまず、画面に何も描かずにすべての単語の幅を測るので、とても速く動きます。次に、すべての行、図、段をどこに置くかを決め、その計画をメモリーに保存します。最後に、できあがったページをWebページ、canvasの画像、PDFファイルとして描きます。単語を1つ変えると、ページを組み直し、変わっていない段落の計測結果を再利用します。行と図を置いていく手順は、次のページで順を追って説明します。"
+        },
+        "pt": {
+          "description": "Arquitetura técnica do motor de composição tipográfica Postext: os conceitos, a árvore do documento, o ritmo vertical, os renderizadores e o desempenho",
+          "plainSummary": "Esta página explica como o Postext funciona por dentro, e foi escrita para programadores. Primeiro, o Postext mede cada palavra sem desenhar nada na tela, e por isso é muito rápido. Depois ele calcula onde vai cada linha, cada imagem e cada coluna, e guarda esse plano na memória. Por fim, desenha as páginas prontas como página web, como imagem em um canvas ou como arquivo PDF. Quando você muda uma palavra, ele diagrama as páginas de novo e reaproveita as medidas dos parágrafos que não mudaram. A página seguinte explica, passo a passo, como as linhas e as imagens são posicionadas."
+        },
+        "fr": {
+          "description": "Architecture technique du moteur de mise en page Postext : ses concepts, l’arbre de document, le rythme vertical, les moteurs de rendu et les performances",
+          "plainSummary": "Cette page explique le fonctionnement interne de Postext ; elle s’adresse aux programmeurs. D’abord, Postext mesure chaque mot sans rien dessiner à l’écran, ce qui le rend très rapide. Ensuite, il calcule l’emplacement de chaque ligne, de chaque image et de chaque colonne, et garde ce plan en mémoire. Enfin, il dessine les pages terminées sous forme de page web, d’image canvas ou de fichier PDF. Quand vous modifiez un mot, il refait la mise en page et réutilise les mesures des paragraphes qui n’ont pas changé. La page suivante explique, étape par étape, comment les lignes et les images sont placées."
+        },
+        "de": {
+          "description": "Technische Architektur der Layout-Engine Postext: Grundbegriffe, Dokumentbaum, vertikaler Rhythmus, Backends und Leistung",
+          "plainSummary": "Diese Seite erklärt, wie Postext im Inneren arbeitet, und richtet sich an Programmiererinnen und Programmierer. Zuerst misst Postext jedes Wort, ohne etwas auf dem Bildschirm zu zeichnen, und ist dadurch sehr schnell. Dann berechnet es, wohin jede Zeile, jedes Bild und jede Spalte gehört, und behält diesen Plan im Speicher. Zuletzt zeichnet es die fertigen Seiten als Webseite, als Canvas-Bild oder als PDF-Datei. Wenn Sie ein Wort ändern, setzt es die Seiten neu und verwendet die Messungen der Absätze wieder, die sich nicht geändert haben. Die nächste Seite erklärt Schritt für Schritt, wie Zeilen und Bilder platziert werden."
+        },
+        "it": {
+          "description": "Architettura tecnica del motore di impaginazione Postext: i concetti, l’albero del documento, il ritmo verticale, i backend e le prestazioni",
+          "plainSummary": "Questa pagina spiega come funziona Postext al suo interno ed è scritta per chi programma. Per prima cosa Postext misura ogni parola senza disegnare nulla sullo schermo, e per questo è molto veloce. Poi calcola dove va ogni riga, ogni immagine e ogni colonna, e tiene questo piano in memoria. Infine disegna le pagine finite come pagina web, come immagine su canvas o come file PDF. Quando cambi una parola, reimpagina le pagine e riusa le misure dei paragrafi che non sono cambiati. La pagina successiva spiega, passo per passo, come vengono collocate le righe e le immagini."
+        }
+      },
+      "pages": [
+        {
+          "slug": "architecture-layout-pipeline",
+          "sections": [
+            "Layout Pipeline"
+          ],
+          "locales": {
+            "en": {
+              "title": "Architecture: the layout pipeline",
+              "sidebarTitle": "The layout pipeline",
+              "description": "The placement pass and its rounds: how the engine places lines, floats, notes and columns, and repeats until the layout settles",
+              "plainSummary": "This page is for programmers who want to know how Postext places things on the page. It goes through the text from start to end and puts every line, picture, table, note and box in its place. When a later step changes something earlier, such as a page number in a reference, it starts the pass again. It stops when nothing moves any more. The page lists each step, what it decides and how many times it can run."
+            },
+            "es": {
+              "title": "Arquitectura: el pipeline de composición",
+              "sidebarTitle": "El pipeline de composición",
+              "description": "La pasada de colocación y sus rondas: cómo coloca el motor las líneas, los flotantes, las notas y las columnas, y cómo repite hasta que la composición se estabiliza",
+              "plainSummary": "Esta página es para programadores que quieren saber cómo coloca Postext cada cosa en la página. Postext recorre el texto de principio a fin y pone en su sitio cada línea, imagen, tabla, nota y recuadro. Si un paso posterior cambia algo anterior, como el número de página de una referencia, vuelve a empezar la pasada. Se detiene cuando ya nada se mueve. La página enumera cada paso, lo que decide y cuántas veces puede repetirse."
+            },
+            "ca": {
+              "title": "Arquitectura: el pipeline de composició",
+              "sidebarTitle": "El pipeline de composició",
+              "description": "La passada de col·locació i les seves rondes: com col·loca el motor les línies, els flotants, les notes i les columnes, i com repeteix fins que la composició s'estabilitza",
+              "plainSummary": "Aquesta pàgina és per a programadors que volen saber com col·loca Postext cada cosa a la pàgina. Postext recorre el text de principi a fi i posa al seu lloc cada línia, imatge, taula, nota i requadre. Si un pas posterior canvia alguna cosa d'abans, com ara el número de pàgina d'una referència, torna a començar la passada. S'atura quan ja no es mou res. La pàgina enumera cada pas, què decideix i quantes vegades es pot repetir."
+            },
+            "zh": {
+              "title": "架构：排版流水线",
+              "sidebarTitle": "排版流水线",
+              "description": "放置遍及其轮次：引擎怎样放置行、浮动体、注释和栏，并反复运行直到版面稳定",
+              "plainSummary": "本页写给想了解Postext怎样在页面上摆放内容的程序员。它从头到尾走一遍文字，把每一行、每张图、每个表格、每条注释和每个框放到各自的位置。如果后面的步骤改动了前面的内容，比如引用里的一个页码，它就从头再来一遍。等到没有任何东西再移动，它才停下。本页列出每一步、它决定什么，以及它最多能运行几次。"
+            },
+            "ar": {
+              "title": "البنية: خط الإخراج",
+              "sidebarTitle": "خط الإخراج",
+              "description": "تمريرة التوزيع وجولاتها: كيف يضع المحرّك الأسطر والعناصر العائمة والحواشي والأعمدة، ويعيد التمريرة حتى يستقر الإخراج",
+              "plainSummary": "هذه الصفحة للمبرمجين الذين يريدون أن يعرفوا كيف يضع Postext الأشياء على الصفحة. يمرّ Postext على النص من أوله إلى آخره، ويضع كل سطر وصورة وجدول وحاشية وإطار في مكانه. وإذا غيّرت خطوةٌ لاحقة شيئًا سابقًا، كرقم صفحة في إحالة، بدأ التمريرة من جديد. ويتوقف حين لا يتحرك شيء بعد ذلك. وتسرد الصفحة كل خطوة، وما تقرّره، وعدد المرات التي يمكن أن تعمل فيها."
+            },
+            "ja": {
+              "title": "アーキテクチャー：レイアウトのパイプライン",
+              "sidebarTitle": "レイアウトのパイプライン",
+              "description": "配置のパスと再実行：エンジンが行、フロート、注、段を置く手順と、レイアウトが落ち着くまでパスを繰り返すしくみ",
+              "plainSummary": "このページは、Postextが紙面にものを置くしくみを知りたいプログラマー向けです。Postextは文章を最初から最後までたどり、すべての行、図、表、注、囲みをそれぞれの場所に置きます。あとの段階で前の部分が変わったとき、たとえば参照の中のページ番号が変わったときは、最初からやり直します。何も動かなくなったところで終わります。このページでは、各段階が何を決めるか、何回まで実行できるかを順に挙げます。"
+            },
+            "pt": {
+              "title": "Arquitetura: o pipeline de layout",
+              "sidebarTitle": "O pipeline de layout",
+              "description": "A passada de posicionamento e suas rodadas: como o motor posiciona linhas, flutuantes, notas e colunas, e repete o processo até o layout se estabilizar",
+              "plainSummary": "Esta página é para programadores que querem saber como o Postext posiciona as coisas na página. Ele percorre o texto do começo ao fim e coloca cada linha, imagem, tabela, nota e boxe no seu lugar. Quando um passo posterior muda algo anterior, como o número de página de uma referência, ele começa a passada de novo. Ele para quando nada mais se move. A página lista cada passo, o que ele decide e quantas vezes pode rodar."
+            },
+            "fr": {
+              "title": "Architecture : la chaîne de mise en page",
+              "sidebarTitle": "La chaîne de mise en page",
+              "description": "La passe de placement et ses tours : comment le moteur place les lignes, les flottants, les notes et les colonnes, et relance la passe jusqu’à ce que la mise en page ne bouge plus",
+              "plainSummary": "Cette page s’adresse aux programmeurs qui veulent savoir comment Postext place les éléments sur la page. Postext parcourt le texte du début à la fin et met à sa place chaque ligne, chaque image, chaque tableau, chaque note et chaque encadré. Quand une étape plus tardive change quelque chose de plus tôt, comme un numéro de page dans un renvoi, il recommence le parcours. Il s’arrête quand plus rien ne bouge. La page liste chaque étape, ce qu’elle décide et combien de fois elle peut se répéter."
+            },
+            "de": {
+              "title": "Architektur: die Layout-Pipeline",
+              "sidebarTitle": "Die Layout-Pipeline",
+              "description": "Der Platzierungsdurchlauf und seine Runden: wie die Engine Zeilen, Gleitobjekte, Anmerkungen und Spalten platziert und den Durchlauf wiederholt, bis das Layout feststeht",
+              "plainSummary": "Diese Seite richtet sich an Programmiererinnen und Programmierer, die wissen wollen, wie Postext die Dinge auf der Seite platziert. Postext geht den Text vom Anfang bis zum Ende durch und setzt jede Zeile, jedes Bild, jede Tabelle, jede Anmerkung und jeden Kasten an seinen Platz. Wenn ein späterer Schritt etwas Früheres ändert, etwa eine Seitenzahl in einem Verweis, beginnt der Durchgang von vorn. Er endet, wenn sich nichts mehr bewegt. Die Seite führt jeden Schritt auf, was er entscheidet und wie oft er laufen kann."
+            },
+            "it": {
+              "title": "Architettura: la pipeline di impaginazione",
+              "sidebarTitle": "La pipeline di impaginazione",
+              "description": "La passata di posizionamento e i suoi giri: come il motore colloca righe, elementi flottanti, note e colonne, e ripete la passata finché l’impaginazione non si assesta",
+              "plainSummary": "Questa pagina è per chi programma e vuole sapere come Postext colloca le cose sulla pagina. Postext percorre il testo dall’inizio alla fine e mette al suo posto ogni riga, immagine, tabella, nota e riquadro. Quando un passo successivo cambia qualcosa che viene prima, come un numero di pagina in un rimando, ricomincia il percorso. Si ferma quando non si sposta più niente. La pagina elenca ogni passo, che cosa decide e quante volte può ripetersi."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "configuration-page-layout",
+      "entry": {
+        "en": {
+          "description": "The page size, margins and baseline grid, page numbering, and the columns and their gutters",
+          "plainSummary": "This page covers the settings for the sheet itself. You choose the page size, the margins, the side the book is bound on and the grid the lines of text sit on. You set how page numbers are counted and written. You set how many columns a page has and how much space runs between them, and whether the text runs across the page or down it. The running headers and footers have a page of their own."
+        },
+        "es": {
+          "description": "El tamaño de página, los márgenes y la rejilla base, la numeración de páginas, y las columnas y su medianil",
+          "plainSummary": "Esta página reúne los ajustes de la hoja. Eliges el tamaño de página, los márgenes, el lado por el que se encuaderna el libro y la rejilla sobre la que se apoyan las líneas de texto. Decides cómo se cuentan y cómo se escriben los números de página. Decides cuántas columnas tiene la página y cuánto espacio las separa, y si el texto va en líneas horizontales o verticales. Los encabezados y pies de página se explican en otra página."
+        },
+        "ca": {
+          "description": "La mida de pàgina, els marges i la retícula de base, la numeració de les pàgines, i les columnes i l'espai que les separa",
+          "plainSummary": "Aquesta pàgina reuneix els paràmetres del full. Tries la mida de pàgina, els marges, el costat per on s'enquaderna el llibre i la retícula sobre la qual reposen les línies de text. Decideixes com es compten i com s'escriuen els números de pàgina. Decideixes quantes columnes té la pàgina i quant d'espai les separa, i si el text va en línies horitzontals o verticals. Les capçaleres i els peus de pàgina s'expliquen en una altra pàgina."
+        },
+        "zh": {
+          "description": "页面尺寸、页边距与基线网格，页码编号，以及分栏与栏间距",
+          "plainSummary": "本页讲纸面本身的设置。你可以选择页面大小、页边距、书的装订边，以及文字行所对齐的网格。你可以设定页码怎样计数、怎样书写。你可以设定一页分几栏，栏与栏之间留多少空，以及文字横排还是竖排。页眉和页脚另有一页说明。"
+        },
+        "ar": {
+          "description": "مقاس الصفحة والهوامش وشبكة خطوط الأساس، وترقيم الصفحات، والأعمدة والفواصل بينها",
+          "plainSummary": "تتناول هذه الصفحة إعدادات الورقة نفسها. تختار مقاس الصفحة والهوامش وجهة تجليد الكتاب والشبكة التي تستقر عليها أسطر النص. وتحدد طريقة عدّ أرقام الصفحات وكتابتها. وتحدد عدد أعمدة الصفحة ومقدار الفراغ بينها، وهل يسير النص أفقيًا أم عموديًا. ولرؤوس الصفحات وتذييلاتها صفحة خاصة بها."
+        },
+        "ja": {
+          "description": "ページサイズ、余白、ベースライングリッド、ノンブル、段組みと段間",
+          "plainSummary": "このページでは、紙面そのものの設定を説明します。ページの大きさ、余白、本をとじる側、文字の行をそろえるグリッドを選びます。ページ番号の数え方と書き方を決めます。1ページを何段に分けるか、段と段のあいだをどれだけ空けるか、文字を横に組むか縦に組むかを決めます。各ページの上と下に印刷するものは、別のページで説明します。"
+        },
+        "pt": {
+          "description": "O tamanho da página, as margens e a grade de linhas de base, a numeração das páginas, e as colunas e seus medianizes",
+          "plainSummary": "Esta página reúne os ajustes da folha. Você escolhe o tamanho da página, as margens, o lado da encadernação e a grade em que as linhas de texto se apoiam. Define como as páginas são contadas e como os números de página são escritos. Define quantas colunas a página tem e quanto espaço fica entre elas, e se o texto corre em linhas horizontais ou verticais. Os cabeços e rodapés têm uma página própria."
+        },
+        "fr": {
+          "description": "Le format de la page, les marges et la grille de ligne de base, la numérotation des pages, les colonnes et leurs gouttières",
+          "plainSummary": "Cette page réunit les réglages de la feuille elle-même. Vous choisissez le format de la page, les marges, le côté de la reliure et la grille sur laquelle reposent les lignes de texte. Vous fixez la façon dont les pages sont comptées et dont leur numéro s’écrit. Vous fixez le nombre de colonnes d’une page et l’espace qui les sépare, et vous décidez si le texte court en travers de la page ou de haut en bas. Les en-têtes et pieds de page ont leur propre page."
+        },
+        "de": {
+          "description": "Seitenformat, Ränder und Grundlinienraster, die Seitennummerierung sowie die Spalten und ihre Abstände",
+          "plainSummary": "Diese Seite behandelt die Einstellungen für das Blatt selbst. Sie wählen das Seitenformat, die Ränder, die Seite, auf der das Buch gebunden wird, und das Raster, auf dem die Textzeilen stehen. Sie legen fest, wie die Seiten gezählt und wie ihre Nummern geschrieben werden. Sie bestimmen, wie viele Spalten eine Seite hat und wie viel Abstand zwischen ihnen liegt, und ob der Text quer über die Seite oder von oben nach unten läuft. Die Kopf- und Fußzeilen haben eine eigene Seite."
+        },
+        "it": {
+          "description": "Il formato della pagina, i margini e la griglia della linea di base, la numerazione delle pagine, e le colonne con i loro intercolonni",
+          "plainSummary": "Questa pagina riguarda le impostazioni del foglio stesso. Scegli il formato della pagina, i margini, il lato su cui il libro è rilegato e la griglia su cui poggiano le righe di testo. Stabilisci come si contano le pagine e come si scrive il loro numero. Stabilisci quante colonne ha una pagina e quanto spazio c’è tra di esse, e se il testo scorre in orizzontale o in verticale. Le intestazioni e i piè di pagina hanno una pagina a parte."
+        }
+      },
+      "pages": [
+        {
+          "slug": "configuration-headers-footers",
+          "sections": [
+            "Headers & footers"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: headers and footers",
+              "sidebarTitle": "Headers and footers",
+              "description": "What prints at the top and the foot of every page: text with placeholders, rules, boxes and images, by page parity, and where each element sits",
+              "plainSummary": "This page covers what is printed at the top and at the bottom of every page. A header or a footer can hold the page number, the title of the book or of the chapter, a line, a box or a small picture. Left and right pages can show different things. Each element can be placed at the left, in the middle or at the right, or in the margin beside the text. The header and the footer sit inside the margins, so they never make the text area smaller."
+            },
+            "es": {
+              "title": "Configuración: encabezados y pies de página",
+              "sidebarTitle": "Encabezados y pies de página",
+              "description": "Lo que se imprime arriba y al pie de cada página: texto con marcadores, líneas, cajas e imágenes, según la paridad de la página, y dónde va cada elemento",
+              "plainSummary": "Esta página reúne lo que se imprime arriba y abajo de cada página. Un encabezado o un pie puede llevar el número de página, el título del libro o del capítulo, una línea, una caja o una imagen pequeña. Las páginas de la izquierda y las de la derecha pueden mostrar cosas distintas. Cada elemento puede ir a la izquierda, en el centro o a la derecha, o en el margen, junto al texto. El encabezado y el pie van dentro de los márgenes, así que nunca le quitan espacio al texto."
+            },
+            "ca": {
+              "title": "Configuració: capçaleres i peus de pàgina",
+              "sidebarTitle": "Capçaleres i peus de pàgina",
+              "description": "El que s'imprimeix a dalt i al peu de cada pàgina: text amb marcadors, línies, caixes i imatges, segons la paritat de la pàgina, i on va cada element",
+              "plainSummary": "Aquesta pàgina reuneix el que s'imprimeix a dalt i a baix de cada pàgina. Una capçalera o un peu pot portar el número de pàgina, el títol del llibre o del capítol, una línia, una caixa o una imatge petita. Les pàgines de l'esquerra i les de la dreta poden mostrar coses diferents. Cada element pot anar a l'esquerra, al centre o a la dreta, o al marge, al costat del text. La capçalera i el peu van dins dels marges, així que mai no treuen espai al text."
+            },
+            "zh": {
+              "title": "配置：页眉与页脚",
+              "sidebarTitle": "页眉与页脚",
+              "description": "每页顶部和底部印出的内容：带占位符的文字、线条、方框和图像，按奇偶页分别设置，以及每个元素的位置",
+              "plainSummary": "本页讲每页顶部和底部印出的内容。页眉或页脚里可以放页码、书名或章名、一条线、一个方框或一张小图。左页和右页可以显示不同的内容。每个元素可以放在左边、中间或右边，也可以放在正文旁边的页边里。页眉和页脚位于页边距之内，所以不会让正文区域变小。"
+            },
+            "ar": {
+              "title": "الإعدادات: رؤوس الصفحات وتذييلاتها",
+              "sidebarTitle": "رؤوس الصفحات وتذييلاتها",
+              "description": "ما يُطبع أعلى كل صفحة وأسفلها: نص بعناصر نائبة، وخطوط، وصناديق، وصور، بحسب زوجية الصفحة، وموضع كل عنصر",
+              "plainSummary": "تتناول هذه الصفحة ما يُطبع أعلى كل صفحة وأسفلها. يمكن أن يحمل رأس الصفحة أو تذييلها رقم الصفحة، أو عنوان الكتاب أو الفصل، أو خطًا، أو صندوقًا، أو صورة صغيرة. ويمكن أن تُظهر الصفحات اليمنى واليسرى أشياء مختلفة. ويوضع كل عنصر في اليسار أو الوسط أو اليمين، أو في الهامش بجانب النص. ويقع رأس الصفحة وتذييلها داخل الهوامش، فلا يُصغّران مساحة النص أبدًا."
+            },
+            "ja": {
+              "title": "設定：柱とノンブル",
+              "sidebarTitle": "柱とノンブル",
+              "description": "各ページの上と下に印刷するもの：プレースホルダーを含むテキスト、罫線、ボックス、画像、奇偶ページごとの指定、各要素の配置",
+              "plainSummary": "このページでは、各ページの上と下に印刷するものを説明します。柱やノンブルには、ページ番号、本や章の題名、線、枠、小さな画像を入れられます。左右のページで違うものを見せることもできます。それぞれの要素は左、中央、右のどこかに置くか、本文の横の余白に置けます。柱とノンブルは余白の中に入るので、本文の場所が狭くなることはありません。"
+            },
+            "pt": {
+              "title": "Configuração: cabeços e rodapés",
+              "sidebarTitle": "Cabeços e rodapés",
+              "description": "O que é impresso no alto e no pé de cada página: texto com marcadores, fios, caixas e imagens, conforme a paridade da página, e onde cada elemento fica",
+              "plainSummary": "Esta página trata do que é impresso no alto e no pé de cada página. Um cabeço ou um rodapé pode trazer o número da página, o título do livro ou do capítulo, uma linha, uma caixa ou uma imagem pequena. As páginas da esquerda e as da direita podem mostrar coisas diferentes. Cada elemento pode ficar à esquerda, no centro ou à direita, ou na margem, ao lado do texto. O cabeço e o rodapé ficam dentro das margens, então nunca diminuem a área do texto."
+            },
+            "fr": {
+              "title": "Configuration : en-têtes et pieds de page",
+              "sidebarTitle": "En-têtes et pieds de page",
+              "description": "Ce qui s’imprime en haut et en bas de chaque page : texte avec variables, filets, boîtes et images, selon la parité de la page, et la place de chaque élément",
+              "plainSummary": "Cette page traite de ce qui s’imprime en haut et en bas de chaque page. Un en-tête ou un pied de page peut contenir le numéro de page, le titre du livre ou du chapitre, un trait, une boîte ou une petite image. Les pages de gauche et de droite peuvent afficher des choses différentes. Chaque élément se place à gauche, au centre ou à droite, ou dans la marge à côté du texte. L’en-tête et le pied de page se logent dans les marges : ils ne réduisent jamais la zone de texte."
+            },
+            "de": {
+              "title": "Konfiguration: Kopf- und Fußzeilen",
+              "sidebarTitle": "Kopf- und Fußzeilen",
+              "description": "Was oben und unten auf jeder Seite gedruckt wird: Text mit Platzhaltern, Linien, Kästen und Bilder, nach Seitenparität, und wo jedes Element steht",
+              "plainSummary": "Diese Seite behandelt, was oben und unten auf jeder Seite gedruckt wird. Eine Kopf- oder Fußzeile kann die Seitenzahl, den Titel des Buchs oder des Kapitels, eine Linie, einen Kasten oder ein kleines Bild enthalten. Linke und rechte Seiten können Verschiedenes zeigen. Jedes Element kann links, in der Mitte oder rechts stehen oder im Rand neben dem Text. Kopf- und Fußzeile liegen innerhalb der Ränder und machen den Textbereich deshalb nie kleiner."
+            },
+            "it": {
+              "title": "Configurazione: intestazioni e piè di pagina",
+              "sidebarTitle": "Intestazioni e piè di pagina",
+              "description": "Che cosa si stampa in cima e in fondo a ogni pagina: testo con segnaposto, filetti, riquadri e immagini, secondo la parità della pagina, e dove si colloca ogni elemento",
+              "plainSummary": "Questa pagina riguarda ciò che viene stampato in alto e in basso in ogni pagina. Un’intestazione o un piè di pagina può contenere il numero di pagina, il titolo del libro o del capitolo, una linea, un riquadro o una piccola immagine. Le pagine di sinistra e di destra possono mostrare cose diverse. Ogni elemento può stare a sinistra, al centro o a destra, oppure nel margine accanto al testo. Intestazione e piè di pagina stanno dentro i margini, quindi non rimpiccioliscono mai l’area del testo."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "configuration-text",
+      "entry": {
+        "en": {
+          "title": "Configuration: body text",
+          "sidebarTitle": "Body text",
+          "description": "The typography of the running text: font, size and leading, colours, indents, blockquotes, verse, tab stops and drop caps",
+          "plainSummary": "This page covers the settings for the main text of a book. You choose its font, its size and the space between its lines, and the colours of bold and italic words. You set the first-line indent and the space between paragraphs. The page also covers quotations set apart from the text, poems, tab stops for text in columns, and the large first letter some chapters open with. Hyphenation, headings and lists have pages of their own."
+        },
+        "es": {
+          "title": "Configuración: texto de cuerpo",
+          "sidebarTitle": "Texto de cuerpo",
+          "description": "La tipografía del texto corrido: la fuente, el cuerpo y el interlineado, los colores, las sangrías, las citas, el verso, las tabulaciones y las letras capitulares",
+          "plainSummary": "Esta página reúne los ajustes del texto principal de un libro. Eliges su tipografía, su cuerpo y el espacio entre sus líneas, y el color de las palabras en negrita y en cursiva. Fijas la sangría de la primera línea y el espacio entre párrafos. La página también explica las citas que se separan del texto, los poemas, las tabulaciones para el texto en columnas y la letra grande con la que empiezan algunos capítulos. La separación silábica, los encabezados y las listas tienen páginas propias."
+        },
+        "ca": {
+          "title": "Configuració: text de cos",
+          "sidebarTitle": "Text de cos",
+          "description": "La tipografia del text corregut: la font, el cos i l'interlineat, els colors, els sagnats, les cites, el vers, les tabulacions i les caplletres",
+          "plainSummary": "Aquesta pàgina reuneix els paràmetres del text principal d'un llibre. Tries la tipografia, el cos i l'espai entre les línies, i el color de les paraules en negreta i en cursiva. Fixes el sagnat de la primera línia i l'espai entre paràgrafs. La pàgina també explica les cites separades del text, els poemes, les tabulacions per al text en columnes i la lletra gran amb què comencen alguns capítols. La partició de mots, els encapçalaments i les llistes tenen pàgines pròpies."
+        },
+        "zh": {
+          "title": "配置：正文",
+          "sidebarTitle": "正文",
+          "description": "正文的排印：字体、字号与行距、颜色、缩进、引用块、诗歌、制表位和首字下沉",
+          "plainSummary": "本页讲一本书正文的设置。你可以选择正文的字体、字号和行距，以及粗体和斜体文字的颜色。你可以设定首行缩进和段落之间的距离。本页还讲与正文分开排的引文、诗歌、按列对齐文字用的制表位，以及有些章开头那个放大的首字。断词、标题和列表另有页面说明。"
+        },
+        "ar": {
+          "title": "الإعدادات: نص المتن",
+          "sidebarTitle": "نص المتن",
+          "description": "تنضيد النص الجاري: الخط والحجم وتباعد الأسطر، والألوان، والإزاحات، والاقتباسات الكتلية، والشعر، ومواضع الجدولة، والحروف الاستهلالية",
+          "plainSummary": "تتناول هذه الصفحة إعدادات النص الأساسي في الكتاب. تختار خطه وحجمه والمسافة بين أسطره، ولون الكلمات الغامقة والمائلة. وتحدد إزاحة السطر الأول والمسافة بين الفقرات. وتتناول الصفحة أيضًا الاقتباسات المفصولة عن النص، والقصائد، ومواضع الجدولة للنص المرتّب في أعمدة، والحرف الكبير الذي تبدأ به بعض الفصول. ولتقسيم الكلمات والعناوين والقوائم صفحات خاصة بها."
+        },
+        "ja": {
+          "title": "設定：本文",
+          "sidebarTitle": "本文",
+          "description": "本文の文字組み：フォント、サイズと行送り、色、インデント、引用ブロック、詩、タブ位置、ドロップキャップ",
+          "plainSummary": "このページでは、本の本文の設定を説明します。本文のフォント、文字の大きさ、行の間隔と、太字や斜体の語の色を選びます。行の初めの字下げと、段落と段落のあいだの空きを決めます。本文から離して組む引用、詩、列をそろえて並べる文字のためのタブ位置、章の初めに置く大きな最初の文字も扱います。ハイフネーション、見出し、リストは、それぞれ別のページで説明します。"
+        },
+        "pt": {
+          "title": "Configuração: texto do corpo",
+          "sidebarTitle": "Texto do corpo",
+          "description": "A tipografia do texto corrido: fonte, tamanho e entrelinha, cores, recuos, citações, verso, paradas de tabulação e capitulares",
+          "plainSummary": "Esta página reúne os ajustes do texto principal de um livro. Você escolhe a fonte, o tamanho e o espaço entre as linhas, e as cores das palavras em negrito e em itálico. Define o recuo da primeira linha e o espaço entre parágrafos. A página também trata das citações destacadas do texto, dos poemas, das paradas de tabulação para texto em colunas e da letra grande que abre alguns capítulos. A hifenização, os títulos e as listas têm páginas próprias."
+        },
+        "fr": {
+          "title": "Configuration : texte courant",
+          "sidebarTitle": "Texte courant",
+          "description": "La typographie du texte courant : police, corps et interlignage, couleurs, retraits, citations, vers, taquets de tabulation et lettrines",
+          "plainSummary": "Cette page réunit les réglages du texte principal d’un livre. Vous choisissez sa police, sa taille et l’espace entre ses lignes, ainsi que la couleur des mots en gras et en italique. Vous réglez le retrait de première ligne et l’espace entre les paragraphes. La page traite aussi des citations mises à part du texte, des poèmes, des taquets de tabulation pour le texte en colonnes, et de la grande lettre qui ouvre certains chapitres. La césure, les titres et les listes ont leurs propres pages."
+        },
+        "de": {
+          "title": "Konfiguration: Fließtext",
+          "sidebarTitle": "Fließtext",
+          "description": "Die Typografie des Fließtexts: Schrift, Größe und Zeilenabstand, Farben, Einzüge, Zitate, Verse, Tabulatoren und Initialen",
+          "plainSummary": "Diese Seite behandelt die Einstellungen für den Haupttext eines Buchs. Sie wählen seine Schrift, seine Größe und den Abstand zwischen seinen Zeilen sowie die Farben fetter und kursiver Wörter. Sie legen den Einzug der ersten Zeile und den Abstand zwischen Absätzen fest. Die Seite behandelt außerdem abgesetzte Zitate, Gedichte, Tabulatoren für Text in Spalten und den großen Anfangsbuchstaben, mit dem manche Kapitel beginnen. Silbentrennung, Überschriften und Listen haben eigene Seiten."
+        },
+        "it": {
+          "title": "Configurazione: testo corrente",
+          "sidebarTitle": "Testo corrente",
+          "description": "La tipografia del testo corrente: font, corpo e interlinea, colori, rientri, citazioni in blocco, versi, punti di tabulazione e capilettera",
+          "plainSummary": "Questa pagina riguarda le impostazioni del testo principale di un libro. Scegli il font, la dimensione e lo spazio tra le righe, e i colori delle parole in grassetto e in corsivo. Stabilisci il rientro della prima riga e lo spazio tra i paragrafi. La pagina tratta anche le citazioni staccate dal testo, le poesie, i punti di tabulazione per il testo in colonne e la grande lettera iniziale con cui si aprono alcuni capitoli. Sillabazione, titoli ed elenchi hanno pagine a parte."
+        }
+      },
+      "pages": [
+        {
+          "slug": "configuration-language",
+          "sections": [
+            "Body text > Hyphenation",
+            "Body text > Document language",
+            "Body text > Languages and scripts",
+            "Body text > Arabic text"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: hyphenation and language",
+              "sidebarTitle": "Hyphenation and language",
+              "description": "Hyphenation patterns and exceptions, ragged text, the document language and its digits and direction, and the scripts Postext sets",
+              "plainSummary": "This page covers how words are split at the end of a line and how Postext knows the language of a book. You turn hyphenation on or off, and list the words that must never be split. You can leave the right edge of the text uneven instead of straight. The document language decides the hyphenation rules, the names of figures and tables, the digits and the direction of the text. The last sections say which writing systems Postext can set and how Arabic text is handled."
+            },
+            "es": {
+              "title": "Configuración: separación silábica e idioma",
+              "sidebarTitle": "Separación silábica e idioma",
+              "description": "Los patrones y las excepciones de la separación silábica, el texto en bandera, el idioma del documento con sus cifras y su dirección, y las escrituras que compone Postext",
+              "plainSummary": "Esta página explica cómo se parten las palabras al final de la línea y cómo sabe Postext en qué idioma está el libro. Activas o desactivas la separación silábica y anotas las palabras que nunca deben partirse. Puedes dejar el borde derecho del texto irregular en lugar de recto. El idioma del documento decide las reglas para partir palabras, los nombres de las figuras y las tablas, las cifras y la dirección del texto. Las últimas secciones dicen qué escrituras sabe componer Postext y cómo trata el texto árabe."
+            },
+            "ca": {
+              "title": "Configuració: partició de mots i llengua",
+              "sidebarTitle": "Partició de mots i llengua",
+              "description": "Els patrons i les excepcions de la partició de mots, el text en bandera, la llengua del document amb les seves xifres i la seva direcció, i les escriptures que compon Postext",
+              "plainSummary": "Aquesta pàgina explica com es parteixen els mots al final de la línia i com sap Postext en quina llengua està escrit el llibre. Actives o desactives la partició de mots i anotes les paraules que no s'han de partir mai. Pots deixar la vora dreta del text irregular en lloc de recta. La llengua del document decideix les regles per partir mots, els noms de les figures i les taules, les xifres i la direcció del text. Les últimes seccions diuen quines escriptures sap compondre Postext i com tracta el text àrab."
+            },
+            "zh": {
+              "title": "配置：断词与语言",
+              "sidebarTitle": "断词与语言",
+              "description": "断词模式与例外、不齐行文字、文档语言及其数字和方向，以及Postext能排的文字",
+              "plainSummary": "本页讲行末怎样拆开单词，以及Postext怎样知道一本书的语言。你可以打开或关闭断词，并列出绝不能拆开的词。你也可以让行尾参差不齐，而不是排成一条直线。文档语言决定断词规则、图和表的名称、数字和文字方向。最后几节说明Postext能排哪些文字，以及阿拉伯文怎样处理。"
+            },
+            "ar": {
+              "title": "الإعدادات: تقسيم الكلمات واللغة",
+              "sidebarTitle": "تقسيم الكلمات واللغة",
+              "description": "أنماط تقسيم الكلمات بالواصلة واستثناءاتها، والنص غير المضبوط، ولغة المستند وأرقامها واتجاهها، وأنظمة الكتابة التي ينضّدها Postext",
+              "plainSummary": "تتناول هذه الصفحة طريقة تقسيم الكلمات في آخر السطر، وكيف يعرف Postext لغة الكتاب. تشغّل تقسيم الكلمات أو توقفه، وتسرد الكلمات التي لا يجوز تقسيمها أبدًا. ويمكنك أن تترك نهايات الأسطر غير متساوية بدلًا من حافة مستقيمة. وتحدد لغة المستند قواعد التقسيم، وأسماء الأشكال والجداول، والأرقام، واتجاه النص. وتبيّن الأقسام الأخيرة أنظمة الكتابة التي يستطيع Postext تنضيدها، وطريقة معالجة النص العربي."
+            },
+            "ja": {
+              "title": "設定：ハイフネーションと言語",
+              "sidebarTitle": "ハイフネーションと言語",
+              "description": "ハイフネーションのパターンと例外、行末不ぞろいのテキスト、文書の言語とその数字と方向、Postextが組める文字体系",
+              "plainSummary": "このページでは、行の終わりで単語をどう分けるかと、Postextが本の言語をどう知るかを説明します。ハイフネーションを使うかどうかを選び、決して分けてはいけない語を挙げます。行の終わりをそろえず、不ぞろいのままにすることもできます。文書の言語によって、ハイフネーションの規則、図や表の呼び名、数字、文字の方向が決まります。最後の節では、Postextが組める文字の種類と、アラビア文字の扱いを説明します。"
+            },
+            "pt": {
+              "title": "Configuração: hifenização e idioma",
+              "sidebarTitle": "Hifenização e idioma",
+              "description": "Padrões e exceções de hifenização, texto em bandeira, o idioma do documento com seus algarismos e sua direção, e os sistemas de escrita que o Postext compõe",
+              "plainSummary": "Esta página trata de como as palavras são divididas no fim da linha e de como o Postext sabe o idioma de um livro. Você liga ou desliga a hifenização e lista as palavras que nunca devem ser divididas. Pode deixar a margem direita do texto irregular em vez de reta. O idioma do documento define as regras de hifenização, os nomes das figuras e das tabelas, os algarismos e a direção do texto. As últimas seções dizem quais sistemas de escrita o Postext compõe e como ele trata o texto árabe."
+            },
+            "fr": {
+              "title": "Configuration : césure et langue",
+              "sidebarTitle": "Césure et langue",
+              "description": "Les motifs de césure et les exceptions, le texte en drapeau, la langue du document avec ses chiffres et son sens d’écriture, et les écritures que compose Postext",
+              "plainSummary": "Cette page explique comment les mots sont coupés en fin de ligne et comment Postext connaît la langue d’un livre. Vous activez ou désactivez la césure, et vous listez les mots qui ne doivent jamais être coupés. Vous pouvez laisser le bord droit du texte irrégulier au lieu de l’aligner. La langue du document décide des règles de césure, du nom des figures et des tableaux, des chiffres et du sens du texte. Les dernières sections indiquent les systèmes d’écriture que Postext sait composer et la façon dont il traite l’arabe."
+            },
+            "de": {
+              "title": "Konfiguration: Silbentrennung und Sprache",
+              "sidebarTitle": "Silbentrennung und Sprache",
+              "description": "Trennmuster und Ausnahmen, Flattersatz, die Dokumentsprache mit ihren Ziffern und ihrer Schreibrichtung und die Schriftsysteme, die Postext setzt",
+              "plainSummary": "Diese Seite behandelt, wie Wörter am Zeilenende getrennt werden und woher Postext die Sprache eines Buchs kennt. Sie schalten die Silbentrennung ein oder aus und führen die Wörter auf, die nie getrennt werden dürfen. Sie können den rechten Rand des Texts ungleichmäßig lassen, statt ihn gerade auszurichten. Die Dokumentsprache bestimmt die Trennregeln, die Namen von Abbildungen und Tabellen, die Ziffern und die Schreibrichtung. Die letzten Abschnitte nennen die Schriftsysteme, die Postext setzen kann, und erklären, wie arabischer Text behandelt wird."
+            },
+            "it": {
+              "title": "Configurazione: sillabazione e lingua",
+              "sidebarTitle": "Sillabazione e lingua",
+              "description": "Pattern ed eccezioni di sillabazione, testo in bandiera, la lingua del documento con le sue cifre e la sua direzione, e le scritture che Postext compone",
+              "plainSummary": "Questa pagina spiega come si dividono le parole a fine riga e come Postext sa in che lingua è scritto un libro. Attivi o disattivi la sillabazione ed elenchi le parole che non vanno mai divise. Puoi lasciare irregolare il margine destro del testo invece che dritto. La lingua del documento decide le regole di sillabazione, i nomi delle figure e delle tabelle, le cifre e la direzione del testo. Le ultime sezioni dicono quali sistemi di scrittura Postext sa comporre e come tratta il testo arabo."
+            }
+          }
+        },
+        {
+          "slug": "configuration-headings",
+          "sections": [
+            "Headings"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: headings",
+              "sidebarTitle": "Headings",
+              "description": "Heading defaults, the overrides for each level, page breaks before a heading, page-wide chapter openers and numbers spelled out in words",
+              "plainSummary": "This page covers the settings for headings. You set a font, a size and a colour for all of them, and change any of them for one level, such as chapter titles. You decide whether a heading starts a new page, and whether that page must be on the left or on the right. A chapter title can open across the whole width of the page with its own design. Heading numbers can be written in words, such as Chapter One."
+            },
+            "es": {
+              "title": "Configuración: encabezados",
+              "sidebarTitle": "Encabezados",
+              "description": "Los valores por defecto de los encabezados, la configuración de cada nivel, los saltos de página antes de un encabezado, las aperturas de capítulo a todo el ancho de la página y los números escritos con letras",
+              "plainSummary": "Esta página reúne los ajustes de los títulos. Les das a todos una tipografía, un cuerpo y un color, y cambias cualquiera de ellos para un solo nivel, como los títulos de capítulo. Decides si un título empieza una página nueva y si esa página debe quedar a la izquierda o a la derecha. Un título de capítulo puede abrir a todo el ancho de la página con un diseño propio. Los números de los títulos pueden escribirse con letras, como en Capítulo tres."
+            },
+            "ca": {
+              "title": "Configuració: encapçalaments",
+              "sidebarTitle": "Encapçalaments",
+              "description": "Els valors per defecte dels encapçalaments, la configuració de cada nivell, els salts de pàgina abans d'un encapçalament, les obertures de capítol a tota l'amplada de la pàgina i els nombres escrits en lletres",
+              "plainSummary": "Aquesta pàgina reuneix els paràmetres dels títols. Els dones a tots una tipografia, un cos i un color, i en canvies qualsevol per a un sol nivell, com ara els títols de capítol. Decideixes si un títol comença una pàgina nova i si aquesta pàgina ha de quedar a l'esquerra o a la dreta. Un títol de capítol pot obrir a tota l'amplada de la pàgina amb un disseny propi. Els números dels títols es poden escriure en lletres, com ara Capítol tres."
+            },
+            "zh": {
+              "title": "配置：标题",
+              "sidebarTitle": "标题",
+              "description": "标题的默认值、各级覆盖、标题前分页、通栏的章首页，以及以文字书写的编号",
+              "plainSummary": "本页讲标题的设置。你可以给所有标题设定字体、字号和颜色，也可以只改某一级，比如章标题。你可以决定一个标题是否另起一页，以及这一页必须在左边还是右边。章标题可以用自己的设计横跨整个页面宽度。标题编号可以用文字书写，比如“第一章”。"
+            },
+            "ar": {
+              "title": "الإعدادات: العناوين",
+              "sidebarTitle": "العناوين",
+              "description": "القيم الافتراضية للعناوين، وتجاوزات كل مستوى، والفاصل قبل العنوان، وافتتاحيات الفصول الممتدة بعرض الصفحة، والأعداد المكتوبة بالحروف",
+              "plainSummary": "تتناول هذه الصفحة إعدادات العناوين. تحدد خطًا وحجمًا ولونًا لها جميعًا، وتغيّر أيًّا منها لمستوى واحد، مثل عناوين الفصول. وتقرر هل يبدأ العنوان صفحة جديدة، وهل يجب أن تكون هذه الصفحة يمنى أم يسرى. ويمكن أن يفتتح عنوان الفصل الصفحة بعرضها كله وبتصميم خاص به. ويمكن كتابة أرقام العناوين بالحروف، مثل «الفصل الأول»."
+            },
+            "ja": {
+              "title": "設定：見出し",
+              "sidebarTitle": "見出し",
+              "description": "見出しの共通の既定値、レベルごとの上書き、見出しの前の改ページ、ページ幅いっぱいの章の書き出し、語で綴る番号",
+              "plainSummary": "このページでは、見出しの設定を説明します。すべての見出しに共通のフォント、大きさ、色を決め、章の題名のような1つのレベルだけを変えることもできます。見出しから新しいページを始めるかどうか、そのページを左右どちらにするかを決めます。章の題名は、独自のデザインでページの幅いっぱいに組めます。見出しの番号は、「第一章」のように文字で書くこともできます。"
+            },
+            "pt": {
+              "title": "Configuração: títulos",
+              "sidebarTitle": "Títulos",
+              "description": "Os padrões dos títulos, as sobrescritas de cada nível, as quebras de página antes de um título, as aberturas de capítulo na largura da página e os números por extenso",
+              "plainSummary": "Esta página reúne os ajustes dos títulos. Você define uma fonte, um tamanho e uma cor para todos eles, e muda qualquer um desses valores para um só nível, como os títulos de capítulo. Decide se um título começa uma página nova e se essa página deve ficar à esquerda ou à direita. Um título de capítulo pode abrir ocupando toda a largura da página, com um design próprio. Os números dos títulos podem ser escritos por extenso, como em Capítulo três."
+            },
+            "fr": {
+              "title": "Configuration : titres",
+              "sidebarTitle": "Titres",
+              "description": "Les valeurs communes des titres, les réglages propres à chaque niveau, les sauts de page avant un titre, les ouvertures de chapitre sur toute la largeur de la page et les numéros en toutes lettres",
+              "plainSummary": "Cette page réunit les réglages des titres. Vous leur donnez à tous une police, une taille et une couleur, et vous changez l’un de ces choix pour un seul niveau, comme les titres de chapitre. Vous décidez si un titre commence une nouvelle page, et si cette page doit être à gauche ou à droite. Un titre de chapitre peut s’ouvrir sur toute la largeur de la page avec sa propre maquette. Les numéros des titres peuvent s’écrire en toutes lettres, comme « Chapitre un »."
+            },
+            "de": {
+              "title": "Konfiguration: Überschriften",
+              "sidebarTitle": "Überschriften",
+              "description": "Standardwerte für Überschriften, Überschreibungen pro Ebene, Seitenumbrüche vor einer Überschrift, Kapitelauftakte über die ganze Seitenbreite und ausgeschriebene Zahlen",
+              "plainSummary": "Diese Seite behandelt die Einstellungen für Überschriften. Sie legen für alle eine Schrift, eine Größe und eine Farbe fest und können jede davon für eine einzelne Ebene ändern, etwa für Kapiteltitel. Sie entscheiden, ob eine Überschrift eine neue Seite beginnt und ob diese Seite links oder rechts liegen muss. Ein Kapitel kann mit einem Titel über die ganze Seitenbreite und einer eigenen Gestaltung beginnen. Die Nummern von Überschriften lassen sich in Worten schreiben, etwa „Erstes Kapitel“."
+            },
+            "it": {
+              "title": "Configurazione: titoli",
+              "sidebarTitle": "Titoli",
+              "description": "I valori predefiniti dei titoli, le personalizzazioni per livello, le interruzioni di pagina prima di un titolo, le aperture di capitolo a tutta pagina e i numeri scritti in lettere",
+              "plainSummary": "Questa pagina riguarda le impostazioni dei titoli. Dai a tutti un font, una dimensione e un colore, e puoi cambiarne uno per un solo livello, come i titoli dei capitoli. Decidi se un titolo comincia una nuova pagina e se quella pagina deve stare a sinistra o a destra. Il titolo di un capitolo può aprirsi su tutta la larghezza della pagina con un progetto grafico proprio. I numeri dei titoli possono essere scritti in lettere, come «Capitolo primo»."
+            }
+          }
+        },
+        {
+          "slug": "configuration-page-flow",
+          "sections": [
+            "Body text > Orphans, widows, runts, and keep-together rules",
+            "Headings > Column balancing"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: widows, orphans and balancing",
+              "sidebarTitle": "Widows, orphans and balancing",
+              "description": "The rules that keep lines and blocks together across a column break, and the levers that make every column end level",
+              "plainSummary": "This page covers how Postext decides where a column or a page ends. A single line of a paragraph should not be left alone at the top or the bottom of a column, and a heading should not be left without its text. These rules can leave a column shorter than the others. Postext then makes small changes, in a fixed order, so that every column ends at the same height. The page lists each rule and each change, and how to see which one was used."
+            },
+            "es": {
+              "title": "Configuración: viudas, huérfanas y equilibrado",
+              "sidebarTitle": "Viudas, huérfanas y equilibrado",
+              "description": "Las reglas que mantienen juntas las líneas y los bloques en un salto de columna, y las palancas que hacen que todas las columnas terminen a la misma altura",
+              "plainSummary": "Esta página explica cómo decide Postext dónde termina una columna o una página. Una línea de un párrafo no debe quedarse sola arriba o abajo de una columna, y un título no debe quedarse sin su texto. Estas reglas pueden dejar una columna más corta que las demás. Entonces Postext hace pequeños cambios, en un orden fijo, para que todas las columnas terminen a la misma altura. La página enumera cada regla y cada cambio, y cómo ver cuál se ha usado."
+            },
+            "ca": {
+              "title": "Configuració: vídues, òrfenes i equilibratge",
+              "sidebarTitle": "Vídues, òrfenes i equilibratge",
+              "description": "Les regles que mantenen junts les línies i els blocs en un salt de columna, i les palanques que fan que totes les columnes acabin a la mateixa altura",
+              "plainSummary": "Aquesta pàgina explica com decideix Postext on acaba una columna o una pàgina. Una línia d'un paràgraf no s'ha de quedar sola a dalt o a baix d'una columna, i un títol no s'ha de quedar sense el seu text. Aquestes regles poden deixar una columna més curta que les altres. Llavors Postext fa petits canvis, en un ordre fix, perquè totes les columnes acabin a la mateixa altura. La pàgina enumera cada regla i cada canvi, i explica com veure quin s'ha fet servir."
+            },
+            "zh": {
+              "title": "配置：孤行与各栏齐底",
+              "sidebarTitle": "孤行与各栏齐底",
+              "description": "让行与块在换栏处保持在一起的规则，以及让每一栏底部齐平的调整手段",
+              "plainSummary": "本页讲Postext怎样决定一栏或一页在哪里结束。一个段落不应只留一行在栏顶或栏底，标题也不应和它下面的正文分开。这些规则可能让某一栏比其他栏短。这时Postext会按固定的顺序做一些小调整，让每一栏在同一高度结束。本页列出每条规则和每种调整，以及怎样查看用了哪一种。"
+            },
+            "ar": {
+              "title": "الإعدادات: الأرامل والأسطر اليتيمة وموازنة الأعمدة",
+              "sidebarTitle": "الأرامل والأسطر اليتيمة والموازنة",
+              "description": "القواعد التي تُبقي الأسطر والكتل معًا عند فاصل العمود، والأدوات التي تجعل كل الأعمدة تنتهي عند المستوى نفسه",
+              "plainSummary": "تتناول هذه الصفحة كيف يقرر Postext أين ينتهي العمود أو الصفحة. لا ينبغي أن يبقى سطر واحد من فقرة وحده في أعلى العمود أو أسفله، ولا أن ينفصل عنوان عن نصه. وقد تجعل هذه القواعد عمودًا أقصر من غيره. فيُجري Postext عندئذ تغييرات صغيرة، بترتيب ثابت، حتى ينتهي كل عمود عند الارتفاع نفسه. وتسرد الصفحة كل قاعدة وكل تغيير، وطريقة معرفة ما استُعمل منها."
+            },
+            "ja": {
+              "title": "設定：オーファン、ウィドウ、段末そろえ",
+              "sidebarTitle": "オーファン、ウィドウ、段末そろえ",
+              "description": "段の区切りをまたいで行やブロックを離さない規則と、すべての段の終わりをそろえる調整手段",
+              "plainSummary": "このページでは、Postextが段やページの終わりをどう決めるかを説明します。段落の1行だけが段の上や下に取り残されないようにし、見出しが本文と離れないようにします。この規則のために、ほかより短い段ができることがあります。そこでPostextは、決まった順序で少しずつ調整し、どの段も同じ高さで終わるようにします。このページでは、それぞれの規則と調整を挙げ、どれが使われたかを確かめる方法を示します。"
+            },
+            "pt": {
+              "title": "Configuração: viúvas, órfãs e equilíbrio",
+              "sidebarTitle": "Viúvas, órfãs e equilíbrio",
+              "description": "As regras que mantêm linhas e blocos juntos numa quebra de coluna, e os recursos que fazem todas as colunas terminarem na mesma altura",
+              "plainSummary": "Esta página trata de como o Postext decide onde uma coluna ou uma página termina. Uma linha de um parágrafo não deve ficar sozinha no alto ou no pé de uma coluna, e um título não deve ficar separado do seu texto. Essas regras podem deixar uma coluna mais curta que as outras. O Postext então faz pequenas mudanças, numa ordem fixa, para que todas as colunas terminem na mesma altura. A página lista cada regra e cada mudança, e mostra como ver qual delas foi usada."
+            },
+            "fr": {
+              "title": "Configuration : veuves, orphelines et équilibrage",
+              "sidebarTitle": "Veuves, orphelines et équilibrage",
+              "description": "Les règles qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne, et les leviers qui font finir chaque colonne au même niveau",
+              "plainSummary": "Cette page explique comment Postext décide de l’endroit où finit une colonne ou une page. Une ligne d’un paragraphe ne doit pas rester seule en haut ou en bas d’une colonne, et un titre ne doit pas être séparé de son texte. Ces règles peuvent laisser une colonne plus courte que les autres. Postext fait alors de petits changements, dans un ordre fixe, pour que toutes les colonnes finissent à la même hauteur. La page liste chaque règle et chaque changement, et explique comment voir lequel a servi."
+            },
+            "de": {
+              "title": "Konfiguration: Witwen, Waisen und Spaltenausgleich",
+              "sidebarTitle": "Witwen, Waisen und Spaltenausgleich",
+              "description": "Die Regeln, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten, und die Hebel, mit denen jede Spalte auf gleicher Höhe endet",
+              "plainSummary": "Diese Seite erklärt, wie Postext entscheidet, wo eine Spalte oder eine Seite endet. Eine einzelne Zeile eines Absatzes sollte nicht allein oben oder unten in einer Spalte stehen, und eine Überschrift sollte nicht ohne ihren Text bleiben. Diese Regeln können eine Spalte kürzer machen als die anderen. Dann nimmt Postext in einer festen Reihenfolge kleine Änderungen vor, damit alle Spalten auf derselben Höhe enden. Die Seite führt jede Regel und jede Änderung auf und zeigt, wie Sie sehen, welche gegriffen hat."
+            },
+            "it": {
+              "title": "Configurazione: vedove, orfane e bilanciamento",
+              "sidebarTitle": "Vedove, orfane e bilanciamento",
+              "description": "Le regole che tengono unite righe e blocchi a cavallo di un’interruzione di colonna, e le leve che fanno finire ogni colonna alla stessa altezza",
+              "plainSummary": "Questa pagina spiega come Postext decide dove finisce una colonna o una pagina. Una riga di un paragrafo non dovrebbe restare da sola in cima o in fondo a una colonna, e un titolo non dovrebbe restare senza il suo testo. Queste regole possono lasciare una colonna più corta delle altre. Allora Postext fa piccoli cambiamenti, in un ordine fisso, perché tutte le colonne finiscano alla stessa altezza. La pagina elenca ogni regola e ogni cambiamento, e spiega come vedere quale è stato usato."
+            }
+          }
+        },
+        {
+          "slug": "configuration-lists-math",
+          "sections": [
+            "Unordered Lists",
+            "Ordered Lists",
+            "Math"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: lists and maths",
+              "sidebarTitle": "Lists and maths",
+              "description": "Bulleted and numbered lists, their markers, indents and nesting, task lists, and the size, colour and spacing of mathematical formulas",
+              "plainSummary": "This page covers lists and formulas. A bulleted list marks each item with a symbol, and a numbered list counts its items with numbers or letters. You set the marker, the indent and the space of each list, and change them for lists inside lists. Task lists draw a box that can be ticked. The last section sets the size, the colour and the space around mathematical formulas."
+            },
+            "es": {
+              "title": "Configuración: listas y matemáticas",
+              "sidebarTitle": "Listas y matemáticas",
+              "description": "Las listas con viñetas y las numeradas, sus marcas, sangrías y anidamiento, las listas de tareas, y el cuerpo, el color y el espaciado de las fórmulas matemáticas",
+              "plainSummary": "Esta página reúne las listas y las fórmulas. Una lista con viñetas marca cada elemento con un símbolo, y una lista numerada cuenta sus elementos con números o letras. Fijas la marca, la sangría y el espacio de cada lista, y los cambias para las listas que van dentro de otras. Las listas de tareas dibujan una casilla que se puede marcar. La última sección fija el tamaño, el color y el espacio alrededor de las fórmulas matemáticas."
+            },
+            "ca": {
+              "title": "Configuració: llistes i matemàtiques",
+              "sidebarTitle": "Llistes i matemàtiques",
+              "description": "Les llistes amb pics i les numerades, les seves marques, els sagnats i la imbricació, les llistes de tasques, i la mida, el color i l'espaiat de les fórmules matemàtiques",
+              "plainSummary": "Aquesta pàgina reuneix les llistes i les fórmules. Una llista amb pics marca cada element amb un símbol, i una llista numerada compta els elements amb números o lletres. Fixes la marca, el sagnat i l'espai de cada llista, i els canvies per a les llistes que van dins d'altres llistes. Les llistes de tasques dibuixen una casella que es pot marcar. L'última secció fixa la mida, el color i l'espai al voltant de les fórmules matemàtiques."
+            },
+            "zh": {
+              "title": "配置：列表与数学公式",
+              "sidebarTitle": "列表与数学公式",
+              "description": "无序列表和有序列表的标记、缩进与嵌套，任务列表，以及数学公式的大小、颜色和间距",
+              "plainSummary": "本页讲列表和公式。无序列表用一个符号标出每一项，有序列表用数字或字母给各项计数。你可以设定每种列表的标记、缩进和间距，并为列表里的列表另行设定。任务列表会画一个可以打勾的方框。最后一节设定数学公式的大小、颜色和周围的空白。"
+            },
+            "ar": {
+              "title": "الإعدادات: القوائم والصيغ الرياضية",
+              "sidebarTitle": "القوائم والصيغ الرياضية",
+              "description": "القوائم المرقّمة وغير المرقّمة، وعلاماتها وإزاحاتها وتداخلها، وقوائم المهام، وحجم الصيغ الرياضية ولونها والمسافات حولها",
+              "plainSummary": "تتناول هذه الصفحة القوائم والصيغ. تضع القائمة غير المرقّمة رمزًا أمام كل بند، وتعدّ القائمة المرقّمة بنودها بالأرقام أو الحروف. تحدد علامة كل قائمة وإزاحتها ومسافاتها، وتغيّرها للقوائم الموضوعة داخل قوائم أخرى. وترسم قوائم المهام مربعًا يمكن التأشير عليه. ويضبط القسم الأخير حجم الصيغ الرياضية ولونها والمسافة حولها."
+            },
+            "ja": {
+              "title": "設定：リストと数式",
+              "sidebarTitle": "リストと数式",
+              "description": "箇条書きリストと番号付きリスト、その行頭記号、字下げ、入れ子、タスクリスト、数式の大きさ、色、間隔",
+              "plainSummary": "このページでは、リストと数式を説明します。箇条書きリストは各項目に記号を付け、番号付きリストは数字や文字で項目を数えます。リストごとに行頭の記号、字下げ、空きを決め、リストの中のリストでは別の値にもできます。タスクリストには、チェックを入れられる四角が付きます。最後の節では、数式の大きさ、色、まわりの空きを決めます。"
+            },
+            "pt": {
+              "title": "Configuração: listas e matemática",
+              "sidebarTitle": "Listas e matemática",
+              "description": "Listas com marcadores e numeradas, seus marcadores, recuos e aninhamento, listas de tarefas, e o tamanho, a cor e o espaçamento das fórmulas matemáticas",
+              "plainSummary": "Esta página trata das listas e das fórmulas. Uma lista com marcadores indica cada item com um símbolo, e uma lista numerada conta os itens com números ou letras. Você define o marcador, o recuo e o espaço de cada lista, e muda esses valores para listas dentro de listas. As listas de tarefas desenham uma caixinha que pode ser marcada. A última seção define o tamanho, a cor e o espaço em volta das fórmulas matemáticas."
+            },
+            "fr": {
+              "title": "Configuration : listes et mathématiques",
+              "sidebarTitle": "Listes et mathématiques",
+              "description": "Les listes à puces et numérotées, leurs marqueurs, leurs retraits et leur imbrication, les listes de tâches, et la taille, la couleur et l’espacement des formules mathématiques",
+              "plainSummary": "Cette page traite des listes et des formules. Une liste à puces marque chaque élément d’un symbole, et une liste numérotée compte ses éléments avec des chiffres ou des lettres. Vous réglez le marqueur, le retrait et l’espacement de chaque liste, et vous pouvez les changer pour les listes placées dans une autre liste. Les listes de tâches dessinent une case que l’on peut cocher. La dernière section règle la taille, la couleur et l’espace autour des formules mathématiques."
+            },
+            "de": {
+              "title": "Konfiguration: Listen und Mathematik",
+              "sidebarTitle": "Listen und Mathematik",
+              "description": "Aufzählungen und nummerierte Listen, ihre Listenzeichen, Einzüge und Verschachtelung, Aufgabenlisten sowie Größe, Farbe und Abstände mathematischer Formeln",
+              "plainSummary": "Diese Seite behandelt Listen und Formeln. Eine Aufzählung kennzeichnet jeden Punkt mit einem Zeichen, eine nummerierte Liste zählt ihre Punkte mit Zahlen oder Buchstaben. Sie legen für jede Liste das Zeichen, den Einzug und den Abstand fest und können sie für Listen in Listen ändern. Aufgabenlisten zeichnen ein Kästchen, das sich abhaken lässt. Der letzte Abschnitt legt Größe, Farbe und Abstand mathematischer Formeln fest."
+            },
+            "it": {
+              "title": "Configurazione: elenchi e matematica",
+              "sidebarTitle": "Elenchi e matematica",
+              "description": "Elenchi puntati e numerati, i loro marcatori, rientri e annidamenti, gli elenchi di attività, e dimensione, colore e spaziatura delle formule matematiche",
+              "plainSummary": "Questa pagina riguarda elenchi e formule. Un elenco puntato segna ogni voce con un simbolo, e un elenco numerato conta le voci con numeri o lettere. Stabilisci il marcatore, il rientro e lo spazio di ogni elenco, e puoi cambiarli per gli elenchi dentro altri elenchi. Gli elenchi di attività disegnano una casella da spuntare. L’ultima sezione imposta la dimensione, il colore e lo spazio intorno alle formule matematiche."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "configuration-styles",
+      "entry": {
+        "en": {
+          "description": "Named styles for paragraphs, chips, code listings and headings, and the pages that open each part",
+          "plainSummary": "This page covers the named styles you define once and use many times. A paragraph style sets a kind of text, such as a bibliography or a glossary. A chip style draws a small label inside a line. Code listings have their own font, box and colours. The page also covers the pages that open each part of a book, and the styles for special headings. Callout boxes have a page of their own."
+        },
+        "es": {
+          "description": "Los estilos con nombre de párrafos, chips, listados de código y encabezados, y las páginas que abren cada parte",
+          "plainSummary": "Esta página reúne los estilos con nombre, que defines una vez y usas muchas. Un estilo de párrafo fija una clase de texto, como una bibliografía o un glosario. Un estilo de chip dibuja una etiqueta pequeña dentro de la línea. Los listados de código tienen su propia tipografía, su caja y sus colores. La página también explica las páginas que abren cada parte del libro y los estilos de los títulos especiales. Los recuadros de aviso tienen su propia página."
+        },
+        "ca": {
+          "description": "Els estils amb nom de paràgrafs, xips, llistats de codi i encapçalaments, i les pàgines que obren cada part",
+          "plainSummary": "Aquesta pàgina reuneix els estils amb nom, que defineixes un cop i fas servir molts. Un estil de paràgraf fixa una classe de text, com ara una bibliografia o un glossari. Un estil de xip dibuixa una etiqueta petita dins la línia. Els llistats de codi tenen la seva pròpia tipografia, la seva caixa i els seus colors. La pàgina també explica les pàgines que obren cada part del llibre i els estils dels títols especials. Els requadres d'avís tenen una pàgina pròpia."
+        },
+        "zh": {
+          "description": "段落、行内标签、代码清单和标题的命名样式，以及每一篇的篇首页",
+          "plainSummary": "本页讲命名样式，定义一次就可以反复使用。段落样式设定一类文字，比如参考文献或术语表。行内标签样式在行内画出一个小标签。代码清单有自己的字体、边框和颜色。本页还讲书中每一篇开头的那一页，以及特殊标题的样式。标注框另有一页说明。"
+        },
+        "ar": {
+          "description": "الأنماط المسمّاة للفقرات والشارات وقوائم الشيفرة والعناوين، والصفحات التي تفتتح كل جزء",
+          "plainSummary": "تتناول هذه الصفحة الأنماط المسمّاة التي تعرّفها مرة واحدة وتستعملها مرات كثيرة. يضبط نمط الفقرة نوعًا من النص، مثل قائمة المراجع أو المسرد. ويرسم نمط الشارة ملصقًا صغيرًا داخل السطر. ولقوائم الشيفرة خطها وإطارها وألوانها. وتتناول الصفحة أيضًا الصفحات التي تفتتح كل جزء من الكتاب، وأنماط العناوين الخاصة. وللإطارات صفحة خاصة بها."
+        },
+        "ja": {
+          "description": "段落、チップ、コードリスト、見出しの名前付きスタイルと、各部の扉ページ",
+          "plainSummary": "このページでは、一度決めれば何度でも使える名前付きスタイルを説明します。段落スタイルは、参考文献や用語集のような種類の文章の組み方を決めます。チップスタイルは行の中に小さなラベルを描きます。コードリストには専用のフォント、枠、色があります。本の各部の最初に置くページと、特別な見出しのスタイルも扱います。囲みは別のページで説明します。"
+        },
+        "pt": {
+          "description": "Os estilos nomeados de parágrafos, chips, listagens de código e títulos, e as páginas que abrem cada parte",
+          "plainSummary": "Esta página reúne os estilos nomeados, que você define uma vez e usa muitas. Um estilo de parágrafo define um tipo de texto, como uma bibliografia ou um glossário. Um estilo de chip desenha uma pequena etiqueta dentro da linha. As listagens de código têm fonte, caixa e cores próprias. A página também explica as páginas que abrem cada parte do livro e os estilos dos títulos especiais. Os boxes têm uma página própria."
+        },
+        "fr": {
+          "description": "Les styles nommés des paragraphes, des pastilles, des listings de code et des titres, et les pages qui ouvrent chaque partie",
+          "plainSummary": "Cette page présente les styles nommés que vous définissez une fois et utilisez autant de fois que nécessaire. Un style de paragraphe règle un genre de texte, comme une bibliographie ou un glossaire. Un style de pastille dessine une petite étiquette dans une ligne. Les listings de code ont leur propre police, leur cadre et leurs couleurs. La page traite aussi des pages qui ouvrent chaque partie d’un livre, et des styles des titres particuliers. Les encadrés ont leur propre page."
+        },
+        "de": {
+          "description": "Benannte Stile für Absätze, Chips, Code-Listings und Überschriften sowie die Seiten, die jeden Teil eröffnen",
+          "plainSummary": "Diese Seite behandelt die benannten Stile, die Sie einmal festlegen und vielfach verwenden. Ein Absatzformat legt eine Textart fest, etwa ein Literaturverzeichnis oder ein Glossar. Ein Chip-Stil zeichnet eine kleine Marke in eine Zeile. Code-Listings haben ihre eigene Schrift, ihren eigenen Rahmen und ihre eigenen Farben. Außerdem behandelt die Seite die Seiten, die jeden Teil eines Buchs eröffnen, und die Stile für besondere Überschriften. Kästen haben eine eigene Seite."
+        },
+        "it": {
+          "description": "Stili con nome per paragrafi, chip, listati di codice e titoli, e le pagine che aprono ogni parte",
+          "plainSummary": "Questa pagina tratta gli stili con nome che definisci una volta e usi molte volte. Uno stile di paragrafo imposta un tipo di testo, come una bibliografia o un glossario. Uno stile di chip disegna una piccola etichetta dentro una riga. I listati di codice hanno un proprio font, una propria cornice e propri colori. La pagina tratta anche le pagine che aprono ogni parte di un libro e gli stili per i titoli speciali. I riquadri hanno una pagina a parte."
+        }
+      },
+      "pages": [
+        {
+          "slug": "configuration-callouts",
+          "sections": [
+            "Callout styles"
+          ],
+          "locales": {
+            "en": {
+              "title": "Configuration: callout boxes",
+              "sidebarTitle": "Callout boxes",
+              "description": "Named styles for :::callout boxes: frame, fill, stripe, title, icon and marker, numbered statements, typography inside the box and boxes split across pages",
+              "plainSummary": "This page covers the boxes that set a note, a tip, a warning or a list of goals apart from the text. You give each kind of box a name and a look: its background, its border, a coloured stripe, a title and an icon. A box can carry a number, as a theorem or an example does in a textbook. You choose the fonts inside the box. When a long box goes on to the next page, you choose what marks the break."
+            },
+            "es": {
+              "title": "Configuración: recuadros de aviso",
+              "sidebarTitle": "Recuadros de aviso",
+              "description": "Estilos con nombre para los recuadros :::callout: marco, fondo, franja, título, icono y marcador, enunciados numerados, tipografía dentro del recuadro y recuadros partidos entre páginas",
+              "plainSummary": "Esta página explica los recuadros que separan del texto una nota, un consejo, una advertencia o una lista de objetivos. Das a cada clase de recuadro un nombre y un aspecto: su fondo, su borde, una franja de color, un título y un icono. Un recuadro puede llevar un número, como un teorema o un ejemplo en un libro de texto. Eliges las tipografías de dentro del recuadro. Cuando un recuadro largo sigue en la página siguiente, eliges qué marca el corte."
+            },
+            "ca": {
+              "title": "Configuració: requadres d'avís",
+              "sidebarTitle": "Requadres d'avís",
+              "description": "Estils amb nom per als requadres :::callout: marc, fons, franja, títol, icona i marcador, enunciats numerats, tipografia dins del requadre i requadres partits entre pàgines",
+              "plainSummary": "Aquesta pàgina explica els requadres que separen del text una nota, un consell, una advertència o una llista d'objectius. Dones a cada classe de requadre un nom i un aspecte: el fons, la vora, una franja de color, un títol i una icona. Un requadre pot portar un número, com un teorema o un exemple en un llibre de text. Tries les tipografies de dins del requadre. Quan un requadre llarg continua a la pàgina següent, tries què marca el tall."
+            },
+            "zh": {
+              "title": "配置：标注框",
+              "sidebarTitle": "标注框",
+              "description": ":::callout标注框的命名样式：边框、底色、色条、标题、图标和框外标记，编号的命题，框内排版，以及跨页拆分的框",
+              "plainSummary": "本页讲把提示、技巧、警告或学习目标与正文分开的框。你给每种框起一个名字，并设定它的样子：底色、边框、一条彩色色条、标题和图标。框可以带编号，就像教科书里的定理或例题。你可以选择框内的字体。一个长框延续到下一页时，你可以选择用什么标出断开的地方。"
+            },
+            "ar": {
+              "title": "الإعدادات: الإطارات",
+              "sidebarTitle": "الإطارات",
+              "description": "الأنماط المسمّاة لإطارات :::callout: الحدّ والخلفية والشريط الجانبي والعنوان والأيقونة والعلامة الخارجية، والمبرهنات المرقّمة، والتنسيق الطباعي داخل الإطار، والإطارات المقسومة بين الصفحات",
+              "plainSummary": "تتناول هذه الصفحة الإطارات التي تفصل ملاحظة أو نصيحة أو تحذيرًا أو قائمة أهداف عن النص. تعطي كل نوع من الإطارات اسمًا ومظهرًا: خلفيته وحدّه وشريطًا ملوّنًا وعنوانًا وأيقونة. ويمكن أن يحمل الإطار رقمًا، كما تحمل المبرهنة أو المثال رقمًا في الكتاب المدرسي. وتختار الخطوط داخل الإطار. وحين يمتد إطار طويل إلى الصفحة التالية، تختار ما يدل على موضع الانقطاع."
+            },
+            "ja": {
+              "title": "設定：囲み",
+              "sidebarTitle": "囲み",
+              "description": ":::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコンと外側のマーカー、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み",
+              "plainSummary": "このページでは、注記、ヒント、警告、学習目標などを本文から切り離して見せる囲みを説明します。囲みの種類ごとに名前を付け、背景、枠線、色の帯、タイトル、アイコンといった見た目を決めます。教科書の定理や例題のように、囲みに番号を付けることもできます。囲みの中のフォントも選べます。長い囲みが次のページへ続くときは、その切れ目に何を示すかを選びます。"
+            },
+            "pt": {
+              "title": "Configuração: boxes",
+              "sidebarTitle": "Boxes",
+              "description": "Estilos nomeados para boxes :::callout: moldura, fundo, faixa, título, ícone e marcador, enunciados numerados, tipografia dentro do boxe e boxes divididos entre páginas",
+              "plainSummary": "Esta página trata dos boxes que separam do texto uma nota, uma dica, um alerta ou uma lista de objetivos. Você dá a cada tipo de boxe um nome e uma aparência: o fundo, a borda, uma faixa colorida, um título e um ícone. Um boxe pode ter um número, como um teorema ou um exemplo num livro didático. Você escolhe as fontes dentro do boxe. Quando um boxe longo continua na página seguinte, você escolhe o que marca a quebra."
+            },
+            "fr": {
+              "title": "Configuration : encadrés",
+              "sidebarTitle": "Encadrés",
+              "description": "Les styles nommés des encadrés :::callout : cadre, fond, bande, titre, icône et marqueur, énoncés numérotés, typographie dans l’encadré et encadrés coupés d’une page à l’autre",
+              "plainSummary": "Cette page traite des encadrés qui mettent à part du texte une remarque, un conseil, un avertissement ou une liste d’objectifs. Vous donnez à chaque genre d’encadré un nom et un aspect : son fond, sa bordure, une bande de couleur, un titre et une icône. Un encadré peut porter un numéro, comme un théorème ou un exemple dans un manuel. Vous choisissez les polices à l’intérieur de l’encadré. Quand un long encadré continue sur la page suivante, vous choisissez ce qui marque la coupure."
+            },
+            "de": {
+              "title": "Konfiguration: Kästen",
+              "sidebarTitle": "Kästen",
+              "description": "Benannte Stile für :::callout-Kästen: Rahmen, Füllung, Streifen, Titel, Symbol und Marker, nummerierte Aussagen, Typografie im Kasten und Kästen, die über Seiten hinweg geteilt werden",
+              "plainSummary": "Diese Seite behandelt die Kästen, die eine Anmerkung, einen Tipp, eine Warnung oder eine Liste von Lernzielen vom Text absetzen. Sie geben jeder Art von Kasten einen Namen und ein Aussehen: Hintergrund, Rahmen, einen farbigen Streifen, einen Titel und ein Symbol. Ein Kasten kann eine Nummer tragen, wie ein Lehrsatz oder ein Beispiel in einem Lehrbuch. Sie wählen die Schriften im Kasten. Wenn ein langer Kasten auf der nächsten Seite weitergeht, wählen Sie, was die Trennstelle kennzeichnet."
+            },
+            "it": {
+              "title": "Configurazione: riquadri",
+              "sidebarTitle": "Riquadri",
+              "description": "Stili con nome per i riquadri :::callout: cornice, sfondo, fascia, titolo, icona e marcatore, enunciati numerati, tipografia dentro il riquadro e riquadri divisi tra più pagine",
+              "plainSummary": "Questa pagina riguarda i riquadri che separano dal testo una nota, un suggerimento, un’avvertenza o un elenco di obiettivi. Dai a ogni tipo di riquadro un nome e un aspetto: lo sfondo, il bordo, una fascia colorata, un titolo e un’icona. Un riquadro può avere un numero, come un teorema o un esempio in un libro di testo. Scegli i font dentro il riquadro. Quando un riquadro lungo continua nella pagina seguente, scegli che cosa segna l’interruzione."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "configuration-programmatic-usage",
+      "entry": {
+        "en": {
+          "description": "Calling Postext from code: buildDocument and its warnings, defaults, fonts, caches and the Web Worker",
+          "plainSummary": "This page is for people who write code. It shows how to build a book with one function call and how to read the warnings it reports. It shows how to fill in the default settings, load fonts before the work starts and keep measurements for later. It explains how to run the work in the background, so the page stays quick. The PDF file, the web view, the 3D book, the EPUB e-book and the book files have pages of their own."
+        },
+        "es": {
+          "description": "Postext desde el código: buildDocument y sus avisos, los valores por defecto, las fuentes, las cachés y el Web Worker",
+          "plainSummary": "Esta página es para quienes escriben código. Enseña a componer un libro con una sola llamada a una función y a leer los avisos que devuelve. Explica cómo completar los ajustes por defecto, cargar las fuentes antes de empezar y guardar las medidas para más adelante. También explica cómo hacer el trabajo en segundo plano, para que la página siga respondiendo rápido. El archivo PDF, la vista web, el libro en 3D, el libro electrónico EPUB y los archivos de libro tienen páginas propias."
+        },
+        "ca": {
+          "description": "Postext des del codi: buildDocument i els seus avisos, els valors per defecte, les fonts, les memòries cau i el Web Worker",
+          "plainSummary": "Aquesta pàgina és per a qui escriu codi. Ensenya a compondre un llibre amb una sola crida a una funció i a llegir els avisos que retorna. Explica com completar els paràmetres per defecte, carregar les fonts abans de començar i desar les mesures per a més endavant. També explica com fer la feina en segon pla, perquè la pàgina continuï responent de pressa. El fitxer PDF, la vista web, el llibre en 3D, el llibre electrònic EPUB i els fitxers de llibre tenen pàgines pròpies."
+        },
+        "zh": {
+          "description": "用代码调用Postext：buildDocument及其警告、默认值、字体、缓存和Web Worker",
+          "plainSummary": "本页写给写代码的人。它说明怎样用一次函数调用排出一本书，以及怎样读它报告的警告。它说明怎样补全默认设置、在开始工作前加载字体，以及把测量结果留着以后再用。它说明怎样把这项工作放到后台运行，让页面保持流畅。PDF文件、网页视图、3D书本、EPUB电子书和书本文件另有页面说明。"
+        },
+        "ar": {
+          "description": "استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، و Web Worker",
+          "plainSummary": "هذه الصفحة لمن يكتبون الشيفرة. تبيّن كيف تُخرج كتابًا باستدعاء دالة واحدة، وكيف تقرأ التحذيرات التي تعيدها. وتبيّن كيف تستكمل الإعدادات الافتراضية، وتحمّل الخطوط قبل بدء العمل، وتحفظ القياسات لوقت لاحق. وتشرح كيف تشغّل العمل في الخلفية، لتبقى الصفحة سريعة. ولملف PDF وعرض الويب والكتاب ثلاثي الأبعاد والكتاب الإلكتروني بصيغة EPUB وملفات الكتب صفحات خاصة بها."
+        },
+        "ja": {
+          "description": "コードからPostextを使う：buildDocumentとその警告、既定値、フォント、キャッシュ、Web Worker",
+          "plainSummary": "このページは、プログラムを書く人向けです。1回の関数呼び出しで本を組む方法と、返ってくる警告の読み方を示します。既定の設定で値を補う方法、作業の前にフォントを読み込む方法、計測結果をあとのために取っておく方法を示します。ページの動きを軽く保つために、処理を裏で動かす方法を説明します。PDFファイル、Web表示、3Dの本、EPUBの電子書籍、本のファイルは、それぞれ別のページで説明します。"
+        },
+        "pt": {
+          "description": "O Postext a partir do código: buildDocument e seus avisos, valores padrão, fontes, caches e o Web Worker",
+          "plainSummary": "Esta página é para quem escreve código. Mostra como compor um livro com uma só chamada de função e como ler os avisos que ela devolve. Mostra como preencher os ajustes padrão, carregar as fontes antes de começar e guardar as medidas para depois. Também explica como fazer o trabalho em segundo plano, para a página continuar rápida. O arquivo PDF, a visualização web, o livro em 3D, o livro digital EPUB e os arquivos de livro têm páginas próprias."
+        },
+        "fr": {
+          "description": "Appeler Postext depuis le code : buildDocument et ses avertissements, les valeurs par défaut, les polices, les caches et le Web Worker",
+          "plainSummary": "Cette page s’adresse aux personnes qui écrivent du code. Elle montre comment composer un livre avec un seul appel de fonction et comment lire les avertissements qu’il signale. Elle montre comment compléter les réglages par défaut, charger les polices avant de commencer et garder les mesures pour plus tard. Elle explique comment faire le travail en arrière-plan, pour que la page reste rapide. Le fichier PDF, la vue web, le livre en 3D, le livre numérique EPUB et les fichiers de livre ont leurs propres pages."
+        },
+        "de": {
+          "description": "Postext aus Code aufrufen: buildDocument und seine Warnungen, Standardwerte, Schriften, Caches und der Web Worker",
+          "plainSummary": "Diese Seite richtet sich an Menschen, die Code schreiben. Sie zeigt, wie Sie ein Buch mit einem einzigen Funktionsaufruf erzeugen und wie Sie die Warnungen lesen, die dabei gemeldet werden. Sie zeigt, wie Sie die Standardeinstellungen ergänzen, Schriften vor Beginn der Arbeit laden und Messungen für später aufbewahren. Sie erklärt, wie die Arbeit im Hintergrund läuft, damit die Seite schnell bleibt. Die PDF-Datei, die Webansicht, das 3D-Buch, das E-Book im Format EPUB und die Buchdateien haben eigene Seiten."
+        },
+        "it": {
+          "description": "Chiamare Postext dal codice: buildDocument e i suoi avvisi, i valori predefiniti, i font, le cache e il Web Worker",
+          "plainSummary": "Questa pagina è per chi scrive codice. Mostra come costruire un libro con una sola chiamata di funzione e come leggere gli avvisi che segnala. Mostra come completare le impostazioni predefinite, caricare i font prima di cominciare e conservare le misure per dopo. Spiega come eseguire il lavoro in background, così la pagina resta reattiva. Il file PDF, la vista web, il libro 3D, l’e-book EPUB e i file del libro hanno pagine a parte."
+        }
+      },
+      "pages": [
+        {
+          "slug": "configuration-pdf-output",
+          "sections": [
+            "Generating PDFs"
+          ],
+          "locales": {
+            "en": {
+              "title": "Programmatic usage: PDF files",
+              "sidebarTitle": "PDF files",
+              "description": "postext-pdf from code: installation, the API, font providers in the browser and in Node, CJK fonts, resource bytes, vertical text, workers and print-ready files",
+              "plainSummary": "This page is for people who write code and want a PDF file. It shows how to install the PDF package and turn a laid-out book into a file in a few lines. The package needs the font files, so the page explains how to give them to it, in a browser or on a server. It covers fonts for Chinese, Japanese and Korean, pictures, text set from top to bottom and links. It ends with a complete example and with files ready for a printer."
+            },
+            "es": {
+              "title": "Uso programático: archivos PDF",
+              "sidebarTitle": "Archivos PDF",
+              "description": "postext-pdf desde el código: instalación, la API, los proveedores de fuentes en el navegador y en Node, las fuentes CJK, los bytes de recursos, el texto vertical, los workers y los archivos listos para imprenta",
+              "plainSummary": "Esta página es para quienes escriben código y quieren un archivo PDF. Enseña a instalar el paquete de PDF y a convertir un libro compuesto en un archivo con unas pocas líneas. El paquete necesita los archivos de las fuentes, así que la página explica cómo dárselos, en un navegador o en un servidor. Trata las fuentes para chino, japonés y coreano, las imágenes, el texto que va de arriba abajo y los enlaces. Termina con un ejemplo completo y con archivos listos para la imprenta."
+            },
+            "ca": {
+              "title": "Ús programàtic: fitxers PDF",
+              "sidebarTitle": "Fitxers PDF",
+              "description": "postext-pdf des del codi: instal·lació, l'API, els proveïdors de fonts al navegador i a Node, les fonts CJK, els bytes de recursos, el text vertical, els workers i els fitxers a punt per a impremta",
+              "plainSummary": "Aquesta pàgina és per a qui escriu codi i vol un fitxer PDF. Ensenya a instal·lar el paquet de PDF i a convertir un llibre compost en un fitxer amb unes quantes línies. El paquet necessita els fitxers de les fonts, i la pàgina explica d'on els pot treure, en un navegador o en un servidor. Tracta les fonts per al xinès, el japonès i el coreà, les imatges, el text que va de dalt a baix i els enllaços. Acaba amb un exemple complet i amb fitxers a punt per a la impremta."
+            },
+            "zh": {
+              "title": "以编程方式使用：PDF文件",
+              "sidebarTitle": "PDF文件",
+              "description": "用代码调用postext-pdf：安装、API、浏览器和Node中的字体提供函数、中日韩字体、资源字节、竖排文字、工作线程和可付印的文件",
+              "plainSummary": "本页写给写代码、想得到PDF文件的人。它说明怎样安装PDF包，并用几行代码把排好的书变成文件。这个包需要字体文件，所以本页说明在浏览器或服务器上怎样把字体交给它。本页还讲中文、日文和韩文字体，图片，从上往下排的文字，以及链接。最后给出一个完整的例子，以及可以直接交给印刷厂的文件。"
+            },
+            "ar": {
+              "title": "الاستخدام البرمجي: ملفات PDF",
+              "sidebarTitle": "ملفات PDF",
+              "description": "postext-pdf من الشيفرة: التثبيت، والواجهة البرمجية، ومزوّدو الخطوط في المتصفح وفي Node، وخطوط CJK، وبايتات الموارد، والنص العمودي، والتشغيل في عامل، والملفات الجاهزة للطباعة",
+              "plainSummary": "هذه الصفحة لمن يكتبون الشيفرة ويريدون ملف PDF. تبيّن كيف تثبّت حزمة PDF وتحوّل كتابًا مُخرَجًا إلى ملف ببضعة أسطر. وتحتاج الحزمة إلى ملفات الخطوط، فتشرح الصفحة كيف تعطيها إياها في المتصفح أو على الخادم. وتتناول خطوط الصينية واليابانية والكورية، والصور، والنص المكتوب من الأعلى إلى الأسفل، والروابط. وتنتهي بمثال كامل وبملفات جاهزة للمطبعة."
+            },
+            "ja": {
+              "title": "プログラムからの利用：PDFファイル",
+              "sidebarTitle": "PDFファイル",
+              "description": "コードから使うpostext-pdf：インストール、API、ブラウザーとNodeのフォントプロバイダー、CJKフォント、リソースのバイト列、縦組み、ワーカー、印刷入稿用のファイル",
+              "plainSummary": "このページは、プログラムを書いてPDFファイルを作りたい人向けです。PDFのパッケージをインストールし、組み上がった本を数行でファイルにする方法を示します。このパッケージにはフォントのファイルが必要なので、ブラウザーでもサーバーでも、それを渡す方法を説明します。中国語、日本語、韓国語のフォント、画像、縦組みの文章、リンクも扱います。最後に、全体を通した例と、印刷所に渡せるファイルを示します。"
+            },
+            "pt": {
+              "title": "Uso programático: arquivos PDF",
+              "sidebarTitle": "Arquivos PDF",
+              "description": "O postext-pdf a partir do código: instalação, a API, provedores de fontes no navegador e no Node, fontes CJK, bytes de recursos, texto vertical, workers e arquivos prontos para impressão",
+              "plainSummary": "Esta página é para quem escreve código e quer um arquivo PDF. Mostra como instalar o pacote de PDF e transformar um livro diagramado em arquivo com poucas linhas. O pacote precisa dos arquivos das fontes, então a página explica como entregá-los a ele, num navegador ou num servidor. Trata das fontes para chinês, japonês e coreano, das imagens, do texto escrito de cima para baixo e dos links. Termina com um exemplo completo e com arquivos prontos para a gráfica."
+            },
+            "fr": {
+              "title": "Utilisation programmatique : fichiers PDF",
+              "sidebarTitle": "Fichiers PDF",
+              "description": "postext-pdf depuis le code : installation, API, fournisseurs de polices dans le navigateur et dans Node, polices CJK, octets des ressources, texte vertical, workers et fichiers prêts pour l’impression",
+              "plainSummary": "Cette page s’adresse aux personnes qui écrivent du code et veulent un fichier PDF. Elle montre comment installer le paquet PDF et transformer en quelques lignes un livre mis en page en fichier. Le paquet a besoin des fichiers de police : la page explique comment les lui fournir, dans un navigateur ou sur un serveur. Elle traite des polices pour le chinois, le japonais et le coréen, des images, du texte écrit de haut en bas et des liens. Elle se termine par un exemple complet et par des fichiers prêts pour un imprimeur."
+            },
+            "de": {
+              "title": "Programmatische Nutzung: PDF-Dateien",
+              "sidebarTitle": "PDF-Dateien",
+              "description": "postext-pdf aus Code: Installation, API, Font-Provider im Browser und in Node, CJK-Schriften, Ressourcenbytes, vertikaler Text, Worker und druckfertige Dateien",
+              "plainSummary": "Diese Seite richtet sich an Menschen, die Code schreiben und eine PDF-Datei brauchen. Sie zeigt, wie Sie das PDF-Paket installieren und ein gesetztes Buch mit wenigen Zeilen in eine Datei verwandeln. Das Paket braucht die Schriftdateien, deshalb erklärt die Seite, wie Sie sie ihm übergeben, im Browser oder auf einem Server. Sie behandelt Schriften für Chinesisch, Japanisch und Koreanisch, Bilder, Text, der von oben nach unten läuft, und Links. Am Ende stehen ein vollständiges Beispiel und Dateien, die eine Druckerei übernehmen kann."
+            },
+            "it": {
+              "title": "Uso programmatico: file PDF",
+              "sidebarTitle": "File PDF",
+              "description": "postext-pdf dal codice: installazione, API, provider di font nel browser e in Node, font CJK, byte delle risorse, testo verticale, worker e file pronti per la stampa",
+              "plainSummary": "Questa pagina è per chi scrive codice e vuole un file PDF. Mostra come installare il pacchetto PDF e trasformare un libro impaginato in un file con poche righe. Il pacchetto ha bisogno dei file dei font, quindi la pagina spiega come fornirglieli, in un browser o su un server. Tratta i font per cinese, giapponese e coreano, le immagini, il testo scritto dall’alto in basso e i link. Si chiude con un esempio completo e con file pronti per la tipografia."
+            }
+          }
+        },
+        {
+          "slug": "configuration-html-folio-epub",
+          "sections": [
+            "Integrating the HTML viewer",
+            "A 3D book (`postext-folio`)",
+            "EPUB books (`postext-epub`)"
+          ],
+          "locales": {
+            "en": {
+              "title": "Programmatic usage: HTML, Folio and EPUB",
+              "sidebarTitle": "HTML, Folio and EPUB",
+              "description": "The laid-out book in a web page, as a 3D book with postext-folio, and as fixed-layout or reflowable EPUB 3 with postext-epub",
+              "plainSummary": "This page is for people who write code and want to show a book on a screen. The first section puts the pages inside a web page and explains how that view differs from the canvas and the PDF. The second shows the book in 3D, lying open on a desk, with pages the reader turns. The last section makes an EPUB e-book, with fixed pages or with text that flows to fit the screen, and checks the file."
+            },
+            "es": {
+              "title": "Uso programático: HTML, Folio y EPUB",
+              "sidebarTitle": "HTML, Folio y EPUB",
+              "description": "El libro compuesto en una página web, como libro en 3D con postext-folio y como EPUB 3 de maquetación fija o fluida con postext-epub",
+              "plainSummary": "Esta página es para quienes escriben código y quieren mostrar un libro en una pantalla. La primera sección coloca las páginas dentro de una página web y explica en qué se diferencia esa vista del canvas y del PDF. La segunda muestra el libro en 3D, abierto sobre una mesa, con hojas que el lector pasa. La última sección crea un libro electrónico EPUB, con páginas fijas o con un texto que se adapta a la pantalla, y comprueba el archivo."
+            },
+            "ca": {
+              "title": "Ús programàtic: HTML, Folio i EPUB",
+              "sidebarTitle": "HTML, Folio i EPUB",
+              "description": "El llibre compost en una pàgina web, com a llibre en 3D amb postext-folio i com a EPUB 3 de maquetació fixa o fluida amb postext-epub",
+              "plainSummary": "Aquesta pàgina és per a qui escriu codi i vol mostrar un llibre en una pantalla. La primera secció posa les pàgines dins d'una pàgina web i explica en què es diferencia aquesta vista del canvas i del PDF. La segona mostra el llibre en 3D, obert sobre una taula, amb fulls que el lector passa. L'última secció crea un llibre electrònic EPUB, amb pàgines fixes o amb un text que s'adapta a la pantalla, i comprova el fitxer."
+            },
+            "zh": {
+              "title": "以编程方式使用：HTML、3D书本与EPUB",
+              "sidebarTitle": "HTML、3D书本与EPUB",
+              "description": "把排好的书放进网页，用postext-folio做成3D书本，用postext-epub做成固定版式或流式版式的EPUB 3",
+              "plainSummary": "本页写给写代码、想在屏幕上展示一本书的人。第一节把页面放进网页，并说明这种视图和Canvas、PDF有什么不同。第二节把书以3D形式摊开在桌面上，读者可以翻页。最后一节制作EPUB电子书，页面可以固定，也可以让文字随屏幕重新排列，并检查这个文件。"
+            },
+            "ar": {
+              "title": "الاستخدام البرمجي: HTML وFolio وEPUB",
+              "sidebarTitle": "HTML وFolio وEPUB",
+              "description": "الكتاب المُخرَج داخل صفحة ويب، وكتابًا ثلاثي الأبعاد مع postext-folio، وبصيغة EPUB 3 ثابتة التخطيط أو متدفقة مع postext-epub",
+              "plainSummary": "هذه الصفحة لمن يكتبون الشيفرة ويريدون عرض كتاب على الشاشة. يضع القسم الأول الصفحات داخل صفحة ويب، ويشرح كيف يختلف هذا العرض عن Canvas وPDF. ويعرض القسم الثاني الكتاب بالأبعاد الثلاثة، مفتوحًا على مكتب، بصفحات يقلّبها القارئ. ويصنع القسم الأخير كتابًا إلكترونيًا بصيغة EPUB، بصفحات ثابتة أو بنص يتدفق ليناسب الشاشة، ثم يفحص الملف."
+            },
+            "ja": {
+              "title": "プログラムからの利用：HTML、Folio、EPUB",
+              "sidebarTitle": "HTML、Folio、EPUB",
+              "description": "組み上がった本をWebページに入れる方法、postext-folioで3Dの本にする方法、postext-epubで固定レイアウトまたはリフロー型のEPUB 3にする方法",
+              "plainSummary": "このページは、プログラムを書いて本を画面に見せたい人向けです。最初の節では、ページをWebページの中に入れ、その表示がcanvasやPDFとどう違うかを説明します。次の節では、本を机の上に開いた3Dの姿で見せ、読者がページをめくれるようにします。最後の節では、ページが固定された電子書籍か、画面に合わせて文章が流れる電子書籍をEPUBで作り、そのファイルを検査します。"
+            },
+            "pt": {
+              "title": "Uso programático: HTML, Folio e EPUB",
+              "sidebarTitle": "HTML, Folio e EPUB",
+              "description": "O livro diagramado numa página web, como livro em 3D com o postext-folio e como EPUB 3 de layout fixo ou refluível com o postext-epub",
+              "plainSummary": "Esta página é para quem escreve código e quer mostrar um livro numa tela. A primeira seção coloca as páginas dentro de uma página web e explica em que essa visualização difere do canvas e do PDF. A segunda mostra o livro em 3D, aberto sobre uma mesa, com folhas que o leitor vira. A última seção gera um livro digital EPUB, com páginas fixas ou com texto que se ajusta à tela, e verifica o arquivo."
+            },
+            "fr": {
+              "title": "Utilisation programmatique : HTML, Folio et EPUB",
+              "sidebarTitle": "HTML, Folio et EPUB",
+              "description": "Le livre mis en page dans une page web, en livre 3D avec postext-folio, et en EPUB 3 à mise en page fixe ou recomposable avec postext-epub",
+              "plainSummary": "Cette page s’adresse aux personnes qui écrivent du code et veulent montrer un livre à l’écran. La première section place les pages dans une page web et explique en quoi cette vue diffère du canvas et du PDF. La deuxième montre le livre en 3D, ouvert sur un bureau, avec des pages que le lecteur tourne. La dernière section produit un livre numérique EPUB, à pages fixes ou avec un texte qui s’adapte à l’écran, et vérifie le fichier."
+            },
+            "de": {
+              "title": "Programmatische Nutzung: HTML, Folio und EPUB",
+              "sidebarTitle": "HTML, Folio und EPUB",
+              "description": "Das gesetzte Buch in einer Webseite, als 3D-Buch mit postext-folio und als EPUB 3 mit festem Layout oder umfließend mit postext-epub",
+              "plainSummary": "Diese Seite richtet sich an Menschen, die Code schreiben und ein Buch auf einem Bildschirm zeigen wollen. Der erste Abschnitt bettet die Seiten in eine Webseite ein und erklärt, worin sich diese Ansicht vom Canvas und vom PDF unterscheidet. Der zweite zeigt das Buch in 3D, aufgeschlagen auf einem Tisch, mit Seiten, die der Leser umblättert. Der letzte Abschnitt erstellt ein E-Book im Format EPUB, mit festen Seiten oder mit Text, der sich dem Bildschirm anpasst, und prüft die Datei."
+            },
+            "it": {
+              "title": "Uso programmatico: HTML, Folio ed EPUB",
+              "sidebarTitle": "HTML, Folio ed EPUB",
+              "description": "Il libro impaginato in una pagina web, come libro 3D con postext-folio, e come EPUB 3 a layout fisso o fluido con postext-epub",
+              "plainSummary": "Questa pagina è per chi scrive codice e vuole mostrare un libro su uno schermo. La prima sezione mette le pagine dentro una pagina web e spiega in che cosa questa vista differisce dal canvas e dal PDF. La seconda mostra il libro in 3D, aperto su una scrivania, con pagine che il lettore sfoglia. L’ultima sezione crea un e-book EPUB, a pagine fisse o con un testo che si adatta allo schermo, e verifica il file."
+            }
+          }
+        },
+        {
+          "slug": "configuration-bundles",
+          "sections": [
+            "Bundles (`.postext` files)"
+          ],
+          "locales": {
+            "en": {
+              "title": "Programmatic usage: .postext bundles",
+              "sidebarTitle": ".postext bundles",
+              "description": "Opening, laying out, rendering and creating .postext files from code, bilingual bundles, files from older versions and the low-level API",
+              "plainSummary": "This page is for people who write code. A .postext file holds a whole book in one file: its text, its settings, its fonts and its pictures. The page shows how to open such a file, lay out its pages and draw them. It shows how to make a new file from your own text, and how to keep two languages of a book in one file. It also explains how files made by older versions of Postext are read."
+            },
+            "es": {
+              "title": "Uso programático: paquetes .postext",
+              "sidebarTitle": "Paquetes .postext",
+              "description": "Abrir, componer, renderizar y crear archivos .postext desde el código, los paquetes bilingües, los archivos de versiones anteriores y la API de bajo nivel",
+              "plainSummary": "Esta página es para quienes escriben código. Un archivo .postext guarda un libro entero en un solo archivo: su texto, sus ajustes, sus fuentes y sus imágenes. La página enseña a abrir uno de esos archivos, componer sus páginas y dibujarlas. Enseña a crear un archivo nuevo a partir de tu propio texto y a guardar dos idiomas de un libro en el mismo archivo. También explica cómo se leen los archivos creados con versiones anteriores de Postext."
+            },
+            "ca": {
+              "title": "Ús programàtic: paquets .postext",
+              "sidebarTitle": "Paquets .postext",
+              "description": "Obrir, compondre, renderitzar i crear fitxers .postext des del codi, els paquets bilingües, els fitxers de versions anteriors i l'API de baix nivell",
+              "plainSummary": "Aquesta pàgina és per a qui escriu codi. Un fitxer .postext desa un llibre sencer en un sol fitxer: el text, els paràmetres, les fonts i les imatges. La pàgina ensenya a obrir un d'aquests fitxers, compondre'n les pàgines i dibuixar-les. Ensenya a crear un fitxer nou a partir del teu propi text i a desar dues llengües d'un llibre en el mateix fitxer. També explica com es llegeixen els fitxers creats amb versions anteriors de Postext."
+            },
+            "zh": {
+              "title": "以编程方式使用：.postext文件包",
+              "sidebarTitle": ".postext文件包",
+              "description": "用代码打开、排版、渲染和创建.postext文件，双语文件包，旧版本的文件，以及底层API",
+              "plainSummary": "本页写给写代码的人。一个.postext文件把整本书装在一个文件里：文字、设置、字体和图片。本页说明怎样打开这样的文件、给它排版并画出页面。它说明怎样用你自己的文字做一个新文件，以及怎样把一本书的两种语言放在同一个文件里。本页还说明旧版本Postext做出的文件怎样读取。"
+            },
+            "ar": {
+              "title": "الاستخدام البرمجي: حزم .postext",
+              "sidebarTitle": "حزم .postext",
+              "description": "فتح ملفات .postext وإخراجها ورسمها وإنشاؤها من الشيفرة، والحزم الثنائية اللغة، وملفات الإصدارات القديمة، والواجهة البرمجية منخفضة المستوى",
+              "plainSummary": "هذه الصفحة لمن يكتبون الشيفرة. يحمل ملف .postext كتابًا كاملًا في ملف واحد: نصه وإعداداته وخطوطه وصوره. وتبيّن الصفحة كيف تفتح هذا الملف، وتُخرج صفحاته، وترسمها. وتبيّن كيف تصنع ملفًا جديدًا من نصك، وكيف تحفظ لغتين من الكتاب في ملف واحد. وتشرح أيضًا كيف تُقرأ الملفات التي صنعتها إصدارات أقدم من Postext."
+            },
+            "ja": {
+              "title": "プログラムからの利用：.postextバンドル",
+              "sidebarTitle": ".postextバンドル",
+              "description": "コードから.postextファイルを開き、組み、描画し、作成する方法、多言語のバンドル、古いバージョンのファイル、低レベルのAPI",
+              "plainSummary": "このページは、プログラムを書く人向けです。.postextファイルには、1冊の本の文章、設定、フォント、画像がまるごと入っています。このページでは、そのファイルを開き、ページを組み、描く方法を示します。自分の文章から新しいファイルを作る方法と、2つの言語の本を1つのファイルにまとめる方法も示します。古いバージョンのPostextで作ったファイルがどう読まれるかも説明します。"
+            },
+            "pt": {
+              "title": "Uso programático: pacotes .postext",
+              "sidebarTitle": "Pacotes .postext",
+              "description": "Abrir, diagramar, renderizar e criar arquivos .postext a partir do código, pacotes bilíngues, arquivos de versões anteriores e a API de baixo nível",
+              "plainSummary": "Esta página é para quem escreve código. Um arquivo .postext guarda um livro inteiro num só arquivo: o texto, os ajustes, as fontes e as imagens. A página mostra como abrir um arquivo desses, diagramar as páginas e desenhá-las. Mostra como criar um arquivo novo a partir do seu próprio texto e como guardar dois idiomas de um livro no mesmo arquivo. Também explica como são lidos os arquivos feitos por versões anteriores do Postext."
+            },
+            "fr": {
+              "title": "Utilisation programmatique : paquets .postext",
+              "sidebarTitle": "Paquets .postext",
+              "description": "Ouvrir, mettre en page, rendre et créer des fichiers .postext depuis le code, les paquets bilingues, les fichiers des anciennes versions et l’API de bas niveau",
+              "plainSummary": "Cette page s’adresse aux personnes qui écrivent du code. Un fichier .postext contient un livre entier en un seul fichier : son texte, ses réglages, ses polices et ses images. La page montre comment ouvrir un tel fichier, composer ses pages et les dessiner. Elle montre comment créer un nouveau fichier à partir de votre propre texte, et comment garder deux langues d’un même livre dans un seul fichier. Elle explique aussi comment Postext lit les fichiers créés par ses anciennes versions."
+            },
+            "de": {
+              "title": "Programmatische Nutzung: .postext-Pakete",
+              "sidebarTitle": ".postext-Pakete",
+              "description": ".postext-Dateien aus Code öffnen, setzen, rendern und erstellen, zweisprachige Pakete, Dateien älterer Versionen und die API der unteren Ebene",
+              "plainSummary": "Diese Seite richtet sich an Menschen, die Code schreiben. Eine .postext-Datei enthält ein ganzes Buch in einer einzigen Datei: Text, Einstellungen, Schriften und Bilder. Die Seite zeigt, wie Sie eine solche Datei öffnen, ihre Seiten setzen und zeichnen. Sie zeigt, wie Sie aus Ihrem eigenen Text eine neue Datei erstellen und wie Sie zwei Sprachfassungen eines Buchs in einer Datei halten. Außerdem erklärt sie, wie Dateien gelesen werden, die ältere Versionen von Postext erzeugt haben."
+            },
+            "it": {
+              "title": "Uso programmatico: pacchetti .postext",
+              "sidebarTitle": "Pacchetti .postext",
+              "description": "Aprire, impaginare, disegnare e creare file .postext dal codice, i pacchetti bilingui, i file delle versioni precedenti e l’API di basso livello",
+              "plainSummary": "Questa pagina è per chi scrive codice. Un file .postext contiene un libro intero in un solo file: il testo, le impostazioni, i font e le immagini. La pagina mostra come aprire un file di questo tipo, impaginarlo e disegnarne le pagine. Mostra come creare un file nuovo dal tuo testo e come tenere due lingue di un libro in un solo file. Spiega anche come vengono letti i file creati da versioni precedenti di Postext."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "document-format",
+      "entry": {
+        "en": {
+          "description": "The Markdown subset Postext parses: frontmatter, headings, lists and code blocks, what it ignores, and the rules for authoring source documents",
+          "plainSummary": "This page explains how to write a text that Postext can lay out. You write in Markdown, a simple way of writing where a few symbols mark headings, lists, bold words and links. This page covers the lines at the top of a file, headings, lists, code and the marks Postext ignores. Four more pages cover blocks such as boxes and columns, marks inside a line, notes and references, and pictures and tables. The page ends with advice on writing text that is easy to read."
+        },
+        "es": {
+          "description": "El subconjunto de Markdown que parsea Postext: el frontmatter, los encabezados, las listas y los bloques de código, lo que ignora y las normas para escribir los documentos fuente",
+          "plainSummary": "Esta página explica cómo escribir un texto que Postext pueda componer. Se escribe en Markdown, una forma sencilla de escribir en la que unos pocos signos marcan los títulos, las listas, las negritas y los enlaces. Esta página trata las líneas del principio del archivo, los títulos, las listas, el código y las marcas que Postext no tiene en cuenta. Otras cuatro páginas tratan los bloques, como los recuadros y las columnas, las marcas dentro de la línea, las notas y las referencias, y las imágenes y las tablas. La página termina con consejos para escribir un texto fácil de leer."
+        },
+        "ca": {
+          "description": "El subconjunt de Markdown que analitza Postext: el frontmatter, els encapçalaments, les llistes i els blocs de codi, el que ignora i les normes per escriure els documents font",
+          "plainSummary": "Aquesta pàgina explica com s'escriu un text que Postext pugui compondre. S'escriu en Markdown, una manera senzilla d'escriure en què uns pocs signes marquen els títols, les llistes, les negretes i els enllaços. Aquesta pàgina tracta les línies del començament del fitxer, els títols, les llistes, el codi i les marques que Postext no té en compte. Unes altres quatre pàgines tracten els blocs, com els requadres i les columnes, les marques dins de la línia, les notes i les referències, i les imatges i les taules. La pàgina acaba amb consells per escriure un text fàcil de llegir."
+        },
+        "zh": {
+          "description": "Postext解析的Markdown子集：前置元数据、标题、列表和代码块，它忽略的写法，以及编写源文档的规则",
+          "plainSummary": "本页说明怎样写出Postext能排版的文字。文字用Markdown写成，这是一种简单的写法，用几个符号标出标题、列表、粗体和链接。本页讲文件开头的几行、标题、列表、代码，以及Postext会忽略的标记。另外四页分别讲框和分栏这样的块、行内的标记、注释和引用，以及图片和表格。最后给出一些让文字更好读的建议。"
+        },
+        "ar": {
+          "description": "مجموعة Markdown الجزئية التي يحلّلها Postext: البيانات التمهيدية، والعناوين، والقوائم، وكتل الشيفرة، وما يتجاهله، وقواعد كتابة المستندات المصدرية",
+          "plainSummary": "تشرح هذه الصفحة كيف تكتب نصًا يستطيع Postext أن يُخرجه في صفحات. تكتب بلغة Markdown، وهي طريقة بسيطة في الكتابة تدلّ فيها رموز قليلة على العناوين والقوائم والكلمات الغامقة والروابط. وتتناول هذه الصفحة الأسطر التي في أعلى الملف، والعناوين، والقوائم، والشيفرة، والعلامات التي يتجاهلها Postext. وتتناول أربع صفحات أخرى الكتل مثل الإطارات والأعمدة، والعلامات داخل السطر، والحواشي والإحالات، والصور والجداول. وتنتهي الصفحة بنصائح لكتابة نص سهل القراءة."
+        },
+        "ja": {
+          "description": "Postextが解析するMarkdownのサブセット：フロントマター、見出し、リスト、コードブロック、無視される記法、原稿を書くときの規則",
+          "plainSummary": "このページでは、Postextが組める文章の書き方を説明します。文章はMarkdownで書きます。Markdownは、いくつかの記号で見出し、リスト、太字、リンクを表す簡単な書き方です。このページでは、ファイルの先頭に書く行、見出し、リスト、コードと、Postextが無視する記号を扱います。囲みや段組みのようなブロック、行の中の記号、注と参照、画像と表は、ほかの4つのページで説明します。最後に、読みやすい文章を書くための助言があります。"
+        },
+        "pt": {
+          "description": "O subconjunto de Markdown que o Postext lê: frontmatter, títulos, listas e blocos de código, o que ele ignora e as regras para escrever os documentos de origem",
+          "plainSummary": "Esta página explica como escrever um texto que o Postext consiga diagramar. Você escreve em Markdown, um jeito simples de escrever em que alguns símbolos marcam títulos, listas, palavras em negrito e links. Esta página trata das linhas do início do arquivo, dos títulos, das listas, do código e das marcas que o Postext ignora. Outras quatro páginas tratam dos blocos, como boxes e colunas, das marcas dentro da linha, das notas e referências, e das imagens e tabelas. No final, traz conselhos para escrever um texto fácil de ler."
+        },
+        "fr": {
+          "description": "Le sous-ensemble de Markdown que lit Postext : frontmatter, titres, listes et blocs de code, ce qu’il ignore, et les règles pour rédiger les documents source",
+          "plainSummary": "Cette page explique comment écrire un texte que Postext sait mettre en page. Vous écrivez en Markdown, une façon simple d’écrire où quelques symboles marquent les titres, les listes, les mots en gras et les liens. Cette page traite des lignes en tête de fichier, des titres, des listes, du code et des marques que Postext ignore. Quatre autres pages traitent des blocs comme les encadrés et les colonnes, des marques dans une ligne, des notes et des renvois, et des images et des tableaux. La page se termine par des conseils pour écrire un texte facile à lire."
+        },
+        "de": {
+          "description": "Die Markdown-Teilmenge, die Postext einliest: Frontmatter, Überschriften, Listen und Codeblöcke, was es übergeht, und die Regeln für das Verfassen von Quelldokumenten",
+          "plainSummary": "Diese Seite erklärt, wie Sie einen Text schreiben, den Postext setzen kann. Sie schreiben in Markdown, einer einfachen Schreibweise, in der ein paar Zeichen Überschriften, Listen, fette Wörter und Links kennzeichnen. Diese Seite behandelt die Zeilen am Anfang einer Datei, Überschriften, Listen, Code und die Zeichen, die Postext übergeht. Vier weitere Seiten behandeln Blöcke wie Kästen und Spalten, Zeichen innerhalb einer Zeile, Anmerkungen und Verweise sowie Bilder und Tabellen. Am Ende stehen Ratschläge für Texte, die sich leicht lesen lassen."
+        },
+        "it": {
+          "description": "Il sottoinsieme di markdown che Postext analizza: frontmatter, titoli, elenchi e blocchi di codice, ciò che ignora, e le regole per scrivere i documenti sorgente",
+          "plainSummary": "Questa pagina spiega come scrivere un testo che Postext sappia impaginare. Scrivi in Markdown, un modo semplice di scrivere in cui pochi simboli indicano titoli, elenchi, parole in grassetto e link. Questa pagina tratta le righe in cima a un file, i titoli, gli elenchi, il codice e i segni che Postext ignora. Altre quattro pagine trattano i blocchi come riquadri e colonne, i segni dentro una riga, le note e i rimandi, e le immagini e le tabelle. La pagina si chiude con qualche consiglio per scrivere un testo facile da leggere."
+        }
+      },
+      "pages": [
+        {
+          "slug": "document-format-directives",
+          "sections": [
+            "Directives",
+            "Comics"
+          ],
+          "locales": {
+            "en": {
+              "title": "Document format: directives",
+              "sidebarTitle": "Directives",
+              "description": "The ::: directives: containers, columns, paper, page breaks, numbering, space, verse, contents and index, line breaks, and the markup of comic pages",
+              "plainSummary": "A directive is a block that starts with three colons, such as :::callout or :::columns. This page lists every directive and what it does. Some put text in a box, set it in columns or print it on another kind of paper. Others start a new page, change the numbering, add space, set a poem line by line, or print the table of contents and the index. The last section covers the marks for comic pages, panels and the words of the characters."
+            },
+            "es": {
+              "title": "Formato del documento: directivas",
+              "sidebarTitle": "Directivas",
+              "description": "Las directivas con ::: (contenedores, columnas, papel, saltos de página, numeración, espacio, verso, índice de contenidos e índice analítico, saltos de línea) y el marcado de las páginas de cómic",
+              "plainSummary": "Una directiva es un bloque que empieza con tres signos de dos puntos seguidos, como :::callout o :::columns. Esta página enumera todas las directivas y lo que hace cada una. Algunas meten el texto en un recuadro, lo componen en columnas o lo imprimen en otra clase de papel. Otras empiezan una página nueva, cambian la numeración, añaden espacio, componen un poema verso a verso o imprimen el índice de contenidos y el índice analítico. La última sección explica las marcas de las páginas de cómic, de las viñetas y de las palabras de los personajes."
+            },
+            "ca": {
+              "title": "Format del document: directives",
+              "sidebarTitle": "Directives",
+              "description": "Les directives amb ::: (contenidors, columnes, paper, salts de pàgina, numeració, espai, vers, índex de continguts i índex analític, salts de línia) i el marcatge de les pàgines de còmic",
+              "plainSummary": "Una directiva és un bloc que comença amb tres signes de dos punts seguits, com ara :::callout o :::columns. Aquesta pàgina enumera totes les directives i què fa cadascuna. Algunes posen el text en un requadre, el componen en columnes o l'imprimeixen en una altra classe de paper. D'altres comencen una pàgina nova, canvien la numeració, afegeixen espai, componen un poema vers a vers o imprimeixen l'índex de continguts i l'índex analític. L'última secció explica les marques de les pàgines de còmic, de les vinyetes i de les paraules dels personatges."
+            },
+            "zh": {
+              "title": "文档格式：指令",
+              "sidebarTitle": "指令",
+              "description": ":::指令：容器、分栏、纸张、分页、编号、空白、诗歌、目录和索引、换行，以及漫画页的标记",
+              "plainSummary": "指令是以三个冒号开头的块，比如:::callout或:::columns。本页列出每一种指令和它的作用。有的把文字放进框里、排成几栏，或印在另一种纸上。有的另起一页、改变编号、加一段空白、逐行排一首诗，或印出目录和索引。最后一节讲漫画页、分格和人物台词用的标记。"
+            },
+            "ar": {
+              "title": "صيغة المستند: التوجيهات",
+              "sidebarTitle": "التوجيهات",
+              "description": "التوجيهات (:::): الحاويات، والأعمدة، والورق، وفواصل الصفحات، والترقيم، والمسافات، والشعر، وجدول المحتويات والفهرس، وفواصل الأسطر، وترميز صفحات القصص المصورة",
+              "plainSummary": "التوجيه كتلة تبدأ بالعلامة :::، مثل :::callout أو :::columns. تسرد هذه الصفحة كل توجيه وما يفعله. بعضها يضع النص في إطار، أو ينضّده في أعمدة، أو يطبعه على نوع آخر من الورق. وبعضها يبدأ صفحة جديدة، أو يغيّر الترقيم، أو يضيف مسافة، أو ينضّد قصيدة سطرًا سطرًا، أو يطبع جدول المحتويات والفهرس. ويتناول القسم الأخير علامات صفحات القصص المصورة ومربعاتها وكلام الشخصيات."
+            },
+            "ja": {
+              "title": "文書形式：ディレクティブ",
+              "sidebarTitle": "ディレクティブ",
+              "description": ":::で始まるディレクティブ：コンテナー、段組み、紙、改ページ、番号付け、空き、詩、目次と索引、改行、漫画のページのマークアップ",
+              "plainSummary": "ディレクティブは、:::calloutや:::columnsのように、3つのコロンで始まるブロックです。このページでは、すべてのディレクティブとその働きを挙げます。文章を囲みに入れるもの、段に組むもの、別の種類の紙に刷るものがあります。新しいページを始める、番号を変える、空きを入れる、詩を1行ずつ組む、目次や索引を印刷する、といったものもあります。最後の節では、漫画のページ、コマ、登場人物のせりふのための記号を説明します。"
+            },
+            "pt": {
+              "title": "Formato do documento: diretivas",
+              "sidebarTitle": "Diretivas",
+              "description": "As diretivas com ::: (contêineres, colunas, papel, quebras de página, numeração, espaço, verso, sumário e índice remissivo, quebras de linha) e a marcação das páginas de quadrinhos",
+              "plainSummary": "Uma diretiva é um bloco que começa com três sinais de dois-pontos seguidos, como :::callout ou :::columns. Esta página lista todas as diretivas e o que cada uma faz. Algumas colocam o texto num boxe, compõem o texto em colunas ou o imprimem em outro tipo de papel. Outras começam uma página nova, mudam a numeração, acrescentam espaço, compõem um poema verso a verso ou imprimem o sumário e o índice remissivo. A última seção trata das marcas das páginas de quadrinhos, dos quadros e das falas dos personagens."
+            },
+            "fr": {
+              "title": "Format du document : directives",
+              "sidebarTitle": "Directives",
+              "description": "Les directives ::: pour les conteneurs, les colonnes, le papier, les sauts de page, la numérotation, l’espace, les vers, la table des matières et l’index, les sauts de ligne, et le balisage des planches de bande dessinée",
+              "plainSummary": "Une directive est un bloc qui commence par trois deux-points, comme :::callout ou :::columns. Cette page liste chaque directive et ce qu’elle fait. Certaines mettent le texte dans un encadré, le composent en colonnes ou l’impriment sur un autre papier. D’autres commencent une nouvelle page, changent la numérotation, ajoutent de l’espace, composent un poème vers par vers, ou impriment la table des matières et l’index. La dernière section traite des marques pour les planches de bande dessinée, les cases et les paroles des personnages."
+            },
+            "de": {
+              "title": "Dokumentformat: Direktiven",
+              "sidebarTitle": "Direktiven",
+              "description": "Die :::-Direktiven: Container, Spalten, Papier, Seitenumbrüche, Nummerierung, Abstand, Verse, Inhaltsverzeichnis und Register, Zeilenumbrüche und die Auszeichnung von Comicseiten",
+              "plainSummary": "Eine Direktive ist ein Block, der mit drei Doppelpunkten beginnt, etwa :::callout oder :::columns. Diese Seite führt jede Direktive auf und sagt, was sie tut. Manche setzen den Text in einen Kasten oder in Spalten oder drucken ihn auf einer anderen Papiersorte. Andere beginnen eine neue Seite, ändern die Nummerierung, fügen Abstand ein, setzen ein Gedicht Zeile für Zeile oder drucken das Inhaltsverzeichnis und das Register. Der letzte Abschnitt behandelt die Zeichen für Comicseiten, Panels und die Worte der Figuren."
+            },
+            "it": {
+              "title": "Formato del documento: direttive",
+              "sidebarTitle": "Direttive",
+              "description": "Le direttive ::: per contenitori, colonne, carta, interruzioni di pagina, numerazione, spazio, versi, indice dei contenuti e indice analitico, a capo, e il markup delle pagine a fumetti",
+              "plainSummary": "Una direttiva è un blocco che comincia con tre due punti di fila, come :::callout o :::columns. Questa pagina elenca ogni direttiva e che cosa fa. Alcune mettono il testo in un riquadro, lo compongono in colonne o lo stampano su un altro tipo di carta. Altre cominciano una nuova pagina, cambiano la numerazione, aggiungono spazio, compongono una poesia verso per verso, o stampano l’indice dei contenuti e l’indice analitico. L’ultima sezione tratta i segni per le pagine a fumetti, le vignette e le parole dei personaggi."
+            }
+          }
+        },
+        {
+          "slug": "document-format-inline",
+          "sections": [
+            "Inline formatting",
+            "Mathematical formulas"
+          ],
+          "locales": {
+            "en": {
+              "title": "Document format: inline formatting and formulas",
+              "sidebarTitle": "Inline formatting and formulas",
+              "description": "Marks inside a line: emphasis, links, chips, small capitals, tabs, vertical text, Chinese and Japanese marks, text direction, and LaTeX formulas",
+              "plainSummary": "This page covers the marks you use inside a line of text. They make words bold or italic, add links, draw small labels, set small capitals and line text up at tab stops. Other marks are for Chinese and Japanese books, such as small readings above a character, or for a phrase in another direction, such as English in an Arabic book. The last section shows how to write mathematical formulas."
+            },
+            "es": {
+              "title": "Formato del documento: formato en línea y fórmulas",
+              "sidebarTitle": "Formato en línea y fórmulas",
+              "description": "Las marcas dentro de la línea: énfasis, enlaces, chips, versalitas, tabuladores, texto vertical, marcas chinas y japonesas, dirección del texto y fórmulas LaTeX",
+              "plainSummary": "Esta página explica las marcas que se usan dentro de una línea de texto. Ponen palabras en negrita o en cursiva, añaden enlaces, dibujan etiquetas pequeñas, componen versalitas y alinean el texto en las tabulaciones. Otras marcas sirven para los libros en chino y en japonés, como las lecturas pequeñas que van sobre un carácter, o para una frase que va en otra dirección, como un texto en inglés dentro de un libro en árabe. La última sección enseña a escribir fórmulas matemáticas."
+            },
+            "ca": {
+              "title": "Format del document: format en línia i fórmules",
+              "sidebarTitle": "Format en línia i fórmules",
+              "description": "Les marques dins de la línia: èmfasi, enllaços, xips, versaletes, tabuladors, text vertical, marques xineses i japoneses, direcció del text i fórmules LaTeX",
+              "plainSummary": "Aquesta pàgina explica les marques que es fan servir dins d'una línia de text. Posen paraules en negreta o en cursiva, afegeixen enllaços, dibuixen etiquetes petites, componen versaletes i alineen el text a les tabulacions. Altres marques serveixen per als llibres en xinès i en japonès, com les lectures petites que van damunt d'un caràcter, o per a una frase que va en una altra direcció, com un text en anglès dins d'un llibre en àrab. L'última secció ensenya a escriure fórmules matemàtiques."
+            },
+            "zh": {
+              "title": "文档格式：行内格式与数学公式",
+              "sidebarTitle": "行内格式与数学公式",
+              "description": "行内的标记：强调、链接、行内标签、小型大写字母、制表符、竖排、中文和日文标记、文本方向，以及LaTeX公式",
+              "plainSummary": "本页讲在一行文字里使用的标记。它们可以把字变成粗体或斜体，加上链接，画出小标签，排成小型大写字母，或让文字在制表位上对齐。还有一些标记用于中文和日文书，比如字上方的小号注音，或者用于方向不同的短语，比如阿拉伯文书里的英文。最后一节说明怎样写数学公式。"
+            },
+            "ar": {
+              "title": "صيغة المستند: التنسيق المضمّن والصيغ الرياضية",
+              "sidebarTitle": "التنسيق المضمّن والصيغ الرياضية",
+              "description": "العلامات داخل السطر: التوكيد، والروابط، والشارات، والحروف الكبيرة المصغّرة، والجدولة، والنص العمودي، والعلامات الصينية واليابانية، واتجاه النص، وصيغ LaTeX",
+              "plainSummary": "تتناول هذه الصفحة العلامات التي تستعملها داخل سطر النص. تجعل الكلمات غامقة أو مائلة، وتضيف الروابط، وترسم ملصقات صغيرة، وتنضّد الحروف الكبيرة المصغّرة، وتصفّ النص عند مواضع الجدولة. وهناك علامات أخرى لكتب الصينية واليابانية، مثل القراءات الصغيرة فوق الحرف، أو لعبارة تسير في اتجاه آخر، مثل كلمات إنجليزية في كتاب عربي. ويبيّن القسم الأخير كيف تكتب الصيغ الرياضية."
+            },
+            "ja": {
+              "title": "文書形式：インライン書式と数式",
+              "sidebarTitle": "インライン書式と数式",
+              "description": "行の中の記号：強調、リンク、チップ、スモールキャピタル、タブ、縦組み、中国語と日本語の記号、文字方向、LaTeXの数式",
+              "plainSummary": "このページでは、文章の行の中で使う記号を説明します。語を太字や斜体にする、リンクを付ける、小さなラベルを描く、スモールキャピタルにする、タブ位置で文字をそろえる、といった記号です。ほかに、字の上に小さく読みを付けるルビのような中国語と日本語の本のための記号や、アラビア語の本の中の英語のように向きの違う語句のための記号があります。最後の節では、数式の書き方を示します。"
+            },
+            "pt": {
+              "title": "Formato do documento: formatação em linha e fórmulas",
+              "sidebarTitle": "Formatação em linha e fórmulas",
+              "description": "Marcas dentro da linha: ênfase, links, chips, versaletes, tabulações, texto vertical, marcas chinesas e japonesas, direção do texto e fórmulas LaTeX",
+              "plainSummary": "Esta página trata das marcas que você usa dentro de uma linha de texto. Elas deixam palavras em negrito ou itálico, acrescentam links, desenham pequenas etiquetas, compõem versaletes e alinham o texto em paradas de tabulação. Outras marcas são para livros em chinês e japonês, como as pequenas leituras sobre um caractere, ou para uma frase em outra direção, como um trecho em inglês num livro em árabe. A última seção mostra como escrever fórmulas matemáticas."
+            },
+            "fr": {
+              "title": "Format du document : mise en forme en ligne et formules",
+              "sidebarTitle": "Mise en forme en ligne et formules",
+              "description": "Les marques dans une ligne : emphase, liens, pastilles, petites capitales, tabulations, texte vertical, marques chinoises et japonaises, sens du texte, et formules LaTeX",
+              "plainSummary": "Cette page traite des marques que vous utilisez dans une ligne de texte. Elles mettent des mots en gras ou en italique, ajoutent des liens, dessinent de petites étiquettes, composent des petites capitales et alignent le texte sur des taquets de tabulation. D’autres marques servent aux livres chinois et japonais, comme les petites indications de prononciation au-dessus d’un caractère, ou à une phrase écrite dans l’autre sens, comme de l’anglais dans un livre arabe. La dernière section montre comment écrire des formules mathématiques."
+            },
+            "de": {
+              "title": "Dokumentformat: Inline-Formatierung und Formeln",
+              "sidebarTitle": "Inline-Formatierung und Formeln",
+              "description": "Auszeichnungen innerhalb einer Zeile: Hervorhebung, Links, Chips, Kapitälchen, Tabulatoren, senkrechter Text, chinesische und japanische Zeichen, Schreibrichtung und LaTeX-Formeln",
+              "plainSummary": "Diese Seite behandelt die Zeichen, die Sie innerhalb einer Textzeile verwenden. Sie machen Wörter fett oder kursiv, fügen Links ein, zeichnen kleine Marken, setzen Kapitälchen und richten Text an Tabstopps aus. Andere Zeichen sind für chinesische und japanische Bücher gedacht, etwa kleine Aussprachehilfen über einem Schriftzeichen, oder für eine Wendung in der anderen Schreibrichtung, etwa Englisch in einem arabischen Buch. Der letzte Abschnitt zeigt, wie Sie mathematische Formeln schreiben."
+            },
+            "it": {
+              "title": "Formato del documento: formattazione in linea e formule",
+              "sidebarTitle": "Formattazione in linea e formule",
+              "description": "I segni dentro una riga: enfasi, link, chip, maiuscoletto, tabulazioni, testo verticale, segni cinesi e giapponesi, direzione del testo e formule LaTeX",
+              "plainSummary": "Questa pagina riguarda i segni che usi dentro una riga di testo. Mettono le parole in grassetto o in corsivo, aggiungono link, disegnano piccole etichette, compongono il maiuscoletto e allineano il testo ai punti di tabulazione. Altri segni servono ai libri cinesi e giapponesi, come le piccole indicazioni di pronuncia sopra un carattere, o a una frase scritta nell’altra direzione, come l’inglese in un libro arabo. L’ultima sezione mostra come scrivere le formule matematiche."
+            }
+          }
+        },
+        {
+          "slug": "document-format-notes-references",
+          "sections": [
+            "Footnotes",
+            "Cross-references and anchors",
+            "Citations and bibliography",
+            "Back-of-book index"
+          ],
+          "locales": {
+            "en": {
+              "title": "Document format: notes and references",
+              "sidebarTitle": "Notes and references",
+              "description": "Footnotes, cross-references and anchors, citations and the bibliography, and the marks of the back-of-book index",
+              "plainSummary": "This page covers the marks that point somewhere else in the book or outside it. A footnote mark sends the reader to a note at the bottom of the page. A cross-reference names a figure, a section or a page by its number. A citation names a book or an article you quote, and the bibliography lists them all. Index marks choose the words that the index at the back of the book lists with their pages."
+            },
+            "es": {
+              "title": "Formato del documento: notas y referencias",
+              "sidebarTitle": "Notas y referencias",
+              "description": "Las notas al pie, las referencias cruzadas y las anclas, las citas y la bibliografía, y las marcas del índice analítico",
+              "plainSummary": "Esta página explica las marcas que remiten a otro lugar del libro o de fuera de él. Una llamada de nota lleva al lector a una nota al pie de la página. Una referencia cruzada nombra una figura, una sección o una página por su número. Una cita nombra un libro o un artículo que mencionas, y la bibliografía los reúne todos. Las marcas de índice eligen las palabras que el índice del final del libro enumera con sus páginas."
+            },
+            "ca": {
+              "title": "Format del document: notes i referències",
+              "sidebarTitle": "Notes i referències",
+              "description": "Les notes a peu de pàgina, les referències creuades i les àncores, les citacions i la bibliografia, i les marques de l'índex analític",
+              "plainSummary": "Aquesta pàgina explica les marques que remeten a un altre lloc del llibre o de fora. Una crida de nota porta el lector a una nota a peu de pàgina. Una referència creuada anomena una figura, una secció o una pàgina pel seu número. Una citació anomena un llibre o un article que esmentes, i la bibliografia els recull tots. Les marques d'índex trien les paraules que l'índex del final del llibre enumera amb les seves pàgines."
+            },
+            "zh": {
+              "title": "文档格式：注释与引用",
+              "sidebarTitle": "注释与引用",
+              "description": "脚注、交叉引用与锚点、引用与参考文献，以及书末索引的标记",
+              "plainSummary": "本页讲指向书中别处或书外的标记。脚注标记把读者引到页面底部的注释。交叉引用用编号指出一张图、一节或一页。引用指出你引述的书或文章，参考文献把它们全部列出来。索引标记选出书末索引要列出的词，并附上它们的页码。"
+            },
+            "ar": {
+              "title": "صيغة المستند: الحواشي والإحالات",
+              "sidebarTitle": "الحواشي والإحالات",
+              "description": "الحواشي السفلية، والإحالات والمراسي، والاستشهادات وقائمة المراجع، وعلامات الفهرس الأبجدي",
+              "plainSummary": "تتناول هذه الصفحة العلامات التي تشير إلى موضع آخر في الكتاب أو خارجه. ترسل علامة الحاشية القارئ إلى ملاحظة في أسفل الصفحة. وتذكر الإحالة شكلًا أو قسمًا أو صفحة برقمه. ويذكر الاستشهاد كتابًا أو مقالة تقتبس منها، وتسرد قائمة المراجع ذلك كله. وتختار علامات الفهرس الكلمات التي يسردها الفهرس في آخر الكتاب مع صفحاتها."
+            },
+            "ja": {
+              "title": "文書形式：注と参照",
+              "sidebarTitle": "注と参照",
+              "description": "脚注、相互参照とアンカー、引用と参考文献、巻末の索引のマーク",
+              "plainSummary": "このページでは、本の中のほかの場所や本の外を指す記号を説明します。脚注の記号は、読者をページの下の注へ案内します。相互参照は、図、節、ページを番号で示します。引用は取り上げる本や論文を示し、参考文献はそれをすべて並べます。索引マークは、巻末の索引にページと一緒に載せる語を選びます。"
+            },
+            "pt": {
+              "title": "Formato do documento: notas e referências",
+              "sidebarTitle": "Notas e referências",
+              "description": "Notas de rodapé, referências cruzadas e âncoras, citações e bibliografia, e as marcas do índice remissivo",
+              "plainSummary": "Esta página trata das marcas que apontam para outro lugar do livro ou para fora dele. A chamada de uma nota leva o leitor a uma nota no pé da página. Uma referência cruzada indica uma figura, uma seção ou uma página pelo número. Uma citação indica um livro ou um artigo que você menciona, e a bibliografia reúne todos eles. As marcas de índice escolhem as palavras que o índice no fim do livro lista com suas páginas."
+            },
+            "fr": {
+              "title": "Format du document : notes et références",
+              "sidebarTitle": "Notes et références",
+              "description": "Les notes de bas de page, les renvois et les ancres, les citations et la bibliographie, et les marques d’index",
+              "plainSummary": "Cette page traite des marques qui renvoient ailleurs dans le livre ou en dehors. Un appel de note envoie le lecteur vers une note en bas de page. Un renvoi désigne une figure, une section ou une page par son numéro. Une citation désigne un livre ou un article que vous citez, et la bibliographie les liste tous. Les marques d’index choisissent les mots que l’index, à la fin du livre, liste avec leurs pages."
+            },
+            "de": {
+              "title": "Dokumentformat: Anmerkungen und Verweise",
+              "sidebarTitle": "Anmerkungen und Verweise",
+              "description": "Fußnoten, Querverweise und Anker, Zitate und Literaturverzeichnis sowie die Registermarken",
+              "plainSummary": "Diese Seite behandelt die Zeichen, die auf eine andere Stelle im Buch oder auf etwas außerhalb verweisen. Ein Fußnotenzeichen verweist auf eine Anmerkung unten auf der Seite. Ein Querverweis nennt eine Abbildung, einen Abschnitt oder eine Seite mit ihrer Nummer. Eine Quellenangabe nennt ein Buch oder einen Artikel, aus dem Sie zitieren, und das Literaturverzeichnis führt sie alle auf. Registermarken wählen die Wörter aus, die das Register am Ende des Buchs mit ihren Seiten aufführt."
+            },
+            "it": {
+              "title": "Formato del documento: note e riferimenti",
+              "sidebarTitle": "Note e riferimenti",
+              "description": "Note a piè di pagina, rimandi e ancore, citazioni e bibliografia, e i segni dell’indice analitico",
+              "plainSummary": "Questa pagina riguarda i segni che rimandano a un altro punto del libro o fuori di esso. Il richiamo di una nota manda chi legge a una nota in fondo alla pagina. Un rimando indica una figura, una sezione o una pagina con il suo numero. Una citazione indica un libro o un articolo che citi, e la bibliografia li elenca tutti. I segni dell’indice scelgono le parole che l’indice analitico, in fondo al libro, elenca con le loro pagine."
+            }
+          }
+        },
+        {
+          "slug": "document-format-resources",
+          "sections": [
+            "Resources"
+          ],
+          "locales": {
+            "en": {
+              "title": "Document format: pictures, tables and videos",
+              "sidebarTitle": "Pictures, tables and videos",
+              "description": "Resources in the text: references and embeds, numbering, placement and where a float lands, text wrap, bitmap size, safe areas, comic anchors and videos",
+              "plainSummary": "This page covers the pictures, tables and videos of a book. You add them once and mention them in the text, and Postext puts each one near the place where it is first mentioned. You can choose where it goes: at the top of a page, across all the columns, or exactly where it is written. Text can flow around a picture. A picture can mark the part that must always be seen when it is cut to fit. Videos play in the web view and in e-books, and show a picture in print."
+            },
+            "es": {
+              "title": "Formato del documento: imágenes, tablas y vídeos",
+              "sidebarTitle": "Imágenes, tablas y vídeos",
+              "description": "Los recursos en el texto: referencias e inserciones, numeración, colocación y dónde cae un flotante, ajuste del texto, tamaño de los mapas de bits, zonas seguras, anclas de cómic y vídeos",
+              "plainSummary": "Esta página explica las imágenes, las tablas y los vídeos de un libro. Los añades una vez y los mencionas en el texto, y Postext coloca cada uno cerca del lugar donde se menciona por primera vez. Puedes elegir dónde va: arriba de una página, a lo ancho de todas las columnas o justo donde lo escribes. El texto puede rodear una imagen. Una imagen puede marcar la parte que siempre debe verse cuando se recorta para que quepa. Los vídeos se reproducen en la vista web y en los libros electrónicos, y en papel muestran una imagen."
+            },
+            "ca": {
+              "title": "Format del document: imatges, taules i vídeos",
+              "sidebarTitle": "Imatges, taules i vídeos",
+              "description": "Els recursos en el text: referències i insercions, numeració, col·locació i on va a parar un flotant, ajust del text, mida dels mapes de bits, zones segures, àncores de còmic i vídeos",
+              "plainSummary": "Aquesta pàgina explica les imatges, les taules i els vídeos d'un llibre. Els afegeixes una vegada i els esmentes en el text, i Postext col·loca cadascun a prop del lloc on s'esmenta per primera vegada. Pots triar on va: a dalt d'una pàgina, a tota l'amplada de les columnes o just on l'escrius. El text pot envoltar una imatge. Una imatge pot marcar la part que sempre s'ha de veure quan es retalla perquè hi càpiga. Els vídeos es reprodueixen a la vista web i als llibres electrònics, i en paper mostren una imatge."
+            },
+            "zh": {
+              "title": "文档格式：图片、表格与视频",
+              "sidebarTitle": "图片、表格与视频",
+              "description": "正文中的资源：引用与嵌入、编号、位置与浮动体落在哪里、文字绕排、位图尺寸、安全区、漫画锚点和视频",
+              "plainSummary": "本页讲书中的图片、表格和视频。你添加一次，在正文里提到它，Postext就把它放在第一次提到的地方附近。你可以选择它的位置：页面顶部、横跨所有栏，或者正好在写它的地方。文字可以绕着图片排。图片被裁切以适应版面时，你可以标出必须始终看得见的部分。视频在网页视图和电子书里播放，印刷时显示为一张图片。"
+            },
+            "ar": {
+              "title": "صيغة المستند: الصور والجداول ومقاطع الفيديو",
+              "sidebarTitle": "الصور والجداول والفيديو",
+              "description": "الموارد في النص: الإحالات والتضمين، والترقيم، والموضع وأين يستقر العنصر العائم، والتفاف النص، ومقاس الصورة النقطية، والمناطق الآمنة، ونقاط الارتكاز في القصص المصورة، ومقاطع الفيديو",
+              "plainSummary": "تتناول هذه الصفحة صور الكتاب وجداوله ومقاطع الفيديو فيه. تضيفها مرة واحدة وتذكرها في النص، فيضع Postext كلًّا منها قرب الموضع الذي ذُكر فيه أول مرة. ويمكنك أن تختار مكانها: أعلى الصفحة، أو بعرض كل الأعمدة، أو في الموضع الذي كُتبت فيه بالضبط. ويمكن أن يلتف النص حول الصورة. ويمكن أن تحدد في الصورة الجزء الذي يجب أن يظهر دائمًا حين تُقصّ لتناسب مكانها. وتعمل مقاطع الفيديو في عرض الويب وفي الكتب الإلكترونية، وتظهر في الطباعة صورةً."
+            },
+            "ja": {
+              "title": "文書形式：画像、表、動画",
+              "sidebarTitle": "画像、表、動画",
+              "description": "本文の中のリソース：参照と埋め込み、番号付け、配置とフロートが置かれる場所、回り込み、ビットマップのサイズ、セーフエリア、漫画のアンカー、動画",
+              "plainSummary": "このページでは、本の画像、表、動画を説明します。一度追加して本文で触れれば、Postextはそれぞれを最初に触れた場所の近くに置きます。置く場所は、ページの上、すべての段にまたがる幅、書いたその場所などから選べます。画像のまわりに文章を回り込ませることもできます。画像を切り詰めて収めるとき、いつも見えていなければならない部分を指定できます。動画はWeb表示と電子書籍で再生され、印刷では1枚の絵になります。"
+            },
+            "pt": {
+              "title": "Formato do documento: imagens, tabelas e vídeos",
+              "sidebarTitle": "Imagens, tabelas e vídeos",
+              "description": "Recursos no texto: referências e inserções, numeração, posicionamento e onde um flutuante vai parar, contorno de texto, tamanho do bitmap, áreas seguras, âncoras de quadrinhos e vídeos",
+              "plainSummary": "Esta página trata das imagens, tabelas e vídeos de um livro. Você os inclui uma vez e os menciona no texto, e o Postext coloca cada um perto do lugar onde é mencionado pela primeira vez. Você pode escolher onde ele fica: no alto de uma página, na largura de todas as colunas ou exatamente onde foi escrito. O texto pode contornar uma imagem. Uma imagem pode marcar a parte que sempre deve aparecer quando ela é cortada para caber. Os vídeos tocam na visualização web e nos livros digitais, e no impresso mostram uma imagem."
+            },
+            "fr": {
+              "title": "Format du document : images, tableaux et vidéos",
+              "sidebarTitle": "Images, tableaux et vidéos",
+              "description": "Les ressources dans le texte : renvois et insertions, numérotation, placement et point de chute d’un flottant, habillage du texte, taille des bitmaps, zones de sécurité, ancres des personnages et vidéos",
+              "plainSummary": "Cette page traite des images, des tableaux et des vidéos d’un livre. Vous les ajoutez une fois et vous les citez dans le texte, et Postext place chacun près de l’endroit où il est cité pour la première fois. Vous pouvez choisir où il va : en haut d’une page, sur toutes les colonnes, ou exactement là où il est écrit. Le texte peut contourner une image. Une image peut indiquer la partie qui doit toujours rester visible quand on la recadre. Les vidéos se lisent dans la vue web et dans les livres numériques, et, à l’impression, une image les remplace."
+            },
+            "de": {
+              "title": "Dokumentformat: Bilder, Tabellen und Videos",
+              "sidebarTitle": "Bilder, Tabellen und Videos",
+              "description": "Ressourcen im Text: Verweise und Einbettungen, Nummerierung, Platzierung und wo ein Gleitobjekt landet, Textumfluss, Bitmap-Größe, Sicherheitsbereiche, Sprecheranker und Videos",
+              "plainSummary": "Diese Seite behandelt die Bilder, Tabellen und Videos eines Buchs. Sie fügen sie einmal hinzu und erwähnen sie im Text, und Postext stellt jedes in die Nähe der Stelle, an der es zuerst erwähnt wird. Sie können wählen, wohin es kommt: oben auf eine Seite, über alle Spalten oder genau dorthin, wo es im Text steht. Text kann um ein Bild herumfließen. Ein Bild kann den Teil kennzeichnen, der immer sichtbar bleiben muss, wenn es zugeschnitten wird. Videos laufen in der Webansicht und in E-Books, im Druck steht an ihrer Stelle ein Bild."
+            },
+            "it": {
+              "title": "Formato del documento: immagini, tabelle e video",
+              "sidebarTitle": "Immagini, tabelle e video",
+              "description": "Le risorse nel testo: rimandi e inserimenti, numerazione, collocazione e dove finisce un elemento flottante, testo intorno alle immagini, dimensione delle bitmap, zone sicure, ancore dei personaggi e video",
+              "plainSummary": "Questa pagina riguarda le immagini, le tabelle e i video di un libro. Li aggiungi una volta e li citi nel testo, e Postext mette ciascuno vicino al punto in cui è citato per la prima volta. Puoi scegliere dove va: in cima a una pagina, su tutte le colonne o esattamente dove è scritto. Il testo può scorrere intorno a un’immagine. Un’immagine può indicare la parte che deve restare sempre visibile quando viene ritagliata. I video si riproducono nella vista web e negli e-book, e nella stampa al loro posto compare un’immagine."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "sandbox",
+      "entry": {
+        "en": {
+          "description": "The Sandbox's interface: the activity bar and the Text, Books, Chapters, Resources and Fonts panels, and the layout on phones",
+          "plainSummary": "The Sandbox is a free tool on this website for trying Postext without installing anything. You write your text on one side and see the finished pages on the other, and they change as you type. This page explains the parts of the screen and the panels where you write the text, manage books and chapters, add pictures and choose fonts. Other pages cover the design settings, the previews, saving and importing, and putting the Sandbox in your own website."
+        },
+        "es": {
+          "description": "La interfaz del Sandbox: la barra de actividad, los paneles de texto, libros, capítulos, recursos y fuentes, y la disposición en móviles",
+          "plainSummary": "El Sandbox es una herramienta gratuita de esta web para probar Postext sin instalar nada. Escribes el texto a un lado y ves las páginas terminadas al otro, y cambian mientras escribes. Esta página explica las partes de la pantalla y los paneles donde escribes el texto, organizas libros y capítulos, añades imágenes y eliges tipografías. Otras páginas explican los ajustes de diseño, las vistas previas, cómo guardar e importar, y cómo poner el Sandbox en tu propia web."
+        },
+        "ca": {
+          "description": "La interfície del Sandbox: la barra d'activitat, els taulers de text, llibres, capítols, recursos i fonts, i la disposició als mòbils",
+          "plainSummary": "El Sandbox és una eina gratuïta d'aquest web per provar Postext sense instal·lar res. Escrius el text a una banda i veus les pàgines acabades a l'altra, i canvien mentre escrius. Aquesta pàgina explica les parts de la pantalla i els taulers on escrius el text, organitzes llibres i capítols, afegeixes imatges i tries tipografies. Altres pàgines expliquen els paràmetres de disseny, les previsualitzacions, com desar i importar, i com posar el Sandbox al teu propi web."
+        },
+        "zh": {
+          "description": "沙盒的界面：活动栏，正文、书库、章节、资源和字体面板，以及手机上的布局",
+          "plainSummary": "沙盒是本网站上的一个免费工具，不用安装任何东西就能试用Postext。你在一边写文字，另一边就能看到排好的页面，页面会随着你的输入而变化。本页介绍屏幕的各个部分，以及用来写文字、管理书和章节、添加图片和选择字体的面板。版面设计设置、预览、保存与导入，以及把沙盒放进你自己的网站，另有页面说明。"
+        },
+        "ar": {
+          "description": "واجهة Sandbox: شريط النشاط، ولوحات النص والكتب والفصول والموارد والخطوط، والتخطيط على الهواتف",
+          "plainSummary": "Sandbox أداة مجانية في هذا الموقع لتجربة Postext من غير تثبيت أي شيء. تكتب نصك في جهة وترى الصفحات الجاهزة في الجهة الأخرى، وتتغيّر الصفحات وأنت تكتب. وتشرح هذه الصفحة أجزاء الشاشة، واللوحات التي تكتب فيها النص، وتدير الكتب والفصول، وتضيف الصور، وتختار الخطوط. وتتناول صفحات أخرى إعدادات التصميم، والمعاينات، والحفظ والاستيراد، ووضع Sandbox في موقعك."
+        },
+        "ja": {
+          "description": "Sandboxの画面：アクティビティバーと、本文、本、章、リソース、フォントの各パネル、スマートフォンでの配置",
+          "plainSummary": "Sandboxは、何もインストールせずにPostextを試せる、このサイトの無料の道具です。片側に文章を書くと、もう片側に仕上がったページが表示され、入力に合わせてすぐに変わります。このページでは、画面の各部分と、文章を書く、本と章を管理する、画像を加える、フォントを選ぶためのパネルを説明します。デザインの設定、プレビュー、保存と読み込み、自分のWebサイトへのSandboxの埋め込みは、ほかのページで説明します。"
+        },
+        "pt": {
+          "description": "A interface do Sandbox: a barra de atividades, os painéis Texto, Livros, Capítulos, Recursos e Fontes, e o layout em celulares",
+          "plainSummary": "O Sandbox é uma ferramenta gratuita deste site para experimentar o Postext sem instalar nada. Você escreve o texto de um lado e vê as páginas prontas do outro, e elas mudam enquanto você digita. Esta página explica as partes da tela e os painéis em que você escreve o texto, organiza livros e capítulos, inclui imagens e escolhe fontes. Outras páginas tratam dos ajustes de design, das visualizações, de como salvar e importar, e de como colocar o Sandbox no seu próprio site."
+        },
+        "fr": {
+          "description": "L’interface du Sandbox : la barre d’activité, les panneaux Texte, Livres, Chapitres, Ressources et Polices, et la disposition sur téléphone",
+          "plainSummary": "Le Sandbox est un outil gratuit de ce site pour essayer Postext sans rien installer. Vous écrivez votre texte d’un côté et voyez les pages terminées de l’autre, qui changent à mesure que vous tapez. Cette page présente les parties de l’écran et les panneaux où vous écrivez le texte, gérez les livres et les chapitres, ajoutez des images et choisissez les polices. D’autres pages traitent des réglages de maquette, des aperçus, de l’enregistrement et de l’import, et de l’intégration du Sandbox dans votre propre site."
+        },
+        "de": {
+          "description": "Die Oberfläche der Sandbox: die Aktivitätsleiste, die Bedienfelder Text, Bücher, Kapitel, Ressourcen und Schriften und die Darstellung auf Telefonen",
+          "plainSummary": "Die Sandbox ist ein kostenloses Werkzeug auf dieser Website, mit dem Sie Postext ausprobieren können, ohne etwas zu installieren. Sie schreiben Ihren Text auf der einen Seite und sehen auf der anderen die fertigen Seiten, die sich beim Tippen mitändern. Diese Seite erklärt die Teile des Bildschirms und die Bedienfelder, in denen Sie den Text schreiben, Bücher und Kapitel verwalten, Bilder hinzufügen und Schriften wählen. Andere Seiten behandeln die Gestaltungseinstellungen, die Vorschauen, das Speichern und Importieren und das Einbinden der Sandbox in Ihre eigene Website."
+        },
+        "it": {
+          "description": "L’interfaccia della Sandbox: la barra delle attività, i pannelli Testo, Libri, Capitoli, Risorse e Font, e la disposizione sui telefoni",
+          "plainSummary": "La Sandbox è uno strumento gratuito di questo sito per provare Postext senza installare nulla. Scrivi il testo da una parte e vedi le pagine finite dall’altra, e cambiano mentre scrivi. Questa pagina spiega le parti dello schermo e i pannelli in cui scrivi il testo, gestisci libri e capitoli, aggiungi immagini e scegli i font. Altre pagine trattano le impostazioni grafiche, le anteprime, il salvataggio e l’importazione, e l’inserimento della Sandbox nel tuo sito."
+        }
+      },
+      "pages": [
+        {
+          "slug": "sandbox-design-checks",
+          "sections": [
+            "Interface layout > Sidebar panels > Design panel",
+            "Interface layout > Sidebar panels > Checks panel"
+          ],
+          "locales": {
+            "en": {
+              "title": "Sandbox: the Design and Checks panels",
+              "sidebarTitle": "Design and Checks panels",
+              "description": "The Design panel's groups, pages, search and summary, and the Checks panel's live warnings, grouped by kind",
+              "plainSummary": "This page covers two panels of the Sandbox. The Design panel holds every setting of the book, such as the page size, the fonts and the colours, sorted into groups with a search box. The Checks panel lists the problems Postext finds while you work, such as a missing picture or a line that is too loose. Each problem says where it is and takes you there when you click it."
+            },
+            "es": {
+              "title": "Sandbox: los paneles de diseño y de revisión",
+              "sidebarTitle": "Paneles de diseño y de revisión",
+              "description": "Los grupos, las páginas, la búsqueda y el resumen del panel Diseño, y los avisos en vivo del panel Revisión, agrupados por tipo",
+              "plainSummary": "Esta página explica dos paneles del Sandbox. El panel Diseño reúne todos los ajustes del libro, como el tamaño de página, las tipografías y los colores, ordenados en grupos y con un buscador. El panel Revisión enumera los problemas que Postext encuentra mientras trabajas, como una imagen que falta o una línea demasiado abierta. Cada problema dice dónde está y te lleva allí cuando haces clic en él."
+            },
+            "ca": {
+              "title": "Sandbox: els taulers de disseny i de revisió",
+              "sidebarTitle": "Taulers de disseny i de revisió",
+              "description": "Els grups, les pàgines, la cerca i el resum del tauler Disseny, i els avisos en viu del tauler Revisió, agrupats per tipus",
+              "plainSummary": "Aquesta pàgina explica dos taulers del Sandbox. El tauler Disseny reuneix tots els paràmetres del llibre, com ara la mida de pàgina, les tipografies i els colors, ordenats en grups i amb un cercador. El tauler Revisió enumera els problemes que Postext troba mentre treballes, com ara una imatge que falta o una línia massa espaiada. Cada problema diu on és i t'hi porta quan hi fas clic."
+            },
+            "zh": {
+              "title": "沙盒：版面设计面板与检查面板",
+              "sidebarTitle": "版面设计与检查面板",
+              "description": "版面设计面板的分组、页面、搜索与摘要，以及检查面板中按类别分组的实时警告",
+              "plainSummary": "本页介绍沙盒的两个面板。版面设计面板放着书的每一项设置，比如页面大小、字体和颜色，分成若干组，还有一个搜索框。检查面板列出你工作时Postext发现的问题，比如缺了一张图片，或者某一行太松。每个问题都标明位置，点一下就会跳过去。"
+            },
+            "ar": {
+              "title": "Sandbox: لوحتا التصميم والفحوص",
+              "sidebarTitle": "لوحتا التصميم والفحوص",
+              "description": "مجموعات لوحة التصميم وصفحاتها وبحثها وملخّصها، والتحذيرات الحيّة في لوحة الفحوص مجمّعة بحسب نوعها",
+              "plainSummary": "تتناول هذه الصفحة لوحتين في Sandbox. تضم لوحة التصميم كل إعدادات الكتاب، مثل مقاس الصفحة والخطوط والألوان، مرتّبة في مجموعات ومعها مربع بحث. وتسرد لوحة الفحوص المشكلات التي يجدها Postext وأنت تعمل، مثل صورة مفقودة أو سطر تتباعد كلماته أكثر مما ينبغي. وتذكر كل مشكلة موضعها، وتنقلك إليه حين تنقر عليها."
+            },
+            "ja": {
+              "title": "Sandbox：デザインパネルと検査パネル",
+              "sidebarTitle": "デザインパネルと検査パネル",
+              "description": "デザインパネルのグループ、ページ、検索、概要と、検査パネルが種類ごとにまとめて示すその場の警告",
+              "plainSummary": "このページでは、Sandboxの2つのパネルを説明します。デザインパネルには、ページの大きさ、フォント、色など、本のすべての設定が入っていて、グループに分かれ、検索欄もあります。検査パネルには、作業中にPostextが見つけた問題が並びます。画像が見つからない、行がゆるすぎる、といった問題です。それぞれの問題には場所が示され、クリックするとそこへ移ります。"
+            },
+            "pt": {
+              "title": "Sandbox: os painéis Design e Verificações",
+              "sidebarTitle": "Painéis Design e Verificações",
+              "description": "Os grupos, as páginas, a busca e a visão geral do painel Design, e os avisos ao vivo do painel Verificações, agrupados por tipo",
+              "plainSummary": "Esta página trata de dois painéis do Sandbox. O painel Design reúne todos os ajustes do livro, como o tamanho da página, as fontes e as cores, organizados em grupos e com uma caixa de busca. O painel Verificações lista os problemas que o Postext encontra enquanto você trabalha, como uma imagem que falta ou uma linha frouxa demais. Cada problema diz onde está e leva você até lá quando você clica nele."
+            },
+            "fr": {
+              "title": "Sandbox : les panneaux Maquette et Vérifications",
+              "sidebarTitle": "Panneaux Maquette et Vérifications",
+              "description": "Les groupes, les pages, la recherche et la vue d’ensemble du panneau Maquette, et les avertissements en direct du panneau Vérifications, regroupés par nature",
+              "plainSummary": "Cette page présente deux panneaux du Sandbox. Le panneau Maquette contient tous les réglages du livre, comme le format de la page, les polices et les couleurs, rangés en groupes avec un champ de recherche. Le panneau Vérifications liste les problèmes que Postext trouve pendant que vous travaillez, comme une image manquante ou une ligne aux mots trop espacés. Chaque problème indique où il se trouve, et un clic vous y emmène."
+            },
+            "de": {
+              "title": "Sandbox: die Bedienfelder Gestaltung und Prüfungen",
+              "sidebarTitle": "Bedienfelder Gestaltung und Prüfungen",
+              "description": "Gruppen, Seiten, Suche und Übersicht des Bedienfelds Gestaltung und die laufenden Warnungen des Bedienfelds Prüfungen, nach Art gruppiert",
+              "plainSummary": "Diese Seite behandelt zwei Bedienfelder der Sandbox. Das Bedienfeld Gestaltung enthält alle Einstellungen des Buchs, etwa Seitenformat, Schriften und Farben, geordnet in Gruppen und mit einem Suchfeld. Das Bedienfeld Prüfungen führt die Probleme auf, die Postext während der Arbeit findet, etwa ein fehlendes Bild oder eine Zeile mit zu großen Wortabständen. Jedes Problem nennt seine Stelle und führt Sie per Klick dorthin."
+            },
+            "it": {
+              "title": "Sandbox: i pannelli Grafica e Verifiche",
+              "sidebarTitle": "Pannelli Grafica e Verifiche",
+              "description": "Gruppi, pagine, ricerca e panoramica del pannello Grafica, e gli avvisi dal vivo del pannello Verifiche, raggruppati per tipo",
+              "plainSummary": "Questa pagina riguarda due pannelli della Sandbox. Il pannello Grafica contiene tutte le impostazioni del libro, come il formato della pagina, i font e i colori, ordinate in gruppi e con una casella di ricerca. Il pannello Verifiche elenca i problemi che Postext trova mentre lavori, come un’immagine mancante o una riga con troppo spazio tra le parole. Ogni problema dice dove si trova e, se ci fai clic, ti porta lì."
+            }
+          }
+        },
+        {
+          "slug": "sandbox-previews",
+          "sections": [
+            "Interface layout > Main viewport"
+          ],
+          "locales": {
+            "en": {
+              "title": "Sandbox: the previews",
+              "sidebarTitle": "Previews",
+              "description": "The Canvas, PDF, Folio, HTML and EPUB 3 tabs of the main viewport: what each shows and what it can do",
+              "plainSummary": "This page covers the right side of the Sandbox, where the finished pages appear. Five tabs show the same book in five ways: as page images, as a PDF file, as a 3D book you can leaf through, as a web page and as an EPUB e-book. Changing the tab does not lay the book out again, so every tab shows the same pages. The page explains what each tab shows and what you can do in it."
+            },
+            "es": {
+              "title": "Sandbox: las vistas previas",
+              "sidebarTitle": "Vistas previas",
+              "description": "Las pestañas Canvas, PDF, Folio, HTML y EPUB 3 del viewport principal: qué muestra cada una y qué permite hacer",
+              "plainSummary": "Esta página explica la parte derecha del Sandbox, donde aparecen las páginas terminadas. Cinco pestañas muestran el mismo libro de cinco formas: como imágenes de página, como archivo PDF, como libro en 3D que puedes hojear, como página web y como libro electrónico EPUB. Cambiar de pestaña no vuelve a componer el libro, así que todas muestran las mismas páginas. La página explica qué muestra cada pestaña y qué puedes hacer en ella."
+            },
+            "ca": {
+              "title": "Sandbox: les previsualitzacions",
+              "sidebarTitle": "Previsualitzacions",
+              "description": "Les pestanyes Canvas, PDF, Folio, HTML i EPUB 3 del viewport principal: què mostra cadascuna i què permet fer",
+              "plainSummary": "Aquesta pàgina explica la part dreta del Sandbox, on apareixen les pàgines acabades. Cinc pestanyes mostren el mateix llibre de cinc maneres: com a imatges de pàgina, com a fitxer PDF, com a llibre en 3D que pots fullejar, com a pàgina web i com a llibre electrònic EPUB. Canviar de pestanya no torna a compondre el llibre, així que totes mostren les mateixes pàgines. La pàgina explica què mostra cada pestanya i què hi pots fer."
+            },
+            "zh": {
+              "title": "沙盒：预览",
+              "sidebarTitle": "预览",
+              "description": "主视口中的Canvas、PDF、书页、HTML和EPUB 3标签页：各自显示什么，能做什么",
+              "plainSummary": "本页介绍沙盒右侧显示排好页面的区域。五个标签页用五种方式显示同一本书：页面图像、PDF文件、可以翻阅的3D书、网页和EPUB电子书。切换标签页不会重新排版，所以每个标签页显示的都是同样的页面。本页说明每个标签页显示什么，以及你在其中能做什么。"
+            },
+            "ar": {
+              "title": "Sandbox: المعاينات",
+              "sidebarTitle": "المعاينات",
+              "description": "تبويبات Canvas وPDF وFolio وHTML وEPUB 3 في منطقة العرض الرئيسية: ما يعرضه كل منها وما يمكنه فعله",
+              "plainSummary": "تتناول هذه الصفحة الجزء من Sandbox الذي تظهر فيه الصفحات الجاهزة. تعرض خمسة تبويبات الكتاب نفسه بخمس طرق: صورًا للصفحات، وملف PDF، وكتابًا ثلاثي الأبعاد تقلّب صفحاته، وصفحة ويب، وكتابًا إلكترونيًا بصيغة EPUB. ولا يُعاد إخراج الكتاب حين تنتقل بين التبويبات، فيعرض كل تبويب الصفحات نفسها. وتشرح الصفحة ما يعرضه كل تبويب وما يمكنك أن تفعله فيه."
+            },
+            "ja": {
+              "title": "Sandbox：プレビュー",
+              "sidebarTitle": "プレビュー",
+              "description": "メインビューポートのCanvas、PDF、Folio、HTML、EPUB 3タブ：それぞれが表示するものと、できること",
+              "plainSummary": "このページでは、仕上がったページが表示されるSandboxの右側を説明します。5つのタブが、同じ本を5つの形で見せます。ページの画像、PDFファイル、めくって読める3Dの本、Webページ、EPUBの電子書籍です。タブを切り替えても本は組み直されないので、どのタブにも同じページが表示されます。このページでは、各タブに何が表示され、そこで何ができるかを説明します。"
+            },
+            "pt": {
+              "title": "Sandbox: as visualizações",
+              "sidebarTitle": "Visualizações",
+              "description": "As abas Canvas, PDF, Folio, HTML e EPUB 3 da área de visualização principal: o que cada uma mostra e o que permite fazer",
+              "plainSummary": "Esta página trata do lado direito do Sandbox, onde aparecem as páginas prontas. Cinco abas mostram o mesmo livro de cinco maneiras: como imagens de página, como arquivo PDF, como livro em 3D que você pode folhear, como página web e como livro digital EPUB. Trocar de aba não diagrama o livro de novo, então todas as abas mostram as mesmas páginas. A página explica o que cada aba mostra e o que você pode fazer nela."
+            },
+            "fr": {
+              "title": "Sandbox : les aperçus",
+              "sidebarTitle": "Aperçus",
+              "description": "Les onglets Canvas, PDF, Folio, HTML et EPUB 3 de la zone d’aperçu principale : ce que chacun montre et ce qu’il permet de faire",
+              "plainSummary": "Cette page présente la partie droite du Sandbox, où apparaissent les pages terminées. Cinq onglets montrent le même livre de cinq façons : en images de pages, en fichier PDF, en livre 3D que l’on feuillette, en page web et en livre numérique EPUB. Changer d’onglet ne refait pas la mise en page : chaque onglet montre les mêmes pages. La page explique ce que montre chaque onglet et ce que vous pouvez y faire."
+            },
+            "de": {
+              "title": "Sandbox: die Vorschauen",
+              "sidebarTitle": "Vorschauen",
+              "description": "Die Tabs Canvas, PDF, Folio, HTML und EPUB 3 im Hauptansichtsbereich: was jeder zeigt und was er kann",
+              "plainSummary": "Diese Seite behandelt den rechten Bereich der Sandbox, in dem die fertigen Seiten erscheinen. Fünf Tabs zeigen dasselbe Buch auf fünf Arten: als Seitenbilder, als PDF-Datei, als 3D-Buch zum Durchblättern, als Webseite und als E-Book im Format EPUB. Ein Wechsel des Tabs setzt das Buch nicht neu, deshalb zeigt jeder Tab dieselben Seiten. Die Seite erklärt, was jeder Tab zeigt und was Sie darin tun können."
+            },
+            "it": {
+              "title": "Sandbox: le anteprime",
+              "sidebarTitle": "Anteprime",
+              "description": "Le schede Canvas, PDF, Folio, HTML ed EPUB 3 dell’area di visualizzazione principale: che cosa mostra ciascuna e che cosa permette di fare",
+              "plainSummary": "Questa pagina riguarda il lato destro della Sandbox, dove compaiono le pagine finite. Cinque schede mostrano lo stesso libro in cinque modi: come immagini delle pagine, come file PDF, come libro 3D da sfogliare, come pagina web e come e-book EPUB. Cambiare scheda non reimpagina il libro, quindi ogni scheda mostra le stesse pagine. La pagina spiega che cosa mostra ogni scheda e che cosa ci puoi fare."
+            }
+          }
+        },
+        {
+          "slug": "sandbox-books-saving",
+          "sections": [
+            "Books and chapters",
+            "Editing comics",
+            "Word documents",
+            "Persistence"
+          ],
+          "locales": {
+            "en": {
+              "title": "Sandbox: books, Word files and saving",
+              "sidebarTitle": "Books, Word files and saving",
+              "description": "Books and chapters, editing comic pages, importing and exporting Word documents, and how the Sandbox saves, exports and imports your work",
+              "plainSummary": "This page covers how you organise and keep your work in the Sandbox. A project is a book made of chapters. Comic pages have their own tools for panels and speech. You can bring in a Word file, choose how its styles become Postext styles, and send the book back to Word. Your work is saved in your own browser as you go, and you can download it as one file and open it again later."
+            },
+            "es": {
+              "title": "Sandbox: libros, archivos de Word y guardado",
+              "sidebarTitle": "Libros, archivos de Word y guardado",
+              "description": "Los libros y los capítulos, la edición de páginas de cómic, la importación y la exportación de documentos de Word, y cómo guarda, exporta e importa el Sandbox tu trabajo",
+              "plainSummary": "Esta página explica cómo organizar y conservar tu trabajo en el Sandbox. Un proyecto es un libro hecho de capítulos. Las páginas de cómic tienen sus propias herramientas para las viñetas y los diálogos. Puedes traer un archivo de Word, elegir en qué estilos de Postext se convierten sus estilos y devolver el libro a Word. Tu trabajo se guarda en tu propio navegador sobre la marcha, y puedes descargarlo en un solo archivo y volver a abrirlo más tarde."
+            },
+            "ca": {
+              "title": "Sandbox: llibres, fitxers de Word i desament",
+              "sidebarTitle": "Llibres, fitxers de Word i desament",
+              "description": "Els llibres i els capítols, l'edició de pàgines de còmic, la importació i l'exportació de documents de Word, i com desa, exporta i importa el Sandbox la teva feina",
+              "plainSummary": "Aquesta pàgina explica com organitzes i conserves la teva feina al Sandbox. Un projecte és un llibre fet de capítols. Les pàgines de còmic tenen eines pròpies per a les vinyetes i els diàlegs. Pots portar un fitxer de Word, triar en quins estils de Postext es converteixen els seus estils i tornar el llibre a Word. La teva feina es desa al teu propi navegador sobre la marxa, i la pots baixar en un sol fitxer i tornar-la a obrir més endavant."
+            },
+            "zh": {
+              "title": "沙盒：书、Word文件与保存",
+              "sidebarTitle": "书、Word文件与保存",
+              "description": "书与章、编辑漫画页、导入和导出Word文档，以及沙盒怎样保存、导出和导入你的作品",
+              "plainSummary": "本页讲在沙盒里怎样整理和保存你的作品。一个项目就是一本由若干章组成的书。漫画页有自己的分格和台词工具。你可以导入一个Word文件，选择它的样式对应哪些Postext样式，也可以把书再导出为Word文件。你的作品会随时保存在你自己的浏览器里，你也可以把它下载成一个文件，以后再打开。"
+            },
+            "ar": {
+              "title": "Sandbox: الكتب وملفات Word والحفظ",
+              "sidebarTitle": "الكتب وملفات Word والحفظ",
+              "description": "الكتب والفصول، وتحرير صفحات القصص المصورة، واستيراد مستندات Word وتصديرها، وكيف يحفظ Sandbox عملك ويصدّره ويستورده",
+              "plainSummary": "تتناول هذه الصفحة طريقة تنظيم عملك والاحتفاظ به في Sandbox. المشروع كتاب مكوّن من فصول. ولصفحات القصص المصورة أدواتها الخاصة للمربعات والكلام. ويمكنك أن تستورد ملف Word، وتختار ما يقابل أنماطه من أنماط Postext، ثم تعيد الكتاب إلى Word. ويُحفظ عملك في متصفحك أولًا بأول، ويمكنك تنزيله ملفًا واحدًا وفتحه من جديد لاحقًا."
+            },
+            "ja": {
+              "title": "Sandbox：本、Wordファイル、保存",
+              "sidebarTitle": "本、Wordファイル、保存",
+              "description": "本と章、漫画のページの編集、Word文書の読み込みと書き出し、Sandboxが作業を保存し、書き出し、読み込むしくみ",
+              "plainSummary": "このページでは、Sandboxで作業をまとめ、残しておく方法を説明します。1つのプロジェクトは、章でできた1冊の本です。漫画のページには、コマとせりふのための専用の道具があります。Wordファイルを取り込み、そのスタイルをPostextのどのスタイルにするかを選び、本をWordに書き戻すこともできます。作業はそのつど自分のブラウザーに保存され、1つのファイルとしてダウンロードして、あとでまた開けます。"
+            },
+            "pt": {
+              "title": "Sandbox: livros, arquivos do Word e salvamento",
+              "sidebarTitle": "Livros, arquivos do Word e salvamento",
+              "description": "Livros e capítulos, edição de páginas de quadrinhos, importação e exportação de documentos do Word, e como o Sandbox salva, exporta e importa o seu trabalho",
+              "plainSummary": "Esta página trata de como você organiza e guarda o seu trabalho no Sandbox. Um projeto é um livro feito de capítulos. As páginas de quadrinhos têm ferramentas próprias para os quadros e as falas. Você pode trazer um arquivo do Word, escolher em quais estilos do Postext os estilos dele se transformam e mandar o livro de volta para o Word. O trabalho é salvo no seu próprio navegador à medida que você avança, e você pode baixá-lo como um só arquivo e abri-lo de novo depois."
+            },
+            "fr": {
+              "title": "Sandbox : livres, fichiers Word et enregistrement",
+              "sidebarTitle": "Livres, fichiers Word et enregistrement",
+              "description": "Les livres et les chapitres, la modification des planches de bande dessinée, l’import et l’export de documents Word, et la façon dont le Sandbox enregistre, exporte et importe votre travail",
+              "plainSummary": "Cette page explique comment organiser et garder votre travail dans le Sandbox. Un projet est un livre fait de chapitres. Les planches de bande dessinée ont leurs propres outils pour les cases et les bulles. Vous pouvez importer un fichier Word, choisir comment ses styles deviennent des styles Postext, et renvoyer le livre vers Word. Votre travail est enregistré dans votre propre navigateur au fil de l’eau, et vous pouvez le télécharger en un seul fichier pour le rouvrir plus tard."
+            },
+            "de": {
+              "title": "Sandbox: Bücher, Word-Dateien und Speichern",
+              "sidebarTitle": "Bücher, Word-Dateien und Speichern",
+              "description": "Bücher und Kapitel, Comicseiten bearbeiten, Word-Dokumente importieren und exportieren und wie die Sandbox Ihre Arbeit speichert, exportiert und importiert",
+              "plainSummary": "Diese Seite erklärt, wie Sie Ihre Arbeit in der Sandbox ordnen und aufbewahren. Ein Projekt ist ein Buch aus Kapiteln. Für Comicseiten gibt es eigene Werkzeuge für Panels und Sprechblasen. Sie können eine Word-Datei einlesen, festlegen, wie ihre Formatvorlagen zu Postext-Stilen werden, und das Buch wieder nach Word ausgeben. Ihre Arbeit wird laufend in Ihrem eigenen Browser gespeichert, und Sie können sie als eine Datei herunterladen und später wieder öffnen."
+            },
+            "it": {
+              "title": "Sandbox: libri, file Word e salvataggio",
+              "sidebarTitle": "Libri, file Word e salvataggio",
+              "description": "Libri e capitoli, la modifica delle pagine a fumetti, l’importazione e l’esportazione dei documenti Word, e come la Sandbox salva, esporta e importa il tuo lavoro",
+              "plainSummary": "Questa pagina riguarda come organizzi e conservi il tuo lavoro nella Sandbox. Un progetto è un libro fatto di capitoli. Le pagine a fumetti hanno strumenti propri per le vignette e i dialoghi. Puoi importare un file Word, scegliere come i suoi stili diventano stili di Postext e riportare il libro in Word. Il lavoro si salva nel tuo browser man mano che procedi, e puoi scaricarlo come un unico file e riaprirlo più tardi."
+            }
+          }
+        },
+        {
+          "slug": "sandbox-embedding",
+          "sections": [
+            "Agents: WebMCP",
+            "Standalone usage",
+            "Preset bundle format"
+          ],
+          "locales": {
+            "en": {
+              "title": "Sandbox: agents, embedding and presets",
+              "sidebarTitle": "Agents, embedding and presets",
+              "description": "WebMCP tools for AI agents, the PostextSandbox component in your own app with its props and CSS, and the preset bundle format",
+              "plainSummary": "This page is for people who build websites or use AI assistants. An assistant that runs in the browser can read and change the book in the Sandbox through a set of tools. You can put the Sandbox inside your own website as one component, and this page lists its options and the styles it needs. The last section describes the files of a sample book, which the Sandbox can open."
+            },
+            "es": {
+              "title": "Sandbox: agentes, incrustación y presets",
+              "sidebarTitle": "Agentes, incrustación y presets",
+              "description": "Las herramientas WebMCP para agentes de IA, el componente PostextSandbox dentro de tu aplicación con sus props y su CSS, y el formato de paquete de preset",
+              "plainSummary": "Esta página es para quienes crean sitios web o usan asistentes de IA. Un asistente que funciona en el navegador puede leer y cambiar el libro del Sandbox con un conjunto de herramientas. Puedes poner el Sandbox dentro de tu propia web como un solo componente, y esta página enumera sus opciones y los estilos que necesita. La última sección describe los archivos de un libro de ejemplo, que el Sandbox puede abrir."
+            },
+            "ca": {
+              "title": "Sandbox: agents, incrustació i presets",
+              "sidebarTitle": "Agents, incrustació i presets",
+              "description": "Les eines WebMCP per a agents d'IA, el component PostextSandbox dins de la teva aplicació amb les seves props i el seu CSS, i el format de paquet de preset",
+              "plainSummary": "Aquesta pàgina és per a qui crea llocs web o fa servir assistents d'IA. Un assistent que funciona al navegador pot llegir i canviar el llibre del Sandbox amb un conjunt d'eines. Pots posar el Sandbox dins del teu propi web com un sol component, i aquesta pàgina n'enumera les opcions i els estils que necessita. L'última secció descriu els fitxers d'un llibre d'exemple, que el Sandbox pot obrir."
+            },
+            "zh": {
+              "title": "沙盒：智能体、嵌入与预设",
+              "sidebarTitle": "智能体、嵌入与预设",
+              "description": "供AI智能体使用的WebMCP工具，在你自己的应用中使用的PostextSandbox组件及其属性和CSS，以及预设文件包格式",
+              "plainSummary": "本页写给建网站或使用AI助手的人。在浏览器里运行的助手可以通过一组工具读取和修改沙盒里的书。你可以把沙盒作为一个组件放进你自己的网站，本页列出它的选项和它需要的样式。最后一节介绍示例书的文件，沙盒可以打开这些文件。"
+            },
+            "ar": {
+              "title": "Sandbox: الوكلاء والتضمين والإعدادات المسبقة",
+              "sidebarTitle": "الوكلاء والتضمين والإعدادات المسبقة",
+              "description": "أدوات WebMCP لوكلاء الذكاء الاصطناعي، والمكوّن PostextSandbox في تطبيقك مع خصائصه وCSS، وصيغة حزمة الإعداد المسبق",
+              "plainSummary": "هذه الصفحة لمن يبنون مواقع الويب أو يستعملون مساعدات الذكاء الاصطناعي. يستطيع المساعد الذي يعمل في المتصفح أن يقرأ الكتاب في Sandbox ويغيّره عبر مجموعة من الأدوات. ويمكنك أن تضع Sandbox داخل موقعك مكوّنًا واحدًا، وتسرد هذه الصفحة خياراته والأنماط التي يحتاجها. ويصف القسم الأخير ملفات كتاب نموذجي يستطيع Sandbox فتحه."
+            },
+            "ja": {
+              "title": "Sandbox：エージェント、埋め込み、プリセット",
+              "sidebarTitle": "エージェント、埋め込み、プリセット",
+              "description": "AIエージェント向けのWebMCPツール、自分のアプリに入れるPostextSandboxコンポーネントとそのpropsとCSS、プリセットバンドルの形式",
+              "plainSummary": "このページは、Webサイトを作る人や、AIアシスタントを使う人向けです。ブラウザーで動くアシスタントは、用意されたツールを通してSandboxの本を読み、変更できます。Sandboxを1つのコンポーネントとして自分のWebサイトに入れることもでき、このページではその設定項目と必要なスタイルを挙げます。最後の節では、Sandboxで開けるサンプルの本のファイルを説明します。"
+            },
+            "pt": {
+              "title": "Sandbox: agentes, incorporação e predefinições",
+              "sidebarTitle": "Agentes, incorporação e predefinições",
+              "description": "Ferramentas WebMCP para agentes de IA, o componente PostextSandbox no seu próprio app com as props e o CSS, e o formato do pacote de predefinição",
+              "plainSummary": "Esta página é para quem cria sites ou usa assistentes de IA. Um assistente que roda no navegador pode ler e alterar o livro do Sandbox com um conjunto de ferramentas. Você pode colocar o Sandbox dentro do seu próprio site como um único componente, e esta página lista as opções dele e os estilos de que ele precisa. A última seção descreve os arquivos de um livro de exemplo, que o Sandbox consegue abrir."
+            },
+            "fr": {
+              "title": "Sandbox : agents, intégration et préréglages",
+              "sidebarTitle": "Agents, intégration et préréglages",
+              "description": "Les outils WebMCP pour les agents d’IA, le composant PostextSandbox dans votre propre application avec ses props et son CSS, et le format des paquets de préréglage",
+              "plainSummary": "Cette page s’adresse à ceux qui créent des sites web ou utilisent des assistants d’IA. Un assistant qui fonctionne dans le navigateur peut lire et modifier le livre du Sandbox grâce à un ensemble d’outils. Vous pouvez placer le Sandbox dans votre propre site sous la forme d’un seul composant, et cette page liste ses options et les styles dont il a besoin. La dernière section décrit les fichiers d’un livre d’exemple, que le Sandbox sait ouvrir."
+            },
+            "de": {
+              "title": "Sandbox: Agenten, Einbettung und Vorlagen",
+              "sidebarTitle": "Agenten, Einbettung und Vorlagen",
+              "description": "WebMCP-Werkzeuge für KI-Agenten, die Komponente PostextSandbox in Ihrer eigenen App mit ihren Props und ihrem CSS und das Format der Vorlagenpakete",
+              "plainSummary": "Diese Seite richtet sich an Menschen, die Websites bauen oder KI-Assistenten nutzen. Ein Assistent, der im Browser läuft, kann das Buch in der Sandbox über eine Reihe von Werkzeugen lesen und ändern. Sie können die Sandbox als eine einzige Komponente in Ihre eigene Website einbauen, und diese Seite führt ihre Optionen und die nötigen Stile auf. Der letzte Abschnitt beschreibt die Dateien eines Beispielbuchs, das die Sandbox öffnen kann."
+            },
+            "it": {
+              "title": "Sandbox: agenti, integrazione e preset",
+              "sidebarTitle": "Agenti, integrazione e preset",
+              "description": "Gli strumenti WebMCP per gli agenti di IA, il componente PostextSandbox nella tua applicazione con le sue props e il suo CSS, e il formato dei pacchetti preset",
+              "plainSummary": "Questa pagina è per chi costruisce siti web o usa assistenti di IA. Un assistente che funziona nel browser può leggere e cambiare il libro nella Sandbox attraverso una serie di strumenti. Puoi inserire la Sandbox nel tuo sito come un unico componente, e questa pagina elenca le sue opzioni e gli stili di cui ha bisogno. L’ultima sezione descrive i file di un libro di esempio, che la Sandbox sa aprire."
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "configurationIndex": {
+    "locales": {
+      "en": {
+        "description": "What a Postext configuration is, and where each group of settings is explained in the eighteen pages of the reference",
+        "plainSummary": "This page opens the reference for every setting that controls how your pages look. One group of settings holds all the choices: page size, number of columns, fonts, text size, headings, boxes, colours and more. You only write the settings you want to change, because each one starts with a sensible value. The reference is split into eighteen pages. The list on this page links every section, so jump to the part you need.",
+        "indexLead": "The reference is split into eighteen pages. Each group below is one page, followed by the sections it holds."
+      },
+      "es": {
+        "description": "Qué es una configuración de Postext y en cuál de las dieciocho páginas de la referencia se explica cada grupo de ajustes",
+        "plainSummary": "Esta página abre la referencia de todos los ajustes que deciden el aspecto de tus páginas. Un solo grupo de ajustes guarda todas las decisiones: tamaño de página, número de columnas, tipografías, cuerpo del texto, títulos, recuadros, colores y mucho más. Solo escribes los ajustes que quieres cambiar, porque cada uno parte de un valor razonable. La referencia está repartida en dieciocho páginas. La lista de esta página enlaza todas las secciones, así que puedes ir directamente a la parte que necesitas.",
+        "indexLead": "La referencia está repartida en dieciocho páginas. Cada grupo de esta lista es una página, seguida de las secciones que contiene."
+      },
+      "ca": {
+        "description": "Què és una configuració de Postext i en quina de les divuit pàgines de la referència s'explica cada grup de paràmetres",
+        "plainSummary": "Aquesta pàgina obre la referència de tots els paràmetres que decideixen l'aspecte de les teves pàgines. Un sol grup de paràmetres desa totes les decisions: mida de pàgina, nombre de columnes, tipografies, cos del text, títols, requadres, colors i molt més. Només escrius els paràmetres que vols canviar, perquè cadascun parteix d'un valor raonable. La referència està repartida en divuit pàgines. La llista d'aquesta pàgina enllaça totes les seccions, així que pots anar directament a la part que necessites.",
+        "indexLead": "La referència està repartida en divuit pàgines. Cada grup d'aquesta llista és una pàgina, seguida de les seccions que conté."
+      },
+      "zh": {
+        "description": "什么是Postext配置，以及参考的十八个页面各讲哪一组设置",
+        "plainSummary": "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为十八个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
+        "indexLead": "这份参考分为十八个页面。下面每一组是一个页面，后面列出它包含的各节。"
+      },
+      "ar": {
+        "description": "ما هي إعدادات Postext، وفي أي صفحة من صفحات المرجع الثماني عشرة تُشرح كل مجموعة منها",
+        "plainSummary": "تفتح هذه الصفحة مرجع كل إعداد يتحكم في مظهر صفحاتك. تجمع مجموعة واحدة من الإعدادات كل الخيارات: مقاس الصفحة وعدد الأعمدة والخطوط وحجم النص والعناوين والإطارات والألوان وغير ذلك. لا تكتب إلا الإعدادات التي تريد تغييرها، لأن لكل إعداد قيمة أولى معقولة. المرجع موزّع على ثماني عشرة صفحة. وتربط القائمة في هذه الصفحة بكل قسم، فانتقل مباشرة إلى الجزء الذي تحتاجه.",
+        "indexLead": "المرجع موزّع على ثماني عشرة صفحة. كل مجموعة في هذه القائمة صفحة، تليها الأقسام التي تضمّها."
+      },
+      "ja": {
+        "description": "Postextの設定とは何か、そして18ページに分かれたリファレンスのどこに各設定の説明があるか",
+        "plainSummary": "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは18のページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
+        "indexLead": "このリファレンスは18のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。"
+      },
+      "pt": {
+        "description": "O que é uma configuração do Postext e em qual das dezoito páginas da referência cada grupo de ajustes é explicado",
+        "plainSummary": "Esta página abre a referência de todos os ajustes que definem a aparência das suas páginas. Um só grupo de ajustes reúne todas as escolhas: tamanho da página, número de colunas, fontes, tamanho do texto, títulos, boxes, cores e muito mais. Você só escreve os ajustes que quer mudar, porque cada um já começa com um valor sensato. A referência está dividida em dezoito páginas. A lista desta página tem um link para cada seção, então vá direto à parte de que precisa.",
+        "indexLead": "A referência está dividida em dezoito páginas. Cada grupo desta lista é uma página, seguida das seções que ela contém."
+      },
+      "fr": {
+        "description": "Ce qu’est une configuration Postext, et dans laquelle des dix-huit pages de la référence chaque groupe de réglages est expliqué",
+        "plainSummary": "Cette page ouvre la référence de tous les réglages qui décident de l’aspect de vos pages. Un seul groupe de réglages réunit tous les choix : format de la page, nombre de colonnes, polices, taille du texte, titres, encadrés, couleurs et bien plus. Vous n’écrivez que les réglages que vous voulez changer, car chacun part d’une valeur raisonnable. La référence est répartie sur dix-huit pages. La liste de cette page renvoie à chaque section : allez directement à la partie qui vous intéresse.",
+        "indexLead": "La référence est répartie sur dix-huit pages. Chaque groupe ci-dessous correspond à une page, suivie des sections qu’elle contient."
+      },
+      "de": {
+        "description": "Was eine Postext-Konfiguration ist und auf welcher der achtzehn Seiten der Referenz jede Gruppe von Einstellungen erklärt wird",
+        "plainSummary": "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie schreiben nur die Einstellungen auf, die Sie ändern wollen, denn jede beginnt mit einem sinnvollen Wert. Die Referenz ist auf achtzehn Seiten verteilt. Die Liste auf dieser Seite verlinkt jeden Abschnitt, springen Sie also direkt zu dem Teil, den Sie brauchen.",
+        "indexLead": "Die Referenz ist auf achtzehn Seiten verteilt. Jede Gruppe unten ist eine Seite, gefolgt von den Abschnitten, die sie enthält."
+      },
+      "it": {
+        "description": "Che cos’è una configurazione di Postext e in quale delle diciotto pagine del riferimento è spiegato ogni gruppo di impostazioni",
+        "plainSummary": "Questa pagina apre il riferimento di tutte le impostazioni che decidono l’aspetto delle tue pagine. Un solo gruppo di impostazioni raccoglie tutte le scelte: formato della pagina, numero di colonne, font, corpo del testo, titoli, riquadri, colori e altro ancora. Scrivi solo le impostazioni che vuoi cambiare, perché ognuna parte da un valore ragionevole. Il riferimento è diviso in diciotto pagine. L’elenco di questa pagina rimanda a ogni sezione: vai direttamente alla parte che ti serve.",
+        "indexLead": "Il riferimento è diviso in diciotto pagine. Ogni gruppo qui sotto è una pagina, seguita dalle sezioni che contiene."
+      }
+    },
+    "lines": {
+      "configuration-page-flow": [
+        {
+          "path": "Body text > Orphans, widows, runts, and keep-together rules",
+          "tails": {
+            "en": " — `bodyText` keys that keep lines and blocks together across a column break.",
+            "es": " — claves de `bodyText` que mantienen juntas las líneas y los bloques en un salto de columna.",
+            "ca": " — claus de `bodyText` que mantenen junts les línies i els blocs en un salt de columna.",
+            "zh": "：`bodyText`中让行与块在换栏处保持在一起的键。",
+            "ar": " — مفاتيح `bodyText` التي تُبقي الأسطر والكتل معًا عند فاصل العمود.",
+            "ja": "：段の区切りをまたいで行やブロックを離さないための`bodyText`のキー。",
+            "pt": " — chaves de `bodyText` que mantêm linhas e blocos juntos numa quebra de coluna.",
+            "fr": " — les clés de `bodyText` qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne.",
+            "de": " – Schlüssel von `bodyText`, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten.",
+            "it": " — le chiavi di `bodyText` che tengono unite righe e blocchi a cavallo di un’interruzione di colonna."
+          }
+        },
+        {
+          "path": "Headings > Column balancing",
+          "tails": {
+            "en": " — the levers that make every column end level, in editorial order.",
+            "es": " — las palancas que igualan el final de todas las columnas, en orden editorial.",
+            "ca": " — les palanques que igualen el final de totes les columnes, en ordre editorial.",
+            "zh": "：让每一栏底部齐平的调整手段，按编辑上的先后顺序排列。",
+            "ar": " — الأدوات التي تجعل كل الأعمدة تنتهي عند المستوى نفسه، بترتيبها التحريري.",
+            "ja": "：すべての段の終わりをそろえる調整手段。編集上の優先順に並べています。",
+            "pt": " — os recursos que fazem todas as colunas terminarem na mesma altura, na ordem editorial.",
+            "fr": " — les leviers qui font finir chaque colonne au même niveau, par ordre de priorité éditoriale.",
+            "de": " – die Hebel, mit denen jede Spalte auf gleicher Höhe endet, in redaktioneller Rangfolge.",
+            "it": " — le leve che fanno finire ogni colonna alla stessa altezza, in ordine di priorità editoriale."
+          }
+        }
+      ],
+      "configuration-language": [
+        {
+          "path": "Body text > Hyphenation",
+          "tails": {
+            "en": " — hyphenation patterns, words kept whole, ragged text.",
+            "es": " — patrones de separación silábica, palabras que no se parten, texto en bandera.",
+            "ca": " — patrons de partició de mots, paraules que no es parteixen, text en bandera.",
+            "zh": "：断词模式、不拆分的词、不齐行文字。",
+            "ar": " — أنماط تقسيم الكلمات، والكلمات التي لا تُقسَّم، والنص غير المضبوط.",
+            "ja": "：ハイフネーションのパターン、分割しない語、行末不ぞろいのテキスト。",
+            "pt": " — padrões de hifenização, palavras que não se dividem, texto em bandeira.",
+            "fr": " — motifs de césure, mots gardés entiers, texte en drapeau.",
+            "de": " – Trennmuster, ungetrennte Wörter, Flattersatz.",
+            "it": " — pattern di sillabazione, parole tenute intere, testo in bandiera."
+          }
+        },
+        {
+          "path": "Body text > Languages and scripts",
+          "tails": {
+            "en": " — the writing systems Postext sets, and the pages that explain each.",
+            "es": " — las escrituras que compone Postext y las páginas que tratan cada una.",
+            "ca": " — les escriptures que compon Postext i les pàgines que tracten cadascuna.",
+            "zh": "：Postext 能排的文字体系，以及分别讲解它们的页面。",
+            "ar": " — أنظمة الكتابة التي يصفّها Postext، والصفحات التي تشرح كلًّا منها.",
+            "ja": "：Postext が組める文字体系と、それぞれを説明するページ。",
+            "pt": " — os sistemas de escrita que o Postext compõe e as páginas que tratam de cada um.",
+            "fr": " — les écritures que compose Postext, et les pages qui expliquent chacune.",
+            "de": " – die Schriftsysteme, die Postext setzt, und die Seiten, die jedes erklären.",
+            "it": " — i sistemi di scrittura che Postext compone e le pagine che spiegano ciascuno."
+          }
+        },
+        {
+          "path": "Body text > Arabic text",
+          "tails": {
+            "en": " — shaping, kashida, vowel marks and digits of Arabic text.",
+            "es": " — formas de las letras, kashida, signos vocálicos y cifras del texto árabe.",
+            "ca": " — formes de les lletres, kashida, signes vocàlics i xifres del text àrab.",
+            "zh": "：阿拉伯文的字形、kashida、元音符号与数字。",
+            "ar": " — أشكال الحروف والكشيدة والحركات والأرقام في النص العربي.",
+            "ja": "：アラビア文字の字形、カシーダ、母音記号、数字。",
+            "pt": " — formas das letras, kashida, sinais vocálicos e algarismos do texto árabe.",
+            "fr": " — mise en forme, kashida, signes vocaliques et chiffres du texte arabe.",
+            "de": " – Formung, Kaschida, Vokalzeichen und Ziffern arabischer Texte.",
+            "it": " — shaping, kashida, segni vocalici e cifre del testo arabo."
+          }
+        }
+      ],
+      "configuration-pdf-output": [
+        {
+          "path": "Generating PDFs",
+          "tails": {
+            "en": " — `postext-pdf`: font providers, CJK fonts, workers and print-ready files.",
+            "es": " — `postext-pdf`: proveedores de fuentes, fuentes CJK, workers y archivos listos para imprenta.",
+            "ca": " — `postext-pdf`: proveïdors de fonts, fonts CJK, workers i fitxers a punt per a impremta.",
+            "zh": "：`postext-pdf`，字体提供函数、中日韩字体、工作线程和可付印的文件。",
+            "ar": " — `postext-pdf`: مزوّدو الخطوط، وخطوط CJK، والتشغيل في عامل، والملفات الجاهزة للطباعة.",
+            "ja": "：`postext-pdf`。フォントプロバイダー、CJKフォント、ワーカー、印刷入稿用のファイル。",
+            "pt": " — `postext-pdf`: provedores de fontes, fontes CJK, workers e arquivos prontos para impressão.",
+            "fr": " — `postext-pdf` : fournisseurs de polices, polices CJK, workers et PDF prêts pour l’impression.",
+            "de": " – `postext-pdf`: Font-Provider, CJK-Schriften, Worker und druckfertige Dateien.",
+            "it": " — `postext-pdf`: provider di font, font CJK, worker e file pronti per la stampa."
+          }
+        }
+      ]
+    }
+  }
+}

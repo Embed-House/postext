@@ -18,7 +18,7 @@ Nove páginas de *Afoot*, uma antologia de bolso com três ensaios sobre caminha
 
 <Excerpt region="opener" />
 
-O `numberingTemplate: '{1:I}'` do nível numera os ensaios I, II e III, e `{number}` imprime o numeral acima do título ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). `minHeight` reserva 12 linhas de 14 pt e o fio fino termina 7 mm acima disso, então, sob um título de uma linha, o texto começa a 79 mm da borda superior em todas as aberturas. Uma segunda linha de título em 26 pt acrescenta 9,9 mm e empurra o texto uma linha da grade para baixo; com `SINK = 14`, títulos de uma e de duas linhas começam o texto na mesma linha. `marginBottom: pt(0)` impede que a margem padrão do título se some à reserva.
+O `numberingTemplate: '{1:I}'` do nível numera os ensaios I, II e III, e `{number}` imprime o numeral acima do título ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). `minHeight` reserva 12 linhas de 14 pt e o fio fino termina 7 mm acima disso, então, sob um título de uma linha, o texto começa a 79 mm da borda superior em todas as aberturas. Uma segunda linha de título em 26 pt acrescenta 9,9 mm e empurra o texto uma linha da grade para baixo; com `SINK = 14`, títulos de uma e de duas linhas começam o texto na mesma linha. `marginBottom: pt(0)` impede que a margem padrão do título se some à reserva.
 
 ### 2 · Deixe o sumário se preencher sozinho
 
@@ -30,7 +30,7 @@ O `numberingTemplate: '{1:I}'` do nível numera os ensaios I, II e III, e `{numb
 
 <Excerpt region="running-heads" />
 
-Cada cabeço é ancorado à página, a 11 mm da borda superior, e `parity` escolhe o lado: o fólio se alinha com a borda externa do texto e o nome ou o título fica 7 mm mais para dentro. O `pages: 'body'` em `head()` mantém os cabeços fora das aberturas, onde a assinatura já nomeia o autor, e o `pages: 'opener'` do rodapé imprime ali um fólio no pé ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). `{chapterTitle}` imprime o título do ensaio sem o numeral.
+Cada cabeço é ancorado à página, a 11 mm da borda superior, e `parity` escolhe o lado: o fólio se alinha com a borda externa do texto e o nome ou o título fica 7 mm mais para dentro. O `pages: 'body'` em `head()` mantém os cabeços fora das aberturas, onde a assinatura já nomeia o autor, e o `pages: 'opener'` do rodapé imprime ali um fólio no pé ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). `{chapterTitle}` imprime o título do ensaio sem o numeral.
 
 ### 4 · Deixe a capa e o sumário fora da contagem
 

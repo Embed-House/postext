@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Els tipus de recurs i la seva numeració, els estils de taules i de peus de recurs, els diagrames a una tinta i els vídeos impresos',
   lang: 'ca',
   lastUpdated: '2026-10-10',
-  readingTime: '5 min',
-  order: 8,
+  readingTime: '46 min',
+  order: 14,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina reuneix els paràmetres de figures, taules, diagrames i vídeos. Postext els anomena recursos i numera cada tipus per separat. Decideixes l'aspecte de les taules: els filets, els fons, la tipografia i com es parteixen entre pàgines. Decideixes com s'escriu el peu d'una figura o d'una taula. També pots imprimir els diagrames a una sola tinta i triar com apareix un vídeo sobre el paper.",
 };
@@ -19,9 +19,9 @@ export const metadata = {
 
 Un **tipus de recurs** és una categoria definible per l'usuari — *Figura*, *Taula*, *Diagrama*, *Llistat*… — que determina com es numeren, com es retola el peu i com es referencien els recursos d'aquella classe. La llista viu a `config.resourceTypes`; el Sandbox l'edita a **Disseny → Figures i taules → Numeració i col·locació**.
 
-Quan `config.resourceTypes` no està definit, Postext inclou tres valors per defecte integrats: **Figura**, **Taula** i **Vídeo**, cadascun numerat per separat com `{h1}.{n}` (es reinicien a cada encapçalament de nivell 1) amb comptadors decimals. Una llista sense cap tipus `video`, la d'un llibre desat abans que existissin els vídeos, continua numerant els recursos de vídeo de tipus `video`: s'hi afegeix per a ells el tipus Vídeo integrat (`effectiveResourceTypes(config, resources)`), i `defaultVideoResourceType(locale)` el retorna tot sol. S'anomenen en la llengua del document: `config.locale` o, si no, `bodyText.hyphenation.locale` o, si no, l'anglès (vegeu [Llengua del document](/ca/docs/configuration-text#llengua-del-document)).
+Quan `config.resourceTypes` no està definit, Postext inclou tres valors per defecte integrats: **Figura**, **Taula** i **Vídeo**, cadascun numerat per separat com `{h1}.{n}` (es reinicien a cada encapçalament de nivell 1) amb comptadors decimals. Una llista sense cap tipus `video`, la d'un llibre desat abans que existissin els vídeos, continua numerant els recursos de vídeo de tipus `video`: s'hi afegeix per a ells el tipus Vídeo integrat (`effectiveResourceTypes(config, resources)`), i `defaultVideoResourceType(locale)` el retorna tot sol. S'anomenen en la llengua del document: `config.locale` o, si no, `bodyText.hyphenation.locale` o, si no, l'anglès (vegeu [Llengua del document](/ca/docs/configuration-language#llengua-del-document)).
 
-Els valors per defecte integrats s'adapten a la llengua. La funció exportada `defaultResourceTypes(locale = 'en')` localitza els noms de tipus, les etiquetes curtes i els prefixos de peu a la llengua del document — l'anglès produeix *Figure*/*Fig.* i *Table*/*Tab.*; el castellà produeix *Figura*/*Fig.* i *Tabla*/*Tabla*; el francès, l'alemany, l'italià, el portuguès, el català i el neerlandès tenen els seus (la taula de [Llengua del document](/ca/docs/configuration-text#llengua-del-document) els recull). Les etiquetes regionals com `es-ES` es resolen per llengua, i qualsevol llengua sense traducció passa a l'anglès. El comportament de numeració (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, comptadors decimals) és independent de la llengua. Cada crida retorna objectes nous, de manera que pots mutar el resultat lliurement:
+Els valors per defecte integrats s'adapten a la llengua. La funció exportada `defaultResourceTypes(locale = 'en')` localitza els noms de tipus, les etiquetes curtes i els prefixos de peu a la llengua del document — l'anglès produeix *Figure*/*Fig.* i *Table*/*Tab.*; el castellà produeix *Figura*/*Fig.* i *Tabla*/*Tabla*; el francès, l'alemany, l'italià, el portuguès, el català i el neerlandès tenen els seus (la taula de [Llengua del document](/ca/docs/configuration-language#llengua-del-document) els recull). Les etiquetes regionals com `es-ES` es resolen per llengua, i qualsevol llengua sense traducció passa a l'anglès. El comportament de numeració (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, comptadors decimals) és independent de la llengua. Cada crida retorna objectes nous, de manera que pots mutar el resultat lliurement:
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -68,15 +68,15 @@ interface ResourceType {
 }
 ```
 
-`ResourcePlacement` té la mateixa forma que el `placement` que un recurs defineix pel seu compte. `position` tria la classe d'espai lliure que pot ocupar el flotant — `auto` (el valor per defecte) pren el primer després de la primera referència, `top` / `bottom` el limiten a aquella classe de banda, `here` incrusta el recurs en línia. `span` fixa l'extensió del flotant: una columna, tota l'amplada de contingut o la columna lateral només per a flotants d'una disposició de columna i mitja. `rotate` gira el recurs un quart de volta i el converteix en un flotant d'amplada de pàgina en una pàgina pròpia. `width` estreny el flotant a una fracció de la seva columna (o de la pàgina, en un flotant d'amplada de pàgina) — una taula petita en una columna ampla, per exemple. `align` indica on se situa aquest flotant més estret — a l'esquerra per defecte, centrat o a la dreta — i on se situa dins el seu espai una imatge més estreta que ell: un mapa de bits més petit que la columna, o una imatge que `layout.fitFiguresToPage` ha reduït. El peu i la nota conserven la mesura de l'espai. (Fins a postext 1.4 aquesta imatge es componia sempre alineada a l'esquerra). `captionSide` posa el peu al costat de la figura a la columna lateral només per a flotants d'una disposició de columna i mitja (`layout.sideColumnRole: 'floats'`), a l'alçada de la vora superior de la figura (de la inferior en un flotant de peu); s'aplica als flotants de columna i, des de postext 1.28, a un recurs posat en el text (`position: 'here'`, d'una columna, sense text que l'envolti), el peu i la nota del qual van a la columna lateral a l'alçada de la vora superior del seu cos on aquella columna és lliure al seu costat, i sota el cos on no ho és (`layout.inlineCaptionSide`, activat per defecte; `false` deixa els peus al marge només per als flotants de columna); una pàgina sense aquella columna manté el peu sota la figura. Quan ni el recurs ni el seu tipus defineixen una col·locació, el valor integrat és `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) i `minScale` (0.7 si no s'indica) redueixen una imatge flotant a l'espai del seu buit en lloc de portar-la més endavant, i `captionMeasure: 'body'` compon el peu i la nota d'una imatge més estreta que el seu buit a l'amplada de la imatge (vegeu [Format del document › Col·locació](/ca/docs/document-format#collocació)); `layout.floatShrink` dona el valor del document per als dos primers. `wrap` col·loca una inserció en línia o un flotant d'una columna a un costat de la columna amb el text compost al costat, a `wrapGap` de distància; `layout.wrap` desa els valors per defecte (vegeu [Format del document › Ajust del text](/ca/docs/document-format#ajust-del-text)). `citingPage` deixa que un flotant `top` o `auto` encapçali la pàgina o la columna on cau la línia que el cita en lloc de prendre el primer espai lliure després d'ella; `layout.floatsAtCitingPage` dona el valor per defecte del document i `layout.maxTopFraction` la fracció de la columna que pot ocupar (vegeu [Format del document › Col·locació](/ca/docs/document-format#collocació)).
+`ResourcePlacement` té la mateixa forma que el `placement` que un recurs defineix pel seu compte. `position` tria la classe d'espai lliure que pot ocupar el flotant — `auto` (el valor per defecte) pren el primer després de la primera referència, `top` / `bottom` el limiten a aquella classe de banda, `here` incrusta el recurs en línia. `span` fixa l'extensió del flotant: una columna, tota l'amplada de contingut o la columna lateral només per a flotants d'una disposició de columna i mitja. `rotate` gira el recurs un quart de volta i el converteix en un flotant d'amplada de pàgina en una pàgina pròpia. `width` estreny el flotant a una fracció de la seva columna (o de la pàgina, en un flotant d'amplada de pàgina) — una taula petita en una columna ampla, per exemple. `align` indica on se situa aquest flotant més estret — a l'esquerra per defecte, centrat o a la dreta — i on se situa dins el seu espai una imatge més estreta que ell: un mapa de bits més petit que la columna, o una imatge que `layout.fitFiguresToPage` ha reduït. El peu i la nota conserven la mesura de l'espai. (Fins a postext 1.4 aquesta imatge es componia sempre alineada a l'esquerra). `captionSide` posa el peu al costat de la figura a la columna lateral només per a flotants d'una disposició de columna i mitja (`layout.sideColumnRole: 'floats'`), a l'alçada de la vora superior de la figura (de la inferior en un flotant de peu); s'aplica als flotants de columna i, des de postext 1.28, a un recurs posat en el text (`position: 'here'`, d'una columna, sense text que l'envolti), el peu i la nota del qual van a la columna lateral a l'alçada de la vora superior del seu cos on aquella columna és lliure al seu costat, i sota el cos on no ho és (`layout.inlineCaptionSide`, activat per defecte; `false` deixa els peus al marge només per als flotants de columna); una pàgina sense aquella columna manté el peu sota la figura. Quan ni el recurs ni el seu tipus defineixen una col·locació, el valor integrat és `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) i `minScale` (0.7 si no s'indica) redueixen una imatge flotant a l'espai del seu buit en lloc de portar-la més endavant, i `captionMeasure: 'body'` compon el peu i la nota d'una imatge més estreta que el seu buit a l'amplada de la imatge (vegeu [Format del document › Col·locació](/ca/docs/document-format-resources#collocació)); `layout.floatShrink` dona el valor del document per als dos primers. `wrap` col·loca una inserció en línia o un flotant d'una columna a un costat de la columna amb el text compost al costat, a `wrapGap` de distància; `layout.wrap` desa els valors per defecte (vegeu [Format del document › Ajust del text](/ca/docs/document-format-resources#ajust-del-text)). `citingPage` deixa que un flotant `top` o `auto` encapçali la pàgina o la columna on cau la línia que el cita en lloc de prendre el primer espai lliure després d'ella; `layout.floatsAtCitingPage` dona el valor per defecte del document i `layout.maxTopFraction` la fracció de la columna que pot ocupar (vegeu [Format del document › Col·locació](/ca/docs/document-format-resources#collocació)).
 
 `columns` (des de postext 1.18) col·loca un flotant `span: 'column'` sobre aquest nombre de columnes contigües en una pàgina de diverses: una foto sobre dues de les cinc columnes d'un diari. La seva mesura és la d'aquestes columnes i els espais que les separen. Ocupa el cap d'una sèrie de columnes buides que comencen a la mateixa altura, o el peu de la columna que el cita i de les columnes buides que la segueixen; tantes columnes com té la pàgina, o més, el converteixen en un flotant a tota l'amplada. No s'aplica als `span` `'page'` i `'side'`, a un recurs girat (`rotate`) ni a una inserció en línia (`here`), i `captionSide` només val per a un flotant d'una columna.
 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '180px' }}>Tipus</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -124,7 +124,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code> (opcional)</td>
-      <td>Col·locació que fan servir els recursos d'aquest tipus que no defineixen el seu propi <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> i <code>columns</code>, cadascun resolt per separat. Quan ni el recurs ni el tipus defineixen un camp, s'aplica el valor integrat: <code>auto</code> / <code>column</code>, sense girar, tota l'amplada, alineat a l'esquerra, peu sota la figura. Vegeu <a href="#numeració-i-referències">Numeració i referències</a> més avall per a la cadena de resolució i <a href="/ca/docs/document-format#recursos">Format del document › Recursos</a> per al que fa cada valor, inclosos els recursos girats.</td>
+      <td>Col·locació que fan servir els recursos d'aquest tipus que no defineixen el seu propi <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> i <code>columns</code>, cadascun resolt per separat. Quan ni el recurs ni el tipus defineixen un camp, s'aplica el valor integrat: <code>auto</code> / <code>column</code>, sense girar, tota l'amplada, alineat a l'esquerra, peu sota la figura. Vegeu <a href="#numeració-i-referències">Numeració i referències</a> més avall per a la cadena de resolució i <a href="/ca/docs/document-format-resources#recursos">Format del document › Recursos</a> per al que fa cada valor, inclosos els recursos girats.</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -136,7 +136,7 @@ interface ResourceType {
 
 ### Tokens de plantilla
 
-`numberingTemplate` es renderitza amb el mateix motor que la numeració d'encapçalaments (vegeu [Encapçalaments](/ca/docs/configuration-text#encapçalaments)). Reconeix dues classes de token:
+`numberingTemplate` es renderitza amb el mateix motor que la numeració d'encapçalaments (vegeu [Encapçalaments](/ca/docs/configuration-headings#encapçalaments)). Reconeix dues classes de token:
 
 - `{n}` — el comptador per tipus, formatat segons `counterFormat`. És el valor que s'incrementa per recurs i es reinicia segons `resetOn`.
 - `{h1}` … `{h6}` — els números d'encapçalament vigents al punt de la primera referència, en decimal llevat que el token anomeni un estil. `{h1}` és el número de l'encapçalament de nivell 1 actual, `{h2}` el de nivell 2, i així successivament.
@@ -149,8 +149,8 @@ Una plantilla buida (`''`) no imprimeix número, encara que el tipus continuï c
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Plantilla</th>
-      <th style={{ width: '180px' }}>Amb <code>h1 = 2</code>, comptador = 3</th>
+      <th>Plantilla</th>
+      <th>Amb <code>h1 = 2</code>, comptador = 3</th>
       <th>Notes</th>
     </tr>
   </thead>
@@ -182,7 +182,7 @@ Una plantilla buida (`''`) no imprimeix número, encara que el tipus continuï c
 
 ### Numeració i referències
 
-El número que produeix un tipus de recurs és el que imprimeix `:ref` i el que segueix el prefix del peu. `:ref{id}` és la forma principal: la primera referència en ordre de lectura **incorpora** el recurs, que flota al primer espai lliure després d'aquella referència — el final de la columna de la referència, el principi o el final de la columna buida següent, o una banda de la pàgina següent (segons la seva col·locació resolta — `position: 'auto' | 'top' | 'bottom' | 'here'` i `span: 'column' | 'page' | 'side'`, més `rotate`, `width`, `align` i `captionSide`, resolta per recurs, després pel `defaultPlacement` del seu tipus, i finalment pel valor integrat `auto` / `column`; `'top'` / `'bottom'` limiten la cerca a espais d'aquell tipus). La inserció en bloc `::resource{id}` és opcional i només cal per a `placement.position: 'here'` — una inserció en línia, sense flotar, en un punt exacte del flux. La gramàtica completa del costat del document — totes dues formes més les opcions `style` i `text` de `:ref` — es documenta a [Format del document › Recursos](/ca/docs/document-format#recursos), inclòs com l'ordre de primera referència determina el recompte.
+El número que produeix un tipus de recurs és el que imprimeix `:ref` i el que segueix el prefix del peu. `:ref{id}` és la forma principal: la primera referència en ordre de lectura **incorpora** el recurs, que flota al primer espai lliure després d'aquella referència — el final de la columna de la referència, el principi o el final de la columna buida següent, o una banda de la pàgina següent (segons la seva col·locació resolta — `position: 'auto' | 'top' | 'bottom' | 'here'` i `span: 'column' | 'page' | 'side'`, més `rotate`, `width`, `align` i `captionSide`, resolta per recurs, després pel `defaultPlacement` del seu tipus, i finalment pel valor integrat `auto` / `column`; `'top'` / `'bottom'` limiten la cerca a espais d'aquell tipus). La inserció en bloc `::resource{id}` és opcional i només cal per a `placement.position: 'here'` — una inserció en línia, sense flotar, en un punt exacte del flux. La gramàtica completa del costat del document — totes dues formes més les opcions `style` i `text` de `:ref` — es documenta a [Format del document › Recursos](/ca/docs/document-format-resources#recursos), inclòs com l'ordre de primera referència determina el recompte.
 
 Això reflecteix la numeració d'encapçalaments: igual que un nivell d'encapçalament porta un `numberingTemplate`, un tipus de recurs també en porta — però el comptador del recurs (`{n}`) avança per primera referència en lloc de per encapçalament, i `resetOn` el lliga de nou a la jerarquia d'encapçalaments.
 
@@ -231,9 +231,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Propietat</th>
-      <th style={{ width: '140px' }}>Tipus</th>
-      <th style={{ width: '160px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -440,7 +440,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continúa'</code> / <code>'Continued'</code></td>
-      <td>Text d'aquest indicador, alineat a la dreta sota la part amb la tipografia de la nota (vegeu <a href="#estil-dels-peus-de-recurs">estil de peus</a>). El valor per defecte segueix la llengua del document (vegeu <a href="/ca/docs/configuration-text#llengua-del-document">Llengua del document</a> per a les vuit llengües).</td>
+      <td>Text d'aquest indicador, alineat a la dreta sota la part amb la tipografia de la nota (vegeu <a href="#estil-dels-peus-de-recurs">estil de peus</a>). El valor per defecte segueix la llengua del document (vegeu <a href="/ca/docs/configuration-language#llengua-del-document">Llengua del document</a> per a les vuit llengües).</td>
     </tr>
   </tbody>
 </table>
@@ -531,7 +531,7 @@ Una taula flotant que no cap a la pàgina nova que se li ofereix no es comprimei
 
 **Taules col·locades al text.** Una taula col·locada `here` (inserida amb `::resource`) segueix les mateixes regles des de postext 1.25 (`splitInline`, activat per defecte). Quan no cap en l'espai que queda a la seva columna, es talla entre files: la primera part conserva a sobre l'espai dels flotants i almenys les files de capçalera i dues files del cos (si n'hi caben menys, la taula sencera comença a la columna següent, com abans); cada part posterior obre la columna següent sense espai a sobre, composta a l'amplada d'aquella columna (en una maqueta de columna i mitja, una part que cau a la columna estreta es compon a la seva amplada), i el text que segueix la línia `::resource` va després de l'última part. La repetició de la capçalera, el peu amb el sufix, la marca, la nota a l'última part, la cua de tres files i els talls que respecten les cel·les combinades i les files que encapçalen un grup són els d'una taula flotant. Una taula de menys de cinc files de cos no es talla mai. `'clip'` conserva les files inicials d'una taula en línia més alta que una columna, composta al principi d'una columna; `'hide'` no col·loca aquesta taula; una de més baixa passa sencera a la columna següent en tots dos modes. Una pàgina que obre una taula en línia només reserva davant dels flotants que acull l'espai de la seva primera part, de manera que una figura a l'amplada de la pàgina que espera encapçala aquella pàgina i la taula continua a sota. Les taules en línia d'una pàgina vertical i les taules dins d'un requadre no es tallen. Amb `splitInline: false` una taula en línia passa sencera a la columna següent, com fins a postext 1.24.
 
-Les cadenes de continuació prenen el valor per defecte de la llengua del document (`locale`, o si no n'hi ha, la llengua de la partició de mots): anglès `(cont.)` / `Continued`, castellà `(cont.)` / `Continúa`, i el mateix en francès, alemany, italià, portuguès, català i neerlandès (recollides a [Llengua del document](/ca/docs/configuration-text#llengua-del-document)).
+Les cadenes de continuació prenen el valor per defecte de la llengua del document (`locale`, o si no n'hi ha, la llengua de la partició de mots): anglès `(cont.)` / `Continued`, castellà `(cont.)` / `Continúa`, i el mateix en francès, alemany, italià, portuguès, català i neerlandès (recollides a [Llengua del document](/ca/docs/configuration-language#llengua-del-document)).
 
 El contingut d'una cel·la és markdown en línia, i un salt de línia dins de la cel·la —un caràcter de línia nova, o `\\` com en peus i notes— obre un paràgraf nou. Un paràgraf que comença per una vinyeta o un guionet (`•`, `-`, `*`, `–`) o per un número (`1.`, `1)`) seguit d'un espai es compon com a element de llista: la marca es pinta tal com es va escriure, el text en penja a la distància `unorderedLists.gap` del document, les línies partides s'alineen amb el text i dos espais inicials nien un nivell. Així, una cel·la escrita com `• Ofrece elección\n• Acomoda a personas diestras y zurdas` surt com una llista de dos elements. Una línia amb només espais corrents no afegeix res; una línia amb un espai de no separació (U+00A0) és una línia de la cel·la, com a CommonMark, així que `1\n` seguit d'un espai de no separació dona una fila de dues línies. Un espai de no separació al final del text d'una cel·la conserva la seva amplada: `760` i un espai de no separació, alineats a la dreta sobre `(231)`, acaben un espai abans de la vora, cosa que acosta el 0 a l'1. Les xifres només queden exactament en columna si l'espai és tan ample com el parèntesi, i en la majoria de les fonts és més estret. (Fins a postext 1.4 es perdien tots dos).
 
@@ -592,9 +592,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '180px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -703,9 +703,9 @@ El subobjecte `note` estilitza `Resource.note`, una línia breu (font, crèdits,
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Propietat</th>
-      <th style={{ width: '180px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -762,9 +762,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '200px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -870,7 +870,7 @@ Per a cada color que reescriu la passada sobre el marcatge (valors hexadecimals,
 
 ### Fonts al text dels SVG
 
-Un dibuix SVG es mostra a través d'una imatge: un `<img>` al canvas, en HTML i en EPUB. Un document d'imatge no veu les fonts web de la pàgina, així que `<text font-family="IBM Plex Sans">` cauria en una font del sistema. Des de postext 1.25 el motor incrusta al marcatge les variants que anomena el text abans de descodificar la imatge o de lliurar-la com a URL: una regla `@font-face` per fitxer de font, amb els seus bytes com a data URI, en un `<style>` just després de l'etiqueta `<svg>` arrel. El PDF no necessita res d'això: compon el text SVG com a text real amb les seves fonts incrustades (consulta [Bytes de recursos i màsters d'impressió](/ca/docs/configuration-programmatic-usage#bytes-de-recursos-i-màsters-dimpressió)).
+Un dibuix SVG es mostra a través d'una imatge: un `<img>` al canvas, en HTML i en EPUB. Un document d'imatge no veu les fonts web de la pàgina, així que `<text font-family="IBM Plex Sans">` cauria en una font del sistema. Des de postext 1.25 el motor incrusta al marcatge les variants que anomena el text abans de descodificar la imatge o de lliurar-la com a URL: una regla `@font-face` per fitxer de font, amb els seus bytes com a data URI, en un `<style>` just després de l'etiqueta `<svg>` arrel. El PDF no necessita res d'això: compon el text SVG com a text real amb les seves fonts incrustades (consulta [Bytes de recursos i màsters d'impressió](/ca/docs/configuration-pdf-output#bytes-de-recursos-i-màsters-dimpressió)).
 
 El que demana el text es llegeix de `font-family`, `font-weight`, `font-style` i `font`, com a atributs, dins d'atributs `style` i heretat dels grups que el contenen; també compta una regla de `<style>` que anomeni una família. En queden fora les famílies genèriques (`serif`, `sans-serif`…) i el text de `<title>` o `<desc>`, i una família que el mateix SVG declara amb `@font-face` no es toca. Un tram recorre la seva llista de `font-family` fins a la primera família que tingui variant. Primer es recoloreix per a la tinta única i després s'incrusten les fonts.
 
@@ -888,7 +888,7 @@ On passa:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` recoloreix (`inkHex`), incrusta les fonts (`fonts`, un proveïdor; `inlineFonts: false` ho omet), descodifica i registra la imatge com a font vectorial, i es resol amb el que ha passat amb cada variant. `registerBundleImages(bundle)` fa el mateix amb els SVG d'un paquet, primer amb les variants del mateix paquet. `prepareSvgMarkup(svgText, options)` retorna el marcatge preparat per a un amfitrió que descodifica pel seu compte.
 - **HTML.** `bundleImageUrl(bundle)` serveix el marcatge SVG amb les variants del paquet incrustades. `renderToHtml(doc, { inlineSvgFonts: true })` incrusta als data URI SVG que retorna `resourceImageUrl` les variants que el registre té a la memòria (o `inlineSvgFonts: { fonts, maxBytes, withhold }`). Una URL d'objecte no es pot llegir de manera síncrona, així que un amfitrió que serveix URL blob incrusta abans de crear-les.
-- **EPUB.** `postext-epub` incrusta des de les `fonts` del llibre, i després des de `svgFonts.provider`, abans d'escriure un SVG (consulta [Llibres EPUB](/ca/docs/configuration-programmatic-usage#llibres-epub-postext-epub)).
+- **EPUB.** `postext-epub` incrusta des de les `fonts` del llibre, i després des de `svgFonts.provider`, abans d'escriure un SVG (consulta [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub)).
 - **PDF.** El text SVG es compon com a text real amb les fonts incrustades. Un `<style>` que només conté regles `@font-face` (variants que va incrustar l'autor) ja no fa que la figura passi a ràster. Quan una figura sí que passa a ràster (un filtre, un degradat), el seu ràster es fa amb les variants incrustades des del `fontProvider` del PDF.
 
 També s'exporten les funcions de nivell més baix: `svgFontRequests(svgText)` enumera les famílies, el pes, l'estil i els caràcters de cada tram; `inlineSvgFonts(svgText, provider, options)` i `inlineSvgFontsSync(svgText, syncProvider, options)` retornen el marcatge; `inlineSvgFontsDetailed` hi afegeix un informe de cada variant (`inlined`, `declared`, `unavailable`, `withheld`, `tooLarge`).
@@ -896,9 +896,9 @@ També s'exporten les funcions de nivell més baix: `svgFontRequests(svgText)` e
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Opció</th>
-      <th style={{ width: '160px' }}>Tipus</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Opció</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -937,7 +937,7 @@ També s'exporten les funcions de nivell més baix: `svgFontRequests(svgText)` e
 
 ## Estil de vídeo
 
-La propietat `videoStyle` defineix com s'imprimeixen els [recursos de vídeo](/ca/docs/document-format#vídeos) (la marca de reproducció i el codi QR sobre la portada, i si la portada enllaça amb el vídeo) i què ofereixen els seus reproductors al visor HTML i a l'EPUB.
+La propietat `videoStyle` defineix com s'imprimeixen els [recursos de vídeo](/ca/docs/document-format-resources#vídeos) (la marca de reproducció i el codi QR sobre la portada, i si la portada enllaça amb el vídeo) i què ofereixen els seus reproductors al visor HTML i a l'EPUB.
 
 ```ts
 const config: PostextConfig = {
@@ -952,9 +952,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '200px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -997,9 +997,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '200px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1020,9 +1020,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '200px' }}>Tipus</th>
-      <th style={{ width: '140px' }}>Per defecte</th>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1048,9 +1048,9 @@ El codi el codifica el mateix motor (`encodeQr(text, level)`: mode byte, UTF-8, 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Propietat</th>
-      <th style={{ width: '120px' }}>Per defecte</th>
-      <th style={{ width: '170px' }}>La respecten</th>
+      <th>Propietat</th>
+      <th>Per defecte</th>
+      <th>La respecten</th>
       <th>Descripció</th>
     </tr>
   </thead>
@@ -1072,7 +1072,7 @@ El codi el codifica el mateix motor (`encodeQr(text, level)`: mode byte, UTF-8, 
 
 Un EPUB només conserva els atributs que coneix el seu esquema: un fitxer es reprodueix amb <code>controls</code>, <code>autoplay</code>, <code>muted</code>, <code>loop</code>, <code>playsinline</code> i <code>preload</code>, a més de la marca <code>data-pt-alongside</code>, i la resta la decideix el lector.
 
-Un vídeo que no és exclusiu porta `data-pt-alongside` a la sortida HTML. `coordinateVideoPlayback(root)` aplica la regla als reproductors que hi ha sota `root` (l'element que conté la sortida de `renderToHtml`): començar un vídeo exclusiu posa en pausa tots els altres que es reprodueixen, i començar-ne un que es reprodueix amb d'altres posa en pausa només els exclusius. Retorna una funció que deixa d'escoltar. `playsAlongside(el)` i `videosToPause(started, videos, alongside)` donen la mateixa regla a un amfitrió amb reproductors propis. A [Folio](/ca/docs/document-format#vídeos-a-les-pàgines-de-folio), un vídeo que arrenca sol i es reprodueix amb d'altres (`autoplay` amb `exclusive: false`) comença, sense so, cada cop que la seva pàgina apareix i s'atura quan es passa la pàgina, diversos alhora, i `loop` el torna a començar en acabar. En un EPUB, la pàgina o el capítol amb vídeos per coordinar (dos o més, un d'ells exclusiu) enllaça la mateixa regla com un petit script, `scripts/videos.js` (l'exportació `VIDEO_PLAYBACK_SCRIPT`), i el paquet declara aquest document `scripted`. Un lector que executa scripts aplica la regla als vídeos d'aquest document, però no als de la pàgina del davant, que és un altre document; un que no els executa reprodueix cada vídeo segons les seves pròpies regles, com fan sempre els reproductors de YouTube i Vimeo.
+Un vídeo que no és exclusiu porta `data-pt-alongside` a la sortida HTML. `coordinateVideoPlayback(root)` aplica la regla als reproductors que hi ha sota `root` (l'element que conté la sortida de `renderToHtml`): començar un vídeo exclusiu posa en pausa tots els altres que es reprodueixen, i començar-ne un que es reprodueix amb d'altres posa en pausa només els exclusius. Retorna una funció que deixa d'escoltar. `playsAlongside(el)` i `videosToPause(started, videos, alongside)` donen la mateixa regla a un amfitrió amb reproductors propis. A [Folio](/ca/docs/document-format-resources#vídeos-a-les-pàgines-de-folio), un vídeo que arrenca sol i es reprodueix amb d'altres (`autoplay` amb `exclusive: false`) comença, sense so, cada cop que la seva pàgina apareix i s'atura quan es passa la pàgina, diversos alhora, i `loop` el torna a començar en acabar. En un EPUB, la pàgina o el capítol amb vídeos per coordinar (dos o més, un d'ells exclusiu) enllaça la mateixa regla com un petit script, `scripts/videos.js` (l'exportació `VIDEO_PLAYBACK_SCRIPT`), i el paquet declara aquest document `scripted`. Un lector que executa scripts aplica la regla als vídeos d'aquest document, però no als de la pàgina del davant, que és un altre document; un que no els executa reprodueix cada vídeo segons les seves pròpies regles, com fan sempre els reproductors de YouTube i Vimeo.
 
 El resolutor i el depurador segueixen el patró de les altres seccions, juntament amb els tipus `VideoStyleConfig` / `ResolvedVideoStyleConfig`:
 

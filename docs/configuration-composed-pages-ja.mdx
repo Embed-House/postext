@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-ja.mdx */}
+
+export const metadata = {
+  title: '設定：テンプレートページ',
+  sidebarTitle: 'テンプレートページの設定',
+  description: 'テンプレートページのためのページテンプレート：フレーム、グループ、装飾、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
+  lang: 'ja',
+  lastUpdated: '2026-10-16',
+  readingTime: '6分',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "このページでは、ページテンプレートを説明します。テンプレートは設定の中に描いたページで、フレームと呼ぶ名前付きの箱と、それぞれの位置、どこまで大きくなれるか、どう見えるかを決めます。テンプレートページのMarkdownは、そのフレームに名前で中身を入れます。そのため本文に位置を書くことはなく、設定に本文を書くこともありません。テンプレートはほかのテンプレートをもとにして一部のフレームだけを変えられ、左ページと右ページで違う形にもできます。画像の上に置く文字のラベルスタイルと、テンプレートが出すすべての警告とその直し方も載せています。",
+};
+
+# 設定：テンプレートページ
+
+
+## ページテンプレート
+
+テンプレートページは、形を設定の**テンプレート**から、中身を`::::page{template="…"}`フェンスのMarkdownから受け取るページです。テンプレートは**フレーム**と呼ぶ長方形に名前を付け、Markdownはそれぞれの中身を名前（スロット）でフレームに送ります。Markdownに位置や大きさが現れることはなく、テンプレートに本文が現れることもありません。本のテンプレートは`pageTemplates`プロパティに入れます。
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+`id`とフレーム1つだけを指定したテンプレートは、そのフレームが版面いっぱいに広がる1ページになります。ほかの項目はすべて省略できます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必須</td>
+      <td>ページのフェンスが指定する名前です（<code>template="tema-cajas"</code>）。テンプレートのあいだで一意で、同じidの2つ目のテンプレートは無視されます。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>idと同じ</td>
+      <td>Sandboxに表示する名前です。組版では読みません。</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>このテンプレートがもとにするテンプレートのidです。<a href="#継承とバリアント">継承とバリアント</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>フレームの位置の基準になる長方形です。<code>'content'</code>はページの版面で、本文と同じく左右のページで鏡像になります。<code>'trim'</code>は断裁後のページ、<code>'bleed'</code>は塗り足しを含めたページです。</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>なし</td>
+      <td>領域をセルに分け、フレームやグループを<code>placement</code>の代わりにセルで配置できるようにします（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>、1から数えます）。間隔の既定値は<code>0</code>です。</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>フレームをテンプレートの順に並べます。この順序で先に測り、優劣がつかないときもこの順序で決めます。<a href="#フレーム">フレーム</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>空間を分け合うフレームの縦の積み重ねと横の並びです。<a href="#グループ">グループ</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>なし</td>
+      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページのフェンスの属性を表す<code>&#123;attr.x&#125;</code>）。要素はフレームやグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾はフレームの後に置かれ、本文を押しのけることはありません。</td>
+    </tr>
+    <tr>
+      <td><code>header</code>、<code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>継承</td>
+      <td>ページの柱とノンブルです。未設定なら章のものをそのまま使い、<code>false</code>なら表示しません。</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>テンプレートが、1枚として組む向かい合った2ページを表します。見開きは、左から右に読む本では必ず左ページから（右から左に読む本では右ページから）始まり、必要なら前に白ページが加わります。</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>見開きで、フレームが避けるノドの帯です。<code>crossGutter: true</code>を指定したフレームは避けません。</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>なし</td>
+      <td>右ページ（<code>recto</code>）または左ページ（<code>verso</code>）での変更で、テンプレートそのものと同じように書きます。左右は物理的な位置なので、左から右に読む本でも右から左に読む本でも使えます。</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>このテンプレート</td>
+      <td>フレームが次のページに続くとき（<code>overflow.continueIn: 'next-page'</code>）に加えるページのテンプレートです。未設定なら、加えたページはこのテンプレートを使い、続きのフレームだけを埋めます。</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>ページの本文の段落スタイルで、見出しスタイルにあるものと同じです。</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>ページのパレットの上書きで、見出しスタイルや部にあるものと同じです。</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td><code>pages</code>フィルターを持つデザイン要素から見たページの役割です。</td>
+    </tr>
+  </tbody>
+</table>
+
+### フレーム
+
+フレームは、組まれた中身を受け取る名前付きの長方形です。`name`がMarkdownの指定するスロットで、テンプレートの中で一意です（アンカーはフレームとグループを同じ書き方で指すので、グループもフレームの名前を使えません）。
+
+テンプレートにグリッドがあればフレームは`grid`のセルで、なければ`placement`で配置します。`placement`はデザイン要素の配置と同じしくみで、アンカー（`'container'`は領域、`'page'`、`'bleed'`、ほかのフレームやグループなら`'#name'`）、辺、オフセット、サイズからなります。ほかのフレームに固定したフレームは、そのフレームと一緒に動きます。どちらもなければ、フレームは領域全体を占めます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>必須</td>
+      <td>スロットの名前です。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>領域全体</td>
+      <td>アンカー、辺、オフセット、サイズで、<a href="/ja/docs/configuration-headers-footers#要素の配置">要素の配置</a>と同じです。グリッドのセルでフレームを配置するときは無視されます。</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>なし</td>
+      <td>テンプレートのグリッドのセルで、1から数え、<code>cols</code> × <code>rows</code>個のセルにまたがります（既定値は1）。グリッドの外にあるセルは、グリッドの中に戻されます。テンプレートにグリッドがなければ無視されます。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>、<code>'auto'</code></td>
+      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（フレームを固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。テキストのフレームには行長が要るので、幅の<code>'auto'</code>が意味を持つのは画像を1枚だけ入れるフレームです（フレームの高さに合わせたときの画像の幅になります）。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>なし</td>
+      <td><code>'auto'</code>や<code>'fill'</code>のサイズと、グループが与えたり取り戻したりする空間の上限と下限です。最小値が最大値より優先され、範囲の外にある固定のサイズは範囲の中に収められます（どちらの場合も<code>frameMinMax</code>が警告します）。</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>枠なし</td>
+      <td><a href="/ja/docs/configuration-callouts#囲みスタイル">囲みスタイル</a>のidです。フレームは囲みスタイルで描きます（背景、枠線、パディング、帯、アイコン、ラベルのタブ、タイトル）。タブの文字はMarkdownから受け取ります（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。囲みの設定のうち、本文の中での箱の置き場所に関するもの（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>など）はフレームには効きません。</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>スタイルの値</td>
+      <td>スタイルのパディングを辺ごとに上書きします。たとえば、ボックスの上に重ねる写真のための余地を作れます。</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>描く順序です。装飾はレイヤー0で、負のレイヤーはその下に描きます。</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>時計回りの角度です。ボックスと中身が一緒に回ります。</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>フレームが中身より高いとき、中身をどこに置くかです。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>、<code>columnGap</code></td>
+      <td><code>number</code>、<code>Dimension</code></td>
+      <td><code>1</code>、スタイルの値</td>
+      <td>フレームの中の段組みです。</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>にすると、ほかのフレームの文字がこのフレームの長方形を避けて回り込みます。</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>スロットを指定していない中身を、このフレームが受け取ります。</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>なし</td>
+      <td>スロットを指定していないそのレベルの最初の見出しを、このフレームが受け取ります。そのため、ページのタイトルはフェンスの先頭に<code># Title</code>と書くだけです。</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>連結です。入りきらない中身は、同じページのその名前のフレームに続きます。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページ）のいずれかです。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>言語による</td>
+      <td>切れた部分の終わりに付ける目印です。未設定なら、文書の言語の「続く」の語を使います（分割した表と同じ）。<code>false</code>なら何も付けません。</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>ほかの手段で中身が収まらないとき、文字を小さく組んでもよいかどうかです。</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>文字の最小の縮小率で、0より大きく1以下です（1より大きい値は1として扱います）。</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>、<code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>、<code>number</code></td>
+      <td><code>true</code>、<code>0.8</code></td>
+      <td>フレームの中の画像を小さくしてよいか、どこまで小さくしてよいかです。</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>フレームが動かず、大きさも変わりません。絵柄と位置をそろえておく必要のあるボックスに使います。グループはそれを避けて並びます。</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>、<code>shrink</code>、<code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>フレームがグループの空間をどう分け合うかです。<code>grow</code>は余った空間の取り分、<code>shrink</code>はフレームが空間を返せるかどうかを決め、<code>priority</code>の低いフレームから先に返します。</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Markdownがこのフレームに何も送らなくても警告しません。</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>見開きで、フレームがノドの帯をまたいでもかまいません。</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>、<code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
+      <td>ページの値</td>
+      <td>横組みのページに置く縦組みのボックス、またはその逆です。</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>ほかのテンプレートを拡張するテンプレートやバリアントの中で、同じ名前の継承したフレームを取り除きます。</td>
+    </tr>
+  </tbody>
+</table>
+
+### グループ
+
+グループは、空間を分け合って一緒に動くフレームの積み重ね（上から下）または並び（始端から終端）です。グループの中では、グループの方向に沿ったフレーム自身の位置は無視され、グループが順に並べて、あいだに`gap`を空けます。あるフレームの文字が増えると、その後のフレームが一緒に動きます。グループはボックスでもあり、フレームや装飾をそこに固定できます（`'#pagina'`）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>必須</td>
+      <td>テンプレートのフレームとグループのあいだで一意です。</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>上から下か、始端から終端かです。</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>グループのフレームを、ページ上の順に並べます。1つのフレームが属するグループは多くても1つです。テンプレートのフレームではない名前や、すでに挙げたフレームは飛ばします。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>グループの隣り合う2つのフレームのあいだの空きです。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>、<code>grid</code></td>
+      <td>フレームと同じ</td>
+      <td>フレームを囲む箱</td>
+      <td>グループ自身のボックスです。未設定なら、フレームに宣言したボックスを囲む箱になります。</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>グループのどのフレームも伸びないとき、余った空間をどこに置くかです。</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>ほかのテンプレートを拡張するテンプレートやバリアントの中で、継承したグループを取り除きます。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 継承とバリアント
+
+`extends`を持つテンプレートは、指定したテンプレート（それ自身がさらにほかのテンプレートを拡張していてもかまいません）から始まり、書いたところだけを変えます。
+
+- `area`、`header`、`overflowTemplate`などの項目は親の値を置き換えます。`grid`はキーごとに統合します。`spread`、`gutter`、`role`も継承しますが、`id`、`name`、`extends`はテンプレート自身のものです。
+- `frames`と`groups`は**名前で**統合します。継承した項目と同じ名前の項目は、書いたフィールドだけを変えて残りを保ちます（`fit`、`overflow`、`padding`はキーごとに統合し、`placement`は丸ごと置き換えます）。`remove: true`はその項目を取り除き、新しい名前は継承した項目の後に加わります。
+- 装飾の要素も同じように`id`で統合します。新しいidの要素やidのない要素は加わります。
+
+`variants.recto`と`variants.verso`はテンプレートと同じように書き、同じように統合して、右ページと左ページに適用します。適用は`extends`の連鎖全体の後で、根のテンプレートのバリアントが先です。見開きは両方の側を持つので、どちらのバリアントも適用しません。
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+Sandboxがテンプレートを保存するとき、既定値と同じ値も捨てずに残します。ほかのテンプレートを拡張するテンプレートやバリアントの中では、その値が親の値を上書きするからです。
+
+コードからは、`resolvePageTemplate(config, id, { parity })`が、連鎖を統合し、その側のバリアントを適用し、すべての既定値を埋め、下の警告で説明するとおりにすべての参照を解決したテンプレートを返します。`validatePageTemplates(config)`は警告を返します。
+
+## ラベルスタイル
+
+`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話し手と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必須</td>
+      <td>アンカーとラベルが使う名前です。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>idと同じ</td>
+      <td>Sandboxに表示する名前です。</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>ラベルが書体の設定を借りる段落スタイルです。下の項目がそれを上書きします。</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>、<code>fontSize</code>、<code>fontWeight</code></td>
+      <td><code>string</code>、<code>Dimension</code>、<code>number</code></td>
+      <td>本文の値</td>
+      <td>ラベルの書体、サイズ、ウエイトです。</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>正体かイタリックかです。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>本文の色</td>
+      <td>文字の色です。</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>大文字にします。地図で海や国の名前を組むときのような使い方です。</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>文字のあいだに加える空きで、単位はemです。</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>なし</td>
+      <td>文字の後ろに付ける縁取りで、込み入った絵の上でも読めるようにします。</td>
+    </tr>
+    <tr>
+      <td><code>background</code>、<code>padding</code></td>
+      <td><code>ColorValue</code>、<code>Dimension</code></td>
+      <td>なし</td>
+      <td>ラベルの後ろに敷く地と、文字のまわりの空きです。</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>ラベルが幅に収まらないとき、どこまで小さく組んでよいかです。</td>
+    </tr>
+  </tbody>
+</table>
+
+### アンカーのラベル項目
+
+画像のアンカー（`Resource.anchors`、漫画が話し手に使う点）は、ラベルのための省略可能な項目をいくつか持てます。どれも画像に対する割合なので、どの言語でも、画像をどう切り抜いても成り立ちます。漫画はこれらを無視します。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>項目</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>ラベル自身の幅</td>
+      <td>ラベルの行長で、画像の幅に対する割合です。長い名前はその中で2行に折り返します。</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>ラベルのどちら側をアンカーの点に合わせるかです。</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>ラベルのどの辺をアンカーの高さに合わせるかです。</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>アンカーの点を中心にした時計回りの角度です。川の名前を流れに沿わせるときに使います。</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td><code>labelStyles</code>のidです。ラベルが自分のスタイルを指定していれば、そちらが優先されます。</td>
+    </tr>
+  </tbody>
+</table>
+
+## ページテンプレートの警告
+
+ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
+
+テンプレート、フレーム、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のないフレームとグループは無視され、その項目に`unknownConfigValue`が出ます。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>警告</th>
+      <th>原因</th>
+      <th>対処</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>2つのテンプレートが同じ<code>id</code>を持っています。最初のものを使い、後のものは無視します。</td>
+      <td>どちらかの名前を変えるか、複製を削除します。</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td><code>extends</code>をたどると同じテンプレートに戻ります（<code>a → b → a</code>）。輪の中のすべてのテンプレートと、そのどれかを拡張するすべてのテンプレートが捨てられ、どのページでも使えません。</td>
+      <td>輪の中のテンプレートのどれか1つから<code>extends</code>を外します。</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code>が、どのテンプレートにもないidを指しています。テンプレートは何も継承せず、単独で使われます。</td>
+      <td>idを直す（警告が最も近いidを示します）か、親のテンプレートを加えます。</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>1つのリストの中の2つのフレームまたは2つのグループが同じ<code>name</code>を持っているか、グループがフレームと同じ名前を持っています。後の項目は無視され、その名前へのアンカーはフレームを指します。</td>
+      <td>フレームとグループにそれぞれ別の名前を付けます。継承したフレームを変えるには、その名前の項目を1つだけ書きます。</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>フレームの<code>style</code>が、どの囲みスタイルも指していません。フレームは枠なしで描かれます。</td>
+      <td>idを直すか、<code>calloutStyles</code>にそのスタイルを加えます。</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>フレーム、グループ、装飾の要素が<code>'#name'</code>に固定されているのに、テンプレートにその名前のフレーム、グループ、要素がありません。または、フレームとグループが互いに輪になって固定されています（自分では何にも固定せず、ボックスがフレームを囲む箱になるグループを経由する場合も含みます）。アンカーは<code>'container'</code>、つまり領域として扱われます。</td>
+      <td>存在するフレームかグループに固定するか、どれか1つを領域に固定して輪を断ちます。</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>最小値が最大値より大きい（<code>minHeight 40mm &gt; maxHeight 30mm</code>）か、固定の<code>width</code>や<code>height</code>が範囲の外にあります。最小値が優先され、固定のサイズは範囲の中に収められ、<code>used</code>がフレームの実際の値を示します。単位の違う長さはページの解像度で比べ、emは本文のサイズで換算します。</td>
+      <td>最小値を最大値以下にするか、固定のサイズと矛盾する制限を外します。</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>グループの<code>frames</code>に、テンプレートのフレームではない名前があります（子のテンプレートやバリアントで取り除かれたのかもしれません）。グループはそれを飛ばします。</td>
+      <td>名前を直すか、リストから外します。</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>1つのフレームが2つのグループに、または1つのグループに2回挙げられています。フレームが属するグループは1つだけなので、後のほうは飛ばします。</td>
+      <td>フレームを、一緒に動くべき1つのグループだけに残します。</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>フレームが<code>next</code>や<code>overflow.continueIn: '#frame'</code>で輪になって続いています（<code>a → b → a</code>）。輪を閉じるつながりが捨てられ、連鎖はその手前のフレームで終わります。</td>
+      <td>連鎖を最後のフレームで終わらせます。その<code>next</code>を外すか、次のページに続けます。</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td><code>next</code>がテンプレートのどのフレームも指していない、<code>overflow.continueIn</code>がどのフレーム（<code>'#x'</code>）もテンプレート（<code>'template:x'</code>）も指していないか、<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>のどの形でもない、または<code>overflowTemplate</code>がどのテンプレートも指していない、のいずれかです。入りきらない中身はそこには続きません。</td>
+      <td>名前やidを直すか、3つの形のどれかで書きます。</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>画像のアンカーが、<code>labelStyles</code>にない<code>style</code>を指しています。警告はリソースを示します。そのアンカーのラベルは既定の見た目になります。</td>
+      <td>アンカーのスタイルのidを直すか、<code>labelStyles</code>にそのスタイルを加えます。</td>
+    </tr>
+  </tbody>
+</table>
+
+ページテンプレートの導入以来、設定のバージョンは15です（それ以前に書かれたバンドルはこれまでどおり読み込めます。古い設定に書かれた内容の意味は何も変わりません）。

@@ -22,7 +22,7 @@ The standard asks for “et al.” after the first three authors of a Western wo
 
 ### 2 · The references in a CSL-YAML block
 
-The works are listed in a `:::references{format=csl-yaml}` block at the end of the Markdown, in the format Zotero exports as CSL YAML ([References](/en/docs/document-format#references)). The CSL type decides the code: `book` prints [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] after its `//` and the proceedings, and `webpage` [EB/OL] with the access date in square brackets. A journal article with a DOI becomes [J/OL] and keeps its DOI, as the standard asks. Chinese names go in `literal`, so the style does not split them into family and given names. `:::bibliography{title=""}` puts the list under the unnumbered heading 参考文献, and `labelWidth` sets the turnover lines under the text of the entry, not past it.
+The works are listed in a `:::references{format=csl-yaml}` block at the end of the Markdown, in the format Zotero exports as CSL YAML ([References](/en/docs/document-format-notes-references#references)). The CSL type decides the code: `book` prints [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] after its `//` and the proceedings, and `webpage` [EB/OL] with the access date in square brackets. A journal article with a DOI becomes [J/OL] and keeps its DOI, as the standard asks. Chinese names go in `literal`, so the style does not split them into family and given names. `:::bibliography{title=""}` puts the list under the unnumbered heading 参考文献, and `labelWidth` sets the turnover lines under the text of the entry, not past it.
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Page 2: Western entries in capitals with et al., Chinese entries with 等, each with its type code." />
 
@@ -30,7 +30,7 @@ The works are listed in a `:::references{format=csl-yaml}` block at the end of t
 
 <Excerpt region="masthead" />
 
-The title block is the design of the H1, a heading style that spans both columns. The band is a box anchored to the trim, and the journal’s name sits on it in white. The title, the authors and the affiliations come from the heading and its attributes, each placed below the one before (`#title`, `below`), so a three-line title pushes the rest down ([Span and advanced design](/en/docs/configuration-text#span-and-advanced-design)).
+The title block is the design of the H1, a heading style that spans both columns. The band is a box anchored to the trim, and the journal’s name sits on it in white. The title, the authors and the affiliations come from the heading and its attributes, each placed below the one before (`#title`, `below`), so a three-line title pushes the rest down ([Span and advanced design](/en/docs/configuration-headings#span-and-advanced-design)).
 
 ### 4 · The abstract and its labels
 

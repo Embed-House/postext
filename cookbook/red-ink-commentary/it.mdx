@@ -18,7 +18,7 @@ L’inizio del capitolo 1 del manoscritto Jiaxu della *Storia della pietra*, la 
 
 Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Una pagina verticale è una pagina orizzontale ruotata di un quarto di giro, quindi la colonna laterale di un’[impaginazione a colonna e mezza](/it/docs/configuration-page-layout#tipi-di-impaginazione) diventa una fascia lungo la pagina, e `sideColumnSide: 'left'` mette quella fascia in testa ([Scrittura verticale](/it/docs/configuration-page-layout#scrittura-verticale)). La [griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri) arrotonda `sideColumnPercent: 19` a 10 caratteri del testo, 120 pt, e l’intercolonna a due; il filetto tra le colonne diventa la linea sottile tra i commenti e il testo. Lo stile dei commenti non ha riquadro: Kai a 7 pt, 17 caratteri per colonna, un corpo a cui nessuno dei dieci commenti finisce su una colonna di un solo carattere, e `snapToGrid: false` perché i commenti si impilino al loro passo di 10 pt invece che ai 21 pt del testo.
 
-Entrambi i tipi di commento sono segnati dove li ha il manoscritto. Una nota laterale è uno span [`:warichu[…]`](/it/docs/document-format#segni-cinesi-ruby-e-warichu), che `cjk.warichu` colora; un commento di testa è un riquadro delimitato con `span="side"` subito prima del passo di cui parla:
+Entrambi i tipi di commento sono segnati dove li ha il manoscritto. Una nota laterale è uno span [`:warichu[…]`](/it/docs/document-format-inline#segni-cinesi-ruby-e-warichu), che `cjk.warichu` colora; un commento di testa è un riquadro delimitato con `span="side"` subito prima del passo di cui parla:
 
 ```markdown
 :::callout{type="meipi" span="side"}
@@ -38,7 +38,7 @@ Su una pagina verticale un’apertura è impaginata nel riferimento del flusso, 
 
 <Excerpt region="fore-edge" />
 
-Sono le testatine sul taglio esterno di [Elementi di testo verticali](/it/docs/configuration-page-layout#elementi-di-testo-verticale): `anchor.to: 'outer'` è il margine lontano dal dorso, la sinistra di un recto e la destra di un verso in un libro rilegato a destra, e `writingMode: 'vertical-rl'` compone il testo lungo la pagina. Qui la gabbia include la fascia dei commenti, quindi «quattro caratteri sotto la testa» si misura dalla cima dei commenti rossi. `trad-chinese-informal` stampa i folii da 一 a 六.
+Sono le testatine sul taglio esterno di [Elementi di testo verticali](/it/docs/configuration-headers-footers#elementi-di-testo-verticale): `anchor.to: 'outer'` è il margine lontano dal dorso, la sinistra di un recto e la destra di un verso in un libro rilegato a destra, e `writingMode: 'vertical-rl'` compone il testo lungo la pagina. Qui la gabbia include la fascia dei commenti, quindi «quattro caratteri sotto la testa» si misura dalla cima dei commenti rossi. `trad-chinese-informal` stampa i folii da 一 a 六.
 
 ### 4 · Carica ogni voce con il testo che compone
 

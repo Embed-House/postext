@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Units, colours and the palette, custom fonts, the HTML viewer, PDF and print production, the Folio viewer and the debug overlays',
   lang: 'en',
   lastUpdated: '2026-10-10',
-  readingTime: '6 min',
-  order: 11,
+  readingTime: '36 min',
+  order: 19,
   parent: 'configuration',
   plainSummary: "This page covers the settings shared by the whole book and the settings for each kind of output. It explains how to write a measure and a colour, and how to name the colours of a palette. It shows how to add your own fonts. Then it covers the web view, the PDF file, the files a printing company asks for and the 3D book. The last section turns on the guides and warnings that help while you work.",
 };
@@ -247,9 +247,9 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Property</th>
-      <th style={{ width: '160px' }}>Type</th>
-      <th style={{ width: '140px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-See [Integrating the HTML viewer](/en/docs/configuration-programmatic-usage#integrating-the-html-viewer) below for an end-to-end example.
+See [Integrating the HTML viewer](/en/docs/configuration-html-folio-epub#integrating-the-html-viewer) below for an end-to-end example.
 
 
 ## PDF generation (config)
@@ -336,9 +336,9 @@ interface PdfGenerationConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Property</th>
-      <th style={{ width: '180px' }}>Type</th>
-      <th style={{ width: '140px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-See [Generating PDFs](/en/docs/configuration-programmatic-usage#generating-pdfs) below for the end-to-end export recipe.
+See [Generating PDFs](/en/docs/configuration-pdf-output#generating-pdfs) below for the end-to-end export recipe.
 
 
 ## Print production (config)
@@ -428,9 +428,9 @@ interface CustomOutputProfile {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Property</th>
-      <th style={{ width: '170px' }}>Type</th>
-      <th style={{ width: '120px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -508,10 +508,10 @@ print: {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Id</th>
+      <th>Id</th>
       <th>Condition</th>
-      <th style={{ width: '150px' }}>Registry name</th>
-      <th style={{ width: '90px' }}>Ink limit</th>
+      <th>Registry name</th>
+      <th>Ink limit</th>
     </tr>
   </thead>
   <tbody>
@@ -576,9 +576,9 @@ interface PrintBlackConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Property</th>
-      <th style={{ width: '140px' }}>Type</th>
-      <th style={{ width: '170px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -644,9 +644,9 @@ interface PrintPreflightConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Property</th>
-      <th style={{ width: '110px' }}>Type</th>
-      <th style={{ width: '100px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -729,9 +729,9 @@ interface ContrastConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>Property</th>
-      <th style={{ width: '110px' }}>Type</th>
-      <th style={{ width: '100px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -755,8 +755,8 @@ The ratio a text must reach follows its size and weight, as in WCAG 2.
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Level</th>
-      <th style={{ width: '120px' }}>Text</th>
+      <th>Level</th>
+      <th>Text</th>
       <th>Large text</th>
     </tr>
   </thead>
@@ -818,6 +818,66 @@ The measures are exported for your own tools:
 The resolver and stripper match the other sections: `resolveContrastConfig` and `stripContrastDefaults`, with `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` and `CONTRAST_MODES`.
 
 
+## Content check (config)
+
+The `checks` property holds the checks that read the configuration itself. It has one today, `contentInConfig`, which warns when a design keeps the book's text. A running head, a heading design, a part page and a contents part row are form: they hold placeholders (`{chapterTitle}`, `{titleText}`, `{number}`) and at most a word or two of their own, such as *Chapter* before `{chapterNumber}`. Text that is part of the book belongs in the Markdown, where the contents, the search, translations, the tagged PDF and the EPUB see it. Layout ignores the check, so changing it never moves a line.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Property</th>
+      <th style={{ width: '110px' }}>Type</th>
+      <th style={{ width: '100px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Run the check.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Phrases a design may repeat at any length: the book's title, the publisher's name. They are compared without case, spacing or the punctuation around words, and a phrase found inside a longer text is taken out before the rest is counted.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Most words a design text may hold beyond its placeholders.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Most letters and digits a design text may hold beyond its placeholders. A Chinese, Japanese, Korean or Thai character counts as three, so about eight of them pass.</td></tr>
+  </tbody>
+</table>
+
+### How a design text is read
+
+- Its literal text is its `content` with every placeholder taken out (`{name}`, `{attr.key}`, `{firstMark.key}`), the `{{` and `}}` escapes read as braces and `\n` as a line break.
+- A text with no letter or digit (a row of leader dots, an ornament, a `·`) is never content.
+- A word is what stands between spaces and holds a letter or a digit: a lone `·` or `|` is no word, and an address such as `postext.dev` is one.
+- The phrases of `allow` are taken out first, and so are the `title`, `subtitle`, `author` and `publisher` of the document's metadata (its front matter), which a running head often repeats.
+- What is left is content when it has more than `maxWords` words or more than `maxChars` letters and digits.
+
+Every design slot is read: `header`, `footer`, each heading level's `advancedDesign.slot`, each heading style's `advancedDesign.slot`, `header` and `footer`, `parts.design`, `parts.versoDesign`, `toc.parts.design`, and the same under `htmlViewer.overrides`. `configDesignSlots(config)` lists them with their paths, and `designTextLiteral(content)` returns the literal text of a template.
+
+### The warning
+
+`collectConfigWarnings` (and `VDTDocument.configWarnings`) gives one `contentInConfig` warning per setting that holds content: a heading style (its `id` in `ownerId`), a heading level, the header, a part design. `path` names the setting, `count` the design texts at fault, `chars` their letters and digits, `elements` the path of each (the first 20) and `value` the start of the first text (40 characters at most). Pass the document's metadata as the second argument to allow its title and author; a build does it on its own.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**Fix:** move the text into the Markdown, as a heading, a callout or a paragraph of the chapter it belongs to, and keep only placeholders in the design. A value that changes per chapter can travel on the heading line and be read with `{attr.key}`: `# Maps {kicker="Lesson 4"}` and `{attr.kicker}` in the design. A phrase that is form, such as the publisher's name in a running head, goes in `allow`.
+
+The Sandbox lists the warning in **Checks** and sets the check under **Design → Advanced → Content in the configuration**; `postext check` prints it.
+
+
 ## Folio viewer (config)
 
 The `folio` property sets how the Folio viewer (`postext-folio`) presents the printed book in 3D: the angle of the view, the paper, the binding, the surface the book lies on and the light. Layout ignores it, and so do the canvas, HTML and PDF output. `buildDocument` carries the resolved settings in the VDT as `doc.config.folio` when the config sets any, so a document without them keeps its layout hash.
@@ -859,9 +919,9 @@ interface FolioConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Property</th>
-      <th style={{ width: '180px' }}>Type</th>
-      <th style={{ width: '140px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -930,7 +990,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>; <code>'folded'</code> on a newspaper trim</td>
-      <td><code>hardcover</code>: case bound, boards slightly larger than the pages. <code>paperback</code>: perfect bound (milled and glued), opens less flat. <code>sewn</code>: a softcover with sewn sections. <code>layflat</code>: opens flat, with no dip at the gutter. <code>saddleStitch</code>: folded sheets stapled through the fold, as a magazine or a booklet; no flat spine. <code>folded</code> (since postext 1.18): a newspaper, sheets folded once and laid one inside the other with nothing holding them; no staples, no spine and no cover board, and the first page is the front. A <a href="/en/docs/document-format#paper"><code>:::paper</code></a> run with a <code>shade</code> prints a section, the business pages say, on salmon newsprint.</td>
+      <td><code>hardcover</code>: case bound, boards slightly larger than the pages. <code>paperback</code>: perfect bound (milled and glued), opens less flat. <code>sewn</code>: a softcover with sewn sections. <code>layflat</code>: opens flat, with no dip at the gutter. <code>saddleStitch</code>: folded sheets stapled through the fold, as a magazine or a booklet; no flat spine. <code>folded</code> (since postext 1.18): a newspaper, sheets folded once and laid one inside the other with nothing holding them; no staples, no spine and no cover board, and the first page is the front. A <a href="/en/docs/document-format-directives#paper"><code>:::paper</code></a> run with a <code>shade</code> prints a section, the business pages say, on salmon newsprint.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1109,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-In the sandbox these settings are the **Folio** group of the Design panel (**Design → Folio → Folio viewer (3D)**), and the Folio tab shows them as you change them, without laying the book out again. See [A 3D book](/en/docs/configuration-programmatic-usage#a-3d-book-postext-folio) for the viewer itself, and [Document format › `:::paper`](/en/docs/document-format#paper) for a run of pages on another stock.
+In the sandbox these settings are the **Folio** group of the Design panel (**Design → Folio → Folio viewer (3D)**), and the Folio tab shows them as you change them, without laying the book out again. See [A 3D book](/en/docs/configuration-html-folio-epub#a-3d-book-postext-folio) for the viewer itself, and [Document format › `:::paper`](/en/docs/document-format-directives#paper) for a run of pages on another stock.
 
 
 ## Debug
@@ -1059,8 +1119,8 @@ The `debug` property groups two kinds of authoring aids: visual overlays that ke
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Property</th>
-      <th style={{ width: '200px' }}>Type</th>
+      <th>Property</th>
+      <th>Type</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -1098,9 +1158,9 @@ The `debug` property groups two kinds of authoring aids: visual overlays that ke
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Property</th>
-      <th style={{ width: '120px' }}>Type</th>
-      <th style={{ width: '120px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -1211,9 +1271,9 @@ interface WarningsToggleConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Property</th>
-      <th style={{ width: '120px' }}>Type</th>
-      <th style={{ width: '120px' }}>Default</th>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -1284,7 +1344,9 @@ Eight mistakes in the configuration itself are never silent, and no toggle hides
 - **Unknown heading setting** — a key that `headings`, `headings.balancing`, a heading level, a heading style or a paragraph style does not have: a misspelt `letterSpacng`, a `tracking` borrowed from another tool, a `level` on a heading style, a `fontStyle: 'italic'` on a paragraph style (which takes `italic: true`). A tab stop is checked the same way (a `leaders` for `leader`). The engine ignores it (up to postext 1.4 it did so without a word). `value` is the key, `used` is empty, and `suggestion` names the setting it is closest to, when one is a letter or two away or differs only in case (`unknownConfigKey`).
 - **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`.
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
-- **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format#text-wrap)). A `wrap` that names no side is an unknown setting value.
+- **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format-resources#text-wrap)). A `wrap` that names no side is an unknown setting value.
+- **Page templates and label styles** — a problem in `pageTemplates` or `labelStyles`: an id or a name used twice, `extends`, anchors or chained frames that loop, a style, frame or template that does not exist, a minimum above its maximum, an anchor's label style that `labelStyles` lacks (checked when the resources are given: `collectConfigWarnings(config, { resources })`). Their `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`); each kind is listed with its cause and fix in [Page template warnings](/en/docs/configuration-composed-pages#page-template-warnings).
+- **Content in a design** — a design text element whose text, beyond its placeholders, is longer than a short label: the book's text kept in the configuration. One warning per setting (a heading style, the header, a part design), with the path of each text (`contentInConfig`; see [Content check](#content-check-config)). Unlike the others, it can be turned off: `checks.contentInConfig.enabled: false`.
 
 The Sandbox lists them in the **Checks** panel with the path of the setting. In code, `buildDocument` puts them on the document as `configWarnings` (absent when the configuration is clean), and `collectConfigWarnings(config)` returns them without laying anything out:
 

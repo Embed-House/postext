@@ -1,4 +1,13 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
+import type { LabelStyle, PageTemplate } from './composed/types';
+
+// Composed pages (#846): the config types live next to their resolver.
+export type {
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
+  PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
+  ResolvedPageTemplate, ResolvedLabelStyle,
+} from './composed/types';
 
 /** @deprecated Legacy content-model resource used by the VDT renderer
  *  (`VDTBlock.resource`). The Resources-panel feature uses the newer
@@ -451,6 +460,20 @@ export interface ResourceAnchor {
   head?: { x: number; y: number };
   /** The face: a region no balloon covers. */
   face?: ResourceSafeArea;
+  // Label fields (composed pages, #846): a `::label` set at this anchor
+  // takes them unless it says otherwise. Comics ignore them.
+  /** The label's measure, a fraction of the picture's width. Unset: the
+   *  label's natural width. */
+  width?: number;
+  /** Which side of the label stands at (x, y): its start, its centre or
+   *  its end, in the label's direction. Default `'center'`. */
+  align?: 'start' | 'center' | 'end';
+  /** Which edge of the label stands at y. Default `'middle'`. */
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+  /** Degrees, clockwise, around (x, y). Default 0. */
+  rotate?: number;
+  /** A `labelStyles` id. */
+  style?: string;
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -5827,6 +5850,44 @@ export interface ResolvedContrastConfig {
   reversedText: ResolvedContrastReversedTextConfig;
 }
 
+/** The content check (`checks.contentInConfig`, #849): a design text
+ *  element of the configuration — a running head, a heading or part
+ *  design, a contents part row — whose `content` holds more literal text
+ *  than a short label. The text of a book belongs in its Markdown; a design
+ *  keeps placeholders (`{titleText}`, `{chapterTitle}`…) and, at most, a
+ *  word or two of its own ("Chapter {chapterNumber}"). Layout ignores it. */
+export interface ContentInConfigCheckConfig {
+  /** Run the check. Defaults to true. */
+  enabled?: boolean;
+  /** Literal text a design may carry whatever its length: the book's
+   *  title, the publisher's name. Compared without case, spacing or
+   *  punctuation, after the placeholders are removed; an entry found inside
+   *  a longer text is taken out before the rest is counted. */
+  allow?: string[];
+  /** Most words a design text may hold beyond its placeholders. Defaults
+   *  to 2. */
+  maxWords?: number;
+  /** Most letters and digits a design text may hold beyond its
+   *  placeholders. Defaults to 24. */
+  maxChars?: number;
+}
+
+export interface ResolvedContentInConfigCheckConfig {
+  enabled: boolean;
+  allow: string[];
+  maxWords: number;
+  maxChars: number;
+}
+
+/** Checks that read the configuration itself and change no page (#849). */
+export interface ChecksConfig {
+  contentInConfig?: ContentInConfigCheckConfig;
+}
+
+export interface ResolvedChecksConfig {
+  contentInConfig: ResolvedContentInConfigCheckConfig;
+}
+
 /** An ICC output profile the user uploaded (their printer's), stored
  *  out-of-band like a font or a picture. */
 export interface CustomOutputProfile {
@@ -6688,6 +6749,45 @@ export interface TocConfig {
     marginTop?: Dimension;
     marginBottom?: Dimension;
   };
+  /** The blocks of the contents (#850): a head row (a part row, or an
+   *  entry of a heading level) and every entry under it, down to the next
+   *  head of the same or a higher rank, kept on one column and page. A
+   *  `:::toc{keep="…"}` overrides it for one contents. */
+  groups?: TocGroupsConfig;
+}
+
+/** What heads a block of the contents (`toc.groups.head`): a part row, or
+ *  the entry of a heading level. */
+export type TocGroupHead = 'part' | 1 | 2 | 3 | 4 | 5 | 6;
+
+/** `toc.groups` (#850). */
+export interface TocGroupsConfig {
+  /** Keep each block whole: one that does not fit in the room left moves
+   *  to the next column or page, its head row with it. A block taller than
+   *  a full column is cut, and the column it goes on in opens with its head
+   *  row again. Default `false`. */
+  keepTogether?: boolean;
+  /** What heads a block. Default `'part'`. */
+  head?: TocGroupHead;
+  /** The fewest entries a cut block keeps under its head row: the head
+   *  moves on rather than stand with fewer. Default `2`. */
+  minEntriesAfterHead?: number;
+  /** The head row repeated at the top of the column a cut block goes on
+   *  in. */
+  continuation?: {
+    /** Default `true`. */
+    enabled?: boolean;
+    /** Set after the repeated title. Default: the document language's
+     *  continued-table suffix ("(cont.)", "(suite)", "（续）"…). */
+    mark?: string;
+  };
+}
+
+export interface ResolvedTocGroupsConfig {
+  keepTogether: boolean;
+  head: TocGroupHead;
+  minEntriesAfterHead: number;
+  continuation: { enabled: boolean; mark: string };
 }
 
 export interface ResolvedTocEntryStyleConfig {
@@ -6743,6 +6843,7 @@ export interface ResolvedTocConfig {
     marginTop: Dimension;
     marginBottom: Dimension;
   };
+  groups: ResolvedTocGroupsConfig;
 }
 
 // ---------------------------------------------------------------------------
@@ -7366,6 +7467,14 @@ export interface PostextConfig {
   /** Comic pages (`:::page`): panel grid, panel and balloon styles,
    *  lettering, cast. */
   comics?: ComicsConfig;
+  /** Page templates (composed pages, #846): named frames, groups and
+   *  decoration that a `::::page{template="…"}` fence pours its Markdown
+   *  into, slot by slot. Validated (see `validatePageTemplates`): a
+   *  template's warnings carry a JSON-pointer `path`. */
+  pageTemplates?: PageTemplate[];
+  /** Named styles of the labels set at a picture's anchors (`::label`,
+   *  `ResourceAnchor.style`). */
+  labelStyles?: LabelStyle[];
 
   pdfGeneration?: PdfGenerationConfig;
 
@@ -7374,6 +7483,10 @@ export interface PostextConfig {
 
   /** The contrast check: level, rendition, reversed text. */
   contrast?: ContrastConfig;
+
+  /** Checks of the configuration itself (#849): the content check of the
+   *  design texts (`contentInConfig`). Layout ignores them. */
+  checks?: ChecksConfig;
 
   colorPalette?: ColorPaletteEntry[];
 

@@ -18,7 +18,7 @@ Four pages of the identity manual for Metro de Alba, a fictional metro of five l
 
 <Excerpt region="build" />
 
-Layout measures every word with the faces in `document.fonts`, so `loadBrandFonts()` in [the short answer](#the-short-answer) fetches each file once, keeps its bytes and registers a `FontFace` built from them before `buildDocument` runs. The kit's `kitFonts` only fetches from Fontsource, and a brand serves its files from its own server. `renderToPdf` asks for the faces the pages paint, and `brandFontProvider` answers each request with the bytes already fetched; a weight or slant the brand lacks would get the closest file of the same family ([Why a font provider?](/en/docs/configuration-programmatic-usage#why-a-font-provider)). The PDF embeds the six files the canvas measured, each once.
+Layout measures every word with the faces in `document.fonts`, so `loadBrandFonts()` in [the short answer](#the-short-answer) fetches each file once, keeps its bytes and registers a `FontFace` built from them before `buildDocument` runs. The kit's `kitFonts` only fetches from Fontsource, and a brand serves its files from its own server. `renderToPdf` asks for the faces the pages paint, and `brandFontProvider` answers each request with the bytes already fetched; a weight or slant the brand lacks would get the closest file of the same family ([Why a font provider?](/en/docs/configuration-pdf-output#why-a-font-provider)). The PDF embeds the six files the canvas measured, each once.
 
 ### 2 · The colour system is one list
 
@@ -42,7 +42,7 @@ A resource type can carry a partial `captionStyle`, and these two set only the l
 
 <Excerpt region="bundle" />
 
-`createBundle` reads `config.customFonts`, looks up each variant's bytes in `files` by its `fileId` and writes them under `fonts/`, with a `fonts` entry in the manifest. The display family carries `redistributable: false`, standing in for a licence that forbids handing the files on (Big Shoulders Display itself is under the OFL). Its file stays out, and `warnings` names the family. The 81 KB file holds the chapter, the configuration, the three drawings and five font files. Layout never reads `customFonts`; the pages come out the same without it ([Creating a bundle](/en/docs/configuration-programmatic-usage#creating-a-bundle)).
+`createBundle` reads `config.customFonts`, looks up each variant's bytes in `files` by its `fileId` and writes them under `fonts/`, with a `fonts` entry in the manifest. The display family carries `redistributable: false`, standing in for a licence that forbids handing the files on (Big Shoulders Display itself is under the OFL). Its file stays out, and `warnings` names the family. The 81 KB file holds the chapter, the configuration, the three drawings and five font files. Layout never reads `customFonts`; the pages come out the same without it ([Creating a bundle](/en/docs/configuration-bundles#creating-a-bundle)).
 
 ## Variations
 

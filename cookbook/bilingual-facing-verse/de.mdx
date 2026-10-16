@@ -16,13 +16,13 @@ Ein zweisprachiger Gedichtband mit fünf Gedichten über eine Saline im Süden S
 
 ### 1 · Ein Gedicht ist ein Kasten mit festem Spaltenumbruch
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht ist ein Kasten um eine Gruppe `:::columns`; sein Stil verzichtet auf Fläche und Innenabstand und druckt den `title` des Direktivenblocks, die Ziffer ([`:::columns`](/de/docs/document-format#columns)). Ohne `breaks` bricht die Gruppe dort um, wo ihre beiden Spalten gleich hoch ausgehen. Beide Hälften dieser Gedichte sind gleich hoch, also fällt der Umbruch ohnehin auf den englischen Titel; verlängern Sie zwei Zeilen von *The Rake*, bis sie umbrechen, und der Umbruch rückt einen Block nach unten und lässt THE RAKE am Fuß der spanischen Spalte stehen. `breaks="5"` nennt den Block, der die zweite Spalte eröffnet, sodass der englische Titel sie anführt, wie hoch die beiden Hälften auch sind.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht ist ein Kasten um eine Gruppe `:::columns`; sein Stil verzichtet auf Fläche und Innenabstand und druckt den `title` des Direktivenblocks, die Ziffer ([`:::columns`](/de/docs/document-format-directives#columns)). Ohne `breaks` bricht die Gruppe dort um, wo ihre beiden Spalten gleich hoch ausgehen. Beide Hälften dieser Gedichte sind gleich hoch, also fällt der Umbruch ohnehin auf den englischen Titel; verlängern Sie zwei Zeilen von *The Rake*, bis sie umbrechen, und der Umbruch rückt einen Block nach unten und lässt THE RAKE am Fuß der spanischen Spalte stehen. `breaks="5"` nennt den Block, der die zweite Spalte eröffnet, sodass der englische Titel sie anführt, wie hoch die beiden Hälften auch sind.
 
 ### 2 · Ein Block :::verse pro Spalte, eine Leerzeile pro Strophenwechsel
 
 <Excerpt region="verse" />
 
-Jede Hälfte eines Gedichts ist ein Block `:::verse`: ein Vers pro Markdown-Zeile, im Flattersatz und nie getrennt, und zwischen den Strophen eine Leerzeile, die in der Spalte eine Leerzeile lässt ([`:::verse`](/de/docs/document-format#verse)). Jede Strophe ist ein Block, also zählt `breaks` Strophen, nicht Zeilen. Das englische *each one standing on its own reflection.* ist zu lang für seine 55 mm breite Spalte und bricht um 2 em eingerückt um; die spanische Hälfte schließt ihren Block nach der gegenüberliegenden Strophe und setzt vor die nächste ein `:::space{lines=2}`, sodass die folgenden Strophen auf derselben Zeile beginnen. Ein `:::space` ist kein Block, und `breaks` zählt es nicht mit ([`:::space`](/de/docs/document-format#space)).
+Jede Hälfte eines Gedichts ist ein Block `:::verse`: ein Vers pro Markdown-Zeile, im Flattersatz und nie getrennt, und zwischen den Strophen eine Leerzeile, die in der Spalte eine Leerzeile lässt ([`:::verse`](/de/docs/document-format-directives#verse)). Jede Strophe ist ein Block, also zählt `breaks` Strophen, nicht Zeilen. Das englische *each one standing on its own reflection.* ist zu lang für seine 55 mm breite Spalte und bricht um 2 em eingerückt um; die spanische Hälfte schließt ihren Block nach der gegenüberliegenden Strophe und setzt vor die nächste ein `:::space{lines=2}`, sodass die folgenden Strophen auf derselben Zeile beginnen. Ein `:::space` ist kein Block, und `breaks` zählt es nicht mit ([`:::space`](/de/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="Gedicht I auf Seite 3: „reflection.“ bricht im Englischen um, und die spanische Strophe endet mit zwei Leerzeilen statt einer." />
 
@@ -42,7 +42,7 @@ Beide sind Überschriften der Ebene 1 mit eigenem Stil ([Überschriftenstile](/d
 
 <Excerpt region="heads" />
 
-Die linke Seite trägt den spanischen Titel, die rechte den englischen, in der Reihenfolge der Spalten. `pages: 'body'` hält sie von den drei Seiten fern, die mit einer Überschrift beginnen. Vorbemerkung und Aquarell bekommen stattdessen eine Seitenzahl am Fuß, und der Stil der Titelseite leert Kopf- und Fußzeile ([Textelemente](/de/docs/configuration-page-layout#textelemente)).
+Die linke Seite trägt den spanischen Titel, die rechte den englischen, in der Reihenfolge der Spalten. `pages: 'body'` hält sie von den drei Seiten fern, die mit einer Überschrift beginnen. Vorbemerkung und Aquarell bekommen stattdessen eine Seitenzahl am Fuß, und der Stil der Titelseite leert Kopf- und Fußzeile ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
 
 ## Varianten
 

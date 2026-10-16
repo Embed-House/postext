@@ -17,8 +17,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 14 since #770 (13 from
- * postext 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 15 since #853 (14 from
+ * postext 1.30, 13 from 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -190,6 +190,12 @@ import { hasCJK } from '../measure/cjk';
  *     and the runs of a design text measured as they are painted, and in
  *     the PDF the shaping word by word and each character from the file
  *     the browser took it from.
+ * - 15 (#853), composed pages: the configuration may hold page templates
+ *   (`pageTemplates`) and label styles (`labelStyles`), which an engine
+ *   that reads 14 or less ignores. Nothing an older configuration says
+ *   changes meaning, so one stored under 14 is read as it is (no pin): the
+ *   number marks a configuration that may hold templates, so an older
+ *   reader can say it lays out without them.
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -207,9 +213,10 @@ import { hasCJK } from '../measure/cjk';
  * too); one stored under 12 was written by postext 1.28 and gets the
  * version-13 pins (which every older one gets too); one stored under 13
  * was written by postext 1.29 and gets the version-14 pin (which every
- * older one gets too).
+ * older one gets too); one stored under 14 was written by postext 1.30 to
+ * 1.33 and gets nothing.
  */
-export const CONFIG_VERSION = 14;
+export const CONFIG_VERSION = 15;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -314,6 +321,10 @@ const SCRIPT_CONTEXT_RULES = 12;
 const SHAPING_LANGUAGE_RULES = 14;
 /** The rules that draw the box of a task item (#765). */
 const TASK_BOX_RULES = 13;
+/** The rules that read page templates and label styles (#853). They add
+ *  keys and change no older one, so they pin nothing: kept to say where
+ *  the number came from. */
+export const COMPOSED_PAGES_RULES = 15;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1834,6 +1845,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
+  // COMPOSED_PAGES_RULES (15, #853): new keys only, nothing to pin.
   return out;
 }
 
@@ -1925,5 +1937,6 @@ export function migrateBundleConfig(
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
+  // COMPOSED_PAGES_RULES (15, #853): new keys only, nothing to pin.
   return merged;
 }
