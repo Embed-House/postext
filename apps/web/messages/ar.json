@@ -2579,6 +2579,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "الرقم الترتيبي بالكلمات (First, Second, Third)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "الرقم الترتيبي بالكلمات بأحرف صغيرة (first, second, third)",
     "headerFooterPlaceholderNumberHan": "الرقم بالأرقام الصينية (一، 十二)",
+    "headerFooterPlaceholderLeader": "الموجِّه حتى رقم الصفحة",
     "headerFooterPlaceholderAttrHint": "يُدرج سمة من سمات العنوان (# Title '{key=\"value\"}')؛ وفي الترويسات والتذييلات، سمة الفصل الحالي",
     "headerFooterPlaceholderBookTotalPages": "إجمالي صفحات الكتاب",
     "headerFooterPlaceholderMarkHint": "أول / آخر كلمة دليلية في الصفحة: مستوى عنوان (h1–h6) أو نمط فقرة، تَسِم مداخلُه الصفحة بكلماتها الافتتاحية الغامقة",

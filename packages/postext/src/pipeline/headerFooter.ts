@@ -1377,6 +1377,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           const palette = { ...(partPaletteByPageIndex[page.index] ?? {}), ...(tp.palette ?? {}) };
           const placeholders: DesignPlaceholderContext = {
             kind: 'part',
+            // `{leader}` fills the row with the contents' leader (#889).
+            leader: { enabled: resolved.toc.leader.enabled, char: resolved.toc.leader.char, gap: resolved.toc.leader.gap },
             page: rowPage,
             allPages: doc.pages,
             metadata: doc.metadata,

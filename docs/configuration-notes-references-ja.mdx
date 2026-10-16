@@ -704,7 +704,7 @@ const config: PostextConfig = {
       <td><code>parts.design</code></td>
       <td><code>DesignSlot</code></td>
       <td>空</td>
-      <td>行のデザインです。コンテナーは行そのもの（段の幅 × <code>height</code>）です。プレースホルダーは<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>、<code>{'{pageNumber}'}</code>です（最後のものは部扉のページラベルです。部扉を作らない<code>parts.page: false</code>のときは、部の内容が始まるページ、つまり柱がその部に切り替わるページのラベルになります。章ごとにレイアウトする本では、章を閉じるフェンスは次の章の最初の内容ページを指します）。パレットに連動した色は部自身の<code>palette</code>を使うため、各部の行はその部の色で表示されます。空のときは、<code>{'{number} {titleText}'}</code>（あいだにH1の<code>numberSeparator</code>）とページ番号を、レベル1の項目の文字組みで組みます。</td>
+      <td>行のデザインです。コンテナーは行そのもの（段の幅 × <code>height</code>）です。プレースホルダーは<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>、<code>{'{pageNumber}'}</code>です（最後のものは部扉のページラベルです。部扉を作らない<code>parts.page: false</code>のときは、部の内容が始まるページ、つまり柱がその部に切り替わるページのラベルになります。章ごとにレイアウトする本では、章を閉じるフェンスは次の章の最初の内容ページを指します）。パレットに連動した色は部自身の<code>palette</code>を使うため、各部の行はその部の色で表示されます。空のときは、<code>{'{number} {titleText}'}</code>（あいだにH1の<code>numberSeparator</code>）とページ番号を、レベル1の項目の文字組みで組みます。<code>{'{leader}'}</code>は、同じテキスト要素のなかで、前後の文字列のあいだに目次の<code>leader</code>を置きます。<code>{'{number} {titleText}{leader}{pageNumber}'}</code>と書くと、行頭に題名、行末にページ番号が来て、そのあいだにリーダーが入ります。リーダーはページ番号側にそろい、両側の文字列とは<code>gap</code>だけ離れます。項目行と同じ組み方です。このとき要素は行の幅いっぱいを占め（幅<code>auto</code>はコンテナの端まで伸びます）、題名が収まらなければ題名を切り詰め、ページ番号は切りません。リーダーを無効にすると（<code>leader.enabled: false</code>）あいだは空白になります。部の行以外や縦組みのページでは、<code>{'{leader}'}</code>は何も出力しません。タグ付きPDFとHTMLでは、リーダーは読み上げるテキストに含まれません。</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

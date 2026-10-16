@@ -2695,6 +2695,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   headerFooterPlaceholderNumberOrdinalWords: 'Number (First, Second, Third)',
   headerFooterPlaceholderNumberOrdinalWordsLower: 'Number (first, second, third)',
   headerFooterPlaceholderNumberHan: 'Number in Chinese numerals (一, 十二)',
+  headerFooterPlaceholderLeader: 'Leader up to the page number',
   headerFooterPlaceholderAttrHint: 'inserts a heading attribute (# Title {key="value"}); in headers and footers, that of the current chapter',
   headerFooterPlaceholderBookTotalPages: 'Book total pages',
   headerFooterPlaceholderMarkHint: 'first / last guide word of the page: a heading level (h1–h6) or a paragraph style, whose entries mark the page with their bold opening words',

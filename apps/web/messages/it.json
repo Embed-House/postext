@@ -2580,6 +2580,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Numero (Primo, Secondo, Terzo)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Numero (primo, secondo, terzo)",
     "headerFooterPlaceholderNumberHan": "Numero in numerali cinesi (一, 十二)",
+    "headerFooterPlaceholderLeader": "Riempimento fino al numero di pagina",
     "headerFooterPlaceholderAttrHint": "inserisce un attributo del titolo (# Title '{key=\"value\"}'); in intestazioni e piè di pagina, quello del capitolo corrente",
     "headerFooterPlaceholderBookTotalPages": "Pagine totali del libro",
     "headerFooterPlaceholderMarkHint": "prima / ultima parola guida della pagina: un livello di titolo (h1–h6) o uno stile di paragrafo, le cui voci marcano la pagina con le parole iniziali in grassetto",

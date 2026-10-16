@@ -2580,6 +2580,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Nummer (First, Second, Third)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Nummer (first, second, third)",
     "headerFooterPlaceholderNumberHan": "Nummer in chinesischen Zahlzeichen (一, 十二)",
+    "headerFooterPlaceholderLeader": "Füllzeichen bis zur Seitenzahl",
     "headerFooterPlaceholderAttrHint": "fügt ein Attribut einer Überschrift ein (# Title '{key=\"value\"}'); in Kopf- und Fußzeilen das des aktuellen Kapitels",
     "headerFooterPlaceholderBookTotalPages": "Seitenzahl des Buchs",
     "headerFooterPlaceholderMarkHint": "erstes / letztes Leitwort der Seite: eine Überschriftenebene (h1–h6) oder ein Absatzformat, dessen Einträge die Seite mit ihren fetten Anfangswörtern kennzeichnen",

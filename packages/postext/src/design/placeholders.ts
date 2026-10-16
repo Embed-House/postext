@@ -1,4 +1,4 @@
-import type { DigitSystem, DocumentMetadata, PostextConfig } from '../types';
+import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig } from '../types';
 import { withDigits } from '../arabicNumerals';
 import type { VDTPage } from '../vdt';
 import { formatCounter, formatNumeral, hanInformalStyle } from '../numbering';
@@ -50,8 +50,28 @@ export interface HeadingPlaceholderInfo {
   attrs?: Record<string, string>;
 }
 
+/** What `{leader}` prints in place: a private-use character the layout
+ *  of a design text replaces with the leader run (#889,
+ *  `design/layout.ts`). Never painted. */
+export const LEADER_MARK = '\uE0A0';
+
+/** The contents' leader settings (`toc.leader`), for the `{leader}` of a
+ *  contents part row (#889). */
+export interface DesignLeader {
+  /** Off: the room between the texts stays blank, the page number still
+   *  flush with the row's end. */
+  enabled: boolean;
+  char: string;
+  /** Room kept on either side of the run. */
+  gap: Dimension;
+}
+
 export interface DesignPlaceholderContext {
   kind: DesignContextKind;
+  /** A contents part row (#889): `{leader}` fills the room between the
+   *  text before it and the text after it with this leader. Absent
+   *  elsewhere, where `{leader}` prints nothing. */
+  leader?: DesignLeader;
   page: VDTPage;
   allPages: VDTPage[];
   metadata: DocumentMetadata;
@@ -144,6 +164,8 @@ export function allowedPlaceholdersFor(kind: DesignContextKind): Set<string> {
  *  `lastMark.<key>` marks. */
 export function isAllowedPlaceholder(name: string, kind: DesignContextKind): boolean {
   if (allowedPlaceholdersFor(kind).has(name) || attrPlaceholderKey(name) !== undefined) return true;
+  // `{leader}`: the contents part rows' (#889), a part context.
+  if (name === 'leader') return kind === 'part';
   return (kind === 'header' || kind === 'footer') && markPlaceholder(name) !== undefined;
 }
 
@@ -272,6 +294,13 @@ export function resolveDesignPlaceholders(
       if (attrKey !== undefined) {
         const value = resolveAttrPlaceholder(attrKey, ctx);
         out += options?.attrValue ? options.attrValue(value) : value;
+        i = end + 1;
+        continue;
+      }
+      if (name === 'leader') {
+        // A contents part row's leader (#889): marked here, set by the
+        // layout over the room the row leaves.
+        if (ctx.leader) out += LEADER_MARK;
         i = end + 1;
         continue;
       }

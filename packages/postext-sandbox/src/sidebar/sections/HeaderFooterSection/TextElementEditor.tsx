@@ -67,10 +67,12 @@ interface Props {
   resolved: ResolvedDesignTextElement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** Placeholders of this slot alone (see `PlaceholderPicker`). */
+  extraPlaceholders?: readonly string[];
   onChange: (next: DesignTextElement) => void;
 }
 
-export function TextElementEditor({ raw, resolved, slotKind, siblings = [], onChange }: Props) {
+export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extraPlaceholders, onChange }: Props) {
   const labels = useSandboxLabels();
   const [showPicker, setShowPicker] = useState(false);
 
@@ -177,7 +179,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], onCh
         onFocus={() => setShowPicker(true)}
         onBlur={() => { setTimeout(() => setShowPicker(false), 150); }}
       />
-      {showPicker && <PlaceholderPicker onInsert={insertAtCursor} slotKind={slotKind} />}
+      {showPicker && <PlaceholderPicker onInsert={insertAtCursor} slotKind={slotKind} extra={extraPlaceholders} />}
       <PlacementFields
         placement={resolved.placement}
         slotKind={slotKind}

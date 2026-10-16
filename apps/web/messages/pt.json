@@ -2579,6 +2579,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Número (Primeiro, Segundo, Terceiro)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Número (primeiro, segundo, terceiro)",
     "headerFooterPlaceholderNumberHan": "Número em algarismos chineses (一, 十二)",
+    "headerFooterPlaceholderLeader": "Linha de pontos até o número da página",
     "headerFooterPlaceholderAttrHint": "insere um atributo do título (# Título '{key=\"value\"}'); em cabeçalhos e rodapés, o do capítulo atual",
     "headerFooterPlaceholderBookTotalPages": "Total de páginas do livro",
     "headerFooterPlaceholderMarkHint": "primeira / última palavra-guia da página: um nível de título (h1–h6) ou um estilo de parágrafo, cujas entradas marcam a página com as primeiras palavras em negrito",

@@ -2672,6 +2672,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     headerFooterPlaceholderNumberOrdinalWords: t("headerFooterPlaceholderNumberOrdinalWords"),
     headerFooterPlaceholderNumberOrdinalWordsLower: t("headerFooterPlaceholderNumberOrdinalWordsLower"),
     headerFooterPlaceholderNumberHan: t("headerFooterPlaceholderNumberHan"),
+    headerFooterPlaceholderLeader: t("headerFooterPlaceholderLeader"),
     headerFooterPlaceholderAttrHint: t("headerFooterPlaceholderAttrHint"),
     headerFooterPlaceholderBookTotalPages: t("headerFooterPlaceholderBookTotalPages"),
     headerFooterPlaceholderMarkHint: t("headerFooterPlaceholderMarkHint"),

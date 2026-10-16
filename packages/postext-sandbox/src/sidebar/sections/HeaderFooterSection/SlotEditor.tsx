@@ -29,6 +29,9 @@ interface SlotEditorProps {
   raw: DesignSlot | undefined;
   resolved: ResolvedDesignSlot;
   onUpdate: (slot: DesignSlot | undefined) => void;
+  /** Placeholders this slot reads beyond its kind's: `['leader']` for a
+   *  contents part row (#889). */
+  extraPlaceholders?: readonly string[];
 }
 
 function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>): string {
@@ -37,7 +40,7 @@ function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>):
   return `${kind}${i}`;
 }
 
-export function SlotEditor({ slotKey, raw, resolved, onUpdate }: SlotEditorProps) {
+export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
 
@@ -187,6 +190,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate }: SlotEditorProps
                   resolved={resolvedEl}
                   slotKind={slotKey}
                   siblings={siblings}
+                  extraPlaceholders={extraPlaceholders}
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : rawEl.kind === 'rule' && resolvedEl?.kind === 'rule' ? (

@@ -241,7 +241,14 @@ export function renderTextBlock(
         ctx.page.pushOperators(...stretch.after);
       }
       // A vertical line: the orientation its author gave the run.
-      else drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, actualText, segmentOrientation(run));
+      else if (run.leader) {
+        // A contents part row's leader (#889): a layout artifact under an
+        // empty `/ActualText`, as an entry row's is; the row's text goes on
+        // after it.
+        if (mark) tagArtifact(ctx, { type: 'Layout' });
+        if (run.text) drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, '');
+        if (mark) tagSlotText(ctx, mark, block);
+      } else drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, actualText, segmentOrientation(run));
       x += run.width;
     }
   }

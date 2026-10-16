@@ -33,6 +33,9 @@ const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const SPACING_UNITS: DimensionUnit[] = ['em', 'pt', 'px', 'mm'];
 const infoStyle = { color: 'var(--slate)' } as const;
+/** A part row's own placeholder: the contents' leader up to the page
+ *  number (#889). */
+const TOC_PART_PLACEHOLDERS = ['leader'] as const;
 
 type Labels = ReturnType<typeof useSandboxLabels>;
 type PageNumberConfig = NonNullable<TocConfig['pageNumber']>;
@@ -656,6 +659,7 @@ export const TocSection = memo(function TocSection() {
             </p>
             <SlotEditor
               slotKey="part"
+              extraPlaceholders={TOC_PART_PLACEHOLDERS}
               raw={raw?.parts?.design}
               resolved={raw?.parts?.design ? resolveDesignSlot(raw.parts.design, 'tocRow') : { elements: [] }}
               onUpdate={(slot: DesignSlot | undefined) =>

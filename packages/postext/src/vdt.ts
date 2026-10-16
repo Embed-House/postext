@@ -1981,6 +1981,10 @@ export interface VDTFootnoteArea {
 export interface VDTDesignTextRun {
   text: string;
   fontString: string;
+  /** The leader of a contents part row (#889, `{leader}`): the dots, and
+   *  the blank room around them. Read by no assistive technology: an
+   *  artifact in a tagged PDF, hidden in HTML. */
+  leader?: true;
   /** Advance of the run, tracking included. */
   width: number;
   /** Superscript / subscript offset off the baseline (px, positive down). */

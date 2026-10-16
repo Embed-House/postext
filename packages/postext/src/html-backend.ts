@@ -2945,7 +2945,10 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
             // indents its text, and so would a box inside it.
             : run.inkOffset !== undefined ? esc(run.text)
             : wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
-          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl ? `<span style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
+          // A contents part row's leader (#889): painted, hidden from
+          // assistive technology, as an entry row's is.
+          const hidden = run.leader ? ' aria-hidden="true"' : '';
+          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
         }).join('')
       : letterlessRunHtml(line.text, block.fontString, false, line.width, block.letterSpacingPx ?? 0) ?? wordsHtml(line.text, trackedIn(block.fontString, block.letterSpacingPx));
     // A line that carries directions (an order, a right-to-left run): a box
