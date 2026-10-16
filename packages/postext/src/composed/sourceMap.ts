@@ -22,7 +22,7 @@
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
-import { composedPaintOrder, frameMatrix } from './paint';
+import { composedPaintOrder, frameContentRect, frameMatrix, frameOfBlock } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
 
 /** Where something painted comes from. Markdown offsets are absolute in
@@ -454,9 +454,28 @@ function intoFrame(frame: VDTFrame, p: Point): Point {
   return { x: (d * x - c * y) / det, y: (-b * x + a * y) / det };
 }
 
+/** A box in a frame's blocks' own coordinates on the page, upright: a
+ *  frame whose text the reflow ladder scaled (#858) lays its blocks out
+ *  `1 / scale` as large from its top-left; the box is scaled back, the
+ *  turn (`rotate`) left to the element's `rotate`. */
+function uprightRect(frame: Pick<VDTFrame, 'rect' | 'scale'> | undefined, r: BoundingBox): BoundingBox {
+  const s = frame?.scale;
+  if (!frame || s === undefined || !(s > 0) || Math.abs(s - 1) < 1e-9) return { ...r };
+  const o = frame.rect;
+  return { x: o.x + (r.x - o.x) * s, y: o.y + (r.y - o.y) * s, width: r.width * s, height: r.height * s };
+}
+
+/** The elements of a frame's chain with their boxes upright on the page
+ *  (`uprightRect`); the frame, its groups and the template keep theirs. */
+function uprightChain(frame: VDTFrame, chain: SourceElement[]): SourceElement[] {
+  if (frame.scale === undefined || Math.abs(frame.scale - 1) < 1e-9) return chain;
+  return chain.map((e) => (e.rect && e.level !== 'frame' && e.level !== 'group' && e.level !== 'template' ? { ...e, rect: uprightRect(frame, e.rect) } : e));
+}
+
 /** What a frame shows at `p` (page px), innermost first. */
 function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }, facing = false): SourceElement[] | undefined {
-  const chain = frameChainOf(doc, page, frame, blocks, pagePoint, file);
+  const raw = frameChainOf(doc, page, frame, blocks, pagePoint, file);
+  const chain = raw && uprightChain(frame, raw);
   // The half of a spread frame read on the facing page (#861): the ids of
   // the blocks it copies, flagged.
   return chain && facing ? chain.map((e) => (e.level === 'frame' || e.level === 'group' || e.level === 'template' ? e : { ...e, id: unfacing(e.id), facing: true as const })) : chain;
@@ -481,7 +500,8 @@ function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: 
       return [{ level: 'text', id: `${frame.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...frameAncestors(doc, page, frame)];
     }
   }
-  if (!inside(frame.rect, p)) return undefined;
+  // `p` is in the blocks' own coordinates: a scaled frame's are larger.
+  if (!inside(frameContentRect(frame), p)) return undefined;
   const boxes = blocks.filter((b) => b.type === 'callout');
   // Content: the leaf block under `p` (text, a picture), then its boxes.
   for (const b of blocks) {
@@ -617,7 +637,9 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     if (block.sourceStart === undefined || block.sourceEnd === undefined || block.type === 'callout') return;
     if (!meets({ start: block.sourceStart, end: block.sourceEnd }, start, end)) return;
     const file = fileOf(options, pageIndex);
-    const foot = held ? held.frame.rect.y + held.frame.rect.height : Infinity;
+    // The frame's foot in its blocks' own coordinates (larger when the
+    // frame's text is scaled, #858).
+    const foot = held ? frameContentRect(held.frame).y + frameContentRect(held.frame).height : Infinity;
     const extra = {
       ...(held?.frame.rotate ? { rotate: held.frame.rotate } : {}),
       ...(facing ? { facing: true as const } : {}),
@@ -632,7 +654,7 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
           level: 'line',
           id: `${id}:l${index}`,
           source: { kind: 'markdown', ...range, ...file },
-          rect: { ...line.bbox },
+          rect: uprightRect(held?.frame, line.bbox),
           ...extra,
           ...(line.bbox.y + line.bbox.height > foot + 0.5 ? { clipped: true as const } : {}),
         },
@@ -643,10 +665,10 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     for (const label of rb?.labels ?? []) {
       if (!meets({ start: label.sourceStart, end: label.sourceEnd }, start, end)) continue;
       const el = labelChain(label, rb!.resource.id, id, { x: 0, y: 0 }, file).find((e) => e.level === 'label')!;
-      out.push({ pageIndex, element: { ...el, ...extra } });
+      out.push({ pageIndex, element: { ...el, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });
     }
     const el = blockElement(block, file);
-    if (el) out.push({ pageIndex, element: { ...el, id, ...extra } });
+    if (el) out.push({ pageIndex, element: { ...el, id, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });
   };
   const seen = new Set<string>();
   for (const block of doc.blocks) {
@@ -681,10 +703,16 @@ export function findElement(doc: VDTDocument, id: string, options?: SourceMapOpt
   }
   for (const b of doc.blocks) {
     const label = b.pageIndex >= 0 ? b.resourceBlock?.labels?.find((l) => l.id === id) : undefined;
-    if (label) return { pageIndex: b.pageIndex, element: labelChain(label, b.resourceBlock!.resource.id, b.id, { x: 0, y: 0 }, fileOf(options, b.pageIndex)).find((e) => e.level === 'label')! };
+    if (label) {
+      const el = labelChain(label, b.resourceBlock!.resource.id, b.id, { x: 0, y: 0 }, fileOf(options, b.pageIndex)).find((e) => e.level === 'label')!;
+      const frame = frameOfBlock(doc.pages[b.pageIndex]?.composed, b.id);
+      return { pageIndex: b.pageIndex, element: el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el };
+    }
   }
   const block = doc.blocks.find((b) => b.id === id && b.pageIndex >= 0);
   if (!block) return undefined;
   const el = blockElement(block, fileOf(options, block.pageIndex));
-  return el ? { pageIndex: block.pageIndex, element: el } : undefined;
+  // Upright on the page when its frame's text is scaled (#858).
+  const frame = frameOfBlock(doc.pages[block.pageIndex]?.composed, block.id);
+  return el ? { pageIndex: block.pageIndex, element: el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el } : undefined;
 }

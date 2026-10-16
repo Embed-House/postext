@@ -6208,7 +6208,11 @@ function placeDocumentPass(
     leaveCurrentPage();
     cursor.columnIndex = 0;
     const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
-    const common = (page: VDTPage) => ({
+    /** What every composed page or spread reads; `current` names the
+     *  template laid, so a `useTemplate` proposal (#858) tries the book's
+     *  other templates of the same kind (single pages for this side, or
+     *  spreads). */
+    const common = (page: VDTPage, current: { id: string; spread: boolean; parity?: 'recto' | 'verso' }) => ({
       pass: framePass,
       fence,
       startIdx: planned.startIdx,
@@ -6223,9 +6227,9 @@ function placeDocumentPass(
       locale: resolvedLocale(resolved),
       // The book's other templates, for a `useTemplate` proposal (#858).
       alternatives: () => [...new Set((resolved.pageTemplates ?? []).map((t) => t?.id))].flatMap((id) => {
-        if (typeof id !== 'string' || id === template.id) return [];
-        const alt = resolvePageTemplate(templateSource, id, { parity });
-        return alt && !alt.spread ? [alt] : [];
+        if (typeof id !== 'string' || id === current.id) return [];
+        const alt = resolvePageTemplate(templateSource, id, current.spread ? { spread: true } : { parity: current.parity });
+        return alt && alt.spread === current.spread ? [alt] : [];
       }),
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
@@ -6251,7 +6255,7 @@ function placeDocumentPass(
       const left = versoIsLeft ? verso : recto;
       const right = versoIsLeft ? recto : verso;
       const out = layoutComposedSpread({
-        ...common(flowMirrored ? right : left),
+        ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
         template: sheet,
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
@@ -6273,7 +6277,7 @@ function placeDocumentPass(
       // Kept by what it reads (#857): a page met again is not set again.
       // A spread is laid out afresh each time (its two sides are one sheet).
       const out = layoutComposedPageMemo({
-        ...common(page),
+        ...common(page, { id: template.id, spread: false, parity }),
         page,
         template,
         areas: { area, page: frames.page, bleed: frames.bleed },

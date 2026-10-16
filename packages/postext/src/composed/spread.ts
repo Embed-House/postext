@@ -147,22 +147,20 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
   const { first, second, template, dpi } = input;
   const sheet = spreadSheet(template.area, first.contentArea, second.contentArea, input.trim, input.bleed);
   const gutterPx = lengthPx(template.gutter, dpi, input.emPx);
-  const resized = new Map<string, ReflowEvent>();
   const mm = (v: number): number => Math.round((v / dpi) * MM_PER_IN * 10) / 10;
   const out: ComposedPageLayout = layoutComposedPage({
     ...input,
     page: first,
     areas: sheet.areas,
-    fitBox: (frame, rect) => {
-      const kept = keepOffGutter(frame, rect, sheet.spine, gutterPx);
-      if (kept !== rect && Math.abs(kept.width - rect.width) > 0.5) {
-        resized.set(frame.name, { frame: frame.name, kind: 'resized', fromMm: mm(rect.width), toMm: mm(kept.width), cause: 'gutter' });
-      } else if (kept !== rect) {
-        resized.set(frame.name, { frame: frame.name, kind: 'moved', fromMm: mm(rect.x), toMm: mm(kept.x), cause: 'gutter' });
-      }
-      return kept;
-    },
+    fitBox: (frame, rect) => keepOffGutter(frame, rect, sheet.spine, gutterPx),
   });
+  // What the gutter did, read off the layout the reflow ladder (#858)
+  // settled on (not the ones it only tried).
+  const resized = new Map<string, ReflowEvent>();
+  for (const [name, { placed, kept }] of out.fitted ?? []) {
+    if (Math.abs(kept.width - placed.width) > 0.5) resized.set(name, { frame: name, kind: 'resized', fromMm: mm(placed.width), toMm: mm(kept.width), cause: 'gutter' });
+    else resized.set(name, { frame: name, kind: 'moved', fromMm: mm(placed.x), toMm: mm(kept.x), cause: 'gutter' });
+  }
   const pages = [first, second] as const;
   const byId = new Map(out.blocks.map((b) => [b.id, b]));
   const sideFrames: [VDTFrame[], VDTFrame[]] = [[], []];

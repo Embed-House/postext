@@ -646,7 +646,16 @@ Recorded where the implementation settles a point the sections above leave open,
   `1 / scale`), so padding that keeps room for photos set over a box stays that room. Blocks of a
   scaled frame are in its laid-out coordinates: anything that reads block boxes directly instead of
   painting through `frameMatrix` (the Sandbox's caret and selection overlay, tagged PDF bounding
-  boxes) sees them unscaled, as it sees a rotated frame's upright (follow-up).
+  boxes) sees them unscaled, as it sees a rotated frame's upright (follow-up). The source map
+  (`sourceAt`, `elementsForSource`, `findElement`) reads them where they are painted: a point goes
+  through the inverse of `frameMatrix` and is tested against `frameContentRect`, and the boxes it
+  returns inside the frame are scaled back upright (the turn stays in `rotate`).
+- **Spreads and the memo.** On a spread the ladder runs on the sheet: the gutter cut (`fitBox`)
+  narrows a frame first and the ladder works from that box; a frame of the second page keeps its
+  `scale` when it is moved onto its sheet. The gutter events come from the composition the ladder
+  settles on (`ComposedPageLayout.fitted`), not from the ones it tried. The page memo keys the
+  inputs the ladder reads (the resolved configuration holds the other templates and the locale), so
+  a reused page equals a fresh one, scales and proposals' source ranges included.
 - **Warning.** `frameOverflow` gains `locale`, `stepsTried`, `scale`, `imageScale`, `proposals`.
   Proposals are data with set-the-pointer semantics (`path` → `value`); a Markdown change carries a
   source range instead (`useTemplate`: the fence's `template` value; `shortenText`: the frame's

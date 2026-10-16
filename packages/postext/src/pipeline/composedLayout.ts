@@ -90,6 +90,11 @@ export interface ComposedPageLayout {
   /** Story heads laid in a frame of this page. A story left out (its frame
    *  is missing on this side) is set in the flow after the page. */
   laid: Set<string>;
+  /** The frames `fitBox` moved or narrowed in the layout kept (a spread's
+   *  gutter, #861): the box placed and the box it took. Only the
+   *  composition the reflow ladder (#858) settles on counts, not the ones
+   *  it tried. Not kept by the page memo (spreads are laid afresh). */
+  fitted?: Map<string, { placed: Rect; kept: Rect }>;
 }
 
 const MM_PER_IN = 25.4;
@@ -134,6 +139,8 @@ interface Composition {
   /** Each frame's content height at its final width (page px), for the
    *  frames that hold content, measured when asked. */
   needs: Map<string, () => number>;
+  /** What `fitBox` did to each frame. */
+  fitted: Map<string, { placed: Rect; kept: Rect }>;
   /** The template laid (with the ladder's patches). */
   template: ResolvedPageTemplate;
 }
@@ -369,7 +376,7 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     });
   }
 
-  const { frames, blocks, log, laid } = cur;
+  const { frames, blocks, log, laid, fitted } = cur;
   // Template order on the page record.
   const order = new Map(template.frames.map((f, i) => [f.name, i]));
   frames.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
@@ -387,7 +394,7 @@ export function layoutComposedPage(input: ComposedPageInput): ComposedPageLayout
     sourceStart: contentBlocks[input.startIdx]!.sourceStart + input.bodyOffset,
     sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,
   };
-  return { composed, blocks, warnings, laid };
+  return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}) };
 }
 
 /** The frame sends what does not fit to another page (#859). */
@@ -616,6 +623,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const overflowLog: ReflowEvent[] = [];
     const fitLog: ReflowEvent[] = [];
     const needs = new Map<string, () => number>();
+    /** What `fitBox` did to each frame (#861), last placement wins. */
+    const fitted = new Map<string, { placed: Rect; kept: Rect }>();
     const laid = new Set<string>();
     const pushed: { name: string; box: Rect }[] = seed ? [...seed].map(([name, box]) => ({ name, box })) : [];
 
@@ -686,9 +695,15 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number): Rect => {
       const r = placeBox(placeable, template, ctx, refs, nat);
       if (!input.fitBox) return r;
-      const fitted = input.fitBox(frame, r);
-      if (Math.abs(fitted.width - r.width) < 0.01) return fitted;
-      return input.fitBox(frame, placeBox(placeable, template, ctx, refs, () => nat(fitted.width)));
+      const keep = (placed: Rect): Rect => {
+        const kept = input.fitBox!(frame, placed);
+        if (sameRect(kept, placed)) fitted.delete(frame.name);
+        else fitted.set(frame.name, { placed, kept });
+        return kept;
+      };
+      const first = keep(r);
+      if (Math.abs(first.width - r.width) < 0.01) return first;
+      return keep(placeBox(placeable, template, ctx, refs, () => nat(first.width)));
     };
     /** A frame's height as its template declares it: its `minHeight` where
      *  the height follows the content, else the content's (`natural`). */
@@ -914,11 +929,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects };
+    return { frames, blocks, log, laid, needs, pushRects, fitted };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs } = first.pushRects.size > 0 ? run(first.pushRects) : first;
-  return { frames, blocks, log, laid, needs, template };
+  const { frames, blocks, log, laid, needs, fitted } = first.pushRects.size > 0 ? run(first.pushRects) : first;
+  return { frames, blocks, log, laid, needs, template, fitted };
 }
 
 const sameRect = (a: Rect, b: Rect): boolean =>

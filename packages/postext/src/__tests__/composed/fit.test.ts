@@ -4,6 +4,8 @@ import { createMeasurementCache } from '../../measure';
 import { formatWarning } from '../../pipeline/contentWarnings';
 import { describeFitStep, describeFrameOverflowProposal, describeReflowEvent } from '../../composed/reflowLog';
 import { frameBounds, frameContentRect, frameMatrix } from '../../composed/paint';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo';
+import { elementsForSource, sourceAt } from '../../composed/sourceMap';
 import type { FrameConfig, PageTemplate } from '../../composed/types';
 import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { page8Fixture } from './fixtures/page8';
@@ -341,5 +343,102 @@ describe('slot warnings carry their location (#858)', () => {
     expect(empty).toMatchObject({ kind: 'slotEmpty', frame: 'c', template: 't', pageIndex: composed.index });
     expect(md.slice(empty.sourceStart!, empty.sourceEnd!)).toMatch(/^::::page\{template="t"\}/);
     expect(formatWarning(unknown)).toContain('the flow frame "a"');
+  });
+});
+
+describe('the ladder with spreads, the page memo and the source map (#858)', () => {
+  const PAGE: PostextConfig = {
+    page: { width: mm(200), height: mm(260), margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } } as never,
+    headings: { balancing: { enabled: false }, levels: [{ level: 1, breakBefore: { enabled: false } }] } as never,
+  };
+  const W = 200 * MM;
+  const buildWith = (md: string, templates: PageTemplate[]): VDTDocument => buildDocument({ markdown: md }, { ...PAGE, pageTemplates: templates }, createMeasurementCache());
+  const words = (n: number, w = 'word'): string => Array.from({ length: n }, (_, i) => `${w}${i}`).join(' ');
+
+  it('a spread: the gutter cut narrows a frame, the ladder shrinks its text; a frame of the second page is scaled on its own sheet', () => {
+    const t: PageTemplate = {
+      id: 'sp', spread: true, gutter: mm(20),
+      frames: [
+        // Centred on the spine: cut at the band's edge, on the first page.
+        { name: 'cut', height: mm(40), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+        { name: 'right', width: mm(60), height: mm(30), placement: { anchor: { to: 'container', edge: 'bottom-right' } } },
+      ],
+    };
+    const md = (cut: number, right: number) => `::::page{template="sp" spread}\n:::frame{slot="cut"}\n${words(cut, 'cut')}\n:::\n\n:::frame{slot="right"}\n${words(right, 'right')}\n:::\n::::\n`;
+    const doc = buildWith(md(400, 94), [t]);
+    const [verso, recto] = doc.pages.filter((p) => p.composed?.spread) as [VDTPage, VDTPage];
+    const cut = verso.composed!.frames.find((f) => f.name === 'cut' && f.blockIds.length > 0)!;
+    expect(verso.composed!.log.find((e) => e.frame === 'cut' && e.cause === 'gutter')).toMatchObject({ kind: 'resized' });
+    expect(cut.scale).toBeLessThan(1);
+    expect(cut.overflowPx).toBe(0);
+    expect(frameBounds(cut).x + frameBounds(cut).width).toBeLessThanOrEqual(W - 10 * MM + 1e-6);
+    expect(verso.composed!.log).toContainEqual({ frame: 'cut', kind: 'textScaled', scale: cut.scale });
+    const right = recto.composed!.frames.find((f) => f.name === 'right')!;
+    expect(right.scale).toBeLessThan(1);
+    expect(right.overflowPx).toBe(0);
+    const b = frameBounds(right);
+    expect(b.x).toBeGreaterThan(0);
+    expect(b.x + b.width).toBeLessThanOrEqual(W + 1e-6);
+    // Its blocks are on its own page, laid out in its larger content box.
+    const content = frameContentRect(right);
+    for (const id of right.blockIds) {
+      const blk = recto.floats!.find((x) => x.id === id)!;
+      expect(blk.pageIndex).toBe(recto.index);
+      expect(blk.bbox.x).toBeGreaterThanOrEqual(content.x - 0.5);
+      expect(blk.bbox.x + blk.bbox.width).toBeLessThanOrEqual(content.x + content.width + 0.5);
+    }
+  });
+
+  it('the page memo keys the ladder: a reused page with scaled frames and a warning is the page laid out afresh', () => {
+    const f = standIn({ frames: { dinero: { height: mm(36), minHeight: undefined }, gasto: { height: mm(30), minHeight: undefined } }, markdown: moreWords(40) });
+    const md = `${f.markdown}\n${f.markdown.replace('tema="Retos del planeta"', 'tema="Otro"')}`;
+    const shape = (doc: VDTDocument): string => JSON.stringify({ pages: doc.pages, blocks: doc.blocks, warnings: doc.contentWarnings ?? [] }, (k, v: unknown) => (k === 'layoutKey' ? undefined : v));
+    const run = (text: string) => buildDocument({ markdown: text, resources: f.resources }, f.config, createMeasurementCache());
+    setComposedPageMemo(false);
+    let expected: string;
+    try {
+      expected = shape(run(md));
+    } finally {
+      setComposedPageMemo(true);
+    }
+    clearComposedPageMemo();
+    // Laid out first where every offset is elsewhere, then met again.
+    run(`Una línea antes.\n\n:::pagebreak\n\nOtra línea.\n\n${md}`);
+    const before = composedPageMemoStats().hits;
+    const doc = run(md);
+    expect(composedPageMemoStats().hits).toBeGreaterThan(before);
+    expect(shape(doc)).toBe(expected);
+    const pages = doc.pages.filter((p) => p.composed);
+    expect(pages[0]!.composed!.frames.find((x) => x.name === 'dinero')!.scale).toBeLessThan(1);
+    const w = overflowsOf(doc).find((x) => x.frame === 'gasto')!;
+    expect(w.proposals.find((p) => p.kind === 'shortenText')!.sourceStart).toBe(w.sourceStart);
+    expect(md.slice(w.sourceStart!, w.sourceStart! + 3)).toBe(md.slice(frameOf(doc, 'gasto').sourceStart!, frameOf(doc, 'gasto').sourceStart! + 3));
+    clearComposedPageMemo();
+  });
+
+  it('the source map reads a scaled frame where it is painted', () => {
+    const doc = build(standIn({ frames: { dinero: { height: mm(36), minHeight: undefined } }, markdown: moreWords(40) }));
+    const page = page0(doc);
+    const d = frameOf(doc, 'dinero');
+    expect(d.scale).toBeLessThan(1);
+    const para = d.blockIds.map((id) => page.floats!.find((b) => b.id === id)!).find((b) => b.type === 'paragraph' && b.lines.length > 1)!;
+    const line = para.lines[para.lines.length - 1]!;
+    // Where the line is painted: its laid box scaled about the frame's top-left.
+    const painted = { x: d.rect.x + (line.bbox.x + 10 - d.rect.x) * d.scale, y: d.rect.y + (line.bbox.y + line.bbox.height / 2 - d.rect.y) * d.scale };
+    const hit = sourceAt(doc, page.index, painted.x, painted.y);
+    const lineHit = hit.find((e) => e.level === 'line')!;
+    expect(lineHit).toBeDefined();
+    expect(lineHit.rect!.x).toBeLessThanOrEqual(painted.x);
+    expect(lineHit.rect!.x + lineHit.rect!.width).toBeGreaterThanOrEqual(painted.x);
+    expect(lineHit.rect!.y).toBeLessThanOrEqual(painted.y);
+    expect(lineHit.rect!.y + lineHit.rect!.height).toBeGreaterThanOrEqual(painted.y);
+    expect(lineHit.rect!.height).toBeCloseTo(line.bbox.height * d.scale, 6);
+    expect(hit.find((e) => e.level === 'frame')!.id).toBe(d.id);
+    // The same line found from its Markdown has the same box.
+    const found = elementsForSource(doc, lineHit.source.kind === 'markdown' ? lineHit.source.start : 0, lineHit.source.kind === 'markdown' ? lineHit.source.start : 0).find((m) => m.element.id === lineHit.id)!;
+    expect(found.element.rect).toEqual(lineHit.rect);
+    // Under the painted box, nothing of the frame's content: the frame's foot is its rect's.
+    const below = sourceAt(doc, page.index, d.rect.x + 20, d.rect.y + d.rect.height + 2);
+    expect(below.find((e) => e.id === d.id)).toBeUndefined();
   });
 });
