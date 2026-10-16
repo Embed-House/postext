@@ -82,6 +82,22 @@ export function fitMarksFor(
   return target ? [{ frame: target, kind: 'target', text: '' }, ...out] : out;
 }
 
+/** A turned frame's turn about its centre, as the page selection's mark
+ *  writes it (`selection/pickedOverlay.ts`, a `matrix()` the Folio reads
+ *  too), so both marks sit on the same box. The box is the frame's
+ *  `rect`, the box as drawn: a frame whose text the ladder scaled keeps
+ *  its drawn size (only its content, `frameContentRect`, is laid out
+ *  larger), and its `overflowPx` is already in sheet px. Null upright. */
+export function frameTurnMatrix(rect: { x: number; y: number; width: number; height: number }, rotate: number): string | null {
+  if (!rotate) return null;
+  const cx = rect.x + rect.width / 2;
+  const cy = rect.y + rect.height / 2;
+  const a = (rotate * Math.PI) / 180;
+  const cos = Math.cos(a);
+  const sin = Math.sin(a);
+  return `matrix(${[cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy].join(' ')})`;
+}
+
 const RED = '#d0021b';
 const AMBER = '#9a5b00';
 const TARGET = '#1d6fd6';
@@ -150,7 +166,8 @@ export function drawFitMarks(
     const item = document.createElementNS(SVG_NS, 'g');
     item.dataset.frameId = mark.frame.id;
     item.dataset.fit = mark.kind;
-    if (rotate) item.setAttribute('transform', `rotate(${rotate} ${rect.x + rect.width / 2} ${rect.y + rect.height / 2})`);
+    const turn = frameTurnMatrix(rect, rotate);
+    if (turn) item.setAttribute('transform', turn);
     const box = document.createElementNS(SVG_NS, 'rect');
     box.setAttribute('x', String(rect.x));
     box.setAttribute('y', String(rect.y));

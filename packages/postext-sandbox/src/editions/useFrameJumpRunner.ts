@@ -3,25 +3,43 @@
 /**
  * The canvas side of a frame jump (#867, see `frameJump.ts`): once the
  * edition and chapter a jump names are on screen and laid out, land on the
- * page that sets its fence, pick the frame (`selectFrame`, the frame the
- * Design mode and the template editor read), put the editor's caret in
- * the frame's slot and outline the frame for a moment.
+ * page that sets its fence, pick the frame as the page selection (#865:
+ * its mark and its path in the breadcrumb) and for the template editor
+ * (`selectFrame`), and put the editor's caret in the frame's slot.
  */
 
 import { useEffect, useRef, useSyncExternalStore } from 'react';
-import type { VDTDocument } from 'postext';
+import { sourceAt, type VDTDocument } from 'postext';
 import {
   useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector,
 } from '../context/SandboxContext';
 import { fromBookOffset } from '../book/compose';
 import type { ComposedBook } from '../book/types';
 import { selectFrame } from '../editing/editMode';
+import { climbable } from '../selection/pageSelection';
+import { setPageSelection } from '../selection/selectionStore';
 import { sameLocaleTag } from '../presets/locale';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { resolveJump } from '../warnings/composedChecks';
 import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type PendingFrameJump } from './frameJump';
 
-/** How long the frame reached stays outlined. */
+/** Pick frame `frameId` of page `pageIndex` as the page selection, at
+ *  frame level (what a click on it and Esc from its text would pick).
+ *  False when the source map does not find it there. */
+export function selectFrameOnPage(doc: VDTDocument, pageIndex: number, frameId: string, chapter?: string): boolean {
+  const frame = doc.pages[pageIndex]?.composed?.frames.find((f) => f.id === frameId);
+  if (!frame) return false;
+  // Its centre: on the sheet whatever its turn or scale.
+  const point = { x: frame.rect.x + frame.rect.width / 2, y: frame.rect.y + frame.rect.height / 2 };
+  const chain = climbable(sourceAt(doc, pageIndex, point.x, point.y));
+  const level = chain.findIndex((el) => el.level === 'frame' && el.id === frameId);
+  if (level < 0) return false;
+  setPageSelection({ pageIndex, chain, level, point, origin: 'page', ...(chapter ? { chapter } : {}) }, doc);
+  return true;
+}
+
+/** How long the frame reached stays outlined (when the page selection
+ *  cannot take it). */
 const FLASH_MS = 2400;
 
 function pendingVersion(): PendingFrameJump | null {
@@ -118,8 +136,14 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     const frame = resolved.frame;
     if (frame && page.composed) {
       selectFrame({ pageIndex: Math.max(0, screenIndex), frameId: frame.id, name: frame.name, template: page.composed.template, configPath: frame.configPath });
-      setJumpFlash({ frameId: frame.id, pageIndex: Math.max(0, screenIndex), until: Date.now() + FLASH_MS });
-      window.setTimeout(() => setJumpFlash(null), FLASH_MS + 50);
+      // The page selection (#865): the frame is picked on the page, its
+      // path in the breadcrumb, Esc climbs to its group and template. Where
+      // the page cannot take it, the frame is outlined for a moment.
+      const screen = docRef.current;
+      if (!(screen && screenIndex >= 0 && selectFrameOnPage(screen, screenIndex, frame.id, chapter.id))) {
+        setJumpFlash({ frameId: frame.id, pageIndex: Math.max(0, screenIndex), until: Date.now() + FLASH_MS });
+        window.setTimeout(() => setJumpFlash(null), FLASH_MS + 50);
+      }
     }
     if (jump.keepEditor) return;
     // The caret at the start of the slot: the frame's content, else what

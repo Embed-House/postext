@@ -21,12 +21,13 @@ export const PAGE_TEMPLATE_KINDS = [
   'overflowTargetUnknown', 'labelStyleUnknown',
 ] as const satisfies readonly WarningPayload['kind'][];
 
-/** The kinds a composed book is checked for in every edition: overflow,
- *  slots, fences, the contents cut between columns, design text that is
- *  content, and the templates themselves. */
+/** The kinds a composed book is checked for in every edition: overflow
+ *  (and a continuation past its page limit), slots, fences, the contents
+ *  cut between columns, figure labels at anchors (#860), design text that
+ *  is content, and the templates themselves. */
 const COMPOSED_KINDS: ReadonlySet<WarningPayload['kind']> = new Set<WarningPayload['kind']>([
-  'frameOverflow', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
-  'tocGroupSplit', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
+  'frameOverflow', 'frameContinuationLimit', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
+  'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
 ]);
 
 export function isComposedCheckKind(kind: WarningPayload['kind']): boolean {
@@ -73,7 +74,7 @@ function fenceOf(p: WarningPayload): number | null {
 /** The frame a payload names: the frame that overflows or is left empty,
  *  the flow frame that takes an unknown slot's content. */
 function frameNameOf(p: WarningPayload): string | null {
-  if (p.kind === 'frameOverflow' || p.kind === 'slotEmpty') return p.frame;
+  if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'slotEmpty') return p.frame;
   if (p.kind === 'slotUnknown') return p.frame ?? null;
   return null;
 }
@@ -123,6 +124,18 @@ function docPageOf(doc: Pick<VDTDocument, 'pages' | 'pageIndexOffset'>, bookPage
   return i >= 0 && i < doc.pages.length ? i : -1;
 }
 
+/** The frame of a composed page that sets resource `resourceId` (a
+ *  figure whose labels a warning names), or null. */
+function frameWithResource(doc: Pick<VDTDocument, 'blocks'>, page: VDTPage | undefined, resourceId: string): VDTFrame | null {
+  if (!page?.composed) return null;
+  const blocks = [...(page.floats ?? []), ...doc.blocks];
+  for (const frame of page.composed.frames) {
+    const ids = new Set(frame.blockIds);
+    if (blocks.some((b) => ids.has(b.id) && b.resourceBlock?.resource.id === resourceId)) return frame;
+  }
+  return null;
+}
+
 function frameOn(page: VDTPage | undefined, name: string | null): VDTFrame | null {
   if (!page?.composed || !name) return null;
   return page.composed.frames.find((f) => f.name === name) ?? null;
@@ -156,9 +169,19 @@ export function composedChecksOf(locale: string, chapters: readonly EditionChapt
         }
       }
       if (doc) {
-        if (p.kind === 'frameOverflow') {
+        if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit') {
           const i = docPageOf(doc, p.page);
           pageIndex = i >= 0 && doc.pages[i]!.composed?.fenceIndex === p.fenceIndex ? i : composedPageIndex(doc, p.fenceIndex, p.frame);
+        } else if (p.kind === 'labelAnchorUnknown' || p.kind === 'anchorUnlabelled') {
+          // A figure's label (#860): its page, the frame that sets the figure.
+          pageIndex = docPageOf(doc, p.page);
+          const page = pageIndex >= 0 ? doc.pages[pageIndex] : undefined;
+          const holder = frameWithResource(doc, page, p.resourceId);
+          if (page?.composed) {
+            fenceIndex = page.composed.fenceIndex;
+            template = page.composed.template;
+          }
+          if (holder) frame = holder.name;
         } else if (p.kind === 'tocGroupSplit') {
           pageIndex = docPageOf(doc, p.page);
         } else if (fenceIndex !== null) {
@@ -179,7 +202,7 @@ export function composedChecksOf(locale: string, chapters: readonly EditionChapt
         locale,
         warning: w,
         chapterIndex,
-        page: page ? page.pageNumberValue : p.kind === 'tocGroupSplit' ? p.page : null,
+        page: page ? page.pageNumberValue : 'page' in p && typeof p.page === 'number' ? p.page : null,
         pageIndex: page ? pageIndex : null,
         fenceIndex,
         template,

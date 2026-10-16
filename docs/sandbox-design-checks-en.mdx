@@ -282,6 +282,8 @@ In a book with page templates (`pageTemplates`), the panel opens with **Composed
 The section lists:
 
 - *Text does not fit its frame* (`frameOverflow`), with the steps the reflow ladder tried and the changes that would make the frame fit;
+- *Text still runs past its last added page* (`frameContinuationLimit`): the frame's content went on to the most pages a composed page may add and still does not fit;
+- *Label at an unknown anchor* and *Anchor without a label* (`labelAnchorUnknown`, `anchorUnlabelled`), filed under the frame that sets the figure;
 - *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Contents block cut between columns* (`tocGroupSplit`);
 - the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).
@@ -290,6 +292,6 @@ These entries are not repeated in the groups below.
 
 **Page**, **Frame** and **Language** group the list by composed page (the same page in every edition, whatever number it carries there), by frame or by edition. The three menus under them keep one language, one page or one frame. Each entry shows the edition's tag (*CA*), the page number in that edition and the frame's name.
 
-A click on an entry takes you to its frame in its edition. When another edition is on screen, the book switches to the entry's language; then the chapter and the page open, the frame is outlined for a moment and the caret goes to the start of its slot in the **Text** panel. A template's own warning opens the first page set with that template, with its frame picked; design text that holds content opens the **Design** panel.
+A click on an entry takes you to its frame in its edition. When another edition is on screen, the book switches to the entry's language; then the chapter and the page open, the frame is picked on the page (its path shows at the foot of the preview) and the caret goes to the start of its slot in the **Text** panel. A template's own warning opens the first page set with that template, with its frame picked; design text that holds content opens the **Design** panel.
 
 A local project holds one edition: a bundle imported as a project keeps the language chosen on import, and only that edition is checked (the line under the controls says so). Open the bundle from **Books** to check every language it carries. The badge on the activity bar counts the warnings of the chapter on screen, in the edition on screen.

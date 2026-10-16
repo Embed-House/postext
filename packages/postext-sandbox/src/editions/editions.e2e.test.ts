@@ -4,6 +4,9 @@ import type { VDTDocument } from 'postext';
 import { layOutEdition, type EditionLayout } from './editionLayout';
 import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from './threeEditions.fixture';
 import { frameJumpFragment } from './frameJump';
+import { selectFrameOnPage } from './useFrameJumpRunner';
+import { pageSelectionNow, resetPageSelection } from '../selection/selectionStore';
+import { selectedElement } from '../selection/pageSelection';
 import {
   composedChecksOf, composedPageIndex, filterComposedChecks, frameKeyOf, groupComposedChecks, jumpFor, pageKeyOf,
   resolveJump, sameComposedPage, type ComposedCheck,
@@ -186,5 +189,18 @@ describe('a composed book in three editions', () => {
     // In a project (one edition), the fragment keeps the book on screen.
     expect(frameJumpFragment({ ...EMPTY_VIEW_HASH, project: 'p1', chapter: 1 }, { presetId: null, locale: 'es', chapterIndex: 0, page: 3 }))
       .toBe('#project=p1&view=canvas&chapter=1&page=3');
+  });
+
+  it('picks the frame a check reaches as the page selection, at frame level', () => {
+    resetPageSelection();
+    const ca = doc('ca', 1);
+    const i = composedPageIndex(ca, 0, 'dinero');
+    expect(selectFrameOnPage(ca, i, 'cp0:dinero', 'ca-ch2')).toBe(true);
+    const sel = pageSelectionNow()!.selection;
+    expect(sel.pageIndex).toBe(i);
+    expect(selectedElement(sel)).toMatchObject({ level: 'frame', id: 'cp0:dinero' });
+    expect(sel.chapter).toBe('ca-ch2');
+    expect(selectFrameOnPage(ca, i, 'cp9:nada')).toBe(false);
+    resetPageSelection();
   });
 });

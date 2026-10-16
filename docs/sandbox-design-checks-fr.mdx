@@ -282,6 +282,8 @@ Dans un livre doté de modèles de page (`pageTemplates`), le panneau s’ouvre 
 La section rassemble :
 
 - *Le texte déborde de son bloc* (`frameOverflow`), avec les étapes essayées par la cascade de recomposition et les changements qui feraient tenir le bloc ;
+- *Le texte déborde encore après les pages ajoutées* (`frameContinuationLimit`) : le contenu du bloc a continué sur toutes les pages qu’une page composée peut ajouter et ne tient toujours pas ;
+- *Étiquette sur une ancre inconnue* et *Ancre sans étiquette* (`labelAnchorUnknown`, `anchorUnlabelled`), rangées sous le bloc qui compose la figure ;
 - *Slot sans bloc*, *Bloc vide*, *Modèle de page inconnu*, *Page composée avec trois deux-points* et *La double page ne correspond pas au modèle* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`) ;
 - *Bloc de la table des matières coupé entre colonnes* (`tocGroupSplit`) ;
 - les avertissements des modèles eux-mêmes (un style ou une ancre de bloc qui n’existe pas, des tailles qui se contredisent, une chaîne qui revient sur elle-même) et le texte de maquette qui contient du contenu du livre (`contentInConfig`).
@@ -290,6 +292,6 @@ Ces entrées ne se répètent pas dans les groupes du dessous.
 
 **Page**, **Bloc** et **Langue** regroupent la liste par page composée (la même page dans toutes les éditions, quel que soit son numéro dans chacune), par bloc ou par édition. Les trois menus en dessous gardent une seule langue, une seule page ou un seul bloc. Chaque entrée affiche l’étiquette de l’édition (*CA*), le numéro de page dans cette édition et le nom du bloc.
 
-Un clic sur une entrée mène à son bloc dans son édition. Si une autre édition est à l’écran, le livre passe à la langue de l’entrée ; puis le chapitre et la page s’ouvrent, le bloc est entouré un instant et le curseur se place au début de son slot dans le panneau **Texte**. Un avertissement propre à un modèle ouvre la première page composée avec ce modèle, son bloc sélectionné ; le texte de maquette qui contient du contenu ouvre le panneau **Maquette**.
+Un clic sur une entrée mène à son bloc dans son édition. Si une autre édition est à l’écran, le livre passe à la langue de l’entrée ; puis le chapitre et la page s’ouvrent, le bloc est sélectionné sur la page (son chemin s’affiche au bas de l’aperçu) et le curseur se place au début de son slot dans le panneau **Texte**. Un avertissement propre à un modèle ouvre la première page composée avec ce modèle, son bloc sélectionné ; le texte de maquette qui contient du contenu ouvre le panneau **Maquette**.
 
 Un projet local contient une seule édition : un paquet importé comme projet garde la langue choisie à l’import, et seule cette édition est vérifiée (la ligne sous les commandes le dit). Pour vérifier toutes ses langues, ouvrez le paquet depuis **Livres**. La pastille de la barre d’activité compte les avertissements du chapitre à l’écran, dans l’édition à l’écran.

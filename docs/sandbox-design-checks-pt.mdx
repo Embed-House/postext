@@ -282,6 +282,8 @@ Num livro com modelos de página (`pageTemplates`), o painel começa por **Pági
 A seção reúne:
 
 - *O texto não cabe no bloco* (`frameOverflow`), com os passos que a escada de ajuste tentou e as mudanças que fariam o bloco caber;
+- *O texto ainda não cabe depois das páginas acrescentadas* (`frameContinuationLimit`): o conteúdo do bloco seguiu por todas as páginas que uma página composta pode acrescentar e ainda não cabe;
+- *Rótulo numa âncora inexistente* e *Âncora sem rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), junto ao bloco que compõe a figura;
 - *Slot sem bloco*, *Bloco vazio*, *Modelo de página desconhecido*, *Página composta com três dois-pontos* e *A página dupla não corresponde ao modelo* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Bloco do sumário dividido entre colunas* (`tocGroupSplit`);
 - os avisos dos próprios modelos (um estilo ou uma âncora de bloco que não existe, tamanhos que se contradizem, uma cadeia que volta sobre si mesma) e o texto de design que guarda conteúdo do livro (`contentInConfig`).
@@ -290,6 +292,6 @@ Essas entradas não se repetem nos grupos abaixo.
 
 **Página**, **Bloco** e **Idioma** agrupam a lista por página composta (a mesma página em todas as edições, seja qual for o número dela em cada uma), por bloco ou por edição. Os três menus logo abaixo deixam um só idioma, uma só página ou um só bloco. Cada entrada mostra a sigla da edição (*CA*), o número da página naquela edição e o nome do bloco.
 
-Um clique numa entrada leva ao bloco dela na edição dela. Se outra edição estiver na tela, o livro passa para o idioma da entrada; depois abrem o capítulo e a página, o bloco ganha um contorno por um momento e o cursor vai para o começo do slot no painel **Texto**. Um aviso do próprio modelo abre a primeira página composta com ele, com o bloco selecionado; o texto de design com conteúdo abre o painel **Design**.
+Um clique numa entrada leva ao bloco dela na edição dela. Se outra edição estiver na tela, o livro passa para o idioma da entrada; depois abrem o capítulo e a página, o bloco fica selecionado na página (o caminho dele aparece no pé da prévia) e o cursor vai para o começo do slot no painel **Texto**. Um aviso do próprio modelo abre a primeira página composta com ele, com o bloco selecionado; o texto de design com conteúdo abre o painel **Design**.
 
 Um projeto local guarda uma só edição: um pacote importado como projeto mantém o idioma escolhido na importação, e só essa edição é verificada (a linha abaixo dos controles avisa). Para verificar todos os idiomas, abra o pacote em **Livros**. O contador da barra de atividades conta os avisos do capítulo na tela, na edição na tela.

@@ -282,6 +282,8 @@ En un llibre amb plantilles de pàgina (`pageTemplates`), el tauler comença per
 La secció recull:
 
 - *El text no cap al seu marc* (`frameOverflow`), amb els passos que ha provat l'escala d'ajust i els canvis que farien cabre el marc;
+- *El text encara no cap després de les pàgines afegides* (`frameContinuationLimit`): el contingut del marc ha continuat en totes les pàgines que pot afegir una pàgina composta i encara no hi cap;
+- *Rètol en una àncora que no existeix* i *Àncora sense rètol* (`labelAnchorUnknown`, `anchorUnlabelled`), amb el marc que compon la figura;
 - *Slot sense marc*, *Marc buit*, *Plantilla de pàgina desconeguda*, *Pàgina composta amb tres dos punts* i *La doble pàgina no coincideix amb la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Bloc de l'índex partit entre columnes* (`tocGroupSplit`);
 - els avisos de les mateixes plantilles (un estil o una àncora de marc que no existeix, mides que es contradiuen, una cadena que torna sobre si mateixa) i el text de disseny que guarda contingut del llibre (`contentInConfig`).
@@ -290,6 +292,6 @@ Aquestes entrades no es repeteixen als grups de sota.
 
 **Pàgina**, **Marc** i **Idioma** agrupen la llista per pàgina composta (la mateixa pàgina en totes les edicions, porti el número que porti en cadascuna), per marc o per edició. Els tres menús de sota deixen un sol idioma, una sola pàgina o un sol marc. Cada entrada mostra l'etiqueta de l'edició (*CA*), el número de pàgina en aquella edició i el nom del marc.
 
-Un clic en una entrada porta al seu marc en la seva edició. Si a la pantalla hi ha una altra edició, el llibre canvia a l'idioma de l'entrada; després s'obren el capítol i la pàgina, el marc es contorneja un moment i el cursor va al començament del seu slot al tauler **Text**. Un avís de la mateixa plantilla obre la primera pàgina composta amb ella, amb el marc seleccionat; el text de disseny amb contingut obre el tauler **Disseny**.
+Un clic en una entrada porta al seu marc en la seva edició. Si a la pantalla hi ha una altra edició, el llibre canvia a l'idioma de l'entrada; després s'obren el capítol i la pàgina, el marc queda seleccionat a la pàgina (la seva ruta apareix al peu de la previsualització) i el cursor va al començament del seu slot al tauler **Text**. Un avís de la mateixa plantilla obre la primera pàgina composta amb ella, amb el marc seleccionat; el text de disseny amb contingut obre el tauler **Disseny**.
 
 Un projecte local guarda una sola edició: un paquet importat com a projecte conserva l'idioma triat en importar-lo i només es revisa aquella edició (la línia sota els controls ho diu). Per revisar tots els seus idiomes, obre el paquet des de **Llibres**. El comptador de la barra d'activitat compta els avisos del capítol a la pantalla, en l'edició a la pantalla.

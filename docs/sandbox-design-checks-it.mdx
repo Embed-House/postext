@@ -282,6 +282,8 @@ In un libro con modelli di pagina (`pageTemplates`) il pannello si apre con **Pa
 La sezione raccoglie:
 
 - *Il testo non entra nella cornice* (`frameOverflow`), con i passi tentati dalla sequenza di reimpaginazione e le modifiche che farebbero entrare la cornice;
+- *Il testo non entra nemmeno dopo le pagine aggiunte* (`frameContinuationLimit`): il contenuto della cornice è proseguito su tutte le pagine che una pagina composta può aggiungere e ancora non entra;
+- *Etichetta su un'ancora inesistente* e *Ancora senza etichetta* (`labelAnchorUnknown`, `anchorUnlabelled`), sotto la cornice che compone la figura;
 - *Slot senza cornice*, *Cornice vuota*, *Modello di pagina sconosciuto*, *Pagina composta con tre due punti* e *La doppia pagina non corrisponde al modello* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Blocco dell'indice diviso tra colonne* (`tocGroupSplit`);
 - gli avvisi dei modelli stessi (uno stile o un’ancora di cornice che non esiste, misure che si contraddicono, una catena che torna su sé stessa) e il testo di grafica che contiene contenuto del libro (`contentInConfig`).
@@ -290,6 +292,6 @@ Queste voci non si ripetono nei gruppi sottostanti.
 
 **Pagina**, **Cornice** e **Lingua** raggruppano l’elenco per pagina composta (la stessa pagina in ogni edizione, qualunque numero abbia in ciascuna), per cornice o per edizione. I tre menu sotto lasciano una sola lingua, una sola pagina o una sola cornice. Ogni voce mostra la sigla dell’edizione (*CA*), il numero di pagina in quell’edizione e il nome della cornice.
 
-Un clic su una voce porta alla sua cornice nella sua edizione. Se a schermo c’è un’altra edizione, il libro passa alla lingua della voce; poi si aprono il capitolo e la pagina, la cornice viene evidenziata per un momento e il cursore va all’inizio del suo slot nel pannello **Testo**. Un avviso proprio di un modello apre la prima pagina composta con quel modello, con la cornice selezionata; il testo di grafica che contiene contenuto apre il pannello **Grafica**.
+Un clic su una voce porta alla sua cornice nella sua edizione. Se a schermo c’è un’altra edizione, il libro passa alla lingua della voce; poi si aprono il capitolo e la pagina, la cornice resta selezionata sulla pagina (il suo percorso compare in fondo all’anteprima) e il cursore va all’inizio del suo slot nel pannello **Testo**. Un avviso proprio di un modello apre la prima pagina composta con quel modello, con la cornice selezionata; il testo di grafica che contiene contenuto apre il pannello **Grafica**.
 
 Un progetto locale contiene una sola edizione: un pacchetto importato come progetto conserva la lingua scelta all’importazione, e si controlla solo quella (lo dice la riga sotto i comandi). Per controllare tutte le sue lingue, apri il pacchetto da **Libri**. Il contatore della barra delle attività conta gli avvisi del capitolo a schermo, nell’edizione a schermo.
