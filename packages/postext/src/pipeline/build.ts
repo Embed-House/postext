@@ -31,6 +31,7 @@ import {
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
 import { contourOnPage } from '../contour';
+import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels';
 import { anchorBox } from '../design/layout';
 import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
 import {
@@ -899,10 +900,10 @@ function placeDocumentPass(
   }
   // The labels of each `:::figure` (#862), by resource: a figure that
   // floats is laid out by its id alone.
-  const figureLabelsById = new Map<string, VDTFigureLabel[]>();
+  const figureLabelsById = new Map<string, { labels: VDTFigureLabel[]; parsed: NonNullable<ContentBlock['figure']>['labels'] }>();
   for (const b of contentBlocks) {
     const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b, bodyOffset) : undefined;
-    if (labels) figureLabelsById.set(b.resourceId!, labels);
+    if (labels) figureLabelsById.set(b.resourceId!, { labels, parsed: b.figure!.labels });
   }
 
   // Resolve styles
@@ -1672,7 +1673,11 @@ function placeDocumentPass(
     const { block: rb, totalHeight } = laid;
     const id = slice && slice.startRow > 0 ? `float-${resourceId}-cont-${slice.startRow}` : `float-${resourceId}`;
     const blk = createVDTBlock(id, 'resource', bodyStyle.fontString, bodyStyle.color, bodyStyle.textAlign);
-    const labels = figureLabelsById.get(resourceId);
+    // A floated figure's labels, laid out on its picture as set (#860).
+    const figure = figureLabelsById.get(resourceId);
+    const labels = figure
+      ? layOutFigureLabels(figure.labels, figure.parsed, rb, { resolved, resourceNumbering, resourceTypes, resources, ...(cache ? { cache } : {}) })
+      : undefined;
     blk.resourceBlock = labels ? { ...rb, labels } : rb;
     blk.dirty = false;
     blk.snappedToGrid = false;
@@ -8721,6 +8726,8 @@ function placeDocumentPass(
   // Right-to-left pages: lines advance through the mirrored flow in the
   // reverse of their visual order.
   if (doc.pages.some((p) => pageIsMirrored(p))) orientLinesToFrames(doc);
+  // Figure labels (#860): where each one is painted, for the source map.
+  stampFigureLabelRects(doc);
 
   doc.converged = true;
   doc.iterationCount = 1;
@@ -8840,6 +8847,9 @@ export function* buildDocumentGen(
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
   // Design texts cut to fit their width (#628).
   loose.push(...designTruncationWarnings(doc));
+  // Figure labels at anchors their picture lacks, anchors left without a
+  // word in this locale (#860).
+  loose.push(...figureLabelWarnings(doc, (b) => (b.sourceStart !== undefined && b.sourceEnd !== undefined ? { start: b.sourceStart, end: b.sourceEnd } : undefined)));
   // Comic panels whose cell cannot hold their picture's safe area (#556).
   for (const page of doc.pages) {
     if (page.comic) loose.push(...comicPageLayoutWarnings(page.comic));

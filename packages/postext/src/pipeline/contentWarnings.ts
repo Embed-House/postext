@@ -856,6 +856,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
         ? `Template "${w.template}" is a spread — the page is laid over two facing pages; write ::::page{template="${w.template}" spread}`
         : `Template "${w.template}" is a single page — the page is laid on one page; drop spread from the fence, or use a template with spread: true`;
       break;
+    case 'labelAnchorUnknown':
+      text = `Label at anchor "${w.anchor}" of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''}: the resource has no such anchor — the label is not drawn; ${w.known.length > 0 ? `use one of ${w.known.slice(0, 6).map((a) => `"${a}"`).join(', ')}${w.known.length > 6 ? '…' : ''}, add the anchor to the resource,` : 'add the anchor to the resource'} or place it with at="x% y%"`;
+      break;
+    case 'anchorUnlabelled':
+      text = `Anchor "${w.anchor}" of "${w.resourceId}" names the label style "${w.style}" but no label of the figure stands at it${w.locale ? ` in ${w.locale}` : ''} — add ::label[…]{at="${w.anchor}"}, or drop the anchor's style`;
+      break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
       break;

@@ -6,6 +6,7 @@
 import type { ContentBlock } from '../parse';
 import type { Resource, ResourceType } from '../types';
 import type { ResolvedConfig, VDTBlock, ResolvedResourceBlock, VDTFigureLabel } from '../vdt';
+import { layOutFigureLabels } from '../composed/labels';
 import type { BlockStyle } from './styles';
 import type { MeasuredBlock, MeasurementCache } from '../measure';
 import { measureBlock, measureRichBlock, cachedMeasureBlock, cachedMeasureRichBlock } from '../measure';
@@ -128,7 +129,17 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
     };
     // A `:::figure`'s labels (#862) ride on its block: a copy, so a
     // cached layout of the same resource keeps none of them.
-    const labels = figureLabels(contentBlock, input.bodyOffset);
+    // Each label is laid out on the picture as set here (#860).
+    const plain = figureLabels(contentBlock, input.bodyOffset);
+    const labels = plain
+      ? layOutFigureLabels(plain, contentBlock.figure?.labels, block, {
+          resolved: input.resolved,
+          ...(input.resourceNumbering ? { resourceNumbering: input.resourceNumbering } : {}),
+          ...(input.resourceTypes ? { resourceTypes: input.resourceTypes } : {}),
+          ...(input.resources ? { resources: input.resources } : {}),
+          ...(cache ? { cache } : {}),
+        })
+      : undefined;
     const resourceBlock = labels ? { ...block, labels } : block;
     return { measured, resourceBlock, ...(tableRows ? { tableRows } : {}), ...(asideHeight !== undefined ? { asideHeight } : {}) };
   }

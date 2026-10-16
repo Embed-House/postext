@@ -33,6 +33,7 @@ import {
   type VDTLineSegment,
   type VDTPage,
 } from '../vdt';
+import { mirrorLabelLayout } from '../composed/labels';
 
 /** Lines this pass made (already in flow order). */
 const oriented = new WeakSet<VDTLine>();
@@ -109,8 +110,22 @@ function orientResourceBlock(rb: ResolvedResourceBlock): ResolvedResourceBlock {
     });
     if (changed) table = { ...table, cells };
   }
-  if (captionLines === rb.captionLines && noteLines === rb.noteLines && continuesLines === rb.continuesLines && table === rb.table) return rb;
-  return { ...rb, captionLines, noteLines, continuesLines, ...(table ? { table } : {}) };
+  // A figure's labels (#860): reflected about the body, so the page's
+  // reflection puts them back over the picture, reading as written.
+  let labels = rb.labels;
+  if (labels?.some((l) => l.layout)) {
+    let changed = false;
+    const next = labels.map((l) => {
+      if (!l.layout) return l;
+      const layout = mirrorLabelLayout(l.layout, rb.bodyRect.width, orientLine);
+      if (layout === l.layout) return l;
+      changed = true;
+      return { ...l, layout };
+    });
+    if (changed) labels = next;
+  }
+  if (captionLines === rb.captionLines && noteLines === rb.noteLines && continuesLines === rb.continuesLines && table === rb.table && labels === rb.labels) return rb;
+  return { ...rb, captionLines, noteLines, continuesLines, ...(table ? { table } : {}), ...(labels ? { labels } : {}) };
 }
 
 function orientBlock(block: VDTBlock): void {

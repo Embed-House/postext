@@ -122,8 +122,11 @@ describe('labels as a figure\'s text (#862)', () => {
     expect(altWithLabels('خريطة', labels('القاهرة', 'دمشق'))).toBe('خريطة (القاهرة، دمشق)');
   });
 
-  it('is the alternative text of the picture in the HTML viewer', () => {
+  it('is the alternative text of the picture in the HTML viewer, for the labels not drawn on it (#860)', () => {
+    // The map has no anchor `atlantico`: that label is not drawn and stays
+    // in the alt; Madrid, placed by percentages, is drawn as text.
     const html = renderToHtmlIndexed(build(`${FIGURE}\n`), { resourceImageUrl: (id) => `https://example.org/${id}` }).pages[0]!.innerHtml;
-    expect(html).toContain('alt="A map of Europe (OCÉANO ATLÁNTICO, Madrid)"');
+    expect(html).toContain('alt="A map of Europe (OCÉANO ATLÁNTICO)"');
+    expect(html).toContain('>Madrid<');
   });
 });

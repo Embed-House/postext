@@ -39,7 +39,7 @@ import type {
   VDTPage,
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
-import { altWithLabels, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
+import { altWithLabels, figureLabelMatrix, undrawnLabels, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
 import { roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
@@ -80,6 +80,7 @@ import { paintChip } from './chip';
 import { renderMathSegment } from './blockRender';
 import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { tagArtifact, tagContent, type StructAttrs, type StructElem } from './tagging';
+import { sheetMatrixToPdf } from './comic';
 import type { StructureFlow } from './structureFlow';
 import {
   svgToVectorDrawing,
@@ -831,7 +832,8 @@ function captionText(rb: ResolvedResourceBlock): string {
 function figureAlt(rb: ResolvedResourceBlock): string {
   const label = `${rb.captionPrefix} ${rb.number}`.trim();
   const text = rb.resource.altText?.trim() || captionText(rb);
-  if (rb.kind !== 'video') return altWithLabels(text || label, rb.labels);
+  // Labels drawn as text are read as text, after the picture (#860).
+  if (rb.kind !== 'video') return altWithLabels(text || label, undrawnLabels(rb.labels));
   const name = rb.captionPrefix.trim() || 'Video';
   // A Chinese or Japanese name takes the full-width colon (视频：…).
   const colon = /[\u3040-\u30ff\u3400-\u9fff]$/.test(name) ? '：' : ': ';
@@ -1064,6 +1066,60 @@ function drawVideoOverlays(ctx: PageCtx, video: VDTResourceVideo, bx: number, by
   });
 }
 
+/**
+ * The labels of a `:::figure` drawn on its picture (#860), its body's
+ * top-left corner at (`bx`, `by`): each one through its matrix, its plate
+ * and halo as layout artifacts, then its lines. In a tagged render the
+ * labels are read after the picture, in the order written: a `Div` beside
+ * the figure holding one `P` per label (`figureLabelsElem`).
+ */
+function paintFigureLabels(
+  ctx: PageCtx,
+  block: VDTBlock,
+  rb: ResolvedResourceBlock,
+  bx: number,
+  by: number,
+  fontCache: FontCache,
+  linkColor: Color,
+  linkRegistry: LinkRegistry | undefined,
+  structure: StructureFlow | undefined,
+): void {
+  const drawn = (rb.labels ?? []).filter((l) => l.layout);
+  if (drawn.length === 0) return;
+  const group = structure ? structure.figureLabelsElem(block) : undefined;
+  for (const label of drawn) {
+    const layout = label.layout!;
+    const m = figureLabelMatrix(layout, bx, by);
+    pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
+    try {
+      const fonts: PaintFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
+      if (layout.background) {
+        tagArtifact(ctx, { type: 'Layout' });
+        const r = layout.background.rect;
+        fillRectPx(ctx, r.x, r.y, r.width, r.height, colorFromHex(layout.background.color, ctx.colorSpace));
+      }
+      if (layout.halo && layout.halo.widthPx > 0) {
+        // The glyphs stroked hollow under the text: painted once more, an
+        // artifact, so the words are read once.
+        const halo = colorFromHex(layout.halo.color, ctx.colorSpace);
+        tagArtifact(ctx, { type: 'Layout' });
+        ctx.textOutline = { color: halo, widthPx: 2 * layout.halo.widthPx, hollow: true };
+        try {
+          for (const line of layout.lines) paintLine(ctx, line.highlights ? { ...line, highlights: undefined } : line, fonts, fontCache, halo, halo, undefined, () => undefined, halo);
+        } finally {
+          delete ctx.textOutline;
+        }
+      }
+      const elem = group?.child('P');
+      const color = colorFromHex(layout.color, ctx.colorSpace);
+      if (!elem && structure) tagArtifact(ctx, { type: 'Layout' });
+      for (const line of layout.lines) paintLine(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, refTarget, color, elem);
+    } finally {
+      popFrame(ctx);
+    }
+  }
+}
+
 export function renderResourceBlock(
   ctx: PageCtx,
   block: VDTBlock,
@@ -1152,6 +1208,8 @@ export function renderResourceBlock(
         linkRegistry.addUriLink(ctx.page, box, uri, elem ? { elem, contents: `${figureAlt(rb)} (${video.link})` } : undefined);
       }
     }
+    // A figure's labels, over the picture (#860).
+    if (rb.labels) paintFigureLabels(ctx, block, rb, bx, by, fontCache, linkColor, linkRegistry, structure);
   } else if (rb.kind === 'table') {
     renderTable(ctx, rb, bx, by, fontCache, images, linkColor, linkRegistry, owner);
   }

@@ -48,6 +48,9 @@ import { shapesAsCanvas, shapingKey, withShapingScript } from '../shapingLanguag
 
 export interface PageCtx {
   page: PDFPage;
+  /** Set while a figure label's halo is painted (#860): every text drawn
+   *  without an outline of its own takes this one. */
+  textOutline?: TextOutline;
   pageHeightPt: number;
   scale: number;
   /** The output colour: a PDF colour space, or an ICC print mode. */
@@ -1213,6 +1216,7 @@ export function drawTextPx(
   direction?: 'ltr' | 'rtl',
 ): void {
   if (!text) return;
+  outline ??= ctx.textOutline;
   if (ctx.vertical) {
     verticalPainter?.(ctx, text, xPx, baselinePx, font, sizePx, color, outline, actualText, orient);
     return;
@@ -1348,6 +1352,7 @@ export function pushTextObject(
   advancePx?: number,
 ): void {
   const { scale, pageHeightPt } = ctx;
+  outline ??= ctx.textOutline;
   const textMatrix = ctx.mirror
     ? setTextMatrix(-1, 0, 0, 1, (xPx + (advancePx ?? ctx.runAdvancePx ?? 0)) * scale, pageHeightPt - baselinePx * scale)
     : setTextMatrix(1, 0, 0, 1, xPx * scale, pageHeightPt - baselinePx * scale);

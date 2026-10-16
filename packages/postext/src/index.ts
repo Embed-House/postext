@@ -567,6 +567,7 @@ export type {
   VDTComposedPage,
   VDTFrame,
   VDTFigureLabel,
+  VDTFigureLabelLayout,
   ReflowEvent,
   ReflowEventKind,
   FrameOverflowProposal,
@@ -622,6 +623,19 @@ export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
 export { altWithLabels } from './composed/labelText';
+export {
+  figureLabelBounds,
+  figureLabelMatrix,
+  figureLabelReading,
+  labelGlyphAt,
+  labelPlace,
+  layOutFigureLabels,
+  pictureToBody,
+  resolveLabelLook,
+  undrawnLabels,
+  type LabelLook,
+  type LabelMatrix,
+} from './composed/labels';
 export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';

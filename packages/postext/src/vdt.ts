@@ -1558,10 +1558,56 @@ export interface VDTFigureLabel {
   /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
    *  a label placed by percentages. */
   anchorRef?: string;
-  /** Where the label is painted (page px, upright), once labels are laid
-   *  out on the picture (#860); `sourceAt` answers a point inside it with
-   *  the label. Absent until then. */
+  /** Where the label is painted: the upright box round its text (and
+   *  background), in the coordinates of the block's own frame (a page's
+   *  flow, or the frame of a composed page its block stands in), stamped
+   *  once the pages exist (#860). `sourceAt` answers a point inside it
+   *  with the label. Absent for a label that is not drawn. */
   rect?: BoundingBox;
+  /** The label set on the picture (#860): absent when it is not drawn (its
+   *  anchor is unknown, the resource is no picture). */
+  layout?: VDTFigureLabelLayout;
+}
+
+/**
+ * A figure label laid out on its picture (#860, DESIGN §2.6). Everything is
+ * in the label's own frame: its origin is the anchor's point and its axes
+ * are turned by `rotate` degrees (clockwise) about it. That point is
+ * `(x, y)` px from the top-left corner of the picture's body (the block's
+ * `bodyRect` as drawn, its crop applied), so the label moves with its
+ * block. Painters: `translate(bodyX + x, bodyY + y) · rotate(rotate)`
+ * (`figureLabelMatrix`), then the halo, the background and the lines.
+ */
+export interface VDTFigureLabelLayout {
+  x: number;
+  y: number;
+  /** Degrees, clockwise. Absent = 0. */
+  rotate?: number;
+  /** The text, as caption lines are (segments, chips, marks, bidi order),
+   *  positioned in the label's frame. */
+  lines: VDTLine[];
+  /** The box of the lines in the label's frame. */
+  box: BoundingBox;
+  fontString: string;
+  boldFontString: string;
+  italicFontString: string;
+  boldItalicFontString: string;
+  /** Hex. */
+  color: string;
+  /** The glyphs stroked `2 × widthPx` wide in `color` under the text. */
+  halo?: { color: string; widthPx: number };
+  /** A fill behind the text: `rect` is the box grown by the style's
+   *  padding. */
+  background?: { color: string; rect: BoundingBox };
+  /** The scale the label was set at to fit its width (`minScale` at
+   *  least); absent at 1. */
+  scale?: number;
+  /** Still wider than its anchor's width at the style's `minScale`. */
+  overflow?: true;
+  /** The label style it was set in (`labelStyles[].id`). */
+  styleId?: string;
+  /** Set right to left (its text opens with a right-to-left letter). */
+  direction?: 'rtl';
 }
 
 /**
@@ -3115,6 +3161,16 @@ export type ContentWarning = ContentWarningBase & (
    *  (`fence: false`, `templateSpread: true`; it is laid over two facing
    *  pages, as the template says). */
   | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
+  /** A `::label[…]{at="…"}` of a `:::figure` (#860) names an anchor its
+   *  resource does not have: the label is not drawn (the reflowable
+   *  output still lists it). `known` lists the resource's anchor ids. The
+   *  source range is the label's text. */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string }
+  /** An anchor of a figure's resource names a label `style` but no
+   *  `::label` of the figure stands at it in this locale (#860): a note,
+   *  the map lacks that word in this edition. The source range is the
+   *  figure's. */
+  | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; locale?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

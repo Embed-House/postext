@@ -19,6 +19,7 @@
  * level and find the same element again after a relayout or in another
  * locale of the chapter.
  */
+import { labelGlyphAt } from './labels';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
@@ -274,7 +275,7 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
     const resourceId = block.resourceBlock.resource.id;
     // A label laid on the picture (#860): its glyph, then the label.
     const label = block.resourceBlock.labels?.find((l) => l.rect && inside(l.rect, p));
-    if (label) out.push(...labelChain(label, resourceId, block.id, p, file));
+    if (label) out.push(...labelChain(label, resourceId, block.id, p, file, block));
     out.push({ level: 'resource', id: `${block.id}:resource`, source: { kind: 'resource', resourceId }, rect: { ...block.bbox } });
   } else {
     const hit = lineAt(block, p.y);
@@ -292,14 +293,17 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
 
 /** A figure label's glyph at `p` (its text spread over its rect) and the
  *  label itself, its source the resource at its anchor. */
-function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }): SourceElement[] {
+function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }, block?: VDTBlock): SourceElement[] {
   const id = label.id ?? `${blockId}:label:${'anchor' in label.at ? label.at.anchor : label.sourceStart}`;
   const anchor = label.anchorRef ? label.anchorRef.slice(label.anchorRef.indexOf('#') + 1) : undefined;
   const out: SourceElement[] = [];
   const map = label.sourceMap;
   if (label.rect && map && map.length > 0) {
+    // The glyph under the point on the label's lines, through its turn
+    // (#860); else its text spread over its box.
+    const k = block && label.layout ? labelGlyphAt(label, block, p.x, p.y) : undefined;
     const frac = label.rect.width > 0 ? Math.max(0, Math.min(0.9999, (p.x - label.rect.x) / label.rect.width)) : 0;
-    const at = map[Math.min(map.length - 1, Math.floor(frac * map.length))]!;
+    const at = map[Math.min(map.length - 1, k ?? Math.floor(frac * map.length))]!;
     out.push({ level: 'text', id: `${id}@${at}`, source: { kind: 'markdown', start: at, end: at + 1, ...file } });
   }
   out.push({

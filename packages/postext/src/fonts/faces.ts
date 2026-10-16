@@ -218,6 +218,11 @@ export function documentFontFaces(doc: VDTDocument): FontFaceRequest[] {
     if (rb) {
       addLines(rb.captionLines, rb.captionFontString, rb.captionBoldFontString, rb.captionItalicFontString, rb.captionBoldItalicFontString, add);
       addLines(rb.noteLines, rb.noteFontString, rb.noteBoldFontString, rb.noteItalicFontString, rb.noteBoldItalicFontString, add);
+      // A figure's labels drawn on its picture (#860).
+      for (const label of rb.labels ?? []) {
+        const l = label.layout;
+        if (l) addLines(l.lines, l.fontString, l.boldFontString, l.italicFontString, l.boldItalicFontString, add);
+      }
       const t = rb.table;
       if (t) {
         for (const cell of t.cells) {
