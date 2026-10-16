@@ -1,0 +1,54 @@
+---
+title: "Uma linha do tempo ilustrada em página dupla"
+summary: "Um modelo de página dupla para a linha do tempo de um livro didático: uma faixa atravessa a lombada e duas fileiras de fichas dividem a largura."
+plain: "Duas páginas espelhadas de um livro de História feitas como uma só: uma faixa colorida atravessa o meio do livro e, embaixo, seis fichas com desenho dividem a largura, para que a história mais longa fique com a ficha mais larga."
+description: "Uma linha do tempo em página dupla com Postext: um modelo, uma faixa sobre a lombada, fichas que dividem a largura e pontos que acompanham cada ficha."
+question: "Como diagramo uma linha do tempo em página dupla, com fichas nas duas páginas?"
+aliases: ["linha do tempo", "cronologia", "página dupla", "modelo de página", "fileira de blocos", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+---
+
+## O que você vai compor
+
+As páginas 48 e 49 de um livro de História do ensino fundamental: *O caminho do papel*, mil anos de ofício, da oficina de Cai Lun à mó de Keller. A página da esquerda abre com o título e dois parágrafos; a da direita, com um boxe que conta como se fazia uma folha à mão. Pelo meio corre a linha do tempo: uma faixa anil para a Ásia e uma terracota para a Europa, que começa na página da esquerda e atravessa a lombada. Embaixo, seis fichas com seu desenho, presas à faixa por um ponto e um traço. As fichas dividem a largura: a de 1844, com a história mais longa, toma largura das duas vizinhas (3 mm em espanhol, 13 mm em japonês), e o seu ponto se move com ela. Todas as palavras estão no Markdown, em espanhol, inglês e japonês; esta página mostra a edição em inglês.
+
+## Preparo
+
+### 1 · Uma folha para duas páginas
+
+<Excerpt region="answer" />
+
+`spread: true` transforma o modelo numa só folha da largura das duas páginas, e o bloco da página diz o mesmo com `spread`. Uma página dupla começa numa página par, então a composição recebe `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: a página 1 deste trecho é a 48 do livro, uma página da esquerda, e nenhuma página em branco vem antes. A grade tem uma coluna por página, separadas pelo dobro da margem interna, de modo que só a faixa chega perto da dobra. A segunda faixa usa `crossGutter` e 36 mm de recuo à esquerda: a cor sai do fim da primeira e atravessa a lombada, e as palavras começam na página da direita, onde a diagramação as lê.
+
+### 2 · Fichas que dividem a largura
+
+<Excerpt region="cards" />
+
+Cada fileira de três fichas é um grupo `row`, e cada ficha tem uma altura fixa (`height`) com um `maxHeight` 16 mm maior. Quando o texto de uma ficha passa da sua altura, ela toma das vizinhas com `shrink` os milímetros inteiros de que precisa, e cada vizinha mantém a largura em que o seu próprio texto ainda cabe. Só quando elas não têm mais o que dar a ficha cresce para baixo, até `maxHeight`. Na edição em espanhol, a ficha de 1844 toma 3 mm, 2 da de 1282 e 1 da de 1150; com todos os textos 30 % mais longos, o teste da bancada, toma 15 mm, e o boxe e o texto de abertura reduzem a letra a 92,5 % e 85 %.
+
+### 3 · Pontos que acompanham as fichas
+
+<Excerpt region="marks" />
+
+Os pontos e os traços são a decoração (`decoration`) do modelo, ancorados em `#c1` … `#c6` pela borda de cima (`top`) e levantados a distância que os separa da faixa. A decoração é posta depois dos blocos: quando uma ficha se move ou se alarga, o seu ponto continua sobre o centro dela. O fundo creme também é decoração, uma caixa ancorada ao pé da sangria que começa na faixa.
+
+### 4 · Desenhos no tamanho de impressão
+
+<Excerpt region="art" />
+
+As vinhetas têm 1.000 px a 550 ppi, 46 mm na página, e uma imagem nunca é ampliada: a ficha que se alarga mantém o desenho e deixa o espaço para o texto. Uma ficha mais estreita que 46 mm reduz o desenho, como a edição em japonês mostra nas fichas de 1150 e 1282, as duas que cedem largura à de 1844.
+
+## Variações
+
+### Manter as fichas com a mesma largura
+
+Com `shrink: 0`, nenhuma ficha cede largura: a de 1844 cresce para baixo, até o seu `maxHeight`, e a fileira termina desigual.
+
+```diff
+-  shrink: 1, // a card gives width to a neighbour whose text runs past the row
++  shrink: 0,
+```
+
+## Erros comuns
+
+- Uma fileira cujas fichas têm alturas `'auto'` nunca divide a largura: leia o erro abaixo e dê uma altura às fichas.
+- A edição em japonês é composta na horizontal, como os livros didáticos de História no Japão. Um modelo de página dupla num livro vertical (`vertical-rl`) é posto no sistema girado do texto, com blocos, desenhos e fundo fora do lugar, e nenhum aviso diz isso: por enquanto, use páginas duplas compostas só em livros horizontais.

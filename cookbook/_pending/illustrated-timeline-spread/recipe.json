@@ -1,0 +1,207 @@
+{
+  "$schema": "../../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 158,
+  "status": "draft",
+  "chapter": "page",
+  "order": 180,
+  "level": 3,
+  "genres": [
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "composed-spreads",
+      "frame-groups",
+      "frame-decoration"
+    ],
+    "also": [
+      "composed-pages",
+      "callout-label-tabs",
+      "callout-styles",
+      "design-anchoring",
+      "running-heads",
+      "mirrored-margins",
+      "numbered-lists",
+      "cjk-fonts",
+      "color-palette",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q183",
+    "Q184"
+  ],
+  "gotchas": [
+    "row-needs-a-height"
+  ],
+  "engine": {
+    "postext": "1.36.1",
+    "postextPdf": "1.36.1"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images",
+    "cjk"
+  ],
+  "sample": {
+    "locales": [
+      "es",
+      "en",
+      "ja"
+    ]
+  },
+  "capture": {
+    "hero": [
+      1,
+      2
+    ],
+    "card": "spread",
+    "pages": "all",
+    "expect": {
+      "pages": [
+        2,
+        2
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "The paper road, a double-page timeline written for this recipe in Spanish, English and Japanese",
+          "es": "La ruta del papel, una cronología a doble página escrita para esta receta en español, inglés y japonés"
+        },
+        "who": "Postext Cookbook",
+        "license": "CC-BY-4.0"
+      }
+    ],
+    "images": [
+      {
+        "what": {
+          "en": "A Han court official watches a craftsman lift a bamboo mould from a vat.",
+          "es": "Un funcionario de la corte Han mira cómo un artesano saca de la tina un molde de bambú."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v105-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "A monk shows two Japanese courtiers how to hold a papermaking mould.",
+          "es": "Un monje enseña a dos cortesanos japoneses a sostener el molde."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v610-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "Papermakers by a canal in Samarkand, sheets drying on a wall.",
+          "es": "Papeleros junto a un canal de Samarcanda, con las hojas secándose en un muro."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v751-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "A paper workshop below the castle of Xàtiva.",
+          "es": "Un taller de papel bajo el castillo de Xàtiva."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v1150-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "A Fabriano mill with its water wheel; a sheet held up to the light.",
+          "es": "Un molino de Fabriano con su rueda; una hoja al trasluz."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v1282-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "A craftsman grinds a spruce log against a stone into wood pulp.",
+          "es": "Un artesano muele un tronco de abeto contra una muela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "v1844-1000.jpg"
+      },
+      {
+        "what": {
+          "en": "Two hands lift a papermaker's mould from a vat of pulp.",
+          "es": "Dos manos sacan de la tina el molde del papelero."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "forma-800.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Literata",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Archivo",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Serif JP",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Sans JP",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-17",
+  "updated": "2026-10-17",
+  "downloads": {
+    "pdf": true
+  },
+  "related": [
+    "comic-double-spread"
+  ],
+  "folio": {
+    "paper": {
+      "type": "coatedSilk",
+      "grammage": 115
+    },
+    "binding": {
+      "type": "paperback",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#2f4f7a"
+    },
+    "surface": {
+      "type": "oak"
+    },
+    "lighting": {
+      "environment": "daylight"
+    }
+  }
+}

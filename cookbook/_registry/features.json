@@ -23542,7 +23542,8 @@
         "marcos",
         "slots",
         "página compuesta",
-        "pageTemplates"
+        "pageTemplates",
+        "ranuras"
       ],
       "ca": [
         "plantilla de pàgina",
@@ -23554,7 +23555,8 @@
         "页面模板",
         "框",
         "slot",
-        "pageTemplates"
+        "pageTemplates",
+        "模板页"
       ],
       "ar": [
         "قالب الصفحة",
@@ -23566,19 +23568,23 @@
         "ページテンプレート",
         "フレーム",
         "slot",
-        "pageTemplates"
+        "pageTemplates",
+        "枠",
+        "スロット"
       ],
       "pt": [
         "modelo de página",
         "quadros",
         "slots",
-        "página composta"
+        "página composta",
+        "blocos"
       ],
       "fr": [
         "gabarit de page",
         "blocs",
         "slots",
-        "page composée"
+        "page composée",
+        "modèle de page"
       ],
       "de": [
         "Seitenvorlage",
@@ -23590,7 +23596,8 @@
         "modello di pagina",
         "riquadri",
         "slot",
-        "pagina composta"
+        "pagina composta",
+        "cornici"
       ]
     },
     "group": "page",
@@ -23649,53 +23656,73 @@
         "stack",
         "frame group",
         "growing boxes",
-        "reflow"
+        "reflow",
+        "row",
+        "shrink",
+        "grow"
       ],
       "es": [
         "pila",
         "grupo de marcos",
         "cajas que crecen",
-        "recomposición"
+        "recomposición",
+        "fila",
+        "reparto de anchura"
       ],
       "ca": [
         "pila",
         "grup de marcs",
-        "caixes que creixen"
+        "caixes que creixen",
+        "fila"
       ],
       "zh": [
         "堆叠",
         "框组",
-        "变高的框"
+        "变高的框",
+        "组",
+        "一行框",
+        "一叠框"
       ],
       "ar": [
         "رصّة",
         "مجموعة إطارات",
-        "إطارات تكبر"
+        "إطارات تكبر",
+        "كومة",
+        "صف"
       ],
       "ja": [
         "スタック",
         "フレームグループ",
-        "伸びる枠"
+        "伸びる枠",
+        "グループ",
+        "横並び",
+        "縦積み"
       ],
       "pt": [
         "pilha",
         "grupo de quadros",
-        "caixas que crescem"
+        "caixas que crescem",
+        "fileira",
+        "grupo de blocos"
       ],
       "fr": [
         "pile",
         "groupe de blocs",
-        "cadres qui grandissent"
+        "cadres qui grandissent",
+        "rangée"
       ],
       "de": [
         "Stapel",
         "Rahmengruppe",
-        "wachsende Kästen"
+        "wachsende Kästen",
+        "Reihe"
       ],
       "it": [
         "pila",
         "gruppo di riquadri",
-        "riquadri che crescono"
+        "riquadri che crescono",
+        "fila",
+        "gruppo di cornici"
       ]
     },
     "group": "page",
@@ -24030,6 +24057,98 @@
       ],
       "config": [
         "labelStyles"
+      ]
+    }
+  },
+  "frame-decoration": {
+    "label": {
+      "en": "Decoration anchored to frames",
+      "es": "Decoración anclada a los marcos",
+      "ca": "Decoració ancorada als marcs",
+      "zh": "锚定在框上的装饰",
+      "ar": "زخرفة مثبّتة بالإطارات",
+      "ja": "枠に固定した飾り",
+      "pt": "Decoração ancorada aos blocos",
+      "fr": "Décor ancré aux blocs",
+      "de": "An Rahmen verankertes Dekor",
+      "it": "Decorazione ancorata alle cornici"
+    },
+    "definition": {
+      "en": "The rules, boxes, pictures and short texts of a template’s decoration are laid after its frames, so an element anchored to \"#frame\" follows that frame wherever its group moves or widens it.",
+      "es": "Los filetes, cajas, imágenes y textos breves de la decoración de una plantilla se colocan después de sus marcos, así que un elemento anclado a \"#marco\" sigue a ese marco adondequiera que su grupo lo mueva o lo ensanche.",
+      "ca": "Els filets, caixes, imatges i textos breus de la decoració d’una plantilla es col·loquen després dels marcs, així que un element ancorat a \"#marc\" segueix aquell marc allà on el seu grup el mogui o l’eixampli.",
+      "zh": "模板装饰里的线、方块、图片和短文字在框排好之后才放，所以锚定在\"#框\"上的元素会跟着那个框走，不管组把它移到哪里、加宽多少。",
+      "ar": "تُوضع الخطوط والصناديق والصور والنصوص القصيرة في زخرفة القالب بعد إطاراته، فيتبع العنصرُ المثبّت بـ\"#إطار\" ذلك الإطارَ أينما حرّكته مجموعته أو وسّعته.",
+      "ja": "テンプレートの飾り（罫、箱、画像、短い文字）は枠を置いたあとに配置されます。\"#枠名\"に固定した要素は、グループがその枠を動かしても広げても付いていきます。",
+      "pt": "Os fios, caixas, imagens e textos curtos da decoração de um modelo são postos depois dos blocos, então um elemento ancorado a \"#bloco\" acompanha esse bloco aonde quer que o grupo o mova ou alargue.",
+      "fr": "Les filets, boîtes, images et textes courts du décor d’un modèle sont placés après ses blocs : un élément ancré à \"#bloc\" suit ce bloc partout où son groupe le déplace ou l’élargit.",
+      "de": "Linien, Kästen, Bilder und kurze Texte im Dekor einer Vorlage werden nach den Rahmen gesetzt, sodass ein an \"#rahmen\" verankertes Element dem Rahmen folgt, wohin seine Gruppe ihn auch schiebt oder verbreitert.",
+      "it": "Filetti, riquadri, immagini e brevi testi della decorazione di un modello si collocano dopo le cornici, quindi un elemento ancorato a \"#cornice\" la segue ovunque il suo gruppo la sposti o la allarghi."
+    },
+    "aliases": {
+      "en": [
+        "decoration",
+        "anchor to a frame",
+        "timeline dots"
+      ],
+      "es": [
+        "decoración",
+        "anclar a un marco",
+        "puntos de cronología"
+      ],
+      "ca": [
+        "decoració",
+        "ancorar a un marc"
+      ],
+      "zh": [
+        "装饰",
+        "锚定"
+      ],
+      "ar": [
+        "زخرفة",
+        "تثبيت بإطار"
+      ],
+      "ja": [
+        "飾り",
+        "アンカー"
+      ],
+      "pt": [
+        "decoração",
+        "ancorar a um bloco"
+      ],
+      "fr": [
+        "décor",
+        "ancrage à un bloc"
+      ],
+      "de": [
+        "Dekor",
+        "an Rahmen verankern"
+      ],
+      "it": [
+        "decorazione",
+        "ancorare a una cornice"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Decoration, running heads and layers",
+        "es": "Decoración, cabeceras y capas",
+        "ca": "Decoració, capçaleres i capes",
+        "zh": "装饰、书眉与层",
+        "ar": "الزخرفة والترويسات والطبقات",
+        "ja": "飾り、柱、レイヤー",
+        "pt": "Decoração, cabeços e camadas",
+        "fr": "Décor, titres courants et calques",
+        "de": "Dekor, Kolumnentitel und Ebenen",
+        "it": "Decorazione, testatine e livelli"
+      }
+    },
+    "since": "1.35.0",
+    "detect": {
+      "config": [
+        "pageTemplates[].decoration"
       ]
     }
   }

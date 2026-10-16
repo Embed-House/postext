@@ -1,0 +1,54 @@
+---
+title: "Una linea del tempo illustrata su una doppia pagina"
+summary: "Un modello su doppia pagina per la linea del tempo di un manuale: una fascia attraversa il dorso e due file di schede si dividono la larghezza."
+plain: "Due pagine affiancate di un libro di storia fatte come una sola: una fascia colorata attraversa il centro del libro e sotto sei schede illustrate si dividono la larghezza, così la storia più lunga prende la scheda più larga."
+description: "Una linea del tempo su doppia pagina con Postext: un modello, una fascia sul dorso, schede che si dividono la larghezza e punti che seguono ogni scheda."
+question: "Come impagino una linea del tempo su una doppia pagina, con schede su entrambe le pagine?"
+aliases: ["linea del tempo", "cronologia", "doppia pagina", "modello di pagina", "fila di cornici", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+---
+
+## Che cosa comporrai
+
+Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta*, mille anni di mestiere dalla bottega di Cai Lun alla mola di Keller. La pagina di sinistra apre con il titolo e due paragrafi, quella di destra con un riquadro che racconta come si faceva un foglio a mano. Al centro corre la linea del tempo: una fascia indaco per l’Asia e una color terracotta per l’Europa, che parte dalla pagina di sinistra e attraversa il dorso. Sotto, sei schede con il loro disegno, appese alla fascia con un punto e un tratto. Le schede si dividono la larghezza: quella del 1844, con la storia più lunga, prende larghezza alle due vicine (3 mm in spagnolo, 13 mm in giapponese) e il suo punto si sposta con lei. Tutte le parole sono nel Markdown, in spagnolo, inglese e giapponese; questa pagina mostra l’edizione inglese.
+
+## Preparazione
+
+### 1 · Un foglio per due pagine
+
+<Excerpt region="answer" />
+
+`spread: true` fa del modello un solo foglio largo come le due pagine, e il blocco della pagina lo dice con `spread`. Una doppia pagina comincia su una pagina pari, perciò la composizione riceve `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: la pagina 1 di questo estratto è la 48 del libro, una pagina di sinistra, e non serve una pagina bianca davanti. La griglia ha una colonna per pagina, separate dal doppio del margine interno, così solo la fascia arriva vicino alla piega. La seconda fascia ha `crossGutter` e 36 mm di spaziatura a sinistra: il suo colore parte dalla fine della prima e attraversa il dorso, le sue parole cominciano sulla pagina di destra, dove l’impaginazione le legge.
+
+### 2 · Schede che si dividono la larghezza
+
+<Excerpt region="cards" />
+
+Ogni fila di tre schede è un gruppo `row`, e ogni scheda ha un’altezza fissa (`height`) con un `maxHeight` più alto di 16 mm. Quando il testo di una scheda supera la sua altezza, prende dalle vicine con `shrink` i millimetri interi che le servono, e ogni vicina tiene la larghezza in cui il suo testo entra ancora. Solo quando non hanno più nulla da dare la scheda cresce verso il basso, fino a `maxHeight`. Nell’edizione spagnola la scheda del 1844 prende 3 mm, 2 da quella del 1282 e 1 da quella del 1150; con tutti i testi più lunghi del 30 %, la prova del banco, ne prende 15, e il riquadro e l’attacco portano il testo al 92,5 % e all’85 %.
+
+### 3 · Punti che seguono le schede
+
+<Excerpt region="marks" />
+
+I punti e i tratti sono la decorazione (`decoration`) del modello, ancorati a `#c1` … `#c6` sul bordo superiore (`top`) e alzati della distanza dalla fascia. La decorazione si colloca dopo le cornici: quando una scheda si sposta o si allarga, il suo punto resta sopra il suo centro. Anche il fondo crema è decorazione, un riquadro ancorato al piede dell’abbondanza che comincia alla fascia.
+
+### 4 · Disegni alla misura di stampa
+
+<Excerpt region="art" />
+
+Le vignette sono larghe 1.000 px a 550 ppi, 46 mm sulla pagina, e un’immagine non viene mai ingrandita: la scheda che si allarga tiene il suo disegno e lascia lo spazio al testo. Una scheda più stretta di 46 mm rimpicciolisce il disegno, come si vede nell’edizione giapponese nelle schede del 1150 e del 1282, le due che cedono larghezza a quella del 1844.
+
+## Varianti
+
+### Schede tutte della stessa larghezza
+
+Con `shrink: 0` nessuna scheda cede larghezza: quella del 1844 cresce verso il basso, fino al suo `maxHeight`, e la fila finisce irregolare.
+
+```diff
+-  shrink: 1, // a card gives width to a neighbour whose text runs past the row
++  shrink: 0,
+```
+
+## Errori frequenti
+
+- Una fila le cui schede hanno altezze `'auto'` non divide mai la larghezza: leggi l’errore qui sotto e dai un’altezza alle schede.
+- L’edizione giapponese è composta in orizzontale, come i manuali di storia in Giappone. Un modello su doppia pagina in un libro verticale (`vertical-rl`) viene collocato nel sistema ruotato del testo, con cornici, disegni e fondo fuori posto, e nessun avviso lo segnala: per ora tieni le doppie pagine composte nei libri orizzontali.

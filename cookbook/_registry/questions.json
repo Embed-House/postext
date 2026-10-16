@@ -5098,5 +5098,61 @@
       "it": "Carte, su doppia pagina"
     },
     "theme": "figures"
+  },
+  "Q183": {
+    "kind": "how",
+    "text": {
+      "en": "How do I lay out a timeline across a double page, with a band over the spine and cards on both pages?",
+      "es": "¿Cómo maqueto una cronología a doble página, con una banda que cruza el lomo y fichas en las dos páginas?",
+      "ca": "Com maqueto una cronologia a doble pàgina, amb una banda que travessa el llom i fitxes a les dues pàgines?",
+      "zh": "怎样把年表排成跨页，让一条色带跨过书脊，卡片分布在两页上？",
+      "ar": "كيف أنضّد خطًّا زمنيًّا على صفحتين متقابلتين، بشريط يعبر الكعب وبطاقات على الصفحتين؟",
+      "ja": "のどをまたぐ帯と左右のページのカードで、見開きの年表を組むには？",
+      "pt": "Como diagramo uma linha do tempo em página dupla, com uma faixa que atravessa a lombada e fichas nas duas páginas?",
+      "fr": "Comment mettre en page une frise chronologique sur une double page, avec un bandeau qui passe le dos et des fiches sur les deux pages ?",
+      "de": "Wie setze ich eine Zeitleiste über eine Doppelseite, mit einem Band über den Bund und Karten auf beiden Seiten?",
+      "it": "Come impagino una linea del tempo su una doppia pagina, con una fascia che attraversa il dorso e schede su entrambe le pagine?"
+    },
+    "index": {
+      "en": "Timelines, across a double page",
+      "es": "Cronologías a doble página",
+      "ca": "Cronologies a doble pàgina",
+      "zh": "年表，跨页",
+      "ar": "الخطوط الزمنية، على صفحتين متقابلتين",
+      "ja": "年表、見開きの",
+      "pt": "Linhas do tempo em página dupla",
+      "fr": "Frises chronologiques sur double page",
+      "de": "Zeitleisten über eine Doppelseite",
+      "it": "Linee del tempo su doppia pagina"
+    },
+    "theme": "page"
+  },
+  "Q184": {
+    "kind": "how",
+    "text": {
+      "en": "How do I let a row of boxes share its width, so the one with the longest text gets wider?",
+      "es": "¿Cómo hago que una fila de cajas se reparta la anchura y la del texto más largo se ensanche?",
+      "ca": "Com faig que una fila de caixes es reparteixi l’amplada i la del text més llarg s’eixampli?",
+      "zh": "怎样让一行方框分配宽度，文字最长的那个变宽？",
+      "ar": "كيف أجعل صفًّا من الصناديق يتقاسم عرضه، فيتّسع الصندوق ذو النص الأطول؟",
+      "ja": "横に並んだ囲みで幅を分け合い、文章のいちばん長い囲みを広くするには？",
+      "pt": "Como faço uma fileira de caixas dividir a largura, para que a do texto mais longo fique mais larga?",
+      "fr": "Comment faire qu’une rangée d’encadrés se partage la largeur et que celui au texte le plus long s’élargisse ?",
+      "de": "Wie lasse ich eine Reihe von Kästen ihre Breite teilen, sodass der mit dem längsten Text breiter wird?",
+      "it": "Come faccio a far dividere la larghezza a una fila di riquadri, così che quello col testo più lungo si allarghi?"
+    },
+    "index": {
+      "en": "Rows of boxes, width shared in",
+      "es": "Filas de cajas, reparto de anchura",
+      "ca": "Files de caixes, repartiment d’amplada",
+      "zh": "一行方框，分配宽度",
+      "ar": "صفوف الصناديق، تقاسم العرض فيها",
+      "ja": "横並びの囲み、幅の分け合い",
+      "pt": "Fileiras de caixas, divisão da largura",
+      "fr": "Rangées d’encadrés, partage de la largeur",
+      "de": "Reihen von Kästen, Breite teilen",
+      "it": "File di riquadri, divisione della larghezza"
+    },
+    "theme": "page"
   }
 }
