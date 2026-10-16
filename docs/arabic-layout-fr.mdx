@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Comment Postext compose l’arabe : sens d’écriture et algorithme bidirectionnel, livres reliés à droite, mots liés jamais coupés ni espacés, justification par kashida, signes vocaliques, mise en valeur, chiffres et styles de numérotation, ordinaux en toutes lettres, notes de bas de page, poésie classique, table des matières, index, citations et polices',
   lang: 'fr',
   lastUpdated: '2026-10-04',
-  readingTime: '24 min',
-  order: 16,
+  readingTime: '33 min',
+  order: 31,
   plainSummary: "Cette page explique comment Postext met en page l’arabe. L’arabe se lit de droite à gauche : les lignes, les colonnes et les pages du livre suivent donc ce sens, tandis que les nombres et les mots anglais du texte se lisent toujours de gauche à droite. Les lettres d’un mot sont liées entre elles : Postext ne coupe donc jamais un mot, n’écarte jamais ses lettres et, pour allonger une ligne, étire certaines liaisons. La page traite aussi des signes de voyelles placés au-dessus et au-dessous des lettres, des chiffres employés dans chaque région, des notes et des poèmes. Elle se termine par deux exemples complets et les limites qui subsistent.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **Un livre arabe va de droite à gauche, de ses lettres à ses doubles pages, et ses mots sont des tracés liés que l’on ne peut pas couper.**
 
-Postext compose l’arabe standard moderne et l’arabe classique à partir du même Markdown et de la même configuration que toute autre langue. Un seul réglage, la langue du document, retourne le livre entier : les lignes commencent à droite, la première colonne est celle de droite, le livre est relié sur le bord droit et ses doubles pages se lisent de droite à gauche, tandis que les mots latins et les nombres d’une ligne continuent de se lire de gauche à droite. Les mots sont mesurés et peints entiers, mis en forme par la police, et une ligne justifiée s’élargit à ses espaces et par l’allongement des liaisons entre les lettres (kashida), jamais en écartant les lettres. Cette page explique ce que fait le moteur et quels réglages le contrôlent. La [référence de configuration](/fr/docs/configuration-text#sens-du-texte) liste chaque clé avec sa valeur par défaut, et le [format du document](/fr/docs/document-format#sens-du-texte-dans-le-balisage) décrit le balisage.
+Postext compose l’arabe standard moderne et l’arabe classique à partir du même Markdown et de la même configuration que toute autre langue. Un seul réglage, la langue du document, retourne le livre entier : les lignes commencent à droite, la première colonne est celle de droite, le livre est relié sur le bord droit et ses doubles pages se lisent de droite à gauche, tandis que les mots latins et les nombres d’une ligne continuent de se lire de gauche à droite. Les mots sont mesurés et peints entiers, mis en forme par la police, et une ligne justifiée s’élargit à ses espaces et par l’allongement des liaisons entre les lettres (kashida), jamais en écartant les lettres. Cette page explique ce que fait le moteur et quels réglages le contrôlent. La [référence de configuration](/fr/docs/configuration-language#sens-du-texte) liste chaque clé avec sa valeur par défaut, et le [format du document](/fr/docs/document-format-inline#sens-du-texte-dans-le-balisage) décrit le balisage.
 
 Les règles suivent les *Arabic & Persian Layout Requirements* du W3C ([alreq](https://www.w3.org/TR/alreq/)) et l’algorithme bidirectionnel Unicode ([UAX #9](https://www.unicode.org/reports/tr9/)) et, pour les conventions du livre, les ouvrages imprimés au Caire, à Beyrouth et par l’imprimerie de Būlāq. Les sources sont listées à la fin.
 
@@ -117,7 +117,7 @@ Un réglage qui nomme un côté désigne un côté du texte, et non de la feuill
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Réglage</th>
+      <th>Réglage</th>
       <th><code>left</code> / <code>right</code></th>
       <th><code>start</code> / <code>end</code></th>
     </tr>
@@ -170,7 +170,7 @@ Les signes vocaliques (ḥarakāt : fatḥa, ḍamma, kasra, sukūn, shadda, ta
   <thead>
     <tr>
       <th>Texte</th>
-      <th style={{ width: '200px' }}><code>lineHeight</code></th>
+      <th><code>lineHeight</code></th>
     </tr>
   </thead>
   <tbody>
@@ -201,7 +201,7 @@ L’arabe s’écrit avec trois jeux de chiffres, choisis selon la région :
     <tr>
       <th>Région</th>
       <th>Chiffres</th>
-      <th style={{ width: '170px' }}><code>numerals</code></th>
+      <th><code>numerals</code></th>
     </tr>
   </thead>
   <tbody>
@@ -211,7 +211,7 @@ L’arabe s’écrit avec trois jeux de chiffres, choisis selon la région :
   </tbody>
 </table>
 
-La clé de premier niveau `numerals` règle les chiffres de tous les nombres qu’écrit le moteur : folios et numéros de page de la table des matières et de l’index, numéros de liste et de note, compteurs de titres et de chapitres, numéros de figures et renvois vers elles, `{totalPages}`. `'auto'` prend les chiffres de la région dans `locale` (`ar` sans région, et `ar-AE`, sont machrékins, comme les impriment les livres arabes de ces pays) ; une étiquette peut nommer les siens (`ar-MA-u-nu-arab`). Les nombres saisis par l’auteur ne sont jamais modifiés et sont lus dans n’importe quel système : un élément de liste `٣.` commence à 3, et `{startAt=٥}` vaut 5. Voir [Chiffres du document](/fr/docs/configuration-text#chiffres-du-document).
+La clé de premier niveau `numerals` règle les chiffres de tous les nombres qu’écrit le moteur : folios et numéros de page de la table des matières et de l’index, numéros de liste et de note, compteurs de titres et de chapitres, numéros de figures et renvois vers elles, `{totalPages}`. `'auto'` prend les chiffres de la région dans `locale` (`ar` sans région, et `ar-AE`, sont machrékins, comme les impriment les livres arabes de ces pays) ; une étiquette peut nommer les siens (`ar-MA-u-nu-arab`). Les nombres saisis par l’auteur ne sont jamais modifiés et sont lus dans n’importe quel système : un élément de liste `٣.` commence à 3, et `{startAt=٥}` vaut 5. Voir [Chiffres du document](/fr/docs/configuration-language#chiffres-du-document).
 
 Un format nommé dans la configuration s’imprime tel qu’il est nommé, si bien qu’un livre peut mélanger les systèmes. Les styles de numérotation arabes :
 
@@ -220,7 +220,7 @@ Un format nommé dans la configuration s’imprime tel qu’il est nommé, si bi
     <tr>
       <th>Style</th>
       <th>1, 2, 3 … 11, 1446</th>
-      <th style={{ width: '220px' }}>Nom</th>
+      <th>Nom</th>
     </tr>
   </thead>
   <tbody>
@@ -270,7 +270,7 @@ headings: {
 },
 ```
 
-Cela imprime الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة et, à 1001, الليلة الحادية بعد الألف ; `'الفصل {1:ordinal}'` imprime الفصل الأول, الفصل الحادي عشر. Les ordinaux s’écrivent jusqu’à 9 999 et les cardinaux jusqu’à 99 999 ; au-delà, le nombre s’imprime en chiffres. Les variables de design `{numberWords}` et `{numberOrdinalWords}` donnent les formes masculines. Voir [Nombres en toutes lettres](/fr/docs/configuration-text#numéros-en-toutes-lettres).
+Cela imprime الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة et, à 1001, الليلة الحادية بعد الألف ; `'الفصل {1:ordinal}'` imprime الفصل الأول, الفصل الحادي عشر. Les ordinaux s’écrivent jusqu’à 9 999 et les cardinaux jusqu’à 99 999 ; au-delà, le nombre s’imprime en chiffres. Les variables de design `{numberWords}` et `{numberOrdinalWords}` donnent les formes masculines. Voir [Nombres en toutes lettres](/fr/docs/configuration-headings#numéros-en-toutes-lettres).
 
 ## Notes de bas de page
 
@@ -310,9 +310,9 @@ Un poème arabe classique (qaṣīda, qiṭʿa) se compose à raison d’un vers
 - **Caractère.** Le poème prend le caractère et le corps du texte courant ; `style` nomme un style de paragraphe, et c’est ainsi qu’un poème vocalisé reçoit l’interlignage dont ses signes ont besoin. Un poème en translittération latine dans un livre anglais se compose de la même façon, son ṣadr à gauche.
 - **Numéros de ligne.** Avec `lineNumbers` activé, un poème compte un numéro par bayt, imprimé dans la marge à côté de lui ; le ʿajuz d’un bayt décalé, sur sa propre ligne, ne reçoit pas de numéro. `position: 'start'` place les numéros à droite de chaque page d’un livre arabe. Voir [Configuration › Numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne).
 
-Le texte brut garde le poème tel qu’il est écrit, un bayt par ligne, sans les kashidas ni l’ornement. Voir [`:::verse`](/fr/docs/document-format#verse) dans le format du document.
+Le texte brut garde le poème tel qu’il est écrit, un bayt par ligne, sans les kashidas ni l’ornement. Voir [`:::verse`](/fr/docs/document-format-directives#verse) dans le format du document.
 
-**Vers libres et poèmes latins.** Un poème dont les lignes ne portent pas de `||` (des vers libres modernes, ou un poème latin cité dans un livre arabe, `:::verse{dir=ltr lang=en}`) se compose plutôt ligne par ligne : chaque ligne de la source donne un vers, des lignes vides entre les strophes, des espaces en début de ligne pour un retrait mesuré depuis le côté de début propre au poème, et les lignes trop longues renvoyées à la ligne avec un retrait suspendu. Voir [`:::verse` › Ligne par ligne](/fr/docs/document-format#vers-par-vers).
+**Vers libres et poèmes latins.** Un poème dont les lignes ne portent pas de `||` (des vers libres modernes, ou un poème latin cité dans un livre arabe, `:::verse{dir=ltr lang=en}`) se compose plutôt ligne par ligne : chaque ligne de la source donne un vers, des lignes vides entre les strophes, des espaces en début de ligne pour un retrait mesuré depuis le côté de début propre au poème, et les lignes trop longues renvoyées à la ligne avec un retrait suspendu. Voir [`:::verse` › Ligne par ligne](/fr/docs/document-format-directives#vers-par-vers).
 
 ## Table des matières et index
 
@@ -326,7 +326,7 @@ Le texte brut garde le poème tel qu’il est écrit, un bayt par ligne, sans le
 
 Une ligne de la table des matières se compose de droite à gauche : le numéro et le titre à droite, les points de conduite, le numéro de page à gauche. Un titre latin dans un livre arabe garde son numéro de page à gauche, et ses propres mots se lisent de gauche à droite.
 
-**Taquets de tabulation.** Les taquets de tabulation du texte courant fonctionnent de la même façon (voir [Tabulations et taquets](/fr/docs/document-format#tabulations-et-taquets)) : la position d’un taquet se mesure depuis le bord droit de la justification, un taquet `end` se place à gauche, et des points de conduite courent entre les parties dans l’ordre visuel. Une liste de prix ou une table des matières saisie en paragraphes, `الفصل الأول :tab 12` sous un style dont le taquet est `{ position: 'end', align: 'end', leader: '.' }`, compose le titre à droite et le numéro à gauche, derrière des points.
+**Taquets de tabulation.** Les taquets de tabulation du texte courant fonctionnent de la même façon (voir [Tabulations et taquets](/fr/docs/document-format-inline#tabulations-et-taquets)) : la position d’un taquet se mesure depuis le bord droit de la justification, un taquet `end` se place à gauche, et des points de conduite courent entre les parties dans l’ordre visuel. Une liste de prix ou une table des matières saisie en paragraphes, `الفصل الأول :tab 12` sous un style dont le taquet est `{ position: 'end', align: 'end', leader: '.' }`, compose le titre à droite et le numéro à gauche, derrière des points.
 
 **Index.** L’index d’un livre arabe trie ses entrées dans l’ordre alphabétique (hijāʾī) et les regroupe sous leur première lettre. Il ignore l’article défini : البصرة se classe sous ب, entre بدر et بغداد, et s’imprime tel qu’il est écrit (`index.ignoreArticle`, activé par défaut quand la langue de l’index est l’arabe ; الله garde son article). Il ignore aussi les signes vocaliques et le tatweel, classe أ إ آ ٱ sous ا, et trie ة avec ه et ى avec ي. Les numéros de page sont reliés par la virgule arabe (، ) et un renvoi se lit انظر ou انظر أيضًا. Une entrée dotée de sa propre clé `sort` garde l’article de cette clé. Voir [Index](/fr/docs/configuration-notes-references#index).
 
@@ -339,9 +339,9 @@ Postext compose chaque style dans une seule famille et ne se rabat pas sur une a
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Caractère</th>
+      <th>Caractère</th>
       <th>Style</th>
-      <th style={{ width: '240px' }}>Usage</th>
+      <th>Usage</th>
     </tr>
   </thead>
   <tbody>
@@ -355,7 +355,7 @@ Postext compose chaque style dans une seule famille et ne se rabat pas sur une a
 
 Markazi Text et Noto Kufi Arabic conviennent aux livres modernes (texte et titres), et El Messiri aux titres modernes. À corps nominal égal, un caractère naskh paraît plus petit qu’un caractère latin : le texte d’un livre arabe est couramment composé en 13–15 pt là où un texte latin serait en 10–11 pt.
 
-- **Dans le navigateur et le Sandbox**, Google Fonts et Fontsource servent chaque famille sous forme d’un fichier par sous-ensemble : `latin`, `latin-ext` et `arabic`. Le navigateur ne charge le fichier `arabic` qu’au moment où un caractère en a besoin, et une mise en page mesurée avant son arrivée l’est dans un caractère de repli. Le Sandbox le charge avant la première mise en page ; un hôte le vérifie avec un échantillon qui contient une lettre arabe (`document.fonts.load('16px Amiri', 'ب')`). Le fournisseur de polices PDF doit transmettre à `renderToPdf` le fichier `arabic` pour le texte arabe ; le fournisseur décrit dans [Fournisseur de polices du navigateur](/fr/docs/configuration-programmatic-usage#fournisseur-de-polices-dans-le-navigateur-fontsource--woff2) choisit la tranche par point de code.
+- **Dans le navigateur et le Sandbox**, Google Fonts et Fontsource servent chaque famille sous forme d’un fichier par sous-ensemble : `latin`, `latin-ext` et `arabic`. Le navigateur ne charge le fichier `arabic` qu’au moment où un caractère en a besoin, et une mise en page mesurée avant son arrivée l’est dans un caractère de repli. Le Sandbox le charge avant la première mise en page ; un hôte le vérifie avec un échantillon qui contient une lettre arabe (`document.fonts.load('16px Amiri', 'ب')`). Le fournisseur de polices PDF doit transmettre à `renderToPdf` le fichier `arabic` pour le texte arabe ; le fournisseur décrit dans [Fournisseur de polices du navigateur](/fr/docs/configuration-pdf-output#fournisseur-de-polices-dans-le-navigateur-fontsource--woff2) choisit la tranche par point de code.
 - **Dans un paquet**, livrez les caractères entiers ou réduits aux caractères du livre, en conservant les tables de mise en forme OpenType (`GSUB`, `GPOS`) : c’est là que se trouvent les formes de liaison, les ligatures, les positions des signes et les parenthèses en miroir. Un sous-ensemble qui en est privé imprime des lettres isolées.
 - **Les glyphes manquants** s’impriment sous la forme du carré vide de la police ; `renderToPdf` les signale par caractère (`missingGlyph`), et le Sandbox les liste dans le panneau Vérifications.
 - **Le latin à l’intérieur du texte arabe** se compose dans la même famille. Amiri a son propre latin ; avec un caractère naskh dont le latin est pauvre, composez les longs passages latins dans un style de paragraphe doté d’un caractère latin.
@@ -364,7 +364,7 @@ Markazi Text et Noto Kufi Arabic conviennent aux livres modernes (texte et titre
 
 Sous **Maquette › Système d’écriture**, la liste Langue du document propose العربية, العربية (مصر) et العربية (المغرب), et **Sens du texte** et **Chiffres** montrent à quoi correspond *Auto*. **Valeurs par défaut pour l’arabe › Vérifier…** liste ce que change la configuration du livre pour l’arabe avant de l’appliquer, avec un choix de caractères (*Classique*, Amiri ; *Moderne*, Noto Naskh Arabic avec des titres en Noto Kufi Arabic) : le sens et la reliure ramenés à *Auto*, des titres courants et des folios dans un caractère doté de lettres arabes, un interlignage de 1,75 em, un texte justifié, les chiffres de la région, شكل et جدول numérotés par chapitre, des légendes composées شكل ١-١: العنوان, des chapitres numérotés الفصل الأول, des listes numérotées ١- أ- (١) et des notes numérotées à chaque page. Chaque sélecteur de police liste d’abord les familles arabes.
 
-L’éditeur donne à chaque ligne le sens de sa première lettre : une ligne d’arabe part de la droite, et le curseur et les touches fléchées suivent l’ordre visuel, tandis que le balisage qu’elle contient (attributs `{…}`, `[^id]`, un `:ref[…]`, les formules mathématiques, les cibles de liens) reste de gauche à droite. Voir [Sandbox](/fr/docs/sandbox#panneau-maquette).
+L’éditeur donne à chaque ligne le sens de sa première lettre : une ligne d’arabe part de la droite, et le curseur et les touches fléchées suivent l’ordre visuel, tandis que le balisage qu’elle contient (attributs `{…}`, `[^id]`, un `:ref[…]`, les formules mathématiques, les cibles de liens) reste de gauche à droite. Voir [Sandbox](/fr/docs/sandbox-design-checks#panneau-maquette).
 
 ## Deux configurations complètes
 

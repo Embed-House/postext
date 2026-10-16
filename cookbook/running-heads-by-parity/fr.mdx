@@ -18,13 +18,13 @@ Les pages 29 à 33 d’une édition de poche des *Essais* de Montaigne dans l’
 
 <Excerpt region="palette" />
 
-Chaque couleur de la configuration est liée à l’une de ces entrées. Si vous laissez `header` non défini, le moteur dessine son titre courant intégré : `{title}` sur les rectos et `{chapterTitle}` sur les versos au-dessus d’un filet de 1 pt, en Open Sans 600 de 8 pt et en bleu `#295AA3` ([en-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page)). Faire pointer `main-color` sur le sépia recolore les valeurs par défaut du texte et ce titre courant avec elles, mais son caractère, son filet et le côté où s’imprime chaque titre restent ceux du moteur. Chaque titre courant est donc écrit ici en entier, chaque couleur liée à une entrée de palette. Le gras, l’italique et les renvois suivent aussi `main-color` par défaut, et `bodyText` les ramène à l’encre.
+Chaque couleur de la configuration est liée à l’une de ces entrées. Si vous laissez `header` non défini, le moteur dessine son titre courant intégré : `{title}` sur les rectos et `{chapterTitle}` sur les versos au-dessus d’un filet de 1 pt, en Open Sans 600 de 8 pt et en bleu `#295AA3` ([en-têtes et pieds de page](/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page)). Faire pointer `main-color` sur le sépia recolore les valeurs par défaut du texte et ce titre courant avec elles, mais son caractère, son filet et le côté où s’imprime chaque titre restent ceux du moteur. Chaque titre courant est donc écrit ici en entier, chaque couleur liée à une entrée de palette. Le gras, l’italique et les renvois suivent aussi `main-color` par défaut, et `bodyText` les ramène à l’encre.
 
 ### 2 · Construire chaque titre courant à partir d’un onglet
 
 <Excerpt region="tab" />
 
-La réponse courte ancre l’onglet de chaque titre courant à `'page'` : ses décalages se mesurent donc depuis le bord de coupe. Depuis le coin `top-right`, un `x` positif sort de la page, d’où le décalage négatif de l’onglet du recto. Le filet de séparation est accroché à l’onglet, et le titre au filet ([placement des éléments](/fr/docs/configuration-page-layout#placement-des-éléments)). Les dimensions de l’onglet sont des constantes nommées, parce que les autres pièces se mesurent à partir d’elles. Le filet mesure `TAB_H` de haut. Le folio et les deux titres partagent une même boîte de ligne de 9 pt, et la ligne de base d’un texte de maquette se place aux 80 % de la hauteur de sa boîte de ligne : les trois reposent donc sur une même ligne de base, quel que soit le corps.
+La réponse courte ancre l’onglet de chaque titre courant à `'page'` : ses décalages se mesurent donc depuis le bord de coupe. Depuis le coin `top-right`, un `x` positif sort de la page, d’où le décalage négatif de l’onglet du recto. Le filet de séparation est accroché à l’onglet, et le titre au filet ([placement des éléments](/fr/docs/configuration-headers-footers#placement-des-éléments)). Les dimensions de l’onglet sont des constantes nommées, parce que les autres pièces se mesurent à partir d’elles. Le filet mesure `TAB_H` de haut. Le folio et les deux titres partagent une même boîte de ligne de 9 pt, et la ligne de base d’un texte de maquette se place aux 80 % de la hauteur de sa boîte de ligne : les trois reposent donc sur une même ligne de base, quel que soit le corps.
 
 <PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Page 30, un verso : l’onglet, le filet et le titre du livre, lus de la marge extérieure vers l’intérieur." />
 
@@ -40,13 +40,13 @@ Avec `mirror: true`, la marge `right` est la marge extérieure sur un recto et p
 
 <Excerpt region="opener" />
 
-L’ouverture compose le titre en entier avec `overflow: 'wrap'` et le coupe à chaque `\\` de la ligne de titre. Seule une ouverture sur toute la largeur de la page respecte ces coupures : le niveau porte donc `span: 'page'` ([sauts de ligne dans les titres](/fr/docs/document-format#sauts-de-ligne-dans-les-titres)). Dans le titre courant, `{chapterTitle}` donne toujours le titre sur une seule ligne, et ce sont les points de suspension qui coupent cette ligne. Le chiffre romain vient de l’attribut `{num="IV"}` du titre, et les petites capitales à côté de la plaque viennent du `subtitle` du frontmatter.
+L’ouverture compose le titre en entier avec `overflow: 'wrap'` et le coupe à chaque `\\` de la ligne de titre. Seule une ouverture sur toute la largeur de la page respecte ces coupures : le niveau porte donc `span: 'page'` ([sauts de ligne dans les titres](/fr/docs/document-format-directives#sauts-de-ligne-dans-les-titres)). Dans le titre courant, `{chapterTitle}` donne toujours le titre sur une seule ligne, et ce sont les points de suspension qui coupent cette ligne. Le chiffre romain vient de l’attribut `{num="IV"}` du titre, et les petites capitales à côté de la plaque viennent du `subtitle` du frontmatter.
 
 ### 5 · Ouvrir chaque essai sur un recto
 
 <Excerpt region="levels" />
 
-Avec `'odd'`, un essai qui se termine sur un recto est suivi d’un verso blanc. L’édition espagnole en a un, car son chapitre IV se termine à la page 31 ; ici, le chapitre IV se termine à la page 32, un verso, et le chapitre V s’ouvre à la page 33. Le `pages: 'body'` des titres courants les écarte des pages blanches et des ouvertures (les pages dont le premier bloc est ce titre). Le `pages: 'opener'` du pied de page n’imprime le folio en pied que sur les ouvertures ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)).
+Avec `'odd'`, un essai qui se termine sur un recto est suivi d’un verso blanc. L’édition espagnole en a un, car son chapitre IV se termine à la page 31 ; ici, le chapitre IV se termine à la page 32, un verso, et le chapitre V s’ouvre à la page 33. Le `pages: 'body'` des titres courants les écarte des pages blanches et des ouvertures (les pages dont le premier bloc est ce titre). Le `pages: 'opener'` du pied de page n’imprime le folio en pied que sur les ouvertures ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)).
 
 ### 6 · Commencer les folios à 29
 

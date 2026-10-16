@@ -1,0 +1,198 @@
+{/* docs/composed-pages-ca.mdx */}
+
+export const metadata = {
+  title: 'Pàgines compostes',
+  sidebarTitle: 'Pàgines compostes',
+  description: 'El Markdown de les pàgines compostes: la tanca de pàgina de quatre dos punts que anomena una plantilla de pàgina, els marcs i l’atribut slot que porten el contingut als marcs de la plantilla, les figures amb rètols a les àncores d’una imatge i els avisos que comproven el contingut amb la plantilla',
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 34,
+  plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext les anomena pàgines compostes. La forma de la pàgina és una plantilla de la configuració, i el Markdown només diu quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: la tanca de la pàgina, els marcs, els noms de slot i les imatges amb rètols, com els noms d'un mapa. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
+};
+
+# Pàgines compostes
+
+**La plantilla guarda la forma de la pàgina; el Markdown en guarda el contingut i diu a quin marc va cada tros.**
+
+Una pàgina composta es maqueta a partir d'una plantilla: marcs amb nom (una banda de títol, un text, una caixa amb la seva foto), grups que es mouen junts i una decoració, tot definit a la configuració, a `pageTemplates`. El Markdown de la pàgina és un bloc amb tanca que anomena la seva plantilla i aboca el contingut als marcs pel seu nom. Al Markdown mai no s'hi escriu cap posició ni cap mida, i a la configuració mai no s'hi escriu text del contingut, de manera que una traducció és la mateixa plantilla amb altres paraules.
+
+Aquesta pàgina tracta del Markdown. En aquesta versió l'analitzador ja llegeix les pàgines compostes i les comprovacions de slots s'executen, de manera que el tauler Revisió i `postext check` assenyalen una pàgina que no lliga amb la seva plantilla. La maquetació de la plantilla sobre la pàgina arriba a la versió següent; fins aleshores, el contingut d'una pàgina composta es compon al text corregut, en l'ordre del Markdown i en pàgines pròpies, així que no es perd res del que s'hi escriu. Un document sense pàgines compostes es maqueta exactament igual que abans.
+
+## La tanca de pàgina
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+Una pàgina composta s'obre amb una línia de **quatre dos punts** seguida de `page` i els seus atributs, i es tanca amb una línia que només porta el **mateix nombre de dos punts**. A dins, els contenidors de tres dos punts (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) s'obren i es tanquen com sempre, així que un `:::` solt tanca el més interior i mai la pàgina. Una pàgina escrita amb cinc dos punts (`:::::page`) es tanca amb cinc, i una línia de quatre dos punts a dins passa a ser text normal.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Atribut</th>
+      <th>Efecte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Obligatori. L'id d'una entrada de <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>La pàgina és una doble pàgina que ocupa dues pàgines encarades; la plantilla també ha de ser de doble pàgina.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Una àncora: un <code>:ref</code> que hi apunta imprimeix la pàgina on cau la pàgina composta.</td></tr>
+    <tr><td>qualsevol altre</td><td>Un valor que la plantilla llegeix com a <code>&#123;attr.name&#125;</code>, per exemple una imatge de fons triada pàgina a pàgina: <code>fondo="banda-retos"</code> amb <code>resourceId: "&#123;attr.fondo&#125;"</code> a la decoració.</td></tr>
+  </tbody>
+</table>
+
+Una pàgina composta sempre comença una pàgina nova (o una doble pàgina), i el text que segueix la seva tanca de tancament comença a la següent.
+
+El `:::page{split=…}` de tres dos punts és una pàgina de còmic (vegeu [Còmics](/ca/docs/comics)) i manté aquest sentit. Un `:::page` de tres dos punts que porta `template=` es continua llegint com a pàgina de còmic, i l'avís `pageFenceLength` indica que una pàgina composta necessita quatre dos punts.
+
+Quan falta una tanca, l'analitzador es refà sense perdre text:
+
+- una pàgina que es queda oberta arriba fins al final del capítol i s'assenyala com a contenidor sense tancar a la seva línia d'obertura;
+- una línia `::::page` que apareix amb una pàgina oberta tanca abans allà la pàgina oberta (i s'assenyala de la mateixa manera);
+- la tanca de tancament tanca qualsevol marc o caixa que encara estigui obert dins de la pàgina, i els assenyala un per un;
+- una tanca de tancament amb un altre nombre de dos punts no és la de la pàgina: es queda al text, a la vista.
+
+## Marcs i slots
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+Un **slot** és el nom que demana un tros de contingut, i coincideix amb el nom d'un marc de la plantilla. `:::frame{slot="…"}` envia a aquest marc tot el que conté. El seu cos és Markdown complet: paràgrafs, llistes, encapçalaments, xips, insercions `::resource`, referències `:ref`, notes a peu de pàgina, `:::columns` i caixes niades. `label` i `title` posen les paraules de la pestanya o del títol del marc, com en un `:::callout`; l'aspecte del marc surt de l'estil de requadre que li assigna la plantilla.
+
+Un bloc solt també pot anomenar el seu propi slot:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Bloc</th>
+      <th>Com s'escriu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Un encapçalament</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>Una inserció de recurs</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (els dos atributs, en qualsevol ordre)</td></tr>
+    <tr><td>Un llistat de codi</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>Una caixa o qualsevol altre contenidor</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: la caixa sencera va al slot</td></tr>
+    <tr><td>Una figura</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (vegeu més avall)</td></tr>
+  </tbody>
+</table>
+
+Com es reparteix el contingut:
+
+- Diversos trossos amb el mateix slot s'ajunten en l'ordre del Markdown.
+- El contingut sense slot va al **marc de flux** de la plantilla (el que porta `flow`).
+- Un encapçalament sense slot va primer al marc que pren el seu nivell (`takes: "h1"`), si la plantilla en té cap, així que el títol d'un tema d'un llibre de text és un simple `# Títol` al capdamunt de la pàgina.
+- El contingut que anomena un slot que la plantilla no té va al marc de flux i s'assenyala (`slotUnknown`).
+
+Un `slot` fora d'una pàgina composta es llegeix i no canvia res.
+
+## Figures amb rètols
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` col·loca un recurs, amb el seu peu i el seu número, com fa `::resource`, i enumera els rètols que van sobre la imatge: una línia `::label[TEXT]{…}` per rètol, amb línies en blanc permeses entre elles.
+
+- `at` anomena una àncora del recurs (un punt que es defineix una sola vegada sobre la imatge i que comparteixen totes les llengües), o dona un punt en percentatges de la imatge, `at="x% y%"`, per a un rètol sense àncora.
+- `style` anomena un estil de rètol i s'imposa al de l'àncora.
+- El text entre claudàtors és Markdown en línia: negreta, cursiva, xips.
+
+Una figura funciona tant al text corregut com dins d'un marc. Els rètols es llegeixen i es guarden juntament amb la seva posició al Markdown; dibuixar-los sobre la imatge arriba amb la maquetació de plantilles, i fins aleshores la figura es compon igual que el seu recurs. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
+
+## Exemple
+
+La pàgina d'un llibre de text escolar, amb una banda de títol, un text amb la seva llista i tres caixes de colors, cadascuna amb la seva foto al costat:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+El títol va al marc que pren `h1`; el subtítol, el paràgraf i la llista, al marc de flux; cada caixa i cada foto, al marc del seu slot. L'edició en català són les mateixes línies amb altres paraules: la plantilla, els slots i les fotos no canvien.
+
+## Avisos
+
+Les comprovacions llegeixen el Markdown i la configuració abans de maquetar res, així que apareixen al tauler Revisió mentre escrius, a `postext check` i als `contentWarnings` del document, cadascuna amb l'interval d'origen del que assenyala (vegeu [Configuració › Avisos del document](/ca/docs/configuration-programmatic-usage#avisos-del-document)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Tipus</th>
+      <th>Causa</th>
+      <th>Solució</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>La tanca de la pàgina anomena una plantilla que no és a <code>pageTemplates</code>, o no n'anomena cap. Els seus slots no es comproven.</td>
+      <td>Corregeix l'id o afegeix la plantilla a la configuració.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Un <code>slot="…"</code> no anomena cap marc de la plantilla de la pàgina (compten els marcs heretats amb <code>extends</code> i els d'una pàgina de <code>variants</code>). El contingut va al marc de flux.</td>
+      <td>Corregeix el nom del slot o afegeix a la plantilla un marc amb aquest nom.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Un marc de la plantilla no rep res en aquesta pàgina: cap slot no l'anomena, no pren cap encapçalament i, si és el marc de flux, no queda contingut sense slot. No s'assenyala un marc que només rep el que un altre marc hi continua (<code>next</code>). <code>postext check</code> el llista com a nota.</td>
+      <td>Escriu contingut per a aquest marc amb el seu slot, o marca'l com a <code>optional: true</code> a la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> de tres dos punts porta <code>template=</code>. Es llegeix com a pàgina de còmic, igual que abans.</td>
+      <td>Obre la pàgina amb quatre dos punts, <code>::::page&#123;template="…"&#125;</code>, i tanca-la amb <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>Una pàgina composta, un marc o una figura no es tanca mai (vegeu les regles de recuperació de més amunt). El tauler Revisió anomena la pàgina composta <code>::::page</code>.</td>
+      <td>Afegeix la tanca de tancament: tants dos punts com la línia d'obertura de la pàgina, o <code>:::</code> per a un marc o una figura.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Des del codi
+
+`composedPages(blocks)` llegeix els blocs analitzats d'un capítol (`parseMarkdownWithIssues(markdown).blocks`) i retorna un node per cada tanca de pàgina, en ordre: el seu `template`, `spread`, `attrs` amb l'interval d'origen de cada valor (`attrSources`), el seu `fenceIndex` (l'ordinal de la tanca dins del capítol, el mateix en totes les llengües), `slots` (els índexs dels blocs de cada slot, en l'ordre del Markdown), `unassigned` (els blocs sense slot) i l'interval d'origen de la pàgina sencera. Un bloc porta el slot que anomena a `ContentBlock.slot`, amb l'interval d'origen del valor; una figura és un `resourceBlock` el `figure` del qual guarda els seus atributs i els seus rètols, cada rètol amb el seu text, els seus trams en línia i un mapa d'origen que remet al Markdown. `checkComposedSlots(pages, config)` retorna els tres avisos de slot d'aquestes pàgines.

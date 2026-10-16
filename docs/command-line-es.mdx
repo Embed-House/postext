@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Un ejecutable autónomo para macOS, Linux y Windows que convierte un libro .postext, una carpeta de libro o Markdown suelto en PDF, HTML, EPUB, imágenes de página y Word, crea paquetes y revisa libros, con salida JSON para scripts y agentes',
   lang: 'es',
   lastUpdated: '2026-10-09',
-  readingTime: '10 min',
-  order: 22,
+  readingTime: '13 min',
+  order: 42,
   plainSummary: "Esta página es para quien quiere hacer libros con Postext desde una terminal en lugar de desde la web. Descargas un único archivo para tu ordenador y lo ejecutas, sin instalar nada más. Le das tu libro, o unos cuantos archivos de texto, y te hace un PDF, una página web, un libro electrónico, imágenes de las páginas o un documento de Word. También puede revisar un libro en busca de problemas y juntar todos sus archivos en uno. Otros programas y los asistentes de inteligencia artificial también pueden usarlo, porque sabe responder en un formato que leen con facilidad.",
 };
 
@@ -114,7 +114,7 @@ postext image my-book.postext --page 1 -o cover.png
 Todos los comandos que leen un libro aceptan cualquiera de estas formas:
 
 - **Un archivo `.postext`**: el paquete que el Sandbox exporta y abre (consulta
-  [Paquetes](/es/docs/configuration-programmatic-usage#paquetes-archivos-postext)).
+  [Paquetes](/es/docs/configuration-bundles#paquetes-archivos-postext)).
 - **Una carpeta de libro**: un paquete desempaquetado, con su `preset.json`,
   sus capítulos, sus recursos y sus fuentes. Es lo que entrega la skill para
   agentes, y `postext unpack` escribe una.
@@ -211,7 +211,7 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 `--layout fixed` (el valor por defecto) conserva cada página tal como se
 imprime, con el texto seleccionable; `--layout reflowable` deja que el sistema
 de lectura vuelva a componer el texto para su pantalla (consulta
-[Libros EPUB](/es/docs/configuration-programmatic-usage#libros-epub-postext-epub)). La cubierta es
+[Libros EPUB](/es/docs/configuration-html-folio-epub#libros-epub-postext-epub)). La cubierta es
 la miniatura del libro, salvo que `--cover` indique una imagen. Los metadatos
 del paquete (título, autores, idioma, identificador) salen del front matter
 del primer capítulo, como en el Sandbox.
@@ -300,6 +300,12 @@ cerca del corte. También enumera el texto que no se lee sobre su fondo
 imprenta, sobre el papel del perfil de salida. Cada problema indica el archivo
 del capítulo, la línea y la página. El código de salida es 3 cuando se encuentra un error, o cualquier
 aviso con `--strict`.
+
+También avisa de los textos de diseño de la configuración que guardan el texto
+del libro en lugar de marcadores (`contentInConfig`), una vez por estilo de
+título, titulillo o diseño de parte, con la ruta de cada texto: lleva ese texto
+al Markdown, o añade el título o el nombre de la editorial a
+`checks.contentInConfig.allow`.
 
 ### build y --watch
 

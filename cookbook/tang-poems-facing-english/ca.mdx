@@ -16,7 +16,7 @@ Un petit llibre bilingüe de poemes Tang, compost com les edicions bilingües de
 
 ### 1 · Un estil de títol per a cada costat del plec
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. Cada poema són dos títols de nivell 1: `# Night Thoughts {style="en" …}` amb els versos de Giles i després `# 靜夜思 {style="zh" …}` amb el poema. L'estil `en` salta a la pàgina parella següent; el `zh`, a la senar següent, la que queda al davant. Mentre cada poema càpiga a la seva pàgina no hi entra cap pàgina en blanc; una versió anglesa que passés de pàgina empenyeria el seu original a la senar següent, darrere d'una parella en blanc ([Saltar abans](/ca/docs/configuration-text#saltar-abans)). Els dos dissenys reserven sis línies de la retícula, així que l'anglès i el xinès comencen a la mateixa línia. L'estil xinès porta `span: 'page'` perquè el seu primer element, una caixa de la mida de la pàgina, és el full tenyit, i un disseny que es queda a la columna es talla al peu de la columna ([Span i disseny avançat](/ca/docs/configuration-text#span-i-disseny-avançat)).
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. Cada poema són dos títols de nivell 1: `# Night Thoughts {style="en" …}` amb els versos de Giles i després `# 靜夜思 {style="zh" …}` amb el poema. L'estil `en` salta a la pàgina parella següent; el `zh`, a la senar següent, la que queda al davant. Mentre cada poema càpiga a la seva pàgina no hi entra cap pàgina en blanc; una versió anglesa que passés de pàgina empenyeria el seu original a la senar següent, darrere d'una parella en blanc ([Saltar abans](/ca/docs/configuration-headings#saltar-abans)). Els dos dissenys reserven sis línies de la retícula, així que l'anglès i el xinès comencen a la mateixa línia. L'estil xinès porta `span: 'page'` perquè el seu primer element, una caixa de la mida de la pàgina, és el full tenyit, i un disseny que es queda a la columna es talla al peu de la columna ([Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Pàgina 2: l'anglès comença a la pàgina parella sis línies més avall, a la mateixa línia de la retícula on comença el xinès a la pàgina 3." />
 
@@ -36,7 +36,7 @@ Les notes són notes a peu de pàgina, una per renglera: `疑是地上霜。[^be
 
 <Excerpt region="heads" />
 
-Totes les pàgines d'aquest llibre comencen amb un títol, així que totes són obertures, i les capçaleres porten `pages: 'opener'`. Una pàgina en blanc que afegís un salt quedaria neta, i la portada les treu amb una capçalera buida pròpia. La pàgina parella pren el títol del llibre del `subtitle` del frontmatter, que cada edició escriu en la seva llengua; la senar pren el nom del poeta de l'atribut `name` del títol xinès ([Capçaleres i peus](/ca/docs/configuration-page-layout#capçaleres-i-peus)).
+Totes les pàgines d'aquest llibre comencen amb un títol, així que totes són obertures, i les capçaleres porten `pages: 'opener'`. Una pàgina en blanc que afegís un salt quedaria neta, i la portada les treu amb una capçalera buida pròpia. La pàgina parella pren el títol del llibre del `subtitle` del frontmatter, que cada edició escriu en la seva llengua; la senar pren el nom del poeta de l'atribut `name` del títol xinès ([Capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus)).
 
 ### 5 · Una portada sobre una lluna
 
@@ -48,7 +48,7 @@ La portada també és un estil de títol, amb `runningChapter: false` perquè no
 
 <Excerpt region="voices" />
 
-Fontsource parteix cada font xinesa en uns cent fitxers per rangs de caràcters, i `loadCjkFonts` baixa només els que necessita el seu text ([Fonts xineses, japoneses i coreanes](/ca/docs/configuration-programmatic-usage#fonts-xineses-japoneses-i-coreanes)). La Kai rep els poemes i el segell; la Hei, els noms dels poetes; la Song en negreta, els quatre títols i les paraules glossades de les notes, i el seu pes més negre, els dos caràcters de la portada.
+Fontsource parteix cada font xinesa en uns cent fitxers per rangs de caràcters, i `loadCjkFonts` baixa només els que necessita el seu text ([Fonts xineses, japoneses i coreanes](/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes)). La Kai rep els poemes i el segell; la Hei, els noms dels poetes; la Song en negreta, els quatre títols i les paraules glossades de les notes, i el seu pes més negre, els dos caràcters de la portada.
 
 ## Variants
 

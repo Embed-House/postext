@@ -42,6 +42,16 @@ describe("compareEdition (#736)", () => {
     expect(compareEdition(recorded, twice, options).map((f) => f.detail)).toEqual(["the Sandbox raises a warning the pen does not: unknownResourceId fig"]);
   });
 
+  it("warns, not fails, on a warning kind newer than the recipe's engine (#887)", () => {
+    const got = run({ chapters: [{ pages: 2, hash: "aaaa", warnings: ["contentInConfig header"] }] });
+    expect(compareEdition(expected(), got, { ...options, sameEngine: false })).toEqual([{
+      severity: "warn",
+      detail: "the Sandbox raises contentInConfig header, a warning postext 1.34.0 added after the recipe's 1.28.0: capture again on 1.34.0 or later",
+    }]);
+    const pinned = { ...expected(), engine: "1.34.0" };
+    expect(compareEdition(pinned, got, options)[0]).toMatchObject({ severity: "fail" });
+  });
+
   it("fails on an error of the page or the worker, and on a layout that brought nothing", () => {
     expect(compareEdition(expected(), run({ chapters: [], errors: ["the bundle does not open and lay out in the Sandbox: Not a zip archive"] }), options))
       .toEqual([{ severity: "fail", detail: "the bundle does not open and lay out in the Sandbox: Not a zip archive" }]);

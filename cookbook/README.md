@@ -1015,7 +1015,9 @@ that `readEpub` cannot read back in its own layout (C30; the writer's `missingFo
 not know (`unknownNumberFormat`, `unknownNumerals`), a value outside a setting's choices
 (`unknownConfigValue`) and a key no heading setting or paragraph style has (`unknownConfigKey`).
 Each sets a page other than the one the config claims; a recipe that shows one on purpose lists
-its kind in `expect.warnings`. A formula the maths engine could not set fails too (C32): it prints as
+its kind in `expect.warnings`. A design text that keeps the book's text instead of placeholders
+(`contentInConfig`, #849) is a warning: move the text into the Markdown, or list a title, a journal
+name or a brand line in the config's `checks.contentInConfig.allow`. A formula the maths engine could not set fails too (C32): it prints as
 a small red box and takes the room of one, so the pages after it are not the recipe's. The line
 names the formula, its page and MathJax's message, one line per message. A Sandbox bundle that
 does not lay out as the pen's documents fails as well (C33, above): another page count,

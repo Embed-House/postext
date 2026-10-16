@@ -22,13 +22,13 @@ Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Ein Haik
 
 <Excerpt region="tanka" />
 
-Takubokus Tanka sind ein Block `:::verse`, jedes Tanka eine Strophe: Seine drei Zeilen sind drei Zeilen des Markdowns, und die Leerzeile zwischen zwei Tanka in der Quelle lässt eine Rasterzeile zwischen den Gedichten frei. Der Stil des Gedichts gibt den Einzug von zwei Zeichen und die Linie unter der Gruppe vor, und die Zeilen hängen vom Kopf herab wie jede Spalte. `keepStanzas=3` hält jede dreizeilige Strophe zusammen: Auf Seite 5 passt das dritte Tanka nicht mehr unter den Teiltitel und die ersten beiden, also eröffnet es Seite 6 vollständig, statt seine erste Zeile zurückzulassen. Das Ornament zwischen zwei Gruppen leitet die nächste ein, daher geht es mit deren erstem Tanka mit, statt allein am Fuß einer Seite zu stehen ([`:::verse`](/de/docs/document-format#verse)).
+Takubokus Tanka sind ein Block `:::verse`, jedes Tanka eine Strophe: Seine drei Zeilen sind drei Zeilen des Markdowns, und die Leerzeile zwischen zwei Tanka in der Quelle lässt eine Rasterzeile zwischen den Gedichten frei. Der Stil des Gedichts gibt den Einzug von zwei Zeichen und die Linie unter der Gruppe vor, und die Zeilen hängen vom Kopf herab wie jede Spalte. `keepStanzas=3` hält jede dreizeilige Strophe zusammen: Auf Seite 5 passt das dritte Tanka nicht mehr unter den Teiltitel und die ersten beiden, also eröffnet es Seite 6 vollständig, statt seine erste Zeile zurückzulassen. Das Ornament zwischen zwei Gruppen leitet die nächste ein, daher geht es mit deren erstem Tanka mit, statt allein am Fuß einer Seite zu stehen ([`:::verse`](/de/docs/document-format-directives#verse)).
 
 ### 3 · Die Ortsnamen auf eine Breite sperren
 
 <Excerpt region="places" />
 
-Die Stationen von Bashōs Route sind Überschriften der Ebene 2, zwei Textzeilen hoch (2行取り), sodass Prosa und Haiku danach im Raster bleiben. `jidori: 3` sperrt einen kürzeren Namen auf drei seiner eigenen Zeichen (字取り): 平泉 wird als 平　泉 mit einem vollen Zeichen dazwischen gedruckt, und jeder Name endet auf derselben Höhe wie 立石寺 und 最上川. Ein Name, der schon drei Zeichen lang ist, bleibt unverändert ([Einstellungen pro Ebene](/de/docs/configuration-text#überschreibungen-pro-ebene)).
+Die Stationen von Bashōs Route sind Überschriften der Ebene 2, zwei Textzeilen hoch (2行取り), sodass Prosa und Haiku danach im Raster bleiben. `jidori: 3` sperrt einen kürzeren Namen auf drei seiner eigenen Zeichen (字取り): 平泉 wird als 平　泉 mit einem vollen Zeichen dazwischen gedruckt, und jeder Name endet auf derselben Höhe wie 立石寺 und 最上川. Ein Name, der schon drei Zeichen lang ist, bleibt unverändert ([Einstellungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)).
 
 ### 4 · Jeden Teil auf eigener Seite beginnen
 
@@ -40,7 +40,7 @@ Jeder Teil ist eine Überschrift der Ebene 1, deren Design den Titel setzt, ein 
 
 <Excerpt region="voices" />
 
-Bashōs Prosa schreibt wiederholte Wörter mit dem alten Wiederholungszeichen 〻 (日〻, 人〻), und ältere Texte verwenden außerdem das lange くの字点 〳〵. Zen Old Mincho hat keines von beiden: Der Canvas würde sie aus einer Systemschrift borgen, und das PDF zeichnete leere Kästchen. Shippori Mincho, Noto Serif JP und Shippori Mincho B1 haben beide, daher sind die Gedichte in Shippori Mincho gesetzt ([Schriften für Chinesisch, Japanisch und Koreanisch](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften)). Der Aozora-Text bewahrt auch die Anmerkungen des Herausgebers zu alten Schreibungen, `とら{え|（へ）}て`, die das erwartete Kana neben dasjenige setzen, das Bashō schrieb.
+Bashōs Prosa schreibt wiederholte Wörter mit dem alten Wiederholungszeichen 〻 (日〻, 人〻), und ältere Texte verwenden außerdem das lange くの字点 〳〵. Zen Old Mincho hat keines von beiden: Der Canvas würde sie aus einer Systemschrift borgen, und das PDF zeichnete leere Kästchen. Shippori Mincho, Noto Serif JP und Shippori Mincho B1 haben beide, daher sind die Gedichte in Shippori Mincho gesetzt ([Schriften für Chinesisch, Japanisch und Koreanisch](/de/docs/configuration-pdf-output#chinesische-japanische-und-koreanische-schriften)). Der Aozora-Text bewahrt auch die Anmerkungen des Herausgebers zu alten Schreibungen, `とら{え|（へ）}て`, die das erwartete Kana neben dasjenige setzen, das Bashō schrieb.
 
 ## Varianten
 

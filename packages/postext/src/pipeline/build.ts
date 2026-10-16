@@ -3359,11 +3359,13 @@ function placeDocumentPass(
     // mirrored, #370): an Arabic quotation in an English book, an English
     // one in an Arabic book. Its lines carry their span (`VDTLine.measure`).
     if (blk.type !== 'resource' && raw.direction !== undefined && raw.direction !== resolvedDirection(resolved)) blk.direction = raw.direction;
+    const tocContinued = raw.toc?.group?.role === 'continuation' ? { continued: true as const } : {};
     if (raw.toc?.kind === 'entry') {
-      blk.tocEntry = raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {};
+      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...tocContinued };
     }
     if (raw.toc?.kind === 'part') {
       blk.tocPart = {
+        ...tocContinued,
         number: raw.toc.number,
         title: raw.toc.title ?? '',
         pageLabel: raw.toc.pageLabel ?? '',
@@ -4007,6 +4009,9 @@ function placeDocumentPass(
   /** A closed `:::paper` still owes a page break before the next placed
    *  block. */
   let pendingPaperBreak = false;
+  /** A composed page (`::::page`, #854) ended: the next placed block opens
+   *  a new page. */
+  let pendingComposedBreak = false;
   /** A comic page (`:::page`) was laid out on the current page: the next
    *  placed block opens a new one (a page that ends the document leaves no
    *  empty page behind). */
@@ -6288,6 +6293,108 @@ function placeDocumentPass(
     return undefined;
   };
 
+  // --- Blocks of the contents kept together (`toc.groups`, #850) -----------
+  /** The measure context of content block `idx` (a part's, a styled
+   *  section's). */
+  const measureCtxOf = (idx: number): BlockMeasureContext =>
+    (partPlan.byBlock[idx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[idx]));
+  /** The rows of the contents block whose lead row is `idx`, in order (its
+   *  head's repeats aside). */
+  const tocGroupRows = (idx: number): number[] => {
+    const id = contentBlocks[idx]?.toc?.group?.id;
+    const rows: number[] = [];
+    if (id === undefined) return rows;
+    for (let i = idx; i < contentBlocks.length; i++) {
+      const b = contentBlocks[i]!;
+      if (isMarkerBlock(b)) continue;
+      if (b.toc?.group?.id !== id) break;
+      if (b.toc.group.role !== 'continuation') rows.push(i);
+    }
+    return rows;
+  };
+  /**
+   * The room the contents block led by row `idx` takes in a column `width`
+   * wide, from the top of its first row (the space above it aside): `whole`
+   * for every row, `lead` down to the `minEntries`-th entry under its head
+   * (the least a cut block keeps with its head). The rows are spaced as
+   * the layout spaces them, by the larger of the margins that meet.
+   */
+  const tocGroupNeed = (idx: number, width: number): { whole: number; lead: number } | undefined => {
+    const rows = tocGroupRows(idx);
+    if (rows.length < 2) return undefined;
+    const min = contentBlocks[idx]!.toc!.group!.minEntries;
+    let height = 0;
+    let lead = 0;
+    let prevBottom: number | undefined;
+    let afterHead = -1;
+    for (const i of rows) {
+      const raw = contentBlocks[i]!;
+      const m = measureContentBlock(raw, i, width, measureCtxOf(i));
+      if (!m) return undefined;
+      const style = m.kind.style;
+      if (prevBottom !== undefined) height += Math.max(prevBottom, style.marginTopPx);
+      height += m.measured.lines.length * style.lineHeightPx;
+      prevBottom = style.marginBottomPx;
+      if (raw.toc!.group!.role === 'head') afterHead = 0;
+      else if (afterHead >= 0 && raw.toc!.kind === 'entry') afterHead++;
+      if (afterHead >= 0 && afterHead <= min) lead = height;
+    }
+    return { whole: height, lead };
+  };
+  /**
+   * Whether the repeat of a contents block's head row at `idx` is set: the
+   * entry after it goes on in a fresh column, which the repeat opens. When
+   * the entry does not fit in the room the cursor's column has left (an
+   * entry is not cut between columns once its block is), the cursor moves
+   * on to the next column first.
+   */
+  const tocContinuationOpens = (idx: number): boolean => {
+    let next = idx + 1;
+    while (next < contentBlocks.length && isMarkerBlock(contentBlocks[next])) next++;
+    const entry = contentBlocks[next];
+    if (entry?.toc?.group?.id !== contentBlocks[idx]!.toc!.group!.id) return false;
+    const col = currentColumn(doc, cursor);
+    if (col.blocks.length === 0) return true;
+    const m = measureContentBlock(entry, next, col.bbox.width, measureCtxOf(next));
+    if (!m) return false;
+    const style = m.kind.style;
+    const need = m.measured.lines.length * style.lineHeightPx + Math.max(pendingSpacing, style.marginTopPx);
+    if (need <= col.availableHeight + FIT_EPS) return false;
+    pendingSpacing = 0;
+    advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+    return true;
+  };
+  /** A `tocGroupSplit` warning for each contents block set in more than
+   *  one column, with its head's title and the page it is cut on. */
+  const tocGroupWarnings = (): ContentWarning[] => {
+    const placed = new Map<number, { title: string; columns: Set<string>; pageIndex: number; source: ContentBlock }>();
+    for (const page of doc.pages) {
+      for (const c of page.columns) {
+        for (const b of c.blocks) {
+          const raw = b.contentIndex !== undefined ? contentBlocks[b.contentIndex] : undefined;
+          const group = raw?.toc?.group;
+          if (!raw || !group || group.role === 'continuation') continue;
+          const at = placed.get(group.id) ?? { title: group.title, columns: new Set<string>(), pageIndex: page.index, source: raw };
+          at.columns.add(`${page.index}:${c.index}`);
+          placed.set(group.id, at);
+        }
+      }
+    }
+    const out: ContentWarning[] = [];
+    for (const at of placed.values()) {
+      if (at.columns.size < 2) continue;
+      out.push({
+        kind: 'tocGroupSplit',
+        title: at.title,
+        columns: at.columns.size,
+        sourceStart: at.source.sourceStart + bodyOffset,
+        sourceEnd: at.source.sourceEnd + bodyOffset,
+        pageIndex: at.pageIndex,
+      });
+    }
+    return out;
+  };
+
   /** The first block of the document that sets something: a heading there
    *  opens the document's first page (`openerPages`, #749). */
   const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
@@ -6301,6 +6408,10 @@ function placeDocumentPass(
     // pages opened from here (a heading with `breakBefore` opens one).
     const blockSection = sectionPlan.byBlock[blockIdx];
     if (blockSection !== currentSection) enterSection(blockSection);
+
+    // The repeat of a contents block's head row (#850): set where a cut
+    // block goes on in a fresh column, skipped everywhere else.
+    if (rawBlock.toc?.group?.role === 'continuation' && !tocContinuationOpens(blockIdx)) continue;
 
     // Floats whose reference landed in an earlier iteration take the first
     // free slot of the current page now — after their reference in reading
@@ -6501,6 +6612,25 @@ function placeDocumentPass(
     }
     if (pendingPaperBreak) {
       pendingPaperBreak = false;
+      breakForPaper(blockIdx);
+    }
+    // A composed page (`::::page{template=…}`, #854). Until templates are
+    // laid out (P4, #855) its content is set in the flow, in Markdown order
+    // and on pages of its own: the page fence breaks the page as `:::paper`
+    // does, its frames are transparent containers (the generic marker branch
+    // below), and the block after the closing fence opens a new page. P4
+    // replaces this branch with the template layout (DESIGN §5.1).
+    if ((rawBlock.type === 'containerStart' || rawBlock.type === 'containerEnd') && rawBlock.containerName === 'composedPage') {
+      if (rawBlock.type === 'containerStart') {
+        pendingComposedBreak = false;
+        breakForPaper(blockIdx);
+      } else {
+        pendingComposedBreak = true;
+      }
+      continue;
+    }
+    if (pendingComposedBreak) {
+      pendingComposedBreak = false;
       breakForPaper(blockIdx);
     }
     // `:::page`: a comic page owns a fresh page — its panels, split lines
@@ -7751,6 +7881,36 @@ function placeDocumentPass(
         }
       }
 
+      // A block of the contents is set whole (`toc.groups.keepTogether`,
+      // `:::toc{keep}`, #850): when its rows do not all fit in the room the
+      // column has left and a full column would hold them, it opens the
+      // next column, with the headings right above it. One taller than a
+      // column is cut, but keeps its head with `minEntriesAfterHead`
+      // entries. Not a block that opens its column, or stands under
+      // nothing but headings: it cannot do better anywhere.
+      if (rawBlock.toc?.group?.lead && partIndex === 0 && curCol.blocks.length > 0) {
+        const headingRun = trailingHeadingRun(curCol);
+        const need = headingRun < curCol.blocks.length ? tocGroupNeed(blockIdx, curCol.bbox.width) : undefined;
+        if (need) {
+          const room = curCol.availableHeight - spacingBefore;
+          const asked = need.whole <= contentArea.height + FIT_EPS ? need.whole : need.lead;
+          if (asked > room + FIT_EPS) {
+            if (resolved.headings.keepWithNext && headingRun > 0) {
+              const rolledBack = rollbackHeadings(curCol);
+              if (rolledBack.length > 0) {
+                blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
+                pendingSpacing = 0;
+                advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+                break;
+              }
+            }
+            pendingSpacing = 0;
+            advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+            continue;
+          }
+        }
+      }
+
       // A short list is set whole (`bodyText.shortListSplit: 'avoid'`,
       // #749): when its items do not all fit under what the column holds
       // and an empty column would hold them, the list opens the next
@@ -8483,7 +8643,7 @@ function placeDocumentPass(
   if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
   // The composition rules (#749): short lists cut, floats on opener pages.
-  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes];
+  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
 
   const { proposals: citingPageProposals, refused: citingPageRefused } = settleCitingPageFloats();
@@ -8615,7 +8775,7 @@ export function* buildDocumentGen(
   // Config values the build replaced (an unknown number format, a font
   // stack, a side column no column width can take): walked once per build,
   // not per pass — they belong to no page.
-  const configWarnings = collectConfigWarnings(config);
+  const configWarnings = collectConfigWarnings(config, { resources: content.resources, metadata: doc.metadata });
   if (configWarnings.length > 0) doc.configWarnings = configWarnings;
   return doc;
 }

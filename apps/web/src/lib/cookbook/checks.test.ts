@@ -377,6 +377,7 @@ describe("C31: config values the engine replaced (#468)", () => {
       { kind: "unknownConfigKey", path: "headingStyles[3].minHeight", value: "minHeight", used: "", suggestion: "lineHeight" },
       { kind: "lineNumbersUnsupported", path: "lineNumbers.enabled", value: "true", used: "false" },
       { kind: "fontFamilyStack", path: "bodyText.fontFamily", value: "Zen Old Mincho, serif", used: "Zen Old Mincho" },
+      { kind: "contentInConfig", path: "header", value: "Measure · Vol. 7 · 2026", used: "", count: 2, chars: 52 },
     ];
     const c31 = of("C31", runChecks(input({ facts: facts({ configWarnings }) })));
     expect(c31.map((f) => [f.severity, f.detail])).toEqual([
@@ -389,6 +390,7 @@ describe("C31: config values the engine replaced (#468)", () => {
       ["fail", "unknownConfigKey: headingStyles[3].minHeight is no key of that setting (lineHeight?); the engine ignores it"],
       ["fail", "lineNumbersUnsupported: lineNumbers.enabled: vertical documents get no line numbers"],
       ["warn", 'fontFamilyStack: bodyText.fontFamily "Zen Old Mincho, serif" is a font stack; the text is set in Zen Old Mincho alone'],
+      ["warn", 'contentInConfig: header keeps 2 design texts of content (52 letters, "Measure · Vol. 7 · 2026"); move the text into the Markdown or list the phrase in checks.contentInConfig.allow'],
     ]);
   });
 

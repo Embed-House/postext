@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Die Einstellungen cjk: Zeilenumbruch, Breite der Satzzeichen, Abstände, das Zeichenraster, Ruby und die Zeichen von chinesischem, japanischem und koreanischem Text',
   lang: 'de',
   lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 7,
+  readingTime: '33 min',
+  order: 13,
   parent: 'configuration',
   plainSummary: "Diese Seite behandelt die Einstellungen für chinesischen, japanischen und koreanischen Text. Sie bestimmen, wo eine Zeile umbrechen darf und wie breit die Satzzeichen sind. Sie legen den Abstand zwischen diesen Schriftzeichen und lateinischen Buchstaben oder Ziffern fest. Außerdem steuern sie die kleinen Lesehilfen, die neben Schriftzeichen gedruckt werden, und die Zeichen, die neben Namen und Titeln stehen. Die Leitfäden zum chinesischen und zum japanischen Satz zeigen diese Einstellungen in der Praxis.",
 };
@@ -62,9 +62,9 @@ interface CjkConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Eigenschaft</th>
-      <th style={{ width: '200px' }}>Typ</th>
-      <th style={{ width: '120px' }}>Standard</th>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
       <th>Beschreibung</th>
     </tr>
   </thead>
@@ -219,7 +219,7 @@ interface CjkConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '90px' }}>Stufe</th>
+      <th>Stufe</th>
       <th>Nie am Zeilenanfang</th>
       <th>Nie am Zeilenende</th>
     </tr>
@@ -237,7 +237,7 @@ Die japanischen Stufen folgen den drei Konventionen von JLReq Anhang C.3. Auf je
 <table>
   <thead>
     <tr>
-      <th style={{ width: '130px' }}>Stufe</th>
+      <th>Stufe</th>
       <th>Nie am Zeilenanfang</th>
     </tr>
   </thead>
@@ -270,7 +270,7 @@ Ein chinesisches Satzzeichen voller Breite besteht aus einem halben Geviert Glyp
 <table>
   <thead>
     <tr>
-      <th style={{ width: '130px' }}>Stil</th>
+      <th>Stil</th>
       <th>Innerhalb der Zeile</th>
       <th>Am Zeilenende</th>
     </tr>
@@ -320,7 +320,7 @@ Im vertikalen Text wird ein lateinisches Wort oder eine lange Zahl seitlich gedr
 - In Japan stehen auch die Paare `!!`, `!?`, `?!` und `??`, in halber oder voller Breite, aufrecht in einer Zelle (`すごい！？`), sofern kein lateinischer Buchstabe, keine Ziffer und kein drittes Zeichen sie berührt; ein Paar voller Breite wird mit den Zeichen halber Breite gemalt. Kleine Kana, ：；, “ ” (gemalt als 〝〟) und ・ nehmen die japanischen vertikalen Formen an (siehe [Japanischer Satz › Senkrechte Formen](/de/docs/japanese-layout#senkrechte-formen)).
 - Das Messwerkzeug und jeder Renderer finden dieselben Zellen: Das Canvas malt die Ziffern zurückgedreht aufrecht und gestaucht, das PDF ebenso mit der horizontalen Schrift, und das HTML umschließt sie mit `text-combine-upright: all`.
 
-Von Hand überschreiben drei Inline-Zeichen die Einstellung im vertikalen Text und ändern im horizontalen Text nichts (siehe [Dokumentformat › Ausrichtung in senkrechtem Text](/de/docs/document-format#ausrichtung-in-senkrechtem-text)):
+Von Hand überschreiben drei Inline-Zeichen die Einstellung im vertikalen Text und ändern im horizontalen Text nichts (siehe [Dokumentformat › Ausrichtung in senkrechtem Text](/de/docs/document-format-inline#ausrichtung-in-senkrechtem-text)):
 
 ```markdown
 第:tcy[120]回、:upright[GDP]與:sideways[12]
@@ -351,7 +351,7 @@ Zwei Layouts aus der chinesischen Praxis, in 五号 (10,5 pt) mit 6 pt Zeilenzwi
 
 ### Zeichen, Ruby und Warichu
 
-Das Markup für [chinesische Zeichen, Ruby und Warichu](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) belässt seinen Text im Absatz: Suche, Inhaltsverzeichnis, Registeranker und kopierter Text lesen die Zeichen, wie sie geschrieben sind, und nur was um sie herum gezeichnet wird, hängt von diesen Einstellungen ab.
+Das Markup für [chinesische Zeichen, Ruby und Warichu](/de/docs/document-format-inline#chinesische-zeichen-ruby-und-warichu) belässt seinen Text im Absatz: Suche, Inhaltsverzeichnis, Registeranker und kopierter Text lesen die Zeichen, wie sie geschrieben sind, und nur was um sie herum gezeichnet wird, hängt von diesen Einstellungen ab.
 
 - **Betonungspunkte** (着重号, 傍点; `:dots[…]` sowie `*…*` auf CJK-Zeichen unter `emphasis: 'dots'`) setzen ein Zeichen je Schriftzeichen, darauf zentriert (ohne die Sperrung einer Zeile im Blocksatz), nie auf Satzzeichen oder Leerzeichen: unter dem Zeichen im horizontalen Text, rechts davon im vertikalen (clreq §5.3.1). `style` wählt einen gefüllten Punkt, einen offenen Kreis oder ein Sesamzeichen, `fill="open"` zeichnet die Kontur, `pos="over|under"` die Seite; `emphasisMark` legt fest, was ein Zeichen ungesetzt lässt (in Japan ein Sesamzeichen über dem Text, rechts davon im vertikalen Text). Ein Sesamzeichen steht in beiden Schreibrichtungen gleich auf dem Bogen, und Zeichen auf der Seite einer Ruby-Lesung kommen außerhalb davon.
 - **Seitenlinien** (傍線, `:sideline[…]{style pos}`) laufen neben dem Text, Satzzeichen und Leerzeichen eingeschlossen: `solid`, `double`, `wavy` oder `dotted`, standardmäßig unter dem Text quer über die Seite und rechts davon die Seite hinunter; zwei Linien, die aufeinandertreffen, geben je ein Achtelgeviert auf. Sie funktionieren in jedem Schriftsystem.

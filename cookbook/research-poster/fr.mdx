@@ -24,13 +24,13 @@ Un poster de congrès pour une étude inventée sur les arbres d’alignement et
 
 <Excerpt region="band" />
 
-Le H1 porte le congrès, le numéro du poster, les auteurs et les affiliations sous forme d’attributs, et sa maquette les pose sur un bloc vert ancré à la page, haut de 158 mm ([pleine largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le bloc se termine 133 mm sous la marge de tête. Sans `minHeight`, le résumé commencerait 0,9 mm sous le vert ; une `minHeight` de onze lignes de grille laisse 14 mm. Les appels d’affiliation sont les caractères ¹ ² ³, les seuls chiffres en exposant de la plage Latin-1.
+Le H1 porte le congrès, le numéro du poster, les auteurs et les affiliations sous forme d’attributs, et sa maquette les pose sur un bloc vert ancré à la page, haut de 158 mm ([pleine largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)). Le bloc se termine 133 mm sous la marge de tête. Sans `minHeight`, le résumé commencerait 0,9 mm sous le vert ; une `minHeight` de onze lignes de grille laisse 14 mm. Les appels d’affiliation sont les caractères ¹ ² ³, les seuls chiffres en exposant de la plage Latin-1.
 
 ### 3 · Disposer les panneaux dans un groupe sur toute la largeur
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-Le corps court sur deux colonnes et les panneaux sur trois : la grille est donc un groupe `:::columns{count=3}` ouvert directement dans le texte, et `span="page"` l’étend sur les deux colonnes du corps, sous le résumé, avec la gouttière de la page entre ses colonnes ([`:::columns`](/fr/docs/document-format#columns)). Laissé à lui-même, un groupe dans le texte est suivi d’une ligne d’espacement de paragraphe, 38 pt ici, et la bande de mots-clés passerait sur une deuxième page ; `marginBottom="0.75em"` sur le bloc remplace cette ligne (postext 1.28), et la bande tient au pied de la page. Chaque panneau est un encadré du groupe : il prend son propre style, les 175 mm de largeur de la colonne et 18 mm de `marginTop` sous le panneau du dessus ([le conteneur `:::callout`](/fr/docs/configuration-styles#le-conteneur-callout)). `breaks="3,4"` envoie le troisième panneau, Results, en tête de la colonne du milieu et le quatrième, Conclusions, en tête de la dernière. Sans lui, le groupe s’équilibre et coupe au panneau le plus proche de chaque tiers de la pile. Avec ce texte, les coupes tombent sur les deux mêmes panneaux ; l’attribut les y maintient quand le texte change.
+Le corps court sur deux colonnes et les panneaux sur trois : la grille est donc un groupe `:::columns{count=3}` ouvert directement dans le texte, et `span="page"` l’étend sur les deux colonnes du corps, sous le résumé, avec la gouttière de la page entre ses colonnes ([`:::columns`](/fr/docs/document-format-directives#columns)). Laissé à lui-même, un groupe dans le texte est suivi d’une ligne d’espacement de paragraphe, 38 pt ici, et la bande de mots-clés passerait sur une deuxième page ; `marginBottom="0.75em"` sur le bloc remplace cette ligne (postext 1.28), et la bande tient au pied de la page. Chaque panneau est un encadré du groupe : il prend son propre style, les 175 mm de largeur de la colonne et 18 mm de `marginTop` sous le panneau du dessus ([le conteneur `:::callout`](/fr/docs/configuration-callouts#le-conteneur-callout)). `breaks="3,4"` envoie le troisième panneau, Results, en tête de la colonne du milieu et le quatrième, Conclusions, en tête de la dernière. Sans lui, le groupe s’équilibre et coupe au panneau le plus proche de chaque tiers de la pile. Avec ce texte, les coupes tombent sur les deux mêmes panneaux ; l’attribut les y maintient quand le texte change.
 
 ### 4 · Garder chaque figure dans son panneau
 
@@ -42,7 +42,7 @@ Une figure placée en `'here'` reste dans le panneau où `::resource` la pose 
 
 <Excerpt region="palette" />
 
-Les cellules de la carte thermique et les quatre segments `:swatch{color="…"}` de sa légende nomment les mêmes entrées de palette : une nouvelle valeur pour `cool` repeint à la fois la carte et la légende ([mise en forme dans le texte](/fr/docs/document-format#mise-en-forme-en-ligne)). La légende est un second groupe `:::columns`, deux entrées par colonne, à l’intérieur du panneau Results.
+Les cellules de la carte thermique et les quatre segments `:swatch{color="…"}` de sa légende nomment les mêmes entrées de palette : une nouvelle valeur pour `cool` repeint à la fois la carte et la légende ([mise en forme dans le texte](/fr/docs/document-format-inline#mise-en-forme-en-ligne)). La légende est un second groupe `:::columns`, deux entrées par colonne, à l’intérieur du panneau Results.
 
 ### 6 · Composer le chiffre phare dans un style de paragraphe
 

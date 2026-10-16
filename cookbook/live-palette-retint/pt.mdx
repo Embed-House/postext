@@ -30,13 +30,13 @@ O azul do motor é uma entrada de paleta, `main-color` (#295AA3), e [os seus pad
 
 <Excerpt region="opener" />
 
-A abertura é um [encaixe de design](/pt/docs/configuration-page-layout#elementos-de-caixa) com uma caixa que sangra pela borda superior, 29 barras arredondadas para a onda e três elementos de texto: o próprio texto do título, e o antetítulo e a linha fina vindos dos atributos dele. As barras são caixas e não um SVG, então o preenchimento delas é mais uma ligação a `tint` que acompanha a paleta; um SVG teria de ser redesenhado e registrado de novo para cada combinação. Sozinha, a caixa da faixa faria o texto começar na linha da grade 2,4 mm abaixo da faixa; `minHeight`, 18 linhas ou 85,1 mm abaixo da margem superior, reserva mais e leva a primeira linha para 7 mm abaixo dela.
+A abertura é um [encaixe de design](/pt/docs/configuration-headers-footers#elementos-de-caixa) com uma caixa que sangra pela borda superior, 29 barras arredondadas para a onda e três elementos de texto: o próprio texto do título, e o antetítulo e a linha fina vindos dos atributos dele. As barras são caixas e não um SVG, então o preenchimento delas é mais uma ligação a `tint` que acompanha a paleta; um SVG teria de ser redesenhado e registrado de novo para cada combinação. Sozinha, a caixa da faixa faria o texto começar na linha da grade 2,4 mm abaixo da faixa; `minHeight`, 18 linhas ou 85,1 mm abaixo da margem superior, reserva mais e leva a primeira linha para 7 mm abaixo dela.
 
 ### 4 · Deixe a paleta preencher a tabela
 
 <Excerpt region="grid" />
 
-A grade é um recurso de tabela, fora da configuração. Mesmo assim, os [preenchimentos de célula](/pt/docs/document-format#inserção-em-bloco-opcional-posicionamento-explícito-em-linha) levam ids de paleta, e o motor os resolve pela paleta do documento quando compõe a tabela; os `:swatch{color="band"}` e `:swatch{color="tint"}` da legenda, na nota da tabela, se resolvem do mesmo jeito. Os chips da programação usam os mesmos dois ids, e assim a casa preenchida, o chip ao lado de um horário e a amostra da legenda batem em todas as combinações.
+A grade é um recurso de tabela, fora da configuração. Mesmo assim, os [preenchimentos de célula](/pt/docs/document-format-resources#inserção-em-bloco-opcional-posicionamento-explícito-em-linha) levam ids de paleta, e o motor os resolve pela paleta do documento quando compõe a tabela; os `:swatch{color="band"}` e `:swatch{color="tint"}` da legenda, na nota da tabela, se resolvem do mesmo jeito. Os chips da programação usam os mesmos dois ids, e assim a casa preenchida, o chip ao lado de um horário e a amostra da legenda batem em todas as combinações.
 
 ### 5 · Troque a paleta e componha de novo
 

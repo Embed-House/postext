@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
-import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from 'postext';
+import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
@@ -60,6 +60,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'unplaced':
     case 'shortListSplit':
     case 'openerFloat':
+    case 'tocGroupSplit':
       return FileWarning;
     case 'headingHierarchy':
       return Heading;
@@ -83,6 +84,10 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'unclosedCodeBlock':
     case 'unknownParagraphStyle':
     case 'columnsFlowUnknown':
+    case 'templateUnknown':
+    case 'slotUnknown':
+    case 'slotEmpty':
+    case 'pageFenceLength':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'duplicateAnchor':
@@ -147,7 +152,21 @@ function iconFor(kind: WarningPayload['kind']) {
       return List;
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'contentInConfig':
       return FileWarning;
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
+      return LayoutGrid;
     case 'unsupportedHyphenationLocale':
     case 'missingGlyph':
     case 'variableFontDefaultInstance':
@@ -242,6 +261,14 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownCalloutTypeTitle;
     case 'columnsFlowUnknown':
       return labels.warningsColumnsFlowUnknownTitle;
+    case 'templateUnknown':
+      return labels.warningsTemplateUnknownTitle;
+    case 'slotUnknown':
+      return labels.warningsSlotUnknownTitle;
+    case 'slotEmpty':
+      return labels.warningsSlotEmptyTitle;
+    case 'pageFenceLength':
+      return labels.warningsPageFenceLengthTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'duplicateAnchor':
@@ -363,10 +390,38 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsShortListSplitTitle;
     case 'openerFloat':
       return labels.warningsOpenerFloatTitle;
+    case 'tocGroupSplit':
+      return labels.warningsTocGroupSplitTitle;
     case 'unknownConfigKey':
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
       return labels.warningsUnknownConfigValueTitle;
+    case 'templateDuplicate':
+      return labels.warningsTemplateDuplicateTitle;
+    case 'templateExtendsCycle':
+      return labels.warningsTemplateExtendsCycleTitle;
+    case 'templateExtendsUnknown':
+      return labels.warningsTemplateExtendsUnknownTitle;
+    case 'frameDuplicate':
+      return labels.warningsFrameDuplicateTitle;
+    case 'frameStyleUnknown':
+      return labels.warningsFrameStyleUnknownTitle;
+    case 'frameAnchorUnknown':
+      return labels.warningsFrameAnchorUnknownTitle;
+    case 'frameMinMax':
+      return labels.warningsFrameMinMaxTitle;
+    case 'groupFrameUnknown':
+      return labels.warningsGroupFrameUnknownTitle;
+    case 'groupFrameTwice':
+      return labels.warningsGroupFrameTwiceTitle;
+    case 'frameChainLoop':
+      return labels.warningsFrameChainLoopTitle;
+    case 'overflowTargetUnknown':
+      return labels.warningsOverflowTargetUnknownTitle;
+    case 'labelStyleUnknown':
+      return labels.warningsLabelStyleUnknownTitle;
+    case 'contentInConfig':
+      return labels.warningsContentInConfigTitle;
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleTitle;
     case 'missingGlyph':
@@ -502,6 +557,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'unknownDirective':
       return `:::${payload.name} — ${labels.warningsUnknownDirectiveDetail.replace('__names__', KNOWN_FENCE_NAMES)}`;
     case 'unclosedContainer':
+      // A composed page closes with a bare fence of as many colons (#854).
+      if (payload.name === 'composedPage') return `::::page — ${labels.warningsUnclosedComposedPageDetail}`;
       return `:::${payload.name} — ${labels.warningsUnclosedContainerDetail}`;
     case 'unclosedCodeBlock':
       return `${payload.delimiter}${payload.lang ?? ''} — ${labels.warningsUnclosedCodeBlockDetail}`;
@@ -519,6 +576,14 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `:::callout{type="${payload.type}"} — ${labels.warningsUnknownCalloutTypeDetail}`;
     case 'columnsFlowUnknown':
       return `:::columns{flow="${payload.value}"} — ${labels.warningsColumnsFlowUnknownDetail}`;
+    case 'templateUnknown':
+      return `::::page{template="${payload.template}"} — ${labels.warningsTemplateUnknownDetail}`;
+    case 'slotUnknown':
+      return `slot="${payload.slot}" — ${labels.warningsSlotUnknownDetail.replace('__template__', payload.template)}`;
+    case 'slotEmpty':
+      return `${payload.frame} — ${labels.warningsSlotEmptyDetail.replace('__template__', payload.template)}`;
+    case 'pageFenceLength':
+      return `:::page{template=…} — ${labels.warningsPageFenceLengthDetail}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'duplicateAnchor':
@@ -668,6 +733,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return labels.warningsShortListSplitDetail.replace('__page__', String(payload.page)).replace('__items__', String(payload.items));
     case 'openerFloat':
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsOpenerFloatDetail.replace('__page__', String(payload.page))}`;
+    case 'tocGroupSplit':
+      return labels.warningsTocGroupSplitDetail
+        .replace('__page__', String(payload.page))
+        .replace('__title__', payload.title)
+        .replace('__columns__', String(payload.columns));
     case 'codeOverflow': {
       const detail = payload.mode === 'wrap' ? labels.warningsCodeOverflowWrap
         : payload.mode === 'clip' ? labels.warningsCodeOverflowClip
@@ -687,6 +757,26 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.path} — ${labels.warningsUnknownConfigKeyDetail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
     case 'unknownConfigValue':
       return `${payload.path}: "${payload.value}" — ${labels.warningsUnknownConfigValueDetail.replace('__used__', payload.used)}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
+      return pageTemplateDetail(payload, labels);
+    case 'contentInConfig': {
+      const where = `${payload.elements.slice(0, 3).join(', ')}${payload.count > 3 ? ` … (${payload.count})` : ''}`;
+      return `${payload.path}${payload.ownerId ? ` (${payload.ownerId})` : ''}: ${where} — ${labels.warningsContentInConfigDetail
+        .replace('__count__', String(payload.count))
+        .replace('__chars__', String(payload.chars))
+        .replace('__sample__', payload.sample)}`;
+    }
     case 'unsupportedHyphenationLocale':
       return labels.warningsUnsupportedHyphenationLocaleDetail
         .replace('__locale__', payload.locale)
@@ -767,9 +857,9 @@ function WarningItem({
   onClick: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
-  // A preflight or contrast finding, or a design text cut on a page
-  // (#628), names its book page.
-  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
+  // A preflight or contrast finding, a design text cut on a page (#628)
+  // or a contents block cut (#850) names its book page.
+  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' || warning.payload.kind === 'tocGroupSplit' ? warning.payload.page : undefined;
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
@@ -816,6 +906,9 @@ export function WarningsPanel() {
     // A cut design text opens its page; one that prints a heading or a
     // frontmatter field also selects it in the editor.
     if (w.payload.kind === 'designTextTruncated') goToBookPage(w.payload.page);
+    // A contents block cut between columns (#850) opens the contents page
+    // and selects the `:::toc` line.
+    if (w.payload.kind === 'tocGroupSplit') goToBookPage(w.payload.page);
     // A contrast finding opens the page of its first occurrence, and
     // selects its text when it has a place in the source.
     if (w.payload.kind === 'contrast' && w.payload.page !== undefined) goToBookPage(w.payload.page);
@@ -895,3 +988,28 @@ function WarningGroup({ title, count, children }: { title: string; count: number
     </Collapsible.Root>
   );
 }
+
+/** A page-template warning (#853): the JSON pointer, the value at fault,
+ *  what the engine does, and the closest name that exists. */
+function pageTemplateDetail(payload: Extract<WarningPayload, { kind: PageTemplateWarningKind }>, labels: SandboxLabels): string {
+  const detail = PAGE_TEMPLATE_DETAIL[payload.kind](labels)
+    .replace('__used__', payload.used)
+    .replace('__resource__', payload.resourceId !== undefined ? `#${payload.resourceId}` : '');
+  const suggestion = payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : '';
+  return `${payload.path}: "${payload.value}" — ${detail}${suggestion}`;
+}
+
+const PAGE_TEMPLATE_DETAIL: Record<PageTemplateWarningKind, (labels: SandboxLabels) => string> = {
+  templateDuplicate: (l) => l.warningsTemplateDuplicateDetail,
+  templateExtendsCycle: (l) => l.warningsTemplateExtendsCycleDetail,
+  templateExtendsUnknown: (l) => l.warningsTemplateExtendsUnknownDetail,
+  frameDuplicate: (l) => l.warningsFrameDuplicateDetail,
+  frameStyleUnknown: (l) => l.warningsFrameStyleUnknownDetail,
+  frameAnchorUnknown: (l) => l.warningsFrameAnchorUnknownDetail,
+  frameMinMax: (l) => l.warningsFrameMinMaxDetail,
+  groupFrameUnknown: (l) => l.warningsGroupFrameUnknownDetail,
+  groupFrameTwice: (l) => l.warningsGroupFrameTwiceDetail,
+  frameChainLoop: (l) => l.warningsFrameChainLoopDetail,
+  overflowTargetUnknown: (l) => l.warningsOverflowTargetUnknownDetail,
+  labelStyleUnknown: (l) => l.warningsLabelStyleUnknownDetail,
+};

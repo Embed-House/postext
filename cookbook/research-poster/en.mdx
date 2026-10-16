@@ -24,13 +24,13 @@ At the default 300 dpi the poster breaks every line where it does at 72 dpi, but
 
 <Excerpt region="band" />
 
-The H1 carries the meeting, the poster number, the authors and the affiliations as attributes, and its design sets them over a page-anchored green box 158 mm deep ([span and advanced design](/en/docs/configuration-text#span-and-advanced-design)). The box ends 133 mm under the top margin. Without a `minHeight` the summary would start 0.9 mm under the green; a `minHeight` of eleven grid lines leaves 14 mm. The affiliation marks are the characters ¹ ² ³, the only superscript figures in the Latin-1 range.
+The H1 carries the meeting, the poster number, the authors and the affiliations as attributes, and its design sets them over a page-anchored green box 158 mm deep ([span and advanced design](/en/docs/configuration-headings#span-and-advanced-design)). The box ends 133 mm under the top margin. Without a `minHeight` the summary would start 0.9 mm under the green; a `minHeight` of eleven grid lines leaves 14 mm. The affiliation marks are the characters ¹ ² ³, the only superscript figures in the Latin-1 range.
 
 ### 3 · Set the panels in a group across the page
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-The body runs in two columns and the panels in three, so the grid is a `:::columns{count=3}` group fenced straight into the text, and `span="page"` sets it across both body columns, under the summary, with the page's gutter between its columns ([`:::columns`](/en/docs/document-format#columns)). Left to itself, a group in the text is followed by a line of paragraph spacing, 38 pt here, and the keyword strip would move to a second page; `marginBottom="0.75em"` on the fence takes the place of that line (postext 1.28), and the strip fits at the foot of the page. Each panel is a callout in the group: it takes its own style, the column's 175 mm width and 18 mm of `marginTop` under the panel above it ([the `:::callout` container](/en/docs/configuration-styles#the-callout-container)). `breaks="3,4"` sends the third panel, Results, to the head of the middle column and the fourth, Conclusions, to the head of the last. Without it the group balances and cuts at the panel nearest each third of the stack. With this copy the cuts fall at the same two panels; the attribute keeps them there when the copy changes.
+The body runs in two columns and the panels in three, so the grid is a `:::columns{count=3}` group fenced straight into the text, and `span="page"` sets it across both body columns, under the summary, with the page's gutter between its columns ([`:::columns`](/en/docs/document-format-directives#columns)). Left to itself, a group in the text is followed by a line of paragraph spacing, 38 pt here, and the keyword strip would move to a second page; `marginBottom="0.75em"` on the fence takes the place of that line (postext 1.28), and the strip fits at the foot of the page. Each panel is a callout in the group: it takes its own style, the column's 175 mm width and 18 mm of `marginTop` under the panel above it ([the `:::callout` container](/en/docs/configuration-callouts#the-callout-container)). `breaks="3,4"` sends the third panel, Results, to the head of the middle column and the fourth, Conclusions, to the head of the last. Without it the group balances and cuts at the panel nearest each third of the stack. With this copy the cuts fall at the same two panels; the attribute keeps them there when the copy changes.
 
 ### 4 · Keep each figure in its panel
 
@@ -42,7 +42,7 @@ A figure placed `'here'` stays in the panel where `::resource` sets it; with the
 
 <Excerpt region="palette" />
 
-The heat map's cells and the four `:swatch{color="…"}` runs of its key name the same palette entries, so a new value for `cool` repaints the map and the key together ([inline formatting](/en/docs/document-format#inline-formatting)). The key is a second `:::columns` group, two entries a column, inside the Results panel.
+The heat map's cells and the four `:swatch{color="…"}` runs of its key name the same palette entries, so a new value for `cool` repaints the map and the key together ([inline formatting](/en/docs/document-format-inline#inline-formatting)). The key is a second `:::columns` group, two entries a column, inside the Results panel.
 
 ### 6 · Set the headline figure in a paragraph style
 

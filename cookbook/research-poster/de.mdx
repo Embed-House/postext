@@ -24,13 +24,13 @@ Bei den voreingestellten 300 dpi bricht das Poster jede Zeile an derselben Stell
 
 <Excerpt region="band" />
 
-Die H1 trägt Tagung, Posternummer, Autoren und Institutionen als Attribute, und ihre Gestaltung setzt sie über einen an der Seite verankerten grünen Kasten von 158 mm Höhe ([Span und erweiterte Gestaltung](/de/docs/configuration-text#seitenbreite-und-erweiterte-gestaltung)). Der Kasten endet 133 mm unter dem oberen Rand. Ohne `minHeight` begänne die Zusammenfassung 0,9 mm unter dem Grün; ein `minHeight` von elf Rasterzeilen lässt 14 mm. Die Institutionszeichen sind die Zeichen ¹ ² ³, die einzigen hochgestellten Ziffern im Bereich Latin-1.
+Die H1 trägt Tagung, Posternummer, Autoren und Institutionen als Attribute, und ihre Gestaltung setzt sie über einen an der Seite verankerten grünen Kasten von 158 mm Höhe ([Span und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)). Der Kasten endet 133 mm unter dem oberen Rand. Ohne `minHeight` begänne die Zusammenfassung 0,9 mm unter dem Grün; ein `minHeight` von elf Rasterzeilen lässt 14 mm. Die Institutionszeichen sind die Zeichen ¹ ² ³, die einzigen hochgestellten Ziffern im Bereich Latin-1.
 
 ### 3 · Die Panels in einer Gruppe über die Seite setzen
 
 <Excerpt region="answer" highlight="3-10,19" />
 
-Der Grundtext läuft in zwei Spalten und die Panels in drei, das Raster ist also eine Gruppe `:::columns{count=3}`, als Direktivenblock direkt im Text, und `span="page"` setzt sie über beide Textspalten, unter die Zusammenfassung, mit dem Spaltenabstand der Seite zwischen ihren Spalten ([`:::columns`](/de/docs/document-format#columns)). Sich selbst überlassen folgt einer Gruppe im Text eine Zeile Absatzabstand, hier 38 pt, und der Schlagwortstreifen rückte auf eine zweite Seite; `marginBottom="0.75em"` am Direktivenblock tritt an die Stelle dieser Zeile (postext 1.28), und der Streifen passt an den Fuß der Seite. Jedes Panel ist ein Kasten in der Gruppe: Es nimmt sein eigenes Format, die Spaltenbreite von 175 mm und 18 mm `marginTop` unter dem Panel darüber ([der Container `:::callout`](/de/docs/configuration-styles#der-container-callout)). `breaks="3,4"` schickt das dritte Panel, „Results“, an den Kopf der mittleren Spalte und das vierte, „Conclusions“, an den Kopf der letzten. Ohne diese Angabe gleicht die Gruppe aus und schneidet beim Panel, das jedem Drittel des Stapels am nächsten liegt. Mit diesem Text fallen die Schnitte bei denselben zwei Panels; das Attribut hält sie dort, wenn sich der Text ändert.
+Der Grundtext läuft in zwei Spalten und die Panels in drei, das Raster ist also eine Gruppe `:::columns{count=3}`, als Direktivenblock direkt im Text, und `span="page"` setzt sie über beide Textspalten, unter die Zusammenfassung, mit dem Spaltenabstand der Seite zwischen ihren Spalten ([`:::columns`](/de/docs/document-format-directives#columns)). Sich selbst überlassen folgt einer Gruppe im Text eine Zeile Absatzabstand, hier 38 pt, und der Schlagwortstreifen rückte auf eine zweite Seite; `marginBottom="0.75em"` am Direktivenblock tritt an die Stelle dieser Zeile (postext 1.28), und der Streifen passt an den Fuß der Seite. Jedes Panel ist ein Kasten in der Gruppe: Es nimmt sein eigenes Format, die Spaltenbreite von 175 mm und 18 mm `marginTop` unter dem Panel darüber ([der Container `:::callout`](/de/docs/configuration-callouts#der-container-callout)). `breaks="3,4"` schickt das dritte Panel, „Results“, an den Kopf der mittleren Spalte und das vierte, „Conclusions“, an den Kopf der letzten. Ohne diese Angabe gleicht die Gruppe aus und schneidet beim Panel, das jedem Drittel des Stapels am nächsten liegt. Mit diesem Text fallen die Schnitte bei denselben zwei Panels; das Attribut hält sie dort, wenn sich der Text ändert.
 
 ### 4 · Jede Abbildung in ihrem Panel halten
 
@@ -42,7 +42,7 @@ Eine mit `'here'` platzierte Abbildung bleibt in dem Panel, in das `::resource` 
 
 <Excerpt region="palette" />
 
-Die Zellen der Heatmap und die vier Läufe `:swatch{color="…"}` ihres Schlüssels nennen dieselben Paletteneinträge, sodass ein neuer Wert für `cool` Karte und Schlüssel zugleich umfärbt ([Inline-Formatierung](/de/docs/document-format#inline-formatierung)). Der Schlüssel ist eine zweite Gruppe `:::columns`, zwei Einträge pro Spalte, im Panel „Results“.
+Die Zellen der Heatmap und die vier Läufe `:swatch{color="…"}` ihres Schlüssels nennen dieselben Paletteneinträge, sodass ein neuer Wert für `cool` Karte und Schlüssel zugleich umfärbt ([Inline-Formatierung](/de/docs/document-format-inline#inline-formatierung)). Der Schlüssel ist eine zweite Gruppe `:::columns`, zwei Einträge pro Spalte, im Panel „Results“.
 
 ### 6 · Die Leitzahl in einem Absatzformat setzen
 

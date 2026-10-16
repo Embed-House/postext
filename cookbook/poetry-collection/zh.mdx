@@ -16,7 +16,7 @@ pageNotes: { "2": "卷首插图：一张蕨叶和一枝结果花楸的物影照�
 
 ### 1 · 一首诗是一个:::verse块
 
-`:::verse`块把Markdown的每一行保留为一行诗，所以诗照印刷的样子书写（[`:::verse`](/zh/docs/document-format#verse)）。行首空格就是缩进，两个空格一个em，因此押韵的诗行与1918年版一样缩进相同的距离。诗节之间的空行留出基线网格的一行，落在页首时去掉。比版心长的诗行在词间空格处转行，按诗行样式的`hangingIndent`悬挂，从该行自身的起点算起：无缩进的行悬挂2 em，缩进2 em的行下面悬挂到4 em，转行因此不会被当成新的一行。`align=start`让每首诗与页边距对齐；没有它，诗会以最长的一行为准居中。诗行不加连字符断词，分页时一行诗也绝不与它的转行分开。
+`:::verse`块把Markdown的每一行保留为一行诗，所以诗照印刷的样子书写（[`:::verse`](/zh/docs/document-format-directives#verse)）。行首空格就是缩进，两个空格一个em，因此押韵的诗行与1918年版一样缩进相同的距离。诗节之间的空行留出基线网格的一行，落在页首时去掉。比版心长的诗行在词间空格处转行，按诗行样式的`hangingIndent`悬挂，从该行自身的起点算起：无缩进的行悬挂2 em，缩进2 em的行下面悬挂到4 em，转行因此不会被当成新的一行。`align=start`让每首诗与页边距对齐；没有它，诗会以最长的一行为准居中。诗行不加连字符断词，分页时一行诗也绝不与它的转行分开。
 
 <PageShot page={6} crop="0.08,0.22,0.86,0.48" caption="The Windhover, page 6: the lines that rhyme in -iding start 2 em in, and the four lines too long for the page turn over and hang 4 em in." />
 
@@ -30,7 +30,7 @@ pageNotes: { "2": "卷首插图：一张蕨叶和一枝结果花楸的物影照�
 
 <Excerpt region="poem-head" />
 
-这个标题不印它的文字，而是在栏里印一个版面设计。在这个设计里，`{number}`是按`numberingTemplate: '{1:I}'`格式化的计数，从I到IV，`{titleText}`是诗题（[通栏与高级版面设计](/zh/docs/configuration-text#通栏与高级设计)）。这一级标题没有下外边距，`minHeight`让每个标题都占六行网格（31.75 mm）。罗马数字和一行诗题占其中四行，诗题折行时占五行，所以每首诗都从页面上的同一行开始。在<PageRef page={6}>第6页</PageRef>上，这一行放的是献词。奇偶设为`'any'`时分页到下一页，不论左右页，所以诗与诗之间没有空白页。
+这个标题不印它的文字，而是在栏里印一个版面设计。在这个设计里，`{number}`是按`numberingTemplate: '{1:I}'`格式化的计数，从I到IV，`{titleText}`是诗题（[通栏与高级版面设计](/zh/docs/configuration-headings#通栏与高级设计)）。这一级标题没有下外边距，`minHeight`让每个标题都占六行网格（31.75 mm）。罗马数字和一行诗题占其中四行，诗题折行时占五行，所以每首诗都从页面上的同一行开始。在<PageRef page={6}>第6页</PageRef>上，这一行放的是献词。奇偶设为`'any'`时分页到下一页，不论左右页，所以诗与诗之间没有空白页。
 
 ### 4 · 前置部分由标题组成
 

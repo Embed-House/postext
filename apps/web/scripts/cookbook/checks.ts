@@ -35,6 +35,9 @@ export interface ProbeConfigWarning {
   value: string;
   used: string;
   suggestion?: string;
+  /** `contentInConfig` (#849): the design texts at fault and their letters. */
+  count?: number;
+  chars?: number;
 }
 
 export interface ProbePage {
@@ -546,6 +549,8 @@ const CONFIG_WARNING_SEVERITY: Record<string, Severity> = {
   unknownConfigKey: "fail",
   lineNumbersUnsupported: "fail",
   fontFamilyStack: "warn",
+  // Text kept in a design (#849): the pages are as asked, the source is not.
+  contentInConfig: "warn",
 };
 
 /** A config warning as C31 prints it: the kind, where, and what the engine did. */
@@ -568,6 +573,8 @@ export function configWarningText(w: ProbeConfigWarning): string {
       return `unknownConfigKey: ${w.path} is no key of that setting${w.suggestion ? ` (${w.suggestion}?)` : ""}; the engine ignores it`;
     case "lineNumbersUnsupported":
       return `lineNumbersUnsupported: ${w.path}: vertical documents get no line numbers`;
+    case "contentInConfig":
+      return `contentInConfig: ${w.path} keeps ${w.count ?? 1} design text${w.count === 1 ? "" : "s"} of content (${w.chars ?? 0} letters, ${value}); move the text into the Markdown or list the phrase in checks.contentInConfig.allow`;
     case "fontFamilyStack":
       return `fontFamilyStack: ${w.path} ${value} is a font stack; the text is set in ${w.used} alone`;
     default:

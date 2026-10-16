@@ -1,0 +1,730 @@
+{/* docs/document-format-directives-ca.mdx */}
+
+export const metadata = {
+  title: 'Format del document: directives',
+  sidebarTitle: 'Directives',
+  description: 'Les directives amb ::: (contenidors, columnes, paper, salts de pàgina, numeració, espai, vers, índex de continguts i índex analític, salts de línia) i el marcatge de les pàgines de còmic',
+  lang: 'ca',
+  lastUpdated: '2026-10-16',
+  readingTime: '37 min',
+  order: 26,
+  parent: 'document-format',
+  plainSummary: "Una directiva és un bloc que comença amb tres signes de dos punts seguits, com ara :::callout o :::columns. Aquesta pàgina enumera totes les directives i què fa cadascuna. Algunes posen el text en un requadre, el componen en columnes o l'imprimeixen en una altra classe de paper. D'altres comencen una pàgina nova, canvien la numeració, afegeixen espai, componen un poema vers a vers o imprimeixen l'índex de continguts i l'índex analític. L'última secció explica les marques de les pàgines de còmic, de les vinyetes i de les paraules dels personatges.",
+};
+
+# Format del document: directives
+
+
+## Directives
+
+Les directives són etiquetes de control d'una sola línia escrites com a `:::nombre` o `:::nombre{atributos}` en una línia pròpia. No produeixen cap sortida visible — controlen el pipeline de col·locació i numeració.
+
+<table>
+  <thead>
+    <tr>
+      <th>Sintaxi</th>
+      <th>Efecte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:::pagebreak</code></td>
+      <td>Força que el bloc següent comenci en una pàgina nova.</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="odd"&#125;</code></td>
+      <td>Igual, i a més assegura que la pàgina nova sigui senar (costat dret). Insereix una pàgina en blanc de farciment quan cal.</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="even"&#125;</code></td>
+      <td>Igual, però apuntant a una pàgina parella (costat esquerre).</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="always-odd"&#125;</code></td>
+      <td>Garanteix almenys una pàgina separadora en blanc obligatòria abans d'arribar a una pàgina senar. La pàgina separadora pertany al contingut anterior; qualsevol farciment de paritat addicional pertany al que segueix. Útil quan cada capítol ha de començar un plec nou.</td>
+    </tr>
+    <tr>
+      <td><code>:::pagebreak&#123;parity="always-even"&#125;</code></td>
+      <td>Igual, però apuntant a una pàgina parella.</td>
+    </tr>
+    <tr>
+      <td><code>:::numbering&#123;format="decimal" startAt=1&#125;</code></td>
+      <td>Al límit de pàgina següent, canvia la seqüència de numeració. Tots dos atributs són opcionals — omet <code>format</code> per mantenir el format, omet <code>startAt</code> per continuar el comptador.</td>
+    </tr>
+    <tr>
+      <td><code>:::columnbreak</code></td>
+      <td>Acaba aquí la columna actual: el bloc següent comença a la columna següent de la mateixa pàgina (o en una pàgina nova quan la directiva cau a l'última columna). No fa res en una columna buida, així que mai no genera una columna o una pàgina en blanc. La columna que acaba conserva el seu buit inferior — l'equilibrat de columnes no l'estira.</td>
+    </tr>
+    <tr>
+      <td><code>:::space</code></td>
+      <td>Deixa aquí una línia de text en blanc — la manera explícita de donar una mica d'aire entre dos blocs. <code>:::space&#123;lines=2&#125;</code> en deixa dues (també valen fraccions com <code>0.5</code>). Se suma al marge entre els blocs i desapareix al principi d'una columna o pàgina. Vegeu <a href="#space">més avall</a>.</td>
+    </tr>
+    <tr>
+      <td><code>:::toc</code></td>
+      <td>Imprimeix aquí la taula de continguts: una entrada per encapçalament dels nivells indicats (títol, número, número de pàgina i, opcionalment, els autors del capítol) i una fila per separador de part, compostes segons la configuració <code>toc</code>. Les entrades segueixen el document — reanomena, mou o renumera un capítol i la taula el segueix.</td>
+    </tr>
+    <tr>
+      <td><code>:::index</code></td>
+      <td>Imprimeix aquí l'índex analític: tots els termes marcats amb <code>:index</code> al llibre, ordenats i agrupats per inicial, amb les pàgines on cauen, compostos segons la configuració <code>index</code>. <code>:::index&#123;index="nombres"&#125;</code> imprimeix un índex amb nom. Vegeu <a href="/ca/docs/document-format-notes-references#índex-analític">Índex analític</a>.</td>
+    </tr>
+    <tr>
+      <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Una pàgina de còmic: les seves línies <code>::panel</code> i les seves línies de guió, compostes com a vinyetes i bafarades retolades en una pàgina pròpia. Vegeu <a href="#còmics">Còmics</a>.</td>
+    </tr>
+    <tr>
+      <td><code>:::strip&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Una tira còmica dins del flux del text, de l'amplada d'una columna o de la pàgina. Vegeu <a href="#strip"><code>:::strip</code></a>.</td>
+    </tr>
+    <tr>
+      <td><code>:::verse</code> … <code>:::</code></td>
+      <td>Un poema, compost línia a línia tal com s'escriu (cada línia un vers, línies en blanc entre estrofes, espais inicials com a sagnat), o a la manera àrab clàssica quan les seves línies separen els hemistiquis amb <code>||</code>. Vegeu <a href="#verse">més avall</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Els valors dels atributs poden anar entre cometes dobles (<code>"…"</code>), cometes simples (<code>'…'</code>) o sense cometes (<code>startAt=17</code>). Una clau sense `=` es tracta com una bandera present amb valor buit.
+
+Avui només es reconeixen `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` i `index` com a directives d'una sola línia (i `references`, `verse`, `page` i `strip` com a blocs amb tanca) — qualsevol altra línia `:::nombre` que no sigui un contenidor (més avall) s'analitza com a paràgraf i genera un avís **Directiva desconeguda** al sandbox. El motor també ho registra, com una entrada `unknownDirective` als `contentWarnings` del document (vegeu [Configuració › Avisos del document](/ca/docs/configuration-programmatic-usage#avisos-del-document)).
+
+### Valors dels atributs
+
+La mateixa sintaxi `clave="valor"` la llegeixen els atributs d'encapçalament, les tanques de directives i contenidors (`:::nombre{…}`), les referències en línia (`:ref{…}`), els xips (`:chip[…]{…}`), les mostres de color (`:swatch{…}`) i les marques d'índex (`:index[…]{…}`). Les seves regles:
+
+- **Claus.** Comencen per una lletra ASCII o `_` i continuen amb lletres ASCII, dígits, `_` o `-`. S'admeten espais al voltant de l'`=`, l'`＝` d'amplada completa que escriu un mètode d'entrada xinès val com a `=`, una clau repetida es queda amb el seu últim valor i una clau sense `=` és una bandera amb valor buit. Una clau en una altra escriptura (`作者=曹雪芹`) no es llegeix i genera un avís `attributeKeyInvalid`; les altres claus del bloc s'apliquen igualment. Els valors admeten qualsevol escriptura.
+- **Valors entre cometes.** Un valor entre cometes dobles pot contenir qualsevol cosa llevat de `"`, cometes simples incloses; un entre cometes simples, qualsevol cosa llevat de `'`. Així, un valor amb cometes dobles va entre simples: `lead='Dijo "hola"'`. No hi ha escapaments —la barra inversa és un caràcter normal—, així que un valor que necessiti els dos tipus de cometes ASCII fa servir cometes tipogràfiques (`«…»`, `“…”`, `’`). Un valor també es pot obrir amb la cometa `“` o el claudàtor de cantonada `「` que escriu un mètode d'entrada xinès, i llavors arriba fins a la seva `”` o `」`, espais inclosos: `title=“甲戌本 眉批”`, `title=「脂批」`.
+- **Valors sense cometes** (`startAt=17`, `year=1998`) arriben fins a l'espai següent: `title=Hola mundo` és `title="Hola"` més una bandera `mundo`.
+- **Sense claus.** `{` i `}` no van mai en un valor. La primera `}` tanca el bloc: una tanca el valor de la qual en contingui una deixa de ser una directiva i passa a ser un paràgraf, i en línia la resta del valor es vessa al text. En un encapçalament, una clau en un valor deixa tot el bloc al títol: `# Título {nota="a {b"}` es compon tal qual. (Fins a postext 1.8 una `{` després d'un espai tornava a començar el bloc i `b` es llegia com a bandera.)
+- **El signe `$` és text.** Els atributs es llegeixen abans que les fórmules en línia, així que `lead="de 5 $ a 6 $"` és només text.
+- **Una línia.** Un bloc d'atributs no ocupa mai més d'una línia.
+
+```markdown
+# El llarg camí {lead='Una "novel·la de carretera", van dir' precio="18 $"}
+
+:::callout{type="note" title='El camí "ràpid"'}
+…
+:::
+```
+
+`::resource{id="…"}` és més estricte: l'id entre cometes dobles i cap altre atribut (consulta [Recursos](/ca/docs/document-format-resources#recursos)).
+
+### Contenidors
+
+Un contenidor embolcalla una sèrie de blocs entre dues tanques: una línia d'obertura `:::nombre` o `:::nombre{atributos}`, després qualsevol contingut normal — paràgrafs, encapçalaments, llistes, cites, fórmules, fins i tot altres directives — i una línia de tancament amb un `:::` sol. Els contenidors es poden niar; cada `:::` de tancament tanca el més intern dels oberts.
+
+```
+:::callout{type="note"}
+Mantén la llanterna encesa **totes** les nits.
+
+- Revisa el ble.
+- Retalla'l al capvespre.
+:::
+```
+
+Es reconeixen cinc noms de contenidor al flux del text. El que renderitza cadascun es defineix a la seva pròpia secció de la configuració:
+
+<table>
+  <thead>
+    <tr>
+      <th>Sintaxi</th>
+      <th>Efecte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:::callout&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Contingut en caixa — una nota, un consell o un avís separat del cos en una caixa amb vora o fons tenyit.</td>
+    </tr>
+    <tr>
+      <td><code>:::paragraphs&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Una sèrie de paràgrafs composta amb un estil de paràgraf amb nom (una entradeta, un epígraf, unes notes en lletra petita) en lloc de l'estil del cos. <code>align</code>, <code>indent</code> i <code>endIndent</code> fixen l'alineació i els sagnats, amb estil o sense: <code>:::paragraphs&#123;align=end endIndent=1&#125;</code> compon una data a un caràcter del final de la línia (地から1字上げ). <code>dropcap</code> activa o desactiva una <a href="/ca/docs/document-format#caplletres">caplletra</a> al seu primer paràgraf.</td>
+    </tr>
+    <tr>
+      <td><code>:::part&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Una obertura de part o secció: l'encapçalament i el text que tanca formen la pàgina d'obertura d'una divisió major.</td>
+    </tr>
+    <tr>
+      <td><code>:::paper&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Una tanda de pàgines impreses en un altre paper, com un plec de làmines en estucat brillant dins d'un llibre en paper mat. Només ho mostra el visor Folio.</td>
+    </tr>
+    <tr>
+      <td><code>:::columns&#123;…&#125;</code> … <code>:::</code></td>
+      <td>Blocs compostos en diverses columnes pròpies: dins d'un requadre, a la columna de text o a tota l'amplada d'una pàgina de diverses columnes. Vegeu <a href="#columns"><code>:::columns</code></a> més avall.</td>
+    </tr>
+  </tbody>
+</table>
+
+Els atributs que admet cada contenidor, i com s'estilitza, es documenten a [Configuració](/ca/docs/configuration). Els valors dels atributs segueixen la mateixa gramàtica que les directives. Una tanca `:::callout` admet `type` (l'id d'un estil d'avís configurat — els tipus desconeguts o absents fan servir el primer estil), `title` (sobreescriu el títol per defecte de l'estil) i `span` / `placement` (`column`, `page` o `side`; `here`, `top`, `bottom` o `fixed`) per sobreescriure l'extensió i la posició de l'estil en aquella caixa:
+
+```
+:::callout{type="objectives" title="Què aprendràs" span="page" placement="top"}
+- Anomenar les parts de la llanterna.
+- Retallar el ble sense tocar el vidre.
+:::
+```
+
+Una caixa flotant (`placement` `auto`, `top` o `bottom`) admet a més `columns`, el nombre de columnes contigües que ocupa en una pàgina de diverses, com a `:::callout{placement="top" columns="2"}` (des de postext 1.18).
+
+Una caixa també pot compondre al costat el text que la segueix: `wrap` (`left`, `right`, `start` o `end`), `width` (la seva part de la columna, de 0 a 1; `layout.wrap.defaultWidth` si no s'indica) i `wrapGap` (una longitud, com `6pt`), com a `:::callout{wrap="right" width=0.4}` (vegeu [Ajust del text](/ca/docs/document-format-resources#ajust-del-text); des de postext 1.24).
+
+Un avís es compon com una caixa — un títol opcional i després el seu contingut, amb la tipografia de cos i de llistes pròpia de l'estil. Per defecte es manté unit i passa sencer a la columna o pàgina següent quan no hi cap (una caixa més alta que una columna sencera es parteix igualment, en lloc de desbordar); un estil amb `keepTogether: false` li permet partir-se entre els seus blocs, o entre línies, deixant almenys `splitMinLines` línies de text — o una figura, taula, fórmula en bloc o caixa niada — a cada costat del tall (un tall dins d'un paràgraf o d'un element de llista deixa, a més, almenys `layout.boxChildSplitMinLines` de les seves línies a cada costat: dues per defecte, `splitMinLines` si és menor; els llibres desats abans de la 1.5 amb capítols que tenen requadres es llegeixen amb 1, el tall de la 1.4). Cada part posterior a la primera comença sense la icona, encara que el text conserva la columna de la icona, i sense el títol llevat que l'estil el repeteixi (`repeatTitle`: «Punts clau (cont.)»); a més, un estil pot posar un indicador «Continua» sota cada part que segueix (`continuesMarkerEnabled`) — vegeu [Marques d'un requadre partit](/ca/docs/configuration-callouts#marques-dun-requadre-partit). Les caixes d'amplada completa (`span="page"`) tallen la pàgina en bandes de columnes; les caixes `span="side"` surten del flux cap a la columna lateral només per a flotants d'una disposició de columna i mitja (`layout.sideColumnRole: 'floats'`), apilades al costat del text que interrompen, i es componen com a caixes de columna on no existeix aquesta columna; les caixes `placement="fixed"` surten del flux i es fixen a coordenades de pàgina (per exemple, un distintiu d'autoavaluació a la cantonada inferior esquerra de l'última pàgina del capítol), i les columnes que cobreixen cedeixen aquella zona; les caixes flotants (`placement="top"` / `"bottom"`) surten del flux on apareixen i ocupen la primera banda lliure després d'aquella posició — el peu de la pàgina, o la capçalera o el peu de la següent — mentre el text que les segueix omple la pàgina que han deixat. Un estil amb `floatBarrier: true` (normalment la caixa de «punts clau» que tanca el capítol) converteix la caixa en una **barrera de flotants**: tota figura o taula referenciada abans es col·loca abans que ella — als buits lliures de la pàgina, o en pàgines obertes per davant de la caixa — de manera que cap flotant no s'escapa més enllà del final del seu capítol. Una tanca `:::nombre` desconeguda no és un contenidor — la línia es tracta com a text, exactament igual que una directiva desconeguda.
+
+Una tanca `:::part` admet `number` (tal com el vulguis imprimir — `"I"`, `"IV"`, `"3"`; a més, s'interpreta perquè el disseny el pugui reformatar) i `title`; tots dos són opcionals. Un tercer atribut, `palette="band=#hex"` (diversos parells `id=#hex` separats per comes), recoloreja tots els colors de disseny vinculats a aquests ids de paleta — capçaleres, banda d'obertura, dissenys de part — i els colors del flux de text que comparteixen el seu valor base (títols, negreta, referències, vinyetes, peus, taules, requadres, xips) per a la part i els capítols que la segueixen, fins a la part següent; vegeu [Configuració › Parts](/ca/docs/configuration-styles#parts). El contenidor sempre obre una pàgina pròpia: un salt de pàgina amb la paritat configurada abans, una única columna de cos als `parts.margins`, el disseny d'obertura sobre la pàgina sencera i un altre salt de pàgina després de la tanca de tancament. El cos — normalment la llista dels capítols que agrupa la part, o res en absolut — es compon amb `parts.bodyStyle`:
+
+```
+:::part{number="I" title="Fonaments"}
+1. El fanal i les seves parts
+2. Retallar el ble
+:::
+
+# El fanal i les seves parts
+```
+
+Amb els valors per defecte dels encapçalaments això produeix la seqüència clàssica: pàgina de part en pàgina dreta, pàgina esquerra en blanc, capítol a la pàgina dreta següent. La pàgina es notifica com a `role: 'part'` perquè les capçaleres i els peus se la puguin saltar, i `{partTitle}` / `{partNumber}` es resolen a la part actual en totes les pàgines següents. Consulta [Parts](/ca/docs/configuration-styles#parts) a la referència de configuració.
+
+Una tanca no necessita una línia en blanc al davant: una tanca d'obertura o de tancament enganxada just a sota d'un paràgraf, una llista o una cita acaba aquell bloc. Un contenidor que queda obert al final del document es tanca automàticament allà, i el sandbox emet un avís **Contenidor sense tancar** que assenyala la línia d'obertura. Un `:::` solt sense cap contenidor obert es deixa al text com un paràgraf visible en lloc de descartar-se en silenci.
+
+### `:::columns`
+
+Un grup `:::columns{count=2}` … `:::` compon els blocs entre les seves tanques en `count` columnes d'igual amplada (de 2 a 6), i el text posterior recupera l'amplada completa. Dins d'un `:::callout` les columnes es reparteixen l'amplada interior de la caixa, separades pel `columnGap` de l'estil, amb la tipografia de cos i de llistes de la caixa, i la caixa creix fins a la columna més alta. Al text corregut (des de postext 1.25) es reparteixen la columna de text, separades per una línia del cos, i els blocs conserven la tipografia del mateix text; amb `span="page"`, en una pàgina de diverses columnes, el grup talla la pàgina en una banda com una caixa a amplada completa: les columnes de sobre tanquen anivellades, el grup es compon a tota l'amplada del contingut (separat per l'espai entre columnes) i el text continua a totes les columnes per sota. En una pàgina d'una sola columna, `span="page"` el compon a la columna. Els encapçalaments dins d'un grup conserven el seu estil, el seu número i la seva entrada a l'índex, una nota al peu citada al grup va al peu de la columna de text, i les figures que cita floten com sempre.
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Efecte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>count</code></td>
+      <td>Quantes columnes, de 2 a 6. Per defecte, 2.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>L'espai entre les columnes, una longitud (<code>12pt</code>, <code>1em</code>, <code>4mm</code>). Per defecte: el <code>columnGap</code> de l'estil de requadre en un requadre, una línia del cos a la columna de text, <code>layout.gutterWidth</code> a tota l'amplada de la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>rule</code></td>
+      <td>Traça un filet al llarg de cada separació, amb el color i el gruix de <code>layout.columnRule</code>: <code>:::columns&#123;count=3 rule&#125;</code>.</td>
+    </tr>
+    <tr>
+      <td><code>breaks</code></td>
+      <td>Els blocs que obren cada columna a partir de la segona, en lloc d'anivellar-les: <code>breaks="4"</code> obre la segona columna al quart bloc del grup (una llista separada per comes per a més columnes). Més avall s'explica com compta.</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td>Com continua un grup que no hi cap: <code>snake</code> (el valor per defecte sense <code>breaks</code>) o <code>parallel</code> (el valor per defecte amb <code>breaks</code>). Vegeu <a href="#partir-un-grup">Partir un grup</a>.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td>Només al text corregut: <code>column</code> (el valor per defecte) o <code>page</code>.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>L'espai sobre el grup, una longitud com la de <code>gap</code>. Es fon amb l'espai pendent sobre el grup; no n'hi ha cap al cap d'una columna, ni quan el grup obre el seu requadre. Des de postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>L'espai sota el grup, una longitud; <code>0</code> demana que no n'hi hagi cap. Al text corregut ocupa el lloc de la separació entre paràgrafs del cos; en un requadre és l'espai abans del bloc següent. Des de postext 1.28.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un grup compost sencer es talla on millor s'anivellen les seves columnes —entre blocs, o entre les línies d'un paràgraf o element de llista, la cua del qual continua al capdamunt de la columna següent sense la vinyeta—, llevat que `breaks` fixi on comença cada columna, sense tallar dins d'un paràgraf: una columna de text al costat d'una columna amb una figura.
+
+**L'espai al voltant d'un grup.** Al text corregut, un grup va seguit de la separació entre paràgrafs del cos (una línia amb `bodyText.paragraphSpacing`, res sense), i dins d'un requadre de cap espai propi. `marginTop` i `marginBottom` a la tanca el fixen: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Cadascun és un mínim que es fon amb l'espai que el bloc veí es reserva, com els marges d'un requadre. Al text corregut el flux torna a la retícula de base sota el grup, de manera que l'espai surt en línies senceres, i un grup dividit entre columnes o pàgines conserva el marge superior per a la primera part i l'inferior per a l'última. Un `em` és la mida del text on es troba el grup; un valor que no és una longitud, o un de negatiu, s'ignora.
+
+```md
+:::callout{type="summary"}
+:::columns{count=2}
+- Cada element és un tipus d'àtom.
+- Els electrons viuen en orbitals.
+- Un enllaç comparteix o transfereix electrons.
+:::
+:::
+```
+
+**Com compta `breaks`.** `breaks` numera els blocs del grup en ordre — paràgrafs, elements de llista (un bloc cadascun), fórmules en bloc, figures i taules —, i un `:::callout` niat compta com un sol bloc, en tingui els que en tingui a dins. Les directives no són blocs: un `:::space` entre dues estrofes no altera el compte. Un nombre menor que 2, posterior a l'últim bloc del grup o que no va després del tall anterior s'ignora. Dins d'un grup, `:::space` separa dos blocs com en qualsevol altre punt del requadre, i desapareix al principi del grup i al capdamunt de cadascuna de les seves columnes (una posició de `breaks` o un tall d'anivellament); per començar el grup més avall, posa l'espai abans de la tanca `:::columns`. Així, dues columnes amb els mateixos espais queden alineades estrofa a estrofa:
+
+```md
+:::callout{type="verso"}
+:::columns{count=2 breaks="4"}
+La llàntia s'encén al capvespre,
+
+i se li talla el ble abans de l'alba.
+
+:::space
+
+El faroner dorm de dia.
+
+The lamp is lit at dusk,
+
+and trimmed before the dawn.
+
+:::space
+
+The keeper sleeps by day.
+:::
+:::
+```
+
+Aquí el quart bloc, «The lamp…», obre la segona columna; les dues línies `:::space` no compten i deixen el mateix buit a totes dues columnes.
+
+#### Partir un grup
+
+Des de postext 1.25, un grup que no cap en l'espai que té —el que queda de la seva columna al text corregut, o la part d'una caixa que es parteix (`keepTogether: false`, o una caixa més alta que una columna)— es talla entre les seves columnes i continua a la columna o la pàgina següent, en una caixa pròpia si el grup és en un requadre:
+
+- **`flow="snake"`**, el valor per defecte sense `breaks`: els blocs del grup corren com una sola galerada, com el text d'una notícia de diari. Una part que continua omple les columnes per torns, tan anivellades com permeten els talls, tallant entre blocs o entre les línies d'un paràgraf o element de llista (almenys `layout.boxChildSplitMinLines` línies seves a cada costat, dues per defecte); l'última part s'anivella com un grup sencer.
+- **`flow="parallel"`**, el valor per defecte amb `breaks`: cada tram que obren els talls és un corrent que conserva la seva pròpia columna. Una part omple cada corrent fins a l'espai que té, i cadascun continua a la mateixa columna de la part següent, de manera que un poema i la seva traducció compostos un al costat de l'altre queden anivellats estrofa a estrofa. Un grup paral·lel sense `breaks` continua com un grup en serpentina.
+
+Una caixa niada dins d'un grup queda sencera i passa a la part següent, i un grup dins d'una caixa niada no es talla mai. Un grup que hi cap es compon exactament com abans. `layout.flowColumns: false` conserva les regles de postext 1.24: una tanca fora d'un requadre s'ignora i un grup no es talla mai; els llibres desats abans de la 1.25 que tenen un grup `:::columns` es llegeixen així. El Sandbox avisa d'un `flow` que no coneix (**Flux de columnes desconegut**) i de columnes més estretes que sis emes del seu text (**Columnes massa estretes**).
+
+```md
+## Breus
+
+:::columns{count=3 span="page" rule}
+**Port.** El nou moll s'inaugura dilluns…
+
+**Mercat.** El lloguer de les parades no canvia…
+
+**Temps.** Pluja des de l'oest al vespre…
+:::
+```
+
+Una tanca `:::callout` també admet `label="…"`: el text que un estil amb pestanya `label` imprimeix a la cantonada superior de la caixa (`:::callout{type="recuadro" label="RECUADRO 1-1" title="La regla del octeto"}`).
+
+Un `:::callout` dins d'un altre és una caixa pròpia —una fitxa d'exercici amb requadres de resposta, per exemple—. Pren el seu propi estil (fons, vora, radi, farciment, títol, icona) a l'amplada interior completa de la caixa exterior i s'apila entre els altres blocs; el seu `span` i el seu `placement` s'ignoren, perquè una caixa niada sempre flueix dins de la seva mare. Cada tanca de tancament tanca la caixa oberta més interna:
+
+```md
+:::callout{type="ficha"}
+L'enunciat de l'exercici.
+
+:::callout{type="respuesta"}
+Un requadre blanc de resposta amb la seva pròpia vora i farciment.
+:::
+
+:::callout{type="respuesta"}
+Un segon requadre de resposta.
+:::
+:::
+```
+
+Quan la caixa exterior es parteix entre columnes o pàgines (`keepTogether: false`, o més alta que una columna), una caixa niada passa sencera al fragment següent llevat que el seu propi estil permeti partir-la també; cada fragment torna a dibuixar els marcs que conté, i una caixa niada que continua perd la icona, i el títol llevat que el seu estil el repeteixi (`repeatTitle`).
+
+### `:::paper`
+
+Un llibre pot canviar de paper en una tanda de pàgines: un plec de làmines en estucat brillant dins d'un llibre imprès en òfset de color os, un encart en cartolina, uns fulls de paper de color. Aquest contingut s'embolcalla en un contenidor `:::paper`:
+
+```md
+:::paper{type=coatedGloss grammage=130}
+## Làmines
+::resource{id="plate-1"}
+::resource{id="plate-2"}
+:::
+```
+
+Un paper ocupa fulls sencers, així que el contingut entre les tanques comença en una pàgina nova, i el que segueix el `:::` de tancament també. Si la tanda tanca el document, no deixa cap pàgina en blanc al darrere. Les figures i taules citades dins de la tanda es col·loquen abans que es tanqui. Cada pàgina composta amb contingut del contenidor porta el paper a la maquetació (`VDTPage.paper`, amb els atributs tal com els escriu la tanca); les pàgines de fora no porten res. El visor Folio ho llegeix i dibuixa aquests fulls amb el color, la superfície, el gruix i la rigidesa del paper. Les sortides de canvas, PDF i HTML ho ignoren: les pàgines es componen i s'imprimeixen com qualsevol altra.
+
+Els atributs són els de la configuració `folio.paper`, i tots són opcionals. El que la tanca no escriu segueix el paper del document i, si no n'hi ha, els valors per defecte del tipus de paper:
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td>El paper: <code>uncoated</code>, <code>bookWove</code>, <code>coatedMatte</code>, <code>coatedSilk</code>, <code>coatedGloss</code>, <code>bible</code>, <code>newsprint</code>, <code>cardStock</code>, <code>board</code>. Fixa els valors per defecte dels atributs següents.</td>
+    </tr>
+    <tr>
+      <td><code>grammage</code></td>
+      <td>Gramatge en g/m², un nombre més gran que 0. Un paper més pesant és més gruixut, més rígid i més opac.</td>
+    </tr>
+    <tr>
+      <td><code>bulk</code></td>
+      <td>Mà en cm³/g, un nombre més gran que 0 (gruix en µm = gramatge × mà).</td>
+    </tr>
+    <tr>
+      <td><code>finish</code></td>
+      <td>L'acabat de la superfície: <code>auto</code>, <code>uncoated</code>, <code>matte</code>, <code>silk</code>, <code>gloss</code>.</td>
+    </tr>
+    <tr>
+      <td><code>texture</code></td>
+      <td>El relleu de la superfície: <code>auto</code>, <code>smooth</code>, <code>vellum</code>, <code>wove</code>, <code>laid</code>, <code>linen</code>, <code>felt</code>.</td>
+    </tr>
+    <tr>
+      <td><code>textureStrength</code></td>
+      <td>Fins a quin punt es nota la textura, de 0 a 2.</td>
+    </tr>
+    <tr>
+      <td><code>shade</code></td>
+      <td>El color del paper: <code>#rgb</code>, <code>#rrggbb</code> o l'id d'una entrada de <code>colorPalette</code>.</td>
+    </tr>
+    <tr>
+      <td><code>showThrough</code></td>
+      <td><code>true</code> o <code>false</code>: si la pàgina del revers es transparenta una mica. Un <code>showThrough</code> sense valor equival a <code>true</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un `:::paper` dins d'un altre només canvia els atributs que escriu, i també comença i acaba amb un salt de pàgina. Dins d'un `:::callout` les tanques s'ignoren. Un valor que el motor no sap llegir es descarta, i el sandbox el mostra com a avís **Atribut de paper no vàlid** (`paperAttributeInvalid` als `contentWarnings` del document).
+### `:::pagebreak`
+
+La directiva per si sola no força paritat — només afecta el bloc següent. Fes-la servir per acabar un pròleg, forçar una dedicatòria a la seva pròpia pàgina o marcar el final d'una secció. Quan es volen tots dos efectes (salt de pàgina i reinici de la numeració), compon `:::pagebreak` seguit de `:::numbering` — el canvi de numeració s'aplica a la pàgina nova que acaba de crear `:::pagebreak`.
+
+Un salt de pàgina en una pàgina encara buida no fa res, així que mai no afegeix una pàgina en blanc. Tampoc no substitueix el `breakBefore` d'un encapçalament que vingui just darrere (el nivell 1 el té per defecte): l'encapçalament aplica igualment la seva paritat, cosa que pot afegir una pàgina en blanc després de la que va obrir la directiva. Perquè un encapçalament comenci just allà, desactiva'n el salt (vegeu **Configuració → Estils d'encapçalament**). Darrere d'un encapçalament de portada que omple la seva pàgina el salt és opcional: la portada ja reclama la resta de la seva pàgina, tant en disposicions d'una columna com de diverses, i un `:::pagebreak` just darrere no fa cap mal. Només cal darrere d'una portada el disseny de la qual acaba abans del peu de la pàgina, quan el text ha de començar igualment a la pàgina següent (vegeu **Configuració → Alçada reservada**).
+
+```md
+El capítol anterior acaba aquí.
+
+:::pagebreak{parity="odd"}
+
+# Un capítol nou
+```
+
+L'indicador `center` (`:::pagebreak{center}`, desactivat amb `center=false`) centra el text de la pàgina que obre el salt entre el cap i el peu de la caixa de text, a l'ample de la pàgina en text vertical: el ページの左右中央 d'una portadella de part o d'una dedicatòria japonesa. Els flotants, les notes i les capçaleres es queden on són, i una pàgina ja plena no es toca. L'indicador no acaba la pàgina: tanca-la amb un altre `:::pagebreak`.
+
+```md
+:::pagebreak{center}
+
+# 上　先生と私
+
+:::pagebreak
+```
+
+#### Atribut `parity`
+
+L'atribut `parity` accepta els mateixos cinc valors que `headings.levels[*].breakBefore.parity`:
+
+- `'any'` — el valor per defecte: sense restricció de paritat; el salt simplement obre una pàgina nova.
+- `'odd'` / `'even'` — la pàgina nova s'obre al costat demanat del plec; només s'insereix una pàgina en blanc quan la pàgina natural següent cau al costat equivocat.
+- `'always-odd'` / `'always-even'` — garanteixen almenys una pàgina separadora en blanc obligatòria entre el contingut anterior i la pàgina nova, i després forcen la paritat. La separadora pertany al capítol **anterior**; qualsevol farciment de paritat addicional pertany al que ve després.
+
+#### Pertinença de les pàgines en blanc
+
+Els dos tipus de pàgines en blanc que `:::pagebreak` (i `breakBefore`) poden introduir es distingeixen al model `VDTPage`:
+
+- `blankForParity: true` — inserida per satisfer una restricció de paritat. Al marcador `{chapterTitle}` aquesta pàgina porta el títol del capítol **entrant**, perquè la pàgina en blanc només existeix per empènyer aquest capítol a la paritat correcta.
+- `blankForForce: true` — la pàgina separadora obligatòria que afegeix un mode `'always-*'`. Pertany al capítol **anterior** — és una pausa deliberada de tancament de capítol, no un farciment de paritat per al capítol següent.
+
+Les mateixes dues regles donen a una pàgina en blanc les capçaleres i la paleta d'una secció amb estil — vegeu [Configuració › Estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament).
+
+#### Excepció a l'inici del document
+
+Quan `:::pagebreak` és la primera construcció del document (o un encapçalament amb `breakBefore` el dispara), la imposició de paritat s'omet mentre la primera pàgina continuï buida. El bloc següent arriba a la pàgina 1 tal qual, independentment de la paritat demanada — no s'insereix cap pàgina en blanc inicial supèrflua.
+
+### `:::numbering`
+
+`:::numbering` és la manera de reiniciar el comptador de pàgines a mig document. Exemple canònic de llibre:
+
+```md
+---
+title: "Un llibre amb pàgines preliminars"
+---
+
+# Prefaci
+
+…
+
+:::pagebreak{parity="odd"}
+:::numbering{format="decimal" startAt=1}
+
+# Capítol 1
+```
+
+Les pàgines del prefaci s'etiqueten `i`, `ii`, `iii`, …; el primer capítol s'obre en una pàgina dreta etiquetada `1`.
+
+Els canvis només de format (sense `startAt`) mantenen el comptador viu — útil, per exemple, per passar de `lower-alpha` a `upper-alpha` sense reiniciar.
+
+`format` accepta qualsevol grafia d'un format de numeració: `roman-lower` i `i` funcionen igual que `lower-roman`, `arabic` igual que `decimal`, i `一` i `あ` igual que `japanese-informal` i `hiragana` (consulta [Configuració › Grafies dels formats de numeració](/ca/docs/configuration-page-layout#grafies-dels-formats-de-numeració)). Un valor que no és cap d'aquestes deixa el format com estava, i el sandbox ho assenyala.
+
+`lines` reinicia el compte de la [numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies), no el comptador de pàgines: la línia següent que es compta porta el número donat, digui el que digui `lineNumbers.restart`. Un valor que no és un nombre enter igual o més gran que 0 s'ignora.
+
+```md
+## Acte II
+
+:::numbering{lines=1}
+```
+
+### `:::space`
+
+`:::space` deixa espai vertical entre dos blocs: per separar una línia de tancament del text que la precedeix, baixar una mica un epígraf o una signatura, o obrir un *blanc de separació* entre dos trams de text. Les línies en blanc de més al Markdown no ho fan — com en qualsevol Markdown, una sèrie de línies en blanc és un únic separador de paràgrafs, i així un document no canvia de maquetació quan un editor o un formatador afegeix o retalla espais.
+
+```md
+L'últim paràgraf de l'escena.
+
+:::space
+
+Comença una escena nova, una línia més avall.
+
+:::space{lines=2}
+
+I aquí, dues línies més avall encara.
+```
+
+- **`lines`** — quant d'espai, en línies de text (la retícula de línies de base). Per defecte `1`. Els nombres enters mantenen cada línia de text a la retícula, de manera que les columnes continuen alineades a tota la pàgina; una fracció (`lines=0.5`) es respecta exactament, a costa d'aquesta alineació fins al bloc següent que s'ajusti a la retícula. Un valor que no sigui un nombre més gran que 0 i com a màxim 20 se substitueix per una línia, i el sandbox ho assenyala (**Mida d'espai no vàlida**).
+- **Se suma.** L'espai s'afegeix al marge que ja separa els dos blocs — el marge superior d'un encapçalament, l'inferior d'una llista — en lloc de fondre-s'hi. Dues línies `:::space` seguides sumen dues línies.
+- **Desapareix als salts**, com el `\vspace` de LaTeX: al principi d'una columna o pàgina es descarta, perquè cap pàgina no comenci amb un buit; i si no cap al peu d'una columna, simplement l'acaba, sense arrossegar la resta a la següent.
+- **El paràgraf que el segueix va sense sagnat.** Amb `bodyText.indentAfterHeading` desactivat, un paràgraf just després de `:::space` perd el sagnat de primera línia, igual que després d'un encapçalament — la convenció habitual quan el text es reprèn després d'una línia en blanc.
+- **Dins d'un requadre** (o d'un grup `:::columns`) separa els fills del requadre de la mateixa manera, mesurat en les línies de text del mateix requadre. Abans del primer bloc del requadre es descarta, com al principi d'una columna — el farciment ja separa el contingut del marc —, excepte en dos casos en què obre aquest espai: just a sota del títol del requadre i en un requadre que no conté res més (un requadre de resposta, un espai per escriure, mesurat en línies). Sempre desapareix al principi d'un grup `:::columns`, al capdamunt de cadascuna de les seves columnes i al principi de la part d'un requadre partit que continua a la columna o pàgina següent. Dins d'un contenidor `:::paragraphs` funciona igual que entre paràgrafs de cos.
+- **Mantenir amb el següent** el té en compte: un encapçalament seguit de `:::space` passa a la columna següent quan l'espai i les primeres línies del seu text no hi caben a sota.
+
+El requadre de resposta d'una fitxa és un requadre l'únic contingut del qual és espai: la pregunta al títol i quatre línies lliures a sota.
+
+```md
+:::callout{type="respuesta" title="1. Anomena les tres parts del fanal."}
+:::space{lines=4}
+:::
+```
+
+Per a un salt fix en lloc d'espai, fes servir `:::columnbreak` o `:::pagebreak`.
+
+
+### `:::verse`
+
+Un poema. `:::verse` el compon d'una de dues maneres: **línia a línia**, com s'imprimeixen la majoria dels poemes, o a la **manera àrab clàssica** d'una qaṣīda, cada bayt en dos hemistiquis l'un al costat de l'altre. Un poema les línies del qual porten separador d'hemistiquis (`||`, o un `\\` entre espais) pren la manera àrab, i qualsevol altre la composició línia a línia; `layout=lines` o `layout=bayt` a l'obertura en tria una.
+
+#### Línia a línia
+
+Escriu el poema com s'imprimeix: un vers per línia de Markdown, una línia en blanc entre estrofes i espais davant d'un vers per sagnar-lo.
+
+```md
+:::verse
+Ja els passerells s'arreceren
+a la vora del camí;
+  el sol de migdia empeny
+  la terra cap al ponent.
+
+Tot calla dins la clariana,
+tot dorm sota l'om antic.
+:::
+```
+
+- **Versos.** Cada línia no buida és un vers, llegit com a Markdown en línia per si sol: cursives, versaletes, notes i referències funcionen. Una sèrie de línies en blanc és un sol canvi d'estrofa.
+- **Sagnats.** Cada espai inicial mesura `indentStep`, 0,5 em per defecte, de manera que dos espais sagnen el vers un em; un tabulador en compta quatre i un espai ideogràfic (U+3000), dos.
+- **Versos partits.** Un vers una mica més ample que la caixa primer estreny els espais entre paraules, fins a `bodyText.minWordSpacing` de la seva amplada natural (el límit fins on s'estreny el text justificat), i cap en una línia; `tighten=false` a l'obertura, o `bodyText.verse.tighten: false`, el parteix en lloc d'això. Un vers que continua sense cabre es parteix en un espai entre paraules. Amb `turnover=hang` (per defecte) la resta penja a la línia següent, `hang` cap a dins des de l'inici del mateix vers: la `hangingIndent` de l'estil de paràgraf del poema, o 2 em (`bodyText.verse.hang`). Amb `turnover=right` es compon contra el final de la caixa darrere d'un claudàtor d'obertura (`turnoverMark`, `[` per defecte), el costum de les edicions castellanes i angleses. El vers no es divideix amb guionet si el seu estil de paràgraf no fixa `hyphenation: true` per si mateix. Un vers i la seva resta no se separen mai en un salt de columna o de pàgina.
+- **Estrofes.** L'espai entre dues estrofes és una línia de l'interlineat del poema; `stanzaSpace=0.5` el deixa en mitja línia, i una longitud (`stanzaSpace=6pt`) el fixa exacte. A la retícula de base surt en línies senceres. Les columnes i les pàgines es tallen primer entre estrofes; dins d'una estrofa, segons les regles de vídues i òrfenes, que llavors compten les línies de l'estrofa. `keepStanzas=N` manté sencera tota estrofa de N línies o menys: un haiku porta `keepStanzas=3` i una tanka `keepStanzas=5`.
+- **Posició.** El poema es centra a la caixa sobre el seu vers més llarg, amb tots els versos alineats a l'inici del poema (`align=center`, l'habitual per a un poema citat en prosa); `align=start` l'alinea amb l'inici de la caixa, que és el predeterminat en text vertical. El paràgraf que presenta el poema conserva la seva última línia amb els primers versos.
+- **Versos esglaonats.** Un vers escrit `+ …` comença on va acabar el de dalt, un espai més enllà, com el vers compartit entre dos personatges al teatre en vers. Escriu `\+` per a un vers que comença amb un signe més.
+- **Cesures.** Amb `keepSpaces` a l'obertura, una sèrie de dos o més espais dins d'un vers conserva la seva amplada; sense, els espais es redueixen a un com en qualsevol paràgraf.
+- **Tipus i direcció.** `style` anomena un estil de paràgraf, que dona la família, el cos, l'interlineat, la `indent` i l'espai damunt i davall del poema. `dir` i `lang` en fixen la direcció i l'idioma: un poema llatí en un llibre àrab (`dir=ltr`) es sagna des del seu propi costat d'inici. En text vertical cada vers és una columna, sagnada des del capdamunt.
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>, <code>bayt</code> o <code>auto</code>: a la manera àrab quan una línia porta separador.</td></tr>
+    <tr><td><code>indentStep</code></td><td><code>0.5em</code></td><td>Amplada d'un espai inicial.</td></tr>
+    <tr><td><code>turnover</code></td><td><code>hang</code></td><td><code>hang</code> o <code>right</code>.</td></tr>
+    <tr><td><code>hang</code></td><td>la <code>hangingIndent</code> de l'estil, o <code>2em</code></td><td>Sagnat de la resta penjada des de l'inici del seu vers.</td></tr>
+    <tr><td><code>turnoverMark</code></td><td><code>[</code></td><td>El signe davant d'una resta composta a la dreta.</td></tr>
+    <tr><td><code>stanzaSpace</code></td><td><code>1</code></td><td>Espai entre estrofes: un nombre sol compta línies de l'interlineat del poema, una longitud és aquesta longitud.</td></tr>
+    <tr><td><code>keepStanzas</code></td><td><code>0</code></td><td>No partir estrofes d'aquestes línies o menys; 0 ho desactiva.</td></tr>
+    <tr><td><code>tighten</code></td><td><code>true</code></td><td>Estrènyer els espais entre paraules d'un vers una mica massa ample, fins a <code>bodyText.minWordSpacing</code>, abans de partir-lo.</td></tr>
+    <tr><td><code>keepSpaces</code></td><td>desactivat</td><td>Conservar les sèries de dos o més espais dins d'un vers.</td></tr>
+    <tr><td><code>align</code></td><td><code>center</code> (<code>start</code> en text vertical)</td><td>Centrar el poema sobre el seu vers més llarg o alinear-lo a l'inici.</td></tr>
+    <tr><td><code>style</code>, <code>dir</code>, <code>lang</code></td><td>—</td><td>Estil de paràgraf, direcció i idioma del poema.</td></tr>
+    <tr><td><code>numbered</code></td><td><code>true</code></td><td><code>false</code> deixa el poema fora de la numeració de línies: els seus versos no es compten.</td></tr>
+    <tr><td><code>lineStart</code></td><td>—</td><td>El número de línia del primer vers del poema. El compte torna a començar aquí, digui el que digui <code>lineNumbers.restart</code>.</td></tr>
+    <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>L'interval propi del poema: imprimir el número de cada enèsim vers.</td></tr>
+  </tbody>
+</table>
+
+`bodyText.verse` fixa els valors per defecte de tots els poemes (vegeu [Configuració › Vers](/ca/docs/configuration-text#vers)). El text pla conserva el poema tal com es va escriure, un salt de línia entre versos i una línia en blanc entre estrofes, de manera que un passatge copiat i una cerca el llegeixen vers a vers; l'EPUB adaptable compon cada estrofa com un element els versos del qual pengen la seva resta, i el PDF etiquetat marca cada estrofa com un paràgraf.
+
+**Numeració de línies.** Amb `lineNumbers` activat, els versos d'un poema es compten (vegeu [Configuració › Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)). Cada vers compta una vegada: la seva resta no porta número, i l'espai entre estrofes no es compta. Per defecte cada cinquè vers imprimeix el seu número al marge exterior i el compte torna a començar a cada poema. Un poema a la manera àrab clàssica compta una línia per bayt. L'obertura ajusta un poema: `lineStart=N` dona un número al seu primer vers, `interval=N` li dona un interval propi i `numbered=false` el deixa fora.
+
+```md
+:::verse{lineStart=37}
+…
+:::
+```
+
+Amb l'interval per defecte, 5, aquest poema imprimeix 40, 45, etc. al costat dels seus versos.
+
+#### Manera àrab clàssica
+
+Un poema a la manera àrab clàssica (una qaṣīda, una qiṭʿa): cada vers, el *bayt*, en una línia i en dues meitats, el *ṣadr* al costat de l'inici (la dreta en àrab) i l'*ʿajuz* al costat del final, amb un buit entre totes dues. Escriu un bayt per línia, amb els hemistiquis separats per `||` (també val `\\` amb un espai a cada banda, com als textos de Wikisource). Una línia sense separador és un hemistiqui solt, centrat al poema.
+
+```md
+فأنشد يقول:
+
+:::verse
+يَا حُرْقَةَ الدَّهْرِ كُفِّي || إِنْ لَمْ تَكُفِّي فَعِفِّي
+فَلَا بِحَظِّيَ أُعْطِي || وَلَا بِصَنْعَةِ كَفِّي
+:::
+```
+
+- **Una sola amplada.** Tots els hemistiquis del poema es componen amb la mateixa amplada, de manera que cada ṣadr comença a la mateixa vertical i cada ʿajuz acaba en una altra, i les lletres de la rima queden alineades al llarg del poema. L'amplada és la de l'hemistiqui més ample, com a màxim la meitat de la mesura menys el buit; `width` la fixa (`width=55mm`). Cada hemistiqui s'hi porta primer amb caixides (el vers s'allarga més que la prosa: el doble de `bodyText.kashidaMaxLength`) i després amb els seus espais; un hemistiqui d'una sola paraula que no l'omple deixa la resta al buit.
+- **El buit** fa 2 em per defecte; `gap` el fixa (`gap=3em`; un número sense unitat va en em). `ornament` imprimeix una marca al centre (`ornament="٭"`), que no forma part del text.
+- **Massa ample.** Un hemistiqui més ample que l'amplada comuna estreny primer els espais fins a `bodyText.minWordSpacing`. Si tot i així no hi cap, el seu bayt es compon esglaonat: el ṣadr alineat amb el costat de l'inici en una línia pròpia i l'ʿajuz alineat amb el costat del final a la següent.
+- **Col·locació.** El poema va centrat a la columna; `align=start` l'alinea amb el costat de l'inici. Un bayt no es parteix mai entre columnes o pàgines, i el poema segueix les regles d'òrfenes i vídues dels paràgrafs (un poema de tres bayts o menys va sencer). El paràgraf anterior, que l'introdueix («فأنشد يقول:»), manté la seva última línia al costat dels primers bayts.
+- **Tipus.** El poema pren la font, el cos i l'interlineat del text; `style` li assigna un estil de paràgraf (`style="vers"`), que és com un poema vocalitzat obté l'interlineat addicional que demanen les seves harakat. `dir=ltr` o `dir=rtl` en fixa la direcció com en qualsevol bloc; un poema en alfabet llatí en un llibre d'esquerra a dreta porta el ṣadr a l'esquerra.
+
+El text pla del poema separa hemistiquis i bayts (un tabulador i un salt de línia), de manera que una cerca o un passatge copiat el llegeixen tal com es va escriure; les caixides i l'ornament en queden fora.
+
+
+### `:::toc`
+
+`:::toc` imprimeix l'índex de continguts al punt on és. S'expandeix en blocs ordinaris — un per encapçalament dels nivells que enumera `toc.levels` (el nivell 1 per defecte) i un per `:::part` — de manera que l'índex flueix per columnes i pàgines com qualsevol altre text, i un clic sobre una entrada porta a la línia de la directiva. Cada entrada mostra el número de l'encapçalament (el resultat del seu `numberingTemplate` o, si no n'hi ha, l'ordinal de capítol), el títol, una línia de punts i l'etiqueta de la pàgina on comença i, si `toc.subtitle` està activat, una segona línia amb un atribut de l'encapçalament, com els autors del capítol (`{author="…"}`). Cada part rep una fila pròpia, dissenyada per `toc.parts.design` i acolorida amb la `palette` de la part. Els encapçalaments l'estil dels quals declara `numbered: false` apareixen sense número; `{toc="false"}` en un encapçalament el deixa fora (normalment, el mateix encapçalament de l'índex).
+
+```md
+# Índex {style="preliminar" toc="false"}
+
+:::toc
+```
+
+Dos atributs canvien el que imprimeix un índex concret, digui el que digui la configuració. `levels` indica els nivells d'encapçalament que recull: un interval (`levels="1-2"`), un sol nivell (`levels="2"`) o una llista (`levels="1,3"`); un nivell al qual `toc.levels` no dona estil pren el del nivell més proper per damunt. `keep` manté cada bloc de l'índex en una sola columna i pàgina, com fa [`toc.groups.keepTogether`](/ca/docs/configuration-notes-references#índex-de-continguts): `keep="part"` manté una fila de part amb els seus capítols, `keep="1"` (fins a `"6"`) un encapçalament d'aquest nivell amb les entrades que en depenen, i `keep="none"` desactiva l'agrupament configurat. Un bloc que no hi cap passa sencer a la columna o la pàgina següent; un de més alt que una columna es parteix, i la columna on continua s'obre de nou amb la seva fila de capçalera, seguida d'una marca de continuació com *(cont.)*.
+
+```md
+# Índex {style="preliminar" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
+Els números de pàgina són els que el document imprimeix realment. Un document compost tot sol es torna a compondre amb les etiquetes de la passada anterior fins que deixen de moure's — amb la numeració reiniciada després dels preliminars (la recepta de `:::numbering` de més amunt) n'hi ha prou amb una passada addicional. Un capítol compost per separat (les previsualitzacions del sandbox) rep en canvi l'esquema del llibre sencer des del seu amfitrió. Vegeu [Índex de continguts](/ca/docs/configuration-notes-references#índex-de-continguts) a la referència de configuració.
+
+### `:::index`
+
+`:::index` imprimeix l'índex analític al punt on és: els termes marcats amb `:index[…]` o `:index{term="…"}` a tot el llibre, amb les seves pàgines, que segueixen el text quan es mou. Es descriu juntament amb les marques a [Índex analític](/ca/docs/document-format-notes-references#índex-analític). Una columna no acaba mai després de la primera entrada d'un grup ni abans de l'última: en queden dues i en passen dues, o el grup passa sencer (`index.groups.splitMinEntries`).
+
+```md
+# Índex analític {style="indice"}
+
+:::index
+```
+
+### Salts de línia
+
+Les línies d'un paràgraf s'uneixen amb un espai. Per acabar una línia dins d'un paràgraf sense començar-ne un altre (una adreça, la salutació d'una carta, una dedicatòria), acaba la línia del text amb una barra inversa, el salt forçat de CommonMark, o escriu `\\` seguit d'un espai:
+
+```md
+Al guardià del far,\
+al final del moll nord.
+
+Anna Puig \\ Carrer Major 4 \\ 08001 Barcelona
+```
+
+- La línia anterior a un salt es compon amb la seva amplada natural, com l'última línia d'un paràgraf, sense estirar-se fins a la caixa. El text que segueix obre una línia nova del mateix paràgraf, sense sagnat de primera línia ni espai a sobre; amb sagnat francès penja com qualsevol línia després de la primera.
+- L'admeten els paràgrafs, les cites (`> Primera línia\` sobre `> segona línia`), les notes al peu i els elements de llista. Un element de llista ocupa una sola línia del text, així que es parteix amb `\\`.
+- Una barra inversa al final del paràgraf s'imprimeix, com a CommonMark, i dos salts seguits són un de sol: per a una línia buida, comença un paràgraf nou o afegeix un [`:::space`](#space).
+- Un `\\` enganxat al caràcter següent no és un salt: `\\*` imprimeix una barra inversa i un asterisc escapat, `C:\\Temp` les dues barres. Al codi en línia i en una fórmula les barres són del codi i de la fórmula.
+- Dos espais al final d'una línia, l'altre salt forçat de CommonMark, no ho són: no es veuen en un editor i molts editors els hi deixen oblidats, així que partirien línies que ningú no volia partir.
+- El text copiat del visor HTML porta un salt de línia en aquest punt, l'EPUB adaptable un `<br/>`, el text del PDF un final de línia i una exportació a Word un salt de línia manual (Maj+Retorn), que la importació de Word torna a llegir com a salt.
+- Un poema conserva els versos, els sagnats i les estrofes en un bloc [`:::verse`](#verse), sense una barra a cada línia.
+
+Fins a postext 1.22 la barra inversa s'imprimia i les línies s'unien amb un espai. Un llibre desat aleshores el text del qual acaba una línia amb una barra inversa, o posa `\\` davant d'un espai, conserva aquesta lectura (`bodyText.hardLineBreaks: false`, vegeu [Configuració › Paquets escrits per postext 1.4 o anterior](/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior)).
+
+### Salts de línia als títols
+
+Escriu `\\` dins d'un encapçalament (o dins de l'atribut `title` d'una part) per forçar un salt de línia allà on el títol es mostra com a tal: l'encapçalament en columna continua fluint i mostra un espai, mentre que el `{titleText}` d'un disseny d'obertura salta de línia en aquest punt (en qualsevol mode d'`overflow` de l'element de text). Les capçaleres de pàgina, `{chapterTitle}`, `{partTitle}` i l'índex del PDF sempre componen el títol en una sola línia. En xinès o en japonès el salt es llegeix com un espai ideogràfic entre dos caràcters d'aquesta escriptura (un títol en dístic); on un d'ells s'ajunta amb una xifra o amb text llatí (`关于举办 \\ 2026年…`), la pàgina posa l'espai entre xinès i llatí, i els marcadors i el títol del PDF uneixen les dues meitats sense res, com s'escriu el xinès en text pla.
+
+```md
+# Concepte de salut i malaltia. \\ Salut comunitària {author="I. Zango Martín"}
+```
+
+
+## Còmics
+
+Les pàgines de còmic, les tires i les dobles pàgines s'escriuen en dos blocs amb tanca el cos dels quals llegeix el mateix motor, línia per línia: `:::page` i `:::strip`. A dins, les línies `::panel` comencen les vinyetes i les línies de guió les retolen. La guia, amb les regles de compaginació, la retolació i les sortides, és [Còmics](/ca/docs/comics); els paràmetres són a [Configuració › Còmics](/ca/docs/configuration-comics#còmics).
+
+### `:::page`
+
+```md
+:::page{split="30 [30 | 20 | *] / *" gutter=4mm}
+::panel{art=lh-arrive}
+caption: Cada estiu, la Maya passava una setmana al far.
+maya: Avi! Ja soc aquí!
+::panel{art=lh-radio focus="40% 50%"}
+tomas: Just a temps.
+::panel{art=lh-maya}
+maya{thought}: Aquesta vàlvula sembla fluixa…
+::panel{art=lh-beam bleed}
+sfx{rotate=-8}: CRAC
+:::
+```
+
+Un bloc `:::page` és una pàgina de còmic: obre una pàgina nova, l'ocupa sencera, i el text que ve després del seu `:::` de tancament comença a la pàgina següent. Els seus atributs són `split` (com es talla la pàgina en cel·les: mides en percentatge separades per `/` per a les fileres i per `|` per a les vinyetes de costat, una llista entre claudàtors per tornar a tallar una cel·la, `*` per a la resta, `a~b` per a una línia inclinada), `gutter` (una longitud, o dues: entre fileres i entre vinyetes; un nombre sol és en mil·límetres), `style` (un estil de vinyeta amb nom), `bleed`, `direction` (`ltr` o `rtl`, també escrit `dir`) i `spread` (vegeu [Dobles pàgines](#dobles-pàgines)). Sense `split` les vinyetes s'apilen en fileres iguals. Dins del bloc no es llegeixen blocs Markdown, contenidors ni directives; els `<!-- comentaris -->` sí.
+
+### Vinyetes
+
+Una línia `::panel{…}` comença una vinyeta, que omple la cel·la següent en ordre de lectura i arriba fins a la línia `::panel` següent o fins a la tanca de tancament:
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Efecte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>art=&lt;id&gt;</code></td><td>El dibuix: un recurs bitmap o SVG. Sense ell la vinyeta queda buida.</td></tr>
+    <tr><td><code>fit=cover</code>, <code>fit=contain</code></td><td>Retalla el dibuix per omplir la cel·la (mai dins de la seva zona segura), o el mostra sencer.</td></tr>
+    <tr><td><code>focus="x% y%"</code></td><td>El punt que s'ha de mantenir centrat allà on la zona segura deixa marge.</td></tr>
+    <tr><td><code>style=…</code>, <code>border=none</code>, <code>border=0.5mm</code>, <code>bg=#hex</code></td><td>Un estil de vinyeta amb nom, la vora, el fons (un color, un id de la paleta o <code>none</code>).</td></tr>
+    <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Estén els costats que toquen el marc fins al tall i la sang.</td></tr>
+    <tr><td><code>pad="…"</code></td><td>Fa la vinyeta més petita que la seva cel·la: d'una a quatre longituds o percentatges (dalt, final, baix, inici).</td></tr>
+    <tr><td><code>inset="x y w h"</code></td><td>Posa la vinyeta sobre l'anterior, en aquesta caixa en percentatges d'aquella, en lloc de donar-li una cel·la.</td></tr>
+    <tr><td><code>pop=&lt;id&gt;</code></td><td>Un retall transparent dibuixat per sobre de la vora amb el retall del dibuix (una vora trencada).</td></tr>
+    <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Reflecteix el dibuix, o el conserva tal com és en una pàgina en mirall.</td></tr>
+    <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>L'alternativa textual (si no, l'<code>altText</code> del recurs) i un id d'àncora.</td></tr>
+  </tbody>
+</table>
+
+### Línies de guió
+
+Cada línia d'una vinyeta és una bafarada, una cartel·la o una onomatopeia, i s'escriu `clau{atributs}: text`:
+
+```md
+maya: Avi! Ja soc aquí!
+tomas{whisper}: Xxt. Escolta.
+caption{at=bottom-end}: A tres carrers d'aquí.
+sfx{at="62% 40%" rotate=-8 size=1.4}: CRAC
+ben{tail=start}: (des de fora de la vinyeta) Soc aquí!
+sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
+maya: Aquesta línia continua
+  a la línia següent,\
+  i es parteix aquí.
+```
+
+- La **clau** és un id de personatge (lletres, xifres, `_`, `.`, `-`), el mateix en totes les traduccions; `caption`, `sfx` i `note` són reservades. Els dos punts poden ser els `：` d'amplada completa.
+- Una paraula sola entre claus és un **estil de bafarada** (`thought`, `whisper`, `shout`, `radio`, `inner` o un de `comics.balloonStyles`); `style=` diu el mateix.
+- `at` fixa la bafarada: un punt en percentatges del dibuix de la vinyeta (`at="62% 40%"`), o una cantonada o una vora (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` apunta la cua a un punt del dibuix; `tail=none` la treu i `tail=top|bottom|start|end|left|right` l'apunta fora de la vinyeta. `join` i `join=false` uneixen la bafarada a l'anterior del mateix personatge o la mantenen separada; `break` li permet travessar la vora, i l'encreuament no s'avisa com a desbordament. `rotate` (graus), `size` (una escala, per a les onomatopeies), `color` i `font` en modifiquen la retolació.
+- `vertical` i `horizontal` (o `mode=vertical`, `mode=horizontal`) fixen la direcció d'escriptura de la línia per damunt de la del llibre: un `ドン` sense traduir, compost en columna en una edició horitzontal; un rètol escrit de través, en filera en una de vertical. Una columna en un llibre d'una altra llengua segueix les regles del seu propi text (amb kana, les del japonès). En un llibre vertical, una línia sense caràcters xinesos ni japonesos es compon en filera igualment.
+- Una línia sagnada amb dos espais o un tabulador continua la bafarada de sobre; una barra inversa al final d'una línia hi parteix el text. Les línies en blanc s'ignoren.
+- El text és Markdown en línia: èmfasi (retolat en negreta cursiva), `:tcy`, `:ruby` (la lectura sobre la base, tret que la base vagi de dreta a esquerra), `:ltr` i `:rtl` (un fragment que conserva el seu propi sentit). Les notes a peu de pàgina i les marques `:ref` no es llegeixen.
+
+### `:::strip`
+
+```md
+:::strip{split="* | * | *" aspect=3 span=page placement=top}
+::panel{art=pip-1}
+pip: Bon dia, Otto!
+::panel{art=pip-2}
+::panel{art=pip-3}
+otto: Tu creus?
+:::
+```
+
+Un `:::strip` té el cos d'una pàgina però va dins del text com una sola caixa que no es parteix, tallada en vinyetes: `span` (`column`, el valor per defecte, o `page`), `placement` (`here`, el valor per defecte, allà on està escrita; o `top`, `bottom`, `auto`, flotant com una figura) i la seva mida, sigui `height` (una longitud; un nombre sol és en mil·límetres) o `aspect` (l'amplada dividida per l'alçada: `3`, `4/1`, `4:1`; per defecte, les proporcions que fan quadrades les seves vinyetes). Una tira a amplada de pàgina composta `here` en una pàgina de diverses columnes talla les columnes allà on és, com fa una caixa d'amplada de pàgina. `width` la fa més estreta que la mesura que abasta (un `60%` d'aquesta mesura, o una longitud) i `align` la situa a l'inici (`start`), al centre (`center`, el valor per defecte) o al final (`end`) d'aquesta mesura, segons la direcció del text. `caption="…"` hi posa un peu a sota amb l'estil de peus; amb `type=figure` (un tipus de recurs), el peu pren l'etiqueta i el número del tipus i la tira compta en la seqüència d'aquest tipus, i amb `id=…` un `:ref` la pot anomenar. Sense `split` les vinyetes van l'una al costat de l'altra. Les tires només es llegeixen al nivell superior d'un capítol.
+
+### Dobles pàgines
+
+`:::page{spread}` estén una pàgina per dues pàgines encarades: la divisió cobreix les dues caixes de text unides al llom, sense els seus marges interiors, i una vinyeta pot travessar el llom. La doble pàgina s'obre en una pàgina parella, després d'una pàgina en blanc si cal. Vegeu [Còmics › Dobles pàgines](/ca/docs/comics#dobles-pàgines).
+
+## Pàgines compostes
+
+Una pàgina composta es maqueta a partir d'una plantilla de pàgina de la configuració (`pageTemplates`), i el seu contingut s'aboca als marcs de la plantilla pel seu nom. La guia, amb els avisos, és a [Pàgines compostes](/ca/docs/composed-pages).
+
+- `::::page{template="…"}` … `::::` és la pàgina: quatre dos punts o més, i es tanca amb una tanca sola del mateix nombre. Les tanques de tres dos punts que hi ha a dins (`:::frame`, `:::callout`, `:::figure`…) funcionen com a tot arreu, i un `:::` solt mai no tanca la pàgina. Un `:::page` de tres dos punts continua sent una pàgina de còmic.
+- `:::frame{slot="…" label="…"}` … `:::` guarda el contingut del marc d'aquest nom: qualsevol Markdown.
+- `slot="…"` en un encapçalament (`## Retos {slot="retos-titulo"}`), a `::resource{id="…" slot="…"}`, en una tanca de codi o en un contenidor `:::` envia només aquell bloc. El contingut sense slot va al marc de flux de la plantilla.
+- `:::figure{resource="…" slot="…"}` … `:::` col·loca un recurs amb les seves línies `::label[TEXT]{at="…" style="…"}`, on `at` és una àncora de la imatge o un punt `"x% y%"`. Una figura també funciona al text corregut.

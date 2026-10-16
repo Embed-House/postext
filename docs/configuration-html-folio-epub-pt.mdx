@@ -1,0 +1,437 @@
+{/* docs/configuration-html-folio-epub-pt.mdx */}
+
+export const metadata = {
+  title: 'Uso programático: HTML, Folio e EPUB',
+  sidebarTitle: 'HTML, Folio e EPUB',
+  description: 'O livro diagramado numa página web, como livro em 3D com o postext-folio e como EPUB 3 de layout fixo ou refluível com o postext-epub',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '18 min',
+  order: 22,
+  parent: 'configuration',
+  plainSummary: "Esta página é para quem escreve código e quer mostrar um livro numa tela. A primeira seção coloca as páginas dentro de uma página web e explica em que essa visualização difere do canvas e do PDF. A segunda mostra o livro em 3D, aberto sobre uma mesa, com folhas que o leitor vira. A última seção gera um livro digital EPUB, com páginas fixas ou com texto que se ajusta à tela, e verifica o arquivo.",
+};
+
+# Uso programático: HTML, Folio e EPUB
+
+
+## Integração do visualizador HTML
+
+O visualizador HTML é o renderizador do Postext voltado para a tela. Em vez de rasterizar as páginas em um bitmap, ele emite nós DOM com posicionamento absoluto, cuja geometria vem do mesmo pipeline que produz a saída impressa. Por isso é a escolha certa quando você quer, no navegador, tipografia legível, selecionável e que acompanha o redimensionamento (um app de leitura, uma visualização dentro de um produto ou uma página de documentação incorporada) sem depender de um visualizador de PDF.
+
+As peças principais da API pública:
+
+- **`buildDocument(content, config, cache?)`**: executa o pipeline de layout completo e devolve um `VDTDocument`.
+- **`renderToHtmlIndexed(doc, options)`**: transforma o VDT em uma única string HTML, mais um detalhamento por página e por bloco. Esse detalhamento permite remendar o DOM a baixo custo quando só alguns blocos mudaram entre duas renderizações.
+- **`resolveHtmlViewerConfig(partial)`**: preenche os valores padrão do visualizador HTML (`maxCharsPerLine`, `columnGap`, `optimalLineBreaking`).
+- **`buildFontString` + `measureGlyphWidth` + `dimensionToPx`**: primitivas de medição usadas para obter a largura real da coluna em pixels a partir de um número de caracteres desejado.
+- **`createMeasurementCache` / `clearMeasurementCache`**: caches plugáveis, para reaproveitar medições entre um layout e outro.
+- **`prepareFonts` / `buildDocumentWithFonts` / `watchFonts` / `onFontsChanged`**: carregam as faces do documento antes do layout e diagramam de novo quando chegam faces (veja [Carregar as fontes antes do layout](/pt/docs/configuration-programmatic-usage#carregar-as-fontes-antes-do-layout)).
+
+### Exemplo ao vivo: uma string HTML
+
+O percurso completo em JavaScript puro, antes da integração com React mais abaixo: construir o documento, entregar o `VDTDocument` a `renderToHtml` e inserir a string em um contêiner. `mode: 'single'` empilha as páginas na vertical; `background` dá uma cor a elas, já que as páginas são transparentes por padrão. O pen também imprime a marcação gerada, para você ver as linhas com posicionamento absoluto que o renderizador emite: o navegador as pinta, mas nunca refaz o fluxo delas.
+
+<CodePenExample name="render-html" title="Postext · renderizar um documento em HTML" description="Diagrame um documento Markdown com o postext e renderize-o em uma string HTML." height={600} />
+
+### Integração mínima
+
+O trecho abaixo é a menor integração útil: constrói o documento no tamanho atual da área de visualização, renderiza-o em um contêiner e repete o processo a cada redimensionamento.
+
+```tsx
+import { useEffect, useRef } from 'react';
+import {
+  buildDocument,
+  renderToHtmlIndexed,
+  resolveHtmlViewerConfig,
+  buildFontString,
+  measureGlyphWidth,
+  dimensionToPx,
+  createMeasurementCache,
+  watchFonts,
+  onFontsChanged,
+} from 'postext';
+import type { PostextConfig, MeasurementCache } from 'postext';
+
+// DPI adequado para tela: a 144 DPI, um corpo de 8pt equivale a 16 px.
+const HTML_DPI = 144;
+const PADDING_PX = 24;
+
+// Amostra de prosa usada para medir a largura de coluna desejada. Com fontes
+// proporcionais, "N × largura média" não é confiável, então medimos uma string representativa.
+const SAMPLE =
+  'The quick brown fox jumps over the lazy dog. Sphinx of black quartz, judge my vow.';
+
+function sampleForChars(n: number): string {
+  let s = SAMPLE;
+  while (s.length < n) s += ' ' + SAMPLE;
+  return s.slice(0, n);
+}
+
+export function PostextHtmlViewer({
+  markdown,
+  config,
+  mode = 'multi',
+}: {
+  markdown: string;
+  config: PostextConfig;
+  mode?: 'single' | 'multi';
+}) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const cacheRef = useRef<MeasurementCache>(createMeasurementCache());
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    const relayout = () => {
+      const rect = host.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const viewer = resolveHtmlViewerConfig(config.htmlViewer);
+      const fontFamily = config.bodyText?.fontFamily ?? 'EB Garamond';
+      const fontWeight = config.bodyText?.fontWeight ?? 400;
+      const fontSize = config.bodyText?.fontSize ?? { value: 8, unit: 'pt' as const };
+      const fontSizePx = dimensionToPx(fontSize, HTML_DPI);
+
+      // Mede a largura *real* da coluna para N caracteres de texto corrido.
+      const targetColumnPx = measureGlyphWidth(
+        sampleForChars(viewer.maxCharsPerLine),
+        buildFontString(fontFamily, fontSizePx, String(fontWeight), 'normal'),
+      );
+
+      const inner = Math.max(rect.width - PADDING_PX * 2, 100);
+      let columnWidthPx: number;
+      if (mode === 'single') {
+        columnWidthPx = Math.min(targetColumnPx, inner);
+      } else {
+        // Encaixa quantas colunas couberem na largura desejada.
+        const count = Math.max(
+          1,
+          Math.floor((inner + viewer.columnGap) / (targetColumnPx + viewer.columnGap)),
+        );
+        columnWidthPx = (inner - viewer.columnGap * (count - 1)) / count;
+      }
+      columnWidthPx = Math.max(Math.floor(columnWidthPx), 80);
+
+      // O modo single usa uma única página muito alta; o modo multi usa a altura
+      // da área de visualização, de modo que cada "página" do VDT vira uma coluna.
+      const pageHeightPx =
+        mode === 'single' ? Math.max(rect.height * 20, 200_000) : Math.max(rect.height - PADDING_PX * 2, 400);
+
+      const override: PostextConfig = {
+        ...config,
+        page: {
+          ...config.page,
+          dpi: HTML_DPI,
+          width: { value: columnWidthPx, unit: 'px' },
+          height: { value: pageHeightPx, unit: 'px' },
+          margins: {
+            top: { value: 0, unit: 'px' },
+            bottom: { value: 0, unit: 'px' },
+            left: { value: 0, unit: 'px' },
+            right: { value: 0, unit: 'px' },
+          },
+        },
+        layout: { ...config.layout, layoutType: 'single' },
+        bodyText: {
+          ...config.bodyText,
+          optimalLineBreaking: viewer.optimalLineBreaking,
+        },
+      };
+
+      const doc = buildDocument({ markdown }, override, cacheRef.current);
+      const { html } = renderToHtmlIndexed(doc, {
+        mode,
+        columnGap: viewer.columnGap,
+        padding: PADDING_PX,
+        background: 'transparent',
+      });
+
+      host.innerHTML = html;
+    };
+
+    relayout();
+
+    const ro = new ResizeObserver(() => relayout());
+    ro.observe(host);
+
+    // Mede de novo quando as fontes web chegam, para que as larguras dos glifos não venham das fontes substitutas.
+    const stopWatching = watchFonts();
+    const off = onFontsChanged(() => relayout());
+
+    return () => {
+      ro.disconnect();
+      off();
+      stopWatching();
+    };
+  }, [markdown, config, mode]);
+
+  return <div ref={hostRef} style={{ width: '100%', height: '100%', overflow: 'auto' }} />;
+}
+```
+
+Algumas observações sobre o que esse exemplo faz:
+
+- **Mede a coluna em vez de estimá-la.** Como `maxCharsPerLine` é um *alvo* expresso em caracteres, a largura real em pixels depende da fonte do texto corrido. `measureGlyphWidth` faz uma medição de verdade com a fonte escolhida, o que mantém a medida constante quando a fonte muda.
+- **Reescreve a página.** O visualizador HTML trata cada “página” do VDT como uma coluna na tela. O exemplo substitui `page.width` pela largura de coluna medida, zera as margens (o espaçamento interno fica fora da página, na div `.pt-doc` que a envolve) e usa `HTML_DPI = 144` para que um texto de `8pt` resulte em `16px`.
+- **Leva em conta o carregamento das fontes.** `watchFonts` escuta `document.fonts` e, uma vez por quadro, descarta o que foi medido nas famílias cujas faces chegaram; `onFontsChanged` então diagrama a coluna de novo. Sem refazer o layout, a primeira renderização usa as métricas de uma fonte substituta e salta quando a fonte verdadeira chega.
+- **Reaproveita o cache de medição.** Criar o cache uma vez por componente faz com que redimensionamentos e mudanças de escala da fonte reaproveitem as medições da renderização anterior, em vez de medir de novo cada parágrafo.
+
+### Indo além
+
+O exemplo acima é propositalmente simples. Integrações em produção costumam acrescentar:
+
+- **Isolamento com Shadow DOM**: renderize em `host.attachShadow({ mode: 'open' })` para que nenhum CSS da página externa vaze para o visualizador.
+- **Remendos incrementais**: `renderToHtmlIndexed` devolve `pages[i].blocks`, cada um com um `id` estável e o HTML externo do bloco. Quando só alguns blocos diferem entre duas renderizações, você pode substituir esses invólucros no lugar, em vez de reconstruir o `innerHTML`.
+- **Sobreposições**: uma camada SVG com posicionamento absoluto sobre cada `.pt-page`, para cursores, seleções ou a grade de linhas de base.
+- **Links**: as palavras de um link Markdown são envolvidas em `<a href="…" rel="noopener noreferrer">`, que assume a cor do texto e não tem sublinhado; veja [Formato do documento › Links](/pt/docs/document-format-inline#links). Em um visualizador que funcione como editor, intercepte os cliques em `a[href]` que não comecem por `#` e abra-os em uma nova aba (as âncoras de `:ref` apontam para dentro do documento).
+- **Imagens em tinta única**: com `diagramStyle.singleInk` ativado, os `<img>` SVG recebem um filtro CSS, a menos que você passe `singleInk: false` para URLs que já foram recoloridas; veja [Tinta única no canvas e no HTML](/pt/docs/configuration-resources#tinta-única-no-canvas-e-no-html).
+
+O componente `HtmlPreview` do Sandbox (`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`) implementa tudo isso sobre a mesma API mostrada aqui e pode servir de referência. Ele também encaminha cada build por um worker de layout compartilhado (veja [Executar o layout em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-o-layout-em-um-web-worker)), para que edições ao vivo e redimensionamentos nunca bloqueiem a thread principal. Troque a chamada direta `buildDocument(...)` do trecho acima por `layoutWorker.build(...)` quando quiser tirar o layout da thread principal.
+
+### Como a saída HTML difere do canvas e do PDF
+
+`renderToHtml` posiciona cada linha, figura e elemento de design exatamente onde o canvas e o PDF os posicionam, mas pinta menos coisas ao redor deles:
+
+<table>
+  <thead>
+    <tr>
+      <th>Recurso</th>
+      <th>Canvas (<code>renderPage</code>)</th>
+      <th>HTML (<code>renderToHtml</code>)</th>
+      <th>PDF (<code>renderToPdf</code>)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Fundo da página</td>
+      <td>Branco, com <code>page.backgroundColor</code> sobre o refile e a sangria.</td>
+      <td><strong>Transparente</strong>, a menos que você passe <code>background</code> ou defina <code>page.backgroundColor</code> (que então preenche a caixa da página inteira, área de slug incluída).</td>
+      <td>Branco, com <code>page.backgroundColor</code> sobre o refile e a sangria.</td>
+    </tr>
+    <tr>
+      <td>Grade de linhas de base (<code>page.baselineGrid</code>)</td>
+      <td>Desenhada</td>
+      <td>Não desenhada</td>
+      <td>Desenhada</td>
+    </tr>
+    <tr>
+      <td>Fio entre colunas (<code>layout.columnRule</code>)</td>
+      <td>Desenhado</td>
+      <td>Não desenhado</td>
+      <td>Desenhado</td>
+    </tr>
+    <tr>
+      <td>Marcas de corte (<code>page.cutLines</code>)</td>
+      <td>Desenhadas</td>
+      <td>Não desenhadas; a caixa da página continua incluindo a área de slug ao redor do refile.</td>
+      <td>Desenhadas</td>
+    </tr>
+    <tr>
+      <td>Negativo da página</td>
+      <td>Opção <code>pageNegative</code></td>
+      <td>Não disponível</td>
+      <td>Opção <code>pageNegative</code></td>
+    </tr>
+    <tr>
+      <td>Texto</td>
+      <td>Pixels</td>
+      <td>Texto selecionável em elementos com posicionamento absoluto, composto nas famílias de fonte do CSS: a página precisa carregar as mesmas fontes.</td>
+      <td>Fontes incorporadas a partir do seu <code>fontProvider</code>; selecionável, pesquisável e com tags.</td>
+    </tr>
+    <tr>
+      <td>Texto vertical (<code>layout.writingMode: 'vertical-rl'</code>)</td>
+      <td>Caracteres pintados uma célula por vez, girados de volta à posição em pé; formas verticais por meio de uma fonte gêmea (<code>loadVerticalAlternates</code>).</td>
+      <td>O fluxo em uma caixa girada um quarto de volta; cada linha girada de volta à posição em pé e composta com <code>writing-mode: vertical-rl</code>, de modo que o navegador usa as formas verticais e põe os caracteres em pé; números curtos em <code>text-combine-upright: all</code>; um travessão, reticências, um ponto médio ou um til ondulado em uma caixa da sua célula (o navegador o avançaria pela largura horizontal), e um travessão esticado para preenchê-la por <code>flow.dashAdvances</code>.</td>
+      <td>Caracteres em pé por meio de uma gêmea <code>Identity-V</code> de cada fonte; veja <a href="/pt/docs/configuration-pdf-output#texto-vertical-no-pdf">Texto vertical no PDF</a>.</td>
+    </tr>
+    <tr>
+      <td>Imagens</td>
+      <td><code>registerResourceImage</code></td>
+      <td>A opção <code>resourceImageUrl(fileId)</code>; sem ela, uma caixa cinza no lugar.</td>
+      <td>A opção <code>resourceBytes(fileId)</code>.</td>
+    </tr>
+    <tr>
+      <td>Fórmulas</td>
+      <td>Caminhos vetoriais</td>
+      <td><code>&lt;svg&gt;</code> embutido</td>
+      <td>Caminhos vetoriais</td>
+    </tr>
+    <tr>
+      <td>Links</td>
+      <td>Nenhum</td>
+      <td>As citações <code>:ref</code> apontam para o seu recurso; as linhas do sumário, não.</td>
+      <td>As citações <code>:ref</code> e as linhas do sumário, além dos marcadores (bookmarks).</td>
+    </tr>
+  </tbody>
+</table>
+
+A página transparente faz diferença em um site escuro: uma visualização sem `background` mostra texto preto sobre o fundo escuro do site. Passe `renderToHtml(doc, { background: '#ffffff' })` ou dê ao documento um `page.backgroundColor`.
+
+**Os estilos de texto da página hospedeira ficam de fora.** Cada linha é composta nas larguras que o motor mediu, então um `letter-spacing`, `word-spacing`, `text-transform` ou `font-variant` que a saída herdasse da página ao redor alargaria os trechos de glifos e faria as linhas se sobreporem. Por isso a raiz `.pt-doc` redefine as propriedades de texto herdadas (espaçamento entre letras e entre palavras, caixa, recuo, espaço em branco, estilo, variante, peso, largura, recursos e kerning da fonte, entrelinha, alinhamento, sombra e ênfase do texto, hifenização, direção, modo de escrita, contorno e preenchimento do texto e o ampliamento de texto em celulares) antes das suas próprias declarações de layout, de modo que a saída tem a mesma aparência dentro de uma shadow root ou sob um elemento estilizado. A lista é exportada como `HTML_TEXT_RESET`, uma string de declarações CSS: um hospedeiro que monta o `innerHtml` das páginas (de `renderToHtmlIndexed`) em contêineres próprios a aplica à raiz deles. Até o postext 1.4 a raiz não redefinia nada; a solução era um invólucro com `all: initial`.
+
+
+## Um livro em 3D (`postext-folio`)
+
+`postext-folio` apresenta na tela um documento diagramado como um livro impresso aberto sobre uma mesa: páginas duplas segundo a regra do recto e folhas que o leitor vira com os botões ‹ ›, as setas do teclado, um deslizar do dedo, um clique em uma página ou pegando uma página pela borda e arrastando-a. Cada folha se curva em three.js de acordo com o seu papel e projeta uma sombra real sobre as páginas de baixo. O canvas WebGL desenha o livro parado e virando da mesma forma, então uma página nunca muda de aparência ao assentar. É o visualizador das Receitas e da aba **Folio** do Sandbox.
+
+```bash
+npm install postext postext-folio three
+```
+
+```ts
+import { buildDocument } from 'postext';
+import { createFolioFromDocument } from 'postext-folio';
+
+const doc = buildDocument({ markdown }, config);
+const book = createFolioFromDocument(document.getElementById('book')!, doc, {
+  onChange: ({ pages }) => console.log('showing pages', pages),
+});
+
+// Depois de uma edição: o mesmo visualizador, na mesma página.
+book.setDocument(buildDocument({ markdown: edited }, config));
+```
+
+- **As páginas são pintadas conforme são necessárias.** `createFolioFromDocument` pinta cada página com `renderPageToCanvas` exatamente nos pixels de dispositivo de um espaço de página (o WebGL então a mostra texel por pixel, tão nítida quanto a visualização em canvas), e apenas as páginas duplas em torno da que está aberta (`window`, três de cada lado por padrão). As páginas que saem dessa janela são liberadas, então um livro de mil páginas custa a memória de algumas poucas. Um salto para uma página distante pinta primeiro aquela página dupla. Até dez páginas de distância, as folhas viram uma a uma; mais longe que isso, o bloco de páginas intermediárias se levanta como uma única placa, tão grossa quanto essas páginas (a soma das suas espessuras), e assenta do outro lado. `setDocument` mantém a pintura de cada página que fica igual no novo layout (`{ repaint: true }` pinta todas de novo, depois que uma imagem chegou).
+- **O documento define o livro.** A sua primeira página abre sozinha à direita quando é um recto (`pageIndexOffset` par), um livro com encadernação à direita (`page.binding: 'right'`, ou um documento vertical) aparece espelhado e vira as páginas para a esquerda, as páginas em branco assumem a cor de fundo da página, e a largura de refile da página (`pageWidthMm`) dá a escala da espessura do papel e das capas. Um capítulo diagramado com uma `continuation` conta as outras páginas do livro (`pageIndexOffset` antes dele, `bookPageCount` depois dele) na espessura dos dois blocos de páginas sem desenhá-las (`extraPages`).
+- **O documento define a aparência.** O papel, a encadernação, a mesa e a luz são as [configurações `folio`](/pt/docs/configuration-fonts-colors-viewers#visualizador-folio-configuração) do documento (`doc.config.folio`). Uma página composta dentro de uma sequência `:::paper` leva o seu próprio papel (`VDTPage.paper`), e a sua folha é desenhada com a cor, a superfície, a espessura e a rigidez desse papel. Com `binding.cover: 'pages'`, a primeira página é a capa da frente e a última, quando é um verso, a capa de trás (`covers`). Um formato de jornal (`'broadsheet'`, `'berliner'`, `'tabloid'`, `'compact'`) cujas configurações não nomeiam papel nem encadernação aparece como papel-jornal dobrado, também quando o hospedeiro passa o seu próprio `folio`.
+- **O contêiner define o tamanho.** O livro o ocupa por inteiro, com os botões e a contagem de páginas nas margens, então dê uma altura ao contêiner; um redimensionamento pinta as páginas de novo no novo tamanho. Abaixo de 560 px de largura, ele mostra uma página por vez (`mode: 'auto'`; `'single'` e `'double'` forçam um ou outro): a lombada fica ao longo da borda interna da página e a folha vira sobre ela, arrastar em direção à lombada avança, deslizar para longe dela volta, e um toque vira a página.
+- **O que o ponteiro faz.** `interaction` (e, depois, `setInteraction`) define o que o botão esquerdo, um dedo ou uma caneta fazem sobre o livro: `'hand'` (o padrão) pega e vira as páginas, `'orbit'` gira a vista como faz o arrastar com o botão direito (para trackpads e tablets), `'select'` deixa o ponteiro para o hospedeiro, para selecionar texto, por exemplo. `pageAt(event)` dá a página sob um ponteiro e o ponto dela (`{ page, x, y }`, frações da página a partir do canto superior esquerdo), no livro tal como é visto, inclinado ou girado; `pointOnScreen(point)` faz o caminho inverso, para desenhar um cursor de texto ou uma seleção sobre a página. `refreshPage(src)` volta a mostrar um canvas de página que o hospedeiro redesenhou no mesmo lugar. O Sandbox usa todos eles para selecionar texto e acompanhar o cursor do editor nas páginas em 3D.
+- **Uma lupa para letras miúdas.** `interaction: 'magnify'` mantém sobre o livro, onde está o ponteiro, uma lente redonda com aro preto (um dedo a mantém acima de si enquanto toca a tela). Ela mostra o livro como o olho do leitor o vê, iluminado e curvado como está, com o aumento máximo no centro e curvando-se em direção ao aro. A roda do mouse, `+` e `−` mudam o aumento (`setMagnification(zoom)`, de 1,5 a 10; o padrão mostra a página a cerca de 5,5 px CSS por milímetro) e Esc a guarda; `magnifier: { zoom, diameter }` define os dois desde o início. `createFolioFromDocument` pinta de novo as páginas sob a lente, nítidas o bastante para o centro dela, de modo que o corpo de texto de um jornal fica legível; `createFolio` obtém essas pinturas de `detail: { paint(index, deviceWidth), release() }`. O Sandbox a coloca no botão **Lupa** (M). A lupa também seleciona texto: sobre as páginas, o cursor é o de texto, `pageAt` devolve o ponto sob o centro da lente (acima do dedo em uma tela sensível ao toque), e no Sandbox um clique ali posiciona o cursor de texto e um arrasto seleciona.
+- **O leitor pode olhar ao redor.** Arrastar com o botão direito gira a vista em órbita ao redor do livro (até 70° a partir da vertical), também enquanto as folhas viram; `resetView()` a devolve suavemente à `tilt` e ao `yaw` das configurações, e `getView()` dá a vista tal como é vista agora (`{ tilt, yaw }`, em graus) para guardá-la como essas configurações. O Sandbox os coloca em dois botões, **Redefinir visualização** e **Salvar como visualização padrão**.
+- **Os vídeos tocam nas páginas.** Um clique no pôster de um vídeo o reproduz na página, em qualquer modo de `interaction`, e ele continua tocando enquanto a sua folha vira; outro clique o pausa, e ele para quando o livro fica parado em uma página dupla que não o mostra. Um vídeo com `player.autoplay` começa sozinho na primeira vez que a sua página dupla aparece; um que também toca junto com os outros (`player.exclusive: false`) começa, sem som, toda vez, e para quando a página dupla é virada, vários ao mesmo tempo. Opções `videos`, `videoUrl` e `onVideo`, e `stopVideo()` no visualizador; veja [Formato do documento › Vídeos nas páginas do Folio](/pt/docs/document-format-resources#vídeos-nas-páginas-do-folio).
+- **Fontes e imagens primeiro.** Como no caso de `renderPage`, as fontes que o documento usa precisam estar carregadas em `document.fonts` e as suas imagens de recursos registradas com `registerResourceImage` antes de as páginas serem pintadas.
+- **Acessível.** O visualizador é um grupo focável que responde a ←/→ (espelhadas em um livro com encadernação à direita), Page Up/Down, Home e End; os seus botões e a contagem de páginas têm rótulos (`labels` os traduz), e cada canvas de página leva um texto `alt` (`alt: (index) => …`).
+- **Sem WebGL2**, ou quando o leitor pede movimento reduzido, as páginas duplas simplesmente mudam. Livros em WebGL são pesados para um celular (uma textura por lado de página): o Sandbox só oferece a aba Folio onde há WebGL2 e o lado menor da tela mede pelo menos 600 px. `canFlip()` diz se as folhas vão virar em 3D ali: com WebGL2 e sem movimento reduzido.
+
+### Aparência
+
+A opção `appearance`, e depois `setAppearance`, substituem o que o documento diz. O que ficar de fora mantém o valor do documento:
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  appearance: {
+    folio: {
+      tilt: 22,
+      paper: { type: 'bookWove', texture: 'laid' },
+      binding: { type: 'hardcover', coverColor: { hex: '#5a1f1f', model: 'hex' } },
+      surface: { type: 'walnut' },
+      lighting: { environment: 'lamp' },
+    },
+    // Mesas fotografadas: uma pasta organizada como /folio/textures/ do postext.dev
+    // (manifest.json e uma pasta por mesa). Sem ela, mapas procedurais.
+    textureBaseUrl: '/folio/textures',
+    // A imagem de `folio.binding.spineImage`: a URL do recurso,
+    // ou um canvas ou uma imagem já desenhados.
+    spineImage: spineUrl,
+  },
+});
+
+// Um painel de configurações: o livro redesenhado no lugar, sem pintar nada de novo.
+book.setAppearance({ folio: { ...folio, lighting: { environment: 'daylight' } } });
+book.resetView();
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>O que faz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>folio</code></td><td>As <a href="/pt/docs/configuration-fonts-colors-viewers#visualizador-folio-configuração">configurações <code>folio</code></a>: inclinação, papel, encadernação, superfície, iluminação. Substitui as do documento quando informado.</td></tr>
+    <tr><td><code>pageWidthMm</code></td><td>A largura de refile de uma página em mm, que dá a escala da espessura do papel e das capas. A partir do documento: a página refilada no seu dpi. Padrão 150 para <code>createFolio</code>.</td></tr>
+    <tr><td><code>extraPages</code></td><td><code>{'{ before, after }'}</code>: páginas do livro além das informadas, contadas na espessura dos blocos de páginas e nunca desenhadas.</td></tr>
+    <tr><td><code>covers</code></td><td><code>{'{ front, back }'}</code>: a primeira página informada é a capa da frente, a última, a capa de trás (quando cai em um verso). Elas viram como capas rígidas e nenhuma caixa de capa é desenhada. A partir do documento: <code>binding.cover: 'pages'</code> em um livro que começa na sua primeira página e termina na última.</td></tr>
+    <tr><td><code>spineImage</code></td><td>A imagem impressa na lombada, como URL, canvas ou imagem. <code>createFolioFromDocument</code> não busca recursos: passe a imagem do recurso que <code>folio.binding.spineImage</code> nomeia. Ignorada em uma encadernação canoa (grampeada).</td></tr>
+    <tr><td><code>textureBaseUrl</code></td><td>Onde são servidas as texturas fotografadas da mesa. Até elas carregarem, ou sem ela, a mesa é desenhada com mapas procedurais.</td></tr>
+  </tbody>
+</table>
+
+`createFolio(container, { pages })` é o mesmo visualizador sobre quaisquer páginas: URLs de imagens, elementos `<img>` ou `<canvas>`, e `""` para uma página em branco; uma página pode ser `{ src, alt, paper }`, com `paper` um papel no estilo de `:::paper` para aquela folha. `PageFlipper` é só o motor em three.js, para um hospedeiro que monta o DOM das suas próprias páginas duplas; `FlatPageFlipper` é o virar de página plano anterior ao livro em 3D, mantido para a mesa de luz das Receitas. A lista completa de opções está no [README do pacote](https://www.npmjs.com/package/postext-folio).
+
+### Exemplo ao vivo: um livro em 3D
+
+O pen importa `postext` e `postext-folio` de uma CDN, diagrama um documento curto e o abre como um livro. Pegue a página da direita pela borda e arraste-a.
+
+<CodePenExample name="render-folio" title="Postext · um documento como livro em 3D" description="Diagrame um documento Markdown com o postext e vire as páginas em 3D com o postext-folio." height={640} />
+
+### Exemplo ao vivo: imagens de página
+
+`createFolio` com páginas desenhadas em canvas, uma última página em branco e a cor do papel.
+
+<CodePenExample name="folio-images" title="Postext · um livro de imagens em 3D" description="Vire quaisquer páginas em 3D com o postext-folio: URLs de imagens, elementos img ou canvas." height={600} />
+
+
+## Livros EPUB (`postext-epub`)
+
+`postext-epub` grava um livro diagramado como arquivo EPUB 3.3, no navegador ou no Node, sem servidor. Ele lê os mesmos documentos de capítulo que `renderToPdf` recebe para um livro, de modo que números de página, notas, citações, referências cruzadas, o sumário e o índice remissivo chegam resolvidos, e devolve o arquivo como bytes. É o gerador por trás da aba **EPUB 3** do Sandbox.
+
+```bash
+npm install postext postext-epub
+```
+
+`postext` é uma peer dependency, como no caso do `postext-pdf`: atualize os dois juntos e, em uma CDN, fixe os dois na mesma versão.
+
+### Layout fixo e refluível
+
+O EPUB 3 define duas apresentações, escolhidas pela propriedade `rendition:layout` do pacote; `layout` escolhe uma:
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th><code>layout: 'fixed'</code></th>
+      <th><code>layout: 'reflowable'</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Nome no EPUB</td><td><code>pre-paginated</code> (layout fixo, FXL)</td><td><code>reflowable</code>, o padrão do EPUB</td></tr>
+    <tr><td>Documentos de conteúdo</td><td>Um documento XHTML por página impressa, no tamanho da página refilada em px CSS</td><td>Um documento XHTML por capítulo (uma parte abre um próprio)</td></tr>
+    <tr><td>O que mantém</td><td>A página: colunas, flutuantes, cabeços, aberturas, quebras e posições de linha, nas fontes incorporadas. O texto continua sendo texto de verdade: selecionável, pesquisável, lido em voz alta</td><td>O texto e a sua estrutura: títulos, parágrafos reconstruídos a partir das linhas, listas, boxes como asides, figuras e tabelas depois do texto que as cita, notas, links, marcadores de página impressa. Uma folha de estilo derivada da configuração</td></tr>
+    <tr><td>Do que abre mão</td><td>Da escolha do leitor de tipo, tamanho e margens; em uma tela pequena a página é reduzida</td><td>Das colunas, dos cabeços, do design de página e das quebras de linha exatas</td></tr>
+    <tr><td>Páginas duplas e direção</td><td><code>page-spread-left</code> / <code>page-spread-right</code> a partir da paridade e da encadernação; um livro com encadernação à direita é lido da direita para a esquerda</td><td>Direção de leitura a partir da encadernação; o chinês vertical mantém <code>vertical-rl</code>, o árabe é <code>dir="rtl"</code></td></tr>
+    <tr><td>Indicado para</td><td>Páginas com design: livros ilustrados, livros didáticos, catálogos, revistas; telas grandes</td><td>Texto corrido: romances, ensaios, relatórios; celulares e leitores de tinta eletrônica</td></tr>
+  </tbody>
+</table>
+
+As duas apresentações levam a mesma navegação: um sumário a partir dos títulos e das páginas de parte, uma lista de páginas com os rótulos de página impressos, landmarks (capa, sumário impresso, início do corpo do texto) e um NCX para sistemas de leitura mais antigos.
+
+### Gravar um livro
+
+```ts
+import { openBundle, buildBundle } from 'postext';
+import { renderToEpub } from 'postext-epub';
+
+const bundle = await openBundle(fileBytes);
+const docs = buildBundle(bundle); // um VDTDocument por capítulo, na ordem do livro
+
+const bytes = await renderToEpub(docs, {
+  layout: 'reflowable',
+  metadata: { title: 'Lantern', creators: ['Ada Lovelace'], language: 'en' },
+  fonts: bundle.fonts.map((f) => ({ family: f.family, weight: f.weight, style: f.style, bytes: new Uint8Array(f.bytes), format: f.format })),
+  resourceBytes: (fileId) => {
+    const data = bundle.files.get(fileId);
+    return data ? { bytes: data, mediaType: '' } : undefined;
+  },
+  onWarning: (w) => console.warn(w),
+});
+```
+
+Um documento único é um livro de um capítulo: `renderToEpub([doc], options)`.
+
+- **`renderToEpub(docs, options): Promise<Uint8Array>`** grava o arquivo. `options` é `{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`.
+- **`metadata`**: `title` e `language` (uma tag BCP 47) são obrigatórios; `subtitle`, `creators`, `identifier`, `date`, `publisher`, `rights`, `description` e `modified` são opcionais. Um ISBN sozinho vira `urn:isbn:…`. Sem um `identifier`, o livro recebe um `urn:uuid:` derivado do título, dos criadores e do idioma, para que uma nova versão do mesmo livro mantenha o seu lugar na biblioteca do leitor. Passe também `modified` para obter uma saída idêntica byte a byte.
+- **`fonts`**: as variantes a incorporar, `{ family, weight, style, bytes, format, unicodeRange? }`, com `format` igual a `woff2`, `woff`, `ttf` ou `otf`. Cada variante vira um arquivo e uma regra `@font-face`; vários arquivos com o seu `unicodeRange` formam uma variante (as fatias do Google Fonts). Uma família, peso ou estilo que as páginas usam sem variante incorporada é informado como `missingFont`, e os sistemas de leitura o substituem pelos seus. Incorpore apenas fontes cuja licença permita isso: uma variante com `redistributable: false` nunca é gravada no arquivo (o livro pode ser composto com ela, mas o arquivo dela fica de fora, inclusive das imagens SVG).
+- **`resourceBytes(fileId)`**: as imagens que as páginas posicionam, de forma síncrona ou assíncrona, como `{ bytes, mediaType }`; um `mediaType` vazio é deduzido dos bytes. Entregue os bitmaps como estão armazenados e os SVGs como o seu código-fonte, não a matriz de impressão em PDF (`svg.pdfFileId`). Cada imagem é guardada uma única vez. Um livro em tinta única (`diagramStyle.singleInk`) tem os seus SVGs recoloridos no arquivo. Um SVG recebe incorporadas as variantes que o seu texto nomeia, já que um sistema de leitura o exibe como uma imagem que não enxerga as fontes do livro (veja [Fontes no texto dos SVG](/pt/docs/configuration-resources#fontes-no-texto-dos-svg)): a partir de `fonts` (as fatias que contêm os seus caracteres) e, depois, de **`svgFonts.provider`** para uma família que o texto do livro não usa. As famílias de variantes marcadas com `redistributable: false`, e as que `svgFonts.withhold(family)` indica, ficam de fora e são informadas uma vez cada como `fontWithheld`; uma família sem variante é informada como `svgFontUnavailable`, e variantes acima de `svgFonts.maxBytes` (2 MiB), como `svgFontsTooLarge`. `svgFonts.inline: false`, `diagramStyle.inlineFonts: false` e o `svg.inlineFonts: false` de um recurso mantêm os bytes como foram entregues. Uma imagem sem bytes é informada como `missingImage` e fica como um quadro vazio.
+- **`cover`**: `{ bytes, mediaType, alt? }`, uma imagem JPEG, PNG, WebP ou SVG. O livro então abre em um documento de capa que a contém, e ela é a `cover-image` do pacote (a miniatura na biblioteca). Sem ela, o layout fixo nomeia a primeira página como capa e o livro refluível fica sem imagem de capa.
+- **`onProgress({ phase, done, total })`**: `resources` (fontes e imagens), `documents` (páginas em um layout fixo, capítulos em um refluível) e, por fim, `package`. **`signal`** interrompe entre as etapas.
+- **`readEpub(bytes)`** lê um arquivo de volta para um visualizador, sem `DOMParser`: layout, metadados, direção de leitura, todos os arquivos por caminho, o manifesto, a spine, o sumário, a lista de páginas, o viewport do layout fixo e a capa. O leitor do Sandbox é construído sobre ele.
+
+As duas apresentações levam metadados do EPUB Accessibility 1.1 (modos de acesso, recursos como o sumário e os números de página impressos, riscos e um resumo) e, por padrão, não declaram conformidade com as WCAG. A lista completa de opções e as limitações estão no [README do pacote](https://www.npmjs.com/package/postext-epub).
+
+### Verificar um arquivo com o EPUBCheck
+
+O [W3C EPUBCheck](https://www.w3.org/publishing/epubcheck/) é o validador de referência para EPUB; as lojas de e-books verificam com ele os arquivos que recebem. Com ele instalado (`brew install epubcheck`, ou a versão em Java), `epubcheck book.epub` lista erros, avisos e notas de uso; as notas de uso que a saída do Postext deixa (`CSS-028`, `OBS-001`, `HTM_062`) são apenas informativas. No repositório do Postext, `pnpm --filter postext-epub epubcheck` verifica os livros de exemplo do conjunto de testes, `node packages/postext-epub/scripts/epubcheck.mjs book.postext --layout both` diagrama um arquivo `.postext` ou uma pasta de predefinição e verifica as duas apresentações, e `pnpm --filter postext-epub validate` executa a matriz inteira de livros (o guia, as predefinições de vitrine, livros em chinês, em árabe e das Receitas), e cada um deles passa sem erros nem avisos.

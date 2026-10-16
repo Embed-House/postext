@@ -1,0 +1,464 @@
+{/* docs/document-format-resources-es.mdx */}
+
+export const metadata = {
+  title: 'Formato del documento: imágenes, tablas y vídeos',
+  sidebarTitle: 'Imágenes, tablas y vídeos',
+  description: 'Los recursos en el texto: referencias e inserciones, numeración, colocación y dónde cae un flotante, ajuste del texto, tamaño de los mapas de bits, zonas seguras, anclas de cómic y vídeos',
+  lang: 'es',
+  lastUpdated: '2026-10-16',
+  readingTime: '44 min',
+  order: 29,
+  parent: 'document-format',
+  plainSummary: "Esta página explica las imágenes, las tablas y los vídeos de un libro. Los añades una vez y los mencionas en el texto, y Postext coloca cada uno cerca del lugar donde se menciona por primera vez. Puedes elegir dónde va: arriba de una página, a lo ancho de todas las columnas o justo donde lo escribes. El texto puede rodear una imagen. Una imagen puede marcar la parte que siempre debe verse cuando se recorta para que quepa. Los vídeos se reproducen en la vista web y en los libros electrónicos, y en papel muestran una imagen.",
+};
+
+# Formato del documento: imágenes, tablas y vídeos
+
+
+## Recursos
+
+Las imágenes, los SVG, las tablas y los vídeos no se escriben en línea. Se declaran una sola vez como **recursos** (gestionados en el [panel Recursos](/es/docs/sandbox#panel-de-recursos) del Sandbox, que ofrece subida de imágenes y SVG, un editor interactivo de tablas, vídeos de YouTube y Vimeo o subidos, y edición de pies y de colocación) y luego se conectan al texto por id. **Basta con referenciar un recurso para incorporarlo**: lo mencionas una vez con `:ref{id="…"}` y el motor hace flotar la figura o tabla al primer hueco libre tras esa referencia — el final de la columna donde la mencionas, el principio de la siguiente, una banda de la página siguiente —, igual que haría un tipógrafo de imprenta. No lo colocas una segunda vez.
+
+Ambas formas de abajo son sintaxis completamente nueva que no choca con CommonMark, por lo que un documento que las use sigue leyéndose como texto plano en cualquier otro visor de markdown.
+
+### Referencia en línea (la forma principal)
+
+Refiérete a un recurso desde el texto con `:ref{id="…"}`. La primera referencia **incorpora** el recurso (para que se coloque en la página) y renderiza su número calculado, precedido por defecto por la etiqueta corta del tipo:
+
+```md
+Como se ve en :ref{id="lighthouse-diagram"}, la sala de la linterna queda sobre la galería.
+```
+
+se renderiza como: *Como se ve en Fig. 1.7, la sala de la linterna queda sobre la galería.* — y el propio diagrama flota al primer hueco libre tras la frase (el final de esta columna, el principio de la siguiente, o una banda de la página siguiente), mientras esta frase y el texto posterior siguen fluyendo sin interrupción.
+
+El texto nunca se corta en el punto de la referencia. Dónde aterriza el recurso —el primer hueco libre, o solo un hueco superior o inferior; en una sola columna o a todo el ancho— lo decide su **colocación** (ver [Colocación](#colocación) más abajo), junto con el lugar donde lo mencionas: la búsqueda empieza justo después de la referencia.
+
+### Inserción en bloque (opcional, colocación en línea explícita)
+
+A veces quieres que un recurso quede en un punto exacto del flujo en lugar de flotar. Renuncia al flotado dando al recurso `placement.position: "here"` e insertándolo con `::resource{id="…"}` en su propia línea:
+
+```md
+Aquí está el plano que comentamos.
+
+::resource{id="lighthouse-diagram"}
+
+Las dependencias del farero ocupan el ala este.
+```
+
+Para un recurso que flota, la directiva `::resource` es innecesaria —el `:ref` ya lo colocó, y un `::resource` redundante para el mismo id se trata como otra referencia, no como una segunda copia. Un `::resource` solo renderiza el recurso en línea cuando su colocación resuelta es `"here"`. Un recurso en línea conserva una línea de espacio sobre él (el hueco de los flotantes), como lo haría un flotante, salvo que el bloque anterior pida más. En el texto corrido conserva el mismo espacio bajo él; después, el texto que sigue vuelve a la rejilla base, lo que puede añadir hasta una línea más. Un encabezado, una lista, un recuadro u otro recurso en línea justo después comparte ese espacio con su propio espacio superior: se aplica el mayor de los dos, no la suma. (Hasta postext 1.4, el espacio de debajo era solo lo que dejaba el ajuste a la rejilla, entre nada y una línea; `layout.inlineResourceGap: 'above'` mantiene esa regla, y los libros guardados antes de la 1.5 se leen con ella). Dentro de un recuadro (`:::callout`) el recurso conserva el mismo espacio, una línea del texto del propio recuadro encima y, con `'around'`, debajo; al principio o al final del recuadro ya lo separa el relleno. (Hasta postext 1.4 quedaba pegado al texto del recuadro; `layout.inlineResourceGapInBoxes: false` lo mantiene, y los libros guardados antes de la 1.5 cuyos recuadros insertan un recurso se leen así).
+
+Un recurso en línea cuya colocación dice además `span: 'page'` (`placement: { position: 'here', span: 'page' }`) ocupa el ancho de la página en el punto de su directiva cuando la maqueta tiene varias columnas, como un recuadro de página: las columnas de encima se cierran a la misma altura (equilibradas, o el recurso pasa a la cabeza de la página siguiente si no se puede), se compone a todo el ancho de la caja con el mismo espacio encima y debajo, y el texto sigue en todas las columnas por debajo. En una página de una sola columna se compone como antes, a toda la medida. Un recurso `span: 'column'` con `columns` se queda en su columna cuando se inserta en línea: las columnas solo cuentan para los flotantes. Desde postext 1.19.
+
+El `id` debe coincidir con un recurso definido en el panel Recursos. El motor renderiza el recurso (imagen, SVG o tabla) con su pie dibujado debajo a modo de pie de figura/tabla. El texto del pie se compone a partir del `captionPrefix` del tipo de recurso, el número calculado y el pie propio del recurso — p. ej. **Figura 1.7. El plano original del faro.** Su tipografía se controla desde [Configuración › Estilo de pies de recurso](/es/docs/configuration-resources#estilo-de-pies-de-recurso): la etiqueta y la descripción comparten tipografía y tamaño, mientras que la etiqueta conserva sus propios ajustes de negrita/cursiva/color; la separación sobre el pie es por defecto `0.75em` y la alineación, a la izquierda. El pie puede situarse en cambio encima del recurso (`captionStyle.position: 'above'`, de forma global o por tipo de recurso), opcionalmente sobre una barra de color. Un recurso puede llevar además una `note` — una línea breve de fuente o créditos, con el mismo formato en línea y las mismas marcas `:ref` que el pie — compuesta en un tamaño menor bajo el recurso (bajo el pie cuando este va debajo, bajo el cuerpo cuando va encima) y estilizada mediante `captionStyle.note`.
+
+**Saltos de línea en pies y notas.** Un pie o una nota es un único párrafo compuesto a la medida de su hueco, y un salto de línea escrito en él cuenta como un espacio. Para empezar una línea nueva, escribe `\\` —el salto forzado de los títulos— o termina la línea con una barra invertida, el salto duro de Markdown: `¹ Medido a 20 °C. \\ ² Media de tres ensayos.` compone cada nota de una tabla ancha en su propia línea. La línea anterior a un salto conserva su ancho natural, sin estirarse hasta la medida, y dos saltos seguidos no dejan una línea vacía (un espacio de no separación entre ellos, sí). En una celda de tabla, `\\` hace lo mismo que un salto de línea: abre un párrafo nuevo, y la sangría de la línea siguiente se conserva, de modo que dos espacios iniciales siguen anidando un elemento de lista. En el propio texto las dos barras son siempre un salto y no tienen escape: para imprimirlas, escríbelas en código en línea, donde las barras se imprimen tal cual. En el destino de un enlace siguen formando parte de la URL, y en los atributos de una directiva (el `text` de un `:ref`), del valor; dentro de un chip, que se compone en una sola línea, un salto es un espacio. (Hasta postext 1.4 las barras se imprimían, y un pie o una nota solo cambiaba de línea al agotarse la medida).
+
+Los recursos de tabla dibujan su propia rejilla, con estilo definido en [Configuración › Estilo de tablas](/es/docs/configuration-resources#estilo-de-tablas): las celdas de cuerpo y de cabecera tienen tipografía totalmente independiente, el fondo de la cabecera es por defecto `#f0f0f0`, los bordes `0.75pt` y el `cellPadding` `0.375em` — cualquier campo sin definir hereda del texto del cuerpo. Los anchos de columna forman parte de la propia tabla: `TableModel.columnWidths` guarda un peso relativo por columna (`[2, 1, 1]` da a la primera columna la mitad del ancho); si no se indica, las columnas se reparten el ancho a partes iguales. Una tabla también puede componerse con una variante con nombre: `table.styleId` elige uno de los `tableStyles` del documento (véase [Configuración › Estilos de tabla con nombre](/es/docs/configuration-resources#estilos-de-tabla-con-nombre)), cuyos campos sin definir heredan de `tableStyle`; un id desconocido o ausente conserva `tableStyle`.
+
+Una celda coloca su contenido con `TableCell.align` (`left`, `center`, `right`; los elementos de lista siguen alineados a la izquierda) y `TableCell.verticalAlign` (`top`, por defecto, `middle` o `bottom`). La alineación vertical mueve todo el contenido de la celda —la imagen y el texto que va debajo, como una sola unidad— dentro de una celda más alta que él: una fila estirada por una vecina más larga, o las filas que abarca un `rowSpan`. Se aplica en todas las salidas (canvas, HTML, PDF), en las tablas giradas y en cada tramo de una tabla partida entre páginas. Ambas se fijan por celda desde los botones de alineación de la barra del editor de tablas del sandbox.
+
+Una celda de tabla también puede contener una imagen. `TableCell.image` nombra un recurso de imagen o SVG por su id (`{ "resourceId": "fig-brazo", "width": 0.7 }`): la imagen se dibuja dentro de la celda — nunca se numera, flota ni lleva pie — ajustada al ancho interior de la celda (o a la fracción que indique `width`, por defecto `1`) conservando su proporción, alineada como el texto de la celda, y el texto de la celda, si lo hay, va debajo. La fila crece para alojarla. En el editor de tablas del sandbox, el botón de imagen de la barra elige el recurso para la celda activa y un campo de ancho fija la fracción. Un id que no corresponda a ningún recurso de imagen deja la celda solo con texto.
+
+Una celda puede llevar su propio relleno. `TableCell.background` es un valor de color (`{ "hex": "#c1dfd6", "model": "hex" }`, opcionalmente vinculado a una entrada de la paleta del documento con `paletteId`) que se pinta en lugar del fondo de cabecera o de cuerpo del estilo — así sombrea sus celdas en verde, rojo y amarillo una matriz de compatibilidades. En el editor de tablas del sandbox se fija con el control de relleno de la barra. Para dar la clave de esos rellenos, la leyenda, la nota y cualquier bloque de texto admiten una **muestra de color** en línea: `:swatch{color="#c1dfd6"}` (un hexadecimal, o el id de una entrada de la paleta — `:swatch{color="table-compatible"}`) compone un pequeño cuadrado sobre la línea base, de tres cuartos del cuerpo, relleno con el color y perfilado con el color del texto, de modo que una nota puede decir `:swatch{color="ok"}: compatibles; :swatch{color="no"}: incompatibles`. Un color que no resuelve a nada dibuja solo el perfil. El hexadecimal puede llevar canal alfa (`#rrggbbaa`, `#rgba`), y también sirven los colores `rgb()` / `rgba()`, de modo que un relleno de celda translúcido tiene una clave igual de translúcida (consulta [Configuración › Transparencia](/es/docs/configuration-fonts-colors-viewers#transparencia)).
+
+Los recursos SVG pueden además recolorearse para impresión a una sola tinta plana mediante `diagramStyle.singleInk` (por defecto `false`). Al activarlo, cada color del diagrama SVG se reasigna a un matiz de `diagramStyle.inkColor` según su luminancia (por defecto el color principal de la paleta, `#295AA3`) — el blanco se asigna al papel y el negro a la tinta plena — de modo que las figuras se reproducen con fidelidad cuando el documento se imprime con una única tinta plana. Ver [Configuración › Estilo de diagramas](/es/docs/configuration-resources#estilo-de-diagramas).
+
+Una inserción mal formada (sin `id`, con `id` vacío, con el `id` sin comillas o entre comillas simples, o con atributos de más) no se promueve a bloque de recurso; recae en el parseo de párrafo normal y sigue siendo visible en la salida. Lo mismo le ocurre a una línea de inserción bien formada pegada bajo una línea de párrafo sin una línea en blanco entre ambas: se lee como parte de ese párrafo. Las dos generan un aviso `malformedEmbed`, que el panel Revisión del sandbox muestra como **Inserción compuesta como texto**.
+
+Las referencias en línea se reconocen dentro de cualquier bloque de texto — párrafos, encabezados, citas y elementos de lista — y pueden convivir con negrita, cursiva, código en línea y matemáticas en línea.
+
+#### Opciones de la referencia
+
+La directiva `:ref` admite tres atributos opcionales, en cualquier orden. `style` selecciona cómo se renderiza la etiqueta calculada: `style="number"` imprime el número a secas (`1.7`), `style="full"` imprime el nombre completo del tipo seguido del número (`Figura 1.7`), y cuando `style` se omite se usa la etiqueta corta (`shortLabel`) del tipo seguida del número (`Fig. 1.7`). `case` cambia las mayúsculas y minúsculas solo de la parte de la etiqueta — `lower`, `upper` o `capitalize` — sin tocar el número. `text` es una anulación literal que sustituye cualquier etiqueta calculada y tiene prioridad tanto sobre `style` como sobre `case`. Las opciones de renderizado, lado a lado:
+
+<table>
+  <thead>
+    <tr>
+      <th>Sintaxis</th>
+      <th>Renderiza</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:ref&#123;id="…"&#125;</code></td>
+      <td><code>Fig. 1.7</code></td>
+      <td>Estilo por defecto: la etiqueta corta (<code>shortLabel</code>) del tipo seguida del número, unidas con un espacio irrompible para que nunca se separen al final de la línea.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="number"&#125;</code></td>
+      <td><code>1.7</code></td>
+      <td>El número calculado a secas, sin etiqueta.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="full"&#125;</code></td>
+      <td><code>Figura 1.7</code></td>
+      <td>El nombre completo (<code>name</code>) del tipo seguido del número. Útil al inicio de una frase o donde la abreviatura se lea mal.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" case="lower"&#125;</code></td>
+      <td><code>fig. 1.7</code></td>
+      <td>Cambia la caja solo de la etiqueta: <code>lower</code> (<code>fig. 1.7</code>), <code>upper</code> (<code>FIG. 1.7</code>) o <code>capitalize</code> (primera letra en mayúscula). Se combina con <code>style="full"</code> (<code>figura 1.7</code>); el número nunca se toca, y un valor no reconocido se ignora.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" text="ver el plano"&#125;</code></td>
+      <td><code>ver el plano</code></td>
+      <td>Una anulación explícita. El texto dado se usa literalmente en lugar de cualquier etiqueta calculada — útil para enlaces de prosa como "como vimos antes". Cuando está presente, <code>text</code> tiene prioridad sobre <code>style</code> y <code>case</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Si un `:ref` (o un `::resource`) nombra un id sin recurso correspondiente, la etiqueta recae en `?` (con `text=` se imprime esa etiqueta, igualmente sin número ni enlace) y el sandbox emite un aviso de **recurso desconocido**. El motor lo registra como una entrada `unknownResourceId` en los `contentWarnings` del documento, con el rango de origen y la página de la referencia; también para un `:ref` dentro del pie, la nota o una celda de tabla de un recurso que el texto usa.
+
+### Numeración por primera referencia
+
+El número de un recurso se asigna **la primera vez que se menciona en orden de lectura** — sea esa primera mención una inserción en bloque `::resource` o una referencia en línea `:ref`. A partir de ahí, toda referencia al mismo id imprime ese mismo número.
+
+Esto significa que los números siguen el orden en que el lector los encuentra, no el orden en que se crearon los recursos en el panel:
+
+- Si haces `:ref` de una figura en la introducción y solo la insertas (`::resource`) dos páginas después, igualmente toma el número de la introducción — la referencia llegó primero.
+- Insertar una nueva referencia *antes* en el documento renumera automáticamente todo lo que viene después. No hay numeración manual que mantener sincronizada.
+
+La numeración es por tipo de recurso y respeta el ámbito de reinicio y el formato de contador de cada tipo — ver [Configuración › Tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso) para los tokens de plantilla (`{h1}`, `{n}`), `resetOn` y `counterFormat`.
+
+Solo cuenta lo que el texto referencia: un recurso que solo dibuja un diseño (un elemento de imagen de una apertura de capítulo, por ejemplo) no lleva número y deja el contador como estaba. Y `{h1}` cuenta todos los encabezados de nivel 1 cuyo estilo no fije `numbered: false`, también los que tienen un `numberingTemplate` vacío, así que un artículo cuyo único H1 es su título numera sus figuras 1.1, 1.2… por defecto. [Configuración › Qué se numera](/es/docs/configuration-resources#qué-se-numera) explica las dos reglas y los ajustes para obtener Figura 1, 2….
+
+### Colocación
+
+Cada recurso tiene una **colocación** que decide dónde aterriza su flotante, resuelta por recurso (su propio `placement`), luego el `defaultPlacement` de su tipo, y por último el valor por defecto integrado `auto` / `column`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Valores</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>"auto"</code> · <code>"top"</code> · <code>"bottom"</code> · <code>"here"</code></td>
+      <td><code>"auto"</code> (el valor por defecto) toma el primer hueco libre tras la referencia, arriba o abajo; <code>"top"</code> / <code>"bottom"</code> solo aceptan huecos de ese tipo; <code>"here"</code> renuncia al flotado e inserta el recurso en línea en la directiva <code>::resource</code> (una tabla colocada ahí se corta entre filas cuando no cabe en lo que queda de su columna; véase <a href="/es/docs/configuration-resources#tablas-más-altas-que-la-página">Tablas más altas que la página</a>).</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>align</code></td>
+      <td><code>0 &lt; width &lt; 1</code>; <code>"left"</code> · <code>"center"</code> · <code>"right"</code></td>
+      <td>Un recurso más estrecho que su hueco: <code>width</code> es la fracción del ancho de la columna (o de la página) que ocupa y <code>align</code> dónde se sitúa en el hueco (una tabla pequeña centrada en su columna; una banda a ancho de página cuya imagen abarca una sola columna). Una imagen más estrecha que su hueco —un mapa de bits más pequeño que la columna, o una que <code>layout.fitFiguresToPage</code> redujo— también se sitúa ahí según <code>align</code>, bajo un pie que conserva la medida del hueco. Vale tanto para flotantes como para inserciones <code>::resource</code> en línea.</td>
+    </tr>
+    <tr>
+      <td><code>captionSide</code></td>
+      <td><code>true</code> · <code>false</code></td>
+      <td>En una maquetación de columna y media cuya columna lateral está reservada a flotantes (<code>layout.sideColumnRole: 'floats'</code>), un flotante <code>"column"</code> con <code>captionSide</code> mantiene su cuerpo en la columna principal y compone su pie (y su nota) en la columna lateral, a la altura del borde superior de la figura —o del inferior en un flotante de pie—; la columna lateral cede esa banda. Una página sin esa columna deja el pie bajo la figura. Desde postext 1.28 un recurso puesto en el texto (<code>"here"</code>), de una columna, también lo admite: su pie y su nota van a la columna lateral, a la altura del borde superior de su cuerpo, el bloque en el texto mide lo que el cuerpo solo, y las figuras y recuadros laterales que vienen después respetan el pie. Donde la columna lateral está ocupada junto al recurso, el pie queda bajo el cuerpo; un recurso que pasa a la columna o página siguiente vuelve a decidirlo allí. No dentro de un recuadro, ni en una página vertical, ni en una imagen rodeada por el texto. <code>layout.inlineCaptionSide: false</code> deja los pies al margen solo para los flotantes de columna.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>"column"</code> · <code>"page"</code></td>
+      <td>Ocupa una sola columna, o rompe el flujo de columnas y abarca todo el ancho del contenido cruzando todas las columnas. En una maquetación de una sola columna ambas opciones son idénticas.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td>un número entero, <code>1</code> por defecto</td>
+      <td>En una página de varias columnas, un flotante <code>"column"</code> sobre ese número de columnas contiguas, medianiles incluidos: una foto sobre dos de las cinco columnas de un periódico. Ocupa la cabeza de una serie de columnas vacías que empiezan a la misma altura, o el pie de la columna que lo cita y de las columnas vacías que la siguen. Tantas columnas como tiene la página, o más, lo convierten en un flotante a todo el ancho. No se aplica a los <code>span</code> <code>"page"</code> y <code>"side"</code>, a un recurso girado ni a una inserción en línea (<code>"here"</code>); <code>captionSide</code> solo vale para un flotante de una columna. Desde postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>"ccw"</code> · <code>"cw"</code></td>
+      <td>Compone el recurso girado un cuarto de vuelta — una tabla apaisada en un libro vertical. <code>"ccw"</code> lo gira en sentido antihorario, con la cabecera hacia el borde izquierdo de la página (el lector gira el libro en sentido horario), la convención habitual; <code>"cw"</code> en el otro sentido. Un recurso girado es siempre un flotante a todo el ancho en una página propia: se compone a lo largo de la altura del área de contenido, redondeada hacia abajo a líneas enteras de la rejilla y menos una línea del cuerpo, el hueco que deja toda banda de flotantes (un área de texto de 237 mm con una rejilla de 14 pt tiene 47 líneas, 232,1 mm, así que el recurso ocupa 46, 227,2 mm), queda pegado al lomo cuando los márgenes son simétricos (a la izquierda si no) y una tabla demasiado ancha para una página se corta entre filas y continúa, girada, en las páginas siguientes con la cabecera repetida, exactamente como una tabla vertical más alta que la página. Una figura girada se escala para caber en la página. Se ignora en un embebido en línea (<code>"here"</code>).</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code>, <code>minScale</code></td>
+      <td><code>"never"</code> · <code>"page"</code> · <code>"slot"</code>; <code>0 &lt; minScale ≤ 1</code>, por defecto <code>0.7</code></td>
+      <td>Reduce una imagen flotante (mapa de bits, SVG, el póster de un vídeo), sin cambiar sus proporciones, al sitio que tiene un hueco en lugar de llevarla más adelante. <code>"never"</code> (el valor por defecto) la compone a su tamaño. <code>"page"</code> la reduce solo cuando es demasiado alta para la banda de una página nueva: el área de contenido menos lo que ya ocupa esa página (una apertura, otros flotantes, notas al pie) y el espacio del flotante, como una lámina de catálogo que se ajusta a su página. <code>"slot"</code> también la reduce para que entre en un hueco de la página que la cita, o en el sitio que queda junto a otra banda, si cabe allí a <code>minScale</code> o más; si no, sigue adelante como siempre. Los huecos se prueban en su orden habitual y la banda sigue terminando en la retícula de líneas base. Una imagen con zona segura se recorta dentro de ella antes de reducirse (véase <a href="#zona-segura">Zona segura</a>). En una página nueva, donde no tiene otro sitio adonde ir, una imagen que no cabe ni a <code>minScale</code> se compone a esa escala y sobresale de la banda. La maquetación avisa de cada flotante reducido con un aviso <code>floatShrunk</code>. Las tablas (que se dividen), las cajas flotantes, las tiras de cómic, los recursos girados y las inserciones en línea nunca se reducen. El valor del documento es <code>layout.floatShrink</code>. Desde postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>captionMeasure</code></td>
+      <td><code>"slot"</code> · <code>"body"</code></td>
+      <td>La medida del pie y la nota de una imagen más estrecha que su hueco (reducida, o un mapa de bits más pequeño que la columna): <code>"slot"</code> (el valor por defecto) mantiene la medida del hueco; <code>"body"</code> los compone tan anchos como la imagen, debajo de ella según <code>align</code>, así que una lámina centrada lleva el pie centrado debajo. Para flotantes e inserciones en línea por igual. Desde postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>wrap</code>, <code>wrapGap</code></td>
+      <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; una longitud</td>
+      <td>Compone el texto al lado del recurso: este se coloca en ese lado de su columna, y las líneas de al lado se ajustan a la medida que queda, a <code>wrapGap</code> de su caja (pie incluido), y vuelven a la medida completa debajo. Lo admiten una inserción en línea (<code>"here"</code>) y un flotante de una columna en la cabecera o el pie de una columna; los flotantes de página, de varias columnas, de columna lateral y girados conservan su banda. El recurso ocupa <code>width</code> de la columna, o <code>layout.wrap.defaultWidth</code> (0,45). <code>wrapGap</code> vale por defecto <code>layout.wrap.gap</code>, o una línea del cuerpo. Véase <a href="#ajuste-del-texto">Ajuste del texto</a>. Desde postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>citingPage</code></td>
+      <td><code>true</code> · <code>false</code>, por defecto <code>false</code></td>
+      <td>Deja que un flotante <code>"top"</code> o <code>"auto"</code> ocupe la cabeza de la página (un flotante a lo ancho de la página) o de la columna (un flotante de columna, también a lo ancho de <code>columns</code>) donde cae la línea que lo cita por primera vez, como hace la colocación <code>t</code> de LaTeX, en lugar del primer hueco libre después de esa línea. El texto que hay encima de la referencia baja bajo el flotante. Solo lo hace cuando el flotante cabe allí dentro de <code>layout.maxTopFraction</code> de la columna (0,7 por defecto), cuando los flotantes anteriores de su secuencia de numeración ya están colocados, cuando ningún salto explícito abre la página (la primera página de un capítulo, una parte, un <code>:::pagebreak</code>) y nada a lo ancho de la página queda encima de la línea que lo cita, y cuando, así colocado, la línea que lo cita sigue cayendo en esa página (en una columna que el flotante encabeza); si no, el flotante toma su hueco habitual. Los flotantes girados, los de la columna lateral y el resto de una tabla partida entre páginas nunca se mueven así. Por defecto: el <code>defaultPlacement</code> del tipo y después <code>layout.floatsAtCitingPage</code>. Desde postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un flotante ocupa el **primer hueco libre tras su primera referencia**, en orden de lectura: el final de la columna donde está la referencia, después el principio y el final de la siguiente columna vacía de la misma página, y después las bandas de la siguiente página que abra el flujo (un flotante a ancho de página ocupa el pie de la página cuando todas las columnas aún tienen sitio para él; si no, una banda de la página siguiente). También cuenta una página que abre una figura o una tabla en línea: un flotante que espera esa página ocupa su cabecera, por encima de la figura o la tabla, cuando las dos caben en ella; si no caben, la figura o la tabla se queda con la página y el flotante espera a la siguiente. Hasta postext 1.4 esa página se saltaba, y el flotante esperaba a la de después aunque cupieran las dos. Se compone a su tamaño salvo que su `shrink` le permita reducirse al sitio de un hueco (véase la tabla de arriba), y nunca aterriza antes de su referencia. Los flotantes de una misma secuencia de numeración aparecen en orden de referencia: una figura que no cabe en ninguna parte de una página retiene a las figuras que vienen detrás (una tabla en espera no retiene a una figura, ni al revés), así que la figura 12 nunca aparece antes que la figura 11. Una tabla que tendría que esperar se corta en su lugar: si recibe la cabecera de una columna vacía, toma las filas que caben y continúa en el siguiente hueco — la columna de al lado o la página siguiente — con sus filas de cabecera repetidas (véase `tableStyle.overflow`). Un flotante `top` o `auto` con `citingPage` activado puede encabezar en cambio la página (o la columna) donde cae la línea que lo cita, y el texto de encima de la referencia baja bajo él: queda pintado encima de su referencia en la misma página, nunca en una anterior, y en un PDF etiquetado y en el HTML se sigue leyendo después de ella. El motor lo resuelve en unas pocas pasadas más y solo lo mantiene mientras la línea que lo cita siga en esa página.
+
+Los flotantes nunca escapan de su capítulo: en una apertura de capítulo (un nivel de encabezado con `breakBefore` o `span: 'page'`), en un `:::part`, en un estilo de aviso con `floatBarrier: true` (la caja de «puntos clave» que cierra el capítulo) y al final del documento, todo flotante pendiente se coloca primero — en los huecos libres de la página, o en páginas abiertas por delante del límite. Un flotante que cita por primera vez la propia apertura (un título de capítulo que nombra su figura), o el primer bloque tras un `:::part`, pertenece al capítulo nuevo: cae después de esa línea, como cualquier otro. Una figura o tabla que pidió la cabeza de una página puede ocupar entonces el pie de la página de cierre del capítulo, bajo sus columnas equilibradas, en lugar de una página propia. Un `:::pagebreak` simplemente envía los flotantes pendientes a la página que le sigue.
+
+Bajo una apertura a ancho de página compuesta sobre dos o más columnas de texto, la columna de la propia apertura cuenta como vacía en su cabeza mientras nada siga a la apertura en ella: una caja flotante puesta justo después de la apertura, o un recurso incrustado ahí con `::resource`, ocupa la cabeza de la primera columna, bajo la apertura y a la altura de las cabezas de las demás columnas (en varias columnas a partir de ella con `columns`), y el texto de la columna empieza debajo. Un flotante citado en el texto sigue yendo después de la línea que lo cita. Hasta postext 1.24 la primera columna no ofrecía ese hueco y el flotante caía a partir de la segunda; `layout.floatsUnderOpener: false` lo mantiene (ver [Configuración › Disposición](/es/docs/configuration-page-layout#disposición)).
+
+Las cajas laterales (`span="side"`) tampoco salen de su capítulo. Una caja que no cabe en la columna lateral de su página ocupa la de la página siguiente; si antes termina el capítulo, o el documento, cada caja que sigue esperando se compone en la columna lateral de una página abierta después del texto, en el orden de sus vallas, y una figura lateral citada después de ellas queda detrás. Esa página no tiene texto, así que la composición avisa de cada caja y figura que hay en ella (`afterText`). Una caja más alta que una columna lateral vacía se compone igualmente y se avisa (`calloutOverflow`), y lo que aun así no encuentra página también se avisa (`unplaced`) en lugar de perderse. Hasta postext 1.24 solo se abría la primera de esas páginas y las cajas restantes se perdían sin aviso.
+
+Las bandas de flotantes se corrigen contra la rejilla base para que el texto circundante mantenga el ritmo vertical de toda la página. Una banda **superior** amplía su margen inferior hasta la siguiente línea de la rejilla, de modo que el texto bajo el flotante queda alineado con las columnas vecinas y con la página enfrentada. Un flotante **inferior** se ancla de forma que la última línea de su leyenda comparta línea base con la última línea de texto de las demás columnas (el contenido sin leyenda alinea su borde inferior con la última celda de la rejilla) — así, las páginas llenas terminan a la misma altura entre columnas y entre páginas enfrentadas.
+
+En la página de cierre de un capítulo —y del documento— nada sigue a las figuras y tablas a lo ancho de la página que quedan bajo la última banda de texto, así que suben hasta quedar a un hueco de flotante bajo ella, apiladas en su orden, en lugar de dejar blanco entre el texto y una figura al pie de la página. Vale también para un flotante `position: 'bottom'`. Para dejarlas al pie, como en cualquier otra página, pon `layout.hugClosingFloats: false` (consulta [Configuración › Disposición](/es/docs/configuration-page-layout#disposición)). En las páginas con columna lateral nunca se mueven.
+
+Los tres backends — la previsualización en canvas, el visor HTML y la salida PDF — renderizan recursos. En el backend HTML, las imágenes viven fuera del documento, así que el anfitrión las suministra mediante la opción de resolución `resourceImageUrl(fileId)`; cuando falta el resolutor (o no devuelve nada para un fichero), el recurso se renderiza como una caja neutra de relleno para que la maquetación se mantenga estable. El archivo propio de un vídeo llega del mismo modo mediante `resourceVideoUrl(fileId)` (consulta [Vídeos](#vídeos)).
+
+#### Dónde puede caer un flotante
+
+«Nunca antes de su referencia» se cuenta desde la línea que cita el flotante: el flotante espera a que esa línea esté compuesta y ocupa el primer hueco libre tras ella en orden de lectura — la cabeza de la página donde se compone la línea viene antes. Un flotante lateral (`span: 'side'`, en la columna lateral reservada a flotantes de una disposición de columna y media) es la excepción: se apila en la columna lateral junto al texto que lo cita, y puede quedar en la página más arriba que la línea que lo cita. Para una figura citada en la página 5:
+
+<table>
+  <thead>
+    <tr>
+      <th>Colocación</th>
+      <th>En la página 5</th>
+      <th>Si no</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>top</code>, <code>span: 'page'</code></td>
+      <td>Nunca: la banda de la cabeza de la página está por encima de la línea que la cita.</td>
+      <td>La banda superior de la página 6.</td>
+    </tr>
+    <tr>
+      <td><code>top</code>, <code>span: 'column'</code></td>
+      <td>La cabeza de una columna posterior que siga vacía — citada en la primera de dos columnas, puede abrir la segunda.</td>
+      <td>La cabeza de una columna de la página 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> o <code>bottom</code>, <code>span: 'page'</code></td>
+      <td>La banda del pie de la página 5, cuando todas las columnas aún tienen sitio para él.</td>
+      <td>Una banda de la página 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> o <code>bottom</code>, <code>span: 'column'</code></td>
+      <td>El pie de la columna que lo cita; después el pie (ambas) o la cabeza (solo <code>auto</code>) de una columna posterior vacía.</td>
+      <td>La página 6.</td>
+    </tr>
+  </tbody>
+</table>
+
+- La página de una apertura de capítulo sigue las mismas reglas: un flotante a ancho de página `auto` o `bottom` citado en el primer párrafo de la apertura puede ocupar la banda del pie de esa página, bajo su texto; uno `top` abre la página siguiente. Para tener la imagen en la página que la cita, usa `auto` o `bottom`, o dibújala como elemento de imagen del diseño de la apertura.
+- Dos flotantes de columna citados en el mismo párrafo ocupan los dos huecos siguientes: normalmente el primero el pie de la columna que los cita y el segundo la cabeza de la siguiente columna vacía — uno junto a otro en la página.
+- En una disposición de una columna un flotante a ancho de página es un flotante de columna, y valen las mismas reglas: un flotante `top` citado en una página cae en la cabeza de la siguiente.
+- Un párrafo que pasa de una página a la siguiente también cuenta desde su línea de cita. Cuando el párrafo empieza al pie de la página 5 y la referencia cae en la 6 — o el párrafo entero pasa a la 6 porque al pie de la 5 no caben suficientes líneas suyas —, la referencia está en la 6: un flotante `top` abre la página 7, y uno `auto` ocupa el pie de la 6 si cabe. Lo mismo vale entre las columnas de una página y para una caja partida entre páginas: la figura que cita su segunda parte espera a esa parte.
+- **Cambia en postext 1.5.** Hasta postext 1.4 un flotante entraba en la cola cuando la maquetación llegaba al párrafo que lo cita, así que la página a la que ese párrafo pasaba (o se trasladaba entero) podía abrirse con el flotante, por encima de la línea que lleva la referencia. Esa figura cae ahora una página más tarde, o al pie de la página cuando pide `auto`; el número de páginas puede cambiar.
+
+### Ajuste del texto
+
+Una imagen, una tabla o una caja más estrecha que su columna puede colocarse en uno de sus lados con el texto compuesto al lado, como en una revista o un boletín. Da a su colocación un lado de `wrap` y, si quieres, un `width`:
+
+```json
+{ "id": "bed", "typeId": "figure", "kind": "svg", "caption": "El nuevo bancal.",
+  "placement": { "position": "here", "wrap": "right", "width": 0.4 } }
+```
+
+- **En línea (`"here"`).** El recurso se coloca en su lado de la columna, con su parte superior a la altura de la parte superior de la línea siguiente a la línea `::resource`, y los párrafos, citas y elementos de lista que siguen se componen a su lado a la medida que queda, y después debajo a la medida completa. Un párrafo que empieza a su lado y termina debajo sigue siendo un solo párrafo: sin corte ni espacio añadido al pie de la imagen. Todas las líneas siguen en la retícula de líneas base; el espacio bajo la imagen es su separación redondeada a líneas enteras de la retícula.
+- **Un flotante de columna.** Un flotante `span: "column"` de una columna de ancho, en la cabecera (`"top"`, o `"auto"` en la cabecera de una columna) o al pie (`"bottom"`, `"auto"`) de una columna, se coloca en su banda como cualquier flotante; las primeras líneas de la columna, o las últimas, se componen entonces a su lado. En una página de dos columnas el flotante pertenece a su columna, y la otra va a todo el ancho.
+- **Una caja.** Un `:::callout` admite los mismos ajustes como atributos: `:::callout{wrap="right" width=0.4}` coloca una cita destacada o un recuadro donde aparece, con el texto que le sigue a su lado, y `placement="top"` o `"bottom"` con `wrap` lo hace flotar a la cabecera o al pie de una columna. Una caja ajustada se compone entera y nunca se divide.
+- **Qué va debajo.** Un encabezado, una fórmula destacada, una figura o tabla, una caja y un poema no se componen al lado de un elemento ajustado: van debajo, y el blanco a su lado por encima de ellos queda vacío. Salir de la columna (su pie, un `:::columnbreak`, un salto de página) termina allí el ajuste: el elemento pertenece a su columna. Cuando el bloque que sigue a un recurso en línea no puede ir a su lado, el recurso ocupa su banda, como sin `wrap`.
+- **Separación y límites.** `wrapGap` (o `layout.wrap.gap`, o una línea del cuerpo) separa el elemento, pie incluido, del texto de al lado y del de debajo. Si el texto de al lado quedara más estrecho que `layout.wrap.minTextWidth` (12 em del cuerpo), o el elemento fuera más bajo que `layout.wrap.minLinesBeside` líneas (2), ocupa su banda entera y un aviso `textWrap` lo indica. Uno en línea demasiado alto para el espacio que queda en su columna pasa a la siguiente con su ancla, con el mismo aviso.
+- **Lados.** `left` y `right` son lados del flujo del texto, como en `align`: en un libro de derecha a izquierda `left` es la derecha de la hoja. `start` y `end` nombran los mismos lados.
+- **Salidas.** El lienzo, el visor HTML, el PDF y el EPUB de maquetación fija componen las líneas tal como se maquetaron; un PDF etiquetado lee la imagen o la caja antes del párrafo que va a su lado. Un EPUB adaptable la hace flotar a su lado con CSS, con la misma parte del ancho del texto.
+- **Todavía no.** Texto a ambos lados de una imagen, ajuste al contorno, ajuste dentro del contenido de una caja y ajuste en escritura vertical (el elemento conserva su banda, con un aviso). Las columnas con un elemento ajustado quedan fuera del equilibrado de columnas.
+
+### Tamaño de los mapas de bits
+
+Un mapa de bits declara sus píxeles: `bitmap.width` y `bitmap.height` son los píxeles del archivo, no un tamaño de impresión. Cuántos de ellos van en una pulgada decide a qué tamaño se compone la imagen antes de que su hueco la limite. Hay tres maneras de darle tamaño:
+
+- **Sus píxeles a los dpi de la página** (el valor por defecto). Sin resolución, un píxel de la imagen es un píxel de la maquetación (`page.dpi`, 300 si no se indica): una fotografía de 2400 px mide 8 pulgadas (203,2 mm) de ancho en una página a 300 dpi, y el doble en una a 150.
+- **Una resolución.** `bitmap.resolution` son los ppp de la imagen a su tamaño natural de impresión, así que su ancho natural es `width × page.dpi / resolution` en una página de cualquier resolución: 2400 px con `resolution: 300` miden 203,2 mm de ancho en una página maquetada a 150 dpi o a 300. `layout.bitmapResolution` da una resolución a todo mapa de bits que no tenga una propia: un número (`300`), o `'file'`, la resolución que indica su archivo (`bitmap.fileResolution`: el `pHYs` de un PNG, la densidad JFIF o EXIF de un JPEG, el EXIF de un WebP; en una imagen importada de Word, el tamaño al que Word la imprimía). Las cámaras, las capturas de pantalla y las exportaciones para la web suelen indicar 72 o 96 ppp cuando no saben nada de un tamaño de impresión, así que con `'file'` esos dos valores cuentan como sin indicar y la imagen conserva sus píxeles a los dpi de la página; un 72 declarado en el propio recurso se toma tal cual. `'document'`, el valor por defecto, es la primera manera.
+- **Una parte de la columna.** `placement.width` estrecha un flotante o una inserción en línea a una fracción de su columna (o de la página), y una imagen más grande que esa parte se reduce hasta ella, tenga los píxeles que tenga (véase [Colocación](#colocación)).
+
+En todos los casos el hueco limita la imagen, sin cambiar sus proporciones, y una imagen más pequeña nunca se amplía. El mismo tamaño natural vale para una imagen en una celda de tabla y para un elemento `image` de un diseño con tamaño `'auto'`. El PDF incrusta el archivo tal cual, a su tamaño colocado. El [preflight](/es/docs/configuration-fonts-colors-viewers#preflight) comprueba la resolución a la que se imprime cada imagen, y el [panel de Recursos](/es/docs/sandbox#panel-de-recursos) del Sandbox la muestra para cada imagen. Desde postext 1.24.
+
+```json
+{ "id": "puerto", "typeId": "figure", "kind": "bitmap", "caption": "El puerto al amanecer.",
+  "bitmap": { "fileId": "puerto.jpg", "format": "jpeg", "width": 2400, "height": 1600, "resolution": 300 } }
+```
+
+`bitmapInfo(bytes)` (de `postext` y `postext/bundle`) lee los píxeles de un archivo y la resolución que indica, `{ width, height, resolution?: { x, y, source } }`; un paquete abierto con `'file'` rellena con ella `fileResolution`, y el Sandbox la guarda para cada imagen que se sube.
+
+### Zona segura
+
+Un recurso bitmap o SVG puede marcar una **zona segura**: el rectángulo de la imagen que contiene lo importante (una persona y una franja del paisaje que la rodea, la parte dibujada de una gráfica) y que siempre se ve. Es el campo `safeArea` del recurso, cuatro fracciones (0–1) del tamaño intrínseco de la imagen medidas desde su esquina superior izquierda: `x` y `width` son fracciones de su anchura, `y` y `height` de su altura. El nombre dice qué hay que conservar; una caja de recorte diría por dónde cortar.
+
+```ts
+const puerto: Resource = {
+  id: 'puerto', typeId: 'figure', kind: 'bitmap', caption: 'El puerto al amanecer.',
+  createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'puerto.jpg', format: 'jpeg', width: 2400, height: 1600 },
+  // las barcas y el muelle: del 18 al 68 % de la anchura, del 25 al 85 % de la altura
+  safeArea: { x: 0.18, y: 0.25, width: 0.5, height: 0.6 },
+};
+```
+
+Solo se recorta una imagen que tenga zona segura. El motor puede entonces mostrarla con cualquier proporción entre la imagen entera y la zona segura: más alta que su proporción propia recortando los lados, como mucho hasta la anchura de la zona segura, o más baja recortando arriba y abajo, como mucho hasta su altura. La anchura de la figura no cambia nunca, solo su altura. Lo que queda fuera de la zona segura se recorta por cada lado en proporción al margen que hay ahí, así que un motivo a la izquierda del centro sigue a la izquierda del centro. Compuesto a 60 mm de ancho, el puerto del ejemplo mide 40 mm de alto entero y puede mostrarse con cualquier altura entre 24 mm (arriba y abajo recortados hasta el 60 % de la altura) y 80 mm (los lados recortados hasta la mitad de la anchura). Los valores que se salen de la imagen se ajustan a sus bordes; una zona con algún valor que no es un número o con un lado de menos del 2 % de la imagen, o que cubre la imagen entera, se ignora, igual que el campo en una tabla. Sin zona segura la imagen se muestra siempre entera, como hasta ahora.
+
+El motor aprovecha ese margen en cuatro casos:
+
+- **El hueco que queda en una columna.** Una imagen en línea (`position: 'here'`) algo más alta que el hueco que le queda en su columna, también cuando es su leyenda la que se saldría por el pie de la página, se recorta dentro de su zona segura para quedarse ahí, en lugar de pasar a la columna o la página siguiente y dejar esta corta.
+- **Páginas más bajas que la figura.** Con `layout.fitFiguresToPage`, una imagen demasiado alta para la página se recorta primero dentro de su zona segura, conservando su anchura, y solo se reduce si sigue sin caber (consulta [Configuración › Disposición](/es/docs/configuration-page-layout#disposición)).
+- **Bandas más bajas que la figura.** Un flotante cuyo `placement.shrink` lo reduce al sitio de su hueco se recorta primero dentro de su zona segura, manteniendo su anchura, y solo después se reduce; la palanca `flexFigure` de abajo nunca lo hace crecer más allá de ese sitio.
+- **Equilibrado de columnas.** Una imagen con zona segura colocada en línea en una columna corta, o flotada en la cabeza o el pie de esa columna y solo sobre ella, crece en líneas enteras de la rejilla base hasta llenar las líneas vacías de la columna. Una imagen más alta no deja ningún hueco visible, así que esta palanca, `flexFigure`, se prueba justo después de la caja que cierra la columna y antes de añadir espacio sobre los encabezados o tras las listas. Un flotante en la cabeza de una columna de la página de cierre de un capítulo, o de una banda de cierre, no crece, porque ahí las cabezas de columna quedan a nivel (consulta [Configuración › Equilibrado de columnas](/es/docs/configuration-page-flow#equilibrado-de-columnas)).
+
+El VDT anota el recorte en el bloque del recurso: `bodySource` es la parte de la imagen que se ve en `bodyRect`, en las mismas fracciones (no aparece cuando se ve la imagen entera), y `bodyFlex` da los px que el cuerpo aún podría encoger y crecer y los px que ya le cambiaron las palancas (`{ shrink, grow, delta }`). La previsualización en canvas y el PDF recortan al cuerpo y dibujan la imagen entera a su tamaño sin recortar; el visor HTML y el EPUB de maquetación fija ponen la imagen con `object-fit: cover` y el `object-position` correspondiente; un EPUB adaptable, que no tiene página que llenar, muestra la imagen entera. Un anfitrión que dibuje las imágenes por su cuenta tiene las funciones que exporta `postext`: `resourceSafeArea` y `normalizeSafeArea` (la zona tal como la lee el motor, o `undefined`), `safeAreaHeightRange` (el cuerpo más bajo y el más alto a una anchura), `safeAreaSource` (la parte que se ve a una altura dada) y `uncroppedPictureBox` (dónde dibujar la imagen entera antes de recortar), con el tipo `ResourceSafeArea`. En el Sandbox el campo es **Zona segura**, en una imagen del [panel de Recursos](/es/docs/sandbox#panel-de-recursos).
+
+La receta nº 116 del Recetario, [Fotos que crecen hasta llenar la columna](/es/cookbook/photos-fill-short-columns), compone dos veces un reportaje de revista a dos columnas, sin zonas seguras y con ellas, para comparar las páginas una junto a otra.
+
+
+### Anclas de personaje y zonas libres
+
+Un dibujo que hace de arte de una viñeta de cómic puede decir además dónde están sus personas, para la rotulación (véase [Cómics](/es/docs/document-format-directives#cómics)). `anchors` enumera un punto por personaje y `avoid` las regiones que ningún bocadillo tapa, unos y otras en fracciones del dibujo, como la zona segura:
+
+```ts
+const radio: Resource = {
+  id: 'lh-radio', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-radio.jpg', format: 'jpeg', width: 1000, height: 1000 },
+  safeArea: { x: 0, y: 0.36, width: 0.62, height: 0.56 },
+  anchors: [
+    // el farero: boca, cabeza (para los bocadillos de pensamiento) y cara
+    { id: 'tomas', x: 0.345, y: 0.52, head: { x: 0.38, y: 0.44 }, face: { x: 0.29, y: 0.4, width: 0.16, height: 0.18 } },
+  ],
+  avoid: [{ x: 0, y: 0.44, width: 0.22, height: 0.26 }], // la radio
+};
+```
+
+El `id` de un ancla es la clave de personaje del guion (`tomas: …`), o `sfx` para el punto en el que se reúnen las onomatopeyas de la viñeta; `x` e `y` son la boca a la que apunta el rabillo de un bocadillo de diálogo, `head` el punto al que apuntan las burbujas de un bocadillo de pensamiento (la boca si no se fija) y `face` un rectángulo que ningún bocadillo tapa. El motor lleva cada punto a través del recorte y el reflejo de la viñeta, de modo que un rabillo sigue en su personaje sea cual sea la forma que tome la viñeta; un ancla fuera de la zona segura genera `comicAnchorOutsideSafeArea`, porque un recorte puede dejarla fuera. Una tercera lista, `faces`, guarda las caras de quienes no hablan, como rectángulos iguales a los de `avoid`: ningún bocadillo las tapa, mientras que una zona libre cede cuando a la viñeta no le queda otro sitio. Las anclas pertenecen al dibujo y sirven a todas las traducciones del cómic. Solo las leen las viñetas de cómic; una figura las ignora. En el Sandbox se marcan en el diálogo **Zona segura y rotulación** del [panel de Recursos](/es/docs/sandbox#panel-de-recursos).
+
+
+### Vídeos
+
+Un recurso de **vídeo** (`kind: 'video'`) es un vídeo de YouTube o Vimeo, o un vídeo propio: un archivo guardado en el libro (MP4, WebM) o uno que está en una dirección web, sea un archivo en un servidor o un **flujo HLS** (una lista de reproducción `.m3u8`). Se coloca, lleva pie, flota y se cita como una imagen, y se numera en una serie propia: el tipo integrado `video` imprime *Vídeo 1.1*, *Vídeo 1.2*… junto a *Figura 1.1* y *Tabla 1.1* (consulta [Configuración › Tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso)). Cada salida lo muestra como puede:
+
+<table>
+  <thead>
+    <tr>
+      <th>Salida</th>
+      <th>Qué muestra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Canvas, PDF</td>
+      <td>La <strong>portada</strong>, un fotograma del vídeo, con una marca de reproducción y un código QR que abre el vídeo (<a href="/es/docs/configuration-resources#estilo-de-vídeo">Configuración › Estilo de vídeo</a>). En el PDF la portada es además un enlace al vídeo.</td>
+    </tr>
+    <tr>
+      <td>Folio</td>
+      <td>La portada, tal como se imprime. Un clic sobre ella reproduce el vídeo <strong>en la propia página</strong>, y el vídeo sigue en marcha mientras la hoja pasa (consulta <a href="#vídeos-en-las-páginas-de-folio">Vídeos en las páginas de Folio</a> más abajo). Los vídeos de YouTube y Vimeo se quedan en su portada.</td>
+    </tr>
+    <tr>
+      <td>Visor HTML</td>
+      <td>El <strong>reproductor</strong> del vídeo: el de YouTube o el de Vimeo, o el reproductor HTML5 del navegador para un archivo o una dirección. Un flujo HLS se reproduce de forma nativa en Safari y en las versiones recientes de Chrome; en los demás navegadores el anfitrión le pone un reproductor como hls.js, igual que hace el Sandbox. Con <code>videoStyle.html: 'poster'</code> muestra en su lugar la portada impresa.</td>
+    </tr>
+    <tr>
+      <td>EPUB</td>
+      <td>Un archivo se reproduce en el reproductor del propio sistema de lectura, empaquetado en el libro o leído desde su dirección de producción. Un vídeo de YouTube o Vimeo es su portada, enlazada con el vídeo: un EPUB no puede insertar el reproductor de una página web. Un flujo HLS también es su portada enlazada: una lista de reproducción HLS no es ninguno de los tipos de medio que un EPUB puede reproducir. Si el sistema de lectura ejecuta scripts, los archivos de una misma página o capítulo siguen <code>player.exclusive</code>: al empezar uno se pausan los demás con los que no se reproduce a la vez.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const charla: Resource = {
+  id: 'charla-farero', typeId: 'video', kind: 'video',
+  caption: 'El farero explica la lámpara.',
+  altText: 'Un farero junto a la lámpara',
+  createdAt: 0, updatedAt: 0,
+  video: {
+    source: 'youtube',                        // 'youtube' | 'vimeo' | 'file'
+    url: 'https://youtu.be/aqz-KE-bpKQ',
+    poster: { fileId: 'charla.jpg', format: 'jpeg', width: 1280, height: 720 },
+    start: 30,                                // empieza en 0:30; el enlace impreso también
+  },
+};
+```
+
+El texto cita un vídeo igual que una figura: `:ref{id="charla-farero"}` imprime *Vídeo 1.1* y hace flotar la portada al primer hueco libre tras la referencia, y `::resource{id="charla-farero"}` con `placement.position: 'here'` la coloca en línea. Los campos de `Resource.video` (`ResourceVideo`):
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Tipo</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td><code>'youtube'</code> · <code>'vimeo'</code> · <code>'file'</code></td>
+      <td>Desde dónde se reproduce el vídeo: una página de YouTube o Vimeo, o un vídeo propio (<code>'file'</code>), subido o en una dirección.</td>
+    </tr>
+    <tr>
+      <td><code>url</code></td>
+      <td><code>string</code></td>
+      <td>YouTube o Vimeo: la dirección del vídeo, en cualquiera de sus formas (una página de reproducción, <code>youtu.be</code>, Shorts, un enlace de inserción, <code>youtube-nocookie.com</code>; una página de Vimeo, la de un canal o un enlace oculto con su hash). Un archivo: su <strong>dirección de producción</strong>, donde lo encontrará el libro publicado. Un vídeo propio sin archivo se reproduce desde esta dirección: un MP4 o WebM en un servidor, o un flujo HLS (<code>…/master.m3u8</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fileId</code>, <code>format</code></td>
+      <td><code>string</code></td>
+      <td>Un archivo: el vídeo subido, guardado fuera de banda como un bitmap, y su formato: <code>'mp4'</code>, <code>'webm'</code>, <code>'ogv'</code>, <code>'mov'</code>, o <code>'hls'</code> para un flujo HLS. Si no se indica, lo da la extensión de la dirección (<code>.m3u8</code> es <code>'hls'</code>) y, en su defecto, es <code>'mp4'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>poster</code></td>
+      <td><code>{'{ fileId, format, width, height }'}</code></td>
+      <td>El fotograma de portada, un bitmap.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code>, <code>duration</code></td>
+      <td><code>number</code></td>
+      <td>El tamaño del fotograma del vídeo en px (su proporción cuando no hay portada) y su duración en segundos.</td>
+    </tr>
+    <tr>
+      <td><code>posterTime</code></td>
+      <td><code>number</code></td>
+      <td>El segundo del archivo cuyo fotograma se usa como portada, guardado para poder volver a elegirlo.</td>
+    </tr>
+    <tr>
+      <td><code>start</code>, <code>end</code></td>
+      <td><code>number</code></td>
+      <td>Reproduce desde el segundo <code>start</code> hasta el <code>end</code>. El código QR y el enlace del PDF también empiezan en <code>start</code>.</td>
+    </tr>
+    <tr>
+      <td><code>player</code></td>
+      <td><code>VideoPlayerOptions</code></td>
+      <td>Las opciones de reproductor de este vídeo, que se aplican sobre <code>videoStyle.player</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+**La portada.** Se compone a la medida de su hueco (o a la fracción `placement.width` de ella), con su propia proporción y sea cual sea su tamaño en píxeles: un fotograma del tamaño de una pantalla se amplía en lugar de imprimirse pequeño. Como un bitmap, puede llevar una [zona segura](#zona-segura) y seguir `placement.align`. Un vídeo sin portada imprime un recuadro oscuro con la proporción del vídeo (16:9 si nada la indica) y sus elementos superpuestos, y genera un aviso de contenido `videoWithoutPoster`. En el Sandbox, la portada de un vídeo de YouTube o Vimeo se descarga de la plataforma al escribir su dirección, y la de un archivo es un fotograma que eliges en el vídeo.
+
+**La dirección.** El código QR y el enlace del PDF abren la página del vídeo, `https://youtu.be/<id>` o `https://vimeo.com/<id>`, desde `start`. Un archivo no tiene página: abren su dirección de producción, que es también desde donde se reproduce un vídeo sin archivo propio (un MP4 en un servidor, un flujo HLS). Sin ella, la versión impresa no lleva código QR ni enlace (`videoWithoutUrl`), y una salida HTML o EPUB que no lleva el archivo muestra la portada. Una dirección de YouTube o Vimeo que no nombra ningún vídeo de esa plataforma genera `videoUrlInvalid`, y se muestra la portada en lugar de un reproductor.
+
+**Los reproductores.** Las opciones del reproductor (controles, botón de descarga, pantalla completa, menú de velocidad, imagen en imagen, envío a otra pantalla, reproducción automática, empezar sin sonido, repetición, precarga, inserción con más privacidad) se fijan para todo el libro en `videoStyle.player` y para un vídeo en `video.player`; cada reproductor aplica las que puede (consulta [Configuración › Estilo de vídeo](/es/docs/configuration-resources#estilo-de-vídeo)). El backend HTML recibe la URL reproducible de un archivo mediante la opción `resourceVideoUrl(fileId)`, igual que recibe las imágenes mediante `resourceImageUrl`, y si no la tiene recurre a la dirección de producción. Su opción `videos: { files, streams, hls }` elige entre reproductor y portada según el origen, por encima de `videoStyle.html` (`hls`, un vídeo que se reproduce desde una dirección HLS, sigue a `files` si no se indica); el escritor EPUB la usa. Un `<video>` que reproduce una dirección HLS lleva `data-pt-hls`, para que un anfitrión pueda darle un reproductor en los navegadores sin HLS nativo (Safari y las versiones recientes de Chrome lo reproducen tal cual). En un libro de derecha a izquierda, el reproductor y los elementos superpuestos de la portada recuperan su orientación, como una imagen, para que el código QR se pueda leer.
+
+**En el VDT.** El bloque de recurso de un vídeo lleva `kind: 'video'`, su portada como `fileId` / `format` (se dibuja como un bitmap) y `video` (`VDTResourceVideo`): el `link` al que se envía al lector, la `embedUrl` de YouTube o Vimeo con las opciones del reproductor aplicadas, el `fileId` de un archivo, el `mimeType` de un vídeo propio (el de su archivo o, si solo tiene dirección, el de esta; `application/vnd.apple.mpegurl` para HLS), el intervalo `start` / `end`, el `player` resuelto, `linkPoster`, `html` y los elementos superpuestos `playMark` y `qr` (los módulos del QR como filas de `'0'` / `'1'`), con rectángulos relativos a la esquina superior izquierda del cuerpo. Un anfitrión que dibuje los vídeos por su cuenta tiene las funciones que exporta `postext`: `parseVideoUrl`, `videoWatchUrl`, `resourceVideoLink`, `videoEmbedUrl`, `videoEmbedAllow`, `videoElementAttributes`, `mediaFragment`, `videoMimeType`, `videoFormatOfUrl`, `resourceVideoFormat`, `isHlsMimeType`, `HLS_MIME_TYPE`, `youtubePosterUrls`, `encodeQr`, `layoutVideo`, `playMarkTriangle` y `qrModuleRuns`.
+
+**En un paquete.** Un `.postext` lleva el archivo (`resources/<id>.mp4`) y la portada (`resources/<id>.poster.jpg`): la entrada del manifiesto los nombra en `file` y `poster`, da el tamaño de la portada en `width` / `height` y guarda el resto en `video`, sin ids de archivo. `bundleVideoUrl(bundle)` es el resolutor `resourceVideoUrl` sobre los archivos de un paquete. Un vídeo que se reproduce solo desde una dirección no lleva archivo: su entrada tiene únicamente la portada. En un paquete bilingüe, cada idioma puede dar a un vídeo su propia `poster` y su propio `video` (otro montaje, en su propia dirección) en `localized[…].resources`.
+
+#### Vídeos en las páginas de Folio
+
+En el [libro en 3D](/es/docs/configuration-html-folio-epub#un-libro-en-3d-postext-folio), un vídeo propio se reproduce en la página en la que está impreso. Un clic en la portada lo pone en marcha ahí mismo, haga lo que haga el puntero sobre el libro (pasar páginas, orbitar la vista o seleccionar texto): el shader de la página dibuja los fotogramas del vídeo sobre la portada, de modo que la imagen se dobla y se curva con el papel cuando se pasa la hoja, y el vídeo sigue reproduciéndose durante el paso. Un clic en un vídeo en marcha lo pausa, otro en un vídeo en pausa lo reanuda, y la barra espaciadora o Intro hacen lo mismo con el primer vídeo del pliego abierto. Al poner en marcha otro vídeo se detiene el que estaba sonando (vuelve a su portada), y un vídeo se detiene cuando el libro se queda quieto en un pliego donde ya no aparece, o al llegar a su `end`. Sobre un vídeo que puede reproducir, el puntero toma forma de mano; un arrastre que empieza sobre él sigue pasando la página o girando la vista. Un vídeo que debe reproducirse solo (`video.player.autoplay`) arranca por sí mismo la primera vez que el libro se queda quieto en su pliego, cuando el libro ya se ha asentado (también si el anfitrión lo compone por etapas), y no vuelve a hacerlo en ese visor.
+
+Un vídeo que se reproduce junto a otros (`video.player.exclusive: false`, desde postext 1.18) cambia las dos reglas. Al empezarlo solo se detienen los vídeos exclusivos, así que varios de ellos se reproducen a la vez; empezar un vídeo exclusivo también lo detiene. Con `autoplay` empieza, sin sonido, cada vez que el libro se detiene en su pliego, y se para cuando se pasa a otro: los bucles sin sonido (`loop`) de una página corren juntos cada vez que el lector llega a ella.
+
+- **Qué se reproduce.** Un archivo (el anfitrión convierte su `fileId` en una URL con la opción `videoUrl`; en el Sandbox es una URL de objeto) o, si no lo hay, su dirección: MP4, WebM o un flujo HLS. Un flujo HLS se reproduce con [hls.js](https://github.com/video-dev/hls.js) en todo navegador que tenga Media Source Extensions (se carga la primera vez que se reproduce un vídeo; es una *peer dependency* opcional de `postext-folio`), limitado a la variante más cercana al tamaño que tiene la imagen en pantalla, de modo que una imagen de unos cientos de píxeles de alto nunca descarga una variante 4K; si no, se usa el HLS propio del navegador. Sus peticiones llevan un parámetro `pt-cors` propio, para que la caché del navegador nunca les entregue una copia que otro reproductor descargó sin CORS. YouTube y Vimeo se reproducen en iframes, que WebGL no puede dibujar: un clic en su portada pasa la página como en cualquier otro punto.
+- **Lecturas entre orígenes.** WebGL solo dibuja un vídeo si su servidor permite leerlo (CORS, `Access-Control-Allow-Origin`). Un vídeo que no se puede leer se queda en su portada, y `onVideo` recibe `error`.
+- **Sonido.** El clic permite que el vídeo se reproduzca con sonido; si el navegador aun así lo impide, se reproduce silenciado. Un vídeo que arranca solo tiene sonido si el lector ya ha hecho clic o ha escrito en la página (pasar hasta ella cuenta); si no, empieza silenciado, y un clic sobre él le da sonido antes de que el siguiente lo pause. `video.player.muted` lo hace empezar sin sonido, `loop` lo repite, y `start` / `end` delimitan la parte que se reproduce.
+- **En cualquier página.** La imagen se dibuja donde la pone la composición: girada en un recurso rotado, derecha en una página vertical y sin reflejar en un libro de derecha a izquierda, igual que la portada. Una portada recortada dentro de su [zona segura](#zona-segura) recorta el vídeo del mismo modo.
+- **Sin WebGL2**, o con la preferencia de menos movimiento, el vídeo se reproduce en un `<video>` HTML colocado sobre la página.
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  // La URL reproducible de un vídeo subido (una URL de objeto sobre sus bytes).
+  videoUrl: (fileId) => urls.get(fileId),
+  onVideo: ({ resourceId, state }) => console.log(resourceId, state), // playing | paused | stopped | error
+});
+book.stopVideo();
+```
+
+`videos: false` lo desactiva. `toggleVideoAt({ page, x, y })` hace lo mismo que un clic en ese punto, y `pageVideoSpots(page, doc)` indica dónde está cada vídeo de una página, para el anfitrión que dibuja sus propios controles.
+
+Dos recetas del Recetario ponen vídeos: la nº 131, [Programa de cineclub con códigos QR en las portadas](/es/cookbook/film-club-video-qr), imprime cada película como una cartela con la marca de reproducción y un código QR, y la nº 132, [Hoja de prácticas con vídeos que se ven en pantalla y EPUB](/es/cookbook/pendulum-lab-video-players), fija las opciones del reproductor de la edición HTML y empaqueta sus propios vídeos en un EPUB de maquetación fija.

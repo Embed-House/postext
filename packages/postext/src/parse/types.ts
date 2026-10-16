@@ -1,4 +1,5 @@
 import type { ComicPageSource } from '../comics/types';
+import type { FigureLabelNode, SourceRange } from '../composed/types';
 
 export type ContentBlockType =
   | 'heading'
@@ -99,13 +100,78 @@ export interface CodeBlockInfo {
 
 /** Recognized directive names. Unknown names are not parsed as directives —
  *  they fall through to the paragraph branch and surface via warnings. */
-export type DirectiveName = 'pagebreak' | 'numbering' | 'columnbreak' | 'space' | 'toc' | 'index' | 'bibliography' | 'references' | 'verse' | 'page' | 'strip';
+export type DirectiveName = 'pagebreak' | 'numbering' | 'columnbreak' | 'space' | 'toc' | 'index' | 'bibliography' | 'references' | 'verse' | 'page' | 'strip' | 'figure';
 
 /** Recognized fenced-container names. A container opens with a
  *  `:::name{attrs}` line and closes with a bare `:::` line; the blocks in
  *  between are parsed as usual and bracketed by a `containerStart` /
  *  `containerEnd` marker pair sharing a `containerId`. */
-export type ContainerName = 'callout' | 'paragraphs' | 'part' | 'columns' | 'paper';
+export type ContainerName = 'callout' | 'paragraphs' | 'part' | 'columns' | 'paper' | 'frame'
+  /** A composed page (#854): `::::page{template=…}` … `::::`, four or
+   *  more colons (see {@link ComposedPageFence}). Not in
+   *  `KNOWN_CONTAINERS`: a three-colon `:::page` is a comic page. */
+  | 'composedPage'
+  /** Only named by an `unclosedContainer` issue: a `:::figure` (#854) is
+   *  read whole into one `resourceBlock` (see {@link FigureInfo}). */
+  | 'figure';
+
+/** The fence of a composed page (#854, DESIGN §3.1), on its
+ *  `containerStart` marker: `::::page{template="…" spread …}`. The page's
+ *  content is the blocks up to the matching `containerEnd`; a bare fence
+ *  of the same number of colons closes it, and a bare `:::` inside never
+ *  does. `composedPages()` (`composed/document.ts`) gathers the content by
+ *  slot. */
+export interface ComposedPageFence {
+  /** The `template` attribute as written (`''` when missing). */
+  template: string;
+  /** The `spread` flag (any value but `false`). */
+  spread: boolean;
+  /** Every attribute of the fence as written (`template`, `spread`, `id`
+   *  and the page's own, read by the template as `{attr.x}`). */
+  attrs: DirectiveAttrs;
+  /** Absolute source range of each attribute's value. */
+  attrSources: Record<string, SourceRange>;
+  /** Ordinal of the fence in its text, from 0: the same in every locale
+   *  when the chapters keep their pages in order. */
+  fenceIndex: number;
+  /** How many colons open (and close) the page: 4 or more. */
+  colons: number;
+}
+
+/** The `slot="…"` a block names (#854, DESIGN §3.2): a heading's
+ *  `{slot=…}`, a `::resource{… slot=…}`, a `:::figure{slot=…}`, a code
+ *  fence's or any `:::` container's (a `:::frame{slot=…}` sends its whole
+ *  body). Absolute source range of the value. */
+export interface BlockSlot extends SourceRange {
+  name: string;
+}
+
+/** A `::label[TEXT]{at=… style=…}` line of a `:::figure` (#854, DESIGN
+ *  §3.3): a short text set at an anchor of the picture (P6 lays it out).
+ *  `text` is the plain text of the label's inline Markdown, `spans` its
+ *  runs and `sourceMap` the absolute source offset of each character of
+ *  `text`. `at` is an anchor name, or `{ x, y }` in fractions of the
+ *  picture from `at="62% 48%"`. */
+export interface FigureLabel extends FigureLabelNode {
+  spans: InlineSpan[];
+  sourceMap: number[];
+  /** Source range of the bracketed text (between `[` and `]`). */
+  textStart: number;
+  textEnd: number;
+  /** Absolute source range of each attribute's value. */
+  attrSources: Record<string, SourceRange>;
+}
+
+/** A `:::figure{resource="…" slot="…"}` … `:::` block (#854): one
+ *  resource, set as `::resource` sets it, with labels at its anchors. Its
+ *  block is a `resourceBlock` whose `resourceId` is the `resource`
+ *  attribute. */
+export interface FigureInfo {
+  /** The fence's attributes as written. */
+  attrs: DirectiveAttrs;
+  attrSources: Record<string, SourceRange>;
+  labels: FigureLabel[];
+}
 
 /** Letter-case transform applied to the computed label of an inline `:ref`
  *  (never to the number, never to a `text=` override). */
@@ -571,6 +637,29 @@ export interface TocBlockInfo {
   /** A part row's title and palette overrides. */
   title?: string;
   palette?: Record<string, string>;
+  /** The block of the contents this row belongs to, when the contents
+   *  keeps its blocks together (`toc.groups`, `:::toc{keep}`, #850). */
+  group?: TocGroupInfo;
+}
+
+/** A row's place in a block of the contents (#850). */
+export interface TocGroupInfo {
+  /** The block's number, unique in the document. */
+  id: number;
+  /** `'head'`: the head row; `'member'`: a row under it (an entry, or a
+   *  part row right above a heading head, which goes with its block);
+   *  `'continuation'`: the head row repeated with the continuation mark,
+   *  set only when the column it opens holds the rest of a cut block
+   *  (else skipped). */
+  role: 'head' | 'member' | 'continuation';
+  /** The block's first row, which carries the keep: the head, or a part
+   *  row right above it. */
+  lead?: true;
+  /** The fewest entries a cut block keeps with its head
+   *  (`minEntriesAfterHead`). */
+  minEntries: number;
+  /** The head's title, for the `tocGroupSplit` warning. */
+  title: string;
 }
 
 /** An index mark (`:index[text]{…}` / `:index{…}`, #165): one term the
@@ -756,6 +845,15 @@ export interface ContentBlock {
   inlineCode?: Array<{ start: number; end: number }>;
   /** For `resourceBlock` blocks: the referenced `Resource.id`. */
   resourceId?: string;
+  /** For a `resourceBlock` written as `:::figure{resource=…}` (#854): the
+   *  fence's attributes and its `::label` lines. */
+  figure?: FigureInfo;
+  /** For the `containerStart` of a composed page (`containerName:
+   *  'composedPage'`, #854): its fence. */
+  composedPage?: ComposedPageFence;
+  /** The slot the block names (#854): where a composed page pours it.
+   *  Absent when it names none (it goes to the template's flow frame). */
+  slot?: BlockSlot;
   /** For `containerStart` / `containerEnd` marker blocks: the container
    *  name (`'callout'`, `'paragraphs'`, `'part'`). */
   containerName?: ContainerName;

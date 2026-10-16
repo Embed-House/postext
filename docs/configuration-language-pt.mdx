@@ -1,0 +1,253 @@
+{/* docs/configuration-language-pt.mdx */}
+
+export const metadata = {
+  title: 'Configuração: hifenização e idioma',
+  sidebarTitle: 'Hifenização e idioma',
+  description: 'Padrões e exceções de hifenização, texto em bandeira, o idioma do documento com seus algarismos e sua direção, e os sistemas de escrita que o Postext compõe',
+  lang: 'pt',
+  lastUpdated: '2026-10-16',
+  readingTime: '21 min',
+  order: 8,
+  parent: 'configuration',
+  plainSummary: "Esta página trata de como as palavras são divididas no fim da linha e de como o Postext sabe o idioma de um livro. Você liga ou desliga a hifenização e lista as palavras que nunca devem ser divididas. Pode deixar a margem direita do texto irregular em vez de reta. O idioma do documento define as regras de hifenização, os nomes das figuras e das tabelas, os algarismos e a direção do texto. As últimas seções dizem quais sistemas de escrita o Postext compõe e como ele trata o texto árabe.",
+};
+
+# Configuração: hifenização e idioma
+
+
+## Hifenização
+
+Quando o alinhamento do texto é `'justify'`, a hifenização evita o espaçamento excessivo entre palavras, dividindo as palavras longas nos limites de sílaba. O motor usa os padrões TeX/Liang para encontrar os pontos de quebra naturais entre sílabas. Veja [Hifenização e justificação](/pt/docs/justification) para uma explicação detalhada. O texto em bandeira só é hifenizado quando você pede: veja [Texto em bandeira](#texto-em-bandeira) abaixo.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se a hifenização é permitida.</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>LocaleTag</code></td>
+      <td><code>locale</code> do nível superior; senão, <code>'en-us'</code></td>
+      <td>Regras do idioma para os limites de sílaba: um dos idiomas suportados abaixo, ou qualquer tag BCP 47 (<code>'es-ES'</code>, <code>'pt-BR'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>ragged</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Hifeniza também o texto em bandeira (alinhado à esquerda, à direita ou ao centro), dentro da <code>zone</code>. Veja <a href="#texto-em-bandeira">Texto em bandeira</a>.</td>
+    </tr>
+    <tr>
+      <td><code>zone</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>3em</code></td>
+      <td>Zona de hifenização do texto em bandeira: uma palavra que não cabe só é dividida quando mandá-la inteira para a linha seguinte deixaria um vazio maior que este. <code>em</code> é relativo ao tamanho da fonte do próprio texto. Ignorada no texto justificado.</td>
+    </tr>
+    <tr>
+      <td><code>compounds</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permite que o dicionário divida as palavras de um composto, uma palavra com um hífen entre duas letras (<code>af-ter-dinner</code>). <code>false</code> mantém essa palavra inteira, exceto no seu próprio hífen, onde a linha ainda pode terminar (<code>after-</code> · <code>dinner</code>), como faz o TeX. Um hífen condicional digitado na palavra continua quebrando, e um composto mais largo que a linha inteira continua sendo dividido. Vale para o texto corrido, títulos, listas, citações e boxes; legendas, notas, células de tabela e o sumário continuam dividindo os compostos. Veja <a href="/pt/docs/justification#palavras-compostas">Palavras compostas</a>.</td>
+    </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>nenhuma</td>
+      <td>Palavras que o dicionário não deve dividir, ou só pode dividir onde a entrada indica: <code>'Alice'</code> nunca é dividida, <code>'You-Tube'</code> só no seu hífen. Veja <a href="#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide as palavras com inicial maiúscula como qualquer outra. <code>false</code> mantém inteira toda palavra que começa com maiúscula (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), inclusive a primeira palavra de uma frase. Veja <a href="#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Idiomas suportados:** `'en-us'` (inglês), `'es'` (espanhol), `'fr'` (francês), `'de'` (alemão), `'it'` (italiano), `'pt'` (português), `'ca'` (catalão), `'nl'` (holandês).
+
+As subtags de região, escrita e variante são ignoradas na escolha dos padrões, assim como a caixa das letras e os separadores `_`: `'es-ES'`, `'es-MX'` e `'es_419'` hifenizam com `'es'`, `'pt-BR'` com `'pt'`, e toda tag inglesa (`'en'`, `'en-GB'`) com `'en-us'`, os únicos padrões ingleses incluídos, de modo que o texto britânico recebe quebras americanas. Um idioma sem padrões incluídos (`'sv'`, `'pl'`, `'fi'`…) é hifenizado com os padrões `'en-us'`, o que produz quebras erradas em vez de nenhuma; o motor o reporta uma vez por tag com um `console.warn`, e o Sandbox o lista no painel **Verificações**. Defina `enabled: false` para um documento assim; isso também silencia o aviso. Chinês, japonês e coreano (`zh`, `ja`, `ko`, qualquer que seja a região ou a escrita) não precisam de padrões nem geram aviso: um documento em um desses idiomas é composto sem hifenização. Para dividir as palavras latinas citadas nele, defina `enabled: true` e indique o idioma delas em `locale` (`'en-us'` para o inglês). `enabled: true` sem `locale`, ou com um idioma chinês, japonês ou coreano, deixa a hifenização desativada e avisa uma vez no console. `matchHyphenationLocale(tag)` devolve o idioma incluído que corresponde a uma tag (`undefined` quando não há nenhum), e `HYPHENATION_LOCALES` lista os incluídos. A configuração resolvida (`doc.config.bodyText.hyphenation`) indica em `locale` os padrões realmente usados e guarda em `tag` a tag que você informou, quando for diferente. O renderizador de PDF declara o idioma do documento a partir do `locale` do nível superior, e a partir desta tag só quando `locale` não está definido (veja [Idioma do documento](#idioma-do-documento)).
+
+```ts
+import { matchHyphenationLocale } from 'postext';
+
+matchHyphenationLocale('es-MX'); // 'es'
+matchHyphenationLocale('en-GB'); // 'en-us'
+matchHyphenationLocale('sv');    // undefined: hifenizado com 'en-us', com um aviso no console
+```
+
+Palavras com menos de 5 caracteres nunca são hifenizadas. O motor exige pelo menos 2 caracteres antes e 3 caracteres depois de um ponto de quebra.
+
+### Palavras que não se dividem
+
+Um dicionário divide um nome como divide qualquer palavra: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Três opções mantêm palavras inteiras, e as três têm como padrão o que o dicionário faz.
+
+`hyphenation.exceptions` é uma lista de palavras, como no `\hyphenation{…}` do TeX. Uma entrada escrita sem hífen nunca é dividida; uma entrada escrita com hifens só é dividida neles, de modo que `'You-Tube'` dá `You-` · `Tube` e nada mais. Uma entrada corresponde a uma sequência de letras, seja o que for que a cerque: `'Alice'` cobre `(Alice,` e `Alice’s`, e um composto é comparado parte por parte (`Blender-based` corresponde a `'Blender'`). Uma forma flexionada é outra palavra e precisa da sua própria entrada. Uma entrada em minúsculas vale para a palavra em qualquer caixa (`'blender'` cobre `Blender` e `BLENDER`); uma entrada com inicial maiúscula só vale para as ocorrências que começam com maiúscula, de modo que `'Rose'` mantém o nome inteiro e deixa `rose` para o dicionário. As entradas só contêm letras e hifens; todo o resto é descartado.
+
+`hyphenation.capitalized: false` mantém inteira toda palavra que começa com maiúscula: nomes, siglas e também a primeira palavra de cada frase. É a opção "Hyphenate Capitalized Words" do InDesign desativada, e o `\uchyph=0` do TeX. Uma entrada de `exceptions` com hifens continua dividindo a sua palavra neles. O alemão escreve todo substantivo com maiúscula, de modo que a opção deixaria um texto alemão quase sem palavras para dividir: nesse caso, indique as palavras em `exceptions`, ou use `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` mantém inteiros os sobrenomes dos autores que o documento cita, onde quer que estejam: numa citação, no texto corrido e na lista de referências. Veja [Citações](/pt/docs/configuration-notes-references#citações).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+As três alcançam todo texto que o dicionário divide: corpo, títulos, listas, boxes, legendas, células de tabela, notas, cabeços e o restante do texto de design. É mais do que `compounds` alcança, que legendas, notas, células e o sumário ignoram. Duas coisas ficam como estão. Um hífen condicional digitado numa ocorrência de uma palavra continua decidindo essa ocorrência, e um hífen condicional antes da primeira letra mantém uma ocorrência inteira sem lista (veja [Onde uma linha nunca quebra](/pt/docs/justification#onde-uma-linha-nunca-quebra)). E uma palavra mais larga que a medida inteira continua sendo dividida: nos pontos da sua entrada, quando ela os tem; senão, nas sílabas do dicionário. Menos palavras divididas deixam a uma coluna justificada estreita menos maneiras de preencher as linhas, então confira o espaçamento entre palavras depois de desativar `capitalized` numa página de três colunas. O EPUB refluível deixa a hifenização para o sistema de leitura, que não conhece essas regras.
+
+### Texto em bandeira
+
+Por padrão, só o texto justificado é hifenizado: com `textAlign: 'left'`, e nos estilos de parágrafo alinhados à esquerda, ao centro ou à direita, toda palavra é mantida inteira, por mais irregular que a borda fique, exceto em um hífen condicional (U+00AD) digitado no texto. Defina `hyphenation.ragged: true` para hifenizar também o texto em bandeira.
+
+Uma linha em bandeira nunca é esticada, então dividir toda palavra que não cabe encheria a borda de hífens. A **zona de hifenização** limita isso, como faz o compositor de linha única de um programa de editoração. Quando uma palavra não cabe no fim de uma linha, o motor olha o vazio que mandá-la inteira para a linha seguinte deixaria. Se esse vazio for maior que `zone`, a palavra é dividida na última sílaba que cabe; caso contrário, desce inteira. Uma zona em `em` é relativa ao tamanho da fonte do próprio texto. O padrão, `3em`, só divide as palavras que deixariam uma linha visivelmente curta. Uma zona maior dá menos hífens e uma borda mais irregular; `0` divide toda palavra que não cabe. Na composição linha a linha, no máximo duas linhas seguidas terminam em sílaba. Hífens fixos (`enseñanza-aprendizaje`), junções de URL, hífens condicionais digitados no texto e palavras mais largas que a linha inteira quebram como sempre: a zona e o limite de duas linhas só regem as sílabas do dicionário.
+
+A configuração vale para o documento inteiro. Aplica-se ao texto do corpo e às citações quando estão em bandeira, e a todo estilo de parágrafo e corpo de boxe em bandeira cuja `hyphenation` própria esteja ativada (por padrão, ela segue o `hyphenation.enabled` do corpo), de modo que `hyphenation: false` mantém inteiras as palavras de um estilo. Títulos, legendas, notas, células de tabela e o sumário não são hifenizados; ali, como em todo lugar, só uma palavra mais larga que a medida inteira é dividida. O texto de design (cabeços, aberturas, páginas de parte) segue a opção `hyphenate` de cada elemento de texto, que as aberturas de página inteira e as páginas de parte embutidas ativam, e usa também o dicionário do documento. O texto justificado ignora `ragged` e `zone`.
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    textAlign: 'left',
+    // Um pouco mais de hifenização que o padrão de 3 em.
+    hyphenation: { ragged: true, zone: { value: 2, unit: 'em' } },
+  },
+};
+```
+
+Com `optimalRagged` (o padrão), o texto corrido em bandeira é quebrado com Knuth-Plass, e a zona mantém o seu sentido ali: uma palavra só é dividida quando não cabe no restante da linha e mandá-la inteira para baixo deixaria vazio mais que a zona. Duas sílabas seguidas não são recusadas, mas custam o que custam dois hífens seguidos no texto justificado, então uma terceira é rara. Com `optimalRagged: false`, ou `optimalLineBreaking: false`, cada linha é preenchida antes da seguinte, como até o postext 1.4.
+
+A hifenização do texto em bandeira diagrama os parágrafos com o algoritmo de quebra que os parágrafos com formatação inline (negrito, itálico, links, fórmulas) sempre usam, então ativá-la pode mudar algumas quebras além dos hífens. Em uma linha em bandeira, além dos espaços e das sílabas do dicionário, esse algoritmo quebra depois de um hífen fixo ou de um travessão entre duas palavras (`largas—separadas`; com `breakAfterDashes`, qualquer travessão colado entre palavras, também `riddles.—I` e `riddles—*and*`), nas junções de URL e entre ideogramas, e mantém junta uma palavra composta em vários trechos (`**Nota**:`, `(*véase*`). Sem a hifenização do texto em bandeira, um parágrafo em bandeira sem formatação é quebrado com Knuth-Plass quando `optimalRagged` está ativado (o padrão): nos espaços entre palavras, depois de um hífen fixo entre duas letras (`meta-` · `analyses`), como faz o outro algoritmo, e, com `breakAfterDashes`, depois de travessões colados. Na composição linha a linha, ele passa pelo algoritmo de quebra do pretext, que difere em três pontos: também pode quebrar antes de um travessão que fecha um aparte ou depois de um que o abre (`él` · `— y`), depois de uma barra ao hifenizar (`km/` · `h`), e corta uma palavra mais larga que a linha em qualquer caractere, sem hífen, onde o outro algoritmo a divide primeiro em uma sílaba.
+
+No Sandbox, a opção é **Hifenizar texto em bandeira**, abaixo do alinhamento de parágrafo da seção **Texto do corpo**, com a zona logo abaixo. Com o corpo justificado, a mesma opção fica junto das configurações de justificação, para os estilos de parágrafo e os boxes em bandeira.
+
+
+## Idioma do documento
+
+O `locale` de nível superior é o idioma do documento como um todo. Aceita os mesmos valores que `hyphenation.locale` e é o valor que esse campo usa quando não está definido, de modo que basta `locale: 'es'` para um livro em espanhol ser hifenizado em espanhol. Ele também escolhe o idioma das strings integradas de continuação de tabelas e de boxes divididos (`(cont.)` / *Continued* em vez de *Continúa*, veja [Tabelas mais altas que a página](/pt/docs/configuration-resources#tabelas-mais-altas-que-a-página) e [Marcas de um boxe dividido](/pt/docs/configuration-callouts#marcas-em-um-boxe-dividido)) e dos números de título escritos por extenso (*Chapter One* em vez de *Capítulo uno*, veja [Números por extenso](/pt/docs/configuration-headings#números-por-extenso)), e é o idioma marcado num PDF acessível. Sem definição, o motor assume `'en-us'`; o Sandbox usa o idioma da interface e mostra o campo em **Design › Sistema de escrita**.
+
+Ele escolhe também os tipos de recurso integrados. Quando `resourceTypes` não está definido, `buildDocument` numera e legenda com `defaultResourceTypes(locale)`, então só `locale: 'de'` já dá *Abbildung 1.1* e *Tabelle 1.1*. Quando `locale` não está definido, o idioma da hifenização ocupa o lugar dele, tanto para os tipos de recurso quanto para as strings das tabelas. Uma lista `resourceTypes` explícita sempre prevalece. As versões anteriores usavam os tipos em inglês qualquer que fosse o `locale`, a menos que você mesmo passasse `defaultResourceTypes(locale)`; um documento que define `locale` e quer manter os rótulos em inglês passa `resourceTypes: defaultResourceTypes('en')`. Os livros do Sandbox e os pacotes levam a própria lista, então não são afetados.
+
+Qualquer tag BCP 47 funciona aqui, como em `hyphenation.locale`: `'de-AT'` recebe as strings em alemão. As strings integradas existem nos oito idiomas que a hifenização suporta, em chinês (em caracteres simplificados e tradicionais), em japonês e em árabe; qualquer outro idioma recebe as inglesas.
+
+O chinês aceita `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`, `zh-MO` e as formas longas (`zh-Hant-TW`), em maiúsculas ou minúsculas e com `-` ou `_`. As strings seguem a escrita, lida com `Intl.Locale(tag).maximize()`: `zh`, `zh-CN` e `zh-SG` são simplificado; `zh-TW`, `zh-HK` e `zh-MO`, tradicional. Já os padrões tipográficos que dependem do idioma seguem a região, como recomenda a [clreq §1.2](https://www.w3.org/TR/clreq/#x1-2-basic-features-of-chinese-script): CN, SG e MY contam como China continental, TW como Taiwan, HK e MO como Hong Kong, e uma tag sem região vale pela escrita (`zh-Hant` é Taiwan; `zh` e `zh-Hans`, a China continental). O japonês aceita `ja`, `ja-JP`, `ja-Jpan` e qualquer outra tag `ja` (`isJapaneseLanguage(tag)`); desde o postext 1.16 ele tem strings próprias e uma região própria, `japan`, cujos padrões tipográficos seguem a JLReq (veja [Composição japonesa](/pt/docs/japanese-layout)). Uma tabela de strings sem entrada em japonês dá inglês, nunca chinês. `localeScript(tag)`, `cjkRegionOf(tag)`, `stringsKeyOf(tag)` e `sameContentLocale(a, b)` dão essas leituras, e `DOCUMENT_LANGUAGES` lista os idiomas com strings integradas, cada um com o nome no próprio idioma (日本語 entre as entradas chinesas e العربية), como o seletor Idioma do documento do Sandbox os mostra.
+
+<table>
+  <thead>
+    <tr>
+      <th>Idioma</th>
+      <th>Figura: nome, plural, rótulo curto</th>
+      <th>Tabela: nome, plural, rótulo curto</th>
+      <th>Continuação de tabela: <code>continuedSuffix</code>, <code>continuesMarker</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Inglês (<code>en</code>)</td><td>Figure, Figures, Fig.</td><td>Table, Tables, Tab.</td><td>(cont.), Continued</td></tr>
+    <tr><td>Espanhol (<code>es</code>)</td><td>Figura, Figuras, Fig.</td><td>Tabla, Tablas, Tabla</td><td>(cont.), Continúa</td></tr>
+    <tr><td>Francês (<code>fr</code>)</td><td>Figure, Figures, Fig.</td><td>Tableau, Tableaux, Tabl.</td><td>(suite), À suivre</td></tr>
+    <tr><td>Alemão (<code>de</code>)</td><td>Abbildung, Abbildungen, Abb.</td><td>Tabelle, Tabellen, Tab.</td><td>(Forts.), Wird fortgesetzt</td></tr>
+    <tr><td>Italiano (<code>it</code>)</td><td>Figura, Figure, Fig.</td><td>Tabella, Tabelle, Tab.</td><td>(segue), Continua</td></tr>
+    <tr><td>Português (<code>pt</code>)</td><td>Figura, Figuras, Fig.</td><td>Tabela, Tabelas, Tab.</td><td>(cont.), Continua</td></tr>
+    <tr><td>Catalão (<code>ca</code>)</td><td>Figura, Figures, Fig.</td><td>Taula, Taules, Taula</td><td>(cont.), Continua</td></tr>
+    <tr><td>Neerlandês (<code>nl</code>)</td><td>Figuur, Figuren, Fig.</td><td>Tabel, Tabellen, Tab.</td><td>(vervolg), Wordt vervolgd</td></tr>
+    <tr><td>Chinês simplificado (<code>zh-Hans</code>, <code>zh</code>, <code>zh-CN</code>)</td><td>图, 图, 图</td><td>表, 表, 表</td><td>（续）, 接下页</td></tr>
+    <tr><td>Chinês tradicional (<code>zh-Hant</code>, <code>zh-TW</code>, <code>zh-HK</code>)</td><td>圖, 圖, 圖</td><td>表, 表, 表</td><td>（續）, 接下頁</td></tr>
+    <tr><td>Japonês (<code>ja</code>, <code>ja-JP</code>)</td><td>図, 図, 図</td><td>表, 表, 表</td><td>（続き）, 次ページへ続く</td></tr>
+    <tr><td>Árabe (<code>ar</code>, <code>ar-EG</code>, <code>ar-MA</code>…)</td><td>شكل, أشكال, شكل</td><td>جدول, جداول, جدول</td><td>(تابع), يتبع</td></tr>
+  </tbody>
+</table>
+
+O prefixo da legenda é o nome do tipo (*Figura 1.1.*). Os tipos chineses numeram dentro do capítulo com hífen, `{h1}-{n}` (图 1-1); com os ajustes de legenda `labelNumberGap: ''` e `labelSeparator: '　'` a legenda fica 图1-1　标题 (veja [Estilo de legendas](/pt/docs/configuration-resources#estilo-de-legenda)). O índice remissivo também segue o idioma: 见 e 另见 antes de uma referência cruzada, 符号 e 数字 sobre os símbolos e os números em chinês simplificado; 見, 另見, 符號 e 數字 em tradicional. O japonês numera seus tipos da mesma forma e compõe as legendas como 図1-1　題 sem os dois ajustes, escreve as referências cruzadas como 第3章, 2.3節 e 12ページ, dá à bibliografia o título 参考文献, e seu índice imprime 記号 e 数字 sobre os símbolos e os números e escreve as remissões com uma seta, `→夏目漱石` para *ver* e `→夏目漱石、森鷗外も見よ` depois das páginas para *ver também*, com os rótulos em pé. O árabe numera seus tipos da mesma forma, `{h1}-{n}` (شكل 2-3), escreve as referências cruzadas como الفصل 3, القسم 2-1 e ص 12, dá à bibliografia o título المراجع, e seu índice imprime انظر / انظر أيضًا, رموز e أرقام, com a vírgula e o ponto e vírgula árabes (، ؛).
+
+Um documento em chinês, japonês ou coreano declara o idioma na saída HTML (`lang` na raiz `.pt-doc`, com `zh-Hant-TW` inteiro) e no canvas que ele pinta (`ctx.lang`, no Chrome 136 e posteriores), para que o navegador desenhe as formas de glifo da região: o Unicode unifica os caracteres han, e um mesmo ponto de código tem aspecto diferente numa fonte taiwanesa e numa japonesa. Desde o postext 1.30 os demais documentos também o declaram, no idioma em que o texto deles é composto ([`bodyText.shapingLanguage: 'document'`](/pt/docs/configuration-text#texto-do-corpo), o padrão); com `'host'` os demais documentos não levam `lang`, e todo canvas pinta no idioma da página que o hospeda. O PDF declara `/Lang` a partir de `locale` em todo documento, marcado ou não, com a escrita e a região. Um documento num idioma escrito da direita para a esquerda (árabe, persa, urdu, hebraico…) também declara o idioma: as formas linguísticas da fonte (`locl`) e a fonte substituta o seguem.
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: { textAlign: 'justify', hyphenation: { enabled: true } }, // hifeniza em espanhol
+};
+```
+
+### Algarismos do documento
+
+O `numerals` de nível superior define os algarismos de todo número que o motor escreve: números de página e os rótulos de página do sumário, do índice e das referências a páginas; números de listas numeradas e de notas de rodapé; contadores de títulos e capítulos, `{chapterNumber}`; o `{h1}` e o `{n}` do número de uma figura e de uma referência a ela; `{totalPages}`, `{bookTotalPages}` e `{numberDecimal}`. `'latn'` escreve 0–9, `'arab'` os algarismos arábico-índicos ٠–٩ e `'arabext'` os algarismos persas ۰–۹. Só o formato decimal muda (`decimal`, o `arabic` das listas ou um ajuste deixado no padrão), então um formato que o autor nomeia sai como foi nomeado: `lower-roman` continua i, ii, iii, e `arabic-indic` num documento latino ainda escreve ١, ٢, ٣. O texto do documento nunca é reescrito.
+
+O padrão, `'auto'`, usa os algarismos de `locale` (`defaultNumeralsFor(tag)`): `'arab'` para o árabe sem região ou com qualquer região fora do Magrebe (`ar`, `ar-EG`, `ar-SA`, `ar-AE`…), `'latn'` para `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` e `ar-EH`, `'arabext'` para o persa (`fa`), o pashto (`ps`) e o urdu da Índia (`ur-IN`), e `'latn'` para todo o resto, inclusive o urdu do Paquistão. O CLDR dá `latn` para um `ar` sem região e para `ar-AE`; os livros árabes do Machrek e do Golfo imprimem ٠–٩, e é isso que o Postext segue. Uma tag que nomeia seus algarismos os mantém: `ar-MA-u-nu-arab`. Uma página numerada com os algarismos do documento registra `arabic-indic` ou `persian` como `pageNumberFormat`, para que os rótulos de página do PDF mostrem os mesmos algarismos. Um valor desconhecido segue o idioma e é avisado como `unknownNumerals`.
+
+Os números que o autor digita são lidos em qualquer um dos três sistemas: um item de lista `٣.` começa em 3, e `{startAt=٥}`, `:::numbering{startAt=٥}`, `:::space{lines=٢}` e `:::part{number="٣"}` (para `{numberDecimal}`) leem o valor.
+
+```ts
+const config: PostextConfig = { locale: 'ar' };                     // ١، ٢، ٣
+const maghreb: PostextConfig = { locale: 'ar-MA' };                 // 1, 2, 3
+const forced: PostextConfig = { locale: 'ar', numerals: 'latn' };   // 1, 2, 3
+```
+
+### Direção do texto
+
+O `direction` de nível superior define a direção base do documento: `'ltr'`, `'rtl'` ou `'auto'` (o padrão), que é `'rtl'` quando a escrita de `locale` vai da direita para a esquerda (árabe, persa, urdu, hebraico, siríaco, thaana, n'ko, adlam…, lida por `directionOf(tag)`) e `'ltr'` nos demais casos. Um documento da direita para a esquerda é diagramado num quadro espelhado: as linhas começam à direita, a primeira coluna é a da direita, recuos, marcadores de lista, flutuantes, notas de rodapé e boxes ficam à direita, e [`page.binding: 'auto'`](/pt/docs/configuration-page-layout#encadernação) o encaderna pela direita. A configuração resolvida só leva `direction: 'rtl'` num documento assim, de modo que um documento da esquerda para a direita se resolve como antes. Um valor desconhecido é lido como `'auto'` e avisado como `unknownConfigValue`. O algoritmo bidirecional do Unicode (UAX #9) ordena os trechos de cada linha em qualquer direção: uma citação em árabe num livro em inglês se lê da direita para a esquerda no próprio lugar.
+
+Dentro do documento, um título ou um contêiner `:::` aceita `{dir=ltr}` ou `{dir=rtl}`, e os inline `:ltr[…]` e `:rtl[…]` isolam um trecho de texto (veja [Direção do texto na marcação](/pt/docs/document-format-inline#direção-do-texto-na-marcação)); um recurso de tabela aceita `table.direction`. Um bloco composto contra a direção do documento mantém o próprio lado de início: o recuo, os marcadores de lista e o final alinhado da última linha passam para o lado em que o texto dele começa.
+
+Um ajuste que nomeia um lado se refere a um lado do texto ou do fluxo do corpo, nunca da folha, então um design feito para um livro em inglês continua funcionando quando o livro passa para o árabe. `'start'` e `'end'` são aceitos como nomes explícitos:
+
+<table>
+  <thead>
+    <tr>
+      <th>Ajuste</th>
+      <th><code>'left'</code> / <code>'right'</code></th>
+      <th><code>'start'</code> / <code>'end'</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>textAlign</code> do corpo, dos títulos, dos estilos de parágrafo, das partes, das notas de rodapé e do corpo dos boxes; <code>align</code> da legenda e da nota de legenda</td><td>Os lados do texto: <code>'left'</code> é o lado em que a linha começa, a direita de um parágrafo árabe, onde fica a última linha de um parágrafo justificado.</td><td>Sinônimos de <code>'left'</code> e <code>'right'</code>. As configurações resolvidas levam <code>'left'</code> / <code>'right'</code>; as salvas mantêm o que foi escrito.</td></tr>
+    <tr><td><code>align</code> de célula de tabela</td><td>Os lados do texto da célula, lidos na direção da tabela (<code>table.direction</code>).</td><td>Sinônimos, lidos na direção da tabela.</td></tr>
+    <tr><td><code>placement.align</code> (flutuantes, figuras estreitas)</td><td>Os lados do fluxo do corpo: num livro da direita para a esquerda, <code>'left'</code> é a direita da folha.</td><td>Sinônimos.</td></tr>
+    <tr><td><code>stripe.side</code>, <code>icon.cornerSide</code> e <code>labelTab.position</code> do boxe (<code>'top-start'</code>, <code>'top-end'</code>)</td><td>Os lados do fluxo do corpo, os mesmos para todos os boxes da página.</td><td>A direção do próprio boxe (um <code>:::callout&#123;dir=ltr&#125;</code> num livro árabe começa pela esquerda da folha).</td></tr>
+    <tr><td>Posições do cabeçalho e do rodapé; elementos de design ancorados na folha</td><td>Os lados da folha.</td><td>Só elementos de texto: o início e o fim da <code>direction</code> do próprio elemento.</td></tr>
+  </tbody>
+</table>
+
+`placement.rotate` mantém o sentido físico numa página espelhada: uma figura girada no sentido horário fica girada no sentido horário na folha. Um host que lê o layout encontra o quadro espelhado em cada página (`VDTPage.flow` com `direction: 'rtl'`, `pageIsMirrored(page)`) e a ordem visual dos segmentos de cada linha em `VDTLine.order`; `flowToPage` e `pageToFlow` convertem entre o fluxo e a folha. Veja [Composição árabe](/pt/docs/arabic-layout#direção-e-algoritmo-bidirecional).
+
+```ts
+const arabic: PostextConfig = { locale: 'ar' };                        // da direita para a esquerda, encadernado pela direita
+const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forçado; raramente é o que você quer
+```
+
+
+## Idiomas e escritas
+
+O Postext compõe escritas alfabéticas da esquerda para a direita, e o chinês e o japonês na horizontal e na vertical. [Composição chinesa](/pt/docs/chinese-layout) e [Composição japonesa](/pt/docs/japanese-layout) explicam como são compostos e quais ajustes os controlam; as chaves estão em [Tipografia do Leste Asiático](/pt/docs/configuration-east-asian#tipografia-do-leste-asiático), [Escrita vertical](/pt/docs/configuration-page-layout#escrita-vertical) e [Encadernação](/pt/docs/configuration-page-layout#encadernação). O que cada escrita recebe:
+
+- **O chinês** é composto pelo compositor CJK quando um parágrafo tem mais caracteres CJK do que espaços entre palavras: as linhas quebram entre caracteres segundo as regras de início e fim de linha de `cjk.lineBreak` (nenhuma linha começa com 。、」 ou ー, nenhuma termina com 「 ou （), mantêm inteiros —— e ……, um número com seus sinais e uma palavra latina, e uma linha justificada é espaçada entre os caracteres até a medida. A largura da pontuação, a pontuação pendente, o espaço entre han e latim, a grade de caracteres, os pontos de ênfase, as marcas de nome próprio e de título de obra, o rubi e as notas warichu seguem a região de `locale`, na linha horizontal ou na vertical (`layout.writingMode: 'vertical-rl'`). Um parágrafo latino que cita algumas palavras CJK mantém a quebra de linha ótima e pode quebrar ao lado delas; um colchete CJK, o ponto médio ou um sinal de largura total citado em texto latino (〈h〉, ％) não muda nada.
+- **O japonês** passa pelo mesmo compositor com regras próprias desde o postext 1.16, as dos *Requirements for Japanese Text Layout* (JLReq) do W3C e da JIS X 4051: um locale `ja` dá a região `japan`, cujos valores automáticos definem os níveis de kinsoku da JLReq (kana pequenos e ー nunca abrem uma linha), pontuação de largura total com compressão de pares, um eme depois de ？！, o parêntese que abre um parágrafo na segunda metade do recuo, marcas de ênfase em forma de gergelim sobre o texto, títulos de obras entre 『』, furigana espaçados 1:2:1, contadores japoneses, notas e um índice ordenado pela leitura. As versões anteriores compunham o japonês com os padrões da China continental.
+- **O coreano** passa pelo mesmo compositor e é composto sem hifenização, mas com os padrões da China continental: as regras próprias dele (KLREQ) não estão implementadas. O texto coreano quebra entre sílabas e também nos espaços.
+- **O árabe e as outras escritas da direita para a esquerda** (persa, urdu, hebraico…) são compostos da direita para a esquerda: [Composição árabe](/pt/docs/arabic-layout) explica como. A [`direction`](#direção-do-texto) do documento vem da escrita de `locale`, o algoritmo bidirecional do Unicode ordena as palavras latinas e os números dentro de cada linha, o livro é encadernado pela direita com a primeira coluna à direita, e todo número que o motor escreve usa os [algarismos](#algarismos-do-documento) da região. Uma palavra que contém uma letra da escrita árabe nunca é hifenizada, espaçada nem cortada, e uma linha árabe justificada se estica nos espaços e com kashidas. Sinais vocálicos, ênfase, notas de rodapé e as strings do árabe estão em [Texto árabe](#texto-árabe). O persa, o urdu e o hebraico recebem a direção, os algarismos e as regras de palavra inteira, mas nenhuma string integrada própria.
+
+Há padrões de hifenização para oito idiomas (`en-us`, `es`, `fr`, `de`, `it`, `pt`, `ca`, `nl`); os tipos de recurso integrados e as strings de continuação existem nesses oito, em chinês, em japonês e em árabe. Chinês, japonês, coreano e os idiomas escritos da direita para a esquerda são compostos sem hifenização. Qualquer outro idioma é hifenizado com os padrões do inglês dos EUA, com um aviso no console, e recebe as strings em inglês. Para um documento assim, defina `hyphenation.enabled: false` e passe `resourceTypes` e as strings de continuação de `tableStyle` no idioma dele.
+
+
+## Texto árabe
+
+Estes ajustes servem ao texto em escrita árabe; nenhum muda um documento escrito em outra escrita. [Composição árabe](/pt/docs/arabic-layout) os explica junto com o resto de um livro árabe: direção, encadernação, algarismos, verso, sumário e índice.
+
+- **Sinais vocálicos e entrelinha.** Os sinais vocálicos de um texto vocalizado (fatḥa, kasra, shadda, tanwīn, o alef sobrescrito, os sinais corânicos) se empilham sobre e sob as letras, dentro da entrelinha, que nunca cresce por causa deles. Cada linha com sinais registra até onde vai a tinta deles (`VDTLine.markInk`), e o recorte de coluna dos renderizadores inclui os sinais da primeira e da última linha da coluna. Quando um sinal sobre uma palavra encosta nas letras ou nos sinais pendurados sob a palavra de cima, a composição avisa o parágrafo (`arabicMarksExceedLeading`, no painel Verificações do Sandbox). Só se comparam palavras que estão uma sobre a outra. Texto parcialmente vocalizado pede cerca de 1,7–1,85 em de `lineHeight`; verso totalmente vocalizado, 1,9–2,1 em.
+- **Ênfase.** A tipografia árabe não tem itálico, então num documento cujo `locale` se escreve em escrita árabe `*…*` sai em negrito por padrão (`bodyText.emphasis: 'auto'`). `'color'` o compõe em redondo com `italicColor`, e `'overline'` traça um fio sobre as palavras, o khaṭṭ fawqī dos livros árabes. O ajuste vale para todo texto composto com as fontes do corpo: parágrafos, listas, citações em bloco, estilos de parágrafo, corpo dos boxes, notas e títulos. Legendas, células de tabela, o sumário e o índice mantêm os próprios ajustes de itálico. Seja qual for a escolha, o motor nunca inclina letras árabes: as palavras árabes de um trecho em itálico ficam em pé e as palavras latinas mantêm o itálico. Num documento assim, a citação em bloco é em redondo por padrão.
+- **Tashkīl.** `bodyText.tashkil: 'strip'` tira os sinais vocálicos e corânicos do texto que o layout compõe, para uma edição sem vogais feita a partir de uma fonte vocalizada: fatḥa, ḍamma, kasra e seus tanwīn, sukūn, shadda, o alef sobrescrito (هٰذا vira هذا) e os sinais U+0656–U+065F e U+06D6–U+06ED. `'strip-vowels'` mantém a shadda, como a maioria dos livros modernos a imprime. Hamza e madda ficam (أ إ آ são letras, também quando digitadas com sinais combinantes). O original mantém os sinais; as linhas, os títulos e o sumário são compostos sem eles, e cada caractere composto continua apontando para o seu lugar no original.
+- **Notas de rodapé.** `footnotes.markerTemplate: '({n})'` escreve as chamadas «(١)» nos algarismos do documento, `numbering: 'page'` recomeça a numeração em cada página e `noteNumberPosition: 'inline'` põe o número da própria nota na linha. O fio separador e os números das notas ficam no início da coluna, à direita num livro da direita para a esquerda.
+- **Palavras inteiras.** Uma palavra que contém uma letra da escrita árabe nunca é hifenizada, cortada ou espaçada, num livro árabe ou citada em outro. Um estilo que aplica `letterSpacing` a texto árabe é avisado (`joiningScriptLetterSpacing`), e uma palavra mais larga que a linha transborda dela e é avisada (`unbreakableWordOverflow`). Veja [Composição árabe](/pt/docs/arabic-layout#formas-contextuais-e-palavras-inteiras).
+- **Kashida e verso.** Uma linha árabe justificada se estica com kashidas além dos espaços (`bodyText.kashida`, veja [Kashida no texto árabe](/pt/docs/justification#kashida-no-texto-árabe)), e um poema clássico é composto um bayt por linha, em dois hemistíquios de mesma largura, com `:::verse` (veja [`:::verse`](/pt/docs/document-format-directives#verse)).
+- **Índice.** Um índice em árabe ordena alfabeticamente e ignora o artigo ال (`index.ignoreArticle`), os sinais vocálicos e os suportes da hamza; veja [Índice remissivo](/pt/docs/configuration-notes-references#índice-remissivo).

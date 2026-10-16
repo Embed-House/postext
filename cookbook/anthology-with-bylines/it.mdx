@@ -18,7 +18,7 @@ Nove pagine di *Afoot*, un’antologia tascabile di tre saggi sul camminare, di 
 
 <Excerpt region="opener" />
 
-Il `numberingTemplate: '{1:I}'` del livello numera i saggi I, II e III, e `{number}` stampa il numero sopra il titolo ([span e design avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). `minHeight` riserva 12 righe da 14 pt e il filetto finisce 7 mm sopra quella riserva, così sotto un titolo di una riga il testo comincia a 79 mm dal bordo superiore in ogni apertura. Una seconda riga di titolo da 26 pt aggiunge 9,9 mm e spinge il testo giù di una riga della griglia; con `SINK = 14`, i titoli di una e di due righe fanno partire il testo sulla stessa riga. `marginBottom: pt(0)` impedisce al margine predefinito del titolo di sommarsi alla riserva.
+Il `numberingTemplate: '{1:I}'` del livello numera i saggi I, II e III, e `{number}` stampa il numero sopra il titolo ([span e design avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)). `minHeight` riserva 12 righe da 14 pt e il filetto finisce 7 mm sopra quella riserva, così sotto un titolo di una riga il testo comincia a 79 mm dal bordo superiore in ogni apertura. Una seconda riga di titolo da 26 pt aggiunge 9,9 mm e spinge il testo giù di una riga della griglia; con `SINK = 14`, i titoli di una e di due righe fanno partire il testo sulla stessa riga. `marginBottom: pt(0)` impedisce al margine predefinito del titolo di sommarsi alla riserva.
 
 ### 2 · Lascia che l’indice si compili da solo
 
@@ -30,7 +30,7 @@ Il `numberingTemplate: '{1:I}'` del livello numera i saggi I, II e III, e `{numb
 
 <Excerpt region="running-heads" />
 
-Ogni testatina è ancorata alla pagina, a 11 mm dal bordo superiore, e `parity` sceglie il lato: il folio si allinea al bordo esterno del testo e il nome o il titolo sta 7 mm più all’interno. Il `pages: 'body'` in `head()` tiene le testatine lontane dalle aperture, dove la firma nomina già l’autore, e il `pages: 'opener'` del piè di pagina vi stampa invece un folio al piede ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). `{chapterTitle}` stampa il titolo del saggio senza il suo numero.
+Ogni testatina è ancorata alla pagina, a 11 mm dal bordo superiore, e `parity` sceglie il lato: il folio si allinea al bordo esterno del testo e il nome o il titolo sta 7 mm più all’interno. Il `pages: 'body'` in `head()` tiene le testatine lontane dalle aperture, dove la firma nomina già l’autore, e il `pages: 'opener'` del piè di pagina vi stampa invece un folio al piede ([elementi di testo](/it/docs/configuration-headers-footers#elementi-di-testo)). `{chapterTitle}` stampa il titolo del saggio senza il suo numero.
 
 ### 4 · Tieni la copertina e l’indice fuori dal conteggio
 

@@ -1,0 +1,554 @@
+{/* docs/configuration-headings-ja.mdx */}
+
+export const metadata = {
+  title: '設定：見出し',
+  sidebarTitle: '見出し',
+  description: '見出しの共通の既定値、レベルごとの上書き、見出しの前の改ページ、ページ幅いっぱいの章の書き出し、語で綴る番号',
+  lang: 'ja',
+  lastUpdated: '2026-10-16',
+  readingTime: '32分',
+  order: 9,
+  parent: 'configuration',
+  plainSummary: "このページでは、見出しの設定を説明します。すべての見出しに共通のフォント、大きさ、色を決め、章の題名のような1つのレベルだけを変えることもできます。見出しから新しいページを始めるかどうか、そのページを左右どちらにするかを決めます。章の題名は、独自のデザインでページの幅いっぱいに組めます。見出しの番号は、「第一章」のように文字で書くこともできます。",
+};
+
+# 設定：見出し
+
+
+## 見出し
+
+`headings`プロパティは、すべての見出しレベル（H1〜H6）の文字組みを制御します。全レベルに適用される共通の既定値を設定し、そのうえで特定のプロパティをレベルごとに上書きできます。
+
+### 共通の既定値
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td><code>'Open Sans'</code></td>
+      <td>すべての見出しのフォントファミリー。</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.2 em</code></td>
+      <td>見出しの行の高さ。本文より詰めた値です。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Main Color (<code>#295AA3</code>)</td>
+      <td>見出しの文字色。既定のパレットの<code>main-color</code>項目に結び付いているため、パレットの色を差し替えるとすべての見出しの色が変わります。</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
+      <td><code>'left'</code></td>
+      <td>すべての見出しレベルに共通のそろえ方です（レベルごとの値はありません）。左そろえ（行末不ぞろい）、両端そろえ、中央そろえ、右そろえ（行頭不ぞろい）から選びます。両端そろえの見出しは段落と同じく最終行を左端にそろえるので、1行の見出しは<code>'left'</code>と同じに見えます。Canvas、HTML、PDFは、番号の接頭辞も含めて同じ位置に行を置きます。詳細デザインのない<code>span: 'page'</code>見出しの既定の章扉もこの値に従います（両端そろえは左端にそろえます）。詳細デザインでは、各テキスト要素が自身の<code>align</code>でそろえられます。</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>見出しのフォントウェイト（100〜900）。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>見出しの上の空き。段の頭に来る見出しでは取り除かれます（<code>columnHeadSpace</code>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>見出しの下の空き。</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>true</code>のとき、見出しが段やページの最後の要素として置かれることはありません。続くブロックが見出しの後に少なくとも<code>bodyText.widowMinLines</code>行（<code>bodyText.avoidWidows</code>が<code>false</code>のときは1行）の余地を得られない場合、見出しは本文から離れないよう先へ送られます。<code>bodyText.keepColonWithList</code>と連動し、この規則がコロンで終わる段落をまるごと送る場合、段の末尾にある見出しも取り残されずに一緒に移ります。</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSpread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td><code>keepWithNext</code>が有効でも、偶数ページの最後の本文の段を見出しで終えることは許します。その本文は同じ見開きの向かいの奇数ページで始まるからです（JLReq §4.1.7）。見開きは1ページ目が単独、続いて2〜3ページ、4〜5ページ…と、<code>pageIndexOffset</code>を加味して数えます。左綴じ・右綴じのどちらの本でも同じです。postext 1.16以降。</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSplit</code></td>
+      <td><code>'rules' | 'fill'</code></td>
+      <td><code>'rules'</code></td>
+      <td>見出しが段の末尾に来て、段落をまるごと送ると見出しが取り残される場合に、見出しの下の段落をどう分割するか。<code>'rules'</code>：収まるだけの行を置きます。ただし、見出しの下に少なくとも<code>bodyText.widowMinLines</code>行、次の段に少なくとも<code>bodyText.orphanMinLines</code>行が残ることが条件です。両方を満たす分割がなければ見出しは段落とともに先へ移り、空いた余地は段末そろえが埋めます。<code>'fill'</code>：次へ送る行がどれほど少なくても、収まるだけの行を置きます。3行分の余地がある4行の段落は3 + 1に分かれます。postext 1.4まではすべての見出しがこの方法で分割していました。<code>configVersion</code> 8より前に保存された設定はこの動作を保ちます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。<code>avoidWidows</code>または<code>avoidOrphans</code>がオフのときは、規則のその側を外します。</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>見出しの下で流れをベースライングリッドに戻すかどうか。<code>true</code>では見出しの<code>marginBottom</code>をグリッドの行単位に切り上げます。<code>false</code>では指定どおりの空きを保ち、見出しの下の本文は次の吸着点（リストの終わり、<code>:::paragraphs</code>の末尾、別行立て数式）までグリッドから外れることがあります。見出しの下に1行半を空ける、多くの本に見られる組み方です。レベル（<code>levels[].snapToGrid</code>）や見出しスタイルは独自の値を持てます。ここでの値は、それらが継承する値です。</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>グリッドにそろえる見出しが段の頭（ページの頭、または段の頭にある図や表の下）に来たとき、上の空きをどれだけ残すかを決めます。<code>'none'</code>では、空きをすべて取り除き、見出しを段の1行目に置いて隣の段の頭とそろえます。グリッドにそろえるために必要な1行未満の空きは見出しの下に入るので、本文は段落の後の見出しより離れることがあります。<code>'remainder'</code>では、グリッド行単位の空きだけを取り除き、残った1行未満の空きを見出しの上に残します。本文は段落の後の見出しと同じ距離で始まります。見出しは段の頭より少し下から始まり、本文の行は動きません。隣に比べる段の頭がない1段組の本に向いています。それ以外の値は<code>'none'</code>として扱います。ページ幅の章扉の下の段、<code>span: 'page'</code>の見出し、<code>lineSpan</code>のある見出し、非表示の見出し、デザイン（<code>advancedDesign</code>）で描く見出しには適用しません。postext 1.28以降。</td>
+    </tr>
+    <tr>
+      <td><code>inlineMarks</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>見出しが段落と同じように文字書式の記号を読むかどうか。対象は<code>*italic*</code>、<code>**bold**</code>、<code>^superscript^</code>、<code>~subscript~</code>、<code>:smallcaps[…]</code>、リンクです。イタリックの範囲は見出しの傾きを反転させるため、イタリックの見出しの中では立体（ローマン）になります。太字の範囲は<code>bodyText.boldFontWeight</code>を使い、見出し自身のウェイトのほうが重ければそちらを使います。目次にも太字とイタリックの範囲が反映されます。柱とPDFのしおりには文字だけが出ます。<code>false</code>では記号を取り除き、postext 1.4までと同様に、語を見出し自身のスタイルで組みます。デザインのない<code>span: 'page'</code>見出しの既定の章扉も、太字・イタリック・上付き・下付きの範囲を組みます。見出しのデザイン（デザインした章扉の帯、または段内の<code>advancedDesign</code>）は、どちらの場合も<code>{'{titleText}'}</code>をプレーンテキストとして出力します。ただし、そのテキスト要素がインラインの書式記号を読む場合（<code>inlineMarks: true</code>）は、<code>{'{titleText}'}</code>が見出しの太字・イタリック・上付き・下付きの範囲を保ちます（postext 1.19から）。それ以前に保存された設定のうち見出しに記号を含むものは、<code>false</code>として読み込みます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>balancing</code></td>
+      <td><code>ColumnBalancingConfig</code></td>
+      <td>有効</td>
+      <td>縦方向の段末そろえ。段がページの下端にそろって終わるよう、見出しの上に空きを足します。後述します。</td>
+    </tr>
+  </tbody>
+</table>
+
+デザインスロットを使わずに、詩や戯曲の各幕の見出しを中央にそろえる例です：
+
+```ts
+headings: {
+  textAlign: 'center',
+  levels: [{ level: 2, textTransform: 'uppercase' }],
+}
+```
+
+`headings`オブジェクトを渡しても、改めて指定しなかったレベルの既定値はすべて保たれます。H1の改ページも同じです（[レベルごとの上書き](#レベルごとの上書き)を参照）。
+
+### レベルごとの上書き
+
+各見出しレベルは、`levels`配列で共通の既定値を上書きできます。既定で異なるのは`fontSize`（と、後述するH1の`breakBefore`）だけで、ほかのプロパティはすべて見出しの共通設定を継承します。
+
+<table>
+  <thead>
+    <tr>
+      <th>レベル</th>
+      <th>既定のフォントサイズ</th>
+      <th>既定の<code>breakBefore</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>H1</td><td><code>18 pt</code></td><td><code>&#123; enabled: true, parity: 'always-odd' &#125;</code></td></tr>
+    <tr><td>H2</td><td><code>15 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H3</td><td><code>12 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H4</td><td><code>10 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H5</td><td><code>9 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H6</td><td><code>8 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+  </tbody>
+</table>
+
+H1の既定値は書籍の章立てを模したものです。最上位の見出しはすべて新しい右ページ（奇数ページ）から始まり、前の章との間に必ず白ページを1ページはさみます。書籍ほど階層のない文書では、`levels[0].breakBefore`で上書きしてください。
+
+レベルの`breakBefore`はこの既定値にフィールド単位でマージされ、それに触れない`headings`オブジェクトは既定値を保ちます。H1に`{ parity: 'odd' }`を指定すると改ページを保ったまま奇偶だけが変わり、`{ enabled: false }`にすると章が続けて組まれます：
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',                               // H1 still breaks to a fresh recto (always-odd)
+  levels: [{ level: 1, breakBefore: { parity: 'odd' } }],    // …or: a recto, with no mandatory blank
+}
+
+headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] } // chapters run on
+```
+
+**postext 1.5での変更**。postext 1.4までは、`headings`オブジェクトを渡すと`levels[0].breakBefore`を改めて指定しない限りH1の改ページが無効になり、一部だけ指定した`breakBefore`は欠けたフィールドを改ページなしの既定値で補っていました。そのため、`headings`オブジェクトを持ちH1の改ページを指定していない、1.4向けにコードで書いた設定では、いまはどの章も新しい奇数ページから始まり、必要に応じて白の偶数ページが入ります。章を続けて組むには、`levels`のH1の項目にフィールドを1つ与えます：
+
+```ts
+headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enabled: false } }] } // as 1.4 laid it out
+```
+
+設定が保存されたものであれば、エンジンがそれを見分けて代わりに処理します。Sandboxは当時保存した本と設定について（**Sandbox → 作業内容の保存**を参照）、`openBundle` / `readBundle`はpostext 1.4以前で書き出された`.postext`バンドルについて（[postext 1.4以前で書き出したバンドル](/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル)を参照）処理します。自分で保存した設定は、`postext/bundle`の`migrateConfig(config)`に通せます。これは1.4が組んだ改ページを明示的に書き出します（`pinLegacyHeadingBreaks`）。改ページのなかったH1には`enabled: false`を、H1と見出しスタイルで奇偶を指定していない`enabled: true`には`parity: 'any'`を添えます。さらに次の項目も1.4の設定どおりに固定します：数式のサイズ、インライン図の周りの空き（囲みの中も）、見出しの文字書式、ドロップキャップのサイズ、リストを導くコロンの行の下の余地、囲みの切断が段落やリスト項目に残す行数、ダッシュでの改行、不ぞろい組みの本文の1行ずつの改行、見出しの下の段落の分割、複合語のハイフンでの改行、`:::paragraphs`コンテナーの下の空き。第3引数として本のMarkdownを`{ content }`で渡すと、不要な固定を省きます。本文に`$`がなければ数式の固定を、リソースを埋め込む行がなければ空きの固定を（囲みの中になければ囲み内の空きの固定を）、記号を含む見出しがなければ見出しの文字書式の固定を、コロンで終わる行の後にリストが続かなければコロン行の固定を、本文が`:::callout`を開かなければ囲みの切断の固定を、語の間に詰めて置かれたダッシュがなければダッシュの固定を、本文に見出しがなければ見出し下の分割の固定を、本文が`:::paragraphs`コンテナーを開かなければコンテナーの固定を、2つの文字の間にハイフンがなければ複合語の固定を省きます。不ぞろい組みの改行の固定は本文の一部を不ぞろいに組む設定にだけ、コンテナーの固定は段落スタイルを宣言する設定にだけ加えます（[postext 1.4以前で書き出したバンドル](/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル)を参照）。改ページだけを固定するには`pinLegacyHeadingBreaks(config)`を呼び出します。
+
+レベルごとの上書きには、共通の既定値と同じプロパティ（`fontSize`、`lineHeight`、`fontFamily`、`color`、`fontWeight`、`marginTop`、`marginBottom`、`snapToGrid`）に加え、次のレベル専用のフィールドを使えます（[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)でも使えます）：
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>見出しをイタリックで描画します。<code>fontWeight</code>に重ねて適用します。</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>見出しのタイトルを大文字にします（番号の接頭辞は書いたとおりに残り、タイトル中のチップや<code>:ref</code>のラベルも同様です）。エディターのソースマップを1対1に保つため文字数を変えないので、大文字にすると長くなる文字（<code>ß</code> → <code>SS</code>）はそのままです。変換後のタイトルは、詳細デザインと章扉の<code>&#123;titleText&#125;</code>プレースホルダーにも渡ります。PDFのしおりはタイトルを書いたとおりに保ちます（<em>AUTHOR CONTRIBUTIONS</em>ではなく<em>Author contributions</em>）。CSSの<code>text-transform</code>が文字列そのものを変えないのと同じです（postext 1.4までは大文字になっていました）。</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>見出しのすべてのグリフの後に入るトラッキングで、スペースと番号の接頭辞も含みます。CSSの<code>letter-spacing</code>と同じです。正の値は字間を広げ（<code>textTransform: 'uppercase'</code>で組んだ大文字には少し広げるのが普通です：<code>&#123; value: 0.12, unit: 'em' &#125;</code>）、負の値は大きな表示サイズを詰めます。<code>em</code>の値はそのレベルの<code>fontSize</code>に対する相対値です。見出しの行はこの値込みで測るので、字間を付けた文字列の終わりで折り返し、Canvas、HTML、PDFは同じように描画します。字間を付けてもグリフは変わりません。フォントの合字（fi、fl）はどの出力でも保たれます。中央そろえや右そろえの行は文字の範囲で配置します。デザインのテキストと同様に最後のグリフの後のトラッキングは除くので、中央そろえの見出しは<code>span: 'page'</code>見出しの既定の章扉とそろいます。<code>advancedDesign</code>から描画するレベルは、ここにあるほかの文字組みのフィールドと同様にこの値を無視します。デザインの各テキスト要素がそれぞれ<code>letterSpacing</code>を持っているからです。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>でも、そのスタイルを使う見出しに対して設定できます。postext 1.4までは見出しにトラッキングがなく、このキーは何の通知もなく無視されていました。</td>
+    </tr>
+    <tr>
+      <td><code>lineSpan</code></td>
+      <td><code>number</code></td>
+      <td>未設定</td>
+      <td>行取り（JLReq §4.1.6）。見出しを本文のこの行数分の帯に組み、文字をその中央に置きます。<code>marginTop</code>と<code>marginBottom</code>の代わりに使います。<code>3</code>なら3行取りの見出しです。見出しがグリッドに吸着するとき帯は本文の行の位置から始まり、その後の本文もグリッドに乗ったままです。縦組み・横組みのどちらでも、<code>cjk.grid</code>を使っていても同じです。行数が足りない見出しは、次の整数の行数を取ります。中央とは文字の中央（ベースラインから書体の仮想ボディの中心までを引いた位置）で、JLReqの測り方に従います。行のボックスの中央ではありません。章扉（<code>span: 'page'</code>）、<code>advancedDesign</code>から描画する見出し、非表示の見出し、囲みの中の見出しには適用しません。見出しスタイルで<code>0</code>を指定すると、そのレベルの行取りを解除できます。postext 1.16以降。</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>見出しの行頭からの字下げ。<code>em</code>は<strong>本文</strong>のサイズで、日本の書籍が見出しの字下げを本文の字数で数えるのに合わせています（JLReq §4.1.3）。<code>&#123; value: 6, unit: 'em' &#125;</code>は、見出しのサイズにかかわらず6字下げです。行長はその分狭くなり、中央そろえの見出しは残りの幅の中央に置かれます。postext 1.16以降。</td>
+    </tr>
+    <tr>
+      <td><code>firstLineIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>見出しの1行目だけの字下げ。<code>indent</code>の位置から測り、<code>indent</code>と同じく<strong>本文</strong>のemで数えます。長い見出しの2行目以降は<code>indent</code>の位置（未設定なら行頭）から始まります。GB/T 9704は各レベルの見出しを2字下げ、折り返した行を行頭に戻して組みます：<code>&#123; value: 2, unit: 'em' &#125;</code>。<code>cjk.grid</code>が有効なら、本文の2 emはグリッドの2マスです。番号付きの見出しは字下げのあとに番号を置くので、番号テンプレートに全角スペースを入れる必要はありません（入れると目次とPDFのしおりにも出力されます）。縦組み（行頭から）、CJKコンポーザー（見出しの先頭の始め括弧は段落と同じく行頭の規則に従います）、Knuth–Plassで働きます。中央そろえの見出しは中央そろえの段落と同じ扱いで、1行目を字下げのあとに残る幅の中央に置きます。見出しのタイトルのあとに<code>&#123;firstLineIndent=N&#125;</code>と書くとその見出しだけに指定でき、<code>&#123;firstLineIndent=0&#125;</code>はレベルの指定を外します。postext 1.24以降。</td>
+    </tr>
+    <tr>
+      <td><code>jidori</code></td>
+      <td><code>number</code></td>
+      <td>未設定</td>
+      <td>字取り。見出し<strong>自身の</strong>emでこの数より狭い1行の見出しを、ちょうどその幅になるよう均等に割り付けます。<code>3</code>なら序章を序　章と組みます。それより広いタイトルや複数行の見出しはそのままです。見出しのタイトルの後に<code>&#123;jidori=N&#125;</code>と書くとその見出しだけに指定でき、<code>&#123;jidori=0&#125;</code>でそのレベルの字取りを解除します。postext 1.16以降。</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td><code>ParagraphDropCap | false</code></td>
+      <td>なし</td>
+      <td>このレベルの見出しの後の最初の本文の段落を始めるドロップキャップです（<a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>を参照）。1つの設定で、すべての章に頭文字が付きます。見出しに<code>&#123;dropcap=false&#125;</code>と書くと解除し、<code>&#123;dropcap=2&#125;</code>と書くと行数を指定します。postext 1.23以降。</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>そのレベルの自動番号のテンプレート。<code>{'{1}'}</code>〜<code>{'{6}'}</code>のトークンはその見出しレベルの通し番号を出力し、接尾辞で書式を指定できます。<code>{'{1:I}'}</code>は大文字のローマ数字、<code>{'{1:i}'}</code>は小文字のローマ数字、<code>{'{1:A}'}</code> / <code>{'{1:a}'}</code>はアルファベット、<code>{'{1:01}'}</code>はゼロ埋め、<code>{'{1:words}'}</code>は語で綴る数（<em>twenty-one</em>）、<code>{'{1:ordinal}'}</code>は序数（<em>twenty-first</em>）、<code>{'{1:一}'}</code>は漢数字（日本語の文書では日本式：第百一章）、<code>{'{1:〇}'}</code>は1桁ずつの漢数字、<code>{'{1:壹}'}</code>は大字、<code>{'{1:①}'}</code>は丸数字です。<a href="/ja/docs/configuration-page-layout#番号書式の表記">番号書式の表記</a>にある名前も使えます。それ以外の文字はそのまま出力します（<code>'Chapter {'{1}'}. '</code>、<code>'{'{1}'}.{'{2}'}'</code>、第一百二十回なら<code>'第{'{1:一}'}回'</code>。バックスラッシュで波かっこそのものを書けます）。カウンターがまだ空のトークンは、隣接する区切りとともに消えます。空（既定）なら自動番号は付きません。生成された番号は流れの中でタイトルの前に付き、詳細デザインのスロットでは<code>{'{number}'}</code>プレースホルダーに渡り（そこでは接頭辞自体は付きません）、目次にも出力されます。語での綴り方は<a href="#語で綴る番号">語で綴る番号</a>を、レベルの一部の見出しに独自のテンプレートを与えるには<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>numberSeparator</code></td>
+      <td><code>string</code></td>
+      <td><code>' '</code></td>
+      <td>番号とタイトルの間に入るもの。段の中、<code>span: 'page'</code>レベルの既定の章扉、見出しの行を出力する柱、PDFのしおりで使われます。レベル1の区切りは、既定の部扉と、目次の既定の部の行で、部の番号とタイトルをつなぐのにも使います。中国語の章見出しには全角スペースを入れるか、何も入れません（<code>'　'</code>：第一回　甄士隱夢幻識通靈）。目次は独自の番号の列を持ちます（<code>toc.levels[].numberGap</code>）。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>は独自の値を設定できます。中国の小説の対句の回目のようにタイトルを<code>{'\\\\'}</code>で2つに分けた場合、1行で示す形（段の中、目次、柱）では、両側が中国語または日本語の文字なら全角スペースで、そうでなければ半角スペースで、2つの半分をつなぎます。</td>
+    </tr>
+    <tr>
+      <td><code>numberPosition</code></td>
+      <td><code>'before' | 'replace'</code></td>
+      <td><code>'before'</code></td>
+      <td>生成された番号を置く位置。<code>'before'</code>：タイトルの前に置き、<code>numberSeparator</code>でつなぎます。<code>'replace'</code>：番号がタイトル全体になり、ソースに書いたタイトルは出力しません。たとえば<code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code>のもとで<code># Night</code>はالليلة الثانيةと出力されます。目次は番号を項目のタイトルとして示し（番号の列はなし）、柱（<code>{chapterTitle}</code>、<code>{titleText}</code>）とPDFのしおりもそれを読みます。このような見出しでは<code>{number}</code>は空です。テンプレート（レベルのもの、またはスタイルのもの）を持つ番号付きの見出しにだけ適用し、それ以外はタイトルを保ちます。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>は独自の値を設定でき、<code>'before'</code>にすると、レベルが置き換えるはずのタイトルを残せます。</td>
+    </tr>
+    <tr>
+      <td><code>breakBefore</code></td>
+      <td><code>HeadingBreakBeforeConfig</code></td>
+      <td>H1: <code>&#123; enabled: true, parity: 'always-odd' &#125;</code><br/>H2–H6: <code>&#123; enabled: false, parity: 'any' &#125;</code></td>
+      <td>このレベルのすべての見出しの前で改ページします。<code>parity: 'odd'</code> / <code>'even'</code>は、見出しが見開きのどちら側から始まるかをさらに制約します。必要に応じて埋め合わせの白ページを挿入します（ページ番号には数えます）。<code>'always-odd'</code> / <code>'always-even'</code>は、さらに前の内容と新しい見出しの間に、少なくとも1ページの必須の区切りの白ページを保証します（区切りのページは前の章に属し、奇偶合わせのための追加のページは新しい章に属します）。見出しが文書の最初のブロックで、1ページ目がまだ空のときは奇偶の強制を行わず、見出しは書いたとおり1ページ目に置かれます。指定しないフィールドはレベルの既定値を保つので、H1に<code>&#123; parity: 'odd' &#125;</code>だけを指定しても改ページは行われます。</td>
+    </tr>
+    <tr>
+      <td><code>hidden</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>構造上の見出し。何も出力せず、段の中でも囲みの中でも場所を取りません（本文も空きも章扉の帯もありません）が、見出しとしてのほかの働きはすべて行います。<code>breakBefore</code>はページを始め、スタイルのセクションを開き、番号に数えられ（スタイルが<code>numbered: false</code>の場合を除く）、<code>:::toc</code>の一覧に載り、<code>{'{chapterTitle}'}</code>の柱に名前が出て、PDFのしおりにも入ります。目次や読者のしおりには必要でも、ページには表示しない献辞、エピグラフのページ、奥付に使います。レベル全体ではなく<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>に設定してください。個々の見出しでは<code>{'{hidden="true"}'}</code> / <code>{'{hidden="false"}'}</code>で上書きできます。</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',
+  levels: [
+    // Canonical book preset: chapters on a right-hand (odd) page.
+    { level: 1, fontSize: { value: 24, unit: 'pt' }, breakBefore: { enabled: true, parity: 'odd' } },
+    { level: 2, fontSize: { value: 18, unit: 'pt' }, italic: true },
+  ]
+}
+```
+
+`snapToGrid`はレベルごとにも働きます。指定しなければレベルは`headings.snapToGrid`に従い、指定すればそれを上書きします。そのため1つの文書の中で、H2では本文との間に1行半を空けて次の吸着点までグリッドから外し、H3では下の空きをグリッドの行単位に切り上げる、といった組み方ができます。見出しスタイルでも、そのスタイルを使う見出しに対して設定できます。
+
+```ts
+headings: {
+  marginBottom: { value: 1.5, unit: 'em' },
+  levels: [
+    { level: 2, snapToGrid: false }, // exactly 1.5 em under every H2
+    { level: 3 },                    // inherits headings.snapToGrid: true
+  ],
+}
+```
+
+### 前で改ページ
+
+`breakBefore`は番号付けの制御とは独立しています。有効にすると改ページを強制しますが、番号のカウンターがリセットされるのは`:::numbering`ディレクティブを明示的に挿入したときだけです。奇偶合わせの白ページも実際のページとして数え、通常の奇数・偶数の規則に従ってヘッダーとフッターが付きます。
+
+このような見出しの直前に`:::pagebreak`を置いても、見出しの改ページの代わりにはなりません。見出しはディレクティブが始めたページの後でも奇偶を適用するため、白ページが加わることがあります。手動の改ページの直後から始めたい見出しについては、[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)を参照してください。
+
+#### 奇偶の値
+
+<table>
+  <thead>
+    <tr>
+      <th>値</th>
+      <th>動作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'any'</code>（既定）</td>
+      <td>奇偶の制約はありません。見出しは単に次のページから始まります。</td>
+    </tr>
+    <tr>
+      <td><code>'odd'</code></td>
+      <td>見出しが奇数（右）ページから始まるようにします。白ページを1ページ挿入するのは、自然な次のページが偶数ページのときだけです。</td>
+    </tr>
+    <tr>
+      <td><code>'even'</code></td>
+      <td>同様に、偶数（左）ページから始めます。</td>
+    </tr>
+    <tr>
+      <td><code>'always-odd'</code></td>
+      <td>前の内容と新しい見出しの間に<strong>少なくとも1ページの必須の区切りの白ページ</strong>を保証し、そのうえで奇数ページにそろえます。どの章も新しい見開きから始めたいときに使います。</td>
+    </tr>
+    <tr>
+      <td><code>'always-even'</code></td>
+      <td>同様に、偶数ページにそろえます。</td>
+    </tr>
+  </tbody>
+</table>
+
+#### 白ページの帰属
+
+`breakBefore`が挿入した白ページには、挿入された*理由*に応じて、章タイトルの柱が付きます：
+
+- 奇偶の制約（`'odd'`、`'even'`、または`'always-*'`の奇偶合わせの部分）を満たすために挿入したページは、**これから始まる**章に属します。柱の`{chapterTitle}`プレースホルダーは新しい章のタイトルになります。その白ページは、新しい章を正しい奇偶のページへ送るためだけにあるからです。
+- `'always-odd'` / `'always-even'`が先頭に挿入する必須の区切りは、**前の**章に属します。章の終わりに意図して置く間なので、柱の`{chapterTitle}`プレースホルダーには前の章のタイトルが出たままです。
+
+スタイルを持つセクション（[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)を参照）の柱とパレットも、白ページでは同じ2つの規則に従います。
+
+#### 文書冒頭の例外
+
+文書の最初のブロックが`breakBefore`を有効にした見出しである場合、またはソースが`:::pagebreak`で始まる場合、1ページ目がまだ空のあいだは奇偶の強制を行いません。設定した奇偶にかかわらず見出しは書いたとおり1ページ目に置かれるので、`parity: 'odd'`を設定した`# Chapter 1`で始まる文書の先頭に、余計な白ページが入ることはありません。何か内容が置かれた後は、奇偶の強制は通常どおり働きます。
+
+### 幅と詳細デザイン
+
+各見出しレベルには、見出しをページ幅いっぱいの章扉として描画する方法を制御するフィールドが、さらに2つあります。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page'</code></td>
+      <td><code>'column'</code></td>
+      <td><code>'page'</code>のとき、見出しは章扉として扱われ、その詳細デザイン（有効な場合）は本文の上の章扉の帯としてページに付きます。章扉が確実に新しいページから始まるよう、<code>breakBefore.enabled: true</code>と組み合わせてください。独自のデザインがない場合、タイトルは既定の章扉が版面の全幅にわたって描きます。レベルの文字組みと行送りを使い、太字・イタリック・上付き下付きの範囲（<code>headings.inlineMarks</code>）も反映し、帯はその幅で測ります。帯は章扉が描くすべての行を収めます。章扉が見出し自身の行長より多くの行を使う場合（語間を詰めれば1行に収まってしまう両端そろえのタイトル、強制改行<code>{'\\\\'}</code>）も、帯はその行数を取ります。postext 1.4までは帯を段の幅で折り返したタイトルで測っていたため、版面の幅なら1行に収まるタイトルが2行分の高さの帯を取り、その中央に1行が置かれていました。ほかの段も、見出し自身の段と同じく帯の下から始まります。それらの段の冒頭の本文は、章扉自身の段で何が続くかにかかわらず、章扉の直下の本文が始まる位置から始まります。つまり、タイトルまたはデザインの下に章扉の<code>marginBottom</code>を取り、レベルが吸着するときは次のグリッド行まで進めた位置です。それらの段を見出し、別行立て数式、目次の行で始める場合は、章扉の下にある最初の見出しや別行立て数式と同じ高さに、そこでの空きも含めて置きます。章扉の段がそれ以外の内容で続く場合は、その本文が始まる位置から始まります。章扉の下の非表示の見出しは数に入らず、<a href="/ja/docs/configuration-page-flow#段末そろえ">段末そろえ</a>が章扉の下の見出しの上に足した空きは、ほかの段では繰り返しません。これらの段がグリッドに吸着させるものは、ページのグリッドに乗ります。postext 1.4までは、それらの段の最初のブロックは帯の下端に置かれていました。帯が2行の間で終わればグリッドから外れ、章扉の後に見出しが続くと空きなしで帯に接していました（帯がグリッド上で終わる場合は現在より1行上）。また、そこにある見出しは、最初の段の見出しが保っていた上の空きも失っていました。</td>
+    </tr>
+    <tr>
+      <td><code>spanBreak</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>span: 'page'</code>の見出しが新しいページから始まるかどうかです。<code>true</code>は次のページを開きます（左右は<code>breakBefore</code>で決まります）。<code>false</code>で<code>breakBefore.enabled: false</code>のときは、ページ幅の囲みと同じく、本文が届いた位置で見出しを開きます。上の段は高さをそろえて終わり（<code>headings.balancing.trailing</code>が有効なら帯を均等化します）、見出しのデザインまたは既定の章扉がその下に版面の幅いっぱいに組まれ、本文はその下のすべての段で続きます。会報で2本目の記事を1本目の終わりの下から始める場合などです。残りの余白に見出しとその下の最小行数（ウィドウ）が収まらないときは、<code>true</code>と同じく次のページを開きます。ページの役割は最初のブロックで決まるままです。<code>span: 'column'</code>の見出しには効きません。見出しスタイルでも指定できます。postext 1.19から。</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign</code></td>
+      <td><code>HeadingAdvancedDesignConfig</code></td>
+      <td><code>{'{ enabled: false, slot: { elements: [] } }'}</code></td>
+      <td>このレベルの自由配置のデザインスロット。<code>enabled</code>のとき、スロットの要素が章扉を構成します。テキスト要素の中で<code>{'{titleText}'}</code>を使うと見出しのタイトル文字列を描画し、<code>{'{number}'}</code>、<code>{'{numberRoman}'}</code>などで書式付きの見出し番号を挿入します。</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign.minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>段の流れの中で見出しに確保する最小の高さ。見出しは<code>max(design content bottom, minHeight)</code>を取り、その下に見出しの<code>marginBottom</code>（見出しスタイル、レベル、または<code>headings.marginBottom</code>から。既定では見出しのサイズの0.5 em）を加え、見出しが吸着する場合はその合計をベースライングリッドに切り上げます。そのため章扉は、要素が短い場合や、見出しより上でページ枠・裁ち落とし枠に固定されている場合でも、本文を押し下げる（あるいはページ全体を占める）ことができます。帯をちょうど<code>minHeight</code>の高さにするには、その<code>marginBottom</code>を0にし、<code>minHeight</code>をグリッドの行の整数倍にします。スロットが空でも、<code>enabled</code>がtrueなら常に適用します。デザインの内容の下端に何が含まれるかは、<a href="#確保する高さ">確保する高さ</a>を参照してください。</td>
+    </tr>
+  </tbody>
+</table>
+
+**ページと同じ高さの章扉**。確保する高さが段の末尾を越える場合（`minHeight`がページの高さに等しい表紙や、ページまたは裁ち落としに固定されて仕上がり線まで伸びる画像や囲み）、章扉はページの残りを占めます。その後の本文は、2段組みでも1段半レイアウトでも、どの段でも次のページから始まります。したがって表紙の後に`:::pagebreak`は不要です（置いても害はなく、白ページは加わりません）。段内の見出し（`span: 'column'`）のデザインが段より高い場合はその段を占め、本文は次の段の頭から始まります。見出しのブロックは占めた段の末尾まで伸び、デザインはその帯に対してレイアウトされます。上端に固定した要素は固定位置にとどまり、帯に従う要素（帯の中央や下端に固定したもの、または高さが`'fill'`のもの）は、高さが収まるときに確保した高さに収まるのと同じように、見出しが占める範囲に収まります（postext 1.4までは、ブロックは本文の高さのままだったので、それらの要素はタイトル1つ分の高さの帯に対してレイアウトされ、その後の本文はデザインの下へ続いていました）。ページを占めるべきでないページの装飾（ページ全体にわたる小口側の帯、ページ下端の飾り）は、ヘッダーかフッターのデザインに入れてください。`'page'`または`'bleed'`に固定し、`pages: 'opener'`で表示すれば、章扉のページに描かれ、本文の場所は確保しません。
+
+例：タイトルの上に「Chapter N」を表示する簡素な章扉です。
+
+```json
+{
+  "headings": {
+    "levels": [
+      {
+        "level": 1,
+        "span": "page",
+        "breakBefore": { "enabled": true, "parity": "always-odd" },
+        "advancedDesign": {
+          "enabled": true,
+          "slot": {
+            "elements": [
+              {
+                "kind": "text",
+                "id": "chapterLabel",
+                "placement": {
+                  "anchor": { "to": "container", "edge": "top" },
+                  "offset": { "y": { "value": 48, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "Chapter {numberRoman}",
+                "fontSize": { "value": 10, "unit": "pt" },
+                "align": "center",
+                "overflow": "ellipsis-end"
+              },
+              {
+                "kind": "text",
+                "id": "chapterTitle",
+                "placement": {
+                  "anchor": { "to": "#chapterLabel", "edge": "below" },
+                  "offset": { "y": { "value": 12, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "{titleText}",
+                "fontSize": { "value": 24, "unit": "pt" },
+                "fontWeight": 700,
+                "align": "center",
+                "overflow": "wrap",
+                "hyphenate": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+レベルのデザインスロットで使える見出しのプレースホルダー：
+
+- `{titleText}`：見出しのプレーンテキスト（番号の接頭辞を除く）。タイトル中の強制改行（`\\`）は、章扉の帯でも段内のデザインでも、ここでは改行になります（postext 1.4までは、段内のデザインではスペースを出力し、高さは改行込みで測っていました）。非表示の見出しが段の中で折り返した行は、書いたとおりのタイトルに戻してつなぎます。語自身のハイフンの後で折り返した語はハイフンを残して後にスペースを入れず、段が分割した語は改行で加わったハイフンを除いて元の1語に戻します。段より広く、ノーブレークスペースの位置で分けられたまとまりはノーブレークスペースを取り戻し（`CapítuloXVIII`ではなく`Capítulo XVIII`）、それ以外の改行はスペース1つに戻します。postext 1.4までは改行がすべてスペースになったので、ハイフンで折り返したタイトルは`Word- Book`と出力され、そのようなタイトルの強制改行は失われていました。
+- `{number}`：レベルの`numberingTemplate`に従って書式化した番号。
+- `{numberDecimal}`、`{numberRoman}`、`{numberRomanLower}`、`{numberAlpha}`、`{numberAlphaLower}`：見出しのカウンター（テンプレートが何を出力するかにかかわらず、そのレベルの通し番号）を、ほかの数字の書式で表したもの。3番目の章なら`3`、`III`、`iii`、`C`、`c`となり、`numberingTemplate`の有無は問いません。番号を付けない見出し（`numbered: false`のスタイル）では空になります。
+- `{numberWords}`、`{numberWordsLower}`、`{numberOrdinalWords}`、`{numberOrdinalWordsLower}`：同じカウンターを語で綴ったもの。先頭を大文字にするか、すべて小文字にするかを選べます：*Three* / *three*、*Third* / *third*（[語で綴る番号](#語で綴る番号)を参照）。
+- `{numberHan}`：同じカウンターを、文書の`locale`の字体の漢数字で表したもの。`第{numberHan}回`と設定した章扉は12番目の章で第十二回と出力し、目次には`12`と載ります。
+- `{chapterNumber}`、`{chapterTitle}`、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`、`{title}`、`{subtitle}`、`{author}`、`{publishDate}`：共通のメタデータのプレースホルダー。
+- `{attr.<key>}`：見出しの行そのものに書いた属性（`# Title {author="I. Zango Martín"}`）。なければ現在の章のH1の属性を使います。存在しない属性は、警告なしで空文字列になります。
+
+`{chapterNumber}`は、柱がその章について出力するものと同じ値を出力します。H1のレベル（またはスタイル）に`numberingTemplate`があればH1の番号、なければ章の序数（`1`、`2`…で、この章より前に組んだ章から続きます）で、番号を付けない章や、テンプレートが`''`のスタイルでは何も出力しません。見出しのデザインは、その見出しが属する章を読みます。レベル1の見出しは自身の章を、下位の見出しはその前にある最後のレベル1見出しの章を読みます。2つの章が1ページで接する場合も同じで、そのページの柱は後の章を出力します。章扉が確保する高さも、同じ値で測ります。postext 1.4までは見出しの番号の接頭辞（テンプレートがなければ空）で測っていたため、高さが`{chapterNumber}`に依存するデザインは確保した場所より高く描かれることがありました。また、デザインはページの章を出力していたので、1ページを共有する2つの章のうち最初の章に、2番目の章の番号が出ていました。
+
+カウンターのプレースホルダーは、1章ずつ組んだ章をまたいで本全体に従います（`continuationAfter()`が引き継ぐカウンター）。見出しの`startAt`属性でリセットされます（**文書形式 → 見出しの属性**を参照）。流れと目次では`3.`と番号が付いたタイトルの上に、*Chapter III*と表示する章扉の例です：
+
+```ts
+{
+  level: 1,
+  span: 'page',
+  numberingTemplate: '{1}.',
+  advancedDesign: {
+    enabled: true,
+    slot: { elements: [
+      { kind: 'text', id: 'label', content: 'Chapter {numberRoman}', fontSize: { value: 10, unit: 'pt' }, overflow: 'ellipsis-end',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill', height: 'auto' } } },
+      { kind: 'text', id: 'title', content: '{titleText}', fontSize: { value: 24, unit: 'pt' }, overflow: 'wrap',
+        placement: { anchor: { to: '#label', edge: 'below' }, size: { width: 'fill', height: 'auto' } } },
+    ] },
+  },
+}
+```
+
+#### 確保する高さ
+
+詳細デザインを持つ見出しは、ほかのブロックと同じように段の中で場所を取り、その後の本文はその下から始まります。その場所は次の3つの高さのうち最も高いもので、いずれも見出しの上端（ページの最初に来る章扉では版面の上端）から下へ測ります：
+
+1. レベルの文字組みで組んだ見出し自身の本文（デザインの下に隠れますが、行は保ちます）。
+2. デザインの内容の下端：数に入る要素（後述）のうち、最も低い下辺。
+3. `advancedDesign.minHeight`。
+
+その後に見出しの`marginBottom`（見出しスタイル、レベル、または`headings.marginBottom`から。既定は0.5 em）を加え、見出しが吸着する場合はベースライングリッドに切り上げます。章扉（`span: 'page'`）では、同じ帯をページのすべての段で空けておきます。段に収まる段内の見出しでは、デザインはちょうどその高さの見出しのボックスの中にレイアウトされます。
+
+**数に入る要素**。デザインの要素は、テキスト、罫線、ボックス、画像のいずれもすべて数に入ります（postext 1.4までは`image`要素は数に入らなかったので、`minHeight`で押さえない限り、本文が帯の画像に重なって始まることがありました）。ただし、次のものは除きます：
+
+- **`reserve: false`の要素**：本文の下に敷いてよい装飾。
+- **帯そのものに従う要素**：コンテナーの中段（`left`、`center`、`right`）または下段（`bottom-left`、`bottom`、`bottom-right`）に固定した要素、高さをコンテナーに対する`'fill'`とした要素（高さのないボックスや縦罫線は既定でコンテナーを満たします）、およびそれらに固定した要素。コンテナーは確保した帯なので、これらは帯の下端に置かれるか、帯全体にわたります。帯の下の罫線や、タイトルの背後の色付きのパネルなどです。高さに従うだけで、高さを決めることはありません。ただし、そのうち自身の高さを保つテキストには、それでも場所が必要です。帯の下端に固定したタイトルは帯を少なくともタイトルの高さにするので、タイトルが見出しの上端より上から始まることはありません。`minHeight: 36mm`でタイトルを`bottom-left`に固定すると、見出しのボックスは36 mmに`marginBottom`を加え、グリッドに切り上げた高さになり、タイトルはそのボックスの下端、つまり続く本文のすぐ上に置かれます。`minHeight`がなければ、見出し自身の本文より多くの行を使うタイトルは、帯をタイトルの深さまで広げます。postext 1.4までは、このようなタイトルは見出しの上にある本文に重ねて上方向に描かれていました。帯に従うボックス、罫線、画像にはこのような下限はないので、下端に固定したパネルが見出しより上まで届くことがあります。
+
+ページと裁ち落としに固定した要素は、見出しの上端より下へどれだけ届くかで数えます。見出しより上で終わるページ上部の帯は何も数えず、見出しを越えて伸びる裁ち落としいっぱいの画像は、本文をその下辺まで押し下げます。ページの低い位置にあるものも同じです。ページの下端から25 mm上にある印章、ページ全高にわたる側面の帯、枠などはページをその下辺まで確保するので、本文はたいてい次のページから始まります。このような装飾には`reserve: false`を付け（描画はされ、ほかの要素はそれに固定できます）、見出しに必要な場所はテキスト要素か`minHeight`で与えてください：
+
+```json
+{
+  "kind": "image", "id": "seal", "resourceId": "seal", "reserve": false,
+  "placement": {
+    "anchor": { "to": "page", "edge": "bottom-right" },
+    "offset": { "x": { "value": -25, "unit": "mm" }, "y": { "value": -25, "unit": "mm" } },
+    "size": { "width": { "value": 30, "unit": "mm" } }
+  }
+}
+```
+
+確保しない要素に固定した要素は、それ自身にも印を付けない限り数に入ります（印章に付けたキャプションには、それ自身の`reserve: false`が必要です）。
+
+**描画される位置**。章扉のデザイン（`span: 'page'`）は本文より先に描画されるので、何も確保しない装飾は本文の下に敷かれます。段内の見出しのデザインは見出しのブロックとともに描画され、段の中で先行するブロックより手前、後続のブロックより奥に描かれます。段の末尾より上であれば、左右の余白、天の余白、裁ち落とし、隣の段のどこに置いてもかまいません。流れはそこで終わるので、CanvasでもPDFでも段の末尾で切れます（後述の**段より高い場合**を参照）。postext 1.4までは、CanvasとPDFは段の上端でも切っていたため、ページや裁ち落としの上端に固定した帯は左右の余白には伸びても、天の余白で止まっていました。ページの下端に固定する装飾は、章扉か、`pages: 'opener'`を指定したフッターのデザインに入れてください。
+
+**段より高い場合**。確保する高さが段の末尾を越える場合（ページと同じ高さの`minHeight`、仕上がり線まで伸びる画像や枠）、見出しはページ（章扉ではすべての段）または段（段内の見出し）の残りを占め、その後の本文は次のページまたは段から始まります。見出しのブロックは段の末尾まで伸び、本文の高さに切り詰められることはないので、デザインがレイアウトされる帯は占めた範囲そのものです（`minHeight`も含め、末尾まで）。ページそのものより高いデザイン（小さな画面用ページの長いリードなど）は、それでもページの末尾で切れます（段内のデザインは段の末尾で切れます）。Sandboxはこれを**検査**パネルで**見出しのデザインの欠け**として示します。レイアウト自体は警告を出しません。ページを占める表紙はよくある使い方で、失うものもないからです。ただし、どのホストでも組み上がったレイアウトに同じ検査を行えます。`collectHeadingDesignCuts(doc)`は、デザインのテキストがページの仕上がりの末尾（`where: 'page'`、章扉）または段の末尾（`where: 'column'`）を越えている見出しごとに`{ kind: 'headingDesignCut', pageIndex, level, where, overflowPx, sourceStart, sourceEnd }`を1つ返し、`formatWarning`がそれぞれを説明します。[幅と詳細デザイン](#幅と詳細デザイン)の**ページと同じ高さの章扉**を参照してください。
+
+**サイド段**。サイド段がフロートを受け持つ（`sideColumnRole: 'floats'`）1段半レイアウトでは、段内の見出しのデザインのうちサイド段に立つ要素（教科書の章扉で、小口側の余白の段にページ基準で固定した章番号など）が、サイド段に積まれるフロートを遠ざけます。見出しの後にそのページが置く`span: 'side'`の図、表、囲みは、そのような要素からフロートの間隔1つ分を空けます。積み重ねで決まる位置で要素より上に収まればそこにとどまり、収まらなければ要素の下へ回り、サイド段の残りにそこで収まらなければ次のページを待ちます。そのため、サイド段の頭にある章番号は積み重ね全体をその下に置き、ページの下のほうにある見出しの脇の余白に掛けた節番号は、サイド段の頭をそのページが引用する図に譲ります（余白の図は引き続きページの上端に置かれます）。見出しを置く時点でサイド段がすでに持っているものは動かしません。ページの前のほうで積まれ、見出しの要素まで届く図はそのまま要素の下に残るので、ページの途中でサイド段に要素が立つデザインでは、図を見出しの後で引用してください。`reserve: false`の要素は、本文に対してと同じくサイド段も空けたままにします。章扉（`span: 'page'`）ではこのような配慮は不要です。その帯はサイド段を含むすべての段で確保されるからです。postext 1.4までは、このような章扉で引用したサイドの図は、サイド段の頭、章番号の上に置かれていました。
+
+**表紙**。ページを埋める表紙の見出し（ページと同じ高さの`minHeight`、またはデザイン内のページ全面の画像）は、こうして1段組みでも多段組みでも、それだけで後の本文を次のページへ送ります。直後の`:::pagebreak`は任意で、害もありません。まだ空のページでの改ページは何もしないので、白ページが加わることはありません。必要になるのは、表紙のデザインがページの末尾まで届かず、それでも本文を新しいページから始めたい場合だけです。
+
+```md
+# Annual report 2026 {style="cover"}
+
+:::pagebreak
+
+# Letter from the chair
+```
+
+### 語で綴る番号
+
+番号付けテンプレートの2つの接尾辞は、カウンターを文書の言語（最上位の`locale`、なければハイフネーションのロケール。[文書の言語](/ja/docs/configuration-language#文書の言語)を参照）の語で書きます。基数には`words`、序数には`ordinal`を使います。文字の`A` / `a`と同じく、接尾辞の大文字・小文字が語の大文字・小文字を決めます：
+
+<table>
+  <thead>
+    <tr>
+      <th>トークン</th>
+      <th>英語（21）</th>
+      <th>スペイン語（21）</th>
+      <th>中国語（21）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{'{1:words}'}</code></td><td>twenty-one</td><td>veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:Words}'}</code></td><td>Twenty-one</td><td>Veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:WORDS}'}</code></td><td>TWENTY-ONE</td><td>VEINTIUNO</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:ordinal}'}</code></td><td>twenty-first</td><td>vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:Ordinal}'}</code></td><td>Twenty-first</td><td>Vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:ORDINAL}'}</code></td><td>TWENTY-FIRST</td><td>VIGESIMOPRIMERO</td><td>第二十一</td></tr>
+  </tbody>
+</table>
+
+英語、スペイン語、フランス語、イタリア語、ドイツ語、カタルーニャ語、ポルトガル語、中国語、日本語、アラビア語は語で綴ります。ほかの言語は、組み込みの表の続き文字列と同じく英語の語を使います。中国語は`locale`の字体に従い、`simp-chinese-informal`または`trad-chinese-informal`の通常の漢数字（一万 / 一萬）で書き、序数の前に第を付けます。漢字には大文字・小文字がないので、接尾辞の3つの書き方は同じ結果になります。英語はアメリカ式です（*one hundred five*、*and*なし）。スペイン語は、*capítulo*や*libro*に番号を付けるときと同じく既定では男性形を使い（*capítulo primero*、*tercero*、*veintiuno*）、13から29の序数はRAEが推奨するとおり1語で書きます（*decimotercero*、*vigesimoprimero*）。基数は999 999まで、スペイン語・カタルーニャ語・ポルトガル語の序数は999まで語で綴り、それより大きい数は数字で出力します。
+
+フランス語は伝統的な綴りで書き（*vingt et un*、*soixante et onze*、*quatre-vingts*、*deux cent un*）、1の序数は*premier*です（*Chapitre premier*。ただし*vingt et unième*）。イタリア語は数を1語で書き（*ventuno*、*ventitré*、*duemilaventiquattro*。*primo*、*ventunesimo*）、ドイツ語も同様です（*einundzwanzig*、*hunderteins*。*erste*、*einundzwanzigste*）。スイスのドイツ語（`de-CH`）では*ß*を*ss*と書きます。カタルーニャ語はIECに従い（*vint-i-u*、*dos-cents*。*primer*、*cinquè*、*vint-i-unè*）、ポルトガル語は`locale`がほかの地域を示さない限りブラジル式で（*dezesseis*。`pt-PT`では*dezasseis*）、序数はラテン系の形です（*vigésimo primeiro*）。カタルーニャ語とポルトガル語の序数は、スペイン語と同じく999まで綴ります。
+
+ロマンス諸語は性の修飾子を読みます。`-feminine`（または`-f`）は語を女性名詞に一致させ（`Parte {1:ordinal-f}`はイタリア語で*Parte prima*、`{1:Ordinal-f} partie`はフランス語で*Première partie*。同様に*veintiuna*、*vint-i-una*、*duzentas*）、`-masculine`（`-m`）が既定です。ドイツ語の基数は変化しません（*Kapitel eins*）が、序数は変化します。修飾子がなければ冠詞の後の語尾で、3つの性で同じ形です（`Das {1:ordinal} Kapitel`は*Das erste Kapitel*）。冠詞のない名詞の前では、`-masculine`が*Erster Teil*、`-feminine`が*Erste Lektion*、`-neuter`（`-n`）が*Erstes Kapitel*になります。ドイツ語の数詞は言語の規則どおり小文字で書きます（`Kapitel {1:words}`は*Kapitel eins*）。`{1:Words}`は見出しの先頭に来る語のために頭文字を大文字にし、`{1:WORDS}`はßをSSと書きます。
+
+アラビア語の数は数える名詞と性が一致するので、接尾辞に修飾子を付けます。女性名詞には`-feminine`（または`-f`）、男性名詞には`-masculine`（`-m`、既定）を使います。`-classical`は、ブーラーク版や多くのエジプトの刊本と同じく、百を現代のمئةではなくمائةと綴ります。`{1:ordinal}`は、見出しで使う限定・主格の序数を書きます。`الفصل {1:ordinal}`は*الفصل الأول*、*الفصل الحادي عشر*、*الفصل الحادي والعشرون*となり、`الليلة {1:ordinal-feminine}`は*الليلة الأولى*、*الليلة الحادية عشرة*、*الليلة الحادية والعشرون*、*الليلة المئتان*となります。100を超えると、古典的な「〜の後の」の定型になります：*الليلة الخامسة والأربعون بعد الثلاثمئة*、*الليلة الحادية بعد الألف*。`{1:words}`は基数を書きます（واحد وعشرون。女性形はإحدى عشرة、واحدة وعشرون）。序数は9 999まで、基数は99 999まで語で綴ります。修飾子は組み合わせられます（`{1:ordinal-f-classical}`）。ロマンス諸語とドイツ語は性の修飾子だけを読み（上記参照）、ほかの言語では無視されます。アラビア語には大文字がないので、接尾辞の大文字・小文字は何も変えません。デザインのプレースホルダー`{numberWords}`と`{numberOrdinalWords}`は男性形を書きます。女性形の章扉では、レベルのテンプレートに序数を入れて`{number}`で出力してください。
+
+見出しのデザインでは、`{numberWords}` / `{numberWordsLower}`と`{numberOrdinalWords}` / `{numberOrdinalWordsLower}`が見出しのカウンターを同じように綴るので、目次には`1`と載せたまま、章扉には*Chapter One*と表示できます。大文字にするには、テキスト要素の`textTransform: 'uppercase'`を使います：
+
+```ts
+// Spanish novel: "CAPÍTULO PRIMERO" above the title, "1." in the contents.
+{ level: 1, numberingTemplate: '{1}.', span: 'page',
+  advancedDesign: { enabled: true, slot: { elements: [
+    { kind: 'text', id: 'n', content: 'Capítulo {numberOrdinalWordsLower}', textTransform: 'uppercase', /* … */ },
+    { kind: 'text', id: 't', content: '{titleText}', /* … */ },
+  ] } } }
+```

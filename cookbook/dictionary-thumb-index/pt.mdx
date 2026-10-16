@@ -22,7 +22,7 @@ O código é [a resposta curta](#a-resposta-curta) lá em cima. `TABS` lista 22 
 
 <Excerpt region="running-heads" />
 
-Os cabeços são elementos de texto ancorados à página e filtrados por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). O título da página 1 ocupa as duas colunas, o que faz dela uma página de abertura. Os cabeços pulam essa página, e o fólio dela vem do rodapé, um elemento com `pages: 'opener'` que imprime 6 mm abaixo da mancha. Numa página ímpar, `{chapterTitle}` imprime a letra do último título de nível 1 que está na página ou antes dela, *Letter C*. `{firstMark.<key>}` e `{lastMark.<key>}` imprimem no lugar dela o primeiro e o último lema da página, as palavras-guia que a maioria dos dicionários traz; esta receita mantém a letra, que é o que as suas abas indexam.
+Os cabeços são elementos de texto ancorados à página e filtrados por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). O título da página 1 ocupa as duas colunas, o que faz dela uma página de abertura. Os cabeços pulam essa página, e o fólio dela vem do rodapé, um elemento com `pages: 'opener'` que imprime 6 mm abaixo da mancha. Numa página ímpar, `{chapterTitle}` imprime a letra do último título de nível 1 que está na página ou antes dela, *Letter C*. `{firstMark.<key>}` e `{lastMark.<key>}` imprimem no lugar dela o primeiro e o último lema da página, as palavras-guia que a maioria dos dicionários traz; esta receita mantém a letra, que é o que as suas abas indexam.
 
 ### 3 · Dê cor aos lemas e a nada mais
 
@@ -40,7 +40,7 @@ Cada verbete é um parágrafo de um bloco `:::paragraphs{style="entry"}`, com as
 
 <Excerpt region="title" />
 
-O estilo do título ocupa a largura da página com uma faixa que reúne a âncora, o nome, um subtítulo e uma linha de autoria lidos de atributos do título, e um fio duplo ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). O fio fino termina 45,1 mm abaixo do alto da mancha, então a faixa se ajusta a 13 linhas da grade, ou 47,7 mm. O fio entre colunas começa abaixo da faixa, na linha em que começa o texto das duas colunas.
+O estilo do título ocupa a largura da página com uma faixa que reúne a âncora, o nome, um subtítulo e uma linha de autoria lidos de atributos do título, e um fio duplo ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). O fio fino termina 45,1 mm abaixo do alto da mancha, então a faixa se ajusta a 13 linhas da grade, ou 47,7 mm. O fio entre colunas começa abaixo da faixa, na linha em que começa o texto das duas colunas.
 
 ## Variações
 

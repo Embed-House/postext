@@ -22,7 +22,9 @@ in vertical text, tab characters no style turns into tabs); drop caps
 as a heading attribute by a design's drop cap); for comics
 (`:::page`, `:::strip`), the split expressions, panels, script lines,
 balloon and panel styles, the `comics` config, speaker anchors and safe
-areas, the lettering faces, and whether every edition sets the same pages.
+areas, the lettering faces, and whether every edition sets the same pages;
+and the book's text typed into design text elements of the config
+(contentInConfig, the rule of `preset_kit.py lint`) and a config past 3 MB.
 Pure Python otherwise.
 
 Exit code 1 when there are errors (or warnings with --strict).
@@ -2282,6 +2284,37 @@ def check_snippet(where: str, text: str, res_ids: set[str], rep: Report) -> None
             rep.error(where, f":ref to unknown resource {m.group(1)!r}")
 
 
+def check_content_in_config(m: dict, root: Path, rep: Report) -> None:
+    """Text of the book typed into design text elements (preset_kit.py lint):
+    one error per slot that holds some, and the size of the config."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import preset_kit  # noqa: PLC0415
+    except ImportError:
+        return
+
+    def read(rel: str) -> str | None:
+        f = root / rel
+        return f.read_text(encoding="utf-8", errors="replace") if f.is_file() else None
+
+    res = preset_kit.lint_manifest(m, read=read)
+    groups: dict[tuple[str, str], list[dict]] = {}
+    for f in res["findings"]:
+        groups.setdefault((f["owner"], f["slot"]), []).append(f)
+    for (owner, slot), fs in groups.items():
+        first = fs[0]
+        sample = first["text"] if len(first["text"]) <= 50 else first["text"][:47] + "..."
+        rep.error(f"{owner} ({slot})",
+                  f"contentInConfig: {len(fs)} design text element(s) hold {sum(f['chars'] for f in fs)} characters "
+                  f"of the book's text ({first['path']}: \"{sample}\"). Content goes in the Markdown "
+                  "(headings, callouts, :::paragraphs, {attr.key} attributes); allow a publisher's name or "
+                  "running-head literal with config.checks.contentInConfig.allow. `preset_kit.py lint` lists them all")
+    size = res["configBytes"]
+    if size >= preset_kit.SIZE_WARN_BYTES:
+        rep.warn("preset.json config", f"the config is {size / 1048576:.1f} MB: the Sandbox keeps a book in about "
+                 "5 MB of browser storage; aim under 1 MB (one style per kind of page, not per page)")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project")
@@ -2397,6 +2430,7 @@ def main() -> None:
             rep.info(where, "`source` is extraction metadata: drop it from the final manifest")
     check_folio(shared, "preset.json config", resources, rep)
     check_comics_config(shared, "preset.json config", rep)
+    check_content_in_config(m, root, rep)
 
     comic_editions: dict[str, list] = {}
     coverage = ...  # loaded on the first locale with CJK text

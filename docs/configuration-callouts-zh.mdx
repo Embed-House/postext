@@ -1,0 +1,414 @@
+{/* docs/configuration-callouts-zh.mdx */}
+
+export const metadata = {
+  title: '配置：标注框',
+  sidebarTitle: '标注框',
+  description: ':::callout标注框的命名样式：边框、底色、色条、标题、图标和框外标记，编号的命题，框内排版，以及跨页拆分的框',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '18分钟',
+  order: 16,
+  parent: 'configuration',
+  plainSummary: "本页讲把提示、技巧、警告或学习目标与正文分开的框。你给每种框起一个名字，并设定它的样子：底色、边框、一条彩色色条、标题和图标。框可以带编号，就像教科书里的定理或例题。你可以选择框内的字体。一个长框延续到下一页时，你可以选择用什么标出断开的地方。",
+};
+
+# 配置：标注框
+
+
+## 标注框样式
+
+`calloutStyles`属性声明一组具名的框样式，文档用`:::callout{type="…"}`容器来套用：注释、提示、警告、学习目标，以及任何需要用底色框或描边框与正文区分开的内容。默认只带一种中性样式`note`（浅灰底色，无边框、无色条、无图标、无标题），所以不做任何配置也能使用`:::callout`；一旦声明`calloutStyles`，就会替换这份默认列表。
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [
+    { id: 'note', name: 'Note' },
+    {
+      id: 'objectives',
+      name: 'Learning objectives',
+      title: 'Objectives',
+      stripe: { enabled: true, side: 'left' },
+      icon: { kind: 'glyph', glyph: '✓' },
+      titleStyle: { textTransform: 'uppercase' },
+      lists: { bulletChar: '–' },
+    },
+    {
+      id: 'warning',
+      title: 'Warning',
+      backgroundEnabled: false,
+      border: { enabled: true, color: { hex: '#AA0000', model: 'hex' }, width: { value: 1, unit: 'pt' } },
+      borderRadius: { value: 1, unit: 'mm' },
+      titleStyle: { color: { hex: '#AA0000', model: 'hex' } },
+    },
+  ],
+};
+```
+
+```md
+:::callout{type="objectives"}
+- Describe the parts of the lantern.
+- Trim the wick at dusk.
+:::
+
+:::callout{type="warning" title="Do not touch the lens"}
+The glass stays hot for an hour after the flame is out.
+:::
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>由<code>:::callout&#123;type="…"&#125;</code>选用的标识符。<code>type</code>未知或缺失的围栏使用配置中的第一种样式（沙盒会标出未知类型）。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td><code>id</code></td>
+      <td>便于阅读的名称（仅用于编辑器界面）。</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>默认标题文字；为空表示没有标题。围栏上的<code>title</code>属性可逐个覆盖它。</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page' | 'side'</code></td>
+      <td><code>'column'</code></td>
+      <td>水平范围：一栏、整个版心宽度，或一栏半版式中只放浮动体的侧栏（<code>layout.sideColumnRole: 'floats'</code>）；后一种情况下，框离开文字流，叠放在侧栏中，紧挨着它所打断的正文。可用<code>span</code>属性逐个覆盖。在多栏版式中，<code>'page'</code>框会成为<em>通栏块</em>：它把页面切分成若干栏带，自己占一个通栏宽的栏（见下文容器一节）。本页侧栏放不下的侧栏框排进下一页的侧栏；如果所在章（或文档）先结束，每个仍在等待的框按围栏的先后排进正文之后页面的侧栏，排版会报告（<code>afterText</code>；在postext 1.24及以前，第一个这样的页面之后的框会丢失）。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>浮动框（<code>placement</code>为<code>'auto'</code>、<code>'top'</code>或<code>'bottom'</code>，且<code>span: 'column'</code>）占用的相邻栏数，与图的<code>placement.columns</code>作用相同：例如报纸五栏中横跨三栏的新闻框。栏数等于或大于页面的栏数时，就是通栏框。排在文字流中的框（<code>'here'</code>）只占自己的栏。每个实例可用<code>columns</code>属性覆盖。postext 1.18起。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'here' | 'auto' | 'top' | 'bottom' | 'fixed'</code></td>
+      <td><code>'here'</code></td>
+      <td>框的位置。<code>'here'</code>把它排在文字流中的原位；<code>'top'</code> / <code>'bottom'</code>让它像资源一样<strong>浮动</strong>（<code>'auto'</code>取先空出来的那个区带，页首或页脚都可以）：它在出现处离开文字流，占用该处或其后第一个空闲区带（当前页的页脚，或文字流打开的下一页的页首 / 页脚），后面的正文围绕它填满页面；<code>'fixed'</code>通过下面的<code>fixed</code>把它锚定在页面坐标上，脱离栏内文字流。细节见容器一节。可用<code>placement</code>属性逐个覆盖。</td>
+    </tr>
+    <tr>
+      <td><code>sideAtColumnEnd</code></td>
+      <td><code>'before' | 'after'</code></td>
+      <td><code>'before'</code></td>
+      <td>侧栏框（<code>span: 'side'</code>）在围栏之后的正文没有在同一栏接着排时的位置：栏里已经放不下，或断行规则把正文送走（被段首孤行、段末孤行规则整段移走的段落，与正文保持同栏的标题）。<code>'before'</code>让它留在围栏处，就在那一页、挨着前面的正文；围栏下方放不下时，从栏底往上挪：适合写在所解释段落之后的旁注。<code>'after'</code>把它与围栏之后正文的第一行平齐，排在那段正文接续的那一页的侧栏中：适合写在对应行之前的行号或边题。正文在同一栏接着排时，两者都把框排在围栏处。在本章中后面没有任何内容的框，无论哪种设置都留在前面正文旁边；连续围起的几个侧栏框保持原来的顺序。postext 1.4及以前，所有侧栏框的行为都等同于<code>'before'</code>，这仍是默认值：旁注样式的框会留在它所解释段落的那一页。</td>
+    </tr>
+    <tr>
+      <td><code>fixed</code></td>
+      <td><code>{'{ anchor?, offset? }'}</code></td>
+      <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
+      <td><code>'fixed'</code>框的位置：一个<code>ElementAnchor</code>（<code>to</code>：<code>'container'</code>为页面内容区，在偶数页上镜像；<code>'page'</code>为成品尺寸框；<code>'bleed'</code>为出血框；<code>edge</code>：容器九个边位之一），外加可选的<code>offset</code>（<code>x</code> / <code>y</code>尺寸）。</td>
+    </tr>
+    <tr>
+      <td><code>floatBarrier</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>把框设为浮动体屏障：在它之前被引用的每个图或表都排在它之前（放进本页的空闲位置，否则放在框之前新开的页面上），这样浮动体不会越过一章的收尾框（通常是“要点”小结）。章首页、<code>:::part</code>和文档末尾始终是屏障。</td>
+    </tr>
+    <tr>
+      <td colSpan="4">多栏页面上的<code>span: 'page'</code>框会在它所跟随的正文下方切断栏带；在它之前引用的通栏图先占用这个切口：正文被拉齐，图紧接在正文结束处，框排在图的下面（放不下时移到下一页）。图太高、无法跟在拉齐的正文后面时，图改到下一页开头，框跟在它后面，被离开的栏带仍然齐底结束。可拆分的框（<code>keepTogether: false</code>）在正文和图的下方开始，放进尽可能多的条目，其余接续到下一页。</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>'fill' | 'auto'</code></td>
+      <td><code>'fill'</code></td>
+      <td><code>'fill'</code>占满可用宽度；<code>'auto'</code>按标题收缩宽度（用作徽标），忽略子内容。</td>
+    </tr>
+    <tr>
+      <td><code>backgroundEnabled</code> / <code>background</code></td>
+      <td><code>boolean</code> / <code>ColorValue</code></td>
+      <td><code>true</code> / <code>#f4f4f4</code></td>
+      <td>框的底色。</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>false</code>、<code>#cccccc</code>、<code>0.5pt</code></td>
+      <td>框的轮廓线，与框元素的边框一样描在框边缘的内侧（见<a href="/zh/docs/configuration-headers-footers#方框元素">框元素</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>底色 / 边框的圆角半径（上限为框宽和框高的一半）。色条随之变化：在圆角框上，色条被裁切到圆角框形之内，就像CSS按<code>border-radius</code>裁切<code>border-left</code>一样。<code>label</code>标签保持直角。</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top, right, bottom, left &#125;</code></td>
+      <td>各为<code>0.75em</code></td>
+      <td>框边缘与内容之间的内边距。<code>em</code>值相对于标注框正文的字号。</td>
+    </tr>
+    <tr>
+      <td><code>stripe</code></td>
+      <td><code>&#123; enabled, side, width, color &#125;</code></td>
+      <td><code>false</code>、<code>'left'</code>、<code>1.5em</code>、主色</td>
+      <td>沿一条边的实色色条。<code>'left'</code> / <code>'right'</code>色条会缩窄内容；<code>'top'</code>色条把内容往下推。<code>'left'</code>和<code>'right'</code>指文字流的两侧（在从右到左的书中<code>'left'</code>是纸面的右侧）；<code>'start'</code>和<code>'end'</code>跟随框自身的方向，所以阿拉伯文书中的<code>:::callout&#123;dir=ltr&#125;</code>把<code>'start'</code>色条放在左侧。在设了<code>borderRadius</code>的框上，色条的外侧角随框形一起变圆（postext 1.4及以前它们保持直角，会伸出圆角之外）。</td>
+    </tr>
+    <tr>
+      <td><code>icon</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
+      <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
+      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>，或<code>'outer'</code> / <code>'inner'</code>，后两者随镜像页边距的页面奇偶变化（外侧在右页上是右边，在左页上是左边）。</td>
+    </tr>
+    <tr>
+      <td><code>marker</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule &#125;</code></td>
+      <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'center'</code>、<code>0.5em</code>、不画线（<code>0.5pt</code>、主色、长度<code>0</code>）</td>
+      <td>画在框<em>外</em>左侧一栏中的第二个图标，它与框之间可以有一条竖线<code>rule</code>，例如自测徽标旁边那只“点这里”的手。整体结构变为<code>[marker][rule][gap][box]</code>，高度取三者中最高的一个；<code>align</code>让它们彼此居中或顶端对齐。<code>rule.length</code>是最小值：竖线至少与框一样高。</td>
+    </tr>
+    <tr>
+      <td><code>titleStyle</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, italic, color, textTransform, gap, letterSpacing, indent, lineHeight &#125;</code></td>
+      <td>标题字体、正文字号、<code>700</code>、<code>false</code>、主色、<code>'none'</code>、<code>0.5em</code>、<code>0</code>、<code>0</code>、<code>1.2em</code></td>
+      <td>标题的排版。<code>gap</code>是标题与第一个子块之间的距离（也是图标栏的间距）。<code>lineHeight</code>是标题各行的行距，<code>em</code>按标题自身的字号计；与正文一样，基线位于每行顶端往下0.8倍行距处。所以标题采用正文行距（12 pt网格上设<code>lineHeight: 12pt</code>）时，框的高度保持整数行、标题落在网格上；默认的1.2 em则会给每个框多出零点几行。<code>textTransform: 'uppercase'</code>不改变文字长度。<code>letterSpacing</code>调整标题的字距（canvas的<code>letterSpacing</code> / PDF的<code>Tc</code>）；<code>indent</code>把标题从框的内侧边缘往右推。挂在标题一侧（左角）的角徽标先留出自己的空间，即徽标内侧一半加上<code>gap</code>，这样无论落在哪一页，标题都能避开它；<code>indent</code>只在此基础上再加。</td>
+    </tr>
+    <tr>
+      <td><code>body</code></td>
+      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
+      <td>继承<code>bodyText</code>；<code>italic</code> / <code>smallCaps</code>为<code>false</code></td>
+      <td>框内段落和列表项的排版。每个字段未设置时都继承正文；<code>italicColor</code>设置斜体文字的颜色（例如用框的颜色排成斜体的引文）。<code>fontWeight</code> / <code>boldFontWeight</code>设置常规和粗体文字的字重；<code>italic</code>把整个框排成斜体，此时<code>*…*</code>内的文字改为正体；<code>smallCaps</code>把它排成小型大写字母；<code>tabStops</code>和<code>tabInterval</code>在框内替换正文的设置（见<a href="/zh/docs/configuration-text#制表位">制表位</a>）。框内文字还会采用哪些设置，见<a href="#框内的排版">框内的排版</a>。</td>
+    </tr>
+    <tr>
+      <td><code>lists</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td>继承<code>unorderedLists</code></td>
+      <td>框内列表的排版（<code>color</code>、<code>indent</code>、<code>gap</code>和<code>itemSpacing</code>也作用于编号列表）。<code>bulletFontSize</code> / <code>bulletFontWeight</code>让项目符号字形以框的正文字体、按这个字号和字重排出（例如粗重的彩色项目符号）。</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td>未设置（无标签）</td>
+      <td>框顶边上的一个标签，印出围栏的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以标签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到标签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>。标签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5em</code></td>
+      <td>框内<code>:::columns</code>组的栏间距（见下文容器一节）。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code> / <code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.75em</code> / <code>0.75em</code></td>
+      <td>框上方的间距（与前一个块的外边距合并），以及框下方的最小间距（设<code>snapToGrid: false</code>时为精确间距）。浮动的框（<code>placement: 'top'</code>、<code>'bottom'</code>或<code>'auto'</code>）在它的区带与正文之间保持浮动间距，即一行正文；比这更大的<code>marginBottom</code>决定顶部区带中框下方的间距，更大的<code>marginTop</code>决定底部区带中框上方的间距，并随区带一起向上取整到网格。postext 1.4及以前，浮动的框忽略自己的外边距。</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>为<code>true</code>时，框之后的文字流回到基线网格上，因此框下方的间距是<code>marginBottom</code>向上取整到整数网格行。为<code>false</code>时，框保持精确的<code>marginBottom</code>，并与下一个块的上外边距合并：这种样式的两个相邻框之间恰好相距<code>max(marginBottom, marginTop)</code>；框之后的正文可能偏离网格，直到下一个对齐点（标题、列表结尾），与<code>headings.snapToGrid: false</code>的标题之后一样。适用于由一个个框叠成的文档（练习册、表单）。它只作用于文字流中的框；多栏版式中的通栏框，以及浮动框、固定框和侧栏框都保持网格，因为栏带和浮动区都是在网格上排布的。各栏齐底的调节手段不变：收尾某一栏的框仍会被推到该栏最后一个网格位置。</td>
+    </tr>
+    <tr>
+      <td><code>keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>为<code>true</code>时，框保持完整：剩余空间放不下的标注框整个移到下一栏或下一页。只有比一整个空栏还高的框（对<code>span: 'page'</code>框来说是一整页）无法保持完整：它从出现处开始，按下文<code>false</code>的规则拆分，而不是溢出；能放进一栏的接续部分随后整体移动。这么高的浮动框（<code>placement: 'top' | 'bottom' | 'auto'</code>）不浮动，而是留在文字流中的原位。为<code>false</code>时，任何框都可以在子块之间、或段落和列表项的行与行之间断开：能放下的最深切口结束当前栏（对<code>span: 'page'</code>框来说结束当前页，与各栏底部齐平），其余部分在下一栏开头的一个独立框中继续，框形和色条相同，不带图标，也不带标题（除非<code>repeatTitle</code>重复它），仍然太高时再次拆分。每个片段的文字都保留行内图标在首段所占的那一栏（留空），因此框在每一页上的行长都相同。切口落在列表项内部时，项目符号留在切口之前的片段。每个片段的框形都共用围栏的<code>contentIndex</code> / <code>containerId</code>，并记录<code>callout.part</code> / <code>callout.continued</code>。可以把它用在一章末尾很长的“要点”框上，配合<code>headings.balancing.beforeSpan</code>；也可以用在绝不能把图挤出页面的注释样式上。嵌套的框（另一个框里的<code>:::callout</code>）是其父框的一个子块：切口可以落在它之前或之后；只有它自己的样式允许拆分时（<code>keepTogether: false</code>，或比一整栏还高），才会按它自己的<code>splitMinLines</code>在它内部断开。</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>拆分框（<code>keepTogether: false</code>，或比一整栏还高的保持完整框）的片段在切口两侧至少各保留几行文字。它只约束文字：只要某一侧有至少一个图、表、独立公式或嵌套框，无论行数多少都可以接受，所以一个全是图片的框可以只在一页上留下一张图。切口落在段落或列表项内部时，仍然计算两侧的全部行数（其中的图或公式计为一行），并且在每一侧至少留下该段落或列表项的<code>layout.boxChildSplitMinLines</code>行（默认两行；<code>splitMinLines</code>更低时取它，所以设为1就允许留一行）。按默认值，两三行的列表项绝不拆分，四行的只能拆成两行加两行。按默认值，任何框都不会在栏底或下一栏开头留下孤零零的一行文字；没有切口能满足最小值时，框整体移动。（postext 1.5之前，段落内部的切口只检查整个一侧的行数，所以当框里其他行凑够最小值时，两行的列表项可能被拆成一行加一行。）</td>
+    </tr>
+    <tr>
+      <td><code>repeatTitle</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>在拆分框每个接续部分的开头重复标题，后接<code>continuedSuffix</code>（“Key points (cont.)”）。重复的标题采用标题样式。没有标题的框不重复任何内容。见<a href="#拆分框的标记">拆分框的标记</a>。</td>
+    </tr>
+    <tr>
+      <td><code>continuedSuffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'(cont.)'</code></td>
+      <td>重复标题之后的文字，使用文档语言（<code>locale</code>，否则为断词语言），与拆分表格的做法相同，并像表格那样接在标题后面。</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerEnabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>在拆分框每个还要接续的部分的最后一行下方、框内，排出<code>continuesMarker</code>。</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarker</code></td>
+      <td><code>string</code></td>
+      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
+      <td>该标记的文字（剧本里的“(MORE)”），使用框的正文字体和字号，随文档语言而定。</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerAlign</code></td>
+      <td><code>'left' | 'center' | 'right'</code></td>
+      <td><code>'right'</code></td>
+      <td>标记在框内宽度中的位置。</td>
+    </tr>
+    <tr>
+      <td><code>continuesMarkerItalic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>把标记排成斜体。</td>
+    </tr>
+    <tr>
+      <td><code>numbering</code></td>
+      <td><code>&#123; label, counter, numberingTemplate, resetOn, counterFormat, placement, bold, italic, suffix &#125;</code></td>
+      <td>未设置</td>
+      <td>把这种样式的框作为编号的命题计数，如定理、引理、定义。见<a href="#编号的命题与证明">编号的命题与证明</a>。</td>
+    </tr>
+    <tr>
+      <td><code>endMark</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>在框最后一行末尾右对齐排出的记号，就像证明以<code>'∎'</code>或<code>'□'</code>结束：空一格后放得下时排在最后一行上，否则单独占一行。以不带编号的独立公式结束的框，把它作为该公式的标签排出。启用数学公式时，方块（∎ □ ■ ▪ ◻ ▫）用TeX自带的字形绘制，因此即使字体中没有这些字符（如Fontsource的latin文件）也能印出；关闭数学公式时，则用框正文的字体排出。</td>
+    </tr>
+  </tbody>
+</table>
+
+### `:::callout`容器
+
+`:::callout{type="<id>"}`一行打开框，单独一行`:::`关闭它。围栏接受五个属性：`type`（样式id）、`title`（覆盖样式的标题）、`span`、`placement`和`columns`（覆盖样式中的值）；两者之间的内容排在框内：先是可选的标题，然后是段落、列表、引文块、公式或资源嵌入，各自按样式的`body` / `lists`排版（标题保留它们平常的样式）。子块之间的外边距像正文中一样合并；框内部脱离基线网格，框之后文字流回到网格上，框下方至少留出`marginBottom`（以网格为准，外边距是最小值，资源遵循的也是这一约定）。`snapToGrid: false`的样式则保持精确的`marginBottom`，框之后的正文一直偏离网格，直到下一个标题或列表结尾。紧挨在标注框之前的标题与框保持同栏。
+
+本版本的限制：
+
+- 标注框保持完整，除非其样式设置了`keepTogether: false`。栏中剩余空间放不下时，它整个移到下一栏或下一页；一个被浮动区带或区带上限截短的空栏，只要完整的一栏能容纳它，框也会从中移出。比一整栏还高的框改为拆分，与可拆分的框一样；只有任何切口都拆不开的框（比栏还高的图或表，或没有切口能满足的`splitMinLines`）才会照排并溢出；此时版面记录一条`calloutOverflow`警告（`VDTDocument.warnings`），沙盒会列出它。`:::columns`组像它外面的框一样切开，切口落在子栏之间（自postext 1.25起）；只有设置了`layout.flowColumns: false`或位于嵌套框内时，它才保持完整，并可能以同样的方式溢出。可拆分的框留下能放下的部分，即完整的子块，或段落的若干行，每侧不少于`splitMinLines`行（单独一个图、表或独立公式就足以构成一侧），然后在下一栏或下一页的一个不带图标的框中继续，除非样式重复标题，否则也不带标题，还可以在它留下的部分下方加一个标记（见[拆分框的标记](#拆分框的标记)）。
+- 浮动体让位于不可拆分的框。当图的引用之后紧接的块是`keepTogether`标注框时，如果某个位置会让这个框在当前栏带中无栏可落（引用所在的栏，或它之后的空栏，在浮动之前本可容纳它），就不采用这个位置：图移到它的下一个位置，通常是下一页，框留在文字流中。这正是排版工人的做法：不会把框挤出页面，只在栏里留下那张图。
+- 在多栏版式中，`span: 'page'`让框成为**通栏块**：它按整个版心宽度排布，把页面切分成栏带。它上方的各栏文字在切线处结束，框自己占一个通栏宽的栏，下方新开一组文字栏，文字流在每一栏中都从框下继续。在各栏*平齐*的地方，即页面顶端、`span: 'page'`的章首标题正下方、另一个通栏块正下方，或顶部浮动区带正下方，框直接在那里切开。如果它在页面中部出现、各栏参差不齐，就按排版工人的方式处理：它上方的正文在所有栏中齐平切断（引擎把该栏带的各栏缩短到相同的网格行数后重新排布，于是文字自然地从一栏流向下一栏，所有段首孤行、段末孤行和与下文同栏的规则照样生效），框横跨整页，各栏在它下方继续。切断要多跑几遍排布；如果切线下方放不下框加上段首孤行（widow）规则所需的最少正文行数，或者尝试几次后仍没有合适的排法，框就移到下一页顶端。上方的正文遵守这条切线：一栏在图下方只剩几行、放不下一个段落的开头时，该段落移到下一栏（图于是单独占据那一栏）；当某个块仍会越过切线时，切线下移一行，而不是移到那个块结束的地方。开启栏带的拆分框也在那里切断，所以它的其余部分不会越过切线。在`headings.balancing.beforeSpan`（默认开启）下，框离开的栏带在它后面齐平切断，就像一章的收尾栏带；样式允许拆分时（`keepTogether: false`），框中能放进拉齐后各栏下方的部分结束这一页，其余部分开启下一页。设`beforeSpan: false`时，框离开的页面只做常规的各栏齐底，不强制分页。紧挨在通栏块之前的标题不随它移动。在单栏版式中，`span: 'page'`就是普通的行内排布。
+- `placement: 'fixed'`把框移出文字流：先排出框（`width: 'auto'`按标题收缩宽度；`'fill'`取锚点下方那一栏的文字宽度），再把它固定在它在文字流中所在的页面上，位置由`fixed.anchor` / `fixed.offset`描述，默认为内容区的左下角。它覆盖的文字栏让出这块区域（从底部截去，栏仍为空时从顶部截去），与浮动区带完全相同；如果这块区域中已经有正文、浮动体或通栏块，框就移到下一页。收尾一章的固定框（下一个块是章首页、`:::part`、浮动体屏障框或文档末尾）会先把它上方的各栏拉齐（`headings.balancing.trailing`），这样较短的收尾页会齐底结束，下方是徽标。框形和子块放在`page.floats`中，在所有后端中都在栏的裁切区之外渲染。
+- `placement: 'top' | 'bottom'`让框像资源一样**浮动**：它在出现处离开文字流，占用该处之后第一个空闲区带，即当前页的页脚（`'bottom'`），或文字流打开的下一页的页首 / 页脚，宽度为一栏（`span: 'column'`）或整个版心（`span: 'page'`）；它之后的正文填满它离开的那一页。它的框形和子块进入`page.floats`，与固定框一样。位于新一页页首的浮动框排在等待该页的图之前；在较早一页引用、随后能放在它下方的图，即使剩下的正文不足三行，也会占满该页其余部分（图集页：框加图，中间没有正文）。`span: 'side'`框从不浮动：无论placement如何，它都叠放在正文旁边。`columns`大于1时（在样式中或作为围栏属性，postext 1.18起），`span: 'column'`框占用这么多相邻的栏：一组顶端平齐的空栏的栏首，或者当前栏及其后空栏的栏脚，例如`:::callout{placement="top" columns="2"}`。
+- `width: 'auto'`只按标题收缩宽度，子内容被忽略。
+- 嵌套在另一个标注框中的`:::callout`是一个独立的框：它按自己的样式（底色、边框、圆角、内边距、色条、标题、图标、标记、标签、排版）以父框的全部内宽排布，作为父框的一个子块叠放，其`marginTop` / `marginBottom`与相邻块合并。它的`span`和`placement`（围栏或样式中的）被忽略，嵌套框总是在父框内顺排；`floatBarrier`和`snapToGrid`同样被忽略。框可以任意层级嵌套，也可以放在`:::columns`组中（每个框完整地位于一栏中）。父框拆分时，切口落在嵌套框之前或之后，嵌套样式允许拆分时也可以落在它内部；每个片段都会重画它切过的框形，从上一个片段接续过来的嵌套框不带标题和图标，与顶层的接续部分一样。
+- 子块中的`:::columns{count=N}` … `:::`组在框内把这些子块排成`N`个等宽的栏，间距为`columnGap`：这一串内容在最能让各栏平齐的块边界或行边界处切开（在中途切开的段落或列表项在下一栏开头继续，不带项目符号），每一栏都从组的顶部开始，组的高度等于最高的一栏；组之后的子块恢复全宽。拆分的框（`keepTogether: false`，或比一栏还高的框）也会在组内部、各栏之间切开：蛇形组依次填满各栏，接到下一个片段；平行组（`breaks`）则逐个流接续（postext 1.25起；见[文档格式 › `:::columns`](/zh/docs/document-format-directives#columns)）。围栏上的`gap`为该组替代`columnGap`，`rule`在每条栏间空白中画一条竖线。可用来排两栏的要点小结，或让宽框中的几张表并排。
+- 围栏的第六个属性`label`印在样式的标签上（见上文`label`）：`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`；样式没有`label`时忽略该属性。
+
+在VDT中，框是一个`type: 'callout'`的框形块，其装饰（底色、色条、图标、标题）放在`designOverlay`上，后面在同一栏中跟着它的子块；框形和每个子块都带有围栏的`containerId`。嵌套框是子块中一个独立的`type: 'callout'`框形，后面跟着它自己的块；这些块保留顶层围栏的`containerId`（排布和各栏齐底仍把它们看作一个单元），并加上`calloutPath`，即包围它们的各层嵌套围栏的容器id，由外到内排列（嵌套框形自己的id是最后一项）。带标签的PDF为每个嵌套框在其父框的`Div`内生成一个`Div`。图标图片与资源图片的解析方式相同：canvas图片注册表、HTML的`resourceImageUrl`选项和PDF的`resourceBytes`提供器。
+
+```ts
+const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
+// => 每个继承字段都从已解析的各节中填入；可选的
+//    locale决定接续字符串的语言
+
+const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
+// => 对内置的`note`默认值返回undefined；去掉静态默认值
+```
+
+### 编号的命题与证明
+
+带`numbering`的样式为它的框计数，就像LaTeX的`amsthm`为定理环境计数（postext 1.19起）。每个框印出它的标签和编号，即第一段开头的“**定理2.**”，围栏的`title`以括号跟在编号之后：`:::callout{type="theorem" title="Bradley–Terry"}`以“**定理2**（Bradley–Terry）**.**”开头。以标识符打开的框（`{#thm:main}`）可以作为交叉引用的目标，引用印出“定理2”（`:ref{id="thm:main"}`），`\ref{thm:main}`或`style=number`印出2。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>label</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>编号前面的词：<code>'定理'</code>、<code>'Lemma'</code>、<code>'Definición'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>counter</code></td>
+      <td><code>string | false</code></td>
+      <td>样式的<code>id</code></td>
+      <td>框所推进的计数器。指定同一个计数器的样式共用它，如同<code>\newtheorem&#123;lemma&#125;[theorem]</code>：定理1、引理2、定理3。<code>'equation'</code>与带标签的公式一起计数。<code>false</code>只印标签，不印编号（证明的“<em>证明.</em>”）。</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
+      <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
+      <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
+      <td>与资源类型中的相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为定理2.1、2.2……；<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。几种样式共用的计数器照常递增，不论各样式的模板印出什么。标记可以像资源类型的模板那样在冒号后写样式：<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>在字母编号的附录里印出<em>定理 A.1</em>。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>'runIn' | 'title'</code></td>
+      <td><code>'runIn'</code></td>
+      <td><code>'runIn'</code>把标签排在框第一段的开头（以列表、公式或另一个框开始的框，会为标签另起一段）；<code>'title'</code>把标签作为框的标题，按其<code>titleStyle</code>排出：“定理2（Bradley–Terry）”。</td>
+    </tr>
+    <tr>
+      <td><code>bold</code> / <code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code> / <code>false</code></td>
+      <td>段首标签及其后缀的字形，不受框正文的影响：正文为斜体（<code>body.italic</code>）时，直立的标签仍保持直立。括号中的标题以常规字重直立排出。</td>
+    </tr>
+    <tr>
+      <td><code>suffix</code></td>
+      <td><code>string</code></td>
+      <td><code>'.'</code></td>
+      <td>排在段首标签及其标题之后。</td>
+    </tr>
+  </tbody>
+</table>
+
+证明就是一个标签不编号、带结束记号的样式：
+
+```ts
+calloutStyles: [
+  { id: 'theorem', numbering: { label: '定理' }, body: { italic: true } },
+  { id: 'lemma', numbering: { label: '引理', counter: 'theorem' }, body: { italic: true } },
+  { id: 'definition', numbering: { label: '定义' } },
+  { id: 'proof', backgroundEnabled: false, endMark: '□',
+    numbering: { label: '证明', counter: false, bold: false, italic: true } },
+]
+```
+
+逐章排版的书中，计数器接着上一章继续（`LayoutContinuation.statementCounters`，由`continuationAfter`填入），全书大纲为每个编号框的锚点给出它的标签（`OutlineEntry.numberLabel`），所以从另一章引用时也能印出它。
+
+### 框内的排版
+
+框用自己的`body`和`lists`排版设置内容，其余一切沿用文档的样式：
+
+- **段落**采用框的`body`：字体、字号、行距、颜色、强调颜色、字重、`italic`、`smallCaps`、对齐、断词、缩进和段间距。未设置的字段继承`bodyText`。继承来的强调颜色保留与调色板的关联，所以框内的粗体、斜体和`:ref`标签与框外一样随`colorPalette`变化。（postext 1.4及以前，无论主色是什么，框内的粗体都保持`#295AA3`。）
+- **项目符号列表**以框的`lists`（项目符号字符、颜色、字形大小和字重、缩进、间隔、条目间距）覆盖`unorderedLists`，文字是框的正文。`lists.bulletChar`或`lists.color`与文档的设置（`unorderedLists`）不同时，替换每一层的项目符号或颜色；与之相同或未设置时，每一层保留各自的设置（`unorderedLists.levels`），所以嵌套的破折号在框内依然保留。
+- **编号列表**采用`lists.indent`、`gap`和`itemSpacing`；只要样式设置了`lists.color`，也采用它，即使它就是文档的项目符号颜色；未设置时，编号保持`orderedLists.color`。（postext 1.4及以前，只有当颜色与`unorderedLists.color`不同时才会作用到编号上，所以设成同一种颜色不起作用。）编号本身的字体、字号和分隔符来自全局的`orderedLists`，因为`lists`只有项目符号字段：框内编号的样式请在那里设置。
+- <strong>框内的`:::paragraphs`</strong>使用它们的段落样式，嵌套框中也是如此。段落样式未设置的字段继承文档的`bodyText`，而不是框的`body`（也不继承框的斜体或小型大写字母）。
+- **`:::columns`组**没有自己的样式：每一栏都共用框的正文和列表排版，`columnGap`设置栏间距。
+- **引文块**采用框的正文字体、字号和字重（与正文中一样为灰色斜体），以及框的小型大写字母。**标题**保留标题样式；**独立公式**保留数学设置。
+- **图和表**保留文档的题注和表格样式，宽度为框的内宽；它们的常规字重和粗体字重跟随框的`body`字重。
+- **行内标签**保留自己的标签样式；`em`字号按框的正文字号计算。
+- <strong>`:::space`</strong>以框的正文行为单位计量（它在哪些位置被丢弃，见[`:::space`](/zh/docs/document-format-directives#space)）。
+- **嵌套框**完整采用自己的样式；它的`span`、`placement`、`floatBarrier`和`snapToGrid`被忽略。
+
+### 拆分框的标记
+
+框跨栏或跨页拆分时（`keepTogether: false`，或框比一栏还高），第一部分之后的每一部分都不带标题和图标开始，默认也没有任何提示告诉读者框还在继续。图书或剧本常用的标记可以通过两个选项加上：
+
+- <strong>`repeatTitle: true`</strong>在每个接续部分的开头重复标题，后接`continuedSuffix`，默认为“Key points (cont.)”。重复的标题采用标题样式，所以配合`textTransform: 'uppercase'`就得到剧本里的“HAMLET (CONT'D)”。图标和标签只留在第一部分。
+- <strong>`continuesMarkerEnabled: true`</strong>在每个还要接续的部分的最后一行下方、框内，排出`continuesMarker`：“Continued”，西班牙语文档中为“Continúa”。它使用框的正文字体和字号：除非`continuesMarkerItalic`为`false`，否则为斜体；除非`continuesMarkerAlign`设为`'left'`或`'center'`，否则右对齐。标记占用它所结束的那一部分的空间，选择切口时会保证它放得下。
+
+```ts
+calloutStyles: [{
+  id: 'speech',
+  keepTogether: false,
+  titleStyle: { textTransform: 'uppercase' },
+  repeatTitle: true,
+  continuedSuffix: "(CONT'D)",
+  continuesMarkerEnabled: true,
+  continuesMarker: '(MORE)',
+  continuesMarkerAlign: 'center',
+  continuesMarkerItalic: false,
+}],
+```
+
+```md
+:::callout{type="speech" title="Hamlet"}
+A speech long enough to run over the foot of the page…
+:::
+```
+
+结束这一页的部分以“(MORE)”收尾，下一页以“HAMLET (CONT'D)”开始。两者都是分页附属物：在无障碍PDF中它们是artifact，在HTML中对辅助技术隐藏，所以标题只被朗读一次。在VDT中，它们是标记为`artifact: true`的`designOverlay`文本块。

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'الوحدات والألوان ولوحة الألوان، والخطوط المخصّصة، وعارض HTML، وإنتاج PDF والإنتاج الطباعي، وعارض Folio، والتصحيح',
   lang: 'ar',
   lastUpdated: '2026-10-10',
-  readingTime: '6 دقائق',
-  order: 11,
+  readingTime: '39 دقيقة',
+  order: 19,
   parent: 'configuration',
   plainSummary: "تتناول هذه الصفحة الإعدادات المشتركة في الكتاب كله وإعدادات كل نوع من المُخرجات. تشرح طريقة كتابة القياس واللون، وطريقة تسمية ألوان اللوحة. وتبيّن كيف تضيف خطوطك الخاصة. ثم تتناول عرض الويب وملف PDF والملفات التي تطلبها المطبعة والكتاب ثلاثي الأبعاد. ويفعّل القسم الأخير الأدلة والتحذيرات التي تساعدك أثناء العمل.",
 };
@@ -247,9 +247,9 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>الخاصية</th>
-      <th style={{ width: '160px' }}>النوع</th>
-      <th style={{ width: '140px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -307,7 +307,7 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => undefined when everything matches the defaults
 ```
 
-انظر [دمج عارض HTML](/ar/docs/configuration-programmatic-usage#دمج-عارض-html) أدناه لمثال كامل من البداية إلى النهاية.
+انظر [دمج عارض HTML](/ar/docs/configuration-html-folio-epub#دمج-عارض-html) أدناه لمثال كامل من البداية إلى النهاية.
 
 
 ## إنتاج PDF (الإعدادات)
@@ -336,9 +336,9 @@ interface PdfGenerationConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>الخاصية</th>
-      <th style={{ width: '180px' }}>النوع</th>
-      <th style={{ width: '140px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -395,7 +395,7 @@ const minimal  = stripPdfGenerationDefaults(config.pdfGeneration);
 // => undefined when everything matches the defaults
 ```
 
-انظر [إنتاج ملفات PDF](/ar/docs/configuration-programmatic-usage#توليد-ملفات-pdf) أدناه لوصفة التصدير الكاملة.
+انظر [إنتاج ملفات PDF](/ar/docs/configuration-pdf-output#توليد-ملفات-pdf) أدناه لوصفة التصدير الكاملة.
 
 
 ## الإنتاج الطباعي (الإعدادات)
@@ -428,9 +428,9 @@ interface CustomOutputProfile {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>الخاصية</th>
-      <th style={{ width: '170px' }}>النوع</th>
-      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -508,10 +508,10 @@ print: {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>المعرّف</th>
+      <th>المعرّف</th>
       <th>ظروف الطباعة</th>
-      <th style={{ width: '150px' }}>الاسم في السجل</th>
-      <th style={{ width: '90px' }}>حد الحبر</th>
+      <th>الاسم في السجل</th>
+      <th>حد الحبر</th>
     </tr>
   </thead>
   <tbody>
@@ -576,9 +576,9 @@ interface PrintBlackConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>الخاصية</th>
-      <th style={{ width: '140px' }}>النوع</th>
-      <th style={{ width: '170px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -644,9 +644,9 @@ interface PrintPreflightConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>الخاصية</th>
-      <th style={{ width: '110px' }}>النوع</th>
-      <th style={{ width: '100px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -729,9 +729,9 @@ interface ContrastConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '210px' }}>الخاصية</th>
-      <th style={{ width: '110px' }}>النوع</th>
-      <th style={{ width: '100px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -755,8 +755,8 @@ interface ContrastConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>المستوى</th>
-      <th style={{ width: '120px' }}>النص</th>
+      <th>المستوى</th>
+      <th>النص</th>
       <th>النص الكبير</th>
     </tr>
   </thead>
@@ -818,6 +818,66 @@ for (const issue of contrastDocument(doc, { transform })) {
 يطابق المُحلِّل والمُجرِّد ما في الأقسام الأخرى: `resolveContrastConfig` و`stripContrastDefaults`، مع `DEFAULT_CONTRAST_CONFIG` و`DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG` و`CONTRAST_LEVELS` و`CONTRAST_MODES`.
 
 
+## فحص المحتوى (الإعدادات)
+
+تجمع الخاصية `checks` الفحوص التي تقرأ الإعدادات نفسها. وفيها اليوم فحص واحد هو `contentInConfig`، ينبّه حين يحتفظ تصميمٌ بنصّ الكتاب. فرأس الصفحة الجاري وتصميم العنوان وصفحة الجزء وسطر الجزء في الفهرس كلها من الشكل: تحمل عناصر نائبة (`{chapterTitle}` و`{titleText}` و`{number}`) وكلمة أو كلمتين على الأكثر من عندها، مثل *الفصل* قبل `{chapterNumber}`. أما النص الذي هو جزء من الكتاب فمكانه ملف Markdown، حيث يراه الفهرس والبحث والترجمات وملف PDF الموسوم وEPUB. ولا يقرأ التنضيد هذا الفحص، فتغييره لا يحرّك سطرًا.
+
+```ts
+interface ChecksConfig {
+  contentInConfig?: {
+    enabled?: boolean;
+    allow?: string[];
+    maxWords?: number;
+    maxChars?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>الخاصية</th>
+      <th style={{ width: '110px' }}>النوع</th>
+      <th style={{ width: '100px' }}>الافتراضي</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>يُجري الفحص.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>عبارات يجوز للتصميم تكرارها مهما طالت: عنوان الكتاب، اسم الناشر. تُقارن دون اعتبار لحالة الأحرف والمسافات وعلامات الترقيم المحيطة بالكلمات، وإذا وُجدت عبارة داخل نص أطول أُزيلت قبل عدّ الباقي.</td></tr>
+    <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>أقصى عدد من الكلمات يحمله نص التصميم إلى جانب عناصره النائبة.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>أقصى عدد من الحروف والأرقام يحمله نص التصميم إلى جانب عناصره النائبة. ويُحسب الحرف الصيني أو الياباني أو الكوري أو التايلندي بثلاثة، فيمرّ نحو ثمانية منها.</td></tr>
+  </tbody>
+</table>
+
+### كيف يُقرأ نص التصميم
+
+- نصّه الحرفي هو `content` بعد حذف كل عنصر نائب (`{name}` و`{attr.key}` و`{firstMark.key}`)، مع قراءة `{{` و`}}` قوسين معقوفين و`\n` فاصل سطر.
+- النص الخالي من الحروف والأرقام (صفّ من نقاط الإرشاد، زخرفة، `·`) لا يُعدّ محتوى أبدًا.
+- الكلمة هي ما يقع بين مسافتين ويحمل حرفًا أو رقمًا: فـ`·` أو `|` وحدهما ليسا كلمة، وعنوان مثل `postext.dev` كلمة واحدة.
+- تُزال أولًا عبارات `allow`، وكذلك `title` و`subtitle` و`author` و`publisher` من البيانات الوصفية للمستند (مقدّمته)، إذ كثيرًا ما يكرّرها رأس الصفحة.
+- ما يبقى يُعدّ محتوى إذا زاد على `maxWords` كلمة أو على `maxChars` من الحروف والأرقام.
+
+تُقرأ كل خانات التصميم: `header` و`footer` و`advancedDesign.slot` لكل مستوى عناوين، و`advancedDesign.slot` و`header` و`footer` لكل نمط عنوان، و`parts.design` و`parts.versoDesign` و`toc.parts.design`، والمواضع نفسها داخل `htmlViewer.overrides`. وتسردها `configDesignSlots(config)` بمساراتها، وتعيد `designTextLiteral(content)` النص الحرفي لقالب.
+
+### التحذير
+
+تعطي `collectConfigWarnings` (و`VDTDocument.configWarnings`) تحذير `contentInConfig` واحدًا لكل إعداد يحمل محتوى: نمط عنوان (ومعرّفه `id` في `ownerId`)، أو مستوى عناوين، أو الترويسة، أو تصميم الأجزاء. يسمّي `path` الإعداد، و`count` نصوص التصميم المعنية، و`chars` حروفها وأرقامها، و`elements` مسار كل نص (أول 20)، و`value` بداية النص الأول (40 محرفًا على الأكثر). مرّر البيانات الوصفية للمستند وسيطًا ثانيًا ليُسمح بعنوانه ومؤلفه؛ والتنضيد يفعل ذلك وحده.
+
+```js
+import { collectConfigWarnings } from 'postext';
+
+collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+// [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
+//    value: 'Look at the picture and answer the questi…', used: '',
+//    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
+```
+
+**الحل:** انقل النص إلى Markdown، عنوانًا أو إطارًا أو فقرة في الفصل الذي ينتمي إليه، واترك في التصميم العناصر النائبة وحدها. والقيمة التي تتغيّر من فصل إلى فصل يمكن أن تُكتب في سطر العنوان وتُقرأ بـ`{attr.key}`: `# الخرائط {kicker="الدرس 4"}` و`{attr.kicker}` في التصميم. والعبارة التي هي من الشكل، مثل اسم الناشر في رأس الصفحة، توضع في `allow`.
+
+يعرض Sandbox التحذير في لوحة **الفحوص**، ويضع الفحص في **التصميم › متقدّم › المحتوى في الإعدادات**؛ ويطبعه `postext check`.
+
+
 ## عارض Folio (الإعدادات)
 
 تضبط الخاصية `folio` طريقة عرض عارض Folio (`postext-folio`) للكتاب المطبوع بالأبعاد الثلاثة: زاوية النظر، والورق، والتجليد، والسطح الذي يستقر عليه الكتاب، والإضاءة. يتجاهلها الإخراج، وكذلك مخرجات Canvas وHTML وPDF. يحمل `buildDocument` الإعدادات المحلولة في VDT باسم `doc.config.folio` حين تضبط الإعدادات أيًّا منها، فيحتفظ المستند الذي لا يضبطها ببصمة إخراجه.
@@ -859,9 +919,9 @@ interface FolioConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>الخاصية</th>
-      <th style={{ width: '180px' }}>النوع</th>
-      <th style={{ width: '140px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -930,7 +990,7 @@ interface FolioConfig {
       <td><code>binding.type</code></td>
       <td><code>FolioBindingType</code></td>
       <td><code>'hardcover'</code>؛ و<code>'folded'</code> في مقاسات الصحف</td>
-      <td><code>hardcover</code>: تجليد بغلاف صلب، ألواحه أكبر قليلًا من الصفحات. <code>paperback</code>: تجليد بالغراء (تُفرز الكعوب وتُلصق)، ينفتح أقل استواءً. <code>sewn</code>: غلاف ليّن بملازم مخيطة. <code>layflat</code>: ينفتح مستويًا، بلا انخفاض عند الفاصل الداخلي. <code>saddleStitch</code>: أوراق مطوية مدبّسة عبر الطيّة، كالمجلة أو الكتيّب؛ بلا كعب مسطّح. <code>folded</code> (منذ postext 1.18): جريدة، أفرخ مطوية مرة واحدة يوضع بعضها داخل بعض بلا شيء يمسكها؛ بلا دبابيس ولا كعب ولا غلاف مقوّى، والصفحة الأولى هي الواجهة. ومقطع <a href="/ar/docs/document-format#paper"><code>:::paper</code></a> ذو <code>shade</code> يطبع قسمًا، كصفحات الاقتصاد، على ورق صحف بلون السلمون.</td>
+      <td><code>hardcover</code>: تجليد بغلاف صلب، ألواحه أكبر قليلًا من الصفحات. <code>paperback</code>: تجليد بالغراء (تُفرز الكعوب وتُلصق)، ينفتح أقل استواءً. <code>sewn</code>: غلاف ليّن بملازم مخيطة. <code>layflat</code>: ينفتح مستويًا، بلا انخفاض عند الفاصل الداخلي. <code>saddleStitch</code>: أوراق مطوية مدبّسة عبر الطيّة، كالمجلة أو الكتيّب؛ بلا كعب مسطّح. <code>folded</code> (منذ postext 1.18): جريدة، أفرخ مطوية مرة واحدة يوضع بعضها داخل بعض بلا شيء يمسكها؛ بلا دبابيس ولا كعب ولا غلاف مقوّى، والصفحة الأولى هي الواجهة. ومقطع <a href="/ar/docs/document-format-directives#paper"><code>:::paper</code></a> ذو <code>shade</code> يطبع قسمًا، كصفحات الاقتصاد، على ورق صحف بلون السلمون.</td>
     </tr>
     <tr>
       <td><code>binding.cover</code></td>
@@ -1049,7 +1109,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-في Sandbox، هذه الإعدادات هي مجموعة **Folio** في لوحة التصميم (**التصميم › Folio › عارض Folio (ثلاثي الأبعاد)**)، ويعرضها تبويب Folio وأنت تغيّرها، دون إعادة إخراج الكتاب. انظر [كتاب ثلاثي الأبعاد](/ar/docs/configuration-programmatic-usage#كتاب-ثلاثي-الأبعاد-postext-folio) للعارض نفسه، و[صيغة المستند › `:::paper`](/ar/docs/document-format#paper) لسلسلة صفحات على نوع ورق آخر.
+في Sandbox، هذه الإعدادات هي مجموعة **Folio** في لوحة التصميم (**التصميم › Folio › عارض Folio (ثلاثي الأبعاد)**)، ويعرضها تبويب Folio وأنت تغيّرها، دون إعادة إخراج الكتاب. انظر [كتاب ثلاثي الأبعاد](/ar/docs/configuration-html-folio-epub#كتاب-ثلاثي-الأبعاد-postext-folio) للعارض نفسه، و[صيغة المستند › `:::paper`](/ar/docs/document-format-directives#paper) لسلسلة صفحات على نوع ورق آخر.
 
 
 ## التصحيح
@@ -1059,8 +1119,8 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>الخاصية</th>
-      <th style={{ width: '200px' }}>النوع</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -1098,9 +1158,9 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>الخاصية</th>
-      <th style={{ width: '120px' }}>النوع</th>
-      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -1211,9 +1271,9 @@ interface WarningsToggleConfig {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>الخاصية</th>
-      <th style={{ width: '120px' }}>النوع</th>
-      <th style={{ width: '120px' }}>القيمة الافتراضية</th>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
       <th>الوصف</th>
     </tr>
   </thead>
@@ -1284,7 +1344,9 @@ debug: {
 - **إعداد عنوان غير معروف**: مفتاح لا يوجد في `headings`، أو `headings.balancing`، أو مستوى عنوان، أو نمط عنوان، أو نمط فقرة: مثل `letterSpacng` مكتوبًا خطأً، أو `tracking` مستعارًا من أداة أخرى، أو `level` في نمط عنوان، أو `fontStyle: 'italic'` في نمط فقرة (الذي يأخذ `italic: true`). ويُفحص موضع الجدولة بالطريقة نفسها (`leaders` بدل `leader`). يتجاهله المحرّك (وحتى postext 1.4 كان يفعل ذلك دون أي إشعار). `value` هو المفتاح، و`used` فارغ، و`suggestion` يسمّي الإعداد الأقرب إليه، حين يبعد عنه حرفًا أو حرفين أو لا يختلف عنه إلا في حالة الأحرف (`unknownConfigKey`).
 - **قيمة إعداد غير معروفة**: إعداد يأخذ كلمة من بضع كلمات يحمل كلمة أخرى، مثل `direction: 'right'` (الذي يأخذ `auto` أو `ltr` أو `rtl`). يقرأ المحرّك القيمة الافتراضية بدلًا منها، ويسمّي `used` ما آلت إليه: في `direction`، اتجاه لغة المستند (`unknownConfigValue`). ويُقرأ `align` في موضع الجدولة الذي ليس إحدى كلماته الأربع `'start'`، و`position` الذي ليس طولًا ولا `'end'` ولا نسبة مئوية يستبعد الموضع (`used` هو `'none'`). وتُفحص كلمات إعدادات القصص المصورة أيضًا ([القصص المصورة › تحذيرات القصص المصورة](/ar/docs/comics#تحذيرات-القصص-المصورة)): `used` هي القيمة التي آل إليها الإعداد (القيمة الافتراضية لنمط الفقاعة نفسه، في النمط المدمج)، و`suggestion` تسمّي الكلمة الأقرب إلى القيمة، حين تكون إحداها قريبة. ويُفحص `level` و`mode` في فحص التباين بالطريقة نفسها: `used` هي `'AA'` أو `'auto'`.
 - **أرقام الأسطر في النص العمودي**: `lineNumbers.enabled: true` في مستند منضّد عموديًا (`layout.writingMode: 'vertical-rl'`). الصفحات العمودية لا تأخذ أرقام أسطر، و`used` هو `false` (`lineNumbersUnsupported`؛ انظر [ترقيم الأسطر](/ar/docs/configuration-notes-references#ترقيم-الأسطر)).
-- **التفاف النص في الكتابة العمودية** — `defaultPlacement.wrap` لنوع مورد في مستند مكتوب عموديًا. الصفحات العمودية لا تصفّ نصًا بجانب الشكل، و`used` هي `none` (`wrapUnsupported`؛ انظر [تنسيق المستند › التفاف النص](/ar/docs/document-format#التفاف-النص)). و`wrap` لا يسمّي جانبًا قيمةُ إعداد غير معروفة.
+- **التفاف النص في الكتابة العمودية** — `defaultPlacement.wrap` لنوع مورد في مستند مكتوب عموديًا. الصفحات العمودية لا تصفّ نصًا بجانب الشكل، و`used` هي `none` (`wrapUnsupported`؛ انظر [تنسيق المستند › التفاف النص](/ar/docs/document-format-resources#التفاف-النص)). و`wrap` لا يسمّي جانبًا قيمةُ إعداد غير معروفة.
+- **قوالب الصفحات وأنماط التسميات** — مشكلة في `pageTemplates` أو `labelStyles`: معرّف أو اسم مكرّر، أو حقول `extends` أو روابط أو خانات متتابعة تدور في حلقة، أو نمط أو خانة أو قالب غير موجود، أو حدّ أدنى أكبر من حدّه الأقصى، أو نمط تسمية لمرساة ليس في `labelStyles` (يُفحَص عند تمرير الموارد: `collectConfigWarnings(config, { resources })`). يكون `path` في هذه التحذيرات مؤشّر JSON (`/pageTemplates/3/frames/2/style`)، وكل نوع مذكور بسببه وطريقة إصلاحه في [تحذيرات قوالب الصفحات](/ar/docs/configuration-composed-pages#تحذيرات-قوالب-الصفحات).
+- **محتوى في تصميم** — عنصر نصّي في تصميم يزيد نصّه، إلى جانب العناصر النائبة، على تسمية قصيرة: أي نص الكتاب محفوظًا في الإعدادات. تحذير واحد لكل إعداد (نمط عنوان، الترويسة، تصميم الأجزاء) مع مسار كل نص (`contentInConfig`؛ انظر [فحص المحتوى](#فحص-المحتوى-الإعدادات)). وخلافًا للبقية يمكن إيقافه: `checks.contentInConfig.enabled: false`.
 
 يُدرجها Sandbox في لوحة **الفحوص** مع مسار الإعداد. وفي الشيفرة، يضعها `buildDocument` على المستند باسم `configWarnings` (وتغيب حين تكون الإعدادات سليمة)، ويعيدها `collectConfigWarnings(config)` دون إخراج أي شيء:
 

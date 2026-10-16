@@ -20,6 +20,36 @@ function find<K extends WarningPayload['kind']>(
   );
 }
 
+describe('composed-page warnings (#854)', () => {
+  const config = { pageTemplates: [{ id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'caja' }, { name: 'nota', optional: true }] }] } as unknown as PostextConfig;
+
+  it('lists unknown templates, unknown slots and empty frames from the source', () => {
+    const md = '::::page{template="tema"}\nText.\n:::frame{slot="cja"}\nBox.\n:::\n::::\n\n::::page{template="otra"}\n::::';
+    const unknownSlot = find(md, 'slotUnknown', config);
+    expect(unknownSlot).toHaveLength(1);
+    expect(unknownSlot[0]!.payload).toEqual({ kind: 'slotUnknown', template: 'tema', slot: 'cja', fenceIndex: 0 });
+    expect(md.slice(unknownSlot[0]!.sourceStart, unknownSlot[0]!.sourceEnd)).toBe('cja');
+    expect(find(md, 'slotEmpty', config).map((w) => w.payload.frame)).toEqual(['caja']);
+    const unknown = find(md, 'templateUnknown', config);
+    expect(unknown.map((w) => w.payload.template)).toEqual(['otra']);
+    expect(unknown[0]!.line).toBe(8);
+    for (const k of ['slotUnknown', 'slotEmpty', 'templateUnknown', 'pageFenceLength'] as const) expect(warningCategory(k)).toBe('markup');
+  });
+
+  it('flags a composed page written with three colons', () => {
+    expect(kinds(':::page{template="tema"}\n::panel\nA: Hi.\n:::', config)).toContain('pageFenceLength');
+  });
+
+  it('reports a page left open as an unclosed container', () => {
+    const found = find('::::page{template="tema"}\nText.', 'unclosedContainer', config);
+    expect(found.map((w) => w.payload.name)).toEqual(['composedPage']);
+  });
+
+  it('knows :::frame and :::figure', () => {
+    expect(kinds(':::frame{slot="x"}\nA.\n:::\n\n:::figure{resource="m"}\n:::')).not.toContain('unknownDirective');
+  });
+});
+
 describe('fenced-container warnings', () => {
   it('does not flag known containers as unknown directives', () => {
     const md = [
@@ -630,6 +660,25 @@ describe('engine content warnings', () => {
       .filter((w) => w.payload.kind === 'openerFloat')).toEqual([]);
   });
 
+  it('reports a contents block cut between columns, by its book page (#850)', () => {
+    const g = globalThis as unknown as { OffscreenCanvas?: unknown };
+    g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };
+    const pt = (value: number) => ({ value, unit: 'pt' as const });
+    const config: PostextConfig = {
+      page: { width: pt(360), height: pt(260), margins: { top: pt(18), bottom: pt(18), left: pt(18), right: pt(18) } },
+      layout: { layoutType: 'single' },
+      headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] },
+      headingStyles: [{ id: 'front', numbered: false }],
+    };
+    const chapters = (title: string, n: number) => Array.from({ length: n }, (_, i) => `# ${title} ${i + 1}\n\nText.`).join('\n\n');
+    const md = `# Contents {style="front" toc="false"}\n\n:::toc{keep="part"}\n\n:::part{number="I" title="Long"}\n:::\n\n${chapters('Chapter', 30)}`;
+    const doc = buildDocument({ markdown: md }, config);
+    const cut = computeWarnings({ markdown: md, config, doc }).filter((w) => w.payload.kind === 'tocGroupSplit');
+    expect(cut.map((w) => w.payload)).toEqual([{ kind: 'tocGroupSplit', page: 1, title: 'Long', columns: 2 }]);
+    expect(md.slice(cut[0]!.sourceStart, cut[0]!.sourceEnd)).toBe(':::toc{keep="part"}');
+    expect(warningCategory('tocGroupSplit')).toBe('typesetting');
+  });
+
   it('flags an image the previews cannot read, unless storage itself is out', () => {
     const md = 'Look :ref{id="photo"}.';
     const found = computeWarnings({ markdown: md, config: {}, doc: null, resources: [photo], unavailableImages: new Set(['file-photo']) })
@@ -915,5 +964,26 @@ describe('comic page warnings (#570)', () => {
     const md = 'a'.repeat(50);
     const kindsFound = computeWarnings({ markdown: md, config: {}, doc }).map((w) => w.payload.kind).filter((k) => k.startsWith('comic'));
     expect(kindsFound).toEqual(['comicPanelLetterbox', 'comicBalloonOverflow']);
+  });
+});
+
+describe('page template warnings (#853)', () => {
+  it('lists the engine\'s template warnings in the design group, with the resource of an anchor', () => {
+    const config: PostextConfig = {
+      calloutStyles: [{ id: 'caja' }],
+      pageTemplates: [{ id: 'tema', frames: [{ name: 'texto', flow: true, style: 'cja' }, { name: 'texto' }] }, { id: 'hijo', extends: 'tem' }],
+    };
+    const mapa = { id: 'mapa', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, anchors: [{ id: 'madrid', x: 0.5, y: 0.5, style: 'ciudad' }] } as Resource;
+    const found = computeWarnings({ markdown: 'Text.', config, doc: null, resources: [mapa] })
+      .filter((w) => ['frameStyleUnknown', 'frameDuplicate', 'templateExtendsUnknown', 'labelStyleUnknown'].includes(w.payload.kind));
+    expect(found.map((w) => w.payload)).toEqual([
+      { kind: 'frameDuplicate', path: '/pageTemplates/0/frames/1', value: 'texto', used: '' },
+      { kind: 'frameStyleUnknown', path: '/pageTemplates/0/frames/0/style', value: 'cja', used: '', suggestion: 'caja' },
+      { kind: 'templateExtendsUnknown', path: '/pageTemplates/1/extends', value: 'tem', used: '', suggestion: 'tema' },
+      { kind: 'labelStyleUnknown', path: '/resources/0/anchors/0/style', value: 'ciudad', used: '', resourceId: 'mapa' },
+    ]);
+    for (const kind of ['templateDuplicate', 'templateExtendsCycle', 'templateExtendsUnknown', 'frameDuplicate', 'frameStyleUnknown', 'frameAnchorUnknown', 'frameMinMax', 'groupFrameUnknown', 'groupFrameTwice', 'frameChainLoop', 'overflowTargetUnknown', 'labelStyleUnknown'] as const) {
+      expect(warningCategory(kind), kind).toBe('design');
+    }
   });
 });

@@ -6,8 +6,8 @@ export const metadata = {
   description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 36 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
   lastUpdated: '2026-10-13',
-  readingTime: '14 min',
-  order: 23,
+  readingTime: '13 min',
+  order: 43,
   plainSummary: "Esta página é para quem quer que um assistente de inteligência artificial trabalhe por você em um livro no Sandbox. Enquanto o Sandbox está aberto, ele entrega ao assistente um conjunto de ferramentas para olhar qualquer página, mudar o design, editar o texto, adicionar imagens e tabelas, encontrar problemas e salvar arquivos. Você pede com as suas palavras, por exemplo \"aumente um pouco a letra e confira se o livro continua cabendo em 40 páginas\", e o assistente usa as ferramentas e mostra as páginas para você. Tudo fica no seu navegador. A página explica como conectar um assistente, o que ele pode fazer e como cada ferramenta é chamada.",
 };
 
@@ -637,7 +637,7 @@ cada uma vêm com `postextWebMcp.listTools()`.
 ## Ao incorporar o Sandbox
 
 `<PostextSandbox>` registra as ferramentas enquanto está montado;
-`webmcp={false}` as deixa de fora (veja [Props](/pt/docs/sandbox#props)). Uma
+`webmcp={false}` as deixa de fora (veja [Props](/pt/docs/sandbox-embedding#props)). Uma
 página hospedeira pode adicionar ferramentas próprias pelo mesmo módulo:
 
 ```ts

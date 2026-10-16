@@ -6,8 +6,8 @@ export const metadata = {
   description: 'How Postext sets Chinese, horizontally and vertically: regions, line breaking, punctuation widths, justification between characters, the character grid, right-bound books, upright numbers, marks, ruby, warichu, Chinese numerals and fonts',
   lang: 'en',
   lastUpdated: '2026-09-30',
-  readingTime: '26 min',
-  order: 15,
+  readingTime: '32 min',
+  order: 30,
   plainSummary: "This page explains how Postext lays out Chinese text. Chinese can run across the page in rows, or down the page in columns read from right to left. Mainland China, Taiwan and Hong Kong use slightly different rules for punctuation and line breaks, and Postext follows each set. The page also covers numbers inside up-and-down text, sound guides printed beside characters, notes in small type and which fonts to use. It ends with two complete examples and the limits that remain.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **A Chinese page is a grid of square cells, and the rules that fill it depend on where the book is printed.**
 
-Postext sets Chinese across the page and down it, from one Markdown source and one configuration. The same engine places the punctuation of a mainland novel where GB/T 15834 puts it and that of a Taiwan edition where the Ministry of Education's handbook does, breaks their lines under each region's rules, adjusts the blank inside each mark, spreads a justified line between its characters, stands short numbers upright in a vertical column, and turns a book's spreads so that it opens from the right. This page explains what the engine does and which settings control it. The [configuration reference](/en/docs/configuration-east-asian#east-asian-typography) lists every key with its default, and the [document format](/en/docs/document-format#chinese-marks-ruby-and-warichu) describes the markup.
+Postext sets Chinese across the page and down it, from one Markdown source and one configuration. The same engine places the punctuation of a mainland novel where GB/T 15834 puts it and that of a Taiwan edition where the Ministry of Education's handbook does, breaks their lines under each region's rules, adjusts the blank inside each mark, spreads a justified line between its characters, stands short numbers upright in a vertical column, and turns a book's spreads so that it opens from the right. This page explains what the engine does and which settings control it. The [configuration reference](/en/docs/configuration-east-asian#east-asian-typography) lists every key with its default, and the [document format](/en/docs/document-format-inline#chinese-marks-ruby-and-warichu) describes the markup.
 
 The rules follow the W3C *Requirements for Chinese Text Layout* ([clreq](https://www.w3.org/TR/clreq/)), cited below by section, and the national standards it draws on. The sources are listed at the end.
 
@@ -41,7 +41,7 @@ The language is also the one the text is shaped in. A Chinese face answers with 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Default</th>
+      <th>Default</th>
       <th>Mainland (<code>zh-Hans</code>, <code>zh-CN</code>)</th>
       <th>Taiwan (<code>zh-Hant</code>, <code>zh-TW</code>)</th>
       <th>Hong Kong (<code>zh-HK</code>, <code>zh-MO</code>)</th>
@@ -78,7 +78,7 @@ Chinese text is written in the same Markdown as any other. A few rules make it c
 - **Emphasis and ranges.** `_` and `__` work between Chinese characters (`中文_斜体_中文`). A `~` between two digits or two Chinese words is a range and stays as typed (`3~5天`, `周一~周五`).
 - **Ids and file names** keep Chinese letters: a chapter titled 第一回 is stored as `chapters/001-第一回.md`.
 
-The directives for Chinese marks, ruby, warichu and orientation are described [below](#marks-and-annotations) and in the [document format](/en/docs/document-format#chinese-marks-ruby-and-warichu).
+The directives for Chinese marks, ruby, warichu and orientation are described [below](#marks-and-annotations) and in the [document format](/en/docs/document-format-inline#chinese-marks-ruby-and-warichu).
 
 ## Horizontal composition
 
@@ -91,7 +91,7 @@ The line-start and line-end rules (避头尾) say which marks may not open a lin
 <table>
   <thead>
     <tr>
-      <th style={{ width: '90px' }}>Level</th>
+      <th>Level</th>
       <th>Never at the start of a line</th>
       <th>Never at the end of a line</th>
     </tr>
@@ -123,10 +123,10 @@ A full-width mark is half an em of glyph and half an em of blank, and what the s
 <table>
   <thead>
     <tr>
-      <th style={{ width: '150px' }}>Style</th>
+      <th>Style</th>
       <th>Inside the line</th>
       <th>At the end of the line</th>
-      <th style={{ width: '180px' }}>Where it is used</th>
+      <th>Where it is used</th>
     </tr>
   </thead>
   <tbody>
@@ -175,7 +175,7 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 Each column becomes `charsPerLine` ems of the body size and the type area `linesPerPage` lines of the body line height. The configured `page.margins` act as minimums: the type area is centred in the room they leave, each margin growing by half the difference. With two columns the gutter is rounded to a whole number of ems. A number larger than fits is reduced and reported (`cjkGridClamped`); an unset one takes as many as fit. `show` draws the grid (稿纸) on screen, one square per character position; the PDF leaves it out unless `renderToPdf` is given `characterGrid: true`.
 
-A page on the grid is filled line by line and is not balanced: a column that ends short, a heading kept with its text on the next page say, stays short, the way a GB/T 9704 document counts its 22 lines. `headings.balancing.enabled: true` turns balancing on with levers that keep the grid: lines added above headings and under lists, displays and figures are whole lines of the grid, which `headings.balancing.gridLines: 'off'` keeps out, and a paragraph runs a line long only when its characters spread no more than `headings.balancing.maxTracking` apart, which a line a whole character short never does at the default. Every character stays in its cell either way. See [Configuration › Column balancing](/en/docs/configuration-text#column-balancing).
+A page on the grid is filled line by line and is not balanced: a column that ends short, a heading kept with its text on the next page say, stays short, the way a GB/T 9704 document counts its 22 lines. `headings.balancing.enabled: true` turns balancing on with levers that keep the grid: lines added above headings and under lists, displays and figures are whole lines of the grid, which `headings.balancing.gridLines: 'off'` keeps out, and a paragraph runs a line long only when its characters spread no more than `headings.balancing.maxTracking` apart, which a line a whole character short never does at the default. Every character stays in its cell either way. See [Configuration › Column balancing](/en/docs/configuration-page-flow#column-balancing).
 
 The `avoidWidows` and `avoidOrphans` rules follow the grid as well. `bodyText.avoidWidows` is off by default on a grid: a paragraph may start with one line at the foot of a page, and the page keeps its count of lines. `bodyText.avoidOrphans` stays on: the last line of a paragraph does not stand alone at the head of a page (孤行, clreq §7.1.2), and the page before gives up a line for it. Set either key to choose otherwise.
 
@@ -196,7 +196,7 @@ headings: {
 },
 ```
 
-That gives 第一回 to 第一百二十回, followed by an ideographic space before the title. A 回目 couplet is written with a line break in the heading, `# 甄士隱夢幻識通靈 \\ 賈雨村風塵懷閨秀`. A heading design prints `{titleText}` on two lines, one half each: an opener band, or an in-column `advancedDesign` on the level or on a heading style (see [Span and advanced design](/en/docs/configuration-text#span-and-advanced-design)). Everywhere else the halves are joined with an ideographic space: in the contents, the running heads and the PDF bookmarks, and in a heading set in the column without a design, where the joined title then wraps wherever the measure ends, often inside the second half. A break between a Chinese character and a digit or a Latin word (`# 示例市出版协会关于举办 \\ 2026年中文排版实务培训班的通知`) is set as the Han–Latin space in the column, the contents and the running heads, and the PDF bookmarks and document title join it with nothing. Neither example below has a design, so give the heading one when the couplet should stand on two lines. `{1:words}` writes the number in Chinese words in a Chinese document (十二) and `{1:ordinal}` with 第 (第十二). A part numbered `:::part{number="卷三"}` reads as 3 for the placeholders that need a number.
+That gives 第一回 to 第一百二十回, followed by an ideographic space before the title. A 回目 couplet is written with a line break in the heading, `# 甄士隱夢幻識通靈 \\ 賈雨村風塵懷閨秀`. A heading design prints `{titleText}` on two lines, one half each: an opener band, or an in-column `advancedDesign` on the level or on a heading style (see [Span and advanced design](/en/docs/configuration-headings#span-and-advanced-design)). Everywhere else the halves are joined with an ideographic space: in the contents, the running heads and the PDF bookmarks, and in a heading set in the column without a design, where the joined title then wraps wherever the measure ends, often inside the second half. A break between a Chinese character and a digit or a Latin word (`# 示例市出版协会关于举办 \\ 2026年中文排版实务培训班的通知`) is set as the Han–Latin space in the column, the contents and the running heads, and the PDF bookmarks and document title join it with nothing. Neither example below has a design, so give the heading one when the couplet should stand on two lines. `{1:words}` writes the number in Chinese words in a Chinese document (十二) and `{1:ordinal}` with 第 (第十二). A part numbered `:::part{number="卷三"}` reads as 3 for the placeholders that need a number.
 
 Ordered lists follow the hierarchy of GB/T 15834—2011 (一、 （一） 1. （1） ①) with a `prefix` before the number:
 
@@ -279,7 +279,7 @@ Running heads and folios stay on the sheet and are set horizontally, as in most 
 - **Fore-edge heads**: the chapter title down the outer margin, starting about four characters below the head of the type area, and the folio ending about five characters above its foot, in Chinese numerals, at about 80 % of the body size. The Sandbox adds them in one step (**Header › Fore-edge heads (vertical)**).
 - **Folio at the outer foot corner**, as Taiwan's rules for vertical books ask: a horizontal element in the footer at the bottom left of odd pages and the bottom right of even pages of a right-bound book.
 
-The template is in the configuration reference, under [Vertical text elements](/en/docs/configuration-page-layout#vertical-text-elements).
+The template is in the configuration reference, under [Vertical text elements](/en/docs/configuration-headers-footers#vertical-text-elements).
 
 ### Vertical text in each output
 
@@ -327,7 +327,7 @@ Postext sets each style in one family and does not fall back to another family f
 - **The region's face.** Noto Serif SC, TC and HK draw the same code points in their region's shapes, and put the pause and stop marks where their region puts them. A book's face and its locale should agree.
 - **No italics.** Chinese faces have none; the browser and the PDF would slant the glyphs. Set emphasis with dots, a Kai face (楷体, such as LXGW WenKai) or bold.
 
-The traditional voices of a Chinese book map onto families: Song (宋体, Noto Serif) for the text, Hei (黑体, Noto Sans) for headings and labels, Kai (楷体) for quotations, verse and prefaces, Fangsong (仿宋) for official documents. [Chinese, Japanese and Korean fonts](/en/docs/configuration-programmatic-usage#chinese-japanese-and-korean-fonts) in the configuration reference has the font provider code.
+The traditional voices of a Chinese book map onto families: Song (宋体, Noto Serif) for the text, Hei (黑体, Noto Sans) for headings and labels, Kai (楷体) for quotations, verse and prefaces, Fangsong (仿宋) for official documents. [Chinese, Japanese and Korean fonts](/en/docs/configuration-pdf-output#chinese-japanese-and-korean-fonts) in the configuration reference has the font provider code.
 
 ## Two complete configurations
 
@@ -416,7 +416,7 @@ const config: PostextConfig = {
 
 ## In the Sandbox and the Cookbook
 
-In the Sandbox, **Design › Writing system** holds the document language, the writing mode, the binding and every `cjk` setting, and **Chinese defaults › Review…** sets a book up for Chinese in one step, listing each change first (see [Sandbox](/en/docs/sandbox#design-panel)). The showcase shelf has *Dream of the Red Chamber* (紅樓夢, 程乙本 of 1792) in three editions: [Traditional, vertical and bound on the right](/en/sandbox#preset=hongloumeng&lang=zh-Hant), [Simplified and horizontal](/en/sandbox#preset=hongloumeng&lang=zh-Hans), and the first 56 chapters in H. Bencraft Joly's English translation. The Sandbox's own guide has [a Chinese edition](/en/sandbox#preset=postext-guide&lang=zh-Hans) set the same way: vertical and bound on the right, in two tiers, with chapter bands down the right edge, running heads down the fore-edge and folios in Chinese numerals. The [Cookbook](/en/cookbook?col=chinese-layout) gathers the Chinese recipes in its *Chinese layout* collection, each a page or spread with the script that sets it.
+In the Sandbox, **Design › Writing system** holds the document language, the writing mode, the binding and every `cjk` setting, and **Chinese defaults › Review…** sets a book up for Chinese in one step, listing each change first (see [Sandbox](/en/docs/sandbox-design-checks#design-panel)). The showcase shelf has *Dream of the Red Chamber* (紅樓夢, 程乙本 of 1792) in three editions: [Traditional, vertical and bound on the right](/en/sandbox#preset=hongloumeng&lang=zh-Hant), [Simplified and horizontal](/en/sandbox#preset=hongloumeng&lang=zh-Hans), and the first 56 chapters in H. Bencraft Joly's English translation. The Sandbox's own guide has [a Chinese edition](/en/sandbox#preset=postext-guide&lang=zh-Hans) set the same way: vertical and bound on the right, in two tiers, with chapter bands down the right edge, running heads down the fore-edge and folios in Chinese numerals. The [Cookbook](/en/cookbook?col=chinese-layout) gathers the Chinese recipes in its *Chinese layout* collection, each a page or spread with the script that sets it.
 
 ## Known limits
 
@@ -424,8 +424,8 @@ In the Sandbox, **Design › Writing system** holds the document language, the w
 - **Design text** (running heads, openers, box titles, part pages) takes the line-start and line-end rules, the punctuation widths and the Han–Latin space of the body (`cjk.composeDesignText`, since postext 1.25), but its lines are ragged: they are not spread between characters.
 - **One writing mode per page.** A horizontal box inside a vertical page, native vertical tables with the header row on the right, and captions beside an upright figure are not available. Inline formulas, chips and swatches are turned sideways with a vertical line.
 - **Line numbers** are not printed in vertical text: a vertical book that turns `lineNumbers` on gets none, with a `lineNumbersUnsupported` configuration warning. Horizontal books number their lines like any other ([Configuration › Line numbers](/en/docs/configuration-notes-references#line-numbers)).
-- **Text wrap.** In horizontal text a picture or a box can stand at one side of its column with the text beside it (see [Text wrap](/en/docs/document-format#text-wrap)); under the character grid the room it takes is a whole number of characters, so the lines beside it keep to the grid. Vertical text sets no text beside a figure: a wrapped figure keeps its band, with a `textWrap` warning (`wrapUnsupported` for a resource type's default).
-- **Tabs.** A horizontal paragraph that holds a tab (`:tab`, or a tab character under a style with tab stops) is set line by line: broken between characters under the document's line-breaking rules, but without punctuation compression or justification between characters. In vertical text there are no tab stops: a tab is a word space, and a `:tab` raises the `tabInVerticalText` content warning. A paragraph with ruby or warichu also sets its tabs as word spaces. See [Tabs and tab stops](/en/docs/document-format#tabs-and-tab-stops).
+- **Text wrap.** In horizontal text a picture or a box can stand at one side of its column with the text beside it (see [Text wrap](/en/docs/document-format-resources#text-wrap)); under the character grid the room it takes is a whole number of characters, so the lines beside it keep to the grid. Vertical text sets no text beside a figure: a wrapped figure keeps its band, with a `textWrap` warning (`wrapUnsupported` for a resource type's default).
+- **Tabs.** A horizontal paragraph that holds a tab (`:tab`, or a tab character under a style with tab stops) is set line by line: broken between characters under the document's line-breaking rules, but without punctuation compression or justification between characters. In vertical text there are no tab stops: a tab is a word space, and a `:tab` raises the `tabInVerticalText` content warning. A paragraph with ruby or warichu also sets its tabs as word spaces. See [Tabs and tab stops](/en/docs/document-format-inline#tabs-and-tab-stops).
 - **Drop caps.** A horizontal paragraph can open with a drop cap of one character (首字下沉), set from a paragraph style or a heading level (see [Drop caps](/en/docs/configuration-text#drop-caps)): its size takes the character's own height against the text's, and the composer sets the shortened lines with its usual compression and justification. Vertical text has no drop caps: a paragraph that would open with one is set without it and raises the `dropCap` content warning.
 - **Sizes in points.** There are no 号 or Q units.
 - **Vertical metrics.** Every upright character advances one em; proportional vertical metrics (`vpal`) and vertical kerning are not used.

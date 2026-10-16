@@ -16,7 +16,7 @@ Ibn Khaldūnの『歴史序説』（Muqaddima）のうち、歴史学の優れ�
 
 ### 1 · 2系統のノンブルと、ページごとの注
 
-コードは上の[手短な答え](#手短な答え)にあります。`page.pageNumbering`は本を`'abjad'`、つまりアブジャド順の文字で始めます。5はهـです。本文の前に置いた2つのディレクティブが、次の奇数ページから文書の数字で数え直させます（[`:::numbering`](/ja/docs/document-format#numbering)、[数字と番号の書式](/ja/docs/arabic-layout#数字と番号の書式)）。注には`numbering: 'page'`、`markerTemplate`の`'({n})'`、`noteNumberPosition: 'inline'`を設定します。こうすると合印は本文の中で上がり、注は行の中でその番号から始まります（[脚注](/ja/docs/arabic-layout#脚注)）。
+コードは上の[手短な答え](#手短な答え)にあります。`page.pageNumbering`は本を`'abjad'`、つまりアブジャド順の文字で始めます。5はهـです。本文の前に置いた2つのディレクティブが、次の奇数ページから文書の数字で数え直させます（[`:::numbering`](/ja/docs/document-format-directives#numbering)、[数字と番号の書式](/ja/docs/arabic-layout#数字と番号の書式)）。注には`numbering: 'page'`、`markerTemplate`の`'({n})'`、`noteNumberPosition: 'inline'`を設定します。こうすると合印は本文の中で上がり、注は行の中でその番号から始まります（[脚注](/ja/docs/arabic-layout#脚注)）。
 
 <PageShot page={5} crop="0,0.62,1,0.33" caption="١ページ：注はまた(١)から始まり、ページの行頭側にある罫の下に並びます。" />
 

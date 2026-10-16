@@ -18,7 +18,7 @@ Vier Seiten aus dem Gestaltungshandbuch der Metro de Alba, einer erfundenen U-Ba
 
 <Excerpt region="build" />
 
-Das Layout misst jedes Wort mit den Schriften in `document.fonts`, darum lädt `loadBrandFonts()` in [der kurzen Antwort](#die-kurze-antwort) jede Datei einmal, behält ihre Bytes und registriert ein daraus gebautes `FontFace`, bevor `buildDocument` läuft. Die Funktion `kitFonts` des Kits lädt nur von Fontsource, eine Marke liefert ihre Dateien aber von ihrem eigenen Server. `renderToPdf` fragt nach den Schriften, die die Seiten zeichnen, und `brandFontProvider` beantwortet jede Anfrage mit den bereits geladenen Bytes; eine Schriftstärke oder Neigung, die der Marke fehlt, bekäme die nächstliegende Datei derselben Familie ([Warum ein Schriftlieferant?](/de/docs/configuration-programmatic-usage#warum-ein-font-provider)). Das PDF bettet die sechs Dateien, mit denen der Canvas gemessen hat, je einmal ein.
+Das Layout misst jedes Wort mit den Schriften in `document.fonts`, darum lädt `loadBrandFonts()` in [der kurzen Antwort](#die-kurze-antwort) jede Datei einmal, behält ihre Bytes und registriert ein daraus gebautes `FontFace`, bevor `buildDocument` läuft. Die Funktion `kitFonts` des Kits lädt nur von Fontsource, eine Marke liefert ihre Dateien aber von ihrem eigenen Server. `renderToPdf` fragt nach den Schriften, die die Seiten zeichnen, und `brandFontProvider` beantwortet jede Anfrage mit den bereits geladenen Bytes; eine Schriftstärke oder Neigung, die der Marke fehlt, bekäme die nächstliegende Datei derselben Familie ([Warum ein Schriftlieferant?](/de/docs/configuration-pdf-output#warum-ein-font-provider)). Das PDF bettet die sechs Dateien, mit denen der Canvas gemessen hat, je einmal ein.
 
 ### 2 · Das Farbsystem ist eine Liste
 
@@ -42,7 +42,7 @@ Ein Ressourcentyp kann ein partielles `captionStyle` tragen, und diese beiden se
 
 <Excerpt region="bundle" />
 
-`createBundle` liest `config.customFonts`, sucht die Bytes jeder Variante über ihre `fileId` in `files` und schreibt sie unter `fonts/`, mit einem Eintrag `fonts` im Manifest. Die Displayfamilie trägt `redistributable: false`, stellvertretend für eine Lizenz, die die Weitergabe der Dateien verbietet (Big Shoulders Display selbst steht unter der OFL). Ihre Datei bleibt draußen, und `warnings` nennt die Familie. Die 81 KB große Datei enthält das Kapitel, die Konfiguration, die drei Zeichnungen und fünf Schriftdateien. Das Layout liest `customFonts` nie; die Seiten sehen ohne es genauso aus ([Ein Paket erstellen](/de/docs/configuration-programmatic-usage#ein-paket-erstellen)).
+`createBundle` liest `config.customFonts`, sucht die Bytes jeder Variante über ihre `fileId` in `files` und schreibt sie unter `fonts/`, mit einem Eintrag `fonts` im Manifest. Die Displayfamilie trägt `redistributable: false`, stellvertretend für eine Lizenz, die die Weitergabe der Dateien verbietet (Big Shoulders Display selbst steht unter der OFL). Ihre Datei bleibt draußen, und `warnings` nennt die Familie. Die 81 KB große Datei enthält das Kapitel, die Konfiguration, die drei Zeichnungen und fünf Schriftdateien. Das Layout liest `customFonts` nie; die Seiten sehen ohne es genauso aus ([Ein Paket erstellen](/de/docs/configuration-bundles#ein-paket-erstellen)).
 
 ## Varianten
 

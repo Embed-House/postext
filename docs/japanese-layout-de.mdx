@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Wie Postext Japanisch senkrecht und waagerecht setzt: die Region Japan, Kinsoku, Yakumono-Abstände, Klammern am Absatzanfang, senkrechte Formen, Furigana, Betonungszeichen und Seitenlinien, Kanbun, Zählweisen, Gyōdori-Überschriften, Anmerkungen, ein Register in Gojūon-Ordnung, Zitate, Schriften und Quellen aus dem Aozora Bunko',
   lang: 'de',
   lastUpdated: '2026-10-05',
-  readingTime: '30 min',
-  order: 17,
+  readingTime: '33 min',
+  order: 32,
   plainSummary: "Diese Seite erklärt, wie Postext japanischen Text setzt. Japanische Bücher werden in Spalten von oben nach unten gesetzt, die von rechts nach links gelesen werden, oder waagerecht wie diese Seite. Ein Dokument auf Japanisch folgt den japanischen Regeln für Zeilenumbrüche, für die Abstände um Satzzeichen, für kleine Lesehilfen über den Zeichen und für Betonungszeichen. Die Seite behandelt außerdem Anmerkungen, in Kanji geschriebene Zahlen, Überschriften, die eine feste Anzahl von Zeilen einnehmen, ein nach dem Klang sortiertes Register am Buchende und den Import von Texten aus der Bibliothek Aozora Bunko. Am Ende stehen zwei vollständige Beispiele und die verbleibenden Grenzen.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **Eine japanische Seite mischt vier Schriften auf einem Raster quadratischer Zellen, und der Abstand um ihre Satzzeichen gehört zum Text.**
 
-Postext setzt Japanisch senkrecht und waagerecht, aus einer Markdown-Quelle und einer Konfiguration. Ein Dokument in japanischer Sprache bricht seine Zeilen nach den Kinsoku-Regeln um, gibt jeder Klammer und jedem Komma den Raum, den der japanische Satz ihnen gibt, und nimmt ihn zurück, wo zwei Zeichen aufeinandertreffen, setzt die Klammer am Absatzanfang so, wie es die meisten Romane tun, stellt kleine Kana und die Zeichen einer senkrechten Zeile in ihren senkrechten Formen, verteilt Furigana im Verhältnis 1:2:1 über ihren Kanji, setzt Sesampunkte über hervorgehobene Wörter, nummeriert Kapitel als 第一章 und sortiert ein Register nach der Lesung. Seit postext 1.16 folgt all das aus `locale: 'ja'`; frühere Versionen setzten Japanisch mit den Standards für Festlandchina. Diese Seite erklärt, was die Engine tut und welche Einstellungen es steuern. Die [Konfigurationsreferenz](/de/docs/configuration-east-asian#ostasiatische-typografie) listet jeden Schlüssel mit seinem Standardwert, und das [Dokumentformat](/de/docs/document-format#chinesische-zeichen-ruby-und-warichu) beschreibt das Markup.
+Postext setzt Japanisch senkrecht und waagerecht, aus einer Markdown-Quelle und einer Konfiguration. Ein Dokument in japanischer Sprache bricht seine Zeilen nach den Kinsoku-Regeln um, gibt jeder Klammer und jedem Komma den Raum, den der japanische Satz ihnen gibt, und nimmt ihn zurück, wo zwei Zeichen aufeinandertreffen, setzt die Klammer am Absatzanfang so, wie es die meisten Romane tun, stellt kleine Kana und die Zeichen einer senkrechten Zeile in ihren senkrechten Formen, verteilt Furigana im Verhältnis 1:2:1 über ihren Kanji, setzt Sesampunkte über hervorgehobene Wörter, nummeriert Kapitel als 第一章 und sortiert ein Register nach der Lesung. Seit postext 1.16 folgt all das aus `locale: 'ja'`; frühere Versionen setzten Japanisch mit den Standards für Festlandchina. Diese Seite erklärt, was die Engine tut und welche Einstellungen es steuern. Die [Konfigurationsreferenz](/de/docs/configuration-east-asian#ostasiatische-typografie) listet jeden Schlüssel mit seinem Standardwert, und das [Dokumentformat](/de/docs/document-format-inline#chinesische-zeichen-ruby-und-warichu) beschreibt das Markup.
 
 Die Regeln folgen den *Requirements for Japanese Text Layout* des W3C ([JLReq](https://www.w3.org/TR/jlreq/)), unten nach Abschnitt zitiert, und JIS X 4051, der japanischen Norm, die es wiedergibt. Ein Großteil der Mechanik wird mit dem Chinesischen geteilt, und [Chinesischer Satz](/de/docs/chinese-layout) beschreibt die Teile, die diese Seite nur erwähnt: das Zeichenraster, den gedrehten Rahmen einer senkrechten Seite, die Bindung rechts und die Ausgaben. Die Quellen stehen am Ende.
 
@@ -28,7 +28,7 @@ Ein Dokument mit japanischer `locale` (`ja`, `ja-JP`, `ja-Jpan`, in beliebiger S
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Einstellung</th>
+      <th>Einstellung</th>
       <th>Japan (<code>ja</code>)</th>
       <th>Festlandchina (<code>zh-Hans</code>)</th>
     </tr>
@@ -85,9 +85,9 @@ Kinsoku shori (禁則処理) hält manche Zeichen vom Anfang einer Zeile fern un
 <table>
   <thead>
     <tr>
-      <th style={{ width: '130px' }}>Stufe</th>
+      <th>Stufe</th>
       <th>Nie am Zeilenanfang</th>
-      <th style={{ width: '220px' }}>Verwendet in</th>
+      <th>Verwendet in</th>
     </tr>
   </thead>
   <tbody>
@@ -161,7 +161,7 @@ Zahlen mit bis zu zwei Ziffern stehen aufrecht in einer Zelle (`cjk.uprightDigit
 
 ### Seiten, Stufen und Paginas
 
-Ein senkrechtes japanisches Buch druckt seine Pagina meist in arabischen Ziffern am Fuß, und eine senkrechte Pagina in Kanji entlang des Außenrands, wenn die Gestaltung eine vorsieht: `page.pageNumbering.format: 'cjk-decimal'` schreibt 一〇五 für Seite 105, die Stellenwertform, die Paginas verwenden (JLReq §2.6). Kapitel beginnen auf einer Vorderseite (recto), die in einem rechts gebundenen Buch eine linke Seite ist: `breakBefore: { enabled: true, parity: 'odd' }`. Die Außenrand-Kolumnentitel aus [Vertikale Textelemente](/de/docs/configuration-page-layout#vertikale-textelemente) funktionieren für japanische Bücher unverändert.
+Ein senkrechtes japanisches Buch druckt seine Pagina meist in arabischen Ziffern am Fuß, und eine senkrechte Pagina in Kanji entlang des Außenrands, wenn die Gestaltung eine vorsieht: `page.pageNumbering.format: 'cjk-decimal'` schreibt 一〇五 für Seite 105, die Stellenwertform, die Paginas verwenden (JLReq §2.6). Kapitel beginnen auf einer Vorderseite (recto), die in einem rechts gebundenen Buch eine linke Seite ist: `breakBefore: { enabled: true, parity: 'odd' }`. Die Außenrand-Kolumnentitel aus [Vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente) funktionieren für japanische Bücher unverändert.
 
 Auf einem Zeichenraster (`cjk.grid`) fasst eine japanische Seite jede Zeile, die ihr Raster zählt: `bodyText.avoidWidows` und `bodyText.avoidOrphans` sind dort standardmäßig beide ausgeschaltet. JLReq §3.5.4 zählt die Zeichen der letzten Zeile eines Absatzes und legt keine Zeilenzahl an einem Seitenumbruch fest, sodass ein Absatz eine Zeile am Fuß einer Seite lassen oder eine auf die nächste tragen darf. Setzen Sie einen der beiden Schlüssel auf `true`, um die Regel zurückzuholen. Ein Dokument ohne Raster behält beide eingeschaltet.
 
@@ -243,9 +243,9 @@ Jede Nummerierungseinstellung (Seitenzahlen, nummerierte Listen, Fußnoten, Ress
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Stil</th>
+      <th>Stil</th>
       <th>Druckt</th>
-      <th style={{ width: '120px' }}>Token</th>
+      <th>Token</th>
     </tr>
   </thead>
   <tbody>
@@ -350,7 +350,7 @@ Wenn der Autor sie nicht setzt, erhält ein japanisches Dokument diese Werte (di
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Feld</th>
+      <th>Feld</th>
       <th>Senkrechtes Buch</th>
       <th>Waagerechtes Buch</th>
     </tr>
@@ -391,7 +391,7 @@ Ein japanisches Dokument zitiert mit der CSL-Locale `ja-JP`: Narrative Zitate ve
 citations: { style: 'sist02' },
 ```
 
-Ein in CJK-Zeichen mit einem Leerzeichen geschriebener Personenname wird mit dem Familiennamen zuerst gelesen, in BibTeX sowie in YAML- oder JSON-Daten: `author = {夏目 漱石}` ist der Familienname 夏目 und der Vorname 漱石. Romanisierte Namen behalten die übliche Reihenfolge. Das Literaturverzeichnis heißt <span lang="ja" className="font-body">参考文献</span>. Siehe [Zitate und Literaturverzeichnis](/de/docs/document-format#zitate-und-literaturverzeichnis).
+Ein in CJK-Zeichen mit einem Leerzeichen geschriebener Personenname wird mit dem Familiennamen zuerst gelesen, in BibTeX sowie in YAML- oder JSON-Daten: `author = {夏目 漱石}` ist der Familienname 夏目 und der Vorname 漱石. Romanisierte Namen behalten die übliche Reihenfolge. Das Literaturverzeichnis heißt <span lang="ja" className="font-body">参考文献</span>. Siehe [Zitate und Literaturverzeichnis](/de/docs/document-format-notes-references#zitate-und-literaturverzeichnis).
 
 ## Tabellen, Legenden und Anmerkungen
 
@@ -401,7 +401,7 @@ Furigana, Betonungszeichen, Seitenlinien, Werktitel und Warichu werden in Tabell
 
 Die HTML-Ausgabe schreibt jede Lesung als semantisches Ruby: `<ruby>東<rt>とう</rt>京<rt>きょう</rt></ruby>`, ein `<ruby>` je Wort, das Screenreader vorlesen. Jede Seite eines japanischen Dokuments trägt `lang="ja"`, sodass ein Host, der Seiten einzeln einbindet, trotzdem die japanischen Glyphenformen erhält. Ein EPUB mit festem Layout besteht aus diesen Seiten.
 
-Ein umfließendes EPUB enthält die Regeln, die ein Lesesystem selbst anwenden kann: `line-break: strict`, `normal` oder `loose` für die drei Kinsoku-Stufen, `hanging-punctuation: allow-end`, wenn das Buch Satzzeichen hängen lässt, `text-emphasis` für Sesampunkte über dem Text, aufrechte Zellen für kurze Zahlen und `!?`-Paare in senkrechten Büchern, das Geviert nach ？！, Seitenlinien, Kunten, Anmerkungsmarkierungen, belegte Zeilen und Einzüge von Überschriften sowie den `primary-writing-mode` eines senkrechten Buches in seinem Paket. Die Navigation ist japanisch benannt. Den Rest des Exports beschreibt [EPUB-Bücher](/de/docs/configuration-programmatic-usage#epub-bücher-postext-epub).
+Ein umfließendes EPUB enthält die Regeln, die ein Lesesystem selbst anwenden kann: `line-break: strict`, `normal` oder `loose` für die drei Kinsoku-Stufen, `hanging-punctuation: allow-end`, wenn das Buch Satzzeichen hängen lässt, `text-emphasis` für Sesampunkte über dem Text, aufrechte Zellen für kurze Zahlen und `!?`-Paare in senkrechten Büchern, das Geviert nach ？！, Seitenlinien, Kunten, Anmerkungsmarkierungen, belegte Zeilen und Einzüge von Überschriften sowie den `primary-writing-mode` eines senkrechten Buches in seinem Paket. Die Navigation ist japanisch benannt. Den Rest des Exports beschreibt [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub).
 
 ## Schriften
 
@@ -413,7 +413,7 @@ Postext setzt jedes Format in einer Familie, ohne Rückgriff auf eine andere fü
 - **Im Browser** liefert Fontsource eine japanische Familie als etwa hundert nummerierte Dateien, von denen jede einen Teil der Zeichen enthält; die Sandbox und ihr PDF-Tab laden die, die der Text verwendet. Keine Fontsource-Datei enthält Hentaigana (𛀁) oder andere historische Kana.
 - **Keine Kursiven.** Japanische Schriften haben keine; Hervorhebung wird mit Zeichen gesetzt.
 
-[Chinesische, japanische und koreanische Schriften](/de/docs/configuration-programmatic-usage#chinesische-japanische-und-koreanische-schriften) in der Konfigurationsreferenz enthält den Code für den Schriftanbieter.
+[Chinesische, japanische und koreanische Schriften](/de/docs/configuration-pdf-output#chinesische-japanische-und-koreanische-schriften) in der Konfigurationsreferenz enthält den Code für den Schriftanbieter.
 
 ## Quellen aus dem Aozora Bunko
 
@@ -574,7 +574,7 @@ Die Schlüssel `cjk` und `footnotes` werden nicht gebraucht: Die Locale gibt waa
 
 ## In der Sandbox und im Rezeptbuch
 
-In der Sandbox enthält **Gestaltung › Schriftsystem** die Dokumentsprache (日本語), die Schreibrichtung, die Bindung und jede `cjk`-Einstellung, die japanischen eingeschlossen. **Japanische Standards › Prüfen…** richtet ein Buch in einem Schritt für Japanisch ein, als senkrechtes Bunko oder als waagerechtes Fachbuch, und listet zuvor jede Änderung auf: Noto Serif JP und Noto Sans JP, ein Zeilenabstand von 1,75 em, ein Einzug von einem Geviert, das Zeichenraster eines senkrechten Buches, 図 und 表, 第一章, Gyōdori und eingezogene Überschriften, japanische Listennummern und die chinesischen Einstellungen, die den japanischen im Weg stünden, zurück auf *Auto*. Die Schriftauswahl listet die japanischen Familien als Gruppe, das Schriftmuster zeigt einen Abschnitt aus <span lang="ja" className="font-body">吾輩は猫である</span> mit seinen Betonungszeichen, und die Werkzeugleiste des Editors hat für ein japanisches Buch eine Ruby-Schaltfläche und eine Tate-chū-yoko-Schaltfläche. Siehe [Sandbox](/de/docs/sandbox#bedienfeld-gestaltung).
+In der Sandbox enthält **Gestaltung › Schriftsystem** die Dokumentsprache (日本語), die Schreibrichtung, die Bindung und jede `cjk`-Einstellung, die japanischen eingeschlossen. **Japanische Standards › Prüfen…** richtet ein Buch in einem Schritt für Japanisch ein, als senkrechtes Bunko oder als waagerechtes Fachbuch, und listet zuvor jede Änderung auf: Noto Serif JP und Noto Sans JP, ein Zeilenabstand von 1,75 em, ein Einzug von einem Geviert, das Zeichenraster eines senkrechten Buches, 図 und 表, 第一章, Gyōdori und eingezogene Überschriften, japanische Listennummern und die chinesischen Einstellungen, die den japanischen im Weg stünden, zurück auf *Auto*. Die Schriftauswahl listet die japanischen Familien als Gruppe, das Schriftmuster zeigt einen Abschnitt aus <span lang="ja" className="font-body">吾輩は猫である</span> mit seinen Betonungszeichen, und die Werkzeugleiste des Editors hat für ein japanisches Buch eine Ruby-Schaltfläche und eine Tate-chū-yoko-Schaltfläche. Siehe [Sandbox](/de/docs/sandbox-design-checks#bedienfeld-gestaltung).
 
 Das Schaufenster-Regal enthält Natsume Sōsekis *Kokoro* (<span lang="ja" className="font-body">こころ</span>, 1914) auf Japanisch, [senkrecht gesetzt und rechts gebunden](/de/sandbox#preset=kokoro&lang=ja), nach dem Text des Aozora Bunko, und der eigene Leitfaden der Sandbox hat [eine japanische Ausgabe](/de/sandbox#preset=postext-guide&lang=ja). Das [Rezeptbuch](/de/cookbook?col=japanese-layout) versammelt die japanischen Rezepte in seiner Sammlung *Japanischer Satz*, jedes eine Seite oder Doppelseite mit dem Skript, das sie setzt.
 
@@ -591,8 +591,8 @@ Das Schaufenster-Regal enthält Natsume Sōsekis *Kokoro* (<span lang="ja" class
 - **Zitate**: SIST 02 ist der einzige mitgelieferte japanische Stil; Autor-Jahr-Zitate behalten ASCII-Satzzeichen; Literaturverzeichnisse werden nicht nach der Lesung sortiert.
 - **Tabellen**: Zell- und Legendentext ist auf jeder Seite waagerecht.
 - **Zeilennummern** werden in senkrechtem Text nicht gedruckt: Ein senkrechtes Buch, das `lineNumbers` einschaltet, erhält keine, mit einer Konfigurationswarnung `lineNumbersUnsupported`. Waagerechte Bücher nummerieren ihre Zeilen wie jedes andere ([Konfiguration › Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)).
-- **Textumfluss.** In waagerechtem Text kann ein Bild oder ein Kasten an einer Seite seiner Spalte stehen, mit dem Text daneben (siehe [Textumfluss](/de/docs/document-format#textumfluss)); unter dem Zeichenraster ist der Raum, den es einnimmt, eine ganze Zahl von Zeichen, sodass die Zeilen daneben auf dem Raster bleiben. Senkrechter Text setzt keinen Text neben eine Abbildung: Eine umflossene Abbildung behält ihr Band, mit einer Warnung `textWrap` (`wrapUnsupported` beim Standard eines Ressourcentyps).
-- **Tabulatoren.** Ein waagerechter Absatz, der einen Tabulator enthält (`:tab` oder ein Tabulatorzeichen unter einem Format mit Tabstopps), wird Zeile für Zeile gesetzt: zwischen Zeichen nach Kinsoku umbrochen, aber ohne Yakumono-Stauchung und ohne Blocksatz zwischen Zeichen. In senkrechtem Text gibt es keine Tabstopps: Ein Tabulator ist ein Wortzwischenraum, und ein `:tab` löst die Inhaltswarnung `tabInVerticalText` aus. Ein Absatz mit Ruby, Warichu oder Kanbun-Zeichen setzt seine Tabulatoren ebenfalls als Wortzwischenräume. Siehe [Tabulatoren und Tabstopps](/de/docs/document-format#tabulatoren-und-tabstopps).
+- **Textumfluss.** In waagerechtem Text kann ein Bild oder ein Kasten an einer Seite seiner Spalte stehen, mit dem Text daneben (siehe [Textumfluss](/de/docs/document-format-resources#textumfluss)); unter dem Zeichenraster ist der Raum, den es einnimmt, eine ganze Zahl von Zeichen, sodass die Zeilen daneben auf dem Raster bleiben. Senkrechter Text setzt keinen Text neben eine Abbildung: Eine umflossene Abbildung behält ihr Band, mit einer Warnung `textWrap` (`wrapUnsupported` beim Standard eines Ressourcentyps).
+- **Tabulatoren.** Ein waagerechter Absatz, der einen Tabulator enthält (`:tab` oder ein Tabulatorzeichen unter einem Format mit Tabstopps), wird Zeile für Zeile gesetzt: zwischen Zeichen nach Kinsoku umbrochen, aber ohne Yakumono-Stauchung und ohne Blocksatz zwischen Zeichen. In senkrechtem Text gibt es keine Tabstopps: Ein Tabulator ist ein Wortzwischenraum, und ein `:tab` löst die Inhaltswarnung `tabInVerticalText` aus. Ein Absatz mit Ruby, Warichu oder Kanbun-Zeichen setzt seine Tabulatoren ebenfalls als Wortzwischenräume. Siehe [Tabulatoren und Tabstopps](/de/docs/document-format-inline#tabulatoren-und-tabstopps).
 - **Initialen.** Ein waagerechter Absatz kann mit einer Initiale aus einem Zeichen beginnen, gesetzt über ein Absatzformat oder eine Überschriftenebene (siehe [Initialen](/de/docs/configuration-text#initialen)): Ihre Größe richtet sich nach der eigenen Höhe des Zeichens im Verhältnis zu der des Textes, und der Setzer setzt die verkürzten Zeilen wie üblich nach Kinsoku. Senkrechter Text hat keine Initialen: Ein Absatz, der mit einer beginnen würde, wird ohne sie gesetzt und löst die Inhaltswarnung `dropCap` aus.
 - **Codelistings.** Ein waagerechtes Listing wird Zeile für Zeile in seiner Codeschrift gesetzt; in einer dicktengleichen Schrift mit Kanji (BIZ UDGothic) nimmt ein vollbreites Zeichen zwei Zellen ein, sodass Spalten fluchten, und ein Tabulator zählt es als zwei. In senkrechtem Text folgt ein Listing dem senkrechten Fluss, sein lateinischer Text quergestellt, wie senkrechter Text ihn setzt, und erhält keine Zeilennummern. Siehe [Code-Listings](/de/docs/configuration-styles#code-listings).
 - **Schriften**: eine Familie je Format ohne Rückgriff auf eine andere; CFF-Schriften werden ganz eingebettet; senkrechte proportionale Metriken (`vpal`) werden nicht verwendet.

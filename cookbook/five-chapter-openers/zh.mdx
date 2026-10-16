@@ -24,13 +24,13 @@ pageNotes: { "1": "第一章“The Voice”：红色的加宽字距小眉题、�
 
 <Excerpt region="framed" />
 
-数组顺序就是绘制顺序，所以方框在前，文字在上；花饰是一个图像元素，绘制一个已注册的SVG资源，这个资源不编号也不被引用。每一章要有自己的照片，也是靠图像元素：从postext 1.8起，它的`resourceId`接受占位符，于是用`resourceId: '{attr.photo}'`，一种样式就能绘制每个标题点名的照片，例如`# The Frame {style="framed" photo="lake"}`，<RecipeLink slug="recipe-card">菜谱卡片</RecipeLink>里的菜品就是这样做的（[图像元素](/zh/docs/configuration-page-layout#图像元素)）。简短回答里的`framed`样式设置了`palette`，把本章各页的`accent`变成蓝色，于是线条、眉题和底部页码都印成蓝色；它的`margins`让文字块在花框下居中。这个样式自己的`dropCap`指定`col('accent')`，调色板同样把它变成蓝色，所以三行高的L与花框颜色一致。
+数组顺序就是绘制顺序，所以方框在前，文字在上；花饰是一个图像元素，绘制一个已注册的SVG资源，这个资源不编号也不被引用。每一章要有自己的照片，也是靠图像元素：从postext 1.8起，它的`resourceId`接受占位符，于是用`resourceId: '{attr.photo}'`，一种样式就能绘制每个标题点名的照片，例如`# The Frame {style="framed" photo="lake"}`，<RecipeLink slug="recipe-card">菜谱卡片</RecipeLink>里的菜品就是这样做的（[图像元素](/zh/docs/configuration-headers-footers#图像元素)）。简短回答里的`framed`样式设置了`palette`，把本章各页的`accent`变成蓝色，于是线条、眉题和底部页码都印成蓝色；它的`margins`让文字块在花框下居中。这个样式自己的`dropCap`指定`col('accent')`，调色板同样把它变成蓝色，所以三行高的L与花框颜色一致。
 
 ### 3 · 堆叠标题，给首字母加框
 
 <Excerpt region="stacked" />
 
-堆叠写在Markdown里：`# Say it \\ out \\ loud.`在每个`\\`处给`{titleText}`换行，而书眉和PDF书签把标题读作一行（[标题中的换行](/zh/docs/document-format#标题中的换行)）。色底从出血的顶端垂下，通宽，高130 mm，导语从它下方8 mm处的第一条网格线开始（`TEXT_TOP`）。加框的首字母由两部分组成。样式的`dropCap`把白色的M排成导语的三行高，章首页在它下面画一个品红色方框，位置根据`TEXT_TOP`、导语的行距和Geist Mono的字体度量确定，让M上下露出的颜色与它的左右侧边距一样宽。这个方框在章首页里不占空间（`reserve: false`）；一个空的`room`方框让章首页结束在导语开始的地方。
+堆叠写在Markdown里：`# Say it \\ out \\ loud.`在每个`\\`处给`{titleText}`换行，而书眉和PDF书签把标题读作一行（[标题中的换行](/zh/docs/document-format-directives#标题中的换行)）。色底从出血的顶端垂下，通宽，高130 mm，导语从它下方8 mm处的第一条网格线开始（`TEXT_TOP`）。加框的首字母由两部分组成。样式的`dropCap`把白色的M排成导语的三行高，章首页在它下面画一个品红色方框，位置根据`TEXT_TOP`、导语的行距和Geist Mono的字体度量确定，让M上下露出的颜色与它的左右侧边距一样宽。这个方框在章首页里不占空间（`reserve: false`）；一个空的`room`方框让章首页结束在导语开始的地方。
 
 ### 4 · 给手册加上徽标、两栏和自己的书眉
 

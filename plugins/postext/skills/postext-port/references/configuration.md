@@ -119,6 +119,7 @@ Conversion at `page.dpi` (default 300):
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
+| `checks` | `{ contentInConfig?: { allow?: string[] } }` | — | literals allowed in design text elements (a journal name, an imprint line), read by `preset_kit.py lint` and `lint_project.py`, and by the engine's `contentInConfig` warning where the installed Postext has it; an older engine ignores the key (§7) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -744,6 +745,15 @@ front matter with roman folios / single column, unnumbered appendix, index.
 `DesignSlot = { elements: DesignElement[] }`; **array order = paint order** (first = back).
 Elements can anchor to later elements; the engine topo-sorts for geometry.
 
+**Form only.** A design text element's `content` holds placeholders and short labels; the book's
+text lives in the chapters. Literal text of more than 2 words or 24 characters in one element
+(placeholders removed) is content: `preset_kit.py lint` fails on it, `lint_project.py` reports
+`contentInConfig`, and so does `postext check` in releases with that warning. Longer literals
+that are form go in `checks.contentInConfig.allow` (a list of strings; the book's title, subtitle,
+author and manifest name are allowed without it). A design image's `resourceId` takes the same
+placeholders (postext ≥ 1.8): one style draws a different picture per heading
+(`resourceId: '{attr.fondo}'`), so per-page pictures never need per-page styles.
+
 ### 7.1 Containers ("container" anchor frame)
 | slot | container |
 |---|---|
@@ -842,7 +852,8 @@ Header/footer placeholders: `{pageNumber}` (the page LABEL, e.g. "xii"), `{total
 `{title}`, `{subtitle}`, `{author}`, `{publishDate}` (front matter), `{chapterTitle}` (latest H1),
 `{chapterNumber}`, `{chapterTitleAtTop}` / `{chapterNumberAtTop}` (the chapter in force at the top
 of the page: differs where a chapter starts below other text, for run-on chapters),
-`{partTitle}`, `{partNumber}`, `{attr.<key>}` (chapter H1 attribute).
+`{partTitle}`, `{partNumber}`, `{attr.<key>}` (chapter H1 attribute; in a heading design, that
+heading's own attribute).
 
 **rule**: `{ kind:'rule', id, placement, direction: 'horizontal'|'vertical', color: ColorValue (req), thickness: Dimension (req), reserve? }`
 (required in the type; a JSON config that leaves them out gets 'horizontal', #000000 and 0.5pt)
@@ -924,9 +935,19 @@ toc
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
-└─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}),
-                  height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
+├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}),
+│                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
+└─ groups       ≥ 1.34 blocks of the contents kept on one column/page
+   ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
+   ├─ head           'part'    'part' | 1…6 — what heads a block (1 = chapter with its sections)
+   ├─ minEntriesAfterHead 2    a block taller than a column keeps its head with ≥ N entries
+   └─ continuation   { enabled: true, mark: <locale> }
+                               the head row repeated at the top of each column a tall block goes on in,
+                               title + mark ("(cont.)", "(suite)", "(Forts.)", "(segue)", "（续）", "（続き）", "(تابع)")
 ```
+`:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
+`levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
+`tocGroupSplit`.
 
 ---------------------------------------------------------------------------------
 

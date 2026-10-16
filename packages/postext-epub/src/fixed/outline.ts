@@ -93,7 +93,8 @@ export function contentsRows(page: VDTPage): ContentsRow[] {
   const out: ContentsRow[] = [];
   for (const col of page.columns) {
     for (const block of col.blocks) {
-      if (block.hidden) continue;
+      // (Nor a head row repeated where a cut block goes on, #850.)
+      if (block.hidden || block.tocEntry?.continued || block.tocPart?.continued) continue;
       const pageIndex = block.tocEntry?.pageIndex ?? block.tocPart?.pageIndex;
       if (pageIndex === undefined) continue;
       const label = block.tocPart

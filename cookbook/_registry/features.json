@@ -1821,7 +1821,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::pagebreak`",
         "es": "`:::pagebreak`",
@@ -1947,7 +1947,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::space`",
         "es": "`:::space`",
@@ -2075,7 +2075,7 @@
     },
     "group": "page",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-page-flow",
       "heading": {
         "en": "Column balancing",
         "es": "Equilibrado de columnas",
@@ -2745,7 +2745,7 @@
     },
     "group": "text",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-page-flow",
       "heading": {
         "en": "Orphans, widows, runts, and keep-together rules",
         "es": "Huérfanas, viudas, *runts* y reglas de cohesión",
@@ -3051,7 +3051,7 @@
     },
     "group": "text",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::verse`",
         "es": "`:::verse`",
@@ -3892,7 +3892,7 @@
     },
     "group": "text",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-lists-math",
       "heading": {
         "en": "Unordered Lists",
         "es": "Listas no ordenadas",
@@ -4025,7 +4025,7 @@
     },
     "group": "text",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-lists-math",
       "heading": {
         "en": "Ordered Lists",
         "es": "Listas ordenadas",
@@ -4289,7 +4289,7 @@
     },
     "group": "colour",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Inline formatting",
         "es": "Formato en línea",
@@ -4419,7 +4419,7 @@
     },
     "group": "text",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Inline formatting",
         "es": "Formato en línea",
@@ -4548,7 +4548,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Footnotes",
         "es": "Notas al pie",
@@ -5232,7 +5232,7 @@
     },
     "group": "fonts",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Why a font provider?",
         "es": "¿Por qué un proveedor de fuentes?",
@@ -5626,7 +5626,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-bundles",
       "heading": {
         "en": "Opening a bundle",
         "es": "Abrir un paquete",
@@ -5751,7 +5751,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Per-level overrides",
         "es": "Configuración por nivel",
@@ -5875,7 +5875,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Per-level overrides",
         "es": "Configuración por nivel",
@@ -5999,7 +5999,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Break before",
         "es": "Saltar antes",
@@ -6110,7 +6110,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
         "es": "Span y diseño avanzado",
@@ -6242,7 +6242,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
         "es": "Span y diseño avanzado",
@@ -6839,7 +6839,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "Line breaks in titles",
         "es": "Saltos de línea en los títulos",
@@ -6964,7 +6964,7 @@
     },
     "group": "headings",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -7109,7 +7109,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Headers & footers",
         "es": "Encabezados y pies",
@@ -7234,7 +7234,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -7378,7 +7378,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Headers & footers",
         "es": "Encabezados y pies",
@@ -7504,7 +7504,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Image elements",
         "es": "Elementos de imagen",
@@ -7627,7 +7627,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
         "es": "Posicionamiento de elementos",
@@ -7754,7 +7754,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
         "es": "Posicionamiento de elementos",
@@ -8022,7 +8022,7 @@
     },
     "group": "furniture",
     "docs": {
-      "slug": "configuration-page-layout",
+      "slug": "configuration-headers-footers",
       "heading": {
         "en": "Text elements",
         "es": "Elementos de texto",
@@ -8166,7 +8166,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
         "es": "Estilos de aviso",
@@ -8288,7 +8288,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
         "es": "Estilos de aviso",
@@ -8397,7 +8397,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
         "es": "Estilos de aviso",
@@ -8505,7 +8505,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
         "es": "Estilos de aviso",
@@ -8611,7 +8611,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::columns`",
         "es": "`:::columns`",
@@ -8719,7 +8719,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -8827,7 +8827,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -8955,7 +8955,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
         "es": "Estilos de aviso",
@@ -9073,7 +9073,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -9199,7 +9199,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -9328,7 +9328,7 @@
     },
     "group": "boxes",
     "docs": {
-      "slug": "configuration-styles",
+      "slug": "configuration-callouts",
       "heading": {
         "en": "The `:::callout` container",
         "es": "El contenedor `:::callout`",
@@ -9473,7 +9473,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Resources",
         "es": "Recursos",
@@ -9600,7 +9600,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Inline reference (the primary form)",
         "es": "Referencia en línea (la forma principal)",
@@ -9728,7 +9728,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "First-reference numbering",
         "es": "Numeración por primera referencia",
@@ -10013,7 +10013,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -10136,7 +10136,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -10259,7 +10259,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Text wrap",
         "es": "Ajuste del texto",
@@ -10377,7 +10377,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Block embed (optional, explicit inline placement)",
         "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -10483,7 +10483,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -10708,7 +10708,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Safe area",
         "es": "Zona segura",
@@ -10804,7 +10804,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -11179,11 +11179,11 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "sandbox",
+      "slug": "sandbox-embedding",
       "heading": {
         "en": "`preset.json`",
         "es": "`preset.json`",
-        "ca": "Full de ruta",
+        "ca": "`preset.json`",
         "zh": "`preset.json`",
         "ar": "`preset.json`",
         "ja": "`preset.json`",
@@ -11455,7 +11455,7 @@
     },
     "group": "tables",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Block embed (optional, explicit inline placement)",
         "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -11961,7 +11961,7 @@
     },
     "group": "tables",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Block embed (optional, explicit inline placement)",
         "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -12074,7 +12074,7 @@
     },
     "group": "tables",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Block embed (optional, explicit inline placement)",
         "es": "Inserción en bloque (opcional, colocación en línea explícita)",
@@ -12195,7 +12195,7 @@
     },
     "group": "tables",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Placement",
         "es": "Colocación",
@@ -12327,7 +12327,7 @@
     },
     "group": "math",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Mathematical formulas",
         "es": "Fórmulas matemáticas",
@@ -12721,7 +12721,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::numbering`",
         "es": "`:::numbering`",
@@ -13241,7 +13241,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-bundles",
       "heading": {
         "en": "Laying out and rendering a bundle",
         "es": "Componer y renderizar un paquete",
@@ -13502,7 +13502,7 @@
     },
     "group": "pdf",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Generating PDFs",
         "es": "Generación de PDF",
@@ -13996,7 +13996,7 @@
     },
     "group": "html",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-html-folio-epub",
       "heading": {
         "en": "Integrating the HTML viewer",
         "es": "Integrar el visor HTML",
@@ -14380,7 +14380,7 @@
     },
     "group": "integration",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-bundles",
       "heading": {
         "en": "Bundles (`.postext` files)",
         "es": "Paquetes (archivos `.postext`)",
@@ -14787,7 +14787,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Back-of-book index",
         "es": "Índice analítico",
@@ -16193,7 +16193,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Chinese marks, ruby and warichu",
         "es": "Marcas chinas, ruby y warichu",
@@ -16354,7 +16354,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Chinese marks, ruby and warichu",
         "es": "Marcas chinas, ruby y warichu",
@@ -16498,7 +16498,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-inline",
       "heading": {
         "en": "Chinese marks, ruby and warichu",
         "es": "Marcas chinas, ruby y warichu",
@@ -16650,7 +16650,7 @@
     },
     "group": "fonts",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-pdf-output",
       "heading": {
         "en": "Chinese, Japanese and Korean fonts",
         "es": "Fuentes chinas, japonesas y coreanas",
@@ -19087,7 +19087,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "configuration-text",
+      "slug": "configuration-language",
       "heading": {
         "en": "Document language",
         "es": "Idioma del documento",
@@ -20031,7 +20031,7 @@
     },
     "group": "languages",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::verse`",
         "es": "`:::verse`",
@@ -20197,7 +20197,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -20340,7 +20340,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -20476,7 +20476,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Citations and bibliography",
         "es": "Citas y bibliografía",
@@ -20616,7 +20616,7 @@
     },
     "group": "structure",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-notes-references",
       "heading": {
         "en": "Cross-references and anchors",
         "es": "Referencias cruzadas y anclas",
@@ -20770,7 +20770,7 @@
     },
     "group": "integration",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-html-folio-epub",
       "heading": {
         "en": "A 3D book (`postext-folio`)",
         "es": "Un libro en 3D (`postext-folio`)",
@@ -21186,7 +21186,7 @@
     },
     "group": "page",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-directives",
       "heading": {
         "en": "`:::paper`",
         "es": "`:::paper`",
@@ -21350,7 +21350,7 @@
     },
     "group": "integration",
     "docs": {
-      "slug": "configuration-programmatic-usage",
+      "slug": "configuration-html-folio-epub",
       "heading": {
         "en": "EPUB books (`postext-epub`)",
         "es": "Libros EPUB (`postext-epub`)",
@@ -21479,7 +21479,7 @@
     },
     "group": "figures",
     "docs": {
-      "slug": "document-format",
+      "slug": "document-format-resources",
       "heading": {
         "en": "Videos",
         "es": "Vídeos",

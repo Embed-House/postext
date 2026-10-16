@@ -18,7 +18,7 @@ Cinq pages de texte tirées de la fin de *Dom Casmurro*, le roman de Machado de 
 
 <Excerpt region="answer" highlight="17-24" />
 
-Le niveau des chapitres a son saut désactivé, et `marginTop` place chaque titre deux lignes sous la dernière ligne du chapitre précédent. Sa maquette n’a pas de `span` : le titre est donc dessiné dans la colonne, dans un bloc de trois lignes de haut, et le texte qui le suit reste sur la grille ([saut avant](/fr/docs/configuration-text#saut-avant), [largeur et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Les règles de maintien gardent leurs valeurs par défaut. Les paragraphes de quatre lignes sous CXIX et CXXI laissent chacun deux lignes au pied de leur page et en reportent deux ; avec `avoidOrphans: false`, ils se couperaient en trois et une, et les pages 214 et 215 s’ouvriraient sur une ligne isolée ([orphelines, veuves, fins de paragraphe trop courtes](/fr/docs/configuration-text#orphelines-veuves-lignes-creuses-et-règles-de-maintien)). L’équilibrage des colonnes ajoute une troisième ligne de blanc au-dessus de CXIX, pour que la page 213 se termine sur la ligne 33 ([équilibrage des colonnes](/fr/docs/configuration-text#équilibrage-des-colonnes)).
+Le niveau des chapitres a son saut désactivé, et `marginTop` place chaque titre deux lignes sous la dernière ligne du chapitre précédent. Sa maquette n’a pas de `span` : le titre est donc dessiné dans la colonne, dans un bloc de trois lignes de haut, et le texte qui le suit reste sur la grille ([saut avant](/fr/docs/configuration-headings#saut-avant), [largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)). Les règles de maintien gardent leurs valeurs par défaut. Les paragraphes de quatre lignes sous CXIX et CXXI laissent chacun deux lignes au pied de leur page et en reportent deux ; avec `avoidOrphans: false`, ils se couperaient en trois et une, et les pages 214 et 215 s’ouvriraient sur une ligne isolée ([orphelines, veuves, fins de paragraphe trop courtes](/fr/docs/configuration-page-flow#orphelines-veuves-lignes-creuses-et-règles-de-maintien)). L’équilibrage des colonnes ajoute une troisième ligne de blanc au-dessus de CXIX, pour que la page 213 se termine sur la ligne 33 ([équilibrage des colonnes](/fr/docs/configuration-page-flow#équilibrage-des-colonnes)).
 
 <PageShot page={3} crop="0,.683,1,.317" caption="Page 213 : le chapitre CXIX commence trois lignes sous la fin de CXVIII et garde deux lignes de son texte au pied." />
 
@@ -32,7 +32,7 @@ La marge du bas mesure 16,3 mm, ce que laisse la hauteur de 178 mm après la mar
 
 <Excerpt region="heads" />
 
-`{title}` imprime le titre du frontmatter, et `{chapterTitle}` le dernier chapitre qui commence sur la page ou avant elle : la page 217 nomme donc CXXIII, commencé en page 216 ([éléments de texte](/fr/docs/configuration-page-layout#éléments-de-texte)). La page 213 nomme CXIX, qui commence à son pied, bien que ses 25 premières lignes terminent CXVIII. `{chapterTitleAtTop}` nommerait plutôt le chapitre dans lequel s’ouvre la page, mais cet extrait ne contient aucun titre pour CXVIII. `SHIFT` place les titres courants sur le centre du bloc de texte, à 1 mm du centre de la page parce que la marge intérieure est plus large de 2 mm que la marge extérieure.
+`{title}` imprime le titre du frontmatter, et `{chapterTitle}` le dernier chapitre qui commence sur la page ou avant elle : la page 217 nomme donc CXXIII, commencé en page 216 ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)). La page 213 nomme CXIX, qui commence à son pied, bien que ses 25 premières lignes terminent CXVIII. `{chapterTitleAtTop}` nommerait plutôt le chapitre dans lequel s’ouvre la page, mais cet extrait ne contient aucun titre pour CXVIII. `SHIFT` place les titres courants sur le centre du bloc de texte, à 1 mm du centre de la page parce que la marge intérieure est plus large de 2 mm que la marge extérieure.
 
 ### 4 · Dessiner la couverture et la planche comme des titres
 
@@ -44,7 +44,7 @@ Les deux sont des [styles de titre](/fr/docs/configuration-styles#styles-de-titr
 
 <Excerpt region="excerpt" />
 
-`continuation.headings` donne les compteurs de titres à partir desquels l’extrait commence. Avec `h1: 118`, le premier titre numéroté est le chapitre CXIX ; sans lui, les cinq chapitres sont numérotés de I à V. `numberingTemplate: '{1:I}'` dans le niveau des chapitres compose ces numéros en chiffres romains, et la maquette les imprime avec `{number}`. `:::numbering{startAt=212}`, après la couverture, numérote la planche 212 et les pages de texte de 213 à 217 ([numérotation](/fr/docs/document-format#numbering)).
+`continuation.headings` donne les compteurs de titres à partir desquels l’extrait commence. Avec `h1: 118`, le premier titre numéroté est le chapitre CXIX ; sans lui, les cinq chapitres sont numérotés de I à V. `numberingTemplate: '{1:I}'` dans le niveau des chapitres compose ces numéros en chiffres romains, et la maquette les imprime avec `{number}`. `:::numbering{startAt=212}`, après la couverture, numérote la planche 212 et les pages de texte de 213 à 217 ([numérotation](/fr/docs/document-format-directives#numbering)).
 
 ## Variantes
 

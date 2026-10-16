@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Was ein KI-Agent im Browser mit den 36 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
   lastUpdated: '2026-10-13',
-  readingTime: '14 min',
-  order: 23,
+  readingTime: '12 min',
+  order: 43,
   plainSummary: "Diese Seite ist für alle, die einen KI-Helfer für sich an einem Buch in der Sandbox arbeiten lassen möchten. Solange die Sandbox geöffnet ist, gibt sie dem Helfer eine Reihe von Werkzeugen: um jede Seite anzusehen, die Gestaltung zu ändern, den Text zu bearbeiten, Bilder und Tabellen hinzuzufügen, Probleme zu finden und Dateien zu speichern. Sie bitten mit Ihren eigenen Worten, zum Beispiel „mach die Schrift etwas größer und prüf, ob das Buch noch auf 40 Seiten passt“, und der Helfer setzt die Werkzeuge ein und zeigt Ihnen die Seiten. Alles bleibt in Ihrem Browser. Die Seite erklärt, wie Sie einen Helfer verbinden, was er tun kann und wie jedes Werkzeug aufgerufen wird.",
 };
 
@@ -654,7 +654,7 @@ und das Schema jedes Werkzeugs liefert `postextWebMcp.listTools()`.
 ## Wenn Sie die Sandbox einbetten
 
 `<PostextSandbox>` registriert die Werkzeuge, solange es eingebunden ist;
-`webmcp={false}` lässt sie weg (siehe [Props](/de/docs/sandbox#props)). Eine
+`webmcp={false}` lässt sie weg (siehe [Props](/de/docs/sandbox-embedding#props)). Eine
 Host-Seite kann über dasselbe Modul eigene Werkzeuge hinzufügen:
 
 ```ts

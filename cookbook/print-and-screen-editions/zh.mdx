@@ -42,7 +42,7 @@ pageNotes: { "1": "Notes on Weather的篇页：雨蓝色底上是白色斜向雨
 
 <Excerpt region="screen" />
 
-每个屏幕页都与窗格一样高，所以`fitFiguresToPage`把雨量计缩小到连同题注能放进一页为止（[版面](/zh/docs/configuration-page-layout#版式)）。在CSS假定的96 dpi下，从印刷版继承来的毫米和点按标称尺寸渲染（[集成HTML查看器](/zh/docs/configuration-programmatic-usage#集成html查看器)）。示例把`renderToHtml`输出的绝对定位行写进一个Shadow DOM，页面的选择器够不到它们。`letter-spacing`之类的继承属性能越过这道边界，版面的根元素会自己把它们重置，因为引擎测量这些行时没有考虑它们。HTML页面除非上色，否则是透明的，所以`page.backgroundColor`从调色板取夜间的纸色。ResizeObserver等待150 ms，只在窗格的宽度或高度变化时才用新的`config()`重新构建；重建之后，窗格滚回到原来高度比例的位置。
+每个屏幕页都与窗格一样高，所以`fitFiguresToPage`把雨量计缩小到连同题注能放进一页为止（[版面](/zh/docs/configuration-page-layout#版式)）。在CSS假定的96 dpi下，从印刷版继承来的毫米和点按标称尺寸渲染（[集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)）。示例把`renderToHtml`输出的绝对定位行写进一个Shadow DOM，页面的选择器够不到它们。`letter-spacing`之类的继承属性能越过这道边界，版面的根元素会自己把它们重置，因为引擎测量这些行时没有考虑它们。HTML页面除非上色，否则是透明的，所以`page.backgroundColor`从调色板取夜间的纸色。ResizeObserver等待150 ms，只在窗格的宽度或高度变化时才用新的`config()`重新构建；重建之后，窗格滚回到原来高度比例的位置。
 
 ## 变化
 

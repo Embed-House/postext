@@ -18,7 +18,7 @@ Quatre pages du manuel d’identité visuelle de Metro de Alba, un métro fictif
 
 <Excerpt region="build" />
 
-La mise en page mesure chaque mot avec les caractères de `document.fonts` : `loadBrandFonts()`, dans [la réponse courte](#la-réponse-courte), télécharge donc chaque fichier une fois, garde ses octets et enregistre un `FontFace` construit à partir d’eux avant que `buildDocument` ne s’exécute. Le `kitFonts` du kit ne télécharge que depuis Fontsource, alors qu’une marque sert ses fichiers depuis son propre serveur. `renderToPdf` demande les caractères que peignent les pages, et `brandFontProvider` répond à chaque demande avec les octets déjà téléchargés ; une graisse ou une inclinaison absente de la marque recevrait le fichier le plus proche de la même famille ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-programmatic-usage#pourquoi-un-fournisseur-de-polices)). Le PDF intègre les six fichiers que le canvas a mesurés, chacun une fois.
+La mise en page mesure chaque mot avec les caractères de `document.fonts` : `loadBrandFonts()`, dans [la réponse courte](#la-réponse-courte), télécharge donc chaque fichier une fois, garde ses octets et enregistre un `FontFace` construit à partir d’eux avant que `buildDocument` ne s’exécute. Le `kitFonts` du kit ne télécharge que depuis Fontsource, alors qu’une marque sert ses fichiers depuis son propre serveur. `renderToPdf` demande les caractères que peignent les pages, et `brandFontProvider` répond à chaque demande avec les octets déjà téléchargés ; une graisse ou une inclinaison absente de la marque recevrait le fichier le plus proche de la même famille ([Pourquoi un fournisseur de polices ?](/fr/docs/configuration-pdf-output#pourquoi-un-fournisseur-de-polices)). Le PDF intègre les six fichiers que le canvas a mesurés, chacun une fois.
 
 ### 2 · Le système de couleurs tient dans une seule liste
 
@@ -42,7 +42,7 @@ Un type de ressource peut porter un `captionStyle` partiel, et ces deux-là ne r
 
 <Excerpt region="bundle" />
 
-`createBundle` lit `config.customFonts`, cherche les octets de chaque variante dans `files` d’après son `fileId` et les écrit sous `fonts/`, avec une entrée `fonts` dans le manifeste. La famille de titrage porte `redistributable: false`, pour figurer une licence qui interdirait de transmettre les fichiers (Big Shoulders Display est en réalité sous OFL). Son fichier reste dehors, et `warnings` nomme la famille. Le fichier de 81 Ko contient le chapitre, la configuration, les trois dessins et cinq fichiers de police. La mise en page ne lit jamais `customFonts` ; les pages sortent identiques sans lui ([Créer un paquet](/fr/docs/configuration-programmatic-usage#créer-un-paquet)).
+`createBundle` lit `config.customFonts`, cherche les octets de chaque variante dans `files` d’après son `fileId` et les écrit sous `fonts/`, avec une entrée `fonts` dans le manifeste. La famille de titrage porte `redistributable: false`, pour figurer une licence qui interdirait de transmettre les fichiers (Big Shoulders Display est en réalité sous OFL). Son fichier reste dehors, et `warnings` nomme la famille. Le fichier de 81 Ko contient le chapitre, la configuration, les trois dessins et cinq fichiers de police. La mise en page ne lit jamais `customFonts` ; les pages sortent identiques sans lui ([Créer un paquet](/fr/docs/configuration-bundles#créer-un-paquet)).
 
 ## Variantes
 

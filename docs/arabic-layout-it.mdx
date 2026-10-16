@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Come Postext compone l’arabo: direzione del testo e algoritmo bidirezionale, libri rilegati a destra, parole legate che non si dividono né si spaziano, giustificazione con kashida, segni vocalici, enfasi, cifre e stili di numerazione, ordinali in lettere, note a piè di pagina, versi classici, indice, indice analitico, citazioni e font',
   lang: 'it',
   lastUpdated: '2026-10-04',
-  readingTime: '24 min',
-  order: 16,
+  readingTime: '31 min',
+  order: 31,
   plainSummary: "Questa pagina spiega come Postext impagina l’arabo. L’arabo si legge da destra a sinistra, quindi le righe, le colonne e le pagine del libro procedono in quel verso, mentre i numeri e le parole inglesi dentro il testo continuano a leggersi da sinistra a destra. Le lettere di una parola si uniscono tra loro, perciò Postext non divide mai una parola, non ne allarga mai le lettere e, per allungare una riga, allunga invece alcuni raccordi. La pagina tratta anche i segni vocalici sopra e sotto le lettere, le cifre usate in ogni regione, le note e le poesie. Si chiude con due esempi completi e con i limiti che restano.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **Un libro arabo procede da destra a sinistra, dalle lettere fino alle doppie pagine, e le sue parole sono tratti legati che non si possono dividere.**
 
-Postext compone l’arabo standard moderno e l’arabo classico a partire dallo stesso Markdown e dalla stessa configurazione di qualsiasi altra lingua. Una sola impostazione, la lingua del documento, capovolge l’intero libro: le righe cominciano a destra, la prima colonna è quella di destra, il libro è rilegato sul bordo destro e le doppie pagine si leggono da destra a sinistra, mentre le parole latine e i numeri dentro una riga continuano a leggersi da sinistra a destra. Le parole vengono misurate e disegnate intere, modellate dal font, e una riga giustificata si allunga negli spazi e allungando i raccordi tra le lettere (kashida), mai spaziando le lettere. Questa pagina spiega che cosa fa il motore e quali impostazioni lo controllano. Il [riferimento della configurazione](/it/docs/configuration-text#direzione-del-testo) elenca ogni chiave con il suo valore predefinito, e il [formato del documento](/it/docs/document-format#la-direzione-del-testo-nel-markup) descrive il markup.
+Postext compone l’arabo standard moderno e l’arabo classico a partire dallo stesso Markdown e dalla stessa configurazione di qualsiasi altra lingua. Una sola impostazione, la lingua del documento, capovolge l’intero libro: le righe cominciano a destra, la prima colonna è quella di destra, il libro è rilegato sul bordo destro e le doppie pagine si leggono da destra a sinistra, mentre le parole latine e i numeri dentro una riga continuano a leggersi da sinistra a destra. Le parole vengono misurate e disegnate intere, modellate dal font, e una riga giustificata si allunga negli spazi e allungando i raccordi tra le lettere (kashida), mai spaziando le lettere. Questa pagina spiega che cosa fa il motore e quali impostazioni lo controllano. Il [riferimento della configurazione](/it/docs/configuration-language#direzione-del-testo) elenca ogni chiave con il suo valore predefinito, e il [formato del documento](/it/docs/document-format-inline#la-direzione-del-testo-nel-markup) descrive il markup.
 
 Le regole seguono gli *Arabic & Persian Layout Requirements* del W3C ([alreq](https://www.w3.org/TR/alreq/)) e l’algoritmo bidirezionale Unicode ([UAX #9](https://www.unicode.org/reports/tr9/)) e, per le convenzioni librarie, i libri stampati al Cairo, a Beirut e dalla tipografia di Būlāq. Le fonti sono elencate in fondo.
 
@@ -117,7 +117,7 @@ Un’impostazione che nomina un lato indica un lato del testo, non del foglio, q
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Impostazione</th>
+      <th>Impostazione</th>
       <th><code>left</code> / <code>right</code></th>
       <th><code>start</code> / <code>end</code></th>
     </tr>
@@ -170,7 +170,7 @@ I segni vocalici (ḥarakāt: fatḥa, ḍamma, kasra, sukūn, shadda, tanwīn, 
   <thead>
     <tr>
       <th>Testo</th>
-      <th style={{ width: '200px' }}><code>lineHeight</code></th>
+      <th><code>lineHeight</code></th>
     </tr>
   </thead>
   <tbody>
@@ -201,7 +201,7 @@ L’arabo si scrive con tre serie di cifre, scelte in base alla regione:
     <tr>
       <th>Regione</th>
       <th>Cifre</th>
-      <th style={{ width: '170px' }}><code>numerals</code></th>
+      <th><code>numerals</code></th>
     </tr>
   </thead>
   <tbody>
@@ -211,7 +211,7 @@ L’arabo si scrive con tre serie di cifre, scelte in base alla regione:
   </tbody>
 </table>
 
-`numerals` al livello principale imposta le cifre di ogni numero che il motore scrive: folio e numeri di pagina dell’indice e dell’indice analitico, numeri di elenco e di nota, contatori dei titoli e dei capitoli, numeri delle figure e i rimandi a esse, `{totalPages}`. `'auto'` prende le cifre della regione da `locale` (`ar` senza regione, e `ar-AE`, sono del Mashriq, come le stampano i libri arabi di quelle zone); un tag può indicare le proprie (`ar-MA-u-nu-arab`). I numeri digitati dall’autore non vengono mai cambiati, e vengono letti in qualsiasi sistema: una voce di elenco `٣.` comincia da 3, e `{startAt=٥}` vale 5. Vedi [Cifre del documento](/it/docs/configuration-text#cifre-del-documento).
+`numerals` al livello principale imposta le cifre di ogni numero che il motore scrive: folio e numeri di pagina dell’indice e dell’indice analitico, numeri di elenco e di nota, contatori dei titoli e dei capitoli, numeri delle figure e i rimandi a esse, `{totalPages}`. `'auto'` prende le cifre della regione da `locale` (`ar` senza regione, e `ar-AE`, sono del Mashriq, come le stampano i libri arabi di quelle zone); un tag può indicare le proprie (`ar-MA-u-nu-arab`). I numeri digitati dall’autore non vengono mai cambiati, e vengono letti in qualsiasi sistema: una voce di elenco `٣.` comincia da 3, e `{startAt=٥}` vale 5. Vedi [Cifre del documento](/it/docs/configuration-language#cifre-del-documento).
 
 Un formato indicato nella configurazione viene stampato come indicato, quindi un libro può mescolare i sistemi. Gli stili di numerazione arabi:
 
@@ -220,7 +220,7 @@ Un formato indicato nella configurazione viene stampato come indicato, quindi un
     <tr>
       <th>Stile</th>
       <th>1, 2, 3 … 11, 1446</th>
-      <th style={{ width: '220px' }}>Nome</th>
+      <th>Nome</th>
     </tr>
   </thead>
   <tbody>
@@ -270,7 +270,7 @@ headings: {
 },
 ```
 
-Questo stampa الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة e, a 1001, الليلة الحادية بعد الألف; `'الفصل {1:ordinal}'` stampa الفصل الأول, الفصل الحادي عشر. Gli ordinali si scrivono fino a 9 999 e i cardinali fino a 99 999; oltre, il numero viene stampato in cifre. I segnaposto grafici `{numberWords}` e `{numberOrdinalWords}` danno le forme maschili. Vedi [Numeri in lettere](/it/docs/configuration-text#numeri-in-lettere).
+Questo stampa الليلة الأولى, الليلة الحادية عشرة, الليلة الخامسة والأربعون بعد الثلاثمئة e, a 1001, الليلة الحادية بعد الألف; `'الفصل {1:ordinal}'` stampa الفصل الأول, الفصل الحادي عشر. Gli ordinali si scrivono fino a 9 999 e i cardinali fino a 99 999; oltre, il numero viene stampato in cifre. I segnaposto grafici `{numberWords}` e `{numberOrdinalWords}` danno le forme maschili. Vedi [Numeri in lettere](/it/docs/configuration-headings#numeri-in-lettere).
 
 ## Note a piè di pagina
 
@@ -310,9 +310,9 @@ Scrivi la poesia in un blocco `:::verse`, un bayt per riga, con gli emistichi se
 - **Carattere.** La poesia prende il carattere e il corpo del testo; `style` indica uno stile di paragrafo, ed è così che una poesia vocalizzata ottiene l’interlinea di cui hanno bisogno i suoi segni. Una poesia in traslitterazione latina in un libro inglese si compone allo stesso modo, con il ṣadr a sinistra.
 - **Numeri di riga.** Con `lineNumbers` attivo, una poesia conta un numero per bayt, stampato nel margine accanto; l’ʿajuz di un bayt sfalsato, su una riga propria, non riceve numero. `position: 'start'` mette i numeri a destra su ogni pagina di un libro arabo. Vedi [Configurazione › Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga).
 
-Il testo semplice conserva la poesia come è stata scritta, un bayt per riga, e lascia fuori le kashida e l’ornamento. Vedi [`:::verse`](/it/docs/document-format#verse) nel formato del documento.
+Il testo semplice conserva la poesia come è stata scritta, un bayt per riga, e lascia fuori le kashida e l’ornamento. Vedi [`:::verse`](/it/docs/document-format-directives#verse) nel formato del documento.
 
-**Versi liberi e poesie latine.** Una poesia le cui righe non contengono `||` (versi liberi moderni, o una poesia latina citata in un libro arabo, `:::verse{dir=ltr lang=en}`) viene invece composta riga per riga: ogni riga della sorgente è un verso, le righe vuote separano le strofe, gli spazi iniziali sono un rientro misurato dal lato d’inizio della poesia, e le righe troppo lunghe vanno a capo con un rientro sporgente. Vedi [`:::verse` › Riga per riga](/it/docs/document-format#verso-per-verso).
+**Versi liberi e poesie latine.** Una poesia le cui righe non contengono `||` (versi liberi moderni, o una poesia latina citata in un libro arabo, `:::verse{dir=ltr lang=en}`) viene invece composta riga per riga: ogni riga della sorgente è un verso, le righe vuote separano le strofe, gli spazi iniziali sono un rientro misurato dal lato d’inizio della poesia, e le righe troppo lunghe vanno a capo con un rientro sporgente. Vedi [`:::verse` › Riga per riga](/it/docs/document-format-directives#verso-per-verso).
 
 ## Indice e indice analitico
 
@@ -326,7 +326,7 @@ Il testo semplice conserva la poesia come è stata scritta, un bayt per riga, e 
 
 Una riga dell’indice è composta da destra a sinistra: il numero e il titolo a destra, la linea guida, il numero di pagina a sinistra. Un titolo latino in un libro arabo mantiene il numero di pagina a sinistra, e le sue parole si leggono da sinistra a destra.
 
-**Tabulazioni.** Le tabulazioni nel testo corrente funzionano allo stesso modo (vedi [Tabulazioni e punti di tabulazione](/it/docs/document-format#tabulazioni-e-tabulatori)): la posizione di una tabulazione si misura dal bordo destro della giustezza, una tabulazione `end` sta a sinistra, e una linea guida corre tra le parti in ordine visivo. Un listino prezzi o un indice digitato come paragrafi, `الفصل الأول :tab 12` con uno stile la cui tabulazione è `{ position: 'end', align: 'end', leader: '.' }`, compone il titolo a destra e il numero a sinistra, dopo i puntini.
+**Tabulazioni.** Le tabulazioni nel testo corrente funzionano allo stesso modo (vedi [Tabulazioni e punti di tabulazione](/it/docs/document-format-inline#tabulazioni-e-tabulatori)): la posizione di una tabulazione si misura dal bordo destro della giustezza, una tabulazione `end` sta a sinistra, e una linea guida corre tra le parti in ordine visivo. Un listino prezzi o un indice digitato come paragrafi, `الفصل الأول :tab 12` con uno stile la cui tabulazione è `{ position: 'end', align: 'end', leader: '.' }`, compone il titolo a destra e il numero a sinistra, dopo i puntini.
 
 **Indice analitico.** L’indice analitico di un libro arabo ordina le voci in ordine alfabetico (hijāʾī) e le raggruppa sotto la loro prima lettera. Ignora l’articolo determinativo: البصرة va sotto ب, tra بدر e بغداد, e viene stampato come è scritto (`index.ignoreArticle`, attivo per impostazione predefinita quando la lingua dell’indice è l’arabo; الله conserva l’articolo). Ignora anche i segni vocalici e il tatweel, classifica أ إ آ ٱ sotto ا, e ordina ة con ه e ى con ي. I numeri di pagina sono uniti dalla virgola araba (، ) e un rimando recita انظر o انظر أيضًا. Una voce con una propria chiave `sort` mantiene l’articolo di quella chiave. Vedi [Indice analitico](/it/docs/configuration-notes-references#indice-analitico).
 
@@ -339,9 +339,9 @@ Postext compone ogni stile in una sola famiglia e non ricorre a un’altra per u
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Carattere</th>
+      <th>Carattere</th>
       <th>Stile</th>
-      <th style={{ width: '240px' }}>Uso</th>
+      <th>Uso</th>
     </tr>
   </thead>
   <tbody>
@@ -355,7 +355,7 @@ Postext compone ogni stile in una sola famiglia e non ricorre a un’altra per u
 
 Markazi Text e Noto Kufi Arabic servono per i libri moderni (testo e titoli), ed El Messiri per i titoli display moderni. A parità di corpo nominale un carattere naskh sembra più piccolo di uno latino: il testo dei libri arabi è comunemente di 13–15 pt dove il testo latino sarebbe di 10–11 pt.
 
-- **Nel browser e nella Sandbox**, Google Fonts e Fontsource servono ogni famiglia come un file per sottoinsieme: `latin`, `latin-ext` e `arabic`. Il browser carica il file `arabic` solo quando un carattere ne ha bisogno, e un’impaginazione misurata prima del suo arrivo viene misurata con un carattere di ripiego. La Sandbox lo carica prima della prima impaginazione; un host lo verifica con un campione che contiene una lettera araba (`document.fonts.load('16px Amiri', 'ب')`). Il fornitore di font del PDF deve passare a `renderToPdf` il file `arabic` per il testo arabo; il fornitore descritto in [Fornitore di font per il browser](/it/docs/configuration-programmatic-usage#provider-di-font-per-il-browser-fontsource--woff2) sceglie la porzione in base al punto di codice.
+- **Nel browser e nella Sandbox**, Google Fonts e Fontsource servono ogni famiglia come un file per sottoinsieme: `latin`, `latin-ext` e `arabic`. Il browser carica il file `arabic` solo quando un carattere ne ha bisogno, e un’impaginazione misurata prima del suo arrivo viene misurata con un carattere di ripiego. La Sandbox lo carica prima della prima impaginazione; un host lo verifica con un campione che contiene una lettera araba (`document.fonts.load('16px Amiri', 'ب')`). Il fornitore di font del PDF deve passare a `renderToPdf` il file `arabic` per il testo arabo; il fornitore descritto in [Fornitore di font per il browser](/it/docs/configuration-pdf-output#provider-di-font-per-il-browser-fontsource--woff2) sceglie la porzione in base al punto di codice.
 - **In un pacchetto**, includi i caratteri interi o ridotti ai caratteri del libro, conservando le tabelle di layout OpenType (`GSUB`, `GPOS`): lì stanno le forme di legatura, le legature, le posizioni dei segni e le parentesi specchiate. Un sottoinsieme che ne è privo stampa lettere isolate.
 - **I glifi mancanti** vengono stampati come la casella vuota del font; `renderToPdf` li segnala per carattere (`missingGlyph`), e la Sandbox li elenca nel pannello Verifiche.
 - **Il latino dentro il testo arabo** è composto nella stessa famiglia. Amiri ha un proprio latino; con un carattere naskh dal latino povero, componi i passi latini lunghi in uno stile di paragrafo con un carattere latino.
@@ -364,7 +364,7 @@ Markazi Text e Noto Kufi Arabic servono per i libri moderni (testo e titoli), ed
 
 In **Grafica › Sistema di scrittura**, il menu Lingua del documento offre العربية, العربية (مصر) e العربية (المغرب), e **Direzione del testo** e **Cifre** mostrano a che cosa si risolve *Auto*. **Predefiniti per l’arabo › Rivedi…** elenca che cosa cambia la preparazione del libro per l’arabo prima di applicarla, con una scelta di caratteri (*Classico*, Amiri; *Moderno*, Noto Naskh Arabic con titoli in Noto Kufi Arabic): la direzione e la rilegatura riportate ad *Auto*, testatine e folio in un carattere con lettere arabe, un’interlinea di 1,75 em, testo giustificato, le cifre della regione, شكل e جدول numerate per capitolo, didascalie composte شكل ١-١: العنوان, capitoli numerati الفصل الأول, elenchi numerati ١- أ- (١) e note numerate a ogni pagina. Ogni selettore di font elenca per prime le famiglie arabe.
 
-L’editor dà a ogni riga la direzione della sua prima lettera: una riga di arabo parte da destra, e il cursore e i tasti freccia seguono l’ordine visivo, mentre il markup al suo interno (attributi `{…}`, `[^id]`, un `:ref[…]`, formule, destinazioni dei link) resta da sinistra a destra. Vedi [Sandbox](/it/docs/sandbox#pannello-grafica).
+L’editor dà a ogni riga la direzione della sua prima lettera: una riga di arabo parte da destra, e il cursore e i tasti freccia seguono l’ordine visivo, mentre il markup al suo interno (attributi `{…}`, `[^id]`, un `:ref[…]`, formule, destinazioni dei link) resta da sinistra a destra. Vedi [Sandbox](/it/docs/sandbox-design-checks#pannello-grafica).
 
 ## Due configurazioni complete
 

@@ -1,0 +1,102 @@
+{/* docs/sandbox-previews-en.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: the previews',
+  sidebarTitle: 'Previews',
+  description: 'The Canvas, PDF, Folio, HTML and EPUB 3 tabs of the main viewport: what each shows and what it can do',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '14 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "This page covers the right side of the Sandbox, where the finished pages appear. Five tabs show the same book in five ways: as page images, as a PDF file, as a 3D book you can leaf through, as a web page and as an EPUB e-book. Changing the tab does not lay the book out again, so every tab shows the same pages. The page explains what each tab shows and what you can do in it.",
+};
+
+# Sandbox: the previews
+
+
+## Main viewport
+
+The right side of the interface displays the rendered output. Five tabs are available, one per rendering mode, in this order: **Canvas**, **PDF**, **Folio**, **HTML** and **EPUB 3**. Switching tabs does not re-run layout: the same VDT feeds every backend, so the content you see is consistent across modes. The Folio tab is offered only where the browser has WebGL2 and the screen is not a phone's (see [Folio tab](#folio-tab)).
+
+Each viewport runs the layout pipeline inside a dedicated **Web Worker** (`postext/worker`). A per-viewport `useLayoutWorker` hook owns the worker handle, ships fonts into it as transferable `ArrayBuffer`s, and drives builds with **last-wins cancellation** — a keystroke or slider drag aborts the previous build's `AbortSignal` before the next one starts, so fast typing never queues up stale work on the main thread. Unmounting a viewport disposes its worker and rejects any pending build. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the integration pattern used here.
+
+<Illustration name="SandboxSyncFlow" data='{"title": "One VDT, five outputs", "desc": "The sandbox markdown and configuration feed a single in-memory VDT. Canvas, PDF, Folio, HTML and EPUB 3 each render from that same VDT, so every tab shows the same layout.", "caption": "A single VDT feeds the five output tabs.", "markdownLabel": "Markdown", "configLabel": "Configuration", "vdtTitle": "VDT", "vdtSubtitle": "shared layout", "canvasLabel": "Canvas", "htmlLabel": "HTML", "folioLabel": "Folio", "pdfLabel": "PDF", "epubLabel": "EPUB 3", "singleSource": "single source of truth"}' />
+
+### Canvas tab
+
+Renders a rasterized preview of the document on an HTML5 `<canvas>` element. This provides a pixel-accurate representation of how the final typeset document will look, including precise text positioning, column layout, and resource placement.
+
+A toolbar at the top of the canvas viewport provides:
+
+- **Zoom controls** — Zoom in and out (1.25x per step, range 0.25x–4x). Manual zooming disables fit mode.
+- **Fit modes** — Fit to page width or fit to page height. Toggles on/off; fitting recalculates automatically on window resize.
+- **View modes** — Single page (one page per row) or double-page spread (book-like layout where the first page appears on the right as a recto, and subsequent pages are paired as spreads). A book bound on the right (`page.binding`, vertical Chinese) shows its spreads the other way round: page 1 alone on the left, then `[3 | 2]`, `[5 | 4]`. On a vertical page a click lands on the character under the pointer, and the caret is a bar across the column.
+- **Print preview** (`Printer` icon) — Shows the pages as they will print, off by default and remembered by the browser: every colour separated through the output profile of *Print preparation* and shown on the paper's own white, large black areas in rich black; a PDF forced to grayscale shows in black ink alone. Only what prints: no screen guides and no outlines (the preflight's findings are in **Checks**). The Folio tab shares the switch. It repaints the pages and never lays them out again.
+
+Pages render lazily via `IntersectionObserver` — only visible pages (plus a 200px margin) are drawn to canvas, keeping GPU memory usage low for long documents.
+
+### PDF tab
+
+Generates a real PDF of the current document via the `postext-pdf` package and displays it inside an embedded browser PDF viewer. The PDF is rebuilt automatically on first mount and on every subsequent regeneration, using the same VDT that feeds the canvas and HTML tabs — so line breaks, page boundaries, and resource placement match pixel-for-pixel across the three backends, down to the compression of overfull final lines that Knuth–Plass occasionally accepts.
+
+A floating toolbar at the bottom-right of the viewport provides:
+
+- **Regenerate** (`RefreshCw` icon) — Rebuilds the PDF from the current markdown and configuration. Useful after changing a setting that does not auto-trigger a rebuild, or when fonts have finished loading.
+- **Download** (`Download` icon) — Saves the current PDF to disk. The filename is derived from the document's first H1 heading (falling back to `document.pdf`).
+- **Print** (`Printer` icon) — Opens the browser's print dialog against the embedded PDF viewer, which in most browsers lets you either print or save as PDF again.
+- **Current chapter / Whole book** (selector at the left of the tab bar, books with more than one chapter) — Renders every chapter as one continuous PDF instead of the active chapter continued after the ones before it (the default). Changing it regenerates the PDF. The canvas has a selector of its own (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)).
+
+Under the hood the sandbox uses a `createPdfFontProvider()` helper that fetches per-weight static WOFF2 files from the Fontsource jsdelivr CDN, the files its previews are measured with, decompresses them to TTF in the browser, and hands the bytes to `pdf-lib` via `renderToPdf`. Per-weight static fonts (rather than a single variable font) are required so that bold text actually embeds at the bold weight. See [Generating PDFs](/en/docs/configuration-pdf-output#generating-pdfs) for the same pattern used outside the sandbox.
+
+### Folio tab
+
+Shows the book as a printed object: the pages laid out by the engine, bound and lying open on a desk, in 3D (`postext-folio`, three.js). The pages are the canvas's own paintings, shown texel for pixel, so the text is as sharp as on the Canvas tab; what changes is everything around them. The paper, the binding, the desk and the light come from the **Folio** group of the Design panel (the `folio` configuration), and a `:::paper` run in the text prints its pages on another stock (see [Document format › `:::paper`](/en/docs/document-format-directives#paper)).
+
+- **What it lays out.** The Folio tab follows the canvas's **Current chapter / Whole book** selector. A chapter is shown as part of its book: the pages before and after it are counted into the thickness of the two page blocks, and the chapter opens on its true side of the spread. A right-bound book (`page.binding: 'right'`, or a vertical book) lies mirrored and turns its leaves leftward.
+- **Turning pages.** Take a page by its edge and drag it over; let it go past halfway and it turns, short of that it falls back. A click on a page turns it (the right-hand page forward, the left-hand one back), and so do the ‹ › buttons of the toolbar and the arrow keys, Page Up/Down, Home and End when the book has focus. Each leaf bends according to its paper: bible paper rolls tight, card turns in a wide arc, board and the covers turn as rigid slabs.
+- **Long jumps.** A page more than ten pages away (typed in the page field, named by the permalink, reached by a link or by the caret in the Text panel) is reached in one move: the block of pages in between lifts as one, as thick as those pages are, and is laid over on the other side. Up to ten pages, the leaves turn one by one.
+- **Looking round the book.** A right-drag orbits the view round the book, down to 70° from overhead: to see the spine, the fore-edge or the thickness of the block. The view stays where you leave it, even while pages turn, until **Reset view** eases it back to the view the settings give (*Tilt* and *Turn*). **Save as default view** stores the view as you see it in those settings, so the book opens there and Reset view comes back to it.
+- **What the pointer does.** Three buttons in the toolbar choose what the left button (one finger, a pen) does on the book: **Turn pages by hand**, the default, as above; **Orbit the view**, the same as a right-drag, for a trackpad or a tablet; **Select text**, which works as on the Canvas tab on the book as it is seen, tilted or orbited: a click puts the caret in the Text panel, a drag selects, a double click takes a word, a click on a link follows it. The choice is remembered; H, O and S switch it while the book has focus.
+- **Following the editor.** The caret and the selection of the Text panel are drawn on the pages, and stay there as you type: the page shows the edit as soon as it is laid out again. Moving the caret in the editor to a page not on show turns the book to it.
+- **Covers.** With *Covers: A case round the pages* the book is bound in a case of cloth, card or leather in the cover colour. With *The document's own pages* the first page is the front cover and the last page (when it falls on a left-hand page) the back cover: the book lies closed until the cover is turned, and turning the last leaf closes it again. A thick book opens with its spine standing between the two blocks.
+- **The toolbar.** A floating bar like the canvas's: **Recalculate**, **Reset view**, **Save as default view**, the three pointer modes, **Print preview** (the canvas's proof, on the paper's white of the output profile, so the book's paper shade is set aside meanwhile; the same switch as the canvas's), the pin, ‹ › and the page field, which takes a book page number and turns to its spread. The page on the right of the open spread is the one the permalink names (`view=folio&page=N`).
+- **Settings apply at once.** The Folio settings are not part of the layout: changing the paper, the binding or the light redraws the book without laying a page out again.
+- **Where it is offered.** The tab needs WebGL2 and a screen whose short side is at least 600 px: on a phone the 3D book takes more memory than the browser gives a tab, so the tab is not shown there (nor in a browser without WebGL2). In a pane narrower than 560 px the book shows one page at a time; the leaf still turns over the spine. With reduced motion asked for by the system, the spreads change without turning.
+- **Videos on the page.** A click on a video's poster plays it on the page, in any of the three pointer modes, and the picture keeps moving while the leaf turns and curls. Another click pauses it; starting another stops the first, unless *Play alongside other videos* is on; the video stops when the book comes to rest on a spread that no longer shows it. Space plays or pauses the video on the open spread. A video with *Autoplay* on starts by itself the first time its spread is shown, with its sound once you have clicked on the page (muted before, and a click unmutes it); the guide's two videos do. Uploaded files and videos at an address (MP4, HLS) play this way when their server allows cross-origin reads; YouTube and Vimeo videos turn the page as before (see [Document format › Videos on Folio's pages](/en/docs/document-format-resources#videos-on-folios-pages)).
+- **Text alternatives.** Each page is drawn as an image; its accessible name points to the HTML tab and the Text panel for its text.
+
+### HTML tab
+
+Renders the postext output inside a Shadow DOM container, ensuring complete style isolation from the host page. The editorial CSS (typography, spacing, column rules) is injected inside the shadow root so it cannot be affected by or leak into the surrounding application styles.
+
+Markdown links are live here and in the PDF (see [Document format › Links](/en/docs/document-format-inline#links)). In this tab, clicking one opens its target in a new browser tab, so the Sandbox stays open; `:ref` citations still jump within the document.
+
+Videos play here: a YouTube or Vimeo video in the platform's player, a file or an address in the browser's player (an HLS stream through hls.js where the browser has no HLS of its own), with the player options of the Design panel's *Video style* and of each video. Clicks on a player go to the player, not to the editor. With **In the HTML viewer** set to *Poster*, the tab shows the printed poster, linked to the video.
+
+A toolbar at the top of the viewport provides:
+
+- **Font-scale controls** — Shrink or grow body text while preserving every relative measurement in the configuration.
+- **Column modes** — Single (one tall scrollable column) or multi (the number of columns whose width comes closest to the configured measure, with horizontal scroll-snap between pages). A double-column document keeps its two-column pages, but the viewer may show an odd number of columns — three rather than two stretched or four squeezed — when that is the nearest fit; the last one then belongs to the next page, half in view. A document or a section in *Multiple columns* is shown as two-column pages too: three to eight print columns would be slivers at screen width, so the viewer sets its text two columns to a page and shows as many side by side as the measure allows. A book bound on the right (`page.binding`) runs its pages right to left in multi mode: the viewer opens at the right end and the ‹ arrow goes to the next page. A book set vertically reads in multi mode only: the **Single** button is disabled, with a tooltip saying why, and the choice you saved comes back with the next horizontal book.
+
+Column geometry is driven by the **Web reader (HTML)** section of the Design panel (**Design → Export**): `maxCharsPerLine` sets the target measure in characters of the body font, `columnGap` the horizontal gap between columns in multi mode, and `optimalLineBreaking` toggles Knuth–Plass inside the viewer. See the [HTML Viewer configuration reference](/en/docs/configuration-fonts-colors-viewers#html-viewer) and the end-to-end [integration example](/en/docs/configuration-html-folio-epub#integrating-the-html-viewer) for the same pattern used internally by the sandbox.
+
+### EPUB 3 tab
+
+Writes the whole book as an EPUB 3 file with the `postext-epub` package, shows it in a reader inside the tab and downloads it. The file is built in the browser from the same chapter-by-chapter layout the PDF tab uses for **Whole book**, so its page numbers, notes, cross-references, contents and index are the ones the PDF prints. The tab has no **Current chapter / Whole book** selector, since an EPUB always holds the whole book. In its place, at the left of the tab bar, it offers the rendition (as icons on a phone).
+
+EPUB 3 has two renditions, named by the package's `rendition:layout` property:
+
+- **Fixed layout** (`pre-paginated`, often called FXL): every page as it is printed. Each page is a document of its own with the page's size, and the text sits where the PDF puts it, in the book's fonts, but stays real text that can be selected, searched and read aloud. Spreads pair as in print, and a right-bound book (Arabic, vertical Chinese) turns right to left. It keeps the design: columns, floats, running heads, openers, the exact line breaks. Choose it for books whose pages are designed as pages, such as illustrated books, textbooks, catalogues and magazines, and for reading systems with a large screen. On a small screen the page is scaled down, and the reader zooms in to read it.
+- **Reflowable** (the default on phones and computers, and the EPUB default): the text, figures and tables in reading order, set again by the reading system for its screen and for the typeface, type size and margins the reader picks. Paragraphs are rebuilt from the laid-out lines (the hyphens added at line ends are removed), figures and tables follow the text that cites them, boxes become asides, footnotes link to the notes at the end of each chapter and back, and the printed page numbers are kept as page markers. A style sheet derived from the design gives the headings, boxes, tables and captions their look, but the page geometry is gone: no columns, no running heads, no fixed line breaks. Choose it for running text, such as novels, essays and reports, and for phones and e-ink readers.
+
+Until one is picked, the tab opens in the fixed layout on a tablet such as an iPad, whose screen has room for the printed page, and reflowable everywhere else. The choice is remembered between visits (`postext-sandbox-epub-layout`), and switching it writes the file again at once.
+
+- **Generation.** The EPUB is written the first time the tab opens and again when **Recalculate** is pressed. A progress bar counts the chapters being laid out, then the writer's steps (fonts, pictures and the cover; the pages or chapters; the package), and screen readers hear when the file is ready or failed. After an edit, an arrow next to **Recalculate** shows that the file no longer matches the text, as on the PDF tab. Leaving the tab or switching the rendition stops a generation under way. A long book takes a few seconds, during which the page does not respond.
+- **What goes into the file.** The metadata come from the first chapter's front matter: `title`, `subtitle`, `author` (one name or a list), `publishDate` or `date`, `isbn` or `identifier`, `publisher`, `rights` and `description`; the language comes from the configuration's `locale`. A book without an identifier gets one derived from the project (or from the sample book and its language), so every EPUB of the same book keeps one identity in a reader's library. Every font family the design names is embedded: Google Fonts slices only where the book prints characters they hold, custom families unless they are marked as not redistributable. Pictures go in as stored, never as the PDF print master; each SVG carries the faces its text names (custom families and Google families alike), except families marked as not redistributable, which are reported. Video files go in under `media/` and play in the reader's player; a file without its bytes plays from its production address, which the package declares as a remote resource, and a YouTube or Vimeo video is its poster linked to the video. The cover is the book's own picture when it is a bitmap at least 600 px wide, otherwise the first page rendered 1,600 px wide without its crop-mark margin.
+- **The reader.** The tab opens the file it has just written, the bytes you download, not a separate preview. The fixed layout shows one page, or a spread when the pane is wide enough, scaled to fit; the reflowable book is paged one screen at a time (top to bottom for vertical Chinese), and its pages carry on from one chapter to the next. Links in the book move the reader; web and mail links open in a new browser tab. ← / →, Page Up / Page Down, Home and End turn the pages, and in a right-to-left book ← goes forward.
+- **The toolbar.** A floating bar like the PDF tab's: **Recalculate**, the pin, **Download EPUB** with the file's size (the file is named after the book's title), a warnings button when the writer reported anything, **Contents** (a jump list from the book's table of contents), **Increase font size** and **Decrease font size** (reflowable only, keeping your place), ‹ › and, in a fixed layout, the page field. The page field counts pages in the file's reading order, the cover being 1; the frames name each page with its printed number.
+- **Warnings.** The warnings button lists what the file could not carry as the book has it: a picture with no stored file (an empty frame takes its place), a family, weight or style with no embedded face (reading systems substitute one), a family left out because it may not be redistributed, and anything the rendition cannot express. The same messages go to the browser console.
+- **Checking the file.** Both renditions of the guide and of the sample books pass [W3C EPUBCheck](https://www.w3.org/publishing/epubcheck/) 5.4 with no errors or warnings. To check your own book, download it and run `epubcheck book.epub`, or read it in Apple Books, Thorium Reader or Calibre.
+
+See [EPUB books](/en/docs/configuration-html-folio-epub#epub-books-postext-epub) for writing the same files from your own code.

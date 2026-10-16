@@ -16,13 +16,13 @@ A bilingual chapbook of five poems about a salt pan in the south of Spain, 156 �
 
 ### 1 · A poem is a box with a fixed column break
 
-The code is [the short answer](#the-short-answer) above. Each poem is a callout around a `:::columns` group; its style drops the fill and the padding and prints the fence’s `title`, the numeral ([`:::columns`](/en/docs/document-format#columns)). Without `breaks`, the group cuts where its two columns come out level. Both halves of these poems are the same height, so the cut falls on the English title anyway; lengthen two lines of *The Rake* until they turn over, and the cut moves one block down and leaves THE RAKE at the foot of the Spanish column. `breaks="5"` names the block that opens the second column, so the English title heads it whatever the heights of the two halves.
+The code is [the short answer](#the-short-answer) above. Each poem is a callout around a `:::columns` group; its style drops the fill and the padding and prints the fence’s `title`, the numeral ([`:::columns`](/en/docs/document-format-directives#columns)). Without `breaks`, the group cuts where its two columns come out level. Both halves of these poems are the same height, so the cut falls on the English title anyway; lengthen two lines of *The Rake* until they turn over, and the cut moves one block down and leaves THE RAKE at the foot of the Spanish column. `breaks="5"` names the block that opens the second column, so the English title heads it whatever the heights of the two halves.
 
 ### 2 · A :::verse block per column, a blank line per stanza break
 
 <Excerpt region="verse" />
 
-Each half of a poem is a `:::verse` block: a line of verse a line of the Markdown, ragged and never hyphenated, and a blank line between stanzas, which leaves a blank line in the column ([`:::verse`](/en/docs/document-format#verse)). Every stanza is a block, so `breaks` counts stanzas, not lines. The English *each one standing on its own reflection.* is too long for its 55 mm column and turns over 2 em in; the Spanish half closes its block after the stanza opposite and puts a `:::space{lines=2}` before the next one, so the next stanzas start on the same line. A `:::space` is not a block, and `breaks` does not count it ([`:::space`](/en/docs/document-format#space)).
+Each half of a poem is a `:::verse` block: a line of verse a line of the Markdown, ragged and never hyphenated, and a blank line between stanzas, which leaves a blank line in the column ([`:::verse`](/en/docs/document-format-directives#verse)). Every stanza is a block, so `breaks` counts stanzas, not lines. The English *each one standing on its own reflection.* is too long for its 55 mm column and turns over 2 em in; the Spanish half closes its block after the stanza opposite and puts a `:::space{lines=2}` before the next one, so the next stanzas start on the same line. A `:::space` is not a block, and `breaks` does not count it ([`:::space`](/en/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="Poem I on page 3: reflection. turns over in the English, and the Spanish stanza ends with two blank lines instead of one." />
 
@@ -42,7 +42,7 @@ Each is a level-1 heading with a style of its own ([heading styles](/en/docs/con
 
 <Excerpt region="heads" />
 
-The verso carries the Spanish title and the recto the English one, in the order of the columns. `pages: 'body'` keeps them off the three pages that open with a heading. The note and the watercolour get a folio at the foot instead, and the title page’s style empties its header and its footer ([text elements](/en/docs/configuration-page-layout#text-elements)).
+The verso carries the Spanish title and the recto the English one, in the order of the columns. `pages: 'body'` keeps them off the three pages that open with a heading. The note and the watercolour get a folio at the foot instead, and the title page’s style empties its header and its footer ([text elements](/en/docs/configuration-headers-footers#text-elements)).
 
 ## Variations
 

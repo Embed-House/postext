@@ -63,7 +63,8 @@ export type SettingsSectionId =
   | 'pdfGeneration'
   | 'print'
   | 'debug'
-  | 'warnings';
+  | 'warnings'
+  | 'checks';
 
 export interface SettingsGroup {
   id: SettingsGroupId;
@@ -149,6 +150,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'folio', group: 'folio', labelKey: 'folioSection', configKeys: ['folio'] },
   { id: 'debug', group: 'advanced', labelKey: 'debug', configKeys: ['debug', 'page'] },
   { id: 'warnings', group: 'advanced', labelKey: 'warnings', configKeys: ['debug'] },
+  // The checks of the configuration itself (#849).
+  { id: 'checks', group: 'advanced', labelKey: 'checksSection', configKeys: ['checks'] },
 ];
 
 export function sectionsInGroup(group: SettingsGroupId): SettingsSectionEntry[] {

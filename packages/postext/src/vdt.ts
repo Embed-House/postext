@@ -29,6 +29,7 @@ import type {
   ResolvedPdfGenerationConfig,
   ResolvedPrintConfig,
   ResolvedContrastConfig,
+  ResolvedChecksConfig,
   ResolvedFolioConfig,
   ResolvedDesignSlot,
   ResolvedPartsConfig,
@@ -47,6 +48,8 @@ import type {
   ResolvedComicsConfig,
   ResolvedLineNumbersConfig,
   ResolvedCodeStyleConfig,
+  PageTemplate,
+  ResolvedLabelStyle,
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
@@ -132,6 +135,9 @@ export interface ResolvedConfig {
    *  when the config sets any. Layout ignores them; `contrastDocument`
    *  reads them. */
   contrast?: ResolvedContrastConfig;
+  /** The checks of the configuration itself (`PostextConfig.checks`, #849),
+   *  resolved, when the config sets any. Layout ignores them. */
+  checks?: ResolvedChecksConfig;
   /** The Folio 3D viewer settings (`PostextConfig.folio`), resolved, when
    *  the config sets any. Layout ignores them; `postext-folio` reads them. */
   folio?: ResolvedFolioConfig;
@@ -147,6 +153,14 @@ export interface ResolvedConfig {
    *  resolved, when the config sets the section; absent otherwise (the
    *  defaults apply, `resolvedCodeStyle`). */
   codeStyle?: ResolvedCodeStyleConfig;
+  /** Page templates (`PostextConfig.pageTemplates`, #853) as written, when
+   *  the config sets any; absent otherwise, so a document without composed
+   *  pages resolves (and hashes) as before. Read one with
+   *  `resolvePageTemplate(config, id, { parity })`. */
+  pageTemplates?: PageTemplate[];
+  /** Label styles (`PostextConfig.labelStyles`, #853), resolved, when the
+   *  config sets any. */
+  labelStyles?: ResolvedLabelStyle[];
 }
 
 // ---------------------------------------------------------------------------
@@ -1602,14 +1616,19 @@ export interface VDTBlock {
   notRunningChapter?: boolean;
   /** Present on the part row of an expanded `:::toc`: the row's design is
    *  laid out from `toc.parts.design` with these values (see
-   *  `buildHeadersAndFooters`), replacing the block's (empty) line. */
-  tocPart?: { number: string; title: string; pageLabel: string; palette?: Record<string, string>; pageIndex?: number };
+   *  `buildHeadersAndFooters`), replacing the block's (empty) line.
+   *  `continued`: the head row of a cut contents block repeated at the top
+   *  of the column it goes on in (`toc.groups.continuation`, #850), its
+   *  title followed by the continuation mark; a reading of the contents
+   *  (EPUB navigation) leaves it out. */
+  tocPart?: { number: string; title: string; pageLabel: string; palette?: Record<string, string>; pageIndex?: number; continued?: true };
   /** Present on an entry of an expanded `:::toc`, with the book page index
    *  the entry points at once known (`OutlineEntry.pageIndex`): renderers
    *  make the row a link to it. The contents keep their own rhythm:
    *  entries and part rows neither snap to the baseline grid nor serve as
-   *  column-balancing stretch points. */
-  tocEntry?: { pageIndex?: number };
+   *  column-balancing stretch points. `continued`: a repeated head row (see
+   *  `tocPart`). */
+  tocEntry?: { pageIndex?: number; continued?: true };
   numberPrefix?: string;
   /** What joins {@link numberPrefix} to the title
    *  (`HeadingLevelConfig.numberSeparator`), when it is not one space:
@@ -2564,8 +2583,48 @@ export interface ConfigWarning {
    *  document (#621), which gets no line numbers; `used` is `false`.
    *  `wrapUnsupported`: a resource type's `defaultPlacement.wrap` in a
    *  vertical document (#627), whose figures keep their bands whole;
-   *  `used` is `none`. */
-  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported';
+   *  `used` is `none`.
+   *
+   *  Page templates (`pageTemplates`, #853; see `validatePageTemplates`),
+   *  whose `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`):
+   *  `templateDuplicate`: a second template with an id already taken; it
+   *  is ignored. `templateExtendsCycle`: a template whose `extends` chain
+   *  comes back to itself (`value` the chain, `a → b → a`); it is dropped.
+   *  `templateExtendsUnknown`: `extends` names no template; the template
+   *  stands alone. `frameDuplicate`: a second frame or group of one list
+   *  with a name already taken (or a group named like a frame); it is
+   *  ignored. `frameStyleUnknown`: a frame `style` no callout style has;
+   *  the frame is frameless. `frameAnchorUnknown`: a frame or group
+   *  anchored (`placement.anchor.to: '#x'`) to a frame or group the
+   *  template does not have, or a decoration element anchored to nothing
+   *  the template has, or anchors that form a loop (`value` the loop);
+   *  the anchor reads as `'container'`. `frameMinMax`: a minimum above its
+   *  maximum, or a fixed size outside them (`value` says which); the
+   *  minimum wins over the maximum and a fixed size is clamped between
+   *  them. `groupFrameUnknown`: a group lists a frame the template does
+   *  not have; it is skipped. `groupFrameTwice`: a frame listed in a
+   *  second group, or twice in one; the later listing is skipped.
+   *  `frameChainLoop`: frames whose `next` (or `overflow.continueIn:
+   *  '#frame'`) come back round (`value` the loop); the link that closes
+   *  it is dropped. `overflowTargetUnknown`: a `next`, an
+   *  `overflow.continueIn` or an `overflowTemplate` that names no frame or
+   *  template, or a `continueIn` in no form the engine knows; the content
+   *  does not continue there. `labelStyleUnknown`: a resource anchor's
+   *  `style` that no `labelStyles` entry has (`resourceId` names the
+   *  resource); the label takes the default look.
+   *
+   *  `contentInConfig`: design text elements of one owner (a heading
+   *  style, a heading level, the page header or footer, a part design, the
+   *  contents part rows) whose text beyond its placeholders is the book's
+   *  content (#849): more than `checks.contentInConfig.maxWords` words or
+   *  `maxChars` letters and digits, not counting the phrases of its `allow`
+   *  list. Nothing is replaced: the text is set as written. `path` is the
+   *  owner, `value` the start of the first text (40 characters at most),
+   *  `used` is empty, and `count`, `chars` and `elements` say how many
+   *  texts, how many letters and where. The fix is to move the text into
+   *  the Markdown and keep only placeholders in the design. */
+  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported' | 'contentInConfig'
+    | PageTemplateWarningKind;
   /** Where the value sits in the config, e.g.
    *  `orderedLists.levels[1].numberFormat`, `header.elements[0].fontFamily`,
    *  `headingStyles[2].layout.sideColumnPercent`. */
@@ -2578,9 +2637,39 @@ export interface ConfigWarning {
   used: string;
   /** `unknownConfigKey`: the known key the unknown one is closest to
    *  (another case, a letter or two apart), when there is one. Also on an
-   *  `unknownConfigValue` of a comics setting: the closest of its words. */
+   *  `unknownConfigValue` of a comics setting: the closest of its words,
+   *  and on a page-template warning that names an id or a name (a style,
+   *  a parent, a frame): the closest one that exists. */
   suggestion?: string;
+  /** `labelStyleUnknown`: the resource whose anchor names the style. */
+  resourceId?: string;
+  /** `contentInConfig`: the design texts of the owner that hold content. */
+  count?: number;
+  /** `contentInConfig`: the letters and digits those texts hold beyond
+   *  their placeholders and allowed phrases. */
+  chars?: number;
+  /** `contentInConfig`: the path of each of those texts
+   *  (`headingStyles[3].header.elements[12]`), the first 20. */
+  elements?: string[];
+  /** `contentInConfig`: the `id` of the heading style the warning is
+   *  about, when its owner is one. */
+  ownerId?: string;
 }
+
+/** The kinds of {@link ConfigWarning} a page template gives (#853). */
+export type PageTemplateWarningKind =
+  | 'templateDuplicate'
+  | 'templateExtendsCycle'
+  | 'templateExtendsUnknown'
+  | 'frameDuplicate'
+  | 'frameStyleUnknown'
+  | 'frameAnchorUnknown'
+  | 'frameMinMax'
+  | 'groupFrameUnknown'
+  | 'groupFrameTwice'
+  | 'frameChainLoop'
+  | 'overflowTargetUnknown'
+  | 'labelStyleUnknown';
 
 /** Where a content warning points: the source range of the construct in
  *  the markdown given to the build (frontmatter included), and the page it
@@ -2640,6 +2729,22 @@ export type ContentWarning = ContentWarningBase & (
    *  the group takes the default (`'parallel'` with `breaks`, `'snake'`
    *  without). */
   | { kind: 'columnsFlowUnknown'; value: string }
+  /** A composed page (`::::page{template=…}`, #854) names a template no
+   *  `pageTemplates` entry has (or names none). Until templates are laid
+   *  out its content is set in the flow, on pages of its own. */
+  | { kind: 'templateUnknown'; template: string; fenceIndex: number }
+  /** Content of a composed page names a slot (`slot="…"`,
+   *  `:::frame{slot=…}`) that is no frame of the page's template: it goes
+   *  to the template's flow frame. */
+  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+  /** A frame of a composed page's template receives no content: nothing
+   *  names its slot, it takes no heading, and (the flow frame) no content
+   *  is left without a slot. A frame marked `optional` is not reported. */
+  | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  /** A three-colon `:::page` carries `template=`: a composed page needs
+   *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
+   *  page, as before. */
+  | { kind: 'pageFenceLength' }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`
@@ -2880,6 +2985,14 @@ export type ContentWarning = ContentWarningBase & (
    *  list, with the range of the list and the page of its first item.
    *  Found by the layout. */
   | { kind: 'shortListSplit'; items: number }
+  /** `tocGroupSplit` (#850): a block of the contents kept together
+   *  (`toc.groups.keepTogether`, `:::toc{keep}`), headed by `title`, set in
+   *  `columns` columns: taller than a full column, or in a column too short
+   *  to hold it (under a page-span box, beside a float). With
+   *  `toc.groups.continuation` the column it goes on in opens with its head
+   *  row again. One per block, with the range of its `:::toc` and the page
+   *  it starts on. Found by the layout. */
+  | { kind: 'tocGroupSplit'; title: string; columns: number }
   /** `openerFloat` (#749): a float set on an opener page (the page a part
    *  or a heading's own break opens, the first page of a document that
    *  starts with a heading) under `layout.openerFloats: 'warn'`: a figure,

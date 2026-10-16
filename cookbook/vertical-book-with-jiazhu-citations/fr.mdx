@@ -24,7 +24,7 @@ Les lignes se remplissent morceau par morceau. Au pied de la troisième colonne,
 
 ### 2 · Les ouvrages cités, à la fin du chapitre
 
-`:::bibliography{title="本章引用書目" scope=chapter}` compose la liste là où elle se trouve et ne retient que les ouvrages cités dans ce chapitre ([La bibliographie](/fr/docs/document-format#la-bibliographie)). Les références viennent d’un bloc BibTeX. Chaque entrée porte un `langid`, `chinese` ou `english`, que le style lit comme la langue de l’ouvrage, et les noms écrits en caractères restent entiers. La liste est numérotée dans l’ordre de première citation, et les colonnes de suite d’une entrée commencent sous son étiquette.
+`:::bibliography{title="本章引用書目" scope=chapter}` compose la liste là où elle se trouve et ne retient que les ouvrages cités dans ce chapitre ([La bibliographie](/fr/docs/document-format-notes-references#la-bibliographie)). Les références viennent d’un bloc BibTeX. Chaque entrée porte un `langid`, `chinese` ou `english`, que le style lit comme la langue de l’ouvrage, et les noms écrits en caractères restent entiers. La liste est numérotée dans l’ordre de première citation, et les colonnes de suite d’une entrée commencent sous son étiquette.
 
 ### 3 · Des caractères traditionnels aux règles continentales
 
@@ -36,7 +36,7 @@ Dans les notes et la liste, un titre latin et une année à quatre chiffres se c
 
 <Excerpt region="opener" />
 
-Sur une page verticale, une maquette de titre se dessine dans le cadre du flux : `x` descend la colonne et `y` traverse la page à partir de son bord droit, si bien qu’un filet `'horizontal'` est une ligne verticale sur la feuille. Trois filets encadrent deux colonnes espacées de 30,4 pt. 第三章 se place dans la première en Hei gras, et le titre dans la seconde en Kai ([Emplacements et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)). Le numéro de chapitre vient de `startAt=3` sur le titre et du modèle `第{1:一}章`, et les folios de `pageNumbering` : `trad-chinese-informal` à partir de 45. Les titres courants et les folios descendent le long de la marge extérieure comme dans <RecipeLink slug="vertical-novel-right-bound">Nº 075</RecipeLink> ([Éléments en texte vertical](/fr/docs/configuration-page-layout#éléments-de-texte-vertical)).
+Sur une page verticale, une maquette de titre se dessine dans le cadre du flux : `x` descend la colonne et `y` traverse la page à partir de son bord droit, si bien qu’un filet `'horizontal'` est une ligne verticale sur la feuille. Trois filets encadrent deux colonnes espacées de 30,4 pt. 第三章 se place dans la première en Hei gras, et le titre dans la seconde en Kai ([Emplacements et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)). Le numéro de chapitre vient de `startAt=3` sur le titre et du modèle `第{1:一}章`, et les folios de `pageNumbering` : `trad-chinese-informal` à partir de 45. Les titres courants et les folios descendent le long de la marge extérieure comme dans <RecipeLink slug="vertical-novel-right-bound">Nº 075</RecipeLink> ([Éléments en texte vertical](/fr/docs/configuration-headers-footers#éléments-de-texte-vertical)).
 
 <Excerpt region="palette" />
 

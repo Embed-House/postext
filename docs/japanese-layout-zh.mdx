@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Postext如何排日文横排与竖排：日本地区、禁则、约物间距、段首括号、竖排字形、振假名、傍点与傍线、汉文训读、编号、行取り标题、注释、五十音索引、引用、字体以及青空文库源文本',
   lang: 'zh',
   lastUpdated: '2026-10-05',
-  readingTime: '30分钟',
-  order: 17,
+  readingTime: '25分钟',
+  order: 32,
   plainSummary: "本页说明Postext怎样排日文。日文书可以竖排成从右往左读的一列列文字，也可以像本页这样横排。语言设为日语的文档，按日文的规则断行、安排标点的空白、在字旁加小字读音和强调记号。本页还介绍注释、用汉字写的数字、占固定行数的标题、按读音排序的书后索引，以及怎样导入青空文库的文本。最后给出两套完整的示例配置，并列出尚未解决的问题。",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **日文页面在方形字格组成的网格上混排四种文字，标点的空白本身就是文字的一部分。**
 
-Postext用同一份Markdown源文件和同一套配置，既能横排日文，也能竖排日文。语言为日语的文档按禁则断行，给每个括号和逗号留出日文排版规定的空白，两个标点相遇时再收回这段空白；像大多数小说那样排段首的括号；小假名和竖排行中的标点使用竖排字形；振假名按1:2:1的比例排在汉字上方；被强调的词上方加芝麻点；章按第一章编号；索引按读音排序。从postext 1.16起，这一切都由`locale: 'ja'`推出；更早的版本用中国大陆的默认值排日文。本页说明引擎做了什么、由哪些设置控制。[配置参考](/zh/docs/configuration-east-asian#东亚排版)列出了每个键及其默认值，[文档格式](/zh/docs/document-format#中文标记注音和双行夹注)介绍了相关标记。
+Postext用同一份Markdown源文件和同一套配置，既能横排日文，也能竖排日文。语言为日语的文档按禁则断行，给每个括号和逗号留出日文排版规定的空白，两个标点相遇时再收回这段空白；像大多数小说那样排段首的括号；小假名和竖排行中的标点使用竖排字形；振假名按1:2:1的比例排在汉字上方；被强调的词上方加芝麻点；章按第一章编号；索引按读音排序。从postext 1.16起，这一切都由`locale: 'ja'`推出；更早的版本用中国大陆的默认值排日文。本页说明引擎做了什么、由哪些设置控制。[配置参考](/zh/docs/configuration-east-asian#东亚排版)列出了每个键及其默认值，[文档格式](/zh/docs/document-format-inline#中文标记注音和双行夹注)介绍了相关标记。
 
 这些规则依据W3C的《日文排版需求》（*Requirements for Japanese Text Layout*，[JLReq](https://www.w3.org/TR/jlreq/)），下文按章节号引用；也依据JLReq所介绍的日本工业标准JIS X 4051。很多机制与中文共用，本页只是提到的部分，即字符网格、竖排页面转过的坐标系、右侧装订和各种输出，由[中文排版](/zh/docs/chinese-layout)详细说明。参考资料列在本页末尾。
 
@@ -28,7 +28,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>设置</th>
+      <th>设置</th>
       <th>日本（<code>ja</code>）</th>
       <th>中国大陆（<code>zh-Hans</code>）</th>
     </tr>
@@ -85,9 +85,9 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 <table>
   <thead>
     <tr>
-      <th style={{ width: '130px' }}>级别</th>
+      <th>级别</th>
       <th>不能出现在行首</th>
-      <th style={{ width: '220px' }}>使用场合</th>
+      <th>使用场合</th>
     </tr>
   </thead>
   <tbody>
@@ -161,7 +161,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 ### 页面、栏与页码
 
-竖排日文书通常在页面下端用阿拉伯数字印页码；如果设计要在切口竖排页码，则用汉字：`page.pageNumbering.format: 'cjk-decimal'`把第105页写成一〇五，这是页码所用的逐位写法（JLReq §2.6）。章从右页（recto）开始，在右侧装订的书中就是左手边的页面：`breakBefore: { enabled: true, parity: 'odd' }`。[竖排文本元素](/zh/docs/configuration-page-layout#竖排文本元素)中的切口书眉不加改动即可用于日文书。
+竖排日文书通常在页面下端用阿拉伯数字印页码；如果设计要在切口竖排页码，则用汉字：`page.pageNumbering.format: 'cjk-decimal'`把第105页写成一〇五，这是页码所用的逐位写法（JLReq §2.6）。章从右页（recto）开始，在右侧装订的书中就是左手边的页面：`breakBefore: { enabled: true, parity: 'odd' }`。[竖排文本元素](/zh/docs/configuration-headers-footers#竖排文本元素)中的切口书眉不加改动即可用于日文书。
 
 在字符网格（`cjk.grid`）上，日文页面排满网格所数的每一行：`bodyText.avoidWidows`和`bodyText.avoidOrphans`在那里默认都关闭。JLReq §3.5.4计的是段落末行的字数，没有规定换页处要留几行，所以段落可以在页末留下一行，也可以带一行到下一页。把其中任一键设为`true`即可恢复该规则。不设网格的文档两条规则都保持开启。
 
@@ -243,9 +243,9 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>样式</th>
+      <th>样式</th>
       <th>印出</th>
-      <th style={{ width: '120px' }}>记号</th>
+      <th>记号</th>
     </tr>
   </thead>
   <tbody>
@@ -350,7 +350,7 @@ headings: {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>字段</th>
+      <th>字段</th>
       <th>竖排书</th>
       <th>横排书</th>
     </tr>
@@ -391,7 +391,7 @@ headings: {
 citations: { style: 'sist02' },
 ```
 
-在BibTeX以及YAML或JSON数据中，用CJK字符书写、中间有空格的人名按姓在前读取：`author = {夏目 漱石}`的姓是夏目，名是漱石。罗马字拼写的人名保持通常的顺序。参考文献的标题是<span lang="ja" className="font-body">参考文献</span>。见[引用与参考文献](/zh/docs/document-format#引用与参考文献)。
+在BibTeX以及YAML或JSON数据中，用CJK字符书写、中间有空格的人名按姓在前读取：`author = {夏目 漱石}`的姓是夏目，名是漱石。罗马字拼写的人名保持通常的顺序。参考文献的标题是<span lang="ja" className="font-body">参考文献</span>。见[引用与参考文献](/zh/docs/document-format-notes-references#引用与参考文献)。
 
 ## 表格、题注与资源注释
 
@@ -401,7 +401,7 @@ citations: { style: 'sist02' },
 
 HTML输出把每个读音写成语义化的注音：`<ruby>東<rt>とう</rt>京<rt>きょう</rt></ruby>`，每个词一个`<ruby>`，屏幕阅读器会读出来。日文文档的每一页都带`lang="ja"`，所以逐页挂载页面的宿主程序也能得到日文字形。固定版式的EPUB由这些页面组成。
 
-流式EPUB带有阅读系统能够自行应用的规则：三个禁则级别对应`line-break: strict`、`normal`或`loose`，书悬挂标点时用`hanging-punctuation: allow-end`，文字上方的芝麻点用`text-emphasis`，竖排书中的短数字和`!?`组合排在直立字格中，？！之后的一个字宽，傍线、训点、注码、标题的占行与缩进，竖排书还在包文件中声明`primary-writing-mode`。导航用日文命名。导出的其余部分见[EPUB电子书](/zh/docs/configuration-programmatic-usage#epub电子书postext-epub)。
+流式EPUB带有阅读系统能够自行应用的规则：三个禁则级别对应`line-break: strict`、`normal`或`loose`，书悬挂标点时用`hanging-punctuation: allow-end`，文字上方的芝麻点用`text-emphasis`，竖排书中的短数字和`!?`组合排在直立字格中，？！之后的一个字宽，傍线、训点、注码、标题的占行与缩进，竖排书还在包文件中声明`primary-writing-mode`。导航用日文命名。导出的其余部分见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)。
 
 ## 字体
 
@@ -413,7 +413,7 @@ Postext为每种样式只用一个字体族，缺字时不会退回到另一个�
 - **在浏览器中**，Fontsource把一个日文字体族拆成约一百个编号文件，每个文件包含一部分字符；沙盒及其PDF标签页只加载文字用到的文件。Fontsource的文件都不包含变体假名（𛀁）或其他历史假名。
 - **没有斜体。** 日文字体没有斜体；强调用傍点。
 
-配置参考中的[中日韩字体](/zh/docs/configuration-programmatic-usage#中文日文和韩文字体)给出了字体提供器的代码。
+配置参考中的[中日韩字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)给出了字体提供器的代码。
 
 ## 青空文库源文本
 
@@ -574,7 +574,7 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 
 ## 在沙盒和排版食谱中
 
-在沙盒中，**设计 › 书写系统**包含文档语言（日本語）、书写方向、装订方式和所有`cjk`设置，日文的设置也在其中。<strong>日语默认设置 › 查看…</strong>可以一步把书设为日文排版，可选竖排文库本或横排技术书，并先列出每一项改动：Noto Serif JP和Noto Sans JP，1.75 em的行距，一个字的缩进，竖排书的字符网格，図和表，第一章，占行并缩进的标题，日文列表编号，以及把会妨碍日文设置的中文设置恢复为*自动*。字体选择器把日文字体族列为一组，字体样张显示一段带傍点的<span lang="ja" className="font-body">吾輩は猫である</span>，日文书的编辑器工具栏有注音按钮和纵中横按钮。见[沙盒](/zh/docs/sandbox#版面设计面板)。
+在沙盒中，**设计 › 书写系统**包含文档语言（日本語）、书写方向、装订方式和所有`cjk`设置，日文的设置也在其中。<strong>日语默认设置 › 查看…</strong>可以一步把书设为日文排版，可选竖排文库本或横排技术书，并先列出每一项改动：Noto Serif JP和Noto Sans JP，1.75 em的行距，一个字的缩进，竖排书的字符网格，図和表，第一章，占行并缩进的标题，日文列表编号，以及把会妨碍日文设置的中文设置恢复为*自动*。字体选择器把日文字体族列为一组，字体样张显示一段带傍点的<span lang="ja" className="font-body">吾輩は猫である</span>，日文书的编辑器工具栏有注音按钮和纵中横按钮。见[沙盒](/zh/docs/sandbox-design-checks#版面设计面板)。
 
 展示书架上有夏目漱石的《心》（<span lang="ja" className="font-body">こころ</span>，1914年）日文版，根据青空文库的文本[竖排、右侧装订](/zh/sandbox#preset=kokoro&lang=ja)；沙盒自带的指南也有[日文版](/zh/sandbox#preset=postext-guide&lang=ja)。[排版食谱](/zh/cookbook?col=japanese-layout)在“日文排版”合集中收录了日文食谱，每个食谱是一页或一组跨页，附有排出它的脚本。
 
@@ -591,8 +591,8 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 - **引用**：SIST 02是唯一随包附带的日文样式；著者-出版年式引用保留ASCII标点；参考文献不按读音排序。
 - **表格**：单元格和题注的文字在每一页上都横排。
 - **行号**：竖排文字不印行号；竖排的书打开`lineNumbers`也没有行号，并给出配置警告`lineNumbersUnsupported`。横排的书照常标注行号（[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。
-- **文字绕排。** 横排中，图片或框可以放在栏的一侧，正文排在旁边（见[文字绕排](/zh/docs/document-format#文字绕排)）；使用字格时，它占的宽度取整到整字，旁边的行仍在网格上。竖排不在图旁排正文：绕排的图片保持整条，并给出`textWrap`警告（资源类型的默认值则为`wrapUnsupported`）。
-- **制表符**：含有制表符（`:tab`，或设有制表位的样式下的制表符字符）的横排段落逐行排：按禁则在字与字之间断开，但不做约物挤压，也不在字与字之间分配空白来两端对齐。竖排文字没有制表位：制表符是一个词间空格，`:tab`会引发内容警告`tabInVerticalText`。带振假名、割注或汉文训读记号的段落也把其中的制表符排成词间空格。见[制表符与制表位](/zh/docs/document-format#制表符与制表位)。
+- **文字绕排。** 横排中，图片或框可以放在栏的一侧，正文排在旁边（见[文字绕排](/zh/docs/document-format-resources#文字绕排)）；使用字格时，它占的宽度取整到整字，旁边的行仍在网格上。竖排不在图旁排正文：绕排的图片保持整条，并给出`textWrap`警告（资源类型的默认值则为`wrapUnsupported`）。
+- **制表符**：含有制表符（`:tab`，或设有制表位的样式下的制表符字符）的横排段落逐行排：按禁则在字与字之间断开，但不做约物挤压，也不在字与字之间分配空白来两端对齐。竖排文字没有制表位：制表符是一个词间空格，`:tab`会引发内容警告`tabInVerticalText`。带振假名、割注或汉文训读记号的段落也把其中的制表符排成词间空格。见[制表符与制表位](/zh/docs/document-format-inline#制表符与制表位)。
 - **首字下沉**：横排段落可以以一个字的首字下沉开头，由段落样式或标题级别设定（见[首字下沉](/zh/docs/configuration-text#首字下沉)）：它的字号按这个字本身的高度与正文的高度来定，缩短的行由排版器照常按禁则排出。竖排文字没有首字下沉：本应以首字下沉开头的段落不带首字排出，并引发内容警告`dropCap`。
 - **代码清单**：横排的代码清单用代码字体逐行排；在含汉字的等宽字体（BIZ UDGothic）中，一个全角字符占两格，所以各列能对齐，制表符也把它算作两格。在竖排文字中，代码清单随竖排方向排，其中的拉丁文按竖排的惯例横躺，不带行号。见[代码清单](/zh/docs/configuration-styles#代码清单)。
 - **字体**：每种样式一个字体族，不回退；CFF字体整个嵌入；不使用比例竖排度量（`vpal`）。

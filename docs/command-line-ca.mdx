@@ -6,8 +6,8 @@ export const metadata = {
   description: "Un sol executable autònom per a macOS, Linux i Windows que converteix un llibre .postext, una carpeta de llibre o Markdown solt en PDF, HTML, EPUB, imatges de pàgina i Word, empaqueta paquets i revisa llibres, amb sortida JSON per a scripts i agents",
   lang: 'ca',
   lastUpdated: '2026-10-09',
-  readingTime: '10 min',
-  order: 22,
+  readingTime: '13 min',
+  order: 42,
   plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir-ne tots els fitxers en un de sol. Els programes i els assistents d'intel·ligència artificial també el poden fer servir, perquè pot respondre en un format que llegeixen sense dificultat.",
 };
 
@@ -114,7 +114,7 @@ postext image my-book.postext --page 1 -o cover.png
 Totes les ordres que llegeixen un llibre accepten qualsevol d'aquestes formes:
 
 - **Un fitxer `.postext`**: el paquet que el Sandbox exporta i obre (vegeu
-  [Paquets](/ca/docs/configuration-programmatic-usage#paquets-fitxers-postext)).
+  [Paquets](/ca/docs/configuration-bundles#paquets-fitxers-postext)).
 - **Una carpeta de llibre**: un paquet desempaquetat, amb el seu `preset.json`,
   els capítols, els recursos i les fonts. És el que lliura la skill per a
   agents, i `postext unpack` n'escriu una.
@@ -211,7 +211,7 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 `--layout fixed` (per defecte) conserva cada pàgina com la impresa, amb text
 seleccionable; `--layout reflowable` deixa que el sistema de lectura torni a
 compondre el text per a la seva pantalla (vegeu
-[Llibres EPUB](/ca/docs/configuration-programmatic-usage#llibres-epub-postext-epub)). La coberta
+[Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub)). La coberta
 és la miniatura del llibre tret que `--cover` en doni una imatge. Les metadades
 del paquet (títol, autors, llengua, identificador) surten del frontmatter del
 primer capítol, com al Sandbox.
@@ -301,6 +301,12 @@ prop del tall. També llista el text que no es llegeix sobre el seu fons
 impremta, sobre el paper del perfil de sortida. Cada problema indica el fitxer
 del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
 `--strict`.
+
+També avisa dels textos de disseny de la configuració que desen el text del
+llibre en lloc de marcadors (`contentInConfig`), un cop per estil de títol,
+títol corrent o disseny de part, amb el camí de cada text: porta aquest text al
+Markdown, o afegeix el títol o el nom de l'editorial a
+`checks.contentInConfig.allow`.
 
 ### build i --watch
 

@@ -30,13 +30,13 @@ Il blu del motore è una voce di palette, `main-color` (#295AA3), e [i suoi valo
 
 <Excerpt region="opener" />
 
-L’apertura è uno [slot di progetto grafico](/it/docs/configuration-page-layout#elementi-riquadro) che contiene un riquadro al vivo sul bordo superiore, 29 barre arrotondate per la forma d’onda e tre elementi di testo: il testo stesso del titolo come titolo, e l’occhiello e il sommario dai suoi attributi. Le barre sono riquadri e non un SVG, quindi il loro fondo è un altro collegamento a `tint` che segue la palette; un SVG andrebbe ridisegnato e registrato di nuovo per ogni variante. Da solo, il riquadro della fascia farebbe partire il testo sulla riga di griglia 2,4 mm sotto la fascia; `minHeight`, 18 righe o 85,1 mm sotto il margine superiore, riserva di più e sposta la prima riga a 7 mm sotto di essa.
+L’apertura è uno [slot di progetto grafico](/it/docs/configuration-headers-footers#elementi-riquadro) che contiene un riquadro al vivo sul bordo superiore, 29 barre arrotondate per la forma d’onda e tre elementi di testo: il testo stesso del titolo come titolo, e l’occhiello e il sommario dai suoi attributi. Le barre sono riquadri e non un SVG, quindi il loro fondo è un altro collegamento a `tint` che segue la palette; un SVG andrebbe ridisegnato e registrato di nuovo per ogni variante. Da solo, il riquadro della fascia farebbe partire il testo sulla riga di griglia 2,4 mm sotto la fascia; `minHeight`, 18 righe o 85,1 mm sotto il margine superiore, riserva di più e sposta la prima riga a 7 mm sotto di essa.
 
 ### 4 · Lascia che la palette riempia la tabella
 
 <Excerpt region="grid" />
 
-La griglia è una risorsa tabella, fuori dalla configurazione. I suoi [fondi di cella](/it/docs/document-format#inserimento-di-blocco-facoltativo-collocazione-in-linea-esplicita) portano comunque id di palette, e il motore li risolve dalla palette del documento quando impagina la tabella; allo stesso modo si risolvono i `:swatch{color="band"}` e `:swatch{color="tint"}` della legenda nella nota della tabella. I chip negli elenchi usano gli stessi due id, così un quadrato pieno, il chip accanto a un orario e il campione della legenda concordano in ogni variante.
+La griglia è una risorsa tabella, fuori dalla configurazione. I suoi [fondi di cella](/it/docs/document-format-resources#inserimento-di-blocco-facoltativo-collocazione-in-linea-esplicita) portano comunque id di palette, e il motore li risolve dalla palette del documento quando impagina la tabella; allo stesso modo si risolvono i `:swatch{color="band"}` e `:swatch{color="tint"}` della legenda nella nota della tabella. I chip negli elenchi usano gli stessi due id, così un quadrato pieno, il chip accanto a un orario e il campione della legenda concordano in ogni variante.
 
 ### 5 · Cambia palette e ricomponi
 

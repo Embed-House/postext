@@ -22,13 +22,13 @@ O código é [a resposta curta](#a-resposta-curta) logo acima. Cada carta é um 
 
 <Excerpt region="letters" />
 
-Com `breakBefore` desligado, uma carta começa duas linhas da grade (`marginTop`) abaixo da linha da grade em que a anterior termina. Na <PageRef page={4}>página 4</PageRef>, o pós-escrito, com entrelinha de 12,6 pt, termina entre duas linhas da grade, e por isso ficam cerca de três linhas em branco acima da carta III. Na página 2, a carta I vai até o pé da página e a carta II abre a página 3. Com o padrão do nível 1, cada carta abriria numa página ímpar ([quebra antes](/pt/docs/configuration-text#quebra-antes)). `numberingTemplate: '{1:I}'` numera as cartas de I a III, e o cabeçalho imprime o numeral por `{number}`.
+Com `breakBefore` desligado, uma carta começa duas linhas da grade (`marginTop`) abaixo da linha da grade em que a anterior termina. Na <PageRef page={4}>página 4</PageRef>, o pós-escrito, com entrelinha de 12,6 pt, termina entre duas linhas da grade, e por isso ficam cerca de três linhas em branco acima da carta III. Na página 2, a carta I vai até o pé da página e a carta II abre a página 3. Com o padrão do nível 1, cada carta abriria numa página ímpar ([quebra antes](/pt/docs/configuration-headings#quebra-antes)). `numberingTemplate: '{1:I}'` numera as cartas de I a III, e o cabeçalho imprime o numeral por `{number}`.
 
 ### 3 · Ponha a data da carta na página ímpar
 
 <Excerpt region="running-heads" />
 
-Num cabeçalho de página, `{attr.date}` pega o atributo do último título de nível 1 que começa naquela página ou antes dela. A página 3 imprime 12 juin 1740, e a página 5, onde continua a carta de Voltaire iniciada na 4, imprime 1er avril 1778 com a terminação elevada ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). Os cabeços ficam 12 mm abaixo da borda superior da página, o fólio na margem externa e o texto 8 mm mais para dentro. `pages: 'body'` os mantém fora da capa, que conta como abertura porque o seu título ocupa a largura da página. A data é composta no itálico da Crimson Pro, o mesmo do local e data que ela repete, e os nomes na página par, nos versaletes dos números das cartas.
+Num cabeçalho de página, `{attr.date}` pega o atributo do último título de nível 1 que começa naquela página ou antes dela. A página 3 imprime 12 juin 1740, e a página 5, onde continua a carta de Voltaire iniciada na 4, imprime 1er avril 1778 com a terminação elevada ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). Os cabeços ficam 12 mm abaixo da borda superior da página, o fólio na margem externa e o texto 8 mm mais para dentro. `pages: 'body'` os mantém fora da capa, que conta como abertura porque o seu título ocupa a largura da página. A data é composta no itálico da Crimson Pro, o mesmo do local e data que ela repete, e os nomes na página par, nos versaletes dos números das cartas.
 
 ### 4 · Faça da capa um título
 

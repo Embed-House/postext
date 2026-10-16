@@ -1,0 +1,437 @@
+{/* docs/configuration-html-folio-epub-zh.mdx */}
+
+export const metadata = {
+  title: '以编程方式使用：HTML、3D书本与EPUB',
+  sidebarTitle: 'HTML、3D书本与EPUB',
+  description: '把排好的书放进网页，用postext-folio做成3D书本，用postext-epub做成固定版式或流式版式的EPUB 3',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '12分钟',
+  order: 22,
+  parent: 'configuration',
+  plainSummary: "本页写给写代码、想在屏幕上展示一本书的人。第一节把页面放进网页，并说明这种视图和Canvas、PDF有什么不同。第二节把书以3D形式摊开在桌面上，读者可以翻页。最后一节制作EPUB电子书，页面可以固定，也可以让文字随屏幕重新排列，并检查这个文件。",
+};
+
+# 以编程方式使用：HTML、3D书本与EPUB
+
+
+## 集成HTML查看器
+
+HTML查看器是Postext面向屏幕的渲染器。它不把页面栅格化成位图，而是输出绝对定位的DOM节点，节点的几何位置来自生成印刷输出的同一条流水线。如果你想在浏览器里呈现可读、可选中、能随窗口尺寸变化的排版，又不想引入PDF阅读器，比如做一个阅读应用、产品内预览或嵌入式文档界面，它就是合适的选择。
+
+公共API中的关键部分：
+
+- **`buildDocument(content, config, cache?)`**：运行完整的排版流水线，返回一个`VDTDocument`。
+- **`renderToHtmlIndexed(doc, options)`**：把VDT转成一个HTML字符串，外加按页、按块的拆分结果。两次渲染之间只有少数块变化时，可以借助这份拆分廉价地修补DOM。
+- **`resolveHtmlViewerConfig(partial)`**：补齐HTML查看器的默认值（`maxCharsPerLine`、`columnGap`、`optimalLineBreaking`）。
+- **`buildFontString` + `measureGlyphWidth` + `dimensionToPx`**：测量原语，用来根据目标字符数算出实际的栏宽像素值。
+- **`createMeasurementCache` / `clearMeasurementCache`**：可插拔的缓存，让多次重新排版复用测量结果。
+- **`prepareFonts` / `buildDocumentWithFonts` / `watchFonts` / `onFontsChanged`**：在排版前加载文档的字体，并在字体到达时重新排版（见[排版前加载字体](/zh/docs/configuration-programmatic-usage#排版前加载字体)）。
+
+### 在线示例：HTML字符串
+
+在进入下面的React集成之前，先用纯JavaScript走一遍完整流程：构建文档，把`VDTDocument`交给`renderToHtml`，再把字符串放进一个容器。`mode: 'single'`把页面竖向堆叠；页面默认透明，所以用`background`给它们一个颜色。这个pen还会打印生成的标记，你可以看到渲染器输出的绝对定位的行：浏览器绘制它们，但从不重排它们。
+
+<CodePenExample name="render-html" title="Postext · 把文档渲染为HTML" description="用postext排版一篇Markdown文档，并渲染为HTML字符串。" height={600} />
+
+### 最简集成
+
+下面的代码是最短的实用集成：按当前视口尺寸构建文档，渲染进一个容器，尺寸变化时重新运行。
+
+```tsx
+import { useEffect, useRef } from 'react';
+import {
+  buildDocument,
+  renderToHtmlIndexed,
+  resolveHtmlViewerConfig,
+  buildFontString,
+  measureGlyphWidth,
+  dimensionToPx,
+  createMeasurementCache,
+  watchFonts,
+  onFontsChanged,
+} from 'postext';
+import type { PostextConfig, MeasurementCache } from 'postext';
+
+// 适合屏幕的DPI：在144 DPI下，8pt的正文字号换算为16 px。
+const HTML_DPI = 144;
+const PADDING_PX = 24;
+
+// 用来测量目标栏宽的正文样本。比例字体下“N × 平均宽度”并不可靠，
+// 所以测量一段有代表性的字符串。
+const SAMPLE =
+  'The quick brown fox jumps over the lazy dog. Sphinx of black quartz, judge my vow.';
+
+function sampleForChars(n: number): string {
+  let s = SAMPLE;
+  while (s.length < n) s += ' ' + SAMPLE;
+  return s.slice(0, n);
+}
+
+export function PostextHtmlViewer({
+  markdown,
+  config,
+  mode = 'multi',
+}: {
+  markdown: string;
+  config: PostextConfig;
+  mode?: 'single' | 'multi';
+}) {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const cacheRef = useRef<MeasurementCache>(createMeasurementCache());
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    const relayout = () => {
+      const rect = host.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const viewer = resolveHtmlViewerConfig(config.htmlViewer);
+      const fontFamily = config.bodyText?.fontFamily ?? 'EB Garamond';
+      const fontWeight = config.bodyText?.fontWeight ?? 400;
+      const fontSize = config.bodyText?.fontSize ?? { value: 8, unit: 'pt' as const };
+      const fontSizePx = dimensionToPx(fontSize, HTML_DPI);
+
+      // 测量N个正文字符的*实际*栏宽。
+      const targetColumnPx = measureGlyphWidth(
+        sampleForChars(viewer.maxCharsPerLine),
+        buildFontString(fontFamily, fontSizePx, String(fontWeight), 'normal'),
+      );
+
+      const inner = Math.max(rect.width - PADDING_PX * 2, 100);
+      let columnWidthPx: number;
+      if (mode === 'single') {
+        columnWidthPx = Math.min(targetColumnPx, inner);
+      } else {
+        // 按目标栏宽尽量多放几栏。
+        const count = Math.max(
+          1,
+          Math.floor((inner + viewer.columnGap) / (targetColumnPx + viewer.columnGap)),
+        );
+        columnWidthPx = (inner - viewer.columnGap * (count - 1)) / count;
+      }
+      columnWidthPx = Math.max(Math.floor(columnWidthPx), 80);
+
+      // single模式用一个很高的页面；multi模式用视口高度，
+      // 这样每个VDT“页面”就成为一栏。
+      const pageHeightPx =
+        mode === 'single' ? Math.max(rect.height * 20, 200_000) : Math.max(rect.height - PADDING_PX * 2, 400);
+
+      const override: PostextConfig = {
+        ...config,
+        page: {
+          ...config.page,
+          dpi: HTML_DPI,
+          width: { value: columnWidthPx, unit: 'px' },
+          height: { value: pageHeightPx, unit: 'px' },
+          margins: {
+            top: { value: 0, unit: 'px' },
+            bottom: { value: 0, unit: 'px' },
+            left: { value: 0, unit: 'px' },
+            right: { value: 0, unit: 'px' },
+          },
+        },
+        layout: { ...config.layout, layoutType: 'single' },
+        bodyText: {
+          ...config.bodyText,
+          optimalLineBreaking: viewer.optimalLineBreaking,
+        },
+      };
+
+      const doc = buildDocument({ markdown }, override, cacheRef.current);
+      const { html } = renderToHtmlIndexed(doc, {
+        mode,
+        columnGap: viewer.columnGap,
+        padding: PADDING_PX,
+        background: 'transparent',
+      });
+
+      host.innerHTML = html;
+    };
+
+    relayout();
+
+    const ro = new ResizeObserver(() => relayout());
+    ro.observe(host);
+
+    // Web字体加载完成后重新测量，避免字形宽度取自后备字体。
+    const stopWatching = watchFonts();
+    const off = onFontsChanged(() => relayout());
+
+    return () => {
+      ro.disconnect();
+      off();
+      stopWatching();
+    };
+  }, [markdown, config, mode]);
+
+  return <div ref={hostRef} style={{ width: '100%', height: '100%', overflow: 'auto' }} />;
+}
+```
+
+关于这个示例做了什么，有几点说明：
+
+- **测量栏宽，而不是估算。**`maxCharsPerLine`是以字符数表示的*目标*，实际的像素宽度取决于正文字体。`measureGlyphWidth`针对所选字体给出真实的测量值，换字体后行长也保持一致。
+- **改写页面**。HTML查看器把每个VDT“页面”当作屏幕上的一栏。示例用测得的栏宽覆盖`page.width`，把页边距设为0（内边距放在页面外，由外层的`.pt-doc` div提供），并使用`HTML_DPI = 144`，使`8pt`的正文换算为`16px`。
+- **感知字体加载**。`watchFonts`监听`document.fonts`，每帧最多一次，丢弃在有字体到达的字体族中测得的结果；随后`onFontsChanged`重新排出这一栏。如果不重新排版，首次渲染用的是后备字体的度量，真正的字体到达后版面会跳动。
+- **复用测量缓存**。每个组件只创建一次缓存，调整尺寸或改变字体缩放时就能复用上一次渲染的测量结果，不必重新测量每个段落。
+
+### 进一步
+
+上面的示例刻意保持简单。用于生产的集成通常还会加上：
+
+- **Shadow DOM隔离**：渲染到`host.attachShadow({ mode: 'open' })`里，外层页面的CSS就不会渗入查看器。
+- **增量修补**：`renderToHtmlIndexed`返回`pages[i].blocks`，每个块都有稳定的`id`和该块的外层HTML。两次渲染之间只有少数块不同时，可以原地替换这些块的包装元素，而不必重建`innerHTML`。
+- **叠加层**：在每个`.pt-page`上叠一个绝对定位的SVG，用来显示光标、选区或基线网格。
+- **链接**：Markdown链接中的词被包在`<a href="…" rel="noopener noreferrer">`里，沿用文字颜色，没有下划线；见[文档格式 › 链接](/zh/docs/document-format-inline#链接)。在类似编辑器的查看器中，拦截对不以`#`开头的`a[href]`的点击，在新标签页中打开（`:ref`锚点链接到文档内部）。
+- **单色图片**：打开`diagramStyle.singleInk`后，SVG的`<img>`会加上CSS滤镜；对于已经重新着色的URL，传入`singleInk: false`即可跳过；见[Canvas与HTML中的单色模式](/zh/docs/configuration-resources#canvas与html中的单色模式)。
+
+沙盒的`HtmlPreview`组件（`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`）在这里展示的同一套API之上实现了以上全部功能，可以作为参考。它还把每次构建都交给一个共享的排版工作线程（见[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)），所以实时编辑和调整尺寸都不会阻塞主线程。准备把排版移出主线程时，把上面代码中直接调用的`buildDocument(...)`换成`layoutWorker.build(...)`即可。
+
+### HTML输出与Canvas和PDF的区别
+
+`renderToHtml`把每一行、每个图和每个设计元素放在与Canvas和PDF完全相同的位置，但在它们周围画的东西更少：
+
+<table>
+  <thead>
+    <tr>
+      <th>功能</th>
+      <th>Canvas（<code>renderPage</code>）</th>
+      <th>HTML（<code>renderToHtml</code>）</th>
+      <th>PDF（<code>renderToPdf</code>）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>页面背景</td>
+      <td>白色，<code>page.backgroundColor</code>铺满成品区域和出血。</td>
+      <td><strong>透明</strong>，除非传入<code>background</code>或设置<code>page.backgroundColor</code>（此时填满整个页面框，包括裁切线外的区域）。</td>
+      <td>白色，<code>page.backgroundColor</code>铺满成品区域和出血。</td>
+    </tr>
+    <tr>
+      <td>基线网格（<code>page.baselineGrid</code>）</td>
+      <td>绘制</td>
+      <td>不绘制</td>
+      <td>绘制</td>
+    </tr>
+    <tr>
+      <td>栏间线（<code>layout.columnRule</code>）</td>
+      <td>绘制</td>
+      <td>不绘制</td>
+      <td>绘制</td>
+    </tr>
+    <tr>
+      <td>裁切标记（<code>page.cutLines</code>）</td>
+      <td>绘制</td>
+      <td>不绘制；页面框仍包含成品尺寸外围的区域。</td>
+      <td>绘制</td>
+    </tr>
+    <tr>
+      <td>页面反色</td>
+      <td><code>pageNegative</code>选项</td>
+      <td>不支持</td>
+      <td><code>pageNegative</code>选项</td>
+    </tr>
+    <tr>
+      <td>文字</td>
+      <td>像素</td>
+      <td>绝对定位元素中的可选中文字，使用CSS字体族排版：页面必须加载相同的字体。</td>
+      <td>来自<code>fontProvider</code>的嵌入字体；可选中、可搜索、带标签。</td>
+    </tr>
+    <tr>
+      <td>竖排文字（<code>layout.writingMode: 'vertical-rl'</code>）</td>
+      <td>逐个字格绘制字符并转回直立；竖排字形取自一个孪生字体（<code>loadVerticalAlternates</code>）。</td>
+      <td>一个框中的文字流整体旋转四分之一圈；每一行再转回直立，并以<code>writing-mode: vertical-rl</code>排版，由浏览器选用竖排字形并让字符直立；短数字用<code>text-combine-upright: all</code>；破折号、省略号、间隔号或波浪线放在所在字格的一个框里（否则浏览器会按它的横排宽度推进），破折号按<code>flow.dashAdvances</code>拉长以填满字格。</td>
+      <td>通过每种字体的<code>Identity-V</code>孪生字体排出直立字符；见<a href="/zh/docs/configuration-pdf-output#pdf中的竖排文字">PDF中的竖排文字</a>。</td>
+    </tr>
+    <tr>
+      <td>图像</td>
+      <td><code>registerResourceImage</code></td>
+      <td><code>resourceImageUrl(fileId)</code>选项；未提供时显示灰色占位框。</td>
+      <td><code>resourceBytes(fileId)</code>选项。</td>
+    </tr>
+    <tr>
+      <td>公式</td>
+      <td>矢量路径</td>
+      <td>内联<code>&lt;svg&gt;</code></td>
+      <td>矢量路径</td>
+    </tr>
+    <tr>
+      <td>链接</td>
+      <td>无</td>
+      <td><code>:ref</code>引用链接到对应资源；目录行不带链接。</td>
+      <td><code>:ref</code>引用和目录行，外加文档大纲（书签）。</td>
+    </tr>
+  </tbody>
+</table>
+
+在深色网站上，透明页面会带来问题：不传`background`的预览会在网站的深色背景上显示黑色文字。可以传入`renderToHtml(doc, { background: '#ffffff' })`，或给文档设置`page.backgroundColor`。
+
+**宿主页面的文字样式不会进入输出**。每一行都按引擎测得的宽度排版，如果输出从周围页面继承了`letter-spacing`、`word-spacing`、`text-transform`或`font-variant`，字形串就会变宽，行与行相互叠印。因此`.pt-doc`根元素在自己的排版声明之前，先重置所有可继承的文字属性：字距和词间距、大小写、缩进、空白处理、字体样式、变体、字重、宽度、特性与字偶间距、行高、对齐、文字阴影与着重号、断词、方向、书写模式、文字描边与填充，以及移动端的文字放大。这样无论放在shadow root里还是带样式的元素下，输出看起来都一样。这份列表以`HTML_TEXT_RESET`导出，是一串CSS声明：如果宿主把各页的`innerHtml`（来自`renderToHtmlIndexed`）挂载到自己的容器中，就在这些容器的根元素上设置它。postext 1.4及以前，根元素不做任何重置，变通办法是加一个`all: initial`的包装元素。
+
+
+## 3D书本（`postext-folio`）
+
+`postext-folio`把排好的文档呈现为一本印好的书，摊开放在桌面上：按右页规则成对展开，读者可以用‹ ›按钮、方向键、滑动、点击页面，或抓住页边拖过去来翻页。每一页都在three.js中按其纸张卷曲，并在下方页面上投下真实的阴影。WebGL画布在静止和翻页时都绘制书本，所以页面落下时外观不会变化。它是食谱页面和沙盒**书页**标签页使用的查看器。
+
+```bash
+npm install postext postext-folio three
+```
+
+```ts
+import { buildDocument } from 'postext';
+import { createFolioFromDocument } from 'postext-folio';
+
+const doc = buildDocument({ markdown }, config);
+const book = createFolioFromDocument(document.getElementById('book')!, doc, {
+  onChange: ({ pages }) => console.log('当前页面', pages),
+});
+
+// 编辑之后：同一个查看器，停留在同一页。
+book.setDocument(buildDocument({ markdown: edited }, config));
+```
+
+- **页面按需绘制。** `createFolioFromDocument`用`renderPageToCanvas`按页面所在位置的设备像素精确绘制每一页（WebGL因此逐像素显示，与画布预览一样清晰），而且只绘制当前展开页附近的展开页（`window`，默认前后各三个）。移出这个范围的页面会被释放，所以一千页的书也只占几页的内存。跳到很远的页面时，先绘制那个展开页。十页以内，书页一张一张地翻；更远时，中间的整叠书页作为一块整体抬起，厚度就是这些书页的厚度（各张厚度之和），落到另一侧。`setDocument`会保留新版面中内容不变的每一页的绘制结果（图片载入之后，用`{ repaint: true }`全部重新绘制）。
+- **书本由文档决定。** 第一页是右页（`pageIndexOffset`为偶数）时单独显示在右侧；右侧装订的书（`page.binding: 'right'`，或竖排文档）呈镜像，向左翻页；空白页使用页面的背景色；页面的成品宽度（`pageWidthMm`）决定纸张厚度和封面纸板的比例。用`continuation`排出的一章，会把书中其余的页（它之前的`pageIndexOffset`页，之后到`bookPageCount`为止的页）计入两侧书芯的厚度，但不绘制它们（`extraPages`）。
+- **外观由文档决定。** 纸张、装订、桌面和光照来自文档的[`folio`设置](/zh/docs/configuration-fonts-colors-viewers#书页视图配置)（`doc.config.folio`）。排在`:::paper`段落中的页面带有自己的纸张（`VDTPage.paper`），这一叶按该纸张的颜色、表面、厚度和挺度绘制。设置`binding.cover: 'pages'`时，第一页是封面纸板，最后一页（落在左页时）是封底纸板（`covers`）。报纸开本（`'broadsheet'`、`'berliner'`、`'tabloid'`、`'compact'`）的设置若没有指定纸种和装订方式，就显示为对折的新闻纸，宿主传入自己的`folio`时也是如此。
+- **尺寸由容器决定。** 书本占满容器，按钮和页码位于边距中，所以要给容器设定高度；尺寸改变时会按新尺寸重新绘制页面。宽度小于560像素时一次显示一页（`mode: 'auto'`；`'single'`和`'double'`可强制其中一种）：书脊沿页面内侧边缘，书页绕着它翻动；朝书脊方向拖动向前翻，背离书脊滑动向后翻，轻点则翻页。
+- **指针做什么。** `interaction`（以及之后的`setInteraction`）决定鼠标左键、一根手指或一支笔在书上做什么：`'hand'`（默认）拿起书页翻动，`'orbit'`像右键拖动那样转动视角（适合触控板和平板），`'select'`把指针交给宿主程序，例如用来选择文字。`pageAt(event)`给出指针下的页面以及页面上的位置（`{ page, x, y }`，从页面左上角算起的宽高比例），按书本被看到的样子计算，倾斜或转动后也一样；`pointOnScreen(point)`反过来换算，用来在页面上画出光标或选区。`refreshPage(src)`重新显示宿主在原处重绘的页面画布。Sandbox用这些接口在3D书页上选择文字并跟随编辑器的光标。
+- **看小字的放大镜。** `interaction: 'magnify'` 在指针所在处的书上放一块带黑色边框的圆形镜片（手指触屏时，镜片停在手指上方）。它显示读者眼中的书：光照和弯曲照旧，中心放大最多，向边框处弯曲收拢。滚轮、`+` 和 `−` 调整放大倍数（`setMagnification(zoom)`，1.5 到 10；默认让页面约为每毫米 5.5 个 CSS 像素），Esc 收起；`magnifier: { zoom, diameter }` 从一开始设定两者。`createFolioFromDocument` 会把镜片下的页面按中心所需的清晰度重新绘制，报纸正文也能读清；`createFolio` 从 `detail: { paint(index, deviceWidth), release() }` 取得这些绘制。Sandbox 把它放在**放大镜**按钮上（M）。放大镜也能选取文字：指针在页面上时显示为文本光标，`pageAt` 返回镜片中心下方的点（触摸屏上在手指上方）；在 Sandbox 中，在那里单击放置插入点，拖动则选取文字。
+- **读者可以绕着书看。** 按住右键拖动可让视角绕书旋转（最低到偏离正上方70°），翻页过程中也可以；`resetView()`把视角平缓地恢复到设置中的`tilt`和`yaw`；`getView()`返回当前看到的视角（`{ tilt, yaw }`，单位为度），可以存为这两项设置。沙盒把它们做成了**重置视角**和**保存为默认视角**两个按钮。
+- **视频在页面上播放。** 无论处于哪种`interaction`模式，点击视频的封面，它就在页面上播放，翻动这一叶时也不停；再点击一次暂停，书停在不显示它的跨页上时停止。设置了`player.autoplay`的视频在它的跨页第一次出现时自动开始播放；如果它还与其他视频同时播放（`player.exclusive: false`），则每次都静音开始，翻走时停止，几段可以同时播放。相关的选项是`videos`、`videoUrl`和`onVideo`，查看器上还有`stopVideo()`；见[文档格式 › Folio视图中的视频](/zh/docs/document-format-resources#folio视图中的视频)。
+- **先加载字体和图片。** 与`renderPage`一样，绘制页面之前，文档用到的字体必须已在`document.fonts`中加载，资源图片必须已通过`registerResourceImage`注册。
+- **无障碍。** 查看器是可获得焦点的组，响应←/→（右侧装订的书方向相反）、Page Up/Down、Home和End；按钮和页码都有标签（用`labels`翻译），每个页面画布都带有替代文本（`alt: (index) => …`）。
+- **没有WebGL2**，或读者要求减少动画时，展开页直接切换。WebGL书本对手机来说负担很重（每个页面的每一面都要一张纹理）：沙盒只在支持WebGL2、且屏幕短边至少600像素的地方提供书页标签页。`canFlip()`表明此处书页能否以3D方式翻动：需要WebGL2，且没有要求减少动画。
+
+### 外观
+
+`appearance`选项，以及之后调用的`setAppearance`，会覆盖文档中的设置。没有给出的部分沿用文档的设置：
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  appearance: {
+    folio: {
+      tilt: 22,
+      paper: { type: 'bookWove', texture: 'laid' },
+      binding: { type: 'hardcover', coverColor: { hex: '#5a1f1f', model: 'hex' } },
+      surface: { type: 'walnut' },
+      lighting: { environment: 'lamp' },
+    },
+    // 实拍桌面：目录结构与postext.dev的/folio/textures/相同
+    //（manifest.json，每种桌面一个文件夹）。不设置时使用程序生成的贴图。
+    textureBaseUrl: '/folio/textures',
+    // `folio.binding.spineImage`所指的图片：资源的URL，
+    // 或已绘制的画布或图片。
+    spineImage: spineUrl,
+  },
+});
+
+// 设置面板：书本就地重绘，页面不重新绘制。
+book.setAppearance({ folio: { ...folio, lighting: { environment: 'daylight' } } });
+book.resetView();
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>字段</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>folio</code></td><td><a href="/zh/docs/configuration-fonts-colors-viewers#书页视图配置"><code>folio</code>设置</a>：倾斜角、纸张、装订、台面、光照。给出时取代文档的设置。</td></tr>
+    <tr><td><code>pageWidthMm</code></td><td>页面的成品宽度（毫米），纸张厚度和封面纸板按它缩放。取自文档时，是按其dpi换算的裁切后页面宽度。<code>createFolio</code>默认为150。</td></tr>
+    <tr><td><code>extraPages</code></td><td><code>{'{ before, after }'}</code>：给定页面之外的书页数，计入书芯的厚度，从不绘制。</td></tr>
+    <tr><td><code>covers</code></td><td><code>{'{ front, back }'}</code>：给定的第一页是封面，最后一页（落在左页时）是封底。它们像纸板一样翻动，不绘制书壳。取自文档时：书从第一页开始、到最后一页结束，且设置了<code>binding.cover: 'pages'</code>。</td></tr>
+    <tr><td><code>spineImage</code></td><td>印在书脊上的图片，可以是URL、画布或图片。<code>createFolioFromDocument</code>不查找资源：请传入<code>folio.binding.spineImage</code>所指资源的图片。骑马钉时忽略。</td></tr>
+    <tr><td><code>textureBaseUrl</code></td><td>实拍桌面纹理的提供位置。纹理载入之前，或不设置时，桌面用程序生成的贴图绘制。</td></tr>
+  </tbody>
+</table>
+
+`createFolio(container, { pages })`是同一个查看器，可用于任意页面：图片URL、`<img>`或`<canvas>`元素，以及表示空白页的`""`；页面也可以写成`{ src, alt, paper }`，其中`paper`是这一叶所用的纸张，写法同`:::paper`。`PageFlipper`是单独的three.js引擎，供自己排布展开页DOM的宿主使用；`FlatPageFlipper`是3D书本出现之前的平面翻页效果，保留给食谱页面的看片台使用。完整的选项列表见[软件包README](https://www.npmjs.com/package/postext-folio)。
+
+### 在线示例：3D书本
+
+这个pen从CDN导入`postext`和`postext-folio`，排一篇短文档并以书本形式打开。抓住右页的边缘拖过去。
+
+<CodePenExample name="render-folio" title="Postext · 文档变成3D书本" description="用postext排版一篇Markdown文档，并用postext-folio以3D方式翻页。" height={640} />
+
+### 在线示例：页面图片
+
+用`createFolio`显示画布上绘制的页面、最后一页空白页和纸张颜色。
+
+<CodePenExample name="folio-images" title="Postext · 图片组成的3D书本" description="用postext-folio以3D方式翻动任意页面：图片URL、img或canvas元素。" height={600} />
+
+
+## EPUB电子书（`postext-epub`）
+
+`postext-epub`把排好的书写成EPUB 3.3文件，在浏览器或Node中运行，无需服务器。它读取的逐章文档与`renderToPdf`为整本书接收的相同，所以页码、注释、引用、交叉引用、目录和索引都已解析好；结果以字节返回。沙盒的**EPUB 3**标签页用的就是它。
+
+```bash
+npm install postext postext-epub
+```
+
+与`postext-pdf`一样，`postext`是对等依赖：两者要一起升级，从CDN引用时固定为同一版本。
+
+### 固定版式与流式版式
+
+EPUB 3定义了两种版式，由包文件的`rendition:layout`属性声明；`layout`选择其中一种：
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th><code>layout: 'fixed'</code></th>
+      <th><code>layout: 'reflowable'</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>EPUB中的名称</td><td><code>pre-paginated</code>（固定版式，英文称fixed layout或FXL）</td><td><code>reflowable</code>（流式版式），EPUB的默认版式</td></tr>
+    <tr><td>内容文档</td><td>每个印刷页一个XHTML文档，尺寸为成品页面的CSS像素</td><td>每章一个XHTML文档（篇另起一个文档）</td></tr>
+    <tr><td>保留什么</td><td>页面：分栏、浮动体、书眉、章首页、断行和位置，使用嵌入的字体。文字仍是真正的文字：可以选择、搜索和朗读</td><td>文字及其结构：标题、由行重新拼合的段落、列表、作为旁注的标注框、跟在引用文字之后的图和表、注释、链接、印刷页的分页标记。还有一份由配置导出的样式表</td></tr>
+    <tr><td>放弃什么</td><td>读者对字体、字号和边距的选择；在小屏幕上页面会缩小显示</td><td>分栏、书眉、页面设计和确切的断行</td></tr>
+    <tr><td>跨页与方向</td><td>按奇偶页和装订方式标记<code>page-spread-left</code> / <code>page-spread-right</code>；右装订的书从右向左阅读</td><td>阅读方向取自装订方式；竖排中文保持<code>vertical-rl</code>，阿拉伯文带<code>dir="rtl"</code></td></tr>
+    <tr><td>适合</td><td>以页面为设计单位的书：图文书、教材、目录册、杂志；大屏幕</td><td>连续的正文：小说、随笔、报告；手机和电子墨水阅读器</td></tr>
+  </tbody>
+</table>
+
+两种版式的导航相同：由标题和篇页生成的目录、带印刷页码的页码列表、地标（封面、印刷目录、正文开始处），以及供旧阅读器使用的NCX。
+
+### 写出一本书
+
+```ts
+import { openBundle, buildBundle } from 'postext';
+import { renderToEpub } from 'postext-epub';
+
+const bundle = await openBundle(fileBytes);
+const docs = buildBundle(bundle); // 每章一个VDTDocument，按书中顺序
+
+const bytes = await renderToEpub(docs, {
+  layout: 'reflowable',
+  metadata: { title: '灯笼', creators: ['Ada Lovelace'], language: 'zh-Hans' },
+  fonts: bundle.fonts.map((f) => ({ family: f.family, weight: f.weight, style: f.style, bytes: new Uint8Array(f.bytes), format: f.format })),
+  resourceBytes: (fileId) => {
+    const data = bundle.files.get(fileId);
+    return data ? { bytes: data, mediaType: '' } : undefined;
+  },
+  onWarning: (w) => console.warn(w),
+});
+```
+
+单个文档就是只有一章的书：`renderToEpub([doc], options)`。
+
+- <strong>`renderToEpub(docs, options): Promise<Uint8Array>`</strong>写出文件。`options`为`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`。
+- **`metadata`**：`title`和`language`（BCP 47语言标签）必填；`subtitle`、`creators`、`identifier`、`date`、`publisher`、`rights`、`description`和`modified`可选。不带前缀的ISBN会写成`urn:isbn:…`。没有`identifier`时，书会得到一个由书名、作者和语言派生的`urn:uuid:`，这样同一本书的新版本在读者书库中保持原位。再传入`modified`即可得到逐字节相同的输出。
+- **`fonts`**：要嵌入的字形，`{ family, weight, style, bytes, format, unicodeRange? }`，`format`为`woff2`、`woff`、`ttf`、`otf`之一。每个字形成为一个文件和一条`@font-face`规则；带各自`unicodeRange`的多个文件合成一个字形（Google Fonts的分片）。页面用到却没有嵌入字形的字体族、字重或字形会以`missingFont`提醒，阅读器会改用自己的字体。只嵌入许可证允许嵌入的字体：`redistributable: false`的字形绝不写入文件（书可以用它排版，但它的文件不会放进去，SVG图片中也不会）。
+- **`resourceBytes(fileId)`**：页面放置的图片，同步或异步返回`{ bytes, mediaType }`；`mediaType`为空时从字节判断类型。位图按存储时的样子给出，SVG给出源代码，而不是PDF印刷母版（`svg.pdfFileId`）。每张图片只存一次。单色书（`diagramStyle.singleInk`）的SVG会在文件中重新着色。SVG会嵌入其文字指定的字形，因为阅读系统把它作为图像显示，而图像看不到书的字体（见[SVG文字中的字体](/zh/docs/configuration-resources#svg文字中的字体)）：先取自`fonts`（包含其字符的分片），书的正文没有用到的字体族再取自<strong>`svgFonts.provider`</strong>。标记为`redistributable: false`的字形所属的字体族，以及`svgFonts.withhold(family)`指定的字体族，不放进SVG，每个以`fontWithheld`报告一次；没有字形的字体族以`svgFontUnavailable`报告，超出`svgFonts.maxBytes`（2 MiB）的字形以`svgFontsTooLarge`报告。`svgFonts.inline: false`、`diagramStyle.inlineFonts: false`和资源的`svg.inlineFonts: false`都让字节保持原样。没有字节的图片以`missingImage`提醒，原处留下空框。
+- **`cover`**：`{ bytes, mediaType, alt? }`，JPEG、PNG、WebP或SVG图片。书会以包含它的封面文档开头，它也是包文件的`cover-image`（书库中的缩略图）。没有封面时，固定版式把第一页标为封面，流式版式的书没有封面图片。
+- **`onProgress({ phase, done, total })`**：依次为`resources`（字体和图片）、`documents`（固定版式为页，流式版式为章）、`package`。<strong>`signal`</strong>可在步骤之间中止。
+- <strong>`readEpub(bytes)`</strong>为查看器读回文件，不需要`DOMParser`：版式、元数据、阅读方向、按路径列出的所有文件、清单、spine、目录、页码列表、固定版式的视口和封面。沙盒的阅读器就建立在它之上。
+
+两种版式都带有EPUB Accessibility 1.1元数据（访问模式、目录和印刷页码等功能、危险性和摘要），默认不声明符合WCAG。完整的选项列表和局限见[软件包的README](https://www.npmjs.com/package/postext-epub)。
+
+### 用EPUBCheck检查文件
+
+[W3C EPUBCheck](https://www.w3.org/publishing/epubcheck/)是EPUB的参考校验工具；电子书商店用它检查收到的文件。安装后（`brew install epubcheck`，或Java版本），`epubcheck book.epub`会列出错误、警告和用法提示；Postext输出留下的用法提示（`CSS-028`、`OBS-001`、`HTM_062`）仅供参考。在Postext仓库中，`pnpm --filter postext-epub epubcheck`检查测试套件的示例书，`node packages/postext-epub/scripts/epubcheck.mjs book.postext --layout both`对一个`.postext`文件或预设文件夹排版并检查两种版式，`pnpm --filter postext-epub validate`跑完整套书目（指南、示例预设，以及中文、阿拉伯文和排版食谱中的书），全部没有错误或警告。

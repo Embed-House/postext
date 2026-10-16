@@ -73,11 +73,12 @@ export function configKeyOf(config: PostextConfig): string {
   if (key === undefined) {
     // How the Folio viewer presents the book does not shape its pages, nor
     // does how it is separated and checked for print, nor the contrast
-    // check's settings.
+    // check's settings, nor the checks of the configuration (#849).
     const layout: PostextConfig = { ...config };
     delete layout.folio;
     delete layout.print;
     delete layout.contrast;
+    delete layout.checks;
     key = hash(stableStringify(stripConfigDefaults(layout)));
     configKeys.set(config, key);
   }

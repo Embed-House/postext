@@ -18,14 +18,19 @@ Every case below came up while porting real publications to Postext:
   furigana, part openers centred on the page and the Aozora credits in the
   colophon;
 - a webcomic re-lettered in seven languages from its text-free pages, and
-  manga, strip and album pages lettered from scripts (section I).
+  manga, strip and album pages lettered from scripts (section I);
+- a 28-page children's textbook of placed boxes, maps and time lines in
+  three languages, whose first port put its text in the config (section J
+  says how to avoid that).
 
 Each entry: **case → technique**, with the Markdown/config to write. Syntax
 details are in document-format.md and configuration.md.
 
 **Principle**: never hard-code a book in the engine. Express every need as
-config, Markdown or a resource. If something cannot be expressed, say so and
-report it upstream; do not fake it with images of text.
+config, Markdown or a resource, with the book's text in the Markdown and
+only form in the config. If something cannot be expressed that way, stop:
+write the gap as an issue draft and ask the user (J9). Do not fake it with
+images of text or with text typed into design elements.
 
 ---
 
@@ -110,6 +115,16 @@ automatically.
 - `toc.parts.design` draws part rows (a band in the part colour,
   "SECTION {number}", title, `{pageNumber}`). `toc.parts.breakBefore: true`
   gives one section per contents page.
+- A block that must stay on the same column and page as its entries (a part
+  row, a section heading with its topics): `toc.groups` /
+  `:::toc{keep="part"}` (`keep="1"` with `levels="1-2"` when the blocks are
+  chapters with sections), when the installed Postext supports `toc.groups`
+  (postext ≥ 1.34: check with `postext --version` and the docs' contents
+  settings). Style the rows with `toc.levels` and `toc.parts.design`.
+  Otherwise write that contents by hand with
+  `:ref{id="…" style="pageNumber"}` page numbers and list it in the report
+  as a documented gap. Never retype the source's page numbers, and never
+  draw the contents in a design slot.
 
 ### A4. Parts / sections with their own colour
 Put the part fence **at the top of the first chapter file of the part**. Its
@@ -164,9 +179,14 @@ Use H1 with `span: "page"`, `breakBefore` (parity from the book) and an
   digit or Latin text (`关于举办 \\ 2026年` → `关于举办2026年`), with an
   ideographic space between two Chinese characters (a 回目 couplet), and with
   a space between Latin words (postext ≥ 1.9.2).
-- A different picture or colour per chapter needs one heading style per
-  chapter (`# Title {style="cap-7"}`), each embedding its own image and
-  literal colour.
+- A different picture per chapter needs no style per chapter: a design
+  image's `resourceId` takes the placeholders a design text takes
+  (postext ≥ 1.8), so one opener style draws the picture each heading
+  names: `resourceId: "{attr.vignette}"` with
+  `# Title {style="opener" vignette="fig-harbour"}`. An id that resolves
+  empty draws nothing. A colour per chapter is form: a part palette (A4)
+  when the chapters of a part share it, otherwise one heading style per
+  colour with its `palette` override, never one per chapter holding text.
 - `{number}` is empty in a heading opener design. Pass a catalogue number
   or similar as an attribute (`{attr.cat}`).
 - A chapter that opens with a poem instead of prose: a style variant without
@@ -584,8 +604,8 @@ numbers" panels, grey boxes, badges. In Markdown write
   filling the page. Floated boxes are placed in order, so **put each fence
   right after the paragraph that cites it** (in citation order).
 - A chapter-closing summary nothing may pass: `floatBarrier: true`.
-- A badge pinned to a page position: `placement: "fixed"`,
-  `fixed: {anchor, offset}`.
+- A badge or a box pinned to a page position: `placement: "fixed"`,
+  `fixed: {anchor, offset}`; the text stays in the fence (J2).
 
 ### C4. Long boxes
 Set `keepTogether: false` to let a box split between children or lines, with
@@ -842,21 +862,25 @@ A Chinese family is tens of MB and thousands of glyphs; ship it cut to the book.
 ## F. Languages
 
 ### F1. The same book in two languages
-Use one shared `config` in the primary language plus `localized.<lang>.config`.
+One bundle for every edition, never a preset or a bundle per language. Use
+one shared `config` in the primary language plus `localized.<lang>.config`.
 It replaces whole top-level keys, so restate them: `locale`, `bodyText`
 (hyphenation), `headings` (labels), `headingStyles`, `parts`, `toc`,
 `resourceTypes`, `header`. Add `localized.<lang>.resources` (captions, notes,
 alt text, tables) and chapters per locale. Parse both sources with the same
-code, anchoring glosses by per-language text fragments.
+code, anchoring glosses by per-language text fragments. Check every edition:
+`postext check my-book --locale <lang>` per locale.
 
 ### F2. Two different books per language
 Give resources language-prefixed ids (`es-1-…`, `en-1-…`) and keep all of
 them in the shared list. Give heading styles per locale.
 
 ### F3. Translating a finished config
-Keep a map of names and literal slot texts ("SECTION {partNumber}"), and walk
-the config replacing them. Translate tables cell by cell by exact source
-text.
+The config holds labels, not text (J7): keep a map of style names and label
+literals ("SECTION {partNumber}", "Contents") and walk the config replacing
+them in `localized.<lang>.config`. Everything else is translated in the
+chapters. Translate tables cell by cell by exact source text, into
+`localized.<lang>.resources[].table`.
 
 ### F4. Number formats
 Decimal comma vs point in data and captions; `{,}` in LaTeX.
@@ -1103,3 +1127,148 @@ Measure pages with `scripts/comic_panels.py` (comics.md §15). The
 Postext repository's `scripts/presets/showcase/pepper-carrot/` (a full port
 in seven languages) and `scripts/presets/comics/` (generated art for the
 Cookbook's comic recipes) are working pipelines.
+
+---
+
+## J. Fixed-page books: textbooks, worksheets, picture books
+
+A children's textbook, a workbook or an infographic book sets many pages as
+**composed** pages: boxes, labels, maps and diagrams at set places, with
+little running text. Postext lays text out in flows and has no composed
+pages yet, so these books need the ladder below. What went wrong before: a
+28-page textbook ported with Postext 1.33 drew every page's diagram text as
+design text elements of a hidden heading style per page, at the source's
+coordinates, and built one bundle per language from them. The English
+edition carried 77 heading styles and 3,384 design elements, the bundle
+broke the Sandbox's import, and fixing a typo meant regenerating styles.
+None of the rungs below puts text in the config.
+
+### J1. Classify the pages first
+In the inventory, mark each page **flow** (running text with figures and
+boxes the engine places) or **composed** (positions are the design). Count
+them in the spec sheet. More than a third composed: ask the user before
+building whether the port is an **identical layout** (J2–J4 at the source's
+positions; edited or translated text must still fit its box; whatever
+Postext cannot place is a listed gap) or **editable, translatable text**
+(composed pages set as flow pages that keep the source's faces, colours and
+boxes, placed by the engine). Flow pages follow the rest of this file.
+
+### J2. Placed boxes: one fixed callout style per position
+A box at a set place on the page is a callout whose style pins it there.
+The text stays in the chapter, at the page it belongs to:
+
+```jsonc
+"calloutStyles": [{
+  "id": "card-top-left", "placement": "fixed",
+  "fixed": { "anchor": { "to": "page", "edge": "top-left" },
+             "offset": { "x": { "value": 25, "unit": "mm" }, "y": { "value": 48, "unit": "mm" } } },
+  "background": { "hex": "#ffffff", "model": "hex" }, "borderRadius": { "value": 3.5, "unit": "mm" }
+}]
+```
+
+```md
+:::callout{type="card-top-left" title="The cardinal points"}
+The Sun rises in the **east** and sets in the **west**.
+:::
+```
+
+- One style per **position** (or per kind of box at a position), shared by
+  every page that uses it, never one per page.
+- The box goes on the page where its fence falls in the flow; put the fence
+  after the `:::pagebreak` (or heading) that opens that page. If the place
+  is already taken there, it moves to the next page.
+- `width: "fill"` makes it as wide as the text column under its anchor
+  point; give the section the source's column grid (a heading style's
+  `layout`) for boxes narrower than the type area. Text columns it overlaps
+  are shortened around it. `width: "auto"` is a badge (title only).
+
+### J3. Page backgrounds and furniture: image elements, no text
+A page ground, a card, a band or a frame cut from the source (with its text
+removed) is an `image` element in the running head of a heading style, or
+in a page-opening heading's design with `reserve: false`. One style for
+every page of the kind, the picture named by the heading:
+
+```jsonc
+"headingStyles": [{
+  "id": "topic", "breakBefore": { "enabled": true, "parity": "any" },
+  "header": { "elements": [
+    { "kind": "image", "id": "ground", "resourceId": "{attr.fondo}", "decorative": true,
+      "placement": { "anchor": { "to": "page", "edge": "top-left" },
+                     "size": { "width": { "value": 230, "unit": "mm" }, "height": { "value": 288, "unit": "mm" } } } },
+    { "kind": "text", "id": "folio", "content": "{pageNumber}", "…": "…" }
+  ] }
+}]
+```
+
+```md
+# Finding your position {style="topic" fondo="ground-p05"}
+```
+
+- A design image's `resourceId` takes the placeholders a design text takes
+  (postext ≥ 1.8). In a running head `{attr.key}` reads the current
+  chapter's level-1 heading; in a heading design, that heading's own
+  attributes. An id that resolves empty draws nothing.
+- A topic set on a spread: two elements with `parity: "even"` and
+  `"odd"`, `resourceId: "{attr.verso}"` and `"{attr.recto}"`.
+- A page with no visible title still opens with a heading:
+  `# Map of Europe {style="topic" fondo="ground-p07" hidden="true"}` keeps it
+  in the contents and the bookmarks without printing it.
+- Pictures that overhang a box are image elements too (or `::resource`
+  in the box); their captions and labels are not.
+
+### J4. Maps and diagrams with many labels
+A map, a time line or a labelled diagram whose words sit at set places is a
+**resource**: an SVG with live `<text>` labels (D6), placed with
+`::resource{id}` or `:ref`, and translated by
+`localized.<lang>.resources[].file` (`resources/en/map-europe.svg`).
+Translators edit the labels in the SVG (or the strings file your script
+builds it from), never a style. Text a box holds next to the map is a
+callout (J2), not part of the picture.
+
+### J5. Contents
+`:::toc`, always (A3). A block (a part, a section) that must stay with its
+topics uses `toc.groups` / `:::toc{keep="part"}` when the installed
+Postext supports `toc.groups` (≥ 1.34); otherwise a hand-written contents with
+`:ref{id="…" style="pageNumber"}` page numbers, listed in the report as a
+documented gap.
+
+### J6. Editions in other languages
+One bundle: `chapters.<lang>` per locale, `localized.<lang>.resources` for
+captions, alt text, tables and the label SVGs, `localized.<lang>.config` for
+the locale, labels and faces only (F1). A translation that runs longer than
+the source reflows in its box or flow; it is never re-placed line by line
+at the source's coordinates. Run `postext check my-book --locale <lang>` and
+look at the pages of every locale.
+
+### J7. Never
+- Literal text in design text elements beyond a label, the publisher's name
+  or the book title (`{title}`); `preset_kit.py lint` fails on it.
+- Heading styles that hold content: one hidden style per page carrying that
+  page's text, styles named after page numbers.
+- One preset or one bundle per language.
+- The source's line breaks copied into the paragraphs (B9).
+- A contents written into design slots.
+
+### J8. Size budget
+The Sandbox keeps the working book in about 5 MB of browser storage. Aim for
+a config under 1 MB; `preset_kit.py lint` reports the size, warns from 3 MB
+and fails above `--max-size`. A config past 1 MB in a short book almost
+always means content or per-page styles in it.
+
+### J9. Stop and ask
+When the source needs something none of these rungs expresses (text that
+must flow around a drawn shape, a box chained to another, labels anchored
+to points of a photograph), stop before reaching for the config. Write the
+gap as an issue draft for the user:
+
+```md
+**Gap:** <what the source does>, pages <n–m>.
+**Closest expression today:** <rung and how it looks>; it loses <what>.
+**What Postext would need:** <the feature, in the book's terms>.
+**Workaround that breaks content/form (not used):** <what it would cost:
+  edits, translations, config size>.
+```
+
+Show it and ask whether to accept the closest expression or wait for the
+feature. Never hard-code the book in the engine, and never take the
+workaround without the user's yes.

@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Sandbox',
   sidebarTitle: 'Sandbox',
-  description: 'Interactive playground for experimenting with the Postext layout engine',
+  description: "The Sandbox's interface: the activity bar and the Text, Books, Chapters, Resources and Fonts panels, and the layout on phones",
   lang: 'en',
-  lastUpdated: '2026-10-11',
-  readingTime: '16 min',
-  order: 20,
-  plainSummary: "The Sandbox is a free tool on this website for trying Postext without installing anything. You write your text on one side and see the finished pages on the other, and they change as you type. You can choose fonts, page sizes, columns and colours, and add pictures. You can organise your work as a book with chapters and download it as a PDF or as an EPUB e-book. Your work is saved in your own browser as you go.",
+  lastUpdated: '2026-10-16',
+  readingTime: '28 min',
+  order: 36,
+  plainSummary: "The Sandbox is a free tool on this website for trying Postext without installing anything. You write your text on one side and see the finished pages on the other, and they change as you type. This page explains the parts of the screen and the panels where you write the text, manage books and chapters, add pictures and choose fonts. Other pages cover the design settings, the previews, saving and importing, and putting the Sandbox in your own website.",
 };
 
 # Sandbox
@@ -37,7 +37,7 @@ A narrow strip on the left edge has one button per panel. Each button shows an i
 
 Clicking the active panel's button collapses the sidebar, and clicking a different button switches to that panel. The bar is a single tab stop: the arrow keys (↑ / ↓, wrapping), **Home** and **End** move focus between the buttons, and Enter or Space opens the focused panel.
 
-The host application can add its own items to the bar: an optional **home logo link** in the top cell (via the `homeUrl` or `homeLink` props), and a **theme toggle** and **language switcher** at the bottom. Whole books are exchanged as `.postext` files from the Books panel, and the Text and Design panel headers export their own part (see [Export and import](#export-and-import)).
+The host application can add its own items to the bar: an optional **home logo link** in the top cell (via the `homeUrl` or `homeLink` props), and a **theme toggle** and **language switcher** at the bottom. Whole books are exchanged as `.postext` files from the Books panel, and the Text and Design panel headers export their own part (see [Export and import](/en/docs/sandbox-books-saving#export-and-import)).
 
 ### Sidebar panels
 
@@ -64,12 +64,12 @@ A CodeMirror 6 editor for the chapter's Markdown. Screen readers announce it as 
 
 A code listing (a ```` ``` ```` or `~~~` fence and its lines) is one region in the editor: it gets a code background, and the Postext markup inside it (maths, chips, tabs, index marks) is left uncoloured, as the engine leaves it unread. Host applications can add their own toolbar buttons through `extraActions`. The editor also reports its cursor and selection to the previews, which enables click-to-caret sync: clicking text in the rendered output moves the caret to the matching Markdown position, and the previews can highlight the current selection.
 
-The panel header is a **chapter switcher**: previous/next arrows, the chapter's position and title, and a menu listing every chapter of the book with its page range once its pagination is known (see [Books and chapters](#books-and-chapters)). Each chapter has its own editor instance, so undo history and caret position are kept per chapter. The header then offers five actions:
+The panel header is a **chapter switcher**: previous/next arrows, the chapter's position and title, and a menu listing every chapter of the book with its page range once its pagination is known (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)). Each chapter has its own editor instance, so undo history and caret position are kept per chapter. The header then offers five actions:
 
 - **Reset** (asks for confirmation): reloads the **document part** of the open sample book. Every chapter and the whole figure set are replaced with the sample's (for the built-in sample, the locale's sample document and example resources). The design is left alone except for the sample's own fonts. See [Books panel](#books-panel).
 - **Export**: downloads the active chapter as a plain `.md` file, named `<book>-<nn>-<chapter>.md` in a multi-chapter book, and otherwise after the open book or `document.md`
 - **Import**: replaces the active chapter with the contents of a `.md` file
-- **Import a Word document**: opens a `.docx` manuscript and maps its Word styles to Postext styles before anything changes (see [Word documents](#word-documents))
+- **Import a Word document**: opens a `.docx` manuscript and maps its Word styles to Postext styles before anything changes (see [Word documents](/en/docs/sandbox-books-saving#word-documents))
 - **Export to Word**: downloads the chapter or the whole book as a `.docx` that comes back with every style when it is imported again
 
 #### Books panel
@@ -101,11 +101,11 @@ Clicking a book (or one of a sample book's language tags) opens it, and once it 
     - **Hide from the list** removes the sample from the list (the built-in one cannot be hidden).
     - **Restore the original…** discards your changes to the sample (in every language) and, when it is open, loads the published version in its place. It asks first, and only appears on edited samples.
 
-  A sample in several languages shows one tag per language, in the order its manifest lists them: 繁 and 简 for Traditional and Simplified Chinese, the language code (EN, ES) for the others; the tooltip names the language in the interface language (*Load the Traditional Chinese version*). A sample whose original is in another language than the interface (a Chinese novel with an English translation) says which one it opens in (`openLocale`, see [Preset bundle format](#preset-bundle-format)), so a click on its row brings up the original.
+  A sample in several languages shows one tag per language, in the order its manifest lists them: 繁 and 简 for Traditional and Simplified Chinese, the language code (EN, ES) for the others; the tooltip names the language in the interface language (*Load the Traditional Chinese version*). A sample whose original is in another language than the interface (a Chinese novel with an English translation) says which one it opens in (`openLocale`, see [Preset bundle format](/en/docs/sandbox-embedding#preset-bundle-format)), so a click on its row brings up the original.
 
   Hidden samples are collected under a *Hidden sample books* disclosure at the bottom of the group, each with **Show in the list**. The choice is remembered in `localStorage`.
 
-A `.postext` file opened from the **New** menu becomes a new, open book. A file in several languages first asks which one to import, starting from the one it is written in (its manifest's `locale`). Exporting is a per-row action: the open book's row exports what is on screen. A `.postext` file is a preset bundle directory zipped (see [Export and import](#export-and-import)).
+A `.postext` file opened from the **New** menu becomes a new, open book. A file in several languages first asks which one to import, starting from the one it is written in (its manifest's `locale`). Exporting is a per-row action: the open book's row exports what is on screen. A `.postext` file is a preset bundle directory zipped (see [Export and import](/en/docs/sandbox-books-saving#export-and-import)).
 
 The Reset buttons in the Text and Design panels restore the sample a book was copied from. A blank or imported book has no original, so the buttons are hidden while it is open.
 
@@ -113,14 +113,14 @@ The Reset buttons in the Text and Design panels restore the sample a book was co
 
 The second panel in the activity bar shows only the open book. At the top, its name, what kind of book it is (*Your book*, or *Sample book* with its language and an *Edited* tag once you change it) and a ⋯ menu with the actions on it: **Rename…** for your books (a double-click on the name does the same), **Duplicate** or **Make my own copy**, **Download (.postext)**, and **Restore the original…** for an edited sample book.
 
-Below, its **chapters** fill the rest of the panel and scroll on their own (see [Books and chapters](#books-and-chapters)). Each chapter row shows its page range and word count, and the active chapter is marked. A Chinese, Japanese or Korean book counts characters instead: each Han character, kana or hangul counts one, and so does each Latin word among them. **Add chapter** sits in the panel header next to the chapter count, rows reorder by dragging their grip (or with the arrow keys on it), and each chapter's ⋯ menu offers **Rename**, **Move up / down**, **Split at level-1 headings**, **Merge into previous chapter** and **Delete** (the last chapter can never be deleted).
+Below, its **chapters** fill the rest of the panel and scroll on their own (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)). Each chapter row shows its page range and word count, and the active chapter is marked. A Chinese, Japanese or Korean book counts characters instead: each Han character, kana or hangul counts one, and so does each Latin word among them. **Add chapter** sits in the panel header next to the chapter count, rows reorder by dragging their grip (or with the arrow keys on it), and each chapter's ⋯ menu offers **Rename**, **Move up / down**, **Split at level-1 headings**, **Merge into previous chapter** and **Delete** (the last chapter can never be deleted).
 
 ##### Sample books (presets)
 
 A **preset bundle** is a whole starting point loaded as one unit: the chapters' Markdown, a `PostextConfig`, the resources (with their bitmap/SVG payloads and table models), and the custom font files the config refers to. The panel lists every preset the Sandbox can reach and marks the open one:
 
 - **Built-in preset**: the *Postext guide*, the default sample book shipped with the package. It is always available, always first in the list, and **public**. It comes in English, Spanish, Catalan, Arabic, Simplified Chinese, Japanese and Brazilian Portuguese (the row's ES, CA, EN, ع, 简, 日 and PT buttons; `#preset=postext-guide&lang=zh-Hans` links to the Chinese edition, `lang=ar` to the Arabic one, `lang=ja` to the Japanese one, `lang=pt-BR` to the Brazilian Portuguese one). The Arabic edition is an Arabic book: right to left, bound on the right, Arabic-Indic digits, Amiri, Noto Kufi Arabic and IBM Plex Sans Arabic, kashida justification and figures drawn in mirror with Arabic labels. The Chinese edition has a design of its own (Noto Serif SC and Noto Sans SC, mainland punctuation and line breaking) and figures drawn with Chinese labels. The Japanese edition is a vertical book too, set by the Japanese rules (JLReq): Noto Serif JP and Noto Sans JP, 9.25 pt type on two tiers of 34 characters, section headings three lines deep (行取り), running heads and Arabic folios across the head and foot, figures with Japanese labels. Each interface opens the guide in its own language. An untouched Chinese, Japanese or Arabic guide opened from another interface (its button or a `lang=` link) stays in its language whatever the interface language; the one the Chinese, Japanese or Arabic interface opened itself changes to the language the Sandbox is next opened in, like the other editions.
-- **Remote presets**: bundles served over HTTP from the base URLs passed in the `presetSources` prop (see [Props](#props)). Each source is either public or **private**. Private presets are tagged *Private* in the list and are meant for material that must not leave a machine. The public website only lists a private source in local development, where the Next.js app serves the folder named by `POSTEXT_PRIVATE_PRESETS_DIR` through `/api/private-presets`. Production never lists it. The website's public source, `/presets`, serves its sample books: *Bioquímica*, *Deep Sky*, *Don Quijote*, *Physics (OpenStax)*, *Spanish Painting* and *Signals 2020* in Spanish and English, *Dream of the Red Chamber* in three editions, and *Paradise Lost* in English, with Verity’s notes as footnotes and Doré’s plates. Each comes with its licence and credits.
+- **Remote presets**: bundles served over HTTP from the base URLs passed in the `presetSources` prop (see [Props](/en/docs/sandbox-embedding#props)). Each source is either public or **private**. Private presets are tagged *Private* in the list and are meant for material that must not leave a machine. The public website only lists a private source in local development, where the Next.js app serves the folder named by `POSTEXT_PRIVATE_PRESETS_DIR` through `/api/private-presets`. Production never lists it. The website's public source, `/presets`, serves its sample books: *Bioquímica*, *Deep Sky*, *Don Quijote*, *Physics (OpenStax)*, *Spanish Painting* and *Signals 2020* in Spanish and English, *Dream of the Red Chamber* in three editions, and *Paradise Lost* in English, with Verity’s notes as footnotes and Doré’s plates. Each comes with its licence and credits.
 - **`default: true`**: a private preset flagged as default is loaded automatically the first time a *pristine* Sandbox (untouched built-in document) opens. When several are flagged, the one whose `locale` matches the UI locale wins. Public presets are never loaded automatically.
 
 Each row shows the preset's name, an optional description, its locale tag and its *Private* / *Default* tags. Clicking a row loads the preset **in full**: text, figures, design and fonts. The Sandbox first writes the font files and figure data to IndexedDB, so the viewports never see a half-applied document. Clicking a row opens the sample in the interface language, unless you have only edited it in another language: then your most recent version opens. A bilingual sample's language tags open it in that language (your version there, if you have one).
@@ -130,7 +130,7 @@ Each row shows the preset's name, an optional description, its locale tag and it
 - If the book is **untouched** (Markdown, configuration and resources still hash to what the preset applied), the preset is re-applied in full and a brief notice appears in the panel.
 - If there are **local changes**, they are kept. A banner at the top of the panel (*This sample book has a new version. Your changes are kept.*) offers **Load the new version**, which asks before it discards your changes to that language of the sample, and the Books button in the activity bar shows a dot meanwhile. The draft remembers the version it was made from, so the banner comes back each time you open it until you load the new version. Figures of the draft whose files changed in the new version keep the bytes they had: the draft gets its own copy of them before the bundle's are written. Bundles are only followed while a sample book is open. A book copied from one keeps its own copy.
 
-The same check runs on load, so if you edit a bundle and then open the Sandbox, it picks up the new version as long as the book was untouched. The fingerprint comes from `<preset-dir>/fingerprint.json`. On the development route this is a virtual file that returns a metadata-only hash of the directory (see the [Preset bundle format](#preset-bundle-format) appendix). Sources that do not serve it are not followed.
+The same check runs on load, so if you edit a bundle and then open the Sandbox, it picks up the new version as long as the book was untouched. The fingerprint comes from `<preset-dir>/fingerprint.json`. On the development route this is a virtual file that returns a metadata-only hash of the directory (see the [Preset bundle format](/en/docs/sandbox-embedding#preset-bundle-format) appendix). Sources that do not serve it are not followed.
 
 The open sample book also defines what the other panels' **Reset** buttons restore:
 
@@ -157,11 +157,11 @@ The open sample book also defines what the other panels' **Reset** buttons resto
   </tbody>
 </table>
 
-A preset that was open in an earlier session but is no longer listed by any source (typically a private preset in a build that does not serve it) still appears, greyed out as *Not available in this build*. The Sandbox keeps the loaded content instead of silently swapping it for the built-in sample. The open preset's id is persisted under the `postext-sandbox-preset` key (see [Persistence](#persistence)). The bundle format is described in the [Preset bundle format](#preset-bundle-format) appendix.
+A preset that was open in an earlier session but is no longer listed by any source (typically a private preset in a build that does not serve it) still appears, greyed out as *Not available in this build*. The Sandbox keeps the loaded content instead of silently swapping it for the built-in sample. The open preset's id is persisted under the `postext-sandbox-preset` key (see [Persistence](/en/docs/sandbox-books-saving#persistence)). The bundle format is described in the [Preset bundle format](/en/docs/sandbox-embedding#preset-bundle-format) appendix.
 
 #### Resources panel
 
-Manages the book's resources: bitmap images, SVG figures, tables and videos. The text refers to them with `::resource{id="…"}` blocks and `:ref{id="…"}` inline references. For the reference syntax and the float model, see [Document format → Resources](/en/docs/document-format#resources).
+Manages the book's resources: bitmap images, SVG figures, tables and videos. The text refers to them with `::resource{id="…"}` blocks and `:ref{id="…"}` inline references. For the reference syntax and the float model, see [Document format → Resources](/en/docs/document-format-resources#resources).
 
 **List view.** The header shows the number of resources. Resources are grouped by their resource-type name, and each group is a counted list. Resources whose `typeId` no longer matches a configured type fall into an *Untyped* group so you can still reach them. Each item shows a 36 px thumbnail next to its caption and id: a real preview for bitmaps and SVGs, the poster with a play badge for videos, and a glyph for tables. When the book has more than six resources, a **search** field (*Search resources…*) filters the list by caption and id, ignoring accents. When the book has no resources yet, an empty state explains how to add them and place them in the text with `:ref{#id}`. A **New** dropdown offers four ways to add one:
 
@@ -191,8 +191,8 @@ You can also drag and drop files from disk onto the panel, video files (MP4, Web
   - **Head the page that cites it**: for a top or automatic float of a column or page span that is not turned (`placement.citingPage`): it may take the head of the page or column where the line citing it lands, the text above the reference moving down under it. Resource types offer the same switch in their default placement.
   - **Text wrap**: for a resource set in the text or a one-column float, *None* or the side of the column it sits on with the text beside it (`placement.wrap`), and its **Wrap gap** (`placement.wrapGap`) once it wraps; a wrapped resource with no width of its own shows the layout's default share. Resource types offer both in their default placement.
 - **Payload**: uploaders that replace the bitmap or SVG file
-- **Size and resolution**: for a bitmap, its pixels, the resolution its file states (*none stated*, or 72 and 96 marked as read as unset), its natural size in mm at the resolution it is laid out at, and the ppi it prints at where the current layout places it (the lowest when it is placed more than once). Under the preflight's minimum it shows in the warning style, under the critical one in the critical style, with **Open in Checks** for a book set up for print. **Resolution** sets the picture's own ppi (`bitmap.resolution`; see [Document format › Bitmap size](/en/docs/document-format#bitmap-size)), and **Use the file's … ppi** fills it in from the file. An uploaded picture keeps the resolution its file states (`bitmap.fileResolution`).
-- **Video**: for a video resource ([Document format › Videos](/en/docs/document-format#videos)):
+- **Size and resolution**: for a bitmap, its pixels, the resolution its file states (*none stated*, or 72 and 96 marked as read as unset), its natural size in mm at the resolution it is laid out at, and the ppi it prints at where the current layout places it (the lowest when it is placed more than once). Under the preflight's minimum it shows in the warning style, under the critical one in the critical style, with **Open in Checks** for a book set up for print. **Resolution** sets the picture's own ppi (`bitmap.resolution`; see [Document format › Bitmap size](/en/docs/document-format-resources#bitmap-size)), and **Use the file's … ppi** fills it in from the file. An uploaded picture keeps the resolution its file states (`bitmap.fileResolution`).
+- **Video**: for a video resource ([Document format › Videos](/en/docs/document-format-resources#videos)):
   - **Source**: *YouTube*, *Vimeo* or *File*.
   - **Video address** (YouTube, Vimeo): any link of the video. When it names a new video, its poster, frame size and title are fetched from the platform (the title becomes the alt text when that is empty); **Fetch the poster again** repeats it. A link that names no video of the platform is flagged under the field.
   - **Video file** (File): the uploader of an MP4, WebM, Ogg or QuickTime file, with its format, size and length. A first poster is taken a tenth of the way in. **Poster frame** plays the file: stop or scrub on the frame you want printed and press **Use this frame as the poster**. **Production address**: where the published video will be (`https://…`), opened by the QR code and the PDF link; without it print gets no QR code or link.
@@ -200,7 +200,7 @@ You can also drag and drop files from disk onto the panel, video files (MP4, Web
   - **Poster**: the printed picture with its size, and an uploader to replace it with a picture of your own.
   - **Start (s)** / **End (s)**: the part that plays; 0 leaves the start or the end as it is.
   - **Player**: this video's switches (controls, download button, full screen, speed menu, picture in picture, autoplay, muted start, loop, play alongside other videos), each *Book setting*, *Yes* or *No*. Only the switches the video's player honours are listed.
-- **Safe area**: for bitmaps and SVGs, the part of the picture that is always shown (`Resource.safeArea`; see [Document format › Safe area](/en/docs/document-format#safe-area)). The field shows a thumbnail with the area marked and its size in percent, or *None* when the picture has none, with **Mark safe area** / **Edit safe area** and **Remove safe area** buttons. The dialog shows the picture: drag outside the rectangle to draw a new one, inside it to move it, or from its handles to resize it; with the rectangle focused, the arrow keys move it and Shift with the arrows resizes it. *Left*, *Top*, *Width* and *Height* fields set it in percent, and two previews show the tallest and the shortest crop the area allows.
+- **Safe area**: for bitmaps and SVGs, the part of the picture that is always shown (`Resource.safeArea`; see [Document format › Safe area](/en/docs/document-format-resources#safe-area)). The field shows a thumbnail with the area marked and its size in percent, or *None* when the picture has none, with **Mark safe area** / **Edit safe area** and **Remove safe area** buttons. The dialog shows the picture: drag outside the rectangle to draw a new one, inside it to move it, or from its handles to resize it; with the rectangle focused, the arrow keys move it and Shift with the arrows resizes it. *Left*, *Top*, *Width* and *Height* fields set it in percent, and two previews show the tallest and the shortest crop the area allows.
 - **Fonts in the drawing**: for SVG figures, the families the drawing's text names (family, weight, style) and what became of each: *embedded* with its size, *declared in the SVG* (the file carries its own `@font-face`), *no font file* (the image falls back to another face) or *over the size cap*. The faces come from the book's custom fonts, then from Google Fonts, and are embedded only when the picture is shown or exported, never in the stored file. **Embed the book's fonts** turns it off for this figure (`svg.inlineFonts: false`), for an SVG that carries its own faces or must stay as it is.
 - **SVG source**: for SVG figures, a source editor under the uploader. Only the text nodes accept edits: the content of `<text>` / `<tspan>` elements, tinted in the editor. Typing anywhere else is rejected, and `<`, `>` and `&` typed into a text node are escaped so the file stays well-formed. Each change is saved after a short pause as a **new** stored file, and the figure re-renders (single-ink recolouring included). The editor notes when the SVG has no text nodes.
 - **Preview**: a live mock-up of how the resource will look, with `#` standing in for the number (real numbers depend on where the resource lands in the document). The caption opens with the label the document sets: the type's caption prefix and the number (`Figure #.`), the prefix alone for a type numbered with an empty template (`Do.`), and nothing for a type with no caption prefix
@@ -236,330 +236,6 @@ Shows the typefaces the book uses and manages your own font files alongside the 
   - In a document in Arabic (or another language written in the Arabic script) every font picker lists first, under *Arabic*, the Google families with Fontsource's `arabic` subset, the book faces first (Amiri, Noto Naskh Arabic, Scheherazade New, Markazi Text, Lateef, then Noto Kufi Arabic, Reem Kufi, Aref Ruqaa, El Messiri). The previews load each face's Arabic file before the first layout, and the PDF embeds it with the Latin one when the text uses both.
   - Orphaned font files (uploads no longer used by any family) are removed from IndexedDB automatically.
 
-#### Design panel
-
-A form-based editor for `PostextConfig`, with more than five hundred fields.
-
-**Overview.** When the Design panel opens, it shows an overview:
-
-- A **This book** card with a live drawing of the page. The drawing uses true proportions and shows the margins, the columns and the page and ink colours, as a spread when the margins are mirrored. A vertical book's lines are drawn down the page from the right, its columns as tiers. Beside it are the trim size, the column layout, the writing system, the body typeface and size, and the palette. The writing system line names the document language and, when they are a choice, the direction and the binding (*Vertical · bound on the right · 中文（繁體）*, *Right to left · bound on the right · العربية*); it opens **Writing system**.
-- The list of the thirteen **settings groups**. Each group has a one-sentence description and the number of sections you have changed in it.
-
-**One page per group.** Opening a group shows that group's sections as their own page. Only that group is built, which keeps the panel fast even on large books.
-
-- A breadcrumb (**Design › group**) leads back to the overview.
-- Chips under the page heading jump to each section on the page.
-- A **Next** link at the bottom opens the following group.
-- Focus moves to the page heading when you open a group, and back to the group's row when you return.
-- The open group is remembered between sessions.
-
-The groups, in browsing order:
-
-- **Page & columns**
-  - *Page*: fields are grouped as **Size**, **Margins**, **Paper** and **Numbering**.
-    - **Size**: the size presets say what they are for: *Pocket book* 11 × 17, *Novel, narrative* 12 × 19, *Essay, handbook* 17 × 24 and *Textbook, magazine* 21 × 28; the newspaper trims *Broadsheet* 37.5 × 59.7, *Berliner* 31.5 × 47, *Tabloid* 28 × 43 and *Compact* 29.7 × 42 (since postext 1.18); or *Custom*. **Layout resolution (px per inch)** (`page.dpi`) is here too: the pixels the layout works in, not the resolution of pictures, though a bitmap with no resolution of its own prints at that many ppi.
-    - **Margins**: each margin is tied to the page drawing. Pointing at a margin field or focusing it tints that margin on the drawing. A **mirrored** switch turns left/right into inner/outer margins for facing pages.
-    - **Paper**: the page background colour.
-    - **Numbering**: the page-number format and the number the pages start at.
-  - *Columns*: the layout is chosen from picture cards: *One column* (novels, essays), *Two columns* (textbooks, magazines, reference works), *Column and a half* (a main column plus a narrow side column for notes and small figures) or *Multiple columns* (three to eight equal columns for newspapers and magazines, with a **Columns** count; since postext 1.18). The section also has the gutter, the side column, **Shrink figures that don't fit** (`layout.fitFiguresToPage`), **Bitmap resolution** (`layout.bitmapResolution`: *Page dpi*, *From file*, which also reads the resolution of pictures uploaded before, or *Fixed* with its ppi), **Shrink floated pictures** with its **Smallest scale** (`layout.floatShrink`), **Floats head the page that cites them** (`layout.floatsAtCitingPage`) with **Largest float at the head of its citing page** (`layout.maxTopFraction`), **Floats under a page-wide heading, from the first column** (`layout.floatsUnderOpener`, on by default since postext 1.25: a float fenced right after a heading set across several columns takes the head of the first one), **Space around inline figures** (`layout.inlineResourceGap`), **Space around figures in boxes** (`layout.inlineResourceGapInBoxes`), **Lines of a paragraph at a box cut** (`layout.boxChildSplitMinLines`), **Columns in the text, and groups that split** (`layout.flowColumns`, on by default since postext 1.25: a `:::columns` group outside a box sets its blocks in columns, and a group that does not fit goes on in the next column or page) and **Closing floats hug the text** (`layout.hugClosingFloats`).
-  - *Text wrap*: **Text wrap gap**, **Narrowest text beside**, **Fewest lines beside** and **Wrapped width** (`layout.wrap`), the defaults of the pictures and boxes the text runs beside.
-- **Writing system**. The page opens with the drawing of Page & columns. Its spread carries folios: 2 | 3 in a book bound on the left, 3 | 2 in one bound on the right, whose odd page is the left one; the caption says when the book is bound on the right and when its lines are vertical.
-  - *Language and direction*:
-    - **Document language**, with Chinese as 中文（简体）, 中文（繁體） and 中文（香港）, and Arabic as العربية, العربية (مصر) and العربية (المغرب) (the region sets regional defaults such as the digits). A tag the list lacks (`es-ES`, `zh-TW`, `sv`) shows as an extra option, named after the language it reads as. Changing it renames the built-in figure and table types when they are still the ones of the previous language (a Spanish book switched to Chinese prints 图 and 表, not *Figura* and *Tabla*); types you renamed keep their names.
-    - **Text direction**: *Auto*, which names what it resolves to (right to left for Arabic), *Left to right* or *Right to left* (`direction`).
-    - **Writing mode**, from picture cards: *Horizontal*, or *Vertical*, lines running top to bottom and right to left (`layout.writingMode`).
-    - **Binding**: *Auto*, which names what it resolves to (the right edge for a vertical or right-to-left book and for a comic book read right to left), *Left edge* or *Right edge* (`page.binding`).
-    - **Digits**: *Auto*, which names the digits the language gives (٠ ١ ٢ ٣ for Arabic, 0 1 2 3 for the Arabic of the Maghreb and every other language), *European*, *Arabic-Indic* or *Persian* (`numerals`).
-    - **Chinese defaults**: **Review…** lists what setting the book up for Chinese changes. Pick *Simplified 简体* or *Traditional 繁體* and the direction: a new Traditional book starts vertical, a new Simplified one horizontal, and a book already in Chinese keeps its direction. Each row shows the setting as it is and as it becomes: the document language (a Chinese tag of the same script, such as `zh-TW`, is kept), the writing mode with the binding it gives, Noto Serif and Noto Sans in SC, TC or HK for the body and the headings (the heading row also names the faces heading levels and heading styles set for themselves, and ticked it sets those in the Chinese face too), a 2 em first-line indent, indent after headings, no space between paragraphs, justified text, no hyphenation, 图 or 圖 and 表 numbered by chapter (`{h1}-{n}`), captions set 图1-1　标题 (nothing before the number, an ideographic space after it), chapters numbered 第一章 (`第{1:一}章`, an ideographic space before the title) and numbered lists 一、 （一） 1. （1） ①. Only what differs is listed. A setting you changed yourself comes unticked, marked *your setting*, and stays as it is unless you tick it; the language and the direction always apply, and so does hyphenation, which a Chinese document turns off by itself (unless you turned it on for a Latin language you named in the hyphenation language). **Apply** makes the ticked changes in one step, and **Undo** beside the confirmation takes that step back in the same book: every setting it changed returns to what it was, even when you have changed other settings of the same group since; one you have changed again since stays as you left it, and the confirmation says so. Opening another book drops the Undo.
-    - **Arabic defaults** (in a document in Arabic): **Review…** lists what setting the book up for Arabic changes. Pick the typefaces: *Classical*, Amiri for the body and the headings, or *Modern*, Noto Naskh Arabic with Noto Kufi Arabic headings. The rows: the direction back to *Auto* when the book was set left to right (always applied), the binding back to *Auto* (the right edge), the two typefaces, the typeface of design texts (running heads, folio, opener and heading designs) set in a face with no Arabic letters, moved to the heading face so the PDF does not print empty boxes, a leading of 1.75 em, justified text, no hyphenation, the digits of the region when the book names others, شكل and جدول numbered by chapter, captions set شكل ١-١: العنوان, chapters numbered الفصل الأول (`الفصل {1:ordinal}`, a colon before the title), numbered lists ١- أ- (١) and footnotes numbered again on every page, all in the document's digits. Ticks, *your setting*, **Apply** and **Undo** work as in the Chinese list.
-    - **Japanese defaults** (in a document in Japanese): **Review…** lists what setting the book up for Japanese changes. Pick the kind of book: *Vertical 縦組*, a bunko or tankōbon novel bound on the right on a character grid, or *Horizontal 横組*, a technical book bound on the left. The rows: the document language and the writing mode (always applied), the binding back to *Auto*, Noto Serif JP and Noto Sans JP for the body and the headings (and for design texts set in a face with no kana), a leading of 1.75 em, the character grid a vertical page holds at that size (at most 52 characters), a one-em indent with no extra space between paragraphs, justified text without hyphenation, the Chinese typographic settings back to *Auto* so the Japanese ones apply, 図 and 表 with captions set 図1-1　…, chapters numbered 第一章 (vertical) or 第1章 (horizontal), headings in three and two lines (行取り) with their indents, Japanese list numbers, Chinese note settings back to *Auto*, and kanji folios when a vertical folio is set down the fore-edge. **Apply** and **Undo** work as for Chinese. In a Japanese book the editor's toolbar adds **Ruby** and **Across in vertical text**. See [Japanese layout](/en/docs/japanese-layout#in-the-sandbox-and-the-cookbook).
-  - *East Asian typography* (`cjk`): **Regional conventions** (mainland China, Taiwan, Hong Kong, Japan) at the top, then the fields in nine groups: **Line edges** (**Line breaking**: none, basic, GB, strict, Japanese very strict, Japanese strict, Japanese loose; **Breaks between characters**; **Book titles: characters at a break**, `cjk.titleMinChars`; **Circled numbers**: as Chinese characters or as Latin letters; **CJK rules in design text**; **Trim brackets at line edges**; **Bracket opening a paragraph**: ①, ③ or flush; **Hanging punctuation**), **Punctuation widths** (**Punctuation width**: kaiming, full width, half at line end, half width; **Compress adjacent marks**), **Spacing** (**Space between Han and Latin**; **Space after ？ and ！**), **Vertical text** (**Numbers in one upright cell**: off, or up to 2, 3 or 4 digits, `cjk.uprightDigits`), **Annotations** (**Emphasis in Chinese and Japanese text**: what `*…*` prints, marks or italics; **Emphasis mark**, **Mark fill** and **Mark side**; **Book titles (:book)**: brackets, a wavy line or nothing, and their **Brackets**, 《》 〈〉 or 『』 「」; **Mark colour**), **Ruby** (the readings' typeface, size, colour and position, **Reading overhang**, **Reading alignment** and **Small kana in readings**), **Warichu notes** (the notes' size, colour and opening and closing brackets), **Kanbun marks** (their size, colour and where the return marks go) and **Character grid** (characters per line, lines per page, the grid drawn on screen, and the 字 × 行 read-out with the margins the grid sets). Every *Auto* follows the document language and names what it resolves to. In a document whose language is not Chinese, Japanese or Korean and that sets none of these, the section shows one line saying so and a **Show the settings** button; a search shows the fields in any document. [Chinese layout](/en/docs/chinese-layout) and [Japanese layout](/en/docs/japanese-layout) explain what these settings do; the keys are under [East Asian typography](/en/docs/configuration-east-asian#east-asian-typography), [Vertical writing](/en/docs/configuration-page-layout#vertical-writing), [Numbers in vertical text](/en/docs/configuration-east-asian#numbers-in-vertical-text) and [Binding](/en/docs/configuration-page-layout#binding).
-- **Colours**
-  - *Palette*: named colours reused by every colour picker. Changing an entry updates every reference to it.
-  - *Contrast* (`contrast`): **Check contrast**, the **Level** (AA or AAA), **Checked for** (*Automatic*, *Screen*, *Print*, *Screen and print*) and, under **Reversed text**, the sizes under which light text on an inked ground is reported. Changing them lays no page out again. See [Contrast check](/en/docs/configuration-fonts-colors-viewers#contrast-check-config).
-  - *The ratio beside a colour*: a colour field whose colour the pages set as text, or as the ground of text, shows the lowest contrast ratio it has there, with a tick when it reaches the level and a warning mark when it does not. Opening the field lists each colour it is set with (*Text on #ffffff*, *Ground of #1a1a1a text*), the smallest size, and the ratio on screen and, for a book set up for print, on paper. The numbers follow the picker while you drag, before the page is laid out again. A colour used only for rules or borders shows no ratio.
-- **Typography**
-  - *Body text*: opens with a true-size **type specimen** set in the current typeface, size, leading and colour, in the document's language: a Chinese book shows the opening of 紅樓夢 in its script, `*…*` with emphasis dots, and sets it top to bottom when its lines are vertical. Its line breaks are the browser's; the page uses Postext's. The fields are grouped as:
-    - **Typeface**: font, size, line height, and the regular and bold weights.
-    - **Paragraphs**: alignment (with hyphenation, the justification limits and **Most letter-spacing to justify** (`bodyText.maxJustifyTracking`) when the text is justified, and **Hyphenate ragged text** with its zone, **Optimal Line Breaking** and **Optimal Breaking of Ragged Text** (`bodyText.optimalRagged`) when it is not; under a justified body **Optimal Breaking of Ragged Text** follows **Optimal Line Breaking**, for the ragged paragraph styles and boxes; **Hyphenate across columns** (`bodyText.hyphenateAcrossColumns`) under hyphenation when the body is justified, and under **Optimal Breaking of Ragged Text**, while that is on, when the body is ragged; **Hyphenate compounds** (`bodyText.hyphenation.compounds`) with the hyphenation language), **Break After Dashes** (`bodyText.breakAfterDashes`), **Break After Hyphens** (`bodyText.breakAfterHyphens`), **Repeat Hyphen on Next Line** (`bodyText.repeatHyphen`), **Forced Line Breaks** (`bodyText.hardLineBreaks`), **Tab stops** (`bodyText.tabStops`: a list of stops, each with its position, alignment, leader, leader gap and decimal character) with **Default tab interval** (`bodyText.tabInterval`), indents and paragraph spacing.
-    - **Colour**: the text, bold and italic colours.
-    - **Language**: the document language, named in its own language. It is set under **Writing system**; the row opens that group.
-    - **Widows, orphans and short lines** (collapsible): includes **Graded runt penalty** (`bodyText.gradedRuntPenalty`), **Tighten to pull a runt back** (`bodyText.tightenRunts`), **Most letter-spacing tightening** (`bodyText.maxRuntTracking`), and **Keep colon with list** with **Room Under the Colon** (`bodyText.colonListRoom`): how much room the line ending in a colon needs under it to stay with its list, what the first item needs or one line as up to postext 1.4.
-    - **Blockquotes** (collapsible): the colour of `>` quotes, **Italic Blockquotes**, **Blockquote Indent** and **Blockquote First Line Indent** (`bodyText.blockquote`).
-    - **Verse** (collapsible): **Poems Without Separator** (*Line by line*, or *As hemistichs (1.22)*), **Indent per Space**, **Turnover** (*Hanging* or *Flush right*) with its **Turnover Indent** or **Turnover Mark**, **Space Between Stanzas**, **Keep Short Stanzas Whole** and **Tighten Before Turning Over** (`bodyText.verse`, the defaults of `:::verse` poems set line by line).
-    - **Cross-references** (collapsible).
-  - *Paragraph styles* (`paragraphStyles`): named styles for `:::paragraphs{style="…"}` containers. You can add, remove and rename ids, then set the font, size, line height, colour, the colours of bold and italic runs, regular and bold weights, **italic** and **small caps** switches, alignment, hyphenation, the left indent of every line, first-line and hanging indents (measured from the left indent), space between paragraphs, margins, **Snap to grid** (`paragraphStyles[].snapToGrid`), **Letter case** (`textTransform`, capitals), **Line numbers** (`paragraphStyles[].lineNumbers`: *As the document*, *Counted* or *Not counted*), **Tab stops** with **Default tab interval** (`paragraphStyles[].tabStops`, `tabInterval`), set as in the body text, and **Drop cap** (`paragraphStyles[].dropCap`): the lines it spans and sinks, the letters set large, its face, weight, italics, size, colour and gap, the **Opening mark** (*With the initial*, *Hung outside*, *In the first line*), the **Lead-in** (none, a number of words or the first line, in small capitals or capitals), what a **Short paragraph** does (*Keep the room*, *Shrink the initial*, *No drop cap*) and **Every paragraph** for a catalogue of entries (see [Drop caps](/en/docs/configuration-text#drop-caps)). Unset fields inherit the body text. Above the styles, **Space under a container** (`bodyText.paragraphContainerSpacing`) says how the space under a container meets the block after it: *Collapse*, or *Add (1.4)*.
-  - *Inline labels* (`chipStyles`): named styles for the inline `:chip[text]{style="…"}`. The built-in `chip` style is shown while the configuration has none. You can add, remove and rename ids, then set:
-    - **Text**: font, size, colour, bold and italic. Each inherits the surrounding text until you set it.
-    - **Box**: fill, outline width and colour, corner radius, horizontal and vertical padding (with **Top padding** and **Bottom padding** to pad them apart, which centres a capital in a round chip), and the minimum gap to the neighbouring words.
-  - *Code* (`codeStyle`): **Code fences** and **Indented code** (how listings are read); the **Code face**, size, leading, **Snap to grid**, colour and **Tab width**; the **Box** (page span, background, border, corner radius, padding, space above and below); **Long lines** (**A line wider than the box**: *Turn over*, *Set smaller* with its **Smallest size**, or *Cut*; the **Turnover indent** and **Turnover mark**); **Numbers and highlighted lines** (**Number the lines**, the numbers' colour and the room after them, the tint of the lines a fence highlights); the split **Across columns and pages** (keep together, lines on each side, repeat the title, the continued mark); **Syntax colours** (*Built-in* or *None*, and a colour and a style per kind of token, palette colours included); and **Inline code** in a code face with its fill. See [Code listings](/en/docs/configuration-styles#code-listings).
-  - *Formulas* (`math`), with **Indent after a display** (`math.indentAfterDisplay`) and **Keep with its lead-in line** (`math.keepWithLeadIn`).
-  - *Footnotes* (`footnotes`): **Placement** (column foot or end of chapter), **Position in the column** at the end of a chapter, **Numbering** (per chapter or continuous), the note size, leading, colour, alignment and hanging indent, the spaces above and between the notes, and the **Separator rule** (length, thickness, colour). See [Footnotes](/en/docs/configuration-notes-references#footnotes).
-  - *Line numbers* (`lineNumbers`): **Number lines**, **Count** (*Verse* or *Every line*), **Every** (the interval), **Number the first line**, **Start again** (never, or at each chapter, section, page or poem) with the **First number**, **Position** (outer or inner margin, left, right, line start, line end, side column), **With columns** (outer edges, in the gutters, beside each column), **Distance from the text**, **Alignment**, and the typeface, size, weight, italics, colour and **Number format** of the numbers. See [Line numbers](/en/docs/configuration-notes-references#line-numbers).
-- **Headings & contents**
-  - *Headings*: general defaults plus per-level H1–H6 settings. They include:
-    - letter case, **Letter spacing** (`levels[].letterSpacing`, negative to tighten), alignment (ragged right, justified, centred or ragged left), break-before with parity, and span;
-    - a **Snap back to the grid after headings** switch (`headings.snapToGrid`, on by default: the text snaps back to the baseline grid under a heading), and per level **Snap back to the grid after this heading** (`levels[].snapToGrid`), which overrides it for that level;
-    - an **Inline marks in headings** switch (`headings.inlineMarks`, on by default): a heading sets the italic, bold, scripts, small capitals and links written in it, as a paragraph does; off, it prints the marked words in its own style;
-    - per level, **Hidden (structural)** (`levels[].hidden`): the heading prints nothing and takes no room, but still breaks, numbers and feeds the contents, the running heads and the PDF bookmarks;
-    - per level, **Drop cap after the heading** (`levels[].dropCap`): the first paragraph after a heading of the level opens with a drop cap, with the same fields as a paragraph style's;
-    - an advanced per-level design slot editor with a minimum opener height; each element of a heading design has a **Reserves space** switch (off: it paints without adding to the height the heading reserves);
-    - the column-balancing levers, with their per-lever caps, and **Box Closing a Column** (`balancing.closingBox`): when a box that ends a short column moves down to the column's foot — first, after the other levers, or never.
-  - *Heading styles* (`headingStyles`): named styles applied with `{style="…"}` on a heading line. You can add, remove and rename ids, and for each style:
-    - choose whether the heading is numbered and listed in the contents, and give it a numbering template of its own;
-    - turn off **Named in running heads** (`runningChapter`) for a plate or a map set as an H1 inside a chapter, so the running heads keep naming the chapter it interrupts;
-    - override the heading typography (letter spacing included), break and span, **Snap back to the grid after this heading** and **Hidden (structural)**, and choose the **Drop cap after the heading**: *As the level*, *Own* (its fields as a paragraph style's) or *None*;
-    - give the section its own running heads, optionally starting from the document's;
-    - set its margins and column layout (with the side column's role and edge, as in *Columns*, and its own *Shrink figures that don't fit*);
-    - set the body style, list overrides and palette colours.
-  - *Contents* (`toc`): the heading levels a `:::toc` lists, with the entry typography of each. It also covers the unnumbered entries, page numbers, leader dots, the subtitle line read from a heading attribute, and the part rows with their own design slot.
-- **Lists**
-  - *Bulleted lists*, with **Snap Top to Grid** (`unorderedLists.snapTopToGrid`), which rounds the space above a list up so its first item sits on the baseline grid.
-  - *Numbered lists*: for each level, the separator's font, weight, italic, colour and gap next to its numbering; **Snap Top to Grid** (`orderedLists.snapTopToGrid`), as for bulleted lists; and **Number column** (`orderedLists.numberWidth`): where the text of an item starts, after the widest number of its own run (*Per run*) or of its level in the chapter (*Per level*), or after the item's own number (*Per item*), so each text follows its label by the gap. **Number alignment** (`orderedLists.numberAlign`) sets the numbers against the text, ending together (*Against the text*), or at the start of their column, beginning together (*At the start*).
-- **Figures & tables**
-  - *Numbering & placement* (`resourceTypes`): for each resource type:
-    - names and short labels;
-    - numbering templates with `{n}` and `{h1}`…`{h6}` placeholders, the counter format and reset level, and the caption prefix, with a live "Fig. 1.7"-style preview;
-    - a **Placement** group: the type's default position, span (column, page or the side column), **Columns** (how many adjacent columns a column float of the type takes on a page of several columns; as many as the page has makes it page-wide) and rotation, a width fraction, an alignment for resources narrower than their slot (floats and embeds narrowed by the width, and pictures narrower than the column), and a caption-beside-figure switch;
-    - a collapsible **caption style override** that replaces only the caption fields you set for that type (position, bar, colours, typeface) and inherits the rest.
-  - *Captions* (`captionStyle`): typeface, size, alignment and **position** above or below the resource. There is an optional **background bar** with its colour and padding, and the label and description are styled independently. A **Note** group sets the resource note's size, colour, slant, alignment and gap.
-  - *Tables* (`tableStyle`):
-    - body and header typography, with the header's **Letter spacing** (`headerLetterSpacing`) and **Letter case** (`headerTextTransform`), and fills;
-    - borders, with a **rules** pattern: full grid, horizontal only, outer frame, none or **Booktabs** (a heavy rule above and under the table, a light one under the header, trimmed rules under spanning heads). Booktabs shows its rule widths, the rules under spanning heads and their trim, **Group rules** and, under *Tables taller than the page*, the rule under a part that goes on overleaf, and hides the border width and the corner radius;
-    - a **corner radius** for the outer frame;
-    - cell padding;
-    - under *Tables taller than the page*, **When a table does not fit** (`overflow`) and **Apply to tables set in the text** (`splitInline`, on by default since postext 1.25: a table placed `here` that does not fit the rest of its column is cut between rows and goes on in the next column);
-    - under *Body cells*, **Zebra rows** (`bodyAlternateBackgroundEnabled`), which fills every second body row with the **Alternate row color** (`bodyAlternateBackground`) shown while it is on.
-  - *Table styles* (`tableStyles`): named table styles. You can add, remove and rename ids (renaming carries along the tables that use the id), then set any of the *Tables* fields. Each control shows the value inherited from *Tables* until you set it.
-  - *Diagrams* (`diagramStyle`): a **single-ink** switch that recolours SVG diagrams to tints of one ink for single-colour printing, plus an ink-colour picker that defaults to the palette's main colour, and **Embed fonts in SVG text** (`inlineFonts`, on by default), which sets the text of every SVG in the book's fonts (see [Configuration › Fonts in SVG text](/en/docs/configuration-resources#fonts-in-svg-text)).
-  - *Video style* (`videoStyle`): the **Play mark** (shape, position, size, distance from the edge, colours and background opacity) and the **QR code** (position, size, distance from the edge, error correction, margin, colours and corner radius) printed on a video's poster; **Outputs**: whether the poster links to the video, and whether the HTML viewer shows the player or the poster; and the **Player** switches every video starts from. Among them, **Play alongside other videos**: on, starting a video file leaves the others playing, so the silent loops of a page run together; off, starting one pauses the others. It applies in the HTML viewer and in Folio.
-- **Boxes**
-  - *Box styles* (`calloutStyles`): named styles for `:::callout{type="…"}`. You can add, duplicate, remove and rename ids, then set:
-    - the default title, span, placement and width, and **Columns**: how many adjacent columns a floated box (placement *Auto*, *Top* or *Bottom*, column span) takes on a page of several columns. The `columns` attribute of a `:::callout` overrides it;
-    - the background, border, corner radius and padding, and an edge **stripe**;
-    - an **icon**: either a text glyph or an SVG/bitmap picked from the Resources panel. It can be set inline or as a corner badge, with its corner side and a width for non-square artwork.
-    - a **Label tab** group (`calloutStyles[].label`): font, size, weight, colour, fill, corner, height, padding, offset and inset, an icon resource beside the tab, and a rule along the top edge;
-    - title typography, with letter spacing, indent and **Title line height** (`titleStyle.lineHeight`);
-    - body and list overrides that inherit the document text. These include the body's bold and **italic colours**, its regular and bold weights, **italic** and **small caps** switches, its **Tab stops** and **Default tab interval** (`body.tabStops`, `body.tabInterval`), and the bullet's size and weight.
-    - a column gap for `:::columns` groups inside the box;
-    - a **Snap to grid** switch (`calloutStyles[].snapToGrid`, on by default; off keeps the exact bottom margin for stacked boxes);
-    - the marker column, a fixed anchor, keep-together and split-min-lines, and the float-barrier controls;
-    - a **Side Box at a Column End** choice (`sideAtColumnEnd`) for side boxes whose text does not go on in the same column: beside the text before the fence, or beside the text after it;
-    - a **Split boxes** group: repeat the title with a suffix on every continuation (`repeatTitle`, `continuedSuffix`), and a continuation marker under each part that goes on, with its text, alignment and italic (`continuesMarkerEnabled`, `continuesMarker`, `continuesMarkerAlign`, `continuesMarkerItalic`). The strings default to the document language.
-- **Headers & footers**
-  - *Headers & footers*: per-slot text, rule, box and image elements.
-    - **Text elements**: vertical alignment, **text alignment** within their own box (`align`: flush left, centred or flush right, visible when the box is wider than the text, or justified, which stretches the spaces of every line but the last of each paragraph to fill the box and, with **Hyphenation** on, splits a word at a syllable to fill a line), line height, letter spacing (negative to tighten a display title), letter case, a fitted, filled or fixed width and height, and a maximum width. **Inline marks** (`inlineMarks`) sets `**bold**`, `*italic*` and the other inline marks in the element's text, and an outline draws the letters' contour: **Outline width**, **Outline color** and **Hollow letters** (`stroke`).
-    - **Rules**: horizontal or vertical.
-    - **Placeholders**, picked from the engine allow-list: page number, total pages, book total pages, title, subtitle, author, publish date, chapter title and number, part title and number, and `{attr.key}` for a chapter attribute. Headers and footers also take the chapter title and number at the top of the page, `{chapterTitleAtTop}` / `{chapterNumberAtTop}` (see [Chapter at the top of the page](/en/docs/configuration-page-layout#chapter-at-the-top-of-the-page)), and the guide words `{firstMark.h2}` / `{lastMark.h2}` (a heading level or a paragraph style id after the dot; see [Guide words](/en/docs/configuration-page-layout#guide-words-first-and-last-mark)).
-    - **Where a slot appears**: parity, and a **pages** filter: all, body, chapter openers, part dividers or blank pages.
-    - **Placement**: overflow, and an anchor to the container, to a sibling element, or to the **page** / **bleed** frame for edge-to-edge bands; header and footer elements can also anchor to the **Outer margin** (`'outer'`), the margin away from the spine.
-    - **Writing mode** of a text element: *Horizontal*, or *Vertical, lines right to left* (`writingMode`), for running heads set down the fore-edge of a vertical book. The header editor's **Fore-edge heads (vertical)** adds the chapter title four characters below the head of the type area and the folio five above its foot, both vertical, at 80 % of the body size, anchored to the outer margin (see [Vertical text elements](/en/docs/configuration-page-layout#vertical-text-elements)).
-    - A **Drop cap** group (lines, font, weight, size, colour and gap) and a paragraph indent. A text with a drop cap wraps whatever its **Overflow**, and with no size set the letter's top is level with the capitals of the first line.
-    - Every other design slot offers the same text controls.
-- **Parts**
-  - *Parts* (`parts`):
-    - **Part title page** (`parts.page`): turning it off opens no page, and the part's number, title and colours simply apply from the next content. It also hides the settings below.
-    - the parity of the page a `:::part` opens on, and an optional break after the part with its own parity;
-    - the margins of the part page. They inherit the page margins, with the same mirrored inner/outer labels.
-    - an **opener design** slot laid out against the page trim box. Its placeholder picker adds the heading set: the current title, and its number in decimal, roman or alphabetic form.
-    - a **body style** for the blocks inside the part. It inherits the body text and the list colours, and it includes the list overrides (numbering format and offsets, margins, hanging indent, and the task-list fields).
-- **Export**
-  - *Print preparation* (`print`, and `page.cutLines`), in four groups:
-    - **Crop marks and bleed**: the cut lines, the bleed, the marks' length, offset and width, and their screen colour.
-    - **PDF/X and colour**: **PDF standard** (*None*, *PDF/X-1a:2003*, *PDF/X-4*); **Output profile**, from the fifteen free profiles (FOGRA39 by default, FOGRA51 and FOGRA52 for the PSO v3 conditions, GRACoL, SWOP, newsprint); **Upload an ICC profile** for the one your printer gives you, with its **Printing condition** (the registry name the PDF/X output intent names) and a button that removes it; **Rendering intent**, **Black point compensation**, **Convert pictures to CMYK** (hidden for PDF/X-1a, which always converts) and **Ink limit**.
-    - **Black**: **Greys and black in K only**, **Overprint 100 % black**, **Rich black for large areas** with its C/M/Y/K recipe and the size from which an area turns rich.
-    - **Preflight**: **Preflight in Checks**, the minimum and critical image resolution, the minimum rule width, the size under which text in several inks is flagged, the safe zone, the distance under which a box should bleed, and **Check fonts of placed PDFs**.
-
-    See [Configuration › Print production](/en/docs/configuration-fonts-colors-viewers#print-production-config).
-  - *PDF*: bookmarks, the accessible (tagged) PDF and the forced colour space. CMYK is separated with the profile of *Print preparation*.
-  - *Web reader (HTML)*: the `htmlViewer` settings.
-- **Folio**
-  - *Folio viewer (3D)* (`folio`), in five groups: **View** (the tilt and the turn), **Paper** (stock, grammage, bulk with the resulting caliper, finish, texture and its strength, shade, show-through), **Binding** (type, covers, cover material and colour, spine image; the *Folded (newspaper)* type lays sheets folded once one inside the other with nothing holding them, as a newspaper, and since it has no spine to print on, like *Saddle-stitched (stapled)*, the spine image is hidden), **Surface** (the desk material and its tint) and **Lighting** (environment, exposure, shadows). Picking another paper stock fills the fields you have not changed with that stock's values; the ones you changed keep yours. On a newspaper trim the stock and the binding you have not chosen show as *Newsprint* and *Folded (newspaper)*. The spine image is chosen from the bitmaps and SVGs of the Resources panel. See [Folio tab](#folio-tab).
-- **Advanced**
-  - *On-screen aids* (`debug`): the **baseline grid** (`page.baselineGrid`), which lives here rather than under *Page*, and the other layout-checking overlays.
-  - *Warnings*: which problems the Checks panel reports, and their thresholds.
-
-**Finding a setting.** The toolbar under the header works across every group:
-
-- **Search settings…** filters every field in every section by its label, help text and option names. It ignores accents and matches the start of words: *marg* finds *Top margin* and *Margen superior*, and *h3* opens *Headings › H3*. Results are grouped by settings group. Matching sections open automatically, non-matching rows and sections are hidden, and hits are highlighted. Escape clears the search, then leaves the field.
-- **Changed** shows only the fields whose value differs from its default.
-
-**Help text.** Every field has a short explanation. Screen readers hear it as the field's description, and it stays hidden on screen until you open it with the row's **?** button (*What is "…"?*). The header's **Show every explanation** switch opens every explanation at once, and the choice is remembered.
-
-**Changed values.** The panel follows a consistent **override model**:
-
-- Section headers carry a badge with the number of changed fields inside, counted through nested groups.
-- A section header shows a reset button (which asks for confirmation) only while it contains changes.
-- A changed field has a dot beside its label (read as *changed*) and a small reset button of its own.
-- Only the changed subtree is ever saved or exported. Defaults are stripped, so a pristine Sandbox stores an empty configuration.
-- Resetting *Page* leaves the baseline grid alone, since the grid is edited under *Advanced*.
-
-**The controls:**
-
-- Choices are dropdowns whose options can carry a one-line description, or segmented buttons when there are only a few.
-- On/off settings are switches.
-- Numbers have − / + steppers. The arrow keys step the value, ten times as much with Shift and a tenth with Alt.
-- Lengths have a unit selector that converts the value when the unit changes (cm, mm, in, pt, px, em, rem).
-- A colour is a single button showing the swatch and the value.
-- The font picker can be navigated with the arrow keys.
-
-Controls are context-aware. The gutter width only appears for multi-column layouts, the justification settings only appear when text is justified (ragged text shows **Hyphenate ragged text** instead, and a paragraph style or box shows its hyphenation switch when it is justified or ragged hyphenation is on), and the side-column percentage only appears for the column-and-a-half layout. Changes take effect immediately in the viewport preview. For a full reference of every configuration option and its default, see the [Configuration](/en/docs/configuration) page.
-
-The panel header also offers **Reset** (asks for confirmation; only shown when the design differs from the open sample book's, and it restores that sample's design, fonts included), **Export** and **Import**. See [Export and import](#export-and-import).
-
-#### Checks panel
-
-Live diagnostics, recomputed from the text, the design, the figures and the last build. The count matches the badge on the activity bar button. Warnings are grouped by kind, in triage order: what breaks the output first, then the markup, then the fine typesetting that usually comes in many small items. Each group is collapsible and shows its count:
-
-- **Fonts**: a missing font family, or missing or duplicate weight/style variants in a custom family, and *Font stack in a font family*: a `fontFamily` setting that holds a CSS font stack (the text is set in its first family; the entry names the setting's path)
-- **Figures & tables**: an unknown resource id in a `::resource` / `:ref` — also in the caption, note or cells of a figure the text uses, or as a table cell's image — duplicate resource ids, references to a resource type that does not exist, bitmaps rendered substantially larger than their pixel size, a table whose style id names no table style, a table grid left irregular (a merged cell whose covered cells are missing, or a row with a hole: merge the cells again in the table editor), an image whose file is missing from storage or does not decode (it shows as a placeholder), an SVG whose text names a family with no font file to embed (*Font missing in an SVG*: the picture sets it in a fallback face) or whose fonts exceed the 2 MB cap (*SVG fonts too large to embed*), and a video without a poster, a video file without a production address (no QR code or link in print) or a YouTube or Vimeo address that names no video, and a floated picture set smaller to fit the room on its page (*Picture shrunk to fit*: the entry gives the scale, and the overrun in mm when even its smallest scale runs past the text block), and a picture or a box that does not wrap the text as asked (*Wrapped picture or box*: too narrow a measure beside it, too short for lines beside it, moved on to the next column, or set in vertical text)
-- **Text & markup**:
-  - heading-hierarchy skips (for example H1 → H3), and consecutive headings with no body text between them;
-  - invalid or unclosed `$…$` / `$$…$$` formulas;
-  - unknown directive names (every name the parser knows is accepted: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` and `columns`), invalid numbering or parity attributes, and a `:::space{lines=N}` outside 0–20 lines;
-  - a `:::` container fence left unclosed at the end of the document (clicking it focuses its opening line);
-  - a `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` or heading `{style="…"}` whose style is not configured;
-  - a `::resource` line that prints as text — malformed, or glued under a paragraph without a blank line;
-  - *Fullwidth markup*: markup typed with a Chinese or Japanese input method (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), which prints as text; the entry shows the ASCII form to type;
-  - *Attribute key not read*: an attribute key written outside ASCII (`作者=曹雪芹`), which the parser ignores;
-  - *Unclosed code fence*: a ```` ``` ```` or `~~~` fence with no closing fence, so the rest of the text is set as code (`unclosedCodeBlock`; clicking it focuses the fence);
-  - *Tab in vertical text*: a `:tab` in text set vertically, which is set as a word space, since tab stops are set in horizontal text only (`tabInVerticalText`);
-  - *Front matter ignored*: a chapter other than the first that starts with a front-matter block (only the first chapter's front matter belongs to the book);
-  - *Unknown column flow*: a `:::columns{flow=…}` that is neither `snake` nor `parallel`; the group takes the default (`columnsFlowUnknown`).
-- **Design**:
-  - header and footer placeholder names outside the engine allow-list (`{attr.…}` and the part placeholders are accepted), and placeholders whose document metadata is missing;
-  - cyclic anchors between design elements, or anchors to an element that does not exist. This check and the placeholder check cover every design slot: the running heads, the part opener, the blank verso after a part page, the part rows of the contents, each heading level's design, and each heading style's design and the running heads of its section. An entry from a heading style names the style, as in `{style="index"} header · #rh → #missing`, and one from the verso or the contents' part rows names its setting, as in `toc.parts.design · #row → #missing`;
-  - text elements whose clip overflow always truncates;
-  - *Design text cut short*: a design text that did not fit its width and ends in an ellipsis, or was clipped with ink past its box (`designTextTruncated`). The entry names the slot and the element and gives the whole text; clicking it opens the page it was cut on, and selects a heading or front-matter title in the editor. A running head cut on every page of a chapter is listed once;
-  - *Heading design cut off*: a heading design taller than its page can hold — text of an opener laid out past the foot of the page, or of an in-column design past the foot of its column (a long lead on a small screen page). The heading claims the rest of its page or column, so the text after it starts on the next one, but that part of the design is lost; clicking the entry focuses the heading;
-  - *Side column out of range*: a column-and-a-half side column the engine had to clamp to leave room for the main column;
-  - *Column count out of range*: a `multiple` layout's column count that is not a whole number from 3 to 8, which the engine clamped;
-  - *Unknown number format*: a list, page or resource-type number format the engine does not know, which numbers in decimal;
-  - *Unknown setting*: a key that the headings, a heading level, a heading style or a tab stop does not have (a misspelt `letterSpacng`), which the engine ignores; the entry suggests the setting it is closest to, when one is.
-  - *No line numbers in vertical text*: line numbers turned on in a vertical document, which gets none.
-
-  These last four, like *Font stack in a font family*, come from the configuration rather than the text: the entry names the setting's path, and clicking it does not move the editor.
-- **Contrast**:
-  - *Low contrast*: a text colour under the ratio its size and weight ask at the book's level (`contrast.level`), against the ground it is set on. The entry quotes the text and gives both colours, the size, and the ratio on screen and, for a book set up for print, on the paper of its output profile. A pair is listed once, with the number of places set so;
-  - *Reversed text too fine for the press*: light text on an inked ground under the sizes of **Colours → Contrast → Reversed text**, in a book set up for print.
-
-  Each entry names the page of its first occurrence; clicking it opens that page and selects the text in the editor.
-- **Typesetting**:
-  - loose lines (word spacing stretched past the configured threshold);
-  - *Justified line set ragged*: a line of a justified paragraph left short because reaching the measure would stretch its word spaces past 3× their width; the entry quotes the line and gives the stretch it would have needed, and a click selects the line;
-  - *CJK line set short*: a line of Chinese, Japanese or Korean text left short of its measure because filling it would spread its characters past the limit;
-  - *Marks crowd the next line* and *Readings crowd the next line*: emphasis dots, name and title lines, or ruby readings that need more line gap than the paragraph has; the entry gives both, in em;
-  - boxes that overflow their column;
-  - *Chips touch the next line*: a chip whose box runs into a chip on the line above or below (the overlap is given in points); a tall chip with no chip above or below it is not flagged;
-  - parity cascades;
-  - *Line number over a side box*: a line number in the side column (`lineNumbers.position: 'side'`) that stands over a box, a caption or a figure there; both are printed where they are;
-  - *Drop cap not set as configured*: a paragraph shorter than its drop cap sinks (the entry says whether the room was kept, the initial shrunk or left out), one broken before the initial's last line in a column too short for it, one whose first letter joins the next (Arabic), one in vertical text, or one that opens with no letter (`dropCap`);
-  - *Code line wider than its box*: a listing with lines wider than its box, turned over, set smaller (the entry gives the size) or cut, as **Code → Long lines** says (`codeOverflow`);
-  - *Columns too narrow*: a `:::columns` group whose columns are narrower than six ems of their text (`columnsTooNarrow`);
-  - *Side box or figure after the end of the text*: a side box, or a figure of the side column, set on a page with no text because its chapter's text ended while it waited for room in the side column; the entry names the page (`afterText`);
-  - *Not on any page*: a box or a float still waiting for a slot when the layout ended, which is on no page (`unplaced`);
-  - *Short list cut between columns*: a list of a few items set in two columns or pages; listed when **Body text → Short lists cut between columns** is on *Warn*, and on *Avoid* for a list no column could hold whole (`shortListSplit`);
-  - *Float on an opener page*: a figure, a table or a floated box on the page a chapter or a part opens; listed when **Columns → Floats on opener pages** is on *Warn* (`openerFloat`);
-  - *No hyphenation patterns for this language*: the document language (its hyphenation locale, else `locale`) has no bundled patterns, so its text is hyphenated with the US English ones. It goes away when hyphenation is switched off.
-- **Preflight**, for a book set up for print (a PDF/X standard, a CMYK PDF or crop marks), critical findings first:
-  - *Low image resolution*: a picture under the minimum resolution at its printed size (critical under the critical one), worked out from the pixels its file really has;
-  - *Declared pixels differ from the file*: a bitmap whose declared width and height are not the file's (a warning when it declares more);
-  - *RGB picture*: separated into CMYK on export, or kept RGB by a PDF/X-4 that does not convert pictures;
-  - *Rule too thin*, *Small text in several inks*, *Ink coverage over the limit* (an authored CMYK colour, the rich-black recipe);
-  - *Text in the safe zone* and *Stops just short of the trim* (a box or picture that should bleed);
-  - *Fonts not embedded in a placed PDF*, *RGB in a placed PDF* and *Transparency in a placed PDF* (critical in PDF/X-1a), from each figure's print master.
-
-  Each entry names its page; clicking it opens that page in the viewer.
-- **Browser**: storage unavailable (IndexedDB missing)
-
-Each entry shows an icon, a title, a one-line detail and, where it applies, the chapter and source line (*Ch. 2 · Line 12* in a multi-chapter book). Clicking an entry with a source location switches to that chapter and focuses the editor at that spot. When nothing is wrong, the panel shows **All clear**. Which checks run is set in **Design → Advanced → Warnings**.
-
-### Main viewport
-
-The right side of the interface displays the rendered output. Five tabs are available, one per rendering mode, in this order: **Canvas**, **PDF**, **Folio**, **HTML** and **EPUB 3**. Switching tabs does not re-run layout: the same VDT feeds every backend, so the content you see is consistent across modes. The Folio tab is offered only where the browser has WebGL2 and the screen is not a phone's (see [Folio tab](#folio-tab)).
-
-Each viewport runs the layout pipeline inside a dedicated **Web Worker** (`postext/worker`). A per-viewport `useLayoutWorker` hook owns the worker handle, ships fonts into it as transferable `ArrayBuffer`s, and drives builds with **last-wins cancellation** — a keystroke or slider drag aborts the previous build's `AbortSignal` before the next one starts, so fast typing never queues up stale work on the main thread. Unmounting a viewport disposes its worker and rejects any pending build. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the integration pattern used here.
-
-<Illustration name="SandboxSyncFlow" data='{"title": "One VDT, five outputs", "desc": "The sandbox markdown and configuration feed a single in-memory VDT. Canvas, PDF, Folio, HTML and EPUB 3 each render from that same VDT, so every tab shows the same layout.", "caption": "A single VDT feeds the five output tabs.", "markdownLabel": "Markdown", "configLabel": "Configuration", "vdtTitle": "VDT", "vdtSubtitle": "shared layout", "canvasLabel": "Canvas", "htmlLabel": "HTML", "folioLabel": "Folio", "pdfLabel": "PDF", "epubLabel": "EPUB 3", "singleSource": "single source of truth"}' />
-
-#### Canvas tab
-
-Renders a rasterized preview of the document on an HTML5 `<canvas>` element. This provides a pixel-accurate representation of how the final typeset document will look, including precise text positioning, column layout, and resource placement.
-
-A toolbar at the top of the canvas viewport provides:
-
-- **Zoom controls** — Zoom in and out (1.25x per step, range 0.25x–4x). Manual zooming disables fit mode.
-- **Fit modes** — Fit to page width or fit to page height. Toggles on/off; fitting recalculates automatically on window resize.
-- **View modes** — Single page (one page per row) or double-page spread (book-like layout where the first page appears on the right as a recto, and subsequent pages are paired as spreads). A book bound on the right (`page.binding`, vertical Chinese) shows its spreads the other way round: page 1 alone on the left, then `[3 | 2]`, `[5 | 4]`. On a vertical page a click lands on the character under the pointer, and the caret is a bar across the column.
-- **Print preview** (`Printer` icon) — Shows the pages as they will print, off by default and remembered by the browser: every colour separated through the output profile of *Print preparation* and shown on the paper's own white, large black areas in rich black; a PDF forced to grayscale shows in black ink alone. Only what prints: no screen guides and no outlines (the preflight's findings are in **Checks**). The Folio tab shares the switch. It repaints the pages and never lays them out again.
-
-Pages render lazily via `IntersectionObserver` — only visible pages (plus a 200px margin) are drawn to canvas, keeping GPU memory usage low for long documents.
-
-#### PDF tab
-
-Generates a real PDF of the current document via the `postext-pdf` package and displays it inside an embedded browser PDF viewer. The PDF is rebuilt automatically on first mount and on every subsequent regeneration, using the same VDT that feeds the canvas and HTML tabs — so line breaks, page boundaries, and resource placement match pixel-for-pixel across the three backends, down to the compression of overfull final lines that Knuth–Plass occasionally accepts.
-
-A floating toolbar at the bottom-right of the viewport provides:
-
-- **Regenerate** (`RefreshCw` icon) — Rebuilds the PDF from the current markdown and configuration. Useful after changing a setting that does not auto-trigger a rebuild, or when fonts have finished loading.
-- **Download** (`Download` icon) — Saves the current PDF to disk. The filename is derived from the document's first H1 heading (falling back to `document.pdf`).
-- **Print** (`Printer` icon) — Opens the browser's print dialog against the embedded PDF viewer, which in most browsers lets you either print or save as PDF again.
-- **Current chapter / Whole book** (selector at the left of the tab bar, books with more than one chapter) — Renders every chapter as one continuous PDF instead of the active chapter continued after the ones before it (the default). Changing it regenerates the PDF. The canvas has a selector of its own (see [Books and chapters](#books-and-chapters)).
-
-Under the hood the sandbox uses a `createPdfFontProvider()` helper that fetches per-weight static WOFF2 files from the Fontsource jsdelivr CDN, the files its previews are measured with, decompresses them to TTF in the browser, and hands the bytes to `pdf-lib` via `renderToPdf`. Per-weight static fonts (rather than a single variable font) are required so that bold text actually embeds at the bold weight. See [Generating PDFs](/en/docs/configuration-programmatic-usage#generating-pdfs) for the same pattern used outside the sandbox.
-
-#### Folio tab
-
-Shows the book as a printed object: the pages laid out by the engine, bound and lying open on a desk, in 3D (`postext-folio`, three.js). The pages are the canvas's own paintings, shown texel for pixel, so the text is as sharp as on the Canvas tab; what changes is everything around them. The paper, the binding, the desk and the light come from the **Folio** group of the Design panel (the `folio` configuration), and a `:::paper` run in the text prints its pages on another stock (see [Document format › `:::paper`](/en/docs/document-format#paper)).
-
-- **What it lays out.** The Folio tab follows the canvas's **Current chapter / Whole book** selector. A chapter is shown as part of its book: the pages before and after it are counted into the thickness of the two page blocks, and the chapter opens on its true side of the spread. A right-bound book (`page.binding: 'right'`, or a vertical book) lies mirrored and turns its leaves leftward.
-- **Turning pages.** Take a page by its edge and drag it over; let it go past halfway and it turns, short of that it falls back. A click on a page turns it (the right-hand page forward, the left-hand one back), and so do the ‹ › buttons of the toolbar and the arrow keys, Page Up/Down, Home and End when the book has focus. Each leaf bends according to its paper: bible paper rolls tight, card turns in a wide arc, board and the covers turn as rigid slabs.
-- **Long jumps.** A page more than ten pages away (typed in the page field, named by the permalink, reached by a link or by the caret in the Text panel) is reached in one move: the block of pages in between lifts as one, as thick as those pages are, and is laid over on the other side. Up to ten pages, the leaves turn one by one.
-- **Looking round the book.** A right-drag orbits the view round the book, down to 70° from overhead: to see the spine, the fore-edge or the thickness of the block. The view stays where you leave it, even while pages turn, until **Reset view** eases it back to the view the settings give (*Tilt* and *Turn*). **Save as default view** stores the view as you see it in those settings, so the book opens there and Reset view comes back to it.
-- **What the pointer does.** Three buttons in the toolbar choose what the left button (one finger, a pen) does on the book: **Turn pages by hand**, the default, as above; **Orbit the view**, the same as a right-drag, for a trackpad or a tablet; **Select text**, which works as on the Canvas tab on the book as it is seen, tilted or orbited: a click puts the caret in the Text panel, a drag selects, a double click takes a word, a click on a link follows it. The choice is remembered; H, O and S switch it while the book has focus.
-- **Following the editor.** The caret and the selection of the Text panel are drawn on the pages, and stay there as you type: the page shows the edit as soon as it is laid out again. Moving the caret in the editor to a page not on show turns the book to it.
-- **Covers.** With *Covers: A case round the pages* the book is bound in a case of cloth, card or leather in the cover colour. With *The document's own pages* the first page is the front cover and the last page (when it falls on a left-hand page) the back cover: the book lies closed until the cover is turned, and turning the last leaf closes it again. A thick book opens with its spine standing between the two blocks.
-- **The toolbar.** A floating bar like the canvas's: **Recalculate**, **Reset view**, **Save as default view**, the three pointer modes, **Print preview** (the canvas's proof, on the paper's white of the output profile, so the book's paper shade is set aside meanwhile; the same switch as the canvas's), the pin, ‹ › and the page field, which takes a book page number and turns to its spread. The page on the right of the open spread is the one the permalink names (`view=folio&page=N`).
-- **Settings apply at once.** The Folio settings are not part of the layout: changing the paper, the binding or the light redraws the book without laying a page out again.
-- **Where it is offered.** The tab needs WebGL2 and a screen whose short side is at least 600 px: on a phone the 3D book takes more memory than the browser gives a tab, so the tab is not shown there (nor in a browser without WebGL2). In a pane narrower than 560 px the book shows one page at a time; the leaf still turns over the spine. With reduced motion asked for by the system, the spreads change without turning.
-- **Videos on the page.** A click on a video's poster plays it on the page, in any of the three pointer modes, and the picture keeps moving while the leaf turns and curls. Another click pauses it; starting another stops the first, unless *Play alongside other videos* is on; the video stops when the book comes to rest on a spread that no longer shows it. Space plays or pauses the video on the open spread. A video with *Autoplay* on starts by itself the first time its spread is shown, with its sound once you have clicked on the page (muted before, and a click unmutes it); the guide's two videos do. Uploaded files and videos at an address (MP4, HLS) play this way when their server allows cross-origin reads; YouTube and Vimeo videos turn the page as before (see [Document format › Videos on Folio's pages](/en/docs/document-format#videos-on-folios-pages)).
-- **Text alternatives.** Each page is drawn as an image; its accessible name points to the HTML tab and the Text panel for its text.
-
-#### HTML tab
-
-Renders the postext output inside a Shadow DOM container, ensuring complete style isolation from the host page. The editorial CSS (typography, spacing, column rules) is injected inside the shadow root so it cannot be affected by or leak into the surrounding application styles.
-
-Markdown links are live here and in the PDF (see [Document format › Links](/en/docs/document-format#links)). In this tab, clicking one opens its target in a new browser tab, so the Sandbox stays open; `:ref` citations still jump within the document.
-
-Videos play here: a YouTube or Vimeo video in the platform's player, a file or an address in the browser's player (an HLS stream through hls.js where the browser has no HLS of its own), with the player options of the Design panel's *Video style* and of each video. Clicks on a player go to the player, not to the editor. With **In the HTML viewer** set to *Poster*, the tab shows the printed poster, linked to the video.
-
-A toolbar at the top of the viewport provides:
-
-- **Font-scale controls** — Shrink or grow body text while preserving every relative measurement in the configuration.
-- **Column modes** — Single (one tall scrollable column) or multi (the number of columns whose width comes closest to the configured measure, with horizontal scroll-snap between pages). A double-column document keeps its two-column pages, but the viewer may show an odd number of columns — three rather than two stretched or four squeezed — when that is the nearest fit; the last one then belongs to the next page, half in view. A document or a section in *Multiple columns* is shown as two-column pages too: three to eight print columns would be slivers at screen width, so the viewer sets its text two columns to a page and shows as many side by side as the measure allows. A book bound on the right (`page.binding`) runs its pages right to left in multi mode: the viewer opens at the right end and the ‹ arrow goes to the next page. A book set vertically reads in multi mode only: the **Single** button is disabled, with a tooltip saying why, and the choice you saved comes back with the next horizontal book.
-
-Column geometry is driven by the **Web reader (HTML)** section of the Design panel (**Design → Export**): `maxCharsPerLine` sets the target measure in characters of the body font, `columnGap` the horizontal gap between columns in multi mode, and `optimalLineBreaking` toggles Knuth–Plass inside the viewer. See the [HTML Viewer configuration reference](/en/docs/configuration-fonts-colors-viewers#html-viewer) and the end-to-end [integration example](/en/docs/configuration-programmatic-usage#integrating-the-html-viewer) for the same pattern used internally by the sandbox.
-
-#### EPUB 3 tab
-
-Writes the whole book as an EPUB 3 file with the `postext-epub` package, shows it in a reader inside the tab and downloads it. The file is built in the browser from the same chapter-by-chapter layout the PDF tab uses for **Whole book**, so its page numbers, notes, cross-references, contents and index are the ones the PDF prints. The tab has no **Current chapter / Whole book** selector, since an EPUB always holds the whole book. In its place, at the left of the tab bar, it offers the rendition (as icons on a phone).
-
-EPUB 3 has two renditions, named by the package's `rendition:layout` property:
-
-- **Fixed layout** (`pre-paginated`, often called FXL): every page as it is printed. Each page is a document of its own with the page's size, and the text sits where the PDF puts it, in the book's fonts, but stays real text that can be selected, searched and read aloud. Spreads pair as in print, and a right-bound book (Arabic, vertical Chinese) turns right to left. It keeps the design: columns, floats, running heads, openers, the exact line breaks. Choose it for books whose pages are designed as pages, such as illustrated books, textbooks, catalogues and magazines, and for reading systems with a large screen. On a small screen the page is scaled down, and the reader zooms in to read it.
-- **Reflowable** (the default on phones and computers, and the EPUB default): the text, figures and tables in reading order, set again by the reading system for its screen and for the typeface, type size and margins the reader picks. Paragraphs are rebuilt from the laid-out lines (the hyphens added at line ends are removed), figures and tables follow the text that cites them, boxes become asides, footnotes link to the notes at the end of each chapter and back, and the printed page numbers are kept as page markers. A style sheet derived from the design gives the headings, boxes, tables and captions their look, but the page geometry is gone: no columns, no running heads, no fixed line breaks. Choose it for running text, such as novels, essays and reports, and for phones and e-ink readers.
-
-Until one is picked, the tab opens in the fixed layout on a tablet such as an iPad, whose screen has room for the printed page, and reflowable everywhere else. The choice is remembered between visits (`postext-sandbox-epub-layout`), and switching it writes the file again at once.
-
-- **Generation.** The EPUB is written the first time the tab opens and again when **Recalculate** is pressed. A progress bar counts the chapters being laid out, then the writer's steps (fonts, pictures and the cover; the pages or chapters; the package), and screen readers hear when the file is ready or failed. After an edit, an arrow next to **Recalculate** shows that the file no longer matches the text, as on the PDF tab. Leaving the tab or switching the rendition stops a generation under way. A long book takes a few seconds, during which the page does not respond.
-- **What goes into the file.** The metadata come from the first chapter's front matter: `title`, `subtitle`, `author` (one name or a list), `publishDate` or `date`, `isbn` or `identifier`, `publisher`, `rights` and `description`; the language comes from the configuration's `locale`. A book without an identifier gets one derived from the project (or from the sample book and its language), so every EPUB of the same book keeps one identity in a reader's library. Every font family the design names is embedded: Google Fonts slices only where the book prints characters they hold, custom families unless they are marked as not redistributable. Pictures go in as stored, never as the PDF print master; each SVG carries the faces its text names (custom families and Google families alike), except families marked as not redistributable, which are reported. Video files go in under `media/` and play in the reader's player; a file without its bytes plays from its production address, which the package declares as a remote resource, and a YouTube or Vimeo video is its poster linked to the video. The cover is the book's own picture when it is a bitmap at least 600 px wide, otherwise the first page rendered 1,600 px wide without its crop-mark margin.
-- **The reader.** The tab opens the file it has just written, the bytes you download, not a separate preview. The fixed layout shows one page, or a spread when the pane is wide enough, scaled to fit; the reflowable book is paged one screen at a time (top to bottom for vertical Chinese), and its pages carry on from one chapter to the next. Links in the book move the reader; web and mail links open in a new browser tab. ← / →, Page Up / Page Down, Home and End turn the pages, and in a right-to-left book ← goes forward.
-- **The toolbar.** A floating bar like the PDF tab's: **Recalculate**, the pin, **Download EPUB** with the file's size (the file is named after the book's title), a warnings button when the writer reported anything, **Contents** (a jump list from the book's table of contents), **Increase font size** and **Decrease font size** (reflowable only, keeping your place), ‹ › and, in a fixed layout, the page field. The page field counts pages in the file's reading order, the cover being 1; the frames name each page with its printed number.
-- **Warnings.** The warnings button lists what the file could not carry as the book has it: a picture with no stored file (an empty frame takes its place), a family, weight or style with no embedded face (reading systems substitute one), a family left out because it may not be redistributed, and anything the rendition cannot express. The same messages go to the browser console.
-- **Checking the file.** Both renditions of the guide and of the sample books pass [W3C EPUBCheck](https://www.w3.org/publishing/epubcheck/) 5.4 with no errors or warnings. To check your own book, download it and run `epubcheck book.epub`, or read it in Apple Books, Thorium Reader or Calibre.
-
-See [EPUB books](/en/docs/configuration-programmatic-usage#epub-books-postext-epub) for writing the same files from your own code.
-
 ### Phones and small screens
 
 Below 768 px wide the Sandbox switches to a layout of its own:
@@ -567,388 +243,12 @@ Below 768 px wide the Sandbox switches to a layout of its own:
 - **Panels.** The panel bar moves to the bottom of the window, with the same buttons in the same order. An open panel covers the preview instead of sitting beside it; the preview stays where it was underneath, out of the tab order, so closing the panel finds it on the same page.
 - **Top bar.** The output tabs, the scope selector (the rendition choice on the EPUB tab) and the host's controls (large targets, theme, language) share the bar above the preview. Below 640 px it takes two rows: the logo, the scope and the controls above, the tabs below, sharing the full width; five tabs fit at 320 px.
 - **Toolbars.** The floating toolbars of the previews dock along the bottom of the preview and wrap onto a second row when they do not fit.
-- **Folio.** The Folio tab is not offered on a phone's screen (see [Folio tab](#folio-tab)).
+- **Folio.** The Folio tab is not offered on a phone's screen (see [Folio tab](/en/docs/sandbox-previews#folio-tab)).
 - **PDF.** Phones and touch-only tablets cannot show a PDF inside the page (Android has no inline viewer, and iOS draws only its first page), so the PDF tab shows a card with **Open PDF** instead, which opens the file in a new tab; the toolbar's **Download** still saves it.
-
-## Books and chapters
-
-Everything you open in the Sandbox is a **book**, the way an InDesign book file groups one document per chapter: the configuration, the custom fonts and the resource set are shared by the whole book, and each **chapter** is its own markdown document. Long works — a five-hundred-page textbook — are edited one chapter at a time, while numbering, cross-references and export still see one document.
-
-- **Structure** lives in the Chapters panel and in the Text panel's chapter switcher: add, rename (double-click a row), reorder, split a chapter into one per level-1 heading, merge a chapter into the previous one, delete. Every chapter keeps its own undo history and caret.
-- **One chapter at a time.** By default the previews lay out the **active chapter**, continued after the chapters before it: its first page number follows the last page of the previous chapter, level-1 headings keep counting (chapter 4 is numbered 4, its figures 4.1, 4.2, …), `{chapterNumber}` and `{chapterTitle}` running heads follow, recto/verso parity is kept (a chapter opener pads a blank page exactly as it would mid-book), and a `:ref` to a figure first mentioned in chapter 1 keeps that number. The page counts of the preceding chapters come from the layout that last showed each of them; chapters never visited (or edited since) are laid out in the background, one after the other, and the chapter list reads *pages pending* until they land. Page ranges are exact for chapters that open on a fresh page (the default); a chapter whose text would have run on from the previous page is placed at the top of its own page instead.
-- **Whole book.** The canvas, the HTML preview and the PDF tab can show the whole book as one continuous document: pick **Whole book** in the selector at the left of the tab bar (books with more than one chapter). The canvas then lays out every chapter in order, each after the pages the ones before it came to, and shows the documents stitched together — an edit re-lays out its chapter alone, and the chapters after it only when their first page moved; the chapter list, the `chapter=` and `page=` parts of the permalink and the editor sync follow the page's chapter. The choice is kept with the book (a short novel reads as one document, a textbook one chapter at a time), and a preset can open that way through the manifest's `view.canvasScope`. The HTML preview shares the canvas choice and lays the whole book out as one document from its first page, the contents rows and the fragment following each page's chapter; the PDF tab keeps its own selector.
-- **Long books.** A book of 120 chapters works like a short one. The chapter menu in the Text panel's header scrolls within the window and opens on the active chapter; the arrow keys move from it. A book in parts (`:::part` fences in its chapters) lists its chapters under their parts, in the menu and in the Chapters panel, and a click on a part in the menu opens its first chapter. Above 30 chapters the menu has a search field at the top that matches chapter numbers (`27`) and words of the titles and part names (`埋香`, `卷三`); Enter opens the first match. While an input method is composing (Zhuyin, Cangjie, pinyin, kana), Enter and the arrow keys belong to it: Enter confirms the conversion and opens nothing. A sample book's chapter files load eight at a time, and while the chapters are paginated in the background the Chapters panel shows the progress (*Paginating 34/120*). The canvas and the HTML preview show a book of more than 200 chapters one chapter at a time, whatever the book or its manifest ask: laying out every chapter at once holds the whole book in memory. A book below that can open whole: 紅樓夢 (129 chapters, some 2,000 pages) takes about 25 seconds and 100 MB on the canvas. The PDF tab can still export any book whole.
-- **Front matter.** The first chapter's front matter is the book's front matter (title, author, …). A front-matter block at the top of any other chapter is ignored, and the Checks panel says so. `buildBundle` follows the same rule, so a book renders the same in the Sandbox and in your own program.
-- **Page counts.** Each chapter is laid out as a document of its own, so `{totalPages}` counts the chapter's pages. `{bookTotalPages}` counts the whole book: once every chapter's pages are known, the previews lay each chapter out with that total (only when a header, footer or design prints it). Until then a chapter prints the pages up to its own end. The PDF tab's **Whole book** counts the pages it lays out, so the file always prints the book's real total.
-- **Chapter openers.** No page break is forced between chapters: a chapter whose first block is a level-1 heading opens on a fresh page through the heading's own *break before* setting, exactly like a chapter that starts mid-document.
-- **Sync.** Clicking a paragraph of any chapter in the Canvas or HTML preview switches the editor to that chapter and places the caret; the editor caret is highlighted in the previews wherever the chapter sits in the book. Warnings carry their chapter.
-- **Existing documents** open as a book with one chapter; nothing changes until a second chapter is added.
-
-## Editing comics
-
-A chapter with comic pages (`:::page`) or strips (`:::strip`) can be edited on the pages themselves, in the Canvas tab, the HTML tab and the Folio's select mode. The tools work the same on a strip set in a column, floated to the head of a page or across it, narrower than its measure or under a caption, and write into the strip's own fence. Every change is written into the chapter's Markdown, as a typed edit would be, so the editor's undo takes it back. The markup and the lettering rules are explained in [Comics](/en/docs/comics).
-
-- **Splitters.** Over the gutter between two panels the pointer turns into a resize cursor. Drag it to move the split line; on release the new percentage is written into the page's `split` attribute (added to the fence when the page has none) and the page is laid out again. Shift snaps the line to steps of 5 %, Alt moves only the end nearer the pointer, slanting the line, and no panel gets narrower than 5 %. While you drag, a panel whose picture would no longer keep its safe area in view is marked, with a hint. Each splitter is also a focusable separator: the arrow keys move it by 1 % (5 % with Shift), Enter writes the position and Escape puts it back.
-- **Split and merge.** Over a panel a small toolbar offers **Split with a horizontal line**, **Split with a vertical line** (an empty `::panel` line is added for the new cell, right after this panel) and **Merge with the next panel**: the line between them goes, and the merged panel keeps the first panel's picture and takes the script lines of both. The panels can also be reached with Tab: a focused panel is outlined, H splits it with a horizontal line, V with a vertical one, and M merges it with the next panel; focus stays on the panel after the page is laid out again. Enter opens the toolbar, and Escape goes back from it to the panel.
-- **Balloons.** Drag a balloon to pin it: on release its script line gets `at="x% y%"`, the point in percentages of the panel's picture (of the cell for a panel without one), so the pin stays on the same spot of the drawing through crops, splitter drags and translations. A joined group moves as one, pinned by its first balloon. The arrow keys nudge a focused balloon by 1 % (5 % with Shift), and a double click on a pinned balloon removes its `at`, handing it back to the automatic placement. A single click puts the editor's caret on the balloon's line.
-- **Overflow hint.** While a balloon moves, by pointer or by arrow keys, the preview checks where it would land. If it would cover a face or an avoid zone, or run out of its panel further than it does now, the moving outline turns orange, the panel's faces and avoid zones are drawn dashed, and the tooltip says which: *Here it would cover a face*, *Here it would cover a part of the picture kept clear*, *Here it would run out of the panel*. A line with `break` is not flagged for leaving its panel. The hint does not foresee how the other balloons of the panel will move to make room.
-- **Tails.** Over the tip of a tail the pointer turns into a crosshair. Drag the tip to where the tail should aim: on release the line gets `to="x% y%"`, the point in percentages of the panel's picture, and the tail turns toward it, stopping short of it as it does before a mouth. Escape cancels the drag, and a double click on the tip removes `to`, so the tail points at its speaker again. From the keyboard, T on a focused balloon moves to its tail: the arrow keys move the point it aims at by 1 % (5 % with Shift), Enter writes it, Escape puts it back, Delete removes `to`, and T goes back to the balloon.
-- **Speakers and avoid zones.** On a picture in the [Resources panel](#resources-panel), the **Safe area & lettering** field opens a dialog with three modes. **Safe area** marks the part of the picture that must stay in view. **Speakers** places one point per character: a click on the picture adds a speaker there and focuses its id, which must be the speaker key the script uses (`maya: …`); its mouth, head (where thought bubbles point) and face (never covered by a balloon) are dragged into place. **Avoid zones** are rectangles no balloon covers, drawn by dragging over the picture. The same mode marks the faces of people who do not speak (**Add bystander face**, or the **A face** switch on a zone's row): no balloon covers such a face, where an avoid zone gives way when a panel has no other room. Every mark can be moved with the arrow keys (Shift for larger steps) and removed with Delete; the dialog keeps its own undo, and a speaker outside the safe area is flagged.
-- **Settings.** The Design panel's **Comics** group holds the comics configuration: reading direction and mirrored pictures, the frame and the gutters, the default panel and the named panel styles, the lettering, and the balloon styles, each with a preview of its outline.
-- **Editor and checks.** The text editor colours `:::page`, `:::strip`, `::panel` lines and the keys and attributes of script lines. The Checks panel lists the comic warnings (an unreadable split, panels and cells that do not match, a balloon that does not fit…) at the line they concern; see [Comics › Comic warnings](/en/docs/comics#comic-warnings).
-
-## Word documents
-
-Manuscripts usually arrive as Word files. The Text panel imports a `.docx` directly, with no AI agent and nothing to install, and maps its styles the way *Place* does in InDesign. **Import a Word document** reads the file in the browser (it is never uploaded) and opens a dialog; the book changes only when you press **Import**. A file that is not a Word document, such as an old binary `.doc`, is refused with a message that says so; save it from Word as `.docx` first.
-
-The dialog has these parts, each of which folds away:
-
-- **Quality of the original.** A verdict on how the manuscript was prepared: *Well styled* (it converts cleanly), *Partly styled* (some paragraphs are formatted by hand) or *No styles* (everything is in Normal, so the text comes in as plain paragraphs). Under it, the counts (paragraphs, how many are in a style other than Normal, pictures, tables, notes) and what was found, each with the first words of a few paragraphs where it happens: paragraphs with formatting set by hand (fonts, sizes, colours, alignment; it is left out, as the design sets it), short bold paragraphs that look like headings typed by hand, numbers or bullets typed instead of Word lists, manual line breaks, manual page breaks, empty paragraphs used as spacing, tabs and double spaces, tracked changes (insertions are kept and deletions left out; accept or reject them in Word first), comments (not imported), text boxes (their text follows the paragraph each is anchored to), equations (converted to TeX; check them), hidden text and pictures in formats the browser cannot show (EMF, WMF, TIFF).
-- **Import template.** The mapping in use: *Automatic* (by style name), a saved template, or *Saved in this document* for a file exported from the Sandbox. **Save as a new template** asks for a name and keeps the mapping, every style of this document included, in the browser; **Save changes** updates the selected template; the download button writes it as a `.json` file and the upload button loads one, so a whole team can share the same template. Delete asks for confirmation. The template last used is offered first next time.
-- **Paragraph styles.** Every paragraph style the document uses, with how many paragraphs use it and the first words of one, and what it becomes: **Body text**, **Heading** (a level from 1 to 6 and, when the design has heading styles, one of them), **Paragraph style** (one of the design's paragraph styles; consecutive paragraphs in it make one `:::paragraphs` group), **Callout** (consecutive paragraphs make one box of that type), **Callout title** (opens a box titled with the paragraph's text), **Quote**, **Caption** of the picture or table beside it, **Start of a new chapter**, **Postext Markdown, as written** (the text is copied as it is, for directives typed in Word) or **Leave out**. Paragraphs in Word's numbered and bulleted lists become Postext lists whatever their style, with their numbers and nesting. **Poem (:::verse, line by line)** sets the style's paragraphs as a `:::verse` poem, optionally in one of the design's paragraph styles: Shift+Enter breaks a line, a paragraph is a stanza, one-line paragraphs in a row make one stanza and an empty paragraph a stanza break; it is guessed for styles named Verse, Poem or Poesía.
-- **Character styles.** The same for character styles: **Plain text**, **Bold**, **Italic**, **Bold italic**, **Small capitals**, **Superscript**, **Subscript**, **Chip** (one of the design's chip styles), **Postext Markdown, as written** or **Leave out**.
-- **Options.** Manual line breaks (Shift+Enter) are kept as line breaks inside the paragraph (a backslash at the end of the Markdown line, the default), joined with a space or start a new paragraph; bold, italic, small capitals and scripts set by hand are kept or left out; short bold paragraphs stay paragraphs or become headings of a level; manual page breaks are left out (the design turns the pages) or kept as `:::pagebreak`; pictures and tables are added as resources or not.
-- **Preview of the Markdown**, updated as the mapping changes.
-
-The footer chooses where the text goes: **Replace this chapter**, **New chapters after this one** or **Replace the whole book**; the last two start a chapter at every level-1 heading. Pictures (PNG, JPEG, GIF, WebP, SVG) become figure resources and tables become table resources (header rows, merged cells, column widths and cell fills kept), each placed with `::resource{id="…"}` where it was and captioned by a Caption paragraph next to it, its typed label (*Figure 3.*) left out because Postext numbers resources. Footnotes and endnotes become Postext footnotes (`[^1]`), Word index entries (XE fields) become `:index` marks, links stay links and equations become `$…$` / `$$…$$`. A tab in body text becomes `:tab` with the stop Word set for it (`:tab{at=432pt align=end leader="."}`), or a bare `:tab` when the paragraph goes to a paragraph style of the book that has stops of its own; Word's dot, hyphen and middle-dot leaders become `.`, `-` and `·`, its underscore and heavy leaders a rule. A tab in a heading, a table cell or a note becomes a space.
-
-Before matching styles by name, the automatic mapping recognises Word's own roles in any interface language (*heading 1*–*6*, *Title*, *Quote*, *Caption*; table-of-contents, index, header and footer paragraphs are left out) and the design's styles: a Word style called like a paragraph style, callout type, heading style or chip style of the book (by id or name, ignoring case and accents) maps to it.
-
-**Export to Word** downloads the open chapter, or the whole book, as a `.docx` for someone to work on in Word. The same template is applied in reverse: headings get Word's heading styles, paragraph styles, callouts, quotes and chips get Word styles of their own (named after the design's styles, *Callout: Note*, *Chip: Key*), lists become Word lists, footnotes become Word footnotes and links stay links. `:tab` becomes a Word tab, a `:tab{…}` with its own stop is kept as written, and the tab stops of a paragraph style that are set at a length become the tab stops of its Word style, with Word's nearest leader (a stop at `'end'` or at a percentage depends on the page Word sets the text on, and is left out). What Word cannot show (front matter, fences, directives, `:ref`, maths, `:index` marks, resource lines) is kept as written in the grey *Postext Markup* styles. A book is exported with a *Postext Chapter* paragraph at the head of each chapter. The template travels inside the file, so the edited document imports again with the same mapping, as a whole book when it holds chapter paragraphs. Leave the grey text as it is and the text comes back as it went out; footnote labels are renumbered (`[^1]`, `[^2]`…), which prints the same, and `_italic_` comes back as `*italic*`.
-
-For conversions this dialog does not cover (PDF, PowerPoint, EPUB or IDML sources, reproducing an original's layout rules), use the [agent skill](/en/docs/skill).
-
-## Persistence
-
-The Sandbox automatically saves your work to the browser:
-
-- **Book and configuration** — The chapters, the active chapter and the canvas scope are auto-saved to `localStorage` under `postext-sandbox-book` (a single document saved by an earlier version is read from `postext-sandbox-markdown` as a one-chapter book and migrated on the first save); the configuration is saved after 1 second of inactivity with defaults stripped so only your overrides are stored, together with its version (`postext-sandbox-config-version`); a configuration saved before the version existed is read as described under *Heading breaks saved by postext 1.4 or earlier* below
-- **UI state** — The active panel and viewport tab, sidebar width, the Design panel's open group (`postext-sandbox-settings-group`), its *Show every explanation* switch (`postext-sandbox-settings-help`) and section open states, hidden sample books, canvas zoom/fit/view modes, HTML font scale and column mode, the EPUB tab's rendition (`postext-sandbox-epub-layout`), and toolbar pin states are all persisted in `localStorage`
-- **Open book** — The id of the open book of your own (a *project*) is stored in `localStorage` under `postext-sandbox-project`; the projects themselves (chapters, configuration and resource records; record `version: 9`, the engine's `CONFIG_VERSION`, which the working configuration and `postext-config.json` exports are stamped with too, so each is migrated once when the engine's rules change; single-document records from earlier versions are migrated when read, the heading breaks of records older than version 3, the maths size of records older than version 4, the space under inline figures of records older than version 5, the space around inline figures in boxes, the heading marks, the drop-cap sizes, the room under a colon line and the box cuts of records older than version 6, the breaks at dashes and the breaking of ragged text of records older than version 7, and the splits under a heading, the breaks at compounds' hyphens and the space under the `:::paragraphs` containers of records older than version 8 are pinned as described below) live in the `projects` store of the sandbox's IndexedDB database, and their binary payloads share the blob and font stores with the working document. Payloads are garbage-collected when neither the working document nor any project references them
-- **Edited sample books** — Your version of a sample book (its chapters, active chapter, canvas scope, configuration and resource records, with what the sample applied when you opened it) is saved in the `presetDrafts` store of the sandbox's IndexedDB database, one record per sample and content language, and its files are kept by the garbage collection like a project's. Restoring the original deletes it
-- **Sample book covers** — The cover taken from the first page of a sample book that ships no thumbnail is kept in the `presetCovers` store of the sandbox's IndexedDB database, one record per sample and content language (see [Books panel](#books-panel)). A book of your own keeps its cover in its project record.
-- **Saving on the way out** — Pending edits are written at once when the page is hidden or closed, when you leave the sandbox through a link (the logo) and before another book opens, rather than after the 1-second pause
-- **Open sample book** — The id of the last loaded preset is stored in `localStorage` under `postext-sandbox-preset`, so the panels' Reset buttons keep restoring that preset across sessions (a preset that is no longer served shows as unavailable). What that preset applied — its bundle fingerprint plus hashes of the markdown, configuration and resource set — is stored under `postext-sandbox-preset-applied`, which is how the next visit tells an untouched document from an edited one
-- **Resources and fonts** — Resource records, their binary blobs (bitmaps and SVGs), and custom font files persist in **IndexedDB**; when IndexedDB is unavailable (e.g. some private-browsing modes), a *storage unavailable* warning appears in the Checks panel (under *Browser*)
-- **Permalink** — The URL fragment names what is on screen, so a reload, a bookmark or a link passed to someone else lands on the same page of the same book in the same viewer: `#preset=bioquimica-feduchi&lang=es&view=canvas&chapter=1&page=7` opens the Bioquímica preset in Spanish on the Canvas tab at chapter 1, page 7 (the number printed on the page). `view` is `canvas`, `pdf`, `folio`, `html` or `epub`; on the Folio tab the page is the right-hand page of the open spread. A local project is named as `project=ID` — its storage id, so only the browser holding the project can follow such a link. The sandbox keeps the fragment current as you switch books, tabs and chapters and as you scroll. A part left out means whatever is there (no page: the chapter's first page; no book: the one last open), and a book the browser cannot open is passed over. Pasting a link into the address bar of an open sandbox opens it in place. When the page is opened on a link to another book than the one last open, the sandbox shows its loading state until the linked book is in, never the previous one. A host can also link to books of its own with the `hashBundles` prop (see [Props](#props)): the website opens a Cookbook recipe with `#recipe=<slug>&lang=es`. The first visit imports the recipe's `.postext` file as one of your books. A later visit of the same link asks first (*You already have this book*): **Open my copy** opens that book, your edits included, and **Replace with the published version** imports the recipe afresh, which may have been corrected since, and deletes your copy once the new one is open; Escape keeps your copy. The fragment then names the project. The interface language stays in the path (`/en/sandbox`, `/es/sandbox`); `lang` is the content language of a bilingual bundle, any BCP 47 tag, kept in canonical case (`lang=zh-hant` reads `zh-Hant`). A tag the bundle does not list opens the edition that serves it: `zh-TW` and `zh-HK` open the Traditional Chinese one (`zh-Hant`), `zh` and `zh-CN` the Simplified one (`zh-Hans`), `en-GB` the English one. The other Chinese script is read only when the bundle has no edition in the reader's: a `zh-TW` link to a book in `zh-Hans` and English opens the Simplified text, not the English. A link without `lang` opens the bundle's `openLocale` when it names one, else the edition in the interface language. The chapter and page of a link apply to the edition it opens, and the fragment then names that edition by its own tag (`lang=zh-TW&chapter=28` becomes `lang=zh-Hant&chapter=28`).
-
-**Heading breaks saved by postext 1.4 or earlier.** Up to postext 1.4, a configuration with a `headings` object laid its level-1 headings out with no page break unless it set the H1 *Break before* switch explicitly (and saving dropped a switched-off H1 break), a partial H1 break took its missing field from the no-break default, and a heading style's break did the same instead of merging onto its level's. The engine now keeps each level's default — H1 opens on a fresh recto (`always-odd`) — and merges a partial break onto it. So that a book saved then keeps the pages it had, the Sandbox writes those breaks out when it reads a project record older than version 3 or an unversioned working configuration: `enabled: false` on H1 where the break was off, and `parity: 'any'` beside an `enabled: true` that named no parity, on H1 and on heading styles. The Design panel then shows the break the pages were laid out with. Files record the version too since postext 1.5: a `.postext` file whose manifest has no `configVersion`, and a `postext-config.json` with none, were written by postext 1.4 or earlier, and are read the same way when they are imported or opened (see [Bundles written by postext 1.4 or earlier](/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier)).
-
-**Maths size saved before postext 1.5.** Up to postext 1.4 every formula came out 1.131 times larger than its *Size scale* says (see [Formula size](/en/docs/configuration-text#math)). So that a book saved then keeps its pages, the Sandbox pins that size when it reads a project record older than version 4, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 4`, or a `postext-config.json` exported before it: *Size scale* becomes the saved scale × 1.1312 and a display margin in `em` is divided by 1.1312, so the formulas and the space around them stay as they were. A book whose chapters have no `$` is left as it was (a `postext-config.json` carries no chapters, so its size is pinned whenever maths is on), and so is one with *Enable LaTeX* off. The Formulas section then shows the values the book is laid out with; reset *Size scale*, *Display margin top* and *Display margin bottom* to set it at today's size. The pin is written once: the record is saved again under the current version and read as it is from then on. A preset applied then and never edited still counts as untouched (the Sandbox compares it with its pinned values, and this holds for the heading-break pin too): reloading it or switching books does not ask to discard edits you never made, and a newer version of the preset, such as the built-in guide's, still replaces it.
-
-**Inline figures saved before postext 1.5.** Up to postext 1.4 a figure or table set inline in the text (placement *Inline (here)*) kept a line of space above it only: the text after it resumed at the next grid line, however close that was. It now keeps the same line below it (**Columns → Space around inline figures**, *Above and below*). So that a book saved then keeps its pages, the Sandbox sets *Space around inline figures* to *Above only* when it reads a project record older than version 5, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 5`, or a `postext-config.json` exported before it, when a line of the book embeds a resource — `::resource{id="…"}` alone on its line, not a mention in the text. A `postext-config.json` carries no chapters, so there it is set whenever the file is older. Choose *Above and below* to lay the book out with today's spacing.
-
-**Inline figures in boxes saved before postext 1.5.** Up to postext 1.4 a figure or table set inline inside a box sat right against the box text around it. It now keeps a line of the box text above it, and below it too with *Above and below* (**Columns → Space around figures in boxes**). So that a book saved then keeps its pages, the Sandbox switches *Space around figures in boxes* off when it reads a project record older than version 6, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 6`, or a `postext-config.json` exported before it, when a box of the book embeds a resource on a line of its own. A `postext-config.json` carries no chapters, so there it is switched off whenever the file is older. Switch it on to lay the book out with today's spacing.
-
-**Heading marks and drop caps saved before postext 1.5.** Up to postext 1.4 a heading printed the words of its `*italic*`, `**bold**` and other marks in its own plain style, and a drop cap with no size was as tall as all the lines it spans, its top above the first line. A heading now sets its marks (**Headings → Inline marks in headings**), and a drop cap's top is level with the capitals of the first line. So that a book saved then keeps its pages, the Sandbox turns *Inline marks in headings* off when it reads a project record older than version 6, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 6`, or a `postext-config.json` exported before it, when a heading of the book carries a mark (a `postext-config.json` carries no chapters, so there it is turned off whenever the file is older); and it writes the size each drop cap was set at into its **Drop cap size**. Turn the switch on, or clear the size, to set the book with today's rules. Mind that an italic heading whose whole title is marked `*…*` then comes out upright.
-
-**Lists after a colon saved before postext 1.5.** Up to postext 1.4 *Keep colon with list* took one line of room under the line ending in a colon as enough for the list, so a two-line first item that the orphan and widow rules keep whole went on to the next column and left the colon line alone at the foot. It now asks for the room the first item needs (**Typography → Body text → Widows, orphans and short lines → Room Under the Colon**, *What the first item needs*). So that a book saved then keeps its pages, the Sandbox sets *Room Under the Colon* to *One line (1.4)* when it reads a project record older than version 6, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 6`, or a `postext-config.json` exported before it, when a list of the book follows a line ending in a colon. A `postext-config.json` carries no chapters, so there it is set whenever the file is older. Choose *What the first item needs* to lay the book out with today's rule.
-
-**Box cuts saved before postext 1.5.** Up to postext 1.4 a box that split inside a paragraph or list item could leave one line of it on a side, as long as each side of the box held its *Lines kept on each side of a split*. A cut now leaves at least two lines of the paragraph or item on each side (**Columns → Lines of a paragraph at a box cut**). So that a book saved then keeps its pages, the Sandbox sets *Lines of a paragraph at a box cut* to 1 when it reads a project record older than version 6, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 6`, or a `postext-config.json` exported before it, when a chapter of the book opens a `:::callout`. A `postext-config.json` carries no chapters, so there it is set whenever the file is older. Set it back to 2 to lay the book out with today's rule.
-
-**Dashes and ragged text saved before postext 1.5.** Up to postext 1.4 optimal line breaking never ended a line after an em or en dash set closed between words (`say—that’s`), and ragged text was always set line by line, each line filled before the next. A line may now end after such a dash (**Typography → Body text → Paragraphs → Break After Dashes**), and ragged running text is broken with Knuth-Plass too (**Optimal Breaking of Ragged Text**). So that a book saved then keeps its pages, the Sandbox switches *Break After Dashes* off when it reads a project record older than version 7, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 7`, or a `postext-config.json` exported before it, when a chapter of the book sets such a dash (a `postext-config.json` carries no chapters, so there it is switched off whenever the file is older); and it switches *Optimal Breaking of Ragged Text* off when the configuration sets some running text ragged: the body text, a paragraph style, a box body, the body of a part or the body of a section style. Switch them on to lay the book out with today's rules.
-
-**Splits under a heading saved before postext 1.5.** Up to postext 1.4 the paragraph under a heading at the foot of a column kept as many lines as fit there, however few went on to the next column. It now keeps the orphan minimum too, or the heading moves on with it (**Headings & contents → Headings → Split Under a Heading**). So that a book saved then keeps its pages, the Sandbox sets *Split Under a Heading* to *Fill the column* when it reads a project record older than version 8, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 8`, or a `postext-config.json` exported before it, when a chapter of the book has a heading (a `postext-config.json` carries no chapters, so there it is set whenever the file is older) and the configuration keeps *Keep With Next* and orphan control on. Set it to *By the rules* to lay the book out with today's rule.
-
-**Paragraph containers saved before postext 1.5.** Up to postext 1.4 the space under a `:::paragraphs` container was the style's own (the larger of its space between paragraphs and its bottom margin), set under the last line before the text snapped back to the grid; the space a heading keeps above itself was added under it, and the body's paragraph spacing did not count, so a heading sat further from a bibliography than from a paragraph, and the paragraph after a group of tight entries sat closer to it than to any other. The space now merges with the next block's own and is at least the text's paragraph spacing (**Typography → Paragraph styles → Space under a container**, *Collapse*). So that a book saved then keeps its pages, the Sandbox sets *Space under a container* to *Add (1.4)* when it reads a project record older than version 8, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 8`, or a `postext-config.json` exported before it, when the configuration declares a paragraph style and a chapter of the book opens a `:::paragraphs` container. A `postext-config.json` carries no chapters, so there it is set whenever the file is older and declares a paragraph style. Choose *Collapse* to lay the book out with today's rule.
-
-**Compounds saved before postext 1.5.** Up to postext 1.4 optimal line breaking never ended a justified line after the hyphen of a compound (`well-known`) in a paragraph without bold, italics or other formatting, while it did in one with formatting. A line may now end there in every paragraph (**Typography → Body text → Paragraphs → Break After Hyphens**). So that a book saved then keeps its pages, the Sandbox switches *Break After Hyphens* off when it reads a project record older than version 8, a working configuration saved under an older stamp (or none), a `.postext` file whose manifest is older than `configVersion: 8`, or a `postext-config.json` exported before it, when a chapter of the book sets a hyphen between two letters (a `postext-config.json` carries no chapters, so there it is switched off whenever the file is older). Switch it on to lay the book out with today's rule.
-
-**Poems and hanging styles saved before postext 1.23.** Up to postext 1.22 a `:::verse` poem whose lines carried no `||` was set as single hemistichs, each line centred, and a paragraph style's hanging indent replaced its first-line indent. Such a poem is now set line by line (**Typography → Body text → Verse → Poems Without Separator**, *Line by line*), and a style that sets both indents starts its first line at the first-line indent. So that a book saved then keeps its pages, the Sandbox sets *Poems Without Separator* to *As hemistichs (1.22)* when it reads a project record older than version 9, a working configuration or a `postext-config.json` export stamped below 9 whose chapters hold such a poem, and drops the first-line indent of a style that also hangs. It also switches **Forced Line Breaks** (**Typography → Body text → Paragraphs**) off when the chapters of such a record end a line with a backslash or set `\\` before a space, which printed up to postext 1.22 (for a `postext-config.json` export, which carries no chapters, always). And it switches **Code fences** (**Typography → Code**) off when the chapters hold a ```` ``` ```` or `~~~` fence, whose lines were read as Markdown up to postext 1.22 (for an export, always).
-
-**Poems saved with postext 1.23.** In postext 1.23 a line of a poem set line by line that was even a little wider than the measure turned over. It now tightens its word spaces, down to the minimum word spacing, and stays on one line when that is enough (**Typography → Body text → Verse → Tighten Before Turning Over**). So that a book saved then keeps its pages, the Sandbox switches *Tighten Before Turning Over* off when it reads a project record, a working configuration or a `postext-config.json` export stamped 9 or below whose chapters set a poem line by line (for an export, which carries no chapters, always).
-
-**Design texts saved with postext 1.23.** Up to postext 1.23 a text element of a heading design or a part page that set no overflow was cut to one line with an ellipsis. It now wraps onto more lines, and **Add text** leaves *Overflow* to the slot. So that a book saved then keeps its pages, the Sandbox sets *Overflow* to *Ellipsis at the end (…)* on each of those elements when it reads a project record, a working configuration, a `.postext` file or a `postext-config.json` export stamped 9 or below.
-
-**Inline tables and columns saved with postext 1.24.** Up to postext 1.24 a table placed `here` that did not fit the rest of its column moved whole to the next one, a `:::columns` fence outside a box was ignored, and a box never cut inside a `:::columns` group. Now the table is cut between rows and the group sets its blocks in columns and goes on in the next column or page. So that a book saved then keeps its pages, the Sandbox switches **Apply to tables set in the text** (**Tables**) off when it reads a project record, a working configuration or a `postext-config.json` export stamped below 11 whose chapters embed a resource, and **Columns in the text, and groups that split** (**Columns**) off when they hold a `:::columns` fence (for an export, which carries no chapters, always).
-
-These pins hold back what each of those rule changes would move. Version 1.5 also fixes layout bugs, and a fix has no pin, so a saved book can still see a page move where one of them applies: the band of a page-wide chapter heading without a design, a drop cap in a heading design, a paragraph in a box, a loose paragraph that balancing stretches, a floated box with a margin wider than a line, a centred or right-aligned running head with tracking, the second column under a page-wide opener, a running head taken from a heading broken after a hyphen, a word wider than its line cut next to its own hyphen, the rest of a word wider than its line, which now keeps its own break points, the item after a list nested in another (see [Formula size](/en/docs/configuration-text#math) for the list).
-
-Storage is **shared across UI locales**. A pristine default document swaps to the current locale's default markdown and reseeds the example resources when the locale changes — so opening the Spanish sandbox shows Spanish examples. Any user edit opts the document out of this behavior. All previews also derive a hyphenation locale from the UI locale when the configuration names no language (neither a hyphenation locale nor `locale`).
-
-### Export and import
-
-A whole book travels as a **`.postext` file**: a zip archive with exactly the layout of a preset bundle directory — `preset.json`, `chapters/*.md`, `resources/*` and `fonts/*` (see [Preset bundle format](#preset-bundle-format)). The archive also carries the book's **pagination** as `layouts.json` — each chapter's page count and numbering, stamped with the engine version, configuration and resources it was built with — so an imported book opens paginated and only what those stamps no longer vouch for is laid out again. A bundle in several languages sets each with its own configuration, so it may carry one per language instead, `layouts.<locale>.json` (`layouts.zh-Hant.json`), read before `layouts.json`. The active document exports the pagination it holds; a project or preset exported from its row carries the one recorded while it was last the working book. A cover image is written as the manifest's `thumbnail`, so it survives the round trip. The **Books panel**'s **New** menu (**Open a .postext file…**) imports a file as a new book; every row's ⋯ menu has its own **Download (.postext)**, and the open book's exports the working document. Files written by earlier versions (a version 1 manifest with a single `document.md`) import as a one-chapter book. A book in one language keeps the figure and table labels of that language whatever the interface language: a Spanish file opened from `/en/sandbox` prints *Figura* and *Tabla* unless its configuration names other resource types. The language is the one the file names or, when it names none, the one its configuration sets (`locale`, then the hyphenation language). Import accepts the files at the archive root or under one top-level folder (as produced by zipping the folder itself; `__MACOSX` entries and dotfiles are ignored). Fonts are written as separate files, never inside `config.customFonts`; `.woff` faces are skipped with a warning both ways, as are resources whose bytes are missing. Unzip an exported file into `<presets-root>/<dir>/` and add an `index.json` entry to serve it as a preset.
-
-The same files are read and written by the `postext` package (`openBundle`, `createBundle`, `buildBundle`; see [Bundles](/en/docs/configuration-programmatic-usage#bundles-postext-files)). A book exported here opens in your own program, and a book your program writes opens here. That makes the Sandbox a place to inspect and fine-tune what a program lays out: export it from the program, import it here, fix it with the live preview, export it again and load it back in the program. The [agent skill](/en/docs/skill) delivers its ports as `.postext` files too.
-
-The text and the design also export separately from the Text and Design panel headers.
-
-The **Design panel** header downloads `postext-config.json` with defaults stripped:
-
-```json
-{
-  "type": "postext-config",
-  "version": 1,
-  "config": { ... }
-}
-```
-
-The **Text panel** header downloads the active chapter as a plain `.md` file and its **Import** button replaces the active chapter with a `.md` file's contents. The Design panel's **Import** button opens a file picker for `.json` files validated against the expected `type` and `version`; invalid files are silently ignored. The `postext-markdown.json` wrapper and the combined `postext-sandbox.json` format from earlier versions no longer exist.
-
-## Agents: WebMCP
-
-The Sandbox hands an agent in the browser its own tools through [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), so an assistant works on the book itself instead of clicking through the interface. There is nothing to set up: the tools are registered while the Sandbox is on screen, and the rest of this site registers a few of its own on every page (search the docs and the Cookbook, read a page as Markdown, open a recipe in the Sandbox, switch language and theme).
-
-They are built for the loop a designer runs by eye — change something, look at the page, change again:
-
-- **See** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings`: the book with its chapters and page ranges, and what is going on in the interface (the selection, a notice, a question waiting for an answer); any page as a JPEG, PNG or WebP at the width asked for, or a crop of it for a close look, with the print preview on request; the same page as data (its blocks and lines, how full each column is, which lines are loose or end in a broken word); what lies at a point of a page (the line of the source, a link and where it leads, a cell of a table); the panels and balloons of a comic page; and what the checks find in any chapter or in the whole book, whatever chapter and viewer are on screen.
-- **Change** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word`: any setting by its path (`bodyText.fontSize`, `page.margins.top`, `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`), the text by exact find-and-replace, with an undo, chapters, pictures, SVG drawings, videos, tables with their formatting, fonts, the panels and balloons of a comic, and a Word document imported with its styles mapped. A change answers with each value before and after and the pages every chapter came to; a setting also says what the engine resolved it to and which other settings followed it, and a value the engine cannot resolve is refused with nothing changed.
-- **Show** — `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer`: the viewer tab, the side panel, chapter or whole book, zoom, fit and facing pages, the reader's type size, the print preview, the guides drawn on the pages, the Folio's magnifying glass, and the page on screen (by its number, by a passage, by an anchor or by an entry of an EPUB's contents); writing the PDF or the EPUB again, printing, and playing a video on a page.
-- **Keep** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer`: the samples and your projects with their covers, a `.postext` file imported, the book — or one that is not open — written to PDF, EPUB, `.postext`, Word, Markdown or its settings as JSON, the templates of the Word import, and the answer to a question the Sandbox asks.
-
-A tool that changes the book waits for the layout, so the next picture is always of the new pages; a page is laid out and painted for the tool whatever tab is on screen. What cannot be taken back — deleting a chapter, a resource or a project, putting the original back, importing a Word document over the text, replacing your copy of a book — is marked as consequential, so the browser can ask you first. As with the interface, everything stays in your browser: the tools reach nothing the Sandbox itself does not.
-
-WebMCP is a draft: Chrome offers it as an origin trial, and behind `chrome://flags/#enable-webmcp-testing`. In a browser without it the same tools are on `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), for an agent that can run script in the page. When you embed the Sandbox, `webmcp={false}` leaves the tools out (see [Props](#props)).
-
-The [WebMCP](/en/docs/webmcp) page shows what an agent can be asked to do and how each tool is called, with examples.
-
-## Standalone usage
-
-The Sandbox is available as a standalone React package (`postext-sandbox`) that can be embedded in any React application:
-
-```bash
-npm install postext-sandbox postext
-```
-
-```tsx
-import { PostextSandbox } from 'postext-sandbox';
-
-function App() {
-  return (
-    <PostextSandbox
-      initialMarkdown="# Hello World"
-      initialConfig={{ layout: { layoutType: 'double' } }}
-      onMarkdownChange={(md) => console.log(md)}
-      onConfigChange={(cfg) => console.log(cfg)}
-    />
-  );
-}
-```
-
-### Props
-
-<table>
-  <thead>
-    <tr>
-      <th>Prop</th>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>initialMarkdown</code></td>
-      <td><code>string</code></td>
-      <td>Starting markdown content</td>
-    </tr>
-    <tr>
-      <td><code>initialConfig</code></td>
-      <td><code>PostextConfig</code></td>
-      <td>Starting layout configuration</td>
-    </tr>
-    <tr>
-      <td><code>className</code></td>
-      <td><code>string</code></td>
-      <td>CSS class for the root container</td>
-    </tr>
-    <tr>
-      <td><code>labels</code></td>
-      <td><code>Partial&lt;SandboxLabels&gt;</code></td>
-      <td>UI label replacements, merged over the built-in English defaults — pass translated labels together with <code>locale</code> when embedding in another language</td>
-    </tr>
-    <tr>
-      <td><code>locale</code></td>
-      <td><code>string</code></td>
-      <td>UI locale (defaults to <code>'en'</code>). Selects the localized default resource types and example resources (a preset or file in one language gets the resource types of its own language), and provides the hyphenation locale the previews use when none is configured</td>
-    </tr>
-    <tr>
-      <td><code>presetSources</code></td>
-      <td><code>&#123; url: string; private?: boolean &#125;[]</code></td>
-      <td>Remote preset sources, tried in order after the built-in preset. Each <code>url</code> is a base URL serving an <code>index.json</code> (see <a href="#preset-bundle-format">Preset bundle format</a>); <code>private: true</code> tags the source's presets as private and makes their <code>default</code> flag eligible for auto-loading. Sources that fail to respond simply contribute nothing</td>
-    </tr>
-    <tr>
-      <td><code>hashBundles</code></td>
-      <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
-      <td>Books linked by a fragment key of the host's own: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> makes <code>#recipe=&lt;slug&gt;&amp;lang=es</code> open that bundle. Return the URL of a <code>.postext</code> file on the page's own origin, several to try in order (the first that answers wins), or <code>null</code> for an id the host does not serve. The first visit imports the file as a project recorded with the link (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); a later visit asks whether to open that project, edits included, or replace it with the file as served now. The fragment is then rewritten to <code>#project=&lt;id&gt;</code></td>
-    </tr>
-    <tr>
-      <td><code>onConfigChange</code></td>
-      <td><code>(config) =&gt; void</code></td>
-      <td>Callback when config changes</td>
-    </tr>
-    <tr>
-      <td><code>onMarkdownChange</code></td>
-      <td><code>(markdown) =&gt; void</code></td>
-      <td>Callback when markdown changes</td>
-    </tr>
-    <tr>
-      <td><code>webmcp</code></td>
-      <td><code>boolean</code></td>
-      <td>Registers the Sandbox's <a href="#agents-webmcp">WebMCP tools</a> for agents in the browser while it is mounted. Default <code>true</code></td>
-    </tr>
-    <tr>
-      <td><code>themeToggle</code></td>
-      <td><code>ReactNode</code></td>
-      <td>Custom theme toggle component, slotted at the bottom of the activity bar</td>
-    </tr>
-    <tr>
-      <td><code>languageSwitcher</code></td>
-      <td><code>ReactNode</code></td>
-      <td>Custom language switcher component, slotted at the bottom of the activity bar</td>
-    </tr>
-    <tr>
-      <td><code>homeUrl</code></td>
-      <td><code>string</code></td>
-      <td>When set, renders a home logo link at the top of the activity bar pointing to this URL</td>
-    </tr>
-    <tr>
-      <td><code>homeLink</code></td>
-      <td><code>ReactNode</code></td>
-      <td>Custom node for the home slot, replacing the default logo link (takes precedence over <code>homeUrl</code>)</td>
-    </tr>
-  </tbody>
-</table>
-
-### CSS requirements
-
-The package uses Tailwind CSS utility classes that reference CSS custom properties. Your host application must provide these variables:
-
-- `--background`, `--foreground` — Base colors
-- `--surface` — Elevated surface color; `--surface-2` — Hovered rows and highlighted options (falls back to `--background`)
-- `--slate` — Muted text color
-- `--rule` — Border/divider color; `--rule-strong` — Stronger rule for hovered controls (falls back to `--slate`)
-- `--brand` — Accent color: the active panel marker, focus rings, switches and selected choices
-- `--brand-hover` — Accent color on hover
-- `--brand-soft` — Translucent accent fill behind selected choices (falls back to `--surface`)
-- `--brand-contrast` — Knob of a checked switch (falls back to `--background`)
-- `--destructive` — Color of destructive actions and errors
-- `--accent-blue` — Link/accent color
-- `--font-sans` — UI font family
-- `--font-mono` — Monospace font family (for the code editor)
-- `--font-display`, `--brand-blue`, `--brand-gilt` — Optional face and colours of the default logo mark in the activity bar (fall back to Georgia, `#2b4acb` and `#d8a21a`)
-
-The website sets `--brand` to gilt in the dark theme and blue in the light one. Earlier versions read `--gilt` and `--gilt-hover`; the sandbox no longer uses them.
-
-Popovers, menus and tooltips render in a portal on `document.body`, so define the variables on `:root` (or `body`), not only on the element that wraps the sandbox. The host's Tailwind build must scan the package's sources (`@source "…/postext-sandbox/src/**/*.tsx"` in Tailwind 4) so the utility classes it uses are generated.
-
-## Preset bundle format
-
-Appendix. A preset source is a directory (served over HTTP) whose root holds an `index.json` listing preset directories; each directory holds a `preset.json` manifest plus the markdown, resource and font files it refers to. The `scripts/presets/` tooling in the repository scaffolds bundles in exactly this shape, and a `.postext` file exported from the sandbox is one such directory zipped (without the `index.json`).
-
-```
-<presets-root>/
-  index.json
-  <preset-dir>/
-    preset.json
-    chapters/              one .md per chapter, in order (a version 1 manifest names a single document instead)
-    resources/             figures: .svg / .png / .jpg / .jpeg / .webp / .gif (+ optional .pdf print masters)
-    fonts/                 .otf / .ttf / .woff2 single faces
-```
-
-### `index.json`
-
-```jsonc
-{
-  "version": 1,
-  "presets": [
-    {
-      "id": "acme-journal",          // stable id, [a-z0-9-]
-      "dir": "acme-journal",         // directory name relative to index.json
-      "name": "Acme Journal",
-      "description": "Two-column journal article",   // optional
-      "locale": "en",                 // optional
-      "default": true,                // optional, at most one
-      "locales": ["en", "es"],        // optional: every locale the bundle carries
-      "openLocale": "en",             // optional: the locale it opens in when none is asked for
-      "thumbnail": "thumbnail.jpg",   // optional: preview shown in the picker
-      "license": "CC BY 4.0",         // optional: shown as a tag
-      "credits": "Text and images: ESO",  // optional: one line under the description
-      "tags": ["magazine", "two-column"], // optional
-      "binding": "left"               // optional: the edge the website's shelf draws the spine on ("right" for a right-bound book)
-    }
-  ]
-}
-```
-
-### `preset.json`
-
-```jsonc
-{
-  "version": 2,
-  "id": "acme-journal",
-  "name": "Acme Journal",
-  "description": "Two-column journal article",       // optional
-  "locale": "en",                                     // optional
-  "default": true,                                    // optional
-  "configVersion": 8,                                 // optional: the configuration rules `config` is written for
-  // The same optional showcase fields as the index entry:
-  // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
-
-  // The book's chapters, in order — or one list per locale
-  "chapters": [
-    { "title": "Introduction", "file": "chapters/01-introduction.md" },
-    { "title": "Methods", "file": "chapters/02-methods.md" }
-  ],
-  // "chapters": { "en": [ … ], "es": [ … ] },
-  // Version 1 manifests use a single document instead and are still accepted:
-  // "version": 1, "markdown": "article.md"  (or a locale → file map)
-
-  // Optional PostextConfig JSON (page, margins, columns, typography...).
-  // Do NOT put customFonts here: fonts come from the `fonts` array below.
-  "config": { },
-
-  "resources": [
-    {
-      "id": "fig-1-1",                 // referenced from markdown (:ref)
-      "typeId": "figure",              // resource type id (figure, table, ...)
-      "kind": "svg",                   // "svg" | "bitmap" | "table"
-      "file": "resources/fig-1-1.svg", // svg/bitmap only, relative to preset.json
-      "width": 240.5,                  // optional, pt (svg) / px (bitmap)
-      "resolution": 300,               // optional, bitmap only: ppi at its natural print size
-      "pdfFile": "resources/fig-1-1.pdf", // optional, svg only: vector print master (see notes)
-      "height": 180,                   // optional
-      "caption": "Caption text",
-      "altText": "Accessible description",            // optional
-      "safeArea": { "x": 0.18, "y": 0.25, "width": 0.5, "height": 0.6 }, // optional, svg/bitmap only: the part always shown, in fractions of the picture
-      "placement": { "position": "top", "span": "column" },  // optional
-      "note": "Source: ...",                          // optional
-      "table": { "model": { "rows": [[{ "content": "A", "isHeader": true }]], "headerRowCount": 1 } }
-                                                      // kind "table" only
-    }
-  ],
-
-  "fonts": [
-    {
-      "name": "Some Family",           // family name used by the config
-      "variants": [
-        { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
-        { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
-        { "weight": 700, "style": "normal", "file": "fonts/SomeFamily-Bold.otf" }
-      ]
-    }
-  ]
-}
-```
-
-Notes:
-
-- `id` in `preset.json` must match the `index.json` entry; `description`, `locale` and `default` in the manifest override the index values once the preset is loaded, as do the showcase fields `locales`, `openLocale`, `license`, `credits` and `tags`. `openLocale`, one of `locales`, is the language the book opens in when a link or a click asks for none (the home page's shelf links to it too): set it when the original is not in the reader's language, as the 紅樓夢 showcase does with `zh-Hant`, so that its English translation does not open for every English-speaking reader. Without it the interface language picks. The picker shows every locale in `locales` (or `locale`) and the licence as tags, the credits under the description, and `thumbnail` — a small page image relative to the preset directory — in place of the row's check-mark column; a book copied from the preset (**Make my own copy**) keeps it as its cover. The public showcase presets under `apps/web/public/presets/` use every field and carry a `CREDITS.md` with the licence and source of each text and image.
-- `configVersion` (optional) names the configuration rules `config` and the `localized` configurations are written for. Every writer since postext 1.5 sets it to 8. A manifest without it was written by postext 1.4 or earlier, and its heading breaks, maths size, space around inline figures (in the text and in boxes), heading marks, drop caps, room under a colon line, box cuts, breaks at dashes and at compounds' hyphens, ragged text, splits under a heading and space under paragraph containers are read as 1.4 laid them out (see *Heading breaks saved by postext 1.4 or earlier*, *Maths size saved before postext 1.5*, *Inline figures saved before postext 1.5*, *Inline figures in boxes saved before postext 1.5*, *Heading marks and drop caps saved before postext 1.5*, *Lists after a colon saved before postext 1.5*, *Box cuts saved before postext 1.5*, *Dashes and ragged text saved before postext 1.5*, *Compounds saved before postext 1.5*, *Splits under a heading saved before postext 1.5* and *Paragraph containers saved before postext 1.5* under [Persistence](#persistence)); one stamped 3 to 7 (a 1.5 prerelease) gets the pins of the later rules only. With 3 that is the maths size, the inline gap, the five pins of rules 6, the two of rules 7 and the three of rules 8; with 4, the inline gap and the pins of rules 6, 7 and 8; with 5, the pins of rules 6, 7 and 8; with 6, the pins of rules 7 and 8; with 7, the pins of rules 8 alone. Set it to 8 when you write a manifest by hand for today's rules.
-- `view` (optional) says how the sandbox opens the bundle: `{ "canvasScope": "book" }` lays the whole book out on the canvas (see [Books and chapters](#books-and-chapters)); absent, the canvas shows one chapter at a time. Exported books carry it when it is set. A book of more than 200 chapters opens a chapter at a time whatever it asks.
-- `start` (optional) says where the book starts when the bundle holds part of a longer one: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` opens it on page 58, an even page, in chapter 4. It is the `continuation` of the first chapter (`buildDocument`); the sandbox lays the book out from there, keeps it with the book when it is saved as a project and writes it back on export. No panel edits it. A `localized` entry may carry a `start` of its own for its edition.
-- `localized` (optional) holds per-locale overrides for a bilingual bundle: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. The overrides of the locale the chapters were picked from apply on top of the shared `config` (top-level keys replaced wholesale — `resourceTypes` with translated caption prefixes, typically) and `resources` (caption, note, alt text and table cells merged by id); a locale without an entry keeps the shared wording. An entry may also carry a `view` of its own, which applies over the shared one to that edition: 紅樓夢 opens its Chinese editions on the whole book and Joly's English, much slower to paint whole, a chapter at a time (`"en": { "view": { "canvasScope": "chapter" } }`).
-- `chapters` (version 2) is a list of `{ title, file }` in book order, or a locale → list map; `markdown` (version 1) is a file name or a locale → file map. In both cases the sandbox picks the entry matching the locale asked for (exact tag, case aside; then the same language and script, so `zh-TW` reads `zh-Hant` before `zh-Hans`; then the same language in the other script, so a `zh-TW` reader of a bundle keyed by bare `zh` gets the Chinese; then the preset's own `locale`, then the first entry), and only that locale's chapter files are read. An empty chapter `title` is derived from the file's first level-1 heading. The sandbox always writes version 2.
-- `width` / `height` are optional for `svg` and `bitmap` resources — when missing they are read from the file at load time. A bitmap may also carry `resolution` (its ppi at its natural print size) and `fileResolution` (the one its file states, read at load time when the configuration sets `layout.bitmapResolution: 'file'`).
-- `pdfFile` (svg resources only) points to a single-page PDF holding the same figure as vectors — typically the original Illustrator or PDF export the SVG was derived from. The PDF export embeds that page verbatim (fonts, gradients and colour spaces intact) instead of the SVG; the canvas and HTML previews keep using the SVG. It is ignored in single-ink mode, whose recolouring pass only operates on SVG markup, and a missing file only drops the master, never the figure. Editing the SVG source in the resource detail detaches the master (it was made for the source as it was), so the PDF export follows the edited SVG from then on; restore the original (**Restore the original…** in the Books panel) to get it back. SVGs without a master are emitted as vector paths when they stay within the PDF backend's subset (basic shapes, paths, groups, `use`, clip paths, solid fills and strokes, opacity, and `text` / `tspan` runs set in the fonts the document can load — custom fonts first, then Google-hosted families) and rasterised at 600 dpi otherwise.
-- SVG `text` renders in the book's fonts everywhere: the previews and the EPUB embed the faces its text names in the SVG before it is shown (an `<img>` cannot see the page's fonts), custom families as uploaded and Google families as the Fontsource files that hold the characters, and the PDF export sets the runs as real, selectable text in the same embedded faces. Name the family in `font-family` exactly as it appears under Fonts. A resource can opt out with `"inlineFonts": false` in its manifest entry (`svg.inlineFonts`).
-- The SVG source editor only lets you type inside text nodes (tinted) so a figure cannot be broken by accident; the lock button in its header opens the whole source — coordinates, colours, structure — and locking again rescans the text nodes.
-- `table.model` is a Postext `TableModel`: `rows` is a row-major array of cells (`content`, optional `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` the number of leading header rows, and `columnWidths` an optional array of relative column weights. `table.styleId` optionally names one of the config's `tableStyles`.
-- Font files are stored in IndexedDB under ids derived from the preset id and file path, and the families are appended to `config.customFonts` when the preset is applied; a missing or malformed `index.json` yields no presets rather than an error.
-- `<preset-dir>/fingerprint.json` is optional and, on the development route, **virtual**: when no such file exists, `GET` answers `{ "fingerprint": "<sha1 hex>", "files": <n> }` computed from the directory's file metadata (relative path, modification time and size of every file up to four levels deep, dotfiles and `node_modules` skipped), never from file contents, with `Cache-Control: no-store`. The sandbox polls it to follow edits to the bundle (see [Books panel](#books-panel)). A static host can serve a real `fingerprint.json` with the same shape, or none at all, in which case its presets are not followed.
 
 ## Roadmap
 
 The following features are planned for future versions:
 
 - **Collaborative editing** — Edit one book together from several browsers
+

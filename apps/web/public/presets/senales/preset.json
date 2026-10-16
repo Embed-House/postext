@@ -4620,6 +4620,14 @@
    "lighting": {
     "environment": "daylight"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "Señales 2020 · Hacia una contaminación cero en Europa",
+     "Signals 2020 · Towards zero pollution in Europe"
+    ]
+   }
   }
  },
  "localized": {

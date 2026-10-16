@@ -1,0 +1,464 @@
+{/* docs/document-format-resources-de.mdx */}
+
+export const metadata = {
+  title: 'Dokumentformat: Bilder, Tabellen und Videos',
+  sidebarTitle: 'Bilder, Tabellen und Videos',
+  description: 'Ressourcen im Text: Verweise und Einbettungen, Nummerierung, Platzierung und wo ein Gleitobjekt landet, Textumfluss, Bitmap-Größe, Sicherheitsbereiche, Sprecheranker und Videos',
+  lang: 'de',
+  lastUpdated: '2026-10-16',
+  readingTime: '38 min',
+  order: 29,
+  parent: 'document-format',
+  plainSummary: "Diese Seite behandelt die Bilder, Tabellen und Videos eines Buchs. Sie fügen sie einmal hinzu und erwähnen sie im Text, und Postext stellt jedes in die Nähe der Stelle, an der es zuerst erwähnt wird. Sie können wählen, wohin es kommt: oben auf eine Seite, über alle Spalten oder genau dorthin, wo es im Text steht. Text kann um ein Bild herumfließen. Ein Bild kann den Teil kennzeichnen, der immer sichtbar bleiben muss, wenn es zugeschnitten wird. Videos laufen in der Webansicht und in E-Books, im Druck steht an ihrer Stelle ein Bild.",
+};
+
+# Dokumentformat: Bilder, Tabellen und Videos
+
+
+## Ressourcen
+
+Bilder, SVGs, Tabellen und Videos werden nicht im Text geschrieben. Sie werden einmal als **Ressourcen** angelegt (verwaltet im [Bedienfeld Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) der Sandbox, das das Hochladen von Bildern und SVGs, einen interaktiven Tabelleneditor, YouTube-, Vimeo- und hochgeladene Videos sowie die Bearbeitung von Legende und Platzierung übernimmt) und dann über ihre ID mit dem Text verbunden. **Ein Verweis auf eine Ressource genügt, um sie einzubinden** – Sie nennen sie einmal mit einem `:ref{id="…"}` im Text, und die Engine lässt die Abbildung oder Tabelle in den ersten freien Platz nach diesem Verweis gleiten – an den Fuß der Spalte, in der Sie sie nennen, an den Kopf der nächsten Spalte, in ein Band der nächsten Seite –, so wie es ein Setzer im Druck täte. Sie platzieren sie kein zweites Mal.
+
+Beide Formen unten sind neue Syntax, die nicht mit CommonMark kollidiert, sodass ein Dokument, das sie verwendet, in jedem anderen Markdown-Betrachter weiterhin als reiner Text lesbar bleibt.
+
+### Verweis im Text (die Hauptform)
+
+Verweisen Sie im Fließtext mit `:ref{id="…"}` auf eine Ressource. Der erste Verweis **bindet** die Ressource zugleich **ein** (sie wird also auf der Seite platziert) und gibt ihre berechnete Nummer aus, standardmäßig mit der Kurzbezeichnung des Typs davor:
+
+```md
+As shown in :ref{id="lighthouse-diagram"}, the lantern room sits above the gallery.
+```
+
+ergibt: *As shown in Fig. 1.7, the lantern room sits above the gallery.* – und das Diagramm selbst gleitet an den nächsten freien Platz nach dem Satz (den Fuß dieser Spalte, den Kopf der nächsten oder ein Band der nächsten Seite), während dieser Satz und der Text danach ohne Unterbrechung weiterlaufen.
+
+Der Fließtext wird an der Verweisstelle nie unterbrochen. Wo die Ressource landet – am ersten freien Platz oder nur an einem Platz oben oder unten, innerhalb einer Spalte oder über die ganze Breite –, bestimmen ihre **Platzierung** (siehe [Platzierung](#platzierung) weiter unten) und die Stelle, an der Sie sie nennen: Die Suche beginnt direkt nach dem Verweis.
+
+### Blockeinbettung (optional, ausdrückliche Platzierung im Text)
+
+Gelegentlich soll eine Ressource an einer genauen Stelle im Textfluss stehen, statt zu gleiten. Schalten Sie das Gleiten ab, indem Sie der Ressource `placement.position: "here"` geben und sie mit `::resource{id="…"}` in einer eigenen Zeile einbetten:
+
+```md
+Here is the floor plan we discussed.
+
+::resource{id="lighthouse-diagram"}
+
+The keeper's quarters occupy the eastern wing.
+```
+
+Für eine gleitende Ressource ist die Direktive `::resource` unnötig – das `:ref` hat sie bereits platziert, und ein überzähliges `::resource` für dieselbe ID wird einfach als weiterer Verweis behandelt, nicht als zweite Kopie. Ein `::resource` setzt die Ressource nur dann im Text, wenn ihre aufgelöste Platzierung `"here"` ist. Eine Ressource im Text hält über sich eine Zeile Abstand (den Gleitobjektabstand), wie es ein Gleitobjekt täte, sofern der Block davor nicht mehr verlangt. Im Fließtext hält sie darunter denselben Abstand; danach kehrt der Text auf das Grundlinienraster zurück, was bis zu einer weiteren Zeile hinzufügen kann. Eine Überschrift, eine Liste, ein Kasten oder eine weitere Ressource im Text direkt danach teilt diesen Abstand mit ihrem eigenen Abstand oben: Es gilt der größere der beiden, nicht beide. (Bis postext 1.4 war der Abstand darunter nur das, was die Rasterausrichtung übrig ließ, irgendwo zwischen nichts und einer Zeile; `layout.inlineResourceGap: 'above'` behält diese Regel bei, und vor 1.5 gespeicherte Bücher werden damit gelesen.) Innerhalb eines Kastens (`:::callout`) behält die Ressource denselben Abstand, eine Zeile des Kastentextes darüber und, mit `'around'`, darunter; am Kopf oder Fuß des Kastens setzt stattdessen der Innenabstand sie ab. (Bis postext 1.4 stand sie direkt am Text des Kastens; `layout.inlineResourceGapInBoxes: false` behält das bei, und vor 1.5 gespeicherte Bücher, deren Kästen eine Ressource einbetten, werden damit gelesen.)
+
+Eine Ressource im Text, deren Platzierung zusätzlich `span: 'page'` angibt (`placement: { position: 'here', span: 'page' }`), läuft in einem mehrspaltigen Layout an der Stelle ihrer Direktive über die ganze Seitenbreite, wie ein seitenbreiter Kasten: Die Spalten darüber enden auf gleicher Höhe (ausgeglichen, oder die Ressource wandert an den Kopf der nächsten Seite, wenn das nicht geht), sie wird über die Breite des Inhaltsbereichs mit demselben Abstand darüber und darunter gesetzt, und der Text läuft in jeder Spalte darunter weiter. Auf einer einspaltigen Seite wird sie wie bisher in voller Satzbreite gesetzt. Eine Ressource mit `span: 'column'` und gesetztem `columns` bleibt in ihrer Spalte, wenn sie im Text eingebettet wird: Die Spaltenzahl gilt nur für Gleitobjekte. Seit postext 1.19.
+
+Die `id` muss einer im Bedienfeld Ressourcen angelegten Ressource entsprechen. Die Engine rendert die Ressource (Bitmap, SVG oder Tabelle) mit ihrer Legende darunter als Fuß der Abbildung bzw. Tabelle. Der Legendentext setzt sich aus dem `captionPrefix` des Ressourcentyps, der berechneten Nummer und der eigenen Legende der Ressource zusammen – z. B. **Figure 1.7. The original lighthouse plan.** Ihre Typografie regelt [Konfiguration › Legendenstil](/de/docs/configuration-resources#legendenstil): Bezeichnung und Beschreibung teilen Schriftart und Größe, während die Bezeichnung eigene Einstellungen für fett, kursiv und Farbe behält; der Abstand über der Legende ist standardmäßig `0.75em`, die Ausrichtung linksbündig. Die Legende kann stattdessen über der Ressource stehen (`captionStyle.position: 'above'`, global oder je Ressourcentyp), wahlweise auf einem farbigen Balken. Eine Ressource kann außerdem eine `note` tragen – eine kurze Quellen- oder Nachweiszeile mit derselben Formatierung im Text und denselben `:ref`-Markierungen wie die Legende –, die kleiner unter der Ressource gesetzt wird (unter der Legende, wenn diese unten steht, unter dem Inhalt, wenn sie oben steht) und über `captionStyle.note` gestaltet wird.
+
+**Zeilenumbrüche in Legenden und Anmerkungen.** Eine Legende oder Anmerkung ist ein Absatz in der Satzbreite ihres Platzes, und ein darin getippter Zeilenwechsel ist ein Leerzeichen. Um eine neue Zeile zu beginnen, schreiben Sie `\\` – den erzwungenen Umbruch von Titeln – oder beenden die Zeile mit einem Backslash, dem harten Umbruch von Markdown: `¹ Measured at 20 °C. \\ ² Mean of three runs.` setzt jede Fußnote einer breiten Tabelle in eine eigene Zeile. Die Zeile vor einem Umbruch behält ihre natürliche Breite und wird nie auf die Satzbreite gedehnt, und zwei Umbrüche hintereinander ergeben keine Leerzeile (ein geschütztes Leerzeichen dazwischen schon). In einer Tabellenzelle wirkt `\\` wie ein Zeilenwechsel: Es beginnt einen neuen Absatz; der Einzug der folgenden Zeile bleibt erhalten, sodass zwei führende Leerzeichen weiterhin einen Listenpunkt verschachteln. Im Text selbst sind die beiden Backslashes immer ein Umbruch, ohne Maskierung: Um sie zu drucken, setzen Sie sie in Code im Text, wo Backslashes so gedruckt werden, wie sie geschrieben sind. Im Ziel eines Links bleiben sie Teil der URL, in den Attributen einer Direktive (dem `text` eines `:ref`) Teil des Wertes; in einem Chip, der einzeilig gesetzt wird, ist ein Umbruch ein Leerzeichen. (Bis postext 1.4 wurden die Backslashes gedruckt, und eine Legende oder Anmerkung brach nur dort um, wo die Satzbreite endete.)
+
+Tabellenressourcen zeichnen ihr eigenes Gitter, gestaltet über [Konfiguration › Tabellenstil](/de/docs/configuration-resources#tabellenstil): Grund- und Kopfzellen haben völlig unabhängige Typografie, der Hintergrund der Kopfzeile ist standardmäßig `#f0f0f0`, Linien sind `0.75pt` stark und `cellPadding` beträgt `0.375em` – jedes nicht gesetzte Feld übernimmt den Wert des Grundtextes. Spaltenbreiten gehören zur Tabelle selbst: `TableModel.columnWidths` enthält je Spalte ein relatives Gewicht (`[2, 1, 1]` gibt der ersten Spalte die halbe Breite); ohne Angabe teilen sich die Spalten die Breite gleichmäßig. Eine Tabelle kann auch in einer benannten Variante gesetzt werden: `table.styleId` wählt einen der `tableStyles` des Dokuments (siehe [Konfiguration › Benannte Tabellenstile](/de/docs/configuration-resources#benannte-tabellenstile)), dessen nicht gesetzte Felder `tableStyle` übernehmen; eine unbekannte oder fehlende ID behält `tableStyle` bei.
+
+Eine Zelle richtet ihren Inhalt mit `TableCell.align` (`left`, `center`, `right`; Listenpunkte bleiben linksbündig) und `TableCell.verticalAlign` (`top`, der Standard, `middle` oder `bottom`) aus. Die vertikale Ausrichtung verschiebt den gesamten Zellinhalt – das Bild und den Text darunter als Einheit – innerhalb einer Zelle, die höher ist als er: einer Zeile, die eine längere Nachbarzelle streckt, oder der Zeilen, die ein `rowSpan` überdeckt. Sie gilt in jeder Ausgabe (Canvas, HTML, PDF), in gedrehten Tabellen und in jedem Teilstück einer über mehrere Seiten geteilten Tabelle. Beide werden je Zelle über die Ausrichtungsschaltflächen in der Werkzeugleiste des Tabelleneditors der Sandbox gesetzt.
+
+Eine Tabellenzelle kann auch ein Bild enthalten. `TableCell.image` nennt eine Bitmap- oder SVG-Ressource über ihre ID (`{ "resourceId": "fig-arm", "width": 0.7 }`): Das Bild wird in der Zelle gezeichnet – nie nummeriert, gleitend oder beschriftet –, auf die Innenbreite der Zelle eingepasst (oder auf den mit `width` angegebenen Anteil davon, Standard `1`) unter Wahrung des Seitenverhältnisses, ausgerichtet wie der Zelltext, und ein etwaiger Zelltext läuft darunter. Die Zeile wächst, um es aufzunehmen. Im Tabelleneditor der Sandbox wählt die Bildschaltfläche der Werkzeugleiste die Ressource für die aktive Zelle, und ein Breitenfeld setzt den Anteil. Eine ID, die zu keiner Bildressource passt, lässt die Zelle reinen Text enthalten.
+
+Eine Zelle kann eine eigene Füllung tragen. `TableCell.background` ist ein Farbwert (`{ "hex": "#c1dfd6", "model": "hex" }`, wahlweise über `paletteId` mit einem Eintrag der Dokumentpalette verknüpft), der statt des Kopf- oder Grundhintergrunds des Stils gemalt wird – eine Kompatibilitätsmatrix färbt ihre Zellen auf diese Weise grün, rot und gelb. Der Tabelleneditor der Sandbox setzt ihn über das Füllsteuerelement der Werkzeugleiste. Um solche Füllungen zu erklären, nehmen Legende, Anmerkung und jeder Textblock ein **Farbfeld** im Text auf: `:swatch{color="#c1dfd6"}` (ein Hexwert oder die ID eines Paletteneintrags – `:swatch{color="table-compatible"}`) setzt ein kleines Quadrat auf die Grundlinie, drei Viertel der Schriftgröße groß, mit der Farbe gefüllt und in der Textfarbe umrandet, sodass eine Anmerkung `:swatch{color="ok"}: compatible; :swatch{color="no"}: incompatible` lauten kann. Eine Farbe, die sich zu nichts auflöst, zeichnet einen leeren Umriss. Der Hexwert kann einen Alphakanal enthalten (`#rrggbbaa`, `#rgba`), und `rgb()`- / `rgba()`-Farben funktionieren ebenfalls, sodass eine durchscheinende Zellfüllung ein passend durchscheinendes Farbfeld hat (siehe [Konfiguration › Transparenz](/de/docs/configuration-fonts-colors-viewers#transparenz)).
+
+SVG-Ressourcen lassen sich zusätzlich für den Druck mit einer einzigen Schmuckfarbe umfärben, über `diagramStyle.singleInk` (Standard `false`). Ist es eingeschaltet, wird jede Farbe in einem SVG-Diagramm auf einen helligkeitsabhängigen Tonwert von `diagramStyle.inkColor` abgebildet (standardmäßig die Hauptfarbe der Palette, `#295AA3`) – Weiß wird zu Papier, Schwarz zur vollen Farbe –, sodass Abbildungen getreu wiedergegeben werden, wenn das Dokument mit einer einzigen Schmuckfarbe gedruckt wird. Siehe [Konfiguration › Diagrammstil](/de/docs/configuration-resources#diagrammstil).
+
+Eine fehlerhafte Einbettung (fehlende oder leere `id`, eine `id` ohne Anführungszeichen oder in einfachen Anführungszeichen, zusätzliche Attribute) wird nicht zu einem Ressourcenblock; sie fällt auf das normale Lesen als Absatz zurück und bleibt in der Ausgabe sichtbar. Ebenso eine korrekt geschriebene Einbettungszeile, die ohne Leerzeile direkt unter einer Absatzzeile steht: Sie wird als Teil dieses Absatzes gelesen. Beide lösen eine Warnung `malformedEmbed` aus – einen Eintrag **Einbettung als Text gesetzt** im Bedienfeld Prüfungen der Sandbox.
+
+Verweise im Text werden in jedem Textblock erkannt – Absätzen, Überschriften, Zitaten und Listenpunkten – und können neben fett, kursiv, Code und Formeln im Text stehen.
+
+#### Verweisoptionen
+
+Die Direktive `:ref` nimmt drei optionale Attribute in beliebiger Reihenfolge an. `style` wählt, wie die berechnete Bezeichnung ausgegeben wird: `style="number"` druckt die bloße Nummer (`1.7`), `style="full"` den vollen Namen des Typs plus Nummer (`Figure 1.7`), und ohne `style` wird die `shortLabel` des Typs plus Nummer verwendet (`Fig. 1.7`). `case` ändert nur die Groß- und Kleinschreibung des Bezeichnungsteils – `lower`, `upper` oder `capitalize` – und lässt die Nummer unberührt. `text` ist eine wörtliche Ersetzung, die jede berechnete Bezeichnung ersetzt und Vorrang vor `style` und `case` hat. Die Ausgabeoptionen nebeneinander:
+
+<table>
+  <thead>
+    <tr>
+      <th>Syntax</th>
+      <th>Ausgabe</th>
+      <th>Hinweise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>:ref&#123;id="…"&#125;</code></td>
+      <td><code>Fig. 1.7</code></td>
+      <td>Standardstil: die <code>shortLabel</code> des Typs, gefolgt von der Nummer, verbunden durch ein geschütztes Leerzeichen, sodass beide nie getrennt umbrochen werden.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="number"&#125;</code></td>
+      <td><code>1.7</code></td>
+      <td>Die bloße berechnete Nummer, ohne Bezeichnung.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" style="full"&#125;</code></td>
+      <td><code>Figure 1.7</code></td>
+      <td>Der volle <code>name</code> des Typs, gefolgt von der Nummer. Für den Satzanfang oder wo die Abkürzung schlecht liest.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" case="lower"&#125;</code></td>
+      <td><code>fig. 1.7</code></td>
+      <td>Ändert nur die Schreibung der Bezeichnung: <code>lower</code> (<code>fig. 1.7</code>), <code>upper</code> (<code>FIG. 1.7</code>) oder <code>capitalize</code> (erster Buchstabe groß). Lässt sich mit <code>style="full"</code> kombinieren (<code>figure 1.7</code>); die Nummer wird nie verändert, und ein unbekannter Wert wird ignoriert.</td>
+    </tr>
+    <tr>
+      <td><code>:ref&#123;id="…" text="see the plan"&#125;</code></td>
+      <td><code>see the plan</code></td>
+      <td>Eine ausdrückliche Ersetzung. Der angegebene Text wird wörtlich statt jeder berechneten Bezeichnung verwendet – nützlich für Links im Fließtext wie „wie wir zuvor gesehen haben“. Ist <code>text</code> vorhanden, hat es Vorrang vor <code>style</code> und <code>case</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+Nennt ein `:ref` (oder `::resource`) eine ID ohne passende Ressource, fällt die Bezeichnung auf `?` zurück (eine `text=`-Bezeichnung wird stattdessen gedruckt, weiterhin ohne Nummer und Link), und die Sandbox meldet eine Warnung **Unbekannte Ressource**. Die Engine verzeichnet sie als Eintrag `unknownResourceId` in den `contentWarnings` des Dokuments, mit dem Quellbereich und der Seite des Verweises – auch für ein `:ref` in der Legende, der Anmerkung oder einer Tabellenzelle einer Ressource, die der Text verwendet.
+
+### Nummerierung beim ersten Verweis
+
+Die Nummer einer Ressource wird vergeben, wenn sie **in Lesereihenfolge zum ersten Mal genannt** wird – ob diese erste Nennung eine Blockeinbettung `::resource` oder ein `:ref` im Text ist. Von da an druckt jeder Verweis auf dieselbe ID dieselbe Nummer.
+
+Die Nummern folgen also der Reihenfolge, in der der Leser auf sie trifft, nicht der Reihenfolge, in der die Ressourcen im Bedienfeld angelegt wurden:
+
+- Wenn Sie in der Einleitung per `:ref` auf eine Abbildung verweisen und sie erst zwei Seiten später einbetten (`::resource`), erhält sie trotzdem die Nummer der Einleitung – der Verweis kam zuerst.
+- Ein neuer Verweis *weiter vorn* im Dokument nummeriert alles danach automatisch neu. Es gibt keine manuelle Nummerierung, die abgeglichen werden müsste.
+
+Die Nummerierung erfolgt je Ressourcentyp und beachtet dessen Rücksetzbereich und Zählerformat – siehe [Konfiguration › Ressourcentypen](/de/docs/configuration-resources#ressourcentypen) zu den Vorlagen-Tokens (`{h1}`, `{n}`), `resetOn` und `counterFormat`.
+
+Gezählt wird nur, worauf der Text verweist: Eine Ressource, die nur eine Gestaltung zeichnet (etwa ein Bildelement eines Kapitelauftakts), erhält keine Nummer und lässt den Zähler unverändert. Und `{h1}` zählt jede Überschrift der Ebene 1, deren Format nicht `numbered: false` ist, auch eine mit leerer `numberingTemplate`, sodass ein Artikel, dessen einzige H1 sein Titel ist, seine Abbildungen standardmäßig 1.1, 1.2 … nummeriert. [Konfiguration › Was nummeriert wird](/de/docs/configuration-resources#was-nummeriert-wird) beschreibt beide Regeln und die Einstellungen für Abbildung 1, 2 ….
+
+### Platzierung
+
+Jede Ressource hat eine **Platzierung**, die bestimmt, wo ihr Gleitobjekt landet; aufgelöst wird sie je Ressource (ihr eigenes `placement`), dann über das `defaultPlacement` ihres Typs, dann über den eingebauten Standard `auto` / `column`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Feld</th>
+      <th>Werte</th>
+      <th>Bedeutung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>"auto"</code> · <code>"top"</code> · <code>"bottom"</code> · <code>"here"</code></td>
+      <td><code>"auto"</code> (der Standard) nimmt den ersten freien Platz nach dem Verweis, oben oder unten; <code>"top"</code> / <code>"bottom"</code> nehmen nur Plätze dieser Art an; <code>"here"</code> schaltet das Gleiten ab und bettet die Ressource an der Direktive <code>::resource</code> im Text ein (eine dort platzierte Tabelle wird zwischen Zeilen geteilt, wenn sie nicht in den Rest ihrer Spalte passt, siehe <a href="/de/docs/configuration-resources#tabellen-die-höher-als-die-seite-sind">Tabellen, die höher als die Seite sind</a>).</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>align</code></td>
+      <td><code>0 &lt; width &lt; 1</code>; <code>"left"</code> · <code>"center"</code> · <code>"right"</code></td>
+      <td>Eine Ressource, die schmaler ist als ihr Platz: <code>width</code> ist der Anteil der Spalten- (oder Seiten-)breite, den sie einnimmt, <code>align</code>, wo sie im Platz steht (eine kleine Tabelle mittig in ihrer Spalte; ein seitenbreites Band, dessen Bild eine Spalte breit ist). Ein Bild, das schmaler ist als sein Platz – eine Bitmap, die kleiner ist als die Spalte, oder eine, die <code>layout.fitFiguresToPage</code> verkleinert hat –, steht ebenfalls gemäß <code>align</code> dort, unter einer Legende, die die Satzbreite des Platzes behält. Gilt für Gleitobjekte und für Einbettungen mit <code>::resource</code> im Text gleichermaßen.</td>
+    </tr>
+    <tr>
+      <td><code>captionSide</code></td>
+      <td><code>true</code> · <code>false</code></td>
+      <td>In einem anderthalbspaltigen Layout, dessen Nebenspalte für Gleitobjekte reserviert ist (<code>layout.sideColumnRole: 'floats'</code>), behält ein <code>"column"</code>-Gleitobjekt mit <code>captionSide</code> seinen Inhalt in der Hauptspalte und setzt seine Legende (und Anmerkung) in die Nebenspalte, auf Höhe der Oberkante der Abbildung – oder ihrer Unterkante bei einem Gleitobjekt unten; die Nebenspalte gibt dieses Band ab. Eine Seite ohne solche Spalte behält die Legende unter der Abbildung. Seit postext 1.28 gilt das auch für eine im Text gesetzte Ressource (<code>"here"</code>), eine Spalte breit: Ihre Legende und Anmerkung stehen in der Nebenspalte, auf Höhe der Oberkante ihres Inhalts, der Block im Text ist nur so hoch wie der Inhalt, und die danach gesetzten Abbildungen und Kästen der Nebenspalte halten Abstand zur Legende. Wo die Nebenspalte neben der Einbettung belegt ist, bleibt die Legende unter dem Inhalt; eine Einbettung, die in die nächste Spalte oder auf die nächste Seite wandert, entscheidet dort neu. Nicht in einem Kasten, auf einer Seite mit senkrechtem Satz oder bei einem Bild, das vom Text umflossen wird. <code>layout.inlineCaptionSide: false</code> beschränkt seitliche Legenden auf Spalten-Gleitobjekte.</td>
+    </tr>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>"column"</code> · <code>"page"</code></td>
+      <td>Eine einzelne Spalte belegen oder den Spaltenfluss unterbrechen und über die ganze Breite des Inhaltsbereichs, über alle Spalten laufen. In einem einspaltigen Layout sind beide gleich.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td>eine ganze Zahl, Standard <code>1</code></td>
+      <td>Auf einer mehrspaltigen Seite ein <code>"column"</code>-Gleitobjekt über so viele benachbarte Spalten, Spaltenabstände eingeschlossen: ein Bild über zwei der fünf Spalten einer Zeitung. Es nimmt den Kopf einer Folge leerer Spalten, die auf gleicher Höhe beginnen, oder den Fuß der zitierenden Spalte und der leeren Spalten danach. So viele Spalten, wie die Seite hat, oder mehr machen es zu einem seitenbreiten Gleitobjekt. Wird bei den Spannweiten <code>"page"</code> und <code>"side"</code>, bei einer gedrehten Ressource und bei einer Einbettung im Text (<code>"here"</code>) ignoriert; <code>captionSide</code> gilt nur für ein Gleitobjekt von einer Spalte Breite. Seit postext 1.18.</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>"ccw"</code> · <code>"cw"</code></td>
+      <td>Die Ressource um eine Vierteldrehung gedreht setzen – eine Tabelle im Querformat in einem Buch im Hochformat. <code>"ccw"</code> dreht sie gegen den Uhrzeigersinn, ihre Oberkante zum linken Seitenrand (der Leser dreht das Buch im Uhrzeigersinn), die übliche Konvention; <code>"cw"</code> in die andere Richtung. Eine gedrehte Ressource ist immer ein seitenbreites Gleitobjekt auf einer eigenen Seite: Sie wird entlang der Höhe des Inhaltsbereichs gesetzt, abgerundet auf ganze Zeilen des Grundlinienrasters und abzüglich einer Grundtextzeile, des Gleitobjektabstands, den jedes Gleitobjektband hält (ein Satzspiegel von 237 mm auf einem 14-pt-Raster fasst 47 Zeilen, 232,1 mm, die Ressource erhält also 46 davon, 227,2 mm), steht bei gespiegelten Rändern bündig am Bund (sonst linksbündig), und eine Tabelle, die zu breit für eine Seite ist, wird zwischen Zeilen geteilt und läuft gedreht auf den folgenden Seiten weiter, mit wiederholter Kopfzeile, genau wie eine aufrechte Tabelle, die höher ist als eine Seite. Eine gedrehte Abbildung wird auf die Seite eingepasst. Wird bei einer Einbettung im Text (<code>"here"</code>) ignoriert.</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code>, <code>minScale</code></td>
+      <td><code>"never"</code> · <code>"page"</code> · <code>"slot"</code>; <code>0 &lt; minScale ≤ 1</code>, Standard <code>0.7</code></td>
+      <td>Ein gleitendes Bild (Bitmap, SVG, das Posterbild eines Videos) unter Wahrung seiner Proportionen auf den Raum eines Platzes verkleinern, statt es weiterzuschieben. <code>"never"</code> (der Standard) setzt es in seiner Größe. <code>"page"</code> verkleinert es nur, wenn es zu hoch für das Band einer frischen Seite ist: den Inhaltsbereich abzüglich dessen, was dort bereits steht (ein Auftakt, andere Gleitobjekte, Fußnoten), und des Gleitobjektabstands, wie bei einer Katalogtafel, die auf ihre Seite zugeschnitten ist. <code>"slot"</code> verkleinert es außerdem in einen Platz der zitierenden Seite oder in den neben einem anderen Band verbliebenen Raum, wenn es dort mit <code>minScale</code> oder mehr hineinpasst; sonst wandert es wie bisher weiter. Die Plätze werden in ihrer üblichen Reihenfolge geprüft, und das Band endet weiterhin auf dem Grundlinienraster. Ein Bild mit Sicherheitsbereich wird innerhalb dessen beschnitten, bevor es skaliert wird (siehe <a href="#sicherheitsbereich">Sicherheitsbereich</a>). Auf einer frischen Seite, wo es sonst nirgends hin kann, wird ein Bild, das selbst bei <code>minScale</code> nicht passt, in diesem Maßstab gesetzt und ragt über das Band hinaus. Das Layout meldet jedes verkleinerte Gleitobjekt als Warnung <code>floatShrunk</code>. Tabellen (die geteilt werden), gleitende Kästen, Comicstreifen, gedrehte Ressourcen und Einbettungen im Text werden nie skaliert. Der Dokumentstandard ist <code>layout.floatShrink</code>. Seit postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>captionMeasure</code></td>
+      <td><code>"slot"</code> · <code>"body"</code></td>
+      <td>Die Satzbreite von Legende und Anmerkung eines Bildes, das schmaler ist als sein Platz (verkleinert oder eine Bitmap, die kleiner ist als die Spalte): <code>"slot"</code> (der Standard) behält die Satzbreite des Platzes; <code>"body"</code> setzt sie so breit wie das Bild, darunter gemäß <code>align</code>, sodass eine zentrierte Tafel ihre Legende mittig darunter hat. Gilt für Gleitobjekte und Einbettungen im Text gleichermaßen. Seit postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>wrap</code>, <code>wrapGap</code></td>
+      <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; eine Länge</td>
+      <td>Den Text neben der Ressource laufen lassen: Sie steht an dieser Seite ihrer Spalte, und die Zeilen daneben werden auf die verbleibende Satzbreite gesetzt, mit <code>wrapGap</code> Abstand zu ihrem Kasten (Legende eingeschlossen), und kehren darunter zur vollen Satzbreite zurück. Eine Einbettung im Text (<code>"here"</code>) und ein einspaltiges Gleitobjekt am Kopf oder Fuß einer Spalte nehmen das an; seitenbreite, mehrspaltige, Nebenspalten- und gedrehte Gleitobjekte behalten ihr Band. Die Ressource nimmt <code>width</code> der Spalte ein, sonst <code>layout.wrap.defaultWidth</code> (0.45). <code>wrapGap</code> ist standardmäßig <code>layout.wrap.gap</code>, sonst eine Grundtextzeile. Siehe <a href="#textumfluss">Textumfluss</a>. Seit postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>citingPage</code></td>
+      <td><code>true</code> · <code>false</code>, Standard <code>false</code></td>
+      <td>Ein <code>"top"</code>- oder <code>"auto"</code>-Gleitobjekt den Kopf der Seite (bei einem seitenbreiten Gleitobjekt) oder der Spalte (bei einem Spalten-Gleitobjekt, auch über <code>columns</code>) einnehmen lassen, auf der die Zeile landet, die es zuerst zitiert, wie es die Platzierung <code>t</code> in LaTeX tut, statt des ersten freien Platzes nach dieser Zeile. Der Text über dem Verweis rückt unter das Gleitobjekt nach unten. Das geschieht nur, wenn das Gleitobjekt dort innerhalb von <code>layout.maxTopFraction</code> der Spalte (standardmäßig 0.7) Platz findet, wenn die früheren Gleitobjekte seiner Nummernfolge bereits gesetzt sind, wenn kein ausdrücklicher Umbruch die Seite eröffnet (die erste Seite eines Kapitels, ein Teil, ein <code>:::pagebreak</code>) und nichts Seitenbreites über der zitierenden Zeile steht, und wenn die zitierende Zeile bei dieser Anordnung noch auf dieser Seite landet (in einer Spalte, die das Gleitobjekt anführt); andernfalls nimmt das Gleitobjekt seinen üblichen Platz. Gedrehte Gleitobjekte, Nebenspalten-Gleitobjekte und der Rest einer über Seiten geteilten Tabelle werden nie so verschoben. Standard: das <code>defaultPlacement</code> des Typs, dann <code>layout.floatsAtCitingPage</code>. Seit postext 1.25.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Gleitobjekt kommt an den **ersten freien Platz nach seinem ersten Verweis**, in Lesereihenfolge: den Fuß der Spalte, in der der Verweis steht, dann Kopf und Fuß der nächsten leeren Spalte derselben Seite, dann die Bänder der nächsten Seite, die der Fluss öffnet (ein seitenbreites Gleitobjekt nimmt den Fuß der Seite, wenn jede Spalte noch Platz dafür hat, sonst ein Band der nächsten Seite). Eine Seite, die eine Abbildung oder Tabelle im Text eröffnet, zählt ebenfalls: Ein Gleitobjekt, das auf diese Seite wartet, nimmt ihren Kopf über der Abbildung oder Tabelle ein, wenn beide darauf passen; passen sie nicht, behält die Abbildung oder Tabelle die Seite, und das Gleitobjekt wartet auf die nächste. Bis postext 1.4 wurde eine solche Seite übersprungen, und das Gleitobjekt wartete auf die Seite danach, auch wenn beide gepasst hätten. Es wird in seiner Größe gesetzt, sofern sein `shrink` es nicht auf den Raum eines Platzes skalieren lässt (siehe Tabelle oben), und es landet nie vor seinem Verweis. Gleitobjekte einer Nummernfolge erscheinen in Verweisreihenfolge: Eine Abbildung, die auf einer Seite nirgends passt, hält die Abbildungen hinter ihr auf (eine wartende Tabelle hält keine Abbildung auf und umgekehrt), sodass Abbildung 12 nie vor Abbildung 11 erscheint. Eine Tabelle, die sonst warten müsste, wird stattdessen geteilt: Bietet sich ihr der Kopf einer leeren Spalte, nimmt sie die Zeilen, die passen, und setzt sich im nächsten Platz fort – der Spalte daneben oder der nächsten Seite – mit wiederholten Kopfzeilen (siehe `tableStyle.overflow`). Ein `top`- oder `auto`-Gleitobjekt mit eingeschaltetem `citingPage` kann stattdessen die Seite (oder Spalte) anführen, auf der seine zitierende Zeile landet, wobei der Text über dem Verweis darunter nach unten rückt: Es wird dann auf derselben Seite über seinem Verweis gemalt, nie auf einer früheren, und in einem getaggten PDF und im HTML weiterhin danach gelesen. Die Engine klärt das in einigen zusätzlichen Durchläufen und behält es nur, solange die zitierende Zeile auf dieser Seite bleibt.
+
+Gleitobjekte verlassen nie ihr Kapitel: An einem Kapitelauftakt (einer Überschriftenebene mit `breakBefore` oder `span: 'page'`), einem `:::part`, einem Kastenformat mit `floatBarrier: true` (dem abschließenden Kasten „Das Wichtigste“ eines Kapitels) und am Ende des Dokuments wird jedes noch ausstehende Gleitobjekt zuerst platziert – in den freien Plätzen der Seite oder auf Seiten, die vor der Grenze eröffnet werden. Ein Gleitobjekt, das zuerst vom Auftakt selbst zitiert wird (ein Kapiteltitel, der seine Abbildung nennt) oder vom ersten Block nach einem `:::part`, gehört zum neuen Kapitel: Es landet nach dieser Zeile, wie jedes andere. Eine Abbildung oder Tabelle, die den Kopf einer Seite verlangt hat, kann dann den Fuß der Schlussseite des Kapitels unter dessen ausgeglichenen Spalten einnehmen, statt einer eigenen Seite. Ein `:::pagebreak` schickt ausstehende Gleitobjekte einfach auf die Seite danach.
+
+Unter einem seitenbreiten Auftakt über zwei oder mehr Textspalten gilt die eigene Spalte des Auftakts an ihrem Kopf als leer, solange ihm darin nichts folgt: Ein gleitender Kasten, der direkt nach dem Auftakt steht, oder eine dort mit `::resource` eingebettete Ressource nimmt den Kopf der ersten Spalte ein, unter dem Auftakt und auf Höhe der Köpfe der anderen Spalten (mit `columns` über mehrere Spalten ab dieser), und der Text der Spalte beginnt darunter. Ein im Fließtext zitiertes Gleitobjekt folgt weiterhin seiner zitierenden Zeile. Bis postext 1.24 bot die erste Spalte dort keinen Platz, und ein solches Gleitobjekt landete erst ab der zweiten Spalte; `layout.floatsUnderOpener: false` behält das bei (siehe [Konfiguration › Layout](/de/docs/configuration-page-layout#layout)).
+
+Seitenkästen (`span="side"`) bleiben ebenfalls in ihrem Kapitel. Ein Kasten, den die Nebenspalte seiner Seite nicht fassen kann, nimmt die Nebenspalte der nächsten Seite; wo das Kapitel oder das Dokument vorher endet, wird jeder noch wartende Kasten in der Nebenspalte einer nach dem Text eröffneten Seite gesetzt, in der Reihenfolge ihrer Blöcke, und eine danach zitierte Seitenabbildung steht hinter ihnen. Eine solche Seite enthält keinen Text, daher meldet der Build jeden Kasten und jede Abbildung darauf (`afterText`). Ein Kasten, der höher ist als eine leere Nebenspalte, wird trotzdem gesetzt und gemeldet (`calloutOverflow`), und alles, was weiterhin keine Seite findet, wird ebenfalls gemeldet (`unplaced`) statt verworfen. Bis postext 1.24 wurde nur die erste dieser Seiten eröffnet, und die übrigen Kästen gingen ohne Warnung verloren.
+
+Gleitobjektbänder werden am Grundlinienraster ausgerichtet, damit der umgebende Text den seitenweiten vertikalen Rhythmus behält. Ein Band **oben** vergrößert seinen unteren Abstand bis zur nächsten Rasterlinie, sodass der Text unter dem Gleitobjekt mit den Nachbarspalten und der gegenüberliegenden Seite registerhaltig bleibt. Ein Gleitobjekt **unten** wird so verankert, dass die letzte Zeile seiner Legende eine Grundlinie mit der letzten Textzeile der anderen Spalten teilt (Inhalt ohne Legende richtet seine Unterkante an der letzten Rasterzeile aus) – volle Seiten enden daher über alle Spalten und gegenüberliegenden Seiten hinweg auf derselben Höhe.
+
+Auf der Schlussseite eines Kapitels – und des Dokuments – folgt den seitenbreiten Abbildungen und Tabellen unter dem letzten Textband nichts mehr; sie rücken daher nach oben und stehen einen Gleitobjektabstand darunter, in ihrer Reihenfolge gestapelt, statt Weißraum zwischen dem Text und einer Abbildung am Seitenfuß zu lassen. Das gilt auch für ein Gleitobjekt mit `position: 'bottom'`. Um sie wie auf jeder anderen Seite am Fuß zu halten, setzen Sie `layout.hugClosingFloats: false` (siehe [Konfiguration › Layout](/de/docs/configuration-page-layout#layout)). Seiten mit Nebenspalte verschieben sie nie.
+
+Alle drei Backends – die Canvas-Vorschau, der HTML-Betrachter und die PDF-Ausgabe – rendern Ressourcen. Im HTML-Backend liegen die Bilddaten außerhalb des Dokuments, daher liefert der Host sie über die Resolver-Option `resourceImageUrl(fileId)`; fehlt der Resolver (oder liefert er für eine Datei nichts), wird die Ressource als neutraler Platzhalterkasten gerendert, damit das Layout stabil bleibt. Die eigene Datei eines Videos kommt auf dieselbe Weise über `resourceVideoUrl(fileId)` (siehe [Videos](#videos)).
+
+#### Wo ein Gleitobjekt landen kann
+
+„Nie vor seinem Verweis“ zählt ab der Zeile, die das Gleitobjekt zitiert: Das Gleitobjekt wartet, bis diese Zeile gesetzt ist, und nimmt den ersten freien Platz danach in Lesereihenfolge – der Kopf der Seite, auf der die Zeile steht, kommt vor ihr. Ein Seitengleitobjekt (`span: 'side'`, in der Nebenspalte nur für Gleitobjekte eines anderthalbspaltigen Layouts) ist die Ausnahme: Es stapelt sich in der Nebenspalte neben dem Text, der es zitiert, und kann höher auf der Seite stehen als die zitierende Zeile. Für eine auf Seite 5 zitierte Abbildung:
+
+<table>
+  <thead>
+    <tr>
+      <th>Platzierung</th>
+      <th>Auf Seite 5</th>
+      <th>Sonst</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>top</code>, <code>span: 'page'</code></td>
+      <td>Nie: Das Band am Kopf der Seite liegt über der zitierenden Zeile.</td>
+      <td>Das obere Band von Seite 6.</td>
+    </tr>
+    <tr>
+      <td><code>top</code>, <code>span: 'column'</code></td>
+      <td>Der Kopf einer späteren Spalte, die noch leer ist – in der ersten von zwei Spalten zitiert, kann sie die zweite eröffnen.</td>
+      <td>Der Kopf einer Spalte von Seite 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> oder <code>bottom</code>, <code>span: 'page'</code></td>
+      <td>Das Fußband von Seite 5, wenn jede Spalte noch Platz dafür hat.</td>
+      <td>Ein Band von Seite 6.</td>
+    </tr>
+    <tr>
+      <td><code>auto</code> oder <code>bottom</code>, <code>span: 'column'</code></td>
+      <td>Der Fuß der zitierenden Spalte; dann der Fuß (beide) oder der Kopf (nur <code>auto</code>) einer späteren leeren Spalte.</td>
+      <td>Seite 6.</td>
+    </tr>
+  </tbody>
+</table>
+
+- Eine Seite mit Kapitelauftakt folgt denselben Regeln: Ein seitenbreites `auto`- oder `bottom`-Gleitobjekt, das im ersten Absatz des Auftakts zitiert wird, kann das Fußband dieser Seite unter ihrem Text einnehmen; ein `top`-Gleitobjekt eröffnet die nächste Seite. Soll das Bild auf der Seite stehen, die es zitiert, verwenden Sie `auto` oder `bottom`, oder zeichnen Sie es als Bildelement in der Gestaltung des Auftakts.
+- Zwei Spalten-Gleitobjekte, die im selben Absatz zitiert werden, nehmen die nächsten beiden Plätze: typischerweise das erste den Fuß der zitierenden Spalte, das zweite den Kopf der nächsten leeren Spalte – nebeneinander auf der Seite.
+- In einem einspaltigen Layout ist ein seitenbreites Gleitobjekt ein Spalten-Gleitobjekt, und es gelten dieselben Regeln: Ein `top`-Gleitobjekt, das auf einer Seite zitiert wird, landet am Kopf der nächsten.
+- Ein Absatz, der von einer Seite auf die nächste läuft, zählt ebenfalls ab seiner zitierenden Zeile. Beginnt der Absatz am Fuß von Seite 5 und fällt der Verweis auf Seite 6 – oder wandert der ganze Absatz auf Seite 6, weil am Fuß von Seite 5 nicht genug seiner Zeilen passen –, steht der Verweis auf Seite 6: Ein `top`-Gleitobjekt eröffnet Seite 7, und ein `auto`-Gleitobjekt nimmt den Fuß von Seite 6, wenn dort Platz ist. Dasselbe gilt zwischen den Spalten einer Seite und für einen über Seiten geteilten Kasten: Eine Abbildung, die sein zweiter Teil zitiert, wartet auf diesen Teil.
+- **Geändert in postext 1.5.** Bis postext 1.4 wurde ein Gleitobjekt eingereiht, sobald das Layout den zitierenden Absatz erreichte, sodass die Seite, auf die ein solcher Absatz lief (oder wanderte), mit dem Gleitobjekt beginnen konnte, über der Zeile mit dem Verweis. Eine solche Abbildung landet jetzt eine Seite später oder, wenn sie `auto` verlangt, am Fuß der Seite; die Seitenzahl kann sich dadurch ändern.
+
+### Textumfluss
+
+Ein Bild, eine Tabelle oder ein Kasten, schmaler als die Spalte, kann an einer Seite davon stehen, während der Text daneben läuft, wie in einer Zeitschrift oder einem Newsletter. Geben Sie seiner Platzierung eine Umflussseite `wrap` und, wenn Sie möchten, eine `width`:
+
+```json
+{ "id": "bed", "typeId": "figure", "kind": "svg", "caption": "The new planting bed.",
+  "placement": { "position": "here", "wrap": "right", "width": 0.4 } }
+```
+
+- **Im Text (`"here"`).** Die Ressource steht an ihrer Seite der Spalte, ihre Oberkante auf Höhe der Oberkante der nächsten Zeile an der `::resource`-Zeile, und die folgenden Absätze, Zitate und Listenpunkte laufen in der verbleibenden Satzbreite daneben, dann in voller Satzbreite darunter. Ein Absatz, der daneben beginnt und darunter endet, bleibt ein Absatz: kein Umbruch, kein zusätzlicher Abstand am Fuß des Bildes. Jede Zeile bleibt auf dem Grundlinienraster; der Raum unter dem Bild ist sein Abstand, aufgerundet auf ganze Rasterzeilen.
+- **Ein Spalten-Gleitobjekt.** Ein `span: "column"`-Gleitobjekt von einer Spalte Breite, am Kopf (`"top"` oder `"auto"` am Kopf einer Spalte) oder am Fuß (`"bottom"`, `"auto"`) einer Spalte, wird wie jedes Gleitobjekt in seinem Band platziert; die ersten oder letzten Zeilen der Spalte laufen dann daneben. Auf einer zweispaltigen Seite gehört das Gleitobjekt zu seiner Spalte, und die andere läuft in voller Breite.
+- **Ein Kasten.** Ein `:::callout` nimmt dieselben Einstellungen als Attribute an: `:::callout{wrap="right" width=0.4}` setzt ein Zitat in Auszeichnungsgröße oder einen Seitenkasten an die Stelle, an der er steht, mit dem Text danach daneben, und `placement="top"` oder `"bottom"` mit `wrap` lässt ihn an den Kopf oder Fuß einer Spalte gleiten. Ein umflossener Kasten wird als Ganzes gesetzt und nie geteilt.
+- **Was darunter kommt.** Eine Überschrift, eine abgesetzte Formel, eine Abbildung oder Tabelle, ein Kasten und ein Gedicht laufen nicht neben einem umflossenen Element: Sie kommen darunter, und der Weißraum neben ihm über ihnen bleibt leer. Das Verlassen der Spalte (ihr Fuß, ein `:::columnbreak`, ein Seitenumbruch) beendet den Umfluss dort: Das Element gehört zu seiner Spalte. Kann der Block direkt nach einer Ressource im Text nicht daneben laufen, nimmt die Ressource ihr Band ein, wie ohne `wrap`.
+- **Abstand und Grenzen.** `wrapGap` (sonst `layout.wrap.gap`, sonst eine Grundtextzeile) trennt das Element, Legende eingeschlossen, vom Text daneben und vom Text darunter. Wo der Text daneben schmaler würde als `layout.wrap.minTextWidth` (12 em Grundtext) oder das Element kürzer ist als `layout.wrap.minLinesBeside` Zeilen (2), nimmt es sein Band ganz ein, und eine Warnung `textWrap` sagt das. Ein Element im Text, das zu hoch für den in seiner Spalte verbliebenen Raum ist, wandert mit seinem Anker in die nächste, mit derselben Warnung.
+- **Seiten.** `left` und `right` sind Seiten des Textflusses, wie bei `align`: In einem Buch, das von rechts nach links läuft, ist `left` die rechte Seite des Blattes. `start` und `end` bezeichnen dieselben Seiten.
+- **Ausgaben.** Canvas, HTML-Betrachter, PDF und EPUB mit festem Layout setzen die Zeilen so, wie sie gesetzt wurden; ein getaggtes PDF liest das Bild oder den Kasten vor dem Absatz, der daneben läuft. Ein umfließendes EPUB lässt es per CSS an seine Seite gleiten, mit demselben Anteil an der Textbreite.
+- **Noch nicht.** Text auf beiden Seiten eines Bildes, Konturenumfluss, Umfluss innerhalb des eigenen Inhalts eines Kastens und Umfluss in senkrechtem Text (das Element behält sein Band, mit einer Warnung). Spalten mit einem umflossenen Element werden vom Spaltenausgleich ausgenommen.
+
+### Bitmap-Größe
+
+Eine Bitmap gibt ihre Pixel an: `bitmap.width` und `bitmap.height` sind die Pixelzahlen der Datei, keine Druckgröße. Wie viele davon auf einen Zoll kommen, entscheidet, wie groß das Bild gesetzt wird, bevor sein Platz es begrenzt. Es gibt drei Wege, die Größe festzulegen:
+
+- **Ihre Pixel bei der dpi-Zahl der Seite** (der Standard). Ohne Auflösung ist ein Pixel des Bildes ein Pixel des Layouts (`page.dpi`, 300, sofern nicht gesetzt): Ein Foto von 2400 px ist auf einer Seite mit 300 dpi 8 Zoll (203,2 mm) breit und auf einer mit 150 dpi doppelt so breit.
+- **Eine Auflösung.** `bitmap.resolution` ist die ppi-Zahl des Bildes bei seiner natürlichen Druckgröße, seine natürliche Breite ist also auf einer Seite beliebiger dpi-Zahl `width × page.dpi / resolution`: 2400 px bei `resolution: 300` sind 203,2 mm breit, ob die Seite mit 150 dpi oder mit 300 gesetzt wird. `layout.bitmapResolution` gibt jeder Bitmap ohne eigene Auflösung eine: eine Zahl (`300`) oder `'file'`, die Auflösung, die ihre Datei angibt (`bitmap.fileResolution`: das `pHYs` eines PNG, die JFIF- oder EXIF-Dichte eines JPEG, das EXIF eines WebP; bei einem aus Word importierten Bild die Größe, in der Word es gedruckt hat). Kameras, Bildschirmfotos und Web-Exporte geben oft 72 oder 96 ppi an, wenn sie nichts über eine Druckgröße wissen, daher gelten diese beiden Werte unter `'file'` als nicht gesetzt, und das Bild behält seine Pixel bei der dpi-Zahl der Seite; eine an der Ressource selbst angegebene 72 wird wörtlich genommen. `'document'`, der Standard, ist der erste Weg.
+- **Ein Anteil an der Spalte.** `placement.width` verengt ein Gleitobjekt oder eine Einbettung im Text auf einen Bruchteil ihrer Spalte (oder Seite), und ein Bild, das größer ist als dieser Anteil, wird unabhängig von seinen Pixeln darauf verkleinert (siehe [Platzierung](#platzierung)).
+
+In jedem Fall begrenzt der Platz das Bild unter Wahrung seiner Proportionen, und ein kleineres Bild wird nie vergrößert. Dieselbe natürliche Größe gilt für ein Bild in einer Tabellenzelle und für ein `image`-Element einer Gestaltung mit Größe `'auto'`. Das PDF bettet die Datei unverändert in ihrer platzierten Größe ein. Der [Preflight](/de/docs/configuration-fonts-colors-viewers#preflight) prüft die Auflösung, in der jedes Bild gedruckt wird, und das [Bedienfeld Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) der Sandbox zeigt sie für jedes Bild an. Seit postext 1.24.
+
+```json
+{ "id": "harbour", "typeId": "figure", "kind": "bitmap", "caption": "The harbour at dawn.",
+  "bitmap": { "fileId": "harbour.jpg", "format": "jpeg", "width": 2400, "height": 1600, "resolution": 300 } }
+```
+
+`bitmapInfo(bytes)` (aus `postext` und `postext/bundle`) liest die Pixel einer Datei und die Auflösung, die sie angibt, `{ width, height, resolution?: { x, y, source } }`; ein unter `'file'` geöffnetes Paket füllt damit `fileResolution`, und die Sandbox speichert sie für jedes Bild, das sie hochlädt.
+
+### Sicherheitsbereich
+
+Eine Bitmap- oder SVG-Ressource kann einen **Sicherheitsbereich** markieren: das Rechteck des Bildes, das das Wesentliche enthält (eine Person und einen Streifen der Landschaft hinter ihr, den Datenbereich eines Diagramms) und immer gezeigt wird. Es ist das `safeArea` der Ressource, vier Bruchteile (0–1) der Eigengröße des Bildes, gemessen von seiner linken oberen Ecke: `x` und `width` sind Bruchteile seiner Breite, `y` und `height` seiner Höhe. Der Name sagt, was erhalten bleiben muss; ein Beschnittrahmen würde sagen, wo geschnitten wird.
+
+```ts
+const harbour: Resource = {
+  id: 'harbour', typeId: 'figure', kind: 'bitmap', caption: 'The harbour at dawn.',
+  createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'harbour.jpg', format: 'jpeg', width: 2400, height: 1600 },
+  // the boats and the quay: 18–68 % of the width, 25–85 % of the height
+  safeArea: { x: 0.18, y: 0.25, width: 0.5, height: 0.6 },
+};
+```
+
+Nur ein Bild mit Sicherheitsbereich wird jemals beschnitten. Die Engine kann es dann in jedem Seitenverhältnis zwischen dem ganzen Bild und dem Sicherheitsbereich zeigen: höher als das eigene Verhältnis des Bildes, indem sie die Seiten beschneidet, höchstens bis auf die Breite des Sicherheitsbereichs, oder niedriger, indem sie oben und unten beschneidet, höchstens bis auf seine Höhe. Die Breite der Abbildung ändert sich nie, nur ihre Höhe. Was außerhalb des Sicherheitsbereichs liegt, wird auf beiden Seiten im Verhältnis der dortigen Ränder beschnitten, sodass ein Motiv links der Mitte links der Mitte bleibt. Bei 60 mm Breite ist der Hafen oben ganz 40 mm hoch und kann in jeder Höhe zwischen 24 mm (oben und unten auf 60 % der Höhe beschnitten) und 80 mm (die Seiten auf die halbe Breite beschnitten) gezeigt werden. Werte über die Bildränder hinaus werden auf diese begrenzt; ein Bereich mit einem Wert, der keine Zahl ist, oder einer Seite unter 2 % des Bildes, oder einer, der das ganze Bild abdeckt, wird ignoriert, ebenso das Feld bei einer Tabelle. Ohne Sicherheitsbereich wird ein Bild wie bisher immer ganz gezeigt.
+
+Die Engine nutzt diesen Spielraum an vier Stellen:
+
+- **Der in einer Spalte verbliebene Raum.** Ein Bild im Text (`position: 'here'`), das etwas zu hoch für den in seiner Spalte verbliebenen Raum ist, auch eines, dessen Legende über den Seitenfuß hinauslaufen würde, wird innerhalb seines Sicherheitsbereichs beschnitten, um dort zu bleiben, statt in die nächste Spalte oder auf die nächste Seite zu wandern und diese hier kurz zu lassen.
+- **Seiten, die niedriger sind als die Abbildung.** Mit `layout.fitFiguresToPage` wird ein Bild, das zu hoch für die Seite ist, zuerst innerhalb seines Sicherheitsbereichs beschnitten, bei gleicher Breite, und nur verkleinert, wenn es dann noch zu hoch ist (siehe [Konfiguration › Layout](/de/docs/configuration-page-layout#layout)).
+- **Bänder, die niedriger sind als die Abbildung.** Ein Gleitobjekt, dessen `placement.shrink` es auf den Raum seines Platzes skaliert, wird zuerst innerhalb seines Sicherheitsbereichs beschnitten, bei gleicher Breite, und erst dann verkleinert; der Hebel `flexFigure` unten lässt es nie über diesen Raum hinaus wachsen.
+- **Spaltenausgleich.** Ein Bild mit Sicherheitsbereich, das im Text einer kurzen Spalte steht oder am Kopf oder Fuß dieser Spalte nur über diese Spalte gleitet, wächst um ganze Zeilen des Grundlinienrasters, um die leeren Zeilen der Spalte zu füllen. Ein höheres Bild hinterlässt kein sichtbares Loch, daher wird dieser Hebel, `flexFigure`, direkt nach dem Kasten, der die Spalte abschließt, versucht und vor jedem zusätzlichen Abstand über Überschriften oder nach Listen. Ein Gleitobjekt am Kopf einer Spalte auf der Schlussseite eines Kapitels oder in einem Schlussband wächst nicht, da diese Spaltenköpfe auf gleicher Höhe bleiben (siehe [Konfiguration › Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich)).
+
+Der VDT verzeichnet den Beschnitt am Ressourcenblock: `bodySource` ist der in `bodyRect` gezeigte Teil des Bildes, in denselben Bruchteilen (fehlt, wenn das ganze Bild es füllt), und `bodyFlex` gibt die px an, um die der Inhalt noch schrumpfen und wachsen könnte, und die px, um die die Hebel ihn bereits verändert haben (`{ shrink, grow, delta }`). Die Canvas-Vorschau und das PDF beschneiden auf den Inhalt und zeichnen das ganze Bild in unbeschnittener Größe; der HTML-Betrachter und das EPUB mit festem Layout setzen das Bild mit `object-fit: cover` und einer passenden `object-position`; ein umfließendes EPUB, das keine Seite zu füllen hat, zeigt das ganze Bild. Ein Host, der Bilder selbst zeichnet, kann die Hilfsfunktionen nutzen, die `postext` exportiert: `resourceSafeArea` und `normalizeSafeArea` (der Bereich, wie die Engine ihn liest, oder `undefined`), `safeAreaHeightRange` (der niedrigste und der höchste Inhalt bei einer Breite), `safeAreaSource` (der bei einer gegebenen Höhe gezeigte Teil) und `uncroppedPictureBox` (wo das ganze Bild vor dem Beschneiden zu zeichnen ist), mit dem Typ `ResourceSafeArea`. In der Sandbox heißt das Feld bei einem Bild im [Bedienfeld Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) **Sicherheitsbereich**.
+
+Rezept Nº 116 im Rezeptbuch, [Fotos, die eine kurze Spalte füllen](/de/cookbook/photos-fill-short-columns), setzt eine zweispaltige Zeitschriftenreportage zweimal, ohne und mit Sicherheitsbereichen, sodass Sie die Seiten nebeneinander vergleichen können.
+
+
+### Sprecheranker und Sperrzonen
+
+Ein Bild, das die Zeichnung eines Comic-Panels ist, kann für das Lettering außerdem angeben, wo seine Figuren sind (siehe [Comics](/de/docs/document-format-directives#comics)). `anchors` listet einen Punkt je Sprecher und `avoid` die Bereiche, die keine Sprechblase verdeckt, beide in Bruchteilen des Bildes wie der Sicherheitsbereich:
+
+```ts
+const radio: Resource = {
+  id: 'lh-radio', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+  bitmap: { fileId: 'lh-radio.jpg', format: 'jpeg', width: 1000, height: 1000 },
+  safeArea: { x: 0, y: 0.36, width: 0.62, height: 0.56 },
+  anchors: [
+    // the keeper: mouth, head (for thought balloons) and face
+    { id: 'tomas', x: 0.345, y: 0.52, head: { x: 0.38, y: 0.44 }, face: { x: 0.29, y: 0.4, width: 0.16, height: 0.18 } },
+  ],
+  avoid: [{ x: 0, y: 0.44, width: 0.22, height: 0.26 }], // the radio
+};
+```
+
+Die `id` eines Ankers ist der Sprecherschlüssel des Skripts (`tomas: …`) oder `sfx` für den Punkt, an dem sich die Geräuscheffekte des Panels sammeln; `x` und `y` sind der Mund, auf den der Dorn einer Sprechblase zeigt, `head` der Punkt, auf den die Bläschen einer Gedankenblase zeigen (ohne Angabe der Mund), und `face` ein Rechteck, das keine Sprechblase verdeckt. Die Engine bildet jeden Punkt über Beschnitt und Spiegelung des Panels ab, sodass ein Dorn auf seinem Sprecher bleibt, welche Form das Panel auch annimmt; ein Anker außerhalb des Sicherheitsbereichs löst `comicAnchorOutsideSafeArea` aus, weil ein Beschnitt ihn abschneiden kann. Eine dritte Liste, `faces`, enthält die Gesichter von Figuren, die nicht sprechen, als Rechtecke wie die von `avoid`: Keine Sprechblase verdeckt sie, während eine Sperrzone nachgibt, wenn ein Panel keinen anderen Platz hat. Anker gehören zum Bild und dienen jeder Übersetzung des Comics. Nur Comic-Panels lesen sie; eine Abbildung ignoriert sie. In der Sandbox werden sie im Dialog **Sicherheitsbereich und Lettering** des [Bedienfelds Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) markiert.
+
+
+### Videos
+
+Eine **Video**-Ressource (`kind: 'video'`) ist ein YouTube- oder Vimeo-Video oder ein eigenes Video: eine im Buch gespeicherte Datei (MP4, WebM) oder eine unter einer Webadresse, eine Datei auf einem Server oder ein **HLS-Stream** (eine `.m3u8`-Playlist). Es wird wie ein Bild platziert, beschriftet, gleiten gelassen und zitiert und in einer eigenen Folge nummeriert: Der eingebaute Typ `video` druckt *Video 1.1*, *Video 1.2* … neben *Figure 1.1* und *Table 1.1* (siehe [Konfiguration › Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Jede Ausgabe zeigt es, so gut sie kann:
+
+<table>
+  <thead>
+    <tr>
+      <th>Ausgabe</th>
+      <th>Was sie zeigt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Canvas, PDF</td>
+      <td>Das <strong>Posterbild</strong>, ein Einzelbild des Videos, mit einem Abspielzeichen und einem QR-Code, der das Video öffnet (<a href="/de/docs/configuration-resources#videostil">Konfiguration › Videostil</a>). Im PDF ist das Posterbild außerdem ein Link zum Video.</td>
+    </tr>
+    <tr>
+      <td>Folio</td>
+      <td>Das Posterbild, wie gedruckt. Ein Klick darauf spielt das Video <strong>auf der Seite selbst</strong> ab, und es läuft weiter, während das Blatt umgeblättert wird (siehe <a href="#videos-auf-den-seiten-von-folio">Videos auf den Seiten von Folio</a> unten). YouTube- und Vimeo-Videos bleiben Posterbilder.</td>
+    </tr>
+    <tr>
+      <td>HTML-Betrachter</td>
+      <td>Der <strong>Player</strong> des Videos: der von YouTube oder Vimeo oder der HTML5-Player des Browsers für eine Datei oder eine Adresse. Ein HLS-Stream läuft nativ in Safari und im aktuellen Chrome; anderswo bindet der Host einen Player wie hls.js ein, wie es die Sandbox tut. Mit <code>videoStyle.html: 'poster'</code> zeigt er stattdessen das gedruckte Posterbild.</td>
+    </tr>
+    <tr>
+      <td>EPUB</td>
+      <td>Eine Datei läuft im eigenen Player des Lesesystems, im Buch verpackt oder von ihrer Produktionsadresse gelesen. Ein YouTube- oder Vimeo-Video ist sein Posterbild, mit dem Video verlinkt: Ein EPUB darf den Player einer Webseite nicht einbetten. Ein HLS-Stream ist ebenfalls sein verlinktes Posterbild: Eine HLS-Playlist ist kein Medientyp, den ein EPUB abspielen darf. Wo das Lesesystem Skripte ausführt, halten sich die Dateien einer Seite oder eines Kapitels an <code>player.exclusive</code>: Das Starten einer Datei pausiert die anderen, mit denen sie nicht gleichzeitig läuft.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const talk: Resource = {
+  id: 'keeper-talk', typeId: 'video', kind: 'video',
+  caption: 'The keeper explains the lamp.',
+  altText: 'A lighthouse keeper beside the lamp',
+  createdAt: 0, updatedAt: 0,
+  video: {
+    source: 'youtube',                        // 'youtube' | 'vimeo' | 'file'
+    url: 'https://youtu.be/aqz-KE-bpKQ',
+    poster: { fileId: 'talk.jpg', format: 'jpeg', width: 1280, height: 720 },
+    start: 30,                                // plays from 0:30; the printed link starts there too
+  },
+};
+```
+
+Der Text zitiert ein Video wie eine Abbildung: `:ref{id="keeper-talk"}` druckt *Video 1.1* und lässt das Posterbild an den ersten freien Platz nach dem Verweis gleiten, und `::resource{id="keeper-talk"}` mit `placement.position: 'here'` setzt es im Text. Die Felder von `Resource.video` (`ResourceVideo`):
+
+<table>
+  <thead>
+    <tr>
+      <th>Feld</th>
+      <th>Typ</th>
+      <th>Bedeutung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td><code>'youtube'</code> · <code>'vimeo'</code> · <code>'file'</code></td>
+      <td>Woher das Video abgespielt wird: von einer YouTube- oder Vimeo-Seite oder als eigenes Video (<code>'file'</code>), hochgeladen oder unter einer Adresse.</td>
+    </tr>
+    <tr>
+      <td><code>url</code></td>
+      <td><code>string</code></td>
+      <td>YouTube oder Vimeo: die Adresse des Videos in beliebiger Form (eine Watch-Seite, <code>youtu.be</code>, Shorts, ein Embed-Link, <code>youtube-nocookie.com</code>; eine Vimeo-Seite, Kanalseite oder ein nicht gelisteter Link mit seinem Hash). Eine Datei: ihre <strong>Produktionsadresse</strong>, unter der das veröffentlichte Buch sie findet. Ein eigenes Video ohne eigene Datei wird von dieser Adresse abgespielt: eine MP4- oder WebM-Datei auf einem Server oder ein HLS-Stream (<code>…/master.m3u8</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fileId</code>, <code>format</code></td>
+      <td><code>string</code></td>
+      <td>Eine Datei: das hochgeladene Video, wie eine Bitmap außerhalb des Dokuments gespeichert, und sein Format: <code>'mp4'</code>, <code>'webm'</code>, <code>'ogv'</code>, <code>'mov'</code> oder <code>'hls'</code> für einen HLS-Stream. Ohne Format bestimmt es die Dateiendung der Adresse (<code>.m3u8</code> ist <code>'hls'</code>), sonst <code>'mp4'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>poster</code></td>
+      <td><code>{'{ fileId, format, width, height }'}</code></td>
+      <td>Das Posterbild, eine Bitmap.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>height</code>, <code>duration</code></td>
+      <td><code>number</code></td>
+      <td>Die Bildgröße des Videos in px (sein Seitenverhältnis, wenn es kein Posterbild gibt) und seine Länge in Sekunden.</td>
+    </tr>
+    <tr>
+      <td><code>posterTime</code></td>
+      <td><code>number</code></td>
+      <td>Die Sekunde des Einzelbildes einer Datei, das als Posterbild dient, gespeichert, damit es erneut gewählt werden kann.</td>
+    </tr>
+    <tr>
+      <td><code>start</code>, <code>end</code></td>
+      <td><code>number</code></td>
+      <td>Von <code>start</code> bis <code>end</code> Sekunden abspielen. Der QR-Code und der PDF-Link beginnen ebenfalls bei <code>start</code>.</td>
+    </tr>
+    <tr>
+      <td><code>player</code></td>
+      <td><code>VideoPlayerOptions</code></td>
+      <td>Die Player-Optionen dieses Videos, über <code>videoStyle.player</code> gelegt.</td>
+    </tr>
+  </tbody>
+</table>
+
+**Das Posterbild.** Es wird in der Satzbreite seines Platzes gesetzt (oder im Anteil `placement.width` davon), in seinem eigenen Seitenverhältnis, unabhängig von seiner Pixelgröße: Ein bildschirmgroßes Einzelbild wird vergrößert, statt klein gedruckt zu werden. Wie eine Bitmap kann es einen [Sicherheitsbereich](#sicherheitsbereich) tragen und `placement.align` folgen. Ein Video ohne Posterbild druckt einen dunklen Kasten im Seitenverhältnis des Videos (16:9, wenn nichts anderes angegeben ist) mit seinen Überlagerungen und löst die Inhaltswarnung `videoWithoutPoster` aus. In der Sandbox wird das Posterbild eines YouTube- oder Vimeo-Videos von der Plattform geholt, sobald seine Adresse eingegeben wird, und das einer Datei ist ein Einzelbild, das Sie im Video auswählen.
+
+**Die Adresse.** Der QR-Code und der PDF-Link öffnen die Seite des Videos, `https://youtu.be/<id>` oder `https://vimeo.com/<id>`, ab `start`. Eine Datei hat keine Seite: Sie öffnen ihre Produktionsadresse, von der auch ein Video ohne eigene Datei abgespielt wird (eine MP4-Datei auf einem Server, ein HLS-Stream). Ohne eine solche Adresse erhält der Druck weder QR-Code noch Link (`videoWithoutUrl`), und eine HTML- oder EPUB-Ausgabe, die die Datei nicht mitführt, zeigt das Posterbild. Eine YouTube- oder Vimeo-Adresse, die kein Video dieser Plattform nennt, löst `videoUrlInvalid` aus; statt eines Players wird das Posterbild gezeigt.
+
+**Die Player.** Die Player-Optionen (Bedienelemente, Download-Schaltfläche, Vollbild, Geschwindigkeitsmenü, Bild-in-Bild, Casting, automatisches Abspielen, stummer Start, Schleife, Vorladen, datenschutzfreundliche Einbettung) werden für das ganze Buch in `videoStyle.player` und für ein einzelnes Video in `video.player` gesetzt; jeder Player berücksichtigt, was er kann (siehe [Konfiguration › Videostil](/de/docs/configuration-resources#videostil)). Das HTML-Backend erhält die abspielbare URL einer Datei über die Option `resourceVideoUrl(fileId)`, so wie es Bilder über `resourceImageUrl` erhält, und fällt auf die Produktionsadresse zurück. Seine Option `videos: { files, streams, hls }` wählt je Quelle zwischen Player und Posterbild, über `videoStyle.html` hinweg (`hls`, ein von einer HLS-Adresse abgespieltes Video, folgt ohne eigene Angabe `files`); der EPUB-Writer verwendet sie. Ein `<video>`, das eine HLS-Adresse abspielt, trägt `data-pt-hls`, sodass ein Host ihm in Browsern ohne natives HLS einen Player geben kann (Safari und das aktuelle Chrome spielen es unverändert ab). In einem Buch, das von rechts nach links läuft, werden der Player und die Überlagerungen des Posterbildes wie ein Bild zurückgedreht, damit der QR-Code lesbar bleibt.
+
+**Im VDT.** Der Ressourcenblock eines Videos hat `kind: 'video'`, sein Posterbild als `fileId` / `format` (wie eine Bitmap gezeichnet) und `video` (`VDTResourceVideo`): den `link`, zu dem ein Leser geschickt wird, die YouTube- oder Vimeo-`embedUrl` mit angewandten Player-Optionen, die `fileId` einer Datei, den `mimeType` eines eigenen Videos (seiner Datei oder nur seiner Adresse, `application/vnd.apple.mpegurl` für HLS), den Bereich `start` / `end`, den aufgelösten `player`, `linkPoster`, `html` und die Überlagerungen `playMark` und `qr` (die QR-Module als Zeilen aus `'0'` / `'1'`), mit Rechtecken relativ zur linken oberen Ecke des Inhalts. Ein Host, der Videos selbst zeichnet, kann die Hilfsfunktionen nutzen, die `postext` exportiert: `parseVideoUrl`, `videoWatchUrl`, `resourceVideoLink`, `videoEmbedUrl`, `videoEmbedAllow`, `videoElementAttributes`, `mediaFragment`, `videoMimeType`, `videoFormatOfUrl`, `resourceVideoFormat`, `isHlsMimeType`, `HLS_MIME_TYPE`, `youtubePosterUrls`, `encodeQr`, `layoutVideo`, `playMarkTriangle` und `qrModuleRuns`.
+
+**In einem Paket.** Eine `.postext`-Datei enthält eine Videodatei (`resources/<id>.mp4`) und das Posterbild (`resources/<id>.poster.jpg`): Der Manifesteintrag nennt sie in `file` und `poster`, gibt die Größe des Posterbildes in `width` / `height` an und hält den Rest ohne Datei-IDs in `video`. `bundleVideoUrl(bundle)` ist der `resourceVideoUrl`-Resolver über die Dateien eines Pakets. Ein Video, das nur von einer Adresse abgespielt wird, enthält keine Datei: Sein Eintrag hat nur das Posterbild. In einem zweisprachigen Paket kann eine Sprache einem Video in `localized[…].resources` ein eigenes `poster` und `video` geben (einen anderen Schnitt unter eigener Adresse).
+
+#### Videos auf den Seiten von Folio
+
+Im [3D-Buch](/de/docs/configuration-html-folio-epub#ein-3d-buch-postext-folio) spielt ein eigenes Video auf der Seite, auf der es gedruckt ist. Ein Klick auf das Posterbild startet es dort, was auch immer der Zeiger am Buch gerade tut (umblättern, die Ansicht drehen oder Text auswählen): Der Shader der Seite zeichnet die Einzelbilder des Videos über das Posterbild, sodass sich das Bild beim Umblättern mit dem Papier biegt und wölbt, und es läuft während des Umblätterns weiter. Ein Klick auf ein laufendes Video pausiert es, ein Klick auf ein pausiertes setzt es fort, und Leertaste oder Eingabetaste tun dasselbe für das erste Video der aufgeschlagenen Doppelseite. Das Starten eines anderen Videos stoppt das laufende (es kehrt zu seinem Posterbild zurück), und ein Video stoppt, wenn das Buch auf einer Doppelseite zur Ruhe kommt, die es nicht mehr zeigt, oder bei seinem `end`. Über einem Video, das er abspielen kann, wird der Zeiger zur Hand; ein Ziehen, das auf einem Video beginnt, blättert weiterhin die Seite um oder dreht die Ansicht. Ein Video, das von selbst startet (`video.player.autoplay`), beginnt von selbst, wenn das Buch zum ersten Mal auf seiner Doppelseite zur Ruhe kommt, sobald das Buch fertig aufgebaut ist (auch wenn ein Host es schrittweise setzt), und in diesem Betrachter nie wieder.
+
+Ein Video, das neben den anderen läuft (`video.player.exclusive: false`, seit postext 1.18), ändert beide Regeln. Sein Start stoppt nur die exklusiven Videos, sodass mehrere solche Videos gleichzeitig laufen; der Start eines exklusiven Videos stoppt es ebenfalls. Mit `autoplay` startet es stumm jedes Mal, wenn das Buch auf seiner Doppelseite zur Ruhe kommt, und stoppt, wenn die Doppelseite umgeblättert wird: Die stummen Schleifen (`loop`) einer Seite laufen jedes Mal gemeinsam, wenn der Leser sie aufschlägt.
+
+- **Was abgespielt wird.** Eine Datei (der Host macht aus ihrer `fileId` mit der Option `videoUrl` eine URL, in der Sandbox eine Object-URL) oder, ohne Datei, ihre Adresse: MP4, WebM oder ein HLS-Stream. Ein HLS-Stream läuft über [hls.js](https://github.com/video-dev/hls.js), wo immer der Browser Media Source Extensions hat (beim ersten Abspielen geladen; eine optionale Peer-Abhängigkeit von `postext-folio`), begrenzt auf die Variante, die der Bildgröße auf dem Bildschirm am nächsten kommt, sodass ein Bild von einigen hundert Pixeln Höhe nie eine 4K-Variante lädt; das eigene HLS des Browsers ist die Rückfallebene. Seine Anfragen tragen eine eigene Abfrage `pt-cors`, sodass der Browser-Cache ihnen nie eine Kopie liefert, die ein anderer Player ohne CORS geholt hat. YouTube und Vimeo laufen in iframes, die WebGL nicht zeichnen kann: Ein Klick auf ihr Posterbild blättert die Seite um wie überall sonst.
+- **Ursprungsübergreifendes Lesen.** WebGL zeichnet ein Video nur, wenn sein Server das Lesen erlaubt (CORS, `Access-Control-Allow-Origin`). Ein Video, das nicht gelesen werden kann, bleibt ein Posterbild, und `onVideo` erhält `error`.
+- **Ton.** Der Klick lässt das Video mit Ton abspielen; ein Browser, der das trotzdem verweigert, spielt es stumm ab. Ein Video, das von selbst startet, hat Ton, sobald der Leser auf der Seite geklickt oder getippt hat (das Aufschlagen zählt); vorher startet es stumm, und ein Klick darauf schaltet den Ton ein, bevor der nächste es pausiert. `video.player.muted` startet es stumm, `loop` spielt es erneut ab, und `start` / `end` geben den abgespielten Teil an.
+- **Auf jeder Seite.** Das Bild wird dort gezeichnet, wo das Layout es hinsetzt: gedreht bei einer gedrehten Ressource, aufrecht auf einer Seite mit senkrechtem Satz und ungespiegelt in einem Buch, das von rechts nach links läuft, wie das Posterbild. Ein innerhalb seines [Sicherheitsbereichs](#sicherheitsbereich) beschnittenes Posterbild beschneidet das Video auf dieselbe Weise.
+- **Ohne WebGL2** oder mit reduzierter Bewegung läuft das Video in einem HTML-`<video>`, das über die Seite gelegt wird.
+
+```ts
+const book = createFolioFromDocument(container, doc, {
+  // An uploaded video's playable URL (an object URL over its bytes).
+  videoUrl: (fileId) => urls.get(fileId),
+  onVideo: ({ resourceId, state }) => console.log(resourceId, state), // playing | paused | stopped | error
+});
+book.stopVideo();
+```
+
+`videos: false` schaltet es ab. `toggleVideoAt({ page, x, y })` tut, was ein Klick an dieser Stelle tut, und `pageVideoSpots(page, doc)` listet, wo jedes Video auf einer Seite liegt, für einen Host, der eigene Bedienelemente zeichnet.
+
+Zwei Rezepte im Rezeptbuch setzen Videos: Nº 131, [Ein Filmclub-Programm mit QR-Codes auf den Postern](/de/cookbook/film-club-video-qr), druckt jeden Film als Titelkarte mit Abspielzeichen und QR-Code, und Nº 132, [Ein Laborblatt, dessen Clips auf dem Bildschirm und im EPUB laufen](/de/cookbook/pendulum-lab-video-players), setzt die Player-Optionen für die HTML-Ausgabe und verpackt seine eigenen Clips in einem EPUB mit festem Layout.

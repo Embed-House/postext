@@ -1,0 +1,390 @@
+{/* docs/configuration-page-flow-ja.mdx */}
+
+export const metadata = {
+  title: '設定：オーファン、ウィドウ、段末そろえ',
+  sidebarTitle: 'オーファン、ウィドウ、段末そろえ',
+  description: '段の区切りをまたいで行やブロックを離さない規則と、すべての段の終わりをそろえる調整手段',
+  lang: 'ja',
+  lastUpdated: '2026-10-16',
+  readingTime: '22分',
+  order: 10,
+  parent: 'configuration',
+  plainSummary: "このページでは、Postextが段やページの終わりをどう決めるかを説明します。段落の1行だけが段の上や下に取り残されないようにし、見出しが本文と離れないようにします。この規則のために、ほかより短い段ができることがあります。そこでPostextは、決まった順序で少しずつ調整し、どの段も同じ高さで終わるようにします。このページでは、それぞれの規則と調整を挙げ、どれが使われたかを確かめる方法を示します。",
+};
+
+# 設定：オーファン、ウィドウ、段末そろえ
+
+
+## オーファン、ウィドウ、ラント、分割禁止の規則
+
+これらのデメリットの仕組みは[ハイフネーションと両端そろえ](/ja/docs/justification)を参照してください。この節は、それらを制御する`bodyText`のキーのリファレンスです。
+
+本文の設定には、ハイフネーションと語間の上限・下限のほかに、構造的に不格好な段落の分割を防ぐ緩やかな規則があります。これらはすべてデメリットとしてKnuth-Plassの改行アルゴリズムに渡されます。厳格な規則を強制することはなく、レイアウトをすっきりした分割の方向に寄せるだけです。どれかを実質的に無効にするには、その`*Penalty`の値を`0`にします。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>avoidOrphans</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>段落が、次の段の頭で<code>orphanMinLines</code>行未満で終わるのを避けます。<code>japan</code>地域の文字グリッド（<code>cjk.grid</code>）では、既定値は<code>false</code>です。</td>
+    </tr>
+    <tr>
+      <td><code>orphanMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>段落を分割するとき、次の段の頭に必要な最小の行数。<code>avoidOrphans</code>が<code>true</code>のときだけ有効です。</td>
+    </tr>
+    <tr>
+      <td><code>orphanPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>オーファンの制約に反したときに加えるデメリット。値を大きくするほど、アルゴリズムはオーファンを強く避けます。<code>0</code>でペナルティーを無効にします。</td>
+    </tr>
+    <tr>
+      <td><code>avoidOrphansInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>true</code>にすると、段落だけでなくリスト項目もオーファンから保護します。<code>avoidOrphans</code>が<code>true</code>のときだけ効果があります。</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidows</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>段落が、現在の段の末尾で<code>widowMinLines</code>行未満で始まるのを避けます。文字グリッド（<code>cjk.grid</code>）では既定値は<code>false</code>で、ページはグリッドが数える行数を収めます。</td>
+    </tr>
+    <tr>
+      <td><code>widowMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>段落を分割するとき、現在の段の末尾に必要な最小の行数。<code>avoidWidows</code>が<code>true</code>のときだけ有効です。</td>
+    </tr>
+    <tr>
+      <td><code>widowPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>ウィドウの制約に反したときに加えるデメリット。<code>0</code>でペナルティーを無効にします。</td>
+    </tr>
+    <tr>
+      <td><code>avoidWidowsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>true</code>にすると、リスト項目もウィドウから保護します。<code>avoidWidows</code>が<code>true</code>のときだけ効果があります。</td>
+    </tr>
+    <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>2つの段またはページに分かれる短いリストの扱いです。対象は、本文の流れの中にあって項目が<code>shortListMaxItems</code>個以下のリストです。3項目のリストが1 + 2に分かれる場合などが当たります。<code>avoidOrphansInLists</code>と<code>avoidWidowsInLists</code>は1つの項目の行を離さず、この規則は1つのリストの項目を離しません。<code>'allow'</code>は、ほかのリストと同じく、段の終わりでリストを切ります。<code>'warn'</code>は組版を変えずに、切られたリストを1件ずつ報告します（<code>shortListSplit</code>の警告。<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>'avoid'</code>はリスト全体をまとめて組みます。段にすでにある内容の下に収まらないときはリストを次の段に送り、すぐ上の見出しと、リストを導入するコロンの行（<code>keepColonWithList</code>）も一緒に送ります。空の段より高いリストは、ほかのリストと同じく切られ、報告されます。<code>:::callout</code>の中のリストは囲み自身の分割の規則に従います。<code>:::toc</code>と<code>:::index</code>の項目はリストではありません。postext 1.28から。</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td><code>shortListSplit</code>がリストを短いとみなす項目数の上限です。入れ子のリストの項目も数えます。1以上の整数。postext 1.28から。</td>
+    </tr>
+    <tr>
+      <td><code>avoidRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>段落が非常に短い最終行、つまり<em>ラント</em>（たとえば短い1語だけの行）で終わるのを避けます。<code>optimalRagged</code>を使うと、行末不ぞろいのテキストにも適用されます。中国語・日本語・韓国語の段落は、1文字だけ（単独または閉じ記号を伴うもの）の行（孤字）で終わりません。上の行が字間の上限内で引き続き両端そろえにできる場合、その行から最後の1文字を送ります。行頭そろえ、行末そろえ、中央そろえの行も同じように1字を送り、1字分短くなります。<code>cjk.grid.fullLines</code>（原稿用紙）を指定すると、そうした行はすべてのマスを埋め、段落は1字で終わることがあります。</td>
+    </tr>
+    <tr>
+      <td><code>runtMinCharacters</code></td>
+      <td><code>number</code></td>
+      <td><code>20</code></td>
+      <td>段落の最終行のしきい値。文字数ではなく語間の数で数えます。行の幅が<code>runtMinCharacters × normalSpaceWidth</code>ピクセルより狭いと、その行はラントです。語間は多くの本文用書体で1/4–1/3 em、つまり小文字の約半分の幅なので、既定値の20は4–7 em未満、およそ8–12文字未満の最終行を捉えます。約N文字未満の最終行を捉えるには、2 × N程度に設定します。</td>
+    </tr>
+    <tr>
+      <td><code>runtPenalty</code></td>
+      <td><code>number</code></td>
+      <td><code>1000</code></td>
+      <td>Knuth–Plassの二乗デメリットの式に加える、バッドネス換算の値（行の<em>バッドネス</em>と同じ尺度で、バッドネスは10000で飽和します）。<code>0</code>でペナルティーを無効にします。</td>
+    </tr>
+    <tr>
+      <td><code>gradedRuntPenalty</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>ラントのペナルティーを、最終行がどれだけ短いかに応じて段階的にします。しきい値<em>t</em>未満の幅<em>w</em>の最終行は、ペナルティー全体ではなく<code>runtPenalty × (1 − w / t)</code>のコストになります。2語で終わる場合は1語で終わる場合よりコストが小さくなり、上の行に余裕があれば改行処理は語を1つ下の行に送ります（'…sallies of our' / 'minds.'ではなく'…sallies of' / 'our minds.'）。既定ではオフで、どのラントも同じコストになり、改行処理は上の行を詰めた状態に保ちます。</td>
+    </tr>
+    <tr>
+      <td><code>avoidRuntsInLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>true</code>にすると、リスト項目にもラントのペナルティーを適用します。<code>avoidRunts</code>が<code>true</code>のときだけ効果があります。</td>
+    </tr>
+    <tr>
+      <td><code>tightenRunts</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>ペナルティーでラントを避けられなかったとき、代わりに段落を1行短く組みます。語間を詰め（<code>minWordSpacing</code>を超えない範囲）、それだけで行が収まらなければ、わずかなマイナスのトラッキングを加えます。短く組むことで、両端そろえの行が<code>maxWordSpacing</code>を超えて伸びる場合、段落にすでにそれよりゆるい両端そろえの行があるときはその行を超えて伸びる場合、または行末不ぞろいで組む行（通常のスペースの3倍を超える行）が元の段落より増える場合は、短く組むのをやめ、ラントはそのまま残ります。行末不ぞろいのテキストの語間は幅を変えないので、そこではトラッキングだけが働きます。<code>optimalLineBreaking</code>と<code>avoidRunts</code>（行末不ぞろいのテキストではさらに<code>optimalRagged</code>）が必要です。</td>
+    </tr>
+    <tr>
+      <td><code>maxRuntTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>ラントの解消に使えるトラッキングの最大量。1/1000em単位で（InDesignの単位で、10は1文字あたり0.01em）、詰める方向に適用します。<code>0</code>にすると、解消を語間だけに任せます。</td>
+    </tr>
+    <tr>
+      <td><code>slackWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>「段の使われない空間」の二乗コストに掛ける重み。値を大きくするほど、レイアウトは段を隙間なく埋める方向を選びます。<code>0</code>にすると、余りに対する圧力を完全に無効にします。</td>
+    </tr>
+    <tr>
+      <td><code>keepColonWithList</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>段落がコロンで終わり、そのまま直後のリストを導入するとき、コロンを含む最終行をリストから離しません。段落を置くと最初のリスト項目を同じ段・ページで始める余地がなくなる場合、最終行（段落が1行だけなら段落全体）をリストと一緒に次の段に送ります。どれだけの余地があれば十分かは<code>colonListRoom</code>で決まります。この規則で段落全体を送ることになり、その段で段落の直前に見出しが続いている場合は、<code>headings.keepWithNext</code>が保たれるよう、その見出しも一緒に送ります。</td>
+    </tr>
+    <tr>
+      <td><code>colonListRoom</code></td>
+      <td><code>'item' | 'line'</code></td>
+      <td><code>'item'</code></td>
+      <td><code>keepColonWithList</code>がコロンの行の下に求める余地。<code>'item'</code>：リストのオーファンとウィドウの規則が段の末尾に残す最初の項目の分。そこで分割できるなら1行、規則が項目を分割しない場合（たとえば2行の項目）はその全体です。<code>'line'</code>：postext 1.4までと同じく1行。この場合、規則が分割しない最初の項目は単独で次の段に送られ、コロンの行が段の末尾に残ります。<code>configVersion</code> 6より前に保存した設定で、本の中にコロンでリストを導入する箇所があるものは<code>'line'</code>で読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。ほかの値は<code>'item'</code>として読み込まれます。</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateAcrossColumns</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
+      <td><code>true</code></td>
+      <td>段やページがハイフネーションした語で終わることを許します（InDesignの<em>Hyphenate Across Column</em>）。<code>false</code>にすると、段の切れ目をまたぐ段落を改行し直し、その段での最終行が語の途中で終わらないようにします。差分は上の行の語間が<code>maxWordSpacing</code>と<code>minWordSpacing</code>の範囲で吸収します。これは優先度の指定で、その範囲内の改行位置で避けられない場合はハイフンが残ります。段落のすべての段の切れ目を試します。最初の切れ目と、段がいっぱいになる位置にあるそれ以降の切れ目は1回の改行し直しでまとめて扱い、それ以外の位置にある切れ目（ウィドウを避けたもの、帯の高さをそろえるために切ったもの）はその段から別に改行し直します。このとき、前の段ですでに組んだ行は改行位置を保ち、残りだけを改行します。<code>'withinPage'</code>は、ページを閉じる行だけを守ります。語は同じページの2つの段にまたがって分割されてもよく、ページの最終行は範囲が許すかぎり語の途中で終わりません。<code>false</code>より変更する行が少なく、3段組み以上では段末の3つに2つがページの内側にあるので、この違いが効きます。1段組みでは2つの値で同じ行になります。同じページの後ろに本文を受け取る段がなければ、その段がページを閉じます。フロート専用のサイド段は本文を受け取らず、表や図で埋まった段も受け取りません。囲みの本文には影響しません。<code>optimalRagged</code>を使うと、行末不ぞろいの段落も同じように改行し直します。語間の幅は変わらないので、行末の位置だけが動きます。改行し直すたびに段落をもう一度計測するので、段末のハイフンが多い本ではレイアウトが少し遅くなります。<code>optimalLineBreaking</code>が必要で、行末不ぞろいのテキストではさらに<code>optimalRagged</code>が必要です。</td>
+    </tr>
+    <tr>
+      <td><code>paragraphContainerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td><code>'collapse'</code></td>
+      <td>段落で終わる<code>:::paragraphs</code>コンテナーの下、つまりその段落と次のブロックの間のアキ（<a href="/ja/docs/configuration-styles#paragraphsコンテナー"><code>:::paragraphs</code>コンテナー</a>を参照）。<code>'collapse'</code>：スタイルの<code>spaceBetween</code>と<code>marginBottom</code>、およびコンテナーの周りのテキストの段落間隔（<code>paragraphSpacing</code>を使う場合は1行。囲みの中なら囲みの値）のうち大きいほうを取り、本文テキストの2つの段落の間と同様に、次のブロックが自身の上に取るアキと統合します。参考文献の下の見出しは、そのマージンに項目の間隔を足した位置ではなく、自身の<code>marginTop</code>だけ下に置かれます。<code>'add'</code>：postext 1.4までと同じく、グリッドへのスナップの前に最終行の下にスタイルのアキだけを置き、その下に次のブロック自身の上のアキを加え、段落間隔は含めません。そのため、コンテナーの後の段落がほかのどこよりもコンテナーに近づくことがありました。<code>configVersion</code> 8より前に保存した設定で、段落スタイルを宣言し、本の中にそうしたコンテナーがあるものは<code>'add'</code>で読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。マイナスの<code>marginBottom</code>は、どちらの場合も次のブロックを引き上げます。段落スタイルは自分のコンテナーの規則を別に決められます（<code>containerSpacing</code>、postext 1.28以降）。</td>
+    </tr>
+  </tbody>
+</table>
+
+**ラントについて**。ラントとは、最終行が短すぎてまともな1行に見えない段落のことで、典型的には段落の末尾に短い語が1つか2つ取り残されたものです。判定は通常のスペース幅に対する行のピクセル長に基づくため、`runtMinCharacters`は現在の文字サイズに自動的に適応します。`runtMinCharacters × spaceWidth`より見た目が広い短い語は問題なく、それより狭い語（または本当に1語だけの行）にはラントのペナルティーがかかります。しきい値は語間で数え、語間の幅は文字の約半分なので、既定値の20はおよそ8–12文字の最終行にあたります。どのラントもペナルティー全体のコストになるので、しきい値未満の2つの終わり方のうち、改行処理は上の行を詰めたほうを選びます。`gradedRuntPenalty`を使うと、それぞれを不足分に応じて評価し、長いほうの終わり方が選ばれます。数学的な補足として、既定の`runtPenalty`である1000では、ラントの回避は、語間の伸びがおよそr≈2.15までの改行位置の組み合わせのどれよりも優先されます。
+
+**厳格ではなく緩やかな規則**。これらの規則はどれも分割を*禁止*できません。エンジンは常にレイアウトを生成します。これらはデメリットであり、アルゴリズムはバッドネス、ハイフネーションのコスト、適合クラス（fitness class）の滑らかさ、これらの構造上のペナルティーを1つの大域的な最適化の中で比較し、総コストが最も小さい改行位置の組み合わせを選びます。より強い保証が必要ならペナルティーを上げ、ペナルティーを緩めたほうが読みやすい文書なら下げてください。
+
+
+## 段末そろえ
+
+出版社は、どの段もページの上端から始まり、下端にそろって終わることを求めます。改行・改段の規則（オーファンとウィドウの防止、見出しと本文の結び付き、分割できない図）は、どうしても短い段を生みます。段の下にベースライングリッドの空き行が1行以上残るのです。段末そろえを有効にすると、エンジンは組版者と同じことを行い、編集上の優先順位に従って調整手段を適用します。
+
+1. **段を閉じる囲み**：短い段の末尾にある囲みを、その下の空きちょうどの分だけ下げ、下端をページの最後のグリッド位置、つまり隣の段の最終行と同じ高さにそろえます。その空きが1行に満たなくても、何も別の段へ移らない限りはすべて使います。既定ではほかのどの調整手段よりも先に働いて空きをすべて使うため、直前の段落に注釈を付ける囲みがその段落から数行離れることがあります。`closingBox: 'last'`にすると、見出し、リストの終わり、そのほかの空きの調整手段が先に行単位で空きを取り、囲みはその残りだけを取ります。`closingBox: 'off'`では囲みを動かしません。
+2. **セーフエリアのある画像**：セーフエリア（`Resource.safeArea`、[文書形式 › セーフエリア](/ja/docs/document-format-resources#セーフエリア)を参照）を持つ画像が、短い段にインラインで置かれているか、その段だけにかかるフロートとして段の頭または末尾にある場合、段が埋まるか切り抜きがセーフエリアに達するまで、セーフエリアの範囲内で切り抜きながらグリッドの行単位で大きくなります。画像が高くなってもページに穴は開かないので、空きを足すどの手段よりも先に働きます。段の頭がそろったままになるページや帯（後述）で段の頭に置かれたフロートは大きくなりません。`flexFigure`として記録されます。専用の設定はなく、リソースにセーフエリアが指定された画像だけが大きくなれます。
+3. **見出し**：短い段の中にある見出しの上の空きに、グリッドの行単位で行を足します。複数行が必要で、段に見出しが複数ある場合は行を分配し、常に最も重要な見出しに最も多く割り当てます（`h2`は`h3`より多く受け取ります）。段の一番上にある見出しは空きを受け取らないので、段はページの上端から始まったままです。例外は、続きのあるページで段の頭に置かれた図や表の直下にある見出しで、その見出しの上、つまり図の下に空きが入ります。見出し1つがこの段階で受け取るのは`maxLinesBeforeLoose`行まで（既定値は2行）で、後の調整手段を先に試します。それらで埋められなくなったときだけ、`maxLinesPerHeading`まで行を足します。
+4. **リストの終わり**：見出しだけで空きを吸収しきれないとき、リストや番号付きリストの終わりにグリッドの行を足します（リストの後の空きは自然に読めます）。リストの終わりごとに上限があります。
+5. **数式・囲み・図の下**：次に、別行立ての数式や囲みの下、本文が再開する位置にグリッドの行を1行足します（`stretchAfterDisplays`。その要素自身のマージンのように読めます）。続いて、段の頭にある図や表の下にも足します（`stretchAfterFloats`、上限は`maxLinesAfterFloat`）。
+6. **ゆるい段落**：最後の手段として、段の中の段落1つを1行長く組み直します（TeXの`\looseness=+1`）。語間の広がりが目立たないよう、最も長い段落を選びます。ゆるくした組み方は、すべての行が**上限の`bodyText.maxWordSpacing`未満**にとどまる場合にだけ採用します。すでに設定した上限を文字の濃度（タイプカラー）が超えることはありません。`bodyText.optimalLineBreaking`が必要です。
+
+文字グリッド（`cjk.grid`、[中国語の組版 › 文字グリッド](/ja/docs/chinese-layout#文字グリッド)を参照）では、どの文字も幅1 emのマスに収まり、どの行もグリッドの行送りに乗ります。この行送りはベースライングリッドでもあります。縦組みと同じく、そこでは段末そろえは既定でオフです。GB/T 9704が28字22行と数えるように、グリッドに沿って1行ずつ組んだページでは、短い段は短いまま残ります。`enabled: true`を指定した設定では、グリッドを崩さない調整手段が使われます。見出し、リストの終わり、別行立て、図はグリッド行単位で空きを取るので、その下の本文は行単位で下がります。差し出せる空き行のない規格には、`gridLines: 'off'`でこれらを除外します。中国語や日本語の段落を1行長く組むのは、どの2文字の間も`maxTracking`を超えて広がらない場合だけで、文字にトラッキングを別に加えることもありません。1字分短い行は字間全体で1 emを広げることになり、既定の0.01 emをはるかに超えるので、マス単位のグリッドでは、ゆるい段落の調整手段はたいてい使える段落を見つけられません。段を閉じる囲みとセーフエリアのある画像は、もともとグリッドに縛られず、ほかの場所と同じように働きます。
+
+ページの最後の段をそろえるのは、そのページが自然に次のページへ続く場合だけです。章の最後のページは短く終わってよいからです。そのようなページと、`trailing`で高さをそろえて切った最後の帯では、段の頭もそろったままです。段の頭に置かれた図や表の下に行を足すこと（フロート後の調整手段）はせず、そのような図の下で段を始める見出しや囲みも、`stretchAfterFloats`の値にかかわらず段の頭にとどまります。`span: 'page'`の章扉のすぐ下、章扉と同じ段に置かれた見出しも同じです。末尾をそろえるためだけに、隣の段より低い位置から段を始めることはありません。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>段の下端をそろえるかどうか。縦組み（<code>layout.writingMode: 'vertical-rl'</code>）と文字グリッド（<code>cjk.grid.enabled</code>、postext 1.25から）では既定でオフです。<code>true</code>にすれば、そこでも有効になります。</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesPerHeading</code></td>
+      <td><code>number</code></td>
+      <td><code>4</code></td>
+      <td>1つの見出しの上に足せるグリッド行数の上限。</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>後に続く調整手段（リストの終わり、数式と囲み、図、ゆるい段落）を試す前に、1つの見出しの上へ足せるグリッド行の数です。それらで埋められなくなったときだけ、<code>maxLinesPerHeading</code>まで見出しにさらに行を足します。見出しが1つだけのページで、段落を1行長く組めるのに見出しの上に4行も空く、ということがなくなります。<code>maxLinesPerHeading</code>以上の値にすると、postext 1.27までと同じく、まず見出しにすべての行を足します。<code>0</code>にすると、見出しの上に行を足す前にほかの手段を試します。postext 1.28以降。それより前に保存された文書は以前の順序のままです（<code>pinLegacyLooseOrder</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterLists</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>見出しだけで空きを吸収しきれないとき、リストの終わりにグリッド行を足すことを許します。</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterList</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>リストの終わり1か所あたりに足せるグリッド行数の上限。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>リストの終わりの調整手段の次の段階で、短い段にある別行立ての数式の下と囲みの下に、グリッド行を1行足すことを許します。その後のブロックが1行下がります。<code>false</code>にすると、数式や囲みの下の空きはそれぞれのマージンで決まったままになり、空きは後の調整手段に回って、それでも埋まらなければ段は短く終わります。postext 1.28以降。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterFloats</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>短い段の頭にある図や表（上端のフロート）の下に、リストの終わりの調整手段の次の段階でグリッド行を足すことを許します。段を短く終える代わりに、その下の本文を下げます。続きのないページ（章の最後のページ）や、<code>trailing</code>で高さをそろえて切った最後の帯では行いません。そこでは段の頭がそろったままで、最後の段は1行短く終わることがあります。図の下の最初のブロックが前のページで始まった段落の続きでも、同じように下がります。その量は、改行・改段の規則が段の末尾に空けた行（ウィドウの規則で空のまま残った行や、後に本文を置く余地のない段落間の空き）の分です。図のすぐ下に本文を置きたい場合は<code>false</code>にします。複数の段にまたがるフロートの下では、段はいっしょに下がるか、まったく下がりません（<code>stretchAfterWideFloats</code>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>maxLinesAfterFloat</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>上端のフロート1つの下に足せるグリッド行数の上限。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>2つ以上の本文段にまたがる図や表の下での扱いです。<code>'flush'</code>では、そのフロートの下にあるすべての本文段が同じ行数を受け取る場合（段の頭はそろったままです）か、足した行でその段がちょうど埋まる場合にだけ、段を下げます。1つの段の頭だけを下げ、それでもその段が短く終わるような行は足さず、空きはゆるい段落に回ります。<code>'always'</code>では、postext 1.27までと同じく、そのような段もほかのフロートの下と同じように広げます。それ以外の値は<code>'flush'</code>として扱います。postext 1.28以降。それより前に保存された文書は<code>'always'</code>のままです（<code>pinLegacyWideFloatStretch</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>最後の手段として、短い段の段落を<code>bodyText.maxWordSpacing</code>の範囲内で1行ゆるく（それぞれ1行多く）組み直します。</td>
+    </tr>
+    <tr>
+      <td><code>maxLooseParagraphs</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>1つの短い段で1行長くしてよい段落の数。長いものから選びます。</td>
+    </tr>
+    <tr>
+      <td><code>trackParagraphs</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>語間だけでは1行を稼げないとき、ゆるくする段落に、それを稼げる最小の正のトラッキング（字間）を加えることも許します。</td>
+    </tr>
+    <tr>
+      <td><code>maxTracking</code></td>
+      <td><code>number</code></td>
+      <td><code>10</code></td>
+      <td>そのトラッキングの上限。1文字あたり、emの1000分の1を単位とします（10 = 0.01 em）。</td>
+    </tr>
+    <tr>
+      <td><code>trailing</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>章と文書の最後の帯をそろえます。ページが埋まる前に流れが終わり（章扉、<code>:::part</code>、章を閉じる<code>placement: 'fixed'</code>の囲み、または文書の終わりで）、段の高さがそろっていない場合、段を同じ高さで切ります。帯の上限は<code>ceil(Σ used / N / grid)</code>行で、上記の調整手段が前のページを確定させた後に求めます。これにより、短い参考文献が最初の段を埋めて最後の段が半分空くことはなく、どの段でも同じ高さで終わります。この切断は、切らない帯が守る規則を守ります。切断位置をまたいで分割できないブロック（オーファンとウィドウの最小行数でひとまとまりに保たれる段落の末尾、分割しない囲み）がそこを越えてしまう場合（レンダラーは段をその枠で切り抜くので、最後の行が失われます）や、見出しが段を閉じてその本文が次の段で始まってしまう場合（既定の<code>headings.keepWithNext</code>のとき）は、切断位置を1行下げます。これを3回まで試し、それでもだめなら切断をやめます。段の頭にある図の下で、切断が残す行の中で始められないブロック（段落にはそこにオーファンの最小行数が必要です）は、切らない段の場合と同じように帯の次の段へ進み、図はその段に単独で立ちます。末尾の差が1グリッド行以下の段はそのままにします。最後の段が1行短く終わるのは最後の帯のよくある終わり方で、切っても1行が移るだけだからです。切断は測った帯に適用されます。ページ幅の囲みがページの途中で求める切断も同じです。postext 1.4までは、最後のページの最初の本文が先に余地のない帯（フロートがまるごと占めるページや、前のページの末尾にページ幅の囲みが残す細い帯）に回された場合、切断がその帯で使われてしまい、最後のページではすべての行が最初の段に入っていました。幅の異なる段（両方に本文がある1段半レイアウト）は面積で切ります。狭い段の1行に入る本文は少ないので、各段の高さをその幅で重み付けします。<code>enabled</code>がtrueのときだけ働きます。</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td><code>trailing</code>が最後の帯の高さをそろえて切るときの単位です（次のページへ移る囲みの後ろで<code>beforeSpan</code>が切るときも同じです）。<code>'lines'</code>では、独自の行送りで組んだ帯（索引、文献リスト、小さい文字のコンテナ）を、その行送りの行単位で切り、やり直すときも1行ずつ動かします。行送りには、見出しと囲みを除いて、帯の行の過半が共有する行の高さを使います。これで段の差は、本文の帯と同じく1行以内に収まります。本文の帯と、2つの行送りが半々の帯は、これまでどおりベースライングリッドの上で切ります。行の高さが同じでも、行どうしが1行に満たない幅でずれている帯（項目の間にアキを入れた文献リスト、手で決めたマージンを持つ索引のグループ）も同じ扱いです。各段で5行のうち4行が、互いに整数行分だけ離れている必要があります。<code>'grid'</code>では、postext 1.27までと同じく、切る位置は常にベースライングリッドの行の整数倍です。この切り方では、グリッドから外れた帯の1つの段に1行余分に入り、切り直すたびにその帯の1行より大きく下がりました（段の差は最大3行）。それ以外の値は<code>'lines'</code>として扱います。postext 1.28以降。それより前に保存された文書は<code>'grid'</code>のままです（<code>pinLegacyTrailingStep</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>beforeSpan</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>ページ幅のブロックが後に残す帯をそろえます。<code>span: 'page'</code>の囲みが、高さをそろえて切った後でも現在の段の下に収まらず、次のページへ移るか分割（<code>calloutStyles[].keepTogether: false</code>）しなければならない場合、それが中断する段を同じ高さで切ります。最後の帯と同じ末尾の上限を使うので、最初の段がページを埋めて最後の段が短く終わることはありません。そのページは明示的な改ページとして扱い、上記の調整手段が最後の段をページ下端まで引き伸ばし直さないようにします。囲み、またはそのうち収まる部分は、そろえた段の下に置かれます。<code>enabled</code>がtrueのときだけ働きます。</td>
+    </tr>
+    <tr>
+      <td><code>closingBox</code></td>
+      <td><code>'first' | 'last' | 'off'</code></td>
+      <td><code>'first'</code></td>
+      <td>短い段を閉じる囲みが、いつその下の空きを取るか（調整手段1、<code>trailingCallout</code>として記録）。<code>'first'</code>：postext 1.4までと同様、ほかのどの調整手段よりも先に取ります。囲みは数行あっても空きをすべて取り、その上の見出しには何も残りません。<code>'last'</code>：見出し、リストの終わり、別行立て、フロートの各調整手段が先に行単位で空きを取った後に取ります。囲みはその上の本文とともに下がり、残った分（たいていは1行未満）だけを取るので、下端は最後のグリッド位置にそろったまま、注釈を付ける本文の近くにとどまります。<code>'off'</code>：取りません。囲みはその下の空きを残します。ただし、ほかの調整手段が囲みの上に空きを足せば行単位で下がることはあり、その下に残る1行未満の空きはそのままです。最後のページでは、隣の段と下端をそろえる調整手段が囲みしかないため、<code>'off'</code>では流れが置いた位置のままです。それ以外の値は<code>'first'</code>として扱います。帯の中で唯一の本文段を閉じる囲み（途中で終わる1段のページで、次のブロックが次ページから始まる場合）は動かしません。そろえる隣の段がないためです（postext 1.19から）。</td>
+    </tr>
+    <tr>
+      <td><code>gridLines</code></td>
+      <td><code>'allow' | 'off'</code></td>
+      <td><code>'allow'</code></td>
+      <td>文字グリッド上で、グリッド行単位で行を足す調整手段（見出しの上、リストの終わり、別行立てや囲みの下、段の頭にある図の下）を働かせるかどうか。これらの手段はどの文字もマスに収めたままにします。<code>'off'</code>はページの行数を数える規格に向き、段を短いまま残します。グリッドの外では効果がありません。それ以外の値は<code>'allow'</code>として扱います。postext 1.25から。</td>
+    </tr>
+  </tbody>
+</table>
+
+### どの調整手段が働いたか
+
+レイアウトは、適用した調整手段をすべて、適用先のブロックに記録します。`buildDocument`が返すVDTの`block.balancing`です。これを使えば、校正刷り、テスト、レポートで、段がなぜ下端にそろっているか、またどの段はどの調整手段でも閉じられなかったかを示せます。段末そろえが手を付けなかったブロックには`balancing`がなく、`enabled: false`で組んだ文書には一切ありません。
+
+文字グリッドでは、段が短く終わりうる理由を文書が示します。ページがグリッド上にあり、設定が段末そろえを有効にしていないためにオフになっているときは`doc.gridBalancing`が`{ off: true }`、行単位の調整手段なしで働いているときは`{ gridLines: 'off' }`になります。それでも短い段には`column.gridRefused`が付き、グリッドのために使えなかった調整手段を示します（文字をマスからずらして広げなければ段落が1行を稼げなかった場合は`'looseParagraph'`、`gridLines: 'off'`のもとでは行単位の調整手段）。グリッドの外ではどちらもありません。
+
+```ts
+interface VDTBalancing {
+  levers: BalanceLever[]; // usually one: a paragraph after a list can take the list-end line and run a line long too
+  spaceAbove: number;     // px the spacing levers added above the block (0 when only looseParagraph or flexFigure fired)
+  bodyGrowth?: number;    // flexFigure: px the picture grew, cropped within its safe area
+  extraLines?: number;    // looseParagraph: lines the paragraph gained
+  tracking?: number;      // looseParagraph: the tracking that gained them, in thousandths of an em (0 = word spacing alone)
+}
+type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>調整手段</th>
+      <th>記録先</th>
+      <th>行ったこと</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>trailingCallout</code></td>
+      <td>囲みの枠のブロック</td>
+      <td>段を閉じる囲みを、その下の空きちょうどの分だけ下げました（<code>spaceAbove</code>。1行未満でもかまいません）。</td>
+    </tr>
+    <tr>
+      <td><code>flexFigure</code></td>
+      <td>画像のブロック（インライン）またはフロート</td>
+      <td>セーフエリアのある画像を、セーフエリア内で切り抜きながら、グリッドの行単位で<code>bodyGrowth</code> px高くしました。リソースブロックの<code>bodySource</code>は表示される部分、<code>bodyFlex.delta</code>は同じ増分です。</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>見出し</td>
+      <td>見出しの上にグリッドの行を、<code>maxLinesPerHeading</code>まで足しました。</td>
+    </tr>
+    <tr>
+      <td><code>listEnd</code></td>
+      <td>リストの後の最初のブロック</td>
+      <td>リストの終わりにグリッド行を、<code>maxLinesAfterList</code>まで足しました。</td>
+    </tr>
+    <tr>
+      <td><code>afterDisplay</code></td>
+      <td>数式または囲みの後のブロック</td>
+      <td>別行立て数式や囲みの下にグリッド行を1行足しました。</td>
+    </tr>
+    <tr>
+      <td><code>afterFloat</code></td>
+      <td>段の最初のブロック</td>
+      <td>段の頭にあるフロートの帯とその本文の間にグリッド行を、<code>maxLinesAfterFloat</code>まで足しました。</td>
+    </tr>
+    <tr>
+      <td><code>looseParagraph</code></td>
+      <td>段落</td>
+      <td>段落を<code>extraLines</code>行長く組み直しました。そのために使った最小のトラッキングが<code>tracking</code>です（<code>block.letterSpacing</code>は同じ値をpxで表したもの）。</td>
+    </tr>
+  </tbody>
+</table>
+
+高さをそろえる切断は、切った段に記録します。`column.bandCapped`は高さをそろえて切ったすべての段（ページ幅の囲みが残す帯、最後の帯）でtrueになり、`column.trailingCap`はさらに章や文書の最後の帯（`trailing`）であることを示します。
+
+```ts
+import { buildDocument } from 'postext';
+
+const doc = buildDocument(content, config);
+for (const page of doc.pages) {
+  page.columns.forEach((column, i) => {
+    const levers: string[] = column.blocks.flatMap((block) => block.balancing?.levers ?? []);
+    if (column.trailingCap) levers.push('closing band cut level');
+    else if (column.bandCapped) levers.push('band cut level');
+    if (levers.length > 0) console.log(`page ${page.index + 1}, column ${i + 1}: ${levers.join(', ')}`);
+  });
+}
+// page 3, column 1: heading, heading
+// page 3, column 2: listEnd, looseParagraph
+```

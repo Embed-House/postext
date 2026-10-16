@@ -16,7 +16,7 @@ Un piccolo libro bilingue di poesie Tang, composto come le edizioni con testo a 
 
 ### 1 · Uno stile di titolo per ogni lato della doppia pagina
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è fatta di due titoli di livello 1: `# Night Thoughts {style="en" …}` con i versi di Giles, poi `# 靜夜思 {style="zh" …}` con la poesia. Lo stile `en` passa alla pagina pari successiva, un verso; lo stile `zh` alla pagina dispari successiva, il recto di fronte. Finché ogni poesia sta nella sua pagina non entra nessuna pagina bianca; una versione inglese che sforasse spingerebbe l’originale al recto seguente, dietro un verso bianco ([Interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)). Entrambi i progetti grafici riservano sei righe della griglia, così l’inglese e il cinese cominciano sulla stessa riga. Lo stile cinese ha `span: 'page'` perché il suo primo elemento, un riquadro grande quanto la pagina, è la carta colorata, e un progetto grafico tenuto nella colonna si ferma al piede della colonna ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)).
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è fatta di due titoli di livello 1: `# Night Thoughts {style="en" …}` con i versi di Giles, poi `# 靜夜思 {style="zh" …}` con la poesia. Lo stile `en` passa alla pagina pari successiva, un verso; lo stile `zh` alla pagina dispari successiva, il recto di fronte. Finché ogni poesia sta nella sua pagina non entra nessuna pagina bianca; una versione inglese che sforasse spingerebbe l’originale al recto seguente, dietro un verso bianco ([Interruzione prima](/it/docs/configuration-headings#interruzione-prima-del-titolo)). Entrambi i progetti grafici riservano sei righe della griglia, così l’inglese e il cinese cominciano sulla stessa riga. Lo stile cinese ha `span: 'page'` perché il suo primo elemento, un riquadro grande quanto la pagina, è la carta colorata, e un progetto grafico tenuto nella colonna si ferma al piede della colonna ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Pagina 2: l’inglese apre il verso sei righe più in basso, sulla riga di griglia dove il cinese apre pagina 3." />
 
@@ -36,7 +36,7 @@ Le glosse sono note a piè di pagina, una per riga: `疑是地上霜。[^bed]` c
 
 <Excerpt region="heads" />
 
-Ogni pagina di questo libro si apre con un titolo, quindi ogni pagina è un’apertura, e le testatine usano `pages: 'opener'`. Una pagina bianca aggiunta da un’interruzione resterebbe spoglia, e il frontespizio le toglie con un’intestazione vuota tutta sua. Il verso prende il titolo del libro dal `subtitle` del frontmatter, che ogni edizione scrive nella sua lingua; il recto prende il nome del poeta dall’attributo `name` del titolo cinese ([Intestazioni e piè di pagina](/it/docs/configuration-page-layout#intestazioni-e-piè-di-pagina)).
+Ogni pagina di questo libro si apre con un titolo, quindi ogni pagina è un’apertura, e le testatine usano `pages: 'opener'`. Una pagina bianca aggiunta da un’interruzione resterebbe spoglia, e il frontespizio le toglie con un’intestazione vuota tutta sua. Il verso prende il titolo del libro dal `subtitle` del frontmatter, che ogni edizione scrive nella sua lingua; il recto prende il nome del poeta dall’attributo `name` del titolo cinese ([Intestazioni e piè di pagina](/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina)).
 
 ### 5 · Un frontespizio su una luna
 
@@ -48,7 +48,7 @@ Anche il frontespizio è uno stile di titolo, con `runningChapter: false` perch�
 
 <Excerpt region="voices" />
 
-Fontsource divide ogni carattere cinese in circa cento file per intervallo di caratteri, e `loadCjkFonts` scarica solo i file di cui il suo testo ha bisogno ([Font cinesi, giapponesi e coreani](/it/docs/configuration-programmatic-usage#font-cinesi-giapponesi-e-coreani)). Il Kai riceve le poesie e il sigillo, lo Hei le righe dei poeti e i nomi, il Song grassetto i quattro titoli e i lemmi delle note, e il suo peso black i due caratteri del frontespizio.
+Fontsource divide ogni carattere cinese in circa cento file per intervallo di caratteri, e `loadCjkFonts` scarica solo i file di cui il suo testo ha bisogno ([Font cinesi, giapponesi e coreani](/it/docs/configuration-pdf-output#font-cinesi-giapponesi-e-coreani)). Il Kai riceve le poesie e il sigillo, lo Hei le righe dei poeti e i nomi, il Song grassetto i quattro titoli e i lemmi delle note, e il suo peso black i due caratteri del frontespizio.
 
 ## Varianti
 

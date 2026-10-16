@@ -22,7 +22,7 @@ La norma chiede «et al.» dopo i primi tre autori di un’opera occidentale e �
 
 ### 2 · I riferimenti in un blocco CSL-YAML
 
-Le opere sono elencate in un blocco `:::references{format=csl-yaml}` alla fine del Markdown, nel formato che Zotero esporta come CSL YAML ([Riferimenti](/it/docs/document-format#riferimenti)). Il tipo CSL decide il codice: `book` stampa [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] dopo il suo `//` e gli atti, e `webpage` [EB/OL] con la data di consultazione tra parentesi quadre. Un articolo di rivista con un DOI diventa [J/OL] e conserva il DOI, come chiede la norma. I nomi cinesi vanno in `literal`, così lo stile non li divide in cognome e nome. `:::bibliography{title=""}` mette l’elenco sotto il titolo non numerato 参考文献, e `labelWidth` allinea le righe successive sotto il testo della voce, non oltre.
+Le opere sono elencate in un blocco `:::references{format=csl-yaml}` alla fine del Markdown, nel formato che Zotero esporta come CSL YAML ([Riferimenti](/it/docs/document-format-notes-references#riferimenti)). Il tipo CSL decide il codice: `book` stampa [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] dopo il suo `//` e gli atti, e `webpage` [EB/OL] con la data di consultazione tra parentesi quadre. Un articolo di rivista con un DOI diventa [J/OL] e conserva il DOI, come chiede la norma. I nomi cinesi vanno in `literal`, così lo stile non li divide in cognome e nome. `:::bibliography{title=""}` mette l’elenco sotto il titolo non numerato 参考文献, e `labelWidth` allinea le righe successive sotto il testo della voce, non oltre.
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Pagina 2: voci occidentali in maiuscolo con et al., voci cinesi con 等, ciascuna con il suo codice di tipo." />
 
@@ -30,7 +30,7 @@ Le opere sono elencate in un blocco `:::references{format=csl-yaml}` alla fine d
 
 <Excerpt region="masthead" />
 
-Il blocco del titolo è il progetto grafico dell’H1, uno stile di titolo che occupa entrambe le colonne. La fascia è un riquadro ancorato al rifilo, e il nome della rivista ci sta sopra in bianco. Il titolo, gli autori e le affiliazioni vengono dal titolo e dai suoi attributi, ciascuno posto sotto il precedente (`#title`, `below`), così un titolo su tre righe spinge in basso il resto ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)).
+Il blocco del titolo è il progetto grafico dell’H1, uno stile di titolo che occupa entrambe le colonne. La fascia è un riquadro ancorato al rifilo, e il nome della rivista ci sta sopra in bianco. Il titolo, gli autori e le affiliazioni vengono dal titolo e dai suoi attributi, ciascuno posto sotto il precedente (`#title`, `below`), così un titolo su tre righe spinge in basso il resto ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)).
 
 ### 4 · L’abstract e le sue etichette
 

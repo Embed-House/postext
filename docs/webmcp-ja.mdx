@@ -6,8 +6,8 @@ export const metadata = {
   description: 'ブラウザーで動くAIエージェントが、36のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
   lang: 'ja',
   lastUpdated: '2026-10-13',
-  readingTime: '14分',
-  order: 23,
+  readingTime: '13分',
+  order: 43,
   plainSummary: "このページは、Sandboxでの本の作業をAIの助手に任せたい人のためのものです。Sandboxを開いている間、助手には、ページを見る、デザインを変える、本文を直す、画像や表を加える、問題を見つける、ファイルを保存するための道具が渡されます。たとえば「本文を少し大きくして、本が40ページに収まるか確かめて」と普段の言葉で頼むと、助手が道具を使い、そのページを見せてくれます。作業はすべてお使いのブラウザーの中で行われます。このページでは、助手のつなぎ方、助手にできること、各ツールの呼び出し方を説明します。",
 };
 
@@ -454,7 +454,7 @@ Sandboxが登録するときのまとまりで並べています。各ツール�
 
 ## Sandboxを埋め込むとき
 
-`<PostextSandbox>`はマウントされている間ツールを登録し、`webmcp={false}`でツールを登録しないようにできます（[Props](/ja/docs/sandbox#props)を参照）。ホストのページは、同じモジュールを通じて独自のツールを加えられます。
+`<PostextSandbox>`はマウントされている間ツールを登録し、`webmcp={false}`でツールを登録しないようにできます（[Props](/ja/docs/sandbox-embedding#props)を参照）。ホストのページは、同じモジュールを通じて独自のツールを加えられます。
 
 ```ts
 import { registerWebMcpTools } from 'postext-sandbox/webmcp';

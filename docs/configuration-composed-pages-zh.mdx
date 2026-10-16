@@ -1,0 +1,633 @@
+{/* docs/configuration-composed-pages-zh.mdx */}
+
+export const metadata = {
+  title: '配置：组合页面',
+  sidebarTitle: '组合页面设置',
+  description: '组合页面的页面模板：框架、组、装饰、继承与左右页变体、图片锚点的注记样式，以及模板可能给出的警告',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '6分钟',
+  order: 18,
+  parent: 'configuration',
+  plainSummary: "本页讲页面模板。模板是在设置里画好的一个页面：一些有名字的方框，叫做框架，还规定每个框架放在哪里、最大能长到多大、是什么样子。组合页面的Markdown再按名字把内容填进这些框架，所以文字里从不写位置，设置里也从不写文字。一个模板可以从另一个模板出发，只改其中几个框架，左页和右页上还可以不一样。本页还列出写在图片上的文字所用的注记样式，以及模板可能给出的每一条警告和改正的办法。",
+};
+
+# 配置：组合页面
+
+
+## 页面模板
+
+组合页面的版式来自配置中的**模板**，内容来自`::::page{template="…"}`围栏中的Markdown。模板给一些矩形命名，这些矩形叫做**框架**；Markdown按名称（即框架的槽位）把每一段内容送进对应的框架。Markdown中从不出现几何信息，模板中也从不出现正文文字。`pageTemplates`属性保存全书的模板：
+
+```ts
+const config: PostextConfig = {
+  calloutStyles: [{ id: 'caja-azul' }, { id: 'tab-titulo' }],
+  pageTemplates: [
+    {
+      id: 'tema-cajas',
+      decoration: {
+        elements: [
+          { kind: 'image', id: 'fondo', resourceId: '{attr.fondo}', decorative: true,
+            placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: 'fill' } } },
+        ],
+      },
+      frames: [
+        { name: 'titulo', takes: 'h1', style: 'tab-titulo' },
+        { name: 'texto', flow: true },
+        { name: 'dinero', style: 'caja-azul', padding: { right: { value: 62, unit: 'mm' } } },
+        { name: 'dinero-fotos', layer: 2, width: { value: 60, unit: 'mm' },
+          placement: { anchor: { to: '#dinero', edge: 'top-right' } } },
+      ],
+      groups: [
+        { name: 'pagina', kind: 'stack', gap: { value: 6, unit: 'mm' }, frames: ['titulo', 'texto', 'dinero'] },
+      ],
+    },
+  ],
+};
+```
+
+只设了`id`和一个框架的模板就是一整页，这个框架占满版心。其余字段都是可选的：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必填</td>
+      <td>页面围栏所请求的名称（<code>template="tema-cajas"</code>）。在所有模板中唯一：id相同的第二个模板会被忽略。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>即id</td>
+      <td>在沙盒中显示的名称。排版从不读取它。</td>
+    </tr>
+    <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>本模板作为起点的模板的id。见<a href="#继承与变体">继承与变体</a>。</td>
+    </tr>
+    <tr>
+      <td><code>area</code></td>
+      <td><code>'content' | 'trim' | 'bleed'</code></td>
+      <td><code>'content'</code></td>
+      <td>框架位置所参照的矩形。<code>'content'</code>是页面的版心，像正文一样在左右页上镜像；<code>'trim'</code>是裁切后的页面；<code>'bleed'</code>是连同出血的页面。</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
+      <td>无</td>
+      <td>把区域分成单元格，框架或组就可以按单元格放置（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>，从1起数），不必用<code>placement</code>。间距默认为<code>0</code>。</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>FrameConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>各个框架，按模板顺序排列：先测量哪个框架、出现并列时以哪个为准，都按这个顺序。见<a href="#框架">框架</a>。</td>
+    </tr>
+    <tr>
+      <td><code>groups</code></td>
+      <td><code>FrameGroupConfig[]</code></td>
+      <td><code>[]</code></td>
+      <td>共享空间的纵向或横向框架序列。见<a href="#组">组</a>。</td>
+    </tr>
+    <tr>
+      <td><code>decoration</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>无</td>
+      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面围栏某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框架或组（<code>'#dinero'</code>），并随之移动。装饰在框架之后排放，从不推开文字。</td>
+    </tr>
+    <tr>
+      <td><code>header</code>、<code>footer</code></td>
+      <td><code>DesignSlot | false</code></td>
+      <td>继承</td>
+      <td>页面的书眉和页码。未设置时，页面沿用所在章的书眉和页码；<code>false</code>把它们隐藏。</td>
+    </tr>
+    <tr>
+      <td><code>spread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>模板描述两个对页，排成一整张。在从左到右的书中，跨页总是从左页开始（在从右到左的书中从右页开始），需要时会在它前面加一个空白页。</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>在跨页上，订口处框架要避开的带状区域，框架设了<code>crossGutter: true</code>时除外。</td>
+    </tr>
+    <tr>
+      <td><code>variants</code></td>
+      <td><code>&#123; recto?, verso? &#125;</code></td>
+      <td>无</td>
+      <td>针对右页（<code>recto</code>）或左页（<code>verso</code>）的改动，写法与模板本身相同。左右指的是页面的实际位置，所以从左到右和从右到左的书都适用。</td>
+    </tr>
+    <tr>
+      <td><code>overflowTemplate</code></td>
+      <td><code>string</code></td>
+      <td>本模板</td>
+      <td>框架续排到下一页（<code>overflow.continueIn: 'next-page'</code>）时所加页面的模板。未设置时，所加的页面使用本模板，只填入续排的框架。</td>
+    </tr>
+    <tr>
+      <td><code>bodyStyle</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>页面文字的段落样式，用法与标题样式中的相同。</td>
+    </tr>
+    <tr>
+      <td><code>palette</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>页面的调色板覆盖，用法与标题样式和篇中的相同。</td>
+    </tr>
+    <tr>
+      <td><code>role</code></td>
+      <td><code>string</code></td>
+      <td><code>'composed'</code></td>
+      <td>带<code>pages</code>筛选条件的设计元素所看到的页面角色。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 框架
+
+框架是接收排好的内容的具名矩形。它的`name`就是Markdown所请求的槽位，在所属模板中唯一（组也不能使用框架的名称，因为锚点用同样的方式指向两者）。
+
+模板有网格时，框架按它的`grid`单元格放置，否则按它的`placement`放置，后者与设计元素的定位相同：一个锚点（`'container'`表示区域，`'page'`、`'bleed'`，或用`'#name'`表示另一个框架或组）、一条边、一个偏移和一个尺寸。锚定到另一个框架的框架随之移动。两者都没有时，框架占满整个区域。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>必填</td>
+      <td>槽位名称。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>整个区域</td>
+      <td>锚点、边、偏移和尺寸，与<a href="/zh/docs/configuration-headers-footers#元素定位">元素定位</a>相同。由网格单元格放置框架时忽略。</td>
+    </tr>
+    <tr>
+      <td><code>grid</code></td>
+      <td><code>&#123; col, row, cols?, rows? &#125;</code></td>
+      <td>无</td>
+      <td>模板网格中的一个单元格，从1起数，跨<code>cols</code> × <code>rows</code>个单元格（默认1）。超出网格的单元格会被移回网格内。模板没有网格时忽略。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>height</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
+      <td><code>'fill'</code>、<code>'auto'</code></td>
+      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框架所锚定的那条边为止剩下的空间）。未设置时，框架读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。文本框架需要行宽，所以<code>'auto'</code>宽度只对只放一张图片的框架有意义（图片在框架高度下的宽度）。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>无</td>
+      <td><code>'auto'</code>或<code>'fill'</code>尺寸的限值，也是组分出或收回空间时的限值。最小值优先于最大值，超出限值的固定尺寸会被拉回限值之间（这两种情况<code>frameMinMax</code>都会警告）。</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>无边框</td>
+      <td>一个<a href="/zh/docs/configuration-callouts#标注框样式">标注框样式</a>的id：框架用标注框样式绘制（底色、边框、内边距、色条、图标、标签页签、标题）。页签上的文字来自Markdown（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。标注框设置中决定框在正文中放在哪里的那些（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>……）不适用于框架。</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>样式的值</td>
+      <td>逐边覆盖样式的内边距，例如为压在方框上的照片留出空间。</td>
+    </tr>
+    <tr>
+      <td><code>layer</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>绘制顺序。装饰是第0层；负数层画在装饰下面。</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>角度，顺时针。方框和其中的内容一起旋转。</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
+      <td><code>'top'</code></td>
+      <td>框架比内容高时，内容放在什么位置。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code>、<code>columnGap</code></td>
+      <td><code>number</code>、<code>Dimension</code></td>
+      <td><code>1</code>、样式的值</td>
+      <td>框架内的分栏。</td>
+    </tr>
+    <tr>
+      <td><code>exclude</code></td>
+      <td><code>'none' | 'push'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'push'</code>：其他框架的文字绕开这个框架的矩形排。</td>
+    </tr>
+    <tr>
+      <td><code>flow</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>框架接收没有指定槽位的内容。</td>
+    </tr>
+    <tr>
+      <td><code>takes</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td>无</td>
+      <td>框架接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。</td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>链接：放不下的内容在同一页上以该值为名的框架中续排。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框架，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框架）或<code>'template:&lt;id&gt;'</code>（该模板的一页）。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.mark</code></td>
+      <td><code>string | false</code></td>
+      <td>随语言</td>
+      <td>被截断部分末尾的标记。未设置时，使用文档语言的续排词（与拆分表格相同）；<code>false</code>不加标记。</td>
+    </tr>
+    <tr>
+      <td><code>fit.shrinkText</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>别的办法都无法让内容放下时，可以把文字排小。</td>
+    </tr>
+    <tr>
+      <td><code>fit.minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.9</code></td>
+      <td>文字的最小缩放比例，大于0且不超过1（更大的值按1处理）。</td>
+    </tr>
+    <tr>
+      <td><code>fit.scaleImages</code>、<code>fit.imageMinScale</code></td>
+      <td><code>boolean</code>、<code>number</code></td>
+      <td><code>true</code>、<code>0.8</code></td>
+      <td>框架中的图片是否可以缩小，以及最小缩到多少。</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>框架从不移动，也不改变大小，用于必须与画面对齐的方框。组绕开它排列。</td>
+    </tr>
+    <tr>
+      <td><code>grow</code>、<code>shrink</code>、<code>priority</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>框架怎样分享所在组的空间：<code>grow</code>分得多余空间的一份，<code>shrink</code>允许框架让出空间，<code>priority</code>较低的框架先让出。</td>
+    </tr>
+    <tr>
+      <td><code>optional</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Markdown没有向框架发送任何内容时，不发出警告。</td>
+    </tr>
+    <tr>
+      <td><code>crossGutter</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>在跨页上，框架可以越过订口的带状区域。</td>
+    </tr>
+    <tr>
+      <td><code>writingMode</code>、<code>direction</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
+      <td>页面的值</td>
+      <td>横排页面上的竖排方框，或者反过来。</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>在扩展另一个模板的模板中，或在变体中：去掉继承来的同名框架。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 组
+
+组是一列（从上到下）或一行（从起始到末尾）共享空间、一起移动的框架。在组内，框架自己沿组方向的位置被忽略：组按顺序排列它们，彼此之间留出`gap`。某个框架的文字变长时，其后的框架随之移动。组也是一个方框，框架和装饰可以锚定到它（`'#pagina'`）。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>必填</td>
+      <td>在模板的框架和组中唯一。</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack'</code></td>
+      <td>从上到下，或从起始到末尾。</td>
+    </tr>
+    <tr>
+      <td><code>frames</code></td>
+      <td><code>string[]</code></td>
+      <td><code>[]</code></td>
+      <td>组中的框架，按它们在页面上的顺序排列。一个框架最多属于一个组；不是模板中框架的名称，或已经列出过的框架，会被跳过。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>组中相邻两个框架之间的距离。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>、<code>grid</code></td>
+      <td>同框架</td>
+      <td>其框架的外框</td>
+      <td>组自己的方框。未设置时，取包住其各框架声明方框的外框。</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
+      <td><code>'start'</code></td>
+      <td>组中没有框架伸展时，多余空间放在哪里。</td>
+    </tr>
+    <tr>
+      <td><code>remove</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>在扩展另一个模板的模板中，或在变体中：去掉继承来的组。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 继承与变体
+
+带`extends`的模板从它所指的模板出发（后者本身也可以扩展另一个模板），只改动自己写出的部分：
+
+- `area`、`header`或`overflowTemplate`这类字段替换父模板的值。`grid`逐键合并。`spread`、`gutter`和`role`也会继承；`id`、`name`和`extends`属于模板自己。
+- `frames`和`groups`**按名称**合并：与继承项同名的条目改动它写出的字段，其余保留（`fit`、`overflow`和`padding`逐键合并；`placement`整体替换）；`remove: true`去掉该项；新名称追加在继承项之后。
+- 装饰元素以同样的方式按`id`合并；id是新的或没有id的元素会被追加。
+
+`variants.recto`和`variants.verso`的写法与模板相同，合并方式也相同，分别作用于右页和左页。它们在整条`extends`链之后应用，根模板的变体最先应用。跨页同时有两面，所以不应用任何变体。
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
+      placement: { anchor: { to: 'container', edge: 'top-left' } } }],
+    variants: { recto: { frames: [{ name: 'margen', placement: { anchor: { to: 'container', edge: 'top-right' } } }] } } },
+  { id: 'tema-sin-margen', extends: 'tema', frames: [{ name: 'margen', remove: true }] },
+]
+```
+
+沙盒保存模板时，从不丢掉等于默认值的值：在扩展另一个模板的模板中，或在变体中，这个值会覆盖父模板的值。
+
+在代码中，`resolvePageTemplate(config, id, { parity })`返回一个模板：继承链已合并，所在一面的变体已应用，所有默认值已填好，所有引用都已按下文警告所述处理；`validatePageTemplates(config)`返回这些警告。
+
+## 注记样式
+
+`labelStyles`属性为写在图片上的注记命名各种外观：地图上的海洋和城镇，示意图的各个部分。注记位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或注记所指定的样式。
+
+```ts
+labelStyles: [
+  { id: 'mar', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: 0.12,
+    color: { hex: '#2b6ca3', model: 'hex' } },
+  { id: 'ciudad', fontWeight: 600, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 0.6, unit: 'pt' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td><code>string</code></td>
+      <td>必填</td>
+      <td>锚点和注记使用的名称。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><code>string</code></td>
+      <td>即id</td>
+      <td>在沙盒中显示的名称。</td>
+    </tr>
+    <tr>
+      <td><code>paragraphStyle</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>注记借用其字体设置的段落样式；下面的字段覆盖它。</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>、<code>fontSize</code>、<code>fontWeight</code></td>
+      <td><code>string</code>、<code>Dimension</code>、<code>number</code></td>
+      <td>正文的值</td>
+      <td>注记的字体、字号和字重。</td>
+    </tr>
+    <tr>
+      <td><code>fontStyle</code></td>
+      <td><code>'normal' | 'italic'</code></td>
+      <td><code>'normal'</code></td>
+      <td>正体或斜体。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>正文颜色</td>
+      <td>文字的颜色。</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>大写字母，地图上的海洋和国家名称常这样排。</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>字母之间额外的间距，以em计。</td>
+    </tr>
+    <tr>
+      <td><code>halo</code></td>
+      <td><code>&#123; color, width &#125;</code></td>
+      <td>无</td>
+      <td>文字背后的描边，让文字在繁杂的画面上也能读清。</td>
+    </tr>
+    <tr>
+      <td><code>background</code>、<code>padding</code></td>
+      <td><code>ColorValue</code>、<code>Dimension</code></td>
+      <td>无</td>
+      <td>注记背后的底板，以及文字周围留出的空间。</td>
+    </tr>
+    <tr>
+      <td><code>minScale</code></td>
+      <td><code>number</code></td>
+      <td><code>0.85</code></td>
+      <td>注记放不进其宽度时，最多可以缩小到多少。</td>
+    </tr>
+  </tbody>
+</table>
+
+### 锚点的注记字段
+
+图片的锚点（`Resource.anchors`，漫画用来标记说话人的那些点）可以带几个供注记使用的可选字段。这些字段都是相对于图片的比例，所以在每种语言中、在图片的任何裁切下都成立。漫画忽略它们。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>字段</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>number</code></td>
+      <td>注记自身的宽度</td>
+      <td>注记的行宽，以图片宽度的比例表示：较长的名称在其中折成两行。</td>
+    </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td><code>'center'</code></td>
+      <td>注记的哪一侧落在锚点上。</td>
+    </tr>
+    <tr>
+      <td><code>verticalAlign</code></td>
+      <td><code>'top' | 'middle' | 'bottom'</code></td>
+      <td><code>'middle'</code></td>
+      <td>注记的哪条边落在锚点的高度上。</td>
+    </tr>
+    <tr>
+      <td><code>rotate</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>角度，顺时针，绕锚点旋转：例如让河流的名称顺着河道排。</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>一个<code>labelStyles</code>的id。注记自己指定样式时，以注记的为准。</td>
+    </tr>
+  </tbody>
+</table>
+
+## 页面模板警告
+
+在其他地方，引擎会忽略它不认识的键。页面模板和注记样式则会被检查，每个问题都是一条配置警告，出现在`postext check`和沙盒的检查面板中。这些警告的`path`是指向出错字段的JSON指针：`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`。字段是继承来的时，指针指向写出它的模板。指出不存在的id或名称的警告，还会给出最接近的现有名称。
+
+模板、框架、组、网格、`fit`、`overflow`、变体或注记样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框架或组，会被忽略，并在该字段上报告`unknownConfigValue`。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>警告</th>
+      <th>原因</th>
+      <th>解决办法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateDuplicate</code></td>
+      <td>两个模板的<code>id</code>相同。使用第一个，后一个被忽略。</td>
+      <td>给其中一个改名，或删除副本。</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsCycle</code></td>
+      <td>沿着<code>extends</code>又回到同一个模板（<code>a → b → a</code>）。循环中的每个模板，以及扩展其中任何一个的模板，都会被丢弃：没有页面能使用它们。</td>
+      <td>去掉循环中某一个模板的<code>extends</code>。</td>
+    </tr>
+    <tr>
+      <td><code>templateExtendsUnknown</code></td>
+      <td><code>extends</code>指向的id没有对应的模板。该模板单独使用，不继承任何内容。</td>
+      <td>改正id（警告会给出最接近的id），或添加父模板。</td>
+    </tr>
+    <tr>
+      <td><code>frameDuplicate</code></td>
+      <td>同一列表中的两个框架或两个组<code>name</code>相同，或者某个组与某个框架同名。后一个条目被忽略；锚定到该名称时读取框架。</td>
+      <td>给每个框架和组起各自的名称。要修改继承来的框架，写一个同名的条目即可。</td>
+    </tr>
+    <tr>
+      <td><code>frameStyleUnknown</code></td>
+      <td>框架的<code>style</code>没有对应的标注框样式。框架绘制时不带方框。</td>
+      <td>改正id，或把该样式加到<code>calloutStyles</code>中。</td>
+    </tr>
+    <tr>
+      <td><code>frameAnchorUnknown</code></td>
+      <td>框架、组或装饰元素锚定到<code>'#name'</code>，而模板中没有这个名称的框架、组或元素；或者框架和组之间互相锚定，形成循环（也包括经过一个自己没有锚定、方框就是其框架外框的组）。该锚点按<code>'container'</code>（即区域）处理。</td>
+      <td>锚定到存在的框架或组，或把其中一个锚定到区域，打破循环。</td>
+    </tr>
+    <tr>
+      <td><code>frameMinMax</code></td>
+      <td>最小值大于最大值（<code>minHeight 40mm &gt; maxHeight 30mm</code>），或者固定的<code>width</code>或<code>height</code>在限值之外。最小值优先，固定尺寸被拉回限值之间，<code>used</code>说明框架实际取的值。单位不同的长度按页面的分辨率比较，em按正文字号换算。</td>
+      <td>让最小值不大于最大值，或去掉与固定尺寸矛盾的那个限值。</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameUnknown</code></td>
+      <td>组的<code>frames</code>列出了一个不是模板中框架的名称（可能已被子模板或变体去掉）。组跳过它。</td>
+      <td>改正名称，或把它从列表中去掉。</td>
+    </tr>
+    <tr>
+      <td><code>groupFrameTwice</code></td>
+      <td>一个框架列在两个组中，或在同一个组中列了两次。一个框架只属于一个组：后面的那次被跳过。</td>
+      <td>只把框架留在它随之移动的那个组中。</td>
+    </tr>
+    <tr>
+      <td><code>frameChainLoop</code></td>
+      <td>框架通过<code>next</code>或<code>overflow.continueIn: '#frame'</code>互相续排，形成循环（<code>a → b → a</code>）。闭合循环的那个链接被丢弃，所以链在它前面的框架处结束。</td>
+      <td>让链在最后一个框架处结束：去掉它的<code>next</code>，或让它续排到下一页。</td>
+    </tr>
+    <tr>
+      <td><code>overflowTargetUnknown</code></td>
+      <td>某个<code>next</code>没有指向模板中的框架；某个<code>overflow.continueIn</code>没有指向框架（<code>'#x'</code>）或模板（<code>'template:x'</code>），或者不属于<code>'#frame'</code>、<code>'next-page'</code>和<code>'template:&lt;id&gt;'</code>这三种形式；或者<code>overflowTemplate</code>没有指向模板。放不下的内容不会在那里续排。</td>
+      <td>改正名称或id，或写成三种形式之一。</td>
+    </tr>
+    <tr>
+      <td><code>labelStyleUnknown</code></td>
+      <td>图片的某个锚点指定的<code>style</code>在<code>labelStyles</code>中不存在。警告会指出该资源。该锚点上的注记采用默认外观。</td>
+      <td>改正锚点上的样式id，或把该样式加到<code>labelStyles</code>中。</td>
+    </tr>
+  </tbody>
+</table>
+
+自页面模板起，配置版本为15（之前写出的包照常加载，不受影响：旧配置中的任何内容都不改变含义）。

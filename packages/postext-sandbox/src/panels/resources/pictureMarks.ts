@@ -289,6 +289,12 @@ export function normalizeMarks(marks: PictureMarks): PictureMarks {
     if (a.head) out.head = { x: round(clamp(a.head.x, 0, 1)), y: round(clamp(a.head.y, 0, 1)) };
     const face = a.face && validRect(a.face);
     if (face) out.face = roundRect(face);
+    // The label fields of composed pages (#853) are kept as they are.
+    if (a.width !== undefined) out.width = a.width;
+    if (a.align !== undefined) out.align = a.align;
+    if (a.verticalAlign !== undefined) out.verticalAlign = a.verticalAlign;
+    if (a.rotate !== undefined) out.rotate = a.rotate;
+    if (a.style !== undefined) out.style = a.style;
     return out;
   });
   const avoid = marks.avoid.map(validRect).filter((r): r is ResourceSafeArea => !!r).map(roundRect);

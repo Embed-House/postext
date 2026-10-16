@@ -1,0 +1,554 @@
+{/* docs/configuration-headings-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: headings',
+  sidebarTitle: 'Headings',
+  description: 'Heading defaults, the overrides for each level, page breaks before a heading, page-wide chapter openers and numbers spelled out in words',
+  lang: 'en',
+  lastUpdated: '2026-10-16',
+  readingTime: '31 min',
+  order: 9,
+  parent: 'configuration',
+  plainSummary: "This page covers the settings for headings. You set a font, a size and a colour for all of them, and change any of them for one level, such as chapter titles. You decide whether a heading starts a new page, and whether that page must be on the left or on the right. A chapter title can open across the whole width of the page with its own design. Heading numbers can be written in words, such as Chapter One.",
+};
+
+# Configuration: headings
+
+
+## Headings
+
+The `headings` property controls typography for all heading levels (H1–H6). You can set general defaults that apply to all levels, then override specific properties per level.
+
+### General defaults
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>string</code></td>
+      <td><code>'Open Sans'</code></td>
+      <td>Font family for all headings.</td>
+    </tr>
+    <tr>
+      <td><code>lineHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.2 em</code></td>
+      <td>Line height for headings. Tighter than body text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>Main Color (<code>#295AA3</code>)</td>
+      <td>Heading text color. Bound to the default palette's <code>main-color</code> entry, so swapping the palette colour retints every heading.</td>
+    </tr>
+    <tr>
+      <td><code>textAlign</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
+      <td><code>'left'</code></td>
+      <td>Alignment of every heading level (there is no per-level value): ragged right, justified, centred or ragged left. A justified heading sets its last line flush left, like a paragraph, so a one-line heading reads as <code>'left'</code>. Canvas, HTML and PDF place the lines the same way, a number prefix included. The default opener of a <code>span: 'page'</code> heading without an advanced design follows it too (justified sets flush left); an advanced design aligns its own text elements with their <code>align</code>.</td>
+    </tr>
+    <tr>
+      <td><code>fontWeight</code></td>
+      <td><code>number</code></td>
+      <td><code>700</code></td>
+      <td>Font weight for headings (100–900).</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>1.5 em</code></td>
+      <td>Space above headings. Dropped for a heading that opens a column (see <code>columnHeadSpace</code>).</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0.5 em</code></td>
+      <td>Space below headings.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>When <code>true</code>, a heading is never placed as the last element of a column or page. If the following block would not have at least <code>bodyText.widowMinLines</code> lines of room after the heading (or one line when <code>bodyText.avoidWidows</code> is <code>false</code>), the heading is pushed forward so it stays joined to its text. Interacts with <code>bodyText.keepColonWithList</code>: if that rule has to push a colon-paragraph whole, any trailing heading(s) in the column travel with it rather than being left stranded.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSpread</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>With <code>keepWithNext</code>, still let a heading close the last text column of an even page, since its text then opens the facing odd page of the same spread (JLReq §4.1.7). The spreads are page 1 alone, then 2–3, 4–5…, counted with <code>pageIndexOffset</code>, in left- and right-bound books alike. Since postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>keepWithNextSplit</code></td>
+      <td><code>'rules' | 'fill'</code></td>
+      <td><code>'rules'</code></td>
+      <td>How the paragraph under a heading splits when the heading ends up at the foot of a column and pushing the paragraph whole would leave the heading behind. <code>'rules'</code>: the most lines that fit, as long as at least <code>bodyText.widowMinLines</code> stay under the heading and at least <code>bodyText.orphanMinLines</code> go on to the next column; when no split keeps both, the heading moves on with its paragraph, and column balancing fills the room it leaves. <code>'fill'</code>: as many lines as fit, however few go on, so a four-line paragraph with room for three splits 3 + 1. Up to postext 1.4 every heading split this way, and configurations stored before <code>configVersion</code> 8 keep it (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). With <code>avoidWidows</code> or <code>avoidOrphans</code> off, that side of the rule is dropped.</td>
+    </tr>
+    <tr>
+      <td><code>snapToGrid</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether the flow snaps back onto the baseline grid under a heading. With <code>true</code> the heading's <code>marginBottom</code> is rounded up to whole grid lines; with <code>false</code> the exact margin is kept and the text under the heading may sit off the grid until the next snap point (the end of a list, a <code>:::paragraphs</code> tail, display math) — the way many books set a line and a half under a heading. A level (<code>levels[].snapToGrid</code>) or a heading style can set its own value; this one is what they inherit.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>What a heading that snaps to the grid keeps of its space above when it opens a column, at the page's head or under a figure or table that heads the column. <code>'none'</code>: the whole space is dropped and the heading stands on the column's first line, level with the column beside it; the grid snap then puts the part of a line it needs under the heading, so its text can stand further from it than after a paragraph. <code>'remainder'</code>: the space is dropped in whole grid lines only and the part of a line that is left stays above the heading, so the text under it starts at the distance it starts at after a paragraph; the heading starts a little lower than the column's head and no line of body text moves. It suits a book in one column, where no column head beside it shows the difference. Any other value reads as <code>'none'</code>. Not under a page-span opener, and not for a <code>span: 'page'</code>, <code>lineSpan</code>, hidden or designed (<code>advancedDesign</code>) heading. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>inlineMarks</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether a heading reads its inline marks as a paragraph does: <code>*italic*</code>, <code>**bold**</code>, <code>^superscript^</code>, <code>~subscript~</code>, <code>:smallcaps[…]</code> and links. An italic run flips the heading's slant, so it comes out upright in an italic heading; a bold run takes <code>bodyText.boldFontWeight</code>, or the heading's own weight when that is heavier. The contents list the bold and italic runs too; the running heads and the PDF bookmarks print the text only. With <code>false</code> the markers are dropped and the words print in the heading's own style, as up to postext 1.4. The default opener of a <code>span: 'page'</code> heading without a design sets the bold, italic, superscript and subscript runs too; a heading design (a designed opener band or an in-column <code>advancedDesign</code>) prints <code>{'{titleText}'}</code> as plain text either way, unless its text element reads inline marks (<code>inlineMarks: true</code>): there <code>{'{titleText}'}</code> keeps the heading's bold, italic and script runs (since postext 1.19). Configurations stored earlier whose headings carry marks are read with <code>false</code> (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+    </tr>
+    <tr>
+      <td><code>balancing</code></td>
+      <td><code>ColumnBalancingConfig</code></td>
+      <td>enabled</td>
+      <td>Vertical column balancing — extra space above headings so columns end flush with the page bottom. See below.</td>
+    </tr>
+  </tbody>
+</table>
+
+Centred headings for poems or the acts of a play, with no design slot:
+
+```ts
+headings: {
+  textAlign: 'center',
+  levels: [{ level: 2, textTransform: 'uppercase' }],
+}
+```
+
+Passing a `headings` object keeps every level default you do not restate, the H1 page break included (see [Per-level overrides](#per-level-overrides)).
+
+### Per-level overrides
+
+Each heading level can override the general defaults via the `levels` array. Only `fontSize` (plus H1's `breakBefore`, noted below) differs by default — all other properties inherit from the general heading settings.
+
+<table>
+  <thead>
+    <tr>
+      <th>Level</th>
+      <th>Default font size</th>
+      <th>Default <code>breakBefore</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>H1</td><td><code>18 pt</code></td><td><code>&#123; enabled: true, parity: 'always-odd' &#125;</code></td></tr>
+    <tr><td>H2</td><td><code>15 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H3</td><td><code>12 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H4</td><td><code>10 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H5</td><td><code>9 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+    <tr><td>H6</td><td><code>8 pt</code></td><td><code>&#123; enabled: false, parity: 'any' &#125;</code></td></tr>
+  </tbody>
+</table>
+
+The H1 default models a book-style chapter layout: every top-level heading opens on a fresh right-hand (odd) page, with a mandatory blank separator page from the previous chapter. Override it on `levels[0].breakBefore` if your document is flatter than a book.
+
+A level's `breakBefore` is merged field by field over that default, and a `headings` object that does not mention it keeps it. `{ parity: 'odd' }` on H1 keeps the break and changes only the parity; `{ enabled: false }` lets chapters run on:
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',                               // H1 still breaks to a fresh recto (always-odd)
+  levels: [{ level: 1, breakBefore: { parity: 'odd' } }],    // …or: a recto, with no mandatory blank
+}
+
+headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] } // chapters run on
+```
+
+**Changed in postext 1.5.** Up to postext 1.4, any `headings` object turned the H1 break off unless `levels[0].breakBefore` was restated, and a partial `breakBefore` filled its missing field from the no-break default. So a configuration written in code for 1.4 with a `headings` object and no H1 break now opens every chapter on a fresh recto, with blank versos where needed. To keep the chapters running on, give the H1 entry of `levels` one field:
+
+```ts
+headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enabled: false } }] } // as 1.4 laid it out
+```
+
+Where the configuration was stored, the engine can tell and does it for you: the Sandbox for the books and configurations it saved then (see **Sandbox → Persistence**), and `openBundle` / `readBundle` for a `.postext` bundle written by postext 1.4 or earlier (see [Bundles written by postext 1.4 or earlier](/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier)). A configuration you stored yourself can go through `migrateConfig(config)` from `postext/bundle`, which writes out the breaks 1.4 laid out (`pinLegacyHeadingBreaks`): `enabled: false` on an H1 that had no break, and `parity: 'any'` beside an `enabled: true` that named no parity, on H1 and on heading styles. It also pins the maths size, the space around inline figures (in boxes too), the headings' inline marks, the drop-cap sizes, the room under a colon line that introduces a list, the lines a box cut leaves of a paragraph or list item, the line breaks at dashes, the line-by-line breaking of ragged text, the split of a paragraph under a heading, the line breaks at a compound's hyphen and the space under `:::paragraphs` containers, as 1.4 set them. Pass the book's markdown as a third argument, `{ content }`, and it leaves out the maths pin when the text has no `$`, the gap pins when no line embeds a resource (the box-gap pin when none does inside a box), the heading-marks pin when no heading carries a mark, the colon-line pin when no list follows a line ending in a colon, the box-cut pin when the text opens no `:::callout`, the dash pin when no dash is set closed between words, the heading-split pin when the text has no heading, the container pin when the text opens no `:::paragraphs` container, and the compound pin when no hyphen stands between two letters; the ragged-breaking pin goes only to a configuration that sets some running text ragged, and the container pin only to one that declares a paragraph style (see [Bundles written by postext 1.4 or earlier](/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier)). For the breaks alone, call `pinLegacyHeadingBreaks(config)`.
+
+Per-level overrides support the same properties as the general defaults — `fontSize`, `lineHeight`, `fontFamily`, `color`, `fontWeight`, `marginTop`, `marginBottom`, `snapToGrid` — plus these level-only fields (a [heading style](/en/docs/configuration-styles#heading-styles) takes them too):
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>italic</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Render the heading in italic. Applied on top of <code>fontWeight</code>.</td>
+    </tr>
+    <tr>
+      <td><code>textTransform</code></td>
+      <td><code>'none' | 'uppercase'</code></td>
+      <td><code>'none'</code></td>
+      <td>Upper-cases the heading title (a numbering prefix is kept as written, and so are a chip and the label of a <code>:ref</code> in it). Length-preserving so the editor's source map stays 1:1: characters whose upper-case form expands (<code>ß</code> → <code>SS</code>) are left as they are. The transformed title also feeds the <code>&#123;titleText&#125;</code> placeholder of advanced designs and chapter openers. The PDF bookmarks keep the title as written — <em>Author contributions</em>, not <em>AUTHOR CONTRIBUTIONS</em> — the way CSS <code>text-transform</code> leaves the text itself alone (up to postext 1.4 they took the capitals).</td>
+    </tr>
+    <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Tracking after every glyph of the heading — spaces and the numbering prefix included — as CSS <code>letter-spacing</code>. Positive spreads the letters (capitals set with <code>textTransform: 'uppercase'</code> usually want a little: <code>&#123; value: 0.12, unit: 'em' &#125;</code>), negative tightens a display size. An <code>em</code> value is relative to the level's <code>fontSize</code>. The heading's lines are measured with it, so they wrap where the tracked text ends, and canvas, HTML and PDF paint it the same. Letter-spacing never changes the glyphs: the face's ligatures (fi, fl) stay, on every output. A centred or right-aligned line is placed by its letters: the tracking after its last glyph is left out, as in design text, so a centred heading lines up with the default opener of a <code>span: 'page'</code> heading. A level drawn from its <code>advancedDesign</code> ignores it, like the other typography fields here: each design text element has its own <code>letterSpacing</code>. A <a href="/en/docs/configuration-styles#heading-styles">heading style</a> sets it too, for the headings that use it. Up to postext 1.4 headings had no tracking, and the key was dropped without a word.</td>
+    </tr>
+    <tr>
+      <td><code>lineSpan</code></td>
+      <td><code>number</code></td>
+      <td>unset</td>
+      <td>Lines taken (行取り, JLReq §4.1.6): the heading is set in a band of this many body lines, its characters centred in it, in place of <code>marginTop</code> and <code>marginBottom</code>; <code>3</code> is a 3行取り heading. The band starts on a body line when the heading snaps to the grid, and the text after it stays on the grid, in both writing modes and with <code>cjk.grid</code>; a heading whose lines need more takes the next whole number. The centre is that of the characters (the baseline less the face's ideographic centre), as JLReq measures it, not that of the line boxes. Not applied to openers (<code>span: 'page'</code>), headings drawn from an <code>advancedDesign</code>, hidden headings or headings inside boxes. A heading style may set <code>0</code> to take its level's off. Since postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>indent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Indent of the heading from the line start (字下げ), <code>em</code> being the <strong>body</strong> size, as Japanese books count heading indents in body characters (JLReq §4.1.3): <code>&#123; value: 6, unit: 'em' &#125;</code> is 6字下げ whatever the heading's size. The measure narrows by it, and a centred heading centres in the rest. Since postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>firstLineIndent</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Indent of the heading's first line only, measured from <code>indent</code> and, like it, in <strong>body</strong> ems: the lines a long heading wraps onto start at <code>indent</code> (at the line start when it is unset), as GB/T 9704 sets every level of head two cells in with its turnover at the margin: <code>&#123; value: 2, unit: 'em' &#125;</code>. With <code>cjk.grid</code> on, two body ems are two cells of the grid. A numbered heading prints its number after the indent, so the numbering template needs no ideographic spaces, which would also print in the contents and the PDF bookmarks. It works in vertical text (from the top of the line), with the CJK composer (an opening bracket at the start of the heading follows the line-start rules, as in a paragraph) and with Knuth–Plass. A centred heading takes it as a centred paragraph does: its first line centres in the room after the indent. <code>&#123;firstLineIndent=N&#125;</code> after a heading's title sets one heading, and <code>&#123;firstLineIndent=0&#125;</code> takes its level's off. Since postext 1.24.</td>
+    </tr>
+    <tr>
+      <td><code>jidori</code></td>
+      <td><code>number</code></td>
+      <td>unset</td>
+      <td>Even spacing (字取り): a one-line heading narrower than this many of its <strong>own</strong> ems is spaced evenly to exactly that width, so <code>3</code> sets 序章 as 序　章. Wider titles and headings of several lines are left as they are. <code>&#123;jidori=N&#125;</code> after a heading's title sets one heading, and <code>&#123;jidori=0&#125;</code> turns its level's off. Since postext 1.16.</td>
+    </tr>
+    <tr>
+      <td><code>dropCap</code></td>
+      <td><code>ParagraphDropCap | false</code></td>
+      <td>none</td>
+      <td>A drop cap opening the first body paragraph after a heading of this level (see <a href="/en/docs/configuration-text#drop-caps">Drop caps</a>): one setting gives every chapter its initial. A heading turns it off with <code>&#123;dropcap=false&#125;</code> or sets its lines with <code>&#123;dropcap=2&#125;</code>. Since postext 1.23.</td>
+    </tr>
+    <tr>
+      <td><code>numberingTemplate</code></td>
+      <td><code>string</code></td>
+      <td><code>''</code></td>
+      <td>Template of the level's automatic number. A token <code>{'{1}'}</code> … <code>{'{6}'}</code> prints the running counter of that heading level, optionally formatted by a suffix — <code>{'{1:I}'}</code> upper roman, <code>{'{1:i}'}</code> lower roman, <code>{'{1:A}'}</code> / <code>{'{1:a}'}</code> alphabetic, <code>{'{1:01}'}</code> zero-padded, <code>{'{1:words}'}</code> spelled out (<em>twenty-one</em>), <code>{'{1:ordinal}'}</code> as an ordinal (<em>twenty-first</em>), <code>{'{1:一}'}</code> in Chinese numerals (Japanese ones in a Japanese document: 第百一章), <code>{'{1:〇}'}</code> digit by digit, <code>{'{1:壹}'}</code> in financial numerals and <code>{'{1:①}'}</code> circled, or any name of <a href="/en/docs/configuration-page-layout#numbering-format-spellings">Numbering format spellings</a> — and any other text is literal (<code>'Chapter {'{1}'}. '</code>, <code>'{'{1}'}.{'{2}'}'</code>, <code>'第{'{1:一}'}回'</code> for 第一百二十回; a backslash escapes a literal brace). A token whose counter is still empty collapses together with its adjacent separator. Empty (the default) means no automatic number. The rendered number is prepended to the title in the flow, feeds the <code>{'{number}'}</code> placeholder of an advanced design slot (where the prefix itself is not prepended) and is printed in the table of contents. See <a href="#spelled-out-numbers">Spelled-out numbers</a> for the words, and <a href="/en/docs/configuration-styles#heading-styles">Heading styles</a> for a template of its own on some headings of a level.</td>
+    </tr>
+    <tr>
+      <td><code>numberSeparator</code></td>
+      <td><code>string</code></td>
+      <td><code>' '</code></td>
+      <td>What stands between the number and the title: in the column, in the default opener of a <code>span: 'page'</code> level, in the running heads that print the heading line and in the PDF bookmarks. The level-1 separator also joins a part's number and title in the default part page and in the default part row of the contents. Chinese chapter heads take an ideographic space or nothing (<code>'　'</code>: 第一回　甄士隱夢幻識通靈). The contents keep their own number column (<code>toc.levels[].numberGap</code>). A <a href="/en/docs/configuration-styles#heading-styles">heading style</a> may set its own. When a title is broken in two with <code>{'\\\\'}</code>, as the couplet titles of Chinese novels are, the single-line forms (the column, the contents, the running heads) join the halves with an ideographic space when both sides are Chinese or Japanese characters, and with a space otherwise.</td>
+    </tr>
+    <tr>
+      <td><code>numberPosition</code></td>
+      <td><code>'before' | 'replace'</code></td>
+      <td><code>'before'</code></td>
+      <td>Where the generated number stands. <code>'before'</code>: before the title, joined by <code>numberSeparator</code>. <code>'replace'</code>: the number is the whole title and the title written in the source is not printed, so <code># Night</code> under <code>numberingTemplate: 'الليلة &#123;1:ordinal-feminine&#125;'</code> prints الليلة الثانية. The contents list the number as the entry's title (no number column), and the running heads (<code>{chapterTitle}</code>, <code>{titleText}</code>) and the PDF bookmarks read it too; <code>{number}</code> is empty for such a heading. Only for numbered headings with a template (the level's or their style's); any other keeps its title. A <a href="/en/docs/configuration-styles#heading-styles">heading style</a> may set its own, <code>'before'</code> to keep the titles its level would replace.</td>
+    </tr>
+    <tr>
+      <td><code>breakBefore</code></td>
+      <td><code>HeadingBreakBeforeConfig</code></td>
+      <td>H1: <code>&#123; enabled: true, parity: 'always-odd' &#125;</code><br/>H2–H6: <code>&#123; enabled: false, parity: 'any' &#125;</code></td>
+      <td>Force a page break before every heading of this level. <code>parity: 'odd'</code> / <code>'even'</code> further constrains which side of the spread the heading opens on — a blank padding page is inserted when needed (still counted in the page numbering). <code>'always-odd'</code> / <code>'always-even'</code> additionally guarantee at least one mandatory blank separator page between the previous content and the new heading (the separator belongs to the previous chapter; any further parity padding belongs to the new one). When the heading is the very first block of the document and the first page is still empty, parity enforcement is skipped — the heading lands on page 1 as written. A field left unset keeps the level default: H1's <code>&#123; parity: 'odd' &#125;</code> still breaks.</td>
+    </tr>
+    <tr>
+      <td><code>hidden</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>A structural heading: it prints nothing and takes no room in the column or in a callout box — no text, no margins, no opener band — but does everything else a heading does. Its <code>breakBefore</code> still opens a page, it opens its style's section, it counts (unless its style says <code>numbered: false</code>), and it is listed by <code>:::toc</code>, named by <code>{'{chapterTitle}'}</code> running heads and bookmarked in the PDF. For a dedication, an epigraph page or a colophon that the contents and the reader's bookmarks need, but the page does not show. Set it on a <a href="/en/docs/configuration-styles#heading-styles">heading style</a> rather than a whole level; a heading overrides it with <code>{'{hidden="true"}'}</code> / <code>{'{hidden="false"}'}</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+headings: {
+  fontFamily: 'Merriweather',
+  levels: [
+    // Canonical book preset: chapters on a right-hand (odd) page.
+    { level: 1, fontSize: { value: 24, unit: 'pt' }, breakBefore: { enabled: true, parity: 'odd' } },
+    { level: 2, fontSize: { value: 18, unit: 'pt' }, italic: true },
+  ]
+}
+```
+
+`snapToGrid` works per level too. Unset, a level follows `headings.snapToGrid`; set, it overrides it — so one document can set its H2s a line and a half above their text, off the grid until the next snap point, while its H3s round the space under them up to whole grid lines. A heading style can set it as well, for the headings that use it.
+
+```ts
+headings: {
+  marginBottom: { value: 1.5, unit: 'em' },
+  levels: [
+    { level: 2, snapToGrid: false }, // exactly 1.5 em under every H2
+    { level: 3 },                    // inherits headings.snapToGrid: true
+  ],
+}
+```
+
+### Break before
+
+`breakBefore` is orthogonal to the numbering controls: turning it on forces a page break, but the numeric counter only resets when you explicitly insert a `:::numbering` directive. Blank parity pages count as real pages in the sequence and receive headers/footers according to their normal odd/even rules.
+
+A `:::pagebreak` right before such a heading does not replace its break: the heading still applies its parity after the page the directive opened, which can add a blank page. See [Heading styles](/en/docs/configuration-styles#heading-styles) for a heading that should start right after a manual break.
+
+#### Parity values
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'any'</code> (default)</td>
+      <td>No parity constraint. The heading just opens on the next page.</td>
+    </tr>
+    <tr>
+      <td><code>'odd'</code></td>
+      <td>Ensure the heading opens on an odd (right-hand) page. A single blank is inserted only when the natural next page is even.</td>
+    </tr>
+    <tr>
+      <td><code>'even'</code></td>
+      <td>Same but for an even (left-hand) page.</td>
+    </tr>
+    <tr>
+      <td><code>'always-odd'</code></td>
+      <td>Guarantee <strong>at least one mandatory blank separator page</strong> between the previous content and the new heading, then ensure odd parity. Useful when every chapter must start on a fresh spread.</td>
+    </tr>
+    <tr>
+      <td><code>'always-even'</code></td>
+      <td>Same but for an even page.</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Blank-page ownership
+
+Blank pages inserted by `breakBefore` carry chapter-title headers based on *why* they were inserted:
+
+- Pages inserted to satisfy a parity constraint (`'odd'`, `'even'`, or the parity tail of `'always-*'`) belong to the **upcoming** chapter. Their `{chapterTitle}` header placeholder resolves to the new chapter's title — because the blank exists only to push the new chapter onto the correct parity.
+- The mandatory leading separator inserted by `'always-odd'` / `'always-even'` belongs to the **previous** chapter. It's a deliberate end-of-chapter breath, so the `{chapterTitle}` header still shows the old chapter's title.
+
+The running heads and palette of a styled section (see [Heading styles](/en/docs/configuration-styles#heading-styles)) follow the same two rules on blank pages.
+
+#### Document-start exception
+
+When the very first block of the document is a heading with `breakBefore` enabled — or the source opens with `:::pagebreak` — parity enforcement is skipped while the first page is still empty. The heading lands on page 1 as written, regardless of the configured parity, so a document that begins with a `# Chapter 1` configured `parity: 'odd'` doesn't inherit a spurious leading blank. Once any content has been placed, parity enforcement behaves normally.
+
+### Span and advanced design
+
+Each heading level accepts two additional fields that control how the heading renders as a full page-wide chapter opener.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>span</code></td>
+      <td><code>'column' | 'page'</code></td>
+      <td><code>'column'</code></td>
+      <td>When <code>'page'</code>, the heading is treated as a chapter opener and its advanced design (if enabled) is attached to the page as an opener band above the body. Pair with <code>breakBefore.enabled: true</code> so the opener reliably begins a new page. Without a design of its own, the title is painted by a default opener across the whole content area, in the level's typography and leading, with its bold, italic and script runs (<code>headings.inlineMarks</code>), and the band is measured at that width. The band holds every line the opener paints: where the opener takes more lines than the heading's own measure (a justified title whose spaces would shrink onto one line, a forced break <code>{'\\\\'}</code>), the band takes them too. Up to postext 1.4 the band was measured with the title wrapped at the column width, so a title that fits the content area on one line took a band two lines tall, with the line centred in it. The other columns start under the band as the heading's own column does. Text that opens one of them starts where text right under the opener would start, whatever follows the opener in its own column: the opener's <code>marginBottom</code> below its title or design, taken to the next grid line when the level snaps. A heading, a display formula or a contents row that opens one is set level with the first heading or display formula under the opener, margins included as there; when the opener's column goes on with anything else, it starts where that text does. A hidden heading under the opener does not count, and the space <a href="/en/docs/configuration-page-flow#column-balancing">column balancing</a> adds above the heading under the opener is not repeated in the other columns. What these columns snap to the grid lands on the page's grid. Up to postext 1.4 their first block sat at the band's foot: off the grid when the band ended between two lines, and right against the band, with no margin, when a heading followed the opener (a line higher than now when the band ended on the grid); a heading there also dropped the top margin the first column's heading kept.</td>
+    </tr>
+    <tr>
+      <td><code>spanBreak</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether a <code>span: 'page'</code> heading starts a new page. <code>true</code> opens the next page (its side picked by <code>breakBefore</code>). <code>false</code>, with <code>breakBefore.enabled: false</code>, opens it where the text reaches, as a page-span box does: the columns above it end level (the band is balanced when <code>headings.balancing.trailing</code> is on), the heading's design or default opener is set across the content area under them, and the text goes on in every column below: a second article of a bulletin under the end of the first. When the room left would not hold the heading and the widow minimum of lines under it, it opens the next page as with <code>true</code>. The page's role stays the one its first block gives it. No effect on a <code>span: 'column'</code> heading. Also on a heading style. Since postext 1.19.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign</code></td>
+      <td><code>HeadingAdvancedDesignConfig</code></td>
+      <td><code>{'{ enabled: false, slot: { elements: [] } }'}</code></td>
+      <td>Free-composition design slot for this level. When <code>enabled</code>, the slot's elements compose the opener. Use <code>{'{titleText}'}</code> inside a text element to render the heading's title text; use <code>{'{number}'}</code>, <code>{'{numberRoman}'}</code>, etc. to insert the formatted heading number.</td>
+    </tr>
+    <tr>
+      <td><code>advancedDesign.minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>Minimum height reserved for the heading in the column flow. The heading takes <code>max(design content bottom, minHeight)</code>, then the heading's <code>marginBottom</code> under it (from its heading style, its level or <code>headings.marginBottom</code>; 0.5 em of the heading's size by default), and the sum is rounded up to the baseline grid when headings snap. So an opener can push the body text down (or claim the whole page) even when its elements are short or anchored to the page/bleed frames above the heading. For a band exactly <code>minHeight</code> tall, set that <code>marginBottom</code> to 0 and make <code>minHeight</code> a whole number of grid lines. Applies whenever <code>enabled</code> is true, even with an empty slot. See <a href="#reserved-height">Reserved height</a> for what the design content bottom counts.</td>
+    </tr>
+  </tbody>
+</table>
+
+**An opener as tall as the page.** When the reserved height reaches past the foot of the column — a cover whose `minHeight` is the page height, an image or a box anchored to the page or the bleed and running down to the trim — the opener claims the rest of the page: the text after it starts on the next page, in every column of a two-column or column-and-a-half layout alike. A cover therefore needs no `:::pagebreak` after it (one does no harm: it adds no blank page). An in-column heading (`span: 'column'`) whose design is taller than its column claims that column, and the text starts at the head of the next one. The heading's block then runs down to the foot of the column it claims, and its design is laid out against that band: elements anchored to the top stay where they are anchored, and those that follow the band — anchored to its middle or foot, or `'fill'` tall — keep to the room the heading claims, as they keep to the reserved height when it fits (up to postext 1.4 the block kept the height of its text, so those elements were laid out against a band one title tall, and the text after it ran on under the design). Page furniture that should not claim the page — a fore-edge stripe down the whole page, an ornament at the foot of the page — belongs in the header or footer design instead: anchored to `'page'` or `'bleed'` and shown with `pages: 'opener'`, it paints on the opener page and reserves no body space.
+
+Example — a minimalist chapter opener that shows "Chapter N" above the title:
+
+```json
+{
+  "headings": {
+    "levels": [
+      {
+        "level": 1,
+        "span": "page",
+        "breakBefore": { "enabled": true, "parity": "always-odd" },
+        "advancedDesign": {
+          "enabled": true,
+          "slot": {
+            "elements": [
+              {
+                "kind": "text",
+                "id": "chapterLabel",
+                "placement": {
+                  "anchor": { "to": "container", "edge": "top" },
+                  "offset": { "y": { "value": 48, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "Chapter {numberRoman}",
+                "fontSize": { "value": 10, "unit": "pt" },
+                "align": "center",
+                "overflow": "ellipsis-end"
+              },
+              {
+                "kind": "text",
+                "id": "chapterTitle",
+                "placement": {
+                  "anchor": { "to": "#chapterLabel", "edge": "below" },
+                  "offset": { "y": { "value": 12, "unit": "pt" } },
+                  "size": { "width": "fill" }
+                },
+                "content": "{titleText}",
+                "fontSize": { "value": 24, "unit": "pt" },
+                "fontWeight": 700,
+                "align": "center",
+                "overflow": "wrap",
+                "hyphenate": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+Heading placeholders available inside a level's design slot:
+
+- `{titleText}` — the heading's plain text (without numbering prefix). A forced break in the title (`\\`) is a line break here, in an opener band and in an in-column design alike (up to postext 1.4 an in-column design printed a space there, while its height was measured with the break). The lines the hidden heading wraps into in its column are joined back into the title as written: a word broken after its own hyphen keeps the hyphen with no space after it, a word the column divided is whole again without the hyphen the break added, a group glued by a no-break space that was wider than the column and was parted at that space gets its no-break space back (`Capítulo XVIII`, not `CapítuloXVIII`), and each other break gives back its one space. Up to postext 1.4 every line break became a space, so a title that wrapped at a hyphen printed `Word- Book`, and a forced break in such a title was dropped.
+- `{number}` — the formatted number per the level's `numberingTemplate`.
+- `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` — the heading's counter (its level's running count, whatever the template prints) in other numeral formats: the third chapter gives `3`, `III`, `iii`, `C`, `c`, with or without a `numberingTemplate`. An unnumbered heading (a style with `numbered: false`) leaves them empty.
+- `{numberWords}`, `{numberWordsLower}`, `{numberOrdinalWords}`, `{numberOrdinalWordsLower}` — the same counter spelled out, with a capital or in lower case: *Three* / *three*, *Third* / *third* (see [Spelled-out numbers](#spelled-out-numbers)).
+- `{numberHan}` — the same counter in Chinese numerals, in the script of the document's `locale`: an opener set with `第{numberHan}回` prints 第十二回 for the twelfth chapter while the contents list `12`.
+- `{chapterNumber}`, `{chapterTitle}`, `{pageNumber}`, `{totalPages}`, `{bookTotalPages}`, `{title}`, `{subtitle}`, `{author}`, `{publishDate}` — shared metadata placeholders.
+- `{attr.<key>}` — an attribute written on the heading line itself (`# Title {author="I. Zango Martín"}`), falling back to the current chapter's H1 attribute. Missing attributes resolve to an empty string with no warning.
+
+`{chapterNumber}` prints what the running heads print for the chapter: the H1's number when its level (or style) has a `numberingTemplate`, else the chapter ordinal — `1`, `2`… continuing past the chapters laid out before this one — and nothing for an unnumbered chapter or a style whose template is `''`. A heading design reads the chapter its heading belongs to: a level-1 heading its own, a lower heading the last level-1 heading before it. That holds where two chapters meet on one page too, while the running heads of that page print the later chapter. The height an opener reserves is measured with that same value. Up to postext 1.4 it was measured with the heading's number prefix (empty without a template), so a design whose height depends on `{chapterNumber}` could paint taller than the room it took; and the design printed the page's chapter, so the first of two chapters sharing a page showed the second one's number.
+
+The counter placeholders follow the book across chapters laid out one at a time (the counters `continuationAfter()` hands on), and a heading's `startAt` attribute restarts them (see **Document format → Heading attributes**). An opener that says *Chapter III* over a title numbered `3.` in the flow and the contents:
+
+```ts
+{
+  level: 1,
+  span: 'page',
+  numberingTemplate: '{1}.',
+  advancedDesign: {
+    enabled: true,
+    slot: { elements: [
+      { kind: 'text', id: 'label', content: 'Chapter {numberRoman}', fontSize: { value: 10, unit: 'pt' }, overflow: 'ellipsis-end',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill', height: 'auto' } } },
+      { kind: 'text', id: 'title', content: '{titleText}', fontSize: { value: 24, unit: 'pt' }, overflow: 'wrap',
+        placement: { anchor: { to: '#label', edge: 'below' }, size: { width: 'fill', height: 'auto' } } },
+    ] },
+  },
+}
+```
+
+#### Reserved height
+
+A heading with an advanced design takes room in the column like any block: the body text after it starts below that room. The room is the tallest of three heights, all measured down from the heading's top (the top of the content area for an opener that starts its page):
+
+1. the heading's own text, set in the level's typography (it is hidden under the design, but keeps its lines);
+2. the design content bottom — the lowest bottom edge among the elements that count (below);
+3. `advancedDesign.minHeight`.
+
+The heading's `marginBottom` is added after it (from its heading style, its level or `headings.marginBottom`; 0.5 em by default), and the result is snapped up to the baseline grid when headings snap. For an opener (`span: 'page'`) the same band is kept free in every column of the page. For an in-column heading that fits its column, the design is laid out in the heading's box, which is exactly that tall.
+
+**Which elements count.** Every element of the design counts — text, rules, boxes and pictures alike (up to postext 1.4 an `image` element never counted, so the text could start over a band picture unless `minHeight` held it off) — except:
+
+- **elements with `reserve: false`** — decoration that may sit under the text;
+- **elements that follow the band itself** — anchored to the container's middle row (`left`, `center`, `right`) or bottom row (`bottom-left`, `bottom`, `bottom-right`), with a `'fill'` height against the container (a box or a vertical rule with no height fills it by default), and any element anchored to one of those. The container is the reserved band, so these sit on its foot or span it: a rule under the band, a tinted panel behind the title. They follow the height; they never set it. A text among them that keeps its own height still needs room: a title anchored to the foot of the band makes the band at least as tall as the title, so the title never starts above the heading's top. With `minHeight: 36mm` and the title anchored `bottom-left`, the heading's box is 36 mm plus its `marginBottom`, snapped up to the grid, and the title sits at the foot of that box, right above the text that follows; without `minHeight`, a title that takes more lines than the heading's own text makes the band as deep as the title. Up to postext 1.4 such a title was painted up over the text above the heading. Boxes, rules and pictures that follow the band set no such floor, so a panel anchored to the foot can reach above the heading.
+
+Page- and bleed-anchored elements count by how far they reach below the heading's top. A band across the top of the page that ends above the heading counts nothing; a full-bleed picture that runs past it pushes the text down to its bottom edge. So does anything low on the page: a seal 25 mm above the page foot, a full-height side band or a frame reserves the page down to its bottom edge, and the text usually starts on the next page. Mark such decoration `reserve: false` — it still paints and elements can still anchor to it — and give the heading the room it needs with its text elements or `minHeight`:
+
+```json
+{
+  "kind": "image", "id": "seal", "resourceId": "seal", "reserve": false,
+  "placement": {
+    "anchor": { "to": "page", "edge": "bottom-right" },
+    "offset": { "x": { "value": -25, "unit": "mm" }, "y": { "value": -25, "unit": "mm" } },
+    "size": { "width": { "value": 30, "unit": "mm" } }
+  }
+}
+```
+
+An element anchored to a non-reserving one still counts unless it is marked too (a caption set on the seal needs its own `reserve: false`).
+
+**Where it paints.** An opener's design (`span: 'page'`) is drawn before the body, so decoration that reserves nothing lies under the text. An in-column heading's design is drawn with the heading block — over the blocks above it in the column, under those after it — wherever it is placed above the foot of its column: in the side margins, the top margin, the bleed and the neighbouring columns too. The foot of the column cuts it, in the canvas and the PDF, since the flow ends there (see **Taller than the column** below). Up to postext 1.4 the canvas and the PDF also cut it at the top of its column, so a band anchored to the top of the page or of the bleed ran into the side margins but stopped at the top margin. Decoration anchored to the foot of the page belongs in an opener, or in the footer design with `pages: 'opener'`.
+
+**Taller than the column.** When the room reaches past the foot of the column — a `minHeight` as tall as the page, a picture or a frame running down to the trim — the heading claims the rest of its page (an opener, in every column) or of its column (an in-column heading), and the text after it starts on the next page or column. Its block then runs to the column's foot, never cut back to the height of its text, so the band its design is laid out against is the room it claims (`minHeight` included, up to the foot). A design taller than the page itself — a long lead on a small screen page — is still cut at the page's foot (an in-column design, at its column's): the Sandbox lists it in the **Checks** panel as *Heading design cut off*. The layout raises no warning for it — a cover that claims its page is the usual case and loses nothing — but any host can run the same check on the finished layout: `collectHeadingDesignCuts(doc)` returns one `{ kind: 'headingDesignCut', pageIndex, level, where, overflowPx, sourceStart, sourceEnd }` for each heading whose design text lies past the foot of the page's trim (`where: 'page'`, an opener) or of its column (`where: 'column'`), and `formatWarning` describes each one. See **An opener as tall as the page** under [Span and advanced design](#span-and-advanced-design).
+
+**The side column.** In a one-and-a-half layout whose side column holds floats (`sideColumnRole: 'floats'`), an element of an in-column heading's design that stands in the side column — a chapter numeral anchored to the page in the outer margin column of a textbook opener — keeps the side stack off it. Each `span: 'side'` figure, table or box the page sets after the heading keeps one float gap clear of every such element: it stays where the stack puts it when it fits above the element, and otherwise goes under it — or waits for the next page when the rest of the side column cannot hold it there. So a numeral at the head of the channel holds the whole stack under it, while a section number hung in the margin beside a heading further down the page leaves the head of the channel to the figures the page cites (the marginal figure still sits at the top of its page). What the side column already holds when the heading is placed is not moved: a figure stacked earlier on the page that reaches down to the heading's element stays where it is, under the element, so a design whose element stands in the side column mid-page wants its figures cited after the heading. Elements with `reserve: false` leave the side column free, as they leave the text. An opener (`span: 'page'`) needs nothing of the kind: its band is reserved in every column, the side column included. Up to postext 1.4 a side figure cited on such an opener was set at the head of the side column, over the numeral.
+
+**Covers.** A cover heading that fills its page — `minHeight` as tall as the page, or a full-page picture in its design — therefore sends the text after it to the next page by itself, in single- and multi-column layouts alike. A `:::pagebreak` right after it is optional and does no harm: a page break on a page that is still empty does nothing, so it never adds a blank page. It is needed only when the cover's design stops short of the page foot and the text should still start on a fresh page.
+
+```md
+# Annual report 2026 {style="cover"}
+
+:::pagebreak
+
+# Letter from the chair
+```
+
+### Spelled-out numbers
+
+Two numbering-template suffixes write a counter in words, in the document language (the top-level `locale`, else the hyphenation locale — see [Document language](/en/docs/configuration-language#document-language)): `words` for the cardinal and `ordinal` for the ordinal. The case of the suffix sets the case of the words, as `A` / `a` does for letters:
+
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>English (21)</th>
+      <th>Spanish (21)</th>
+      <th>Chinese (21)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{'{1:words}'}</code></td><td>twenty-one</td><td>veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:Words}'}</code></td><td>Twenty-one</td><td>Veintiuno</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:WORDS}'}</code></td><td>TWENTY-ONE</td><td>VEINTIUNO</td><td>二十一</td></tr>
+    <tr><td><code>{'{1:ordinal}'}</code></td><td>twenty-first</td><td>vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:Ordinal}'}</code></td><td>Twenty-first</td><td>Vigesimoprimero</td><td>第二十一</td></tr>
+    <tr><td><code>{'{1:ORDINAL}'}</code></td><td>TWENTY-FIRST</td><td>VIGESIMOPRIMERO</td><td>第二十一</td></tr>
+  </tbody>
+</table>
+
+English, Spanish, French, Italian, German, Catalan, Portuguese, Chinese, Japanese and Arabic are spelled out; any other language takes the English words, as the built-in table continuation strings do. Chinese writes the informal numerals of `simp-chinese-informal` or `trad-chinese-informal`, after the script of `locale` (一万 / 一萬), with 第 before an ordinal; Han characters have no case, so the three spellings of a suffix print alike. English follows American usage (*one hundred five*, no *and*). Spanish uses masculine forms by default, as a *capítulo* or a *libro* is numbered (*capítulo primero*, *tercero*, *veintiuno*), and writes the ordinals from 13 to 29 as one word, as the RAE prefers (*decimotercero*, *vigesimoprimero*). Cardinals are spelled up to 999 999 and Spanish, Catalan and Portuguese ordinals up to 999; larger numbers print in digits.
+
+French follows the traditional spelling (*vingt et un*, *soixante et onze*, *quatre-vingts*, *deux cent un*) and writes *premier* for one (*Chapitre premier*, but *vingt et unième*); Italian writes each number as one word (*ventuno*, *ventitré*, *duemilaventiquattro*; *primo*, *ventunesimo*), and so does German (*einundzwanzig*, *hunderteins*; *erste*, *einundzwanzigste*), with *ss* for *ß* in Swiss German (`de-CH`); Catalan follows the IEC (*vint-i-u*, *dos-cents*; *primer*, *cinquè*, *vint-i-unè*), and Portuguese is Brazilian (*dezesseis*) unless `locale` names another region (`pt-PT`: *dezasseis*), with the Latin ordinals (*vigésimo primeiro*). Catalan and Portuguese ordinals, like Spanish ones, are spelled up to 999.
+
+The Romance languages read the gender modifier: `-feminine` (or `-f`) agrees the words with a feminine noun (`Parte {1:ordinal-f}` gives Italian *Parte prima*, `{1:Ordinal-f} partie` French *Première partie*; likewise *veintiuna*, *vint-i-una*, *duzentas*), and `-masculine` (`-m`) is the default. A German cardinal does not change (*Kapitel eins*), but an ordinal does: with no modifier it takes the ending it has after the article, the same in all three genders (`Das {1:ordinal} Kapitel` gives *Das erste Kapitel*); before a noun without an article, `-masculine` gives *Erster Teil*, `-feminine` *Erste Lektion* and `-neuter` (`-n`) *Erstes Kapitel*. German writes number words in lower case (`Kapitel {1:words}` gives *Kapitel eins*); `{1:Words}` capitalises the first letter, for a word that opens the heading, and `{1:WORDS}` writes ß as SS.
+
+Arabic numbers agree in gender with the noun they count, so the suffix takes a modifier: `-feminine` (or `-f`) for a feminine noun, `-masculine` (`-m`, the default) for a masculine one; `-classical` spells the hundreds مائة, as Bulaq and most Egyptian prints do, instead of the modern مئة. `{1:ordinal}` writes the definite nominative ordinal a heading uses: `الفصل {1:ordinal}` gives *الفصل الأول*, *الفصل الحادي عشر*, *الفصل الحادي والعشرون*; `الليلة {1:ordinal-feminine}` gives *الليلة الأولى*, *الليلة الحادية عشرة*, *الليلة الحادية والعشرون*, *الليلة المئتان*, and above a hundred the classical "after" formula: *الليلة الخامسة والأربعون بعد الثلاثمئة*, *الليلة الحادية بعد الألف*. `{1:words}` writes the cardinal (واحد وعشرون; feminine إحدى عشرة, واحدة وعشرون). Ordinals are spelled up to 9 999 and cardinals up to 99 999; the modifiers combine (`{1:ordinal-f-classical}`); the Romance languages and German read only the gender (see above), and other languages ignore them. Arabic has no capitals, so the case of the suffix changes nothing. The design placeholders `{numberWords}` and `{numberOrdinalWords}` write the masculine forms; for a feminine opener, put the ordinal in the level's template and print it with `{number}`.
+
+In a heading design, `{numberWords}` / `{numberWordsLower}` and `{numberOrdinalWords}` / `{numberOrdinalWordsLower}` spell the heading's counter the same way, so the opener can say *Chapter One* while the contents list `1`. A text element's `textTransform: 'uppercase'` gives the capitals:
+
+```ts
+// Spanish novel: "CAPÍTULO PRIMERO" above the title, "1." in the contents.
+{ level: 1, numberingTemplate: '{1}.', span: 'page',
+  advancedDesign: { enabled: true, slot: { elements: [
+    { kind: 'text', id: 'n', content: 'Capítulo {numberOrdinalWordsLower}', textTransform: 'uppercase', /* … */ },
+    { kind: 'text', id: 't', content: '{titleText}', /* … */ },
+  ] } } }
+```

@@ -1,0 +1,279 @@
+{/* docs/sandbox-embedding-fr.mdx */}
+
+export const metadata = {
+  title: 'Sandbox : agents, intégration et préréglages',
+  sidebarTitle: 'Agents, intégration et préréglages',
+  description: 'Les outils WebMCP pour les agents d’IA, le composant PostextSandbox dans votre propre application avec ses props et son CSS, et le format des paquets de préréglage',
+  lang: 'fr',
+  lastUpdated: '2026-10-16',
+  readingTime: '13 min',
+  order: 40,
+  parent: 'sandbox',
+  plainSummary: "Cette page s’adresse à ceux qui créent des sites web ou utilisent des assistants d’IA. Un assistant qui fonctionne dans le navigateur peut lire et modifier le livre du Sandbox grâce à un ensemble d’outils. Vous pouvez placer le Sandbox dans votre propre site sous la forme d’un seul composant, et cette page liste ses options et les styles dont il a besoin. La dernière section décrit les fichiers d’un livre d’exemple, que le Sandbox sait ouvrir.",
+};
+
+# Sandbox : agents, intégration et préréglages
+
+
+## Agents : WebMCP
+
+Le Sandbox fournit à un agent du navigateur ses propres outils via [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), si bien qu’un assistant travaille sur le livre lui-même au lieu de cliquer dans l’interface. Il n’y a rien à configurer : les outils sont enregistrés tant que le Sandbox est à l’écran, et le reste du site enregistre quelques outils à lui sur chaque page (chercher dans la documentation et le livre de recettes, lire une page en Markdown, ouvrir une recette dans le Sandbox, changer de langue et de thème).
+
+Ils sont pensés pour la boucle qu’un graphiste mène à l’œil : changer quelque chose, regarder la page, changer encore.
+
+- **Voir.** `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings` : le livre avec ses chapitres et leurs plages de pages, et ce qui se passe dans l’interface (la sélection, un message, une question en attente de réponse) ; n’importe quelle page en JPEG, PNG ou WebP à la largeur demandée, ou un recadrage pour l’examiner de près, avec l’aperçu d’impression sur demande ; la même page sous forme de données (ses blocs et ses lignes, le remplissage de chaque colonne, les lignes lâches ou terminées par un mot coupé) ; ce qui se trouve en un point d’une page (la ligne de la source, un lien et sa destination, une cellule de tableau) ; les cases et les bulles d’une page de bande dessinée ; et ce que les vérifications trouvent dans n’importe quel chapitre ou dans tout le livre, quels que soient le chapitre et la visionneuse à l’écran.
+- **Modifier.** `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word` : n’importe quel réglage par son chemin (`bodyText.fontSize`, `page.margins.top`, `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`), le texte par recherche-remplacement exact, avec annulation, les chapitres, les images, les dessins SVG, les vidéos, les tableaux avec leur mise en forme, les polices, les cases et les bulles d’une bande dessinée, et un document Word importé avec ses styles mis en correspondance. Une modification répond avec chaque valeur avant et après et le nombre de pages atteint par chaque chapitre ; un réglage indique aussi la valeur que le moteur en a tirée et quels autres réglages l’ont suivi, et une valeur que le moteur ne peut pas résoudre est refusée sans que rien ne change.
+- **Montrer.** `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer` : l’onglet de visualisation, le panneau latéral, chapitre ou livre entier, zoom, ajustement et pages en regard, la taille de caractère du lecteur, l’aperçu d’impression, les repères tracés sur les pages, la loupe du Folio, et la page à l’écran (par son numéro, par un passage, par une ancre ou par une entrée de la table des matières d’un EPUB) ; régénérer le PDF ou l’EPUB, imprimer, et lire une vidéo sur une page.
+- **Conserver.** `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer` : les exemples et vos projets avec leurs couvertures, un fichier `.postext` importé, le livre (ou un livre qui n’est pas ouvert) écrit en PDF, EPUB, `.postext`, Word, Markdown ou ses réglages en JSON, les modèles de l’import Word, et la réponse à une question que pose le Sandbox.
+
+Un outil qui modifie le livre attend la mise en page, si bien que l’image suivante montre toujours les nouvelles pages ; une page est mise en page et peinte pour l’outil quel que soit l’onglet à l’écran. Ce qui ne peut pas être défait (supprimer un chapitre, une ressource ou un projet, restaurer l’original, importer un document Word par-dessus le texte, remplacer votre copie d’un livre) est marqué comme ayant des conséquences, pour que le navigateur puisse d’abord vous demander votre accord. Comme avec l’interface, tout reste dans votre navigateur : les outils n’atteignent rien que le Sandbox lui-même n’atteigne pas.
+
+WebMCP est un brouillon : Chrome le propose en origin trial, et derrière `chrome://flags/#enable-webmcp-testing`. Dans un navigateur qui ne le prend pas en charge, les mêmes outils sont disponibles sur `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), pour un agent capable d’exécuter du script dans la page. Quand vous intégrez le Sandbox, `webmcp={false}` laisse les outils de côté (voir [Props](#props)).
+
+La page [WebMCP](/fr/docs/webmcp) montre ce qu’on peut demander à un agent et comment s’appelle chaque outil, avec des exemples.
+
+
+## Utilisation autonome
+
+Le Sandbox existe aussi sous forme de package React autonome (`postext-sandbox`), que l’on peut intégrer dans n’importe quelle application React :
+
+```bash
+npm install postext-sandbox postext
+```
+
+```tsx
+import { PostextSandbox } from 'postext-sandbox';
+
+function App() {
+  return (
+    <PostextSandbox
+      initialMarkdown="# Hello World"
+      initialConfig={{ layout: { layoutType: 'double' } }}
+      onMarkdownChange={(md) => console.log(md)}
+      onConfigChange={(cfg) => console.log(cfg)}
+    />
+  );
+}
+```
+
+### Props
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>initialMarkdown</code></td>
+      <td><code>string</code></td>
+      <td>Contenu markdown de départ</td>
+    </tr>
+    <tr>
+      <td><code>initialConfig</code></td>
+      <td><code>PostextConfig</code></td>
+      <td>Configuration de mise en page de départ</td>
+    </tr>
+    <tr>
+      <td><code>className</code></td>
+      <td><code>string</code></td>
+      <td>Classe CSS du conteneur racine</td>
+    </tr>
+    <tr>
+      <td><code>labels</code></td>
+      <td><code>Partial&lt;SandboxLabels&gt;</code></td>
+      <td>Libellés de l’interface à remplacer, fusionnés avec les libellés anglais intégrés par défaut ; passez les libellés traduits avec <code>locale</code> pour une intégration dans une autre langue</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>Langue de l’interface (<code>'en'</code> par défaut). Elle choisit les types de ressource par défaut et les ressources d’exemple localisés (un préréglage ou un fichier dans une seule langue reçoit les types de ressource de sa propre langue), et fournit la langue de césure qu’utilisent les aperçus quand aucune n’est configurée</td>
+    </tr>
+    <tr>
+      <td><code>presetSources</code></td>
+      <td><code>&#123; url: string; private?: boolean &#125;[]</code></td>
+      <td>Sources de préréglages distantes, essayées dans l’ordre après le préréglage intégré. Chaque <code>url</code> est une URL de base qui sert un <code>index.json</code> (voir <a href="#format-des-paquets-de-préréglage">Format des paquets de préréglage</a>) ; <code>private: true</code> marque les préréglages de la source comme privés et rend leur indicateur <code>default</code> éligible au chargement automatique. Les sources qui ne répondent pas n’apportent simplement rien</td>
+    </tr>
+    <tr>
+      <td><code>hashBundles</code></td>
+      <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
+      <td>Livres liés par une clé de fragment propre à l’hôte : <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> fait que <code>#recipe=&lt;slug&gt;&amp;lang=es</code> ouvre ce paquet. Renvoyez l’URL d’un fichier <code>.postext</code> sur l’origine même de la page, plusieurs URL à essayer dans l’ordre (la première qui répond l’emporte), ou <code>null</code> pour un identifiant que l’hôte ne sert pas. La première visite importe le fichier comme un projet enregistré avec le lien (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>) ; une visite ultérieure demande s’il faut ouvrir ce projet, modifications comprises, ou le remplacer par le fichier tel qu’il est servi maintenant. Le fragment est ensuite réécrit en <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>onConfigChange</code></td>
+      <td><code>(config) =&gt; void</code></td>
+      <td>Rappel appelé quand la configuration change</td>
+    </tr>
+    <tr>
+      <td><code>onMarkdownChange</code></td>
+      <td><code>(markdown) =&gt; void</code></td>
+      <td>Rappel appelé quand le markdown change</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>Enregistre les <a href="#agents-webmcp">outils WebMCP</a> du Sandbox pour les agents du navigateur tant qu’il est monté. <code>true</code> par défaut</td>
+    </tr>
+    <tr>
+      <td><code>themeToggle</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Composant personnalisé de changement de thème, placé en bas de la barre d’activité</td>
+    </tr>
+    <tr>
+      <td><code>languageSwitcher</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Composant personnalisé de changement de langue, placé en bas de la barre d’activité</td>
+    </tr>
+    <tr>
+      <td><code>homeUrl</code></td>
+      <td><code>string</code></td>
+      <td>Quand elle est définie, affiche en haut de la barre d’activité un logo d’accueil qui pointe vers cette URL</td>
+    </tr>
+    <tr>
+      <td><code>homeLink</code></td>
+      <td><code>ReactNode</code></td>
+      <td>Nœud personnalisé pour l’emplacement d’accueil, qui remplace le lien logo par défaut (prioritaire sur <code>homeUrl</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Prérequis CSS
+
+Le package utilise des classes utilitaires Tailwind CSS qui font référence à des propriétés personnalisées CSS. Votre application hôte doit fournir ces variables :
+
+- `--background`, `--foreground` : couleurs de base
+- `--surface` : couleur des surfaces surélevées ; `--surface-2` : lignes survolées et options mises en évidence (à défaut, `--background`)
+- `--slate` : couleur du texte atténué
+- `--rule` : couleur des bordures et séparateurs ; `--rule-strong` : filet plus marqué pour les contrôles survolés (à défaut, `--slate`)
+- `--brand` : couleur d’accent du repère de panneau actif, des anneaux de focus, des interrupteurs et des choix sélectionnés
+- `--brand-hover` : couleur d’accent au survol
+- `--brand-soft` : fond d’accent translucide derrière les choix sélectionnés (à défaut, `--surface`)
+- `--brand-contrast` : bouton d’un interrupteur activé (à défaut, `--background`)
+- `--destructive` : couleur des actions destructrices et des erreurs
+- `--accent-blue` : couleur des liens et des accents
+- `--font-sans` : famille de caractères de l’interface
+- `--font-mono` : famille à chasse fixe (pour l’éditeur de code)
+- `--font-display`, `--brand-blue`, `--brand-gilt` : caractère et couleurs facultatifs du logo par défaut dans la barre d’activité (à défaut, Georgia, `#2b4acb` et `#d8a21a`)
+
+Le site règle `--brand` sur le doré dans le thème sombre et sur le bleu dans le thème clair. Les versions antérieures lisaient `--gilt` et `--gilt-hover` ; le Sandbox ne les utilise plus.
+
+Les popovers, menus et infobulles s’affichent dans un portail sur `document.body` : définissez donc les variables sur `:root` (ou `body`), pas seulement sur l’élément qui enveloppe le Sandbox. La compilation Tailwind de l’hôte doit analyser les sources du package (`@source "…/postext-sandbox/src/**/*.tsx"` dans Tailwind 4) pour que les classes utilitaires qu’il emploie soient générées.
+
+
+## Format des paquets de préréglage
+
+Annexe. Une source de préréglages est un répertoire (servi en HTTP) dont la racine contient un `index.json` qui liste des répertoires de préréglage ; chaque répertoire contient un manifeste `preset.json` ainsi que les fichiers markdown, de ressources et de polices auxquels il fait référence. L’outillage `scripts/presets/` du dépôt génère des paquets exactement de cette forme, et un fichier `.postext` exporté depuis le Sandbox est un tel répertoire compressé (sans l’`index.json`).
+
+```
+<presets-root>/
+  index.json
+  <preset-dir>/
+    preset.json
+    chapters/              one .md per chapter, in order (a version 1 manifest names a single document instead)
+    resources/             figures: .svg / .png / .jpg / .jpeg / .webp / .gif (+ optional .pdf print masters)
+    fonts/                 .otf / .ttf / .woff2 single faces
+```
+
+### `index.json`
+
+```jsonc
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "acme-journal",          // stable id, [a-z0-9-]
+      "dir": "acme-journal",         // directory name relative to index.json
+      "name": "Acme Journal",
+      "description": "Two-column journal article",   // optional
+      "locale": "en",                 // optional
+      "default": true,                // optional, at most one
+      "locales": ["en", "es"],        // optional: every locale the bundle carries
+      "openLocale": "en",             // optional: the locale it opens in when none is asked for
+      "thumbnail": "thumbnail.jpg",   // optional: preview shown in the picker
+      "license": "CC BY 4.0",         // optional: shown as a tag
+      "credits": "Text and images: ESO",  // optional: one line under the description
+      "tags": ["magazine", "two-column"], // optional
+      "binding": "left"               // optional: the edge the website's shelf draws the spine on ("right" for a right-bound book)
+    }
+  ]
+}
+```
+
+### `preset.json`
+
+```jsonc
+{
+  "version": 2,
+  "id": "acme-journal",
+  "name": "Acme Journal",
+  "description": "Two-column journal article",       // optional
+  "locale": "en",                                     // optional
+  "default": true,                                    // optional
+  "configVersion": 8,                                 // optional: the configuration rules `config` is written for
+  // The same optional showcase fields as the index entry:
+  // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
+
+  // The book's chapters, in order — or one list per locale
+  "chapters": [
+    { "title": "Introduction", "file": "chapters/01-introduction.md" },
+    { "title": "Methods", "file": "chapters/02-methods.md" }
+  ],
+  // "chapters": { "en": [ … ], "es": [ … ] },
+  // Version 1 manifests use a single document instead and are still accepted:
+  // "version": 1, "markdown": "article.md"  (or a locale → file map)
+
+  // Optional PostextConfig JSON (page, margins, columns, typography...).
+  // Do NOT put customFonts here: fonts come from the `fonts` array below.
+  "config": { },
+
+  "resources": [
+    {
+      "id": "fig-1-1",                 // referenced from markdown (:ref)
+      "typeId": "figure",              // resource type id (figure, table, ...)
+      "kind": "svg",                   // "svg" | "bitmap" | "table"
+      "file": "resources/fig-1-1.svg", // svg/bitmap only, relative to preset.json
+      "width": 240.5,                  // optional, pt (svg) / px (bitmap)
+      "resolution": 300,               // optional, bitmap only: ppi at its natural print size
+      "pdfFile": "resources/fig-1-1.pdf", // optional, svg only: vector print master (see notes)
+      "height": 180,                   // optional
+      "caption": "Caption text",
+      "altText": "Accessible description",            // optional
+      "safeArea": { "x": 0.18, "y": 0.25, "width": 0.5, "height": 0.6 }, // optional, svg/bitmap only: the part always shown, in fractions of the picture
+      "placement": { "position": "top", "span": "column" },  // optional
+      "note": "Source: ...",                          // optional
+      "table": { "model": { "rows": [[{ "content": "A", "isHeader": true }]], "headerRowCount": 1 } }
+                                                      // kind "table" only
+    }
+  ],
+
+  "fonts": [
+    {
+      "name": "Some Family",           // family name used by the config
+      "variants": [
+        { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
+        { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
+        { "weight": 700, "style": "normal", "file": "fonts/SomeFamily-Bold.otf" }
+      ]
+    }
+  ]
+}
+```
+
+Remarques :
+
+- L’`id` de `preset.json` doit correspondre à l’entrée de `index.json` ; `description`, `locale` et `default` dans le manifeste remplacent les valeurs de l’index une fois le préréglage chargé, de même que les champs de vitrine `locales`, `openLocale`, `license`, `credits` et `tags`. `openLocale`, l’une des `locales`, est la langue dans laquelle le livre s’ouvre quand un lien ou un clic n’en demande aucune (l’étagère de la page d’accueil y renvoie aussi) : définissez-la quand l’original n’est pas dans la langue du lecteur, comme le fait la vitrine 紅樓夢 avec `zh-Hant`, pour que sa traduction anglaise ne s’ouvre pas pour tous les lecteurs anglophones. Sans elle, c’est la langue de l’interface qui décide. Le sélecteur affiche en étiquettes chaque langue de `locales` (ou `locale`) et la licence, les crédits sous la description, et `thumbnail` (une petite image de page relative au répertoire du préréglage) à la place de la colonne de coche de la ligne ; un livre copié depuis le préréglage (**Faire ma propre copie**) la garde comme couverture. Les préréglages de vitrine publics de `apps/web/public/presets/` utilisent tous ces champs et contiennent un `CREDITS.md` qui donne la licence et la source de chaque texte et de chaque image.
+- `configVersion` (facultatif) nomme les règles de configuration pour lesquelles `config` et les configurations `localized` sont écrites. Tous les outils d’écriture depuis postext 1.5 le fixent à 8. Un manifeste qui ne l’a pas a été écrit par postext 1.4 ou antérieur, et ses sauts de titre, la taille de ses formules, l’espace autour des figures dans le texte (dans le texte courant et dans les encadrés), les enrichissements des titres, les lettrines, la place sous une ligne terminée par un deux-points, les coupures d’encadrés, les coupures après les tirets et après le trait d’union des mots composés, le texte en drapeau, les coupures sous un titre et l’espace sous les conteneurs de paragraphes sont lus tels que 1.4 les mettait en page (voir *Sauts de titre enregistrés par postext 1.4 ou antérieur*, *Taille des formules enregistrée avant postext 1.5*, *Figures dans le texte enregistrées avant postext 1.5*, *Figures dans le texte des encadrés enregistrées avant postext 1.5*, *Enrichissements des titres et lettrines enregistrés avant postext 1.5*, *Listes après deux-points enregistrées avant postext 1.5*, *Coupures d’encadrés enregistrées avant postext 1.5*, *Tirets et texte en drapeau enregistrés avant postext 1.5*, *Mots composés enregistrés avant postext 1.5*, *Coupures sous un titre enregistrées avant postext 1.5* et *Conteneurs de paragraphes enregistrés avant postext 1.5* sous [Persistance](/fr/docs/sandbox-books-saving#persistance)) ; un manifeste estampillé de 3 à 7 (une préversion de 1.5) ne reçoit que les figeages des règles postérieures. Avec 3, ce sont la taille des formules, l’espace autour des figures dans le texte, les cinq figeages des règles 6, les deux des règles 7 et les trois des règles 8 ; avec 4, l’espace autour des figures dans le texte et les figeages des règles 6, 7 et 8 ; avec 5, les figeages des règles 6, 7 et 8 ; avec 6, ceux des règles 7 et 8 ; avec 7, ceux des règles 8 seulement. Fixez-le à 8 quand vous écrivez un manifeste à la main pour les règles actuelles.
+- `view` (facultatif) indique comment le Sandbox ouvre le paquet : `{ "canvasScope": "book" }` met tout le livre en page sur le canvas (voir [Livres et chapitres](/fr/docs/sandbox-books-saving#livres-et-chapitres)) ; en son absence, le canvas affiche un chapitre à la fois. Les livres exportés le contiennent quand il est défini. Un livre de plus de 200 chapitres s’ouvre un chapitre à la fois, quoi qu’il demande.
+- `start` (facultatif) indique où commence le livre quand le paquet contient une partie d’un ouvrage plus long : `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` l’ouvre à la page 58, une page paire, au chapitre 4. C’est la `continuation` du premier chapitre (`buildDocument`) ; le Sandbox met le livre en page à partir de là, la conserve avec le livre quand celui-ci est enregistré comme projet et la réécrit à l’export. Aucun panneau ne la modifie. Une entrée `localized` peut porter son propre `start` pour son édition.
+- `localized` (facultatif) contient des remplacements par langue pour un paquet bilingue : `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. Les remplacements de la langue dans laquelle les chapitres ont été choisis s’appliquent par-dessus la `config` commune (les clés de premier niveau sont remplacées en bloc ; typiquement `resourceTypes` avec des préfixes de légende traduits) et les `resources` (légende, note, texte alternatif et cellules de tableau fusionnés par identifiant) ; une langue sans entrée garde la formulation commune. Une entrée peut aussi porter sa propre `view`, qui s’applique à cette édition par-dessus la vue commune : 紅樓夢 ouvre ses éditions chinoises sur le livre entier, et l’anglais de Joly, bien plus lent à peindre en entier, un chapitre à la fois (`"en": { "view": { "canvasScope": "chapter" } }`).
+- `chapters` (version 2) est une liste de `{ title, file }` dans l’ordre du livre, ou une table langue → liste ; `markdown` (version 1) est un nom de fichier ou une table langue → fichier. Dans les deux cas, le Sandbox choisit l’entrée correspondant à la langue demandée (balise exacte, à la casse près ; puis même langue et même écriture, si bien que `zh-TW` lit `zh-Hant` avant `zh-Hans` ; puis même langue dans l’autre écriture, si bien qu’un lecteur `zh-TW` d’un paquet dont la clé est un simple `zh` reçoit le chinois ; puis la `locale` du préréglage lui-même, puis la première entrée), et seuls les fichiers de chapitre de cette langue sont lus. Un `title` de chapitre vide est tiré du premier titre de niveau 1 du fichier. Le Sandbox écrit toujours la version 2.
+- `width` / `height` sont facultatifs pour les ressources `svg` et `bitmap` : s’ils manquent, ils sont lus dans le fichier au chargement. Un bitmap peut aussi porter `resolution` (sa résolution en ppi à sa taille d’impression naturelle) et `fileResolution` (celle qu’indique son fichier, lue au chargement quand la configuration fixe `layout.bitmapResolution: 'file'`).
+- `pdfFile` (ressources svg uniquement) désigne un PDF d’une page contenant la même figure en vectoriel, typiquement l’export Illustrator ou PDF original dont le SVG a été tiré. L’export PDF incorpore cette page telle quelle (polices, dégradés et espaces colorimétriques intacts) à la place du SVG ; les aperçus canvas et HTML continuent d’utiliser le SVG. Ce fichier est ignoré en mode encre unique, dont la passe de recoloration n’agit que sur le balisage SVG, et un fichier manquant ne fait que supprimer le master, jamais la figure. Modifier la source SVG dans le détail de la ressource détache le master (il avait été fait pour la source telle qu’elle était), si bien que l’export PDF suit dès lors le SVG modifié ; restaurez l’original (**Restaurer l’original…** dans le panneau Livres) pour le récupérer. Les SVG sans master sont émis sous forme de tracés vectoriels quand ils restent dans le sous-ensemble du moteur PDF (formes de base, tracés, groupes, `use`, masques d’écrêtage, remplissages et contours unis, opacité, et blocs `text` / `tspan` composés dans les polices que le document peut charger : d’abord les polices personnalisées, puis les familles hébergées par Google), et pixellisés à 600 dpi sinon.
+- Le `text` SVG s’affiche partout dans les polices du livre : les aperçus et l’EPUB incorporent dans le SVG, avant de l’afficher, les fontes que nomme son texte (un `<img>` ne voit pas les polices de la page), les familles personnalisées telles qu’elles ont été téléversées et les familles Google sous forme des fichiers Fontsource qui contiennent les caractères, et l’export PDF compose les blocs en vrai texte sélectionnable dans les mêmes fontes incorporées. Nommez la famille dans `font-family` exactement comme elle apparaît sous Polices. Une ressource peut s’en dispenser avec `"inlineFonts": false` dans son entrée de manifeste (`svg.inlineFonts`).
+- L’éditeur de source SVG ne laisse taper qu’à l’intérieur des nœuds de texte (teintés), pour qu’une figure ne puisse pas être cassée par accident ; le bouton de verrou de son en-tête ouvre toute la source (coordonnées, couleurs, structure), et verrouiller de nouveau relance l’analyse des nœuds de texte.
+- `table.model` est un `TableModel` Postext : `rows` est un tableau de cellules rangé par rangées (`content`, et facultativement `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` le nombre de rangées d’en-tête initiales, et `columnWidths` un tableau facultatif de poids relatifs des colonnes. `table.styleId` nomme facultativement l’un des `tableStyles` de la configuration.
+- Les fichiers de polices sont stockés dans IndexedDB sous des identifiants dérivés de l’identifiant du préréglage et du chemin du fichier, et les familles sont ajoutées à `config.customFonts` quand le préréglage est appliqué ; un `index.json` absent ou mal formé ne produit aucun préréglage plutôt qu’une erreur.
+- `<preset-dir>/fingerprint.json` est facultatif et, sur la route de développement, **virtuel** : quand ce fichier n’existe pas, `GET` répond `{ "fingerprint": "<sha1 hex>", "files": <n> }`, calculé à partir des métadonnées des fichiers du répertoire (chemin relatif, date de modification et taille de chaque fichier jusqu’à quatre niveaux de profondeur, en ignorant les fichiers cachés et `node_modules`), jamais à partir de leur contenu, avec `Cache-Control: no-store`. Le Sandbox l’interroge régulièrement pour suivre les modifications du paquet (voir [panneau Livres](/fr/docs/sandbox#panneau-livres)). Un hébergement statique peut servir un vrai `fingerprint.json` de même forme, ou n’en servir aucun, auquel cas ses préréglages ne sont pas suivis.

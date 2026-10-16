@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'إعدادات Postext',
   sidebarTitle: 'الإعدادات',
-  description: 'ما هي إعدادات Postext، وفي أي صفحة من صفحات المرجع التسع تُشرح كل مجموعة منها',
+  description: 'ما هي إعدادات Postext، وفي أي صفحة من صفحات المرجع التسع عشرة تُشرح كل مجموعة منها',
   lang: 'ar',
-  lastUpdated: '2026-10-10',
-  readingTime: 'دقيقتان',
-  order: 3,
-  plainSummary: "تفتح هذه الصفحة مرجع كل إعداد يتحكم في مظهر صفحاتك. تجمع مجموعة واحدة من الإعدادات كل الخيارات: مقاس الصفحة وعدد الأعمدة والخطوط وحجم النص والعناوين والإطارات والألوان وغير ذلك. لا تكتب إلا الإعدادات التي تريد تغييرها، لأن لكل إعداد قيمة أولى معقولة. المرجع موزّع على تسع صفحات. وتربط القائمة في هذه الصفحة بكل قسم، فانتقل مباشرة إلى الجزء الذي تحتاجه.",
+  lastUpdated: '2026-10-16',
+  readingTime: '5 دقائق',
+  order: 4,
+  plainSummary: "تفتح هذه الصفحة مرجع كل إعداد يتحكم في مظهر صفحاتك. تجمع مجموعة واحدة من الإعدادات كل الخيارات: مقاس الصفحة وعدد الأعمدة والخطوط وحجم النص والعناوين والإطارات والألوان وغير ذلك. لا تكتب إلا الإعدادات التي تريد تغييرها، لأن لكل إعداد قيمة أولى معقولة. المرجع موزّع على تسع عشرة صفحة. وتربط القائمة في هذه الصفحة بكل قسم، فانتقل مباشرة إلى الجزء الذي تحتاجه.",
 };
 
 # الإعدادات
@@ -33,21 +33,41 @@ const document = buildDocument(content, {
 
 ## فهرس المرجع
 
-المرجع موزّع على تسع صفحات. كل مجموعة في هذه القائمة صفحة، تليها الأقسام التي تضمّها.
+المرجع موزّع على تسع عشرة صفحة. كل مجموعة في هذه القائمة صفحة، تليها الأقسام التي تضمّها.
 
 **[الصفحة والتخطيط](/ar/docs/configuration-page-layout)**
 
 - [الصفحة](/ar/docs/configuration-page-layout#الصفحة) — المقاس والهوامش وشبكة خطوط الأساس وخطوط القص و[التجليد](/ar/docs/configuration-page-layout#التجليد).
 - [التخطيط](/ar/docs/configuration-page-layout#التخطيط) — عدد الأعمدة والفواصل بين الأعمدة والخطوط الفاصلة و[الكتابة العمودية](/ar/docs/configuration-page-layout#الكتابة-العمودية).
-- [الترويسات والتذييلات](/ar/docs/configuration-page-layout#رؤوس-الصفحات-وتذييلاتها) — عناصر نصية وخطوط في كل صفحة، مع عناصر نائبة (placeholders) وزوجية الصفحة والمحاذاة.
 
-**[النص والعناوين](/ar/docs/configuration-text)**
+**[رؤوس الصفحات وتذييلاتها](/ar/docs/configuration-headers-footers)**
+
+- [الترويسات والتذييلات](/ar/docs/configuration-headers-footers#رؤوس-الصفحات-وتذييلاتها) — عناصر نصية وخطوط في كل صفحة، مع عناصر نائبة (placeholders) وزوجية الصفحة والمحاذاة.
+
+**[نص المتن](/ar/docs/configuration-text)**
 
 - [نص المتن](/ar/docs/configuration-text#نص-المتن) — التنضيد وتقسيم الكلمات بالواصلة ومواضع الجدولة والأسطر اليتيمة (orphans) والأرامل (widows).
-- [لغة المستند](/ar/docs/configuration-text#لغة-المستند) — الخاصية `locale` في المستوى الأعلى: اللغة الاحتياطية لتقسيم الكلمات، وأنواع الموارد المدمجة، وعبارات المتابعة في الجداول والإطارات المقسومة، واللغة الموسومة في ملف PDF الميسّر؛ و[الأرقام](/ar/docs/configuration-text#أرقام-المستند) (`numerals`) و[اتجاه النص](/ar/docs/configuration-text#اتجاه-النص) (`direction`) اللذان تقتضيهما؛ و[اللغات والأنظمة الكتابية](/ar/docs/configuration-text#اللغات-وأنظمة-الكتابة) التي ينضّدها Postext. ودليل الكتب المكتوبة من اليمين إلى اليسار هو [الإخراج العربي](/ar/docs/arabic-layout).
-- [العناوين](/ar/docs/configuration-text#العناوين) — القيم الافتراضية المشتركة وتجاوزات H1–H6.
-- [القوائم غير المرقّمة](/ar/docs/configuration-text#القوائم-غير-المرقّمة) و[القوائم المرقّمة](/ar/docs/configuration-text#القوائم-المرقّمة) — النقاط والترقيم والتداخل.
-- [الرياضيات](/ar/docs/configuration-text#الصيغ-الرياضية) — رسم LaTeX والمقياس واللون والهوامش.
+
+**[تقسيم الكلمات واللغة](/ar/docs/configuration-language)**
+
+- [تقسيم الكلمات بالواصلة](/ar/docs/configuration-language#تقسيم-الكلمات-بالواصلة) — أنماط تقسيم الكلمات، والكلمات التي لا تُقسَّم، والنص غير المضبوط.
+- [لغة المستند](/ar/docs/configuration-language#لغة-المستند) — الخاصية `locale` في المستوى الأعلى: اللغة الاحتياطية لتقسيم الكلمات، وأنواع الموارد المدمجة، وعبارات المتابعة في الجداول والإطارات المقسومة، واللغة الموسومة في ملف PDF الميسّر؛ و[الأرقام](/ar/docs/configuration-language#أرقام-المستند) (`numerals`) و[اتجاه النص](/ar/docs/configuration-language#اتجاه-النص) (`direction`) اللذان تقتضيهما؛ و[اللغات والأنظمة الكتابية](/ar/docs/configuration-language#اللغات-وأنظمة-الكتابة) التي ينضّدها Postext. ودليل الكتب المكتوبة من اليمين إلى اليسار هو [الإخراج العربي](/ar/docs/arabic-layout).
+- [اللغات وأنظمة الكتابة](/ar/docs/configuration-language#اللغات-وأنظمة-الكتابة) — أنظمة الكتابة التي يصفّها Postext، والصفحات التي تشرح كلًّا منها.
+- [النص العربي](/ar/docs/configuration-language#النص-العربي) — أشكال الحروف والكشيدة والحركات والأرقام في النص العربي.
+
+**[العناوين](/ar/docs/configuration-headings)**
+
+- [العناوين](/ar/docs/configuration-headings#العناوين) — القيم الافتراضية المشتركة وتجاوزات H1–H6.
+
+**[الأرامل والأسطر اليتيمة والموازنة](/ar/docs/configuration-page-flow)**
+
+- [الأسطر اليتيمة والأرامل والكلمات المعزولة وقواعد الإبقاء معًا](/ar/docs/configuration-page-flow#الأسطر-اليتيمة-والأرامل-والكلمات-المعزولة-وقواعد-الإبقاء-معًا) — مفاتيح `bodyText` التي تُبقي الأسطر والكتل معًا عند فاصل العمود.
+- [موازنة الأعمدة](/ar/docs/configuration-page-flow#موازنة-الأعمدة) — الأدوات التي تجعل كل الأعمدة تنتهي عند المستوى نفسه، بترتيبها التحريري.
+
+**[القوائم والصيغ الرياضية](/ar/docs/configuration-lists-math)**
+
+- [القوائم غير المرقّمة](/ar/docs/configuration-lists-math#القوائم-غير-المرقّمة) و[القوائم المرقّمة](/ar/docs/configuration-lists-math#القوائم-المرقّمة) — النقاط والترقيم والتداخل.
+- [الرياضيات](/ar/docs/configuration-lists-math#الصيغ-الرياضية) — رسم LaTeX والمقياس واللون والهوامش.
 
 **[الحواشي والإحالات](/ar/docs/configuration-notes-references)**
 
@@ -74,13 +94,20 @@ const document = buildDocument(content, {
 - [أنماط الفقرات](/ar/docs/configuration-styles#أنماط-الفقرات) — أنماط مسمّاة لحاويات `:::paragraphs`: قوائم المراجع والمسارد والملاحظات.
 - [أنماط الشارات](/ar/docs/configuration-styles#أنماط-الشارات) — `chipStyles`: أنماط مسمّاة للشارة السطرية `:chip[…]`: صندوق بنك الكلمات، مفتاح لوحة المفاتيح، وسم.
 - [قوائم الشيفرة](/ar/docs/configuration-styles#قوائم-الشيفرة) — `codeStyle`: الخط والإطار وعرض الجدولة والأسطر الطويلة وأرقام الأسطر وألوان الرموز في قوائم ```` ``` ````، وتلوين الصياغة ومنفذ الملوّن الخارجي، والشيفرة المضمّنة بخط الشيفرة.
-- [أنماط الإطارات](/ar/docs/configuration-styles#أنماط-الإطارات) — ملاحظات ونصائح وأهداف داخل إطارات لحاويات `:::callout`.
 - [الأجزاء](/ar/docs/configuration-styles#الأجزاء) — صفحات فواصل الأجزاء لحاويات `:::part`: زوجية الصفحة ومساحة المتن وتصميم صفحة الافتتاح وتنضيد المتن.
 - [أنماط العناوين](/ar/docs/configuration-styles#أنماط-العناوين) — أنماط مسمّاة لعناوين `{style="…"}`: فصول غير مرقّمة، وصفحات تمهيدية بترويساتها الخاصة، والهندسة ولوحة الألوان.
+
+**[الإطارات](/ar/docs/configuration-callouts)**
+
+- [أنماط الإطارات](/ar/docs/configuration-callouts#أنماط-الإطارات) — ملاحظات ونصائح وأهداف داخل إطارات لحاويات `:::callout`.
 
 **[إعدادات القصص المصورة](/ar/docs/configuration-comics)**
 
 - [القصص المصورة](/ar/docs/configuration-comics#القصص-المصورة) — `comics`: الإطار العام لصفحات القصص المصورة وفواصلها، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات. والدليل هو [القصص المصورة](/ar/docs/comics).
+
+**[إعدادات الصفحات المركّبة](/ar/docs/configuration-composed-pages)**
+
+- [قوالب الصفحات](/ar/docs/configuration-composed-pages#قوالب-الصفحات) — `pageTemplates`: خانات الصفحة المركّبة ومجموعاتها وزخرفتها، والوراثة بين القوالب، ومتغيّرات الصفحة الفردية والزوجية. [أنماط التسميات](/ar/docs/configuration-composed-pages#أنماط-التسميات) — `labelStyles`: مظهر التسميات الموضوعة على مراسي الصورة. وكل مشكلة قد تقع في قالب مذكورة في [تحذيرات قوالب الصفحات](/ar/docs/configuration-composed-pages#تحذيرات-قوالب-الصفحات).
 
 **[الخطوط والألوان والمُخرجات](/ar/docs/configuration-fonts-colors-viewers)**
 
@@ -90,6 +117,7 @@ const document = buildDocument(content, {
 - [إنتاج PDF (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#إنتاج-pdf-الإعدادات) — المخطط التفصيلي (outlines)، والمخرجات الميسّرة (الموسومة)، وفرض فضاء ألوان على مُخرِج PDF.
 - [الإنتاج الطباعي (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#الإنتاج-الطباعي-الإعدادات) — `print`: معيارا PDF/X-1a وPDF/X-4، وملفات تعريف الإخراج ICC، والأسود (الرماديات بالأسود K وحده، والطباعة فوق الألوان، والأسود الغني)، والألوان المعرّفة بقيم CMYK، والفحص قبل الطباعة، ومعاينة الطباعة.
 - [فحص التباين (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#فحص-التباين-الإعدادات) — `contrast`: النص مقابل خلفيته بمستوى WCAG AA أو AAA، على الشاشة وعلى ورق ملف تعريف الإخراج، والنص المفرَّغ الأدقّ مما تحتمله الطباعة.
+- [فحص المحتوى (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#فحص-المحتوى-الإعدادات) — `checks.contentInConfig`: نصوص التصميم التي تحمل نص الكتاب بدل العناصر النائبة، مع قائمة بالعبارات المسموح بها للعنوان والناشر.
 - [عارض Folio (الإعدادات)](/ar/docs/configuration-fonts-colors-viewers#عارض-folio-الإعدادات) — نوع الورق والتجليد والسطح والإضاءة في عارض الكتاب ثلاثي الأبعاد.
 - [التصحيح](/ar/docs/configuration-fonts-colors-viewers#التصحيح) — طبقات بصرية وتحذيرات تأليف للمحرر.
 
@@ -97,7 +125,17 @@ const document = buildDocument(content, {
 
 - [الاستخدام البرمجي](/ar/docs/configuration-programmatic-usage#الاستخدام-البرمجي) — `buildDocument` والتحذيرات التي يبلّغ عنها والمحلِّلات (resolvers) وذاكرات التخزين المؤقت.
 - [تشغيل الإخراج في Web Worker](/ar/docs/configuration-programmatic-usage#تشغيل-الإخراج-في-web-worker) — بناء خارج الخيط الرئيسي مع إمكانية الإلغاء.
-- [دمج عارض HTML](/ar/docs/configuration-programmatic-usage#دمج-عارض-html) و[إنتاج ملفات PDF](/ar/docs/configuration-programmatic-usage#توليد-ملفات-pdf) — وصفات كاملة من البداية إلى النهاية.
-- [كتاب ثلاثي الأبعاد (`postext-folio`)](/ar/docs/configuration-programmatic-usage#كتاب-ثلاثي-الأبعاد-postext-folio) — المستند المُخرَج في هيئة كتاب مطبوع مفتوح على مكتب، يقلّب القارئ أوراقه.
-- [كتب EPUB](/ar/docs/configuration-programmatic-usage#كتب-epub-postext-epub) — ملفات EPUB 3 ثابتة التخطيط وأخرى قابلة لإعادة التدفق من الإخراج نفسه، وفحصها بأداة EPUBCheck.
-- [الحزم (ملفات `.postext`)](/ar/docs/configuration-programmatic-usage#الحزم-ملفات-postext) — كتاب كامل في ملف واحد: إنشاء أرشيفات `.postext` وفتحها وبناؤها من الشيفرة.
+
+**[ملفات PDF](/ar/docs/configuration-pdf-output)**
+
+- [توليد ملفات PDF](/ar/docs/configuration-pdf-output#توليد-ملفات-pdf) — `postext-pdf`: مزوّدو الخطوط، وخطوط CJK، والتشغيل في عامل، والملفات الجاهزة للطباعة.
+
+**[HTML وFolio وEPUB](/ar/docs/configuration-html-folio-epub)**
+
+- [دمج عارض HTML](/ar/docs/configuration-html-folio-epub#دمج-عارض-html) و[إنتاج ملفات PDF](/ar/docs/configuration-pdf-output#توليد-ملفات-pdf) — وصفات كاملة من البداية إلى النهاية.
+- [كتاب ثلاثي الأبعاد (`postext-folio`)](/ar/docs/configuration-html-folio-epub#كتاب-ثلاثي-الأبعاد-postext-folio) — المستند المُخرَج في هيئة كتاب مطبوع مفتوح على مكتب، يقلّب القارئ أوراقه.
+- [كتب EPUB](/ar/docs/configuration-html-folio-epub#كتب-epub-postext-epub) — ملفات EPUB 3 ثابتة التخطيط وأخرى قابلة لإعادة التدفق من الإخراج نفسه، وفحصها بأداة EPUBCheck.
+
+**[حزم .postext](/ar/docs/configuration-bundles)**
+
+- [الحزم (ملفات `.postext`)](/ar/docs/configuration-bundles#الحزم-ملفات-postext) — كتاب كامل في ملف واحد: إنشاء أرشيفات `.postext` وفتحها وبناؤها من الشيفرة.

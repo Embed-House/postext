@@ -6,8 +6,8 @@ export const metadata = {
   description: 'What an AI agent in the browser can do with the Sandbox through its 36 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
   lastUpdated: '2026-10-13',
-  readingTime: '14 min',
-  order: 23,
+  readingTime: '12 min',
+  order: 43,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
 };
 
@@ -620,7 +620,7 @@ each one come with `postextWebMcp.listTools()`.
 ## When you embed the Sandbox
 
 `<PostextSandbox>` registers the tools while it is mounted; `webmcp={false}`
-leaves them out (see [Props](/en/docs/sandbox#props)). A host page can add
+leaves them out (see [Props](/en/docs/sandbox-embedding#props)). A host page can add
 tools of its own through the same module:
 
 ```ts

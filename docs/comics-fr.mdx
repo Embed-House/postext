@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Comment Postext compose la bande dessinée et le manga à partir de Markdown : planches découpées par un arbre de découpage, dessins des cases recadrés autour de leur zone de sécurité, lettrage produit à partir d’un script (paroles, pensées, chuchotements, cris, radio, récitatifs, onomatopées), styles de bulles, ancres des personnages sur les dessins, strips dans le texte, doubles pages, lecture de droite à gauche et lettrage vertical, traductions, et sorties canvas, PDF, HTML et EPUB',
   lang: 'fr',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '42 min',
+  order: 33,
   plainSummary: "Cette page explique comment faire une bande dessinée avec Postext. Les dessins sont les cases, et tout ce que les personnages disent, pensent ou entendent s’écrit comme du texte dans le fichier Markdown. Postext place les cases sur la page et dessine lui-même les bulles, les récitatifs et les onomatopées autour des mots. Pour traduire la BD, vous ne réécrivez que les mots, et Postext refait le lettrage dans la nouvelle langue : le japonais en colonnes, l’arabe de droite à gauche. La page traite aussi des strips dans un livre, des planches sur deux pages en regard, des sorties et des limites qui restent.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 Une bande dessinée, dans Postext, c’est un ensemble de dessins et un script. Les dessins sont des ressources bitmap ou SVG ordinaires, dessinées sans aucun lettrage. Le script se trouve dans le Markdown du chapitre : un bloc `:::page` découpe une planche en cases, donne à chaque case son dessin et énumère, ligne par ligne, les bulles, les récitatifs et les onomatopées de cette case. Postext dispose les cases, recadre chaque dessin dans sa cellule sans entamer ce qui compte, compose le texte dans le caractère de lettrage du livre, à un seul corps, trace une bulle autour, dirige l’appendice vers le personnage qui parle et place les bulles dans l’ordre de lecture, là où elles ne couvrent aucun visage. Une traduction est un autre fichier Markdown avec les mêmes cases et d’autres mots ; Postext en refait entièrement le lettrage, en colonnes pour le japonais et de droite à gauche pour l’arabe.
 
-La bande dessinée est facultative : un document sans `:::page` ni `:::strip` se compose exactement comme avant. Les réglages se trouvent dans la [section `comics` de la configuration](/fr/docs/configuration-comics#bande-dessinée), et le balisage est résumé dans [Format du document › Bande dessinée](/fr/docs/document-format#bandes-dessinées).
+La bande dessinée est facultative : un document sans `:::page` ni `:::strip` se compose exactement comme avant. Les réglages se trouvent dans la [section `comics` de la configuration](/fr/docs/configuration-comics#bande-dessinée), et le balisage est résumé dans [Format du document › Bande dessinée](/fr/docs/document-format-directives#bandes-dessinées).
 
 ## Planches
 
@@ -48,7 +48,7 @@ Les attributs de la ligne d’ouverture :
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Attribut</th>
+      <th>Attribut</th>
       <th>Effet</th>
     </tr>
   </thead>
@@ -87,7 +87,7 @@ Quelques découpages :
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Découpage</th>
+      <th>Découpage</th>
       <th>Planche</th>
     </tr>
   </thead>
@@ -136,7 +136,7 @@ Une ligne `::panel{…}` ouvre une case ; son script va jusqu’à la ligne `:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Attribut</th>
       <th>Effet</th>
     </tr>
   </thead>
@@ -159,7 +159,7 @@ Une ligne `::panel{…}` ouvre une case ; son script va jusqu’à la ligne `:
 
 ### Recadrer le dessin dans sa cellule
 
-Le dessin d’une case est fait sans tenir compte de la forme de la cellule où il finira : une planche peut être redécoupée, un séparateur déplacé, une traduction peut demander une bande plus haute. La **zone de sécurité** du dessin (`Resource.safeArea`, voir [Format du document › Zone de sécurité](/fr/docs/document-format#zone-de-sécurité)) indique ce qui doit rester visible, et le recadrage est calculé pour chaque cellule :
+Le dessin d’une case est fait sans tenir compte de la forme de la cellule où il finira : une planche peut être redécoupée, un séparateur déplacé, une traduction peut demander une bande plus haute. La **zone de sécurité** du dessin (`Resource.safeArea`, voir [Format du document › Zone de sécurité](/fr/docs/document-format-resources#zone-de-sécurité)) indique ce qui doit rester visible, et le recadrage est calculé pour chaque cellule :
 
 1. Avec `fit=cover`, la fenêtre visible a les proportions de la cellule et elle est aussi grande que le dessin le permet.
 2. Elle est placée de façon à contenir la zone de sécurité. Là où il reste de la marge, la fenêtre est centrée sur `focus` quand la case en définit un ; sinon, les marges hors de la zone de sécurité sont rognées en proportion de leurs tailles, de sorte qu’un sujet décalé vers la gauche reste décalé vers la gauche.
@@ -204,7 +204,7 @@ Les attributs d’une ligne de script :
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Attribut</th>
+      <th>Attribut</th>
       <th>Effet</th>
     </tr>
   </thead>
@@ -261,7 +261,7 @@ sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Langue</th>
+      <th>Langue</th>
       <th>Lettrage</th>
       <th>Onomatopées</th>
     </tr>
@@ -298,9 +298,9 @@ Un style de bulle est un type de bulle : son contour, son appendice et son lett
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Style</th>
-      <th style={{ width: '170px' }}>Contour</th>
-      <th style={{ width: '120px' }}>Appendice</th>
+      <th>Style</th>
+      <th>Contour</th>
+      <th>Appendice</th>
       <th>Par ailleurs</th>
     </tr>
   </thead>
@@ -388,7 +388,7 @@ sfx: SPLOSH
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Attribut</th>
       <th>Effet</th>
     </tr>
   </thead>
@@ -484,7 +484,7 @@ La légende d’un strip est peinte avec le texte, comme celle d’une figure. D
 
 ## Modifier une bande dessinée dans le Sandbox
 
-Dans le canvas, les pages HTML et le mode sélection du Folio, une planche se modifie au pointeur, et chaque modification est réécrite dans le Markdown du chapitre (le [guide du Sandbox](/fr/docs/sandbox#modifier-une-bande-dessinée) donne les détails) :
+Dans le canvas, les pages HTML et le mode sélection du Folio, une planche se modifie au pointeur, et chaque modification est réécrite dans le Markdown du chapitre (le [guide du Sandbox](/fr/docs/sandbox-books-saving#modifier-une-bande-dessinée) donne les détails) :
 
 - **Séparateurs.** Au-dessus d’une gouttière, le pointeur devient un curseur de redimensionnement. Le faire glisser déplace la ligne de coupe ; au relâchement, le nouveau pourcentage est écrit dans la valeur `split` de la planche (l’attribut est ajouté si la planche n’en a pas), et la planche est remise en page. Maj aimante par pas de 5 %, Alt ne déplace que l’extrémité la plus proche, ce qui incline la ligne, et aucune cellule ne devient plus étroite que 5 %. Pendant le glissement, une case dont le dessin serait montré entier avec des bandes est signalée. Chaque séparateur est aussi un séparateur focalisable : les touches fléchées le déplacent de 1 % (5 % avec Maj), Entrée écrit la position, Échap la rétablit.
 - **Cases.** Une petite barre d’outils au-dessus d’une case la divise par une ligne horizontale ou verticale, en ajoutant après elle un `::panel` vide pour la nouvelle cellule, ou la fusionne avec la case suivante : la ligne de coupe disparaît, et la case fusionnée garde le dessin de la première case et les deux scripts.
@@ -503,7 +503,7 @@ Chaque avertissement nomme la ligne ou l’attribut qu’il concerne, et le pann
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Avertissement</th>
+      <th>Avertissement</th>
       <th>Cause</th>
       <th>Correction</th>
     </tr>

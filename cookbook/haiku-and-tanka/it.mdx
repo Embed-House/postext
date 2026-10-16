@@ -22,13 +22,13 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un haiku è una 
 
 <Excerpt region="tanka" />
 
-I tanka di Takuboku sono un blocco `:::verse`, ogni tanka una strofa: le sue tre righe sono tre righe del Markdown, e la riga vuota tra due tanka nel sorgente lascia una riga vuota della griglia tra le poesie. Lo stile della poesia dà il rientro di due caratteri e la riga sotto il gruppo, e le righe pendono dalla testa come qualunque colonna. `keepStanzas=3` tiene intera ogni strofa di tre righe: a pagina 5 il terzo tanka non entra sotto il titolo della parte e i primi due, quindi apre intero la pagina 6, invece di lasciare indietro la sua prima riga. Il fregio tra due gruppi introduce il successivo, quindi prosegue con il suo primo tanka invece di restare da solo al piede di una pagina ([`:::verse`](/it/docs/document-format#verse)).
+I tanka di Takuboku sono un blocco `:::verse`, ogni tanka una strofa: le sue tre righe sono tre righe del Markdown, e la riga vuota tra due tanka nel sorgente lascia una riga vuota della griglia tra le poesie. Lo stile della poesia dà il rientro di due caratteri e la riga sotto il gruppo, e le righe pendono dalla testa come qualunque colonna. `keepStanzas=3` tiene intera ogni strofa di tre righe: a pagina 5 il terzo tanka non entra sotto il titolo della parte e i primi due, quindi apre intero la pagina 6, invece di lasciare indietro la sua prima riga. Il fregio tra due gruppi introduce il successivo, quindi prosegue con il suo primo tanka invece di restare da solo al piede di una pagina ([`:::verse`](/it/docs/document-format-directives#verse)).
 
 ### 3 · Spazia i nomi dei luoghi su una stessa larghezza
 
 <Excerpt region="places" />
 
-Le tappe del cammino di Bashō sono titoli di secondo livello alti due righe di testo (2行取り), così la prosa e gli haiku che seguono restano sulla griglia. `jidori: 3` spazia un nome più corto fino a tre dei suoi caratteri (字取り): 平泉 si stampa 平　泉 con un carattere intero in mezzo, e ogni nome finisce alla stessa altezza di 立石寺 e 最上川. Un nome già lungo tre caratteri resta com’è ([Per-level overrides](/it/docs/configuration-text#sovrascritture-per-livello)).
+Le tappe del cammino di Bashō sono titoli di secondo livello alti due righe di testo (2行取り), così la prosa e gli haiku che seguono restano sulla griglia. `jidori: 3` spazia un nome più corto fino a tre dei suoi caratteri (字取り): 平泉 si stampa 平　泉 con un carattere intero in mezzo, e ogni nome finisce alla stessa altezza di 立石寺 e 最上川. Un nome già lungo tre caratteri resta com’è ([Per-level overrides](/it/docs/configuration-headings#sovrascritture-per-livello)).
 
 ### 4 · Apri ogni parte su una pagina propria
 
@@ -40,7 +40,7 @@ Ogni parte è un titolo di livello 1 il cui design compone il titolo, un piccolo
 
 <Excerpt region="voices" />
 
-La prosa di Bashō scrive le parole ripetute con l’antico segno di ripetizione 〻 (日〻, 人〻), e i testi più antichi usano anche il lungo くの字点 〳〵. Zen Old Mincho non ha né l’uno né l’altro: il canvas li prenderebbe in prestito da un carattere di sistema e il PDF disegnerebbe riquadri vuoti. Shippori Mincho, Noto Serif JP e Shippori Mincho B1 li hanno entrambi, quindi le poesie sono composte in Shippori Mincho ([Chinese, Japanese and Korean fonts](/it/docs/configuration-programmatic-usage#font-cinesi-giapponesi-e-coreani)). Il testo di Aozora conserva anche le note del curatore sulle grafie antiche, `とら{え|（へ）}て`, che stampano il kana atteso accanto a quello scritto da Bashō.
+La prosa di Bashō scrive le parole ripetute con l’antico segno di ripetizione 〻 (日〻, 人〻), e i testi più antichi usano anche il lungo くの字点 〳〵. Zen Old Mincho non ha né l’uno né l’altro: il canvas li prenderebbe in prestito da un carattere di sistema e il PDF disegnerebbe riquadri vuoti. Shippori Mincho, Noto Serif JP e Shippori Mincho B1 li hanno entrambi, quindi le poesie sono composte in Shippori Mincho ([Chinese, Japanese and Korean fonts](/it/docs/configuration-pdf-output#font-cinesi-giapponesi-e-coreani)). Il testo di Aozora conserva anche le note del curatore sulle grafie antiche, `とら{え|（へ）}て`, che stampano il kana atteso accanto a quello scritto da Bashō.
 
 ## Varianti
 

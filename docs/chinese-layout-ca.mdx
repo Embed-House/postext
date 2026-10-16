@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Com compon Postext el xinès, en horitzontal i en vertical: regions, tall de línies, amplada de la puntuació, justificació entre caràcters, la retícula de caràcters, llibres enquadernats per la dreta, números en una casella, marques, ruby, warichu, numerals xinesos i fonts',
   lang: 'ca',
   lastUpdated: '2026-09-30',
-  readingTime: '26 min',
-  order: 15,
+  readingTime: '36 min',
+  order: 30,
   plainSummary: "Aquesta pàgina explica com compon Postext el text en xinès. El xinès pot anar en files, d'un costat a l'altre de la pàgina, o en columnes de dalt a baix que es llegeixen de dreta a esquerra. La Xina continental, Taiwan i Hong Kong segueixen regles una mica diferents per a la puntuació i els talls de línia, i Postext respecta les de cada lloc. La pàgina tracta també els números dins el text vertical, les guies de pronúncia al costat dels caràcters, les notes en lletra petita i les tipografies que convé fer servir. Acaba amb dos exemples complets i els límits que queden.",
 };
 
@@ -15,7 +15,7 @@ export const metadata = {
 
 **Una pàgina xinesa és una retícula de caselles quadrades, i les regles que l'omplen depenen del lloc on s'imprimeix el llibre.**
 
-Postext compon el xinès a l'ample de la pàgina i a l'alt, amb un mateix Markdown i una mateixa configuració. El motor posa la puntuació d'una novel·la de la Xina continental on la posa la GB/T 15834 i la d'una edició de Taiwan on la posa el manual del Ministeri d'Educació, talla les línies amb les regles de cada regió, ajusta el blanc de cada signe, reparteix el sobrant d'una línia justificada entre els caràcters, posa drets els números curts d'una columna vertical i gira els plecs perquè el llibre s'obri per la dreta. Aquesta pàgina explica què fa el motor i quins ajustos el governen. La [referència de configuració](/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental) recull cada clau amb el valor per defecte, i el [format de document](/ca/docs/document-format#marques-xineses-ruby-i-warichu), el marcatge.
+Postext compon el xinès a l'ample de la pàgina i a l'alt, amb un mateix Markdown i una mateixa configuració. El motor posa la puntuació d'una novel·la de la Xina continental on la posa la GB/T 15834 i la d'una edició de Taiwan on la posa el manual del Ministeri d'Educació, talla les línies amb les regles de cada regió, ajusta el blanc de cada signe, reparteix el sobrant d'una línia justificada entre els caràcters, posa drets els números curts d'una columna vertical i gira els plecs perquè el llibre s'obri per la dreta. Aquesta pàgina explica què fa el motor i quins ajustos el governen. La [referència de configuració](/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental) recull cada clau amb el valor per defecte, i el [format de document](/ca/docs/document-format-inline#marques-xineses-ruby-i-warichu), el marcatge.
 
 Les regles segueixen els *Requisits per a la composició de textos xinesos* del W3C ([clreq](https://www.w3.org/TR/clreq/)), citats per apartat, i les normes nacionals en què es basen. Les fonts són al final.
 
@@ -41,7 +41,7 @@ La llengua és també aquella en què es conforma el text. Una font xinesa respo
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Valor per defecte</th>
+      <th>Valor per defecte</th>
       <th>Xina continental (<code>zh-Hans</code>, <code>zh-CN</code>)</th>
       <th>Taiwan (<code>zh-Hant</code>, <code>zh-TW</code>)</th>
       <th>Hong Kong (<code>zh-HK</code>, <code>zh-MO</code>)</th>
@@ -78,7 +78,7 @@ El text xinès s'escriu en el mateix Markdown que qualsevol altre. Unes poques r
 - **Èmfasi i intervals.** `_` i `__` funcionen entre caràcters xinesos (`中文_斜体_中文`). Un `~` entre dues xifres o dues paraules xineses és un interval i es manté tal com és (`3~5天`, `周一~周五`).
 - **Els identificadors i els noms de fitxer** conserven les lletres xineses: un capítol titulat 第一回 es desa com a `chapters/001-第一回.md`.
 
-Les directives de les marques xineses, el ruby, el warichu i l'orientació es descriuen [més avall](#marques-i-anotacions) i al [format de document](/ca/docs/document-format#marques-xineses-ruby-i-warichu).
+Les directives de les marques xineses, el ruby, el warichu i l'orientació es descriuen [més avall](#marques-i-anotacions) i al [format de document](/ca/docs/document-format-inline#marques-xineses-ruby-i-warichu).
 
 ## Composició horitzontal
 
@@ -91,7 +91,7 @@ Les regles de principi i final de línia (避头尾) diuen quins signes no poden
 <table>
   <thead>
     <tr>
-      <th style={{ width: '90px' }}>Nivell</th>
+      <th>Nivell</th>
       <th>Mai al principi d'una línia</th>
       <th>Mai al final d'una línia</th>
     </tr>
@@ -123,10 +123,10 @@ Un signe d'amplada completa és mig quadratí de dibuix i mig de blanc, i els aj
 <table>
   <thead>
     <tr>
-      <th style={{ width: '150px' }}>Estil</th>
+      <th>Estil</th>
       <th>Dins de la línia</th>
       <th>Al final de la línia</th>
-      <th style={{ width: '180px' }}>On es fa servir</th>
+      <th>On es fa servir</th>
     </tr>
   </thead>
   <tbody>
@@ -175,7 +175,7 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 Cada columna passa a fer `charsPerLine` quadratins del cos del text, i la caixa, `linesPerPage` línies de l'interlineat. Els marges de `page.margins` funcionen com a mínims: la caixa es centra a l'espai que deixen, i cada marge creix la meitat de la diferència. A dues columnes, l'espai entre columnes s'arrodoneix a un nombre enter de quadratins. Un nombre més gran del que hi cap es redueix i s'avisa (`cjkGridClamped`); un que no es fixa pren tots els que hi caben. `show` dibuixa la retícula (稿纸) a la pantalla, un quadrat per posició de caràcter; el PDF no la inclou tret que `renderToPdf` rebi `characterGrid: true`.
 
-Una pàgina sobre la retícula s'omple línia a línia i no s'equilibra: una columna que acaba curta, per exemple perquè un títol passa amb el seu text a la pàgina següent, es queda curta, igual que un document GB/T 9704 compta les seves 22 línies. `headings.balancing.enabled: true` activa l'equilibratge amb palanques que respecten la retícula: les línies que s'afegeixen damunt dels títols i sota les llistes, les fórmules en bloc i les figures són línies senceres de la retícula, que `headings.balancing.gridLines: 'off'` deixa fora, i un paràgraf guanya una línia només quan els seus caràcters no se separen més de `headings.balancing.maxTracking`, cosa que amb el valor per defecte no aconsegueix mai una línia a la qual falta un caràcter sencer. En tots dos casos cada caràcter es queda a la seva casella. Vegeu [Configuració › Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes).
+Una pàgina sobre la retícula s'omple línia a línia i no s'equilibra: una columna que acaba curta, per exemple perquè un títol passa amb el seu text a la pàgina següent, es queda curta, igual que un document GB/T 9704 compta les seves 22 línies. `headings.balancing.enabled: true` activa l'equilibratge amb palanques que respecten la retícula: les línies que s'afegeixen damunt dels títols i sota les llistes, les fórmules en bloc i les figures són línies senceres de la retícula, que `headings.balancing.gridLines: 'off'` deixa fora, i un paràgraf guanya una línia només quan els seus caràcters no se separen més de `headings.balancing.maxTracking`, cosa que amb el valor per defecte no aconsegueix mai una línia a la qual falta un caràcter sencer. En tots dos casos cada caràcter es queda a la seva casella. Vegeu [Configuració › Equilibratge de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes).
 
 Les regles `avoidWidows` i `avoidOrphans` també segueixen la retícula. `bodyText.avoidWidows` està desactivada per defecte en una retícula: un paràgraf pot començar amb una sola línia al peu de la pàgina, i la pàgina conserva el seu nombre de línies. `bodyText.avoidOrphans` continua activa: l'última línia d'un paràgraf no queda sola al capdamunt d'una pàgina (孤行, clreq §7.1.2), i la pàgina anterior cedeix una línia per acompanyar-la. Qualsevol de les dues claus es pot fixar a la configuració per decidir una altra cosa.
 
@@ -196,7 +196,7 @@ headings: {
 },
 ```
 
-Dona de 第一回 a 第一百二十回, seguits d'un espai ideogràfic abans del títol. Un dístic 回目 s'escriu amb un salt de línia al títol, `# 甄士隱夢幻識通靈 \\ 賈雨村風塵懷閨秀`. Un disseny d'encapçalament imprimeix `{titleText}` en dues línies, una meitat a cadascuna: una franja d'obertura, o un `advancedDesign` a la columna, del nivell o d'un estil d'encapçalament (vegeu [Span i disseny avançat](/ca/docs/configuration-text#span-i-disseny-avançat)). A tots els altres llocs les dues meitats s'uneixen amb un espai ideogràfic: a l'índex general, a les capçaleres, als marcadors del PDF i en un encapçalament compost a la columna sense disseny, on el títol unit es talla allà on acaba la mesura, sovint a la meitat del segon vers. Un salt entre un caràcter xinès i una xifra o una paraula llatina (`# 示例市出版协会关于举办 \\ 2026年中文排版实务培训班的通知`) es compon com l'espai entre xinès i llatí a la columna, l'índex general i les capçaleres, i els marcadors i el títol del PDF l'uneixen sense res. Cap dels dos exemples de més avall no té disseny, així que dona'n un a l'encapçalament quan el dístic hagi d'anar en dues línies. `{1:words}` escriu el número amb paraules xineses en un document xinès (十二), i `{1:ordinal}`, amb 第 (第十二). Una part numerada `:::part{number="卷三"}` val 3 per als marcadors de posició que necessiten un número.
+Dona de 第一回 a 第一百二十回, seguits d'un espai ideogràfic abans del títol. Un dístic 回目 s'escriu amb un salt de línia al títol, `# 甄士隱夢幻識通靈 \\ 賈雨村風塵懷閨秀`. Un disseny d'encapçalament imprimeix `{titleText}` en dues línies, una meitat a cadascuna: una franja d'obertura, o un `advancedDesign` a la columna, del nivell o d'un estil d'encapçalament (vegeu [Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)). A tots els altres llocs les dues meitats s'uneixen amb un espai ideogràfic: a l'índex general, a les capçaleres, als marcadors del PDF i en un encapçalament compost a la columna sense disseny, on el títol unit es talla allà on acaba la mesura, sovint a la meitat del segon vers. Un salt entre un caràcter xinès i una xifra o una paraula llatina (`# 示例市出版协会关于举办 \\ 2026年中文排版实务培训班的通知`) es compon com l'espai entre xinès i llatí a la columna, l'índex general i les capçaleres, i els marcadors i el títol del PDF l'uneixen sense res. Cap dels dos exemples de més avall no té disseny, així que dona'n un a l'encapçalament quan el dístic hagi d'anar en dues línies. `{1:words}` escriu el número amb paraules xineses en un document xinès (十二), i `{1:ordinal}`, amb 第 (第十二). Una part numerada `:::part{number="卷三"}` val 3 per als marcadors de posició que necessiten un número.
 
 Les llistes ordenades segueixen la jerarquia de la GB/T 15834—2011 (一、 （一） 1. （1） ①) amb un prefix (`prefix`) davant del número:
 
@@ -278,7 +278,7 @@ Les capçaleres i els folis es queden al full i es componen en horitzontal, com 
 - **Capçaleres al marge exterior**: el títol del capítol al llarg del marge exterior, començant uns quatre caràcters per sota del cap de la caixa de text, i el foli acabant uns cinc caràcters per sobre del peu, en numerals xinesos, a un 80 % del cos del text. El Sandbox les afegeix en un pas (**Encapçalament › Capçaleres al marge exterior (vertical)**).
 - **Foli a la cantonada exterior del peu**, com demanen les normes de Taiwan per als llibres verticals: un element horitzontal al peu, a baix a l'esquerra a les pàgines senars i a baix a la dreta a les parelles d'un llibre enquadernat per la dreta.
 
-La plantilla és a la referència de configuració, a [Elements de text verticals](/ca/docs/configuration-page-layout#elements-de-text-verticals).
+La plantilla és a la referència de configuració, a [Elements de text verticals](/ca/docs/configuration-headers-footers#elements-de-text-verticals).
 
 ### El text vertical a cada sortida
 
@@ -326,7 +326,7 @@ Postext compon cada estil amb una família i no recorre a una altra família qua
 - **La font de la regió.** Noto Serif SC, TC i HK dibuixen els mateixos punts de codi amb les formes de la seva regió, i posen els signes de pausa i de final d'oració on els posa la seva regió. La font i el `locale` d'un llibre han de coincidir.
 - **Sense cursiva.** Les fonts xineses no en tenen; el navegador i el PDF inclinarien els glifs. L'èmfasi es marca amb punts, amb un tipus kai (楷体, com LXGW WenKai) o amb negreta.
 
-Les veus tradicionals d'un llibre xinès corresponen a famílies: la song (宋体, Noto Serif) per al text, la hei (黑体, Noto Sans) per a títols i etiquetes, la kai (楷体) per a citacions, versos i pròlegs, i la fangsong (仿宋) per als documents oficials. [Fonts xineses, japoneses i coreanes](/ca/docs/configuration-programmatic-usage#fonts-xineses-japoneses-i-coreanes), a la referència de configuració, té el codi del proveïdor de fonts.
+Les veus tradicionals d'un llibre xinès corresponen a famílies: la song (宋体, Noto Serif) per al text, la hei (黑体, Noto Sans) per a títols i etiquetes, la kai (楷体) per a citacions, versos i pròlegs, i la fangsong (仿宋) per als documents oficials. [Fonts xineses, japoneses i coreanes](/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes), a la referència de configuració, té el codi del proveïdor de fonts.
 
 ## Dues configuracions completes
 
@@ -415,7 +415,7 @@ const config: PostextConfig = {
 
 ## Al Sandbox i al Receptari
 
-Al Sandbox, **Disseny › Escriptura** reuneix la llengua del document, el mode d'escriptura, l'enquadernació i tota la configuració `cjk`, i **Configuració per a xinès › Revisar…** prepara un llibre per al xinès en un sol pas, amb la llista de canvis per endavant (vegeu [Sandbox](/ca/docs/sandbox#tauler-de-disseny)). La prestatgeria de mostra té *Somni del pavelló vermell* (紅樓夢, el 程乙本 de 1792) en tres edicions: [en caràcters tradicionals, vertical i enquadernada per la dreta](/ca/sandbox#preset=hongloumeng&lang=zh-Hant), [en simplificats i horitzontal](/ca/sandbox#preset=hongloumeng&lang=zh-Hans), i els 56 primers capítols en la traducció anglesa de H. Bencraft Joly. La guia del mateix Sandbox té [una edició xinesa](/ca/sandbox#preset=postext-guide&lang=zh-Hans) composta de la mateixa manera: vertical i enquadernada per la dreta, en dos pisos, amb les bandes de capítol al llarg de la vora dreta, els titolets pel tall i els folis en numerals xinesos. El [Receptari](/ca/cookbook?col=chinese-layout) agrupa les receptes xineses a la seva col·lecció *Composició xinesa*, cadascuna una pàgina o una doble pàgina al costat del guió que la compon.
+Al Sandbox, **Disseny › Escriptura** reuneix la llengua del document, el mode d'escriptura, l'enquadernació i tota la configuració `cjk`, i **Configuració per a xinès › Revisar…** prepara un llibre per al xinès en un sol pas, amb la llista de canvis per endavant (vegeu [Sandbox](/ca/docs/sandbox-design-checks#tauler-de-disseny)). La prestatgeria de mostra té *Somni del pavelló vermell* (紅樓夢, el 程乙本 de 1792) en tres edicions: [en caràcters tradicionals, vertical i enquadernada per la dreta](/ca/sandbox#preset=hongloumeng&lang=zh-Hant), [en simplificats i horitzontal](/ca/sandbox#preset=hongloumeng&lang=zh-Hans), i els 56 primers capítols en la traducció anglesa de H. Bencraft Joly. La guia del mateix Sandbox té [una edició xinesa](/ca/sandbox#preset=postext-guide&lang=zh-Hans) composta de la mateixa manera: vertical i enquadernada per la dreta, en dos pisos, amb les bandes de capítol al llarg de la vora dreta, els titolets pel tall i els folis en numerals xinesos. El [Receptari](/ca/cookbook?col=chinese-layout) agrupa les receptes xineses a la seva col·lecció *Composició xinesa*, cadascuna una pàgina o una doble pàgina al costat del guió que la compon.
 
 ## Límits coneguts
 
@@ -423,8 +423,8 @@ Al Sandbox, **Disseny › Escriptura** reuneix la llengua del document, el mode 
 - **El text dels dissenys** (capçaleres, obertures, títols de requadre, pàgines de part) segueix les regles de principi i final de línia, les amplades de la puntuació i l'espai entre xinès i llatí del cos (`cjk.composeDesignText`, des de postext 1.25), però les seves línies van en bandera: no es reparteixen entre caràcters.
 - **Un mode d'escriptura per pàgina.** No hi ha requadres horitzontals dins d'una pàgina vertical, ni taules verticals amb la fila de capçalera a la dreta, ni peus al costat d'una figura dreta. Les fórmules, les etiquetes i les mostres de color en línia s'ajeuen amb la línia vertical.
 - **Números de línia**: no s'imprimeixen en text vertical; un llibre vertical que activa `lineNumbers` no en porta cap, amb un avís de configuració `lineNumbersUnsupported`. Els llibres horitzontals numeren les seves línies com qualsevol altre ([Configuració › Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
-- **Ajust del text.** En escriptura horitzontal una imatge o una caixa es pot col·locar a un costat de la columna amb el text al costat (vegeu [Ajust del text](/ca/docs/document-format#ajust-del-text)); amb la retícula de caràcters l'espai que ocupa és un nombre enter de caràcters, de manera que les línies del costat continuen a la retícula. L'escriptura vertical no compon text al costat d'una figura: una figura ajustada conserva la banda, amb un avís `textWrap` (`wrapUnsupported` per al valor per defecte d'un tipus de recurs).
-- **Tabuladors**: un paràgraf horitzontal amb un tabulador (`:tab`, o un caràcter de tabulació sota un estil amb tabulacions) es compon línia a línia: es talla entre caràcters segons les regles de tall de línia del document, però sense compressió de la puntuació ni justificació entre caràcters. En text vertical no hi ha tabulacions: un tabulador és un espai entre paraules, i un `:tab` genera l'avís de contingut `tabInVerticalText`. Un paràgraf amb ruby o warichu també compon els seus tabuladors com a espais entre paraules. Vegeu [Tabuladors i tabulacions](/ca/docs/document-format#tabuladors-i-tabulacions).
+- **Ajust del text.** En escriptura horitzontal una imatge o una caixa es pot col·locar a un costat de la columna amb el text al costat (vegeu [Ajust del text](/ca/docs/document-format-resources#ajust-del-text)); amb la retícula de caràcters l'espai que ocupa és un nombre enter de caràcters, de manera que les línies del costat continuen a la retícula. L'escriptura vertical no compon text al costat d'una figura: una figura ajustada conserva la banda, amb un avís `textWrap` (`wrapUnsupported` per al valor per defecte d'un tipus de recurs).
+- **Tabuladors**: un paràgraf horitzontal amb un tabulador (`:tab`, o un caràcter de tabulació sota un estil amb tabulacions) es compon línia a línia: es talla entre caràcters segons les regles de tall de línia del document, però sense compressió de la puntuació ni justificació entre caràcters. En text vertical no hi ha tabulacions: un tabulador és un espai entre paraules, i un `:tab` genera l'avís de contingut `tabInVerticalText`. Un paràgraf amb ruby o warichu també compon els seus tabuladors com a espais entre paraules. Vegeu [Tabuladors i tabulacions](/ca/docs/document-format-inline#tabuladors-i-tabulacions).
 - **Caplletres**: un paràgraf horitzontal pot començar amb una caplletra d'un caràcter (首字下沉), fixada des d'un estil de paràgraf o un nivell d'encapçalament (vegeu [Caplletres](/ca/docs/configuration-text#caplletres)): la seva mida es calcula amb l'alçada pròpia del caràcter respecte de la del text, i el compositor compon les línies escurçades amb la compressió i la justificació habituals. El text vertical no té caplletres: un paràgraf que en començaria amb una es compon sense i genera l'avís de contingut `dropCap`.
 - **Cossos en punts.** No hi ha unitats 号 ni Q.
 - **Mètriques verticals.** Cada caràcter dret avança un quadratí; no es fan servir les mètriques verticals proporcionals (`vpal`) ni el crenatge vertical.

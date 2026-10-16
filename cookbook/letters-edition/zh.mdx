@@ -22,13 +22,13 @@ pageNotes: { "2": "斜体的编者按，然后是第一封信：红色小型大�
 
 <Excerpt region="letters" />
 
-关闭`breakBefore`后，一封信从上一封信结束处那条网格线往下两条网格线（`marginTop`）开始。在<PageRef page={4}>第4页</PageRef>上，附言用12.6 pt行距排，结束在两条网格线之间，所以第三封信上方留出约三行空白。在第2页上，第一封信排到页面底部，第二封信从第3页开始。如果保留1级标题的默认值，每封信都会从右页开始（[标题前分页](/zh/docs/configuration-text#前置分页)）。`numberingTemplate: '{1:I}'`把书信编为I至III，信头通过`{number}`印出这个数字。
+关闭`breakBefore`后，一封信从上一封信结束处那条网格线往下两条网格线（`marginTop`）开始。在<PageRef page={4}>第4页</PageRef>上，附言用12.6 pt行距排，结束在两条网格线之间，所以第三封信上方留出约三行空白。在第2页上，第一封信排到页面底部，第二封信从第3页开始。如果保留1级标题的默认值，每封信都会从右页开始（[标题前分页](/zh/docs/configuration-headings#前置分页)）。`numberingTemplate: '{1:I}'`把书信编为I至III，信头通过`{number}`印出这个数字。
 
 ### 3 · 让右页随信标注日期
 
 <Excerpt region="running-heads" />
 
-在页眉中，`{attr.date}`取在该页或之前开始的最后一个1级标题的属性。第3页印出12 juin 1740；第5页上，伏尔泰的信从第4页延续过来，印出序数词尾排成上标的1er avril 1778（[文本元素](/zh/docs/configuration-page-layout#文本元素)）。书眉位于页面上边缘下方12 mm处，页码在外侧页边，文字再往里8 mm。`pages: 'body'`让书眉不出现在封面上，封面的标题是通栏的，所以它算作章首页。日期用它所重复的日期行的Crimson Pro斜体排，左页上的人名用书信编号的小型大写字母排。
+在页眉中，`{attr.date}`取在该页或之前开始的最后一个1级标题的属性。第3页印出12 juin 1740；第5页上，伏尔泰的信从第4页延续过来，印出序数词尾排成上标的1er avril 1778（[文本元素](/zh/docs/configuration-headers-footers#文本元素)）。书眉位于页面上边缘下方12 mm处，页码在外侧页边，文字再往里8 mm。`pages: 'body'`让书眉不出现在封面上，封面的标题是通栏的，所以它算作章首页。日期用它所重复的日期行的Crimson Pro斜体排，左页上的人名用书信编号的小型大写字母排。
 
 ### 4 · 把封面做成标题
 

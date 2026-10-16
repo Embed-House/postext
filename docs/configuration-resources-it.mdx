@@ -6,8 +6,8 @@ export const metadata = {
   description: 'I tipi di risorsa e la loro numerazione, gli stili di tabelle e didascalie, i diagrammi a inchiostro unico e i video in stampa',
   lang: 'it',
   lastUpdated: '2026-10-10',
-  readingTime: '5 min',
-  order: 8,
+  readingTime: '44 min',
+  order: 14,
   parent: 'configuration',
   plainSummary: "Questa pagina tratta le impostazioni di figure, tabelle, diagrammi e video. Postext li chiama risorse e numera ogni tipo per conto suo. Stabilisci l’aspetto delle tabelle: i filetti, i fondi, i caratteri e il modo in cui si dividono tra le pagine. Stabilisci come si scrive la didascalia di una figura o di una tabella. Puoi anche stampare i diagrammi con un solo colore d’inchiostro e scegliere come appare un video sulla carta.",
 };
@@ -19,9 +19,9 @@ export const metadata = {
 
 Un **tipo di risorsa** è una categoria definibile dall’utente (*Figura*, *Tabella*, *Diagramma*, *Listato*…) che determina come vengono numerate, accompagnate da didascalia e richiamate le risorse di quel tipo. L’elenco si trova in `config.resourceTypes`; la Sandbox lo modifica in **Grafica → Figure e tabelle → Numerazione e posizione**.
 
-Quando `config.resourceTypes` non è impostato, Postext fornisce tre tipi predefiniti integrati: **Figura**, **Tabella** e **Video**, ciascuno numerato per conto suo con `{h1}.{n}` (che riparte a ogni titolo di livello 1) e contatori decimali. Un elenco senza un tipo `video` (un libro salvato prima che esistessero i video) numera comunque le risorse video di tipo `video`: per loro viene aggiunto il tipo Video integrato (`effectiveResourceTypes(config, resources)`), e `defaultVideoResourceType(locale)` lo restituisce da solo. I nomi sono nella lingua del documento: `config.locale`, altrimenti `bodyText.hyphenation.locale`, altrimenti l’inglese (vedi [Lingua del documento](/it/docs/configuration-text#lingua-del-documento)).
+Quando `config.resourceTypes` non è impostato, Postext fornisce tre tipi predefiniti integrati: **Figura**, **Tabella** e **Video**, ciascuno numerato per conto suo con `{h1}.{n}` (che riparte a ogni titolo di livello 1) e contatori decimali. Un elenco senza un tipo `video` (un libro salvato prima che esistessero i video) numera comunque le risorse video di tipo `video`: per loro viene aggiunto il tipo Video integrato (`effectiveResourceTypes(config, resources)`), e `defaultVideoResourceType(locale)` lo restituisce da solo. I nomi sono nella lingua del documento: `config.locale`, altrimenti `bodyText.hyphenation.locale`, altrimenti l’inglese (vedi [Lingua del documento](/it/docs/configuration-language#lingua-del-documento)).
 
-I tipi predefiniti integrati tengono conto della lingua. La funzione esportata `defaultResourceTypes(locale = 'en')` localizza i nomi dei tipi, le etichette brevi e i prefissi delle didascalie nella lingua del documento: l’inglese dà *Figure*/*Fig.* e *Table*/*Tab.*; lo spagnolo dà *Figura*/*Fig.* e *Tabla*/*Tabla*; anche francese, tedesco, italiano, portoghese, catalano e olandese hanno i loro (la tabella in [Lingua del documento](/it/docs/configuration-text#lingua-del-documento) li elenca). Le etichette regionali come `es-ES` si risolvono per lingua, e qualsiasi lingua senza traduzioni ripiega sull’inglese. Il comportamento della numerazione (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, contatori decimali) non dipende dalla lingua. Ogni chiamata restituisce oggetti nuovi, quindi puoi modificare liberamente il risultato:
+I tipi predefiniti integrati tengono conto della lingua. La funzione esportata `defaultResourceTypes(locale = 'en')` localizza i nomi dei tipi, le etichette brevi e i prefissi delle didascalie nella lingua del documento: l’inglese dà *Figure*/*Fig.* e *Table*/*Tab.*; lo spagnolo dà *Figura*/*Fig.* e *Tabla*/*Tabla*; anche francese, tedesco, italiano, portoghese, catalano e olandese hanno i loro (la tabella in [Lingua del documento](/it/docs/configuration-language#lingua-del-documento) li elenca). Le etichette regionali come `es-ES` si risolvono per lingua, e qualsiasi lingua senza traduzioni ripiega sull’inglese. Il comportamento della numerazione (`numberingTemplate: '{h1}.{n}'`, `resetOn: 'h1'`, contatori decimali) non dipende dalla lingua. Ogni chiamata restituisce oggetti nuovi, quindi puoi modificare liberamente il risultato:
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -68,15 +68,15 @@ interface ResourceType {
 }
 ```
 
-`ResourcePlacement` ha la stessa forma del `placement` che una risorsa imposta per conto proprio. `position` sceglie il tipo di spazio libero che un elemento flottante può occupare: `auto` (il valore predefinito) prende il primo dopo il primo rimando, `top` / `bottom` lo limitano a quel tipo di fascia, `here` incorpora la risorsa nel testo. `span` imposta l’estensione dell’elemento flottante: una colonna, l’intera larghezza del contenuto o la colonna laterale riservata agli elementi flottanti di un impaginato a colonna e mezza. `rotate` ruota la risorsa di un quarto di giro e ne fa un elemento flottante a tutta pagina su una pagina tutta sua. `width` restringe un elemento flottante a una frazione della sua colonna (o della pagina, per un elemento a tutta larghezza): per esempio una tabella piccola in una colonna larga. `align` dice dove si colloca un elemento flottante più stretto (a sinistra per impostazione predefinita, al centro o a destra) e dove si colloca nel suo spazio un’immagine più stretta di quello spazio: una bitmap più piccola della colonna, o un’immagine ridotta da `layout.fitFiguresToPage`. La didascalia e la nota mantengono la giustezza dello spazio. (Fino a postext 1.4 un’immagine del genere veniva sempre allineata a sinistra.) `captionSide` colloca la didascalia accanto alla figura nella colonna laterale riservata agli elementi flottanti di un impaginato a colonna e mezza (`layout.sideColumnRole: 'floats'`), allineata alla testa della figura (al piede, per un elemento flottante in basso); si applica agli elementi flottanti di colonna e, da postext 1.28, a una risorsa composta nel testo (`position: 'here'`, larga una colonna, senza testo che le scorra attorno), la cui didascalia e la cui nota stanno nella colonna laterale all’altezza della testa del corpo della risorsa dove quella colonna è libera accanto, e sotto il corpo dove non lo è (`layout.inlineCaptionSide`, attivo per impostazione predefinita; `false` riserva le didascalie laterali agli elementi flottanti di colonna); una pagina senza una colonna del genere tiene la didascalia sotto la figura. Quando né la risorsa né il suo tipo impostano un posizionamento, vale il predefinito integrato `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) e `minScale` (0.7 se non impostato) riducono un’immagine flottante allo spazio disponibile invece di spostarla oltre, e `captionMeasure: 'body'` compone la didascalia e la nota di un’immagine più stretta del suo spazio alla larghezza dell’immagine (vedi [Formato del documento › Posizionamento](/it/docs/document-format#collocazione)); `layout.floatShrink` dà il valore predefinito del documento per i primi due. `wrap` colloca un’incorporazione nel testo o un elemento flottante di una colonna su un lato della sua colonna con il testo che scorre accanto, a distanza `wrapGap`; `layout.wrap` contiene i valori predefiniti (vedi [Formato del documento › Testo attorno alle risorse](/it/docs/document-format#testo-intorno-alle-immagini)). `citingPage` permette a un elemento flottante `top` o `auto` di aprire la pagina o la colonna in cui cade la riga che lo cita, invece di prendere il primo spazio libero successivo; `layout.floatsAtCitingPage` dà il valore predefinito del documento e `layout.maxTopFraction` la quota della colonna che può occupare (vedi [Formato del documento › Posizionamento](/it/docs/document-format#collocazione)).
+`ResourcePlacement` ha la stessa forma del `placement` che una risorsa imposta per conto proprio. `position` sceglie il tipo di spazio libero che un elemento flottante può occupare: `auto` (il valore predefinito) prende il primo dopo il primo rimando, `top` / `bottom` lo limitano a quel tipo di fascia, `here` incorpora la risorsa nel testo. `span` imposta l’estensione dell’elemento flottante: una colonna, l’intera larghezza del contenuto o la colonna laterale riservata agli elementi flottanti di un impaginato a colonna e mezza. `rotate` ruota la risorsa di un quarto di giro e ne fa un elemento flottante a tutta pagina su una pagina tutta sua. `width` restringe un elemento flottante a una frazione della sua colonna (o della pagina, per un elemento a tutta larghezza): per esempio una tabella piccola in una colonna larga. `align` dice dove si colloca un elemento flottante più stretto (a sinistra per impostazione predefinita, al centro o a destra) e dove si colloca nel suo spazio un’immagine più stretta di quello spazio: una bitmap più piccola della colonna, o un’immagine ridotta da `layout.fitFiguresToPage`. La didascalia e la nota mantengono la giustezza dello spazio. (Fino a postext 1.4 un’immagine del genere veniva sempre allineata a sinistra.) `captionSide` colloca la didascalia accanto alla figura nella colonna laterale riservata agli elementi flottanti di un impaginato a colonna e mezza (`layout.sideColumnRole: 'floats'`), allineata alla testa della figura (al piede, per un elemento flottante in basso); si applica agli elementi flottanti di colonna e, da postext 1.28, a una risorsa composta nel testo (`position: 'here'`, larga una colonna, senza testo che le scorra attorno), la cui didascalia e la cui nota stanno nella colonna laterale all’altezza della testa del corpo della risorsa dove quella colonna è libera accanto, e sotto il corpo dove non lo è (`layout.inlineCaptionSide`, attivo per impostazione predefinita; `false` riserva le didascalie laterali agli elementi flottanti di colonna); una pagina senza una colonna del genere tiene la didascalia sotto la figura. Quando né la risorsa né il suo tipo impostano un posizionamento, vale il predefinito integrato `auto` / `column`. `shrink` (`'never'`, `'page'`, `'slot'`) e `minScale` (0.7 se non impostato) riducono un’immagine flottante allo spazio disponibile invece di spostarla oltre, e `captionMeasure: 'body'` compone la didascalia e la nota di un’immagine più stretta del suo spazio alla larghezza dell’immagine (vedi [Formato del documento › Posizionamento](/it/docs/document-format-resources#collocazione)); `layout.floatShrink` dà il valore predefinito del documento per i primi due. `wrap` colloca un’incorporazione nel testo o un elemento flottante di una colonna su un lato della sua colonna con il testo che scorre accanto, a distanza `wrapGap`; `layout.wrap` contiene i valori predefiniti (vedi [Formato del documento › Testo attorno alle risorse](/it/docs/document-format-resources#testo-intorno-alle-immagini)). `citingPage` permette a un elemento flottante `top` o `auto` di aprire la pagina o la colonna in cui cade la riga che lo cita, invece di prendere il primo spazio libero successivo; `layout.floatsAtCitingPage` dà il valore predefinito del documento e `layout.maxTopFraction` la quota della colonna che può occupare (vedi [Formato del documento › Posizionamento](/it/docs/document-format-resources#collocazione)).
 
 `columns` (da postext 1.18) estende un elemento flottante `span: 'column'` su quel numero di colonne adiacenti in una pagina che ne ha diverse: un’immagine su due delle cinque colonne di un quotidiano. La sua giustezza è data da quelle colonne e dagli intercolonni tra loro. Occupa la testa di una serie di colonne vuote che cominciano alla stessa altezza, oppure il piede della colonna che la cita e delle colonne vuote successive; tante colonne quante ne ha la pagina, o più, ne fanno un elemento flottante a tutta larghezza. Viene ignorato dagli span `'page'` e `'side'`, da una risorsa ruotata (`rotate`) e da un’incorporazione nel testo (`here`), e `captionSide` si applica solo a un elemento flottante largo una colonna.
 
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '180px' }}>Tipo</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -124,7 +124,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code> (opzionale)</td>
-      <td>Posizionamento usato dalle risorse di questo tipo che non impostano un proprio <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> e <code>columns</code>, ciascuno risolto in modo indipendente. Quando né la risorsa né il tipo impostano un campo, vale il predefinito integrato: <code>auto</code> / <code>column</code>, dritta, a tutta larghezza, allineata a sinistra, didascalia sotto la figura. Vedi <a href="#numerazione-e-rimandi">Numerazione e rimandi</a> più avanti per la catena di risoluzione e <a href="/it/docs/document-format#risorse">Formato del documento › Risorse</a> per l’effetto di ogni valore, comprese le risorse ruotate.</td>
+      <td>Posizionamento usato dalle risorse di questo tipo che non impostano un proprio <code>placement</code>: <code>position</code>, <code>span</code>, <code>rotate</code>, <code>width</code>, <code>align</code>, <code>captionSide</code> e <code>columns</code>, ciascuno risolto in modo indipendente. Quando né la risorsa né il tipo impostano un campo, vale il predefinito integrato: <code>auto</code> / <code>column</code>, dritta, a tutta larghezza, allineata a sinistra, didascalia sotto la figura. Vedi <a href="#numerazione-e-rimandi">Numerazione e rimandi</a> più avanti per la catena di risoluzione e <a href="/it/docs/document-format-resources#risorse">Formato del documento › Risorse</a> per l’effetto di ogni valore, comprese le risorse ruotate.</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -136,7 +136,7 @@ interface ResourceType {
 
 ### Token del modello
 
-`numberingTemplate` viene elaborato dallo stesso motore della numerazione dei titoli (vedi [Titoli](/it/docs/configuration-text#titoli)). Riconosce due tipi di token:
+`numberingTemplate` viene elaborato dallo stesso motore della numerazione dei titoli (vedi [Titoli](/it/docs/configuration-headings#titoli)). Riconosce due tipi di token:
 
 - `{n}`: il contatore del tipo, formattato secondo `counterFormat`. È il valore che aumenta a ogni risorsa e si azzera secondo `resetOn`.
 - da `{h1}` a `{h6}`: i numeri dei titoli in vigore nel punto del primo rimando, in decimale a meno che il token non indichi uno stile. `{h1}` è il numero del titolo di livello 1 corrente, `{h2}` quello di livello 2, e così via.
@@ -149,8 +149,8 @@ Un modello vuoto (`''`) non stampa alcun numero, anche se il tipo continua a con
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Modello</th>
-      <th style={{ width: '180px' }}>Con <code>h1 = 2</code>, contatore = 3</th>
+      <th>Modello</th>
+      <th>Con <code>h1 = 2</code>, contatore = 3</th>
       <th>Note</th>
     </tr>
   </thead>
@@ -182,7 +182,7 @@ Un modello vuoto (`''`) non stampa alcun numero, anche se il tipo continua a con
 
 ### Numerazione e rimandi
 
-Il numero prodotto da un tipo di risorsa è ciò che `:ref` stampa e ciò che il prefisso della didascalia precede. `:ref{id}` è la forma principale: il primo rimando in ordine di lettura **incorpora** la risorsa, che flotta nel primo spazio libero dopo quel rimando, cioè il piede della colonna che la richiama, la testa o il piede della colonna vuota successiva, o una fascia della pagina successiva (secondo il posizionamento risolto: `position: 'auto' | 'top' | 'bottom' | 'here'` e `span: 'column' | 'page' | 'side'`, più `rotate`, `width`, `align` e `captionSide`, risolti per ogni risorsa, poi con il `defaultPlacement` del tipo, poi con il predefinito integrato `auto` / `column`; `'top'` / `'bottom'` limitano la ricerca a quel tipo di spazio). L’incorporazione a blocco `::resource{id}` è facoltativa e serve solo per `placement.position: 'here'`, un’incorporazione nel testo, non flottante, in un punto preciso del flusso. La grammatica completa lato documento (entrambe le forme più le opzioni `style` e `text` di `:ref`) è documentata in [Formato del documento › Risorse](/it/docs/document-format#risorse), compreso il modo in cui l’ordine dei primi rimandi determina il conteggio.
+Il numero prodotto da un tipo di risorsa è ciò che `:ref` stampa e ciò che il prefisso della didascalia precede. `:ref{id}` è la forma principale: il primo rimando in ordine di lettura **incorpora** la risorsa, che flotta nel primo spazio libero dopo quel rimando, cioè il piede della colonna che la richiama, la testa o il piede della colonna vuota successiva, o una fascia della pagina successiva (secondo il posizionamento risolto: `position: 'auto' | 'top' | 'bottom' | 'here'` e `span: 'column' | 'page' | 'side'`, più `rotate`, `width`, `align` e `captionSide`, risolti per ogni risorsa, poi con il `defaultPlacement` del tipo, poi con il predefinito integrato `auto` / `column`; `'top'` / `'bottom'` limitano la ricerca a quel tipo di spazio). L’incorporazione a blocco `::resource{id}` è facoltativa e serve solo per `placement.position: 'here'`, un’incorporazione nel testo, non flottante, in un punto preciso del flusso. La grammatica completa lato documento (entrambe le forme più le opzioni `style` e `text` di `:ref`) è documentata in [Formato del documento › Risorse](/it/docs/document-format-resources#risorse), compreso il modo in cui l’ordine dei primi rimandi determina il conteggio.
 
 È lo stesso schema della numerazione dei titoli: come un livello di titolo porta un `numberingTemplate`, ne porta uno anche un tipo di risorsa; ma il contatore delle risorse (`{n}`) avanza a ogni primo rimando anziché a ogni titolo, e `resetOn` lo ricollega alla gerarchia dei titoli.
 
@@ -231,9 +231,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Proprietà</th>
-      <th style={{ width: '140px' }}>Tipo</th>
-      <th style={{ width: '160px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -440,7 +440,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Testo di quell’indicatore, allineato a destra sotto la parte con il carattere delle note (vedi <a href="#stile-delle-didascalie">stile delle didascalie</a>). Il valore predefinito segue la lingua del documento (vedi <a href="/it/docs/configuration-text#lingua-del-documento">Lingua del documento</a> per le otto lingue).</td>
+      <td>Testo di quell’indicatore, allineato a destra sotto la parte con il carattere delle note (vedi <a href="#stile-delle-didascalie">stile delle didascalie</a>). Il valore predefinito segue la lingua del documento (vedi <a href="/it/docs/configuration-language#lingua-del-documento">Lingua del documento</a> per le otto lingue).</td>
     </tr>
   </tbody>
 </table>
@@ -532,7 +532,7 @@ Una tabella flottante che non entra nella pagina nuova che le viene offerta non 
 
 **Tabelle composte nel testo.** Una tabella collocata `here` (incorporata con `::resource`) segue le stesse regole da postext 1.25 (`splitInline`, attivo per impostazione predefinita). Quando non entra nello spazio rimasto nella sua colonna, viene tagliata tra due righe: la prima parte mantiene sopra di sé lo spazio degli elementi flottanti e almeno le righe d’intestazione e due righe del corpo (se sono meno, l’intera tabella comincia nella colonna successiva, come prima), ogni parte successiva apre la colonna seguente senza spazio sopra, impaginata alla larghezza di quella colonna (un impaginato a colonna e mezza compone una parte nella colonna stretta alla sua larghezza), e il testo dopo la riga `::resource` segue l’ultima parte. La ripetizione dell’intestazione, la didascalia con il suffisso, l’indicatore, la nota sull’ultima parte, la coda di tre righe e i tagli che rispettano le celle unite e le intestazioni di gruppo sono quelli di una tabella flottante. Una tabella con meno di cinque righe del corpo non viene mai tagliata. `'clip'` tiene le righe iniziali di una tabella nel testo più alta di una colonna, composte in testa a una colonna; `'hide'` omette una tabella del genere; una più bassa passa intera alla colonna successiva in entrambe le modalità. Una pagina aperta da una tabella nel testo tiene libero dagli elementi flottanti solo lo spazio della prima parte, così una figura a tutta larghezza in attesa apre quella pagina e la tabella prosegue sotto. Le tabelle nel testo su una pagina verticale, e le tabelle dentro un riquadro, non vengono tagliate. `splitInline: false` sposta una tabella nel testo intera alla colonna successiva, come fino a postext 1.24.
 
-Le stringhe di continuazione hanno valori predefiniti per lingua del documento (`locale`, altrimenti la lingua di sillabazione): inglese `(cont.)` / `Continued`, spagnolo `(cont.)` / `Continúa`, e analogamente in francese, tedesco, italiano, portoghese, catalano e olandese (elencate in [Lingua del documento](/it/docs/configuration-text#lingua-del-documento)).
+Le stringhe di continuazione hanno valori predefiniti per lingua del documento (`locale`, altrimenti la lingua di sillabazione): inglese `(cont.)` / `Continued`, spagnolo `(cont.)` / `Continúa`, e analogamente in francese, tedesco, italiano, portoghese, catalano e olandese (elencate in [Lingua del documento](/it/docs/configuration-language#lingua-del-documento)).
 
 Il contenuto delle celle è Markdown in linea, e un a capo dentro una cella (un carattere di nuova riga, o `\\` come nelle didascalie e nelle note) comincia un nuovo paragrafo. Un paragrafo che si apre con un punto elenco o un trattino (`•`, `-`, `*`, `–`) o con un numero (`1.`, `1)`) seguito da uno spazio viene composto come voce di elenco: il segno viene disegnato come è scritto, il testo rientra rispetto al segno di `unorderedLists.gap` del documento, le righe a capo si allineano al testo, e due spazi iniziali annidano un livello. Così una cella scritta come `• Ofrece elección\n• Acomoda a personas diestras y zurdas` diventa un elenco di due voci. Una riga fatta solo di spazi normali non aggiunge nulla; una riga che contiene uno spazio indivisibile (U+00A0) è una riga della cella, come in CommonMark, quindi `1\n` seguito da uno spazio indivisibile rende la riga alta due righe di testo. Uno spazio indivisibile alla fine del testo di una cella mantiene la sua larghezza: `760` e uno spazio indivisibile, allineati a destra sopra `(231)`, terminano uno spazio prima del bordo, il che avvicina lo 0 all’1. Le cifre si allineano esattamente solo dove lo spazio è largo quanto la parentesi, e nella maggior parte dei caratteri è più stretto. (Fino a postext 1.4 venivano eliminati entrambi.)
 
@@ -593,9 +593,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -704,9 +704,9 @@ Il sotto-oggetto `note` dà stile a `Resource.note`, un breve testo (fonte, cred
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Proprietà</th>
-      <th style={{ width: '180px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -762,9 +762,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '200px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -870,7 +870,7 @@ Per ogni colore che il passaggio sul markup riscrive (valori esadecimali, `rgb()
 
 ### Font nel testo SVG
 
-Un’immagine SVG viene mostrata tramite un’immagine: un `<img>` sul canvas, in HTML e in EPUB. Un documento immagine non vede i web font della pagina, quindi `<text font-family="IBM Plex Sans">` ripiegherebbe su un carattere di sistema. Da postext 1.25 il motore incorpora nel markup i caratteri che il testo nomina prima che l’immagine venga decodificata o fornita come URL: una regola `@font-face` per ogni file di font, con i suoi byte come data URI, in uno `<style>` subito dopo il tag `<svg>` radice. Il PDF non ha bisogno di nulla di tutto questo: compone il testo SVG come testo vero nei suoi font incorporati (vedi [Byte delle risorse e master di stampa](/it/docs/configuration-programmatic-usage#byte-delle-risorse-e-master-di-stampa)).
+Un’immagine SVG viene mostrata tramite un’immagine: un `<img>` sul canvas, in HTML e in EPUB. Un documento immagine non vede i web font della pagina, quindi `<text font-family="IBM Plex Sans">` ripiegherebbe su un carattere di sistema. Da postext 1.25 il motore incorpora nel markup i caratteri che il testo nomina prima che l’immagine venga decodificata o fornita come URL: una regola `@font-face` per ogni file di font, con i suoi byte come data URI, in uno `<style>` subito dopo il tag `<svg>` radice. Il PDF non ha bisogno di nulla di tutto questo: compone il testo SVG come testo vero nei suoi font incorporati (vedi [Byte delle risorse e master di stampa](/it/docs/configuration-pdf-output#byte-delle-risorse-e-master-di-stampa)).
 
 Ciò che il testo richiede viene letto da `font-family`, `font-weight`, `font-style` e `font`, come attributi, negli attributi `style` ed ereditato dai gruppi che lo contengono; conta anche una regola `<style>` che nomina una famiglia. Le famiglie generiche (`serif`, `sans-serif`…) e il testo in `<title>` o `<desc>` vengono esclusi, e una famiglia che l’SVG dichiara da sé con `@font-face` non viene toccata. Un tratto di testo scorre il suo elenco `font-family` fino alla prima famiglia che ha un carattere disponibile. Prima viene la ricolorazione per l’inchiostro unico, poi i font.
 
@@ -888,7 +888,7 @@ Dove avviene:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` ricolora (`inkHex`), incorpora i font (`fonts`, un provider; `inlineFonts: false` salta il passaggio), decodifica e registra l’immagine come sorgente vettoriale, e restituisce che cosa è stato di ogni carattere. `registerBundleImages(bundle)` fa lo stesso per gli SVG di un pacchetto, cominciando dai caratteri del pacchetto stesso. `prepareSvgMarkup(svgText, options)` restituisce il markup preparato per un host che decodifica per conto proprio.
 - **HTML.** `bundleImageUrl(bundle)` serve il markup SVG con i caratteri del pacchetto incorporati. `renderToHtml(doc, { inlineSvgFonts: true })` incorpora i font nei data URI `data:` SVG che `resourceImageUrl` restituisce, a partire dai caratteri che il registro tiene in memoria (oppure `inlineSvgFonts: { fonts, maxBytes, withhold }`). Un object URL non si può leggere in modo sincrono, quindi un host che serve URL blob incorpora i font prima di crearli.
-- **EPUB.** `postext-epub` incorpora i font dai `fonts` del libro, poi da `svgFonts.provider`, prima di scrivere un SVG (vedi [Libri EPUB](/it/docs/configuration-programmatic-usage#libri-epub-postext-epub)).
+- **EPUB.** `postext-epub` incorpora i font dai `fonts` del libro, poi da `svgFonts.provider`, prima di scrivere un SVG (vedi [Libri EPUB](/it/docs/configuration-html-folio-epub#libri-epub-postext-epub)).
 - **PDF.** Il testo SVG viene composto come testo vero nei font incorporati. Uno `<style>` che contiene solo regole `@font-face` (caratteri incorporati dall’autore) non fa più ripiegare la figura su un raster. Quando una figura ripiega comunque (un filtro, un gradiente), il suo raster viene creato con i caratteri incorporati dal `fontProvider` del PDF.
 
 Sono esportate anche le funzioni di livello più basso: `svgFontRequests(svgText)` elenca per ogni tratto le famiglie, il peso, lo stile e i caratteri; `inlineSvgFonts(svgText, provider, options)` e `inlineSvgFontsSync(svgText, syncProvider, options)` restituiscono il markup; `inlineSvgFontsDetailed` aggiunge un resoconto di ogni carattere (`inlined`, `declared`, `unavailable`, `withheld`, `tooLarge`).
@@ -896,9 +896,9 @@ Sono esportate anche le funzioni di livello più basso: `svgFontRequests(svgText
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Opzione</th>
-      <th style={{ width: '160px' }}>Tipo</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Opzione</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -937,7 +937,7 @@ Sono esportate anche le funzioni di livello più basso: `svgFontRequests(svgText
 
 ## Stile dei video
 
-La proprietà `videoStyle` stabilisce come vengono stampate le [risorse video](/it/docs/document-format#video) (il simbolo di riproduzione e il codice QR sopra la locandina, e se la locandina rimanda al video) e che cosa offrono i loro player nel visualizzatore HTML e in EPUB.
+La proprietà `videoStyle` stabilisce come vengono stampate le [risorse video](/it/docs/document-format-resources#video) (il simbolo di riproduzione e il codice QR sopra la locandina, e se la locandina rimanda al video) e che cosa offrono i loro player nel visualizzatore HTML e in EPUB.
 
 ```ts
 const config: PostextConfig = {
@@ -952,9 +952,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -997,9 +997,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1020,9 +1020,9 @@ const config: PostextConfig = {
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '200px' }}>Tipo</th>
-      <th style={{ width: '140px' }}>Predefinito</th>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1048,9 +1048,9 @@ Il codice viene codificato dal motore stesso (`encodeQr(text, level)`: modalità
 <table>
   <thead>
     <tr>
-      <th style={{ width: '180px' }}>Proprietà</th>
-      <th style={{ width: '120px' }}>Predefinito</th>
-      <th style={{ width: '170px' }}>Rispettata da</th>
+      <th>Proprietà</th>
+      <th>Predefinito</th>
+      <th>Rispettata da</th>
       <th>Descrizione</th>
     </tr>
   </thead>
@@ -1072,7 +1072,7 @@ Il codice viene codificato dal motore stesso (`encodeQr(text, level)`: modalità
 
 Un EPUB conserva solo gli attributi che il suo schema conosce: un file si riproduce con <code>controls</code>, <code>autoplay</code>, <code>muted</code>, <code>loop</code>, <code>playsinline</code> e <code>preload</code>, più il marcatore <code>data-pt-alongside</code>, e il resto lo decide il sistema di lettura.
 
-Un video non esclusivo porta `data-pt-alongside` nell’output HTML. `coordinateVideoPlayback(root)` fa rispettare la regola ai player sotto `root` (l’elemento che contiene l’output di `renderToHtml`): avviare un video esclusivo mette in pausa tutti gli altri in riproduzione, e avviarne uno che suona insieme agli altri mette in pausa solo quelli esclusivi. Restituisce una funzione che smette di ascoltare. `playsAlongside(el)` e `videosToPause(started, videos, alongside)` offrono la stessa regola a un host con player propri. In [Folio](/it/docs/document-format#video-sulle-pagine-di-folio) un video che parte da solo e suona insieme agli altri (`autoplay` con `exclusive: false`) si avvia, senza audio, ogni volta che la sua pagina entra in vista e si ferma quando la pagina viene girata, più d’uno in contemporanea, e `loop` lo fa ripartire dall’inizio. Una pagina o un capitolo EPUB con video da coordinare (due o più, di cui uno esclusivo) collega la stessa regola come piccolo script, `scripts/videos.js` (l’esportazione `VIDEO_PLAYBACK_SCRIPT`), e il pacchetto dichiara quel documento `scripted`. Un sistema di lettura che esegue gli script fa rispettare la regola ai video di quel documento, ma non a quelli della pagina a fronte, che è un altro documento; uno che non esegue script riproduce ogni video secondo le sue regole, come fanno sempre i player di YouTube e Vimeo.
+Un video non esclusivo porta `data-pt-alongside` nell’output HTML. `coordinateVideoPlayback(root)` fa rispettare la regola ai player sotto `root` (l’elemento che contiene l’output di `renderToHtml`): avviare un video esclusivo mette in pausa tutti gli altri in riproduzione, e avviarne uno che suona insieme agli altri mette in pausa solo quelli esclusivi. Restituisce una funzione che smette di ascoltare. `playsAlongside(el)` e `videosToPause(started, videos, alongside)` offrono la stessa regola a un host con player propri. In [Folio](/it/docs/document-format-resources#video-sulle-pagine-di-folio) un video che parte da solo e suona insieme agli altri (`autoplay` con `exclusive: false`) si avvia, senza audio, ogni volta che la sua pagina entra in vista e si ferma quando la pagina viene girata, più d’uno in contemporanea, e `loop` lo fa ripartire dall’inizio. Una pagina o un capitolo EPUB con video da coordinare (due o più, di cui uno esclusivo) collega la stessa regola come piccolo script, `scripts/videos.js` (l’esportazione `VIDEO_PLAYBACK_SCRIPT`), e il pacchetto dichiara quel documento `scripted`. Un sistema di lettura che esegue gli script fa rispettare la regola ai video di quel documento, ma non a quelli della pagina a fronte, che è un altro documento; uno che non esegue script riproduce ogni video secondo le sue regole, come fanno sempre i player di YouTube e Vimeo.
 
 Resolver e stripper seguono le altre sezioni, accanto ai tipi `VideoStyleConfig` / `ResolvedVideoStyleConfig`:
 

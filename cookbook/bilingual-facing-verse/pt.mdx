@@ -16,13 +16,13 @@ Uma plaquete bilíngue de cinco poemas sobre uma salina no sul da Espanha, em 15
 
 ### 1 · Um poema é um boxe com uma quebra de coluna fixa
 
-O código está [na resposta curta](#a-resposta-curta), mais acima. Cada poema é um boxe com um grupo `:::columns` dentro; o estilo dele tira o fundo e o preenchimento e imprime o `title` da cerca, que é o numeral ([`:::columns`](/pt/docs/document-format#columns)). Sem `breaks`, o grupo corta onde as duas colunas ficam niveladas. As duas metades destes poemas têm a mesma altura, então o corte cai no título inglês de qualquer maneira; mas alongue dois versos de *The Rake* até eles não caberem, e o corte desce um bloco e deixa THE RAKE no pé da coluna espanhola. `breaks="5"` indica o bloco que abre a segunda coluna, e o título inglês a encabeça seja qual for a altura das duas metades.
+O código está [na resposta curta](#a-resposta-curta), mais acima. Cada poema é um boxe com um grupo `:::columns` dentro; o estilo dele tira o fundo e o preenchimento e imprime o `title` da cerca, que é o numeral ([`:::columns`](/pt/docs/document-format-directives#columns)). Sem `breaks`, o grupo corta onde as duas colunas ficam niveladas. As duas metades destes poemas têm a mesma altura, então o corte cai no título inglês de qualquer maneira; mas alongue dois versos de *The Rake* até eles não caberem, e o corte desce um bloco e deixa THE RAKE no pé da coluna espanhola. `breaks="5"` indica o bloco que abre a segunda coluna, e o título inglês a encabeça seja qual for a altura das duas metades.
 
 ### 2 · Um bloco :::verse por coluna, uma linha em branco por quebra de estrofe
 
 <Excerpt region="verse" />
 
-Cada metade de um poema é um bloco `:::verse`: um verso por linha do Markdown, em bandeira e sem hifenização, e uma linha em branco entre estrofes, que deixa uma linha em branco na coluna ([`:::verse`](/pt/docs/document-format#verse)). Cada estrofe é um bloco, então `breaks` conta estrofes, não versos. O verso inglês *each one standing on its own reflection.* é longo demais para a coluna de 55 mm e continua na linha de baixo com recuo de 2 em; a metade espanhola fecha o seu bloco depois da estrofe em frente e põe um `:::space{lines=2}` antes da seguinte, e as estrofes seguintes começam na mesma linha. Um `:::space` não é um bloco, e `breaks` não o conta ([`:::space`](/pt/docs/document-format#space)).
+Cada metade de um poema é um bloco `:::verse`: um verso por linha do Markdown, em bandeira e sem hifenização, e uma linha em branco entre estrofes, que deixa uma linha em branco na coluna ([`:::verse`](/pt/docs/document-format-directives#verse)). Cada estrofe é um bloco, então `breaks` conta estrofes, não versos. O verso inglês *each one standing on its own reflection.* é longo demais para a coluna de 55 mm e continua na linha de baixo com recuo de 2 em; a metade espanhola fecha o seu bloco depois da estrofe em frente e põe um `:::space{lines=2}` antes da seguinte, e as estrofes seguintes começam na mesma linha. Um `:::space` não é um bloco, e `breaks` não o conta ([`:::space`](/pt/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="O poema I na página 3: reflection. passa para a linha de baixo no inglês, e a estrofe espanhola termina com duas linhas em branco em vez de uma." />
 
@@ -42,7 +42,7 @@ Cada uma é um título de nível 1 com estilo próprio ([estilos de título](/pt
 
 <Excerpt region="heads" />
 
-A página par traz o título espanhol e a ímpar o inglês, na ordem das colunas. `pages: 'body'` tira os cabeços das três páginas que abrem com um título. A nota e a aquarela levam um fólio no pé no lugar deles, e o estilo da folha de rosto esvazia o cabeçalho e o rodapé ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)).
+A página par traz o título espanhol e a ímpar o inglês, na ordem das colunas. `pages: 'body'` tira os cabeços das três páginas que abrem com um título. A nota e a aquarela levam um fólio no pé no lugar deles, e o estilo da folha de rosto esvazia o cabeçalho e o rodapé ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)).
 
 ## Variações
 

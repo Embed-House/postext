@@ -3545,6 +3545,14 @@
    "lighting": {
     "environment": "daylight"
    }
+  },
+  "checks": {
+   "contentInConfig": {
+    "allow": [
+     "Física universitaria · Volumen 1",
+     "Physics · Chapters 1 and 2: What is Physics?"
+    ]
+   }
   }
  },
  "localized": {

@@ -1,0 +1,198 @@
+{/* docs/composed-pages-it.mdx */}
+
+export const metadata = {
+  title: 'Pagine composte',
+  sidebarTitle: 'Pagine composte',
+  description: 'Il Markdown delle pagine composte: il recinto di pagina a quattro due punti che indica un modello di pagina, le cornici e l’attributo slot che mandano il contenuto nelle cornici del modello, le figure con le etichette sulle ancore di un’immagine, e gli avvisi che confrontano il contenuto con il modello',
+  lang: 'it',
+  lastUpdated: '2026-10-16',
+  readingTime: '9 min',
+  order: 34,
+  plainSummary: "Alcune pagine non sono una sola colonna di testo corrente ma un insieme di riquadri, come la pagina di un libro di scuola con una fascia per il titolo, un testo e tre riquadri colorati con le loro foto. Postext le chiama pagine composte. La forma della pagina è un modello nella configurazione, e il Markdown dice soltanto quale pezzo di testo va in quale riquadro. Questa pagina spiega come scrivere quel Markdown: il recinto della pagina, le cornici, i nomi degli slot e le immagini con etichette, come i nomi su una carta geografica. Elenca anche gli avvisi che Postext dà quando il testo e il modello non combaciano.",
+};
+
+# Pagine composte
+
+**Il modello porta la forma della pagina; il Markdown porta il contenuto e dice in quale cornice va ogni pezzo.**
+
+Una pagina composta è una pagina impaginata a partire da un modello: cornici con un nome (una fascia per il titolo, un testo, un riquadro con la sua foto), gruppi che si spostano insieme e una decorazione, tutto definito nella configurazione sotto `pageTemplates`. Il Markdown della pagina è un blocco recintato che indica il suo modello e versa il contenuto nelle cornici chiamandole per nome. Nel Markdown non si scrive mai una posizione o una dimensione, e nella configurazione non si scrive mai il testo del contenuto: una traduzione è quindi lo stesso modello con altre parole.
+
+Questa pagina tratta il Markdown. In questa versione il parser legge le pagine composte e i controlli degli slot sono attivi, per cui il pannello Verifiche e `postext check` segnalano una pagina che non corrisponde al suo modello. L’impaginazione del modello sulla pagina arriva nella prossima versione; fino ad allora il contenuto di una pagina composta viene collocato nel testo corrente, nell’ordine del Markdown, su pagine proprie, così che nulla di quanto vi è scritto vada perso. Un documento senza pagine composte si impagina esattamente come prima.
+
+## Il recinto della pagina
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+::::
+```
+
+Una pagina composta si apre con una riga di **quattro due punti** seguita da `page` e dai suoi attributi, e si chiude con una riga che contiene soltanto **lo stesso numero di due punti**. Al suo interno i contenitori a tre due punti (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) si aprono e si chiudono come sempre, quindi un `:::` da solo chiude il più interno di essi e mai la pagina. Una pagina scritta con cinque due punti (`:::::page`) si chiude con cinque; una riga di quattro due punti al suo interno è allora testo normale.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>template="…"</code></td><td>Obbligatorio. L’id di una voce di <code>pageTemplates</code>.</td></tr>
+    <tr><td><code>spread</code></td><td>La pagina è una doppia pagina su due pagine affiancate; anche il modello deve essere un modello di doppia pagina.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un’ancora: un <code>:ref</code> che la cita stampa la pagina su cui cade la pagina composta.</td></tr>
+    <tr><td>qualsiasi altro</td><td>Un valore che il modello legge come <code>&#123;attr.name&#125;</code>, per esempio un’immagine di sfondo scelta pagina per pagina: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> nella decorazione.</td></tr>
+  </tbody>
+</table>
+
+Una pagina composta inizia sempre una nuova pagina (o doppia pagina), e il testo dopo il suo recinto di chiusura inizia sulla successiva.
+
+Il `:::page{split=…}` a tre due punti è una pagina di fumetto (vedi [Fumetti](/it/docs/comics)) e mantiene questo significato. Un `:::page` a tre due punti che porta `template=` viene comunque letto come pagina di fumetto, e l’avviso `pageFenceLength` ricorda che una pagina composta richiede quattro due punti.
+
+Quando manca un recinto, il parser si riprende senza perdere testo:
+
+- una pagina lasciata aperta prosegue fino alla fine del capitolo e viene segnalata come contenitore non chiuso alla sua riga di apertura;
+- una riga `::::page` incontrata mentre una pagina è aperta chiude lì, prima di tutto, la pagina aperta (e viene segnalata allo stesso modo);
+- il recinto di chiusura chiude ogni cornice o riquadro ancora aperto dentro la pagina, segnalandoli uno per uno;
+- un recinto di chiusura con un altro numero di due punti non è quello della pagina: resta nel testo, dove lo vedi.
+
+## Cornici e slot
+
+```md
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago…
+
+Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
+:::
+```
+
+Uno **slot** è il nome che un pezzo di contenuto richiede; corrisponde al nome di una cornice del modello. `:::frame{slot="…"}` manda tutto ciò che contiene in quella cornice. Il suo corpo accetta tutto il Markdown: paragrafi, elenchi, titoli, chip, inserimenti `::resource`, rimandi `:ref`, note a piè di pagina, `:::columns` e riquadri annidati. `label` e `title` danno le parole alla linguetta o al titolo della cornice, come per un `:::callout`; l’aspetto della cornice viene dallo stile di riquadro che il modello le assegna.
+
+Un singolo blocco può indicare da sé il suo slot:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '280px' }}>Blocco</th>
+      <th>Come si scrive</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Un titolo</td><td><code>## Retos &#123;slot="retos-titulo"&#125;</code></td></tr>
+    <tr><td>L’inserimento di una risorsa</td><td><code>::resource&#123;id="dinero-pago" slot="dinero-fotos"&#125;</code> (i due attributi, in qualsiasi ordine)</td></tr>
+    <tr><td>Un listato di codice</td><td><code>&#96;&#96;&#96;js &#123;slot="codigo"&#125;</code></td></tr>
+    <tr><td>Un riquadro o qualsiasi altro contenitore</td><td><code>:::callout&#123;type="nota" slot="aside"&#125;</code>: l’intero riquadro va nello slot</td></tr>
+    <tr><td>Una figura</td><td><code>:::figure&#123;resource="mapa" slot="mapa"&#125;</code> (vedi sotto)</td></tr>
+  </tbody>
+</table>
+
+Il contenuto si distribuisce così:
+
+- Più pezzi con lo stesso slot vengono uniti nell’ordine del Markdown.
+- Il contenuto senza slot va nella **cornice di flusso** del modello (la cornice marcata `flow`).
+- Un titolo senza slot va per prima cosa nella cornice che prende il suo livello (`takes: "h1"`), se il modello ne ha una; così il titolo di un argomento del libro di scuola è semplicemente `# Titolo` in cima alla pagina.
+- Il contenuto che indica uno slot che il modello non ha va nella cornice di flusso e viene segnalato (`slotUnknown`).
+
+Fuori da una pagina composta, uno `slot` viene letto e non cambia nulla.
+
+## Figure con etichette
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` colloca una risorsa, con la sua didascalia e il suo numero, come fa `::resource`, ed elenca le etichette da porre sull’immagine: una riga `::label[TEXT]{…}` per ciascuna, con righe vuote ammesse fra l’una e l’altra.
+
+- `at` indica un’ancora della risorsa (un punto definito una sola volta sull’immagine e comune a tutte le lingue), oppure dà un punto in percentuali dell’immagine, `at="x% y%"`, per un’etichetta senza ancora.
+- `style` indica uno stile di etichetta e prevale su quello dell’ancora.
+- Il testo fra parentesi quadre è Markdown in linea: grassetto, corsivo, chip.
+
+Una figura funziona nel testo corrente come in una cornice. Le etichette vengono lette e conservate con la loro sorgente; il loro disegno sull’immagine arriverà con l’impaginazione dei modelli, e fino ad allora una figura viene composta come la sua risorsa. Dentro una figura, una riga che non è né un’etichetta né vuota chiude una figura a cui manca il `:::` di chiusura, e viene segnalata come contenitore non chiuso.
+
+## Esempio
+
+La pagina di un libro di scuola, con una fascia per il titolo, un testo con il suo elenco e tre riquadri colorati, ognuno con la sua foto accanto:
+
+```md
+::::page{template="tema-cajas" fondo="banda-retos"}
+# La actividad económica y el dinero
+
+## La actividad económica
+
+Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la naturaleza…
+
+- Las :chip[empresas.]{style="clave"} Ofrecen bienes y servicios a cambio de un beneficio.
+- Las :chip[personas y familias.]{style="clave"} Adquieren lo que ofrecen las empresas…
+
+:::frame{slot="dinero" label="El dinero"}
+Es el instrumento utilizado como medio de pago, ya que su valor es conocido…
+:::
+
+::resource{id="dinero-pago" slot="dinero-fotos"}
+
+:::frame{slot="gasto" label="El gasto"}
+- **Fijo:** es el que se produce todos los meses…
+- **Variable:** puede cambiar según las necesidades…
+:::
+
+::resource{id="gasto-compras" slot="gasto-fotos"}
+
+:::frame{slot="ahorro" label="Préstamos y ahorro"}
+Si necesitas o quieres comprar algo muy caro…
+:::
+
+::resource{id="ahorro-balanza" slot="ahorro-fotos"}
+::::
+```
+
+Il titolo va nella cornice che prende `h1`; il sottotitolo, il paragrafo e l’elenco vanno nella cornice di flusso; ogni riquadro e ogni foto vanno nella cornice del loro slot. L’edizione catalana è fatta delle stesse righe con altre parole: il modello, gli slot e le foto non cambiano.
+
+## Avvisi
+
+I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginazione, quindi compaiono già mentre scrivi nel pannello Verifiche, oltre che in `postext check` e nei `contentWarnings` del documento, ciascuno con l’intervallo di sorgente di ciò che riguarda (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Tipo</th>
+      <th>Causa</th>
+      <th>Rimedio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>templateUnknown</code></td>
+      <td>Il recinto della pagina indica un modello che nessuna voce di <code>pageTemplates</code> definisce, oppure non ne indica nessuno. I suoi slot non vengono controllati.</td>
+      <td>Correggi l’id, oppure aggiungi il modello alla configurazione.</td>
+    </tr>
+    <tr>
+      <td><code>slotUnknown</code></td>
+      <td>Uno <code>slot="…"</code> non indica alcuna cornice del modello della pagina (contano anche le cornici ereditate tramite <code>extends</code> e quelle di una pagina di <code>variants</code>). Il contenuto va nella cornice di flusso.</td>
+      <td>Correggi il nome dello slot, oppure aggiungi al modello una cornice con quel nome.</td>
+    </tr>
+    <tr>
+      <td><code>slotEmpty</code></td>
+      <td>Una cornice del modello non riceve nulla in questa pagina: nessuno slot la indica, non prende alcun titolo e, se è la cornice di flusso, nessun contenuto resta senza slot. Una cornice che riceve solo il seguito di un’altra cornice (<code>next</code>) non viene segnalata. <code>postext check</code> la elenca come nota.</td>
+      <td>Scrivi un contenuto per quella cornice con il suo slot, oppure marca la cornice come <code>optional: true</code> nel modello.</td>
+    </tr>
+    <tr>
+      <td><code>pageFenceLength</code></td>
+      <td>Un <code>:::page</code> a tre due punti porta <code>template=</code>. Viene letto come pagina di fumetto, come prima.</td>
+      <td>Apri la pagina con quattro due punti, <code>::::page&#123;template="…"&#125;</code>, e chiudila con <code>::::</code>.</td>
+    </tr>
+    <tr>
+      <td><code>unclosedContainer</code></td>
+      <td>Una pagina composta, una cornice o una figura non viene mai chiusa (vedi sopra come si riprende il parser). Il pannello Verifiche chiama la pagina composta <code>::::page</code>.</td>
+      <td>Aggiungi il recinto di chiusura: tanti due punti quanti ne ha la riga di apertura della pagina, oppure <code>:::</code> per una cornice o una figura.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Dal codice
+
+`composedPages(blocks)` legge i blocchi analizzati di un capitolo (`parseMarkdownWithIssues(markdown).blocks`) e restituisce, in ordine, un nodo per ogni recinto di pagina: il suo `template`, `spread`, `attrs` con l’intervallo di sorgente di ogni valore (`attrSources`), il suo `fenceIndex` (il numero d’ordine del recinto nel capitolo, uguale in ogni lingua), `slots` (gli indici dei blocchi di ogni slot, nell’ordine del Markdown), `unassigned` (i blocchi senza slot) e l’intervallo di sorgente dell’intera pagina. Un blocco porta lo slot che indica in `ContentBlock.slot`, con l’intervallo di sorgente del valore; una figura è un `resourceBlock` il cui `figure` contiene i suoi attributi e le sue etichette, ciascuna con il suo testo, i suoi span in linea e una mappa che la riporta alla sua sorgente nel Markdown. `checkComposedSlots(pages, config)` restituisce i tre avvisi sugli slot per quelle pagine.

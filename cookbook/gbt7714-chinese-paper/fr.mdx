@@ -22,7 +22,7 @@ La norme demande « et al. » après les trois premiers auteurs d’une œuvre
 
 ### 2 · Les références dans un bloc CSL-YAML
 
-Les œuvres sont listées dans un bloc `:::references{format=csl-yaml}` à la fin du Markdown, dans le format que Zotero exporte en CSL YAML ([Références](/fr/docs/document-format#références)). Le type CSL décide du code : `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] après son `//` et les actes, et `webpage` [EB/OL] avec la date de consultation entre crochets. Un article de revue avec un DOI devient [J/OL] et garde son DOI, comme le demande la norme. Les noms chinois vont dans `literal`, pour que le style ne les sépare pas en nom de famille et prénom. `:::bibliography{title=""}` place la liste sous le titre non numéroté 参考文献, et `labelWidth` aligne les lignes suivantes sous le texte de l’entrée, et non au-delà.
+Les œuvres sont listées dans un bloc `:::references{format=csl-yaml}` à la fin du Markdown, dans le format que Zotero exporte en CSL YAML ([Références](/fr/docs/document-format-notes-references#références)). Le type CSL décide du code : `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] après son `//` et les actes, et `webpage` [EB/OL] avec la date de consultation entre crochets. Un article de revue avec un DOI devient [J/OL] et garde son DOI, comme le demande la norme. Les noms chinois vont dans `literal`, pour que le style ne les sépare pas en nom de famille et prénom. `:::bibliography{title=""}` place la liste sous le titre non numéroté 参考文献, et `labelWidth` aligne les lignes suivantes sous le texte de l’entrée, et non au-delà.
 
 <PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Page 2 : entrées occidentales en capitales avec et al., entrées chinoises avec 等, chacune avec son code de type." />
 
@@ -30,7 +30,7 @@ Les œuvres sont listées dans un bloc `:::references{format=csl-yaml}` à la fi
 
 <Excerpt region="masthead" />
 
-Le bloc de titre est la maquette du H1, un style de titre qui s’étend sur les deux colonnes. Le bandeau est une boîte ancrée à la coupe, et le nom de la revue s’y pose en blanc. Le titre, les auteurs et les affiliations viennent du titre et de ses attributs, chacun placé sous le précédent (`#title`, `below`) : un titre sur trois lignes pousse donc le reste vers le bas ([Étendue et maquette avancée](/fr/docs/configuration-text#étendue-et-maquette-avancée)).
+Le bloc de titre est la maquette du H1, un style de titre qui s’étend sur les deux colonnes. Le bandeau est une boîte ancrée à la coupe, et le nom de la revue s’y pose en blanc. Le titre, les auteurs et les affiliations viennent du titre et de ses attributs, chacun placé sous le précédent (`#title`, `below`) : un titre sur trois lignes pousse donc le reste vers le bas ([Étendue et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)).
 
 ### 4 · Le résumé et ses étiquettes
 

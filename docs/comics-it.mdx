@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Come Postext compone fumetti e manga dal Markdown: tavole tagliate da un albero di divisione, immagini delle vignette ritagliate attorno alla loro zona sicura, lettering generato da una sceneggiatura (parlato, pensiero, sussurro, urlo, radio, didascalie, onomatopee), stili delle nuvolette, ancore dei personaggi sulle immagini, strisce nel testo, doppie pagine, lettura da destra a sinistra e lettering verticale, traduzioni, e gli output canvas, PDF, HTML ed EPUB',
   lang: 'it',
   lastUpdated: '2026-10-07',
-  readingTime: '25 min',
-  order: 18,
+  readingTime: '40 min',
+  order: 33,
   plainSummary: "Questa pagina spiega come fare un fumetto con Postext. Le immagini sono le vignette, e tutto ciò che i personaggi dicono, pensano o sentono è scritto come testo nel file Markdown. Postext colloca le vignette sulla pagina e disegna da solo nuvolette, didascalie e onomatopee attorno alle parole. Per tradurre il fumetto riscrivi solo le parole, e Postext rifà il lettering nella nuova lingua: il giapponese in colonne, l’arabo da destra a sinistra. La pagina tratta anche le strisce a fumetti dentro un libro, le tavole su due pagine affiancate, gli output e i limiti che restano.",
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
 
 Un fumetto in Postext è un insieme di immagini e una sceneggiatura. Le immagini sono normali risorse bitmap o SVG, disegnate senza alcun lettering. La sceneggiatura sta nel Markdown del capitolo: un blocco `:::page` taglia una pagina in vignette, assegna a ogni vignetta la sua immagine ed elenca, riga per riga, le nuvolette, le didascalie e le onomatopee di quella vignetta. Postext impagina le vignette, ritaglia ogni immagine sulla sua cella senza tagliare ciò che conta, compone il testo nel carattere del lettering del libro a un solo corpo, gli disegna attorno una nuvoletta, punta il codino verso chi parla e colloca le nuvolette in ordine di lettura dove non coprono nessun volto. Una traduzione è un altro file Markdown con le stesse vignette e altre parole; Postext ne rifà il lettering da zero, in colonne per il giapponese e da destra a sinistra per l’arabo.
 
-I fumetti si attivano solo se li usi: un documento senza `:::page` né `:::strip` si impagina esattamente come prima. Le impostazioni stanno nella [sezione `comics` della configurazione](/it/docs/configuration-comics#fumetti), e la marcatura è riassunta in [Formato del documento › Fumetti](/it/docs/document-format#fumetti).
+I fumetti si attivano solo se li usi: un documento senza `:::page` né `:::strip` si impagina esattamente come prima. Le impostazioni stanno nella [sezione `comics` della configurazione](/it/docs/configuration-comics#fumetti), e la marcatura è riassunta in [Formato del documento › Fumetti](/it/docs/document-format-directives#fumetti).
 
 ## Tavole a fumetti
 
@@ -48,7 +48,7 @@ Gli attributi della riga di apertura:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Attributo</th>
+      <th>Attributo</th>
       <th>Effetto</th>
     </tr>
   </thead>
@@ -87,7 +87,7 @@ Alcune divisioni:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '260px' }}>Divisione</th>
+      <th>Divisione</th>
       <th>Tavola</th>
     </tr>
   </thead>
@@ -136,7 +136,7 @@ Una riga `::panel{…}` comincia una vignetta; la sua sceneggiatura va fino alla
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Attributo</th>
       <th>Effetto</th>
     </tr>
   </thead>
@@ -159,7 +159,7 @@ Una riga `::panel{…}` comincia una vignetta; la sua sceneggiatura va fino alla
 
 ### Ritagliare l’immagine sulla sua cella
 
-I disegni delle vignette si fanno senza badare alla forma della cella in cui finiranno: una tavola si può dividere di nuovo, un divisore si può trascinare, una traduzione può richiedere una striscia più alta. La **zona sicura** dell’immagine (`Resource.safeArea`, vedi [Formato del documento › Zona sicura](/it/docs/document-format#zona-sicura)) dice che cosa deve restare visibile, e il ritaglio si calcola per ogni cella:
+I disegni delle vignette si fanno senza badare alla forma della cella in cui finiranno: una tavola si può dividere di nuovo, un divisore si può trascinare, una traduzione può richiedere una striscia più alta. La **zona sicura** dell’immagine (`Resource.safeArea`, vedi [Formato del documento › Zona sicura](/it/docs/document-format-resources#zona-sicura)) dice che cosa deve restare visibile, e il ritaglio si calcola per ogni cella:
 
 1. Con `fit=cover` la finestra visibile ha le proporzioni della cella ed è grande quanto l’immagine permette.
 2. Viene collocata in modo che la zona sicura stia al suo interno. Dove resta margine, la finestra si centra su `focus` quando la vignetta ne imposta uno; altrimenti i margini fuori dalla zona sicura si tagliano in proporzione alla loro dimensione, così un soggetto a sinistra del centro resta a sinistra del centro.
@@ -204,7 +204,7 @@ Gli attributi di una riga di sceneggiatura:
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Attributo</th>
+      <th>Attributo</th>
       <th>Effetto</th>
     </tr>
   </thead>
@@ -261,7 +261,7 @@ sfx{vertical size=2.6 font="Dela Gothic One"}: ドン
 <table>
   <thead>
     <tr>
-      <th style={{ width: '200px' }}>Lingua</th>
+      <th>Lingua</th>
       <th>Lettering</th>
       <th>Onomatopee</th>
     </tr>
@@ -298,9 +298,9 @@ Uno stile di nuvoletta è un tipo di nuvoletta: il suo contorno, il suo codino e
 <table>
   <thead>
     <tr>
-      <th style={{ width: '120px' }}>Stile</th>
-      <th style={{ width: '170px' }}>Contorno</th>
-      <th style={{ width: '120px' }}>Codino</th>
+      <th>Stile</th>
+      <th>Contorno</th>
+      <th>Codino</th>
       <th>Per il resto</th>
     </tr>
   </thead>
@@ -388,7 +388,7 @@ sfx: SPLOSH
 <table>
   <thead>
     <tr>
-      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Attributo</th>
       <th>Effetto</th>
     </tr>
   </thead>
@@ -484,7 +484,7 @@ La didascalia di una striscia si dipinge con il testo, come quella di una figura
 
 ## Modificare i fumetti nella Sandbox
 
-Nel canvas, nelle pagine HTML e nella modalità di selezione di Folio, una tavola si può modificare con il puntatore, e ogni modifica viene riscritta nel Markdown del capitolo (la [guida della Sandbox](/it/docs/sandbox#modificare-i-fumetti) ha i dettagli):
+Nel canvas, nelle pagine HTML e nella modalità di selezione di Folio, una tavola si può modificare con il puntatore, e ogni modifica viene riscritta nel Markdown del capitolo (la [guida della Sandbox](/it/docs/sandbox-books-saving#modificare-i-fumetti) ha i dettagli):
 
 - **Divisori.** Sopra uno spazio tra le vignette il puntatore diventa un cursore di ridimensionamento. Trascinarlo sposta la linea di divisione; al rilascio la nuova percentuale si scrive nel valore `split` della tavola (l’attributo si aggiunge se la tavola non ce l’ha), e la tavola si impagina di nuovo. Maiusc aggancia a passi del 5 %, Alt sposta solo l’estremità più vicina, inclinando la linea, e nessuna cella diventa più stretta del 5 %. Durante il trascinamento viene marcata una vignetta la cui immagine finirebbe tra bande vuote. Ogni divisore è anche un separatore che può ricevere il focus: i tasti freccia lo spostano dell’1 % (del 5 % con Maiusc), Invio scrive la posizione, Esc la rimette com’era.
 - **Vignette.** Una piccola barra degli strumenti sopra una vignetta la divide con una linea orizzontale o verticale, aggiungendo dopo di essa una `::panel` vuota per la nuova cella, oppure la fonde con la vignetta successiva: la linea di divisione sparisce, e la vignetta fusa mantiene l’immagine della prima vignetta ed entrambe le sceneggiature.
@@ -503,7 +503,7 @@ Ogni avviso indica la riga o l’attributo a cui si riferisce, e il pannello Ver
 <table>
   <thead>
     <tr>
-      <th style={{ width: '230px' }}>Avviso</th>
+      <th>Avviso</th>
       <th>Causa</th>
       <th>Rimedio</th>
     </tr>

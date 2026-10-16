@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Configuration de Postext',
   sidebarTitle: 'Configuration',
-  description: 'Ce qu’est une configuration Postext, et dans laquelle des neuf pages de la référence chaque groupe de réglages est expliqué',
+  description: 'Ce qu’est une configuration Postext, et dans laquelle des dix-neuf pages de la référence chaque groupe de réglages est expliqué',
   lang: 'fr',
-  lastUpdated: '2026-10-10',
-  readingTime: '2 min',
-  order: 3,
-  plainSummary: "Cette page ouvre la référence de tous les réglages qui décident de l’aspect de vos pages. Un seul groupe de réglages réunit tous les choix : format de la page, nombre de colonnes, polices, taille du texte, titres, encadrés, couleurs et bien plus. Vous n’écrivez que les réglages que vous voulez changer, car chacun part d’une valeur raisonnable. La référence est répartie sur neuf pages. La liste de cette page renvoie à chaque section : allez directement à la partie qui vous intéresse.",
+  lastUpdated: '2026-10-16',
+  readingTime: '5 min',
+  order: 4,
+  plainSummary: "Cette page ouvre la référence de tous les réglages qui décident de l’aspect de vos pages. Un seul groupe de réglages réunit tous les choix : format de la page, nombre de colonnes, polices, taille du texte, titres, encadrés, couleurs et bien plus. Vous n’écrivez que les réglages que vous voulez changer, car chacun part d’une valeur raisonnable. La référence est répartie sur dix-neuf pages. La liste de cette page renvoie à chaque section : allez directement à la partie qui vous intéresse.",
 };
 
 # Configuration
@@ -33,23 +33,43 @@ Pour une vue d’ensemble de la façon dont le moteur traite cette configuration
 
 ## Index
 
-La référence est répartie sur neuf pages. Chaque groupe ci-dessous correspond à une page, suivie des sections qu’elle contient.
+La référence est répartie sur dix-neuf pages. Chaque groupe ci-dessous correspond à une page, suivie des sections qu’elle contient.
 
-**[Page et disposition](/fr/docs/configuration-page-layout)**
+**[Page et mise en page](/fr/docs/configuration-page-layout)**
 
 - [Page](/fr/docs/configuration-page-layout#page) — format, marges, grille de ligne de base, traits de coupe, [reliure](/fr/docs/configuration-page-layout#reliure).
 - [Disposition](/fr/docs/configuration-page-layout#mise-en-page) — nombre de colonnes, gouttières, filets, [écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale).
-- [En-têtes et pieds de page](/fr/docs/configuration-page-layout#en-têtes-et-pieds-de-page) — éléments de texte et de filet par page, avec variables, parité et alignement.
 
-**[Texte et titres](/fr/docs/configuration-text)**
+**[En-têtes et pieds de page](/fr/docs/configuration-headers-footers)**
+
+- [En-têtes et pieds de page](/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page) — éléments de texte et de filet par page, avec variables, parité et alignement.
+
+**[Texte courant](/fr/docs/configuration-text)**
 
 - [Texte courant](/fr/docs/configuration-text#texte-courant) — typographie, césure, taquets de tabulation, veuves et orphelines.
-- [Langue du document](/fr/docs/configuration-text#langue-du-document) — la clé de premier niveau `locale` : césure de repli, types de ressources intégrés et textes de continuation des tableaux et des encadrés coupés, langue déclarée dans un PDF accessible ; les [chiffres](/fr/docs/configuration-text#chiffres-du-document) (`numerals`) et le [sens d’écriture](/fr/docs/configuration-text#sens-du-texte) (`direction`) qui en découlent ; et les [langues et écritures](/fr/docs/configuration-text#langues-et-écritures) que Postext compose. Le guide des livres de droite à gauche est [Mise en page arabe](/fr/docs/arabic-layout).
-- [Titres](/fr/docs/configuration-text#titres) — valeurs communes et réglages propres à H1–H6.
-- [Listes à puces](/fr/docs/configuration-text#listes-à-puces) et [Listes numérotées](/fr/docs/configuration-text#listes-numérotées) — puces, numérotation, imbrication.
-- [Mathématiques](/fr/docs/configuration-text#mathématiques) — rendu LaTeX, échelle, couleur, marges.
 
-**[Notes et renvois](/fr/docs/configuration-notes-references)**
+**[Césure et langue](/fr/docs/configuration-language)**
+
+- [Césure](/fr/docs/configuration-language#césure) — motifs de césure, mots gardés entiers, texte en drapeau.
+- [Langue du document](/fr/docs/configuration-language#langue-du-document) — la clé de premier niveau `locale` : césure de repli, types de ressources intégrés et textes de continuation des tableaux et des encadrés coupés, langue déclarée dans un PDF accessible ; les [chiffres](/fr/docs/configuration-language#chiffres-du-document) (`numerals`) et le [sens d’écriture](/fr/docs/configuration-language#sens-du-texte) (`direction`) qui en découlent ; et les [langues et écritures](/fr/docs/configuration-language#langues-et-écritures) que Postext compose. Le guide des livres de droite à gauche est [Mise en page arabe](/fr/docs/arabic-layout).
+- [Langues et écritures](/fr/docs/configuration-language#langues-et-écritures) — les écritures que compose Postext, et les pages qui expliquent chacune.
+- [Texte arabe](/fr/docs/configuration-language#texte-arabe) — mise en forme, kashida, signes vocaliques et chiffres du texte arabe.
+
+**[Titres](/fr/docs/configuration-headings)**
+
+- [Titres](/fr/docs/configuration-headings#titres) — valeurs communes et réglages propres à H1–H6.
+
+**[Veuves, orphelines et équilibrage](/fr/docs/configuration-page-flow)**
+
+- [Orphelines, veuves, lignes creuses et règles de maintien](/fr/docs/configuration-page-flow#orphelines-veuves-lignes-creuses-et-règles-de-maintien) — les clés de `bodyText` qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne.
+- [Équilibrage des colonnes](/fr/docs/configuration-page-flow#équilibrage-des-colonnes) — les leviers qui font finir chaque colonne au même niveau, par ordre de priorité éditoriale.
+
+**[Listes et mathématiques](/fr/docs/configuration-lists-math)**
+
+- [Listes à puces](/fr/docs/configuration-lists-math#listes-à-puces) et [Listes numérotées](/fr/docs/configuration-lists-math#listes-numérotées) — puces, numérotation, imbrication.
+- [Mathématiques](/fr/docs/configuration-lists-math#mathématiques) — rendu LaTeX, échelle, couleur, marges.
+
+**[Notes et références](/fr/docs/configuration-notes-references)**
 
 - [Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page) — `footnotes` : où vont les notes appelées par `[^id]`, comment elles sont numérotées et quel aspect elles ont.
 - [Numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne) — `lineNumbers` : le numéro d’une ligne sur cinq, de vers ou de texte, dans la marge ; ce qui est compté, où le compte reprend, de quel côté se placent les numéros.
@@ -74,13 +94,20 @@ La référence est répartie sur neuf pages. Chaque groupe ci-dessous correspond
 - [Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe) — styles nommés pour les conteneurs `:::paragraphs` : bibliographies, glossaires, notes.
 - [Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille) — `chipStyles` : styles nommés pour la pastille en ligne `:chip[…]` : le cadre d’une banque de mots, une touche de clavier, une étiquette.
 - [Listings de code](/fr/docs/configuration-styles#listings-de-code) — `codeStyle` : la police, le cadre, la largeur de tabulation, les lignes longues, les numéros de ligne et les couleurs des jetons des listings ```` ``` ````, la coloration syntaxique et son crochet de surligneur, et le code en ligne dans une police de code.
-- [Styles d’encadré](/fr/docs/configuration-styles#styles-dencadré) — notes, astuces et objectifs encadrés pour les conteneurs `:::callout`.
 - [Parties](/fr/docs/configuration-styles#parties) — pages de partie pour les conteneurs `:::part` : parité, zone de texte, maquette d’ouverture, typographie du texte.
 - [Styles de titre](/fr/docs/configuration-styles#styles-de-titre) — styles nommés pour les titres `{style="…"}` : chapitres non numérotés, pages liminaires avec leurs propres titres courants, géométrie et palette.
+
+**[Encadrés](/fr/docs/configuration-callouts)**
+
+- [Styles d’encadré](/fr/docs/configuration-callouts#styles-dencadré) — notes, astuces et objectifs encadrés pour les conteneurs `:::callout`.
 
 **[Réglages de bande dessinée](/fr/docs/configuration-comics)**
 
 - [Bande dessinée](/fr/docs/configuration-comics#bande-dessinée) — `comics` : le cadre et les gouttières des planches, les styles de case, le lettrage, les styles de bulle et les personnages. Le guide est [Bande dessinée](/fr/docs/comics).
+
+**[Réglages des pages composées](/fr/docs/configuration-composed-pages)**
+
+- [Gabarits de page](/fr/docs/configuration-composed-pages#gabarits-de-page) — `pageTemplates` : les blocs, groupes et décors d’une page composée, l’héritage entre gabarits et les variantes de belle page et de fausse page. [Styles d’étiquette](/fr/docs/configuration-composed-pages#styles-détiquette) — `labelStyles` : l’aspect des étiquettes posées sur les ancrages d’une image. Tous les problèmes qu’un gabarit peut poser sont listés dans [Avertissements des gabarits de page](/fr/docs/configuration-composed-pages#avertissements-des-gabarits-de-page).
 
 **[Polices, couleurs et sortie](/fr/docs/configuration-fonts-colors-viewers)**
 
@@ -90,14 +117,25 @@ La référence est répartie sur neuf pages. Chaque groupe ci-dessous correspond
 - [Génération de PDF (configuration)](/fr/docs/configuration-fonts-colors-viewers#génération-pdf-configuration) — signets, sortie accessible (balisée), espace colorimétrique imposé pour le moteur de rendu PDF.
 - [Production pour l’impression (configuration)](/fr/docs/configuration-fonts-colors-viewers#production-pour-limpression-configuration) — `print` : PDF/X-1a et PDF/X-4, les profils ICC de sortie, le noir (gris en noir seul, surimpression, noir enrichi), les couleurs définies en CMJN, le contrôle en amont et l’aperçu d’impression.
 - [Contrôle du contraste (configuration)](/fr/docs/configuration-fonts-colors-viewers#contrôle-du-contraste-configuration) — `contrast` : le texte face à son fond, au niveau WCAG AA ou AAA, à l’écran et sur le papier du profil de sortie, et le texte en réserve trop fin pour la presse.
+- [Contrôle du contenu (configuration)](/fr/docs/configuration-fonts-colors-viewers#contrôle-du-contenu-configuration) — `checks.contentInConfig` : les textes de maquette qui gardent le texte du livre au lieu de variables, avec une liste d’expressions admises pour le titre et l’éditeur.
 - [Visionneuse Folio (configuration)](/fr/docs/configuration-fonts-colors-viewers#visionneuse-folio-configuration) — papier, reliure, surface et lumière de la visionneuse de livre en 3D.
 - [Débogage](/fr/docs/configuration-fonts-colors-viewers#débogage) — superpositions visuelles et avertissements de rédaction pour l’éditeur.
 
-**[Utilisation par programme](/fr/docs/configuration-programmatic-usage)**
+**[Utilisation programmatique](/fr/docs/configuration-programmatic-usage)**
 
 - [Utilisation par programme](/fr/docs/configuration-programmatic-usage#utilisation-programmatique) — `buildDocument`, les avertissements qu’il signale, les résolveurs, les caches.
 - [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) — constructions hors du fil principal, avec annulation.
-- [Intégrer la visionneuse HTML](/fr/docs/configuration-programmatic-usage#intégrer-la-visionneuse-html) et [Générer des PDF](/fr/docs/configuration-programmatic-usage#générer-des-pdf) — exemples complets de bout en bout.
-- [Un livre en 3D (`postext-folio`)](/fr/docs/configuration-programmatic-usage#un-livre-en-3d-postext-folio) — le document mis en page sous la forme d’un livre imprimé ouvert sur un bureau, dont le lecteur tourne les feuillets.
-- [Livres EPUB](/fr/docs/configuration-programmatic-usage#livres-epub-postext-epub) — fichiers EPUB 3 à mise en page fixe et recomposables issus de la même mise en page, et leur vérification avec EPUBCheck.
-- [Paquets (fichiers `.postext`)](/fr/docs/configuration-programmatic-usage#paquets-fichiers-postext) — un livre entier dans un seul fichier : créer, ouvrir et construire des archives `.postext` depuis le code.
+
+**[Fichiers PDF](/fr/docs/configuration-pdf-output)**
+
+- [Générer des PDF](/fr/docs/configuration-pdf-output#générer-des-pdf) — `postext-pdf` : fournisseurs de polices, polices CJK, workers et PDF prêts pour l’impression.
+
+**[HTML, Folio et EPUB](/fr/docs/configuration-html-folio-epub)**
+
+- [Intégrer la visionneuse HTML](/fr/docs/configuration-html-folio-epub#intégrer-la-visionneuse-html) et [Générer des PDF](/fr/docs/configuration-pdf-output#générer-des-pdf) — exemples complets de bout en bout.
+- [Un livre en 3D (`postext-folio`)](/fr/docs/configuration-html-folio-epub#un-livre-en-3d-postext-folio) — le document mis en page sous la forme d’un livre imprimé ouvert sur un bureau, dont le lecteur tourne les feuillets.
+- [Livres EPUB](/fr/docs/configuration-html-folio-epub#livres-epub-postext-epub) — fichiers EPUB 3 à mise en page fixe et recomposables issus de la même mise en page, et leur vérification avec EPUBCheck.
+
+**[Paquets .postext](/fr/docs/configuration-bundles)**
+
+- [Paquets (fichiers `.postext`)](/fr/docs/configuration-bundles#paquets-fichiers-postext) — un livre entier dans un seul fichier : créer, ouvrir et construire des archives `.postext` depuis le code.

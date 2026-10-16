@@ -20,7 +20,10 @@ import { PlainSummary } from "@/components/brand/PlainSummary";
 import { DocsPager, type PagerLink } from "@/components/docs/DocsPager";
 import { OldAnchorRedirect } from "@/components/docs/OldAnchorRedirect";
 import { AnchorOnLoad } from "@/components/docs/AnchorOnLoad";
-import { CONFIGURATION_SLUG, movedConfigurationAnchors } from "@/lib/configurationAnchors";
+import { CONFIGURATION_SLUG } from "@/lib/configurationAnchors";
+import { movedAnchors } from "@/lib/movedAnchors";
+import { docNumbers } from "@/lib/docNumbers";
+import Link from "next/link";
 
 const PART_LABEL_KEY = {
   foundations: "partFoundations",
@@ -87,14 +90,21 @@ export default async function DocPage({
   const tPlain = await getTranslations("PlainLanguage");
   const part = docPart(doc.meta.order);
   const chapters = docs.filter((d) => d.locales[locale]);
-  const chapter = chapters.findIndex((d) => d.slug === slug) + 1;
-  // `chapter` is 1-based, so it is also the index of the next chapter.
+  const numbers = docNumbers(chapters, locale);
+  const chapter = numbers.get(slug)!;
+  const position = chapters.findIndex((d) => d.slug === slug);
   const pagerLink = (index: number): PagerLink | null => {
     const other = chapters[index];
     return other
-      ? { href: `/${locale}/docs/${other.slug}`, number: index + 1, title: other.locales[locale]!.sidebarTitle }
+      ? { href: `/${locale}/docs/${other.slug}`, number: numbers.get(other.slug)!, title: other.locales[locale]!.sidebarTitle }
       : null;
   };
+  // A chapter split into pages lists them under its summary (the
+  // Configuration entry page has its own index); a page of a chapter links
+  // back to it.
+  const parent = chapter.includes(".") ? chapters.find((d) => d.slug === doc.meta.parent) : undefined;
+  const pages = chapter.includes(".") || slug === CONFIGURATION_SLUG ? [] : chapters.filter((d) => d.locales[locale]!.parent === slug);
+  const moved = movedAnchors(slug, locale);
 
   const url = localizedUrl(locale, `/docs/${slug}`);
   const jsonLd = [
@@ -141,9 +151,9 @@ export default async function DocPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      {slug === CONFIGURATION_SLUG && (
-        // The reference was one page: its old `#anchors` go to their pages.
-        <OldAnchorRedirect locale={locale} pages={movedConfigurationAnchors(locale)} />
+      {moved && (
+        // The page was split: its old `#anchors` go to their pages.
+        <OldAnchorRedirect locale={locale} pages={moved} />
       )}
       <AnchorOnLoad key={slug} />
       <main
@@ -174,6 +184,17 @@ export default async function DocPage({
             <>
               <span aria-hidden="true" className="size-1 rounded-full bg-rule-strong" />
               <span className="whitespace-nowrap">{doc.meta.readingTime}</span>
+            </>
+          )}
+          {parent && (
+            <>
+              <span aria-hidden="true" className="size-1 rounded-full bg-rule-strong" />
+              <span>
+                {t("inChapter")}{" "}
+                <Link href={`/${locale}/docs/${parent.slug}`} className="docs-link inline-flex min-h-10 items-center font-semibold text-(--part-ink)">
+                  {numbers.get(parent.slug)} {parent.locales[locale]!.sidebarTitle}
+                </Link>
+              </span>
             </>
           )}
           {availableLocales.length > 1 && (
@@ -208,14 +229,41 @@ export default async function DocPage({
           </PlainSummary>
         )}
 
+        {pages.length > 0 && (
+          <nav aria-labelledby="chapter-pages" className="mb-10 rounded-sm border border-rule px-5 py-4">
+            <h2 id="chapter-pages" className="kicker text-[0.62rem] text-(--part-ink)">
+              {t("chapterPages")}
+            </h2>
+            <ol className="mt-2 divide-y divide-rule">
+              {pages.map((page) => (
+                <li key={page.slug}>
+                  <Link href={`/${locale}/docs/${page.slug}`} className="group flex min-h-11 gap-3 py-2">
+                    <span className="w-9 shrink-0 pt-0.5 text-end font-sans text-sm font-bold text-(--part-ink) tabular-nums">
+                      {numbers.get(page.slug)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-display font-semibold transition-colors group-hover:text-(--part-ink)">
+                        {page.locales[locale]!.sidebarTitle}
+                      </span>
+                      <span className="block font-body text-[0.9rem] leading-snug text-slate italic">
+                        {page.locales[locale]!.description}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+
         <MdxContent source={doc.source} skipTitle />
 
         <DocsPager
           label={t("neighbours")}
           previousLabel={t("previousChapter")}
           nextLabel={t("nextChapter")}
-          prev={pagerLink(chapter - 2)}
-          next={pagerLink(chapter)}
+          prev={pagerLink(position - 1)}
+          next={pagerLink(position + 1)}
         />
       </main>
 

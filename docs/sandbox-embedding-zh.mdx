@@ -1,0 +1,279 @@
+{/* docs/sandbox-embedding-zh.mdx */}
+
+export const metadata = {
+  title: '沙盒：智能体、嵌入与预设',
+  sidebarTitle: '智能体、嵌入与预设',
+  description: '供AI智能体使用的WebMCP工具，在你自己的应用中使用的PostextSandbox组件及其属性和CSS，以及预设文件包格式',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '9分钟',
+  order: 40,
+  parent: 'sandbox',
+  plainSummary: "本页写给建网站或使用AI助手的人。在浏览器里运行的助手可以通过一组工具读取和修改沙盒里的书。你可以把沙盒作为一个组件放进你自己的网站，本页列出它的选项和它需要的样式。最后一节介绍示例书的文件，沙盒可以打开这些文件。",
+};
+
+# 沙盒：智能体、嵌入与预设
+
+
+## 智能体：WebMCP
+
+沙盒通过[WebMCP](https://webmachinelearning.github.io/webmcp/)（`document.modelContext`）把自己的工具交给在浏览器里工作的智能体，助手于是直接操作这本书，而不必在界面上一下一下地点。无需任何设置：只要沙盒在屏幕上，这些工具就已注册；本站的其余页面也各自注册了几个工具（搜索文档和排版食谱、把页面读成Markdown、在沙盒里打开一份食谱、切换语言和主题）。
+
+这些工具为设计者凭眼睛反复进行的那个循环而设：改一点，看看页面，再改。
+
+- **看** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings`：这本书及其章节和页码范围，以及界面上的情况（选区、提示、等待回答的询问）；任意一页按指定宽度输出的JPEG、PNG或WebP，或其中一块的放大图，需要时带印刷预览；同一页的数据（各个块和行、每栏排了多满、哪些行过松或以断词结尾）；页面上某一点是什么（源文本的行、链接及其去向、表格的单元格）；漫画页的分格和对话框；以及检查在任意一章或整本书里发现的问题，不论屏幕上是哪一章、哪个查看器。
+- **改** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word`：按路径修改任何设置（`bodyText.fontSize`、`page.margins.top`、`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`），用精确的查找替换修改文字并可撤销，以及章节、图片、SVG图、视频、带格式的表格、字体、漫画的分格和对话框，还能导入Word文档并对应其样式。每次修改都会回报各项的前后取值和每一章排成的页数；设置还会回报引擎解析出的值和随之变化的其他设置，引擎无法解析的值会被拒绝，什么都不改。
+- **显示** — `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer`：查看器标签页、侧面板、单章或整本书、缩放、适应方式和对页、阅读字号、印刷预览、画在页面上的参考线、Folio的放大镜，以及屏幕上的那一页（按页码、按一段文字、按锚点或按EPUB目录的条目）；重新生成PDF或EPUB、打印、播放页面上的视频。
+- **保存** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer`：示例和你的项目及其封面、导入的`.postext`文件，把这本书（或一本没有打开的书）导出为PDF、EPUB、`.postext`、Word、Markdown或JSON格式的设置，Word导入的模板，以及对沙盒所提询问的回答。
+
+修改书的工具会等排版完成，所以下一张图总是新的页面；无论屏幕上是哪个标签页，页面都会为工具单独排版并绘制。无法撤回的操作（删除章节、资源或项目，恢复原稿，用Word文档覆盖文字，替换你手里的一本书）标记为有后果的操作，浏览器可以先征求你的同意。和使用界面时一样，一切都留在你的浏览器里：工具触及不到沙盒本身触及不到的东西。
+
+WebMCP还是草案：Chrome以来源试用的方式提供，也可通过`chrome://flags/#enable-webmcp-testing`开启。在没有WebMCP的浏览器里，同样的工具放在`window.postextWebMcp`上（`listTools()`、`executeTool(name, args)`），供能在页面里运行脚本的智能体使用。嵌入沙盒时，`webmcp={false}`可不注册这些工具（见[属性](#属性)）。
+
+[WebMCP](/zh/docs/webmcp)页面说明可以让智能体做哪些事，以及每个工具的调用方式，并附有示例。
+
+
+## 独立使用
+
+沙盒提供为独立的React包（`postext-sandbox`），可以嵌入任何React应用：
+
+```bash
+npm install postext-sandbox postext
+```
+
+```tsx
+import { Postext沙盒 } from 'postext-sandbox';
+
+function App() {
+  return (
+    <PostextSandbox
+      initialMarkdown="# Hello World"
+      initialConfig={{ layout: { layoutType: 'double' } }}
+      onMarkdownChange={(md) => console.log(md)}
+      onConfigChange={(cfg) => console.log(cfg)}
+    />
+  );
+}
+```
+
+### 属性
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>initialMarkdown</code></td>
+      <td><code>string</code></td>
+      <td>初始Markdown内容</td>
+    </tr>
+    <tr>
+      <td><code>initialConfig</code></td>
+      <td><code>PostextConfig</code></td>
+      <td>初始版面配置</td>
+    </tr>
+    <tr>
+      <td><code>className</code></td>
+      <td><code>string</code></td>
+      <td>根容器的CSS类</td>
+    </tr>
+    <tr>
+      <td><code>labels</code></td>
+      <td><code>Partial&lt;SandboxLabels&gt;</code></td>
+      <td>替换界面文字，合并到内置的英文默认值之上。嵌入其他语言的页面时，把翻译好的文字与<code>locale</code>一起传入</td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>string</code></td>
+      <td>界面语言（默认为<code>'en'</code>）。它决定本地化的默认资源类型和示例资源（单一语言的预设或文件使用其自身语言的资源类型），并在没有配置断词语言时为预览提供断词语言</td>
+    </tr>
+    <tr>
+      <td><code>presetSources</code></td>
+      <td><code>&#123; url: string; private?: boolean &#125;[]</code></td>
+      <td>远程预设来源，在内置预设之后按顺序尝试。每个<code>url</code>是提供<code>index.json</code>的基础URL（见<a href="#预设文件包格式">预设文件包格式</a>）；<code>private: true</code>把该来源的预设标记为私有，并使其<code>default</code>标志可用于自动加载。没有响应的来源不提供任何内容</td>
+    </tr>
+    <tr>
+      <td><code>hashBundles</code></td>
+      <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
+      <td>通过宿主自定义的片段键链接的书：<code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code>让<code>#recipe=&lt;slug&gt;&amp;lang=es</code>打开那个文件包。返回页面同源的<code>.postext</code>文件URL，或者按顺序尝试的多个URL（第一个响应的胜出），宿主不提供的id则返回<code>null</code>。第一次访问会把文件导入为一个项目，并与链接一起记录（<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>）；之后的访问会询问是打开该项目（包括其中的修改），还是用当前提供的文件替换它。片段随后改写为<code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>onConfigChange</code></td>
+      <td><code>(config) =&gt; void</code></td>
+      <td>配置改变时的回调</td>
+    </tr>
+    <tr>
+      <td><code>onMarkdownChange</code></td>
+      <td><code>(markdown) =&gt; void</code></td>
+      <td>Markdown改变时的回调</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>挂载期间为浏览器里的智能体注册沙盒的<a href="#智能体webmcp">WebMCP工具</a>。默认为<code>true</code></td>
+    </tr>
+    <tr>
+      <td><code>themeToggle</code></td>
+      <td><code>ReactNode</code></td>
+      <td>自定义主题切换组件，放在活动栏底部</td>
+    </tr>
+    <tr>
+      <td><code>languageSwitcher</code></td>
+      <td><code>ReactNode</code></td>
+      <td>自定义语言切换组件，放在活动栏底部</td>
+    </tr>
+    <tr>
+      <td><code>homeUrl</code></td>
+      <td><code>string</code></td>
+      <td>设置后，在活动栏顶部渲染一个指向该URL的首页标志链接</td>
+    </tr>
+    <tr>
+      <td><code>homeLink</code></td>
+      <td><code>ReactNode</code></td>
+      <td>首页位置的自定义节点，替换默认的标志链接（优先于<code>homeUrl</code>）</td>
+    </tr>
+  </tbody>
+</table>
+
+### CSS要求
+
+这个包使用引用CSS自定义属性的Tailwind CSS工具类。宿主应用必须提供以下变量：
+
+- `--background`、`--foreground`——基础颜色
+- `--surface`——浮起表面的颜色；`--surface-2`——悬停行和高亮选项的颜色（缺省时回退到`--background`）
+- `--slate`——弱化文字的颜色
+- `--rule`——边框/分隔线颜色；`--rule-strong`——悬停控件上更醒目的线（缺省时回退到`--slate`）
+- `--brand`——强调色：当前面板标记、焦点环、开关和选中的选项
+- `--brand-hover`——悬停时的强调色
+- `--brand-soft`——选中选项背后半透明的强调色填充（缺省时回退到`--surface`）
+- `--brand-contrast`——选中状态开关的滑块（缺省时回退到`--background`）
+- `--destructive`——破坏性操作和错误的颜色
+- `--accent-blue`——链接/强调颜色
+- `--font-sans`——界面字体
+- `--font-mono`——等宽字体（用于代码编辑器）
+- `--font-display`、`--brand-blue`、`--brand-gilt`——活动栏中默认标志的字体和颜色，可选（缺省时回退到Georgia、`#2b4acb`和`#d8a21a`）
+
+网站在深色主题中把`--brand`设为金色，在浅色主题中设为蓝色。早期版本读取`--gilt`和`--gilt-hover`；沙盒已不再使用它们。
+
+弹出层、菜单和工具提示渲染在`document.body`上的portal中，所以要在`:root`（或`body`）上定义这些变量，而不只是在包裹沙盒的元素上。宿主的Tailwind构建必须扫描这个包的源代码（在Tailwind 4中为`@source "…/postext-sandbox/src/**/*.tsx"`），才能生成它用到的工具类。
+
+
+## 预设文件包格式
+
+附录。预设来源是一个（通过HTTP提供的）目录，其根目录中有一个列出各预设目录的`index.json`；每个目录包含一个`preset.json`清单，以及它引用的Markdown、资源和字体文件。仓库中`scripts/presets/`下的工具生成的文件包正是这种结构，从沙盒导出的`.postext`文件就是这样一个目录的zip压缩包（不含`index.json`）。
+
+```
+<presets-root>/
+  index.json
+  <preset-dir>/
+    preset.json
+    chapters/              每章一个.md，按顺序排列（版本1清单则只指定一个文档）
+    resources/             图：.svg / .png / .jpg / .jpeg / .webp / .gif（+ 可选的.pdf印刷母版）
+    fonts/                 .otf / .ttf / .woff2，每个文件一个字体样式
+```
+
+### `index.json`
+
+```jsonc
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "acme-journal",          // 稳定的id，[a-z0-9-]
+      "dir": "acme-journal",         // 相对于index.json的目录名
+      "name": "Acme Journal",
+      "description": "Two-column journal article",   // 可选
+      "locale": "en",                 // 可选
+      "default": true,                // 可选，最多一个
+      "locales": ["en", "es"],        // 可选：文件包包含的所有语言
+      "openLocale": "en",             // 可选：未指定语言时打开所用的语言
+      "thumbnail": "thumbnail.jpg",   // 可选：选择器中显示的预览图
+      "license": "CC BY 4.0",         // 可选：显示为标签
+      "credits": "Text and images: ESO",  // 可选：描述下方的一行
+      "tags": ["magazine", "two-column"], // 可选
+      "binding": "left"               // 可选：网站书架绘制书脊的那一边（右侧装订的书用"right"）
+    }
+  ]
+}
+```
+
+### `preset.json`
+
+```jsonc
+{
+  "version": 2,
+  "id": "acme-journal",
+  "name": "Acme Journal",
+  "description": "Two-column journal article",       // 可选
+  "locale": "en",                                     // 可选
+  "default": true,                                    // 可选
+  "configVersion": 8,                                 // 可选：`config`所遵循的配置规则版本
+  // 与索引条目相同的可选展示字段：
+  // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
+
+  // 书的各章，按顺序排列；也可以每种语言一个列表
+  "chapters": [
+    { "title": "Introduction", "file": "chapters/01-introduction.md" },
+    { "title": "Methods", "file": "chapters/02-methods.md" }
+  ],
+  // "chapters": { "en": [ … ], "es": [ … ] },
+  // 版本1清单改用单个文档，仍然可以接受：
+  // "version": 1, "markdown": "article.md"  （或语言→文件的映射）
+
+  // 可选的PostextConfig JSON（页面、页边距、分栏、字体排印……）。
+  // 不要在这里放customFonts：字体来自下面的`fonts`数组。
+  "config": { },
+
+  "resources": [
+    {
+      "id": "fig-1-1",                 // 在Markdown中引用（:ref）
+      "typeId": "figure",              // 资源类型id（figure、table……）
+      "kind": "svg",                   // "svg" | "bitmap" | "table"
+      "file": "resources/fig-1-1.svg", // 仅svg/bitmap，相对于preset.json
+      "width": 240.5,                  // 可选，pt（svg）/ px（bitmap）
+      "resolution": 300,               // 可选，仅bitmap：自然印刷尺寸下的ppi
+      "pdfFile": "resources/fig-1-1.pdf", // 可选，仅svg：矢量印刷母版（见说明）
+      "height": 180,                   // 可选
+      "caption": "Caption text",
+      "altText": "Accessible description",            // 可选
+      "safeArea": { "x": 0.18, "y": 0.25, "width": 0.5, "height": 0.6 }, // 可选，仅svg/bitmap：始终显示的部分，以图片的比例表示
+      "placement": { "position": "top", "span": "column" },  // 可选
+      "note": "Source: ...",                          // 可选
+      "table": { "model": { "rows": [[{ "content": "A", "isHeader": true }]], "headerRowCount": 1 } }
+                                                      // 仅用于kind "table"
+    }
+  ],
+
+  "fonts": [
+    {
+      "name": "Some Family",           // 配置中使用的字体家族名
+      "variants": [
+        { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
+        { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
+        { "weight": 700, "style": "normal", "file": "fonts/SomeFamily-Bold.otf" }
+      ]
+    }
+  ]
+}
+```
+
+说明：
+
+- `preset.json`中的`id`必须与`index.json`条目一致；预设加载后，清单中的`description`、`locale`和`default`会覆盖索引中的值，展示字段`locales`、`openLocale`、`license`、`credits`和`tags`也是如此。`openLocale`是`locales`中的一项，指链接或点击没有指定语言时书打开所用的语言（首页的书架也链接到它）：原作不是读者所用语言时就设置它，《紅樓夢》示例就设为`zh-Hant`，这样就不会让每个讲英语的读者都打开它的英译本。不设置时由界面语言决定。选择器把`locales`（或`locale`）中的每种语言和许可证显示为标签，把出处信息显示在描述下方，并用`thumbnail`（相对于预设目录的一张小页面图）代替该行的勾选标记列；从预设复制出的书（**建立我的副本**）把它保留为封面。`apps/web/public/presets/`下的公开示例预设用到了所有字段，并附有一个`CREDITS.md`，写明每段文字和每张图片的许可证和来源。
+- `configVersion`（可选）指明`config`和`localized`中各配置所遵循的配置规则。自postext 1.5起，所有写出清单的程序都把它设为8。没有它的清单是postext 1.4或更早版本写出的，其标题分页、公式字号、行内图周围的间距（正文中和框中）、标题标记、首字下沉、冒号行下方空间、框断开、破折号和复合词连字符处的断行、不齐行文字、标题下拆分以及段落容器下方的间距，都按1.4的排法读取（见[持久化](/zh/docs/sandbox-books-saving#持久化)下的*postext 1.4及更早版本保存的标题分页*、*postext 1.5之前保存的公式字号*、*postext 1.5之前保存的行内图*、*postext 1.5之前保存的框内行内图*、*postext 1.5之前保存的标题标记和首字下沉*、*postext 1.5之前保存的冒号后列表*、*postext 1.5之前保存的框断开*、*postext 1.5之前保存的破折号和不齐行文字*、*postext 1.5之前保存的复合词*、*postext 1.5之前保存的标题下拆分*和*postext 1.5之前保存的段落容器*）；标记为3到7的清单（1.5预发布版）只应用较新规则的固定措施。为3时，是公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为4时，是行内间距以及规则6、7、8的固定措施；为5时，是规则6、7、8的固定措施；为6时，是规则7和8的固定措施；为7时，只有规则8的固定措施。手写清单并采用现在的规则时，把它设为8。
+- `view`（可选）说明沙盒如何打开文件包：`{ "canvasScope": "book" }`在Canvas上排出整本书（见[书与章](/zh/docs/sandbox-books-saving#书与章)）；省略时，Canvas一次显示一章。导出的书如果设置了它，会一并带上。超过200章的书无论要求什么，都一次打开一章。
+- `start`（可选）说明文件包只含一本更长的书的一部分时，这本书从哪里开始：`{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }`让它从第58页（偶数页）、第4章开始。它就是第一章的`continuation`（`buildDocument`）；沙盒从这里开始排整本书，把书存为项目时随书保存，导出时再写回去。没有面板可以编辑它。`localized`的条目可以为自己的版本带一个`start`。
+- `localized`（可选）存放双语文件包的各语言覆盖项：`{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`。选取章时所依据的那种语言的覆盖项，会叠加在共用的`config`之上（顶层键整体替换，通常是带有翻译过的题注前缀的`resourceTypes`），以及共用的`resources`之上（题注、注释、替代文字和表格单元格按id合并）；没有条目的语言保留共用的文字。条目也可以带自己的`view`，它对该版本覆盖共用的设置：《紅樓夢》的中文版本以整本书打开，而Joly的英译本整本绘制要慢得多，所以一次打开一章（`"en": { "view": { "canvasScope": "chapter" } }`）。
+- `chapters`（版本2）是按书中顺序排列的`{ title, file }`列表，或语言→列表的映射；`markdown`（版本1）是一个文件名或语言→文件的映射。两种情况下，沙盒都选取与所请求语言匹配的条目（先是完全相同的标签，不计大小写；然后是相同语言和文字，所以`zh-TW`先读`zh-Hant`再读`zh-Hans`；然后是相同语言的另一种文字，所以`zh-TW`读者打开以裸`zh`为键的文件包时得到中文；然后是预设自身的`locale`，最后是第一个条目），并且只读取该语言的章文件。章的`title`为空时，取自文件中的第一个一级标题。沙盒总是写出版本2。
+- 对于`svg`和`bitmap`资源，`width`/`height`是可选的：缺少时在加载时从文件中读取。位图还可以带`resolution`（自然印刷尺寸下的ppi）和`fileResolution`（文件标明的分辨率，配置设了`layout.bitmapResolution: 'file'`时在加载时读取）。
+- `pdfFile`（仅限svg资源）指向一个单页PDF，其中以矢量形式包含同一幅图，通常是SVG所源自的Illustrator原稿或PDF导出文件。PDF导出时原样嵌入这一页（字体、渐变和色彩空间都完整保留），而不用SVG；Canvas和HTML预览仍使用SVG。在单色模式下它会被忽略，因为该模式的重新着色只处理SVG标记；文件缺失时只会丢掉母版，不会丢掉图。在资源详情中编辑SVG源代码会解除母版（母版是为原来的源代码制作的），从此PDF导出跟随编辑后的SVG；恢复原版（书库面板中的**恢复原版…**）即可找回母版。没有母版的SVG，如果不超出PDF后端支持的子集（基本形状、路径、编组、`use`、裁剪路径、纯色填充和描边、不透明度，以及用文档能加载的字体排出的`text`/`tspan`文字，先找自定义字体，再找Google托管的字体家族），就作为矢量路径输出，否则以600 dpi栅格化。
+- SVG中的`text`在各处都用书的字体渲染：预览和EPUB在显示SVG之前，把其文字指定的字体嵌入SVG（`<img>`看不到页面的字体），自定义字体族按上传的文件嵌入，Google字体族则嵌入包含所需字符的Fontsource文件；PDF导出把这些文字排成真正可选中的文本，使用同样的嵌入字体。在`font-family`中写的字体家族名要与“字体”下显示的名称完全一致。资源可以在其清单条目中写`"inlineFonts": false`退出（`svg.inlineFonts`）。
+- SVG源代码编辑器只允许在文本节点（着色显示）内输入，以免意外破坏图；编辑器标题栏中的锁按钮会打开全部源代码（坐标、颜色、结构），再次锁定时会重新扫描文本节点。
+- `table.model`是Postext的`TableModel`：`rows`是按行排列的单元格数组（`content`，可选的`colSpan`、`rowSpan`、`isHeader`、`align`、`verticalAlign`），`headerRowCount`是开头的表头行数，`columnWidths`是可选的相对列宽数组。`table.styleId`可以指定配置的`tableStyles`之一。
+- 字体文件以由预设id和文件路径派生的id存入IndexedDB，应用预设时，其字体家族会追加到`config.customFonts`中；`index.json`缺失或格式错误时，不会产生预设，但也不报错。
+- `<preset-dir>/fingerprint.json`是可选的，在开发路由上是**虚拟的**：不存在这个文件时，`GET`会返回`{ "fingerprint": "<sha1 hex>", "files": <n> }`，它根据目录的文件元数据计算（深度不超过四层的每个文件的相对路径、修改时间和大小，跳过点文件和`node_modules`），从不读取文件内容，并带有`Cache-Control: no-store`。沙盒轮询它以跟踪文件包的修改（见[书库面板](/zh/docs/sandbox#书库面板)）。静态主机可以提供形状相同的真实`fingerprint.json`，也可以不提供，这时它的预设不会被跟踪。

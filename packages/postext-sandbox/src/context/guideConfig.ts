@@ -454,6 +454,9 @@ export function createPostextGuideConfig(locale = 'en'): PostextConfig {
     unorderedLists: { bulletChar: '•', color: col('band') },
     orderedLists: { color: col('band') },
     colorPalette: colorPalette(lang),
+    // The guide's name in the running heads and its site on the back cover
+    // are form, not content (#849).
+    checks: { contentInConfig: { allow: [WORDING[lang].book, 'postext.dev · github.com/drnachio/postext'] } },
     resourceTypes: defaultResourceTypes(lang),
     pdfGeneration: { outlines: true },
   };

@@ -58,6 +58,19 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'wrapUnsupported':
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'templateDuplicate':
+    case 'templateExtendsCycle':
+    case 'templateExtendsUnknown':
+    case 'frameDuplicate':
+    case 'frameStyleUnknown':
+    case 'frameAnchorUnknown':
+    case 'frameMinMax':
+    case 'groupFrameUnknown':
+    case 'groupFrameTwice':
+    case 'frameChainLoop':
+    case 'overflowTargetUnknown':
+    case 'labelStyleUnknown':
+    case 'contentInConfig':
     case 'headingDesignCut':
       return 'design';
     case 'looseLine':
@@ -80,6 +93,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'unplaced':
     case 'shortListSplit':
     case 'openerFloat':
+    case 'tocGroupSplit':
     case 'parityCascade':
     case 'unsupportedHyphenationLocale':
     case 'comicBalloonOverflow':

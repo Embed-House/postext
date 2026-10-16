@@ -1,0 +1,272 @@
+{/* docs/document-format-notes-references-zh.mdx */}
+
+export const metadata = {
+  title: '文档格式：注释与引用',
+  sidebarTitle: '注释与引用',
+  description: '脚注、交叉引用与锚点、引用与参考文献，以及书末索引的标记',
+  lang: 'zh',
+  lastUpdated: '2026-10-16',
+  readingTime: '10分钟',
+  order: 28,
+  parent: 'document-format',
+  plainSummary: "本页讲指向书中别处或书外的标记。脚注标记把读者引到页面底部的注释。交叉引用用编号指出一张图、一节或一页。引用指出你引述的书或文章，参考文献把它们全部列出来。索引标记选出书末索引要列出的词，并附上它们的页码。",
+};
+
+# 文档格式：注释与引用
+
+
+## 脚注
+
+脚注由两部分组成：引用处的标号`[^id]`，以及定义，即本章任意位置以`[^id]:`开头的独立段落。
+
+```md
+The keeper climbed the tower every evening.[^steps] The wind put out his candle,
+so he learned to count the steps in the dark.
+
+[^steps]: The cast-iron staircase has 112 steps; the tower was built in 1861.
+```
+
+- **标号。**`[^id]`把脚注编号印成上标，紧贴前面的词（写在标点之后，如上例）。id可包含字母、数字、`-`、`_`、`.`和`:`。标号可用于段落、列表项、引用块和标注框；在标题、题注和表格单元格中照原样印出。
+- **定义**。以`[^id]:`开头的段落；其文本一直延续到下一个空行，可带常见的行内标记（粗体、斜体、链接、`:ref`、公式、行内标签）。定义无论写在哪里都会离开文字流，因此可以放在引用它的段落下方，也可以全部集中在章末。同一id以第一个定义为准。
+- **编号**。脚注按首次引用的顺序编号，每章（一级标题，以及书中的每个文档）重新开始；被引用两次的脚注保留第一次的编号，只排一次。`footnotes.numbering: 'document'`让编号贯穿全书，`'page'`像中文书那样每页重新编号；`footnotes.numberFormat: 'circled-decimal'`在基线上排出① ② ③。`footnotes.numberFormat: 'symbols'`像期刊那样用`*`、`†`、`‡`、`§`、`‖`、`¶`标注，用完后成对重复，每页重新开始。
+- **日文文本**。把标号写在句末的。之前（`先生[^1]。`）：它跟随前一个字符，而。从不出现在行首。日文竖排书默认把标号（1）排在行的右侧，把注文排在章末；`footnotes.markerPosition: 'side'`在词旁排一个小标号，不占行内空间；`footnotes.placement: 'spread'`把注文排在每个跨页的正文旁边（见[配置 › 脚注](/zh/docs/configuration-notes-references#脚注)）。
+- **脚注的位置**。默认排在引用它的那一行所在栏的底部，上方有一条短线：该行与其脚注总在同一栏，脚注放不下时，该行会随脚注一起移走。单栏版面中就是页面底部。`footnotes.placement: 'chapterEnd'`则把一章的所有脚注排在该章最后一个块之后，默认位于它们结束的那一栏的底部。字号、分隔线和间距见配置参考中的[脚注](/zh/docs/configuration-notes-references#脚注)。
+- **检查**。没有定义的标号（`undefinedFootnote`）在空脚注上印出编号；没有标号引用的定义（`unusedFootnote`）不排。沙盒在检查面板中列出这两种情况。
+
+
+## 交叉引用与锚点
+
+交叉引用指向书中的某个位置，并印出它的编号、标题或页码：*见第3.2节*、*第4章已说明*、*见第112页*。文字和编号随正文变化：移动一节、重新编号各章或重新排版全书，所有引用都会更新。在PDF、HTML和Sandbox预览中，每个引用都是链接，点击即可跳到目标，跨章也可以。
+
+**锚点。** 引用需要一个指向的目标：
+
+- **带标识符的标题**：`## 方法 {#sec-method}`（Pandoc的写法；也可写`id="sec-method"`）。
+- **带标识符的框或其他容器**：`:::callout{#box-safety title="安全"}`。编号样式的框（定理）按标签和编号引用：*定理2*。
+- **带`\label{eq:x}`的独立公式**（见[数学公式](/zh/docs/document-format-inline#数学公式)）：引用印出与公式相同的编号，*(3)*。
+- **正文中的一点**：`:anchor{#key-idea}`设一个不可见的锚点；`[关键思想]{#key-idea}`保留文字并为其命名。
+
+标识符可用字母、数字、`-`、`_`、`.`和`:`，在全书中必须唯一：检查面板会列出重复的标识符（`duplicateAnchor`），引用指向第一个。
+
+**引用。** `:ref{id="…"}`指向锚点的方式与指向图表相同：
+
+```md
+## 方法 {#sec-method}
+
+:ref{id="sec-method"}的结论见:ref{id="sec-method" style=page}。
+```
+
+<table>
+<thead><tr><th><code>style</code></th><th>印出</th></tr></thead>
+<tbody>
+<tr><td><em>（不设）</em></td><td>有编号的标题印名称和编号（<em>第3.2节</em>、<em>第4章</em>），无编号的印标题，锚点印其文字，公式印出它所带的编号（<em>(3)</em>），编号的框印标签和编号（<em>定理2</em>）</td></tr>
+<tr><td><code>number</code></td><td>仅编号（<em>3.2</em>、<em>3</em>、<em>2</em>）</td></tr>
+<tr><td><code>title</code></td><td>标题、锚点文字或框的<code>title</code></td></tr>
+<tr><td><code>page</code></td><td>所在页（<em>第112页</em>）</td></tr>
+<tr><td><code>pageNumber</code></td><td>仅页码（<em>112</em>）</td></tr>
+</tbody>
+</table>
+
+正文中也可以写LaTeX的`\eqref{x}`和`\ref{x}`：`\eqref`相当于不设`style`的引用，`\ref`相当于`style=number`，所以`\ref{thm:main}`印出*2*，`\ref{fig:map}`印出图的编号。紧挨在它们前面的`~`是不断行空格（`Theorem~\ref{thm:main}`）。写在`$…$`之内时，它们属于公式。
+
+`text="…"`印出自定的文字，仍然是链接；`case=capitalize`使西文名称首字母大写。文字随文档语言变化（*section 3.2*、*sección 3.2*、*第3.2节*），可在配置的[交叉引用](/zh/docs/configuration-notes-references#交叉引用)中修改；编号模板已含文字的标题（*第四章*、*Chapter 4*）照原样印出。在竖排中，引用里的数字按`cjk.uprightDigits`的规则排列。
+
+**换行。** 以文字印出的引用与周围正文一样在空格处换行：锚点的文字（`[close the lever so that it points backwards]{#step}`）、标题、自定的`text="…"`。其中的空格就是行内的空格，在两端对齐的行里与其他空格一同拉伸；引用仍是一个链接，跨两行时分成两段。其中的词从不断词。在这样的引用文字里，数字、罗马数字或单个字母与它前面的词不分开，所以`text="Fig. 1a"`、`text="plate IV"`不会被拆到两行。带编号或页码的引用文字（*section 3.2*、*p. 112*、*Fig. 1.7*、*Theorem 2*）从不换行，不论模板里用的是哪种空格；引用文字中的不断行空格与在别处一样把两边粘住。`crossRefs.breakLabels: false`让每个引用文字保持完整，与postext 1.27及更早版本相同，那时引用文字是一个词，无法移上前一行；见[交叉引用](/zh/docs/configuration-notes-references#交叉引用)。
+
+**页码引用**要在全书排好后才知道。引擎会用上一遍的页码重新排版，直到页码不再变化，与目录的做法相同；在此之前页码印为*?*。
+
+**pandoc-crossref。** 为pandoc-crossref写的文本照样可读：`@sec:method`、`[@fig:map]`，`[-@tbl:data]`只印编号。前缀（`sec`、`fig`、`tbl`、`eq`、`lst`）可以是标识符的一部分（`{#sec:method}`），也可以不写（`{#method}`）。紧贴在词后的`@`（如电子邮件地址）仍是文本。
+
+指向不存在的id的引用印为*?*，并在检查面板中列出（`unknownResourceId`）。在Sandbox编辑器中输入`@`，会列出书中的图、表、带标识符的标题和锚点。
+
+
+## 引用与参考文献
+
+按Pandoc的写法书写引用，把参考文献保存在文档中，在设置里选择引用样式：从APA换成IEEE或芝加哥注释体，只需改设置中的样式，不必改正文。每条引用都链接到参考文献表中的对应条目。
+
+### 引用
+
+```md
+正如[@garcia2020, 页 33]所示，纸上阅读更快[参见 @lopez2019, 章 2; @bringhurst2004]。
+@garcia2020 [页 4]说得很清楚；2020年的研究[-@garcia2020]也同意。
+```
+
+- **`[@key]`**：括号引用；多个文献放在同一对方括号中，用`;`分隔。
+- **位置（locator）**：逗号之后写`页 33`、`p. 33`、`pp. 4–6`、`章 2`、`chap. 2`、`§ 4.2`等；只写数字表示页码。范围用短破折号，也可以用TeX的两个连字符：`pp. 4--6`排出来是*4–6*。
+- **前缀与后缀**：`@`之前的文字（`参见`）和键或位置之后的文字（`, 着重号为引者所加`）。后缀保留写在它前面的逗号，无论有没有位置：`[@brown2020, inter alia]`印作*(Brown et al., 2020, inter alia)*，与 Pandoc 一致；不写逗号（`[@brown2020 inter alia]`）就没有逗号。前缀和后缀中的强调在所有样式中都排成强调：`[*e.g.*, @brown2020, *inter alia*]`。
+- **`[-@key]`**：省略著者，用于正文已提到著者的句子。
+- **`@key`**：叙述式引用（*García (2020)*）；`@key [页 4]`加上位置。
+- **图表题注**：图或表的题注及其注释可以像正文一样引用（`此前最好成绩见[@cobbe2021]。`）。其中的文献无需`nocite`即收入参考文献表；顺序编码制按资源放置的位置编号，即排在第一次提到它的段落（其`::resource`块或第一个`:ref`）的引用之后。表格单元格中的引用仍按原文印出。
+- 紧贴在字母或数字后的`@`（电子邮件地址）、行内代码中的`@`以及`\@`都是普通文字。书中没有对应参考文献的引用按原文印出，所以没有参考文献的文档读起来与以前一样。多文献引用中若有未定义的键，该键以粗体排在其余引用之后（`（Glen，1955）**@nye1953**`），缺失的文献在页面上和检查警告中都能看到。引用后的冒号是正文：`[@french2018]：……`。
+- 在中文、日文和韩文正文中，引用紧接前一个字，不加空格（`周明远@zhou2019认为`）；著者-出版年引用采用与正文一致的全角标点：`（施雅风等，1988；刘时银等，2015）`。
+
+### 参考文献数据
+
+参考文献以CSL格式（Zotero和Pandoc使用的数据模型）写在文档中：
+
+```md
+---
+references:
+  - id: zhang2018
+    type: book
+    language: zh-CN
+    author: [张三, 李四, 王五, 赵六]
+    title: 排版学
+    issued: 2018
+    publisher: 商务印书馆
+    publisher-place: 北京
+nocite: "@lopez2019"
+---
+```
+
+也可以写在`:::references`块中，格式为BibTeX（Zotero、JabRef、Google学术导出的格式）、CSL-JSON或CSL-YAML：
+
+```md
+:::references{format=bibtex}
+@book{zhang2018, author = {张三 and 李四}, title = {排版学}, publisher = {商务印书馆},
+  address = {北京}, year = {2018}, langid = {chinese}}
+:::
+```
+
+该块本身不印任何内容。`nocite`列出不引用但要收录的文献（`@*`表示全部）。在书中，任何一章里写的参考文献对全书有效。
+
+在 BibTeX 的姓名列表中，`and others`代表省略的著者（`author = {Tan, Wei and others}`）：各样式在该处印出“等”或 *et al.*。在 YAML 中，把`others`写作列表的最后一个姓名。
+
+### 参考文献表
+
+`:::bibliography`在其所在位置排出所引文献的列表；没有它时，列表放在最后一章之后，标题采用文档语言（*参考文献*、*References*）。`:::bibliography{title="引用文献"}`修改标题，`title=""`不印标题；`scope=chapter`只列出本章引用的文献（适用于合集）。每个条目都是一个锚点（`ref-<key>`），因此指向`#ref-zhang2018`的Markdown链接可以跳到它，PDF中将其标记为`BibEntry`。
+
+`scope=new`列出文档中到此为止引用过、且之前的列表尚未印出的文献，按样式的顺序和编号排列：在正文之后放一个`:::bibliography{scope=new}`，在方法部分之后再放一个，就得到 Nature 论文的两个列表，第二个接着第一个编号。顺序编码制默认在全书连续编号；设置`citations.numbering: 'chapter'`后，每章（每个文档，以及引用之后的每个一级标题）从 1 开始编号，章内列表也使用这些编号，适用于简报中的各篇报告或会议论文集。
+
+### 样式
+
+样式决定引用和条目的内容。内置样式见下表；其他任何CSL样式（Zotero样式库中有一万多种）都可以在**设置 → 引用与参考文献**中从`.csl`文件加载。
+
+<table>
+  <thead>
+    <tr><th><code>citations.style</code></th><th>名称</th><th>体系</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>apa</code></td><td>APA 7</td><td>著者-出版年</td></tr>
+    <tr><td><code>chicago-author-date</code></td><td>Chicago (author-date)</td><td>著者-出版年</td></tr>
+    <tr><td><code>harvard-cite-them-right</code></td><td>Harvard</td><td>著者-出版年</td></tr>
+    <tr><td><code>iso690-author-date-en</code>, <code>iso690-author-date-es</code></td><td>ISO 690</td><td>著者-出版年</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-author-date</code></td><td>GB/T 7714—2025 著者-出版年</td><td>著者-出版年</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-author-date</code></td><td>GB/T 7714—2015 著者-出版年</td><td>著者-出版年</td></tr>
+    <tr><td><code>modern-language-association</code></td><td>MLA 9</td><td>著者-页码</td></tr>
+    <tr><td><code>ieee</code></td><td>IEEE</td><td>顺序编码</td></tr>
+    <tr><td><code>elsevier-vancouver</code></td><td>Vancouver</td><td>顺序编码</td></tr>
+    <tr><td><code>american-medical-association</code></td><td>AMA</td><td>顺序编码</td></tr>
+    <tr><td><code>nature</code></td><td>Nature</td><td>顺序编码</td></tr>
+    <tr><td><code>iso690-numeric-en</code></td><td>ISO 690</td><td>顺序编码</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-numeric</code></td><td>GB/T 7714—2025 顺序编码</td><td>顺序编码</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-numeric</code></td><td>GB/T 7714—2015 顺序编码</td><td>顺序编码</td></tr>
+    <tr><td><code>sist02</code></td><td>SIST 02 参照文献の書き方</td><td>顺序编码</td></tr>
+    <tr><td><code>chicago-notes-bibliography</code></td><td>Chicago (notes)</td><td>注释</td></tr>
+    <tr><td><code>oscola</code></td><td>OSCOLA</td><td>注释</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2025-note</code></td><td>GB/T 7714—2025 注释</td><td>注释</td></tr>
+    <tr><td><code>china-national-standard-gb-t-7714-2015-note</code></td><td>GB/T 7714—2015 注释</td><td>注释</td></tr>
+  </tbody>
+</table>
+
+使用**注释体样式**时，每条引用成为一个脚注，按脚注设置放置和编号；同一文献的后续引用采用简略形式。在中文正文中，`citations.notes: 'warichu'`把引用排成行内双行夹注；夹注后紧跟中文标点（`，`、`。`）时，省去夹注末尾的句点。
+
+**中文。** GB/T 7714-2015样式写出文献类型标识（`[M]`、`[J]`、`[D]`、`[EB/OL]`），中文姓名完整保留，三位以上著者时中文文献写`等`、西文文献写`et al.`，依据每条文献的`language`判断。竖排时，上标编号位于所注字的右侧；`citations.marker: 'corner'`写作`〔1〕`，在竖排中保持直立。
+
+**引擎。** 引用由`postext-citeproc`包（citeproc-js与CSL样式）排版。Sandbox会为有引用的文档加载它；在自己的代码中，排版前先注册：
+
+```ts
+import 'postext-citeproc/register';
+```
+
+检查面板会列出没有参考文献定义的键（`unknownCitationKey`）和无法读取的参考文献块（`referencesUnreadable`）。
+
+
+## 索引
+
+书后索引列出书中的术语及其出现的页码。在正文讨论某个术语的地方标记它，再用`:::index`在需要的位置印出索引，通常放在书末单独的一章。排版完成后，引擎找出每个标记所在的页，因此页码随正文变化：增加一段、移动一章或改变成品尺寸，索引都会印出新的页码。
+
+```md
+Iron-deficiency :index[anaemia] is the most common kind.
+The pulse is taken at the wrist.:index{term="Pulse!radial" main}
+
+# Index {style="index"}
+
+:::index
+```
+
+### 索引标记
+
+- <strong>`:index[text]`</strong>印出`text`，并以它本身的词作为条目。内部的行内标记会印出，但不进入条目。方括号后的属性可把它归到别的条目下：`:index[iron deficiency]{term="Anaemia!iron-deficiency"}`。
+- <strong>`:index{term="…"}`</strong>什么都不印。标记取所在行中紧挨在它前面的词所在的页；若它位于行首，则取它后面的词所在的页。只含标记的行会被删除，因此单独成行的标记从不拆开段落，也不增加空白。
+- **适用位置**。段落、标题、列表项、引用块、标注框和脚注定义。在题注、表格单元格和设计元素中，标记照原样印出。在行内代码中以及反斜杠之后（`\:index`），它是文本。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>term</code></td>
+      <td>条目，各级之间用<code>!</code>分隔：<code>term="Heart!valves!mitral"</code>把该页归在<em>Heart</em>下<em>valves</em>的子条目<em>mitral</em>中。每一级都可以带行内标记（<code>term="&#42;Escherichia coli&#42;"</code>），排序时忽略这些标记。没有<code>term</code>时，<code>:index[text]</code>使用其文本。</td>
+    </tr>
+    <tr>
+      <td><code>sub</code></td>
+      <td>加在<code>term</code>之后的一级：<code>term="Heart" sub="valves"</code>等同于<code>term="Heart!valves"</code>。</td>
+    </tr>
+    <tr>
+      <td><code>sort</code></td>
+      <td>最后一级的排序键，用于该级应按其他字母排序的情况：<code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>、<code>term="20th century" sort="twentieth century"</code>。中文索引按排序器给出的汉字读音排序和分组。多音字若要按另一读音排序，就用只有所需读音的汉字写排序键：<code>:index[重阳]&#123;sort="崇阳"&#125;</code>把重阳归在C下，位于程与崔之间，而不是归在Z下。拼音排序键（<code>sort="chong yang"</code>）也能归到C，但会排在C下所有中文条目之后，因为排序器把拉丁字母排在汉字之后（见<a href="/zh/docs/configuration-notes-references#索引">配置 › 索引</a>中的<code>groupBy</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>yomi</code>、<code>reading</code></td>
+      <td>最后一级的假名读音，日文索引按它排序和分组：<code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code>归在な下，属于な行。没有它时，文字带假名振假名的标记按振假名读取（<code>:index[&#123;東京|とう|きょう&#125;]</code>按とうきょう排序），然后用<code>sort</code>，最后用文字本身；仍以汉字开头的条目报为<code>indexReadingMissing</code>。在其他语言的索引中，<code>yomi</code>的作用与<code>sort</code>相同。标记中的振假名请用简写形式：<code>:ruby[…]</code>需要转义它的方括号。从postext 1.16起提供。</td>
+    </tr>
+    <tr>
+      <td><code>main</code></td>
+      <td>一个标志，表示该术语的主要论述处。其页码排成粗体（<code>index.main</code>）。同时以两种方式标记的页为粗体。</td>
+    </tr>
+    <tr>
+      <td><code>range</code></td>
+      <td>同一术语的<code>range="start"</code>和<code>range="end"</code>界定一段跨越数页的论述：条目印出<code>34–37</code>。只有开始没有结束，或只有结束没有开始，则只印它自身所在的一页，并报出<code>indexRangeUnclosed</code>。</td>
+    </tr>
+    <tr>
+      <td><code>see</code></td>
+      <td>以参见代替页码：<code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code>印出<em>Cardiac insufficiency. See Heart failure</em>。目标的各级用<code>!</code>分隔，印出时用冒号连接（<em>See Heart: valves</em>）。目标不是索引中的条目时，报出<code>indexSeeUnknown</code>。</td>
+    </tr>
+    <tr>
+      <td><code>seealso</code></td>
+      <td>排在条目页码之后的参见：<em>Heart, 12, 40. See also Circulation</em>。标记自身所在的页与其他标记一样计入，因此一个标记既可以索引一段文字，又可以指向相关条目；<code>see</code>标记则不增加页码。</td>
+    </tr>
+    <tr>
+      <td><code>index</code></td>
+      <td>另一个独立索引的名称：<code>index="names"</code>把标记归入<code>:::index&#123;index="names"&#125;</code>印出的索引，而不是主索引。</td>
+    </tr>
+  </tbody>
+</table>
+
+没有术语的标记（单独的`:index{}`或`:index{see="…"}`）不索引任何内容，并报出`indexMarkInvalid`。
+
+### 印出索引
+
+`:::index`在所在位置印出主索引，`:::index{index="names"}`印出具名索引。该指令展开为普通的块，每个条目一块，像正文一样流过各栏和各页：放在[标题样式](/zh/docs/configuration-styles#标题样式)设定了两栏`layout`的标题之下，就得到常见的两栏索引。点击某个条目会跳到该指令所在的行。
+
+```md
+# Index of names {style="index"}
+
+:::index{index="names"}
+
+# Index of subjects {style="index"}
+
+:::index
+```
+
+- **顺序**。条目按文档语言（`locale`或`index.locale`）的字母顺序排序：带重音的字母与其基本字母归在一起（*Árbol*归在A下），西班牙语中*ñ*排在*n*之后，自成一组。以符号开头的条目排在最前，其次是以数字开头的，然后是字母。子条目在其条目下以同样方式排序，每深一级缩进一级。日文索引按JIS X 4061的顺序依读音排序，按五十音行（あ行、か行…）分组，拉丁条目排在假名之前（见[日文排版 › 五十音顺索引](/zh/docs/japanese-layout#五十音顺索引)）。
+- **分组**。每出现一个新的首字母就开启一组：一个字母标题（`index.groups`），其上方空一行（第一组上方不空）。字母标题与该组第一个条目排在同一个块中，因此不会单独留在栏末；没有自身页码的条目（只作为其子条目的上级）出于同样原因与其第一个子条目排在一起。
+- **页码**。使用页面上印出的页码标签，包括前置部分的罗马数字页码。条目的页码经过排序且每页只列一次；连续的页合并为范围（`12–14`，`index.mergeRanges`），落在同一条目某个范围内的页并入该范围（其中若有主要页，整个范围排成粗体），`index.rangeFormat: 'chicago'`会缩短第二个数字（`234–37`）。粗体（主要）页码单独列出。在PDF中，每个页码都链接到对应的页。
+- **参见**位于条目末尾：条目没有页码时为*Term. See Target*，有页码时为*Term, 12. See also Target*。这些标签随文档语言变化（*See*、*Véase*……），可在`index.see`中设定。
+- **图书**。在逐章排版的书中（沙盒、`buildBundle`），印出索引的那一章会收到所有章节的标记及其页码，只有当其中某个标记移动时才重新排版。同时包含标记和索引的文档会反复排版，直到页码稳定，与`:::toc`相同。
+
+排版样式、缩进和分隔符见配置参考中的[索引](/zh/docs/configuration-notes-references#索引)。

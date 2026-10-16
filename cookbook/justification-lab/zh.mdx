@@ -34,13 +34,13 @@ pageNotes: { "1": "一条石墨色色带上有荧光黄的眉题Galley · No. 12
 
 <Excerpt region="bench" />
 
-一个框用同一种正文样式排[`:::columns`](/zh/docs/document-format#columns)组里的所有栏，所以每张样条都是一个带自己`body`的嵌套框，`breaks="3"`把齐左样条和不断词样条叠放在第一栏。齐左样条不需要`hyphenation: false`：除非打开`bodyText.hyphenation.ragged`，齐左文字不断词。对照测试用`placement: 'bottom'`浮动到第3页底部，它的下内边距重复了4 mm的边框，因为最后一张样条的`marginBottom`在框的末尾会被舍去。
+一个框用同一种正文样式排[`:::columns`](/zh/docs/document-format-directives#columns)组里的所有栏，所以每张样条都是一个带自己`body`的嵌套框，`breaks="3"`把齐左样条和不断词样条叠放在第一栏。齐左样条不需要`hyphenation: false`：除非打开`bodyText.hyphenation.ragged`，齐左文字不断词。对照测试用`placement: 'bottom'`浮动到第3页底部，它的下内边距重复了4 mm的边框，因为最后一张样条的`marginBottom`在框的末尾会被舍去。
 
 ### 5 · 把模型画进章首页
 
 <Excerpt region="opener" />
 
-示意图是H1设计中的一个[图像元素](/zh/docs/configuration-page-layout#图像元素)。如果作为图，它会是一个通栏的`top`浮动体，而在第1页引用的`top`浮动体会排到第2页的顶部。色带比示意图伸得更低，而章首页预留的高度一直算到最低的元素，所以不需要`minHeight`，正文就从色带下方开始；由于H1默认的`marginBottom`，还要再往下一行。标签是按图本身坐标摆放的设计文字，字体和字距与章首页的其他标签一致。
+示意图是H1设计中的一个[图像元素](/zh/docs/configuration-headers-footers#图像元素)。如果作为图，它会是一个通栏的`top`浮动体，而在第1页引用的`top`浮动体会排到第2页的顶部。色带比示意图伸得更低，而章首页预留的高度一直算到最低的元素，所以不需要`minHeight`，正文就从色带下方开始；由于H1默认的`marginBottom`，还要再往下一行。标签是按图本身坐标摆放的设计文字，字体和字距与章首页的其他标签一致。
 
 ## 变化
 

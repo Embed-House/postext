@@ -18,7 +18,7 @@ Cinco páginas de texto do final de *Dom Casmurro*, o romance de Machado de Assi
 
 <Excerpt region="answer" highlight="17-24" />
 
-O nível de capítulo tem a quebra desligada, e `marginTop` põe cada título duas linhas abaixo da última linha do capítulo anterior. O design dele não tem `span`, então o título é desenhado dentro da coluna, num bloco de três linhas de altura, e o texto embaixo dele fica na grade ([quebra antes](/pt/docs/configuration-text#quebra-antes), [span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). As regras de coesão ficam nos valores padrão. Os parágrafos de quatro linhas sob o CXIX e o CXXI deixam cada um duas linhas ao pé da sua página e levam duas para a seguinte; com `avoidOrphans: false`, eles se dividiriam em três e uma, e as páginas 214 e 215 começariam com uma linha solta ([órfãs, viúvas e linhas curtas](/pt/docs/configuration-text#órfãs-viúvas-linhas-curtas-e-regras-de-manter-junto)). O equilíbrio de colunas acrescenta uma terceira linha de espaço acima do CXIX, para que a página 213 termine na linha 33 ([equilíbrio de colunas](/pt/docs/configuration-text#equilíbrio-de-colunas)).
+O nível de capítulo tem a quebra desligada, e `marginTop` põe cada título duas linhas abaixo da última linha do capítulo anterior. O design dele não tem `span`, então o título é desenhado dentro da coluna, num bloco de três linhas de altura, e o texto embaixo dele fica na grade ([quebra antes](/pt/docs/configuration-headings#quebra-antes), [span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). As regras de coesão ficam nos valores padrão. Os parágrafos de quatro linhas sob o CXIX e o CXXI deixam cada um duas linhas ao pé da sua página e levam duas para a seguinte; com `avoidOrphans: false`, eles se dividiriam em três e uma, e as páginas 214 e 215 começariam com uma linha solta ([órfãs, viúvas e linhas curtas](/pt/docs/configuration-page-flow#órfãs-viúvas-linhas-curtas-e-regras-de-manter-junto)). O equilíbrio de colunas acrescenta uma terceira linha de espaço acima do CXIX, para que a página 213 termine na linha 33 ([equilíbrio de colunas](/pt/docs/configuration-page-flow#equilíbrio-de-colunas)).
 
 <PageShot page={3} crop="0,.683,1,.317" caption="Página 213: o capítulo CXIX começa três linhas abaixo do fim do CXVIII e mantém duas linhas do seu texto ao pé." />
 
@@ -32,7 +32,7 @@ A margem inferior tem 16,3 mm, o que sobra dos 178 mm de altura depois da margem
 
 <Excerpt region="heads" />
 
-`{title}` imprime o título do frontmatter, e `{chapterTitle}`, o último capítulo que começa na página ou antes dela, de modo que a página 217 nomeia o CXXIII, que começou na 216 ([elementos de texto](/pt/docs/configuration-page-layout#elementos-de-texto)). A página 213 nomeia o CXIX, que começa ao pé dela, embora as suas primeiras 25 linhas fechem o CXVIII. `{chapterTitleAtTop}` nomeia, em vez disso, o capítulo em que a página abre, mas este trecho não traz o título do CXVIII. `SHIFT` leva os cabeços para o centro da mancha, 1 mm fora do centro da página, porque a margem interna é 2 mm mais larga que a externa.
+`{title}` imprime o título do frontmatter, e `{chapterTitle}`, o último capítulo que começa na página ou antes dela, de modo que a página 217 nomeia o CXXIII, que começou na 216 ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). A página 213 nomeia o CXIX, que começa ao pé dela, embora as suas primeiras 25 linhas fechem o CXVIII. `{chapterTitleAtTop}` nomeia, em vez disso, o capítulo em que a página abre, mas este trecho não traz o título do CXVIII. `SHIFT` leva os cabeços para o centro da mancha, 1 mm fora do centro da página, porque a margem interna é 2 mm mais larga que a externa.
 
 ### 4 · Desenhe a capa e a prancha como títulos
 
@@ -44,7 +44,7 @@ As duas são [estilos de título](/pt/docs/configuration-styles#estilos-de-títu
 
 <Excerpt region="excerpt" />
 
-`continuation.headings` dá os contadores de títulos a partir dos quais o trecho começa. Com `h1: 118`, o primeiro título numerado é o capítulo CXIX; sem ele, os cinco capítulos são numerados de I a V. `numberingTemplate: '{1:I}'` no nível de capítulo compõe esses números em algarismos romanos, e o design os imprime com `{number}`. `:::numbering{startAt=212}`, depois da capa, numera a prancha como 212 e as páginas de texto de 213 a 217 ([numeração](/pt/docs/document-format#numbering)).
+`continuation.headings` dá os contadores de títulos a partir dos quais o trecho começa. Com `h1: 118`, o primeiro título numerado é o capítulo CXIX; sem ele, os cinco capítulos são numerados de I a V. `numberingTemplate: '{1:I}'` no nível de capítulo compõe esses números em algarismos romanos, e o design os imprime com `{number}`. `:::numbering{startAt=212}`, depois da capa, numera a prancha como 212 e as páginas de texto de 213 a 217 ([numeração](/pt/docs/document-format-directives#numbering)).
 
 ## Variações
 

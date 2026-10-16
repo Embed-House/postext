@@ -1,4 +1,4 @@
-import type { ContrastIssue, PreflightIssue, PreflightSeverity } from 'postext';
+import type { ContrastIssue, PageTemplateWarningKind, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
  *  the part opener is a single slot. */
 export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
@@ -38,6 +38,10 @@ export type WarningKind =
   | 'unknownParagraphStyle'
   | 'unknownCalloutType'
   | 'columnsFlowUnknown'
+  | 'templateUnknown'
+  | 'slotUnknown'
+  | 'slotEmpty'
+  | 'pageFenceLength'
   | 'unknownChipStyle'
   | 'duplicateAnchor'
   | 'unknownCitationKey'
@@ -97,10 +101,24 @@ export type WarningKind =
   | 'unplaced'
   | 'shortListSplit'
   | 'openerFloat'
+  | 'tocGroupSplit'
   | 'codeOverflow'
   | 'floatShrunk'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
+  | 'templateDuplicate'
+  | 'templateExtendsCycle'
+  | 'templateExtendsUnknown'
+  | 'frameDuplicate'
+  | 'frameStyleUnknown'
+  | 'frameAnchorUnknown'
+  | 'frameMinMax'
+  | 'groupFrameUnknown'
+  | 'groupFrameTwice'
+  | 'frameChainLoop'
+  | 'overflowTargetUnknown'
+  | 'labelStyleUnknown'
+  | 'contentInConfig'
   | 'unsupportedHyphenationLocale'
   | 'missingGlyph'
   | 'variableFontDefaultInstance'
@@ -210,6 +228,13 @@ export type WarningPayload =
   /** `:::columns{flow=…}` names neither `snake` nor `parallel` (#634): the
    *  group takes the default. */
   | { kind: 'columnsFlowUnknown'; value: string }
+  /** Composed pages (#854): a `::::page` naming no template, a slot the
+   *  template lacks, a template frame left empty, a composed page written
+   *  with three colons. */
+  | { kind: 'templateUnknown'; template: string; fenceIndex: number }
+  | { kind: 'slotUnknown'; template: string; slot: string; fenceIndex: number }
+  | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  | { kind: 'pageFenceLength' }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
@@ -376,6 +401,11 @@ export type WarningPayload =
   /** A resource type's `defaultPlacement.wrap` in a vertical document
    *  (#627): ignored, the figures keep their bands whole. */
   | { kind: 'wrapUnsupported'; path: string; value: string; used: string }
+  /** Design texts of one setting (a heading style, a heading level, the
+   *  page header, a part design…) that hold the book's text instead of
+   *  placeholders (#849). `path` is the setting, `elements` the paths of
+   *  the texts (the first 20 of `count`), `sample` the start of the first. */
+  | { kind: 'contentInConfig'; path: string; ownerId?: string; count: number; chars: number; elements: string[]; sample: string }
   /** A resource or a box set to wrap text round it that does not (#627):
    *  the text beside it would be too narrow, it is too short for lines
    *  beside it, it moved on to the next column, or the text is vertical. */
@@ -397,6 +427,10 @@ export type WarningPayload =
   /** A figure, a table (`resourceId`) or a floated box set on an opener
    *  page, book page `page` (`layout.openerFloats: 'warn'`, #749). */
   | { kind: 'openerFloat'; page: number; resourceId?: string }
+  /** A block of the contents kept together (`toc.groups.keepTogether`,
+   *  `:::toc{keep}`, #850) headed by `title`, cut between `columns` columns;
+   *  it starts on book page `page`. */
+  | { kind: 'tocGroupSplit'; page: number; title: string; columns: number }
   /** A line number set in the side column overlaps a side box, caption or
    *  figure (#621); both are painted. `number` as printed. */
   | { kind: 'lineNumberOverlap'; number: string }
@@ -416,6 +450,14 @@ export type WarningPayload =
    *  `suggestion` names the word it is closest to, when one is (the
    *  comics settings, #590). */
   | { kind: 'unknownConfigValue'; path: string; value: string; used: string; suggestion?: string }
+  /** A page template problem (#853), from the engine's
+   *  `validatePageTemplates`: `path` is a JSON pointer
+   *  (`/pageTemplates/3/frames/2/style`), `value` the id, name, loop or
+   *  sizes at fault, `used` what the engine took instead (the size, for
+   *  `frameMinMax`; `container`, for `frameAnchorUnknown`), `suggestion`
+   *  the closest id or name that exists. `labelStyleUnknown` names the
+   *  resource whose anchor asks for the style. */
+  | { kind: PageTemplateWarningKind; path: string; value: string; used: string; suggestion?: string; resourceId?: string }
   /** The document's language (its hyphenation locale, else `locale`) has
    *  no bundled hyphenation patterns: the engine hyphenates it with en-us. */
   | { kind: 'unsupportedHyphenationLocale'; locale: string }

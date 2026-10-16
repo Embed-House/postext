@@ -16,13 +16,13 @@ Four pages from the middle of a reader’s edition of the Kangxi Dictionary (康
 
 ### 1 · Guide words from the headwords
 
-The code is [the short answer](#the-short-answer) above. Every headword is a level-2 heading, and `{firstMark.h2}` and `{lastMark.h2}` print the text of the first and the last level-2 heading that starts on the page ([Text elements](/en/docs/configuration-page-layout#text-elements)). The mark is the heading’s characters: `## {天|tiān}` marks 天, and the reading stays over the headword. An entry that runs on from one page to the next counts only where its headword stands: <PageRef page={2}>page 635</PageRef> opens with the end of 殄 and is headed 腆—髫. Level 1 is kept for the letters: none opens in these four pages, but a letter head would not count as a guide word.
+The code is [the short answer](#the-short-answer) above. Every headword is a level-2 heading, and `{firstMark.h2}` and `{lastMark.h2}` print the text of the first and the last level-2 heading that starts on the page ([Text elements](/en/docs/configuration-headers-footers#text-elements)). The mark is the heading’s characters: `## {天|tiān}` marks 天, and the reading stays over the headword. An entry that runs on from one page to the next counts only where its headword stands: <PageRef page={2}>page 635</PageRef> opens with the end of 殄 and is headed 腆—髫. Level 1 is kept for the letters: none opens in these four pages, but a letter head would not count as a guide word.
 
 ### 2 · Pinyin over the headwords
 
 <Excerpt region="headwords" />
 
-`{天|tiān}` is the compact form of `:ruby[天]{rt="tiān"}`, one reading over one character ([Chinese marks, ruby and warichu](/en/docs/document-format#chinese-marks-ruby-and-warichu)). A heading with no design of its own sets its reading; a heading design would print 天 alone. The reading takes the heading’s own face, Black, unless `cjk.ruby.fontFamily` names one, so the regular Song is named. Half of 15 pt is 7.5 pt, and the heading’s 30 pt line leaves room for it over the headword, so the heading is two lines of the grid and the text under it stays on the 15 pt lines of both columns. A pinyin reading is raised by the depth of its face’s descenders and 0.04 em more, so the g of tīng ends 0.6 pt above the em box of 汀.
+`{天|tiān}` is the compact form of `:ruby[天]{rt="tiān"}`, one reading over one character ([Chinese marks, ruby and warichu](/en/docs/document-format-inline#chinese-marks-ruby-and-warichu)). A heading with no design of its own sets its reading; a heading design would print 天 alone. The reading takes the heading’s own face, Black, unless `cjk.ruby.fontFamily` names one, so the regular Song is named. Half of 15 pt is 7.5 pt, and the heading’s 30 pt line leaves room for it over the headword, so the heading is two lines of the grid and the text under it stays on the 15 pt lines of both columns. A pinyin reading is raised by the depth of its face’s descenders and 0.04 em more, so the g of tīng ends 0.6 pt above the em box of 汀.
 
 ### 3 · One paragraph to an entry
 

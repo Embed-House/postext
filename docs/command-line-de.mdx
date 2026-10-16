@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Eine eigenständige ausführbare Datei für macOS, Linux und Windows, die ein .postext-Buch, einen Buchordner oder lose Markdown-Dateien in PDF, HTML, EPUB, Seitenbilder und Word umwandelt, Pakete packt und Bücher prüft, mit JSON-Ausgabe für Skripte und Agenten',
   lang: 'de',
   lastUpdated: '2026-10-09',
-  readingTime: '10 min',
-  order: 22,
+  readingTime: '12 min',
+  order: 42,
   plainSummary: "Diese Seite richtet sich an alle, die Bücher mit Postext im Terminal statt auf der Website machen wollen. Sie laden eine einzige Datei für Ihren Computer herunter und führen sie aus, ohne etwas zu installieren. Sie geben ihr Ihr Buch oder ein paar Textdateien, und sie erzeugt ein PDF, eine Webseite, ein E-Book, Bilder der Seiten oder ein Word-Dokument. Sie kann ein Buch auch auf Probleme prüfen und seine Dateien zu einer einzigen packen. Auch Programme und KI-Assistenten können sie nutzen, denn sie kann in einem Format antworten, das diese leicht lesen.",
 };
 
@@ -111,7 +111,7 @@ postext image my-book.postext --page 1 -o cover.png
 Jeder Befehl, der ein Buch liest, nimmt eine dieser Formen an:
 
 - **Eine `.postext`-Datei**: das Paket, das die Sandbox exportiert und öffnet (siehe
-  [Pakete](/de/docs/configuration-programmatic-usage#pakete-dateien-im-format-postext)).
+  [Pakete](/de/docs/configuration-bundles#pakete-dateien-im-format-postext)).
 - **Ein Buchordner**: ein entpacktes Paket mit seiner `preset.json`, seinen Kapiteln,
   Ressourcen und Schriften. Der Agent-Skill liefert so etwas, und `postext unpack`
   schreibt einen.
@@ -204,7 +204,7 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 
 `--layout fixed` (Standard) behält jede Seite wie gedruckt, mit markierbarem
 Text; `--layout reflowable` lässt das Lesesystem den Text für seinen Bildschirm
-neu setzen (siehe [EPUB-Bücher](/de/docs/configuration-programmatic-usage#epub-bücher-postext-epub)). Das
+neu setzen (siehe [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub)). Das
 Cover ist das Vorschaubild des Buchs, es sei denn, `--cover` gibt ein Bild an. Die
 Metadaten des Pakets (Titel, Autoren, Sprache, Kennung) kommen aus der Front Matter
 des ersten Kapitels, wie in der Sandbox.
@@ -288,6 +288,12 @@ Grund nicht lesen lässt (`contrast`), einmal pro Farbpaar, mit dem Kontrastverh
 und für den Druck auf dem Papier des Ausgabeprofils. Jedes Problem nennt die
 Kapiteldatei, die Zeile und die Seite. Der Exit-Code ist 3, wenn ein Fehler gefunden wird, oder mit `--strict`
 bei jeder Warnung.
+
+Außerdem meldet es Gestaltungstexte der Konfiguration, die den Text des
+Buches statt Platzhaltern enthalten (`contentInConfig`), einmal je
+Überschriftenstil, Kolumnentitel oder Teilgestaltung, mit dem Pfad jedes
+Textes: Verschieben Sie diesen Text ins Markdown oder tragen Sie Titel oder
+Verlagsnamen in `checks.contentInConfig.allow` ein.
 
 ### build und --watch
 

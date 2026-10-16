@@ -48,8 +48,12 @@ describe('alf-layla in the Sandbox', () => {
   });
 
   it('has nothing to say about a tale chapter, its night headings and its plates', () => {
-    const warnings = computeWarnings({ markdown: CHAPTER, config: manifest.config, doc: null, resources: manifest.resources as unknown as Resource[] }).map((w) => JSON.stringify(w.payload));
+    const all = computeWarnings({ markdown: CHAPTER, config: manifest.config, doc: null, resources: manifest.resources as unknown as Resource[] });
+    const warnings = all.filter((w) => w.payload.kind !== 'contentInConfig').map((w) => JSON.stringify(w.payload));
     expect(warnings).toEqual([]);
+    // The cover and the title page still set their wording in the design
+    // (#849): it moves to the Markdown with the composed pages (#846).
+    expect(all.flatMap((w) => (w.payload.kind === 'contentInConfig' ? [w.payload.ownerId] : []))).toEqual(['cover', 'titlepage']);
   });
 
   it('names only heading styles and resources the bundle has', async () => {

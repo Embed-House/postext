@@ -34,13 +34,13 @@ Les deux éditions partagent une même maquette : toute différence entre les d
 
 <Excerpt region="bench" />
 
-Une boîte compose toutes les colonnes d’un groupe [`:::columns`](/fr/docs/document-format#columns) dans un seul style de corps : chaque épreuve est donc une boîte imbriquée avec son propre `body`, et `breaks="3"` empile l’épreuve en drapeau et l’épreuve sans césure dans la première colonne. L’épreuve en drapeau n’a pas besoin de `hyphenation: false` : le texte en drapeau garde ses mots entiers, sauf si `bodyText.hyphenation.ragged` est activé. Le banc d’essai flotte au pied de la page 3 avec `placement: 'bottom'`, et son remplissage du bas reprend le cadre de 4 mm, car le `marginBottom` de la dernière épreuve est abandonné à la fin de la boîte.
+Une boîte compose toutes les colonnes d’un groupe [`:::columns`](/fr/docs/document-format-directives#columns) dans un seul style de corps : chaque épreuve est donc une boîte imbriquée avec son propre `body`, et `breaks="3"` empile l’épreuve en drapeau et l’épreuve sans césure dans la première colonne. L’épreuve en drapeau n’a pas besoin de `hyphenation: false` : le texte en drapeau garde ses mots entiers, sauf si `bodyText.hyphenation.ragged` est activé. Le banc d’essai flotte au pied de la page 3 avec `placement: 'bottom'`, et son remplissage du bas reprend le cadre de 4 mm, car le `marginBottom` de la dernière épreuve est abandonné à la fin de la boîte.
 
 ### 5 · Dessiner le modèle dans l’ouverture
 
 <Excerpt region="opener" />
 
-Le schéma est un [élément image](/fr/docs/configuration-page-layout#éléments-image) de la maquette du H1. En figure, ce serait un flottant `top` sur toute la largeur de la page, et un flottant `top` cité en page 1 ouvre la page 2. La bande descend sous le schéma, et une ouverture réserve la hauteur jusqu’à son élément le plus bas : le texte commence donc sous la bande sans `minHeight`, une ligne plus bas à cause du `marginBottom` par défaut du H1. Les étiquettes sont du texte de maquette posé sur les coordonnées propres du dessin, composé et interlettré comme les autres étiquettes de l’ouverture.
+Le schéma est un [élément image](/fr/docs/configuration-headers-footers#éléments-image) de la maquette du H1. En figure, ce serait un flottant `top` sur toute la largeur de la page, et un flottant `top` cité en page 1 ouvre la page 2. La bande descend sous le schéma, et une ouverture réserve la hauteur jusqu’à son élément le plus bas : le texte commence donc sous la bande sans `minHeight`, une ligne plus bas à cause du `marginBottom` par défaut du H1. Les étiquettes sont du texte de maquette posé sur les coordonnées propres du dessin, composé et interlettré comme les autres étiquettes de l’ouverture.
 
 ## Variantes
 

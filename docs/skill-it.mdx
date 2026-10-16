@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Installa la skill postext-port in Claude Code, Codex o in qualunque agente e lasciale trasformare un sorgente PDF, Word, PowerPoint, EPUB, InDesign o HTML in un progetto Postext che segue l’impaginazione originale',
   lang: 'it',
   lastUpdated: '2026-10-09',
-  readingTime: '8 min',
-  order: 21,
+  readingTime: '10 min',
+  order: 41,
   plainSummary: "Questa pagina è per chi ha già un libro o un documento in un altro formato, come PDF, Word o InDesign, e vuole portarlo in Postext. Un assistente di intelligenza artificiale, chiamato agente, può fare gran parte del lavoro se gli dai un piccolo componente aggiuntivo chiamato skill. La skill insegna all’agente come copiare il testo e ricostruire la grafica dell’originale. La pagina spiega come installarla, che cosa chiedere e come controllare il risultato. Un video di circa cinque minuti mostra ogni passaggio.",
 };
 
@@ -93,7 +93,7 @@ Anche su YouTube: [guardalo lì](https://www.youtube.com/watch?v=EBKvuJlg1UQ&lis
     disegni senza testo più le traduzioni, da scansioni già letterizzate o da un copione
     con disegni generati (vedi [Fumetti](/it/docs/comics));
   - l’oggetto stampato: come leggere carta, rilegatura, copertine e dorso del
-    sorgente e impostarli come le impostazioni `folio` che il [visualizzatore Folio](/it/docs/sandbox#scheda-folio)
+    sorgente e impostarli come le impostazioni `folio` che il [visualizzatore Folio](/it/docs/sandbox-previews#scheda-folio)
     mostra, controllate dal linter.
 - **Script** (Python e Node), descritti nella sezione successiva.
 
@@ -118,7 +118,7 @@ Anche su YouTube: [guardalo lì](https://www.youtube.com/watch?v=EBKvuJlg1UQ&lis
     <tr><td><code>index_marks.py</code></td><td>Ricostruisce un indice analitico stampato come segni <code>:index</code>: legge le pagine dell’indice nel PDF, trova ogni voce nella sua pagina e segna le stesse parole nei capitoli</td></tr>
     <tr><td><code>comic_panels.py</code></td><td>Misura le pagine dei fumetti: trova le vignette dalla carta che le separa, scrive l’espressione <code>split</code> (da sinistra a destra o da destra a sinistra, compresi gli spazi inclinati), gli spazi tra le vignette e la cornice, ritaglia un’immagine per vignetta e stampa gli scheletri <code>:::page</code>; stende una griglia sulle immagini per leggere ancoraggi dei personaggi e zone sicure, e li ridisegna per controllarli</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Istanziano, ritagliano in sottoinsiemi, scalano e dividono i font (un carattere cinese o giapponese ritagliato sui caratteri del libro conserva le forme verticali e le metriche, uno arabo le forme di legatura e il tatweel); convertono le immagini in sRGB, le rifilano e le uniscono; trasformano le illustrazioni <code>.ai</code>/<code>.pdf</code> in SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Crea lo scheletro del progetto e del suo script generatore, costruisce <code>preset.json</code>, impacchetta il file <code>.postext</code></td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Crea lo scheletro del progetto e del suo script generatore, costruisce <code>preset.json</code>, impacchetta il file <code>.postext</code> e controlla la configurazione: testo del libro scritto negli elementi di design, mentre la configurazione deve contenere solo il progetto grafico, e una configurazione troppo grande per il Sandbox</td></tr>
     <tr><td><code>lint_project.py</code></td><td>Intercetta tutto ciò che il parser e il caricatore sbagliano in silenzio e, per il testo cinese, giapponese e coreano, i caratteri che i font inclusi non possono comporre; per il testo giapponese, i kana sotto una lingua cinese, caratteri o impostazioni cinesi, notazione Aozora rimasta nei capitoli e voci d’indice in kanji senza lettura; per il testo arabo, una lingua araba mancante, caratteri solo latini o senza legature, spaziatura tra lettere, sillabazione forzata ed enfasi in corsivo; nei fumetti, espressioni di suddivisione che non si analizzano, vignette che non corrispondono alle celle, immagini e stili di nuvoletta o di vignetta sconosciuti, ancoraggi dei personaggi malformati, caratteri del lettering che il progetto non include ed edizioni con pagine diverse</td></tr>
     <tr><td><code>render.mjs</code></td><td>Impagina il progetto (una cartella o un file <code>.postext</code>) senza interfaccia con il motore vero, leggendone la configurazione come fa la Sandbox, e stampa gli avvisi. Con <code>--jpeg</code> dipinge le pagine che chiedi (<code>--pages 12-15</code>) come file JPEG con il renderer canvas del motore stesso, in un secondo o due, così l’agente guarda le sue pagine senza costruire un PDF; <code>--out</code> scrive il PDF. Un libro impostato per la stampa riceve righe PREFLIGHT (immagini a bassa risoluzione, filetti sottili, testo piccolo in più inchiostri, inchiostro oltre il limite, testo vicino al rifilo), e il suo PDF viene separato tramite il profilo ICC di output.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Mette affiancate le pagine del sorgente e quelle di Postext, dal PDF del rendering o dalla sua cartella di JPEG</td></tr>
@@ -216,9 +216,13 @@ L’agente segue il flusso di lavoro:
 1. **Brief.** Chiede ciò che non può dedurre: una riproduzione fedele o una
    riprogettazione, un capitolo di prova o il libro intero, le lingue, stampa o schermo,
    e i diritti su testo, immagini e font.
-2. **Inventario e misurazione.** Legge il sorgente e scrive una scheda tecnica
-   di dati misurati: formato rifilato, margini, colonne, interlinea, ruoli tipografici, palette,
-   aperture, testatine, famiglie di riquadri e abitudini di collocazione.
+2. **Inventario e misurazione.** Legge il sorgente e scrive una scheda
+   tecnica di dati misurati: formato rifilato, margini, colonne, interlinea,
+   ruoli tipografici, palette, aperture, testatine, famiglie di riquadri e
+   abitudini di collocazione. Classifica ogni pagina come testo corrente o
+   come pagina composta (riquadri, etichette e mappe in posizioni fisse); se
+   più di un terzo delle pagine è composto, ti chiede se preferisci
+   l’impaginazione identica o un testo che puoi correggere e tradurre.
 3. **Progetto.** Crea lo scheletro di `my-book/` con un generatore `build_preset.py`
    che contiene la scheda tecnica come costanti e produce `preset.json`.
 4. **Contenuto.** Estrae le bozze dei capitoli con l’estrattore giusto, poi
@@ -241,16 +245,24 @@ su una cartella di progetti in una copia locale di Postext, imposta
 
 ### Caricare il risultato dal codice
 
-Il file consegnato non è legato alla Sandbox. Il pacchetto `postext` lo apre con `openBundle`, impagina il libro con `buildBundle` e lo rende su canvas, in HTML o in PDF (vedi [Pacchetti](/it/docs/configuration-programmatic-usage#pacchetti-file-postext)). Un porting può quindi alimentare direttamente un programma. Quando l’output di quel programma va ritoccato, esportalo di nuovo in un file `.postext` con `createBundle`, rifiniscilo nella Sandbox e carica di nuovo il file corretto. Anche lo script senza interfaccia `render.mjs` della skill accetta un file `.postext` impacchettato oltre a una cartella di progetto.
+Il file consegnato non è legato alla Sandbox. Il pacchetto `postext` lo apre con `openBundle`, impagina il libro con `buildBundle` e lo rende su canvas, in HTML o in PDF (vedi [Pacchetti](/it/docs/configuration-bundles#pacchetti-file-postext)). Un porting può quindi alimentare direttamente un programma. Quando l’output di quel programma va ritoccato, esportalo di nuovo in un file `.postext` con `createBundle`, rifiniscilo nella Sandbox e carica di nuovo il file corretto. Anche lo script senza interfaccia `render.mjs` della skill accetta un file `.postext` impacchettato oltre a una cartella di progetto.
 
 ## Che cosa aspettarsi
 
 - **Gli estrattori producono bozze; l’agente le rifinisce.** Prevedi un passaggio di
   revisione per capitolo sulle pagine originali. È da quella revisione che viene
   la qualità.
-- **Solo configurazione e Markdown.** La skill non modifica mai il motore per adattarlo a un
-  libro. Quando Postext non riesce a esprimere qualcosa, l’agente sceglie l’espressione
-  più vicina e la elenca come lacuna nota.
+- **Il testo resta nel Markdown.** La configurazione contiene il progetto
+  grafico e ogni parola del libro sta nei capitoli: una correzione o una
+  traduzione è una modifica al Markdown. Le pagine composte si montano con
+  riquadri fissati al loro posto, immagini di pagina senza testo e figure SVG
+  con etichette in testo vivo. Quando Postext non riesce a esprimere qualcosa
+  senza scrivere testo nella configurazione, l’agente si ferma, descrive la
+  lacuna in una bozza di issue e ti chiede come procedere. La skill non
+  modifica mai il motore per adattarlo a un libro.
+- **Un solo file per tutte le lingue.** Una traduzione è un insieme di
+  capitoli nello stesso file `.postext`, con le sue didascalie ed etichette
+  delle figure, verificato con `postext check` in ogni lingua.
 - **I diritti li decidi tu.** L’agente chiede prima di riprodurre immagini o font
   con licenze poco chiare. I font con licenza vengono marcati
   `redistributable: false`, così i progetti esportati li lasciano fuori.

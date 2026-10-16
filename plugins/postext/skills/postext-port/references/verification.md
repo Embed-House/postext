@@ -6,9 +6,15 @@ Check in this order, from cheap to expensive, and fix the cause each time.
 
 ```bash
 python3 scripts/lint_project.py my-book --quiet
+python3 scripts/preset_kit.py lint my-book          # content in the config, config size
 ```
 
 Fix every ERROR. Common ones:
+
+- `contentInConfig`: the book's text typed into design text elements (a running head, an opener, a page
+  style). Move it to the Markdown (playbooks J); allow a long label that is form with
+  `config.checks.contentInConfig.allow`. `preset_kit.py lint` prints every element's JSON path;
+  `--json` for a script;
 
 - pipe tables, code fences or `---` left over from CommonMark;
 - a `[^id]` marker with no `[^id]:` definition, or a marker in a heading (prints as written);
@@ -38,6 +44,7 @@ Read every WARN:
 - Aozora's ／＼ くの字点 left as typed;
 - markup typed with an input method (`：：：`, `＃`, `［＾…］`, `＊＊`);
 - a CFF font over 2 MB, a variable font, a vertical book whose Chinese face lacks `vert`;
+- a config past 3 MB (the Sandbox keeps a book in about 5 MB of browser storage; aim under 1 MB);
 - comics: panels ≠ cells, stray text, unknown balloon or panel styles, script attributes that do not read,
   an anchor outside its safe area, unbundled lettering or sound-effect faces, and editions whose splits or
   panel pictures differ (the geometry is the same in every language). INFO lists speakers no picture marks.
@@ -181,6 +188,10 @@ those lines, or run the script.
   Chinese input method (`：：：` fence, `＃` heading, `［＾…］` footnote, `｛…｝` attributes,
   `＊＊…＊＊`) is set as text, and an attribute key outside ASCII (`作者=曹雪芹`) is
   dropped. Retype the ASCII form the warning names; keys are ASCII, values any script.
+- `WARN tocGroupSplit` (postext ≥ 1.34): a kept block of the contents (`toc.groups`, `:::toc{keep}`) ran
+  over several columns: it is taller than a column, or its column is short (a page-span box, a float).
+  Fewer levels, a lower `toc.groups.head`, smaller or tighter entries; or accept it (the head row repeats
+  with its continuation mark).
 - `PROBLEM font families used but not bundled`: add the files to `fonts[]`.
 - `WARN raggedLine` (postext ≥ 1.28.0): a line of a justified paragraph was set ragged because its word
   spaces would have stretched past 3× (the message gives the ratio). The line that cannot take the next word
@@ -336,6 +347,8 @@ the page images instead of claiming the port is visually verified.
 | Figure lands pages after its citation | `citingPage: true` (≥ 1.25, top/auto floats) to head the citing page; `position: "auto"` (the foot of the citing page); check the sequence order (floats never overtake); a float cited on a chapter's first page or after a break goes to the next page |
 | Box placed whole where the source runs text around it | floated box (`placement: "auto"`/`"top"`), fence right after the citing paragraph |
 | Box cut or overflowing | `keepTogether: false` + `splitMinLines`; floats yield to keep-together boxes |
+| A box, label or diagram that must sit at the source's position | a fixed callout style per position, a text-free image element with `resourceId: "{attr.…}"`, or a live-text SVG resource (playbooks J); never text in a design element |
+| Config of several MB, a heading style per page | content in the config: `preset_kit.py lint` lists it; one style per kind of page (playbooks J7–J8) |
 | Only the heading of a section fits at a column foot | it moves on by itself (a heading never closes a column); check `keepWithNext` |
 | Over-stretched justified lines (URLs, long compounds) | the engine sets those lines ragged; break URLs with `/`; add soft hyphens (U+00AD) |
 | Word overflowing a table cell | the engine divides it; widen `columnWidths` |

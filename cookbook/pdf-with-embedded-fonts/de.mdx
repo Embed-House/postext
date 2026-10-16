@@ -28,7 +28,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext misst j
 
 <Excerpt region="pdf" />
 
-`renderToPdf` ruft `onProgress` in drei Phasen auf: `prepare`, sobald die Schriften und der Umschlag eingebettet sind, `pages` nach jeder Seite und `save`, bevor es die Datei schreibt. Es fragt den Provider nur nach den Schriften, die die Seiten zeichnen, hier fünf. Die Statuszeile listet die fünf Dateien, die der Provider geliefert hat, genau die aus `FONTS`, und keinen Ersatz. Ein Ersatz verweist auf eine Schrift, die in `FONTS` fehlt. Entfernen Sie Crimson Text 600, meldet die Zeile `Crimson Text 600 → 400`, und das fette *The Harbour Consort* auf Seite 4 erscheint in normaler Schriftstärke. Die Vorschau von CodePen kann kein PDF zeigen, deshalb ersetzt `offerPdf` aus dem Kit die Schaltfläche durch zwei Links: einen, der das PDF in einem neuen Tab öffnet, und einen, der es herunterlädt ([PDFs erzeugen](/de/docs/configuration-programmatic-usage#pdfs-erzeugen)).
+`renderToPdf` ruft `onProgress` in drei Phasen auf: `prepare`, sobald die Schriften und der Umschlag eingebettet sind, `pages` nach jeder Seite und `save`, bevor es die Datei schreibt. Es fragt den Provider nur nach den Schriften, die die Seiten zeichnen, hier fünf. Die Statuszeile listet die fünf Dateien, die der Provider geliefert hat, genau die aus `FONTS`, und keinen Ersatz. Ein Ersatz verweist auf eine Schrift, die in `FONTS` fehlt. Entfernen Sie Crimson Text 600, meldet die Zeile `Crimson Text 600 → 400`, und das fette *The Harbour Consort* auf Seite 4 erscheint in normaler Schriftstärke. Die Vorschau von CodePen kann kein PDF zeigen, deshalb ersetzt `offerPdf` aus dem Kit die Schaltfläche durch zwei Links: einen, der das PDF in einem neuen Tab öffnet, und einen, der es herunterlädt ([PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen)).
 
 ### 4 · Der Überschriftenbaum ist der Lesezeichenbaum
 
@@ -69,4 +69,4 @@ Richten Sie den Fetch auf Ihre eigenen Kopien derselben statischen WOFF2-Dateien
 
 Listen Sie in `FONTS` jede Schrift auf, die Ihre Seiten setzen, darunter Fett und Kursiv des Textes. Fehlt eine, sieht der Bildschirm trotzdem richtig aus, weil das Kit die Schrift ohne Warnung lädt, doch das PDF druckt die nächstliegende Schrift des Providers, und nur die Ersatzschriften in der Statuszeile verraten den Tausch.
 
-Verwenden Sie statische Dateien, eine pro Schriftstärke und Stil. Aus einer variablen WOFF2 bettet das PDF nur die Standardinstanz ein, sodass ein fetter Abschnitt in normaler Schriftstärke erschiene ([Warum ein Font-Provider?](/de/docs/configuration-programmatic-usage#warum-ein-font-provider)).
+Verwenden Sie statische Dateien, eine pro Schriftstärke und Stil. Aus einer variablen WOFF2 bettet das PDF nur die Standardinstanz ein, sodass ein fetter Abschnitt in normaler Schriftstärke erschiene ([Warum ein Font-Provider?](/de/docs/configuration-pdf-output#warum-ein-font-provider)).

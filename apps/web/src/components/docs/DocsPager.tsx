@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export interface PagerLink {
   href: string;
-  /** The chapter's number in the contents. */
-  number: number;
+  /** The page's number in the contents ("3", "3.2"). */
+  number: string;
   title: string;
 }
 
