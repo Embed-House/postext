@@ -146,10 +146,13 @@ export const PageTemplatesSection = memo(function PageTemplatesSection() {
       <div className="mb-2 flex flex-wrap gap-1.5">
         <Button variant="outline" size="xs" icon={<Plus size={12} aria-hidden="true" />} onClick={onNew}>{labels.pageTemplatesNew}</Button>
         <Button variant="outline" size="xs" icon={<Copy size={12} aria-hidden="true" />} onClick={onDuplicate} disabled={!selectedId}>{labels.pageTemplatesDuplicate}</Button>
-        <Button variant="outline" size="xs" icon={<LayoutTemplate size={12} aria-hidden="true" />} onClick={onSaveLayout} disabled={!source} title={source ? undefined : labels.pageTemplatesSaveLayoutNone}>
+        <Button variant="outline" size="xs" icon={<LayoutTemplate size={12} aria-hidden="true" />} onClick={onSaveLayout} disabled={!source} aria-describedby={source ? undefined : 'pt-save-layout-none'}>
           {labels.pageTemplatesSaveLayout}
         </Button>
       </div>
+      {!source && templates.length > 0 && (
+        <p id="pt-save-layout-none" className="mb-2 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesSaveLayoutNone}</p>
+      )}
       {selectedId && (
         <TemplateEditor
           key={selectedId}
@@ -265,7 +268,7 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             />
           </FieldRow>
         )}
-        <div className="my-2">
+        <div className="mx-auto my-2" style={{ maxWidth: spread ? '100%' : '13rem' }}>
           <TemplateSheetSvg
             sheet={sheet}
             width={spread ? 280 : 200}
@@ -275,10 +278,10 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             frameLabel={labels.pageTemplatesSheetFrame}
             gutterLabel={labels.pageTemplatesGutter}
           />
-          <p className="mt-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>
-            {spread ? labels.pageTemplatesSheetSpreadHint : labels.pageTemplatesSheetHint}
-          </p>
         </div>
+        <p className="mb-2 text-[0.7rem]" style={{ color: 'var(--slate)' }}>
+          {spread ? labels.pageTemplatesSheetSpreadHint : labels.pageTemplatesSheetHint}
+        </p>
 
         <FieldGroup title={labels.pageTemplatesGroupTemplate}>
           <FieldRow stacked label={labels.idLabel} tooltip={labels.pageTemplatesIdTooltip} hint={pages > 0 ? labels.pageTemplatesIdHint : undefined}>
@@ -356,7 +359,9 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
           </div>
           <Button variant="outline" size="xs" icon={<Plus size={12} aria-hidden="true" />} onClick={addNewFrame}>{labels.pageTemplatesFrameAdd}</Button>
           {frame && resolved.frames.some((f) => f.name === frame) && (
-            <FrameProperties templateId={id} scope={effScope} name={frame} onRenamed={(n) => onFrame(n)} onRemoved={() => onFrame(null)} />
+            // Keyed by the frame: a field left with a draft in it never commits
+            // into the next frame picked.
+            <FrameProperties key={`${id}:${effScope}:${frame}`} templateId={id} scope={effScope} name={frame} onRenamed={(n) => onFrame(n)} onRemoved={() => onFrame(null)} />
           )}
         </FieldGroup>
 

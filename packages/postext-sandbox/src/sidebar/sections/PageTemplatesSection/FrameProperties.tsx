@@ -102,7 +102,9 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
   const onAnchor = (to: string) => {
     if (to === 'none') return setPlacement(undefined);
     const element = to.startsWith('#');
-    const keep = placement && (element ? [...ELEMENT_EDGES, ...NINE_POINT] : NINE_POINT).includes(placement.anchor.edge);
+    // The edge is kept between targets of one kind (frame to frame, area to
+    // page); a frame anchored to another starts below it.
+    const keep = placement && placement.anchor.to.startsWith('#') === element && (element ? [...ELEMENT_EDGES, ...NINE_POINT] : NINE_POINT).includes(placement.anchor.edge);
     setPlacement({
       ...(placement ?? {}),
       anchor: { to: to as ElementPlacement['anchor']['to'], edge: keep ? placement!.anchor.edge : element ? 'below' : 'top-left' },

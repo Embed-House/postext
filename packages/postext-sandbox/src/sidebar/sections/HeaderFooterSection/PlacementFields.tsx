@@ -101,6 +101,7 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
         label={labels.headerFooterElementOffsetX}
         value={placement.offset?.x ?? ZERO}
         onChange={(dim: Dimension) => onChange(applyOffsetX(placement, dim))}
+        min={-2000}
         step={1}
         tooltip={labels.headerFooterElementOffsetXTooltip}
       />
@@ -108,6 +109,7 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
         label={labels.headerFooterElementOffsetY}
         value={placement.offset?.y ?? ZERO}
         onChange={(dim: Dimension) => onChange(applyOffsetY(placement, dim))}
+        min={-2000}
         step={1}
         tooltip={labels.headerFooterElementOffsetYTooltip}
       />

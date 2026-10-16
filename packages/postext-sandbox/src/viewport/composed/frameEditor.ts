@@ -365,6 +365,9 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       const name = uniqueName(namesInUse(templates, g.c.template), 'frame');
       writeTemplates(addFrame(templates, g.c.template, 'base', frameFromRect(name, d.rect, g.area, dpi())));
       templateEditor.select({ templateId: g.c.template, scope: 'base', frame: name, group: null, pageIndex });
+      const at = templates.findIndex((t) => t.id === g.c.template);
+      const count = (templates[at]?.frames ?? []).filter((fr) => fr.name !== name).length;
+      pickFrame({ pageIndex, frameId: `cp${g.c.fenceIndex}:${name}`, name, template: g.c.template, configPath: `/pageTemplates/${at}/frames/${count}` });
       showPageTemplatesSection(name);
       return;
     }
