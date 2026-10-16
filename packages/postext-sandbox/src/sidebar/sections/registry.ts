@@ -59,6 +59,7 @@ export type SettingsSectionId =
   | 'comicsLettering'
   | 'comicsBalloonStyles'
   | 'comicsCast'
+  | 'pageTemplates'
   | 'htmlViewer'
   | 'folio'
   | 'pdfGeneration'
@@ -106,6 +107,8 @@ export const SETTINGS_GROUPS: readonly SettingsGroup[] = [
 export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'page', group: 'page', labelKey: 'page', configKeys: ['page'] },
   { id: 'layout', group: 'page', labelKey: 'layout', configKeys: ['layout'] },
+  // Composed pages (#863): the page templates a `::::page{template}` fence sets.
+  { id: 'pageTemplates', group: 'page', labelKey: 'pageTemplatesSection', configKeys: ['pageTemplates'] },
   // Language and direction: `locale`, `layout.writingMode`, `page.binding`
   // (see `sectionHasOverrides` for the two nested keys).
   { id: 'writing', group: 'writing', labelKey: 'writingSection', configKeys: ['locale', 'layout', 'page'] },

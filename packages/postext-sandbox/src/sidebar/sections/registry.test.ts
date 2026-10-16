@@ -49,4 +49,9 @@ describe('settings registry', () => {
     expect(isSettingsGroupId('all')).toBe(false);
     expect(isSettingsGroupId('nope')).toBe(false);
   });
+
+  it('puts the page templates with the page and its columns (#863)', () => {
+    expect(sectionsInGroup('page').map((s) => s.id)).toEqual(['page', 'layout', 'pageTemplates']);
+    expect(SETTINGS_SECTIONS.find((s) => s.id === 'pageTemplates')!.configKeys).toEqual(['pageTemplates']);
+  });
 });

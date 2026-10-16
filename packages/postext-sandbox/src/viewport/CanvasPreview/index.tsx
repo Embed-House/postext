@@ -17,6 +17,8 @@ import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { syncComicEditors } from '../comics/comicEditing';
+import { syncFrameEditors } from '../composed/frameEditor';
+import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
 import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../../controls/fontLoader';
@@ -115,6 +117,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   const labels = useSandboxSelector((s) => s.labels);
   const labelsRef = useRef(labels);
   labelsRef.current = labels;
+  // The page-template editor reads and writes the book through the canvas (#863).
+  useTemplateEditorHost();
   // Whole-book mode: the chapter of every page of the stitched document,
   // and the book a page's offsets belong to (its chapter's).
   const chapterOfPageRef = useRef<((pageIndex: number) => number) | null>(null);
@@ -895,6 +899,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     if (!doc) return;
     // The comic splitter handles follow the new layout (#568).
     syncComicEditors();
+    // So do the page-template marks of Design mode (#863).
+    syncFrameEditors();
     const debug = resolveDebugConfig(config.debug);
     // The editor selection is chapter-local; the document is the composed
     // book — or, stitched from every chapter, a document whose offsets are

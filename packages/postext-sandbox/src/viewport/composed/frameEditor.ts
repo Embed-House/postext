@@ -1,0 +1,534 @@
+/**
+ * The page-template editor on the canvas (#863). In Design mode a
+ * composed page shows its template: the margins, the template's area and
+ * grid, the gutter of a spread, every frame's outline with its name, and
+ * an arrow for each chain (`next`). On such a page the pointer is the
+ * editor's:
+ *
+ * - a press on a frame selects it (the Design panel opens it); dragging
+ *   moves it, dragging one of the selected frame's eight handles resizes
+ *   it;
+ * - a drag on the page off every frame draws a new frame;
+ * - the box snaps to the margins, the template grid and the other frames
+ *   (Alt held: no snapping); Escape cancels.
+ *
+ * On release the box is written back into the template in millimetres
+ * (`frameBoxPatch`). When other pages use the template too, a question on
+ * the page asks whether to change the template (every page) or to make a
+ * variant for this page alone (a template that extends it, which the
+ * page's fence then names). A rotated frame moves but does not resize on
+ * the page; the properties panel sizes it.
+ *
+ * Every other page, and every page outside Design mode, keeps the text
+ * interaction: the listeners run in the capture phase and only take the
+ * events they handle.
+ */
+
+import type { Dispatch, MutableRefObject } from 'react';
+import { resolvePageTemplate, type PostextConfig, type ResolvedPageTemplate, type VDTComposedPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
+import type { SandboxAction } from '../../context/SandboxContext';
+import type { ComposedBook } from '../../book/types';
+import { segmentAtOffset } from '../../book/compose';
+import type { SandboxLabels } from '../../types/labels';
+import { applyViewerEdit } from '../../editor/viewerEdits';
+import {
+  RESIZE_HANDLES,
+  dimensionToMm,
+  dragRect,
+  frameBoxPatch,
+  frameFromRect,
+  gridGeometry,
+  handleAt,
+  handlePoint,
+  mmToPx,
+  pageAreas,
+  rectBetween,
+  snapLines,
+  snapRect,
+  templateAreaRect,
+  type Handle,
+  type Rect,
+} from '../../templates/frameGeometry';
+import { templateEditor, templateEditorHost } from '../../templates/editorStore';
+import { showPageTemplatesSection } from '../../templates/showSection';
+import { addFrame, namesInUse, uniqueName } from '../../templates/templateEdits';
+import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits';
+import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
+import { nextFrameName } from '../../templates/frameChain';
+import { frameHitAt } from './frameHit';
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+/** CSS px a pointer may travel before a press becomes a drag. */
+const DRAG_START_CSS_PX = 3;
+/** CSS px within which a handle is grabbed and a side snaps. */
+const HANDLE_CSS_PX = 7;
+const SNAP_CSS_PX = 6;
+/** Smallest frame drawn, CSS px. */
+const MIN_DRAW_CSS_PX = 8;
+
+const COLORS = {
+  frame: '#2f6fd6',
+  frameMuted: 'rgba(47, 111, 214, 0.55)',
+  margin: 'rgba(214, 72, 47, 0.7)',
+  area: 'rgba(47, 111, 214, 0.35)',
+  grid: 'rgba(47, 111, 214, 0.08)',
+  gutter: 'rgba(214, 72, 47, 0.18)',
+  chain: '#c26a00',
+  guide: '#d6482f',
+  ghost: 'rgba(47, 111, 214, 0.12)',
+  label: '#ffffff',
+};
+
+export interface FrameEditorRefs {
+  docRef: MutableRefObject<VDTDocument | null>;
+  dispatchRef: MutableRefObject<Dispatch<SandboxAction>>;
+  sourceRef: MutableRefObject<ComposedBook | null>;
+  pageSourceRef?: MutableRefObject<((pageIndex: number) => ComposedBook | null) | null>;
+  labelsRef?: MutableRefObject<SandboxLabels>;
+}
+
+interface Drag {
+  pointerId: number;
+  kind: 'frame' | 'draw';
+  handle: Handle;
+  frame?: VDTFrame;
+  startX: number;
+  startY: number;
+  startClientX: number;
+  startClientY: number;
+  started: boolean;
+  rect: Rect;
+  guideX?: number;
+  guideY?: number;
+}
+
+interface Instance {
+  slot: HTMLElement;
+  paint(): void;
+}
+
+const live = new Set<Instance>();
+let subscribed = false;
+
+/** Bring every page's template marks up to date (after a relayout, or a
+ *  change of the editor's state). */
+export function syncFrameEditors(): void {
+  for (const e of [...live]) {
+    if (!e.slot.isConnected) live.delete(e);
+    else e.paint();
+  }
+}
+
+function svgEl<K extends keyof SVGElementTagNameMap>(name: K, attrs: Record<string, string | number>): SVGElementTagNameMap[K] {
+  const el = document.createElementNS(SVG_NS, name);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+  return el;
+}
+
+/** The template a composed page is set with, resolved for its side. */
+function pageTemplate(config: PostextConfig, composed: VDTComposedPage): ResolvedPageTemplate | undefined {
+  return resolvePageTemplate(config, composed.template, composed.variant ? { parity: composed.variant } : {});
+}
+
+export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidthPx: number, pageHeightPx: number, refs: FrameEditorRefs): void {
+  const svg = svgEl('svg', { viewBox: `0 0 ${pageWidthPx} ${pageHeightPx}`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
+  svg.dataset.role = 'templateMarks';
+  Object.assign(svg.style, { position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: '6', overflow: 'visible' } satisfies Partial<CSSStyleDeclaration>);
+  let question: HTMLElement | null = null;
+  let drag: Drag | null = null;
+  /** The drop waiting for the template-or-variant answer. */
+  let pending: Rect | null = null;
+  let handledPress = false;
+
+  const page = (): VDTPage | undefined => refs.docRef.current?.pages[pageIndex];
+  const composed = (): VDTComposedPage | undefined => page()?.composed;
+  const active = (): boolean => templateEditor.getSnapshot().designMode && !!composed();
+  const sheetPerCss = (): number => {
+    const w = slot.getBoundingClientRect().width;
+    return w > 0 ? pageWidthPx / w : 1;
+  };
+  const locate = (ev: MouseEvent): { x: number; y: number } | null => {
+    const r = slot.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return null;
+    return { x: (ev.clientX - r.left) * (pageWidthPx / r.width), y: (ev.clientY - r.top) * (pageHeightPx / r.height) };
+  };
+  const dpi = (): number => refs.docRef.current?.config.page.dpi ?? 96;
+
+  const selectedHere = (): VDTFrame | undefined => {
+    const sel = templateEditor.getSnapshot().selection;
+    const c = composed();
+    if (!sel?.frame || !c) return undefined;
+    if (sel.pageIndex !== null && sel.pageIndex !== pageIndex && sel.templateId !== c.template) return undefined;
+    if (sel.pageIndex === null && sel.templateId !== c.template) return undefined;
+    return c.frames.find((f) => f.name === sel.frame);
+  };
+
+  /** The page's areas and the template's geometry, for snapping and the
+   *  write-back. */
+  const geometry = () => {
+    const p = page();
+    const c = composed();
+    const host = templateEditorHost();
+    const doc = refs.docRef.current;
+    if (!p || !c || !host || !doc) return null;
+    const config = host.getState().config;
+    const template = pageTemplate(config, c);
+    if (!template) return null;
+    const areas = pageAreas(p, doc.trimOffset);
+    const area = templateAreaRect(template.area, areas);
+    const grid = template.grid ? gridGeometry(template.grid, area, dpi()) : undefined;
+    return { p, c, host, config, template, areas, area, grid };
+  };
+
+  const paint = (): void => {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    if (!active()) {
+      if (svg.parentNode) svg.remove();
+      closeQuestion();
+      return;
+    }
+    if (svg.parentNode !== slot) slot.appendChild(svg);
+    const g = geometry();
+    const c = composed()!;
+    const k = sheetPerCss();
+    const lw = 1 * k;
+    if (g) {
+      // The margins and the template's area.
+      const content = g.areas.content;
+      svg.appendChild(svgEl('rect', { x: content.x, y: content.y, width: content.width, height: content.height, fill: 'none', stroke: COLORS.margin, 'stroke-width': lw, 'stroke-dasharray': `${4 * k} ${3 * k}` }));
+      if (g.area !== content) svg.appendChild(svgEl('rect', { x: g.area.x, y: g.area.y, width: g.area.width, height: g.area.height, fill: 'none', stroke: COLORS.area, 'stroke-width': lw }));
+      if (g.grid) {
+        for (const col of g.grid.cols) {
+          for (const row of g.grid.rows) svg.appendChild(svgEl('rect', { x: col.start, y: row.start, width: col.end - col.start, height: row.end - row.start, fill: COLORS.grid, stroke: COLORS.area, 'stroke-width': lw * 0.6 }));
+        }
+      }
+      // The spine of a spread page: its gutter band on the inner edge.
+      if (c.spread && g.template.spread) {
+        const gutterPx = mmToPx(dimensionToMm(g.template.gutter), dpi()) / 2;
+        const x = c.spread === 'left' ? g.areas.trim.x + g.areas.trim.width - gutterPx : g.areas.trim.x;
+        svg.appendChild(svgEl('rect', { x, y: 0, width: Math.max(gutterPx, 2 * k), height: pageHeightPx, fill: COLORS.gutter }));
+      }
+    }
+    const selected = selectedHere();
+    const byName = new Map(c.frames.map((f) => [f.name, f]));
+    for (const f of c.frames) {
+      const isSel = selected?.name === f.name;
+      const r = f.rect;
+      const group = svgEl('g', f.rotate ? { transform: `rotate(${f.rotate} ${r.x + r.width / 2} ${r.y + r.height / 2})` } : {});
+      group.appendChild(svgEl('rect', { x: r.x, y: r.y, width: r.width, height: r.height, fill: 'none', stroke: isSel ? COLORS.frame : COLORS.frameMuted, 'stroke-width': (isSel ? 2 : 1) * lw, ...(isSel ? {} : { 'stroke-dasharray': `${5 * k} ${3 * k}` }) }));
+      // The name, on a tab at the top-left corner.
+      const fontSize = 10 * k;
+      const tabW = (f.name.length * 0.6 + 1) * fontSize;
+      group.appendChild(svgEl('rect', { x: r.x, y: r.y - fontSize * 1.4, width: tabW, height: fontSize * 1.4, fill: isSel ? COLORS.frame : COLORS.frameMuted }));
+      const text = svgEl('text', { x: r.x + fontSize * 0.5, y: r.y - fontSize * 0.4, 'font-size': fontSize, 'font-family': 'system-ui, sans-serif', fill: COLORS.label });
+      text.textContent = f.name;
+      group.appendChild(text);
+      svg.appendChild(group);
+    }
+    // Chains: an arrow from each frame to the one its content goes on in.
+    const host = templateEditorHost();
+    const template = host ? pageTemplate(host.getState().config, c) : undefined;
+    for (const f of c.frames) {
+      const resolved = template?.frames.find((rf) => rf.name === f.name);
+      const toName = resolved ? nextFrameName(resolved) : undefined;
+      const to = toName ? byName.get(toName) : undefined;
+      if (!to) continue;
+      const x1 = f.rect.x + f.rect.width - 12 * k;
+      const y1 = f.rect.y + f.rect.height;
+      const x2 = to.rect.x + 12 * k;
+      const y2 = to.rect.y;
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const a = 7 * k;
+      svg.appendChild(svgEl('line', { x1, y1, x2, y2, stroke: COLORS.chain, 'stroke-width': 1.5 * lw }));
+      svg.appendChild(svgEl('polygon', {
+        points: `${x2},${y2} ${x2 - a * Math.cos(angle - 0.45)},${y2 - a * Math.sin(angle - 0.45)} ${x2 - a * Math.cos(angle + 0.45)},${y2 - a * Math.sin(angle + 0.45)}`,
+        fill: COLORS.chain,
+      }));
+    }
+    if (selected && !selected.rotate && !drag?.started && !pending) {
+      const s = 6 * k;
+      for (const h of RESIZE_HANDLES) {
+        const p = handlePoint(selected.rect, h);
+        svg.appendChild(svgEl('rect', { x: p.x - s / 2, y: p.y - s / 2, width: s, height: s, fill: '#ffffff', stroke: COLORS.frame, 'stroke-width': lw }));
+      }
+    }
+    const ghost = drag?.started ? drag.rect : pending;
+    if (ghost) {
+      svg.appendChild(svgEl('rect', { x: ghost.x, y: ghost.y, width: ghost.width, height: ghost.height, fill: COLORS.ghost, stroke: COLORS.frame, 'stroke-width': 1.5 * lw }));
+      if (drag?.guideX !== undefined) svg.appendChild(svgEl('line', { x1: drag.guideX, y1: 0, x2: drag.guideX, y2: pageHeightPx, stroke: COLORS.guide, 'stroke-width': lw }));
+      if (drag?.guideY !== undefined) svg.appendChild(svgEl('line', { x1: 0, y1: drag.guideY, x2: pageWidthPx, y2: drag.guideY, stroke: COLORS.guide, 'stroke-width': lw }));
+    }
+  };
+
+  const selectFrame = (f: VDTFrame): void => {
+    const c = composed();
+    const host = templateEditorHost();
+    if (!c || !host) return;
+    const { templateId, scope } = frameScopeOnPage(host.getState().config.pageTemplates ?? [], c, f);
+    templateEditor.select({ templateId, scope, frame: f.name, group: null, pageIndex });
+    // The frame's properties, in the Design panel.
+    if (host.getState().activePanel !== 'config') refs.dispatchRef.current({ type: 'SET_PANEL', payload: 'config' });
+    showPageTemplatesSection(f.name);
+  };
+
+  /** The book's chapter holding this page's fence, and the fence's start
+   *  in it. */
+  const fenceOfPage = (c: VDTComposedPage): { chapterId: string; markdown: string; fenceStart: number } | null => {
+    const host = templateEditorHost();
+    const book = refs.pageSourceRef?.current ? refs.pageSourceRef.current(pageIndex) : refs.sourceRef.current;
+    if (!host || !book || book.segments.length === 0) return null;
+    const seg = segmentAtOffset(book, c.sourceStart);
+    const chapter = host.getState().chapters.find((ch) => ch.id === seg.chapterId);
+    if (!chapter) return null;
+    const local = c.sourceStart - seg.start;
+    const fences = templateFences(chapter.markdown);
+    const fence = fences.find((f) => f.fenceStart === local) ?? fences[c.fenceIndex];
+    return fence ? { chapterId: chapter.id, markdown: chapter.markdown, fenceStart: fence.fenceStart } : null;
+  };
+
+  const writeTemplates = (templates: PostextConfig['pageTemplates']): void => {
+    refs.dispatchRef.current({ type: 'UPDATE_CONFIG', payload: { pageTemplates: templates && templates.length > 0 ? templates : undefined } });
+  };
+
+  const closeQuestion = (): void => {
+    question?.remove();
+    question = null;
+    if (pending) {
+      pending = null;
+      paint();
+    }
+  };
+
+  /** Ask where a frame dropped at `to` is written, when other pages use
+   *  the template. */
+  const ask = (frame: VDTFrame, to: Rect, pages: number, apply: (where: 'template' | 'page') => void): void => {
+    const labels = refs.labelsRef?.current;
+    if (!labels) {
+      apply('template');
+      return;
+    }
+    pending = to;
+    paint();
+    question?.remove();
+    const box = document.createElement('div');
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', labels.pageTemplatesMoveQuestion.replace('__frame__', frame.name));
+    Object.assign(box.style, {
+      position: 'absolute', zIndex: '7', maxWidth: '18rem', padding: '0.5rem', borderRadius: '0.5rem',
+      background: 'var(--background, #fff)', color: 'var(--foreground, #111)', border: '1px solid var(--rule, #ccc)',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.18)', font: '12px/1.35 system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: '0.35rem',
+    } satisfies Partial<CSSStyleDeclaration>);
+    const left = Math.min(Math.max(0, to.x / pageWidthPx), 0.6) * 100;
+    const top = Math.min(Math.max(0, (to.y + to.height) / pageHeightPx), 0.8) * 100;
+    box.style.left = `${left}%`;
+    box.style.top = `${top}%`;
+    const text = document.createElement('p');
+    text.style.margin = '0';
+    text.textContent = labels.pageTemplatesMoveQuestion.replace('__frame__', frame.name);
+    box.appendChild(text);
+    const button = (label: string, onClick: () => void, primary = false): HTMLButtonElement => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      Object.assign(b.style, {
+        minHeight: '2rem', padding: '0.25rem 0.6rem', borderRadius: '0.375rem', cursor: 'pointer', textAlign: 'start',
+        border: `1px solid ${primary ? 'var(--brand, #2f6fd6)' : 'var(--pt-control-border, #bbb)'}`,
+        background: 'var(--surface, #f6f6f6)', color: primary ? 'var(--brand, #2f6fd6)' : 'inherit', font: 'inherit',
+      } satisfies Partial<CSSStyleDeclaration>);
+      b.addEventListener('pointerdown', (e) => e.stopPropagation());
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        onClick();
+      });
+      box.appendChild(b);
+      return b;
+    };
+    const first = button(labels.pageTemplatesMoveChangeTemplate.replace('__count__', String(pages)), () => {
+      closeQuestion();
+      apply('template');
+    }, true);
+    button(labels.pageTemplatesMoveThisPage, () => {
+      closeQuestion();
+      apply('page');
+    });
+    button(labels.pageTemplatesMoveCancel, () => closeQuestion());
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        closeQuestion();
+      }
+    });
+    box.addEventListener('pointerdown', (e) => e.stopPropagation(), true);
+    slot.appendChild(box);
+    question = box;
+    first.focus({ preventScroll: true });
+  };
+
+  const commit = (d: Drag): void => {
+    const g = geometry();
+    if (!g) return;
+    const templates = g.config.pageTemplates ?? [];
+    if (d.kind === 'draw') {
+      const min = MIN_DRAW_CSS_PX * sheetPerCss();
+      if (d.rect.width < min || d.rect.height < min) return;
+      const name = uniqueName(namesInUse(templates, g.c.template), 'frame');
+      writeTemplates(addFrame(templates, g.c.template, 'base', frameFromRect(name, d.rect, g.area, dpi())));
+      templateEditor.select({ templateId: g.c.template, scope: 'base', frame: name, group: null, pageIndex });
+      showPageTemplatesSection(name);
+      return;
+    }
+    const f = d.frame!;
+    const resolved = g.template.frames.find((rf) => rf.name === f.name);
+    if (!resolved) return;
+    const patch = frameBoxPatch({ resolved, from: f.rect, to: d.rect, area: g.area, dpi: dpi(), ...(g.grid ? { grid: g.grid } : {}) });
+    if (Object.keys(patch).length === 0) return;
+    const state = g.host.getState();
+    const spreadIds = new Set(templates.filter((t) => t.spread).map((t) => t.id));
+    const pages = countTemplatePages(state.chapters, spreadIds).get(g.c.template) ?? 1;
+    const apply = (where: 'template' | 'page'): void => {
+      const now = templateEditorHost()?.getState().config.pageTemplates ?? templates;
+      if (where === 'template') {
+        writeTemplates(changeTemplateFrame(now, g.c, f, patch));
+        return;
+      }
+      const fence = fenceOfPage(g.c);
+      const labels = refs.labelsRef?.current;
+      const label = labels ? labels.pageTemplatesVariantName.replace('__template__', templateDisplayName(now, g.c.template)).replace('__page__', String(pageIndex + 1 + (refs.docRef.current?.pageIndexOffset ?? 0))) : `${g.c.template} ${pageIndex + 1}`;
+      const out = changeFrameForPage(now, g.c, f, patch, label);
+      writeTemplates(out.templates);
+      if (fence) {
+        const change = fenceTemplateChange(fence.markdown, fence.fenceStart, out.id);
+        if (change) applyViewerEdit(refs.dispatchRef.current, fence.chapterId, [change], fence.markdown.length);
+      }
+      templateEditor.select({ templateId: out.id, scope: 'base', frame: f.name, group: null, pageIndex });
+    };
+    if (pages > 1) ask(f, d.rect, pages, apply);
+    else apply('template');
+  };
+
+  const cursorFor = (handle: Handle | null, onFrame: boolean): string => {
+    if (!handle) return onFrame ? 'move' : 'crosshair';
+    switch (handle) {
+      case 'move': return 'move';
+      case 'n':
+      case 's':
+        return 'ns-resize';
+      case 'e':
+      case 'w':
+        return 'ew-resize';
+      case 'ne':
+      case 'sw':
+        return 'nesw-resize';
+      default:
+        return 'nwse-resize';
+    }
+  };
+
+  slot.addEventListener('pointerdown', (ev) => {
+    handledPress = false;
+    if (!active() || ev.button !== 0 || ev.pointerType === 'touch') return;
+    if ((ev.target as Element | null)?.closest?.('[role="dialog"]')) return;
+    const at = locate(ev);
+    if (!at) return;
+    closeQuestion();
+    const tol = HANDLE_CSS_PX * sheetPerCss();
+    const selected = selectedHere();
+    const onSelected = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, tol) : null;
+    const hit = onSelected ? selected! : frameHitAt(page(), at.x, at.y);
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    handledPress = true;
+    try { slot.setPointerCapture(ev.pointerId); } catch { /* not capturable */ }
+    window.addEventListener('keydown', onEscape, true);
+    if (hit) {
+      selectFrame(hit);
+      drag = { pointerId: ev.pointerId, kind: 'frame', handle: onSelected ?? 'move', frame: hit, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, rect: { ...hit.rect } };
+    } else {
+      drag = { pointerId: ev.pointerId, kind: 'draw', handle: 'se', startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, rect: { x: at.x, y: at.y, width: 0, height: 0 } };
+    }
+    paint();
+  }, true);
+
+  slot.addEventListener('pointermove', (ev) => {
+    if (drag && ev.pointerId === drag.pointerId) {
+      ev.stopImmediatePropagation();
+      ev.preventDefault();
+      const at = locate(ev);
+      if (!at) return;
+      if (!drag.started) {
+        const dx = ev.clientX - drag.startClientX;
+        const dy = ev.clientY - drag.startClientY;
+        if (dx * dx + dy * dy < DRAG_START_CSS_PX * DRAG_START_CSS_PX) return;
+        drag.started = true;
+      }
+      const g = geometry();
+      const raw = drag.kind === 'draw'
+        ? rectBetween({ x: drag.startX, y: drag.startY }, at)
+        : dragRect(drag.frame!.rect, drag.handle, at.x - drag.startX, at.y - drag.startY, 4 * sheetPerCss());
+      if (g && !ev.altKey) {
+        const others = g.c.frames.filter((f) => f.name !== drag!.frame?.name).map((f) => f.rect);
+        const lines = snapLines(g.areas, g.area, g.grid, others);
+        const handle: Handle = drag.kind === 'draw' ? (at.x >= drag.startX ? (at.y >= drag.startY ? 'se' : 'ne') : (at.y >= drag.startY ? 'sw' : 'nw')) : drag.handle;
+        const snapped = snapRect(raw, handle, lines, SNAP_CSS_PX * sheetPerCss());
+        drag.rect = snapped.rect;
+        drag.guideX = snapped.guideX;
+        drag.guideY = snapped.guideY;
+      } else {
+        drag.rect = raw;
+        drag.guideX = undefined;
+        drag.guideY = undefined;
+      }
+      paint();
+      return;
+    }
+    if (!active()) return;
+    const at = locate(ev);
+    if (!at) return;
+    ev.stopImmediatePropagation();
+    const selected = selectedHere();
+    const handle = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, HANDLE_CSS_PX * sheetPerCss()) : null;
+    slot.style.cursor = cursorFor(handle, !!frameHitAt(page(), at.x, at.y));
+  }, true);
+
+  /** Escape while dragging: the drag is dropped, nothing is written. */
+  const onEscape = (ev: KeyboardEvent): void => {
+    if (ev.key !== 'Escape' || !drag) return;
+    ev.stopPropagation();
+    ev.preventDefault();
+    const pointerId = drag.pointerId;
+    drag = null;
+    window.removeEventListener('keydown', onEscape, true);
+    try { slot.releasePointerCapture(pointerId); } catch { /* not captured */ }
+    paint();
+  };
+
+  const end = (ev: PointerEvent): void => {
+    if (!drag || ev.pointerId !== drag.pointerId) return;
+    ev.stopImmediatePropagation();
+    const d = drag;
+    drag = null;
+    window.removeEventListener('keydown', onEscape, true);
+    try { slot.releasePointerCapture(ev.pointerId); } catch { /* not captured */ }
+    if (ev.type === 'pointerup' && d.started) commit(d);
+    paint();
+  };
+  slot.addEventListener('pointerup', end, true);
+  slot.addEventListener('pointercancel', end, true);
+  // A press the editor took is not a click on the text.
+  for (const type of ['click', 'mousedown', 'mouseup'] as const) {
+    slot.addEventListener(type, (ev) => {
+      if (!handledPress && !(drag && type === 'mousedown')) return;
+      if (type === 'click') handledPress = false;
+      ev.stopImmediatePropagation();
+      ev.preventDefault();
+    }, true);
+  }
+
+  const instance: Instance = { slot, paint };
+  live.add(instance);
+  if (!subscribed) {
+    subscribed = true;
+    templateEditor.subscribe(syncFrameEditors);
+  }
+  paint();
+}

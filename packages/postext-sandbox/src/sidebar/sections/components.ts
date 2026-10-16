@@ -43,6 +43,7 @@ import { ComicsPanelStylesSection } from './comics/ComicsPanelStylesSection';
 import { ComicsLetteringSection } from './comics/ComicsLetteringSection';
 import { ComicsBalloonStylesSection } from './comics/ComicsBalloonStylesSection';
 import { ComicsCastSection } from './comics/ComicsCastSection';
+import { PageTemplatesSection } from './PageTemplatesSection';
 
 /** Section id → component. Kept apart from the registry so the registry
  *  stays a pure data module. */
@@ -82,6 +83,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'comicsLettering': ComicsLetteringSection,
   'comicsBalloonStyles': ComicsBalloonStylesSection,
   'comicsCast': ComicsCastSection,
+  'pageTemplates': PageTemplatesSection,
   'htmlViewer': HtmlViewerSection,
   'folio': FolioSection,
   'pdfGeneration': PdfGenerationSection,
