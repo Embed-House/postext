@@ -637,6 +637,29 @@ export interface TocBlockInfo {
   /** A part row's title and palette overrides. */
   title?: string;
   palette?: Record<string, string>;
+  /** The block of the contents this row belongs to, when the contents
+   *  keeps its blocks together (`toc.groups`, `:::toc{keep}`, #850). */
+  group?: TocGroupInfo;
+}
+
+/** A row's place in a block of the contents (#850). */
+export interface TocGroupInfo {
+  /** The block's number, unique in the document. */
+  id: number;
+  /** `'head'`: the head row; `'member'`: a row under it (an entry, or a
+   *  part row right above a heading head, which goes with its block);
+   *  `'continuation'`: the head row repeated with the continuation mark,
+   *  set only when the column it opens holds the rest of a cut block
+   *  (else skipped). */
+  role: 'head' | 'member' | 'continuation';
+  /** The block's first row, which carries the keep: the head, or a part
+   *  row right above it. */
+  lead?: true;
+  /** The fewest entries a cut block keeps with its head
+   *  (`minEntriesAfterHead`). */
+  minEntries: number;
+  /** The head's title, for the `tocGroupSplit` warning. */
+  title: string;
 }
 
 /** An index mark (`:index[text]{…}` / `:index{…}`, #165): one term the

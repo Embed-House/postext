@@ -6974,5 +6974,59 @@
         "it": "Controllo del contenuto (configurazione)"
       }
     }
+  },
+  "tocGroupSplit": {
+    "source": "engine",
+    "label": {
+      "en": "Contents block cut between columns",
+      "es": "Bloque del índice partido entre columnas",
+      "ca": "Bloc de l'índex partit entre columnes",
+      "zh": "目录分组跨栏拆分",
+      "ar": "كتلة من جدول المحتويات مقسومة بين عمودين",
+      "ja": "段をまたいで分かれた目次のまとまり",
+      "pt": "Bloco do sumário dividido entre colunas",
+      "fr": "Bloc de la table des matières coupé entre colonnes",
+      "de": "Inhaltsverzeichnis-Block zwischen Spalten geteilt",
+      "it": "Blocco dell'indice diviso tra colonne"
+    },
+    "cause": {
+      "en": "The contents keeps its blocks together (toc.groups.keepTogether, or :::toc{keep=\"part\"}), and one block, a head row with the entries under it, is set in two or more columns or pages: it is taller than a full column, or the column it starts in is short (under a page-span box, beside a float). The engine lists it in doc.contentWarnings with the head's title, the number of columns and the page the block starts on.",
+      "es": "El índice mantiene juntos sus bloques (toc.groups.keepTogether, o :::toc{keep=\"part\"}) y uno de ellos, una fila de cabecera con las entradas que tiene debajo, queda compuesto en dos o más columnas o páginas: es más alto que una columna entera, o la columna donde empieza es corta (bajo un recuadro a toda la página, junto a un flotante). El motor lo anota en doc.contentWarnings con el título de la cabecera, el número de columnas y la página donde empieza el bloque.",
+      "ca": "L'índex manté junts els seus blocs (toc.groups.keepTogether, o :::toc{keep=\"part\"}) i un d'ells, una fila de capçalera amb les entrades que té a sota, queda compost en dues o més columnes o pàgines: és més alt que una columna sencera, o la columna on comença és curta (sota un requadre a tota la pàgina, al costat d'un flotant). El motor ho anota a doc.contentWarnings amb el títol de la capçalera, el nombre de columnes i la pàgina on comença el bloc.",
+      "zh": "目录把各分组排在一起（toc.groups.keepTogether，或:::toc{keep=\"part\"}），但有一组（一行组首及其下的条目）排在了两栏或更多栏、两页或更多页中：它比一整栏还高，或者它开始的那一栏较短（位于通栏框下方或浮动体旁边）。引擎把它连同组首标题、所占栏数和该组开始的页码记在doc.contentWarnings中。",
+      "ar": "يُبقي جدول المحتويات كتله متماسكة (toc.groups.keepTogether، أو :::toc{keep=\"part\"})، لكن إحدى الكتل، وهي صف رأس والمداخل التي تحته، نُضّدت في عمودين أو أكثر أو في صفحتين أو أكثر: فهي أطول من عمود كامل، أو أن العمود الذي تبدأ فيه قصير (تحت إطار يمتد عرض الصفحة، أو بجانب عنصر عائم). يسجّلها المحرّك في doc.contentWarnings مع عنوان الرأس وعدد الأعمدة والصفحة التي تبدأ فيها الكتلة.",
+      "ja": "目次のまとまりを分けない設定（toc.groups.keepTogether、または:::toc{keep=\"part\"}）なのに、まとまりの一つ（見出し行とその下の項目）が2つ以上の段またはページに分かれて組まれています。まとまりが段1つ分より高いか、始まる段が短い（ページ幅のボックスの下、フロートの横など）ためです。エンジンはこれを見出し行の題名、段の数、まとまりが始まるページとともにdoc.contentWarningsに記録します。",
+      "pt": "O sumário mantém juntos os seus blocos (toc.groups.keepTogether, ou :::toc{keep=\"part\"}) e um deles, uma linha de cabeça com as entradas abaixo dela, ficou composto em duas ou mais colunas ou páginas: é mais alto que uma coluna inteira, ou a coluna onde começa é curta (sob uma caixa da largura da página, ao lado de um flutuante). O motor registra isso em doc.contentWarnings com o título da cabeça, o número de colunas e a página onde o bloco começa.",
+      "fr": "La table des matières garde ses blocs entiers (toc.groups.keepTogether, ou :::toc{keep=\"part\"}) et l'un d'eux, une ligne de tête avec les entrées qu'elle coiffe, est composé sur deux colonnes ou pages ou plus : il est plus haut qu'une colonne entière, ou la colonne où il commence est courte (sous un encadré pleine page, à côté d'un flottant). Le moteur le note dans doc.contentWarnings avec le titre de la tête, le nombre de colonnes et la page où commence le bloc.",
+      "de": "Das Inhaltsverzeichnis hält seine Blöcke zusammen (toc.groups.keepTogether oder :::toc{keep=\"part\"}), aber ein Block, eine Kopfzeile mit den Einträgen darunter, steht in zwei oder mehr Spalten oder Seiten: Er ist höher als eine ganze Spalte, oder die Spalte, in der er beginnt, ist kurz (unter einem seitenbreiten Kasten, neben einem Gleitobjekt). Die Engine führt ihn in doc.contentWarnings mit dem Titel der Kopfzeile, der Zahl der Spalten und der Seite, auf der der Block beginnt.",
+      "it": "L'indice tiene uniti i suoi blocchi (toc.groups.keepTogether, oppure :::toc{keep=\"part\"}) e uno di essi, una riga di testa con le voci che stanno sotto, è composto su due o più colonne o pagine: è più alto di una colonna intera, oppure la colonna in cui comincia è corta (sotto un riquadro a tutta pagina, accanto a un oggetto mobile). Il motore lo registra in doc.contentWarnings con il titolo della testa, il numero di colonne e la pagina in cui il blocco comincia."
+    },
+    "fix": {
+      "en": "Make the block fit one column: list fewer levels (:::toc{levels=\"1\"}), head the blocks with a lower level (toc.groups.head: 1 or 2 instead of 'part'), or set the entries smaller or with less space between them. Where the cut is acceptable, leave toc.groups.continuation on, so each column the block goes on in opens with its head row and the continuation mark, and lower minEntriesAfterHead if the head should start lower in its column.",
+      "es": "Haz que el bloque quepa en una columna: lista menos niveles (:::toc{levels=\"1\"}), encabeza los bloques con un nivel inferior (toc.groups.head: 1 o 2 en lugar de 'part') o compón las entradas más pequeñas o con menos espacio entre ellas. Donde el corte sea aceptable, deja activado toc.groups.continuation, para que cada columna por la que sigue el bloque se abra con su fila de cabecera y la marca de continuación, y baja minEntriesAfterHead si la cabecera debe poder empezar más abajo en su columna.",
+      "ca": "Fes que el bloc càpiga en una columna: llista menys nivells (:::toc{levels=\"1\"}), encapçala els blocs amb un nivell inferior (toc.groups.head: 1 o 2 en lloc de 'part') o compon les entrades més petites o amb menys espai entre elles. On el tall sigui acceptable, deixa activat toc.groups.continuation, perquè cada columna per on continua el bloc s'obri amb la seva fila de capçalera i la marca de continuació, i abaixa minEntriesAfterHead si la capçalera ha de poder començar més avall a la seva columna.",
+      "zh": "让该组放得进一栏：少列几级标题（:::toc{levels=\"1\"}），改用更低一级的标题作组首（toc.groups.head设为1或2，而不是'part'），或把条目排得小一些、行距紧一些。可以接受拆分的地方，保持toc.groups.continuation开启，这样该组延续到的每一栏都会以组首行和续接标记开头；如果组首应当可以排在栏中更靠下的位置，调低minEntriesAfterHead。",
+      "ar": "اجعل الكتلة تتسع في عمود واحد: أدرج مستويات أقل (:::toc{levels=\"1\"})، أو اجعل رؤوس الكتل من مستوى أدنى (toc.groups.head على 1 أو 2 بدلًا من 'part')، أو نضّد المداخل بحجم أصغر أو بمسافة أقل بينها. وحيث يُقبل القسم، أبقِ toc.groups.continuation مفعّلًا ليبدأ كل عمود تستمر فيه الكتلة بصف رأسها وعلامة المتابعة، واخفض minEntriesAfterHead إن كان على الرأس أن يبدأ في موضع أدنى من عموده.",
+      "ja": "まとまりを1つの段に収めます。挙げる見出しのレベルを減らす（:::toc{levels=\"1\"}）、より下のレベルの見出しをまとまりの頭にする（toc.groups.headを'part'ではなく1か2にする）、または項目を小さく、あるいは項目間を詰めて組みます。分かれてもよい箇所では、toc.groups.continuationを有効のままにしておけば、まとまりが続く各段の先頭に見出し行と継続の印が入ります。見出し行が段のもっと下から始まってもよいなら、minEntriesAfterHeadを下げます。",
+      "pt": "Faça o bloco caber em uma coluna: liste menos níveis (:::toc{levels=\"1\"}), encabece os blocos com um nível inferior (toc.groups.head: 1 ou 2 em vez de 'part') ou componha as entradas menores ou com menos espaço entre elas. Onde a divisão for aceitável, deixe toc.groups.continuation ativado, para que cada coluna em que o bloco continua se abra com a sua linha de cabeça e a marca de continuação, e diminua minEntriesAfterHead se a cabeça puder começar mais abaixo na coluna.",
+      "fr": "Faites tenir le bloc dans une colonne : listez moins de niveaux (:::toc{levels=\"1\"}), donnez aux blocs une tête de niveau inférieur (toc.groups.head : 1 ou 2 au lieu de 'part'), ou composez les entrées plus petites ou plus serrées. Là où la coupure est acceptable, laissez toc.groups.continuation activé, pour que chaque colonne où le bloc se poursuit s'ouvre sur sa ligne de tête et la marque de suite, et baissez minEntriesAfterHead si la tête peut commencer plus bas dans sa colonne.",
+      "de": "Bringen Sie den Block in einer Spalte unter: weniger Ebenen auflisten (:::toc{levels=\"1\"}), die Blöcke mit einer tieferen Ebene beginnen lassen (toc.groups.head: 1 oder 2 statt 'part') oder die Einträge kleiner oder enger setzen. Wo die Teilung vertretbar ist, lassen Sie toc.groups.continuation eingeschaltet, damit jede Spalte, in der der Block weitergeht, mit seiner Kopfzeile und dem Fortsetzungsvermerk beginnt, und senken Sie minEntriesAfterHead, wenn die Kopfzeile weiter unten in ihrer Spalte beginnen darf.",
+      "it": "Fai stare il blocco in una colonna: elenca meno livelli (:::toc{levels=\"1\"}), metti in testa ai blocchi un livello inferiore (toc.groups.head: 1 o 2 invece di 'part') oppure componi le voci più piccole o più strette. Dove il taglio è accettabile, lascia attivo toc.groups.continuation, così ogni colonna in cui il blocco prosegue si apre con la sua riga di testa e il segno di continuazione, e abbassa minEntriesAfterHead se la testa può cominciare più in basso nella colonna."
+    },
+    "docs": {
+      "slug": "configuration-notes-references",
+      "heading": {
+        "en": "Table of contents",
+        "es": "Índice de contenidos",
+        "ca": "Índex de continguts",
+        "zh": "目录",
+        "ar": "جدول المحتويات",
+        "ja": "目次",
+        "pt": "Sumário",
+        "fr": "Table des matières",
+        "de": "Inhaltsverzeichnis",
+        "it": "Indice dei contenuti"
+      }
+    }
   }
 }

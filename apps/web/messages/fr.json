@@ -2386,6 +2386,8 @@
     "warningsUnplacedDetail": "Il attendait encore un emplacement quand la mise en page s’est terminée ; il ne figure donc sur aucune page : les pages ouvertes pour lui ne peuvent pas le recevoir (un encadré latéral alors que les pages n’ont pas de colonne latérale, par exemple). Changez sa largeur ou son placement.",
     "warningsShortListSplitTitle": "Liste courte coupée entre colonnes",
     "warningsShortListSplitDetail": "page __page__ · une liste de __items__ éléments est coupée entre deux colonnes ou deux pages. Avec la règle sur Éviter, aucune colonne ne pouvait la contenir entière.",
+    "warningsTocGroupSplitTitle": "Bloc de la table des matières coupé entre colonnes",
+    "warningsTocGroupSplitDetail": "page __page__ · le bloc « __title__ » de la table des matières s’étend sur __columns__ colonnes : il est plus haut qu’une colonne, ou sa colonne est trop courte. Listez moins de niveaux, donnez aux blocs une tête de niveau inférieur ou composez les entrées plus petites.",
     "warningsOpenerFloatTitle": "Flottant sur une page d’ouverture",
     "warningsOpenerFloatDetail": "page __page__ · il se trouve sur la page où s’ouvre un chapitre ou une partie. Avec la règle sur Éviter, il prend le premier emplacement libre après cette page.",
     "warningsTextWrapTooNarrow": "le texte à côté serait plus étroit que la largeur minimale du texte habillé ; il occupe toute sa bande.",

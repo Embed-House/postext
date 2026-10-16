@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Altura da linha e o espaço em volta dela. <code>em</code> é o corpo do texto, então a linha padrão tem o dobro do corpo de altura, e não duas linhas do texto: com um texto em 9,5/13,5 pt, ela tem 19 pt. Para uma linha de duas linhas do texto, dê a altura em <code>pt</code> (<code>27pt</code> nesse caso).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Mantém cada bloco do sumário em uma só coluna e página: uma linha de cabeça (veja <code>groups.head</code>) e todas as entradas abaixo dela, até a próxima cabeça de mesma hierarquia ou de hierarquia superior. Um bloco que não cabe no espaço que resta na sua coluna abre a coluna ou a página seguinte, levando junto a sua linha de cabeça, e a coluna que ele deixa termina curta. Os títulos logo acima do sumário (o próprio título dele) vão com o primeiro bloco quando ele muda de lugar. Um bloco mais alto que uma coluna inteira é dividido: começa onde cabem a cabeça e <code>groups.minEntriesAfterHead</code> entradas, e cada coluna em que ele continua abre de novo com a sua linha de cabeça (<code>groups.continuation</code>). Todo bloco dividido entre colunas é relatado como um aviso <code>tocGroupSplit</code> (veja <a href="/pt/docs/configuration-programmatic-usage#avisos-no-documento">Avisos no documento</a>). Um <code>:::toc{'{keep="…"}'}</code> substitui esse valor em um sumário específico (veja <a href="/pt/docs/document-format-directives#toc">Formato do documento</a>). Desde o postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>O que abre um bloco: uma linha de parte (<code>'part'</code>: uma parte e seus capítulos) ou a entrada de um nível de título (<code>1</code>: um capítulo e suas seções; para as seções aparecerem, <code>levels</code> ou <code>:::toc{'{levels="1-2"}'}</code> precisam listá-las). Com um nível de título, a linha de parte logo acima da cabeça vai com o bloco, então uma linha de parte nunca fica sozinha no pé de uma coluna; as entradas de hierarquia superior à da cabeça (um capítulo quando a cabeça é <code>2</code>) ficam avulsas. Uma cabeça sem entradas abaixo dela não forma bloco. Qualquer outro valor é lido como <code>'part'</code> e relatado.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>O mínimo de entradas que um bloco dividido mantém com a sua linha de cabeça: quando a cabeça e essas entradas não cabem no espaço que resta, o bloco começa na coluna seguinte. Com <code>0</code>, uma cabeça pode fechar uma coluna sozinha.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>object</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>A linha de cabeça repetida no alto de cada coluna em que um bloco dividido continua: o número e o título, seguidos de <code>mark</code>, em itálico, sem linha de pontos nem número de página (numa linha de parte, a marca faz parte de <code>{'{titleText}'}</code>, composta com a tipografia do próprio design, e <code>{'{pageNumber}'}</code> não imprime nada). Por padrão, <code>mark</code> é o sufixo de tabela continuada do idioma do documento: <em>(cont.)</em> em inglês, espanhol, catalão e português, <em>(suite)</em> em francês, <em>(Forts.)</em> em alemão, <em>(segue)</em> em italiano, <em>（续）</em> em chinês, <em>（続き）</em> em japonês e <em>(تابع)</em> em árabe. Uma marca que começa com um caractere de largura total fica colada ao título. A repetição fica fora da navegação do EPUB e do sumário do EPUB de layout fluido. <code>enabled: false</code> divide o bloco sem repetir a linha de cabeça.</td>
+    </tr>
   </tbody>
 </table>
 

@@ -215,6 +215,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>La llista es parteix on s'acaba la columna.</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>Un bloc de l'índex que ha d'anar junt (<code>toc.groups.keepTogether</code>, <code>:::toc{'{keep="…"}'}</code>), encapçalat per <code>title</code> i compost en <code>columns</code> columnes: és més alt que una columna sencera, o la columna on comença és curta (sota un bloc d'amplada de pàgina, al costat d'un flotant). Un per bloc; assenyala la directiva <code>:::toc</code>, amb la pàgina on comença el bloc. Per eliminar-lo, llista menys nivells (<code>levels="1"</code>), encapçala els blocs amb un nivell inferior (<code>toc.groups.head: 2</code>) o fes les entrades més petites o més atapeïdes. Des de postext 1.34.</td>
+      <td>El bloc es parteix; amb <code>toc.groups.continuation</code>, cada columna on continua s'obre amb la seva fila de capçalera i la marca de continuació.</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td>Un flotant compost en una pàgina d'obertura amb <code>layout.openerFloats: 'warn'</code>: una figura, una taula o una tira (<code>resourceId</code>), o una caixa flotant. Un per flotant; assenyala el bloc que el cita (o la caixa), amb la seva pàgina. Des de postext 1.28.</td>
       <td>El flotant queda a la pàgina d'obertura; <code>'avoid'</code> el porta al primer buit després d'aquesta.</td>

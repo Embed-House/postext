@@ -215,6 +215,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die Liste wird geteilt, wo die Spalte endet.</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>Ein zusammenzuhaltender Block des Inhaltsverzeichnisses (<code>toc.groups.keepTogether</code>, <code>:::toc{'{keep="…"}'}</code>), angeführt von <code>title</code>, gesetzt in <code>columns</code> Spalten: Er ist höher als eine ganze Spalte, oder die Spalte, in der er beginnt, ist kurz (unter einem Kasten über die ganze Seitenbreite, neben einem Gleitobjekt). Eine pro Block; verweist auf die Direktive <code>:::toc</code>, mit der Seite, auf der der Block beginnt. Um sie zu beheben, führen Sie weniger Ebenen auf (<code>levels="1"</code>), lassen Sie die Blöcke von einer tieferen Ebene anführen (<code>toc.groups.head: 2</code>) oder setzen Sie die Einträge kleiner oder enger. Seit postext 1.34.</td>
+      <td>Der Block wird geteilt; mit <code>toc.groups.continuation</code> beginnt jede Spalte, in der er weiterläuft, mit seiner Kopfzeile und der Fortsetzungsmarke.</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td>Ein Gleitobjekt, das unter <code>layout.openerFloats: 'warn'</code> auf einer Auftaktseite steht: eine Abbildung, eine Tabelle oder ein Streifen (<code>resourceId</code>) oder ein gleitender Kasten. Eine pro Gleitobjekt; verweist auf den Block, der es zitiert (auf den Kasten), mit seiner Seite. Seit postext 1.28.</td>
       <td>Das Gleitobjekt steht auf der Auftaktseite; <code>'avoid'</code> verschiebt es auf den ersten Platz danach.</td>

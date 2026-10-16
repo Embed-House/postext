@@ -582,6 +582,14 @@ O texto simples do poema mantém os hemistíquios e os bayts separados (uma tabu
 :::toc
 ```
 
+Dois atributos mudam o que um sumário específico imprime, independentemente da configuração. `levels` lista os níveis de título que ele inclui: um intervalo (`levels="1-2"`), um só nível (`levels="2"`) ou uma lista (`levels="1,3"`); um nível ao qual `toc.levels` não dá estilo usa o estilo do nível mais próximo acima dele. `keep` mantém cada bloco do sumário em uma só coluna e página, como faz [`toc.groups.keepTogether`](/pt/docs/configuration-notes-references#sumário): `keep="part"` mantém uma linha de parte com os seus capítulos, `keep="1"` (até `"6"`) um título desse nível com as entradas abaixo dele, e `keep="none"` desliga o agrupamento configurado. Um bloco que não cabe passa inteiro para a coluna ou a página seguinte; um bloco mais alto que uma coluna é dividido, e a coluna em que ele continua abre de novo com a sua linha de cabeça, seguida de uma marca de continuação como *(cont.)*.
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
 Os números de página são os que o documento realmente imprime. Um documento diagramado sozinho é diagramado de novo com os rótulos da passada anterior até que eles parem de mudar; com a numeração reiniciando depois dos elementos pré-textuais (a receita de `:::numbering` acima), uma passada extra resolve. Um capítulo diagramado sozinho (as visualizações do Sandbox) recebe, em vez disso, o esquema do livro inteiro da aplicação que o hospeda. Veja [Sumário](/pt/docs/configuration-notes-references#sumário) na referência de configuração.
 
 ### `:::index`

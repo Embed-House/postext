@@ -3090,6 +3090,8 @@
     "warningsUnplacedDetail": "Seguía esperando un hueco cuando terminó la composición, así que no está en ninguna página: las páginas abiertas para él no pueden acogerlo (un recuadro lateral donde las páginas no tienen columna lateral, por ejemplo). Cambia su ancho (span) o su colocación.",
     "warningsShortListSplitTitle": "Lista corta partida entre columnas",
     "warningsShortListSplitDetail": "página __page__ · una lista de __items__ ítems queda partida entre dos columnas o páginas. Con la regla en Evitar, ninguna columna podía acogerla entera.",
+    "warningsTocGroupSplitTitle": "Bloque del índice partido entre columnas",
+    "warningsTocGroupSplitDetail": "página __page__ · el bloque «__title__» del índice ocupa __columns__ columnas: es más alto que una columna o su columna es demasiado corta. Lista menos niveles, encabeza los bloques con un nivel inferior o compón las entradas más pequeñas.",
     "warningsOpenerFloatTitle": "Flotante en una página de apertura",
     "warningsOpenerFloatDetail": "página __page__ · está en la página que abre un capítulo o una parte. Con la regla en Evitar pasa al primer hueco después de esa página.",
     "warningsTextWrapTooNarrow": "el texto de al lado quedaría más estrecho que el mínimo; ocupa su banda entera.",

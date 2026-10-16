@@ -16,8 +16,10 @@ import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import { fitLeader } from '../measure/leader';
 import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
 import { measuresRunsAsPainted } from '../design/bidiText';
-import type { ContentBlock, InlineSpan, TocBlockInfo } from '../parse';
-import type { OutlineEntry, ResolvedTocEntryStyleConfig } from '../types';
+import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../parse';
+import { suffixJoiner } from '../parse/inlineFormatting';
+import { parseTocGroupHead } from '../defaults/toc';
+import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types';
 import type { VDTLine, VDTLineSegment } from '../vdt';
 import { dimensionToPx } from '../units';
 import { buildFontString, measureRichBlock } from '../measure';
@@ -51,17 +53,66 @@ export function expandTocDirectives(
     return blocks as ContentBlock[];
   }
   const out: ContentBlock[] = [];
+  // Block numbers run on across the contents of the document (#850).
+  const groupIds = { next: 0 };
   for (const b of blocks) {
     if (b.type !== 'directive' || b.directiveName !== 'toc') { out.push(b); continue; }
-    out.push(...tocBlocksFor(b, outline, resolved));
+    out.push(...tocBlocksFor(b, outline, resolved, groupIds));
   }
   return out;
 }
 
-function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[], resolved: ResolvedConfig): ContentBlock[] {
+/** The heading levels a `:::toc{levels="…"}` lists (#850): a range
+ *  (`"1-2"`), a single level (`"2"`) or a list of either (`"1,3"`), levels
+ *  1 to 6. Undefined when the attribute is absent or names no level: the
+ *  levels of `toc.levels` are listed. */
+export function parseTocLevelsAttr(value: string | undefined): Set<number> | undefined {
+  if (value === undefined) return undefined;
+  const out = new Set<number>();
+  for (const piece of value.split(/[,\s]+/u)) {
+    const m = /^([1-6])(?:\s*[-–]\s*([1-6]))?$/u.exec(piece.trim());
+    if (!m) continue;
+    const a = Number(m[1]);
+    const b = m[2] !== undefined ? Number(m[2]) : a;
+    for (let l = Math.min(a, b); l <= Math.max(a, b); l++) out.add(l);
+  }
+  return out.size > 0 ? out : undefined;
+}
+
+/** What heads the blocks a contents keeps together (#850): its
+ *  directive's `keep` (`"part"`, `"1"`…`"6"`, `"none"`), else
+ *  `toc.groups.head` when `toc.groups.keepTogether` is on. Undefined: the
+ *  contents keeps nothing together. */
+export function tocKeepOf(attrs: Readonly<Record<string, string>> | undefined, resolved: ResolvedConfig): TocGroupHead | undefined {
+  const groups = resolved.toc.groups;
+  const keep = attrs?.keep?.trim().toLowerCase();
+  if (keep !== undefined && keep.length > 0) {
+    if (keep === 'none' || keep === 'false' || keep === 'off') return undefined;
+    return parseTocGroupHead(keep) ?? (groups.keepTogether ? groups.head : undefined);
+  }
+  return groups.keepTogether ? groups.head : undefined;
+}
+
+/** One row of an expanded contents, before its blocks are grouped. */
+interface TocRow {
+  block: ContentBlock;
+  /** `0` for a part row, the heading level for an entry; undefined for a
+   *  page break between parts. */
+  rank?: number;
+}
+
+function tocBlocksFor(
+  directive: ContentBlock,
+  outline: readonly OutlineEntry[],
+  resolved: ResolvedConfig,
+  groupIds: { next: number },
+): ContentBlock[] {
   const toc = resolved.toc;
-  const listedLevels = new Set(toc.levels.map((l) => l.level));
-  const out: ContentBlock[] = [];
+  const attrs = directive.directiveAttrs;
+  // `levels="1-2"` lists those heading levels, each in its own style when
+  // `toc.levels` gives one (the nearest level above it otherwise).
+  const listedLevels = parseTocLevelsAttr(attrs?.levels) ?? new Set(toc.levels.map((l) => l.level));
+  const rows: TocRow[] = [];
   const base = { sourceStart: directive.sourceStart, sourceEnd: directive.sourceEnd };
   let partRows = 0;
   // The numbers of each level's numbered entries, for the number column.
@@ -78,7 +129,7 @@ function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[],
       if (!toc.parts.enabled) continue;
       // Every part but the first opens a fresh page of the contents.
       if (toc.parts.breakBefore && partRows > 0) {
-        out.push({ ...base, type: 'directive', text: '', spans: [], sourceMap: [], directiveName: 'pagebreak', directiveAttrs: {} });
+        rows.push({ block: { ...base, type: 'directive', text: '', spans: [], sourceMap: [], directiveName: 'pagebreak', directiveAttrs: {} } });
       }
       partRows++;
       const info: TocBlockInfo = {
@@ -87,7 +138,7 @@ function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[],
         ...(entry.pageIndex !== undefined ? { pageIndex: entry.pageIndex } : {}),
         ...(entry.palette ? { palette: entry.palette } : {}),
       };
-      out.push({ ...base, type: 'paragraph', text: '', spans: [], sourceMap: [], toc: info });
+      rows.push({ block: { ...base, type: 'paragraph', text: '', spans: [], sourceMap: [], toc: info }, rank: 0 });
       continue;
     }
     if (!listedLevels.has(entry.level)) continue;
@@ -105,9 +156,95 @@ function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[],
     };
     // Every character maps to the directive line, so a click on the
     // contents lands on `:::toc`.
-    out.push({ ...base, type: 'paragraph', text, spans, sourceMap: new Array<number>(text.length).fill(directive.sourceStart), toc: info });
+    rows.push({ block: { ...base, type: 'paragraph', text, spans, sourceMap: new Array<number>(text.length).fill(directive.sourceStart), toc: info }, rank: entry.level });
+  }
+  const keep = tocKeepOf(attrs, resolved);
+  return keep === undefined ? rows.map((r) => r.block) : groupTocRows(rows, keep === 'part' ? 0 : keep, resolved, groupIds);
+}
+
+/**
+ * The rows of a contents with its blocks marked (#850): a head row (rank
+ * `head`: `0` a part row, else an entry of that level) and every row under
+ * it down to the next row of the same or a higher rank. A part row right
+ * above a heading head goes with its block, as its first row. With
+ * `toc.groups.continuation.enabled`, a repeat of the head row with the
+ * continuation mark stands before every entry under it: the layout sets
+ * it only where a cut block goes on in a fresh column, and skips it
+ * everywhere else. A head with nothing under it makes no block.
+ */
+function groupTocRows(rows: readonly TocRow[], head: number, resolved: ResolvedConfig, groupIds: { next: number }): ContentBlock[] {
+  const groups = resolved.toc.groups;
+  // Each block: the index of its first row, its head row, its last row.
+  const spans: { first: number; head: number; last: number }[] = [];
+  let open: { first: number; head: number; last: number } | undefined;
+  for (let i = 0; i < rows.length; i++) {
+    const rank = rows[i]!.rank;
+    if (rank === undefined) continue;
+    if (rank === head) {
+      if (open && open.last > open.head) spans.push(open);
+      const prev = i > 0 ? rows[i - 1] : undefined;
+      // A part row right above a heading head opens the block with it.
+      const lead = head > 0 && prev?.rank === 0 ? i - 1 : i;
+      open = { first: lead, head: i, last: i };
+    } else if (rank < head) {
+      if (open && open.last > open.head) spans.push(open);
+      open = undefined;
+    } else if (open) {
+      open.last = i;
+    }
+  }
+  if (open && open.last > open.head) spans.push(open);
+  const byRow = new Map<number, { id: number; span: { first: number; head: number; last: number } }>();
+  for (const span of spans) {
+    const id = groupIds.next++;
+    for (let i = span.first; i <= span.last; i++) byRow.set(i, { id, span });
+  }
+  const mark = groups.continuation.mark.trim();
+  const out: ContentBlock[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]!;
+    const at = byRow.get(i);
+    if (!at || !row.block.toc) { out.push(row.block); continue; }
+    const headBlock = rows[at.span.head]!.block;
+    const title = headBlock.toc!.kind === 'part' ? (headBlock.toc!.title ?? '') : headBlock.text;
+    const group: TocGroupInfo = {
+      id: at.id,
+      role: i === at.span.head ? 'head' : 'member',
+      ...(i === at.span.first ? { lead: true as const } : {}),
+      minEntries: groups.minEntriesAfterHead,
+      title,
+    };
+    // The repeated head row, before each entry under the head.
+    if (groups.continuation.enabled && i > at.span.head && row.rank !== 0) {
+      out.push(continuationRow(headBlock, mark, { ...group, role: 'continuation' }));
+    }
+    out.push({ ...row.block, toc: { ...row.block.toc, group } });
   }
   return out;
+}
+
+/** The head row `head` repeated at the top of the column a cut block goes
+ *  on in: its number and title, then `mark` (in italics, after a space or
+ *  solid after a wide character), with no leader and no page label. */
+function continuationRow(head: ContentBlock, mark: string, group: TocGroupInfo): ContentBlock {
+  const info = head.toc!;
+  const rest: TocBlockInfo = { ...info };
+  delete rest.pageLabel;
+  delete rest.subtitle;
+  if (info.kind === 'part') {
+    const title = info.title ?? '';
+    const joined = mark.length === 0 ? title : `${title}${title.length > 0 ? suffixJoiner(mark) : ''}${mark}`;
+    return { ...head, toc: { ...rest, title: joined, group } };
+  }
+  if (mark.length === 0) return { ...head, toc: { ...rest, group } };
+  const tail = `${head.text.length > 0 ? suffixJoiner(mark) : ''}${mark}`;
+  return {
+    ...head,
+    text: head.text + tail,
+    spans: [...head.spans, { text: tail, bold: false, italic: true }],
+    sourceMap: [...head.sourceMap, ...new Array<number>(tail.length).fill(head.sourceStart)],
+    toc: { ...rest, group },
+  };
 }
 
 /**
@@ -226,7 +363,11 @@ export function measureTocBlock(
   }
 
   // --- Entry -----------------------------------------------------------
-  const level = toc.levels.find((l) => l.level === info.level) ?? toc.levels[0]!;
+  // A level `toc.levels` does not style (one a `levels="1-3"` lists) takes
+  // the style of the nearest level above it.
+  const level = toc.levels.find((l) => l.level === info.level)
+    ?? toc.levels.filter((l) => l.level < info.level).sort((a, b) => b.level - a.level)[0]
+    ?? toc.levels[0]!;
   const entry: ResolvedTocEntryStyleConfig = info.numbered ? level : { ...level, ...toc.unnumbered };
   const fontSizePx = dimensionToPx(entry.fontSize, dpi);
   const lineHeightPx = lineHeightPxOf(entry.lineHeight, fontSizePx, dpi);

@@ -711,6 +711,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Alçada de la fila i espai al seu voltant. <code>em</code> és el cos del text, així que la fila per defecte fa el doble del cos, no dues línies de text: amb un text de 9,5/13,5 pt fa 19 pt. Per a una fila de dues línies de text, dona l'alçada en <code>pt</code> (<code>27pt</code> en aquest cas).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Manté cada bloc de l'índex en una sola columna i pàgina: una fila de capçalera (vegeu <code>groups.head</code>) i totes les entrades que en depenen, fins a la capçalera següent del mateix rang o d'un de superior. Un bloc que no cap a l'espai que queda a la seva columna passa a la columna o la pàgina següent amb la seva fila de capçalera, i la columna que deixa acaba curta. Els encapçalaments que hi ha just damunt de l'índex (el seu propi títol) se'n van amb el primer bloc quan aquest es mou. Un bloc més alt que una columna sencera es parteix: comença on hi caben la capçalera i <code>groups.minEntriesAfterHead</code> entrades, i cada columna on continua s'obre de nou amb la seva fila de capçalera (<code>groups.continuation</code>). Cada bloc partit entre columnes es notifica amb un avís <code>tocGroupSplit</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#avisos-del-document">Avisos del document</a>). Un <code>:::toc{'{keep="…"}'}</code> el substitueix en un índex concret (vegeu <a href="/ca/docs/document-format-directives#toc">Format del document</a>). Des de postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Què encapçala un bloc: una fila de part (<code>'part'</code>: una part i els seus capítols) o l'entrada d'un nivell d'encapçalament (<code>1</code>: un capítol i les seves seccions; perquè hi surtin les seccions, <code>levels</code> o <code>:::toc{'{levels="1-2"}'}</code> les han de llistar). Amb un nivell d'encapçalament, la fila de part que hi ha just damunt de la capçalera va amb el seu bloc, de manera que una fila de part mai no queda sola al peu d'una columna; les entrades de rang superior al de la capçalera (un capítol quan la capçalera és <code>2</code>) van soltes. Una capçalera sense entrades a sota no forma bloc. Qualsevol altre valor es llegeix com <code>'part'</code> i es notifica.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>El mínim d'entrades que un bloc partit manté amb la seva fila de capçalera: si la capçalera i aquestes entrades no hi caben a l'espai que queda, el bloc comença a la columna següent. Amb <code>0</code>, una capçalera pot tancar sola una columna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>objecte</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La fila de capçalera que es repeteix al principi de cada columna on continua un bloc partit: el número i el títol seguits de <code>mark</code>, en cursiva, sense línia de punts ni número de pàgina (en una fila de part, la marca forma part de <code>{'{titleText}'}</code>, composta amb la tipografia del mateix disseny, i <code>{'{pageNumber}'}</code> no imprimeix res). Per defecte, <code>mark</code> és el sufix de taula continuada de la llengua del document: <em>(cont.)</em> en anglès, castellà, català i portuguès, <em>(suite)</em> en francès, <em>(Forts.)</em> en alemany, <em>(segue)</em> en italià, <em>（续）</em> en xinès, <em>（続き）</em> en japonès i <em>(تابع)</em> en àrab. Una marca que comença per un caràcter d'amplada completa va enganxada al títol. La repetició queda fora de la navegació de l'EPUB i de l'índex de l'EPUB de maquetació fluida. <code>enabled: false</code> parteix el bloc sense repetir la capçalera.</td>
+    </tr>
   </tbody>
 </table>
 

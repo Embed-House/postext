@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Höhe der Zeile und der Abstand um sie herum. <code>em</code> ist die Grundschriftgröße, die Standardzeile ist also doppelt so hoch wie die Grundschrift, nicht zwei Zeilen des Fließtexts: Bei einem Fließtext von 9,5/13,5 pt sind das 19 pt. Für eine Zeile von zwei Fließtextzeilen geben Sie die Höhe in <code>pt</code> an (dort <code>27pt</code>).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Hält jeden Block des Inhaltsverzeichnisses in einer Spalte und auf einer Seite zusammen: eine Kopfzeile (siehe <code>groups.head</code>) und alle Einträge darunter bis zum nächsten Kopf gleichen oder höheren Rangs. Ein Block, der nicht in den Rest seiner Spalte passt, beginnt mit seiner Kopfzeile in der nächsten Spalte oder auf der nächsten Seite, und die Spalte, die er verlässt, endet kurz. Die Überschriften direkt über dem Verzeichnis (sein eigener Titel) rücken mit dem ersten Block weiter, wenn dieser weiterrückt. Ein Block, der höher ist als eine ganze Spalte, wird geteilt: Er beginnt dort, wo sein Kopf und <code>groups.minEntriesAfterHead</code> Einträge Platz haben, und jede Spalte, in der er weiterläuft, beginnt erneut mit seiner Kopfzeile (<code>groups.continuation</code>). Jeder zwischen Spalten geteilte Block wird als Warnung <code>tocGroupSplit</code> gemeldet (siehe <a href="/de/docs/configuration-programmatic-usage#warnungen-im-dokument">Warnungen im Dokument</a>). Ein <code>:::toc{'{keep="…"}'}</code> setzt die Einstellung für ein einzelnes Verzeichnis außer Kraft (siehe <a href="/de/docs/document-format-directives#toc">Dokumentformat</a>). Seit postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Was einen Block anführt: eine Teilzeile (<code>'part'</code>: ein Teil und seine Kapitel) oder der Eintrag einer Überschriftenebene (<code>1</code>: ein Kapitel und seine Abschnitte; damit die Abschnitte erscheinen, müssen <code>levels</code> oder <code>:::toc{'{levels="1-2"}'}</code> sie aufführen). Bei einer Überschriftenebene geht eine Teilzeile direkt über dem Kopf mit ihrem Block mit, sodass eine Teilzeile nie allein am Fuß einer Spalte steht; Einträge höheren Rangs als der Kopf (ein Kapitel, wenn der Kopf <code>2</code> ist) stehen für sich. Ein Kopf ohne Einträge darunter bildet keinen Block. Jeder andere Wert wird als <code>'part'</code> gelesen und gemeldet.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Die kleinste Zahl von Einträgen, die ein geteilter Block bei seiner Kopfzeile behält: Passen der Kopf und so viele Einträge nicht in den verbleibenden Platz, beginnt der Block in der nächsten Spalte. Mit <code>0</code> darf ein Kopf allein eine Spalte beschließen.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>Objekt</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>Die Kopfzeile, die oben in jeder Spalte wiederholt wird, in der ein geteilter Block weiterläuft: Nummer und Titel, gefolgt von <code>mark</code>, kursiv, ohne Punktlinie und ohne Seitenzahl (in einer Teilzeile ist die Marke Teil von <code>{'{titleText}'}</code>, gesetzt in der Typografie der Gestaltung selbst, und <code>{'{pageNumber}'}</code> druckt nichts). Standardmäßig ist <code>mark</code> das Suffix für fortgesetzte Tabellen in der Sprache des Dokuments: <em>(cont.)</em> im Englischen, Spanischen, Katalanischen und Portugiesischen, <em>(suite)</em> im Französischen, <em>(Forts.)</em> im Deutschen, <em>(segue)</em> im Italienischen, <em>（续）</em> im Chinesischen, <em>（続き）</em> im Japanischen, <em>(تابع)</em> im Arabischen. Eine Marke, die mit einem Zeichen voller Breite beginnt, wird ohne Abstand an den Titel gesetzt. Die Wiederholung fehlt in der EPUB-Navigation und im Inhaltsverzeichnis des EPUB mit fließendem Layout. <code>enabled: false</code> teilt den Block, ohne die Kopfzeile zu wiederholen.</td>
+    </tr>
   </tbody>
 </table>
 

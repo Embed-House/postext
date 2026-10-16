@@ -1616,14 +1616,19 @@ export interface VDTBlock {
   notRunningChapter?: boolean;
   /** Present on the part row of an expanded `:::toc`: the row's design is
    *  laid out from `toc.parts.design` with these values (see
-   *  `buildHeadersAndFooters`), replacing the block's (empty) line. */
-  tocPart?: { number: string; title: string; pageLabel: string; palette?: Record<string, string>; pageIndex?: number };
+   *  `buildHeadersAndFooters`), replacing the block's (empty) line.
+   *  `continued`: the head row of a cut contents block repeated at the top
+   *  of the column it goes on in (`toc.groups.continuation`, #850), its
+   *  title followed by the continuation mark; a reading of the contents
+   *  (EPUB navigation) leaves it out. */
+  tocPart?: { number: string; title: string; pageLabel: string; palette?: Record<string, string>; pageIndex?: number; continued?: true };
   /** Present on an entry of an expanded `:::toc`, with the book page index
    *  the entry points at once known (`OutlineEntry.pageIndex`): renderers
    *  make the row a link to it. The contents keep their own rhythm:
    *  entries and part rows neither snap to the baseline grid nor serve as
-   *  column-balancing stretch points. */
-  tocEntry?: { pageIndex?: number };
+   *  column-balancing stretch points. `continued`: a repeated head row (see
+   *  `tocPart`). */
+  tocEntry?: { pageIndex?: number; continued?: true };
   numberPrefix?: string;
   /** What joins {@link numberPrefix} to the title
    *  (`HeadingLevelConfig.numberSeparator`), when it is not one space:
@@ -2980,6 +2985,14 @@ export type ContentWarning = ContentWarningBase & (
    *  list, with the range of the list and the page of its first item.
    *  Found by the layout. */
   | { kind: 'shortListSplit'; items: number }
+  /** `tocGroupSplit` (#850): a block of the contents kept together
+   *  (`toc.groups.keepTogether`, `:::toc{keep}`), headed by `title`, set in
+   *  `columns` columns: taller than a full column, or in a column too short
+   *  to hold it (under a page-span box, beside a float). With
+   *  `toc.groups.continuation` the column it goes on in opens with its head
+   *  row again. One per block, with the range of its `:::toc` and the page
+   *  it starts on. Found by the layout. */
+  | { kind: 'tocGroupSplit'; title: string; columns: number }
   /** `openerFloat` (#749): a float set on an opener page (the page a part
    *  or a heading's own break opens, the first page of a document that
    *  starts with a heading) under `layout.openerFloats: 'warn'`: a figure,

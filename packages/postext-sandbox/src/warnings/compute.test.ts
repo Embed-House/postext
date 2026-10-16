@@ -660,6 +660,25 @@ describe('engine content warnings', () => {
       .filter((w) => w.payload.kind === 'openerFloat')).toEqual([]);
   });
 
+  it('reports a contents block cut between columns, by its book page (#850)', () => {
+    const g = globalThis as unknown as { OffscreenCanvas?: unknown };
+    g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };
+    const pt = (value: number) => ({ value, unit: 'pt' as const });
+    const config: PostextConfig = {
+      page: { width: pt(360), height: pt(260), margins: { top: pt(18), bottom: pt(18), left: pt(18), right: pt(18) } },
+      layout: { layoutType: 'single' },
+      headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] },
+      headingStyles: [{ id: 'front', numbered: false }],
+    };
+    const chapters = (title: string, n: number) => Array.from({ length: n }, (_, i) => `# ${title} ${i + 1}\n\nText.`).join('\n\n');
+    const md = `# Contents {style="front" toc="false"}\n\n:::toc{keep="part"}\n\n:::part{number="I" title="Long"}\n:::\n\n${chapters('Chapter', 30)}`;
+    const doc = buildDocument({ markdown: md }, config);
+    const cut = computeWarnings({ markdown: md, config, doc }).filter((w) => w.payload.kind === 'tocGroupSplit');
+    expect(cut.map((w) => w.payload)).toEqual([{ kind: 'tocGroupSplit', page: 1, title: 'Long', columns: 2 }]);
+    expect(md.slice(cut[0]!.sourceStart, cut[0]!.sourceEnd)).toBe(':::toc{keep="part"}');
+    expect(warningCategory('tocGroupSplit')).toBe('typesetting');
+  });
+
   it('flags an image the previews cannot read, unless storage itself is out', () => {
     const md = 'Look :ref{id="photo"}.';
     const found = computeWarnings({ markdown: md, config: {}, doc: null, resources: [photo], unavailableImages: new Set(['file-photo']) })

@@ -23,6 +23,7 @@ export type {
   ParseIssue,
   ContentBlock,
   TocBlockInfo,
+  TocGroupInfo,
   IndexBlockInfo,
   IndexMark,
   AnchorMark,

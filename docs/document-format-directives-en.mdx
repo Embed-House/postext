@@ -582,6 +582,14 @@ The plain text of the poem keeps the hemistichs and bayts apart (a tab and a lin
 :::toc
 ```
 
+Two attributes change what one contents prints, whatever the configuration says. `levels` lists the heading levels it names: a range (`levels="1-2"`), one level (`levels="2"`) or a list (`levels="1,3"`); a level `toc.levels` gives no style takes the style of the nearest level above it. `keep` keeps each block of the contents on one column and page, as [`toc.groups.keepTogether`](/en/docs/configuration-notes-references#table-of-contents) does: `keep="part"` keeps a part row with its chapters, `keep="1"` (to `"6"`) a heading of that level with the entries under it, and `keep="none"` turns the configured keep off. A block that does not fit moves whole to the next column or page; one taller than a column is cut, and the column it goes on in opens with its head row again, followed by a continuation mark such as *(cont.)*.
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
 The page numbers are the ones the document actually prints. A document laid out on its own is laid out again with the labels of the previous pass until they no longer move — with the numbering restarting after the front matter (the `:::numbering` recipe above) one extra pass settles it. A chapter laid out on its own (the sandbox previews) receives the whole book's outline from its host instead. See [Table of contents](/en/docs/configuration-notes-references#table-of-contents) in the configuration reference.
 
 ### `:::index`

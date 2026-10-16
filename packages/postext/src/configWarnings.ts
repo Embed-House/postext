@@ -37,6 +37,7 @@ import type {
 } from './types';
 import type { ConfigWarning, ResolvedConfig } from './vdt';
 import { parseNumberFormat } from './numbering';
+import { parseTocGroupHead } from './defaults/toc';
 import { isFontStack, primaryFontFamily } from './measure/font';
 import { dimensionToPx } from './units';
 import { resolveAllConfig, resolveDirection, resolvedLocale, sideColumnPercentUsed, columnCountUsed } from './pipeline/config';
@@ -168,6 +169,11 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   };
   rule('bodyText.shortListSplit', config.bodyText?.shortListSplit);
   rule('layout.openerFloats', config.layout?.openerFloats);
+  // What heads a block of the contents (#850): read as `'part'`.
+  const tocHead = config.toc?.groups?.head as unknown;
+  if (tocHead !== undefined && parseTocGroupHead(tocHead) === undefined) {
+    out.push({ kind: 'unknownConfigValue', path: 'toc.groups.head', value: String(tocHead), used: 'part' });
+  }
   // Where a heading's number stands (#401).
   const position = (path: string, value: unknown) => {
     if (value !== undefined && value !== 'before' && value !== 'replace') {

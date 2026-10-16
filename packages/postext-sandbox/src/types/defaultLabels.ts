@@ -1785,6 +1785,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsUnplacedDetail: 'It was still waiting for a slot when the layout ended, so it is on no page: the pages opened for it cannot take it (a side box where the pages have no side column, say). Change its span or its placement.',
   warningsShortListSplitTitle: 'Short list cut between columns',
   warningsShortListSplitDetail: 'page __page__ · a list of __items__ items is cut between two columns or pages. With the rule on Avoid, no column could hold it whole.',
+  warningsTocGroupSplitTitle: 'Contents block cut between columns',
+  warningsTocGroupSplitDetail: 'page __page__ · the block “__title__” of the contents runs over __columns__ columns: it is taller than a column, or its column is too short. List fewer levels, head the blocks with a lower level or set the entries smaller.',
   warningsOpenerFloatTitle: 'Float on an opener page',
   warningsOpenerFloatDetail: 'page __page__ · it stands on the page a chapter or a part opens. With the rule on Avoid it takes the first slot after that page.',
   warningsTextWrapTooNarrow: "the text beside it would be narrower than the narrowest text beside; it takes its band whole.",

@@ -582,6 +582,14 @@ Le texte brut du poème garde les hémistiches et les bayts séparés (une tabul
 :::toc
 ```
 
+Deux attributs changent ce qu’imprime une table des matières donnée, quelle que soit la configuration. `levels` liste les niveaux de titre qu’elle reprend : une plage (`levels="1-2"`), un seul niveau (`levels="2"`) ou une liste (`levels="1,3"`) ; un niveau auquel `toc.levels` ne donne pas de style prend celui du niveau le plus proche au-dessus de lui. `keep` garde chaque bloc de la table sur une seule colonne et une seule page, comme le fait [`toc.groups.keepTogether`](/fr/docs/configuration-notes-references#table-des-matières) : `keep="part"` garde une rangée de partie avec ses chapitres, `keep="1"` (jusqu’à `"6"`) un titre de ce niveau avec les entrées placées sous lui, et `keep="none"` désactive le regroupement configuré. Un bloc qui ne tient pas passe entier à la colonne ou à la page suivante ; un bloc plus haut qu’une colonne est coupé, et la colonne où il se poursuit s’ouvre de nouveau sur sa tête, suivie d’une marque de continuation comme *(suite)*.
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
 Les numéros de page sont ceux que le document imprime réellement. Un document mis en page seul est remis en page avec les numéros de la passe précédente jusqu’à ce qu’ils ne bougent plus : avec une numérotation qui repart après les pages liminaires (la recette `:::numbering` ci-dessus), une passe supplémentaire suffit. Un chapitre mis en page seul (les aperçus du Sandbox) reçoit à la place le plan du livre entier de son hôte. Voir [Table des matières](/fr/docs/configuration-notes-references#table-des-matières) dans la référence de configuration.
 
 ### `:::index`

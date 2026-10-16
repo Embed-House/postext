@@ -2387,6 +2387,8 @@
     "warningsUnplacedDetail": "Aspettava ancora uno spazio quando l’impaginazione è finita, quindi non è su nessuna pagina: le pagine aperte per esso non possono accoglierlo (un riquadro laterale dove le pagine non hanno colonna laterale, per esempio). Cambia la sua estensione o la sua posizione.",
     "warningsShortListSplitTitle": "Elenco breve diviso tra colonne",
     "warningsShortListSplitDetail": "pagina __page__ · un elenco di __items__ voci è diviso tra due colonne o pagine. Con la regola su Evita, nessuna colonna poteva contenerlo intero.",
+    "warningsTocGroupSplitTitle": "Blocco dell'indice diviso tra colonne",
+    "warningsTocGroupSplitDetail": "pagina __page__ · il blocco «__title__» dell'indice occupa __columns__ colonne: è più alto di una colonna, oppure la sua colonna è troppo corta. Elenca meno livelli, metti in testa ai blocchi un livello inferiore o componi le voci più piccole.",
     "warningsOpenerFloatTitle": "Elemento flottante su una pagina di apertura",
     "warningsOpenerFloatDetail": "pagina __page__ · sta sulla pagina in cui si apre un capitolo o una parte. Con la regola su Evita prende il primo spazio dopo quella pagina.",
     "warningsTextWrapTooNarrow": "il testo accanto sarebbe più stretto del minimo di testo accanto; occupa la sua fascia intera.",

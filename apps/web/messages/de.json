@@ -2387,6 +2387,8 @@
     "warningsUnplacedDetail": "Es wartete noch auf einen Platz, als das Layout endete, und steht daher auf keiner Seite: Die dafür geöffneten Seiten können es nicht aufnehmen (etwa ein seitlicher Kasten, wo die Seiten keine Seitenspalte haben). Ändern Sie seine Breite oder seine Platzierung.",
     "warningsShortListSplitTitle": "Kurze Liste über Spalten getrennt",
     "warningsShortListSplitDetail": "Seite __page__ · Eine Liste mit __items__ Punkten ist zwischen zwei Spalten oder Seiten getrennt. Mit der Regel auf „Vermeiden“ konnte keine Spalte sie ganz aufnehmen.",
+    "warningsTocGroupSplitTitle": "Inhaltsverzeichnis-Block zwischen Spalten geteilt",
+    "warningsTocGroupSplitDetail": "Seite __page__ · der Block „__title__“ des Inhaltsverzeichnisses läuft über __columns__ Spalten: Er ist höher als eine Spalte, oder seine Spalte ist zu kurz. Weniger Ebenen auflisten, die Blöcke mit einer tieferen Ebene beginnen lassen oder die Einträge kleiner setzen.",
     "warningsOpenerFloatTitle": "Gleitobjekt auf einer Auftaktseite",
     "warningsOpenerFloatDetail": "Seite __page__ · Es steht auf der Seite, mit der ein Kapitel oder ein Teil beginnt. Mit der Regel auf „Vermeiden“ nimmt es den ersten Platz nach dieser Seite.",
     "warningsTextWrapTooNarrow": "der Text daneben wäre schmaler als die Mindestbreite für Text daneben; es belegt sein Band ganz.",

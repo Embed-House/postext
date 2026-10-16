@@ -215,6 +215,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>リストは段の終わりで切られます。</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>まとめて組むよう指定した目次のグループ（<code>toc.groups.keepTogether</code>、<code>:::toc{'{keep="…"}'}</code>）。先頭は<code>title</code>で、<code>columns</code>段に組まれています。1段の高さを超えているか、グループが始まる段が短い（ページ幅の囲みの下、フロートの横）。グループごとに1件。<code>:::toc</code>ディレクティブを指し、グループが始まるページが付きます。解消するには、載せるレベルを減らす（<code>levels="1"</code>）、もっと下位のレベルを先頭にする（<code>toc.groups.head: 2</code>）、項目を小さくするか詰めて組む、のいずれかを行います。postext 1.34から。</td>
+      <td>グループは分割されます。<code>toc.groups.continuation</code>が有効なら、続きが入る各段の頭に先頭行と続きの印を組みます。</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td><code>layout.openerFloats: 'warn'</code>のときに開始ページに置かれたフロート。図、表、帯漫画（<code>resourceId</code>）、またはフロートのボックス。フロートごとに1件。フロートを参照するブロック（ボックスならそのボックス）を指し、ページが付きます。postext 1.28から。</td>
       <td>フロートは開始ページに置かれたままです。<code>'avoid'</code>にすると、そのページより後の最初の空き位置に移ります。</td>

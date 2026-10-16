@@ -101,6 +101,7 @@ export type WarningKind =
   | 'unplaced'
   | 'shortListSplit'
   | 'openerFloat'
+  | 'tocGroupSplit'
   | 'codeOverflow'
   | 'floatShrunk'
   | 'unknownConfigKey'
@@ -426,6 +427,10 @@ export type WarningPayload =
   /** A figure, a table (`resourceId`) or a floated box set on an opener
    *  page, book page `page` (`layout.openerFloats: 'warn'`, #749). */
   | { kind: 'openerFloat'; page: number; resourceId?: string }
+  /** A block of the contents kept together (`toc.groups.keepTogether`,
+   *  `:::toc{keep}`, #850) headed by `title`, cut between `columns` columns;
+   *  it starts on book page `page`. */
+  | { kind: 'tocGroupSplit'; page: number; title: string; columns: number }
   /** A line number set in the side column overlaps a side box, caption or
    *  figure (#621); both are painted. `number` as printed. */
   | { kind: 'lineNumberOverlap'; number: string }

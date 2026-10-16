@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>、<code>0</code>、<code>0</code></td>
       <td>行高及其上下的空白。<code>em</code>是正文字号，所以默认行高是正文字号的两倍，而不是两行正文：正文为9.5/13.5 pt时它是19 pt。要让一行占两行正文，就用<code>pt</code>给出高度（这里是<code>27pt</code>）。</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>让目录的每一组排在同一栏、同一页上：一组由组首行（见<code>groups.head</code>）及其下的全部条目组成，直到下一个同级或更高级的组首为止。所在栏的剩余空间放不下的组，连同组首行一起移到下一栏或下一页，它离开的那一栏提前结束。紧挨在目录上方的标题（目录自己的标题）在第一组移动时随它一起移动。比一整栏还高的组会被拆开：它从放得下组首和<code>groups.minEntriesAfterHead</code>个条目的位置开始，之后延续到的每一栏都重新以组首行开头（<code>groups.continuation</code>）。每个跨栏拆开的组都以<code>tocGroupSplit</code>警告报告（见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>:::toc{'{keep="…"}'}</code>可以为单个目录覆盖这一设置（见<a href="/zh/docs/document-format-directives#toc">文档格式</a>）。自postext 1.34起。</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>由什么作组首：篇行（<code>'part'</code>：一篇及其各章），或某一标题级别的条目（<code>1</code>：一章及其各节；要列出各节，需要<code>levels</code>或<code>:::toc{'{levels="1-2"}'}</code>）。以标题级别作组首时，紧挨在组首上方的篇行随该组一起排，所以篇行不会单独留在栏底；级别高于组首的条目（组首为<code>2</code>时的章）各自单独排。下面没有条目的组首不构成一组。其他值一律按<code>'part'</code>处理，并报告。</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>拆开的组至少要与组首行排在一起的条目数：剩余空间放不下组首和这么多条目时，该组从下一栏开始。设为<code>0</code>时，组首可以单独排在栏末。</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>object</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>被拆开的组每延续到一栏，就在栏顶重复的组首行：编号和标题，后接<code>mark</code>，用斜体，不排前导符，也不排页码（在篇行中，续接标记成为<code>{'{titleText}'}</code>的一部分，按篇行设计自己的字体样式排出，<code>{'{pageNumber}'}</code>不输出任何内容）。<code>mark</code>默认取文档语言的续表后缀：英语、西班牙语、加泰罗尼亚语和葡萄牙语为<em>(cont.)</em>，法语为<em>(suite)</em>，德语为<em>(Forts.)</em>，意大利语为<em>(segue)</em>，中文为<em>（续）</em>，日语为<em>（続き）</em>，阿拉伯语为<em>(تابع)</em>。以全角字符开头的标记与标题紧排。重复的组首行不进入EPUB导航，也不进入流式版式EPUB的目录。设为<code>enabled: false</code>时，组照样拆开，但不重复组首行。</td>
+    </tr>
   </tbody>
 </table>
 

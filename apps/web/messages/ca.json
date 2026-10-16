@@ -2386,6 +2386,8 @@
     "warningsUnplacedDetail": "Encara esperava un espai quan es va acabar la composició, de manera que no és a cap pàgina: les pàgines obertes per a ell no el poden acollir (un requadre lateral on les pàgines no tenen columna lateral, per exemple). Canvia'n l'amplada (span) o la col·locació.",
     "warningsShortListSplitTitle": "Llista curta partida entre columnes",
     "warningsShortListSplitDetail": "pàgina __page__ · una llista de __items__ elements queda partida entre dues columnes o pàgines. Amb la regla a Evitar, cap columna no la podia acollir sencera.",
+    "warningsTocGroupSplitTitle": "Bloc de l'índex partit entre columnes",
+    "warningsTocGroupSplitDetail": "pàgina __page__ · el bloc «__title__» de l'índex ocupa __columns__ columnes: és més alt que una columna o la seva columna és massa curta. Llista menys nivells, encapçala els blocs amb un nivell inferior o compon les entrades més petites.",
     "warningsOpenerFloatTitle": "Flotant en una pàgina d’obertura",
     "warningsOpenerFloatDetail": "pàgina __page__ · és a la pàgina que obre un capítol o una part. Amb la regla a Evitar passa al primer espai després d’aquesta pàgina.",
     "warningsTextWrapTooNarrow": "el text del costat quedaria més estret que el mínim; ocupa la banda sencera.",

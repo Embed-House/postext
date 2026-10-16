@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Hauteur de la rangée et espace autour. <code>em</code> est le corps du texte courant, si bien que la rangée par défaut fait deux fois le corps du texte en hauteur, et non deux lignes de texte : avec un texte courant en 9,5/13,5 pt, elle mesure 19 pt. Pour une rangée de deux lignes de texte, donnez la hauteur en <code>pt</code> (<code>27pt</code> dans ce cas).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Garder chaque bloc de la table des matières sur une seule colonne et une seule page : une tête de bloc (voir <code>groups.head</code>) et toutes les entrées placées sous elle, jusqu’à la tête suivante de même rang ou de rang supérieur. Un bloc qui ne tient pas dans la place restante de sa colonne ouvre la colonne ou la page suivante, avec sa tête, et la colonne qu’il quitte se termine plus courte. Les titres placés juste au-dessus de la table (son propre titre) suivent le premier bloc quand il se déplace. Un bloc plus haut qu’une colonne entière est coupé : il commence là où tiennent sa tête et <code>groups.minEntriesAfterHead</code> entrées, et chaque colonne où il se poursuit s’ouvre de nouveau sur sa tête (<code>groups.continuation</code>). Chaque bloc coupé entre deux colonnes est signalé par un avertissement <code>tocGroupSplit</code> (voir <a href="/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document">Avertissements dans le document</a>). Un <code>:::toc{'{keep="…"}'}</code> remplace ce réglage pour une seule table des matières (voir <a href="/fr/docs/document-format-directives#toc">Format du document</a>). Depuis postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Ce qui ouvre un bloc : une rangée de partie (<code>'part'</code> : une partie et ses chapitres), ou l’entrée d’un niveau de titre (<code>1</code> : un chapitre et ses sections, ce qui suppose que <code>levels</code> ou <code>:::toc{'{levels="1-2"}'}</code> listent les sections). Avec un niveau de titre, une rangée de partie placée juste au-dessus de la tête suit son bloc, si bien qu’une rangée de partie ne reste jamais seule au pied d’une colonne ; les entrées de rang supérieur à la tête (un chapitre quand la tête est <code>2</code>) restent isolées. Une tête sans entrée sous elle ne forme pas de bloc. Toute autre valeur est lue comme <code>'part'</code> et signalée.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Le nombre minimal d’entrées qu’un bloc coupé garde avec sa tête : quand la tête et ce nombre d’entrées ne tiennent pas dans la place restante, le bloc commence dans la colonne suivante. <code>0</code> permet à une tête de terminer seule une colonne.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>objet</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La tête répétée en haut de chaque colonne où se poursuit un bloc coupé : son numéro et son intitulé suivis de <code>mark</code>, en italique, sans points de conduite ni numéro de page (dans une rangée de partie, la marque fait partie de <code>{'{titleText}'}</code>, composée dans la typographie de la maquette elle-même, et <code>{'{pageNumber}'}</code> n’imprime rien). Par défaut, <code>mark</code> est le suffixe de tableau continué de la langue du document : <em>(cont.)</em> en anglais, en espagnol, en catalan et en portugais, <em>(suite)</em> en français, <em>(Forts.)</em> en allemand, <em>(segue)</em> en italien, <em>（续）</em> en chinois, <em>（続き）</em> en japonais, <em>(تابع)</em> en arabe. Une marque qui commence par un caractère pleine chasse est collée à l’intitulé. La répétition n’entre ni dans la navigation de l’EPUB ni dans la table des matières de l’EPUB recomposable. <code>enabled: false</code> coupe le bloc sans répéter la tête.</td>
+    </tr>
   </tbody>
 </table>
 

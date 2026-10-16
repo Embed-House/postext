@@ -60,6 +60,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'unplaced':
     case 'shortListSplit':
     case 'openerFloat':
+    case 'tocGroupSplit':
       return FileWarning;
     case 'headingHierarchy':
       return Heading;
@@ -389,6 +390,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsShortListSplitTitle;
     case 'openerFloat':
       return labels.warningsOpenerFloatTitle;
+    case 'tocGroupSplit':
+      return labels.warningsTocGroupSplitTitle;
     case 'unknownConfigKey':
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
@@ -730,6 +733,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return labels.warningsShortListSplitDetail.replace('__page__', String(payload.page)).replace('__items__', String(payload.items));
     case 'openerFloat':
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsOpenerFloatDetail.replace('__page__', String(payload.page))}`;
+    case 'tocGroupSplit':
+      return labels.warningsTocGroupSplitDetail
+        .replace('__page__', String(payload.page))
+        .replace('__title__', payload.title)
+        .replace('__columns__', String(payload.columns));
     case 'codeOverflow': {
       const detail = payload.mode === 'wrap' ? labels.warningsCodeOverflowWrap
         : payload.mode === 'clip' ? labels.warningsCodeOverflowClip
@@ -849,9 +857,9 @@ function WarningItem({
   onClick: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
-  // A preflight or contrast finding, or a design text cut on a page
-  // (#628), names its book page.
-  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
+  // A preflight or contrast finding, a design text cut on a page (#628)
+  // or a contents block cut (#850) names its book page.
+  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' || warning.payload.kind === 'tocGroupSplit' ? warning.payload.page : undefined;
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
@@ -898,6 +906,9 @@ export function WarningsPanel() {
     // A cut design text opens its page; one that prints a heading or a
     // frontmatter field also selects it in the editor.
     if (w.payload.kind === 'designTextTruncated') goToBookPage(w.payload.page);
+    // A contents block cut between columns (#850) opens the contents page
+    // and selects the `:::toc` line.
+    if (w.payload.kind === 'tocGroupSplit') goToBookPage(w.payload.page);
     // A contrast finding opens the page of its first occurrence, and
     // selects its text when it has a place in the source.
     if (w.payload.kind === 'contrast' && w.payload.page !== undefined) goToBookPage(w.payload.page);

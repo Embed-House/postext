@@ -215,6 +215,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’elenco viene tagliato dove finisce la colonna.</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>Un blocco dell’indice da tenere unito (<code>toc.groups.keepTogether</code>, <code>:::toc{'{keep="…"}'}</code>), aperto da <code>title</code>, composto in <code>columns</code> colonne: è più alto di una colonna intera, oppure la colonna in cui comincia è corta (sotto un riquadro a tutta larghezza, accanto a un elemento flottante). Uno per blocco; punta alla direttiva <code>:::toc</code>, con la pagina in cui comincia il blocco. Per eliminarlo, elenca meno livelli (<code>levels="1"</code>), apri i blocchi con un livello inferiore (<code>toc.groups.head: 2</code>) oppure rendi le voci più piccole o più strette. Da postext 1.34.</td>
+      <td>Il blocco viene tagliato; con <code>toc.groups.continuation</code> ogni colonna in cui prosegue si apre con la sua riga di testa e la dicitura di continuazione.</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td>Un elemento flottante composto su una pagina d’apertura con <code>layout.openerFloats: 'warn'</code>: una figura, una tabella o una striscia (<code>resourceId</code>), o un riquadro flottante. Uno per elemento flottante; punta al blocco che lo cita (al riquadro), con la sua pagina. Da postext 1.28.</td>
       <td>L’elemento flottante resta sulla pagina d’apertura; <code>'avoid'</code> lo sposta nel primo spazio successivo.</td>

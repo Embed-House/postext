@@ -215,6 +215,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تُقسم القائمة حيث ينتهي العمود.</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>مجموعة من المحتويات يُطلب إبقاؤها معًا (<code>toc.groups.keepTogether</code>، <code>:::toc{'{keep="…"}'}</code>)، يتصدّرها <code>title</code>، ومنضّدة في <code>columns</code> من الأعمدة: إما أنها أطول من عمود كامل، وإما أن العمود الذي تبدأ فيه قصير (تحت إطار يمتد بعرض الصفحة، أو بجوار عنصر عائم). تنبيه لكل مجموعة؛ يشير إلى التوجيه <code>:::toc</code>، مع الصفحة التي تبدأ فيها المجموعة. ولإزالته، أدرِج مستويات أقل (<code>levels="1"</code>)، أو اجعل رأس المجموعات مستوى أدنى (<code>toc.groups.head: 2</code>)، أو صغّر المداخل أو ضيّق تباعدها. منذ postext 1.34.</td>
+      <td>تُقسم المجموعة؛ ومع <code>toc.groups.continuation</code> يُفتتح كل عمود تستمر فيه بصف رأسها وعلامة الاستمرار.</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td>عنصر عائم وُضع في صفحة افتتاح مع <code>layout.openerFloats: 'warn'</code>: شكل أو جدول أو شريط قصص مصورة (<code>resourceId</code>)، أو صندوق عائم. تنبيه لكل عنصر عائم؛ يشير إلى الكتلة التي تحيل إليه (أو إلى الصندوق)، مع صفحته. منذ postext 1.28.</td>
       <td>يقف العنصر العائم في صفحة الافتتاح؛ و<code>'avoid'</code> تنقله إلى أول موضع بعدها.</td>

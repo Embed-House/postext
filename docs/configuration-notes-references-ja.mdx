@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>行の高さと、その上下のアキです。<code>em</code>は本文の文字サイズなので、既定の行の高さは本文2行分ではなく、本文サイズの2倍です。本文が9.5/13.5 ptなら19 ptになります。本文2行分の行にするには、高さを<code>pt</code>で指定します（この例では<code>27pt</code>）。</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>目次の各グループを1つの段、1つのページにまとめて組みます。グループは先頭行（<code>groups.head</code>を参照）とその下の項目すべてからなり、同じかより上位の次の先頭行の手前で終わります。段の残りに入りきらないグループは、先頭行ごと次の段または次のページに移り、移る前の段は短く終わります。目次の直前にある見出し（目次自身の見出し）は、最初のグループが移るときにいっしょに移ります。1段の高さを超えるグループは分割します。先頭行と<code>groups.minEntriesAfterHead</code>個の項目が入る位置から始まり、続きが入る各段の頭にはもう一度先頭行を組みます（<code>groups.continuation</code>）。段をまたいで分割したグループは、それぞれ<code>tocGroupSplit</code>警告として報告されます（<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>:::toc{'{keep="…"}'}</code>を使うと、1つの目次だけこの設定を上書きできます（<a href="/ja/docs/document-format-directives#toc">文書形式</a>を参照）。postext 1.34以降。</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>グループの先頭になるものです。部の行（<code>'part'</code>：部とその章）か、ある見出しレベルの項目（<code>1</code>：章とその節。節を載せるには<code>levels</code>か<code>:::toc{'{levels="1-2"}'}</code>の指定が必要です）を選びます。見出しレベルを選んだ場合、先頭行の直前にある部の行はそのグループといっしょに組むので、部の行が段の末尾に1行だけ残ることはありません。先頭より上位の項目（先頭が<code>2</code>のときの章）は単独で組みます。下に項目のない先頭行はグループになりません。それ以外の値は<code>'part'</code>として扱い、報告します。</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>分割したグループが先頭行といっしょに残す項目の最小数です。残りの高さに先頭行とこの数の項目が入らなければ、グループは次の段から始まります。<code>0</code>にすると、先頭行だけで段を終えることができます。</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>object</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>分割したグループの続きが入る各段の頭で繰り返す先頭行です。番号とタイトルに<code>mark</code>を続けてイタリックで組み、リーダーとページ番号は付けません（部の行では、この印は<code>{'{titleText}'}</code>の一部になってデザイン自身の文字組みで組まれ、<code>{'{pageNumber}'}</code>は何も出力しません）。<code>mark</code>の既定値は、文書の言語で表の続きを示す接尾辞です。英語、スペイン語、カタルーニャ語、ポルトガル語では<em>(cont.)</em>、フランス語では<em>(suite)</em>、ドイツ語では<em>(Forts.)</em>、イタリア語では<em>(segue)</em>、中国語では<em>（续）</em>、日本語では<em>（続き）</em>、アラビア語では<em>(تابع)</em>です。全角文字で始まる印は、タイトルに詰めて組みます。繰り返した先頭行は、EPUBのナビゲーションにも、リフロー型EPUBの目次にも含まれません。<code>enabled: false</code>にすると、先頭行を繰り返さずにグループを分割します。</td>
+    </tr>
   </tbody>
 </table>
 

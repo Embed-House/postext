@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Altezza della riga e spazio attorno a essa. <code>em</code> è il corpo del testo corrente, quindi la riga predefinita è alta il doppio del corpo, non due righe di testo: con un testo corrente 9,5/13,5 pt è di 19 pt. Per una riga di due righe di testo, indica l’altezza in <code>pt</code> (lì <code>27pt</code>).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Tiene ogni blocco dell’indice in una sola colonna e pagina: una riga di testa (vedi <code>groups.head</code>) e tutte le voci che le stanno sotto, fino alla testa successiva di pari rango o di rango superiore. Un blocco che non entra nello spazio rimasto nella sua colonna apre la colonna o la pagina successiva insieme alla sua riga di testa, e la colonna che lascia finisce corta. I titoli subito sopra l’indice (il suo stesso titolo) seguono il primo blocco quando questo si sposta. Un blocco più alto di una colonna intera viene tagliato: comincia dove entrano la sua testa e <code>groups.minEntriesAfterHead</code> voci, e ogni colonna in cui prosegue si apre di nuovo con la sua riga di testa (<code>groups.continuation</code>). Ogni blocco tagliato tra due colonne viene segnalato con un avviso <code>tocGroupSplit</code> (vedi <a href="/it/docs/configuration-programmatic-usage#avvisi-nel-documento">Avvisi nel documento</a>). Un <code>:::toc{'{keep="…"}'}</code> lo sostituisce per un singolo indice (vedi <a href="/it/docs/document-format-directives#toc">Formato del documento</a>). Da postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Che cosa apre un blocco: una riga di parte (<code>'part'</code>: una parte e i suoi capitoli) o la voce di un livello di titolo (<code>1</code>: un capitolo e le sue sezioni; perché le sezioni compaiano, <code>levels</code> o <code>:::toc{'{levels="1-2"}'}</code> devono elencarle). Con un livello di titolo, una riga di parte subito sopra la testa segue il suo blocco, così una riga di parte non resta mai da sola in fondo a una colonna; le voci di rango superiore alla testa (un capitolo quando la testa è <code>2</code>) restano a sé. Una testa senza voci sotto non forma un blocco. Qualsiasi altro valore viene letto come <code>'part'</code> e segnalato.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Il numero minimo di voci che un blocco tagliato tiene con la sua riga di testa: se la testa e quelle voci non entrano nello spazio rimasto, il blocco comincia nella colonna successiva. Con <code>0</code> una testa può chiudere da sola una colonna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>oggetto</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La riga di testa ripetuta in cima a ogni colonna in cui prosegue un blocco tagliato: il suo numero e il suo titolo seguiti da <code>mark</code>, in corsivo, senza linea di guida né numero di pagina (in una riga di parte la dicitura fa parte di <code>{'{titleText}'}</code>, composta con la tipografia del design stesso, e <code>{'{pageNumber}'}</code> non stampa nulla). Per impostazione predefinita <code>mark</code> è il suffisso di tabella continuata della lingua del documento: <em>(cont.)</em> in inglese, spagnolo, catalano e portoghese, <em>(suite)</em> in francese, <em>(Forts.)</em> in tedesco, <em>(segue)</em> in italiano, <em>（续）</em> in cinese, <em>（続き）</em> in giapponese, <em>(تابع)</em> in arabo. Una dicitura che comincia con un carattere a larghezza piena viene composta attaccata al titolo. La ripetizione resta fuori dalla navigazione dell’EPUB e dall’indice dell’EPUB a layout fluido. <code>enabled: false</code> taglia il blocco senza ripetere la riga di testa.</td>
+    </tr>
   </tbody>
 </table>
 

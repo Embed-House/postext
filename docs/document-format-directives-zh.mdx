@@ -582,6 +582,14 @@ Two lines lower still.
 :::toc
 ```
 
+有两个属性可以改变单个目录输出的内容，不受配置影响。`levels`列出它收录的标题级别：一个范围（`levels="1-2"`）、单个级别（`levels="2"`）或一个列表（`levels="1,3"`）；`toc.levels`没有给出样式的级别，采用其上方最近一级的样式。`keep`让目录的每一组排在同一栏、同一页上，作用与[`toc.groups.keepTogether`](/zh/docs/configuration-notes-references#目录)相同：`keep="part"`让篇行与其各章排在一起，`keep="1"`（直到`"6"`）让该级标题与其下的条目排在一起，`keep="none"`关闭配置中的设置。放不下的组整体移到下一栏或下一页；比一栏还高的组会被拆开，它延续到的那一栏重新以组首行开头，后接“（续）”这样的续接标记。
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
 页码就是文档实际输出的页码。单独排版的文档会用上一遍的页码标签重新排版，直到页码不再变化；如果编号在前置部分之后重新开始（即上面的`:::numbering`做法），多排一遍就能稳定下来。单独排版的一章（沙盒预览）则从其宿主处接收全书的大纲。见配置参考中的[目录](/zh/docs/configuration-notes-references#目录)。
 
 ### `:::index`

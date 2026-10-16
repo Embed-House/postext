@@ -6,9 +6,12 @@ import type {
   ResolvedTocLevelConfig,
   TocConfig,
   TocEntryStyleConfig,
+  TocGroupHead,
   TocLevelConfig,
 } from '../types';
+import { presentTag } from '../locale';
 import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter';
+import { defaultTableContinuationStrings } from './tableStyle';
 
 const ZERO: Dimension = { value: 0, unit: 'em' };
 const NUMBER_WIDTH: Dimension = { value: 2, unit: 'em' };
@@ -24,7 +27,23 @@ export const DEFAULT_TOC_CONFIG = {
   pageNumber: { width: NUMBER_WIDTH },
   subtitle: { enabled: false, attr: 'author' },
   parts: { enabled: true, breakBefore: false },
+  groups: { keepTogether: false, head: 'part' as TocGroupHead, minEntriesAfterHead: 2, continuation: { enabled: true } },
 };
+
+/** A `toc.groups.head` value as written (`'part'`, `1`…`6`, or the same as
+ *  a string: a directive's `keep="2"`), else undefined. */
+export function parseTocGroupHead(value: unknown): TocGroupHead | undefined {
+  if (value === 'part') return 'part';
+  const n = typeof value === 'number' ? value : typeof value === 'string' && /^\s*[1-6]\s*$/.test(value) ? Number(value) : NaN;
+  return Number.isInteger(n) && n >= 1 && n <= 6 ? (n as TocGroupHead) : undefined;
+}
+
+/** The default continuation mark of a contents block in `locale`: the
+ *  continued-table suffix of that language ("(cont.)", "(suite)",
+ *  "（续）"…). */
+export function defaultTocContinuationMark(locale?: string): string {
+  return defaultTableContinuationStrings(locale).continuedSuffix;
+}
 
 function resolveEntryStyle(
   partial: TocEntryStyleConfig | undefined,
@@ -65,6 +84,7 @@ function partialEntryStyle(partial: TocEntryStyleConfig | undefined): Partial<Re
 export function resolveTocConfig(
   partial: TocConfig | undefined,
   bodyText: ResolvedBodyTextConfig,
+  locale?: string,
 ): ResolvedTocConfig {
   const d = DEFAULT_TOC_CONFIG;
   const levelsIn: TocLevelConfig[] = partial?.levels && partial.levels.length > 0
@@ -75,6 +95,7 @@ export function resolveTocConfig(
   const pn = partial?.pageNumber;
   const sub = partial?.subtitle;
   const parts = partial?.parts;
+  const groups = partial?.groups;
   return {
     levels,
     unnumbered: partialEntryStyle(partial?.unnumbered),
@@ -108,6 +129,16 @@ export function resolveTocConfig(
       height: parts?.height ?? PART_HEIGHT,
       marginTop: parts?.marginTop ?? ZERO,
       marginBottom: parts?.marginBottom ?? ZERO,
+    },
+    groups: {
+      keepTogether: groups?.keepTogether ?? d.groups.keepTogether,
+      head: parseTocGroupHead(groups?.head) ?? d.groups.head,
+      minEntriesAfterHead: Math.max(0, Math.floor(groups?.minEntriesAfterHead ?? d.groups.minEntriesAfterHead)),
+      continuation: {
+        enabled: groups?.continuation?.enabled ?? d.groups.continuation.enabled,
+        // The document's language, as a continued table's (#850).
+        mark: groups?.continuation?.mark ?? defaultTocContinuationMark(presentTag(locale) ?? bodyText.hyphenation.tag ?? bodyText.hyphenation.locale),
+      },
     },
   };
 }
@@ -166,6 +197,23 @@ export function stripTocDefaults(toc: TocConfig | undefined): TocConfig | undefi
     if (toc.parts.marginBottom !== undefined) p.marginBottom = toc.parts.marginBottom;
     const kept = stripObject(p);
     if (kept) r.parts = kept;
+  }
+  if (toc.groups) {
+    const g: NonNullable<TocConfig['groups']> = {};
+    const gd = d.groups;
+    if (toc.groups.keepTogether !== undefined && toc.groups.keepTogether !== gd.keepTogether) g.keepTogether = toc.groups.keepTogether;
+    if (toc.groups.head !== undefined && toc.groups.head !== gd.head) g.head = toc.groups.head;
+    if (toc.groups.minEntriesAfterHead !== undefined && toc.groups.minEntriesAfterHead !== gd.minEntriesAfterHead) g.minEntriesAfterHead = toc.groups.minEntriesAfterHead;
+    if (toc.groups.continuation) {
+      const c: NonNullable<NonNullable<TocConfig['groups']>['continuation']> = {};
+      if (toc.groups.continuation.enabled !== undefined && toc.groups.continuation.enabled !== gd.continuation.enabled) c.enabled = toc.groups.continuation.enabled;
+      // The default mark follows the language: an explicit one is kept.
+      if (toc.groups.continuation.mark !== undefined) c.mark = toc.groups.continuation.mark;
+      const kept = stripObject(c);
+      if (kept) g.continuation = kept;
+    }
+    const kept = stripObject(g);
+    if (kept) r.groups = kept;
   }
   return stripObject(r);
 }

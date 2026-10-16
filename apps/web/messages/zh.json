@@ -2386,6 +2386,8 @@
     "warningsUnplacedDetail": "排版结束时它还在等空位，因此不在任何页面上：为它新开的页面放不下它（例如页面没有侧栏，而它是侧栏框）。请修改它的跨度（span）或位置。",
     "warningsShortListSplitTitle": "短列表跨栏拆分",
     "warningsShortListSplitDetail": "第__page__页 · 共 __items__ 项的列表被拆在两栏或两页之间。规则设为“避免”时，说明没有哪一栏放得下整个列表。",
+    "warningsTocGroupSplitTitle": "目录分组跨栏拆分",
+    "warningsTocGroupSplitDetail": "第__page__页 · 目录中的“__title__”一组排进了__columns__栏：它比一栏还高，或它所在的栏太短。可以少列几级标题、改用更低一级的标题作组首，或把条目排得小一些。",
     "warningsOpenerFloatTitle": "章首页上有浮动体",
     "warningsOpenerFloatDetail": "第__page__页 · 它排在一章或一篇的首页上。规则设为“避免”时，它会改排到该页之后的第一个空位。",
     "warningsTextWrapTooNarrow": "旁边的正文会窄于最小宽度，因此占满整条。",

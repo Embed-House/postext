@@ -6739,6 +6739,45 @@ export interface TocConfig {
     marginTop?: Dimension;
     marginBottom?: Dimension;
   };
+  /** The blocks of the contents (#850): a head row (a part row, or an
+   *  entry of a heading level) and every entry under it, down to the next
+   *  head of the same or a higher rank, kept on one column and page. A
+   *  `:::toc{keep="…"}` overrides it for one contents. */
+  groups?: TocGroupsConfig;
+}
+
+/** What heads a block of the contents (`toc.groups.head`): a part row, or
+ *  the entry of a heading level. */
+export type TocGroupHead = 'part' | 1 | 2 | 3 | 4 | 5 | 6;
+
+/** `toc.groups` (#850). */
+export interface TocGroupsConfig {
+  /** Keep each block whole: one that does not fit in the room left moves
+   *  to the next column or page, its head row with it. A block taller than
+   *  a full column is cut, and the column it goes on in opens with its head
+   *  row again. Default `false`. */
+  keepTogether?: boolean;
+  /** What heads a block. Default `'part'`. */
+  head?: TocGroupHead;
+  /** The fewest entries a cut block keeps under its head row: the head
+   *  moves on rather than stand with fewer. Default `2`. */
+  minEntriesAfterHead?: number;
+  /** The head row repeated at the top of the column a cut block goes on
+   *  in. */
+  continuation?: {
+    /** Default `true`. */
+    enabled?: boolean;
+    /** Set after the repeated title. Default: the document language's
+     *  continued-table suffix ("(cont.)", "(suite)", "（续）"…). */
+    mark?: string;
+  };
+}
+
+export interface ResolvedTocGroupsConfig {
+  keepTogether: boolean;
+  head: TocGroupHead;
+  minEntriesAfterHead: number;
+  continuation: { enabled: boolean; mark: string };
 }
 
 export interface ResolvedTocEntryStyleConfig {
@@ -6794,6 +6833,7 @@ export interface ResolvedTocConfig {
     marginTop: Dimension;
     marginBottom: Dimension;
   };
+  groups: ResolvedTocGroupsConfig;
 }
 
 // ---------------------------------------------------------------------------

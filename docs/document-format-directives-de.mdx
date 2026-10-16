@@ -582,6 +582,14 @@ Der reine Text des Gedichts hält Halbverse und Bayts auseinander (ein Tabulator
 :::toc
 ```
 
+Zwei Attribute ändern, was ein einzelnes Verzeichnis druckt, unabhängig von der Konfiguration. `levels` nennt die Überschriftenebenen, die es aufführt: einen Bereich (`levels="1-2"`), eine Ebene (`levels="2"`) oder eine Liste (`levels="1,3"`); eine Ebene, der `toc.levels` kein Format gibt, übernimmt das Format der nächsthöheren Ebene. `keep` hält jeden Block des Verzeichnisses in einer Spalte und auf einer Seite zusammen, wie es [`toc.groups.keepTogether`](/de/docs/configuration-notes-references#inhaltsverzeichnis) tut: `keep="part"` hält eine Teilzeile mit ihren Kapiteln zusammen, `keep="1"` (bis `"6"`) eine Überschrift dieser Ebene mit den Einträgen darunter, und `keep="none"` schaltet das konfigurierte Zusammenhalten ab. Ein Block, der nicht passt, rückt ganz in die nächste Spalte oder auf die nächste Seite; ein Block, der höher ist als eine Spalte, wird geteilt, und die Spalte, in der er weiterläuft, beginnt erneut mit seiner Kopfzeile, gefolgt von einer Fortsetzungsmarke wie *(Forts.)*.
+
+```md
+# Contents {style="front-matter" toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+```
+
 Die Seitenzahlen sind die, die das Dokument tatsächlich druckt. Ein für sich gesetztes Dokument wird mit den Bezeichnungen des vorigen Durchgangs erneut gesetzt, bis sie sich nicht mehr verschieben – beginnt die Nummerierung nach der Titelei neu (das Rezept `:::numbering` oben), genügt ein zusätzlicher Durchgang. Ein für sich gesetztes Kapitel (die Vorschauen der Sandbox) erhält stattdessen die Gliederung des ganzen Buchs von seinem Host. Siehe [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) in der Konfigurationsreferenz.
 
 ### `:::index`

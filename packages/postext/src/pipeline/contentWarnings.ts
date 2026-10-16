@@ -926,6 +926,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'unplaced':
       text = `${w.resourceId !== undefined ? `The resource "${w.resourceId}"` : 'A box'} found no slot before the layout ended — it is on no page`;
       break;
+    case 'tocGroupSplit':
+      text = `The contents block "${w.title}" is cut between ${w.columns} columns — it is taller than a full column, or its column is too short to hold it; list fewer levels (:::toc{levels="1"}), head the blocks with a lower level (toc.groups.head) or make the rows smaller`;
+      break;
     case 'shortListSplit':
       text = `A list of ${w.items} ${w.items === 1 ? 'item' : 'items'} is cut between two columns — bodyText.shortListSplit: "avoid" sets a short list whole when a column can hold it`;
       break;

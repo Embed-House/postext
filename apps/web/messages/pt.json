@@ -2386,6 +2386,8 @@
     "warningsUnplacedDetail": "Ainda esperava um espaço quando a diagramação terminou, por isso não está em nenhuma página: as páginas abertas para ele não o comportam (um boxe lateral onde as páginas não têm coluna lateral, por exemplo). Mude a sua largura (span) ou a sua colocação.",
     "warningsShortListSplitTitle": "Lista curta dividida entre colunas",
     "warningsShortListSplitDetail": "página __page__ · uma lista de __items__ itens ficou dividida entre duas colunas ou páginas. Com a regra em Evitar, nenhuma coluna podia recebê-la inteira.",
+    "warningsTocGroupSplitTitle": "Bloco do sumário dividido entre colunas",
+    "warningsTocGroupSplitDetail": "página __page__ · o bloco “__title__” do sumário ocupa __columns__ colunas: é mais alto que uma coluna, ou a coluna dele é curta demais. Liste menos níveis, encabece os blocos com um nível inferior ou componha as entradas menores.",
     "warningsOpenerFloatTitle": "Flutuante em uma página de abertura",
     "warningsOpenerFloatDetail": "página __page__ · está na página que abre um capítulo ou uma parte. Com a regra em Evitar, passa para o primeiro espaço depois dessa página.",
     "warningsTextWrapTooNarrow": "o texto ao lado ficaria mais estreito que o mínimo; ela ocupa a faixa inteira.",

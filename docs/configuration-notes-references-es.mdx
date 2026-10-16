@@ -712,6 +712,30 @@ const config: PostextConfig = {
       <td><code>2em</code>, <code>0</code>, <code>0</code></td>
       <td>Altura de la fila y espacio a su alrededor. <code>em</code> es el cuerpo del texto, así que la fila por defecto mide el doble del cuerpo, no dos líneas de texto: con un texto de 9,5/13,5 pt mide 19 pt. Para una fila de dos líneas de texto, da la altura en <code>pt</code> (<code>27pt</code> en ese caso).</td>
     </tr>
+    <tr>
+      <td><code>groups.keepTogether</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Mantiene cada bloque del índice en una sola columna y página: una fila de cabecera (ver <code>groups.head</code>) y todas las entradas que dependen de ella, hasta la siguiente cabecera de igual o mayor rango. Un bloque que no cabe en el espacio que queda en su columna pasa a la columna o la página siguiente junto con su fila de cabecera, y la columna que deja termina corta. Los encabezados situados justo encima del índice (su propio título) se van con el primer bloque cuando este se mueve. Un bloque más alto que una columna entera se parte: empieza donde caben su cabecera y <code>groups.minEntriesAfterHead</code> entradas, y cada columna en la que continúa se abre de nuevo con su fila de cabecera (<code>groups.continuation</code>). Cada bloque partido entre columnas se notifica con un aviso <code>tocGroupSplit</code> (ver <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). Un <code>:::toc{'{keep="…"}'}</code> lo sustituye en un índice concreto (ver <a href="/es/docs/document-format-directives#toc">Formato del documento</a>). Desde postext 1.34.</td>
+    </tr>
+    <tr>
+      <td><code>groups.head</code></td>
+      <td><code>'part'</code> | <code>1</code>…<code>6</code></td>
+      <td><code>'part'</code></td>
+      <td>Qué encabeza un bloque: una fila de parte (<code>'part'</code>: una parte y sus capítulos) o la entrada de un nivel de encabezado (<code>1</code>: un capítulo y sus secciones; para que aparezcan las secciones, <code>levels</code> o <code>:::toc{'{levels="1-2"}'}</code> tienen que listarlas). Con un nivel de encabezado, la fila de parte que está justo encima de la cabecera va con su bloque, así que una fila de parte nunca se queda sola al pie de una columna; las entradas de rango mayor que la cabecera (un capítulo cuando la cabecera es <code>2</code>) van sueltas. Una cabecera sin entradas debajo no forma bloque. Cualquier otro valor se lee como <code>'part'</code> y se notifica.</td>
+    </tr>
+    <tr>
+      <td><code>groups.minEntriesAfterHead</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Número mínimo de entradas que un bloque partido mantiene con su fila de cabecera: si la cabecera y esas entradas no caben en el espacio que queda, el bloque empieza en la columna siguiente. Con <code>0</code>, una cabecera puede cerrar sola una columna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.continuation</code></td>
+      <td>objeto</td>
+      <td><code>{"{ enabled: true }"}</code></td>
+      <td>La fila de cabecera que se repite al principio de cada columna en la que continúa un bloque partido: su número y su título seguidos de <code>mark</code>, en cursiva, sin línea de puntos ni número de página (en una fila de parte, la marca pasa a formar parte de <code>{'{titleText}'}</code> y se compone con la tipografía del propio diseño, y <code>{'{pageNumber}'}</code> no imprime nada). Por defecto, <code>mark</code> es el sufijo de tabla continuada del idioma del documento: <em>(cont.)</em> en inglés, español, catalán y portugués, <em>(suite)</em> en francés, <em>(Forts.)</em> en alemán, <em>(segue)</em> en italiano, <em>（续）</em> en chino, <em>（続き）</em> en japonés y <em>(تابع)</em> en árabe. Una marca que empieza por un carácter de ancho completo va pegada al título. La repetición queda fuera de la navegación del EPUB y del índice del EPUB de maquetación fluida. <code>enabled: false</code> parte el bloque sin repetir la cabecera.</td>
+    </tr>
   </tbody>
 </table>
 

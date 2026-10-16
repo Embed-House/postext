@@ -1892,6 +1892,8 @@ export interface SandboxLabels {
   warningsUnplacedDetail: string;
   warningsShortListSplitTitle: string;
   warningsShortListSplitDetail: string;
+  warningsTocGroupSplitTitle: string;
+  warningsTocGroupSplitDetail: string;
   warningsOpenerFloatTitle: string;
   warningsOpenerFloatDetail: string;
   warningsTextWrapTooNarrow: string;

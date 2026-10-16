@@ -215,6 +215,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>列表在栏结束处拆开。</td>
     </tr>
     <tr>
+      <td><code>tocGroupSplit</code></td>
+      <td>要求排在一起的目录组（<code>toc.groups.keepTogether</code>、<code>:::toc{'{keep="…"}'}</code>），组首为<code>title</code>，排成<code>columns</code>栏：它比一整栏还高，或者它开始的那一栏较短（在通栏框下方，或在浮动体旁边）。每组一条；指向<code>:::toc</code>指令，并带该组开始的页码。要消除这条警告，可以少列几级（<code>levels="1"</code>），用更低的级别作组首（<code>toc.groups.head: 2</code>），或者把条目排得更小、更紧。postext 1.34起。</td>
+      <td>该组被拆开；启用<code>toc.groups.continuation</code>时，它延续到的每一栏都以组首行和续接标记开头。</td>
+    </tr>
+    <tr>
       <td><code>openerFloat</code></td>
       <td>设为<code>layout.openerFloats: 'warn'</code>时排在章首页上的浮动体：图、表或漫画条（<code>resourceId</code>），或浮动框。每个浮动体一条；指向引用它的块（或该框），并带页码。postext 1.28起。</td>
       <td>浮动体留在章首页上；<code>'avoid'</code>会把它移到该页之后的第一个空位。</td>

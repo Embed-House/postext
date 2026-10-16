@@ -157,7 +157,7 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     footer: resolveHeaderFooterConfig(config?.footer, 'footer'),
     parts: resolvePartsConfig(config?.parts, page, bodyText, unorderedLists, orderedLists),
     headingStyles: resolveHeadingStylesConfig(config?.headingStyles, page, bodyText, unorderedLists, orderedLists, layout),
-    toc: resolveTocConfig(config?.toc, bodyText),
+    toc: resolveTocConfig(config?.toc, bodyText, config?.locale),
     index: resolveIndexConfig(config?.index, bodyText, documentLocale),
     footnotes: resolveFootnotesConfig(config?.footnotes, documentLocale, layout.writingMode),
     crossRefs: resolveCrossRefsConfig(config?.crossRefs, documentLocale),
