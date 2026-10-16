@@ -113,7 +113,11 @@ function contentTarget(doc: VDTDocument, sel: PageSelection, el: SourceElement):
     case 'frame': {
       if (el.content && el.content.end > el.content.start) return { kind: 'markdown', start: el.content.start, end: el.content.end };
       const frame = frameOf(page, el);
-      return frame && page?.composed ? { kind: 'frame', frame, template: page.composed.template } : { kind: 'none' };
+      if (!frame || !page?.composed) return { kind: 'none' };
+      // A piece on an added page (#859) goes to the slot it continues,
+      // whatever its frame is called in the overflow template.
+      const slot = idName(el.id).replace(/~\d+$/, '');
+      return { kind: 'frame', frame: slot === frame.name ? frame : { ...frame, name: slot }, template: page.composed.template };
     }
     case 'template':
       return el.content ? { kind: 'markdown', start: el.content.start, end: el.content.end } : { kind: 'none' };

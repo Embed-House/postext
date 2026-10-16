@@ -309,7 +309,9 @@ export function breadcrumb(doc: VDTDocument, sel: PageSelection): Crumb[] {
         out.push({ kind: 'group', level: i, name: idName(el.id), current });
         break;
       case 'frame':
-        out.push({ kind: 'frame', level: i, name: idName(el.id), current });
+        // A piece of a frame continued on an added page (`cp0:dinero~1`,
+        // #859) is named by its slot: the same `:::frame` of the Markdown.
+        out.push({ kind: 'frame', level: i, name: idName(el.id).replace(/~\d+$/, ''), current });
         break;
       case 'slot': {
         const name = idName(el.id);
