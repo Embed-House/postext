@@ -670,6 +670,32 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Log.** `imageScaled` (with `cause` when another frame's ladder set it) and `textScaled`
   events, per frame after its size and moves, before its `overflow`; words to the tenth of a
   percent.
+### 5.12 What P11 built (#883)
+
+- **Config.** `ResourcePlacement.wrap: 'contour'` (the picture at the side its `align` names) and
+  `FrameConfig.wrap: 'box' | 'contour'` (with `exclude: 'push'`; `ResolvedFrame.wrap` is set only for
+  `'contour'`). The shape is `Resource.contour`: `points` (polygon in picture fractions, wins),
+  `alpha` (default on for bitmaps), `threshold` (0.5), `margin` (default: the wrap gap / push gap).
+- **No pixels at layout time.** The layout knows pictures by size only, so the alpha channel comes
+  with the resource as `contour.traced` (`ContourTrace`: up to 256 rows, leftmost/rightmost opaque
+  edge per row, the file id and threshold it was traced at; a stale trace is ignored). Hosts trace:
+  `traceResourceContour` (synchronous PNG decoding on fflate in every host, the browser decoder for
+  other formats), `readBundle` (`traceBundleContours`, every bitmap when a frame wraps by contour),
+  the Sandbox (`useContourTraces`, from the blob store). Bundles never store the trace.
+- **Engine.** `contour/index.ts`: rows from polygon or trace (`contourRowsOf`), mapped to page px
+  through `bodySource` (safe-area crop) and `bodyRect` (scale), turned on mirrored pages
+  (`contourOnPage` → `VDTExclusionContour {spans, margin, quantum?}`), and per-line insets
+  (`contourInsetSteps`: the extent of the spans within the margin of each line's band; a line clear
+  of the shape gets none; CJK grid rounds to whole characters). The flow keeps its rectangular
+  `VDTExclusion` (band, settling, epub) and adds `contour`; `wrapInsetSteps` reads it. Frames: the
+  pushing frame's shape is `composed/contour.ts` `frameContour` over its laid children (pictures by
+  shape, everything else by box); `exclusionsFor` passes it to `calloutLayout.exclusionInsets`,
+  which keeps its side choice (the wider side free) and sets each line by the shape. Two shapes on
+  either side inset both sides; text on both sides of a shape in the middle of a measure (split
+  lines) is not done.
+- **Fallback.** A contour wrap with no known shape runs round the box with a `textWrap` warning,
+  reason `noContour` (once per resource per pass). Without contours the VDT is unchanged (preset
+  parity harness, 583 chapters, 0 diffs).
 
 ## 6. Source map contract
 
@@ -781,7 +807,7 @@ placeholders. Decoration text elements follow the same rule.
 <tr><td>Variants</td><td><code>variants.recto/verso</code> patches; <code>spread</code> templates (§2.1).</td></tr>
 <tr><td>Header/footer</td><td>Per template, inherit by default, <code>false</code> hides.</td></tr>
 <tr><td>Decoration with text?</td><td>Only placeholders and whitelisted literals.</td></tr>
-<tr><td>Pushes other frames' text</td><td><code>exclude: 'push'</code>, rectangular, as <code>wrap</code> today; contours in P11.</td></tr>
+<tr><td>Pushes other frames' text</td><td><code>exclude: 'push'</code>, rectangular, as <code>wrap</code> today; by the pictures' contour with <code>wrap: 'contour'</code> (P11, §5.12).</td></tr>
 <tr><td>Flow frame and chaining</td><td><code>flow</code>, <code>next</code>, <code>overflow.continueIn</code>.</td></tr>
 <tr><td>Fence syntax vs comics</td><td>Four-colon <code>::::page{template}</code>; <code>:::page{split}</code> unchanged (§3.1).</td></tr>
 <tr><td>Geometry in Markdown?</td><td>Never; only <code>at="x% y%"</code> as a label fallback.</td></tr>
@@ -796,5 +822,5 @@ placeholders. Decoration text elements follow the same rule.
 P2 #853 config types/validation (§2) · P3 #854 parser (§3) · P4 #855 layout (§5.1–5.2, frames,
 decoration, backends) · P14 #856 groups (§5.3, log) · P16 #857 source map and page-scoped relayout
 (§6) · P5 #858 ladder and warnings (§5.4, §5.7) · P15 #859 continuation (§5.6) · P6 #860 anchors
-and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours ·
+and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours (§5.12) ·
 P12 #885 comics on frames (§7).
