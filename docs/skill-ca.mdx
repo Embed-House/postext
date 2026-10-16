@@ -126,7 +126,7 @@ També a YouTube: [mira'l allà](https://www.youtube.com/watch?v=d6eKBFjVhqA&lis
     <tr><td><code>index_marks.py</code></td><td>Reconstrueix un índex analític imprès com a marques <code>:index</code>: llegeix les pàgines de l'índex al PDF, cerca cada terme a la seva pàgina i marca les mateixes paraules als capítols</td></tr>
     <tr><td><code>comic_panels.py</code></td><td>Mesura pàgines de còmic: troba les vinyetes pel paper que les separa, escriu l'expressió <code>split</code> (d'esquerra a dreta o de dreta a esquerra, amb separacions inclinades), les separacions i el marc, retalla una imatge per vinyeta i imprimeix els esquelets <code>:::page</code>; superposa una quadrícula a les imatges per llegir les àncores de personatge i les zones segures, i les torna a dibuixar per comprovar-les</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instanciar, fer subconjunts, escalar i separar fonts (una font xinesa o japonesa retallada als caràcters del llibre conserva les seves formes i mètriques verticals, i una d'àrab, les formes d'enllaç i el tatweel); passar imatges a sRGB, retallar-les i unir-les; convertir il·lustracions <code>.ai</code>/<code>.pdf</code> en SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Crea el projecte i el seu script generador, construeix <code>preset.json</code> i empaqueta el <code>.postext</code></td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Crea el projecte i el seu script generador, construeix <code>preset.json</code> i empaqueta el <code>.postext</code> i revisa la configuració: text del llibre escrit en elements de disseny, quan la configuració només ha de guardar el disseny, i una configuració massa gran per al Sandbox</td></tr>
     <tr><td><code>lint_project.py</code></td><td>Detecta tot el que el parser i el carregador fan malament en silenci i, en text xinès, japonès o coreà, els caràcters que les fonts del projecte no poden compondre; en text japonès, els kana sota una llengua xinesa, les fonts o els ajustos xinesos, la notació d'Aozora que ha quedat als capítols i les entrades d'índex amb kanji sense lectura; en text àrab, la manca d'una llengua àrab, les fonts només llatines o sense enllaços, l'espaiat entre lletres, la partició de mots forçada i l'èmfasi en cursiva; en còmics, les expressions <code>split</code> que no es poden llegir, les vinyetes que no coincideixen amb les cel·les, les imatges i els estils de bafarada o de vinyeta desconeguts, les àncores de personatge mal formades, les fonts de retolació que falten al projecte i les edicions amb pàgines diferents</td></tr>
     <tr><td><code>render.mjs</code></td><td>Compon el projecte (una carpeta o un fitxer <code>.postext</code>) sense navegador amb el motor real, llegint-ne la configuració igual que el Sandbox, i mostra els avisos. Amb <code>--jpeg</code> pinta les pàgines que li demanis (<code>--pages 12-15</code>) com a fitxers JPEG amb el renderitzador de canvas del mateix motor, en un o dos segons, així que l'agent mira les seves pàgines sense generar un PDF; <code>--out</code> escriu el PDF. Un llibre preparat per a impremta rep línies PREFLIGHT (imatges de baixa resolució, filets fins, text petit en diverses tintes, tinta per sobre del límit, text a prop del tall), i el seu PDF se separa amb el perfil ICC de sortida.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Posa les pàgines de la font i de Postext l'una al costat de l'altra, a partir del PDF de la composició o de la seva carpeta de JPEG</td></tr>
@@ -228,7 +228,10 @@ L'agent segueix el flux de treball:
 2. **Inventari i mesurament.** Llegeix la font i escriu una fitxa de dades
    mesurades: format, marges, columnes, interlineat, rols tipogràfics,
    paleta, obertures, cornises, famílies de requadres i costums de
-   col·locació.
+   col·locació. Classifica cada pàgina com a text corregut o com a pàgina
+   composta (requadres, rètols i mapes en llocs fixos); si més d'un terç són
+   compostes, et pregunta si prefereixes la maqueta idèntica o un text que
+   puguis editar i traduir.
 3. **Projecte.** Crea `mi-libro/` amb un generador `build_preset.py` que
    desa la fitxa com a constants i produeix `preset.json`.
 4. **Contingut.** Extreu capítols en esborrany amb l'extractor adequat i
@@ -260,9 +263,17 @@ El fitxer lliurat no depèn del Sandbox. El paquet `postext` l'obre amb `openBun
 - **Els extractors produeixen esborranys; l'agent els cura.** Compta amb una
   revisió per capítol contrastada amb les pàgines originals. Aquesta revisió és la
   que dona la qualitat.
-- **Només configuració i Markdown.** La skill mai no modifica el motor per
-  encaixar-hi un llibre. Quan Postext no pot expressar alguna cosa, l'agent tria
-  l'expressió més propera i l'anota com a diferència coneguda.
+- **El text es queda al Markdown.** La configuració guarda el disseny i cada
+  paraula del llibre és als capítols, de manera que una correcció o una
+  traducció és una edició del Markdown. Les pàgines compostes es munten amb
+  requadres fixats al seu lloc, imatges de pàgina sense text i figures SVG amb
+  rètols vius. Quan Postext no pot expressar alguna cosa sense escriure text a
+  la configuració, l'agent s'atura, redacta la mancança com a esborrany
+  d'incidència i t'ho pregunta. La skill mai no modifica el motor per
+  encaixar-hi un llibre.
+- **Un sol fitxer per a tots els idiomes.** Una traducció és un joc de
+  capítols dins del mateix `.postext`, amb els seus propis peus i rètols de
+  figura, comprovat amb `postext check` en cada idioma.
 - **Els drets els decideixes tu.** L'agent pregunta abans de reproduir
   imatges o fonts amb llicències dubtoses. Les fonts amb llicència es
   marquen `redistributable: false`, així que els projectes exportats les

@@ -118,7 +118,7 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     <tr><td><code>index_marks.py</code></td><td>Rebuilds a printed back-of-book index as <code>:index</code> marks: reads the index pages of the PDF, finds each term on its page and marks the same words in the chapters</td></tr>
     <tr><td><code>comic_panels.py</code></td><td>Measures comic pages: finds the panels by the paper between them, writes the <code>split</code> expression (left to right or right to left, slanted gutters included), the gutters and the frame, cuts one picture per panel and prints the <code>:::page</code> skeletons; lays a grid over the pictures to read speaker anchors and safe areas, and draws them back to check them</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instance, subset, scale and split fonts (a Chinese or Japanese face cut to the book's characters keeps its vertical forms and metrics, an Arabic one its joining forms and tatweel); convert images to sRGB, trim and join them; turn <code>.ai</code>/<code>.pdf</code> artwork into SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Scaffolds the project and its generator script, builds <code>preset.json</code>, packs the <code>.postext</code> file</td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Scaffolds the project and its generator script, builds <code>preset.json</code>, packs the <code>.postext</code> file, and lints the configuration: text of the book typed into design elements, where the configuration should hold only the design, and a configuration too large for the Sandbox</td></tr>
     <tr><td><code>lint_project.py</code></td><td>Catches everything the parser and loader silently get wrong, and, for Chinese, Japanese and Korean text, the characters the bundled fonts cannot set; for Japanese text, kana under a Chinese locale, Chinese faces or settings, Aozora notation left in the chapters and kanji index entries without a reading; for Arabic text, a missing Arabic locale, Latin-only or unjoined faces, letter-spacing, forced hyphenation and italic emphasis; in comics, split expressions that do not parse, panels that do not match the cells, unknown pictures and balloon or panel styles, malformed speaker anchors, lettering faces the project does not bundle, and editions whose pages differ</td></tr>
     <tr><td><code>render.mjs</code></td><td>Lays the project (a folder or a <code>.postext</code> file) out headlessly with the real engine, reading its configuration as the Sandbox does, and prints warnings. With <code>--jpeg</code> it paints the pages you ask for (<code>--pages 12-15</code>) as JPEG files with the engine's own canvas renderer, in a second or two, so the agent looks at its pages without building a PDF; <code>--out</code> writes the PDF. A book set up for print gets PREFLIGHT lines (low-resolution pictures, thin rules, small text in several inks, ink over the limit, text near the trim), and its PDF is separated through the ICC output profile.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Places source and Postext pages side by side, from the render's PDF or its folder of JPEGs</td></tr>
@@ -218,7 +218,10 @@ The agent follows the workflow:
    and the rights on the text, images and fonts.
 2. **Inventory and measurement.** It reads the source and writes a spec sheet
    of measured facts: trim, margins, columns, leading, type roles, palette,
-   openers, running heads, box families and placement habits.
+   openers, running heads, box families and placement habits. It classifies
+   every page as running text or as a composed page (boxes, labels and maps
+   at set places); when more than a third are composed, it asks whether you
+   want the identical layout or text you can edit and translate.
 3. **Project.** It scaffolds `my-book/` with a `build_preset.py` generator
    that holds the spec as constants and produces `preset.json`.
 4. **Content.** It extracts draft chapters with the right extractor, then
@@ -248,9 +251,16 @@ The delivered file is not tied to the Sandbox. The `postext` package opens it wi
 - **The extractors produce drafts; the agent curates them.** Expect a review
   pass per chapter against the original pages. That review is where the
   quality comes from.
-- **Config and Markdown only.** The skill never changes the engine to fit one
-  book. When Postext cannot express something, the agent picks the closest
-  expression and lists it as a known gap.
+- **The text stays in the Markdown.** The configuration holds the design and
+  every word of the book is in the chapters, so a correction or a translation
+  is an edit to Markdown. Composed pages are set with boxes pinned to their
+  place, page pictures without text and SVG figures with live labels. When
+  Postext cannot express something without typing text into the configuration,
+  the agent stops, writes the gap as an issue draft and asks you. The skill
+  never changes the engine to fit one book.
+- **One book file for every language.** A translation is a set of chapters in
+  the same `.postext` file, with its own captions and figure labels, checked
+  with `postext check` in each language.
 - **Rights are your call.** The agent asks before reproducing images or fonts
   whose licences are unclear. Licensed fonts are marked
   `redistributable: false`, so exported projects leave them out.
