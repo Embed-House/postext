@@ -111,7 +111,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Content of a composed page names a <code>slot</code> that is no frame of the page's template (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>).</td>
+      <td>Content of a composed page names a <code>slot</code> that is no frame of the page's template (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, the flow frame that takes it).</td>
       <td>The content goes to the template's flow frame.</td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>The content laid into a frame of a composed page does not fit it, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
+      <td>The content laid into a frame of a composed page does not fit it after the reflow ladder, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> and <code>imageScale</code>, where its text and pictures were left; <code>proposals</code>, each <code>{'{'} kind, path, value {'}'}</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
       <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>

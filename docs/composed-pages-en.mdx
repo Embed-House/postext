@@ -222,7 +222,7 @@ The checks read the Markdown and the configuration before any layout, so they sh
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>A <code>slot="…"</code> names no frame of the page's template (frames inherited through <code>extends</code> and frames of a <code>variants</code> page count). The content goes to the flow frame.</td>
+      <td>A <code>slot="…"</code> names no frame of the page's template (frames inherited through <code>extends</code> and frames of a <code>variants</code> page count). The content goes to the flow frame, which the warning names (<code>frame</code>).</td>
       <td>Correct the slot name, or add a frame of that name to the template.</td>
     </tr>
     <tr>
@@ -248,19 +248,109 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
+Once the book is laid out, each of these warnings also carries the page it concerns (`pageIndex`), so the Checks panel and `postext check` give the page number next to the template, the frame or slot, and the source range.
+
 ### frameOverflow
 
 This warning comes from the layout, not from the source checks above: it appears once the page has been set, in the Checks panel, in `postext check` and in the document's `contentWarnings`.
 
-**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, and the frame has no `next` frame left to continue in. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the height cut (`overflowMm`) and `configPath`, the JSON pointer of the frame in the configuration (`/pageTemplates/0/frames/2`).
+**Cause.** The content poured into a frame (through its slot, or as the flow frame's content) is taller than the frame, the frame has no `next` frame left to continue in, and none of the steps of the [reflow ladder](#when-it-still-does-not-fit) made it fit. Most often there is more text than the frame holds: a translation that runs longer than the original, or a frame held to a fixed `height` or `maxHeight`. What does not fit is cut at the foot of the frame in paged output; it stays in the document, in the source map and in the reflowable EPUB. The warning gives the template, the frame, the page, the document's `locale`, the height cut (`overflowMm`), `configPath` (the JSON pointer of the frame in the configuration, `/pageTemplates/0/frames/2`), the steps it tried (`stepsTried`), the scale its text and pictures were left at (`scale`, `imageScale`) and `proposals`, the changes that would make it fit.
 
-**Fix.** Give the frame more room (raise or remove its `height` or `maxHeight`), chain it to another frame with `next`, shorten the text, or set the page with another template. The layout does not yet shrink the text to make it fit.
+**Fix.** Apply one of the proposals: each comes with its value, worked out on the page (see [The warning and its proposals](#the-warning-and-its-proposals)). Otherwise give the frame more room, chain it to another frame with `next`, shorten the text, or set the page with another template.
 
 ## When the text grows
 
 A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
 
-When the boxes reach the foot of the area and no frame of the group can give more space, the last frame is cut at the foot and the layout reports `frameOverflow` (see [Warnings](#warnings)): shorten the text, lower another frame's `minHeight`, let a frame shrink, or give the group more room. Groups add no other warning.
+When the boxes reach the foot of the area and no frame of the group can give more space, the frame that does not fit climbs the reflow ladder below; groups add no warning of their own.
+
+## When it still does not fit
+
+A frame whose content does not fit tries, one after another, the ways its template allows to make room, and stops at the first that works. Each step is tried on top of the ones before it, in this order:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Step</th>
+      <th>What the layout does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>free</code></td>
+      <td>The frame takes free space. A frame whose height follows its content already grows into the room its area and its group leave; a frame with a fixed <code>height</code> grows up to its <code>maxHeight</code> when it has one.</td>
+    </tr>
+    <tr>
+      <td><code>push</code></td>
+      <td>Its group moves the frames after it down and the frames with <code>shrink</code> give space back (see <a href="/en/docs/configuration-composed-pages#how-groups-share-space">How groups share space</a>).</td>
+    </tr>
+    <tr>
+      <td><code>scaleImages</code></td>
+      <td>The pictures of the frame and of the other frames of its group are set smaller, in steps of 2.5 %, down to <code>fit.imageMinScale</code> (80 % by default), at the largest scale that makes the content fit. The text after a picture moves up with it.</td>
+    </tr>
+    <tr>
+      <td><code>redistribute</code></td>
+      <td>The other frames of its group give space back whether they <code>shrink</code> or not: each goes down to its <code>minHeight</code>, never below what its own content needs. In a row, they give width, each down to the narrowest width its own text still fits in.</td>
+    </tr>
+    <tr>
+      <td><code>shrinkText</code></td>
+      <td>The frame's text is set smaller, in steps of 2.5 %, down to <code>fit.minScale</code> (90 % by default), at the largest scale that makes it fit. Font size, leading and spacing shrink together, as if the whole frame were set in a smaller size. A frame chained with <code>next</code> shrinks with the frames of its chain. <code>fit.shrinkText: false</code> leaves the text at its size.</td>
+    </tr>
+    <tr>
+      <td><code>continue</code></td>
+      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>). This release reports the step; the added page is laid out by a later one.</td>
+    </tr>
+  </tbody>
+</table>
+
+When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
+
+### The warning and its proposals
+
+`frameOverflow` names the page, the template, the frame and the document's language, so a page that fits in Spanish and overflows in Catalan says so, and it lists the steps it tried. Each proposal is data, `{ kind, path, value }`: `path` is the JSON pointer of the setting to change and `value` what to set it to, worked out from the shortfall.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proposal</th>
+      <th>What it changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>allowShrink</code></td>
+      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
+    </tr>
+    <tr>
+      <td><code>raiseMax</code></td>
+      <td><code>maxHeight</code> of the frame: its height plus the shortfall, in whole millimetres. Proposed only when the page has the room, which is tried on it.</td>
+    </tr>
+    <tr>
+      <td><code>lowerMin</code></td>
+      <td><code>minHeight</code> of another frame of its group (<code>frame</code>) that stands at its minimum with less content than that: lowered by the shortfall, never below its content. Tried on the page.</td>
+    </tr>
+    <tr>
+      <td><code>continueNextPage</code></td>
+      <td><code>overflow.continueIn</code> of the frame, set to <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>useTemplate</code></td>
+      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
+    </tr>
+    <tr>
+      <td><code>shortenText</code></td>
+      <td>About how many characters to cut: the lines that do not fit, at the frame's characters per line. The range is the frame's content.</td>
+    </tr>
+  </tbody>
+</table>
+
+`postext check` prints the warning with its steps and proposals in words, and `--json` carries the same data under the warning's `data`:
+
+```text
+warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template "tema" (ca) is 4.2 mm short of its content after free space, text down to 90 % — the rest is cut at the frame's foot; to fit: let its text shrink to 85 % (fit.minScale: 0.85); or raise maxHeight to 68 mm; or continue on the next page (overflow.continueIn: "next-page"); or cut about 180 characters (page 17, offset 412)
+```
+
+The Checks panel shows the same entry in the language of the interface.
 
 ## Reflow log
 
@@ -291,6 +381,14 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td>The frame's top edge (with <code>axis: 'x'</code>, its left edge) moved, in mm from the sheet's edge; <code>cause</code> is the frame whose growth moved it.</td>
     </tr>
     <tr>
+      <td><code>imageScaled</code></td>
+      <td>The reflow ladder set the frame's pictures at <code>scale</code>; <code>cause</code> is the frame of the group that needed the room, when it is another.</td>
+    </tr>
+    <tr>
+      <td><code>textScaled</code></td>
+      <td>The reflow ladder set the frame's text at <code>scale</code>.</td>
+    </tr>
+    <tr>
       <td><code>overflow</code></td>
       <td>Content did not fit: <code>toMm</code> is the height cut, as in <code>frameOverflow</code>.</td>
     </tr>
@@ -301,7 +399,7 @@ Changes under half a millimetre are left out, and each change is rounded once to
 
 `postext check` prints one `reflow` line per composed page that has events, after the warnings; with `--json`, the report holds a `reflow` array with one entry per page: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` and `lines` (the events in words).
 
-From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words.
+From code, the log is `VDTPage.composed.log`, and each frame keeps the box its template declares in `VDTFrame.declaredRect` when it differs from `rect`. `composedReflowLog(doc)` returns the entries `postext check` prints, and `describeReflowEvent(event)` puts one event in words; `describeFitStep(step)` and `describeFrameOverflowProposal(proposal)` do the same for a step of the ladder and a proposal. A frame whose text the ladder scaled has `VDTFrame.scale` below 1: its blocks are laid out in a box `1 / scale` as large (`frameContentRect(frame)`) and `frameMatrix(frame)` puts them on the sheet; its pictures' scale is `VDTFrame.imageScale`.
 
 ## Spreads
 

@@ -279,19 +279,19 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>When nothing else makes the content fit, its text may be set smaller.</td>
+      <td>When nothing else makes the content fit, its text may be set smaller, in steps of 2.5 % (see <a href="#when-content-does-not-fit">When content does not fit</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>The smallest text scale, above 0 and at most 1 (a larger value reads as 1).</td>
+      <td>The smallest text scale, above 0 and at most 1 (a larger value reads as 1). Font size, leading and spacing scale together.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Whether the pictures in the frame may be set smaller, and down to what scale.</td>
+      <td>Whether the pictures in the frame and in the other frames of its group may be set smaller when this frame's content does not fit, and down to what scale.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -399,7 +399,7 @@ A frame declares its size: a fixed `height`, or `'auto'`, the height of what it 
 
 - A group with no `placement` or `grid` of its own starts where the placement of its first frame puts it and runs down as far as its frames need, to the foot of the template's area. When one frame grows, the frames after it move down by as much.
 - A group with a box of its own lays its frames inside that box. When they need more than it holds, the frames with `shrink` above 0 give space back, the lowest `priority` first; frames of the same priority give in proportion to their `shrink`; none goes below its `minHeight`. Spare space goes to the frames with `grow` above 0, in proportion to it, up to their `maxHeight`; with none, `align` places the frames (`'end'` at the foot, `'center'`, `'space-between'`). A frame of the group with no placement of its own takes the group's box as its area.
-- When nothing more can give, no frame runs past the group's foot: the content that does not fit is cut there and reported as `frameOverflow`.
+- When nothing more can give, no frame runs past the group's foot: the frame whose content does not fit climbs the reflow ladder (see [When content does not fit](#when-content-does-not-fit)), and what still does not fit is cut there and reported as `frameOverflow`.
 - A frame with `height: 'fill'` asks for its `minHeight` and takes spare space as if it had `grow: 1`.
 
 **Row.** The frames of a row go side by side at their declared widths, all as tall as the row: the height of the group's box, or, with no box of its own, the tallest declared height among them (a frame with a fixed height keeps its own). When the text of one frame runs past the row's height, the frame takes width: first the spare width of the row, then width from siblings with `shrink` above 0, the lowest `priority` first, each one never narrower than the width its own text still fits in. The width taken is the fewest whole millimetres that make the text fit; if even all the room there is would not, the frame takes none, and a row with no box of its own grows taller instead. Spare width goes to the frames with `grow` above 0, then to `align`. Rows run from left to right.
@@ -442,6 +442,25 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 The result depends only on the page's content, the template and the typography: the same input gives the same page, measured in the same order with the same steps. The negotiation never reads another page, so a change on one composed page leaves every other page as it was, as long as the content stays on its page.
+
+### When content does not fit
+
+When a frame's content is taller than the room its group gives it, the layout tries, in order, the steps of the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) and stops at the first that makes it fit: free space up to `maxHeight`, the group pushing and yielding, smaller pictures, the other frames of the group down to their minimum, smaller text, continuation on another page. These frame settings decide how far each step may go:
+
+- `maxHeight` on a frame with a fixed `height`: the frame may grow up to it before anything is scaled.
+- `minHeight` on the other frames of the group: how far they give space back; a frame never goes below what its own content needs.
+- `fit.scaleImages` and `fit.imageMinScale`: whether the pictures of the frame and of its group may be set smaller, and down to what scale (80 % by default).
+- `fit.shrinkText` and `fit.minScale`: whether the frame's text may be set smaller, and down to what scale (90 % by default). The scale is the same for the font size, the leading and the spacing; the frame keeps its size.
+- `overflow.continueIn`: where the content goes on when none of this is enough.
+
+Scales go in steps of 2.5 % and the layout takes the largest that fits, so a text that is a line too long is set at 97.5 %, not at the minimum. A box that must keep its type size sets `fit: { shrinkText: false }`; a page whose pictures must keep their size sets `fit: { scaleImages: false }` on the frames of its group:
+
+```ts
+{ name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
+  fit: { minScale: 0.85, imageMinScale: 0.9 } }
+```
+
+What still does not fit is reported as `frameOverflow`, with the steps tried and proposals that carry their values: see [The warning and its proposals](/en/docs/composed-pages#the-warning-and-its-proposals).
 
 ### Inheritance and variants
 
