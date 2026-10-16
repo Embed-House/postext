@@ -17,7 +17,7 @@ export const metadata = {
 
 Eine zusammengesetzte Seite wird nach einer Vorlage umbrochen: benannte Rahmen (ein Titelband, ein Text, ein Kasten mit seinem Foto), Gruppen, die sich gemeinsam verschieben, und ein Dekor, alles in der Konfiguration unter `pageTemplates` festgelegt. Das Markdown der Seite ist ein abgegrenzter Block, der seine Vorlage nennt und den Inhalt über die Namen auf die Rahmen verteilt. Im Markdown stehen nie Positionen oder Größen, und in der Konfiguration steht nie Inhaltstext; eine Übersetzung ist deshalb dieselbe Vorlage mit anderen Wörtern.
 
-Diese Seite behandelt das Markdown. In dieser Version liest der Parser zusammengesetzte Seiten, und die Slot-Prüfungen laufen, sodass das Bedienfeld Prüfungen und `postext check` eine Seite melden, die nicht zu ihrer Vorlage passt. Den Umbruch der Vorlage auf der Seite bringt die nächste Version; bis dahin wird der Inhalt einer zusammengesetzten Seite im Fließtext gesetzt, in der Reihenfolge des Markdowns und auf eigenen Seiten, sodass nichts von dem verloren geht, was darin steht. Ein Dokument ohne zusammengesetzte Seiten wird genau wie zuvor umbrochen.
+Diese Seite behandelt das Markdown und wie die Seite daraus gesetzt wird. Die Vorlage selbst (ihre Rahmen, Größen, Stile und ihr Dekor) beschreibt [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages). Ein Dokument ohne zusammengesetzte Seiten wird genau wie zuvor umbrochen.
 
 ## Die Seitenbegrenzung
 
@@ -112,7 +112,7 @@ Außerhalb einer zusammengesetzten Seite wird ein `slot` gelesen und ändert nic
 - `style` nennt ein Beschriftungsformat und hat Vorrang vor dem des Ankers.
 - Der Text in den eckigen Klammern ist Inline-Markdown: fett, kursiv, Chips.
 
-Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Die Beschriftungen werden gelesen und mit ihrer Quelle aufbewahrt; auf das Bild gezeichnet werden sie erst mit dem Umbruch der Vorlagen, und bis dahin wird eine Abbildung so gesetzt wie ihre Ressource. Eine Zeile in einer Abbildung, die weder eine Beschriftung noch leer ist, beendet eine Abbildung, deren schließendes `:::` fehlt, und wird als nicht geschlossener Container gemeldet.
+Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Die Beschriftungen werden gelesen und mit ihrer Quelle aufbewahrt; auf das Bild gezeichnet werden sie erst in einer späteren Version, und bis dahin wird eine Abbildung so gesetzt wie ihre Ressource. Eine Zeile in einer Abbildung, die weder eine Beschriftung noch leer ist, beendet eine Abbildung, deren schließendes `:::` fehlt, und wird als nicht geschlossener Container gemeldet.
 
 ## Beispiel
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 Der Titel kommt in den Rahmen, der `h1` übernimmt; die Zwischenüberschrift, der Absatz und die Liste kommen in den Flussrahmen; jeder Kasten und jedes Foto kommt in den Rahmen seines Slots. Die katalanische Ausgabe besteht aus denselben Zeilen mit anderen Wörtern: Vorlage, Slots und Fotos bleiben unverändert.
+
+## Wie die Seite gesetzt wird
+
+Eine zusammengesetzte Seite belegt eine eigene Seite (Rolle `composed` für den Filter `pages` der Gestaltungselemente). Die Vorlage wird passend zur Lage der Seite gewählt, rechts oder links; es gilt also ihr `variants.recto` oder ihr `variants.verso`. Danach wird ein Rahmen nach dem anderen platziert und gefüllt, mit der Typografie des übrigen Buchs: Absatz- und Überschriftenformate, Listen, Chips, Fußnotenzeichen und das Kastenformat des Rahmens.
+
+### Rahmen platzieren
+
+Ein Rahmen steht in seiner Rasterzelle oder dort, wo sein `placement` ihn hinsetzt (ein Anker, eine Kante und ein Versatz, wie bei einem Gestaltungselement); hat er beides nicht, steht er in der oberen linken Ecke des Vorlagenbereichs und ist so breit wie der Bereich. Ein Rahmen, der an einem anderen verankert ist (`"to": "#dinero"`), wird nach diesem platziert und bewegt sich mit ihm: `below` hängt ihn unter den anderen Rahmen, `right-of` stellt ihn daneben, und eine Ecke wie `top-right` heftet ihn an diese Ecke des anderen Rahmens.
+
+Seine Höhe ist fest (eine Länge oder ein Prozentwert), `fill` (bis an den Rand des Bereichs) oder `auto`, der Standard: die Höhe des Inhalts, den er erhält, zwischen `minHeight` und `maxHeight` und nie über den Fuß des Bereichs hinaus. In einem Rahmen, der höher ist als sein Inhalt, legt `verticalAlign` fest, wo der Inhalt steht (`top`, `middle`, `bottom` oder `justify`, um den Raum zwischen seinen Blöcken zu verteilen). Das Kastenformat des Rahmens zeichnet Hintergrund, Kontur, abgerundete Ecken, Streifen und Symbol in der vollen Größe des Rahmens; das `label` der Begrenzung `:::frame` steht im Reiter des Formats.
+
+### Der Flussrahmen und die Überschriften
+
+Inhalt, der keinen Slot nennt, kommt in den mit `flow` markierten Rahmen; die erste Überschrift einer Ebene kommt in den Rahmen, der sie mit `takes` übernimmt. Die Rahmen einer Seite werden in der Reihenfolge gelesen, in der ihr Inhalt zum ersten Mal im Markdown auftaucht, jeder als Ganzes: Ein Screenreader, das getaggte PDF und die Ausgaben mit fließendem Layout lesen einen Kasten nach dem Text, mit dem die Seite beginnt, nicht mitten darin.
+
+### Rahmen verketten
+
+`next` schickt, was ein Rahmen nicht fasst, in einen anderen Rahmen derselben Seite und von dort weiter in den nächsten, wie verkettete Textrahmen im Layoutprogramm:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter, neu umbrochen auf dessen Breite, ohne dass etwas verloren geht oder doppelt erscheint. `overflow.continueIn: "#frame"` bedeutet dasselbe. Das Weiterlaufen auf der nächsten Seite ist geplant (`"next-page"`).
+
+### Rahmen, die Text verdrängen
+
+Ein Rahmen mit `exclude: "push"` hält den Text der anderen Rahmen aus seinem Rechteck heraus: Eine Zeile eines anderen Rahmens, die darauf trifft, wird auf der Seite, die das Rechteck abdeckt, kürzer gesetzt, so wie der Fließtext ein Bild umfließt. Ein Foto, das an der Ecke eines Kastens verankert und mit `push` markiert ist, lässt den Text des Kastens neben sich herlaufen. Ein Kasten, der eine feste Spalte für seine Bilder freihalten soll, kann stattdessen `padding` verwenden.
+
+### Dekor, Kolumnentitel und Ebenen
+
+Das Dekor der Vorlage (`decoration`: Bilder, Linien, Kästen und kurze Texte) wird gesetzt, sobald die Rahmen ihre endgültige Box haben; ein Element kann sich daher an einem Rahmen verankern (`"to": "#gasto"`) und ihm folgen. Seine Texte lesen die Attribute der Seite selbst: `fondo="banda-retos"` an der Seitenbegrenzung ergibt `{attr.fondo}`, etwa für ein Hintergrundbild, das Seite für Seite mit `"resourceId": "{attr.fondo}"` gewählt wird. Auch die Kolumnentitel lesen sie. Das `header` oder `footer` einer Vorlage ersetzt das des Abschnitts, `false` blendet es aus, und ohne beides erscheinen die Kolumnentitel des Abschnitts.
+
+Rahmen werden in der Reihenfolge ihrer `layer` gezeichnet: das Dekor auf Ebene 0, Rahmen standardmäßig auf Ebene 1, eine höhere Ebene über einer niedrigeren, eine negative Ebene unter dem Dekor. `rotate` dreht einen Rahmen samt Inhalt um einen beliebigen Winkel um seinen Mittelpunkt, im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout.
+
+### Inhalt, der nicht passt
+
+Ein Rahmen, dessen Inhalt höher ist als der Rahmen und der keinen Folgerahmen hat, behält den ganzen Inhalt im Dokument, zeigt aber nur, was hineinpasst: Der Rest wird in der paginierten Ausgabe am Fuß des Rahmens abgeschnitten, und die Warnung [`frameOverflow`](#frameoverflow) nennt die Menge. Inhalt, den kein Rahmen aufnimmt (kein Flussrahmen, oder auf dieser Seite fehlt ein Rahmen), wird im Fließtext auf der Seite nach der zusammengesetzten Seite gesetzt.
 
 ## Warnungen
 
@@ -204,3 +243,5 @@ Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie ers
 ## Aus dem Code
 
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.
+
+Nach dem Umbruch hält `VDTPage.composed` einer zusammengesetzten Seite ihre Vorlage fest, die angewandte Variante, die Attribute der Seitenbegrenzung und für jeden Rahmen seine ID (`cp0:dinero`: die Ordnungszahl der Seitenbegrenzung und der Name des Rahmens, in jeder Sprache dieselbe), seine Box, Ebene und Drehung, die Höhe des Inhalts, der nicht hineinpasste (`overflowPx`), den Rahmen, aus dem er weiterläuft oder in den er weiterläuft, seinen Konfigurationspfad (`/pageTemplates/0/frames/2`) und die IDs seiner Blöcke. Diese Blöcke sind gewöhnliche Kastenblöcke in `page.floats` und `doc.blocks` mit ihren Quellbereichen, sodass ein Klick in einen ungedrehten Rahmen der Sandbox-Vorschau zu seinem Markdown führt. `composedPaintOrder(page)` liefert die Reihenfolge, in der ein Renderer Rahmen und Dekor zeichnet, und `frameMatrix(frame)` die Drehung eines Rahmens.

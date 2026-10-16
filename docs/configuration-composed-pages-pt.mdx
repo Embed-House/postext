@@ -161,7 +161,7 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
 
 Um quadro é um retângulo com nome que recebe conteúdo diagramado. O seu `name` é o encaixe que o Markdown pede, e é único no seu modelo (um grupo também não pode ter o nome de um quadro, já que as âncoras nomeiam os dois do mesmo jeito).
 
-Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e, senão, pelo seu `placement`, que funciona como o de um elemento de design: uma âncora (`'container'` é a área, `'page'`, `'bleed'`, ou `'#name'` para outro quadro ou grupo), uma borda, um deslocamento e um tamanho. Um quadro ancorado a outro se move com ele. Sem nenhum dos dois, o quadro ocupa a área inteira.
+Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e, senão, pelo seu `placement`, que funciona como o de um elemento de design: uma âncora (`'container'` é a área, `'page'`, `'bleed'`, ou `'#name'` para outro quadro ou grupo), uma borda, um deslocamento e um tamanho. Um quadro ancorado a outro se move com ele. Sem nenhum dos dois, o quadro começa no canto superior esquerdo da área, com a largura da área inteira e a altura que a sua regra de altura indicar. Como o conteúdo é distribuído pelos quadros, encadeado e cortado está descrito em [Páginas compostas › Como a página é composta](/pt/docs/composed-pages#como-a-página-é-composta).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Quando o Sandbox salva um modelo, um valor igual ao padrão nunca é descartado: num modelo que estende outro, ou numa variante, esse valor substitui o do pai.
 
 No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com a cadeia mesclada, a variante do lado aplicada, todos os padrões preenchidos e cada referência resolvida como os avisos abaixo descrevem; `validatePageTemplates(config)` devolve os avisos.
+
+### O que a diagramação aplica
+
+A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, `spread` e `crossGutter`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
 
 ## Estilos de rótulo
 

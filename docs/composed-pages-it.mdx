@@ -17,7 +17,7 @@ export const metadata = {
 
 Una pagina composta è una pagina impaginata a partire da un modello: cornici con un nome (una fascia per il titolo, un testo, un riquadro con la sua foto), gruppi che si spostano insieme e una decorazione, tutto definito nella configurazione sotto `pageTemplates`. Il Markdown della pagina è un blocco recintato che indica il suo modello e versa il contenuto nelle cornici chiamandole per nome. Nel Markdown non si scrive mai una posizione o una dimensione, e nella configurazione non si scrive mai il testo del contenuto: una traduzione è quindi lo stesso modello con altre parole.
 
-Questa pagina tratta il Markdown. In questa versione il parser legge le pagine composte e i controlli degli slot sono attivi, per cui il pannello Verifiche e `postext check` segnalano una pagina che non corrisponde al suo modello. L’impaginazione del modello sulla pagina arriva nella prossima versione; fino ad allora il contenuto di una pagina composta viene collocato nel testo corrente, nell’ordine del Markdown, su pagine proprie, così che nulla di quanto vi è scritto vada perso. Un documento senza pagine composte si impagina esattamente come prima.
+Questa pagina tratta il Markdown e il modo in cui la pagina ne viene composta. Il modello in sé (le sue cornici, le dimensioni, gli stili e la decorazione) è descritto in [Configurazione › Pagine composte](/it/docs/configuration-composed-pages). Un documento senza pagine composte si impagina esattamente come prima.
 
 ## Il recinto della pagina
 
@@ -112,7 +112,7 @@ Fuori da una pagina composta, uno `slot` viene letto e non cambia nulla.
 - `style` indica uno stile di etichetta e prevale su quello dell’ancora.
 - Il testo fra parentesi quadre è Markdown in linea: grassetto, corsivo, chip.
 
-Una figura funziona nel testo corrente come in una cornice. Le etichette vengono lette e conservate con la loro sorgente; il loro disegno sull’immagine arriverà con l’impaginazione dei modelli, e fino ad allora una figura viene composta come la sua risorsa. Dentro una figura, una riga che non è né un’etichetta né vuota chiude una figura a cui manca il `:::` di chiusura, e viene segnalata come contenitore non chiuso.
+Una figura funziona nel testo corrente come in una cornice. Le etichette vengono lette e conservate con la loro sorgente; il loro disegno sull’immagine arriverà in una versione successiva, e fino ad allora una figura viene composta come la sua risorsa. Dentro una figura, una riga che non è né un’etichetta né vuota chiude una figura a cui manca il `:::` di chiusura, e viene segnalata come contenitore non chiuso.
 
 ## Esempio
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 Il titolo va nella cornice che prende `h1`; il sottotitolo, il paragrafo e l’elenco vanno nella cornice di flusso; ogni riquadro e ogni foto vanno nella cornice del loro slot. L’edizione catalana è fatta delle stesse righe con altre parole: il modello, gli slot e le foto non cambiano.
+
+## Come si compone la pagina
+
+Una pagina composta occupa una pagina tutta sua (ruolo `composed` per il filtro `pages` degli elementi di progetto grafico). Il modello si sceglie in base al lato su cui cade la pagina, quindi si applica il suo `variants.recto` o il suo `variants.verso`. Poi ogni cornice viene collocata e riempita, una dopo l’altra, con la tipografia del resto del libro: stili di paragrafo e di titolo, elenchi, chip, richiami di nota e lo stile di riquadro della cornice.
+
+### Collocare le cornici
+
+Una cornice sta nella sua cella della griglia, o dove la mette il suo `placement` (un ancoraggio, un bordo e uno scostamento, come per un elemento di progetto grafico), oppure, senza né l’una né l’altro, nell’angolo in alto a sinistra dell’area del modello, larga quanto l’area. Una cornice ancorata a un’altra (`"to": "#dinero"`) viene collocata dopo di essa e si sposta con essa: `below` la appende sotto l’altra cornice, `right-of` la mette accanto, e un angolo come `top-right` la fissa a quell’angolo del riquadro dell’altra cornice.
+
+La sua altezza è fissa (una lunghezza o una percentuale), `fill` (fino al bordo dell’area) oppure `auto`, il valore predefinito: l’altezza del contenuto che riceve, fra `minHeight` e `maxHeight`, e mai oltre il piede dell’area. In una cornice più alta del suo contenuto, `verticalAlign` dice dove si colloca il contenuto (`top`, `middle`, `bottom`, oppure `justify` per distribuire lo spazio fra i suoi blocchi). Lo stile di riquadro della cornice disegna sfondo, bordo, angoli arrotondati, fascia e icona alla dimensione piena della cornice; il `label` del recinto `:::frame` si stampa nella linguetta dello stile.
+
+### La cornice di flusso e i titoli
+
+Il contenuto che non indica nessuno slot va nella cornice marcata `flow`; il primo titolo di un livello va nella cornice che lo prende con `takes`. Le cornici di una pagina si leggono nell’ordine in cui il loro contenuto compare per la prima volta nel Markdown, ciascuna per intero: un lettore di schermo, il PDF con tag e le uscite a layout fluido leggono un riquadro dopo il testo che apre la pagina, non nel mezzo.
+
+### Concatenare le cornici
+
+`next` manda ciò che una cornice non riesce a contenere in un’altra cornice della stessa pagina, e questa in un’altra ancora, come le cornici di testo concatenate dei programmi di impaginazione:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+Il testo si interrompe fra due righe e prosegue nella cornice seguente, spezzato di nuovo alla larghezza di quella cornice, senza perdere né ripetere nulla. `overflow.continueIn: "#frame"` vuol dire la stessa cosa. Il proseguimento nella pagina successiva è previsto (`"next-page"`).
+
+### Cornici che spostano il testo
+
+Una cornice con `exclude: "push"` tiene il testo delle altre cornici fuori dal suo rettangolo: la riga di un’altra cornice che lo incontra viene composta più corta dal lato coperto dal rettangolo, come il testo scontorna un’immagine nel testo corrente. Una foto ancorata all’angolo di un riquadro e marcata `push` fa scorrere il testo del riquadro accanto a sé. Un riquadro che deve tenere libera una colonna fissa per le sue immagini può usare invece `padding`.
+
+### Decorazione, testatine e livelli
+
+La `decoration` del modello (immagini, filetti, riquadri e testi brevi) viene posata quando le cornici hanno già il loro riquadro definitivo, per cui un elemento può ancorarsi a una cornice (`"to": "#gasto"`) e seguirla. I suoi testi leggono gli attributi della pagina stessa: `fondo="banda-retos"` sul recinto della pagina dà `{attr.fondo}`, per esempio per scegliere pagina per pagina un’immagine di sfondo con `"resourceId": "{attr.fondo}"`. Anche le testatine li leggono. L’`header` o il `footer` di un modello sostituisce quello della sezione, `false` lo nasconde e, se il modello non ne imposta nessuno, si stampano le testatine della sezione.
+
+Le cornici si dipingono nell’ordine del loro `layer`: la decorazione al livello 0, le cornici al livello 1 per impostazione predefinita, un livello più alto sopra uno più basso, un livello negativo sotto la decorazione. `rotate` ruota una cornice insieme al suo contenuto, di qualsiasi angolo e attorno al centro della cornice, nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso.
+
+### Contenuto che non entra
+
+Una cornice il cui contenuto è più alto di lei, senza una cornice seguente in cui proseguire, conserva tutto quel contenuto nel documento ma ne mostra solo quanto entra: il resto viene tagliato al piede della cornice nell’uscita impaginata, e l’avviso [`frameOverflow`](#frameoverflow) dice quanto. Il contenuto che nessuna cornice prende (non c’è una cornice di flusso, o su quel lato manca una cornice) viene composto nel testo corrente, nella pagina che segue la pagina composta.
 
 ## Avvisi
 
@@ -204,3 +243,5 @@ Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descrit
 ## Dal codice
 
 `composedPages(blocks)` legge i blocchi analizzati di un capitolo (`parseMarkdownWithIssues(markdown).blocks`) e restituisce, in ordine, un nodo per ogni recinto di pagina: il suo `template`, `spread`, `attrs` con l’intervallo di sorgente di ogni valore (`attrSources`), il suo `fenceIndex` (il numero d’ordine del recinto nel capitolo, uguale in ogni lingua), `slots` (gli indici dei blocchi di ogni slot, nell’ordine del Markdown), `unassigned` (i blocchi senza slot) e l’intervallo di sorgente dell’intera pagina. Un blocco porta lo slot che indica in `ContentBlock.slot`, con l’intervallo di sorgente del valore; una figura è un `resourceBlock` il cui `figure` contiene i suoi attributi e le sue etichette, ciascuna con il suo testo, i suoi span in linea e una mappa che la riporta alla sua sorgente nel Markdown. `checkComposedSlots(pages, config)` restituisce i tre avvisi sugli slot per quelle pagine.
+
+Dopo l’impaginazione, il `VDTPage.composed` di una pagina composta registra il suo modello, la variante applicata, gli attributi del recinto della pagina e, per ogni cornice, il suo id (`cp0:dinero`: il numero d’ordine del recinto della pagina e il nome della cornice, uguale in ogni lingua), il suo riquadro, il livello, la rotazione, l’altezza del contenuto che non è entrato (`overflowPx`), la cornice da cui prosegue o in cui prosegue, il suo percorso nella configurazione (`/pageTemplates/0/frames/2`) e gli id dei suoi blocchi. Questi blocchi sono normali blocchi di riquadro in `page.floats` e `doc.blocks`, con i loro intervalli di sorgente, così un clic in una cornice non ruotata dell’anteprima del Sandbox porta al suo Markdown. `composedPaintOrder(page)` dà l’ordine in cui un renderer dipinge le cornici e la decorazione, e `frameMatrix(frame)` la rotazione di una cornice.

@@ -17,7 +17,7 @@ export const metadata = {
 
 Una pàgina composta es maqueta a partir d'una plantilla: marcs amb nom (una banda de títol, un text, una caixa amb la seva foto), grups que es mouen junts i una decoració, tot definit a la configuració, a `pageTemplates`. El Markdown de la pàgina és un bloc amb tanca que anomena la seva plantilla i aboca el contingut als marcs pel seu nom. Al Markdown mai no s'hi escriu cap posició ni cap mida, i a la configuració mai no s'hi escriu text del contingut, de manera que una traducció és la mateixa plantilla amb altres paraules.
 
-Aquesta pàgina tracta del Markdown. En aquesta versió l'analitzador ja llegeix les pàgines compostes i les comprovacions de slots s'executen, de manera que el tauler Revisió i `postext check` assenyalen una pàgina que no lliga amb la seva plantilla. La maquetació de la plantilla sobre la pàgina arriba a la versió següent; fins aleshores, el contingut d'una pàgina composta es compon al text corregut, en l'ordre del Markdown i en pàgines pròpies, així que no es perd res del que s'hi escriu. Un document sense pàgines compostes es maqueta exactament igual que abans.
+Aquesta pàgina tracta del Markdown i de com se'n compon la pàgina. La plantilla mateixa (els marcs, les mides, els estils i la decoració) es descriu a [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages). Un document sense pàgines compostes es maqueta exactament igual que abans.
 
 ## La tanca de pàgina
 
@@ -112,7 +112,7 @@ Un `slot` fora d'una pàgina composta es llegeix i no canvia res.
 - `style` anomena un estil de rètol i s'imposa al de l'àncora.
 - El text entre claudàtors és Markdown en línia: negreta, cursiva, xips.
 
-Una figura funciona tant al text corregut com dins d'un marc. Els rètols es llegeixen i es guarden juntament amb la seva posició al Markdown; dibuixar-los sobre la imatge arriba amb la maquetació de plantilles, i fins aleshores la figura es compon igual que el seu recurs. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
+Una figura funciona tant al text corregut com dins d'un marc. Els rètols es llegeixen i es guarden juntament amb la seva posició al Markdown; dibuixar-los sobre la imatge arribarà en una versió posterior, i fins aleshores la figura es compon igual que el seu recurs. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
 
 ## Exemple
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 El títol va al marc que pren `h1`; el subtítol, el paràgraf i la llista, al marc de flux; cada caixa i cada foto, al marc del seu slot. L'edició en català són les mateixes línies amb altres paraules: la plantilla, els slots i les fotos no canvien.
+
+## Com es compon la pàgina
+
+Una pàgina composta ocupa una pàgina pròpia (amb el paper `composed` per al filtre `pages` dels elements de disseny). La plantilla es tria segons el costat on cau la pàgina, així que s'hi aplica el seu `variants.recto` o el seu `variants.verso`. Després es col·loca i s'omple cada marc, l'un rere l'altre, amb la tipografia de la resta del llibre: els estils de paràgraf i d'encapçalament, les llistes, els xips, les crides de nota i l'estil de requadre del marc.
+
+### Col·locar els marcs
+
+Un marc se situa a la seva cel·la de la retícula, o allà on el posa el seu `placement` (un ancoratge, una vora i un desplaçament, com un element de disseny), o, si no té cap dels dos, a l'angle superior esquerre de l'àrea de la plantilla i amb tota l'amplada de l'àrea. Un marc ancorat a un altre (`"to": "#dinero"`) es col·loca després d'aquest i s'hi mou: `below` el penja a sota de l'altre marc, `right-of` el posa al costat i un angle com `top-right` el subjecta en aquest angle de la caixa de l'altre marc.
+
+La seva alçada és fixa (una longitud o un percentatge), `fill` (fins a la vora de l'àrea) o `auto`, el valor per defecte: l'alçada del contingut que rep, entre `minHeight` i `maxHeight`, sense passar mai del peu de l'àrea. En un marc més alt que el seu contingut, `verticalAlign` diu on queda aquest contingut (`top`, `middle`, `bottom`, o `justify` per repartir l'espai entre els seus blocs). L'estil de requadre del marc dibuixa el fons, la vora, els angles arrodonits, la franja i la icona a la mida completa del marc; el `label` de la tanca `:::frame` s'imprimeix a la pestanya de l'estil.
+
+### El marc de flux i els encapçalaments
+
+El contingut que no anomena cap slot va al marc marcat amb `flow`; el primer encapçalament d'un nivell va al marc que el pren amb `takes`. Els marcs d'una pàgina es llegeixen en l'ordre en què el seu contingut apareix per primer cop al Markdown, cadascun sencer: un lector de pantalla, el PDF etiquetat i les sortides de maquetació fluida llegeixen una caixa després del text que obre la pàgina, no pas al mig.
+
+### Encadenar marcs
+
+`next` envia el que un marc no pot contenir a un altre marc de la mateixa pàgina, i aquest a un altre, com els marcs de text enllaçats de la maquetació de sempre:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+El text es talla entre dues línies i continua al marc següent, partit de nou a l'amplada d'aquell marc, sense perdre ni repetir res. `overflow.continueIn: "#frame"` vol dir el mateix. Continuar a la pàgina següent està previst (`"next-page"`).
+
+### Marcs que aparten el text
+
+Un marc amb `exclude: "push"` deixa fora del seu rectangle el text dels altres marcs: la línia d'un altre marc que hi topa es compon més curta pel costat que tapa el rectangle, igual que el text envolta una imatge al text corregut. Una foto ancorada a l'angle d'una caixa i marcada amb `push` fa que el text de la caixa corri al seu costat. Una caixa que hagi de deixar lliure una columna fixa per a les seves imatges pot fer servir `padding` en lloc d'això.
+
+### Decoració, capçaleres i capes
+
+La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo. Els seus textos llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la tanca de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció.
+
+Els marcs es pinten en l'ordre de la seva `layer`: la decoració a la capa 0, els marcs a la 1 per defecte, una capa més alta damunt d'una de més baixa i una capa negativa a sota de la decoració. `rotate` gira un marc juntament amb el seu contingut, en qualsevol angle i al voltant del centre del marc, al llenç, al PDF, al visor HTML i a l'EPUB de maquetació fixa.
+
+### Contingut que no hi cap
+
+Un marc el contingut del qual és més alt que ell, sense cap marc següent on continuar, conserva tot aquest contingut al document però només mostra el que hi cap: la resta es talla al peu del marc a la sortida paginada, i l'avís [`frameOverflow`](#frameoverflow) diu quant. El contingut que no recull cap marc (no hi ha marc de flux, o en aquest costat falta un marc) es compon al text corregut, a la pàgina que segueix la pàgina composta.
 
 ## Avisos
 
@@ -204,3 +243,5 @@ Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí 
 ## Des del codi
 
 `composedPages(blocks)` llegeix els blocs analitzats d'un capítol (`parseMarkdownWithIssues(markdown).blocks`) i retorna un node per cada tanca de pàgina, en ordre: el seu `template`, `spread`, `attrs` amb l'interval d'origen de cada valor (`attrSources`), el seu `fenceIndex` (l'ordinal de la tanca dins del capítol, el mateix en totes les llengües), `slots` (els índexs dels blocs de cada slot, en l'ordre del Markdown), `unassigned` (els blocs sense slot) i l'interval d'origen de la pàgina sencera. Un bloc porta el slot que anomena a `ContentBlock.slot`, amb l'interval d'origen del valor; una figura és un `resourceBlock` el `figure` del qual guarda els seus atributs i els seus rètols, cada rètol amb el seu text, els seus trams en línia i un mapa d'origen que remet al Markdown. `checkComposedSlots(pages, config)` retorna els tres avisos de slot d'aquestes pàgines.
+
+Després de la maquetació, el `VDTPage.composed` d'una pàgina composta registra la seva plantilla, la variant aplicada, els atributs de la tanca de pàgina i, per a cada marc, el seu id (`cp0:dinero`: l'ordinal de la tanca de pàgina i el nom del marc, el mateix en totes les llengües), la seva caixa, la capa, el gir, l'alçada del contingut que no hi ha cabut (`overflowPx`), el marc del qual continua o en el qual continua, el seu camí a la configuració (`/pageTemplates/0/frames/2`) i els ids dels seus blocs. Aquests blocs són blocs de requadre corrents a `page.floats` i `doc.blocks`, amb els seus intervals d'origen, així que un clic en un marc sense girar de la previsualització del Sandbox porta al seu Markdown. `composedPaintOrder(page)` dona l'ordre en què un renderitzador pinta els marcs i la decoració, i `frameMatrix(frame)`, el gir d'un marc.

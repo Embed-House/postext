@@ -17,7 +17,7 @@ export const metadata = {
 
 Una página compuesta se maqueta a partir de una plantilla: marcos con nombre (una banda de título, un texto, una caja con su foto), grupos que se mueven juntos y una decoración, todo ello definido en la configuración, en `pageTemplates`. El Markdown de la página es un bloque con valla que nombra su plantilla y vierte el contenido en los marcos por su nombre. En el Markdown nunca se escribe una posición ni un tamaño, y en la configuración nunca se escribe texto del contenido, así que una traducción es la misma plantilla con otras palabras.
 
-Esta página trata del Markdown. En esta versión el analizador ya lee las páginas compuestas y las comprobaciones de slots se ejecutan, de modo que el panel Revisión y `postext check` señalan una página que no casa con su plantilla. La maquetación de la plantilla sobre la página llega en la próxima versión; hasta entonces, el contenido de una página compuesta se compone en el texto corrido, en el orden del Markdown y en páginas propias, así que no se pierde nada de lo que se escribe en ella. Un documento sin páginas compuestas se maqueta exactamente igual que antes.
+Esta página trata del Markdown y de cómo se compone la página a partir de él. La plantilla en sí (sus marcos, tamaños, estilos y decoración) se describe en [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages). Un documento sin páginas compuestas se maqueta exactamente igual que antes.
 
 ## La valla de página
 
@@ -112,7 +112,7 @@ Un `slot` fuera de una página compuesta se lee y no cambia nada.
 - `style` nombra un estilo de rótulo y se impone al del ancla.
 - El texto entre corchetes es Markdown en línea: negrita, cursiva, chips.
 
-Una figura funciona tanto en el texto corrido como en un marco. Los rótulos se leen y se guardan junto con su posición en el Markdown; dibujarlos sobre la imagen llega con la maquetación de plantillas, y hasta entonces la figura se compone igual que su recurso. Una línea dentro de una figura que no es un rótulo ni está en blanco termina una figura a la que le falta el `:::` de cierre, y se señala como contenedor sin cerrar.
+Una figura funciona tanto en el texto corrido como en un marco. Los rótulos se leen y se guardan junto con su posición en el Markdown; dibujarlos sobre la imagen llegará en una versión posterior, y hasta entonces la figura se compone igual que su recurso. Una línea dentro de una figura que no es un rótulo ni está en blanco termina una figura a la que le falta el `:::` de cierre, y se señala como contenedor sin cerrar.
 
 ## Ejemplo
 
@@ -151,6 +151,45 @@ Si necesitas o quieres comprar algo muy caro…
 ```
 
 El título va al marco que toma `h1`; el subtítulo, el párrafo y la lista, al marco de flujo; cada caja y cada foto, al marco de su slot. La edición en catalán son las mismas líneas con otras palabras: la plantilla, los slots y las fotos no cambian.
+
+## Cómo se compone la página
+
+Una página compuesta ocupa una página propia (con el papel `composed` para el filtro `pages` de los elementos de diseño). La plantilla se elige según el lado en que cae la página, así que se aplica su `variants.recto` o su `variants.verso`. Después se coloca y se llena cada marco, uno tras otro, con la tipografía del resto del libro: los estilos de párrafo y de encabezado, las listas, los chips, las llamadas de nota y el estilo de recuadro del marco.
+
+### Colocar los marcos
+
+Un marco se sitúa en su celda de la rejilla, o donde lo pone su `placement` (un anclaje, un borde y un desplazamiento, como un elemento de diseño), o, si no tiene ninguno de los dos, en la esquina superior izquierda del área de la plantilla y con todo el ancho del área. Un marco anclado a otro (`"to": "#dinero"`) se coloca después de él y se mueve con él: `below` lo cuelga debajo del otro marco, `right-of` lo pone a su lado y una esquina como `top-right` lo sujeta a esa esquina de la caja del otro marco.
+
+Su altura es fija (una longitud o un porcentaje), `fill` (hasta el borde del área) o `auto`, el valor por defecto: la altura del contenido que recibe, entre `minHeight` y `maxHeight`, sin pasar nunca del pie del área. En un marco más alto que su contenido, `verticalAlign` dice dónde queda ese contenido (`top`, `middle`, `bottom`, o `justify` para repartir el espacio entre sus bloques). El estilo de recuadro del marco dibuja el fondo, el borde, las esquinas redondeadas, la banda y el icono al tamaño completo del marco; el `label` de la valla `:::frame` se imprime en la pestaña del estilo.
+
+### El marco de flujo y los encabezados
+
+El contenido que no nombra ningún slot va al marco marcado con `flow`; el primer encabezado de un nivel va al marco que lo toma con `takes`. Los marcos de una página se leen en el orden en que su contenido aparece por primera vez en el Markdown, cada uno entero: un lector de pantalla, el PDF etiquetado y las salidas de maquetación fluida leen una caja después del texto que abre la página, no en medio de él.
+
+### Encadenar marcos
+
+`next` envía lo que un marco no puede contener a otro marco de la misma página, y ese a otro, como los marcos de texto enlazados de la maquetación tradicional:
+
+```json
+{ "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
+{ "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
+```
+
+El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nuevo al ancho de ese marco, sin perder ni repetir nada. `overflow.continueIn: "#frame"` significa lo mismo. Seguir en la página siguiente está previsto (`"next-page"`).
+
+### Marcos que apartan el texto
+
+Un marco con `exclude: "push"` deja fuera de su rectángulo el texto de los demás marcos: la línea de otro marco que choca con él se compone más corta por el lado que tapa el rectángulo, igual que el texto rodea una imagen en el texto corrido. Una foto anclada a la esquina de una caja y marcada con `push` hace que el texto de la caja corra a su lado. Una caja que deba dejar libre una columna fija para sus imágenes puede usar `padding` en su lugar.
+
+### Decoración, cabeceras y capas
+
+La `decoration` de la plantilla (imágenes, filetes, cajas y textos breves) se coloca cuando los marcos ya tienen su caja definitiva, así que un elemento puede anclarse a un marco (`"to": "#gasto"`) y seguirlo. Sus textos leen los atributos de la propia página: `fondo="banda-retos"` en la valla de página da `{attr.fondo}`, por ejemplo para elegir página a página una imagen de fondo con `"resourceId": "{attr.fondo}"`. Las cabeceras y los pies de página también los leen. El `header` o el `footer` de una plantilla sustituye al de la sección, `false` lo oculta y, si la plantilla no fija ninguno, se imprimen los de la sección.
+
+Los marcos se pintan en el orden de su `layer`: la decoración en la capa 0, los marcos en la 1 por defecto, una capa más alta encima de una más baja y una capa negativa debajo de la decoración. `rotate` gira un marco junto con su contenido, en cualquier ángulo y alrededor del centro del marco, en el lienzo, en el PDF, en el visor HTML y en el EPUB de maquetación fija.
+
+### Contenido que no cabe
+
+Un marco cuyo contenido es más alto que él, sin un marco siguiente donde continuar, conserva todo ese contenido en el documento pero solo muestra lo que cabe: el resto se corta al pie del marco en la salida paginada, y el aviso [`frameOverflow`](#frameoverflow) dice cuánto. El contenido que no recoge ningún marco (no hay marco de flujo, o en ese lado falta un marco) se compone en el texto corrido, en la página que sigue a la página compuesta.
 
 ## Avisos
 
@@ -204,3 +243,5 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 ## Desde el código
 
 `composedPages(blocks)` lee los bloques analizados de un capítulo (`parseMarkdownWithIssues(markdown).blocks`) y devuelve un nodo por cada valla de página, en orden: su `template`, `spread`, `attrs` con el rango de origen de cada valor (`attrSources`), su `fenceIndex` (el ordinal de la valla en el capítulo, el mismo en todos los idiomas), `slots` (los índices de los bloques de cada slot, en el orden del Markdown), `unassigned` (los bloques sin slot) y el rango de origen de la página entera. Un bloque lleva el slot que nombra en `ContentBlock.slot`, con el rango de origen del valor; una figura es un `resourceBlock` cuyo `figure` guarda sus atributos y sus rótulos, cada rótulo con su texto, sus tramos en línea y un mapa de origen que remite al Markdown. `checkComposedSlots(pages, config)` devuelve los tres avisos de slot de esas páginas.
+
+Tras la maquetación, el `VDTPage.composed` de una página compuesta registra su plantilla, la variante aplicada, los atributos de la valla de página y, para cada marco, su id (`cp0:dinero`: el ordinal de la valla de página y el nombre del marco, el mismo en todos los idiomas), su caja, su capa, su giro, la altura del contenido que no cupo (`overflowPx`), el marco del que continúa o en el que continúa, su ruta en la configuración (`/pageTemplates/0/frames/2`) y los ids de sus bloques. Esos bloques son bloques de recuadro corrientes en `page.floats` y `doc.blocks`, con sus rangos de origen, así que un clic en un marco sin girar de la vista previa del Sandbox lleva a su Markdown. `composedPaintOrder(page)` da el orden en que un renderizador pinta los marcos y la decoración, y `frameMatrix(frame)`, el giro de un marco.

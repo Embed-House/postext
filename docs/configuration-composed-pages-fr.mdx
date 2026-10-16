@@ -161,7 +161,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
 
 Un bloc est un rectangle nommé qui reçoit du contenu composé. Son `name` est l’emplacement que demande le Markdown, et il est unique dans son gabarit (un groupe ne peut pas non plus prendre le nom d’un bloc, puisque les ancrages nomment les deux de la même façon).
 
-Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par son `placement`, qui fonctionne comme celui d’un élément de maquette : un ancrage (`'container'` est la zone, `'page'`, `'bleed'`, ou `'#name'` pour un autre bloc ou groupe), un bord, un décalage et une taille. Un bloc ancré à un autre se déplace avec lui. Sans l’un ni l’autre, le bloc prend toute la zone.
+Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par son `placement`, qui fonctionne comme celui d’un élément de maquette : un ancrage (`'container'` est la zone, `'page'`, `'bleed'`, ou `'#name'` pour un autre bloc ou groupe), un bord, un décalage et une taille. Un bloc ancré à un autre se déplace avec lui. Sans l’un ni l’autre, le bloc commence au coin supérieur gauche de la zone, sur toute sa largeur, et aussi haut que le dit sa règle de hauteur. La façon dont le contenu est versé dans les blocs, chaîné et rogné est décrite dans [Pages composées › Comment la page est composée](/fr/docs/composed-pages#comment-la-page-est-composée).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le Sandbox enregistre un gabarit : dans un gabarit qui en étend un autre, ou dans une variante, elle remplace la valeur du parent.
 
 Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
+
+### Ce que la mise en page applique
+
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, `spread` et `crossGutter`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
 
 ## Styles d’étiquette
 

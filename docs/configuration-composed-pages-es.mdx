@@ -161,7 +161,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
 
 Un marco es un rectángulo con nombre que recibe contenido compuesto. Su `name` es el hueco que pide el Markdown, y es único en su plantilla (un grupo tampoco puede llevar el nombre de un marco, porque los anclajes nombran a los dos de la misma manera).
 
-Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, si no, por su `placement`, que funciona como el de un elemento de diseño: un anclaje (`'container'` es el área, `'page'`, `'bleed'`, o `'#name'` para otro marco o grupo), un borde, un desplazamiento y un tamaño. Un marco anclado a otro se mueve con él. Sin ninguno de los dos, el marco ocupa toda el área.
+Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, si no, por su `placement`, que funciona como el de un elemento de diseño: un anclaje (`'container'` es el área, `'page'`, `'bleed'`, o `'#name'` para otro marco o grupo), un borde, un desplazamiento y un tamaño. Un marco anclado a otro se mueve con él. Sin ninguno de los dos, el marco empieza en la esquina superior izquierda del área, con todo el ancho del área y tan alto como diga su regla de altura. Cómo se vierte el contenido en los marcos, cómo se encadenan y cómo se recortan se explica en [Páginas compuestas › Cómo se compone la página](/es/docs/composed-pages#cómo-se-compone-la-página).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Cuando el Sandbox guarda una plantilla, nunca descarta un valor igual al valor por defecto: en una plantilla que extiende otra, o en una variante, ese valor sustituye al del padre.
 
 Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una plantilla con su cadena combinada, la variante del lado aplicada, todos los valores por defecto rellenos y cada referencia resuelta como describen los avisos de abajo; `validatePageTemplates(config)` devuelve los avisos.
+
+### Lo que aplica la maquetación
+
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, `spread` y `crossGutter`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
 
 ## Estilos de rótulo
 

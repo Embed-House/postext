@@ -161,7 +161,7 @@ Una plantilla que només fixa el seu `id` i un marc és una pàgina sencera amb 
 
 Un marc és un rectangle amb nom que rep contingut compost. El seu `name` és el buit que demana el Markdown, i és únic a la seva plantilla (un grup tampoc no pot portar el nom d'un marc, perquè els ancoratges anomenen tots dos de la mateixa manera).
 
-Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícula i, si no, pel seu `placement`, que funciona com el d'un element de disseny: un ancoratge (`'container'` és l'àrea, `'page'`, `'bleed'`, o `'#name'` per a un altre marc o grup), una vora, un desplaçament i una mida. Un marc ancorat a un altre es mou amb ell. Sense cap dels dos, el marc ocupa tota l'àrea.
+Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícula i, si no, pel seu `placement`, que funciona com el d'un element de disseny: un ancoratge (`'container'` és l'àrea, `'page'`, `'bleed'`, o `'#name'` per a un altre marc o grup), una vora, un desplaçament i una mida. Un marc ancorat a un altre es mou amb ell. Sense cap dels dos, el marc comença a l'angle superior esquerre de l'àrea, amb tota l'amplada de l'àrea i tan alt com digui la seva regla d'alçada. Com s'aboca el contingut als marcs, com s'encadenen i com es retallen s'explica a [Pàgines compostes › Com es compon la pàgina](/ca/docs/composed-pages#com-es-compon-la-pàgina).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Quan el Sandbox desa una plantilla, mai no descarta un valor igual al valor per defecte: en una plantilla que n'estén una altra, o en una variant, aquest valor substitueix el del pare.
 
 Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantilla amb la seva cadena combinada, la variant del costat aplicada, tots els valors per defecte omplerts i cada referència resolta com descriuen els avisos de més avall; `validatePageTemplates(config)` retorna els avisos.
+
+### El que aplica la maquetació
+
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, `spread` i `crossGutter`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ## Estils de rètol
 

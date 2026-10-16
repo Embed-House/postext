@@ -161,7 +161,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
 
 Ein Rahmen ist ein benanntes Rechteck, das gesetzten Inhalt aufnimmt. Sein `name` ist der Slot, den das Markdown anfordert, und er ist in seiner Vorlage eindeutig (auch eine Gruppe kann nicht den Namen eines Rahmens tragen, da Anker beide auf dieselbe Weise benennen).
 
-Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster hat, sonst über sein `placement`, das wie das eines Gestaltungselements funktioniert: ein Anker (`'container'` ist der Bereich, `'page'`, `'bleed'` oder `'#name'` für einen anderen Rahmen oder eine Gruppe), eine Kante, ein Versatz und eine Größe. Ein Rahmen, der an einem anderen verankert ist, bewegt sich mit ihm. Ohne beides nimmt der Rahmen den ganzen Bereich ein.
+Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster hat, sonst über sein `placement`, das wie das eines Gestaltungselements funktioniert: ein Anker (`'container'` ist der Bereich, `'page'`, `'bleed'` oder `'#name'` für einen anderen Rahmen oder eine Gruppe), eine Kante, ein Versatz und eine Größe. Ein Rahmen, der an einem anderen verankert ist, bewegt sich mit ihm. Ohne beides beginnt der Rahmen in der oberen linken Ecke des Bereichs, ist so breit wie der Bereich und so hoch, wie seine Höhenregel es vorgibt. Wie der Inhalt in die Rahmen fließt, wie Rahmen verkettet und wie sie beschnitten werden, beschreibt [Zusammengesetzte Seiten › Wie die Seite gesetzt wird](/de/docs/composed-pages#wie-die-seite-gesetzt-wird).
 
 <table>
   <thead>
@@ -413,6 +413,10 @@ pageTemplates: [
 Ein Wert, der einem Standardwert gleicht, wird beim Speichern einer Vorlage in der Sandbox nie verworfen: In einer Vorlage, die eine andere erweitert, oder in einer Variante überschreibt er den Wert der Elternvorlage.
 
 Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit zusammengeführter Kette, angewandter Variante der jeweiligen Seite, allen eingesetzten Standardwerten und jedem Verweis so aufgelöst, wie es die Warnungen unten beschreiben; `validatePageTemplates(config)` liefert die Warnungen.
+
+### Was der Umbruch umsetzt
+
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `spread` und `crossGutter`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
 
 ## Beschriftungsstile
 
