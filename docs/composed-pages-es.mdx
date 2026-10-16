@@ -181,6 +181,13 @@ El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nu
 
 Un marco con `exclude: "push"` deja fuera de su rectángulo el texto de los demás marcos: la línea de otro marco que choca con él se compone más corta por el lado que tapa el rectángulo, igual que el texto rodea una imagen en el texto corrido. Una foto anclada a la esquina de una caja y marcada con `push` hace que el texto de la caja corra a su lado. Una caja que deba dejar libre una columna fija para sus imágenes puede usar `padding` en su lugar.
 
+Con `"wrap": "contour"` además, el marco aparta el texto con la forma de las imágenes que contiene en lugar de con su rectángulo: el canal alfa de una ilustración recortada, o el polígono del `contour` de su recurso. Cada línea del otro marco se acorta lo que ocupa la forma a su lado, así que el texto de una caja sigue la silueta de un dibujo puesto encima sin que haya que definir reglas por línea. Los pies y demás textos del marco que aparta conservan sus cajas, un marco girado aparta con su caja, y una imagen de forma desconocida también aparta con su caja, con un aviso `textWrap` (motivo `noContour`). Consulta [Formato del documento › Ajuste al contorno](/es/docs/document-format-resources#ajuste-al-contorno) para la forma, su umbral y su margen.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoración, cabeceras y capas
 
 La `decoration` de la plantilla (imágenes, filetes, cajas y textos breves) se coloca cuando los marcos ya tienen su caja definitiva, así que un elemento puede anclarse a un marco (`"to": "#gasto"`) y seguirlo. Sus textos leen los atributos de la propia página: `fondo="banda-retos"` en la valla de página da `{attr.fondo}`, por ejemplo para elegir página a página una imagen de fondo con `"resourceId": "{attr.fondo}"`. Las cabeceras y los pies de página también los leen. El `header` o el `footer` de una plantilla sustituye al de la sección, `false` lo oculta y, si la plantilla no fija ninguno, se imprimen los de la sección.

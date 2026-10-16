@@ -246,6 +246,12 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>'push'</code>: il testo delle altre cornici scorre attorno al rettangolo di questa.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Con <code>exclude: 'push'</code>: attorno a che cosa scorre il testo delle altre cornici. <code>'contour'</code> è la forma delle immagini che la cornice contiene (il loro poligono o canale alfa, vedi <a href="/it/docs/document-format-resources#testo-lungo-il-contorno">Testo lungo il contorno</a>); una cornice ruotata, o una le cui immagini non hanno una forma nota, sposta il testo con il suo rettangolo.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, oltre ad `area`, `grid`, `decoration`, `header`, `footer` e `variants` del modello. Vengono letti e controllati, ma non ancora applicati: la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` di un gruppo; le sue cornici mantengono la propria collocazione), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, il `writingMode` e la `direction` di una cornice, e il `bodyStyle` e la `palette` del modello. Una larghezza `'auto'` si legge come `'fill'`.
 
 ### Doppie pagine
 
@@ -658,7 +664,7 @@ Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano 
 
 Altrove il motore ignora una chiave che non conosce. I modelli di pagina e gli stili delle etichette invece vengono verificati, e ogni problema diventa un avviso di configurazione in `postext check` e nel pannello Verifiche della Sandbox. Il `path` di questi avvisi è un puntatore JSON al campo in errore: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando il campo è stato ereditato, il puntatore indica il modello che l’ha scritto. Un avviso che cita un id o un nome inesistente suggerisce anche quello esistente più vicino.
 
-Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
+Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
 
 <table>
   <thead>

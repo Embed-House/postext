@@ -181,6 +181,13 @@ Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter
 
 Ein Rahmen mit `exclude: "push"` hält den Text der anderen Rahmen aus seinem Rechteck heraus: Eine Zeile eines anderen Rahmens, die darauf trifft, wird auf der Seite, die das Rechteck abdeckt, kürzer gesetzt, so wie der Fließtext ein Bild umfließt. Ein Foto, das an der Ecke eines Kastens verankert und mit `push` markiert ist, lässt den Text des Kastens neben sich herlaufen. Ein Kasten, der eine feste Spalte für seine Bilder freihalten soll, kann stattdessen `padding` verwenden.
 
+Kommt `"wrap": "contour"` hinzu, verdrängt der Rahmen mit der Form der Bilder, die er enthält, statt mit seinem Rechteck: mit dem Alphakanal einer freigestellten Illustration oder dem Polygon im `contour` ihrer Ressource. Jede Zeile des anderen Rahmens wird um die Breite gekürzt, die die Form neben ihr einnimmt, sodass der Text eines Kastens dem Umriss einer darübergelegten Zeichnung folgt, ohne dass seine Zeilen einzeln geregelt werden müssen. Legenden und anderer Text im verdrängenden Rahmen behalten ihre Kästen, ein gedrehter Rahmen verdrängt mit seinem Rechteck, und ein Bild, dessen Form nicht bekannt ist, verdrängt ebenfalls mit seinem Kasten, mit einer Warnung `textWrap` (Grund `noContour`). Zur Form, ihrer Schwelle und ihrem Abstand siehe [Dokumentformat › Konturenumfluss](/de/docs/document-format-resources#konturenumfluss).
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Dekor, Kolumnentitel und Ebenen
 
 Das Dekor der Vorlage (`decoration`: Bilder, Linien, Kästen und kurze Texte) wird gesetzt, sobald die Rahmen ihre endgültige Box haben; ein Element kann sich daher an einem Rahmen verankern (`"to": "#gasto"`) und ihm folgen. Seine Texte lesen die Attribute der Seite selbst: `fondo="banda-retos"` an der Seitenbegrenzung ergibt `{attr.fondo}`, etwa für ein Hintergrundbild, das Seite für Seite mit `"resourceId": "{attr.fondo}"` gewählt wird. Auch die Kolumnentitel lesen sie. Das `header` oder `footer` einer Vorlage ersetzt das des Abschnitts, `false` blendet es aus, und ohne beides erscheinen die Kolumnentitel des Abschnitts.

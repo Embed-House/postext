@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
-      <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。</td>
+      <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>、<code>'noContour'</code>（形がわからない画像に輪郭に沿った回り込みを指定した。<code>contour.points</code>のないSVG、透明部分のないビットマップ、ホストがトレースしていないアルファチャンネル）。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
+      <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。<code>'noContour'</code>では、本文は画像の枠で回り込みます。画像に多角形を与えるか、透明部分のあるPNGを使うか、トレースを行う<code>readBundle</code>かSandboxで読み込んでください。</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>

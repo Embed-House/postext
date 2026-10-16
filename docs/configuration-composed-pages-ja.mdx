@@ -246,6 +246,12 @@ const config: PostextConfig = {
       <td><code>'push'</code>にすると、ほかのフレームの文字がこのフレームの長方形を避けて回り込みます。</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td><code>exclude: 'push'</code>と併せて、ほかのフレームの文字が何を避けて回り込むかを決めます。<code>'contour'</code>はフレームが持つ画像の形です（多角形またはアルファチャンネル。<a href="/ja/docs/document-format-resources#輪郭に沿った回り込み">輪郭に沿った回り込み</a>を参照）。回転したフレームや、画像の形がわからないフレームは、長方形で押しのけます。</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn: "#frame"`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、`overflow.continueIn: "next-page"`と`overflowTemplate`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
 
 ### 見開き
 
@@ -658,7 +664,7 @@ labelStyles: [
 
 ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
 
-テンプレート、フレーム、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のないフレームとグループは無視され、その項目に`unknownConfigValue`が出ます。
+テンプレート、フレーム、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のないフレームとグループは無視され、その項目に`unknownConfigValue`が出ます。
 
 <table>
   <thead>

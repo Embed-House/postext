@@ -181,6 +181,13 @@ Il testo si interrompe fra due righe e prosegue nella cornice seguente, spezzato
 
 Una cornice con `exclude: "push"` tiene il testo delle altre cornici fuori dal suo rettangolo: la riga di un’altra cornice che lo incontra viene composta più corta dal lato coperto dal rettangolo, come il testo scontorna un’immagine nel testo corrente. Una foto ancorata all’angolo di un riquadro e marcata `push` fa scorrere il testo del riquadro accanto a sé. Un riquadro che deve tenere libera una colonna fissa per le sue immagini può usare invece `padding`.
 
+Con in più `"wrap": "contour"`, la cornice sposta il testo con la forma delle immagini che contiene invece che con il suo rettangolo: il canale alfa di un’illustrazione scontornata, o il poligono nel `contour` della sua risorsa. Ogni riga dell’altra cornice si accorcia di quanto è larga la forma accanto a lei, così il testo di un riquadro segue il profilo di un disegno posato sopra, senza bisogno di regolarne le righe una per una. Le didascalie e gli altri testi della cornice che sposta mantengono i loro riquadri, una cornice ruotata sposta con il suo rettangolo, e anche un’immagine di cui non si conosce la forma sposta con il suo riquadro, con un avviso `textWrap` (motivo `noContour`). Vedi [Formato del documento › Testo lungo il contorno](/it/docs/document-format-resources#testo-lungo-il-contorno) per la forma, la sua soglia e il suo margine.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decorazione, testatine e livelli
 
 La `decoration` del modello (immagini, filetti, riquadri e testi brevi) viene posata quando le cornici hanno già il loro riquadro definitivo, per cui un elemento può ancorarsi a una cornice (`"to": "#gasto"`) e seguirla. I suoi testi leggono gli attributi della pagina stessa: `fondo="banda-retos"` sul recinto della pagina dà `{attr.fondo}`, per esempio per scegliere pagina per pagina un’immagine di sfondo con `"resourceId": "{attr.fondo}"`. Anche le testatine li leggono. L’`header` o il `footer` di un modello sostituisce quello della sezione, `false` lo nasconde e, se il modello non ne imposta nessuno, si stampano le testatine della sezione.

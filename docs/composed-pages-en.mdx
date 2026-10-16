@@ -181,6 +181,13 @@ The text is cut between lines and goes on in the next frame, broken again at tha
 
 A frame with `exclude: "push"` keeps the text of the other frames out of its rectangle: a line of a frame that meets it is set short on the side the rectangle covers, as text wraps round a picture in the running text. A photo anchored to the corner of a box and marked `push` makes the box's text run beside it. A box that should keep a fixed column free for its pictures can use `padding` instead.
 
+With `"wrap": "contour"` as well, the frame pushes with the shape of the pictures it holds rather than its rectangle: the alpha channel of a cut-out illustration, or the polygon in its resource's `contour`. Each line of the other frame is set as short as the shape is wide beside it, so the text of a box follows the outline of a drawing laid over it, with no line breaks or indents written line by line. Captions and other text in the pushing frame keep their boxes, a turned frame pushes with its box, and a picture whose shape is not known pushes with its box too, with a `textWrap` warning (reason `noContour`). See [Document format › Contour wrap](/en/docs/document-format-resources#contour-wrap) for the shape, its threshold and its margin.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoration, running heads and layers
 
 The template's `decoration` (pictures, rules, boxes and short texts) is laid once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print.

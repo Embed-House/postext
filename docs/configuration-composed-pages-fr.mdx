@@ -246,6 +246,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>'push'</code> : le texte des autres blocs habille le rectangle de celui-ci.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Avec <code>exclude: 'push'</code> : ce que le texte des autres blocs habille. <code>'contour'</code> est la forme des images que contient le bloc (leur polygone ou leur canal alpha, voir <a href="/fr/docs/document-format-resources#habillage-au-contour">Habillage au contour</a>) ; un bloc pivoté, ou un bloc dont les images n’ont pas de forme connue, repousse le texte avec son rectangle.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next` et `overflow.continueIn: "#frame"`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer` et les `variants` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, `overflow.continueIn: "next-page"` et `overflowTemplate`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
 
 ### Doubles pages
 
@@ -658,7 +664,7 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
 
 Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur nomme le gabarit qui l’a écrit. Un avertissement qui nomme un id ou un nom inexistant propose aussi le plus proche qui existe.
 
-Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
 
 <table>
   <thead>

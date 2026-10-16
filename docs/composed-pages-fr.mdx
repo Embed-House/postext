@@ -181,6 +181,13 @@ Le texte est coupé entre deux lignes et continue dans le bloc suivant, recompos
 
 Un bloc avec `exclude: "push"` tient le texte des autres blocs hors de son rectangle : une ligne d’un autre bloc qui le rencontre est composée plus courte du côté que couvre le rectangle, comme le texte habille une image dans le texte courant. Une photo ancrée au coin d’un encadré et marquée `push` fait courir le texte de l’encadré à côté d’elle. Un encadré qui doit garder une colonne fixe libre pour ses images peut plutôt utiliser `padding`.
 
+Avec en plus `"wrap": "contour"`, le bloc repousse le texte selon la forme des images qu’il contient et non selon son rectangle : le canal alpha d’une illustration détourée, ou le polygone du `contour` de sa ressource. Chaque ligne de l’autre bloc est raccourcie de la largeur qu’occupe la forme à côté d’elle, si bien que le texte d’un encadré suit le contour d’un dessin posé dessus, sans qu’il faille régler ses lignes une à une. Les légendes et les autres textes du bloc qui repousse gardent leur cadre, un bloc pivoté repousse avec son rectangle, et une image dont la forme n’est pas connue repousse elle aussi avec son cadre, avec un avertissement `textWrap` (raison `noContour`). Voir [Format du document › Habillage au contour](/fr/docs/document-format-resources#habillage-au-contour) pour la forme, son seuil et sa marge.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Décor, titres courants et calques
 
 Le décor du modèle (`decoration` : images, filets, boîtes et textes courts) est posé une fois que les blocs ont leur boîte définitive : un élément peut donc s’ancrer à un bloc (`"to": "#gasto"`) et le suivre. Ses textes lisent les attributs de la page elle-même : `fondo="banda-retos"` sur le délimiteur de page donne `{attr.fondo}`, par exemple pour choisir page par page une image de fond avec `"resourceId": "{attr.fondo}"`. Les titres courants les lisent aussi. Le `header` ou le `footer` d’un modèle remplace celui de la section, `false` le masque, et sans l’un ni l’autre ce sont les titres courants de la section qui s’impriment.

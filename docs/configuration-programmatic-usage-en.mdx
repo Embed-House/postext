@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it) or <code>'verticalText'</code>. <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
-      <td>The item takes its band whole, or stands in the next column, as the reason says.</td>
+      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it) <code>'verticalText'</code>, or <code>'noContour'</code> (a contour wrap round a picture whose shape is not known: an SVG with no <code>contour.points</code>, a bitmap with no transparency, or an alpha channel the host did not trace). <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
+      <td>The item takes its band whole, or stands in the next column, as the reason says; with <code>'noContour'</code> the text runs round the picture's box. Give the picture a polygon, use a PNG with transparency, or read it through <code>readBundle</code> or the Sandbox, which trace it.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>

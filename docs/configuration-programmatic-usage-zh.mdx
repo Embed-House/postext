@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）未能按要求排版。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（矮于<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）或<code>'verticalText'</code>。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
-      <td>按原因所述，对象占满整条，或放在下一栏。</td>
+      <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）未能按要求排版。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（矮于<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）、<code>'verticalText'</code>，或<code>'noContour'</code>（沿形状绕排的图片形状未知：没有<code>contour.points</code>的SVG、没有透明度的位图，或宿主没有描摹的Alpha通道）。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
+      <td>按原因所述，对象占满整条，或放在下一栏；为<code>'noContour'</code>时，正文绕图片的框排。给图片一个多边形，改用带透明度的PNG，或通过<code>readBundle</code>或沙盒读取它，两者都会描摹。</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>

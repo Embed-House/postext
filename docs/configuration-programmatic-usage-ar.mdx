@@ -206,8 +206,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>مورد أو صندوق ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> الصندوق) لم يُصفّ كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>. <code>resourceId</code> يسمّي المورد، و<code>box</code> نمط الصندوق. يشير إلى الإدراج أو الصندوق.</td>
-      <td>يأخذ العنصر الشريط كله، أو يوضع في العمود التالي، كما يقول السبب.</td>
+      <td>مورد أو صندوق ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> الصندوق) لم يُصفّ كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>، أو <code>'noContour'</code> (التفاف حول محيط صورة لا يُعرف شكلها: SVG بلا <code>contour.points</code>، أو صورة نقطية بلا شفافية، أو قناة ألفا لم يتتبّعها المضيف). <code>resourceId</code> يسمّي المورد، و<code>box</code> نمط الصندوق. يشير إلى الإدراج أو الصندوق.</td>
+      <td>يأخذ العنصر الشريط كله، أو يوضع في العمود التالي، كما يقول السبب؛ ومع <code>'noContour'</code> يلتف النص حول إطار الصورة. أعطِ الصورة مضلّعًا، أو استعمل PNG فيه شفافية، أو اقرأها عبر <code>readBundle</code> أو Sandbox، فكلاهما يتتبّع شكلها.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>

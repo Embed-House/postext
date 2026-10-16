@@ -179,7 +179,7 @@ SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着�
     <tr>
       <td><code>wrap</code>, <code>wrapGap</code></td>
       <td><code>"none"</code> · <code>"left"</code> · <code>"right"</code> · <code>"start"</code> · <code>"end"</code>; 长度</td>
-      <td>让正文排在资源旁边：资源放在栏的这一侧，旁边的行按剩下的行宽排，与资源的框（含图注）相隔<code>wrapGap</code>，排到它下方后恢复全宽。适用于行内嵌入（<code>"here"</code>）以及位于栏首或栏尾、宽一栏的浮动体；通栏、跨多栏、侧栏和旋转的浮动体保持整条。资源占栏宽的<code>width</code>，未设置时取<code>layout.wrap.defaultWidth</code>（0.45）。<code>wrapGap</code>默认取<code>layout.wrap.gap</code>，再无则为一行正文。见<a href="#文字绕排">文字绕排</a>。postext 1.24起。</td>
+      <td>让正文排在资源旁边：资源放在栏的这一侧，旁边的行按剩下的行宽排，与资源的框（含图注）相隔<code>wrapGap</code>，排到它下方后恢复全宽。适用于行内嵌入（<code>"here"</code>）以及位于栏首或栏尾、宽一栏的浮动体；通栏、跨多栏、侧栏和旋转的浮动体保持整条。资源占栏宽的<code>width</code>，未设置时取<code>layout.wrap.defaultWidth</code>（0.45）。<code>wrapGap</code>默认取<code>layout.wrap.gap</code>，再无则为一行正文。<code>"contour"</code>让正文沿图片自身的形状绕排，而不是沿它的框，图片放在<code>align</code>所指的一侧（见<a href="#沿轮廓绕排">沿轮廓绕排</a>）。见<a href="#文字绕排">文字绕排</a>。postext 1.24起。</td>
     </tr>
     <tr>
       <td><code>citingPage</code></td>
@@ -261,7 +261,27 @@ SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着�
 - **间距与限制。** `wrapGap`（否则`layout.wrap.gap`，再否则一行正文）把对象（含图注）与旁边和下方的正文隔开。若旁边的正文会窄于`layout.wrap.minTextWidth`（正文12 em），或对象矮于`layout.wrap.minLinesBeside`行（2），它就占满整条，并给出`textWrap`警告。行内对象高于所在栏剩余空间时，随锚点移到下一栏，给出同样的警告。
 - **左右。** `left`和`right`是正文流的两侧，与`align`相同：从右到左的书里`left`是纸面的右侧。`start`和`end`指同样的两侧。
 - **输出。** 画布、HTML 查看器、PDF 和固定版式 EPUB 按排版结果排出各行；带标签的 PDF 先读图片或框，再读旁边的段落。可重排 EPUB 用 CSS 让它浮到自己一侧，占正文宽度的同样比例。
-- **尚不支持。** 图片两侧都排正文、按轮廓绕排、在框的内容内部绕排，以及竖排中的绕排（对象保持整条，并给出警告）。含绕排对象的栏不参与栏平衡。
+- **尚不支持。** 图片两侧都排正文、在框的内容内部绕排，以及竖排中的绕排（对象保持整条，并给出警告）。含绕排对象的栏不参与栏平衡。
+
+#### 沿轮廓绕排
+
+抠出来的插图（透明背景上的人物、画出的物件、一座岛的地图），正文沿它的轮廓排，比停在它的框边上更好看。`"wrap": "contour"`做的就是这件事：图片旁边的每一行，按图片形状在这一行高度上的宽度再加一段间距缩短，碰不到形状的行则排满整个行宽。
+
+```json
+{ "id": "pear", "typeId": "figure", "kind": "bitmap",
+  "bitmap": { "fileId": "pear.png", "format": "png", "width": 600, "height": 800 },
+  "placement": { "position": "here", "wrap": "contour", "align": "right", "width": 0.42 },
+  "contour": { "threshold": 0.5, "margin": { "value": 2, "unit": "mm" } } }
+```
+
+- **形状从哪里来。** 位图的形状是它的Alpha通道：不透明度至少为`contour.threshold`（0到1，默认0.5）的像素。`contour.points`中的多边形至少有三个点，以整幅图片的比例从左上角起算（`{ "x": 0.5, "y": 0 }`是上边的中点），它优先于Alpha通道，也是给SVG指定形状的办法。`"alpha": false`忽略Alpha通道。JPEG没有透明度，所以没有多边形时正文绕它的框排。
+- **间距。** `contour.margin`是形状与正文之间留出的距离，左右和上下都算。未设置时取绕排间距（`placement.wrapGap`，否则`layout.wrap.gap`，再否则一行正文）。
+- **左右。** 图片放在`align`所指的一侧（`"right"`或`"end"`；其他值都算左侧），正文排在另一侧。其余与靠一侧的绕排相同：适用于行内嵌入或宽一栏的浮动体，限制和`textWrap`警告也一样。
+- **裁切与缩放。** 形状跟着排出的图片走：随图片缩放，安全区裁切图片的地方，形状也在那里截断。图片下方的题注或附注保持自己的框。
+- **从右到左与CJK。** 在从右到左的页面上，形状随页面翻转，因为图片不翻转，只是画在镜像后的位置。按CJK字格排版时，每行缩进的宽度是整数个字，各行仍落在字格上。
+- **描摹。** 排版只按尺寸读取图片，从不读取像素，所以Alpha通道要随资源一起提供：`contour.traced`，即按行记录的形状，由宿主用`traceResourceContour(resource, bytes, mime)`从文件生成（PNG由引擎自己读取，在浏览器和Node中都可以；其他格式经由浏览器的解码器）。读取文件包时会描摹每张需要描摹的图片，沙盒则在图片的绕排方式、文件或阈值改变时描摹它。文件包从不保存描摹结果。形状未知的图片（没有多边形的SVG、没有透明度的位图，或尚未描摹的图片）绕它的框排，并给出原因为`noContour`的`textWrap`警告：给它一个多边形，改用带透明度的PNG，或通过`readBundle`或沙盒读取它，让它得到描摹。
+- **模板页中的框。** 模板页中推开文字的框（`exclude: "push"`）也接受`"wrap": "contour"`：见[模板页 › 推开文字的框](/zh/docs/composed-pages#推开文字的框)。
+- **尚不支持。** 形状位于行宽中间时在它两侧都排正文（正文排在较宽的一侧），以及在沙盒中编辑多边形。
 
 ### 位图尺寸
 

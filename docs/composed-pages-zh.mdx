@@ -181,6 +181,13 @@ Si necesitas o quieres comprar algo muy caro…
 
 设了`exclude: "push"`的框不让其他框的文字进入自己的矩形：其他框中碰到它的行，在矩形遮住的那一侧缩短，就像正文中文字绕排图片一样。锚定在方框一角并标为`push`的照片，会让方框的文字从它旁边排过。如果方框要为图片留出一条固定的空栏，可以改用`padding`。
 
+再加上`"wrap": "contour"`，框就按其中图片的形状推开文字，而不是按它的矩形：抠图插画的Alpha通道，或资源`contour`中的多边形。另一个框的每一行，按形状在它旁边的宽度缩短，所以方框的文字会沿着压在上面的图画的轮廓排，方框自己不必设任何逐行的规则。推开文字的框里的题注和其他文字仍按各自的外框推开，旋转的框按它的外框推开，形状未知的图片也按它的外框推开，并给出`textWrap`警告（原因为`noContour`）。形状、阈值和间距见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)。
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### 装饰、书眉与层
 
 模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走。装饰中的文字读取本页自己的属性：页面围栏上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。

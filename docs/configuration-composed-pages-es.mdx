@@ -246,6 +246,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>'push'</code>: el texto de los demás marcos rodea el rectángulo de este.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Con <code>exclude: 'push'</code>: lo que rodea el texto de los demás marcos. <code>'contour'</code> es la forma de las imágenes que contiene el marco (su polígono o su canal alfa, véase <a href="/es/docs/document-format-resources#ajuste-al-contorno">Ajuste al contorno</a>); un marco girado, o uno cuyas imágenes no tienen una forma conocida, aparta el texto con su caja.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
 
 ### Dobles páginas
 
@@ -658,7 +664,7 @@ Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics 
 
 En el resto de la configuración, el motor ignora una clave que no conoce. Las plantillas de página y los estilos de rótulo, en cambio, se comprueban, y cada problema es un aviso de configuración en `postext check` y en el panel Revisión del Sandbox. El campo `path` de estos avisos es un puntero JSON al campo que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Cuando el campo es heredado, el puntero nombra la plantilla que lo escribió. Un aviso que nombra un id o un nombre que no existe propone además el existente que más se le parece.
 
-Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
+Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
 
 <table>
   <thead>

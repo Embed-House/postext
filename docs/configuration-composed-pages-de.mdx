@@ -246,6 +246,12 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>'push'</code>: Der Text anderer Rahmen umfließt das Rechteck dieses Rahmens.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Mit <code>exclude: 'push'</code>: was der Text der anderen Rahmen umfließt. <code>'contour'</code> ist die Form der Bilder im Rahmen (ihr Polygon oder ihr Alphakanal, siehe <a href="/de/docs/document-format-resources#konturenumfluss">Konturenumfluss</a>); ein gedrehter Rahmen oder einer, dessen Bilder keine bekannte Form haben, verdrängt mit seinem Rechteck.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
 
 ### Doppelseiten
 
@@ -658,7 +664,7 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
 
 Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, nennt der Pointer die Vorlage, die es geschrieben hat. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
 
-Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
+Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
 
 <table>
   <thead>

@@ -246,6 +246,12 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>'push'</code>: the text of other frames wraps around this one's rectangle.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>With <code>exclude: 'push'</code>: what the other frames' text runs round. <code>'contour'</code> is the shape of the pictures the frame holds (their polygon or alpha channel, see <a href="/en/docs/document-format-resources#contour-wrap">Contour wrap</a>); a turned frame, or one whose pictures have no known shape, pushes with its box.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
 
 ### Spreads
 
@@ -658,7 +664,7 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
 
 Elsewhere the engine ignores a key it does not know. Page templates and label styles are checked instead, and every problem is a configuration warning in `postext check` and in the Sandbox's Checks panel. The `path` of these warnings is a JSON pointer to the field at fault: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. When the field was inherited, the pointer names the template that wrote it. A warning that names an id or a name that does not exist also suggests the closest one that does.
 
-A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
+A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
 
 <table>
   <thead>

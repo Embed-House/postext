@@ -181,6 +181,13 @@ El text es talla entre dues línies i continua al marc següent, partit de nou a
 
 Un marc amb `exclude: "push"` deixa fora del seu rectangle el text dels altres marcs: la línia d'un altre marc que hi topa es compon més curta pel costat que tapa el rectangle, igual que el text envolta una imatge al text corregut. Una foto ancorada a l'angle d'una caixa i marcada amb `push` fa que el text de la caixa corri al seu costat. Una caixa que hagi de deixar lliure una columna fixa per a les seves imatges pot fer servir `padding` en lloc d'això.
 
+Si a més té `"wrap": "contour"`, el marc aparta el text amb la forma de les imatges que conté en lloc del seu rectangle: el canal alfa d'una il·lustració retallada, o el polígon del `contour` del seu recurs. Cada línia de l'altre marc s'escurça el que ocupa la forma al seu costat, de manera que el text d'una caixa segueix la silueta d'un dibuix posat a sobre sense haver de definir regles per línia. Els peus i els altres textos del marc que aparta conserven les seves caixes, un marc girat aparta amb la seva caixa, i una imatge de forma desconeguda també aparta amb la seva caixa, amb un avís `textWrap` (motiu `noContour`). Consulta [Format del document › Ajust al contorn](/ca/docs/document-format-resources#ajust-al-contorn) per a la forma, el seu llindar i el seu marge.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoració, capçaleres i capes
 
 La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo. Els seus textos llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la tanca de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció.

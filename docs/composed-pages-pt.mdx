@@ -181,6 +181,13 @@ O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de n
 
 Um bloco com `exclude: "push"` mantém o texto dos outros blocos fora do seu retângulo: a linha de outro bloco que esbarra nele é composta mais curta do lado que o retângulo cobre, do mesmo jeito que o texto contorna uma imagem no texto corrido. Uma foto ancorada no canto de uma caixa e marcada com `push` faz o texto da caixa correr ao lado dela. Uma caixa que precisa deixar livre uma coluna fixa para as suas imagens pode usar `padding` no lugar disso.
 
+Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens que contém em vez do retângulo: o canal alfa de uma ilustração recortada, ou o polígono no `contour` do recurso dela. Cada linha do outro bloco é encurtada o quanto a forma ocupa ao lado dela, e assim o texto de uma caixa acompanha a silhueta de um desenho posto por cima sem precisar definir regras por linha. Legendas e outros textos do bloco que afasta mantêm as suas caixas, um bloco girado afasta com a sua caixa, e uma imagem de forma desconhecida também afasta com a sua caixa, com um aviso `textWrap` (motivo `noContour`). Veja [Formato do documento › Contorno pela forma](/pt/docs/document-format-resources#contorno-pela-forma) para a forma, o limiar e a margem.
+
+```json
+{ "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
+  "placement": { "anchor": { "to": "#box", "edge": "top-right" } }, "width": { "value": 150, "unit": "mm" } }
+```
+
 ### Decoração, cabeços e camadas
 
 A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção.

@@ -246,6 +246,12 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>'push'</code>: o texto dos outros quadros contorna o retângulo deste.</td>
     </tr>
     <tr>
+      <td><code>wrap</code></td>
+      <td><code>'box' | 'contour'</code></td>
+      <td><code>'box'</code></td>
+      <td>Com <code>exclude: 'push'</code>: o que o texto dos outros quadros contorna. <code>'contour'</code> é a forma das imagens que o quadro contém (o polígono ou o canal alfa delas, veja <a href="/pt/docs/document-format-resources#contorno-pela-forma">Contorno pela forma</a>); um quadro girado, ou um cujas imagens não têm forma conhecida, afasta o texto com a sua caixa.</td>
+    </tr>
+    <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -487,7 +493,7 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude`, `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+A diagramação aplica o posicionamento e os tamanhos de cada quadro (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude` (e o seu `wrap`), `flow`, `takes`, `next` e `overflow.continueIn: "#frame"`, além de `area`, `grid`, `decoration`, `header`, `footer` e `variants` do modelo. São lidos e verificados, mas ainda não aplicados: a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` de um grupo; os seus quadros mantêm o próprio posicionamento), `fit`, `overflow.continueIn: "next-page"` e `overflowTemplate`, o `writingMode` e a `direction` de um quadro, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
 
 ### Páginas duplas
 
@@ -658,7 +664,7 @@ As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam 
 
 No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro nomeia o modelo que o escreveu. Um aviso que nomeia um id ou um nome inexistente também sugere o existente mais parecido.
 
-Uma chave digitada errado de um modelo, quadro, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o seu padrão. Um modelo sem `id`, ou um quadro ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+Uma chave digitada errado de um modelo, quadro, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o seu padrão. Um modelo sem `id`, ou um quadro ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
 
 <table>
   <thead>

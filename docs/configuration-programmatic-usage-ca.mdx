@@ -206,8 +206,8 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Un recurs o una caixa amb el text ajustat al voltant (<code>placement.wrap</code>, el <code>wrap</code> d'una caixa) que no es compon com es va demanar. <code>reason</code>: <code>'tooNarrow'</code> (el text del costat quedaria més estret que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (és més baix que <code>layout.wrap.minLinesBeside</code> línies), <code>'moved'</code> (un en línia massa alt per a l'espai que queda a la columna ha passat a la següent, amb la seva àncora) o <code>'verticalText'</code>. <code>resourceId</code> anomena un recurs, <code>box</code> l'estil d'una caixa. Assenyala la inserció o la caixa.</td>
-      <td>L'element ocupa la banda sencera, o es col·loca a la columna següent, segons la raó.</td>
+      <td>Un recurs o una caixa amb el text ajustat al voltant (<code>placement.wrap</code>, el <code>wrap</code> d'una caixa) que no es compon com es va demanar. <code>reason</code>: <code>'tooNarrow'</code> (el text del costat quedaria més estret que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (és més baix que <code>layout.wrap.minLinesBeside</code> línies), <code>'moved'</code> (un en línia massa alt per a l'espai que queda a la columna ha passat a la següent, amb la seva àncora), <code>'verticalText'</code> o <code>'noContour'</code> (un ajust al contorn al voltant d'una imatge de forma desconeguda: un SVG sense <code>contour.points</code>, un mapa de bits sense transparència o un canal alfa que l'amfitrió no ha traçat). <code>resourceId</code> anomena un recurs, <code>box</code> l'estil d'una caixa. Assenyala la inserció o la caixa.</td>
+      <td>L'element ocupa la banda sencera, o es col·loca a la columna següent, segons la raó; amb <code>'noContour'</code> el text envolta la caixa de la imatge. Dona a la imatge un polígon, fes servir un PNG amb transparència o llegeix-la amb <code>readBundle</code> o amb el Sandbox, que la tracen.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
