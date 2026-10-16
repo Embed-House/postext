@@ -3811,7 +3811,7 @@
     "pageTemplatesSection": "Gabarits de page",
     "pageTemplatesResetConfirm": "Supprimer tous les gabarits de page ? Les pages qui en nomment un sont alors composées en texte courant.",
     "pageTemplatesDesignMode": "Modifier les blocs sur la page",
-    "pageTemplatesDesignModeTooltip": "Mode Conception de la toile. Sur une page composée, un appui sur un bloc le sélectionne, le glisser le déplace, ses poignées le redimensionnent et un glissé sur un endroit vide trace un nouveau bloc. Les boîtes s’alignent sur les marges, la grille du gabarit et les autres blocs ; Alt enfoncée, elles se placent librement, Échap annule. Désactivé, la toile sélectionne le texte comme d’habitude.",
+    "pageTemplatesDesignModeTooltip": "Mode Maquette de la toile. Sur une page composée, un appui sur un bloc le sélectionne, le glisser le déplace, ses poignées le redimensionnent et un glissé sur un endroit vide trace un nouveau bloc. Les boîtes s’alignent sur les marges, la grille du gabarit et les autres blocs ; Alt enfoncée, elles se placent librement, Échap annule. Désactivé, la toile sélectionne le texte comme d’habitude.",
     "pageTemplatesEmpty": "Aucun gabarit de page pour l’instant. Un gabarit est la mise en page d’une page composée (::::page'{'template=\"…\"'}') : des blocs qui reçoivent chacun un emplacement de son contenu.",
     "pageTemplatesListLabel": "Gabarits de page du livre",
     "pageTemplatesPagesOne": "1 page",
