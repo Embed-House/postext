@@ -1,7 +1,7 @@
 import type { VDTDocument } from 'postext';
 import { lineTextAlign, pageIsMirrored, pageToFlow, resourceBlockToLocal } from 'postext';
 import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle';
-import { blockFrameMatrix, intoBlockSpace } from '../composed/frameHit';
+import { blockFrameMatrix, blockPointShown, intoBlockSpace } from '../composed/frameHit';
 import { documentShapingLanguage } from '../../controls/measureLanguage';
 
 type VDTBlock = VDTDocument['blocks'][number];
@@ -462,6 +462,7 @@ function segmentAtPixel(
     if (b.hidden) continue;
     // In the block's composed frame, if any (#910).
     const { x, y } = intoBlockSpace(blockFrameMatrix(page, b.id), xPage, yPage);
+    if (!blockPointShown(page, b.id, { x, y })) continue;
     if (x < b.bbox.x || x > b.bbox.x + b.bbox.width) continue;
     if (y < b.bbox.y || y > b.bbox.y + b.bbox.height) continue;
     const rb = b.resourceBlock;
@@ -669,6 +670,8 @@ export function pixelToSourceOffset(
     // its children follow in `doc.blocks` and own the clickable glyphs.
     if (b.type === 'callout') continue;
     const p = local(b.id);
+    // Text a frame clips at its foot is not painted, so not clicked.
+    if (!blockPointShown(page, b.id, p)) continue;
     const bx = b.bbox.x;
     const by = b.bbox.y;
     if (p.x < bx || p.x > bx + b.bbox.width) continue;

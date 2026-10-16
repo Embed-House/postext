@@ -102,6 +102,20 @@ describe('clicks in scaled and turned frames (#910)', () => {
     });
   }
 
+  it('does not land a click on text the frame clips at its foot', () => {
+    const { doc, small } = framedDoc();
+    small.scale = 1;
+    const block = textBlock(doc, small);
+    const line = block.lines[1]!;
+    const at = glyphOnPage(block, 3, null);
+    // The frame's box ends above the second line: the content overflows.
+    small.rect = { ...small.rect, height: line.bbox.y - small.rect.y };
+    small.overflowPx = block.bbox.y + block.bbox.height - (small.rect.y + small.rect.height);
+    expect(pixelToSourceOffset(doc, 0, at.x, at.y)).toBeNull();
+    small.overflowPx = 0;
+    expect(pixelToSourceOffset(doc, 0, at.x, at.y)).toBe(block.sourceMap![line.plainStart! + 3 - (block.plainPrefixLen ?? 0)]);
+  });
+
   it('reads an upright frame at full size as before', () => {
     const { doc, small } = framedDoc();
     small.scale = 1;

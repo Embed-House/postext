@@ -7,7 +7,7 @@
  * Design mode). Pure: sheet px, no DOM.
  */
 
-import { frameMatrix, frameOfBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
+import { frameClips, frameContentRect, frameMatrix, frameOfBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
 
 /** Anything that may carry a composed page (a `VDTPage`, or a stand-in in a
  *  test). */
@@ -143,6 +143,18 @@ export function blockFrameMatrix(page: ComposedPageLike | null | undefined, bloc
   if (!composed || composed.frames.length === 0) return null;
   const frame = frameOfBlock(composed, blockId);
   return (frame && (frameMatrix(frame) as FrameAffine | undefined)) ?? null;
+}
+
+/** Whether a point in a frame block's own coordinates (see
+ *  {@link intoBlockSpace}) is painted: false past the foot of a frame
+ *  whose content overflows its box, where the backends clip it. */
+export function blockPointShown(page: ComposedPageLike | null | undefined, blockId: string, p: FramePoint): boolean {
+  const composed = page?.composed;
+  if (!composed || composed.frames.length === 0) return true;
+  const frame = frameOfBlock(composed, blockId);
+  if (!frame || !frameClips(frame)) return true;
+  const r = frameContentRect(frame);
+  return p.x >= r.x && p.x <= r.x + r.width && p.y >= r.y && p.y <= r.y + r.height;
 }
 
 /** A page point in the blocks' own coordinates of a frame whose matrix is
