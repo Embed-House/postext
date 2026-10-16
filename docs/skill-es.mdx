@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Instala la skill postext-port en Claude Code, Codex o cualquier agente y deja que convierta un PDF, Word, PowerPoint, EPUB, InDesign o HTML en un proyecto de Postext que sigue la maquetación original',
   lang: 'es',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '10 min',
   order: 41,
   plainSummary: "Esta página es para quien ya tiene un libro o un documento en otro formato, como PDF, Word o InDesign, y quiere pasarlo a Postext. Un asistente de inteligencia artificial, al que se llama agente, puede hacer casi todo el trabajo si le das un pequeño complemento llamado skill. La skill le enseña al agente a copiar el texto y a reconstruir el diseño del original. La página explica cómo instalarla, qué pedirle y cómo revisar el resultado. Un vídeo de unos cinco minutos muestra cada paso.",
@@ -229,9 +229,12 @@ El agente sigue el flujo de trabajo:
    medidos: formato, márgenes, columnas, interlineado, roles tipográficos,
    paleta, aperturas, cornisas, familias de recuadros y costumbres de
    colocación. Clasifica cada página como texto corrido o como página
-   compuesta (recuadros, rótulos y mapas en lugares fijos); si más de un
-   tercio son compuestas, te pregunta si prefieres la maqueta idéntica o un
-   texto que puedas editar y traducir.
+   compuesta (recuadros, rótulos y mapas en lugares fijos); con Postext 1.35 o
+   posterior agrupa las páginas compuestas por tipo de página y monta cada
+   tipo con una plantilla, de modo que la maqueta idéntica conserva un texto
+   que puedes editar y traducir; con una versión anterior, si más de un tercio
+   son compuestas, te pregunta si prefieres la maqueta idéntica o un texto que
+   puedas editar y traducir.
 3. **Proyecto.** Crea `mi-libro/` con un generador `build_preset.py` que
    guarda la ficha como constantes y produce `preset.json`.
 4. **Contenido.** Extrae capítulos en borrador con el extractor adecuado y
@@ -265,9 +268,14 @@ El archivo entregado no depende del Sandbox. El paquete `postext` lo abre con `o
   que da la calidad.
 - **El texto se queda en el Markdown.** La configuración guarda el diseño y
   cada palabra del libro está en los capítulos, así que una corrección o una
-  traducción es una edición del Markdown. Las páginas compuestas se montan con
-  recuadros fijados en su sitio, imágenes de página sin texto y figuras SVG
-  con rótulos vivos. Cuando Postext no puede expresar algo sin escribir texto
+  traducción es una edición del Markdown. Con Postext 1.35 o posterior, las
+  páginas compuestas son plantillas de página en la configuración cuyos marcos
+  se llenan con el Markdown de cada capítulo: un recuadro crece con una
+  traducción más larga y empuja a los que tiene debajo, y desde la 1.37 los
+  nombres de un mapa son rótulos escritos en el Markdown. Con una versión
+  anterior se montan con recuadros fijados en su sitio, imágenes de página sin
+  texto y figuras SVG con rótulos vivos. El informe dice cuál de las dos vías
+  usó el agente y con qué versión. Cuando Postext no puede expresar algo sin escribir texto
   en la configuración, el agente se detiene, redacta la carencia como borrador
   de incidencia y te pregunta. La skill nunca modifica el motor para encajar
   un libro.
