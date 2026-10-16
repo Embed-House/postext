@@ -17,6 +17,7 @@ export function describeHistoryStep(state: SandboxState, step: HistoryStepInfo):
     const index = state.chapters.findIndex((c) => c.id === step.chapterId);
     return { kind: 'text', chapter: index + 1, title: state.chapters[index]?.title ?? null };
   }
+  if (step.kind === 'resource') return { kind: 'resource', resource: step.resourceId };
   return { kind: 'design', settings: step.paths };
 }
 
@@ -37,7 +38,7 @@ export function historyTools(host: SandboxToolHost): WebMcpTool[] {
   const undo: WebMcpTool = {
     name: 'sandbox_undo',
     title: 'Sandbox: take back the last change',
-    description: "Take back the last change to the book, whatever it was, as Cmd/Ctrl+Z and the Undo button do; with redo put back the last one taken back. The Sandbox keeps one history of the text and the design in the order the changes were made: text typed in the Manuscript editor or edited by a tool or on the previews, and every change to the configuration (a setting set by sandbox_set_config or in the Design panel, a frame dragged in Design mode, a page template added). A setting dragged or typed digit by digit is one change. Answers with what was taken back: kind text with its chapter, or kind design with the settings it touched; then whether there is more to undo or redo. The chapter on screen stays the one on screen. Chapters added, removed, split, merged or moved, resources and fonts are not in the history, and opening another book empties it. For text only, sandbox_undo_text.",
+    description: "Take back the last change to the book, whatever it was, as Cmd/Ctrl+Z and the Undo button do; with redo put back the last one taken back. The Sandbox keeps one history of the text and the design in the order the changes were made: text typed in the Manuscript editor or edited by a tool or on the previews, and every change to the configuration (a setting set by sandbox_set_config or in the Design panel, a frame dragged in Design mode, a page template added). A setting dragged or typed digit by digit is one change. Answers with what was taken back: kind text with its chapter, or kind design with the settings it touched; then whether there is more to undo or redo. The chapter on screen stays the one on screen. The marks of a picture (its label anchors, safe area and lettering zones) saved in the Resources panel, set by sandbox_save_resource with marks, or an anchor dragged on a page are kind resource with the resource id. Chapters added, removed, split, merged or moved, other resource changes and fonts are not in the history, and opening another book empties it. For text only, sandbox_undo_text.",
     inputSchema: {
       type: 'object',
       properties: {

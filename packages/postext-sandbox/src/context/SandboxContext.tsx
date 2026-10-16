@@ -350,7 +350,10 @@ export type SandboxAction =
   | { type: 'SET_PRESET_DRAFTS'; payload: PresetDraftSummary[] }
   | { type: 'UPSERT_PRESET_DRAFT'; payload: PresetDraftSummary }
   | { type: 'REMOVE_PRESET_DRAFT'; payload: string }
-  | { type: 'UPSERT_RESOURCE'; payload: Resource }
+  /** `history` makes the change a step of the undo history (#866): the
+   *  marks of a picture (its anchors, safe area, lettering zones). Without
+   *  it a resource change is no step (an upload, a rename). */
+  | { type: 'UPSERT_RESOURCE'; payload: Resource; history?: ConfigHistoryMeta }
   | { type: 'DELETE_RESOURCE'; payload: string }
   /** `config`, when the key is present (even undefined), replaces the
    *  preset's baseline configuration; without the key it is kept. */

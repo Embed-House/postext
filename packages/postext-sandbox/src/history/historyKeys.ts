@@ -41,6 +41,8 @@ export function describeStep(step: HistoryStepInfo, state: Pick<SandboxState, 'c
     const chapter = state.chapters.find((c) => c.id === step.chapterId);
     return labels.historyStepText.replace('__chapter__', chapter?.title ?? '');
   }
+  // A picture's marks (#866): the resource by its id.
+  if (step.kind === 'resource') return labels.historyStepResource.replace('__resource__', step.resourceId);
   // The Design panel sections of the settings it touched, by their names.
   const names: string[] = [];
   for (const key of step.keys) {
