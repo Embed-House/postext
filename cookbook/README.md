@@ -121,6 +121,9 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture [slug…] --verify` | For after a release: runs as a capture does and writes only the record that this release left the capture unchanged (`verified` in `capture.json`, §11), which the recipe page, its Markdown page and the gallery print as "tested with". A recipe whose files would change is listed as needing a recapture, with the reason (layout hash, pixels, PDF, bundle), and the command exits 1. The round after a release is `pnpm cookbook capture --all --verify`, a look at what it lists, and `pnpm cookbook capture <those>`. |
 | `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Fontsource's static cuts, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11): pages, lines and warnings. With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
 | `pnpm cookbook sandbox [slug…] --site https://postext.dev` | The same comparison on a deployed site: the Sandbox route a recipe page links to, one browser context per edition, the layout worker's documents read from the page. It also fails when the page fetched another edition's bundle. Page differences fail here (`--no-strict` makes them warnings). |
+| `pnpm cookbook capture <slug> --stress 1.3 --check` | The stress test (C38, §11): each edition runs as written and once more with every text 30 % longer, and the second run reports what each page did. Implies `--check`. |
+| `pnpm cookbook capture <slug> --check --compare [--max-diff 12] [--no-pixels] [--strict]` | Compares the layout and every published page with the approved capture of the same sources (C39, §11). |
+| `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
@@ -129,7 +132,9 @@ A capture writes only the files that say something new (§11): a recipe whose la
 change keeps its folder byte for byte, also on a new release; pass `--force` to rewrite
 everything anyway. `COOKBOOK_CAPTURE_DIR=<dir>` reads and writes captures in another folder (a
 copy of `apps/web/public/cookbook`), to try a capture or a `--verify` round without touching
-the committed files. Drafts show on the site in development
+the committed files. `COOKBOOK_RECIPES_DIR=<dir>` reads the recipe folders from another
+directory (the kit, the registries and the template still come from `cookbook/`): the bench's
+fixture recipe lives in `apps/web/src/lib/cookbook/fixtures/recipes/`. Drafts show on the site in development
 (`next dev`) or with `COOKBOOK_DRAFTS=1`; production lists published recipes only.
 
 **Recipes for the next release.** A recipe that shows a feature not yet on npm is written as a
@@ -1051,6 +1056,70 @@ sets by itself and no text face holds, which today is the task box `☐` of a `-
 recipe's write-up then says, among its pitfalls, that the box is drawn by the reader's system. A space other than the word space (no-break, thin, ideographic) that a face lacks is
 no failure: the browser sets it from the face's own space.
 
+**Composed pages (C37–C41, `pnpm cookbook bench`).** A recipe whose Markdown declares a
+composed page (`::::page{template=…}`) is held to more than the checks above, in every sample
+edition, before it is published:
+
+- **C37, the warnings it may not raise.** No `frameOverflow` (content cut at a frame's foot),
+  no `tocGroupSplit` (a contents block cut between columns), no `contentInConfig` (the book's
+  text kept in a design), none of the composed pages' source warnings (`templateUnknown`,
+  `slotUnknown`, `slotEmpty`, `pageFenceLength`) and none of the page templates'
+  configuration warnings (`frameStyleUnknown`, `frameAnchorUnknown`, `frameChainLoop`…). Each
+  fails, whatever `expect.warnings` says, and the line names the frame, the template, the page
+  and the proposals of the warning (`to fit: let its text shrink to 85 %; or raise maxHeight
+  to 62 mm`). On a recipe without composed pages a `tocGroupSplit` is a warning, and
+  `contentInConfig` stays C31's.
+- **C38, the stress test** (`--stress <factor>`, 1.3 in the bench). Each edition is laid out
+  again with every paragraph, heading and list item made longer by the factor
+  (`apps/web/src/lib/cookbook/bench.ts` `stretchMarkdown`): its own plain words repeated next
+  to themselves and spread along it (`familia familia`, `这是一个例子这是一个例子`), never inside a
+  fence line, an attribute block, an inline directive (`:chip[…]{…}`), a link, a reference,
+  code, maths, HTML, a table, front matter or a comic's raw body, so the markup and the language
+  stay as they were. A note per composed page says what it did, from its reflow log: `p. 1
+  (tema-cajas) rearranged: dinero grew 8.7 mm; gasto moved down 8.7 mm`, `goes on: continues
+  texto → cp0:resto`, `fits as it was`. A warning the longer text raises fails, except a
+  `frameOverflow` whose proposals carry values, which is a warning that names them (the
+  copy-fitter's next move); one with no such proposal fails. A stretched run that throws, does
+  not converge or builds nothing fails too. The first note says how much longer the text came
+  out (`33.5 % longer, 1198 → 1599 characters`).
+- **C39, the approved pages** (`--compare`; the bench always compares). The approved
+  reference is the committed capture of the same sources. The run's layout hash is compared
+  with the recorded one, and every published page is decoded beside its committed image and
+  compared in cells of 8 × 8 px, as a recapture judges them: a page with a cell whose mean
+  difference in a channel is over `--max-diff` (12 of 255 by default) differs. A difference
+  fails on the engine `capture.json` records, or with `--strict`; on another engine (the
+  working tree, a newer release) it warns, since a layout moved on purpose is captured again
+  after its release. `--no-pixels` compares the layout hash alone: Chrome on Linux paints
+  glyph edges otherwise than on the machine the captures were made on, while the layout comes
+  out the same. With no capture of these sources, a note.
+- **C40, the source map.** On an engine with the source map (`sourceAt`, `elementsForSource`,
+  #857), every element a composed page's fence laid out (frames, blocks, lines, labels, the
+  design text that shows a page attribute) is clicked inside, and `sourceAt` must bring back
+  the same element, or one of its level whose Markdown range holds its text. Each element not
+  found fails, named with its page, level, id and first words. Clipped elements, the facing
+  half of a spread and turned frames are passed over. On an engine without it, a note: the
+  check starts when the pinned engine has it.
+- **C41, the configuration.** Under 1 MB of JSON, for every recipe: it is what the Sandbox
+  loads and what a reader copies.
+
+`pnpm cookbook bench` runs all of it: with no slug, every recipe whose Markdown declares
+composed pages; each edition run and checked as a capture checks it (C1–C36), then C37, C40,
+C41, the comparison (C39) and the stress test (C38). It writes nothing. The bundle in the
+Sandbox stays `pnpm cookbook sandbox`'s (C33, above). `cookbook-sandbox.yml` runs the bench on
+every pull request that touches the engine, the Sandbox or the Cookbook, on the working tree's
+engine and with `--no-pixels`, first on the published recipes and then on the bench's own
+fixture: a topic page of three tabbed boxes in Spanish, English and Catalan
+(`apps/web/src/lib/cookbook/fixtures/recipes/composed-bench`, set with the stand-in template
+for page 8 of a school book that the engine's tests use, `COOKBOOK_RECIPES_DIR` pointing at its
+folder). A recipe that breaks any of these checks fails the pull request. After each release,
+`sandbox-probe.yml` runs the bench again on the engine just published.
+
+**Sample languages.** A recipe may have an edition in any of the ten site languages
+(`sample.locales`, a `content.<lang>.md` for each); the comics have all ten. The lint wants a
+content file for every listed language and composes and lints each edition, the capture runs
+each one, and the site shows each language its own edition, Spanish for Catalan when there is no
+Catalan one, English for Portuguese, French, German and Italian, else the first listed.
+
 **Notes** are printed and kept for whoever fits the copy. C35 lists the paragraphs the engine
 set one line shorter to take up a runt with negative tracking (`VDTBlock.runtFix`), most
 tracked first, with their page, the amount and their first words:
@@ -1144,6 +1213,11 @@ Follow this procedure exactly; do not skip steps because the output "looks right
     variant. The lint fails Arabic text with no Arabic face loaded, a mostly Arabic sample
     whose `locale` is not an Arabic-script tag, and a PDF without `arabicPdfProvider`; a
     Latin recipe that quotes Arabic lists `arabic` and keeps its own `locale`.
+11. **A recipe with composed pages** (`::::page{template=…}`) also passes
+    `pnpm cookbook bench <slug>` (§11, C37–C41) in every sample edition: no `frameOverflow`,
+    `tocGroupSplit` or `contentInConfig`; with the text 30 % longer each page rearranges or
+    goes on, and any warning carries a proposal with a value. Read the per-page notes of C38
+    and fix the template (`fit`, `maxHeight`, `next`), never the stress factor.
 
 **Never:** leave the default skin; pin engine versions; fetch from hosts outside the
 allowlist; use NC/ND content or unlicensed pictures; use `Math.random()` or the clock; put
