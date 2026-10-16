@@ -31,6 +31,9 @@ import type {
   ParagraphDropCap,
   DropCapLeadIn,
   Resource,
+  ChecksConfig,
+  ContentInConfigCheckConfig,
+  DocumentMetadata,
 } from './types';
 import type { ConfigWarning, ResolvedConfig } from './vdt';
 import { parseNumberFormat } from './numbering';
@@ -47,6 +50,10 @@ import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/co
 import { resolvePrintConfig } from './defaults/print';
 import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
 import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
+import { resolveContentInConfigCheck } from './defaults/checks';
+import { stripPlaceholders } from './pipeline/placeholders';
+import { configDesignSlots } from './design/slots';
+import { metadataText } from './frontmatter';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
@@ -85,7 +92,9 @@ function percentText(n: number): string {
  * `headings`, its `balancing` and `levels`, `headingStyles`,
  * `paragraphStyles`). And a setting with a value outside its choices
  * (`unknownConfigValue`: `direction`, the comics settings' words), and a `numerals` value that names
- * no digit system (`unknownNumerals`). Pure.
+ * no digit system (`unknownNumerals`). And the design texts that hold
+ * the book's content instead of placeholders (`contentInConfig`, #849,
+ * tuned by `checks.contentInConfig`). Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
   if (!config) return [];
@@ -93,6 +102,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectValueWarnings(config), ...collectSideColumnWarnings(config), ...collectColumnCountWarnings(config), ...collectUnknownKeyWarnings(config),
     ...collectCjkGridWarnings(config), ...collectChoiceWarnings(config), ...collectNumeralsWarnings(config),
     ...collectPageTemplateWarnings(config, options),
+    ...collectContentInConfigWarnings(config, options),
   ];
 }
 
@@ -101,6 +111,11 @@ export interface ConfigWarningOptions {
   /** The book's resources: an anchor's label `style` is checked against
    *  `labelStyles` (`labelStyleUnknown`). */
   resources?: readonly Resource[];
+  /** The document's metadata (its front matter): its `title`, `subtitle`,
+   *  `author` and `publisher` are allowed in a design text as if listed in
+   *  `checks.contentInConfig.allow`, since a running head often repeats
+   *  them. */
+  metadata?: DocumentMetadata;
 }
 
 /** Page templates and label styles (#853): see `validatePageTemplates`.
@@ -169,6 +184,7 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   out.push(...collectComicChoiceWarnings(config));
   out.push(...collectPrintChoiceWarnings(config));
   out.push(...collectContrastChoiceWarnings(config));
+  out.push(...collectChecksValueWarnings(config));
   out.push(...collectLineNumbersWarnings(config));
   out.push(...collectWrapWarnings(config));
   out.push(...collectCodeStyleWarnings(config));
@@ -478,6 +494,10 @@ const TAB_STOP_KEYS = {
   position: true, align: true, leader: true, leaderGap: true, decimalChar: true,
 } satisfies Record<keyof TabStop, true>;
 
+// The checks of the configuration (#849).
+const CHECKS_KEYS = { contentInConfig: true } satisfies Record<keyof ChecksConfig, true>;
+const CONTENT_IN_CONFIG_KEYS = { enabled: true, allow: true, maxWords: true, maxChars: true } satisfies Record<keyof ContentInConfigCheckConfig, true>;
+
 // Line numbers (#621).
 const LINE_NUMBERS_KEYS = {
   enabled: true, count: true, interval: true, numberFirst: true, restart: true, startAt: true, position: true,
@@ -569,6 +589,9 @@ function collectUnknownKeyWarnings(config: PostextConfig): ConfigWarning[] {
     check(cap.leadIn, DROP_CAP_LEAD_IN_KEYS, `${path}.leadIn`);
   }
   check(config.lineNumbers, LINE_NUMBERS_KEYS, 'lineNumbers');
+  // The checks of the configuration (#849).
+  check(config.checks, CHECKS_KEYS, 'checks');
+  check(config.checks?.contentInConfig, CONTENT_IN_CONFIG_KEYS, 'checks.contentInConfig');
   // Code listings (#624): the section, its token kinds and inline code.
   const codeStyle = config.codeStyle as unknown;
   if (codeStyle && typeof codeStyle === 'object' && !Array.isArray(codeStyle)) {
@@ -688,4 +711,130 @@ function collectCjkGridWarnings(config: PostextConfig): ConfigWarning[] {
   if (g.clamped.charsPerLine !== undefined) out.push({ kind: 'cjkGridClamped', path: 'cjk.grid.charsPerLine', value: String(g.clamped.charsPerLine), used: String(g.charsPerLine) });
   if (g.clamped.linesPerPage !== undefined) out.push({ kind: 'cjkGridClamped', path: 'cjk.grid.linesPerPage', value: String(g.clamped.linesPerPage), used: String(g.linesPerPage) });
   return out;
+}
+
+/** A limit of the content check that is no whole number from 0 (#849):
+ *  the default is used. */
+function collectChecksValueWarnings(config: PostextConfig): ConfigWarning[] {
+  const c = config.checks?.contentInConfig;
+  if (!c || typeof c !== 'object') return [];
+  const out: ConfigWarning[] = [];
+  const used = resolveContentInConfigCheck(c);
+  for (const key of ['maxWords', 'maxChars'] as const) {
+    const v: unknown = c[key];
+    if (v !== undefined && !(typeof v === 'number' && Number.isInteger(v) && v >= 0)) {
+      out.push({ kind: 'unknownConfigValue', path: `checks.contentInConfig.${key}`, value: String(v), used: String(used[key]) });
+    }
+  }
+  return out;
+}
+
+/** Most element paths a `contentInConfig` warning lists. */
+const CONTENT_IN_CONFIG_MAX_PATHS = 20;
+/** Longest sample of the first literal a `contentInConfig` warning quotes. */
+const CONTENT_IN_CONFIG_SAMPLE = 40;
+/** What a character of a script written without spaces (Chinese,
+ *  Japanese, Korean, Thai) counts toward `maxChars`: such a text has no
+ *  words to count, and one of its characters says about as much as a short
+ *  Latin word, so the default limit of 24 lets eight of them through
+ *  (`第{number}章`, `こころ`, `夏目漱石`). */
+const UNSPACED_CHAR_WEIGHT = 3;
+
+const LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
+const LETTERS_OR_DIGITS = /[\p{L}\p{N}]/gu;
+const UNSPACED_SCRIPT = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]/u;
+const UNSPACED_LETTERS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]/gu;
+
+/** A literal as the allow list compares it: no case, the words it holds
+ *  between spaces with the punctuation around them dropped (`·`, a comma,
+ *  quotes), one space between them. Punctuation inside a word stays, so an
+ *  address (`postext.dev`) or a version (`4.0`) is one word. */
+function comparableLiteral(text: string): string {
+  return text.normalize('NFKC').toLowerCase().split(/\s+/)
+    .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}\p{M}]+$/gu, ''))
+    .filter(Boolean).join(' ');
+}
+
+/** `text` with every occurrence of the allowed phrase `phrase` taken out
+ *  (both comparable): between spaces, or anywhere in text written without
+ *  them. */
+function withoutPhrase(text: string, phrase: string): string {
+  if (!phrase || !text) return text;
+  if (UNSPACED_SCRIPT.test(phrase)) return text.split(phrase).join(' ').replace(/\s+/g, ' ').trim();
+  return ` ${text} `.split(` ${phrase} `).join('  ').replace(/\s+/g, ' ').trim();
+}
+
+/** The literal text a design text prints whatever the document: its
+ *  content with every placeholder removed, on one line (#849). */
+export function designTextLiteral(content: string): string {
+  return stripPlaceholders(content).replace(/\s+/g, ' ').trim();
+}
+
+/** What {@link collectConfigWarnings} may read besides the config. */
+/** The phrases of the metadata a design may repeat. */
+function metadataPhrases(metadata: DocumentMetadata | undefined): string[] {
+  if (!metadata) return [];
+  const out: string[] = [];
+  for (const key of ['title', 'subtitle', 'author', 'publisher']) {
+    const v = metadata[key];
+    const values = Array.isArray(v) ? v : [v];
+    for (const one of values) {
+      const text = metadataText(one);
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+/** Content held in the configuration (#849): design text elements whose
+ *  literal text — their content with every placeholder removed, and the
+ *  phrases of `checks.contentInConfig.allow` (and of the metadata) taken
+ *  out — is longer than `maxWords` words or `maxChars` letters and digits.
+ *  One warning per owner (a heading style, a heading level, the page
+ *  header, a part design…): `path` is the owner, `count` the texts at
+ *  fault, `chars` their letters and digits, `elements` the path of each
+ *  (the first 20), `value` the start of the first one's literal. */
+function collectContentInConfigWarnings(config: PostextConfig, options: ConfigWarningOptions): ConfigWarning[] {
+  const check = resolveContentInConfigCheck(config.checks?.contentInConfig);
+  if (!check.enabled) return [];
+  const allow = [...new Set([...check.allow, ...metadataPhrases(options.metadata)].map(comparableLiteral).filter(Boolean))]
+    .sort((a, b) => b.length - a.length);
+  const groups = new Map<string, { ownerId?: string; elements: string[]; count: number; chars: number; sample: string }>();
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      const e = el as { kind?: unknown; content?: unknown } | null;
+      if (!e || typeof e !== 'object' || e.kind !== 'text' || typeof e.content !== 'string') return;
+      const literal = designTextLiteral(e.content);
+      if (!LETTER_OR_DIGIT.test(literal)) return;
+      let rest = comparableLiteral(literal);
+      for (const phrase of allow) rest = withoutPhrase(rest, phrase);
+      const chars = rest.match(LETTERS_OR_DIGITS)?.length ?? 0;
+      if (chars === 0) return;
+      const unspaced = rest.match(UNSPACED_LETTERS)?.length ?? 0;
+      const weight = chars + unspaced * (UNSPACED_CHAR_WEIGHT - 1);
+      // A run of unspaced script is no word count: its characters are weighed.
+      const words = rest.split(' ').filter((w) => LETTER_OR_DIGIT.test(w) && !UNSPACED_SCRIPT.test(w)).length;
+      if (words <= check.maxWords && weight <= check.maxChars) return;
+      let g = groups.get(slot.owner);
+      if (!g) {
+        const points = Array.from(literal);
+        const sample = points.length > CONTENT_IN_CONFIG_SAMPLE ? `${points.slice(0, CONTENT_IN_CONFIG_SAMPLE - 1).join('').trimEnd()}…` : literal;
+        g = { ...(slot.ownerId !== undefined ? { ownerId: slot.ownerId } : {}), elements: [], count: 0, chars: 0, sample };
+        groups.set(slot.owner, g);
+      }
+      g.count++;
+      g.chars += chars;
+      if (g.elements.length < CONTENT_IN_CONFIG_MAX_PATHS) g.elements.push(`${slot.path}.elements[${i}]`);
+    });
+  }
+  return [...groups].map(([owner, g]) => ({
+    kind: 'contentInConfig' as const,
+    path: owner,
+    value: g.sample,
+    used: '',
+    count: g.count,
+    chars: g.chars,
+    elements: g.elements,
+    ...(g.ownerId !== undefined ? { ownerId: g.ownerId } : {}),
+  }));
 }

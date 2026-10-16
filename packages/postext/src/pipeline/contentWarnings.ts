@@ -1015,6 +1015,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'wrapUnsupported':
       text = `${w.path}: text wraps in horizontal text only — in this vertical document "${w.value}" is ignored and the figures keep their bands whole`;
       break;
+    case 'contentInConfig': {
+      const n = w.count ?? 1;
+      text = `${w.path}${w.ownerId ? ` (${w.ownerId})` : ''}: ${n} design text${n === 1 ? '' : 's'} hold${n === 1 ? 's' : ''} ${w.chars ?? 0} characters of content ("${w.value}") — move the text into the Markdown and keep only placeholders in the design`;
+      break;
+    }
     case 'cjkGridClamped':
       text = `${w.path}: ${w.value} ${w.path.endsWith('charsPerLine') ? 'characters per line' : 'lines'} do not fit inside the margins — the grid is set with ${w.used}`;
       break;

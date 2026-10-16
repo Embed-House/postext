@@ -33,6 +33,7 @@ import {
   resolvePdfGenerationConfig,
   resolvePrintConfig,
   resolveContrastConfig,
+  resolveChecksConfig,
   resolveFolioConfig,
   resolveComicsConfig,
   comicReadingDirection,
@@ -183,6 +184,9 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     ...(config?.print ? { print: resolvePrintConfig(config.print) } : {}),
     // The contrast check's settings: `contrastDocument` reads them.
     ...(config?.contrast ? { contrast: resolveContrastConfig(config.contrast) } : {}),
+    // The checks of the configuration itself (#849): `collectConfigWarnings`
+    // reads them from the raw config; carried for hosts that show them.
+    ...(config?.checks ? { checks: resolveChecksConfig(config.checks) } : {}),
     // Not used by layout either: the Folio 3D viewer reads it.
     ...(config?.folio ? { folio: resolveFolioConfig(config.folio, page.sizePreset) } : {}),
     // Line numbers (#621): only a config that sets the section carries

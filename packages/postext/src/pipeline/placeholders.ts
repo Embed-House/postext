@@ -799,6 +799,35 @@ export function collectPlaceholderNames(template: string): string[] {
   return [...names];
 }
 
+/**
+ * The literal text of a template: every placeholder (`{name}`, known or
+ * not, `{attr.key}`, `{firstMark.key}`) removed, the `{{` / `}}` escapes
+ * read as the braces they print, and the `\n` escape as a line break.
+ * What a design text prints whatever the document (#849).
+ */
+export function stripPlaceholders(template: string): string {
+  let out = '';
+  let i = 0;
+  while (i < template.length) {
+    const ch = template[i]!;
+    if (ch === '{' && template[i + 1] === '{') { out += '{'; i += 2; continue; }
+    if (ch === '}' && template[i + 1] === '}') { out += '}'; i += 2; continue; }
+    if (ch === '{') {
+      const end = template.indexOf('}', i + 1);
+      if (end === -1) { out += template.slice(i); break; }
+      const name = template.slice(i + 1, end);
+      if (!PLACEHOLDER_NAME_RE.test(name)) out += template.slice(i, end + 1);
+      // A placeholder stands for a word of its own.
+      else out += ' ';
+      i = end + 1;
+      continue;
+    }
+    out += ch;
+    i++;
+  }
+  return out.replace(/\\n/g, '\n');
+}
+
 export function isKnownPlaceholder(name: string): boolean {
   return PLACEHOLDER_NAMES.has(name) || attrPlaceholderKey(name) !== undefined || markPlaceholder(name) !== undefined;
 }

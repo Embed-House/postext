@@ -29,6 +29,7 @@ import type {
   ResolvedPdfGenerationConfig,
   ResolvedPrintConfig,
   ResolvedContrastConfig,
+  ResolvedChecksConfig,
   ResolvedFolioConfig,
   ResolvedDesignSlot,
   ResolvedPartsConfig,
@@ -134,6 +135,9 @@ export interface ResolvedConfig {
    *  when the config sets any. Layout ignores them; `contrastDocument`
    *  reads them. */
   contrast?: ResolvedContrastConfig;
+  /** The checks of the configuration itself (`PostextConfig.checks`, #849),
+   *  resolved, when the config sets any. Layout ignores them. */
+  checks?: ResolvedChecksConfig;
   /** The Folio 3D viewer settings (`PostextConfig.folio`), resolved, when
    *  the config sets any. Layout ignores them; `postext-folio` reads them. */
   folio?: ResolvedFolioConfig;
@@ -2602,8 +2606,19 @@ export interface ConfigWarning {
    *  template, or a `continueIn` in no form the engine knows; the content
    *  does not continue there. `labelStyleUnknown`: a resource anchor's
    *  `style` that no `labelStyles` entry has (`resourceId` names the
-   *  resource); the label takes the default look. */
-  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported'
+   *  resource); the label takes the default look.
+   *
+   *  `contentInConfig`: design text elements of one owner (a heading
+   *  style, a heading level, the page header or footer, a part design, the
+   *  contents part rows) whose text beyond its placeholders is the book's
+   *  content (#849): more than `checks.contentInConfig.maxWords` words or
+   *  `maxChars` letters and digits, not counting the phrases of its `allow`
+   *  list. Nothing is replaced: the text is set as written. `path` is the
+   *  owner, `value` the start of the first text (40 characters at most),
+   *  `used` is empty, and `count`, `chars` and `elements` say how many
+   *  texts, how many letters and where. The fix is to move the text into
+   *  the Markdown and keep only placeholders in the design. */
+  kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported' | 'contentInConfig'
     | PageTemplateWarningKind;
   /** Where the value sits in the config, e.g.
    *  `orderedLists.levels[1].numberFormat`, `header.elements[0].fontFamily`,
@@ -2623,6 +2638,17 @@ export interface ConfigWarning {
   suggestion?: string;
   /** `labelStyleUnknown`: the resource whose anchor names the style. */
   resourceId?: string;
+  /** `contentInConfig`: the design texts of the owner that hold content. */
+  count?: number;
+  /** `contentInConfig`: the letters and digits those texts hold beyond
+   *  their placeholders and allowed phrases. */
+  chars?: number;
+  /** `contentInConfig`: the path of each of those texts
+   *  (`headingStyles[3].header.elements[12]`), the first 20. */
+  elements?: string[];
+  /** `contentInConfig`: the `id` of the heading style the warning is
+   *  about, when its owner is one. */
+  ownerId?: string;
 }
 
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */

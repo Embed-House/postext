@@ -5840,6 +5840,44 @@ export interface ResolvedContrastConfig {
   reversedText: ResolvedContrastReversedTextConfig;
 }
 
+/** The content check (`checks.contentInConfig`, #849): a design text
+ *  element of the configuration — a running head, a heading or part
+ *  design, a contents part row — whose `content` holds more literal text
+ *  than a short label. The text of a book belongs in its Markdown; a design
+ *  keeps placeholders (`{titleText}`, `{chapterTitle}`…) and, at most, a
+ *  word or two of its own ("Chapter {chapterNumber}"). Layout ignores it. */
+export interface ContentInConfigCheckConfig {
+  /** Run the check. Defaults to true. */
+  enabled?: boolean;
+  /** Literal text a design may carry whatever its length: the book's
+   *  title, the publisher's name. Compared without case, spacing or
+   *  punctuation, after the placeholders are removed; an entry found inside
+   *  a longer text is taken out before the rest is counted. */
+  allow?: string[];
+  /** Most words a design text may hold beyond its placeholders. Defaults
+   *  to 2. */
+  maxWords?: number;
+  /** Most letters and digits a design text may hold beyond its
+   *  placeholders. Defaults to 24. */
+  maxChars?: number;
+}
+
+export interface ResolvedContentInConfigCheckConfig {
+  enabled: boolean;
+  allow: string[];
+  maxWords: number;
+  maxChars: number;
+}
+
+/** Checks that read the configuration itself and change no page (#849). */
+export interface ChecksConfig {
+  contentInConfig?: ContentInConfigCheckConfig;
+}
+
+export interface ResolvedChecksConfig {
+  contentInConfig: ResolvedContentInConfigCheckConfig;
+}
+
 /** An ICC output profile the user uploaded (their printer's), stored
  *  out-of-band like a font or a picture. */
 export interface CustomOutputProfile {
@@ -7395,6 +7433,10 @@ export interface PostextConfig {
 
   /** The contrast check: level, rendition, reversed text. */
   contrast?: ContrastConfig;
+
+  /** Checks of the configuration itself (#849): the content check of the
+   *  design texts (`contentInConfig`). Layout ignores them. */
+  checks?: ChecksConfig;
 
   colorPalette?: ColorPaletteEntry[];
 
