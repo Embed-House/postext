@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "Parece igual",
     "textMigrationPageMeasuring": "Diagramando e comparando as páginas…",
     "textMigrationDifferentCount": "__count__ de __total__ páginas parecem diferentes",
-    "textMigrationDiffLetterSpacing": "o espaçamento entre letras se perde (estilos de parágrafo não têm)",
     "textMigrationDiffBox": "a caixa própria do texto não é desenhada",
     "textMigrationDiffStroke": "o contorno não é desenhado",
     "textMigrationDiffDropCap": "a capitular não é desenhada",

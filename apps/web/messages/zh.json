@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "看起来相同",
     "textMigrationPageMeasuring": "正在排版并比较页面…",
     "textMigrationDifferentCount": "__total__ 页中有 __count__ 页看起来不同",
-    "textMigrationDiffLetterSpacing": "字距丢失（段落样式没有字距设置）",
     "textMigrationDiffBox": "文字自身的底框没有画出",
     "textMigrationDiffStroke": "描边没有画出",
     "textMigrationDiffDropCap": "首字下沉没有画出",

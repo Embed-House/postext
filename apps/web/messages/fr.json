@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "Paraît identique",
     "textMigrationPageMeasuring": "Mise en page et comparaison des pages…",
     "textMigrationDifferentCount": "__count__ pages sur __total__ paraissent différentes",
-    "textMigrationDiffLetterSpacing": "l’interlettrage est perdu (les styles de paragraphe n’en ont pas)",
     "textMigrationDiffBox": "la boîte propre du texte n’est pas dessinée",
     "textMigrationDiffStroke": "le contour n’est pas dessiné",
     "textMigrationDiffDropCap": "la lettrine n’est pas dessinée",

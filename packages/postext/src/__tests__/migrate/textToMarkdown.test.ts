@@ -215,6 +215,50 @@ describe('text as Markdown (#874)', () => {
   });
 });
 
+describe('moveTextToMarkdown carries tracking (#907)', () => {
+  /** The port with its page titles tracked +15/1000 em, as the textbook's
+   *  are: on most pages in em, on the third in points (0.48 pt of 32 pt). */
+  const tracked = (): PostextConfig => {
+    const json = JSON.parse(JSON.stringify(PORT_CONFIG)) as PostextConfig;
+    for (const style of json.headingStyles ?? []) {
+      for (const el of (style.header?.elements ?? []) as { kind: string; id: string; letterSpacing?: unknown }[]) {
+        if (el.kind !== 'text' || !el.id.startsWith('title-')) continue;
+        el.letterSpacing = el.id === 'title-p3' ? { value: 0.48, unit: 'pt' } : { value: 0.015, unit: 'em' };
+      }
+    }
+    return json;
+  };
+
+  it('writes a moved text’s letter spacing into the paragraph style it creates, in ems of its size', () => {
+    const { config, chapters, report } = moveTextToMarkdown({ config: tracked(), chapters: PORT_CHAPTERS, metadata });
+    const titles = config.paragraphStyles!.filter((p) => p.fontFamily === 'Fixture Stamp' && p.fontSize && (p.fontSize as { value: number }).value === 32);
+    expect(titles.length).toBeGreaterThan(0);
+    for (const t of titles) expect(t.letterSpacing).toEqual({ value: 0.015, unit: 'em' });
+    // The pages no longer report tracking as a difference.
+    expect(report.pages.flatMap((p) => p.differences)).not.toContain('letterSpacing');
+    // An untracked look gets none.
+    expect(config.paragraphStyles!.find((p) => p.id === 'fixture-sans-11')!.letterSpacing).toBeUndefined();
+    // Laid out, the title is set tracked in its frame.
+    const ch1 = chapters.find((c) => c.id === 'ch1')!;
+    const doc = buildDocument({ markdown: ch1.markdown }, config, createMeasurementCache());
+    const page = doc.pages.find((p) => p.composed)!;
+    const title = (page.floats ?? []).find((b) => b.type === 'paragraph' && b.lines[0]?.text === 'RIVERS AND SEAS');
+    const sizePx = (32 / 72) * doc.config.page.dpi;
+    expect(title?.letterSpacing).toBeCloseTo(0.015 * sizePx, 5);
+  });
+
+  it('keeps tracked and untracked texts of one look apart', () => {
+    const config = tracked();
+    const p1 = config.headingStyles!.find((s) => (s.header?.elements ?? []).some((e) => e.id === 'title-p1'))!;
+    const el = (p1.header!.elements as { id: string; letterSpacing?: unknown }[]).find((e) => e.id === 'title-p1')!;
+    delete el.letterSpacing;
+    const out = moveTextToMarkdown({ config, chapters: PORT_CHAPTERS, metadata }).config;
+    const titles = out.paragraphStyles!.filter((p) => p.fontFamily === 'Fixture Stamp' && (p.fontSize as { value: number }).value === 32);
+    expect(titles.some((t) => t.letterSpacing === undefined)).toBe(true);
+    expect(titles.some((t) => t.letterSpacing !== undefined)).toBe(true);
+  });
+});
+
 describe('joinLines (#874)', () => {
   it('breaks lines with a backslash, and on the same line where the next would start a list', () => {
     expect(joinLines(['a', 'b'])).toBe('a\\\nb');

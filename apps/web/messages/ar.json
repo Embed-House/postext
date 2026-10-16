@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "تبدو كما هي",
     "textMigrationPageMeasuring": "جارٍ تنضيد الصفحات ومقارنتها…",
     "textMigrationDifferentCount": "__count__ من __total__ صفحة تبدو مختلفة",
-    "textMigrationDiffLetterSpacing": "تضيع المسافة بين الحروف (لا تملكها أنماط الفقرات)",
     "textMigrationDiffBox": "لا يُرسم مربع النص الخاص به",
     "textMigrationDiffStroke": "لا يُرسم الخط المحيط",
     "textMigrationDiffDropCap": "لا يُرسم الحرف الاستهلالي",

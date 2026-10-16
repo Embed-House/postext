@@ -4792,7 +4792,6 @@
     "textMigrationPageSame": "Appare uguale",
     "textMigrationPageMeasuring": "Impaginazione e confronto delle pagine…",
     "textMigrationDifferentCount": "__count__ pagine su __total__ appaiono diverse",
-    "textMigrationDiffLetterSpacing": "si perde la spaziatura tra le lettere (gli stili di paragrafo non ne hanno)",
     "textMigrationDiffBox": "la casella propria del testo non viene disegnata",
     "textMigrationDiffStroke": "il contorno non viene disegnato",
     "textMigrationDiffDropCap": "il capolettera non viene disegnato",

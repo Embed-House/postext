@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "Es veu igual",
     "textMigrationPageMeasuring": "Component i comparant les pàgines…",
     "textMigrationDifferentCount": "__count__ de __total__ pàgines es veuen diferents",
-    "textMigrationDiffLetterSpacing": "es perd l'espaiat entre lletres (els estils de paràgraf no en tenen)",
     "textMigrationDiffBox": "no es dibuixa la caixa pròpia del text",
     "textMigrationDiffStroke": "no es dibuixa el contorn",
     "textMigrationDiffDropCap": "no es dibuixa la caplletra",

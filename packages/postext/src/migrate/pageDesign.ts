@@ -30,6 +30,8 @@ export interface TextLook {
   hyphenate: boolean;
   direction?: 'ltr' | 'rtl';
   writingMode?: 'vertical-rl';
+  /** Tracking in ems of the text's size (#907); absent when none. */
+  letterSpacing?: Dimension;
 }
 
 /** A text element that moves to the Markdown. */
@@ -145,7 +147,21 @@ export function lookOf(el: DesignTextElement): TextLook {
     hyphenate: el.hyphenate === true,
     ...(el.direction === 'rtl' || el.direction === 'ltr' ? { direction: el.direction } : {}),
     ...(el.writingMode === 'vertical-rl' ? { writingMode: 'vertical-rl' as const } : {}),
+    ...trackingOf(el),
   };
+}
+
+/** A design text's tracking as ems of its size, the unit a paragraph
+ *  style reads it in (#907): `{ letterSpacing }`, or nothing when it sets
+ *  none. */
+function trackingOf(el: DesignTextElement): { letterSpacing?: Dimension } {
+  const ls = el.letterSpacing;
+  if (!ls || typeof ls !== 'object' || typeof ls.value !== 'number' || ls.value === 0) return {};
+  if (ls.unit === 'em') return { letterSpacing: { value: ls.value, unit: 'em' } };
+  const sizeMm = toMm(el.fontSize);
+  const mm = toMm(ls, sizeMm ?? 0);
+  if (!sizeMm || mm === undefined || mm === 0) return {};
+  return { letterSpacing: { value: Math.round((mm / sizeMm) * 10000) / 10000, unit: 'em' } };
 }
 
 /** Whether a design text holds a placeholder (`{pageNumber}`, `{attr.x}`). */
@@ -308,7 +324,6 @@ export function planDesign(input: DesignInput): PlannedDesign {
     const r = rectOf(el);
     const lines = contentLines(el.content);
     const pieceNotes: string[] = [];
-    if (el.letterSpacing && (toMm(el.letterSpacing, sizeMm) ?? 0) !== 0) pieceNotes.push('letterSpacing');
     if (el.box) pieceNotes.push('box');
     if (el.stroke) pieceNotes.push('stroke');
     if (el.dropCap) pieceNotes.push('dropCap');

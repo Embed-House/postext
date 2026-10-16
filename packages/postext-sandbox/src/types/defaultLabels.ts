@@ -1964,7 +1964,6 @@ export const DEFAULT_LABELS: SandboxLabels = {
   textMigrationPageSame: "Looks the same",
   textMigrationPageMeasuring: "Laying out and comparing the pages…",
   textMigrationDifferentCount: "__count__ of __total__ pages look different",
-  textMigrationDiffLetterSpacing: "letter spacing lost (paragraph styles have none)",
   textMigrationDiffBox: "the text's own box is not drawn",
   textMigrationDiffStroke: "outline not drawn",
   textMigrationDiffDropCap: "drop cap not drawn",

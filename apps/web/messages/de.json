@@ -4792,7 +4792,6 @@
     "textMigrationPageSame": "Sieht gleich aus",
     "textMigrationPageMeasuring": "Seiten werden gesetzt und verglichen …",
     "textMigrationDifferentCount": "__count__ von __total__ Seiten sehen anders aus",
-    "textMigrationDiffLetterSpacing": "Sperrung geht verloren (Absatzstile haben keine)",
     "textMigrationDiffBox": "der eigene Kasten des Textes wird nicht gezeichnet",
     "textMigrationDiffStroke": "Kontur wird nicht gezeichnet",
     "textMigrationDiffDropCap": "Initiale wird nicht gezeichnet",

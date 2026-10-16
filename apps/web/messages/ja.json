@@ -4791,7 +4791,6 @@
     "textMigrationPageSame": "見た目は同じ",
     "textMigrationPageMeasuring": "ページを組んで比べています…",
     "textMigrationDifferentCount": "__total__ページ中__count__ページの見た目が変わります",
-    "textMigrationDiffLetterSpacing": "字間が失われます（段落スタイルには字間の設定がありません）",
     "textMigrationDiffBox": "テキスト自身の箱は描かれません",
     "textMigrationDiffStroke": "輪郭線は描かれません",
     "textMigrationDiffDropCap": "ドロップキャップは描かれません",

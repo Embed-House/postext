@@ -2072,7 +2072,6 @@ export interface SandboxLabels {
   textMigrationPageSame: string;
   textMigrationPageMeasuring: string;
   textMigrationDifferentCount: string;
-  textMigrationDiffLetterSpacing: string;
   textMigrationDiffBox: string;
   textMigrationDiffStroke: string;
   textMigrationDiffDropCap: string;

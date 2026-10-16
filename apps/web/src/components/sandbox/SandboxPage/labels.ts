@@ -1947,7 +1947,6 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     textMigrationPageSame: t("textMigrationPageSame"),
     textMigrationPageMeasuring: t("textMigrationPageMeasuring"),
     textMigrationDifferentCount: t("textMigrationDifferentCount"),
-    textMigrationDiffLetterSpacing: t("textMigrationDiffLetterSpacing"),
     textMigrationDiffBox: t("textMigrationDiffBox"),
     textMigrationDiffStroke: t("textMigrationDiffStroke"),
     textMigrationDiffDropCap: t("textMigrationDiffDropCap"),

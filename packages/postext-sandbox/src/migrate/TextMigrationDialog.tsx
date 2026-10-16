@@ -49,7 +49,6 @@ export function TextMigrationDialog() {
 type PagePicture = { before?: string; after?: string; marked?: string; difference?: number; failed?: boolean };
 
 const DIFFERENCE_LABEL: Record<string, keyof SandboxLabels> = {
-  letterSpacing: 'textMigrationDiffLetterSpacing',
   box: 'textMigrationDiffBox',
   stroke: 'textMigrationDiffStroke',
   dropCap: 'textMigrationDiffDropCap',

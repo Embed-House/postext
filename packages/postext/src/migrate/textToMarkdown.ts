@@ -84,8 +84,7 @@ export interface MigratedPage {
   frames: number;
   elements: number;
   chars: number;
-  /** Where the page may look different, by code: `letterSpacing` (a
-   *  paragraph style has no tracking), `box`, `stroke`, `dropCap`,
+  /** Where the page may look different, by code: `box`, `stroke`, `dropCap`,
    *  `paragraphIndent`, `height` (the text's own box), `side` (the side of
    *  the page is not known: the text of both sides' frames was written),
    *  `flow` (the page has running text, now set in the template's flow
@@ -184,6 +183,8 @@ function styleFields(look: TextLook, gap: number): Omit<ParagraphStyleConfig, 'i
     boldFontWeight: Math.max(700, look.fontWeight),
     ...(look.italic ? { italic: true } : {}),
     ...(look.uppercase ? { textTransform: 'uppercase' as const } : {}),
+    // The text's tracking, which paragraph styles carry since #907.
+    ...(look.letterSpacing ? { letterSpacing: look.letterSpacing } : {}),
     hyphenation: look.hyphenate,
     firstLineIndent: { value: 0, unit: 'mm' },
     spaceBetween: { value: gap, unit: 'mm' },
