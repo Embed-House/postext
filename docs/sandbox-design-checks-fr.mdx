@@ -274,3 +274,22 @@ Des diagnostics en direct, recalculés à partir du texte, de la maquette, des f
 - **Navigateur** : stockage indisponible (IndexedDB absent)
 
 Chaque entrée affiche une icône, un titre, un détail d’une ligne et, le cas échéant, le chapitre et la ligne source (*Chap. 2 · Ligne 12* dans un livre de plusieurs chapitres). Cliquer sur une entrée qui a un emplacement source passe à ce chapitre et donne le focus à l’éditeur à cet endroit. Quand tout va bien, le panneau affiche **Rien à signaler**. Les vérifications effectuées se règlent dans **Maquette → Avancé → Avertissements**.
+
+### Pages composées dans toutes les éditions
+
+Dans un livre doté de modèles de page (`pageTemplates`), le panneau s’ouvre sur **Pages composées** : les vérifications de chaque page composée de chaque chapitre, dans chaque édition que contient le livre. Un paquet en espagnol, anglais et catalan est vérifié dans les trois pendant que l’une d’elles est à l’écran. Les éditions qui ne sont pas à l’écran sont mises en page en arrière-plan, chacune lue comme l’ouverture la lirait : son brouillon si elle a été modifiée, sinon le texte du paquet dans cette langue. Une ligne sous les commandes indique quelles éditions sont en cours de mise en page et, une fois toutes terminées, lesquelles ont été vérifiées.
+
+La section rassemble :
+
+- *Le texte déborde de son bloc* (`frameOverflow`), avec les étapes essayées par la cascade de recomposition et les changements qui feraient tenir le bloc ;
+- *Slot sans bloc*, *Bloc vide*, *Modèle de page inconnu*, *Page composée avec trois deux-points* et *La double page ne correspond pas au modèle* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`) ;
+- *Bloc de la table des matières coupé entre colonnes* (`tocGroupSplit`) ;
+- les avertissements des modèles eux-mêmes (un style ou une ancre de bloc qui n’existe pas, des tailles qui se contredisent, une chaîne qui revient sur elle-même) et le texte de maquette qui contient du contenu du livre (`contentInConfig`).
+
+Ces entrées ne se répètent pas dans les groupes du dessous.
+
+**Page**, **Bloc** et **Langue** regroupent la liste par page composée (la même page dans toutes les éditions, quel que soit son numéro dans chacune), par bloc ou par édition. Les trois menus en dessous gardent une seule langue, une seule page ou un seul bloc. Chaque entrée affiche l’étiquette de l’édition (*CA*), le numéro de page dans cette édition et le nom du bloc.
+
+Un clic sur une entrée mène à son bloc dans son édition. Si une autre édition est à l’écran, le livre passe à la langue de l’entrée ; puis le chapitre et la page s’ouvrent, le bloc est entouré un instant et le curseur se place au début de son slot dans le panneau **Texte**. Un avertissement propre à un modèle ouvre la première page composée avec ce modèle, son bloc sélectionné ; le texte de maquette qui contient du contenu ouvre le panneau **Maquette**.
+
+Un projet local contient une seule édition : un paquet importé comme projet garde la langue choisie à l’import, et seule cette édition est vérifiée (la ligne sous les commandes le dit). Pour vérifier toutes ses langues, ouvrez le paquet depuis **Livres**. La pastille de la barre d’activité compte les avertissements du chapitre à l’écran, dans l’édition à l’écran.

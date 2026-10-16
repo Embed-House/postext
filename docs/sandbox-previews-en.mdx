@@ -45,6 +45,14 @@ On a composed page (`::::page{template="…"}`) the canvas links each frame to t
 - An empty frame shows a dashed outline, its name and **Write here**; a frame that only continues another says which. These marks are drawn over the canvas only: the PDF, the print and every export leave them out.
 - A double click on a box's label tab opens a field over it that edits the fence's `label="…"`; on a paragraph, a heading or a list item, a field with its Markdown. **Enter** keeps the change, **Shift+Enter** starts a new line, **Esc** leaves the text as it was. The change is written to the chapter and undone with Cmd/Ctrl+Z like any edit made on the previews. Correcting a caption takes a double click and the new words, and no style is opened. A turned frame is edited in the Text panel.
 - In Design mode every frame shows its outline and its name, and a click picks one for the template editor.
+- A frame whose content does not fit is outlined in red, with a band under its foot as tall as what was cut and the shortfall (*15 mm short*). A frame whose text the reflow ladder shrank shows the scale it was set at (*text at 85 %*, and *pictures at 80 %* when its pictures were scaled too). Like the other marks, these are drawn over the canvas only.
+
+#### Editions of a book
+
+For a book in several languages, a bar over the canvas lists its editions (*ES · EN · CA*) and **Side by side**.
+
+- A click on an edition opens it on the same composed page. The page is found by its `::::page` fence in the chapter, which is the same in every language, so you stay on it even when its number differs in the other edition; the frame you picked stays picked. On any other page the page number is kept.
+- **Side by side** shows the chapter on screen next to the same chapter of another edition (**next to** chooses it when the book has more than two). Both columns show the same page and scroll together; **Scroll together** turns that off. Between composed pages the columns count on from the last composed page they share. The frames that do not fit, or whose text was shrunk, are marked in both columns. The other edition is read only here: a click on one of its pages opens that edition at that page.
 
 ### Selecting on the page
 

@@ -45,6 +45,14 @@ Sur une page composée (`::::page{template="…"}`), le canevas relie chaque blo
 - Un bloc vide affiche un contour en pointillés, son nom et **Écrire ici** ; un bloc qui ne fait que prolonger un autre indique lequel. Ces marques ne sont dessinées que sur le canevas : le PDF, l’impression et tous les exports les laissent de côté.
 - Un double clic sur l’onglet d’étiquette d’une boîte ouvre par-dessus un champ qui modifie le `label="…"` du délimiteur ; sur un paragraphe, un titre ou un élément de liste, un champ avec son Markdown. **Entrée** garde la modification, **Maj+Entrée** passe à la ligne, **Échap** laisse le texte tel qu’il était. La modification est écrite dans le chapitre et s’annule avec Cmd/Ctrl+Z comme toute modification faite dans les aperçus. Corriger une légende demande un double clic et les nouveaux mots, sans ouvrir aucun style. Un bloc tourné se modifie dans le panneau Texte.
 - En mode Maquette, chaque bloc affiche son contour et son nom, et un clic en sélectionne un pour l’éditeur de modèles.
+- Un bloc dont le contenu ne tient pas est entouré de rouge, avec sous son pied une bande aussi haute que ce qui a été coupé, et ce qui manque (*15 mm de trop*). Un bloc dont la cascade de recomposition a réduit le texte affiche l’échelle retenue (*texte à 85 %*, et *images à 80 %* quand ses images ont aussi été réduites). Comme les autres marques, elles ne sont dessinées que sur le canevas.
+
+#### Éditions d’un livre
+
+Pour un livre en plusieurs langues, une barre au-dessus du canevas présente ses éditions (*ES · EN · CA*) et **Côte à côte**.
+
+- Un clic sur une édition l’ouvre à la même page composée. La page est retrouvée par sa clôture `::::page` dans le chapitre, la même dans toutes les langues : vous restez sur cette page même si son numéro diffère dans l’autre édition, et le bloc sélectionné le reste. Sur toute autre page, le numéro de page est conservé.
+- **Côte à côte** montre le chapitre à l’écran à côté du même chapitre d’une autre édition (**à côté de** la choisit quand le livre en a plus de deux). Les deux colonnes montrent la même page et défilent ensemble ; **Défiler ensemble** désactive ce lien. Entre deux pages composées, les colonnes comptent à partir de la dernière page composée qu’elles partagent. Les blocs qui ne tiennent pas, ou dont le texte a été réduit, sont marqués dans les deux colonnes. L’autre édition n’est ici qu’en lecture : un clic sur une de ses pages ouvre cette édition à cette page.
 
 ### Sélectionner sur la page
 

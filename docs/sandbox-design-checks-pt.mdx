@@ -274,3 +274,22 @@ Diagnósticos ao vivo, recalculados a partir do texto, do design, das figuras e 
 - **Navegador**: armazenamento indisponível (IndexedDB ausente)
 
 Cada entrada mostra um ícone, um título, um detalhe de uma linha e, quando cabe, o capítulo e a linha do código-fonte (*Cap. 2 · Linha 12* num livro de vários capítulos). Clicar numa entrada com localização no código-fonte passa para aquele capítulo e dá foco ao editor naquele ponto. Quando não há nada errado, o painel mostra **Tudo certo**. Quais verificações rodam é definido em **Design → Avançado → Avisos**.
+
+### Páginas compostas em todas as edições
+
+Num livro com modelos de página (`pageTemplates`), o painel começa por **Páginas compostas**: as verificações de cada página composta de cada capítulo, em cada edição que o livro traz. Um pacote em espanhol, inglês e catalão é verificado nas três enquanto uma delas está na tela. As edições que não estão na tela são diagramadas em segundo plano, cada uma lida como seria lida ao abri-la: o rascunho dela, se foi editada, senão o texto do pacote naquele idioma. Uma linha abaixo dos controles diz quais edições estão sendo diagramadas e, quando todas terminam, quais foram verificadas.
+
+A seção reúne:
+
+- *O texto não cabe no bloco* (`frameOverflow`), com os passos que a escada de ajuste tentou e as mudanças que fariam o bloco caber;
+- *Slot sem bloco*, *Bloco vazio*, *Modelo de página desconhecido*, *Página composta com três dois-pontos* e *A página dupla não corresponde ao modelo* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloco do sumário dividido entre colunas* (`tocGroupSplit`);
+- os avisos dos próprios modelos (um estilo ou uma âncora de bloco que não existe, tamanhos que se contradizem, uma cadeia que volta sobre si mesma) e o texto de design que guarda conteúdo do livro (`contentInConfig`).
+
+Essas entradas não se repetem nos grupos abaixo.
+
+**Página**, **Bloco** e **Idioma** agrupam a lista por página composta (a mesma página em todas as edições, seja qual for o número dela em cada uma), por bloco ou por edição. Os três menus logo abaixo deixam um só idioma, uma só página ou um só bloco. Cada entrada mostra a sigla da edição (*CA*), o número da página naquela edição e o nome do bloco.
+
+Um clique numa entrada leva ao bloco dela na edição dela. Se outra edição estiver na tela, o livro passa para o idioma da entrada; depois abrem o capítulo e a página, o bloco ganha um contorno por um momento e o cursor vai para o começo do slot no painel **Texto**. Um aviso do próprio modelo abre a primeira página composta com ele, com o bloco selecionado; o texto de design com conteúdo abre o painel **Design**.
+
+Um projeto local guarda uma só edição: um pacote importado como projeto mantém o idioma escolhido na importação, e só essa edição é verificada (a linha abaixo dos controles avisa). Para verificar todos os idiomas, abra o pacote em **Livros**. O contador da barra de atividades conta os avisos do capítulo na tela, na edição na tela.

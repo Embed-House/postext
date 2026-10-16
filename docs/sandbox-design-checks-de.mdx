@@ -274,3 +274,22 @@ Laufende Diagnosen, neu berechnet aus dem Text, der Gestaltung, den Abbildungen 
 - **Browser**: Speicher nicht verfügbar (IndexedDB fehlt)
 
 Jeder Eintrag zeigt ein Symbol, einen Titel, ein einzeiliges Detail und, wo zutreffend, Kapitel und Quellzeile (*Kap. 2 · Zeile 12* in einem Buch mit mehreren Kapiteln). Ein Klick auf einen Eintrag mit Quellposition wechselt zu diesem Kapitel und fokussiert den Editor an dieser Stelle. Ist alles in Ordnung, zeigt das Bedienfeld **Alles in Ordnung**. Welche Prüfungen laufen, legen Sie unter **Gestaltung → Erweitert → Warnungen** fest.
+
+### Zusammengesetzte Seiten in allen Ausgaben
+
+In einem Buch mit Seitenvorlagen (`pageTemplates`) beginnt das Bedienfeld mit **Zusammengesetzte Seiten**: den Prüfungen jeder zusammengesetzten Seite jedes Kapitels, in jeder Ausgabe, die das Buch enthält. Ein Paket auf Spanisch, Englisch und Katalanisch wird in allen dreien geprüft, während eine davon angezeigt wird. Die nicht angezeigten Ausgaben werden im Hintergrund gesetzt, jede so gelesen, wie das Öffnen sie lesen würde: ihr Entwurf, wenn sie bearbeitet wurde, sonst der Text des Pakets in dieser Sprache. Eine Zeile unter den Bedienelementen nennt die Ausgaben, die gerade gesetzt werden, und, sobald alle fertig sind, die geprüften.
+
+Der Abschnitt führt auf:
+
+- *Text passt nicht in seinen Rahmen* (`frameOverflow`), mit den Umbruchstufen, die versucht wurden, und den Änderungen, mit denen der Rahmen passen würde;
+- *Slot ohne Rahmen*, *Leerer Rahmen*, *Unbekannte Seitenvorlage*, *Zusammengesetzte Seite mit drei Doppelpunkten* und *Doppelseite passt nicht zur Vorlage* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Inhaltsverzeichnis-Block zwischen Spalten geteilt* (`tocGroupSplit`);
+- die Warnungen der Vorlagen selbst (ein Rahmenstil oder Anker, den es nicht gibt, Größen, die sich widersprechen, eine Kette, die in sich selbst zurückläuft) und Gestaltungstext, der Inhalt des Buchs enthält (`contentInConfig`).
+
+Diese Einträge werden in den Gruppen darunter nicht wiederholt.
+
+**Seite**, **Rahmen** und **Sprache** gruppieren die Liste nach zusammengesetzter Seite (dieselbe Seite in jeder Ausgabe, welche Nummer sie dort auch trägt), nach Rahmen oder nach Ausgabe. Die drei Menüs darunter beschränken sie auf eine Sprache, eine Seite oder einen Rahmen. Jeder Eintrag zeigt das Kürzel der Ausgabe (*CA*), die Seitenzahl in dieser Ausgabe und den Namen des Rahmens.
+
+Ein Klick auf einen Eintrag führt zu seinem Rahmen in seiner Ausgabe. Wird gerade eine andere Ausgabe angezeigt, wechselt das Buch in die Sprache des Eintrags; dann öffnen sich Kapitel und Seite, der Rahmen wird kurz umrandet und der Cursor steht am Anfang seines Slots im Bedienfeld **Text**. Eine Warnung einer Vorlage öffnet die erste Seite, die mit dieser Vorlage gesetzt ist, mit ausgewähltem Rahmen; Gestaltungstext mit Inhalt öffnet das Bedienfeld **Gestaltung**.
+
+Ein lokales Projekt enthält eine einzige Ausgabe: Ein als Projekt importiertes Paket behält die beim Import gewählte Sprache, und nur diese Ausgabe wird geprüft (die Zeile unter den Bedienelementen sagt es). Um alle Sprachen zu prüfen, öffnen Sie das Paket unter **Bücher**. Das Abzeichen in der Aktivitätsleiste zählt die Warnungen des angezeigten Kapitels in der angezeigten Ausgabe.

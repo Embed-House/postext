@@ -274,3 +274,22 @@ Diagnòstics en viu, recalculats a partir del text, el disseny, les figures i l'
 - **Navegador**: emmagatzematge no disponible (falta IndexedDB)
 
 Cada entrada mostra una icona, un títol, un detall d'una línia i, quan escau, el capítol i la línia d'origen (*Cap. 2 · Línia 12* en un llibre de diversos capítols). En fer clic en una entrada amb ubicació d'origen es canvia a aquest capítol i s'enfoca l'editor en aquest punt. Quan no hi ha res a assenyalar, el tauler mostra **Tot en ordre**. Quines comprovacions s'executen es decideix a **Disseny → Avançat → Avisos**.
+
+### Pàgines compostes en totes les edicions
+
+En un llibre amb plantilles de pàgina (`pageTemplates`), el tauler comença per **Pàgines compostes**: les comprovacions de cada pàgina composta de cada capítol, en cada edició que porta el llibre. Un paquet en castellà, anglès i català es revisa en totes tres mentre una d'elles és a la pantalla. Les edicions que no són a la pantalla es componen en segon pla, i cadascuna es llegeix com es llegiria en obrir-la: el seu esborrany si s'ha editat, si no el text del paquet en aquell idioma. Una línia sota els controls diu quines edicions s'estan component i, quan acaben, quines s'han revisat.
+
+La secció recull:
+
+- *El text no cap al seu marc* (`frameOverflow`), amb els passos que ha provat l'escala d'ajust i els canvis que farien cabre el marc;
+- *Slot sense marc*, *Marc buit*, *Plantilla de pàgina desconeguda*, *Pàgina composta amb tres dos punts* i *La doble pàgina no coincideix amb la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloc de l'índex partit entre columnes* (`tocGroupSplit`);
+- els avisos de les mateixes plantilles (un estil o una àncora de marc que no existeix, mides que es contradiuen, una cadena que torna sobre si mateixa) i el text de disseny que guarda contingut del llibre (`contentInConfig`).
+
+Aquestes entrades no es repeteixen als grups de sota.
+
+**Pàgina**, **Marc** i **Idioma** agrupen la llista per pàgina composta (la mateixa pàgina en totes les edicions, porti el número que porti en cadascuna), per marc o per edició. Els tres menús de sota deixen un sol idioma, una sola pàgina o un sol marc. Cada entrada mostra l'etiqueta de l'edició (*CA*), el número de pàgina en aquella edició i el nom del marc.
+
+Un clic en una entrada porta al seu marc en la seva edició. Si a la pantalla hi ha una altra edició, el llibre canvia a l'idioma de l'entrada; després s'obren el capítol i la pàgina, el marc es contorneja un moment i el cursor va al començament del seu slot al tauler **Text**. Un avís de la mateixa plantilla obre la primera pàgina composta amb ella, amb el marc seleccionat; el text de disseny amb contingut obre el tauler **Disseny**.
+
+Un projecte local guarda una sola edició: un paquet importat com a projecte conserva l'idioma triat en importar-lo i només es revisa aquella edició (la línia sota els controls ho diu). Per revisar tots els seus idiomes, obre el paquet des de **Llibres**. El comptador de la barra d'activitat compta els avisos del capítol a la pantalla, en l'edició a la pantalla.

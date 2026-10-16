@@ -45,6 +45,14 @@ Numa página composta (`::::page{template="…"}`), o canvas liga cada bloco ao 
 - Um bloco vazio mostra um contorno tracejado, o nome e **Escreva aqui**; um bloco que só continua outro diz qual. Essas marcas são desenhadas apenas sobre o canvas: o PDF, a impressão e qualquer exportação as deixam de fora.
 - Um clique duplo na aba de etiqueta de uma caixa abre por cima um campo que edita o `label="…"` da cerca; num parágrafo, num título ou num item de lista, um campo com o seu Markdown. **Enter** guarda a alteração, **Shift+Enter** começa outra linha e **Esc** deixa o texto como estava. A alteração é gravada no capítulo e desfeita com Cmd/Ctrl+Z como qualquer edição feita nas visualizações. Corrigir uma legenda pede um clique duplo e as palavras novas, sem abrir nenhum estilo. Um bloco girado é editado no painel Texto.
 - No modo Design, todos os blocos mostram o contorno e o nome, e um clique seleciona um para o editor de modelos.
+- Um bloco cujo conteúdo não cabe ganha um contorno vermelho, com uma faixa abaixo do pé tão alta quanto o que foi cortado e o que falta (*faltam 15 mm*). Um bloco cujo texto a escada de ajuste reduziu mostra a escala usada (*texto a 85%*, e *imagens a 80%* quando as imagens também foram reduzidas). Como as outras marcas, aparecem só sobre o canvas.
+
+#### Edições de um livro
+
+Num livro em vários idiomas, uma barra sobre o canvas mostra as edições dele (*ES · EN · CA*) e **Lado a lado**.
+
+- Um clique numa edição abre essa edição na mesma página composta. A página é encontrada pela cerca `::::page` dela no capítulo, que é a mesma em todos os idiomas; assim você continua nela mesmo que na outra edição o número seja outro, e o bloco selecionado continua selecionado. Em qualquer outra página o número da página se mantém.
+- **Lado a lado** mostra o capítulo na tela ao lado do mesmo capítulo de outra edição (**ao lado de** escolhe qual quando o livro tem mais de duas). As duas colunas mostram a mesma página e rolam juntas; **Rolar junto** desliga isso. Entre páginas compostas, as colunas contam a partir da última página composta que compartilham. Os blocos que não cabem, ou cujo texto foi reduzido, ficam marcados nas duas colunas. A outra edição aqui é só leitura: um clique numa das páginas dela abre essa edição nessa página.
 
 ### Selecionar na página
 

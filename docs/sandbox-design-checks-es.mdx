@@ -274,3 +274,22 @@ Diagnósticos en vivo, recalculados a partir del texto, el diseño, las figuras 
 - **Navegador**: almacenamiento no disponible (falta IndexedDB)
 
 Cada entrada muestra un icono, un título, un detalle de una línea y, cuando procede, el capítulo y la línea de origen (*Cap. 2 · Línea 12* en un libro de varios capítulos). Al hacer clic en una entrada con ubicación de origen se cambia a ese capítulo y se enfoca el editor en ese punto. Cuando no hay nada que señalar, el panel muestra **Todo en orden**. Qué comprobaciones se ejecutan se decide en **Diseño → Avanzado → Avisos**.
+
+### Páginas compuestas en todas las ediciones
+
+En un libro con plantillas de página (`pageTemplates`), el panel empieza por **Páginas compuestas**: las comprobaciones de cada página compuesta de cada capítulo, en cada edición que trae el libro. Un paquete en español, inglés y catalán se revisa en las tres mientras una de ellas está en pantalla. Las ediciones que no están en pantalla se componen en segundo plano, y cada una se lee como se leería al abrirla: su borrador si se editó, si no el texto del paquete en ese idioma. Una línea bajo los controles dice qué ediciones se están componiendo y, cuando terminan, cuáles se revisaron.
+
+La sección recoge:
+
+- *El texto no cabe en su marco* (`frameOverflow`), con los pasos que probó la escalera de ajuste y los cambios que harían caber el marco;
+- *Slot sin marco*, *Marco vacío*, *Plantilla de página desconocida*, *Página compuesta con tres dos puntos* y *La doble página no coincide con la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloque del índice partido entre columnas* (`tocGroupSplit`);
+- los avisos de las propias plantillas (un estilo o un ancla de marco que no existe, tamaños que se contradicen, una cadena que vuelve sobre sí misma) y el texto de diseño que guarda contenido del libro (`contentInConfig`).
+
+Estas entradas no se repiten en los grupos de debajo.
+
+**Página**, **Marco** e **Idioma** agrupan la lista por página compuesta (la misma página en todas las ediciones, lleve el número que lleve en cada una), por marco o por edición. Los tres menús de debajo dejan un solo idioma, una sola página o un solo marco. Cada entrada muestra la etiqueta de la edición (*CA*), el número de página en esa edición y el nombre del marco.
+
+Un clic en una entrada lleva a su marco en su edición. Si en pantalla hay otra edición, el libro cambia al idioma de la entrada; después se abren el capítulo y la página, el marco se contornea un momento y el cursor va al principio de su slot en el panel **Texto**. Un aviso de la propia plantilla abre la primera página compuesta con ella, con su marco seleccionado; el texto de diseño con contenido abre el panel **Diseño**.
+
+Un proyecto local guarda una sola edición: un paquete importado como proyecto conserva el idioma elegido al importarlo y solo se revisa esa edición (la línea bajo los controles lo dice). Para revisar todos sus idiomas, abre el paquete desde **Libros**. El contador de la barra de actividad cuenta los avisos del capítulo en pantalla, en la edición en pantalla.

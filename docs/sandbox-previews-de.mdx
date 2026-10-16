@@ -45,6 +45,14 @@ Auf einer zusammengesetzten Seite (`::::page{template="…"}`) verbindet die Lei
 - Ein leerer Rahmen zeigt einen gestrichelten Umriss, seinen Namen und **Hier schreiben**; ein Rahmen, der nur einen anderen fortsetzt, sagt, welchen. Diese Markierungen erscheinen nur auf der Leinwand: PDF, Druck und alle Exporte lassen sie weg.
 - Ein Doppelklick auf den Beschriftungsreiter eines Kastens öffnet darüber ein Feld, das das `label="…"` der Begrenzung bearbeitet; auf einem Absatz, einer Überschrift oder einem Listeneintrag ein Feld mit seinem Markdown. **Eingabe** übernimmt die Änderung, **Umschalt+Eingabe** beginnt eine neue Zeile, **Esc** lässt den Text, wie er war. Die Änderung wird ins Kapitel geschrieben und mit Cmd/Strg+Z rückgängig gemacht wie jede Bearbeitung in den Vorschauen. Eine Bildunterschrift zu korrigieren braucht einen Doppelklick und die neuen Wörter, ohne einen Stil zu öffnen. Ein gedrehter Rahmen wird im Bereich Text bearbeitet.
 - Im Modus Gestaltung zeigt jeder Rahmen seinen Umriss und seinen Namen, und ein Klick wählt einen für den Vorlageneditor aus.
+- Ein Rahmen, dessen Inhalt nicht passt, ist rot umrandet, mit einem Band unter seinem Fuß, so hoch wie das Abgeschnittene, und dem Fehlbetrag (*15 mm zu kurz*). Ein Rahmen, dessen Text die Umbruchstufen verkleinert haben, zeigt den gewählten Maßstab (*Text auf 85 %*, und *Bilder auf 80 %*, wenn auch seine Bilder verkleinert wurden). Wie die anderen Markierungen erscheinen sie nur über der Leinwand.
+
+#### Ausgaben eines Buchs
+
+Bei einem Buch in mehreren Sprachen zeigt eine Leiste über der Leinwand seine Ausgaben (*ES · EN · CA*) und **Nebeneinander**.
+
+- Ein Klick auf eine Ausgabe öffnet sie auf derselben zusammengesetzten Seite. Die Seite wird über ihren `::::page`-Zaun im Kapitel gefunden, der in jeder Sprache derselbe ist; Sie bleiben also auf ihr, auch wenn sie in der anderen Ausgabe eine andere Nummer trägt, und der ausgewählte Rahmen bleibt ausgewählt. Auf jeder anderen Seite bleibt die Seitenzahl erhalten.
+- **Nebeneinander** zeigt das angezeigte Kapitel neben demselben Kapitel einer anderen Ausgabe (**neben** wählt sie, wenn das Buch mehr als zwei hat). Beide Spalten zeigen dieselbe Seite und blättern gemeinsam; **Gemeinsam blättern** schaltet das ab. Zwischen zusammengesetzten Seiten zählen die Spalten von der letzten zusammengesetzten Seite weiter, die sie teilen. Rahmen, die nicht passen oder deren Text verkleinert wurde, sind in beiden Spalten markiert. Die andere Ausgabe wird hier nur gelesen: Ein Klick auf eine ihrer Seiten öffnet diese Ausgabe auf dieser Seite.
 
 ### Auf der Seite auswählen
 

@@ -274,3 +274,22 @@ Live diagnostics, recomputed from the text, the design, the figures and the last
 - **Browser**: storage unavailable (IndexedDB missing)
 
 Each entry shows an icon, a title, a one-line detail and, where it applies, the chapter and source line (*Ch. 2 · Line 12* in a multi-chapter book). Clicking an entry with a source location switches to that chapter and focuses the editor at that spot. When nothing is wrong, the panel shows **All clear**. Which checks run is set in **Design → Advanced → Warnings**.
+
+### Composed pages in every edition
+
+In a book with page templates (`pageTemplates`), the panel opens with **Composed pages**: the checks of every composed page of every chapter, in every edition the book carries. A bundle in Spanish, English and Catalan is checked in all three while one of them is on screen. The editions not on screen are laid out in the background, each read the way opening it would read it: its draft when it was edited, else the bundle's text in that language. A line under the controls says which editions are being laid out and, once they are all done, which were checked.
+
+The section lists:
+
+- *Text does not fit its frame* (`frameOverflow`), with the steps the reflow ladder tried and the changes that would make the frame fit;
+- *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Contents block cut between columns* (`tocGroupSplit`);
+- the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).
+
+These entries are not repeated in the groups below.
+
+**Page**, **Frame** and **Language** group the list by composed page (the same page in every edition, whatever number it carries there), by frame or by edition. The three menus under them keep one language, one page or one frame. Each entry shows the edition's tag (*CA*), the page number in that edition and the frame's name.
+
+A click on an entry takes you to its frame in its edition. When another edition is on screen, the book switches to the entry's language; then the chapter and the page open, the frame is outlined for a moment and the caret goes to the start of its slot in the **Text** panel. A template's own warning opens the first page set with that template, with its frame picked; design text that holds content opens the **Design** panel.
+
+A local project holds one edition: a bundle imported as a project keeps the language chosen on import, and only that edition is checked (the line under the controls says so). Open the bundle from **Books** to check every language it carries. The badge on the activity bar counts the warnings of the chapter on screen, in the edition on screen.

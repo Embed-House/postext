@@ -45,6 +45,14 @@ In una pagina composta (`::::page{template="…"}`) il canvas collega ogni corni
 - Una cornice vuota mostra un contorno tratteggiato, il suo nome e **Scrivi qui**; una cornice che prosegue soltanto un’altra dice quale. Questi segni sono disegnati solo sul canvas: il PDF, la stampa e ogni esportazione li tralasciano.
 - Un doppio clic sulla linguetta dell’etichetta di un riquadro apre sopra di essa un campo che modifica il `label="…"` del recinto; su un paragrafo, un titolo o una voce di elenco, un campo con il suo Markdown. **Invio** conserva la modifica, **Maiusc+Invio** va a capo, **Esc** lascia il testo com’era. La modifica viene scritta nel capitolo e si annulla con Cmd/Ctrl+Z come ogni modifica fatta nelle anteprime. Correggere una didascalia richiede un doppio clic e le parole nuove, senza aprire alcuno stile. Una cornice ruotata si modifica nel pannello Testo.
 - In modalità Grafica ogni cornice mostra il suo contorno e il suo nome, e un clic ne seleziona una per l’editor dei modelli.
+- Una cornice il cui contenuto non entra è contornata di rosso, con sotto il piede una fascia alta quanto ciò che è stato tagliato e quanto manca (*mancano 15 mm*). Una cornice di cui la sequenza di reimpaginazione ha ridotto il testo mostra la scala scelta (*testo al 85%*, e *immagini al 80%* quando sono state ridotte anche le immagini). Come gli altri segni, compaiono solo sul canvas.
+
+#### Edizioni di un libro
+
+In un libro in più lingue, una barra sopra il canvas mostra le sue edizioni (*ES · EN · CA*) e **Affiancate**.
+
+- Un clic su un’edizione la apre sulla stessa pagina composta. La pagina si ritrova dalla sua recinzione `::::page` nel capitolo, uguale in ogni lingua, quindi resti su quella pagina anche se nell’altra edizione ha un altro numero; la cornice selezionata resta selezionata. In ogni altra pagina il numero di pagina resta lo stesso.
+- **Affiancate** mostra il capitolo a schermo accanto allo stesso capitolo di un’altra edizione (**accanto a** la sceglie quando il libro ne ha più di due). Le due colonne mostrano la stessa pagina e scorrono insieme; **Scorri insieme** lo disattiva. Tra una pagina composta e l’altra le colonne contano dall’ultima pagina composta che condividono. Le cornici che non entrano, o il cui testo è stato ridotto, sono segnate in entrambe le colonne. L’altra edizione qui si legge soltanto: un clic su una delle sue pagine apre quell’edizione a quella pagina.
 
 ### Selezionare sulla pagina
 
