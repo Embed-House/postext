@@ -117,6 +117,41 @@ export function extraWarnings(expected: readonly string[], got: readonly string[
   return out;
 }
 
+/**
+ * Warning kinds by the release that first raises them. A recipe pins the
+ * engine of its capture; the Sandbox runs the tree's. A kind that came after
+ * the pinned engine is one the pen could not raise: the edition is to be
+ * captured again on the release that brings it (#887), not broken.
+ */
+export const WARNING_SINCE: Readonly<Record<string, string>> = {
+  contentInConfig: "1.34.0",
+  tocGroupSplit: "1.34.0",
+  templateUnknown: "1.34.0",
+  slotUnknown: "1.34.0",
+  slotEmpty: "1.34.0",
+  pageFenceLength: "1.34.0",
+  templateDuplicate: "1.34.0",
+  templateExtendsCycle: "1.34.0",
+  templateExtendsUnknown: "1.34.0",
+  frameDuplicate: "1.34.0",
+  frameStyleUnknown: "1.34.0",
+  frameAnchorUnknown: "1.34.0",
+  frameMinMax: "1.34.0",
+  groupFrameUnknown: "1.34.0",
+  groupFrameTwice: "1.34.0",
+  frameChainLoop: "1.34.0",
+  overflowTargetUnknown: "1.34.0",
+  labelStyleUnknown: "1.34.0",
+};
+
+/** `a` is a later release than `b` ("1.34.0" against "1.33.11"). */
+export function laterRelease(a: string, b: string): boolean {
+  const pa = a.split(/[.-]/).map((n) => Number.parseInt(n, 10) || 0);
+  const pb = b.split(/[.-]/).map((n) => Number.parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) if ((pa[i] ?? 0) !== (pb[i] ?? 0)) return (pa[i] ?? 0) > (pb[i] ?? 0);
+  return false;
+}
+
 /** "fontFallback Bangers 700 (synthesized)" → "Bangers". */
 function fallbackFamily(warning: string, families: readonly string[]): string | null {
   if (!warning.startsWith("fontFallback ")) return null;
@@ -147,7 +182,7 @@ export function variableFamilies(fonts: SandboxRun["fonts"]): string[] {
  * An edition's run against its record. Failures: an error of the page or
  * the worker, a layout that did not settle, a warning the pen's builds do
  * not have (for a `fontFallback`, with the family's faces on the page and
- * in the worker). A chapter count, a page count or, on the recorded engine
+ * in the worker; a kind newer than the recipe's engine is a warning). A chapter count, a page count or, on the recorded engine
  * (`sameEngine`), lines other than the recorded ones: failures with
  * `strict`, warnings without. A layout hash other than the recorded one
  * under the recorded lines is a note: the Sandbox measures with another
@@ -195,6 +230,11 @@ export function compareEdition(
     return out;
   }
   for (const warning of extraWarnings(expected.sandbox.warnings ?? [], raised)) {
+    const since = WARNING_SINCE[warning.split(" ")[0]!];
+    if (since && laterRelease(since, expected.engine)) {
+      add("warn", `the Sandbox raises ${warning}, a warning postext ${since} added after the recipe's ${expected.engine}: capture again on ${since} or later`);
+      continue;
+    }
     add("fail", `the Sandbox raises a warning the pen does not: ${warning}${faces(warning)}`);
   }
   if (got.length !== want.length) {
