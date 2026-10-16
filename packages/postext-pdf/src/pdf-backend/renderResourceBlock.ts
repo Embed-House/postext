@@ -435,7 +435,7 @@ export async function preloadResourceImages(
       for (const b of block.designOverlay?.blocks ?? []) if (b.kind === 'image') noteMaster(b.fileId, b.pdfFileId);
     }
     for (const page of doc.pages) {
-      for (const slot of [page.header, page.footer, page.openerBand]) {
+      for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
         for (const b of slot?.blocks ?? []) if (b.kind === 'image') noteMaster(b.fileId, b.pdfFileId);
       }
       for (const art of comicArts(page)) noteMaster(art.fileId, art.pdfFileId);
@@ -547,9 +547,10 @@ export async function preloadResourceImages(
     }
   }
   // Image elements of the page design slots (a logo on a title page, the
-  // chapter motif in a running head, a part page's pictures).
+  // chapter motif in a running head, a part page's pictures, the pictures
+  // of a composed page's decoration).
   for (const page of doc.pages) {
-    for (const slot of [page.header, page.footer, page.openerBand]) {
+    for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
       if (!slot) continue;
       for (const b of slot.blocks) if (b.kind === 'image') await embed(b.fileId, undefined);
     }
