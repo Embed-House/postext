@@ -4323,6 +4323,17 @@ function placeDocumentPass(
     withStripPlaceholder(blk, stripGeometry(idx, raw.comic, width, contentArea.height - 2 * floatGapPx, pageIsVertical(doc.pages[cursor.pageIndex]!)));
     return blk;
   };
+  /** The room a heading's design takes in a box or a frame (#906): as in
+   *  a column (see the heading placement below), against the heading's
+   *  box; a `span: 'page'` heading is laid out at the box's width too. */
+  const boxHeadingDesign = (raw: ContentBlock, blockIdx: number, lines: readonly VDTLine[], pref: string, headingNumber: number | undefined, width: number): number | undefined => {
+    const lvl = headingLevels.forBlock(raw);
+    if (!lvl?.advancedDesign.enabled) return undefined;
+    const { titleText, marked } = defaultOpenerTitle(lines, pref, raw.titleBreaks, raw.text.length, lvl.numberSeparator);
+    const info: HeadingPlaceholderInfo = { titleText, ...(marked !== undefined ? { titleMarked: marked } : {}), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: raw.attrs };
+    const design = measureHeadingDesign(lvl, info, width, resolved.page.dpi, doc.metadata, cursor.pageIndex, undefined, undefined, resourceById);
+    return Math.max(design.height, design.textFloor);
+  };
   /** What the box typesetter (`frameLayout.ts`) reads of this pass. */
   const framePass: FrameLayoutPass = {
     contentBlocks,
@@ -4336,6 +4347,7 @@ function placeDocumentPass(
       : measureCtx),
     stripBlock: calloutStripBlock,
     columnHeight: () => contentArea.height,
+    headingDesign: (raw, blockIdx, heading, width) => boxHeadingDesign(raw, blockIdx, heading.lines, heading.numberPrefix, heading.headingNumber, width),
   };
   const makeCalloutLayouter = (startIdx: number, plan: PlannedCallout, style: ResolvedCalloutStyleConfig): CalloutLayouter =>
     makeCalloutLayouterIn(framePass, startIdx, plan, style);

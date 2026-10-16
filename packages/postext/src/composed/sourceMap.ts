@@ -363,6 +363,24 @@ function designTextSource(b: VDTDesignTextBlock, p: Point): { start: number; end
   return { start: s, end: s + 1 };
 }
 
+/** What a heading's own design shows at `p` (#906): the glyph of the
+ *  title it prints (`{titleText}`, or an attribute), then the heading. The
+ *  heading's lines are not painted: its design is what the page shows. */
+function headingDesignChain(block: VDTBlock, p: Point, file: { file?: string }): SourceElement[] | undefined {
+  const overlay = block.designOverlay;
+  if (block.type !== 'heading' || !overlay || block.hidden) return undefined;
+  for (let i = overlay.blocks.length - 1; i >= 0; i--) {
+    const b = overlay.blocks[i]!;
+    if (b.kind !== 'text' || !inside(b.bbox, p)) continue;
+    const src = designTextSource(b, p);
+    if (!src) continue;
+    const source: SourceRef = b.attr !== undefined ? { kind: 'attr', name: b.attr, ...src, ...file } : { kind: 'markdown', ...src, ...file };
+    const el = blockElement(block, file);
+    return [{ level: 'text', id: `${block.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...(el ? [el] : [])];
+  }
+  return undefined;
+}
+
 /** The chain of a design block at `p` (`idOf` names its element),
  *  innermost first, or undefined when `p` misses it. */
 function designChain(
@@ -504,9 +522,15 @@ function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: 
       return [{ level: 'text', id: `${frame.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...frameAncestors(doc, page, frame)];
     }
   }
+  const boxes = blocks.filter((b) => b.type === 'callout');
+  // The title a heading's design prints in the frame (#906), a tab above
+  // the heading included.
+  for (const b of blocks) {
+    const chain = headingDesignChain(b, p, file);
+    if (chain) return [...chain, ...enclosingBoxes(b, boxes, file).filter((e) => e.id !== boxId), ...frameAncestors(doc, page, frame)];
+  }
   // `p` is in the blocks' own coordinates: a scaled frame's are larger.
   if (!inside(frameContentRect(frame), p)) return undefined;
-  const boxes = blocks.filter((b) => b.type === 'callout');
   // Content: the leaf block under `p` (text, a picture), then its boxes.
   for (const b of blocks) {
     if (b.type === 'callout' || b.hidden) continue;
@@ -576,6 +600,11 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   const floats = page.floats ?? [];
   const all = [...onPage, ...floats.filter((f) => !onPage.includes(f))];
   const boxes = all.filter((b) => b.type === 'callout');
+  // A heading drawn by its design, in a column or a box (#906).
+  for (const b of all) {
+    const chain = headingDesignChain(b, fp, file);
+    if (chain) return [...chain, ...enclosingBoxes(b, boxes, file)];
+  }
   for (const b of all) {
     if (b.type === 'callout' || b.hidden || b.designOverlay) continue;
     if (!inside(b.bbox, fp)) continue;

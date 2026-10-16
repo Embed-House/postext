@@ -1734,6 +1734,20 @@ export interface VDTBlock {
   indexLevel?: number;
   /** Id of the heading style (`{style="…"}`) applied to this heading. */
   headingStyleId?: string;
+  /** A heading set in a box or a frame of a composed page whose level or
+   *  heading style has a design of its own (#906): what the design
+   *  (`designOverlay`) is laid out with. Such a heading carries no
+   *  `headingStyleId`, `attrs` or `titleBreaks`: in the flow those open a
+   *  styled section, a chapter's attributes, an opener band or a page's
+   *  role, which a heading inside a box does not. The block is as tall as
+   *  the design needs, as a heading in a column is. */
+  boxDesign?: {
+    styleId?: string;
+    attrs?: Record<string, string>;
+    attrSources?: Record<string, { start: number; end: number }>;
+    titleBreaks?: number[];
+    titleLength?: number;
+  };
   /** True for a heading whose style has `numbered: false`: it advances no
    *  counter and `{chapterNumber}` is empty on its pages. */
   unnumbered?: boolean;

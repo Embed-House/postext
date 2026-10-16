@@ -15,7 +15,9 @@ import type { BlockMeasureContext } from './measureContentBlock';
 import type { ParagraphContainerPlan } from './paragraphContainers';
 import { isMarkerBlock } from './buildHelpers';
 import {
+  isDesignedBoxHeading,
   layoutCallout,
+  type BoxHeadingDesign,
   type CalloutLayoutInput,
   type CalloutLayoutResult,
   type CalloutLineWidth,
@@ -51,6 +53,9 @@ export interface FrameLayoutPass {
   /** The height of an empty, full-height column of the current page (see
    *  {@link tallerThanColumn}). */
   columnHeight(): number;
+  /** The room a heading's own design takes in a box (#906; see
+   *  `CalloutLayoutInput.headingDesign`). */
+  headingDesign?: BoxHeadingDesign;
 }
 
 /** A position inside a box's children where a fragment starts or ends:
@@ -173,6 +178,7 @@ export const makeCalloutLayouter = (
       ...(open.length > 0 ? { openNested: open } : {}),
       mirrored,
       stripBlock: pass.stripBlock,
+      ...(pass.headingDesign ? { headingDesign: pass.headingDesign } : {}),
       ...frame,
     });
   };
@@ -258,7 +264,9 @@ export const splitCalloutFragment = (
         const c = u.block;
         const k = (c.contentIndex ?? L.childBase) - L.childBase;
         next = k + 1;
-        if (!indivisible(c) && c.lines.length > 1) {
+        // A heading drawn by its design (#906) is one piece: its lines are
+        // not what the page shows.
+        if (!indivisible(c) && c.lines.length > 1 && !isDesignedBoxHeading(c)) {
           // The first laid-out child of a continuation opens after
           // `from.line` lines: cuts inside it are counted from the
           // child's own head. Each side of the box still counts all its

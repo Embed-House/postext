@@ -76,7 +76,7 @@ import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
 import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
 import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock';
 import { uppercasePreservingLength } from './buildBlockKind';
-import { headingIsHidden } from './headingStyles';
+import { headingIsHidden, headingStyleOf } from './headingStyles';
 import { directDesignTextBlock } from '../design/bidiText';
 import { arabicNumbersOf } from './config';
 import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
@@ -354,7 +354,33 @@ export interface CalloutLayoutInput {
    *  the children is set at this share of the width it would take, below
    *  1. */
   pictureScale?: number;
+  /** The room a heading's own design takes in the box (#906): the
+   *  `advancedDesign` of its level or heading style, laid out against the
+   *  heading's box `width` wide, as in a page column. Answers the height
+   *  the design reserves below the heading's top, or `undefined` when the
+   *  heading has no design (its lines alone then set its height). The
+   *  heading keeps at least that height; the design itself is laid out
+   *  over the placed block after placement (`buildHeadersAndFooters`).
+   *  Absent: headings in boxes reserve nothing for a design. */
+  headingDesign?: BoxHeadingDesign;
 }
+
+/** See `CalloutLayoutInput.headingDesign`. `lines` are the heading's
+ *  measured lines (the title is joined back from them, as in a column). */
+export type BoxHeadingDesign = (
+  raw: ContentBlock,
+  blockIdx: number,
+  heading: { lines: readonly VDTLine[]; numberPrefix: string; headingNumber?: number },
+  width: number,
+) => number | undefined;
+
+/** The headings of boxes laid out with their own design (#906): their
+ *  lines are not painted (the design replaces them), so a box never cuts
+ *  between them. */
+const designedBoxHeadings = new WeakSet<VDTBlock>();
+/** Whether `block` is a heading of a box set with its own design (see
+ *  `CalloutLayoutInput.headingDesign`). */
+export const isDesignedBoxHeading = (block: VDTBlock): boolean => designedBoxHeadings.has(block);
 
 /** The measures of `layoutCallout`'s first child across widths (see
  *  `CalloutLayoutInput.lineWidths`), per resolved configuration and
@@ -1118,8 +1144,28 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       blk.sourceEnd = keptLines[keptLines.length - 1]!.sourceEnd ?? raw.sourceEnd + ctx.bodyOffset;
     }
 
+    // A heading with a design of its own (#906): the box keeps the room
+    // the design takes, as a page column does. A heading opened after its
+    // first line has no design to draw.
+    const blockWidth = widthLessEndIndent(blk, width);
+    if (vdtType === 'heading' && !hiddenHeading && !openedMidRun && isTextRun && input.headingDesign) {
+      const reserve = input.headingDesign(raw, blockIdx, { lines: measured.lines, numberPrefix: numberPrefix ?? '', ...(headingNumber !== undefined ? { headingNumber } : {}) }, blockWidth);
+      if (reserve !== undefined) {
+        designedBoxHeadings.add(blk);
+        if (Number.isFinite(reserve) && reserve > height) height = reserve;
+        const offset = input.bodyOffset ?? ctx.bodyOffset;
+        const styleId = headingStyleOf(raw, input.resolved)?.id;
+        blk.boxDesign = {
+          ...(styleId !== undefined ? { styleId } : {}),
+          ...(raw.attrs ? { attrs: raw.attrs } : {}),
+          ...(raw.attrSources ? { attrSources: Object.fromEntries(Object.entries(raw.attrSources).map(([k, r]) => [k, { start: r.start + offset, end: r.end + offset }])) } : {}),
+          ...(raw.titleBreaks ? { titleBreaks: raw.titleBreaks, titleLength: raw.text.length } : {}),
+        };
+      }
+    }
+
     // Relocate to the inner rect (box-relative).
-    blk.bbox = createBoundingBox(x, st.cursorY, widthLessEndIndent(blk, width), height);
+    blk.bbox = createBoundingBox(x, st.cursorY, blockWidth, height);
     for (const line of blk.lines) {
       shiftLineX(line, x);
       line.bbox.y += st.cursorY;
@@ -1265,6 +1311,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ...(reopened && reopened.openRest.length > 0 ? { openNested: reopened.openRest } : {}),
       mirrored: input.mirrored,
       nestPath: [...(nestPath ?? []), open.containerId],
+      ...(input.headingDesign ? { headingDesign: input.headingDesign } : {}),
     });
     // Spacing above: as a paragraph's (margin collapsing, none at the top
     // of the box beyond the title gap).
