@@ -35,12 +35,15 @@ export interface ComposedInsertion {
   head: number;
 }
 
-const quote = (v: string): string => v.replace(/"/g, '\\"');
+/** An attribute value with delimiters the attribute grammar reads and the
+ *  value does not hold: `"…"`, else `'…'`, else `“…”` (the grammar has no
+ *  backslash escapes). */
+const quoted = (v: string): string => (!v.includes('"') ? `"${v}"` : !v.includes("'") ? `'${v}'` : `“${v}”`);
 
 /** The page fence for `template`. */
 export function composedPageInsertion(template: Pick<ResolvedPageTemplate, 'id' | 'frames'>): ComposedInsertion {
   const skip = chainTargets(template.frames);
-  let text = `::::page{template="${quote(template.id)}"}\n`;
+  let text = `::::page{template=${quoted(template.id)}}\n`;
   let sel: { anchor: number; head: number } | null = null;
   let flowDone = false;
   for (const f of template.frames) {
@@ -61,7 +64,7 @@ export function composedPageInsertion(template: Pick<ResolvedPageTemplate, 'id' 
       text += '\n';
       continue;
     }
-    const open = `:::frame{slot="${quote(f.name)}"}\n`;
+    const open = `:::frame{slot=${quoted(f.name)}}\n`;
     sel ??= { anchor: text.length + open.length, head: text.length + open.length };
     text += `${open}\n:::\n\n`;
   }

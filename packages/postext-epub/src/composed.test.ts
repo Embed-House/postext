@@ -25,7 +25,15 @@ const text = (book: ReadEpubResult, path: string): string => new TextDecoder().d
 const chapter = (book: ReadEpubResult): string => text(book, book.spine.find((s) => s.path.includes('chapter-'))!.path);
 
 /** Plain text of markup: tags dropped, entities read, spaces collapsed. */
-const plain = (xml: string): string => xml.replace(/<\/?(?:span|strong|em|b|i|a)\b[^>]*>/g, '').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
+const plain = (xml: string): string => {
+  let s = xml;
+  for (let prev = ''; prev !== s;) {
+    prev = s;
+    s = s.replace(/<\/?(?:span|strong|em|b|i|a)\b[^>]*>/g, '').replace(/<[^>]*>/g, ' ');
+  }
+  // `&amp;` last, so an escaped entity is read once.
+  return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+};
 
 /** The text runs of the page fence's Markdown, in order: its paragraphs,
  *  list items, headings and box titles, marks and directives taken out. */
