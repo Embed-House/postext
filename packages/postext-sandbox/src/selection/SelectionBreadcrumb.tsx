@@ -7,7 +7,7 @@ import { onFrameEditorEvent } from '../templates/frameEvents';
 import { createSelectionApply } from './applySelection';
 import { IconButton, announce, cn } from '../ui';
 import { breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection';
-import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, usePageSelection } from './selectionStore';
+import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, setSelectionTemplates, usePageSelection } from './selectionStore';
 import type { SandboxLabels } from '../types/labels';
 
 /** The viewers that show the book's pages and share the selection. */
@@ -48,7 +48,11 @@ export function SelectionBreadcrumb() {
   // The chapters a contents entry's heading is looked for in.
   useEffect(() => {
     setSelectionChapters(() => getState().chapters);
-    return () => setSelectionChapters(null);
+    setSelectionTemplates(() => getState().config.pageTemplates);
+    return () => {
+      setSelectionChapters(null);
+      setSelectionTemplates(null);
+    };
   }, [getState]);
 
   // The template editor's picks and drags on the canvas (#863) are the

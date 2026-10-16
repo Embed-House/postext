@@ -387,6 +387,7 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
         <FieldGroup title={labels.pageTemplatesGroupDecoration} description={labels.pageTemplatesGroupDecorationDescription}>
           <SlotEditor
             slotKey="part"
+            configPath={`/pageTemplates/${templates.findIndex((t) => t.id === id)}${effScope === 'base' ? '' : `/variants/${effScope}`}/decoration`}
             raw={decoration}
             resolved={resolveDesignSlot(decoration, 'part')}
             onUpdate={(slot) => set({ decoration: slot && slot.elements && slot.elements.length > 0 ? slot : undefined })}

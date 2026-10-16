@@ -16,7 +16,7 @@
  */
 
 import { useSyncExternalStore } from 'react';
-import { findElement, sourceAt, type SourceMapOptions, type VDTDocument } from 'postext';
+import { findElement, sourceAt, type PageTemplate, type SourceMapOptions, type VDTDocument } from 'postext';
 import type { Chapter } from '../book/types';
 import type { FrameEditorEvent } from '../templates/frameEvents';
 import { onFrameDragChange, setFrameDrag } from './frameDrag';
@@ -139,6 +139,18 @@ export function setSelectionChapters(get: (() => readonly Chapter[]) | null): vo
 
 export function selectionChapters(): readonly Chapter[] {
   return chaptersOf?.() ?? [];
+}
+
+let templatesOf: (() => readonly PageTemplate[] | undefined) | null = null;
+
+/** The book's page templates, for a design element of one picked on a
+ *  page: the template editor opens on the template it belongs to (#899). */
+export function setSelectionTemplates(get: (() => readonly PageTemplate[] | undefined) | null): void {
+  templatesOf = get;
+}
+
+export function selectionTemplates(): readonly PageTemplate[] {
+  return templatesOf?.() ?? [];
 }
 
 // ---------------------------------------------------------------------------

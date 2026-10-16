@@ -69,6 +69,17 @@ export interface SettingsSectionRequest {
   group: SettingsGroupId;
   /** The section to bring into view; null: the group's page alone. */
   section: string | null;
+  /** The entry of the section to bring into view and focus (#899). */
+  focus?: SettingsFocus;
+}
+
+/** An entry of a Design panel section: a design element by its config
+ *  pointer (`/header/elements/0`, `/pageTemplates/2/decoration/elements/1`),
+ *  or a style by its id. The panel scrolls to the row and focuses its
+ *  first control (sidebar/settingsFocus.ts). */
+export interface SettingsFocus {
+  path?: string;
+  styleId?: string;
 }
 
 let pendingSection: SettingsSectionRequest | null = null;
@@ -96,6 +107,15 @@ export function takeSettingsSection(group: SettingsGroupId): string | null {
   const section = pendingSection.section;
   pendingSection = null;
   return section;
+}
+
+/** The entry the section request waiting for `group` names (taken:
+ *  it is focused once). Read before {@link takeSettingsSection}. */
+export function takeSettingsFocus(group: SettingsGroupId): SettingsFocus | null {
+  if (!pendingSection || pendingSection.group !== group || !pendingSection.focus) return null;
+  const focus = pendingSection.focus;
+  pendingSection = { ...pendingSection, focus: undefined };
+  return focus;
 }
 
 /** The group of the section request waiting for the panel, if any. */

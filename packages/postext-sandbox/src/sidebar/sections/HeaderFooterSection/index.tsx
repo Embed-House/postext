@@ -74,6 +74,9 @@ function SlotSubSection({
   const resetSlot = () => onUpdate(undefined);
 
   return (
+    // Holds the cards of `/header` or `/footer`: an element picked on a
+    // page opens this section first (#899).
+    <div className="contents" data-config-holder={`/${slotKey}`}>
     <CollapsibleSection
       title={title}
       sectionId={`headerFooter-${slotKey}`}
@@ -87,7 +90,9 @@ function SlotSubSection({
         raw={raw}
         resolved={resolved}
         onUpdate={onUpdate}
+        configPath={`/${slotKey}`}
       />
     </CollapsibleSection>
+    </div>
   );
 }

@@ -32,6 +32,10 @@ interface SlotEditorProps {
   /** Placeholders this slot reads beyond its kind's: `['leader']` for a
    *  contents part row (#889). */
   extraPlaceholders?: readonly string[];
+  /** The slot's JSON pointer in the configuration (`/header`,
+   *  `/pageTemplates/0/decoration`): each element's card carries its own,
+   *  so an element picked on a page opens at its card (#899). */
+  configPath?: string;
 }
 
 function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>): string {
@@ -40,7 +44,7 @@ function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>):
   return `${kind}${i}`;
 }
 
-export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders }: SlotEditorProps) {
+export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
 
@@ -158,6 +162,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
           <div
             className="mb-2 rounded border"
             style={{ borderColor: 'var(--rule)' }}
+            data-config-path={configPath ? `${configPath}/elements/${idx}` : undefined}
           >
             <div
               className="flex items-center justify-between border-b px-2 py-1"

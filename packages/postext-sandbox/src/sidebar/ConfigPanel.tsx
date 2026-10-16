@@ -37,7 +37,8 @@ import { GROUP_ICONS } from './settings/groupIcons';
 import { DesignSummary } from './settings/DesignSummary';
 import { PageGroupPreview } from './settings/PageGroupPreview';
 import { PreviewHighlightProvider } from './settings/previewHighlight';
-import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsSection } from '../context/settingsNavigation';
+import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation';
+import { focusSettingsEntry } from './settingsFocus';
 import { SECTION_COMPONENTS } from './sections/components';
 
 /** The Design panel. Three views share one header and search box:
@@ -365,8 +366,13 @@ function GroupPage({ id, headingRef, onOpen, sectionAsk }: {
   useEffect(() => {
     // Taken when shown, so an effect run twice (strict mode) still shows it.
     const raf = requestAnimationFrame(() => {
+      const focus = takeSettingsFocus(id);
       const section = takeSettingsSection(id);
-      if (section) jumpTo(section);
+      if (!section) return;
+      jumpTo(section);
+      // The element or style asked for, inside the section (#899).
+      const el = pageRef.current?.querySelector<HTMLElement>(`[data-section-id="${section}"]`);
+      if (focus && el) focusSettingsEntry(el, pageRef.current?.parentElement ?? null, focus);
     });
     return () => cancelAnimationFrame(raf);
   }, [id, sectionAsk]);

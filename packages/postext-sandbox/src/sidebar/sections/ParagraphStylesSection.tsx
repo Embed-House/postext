@@ -131,7 +131,7 @@ function ParagraphStyleCard({
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
+    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
       <div className="mb-2 flex items-center justify-between gap-1">
         <span
           className="truncate text-xs font-medium"

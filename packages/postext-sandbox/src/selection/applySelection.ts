@@ -12,13 +12,13 @@ import type { Chapter, ComposedBook } from '../book/types';
 import type { PanelId } from '../types';
 import { toChapterFocus } from '../viewport/CanvasPreview/chapterFocus';
 import { editModeNow, selectFrame } from '../editing/editMode';
-import { requestSettingsSection } from '../context/settingsNavigation';
+import { requestSettingsSection, type SettingsFocus } from '../context/settingsNavigation';
 import { saveSectionState, saveSettingsGroup } from '../storage/persistence';
 import { showPageTemplatesSection } from '../templates/showSection';
 import { templateEditor } from '../templates/editorStore';
 import { headingInChapters, selectionTarget, type SelectionTarget } from './selectionTargets';
 import type { PageSelection } from './pageSelection';
-import type { SelectionApply } from './selectionStore';
+import { selectionTemplates, type SelectionApply } from './selectionStore';
 
 export interface SelectionApplyDeps {
   dispatch: () => Dispatch<SandboxAction>;
@@ -79,20 +79,38 @@ export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VD
         showPageTemplatesSection();
         return true;
       }
-      openSettings(deps, target.group, target.section);
+      openSettings(deps, target.group, target.section, focusOf(target), sel.pageIndex);
       return true;
     case 'none':
       return false;
   }
 }
 
-/** Open the Design panel on a group, bringing a section into view. */
-function openSettings(deps: SelectionApplyDeps, group: Parameters<typeof requestSettingsSection>[0]['group'], section: string | null): void {
+const TEMPLATE_POINTER = /^\/pageTemplates\/(\d+)(?:\/variants\/(recto|verso))?\//;
+
+/** The entry of the section a settings target names (#899): a design
+ *  element by its pointer, a style by its id. */
+function focusOf(target: Extract<SelectionTarget, { kind: 'settings' }>): SettingsFocus | undefined {
+  if (target.styleId) return { styleId: target.styleId };
+  if (target.path) return { path: target.path };
+  return undefined;
+}
+
+/** Open the Design panel on a group, bringing a section (and the entry
+ *  `focus` names) into view. */
+function openSettings(deps: SelectionApplyDeps, group: Parameters<typeof requestSettingsSection>[0]['group'], section: string | null, focus?: SettingsFocus, pageIndex: number | null = null): void {
   const open = deps.activePanel() === 'config';
   // The section opens unfolded (a top-level section's state is kept under
   // `page:<id>`, see CollapsibleSection).
   if (section) saveSectionState(`page:${section}`, true);
-  requestSettingsSection({ group, section });
+  // A template's decoration: the template editor shows that template (the
+  // one the element is set in, maybe one the page's template extends).
+  const m = focus?.path ? TEMPLATE_POINTER.exec(focus.path) : null;
+  const template = m ? selectionTemplates()[Number(m[1])] : undefined;
+  if (template) {
+    templateEditor.select({ templateId: template.id, scope: (m![2] as 'recto' | 'verso' | undefined) ?? 'base', frame: null, group: null, pageIndex });
+  }
+  requestSettingsSection({ group, section, ...(focus ? { focus } : {}) });
   if (!open) {
     saveSettingsGroup(group);
     deps.dispatch()({ type: 'SET_PANEL', payload: 'config' });
