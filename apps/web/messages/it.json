@@ -48,7 +48,9 @@
     "readingTime": "Tempo di lettura",
     "previousChapter": "Precedente",
     "nextChapter": "Successivo",
-    "neighbours": "Capitoli precedente e successivo"
+    "neighbours": "Capitoli precedente e successivo",
+    "figureEnlarge": "Ingrandisci la figura",
+    "figureClose": "Chiudi la figura"
   },
   "CodePen": {
     "run": "Esegui su CodePen",

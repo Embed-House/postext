@@ -3,6 +3,8 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { CODE_THEME_DARK, CODE_THEME_LIGHT } from "@/lib/codeThemes";
 import rehypeAbbr, { type RehypeAbbrOptions } from "@/lib/glossary/rehypeAbbr";
+import rehypeDocsTables from "@/lib/rehypeDocsTables";
+import rehypeCodeIndent from "@/lib/rehypeCodeIndent";
 
 export interface DocsMdxOptions {
   /** The text's language: known abbreviations get an `<abbr>` with their
@@ -14,7 +16,8 @@ export interface DocsMdxOptions {
 }
 
 /** Compile a docs MDX source with the site's shared rehype pipeline
- *  (heading ids, abbreviations + shiki dual-theme highlighting). */
+ *  (heading ids, abbreviations, shiki dual-theme highlighting with hanging
+ *  code lines, and tables prepared to fit the column). */
 export function compileDocsMdx(
   source: string,
   components?: MDXRemoteProps["components"],
@@ -41,6 +44,8 @@ export function compileDocsMdx(
               keepBackground: false,
             },
           ],
+          rehypeCodeIndent,
+          rehypeDocsTables,
         ],
       },
     },

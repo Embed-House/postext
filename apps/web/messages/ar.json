@@ -48,7 +48,9 @@
     "readingTime": "مدة القراءة",
     "previousChapter": "السابق",
     "nextChapter": "التالي",
-    "neighbours": "الفصل السابق والفصل التالي"
+    "neighbours": "الفصل السابق والفصل التالي",
+    "figureEnlarge": "كبّر الشكل",
+    "figureClose": "أغلق الشكل"
   },
   "CodePen": {
     "run": "شغّل على CodePen",

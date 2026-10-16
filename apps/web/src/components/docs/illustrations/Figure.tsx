@@ -1,4 +1,6 @@
 import { useId, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { FigureZoom } from "./FigureZoom";
 
 interface FigureProps {
   title: string;
@@ -10,11 +12,13 @@ interface FigureProps {
 }
 
 export function Figure({ title, desc, caption, maxWidth = 760, viewBox, children }: FigureProps) {
+  const t = useTranslations("Docs");
   const titleId = useId();
   const descId = useId();
+  const drawnWidth = Number(viewBox.split(/[\s,]+/)[2]) || maxWidth;
   return (
     <figure className="docs-figure">
-      <div className="scroll-wrapper">
+      <FigureZoom title={title} width={drawnWidth} enlargeLabel={t("figureEnlarge")} closeLabel={t("figureClose")}>
         <svg
           viewBox={viewBox}
           xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +30,7 @@ export function Figure({ title, desc, caption, maxWidth = 760, viewBox, children
           {desc ? <desc id={descId}>{desc}</desc> : null}
           {children}
         </svg>
-      </div>
+      </FigureZoom>
       {caption ? <figcaption className="docs-figcaption">{caption}</figcaption> : null}
     </figure>
   );

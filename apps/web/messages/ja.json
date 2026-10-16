@@ -48,7 +48,9 @@
     "readingTime": "読了時間",
     "previousChapter": "前の章",
     "nextChapter": "次の章",
-    "neighbours": "前の章と次の章"
+    "neighbours": "前の章と次の章",
+    "figureEnlarge": "図を拡大",
+    "figureClose": "図を閉じる"
   },
   "CodePen": {
     "run": "CodePenで実行",

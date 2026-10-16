@@ -48,7 +48,9 @@
     "readingTime": "Lesezeit",
     "previousChapter": "Zurück",
     "nextChapter": "Weiter",
-    "neighbours": "Vorheriges und nächstes Kapitel"
+    "neighbours": "Vorheriges und nächstes Kapitel",
+    "figureEnlarge": "Abbildung vergrößern",
+    "figureClose": "Abbildung schließen"
   },
   "CodePen": {
     "run": "Auf CodePen ausführen",

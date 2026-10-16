@@ -827,6 +827,13 @@ html {
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
   line-height: 1.6;
+  /* A long line wraps instead of sliding the block sideways: ragged, never
+     hyphenated (the prose around it is justified). */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: start;
+  hyphens: none;
+  -webkit-hyphens: none;
 }
 @media (min-width: 768px) {
   .docs-content pre {
@@ -841,6 +848,16 @@ html {
   border-radius: 0;
   color: var(--foreground);
   font-size: inherit;
+}
+/* One block per highlighted line (whitespace between grid items is not
+   drawn), so a wrapped line can hang: its continuation starts two columns
+   in from the line's own indent (`--indent`, set by rehypeCodeIndent). */
+.docs-content pre code:has(> [data-line]) {
+  display: grid;
+}
+.docs-content pre code > [data-line] {
+  padding-inline-start: calc((var(--indent, 0) + 2) * 1ch);
+  text-indent: calc((var(--indent, 0) + 2) * -1ch);
 }
 /* rehype-pretty-code: use shiki dual-theme CSS variables */
 .docs-content pre code span {
@@ -914,11 +931,14 @@ html {
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.5rem;
 }
+/* A table's box is the container its narrow layout queries. */
+.docs-content .scroll-wrapper:has(> table) {
+  container: docs-table / inline-size;
+}
 .docs-content table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  min-width: 28rem;
 }
 @media (min-width: 768px) {
   .docs-content table {
@@ -949,12 +969,138 @@ html {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--rule);
   vertical-align: top;
-  overflow-wrap: normal;
-  word-break: keep-all;
 }
+/* A short value stays on one line; a long one (a type, a dotted path:
+   `data-wrap`, with break points after `.` `,` `|`) wraps. */
 .docs-content td code,
 .docs-content th code {
   white-space: nowrap;
+}
+.docs-content td code[data-wrap] {
+  white-space: normal;
+}
+
+/* ── Stacked rows ──────────────────────────────────────────────────────
+   A column too narrow for the grid shows each row as a card: the first
+   cell as its title, every other cell under its column's label
+   (`data-label`, from the header), the description without one. Tables of
+   three or more columns stack in a narrow box by a container query (no
+   wide first paint on a phone); any other table that still overflows gets
+   `data-stack` from TableFit. The two selector lists below must stay
+   alike. */
+.docs-content .docs-table[data-stack] {
+  display: block;
+}
+.docs-content .docs-table[data-stack] thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.docs-content .docs-table[data-stack] :is(tbody, tr, td) {
+  display: block;
+}
+.docs-content .docs-table[data-stack] tr {
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--rule);
+}
+.docs-content .docs-table[data-stack] tbody tr:first-child {
+  border-top: 3px solid var(--part, var(--brand));
+}
+.docs-content .docs-table[data-stack] td {
+  border: 0;
+  padding-block: 0.15rem;
+  padding-inline: 7rem 0;
+}
+.docs-content .docs-table[data-stack] td::before {
+  content: attr(data-label);
+  display: inline-block;
+  box-sizing: border-box;
+  width: 7rem;
+  margin-inline-start: -7rem;
+  padding-inline-end: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--slate);
+  vertical-align: top;
+  line-height: 1.9;
+}
+.docs-content .docs-table[data-stack] td:first-child {
+  padding-inline: 0;
+  padding-bottom: 0.3rem;
+  font-weight: 600;
+}
+.docs-content .docs-table[data-stack] :is(td:first-child, td[data-span], td:not([data-label]))::before,
+.docs-content .docs-table[data-stack][data-prose-last] td:last-child::before {
+  display: none;
+}
+.docs-content .docs-table[data-stack] :is(td[data-span], td:not([data-label])),
+.docs-content .docs-table[data-stack][data-prose-last] td:last-child {
+  padding-inline: 0;
+}
+.docs-content .docs-table[data-stack][data-prose-last] td:last-child:not(:first-child) {
+  padding-top: 0.35rem;
+}
+@container docs-table (max-width: 34rem) {
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) {
+    display: block;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(tbody, tr, td) {
+    display: block;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) tr {
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) tbody tr:first-child {
+    border-top: 3px solid var(--part, var(--brand));
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td {
+    border: 0;
+    padding-block: 0.15rem;
+    padding-inline: 7rem 0;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td::before {
+    content: attr(data-label);
+    display: inline-block;
+    box-sizing: border-box;
+    width: 7rem;
+    margin-inline-start: -7rem;
+    padding-inline-end: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--slate);
+    vertical-align: top;
+    line-height: 1.9;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) td:first-child {
+    padding-inline: 0;
+    padding-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(td:first-child, td[data-span], td:not([data-label]))::before,
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child::before {
+    display: none;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"]) :is(td[data-span], td:not([data-label])),
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child {
+    padding-inline: 0;
+  }
+  .docs-content .docs-table:not([data-cols="1"], [data-cols="2"])[data-prose-last] td:last-child:not(:first-child) {
+    padding-top: 0.35rem;
+  }
 }
 .docs-content tbody tr:hover {
   background: var(--surface);
@@ -962,22 +1108,107 @@ html {
 .docs-content svg {
   height: auto;
 }
-.docs-content .scroll-wrapper > svg {
-  min-width: 480px;
-}
 .docs-content .docs-figure {
   margin: 1.75rem 0;
   padding: 0;
 }
-.docs-content .docs-figure > .scroll-wrapper {
+/* A figure fits the column (no sideways scroll); when that shows it well
+   under its drawn size, FigureZoom offers an Enlarge button under it. */
+.docs-content .docs-figure-box {
   margin-bottom: 0.5rem;
+}
+.docs-content .docs-figure-box > .scroll-wrapper {
+  margin-bottom: 0;
   display: flex;
   justify-content: center;
+  overflow: visible;
 }
-.docs-content .docs-figure > .scroll-wrapper > svg {
+.docs-content .docs-figure-box > .scroll-wrapper > svg {
   display: block;
   width: 100%;
   flex-shrink: 0;
+}
+.docs-content .docs-figure-enlarge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  margin: 0.25rem auto 0;
+  padding: 0 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.docs-content .docs-figure-enlarge:hover {
+  border-color: var(--rule-strong);
+}
+.docs-figure-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--background);
+  color: var(--foreground);
+  overscroll-behavior: contain;
+}
+.docs-figure-dialog[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.docs-figure-dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.docs-figure-dialog-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.5rem;
+  padding-inline: 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+.docs-figure-dialog-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.docs-figure-dialog-close {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--foreground);
+}
+.docs-figure-dialog-close:hover {
+  background: var(--rule-strong);
+}
+/* The drawing at its drawn width, centred when the screen is wider, panned
+   when it is narrower. Drawn left to right whatever the page direction. */
+.docs-figure-dialog-stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+  direction: ltr;
+}
+.docs-figure-dialog-stage > svg {
+  display: block;
+  height: auto;
 }
 .docs-content .docs-figcaption {
   font-family: var(--font-sans);
@@ -1363,6 +1594,20 @@ html.light[data-rp-colors="sepia"] :is(.docs-content pre, .cb-excerpt) {
   justify-content: center;
   min-height: 2.75rem;
   min-width: 2.75rem;
+}
+/* A stacked row's description is a paragraph: its links are inline in a
+   sentence (the 2.5.5 exception) and keep the line spacing. */
+.docs-content .docs-table[data-prose-last] td:last-child a {
+  display: inline;
+  min-height: 0;
+  min-width: 0;
+}
+@container docs-table (min-width: 34.01rem) {
+  .docs-content .docs-table[data-prose-last]:not([data-stack]) td:last-child a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
 }
 
 /* Pointer cursor on everything clickable, site and Sandbox (Tailwind v4's
