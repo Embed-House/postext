@@ -603,7 +603,9 @@ export function ResourceDetail({
         {((resource.kind === 'bitmap' && resource.bitmap?.fileId) || (resource.kind === 'svg' && resource.svg?.fileId) || (resource.kind === 'video' && resource.video?.poster?.fileId)) && (
           <SafeAreaField
             resource={resource}
-            onChange={(marks) => onChange(applyMarks(touch({}), marks))}
+            // Saved marks (anchors, safe area, lettering) are one step of the
+            // undo history (#866).
+            onChange={(marks) => dispatch({ type: 'UPSERT_RESOURCE', payload: applyMarks(touch({}), marks), history: { merge: false } })}
           />
         )}
         {resource.kind === 'svg' && resource.svg?.fileId && (

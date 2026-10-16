@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { Crop, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X } from 'lucide-react';
-import type { Resource, ResourceSafeArea } from 'postext';
+import { Crop, MapPin, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X } from 'lucide-react';
+import type { LabelStyle, Resource, ResourceSafeArea } from 'postext';
 import { safeAreaHeightRange, safeAreaSource } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import { NumberInput } from '../../controls';
@@ -14,9 +14,12 @@ import { useBlobObjectUrl } from './ResourcePreview';
 import {
   HANDLES, INITIAL_SAFE_AREA, MIN_SIDE,
   addAnchor, addBystanderFace, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
-  marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, zoneAround,
+  labelFieldsOf, marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, zoneAround,
   type AnchorIdProblem, type Handle, type MarkDrag, type MarkTarget, type PictureMarks, type Point, type ZoneTarget,
 } from './pictureMarks';
+import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
+import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest';
+import { LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
 
 // ---------------------------------------------------------------------------
 // Safe area & lettering marks of a picture. The field sums them up over a
@@ -25,6 +28,10 @@ import {
 //   (drag to draw, move or resize; arrows and Shift+arrows on the focused
 //   rectangle; numeric fields), with the tallest and the shortest crop the
 //   layout may use;
+// - Anchors (`Resource.anchors`, #866): the points a map's or a diagram's
+//   `::label` lines stand at, each with a name, a label style and the label
+//   fields (alignment, rotation, width); the names the text uses that the
+//   picture lacks are placed by clicking (see LabelAnchorsPanel);
 // - Speakers (`Resource.anchors`, #557/#569): the mouth each balloon tail
 //   points at, named by the speaker id the comic's script uses, with an
 //   optional head point (thought balloons) and face rectangle;
@@ -36,7 +43,9 @@ import {
 // and every pointer target is at least 44 px on touch screens.
 // ---------------------------------------------------------------------------
 
-type Mode = 'safe' | 'speakers' | 'avoid';
+type Mode = 'safe' | 'labels' | 'speakers' | 'avoid';
+
+const NO_LABEL_STYLES: LabelStyle[] = [];
 
 const pct = (v: number) => Math.round(v * 1000) / 10;
 
@@ -103,7 +112,32 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
   const area = marks.safeArea;
   const withLettering = lettered(resource);
   const [openIn, setOpenIn] = useState<Mode | null>(null);
+  const [request, setRequest] = useState<AnchorEditorRequest | null>(null);
   const uiLocale = useSandboxSelector((s) => s.locale);
+  const labelStyles = useSandboxSelector((s) => s.config?.labelStyles) ?? NO_LABEL_STYLES;
+  // The book's labels of this picture (#866), the chapter on screen as typed.
+  const chapters = useSandboxSelector((s) => s.chapters);
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
+  const liveMarkdown = useSandboxSelector((s) => s.markdown);
+  const figureLabels = useMemo(
+    () => (withLettering ? labelsInChapters((chapters ?? []).map((c) => ({ id: c.id, markdown: c.id === activeChapterId ? liveMarkdown : c.markdown })), resource.id) : []),
+    [withLettering, chapters, activeChapterId, liveMarkdown, resource.id],
+  );
+  const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
+  // A warning or a label on a page asks for this picture's anchors.
+  useEffect(() => {
+    const take = () => {
+      // Taken once the picture is there to show (its blob URL may come a
+      // moment after the field).
+      if (!url || !withLettering) return;
+      const r = takeAnchorEditorRequest(resource.id);
+      if (!r) return;
+      setRequest(r);
+      setOpenIn('labels');
+    };
+    take();
+    return onAnchorEditorRequest(take);
+  }, [resource.id, url, withLettering]);
   const share = (v: number) => new Intl.NumberFormat(uiLocale, { maximumFractionDigits: 1 }).format(pct(v));
   const count = (n: number) => new Intl.NumberFormat(uiLocale).format(n);
 
@@ -125,7 +159,7 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
                 style={{ ...boxStyle(area), boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45)', outline: '2px solid var(--brand)' }}
               />
             )}
-            {withLettering && <ThumbnailMarks marks={marks} />}
+            {withLettering && <ThumbnailMarks marks={marks} labelStyles={labelStyles} />}
           </div>
         )}
         <span className="text-xs text-(--slate)">
@@ -133,7 +167,14 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
             ? labels.resourceSafeAreaSummary.replace('__w__', share(area.width)).replace('__h__', share(area.height))
             : labels.resourceSafeAreaNone}
         </span>
-        {withLettering && (marks.anchors.length > 0 || marks.avoid.length > 0 || marks.faces.length > 0) && (
+        {withLettering && figureLabels.length > 0 && (
+          <span className="text-xs text-(--slate)">
+            {labels.resourceLabelAnchorsSummary
+              .replace('__anchors__', count(marks.anchors.length))
+              .replace('__waiting__', count(labelState.waiting.length))}
+          </span>
+        )}
+        {withLettering && figureLabels.length === 0 && (marks.anchors.length > 0 || marks.avoid.length > 0 || marks.faces.length > 0) && (
           <span className="text-xs text-(--slate)">
             {labels.resourceMarksSummary
               .replace('__speakers__', count(marks.anchors.length))
@@ -145,6 +186,11 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
           <Button size="sm" icon={<Crop size={13} aria-hidden="true" />} disabled={!url} onClick={() => setOpenIn('safe')}>
             {area ? labels.resourceSafeAreaEdit : labels.resourceSafeAreaMark}
           </Button>
+          {withLettering && (
+            <Button size="sm" icon={<MapPin size={13} aria-hidden="true" />} disabled={!url} onClick={() => { setRequest(null); setOpenIn('labels'); }}>
+              {labels.resourceLabelAnchorsEdit}
+            </Button>
+          )}
           {withLettering && (
             <Button size="sm" icon={<MessageCircle size={13} aria-hidden="true" />} disabled={!url} onClick={() => setOpenIn('speakers')}>
               {labels.resourceMarksEditLettering}
@@ -164,6 +210,9 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
           url={url}
           resource={resource}
           withLettering={withLettering}
+          labelStyles={labelStyles}
+          figureLabels={figureLabels}
+          request={request}
           onClose={() => setOpenIn(null)}
           onSave={(next) => {
             onChange(normalizeMarks(next));
@@ -178,7 +227,7 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
 /** Speakers (a dot at each mouth), avoid zones and bystanders' faces over
  *  the field's thumbnail, subtly: the dialog is where they are read and
  *  edited. */
-function ThumbnailMarks({ marks }: { marks: PictureMarks }) {
+function ThumbnailMarks({ marks, labelStyles }: { marks: PictureMarks; labelStyles: readonly LabelStyle[] }) {
   if (!marks.anchors.length && !marks.avoid.length && !marks.faces.length) return null;
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -194,7 +243,7 @@ function ThumbnailMarks({ marks }: { marks: PictureMarks }) {
           className="absolute rounded-full"
           style={{
             left: `${a.x * 100}%`, top: `${a.y * 100}%`, width: 7, height: 7, transform: 'translate(-50%, -50%)',
-            background: speakerColor(i), boxShadow: '0 0 0 1.5px #fff, 0 0 0 2.5px rgba(0, 0, 0, 0.5)',
+            background: a.style !== undefined ? labelStyleColor(a.style, labelStyles) : speakerColor(i), boxShadow: '0 0 0 1.5px #fff, 0 0 0 2.5px rgba(0, 0, 0, 0.5)',
           }}
         />
       ))}
@@ -208,11 +257,17 @@ interface PictureMarksDialogProps {
   url: string;
   resource: Resource;
   withLettering: boolean;
+  labelStyles: readonly LabelStyle[];
+  /** The book's `::label` lines of this picture (#866). */
+  figureLabels: readonly MarkdownLabel[];
+  /** What opened the Anchors mode from elsewhere: an anchor to pick, a
+   *  name to place. */
+  request: AnchorEditorRequest | null;
   onClose: () => void;
   onSave: (marks: PictureMarks) => void;
 }
 
-function PictureMarksDialog({ open, initialMode, url, resource, withLettering, onClose, onSave }: PictureMarksDialogProps) {
+function PictureMarksDialog({ open, initialMode, url, resource, withLettering, labelStyles, figureLabels, request, onClose, onSave }: PictureMarksDialogProps) {
   const labels = useSandboxLabels();
   const container = usePortalContainer();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -224,9 +279,15 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
   const [selZone, setSelZone] = useState<ZoneTarget | null>(null);
   const zoneSelected = (t: ZoneTarget) => selZone?.kind === t.kind && selZone.index === t.index;
   const [showIdErrors, setShowIdErrors] = useState(false);
+  /** The name the text uses that the next click on the picture places
+   *  (Anchors mode). */
+  const [placing, setPlacing] = useState<string | null>(null);
+  const placingRef = useRef<string | null>(null);
+  placingRef.current = placing;
+  const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
   const [loaded, setLoaded] = useState<{ width: number; height: number } | undefined>(undefined);
   const stageRef = useRef<HTMLDivElement>(null);
-  const drag = useRef<(MarkDrag & { before: PictureMarks; client: Point; moved: boolean; created?: 'anchor' | 'avoid' }) | null>(null);
+  const drag = useRef<(MarkDrag & { before: PictureMarks; client: Point; moved: boolean; created?: 'anchor' | 'placed' | 'avoid' }) | null>(null);
   const lastNudge = useRef<{ key: string; at: number } | null>(null);
   const markEls = useRef(new Map<string, HTMLElement>());
   const idInputs = useRef(new Map<number, HTMLInputElement>());
@@ -264,9 +325,14 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     setMarks(start);
     setMode(withLettering ? initialMode : 'safe');
     setPast([]);
-    setSelAnchor(saved.anchors.length ? 0 : null);
+    const asked = request?.anchor !== undefined ? saved.anchors.findIndex((a) => a.id === request.anchor) : -1;
+    setSelAnchor(asked >= 0 ? asked : saved.anchors.length && initialMode !== 'labels' ? 0 : null);
     setSelZone(null);
     setShowIdErrors(false);
+    // The Anchors mode starts placing the name asked for, else the first
+    // name the text uses that the picture lacks: each click places one.
+    const waiting = anchorLabelState(saved.anchors, figureLabels).waiting;
+    setPlacing(initialMode !== 'labels' ? null : request?.place && waiting.includes(request.place) ? request.place : request?.anchor !== undefined ? null : (waiting[0] ?? null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -291,7 +357,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     const host = el.closest<HTMLElement>('[data-mark]');
     if (!host) return null;
     const kind = host.dataset.mark as MarkTarget['kind'];
-    const editable = mode === 'safe' ? kind === 'safe' : mode === 'speakers' ? kind === 'mouth' || kind === 'head' || kind === 'face' : kind === 'avoid' || kind === 'bystander';
+    const editable = mode === 'safe' ? kind === 'safe'
+      : mode === 'labels' ? kind === 'mouth'
+        : mode === 'speakers' ? kind === 'mouth' || kind === 'head' || kind === 'face'
+          : kind === 'avoid' || kind === 'bystander';
     if (!editable) return null;
     const handle = (el.closest<HTMLElement>('[data-handle]')?.dataset.handle as Handle | undefined) ?? 'move';
     const target = kind === 'safe' ? { kind } : { kind, index: Number(host.dataset.index) };
@@ -325,6 +394,24 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
       setSelAnchor(index);
       setMarks(start);
       drag.current = { ...base, target: { kind: 'mouth', index }, handle: 'move', start, created: 'anchor' };
+    } else if (mode === 'labels') {
+      // On the picture: a new anchor here, named by the name being placed
+      // (else `anchorN`, to type), with the label fields of the anchor
+      // picked before it, so a row of towns takes one style.
+      const name = placingRef.current;
+      const fields = labelFieldsOf(selAnchor !== null ? before.anchors[selAnchor] : undefined);
+      const start = addAnchor(before, p, { ...(name && !before.anchors.some((a) => a.id === name) ? { id: name } : { prefix: 'anchor' }), fields });
+      const index = start.anchors.length - 1;
+      setSelAnchor(index);
+      setMarks(start);
+      drag.current = { ...base, target: { kind: 'mouth', index }, handle: 'move', start, created: name ? 'placed' : 'anchor' };
+      if (name) {
+        // On to the next name the text uses that the picture lacks.
+        const waiting = anchorLabelState(start.anchors, figureLabels).waiting;
+        const after = labelState.waiting.indexOf(name);
+        const next = labelState.waiting.slice(after + 1).find((n) => waiting.includes(n)) ?? waiting[0] ?? null;
+        setPlacing(next);
+      }
     } else {
       // A new avoid zone, drawn from here.
       const index = before.avoid.length;
@@ -421,6 +508,42 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
       idInputs.current.get(index)?.select();
     };
   };
+  /** Anchors mode: a new anchor in the middle of the picture (or the name
+   *  being placed), its name to type. */
+  const addLabelAnchorAtCentre = () => {
+    const before = marksRef.current;
+    const name = placingRef.current;
+    const fields = labelFieldsOf(selAnchor !== null ? before.anchors[selAnchor] : undefined);
+    const next = addAnchor(before, { x: 0.5, y: 0.5 }, { ...(name && !before.anchors.some((a) => a.id === name) ? { id: name } : { prefix: 'anchor' }), fields });
+    const index = next.anchors.length - 1;
+    commit(next);
+    setSelAnchor(index);
+    if (name) setPlacing(anchorLabelState(next.anchors, figureLabels).waiting[0] ?? null);
+    focusNext.current = () => {
+      idInputs.current.get(index)?.focus();
+      idInputs.current.get(index)?.select();
+    };
+  };
+  /** Anchors mode: the anchor `index` taken away. */
+  const removeLabelAnchor = (index: number) => {
+    commit(removeMark(marksRef.current, { kind: 'mouth', index }));
+    setSelAnchor(null);
+    focusNext.current = () => addButton.current?.focus();
+  };
+  /** Anchors mode: a text field's edit, one step of Undo from its first
+   *  change. */
+  const beginAnchorEdit = (index: number) => {
+    if (idEdit.current?.index === index && !idEdit.current.recorded) return;
+    idEdit.current = { index, before: marksRef.current, recorded: false };
+  };
+  const anchorEdit = (next: PictureMarks) => {
+    const edit = idEdit.current;
+    if (edit && !edit.recorded) {
+      record(edit.before);
+      edit.recorded = true;
+    }
+    setMarks(next);
+  };
   const addAvoidAtCentre = () => {
     const next = { ...marksRef.current, avoid: [...marksRef.current.avoid, zoneAround({ x: 0.5, y: 0.5 }, 0.2)] };
     const index = next.avoid.length - 1;
@@ -448,7 +571,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     const bad = firstAnchorIdProblem(marksRef.current.anchors);
     if (bad >= 0) {
       setShowIdErrors(true);
-      setMode('speakers');
+      setMode(mode === 'labels' ? 'labels' : 'speakers');
       setSelAnchor(bad);
       focusNext.current = () => idInputs.current.get(bad)?.focus();
       setMarksState({ ...marksRef.current });
@@ -479,7 +602,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
       })()
     : [];
 
-  const help = mode === 'safe' ? labels.resourceSafeAreaDialogHelp : mode === 'speakers' ? labels.resourceAnchorsHelp : labels.resourceAvoidHelp;
+  const help = mode === 'safe' ? labels.resourceSafeAreaDialogHelp
+    : mode === 'labels' ? labels.resourceLabelAnchorsHelp
+      : mode === 'speakers' ? labels.resourceAnchorsHelp
+        : labels.resourceAvoidHelp;
   const idMessage = (problem: AnchorIdProblem, id: string) =>
     problem === 'empty' ? labels.resourceAnchorIdEmpty
       : problem === 'invalid' ? labels.resourceAnchorIdInvalid
@@ -499,7 +625,11 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
           data-postext-popup=""
           data-testid="picture-marks-dialog"
           className="fixed left-1/2 top-1/2 flex max-h-[calc(100dvh-32px)] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 overflow-y-auto"
-          style={{ ...POPUP_SURFACE, zIndex: POPUP_Z_INDEX, width: 'min(920px, calc(100vw - 32px))', padding: 16, fontSize: 13, lineHeight: '19px' }}
+          style={{ ...POPUP_SURFACE, zIndex: POPUP_Z_INDEX, width: mode === 'labels' ? 'min(1240px, calc(100vw - 32px))' : 'min(920px, calc(100vw - 32px))',
+            // The Anchors mode's list grows with every click: a fixed height
+            // keeps the picture where the pointer is (a centred dialog would
+            // move up as it grows).
+            ...(mode === 'labels' ? { height: 'min(900px, calc(100dvh - 32px))' } : {}), padding: 16, fontSize: 13, lineHeight: '19px' }}
           onKeyDown={(e) => {
             // Undo inside the dialog; a text box keeps its own.
             if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && !(e.target instanceof HTMLInputElement)) {
@@ -521,6 +651,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
               ariaLabel={labels.resourceMarksModeAria}
               options={[
                 { value: 'safe', label: labels.resourceSafeAreaLabel },
+                { value: 'labels', label: labels.resourceMarksModeAnchors },
                 { value: 'speakers', label: labels.resourceMarksModeSpeakers },
                 { value: 'avoid', label: labels.resourceMarksModeAvoid },
               ]}
@@ -531,7 +662,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
             {help}
           </Dialog.Description>
 
-          <div className="flex flex-wrap items-start gap-4">
+          <div className={`flex flex-wrap items-start gap-4 ${mode === 'labels' ? 'min-h-0 flex-1' : ''}`}>
             {/* The picture with the marks over it. */}
             <div
               ref={stageRef}
@@ -548,7 +679,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                 alt=""
                 draggable={false}
                 className="block"
-                style={{ maxWidth: 'min(600px, 100%)', maxHeight: '55dvh' }}
+                // Sized from the picture's ratio, so the stage the marks are
+                // laid over is the picture's own box: a picture held back by
+                // the height limit would otherwise leave the stage wider
+                // than it, and every mark off (#866).
+                style={intrinsic && intrinsic.height > 0
+                  ? { width: `min(600px, calc(55dvh * ${intrinsic.width / intrinsic.height}))`, maxWidth: '100%', height: 'auto' }
+                  : { maxWidth: 'min(600px, 100%)', maxHeight: '55dvh' }}
                 onLoad={(e) => setLoaded({ width: e.currentTarget.naturalWidth, height: e.currentTarget.naturalHeight })}
               />
 
@@ -609,10 +746,14 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                 );
               })}
 
-              {/* Speakers: face rectangle, head–mouth line, head and mouth. */}
+              {/* Speakers: face rectangle, head–mouth line, head and mouth.
+                  Anchors (#866): the point alone, coloured by its label
+                  style and named by its label's text. */}
               {withLettering && marks.anchors.map((a, i) => {
-                const active = mode === 'speakers';
-                const color = speakerColor(i);
+                const labelMode = mode === 'labels';
+                const active = mode === 'speakers' || labelMode;
+                const color = labelMode ? labelStyleColor(a.style, labelStyles) : speakerColor(i);
+                const labelText = labelMode ? labelState.byAnchor.get(a.id)?.[0]?.text : undefined;
                 const selected = active && selAnchor === i;
                 const outside = anchorOutsideSafeArea(a, area);
                 const face: MarkTarget = { kind: 'face', index: i };
@@ -620,7 +761,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                 const mouth: MarkTarget = { kind: 'mouth', index: i };
                 return (
                   <div key={`anchor-${i}`} className={active ? undefined : 'pointer-events-none'} style={{ opacity: active ? 1 : 0.55 }} aria-hidden={active ? undefined : true}>
-                    {a.face && (
+                    {a.face && !labelMode && (
                       <div
                         ref={active ? register(targetKey(face)) : undefined}
                         data-mark="face"
@@ -636,7 +777,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                         {selected && <RectHandles color={color} />}
                       </div>
                     )}
-                    {a.head && (
+                    {a.head && !labelMode && (
                       <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <line
                           x1={a.x * 100} y1={a.y * 100} x2={a.head.x * 100} y2={a.head.y * 100}
@@ -644,7 +785,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                         />
                       </svg>
                     )}
-                    {a.head && (
+                    {a.head && !labelMode && (
                       <PointMark
                         markRef={active ? register(targetKey(head)) : undefined}
                         kind="head"
@@ -665,13 +806,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                       color={color}
                       active={active}
                       selected={selected}
-                      label={labels.resourceAnchorMouthAria.replace('__id__', nameOf(i))}
+                      label={(labelMode ? labels.resourceLabelAnchorsPointAria : labels.resourceAnchorMouthAria).replace('__id__', nameOf(i))}
                       onKeyDown={onMarkKeyDown(mouth)}
                       onFocus={() => setSelAnchor(i)}
                       tag={
                         <>
                           {outside && <TriangleAlert size={10} aria-hidden="true" style={{ color: '#fbbf24' }} />}
-                          <span dir="auto">{a.id || '…'}</span>
+                          <span dir="auto">{labelText ?? (a.id || '…')}</span>
                         </>
                       }
                     />
@@ -699,6 +840,29 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                     </figure>
                   ))}
                 </div>
+              )}
+
+              {mode === 'labels' && (
+                <LabelAnchorsPanel
+                  marks={marks}
+                  area={area}
+                  labelStyles={labelStyles}
+                  byAnchor={labelState.byAnchor}
+                  waiting={labelState.waiting}
+                  waitingLabel={labelState.waitingLabel}
+                  placing={placing}
+                  onPlacing={setPlacing}
+                  selected={selAnchor}
+                  onSelect={setSelAnchor}
+                  commit={commit}
+                  edit={anchorEdit}
+                  beginEdit={beginAnchorEdit}
+                  remove={removeLabelAnchor}
+                  addAtCentre={addLabelAnchorAtCentre}
+                  showIdErrors={showIdErrors}
+                  idInputs={idInputs}
+                  addButton={addButton}
+                />
               )}
 
               {mode === 'speakers' && (

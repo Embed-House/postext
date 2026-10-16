@@ -3,8 +3,9 @@ import { COMIC_RESERVED_KEYS, normalizeSafeArea } from 'postext';
 
 // ---------------------------------------------------------------------------
 // The marks drawn over a picture in the "Safe area & lettering" dialog: the
-// safe area (#442), the speakers a comic's lettering points at
-// (`Resource.anchors`, #557), the zones its balloons keep clear of
+// safe area (#442), the anchors of the picture (`Resource.anchors`): the
+// points a map's or a diagram's `::label` lines stand at (#866) and the
+// speakers a comic's lettering points at (#557), the zones its balloons keep clear of
 // (`Resource.avoid`) and the faces of the people who do not speak
 // (`Resource.faces`, #726). Everything is in fractions of the picture (0–1,
 // top-left origin), so the marks are the same in every edition of a comic.
@@ -224,18 +225,58 @@ export function switchZone(marks: PictureMarks, target: ZoneTarget): { marks: Pi
   return { marks: { ...without, avoid: [...without.avoid, rect] }, target: { kind: 'avoid', index: without.avoid.length } };
 }
 
-/** The first `speakerN` id no speaker of `anchors` uses. */
-export function nextAnchorId(anchors: readonly ResourceAnchor[]): string {
+/** The first `<prefix>N` id no anchor of `anchors` uses (`speakerN` for a
+ *  comic's speakers, `anchorN` for a map's labels). */
+export function nextAnchorId(anchors: readonly ResourceAnchor[], prefix = 'speaker'): string {
   const used = new Set(anchors.map((a) => a.id));
   for (let n = anchors.length + 1; ; n++) {
-    if (!used.has(`speaker${n}`)) return `speaker${n}`;
+    if (!used.has(`${prefix}${n}`)) return `${prefix}${n}`;
   }
 }
 
-/** The marks with a new speaker whose mouth is at `p`. */
-export function addAnchor(marks: PictureMarks, p: Point): PictureMarks {
+/** The label fields of an anchor (#853/#866): what a `::label` set at it
+ *  takes unless it says otherwise. */
+export type LabelFields = Pick<ResourceAnchor, 'style' | 'align' | 'verticalAlign' | 'rotate' | 'width'>;
+export const LABEL_FIELD_KEYS = ['style', 'align', 'verticalAlign', 'rotate', 'width'] as const;
+
+/** The label fields `a` sets. */
+export function labelFieldsOf(a: ResourceAnchor | undefined): LabelFields {
+  const out: LabelFields = {};
+  if (!a) return out;
+  for (const k of LABEL_FIELD_KEYS) if (a[k] !== undefined) (out as Record<string, unknown>)[k] = a[k];
+  return out;
+}
+
+export interface NewAnchorOptions {
+  /** The anchor's id; unset: the next free `<prefix>N`. */
+  id?: string;
+  prefix?: string;
+  /** Label fields the new anchor starts with (those of the anchor picked
+   *  before it, so a row of towns takes one style). */
+  fields?: LabelFields;
+}
+
+/** The marks with a new anchor at `p` (a speaker's mouth on a comic). */
+export function addAnchor(marks: PictureMarks, p: Point, options: NewAnchorOptions = {}): PictureMarks {
   const q = clampPoint(p);
-  return { ...marks, anchors: [...marks.anchors, { id: nextAnchorId(marks.anchors), x: q.x, y: q.y }] };
+  const id = options.id ?? nextAnchorId(marks.anchors, options.prefix);
+  return { ...marks, anchors: [...marks.anchors, { id, x: q.x, y: q.y, ...labelFieldsOf(options.fields as ResourceAnchor | undefined) }] };
+}
+
+/** The marks with the label fields of anchor `index` changed: a key set to
+ *  undefined (or to the engine's default: centre, middle, no turn, a
+ *  natural width) is removed, so the anchor keeps only what it changes. */
+export function withLabelFields(marks: PictureMarks, index: number, patch: { [K in keyof LabelFields]?: LabelFields[K] | undefined }): PictureMarks {
+  return withAnchor(marks, index, (a) => {
+    const next: ResourceAnchor = { ...a };
+    for (const k of Object.keys(patch) as (keyof LabelFields)[]) {
+      const v = patch[k];
+      const isDefault = v === undefined || v === '' || (k === 'align' && v === 'center') || (k === 'verticalAlign' && v === 'middle') || (k === 'rotate' && v === 0);
+      if (isDefault) delete next[k];
+      else (next as unknown as Record<string, unknown>)[k] = v;
+    }
+    return next;
+  });
 }
 
 /** A head point for the speaker `index`: a little above its mouth. */
@@ -289,11 +330,12 @@ export function normalizeMarks(marks: PictureMarks): PictureMarks {
     if (a.head) out.head = { x: round(clamp(a.head.x, 0, 1)), y: round(clamp(a.head.y, 0, 1)) };
     const face = a.face && validRect(a.face);
     if (face) out.face = roundRect(face);
-    // The label fields of composed pages (#853) are kept as they are.
-    if (a.width !== undefined) out.width = a.width;
+    // The label fields of composed pages (#853) are kept as they are, the
+    // numbers rounded as the points are.
+    if (a.width !== undefined) out.width = Number.isFinite(a.width) ? round(clamp(a.width, 0.0001, 1)) : a.width;
     if (a.align !== undefined) out.align = a.align;
     if (a.verticalAlign !== undefined) out.verticalAlign = a.verticalAlign;
-    if (a.rotate !== undefined) out.rotate = a.rotate;
+    if (a.rotate !== undefined) out.rotate = Number.isFinite(a.rotate) ? Math.round(a.rotate * 100) / 100 : a.rotate;
     if (a.style !== undefined) out.style = a.style;
     return out;
   });
