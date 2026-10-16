@@ -554,5 +554,20 @@
       "de": "Beschriftungsstile",
       "it": "Stili delle etichette"
     }
+  },
+  "checks": {
+    "slug": "configuration-fonts-colors-viewers",
+    "heading": {
+      "en": "Content check (config)",
+      "es": "Comprobación del contenido (configuración)",
+      "ca": "Comprovació del contingut (configuració)",
+      "zh": "正文检查（配置）",
+      "ar": "فحص المحتوى (الإعدادات)",
+      "ja": "本文の検査（設定）",
+      "pt": "Verificação do conteúdo (configuração)",
+      "fr": "Contrôle du contenu (configuration)",
+      "de": "Inhaltsprüfung (Konfiguration)",
+      "it": "Controllo del contenuto (configurazione)"
+    }
   }
 }

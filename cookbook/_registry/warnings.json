@@ -6920,5 +6920,59 @@
         "it": "Avvisi dei modelli di pagina"
       }
     }
+  },
+  "contentInConfig": {
+    "source": "engine",
+    "label": {
+      "en": "Text held in the configuration",
+      "es": "Texto guardado en la configuración",
+      "ca": "Text desat a la configuració",
+      "zh": "配置中存放的正文",
+      "ar": "نص محفوظ في الإعدادات",
+      "ja": "設定内に置かれた本文",
+      "pt": "Texto guardado na configuração",
+      "fr": "Texte rangé dans la configuration",
+      "de": "Text in der Konfiguration",
+      "it": "Testo tenuto nella configurazione"
+    },
+    "cause": {
+      "en": "A design text element (a running head, a heading or part design, a contents part row) holds more than a short label beyond its placeholders: more than `checks.contentInConfig.maxWords` words (2) or `maxChars` letters and digits (24). The book's text is kept in the configuration, where the contents, search, translations and the tagged PDF do not see it.",
+      "es": "Un elemento de texto de diseño (un titulillo, el diseño de un título o de una parte, la fila de una parte en el índice) lleva, además de sus marcadores, más que una etiqueta breve: más de `checks.contentInConfig.maxWords` palabras (2) o de `maxChars` letras y cifras (24). El texto del libro queda guardado en la configuración, donde no lo ven el índice, la búsqueda, las traducciones ni el PDF etiquetado.",
+      "ca": "Un element de text de disseny (un títol corrent, el disseny d'un títol o d'una part, la fila d'una part a l'índex) porta, a més dels marcadors, més que una etiqueta breu: més de `checks.contentInConfig.maxWords` paraules (2) o de `maxChars` lletres i xifres (24). El text del llibre queda desat a la configuració, on no el veuen l'índex, la cerca, les traduccions ni el PDF etiquetat.",
+      "zh": "设计文字元素（页眉、标题或部分设计、目录中的部分行）在占位符之外的文字超过一个简短标签：多于`checks.contentInConfig.maxWords`个词（2）或`maxChars`个字母和数字（24）。书的正文被存放在配置中，目录、搜索、翻译和带标签的 PDF 都看不到它。",
+      "ar": "عنصر نصّي في تصميم (رأس صفحة جارٍ، تصميم عنوان أو جزء، سطر جزء في الفهرس) يحمل إلى جانب عناصره النائبة أكثر من تسمية قصيرة: أكثر من `checks.contentInConfig.maxWords` كلمة (2) أو من `maxChars` من الحروف والأرقام (24). فيبقى نص الكتاب محفوظًا في الإعدادات حيث لا يراه الفهرس ولا البحث ولا الترجمات ولا ملف PDF الموسوم.",
+      "ja": "デザインのテキスト要素（柱、見出しや部扉のデザイン、目次の部の行）が、プレースホルダー以外に短いラベルを超える文字を含んでいます。`checks.contentInConfig.maxWords`語（2）または`maxChars`字（文字と数字、24）を超えています。本の本文が設定に置かれ、目次、検索、翻訳、タグ付きPDFから見えません。",
+      "pt": "Um elemento de texto de design (um cabeço, o design de um título ou de uma parte, a linha de uma parte no sumário) tem, além dos marcadores, mais que um rótulo curto: mais de `checks.contentInConfig.maxWords` palavras (2) ou de `maxChars` letras e algarismos (24). O texto do livro fica guardado na configuração, onde o sumário, a busca, as traduções e o PDF etiquetado não o enxergam.",
+      "fr": "Un élément de texte de maquette (un titre courant, la maquette d’un titre ou d’une partie, la ligne d’une partie dans la table des matières) contient, en plus de ses variables, plus qu’une étiquette courte : plus de `checks.contentInConfig.maxWords` mots (2) ou de `maxChars` lettres et chiffres (24). Le texte du livre reste dans la configuration, où la table des matières, la recherche, les traductions et le PDF balisé ne le voient pas.",
+      "de": "Ein Gestaltungstext (ein Kolumnentitel, die Gestaltung einer Überschrift oder eines Teils, die Zeile eines Teils im Inhaltsverzeichnis) enthält neben seinen Platzhaltern mehr als eine kurze Beschriftung: mehr als `checks.contentInConfig.maxWords` Wörter (2) oder `maxChars` Buchstaben und Ziffern (24). Der Text des Buches steckt in der Konfiguration, wo Inhaltsverzeichnis, Suche, Übersetzungen und das getaggte PDF ihn nicht sehen.",
+      "it": "Un elemento di testo di design (un titolo corrente, il design di un titolo o di una parte, la riga di una parte nell’indice) contiene, oltre ai segnaposto, più di un’etichetta breve: più di `checks.contentInConfig.maxWords` parole (2) o di `maxChars` lettere e cifre (24). Il testo del libro resta nella configurazione, dove l’indice, la ricerca, le traduzioni e il PDF con tag non lo vedono."
+    },
+    "fix": {
+      "en": "Move the text into the Markdown (a heading, a callout or a paragraph of its chapter) and keep only placeholders in the design; a value that changes per chapter can ride on the heading line and be read with `{attr.key}`. A phrase that is form, such as the book's title, a journal name or a brand line, goes in `checks.contentInConfig.allow`.",
+      "es": "Lleva el texto al Markdown (un título, un recuadro o un párrafo de su capítulo) y deja solo marcadores en el diseño; un valor que cambia en cada capítulo puede ir en la línea del título y leerse con `{attr.key}`. Una frase que es forma, como el título del libro, el nombre de una revista o una línea de marca, va en `checks.contentInConfig.allow`.",
+      "ca": "Porta el text al Markdown (un títol, un requadre o un paràgraf del seu capítol) i deixa només marcadors al disseny; un valor que canvia a cada capítol pot anar a la línia del títol i llegir-se amb `{attr.key}`. Una frase que és forma, com el títol del llibre, el nom d'una revista o una línia de marca, va a `checks.contentInConfig.allow`.",
+      "zh": "把文字移到 Markdown 中（所属章节的标题、标注框或段落），设计中只保留占位符；每章不同的值可以写在标题行上，用`{attr.key}`读取。属于版式的短语，例如书名、期刊名或品牌行，放进`checks.contentInConfig.allow`。",
+      "ar": "انقل النص إلى Markdown (عنوانًا أو إطارًا أو فقرة في فصله) واترك في التصميم العناصر النائبة وحدها؛ والقيمة التي تتغيّر من فصل إلى فصل يمكن أن تُكتب في سطر العنوان وتُقرأ بـ`{attr.key}`. والعبارة التي هي من الشكل، مثل عنوان الكتاب أو اسم مجلة أو سطر العلامة، توضع في `checks.contentInConfig.allow`.",
+      "ja": "文章をMarkdown（その章の見出し、囲み、段落）に移し、デザインにはプレースホルダーだけを残してください。章ごとに変わる値は見出しの行に書いて`{attr.key}`で読めます。書名、誌名、ブランドの行など体裁に属する語句は`checks.contentInConfig.allow`に入れます。",
+      "pt": "Leve o texto para o Markdown (um título, um boxe ou um parágrafo do capítulo) e deixe só marcadores no design; um valor que muda a cada capítulo pode ir na linha do título e ser lido com `{attr.key}`. Uma frase que é forma, como o título do livro, o nome de uma revista ou uma linha de marca, vai em `checks.contentInConfig.allow`.",
+      "fr": "Déplacez le texte dans le Markdown (un titre, un encadré ou un paragraphe de son chapitre) et ne laissez que des variables dans la maquette ; une valeur qui change à chaque chapitre peut voyager sur la ligne du titre et se lire avec `{attr.key}`. Une expression qui relève de la forme, comme le titre du livre, le nom d’une revue ou une ligne de marque, va dans `checks.contentInConfig.allow`.",
+      "de": "Verschieben Sie den Text ins Markdown (eine Überschrift, ein Kasten oder ein Absatz seines Kapitels) und lassen Sie in der Gestaltung nur Platzhalter; ein Wert, der sich je Kapitel ändert, kann in der Überschriftenzeile stehen und mit `{attr.key}` gelesen werden. Eine Wendung, die Form ist, etwa der Buchtitel, ein Zeitschriftenname oder eine Markenzeile, gehört in `checks.contentInConfig.allow`.",
+      "it": "Sposta il testo nel Markdown (un titolo, un riquadro o un paragrafo del suo capitolo) e lascia solo segnaposto nel design; un valore che cambia a ogni capitolo può stare sulla riga del titolo ed essere letto con `{attr.key}`. Una frase che è forma, come il titolo del libro, il nome di una rivista o una riga di marchio, va in `checks.contentInConfig.allow`."
+    },
+    "docs": {
+      "slug": "configuration-fonts-colors-viewers",
+      "heading": {
+        "en": "Content check (config)",
+        "es": "Comprobación del contenido (configuración)",
+        "ca": "Comprovació del contingut (configuració)",
+        "zh": "正文检查（配置）",
+        "ar": "فحص المحتوى (الإعدادات)",
+        "ja": "本文の検査（設定）",
+        "pt": "Verificação do conteúdo (configuração)",
+        "fr": "Contrôle du contenu (configuration)",
+        "de": "Inhaltsprüfung (Konfiguration)",
+        "it": "Controllo del contenuto (configurazione)"
+      }
+    }
   }
 }
