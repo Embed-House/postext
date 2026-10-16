@@ -2560,7 +2560,6 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     frameStylesMerged: t("frameStylesMerged"),
     frameStylesMergedAll: t("frameStylesMergedAll"),
     frameStylesRenamed: t("frameStylesRenamed"),
-    frameStylesUndoSkipped: t("frameStylesUndoSkipped"),
     frameStylesShow: t("frameStylesShow"),
     frameStylesShowTemplates: t("frameStylesShowTemplates"),
     frameStylesShowText: t("frameStylesShowText"),

@@ -322,6 +322,7 @@ como Design › Boxes › Estilos de quadro. `sandbox_merge_styles` recebe `grou
 (`{ keep, merge }`) ou `all: true` e reescreve cada quadro e cada bloco que
 nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
 boxes ficam em lugares diferentes, que então mudam de lugar.
+A resposta traz `undoSteps`: um passo por capítulo reescrito e outro para os estilos, que `sandbox_undo` desfaz começando pelos estilos.
 
 ### Editar o texto
 

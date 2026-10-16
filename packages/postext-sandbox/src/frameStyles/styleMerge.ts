@@ -7,11 +7,12 @@
  * names no style (it takes the first of the list) keeps the look it had
  * when the first style was one of the group.
  *
- * Renaming a style rewrites the same references.
+ * Renaming a style rewrites the same references. How the rewrite enters
+ * the undo history: ./applyRewrite.
  */
 
 import type { CalloutStyleConfig, FrameConfig, PageTemplate, PageTemplatePatch, PostextConfig } from 'postext';
-import { applyTextChanges, changesApply, invertTextChanges, type TextChange } from '../book/textChanges';
+import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
 import { retypeCalloutChanges } from './calloutFences';
 import type { UsageChapter } from './styleUsage';
 
@@ -181,27 +182,4 @@ export function rewrittenTexts(chapters: readonly UsageChapter[], plan: StyleRew
     if (ch && changesApply(ch.markdown, r.changes)) out.set(ch.id, applyTextChanges(ch.markdown, r.changes));
   }
   return out;
-}
-
-/** How to put the book back as it was before a rewrite. */
-export interface StyleRewriteUndo {
-  calloutStyles: CalloutStyleConfig[] | undefined;
-  pageTemplates: PageTemplate[] | undefined;
-  chapters: ChapterRewrite[];
-}
-
-/** The undo of `plan` applied to a book with `config`: the lists as they
- *  were and the inverse text changes, computed against the rewritten
- *  texts. */
-export function undoOf(config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates'>, plan: StyleRewritePlan): StyleRewriteUndo {
-  return {
-    calloutStyles: config.calloutStyles,
-    pageTemplates: config.pageTemplates,
-    chapters: plan.chapters.map((c) => ({
-      chapterId: c.chapterId,
-      chapterIndex: c.chapterIndex,
-      changes: invertTextChanges(c.changes),
-      baseLength: c.changes.reduce((n, ch) => n + ch.insert.length - (ch.to - ch.from), c.baseLength),
-    })),
-  };
 }

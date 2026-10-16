@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { lastStyleRewrite } from '../../frameStyles/rewriteHistory';
 import { chapter, harness } from './testHarness';
 
 // The frame-style library (#873) through the agent tools: the same usage
@@ -35,15 +34,20 @@ describe('the frame-style tools', () => {
     expect(read.stylesAfterMerging).toBe(2);
   });
 
-  it('merge every suggestion, rewriting the frames and the fences, with an undo kept for the panel', async () => {
+  it('merge every suggestion, rewriting the frames and the fences, as steps sandbox_undo takes back', async () => {
     const { call, get } = harness(book());
     const done = await call('sandbox_merge_styles', { all: true, wait: false });
-    expect(done).toMatchObject({ merged: ['caja-b'], styles: 2, fencesRewritten: 1, inChapters: [2] });
+    expect(done).toMatchObject({ merged: ['caja-b'], styles: 2, fencesRewritten: 1, inChapters: [2], undoSteps: 2 });
     const s = get();
     expect(s.config.calloutStyles!.map((st) => st.id)).toEqual(['note', 'caja-a']);
     expect(s.config.pageTemplates![0]!.frames![1]!.style).toBe('caja-a');
     expect(s.chapters[1]!.markdown).toContain(':::callout{type="caja-a"}\nTres.');
-    expect(lastStyleRewrite()?.undo.calloutStyles).toEqual(CONFIG.calloutStyles);
+    // The design first: every state on the way names styles that exist.
+    expect((await call('sandbox_undo', {})).ok).toBe(true);
+    expect(get().config.calloutStyles).toEqual(CONFIG.calloutStyles);
+    expect(get().chapters[1]!.markdown).toContain(':::callout{type="caja-a"}\nTres.');
+    expect((await call('sandbox_undo', {})).ok).toBe(true);
+    expect(get().chapters[1]!.markdown).toBe(book().chapters[1]!.markdown);
   });
 
   it('refuse a style the book does not have', async () => {

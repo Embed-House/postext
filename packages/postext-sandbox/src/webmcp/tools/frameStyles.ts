@@ -2,7 +2,7 @@ import type { SandboxState } from '../../context/SandboxContext';
 import { frameStyleLibrary } from '../../frameStyles/library';
 import { stylesAfterMerging, type CompareOptions } from '../../frameStyles/styleCompare';
 import { planMerges, type MergeGroup } from '../../frameStyles/styleMerge';
-import { applyStyleRewrite } from '../../frameStyles/rewriteHistory';
+import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
 import type { UsageChapter } from '../../frameStyles/styleUsage';
 import type { SandboxToolHost } from '../host';
 import { ToolError, type WebMcpTool } from '../modelContext';
@@ -63,7 +63,7 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
   const merge: WebMcpTool = {
     name: 'sandbox_merge_styles',
     title: 'Sandbox: merge box styles',
-    description: 'Merge callout styles into the one kept: every template frame style and every :::callout{type} fence of every chapter naming a merged style is rewritten to the kept one, and the merged styles leave the list. Give groups ({ keep, merge: [ids] }), or all: true for every suggestion sandbox_frame_styles makes with the same maxFields / lookOnly. The Frame styles section offers Undo afterwards.',
+    description: 'Merge callout styles into the one kept: every template frame style and every :::callout{type} fence of every chapter naming a merged style is rewritten to the kept one, and the merged styles leave the list. Give groups ({ keep, merge: [ids] }), or all: true for every suggestion sandbox_frame_styles makes with the same maxFields / lookOnly. It enters the undo history as one step per chapter rewritten and one for the styles (undoSteps): sandbox_undo that many times puts the book back.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -100,13 +100,15 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
       if (groups.length === 0) return { merged: [], styles: lib.styles.length, note: 'No suggestion to take.' };
       const before = { calloutStyles: s.config.calloutStyles, pageTemplates: s.config.pageTemplates };
       const plan = planMerges(before, lib.styles, chapters, groups);
-      applyStyleRewrite(store.dispatch, before, plan, s.labels.frameStylesMergedAll.replace('__count__', String(plan.from.length)).replace('__left__', String(plan.calloutStyles.length)));
+      const record = applyStyleRewrite(store.dispatch, before, plan, '', s.activeChapterId);
       return {
         merged: plan.from,
         styles: plan.calloutStyles.length,
         fencesRewritten: plan.fenceCount,
         inChapters: plan.chapters.map((c) => c.chapterIndex + 1),
         framesRewritten: plan.frames,
+        // sandbox_undo takes the design back first, then each chapter.
+        undoSteps: record.steps,
         ...(await layoutAnswer(host, args.wait, signal)),
       };
     },

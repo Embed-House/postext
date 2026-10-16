@@ -66,7 +66,7 @@ import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns';
 import { TabStopsField } from '../settings/TabStopsField';
 import { useBookTexts } from '../../frameStyles/useBookTexts';
 import { planRename } from '../../frameStyles/styleMerge';
-import { applyStyleRewrite } from '../../frameStyles/rewriteHistory';
+import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -1581,6 +1581,7 @@ export function useCalloutStyleEdits() {
   const headingsRaw = useSandboxSelector((s) => s.config.headings);
   const unorderedListsRaw = useSandboxSelector((s) => s.config.unorderedLists);
   const chapters = useBookTexts();
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
   const resources = useSandboxResources();
   const iconResources = resources.filter((r) => r.kind === 'svg' || r.kind === 'bitmap');
 
@@ -1635,7 +1636,7 @@ export function useCalloutStyleEdits() {
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
     const plan = planRename({ calloutStyles: raw, pageTemplates }, styles, chapters, id, nextId);
-    applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId));
+    applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId), activeChapterId);
   };
 
   const removeStyle = (id: string) => {

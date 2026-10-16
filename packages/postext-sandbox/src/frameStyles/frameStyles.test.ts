@@ -4,7 +4,7 @@ import { applyTextChanges } from '../book/textChanges';
 import { calloutFences, retypeCalloutChanges } from './calloutFences';
 import { frameStyleLibrary } from './library';
 import { countFields, mergeSuggestions, parseHex, styleDiff, styleFields, stylesAfterMerging } from './styleCompare';
-import { planMerge, planMerges, planRename, rewrittenTexts, undoOf } from './styleMerge';
+import { planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge';
 import { styleUsage } from './styleUsage';
 import { frameDress, previewConfig, previewMarkdown } from './stylePreview';
 
@@ -191,7 +191,7 @@ describe('mergeSuggestions', () => {
 });
 
 describe('planMerge', () => {
-  it('rewrites every frame and fence to the kept style, drops the others and can be undone', () => {
+  it('rewrites every frame and fence to the kept style and drops the others', () => {
     const plan = planMerge(CONFIG, STYLES, CHAPTERS, 'caja-p4', ['caja-p5', 'caja-p6', 'caja-p7']);
     expect(plan.calloutStyles.map((s) => s.id)).toEqual(['nota', 'caja-p4', 'aviso']);
     expect(plan.frames).toEqual([
@@ -208,13 +208,6 @@ describe('planMerge', () => {
     expect(texts.get('c2')).toContain(":::callout{ type = 'caja-p4' }");
     expect(calloutFences(texts.get('c1')!).map((f) => f.type)).toEqual(['caja-p4', 'caja-p4', '']);
 
-    const undo = undoOf(CONFIG, plan);
-    expect(undo.calloutStyles).toBe(STYLES);
-    for (const c of undo.chapters) {
-      const after = texts.get(c.chapterId)!;
-      expect(after.length).toBe(c.baseLength);
-      expect(applyTextChanges(after, c.changes)).toBe(CHAPTERS.find((ch) => ch.id === c.chapterId)!.markdown);
-    }
   });
 
   it('puts the kept style where the first of the group stood', () => {

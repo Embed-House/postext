@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { ChevronDown, ChevronRight, LayoutTemplate, Merge, PenLine, SquareArrowOutUpRight, Undo2 } from 'lucide-react';
 import { onFontsChanged, type CalloutStyleConfig, type PostextConfig } from 'postext';
 import type { SandboxLabels } from '../../../types/labels';
-import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector, useSandboxStore } from '../../../context/SandboxContext';
 import { CollapsibleSection, FieldRow, NumberControl } from '../../../controls';
 import { Button, SegmentedControl, Switch } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
@@ -12,13 +12,16 @@ import { CalloutStyleCard, useCalloutStyleEdits } from '../CalloutStylesSection'
 import { bookCompareOptions, frameStyleLibrary, type FrameStyleLibrary } from '../../../frameStyles/library';
 import { differingGroups, mergeSuggestions, stylesAfterMerging, type CompareOptions, type MergeSuggestion } from '../../../frameStyles/styleCompare';
 import { planMerges } from '../../../frameStyles/styleMerge';
-import { applyStyleRewrite, lastStyleRewrite, subscribeStyleRewrites, undoStyleRewrite } from '../../../frameStyles/rewriteHistory';
+import { applyStyleRewrite, canUndoStyleRewrite, undoStyleRewrite, type StyleRewriteRecord } from '../../../frameStyles/applyRewrite';
 import { useBookTexts } from '../../../frameStyles/useBookTexts';
 import type { StyleUsage } from '../../../frameStyles/styleUsage';
 import { templateEditor } from '../../../templates/editorStore';
 import { showPageTemplatesSection } from '../../../templates/showSection';
 import { StylePreview } from './StylePreview';
 import { boxesText, groupsText, pagesText, suggestionText, usageText } from './text';
+
+const noSubscription = () => () => undefined;
+const noVersion = () => 0;
 
 type Filter = 'templates' | 'text' | 'unused' | 'all';
 
@@ -61,8 +64,13 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
   const [maxFields, setMaxFields] = useState(2);
   const [filter, setFilter] = useState<Filter | null>(null);
   const [reviewing, setReviewing] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const last = useSyncExternalStore(subscribeStyleRewrites, lastStyleRewrite, () => null);
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
+  // The last merge, offered back while its steps are the latest of the
+  // Sandbox's history (#899).
+  const history = useSandboxStore().history;
+  const [last, setLast] = useState<StyleRewriteRecord | null>(null);
+  useSyncExternalStore(history?.subscribe ?? noSubscription, history?.getVersion ?? noVersion, history?.getVersion ?? noVersion);
+  const undoable = canUndoStyleRewrite(history, last);
 
   // Repaint the previews when fonts land.
   const [fontsVersion, setFontsVersion] = useState(0);
@@ -102,14 +110,13 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
     const message = list.length === 1
       ? labels.frameStylesMerged.replace('__count__', String(merged)).replace('__name__', styleName(byId.get(list[0]!.keep), list[0]!.keep))
       : labels.frameStylesMergedAll.replace('__count__', String(merged)).replace('__left__', String(plan.calloutStyles.length));
-    applyStyleRewrite(dispatch, before, plan, message);
+    setLast(applyStyleRewrite(dispatch, before, plan, message, activeChapterId));
     setReviewing(null);
-    setNotice(null);
   };
 
   const undo = () => {
-    const skipped = undoStyleRewrite(dispatch, (id) => chapters.find((c) => c.id === id)?.markdown.length);
-    setNotice(skipped ? labels.frameStylesUndoSkipped.replace('__count__', String(skipped)) : null);
+    if (history && last) undoStyleRewrite(history, last);
+    setLast(null);
   };
 
   const goToBox = (chapterId: string, offset: number) => {
@@ -131,13 +138,12 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
       <SearchScope title={labels.frameStylesSection}>
         <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>{labels.frameStylesIntro}</p>
 
-        {last && (
+        {last && undoable && (
           <div role="status" className="mb-2 flex items-center gap-2 rounded border px-2 py-1.5 text-xs" style={{ borderColor: 'var(--rule)', color: 'var(--foreground)' }}>
             <span className="min-w-0 flex-1">{last.message}</span>
             <Button variant="outline" size="xs" icon={<Undo2 size={12} />} onClick={undo}>{labels.undo}</Button>
           </div>
         )}
-        {notice && <p role="status" className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>{notice}</p>}
 
         {library.stored && (
           <div className="mb-3">

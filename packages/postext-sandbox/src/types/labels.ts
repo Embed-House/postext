@@ -2759,7 +2759,6 @@ export interface SandboxLabels {
   frameStylesMerged: string;
   frameStylesMergedAll: string;
   frameStylesRenamed: string;
-  frameStylesUndoSkipped: string;
   frameStylesShow: string;
   frameStylesShowTemplates: string;
   frameStylesShowText: string;
