@@ -1443,6 +1443,8 @@ function legibility(page, doc, blocks, resolved) {
   slot(page.openerBand);
   slot(page.header);
   slot(page.footer);
+  // A composed page's decoration (its grounds, cards and pictures, #846).
+  slot(page.composed?.decoration);
   // Comic panels (a :::page, a :::strip in the flow): their pictures and fills.
   const comicPanels = (comic) => {
     for (const panel of comic?.panels ?? []) if (panel.art || filled(panel.background)) sum += box(panel.bbox);
