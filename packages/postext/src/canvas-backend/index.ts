@@ -14,6 +14,8 @@ import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
 import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
 import { renderComicPage } from './comic';
+import { renderComposedFrames } from './composed';
+import { composedFrameBlockIds } from '../composed/paint';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
 import { resetContextState, restoreContext, saveContext } from './contextState';
@@ -302,9 +304,18 @@ function paintContext(
   // live outside the column clip (a `span: 'page'` float crosses the
   // gutter). They were positioned at build time, so they render straight
   // from their absolute bbox.
+  // A composed page's frames (#855) are floats too, painted with their
+  // frames: in layer order, each turned and clipped as its frame says,
+  // the template's decoration at layer 0. A page painted through a flow
+  // frame paints its decoration on the sheet, after the flow.
+  const frameIds = composedFrameBlockIds(page);
   if (page.floats) {
-    for (const fb of page.floats) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, inkHex);
+    for (const fb of page.floats) {
+      if (frameIds.has(fb.id)) continue;
+      renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, inkHex);
+    }
   }
+  if (page.composed) renderComposedFrames(ctx, page, inkHex, flow || endMirror ? undefined : page.composed.decoration);
   renderFootnoteRules(ctx, page);
 
   if (flow) {
@@ -312,6 +323,7 @@ function paintContext(
     restoreContext(ctx);
   }
   endMirror?.();
+  if (page.composed?.decoration && (flow || endMirror)) renderHeaderFooterSlot(ctx, page.composed.decoration, inkHex);
 
   // A comic page's panels and lettering (or its half of a spread), and the
   // strips set in its flow, on the sheet (never through the flow frame).

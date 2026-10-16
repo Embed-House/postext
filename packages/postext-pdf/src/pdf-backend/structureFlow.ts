@@ -78,6 +78,10 @@ export class StructureFlow {
   /** The last float placed after each top-level element, so floats
    *  anchored to one paragraph keep their order. */
   private readonly lastPlacedAfter = new Map<StructElem, StructElem>();
+  /** The top-level elements a float added that was read in reading
+   *  order (`readFloat`'s `readAt`): its anchor (null: before all the
+   *  text) and its place in that order. */
+  private readonly readKeys = new Map<StructElem, { anchor: StructElem | null; key: number }>();
   /** Set while a float is painted: its blocks are not part of the flow. */
   private floating = false;
 
@@ -350,10 +354,17 @@ export class StructureFlow {
    * float is read, not where it is painted: at most one level deeper than
    * the heading before that place, and at most one level shallower than
    * the heading after it, so no level is skipped on either side.
+   *
+   * `readAt` reads a float painted out of reading order (a frame of a
+   * composed page, painted by layer, #855): it is anchored by this content
+   * index instead of the block's own, and among the floats read at the
+   * same place with a `readAt` it goes in `readAt` order, whatever order
+   * they were painted in.
    */
-  readFloat(block: VDTBlock, paint: () => void): void {
+  readFloat(block: VDTBlock, paint: () => void, readAt?: number): void {
     const root = this.tree.root;
-    const at = block.contentIndex === undefined ? undefined : this.readingPlace(block.contentIndex);
+    const index = readAt ?? block.contentIndex;
+    const at = index === undefined ? undefined : readAt !== undefined ? this.orderedPlace(readAt) : this.readingPlace(index);
     const place = at ?? root.kids.length;
     const before = this.lastHeadingIn(root.kids, place) ?? 0;
     const next = this.firstHeadingIn(root.kids, place);
@@ -374,9 +385,52 @@ export class StructureFlow {
     if (at === undefined || root.kids.length === start) return;
     const added = root.kids.splice(start);
     root.kids.splice(at, 0, ...added);
-    const anchor = this.anchorOf(block.contentIndex!);
+    const anchor = this.anchorOf(index!);
+    if (readAt !== undefined) {
+      for (const kid of added) if (kid.kind === 'elem') this.readKeys.set(kid.elem, { anchor: anchor ?? null, key: readAt });
+      // The last float read after the anchor is the last of the run.
+      if (anchor) {
+        let end = at + added.length;
+        while (end < root.kids.length && this.inRun(root.kids[end]!, anchor)) end++;
+        const last = root.kids[end - 1];
+        if (last && last.kind === 'elem') this.lastPlacedAfter.set(anchor, last.elem);
+      }
+      return;
+    }
     const lastAdded = added[added.length - 1]!;
     if (anchor && lastAdded.kind === 'elem') this.lastPlacedAfter.set(anchor, lastAdded.elem);
+  }
+
+  /** Whether `kid` was added by a float read in order after `anchor`. */
+  private inRun(kid: Kid, anchor: StructElem | null): boolean {
+    return kid.kind === 'elem' && this.readKeys.get(kid.elem)?.anchor === anchor;
+  }
+
+  /** Where a float read in order (`readFloat`'s `readAt`) goes: in the run
+   *  of floats read in order at its place, after those whose `readAt` is
+   *  at most its own. */
+  private orderedPlace(readAt: number): number {
+    const root = this.tree.root;
+    const anchor = this.anchorOf(readAt) ?? null;
+    const base = this.readingPlace(readAt);
+    // The run: after the anchor (and the floats read there before), or
+    // just before the first text when the float comes before all of it.
+    let s = base;
+    let e = base;
+    if (anchor) {
+      s = this.kidIndex(anchor) + 1;
+      while (s < e && !this.inRun(root.kids[s]!, anchor)) s++;
+      while (e < root.kids.length && this.inRun(root.kids[e]!, anchor)) e++;
+    } else {
+      while (s > 0 && this.inRun(root.kids[s - 1]!, null)) s--;
+    }
+    let place = s;
+    for (let i = s; i < e; i++) {
+      const kid = root.kids[i]!;
+      const key = kid.kind === 'elem' ? this.readKeys.get(kid.elem)?.key : undefined;
+      if (key !== undefined && key <= readAt) place = i + 1;
+    }
+    return s === e ? base : place;
   }
 
   /** The top-level element of `elem` (its ancestor that is a kid of the
