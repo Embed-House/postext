@@ -1188,6 +1188,12 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   heads of other pages do not list them) print the `headingNumber` counter of the first heading block each
   frame holds, in the document's digits; `headerFooter.ts` gathers them while it names the page's frames and
   hands them to the placeholder context. Empty when no frame holds a numbered heading.
+- **A picture inside a label tab (#981).** `CalloutLabelConfig.icon.placement` (`'beside'` | `'inside'`): inside, the
+  tab is `paddingX + picture + gap + words + paddingX` wide, the picture (fitted into `icon.width` × the tab's
+  height) at the tab's start, the words after it, a tab at the right corner growing leftwards; with no picture the
+  tab is the plain one. The overlay is the same box, image and text blocks, so no backend changes. The picture
+  keeps its colours; a tint from the tab's text colour would need a colour on `VDTDesignImageBlock` and the same
+  in canvas, HTML and PDF, and is left (SP followup).
 
 ## 6. Source map contract
 

@@ -3273,6 +3273,10 @@ export interface CalloutIconConfig {
  *  `offset` is half its height), hugs the corner `position` names, and can
  *  carry an `icon` resource on its outer side and a `rule` along the top
  *  edge from the opposite corner up to it. */
+/** Where the picture of a label tab stands (#981): beside the tab, past
+ *  its edge, or inside it before the words. */
+export type CalloutLabelIconPlacement = 'beside' | 'inside';
+
 export interface CalloutLabelConfig {
   /** Defaults to the headings font family. */
   fontFamily?: string;
@@ -3292,9 +3296,15 @@ export interface CalloutLabelConfig {
   offset?: Dimension;
   /** Inset of the tab from the box's side edge. Default `0`. */
   inset?: Dimension;
-  /** A picture set beside the tab (on the side away from the corner):
-   *  `width` is its width, `gap` the space to the tab. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension };
+  /** A picture on the tab. `'beside'` (default) sets it past the tab's
+   *  edge, on the side away from the corner: `width` is its width, `gap`
+   *  the space to the tab. `'inside'` (#981) sets it in the tab, at its
+   *  start before the words (the right end in a right-to-left box),
+   *  `gap` away from them: the tab is as wide as the picture, the gap, the
+   *  words and the padding, the picture as tall as the tab at most. The
+   *  picture keeps the colours it has, so a white ring on a coloured tab
+   *  and a coloured ring on a white one are two resources, one to a style. */
+  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement };
   /** A rule along the box's top edge from the far corner to the tab (or
    *  its icon). */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
@@ -3656,7 +3666,7 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension };
+    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
   };
   columnGap: Dimension;

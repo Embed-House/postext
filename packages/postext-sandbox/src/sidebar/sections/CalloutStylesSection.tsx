@@ -1137,6 +1137,18 @@ export function CalloutStyleCard({
                   isDefault={labelIconUnset('width')}
                   onReset={() => resetLabelIconField('width')}
                 />
+                <SelectInput
+                  label={labels.calloutStyleLabelIconPlacement}
+                  value={resolved.label.icon.placement}
+                  options={[
+                    { value: 'beside', label: labels.calloutStyleLabelIconBeside },
+                    { value: 'inside', label: labels.calloutStyleLabelIconInside },
+                  ]}
+                  onChange={(v) => updateLabelIcon({ placement: v as 'beside' | 'inside' })}
+                  tooltip={labels.calloutStyleLabelIconPlacementTooltip}
+                  isDefault={labelIconUnset('placement')}
+                  onReset={() => resetLabelIconField('placement')}
+                />
                 <DimensionInput
                   label={labels.calloutStyleLabelIconGap}
                   value={resolved.label.icon.gap}
