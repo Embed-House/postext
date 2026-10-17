@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 156 · A children's textbook unit in three languages ═══
 // https://postext.dev/en/cookbook/children-textbook-pages
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Nunito, Fredoka (SIL OFL 1.1) · Needs postext ≥ 1.40.0
+// Fonts: Nunito, Fredoka (SIL OFL 1.1) · Needs postext ≥ 1.42.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -173,6 +173,15 @@ const pageTemplates = [
       { name: 'texto', flow: true, width: mm(HALF) }, ...questions],
     groups: [{ name: 'pagina', kind: 'stack', gap: mm(7),
       frames: ['titulo', 'texto', ...questions.map((q) => q.name)] }] },
+  // The contents: a frame takes the :::toc and lays it by the contents' own rules (part rows,
+  // leaders, each part kept with its entries); the ground is the template's decoration.
+  { id: 'indice',
+    decoration: { elements: [ground('agua'), titleTab('agua', 0)] },
+    frames: [{ ...title, style: 'titulo-plano', width: mm(HALF),
+      placement: at('container', 'top-left') },
+      { name: 'lista', takes: 'toc', width: mm(HALF) },
+      { name: 'mapa', style: 'foto', width: mm(HALF) }],
+    groups: [{ name: 'pagina', kind: 'stack', gap: mm(7), frames: ['titulo', 'lista', 'mapa'] }] },
   // The opener: a painting to the bleed, the title over its foot.
   { id: 'unidad', header: false, footer: false,
     decoration: { elements: [
@@ -203,16 +212,7 @@ const folio = (id, parity, edge, x) => ({ kind: 'text', id, content: '{pageNumbe
   box: { backgroundColor: col('agua'), borderRadius: mm(4) },
   placement: { ...at('page', edge, x, -8), size: { width: mm(8), height: mm(8) } } });
 
-// #region contents: a flow page, because a :::toc cannot be laid out inside a frame yet
-// The heading style paints the title tab; the entries come from the headings and the parts.
-const indiceOpener = { enabled: true, minHeight: mm(26), slot: { elements: [
-  { kind: 'box', id: 'tab', decorative: true,
-    placement: { ...at('container', 'top-left'), size: { width: mm(HALF), height: mm(18) } },
-    style: { backgroundColor: col('agua'), borderRadius: mm(4) } },
-  { kind: 'text', id: 'title', content: '{titleText}', fontFamily: DISPLAY, fontSize: pt(28),
-    fontWeight: 600, color: col('paper'), align: 'left',
-    placement: { ...at('container', 'top-left', 8, 3.2), size: { width: mm(HALF - 12) } } },
-] } };
+// #region contents: the toc settings; a frame of the 'indice' template takes the :::toc
 const toc = {
   levels: [
     { level: 1, fontFamily: DISPLAY, fontSize: pt(15), lineHeight: pt(22), fontWeight: 500,
@@ -292,7 +292,6 @@ const config = {
   headingStyles: [
     { id: 'portada', numbered: false, toc: false, fontSize: pt(46), lineHeight: pt(48) },
     { id: 'previo', numbered: false, toc: false },
-    { id: 'indice', numbered: false, toc: false, fontSize: pt(28), advancedDesign: indiceOpener },
   ],
   toc,
   parts: { page: false }, // a part is a row of the contents, with no divider page

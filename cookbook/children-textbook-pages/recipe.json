@@ -42,12 +42,10 @@
     "Q179",
     "Q181"
   ],
-  "gotchas": [
-    "toc-in-composed-frame"
-  ],
+  "gotchas": [],
   "engine": {
-    "postext": "1.40.0",
-    "postextPdf": "1.40.0"
+    "postext": "1.42.0",
+    "postextPdf": "1.42.0"
   },
   "kit": [
     "core",
@@ -198,11 +196,6 @@
     "pdf": true
   },
   "workarounds": [
-    {
-      "followup": "EF-875-1",
-      "package": "postext",
-      "note": "the contents are a flow page (a heading style that paints the title tab, then :::toc{keep=\"part\"}) because a :::toc inside a composed page's frame loses its part rows and puts a blank line between entries; the page keeps no ground colour for the same reason, since a heading's design stops at the column's margin"
-    },
     {
       "package": "postext",
       "note": "the three topic spreads extend one base template and the callout styles extend each other, so a topic's colours are the only thing its template and its box styles say"

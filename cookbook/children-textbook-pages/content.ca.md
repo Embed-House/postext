@@ -19,14 +19,16 @@ Composat en Nunito i Fredoka (SIL OFL) · Text original (CC BY 4.0) · Il·lustr
 :::
 ::::
 
-# En aquesta unitat {style="indice"}
+::::page{template="indice"}
+# En aquesta unitat {style="previo"}
 
 :::toc{keep="part" levels="1-2"}
 
-:::figure{resource="rio"}
+:::figure{resource="rio" slot="mapa"}
 ::alt[Mapa pintat de la vall del riu Aldara, des de les muntanyes nevades fins al mar.]
 ::caption[El riu Aldara des del seu naixement fins al mar. El mapa és a les pàgines 6 i 7.]
 :::
+::::
 
 ::::page{template="saberes"}
 # Què en saps, dels rius? {style="previo"}

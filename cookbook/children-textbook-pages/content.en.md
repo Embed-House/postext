@@ -19,14 +19,16 @@ Set in Nunito and Fredoka (SIL OFL) · Original text (CC BY 4.0) · Illustration
 :::
 ::::
 
-# In this unit {style="indice"}
+::::page{template="indice"}
+# In this unit {style="previo"}
 
 :::toc{keep="part" levels="1-2"}
 
-:::figure{resource="rio"}
+:::figure{resource="rio" slot="mapa"}
 ::alt[Painted map of the valley of the River Aldara, from the snowy mountains to the sea.]
 ::caption[The River Aldara from its spring to the sea. The map is on pages 6 and 7.]
 :::
+::::
 
 ::::page{template="saberes"}
 # What do you know about rivers? {style="previo"}

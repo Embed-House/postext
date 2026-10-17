@@ -19,14 +19,16 @@ Compuesto en Nunito y Fredoka (SIL OFL) · Texto original (CC BY 4.0) · Ilustra
 :::
 ::::
 
-# En esta unidad {style="indice"}
+::::page{template="indice"}
+# En esta unidad {style="previo"}
 
 :::toc{keep="part" levels="1-2"}
 
-:::figure{resource="rio"}
+:::figure{resource="rio" slot="mapa"}
 ::alt[Mapa pintado del valle del río Aldara, desde las montañas nevadas hasta el mar.]
 ::caption[El río Aldara, desde su nacimiento hasta el mar. El mapa está en las páginas 6 y 7.]
 :::
+::::
 
 ::::page{template="saberes"}
 # ¿Qué sabes de los ríos? {style="previo"}
