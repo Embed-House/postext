@@ -78,6 +78,7 @@ import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlock
 import { measureBlockMemo, type MeasureMemo } from './measureMemo';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { headingIsHidden, headingStyleOf } from './headingStyles';
+import { tocBlockStamps } from './toc';
 import { directDesignTextBlock } from '../design/bidiText';
 import { arabicNumbersOf } from './config';
 import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
@@ -1046,6 +1047,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     lineCut?: { from: number; to?: number; widths?: readonly CalloutLineWidth[] },
   ): VDTBlock | undefined => {
     if (isStripChild(raw)) return placeStripChild(raw, k, width, x, st, into, unitsInto);
+    // The repeat of a contents block's head row (#850): set where the
+    // fragment goes on in a cut block, skipped everywhere else (#983), as
+    // the running text sets it only at the head of a fresh column.
+    if (raw.toc?.group?.role === 'continuation' && !isFirstRealOf(k)) return undefined;
     const blockIdx = childStartIdx + k;
     // Inside a `:::paragraphs` container: its style, and for the block that
     // closes it the tail style, which carries the container's bottom margin.
@@ -1151,6 +1156,9 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; }
     if (headingNumber !== undefined) blk.headingNumber = headingNumber;
     if (hiddenHeading) blk.hidden = true;
+    // A row of the contents (#983): the page it links to, or the values of
+    // its part row's design.
+    if (raw.toc) Object.assign(blk, tocBlockStamps(raw));
     blk.sourceMap = absoluteSourceMap;
     blk.plainPrefixLen = prefixLen;
 

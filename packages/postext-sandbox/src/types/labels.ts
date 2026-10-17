@@ -3769,6 +3769,7 @@ export interface SandboxLabels {
   pageTemplatesFrameTakesNone: string;
   pageTemplatesFrameTakesLevel: string;
   pageTemplatesFrameTakesTooltip: string;
+  pageTemplatesFrameTakesToc: string;
   pageTemplatesFrameNext: string;
   pageTemplatesFrameNextNone: string;
   pageTemplatesFrameNextTooltip: string;

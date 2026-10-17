@@ -77,7 +77,7 @@ interface FrameConfig {
   exclude?: 'none' | 'push'     // 'push': other frames' text wraps around this frame
   flow?: boolean                // receives content with no slot
   next?: string                 // chain: overflow continues in this frame
-  takes?: 'h1'|'h2'|…|'h6'      // receives the first heading of that level with no slot
+  takes?: 'h1'|'h2'|…|'h6'|'toc' // receives the first heading of that level with no slot, or the page's :::toc (#983)
   pin?: boolean                 // never moves or resizes (aligned with artwork)
   grow?: number, shrink?: number, priority?: number   // group negotiation (§5)
   fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
@@ -1055,6 +1055,35 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   at most 2): silent up to it, a failure past it, an info when it is not needed or 15 % too high; the card files take
   `capture.expect.cardKb` the same way. A budget that counted the painted area was rejected: the bytes of the
   rendered page, not the area, say what it weighs.
+- **The contents in a frame (#983, #987).** `FrameConfig.takes` accepts `'toc'` besides `h1`…`h6`: the frame receives the
+  rows of the page's `:::toc` that name no slot (`ParsedComposedPage.tocRows`, the directive before the contents are
+  expanded, every row and the breaks between parts after; `takenBlocks` answers for both kinds of `takes` in `wrap.ts` and
+  `slotChecks.ts`). A `:::toc` inside a `:::frame` needs no `takes`. The rows are children of the frame's story box, so the
+  box typesetter lays them with `measureTocBlock` and stamps what the flow stamps (`tocBlockStamps`: `tocEntry` with the
+  page it links to, `tocPart`), which was the whole of the defect: `buildHeadersAndFooters` drew the part rows of
+  `page.columns` only, so a frame's part rows were empty lines, and the repeats of a block's head row (`toc.groups.continuation`),
+  which the flow sets only at the head of a column that a cut block goes on in, were all set, one before every entry. Now
+  (a) `placeChild` skips a continuation row unless it is the first row of the fragment, (b) `overlayTocPart` runs for the
+  part rows of `page.floats` and of a spread's `facingBlocks` with the frame's page frames, (c) a cut between the rows of one
+  block of the contents (`:::toc{keep}`) is offered only after its head (or the repeat of it) and `minEntriesAfterHead`
+  entries, and ranks `soft` (taken when no other cut fits) when the whole block is no taller than the room, so a block that a
+  frame holds goes whole to the added page, as the flow moves it to the next column; an entry is never cut inside its lines.
+  The title of the contents is not listed because its heading style says `toc: false`, as in the flow. A page break between
+  parts (`toc.parts.breakBefore`) goes with the rows and is ignored in a box, as every directive is. Memoisation: a page with
+  contents rows is never memoised (`pageMemo` already says so for any `toc` block).
+- **A ground under the contents (#987).** The ground is the template's decoration, which paints under the frames of the
+  page and on every page the frame adds; no heading design is asked to paint across the sheet. A design element anchored to
+  the bleed that runs down to the trim claims the column (the reserved height of a heading design counts every element
+  without `reserve: false`); a document with such a design says so only in the docs: a warning would also fire on every
+  cover whose design claims its page on purpose (`headingDesignCuts.ts` makes the same call), so the answer is the note in
+  the reserved-height section and the `reserve` rows of the design tables.
+- **Frames held at the foot of a card (#980).** No new key. A stack group with a box of the card's height, `grow: 1` (and
+  `shrink`) on the frames above the held ones and a `minHeight` on the held ones is the held foot: spare space goes to the
+  frames that grow, so a shorter text moves nothing below it; a longer one is squeezed by the ladder (`redistribute`, then
+  `shrinkText`) with the held frames at their `minHeight`, and `frameOverflow` and the reflow log (`textScaled`,
+  `overflow`) say what did not fit. A frame anchored to the container's foot instead cannot do this: nothing relates it to
+  the frames above it, so the ladder never squeezes them for it and an overlap is not reported. `footHold.test.ts` pins both
+  directions.
 
 ## 6. Source map contract
 

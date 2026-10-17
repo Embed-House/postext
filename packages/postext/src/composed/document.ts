@@ -16,6 +16,10 @@ import type { ComposedPageNode, SourceRange } from './types';
 /** Heading levels a template frame may `take`. */
 export type HeadingTake = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
+/** What a template frame may `take`: the first heading of a level, or the
+ *  page's contents (`'toc'`, #983). */
+export type FrameTake = HeadingTake | 'toc';
+
 /** A composed page as the parser read it: the design's
  *  {@link ComposedPageNode} plus what the slot checks need. */
 export interface ParsedComposedPage extends ComposedPageNode {
@@ -24,6 +28,11 @@ export interface ParsedComposedPage extends ComposedPageNode {
   /** The first heading of each level that names no slot (its block
    *  index), which a frame with `takes` receives. */
   firstHeadings: Partial<Record<HeadingTake, number>>;
+  /** The `:::toc` of the page that names no slot (#983): the directive,
+   *  or, once the contents are expanded into their rows, every row and
+   *  the page breaks between parts. A frame with `takes: 'toc'` receives
+   *  them. */
+  tocRows: number[];
   /** Source range of the fence line. */
   fence: SourceRange;
   /** The fence had no closing fence of its length (reported by the
@@ -90,6 +99,18 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       put(b.slot, [k]);
       k++;
     }
+    // The page's contents: the directive, or its expanded rows (they and
+    // the breaks between parts map to the directive's line).
+    const tocLines = new Set<number>();
+    for (const k of unassigned) {
+      const b = blocks[k]!;
+      if (b.toc !== undefined || (b.type === 'directive' && b.directiveName === 'toc')) tocLines.add(b.sourceStart);
+    }
+    const tocRows = unassigned.filter((k) => {
+      const b = blocks[k]!;
+      return b.toc !== undefined
+        || (b.type === 'directive' && (b.directiveName === 'toc' || (b.directiveName === 'pagebreak' && tocLines.has(b.sourceStart))));
+    });
     const closing = blocks[end]!;
     const unclosed = closing.type !== 'containerEnd' || closing.containerId !== start.containerId || closing.sourceEnd === closing.sourceStart;
     out.push({
@@ -103,6 +124,7 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       unassigned,
       slotSources,
       firstHeadings,
+      tocRows,
       fence: { sourceStart: start.sourceStart, sourceEnd: start.sourceEnd },
       unclosed,
       sourceStart: start.sourceStart,
@@ -113,4 +135,13 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
     i = end;
   }
   return out;
+}
+
+/** The block indices of `page` that a frame with `takes: take` receives
+ *  (#983): the first heading of that level, or the page's contents. */
+export function takenBlocks(page: Pick<ParsedComposedPage, 'firstHeadings' | 'tocRows'>, take: FrameTake | undefined): readonly number[] {
+  if (take === undefined) return [];
+  if (take === 'toc') return page.tocRows;
+  const at = page.firstHeadings[take];
+  return at === undefined ? [] : [at];
 }

@@ -98,7 +98,7 @@ import { carriedPass, composedPageAt, frameStyleOf, layoutComposedPage, planComp
 import { importJumps, type CarriedNote, type CarriedNumber, type ImportedJumps, type StoryJump } from '../composed/carry';
 import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
-import { expandTocDirectives } from './toc';
+import { expandTocDirectives, tocBlockStamps } from './toc';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
 import type { ResolvedHeadingStyleConfig } from '../types';
 import { resolveBodyStyle, resolveBlockquoteStyle, resolveParagraphStyle, type BlockStyle } from './styles';
@@ -3484,20 +3484,7 @@ function placeDocumentPass(
     // mirrored, #370): an Arabic quotation in an English book, an English
     // one in an Arabic book. Its lines carry their span (`VDTLine.measure`).
     if (blk.type !== 'resource' && raw.direction !== undefined && raw.direction !== resolvedDirection(resolved)) blk.direction = raw.direction;
-    const tocContinued = raw.toc?.group?.role === 'continuation' ? { continued: true as const } : {};
-    if (raw.toc?.kind === 'entry') {
-      blk.tocEntry = { ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}), ...(raw.toc.headingSource !== undefined ? { headingSource: raw.toc.headingSource } : {}), ...tocContinued };
-    }
-    if (raw.toc?.kind === 'part') {
-      blk.tocPart = {
-        ...tocContinued,
-        number: raw.toc.number,
-        title: raw.toc.title ?? '',
-        pageLabel: raw.toc.pageLabel ?? '',
-        ...(raw.toc.palette ? { palette: raw.toc.palette } : {}),
-        ...(raw.toc.pageIndex !== undefined ? { pageIndex: raw.toc.pageIndex } : {}),
-      };
-    }
+    Object.assign(blk, tocBlockStamps(raw));
   };
 
   let blockIdCounter = 0;

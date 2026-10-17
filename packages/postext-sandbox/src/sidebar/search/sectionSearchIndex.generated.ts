@@ -5900,6 +5900,7 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'pageTemplatesFrameTakes',
       'pageTemplatesFrameTakesLevel',
       'pageTemplatesFrameTakesNone',
+      'pageTemplatesFrameTakesToc',
       'pageTemplatesFrameTakesTooltip',
       'pageTemplatesFrameUseGrid',
       'pageTemplatesFrameUseGridTooltip',

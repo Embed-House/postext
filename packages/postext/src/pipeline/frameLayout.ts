@@ -239,6 +239,7 @@ export const splitCalloutFragment = (
     const b = u.kind === 'block' ? u.block.bbox : u.box.result.frame.bbox;
     return b.y + b.height;
   };
+  const unitTop = (u: CalloutUnit): number => (u.kind === 'block' ? u.block.bbox.y : u.box.result.frame.bbox.y);
   /** Room a box keeps under its last item (padding, border, icon growth). */
   const tailOf = (r: CalloutLayoutResult): number => {
     const last = r.units[r.units.length - 1];
@@ -287,10 +288,57 @@ export const splitCalloutFragment = (
         i = j;
       }
     }
+    /** The rows of a block of the contents (`:::toc{keep}`, #850) among
+     *  the units: for each, the block it belongs to, whether its head (or
+     *  the repeat of it a fragment opens with) has gone by and how many
+     *  entries since. A cut between its rows leaves its head with
+     *  `minEntriesAfterHead` entries, and a block that a whole frame would
+     *  hold is cut only when no other cut fits, as the running text moves
+     *  it whole to the next column (#983). */
+    const tocOf = (u: CalloutUnit | undefined) => (u?.kind === 'block' && u.block.contentIndex !== undefined ? pass.contentBlocks[u.block.contentIndex]?.toc : undefined);
+    const tocCut: { group?: NonNullable<ReturnType<typeof tocOf>>['group']; headSeen: boolean; entries: number }[] = [];
+    const tocSpan = new Map<number, { first: number; last: number }>();
+    {
+      let id: number | undefined;
+      let headSeen = false;
+      let entries = 0;
+      units.forEach((u, i) => {
+        const toc = tocOf(u);
+        const group = toc?.group;
+        if (!toc || !group) {
+          id = undefined;
+          headSeen = false;
+          entries = 0;
+          tocCut[i] = { headSeen: false, entries: 0 };
+          return;
+        }
+        if (group.id !== id) {
+          id = group.id;
+          headSeen = false;
+          entries = 0;
+        }
+        if (group.role === 'head' || group.role === 'continuation') {
+          headSeen = true;
+          entries = 0;
+        } else if (headSeen && toc.kind === 'entry') entries++;
+        tocCut[i] = { group, headSeen, entries };
+        const span = tocSpan.get(group.id);
+        if (span) span.last = i;
+        else tocSpan.set(group.id, { first: i, last: i });
+      });
+    }
+    /** The block of the contents a cut after unit `i` falls inside. */
+    const tocInside = (i: number): { id: number; minEntries: number } | undefined => {
+      const a = tocCut[i]?.group;
+      const b = tocCut[i + 1]?.group;
+      return a && b && a.id === b.id ? { id: a.id, minEntries: a.minEntries } : undefined;
+    };
     /** A cut after unit `i` (between two children) the frame's rules
      *  allow: not after a heading, not leaving too few items of a list on
      *  either side. */
     const ruled = (i: number): boolean => {
+      const inside = tocInside(i);
+      if (inside && (!tocCut[i]!.headSeen || tocCut[i]!.entries < inside.minEntries)) return false;
       if (!rules) return true;
       const u = units[i]!;
       if (rules.keepHeadings && u.kind === 'block' && u.block.type === 'heading') return false;
@@ -311,7 +359,7 @@ export const splitCalloutFragment = (
         next = k + 1;
         // A heading drawn by its design (#906) is one piece: its lines are
         // not what the page shows.
-        if (!indivisible(c) && c.lines.length > 1 && !isDesignedBoxHeading(c)) {
+        if (!indivisible(c) && c.lines.length > 1 && !isDesignedBoxHeading(c) && !c.tocEntry && !c.tocPart) {
           // The first laid-out child of a continuation opens after
           // `from.line` lines: cuts inside it are counted from the
           // child's own head. Each side of the box still counts all its
@@ -347,7 +395,10 @@ export const splitCalloutFragment = (
       linesBefore += lineCount(u);
       if (isBlock(u)) blocksBefore++;
       if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true) && ruled(i)) {
-        candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below });
+        const inside = tocInside(i);
+        const span = inside ? tocSpan.get(inside.id) : undefined;
+        const whole = span ? unitBottom(units[span.last]!) - unitTop(units[span.first]!) : Infinity;
+        candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below, ...(inside && whole <= roomPx ? { soft: true as const } : {}) });
       }
     });
   };

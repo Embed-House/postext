@@ -132,8 +132,10 @@ export interface FrameConfig {
   flow?: boolean;
   /** Chain: content that does not fit continues in this frame. */
   next?: string;
-  /** Receives the first heading of this level that names no slot. */
-  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  /** Receives the first heading of this level that names no slot, or
+   *  (`'toc'`, #983) the rows of the page's `:::toc` that name no slot,
+   *  laid by the contents' own rules (part rows, leaders, `keep`). */
+  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc';
   /** Never moves or resizes. */
   pin?: boolean;
   /** Share of a group's spare space this frame takes. Default 0. */
@@ -310,7 +312,7 @@ export interface ResolvedFrame {
   wrap?: 'contour';
   flow: boolean;
   next?: string;
-  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc';
   pin: boolean;
   grow: number;
   shrink: number;

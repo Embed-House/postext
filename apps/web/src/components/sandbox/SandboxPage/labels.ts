@@ -3672,6 +3672,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     pageTemplatesFrameTakesNone: t("pageTemplatesFrameTakesNone"),
     pageTemplatesFrameTakesLevel: t("pageTemplatesFrameTakesLevel"),
     pageTemplatesFrameTakesTooltip: t("pageTemplatesFrameTakesTooltip"),
+    pageTemplatesFrameTakesToc: t("pageTemplatesFrameTakesToc"),
     pageTemplatesFrameNext: t("pageTemplatesFrameNext"),
     pageTemplatesFrameNextNone: t("pageTemplatesFrameNextNone"),
     pageTemplatesFrameNextTooltip: t("pageTemplatesFrameNextTooltip"),

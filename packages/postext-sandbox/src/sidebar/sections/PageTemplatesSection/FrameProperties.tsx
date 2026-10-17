@@ -381,7 +381,7 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         <SelectInput
           label={labels.pageTemplatesFrameTakes}
           value={frame.takes ?? ''}
-          options={[{ value: '', label: labels.pageTemplatesFrameTakesNone }, ...(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const).map((h) => ({ value: h, label: labels.pageTemplatesFrameTakesLevel.replace('__level__', h.slice(1)) }))]}
+          options={[{ value: '', label: labels.pageTemplatesFrameTakesNone }, ...(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const).map((h) => ({ value: h, label: labels.pageTemplatesFrameTakesLevel.replace('__level__', h.slice(1)) })), { value: 'toc', label: labels.pageTemplatesFrameTakesToc }]}
           onChange={(v) => set({ takes: v || undefined })}
           tooltip={labels.pageTemplatesFrameTakesTooltip}
           isDefault={!has('takes')}
