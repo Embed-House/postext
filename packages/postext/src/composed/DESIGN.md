@@ -1113,6 +1113,15 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   from the first's, or that the first left unsaid (and so is not shown either). A figure that repeats the
   first's words, or gives none, is quiet. The range is the first of the dropped words; the Sandbox files it
   under Figures.
+- **Pictures in the frames of a vertical page (#971).** `uprightIn` (`composedLayout.ts`) hands the box
+  typesetter `uprightMaxLength` for every frame whose effective mode is vertical: its own `writingMode`, else
+  the page's. A frame in the page's own mode on a vertical page lies in the flow frame, which is turned the
+  same quarter turn as a vertical frame on a horizontal page, so the same counter-rotation applies with the
+  frame's extent across its lines (`laidH`) less padding. `naturalOf` (the height a frame needs, for placement
+  and proposals) passes the flow's whole height as the room, since the frame's height is what it settles. A
+  horizontal frame on a vertical page is turned against the flow and already stood upright; horizontal pages
+  are unchanged. The VDT of a vertical composed page that holds a figure in a frame changes (the picture and
+  caption no longer turn with the flow); no public preset or bundle chapter does, parity 0 diffs.
 
 ## 6. Source map contract
 
