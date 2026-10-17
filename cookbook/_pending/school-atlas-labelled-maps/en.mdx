@@ -1,0 +1,65 @@
+---
+title: "A school atlas labelled from the Markdown"
+summary: "Maps drawn without a letter, named by ::label lines at the anchors of each resource, on composed pages and a double-page spread, in three languages."
+plain: "Three pages of a school atlas of an invented country. The maps are plain drawings; every name on them is written in the text, so a translation changes the words and leaves the maps alone."
+description: "A school atlas set with Postext: maps labelled from the Markdown at the resource's anchors, a relief map across a spread, an Arabic edition."
+question: "How do I name the places on a map from the text, so each translation keeps the same drawing?"
+aliases: ["atlas", "school atlas", "map labels", "place names", "anchors", "label styles", "double page map", "spread", "right to left", "rotated labels", "rótulos", "topónimos"]
+pageNotes: { "1": "Plate 1: a blue band with the kicker Plate 1 · Location and the title Varenia on the map; two columns of text; a locator map with Varenia in yellow on the south coast of a continent, the Lira Sea and the Misty Ocean in blue, Ostelia and Brunavia in beige; a key of five swatches and three activities.", "2": "Plate 2, left half: the blue band with the title The relief and rivers of Varenia, and the west of a relief map in green, yellow and brown height tints, with the Albar Range turned along its crest, the River Sela, Calvera, Nema Island, the dashed line of section A–B, a north arrow and a scale of 50 km; two columns of text under the map.", "3": "Plate 2, right half: the east of the relief map, with the Ormo Plateau, Lake Ormo and the River Merel, the capital Almaren, Port Sora on the Gulf of Sora, the Grey Hills turned upright, Brena and the border with Brunavia; a key of six height tints and three activities.", "4": "Plate 3: a section from A to B through the Albar Range, tinted in the map's height bands, with the Sela valley, the crest and the coastal plain named over it and heights from 500 to 2,000 m on the left; four words in a glossary and four activities." }
+---
+
+## What you'll build
+
+Three plates from a school atlas of Varenia, a country invented for this recipe. Plate 1 places it on its continent. Plate 2 spreads the relief map across both pages, from the Lira Sea to the border with Brunavia, in height tints with three rivers and the line of a section. Plate 3 draws that section through the Albar Range. Each plate opens on a blue band and ends with a key or a glossary and a few activities for the class. The drawings carry no letter. The 43 names, heights and scale figures are `::label` lines in the Markdown, set at anchors stored with each map, so the Spanish, English and Arabic editions share the same three drawings, and the Arabic one reads and binds from the right.
+
+## Method
+
+### 1 · A place is a point of the drawing
+
+<Excerpt region="anchors" />
+
+An anchor is a point in fractions of the picture's width and height, so it holds at any size the frame sets the map, and when the reflow ladder sets a map smaller its names go with it. `km()` turns the kilometres the drawing is laid out in into those fractions: a town's dot and its name both come from `TOWNS` and cannot drift apart. The anchor holds what belongs to the place, not to the language: its style, the turn of a river's or a range's name along its course, and the side of the name that stands at the point. Town names stand centred above their dot, because `align: 'start'` would be the left of an English name and the right of an Arabic one.
+
+### 2 · Three Markdown files, one resource
+
+<Excerpt region="resources" />
+
+The resource has one SVG and one list of anchors for every edition. Each edition writes one `::label[…]{at="…"}` line per anchor inside `:::figure{resource="relief" slot="map"}`, so `::label[Calvera Plain]{at="plain"}` and `::label[Llanura de Calvera]{at="plain"}` stand on the same spot, broken into two lines by the anchor's `width` when they need it. Only the alternative text changes with the edition, since a resource takes no words from the Markdown. An anchor with a style that an edition leaves without a label is reported as `anchorUnlabelled`, and a label whose `at` names no anchor is not drawn and is reported as `labelAnchorUnknown`.
+
+### 3 · A sheet and a double sheet
+
+<Excerpt region="templates" />
+
+Both templates have the same five frames, so a plate's Markdown has the same shape on one page or on two: the title, the text that names no slot, the map, the key and the activities. On the double sheet `spread: true` lays both pages as one sheet 390 mm wide, and only the map frame sets `crossGutter`, so it runs over the spine while the text and the boxes keep to their own pages. The text, the map and the key form a `stack` group: in the bench's stress test, with every text 30 % longer, the Arabic edition sets the locator map at 87.5 % and the boxes under it move up, with no warning.
+
+### 4 · One palette for the page, the tints and the key
+
+<Excerpt region="palette" />
+
+The five height tints are palette entries. The drawing fills its bands with `palette.low` to `palette.peak`, and the key of plate 2 writes `:swatch{color="low"}` with the same ids, so one new hex changes the map and its key together. Water names in `water` have a contrast of 6:1 on the shallow sea and 4.5:1 on the deep one, and the white title has 7.2:1 on `band`.
+
+### 5 · The Arabic edition
+
+The code is [the short answer](#the-short-answer) above. `locale: 'ar'` sets the text right to left and binds the book on the right, so the spread opens on the right-hand page and the frames follow the mirrored content area: the title and the text stand on the right, the key to the right of the activities. The maps are not mirrored, and each Arabic name stands where its place is drawn. The label styles lose their italics and letter-spacing in Arabic and grow by 15 %, since Kufi sets small. The decoration and the folios stay on the sheet, so the kicker moves to the top right and the folios swap sides.
+
+## Variations
+
+### Name a place the map has no anchor for
+
+A label can stand at a point given in percentages of the picture, with a style of its own.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Nema Light]{at="7% 68%" style="town"}
+ ::label[Misty Ocean]{at="ocean"}
+```
+
+### Number the maps and caption them
+
+Give the map type a counter and a prefix, and each resource a caption: see <RecipeLink slug="atlas-map-sheet">the atlas sheet with numbered maps</RecipeLink>, which captions its maps on a blue bar.
+
+## Pitfalls
+
+- The alternative text of each map lives in the resource (`ALT`), one string per edition: a resource takes no words from the Markdown, so this is the one text of the page outside `content.<lang>.md`.
+- On a right-to-left page the frames are mirrored with the content area, but the template's decoration is not: place a kicker by edition, as `kicker` does.
+- A frame in two columns may cut a paragraph one line before its end and leave that line at the head of the second column. Read the columns of each edition and move a sentence from one paragraph to the next when that happens.

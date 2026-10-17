@@ -1,0 +1,64 @@
+---
+title: "Un atles escolar retolat des del Markdown"
+summary: "Mapes dibuixats sense cap lletra i retolats amb línies ::label a les àncores de cada recurs, en pàgines compostes i a doble pàgina, en tres llengües."
+plain: "Tres pàgines d’un atles escolar d’un país inventat. Els mapes són dibuixos sense text; tots els noms s’escriuen al text, de manera que una traducció canvia les paraules i deixa els mapes com són."
+description: "Un atles escolar compost amb Postext: mapes retolats des del Markdown a les àncores del recurs, un mapa a doble pàgina i una edició àrab."
+question: "Com poso els noms d’un mapa des del text, perquè cada traducció faci servir el mateix dibuix?"
+aliases: ["atles", "atles escolar", "rètols de mapa", "topònims", "àncores", "estils de rètol", "mapa a doble pàgina", "plec", "de dreta a esquerra", "rètols girats", "map labels"]
+---
+
+## Què compondràs
+
+Tres làmines d’un atles escolar de Varenia, un país inventat per a aquesta recepta. La làmina 1 el situa al seu continent. La làmina 2 estén el mapa físic per les dues pàgines, del mar de Lira a la frontera amb Brunavia, en tintes d’altitud, amb tres rius i la línia d’un tall. La làmina 3 dibuixa aquest tall a través de la serra Albar. Cada làmina s’obre amb una banda blava i es tanca amb una llegenda o un vocabulari i unes activitats per a la classe. Els dibuixos no porten cap lletra: els 43 noms, cotes i xifres de l’escala són línies `::label` del Markdown, col·locades en àncores que guarda cada mapa. Per això les edicions en castellà, anglès i àrab comparteixen els tres dibuixos, i l’àrab es llegeix i s’enquaderna per la dreta.
+
+## Elaboració
+
+### 1 · Un lloc és un punt del dibuix
+
+<Excerpt region="anchors" />
+
+Una àncora és un punt en fraccions de l’amplada i l’alçada de la imatge, així que val a qualsevol mida a què el marc posi el mapa, i quan l’escala d’ajust redueix un mapa, els seus noms se’n van amb ell. `km()` converteix en aquestes fraccions els quilòmetres en què està traçat el dibuix: el punt d’una ciutat i el seu nom surten tots dos de `TOWNS` i no es poden separar. L’àncora guarda el que és del lloc i no de la llengua: el seu estil, el gir del nom d’un riu o d’una serra al llarg del seu curs i el costat del rètol que es recolza en el punt. Els noms de ciutat van centrats damunt del seu punt, perquè `align: 'start'` seria l’esquerra d’un nom en català i la dreta d’un en àrab.
+
+### 2 · Tres fitxers de Markdown, un sol recurs
+
+<Excerpt region="resources" />
+
+El recurs té un sol SVG i una sola llista d’àncores per a totes les edicions. Cada edició escriu una línia `::label[…]{at="…"}` per àncora dins de `:::figure{resource="relief" slot="map"}`, de manera que `::label[Llanura de Calvera]{at="plain"}` i `::label[Calvera Plain]{at="plain"}` cauen al mateix lloc, partits en dues línies pel `width` de l’àncora quan cal. Només el text alternatiu canvia amb l’edició, perquè un recurs no pren paraules del Markdown. Una àncora amb estil que una edició deixa sense rètol dona l’avís `anchorUnlabelled`, i un rètol el `at` del qual no anomena cap àncora no es dibuixa i dona `labelAnchorUnknown`.
+
+### 3 · Una làmina i una làmina doble
+
+<Excerpt region="templates" />
+
+Les dues plantilles tenen els mateixos cinc marcs, així que el Markdown d’una làmina té la mateixa forma en una pàgina o en dues: el títol, el text que no anomena cap ranura, el mapa, la llegenda i les activitats. A la làmina doble, `spread: true` maqueta les dues pàgines com un sol full de 390 mm, i només el marc del mapa porta `crossGutter`: travessa el llom mentre el text i els requadres es queden a la seva pàgina. El text, el mapa i la llegenda formen un grup `stack`; a la prova d’estrès del banc, amb tots els textos un 30 % més llargs, l’edició àrab posa el mapa de situació al 87,5 % i els requadres de sota pugen, sense cap avís.
+
+### 4 · Una paleta per a la pàgina, les tintes i la llegenda
+
+<Excerpt region="palette" />
+
+Les cinc tintes d’altitud són entrades de la paleta. El dibuix omple les seves bandes amb `palette.low` a `palette.peak` i la llegenda de la làmina 2 escriu `:swatch{color="low"}` amb els mateixos identificadors, així que un hexadecimal nou canvia alhora el mapa i la seva llegenda. Els noms d’aigua, en `water`, tenen un contrast de 6:1 sobre el mar poc profund i de 4,5:1 sobre el fons, i el títol blanc, de 7,2:1 sobre `band`.
+
+### 5 · L’edició àrab
+
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. `locale: 'ar'` posa el text de dreta a esquerra i enquaderna el llibre per la dreta, així que el plec s’obre a la pàgina de la dreta i els marcs segueixen l’àrea de contingut reflectida: el títol i el text queden a la dreta i la llegenda, a la dreta de les activitats. Els mapes no es reflecteixen, i cada nom àrab es col·loca on hi ha dibuixat el seu lloc. En àrab els estils de rètol perden la cursiva i l’espaiat entre lletres i creixen un 15 %, perquè el cúfic compon petit. La decoració i els folis continuen sobre el full, així que l’avanttítol passa a dalt a la dreta i els folis canvien de costat.
+
+## Variants
+
+### Retola un lloc que no té àncora
+
+Un rètol pot anar en un punt donat en percentatges de la imatge, amb el seu propi estil.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Faro de Nema]{at="7% 68%" style="town"}
+ ::label[Océano Brumoso]{at="ocean"}
+```
+
+### Numera els mapes i posa’ls peu
+
+Dona al tipus de mapa un comptador i un prefix, i a cada recurs un peu: mira <RecipeLink slug="atlas-map-sheet">la làmina d’atles amb mapes numerats</RecipeLink>, que posa els peus dels seus mapes sobre una barra blava.
+
+## Errors freqüents
+
+- El text alternatiu de cada mapa és al recurs (`ALT`), una cadena per edició: un recurs no pren paraules del Markdown, així que és l’únic text de la pàgina que queda fora de `content.<lang>.md`.
+- En una pàgina de dreta a esquerra els marcs es reflecteixen amb l’àrea de contingut, però la decoració de la plantilla no: col·loca l’avanttítol segons l’edició, com fa `kicker`.
+- Un marc a dues columnes pot tallar un paràgraf una línia abans del final i deixar aquesta línia al capdamunt de la segona columna. Revisa les columnes de cada edició i passa una frase d’un paràgraf al següent quan passi.

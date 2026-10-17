@@ -1,0 +1,138 @@
+{
+  "$schema": "../../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 157,
+  "status": "draft",
+  "chapter": "figures",
+  "order": 110,
+  "level": 3,
+  "genres": [
+    "textbook"
+  ],
+  "outputs": [
+    "canvas"
+  ],
+  "features": {
+    "primary": [
+      "figure-labels",
+      "composed-spreads",
+      "composed-pages"
+    ],
+    "also": [
+      "frame-groups",
+      "swatches",
+      "text-direction",
+      "right-binding",
+      "arabic-fonts",
+      "resources",
+      "resource-types",
+      "callout-styles",
+      "numbered-lists",
+      "paragraph-styles",
+      "design-elements",
+      "mirrored-margins",
+      "color-palette",
+      "canvas-rendering"
+    ]
+  },
+  "answers": [
+    "Q181",
+    "Q182"
+  ],
+  "gaps": [],
+  "gotchas": [],
+  "explainsWarnings": [
+    "labelAnchorUnknown",
+    "anchorUnlabelled"
+  ],
+  "workarounds": [],
+  "related": [
+    "atlas-map-sheet",
+    "bilingual-arabic-english-report"
+  ],
+  "engine": {
+    "postext": "1.37.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "images",
+    "arabic",
+    "book"
+  ],
+  "sample": {
+    "locales": [
+      "es",
+      "en",
+      "ar"
+    ]
+  },
+  "capture": {
+    "hero": [
+      2,
+      3
+    ],
+    "card": "spread",
+    "expect": {
+      "pages": [
+        4,
+        4
+      ]
+    }
+  },
+  "folio": {
+    "paper": {
+      "type": "coatedMatte",
+      "grammage": 115,
+      "showThrough": false,
+      "shade": "#fdfdfb"
+    },
+    "binding": {
+      "type": "hardcover",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#1d5f73"
+    },
+    "surface": {
+      "type": "oak"
+    },
+    "lighting": {
+      "environment": "daylight"
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Source Sans 3",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Source Serif 4",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Naskh Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Kufi Arabic",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-17",
+  "updated": "2026-10-17"
+}
