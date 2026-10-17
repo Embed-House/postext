@@ -210,8 +210,8 @@ const isTopLeftPage = (el: { placement?: DesignElement['placement'] }): boolean 
 function rectOf(el: DesignElement): { x: number; y: number; w?: number; h?: number } | undefined {
   if (!isTopLeftPage(el)) return undefined;
   const p = el.placement;
-  const w = typeof p.size?.width === 'object' ? toMm(p.size.width) : undefined;
-  const h = typeof p.size?.height === 'object' ? toMm(p.size.height) : undefined;
+  const w = typeof p.size?.width === 'object' && 'value' in p.size.width ? toMm(p.size.width) : undefined;
+  const h = typeof p.size?.height === 'object' && 'value' in p.size.height ? toMm(p.size.height) : undefined;
   return { x: toMm(p.offset?.x) ?? 0, y: toMm(p.offset?.y) ?? 0, ...(w !== undefined ? { w } : {}), ...(h !== undefined ? { h } : {}) };
 }
 

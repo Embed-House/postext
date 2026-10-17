@@ -467,6 +467,7 @@ export type {
   ElementAnchor,
   ElementPlacement,
   ElementSize,
+  ElementSizeTo,
   ElementBoxStyle,
   TextOverflow,
   DesignTextStroke,

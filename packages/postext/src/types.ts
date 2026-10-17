@@ -6186,7 +6186,21 @@ export interface ElementAnchor {
   edge: AnchorEdge;
 }
 
-export type ElementSize = 'auto' | 'fill' | Dimension;
+/** A size that runs from the element's anchor point to an edge of another
+ *  box (#928): `to` names it as an anchor does (`'container'`, `'page'`,
+ *  `'bleed'`, `'outer'`, `'#id'` of another element or, on a composed
+ *  page's decoration, of a frame or group) and `edge` which of its edges:
+ *  `'top'` / `'bottom'` for a height, `'left'` / `'right'` for a width. A
+ *  ground from the foot of a band down to the bleed:
+ *  `height: { to: 'bleed', edge: 'bottom' }`; it follows the band when the
+ *  band moves. The other side's edge (a width to `'top'`) reads as
+ *  `'fill'`; an edge behind the anchor point gives 0. */
+export interface ElementSizeTo {
+  to: ElementAnchor['to'];
+  edge: 'top' | 'bottom' | 'left' | 'right';
+}
+
+export type ElementSize = 'auto' | 'fill' | Dimension | ElementSizeTo;
 
 export interface ElementPlacement {
   anchor: ElementAnchor;

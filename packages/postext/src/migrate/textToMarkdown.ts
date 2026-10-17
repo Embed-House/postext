@@ -670,7 +670,7 @@ function frameConfig(f: PlannedFrame): FrameConfig {
     ? { anchor: { to: 'page' as const, edge: 'top-left' as const }, offset: { x: { value: round3(first.x), unit: 'mm' as const }, y: { value: round3(first.y), unit: 'mm' as const } } }
     : { anchor: el.placement.anchor, ...(el.placement.offset ? { offset: el.placement.offset } : {}) };
   const width = f.width !== undefined ? { value: round3(f.width), unit: 'mm' as const }
-    : typeof el.placement.size?.width === 'object' ? el.placement.size.width : undefined;
+    : typeof el.placement.size?.width === 'object' && 'value' in el.placement.size.width ? el.placement.size.width : undefined;
   return {
     name: f.name!,
     placement,
