@@ -1163,6 +1163,11 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   (`VDTBlock.letterSpacing`) and painted as a paragraph style's tracking is (#907). A paragraph in a
   `:::paragraphs` fence keeps its own style's tracking, code listings none. A frame takes it through its callout
   style; a frame's own override of it is the `look` of #976.
+- **Removing an inherited decoration element (#975).** `decoration.elements` of a patch may hold
+  `{ id, remove: true }` (`DecorationRemoval`): `mergePatch` drops the element of that `id` merged so far, parents
+  first and a variant after the chain, as `remove: true` does for frames and groups. A removal naming nothing is
+  silent (no warning kind); a new element of the same `id` may follow it. The Sandbox lists the inherited elements
+  with a switch each and writes the removal in the scope being edited.
 
 ## 6. Source map contract
 

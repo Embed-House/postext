@@ -530,7 +530,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 - `area`、`header`、`overflowTemplate`などの項目は親の値を置き換えます。`grid`はキーごとに統合します。`spread`、`gutter`、`role`も継承しますが、`id`、`name`、`extends`はテンプレート自身のものです。
 - `frames`と`groups`は**名前で**統合します。継承した項目と同じ名前の項目は、書いたフィールドだけを変えて残りを保ちます（`fit`、`overflow`、`padding`はキーごとに統合し、`placement`は丸ごと置き換えます）。`remove: true`はその項目を取り除き、新しい名前は継承した項目の後に加わります。
-- 装飾の要素も同じように`id`で統合します。新しいidの要素やidのない要素は加わります。
+- 装飾の要素も同じように`id`で統合します。新しいidの要素やidのない要素は加わります。postext 1.42 から、子テンプレートやバリアントの`decoration.elements`に`{ id: 'head-even', remove: true }`と書くと、継承した同じ`id`の要素を外せます。枠の`remove: true`と同じ働きです。継承していない`id`を指定しても何も起きません。同じリストの中で、削除のあとに同じ`id`の新しい要素を続けて書くこともできます。
 
 `variants.recto`と`variants.verso`はテンプレートと同じように書き、同じように統合して、右ページと左ページに適用します。適用は`extends`の連鎖全体の後で、根のテンプレートのバリアントが先です。見開きは両方の側を持つので、どちらのバリアントも適用しません。
 

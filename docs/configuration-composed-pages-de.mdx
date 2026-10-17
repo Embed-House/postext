@@ -530,7 +530,7 @@ Eine Vorlage mit `extends` geht von der Vorlage aus, die sie nennt (und die selb
 
 - Ein Feld wie `area`, `header` oder `overflowTemplate` ersetzt das der Elternvorlage. `grid` wird Schlüssel für Schlüssel zusammengeführt. Auch `spread`, `gutter` und `role` werden geerbt; `id`, `name` und `extends` gehören der Vorlage selbst.
 - `frames` und `groups` werden **nach Namen** zusammengeführt: Ein Eintrag mit dem Namen eines geerbten ändert die Felder, die er schreibt, und behält die übrigen (`fit`, `overflow` und `padding` werden Schlüssel für Schlüssel zusammengeführt; `placement` wird als Ganzes ersetzt); `remove: true` entfernt ihn; ein neuer Name wird nach den geerbten angefügt.
-- Dekorationselemente werden auf dieselbe Weise nach `id` zusammengeführt; ein Element mit neuer ID oder ohne ID wird angefügt.
+- Dekorationselemente werden auf dieselbe Weise nach `id` zusammengeführt; ein Element mit neuer ID oder ohne ID wird angefügt. Seit postext 1.42 nimmt `{ id: 'kopf-gerade', remove: true }` in `decoration.elements` einer Kindvorlage oder Variante das geerbte Element mit dieser `id` heraus, wie `remove: true` es bei einem Rahmen tut; eine `id`, die die Vorlage nicht erbt, ändert nichts. Ein neues Element mit derselben `id` kann der Entfernung in derselben Liste folgen.
 
 `variants.recto` und `variants.verso` werden wie eine Vorlage geschrieben und auf dieselbe Weise zusammengeführt, auf einer rechten oder einer linken Seite. Sie gelten nach der ganzen `extends`-Kette, die Variante der Wurzel zuerst. Eine Doppelseite hat beide Seiten, daher gilt für sie keine Variante.
 

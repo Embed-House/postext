@@ -530,7 +530,7 @@ Un modello con `extends` parte dal modello che indica (che a sua volta può este
 
 - Un campo come `area`, `header` o `overflowTemplate` sostituisce quello del genitore. `grid` si unisce chiave per chiave. Anche `spread`, `gutter` e `role` si ereditano; `id`, `name` ed `extends` sono propri del modello.
 - `frames` e `groups` si uniscono **per nome**: una voce con il nome di una ereditata cambia i campi che scrive e tiene gli altri (`fit`, `overflow` e `padding` si uniscono chiave per chiave; `placement` si sostituisce per intero); `remove: true` la elimina; un nome nuovo si aggiunge dopo quelli ereditati.
-- Gli elementi della decorazione si uniscono per `id` allo stesso modo; un elemento con un id nuovo, o senza id, si aggiunge.
+- Gli elementi della decorazione si uniscono per `id` allo stesso modo; un elemento con un id nuovo, o senza id, si aggiunge. Da postext 1.42, `{ id: 'testata-pari', remove: true }` in `decoration.elements` di un modello figlio o di una variante toglie l’elemento ereditato con quell’`id`, come `remove: true` fa per una cornice; un `id` che il modello non eredita non cambia nulla. Un nuovo elemento con lo stesso `id` può seguire la rimozione nella stessa lista.
 
 `variants.recto` e `variants.verso` si scrivono come un modello e si uniscono allo stesso modo, su una pagina di destra o di sinistra. Si applicano dopo tutta la catena di `extends`, prima la variante della radice. Una doppia pagina ha entrambi i lati, quindi nessuna variante vale per essa.
 

@@ -9,6 +9,7 @@
 import type {
   CalloutPaddingConfig,
   ColorValue,
+  DesignElement,
   DesignSlot,
   Dimension,
   ElementPlacement,
@@ -186,6 +187,21 @@ export interface PageTemplateGrid {
   rowGap?: Dimension;
 }
 
+/** In a template patch (`extends`, `variants`): takes the decoration
+ *  element `id` of the template it inherits out (#975), as `remove: true`
+ *  does for a frame or a group. An id the patch inherits no element under
+ *  changes nothing. */
+export interface DecorationRemoval {
+  id: string;
+  remove: true;
+}
+
+/** The decoration of a template or of a patch: elements, and in a patch
+ *  the removals of inherited ones. */
+export interface TemplateDecoration {
+  elements: (DesignElement | DecorationRemoval)[];
+}
+
 /** The fields a variant or a child template may override. */
 export interface PageTemplatePatch {
   /** The rectangle frame coordinates refer to. Default `'content'` (the
@@ -198,8 +214,8 @@ export interface PageTemplatePatch {
   /** Merged by `name` over the parent's (`remove: true` drops one). */
   groups?: FrameGroupConfig[];
   /** Elements merged by `id` over the parent's; elements with no id are
-   *  added. */
-  decoration?: DesignSlot;
+   *  added; `{ id, remove: true }` takes an inherited one out (#975). */
+  decoration?: TemplateDecoration;
   /** `false` hides; unset inherits the running section's. */
   header?: DesignSlot | false;
   footer?: DesignSlot | false;

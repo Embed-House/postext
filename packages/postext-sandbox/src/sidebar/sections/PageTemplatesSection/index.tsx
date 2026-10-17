@@ -14,10 +14,14 @@ import {
   createTemplate,
   descendantsOf,
   duplicateTemplate,
+  inheritedDecoration,
+  joinDecoration,
   namesInUse,
   removeTemplate,
   renameTemplate,
+  setInheritedElementHidden,
   slugify,
+  splitDecoration,
   templateAt,
   templateFromLayout,
   uniqueName,
@@ -242,7 +246,9 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
   };
 
   const grid = scoped.grid;
-  const decoration: DesignSlot = scoped.decoration ?? { elements: [] };
+  // The elements the scope draws and the inherited ones it hides (#975).
+  const { slot: decoration, hidden: hiddenElements } = splitDecoration(scoped.decoration);
+  const inherited = inheritedDecoration(templates, id, effScope).elements;
   const addNewFrame = () => {
     const name = uniqueName(namesInUse(templates, id), 'frame');
     write(addFrame(templates, id, effScope, { name, width: { value: 60, unit: 'mm' }, height: { value: 40, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: MM0, y: MM0 } } }));
@@ -394,8 +400,23 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             ]}
             raw={decoration}
             resolved={resolveDesignSlot(decoration, 'part')}
-            onUpdate={(slot) => set({ decoration: slot && slot.elements && slot.elements.length > 0 ? slot : undefined })}
+            onUpdate={(slot) => set({ decoration: joinDecoration(slot && slot.elements ? slot : undefined, hiddenElements) })}
           />
+          {inherited.length > 0 && (
+            <div className="mt-2">
+              <p className="mb-1 text-[0.75rem] font-medium">{labels.pageTemplatesDecorationInherited}</p>
+              <p className="mb-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesDecorationInheritedHint}</p>
+              {inherited.map((el) => (
+                <ToggleSwitch
+                  key={el.id}
+                  label={`${el.id} (${el.kind})`}
+                  checked={!hiddenElements.includes(el.id)}
+                  onChange={(show) => write(setInheritedElementHidden(templates, id, effScope, el.id, !show))}
+                  tooltip={labels.pageTemplatesDecorationInheritedShowTooltip}
+                />
+              ))}
+            </div>
+          )}
         </FieldGroup>
       </div>
     </SearchScope>

@@ -530,7 +530,7 @@ Una plantilla amb `extends` parteix de la plantilla que anomena (que al seu torn
 
 - Un camp com `area`, `header` o `overflowTemplate` substitueix el del pare. `grid` es combina clau a clau. `spread`, `gutter` i `role` també s'hereten; `id`, `name` i `extends` són propis de la plantilla.
 - `frames` i `groups` es combinen **per nom**: una entrada amb el nom d'una d'heretada canvia els camps que escriu i conserva la resta (`fit`, `overflow` i `padding` es combinen clau a clau; `placement` se substitueix sencer); `remove: true` la treu; un nom nou s'afegeix darrere dels heretats.
-- Els elements de decoració es combinen per `id` de la mateixa manera; un element amb un id nou, o sense id, s'afegeix.
+- Els elements de decoració es combinen per `id` de la mateixa manera; un element amb un id nou, o sense id, s'afegeix. Des de postext 1.42, `{ id: 'capcalera-parell', remove: true }` a `decoration.elements` d'una plantilla filla o d'una variant treu l'element heretat amb aquest `id`, com fa `remove: true` amb un marc; un `id` que la plantilla no hereta no canvia res. Un element nou amb el mateix `id` pot seguir l'eliminació a la mateixa llista.
 
 `variants.recto` i `variants.verso` s'escriuen com una plantilla i es combinen igual, en una pàgina senar o en una parell. S'apliquen després de tota la cadena d'`extends`, primer la variant de l'arrel. Una doble pàgina té els dos costats, de manera que no se li aplica cap variant.
 

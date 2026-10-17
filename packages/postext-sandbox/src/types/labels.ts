@@ -3748,6 +3748,9 @@ export interface SandboxLabels {
   pageTemplatesHeadTooltip: string;
   pageTemplatesGroupDecoration: string;
   pageTemplatesGroupDecorationDescription: string;
+  pageTemplatesDecorationInherited: string;
+  pageTemplatesDecorationInheritedHint: string;
+  pageTemplatesDecorationInheritedShowTooltip: string;
   pageTemplatesFrameGroupIdentity: string;
   pageTemplatesFrameName: string;
   pageTemplatesFrameNameTooltip: string;

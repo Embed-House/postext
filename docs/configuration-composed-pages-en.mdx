@@ -530,7 +530,7 @@ A template with `extends` starts from the template it names (which may itself ex
 
 - A field such as `area`, `header` or `overflowTemplate` replaces the parent's. `grid` merges key by key. `spread`, `gutter` and `role` are inherited too; `id`, `name` and `extends` are the template's own.
 - `frames` and `groups` merge **by name**: an entry with the name of an inherited one changes the fields it writes and keeps the rest (`fit`, `overflow` and `padding` merge key by key; `placement` is replaced whole); `remove: true` drops it; a new name is added after the inherited ones.
-- Decoration elements merge by `id` the same way; an element with a new id, or none, is added.
+- Decoration elements merge by `id` the same way; an element with a new id, or none, is added. Since postext 1.42, `{ id: 'head-even', remove: true }` in a child template's or variant's `decoration.elements` takes the inherited element of that `id` out, as `remove: true` does for a frame; an `id` the template does not inherit changes nothing. A new element with the same `id` can follow the removal in the same list.
 
 `variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it.
 

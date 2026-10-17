@@ -13,6 +13,8 @@
  */
 
 import type {
+  DecorationRemoval,
+  DesignElement,
   DesignSlot,
   FrameConfig,
   FrameGroupConfig,
@@ -170,7 +172,12 @@ function mergeTemplatePatch(parent: PageTemplate, child: PageTemplate): PageTemp
   if (parent.decoration || child.decoration) {
     const elements = clone(parent.decoration?.elements ?? []);
     for (const el of child.decoration?.elements ?? []) {
-      const i = el.id ? elements.findIndex((x) => x.id === el.id) : -1;
+      const i = isElementId(el) ? elements.findIndex((x) => x.id === el.id) : -1;
+      // A removal (#975) takes the inherited element out.
+      if (isRemoval(el)) {
+        if (i >= 0) elements.splice(i, 1);
+        continue;
+      }
       if (i >= 0) elements[i] = { ...elements[i]!, ...clone(el) } as typeof el;
       else elements.push(clone(el));
     }
@@ -223,6 +230,81 @@ export function updateTemplate(templates: Templates, id: string, scope: Template
     if (Object.keys(scoped).length > 0) out = withScope(out, scope, (p) => applyFields(p, scoped));
     return out;
   });
+}
+
+// ---------------------------------------------------------------------------
+// Decoration inherited from another template (#975)
+// ---------------------------------------------------------------------------
+
+/** Whether a decoration entry takes the inherited element of its `id` out
+ *  (`{ id, remove: true }`) instead of drawing one. */
+export function isRemoval(el: DesignElement | DecorationRemoval): el is DecorationRemoval {
+  return (el as { remove?: unknown }).remove === true;
+}
+
+const isElementId = (el: DesignElement | DecorationRemoval): boolean => typeof el.id === 'string' && el.id !== '';
+
+/** A scope's decoration split in the elements it draws and the ids it
+ *  hides, so the slot editor shows only the first and writes them back
+ *  with the second kept ({@link joinDecoration}). */
+export function splitDecoration(decoration: { elements: (DesignElement | DecorationRemoval)[] } | undefined): { slot: DesignSlot; hidden: string[] } {
+  const slot: DesignSlot = { elements: [] };
+  const hidden: string[] = [];
+  for (const el of decoration?.elements ?? []) {
+    if (isRemoval(el)) hidden.push(el.id);
+    else slot.elements.push(el);
+  }
+  return { slot, hidden };
+}
+
+/** The inverse of {@link splitDecoration}: the elements drawn, then the
+ *  removals; undefined when both are empty. */
+export function joinDecoration(slot: DesignSlot | undefined, hidden: readonly string[]): { elements: (DesignElement | DecorationRemoval)[] } | undefined {
+  const elements: (DesignElement | DecorationRemoval)[] = [...(slot?.elements ?? []), ...hidden.map((id): DecorationRemoval => ({ id, remove: true }))];
+  return elements.length > 0 ? { elements } : undefined;
+}
+
+/** The decoration elements a scope inherits: those of the templates it
+ *  `extends` (root first) and, for a variant, of its own base, less what
+ *  later patches took out; not the ones the scope redefines by `id` (they
+ *  are its own). With the ids the scope hides. */
+export function inheritedDecoration(templates: Templates, id: string, scope: TemplateScope): { elements: DesignElement[]; hidden: string[] } {
+  const own = templateAt(templates, id)?.template;
+  if (!own) return { elements: [], hidden: [] };
+  const elements: DesignElement[] = [];
+  const apply = (patch: PageTemplatePatch | undefined): void => {
+    for (const el of patch?.decoration?.elements ?? []) {
+      const i = isElementId(el) ? elements.findIndex((x) => x.id === el.id) : -1;
+      if (isRemoval(el)) {
+        if (i >= 0) elements.splice(i, 1);
+      } else if (i >= 0) elements[i] = { ...elements[i]!, ...el } as DesignElement;
+      else elements.push(el);
+    }
+  };
+  for (const ancestor of ancestorsOf(templates, id).reverse()) apply(templateAt(templates, ancestor)?.template);
+  if (scope !== 'base') apply(own);
+  const scoped = scopeEntry(own, scope);
+  const ownIds = new Set((scoped?.decoration?.elements ?? []).filter((e) => !isRemoval(e)).map((e) => e.id));
+  const hidden = (scoped?.decoration?.elements ?? []).filter(isRemoval).map((e) => e.id);
+  // What the scope hides stays in the list (to show it again): the
+  // elements as they stood before this scope's own removals.
+  return { elements: elements.filter((el) => !ownIds.has(el.id)), hidden };
+}
+
+/** Hide (`hidden: true`) or show again the inherited decoration element
+ *  `elementId` on one template or variant: a `{ id, remove: true }` entry
+ *  in its decoration, taken off to show it. */
+export function setInheritedElementHidden(templates: Templates, id: string, scope: TemplateScope, elementId: string, hidden: boolean): PageTemplate[] {
+  return replaceTemplate(templates, id, (t) =>
+    withScope(t, scope, (p) => {
+      const { slot, hidden: ids } = splitDecoration(p.decoration);
+      const next = hidden ? (ids.includes(elementId) ? ids : [...ids, elementId]) : ids.filter((x) => x !== elementId);
+      const decoration = joinDecoration(slot, next);
+      const out = { ...p };
+      if (decoration) out.decoration = decoration;
+      else delete out.decoration;
+      return out;
+    }));
 }
 
 // ---------------------------------------------------------------------------
@@ -367,7 +449,7 @@ export function renameFrame(templates: Templates, id: string, from: string, to: 
       });
     }
     if (p.decoration?.elements) {
-      out.decoration = { elements: p.decoration.elements.map((el) => (el.placement?.anchor.to === `#${from}` ? { ...el, placement: { ...el.placement, anchor: { ...el.placement.anchor, to: `#${to}` } } } : el)) } as DesignSlot;
+      out.decoration = { elements: p.decoration.elements.map((el) => (!isRemoval(el) && el.placement?.anchor.to === `#${from}` ? { ...el, placement: { ...el.placement, anchor: { ...el.placement.anchor, to: `#${to}` } } } : el)) };
     }
     return out;
   };

@@ -298,6 +298,12 @@ function mergePatch(target: Merged, patch: PageTemplatePatch, path: string, issu
       const elementPath = `${path}/decoration/elements/${j}`;
       const id = typeof el.id === 'string' && el.id !== '' ? el.id : undefined;
       const at = id === undefined ? -1 : target.elements.findIndex((e) => e.value.id === id);
+      // `remove: true` takes the inherited element out (#975); a removal
+      // naming nothing inherited changes nothing.
+      if (el.remove === true) {
+        if (at >= 0) target.elements.splice(at, 1);
+        return;
+      }
       if (at >= 0) {
         const merged = { ...target.elements[at]!.value } as Record<string, unknown>;
         for (const [k, v] of Object.entries(el)) if (v !== undefined) merged[k] = v;

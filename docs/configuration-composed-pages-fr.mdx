@@ -530,7 +530,7 @@ Un gabarit doté d’`extends` part du gabarit qu’il nomme (qui peut lui-même
 
 - Un champ comme `area`, `header` ou `overflowTemplate` remplace celui du parent. `grid` se fusionne clé par clé. `spread`, `gutter` et `role` sont hérités aussi ; `id`, `name` et `extends` sont propres au gabarit.
 - `frames` et `groups` se fusionnent **par nom** : une entrée qui porte le nom d’une entrée héritée change les champs qu’elle écrit et garde les autres (`fit`, `overflow` et `padding` se fusionnent clé par clé ; `placement` est remplacé en entier) ; `remove: true` la supprime ; un nom nouveau s’ajoute après les entrées héritées.
-- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute.
+- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute. Depuis postext 1.42, `{ id: 'tete-paire', remove: true }` dans `decoration.elements` d’un gabarit enfant ou d’une variante retire l’élément hérité portant cet `id`, comme `remove: true` le fait pour un bloc ; un `id` que le gabarit n’hérite pas ne change rien. Un nouvel élément du même `id` peut suivre le retrait dans la même liste.
 
 `variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
 

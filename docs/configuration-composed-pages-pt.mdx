@@ -530,7 +530,7 @@ Um modelo com `extends` parte do modelo que nomeia (que por sua vez pode estende
 
 - Um campo como `area`, `header` ou `overflowTemplate` substitui o do pai. `grid` é mesclado chave a chave. `spread`, `gutter` e `role` também são herdados; `id`, `name` e `extends` são do próprio modelo.
 - `frames` e `groups` são mesclados **pelo nome**: uma entrada com o nome de uma herdada muda os campos que escreve e mantém o resto (`fit`, `overflow` e `padding` são mesclados chave a chave; `placement` é substituído inteiro); `remove: true` a remove; um nome novo é acrescentado depois dos herdados.
-- Os elementos de decoração são mesclados por `id` do mesmo jeito; um elemento com um id novo, ou sem id, é acrescentado.
+- Os elementos de decoração são mesclados por `id` do mesmo jeito; um elemento com um id novo, ou sem id, é acrescentado. Desde o postext 1.42, `{ id: 'cabecalho-par', remove: true }` em `decoration.elements` de um modelo filho ou de uma variante tira o elemento herdado com esse `id`, como `remove: true` faz com um bloco; um `id` que o modelo não herda não muda nada. Um elemento novo com o mesmo `id` pode seguir a remoção na mesma lista.
 
 `variants.recto` e `variants.verso` são escritos como um modelo e mesclados do mesmo jeito, numa página ímpar ou numa par. Eles se aplicam depois de toda a cadeia de `extends`, primeiro a variante da raiz. Uma página dupla tem os dois lados, então nenhuma variante se aplica a ela.
 

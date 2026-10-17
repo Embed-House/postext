@@ -530,7 +530,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 - `area`、`header`或`overflowTemplate`这类字段替换父模板的值。`grid`逐键合并。`spread`、`gutter`和`role`也会继承；`id`、`name`和`extends`属于模板自己。
 - `frames`和`groups`**按名称**合并：与继承项同名的条目改动它写出的字段，其余保留（`fit`、`overflow`和`padding`逐键合并；`placement`整体替换）；`remove: true`去掉该项；新名称追加在继承项之后。
-- 装饰元素以同样的方式按`id`合并；id是新的或没有id的元素会被追加。
+- 装饰元素以同样的方式按`id`合并；id是新的或没有id的元素会被追加。自 postext 1.42 起，在子模板或变体的`decoration.elements`中写`{ id: 'head-even', remove: true }`，会去掉所继承的、`id`相同的元素，作用与框的`remove: true`相同；模板并未继承的`id`则不起作用。同一列表中，删除之后可以紧跟一个同`id`的新元素。
 
 `variants.recto`和`variants.verso`的写法与模板相同，合并方式也相同，分别作用于右页和左页。它们在整条`extends`链之后应用，根模板的变体最先应用。跨页同时有两面，所以不应用任何变体。
 

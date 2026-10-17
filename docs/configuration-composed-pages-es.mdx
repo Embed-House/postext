@@ -530,7 +530,7 @@ Una plantilla con `extends` parte de la plantilla que nombra (que a su vez puede
 
 - Un campo como `area`, `header` u `overflowTemplate` sustituye al del padre. `grid` se combina clave a clave. `spread`, `gutter` y `role` también se heredan; `id`, `name` y `extends` son propios de la plantilla.
 - `frames` y `groups` se combinan **por nombre**: una entrada con el nombre de una heredada cambia los campos que escribe y conserva el resto (`fit`, `overflow` y `padding` se combinan clave a clave; `placement` se sustituye entero); `remove: true` la quita; un nombre nuevo se añade detrás de los heredados.
-- Los elementos de decoración se combinan por `id` de la misma manera; un elemento con un id nuevo, o sin id, se añade.
+- Los elementos de decoración se combinan por `id` de la misma manera; un elemento con un id nuevo, o sin id, se añade. Desde postext 1.42, `{ id: 'cabecera-par', remove: true }` en `decoration.elements` de una plantilla hija o de una variante quita el elemento heredado con ese `id`, como `remove: true` hace con un marco; un `id` que la plantilla no hereda no cambia nada. Un elemento nuevo con el mismo `id` puede seguir a la eliminación en la misma lista.
 
 `variants.recto` y `variants.verso` se escriben como una plantilla y se combinan igual, en una página impar o en una par. Se aplican después de toda la cadena de `extends`, primero la variante de la raíz. Una doble página tiene los dos lados, así que no se le aplica ninguna variante.
 
