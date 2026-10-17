@@ -464,7 +464,7 @@ El trozo de la página añadida empieza sin la pestaña ni el título del marco,
 
 ## Registro de recomposición
 
-Cada página compuesta guarda un registro de lo que la composición cambió respecto al dibujo de su plantilla: qué marco creció, cedió espacio o se movió, cuánto, y qué marco lo provocó. Una página cuyo texto cabe en su plantilla no registra nada.
+Cada página compuesta guarda un registro de lo que la composición cambió respecto al dibujo de su plantilla: qué marco creció, cedió espacio o se movió, cuánto, y qué marco lo provocó. Una página cuyo texto cabe en su plantilla no registra nada. Un marco de altura `auto` sin `minHeight` no declara altura propia: en el registro nunca crece, y los marcos anclados a él nunca se mueven, por mucho que se alargue su texto (la entradilla de una revista con las columnas colgadas debajo). Dele como `minHeight` la altura a la que está dibujado para que ambas cosas se registren. La prueba de estrés del Recetario (C38) compara esos marcos con la pasada sobre el texto tal como está escrito.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

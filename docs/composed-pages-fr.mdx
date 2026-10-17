@@ -464,7 +464,7 @@ Le morceau de la page ajoutée s’ouvre sans l’onglet ni le titre du bloc, co
 
 ## Journal de recomposition
 
-Chaque page composée tient un journal de ce que la mise en page a changé par rapport au dessin de son modèle : quel bloc a grandi, a rendu de l’espace ou s’est déplacé, de combien, et quel bloc en est la cause. Une page dont le texte tient dans son modèle n’inscrit rien au journal.
+Chaque page composée tient un journal de ce que la mise en page a changé par rapport au dessin de son modèle : quel bloc a grandi, a rendu de l’espace ou s’est déplacé, de combien, et quel bloc en est la cause. Une page dont le texte tient dans son modèle n’inscrit rien au journal. Un bloc de hauteur `auto` sans `minHeight` ne déclare pas de hauteur propre : il ne grandit jamais dans le journal, et les blocs ancrés à lui ne bougent jamais, quelle que soit la longueur de son texte (le chapeau d’un magazine avec les colonnes accrochées dessous). Donnez-lui comme `minHeight` la hauteur à laquelle il est dessiné pour que les deux soient inscrits. Le test de charge des Recettes (C38) compare ces blocs avec la passe sur le texte tel qu’il est écrit.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

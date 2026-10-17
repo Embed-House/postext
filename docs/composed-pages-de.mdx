@@ -464,7 +464,7 @@ Das Stück auf der hinzugefügten Seite beginnt ohne Reiter und Titel des Rahmen
 
 ## Umbruchprotokoll
 
-Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer.
+Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer. Ein Rahmen mit der Höhe `auto` und ohne `minHeight` gibt keine eigene Höhe an: Im Protokoll wächst er nie, und die an ihm verankerten Rahmen bewegen sich nie, wie lang sein Text auch wird (der Vorspann eines Magazins mit den Spalten darunter). Geben Sie ihm die gezeichnete Höhe als `minHeight`, damit beides protokolliert wird. Der Belastungstest der Rezepte (C38) vergleicht solche Rahmen stattdessen mit dem Durchlauf auf dem Text, wie er geschrieben ist.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

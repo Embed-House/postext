@@ -464,7 +464,7 @@ The piece on the added page opens without the frame's tab and title, as the late
 
 ## Reflow log
 
-Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing.
+Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing. A frame whose height is `auto` and has no `minHeight` declares no height of its own: it never grows in the log, and the frames anchored to it never move, however long its text runs (a magazine standfirst with the columns hung below it). Give it the height it is drawn at as `minHeight` to have both logged. The Cookbook's stress test (C38) compares such frames with the run on the text as written instead.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

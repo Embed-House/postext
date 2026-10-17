@@ -464,7 +464,7 @@ El tros de la pàgina afegida comença sense la pestanya ni el títol del marc, 
 
 ## Registre de reajustament
 
-Cada pàgina composta guarda un registre del que la maquetació ha canviat respecte del dibuix de la plantilla: quin marc ha crescut, ha tornat espai o s'ha desplaçat, quant, i quin marc ho ha provocat. Una pàgina el text de la qual cap a la plantilla no registra res.
+Cada pàgina composta guarda un registre del que la maquetació ha canviat respecte del dibuix de la plantilla: quin marc ha crescut, ha tornat espai o s'ha desplaçat, quant, i quin marc ho ha provocat. Una pàgina el text de la qual cap a la plantilla no registra res. Un marc d'alçada `auto` sense `minHeight` no declara cap alçada pròpia: al registre no creix mai, i els marcs ancorats a ell no es mouen mai, per molt que s'allargui el text (l'entradeta d'una revista amb les columnes penjades a sota). Doneu-li com a `minHeight` l'alçada a què està dibuixat perquè totes dues coses quedin registrades. La prova d'estrès del Receptari (C38) compara aquests marcs amb la passada sobre el text tal com està escrit.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

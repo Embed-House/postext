@@ -464,7 +464,7 @@ O pedaço da página acrescentada abre sem a aba e o título do bloco, como as p
 
 ## Registro de reajustes
 
-Cada página composta guarda um registro do que a diagramação mudou em relação ao desenho do modelo: qual bloco cresceu, devolveu espaço ou se moveu, quanto, e qual bloco provocou a mudança. Uma página cujo texto cabe no modelo não registra nada.
+Cada página composta guarda um registro do que a diagramação mudou em relação ao desenho do modelo: qual bloco cresceu, devolveu espaço ou se moveu, quanto, e qual bloco provocou a mudança. Uma página cujo texto cabe no modelo não registra nada. Um bloco de altura `auto` sem `minHeight` não declara altura própria: no registro ele nunca cresce, e os blocos ancorados nele nunca se movem, por mais que o texto se alongue (a linha fina de uma revista com as colunas penduradas embaixo). Dê a ele como `minHeight` a altura em que está desenhado para que as duas coisas sejam registradas. O teste de estresse das Receitas (C38) compara esses blocos com a passada sobre o texto como está escrito.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm

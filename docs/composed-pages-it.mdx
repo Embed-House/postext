@@ -464,7 +464,7 @@ Il pezzo nella pagina aggiunta si apre senza la linguetta e il titolo della corn
 
 ## Registro di reimpaginazione
 
-Ogni pagina composta tiene un registro di ciò che l’impaginazione ha cambiato rispetto al disegno del modello: quale cornice è cresciuta, ha ceduto spazio o si è spostata, di quanto, e quale cornice ha provocato il cambiamento. Se il testo di una pagina entra nel suo modello, il registro resta vuoto.
+Ogni pagina composta tiene un registro di ciò che l’impaginazione ha cambiato rispetto al disegno del modello: quale cornice è cresciuta, ha ceduto spazio o si è spostata, di quanto, e quale cornice ha provocato il cambiamento. Se il testo di una pagina entra nel suo modello, il registro resta vuoto. Una cornice con altezza `auto` e senza `minHeight` non dichiara un’altezza propria: nel registro non cresce mai, e le cornici ancorate a essa non si spostano mai, per quanto si allunghi il suo testo (l’occhiello di una rivista con le colonne appese sotto). Datele come `minHeight` l’altezza a cui è disegnata perché entrambe le cose vengano registrate. La prova di carico del Ricettario (C38) confronta invece queste cornici con il passaggio sul testo così come è scritto.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
