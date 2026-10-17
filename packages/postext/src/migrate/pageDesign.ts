@@ -57,11 +57,30 @@ export interface TextPiece {
   notes: string[];
 }
 
+/** A picture of the design that carries labels (#918): it leaves the
+ *  decoration for a picture frame at its box, its labels for the
+ *  resource's anchors and `::label` lines. */
+export interface PlannedPicture {
+  element: DesignImageElement;
+  /** Its box on the trim, mm. */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  /** The short texts on it, in their order in the design. */
+  labels: TextPiece[];
+  /** Where the page may look different: `overPicture` (decoration painted
+   *  over the picture now lies under its frame). */
+  notes: string[];
+}
+
 /** A frame the migration writes: one or more pieces of one look, under one
- *  another at an even spacing. */
+ *  another at an even spacing; or a picture with its labels (`picture`,
+ *  no pieces). */
 export interface PlannedFrame {
   side?: PageSide;
   pieces: TextPiece[];
+  picture?: PlannedPicture;
   look: TextLook;
   lookKey: string;
   /** mm between pieces (paragraph spacing). */
@@ -84,6 +103,16 @@ export interface DesignInput {
   chipStyles: readonly ChipStyleConfig[];
   highlightsToChips: boolean;
   merge: boolean;
+  /** Short texts on a picture become its labels (#918): one line, at most
+   *  four words, set no larger than `maxSizeMm`, inside the picture's
+   *  box. Unset: they are frames like the rest. */
+  labelsOnPictures?: {
+    maxSizeMm: number;
+    /** The picture's own width and height (any unit, for its aspect), or
+     *  undefined when the resource is not known: such a picture keeps its
+     *  texts as frames. */
+    pictureSize: (resourceId: string) => { width: number; height: number } | null | undefined;
+  };
 }
 
 export interface PlannedDesign {
@@ -109,6 +138,8 @@ export interface PlannedDesign {
   notes: string[];
   movedChars: number;
   movedElements: number;
+  /** Texts that became picture labels (among `movedElements`). */
+  labelCount: number;
 }
 
 const MM_PER: Record<string, number> = { mm: 1, cm: 10, in: 25.4, pt: 25.4 / 72, px: 25.4 / 96 };
@@ -357,6 +388,26 @@ export function planDesign(input: DesignInput): PlannedDesign {
     movedIds.add(el.id);
   }
 
+  // Labels (#918): the short texts on a picture leave the frames for the
+  // picture's anchors; the picture leaves the decoration for a frame.
+  const pictures = input.labelsOnPictures ? findLabelledPictures(pieces, elements, input.labelsOnPictures) : [];
+  const labelled = new Set(pictures.flatMap((pic) => pic.labels));
+  const pictureIds = new Set(pictures.map((pic) => pic.element.id));
+  if (labelled.size > 0) {
+    for (let i = pieces.length - 1; i >= 0; i--) if (labelled.has(pieces[i]!)) pieces.splice(i, 1);
+    for (const pic of pictures) {
+      // Decoration painted over the picture now lies under its frame.
+      const at = elements.indexOf(pic.element);
+      const over = elements.slice(at + 1).some((e) => {
+        if (movedIds.has(e.id) || e.kind === 'text') return false;
+        const r = rectOf(e);
+        return !!r && r.w !== undefined && r.h !== undefined && r.x < pic.x + pic.width && r.x + r.w > pic.x && r.y < pic.y + pic.height && r.y + r.h > pic.y;
+      });
+      if (over) pic.notes.push('overPicture');
+      for (const l of pic.labels) l.lines = l.lines.map((line) => escapeText(line, l.element.inlineMarks === true));
+    }
+  }
+
   // Highlights: a filled box on a line of a moved text that carries a bold
   // run is that run's chip.
   const usedBoxes = new Set<string>();
@@ -461,14 +512,36 @@ export function planDesign(input: DesignInput): PlannedDesign {
     }
     frames.push({ ...(p.side ? { side: p.side } : {}), pieces: [p], look: p.look, lookKey: p.lookKey, gap: 0, ...(p.width !== undefined ? { width: p.width } : {}), key: '' });
   }
+  const round = (v: number | undefined) => (v === undefined ? '-' : (Math.round(v * 2) / 2).toFixed(1));
+  for (const pic of pictures) {
+    const side = sideOf(pic.element);
+    frames.push({
+      ...(side ? { side } : {}),
+      pieces: [],
+      picture: pic,
+      look: pic.labels[0]!.look,
+      lookKey: 'picture',
+      gap: 0,
+      width: pic.width,
+      key: ['picture', side ?? '', round(pic.x), round(pic.y), round(pic.width), round(pic.height)].join('|'),
+    });
+    notes.push(...pic.notes.map((n) => `${pic.element.id}:${n}`));
+  }
   for (const f of frames) {
+    if (f.picture) continue;
     const first = f.pieces[0]!;
-    const round = (v: number | undefined) => (v === undefined ? '-' : (Math.round(v * 2) / 2).toFixed(1));
     f.key = [f.side ?? '', f.lookKey, round(first.x), round(first.y), round(f.width), first.x === undefined ? stableStringify(first.element.placement) : ''].join('|');
     for (const p of f.pieces) notes.push(...p.notes.map((n) => `${p.id}:${n}`));
   }
   const movedTo = new Map<string, number>();
-  frames.forEach((f, i) => f.pieces.forEach((p) => movedTo.set(p.id, i)));
+  frames.forEach((f, i) => {
+    f.pieces.forEach((p) => movedTo.set(p.id, i));
+    // Anchors to the picture or to one of its labels follow its frame.
+    if (f.picture) {
+      movedTo.set(f.picture.element.id, i);
+      for (const l of f.picture.labels) movedTo.set(l.id, i);
+    }
+  });
 
   // What did not move: in the template's running heads when it hangs from
   // the slot's own container, else in the decoration, with the full-page
@@ -493,7 +566,7 @@ export function planDesign(input: DesignInput): PlannedDesign {
   const header: DesignElement[] = [];
   const footer: DesignElement[] = [];
   elements.forEach((el, i) => {
-    if (movedIds.has(el.id) || usedBoxes.has(el.id)) return;
+    if (movedIds.has(el.id) || usedBoxes.has(el.id) || pictureIds.has(el.id)) return;
     const copy = { ...el } as DesignElement & { reserve?: unknown };
     delete copy.reserve;
     if (inSlot.has(el.id)) {
@@ -506,8 +579,63 @@ export function planDesign(input: DesignInput): PlannedDesign {
     }
     decoration.push(copy);
   });
-  const movedChars = pieces.reduce((n, p) => n + p.chars, 0);
-  return { key: input.key, frames, decoration, header, footer, movedTo, ...(background !== undefined ? { background } : {}), kept, chips, newChipStyles, notes, movedChars, movedElements: pieces.length };
+  const labels = [...labelled];
+  const movedChars = pieces.reduce((n, p) => n + p.chars, 0) + labels.reduce((n, p) => n + p.chars, 0);
+  return {
+    key: input.key, frames, decoration, header, footer, movedTo, ...(background !== undefined ? { background } : {}), kept, chips, newChipStyles, notes,
+    movedChars, movedElements: pieces.length + labels.length, labelCount: labels.length,
+  };
+}
+
+/** Words of a design text as a reader counts them (marks aside). */
+const wordCount = (line: string): number => line.replace(/\*\*|[*_^~]/g, '').trim().split(/\s+/).filter(Boolean).length;
+
+/** The pictures of a design that carry labels (#918), with them: a text of
+ *  one line and at most four words, set no larger than `maxSizeMm`,
+ *  horizontal, whose box (known: placed from the page's top-left with a
+ *  width) lies inside a picture's box on the same side. A text over
+ *  several pictures belongs to the one painted last. */
+function findLabelledPictures(
+  pieces: readonly TextPiece[],
+  elements: readonly DesignElement[],
+  opts: NonNullable<DesignInput['labelsOnPictures']>,
+): PlannedPicture[] {
+  const maxSizeMm = opts.maxSizeMm;
+  const candidates: PlannedPicture[] = [];
+  for (const el of elements) {
+    if (el.kind !== 'image') continue;
+    const id = (el as DesignImageElement).resourceId;
+    if (typeof id !== 'string' || id === '' || id.includes('{')) continue;
+    const r = rectOf(el);
+    if (!r || r.w === undefined || r.h === undefined || r.w <= 0 || r.h <= 0) continue;
+    const size = opts.pictureSize(id);
+    if (!size) continue;
+    // The design draws the picture whole inside its box, centred: the
+    // frame takes the part it covers, where the figure draws it.
+    const aspect = size.width > 0 && size.height > 0 ? size.width / size.height : r.w / r.h;
+    const w = Math.min(r.w, r.h * aspect);
+    const h = w / aspect;
+    candidates.push({ element: el as DesignImageElement, x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, width: w, height: h, labels: [], notes: [] });
+  }
+  if (candidates.length === 0) return [];
+  const TOL = 0.5;
+  for (const p of pieces) {
+    if (p.x === undefined || p.y === undefined || p.width === undefined || p.height === undefined || !p.heightSure) continue;
+    if (p.lines.length !== 1 || wordCount(p.lines[0]!) > 4 || wordCount(p.lines[0]!) === 0) continue;
+    if (p.look.writingMode || p.element.box || (p.element.stroke && p.element.stroke.hollow)) continue;
+    const size = toMm(p.element.fontSize) ?? Infinity;
+    if (size > maxSizeMm + 1e-6) continue;
+    let host: PlannedPicture | undefined;
+    for (const pic of candidates) {
+      const side = sideOf(pic.element);
+      if (side && p.side && side !== p.side) continue;
+      if (side && !p.side) continue;
+      if (p.x < pic.x - TOL || p.y < pic.y - TOL || p.x + p.width > pic.x + pic.width + TOL || p.y + p.height > pic.y + pic.height + TOL) continue;
+      host = pic;
+    }
+    host?.labels.push(p);
+  }
+  return candidates.filter((pic) => pic.labels.length > 0);
 }
 
 /** An image that covers (nearly) the whole page: the page's art. */

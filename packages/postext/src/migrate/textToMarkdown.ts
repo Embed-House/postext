@@ -18,17 +18,21 @@ import type {
   ChipStyleConfig,
   DesignElement,
   DesignSlot,
+  Dimension,
   DocumentMetadata,
   HeadingStyleConfig,
   ParagraphStyleConfig,
   PostextConfig,
+  Resource,
+  ResourceAnchor,
 } from '../types';
-import type { FrameConfig, PageSide, PageTemplate, PageTemplatePatch } from '../composed/types';
+import type { FrameConfig, LabelStyle, PageSide, PageTemplate, PageTemplatePatch } from '../composed/types';
 import { collectConfigWarnings, contentInConfigRule } from '../configWarnings';
 import { resolveAllConfig } from '../pipeline/config';
+import { bitmapLayoutSize } from '../bitmapResolution';
 import { stableStringify } from '../util/stableHash';
 import { scanChapter, type DesignRun, type HeadingLine } from './markdownRuns';
-import { joinLines, planDesign, remapDecorationAnchors, toMm, type PlannedDesign, type PlannedFrame, type TextLook } from './pageDesign';
+import { joinLines, planDesign, remapDecorationAnchors, toMm, type PlannedDesign, type PlannedFrame, type PlannedPicture, type TextLook, type TextPiece } from './pageDesign';
 
 export interface TextMigrationChapter {
   id: string;
@@ -41,6 +45,9 @@ export interface TextMigrationInput {
   /** The book's metadata: its title, author… are allowed in a design, as
    *  the `contentInConfig` check allows them, and stay there. */
   metadata?: DocumentMetadata;
+  /** The book's resources: with `labelsOnPictures` the pictures' anchors
+   *  are written to them (`TextMigrationResult.resources`). */
+  resources?: readonly Resource[];
 }
 
 export interface TextMigrationOptions {
@@ -61,6 +68,15 @@ export interface TextMigrationOptions {
    *  Markdown as it was. Without it the side comes from the opening
    *  heading's `breakBefore.parity`, when it has one. */
   sideOf?: (chapterId: string, offset: number) => PageSide | undefined;
+  /** Words placed on a picture become its labels (#918): a text of the
+   *  design of one line and at most four words, no larger than
+   *  `maxFontSize` (default three quarters of the body text's size),
+   *  inside a picture's box. The picture leaves the decoration for a
+   *  picture frame at its box holding a `:::figure` with one `::label`
+   *  line per text; each label is an anchor of the resource (shared by
+   *  every page that shows the picture) with a `labelStyles` entry for its
+   *  look. Default off: such texts become frames like the rest. */
+  labelsOnPictures?: boolean | { maxFontSize?: Dimension };
 }
 
 export interface ContentInConfigCount {
@@ -119,11 +135,25 @@ export interface TextMigrationReport {
   configBytesAfter: number;
   contentInConfigBefore: ContentInConfigCount;
   contentInConfigAfter: ContentInConfigCount;
+  /** `labelsOnPictures` (#918): pictures that became picture frames, the
+   *  texts that became their labels, the anchors written (shared by the
+   *  pages that show a picture) and the label styles created or reused. */
+  labels: {
+    pictures: number; labels: number; anchors: number; labelStylesCreated: string[]; labelStylesReused: string[];
+    /** Bitmaps smaller than the box the design stretched them over, given
+     *  the `resolution` that sets them at that width (a figure is never
+     *  enlarged). */
+    resolutionSet: string[];
+  };
 }
 
 export interface TextMigrationResult {
   config: PostextConfig;
   chapters: TextMigrationChapter[];
+  /** The resources with the anchors the labels stand at, when
+   *  `labelsOnPictures` turned any text into a label (the input's
+   *  otherwise). */
+  resources?: Resource[];
   report: TextMigrationReport;
   /** Nothing to move: the result is the input. */
   unchanged: boolean;
@@ -229,6 +259,16 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
   const resolved = resolveAllConfig(config);
   const page = { width: toMm(resolved.page.width) ?? 0, height: toMm(resolved.page.height) ?? 0 };
   const before = countContent(config, metadata);
+  const bodyMm = toMm(resolved.bodyText.fontSize) ?? 4.2;
+  const labelOpt = options.labelsOnPictures;
+  const labelMaxMm = !labelOpt ? undefined : (typeof labelOpt === 'object' && labelOpt.maxFontSize ? toMm(labelOpt.maxFontSize, bodyMm) : undefined) ?? bodyMm * 0.75;
+  const resourceById = new Map((input.resources ?? []).map((r) => [r.id, r] as const));
+  const pictureSize = (id: string): { width: number; height: number } | undefined => {
+    const r = resourceById.get(id);
+    if (!r || (r.kind !== 'bitmap' && r.kind !== 'svg')) return undefined;
+    const dims = r.kind === 'bitmap' ? r.bitmap : r.svg;
+    return { width: dims?.width ?? 0, height: dims?.height ?? 0 };
+  };
 
   // 1. Page designs: heading styles whose running heads hold content,
   // grouped by what those running heads draw.
@@ -261,6 +301,7 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
         chipStyles: config.chipStyles ?? [],
         highlightsToChips: highlights,
         merge,
+        ...(labelMaxMm !== undefined ? { labelsOnPictures: { maxSizeMm: labelMaxMm, pictureSize } } : {}),
       });
       const roleFiltered = [...headerEls, ...footerEls].some((e) => typeof e.pages === 'string' && e.pages !== 'all');
       d = { key, styleIds: [], ownHeader: !!header, ownFooter: !!footer, plan, pages: 0, ...(roleFiltered ? { roleFiltered } : {}) };
@@ -300,6 +341,7 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
       chapters: input.chapters.map((c) => ({ ...c })),
       unchanged: true,
       report: emptyReport(before, bytes(config), left, unused),
+      ...(input.resources ? { resources: input.resources.map((r) => ({ ...r })) } : {}),
     };
   }
 
@@ -387,6 +429,11 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
     }
   }
 
+  // 4b. Labels (#918): each label an anchor of its picture's resource, its
+  // look a label style.
+  const labelStyles: LabelStyle[] = (config.labelStyles ?? []).slice();
+  const labels = placeLabels(usedDesigns, input.resources ?? [], labelStyles, resolved.page.dpi);
+
   // 5. The Markdown.
   const pages: MigratedPage[] = [];
   let headingsDropped = 0;
@@ -413,7 +460,7 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
       const firstBreak = breakBefore(run.pages[0]!.headings[0]!);
       run.pages.forEach((p, pi) => {
         const side = options.sideOf?.(chapter.id, lineStart[p.startLine]!) ?? heuristicSide(firstBreak.parity, pi);
-        const written = writePage(d, templateFor(d, p), p, lines, side, styleById, paragraphStyleFor);
+        const written = writePage(d, templateFor(d, p), p, lines, side, styleById, paragraphStyleFor, labels.anchorOf);
         headingsDropped += written.dropped;
         if (out.length > 0 && out[out.length - 1]!.trim() !== '') out.push('');
         // A composed page starts a page but reads no heading's parity: the
@@ -470,6 +517,7 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
     headingStyles: mergedStyles,
     paragraphStyles,
     ...(chipStyles.length > 0 ? { chipStyles } : {}),
+    ...(labelStyles.length > 0 ? { labelStyles } : {}),
     pageTemplates: [...(config.pageTemplates ?? []), ...templates.list],
   };
   for (const id of unused) if (!removeUnused) left.push({ path: `headingStyles[id=${id}]`, reason: 'unused' });
@@ -498,8 +546,12 @@ export function moveTextToMarkdown(input: TextMigrationInput, options: TextMigra
     configBytesAfter: bytes(next),
     contentInConfigBefore: before,
     contentInConfigAfter: countContent(next, metadata),
+    labels: labels.report,
   };
-  return { config: next, chapters: finalChapters, report, unchanged: false };
+  return {
+    config: next, chapters: finalChapters, report, unchanged: false,
+    ...(input.resources ? { resources: labels.resources } : {}),
+  };
 }
 
 function emptyReport(before: ContentInConfigCount, size: number, left: TextMigrationReport['left'], unused: string[]): TextMigrationReport {
@@ -508,6 +560,7 @@ function emptyReport(before: ContentInConfigCount, size: number, left: TextMigra
     paragraphStylesCreated: [], paragraphStylesReused: [], chipStylesCreated: [],
     headingStylesMerged: [], headingStylesRemoved: [], unusedStyles: unused, headingsDropped: 0, left,
     configBytesBefore: size, configBytesAfter: size, contentInConfigBefore: before, contentInConfigAfter: before,
+    labels: { pictures: 0, labels: 0, anchors: 0, labelStylesCreated: [], labelStylesReused: [], resolutionSet: [] },
   };
 }
 
@@ -535,6 +588,7 @@ function writePage(
   side: PageSide | undefined,
   styleById: Map<string, HeadingStyleConfig>,
   paragraphStyleFor: (f: PlannedFrame) => string,
+  anchorOf: (d: Design, piece: TextPiece) => string,
 ): { template: string; lines: string[]; frames: number; elements: number; chars: number; differences: string[]; dropped: number } {
   const differences = new Set<string>();
   const attrs: string[] = [`template="${template}"`];
@@ -567,6 +621,19 @@ function writePage(
     if (f.side && side && f.side !== side) continue;
     if (f.side && !side) differences.add('side');
     frames++;
+    if (f.picture) {
+      // A picture with its labels (#918): the figure in its frame.
+      const pic = f.picture;
+      out.push('', `:::figure{resource="${pic.element.resourceId.replace(/["\\]/g, '')}" slot="${f.name!}"}`);
+      for (const l of pic.labels) {
+        out.push(`::label[${labelText(l.lines[0]!)}]{at="${anchorOf(d, l)}"}`);
+        elements++;
+        chars += l.chars;
+      }
+      out.push(':::');
+      for (const n of pic.notes) differences.add(n);
+      continue;
+    }
     out.push('', `:::frame{slot="${f.name!}"}`, `:::paragraphs{style="${paragraphStyleFor(f)}"}`);
     f.pieces.forEach((piece, i) => {
       if (i > 0) out.push('');
@@ -584,6 +651,19 @@ function writePage(
 
 /** A frame of the template, from a planned one. */
 function frameConfig(f: PlannedFrame): FrameConfig {
+  if (f.picture) {
+    // The picture's box, over the decoration and under the text frames;
+    // the picture keeps its size.
+    const pic = f.picture;
+    return {
+      name: f.name!,
+      placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: { value: round3(pic.x), unit: 'mm' }, y: { value: round3(pic.y), unit: 'mm' } } },
+      width: { value: round3(pic.width), unit: 'mm' },
+      height: { value: round3(pic.height), unit: 'mm' },
+      layer: 0,
+      fit: { scaleImages: false },
+    };
+  }
   const first = f.pieces[0]!;
   const el = first.element;
   const placement = first.x !== undefined && first.y !== undefined
@@ -675,7 +755,8 @@ function buildTemplates(designs: Design[], share: boolean, taken: Set<string>): 
     if (fam.startsWith('solo:') || members.length < 2) {
       for (const d of members) {
         let n = 0;
-        for (const f of d.plan.frames.slice().sort(byPosition)) f.name = `text-${++n}`;
+        let pics = 0;
+        for (const f of d.plan.frames.slice().sort(byPosition)) f.name = f.picture ? `picture-${++pics}` : `text-${++n}`;
         const id = idFor(d);
         const decoration = remapDecorationAnchors(d.plan.decoration, d.plan.movedTo, d.plan.frames);
         const { frames, variants } = framesPatch(d.plan.frames);
@@ -707,7 +788,8 @@ function buildTemplates(designs: Design[], share: boolean, taken: Set<string>): 
         if (shared) f.name = shared;
       });
       let n = 0;
-      for (const f of d.plan.frames.slice().sort(byPosition)) if (!f.name) f.name = `text-${++n}`;
+      let pics = 0;
+      for (const f of d.plan.frames.slice().sort(byPosition)) if (!f.name) f.name = f.picture ? `picture-${++pics}` : `text-${++n}`;
     }
     // Decoration every member draws (ids aside): the base's, under the
     // first member's ids.
@@ -783,9 +865,10 @@ function buildTemplates(designs: Design[], share: boolean, taken: Set<string>): 
 }
 
 function byPosition(a: PlannedFrame, b: PlannedFrame): number {
-  const ay = a.pieces[0]!.y ?? Infinity;
-  const by = b.pieces[0]!.y ?? Infinity;
-  return ay - by || (a.pieces[0]!.x ?? 0) - (b.pieces[0]!.x ?? 0);
+  const at = (f: PlannedFrame) => (f.picture ? { x: f.picture.x, y: f.picture.y } : { x: f.pieces[0]!.x ?? 0, y: f.pieces[0]!.y ?? Infinity });
+  const pa = at(a);
+  const pb = at(b);
+  return pa.y - pb.y || pa.x - pb.x;
 }
 
 /** Migrated heading styles that came out the same are one: the id their
@@ -838,4 +921,152 @@ function renameStyles(markdown: string, renames: Map<string, string>): string {
       return to ? `${pre}"${to}"` : m;
     });
   }).join('\n');
+}
+
+/** A label's text inside `::label[…]`: its brackets escaped. */
+function labelText(line: string): string {
+  return line.replace(/(^|[^\\])([[\]])/g, '$1\\$2');
+}
+
+/** The pitch of a label's lines in ems when its style lends none
+ *  (composed/labels.ts `LABEL_LINE_HEIGHT`). */
+const LABEL_PITCH = 1.15;
+/** Where a line's baseline stands in its line box, from the top: design
+ *  texts and labels alike (`lineHeight × 0.8`). */
+const BASELINE = 0.8;
+
+const round5 = (v: number): number => Math.round(v * 1e5) / 1e5;
+
+/** The label style of a design text's look: the book's own when one sets
+ *  exactly that, else a new one. */
+function labelStyleFields(piece: TextPiece): Omit<LabelStyle, 'id' | 'name'> {
+  const el = piece.element;
+  const sizeMm = toMm(el.fontSize) ?? 4.2;
+  const tracking = el.letterSpacing ? (toMm(el.letterSpacing, sizeMm) ?? 0) / sizeMm : 0;
+  const stroke = el.stroke && !el.stroke.hollow && (toMm(el.stroke.width, sizeMm) ?? 0) > 0 ? el.stroke : undefined;
+  return {
+    ...(piece.look.fontFamily ? { fontFamily: piece.look.fontFamily } : {}),
+    fontSize: piece.look.fontSize,
+    fontWeight: piece.look.fontWeight,
+    ...(piece.look.italic ? { fontStyle: 'italic' as const } : {}),
+    ...(piece.look.color ? { color: piece.look.color } : {}),
+    ...(piece.look.uppercase ? { textTransform: 'uppercase' as const } : {}),
+    ...(Math.abs(tracking) > 1e-6 ? { letterSpacing: round5(tracking) } : {}),
+    ...(stroke ? { halo: { color: stroke.color ?? piece.look.color ?? { hex: '#ffffff', model: 'hex' }, width: stroke.width } } : {}),
+  } as Omit<LabelStyle, 'id' | 'name'>;
+}
+
+/**
+ * The anchors of the labels (#918): one per label on its picture's
+ * resource, at the point the design text stood (its alignment's side,
+ * its first baseline where the design set it), as wide as its box, with a
+ * label style of its look. A picture shown on several pages shares its
+ * anchors: the same text at the same place is one anchor.
+ */
+function placeLabels(designs: readonly Design[], resources: readonly Resource[], labelStyles: LabelStyle[], dpi: number): {
+  anchorOf: (d: Design, piece: TextPiece) => string;
+  resources: Resource[];
+  report: TextMigrationReport['labels'];
+} {
+  const out = resources.map((r) => ({ ...r }));
+  const byId = new Map(out.map((r) => [r.id, r]));
+  const ids = new Map<string, string>();
+  const created: string[] = [];
+  const reused = new Set<string>();
+  const takenStyles = new Set(labelStyles.map((st) => st.id));
+  const styleCache = new Map<string, string>();
+  const NO_ID = new Set(['id', 'name', 'paletteId', 'model']);
+  const styleFor = (piece: TextPiece): string => {
+    const want = labelStyleFields(piece);
+    const key = stableStringify(want, NO_ID);
+    const hit = styleCache.get(key);
+    if (hit) return hit;
+    const own = labelStyles.find((st) => stableStringify(st, NO_ID) === key);
+    if (own) {
+      reused.add(own.id);
+      styleCache.set(key, own.id);
+      return own.id;
+    }
+    const size = toMm(piece.look.fontSize);
+    const pt = size !== undefined ? Math.round((size * 72) / 25.4 * 10) / 10 : undefined;
+    const hex = (piece.look.color as { hex?: string } | undefined)?.hex?.toLowerCase();
+    const parts = ['label', slug(piece.look.fontFamily ?? '') || '', pt !== undefined ? String(pt).replace('.', '-') : '', piece.look.fontWeight >= 600 ? 'bold' : '', piece.look.italic ? 'italic' : '', hex ? hex.replace('#', '') : ''].filter(Boolean);
+    const id = freeId(parts.join('-'), takenStyles);
+    labelStyles.push({ id, name: ['Label', piece.look.fontFamily ?? '', pt !== undefined ? `${pt} pt` : '', hex ?? ''].filter(Boolean).join(' '), ...want });
+    created.push(id);
+    styleCache.set(key, id);
+    return id;
+  };
+  let pictures = 0;
+  let labels = 0;
+  let anchors = 0;
+  /** The widest box each bitmap is drawn at, mm. */
+  const widest = new Map<string, number>();
+  for (const d of designs) {
+    for (const f of d.plan.frames) {
+      const pic: PlannedPicture | undefined = f.picture;
+      if (!pic) continue;
+      const res = byId.get(pic.element.resourceId);
+      if (!res) continue;
+      pictures++;
+      widest.set(res.id, Math.max(widest.get(res.id) ?? 0, pic.width));
+      const list: ResourceAnchor[] = res.anchors ? res.anchors.slice() : [];
+      for (const l of pic.labels) {
+        labels++;
+        const el = l.element;
+        const sizeMm = toMm(el.fontSize) ?? 4.2;
+        const width = l.width ?? 0;
+        const rtl = l.look.direction === 'rtl';
+        const a = l.look.align;
+        const side = a === 'center' ? 'center' : a === 'right' || (a === 'end' && !rtl) || (a === 'start' && rtl) ? 'right' : 'left';
+        const px = side === 'center' ? l.x! + width / 2 : side === 'right' ? l.x! + width : l.x!;
+        // The design text's first baseline, where the label's goes.
+        const boxH = toMm(typeof el.placement?.size?.height === 'object' ? el.placement.size.height : undefined);
+        const textH = l.lines.length * l.lineMm;
+        const va = (el as { verticalAlign?: string }).verticalAlign;
+        const top = l.y! + (boxH !== undefined && boxH > textH ? (va === 'middle' ? (boxH - textH) / 2 : va === 'bottom' ? boxH - textH : 0) : 0);
+        const baseline = top + BASELINE * l.lineMm;
+        const labelTop = baseline - BASELINE * LABEL_PITCH * sizeMm;
+        const anchor: ResourceAnchor = {
+          id: '',
+          x: round5((px - pic.x) / pic.width),
+          y: round5((labelTop - pic.y) / pic.height),
+          ...(width > 0 ? { width: round5(width / pic.width) } : {}),
+          align: side === 'center' ? 'center' : (side === 'left') !== rtl ? 'start' : 'end',
+          verticalAlign: 'top',
+          style: styleFor(l),
+        };
+        const plain = l.lines[0]!.replace(/\\(.)/g, '$1').replace(/\*\*|[*_^~]/g, '');
+        const base = slug(plain) || 'label';
+        const same = (b: ResourceAnchor) => Math.abs(b.x - anchor.x) < 1e-4 && Math.abs(b.y - anchor.y) < 1e-4 && b.width === anchor.width && b.align === anchor.align && b.style === anchor.style;
+        let id = list.find((b) => (b.id === base || b.id.startsWith(`${base}-`)) && same(b))?.id;
+        if (!id) {
+          id = base;
+          for (let n = 2; list.some((b) => b.id === id); n++) id = `${base}-${n}`;
+          list.push({ ...anchor, id });
+          anchors++;
+        }
+        ids.set(`${d.key}\n${l.id}`, id);
+      }
+      res.anchors = list;
+    }
+  }
+  // A bitmap is set at its print size and never enlarged, where the design
+  // stretched it over its box: one smaller than its box takes the
+  // resolution that makes it that wide.
+  const resolutionSet: string[] = [];
+  for (const [id, widthMm] of widest) {
+    const res = byId.get(id)!;
+    if (res.kind !== 'bitmap' || !res.bitmap || !(res.bitmap.width > 0) || !(widthMm > 0)) continue;
+    const natural = bitmapLayoutSize(res.bitmap, dpi).width;
+    const wantPx = (widthMm / 25.4) * dpi;
+    if (natural >= wantPx - 0.5) continue;
+    res.bitmap = { ...res.bitmap, resolution: round5((res.bitmap.width * 25.4) / widthMm) };
+    resolutionSet.push(id);
+  }
+  return {
+    anchorOf: (d, piece) => ids.get(`${d.key}\n${piece.id}`) ?? '',
+    resources: out,
+    report: { pictures, labels, anchors, labelStylesCreated: created, labelStylesReused: [...reused], resolutionSet },
+  };
 }
