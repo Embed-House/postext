@@ -182,6 +182,7 @@ import {
   fragmentRange,
   makeCalloutLayouter as makeCalloutLayouterIn,
   splitCalloutFragment as splitCalloutFragmentIn,
+  frameCutRules,
   tallerThanColumn as tallerThanColumnIn,
   type CalloutCut,
   type CalloutFragment,
@@ -4389,6 +4390,9 @@ function placeDocumentPass(
   };
 
 
+  /** A box of the running text is cut as a composed page's frame is
+   *  (#942): a heading with its text, two list items on each side. */
+  const calloutCutRules = frameCutRules(resolved);
   const splitCalloutFragment = (
     L: CalloutLayouter,
     from: CalloutCut,
@@ -4398,7 +4402,7 @@ function placeDocumentPass(
     continuation: boolean,
     minLines: number,
     mirrored = false,
-  ): CalloutFragment | null => splitCalloutFragmentIn(framePass, L, from, width, roomPx, frameId, continuation, minLines, mirrored);
+  ): CalloutFragment | null => splitCalloutFragmentIn(framePass, L, from, width, roomPx, frameId, continuation, minLines, mirrored, undefined, calloutCutRules);
 
 
   const tallerThanColumn = (result: CalloutLayoutResult): boolean => tallerThanColumnIn(framePass, result);

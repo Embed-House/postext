@@ -492,7 +492,8 @@ the frame, and `<id>` may be `{attr.name}`, read from the sending fence, so one 
 serves every article: `continueIn: 'page:{attr.sigue}'` with `::::page{template="articulo"
 sigue="p47"}`). The remaining content resumes from
 the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the running text is (#913,
-`frameCutRules`, for `next` chains and continuation alike): a heading never ends a piece
+`frameCutRules`, for `next` chains and continuation alike, and since #942 for a
+`keepTogether: false` box of the running text too): a heading never ends a piece
 (`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
 (`bodyText.avoidOrphansInLists` / `avoidWidowsInLists`; one when off), and a list of up to
 `bodyText.shortListMaxItems` items under `shortListSplit: 'avoid'` is not cut between items. When
