@@ -657,9 +657,14 @@ Recorded where the implementation settles a point the sections above leave open,
   physical sheet (left page at 0), `#frame` anchors read the frames' physical boxes
   (`flowRectToPage`, which also fixes `#frame` decoration on single right-to-left pages), then
   `splitSpreadDecoration` keeps the blocks that reach each page's bleed box, moved onto its sheet.
-- **Not done:** spreads on vertical (`vertical-rl`) pages (the sheet is laid in physical
-  boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
-  is used); running-head placeholders in a spread's decoration read the first page met.
+- **Vertical pages (#926):** the sheet is laid in the pages' flow frame, as single vertical
+  composed pages are; the second page follows the first along the flow's y (`SpreadAxis` `'y'`:
+  `spreadSheet`, `keepOffGutter` and `layoutComposedSpread` transpose), the physically right page
+  first; trim and bleed are the flow frame's (`designFramesOn`). The decoration stays physical; its
+  clip is the page's `sheetClip` mapped to the sheet (`composedSheetClipOnSheet`).
+- **Not done:** frames with their own `writingMode` (a horizontal card on a vertical spread);
+  per-side `mirrored` for frames' outer-corner icons (the first page's is used); running-head
+  placeholders in a spread's decoration read the first page met.
 
 ### 5.11 What P5 built (#858)
 
@@ -841,6 +846,21 @@ Recorded where the implementation settles a point the sections above leave open,
   right width and tagged `VDTDesignTextBlock.pageMark`; once the pages are numbered `fillPageMarks`
   (`build.ts`) writes the printed label of the page `continuesTo` / `continuedFrom` points to and
   measures the lines again, keeping their alignment.
+
+### 5.14 Findings round E2 (#882)
+- **Empty frames in stacks (#911).** When the tiers have nothing more to give, a stack cuts its
+  frames from the foot up, each down to `GroupItem.floor` (its `minHeight`; a fixed height without
+  one keeps it), before any frame is clamped at the foot. A frame left below that least height
+  overflows by the cut (`boxShort` → `VDTFrame.overflowPx`), content or none, and climbs the ladder
+  and warns. Proposals skip empty frames for `lowerMin`, and give an empty frame its own `lowerMin`
+  instead of `raiseMax`/`continueNextPage`.
+- **Elastic rows (#927).** `rowH` is the tallest height the cards write (fixed, else `minHeight`);
+  the content's only when none writes one. Widths are negotiated there, then the row grows.
+- **Ruled frames (#914).** `composed/rules.ts`: rules on the box's `designOverlay` (laid-out
+  coordinates, lengths over the text scale); an empty frame keeps them on `VDTFrame.rules` and the
+  decoration step adds them (mapped through the flow, turned on vertical pages).
+- **Drop caps in frames (#922).** A story box (`FRAME_ATTR`) is not a box for `placesOf`; the box
+  typesetter stamps `VDTBlock.dropCap` and `offsetBlock` moves it.
 
 ## 6. Source map contract
 
