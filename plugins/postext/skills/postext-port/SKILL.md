@@ -602,6 +602,15 @@ Pick the path per [sources.md](references/sources.md):
   `::label[…]{at="anchor"}` per word with the anchors on the resource,
   per-page design values as fence attributes (`fondo=`, `tema=`); the same
   fences, slots and anchors in every edition (composed-pages.md §3.4, §6).
+  From a PDF, draft it with the scripts, then curate (composed-pages.md §3.7):
+  `scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions --lang es --fonts my-book/fonts --overlay`
+  (frames, styles, ground, pictures cut without their text, labels, page
+  fences), `scripts/template_dedupe.py work/regions` (one template per kind
+  of page, `extends` children, merged styles and grounds), and
+  `scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts` to lay
+  the draft out and compare it with the source. `scripts/anchors.py` does a
+  single map or diagram (`--page 6 --box x0,y0,x1,y1`) and writes other
+  editions' `::label` lines from a strings file (`--strings en=en.json`).
 
 Every extractor writes `chapters/<lang>/*.md`, `resources.json` and a
 `report.md` of decisions to review. Copy the chapters into `my-book/chapters/`

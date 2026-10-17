@@ -48,6 +48,8 @@ What it writes in DIR:
   `suggested` (bodyText, headings, resourceTypes for the generator);
 - `resources.json` and `resources/`: page grounds, pictures and figures;
 - `chapters/<lang>/01-<chapter>.md`: the page fences in page order;
+- `figures.json`: every figure's labels, for `anchors.py relabel` to
+  write other editions' `::label` lines from a strings file;
 - `regions.json`: what was measured on every page (frames, boxes, tabs,
   pictures, labels, hidden text) and `report.json`.
 
@@ -1895,6 +1897,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         return sid
 
     resources: list[dict] = []
+    figures: list[dict] = []
     all_groups = [g for gs in ctx["label_groups"] for g in gs]
     lstyles, lids = anc.label_styles(all_groups)
     library["labelStyles"] = lstyles
@@ -1918,6 +1921,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
                 anchors_, labels = anc.anchors_for(f.labels, box, lids)
                 f.resource["anchors"] = anchors_
                 f.figure_labels = labels
+                figures.append({"resource": f.resource["id"], "slot": f.name, "labels": labels})
         # a heading the template takes must be the first of its level
         resources += page["resources"]
         library["pageTemplates"].append(tpl)
@@ -1937,6 +1941,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
 
     (out / "library.json").write_text(json.dumps(library, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (out / "resources.json").write_text(json.dumps(resources, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    (out / "figures.json").write_text(json.dumps({"figures": figures}, ensure_ascii=False, indent=1) + "\n",
+                                      encoding="utf-8")
     cdir = out / "chapters" / args.lang
     cdir.mkdir(parents=True, exist_ok=True)
     (cdir / f"01-{args.chapter}.md").write_text("\n".join(p["md"] for p in built), encoding="utf-8")

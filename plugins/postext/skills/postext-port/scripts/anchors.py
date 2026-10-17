@@ -23,7 +23,8 @@ writes its own words at those anchors (references/composed-pages.md §6.4).
 
   anchors.py relabel anchors.json --strings en=strings.en.json [--out DIR]
       Writes the `:::figure` blocks of other editions from an anchors file
-      written before (by this script or by pdf_regions.py), without the PDF.
+      written before (anchors.json by this script, figures.json by
+      pdf_regions.py), without the PDF.
 
 Output with --out: anchors.json ({resource, box, anchors, labelStyles,
 labels: [{at, text}], markdown: {lang: block}}) and figure.<lang>.md. Without

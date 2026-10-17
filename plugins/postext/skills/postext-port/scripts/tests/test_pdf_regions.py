@@ -175,6 +175,17 @@ class ExtractTest(unittest.TestCase):
         # the cut is free of lettering: no label text in the resource files
         self.assertTrue((self.out / fig["file"]).exists())
 
+    def test_relabel_from_figures(self):
+        import contextlib
+
+        strings = self.root / "de.json"
+        strings.write_text(json.dumps({"Blue Bay": "Blaue Bucht"}))
+        with contextlib.redirect_stdout(io.StringIO()):
+            anc.main(["relabel", str(self.out / "figures.json"), "--strings", f"de={strings}", "--out", str(self.root / "rl")])
+        de = (self.root / "rl" / "figures.de.md").read_text()
+        self.assertIn('::label[Blaue Bucht]{at="blue-bay"}', de)
+        self.assertIn('::label[NORTH LAND]{at="north-land"}', de)
+
     def test_pictures_cut(self):
         pics = [r for r in self.res if r["typeId"] == "picture"]
         self.assertGreaterEqual(len(pics), 3)
