@@ -1174,7 +1174,10 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             res.append(f.resource)
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
-                groups = anc.merge_lines(items, merge=not opts.no_merge_labels)
+                notes: list[str] = []
+                groups = anc.merge_lines(items, merge=not opts.no_merge_labels, notes=notes)
+                if notes:
+                    report["notes"].extend(notes)
                 ctx["label_groups"].append(groups)
                 f.labels = groups
 
@@ -2094,7 +2097,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
             centred_used |= bool(getattr(f, "centred", False))
             if f.kind == "figure" and f.labels:
                 box = f.box
-                anchors_, labels = anc.anchors_for(f.labels, box, lids)
+                anchors_, labels = anc.anchors_for(f.labels, box, lids, allow_touching=not args.check_overlap)
                 f.resource["anchors"] = anchors_
                 f.figure_labels = labels
                 figures.append({"resource": f.resource["id"], "slot": f.name, "labels": labels})
@@ -2285,6 +2288,8 @@ def main(argv: list[str] | None = None) -> int:
                         "face a little wider than the source's tracked text does not break the lines one word "
                         "earlier (default 3; 0 keeps the source's measure)")
     p.add_argument("--no-merge-labels", action="store_true", help="one label per line on pictures")
+    p.add_argument("--check-overlap", action="store_true",
+                   help="leave labelOverlap on for names the source prints touching (default: overlap \"allow\" on their anchors)")
     p.add_argument("--json", action="store_true")
     m = sub.add_parser("manifest", help="a draft preset.json from an extract folder")
     m.add_argument("dir")

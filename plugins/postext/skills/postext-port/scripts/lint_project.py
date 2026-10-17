@@ -788,6 +788,27 @@ def font_coverage(root: Path, fonts: list[dict]) -> dict[str, list[tuple[str, se
     return out
 
 
+def check_font_fallback(f: dict, rep: Report) -> None:
+    """`fonts[].fallback` (postext >= 1.42): the open family a licensed family
+    the pack left out is set in. A name, not the family's own; a family with
+    no file and no fallback is set in the generic face, wider than the real
+    one (frameOverflow and missingFont on the plain bundle)."""
+    name = f.get("name")
+    where = f"preset.json font {name!r}"
+    fb = f.get("fallback")
+    if fb is not None and (not isinstance(fb, str) or not fb.strip()):
+        rep.error(where, "fallback must be the name of a font family (a string)")
+        return
+    if isinstance(fb, str) and fb.strip() == name:
+        rep.error(where, "fallback names the family itself: name the open family that stands in for it (EB Garamond)")
+    elif isinstance(fb, str) and f.get("variants"):
+        rep.info(where, f"fallback {fb!r}: the family's own files are used; only a slant it lacks is taken from the fallback")
+    elif not f.get("variants") and not fb:
+        rep.warn(where, "no font file and no fallback: the plain bundle sets this family in the generic face, wider than "
+                        "the real one, so frames overflow and missingFont fills the report; add \"fallback\": \"<open family>\" "
+                        "(fonts.py width picks it by measurement; preset_kit.py pack --fallback writes it)")
+
+
 def check_font_files(root: Path, fonts: list[dict], vertical: bool, rep: Report) -> None:
     """CFF files that postext-pdf embeds whole, variable fonts that print
     their default instance, and vertical forms for a vertical book."""
@@ -2071,7 +2092,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
     comic: dict | None = None  # an open :::page / :::strip block, read raw to its closing :::
     page: dict | None = None  # an open ::::page composed page: colons, line, template, frames, depth
     figure: dict | None = None  # an open :::figure: its ::label lines up to :::
-    figure_words: dict[str, int] = {}  # resource id -> line of the first figure of this file that carries words
+    figure_words: dict[str, tuple[int, dict[str, str]]] = {}  # resource id -> (line, words) of the first figure of this file that carries words
 
     def check_slot(slot: str | None, where: str, what: str) -> None:
         if slot is None:
@@ -2175,11 +2196,18 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
         if figure is not None:
             if line == ":::":
                 if figure["words"]:
-                    first = figure_words.setdefault(figure["resource"], figure["line"])
-                    if first != figure["line"]:
-                        rep.warn(f"{name}:{figure['line']}",
-                                 f"resource {figure['resource']!r} already has its alt/caption/note from the figure at "
-                                 f"line {first}: a resource placed by two figures of one file takes the first figure's words")
+                    words = {k: v for k, (_, v) in figure["words"].items()}
+                    first_line, first_words = figure_words.setdefault(figure["resource"], (figure["line"], words))
+                    if first_line != figure["line"]:
+                        # postext >= 1.42: only words that differ from the first figure's (or that it left
+                        # unsaid) are lost, and the engine says so (figureWordsShared)
+                        lost = [k for k in FIGURE_WORD_KEYS if k in words and first_words.get(k) != words[k]]
+                        if lost:
+                            rep.warn(f"{name}:{figure['line']}",
+                                     f"figureWordsShared (postext 1.42): resource {figure['resource']!r} already has its "
+                                     f"words from the figure at line {first_line}, so this figure's {'/'.join(lost)} are "
+                                     "not shown: declare a second resource that points at the same fileId (its own "
+                                     "id and anchors) and give this figure that one")
                 figure = None
                 stack.pop()
                 prev_nonblank, prev_kind = True, "fence"
@@ -2187,9 +2215,9 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             fw = figure_word(line)
             if fw:
                 # postext >= 1.39: the edition's own words for the picture (a line wins over the attribute)
-                if fw[0] in figure["words"] and figure["words"][fw[0]] == "line":
+                if fw[0] in figure["words"] and figure["words"][fw[0]][0] == "line":
                     rep.warn(where, f"::{fw[0]} given twice in one :::figure: the last one counts")
-                figure["words"][fw[0]] = "line"
+                figure["words"][fw[0]] = ("line", fw[1])
                 if fw[0] == "alt" and not fw[1].strip():
                     rep.info(where, "::alt[] marks the picture decorative (no alt text)")
                 continue
@@ -2224,6 +2252,10 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 rep.warn(where, f"::::page inside :::{stack[-1][0]}: a composed page sits at the top level of a chapter")
             pa = parse_attrs(pm.group(2))
             t = pa.get("template")
+            for pid in re.findall(r"([A-Za-z0-9_-]+)\s*[=:]\s*#?[0-9a-fA-F]{3,8}", pa.get("palette", "")):
+                if pid not in comic_ctx.get("palette", {"main-color"}):
+                    rep.warn(where, f"page palette id {pid!r} is not in colorPalette (nothing on this page will be "
+                                    "recoloured); postext >= 1.42 applies a page fence's palette")
             frames, spread = _composed_frames(comic_ctx, t)
             if not t:
                 rep.error(where, "templateUnknown: a ::::page needs template=\"…\" (a pageTemplates id)")
@@ -2295,7 +2327,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                             rep.error(where, f"unknown resource id {rid!r}")
                     check_slot(attrs.get("slot"), where, "a :::figure")
                     figure = {"resource": rid, "line": i + 1,
-                              "words": {k: "attr" for k in FIGURE_WORD_KEYS if k in attrs}}
+                              "words": {k: ("attr", attrs[k]) for k in FIGURE_WORD_KEYS if k in attrs}}
                     stack.append((fname, i + 1))
                 prev_nonblank, prev_kind = True, "fence"
                 continue
@@ -2613,6 +2645,7 @@ def main() -> None:
             rep.error("preset.json", f"{k} is required")
     fonts = {f.get("name") for f in m.get("fonts", [])}
     for f in m.get("fonts", []):
+        check_font_fallback(f, rep)
         for v in f.get("variants", []):
             p = root / v.get("file", "")
             if not p.exists():

@@ -35,6 +35,16 @@
   fonts.py split COLLECTION.ttc --out fonts/ [--faces regular,italic]
       Single faces out of a .ttc/.otc collection.
 
+  fonts.py width LICENSED.ttf CANDIDATE.ttf... [--text-from chapters/es/ | --text "…"]
+        [--size 10] [--limit 6000]
+      The width of a paragraph of the book in the licensed face and in each
+      candidate of the same weight and slant, at one size (advance widths, no
+      kerning), with the candidate's ratio to the licensed face: within 2 %
+      is a stand-in (`fonts[].fallback`, postext >= 1.42), within 5 % a near
+      one, beyond it none. Run it per cut (regular, bold, italic) and keep
+      the candidate that is close in all of them. The sample is the running
+      text of the Markdown (directive lines, headings and code are left out).
+
 Remember: only ttf, otf and woff2 load (not .woff); every family used by the
 config (body, headings, callouts, captions, tables, running heads, design text)
 must be declared in the manifest `fonts` array, or the PDF/headless render
@@ -178,6 +188,64 @@ def cmd_subset(args) -> None:
     print('Mark these families "redistributable": false in the manifest if their licence forbids sharing.')
 
 
+def sample_text(source: str | Path, limit: int = 6000) -> str:
+    """The running text of the Markdown files at `source` (a file or a folder),
+    up to `limit` characters: paragraphs only, markup taken out."""
+    path = Path(source)
+    files = sorted(path.rglob("*.md")) if path.is_dir() else [path]
+    out: list[str] = []
+    size = 0
+    in_code = False
+    for f in files:
+        for raw in f.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = raw.strip()
+            if line.startswith(("```", "~~~")):
+                in_code = not in_code
+                continue
+            if in_code or not line or line[0] in ":#|>!<$" or line.startswith(("::", "---", "***")):
+                continue
+            line = re.sub(r"\[\^[^\]]*\]|[*_`]|\{[^}]*\}", "", line)
+            line = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", line)
+            out.append(line)
+            size += len(line) + 1
+            if size >= limit:
+                return " ".join(out)[:limit]
+    return " ".join(out)[:limit]
+
+
+def text_width_mm(font, text: str, size_pt: float) -> float:
+    """Sum of the advance widths of `text` in `font` at `size_pt`, in mm."""
+    cmap = font.getBestCmap() or {}
+    hmtx = font["hmtx"]
+    upem = font["head"].unitsPerEm
+    notdef = hmtx.metrics.get(".notdef", (upem // 2, 0))[0]
+    total = sum(hmtx.metrics.get(cmap.get(ord(c), ""), (notdef, 0))[0] for c in text)
+    return total / upem * size_pt * 25.4 / 72
+
+
+def width_verdict(ratio: float) -> str:
+    gap = abs(ratio - 1)
+    return "stand-in (within 2 %)" if gap <= 0.02 else "near (within 5 %)" if gap <= 0.05 else "too far"
+
+
+def cmd_width(args) -> None:
+    text = args.text if args.text else sample_text(args.text_from, args.limit) if args.text_from else ""
+    if not text.strip():
+        sys.exit("give a sample: --text-from chapters/<lang>/ or --text \"…\"")
+    base = None
+    print(f"{len(text)} characters at {args.size:g} pt")
+    for path in args.fonts:
+        font = TTFont(path, lazy=True, fontNumber=0)
+        w = text_width_mm(font, text, args.size)
+        name = f"{name_of(font, 16) or name_of(font, 1)} {name_of(font, 17) or name_of(font, 2)}".strip()
+        if base is None:
+            base = w
+            print(f"  {w:8.1f} mm  {name}  ({path})  <- the licensed face")
+        else:
+            r = w / base if base else 0.0
+            print(f"  {w:8.1f} mm  {name}  ({path})  {r * 100:6.1f} %  {width_verdict(r)}")
+
+
 def cmd_scale(args) -> None:
     from fontTools.pens.transformPen import TransformPen
     from fontTools.pens.t2CharStringPen import T2CharStringPen
@@ -258,12 +326,18 @@ def main() -> None:
     p.add_argument("--factor", required=True)
     p.add_argument("--family", required=True)
     p.add_argument("--out", required=True)
+    p = sub.add_parser("width")
+    p.add_argument("fonts", nargs="+", help="the licensed face first, then the candidates of the same cut")
+    p.add_argument("--text-from", help="a Markdown file or folder: its running text is the sample")
+    p.add_argument("--text", help="the sample itself")
+    p.add_argument("--size", type=float, default=10.0, help="pt (the body size of the book)")
+    p.add_argument("--limit", type=int, default=6000, help="characters of the sample")
     p = sub.add_parser("split")
     p.add_argument("collection")
     p.add_argument("--out", required=True)
     p.add_argument("--faces")
     args = ap.parse_args()
-    {"info": cmd_info, "instance": cmd_instance, "subset": cmd_subset, "scale": cmd_scale, "split": cmd_split}[args.cmd](args)
+    {"info": cmd_info, "instance": cmd_instance, "subset": cmd_subset, "scale": cmd_scale, "split": cmd_split, "width": cmd_width}[args.cmd](args)
 
 
 if __name__ == "__main__":

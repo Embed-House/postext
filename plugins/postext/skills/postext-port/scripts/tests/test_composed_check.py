@@ -93,7 +93,9 @@ class Round(unittest.TestCase):
         p = cc.plan_for((1, 36, 0))
         lacks = {f["feature"] for f in p["lacks"]}
         self.assertTrue({"continuation", "labels", "migration", "headingDesigns", "jumps"} <= lacks)
-        V142 = {"boxTracking", "decorationRemove", "slotRename"}
+        V142 = {"boxTracking", "decorationRemove", "slotRename", "frameLook", "autoWidth", "labelIconInside",
+                "headingNumber", "tocFrame", "labelSymbols", "figureWordsShared", "labelsEpubRtl", "fontFallback",
+                "editionExport", "uprightVertical", "carriedOutline", "labelEditorSandbox"}
         p = cc.plan_for((1, 37, 0))
         v138 = {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
                 "partialTypes", "labelsOnPictures", "sandboxFixes"}
@@ -252,6 +254,17 @@ class Judge(unittest.TestCase):
                      stressed=True, base={"warnings": []})
         self.assertEqual(v["fail"], [])
 
+    def test_label_on_a_symbol_and_shared_words_fail(self):
+        v = cc.judge({"warnings": [
+            {"kind": "labelOverlap", "severity": "warning", "message": "meets symbol 2",
+             "data": {"withSymbol": 2, "with": "symbol 2", "count": 1}},
+            {"kind": "labelOverlap", "severity": "warning", "message": "meets Belgium", "data": {"with": "Belgium"}},
+            {"kind": "figureWordsShared", "severity": "warning", "message": "dropped",
+             "data": {"resourceId": "mapa", "words": "caption"}}]})
+        self.assertEqual([w["kind"] for w in v["fail"]], ["labelOverlap", "figureWordsShared"])
+        self.assertEqual(v["fail"][0]["message"], "meets symbol 2")
+        self.assertEqual([w["message"] for w in v["notes"]], ["meets Belgium"])
+
     def test_stressed(self):
         v = cc.judge(self.REPORT, stressed=True, base={"warnings": [{"kind": "contrast.lowContrast"}]})
         self.assertEqual(v["fail"], [])
@@ -376,6 +389,33 @@ class Lint(unittest.TestCase):
             self.assertIn("shrink sets a text panel's text smaller until it fits: it does nothing without the text flag", out)
             self.assertNotIn("shrink='70%'", out)
 
+    def test_page_fence_palette(self):
+        md = '::::page{template="linea" palette="tint=#f6c3d0; nada=#fff"}\nTexto.\n::::\n'
+        with tempfile.TemporaryDirectory() as d:
+            root = self.project(d, md)
+            data = json.loads((root / "preset.json").read_text())
+            data["config"]["colorPalette"] = [{"id": "tint", "name": "Tinte", "value": {"hex": "#e8f1f7", "model": "hex"}}]
+            (root / "preset.json").write_text(json.dumps(data))
+            out = run_lint(root)
+            self.assertIn("page palette id 'nada' is not in colorPalette", out)
+            self.assertNotIn("page palette id 'tint'", out)
+
+    def test_font_fallback(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.project(d, "Texto.\n")
+            data = json.loads((root / "preset.json").read_text())
+            data["fonts"] = [{"name": "Adobe Garamond Pro", "redistributable": False, "variants": [],
+                              "fallback": "EB Garamond"},
+                             {"name": "Futura", "redistributable": False, "variants": []},
+                             {"name": "Minion", "redistributable": False, "variants": [], "fallback": "Minion"},
+                             {"name": "Sabon", "variants": [], "fallback": 3}]
+            (root / "preset.json").write_text(json.dumps(data))
+            out = run_lint(root)
+            self.assertNotIn("font 'Adobe Garamond Pro'", out)
+            self.assertIn("font 'Futura': no font file and no fallback", out)
+            self.assertIn("font 'Minion': fallback names the family itself", out)
+            self.assertIn("font 'Sabon': fallback must be the name of a font family", out)
+
     def test_callout_extends(self):
         with tempfile.TemporaryDirectory() as d:
             root = self.project(d, "Texto.\n")
@@ -399,7 +439,17 @@ class Lint(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             out = run_lint(self.project(d, md))
             self.assertNotIn("a :::figure ends at its first line", out)
-            self.assertIn("already has its alt/caption/note from the figure at line 2", out)
+            self.assertIn("figureWordsShared (postext 1.42): resource 'tira' already has its words from the figure "
+                          "at line 2, so this figure's alt are not shown", out)
+        # the same words again, or none, lose nothing: the engine is quiet and so is the lint
+        md = ('::::page{template="linea"}\n'
+              ':::figure{resource="tira" slot="tira" alt="Mapa"}\n::caption[Relieve]\n:::\n'
+              ':::figure{resource="tira" slot="tira"}\n::alt[Mapa]\n::caption[Relieve]\n:::\n'
+              ':::figure{resource="tira" slot="tira"}\n::label[X]{at="a"}\n:::\n'
+              '::::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertNotIn("figureWordsShared", out)
         md = ':::figure{resource="tira"}\n::alt[]\n::note[a]\n::note[b]\n::label[X]{at="a"}\n:::\n'
         with tempfile.TemporaryDirectory() as d:
             out = run_lint(self.project(d, md))

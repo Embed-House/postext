@@ -16,6 +16,7 @@ Commands:
   preset_kit.py init <project> --id my-book --name "My book" --lang es [--lang en]
       Create the folders and a build_preset.py to fill in.
   preset_kit.py pack <project> [--out my-book.postext] [--manifest-only] [--exclude GLOB]...
+        [--fallback "FAMILY=OPEN FAMILY"]...
       Zip the bundle as a .postext file (Sandbox > Books > New > Open a .postext
       file). By default every file of the folder goes in except source/,
       scripts (*.py), dot files, pagination caches (layouts*.json), the kit's
@@ -24,6 +25,10 @@ Commands:
       masters, posters, fonts, thumbnail): a work/ folder, label sources,
       translations or tool outputs stay out. --exclude leaves out the paths
       a glob matches (a folder name leaves out what is under it); repeat.
+      A licensed family the pack leaves out stays in the packed manifest with
+      no file and its `fallback` (postext >= 1.42: every host sets its faces
+      in that open family); --fallback names the stand-in, and for a family
+      without one the pack prints how to pick it (`fonts.py width`).
   preset_kit.py index <presets-root>
       Write <presets-root>/index.json listing every preset.json below it (for
       POSTEXT_PRIVATE_PRESETS_DIR or a static host).
@@ -418,9 +423,13 @@ def chapters_from_dir(project: Path | str, lang: str) -> list[dict]:
     return out
 
 
-def font_families(project: Path | str, redistributable: dict[str, bool] | None = None) -> list[dict]:
+def font_families(project: Path | str, redistributable: dict[str, bool] | None = None,
+                  fallback: dict[str, str] | None = None) -> list[dict]:
     """`fonts` entries from project/fonts (ttf/otf/woff2). Family, weight and style
-    come from the font tables (fontTools), else from 'Family-BoldItalic' names."""
+    come from the font tables (fontTools), else from 'Family-BoldItalic' names.
+    `fallback` maps a family to the open family that stands in for it where its
+    files are not (postext >= 1.42, `fonts[].fallback`); the pack keeps the
+    entry of a non-redistributable family with that name and no file."""
     project = Path(project)
     fams: dict[str, list[dict]] = {}
     for f in sorted((project / "fonts").glob("*")):
@@ -436,6 +445,8 @@ def font_families(project: Path | str, redistributable: dict[str, bool] | None =
         entry: dict = {"name": name, "variants": sorted(variants, key=lambda v: (v["style"] != "normal", v["weight"]))}
         if redistributable and redistributable.get(name) is False:
             entry["redistributable"] = False
+        if fallback and fallback.get(name):
+            entry["fallback"] = fallback[name]
         out.append(entry)
     return out
 
@@ -724,17 +735,65 @@ def pack_files(project: Path, manifest: dict, manifest_only: bool = False, exclu
     return out
 
 
+def packed_manifest(manifest: dict, fallbacks: dict[str, str] | None = None) -> tuple[dict, list[str]]:
+    """The manifest as the pack writes it (postext >= 1.42): a family left out
+    because it is not redistributable keeps its entry with no file and its
+    `fallback` (the open family every host sets its faces in); `fallbacks`
+    gives (or replaces) the stand-in per family name. Returns (manifest, the
+    names of the families left out with no fallback)."""
+    out = json.loads(json.dumps(manifest))
+    bare: list[str] = []
+    for f in out.get("fonts", []):
+        if fallbacks and f.get("name") in fallbacks:
+            f["fallback"] = fallbacks[f["name"]]
+        if f.get("redistributable") is False and f.get("variants"):
+            if f.get("fallback"):
+                f["variants"] = []
+            else:
+                bare.append(f["name"])
+    return out, bare
+
+
+def parse_fallbacks(specs: list[str] | None) -> dict[str, str]:
+    """`--fallback "Adobe Garamond Pro=EB Garamond"` (repeatable) as {family: stand-in}."""
+    out: dict[str, str] = {}
+    for spec in specs or []:
+        family, sep, stand_in = spec.partition("=")
+        if not sep or not family.strip() or not stand_in.strip():
+            raise SystemExit(f"--fallback wants FAMILY=OPEN FAMILY, got {spec!r}")
+        if family.strip() == stand_in.strip():
+            raise SystemExit(f"--fallback {spec!r}: the stand-in must be another family")
+        out[family.strip()] = stand_in.strip()
+    return out
+
+
 def cmd_pack(args) -> None:
     project = Path(args.project).resolve()
     manifest = json.loads((project / "preset.json").read_text(encoding="utf-8"))
     out = Path(args.out or f"{manifest['id']}.postext").resolve()
     skip_fonts = {v["file"] for f in manifest.get("fonts", []) if f.get("redistributable") is False for v in f["variants"]}
     files = pack_files(project, manifest, args.manifest_only, args.exclude or [])
+    known = {f.get("name") for f in manifest.get("fonts", [])}
+    fallbacks = parse_fallbacks(args.fallback)
+    for family in fallbacks:
+        if family not in known:
+            raise SystemExit(f"--fallback: the manifest has no font family {family!r} (families: {sorted(n for n in known if n)})")
+    packed, bare = packed_manifest(manifest, fallbacks)
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for rel in files:
-            z.write(project / rel, rel)
+            if rel == "preset.json" and packed != manifest:
+                z.writestr(rel, json.dumps(packed, ensure_ascii=False, indent=2) + "\n")
+            else:
+                z.write(project / rel, rel)
     if skip_fonts:
         print(f"left out {len(skip_fonts)} non-redistributable font file(s)")
+    for f in packed.get("fonts", []):
+        if f.get("redistributable") is False and f.get("fallback"):
+            print(f"  {f['name']}: set in {f['fallback']} where its files are not (postext >= 1.42)")
+    for name in bare:
+        print(f"  {name}: no fallback, so the plain bundle sets it in the generic face (wider; frames overflow). "
+              f"Measure the open candidates with `fonts.py width <licensed .ttf> <candidate .ttf>... --text-from chapters/<lang>/` "
+              f"and pack with --fallback \"{name}=<open family>\"")
     print(f"wrote {out} ({len(files)} files)")
 
 
@@ -1357,6 +1416,8 @@ def main() -> None:
                    help="pack preset.json and only the files it names (keeps work folders and tool outputs out)")
     p.add_argument("--exclude", action="append", metavar="GLOB",
                    help="leave out the paths (or folders) this glob matches; repeat")
+    p.add_argument("--fallback", action="append", metavar="FAMILY=OPEN FAMILY",
+                   help="the open family that stands in for a licensed family the pack leaves out (postext >= 1.42); repeat")
     p = sub.add_parser("index")
     p.add_argument("root")
     p = sub.add_parser("fonts")

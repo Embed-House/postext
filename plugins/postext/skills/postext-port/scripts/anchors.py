@@ -6,15 +6,22 @@ writes its own words at those anchors (references/composed-pages.md §6.4).
 
   anchors.py SOURCE.pdf --page 4 --box 23,151,202,259 [--id mapa-mundi]
              [--lang es] [--strings en=strings.en.json]... [--no-merge]
-             [--font-map map.json] [--fonts DIR] [--out DIR] [--json]
+             [--font-map map.json] [--fonts DIR] [--check-overlap] [--out DIR] [--json]
       Reads the visible text inside the box (mm from the trim's top-left
       corner of page 4), joins the lines of one name set on several lines,
-      and writes:
+      merges the same text printed twice at one point (within 0.5 mm: two
+      grids of degree figures laid over each other; the larger size stays,
+      a `# merged` note in the report), and writes:
         - the resource's `anchors` (id, x and y as fractions of the picture,
           `width` for a name of several lines, `align`, `verticalAlign`,
           `rotate` from the text matrix, `style`);
         - `labelStyles`, one per look of the lettering (face, weight,
           italic, size and colour; colours closer than ΔE 3 are one);
+        - `overlap: "allow"` (postext >= 1.42) on the anchors of names the
+          source prints touching, so `labelOverlap` does not list them at
+          every edition; when a quarter of the map or more touches (a
+          continent with a hundred country and capital names) it is written
+          once, on the map's label styles. --check-overlap leaves the check on;
         - one `:::figure` block of `::label[TEXT]{at="id"}` lines per edition.
       --strings LANG=FILE gives another edition's words: a JSON object keyed
       by the source text (or by the anchor id) whose values are the
@@ -65,10 +72,35 @@ def _centre(line: dict) -> float:
     return (line["x0"] + line["x1"]) / 2
 
 
-def merge_lines(lines: list[dict], merge: bool = True) -> list[list[dict]]:
+SAME_POINT_MM = 0.5
+
+
+def merge_duplicates(lines: list[dict], tol: float = SAME_POINT_MM, notes: list[str] | None = None) -> list[dict]:
+    """Lines of the same text whose points lie within `tol` mm are one label
+    printed twice (two grids of degree figures laid one over the other at
+    0.3 mm offsets and in two sizes): keep the larger size and write a
+    `# merged` note, not a second anchor. The point is the middle of the
+    line's baseline."""
+    kept: list[dict] = []
+    for line in sorted(lines, key=lambda l: (-float(l["size"]), round(l["base"], 2), round(l["x0"], 2))):
+        pt = (_centre(line), line["base"])
+        twin = next((k for k in kept if k["plain"].strip() == line["plain"].strip()
+                     and abs(_centre(k) - pt[0]) <= tol and abs(k["base"] - pt[1]) <= tol), None)
+        if twin is None:
+            kept.append(line)
+        elif notes is not None:
+            notes.append(f"# merged {line['plain'].strip()!r}: a copy at {max(abs(_centre(twin) - pt[0]), abs(twin['base'] - pt[1])):.1f} mm "
+                         f"({line['size']} pt) into the {twin['size']} pt one")
+    return kept
+
+
+def merge_lines(lines: list[dict], merge: bool = True, notes: list[str] | None = None) -> list[list[dict]]:
     """Group the lines of one name set on several lines (same look, one
     leading under the other, centred on each other or flush left). Turned
-    lines stay alone. Deterministic: lines are taken top to bottom."""
+    lines stay alone. The same text twice at one point is one line
+    (`merge_duplicates`, a `# merged` note in `notes`). Deterministic: lines
+    are taken top to bottom."""
+    lines = merge_duplicates(lines, notes=notes)
     order = sorted(lines, key=lambda l: (round(l["base"], 2), round(l["x0"], 2), l["plain"]))
     groups: list[list[dict]] = []
     for line in order:
@@ -156,14 +188,46 @@ def label_text(group: list[dict]) -> tuple[str, str]:
     return md, plain
 
 
+OVERLAP_RATIO = 0.12  # the engine's labelOverlap: more than 12 % of the smaller line height
+
+
+def group_box(g: list[dict]) -> tuple[float, float, float, float]:
+    """(x0, y0, x1, y1) in mm of the lines of one label."""
+    return (min(l["x0"] for l in g), min(l.get("y0", l["base"] - 0.75 * float(l["size"]) * PT_MM) for l in g),
+            max(l["x1"] for l in g), max(l.get("y1", l["base"] + 0.25 * float(l["size"]) * PT_MM) for l in g))
+
+
+def touching_groups(groups: list[list[dict]], ratio: float = OVERLAP_RATIO) -> set[int]:
+    """Indexes of the groups whose box runs into another label's by more than
+    `ratio` of the smaller height (and has any width in common): names the
+    source prints touching, which `labelOverlap` would list at every edition."""
+    boxes = [group_box(g) for g in groups]
+    order = sorted(range(len(groups)), key=lambda i: boxes[i][0])
+    out: set[int] = set()
+    for a, i in enumerate(order):
+        xi0, yi0, xi1, yi1 = boxes[i]
+        for j in order[a + 1:]:
+            xj0, yj0, xj1, yj1 = boxes[j]
+            if xj0 >= xi1:
+                break
+            h = min(yi1, yj1) - max(yi0, yj0)
+            if h > ratio * min(yi1 - yi0, yj1 - yj0) and min(xi1, xj1) - max(xi0, xj0) > 0:
+                out.update((i, j))
+    return out
+
+
 def anchors_for(groups: list[list[dict]], box: tuple[float, float, float, float], style_ids: dict,
-                width_factor: float = 1.25) -> tuple[list[dict], list[dict]]:
+                width_factor: float = 1.25, allow_touching: bool = True) -> tuple[list[dict], list[dict]]:
     """(anchors, labels) for the groups on a picture standing at `box` (mm,
-    x0 y0 x1 y1 on the page). Anchors are fractions of the picture."""
+    x0 y0 x1 y1 on the page). Anchors are fractions of the picture. A label
+    the source prints touching another gets `overlap: "allow"` on its anchor
+    (postext >= 1.42), so `labelOverlap` stops listing what the source
+    itself prints; `allow_touching=False` leaves the check on."""
     bx0, by0, bx1, by1 = box
     bw, bh = max(bx1 - bx0, 1e-6), max(by1 - by0, 1e-6)
     slug = pmd.Slugger()
     anchors, labels = [], []
+    touch = {id(groups[i]) for i in touching_groups(groups)} if allow_touching else set()
     for g in sorted(groups, key=lambda g: (round(g[0]["base"], 2), round(g[0]["x0"], 2), g[0]["plain"])):
         md, plain = label_text(g)
         size_mm = float(g[0]["size"]) * PT_MM
@@ -194,10 +258,31 @@ def anchors_for(groups: list[list[dict]], box: tuple[float, float, float, float]
         sid = style_ids.get(style_key(g[0]))
         if sid:
             a["style"] = sid
+        if id(g) in touch:
+            a["overlap"] = "allow"
         # keys in a fixed order
-        anchors.append({k: a[k] for k in ("id", "x", "y", "width", "align", "verticalAlign", "rotate", "style") if k in a})
+        anchors.append({k: a[k] for k in ("id", "x", "y", "width", "align", "verticalAlign", "rotate", "style", "overlap")
+                        if k in a})
         labels.append({"at": a["id"], "text": md, "plain": plain, "lines": len(g)})
     return anchors, labels
+
+
+def hoist_overlap(anchors: list[dict], styles: list[dict], share: float = 0.25, floor: int = 8) -> bool:
+    """When many labels of one map touch (a continent with a hundred country
+    and capital names), say it once: `overlap: "allow"` on the label styles
+    those anchors use, taken off the anchors. Only for a picture of its own
+    (styles shared with other pictures would allow their overlaps too).
+    Returns whether it did."""
+    allowed = [a for a in anchors if a.get("overlap") == "allow"]
+    if len(allowed) <= max(floor, share * len(anchors)):
+        return False
+    used = {a.get("style") for a in anchors}
+    for st in styles:
+        if st["id"] in used:
+            st["overlap"] = "allow"
+    for a in anchors:
+        a.pop("overlap", None)
+    return True
 
 
 def label_line(text: str, at: str) -> str:
@@ -277,6 +362,8 @@ def _write(result: dict, out: str | None, as_json: bool) -> None:
             (d / f"figure.{lang}.md").write_text(block + "\n", encoding="utf-8")
         if not as_json:
             print(f"{len(result['anchors'])} anchors, {len(result['labelStyles'])} label styles -> {d}/anchors.json")
+            for note in result.get("notes", []):
+                print(f"  {note}")
             for lang, miss in result.get("untranslated", {}).items():
                 if miss:
                     print(f"  {lang}: {len(miss)} untranslated: " + ", ".join(miss[:8]))
@@ -297,13 +384,19 @@ def cmd_pdf(args) -> None:
     lines, hidden = pr.read_lines(args.source, page, fonts, origin)
     inside = [l for l in lines if pr.inside_mm((l.x0, l.y0, l.x1, l.y1), box, 1.0)]
     items = [l.label_dict() for l in inside]
-    groups = merge_lines(items, merge=not args.no_merge)
+    notes: list[str] = []
+    groups = merge_lines(items, merge=not args.no_merge, notes=notes)
     styles, ids = label_styles(groups, delta_e=args.delta_e)
-    anchors, labels = anchors_for(groups, tuple(box), ids)
+    anchors, labels = anchors_for(groups, tuple(box), ids, allow_touching=not args.check_overlap)
+    if hoist_overlap(anchors, styles):
+        notes.append("# many names touch as the source prints them: overlap \"allow\" is on the label styles of this map")
+    elif any(a.get("overlap") for a in anchors):
+        notes.append(f"# {sum(1 for a in anchors if a.get('overlap'))} names touch as the source prints them: "
+                     "overlap \"allow\" on their anchors")
     rid = args.id or f"p{args.page:02d}-figure"
     result = {"resource": rid, "page": args.page, "box": box, "anchors": anchors, "labelStyles": styles,
               "labels": labels, "hidden": hidden, "markdown": {args.lang: figure_block(rid, args.slot, labels)},
-              "untranslated": {}}
+              "untranslated": {}, "notes": notes}
     for lang, strings in _parse_strings(args.strings).items():
         tl, miss = translate(labels, strings)
         result["markdown"][lang] = figure_block(rid, args.slot, tl, words_from(strings))
@@ -356,6 +449,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--lang", default="es", help="the source edition's language (default es)")
     ap.add_argument("--strings", action="append", metavar="LANG=FILE", help="another edition's words (repeat)")
     ap.add_argument("--no-merge", action="store_true", help="one label per line (names on several lines stay apart)")
+    ap.add_argument("--check-overlap", action="store_true",
+                    help="leave labelOverlap on for names the source prints touching (default: overlap \"allow\" on them)")
     ap.add_argument("--delta-e", type=float, default=3.0, help="colours closer than this are one label style (default 3)")
     ap.add_argument("--font-map", help="JSON: PDF font name prefix -> family (or {family, weight, italic})")
     ap.add_argument("--fonts", help="folder of the book's fonts (families read from the files)")
