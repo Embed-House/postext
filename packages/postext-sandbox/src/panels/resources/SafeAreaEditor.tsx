@@ -376,7 +376,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     if (e.button !== 0) return;
     const p = pointAt(e);
     const before = marksRef.current;
-    const hit = markAt(e.target as HTMLElement);
+    // While a name is being placed, a click places it even on a point (the
+    // names of a dense map stand close together); with none, a point under
+    // the pointer is grabbed.
+    const hit = mode === 'labels' && placingRef.current ? null : markAt(e.target as HTMLElement);
     const base = { before, client: { x: e.clientX, y: e.clientY }, moved: false, origin: p };
     if (hit) {
       select(hit.target);

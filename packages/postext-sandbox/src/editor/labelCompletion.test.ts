@@ -44,7 +44,7 @@ describe('label anchors in the Markdown editor', () => {
 
   it('filters from what is typed and keeps to anchor names', () => {
     const r = complete(fig('::label[Río]{style="x" at="ri|'))!;
-    expect(r.to - r.from).toBe(2);
+    expect(r.to! - r.from).toBe(2);
     expect(r.validFor).toBeInstanceOf(RegExp);
   });
 

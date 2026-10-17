@@ -147,7 +147,7 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
           style={{ borderColor: 'var(--pt-control-border)' }}
         />
       )}
-      <ul ref={list} className="relative m-0 flex max-h-[45dvh] list-none flex-col gap-1 overflow-y-auto p-0" aria-label={labels.resourceMarksModeAnchors}>
+      <ul ref={list} className="relative m-0 flex max-h-[58dvh] list-none flex-col gap-1 overflow-y-auto p-0" aria-label={labels.resourceMarksModeAnchors}>
         {visible.map(({ a, i }) => {
           const open = selected === i;
           const color = labelStyleColor(a.style, labelStyles);
