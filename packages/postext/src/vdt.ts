@@ -2681,6 +2681,11 @@ export interface VDTFrame {
    *  PDF as an artifact, the HTML hidden from assistive technology.
    *  `blockIds` is empty on such a frame. */
   facingBlocks?: VDTBlock[];
+  /** The ruled lines (`FrameConfig.rules`, #914) of a frame that holds no
+   *  box (no content, no style), in the page's flow coordinates: the
+   *  template's decoration paints them. A frame with a box carries them on
+   *  the box's `designOverlay`. */
+  rules?: VDTDesignRuleBlock[];
 }
 
 /** A composed page (`::::page{template}`, #846): the template it was set

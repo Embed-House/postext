@@ -659,7 +659,7 @@ export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMat
 export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
 export { composedPagePaintKey } from './composed/pageMemo';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,

@@ -32,7 +32,7 @@
  */
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
 import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
-import { pageIsMirrored, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
+import { pageIsMirrored, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
 import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
 import { frameContour } from '../composed/contour';
 import { dimensionToPx } from '../units';
@@ -46,6 +46,7 @@ import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCo
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
+import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
@@ -1120,6 +1121,21 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).
       overflowPx = Math.max(overflowPx, boxShort.get(frame.name) ?? 0);
+      // Ruled lines (#914): on the box, over its background, in its
+      // laid-out coordinates; an empty frame keeps them for the decoration.
+      let emptyRules: VDTDesignRuleBlock[] | undefined;
+      if (frame.rules) {
+        const linePx = frameLinePx(style, dpi);
+        if (result?.frame.designOverlay && result.frame.callout) {
+          result.frame.designOverlay.blocks.push(...frameRuleBlocks(frame.rules, result.frame.callout.innerRect, linePx, s, dpi, input.emPx));
+        } else if (!result) {
+          const pad = (d: Dimension): number => dimensionToPx(d, dpi, input.emPx);
+          const p = style.padding;
+          const inner = { x: rect.x + pad(p.left), y: rect.y + pad(p.top), width: rect.width - pad(p.left) - pad(p.right), height: rect.height - pad(p.top) - pad(p.bottom) };
+          const blocks = frameRuleBlocks(frame.rules, inner, linePx, 1, dpi, input.emPx);
+          if (blocks.length > 0) emptyRules = blocks;
+        }
+      }
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
         name: frame.name,
@@ -1134,6 +1150,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         configPath: frame.configPath,
         ...(frame.exclude === 'push' ? { push: true as const } : {}),
         ...(collapsed.has(frame.name) ? { collapsed: true as const } : {}),
+        ...(emptyRules ? { rules: emptyRules } : {}),
       };
       const decl = declared.get(frame.name);
       if (decl && !sameRect(decl, rect)) vdt.declaredRect = { ...decl };

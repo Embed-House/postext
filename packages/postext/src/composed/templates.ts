@@ -2,12 +2,13 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
-import type { DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
+import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
 import type {
   FrameConfig,
   FrameGridCell,
   FrameGroupConfig,
   FrameOverflowConfig,
+  FrameRulesConfig,
   FrameSize,
   LabelStyle,
   PageSide,
@@ -203,7 +204,7 @@ interface Merged {
 const SCALAR_KEYS = ['area', 'overflowTemplate', 'bodyStyle', 'palette', 'header', 'footer'] as const;
 const INHERITED_KEYS = ['spread', 'gutter', 'role'] as const;
 /** Frame fields merged key by key rather than replaced. */
-const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding']);
+const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding', 'rules']);
 
 /** A problem resolution met, with the JSON pointer of the field at fault.
  *  `validatePageTemplates` reports them as config warnings. */
@@ -411,6 +412,27 @@ export function normalizeFrame(
   if (oneOf(FRAME_TAKES, f.takes)) out.takes = f.takes;
   if (oneOf(FRAME_WRITING_MODES, f.writingMode)) out.writingMode = f.writingMode;
   if (oneOf(FRAME_DIRECTIONS, f.direction)) out.direction = f.direction;
+  const rules = normalizeRules(f.rules);
+  if (rules) out.rules = rules;
+  return out;
+}
+
+/** A frame's `rules` (#914) with the values the engine cannot use left
+ *  out (their defaults apply); none when it is not an object. */
+function normalizeRules(raw: unknown): FrameRulesConfig | undefined {
+  if (!isRecord(raw)) return undefined;
+  const out: FrameRulesConfig = {};
+  const every = raw.every === 'line' ? 'line' : dim(raw.every);
+  if (every) out.every = every;
+  if (isRecord(raw.color) && typeof raw.color.hex === 'string') out.color = raw.color as unknown as ColorValue;
+  const width = dim(raw.width);
+  if (width) out.width = width;
+  if (isFrameDimension(raw.inset)) out.inset = raw.inset;
+  else if (isRecord(raw.inset)) {
+    const left = dim(raw.inset.left);
+    const right = dim(raw.inset.right);
+    out.inset = { ...(left ? { left } : {}), ...(right ? { right } : {}) };
+  }
   return out;
 }
 

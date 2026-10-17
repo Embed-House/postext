@@ -70,6 +70,24 @@ export interface FrameOverflowConfig {
   fromMark?: string;
 }
 
+/** Ruled lines across a frame (#914): an answer space, a writing frame.
+ *  One rule at the foot of each line slot of the frame's content box (its
+ *  box less its padding), as many as fit its height, so an `'auto'` frame
+ *  that receives `:::space{lines=4}` is ruled four times and a frame that
+ *  grows gets more. */
+export interface FrameRulesConfig {
+  /** The pitch: `'line'` (the default), the leading of the frame's text
+   *  (its style's body, else the book's), or a length. */
+  every?: 'line' | Dimension;
+  /** Default: a mid grey. */
+  color?: ColorValue;
+  /** The rules' thickness. Default 0.5 pt. */
+  width?: Dimension;
+  /** Room left at both ends of each rule, inside the content box, or per
+   *  side. Default 0. */
+  inset?: Dimension | { left?: Dimension; right?: Dimension };
+}
+
 export interface FrameConfig {
   /** The slot name. Unique per template. */
   name: string;
@@ -132,6 +150,8 @@ export interface FrameConfig {
   crossGutter?: boolean;
   writingMode?: 'horizontal-tb' | 'vertical-rl';
   direction?: 'ltr' | 'rtl';
+  /** Ruled lines across the frame at a pitch (#914). */
+  rules?: FrameRulesConfig;
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
 }
@@ -295,6 +315,8 @@ export interface ResolvedFrame {
   crossGutter: boolean;
   writingMode?: 'horizontal-tb' | 'vertical-rl';
   direction?: 'ltr' | 'rtl';
+  /** Ruled lines across the frame (#914), as written (lengths checked). */
+  rules?: FrameRulesConfig;
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;
