@@ -2028,6 +2028,7 @@ export interface SandboxLabels {
   warningsDropCapJoining: string;
   warningsDropCapVertical: string;
   warningsDropCapNoLetter: string;
+  warningsDropCapInBox: string;
   warningsCodeOverflowTitle: string;
   warningsCodeOverflowWrap: string;
   warningsCodeOverflowShrink: string;

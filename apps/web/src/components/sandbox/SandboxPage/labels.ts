@@ -1904,6 +1904,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsDropCapJoining: t("warningsDropCapJoining"),
     warningsDropCapVertical: t("warningsDropCapVertical"),
     warningsDropCapNoLetter: t("warningsDropCapNoLetter"),
+    warningsDropCapInBox: t("warningsDropCapInBox"),
     warningsCodeOverflowTitle: t("warningsCodeOverflowTitle"),
     warningsCodeOverflowWrap: t("warningsCodeOverflowWrap"),
     warningsCodeOverflowShrink: t("warningsCodeOverflowShrink"),

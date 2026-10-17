@@ -1921,6 +1921,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsDropCapJoining: '“__text__”: its first letter joins the next one, so it is not set apart as a drop cap.',
   warningsDropCapVertical: '“__text__”: drop caps are set in horizontal text only; the paragraph is set without one.',
   warningsDropCapNoLetter: '“__text__”: the paragraph opens with no letter to set large (a reference, a formula, a note mark), so it is set without a drop cap.',
+  warningsDropCapInBox: "“__text__”: a paragraph inside a box takes no drop cap, so it is set without one. Set the paragraphs outside the :::callout, or in a frame of a composed page.",
   warningsCodeOverflowTitle: 'Code line wider than its box',
   warningsCodeOverflowWrap: '__lines__ line(s) of the listing are wider than its box and were turned over. Shorten them, or set the code smaller.',
   warningsCodeOverflowShrink: 'The listing is set at __scale__ % of its size so its widest line fits; what still does not fit is turned over.',

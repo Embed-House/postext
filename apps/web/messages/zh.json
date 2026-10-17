@@ -2522,6 +2522,7 @@
     "warningsDropCapJoining": "“__text__”：首字母与后一个字母相连，因此不单独放大。",
     "warningsDropCapVertical": "“__text__”：首字下沉只用于横排文字；该段不用首字下沉。",
     "warningsDropCapNoLetter": "“__text__”：段落开头没有可放大的字母（是引用、公式或注号），因此不用首字下沉。",
+    "warningsDropCapInBox": "“__text__”：框内的段落不做首字下沉，该段不用首字下沉。请把这些段落放到 :::callout 之外，或放进模板页的框里。",
     "warningsCodeOverflowTitle": "代码行宽于其框",
     "warningsCodeOverflowWrap": "清单中有 __lines__ 行宽于其框，已折行。可缩短这些行，或把代码字号调小。",
     "warningsCodeOverflowShrink": "为放下最宽的一行，清单按其字号的 __scale__ % 排版；仍放不下的部分折行。",

@@ -495,7 +495,7 @@ export type WarningPayload =
    *  a page whose text block is wider (#901): `scale` of its print width;
    *  the print, column and text block widths in mm. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
-  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
+  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the
    *  key; `suggestion` names the setting it is closest to, when one is. */

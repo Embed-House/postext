@@ -2522,6 +2522,7 @@
     "warningsDropCapJoining": "« __text__ » : sa première lettre se lie à la suivante ; elle n’est donc pas détachée en lettrine.",
     "warningsDropCapVertical": "« __text__ » : les lettrines ne s’appliquent qu’au texte horizontal ; le paragraphe est composé sans lettrine.",
     "warningsDropCapNoLetter": "« __text__ » : le paragraphe ne commence par aucune lettre à agrandir (un renvoi, une formule, un appel de note) ; il est donc composé sans lettrine.",
+    "warningsDropCapInBox": "« __text__ » : un paragraphe placé dans un encadré ne prend pas de lettrine ; il est donc composé sans. Placez les paragraphes hors du :::callout, ou dans un bloc d’une page composée.",
     "warningsCodeOverflowTitle": "Ligne de code plus large que son bloc",
     "warningsCodeOverflowWrap": "__lines__ ligne(s) du listing sont plus larges que son bloc et ont été renvoyées à la ligne. Raccourcissez-les ou composez le code plus petit.",
     "warningsCodeOverflowShrink": "Le listing est composé à __scale__ % de sa taille pour que sa ligne la plus large tienne ; ce qui ne tient toujours pas est renvoyé à la ligne.",

@@ -3336,6 +3336,7 @@
     "warningsDropCapJoining": "«__text__»: su primera letra se une a la siguiente, así que no se separa como capitular.",
     "warningsDropCapVertical": "«__text__»: las capitulares solo se componen en texto horizontal; el párrafo va sin ella.",
     "warningsDropCapNoLetter": "«__text__»: el párrafo no empieza por una letra que poner en grande (una referencia, una fórmula, una llamada de nota), así que va sin capitular.",
+    "warningsDropCapInBox": "«__text__»: un párrafo dentro de un recuadro no lleva capitular, así que va sin ella. Pon los párrafos fuera del :::callout, o en un marco de una página compuesta.",
     "warningsCodeOverflowTitle": "Línea de código más ancha que su caja",
     "warningsCodeOverflowWrap": "__lines__ línea(s) del listado son más anchas que su caja y se han partido. Acórtalas o reduce el código.",
     "warningsCodeOverflowShrink": "El listado se compone al __scale__ % de su tamaño para que quepa su línea más ancha; lo que aun así no cabe se parte.",

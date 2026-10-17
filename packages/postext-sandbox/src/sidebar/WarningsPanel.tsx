@@ -817,7 +817,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         : payload.reason === 'split' ? labels.warningsDropCapSplit
           : payload.reason === 'joiningScript' ? labels.warningsDropCapJoining
             : payload.reason === 'verticalText' ? labels.warningsDropCapVertical
-              : labels.warningsDropCapNoLetter;
+              : payload.reason === 'inBox' ? labels.warningsDropCapInBox
+                : labels.warningsDropCapNoLetter;
       return detail.replace('__text__', payload.text).replace('__lines__', String(payload.lines ?? ''));
     }
     case 'unknownConfigKey':

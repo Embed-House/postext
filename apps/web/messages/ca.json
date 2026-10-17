@@ -2522,6 +2522,7 @@
     "warningsDropCapJoining": "«__text__»: la primera lletra s’uneix a la següent, de manera que no se separa com a capital.",
     "warningsDropCapVertical": "«__text__»: les capitals només es componen en text horitzontal; el paràgraf va sense.",
     "warningsDropCapNoLetter": "«__text__»: el paràgraf no comença per cap lletra que es pugui posar en gran (una referència, una fórmula, una crida de nota), de manera que va sense caplletra.",
+    "warningsDropCapInBox": "«__text__»: un paràgraf dins d’un requadre no porta capital, així que va sense. Posa els paràgrafs fora del :::callout, o en un marc d’una pàgina composta.",
     "warningsCodeOverflowTitle": "Línia de codi més ampla que la seva caixa",
     "warningsCodeOverflowWrap": "__lines__ línia(es) del llistat són més amples que la seva caixa i s'han partit. Escurça-les o redueix el codi.",
     "warningsCodeOverflowShrink": "El llistat es compon al __scale__ % de la seva mida perquè hi càpiga la línia més ampla; el que tot i així no hi cap es parteix.",

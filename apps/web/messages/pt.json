@@ -2519,6 +2519,7 @@
     "warningsDropCapJoining": "“__text__”: a primeira letra se liga à seguinte, por isso não é separada como capitular.",
     "warningsDropCapVertical": "“__text__”: as capitulares só são compostas em texto horizontal; o parágrafo fica sem ela.",
     "warningsDropCapNoLetter": "“__text__”: o parágrafo não começa por uma letra que se possa pôr em destaque (uma referência, uma fórmula, uma chamada de nota), por isso fica sem capitular.",
+    "warningsDropCapInBox": "“__text__”: um parágrafo dentro de um quadro de destaque não leva capitular, então fica sem ela. Coloque os parágrafos fora do :::callout, ou em um quadro de uma página composta.",
     "warningsCodeOverflowTitle": "Linha de código mais larga que a sua caixa",
     "warningsCodeOverflowWrap": "__lines__ linha(s) da listagem são mais largas que a sua caixa e foram partidas. Encurte-as ou reduza o código.",
     "warningsCodeOverflowShrink": "A listagem é composta a __scale__ % do seu tamanho para caber a sua linha mais larga; o que ainda assim não cabe é partido.",

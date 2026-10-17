@@ -2522,6 +2522,7 @@
     "warningsDropCapJoining": "「__text__」：最初の文字が次の文字とつながるため、ドロップキャップとして切り離しません。",
     "warningsDropCapVertical": "「__text__」：ドロップキャップは横組みでのみ組みます。この段落はドロップキャップなしです。",
     "warningsDropCapNoLetter": "「__text__」：段落が大きくできる文字で始まっていない（参照、数式、注の合印）ため、ドロップキャップなしで組みました。",
+    "warningsDropCapInBox": "「__text__」：囲みの中の段落にはドロップキャップを付けないため、ドロップキャップなしで組みました。段落を :::callout の外に出すか、テンプレートページの枠に入れてください。",
     "warningsCodeOverflowTitle": "枠より長いコード行",
     "warningsCodeOverflowWrap": "リストの __lines__ 行が枠より長いため、折り返しました。行を短くするか、コードを小さくしてください。",
     "warningsCodeOverflowShrink": "最も長い行が収まるよう、リストをサイズの __scale__ % で組みました。それでも収まらない部分は折り返しています。",

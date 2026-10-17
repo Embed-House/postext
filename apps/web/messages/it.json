@@ -2523,6 +2523,7 @@
     "warningsDropCapJoining": "«__text__»: la prima lettera si lega alla successiva, quindi non viene separata come capolettera.",
     "warningsDropCapVertical": "«__text__»: i capilettera si compongono solo nel testo orizzontale; il paragrafo viene composto senza.",
     "warningsDropCapNoLetter": "«__text__»: il paragrafo non comincia con una lettera da ingrandire (un rimando, una formula, un richiamo di nota), quindi è composto senza capolettera.",
+    "warningsDropCapInBox": "«__text__»: un paragrafo dentro un riquadro non prende il capolettera, quindi viene composto senza. Metti i paragrafi fuori dal :::callout, o in una cornice di una pagina composta.",
     "warningsCodeOverflowTitle": "Riga di codice più larga del suo riquadro",
     "warningsCodeOverflowWrap": "__lines__ righe del listato sono più larghe del riquadro e sono andate a capo. Accorciale, o componi il codice più piccolo.",
     "warningsCodeOverflowShrink": "Il listato è composto al __scale__ % della sua dimensione perché la riga più larga entri; ciò che ancora non entra va a capo.",

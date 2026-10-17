@@ -2523,6 +2523,7 @@
     "warningsDropCapJoining": "„__text__“: Sein erster Buchstabe ist mit dem nächsten verbunden, daher wird er nicht als Initiale abgesetzt.",
     "warningsDropCapVertical": "„__text__“: Initialen werden nur in horizontalem Text gesetzt; der Absatz wird ohne Initiale gesetzt.",
     "warningsDropCapNoLetter": "„__text__“: Der Absatz beginnt mit keinem Buchstaben, der groß gesetzt werden kann (ein Querverweis, eine Formel, ein Fußnotenzeichen), daher wird er ohne Initiale gesetzt.",
+    "warningsDropCapInBox": "„__text__“: Ein Absatz in einem Kasten bekommt keine Initiale und wird ohne gesetzt. Setzen Sie die Absätze außerhalb des :::callout oder in einen Rahmen einer zusammengesetzten Seite.",
     "warningsCodeOverflowTitle": "Codezeile breiter als ihr Kasten",
     "warningsCodeOverflowWrap": "__lines__ Zeile(n) des Listings sind breiter als ihr Kasten und wurden umbrochen. Kürzen Sie sie oder setzen Sie den Code kleiner.",
     "warningsCodeOverflowShrink": "Das Listing wird auf __scale__ % seiner Größe gesetzt, damit seine breiteste Zeile passt; was dann noch nicht passt, wird umbrochen.",
