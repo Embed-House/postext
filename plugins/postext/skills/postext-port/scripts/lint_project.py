@@ -1764,8 +1764,9 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
             _check_panel_attrs(pattrs, w, ctx, rep)
             text_panel = "text" in pattrs
             if text_panel and (kind == "strip" or "spread" in attrs):
-                rep.warn(w, f"text panel on a {'strip' if kind == 'strip' else 'spread'}: frames take no text there, the "
-                            "words are set in the flow after the comic (comicPanelFrame): letter them as captions")
+                rep.info(w, f"text panel on a {'strip' if kind == 'strip' else 'spread'}: set in its frame from postext 1.40; "
+                            "an older engine sets the words in the flow after the comic (comicPanelFrame): letter them "
+                            "as captions for those")
             panels += 1
             if not pattrs.get("inset"):
                 flow_panels += 1

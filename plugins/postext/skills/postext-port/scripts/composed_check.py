@@ -144,6 +144,27 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "(#project=ID&lang=L)", "import each edition to look at it"),
     ((1, 39, 0), "wordTracking", "postext import-docx sets Word styles' character spacing as letterSpacing; "
      "docx export writes it", "set the paragraph styles' tracking by hand"),
+    ((1, 40, 0), "labelStyleOff", "a label style that borrows a paragraph style can switch its italics and "
+     "capitals off (fontStyle 'normal', textTransform 'none'); vertical labels on right-to-left pages",
+     "give the label style its own font and size instead of borrowing the paragraph style; set vertical "
+     "names of a right-to-left edition horizontally and name the gap"),
+    ((1, 40, 0), "epubLabels", "the reflowable EPUB draws plain figure labels over the picture (an SVG layer)",
+     "the reflowable EPUB lists the labels after the picture; say the map reads as a list there"),
+    ((1, 40, 0), "textPanelsStrips", "comic text panels set in their frames on :::strip and "
+     ":::page{spread}; valign=middle|bottom in a slanted cell follows the slant",
+     "letter a strip's or spread's words as caption: lines; keep text in slanted cells at the top"),
+    ((1, 40, 0), "framesRtl", "a frame's own writingMode on right-to-left pages, pictures upright in a "
+     "vertical frame, reflowable EPUB frames with writing-mode",
+     "keep the frame in the page's mode on right-to-left pages; a picture in a vertical frame turns with "
+     "it, so keep pictures out of such frames"),
+    ((1, 40, 0), "migrationLayer", "moveTextToMarkdown with labelsOnPictures puts the picture's frame under "
+     "decoration the design painted over it (layer -1)",
+     "read the overPicture difference and move the decoration by hand"),
+    ((1, 40, 0), "editionChecks", "sandbox_get_composed_checks (WebMCP): the composed checks of every "
+     "edition by language, chapter, page and frame; useTemplate proposals tried exactly",
+     "check each edition by switching to it; read `fits` of every useTemplate proposal"),
+    ((1, 40, 0), "wordTrackingSandbox", "the Sandbox's Word import takes the character spacing of the "
+     "Word styles (sandbox_import_word characterSpacing)", "run postext import-docx or set the tracking by hand"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)

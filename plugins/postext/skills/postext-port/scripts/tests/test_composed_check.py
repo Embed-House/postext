@@ -97,13 +97,20 @@ class Round(unittest.TestCase):
         v138 = {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
                 "partialTypes", "labelsOnPictures", "sandboxFixes"}
         self.assertTrue(v138 <= {f["feature"] for f in p["lacks"]})
-        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0") for f in p["lacks"]))
+        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0", "1.40.0") for f in p["lacks"]))
         p = cc.plan_for((1, 38, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
                          {"labelChecks", "figureWords", "styleExtends", "frameModes", "startEnd", "cuts",
-                          "textPanelsMirrored", "coverUpright", "sourceAtFlow", "editionsKept", "wordTracking"})
-        self.assertTrue(all(f["since"] == "1.39.0" for f in p["lacks"]))
-        self.assertEqual(cc.plan_for((1, 39, 0))["lacks"], [])
+                          "textPanelsMirrored", "coverUpright", "sourceAtFlow", "editionsKept", "wordTracking"}
+                         | {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
+                            "editionChecks", "wordTrackingSandbox"})
+        self.assertTrue(all(f["since"] in ("1.39.0", "1.40.0") for f in p["lacks"]))
+        p = cc.plan_for((1, 39, 0))
+        self.assertEqual({f["feature"] for f in p["lacks"]},
+                         {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
+                          "editionChecks", "wordTrackingSandbox"})
+        self.assertTrue(all(f["since"] == "1.40.0" for f in p["lacks"]))
+        self.assertEqual(cc.plan_for((1, 40, 0))["lacks"], [])
 
     def test_round_command(self):
         r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "round", "--version", "1.36.0", "--json"],
@@ -351,7 +358,8 @@ class Lint(unittest.TestCase):
             self.assertNotIn("attribute 'valign' is ignored", out)
             self.assertIn("box='nada' is not in calloutStyles", out)
             self.assertIn("valign='sideways' is ignored", out)
-            self.assertIn("text panel on a strip", out)
+            self.assertIn("text panel on a strip: set in its frame from postext 1.40", out)
+            self.assertNotIn("WARN", "".join(l for l in out.splitlines() if "text panel on a strip" in l))
             self.assertNotIn("comicStrayText", out)
 
     def test_comic_text_panel_shrink(self):
