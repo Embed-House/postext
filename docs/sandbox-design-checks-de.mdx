@@ -332,3 +332,18 @@ Die Optionen: **Seiten mit Rahmen an denselben Stellen teilen sich eine Vorlage*
 In der Konfiguration bleibt, und unter **Bleibt in der Konfiguration** aufgeführt: ein Text, der Wörter mit Platzhaltern mischt (`Seite {pageNumber}`), ein Text, der am eigenen Kasten seines Kolumnentitels oder an einem anderen Element hängt, und der Text eines Überschriftendesigns (keine Seite). Auf den Seiten wird das Design einer Überschrift, die in einem Rahmen steht (der Reiter einer gerahmten Überschrift, Bänder um eine Überschrift), dort nicht gezeichnet; eine Seite mit Fließtext unter solchen Überschriften sieht daher anders aus. Die Kontrastprüfung misst den Text eines Rahmens gegen die Seite und nicht gegen einen Kasten der Dekoration darunter und kann daher ein weißes Etikett auf einem farbigen Kasten melden.
 
 Dasselbe Verschieben ist eine Funktion der Engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, die die neue Konfiguration, die Kapitel und den Bericht des Dialogs zurückgibt. Siehe [Zusammengesetzte Seiten](/de/docs/composed-pages#ein-buch-mit-text-in-seinen-stilen-umstellen).
+
+### Einen Rahmen mit einem Klick beheben
+
+Unter *Text passt nicht in seinen Rahmen* sind die Lösungen, die die Leiter des Satzes für diesen Rahmen errechnet hat, Schaltflächen, in den Worten der Warnung:
+
+- *den Text auf 60 % verkleinern lassen* setzt `fit.minScale` des Rahmens (und schaltet `fit.shrinkText` ein, wenn es aus war);
+- *maxHeight auf 66 mm anheben* setzt seine `maxHeight`;
+- *minHeight von … senken* senkt die Mindesthöhe eines anderen Rahmens seiner Gruppe;
+- *auf der nächsten Seite fortsetzen* setzt `overflow.continueIn` auf `next-page`, sodass, was nicht passt, auf einer nach dieser hinzugefügten Seite weitergeht;
+- *die Seite mit der Vorlage … setzen* schreibt das `template` des `::::page`-Zauns der Seite im Text um;
+- *etwa 626 Zeichen kürzen* ändert nichts: Es wählt den Text des Rahmens im Feld **Text** aus und sagt, wie viele Zeichen wegmüssen.
+
+Die anderen Schaltflächen ändern die Form des Buchs, deshalb fragt jede zuerst und nennt die Einstellung und ihren Wert (*tema-fija › dinero › maxHeight = 66 mm*) oder die Vorlage, die die Seite bekommt. Eine Änderung der Gestaltung gilt für alle Seiten mit dieser Vorlage. **Ändern** nimmt die Änderung als einen Schritt des Rückgängig-Verlaufs vor: Cmd/Strg+Z oder die Schaltfläche Rückgängig neben Inhalt und Gestaltung nimmt sie zurück. Die Seite wird neu gesetzt, und die Warnung verschwindet oder macht dem Platz, was die Änderung hinterlassen hat (ein Kasten weiter unten, der jetzt nicht mehr passt).
+
+Dieselben Schaltflächen begleiten den Rahmen im Feld **Was sich bewegt hat und warum** der Leinwand. Die Warnung einer Ausgabe, die nicht angezeigt wird, bietet an, diese Ausgabe zu öffnen, wo ihre Lösungen angewendet werden können. Hat sich das Buch geändert, seit der Satz eine Lösung vorgeschlagen hat (die Vorlage wurde bearbeitet, der Zaun nennt eine andere Vorlage), sagt die Schaltfläche das und ändert nichts. Ein Agent wendet dieselben Lösungen mit `sandbox_apply_proposal` an ([WebMCP](/de/docs/webmcp)).

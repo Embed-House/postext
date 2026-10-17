@@ -332,3 +332,18 @@ Les opcions: **Les pàgines amb marcs als mateixos llocs comparteixen plantilla*
 Queda a la configuració, i s'enumera a **Queda a la configuració**: un text que barreja paraules i marcadors (`Pàgina {pageNumber}`), un text que penja de la caixa pròpia de la capçalera o d'un altre element, i el text d'un disseny de títol (que no és una pàgina). A les pàgines, el disseny d'un títol col·locat en un marc (la pestanya d'un títol amb caixa, les bandes dibuixades al voltant d'un títol) no s'hi dibuixa, de manera que una pàgina amb text corregut sota títols així es veu diferent. La comprovació de contrast mesura el text d'un marc contra la pàgina i no contra una caixa de la decoració que hi hagi a sota, així que pot assenyalar una etiqueta blanca sobre una caixa de color.
 
 El mateix canvi és una funció del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que torna la configuració nova, els capítols i l'informe que mostra el quadre. Vegeu [Pàgines compostes](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils).
+
+### Arreglar un marc amb un clic
+
+Sota *El text no cap al seu marc*, les solucions que l'escala de reajustament ha calculat per a aquell marc són botons, amb les mateixes paraules de l'avís:
+
+- *deixa que el text baixi al 60 %* fixa el `fit.minScale` del marc (i activa `fit.shrinkText` si estava desactivat);
+- *puja maxHeight a 66 mm* fixa el `maxHeight`;
+- *abaixa el minHeight de …* rebaixa l'alçada mínima d'un altre marc del grup;
+- *fes que continuï a la pàgina següent* posa `overflow.continueIn` a `next-page`, de manera que el que no hi cap continua en una pàgina afegida després d'aquesta;
+- *compon la pàgina amb la plantilla …* reescriu el `template` de la tanca `::::page` de la pàgina al text;
+- *retalla uns 626 caràcters* no canvia res: selecciona el text del marc al tauler **Text** i diu quants caràcters cal treure.
+
+Els altres botons canvien la forma del llibre, així que cadascun pregunta abans i diu l'ajust i el valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que prendrà la pàgina. Un canvi de disseny val per a totes les pàgines compostes amb aquella plantilla. **Canvia-ho** fa el canvi com un pas de l'historial de desfer: Cmd/Ctrl+Z, o el botó Desfés al costat de Contingut i Disseny, el desfà. La pàgina es torna a maquetar i l'avís desapareix, o deixa pas al que el canvi hagi deixat (una caixa més avall que ara no hi cap).
+
+Els mateixos botons acompanyen el marc al tauler **Què s'ha mogut i per què** del llenç. L'avís d'una edició que no és a la pantalla ofereix obrir aquella edició, on es poden aplicar les solucions. Si el llibre ha canviat des que la maquetació va proposar una solució (s'ha editat la plantilla, la tanca diu una altra plantilla), el botó ho diu i no canvia res. Un agent aplica les mateixes solucions amb `sandbox_apply_proposal` ([WebMCP](/ca/docs/webmcp)).

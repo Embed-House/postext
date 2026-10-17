@@ -332,3 +332,18 @@ Las opciones: **Las páginas con marcos en los mismos sitios comparten plantilla
 Queda en la configuración, y se enumera en **Queda en la configuración**: un texto que mezcla palabras y marcadores (`Página {pageNumber}`), un texto que cuelga de la caja propia de su cabecera o de otro elemento, y el texto de un diseño de título (que no es una página). En las páginas, el diseño de un título colocado en un marco (la pestaña de un título con caja, las bandas dibujadas alrededor de un título) no se dibuja ahí, así que una página con texto corrido bajo títulos así se ve distinta. La comprobación de contraste mide el texto de un marco contra la página y no contra una caja de la decoración que haya debajo, así que puede señalar una etiqueta blanca sobre una caja de color.
 
 El mismo cambio es una función del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro. Véase [Páginas compuestas](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos).
+
+### Arreglar un marco con un clic
+
+Bajo *El texto no cabe en su marco*, las soluciones que la escalera de reajuste ha calculado para ese marco son botones, con las mismas palabras del aviso:
+
+- *deja que el texto baje al 60 %* fija el `fit.minScale` del marco (y activa `fit.shrinkText` si estaba desactivado);
+- *sube maxHeight a 66 mm* fija su `maxHeight`;
+- *baja el minHeight de …* rebaja la altura mínima de otro marco de su grupo;
+- *haz que siga en la página siguiente* pone `overflow.continueIn` en `next-page`, de modo que lo que no cabe sigue en una página añadida después de esta;
+- *compón la página con la plantilla …* reescribe el `template` de la valla `::::page` de la página en el texto;
+- *recorta unos 626 caracteres* no cambia nada: selecciona el texto del marco en el panel **Texto** y dice cuántos caracteres hay que quitar.
+
+Los demás botones cambian la forma del libro, así que cada uno pregunta antes y nombra el ajuste y su valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que tomará la página. Un cambio de diseño vale para todas las páginas compuestas con esa plantilla. **Cambiar** hace el cambio como un paso del historial de deshacer: Cmd/Ctrl+Z, o el botón Deshacer junto a Contenido y Diseño, lo deshace. La página se vuelve a maquetar y el aviso desaparece, o deja paso a lo que el cambio haya dejado (una caja más abajo que ahora no cabe).
+
+Los mismos botones acompañan al marco en el panel **Qué se ha movido y por qué** del lienzo. El aviso de una edición que no está en pantalla ofrece abrir esa edición, donde se pueden aplicar sus soluciones. Si el libro ha cambiado desde que la maquetación propuso una solución (se ha editado la plantilla, la valla nombra otra plantilla), el botón lo dice y no cambia nada. Un agente aplica las mismas soluciones con `sandbox_apply_proposal` ([WebMCP](/es/docs/webmcp)).

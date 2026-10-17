@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 39 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 40 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 39 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+Hi ha 40 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -39,7 +39,7 @@ pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
 pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
-quan el Sandbox és a la pantalla, apareixen també les 39 eines `sandbox_*`.
+quan el Sandbox és a la pantalla, apareixen també les 40 eines `sandbox_*`.
 
 ### En qualsevol altre navegador: `window.postextWebMcp`
 
@@ -568,6 +568,7 @@ resposta.
 amb `chapter: 4` → per a cada avís, `sandbox_read_text` al voltant de la seva
 `line` i `sandbox_render_page` de la seva `page` → `sandbox_edit_text` o
 `sandbox_set_config` → `sandbox_get_warnings` un altre cop fins que torni buit.
+Un marc d'una pàgina composta que no hi cap porta les seves solucions (`proposals`): `sandbox_apply_proposal` amb el seu `frame` i el número d'una d'elles l'aplica, torna a maquetar el capítol i respon `fits`.
 
 **«Fes un llibre amb aquest fitxer de Word i dona'm el PDF.»**
 `sandbox_save_book` amb `action: "new_blank"` → `sandbox_import_word` amb
@@ -651,7 +652,7 @@ de cadascuna s'obtenen amb `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Preguntes**: `sandbox_answer`.
-- **La revisió**: `sandbox_get_warnings`.
+- **La revisió**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
 
 ## Quan incrustes el Sandbox
 

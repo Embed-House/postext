@@ -332,3 +332,18 @@ The options: **Pages with frames in the same places share a template**, **A high
 Left in the configuration, and listed under **Left in the configuration**: a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from its running head's own box or from another element, and the text of a heading design (not a page). On the pages, a heading design set in a frame (the tab of a boxed heading, bands drawn around a heading) is not drawn there, so a page with running text under such headings looks different. The contrast check reads a frame's text against the page and not against a box of the decoration under it, so it may list a white label on a coloured box.
 
 The same migration is a function of the engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, which returns the new configuration, the chapters and the report the dialog shows. See [Composed pages](/en/docs/composed-pages#migrating-a-book-with-text-in-its-styles).
+
+### Fixing a frame in one click
+
+Under *Text does not fit its frame*, the fixes the reflow ladder worked out for that frame are buttons, in the warning's own words:
+
+- *let the text shrink to 60 %* sets the frame's `fit.minScale` (and turns `fit.shrinkText` on when it was off);
+- *raise maxHeight to 66 mm* sets its `maxHeight`;
+- *lower the minHeight of …* lowers the minimum height of another frame of its group;
+- *continue it on the next page* sets `overflow.continueIn` to `next-page`, so what does not fit goes on to a page added after this one;
+- *set the page with template …* rewrites the `template` of the page's `::::page` fence in the text;
+- *cut about 626 characters* changes nothing: it selects the frame's text in the **Text** panel and says how many characters to cut.
+
+The other buttons change the book's form, so each asks first, naming the setting and its value (*tema-fija › dinero › maxHeight = 66 mm*) or the template the page will take. A design change applies to every page set with that template. **Change it** makes the change as one step of the undo history: Cmd/Ctrl+Z, or the Undo button beside Content and Design, takes it back. The page is laid out again, and the warning goes, or gives way to what the change left (a box further down that no longer fits).
+
+The same buttons follow the frame in the canvas's **What moved and why** panel. The warning of an edition that is not on screen offers to open that edition instead, where its fixes can be made. When the book changed after the layout proposed a fix (the template was edited, the fence names another template), the button says so and changes nothing. An agent makes the same fixes with `sandbox_apply_proposal` ([WebMCP](/en/docs/webmcp)).

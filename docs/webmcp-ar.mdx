@@ -23,7 +23,7 @@ export const metadata = {
 بعد أن كان 18، فيعيد القيمة كما كانت. يفعل ما تفعله أنت حين تنظر وتقارن،
 ويفعله بكتابك أنت وفي متصفحك.
 
-هناك 39 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
+هناك 40 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
 أدوات للموقع، `site_*`، في كل صفحة من postext.dev. وترتّب هذه الصفحة الأدوات
 بحسب ما قد تطلبه من الوكيل، وتعطي طريقة استدعاء كل واحدة منها.
 
@@ -541,6 +541,7 @@ await browser.close();
 لكل تحذير، `sandbox_read_text` حول سطره `line` و`sandbox_render_page` لصفحته
 `page` ← `sandbox_edit_text` أو `sandbox_set_config` ← `sandbox_get_warnings`
 من جديد حتى يعود فارغًا.
+يأتي الإطار الذي لا يتّسع في صفحة مركّبة مع حلوله (`proposals`): تطبّق `sandbox_apply_proposal` مع `frame` الخاص به ورقم أحد الحلول ذلك الحل، وتعيد تنضيد الفصل، وتجيب بـ`fits`.
 
 **«اصنع كتابًا من ملف Word هذا وأعطني ملف PDF».** `sandbox_save_book` مع
 `action: "new_blank"` ← `sandbox_import_word` مع `dryRun: true` ← تصحيح
@@ -614,7 +615,7 @@ Sandbox، ويواصل العمل هناك بأدوات `sandbox_*`.
   و`sandbox_export`.
 - **Word**: `sandbox_import_word`، و`sandbox_word_templates`.
 - **الأسئلة**: `sandbox_answer`.
-- **الفحوص**: `sandbox_get_warnings`.
+- **الفحوص**: `sandbox_get_warnings`، و`sandbox_apply_proposal`.
 
 ## عند تضمين Sandbox
 

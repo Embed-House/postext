@@ -54,6 +54,19 @@ En un libro en varios idiomas, una barra sobre el lienzo muestra sus ediciones (
 - Un clic en una edición la abre en la misma página compuesta. La página se busca por su valla `::::page` en el capítulo, que es la misma en todos los idiomas, así que sigues en ella aunque en la otra edición lleve otro número; el marco seleccionado sigue seleccionado. En cualquier otra página se conserva el número de página.
 - **En paralelo** muestra el capítulo en pantalla junto al mismo capítulo de otra edición (**junto a** la elige cuando el libro tiene más de dos). Las dos columnas muestran la misma página y se desplazan juntas; **Desplazar a la vez** lo desactiva. Entre páginas compuestas, las columnas cuentan a partir de la última página compuesta que comparten. Los marcos que no caben, o cuyo texto se redujo, se marcan en las dos columnas. La otra edición aquí solo se lee: un clic en una de sus páginas abre esa edición en esa página.
 
+#### Qué se ha movido y por qué
+
+En una página compuesta, la maquetación puede cambiar lo que dibuja la plantilla para que quepa el contenido: una caja crece con su texto, las que la siguen en su grupo bajan, un marco cede altura a otro, las imágenes o el texto se componen más pequeños, lo que sobra sigue en una página añadida. **Reajuste**, en la barra sobre el lienzo (aparece cuando el capítulo tiene páginas compuestas), abre el panel **Qué se ha movido y por qué** y marca esos cambios en las páginas.
+
+- El panel recorre cada página compuesta en la que algo ha cambiado y, bajo un número, cada marco que ha cambiado, con sus cambios en palabras: *dinero ha crecido 13,9 mm para que quepa su contenido*, *gasto ha bajado 13,9 mm para dejar sitio a dinero*, *ahorro-fotos: sus imágenes están al 82,5 %*, *dinero sigue en la página 9*. Cada cambio nombra su causa cuando la tiene: el marco cuyo crecimiento ha movido este, o el lomo de una doble página.
+- En la página, cada uno de esos marcos lleva una insignia con el mismo número y sus cambios en corto (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La caja que declara la plantilla se dibuja con trazos, y unas flechas van de ella a la caja tal como ha quedado: una desde su borde superior si se ha movido, otra al pie o en su borde final si ha cambiado de tamaño.
+- Al pasar sobre un marco de la lista, se resalta en su página; un clic en él, o en el encabezado de una página, lleva a esa página.
+- Un marco que sigue sin caber dice cuánto le falta, y sus soluciones aparecen debajo como botones (consulta [el panel Revisión](/es/docs/sandbox-design-checks)).
+
+Las frases están en el idioma de la interfaz, números incluidos (*13,9 mm*). Las marcas solo se dibujan sobre el lienzo: el PDF, la impresión y cualquier exportación las dejan fuera. El navegador recuerda si el panel estaba abierto.
+
+En el modo **Diseño**, los marcos muestran además cómo los mide su plantilla: *auto* donde la altura sigue al contenido (o una altura fija puede crecer hasta su máximo), una línea de trazos a lo ancho del marco a su altura mínima y otra a la máxima, con los valores en una insignia al pie del marco (*auto · mín. 36 mm · máx. 72 mm*), y una chincheta en el marco que conserva su caja declarada (`pin: true`) hagan lo que hagan los marcos de alrededor.
+
 ### Seleccionar en la página
 
 Las páginas y los editores son dos caras del mismo libro: lo que se selecciona en una página queda seleccionado en el Markdown o en los ajustes, y al revés. Funciona igual en el lienzo, en el Folio con el modo **Seleccionar texto** y en las páginas HTML, y una selección hecha en una pestaña sigue ahí al abrir otra.

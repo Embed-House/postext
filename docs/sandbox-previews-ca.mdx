@@ -54,6 +54,19 @@ En un llibre en diversos idiomes, una barra sobre el llenç mostra les seves edi
 - Un clic en una edició l'obre a la mateixa pàgina composta. La pàgina es busca per la seva tanca `::::page` al capítol, que és la mateixa en tots els idiomes, de manera que hi continues encara que a l'altra edició porti un altre número; el marc seleccionat continua seleccionat. En qualsevol altra pàgina es conserva el número de pàgina.
 - **En paral·lel** mostra el capítol a la pantalla al costat del mateix capítol d'una altra edició (**al costat de** la tria quan el llibre en té més de dues). Les dues columnes mostren la mateixa pàgina i es desplacen juntes; **Desplaçar alhora** ho desactiva. Entre pàgines compostes, les columnes compten a partir de l'última pàgina composta que comparteixen. Els marcs que no hi caben, o el text dels quals s'ha reduït, es marquen a totes dues columnes. L'altra edició aquí només es llegeix: un clic en una de les seves pàgines obre aquella edició en aquella pàgina.
 
+#### Què s'ha mogut i per què
+
+En una pàgina composta, la maquetació pot canviar el que dibuixa la plantilla perquè hi càpiga el contingut: una caixa creix amb el text, les que la segueixen al grup baixen, un marc cedeix alçada a un altre, les imatges o el text es componen més petits, el que sobra continua en una pàgina afegida. **Reajustament**, a la barra sobre el llenç (apareix quan el capítol té pàgines compostes), obre el tauler **Què s'ha mogut i per què** i marca aquests canvis a les pàgines.
+
+- El tauler recorre cada pàgina composta on ha canviat alguna cosa i, sota un número, cada marc que ha canviat, amb els canvis en paraules: *dinero ha crescut 13,9 mm perquè hi càpiga el contingut*, *gasto ha baixat 13,9 mm per fer lloc a dinero*, *ahorro-fotos: les imatges són al 82,5 %*, *dinero continua a la pàgina 9*. Cada canvi diu la causa quan en té: el marc que, en créixer, ha mogut aquest, o el llom d'una doble pàgina.
+- A la pàgina, cadascun d'aquests marcs porta una insígnia amb el mateix número i els canvis en curt (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La caixa que declara la plantilla es dibuixa amb traços, i unes fletxes van d'ella a la caixa tal com ha quedat: una des de la vora superior si s'ha mogut, una altra al peu o a la vora final si ha canviat de mida.
+- En passar per sobre d'un marc de la llista, es ressalta a la seva pàgina; un clic damunt, o a l'encapçalament d'una pàgina, porta a aquella pàgina.
+- Un marc que encara no hi cap diu quant li falta, i les solucions apareixen a sota com a botons (vegeu [el tauler Revisió](/ca/docs/sandbox-design-checks)).
+
+Les frases són en l'idioma de la interfície, nombres inclosos (*13,9 mm*). Les marques només es dibuixen sobre el llenç: el PDF, la impressió i qualsevol exportació les deixen fora. El navegador recorda si el tauler era obert.
+
+En el mode **Disseny**, els marcs mostren a més com els mesura la plantilla: *auto* on l'alçada segueix el contingut (o una alçada fixa pot créixer fins al màxim), una línia de traços al llarg del marc a l'alçada mínima i una altra a la màxima, amb els valors en una insígnia al peu del marc (*auto · mín. 36 mm · màx. 72 mm*), i una xinxeta al marc que conserva la caixa declarada (`pin: true`) facin el que facin els marcs del voltant.
+
 ### Seleccionar a la pàgina
 
 Les pàgines i els editors són dues cares del mateix llibre: el que se selecciona en una pàgina queda seleccionat al Markdown o als ajustos, i a l'inrevés. Funciona igual al llenç, al Folio amb el mode **Seleccionar text** i a les pàgines HTML, i una selecció feta en una pestanya hi continua en obrir-ne una altra.

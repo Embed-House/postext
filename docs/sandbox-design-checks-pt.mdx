@@ -332,3 +332,18 @@ As opções: **Páginas com blocos nos mesmos lugares compartilham um modelo**, 
 Fica na configuração, e aparece em **Fica na configuração**: um texto que mistura palavras e marcadores (`Página {pageNumber}`), um texto preso à caixa do seu cabeçalho ou a outro elemento, e o texto de um desenho de título (que não é uma página). Nas páginas, o desenho de um título posto num bloco (a aba de um título com caixa, as faixas desenhadas em volta de um título) não é desenhado ali, então uma página com texto corrido sob títulos assim parece diferente. A verificação de contraste mede o texto de um bloco contra a página e não contra uma caixa da decoração que esteja embaixo, então pode apontar um rótulo branco sobre uma caixa colorida.
 
 A mesma mudança é uma função do motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devolve a nova configuração, os capítulos e o relatório que a janela mostra. Veja [Páginas compostas](/pt/docs/composed-pages#migrar-um-livro-com-o-texto-nos-estilos).
+
+### Corrigir um bloco com um clique
+
+Sob *O texto não cabe no bloco*, as soluções que a escada de rearranjo calculou para esse bloco são botões, nas palavras do próprio aviso:
+
+- *deixe o texto descer a 60 %* define o `fit.minScale` do bloco (e liga `fit.shrinkText` se estava desligado);
+- *suba maxHeight para 66 mm* define o seu `maxHeight`;
+- *baixe o minHeight de …* baixa a altura mínima de outro bloco do grupo;
+- *faça-o continuar na página seguinte* põe `overflow.continueIn` em `next-page`, para que o que não cabe continue numa página acrescentada depois desta;
+- *componha a página com o modelo …* reescreve o `template` da cerca `::::page` da página no texto;
+- *corte cerca de 626 caracteres* não muda nada: seleciona o texto do bloco no painel **Texto** e diz quantos caracteres tirar.
+
+Os outros botões mudam a forma do livro, por isso cada um pergunta antes, dizendo o ajuste e o valor (*tema-fija › dinero › maxHeight = 66 mm*) ou o modelo que a página vai tomar. Uma mudança de design vale para todas as páginas compostas com esse modelo. **Mudar** faz a mudança como um passo do histórico de desfazer: Cmd/Ctrl+Z, ou o botão Desfazer ao lado de Conteúdo e Design, desfaz. A página é diagramada de novo, e o aviso some, ou dá lugar ao que a mudança deixou (um bloco mais abaixo que agora não cabe).
+
+Os mesmos botões acompanham o bloco no painel **O que se moveu e por quê** da tela. O aviso de uma edição que não está na tela oferece abrir essa edição, onde suas soluções podem ser aplicadas. Se o livro mudou depois que a diagramação propôs uma solução (o modelo foi editado, a cerca cita outro modelo), o botão avisa e não muda nada. Um agente aplica as mesmas soluções com `sandbox_apply_proposal` ([WebMCP](/pt/docs/webmcp)).

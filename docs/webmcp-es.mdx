@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agente trabajando en el Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 39 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
+  description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 40 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
   lang: 'es',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ libro, pide una imagen de la página 12, pone `bodyText.fontSize` a 10,5 pt, ve
 que el capítulo ha pasado de 18 a 19 páginas y lo deja como estaba. Hace lo
 mismo que tú haces a ojo, con tu libro y en tu navegador.
 
-Hay 39 herramientas cuyo nombre empieza por `sandbox_`, registradas mientras el
+Hay 40 herramientas cuyo nombre empieza por `sandbox_`, registradas mientras el
 Sandbox está en pantalla, y 8 herramientas del sitio, `site_*`, en todas las
 páginas de postext.dev. Esta página las ordena según lo que le pedirías a un
 agente y da la llamada de cada una.
@@ -40,7 +40,7 @@ instalar ni configurar.
 WebMCP sigue siendo un borrador. Chrome lo ofrece como prueba de origen y tras
 la opción `chrome://flags/#enable-webmcp-testing`. Las herramientas dependen de
 la página: en la portada o en la documentación el agente tiene las herramientas
-`site_*`; cuando el Sandbox está en pantalla aparecen además las 39
+`site_*`; cuando el Sandbox está en pantalla aparecen además las 40
 herramientas `sandbox_*`.
 
 ### En cualquier otro navegador: `window.postextWebMcp`
@@ -567,6 +567,7 @@ página densa para juzgarla → `sandbox_get_warnings` con
 alrededor de su `line` y `sandbox_render_page` de su `page` →
 `sandbox_edit_text` o `sandbox_set_config` → `sandbox_get_warnings` de nuevo,
 hasta que vuelva vacío.
+Un marco de una página compuesta que no cabe trae sus soluciones (`proposals`): `sandbox_apply_proposal` con su `frame` y el número de una de ellas la aplica, vuelve a maquetar el capítulo y responde `fits`.
 
 **«Haz un libro con este archivo de Word y dame el PDF.»** `sandbox_save_book`
 con `action: "new_blank"` → `sandbox_import_word` con `dryRun: true` →
@@ -650,7 +651,7 @@ de cada una se obtienen con `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Preguntas**: `sandbox_answer`.
-- **La revisión**: `sandbox_get_warnings`.
+- **La revisión**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
 
 ## Al incrustar el Sandbox
 
