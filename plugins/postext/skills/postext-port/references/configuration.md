@@ -96,6 +96,7 @@ Conversion at `page.dpi` (default 300):
 | `paragraphStyles` | ParagraphStyleConfig[] | `[]` | §11 `:::paragraphs{style=…}` |
 | `calloutStyles` | CalloutStyleConfig[] | `[{id:'note',name:'Note'}]` | §12 `:::callout{type=…}` — declaring replaces the default list |
 | `chipStyles` | ChipStyleConfig[] | `[{id:'chip',name:'Chip'}]` | §13 inline `:chip[…]{style=…}` |
+| `markStyles` | MarkStyleConfig[] | `[{id:'mark'}]` (pale yellow) | §13b inline `:mark[…]{style=…}`, postext ≥ 1.34.1 |
 | `codeStyle` | CodeStyleConfig | §12b | code listings (```` ``` ```` / `~~~` fences, postext ≥ 1.23): face, box, tab width, long lines, line numbers, token colours, inline code |
 | `resourceTypes` | ResourceType[] | Figure + Table in the document language (`locale`, else the hyphenation locale; English for other languages) | §15 numbering, caption prefix, default placement |
 | `tableStyle` | TableStyleConfig | §16 | document table style |
@@ -120,7 +121,7 @@ Conversion at `page.dpi` (default 300):
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
-| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0; round 2, composed-pages.md) |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; round 2, composed-pages.md) |
 | `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
@@ -740,6 +741,16 @@ Gotcha: `layout` in a heading style goes through `resolveLayoutConfig` alone, so
 Typical uses: cover page (`numbered:false, toc:false, span:'page', advancedDesign.minHeight = page height`),
 front matter with roman folios / single column, unnumbered appendix, index.
 
+**Headings in boxes and frames** (≥ 1.37): a heading inside a `:::callout` or a composed-page frame draws the
+`advancedDesign` of its level or heading style (tab, band, rules, `{titleText}`), laid out at the box's width,
+and the box keeps the room it takes: the tallest of the heading's text, the design's bottom and `minHeight`
+(no grid in a box), then `marginBottom`. An element anchored to `container` with a negative offset reaches
+over the box's padding; one anchored to `page`/`bleed` stays on the page. A `span:'page'` heading in a box is
+laid out at the box's width (no opener band). A heading in a box opens no styled section: running heads, the
+page's role and the chapter's `{attr.x}` come from the flow's headings, so never rely on that style's
+`header`/`footer` for it. The design scales with a frame the reflow ladder scaled and turns with a turned
+frame. Before 1.37 a box drew its headings plain (a tab in a box was the box's `label`, or its own frame).
+
 ---------------------------------------------------------------------------------
 
 ## 7. Design slots — header, footer, openers, parts, TOC rows
@@ -780,13 +791,19 @@ placement: {
                   element edges  'right-of'|'left-of'|'below'|'above'|'align-top'|'align-bottom'|'align-left'|'align-right' },
   offset?: { x?: Dimension(abs), y?: Dimension(abs) },   // screen direction: +x right, +y DOWN (not "inward");
                                                          // a TEXT element's offset may be in em of its own size (≥ 1.9)
-  size?: { width?: 'auto'|'fill'|Dimension, height?: 'auto'|'fill'|Dimension, maxWidth?: 'auto'|'fill'|Dimension }
-}
+  size?: { width?: 'auto'|'fill'|Dimension|SizeTo, height?: 'auto'|'fill'|Dimension|SizeTo, maxWidth?: 'auto'|'fill'|Dimension }
+}                                       // SizeTo = { to: 'container'|'page'|'bleed'|'outer'|'#id', edge: 'top'|'bottom'|'left'|'right' } (≥ 1.38)
 ```
 - The anchor edge also picks the pin: `top-right` pins the element's top-right corner, so a
   right-anchored element needs a **negative** x offset to move inward; `bottom` anchors need
   negative y to move up (built-in header uses `bottom-right`, y = −16pt).
 - `'fill'` runs to the frame edge from the anchor point.
+- `{ to, edge }` (≥ 1.38) runs from the anchor point to an edge of another box: `height: { to: 'bleed',
+  edge: 'bottom' }` for a ground from the foot of a band down to the bleed, `{ to: '#band', edge: 'top' }`
+  up to another element; `to: '#id'` also names a frame or group on a composed page's decoration, so the
+  ground follows the band when the band moves. A height takes `top`/`bottom`, a width `left`/`right`; an
+  edge behind the anchor point gives 0, an edge across the axis or a missing box reads as `'fill'`. Do not
+  work such lengths out from the page geometry in the generator.
 - Element edges put a corner on a corner of the target: `right-of` = beside, tops level;
   `left-of` = to its left, tops level; `below` = under, left edges level; `above` = over, left
   edges level; `align-top` and `align-left` are the SAME placement (top-left corners together);
@@ -867,10 +884,13 @@ heading's own attribute).
 (stroke painted inside: its outer edge on the box edge, in canvas, HTML and PDF; radius clamped).
 Use for colour bands, thumb tabs, backdrops.
 
-**image**: `{ kind:'image', id, placement, resourceId, reserve?, decorative? }` — bitmap/SVG resource
+**image**: `{ kind:'image', id, placement, resourceId, reserve?, decorative?, fit?, focus? }` — bitmap/SVG resource
 (`decorative: true` keeps an ornament out of the accessible text; otherwise the resource's `altText`, else its
 caption, is the picture's alternative text in HTML and tagged PDF; running-head pictures are always furniture)
-(e.g. logo, cover photo). One of width/height `'auto'` keeps aspect; both set = fit & centre.
+(e.g. logo, cover photo). One of width/height `'auto'` keeps aspect; both set = fit & centre. `fit: 'cover'`
+(≥ 1.38, both sides set) fills the box and crops what runs past it, as a full-bleed photograph does; the
+resource's `safeArea` stays whole, `focus: { x, y }` (fractions of the picture) says which point to centre;
+`'contain'` is the default. Do not pre-cut a photograph to its box's ratio.
 
 ### 7.4 Header/footer defaults
 `header`/`footer` **undefined** → built-in: header = `{title}` right on odd + `{chapterTitle}`
@@ -938,7 +958,7 @@ toc
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
-├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}),
+├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}, {leader} ≥ 1.34.1),
 │                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
 └─ groups       ≥ 1.34 blocks of the contents kept on one column/page
    ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
@@ -948,6 +968,11 @@ toc
                                the head row repeated at the top of each column a tall block goes on in,
                                title + mark ("(cont.)", "(suite)", "(Forts.)", "(segue)", "（续）", "（続き）", "(تابع)")
 ```
+A part row that needs dots up to its page number is ONE text element: `content: "{number} {titleText}{leader}{pageNumber}"`
+(any text before and after `{leader}`), width `fill` (an `auto` width fills to the row's edge anyway). The leader is
+`toc.leader` (char, gap, enabled), the same as the entry rows, so the dots line up with them; a title too long is
+cut, never the number. Never a literal run of dots in `content` (clipped, `designTextTruncated`). `{leader}` prints
+nothing outside a part row and on a vertical page (postext ≥ 1.34.1).
 `:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
 `levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
 `tocGroupSplit`.
@@ -1048,6 +1073,10 @@ in another the outer list's `itemSpacing` applies on both sides. List margins of
                                  reference list ends its groups on the style's own space, no paragraph-spacing
                                  line added, while the document stays on 'collapse')
   textTransform = 'none'         ('uppercase' = capitals, chip words and :ref labels too, length-preserving; maths untouched)
+  letterSpacing: Dimension = 0   (≥ 1.37; tracking after every letter, em = the style's own fontSize: a page title tracked
+                                 +15/1000 em is { value: 0.015, unit: 'em' }, InDesign tracking / 1000. Measured into the
+                                 lines, justified lines spread their word spaces on top; canvas, HTML, PDF, EPUB, and a
+                                 Word export's w:spacing. Arabic-script words stay untracked: joiningScriptLetterSpacing)
   wordBreak?: 'normal'|'keep-all' (≥ 1.16; unset = cjk.wordBreak; between CJK characters; ≥ 1.28 also holds
                                  for the characters a Latin paragraph quotes)
   lineNumbers?: boolean          (≥ 1.23, §19f; unset = counted when lineNumbers.count is 'all', and a poem
@@ -1198,6 +1227,28 @@ Inline `:chip[text]{style="id"}` (word banks, keys, tags). Chip without style �
 
 ---------------------------------------------------------------------------------
 
+## 13b. `markStyles[]` — MarkStyleConfig (postext ≥ 1.34.1)
+
+Inline `:mark[text]{style="id"}`: a coloured band behind a phrase, as a textbook highlights its key words. The
+marked words stay ordinary text (they break at line ends, hyphenate and justify like the words round them; each
+line gets its own band), unlike a chip, which is one unbreakable box. A mark without `style`, or with an id no
+style declares (`unknownMarkStyle`), takes the first style; declaring `markStyles` replaces the default list.
+```
+{ id (REQUIRED), name?,
+  background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
+  holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
+  first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
+  of paddingY) }
+```
+The band takes no room: the lines break as they would without the mark, so marking a laid-out book moves no page.
+Port rule: one style per distinct highlight colour of the source, the highlight's text colour in the style's
+`color`; never a row of chips split by hand at the source's line ends, and never two chips for a translated phrase.
+Limits: a heading drawn by a design (an opener) prints the words without the band, and so does the HTML viewer on a
+vertical page. An engine older than the release that ships `:mark` prints `:mark[…]` literally (check `postext
+--version`).
+
+---------------------------------------------------------------------------------
+
 ## 14. Colour palette & section colours — summary
 
 - `colorPalette: [{ id, name, value: {hex, model} }]`. Link any ColorValue with `paletteId`.
@@ -1265,6 +1316,11 @@ citingPage?: boolean     ≥ 1.25, position top/auto, span column/page, not rota
                          the citing line, and the citing line stays on that page; else its usual slot. Falls back to
                          layout.floatsAtCitingPage. Read after its citation in tagged PDF / HTML
 ```
+A type may leave fields out (≥ 1.38): the built-in type of the same id (`figure`, `table`, `video`, in the document's
+language) fills them, else `name` is the id, `shortLabel` and `captionPrefix` the `name`, `numberingTemplate`
+`{h1}.{n}` (`{h1}-{n}` in Chinese, Japanese and Arabic), `resetOn` `'h1'`, `counterFormat` `'decimal'`; a `resetOn` that
+names no level counts as `'h1'` with `unknownConfigValue`. So `{ id: 'foto', numberingTemplate: '' }` is a whole
+unnumbered type; write every field only for an engine older than 1.38.
 Gotchas
 - **Engine default types follow the document language**: with `resourceTypes` unset, the
   engine uses `defaultResourceTypes(locale)` (else the hyphenation locale; strings exist for
@@ -1797,7 +1853,12 @@ says it for the installed one):
         crossGutter; Markdown reading order in HTML, EPUB, tagged PDF → round 2
 1.36.0  fit (the reflow ladder), frameOverflow proposals; wrap:'contour'; source map
 1.37.0  overflow.continueIn 'next-page'|'template:<id>', overflow.mark, overflowTemplate;
-        labelStyles and anchors drawn (::label)
+        labelStyles and anchors drawn (::label); headings keep their design in frames and boxes;
+        paragraphStyles[].letterSpacing; moveTextToMarkdown
+1.38.0  fit.preferContinue (continue before shrinking), threaded stories continue in the chain head's
+        frame; continueIn 'page:<id>', {page} in overflow.mark, overflow.fromMark; frame rules; stacks
+        keep empty frames, rows of 'auto' cards negotiate width; design size {to, edge}, image fit
+        'cover' + focus; drop caps in frames; spreads on vertical books; resourceTypes written in part
 not yet frame writingMode/direction, template bodyStyle/palette; 'auto' width reads as 'fill'
 ```
 
@@ -1825,11 +1886,14 @@ Frame
 ├─ style?       a calloutStyles id (tab, title, fill, border come from it)
 ├─ layer? (1), rotate?, verticalAlign?, columns?, columnGap?, padding?
 ├─ exclude?     'none'|'push'
+├─ wrap?        'box'|'contour' (1.36; with exclude:'push': the shape of the pictures it holds)
+├─ rules?       { every? ('line'|Dimension), color?, width? (0.5pt), inset? } (1.38) ruled lines across the content box
 ├─ flow?, next?                 the flow frame; `next` chains frames
 ├─ takes?       'h1'…'h6'       a heading of that level with no slot goes here
 ├─ pin?, grow?, shrink?, priority?
-├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8) }
-├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>', mark?: string|false }
+├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8), preferContinue (true, 1.38) }
+├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>'|'page:<id>' (1.38; <id> may be {attr.x}),
+│                 mark?: string|false ({page} = the page it goes on on, 1.38), fromMark?: string (1.38) }
 └─ optional?, crossGutter?, writingMode?, direction?, remove?
 
 Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
@@ -1858,10 +1922,26 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   first frame's placement starts it), side by side in a `row`; pictures beside a box are frames
   of their own anchored to a corner of it (`#box`, `top-right`), outside its group.
 - **fit** (1.36): `{ shrinkText: true, minScale: 0.9, scaleImages: true, imageMinScale: 0.8 }`,
-  2.5 % steps, the largest scale that fits; keep body text at 0.9 or above.
+  2.5 % steps, the largest scale that fits; keep body text at 0.9 or above. The ladder runs free
+  space, push, scaleImages, redistribute, shrinkText, continue; from 1.38 a frame whose `continueIn`
+  leaves the page runs free space, push, redistribute, continue, scaleImages, shrinkText
+  (`preferContinue`, default true; `false` = the order above), so a body frame needs no
+  `shrinkText: false` to keep one size.
 - **overflow** (1.37): `continueIn: 'next-page'` (the template's `overflowTemplate`, else the same
   template with only that frame filled), `'template:<id>'`, `'#frame'` (= `next`); `mark`: string,
   `false`, unset = the style's `continuesMarker` in the document's language; up to 16 added pages.
+  The rest lands in the frame of the same name, else the flow frame; a story threaded through
+  `next` goes on where its chain starts (1.38). `'page:<id>'` (1.38) jumps to the later page fence
+  `::::page{id="<id>"}` of the chapter (`'page:<id>#<frame>'` names the frame; `<id>` may be
+  `{attr.sigue}`): `continueTargetMissing` when no later fence has it. `{page}` in `mark` and
+  `fromMark` is the printed number of the other page (`"Continued on page {page}"`).
+- **rules** (1.38): `{ every: 'line'|length, color, width, inset }` on a frame draws the lines of an
+  answer space (empty fixed-height frame, or `:::space{lines=N}` in an `auto` one).
+- **Design elements on a template's decoration** (1.38): `placement.size.height|width` may be
+  `{ to: 'container'|'page'|'bleed'|'outer'|'#id', edge: 'top'|'bottom'|'left'|'right' }` (7.2);
+  an `image` takes `fit: 'contain'|'cover'` (both sides set) and `focus: {x, y}` (7.3).
+- **Frames are running text**: their paragraphs take drop caps (1.38) as the flow's do; a heading in
+  a frame draws its level's or style's design (1.37), and opens no styled section.
 - **Resource anchors** gain `width` (a fraction of the picture width), `align` ('center'),
   `verticalAlign` ('middle'), `rotate` and `style` (a `labelStyles` id); comics ignore them.
   Anchors live on the resource, so every locale shares them.

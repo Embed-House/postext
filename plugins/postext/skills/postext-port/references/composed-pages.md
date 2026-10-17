@@ -19,7 +19,8 @@ have every key; configuration.md §19g and document-format.md §12.2 sum them up
 Contents: 1 choosing the round · 2 the model · 3 the phases in round 2 ·
 4 the component library · 5 templates · 6 recipes (a box with a tab, a
 category tree, a double-page timeline, a labelled map, photos with captions,
-text round an illustration, a box that continues, a magazine thread) ·
+text round an illustration, a box that continues, a magazine thread with
+jumps, an activity sheet with answer lines, a photo and its ground) ·
 7 verification · 8 one bundle for every edition · 9 ports made with round 1
 or postext 1.33 · 10 limits.
 
@@ -37,7 +38,8 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.34.1</td><td>composed pages laid out: frames placed (grid, anchors to the area or to <code>#frame</code>), filled from their slots, dressed by callout styles; decoration with <code>{attr.x}</code>; <code>next</code> chains; <code>exclude: "push"</code>; layers and <code>rotate</code>. Also <code>:mark</code>, <code>{leader}</code>, <code>localized.&lt;lang&gt;.name</code></td><td>1 (frames do not move with their text yet)</td></tr>
 <tr><td>1.35.0</td><td>stack and row groups (a box that grows pushes the ones after it), <code>pin</code>, the reflow log; spread templates; HTML, EPUB and tagged PDF read composed pages in Markdown order; Sandbox Content and Design modes</td><td><b>2</b></td></tr>
 <tr><td>1.36.0</td><td>the reflow ladder (<code>fit</code>: pictures then text set smaller) and <code>frameOverflow</code> with proposals; the source map (<code>sourceAt</code>, stable ids); contour wrap (<code>wrap: "contour"</code>); the Sandbox template editor</td><td>2</td></tr>
-<tr><td>1.37.0</td><td>continuation on added pages (<code>overflow.continueIn: "next-page" | "template:&lt;id&gt;"</code>, <code>overflowTemplate</code>, <code>frameContinuationLimit</code>); <code>::label</code> words drawn at a picture's anchors (<code>labelAnchorUnknown</code>, <code>anchorUnlabelled</code>); <code>moveTextToMarkdown</code> (#874, check the release notes)</td><td>2</td></tr>
+<tr><td>1.37.0</td><td>continuation on added pages (<code>overflow.continueIn: "next-page" | "template:&lt;id&gt;"</code>, <code>overflowTemplate</code>, <code>frameContinuationLimit</code>); <code>::label</code> words drawn at a picture's anchors (<code>labelAnchorUnknown</code>, <code>anchorUnlabelled</code>); <code>moveTextToMarkdown</code>; headings keep their design in frames and boxes; <code>paragraphStyles[].letterSpacing</code>; the contrast check reads frame text on its box or the decoration under it; <code>pictureBelowPrintSize</code>; Sandbox: frame-style library, one undo history, a click on the page selects the Markdown or the setting behind it (<code>sandbox_inspect_point</code> answers with <code>elements</code>)</td><td>2</td></tr>
+<tr><td>1.38.0</td><td>a frame that can go on to another page does so before it shrinks (<code>fit.preferContinue</code>); a threaded story goes on in the frame its chain starts in; cuts keep a heading with its text and two list items on each side; the answer space under a box goes on with it; <code>continueIn: "page:&lt;id&gt;"</code> jumps to a later page, <code>{page}</code> in <code>overflow.mark</code>, <code>overflow.fromMark</code>, <code>continueTargetMissing</code>; stacks keep their empty frames, rows of <code>auto</code> cards share width without a box; ruled frames (<code>rules</code>); <code>{ to, edge }</code> sizes and <code>fit: "cover"</code> + <code>focus</code> for design images; drop caps in frames; spreads on vertical books; comic <code>::panel{text}</code> and <code>box</code>; <code>moveTextToMarkdown</code> with <code>labelsOnPictures</code>; resource types written in part take the defaults; Sandbox: Canvas &rsaquo; Reflow, anchors placed by a click, <code>sandbox_apply_proposal</code></td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -45,12 +47,14 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
   the `postext` npm version it pins. Update the command line before you
   start (`releases/latest`, SKILL.md "Setup"); an old executable on the
   PATH makes a port choose round 1 for no reason.
-- **Round 2 with gaps.** On 1.35 or 1.36 the script lists what is missing
+- **Round 2 with gaps.** On 1.35 to 1.37 the script lists what is missing
   and what to do instead: without the ladder, give each frame its room by
   hand (`maxHeight`, a chained frame, shorter text); without continuation,
   a taller frame, a chained frame on the same page, or a flow page (never
   the rest of the text typed into a second page fence); without labels, the
-  round-1 live-text SVG (playbooks J4) for maps and diagrams only.
+  round-1 live-text SVG (playbooks J4) for maps and diagrams only. The
+  recipes in section 6 say what each gap costs in a sentence that starts
+  with "Before 1.37" or "Before 1.38".
 - **Say which.** The port's report names the round, the engine version and
   every feature it worked around.
 - **The layout question.** Round 1 made the user choose between an
@@ -162,6 +166,11 @@ geometry constants, with helpers of your own (`frame(name, …)`,
 - Highlighted phrases: `:mark[…]{style}` (they break like text); key words
   in a box of their own: `:chip[…]{style}` (unbreakable). Never split a
   chip by hand at the source's line ends.
+- A story that the source continues "on page 47": the whole article in one
+  page fence, the jump in the template (6.8); never the second half typed
+  at the later page.
+- Answer lines and drawing room: an empty frame with `rules`, or an `auto`
+  frame that receives `:::space{lines=N}` (6.9).
 - Slot names, fence order and labels' anchors are the same in every
   edition: the stable ids (`cp<n>:<frame>`) then line up across languages.
 - The Sandbox's Insert › Composed page (Content mode) writes a fence with
@@ -268,13 +277,25 @@ The library is the set of looks the book uses, each written once:
   (`placement`, `width`, `padding` per frame for the room a picture over
   the box needs), and keep the tab's `label.inset` small: the frame's width
   places the tab.
+- **Tracking belongs to the paragraph style** (1.37): a page title tracked
+  +15/1000 em is `letterSpacing: { value: 0.015, unit: "em" }` on the style
+  its `:::paragraphs{style}` uses, in a frame or in the flow (InDesign
+  tracking / 1000 = the em value). It is measured into the lines. Do not
+  set such a title as a hidden heading in a `takes: "h1"` frame just to
+  keep the tracking. Arabic-script words stay untracked.
 - **No per-page duplicates.** Before adding a component, compare it with
   the ones you have (fill, border, radius, type, tab colour, within a
   rounding step); reuse the existing one. Names say the role
   (`caja-azul`, `pie-foto`, `mar`, `ciudad`), never a page.
-- When the Sandbox has the frame-style library (Design › Boxes › Frame
-  styles, `sandbox_frame_styles` / `sandbox_merge_styles`), run it after a
-  port with `lookOnly: true` and take the merges it proposes.
+- The Sandbox's frame-style library (1.37; Design › Boxes › Frame styles,
+  `sandbox_frame_styles` / `sandbox_merge_styles` with `groups: [{ keep,
+  merge }]`) proposes the merges after a port. Take them with
+  `lookOnly: true` (compare the look, not the position) only once the boxes
+  take their place from template frames: a style that `:::callout` fences
+  also use carries the box's place (`placement`, `fixed`, margins), and
+  merging styles that place boxes differently moves the boxes. Measured on
+  the round-1 textbook: position-safe merges leave 115 of 117 styles, the
+  look alone 16.
 - **Words of a tab** come from the Markdown (`:::frame{label="El dinero"}`):
   give the style a `label` block (font, colours, height, `paddingX`,
   `offset`, `position`) or no tab prints. A style's own `title` default is
@@ -333,10 +354,32 @@ The library is the set of looks the book uses, each written once:
   0.925 for boxes whose type size matters), `fit.imageMinScale` (0.8)
   for pictures; `fit: { shrinkText: false }` keeps a box's type size. Do
   not shrink fonts per edition by hand: let the ladder do it and read the
-  log.
+  log. From 1.38 a frame that can go on to another page (`continueIn`
+  `next-page`, `template:`, `page:`) goes on before it shrinks
+  (`fit.preferContinue`, default true), so a body frame needs no
+  `shrinkText: false` or `scaleImages: false` to keep one size over its
+  pages; write `preferContinue: false` only on a box that should lose a
+  few points rather than add a page.
 - **Decoration** is laid after the frames and anchors to `#frame`; it never
   pushes text and is dropped from reflowable output, so no word of the book
-  goes there.
+  goes there. A ground or a band that runs to another box's edge takes its
+  size from it (1.38): `size.height: { "to": "bleed", "edge": "bottom" }`
+  anchored `below` a band, or `{ "to": "#band", "edge": "top" }`; it
+  follows the band when the band moves. Do not work heights out from the
+  page geometry in the generator (6.10).
+- **Headings in frames** (1.37): a heading in a frame, as in a callout,
+  keeps the `advancedDesign` of its level or heading style (tab, band,
+  rules, `{titleText}`), laid out at the frame's width, so a mid-page topic
+  title with a tab is `## Title {style="tab-tema"}` in the frame's
+  Markdown, the tab in the heading style's design anchored to `container`
+  (a negative offset reaches over the frame's padding). The frame keeps the
+  room the design takes (the tallest of the text, the design and
+  `minHeight`; no grid): use `minHeight` to say where the text under a tab
+  starts. The design scales with the frame's text and turns with the frame.
+  A heading in a frame opens no styled section: running heads, the page's
+  role and the chapter's `{attr.x}` come from headings of the flow, so do
+  not rely on that style's `header`/`footer`. Before 1.37 the title was its
+  own frame with a callout style (`takes: "h1"` or `## T {slot="titulo-2"}`).
 - **Running heads** per template: `header`/`footer` replace the section's,
   `false` hides them, unset inherits.
 - **Variants.** `variants: { recto: { frames: [ { "name": "margen", "placement": { … } } ] } }`
@@ -390,11 +433,11 @@ Es el instrumento utilizado como medio de pago…
   corner. A tab with rounded ends or a ring inside it: a `top-right` tab
   whose icon picture draws that end. A tab centred over a card has no
   setting: put it at `top-left` with `inset` and say so in the report.
-- A box with a second topic title inside it: an `##` in the frame is
-  listed by `:::toc` and the bookmarks, but its heading-style design (a
-  tab, a band) is not drawn inside a frame until heading designs in frames
-  land (#906): make the tabbed title its own frame with a callout style
-  (`takes: "h2"` or `## Title {slot="titulo-2"}`), or use the box's tab.
+- A box with a second topic title inside it: an `##` in the frame draws
+  its heading style's design from 1.37 (section 5, "Headings in frames"),
+  and is listed by `:::toc` and the bookmarks. Before 1.37, make the
+  tabbed title its own frame with a callout style (`takes: "h2"` or
+  `## Title {slot="titulo-2"}`), or use the box's tab.
 - A list as the box's first block drops its top margin; a list after a
   paragraph takes the document's `unorderedLists.marginTop` (set it with
   boxes in mind).
@@ -506,7 +549,28 @@ Con relojes mecánicos
   `gutter`).
 - Era names on tabs are the frames' `label`s: every word stays in the
   Markdown.
-- Not on vertical (`vertical-rl`) pages.
+- A bundle that holds only the spread's excerpt starts at it: `start:
+  { "pageIndexOffset": 1 }` in the manifest (project-format.md §2; the
+  `continuation` of the first chapter), or the engine adds a blank page 1
+  before the verso.
+- A band across the spine: the second band `crossGutter: true`, anchored
+  `right-of` the first, `width: "fill"`, with a left `padding` wider than
+  the spine gap so its words start on the recto, where they are read.
+- Dots and ticks on a timeline are decoration elements anchored to the
+  card (`#era-3`, `top`, a negative y offset): they follow it when a row
+  moves or widens it. Declare `bitmap.resolution` on pictures inside cards
+  so the natural width is the narrowest card's measure; a picture is never
+  enlarged, so a wider card gives its room to the text.
+- A map across the fold: ONE resource in a `crossGutter` frame, labels a
+  few mm off the spine.
+- On a vertical (`vertical-rl`) book (1.38) the spread is laid in the
+  pages' flow frame: the template's `x` runs down the sheet and its `y`
+  from the sheet's right edge leftwards, the right page first; `gutter`,
+  `crossGutter` and the cut at the spine read that axis; decoration stays
+  on the physical sheet. A horizontal timeline drawn for a horizontal book
+  comes out turned: write the template for the flow's frame. Before 1.38
+  a vertical book's spread had the wrong frame and no warning: keep the
+  timeline horizontal and say so in the report.
 
 ### 6.4 A labelled map
 
@@ -555,6 +619,17 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
   rather than beside it.
 - Do not redraw a plate the art already draws (coloured country tabs stay
   in the picture). Legend entries stay separate labels.
+- Put on the anchor what belongs to the place (`style`, `rotate` along a
+  river or a range, `width` for a two-line name); keep `style=` on a
+  `::label` for exceptions. A translation is then new label lines and
+  nothing else; `anchorUnlabelled` lists the anchors an edition forgot.
+- Label styles per script: Arabic gets no italic and `letterSpacing: 0`
+  (letter-spaced Arabic is a `joiningScriptLetterSpacing` failure) and
+  usually about 15 % more size. On right-to-left composed pages the frames
+  follow the mirrored content area and the decoration does not: place
+  kickers and folios by edition.
+  Alt text and captions of a resource are per edition in the resource, with
+  no Markdown hook.
 - A full-page map goes in a frame of the page's width; in the running text
   a figure may be capped smaller.
 - Give the picture `altText` too: the labels are added to it in HTML and
@@ -592,7 +667,10 @@ Un mercado de barrio.
   `localized.<lang>.resources`) only when the book numbers its figures
   ("Figura 3").
 - An unnumbered resource type (`numberingTemplate: ""`) keeps "Photo 1"
-  off the page.
+  off the page. From 1.38 the type may leave the other fields out (the
+  built-in type of the same id, else the id and `{h1}.{n}`, fill them):
+  `{"id": "foto", "numberingTemplate": ""}` is enough; write every field
+  only for 1.37 and older.
 - A row keeps its frames' widths and grows as tall as the tallest caption
   needs. Photos of different widths: different frame widths.
 - Labels on a photo (a chip naming what is shown, an arrow's word): a
@@ -623,7 +701,11 @@ frames += [
   no alpha shape: give `contour.points` (a polygon in fractions of the
   picture, at least three points), or convert the art to PNG.
 - `margin` is the gap between the drawing and the nearest line ends on the
-  source (1.5–3 mm is usual).
+  source (1.5–3 mm is usual). The outline is traced from the file by
+  `readBundle`, the Sandbox and the command line: never write
+  `contour.traced` by hand or keep it in `preset.json` (bundles strip it).
+  A palette PNG (PNG8 with a `tRNS` chunk) traces fine and keeps the asset
+  small.
 - Never copy the source's line breaks or per-line indents.
 - `textWrap` with reason `noContour`: the shape is unknown and the text ran
   round the box. Check the alpha channel, or add `points`.
@@ -658,14 +740,28 @@ templates += [
 - The whole text stays in one `:::frame`. Never move the part that runs
   over into a second page fence: the engine cuts where the frame is full,
   in every edition, and the cut moves when the text changes.
-- Continuing is the ladder's last step: the frame first grows to
-  `maxHeight`, its pictures and text are set smaller as `fit` allows; then
-  it is cut at its foot with the mark, its text goes back to full size and
-  the rest goes on in the frame of the same name on a page added right
-  after (else the flow frame).
+- Continuing is a step of the reflow ladder: the frame first grows to
+  `maxHeight` and makes room in its group; then, from 1.38, it is cut at
+  its foot with the mark, before its pictures or text are set smaller
+  (`fit.preferContinue`, default true), so the story keeps one size over
+  its pages and its last page is not set smaller than the ones before.
+  Do not add `fit: { shrinkText: false }` for that; write
+  `preferContinue: false` only for a box that should lose a few points
+  rather than add a page. Before 1.38 the order was growing, pictures,
+  text down to `fit.minScale`, then continuing: a body frame needed
+  `fit: { shrinkText: false, scaleImages: false }`.
+- The rest goes on, at full size, in the frame of the same name on a page
+  added right after (else the flow frame). The piece is cut as the running
+  text is (1.38): a heading goes with its first lines, a list keeps two
+  items on each side, and when none of the box fits the whole box goes on,
+  tab and all. No `:::space` or reordering to strand-proof a cut.
 - `overflow.mark`: a string («sigue»), `false`, or unset (the style's
-  `continuesMarker`, in the document's language). A "continued from" mark:
-  `repeatTitle: true` on the style (title + `continuedSuffix`).
+  `continuesMarker`, in the document's language). `{page}` in a string is
+  the printed number of the page the rest goes on on (1.38): `"Continúa en
+  la página {page}"`. `overflow.fromMark` sets words at the head of the
+  piece on the added page (`"Viene de la página {page}"`; the receiving
+  frame's own wins); or `repeatTitle: true` on the style (title +
+  `continuedSuffix`). Before 1.38 the mark took no page number.
 - Without `overflowTemplate` the same template is laid again with only
   that frame filled. Added pages are pages of the book (folio, running
   heads, parity), so a longer translation moves every later folio: check
@@ -682,19 +778,33 @@ The source: an article running through three columns round a pull quote
 and a photo, jumping to a later page.
 
 ```python
-templates.append({"id": "articulo", "frames": [
+def columns(last):
+    return [
+        {"name": "col-1", "flow": True, "next": "col-2", "grid": {"col": 1, "row": 2, "rows": 8}},
+        {"name": "col-2", "next": "col-3", "grid": {"col": 2, "row": 2, "rows": 8}},
+        {"name": "col-3", "grid": {"col": 3, "row": 2, "rows": 8}, "overflow": last},
+    ]
+
+templates.append({"id": "articulo", "grid": {"columns": 3, "rows": 9, "columnGap": mm(5), "rowGap": mm(2)}, "frames": [
     {"name": "titular", "takes": "h1", "style": "titular", "grid": {"col": 1, "row": 1, "cols": 3}},
-    {"name": "col-1", "flow": True, "next": "col-2", "grid": {"col": 1, "row": 2, "rows": 8}},
-    {"name": "col-2", "next": "col-3", "grid": {"col": 2, "row": 2, "rows": 8}},
-    {"name": "col-3", "grid": {"col": 3, "row": 2, "rows": 8}, "overflow": {"continueIn": "template:salto"}},
+    *columns({"continueIn": "page:{attr.sigue}",
+              "mark": "Continúa en la página {page}", "fromMark": "Viene de la página {page}"}),
     {"name": "cita", "style": "cita", "exclude": "push", "layer": 2, "grid": {"col": 2, "row": 4, "cols": 2, "rows": 2}},
     {"name": "foto", "exclude": "push", "layer": 2, "grid": {"col": 1, "row": 7, "rows": 3}},
-], "grid": {"columns": 3, "rows": 9, "columnGap": mm(5), "rowGap": mm(2)}})
-templates.append({"id": "salto", "frames": [{"name": "col-3", "flow": True, "columns": 3}]})
+]})
+# the jump page: its own story in "otra", an empty frame for the rest
+templates.append({"id": "saltos", "frames": [
+    {"name": "otra", "flow": True, "grid": {"col": 1, "row": 1, "cols": 2, "rows": 9}},
+    {"name": "resto", "grid": {"col": 3, "row": 1, "rows": 9}},
+]})
+# an article that goes on over added pages instead of jumping: give its last
+# column {"continueIn": "template:cuerpo"}; "cuerpo" continues into itself, so
+# every column refills on each added page
+templates.append({"id": "cuerpo", "frames": columns({"continueIn": "template:cuerpo"})})
 ```
 
 ```md
-::::page{template="articulo"}
+::::page{template="articulo" sigue="p47"}
 # El río que cambió de curso
 
 El texto entero del artículo…
@@ -705,6 +815,10 @@ El texto entero del artículo…
 
 ::resource{id="crecida" slot="foto"}
 ::::
+
+::::page{template="saltos" id="p47"}
+Otra historia, entera…
+::::
 ```
 
 - `next` threads the story through frames of the same page, re-broken at
@@ -713,13 +827,152 @@ El texto entero del artículo…
   `exclude: "push"` make the columns' lines short where they stand.
 - The pull quote repeats words of the article: it is content, written in
   the Markdown, never in a template.
-- The rest of the article goes on on a page added right after
-  (`template:salto`). A jump to a page further on («continúa en la página
-  47», after other articles) has no expression: continuation pages follow
-  their page, and the mark takes no page number. Say so as a gap; set the
-  rest of the article on the page right after, or in the flow.
+- **A jump to a later page** («continúa en la página 47», after other
+  articles), 1.38: `overflow.continueIn: "page:<id>"` sends the rest to the
+  page fence with that `id`; `<id>` may be `{attr.sigue}`, read from the
+  fence the story is on, so one article template serves every article and
+  the Markdown says where each jumps. The rest lands in `page:<id>#<frame>`
+  if named, else in the frame of the sending chain head's name, else the
+  first frame the jump page's own content leaves empty (not reported
+  `slotEmpty`); what that frame cannot hold goes on on pages added after
+  the jump page. The jump page keeps its own content in its other frames
+  and its own frame ids (`cp2:resto`). The jump goes forward within one
+  chapter file only: an id no later fence has is `continueTargetMissing`
+  (the rest goes on on the next page); check that `postext check` has none.
+  In `check --json` a jump is a `continued` event whose `toPage` is the
+  jump page, and the receiving frame's `continuedFrom` is the sending
+  frame. Before 1.38 a jump had no expression: set the rest on the page
+  right after, or in the flow, and name the gap.
+- **A story over added pages.** From 1.38 the rest of a threaded story goes
+  on where its chain starts: a body template whose last column continues
+  into `template:<itself>` (or `next-page`) fills every column of every
+  added page. Before 1.38 the rest landed in the frame of the same name
+  as the cutting frame, so the last column alone refilled on every added
+  page with no warning; the way round was two templates handing the story
+  to each other with distinct frame names (`page-a-3` into `template:page-b`
+  and back), and body frames with `fit: { shrinkText: false }` so the
+  last page was not set at 92.5 %.
 - A chain inside a group measures its later frames empty when the group is
-  solved: keep chained columns out of stack groups.
+  solved: keep chained columns out of stack groups. A push frame anchored
+  to a text frame of the chain is placed after it: anchor push frames
+  (quote, photo) to a frame that is not pushed (the standfirst) or to the
+  container, so they are known when the columns are set.
+- **Full-bleed photos** of a template are decoration images anchored to
+  `bleed` with `resourceId: "{attr.foto}"`, the photo chosen on the fence
+  (6.10); they need postext-pdf 1.37 or later to print (older releases
+  printed them grey).
+- **Drop caps** (1.38): a frame is running text, not a box, so its first
+  paragraph takes one: `:::paragraphs{style="entradilla" dropcap}` inside the
+  `:::frame`, a paragraph style with `dropCap`, or a heading level's
+  `dropCap` for the paragraph after a heading in the same frame (a heading
+  the template sends to a frame of its own opens none in the text frame:
+  give that frame's first group `dropcap`). Inside a `:::callout` the drop
+  cap is not set and warns `dropCap` (`inBox`). Before 1.38 frames set none.
+- Narrow columns (60 mm at 9.8 pt) set justified text loosely and rag the
+  first line after an indent: `bodyText.maxJustifyTracking: 12` halves the
+  loose lines; the rest needs copy edits or a smaller indent.
+
+### 6.9 An activity sheet with answer lines
+
+The source: an exercise box, an empty ruled space under it, a second
+exercise; the box can run over to the next page, and the answer space goes
+with it.
+
+```python
+templates.append({"id": "actividad", "frames": [
+    {"name": "texto", "flow": True, "width": mm(180)},
+    {"name": "pregunta", "style": "ejercicio", "minHeight": mm(30), "maxHeight": mm(110),
+     "overflow": {"continueIn": "next-page"}},
+    {"name": "respuesta", "optional": True, "height": mm(40), "minHeight": mm(40),
+     "rules": {"color": color("#93bcd8"), "width": pt(0.75)}},
+    {"name": "libre", "optional": True, "style": "ejercicio", "minHeight": mm(10),
+     "rules": {"color": color("#93bcd8")}},
+], "groups": [{"name": "cajas", "kind": "stack", "gap": mm(4), "frames": ["pregunta", "respuesta", "libre"]}]})
+```
+
+```md
+:::frame{slot="pregunta" label="Actividad 1"}
+Copia la oración y subraya el verbo…
+:::
+
+:::frame{slot="libre" label="Actividad 2"}
+Escribe tu respuesta:
+
+:::space{lines=4}
+
+:::
+```
+
+- **Ruled frames** (1.38): `rules: { every, color, width, inset }` draws
+  lines across the frame's content box, one at the foot of each line slot,
+  as many as its height holds, over its background and under its text.
+  `every` is `"line"` (the leading of the frame's text, the default) or a
+  length; `color` a mid grey, `width` 0.5 pt, `inset` the room at both ends.
+  An empty frame with a fixed height gets the lines that fit; an `auto`
+  frame that receives `:::space{lines=N}` gets N (the Markdown decides the
+  count); a frame that grows with its text gets more. No decoration `rule`
+  per line anchored to the frame, no `:::space` guesswork. The Sandbox's
+  frame inspector turns them on under Look.
+- **Keep answer frames at their size**: `minHeight` = `height` (the ladder's
+  redistribute step yields down to `minHeight`; without it the empty frame
+  can be squeezed to nothing). In a stack, empty frames keep their fixed
+  height when a box above grows (1.38): the box's text gives way, or the
+  box goes on. A frame cut below its `minHeight` or fixed height is
+  `frameOverflow` even when it holds nothing.
+- **A box that goes on** (`continueIn: "next-page"`) may end a stack that
+  has an answer frame under it: the answer frame goes with the rest to the
+  added page at its size, with its decoration. This holds when the rest goes
+  on on the same template laid again (the template has no `overflowTemplate`);
+  keep the answer frame's `minHeight` = `height` and do not leave slack
+  under the box instead.
+- **Rows of cards**: `height: "auto"` + `minHeight` on each card of a `row`
+  group negotiates width at the `minHeight`, with no box of the row's own;
+  the row grows taller only when no card can give width. Before 1.38 a row
+  needed a fixed `height` and a `maxHeight` per card, and with `auto`
+  heights it never negotiated.
+- A drawing area inside a box is `:::space{lines=N}` in that frame's
+  Markdown.
+
+### 6.10 A photo, a ground and a band to the foot
+
+The source: a full-bleed photograph, a coloured band across the page, a
+ground below the band down to the trim.
+
+```python
+decoration = [
+    {"kind": "image", "id": "foto", "resourceId": "{attr.foto}", "decorative": True,
+     "fit": "cover", "focus": {"x": 0.5, "y": 0.3},
+     "placement": {"anchor": {"to": "bleed", "edge": "top-left"},
+                   "size": {"width": "fill", "height": mm(120)}}},
+    {"kind": "box", "id": "banda", "placement": {"anchor": {"to": "#foto", "edge": "below"},
+                                                 "size": {"width": "fill", "height": mm(14)}},
+     "style": {"backgroundColor": color("#1d3557")}},
+    {"kind": "box", "id": "suelo", "placement": {"anchor": {"to": "#banda", "edge": "below"},
+                                                 "size": {"width": "fill", "height": {"to": "bleed", "edge": "bottom"}}},
+     "style": {"backgroundColor": color("#f6efe0")}},
+]
+```
+
+```md
+::::page{template="portada-foto" foto="foto-portada"}
+…
+::::
+```
+
+- **`fit: "cover"`** (1.38) on an image with both sides set fills the box
+  and crops what runs past it; the resource's `safeArea` stays in view and
+  `focus` says which point to centre. Do not cut the photograph to the
+  box's ratio in the generator. `fit: "contain"` (default) shows it whole.
+  Before 1.38 the photograph was pre-cut to the ratio of its box.
+- **`size: { to, edge }`** (1.38): a height runs from the element's anchor
+  point to the `top`/`bottom` edge of another box, a width to its
+  `left`/`right` edge; `to` is `container`, `page`, `bleed`, `outer` or
+  `#id` (on a composed page's decoration, a frame or a group). The ground
+  follows the band when the band moves. Before 1.38 the generator computed
+  the heights from the page geometry.
+- The photograph is chosen on the page fence (`foto="…"`), never written in
+  the template; an id that resolves to nothing draws nothing, so name the
+  attribute in every fence of the template.
 
 ## 7. Verification
 
@@ -739,7 +992,8 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   template fits, `continueNextPage` for a box the source continues,
   `shortenText` last (it is an estimate). A translation that overflows is
   fixed in the template's limits, not by hand-shrinking that edition.
-- `frameContinuationLimit` = 0.
+- `frameContinuationLimit` = 0, and `continueTargetMissing` = 0 (1.38: a
+  `page:<id>` jump whose later page fence is missing).
 - `contentInConfig` = 0 (and `preset_kit.py lint` clean: it counts page
   templates' decoration and running heads too).
 - No `templateUnknown`, `slotUnknown`, `pageFenceLength`, `spreadMismatch`,
@@ -772,14 +1026,54 @@ Then:
 - **Page images** of every edition against the source (`postext build …
   --watch`, `compare_pages.py`); for a spread, render both pages and join
   them.
+- **Other outputs.** The Markdown order is the reading order everywhere:
+  the reflowable EPUB writes a composed page as `<section class="pt-composed
+  pt-composed-<template>">` with a `<div class="pt-frame pt-frame-<name>">`
+  per frame in its callout style, the frame's `label` as the box title, and
+  drops the decoration (backgrounds, cards, design text), so no word of the
+  book may live there; the fixed-layout EPUB and the HTML viewer list the
+  frames in reading order and paint them by `z-index`; the tagged PDF reads
+  them as `Div`s in the same order. Figure labels are accessible text (a
+  hidden list after the picture in the reflowable EPUB; `Alt (Label, Label)`
+  appended to the alt text in HTML, fixed EPUB and tagged PDF): give the
+  picture its own `altText` too. A fixed-layout EPUB that lacks a face the
+  decoration uses warns `missingFont`.
 - **Source map** (1.36): every frame's text maps back to the Markdown
   (`sourceAt`, `elementsForSource`; the Sandbox's `sandbox_inspect_point`
   answers with `elements` and their `source`). Nothing on a composed page
   should answer with a `config` source except decoration and running heads.
 - In the Sandbox: Content mode (Alt+Shift+M switches) to correct text on
-  the page, Design mode for templates and styles; a red outline «N mm
-  short» is a frame that does not fit, an amber «text at 85 %» a frame the
-  ladder shrank.
+  the page, Design mode for templates and styles (Design › Page & columns ›
+  Page templates; frames dragged and resized on the page write
+  `placement.offset` and `width`/`height` in mm; «Only this page» adds a
+  `<id>-page` template that extends the first); a red outline «N mm short»
+  is a frame that does not fit, an amber «text at 85 %» a frame the ladder
+  shrank. Open a multi-language bundle as a preset or bundle, not as a
+  project (a project keeps one edition): the Checks panel's Composed pages
+  section then lists every composed-page warning per edition with its
+  locale, page and frame, and «Side by side» shows two editions aligned.
+- **Why a page differs from its template** (1.38): Canvas › Reflow lists, per
+  page, each frame that changed and why, with the declared box dashed and
+  an arrow to the laid one; the same log is `sandbox_inspect_pages`
+  (`pages[].composed.reflow`) and `postext check`. A `frameOverflow` carries
+  numbered fixes (`sandbox_get_warnings` → `warnings[].proposals`);
+  `sandbox_apply_proposal { frame, proposal }` applies one, lays out again
+  and answers `fits`; `sandbox_undo` takes it back (one history for text
+  and design; `sandbox_get_state` → `history`). A design fix changes every
+  page set with that template: prefer `raiseMax` / `continueNextPage` on a
+  template used once, and check the other pages after `allowShrink`.
+  `useTemplate` can be wrong when the other template lacks some of the
+  page's slots: read `fits` in the answer. `shortenText` only selects the
+  text.
+- **Frame styles**: run the merges of section 4 after the port.
+- **Anchors**: for a map whose geometry is unknown, write the `::label`
+  lines and leave the anchors out: Resources › the picture › Anchors lists
+  the names the text uses that the picture lacks, and one click on the
+  picture places each, in text order. With the geometry known, write
+  `resource.anchors` (or `sandbox_save_resource` `marks.anchors`). In Design
+  mode the canvas shows each label's box (red = overflowing at the style's
+  `minScale`) and its anchor, which can be dragged; `at="` in a `::label`
+  completes the picture's anchors.
 
 ## 8. One bundle for every edition
 
@@ -802,8 +1096,8 @@ Then:
 ## 9. Ports made with round 1 or with postext 1.33
 
 - **A 1.33 port** that drew whole pages as text elements of heading styles
-  (one hidden style per page): from the release that ships #874,
-  `moveTextToMarkdown` rewrites it. In the Sandbox: Checks › «Move the text
+  (one hidden style per page): from 1.37 `moveTextToMarkdown` rewrites it.
+  In the Sandbox: Checks › «Move the text
   to the Markdown» (before and after pages, undoable). From code:
 
   ```ts
@@ -818,10 +1112,24 @@ Then:
   Markdown back to its file, re-render and compare. `report` lists the pages
   written (template, side, frames, `differences`), the templates proposed,
   what was left (`left[]`, with a reason) and `contentInConfigBefore/After`.
-  Fix by hand what it leaves: letter spacing of a text, a text's own box or
-  stroke, heading designs inside a frame, texts anchored to the running
-  head's container or to another element, texts mixing words and
-  placeholders.
+  The `differences` codes name the pages that may look different: `box`,
+  `stroke`, `dropCap`, `paragraphIndent`, `height` (a text's own box,
+  outline, drop cap, indent, height), `side`, `flow`, `repeated`. Fix by
+  hand what it leaves (`left[]`): texts anchored to the running head's
+  container or to another element, texts mixing words and placeholders, the
+  text of a heading design. Letter spacing is no longer left: it goes into
+  the paragraph style the text becomes (em of its size, 1.37).
+  With `labelsOnPictures: true` (1.38; pass the book's `resources` as
+  `input.resources` and write back `result.resources`; or `{ maxFontSize }`)
+  the short words a design placed on a picture (one line, at most four
+  words, no larger than three quarters of the body size) become the
+  picture's labels instead of frames: the picture moves to a frame at its
+  box with a `:::figure` and one `::label` line per text, each text an
+  anchor of the resource (first baseline, alignment side, box width) with a
+  `labelStyles` entry, a bitmap smaller than its box gets the `resolution`
+  that sets it at that width. Longer or bigger texts on the picture stay
+  frames; the report's `labels` counts them. The Sandbox's dialog does not
+  offer it yet.
 - **A round-1 port** (#848: fixed callouts, grounds in a page-span opener
   design, live-text SVG labels) has no text in the config, so nothing
   migrates it by itself. Move it page kind by page kind: each page's
@@ -837,13 +1145,18 @@ Then:
 
 ## 10. Limits to name in the report
 
-- Heading designs (tabbed or banded titles) are not drawn inside frames
-  until #906 lands: a tabbed title is its own styled frame.
 - Tabs are square and stand at a top corner, start or end; no centred tab.
-- Rows run left to right in every writing direction; spreads not on
-  vertical pages; a frame's `writingMode`/`direction` and a template's
-  `bodyStyle`/`palette` are read but not applied yet.
+- Rows run left to right in every writing direction; a frame's
+  `writingMode`/`direction` and a template's `bodyStyle`/`palette` are read
+  but not applied yet.
 - `'auto'` width reads as `'fill'`.
-- A continuation goes on right after its page, and its mark takes no page
-  number.
+- A continuation goes on right after its page, or, with `page:<id>`, on a
+  later page fence of the same chapter file; a jump never goes back or to
+  another file. Before 1.38 a mark took no page number.
 - Text on both sides of a contour in the middle of a measure is not set.
+- Text panels of comics are set only on single comic pages of horizontal,
+  left-to-right books (comics.md); elsewhere the words are lettered as
+  captions.
+- Before 1.37 headings in frames were plain; before 1.38 spreads were not
+  laid on vertical books and frames set no drop caps: name the gap when the
+  installed version is older.

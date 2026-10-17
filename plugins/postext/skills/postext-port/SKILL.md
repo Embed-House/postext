@@ -117,8 +117,12 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   and `:::figure` + `::label` for maps and diagrams, in reading order. Boxes
   grow with their text and push the ones after them; from 1.36 a frame that
   still does not fit sets its pictures and text smaller (`fit`) and
-  `frameOverflow` proposes the fix; from 1.37 a box goes on on an added page
-  and map words are drawn at the picture's anchors. Follow
+  `frameOverflow` proposes the fix; from 1.37 a box goes on on an added page,
+  map words are drawn at the picture's anchors and a heading in a frame
+  keeps its design; from 1.38 a frame that can go on does so before it
+  shrinks, a story jumps to a later page (`page:<id>`, "continued on page
+  47"), answer lines are ruled frames, and photos and grounds size
+  themselves (`fit: "cover"`, `{ to, edge }`). Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead.
 - **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page
@@ -404,7 +408,8 @@ Full references (load the one you need):
   the component library, templates with `extends` and variants, recipes (a
   box with a tab, a category tree, a double-page timeline, a labelled map,
   photos with captions, text round an illustration, a box that continues
-  on the next page, a magazine thread), the composed-page checks, one
+  on the next page, a magazine thread with jumps, an activity sheet with
+  answer lines, a photo and its ground), the composed-page checks, one
   bundle for every edition, and moving a round-1 or 1.33 port over.
 - [references/comics.md](references/comics.md): comic pages, strips and
   spreads: the split grammar, panels, script lines, the `comics` config,

@@ -250,8 +250,10 @@ those lines, or run the script.
   in the running text on pages of its own: judge the warnings, not the page images.
 - `WARN frameOverflow` (postext ≥ 1.34.1; proposals from 1.36.0): a frame's content does not fit after
   the reflow ladder (free space, the group pushing and yielding, pictures down to `fit.imageMinScale`,
-  the group's frames down to `minHeight`, text down to `fit.minScale`); paged output cuts the rest at the
-  frame's foot. `--json` `data`: `template`, `frame`, `locale`, `overflowMm`, `configPath`, `stepsTried`,
+  the group's frames down to `minHeight`, text down to `fit.minScale`, then `overflow.continueIn`; from 1.38 a
+  frame that can go on to another page goes on right after the group's frames gave way, before its pictures
+  and text shrink); paged output cuts the rest at the frame's foot. An empty frame cut below its `minHeight`
+  or fixed height (an answer space) is reported too (1.38). `--json` `data`: `template`, `frame`, `locale`, `overflowMm`, `configPath`, `stepsTried`,
   `scale`, `imageScale`, `proposals` (`{kind, path, value}`: `allowShrink`, `raiseMax`, `lowerMin`,
   `continueNextPage`; `useTemplate` and `shortenText` carry a Markdown range). Take the proposal that
   matches the design: `raiseMax`/`lowerMin` when the page has room, `allowShrink` only within the house
@@ -260,9 +262,30 @@ those lines, or run the script.
 - `WARN frameContinuationLimit` (postext ≥ 1.37): a frame went on over 16 added pages and was cut; its
   frame on the added pages is far too small (an `overflowTemplate` with a larger one), or the box
   belongs in the running text.
+- `WARN continueTargetMissing` (postext ≥ 1.38): a frame's `overflow.continueIn` is `'page:<id>'` and no
+  `::::page{id="<id>"}` comes after the page the story is on (misspelt id, the `{attr.sigue}` attribute
+  missing from the fence, or the fence comes before). `--json` `data`: `template`, `frame`, `target`,
+  `configPath`, `before`. The rest went on on the next page. Fix: give the later fence that id, or correct the
+  name; jumps go forward within one chapter file only.
 - `WARN labelAnchorUnknown` (postext ≥ 1.37): a `::label` names an anchor its figure's resource lacks; it
   is not drawn (`known` lists the anchors). `NOTE anchorUnlabelled`: an anchor with a label style has no
   word in this edition (a missing translation, or take the style off).
+- `WARN dropCap` reason `inBox` (postext ≥ 1.38): a drop cap asked inside a `:::callout` is not set (a frame
+  of a composed page is running text and takes it). `WARN pictureBelowPrintSize` (postext ≥ 1.37): a bitmap
+  with a print size (its own `resolution`, or `layout.bitmapResolution`) is held at under half of it by a column
+  narrower than the text block; a one-picture page ported as a `:::figure` in the flow wants
+  `layout.layoutType: 'single'`, `placement: { position: 'top', span: 'page' }` or a composed-page frame
+  (a picture in the flow is never wider than its column, and a config without `layout` has two). Treat it as a
+  real finding when `resolution` came from the source's print size.
+- `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
+  used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
+  (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread`/`flow` (text panel where
+  frames take no text: its words are set after the comic).
+- Contrast (postext ≥ 1.37): on a composed page the check follows the paint order: frame text stands on its
+  frame's own box, else on the template `decoration` box under it, else on the paper; text over a decoration
+  picture is skipped. White tab lettering in a frameless frame over a coloured decoration box is measured
+  against that box, so a port needs no frame background to quiet a «#ffffff on #ffffff» report; the
+  decoration's own texts are checked too.
 - `WARN textWrap` reason `noContour` (postext ≥ 1.36): a `wrap: 'contour'` picture has no known shape (no
   alpha channel, no `contour.points`); the text ran round its box.
 - `reflow p. N (template): dinero grew 8 mm; gasto moved down 8 mm` (postext ≥ 1.35; `--json` `reflow[]`):
@@ -380,7 +403,10 @@ Open the project in the sandbox: import the `.postext` (`preset_kit.py pack
 --manifest-only`), or serve the presets folder. A bundle in several languages
 asks which one to import, and the new book holds that edition only (named
 by `localized.<lang>.name` from postext 1.34.1, #891, else by the manifest
-`name`): import each edition to check it. Check the canvas, the HTML viewer, the Folio
+`name`): import each edition to check it, or open the bundle as a preset or bundle instead (not imported as a project: a
+project keeps one edition), where the Checks panel's Composed pages section lists every composed-page warning
+per edition with its locale, page and frame, and «Side by side» aligns two editions (composed-pages.md §7).
+Check the canvas, the HTML viewer, the Folio
 tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading
 hierarchy, design anchors and placeholders, parity issues. The PDF tab's
