@@ -458,6 +458,8 @@ Proseguire è l’ultimo passo della [sequenza di reimpaginazione](#quando-il-co
   </tbody>
 </table>
 
+Un segno può contenere `{page}`: il numero stampato della pagina dove prosegue il resto, come lo scrive una rivista (`mark: "Continua a pagina {page}"`). Vale per una pagina aggiunta (`'next-page'`, `'template:<id>'`) e per un recinto della pagina successivo a cui la storia salta (`'page:<id>'`). `overflow.fromMark` mette delle parole in testa al pezzo su quella pagina, dove `{page}` è la pagina da cui viene (`fromMark: "Segue da pagina {page}"`); il `fromMark` della cornice che riceve vince su quello della cornice che invia, e senza nessuno il pezzo comincia senza parole. I numeri si completano quando le pagine sono già numerate.
+
 Il segno si compone sotto l’ultima riga del pezzo, nel carattere del testo del riquadro, allineato e inclinato come dicono `continuesMarkerAlign` e `continuesMarkerItalic` dello stile (a destra e in corsivo per impostazione predefinita). Fa parte dell’apparato di impaginazione: l’EPUB reflowable lo omette, il PDF taggato lo marca come artefatto. Una cornice concatenata con `next` nella stessa pagina non porta segno.
 
 Il pezzo nella pagina aggiunta si apre senza la linguetta e il titolo della cornice, come le parti successive di un riquadro diviso. Uno stile con `repeatTitle: true` vi ripete il titolo seguito dal suo `continuedSuffix` («(segue)» in italiano), che indica da dove viene il testo.

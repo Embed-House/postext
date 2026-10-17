@@ -458,6 +458,8 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
   </tbody>
 </table>
 
+マーカーには`{page}`を書けます。残りが続くページの印刷されたページ番号で、雑誌の書き方です（`mark: "{page}ページへ続く"`）。追加されたページ（`'next-page'`、`'template:<id>'`）でも、記事が飛ぶ先の後のページフェンス（`'page:<id>'`）でも使えます。`overflow.fromMark`は、そのページの断片の先頭に置く言葉で、`{page}`は断片が来たページです（`fromMark: "{page}ページから続く"`）。受け取る側のフレームの`fromMark`が送る側のものより優先し、どちらもなければ断片は言葉なしで始まります。番号はページに番号が付いたあとで入ります。
+
 マーカーは断片の最後の行の下に囲みの本文の書体で組まれ、そろえと斜体はスタイルの`continuesMarkerAlign`と`continuesMarkerItalic`に従います（既定は右寄せのイタリック）。ページ割りのための付属物なので、リフロー型EPUBでは省かれ、タグ付きPDFではアーティファクトになります。同じページで`next`によってつないだ枠にはマーカーは付きません。
 
 追加ページの断片は、分割された囲みの続きの部分と同じく、枠のタブとタイトルなしで始まります。`repeatTitle: true`のスタイルはそこでタイトルを`continuedSuffix`（「(cont.)」）付きで繰り返し、これが前のページから続いていることの目印になります。

@@ -458,6 +458,8 @@ La suite est la dernière étape de la [cascade de recomposition](#quand-le-cont
   </tbody>
 </table>
 
+Une mention peut contenir `{page}` : le numéro imprimé de la page où la suite continue, comme l’écrit un magazine (`mark: "Suite page {page}"`). Elle vaut pour une page ajoutée (`'next-page'`, `'template:<id>'`) et pour un délimiteur de page plus loin vers lequel l’article saute (`'page:<id>'`). `overflow.fromMark` place des mots en tête du morceau sur cette page, `{page}` étant la page d’où il vient (`fromMark: "Suite de la page {page}"`) ; le `fromMark` du bloc qui reçoit l’emporte sur celui du bloc qui envoie, et sans aucun le morceau commence sans mots. Les numéros sont remplis une fois les pages numérotées.
+
 La mention se compose sous la dernière ligne du morceau, dans la police du texte de l’encadré, alignée et inclinée comme le disent `continuesMarkerAlign` et `continuesMarkerItalic` du style (à droite et en italique par défaut). Elle relève de l’appareil de pagination : l’EPUB recomposable la laisse de côté, le PDF balisé la marque comme artefact. Un bloc chaîné par `next` sur la même page n’en porte pas.
 
 Le morceau de la page ajoutée s’ouvre sans l’onglet ni le titre du bloc, comme les parties suivantes d’un encadré coupé. Un style avec `repeatTitle: true` y répète son titre suivi de son `continuedSuffix` (« (suite) » en français), qui signale d’où vient le texte.

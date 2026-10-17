@@ -458,6 +458,8 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
   </tbody>
 </table>
 
+标记里可以写`{page}`：其余内容接排所在页的印刷页码，杂志常这样写（`mark: "转第 {page} 页"`）。它适用于新增的页（`'next-page'`、`'template:<id>'`），也适用于文章跳到的后面某个页面围栏（`'page:<id>'`）。`overflow.fromMark`在那一页片段的开头加上文字，其中`{page}`是它来自的那一页（`fromMark: "接第 {page} 页"`）；接收框自己的`fromMark`优先于发送框的，两者都没有时片段开头不加文字。页码在各页编号之后填入。
+
 续排标记排在片段最后一行的下方，用方框的正文字体，对齐和倾斜按样式的`continuesMarkerAlign`和`continuesMarkerItalic`（默认右对齐、斜体）。它属于分页用的附属内容：流式EPUB不输出它，带标签的PDF把它标为版面工件。同一页上用`next`串接的框不带标记。
 
 追加页上的片段开头不带框的标签和标题，与拆分框后面的各部分一样。设了`repeatTitle: true`的样式在那里重复标题，并加上`continuedSuffix`（“(cont.)”），起“接上页”标记的作用。

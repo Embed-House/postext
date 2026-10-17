@@ -458,6 +458,8 @@ Continuar en una altra pàgina és l'últim pas de l'[escala d'ajust](#quan-tot-
   </tbody>
 </table>
 
+Una marca pot portar `{page}`: el número imprès de la pàgina on continua la resta, com ho escriu una revista (`mark: "Continua a la pàgina {page}"`). Serveix en una pàgina afegida (`'next-page'`, `'template:<id>'`) i en una tanca de pàgina posterior a la qual salta la història (`'page:<id>'`). `overflow.fromMark` posa les paraules al començament del tros en aquella pàgina, on `{page}` és la pàgina d'on ve (`fromMark: "Ve de la pàgina {page}"`); el `fromMark` del marc que rep guanya al del marc que envia, i sense cap el tros comença sense paraules. Els números s'omplen quan les pàgines ja estan numerades.
+
 La marca es compon sota l'última línia del tros, amb la lletra del cos de la caixa, alineada i inclinada segons `continuesMarkerAlign` i `continuesMarkerItalic` de l'estil (a la dreta i en cursiva per defecte). És un element de la paginació: l'EPUB de maquetació fluida la deixa fora i el PDF etiquetat la marca com a artefacte. Un marc encadenat amb `next` a la mateixa pàgina no porta marca.
 
 El tros de la pàgina afegida comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»), que indica que el text ve de la pàgina anterior.

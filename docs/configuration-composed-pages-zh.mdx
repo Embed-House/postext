@@ -493,7 +493,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）及`overflow.mark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
 
 ### 跨页
 

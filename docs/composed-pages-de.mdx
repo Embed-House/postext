@@ -458,6 +458,8 @@ Das Weiterlaufen ist die letzte der [Umbruchstufen](#wenn-der-inhalt-immer-noch-
   </tbody>
 </table>
 
+Ein Vermerk kann `{page}` enthalten: die gedruckte Nummer der Seite, auf der der Rest weitergeht, wie ein Magazin es schreibt (`mark: "Fortsetzung auf Seite {page}"`). Das gilt für eine hinzugefügte Seite (`'next-page'`, `'template:<id>'`) und für eine spätere Seitenbegrenzung, zu der die Geschichte springt (`'page:<id>'`). `overflow.fromMark` setzt Wörter an den Kopf des Stücks auf jener Seite, wobei `{page}` die Seite ist, von der es kommt (`fromMark: "Fortsetzung von Seite {page}"`); das `fromMark` des empfangenden Rahmens geht dem des sendenden vor, und ohne eines beginnt das Stück ohne Wörter. Die Nummern werden eingesetzt, sobald die Seiten nummeriert sind.
+
 Der Vermerk steht unter der letzten Zeile des Stücks, in der Textschrift des Kastens, ausgerichtet und geneigt, wie es `continuesMarkerAlign` und `continuesMarkerItalic` des Stils angeben (standardmäßig rechtsbündig und kursiv). Er gehört zum Seitenapparat: Das EPUB mit fließendem Layout lässt ihn weg, das getaggte PDF kennzeichnet ihn als Artefakt. Ein Rahmen, der auf derselben Seite mit `next` verkettet ist, trägt keinen Vermerk.
 
 Das Stück auf der hinzugefügten Seite beginnt ohne Reiter und Titel des Rahmens, wie die späteren Teile eines geteilten Kastens. Ein Stil mit `repeatTitle: true` wiederholt dort seinen Titel mit seinem `continuedSuffix` (auf Deutsch „(Forts.)“), der anzeigt, woher der Text kommt.
