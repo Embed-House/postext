@@ -1,0 +1,64 @@
+---
+title: "Ein Schulatlas, beschriftet aus dem Markdown"
+summary: "Karten ohne einen Buchstaben, benannt durch ::label-Zeilen an den Ankern jeder Ressource, auf zusammengesetzten Seiten und einer Doppelseite, in drei Sprachen."
+plain: "Drei Seiten aus einem Schulatlas eines erfundenen Landes. Die Karten sind Zeichnungen ohne Schrift; alle Namen stehen im Text, sodass eine Übersetzung die Wörter ändert und die Karten lässt, wie sie sind."
+description: "Ein Schulatlas mit Postext: Karten, aus dem Markdown an den Ankern der Ressource beschriftet, eine Karte über eine Doppelseite, eine arabische Ausgabe."
+question: "Wie setze ich die Namen einer Karte aus dem Text, damit jede Übersetzung dieselbe Zeichnung behält?"
+aliases: ["Atlas", "Schulatlas", "Kartenbeschriftung", "Ortsnamen", "Anker", "Beschriftungsformate", "Karte über eine Doppelseite", "Doppelseite", "von rechts nach links", "gedrehte Beschriftung", "map labels"]
+---
+
+## Was Sie setzen
+
+Drei Tafeln aus einem Schulatlas von Varenia, einem Land, das für dieses Rezept erfunden wurde. Tafel 1 zeigt seine Lage auf dem Kontinent. Tafel 2 legt die physische Karte über beide Seiten, vom Lira-Meer bis zur Grenze mit Brunavia, in Höhenschichtfarben, mit drei Flüssen und der Linie eines Profils. Tafel 3 zeichnet dieses Profil quer durch das Albar-Gebirge. Jede Tafel beginnt mit einem blauen Band und endet mit einer Legende oder einem Glossar und ein paar Aufgaben für den Unterricht. Die Zeichnungen tragen keinen Buchstaben: Die 43 Namen, Höhen und Zahlen des Maßstabs sind `::label`-Zeilen im Markdown, gesetzt an Ankern, die jede Karte mit sich führt. Deshalb teilen sich die spanische, die englische und die arabische Ausgabe dieselben drei Zeichnungen, und die arabische wird von rechts gelesen und rechts gebunden.
+
+## Zubereitung
+
+### 1 · Ein Ort ist ein Punkt der Zeichnung
+
+<Excerpt region="anchors" />
+
+Ein Anker ist ein Punkt in Bruchteilen der Breite und Höhe des Bildes. Er gilt also bei jeder Größe, in der der Rahmen die Karte setzt, und wenn die Umbruchstufen eine Karte verkleinern, wandern ihre Namen mit. `km()` rechnet die Kilometer, in denen die Zeichnung angelegt ist, in diese Bruchteile um: Der Punkt einer Stadt und ihr Name kommen beide aus `TOWNS` und können nicht auseinanderlaufen. Der Anker hält fest, was zum Ort gehört und nicht zur Sprache: sein Format, die Drehung eines Fluss- oder Gebirgsnamens entlang seines Verlaufs und die Seite der Beschriftung, die am Punkt steht. Stadtnamen stehen mittig über ihrem Punkt, denn `align: 'start'` wäre bei einem englischen Namen links und bei einem arabischen rechts.
+
+### 2 · Drei Markdown-Dateien, eine Ressource
+
+<Excerpt region="resources" />
+
+Die Ressource hat ein SVG und eine Ankerliste für alle Ausgaben. Jede Ausgabe schreibt je Anker eine Zeile `::label[…]{at="…"}` in `:::figure{resource="relief" slot="map"}`, sodass `::label[Calvera Plain]{at="plain"}` und `::label[Llanura de Calvera]{at="plain"}` an derselben Stelle stehen und bei Bedarf durch das `width` des Ankers auf zwei Zeilen umbrochen werden. Nur der Alternativtext ändert sich mit der Ausgabe, denn eine Ressource übernimmt keine Wörter aus dem Markdown. Ein Anker mit Format, den eine Ausgabe ohne Beschriftung lässt, meldet `anchorUnlabelled`; eine Beschriftung, deren `at` keinen Anker nennt, wird nicht gezeichnet und meldet `labelAnchorUnknown`.
+
+### 3 · Eine Tafel und eine Doppeltafel
+
+<Excerpt region="templates" />
+
+Beide Vorlagen haben dieselben fünf Rahmen, daher hat das Markdown einer Tafel auf einer Seite wie auf zweien dieselbe Form: Titel, der Text ohne Slot, Karte, Legende und Aufgaben. Auf der Doppeltafel legt `spread: true` beide Seiten als einen Bogen von 390 mm an, und nur der Kartenrahmen setzt `crossGutter`: Er läuft über den Bund, während Text und Kästen auf ihrer Seite bleiben. Text, Karte und Legende bilden eine `stack`-Gruppe; im Belastungstest der Prüfbank, mit allen Texten um 30 % länger, setzt die arabische Ausgabe die Lagekarte auf 87,5 %, und die Kästen darunter rücken nach oben, ohne Warnung.
+
+### 4 · Eine Palette für Seite, Höhenfarben und Legende
+
+<Excerpt region="palette" />
+
+Die fünf Höhenschichtfarben sind Einträge der Palette. Die Zeichnung füllt ihre Schichten mit `palette.low` bis `palette.peak`, und die Legende von Tafel 2 schreibt `:swatch{color="low"}` mit denselben Kennungen, sodass ein neuer Hexwert Karte und Legende zugleich ändert. Die Gewässernamen in `water` haben auf dem flachen Meer einen Kontrast von 6:1 und auf dem tiefen von 4,5:1, der weiße Titel auf `band` 7,2:1.
+
+### 5 · Die arabische Ausgabe
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `locale: 'ar'` setzt den Text von rechts nach links und bindet das Buch rechts, sodass die Doppelseite auf der rechten Seite beginnt und die Rahmen dem gespiegelten Satzspiegel folgen: Titel und Text stehen rechts, die Legende rechts neben den Aufgaben. Die Karten werden nicht gespiegelt, und jeder arabische Name steht dort, wo sein Ort gezeichnet ist. Im Arabischen verlieren die Beschriftungsformate Kursive und Sperrung und werden um 15 % größer, weil das Kufi klein läuft. Dekoration und Paginierung bleiben auf dem Bogen, also wandert die Dachzeile nach rechts oben und die Seitenzahlen wechseln die Seite.
+
+## Varianten
+
+### Einen Ort ohne Anker benennen
+
+Eine Beschriftung kann an einem Punkt stehen, der in Prozent des Bildes angegeben ist, mit einem eigenen Format.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Nema Light]{at="7% 68%" style="town"}
+ ::label[Misty Ocean]{at="ocean"}
+```
+
+### Die Karten nummerieren und beschriften
+
+Geben Sie dem Kartentyp einen Zähler und ein Präfix und jeder Ressource eine Bildunterschrift: siehe <RecipeLink slug="atlas-map-sheet">das Atlasblatt mit nummerierten Karten</RecipeLink>, das seine Bildunterschriften auf einen blauen Balken setzt.
+
+## Häufige Fehler
+
+- Der Alternativtext jeder Karte steht in der Ressource (`ALT`), eine Zeichenkette je Ausgabe: Eine Ressource übernimmt keine Wörter aus dem Markdown, daher ist er der einzige Text der Seite außerhalb von `content.<lang>.md`.
+- Auf einer Seite von rechts nach links folgen die Rahmen dem gespiegelten Satzspiegel, die Dekoration der Vorlage aber nicht: Platzieren Sie die Dachzeile je Ausgabe, wie es `kicker` tut.
+- Ein zweispaltiger Rahmen kann einen Absatz eine Zeile vor seinem Ende trennen und diese Zeile oben in die zweite Spalte stellen. Prüfen Sie die Spalten jeder Ausgabe und verschieben Sie dann einen Satz in den nächsten Absatz.

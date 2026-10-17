@@ -1,0 +1,54 @@
+---
+title: "Une frise chronologique illustrée sur une double page"
+summary: "Un modèle de page en double page pour la frise d’un manuel : un bandeau passe le dos et deux rangées de fiches se partagent la largeur quand un texte s’allonge."
+plain: "Deux pages en vis-à-vis d’un manuel d’histoire faites comme une seule : un bandeau de couleur traverse le milieu du livre, et six fiches illustrées se partagent la largeur, et l’histoire la plus longue reçoit la fiche la plus large."
+description: "Une frise chronologique en double page avec Postext : un modèle, un bandeau qui passe le dos, des fiches qui partagent leur largeur, des points qui les suivent."
+question: "Comment mettre en page une frise chronologique sur une double page, avec des fiches sur les deux pages ?"
+aliases: ["frise chronologique", "chronologie", "double page", "modèle de page", "rangée de blocs", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+---
+
+## Ce que vous allez composer
+
+Les pages 48 et 49 d’un manuel d’histoire de collège : *La route du papier*, mille ans de métier, de l’atelier de Cai Lun à la meule de Keller. La page de gauche s’ouvre sur le titre et deux paragraphes, celle de droite sur un encadré qui raconte comment on fabriquait une feuille à la main. Au milieu court la frise : un bandeau indigo pour l’Asie, un bandeau terre cuite pour l’Europe, qui part de la page de gauche et passe le dos. Dessous, six fiches avec leur dessin, suspendues au bandeau par un point et un trait. Les fiches se partagent la largeur : celle de 1844, dont l’histoire est la plus longue, prend de la largeur à ses deux voisines (1 mm en espagnol, 7 mm en japonais), et son point se déplace avec elle. Tous les mots sont dans le Markdown, en espagnol, en anglais et en japonais ; cette page montre l’édition anglaise.
+
+## Préparation
+
+### 1 · Une feuille pour deux pages
+
+<Excerpt region="answer" />
+
+`spread: true` fait du modèle une seule feuille large comme les deux pages, et la section de la page le dit aussi avec `spread`. Une double page commence sur une page paire : la composition reçoit donc `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`. La page 1 de cet extrait est la page 48 du livre, une page de gauche, et aucune page blanche ne la précède. La grille a une colonne par page, séparées par deux fois la marge intérieure, si bien que seul le bandeau approche du pli. Le second bandeau porte `crossGutter` et un retrait gauche de 36 mm : sa couleur part de la fin du premier et passe le dos, ses mots commencent sur la page de droite, là où la mise en page les lit.
+
+### 2 · Des fiches qui se partagent la largeur
+
+<Excerpt region="cards" />
+
+Chaque rangée de trois fiches est un groupe `row`, et chaque fiche a un `minHeight`, la hauteur à laquelle elle est dessinée, et au-delà une hauteur `auto`. Quand le texte d’une fiche dépasse la hauteur de la rangée, elle prend aux voisines qui ont `shrink` le nombre de millimètres entiers qu’il lui faut, et chaque voisine garde la largeur où son propre texte tient encore. C’est seulement quand elles n’ont plus rien à donner que la rangée grandit vers le bas. Dans l’édition espagnole, la fiche de 1844 prend 1 mm à celle de 1282 ; dans la japonaise, elle en prend 7, 3 à celle de 1150 et 4 à celle de 1282 ; avec tous les textes plus longs de 30 %, le test du banc d’essai, l’espagnole en prend 15, et l’encadré et le chapeau passent leur texte à 92,5 % et 85 %.
+
+### 3 · Des points qui suivent les fiches
+
+<Excerpt region="marks" />
+
+Les points et les traits sont le décor (`decoration`) du modèle, ancrés à `#c1` … `#c6` par leur bord supérieur (`top`) et remontés de la distance qui les sépare du bandeau. Le décor est placé après les blocs : quand une fiche se déplace ou s’élargit, son point reste au-dessus de son centre. Le fond crème est lui aussi du décor, une boîte ancrée au pied du fond perdu dont la hauteur monte jusqu’au pied de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`) : elle suit le bandeau.
+
+### 4 · Des dessins à leur taille d’impression
+
+<Excerpt region="art" />
+
+Les vignettes font 1 000 px à 550 ppp, soit 46 mm sur la page, et une image n’est jamais agrandie : une fiche qui s’élargit garde son dessin et laisse la place à son texte. Une fiche plus étroite que 53 mm (le dessin plus 3,5 mm de marge de chaque côté) réduit son dessin, ce que montre le test du banc d’essai dans l’édition japonaise : les dessins de 1150 et 1282 à 85 %.
+
+## Variantes
+
+### Garder des fiches de même largeur
+
+Avec `shrink: 0`, aucune fiche ne cède de largeur : la rangée grandit vers le bas, les trois fiches ensemble, et son pied descend dans la page.
+
+```diff
+-  shrink: 1, // a card gives width to a neighbour whose text runs past the row
++  shrink: 0,
+```
+
+## Erreurs fréquentes
+
+- Une fiche à `height` fixe ne prend pas part au partage de la largeur, puisqu’elle ne dépasse jamais la rangée : donnez aux fiches un `minHeight`, comme ici, et laissez la hauteur en `auto`.
+- Une taille qui va jusqu’au bord d’une autre boîte se compte à partir du point d’ancrage de l’élément : le fond est ancré au pied du fond perdu et monte jusqu’à `#band-1`. Un bord situé derrière l’ancre donne une hauteur de 0.

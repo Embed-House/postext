@@ -460,10 +460,17 @@ source line by line.
 - `:chip[Ctrl]{style="key"}` with `chipStyles`.
 - A chip is one unbreakable box: it never breaks across lines. A chip that
   does not fit moves to the next line, and one wider than the line
-  overflows. Keep chips to a word or two; a highlighted phrase the source
-  runs over a line end is split into two chips at that point, and a
-  translation of three words or more is two chips. #888 tracks an inline
-  highlight that breaks like text.
+  overflows. Keep chips to a word or two.
+- A **highlighted phrase** (a band behind key words that runs over line
+  ends, as school textbooks do) is `:mark[text]{style="id"}` with
+  `markStyles` (postext ≥ 1.34.1; document-format.md §10.1b,
+  configuration.md §13b): the words stay text, break and hyphenate with the
+  line, each line gets a band, and the mark takes no room. One style per
+  distinct highlight colour of the source, its text colour in the style's
+  `color`. Never a row of chips split by hand at the source's line ends,
+  and never two chips for a translated phrase. A heading drawn by a design
+  (an opener) prints the words without the band. On an older engine
+  `:mark[…]` prints literally: use a chip for one or two words and say so.
 - A colour key square: `:swatch{color="band"}` (a palette id or `#hex`), in
   text, captions or table notes.
 
@@ -1246,9 +1253,14 @@ The Sun rises in the **east** and sets in the **west**.
   `padding`): measure the source's first baseline and set the padding from
   it (design-analysis.md).
 - **Headings inside a box** are listed by `:::toc` and the bookmarks (a
-  second topic on a page can be an `##` in its box), but their heading
-  style's design is not applied there: a title in a coloured tab inside a
-  box is the box's `label`, or the tab drawn in the page ground (J3).
+  second topic on a page can be an `##` in its box). From postext 1.37 a
+  heading in a box draws its level's or heading style's design (tab, band,
+  `{titleText}`, anchored to `container`; the box keeps the room it takes,
+  `minHeight` places the text under a tab); before 1.37 the design was not
+  applied there: a title in a coloured tab inside a box was the box's
+  `label`, or the tab drawn in the page ground (J3). A heading in a box
+  opens no styled section: running heads and the chapter's `{attr.x}` come
+  from flow headings.
 - **Lists inside a box** take the document's `unorderedLists` /
   `orderedLists` `marginTop` and `marginBottom` (the style's `lists` has no
   margin field); a list that opens the box drops its `marginTop`. A list
@@ -1318,23 +1330,29 @@ holds next to the map is a callout (J2), not part of the picture.
   1.37.0 `::label` lines in a `:::figure` are drawn at the picture's
   anchors and the words live in the Markdown (composed-pages.md §6.4);
   use that instead whenever the engine has it.
-- The `postext` command line draws SVGs differently from the Sandbox
-  (#890). With postext 1.33 an SVG whose `viewBox` did not start at `0 0`
-  printed empty in `postext images`: write `viewBox="0 0 w h"` and move the
-  art with `<g transform="translate(-x -y)">`. An SVG that embeds a raster
-  (`<image href="data:image/…">`) is drawn by resvg, which matches
-  `font-family` against each font file's internal family name, not the
-  bundle's family names: labels in a family whose bundle name differs fall
-  back to another face. Keep the map art in the page ground (J3) and the
-  SVG to the lettering alone, or check the command line's page images
-  against the Sandbox.
+- The `postext` command line drew SVGs differently from the Sandbox with
+  postext 1.33 (#890): an SVG whose `viewBox` did not start at `0 0` printed
+  empty in `postext images`, and an SVG that embeds a raster
+  (`<image href="data:image/…">`, drawn by resvg) matched `font-family`
+  against each font file's internal family name, so labels in a family
+  whose bundle name differs fell back to another face. From postext 1.34.1
+  both work: leave the `viewBox` as the art has it, and name the bundle's
+  family in the SVG's `font-family`; map art and lettering can live in one
+  SVG. Only for an engine older than 1.34.1: write `viewBox="0 0 w h"`
+  (move the art with `<g transform="translate(-x -y)">`), keep the map art
+  in the page ground (J3) and the SVG to the lettering alone, and compare
+  the command line's page images with the Sandbox.
 
 ### J5. Contents
 `:::toc`, always (A3). A block (a part, a section) that must stay with its
 topics uses `toc.groups` / `:::toc{keep="part"}` when the installed
 Postext supports `toc.groups` (≥ 1.34); otherwise a hand-written contents with
 `:ref{id="…" style="pageNumber"}` page numbers, listed in the report as a
-documented gap.
+documented gap. A part row with dots up to its page number is ONE text
+element in `toc.parts.design`, `content: "{number} {titleText}{leader}{pageNumber}"`,
+width `fill` (≥ 1.34.1; configuration.md §9): the leader is `toc.leader`, the
+same as the entry rows; never a literal run of dots in the content (it is
+clipped and warns `designTextTruncated`).
 
 ### J6. Editions in other languages
 One bundle: `chapters.<lang>` per locale, `localized.<lang>.resources` for
@@ -1344,8 +1362,11 @@ the source reflows in its box or flow; it is never re-placed line by line
 at the source's coordinates. Run `postext check my-book --locale <lang>` and
 look at the pages of every locale. The Sandbox imports one edition of a
 multi-language bundle (it asks which), so import each edition to look at
-it; give each edition its own title with `localized.<lang>.name`
-(postext ≥ 1.34.1, #891). Composed pages in several languages: one bundle,
+it; give each edition its own title with `localized.<lang>.name` and
+`localized.<lang>.description` (postext ≥ 1.34.1, #891; the primary edition
+keeps the manifest's `name`; `postext check my-book --locale <lang>` prints
+it in the header, the library and the import dialog use it, and a showcase's
+`index.json` entry can copy it as `localized: { <lang>: { name, description } }`). Composed pages in several languages: one bundle,
 the same templates, slots and anchors (composed-pages.md §8).
 
 ### J7. Never

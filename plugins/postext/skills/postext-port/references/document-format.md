@@ -534,6 +534,30 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 Classify: :chip[battery] :chip[cable] :chip[switch]
 ```
 
+### 10.1b `:mark[text]{style="…"}` (highlight band, postext ≥ 1.34.1)
+
+A coloured band behind a phrase, as a textbook highlights its key words. Unlike a chip, the marked words stay
+ordinary text: they break at line ends, hyphenate and justify like the words round them, and the band follows each
+piece of the phrase on its line (the padding and rounded corners are drawn at the phrase's true start and end only).
+- `{style="id"}` names a `markStyles` entry (configuration.md §13b); without it, or with an id no style declares
+  (`unknownMarkStyle`), the first style is used (a built-in pale yellow `mark` when the config has none).
+- The text takes its own inline marks (`:mark[the **key** word]`), links, chips and refs; brackets nest
+  (`:mark[see [the map]]`), `\]` is a literal bracket, and the text may run over a soft line break of the source.
+  A punctuation mark glued after the brackets (`:mark[land].`) stays out of the band. A mark inside a mark is set
+  as its text.
+- It takes no room: the lines break as they would without it. Works in paragraphs, headings set in the text, list
+  items, quotes, callouts, footnotes, cells, captions and notes, in LTR, RTL, Chinese and Japanese. A heading drawn
+  by a design (an opener) prints the words without the band; the HTML viewer draws none on a vertical page.
+- Porting map: "highlighted phrase / marker pen" becomes `:mark[…]{style}`, one style per distinct highlight
+  colour of the source, never a row of chips split by hand at the source's line ends (a translation would need a
+  different number of them). An engine older than the release that ships it prints `:mark[…]` literally.
+
+```md
+The sun warms the sea and :mark[water rises into the air as vapour].
+
+- :mark[Evaporation]{style="key"}: water turns into vapour.
+```
+
 ### 10.2 `:swatch{color="…"}` (colour key square)
 
 **Regex:** `:swatch\{([^}]*)\}`.
@@ -728,7 +752,7 @@ Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `inde
 |---|---|---|
 | `:::pagebreak` | `parity`: `odd` \| `even` \| `always-odd` \| `always-even`. Anything else (incl. `any`) means no parity; the sandbox warns `pagebreakInvalidParity`. `center` flag (≥ 1.16; `center=false` off). | Next block on a new page. `odd`/`even` add a blank page if needed. `always-*` forces at least one separator blank, which belongs to the previous content. Pending floats go to the new page. Skipped while the first page is still empty. With `center`, the text of the page it opens is centred between the head and foot of the type area (across the page in vertical text: ページの左右中央, a dedication, a part title); end that page with another `:::pagebreak`. |
 | `:::columnbreak` | none | Ends the current column; continues in the next column, or on the next page from the last column. A no-op in an empty column. The column keeps its gap (balancing skips it). |
-| `:::space` | `lines`: body lines (baseline grid), default `1`; fractions allowed; > 0 and ≤ 20, else one line and the sandbox warns `spaceInvalidLines`. | Vertical space between two blocks, **added** to their margin (not collapsed into a heading's top margin); repeated lines add up. Dropped at a column/page top; one that does not fit ends the column without carrying over. A paragraph right after it loses its first-line indent when `indentAfterHeading` is off. Keep-with-next counts it. The only directive honoured inside a `:::callout`/`:::columns` (measured in the box's body lines). Before a box's first block it is dropped, **except** right under the title or in a box holding nothing else (answer box sized in lines: `:::callout{type="answer" title="Q1"}` + `:::space{lines=4}` + `:::`). Always dropped at the top of a `:::columns` group, at each of its column heads, and at the top of a split box's continuation. Works inside `:::paragraphs`. Extra blank lines in the Markdown never add space. |
+| `:::space` | `lines`: body lines (baseline grid), default `1`; fractions allowed; > 0 and ≤ 20, else one line and the sandbox warns `spaceInvalidLines`. | Vertical space between two blocks, **added** to their margin (not collapsed into a heading's top margin); repeated lines add up. Dropped at a column/page top; one that does not fit ends the column without carrying over. A paragraph right after it loses its first-line indent when `indentAfterHeading` is off. Keep-with-next counts it. The only directive honoured inside a `:::callout`/`:::columns` (measured in the box's body lines). Before a box's first block it is dropped, **except** right under the title or in a box holding nothing else (answer box sized in lines: `:::callout{type="answer" title="Q1"}` + `:::space{lines=4}` + `:::`). Always dropped at the top of a `:::columns` group, at each of its column heads, and at the top of a split box's continuation. Works inside `:::paragraphs`. In a frame of a composed page with `rules` (≥ 1.38), `:::space{lines=N}` gives an `auto` frame N ruled lines (the Markdown decides the count). Extra blank lines in the Markdown never add space. |
 | `:::numbering` | `format`: `decimal` \| `lower-roman` \| `upper-roman` \| `lower-alpha` \| `upper-alpha`. `startAt`: integer ≥ 1. Both optional; invalid values are ignored, with `numberingInvalidFormat`/`numberingInvalidStartAt` warnings. `lines`: whole number ≥ 0 (postext ≥ 1.23; line numbers, configuration.md §19f). | `format`/`startAt` switch the page-number format and/or restart the counter **at the next page boundary** (or at the current page if it has no numbered content yet). Canonical form: `:::pagebreak{parity="odd"}` followed by `:::numbering{format="decimal" startAt=1}` before chapter 1. `lines=N`: the next counted line is numbered N (the count restarts there; with `lineNumbers` off it does nothing). |
 | `:::toc` | `keep`, `levels` (postext ≥ 1.34) | Expands, before layout, into one entry per listed heading (levels in `toc.levels`, default level 1) and one row per part. Page labels converge over passes. In the sandbox the book outline is supplied, so chapter files work. Exclude the contents heading itself with `{toc="false"}`. `keep="part"` keeps each part row with its chapters on one column and page; `keep="1"`…`"6"` keeps a heading of that level with the entries under it (a part row right above it goes along); `keep="none"` turns a configured `toc.groups` off. `levels="1-2"` (also `"2"`, `"1,3"`) lists those levels for this contents only; a level with no `toc.levels` style takes the nearest level above's. A hand-written contents (`:::paragraphs` + `:ref{… style="pageNumber"}` + a `:::pagebreak` placed by eye) becomes one `:::toc{keep="part"}` (or `keep="1" levels="1-2"` when the blocks are chapters with sections); style the rows with `toc.levels` / `toc.parts.design`. |
 | `:::verse` … `:::` (line layout, postext ≥ 1.23) | `layout` (`auto` default \| `lines` \| `bayt`), `indentStep` (default `0.5em`: two spaces = 1 em), `turnover` (`hang` default \| `right`), `hang` (default the style's `hangingIndent`, else `2em`), `turnoverMark` (default `[`), `stanzaSpace` (bare number = lines of the poem's leading, default 1; or a length), `keepStanzas` (N: stanzas of ≤ N lines stay whole; haiku 3, tanka 5), `keepSpaces` (flag: runs of ≥ 2 spaces inside a line keep their width), `tighten` (≥ 1.24, default `true`; `false` turns every overlong line over), `align` (`center` on the longest line, default; `start`, default in vertical text), `style`, `dir`, `lang`. Defaults in config `bodyText.verse`. Line numbers (≥ 1.23, config `lineNumbers`): `numbered=false` (the poem takes no numbers and is not counted), `lineStart=N` (its first line is N; restarts the count in any mode), `interval=N` (the poem's own interval). | A poem with no `||` (or `layout=lines`): every non-blank line is a line of verse (inline Markdown per line), a run of blank lines one stanza break, leading spaces the indent (tab = 4, U+3000 = 2), `+ ` opens a stepped line that starts where the line above ended (`\\+` for a literal plus). Each stanza is a block: pages break between stanzas, inside one by orphan/widow rules; a line never parts from its turnover. A line a little wider than the measure tightens its word spaces down to `bodyText.minWordSpacing` and stays on one line (≥ 1.24; no tracking); a line still too wide turns over at word spaces (no hyphenation unless the style sets `hyphenation: true` itself). Do not shorten or re-break a source line that is only a few points too long. Copy, EPUB and tagged PDF read it line by line. |
@@ -755,6 +779,17 @@ ana{thought}: Nothing, he says…
 :::
 ```
 
+A panel with the flag `text` (postext ≥ 1.38) takes **Markdown** instead of a script: `::panel{text}` followed by
+paragraphs (blank lines between them), `**bold**`, `*italic*`, lists, headings, links and chips, up to the next
+`::panel` line. It is set as real text in the panel's frame in the book's body style (not the lettering face),
+`valign=middle|bottom` places it, `box=<calloutStyleId>` draws a box round it (background, border, radius and
+padding of that style). A narrator's page, a letter, a newspaper clipping. No `:::` blocks in the body; use it
+only on single `:::page`s of horizontal LTR books (on a `:::strip`, a `:::page{spread}`, or in an RTL or vertical
+edition the words fall into the flow after the comic: `comicPanelFrame` reason `strip`/`spread`/`flow`, so
+letter them as captions there). Text taller than the cell is clipped (`textOverflow`, `overflowMm`): shorten or
+enlarge the cell, the text is never shrunk. `box` also dresses a picture panel (`unknownBox` when the id is not a
+callout style).
+
 A `:::page` owns a whole page (the text after it starts a new page);
 `:::page{spread}` takes two facing pages; a `:::strip` is a block in the
 text flow (newspaper strips). Inside the block nothing is a paragraph,
@@ -768,7 +803,8 @@ with them: [composed-pages.md](composed-pages.md). Postext 1.34.0 reads and
 checks these blocks and sets their content in the running text on pages of
 its own; 1.34.1 lays the frames out; round 2 starts at 1.35.0 (groups,
 spreads, reading order in every output); `::label` words are drawn from
-1.37.0 (before, the figure is set as `::resource`).
+1.37.0 (before, the figure is set as `::resource`); a story jumps to a later
+page fence from 1.38.0 (`id=` below).
 `python3 scripts/composed_check.py round` says which round the installed
 version takes; with an older one the round-1 ladder (playbooks J) stays the
 method.
@@ -813,6 +849,11 @@ North, south, east and west.
   `at` names an anchor of the resource or a point in percent of the picture
   (`at="62% 48%"`); `style` is a `labelStyles` id. A figure in the flow is
   set as `::resource` with its labels.
+- `id="p47"` on a fence is the target of a jump: a frame whose template says
+  `overflow.continueIn: "page:p47"` (or `"page:{attr.sigue}"`, with `sigue="p47"` on
+  the article's fence) sends the rest of its story there (1.38; within the chapter
+  file, forward only; `continueTargetMissing` otherwise). Write the story whole in
+  its own fence; the later fence holds the other article and an empty frame.
 - `:::page{split=…}` (three colons) is still a **comic** page (§12.1).
   A composed page written with three colons warns `pageFenceLength`.
 - **Order is meaning.** The frames are read in the order their content
@@ -833,7 +874,11 @@ per box and `::resource{… slot=…}` per photo; positions, sizes and colours
 go to `pageTemplates`, never into the Markdown. Keep the slot names the same
 in every locale's chapter. A box whose text runs over to the next page
 stays whole in one `:::frame` (the template continues it, 1.37); never type
-its second half into another page fence. Warnings: verification.md,
+its second half into another page fence. An answer space is an empty frame
+with `rules` in the template, or an `auto` frame that receives
+`:::space{lines=N}` (1.38). A frame is running text: its paragraphs take
+drop caps from a `:::paragraphs{style dropcap}` group (1.38), a heading in it
+draws its design (1.37), and a `{style="…"}` heading attribute works in it. Warnings: verification.md,
 "Composed pages"; `lint_project.py` checks templates, slots, anchors and
 label styles before any layout.
 
@@ -861,6 +906,7 @@ label styles before any layout.
 | `{pageNumber}` `{totalPages}` `{title}` `{subtitle}` `{author}` `{publishDate}` `{chapterTitle}` `{chapterNumber}` `{partTitle}` `{partNumber}` | header/footer and heading/part designs |
 | `{chapterTitleAtTop}` `{chapterNumberAtTop}` `{firstMark.<key>}` `{lastMark.<key>}` | header/footer only |
 | `{titleText}` `{number}` `{numberDecimal}` `{numberRoman}` `{numberRomanLower}` `{numberAlpha}` `{numberAlphaLower}` | heading/part designs only |
+| `{leader}` | `toc.parts.design` only (≥ 1.34.1): the contents' `toc.leader` dots between the text before it and the text after it, in ONE element (`{number} {titleText}{leader}{pageNumber}`); prints nothing elsewhere and on vertical pages |
 | `{attr.<key>}` | anywhere; the Markdown supplies it through heading attributes (§2.2) |
 
 The Markdown's only role is to provide values:
@@ -874,7 +920,7 @@ The Markdown's only role is to provide values:
 **Sandbox warnings tied to the document format** (the engine reports the unknown ids, directives,
 styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings` / `collectContentWarnings`):
 - `unknownDirective`, `malformedEmbed`, `unclosedContainer`, `unclosedMath`, `invalidMath`
-- `unknownParagraphStyle`, `unknownCalloutType`, `unknownChipStyle`, `unknownHeadingStyle`, `unknownTableStyle`, `chipOverlap`
+- `unknownParagraphStyle`, `unknownCalloutType`, `unknownChipStyle`, `unknownMarkStyle` (≥ 1.34.1), `unknownHeadingStyle`, `unknownTableStyle`, `chipOverlap`
 - `raggedTableGrid` (a merged grid that is not rectangular), `missingImage` (an image with nothing to draw)
 - `numberingInvalidFormat`, `numberingInvalidStartAt`, `pagebreakInvalidParity`
 - `unknownResourceId` (embed or ref), `duplicateResourceId`, `danglingTypeRef`

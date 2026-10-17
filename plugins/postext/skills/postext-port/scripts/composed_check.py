@@ -14,7 +14,8 @@ the round-2 checks of a ported book, edition by edition.
                         [--offline] [--keep DIR] [--json]
       For every edition (or the --locale ones): runs `postext check --json`
       and `postext html`, then fails on
-        - frameOverflow, frameContinuationLimit, contentInConfig, tocGroupSplit,
+        - frameOverflow, frameContinuationLimit, continueTargetMissing,
+          contentInConfig, tocGroupSplit,
           the composed pages' source warnings (templateUnknown, slotUnknown,
           pageFenceLength, spreadMismatch, unclosedContainer), the page
           templates' config warnings and labelAnchorUnknown;
@@ -78,8 +79,35 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "as a flow page; never the rest typed into a second page fence"),
     ((1, 37, 0), "labels", "::label words drawn at a picture's anchors (maps, diagrams)",
      "round-1 labels: the words in a live-text SVG per language (playbooks J4)"),
-    ((1, 37, 0), "migration", "moveTextToMarkdown (#874): a 1.33 port's page designs become page "
-     "templates and page fences (check the release notes)", "rewrite those pages by hand"),
+    ((1, 37, 0), "migration", "moveTextToMarkdown: a 1.33 port's page designs become page "
+     "templates and page fences", "rewrite those pages by hand"),
+    ((1, 37, 0), "headingDesigns", "a heading in a frame or a box keeps its level's or style's design "
+     "(tab, band, {titleText}); letterSpacing on paragraph styles",
+     "a tabbed title as a frame of its own (takes: 'h1', a callout style); a tracked title as a hidden "
+     "heading in a frame"),
+    ((1, 38, 0), "continueFirst", "a frame that can go on to another page goes on before it shrinks "
+     "(fit.preferContinue); a threaded story goes on in the frame its chain starts in; a cut keeps a "
+     "heading with its text; the answer space under a box goes on with it",
+     "fit: { shrinkText: false, scaleImages: false } on body frames; two templates with distinct frame "
+     "names that hand the story to each other"),
+    ((1, 38, 0), "jumps", "continueIn 'page:<id>' (a story jumps to a later page fence), {page} in "
+     "overflow.mark, overflow.fromMark, continueTargetMissing",
+     "say 'continued on page N' as plain words and list it as a gap; set the rest on the page after"),
+    ((1, 38, 0), "answerSpaces", "stacks keep their empty frames when a box above grows; rows of "
+     "height 'auto' + minHeight share width; frame rules (ruled lines at a pitch)",
+     "decoration rules anchored to the frame; fixed height + maxHeight on the cards"),
+    ((1, 38, 0), "designSizes", "{ to, edge } sizes of design elements, fit 'cover' + focus on design "
+     "images, drop caps in frames, vertical spreads",
+     "heights computed in the generator; photos cut to the box's ratio; no drop cap; a horizontal "
+     "spread on a vertical book"),
+    ((1, 38, 0), "textPanels", "comic ::panel{text} (Markdown in a panel) and box=<callout style>",
+     "letter the words as captions"),
+    ((1, 38, 0), "partialTypes", "resourceTypes entries that leave fields out take the built-in type's",
+     "write every field of the type"),
+    ((1, 38, 0), "labelsOnPictures", "moveTextToMarkdown({ labelsOnPictures }) turns words on a picture "
+     "into labels", "those words stay frames"),
+    ((1, 38, 0), "sandboxFixes", "Sandbox Canvas > Reflow, anchors placed by a click, "
+     "sandbox_apply_proposal", "apply the proposals' values to the configuration by hand"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)
@@ -433,7 +461,7 @@ def compare_order(pages: list[dict], fences: list[dict]) -> list[dict]:
 # --- running the command line tool ------------------------------------------
 
 FAIL_KINDS = {
-    "frameOverflow", "frameContinuationLimit", "contentInConfig", "tocGroupSplit",
+    "frameOverflow", "frameContinuationLimit", "continueTargetMissing", "contentInConfig", "tocGroupSplit",
     "templateUnknown", "slotUnknown", "pageFenceLength", "spreadMismatch", "unclosedContainer",
     "templateDuplicate", "templateExtendsCycle", "templateExtendsUnknown", "frameDuplicate",
     "frameStyleUnknown", "frameAnchorUnknown", "frameMinMax", "groupFrameUnknown", "groupFrameTwice",

@@ -1,0 +1,66 @@
+---
+title: "Eine Magazinreportage, durch Rahmen verkettet"
+summary: "Eine zusammengesetzte Doppelseite, deren zwei Spalten mit next verkettet sind und über overflow.continueIn auf angefügten Seiten weiterlaufen."
+plain: "Eine vierseitige Magazingeschichte aus einer Vorlage: Der Text läuft von selbst von einer Spalte in die nächste und auf neue Seiten weiter und umfließt ein Zitat und den Umriss eines Fotos."
+description: "Eine Magazinreportage in Postext: eine zusammengesetzte Seite, deren verkettete Spalten auf angefügten Seiten weiterlaufen, um ein Zitat und einen Freisteller."
+question: "Wie lasse ich einen Magazinartikel über verkettete Rahmen durch mehrere Seiten laufen?"
+aliases: ["verkettete Rahmen", "Rahmen verketten", "Textverkettung", "Fortsetzung auf Seite", "Konturenumfluss", "Textumfluss", "herausgestelltes Zitat", "Freisteller", "Seitenvorlage", "threaded frames", "linked text frames", "pull quote", "marcos enlazados"]
+---
+
+## Was Sie setzen
+
+Die Seiten 46 bis 49 von *Patio*, einer erfundenen Vierteljahreszeitschrift über das Leben in der Stadt: eine Reportage über eine pensionierte Setzerin, die auf dem Dach der Druckerei, in der sie dreißig Jahre gearbeitet hat, vierzehn Bienenvölker hält. Die linke Seite der Auftaktdoppelseite ist das Foto, die Schlagzeile steht über dem Kies, ein getönter Kasten mit Zahlen im Himmel. Die rechte Seite trägt den Vorspann und die ersten zwei Spalten, mit einem herausgestellten Zitat über dem Spaltenabstand und einem freigestellten Bienenkorb aus Stroh, dessen Kuppel die Zeilen der zweiten Spalte folgen. Danach belegt der Text so viele dreispaltige Seiten, wie er braucht, und endet, wo er endet. Die spanische, englische und deutsche Ausgabe sind dieselbe Vorlage mit anderen Wörtern. In der deutschen Ausgabe trennen die Silbentrennmuster des Deutschen lange Komposita wie „Bushaltestellenwartehäuschens“ und „Werkstättengenossenschaft“ in den 60 mm breiten Spalten.
+
+## Zubereitung
+
+### 1 · Eine Vorlage, ein Artikel
+
+Den Code zeigt oben [die kurze Antwort](#die-kurze-antwort). Die ganze Reportage ist eine einzige Seitenbegrenzung `::::page{template="apertura" spread}`: Die Überschrift kommt in den Rahmen mit `takes: 'h1'`, die Zahlen und der Vorspann in ihre Slots, und alles Übrige, das keinen Slot nennt, in den Flussrahmen `col-1`. Ist `col-1` voll, läuft der Text in `col-2` weiter, neu auf dessen Breite umbrochen, und was `col-2` nicht fasst, geht auf einer Seite weiter, die nach der Doppelseite angefügt wird (`overflow.continueIn: 'template:seguido'`), nach dem Vermerk *Wird fortgesetzt*. Der Text nennt keine Spalte und keine Seite: Streichen Sie einen Absatz, rücken alle folgenden Zeilen zurück.
+
+### 2 · Die Seiten, die der Text anfügt
+
+<Excerpt region="pages-after" />
+
+Jede angefügte Seite hat drei verkettete Spalten von 60,3 mm, und eine einzige Vorlage dient für alle. Die dritte Spalte läuft in dieser Vorlage selbst weiter, und der Text setzt in dem Rahmen fort, in dem seine Kette beginnt, `seguido-1`: Jede angefügte Seite füllt alle drei Spalten, so viele es braucht. Auch die Schriftgröße muss nichts festhalten: Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, läuft weiter, bevor der Text kleiner gesetzt wird. Ein Text, der fünf Zeilen zu lang ist, bekommt also eine neue Seite statt 92,5 % auf der letzten.
+
+### 3 · Zwei Rahmen, die die Spalten verdrängen
+
+<Excerpt region="push" />
+
+Keiner der beiden Rahmen gehört zum Text, jeder verdrängt nur die Zeilen der Spalten, die er überdeckt. Das herausgestellte Zitat ist am Vorspann verankert, 82 mm tiefer, und sitzt über dem Spaltenabstand, sodass die erste Spalte ihre rechte Seite verliert und die zweite ihre linke. Der Rahmen des Bienenkorbs hat `wrap: 'contour'`: Jede Zeile neben ihm wird um so viel kürzer gesetzt, wie das Bild auf ihrer Höhe breit ist, plus 2,5 mm Abstand. So folgt die zweite Spalte der Kuppel und läuft unter ihrem Fuß wieder auf voller Breite.
+
+### 4 · Ein Umriss, der mit dem Bild reist
+
+<Excerpt region="pictures" />
+
+Der Umbruch liest ein Bild nach seiner Größe, nie nach seinen Pixeln. Deshalb wird der Umriss einmal mit `traceResourceContour` aus dem Alphakanal des PNG gewonnen und reist als `contour.traced` mit der Ressource. Der Bienenkorb ist ein PNG mit 720 px, 200 Farben und transparentem Grund (225 KB). Das Foto auf der linken Seite ist ein Bild des Dekors, `resourceId: '{attr.foto}'`: Die Seitenbegrenzung wählt das Bild, die Vorlage seinen Platz. Es trägt `fit: 'cover'`: Welche Proportionen das Foto auch hat, es füllt die linke Seite, und der Kasten schneidet ab, was übersteht.
+
+### 5 · Kolumnentitel aus der Seitenbegrenzung
+
+<Excerpt region="running-heads" />
+
+Die Auftaktdoppelseite blendet die Kolumnentitel aus (`header: false`); die angefügten Seiten tragen links den Namen der Zeitschrift und rechts das Ressort. Das Ressort kommt aus der Seitenbegrenzung, `seccion="Stadt"`, und `{attr.seccion}` liest es auf den angefügten Seiten genauso wie auf der Doppelseite selbst.
+
+## Varianten
+
+### Den Bienenkorb nach seinem Rechteck umfließen
+
+Ohne `wrap: 'contour'` verdrängt der Rahmen mit seinem Rechteck, und die Zeilen neben der Kuppel enden an einer geraden Kante.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Den Fortsetzungsvermerk weglassen
+
+Mit `mark: false` endet das abgeschnittene Stück auf seiner letzten Zeile, ohne *Wird fortgesetzt*, und die Spalte fasst eine Zeile mehr.
+
+```diff
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
+```
+
+## Häufige Fehler
+
+- Eine Überschrift, die die Vorlage in einen eigenen Rahmen schickt, eröffnet in den Textrahmen keine Initiale. Der erste Absatz der Reportage steht in `:::paragraphs{style="inicio"}`, und das Format trägt das `dropCap`.

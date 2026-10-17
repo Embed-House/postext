@@ -1,0 +1,66 @@
+---
+title: "A magazine feature threaded through frames"
+summary: "A composed spread whose two columns are chained with next, then go on through overflow.continueIn to pages it adds, round a pull quote and a cut-out."
+plain: "A four-page magazine story laid out from a template: the text runs from one column to the next and on to new pages by itself, and wraps round a quote and the outline of a photo."
+description: "A magazine feature in Postext: one composed page whose chained columns run on to added pages, round a pull quote and a cut-out skep, in three languages."
+question: "How do I thread a magazine article through linked frames across several pages?"
+aliases: ["threaded frames", "linked text frames", "story jump", "continued on page", "text runaround", "contour wrap", "pull quote", "cut-out photo", "page template", "marcos enlazados", "verkettete Rahmen"]
+---
+
+## What you'll build
+
+Pages 46 to 49 of *Patio*, an invented quarterly about city life: a feature on a retired typesetter who keeps fourteen hives on the roof of the printing works where she worked for thirty years. The verso of the opening spread is the photograph, with the headline set over the gravel and a tinted box of figures in the sky. The recto carries the standfirst and the first two columns, with a pull quote across the gutter and a straw skep cut out of its background, the lines of the second column following its dome. The story then runs on to as many pages as it needs, three columns each, and ends where it ends. The Spanish, English and German editions are the same template with other words, and German runs its long compounds through 60 mm columns.
+
+## Method
+
+### 1 · One template, one story
+
+The code is [the short answer](#the-short-answer) above. The whole feature is one `::::page{template="apertura" spread}` fence: the heading goes to the frame that `takes: 'h1'`, the figures and the standfirst to their slots, and everything else, which names no slot, to the flow frame `col-1`. When `col-1` is full the text goes on in `col-2`, broken again at its width, and what `col-2` cannot hold goes on to a page added after the spread (`overflow.continueIn: 'template:seguido'`), after the words *Continued* in the reader's language. The text names no column and no page: cut a paragraph and every line after it moves back.
+
+### 2 · The pages the story adds
+
+<Excerpt region="pages-after" />
+
+Each added page is three chained columns of 60.3 mm, and one template serves all of them. The third column continues into this same template, and the story goes on in the frame its chain starts in, `seguido-1`: every added page fills all three columns, however many it takes. Nothing has to pin the type size either: a frame that can go on to another page goes on before the text is set smaller, so a story five lines too long gets a new page, not 92.5 % on its last.
+
+### 3 · Two frames that push the columns aside
+
+<Excerpt region="push" />
+
+Neither frame takes part in the story: each pushes the lines of the columns it overlaps. The pull quote is anchored to the standfirst, 82 mm down, and straddles the gutter, so the first column loses its right side and the second its left. The skep's frame has `wrap: 'contour'`: the lines beside it are set as short as the picture is wide at their height, plus a 2.5 mm margin, so the second column follows the dome and runs full width again under its base.
+
+### 4 · An outline that travels with the picture
+
+<Excerpt region="pictures" />
+
+The layout reads a picture by its size, never by its pixels, so the outline comes from the PNG's alpha channel once, with `traceResourceContour`, and travels on the resource as `contour.traced`. The skep is a 720 px PNG with 200 colours and a transparent ground (225 KB). The photograph on the verso is a decoration image, `resourceId: '{attr.foto}'`, so the fence chooses the picture and the template its place. It is set with `fit: 'cover'`: whatever the photograph's proportions, it fills the verso and the box crops what runs past it.
+
+### 5 · Running heads that read the fence
+
+<Excerpt region="running-heads" />
+
+The opening spread hides the running heads (`header: false`); the added pages print the magazine's name on the verso and the section on the recto. The section comes from the fence, `seccion="City"`, which `{attr.seccion}` reads on the pages the story adds as on the spread itself.
+
+## Variations
+
+### Wrap the skep by its box
+
+Without `wrap: 'contour'` the frame pushes with its rectangle, and the lines beside the dome stop at a straight edge.
+
+```diff
+-  { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
++  { name: 'recorte', exclude: 'push', layer: 2, width: mm(58),
+```
+
+### Drop the continuation mark
+
+`mark: false` ends the cut piece on its last line, without the words *Continued*: the column holds one line more.
+
+```diff
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
+```
+
+## Pitfalls
+
+- A heading the template sends to a frame of its own opens no drop cap in the text frames. The first paragraph of the story is wrapped in `:::paragraphs{style="inicio"}`, and the style carries the `dropCap`.

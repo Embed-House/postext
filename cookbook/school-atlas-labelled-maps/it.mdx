@@ -1,0 +1,64 @@
+---
+title: "Un atlante scolastico etichettato dal Markdown"
+summary: "Carte disegnate senza una lettera e nominate da righe ::label sulle ancore di ogni risorsa, in pagine composte e su una doppia pagina, in tre lingue."
+plain: "Tre pagine di un atlante scolastico di un paese inventato. Le carte sono disegni senza testo; tutti i nomi si scrivono nel testo, così una traduzione cambia le parole e lascia le carte come sono."
+description: "Un atlante scolastico composto con Postext: carte etichettate dal Markdown sulle ancore della risorsa, una carta su doppia pagina e un’edizione araba."
+question: "Come metto i nomi di una carta dal testo, perché ogni traduzione usi lo stesso disegno?"
+aliases: ["atlante", "atlante scolastico", "etichette della carta", "toponimi", "ancore", "stili di etichetta", "carta su doppia pagina", "doppia pagina", "da destra a sinistra", "etichette ruotate", "map labels"]
+---
+
+## Che cosa comporrai
+
+Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ricetta. La tavola 1 lo colloca nel suo continente. La tavola 2 stende la carta fisica sulle due pagine, dal mare di Lira al confine con Brunavia, in tinte altimetriche, con tre fiumi e la traccia di una sezione. La tavola 3 disegna quella sezione attraverso la catena dell’Albar. Ogni tavola si apre con una fascia blu e si chiude con una legenda o un glossario e alcune attività per la classe. I disegni non portano nessuna lettera: i 43 nomi, quote e cifre della scala sono righe `::label` del Markdown, poste su ancore che ogni carta conserva con sé. Per questo le edizioni spagnola, inglese e araba condividono gli stessi tre disegni, e quella araba si legge e si rilega da destra.
+
+## Preparazione
+
+### 1 · Un luogo è un punto del disegno
+
+<Excerpt region="anchors" />
+
+Un’ancora è un punto espresso in frazioni della larghezza e dell’altezza dell’immagine, quindi vale a qualunque dimensione la cornice imposti la carta, e quando la sequenza di reimpaginazione rimpicciolisce una carta i suoi nomi la seguono. `km()` converte in frazioni i chilometri in cui è tracciato il disegno: il punto di una città e il suo nome vengono entrambi da `TOWNS` e non possono separarsi. L’ancora conserva ciò che appartiene al luogo e non alla lingua: lo stile, la rotazione del nome di un fiume o di una catena lungo il suo corso, il lato dell’etichetta che poggia sul punto. I nomi delle città stanno centrati sopra il loro punto, perché `align: 'start'` sarebbe la sinistra di un nome inglese e la destra di uno arabo.
+
+### 2 · Tre file Markdown, una sola risorsa
+
+<Excerpt region="resources" />
+
+La risorsa ha un solo SVG e un solo elenco di ancore per tutte le edizioni. Ogni edizione scrive una riga `::label[…]{at="…"}` per ancora dentro `:::figure{resource="relief" slot="map"}`, così `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` cadono nello stesso punto, spezzati su due righe dal `width` dell’ancora quando serve. Solo il testo alternativo cambia con l’edizione, perché una risorsa non prende parole dal Markdown. Un’ancora con uno stile che un’edizione lascia senza etichetta dà l’avviso `anchorUnlabelled`, e un’etichetta il cui `at` non nomina nessuna ancora non viene disegnata e dà `labelAnchorUnknown`.
+
+### 3 · Una tavola e una tavola doppia
+
+<Excerpt region="templates" />
+
+I due modelli hanno le stesse cinque cornici, quindi il Markdown di una tavola ha la stessa forma su una pagina o su due: il titolo, il testo che non nomina alcuno slot, la carta, la legenda e le attività. Nella tavola doppia `spread: true` impagina le due pagine come un solo foglio di 390 mm, e solo la cornice della carta imposta `crossGutter`: attraversa il dorso mentre il testo e i riquadri restano nella loro pagina. Testo, carta e legenda formano un gruppo `stack`; nella prova di carico del banco, con tutti i testi più lunghi del 30 %, l’edizione araba porta la carta di localizzazione all’87,5 % e i riquadri sotto risalgono, senza alcun avviso.
+
+### 4 · Una tavolozza per la pagina, le tinte e la legenda
+
+<Excerpt region="palette" />
+
+Le cinque tinte altimetriche sono voci della tavolozza. Il disegno riempie le sue fasce con `palette.low` fino a `palette.peak`, e la legenda della tavola 2 scrive `:swatch{color="low"}` con gli stessi identificativi, così un nuovo esadecimale cambia insieme la carta e la sua legenda. I nomi delle acque, in `water`, hanno un contrasto di 6:1 sul mare basso e di 4,5:1 su quello profondo, e il titolo bianco di 7,2:1 su `band`.
+
+### 5 · L’edizione araba
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `locale: 'ar'` compone il testo da destra a sinistra e rilega il libro a destra, quindi la doppia pagina si apre sulla pagina di destra e le cornici seguono l’area del contenuto rispecchiata: il titolo e il testo stanno a destra, la legenda a destra delle attività. Le carte non si rispecchiano, e ogni nome arabo si posa dove è disegnato il suo luogo. In arabo gli stili di etichetta perdono il corsivo e la spaziatura e crescono del 15 %, perché il cufico compone piccolo. La decorazione e i numeri di pagina restano sul foglio, quindi l’occhiello passa in alto a destra e i numeri cambiano lato.
+
+## Varianti
+
+### Nomina un luogo senza ancora
+
+Un’etichetta può stare in un punto dato in percentuali dell’immagine, con uno stile proprio.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Nema Light]{at="7% 68%" style="town"}
+ ::label[Misty Ocean]{at="ocean"}
+```
+
+### Numera le carte e dà loro una didascalia
+
+Dai al tipo di carta un contatore e un prefisso, e a ogni risorsa una didascalia: vedi <RecipeLink slug="atlas-map-sheet">la tavola d’atlante con carte numerate</RecipeLink>, che mette le didascalie delle sue carte su una barra blu.
+
+## Errori frequenti
+
+- Il testo alternativo di ogni carta sta nella risorsa (`ALT`), una stringa per edizione: una risorsa non prende parole dal Markdown, quindi è l’unico testo della pagina fuori da `content.<lang>.md`.
+- In una pagina da destra a sinistra le cornici seguono l’area del contenuto rispecchiata, ma la decorazione del modello no: colloca l’occhiello secondo l’edizione, come fa `kicker`.
+- Una cornice a due colonne può tagliare un paragrafo una riga prima della fine e lasciare quella riga in cima alla seconda colonna. Controlla le colonne di ogni edizione e sposta una frase da un paragrafo al successivo quando succede.

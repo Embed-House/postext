@@ -1,0 +1,66 @@
+---
+title: "Cuaderno de actividades con recuadros que crecen"
+summary: "Un cuaderno de ciencias hecho con plantillas: los recuadros de una pila crecen con su texto, las líneas van en marcos vacíos y el proyecto sigue en otra página."
+plain: "Cinco páginas de un cuaderno de ciencias sobre el agua. Cada pregunta va en un recuadro con líneas debajo. Si la pregunta es más larga, su recuadro crece y baja lo demás. Un proyecto largo sigue en la página siguiente."
+description: "Un cuaderno de actividades en Postext: recuadros que crecen con su texto, líneas de respuesta en marcos vacíos y un proyecto que sigue en otra página."
+question: "¿Cómo hago que los recuadros de actividad crezcan con su texto y que uno largo siga en la página siguiente?"
+aliases: ["cuaderno de actividades", "cuaderno de ejercicios", "ficha", "ficha de trabajo", "líneas para escribir", "renglones", "pauta", "recuadros que crecen", "continúa en la página siguiente", "plantilla de página", "página compuesta", "completar huecos", "casillas"]
+pageNotes: { "1": "La cubierta: un dibujo plano del ciclo del agua llega hasta los bordes en los dos tercios de arriba, con un sol, dos nubes, lluvia sobre una montaña verde de cumbre nevada, un río y un mar azul del que suben flechas blancas discontinuas de vapor. Debajo, el título El agua, de viaje en letras azules grandes, la línea de la colección y una línea para el nombre del alumno.", "4": "La página del proyecto: una banda azul con el título, una introducción breve junto al dibujo de una botella cortada con una regla, un recuadro crema Necesitas y un recuadro blanco Paso a paso con borde naranja y siete pasos numerados; al pie, la palabra Continúa, en cursiva.", "5": "La página añadida: la misma línea de la unidad arriba, el resto del recuadro de los pasos (el registro de la semana con un hueco por día y la pregunta Piensa) y después un título azul, Mis observaciones, sobre seis líneas." }
+---
+
+## Lo que vas a componer
+
+Cinco páginas de *El agua, de viaje*, la unidad 3 de un cuaderno de Ciencias de la Naturaleza inventado para 4.º de Primaria, en 210 × 280 mm. En la cubierta, un dibujo plano del ciclo del agua llega hasta la sangre, sobre un título de 54 pt y una línea para el nombre. Todas las fichas salen de la misma plantilla de página: la línea de la unidad, una banda azul con el título, un texto breve junto a un dibujo y tres recuadros de actividad en azul pálido con una pestaña numerada. Debajo del primer y del tercer recuadro van las líneas para responder. Cada recuadro mide lo que su texto, así que la ficha francesa, una línea más larga aquí y allá, baja sus líneas más que la inglesa sin que cambie ninguna posición de la plantilla. El proyecto, un pluviómetro hecho con una botella, tiene más pasos de los que caben en una página: su recuadro se corta al pie con *Continúa* y sigue arriba de una página añadida, con seis líneas para las observaciones. Todas las palabras, también las de las pestañas y el título de las observaciones, están en el Markdown.
+
+## Elaboración
+
+### 1 · Vierte cada actividad en su recuadro por su nombre
+
+La plantilla es [la respuesta corta](#la-respuesta-corta) de arriba. En el Markdown, cada ficha es una valla `::::page`: el primer título va al marco que tiene `takes: 'h1'`, el párrafo al marco de flujo y cada `:::frame{slot="…"}` al marco de ese nombre, con las palabras de la pestaña en `label`. Los marcos de respuesta no reciben nada, y por eso llevan `optional: true`: un marco vacío daría el aviso `slotEmpty`. Una actividad de dibujo guarda su hueco en blanco dentro del propio recuadro con `:::space{lines=3}`, porque el sitio que necesita el dibujo forma parte de la pregunta.
+
+```md
+:::frame{slot="act-1" label="1 · Lee y contesta"}
+Marta vive en Zaragoza. El agua de su grifo sale del río Ebro…
+:::
+```
+
+### 2 · Deja que la pila mueva las líneas con los recuadros
+
+Cada recuadro tiene un `minHeight` de 22 mm, la altura a la que está dibujado, y por encima de eso una altura `auto`. El grupo coloca sus cinco marcos uno debajo de otro, a 4,5 mm, a partir del sitio donde `act-1` se coloca bajo el texto, de modo que un recuadro más alto baja todo lo que lo sigue. Las líneas son del propio marco vacío: su `rules` dibuja una línea al pie de cada 8 mm de su altura, bajo el texto, de modo que las líneas se mueven con el marco y un espacio de respuesta más largo es un marco más alto. Da a los marcos de respuesta un `minHeight` igual a su altura: cuando un grupo se queda sin sitio, la [escalera de recomposición](/es/docs/composed-pages#cuando-aun-así-no-cabe) recupera espacio de los marcos del grupo hasta su mínimo, y el mínimo de un marco vacío es nada, con lo que las líneas acabarían encima del recuadro siguiente. El último recuadro de la ficha, `act-3`, sigue en la página siguiente (`overflow.continueIn: 'next-page'`) cuando su texto no cabe, y las líneas de respuesta que van debajo se van con él.
+
+### 3 · Lleva el proyecto a la página siguiente
+
+<Excerpt region="continue" />
+
+El recuadro de los pasos no tiene altura fija: mide lo que su texto y se detiene al pie del área. Un marco que puede seguir en otra página sigue antes de componer su texto más pequeño, así que el recuadro se corta entre dos líneas a cuerpo completo, termina con la marca del idioma (*Continúa*, *Continued*, *À suivre*, según `locale`) y sigue en el marco del mismo nombre de una página de `proyecto-sigue` ([cuando el texto sigue](/es/docs/composed-pages#cuando-el-texto-sigue)). La página añadida dibuja las líneas de las observaciones bajo el resto del recuadro, con el título que la valla da en `notas="Mis observaciones"`, de modo que las palabras siguen en el Markdown y cambian con cada edición.
+
+### 4 · Dibuja la cubierta hasta la sangre
+
+<Excerpt region="cover" />
+
+La cubierta también es una página compuesta: su dibujo es decoración anclada a la sangre, y el título, la línea de la colección y el campo del nombre forman una pila que empieza 162 mm por debajo de la caja. El filete del nombre va anclado al pie de su marco, de modo que una etiqueta que ocupe dos líneas en otro idioma mantiene la línea debajo de las palabras. `header: false` y `footer: false` dejan la cubierta sin folio.
+
+## Variantes
+
+### Da más líneas a una actividad
+
+El número de líneas es la altura del marco de respuesta: su `rules` dibuja tantas líneas como caben. Cámbialo en la plantilla y todas las fichas que la usan tendrán esas líneas.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+```
+
+### Deja que los pasos se reduzcan antes de seguir
+
+Un marco que puede seguir en otra página sigue antes de componer su texto más pequeño. Con `fit.preferContinue: false` la escalera compone primero los pasos más pequeños, hasta `fit.minScale` (90 %), y solo los lleva a otra página si eso no basta. En un libro para niños importa más el cuerpo de la letra que ahorrar una página, así que la receta deja el valor por defecto.
+
+```diff
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
+```
+
+## Errores frecuentes
+
+- Un marco que no recibe nada da el aviso `slotEmpty` si no lleva `optional: true`. Aquí lo llevan todos los marcos de respuesta.
+- En una pila, el grupo coloca los recuadros y no su propio `placement`, salvo el primero: coloca el primer recuadro del grupo, o la pila empezará arriba del área, encima del título.

@@ -1,0 +1,66 @@
+---
+title: "Arbeitsheft mit Kästen, die mitwachsen"
+summary: "Ein Sachkunde-Arbeitsheft aus Seitenvorlagen: Kästen in einem Stapel wachsen mit ihrem Text, Schreiblinien liegen auf leeren Rahmen, das Projekt läuft weiter."
+plain: "Fünf Seiten eines Arbeitshefts für Kinder über das Wasser. Jede Frage steht in einem farbigen Kasten mit Linien darunter. Ist die Frage länger, wird der Kasten höher und schiebt den Rest nach unten. Das Projekt geht weiter."
+description: "Ein Arbeitsheft in Postext: Kästen, die mit ihrem Text wachsen, Schreiblinien auf leeren Rahmen und ein Projekt, das auf einer eingefügten Seite weiterläuft."
+question: "Wie lasse ich Aufgabenkästen mit ihrem Text wachsen und einen langen auf der nächsten Seite weiterlaufen?"
+aliases: ["Arbeitsheft", "Arbeitsblatt", "Übungsheft", "Schreiblinien", "Lineatur", "wachsende Kästen", "Fortsetzung nächste Seite", "Seitenvorlage", "zusammengesetzte Seite", "Lückentext", "Ankreuzfelder"]
+pageNotes: { "1": "Der Umschlag: Eine flächige Zeichnung des Wasserkreislaufs füllt die oberen zwei Drittel bis an den Rand, mit Sonne, zwei Wolken, Regen über einem grünen Berg mit Schneegipfel, einem Fluss und einem blauen Meer, aus dem gestrichelte weiße Dampfpfeile aufsteigen. Darunter der Titel Water on the move in großen blauen Buchstaben, die Reihenzeile und eine Linie für den Namen des Kindes.", "4": "Die Projektseite: ein blaues Titelband, eine kurze Einleitung neben der Zeichnung einer aufgeschnittenen Flasche mit Lineal, ein cremefarbener Kasten You will need und ein weißer Kasten Step by step mit orangem Rand und sieben nummerierten Schritten; am Fuß das Wort Continued, kursiv.", "5": "Die eingefügte Seite: oben dieselbe Einheitenzeile, der Rest des Schrittekastens (die Wochenliste mit einer Lücke je Tag und die Frage Think), danach die blaue Überschrift What I noticed über sechs Schreiblinien." }
+---
+
+## Was Sie setzen
+
+Fünf Seiten aus *Water on the move*, Einheit 3 eines erfundenen Sachkunde-Arbeitshefts für die vierte Klasse, im Format 210 × 280 mm. Auf dem Umschlag reicht eine flächige Zeichnung des Wasserkreislaufs bis in den Anschnitt, darunter ein Titel in 54 pt und eine Linie für den Namen. Jedes Arbeitsblatt kommt aus derselben Seitenvorlage: die Zeile der Einheit, ein blaues Titelband, ein kurzer Text neben einer Zeichnung und drei hellblaue Aufgabenkästen mit nummeriertem Reiter. Unter dem ersten und dem dritten Kasten stehen Linien für die Antwort. Jeder Kasten ist so hoch wie sein Text, deshalb schiebt das französische Blatt, hier und da eine Zeile länger, seine Linien weiter nach unten als das englische, ohne dass sich eine Position der Vorlage ändert. Das Projekt, ein Regenmesser aus einer Flasche, hat mehr Schritte, als auf eine Seite passen: Sein Kasten endet am Fuß mit *Continued* und läuft oben auf einer eingefügten Seite weiter, gefolgt von sechs Linien für die Beobachtungen. Jedes Wort, auch die der Reiter und die Überschrift der Beobachtungen, steht im Markdown.
+
+## Zubereitung
+
+### 1 · Jede Aufgabe über ihren Namen in ihren Kasten gießen
+
+Die Vorlage ist [die kurze Antwort](#die-kurze-antwort) oben. Im Markdown ist ein Blatt ein `::::page`-Block: Die erste Überschrift geht in den Rahmen mit `takes: 'h1'`, der Absatz in den Flussrahmen und jedes `:::frame{slot="…"}` in den Rahmen dieses Namens, die Worte des Reiters in `label`. Die Antwortrahmen bekommen nichts und tragen deshalb `optional: true`; ein leerer Rahmen würde sonst die Warnung `slotEmpty` auslösen. Eine Zeichenaufgabe behält ihren freien Platz im eigenen Kasten mit `:::space{lines=3}`, denn wie viel Platz eine Zeichnung braucht, gehört zur Aufgabe.
+
+```md
+:::frame{slot="act-1" label="1 · Read and answer"}
+Tom lives in Leeds. The water from his tap comes from a reservoir in the hills…
+:::
+```
+
+### 2 · Den Stapel die Linien mit den Kästen verschieben lassen
+
+Jeder Kasten hat eine `minHeight` von 22 mm, die Höhe, in der er gezeichnet ist, und darüber eine Höhe `auto`. Die Gruppe legt ihre fünf Rahmen mit 4,5 mm Abstand untereinander, ab der Stelle, an der `act-1` unter den Text gesetzt ist; ein höherer Kasten schiebt also alles nach ihm nach unten. Die Linien gehören zum leeren Rahmen: Sein `rules` zeichnet am Fuß jedes 8-mm-Streifens seiner Höhe eine Linie, unter dem Text, sodass die Linien mit dem Rahmen wandern und ein längerer Antwortplatz ein höherer Rahmen ist. Geben Sie den Antwortrahmen eine `minHeight` gleich ihrer Höhe: Wird der Platz in einer Gruppe knapp, holt sich die [Umbruchleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Raum von den Rahmen der Gruppe bis zu deren Minimum zurück, und das Minimum eines leeren Rahmens ist null; die Linien lägen dann auf dem nächsten Kasten. Der letzte Kasten des Blatts, `act-3`, läuft auf der nächsten Seite weiter (`overflow.continueIn: 'next-page'`), wenn sein Text die Seite sprengt, und die Antwortlinien unter ihm gehen mit.
+
+### 3 · Das Projekt auf die nächste Seite tragen
+
+<Excerpt region="continue" />
+
+Der Kasten mit den Schritten hat keine feste Höhe: Er ist so hoch wie sein Text und endet am Fuß des Satzspiegels. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, läuft weiter, bevor sein Text kleiner gesetzt wird. Der Kasten wird deshalb in voller Größe zwischen zwei Zeilen geteilt, endet mit dem Vermerk der Sprache (*Continúa*, *Continued*, *À suivre*, aus `locale`) und läuft im gleichnamigen Rahmen einer Seite von `proyecto-sigue` weiter ([wenn der Text weiterläuft](/de/docs/composed-pages#wenn-der-text-weiterläuft)). Die eingefügte Seite zeichnet die Beobachtungslinien unter den Rest des Kastens, mit der Überschrift, die der Seitenblock in `notas="What I noticed"` nennt; die Worte bleiben so im Markdown und wechseln mit jeder Ausgabe.
+
+### 4 · Den Umschlag bis in den Anschnitt zeichnen
+
+<Excerpt region="cover" />
+
+Auch der Umschlag ist eine zusammengesetzte Seite: Sein Bild ist Dekoration, am Anschnitt verankert, und Titel, Reihenzeile und Namensfeld bilden einen Stapel, der 162 mm unter dem Satzspiegelkopf beginnt. Die Namenslinie hängt am Fuß ihres Rahmens, sodass eine Beschriftung, die in einer anderen Sprache zwei Zeilen braucht, die Linie unter den Worten behält. `header: false` und `footer: false` halten die Seitenzahl vom Umschlag fern.
+
+## Varianten
+
+### Einer Aufgabe mehr Linien geben
+
+Die Zahl der Linien ist die Höhe des Antwortrahmens: Sein `rules` zeichnet so viele Linien, wie hineinpassen. Ändern Sie sie in der Vorlage, und jedes Blatt, das sie nutzt, bekommt diese Linien.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+```
+
+### Die Schritte vor dem Weiterlaufen kleiner setzen lassen
+
+Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, läuft weiter, bevor sein Text kleiner gesetzt wird. Mit `fit.preferContinue: false` setzt die Leiter die Schritte zuerst kleiner, bis `fit.minScale` (90 %), und schickt sie erst auf eine andere Seite, wenn das nicht reicht. In einem Kinderbuch zählt die Schriftgröße mehr als eine gesparte Seite, deshalb bleibt das Rezept beim Standard.
+
+```diff
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
+```
+
+## Häufige Fehler
+
+- Ein Rahmen, der nichts bekommt, löst `slotEmpty` aus, wenn er nicht `optional: true` trägt. Hier trägt es jeder Antwortrahmen.
+- In einem Stapel setzt die Gruppe die Kästen, nicht deren eigenes `placement`, außer beim ersten: Setzen Sie den ersten Kasten der Gruppe, sonst beginnt der Stapel oben im Satzspiegel, über dem Titel.

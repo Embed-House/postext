@@ -1,0 +1,54 @@
+---
+title: "Eine illustrierte Zeitleiste über eine Doppelseite"
+summary: "Eine Seitenvorlage für Doppelseiten setzt die Zeitleiste eines Schulbuchs: Ein Band läuft über den Bund, zwei Reihen von Karten teilen sich die Breite."
+plain: "Zwei gegenüberliegende Seiten eines Geschichtsbuchs, gesetzt wie eine: Ein farbiges Band läuft über die Buchmitte, darunter teilen sich sechs Bildkarten die Breite, sodass die längste Geschichte die breiteste Karte bekommt."
+description: "Eine Zeitleiste über eine Doppelseite mit Postext: eine Vorlage, ein Band über den Bund, Karten, die sich die Breite teilen, und Punkte, die jeder Karte folgen."
+question: "Wie setze ich eine Zeitleiste über eine Doppelseite, mit Karten auf beiden Seiten?"
+aliases: ["Zeitleiste", "Zeitstrahl", "Doppelseite", "Seitenvorlage", "Rahmenreihe", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+---
+
+## Was Sie setzen
+
+Die Seiten 48 und 49 eines Geschichtsbuchs für die Mittelstufe: *Der Weg des Papiers*, tausend Jahre Handwerk von Cai Luns Werkstatt bis zu Kellers Schleifstein. Die linke Seite beginnt mit dem Titel und zwei Absätzen, die rechte mit einem Kasten darüber, wie ein Bogen von Hand geschöpft wurde. Durch die Mitte läuft die Zeitleiste: ein indigoblaues Band für Asien und ein terrakottafarbenes für Europa, das auf der linken Seite beginnt und über den Bund läuft. Darunter hängen sechs Karten mit je einem Bild an einem Punkt und einem Strich vom Band. Die Karten teilen sich die Breite: Die Karte von 1844 mit der längsten Geschichte nimmt ihren beiden Nachbarn Breite ab (1 mm auf Spanisch, 7 mm auf Japanisch), und ihr Punkt wandert mit. Jedes Wort steht im Markdown, auf Spanisch, Englisch und Japanisch; diese Seite zeigt die englische Ausgabe.
+
+## Zubereitung
+
+### 1 · Ein Bogen für zwei Seiten
+
+<Excerpt region="answer" />
+
+`spread: true` macht die Vorlage zu einem Bogen, so breit wie beide Seiten, und der Seitenblock sagt dasselbe mit `spread`. Eine Doppelseite beginnt auf einer linken Seite, deshalb bekommt der Satz `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: Seite 1 dieses Auszugs ist Seite 48 des Buchs, eine linke Seite, und keine Leerseite steht davor. Das Raster hat eine Spalte pro Seite, getrennt durch den doppelten Innenrand, sodass nur das Band in die Nähe des Falzes kommt. Das zweite Band setzt `crossGutter` und einen linken Innenabstand von 36 mm: Seine Farbe läuft vom Ende des ersten Bands über den Bund, seine Wörter beginnen auf der rechten Seite, wo der Satz sie liest.
+
+### 2 · Karten, die sich die Breite teilen
+
+<Excerpt region="cards" />
+
+Jede Reihe aus drei Karten ist eine `row`-Gruppe, und jede Karte hat eine `minHeight`, die Höhe, in der sie gezeichnet ist, und darüber eine Höhe `auto`. Läuft der Text einer Karte über die Höhe der Reihe, nimmt sie den Nachbarn mit `shrink` so wenige ganze Millimeter, wie sie braucht, und jeder Nachbar behält die Breite, in die sein eigener Text noch passt. Erst wenn sie nichts mehr abgeben können, wächst die Reihe nach unten. In der spanischen Ausgabe nimmt die Karte von 1844 1 mm von der Karte von 1282; in der japanischen nimmt sie 7 mm, 3 von 1150 und 4 von 1282; mit jedem Text 30 % länger, dem Test des Prüfstands, nimmt die spanische 15 mm, und Kasten und Vorspann setzen ihren Text auf 92,5 % und 85 %.
+
+### 3 · Punkte, die den Karten folgen
+
+<Excerpt region="marks" />
+
+Punkte und Striche sind das Dekor (`decoration`) der Vorlage, an `#c1` … `#c6` an ihrer Oberkante (`top`) verankert und um den Abstand zum Band hochgesetzt. Das Dekor wird nach den Rahmen gesetzt: Wenn eine Karte wandert oder breiter wird, bleibt ihr Punkt über ihrer Mitte. Auch der cremefarbene Grund ist Dekor, ein Kasten, der am Fuß des Anschnitts verankert ist und dessen Höhe bis zum Fuß von `#band-1` reicht (`size: { height: { to: '#band-1', edge: 'bottom' } }`): Er folgt dem Band.
+
+### 4 · Bilder in ihrer Druckgröße
+
+<Excerpt region="art" />
+
+Die Vignetten sind 1.000 px breit bei 550 ppi, also 46 mm auf der Seite, und ein Bild wird nie vergrößert: Eine Karte, die breiter wird, behält ihr Bild und gibt den Platz ihrem Text. Eine Karte schmaler als 53 mm (das Bild plus 3,5 mm Rand auf jeder Seite) setzt ihr Bild kleiner; der Test des Prüfstands zeigt das in der japanischen Ausgabe: die Bilder von 1150 und 1282 mit 85 %.
+
+## Varianten
+
+### Alle Karten gleich breit lassen
+
+Mit `shrink: 0` gibt keine Karte Breite ab: Die Reihe wächst stattdessen nach unten, alle drei Karten zusammen, und ihr Fuß rutscht auf der Seite nach unten.
+
+```diff
+-  shrink: 1, // a card gives width to a neighbour whose text runs past the row
++  shrink: 0,
+```
+
+## Häufige Fehler
+
+- Eine Karte mit fester `height` nimmt am Breitentausch nicht teil, weil sie nie über die Reihe hinausragt: Geben Sie den Karten eine `minHeight`, wie hier, und lassen Sie die Höhe auf `auto`.
+- Eine Größe, die bis zum Rand eines anderen Kastens reicht, wird vom Ankerpunkt des Elements aus gezählt: Der Grund ist am Fuß des Anschnitts verankert und wächst bis `#band-1` nach oben. Ein Rand hinter dem Anker ergibt eine Höhe von 0.

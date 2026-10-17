@@ -1,0 +1,65 @@
+---
+title: "Un atlas escolar rotulado desde el Markdown"
+summary: "Mapas dibujados sin una letra y rotulados con líneas ::label en las anclas de cada recurso, en páginas compuestas y a doble página, en tres idiomas."
+plain: "Tres páginas de un atlas escolar de un país inventado. Los mapas son dibujos sin texto; todos sus nombres se escriben en el texto, así que una traducción cambia las palabras y deja los mapas como están."
+description: "Un atlas escolar compuesto con Postext: mapas rotulados desde el Markdown en las anclas del recurso, un mapa a doble página y una edición árabe."
+question: "¿Cómo pongo los nombres de un mapa desde el texto, para que cada traducción use el mismo dibujo?"
+aliases: ["atlas", "atlas escolar", "rótulos de mapa", "topónimos", "anclas", "estilos de rótulo", "mapa a doble página", "pliego", "derecha a izquierda", "rótulos girados", "map labels", "place names"]
+pageNotes: { "1": "Lámina 1: una banda azul con el antetítulo Lámina 1 · Situación y el título Varenia en el mapa; dos columnas de texto; un mapa de situación con Varenia en amarillo en la costa sur de un continente, el mar de Lira y el océano Brumoso en azul, Ostelia y Brunavia en beis; una leyenda de cinco muestras de color y tres actividades.", "2": "Lámina 2, mitad izquierda: la banda azul con el título El relieve y los ríos de Varenia, y el oeste de un mapa físico en tintas de altitud verdes, amarillas y pardas, con la sierra Albar girada a lo largo de su cresta, el río Sela, Calvera, la isla Nema, la línea discontinua del corte A–B, una flecha del norte y una escala de 50 km; dos columnas de texto bajo el mapa.", "3": "Lámina 2, mitad derecha: el este del mapa físico, con la meseta de Ormo, el lago Ormo y el río Merel, la capital Almaren, Puerto Sora en el golfo de Sora, los montes Grises en vertical, Brena y la frontera con Brunavia; una leyenda de seis tintas de altitud y tres actividades.", "4": "Lámina 3: un perfil de A a B a través de la sierra Albar, coloreado con las tintas de altitud del mapa, con el valle del Sela, la cresta y la llanura costera rotulados encima y las altitudes de 500 a 2000 m a la izquierda; un vocabulario de cuatro palabras y cuatro actividades." }
+---
+
+## Lo que vas a componer
+
+Tres láminas de un atlas escolar de Varenia, un país inventado para esta receta. La lámina 1 lo sitúa en su continente. La lámina 2 extiende el mapa físico por las dos páginas, del mar de Lira a la frontera con Brunavia, en tintas de altitud, con tres ríos y la línea de un corte. La lámina 3 dibuja ese corte a través de la sierra Albar. Cada lámina se abre con una banda azul y se cierra con una leyenda o un vocabulario y unas actividades para la clase. Los dibujos no llevan ni una letra: los 43 nombres, cotas y cifras de la escala son líneas `::label` del Markdown, colocadas en anclas que guarda cada mapa. Por eso las ediciones en español, inglés y árabe comparten los tres dibujos, y la árabe se lee y se encuaderna por la derecha.
+
+## Elaboración
+
+### 1 · Un lugar es un punto del dibujo
+
+<Excerpt region="anchors" />
+
+Un ancla es un punto en fracciones del ancho y el alto de la imagen, así que vale a cualquier tamaño al que el marco ponga el mapa, y cuando la escalera de ajuste reduce un mapa, sus nombres se van con él. `km()` convierte en esas fracciones los kilómetros en los que está trazado el dibujo: el punto de una ciudad y su nombre salen los dos de `TOWNS` y no pueden separarse. El ancla guarda lo que es del lugar y no del idioma: su estilo, el giro del nombre de un río o de una sierra a lo largo de su curso y el lado del rótulo que se apoya en el punto. Los nombres de ciudad van centrados encima de su punto, porque `align: 'start'` sería la izquierda de un nombre en español y la derecha de uno en árabe.
+
+### 2 · Tres archivos de Markdown, un solo recurso
+
+<Excerpt region="resources" />
+
+El recurso tiene un solo SVG y una sola lista de anclas para todas las ediciones. Cada edición escribe una línea `::label[…]{at="…"}` por ancla dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Llanura de Calvera]{at="plain"}` y `::label[Calvera Plain]{at="plain"}` caen en el mismo sitio, partidos en dos líneas por el `width` del ancla cuando hace falta. Solo el texto alternativo cambia con la edición, porque un recurso no toma palabras del Markdown. Un ancla con estilo que una edición deja sin rótulo da el aviso `anchorUnlabelled`, y un rótulo cuyo `at` no nombra ningún ancla no se dibuja y da `labelAnchorUnknown`.
+
+### 3 · Una lámina y una lámina doble
+
+<Excerpt region="templates" />
+
+Las dos plantillas tienen los mismos cinco marcos, así que el Markdown de una lámina tiene la misma forma en una página o en dos: el título, el texto que no nombra ranura, el mapa, la leyenda y las actividades. En la lámina doble, `spread: true` maqueta las dos páginas como una sola hoja de 390 mm, y solo el marco del mapa lleva `crossGutter`: cruza el lomo mientras el texto y los recuadros se quedan en su página. El texto, el mapa y la leyenda forman un grupo `stack`; en la prueba de estrés del banco, con todos los textos un 30 % más largos, la edición árabe pone el mapa de situación al 87,5 % y los recuadros de debajo suben, sin ningún aviso.
+
+### 4 · Una paleta para la página, las tintas y la leyenda
+
+<Excerpt region="palette" />
+
+Las cinco tintas de altitud son entradas de la paleta. El dibujo rellena sus bandas con `palette.low` a `palette.peak` y la leyenda de la lámina 2 escribe `:swatch{color="low"}` con los mismos identificadores, así que un hexadecimal nuevo cambia a la vez el mapa y su leyenda. Los nombres de agua, en `water`, tienen un contraste de 6:1 sobre el mar somero y de 4,5:1 sobre el profundo, y el título blanco, de 7,2:1 sobre `band`.
+
+### 5 · La edición árabe
+
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `locale: 'ar'` pone el texto de derecha a izquierda y encuaderna el libro por la derecha, así que el pliego se abre en la página de la derecha y los marcos siguen el área de contenido reflejada: el título y el texto quedan a la derecha y la leyenda, a la derecha de las actividades. Los mapas no se reflejan, y cada nombre árabe se coloca donde está dibujado su lugar. En árabe los estilos de rótulo pierden la cursiva y el espaciado entre letras y crecen un 15 %, porque el cúfico compone pequeño. La decoración y los folios siguen sobre la hoja, así que el antetítulo pasa arriba a la derecha y los folios cambian de lado.
+
+## Variantes
+
+### Rotula un lugar que no tiene ancla
+
+Un rótulo puede ir en un punto dado en porcentajes de la imagen, con su propio estilo.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Faro de Nema]{at="7% 68%" style="town"}
+ ::label[Océano Brumoso]{at="ocean"}
+```
+
+### Numera los mapas y ponles pie
+
+Da al tipo de mapa un contador y un prefijo, y a cada recurso un pie: mira <RecipeLink slug="atlas-map-sheet">la lámina de atlas con mapas numerados</RecipeLink>, que pone los pies de sus mapas sobre una barra azul.
+
+## Errores frecuentes
+
+- El texto alternativo de cada mapa está en el recurso (`ALT`), una cadena por edición: un recurso no toma palabras del Markdown, así que es el único texto de la página que queda fuera de `content.<lang>.md`.
+- En una página de derecha a izquierda los marcos se reflejan con el área de contenido, pero la decoración de la plantilla no: coloca el antetítulo según la edición, como hace `kicker`.
+- Un marco a dos columnas puede cortar un párrafo una línea antes de su final y dejar esa línea en la cabeza de la segunda columna. Revisa las columnas de cada edición y pasa una frase de un párrafo al siguiente cuando ocurra.

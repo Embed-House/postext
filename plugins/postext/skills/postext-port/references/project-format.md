@@ -244,11 +244,15 @@ embeds them with `::resource{id="…"}` (placement `here`).
   QR code or PDF link. Poster overlays and player options live in
   `config.videoStyle` (`playMark`, `qr`, `linkPoster`, `html`, `player`).
 - **Resource types** (`config.resourceTypes`): `figure`, `table` and `video`
-  exist by default *in English* — a non-English book must declare them. Custom types
+  exist by default in the document's language (`locale`; English for a language
+  without strings); declare them to rename or restyle. Custom types
   for plates, ornaments, artwork, sub-tables… An empty `numberingTemplate` (or
   caption prefix) makes an unnumbered type (ornaments, decorative artwork,
   credit-line photos). Numbering: `{n}`, `{h1}.{n}`, `{h1}-{n}` with `resetOn`
-  and `counterFormat` (decimal, roman-upper…).
+  and `counterFormat` (decimal, roman-upper…). From postext 1.38 a type may
+  leave fields out: `{ "id": "foto", "numberingTemplate": "" }` is a whole
+  unnumbered type (the built-in type of the same id, else the id and `{h1}.{n}`,
+  fill the rest); older engines need every field.
 - Ids: descriptive slugs from the caption (`fig-cohort-study`), never numbers —
   numbers are computed from the first mention, so chapters can move.
 - Words drawn inside an SVG: keep them as `<text>` and name the family in

@@ -1,0 +1,66 @@
+---
+title: "Quaderno di attività con riquadri che crescono"
+summary: "Un quaderno di scienze fatto di modelli di pagina: i riquadri di una pila crescono col testo, le righe stanno su riquadri vuoti, il progetto prosegue altrove."
+plain: "Cinque pagine di un quaderno di scienze per bambini sull’acqua. Ogni domanda ha un riquadro colorato con le righe sotto. Se la domanda è più lunga, il riquadro cresce e sposta in basso il resto. Il progetto prosegue nella pagina seguente."
+description: "Quaderno di attività in Postext: riquadri che crescono con il testo, righe per le risposte su riquadri vuoti e un progetto che prosegue in una pagina aggiunta."
+question: "Come faccio crescere i riquadri delle attività con il testo e proseguire quello lungo nella pagina seguente?"
+aliases: ["quaderno di attività", "eserciziario", "scheda", "scheda di lavoro", "righe per scrivere", "rigatura", "riquadri che crescono", "continua alla pagina seguente", "modello di pagina", "pagina composta", "completa le frasi", "caselle da spuntare"]
+pageNotes: { "1": "La copertina: un disegno a campiture piatte del ciclo dell’acqua occupa i due terzi superiori fino ai bordi, con un sole, due nuvole, pioggia su una collina verde dalla cima innevata, un fiume e un mare blu da cui salgono frecce bianche tratteggiate di vapore. Sotto, il titolo Water on the move in grandi lettere blu, la riga della collana e una riga per il nome del bambino.", "4": "La pagina del progetto: una fascia blu con il titolo, una breve introduzione accanto al disegno di una bottiglia tagliata con un righello, un riquadro crema You will need e un riquadro bianco Step by step bordato d’arancione con sette passi numerati; in fondo, la parola Continued, in corsivo.", "5": "La pagina aggiunta: in testa la stessa riga dell’unità, il resto del riquadro dei passi (la tabella della settimana con uno spazio per ogni giorno e la domanda Think), poi un titolo blu, What I noticed, sopra sei righe." }
+---
+
+## Che cosa comporrai
+
+Cinque pagine di *Water on the move*, l’unità 3 di un quaderno di scienze inventato per la quarta elementare, nel formato 210 × 280 mm. In copertina un disegno a campiture piatte del ciclo dell’acqua arriva fino all’abbondanza, sopra un titolo di 54 pt e una riga per il nome. Ogni scheda nasce dallo stesso modello di pagina: la riga dell’unità, una fascia blu con il titolo, un breve testo accanto a un disegno e tre riquadri di attività azzurri con una linguetta numerata. Sotto il primo e il terzo riquadro ci sono le righe per rispondere. Ogni riquadro è alto quanto il suo testo, così la scheda francese, più lunga di una riga qua e là, porta le sue righe più in basso di quella inglese senza che cambi alcuna posizione del modello. Il progetto, un pluviometro fatto con una bottiglia, ha più passi di quanti ne stiano in una pagina: il suo riquadro si interrompe in fondo con *Continued* e riprende in cima a una pagina aggiunta, seguito da sei righe per le osservazioni. Ogni parola, comprese quelle delle linguette e del titolo delle osservazioni, sta nel Markdown.
+
+## Preparazione
+
+### 1 · Versa ogni attività nel suo riquadro per nome
+
+Il modello è [la risposta breve](#la-risposta-breve) qui sopra. Nel Markdown una scheda è un recinto `::::page`: il primo titolo va al riquadro con `takes: 'h1'`, il paragrafo al riquadro di flusso e ogni `:::frame{slot="…"}` al riquadro con quel nome, con le parole della linguetta in `label`. I riquadri delle risposte non ricevono nulla e per questo hanno `optional: true`: un riquadro vuoto darebbe altrimenti l’avviso `slotEmpty`. Un’attività di disegno tiene il suo spazio bianco dentro il riquadro con `:::space{lines=3}`, perché lo spazio che serve al disegno fa parte della consegna.
+
+```md
+:::frame{slot="act-1" label="1 · Read and answer"}
+Tom lives in Leeds. The water from his tap comes from a reservoir in the hills…
+:::
+```
+
+### 2 · Lascia che la pila sposti le righe con i riquadri
+
+Ogni riquadro ha un `minHeight` di 22 mm, l’altezza a cui è disegnato, e sopra quella un’altezza `auto`. Il gruppo mette i suoi cinque riquadri uno sotto l’altro, a 4,5 mm, a partire dal punto in cui `act-1` è collocato sotto il testo: un riquadro più alto sposta in basso tutto ciò che lo segue. Le righe appartengono al riquadro vuoto: il suo `rules` traccia una riga al piede di ogni fascia di 8 mm della sua altezza, sotto il testo, così le righe si muovono con il riquadro e uno spazio di risposta più lungo è un riquadro più alto. Dai ai riquadri delle risposte un `minHeight` pari alla loro altezza: quando un gruppo resta senza spazio, la [scala di reimpaginazione](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) riprende spazio dai riquadri del gruppo fino al loro minimo, e il minimo di un riquadro vuoto è zero; le righe finirebbero sul riquadro seguente. L’ultimo riquadro della scheda, `act-3`, prosegue nella pagina seguente (`overflow.continueIn: 'next-page'`) quando il suo testo non entra, e le righe di risposta sotto di lui lo accompagnano.
+
+### 3 · Porta il progetto nella pagina seguente
+
+<Excerpt region="continue" />
+
+Il riquadro dei passi non ha un’altezza fissa: è alto quanto il suo testo e si ferma in fondo all’area. Un riquadro che può proseguire su un’altra pagina prosegue prima che il suo testo sia composto più piccolo, così il riquadro si taglia tra due righe a corpo pieno, termina con il segno della lingua (*Continúa*, *Continued*, *À suivre*, da `locale`) e prosegue nel riquadro con lo stesso nome di una pagina di `proyecto-sigue` ([quando il testo prosegue](/it/docs/composed-pages#quando-il-testo-prosegue)). La pagina aggiunta disegna le righe delle osservazioni sotto il resto del riquadro, con il titolo che il recinto indica in `notas="What I noticed"`: le parole restano nel Markdown e cambiano con ogni edizione.
+
+### 4 · Disegna la copertina fino all’abbondanza
+
+<Excerpt region="cover" />
+
+Anche la copertina è una pagina composta: il disegno è decorazione ancorata all’abbondanza, e titolo, riga della collana e campo del nome formano una pila che parte 162 mm sotto la testa dell’area. Il filetto del nome è ancorato al piede del suo riquadro, così un’etichetta che in un’altra lingua occupi due righe tiene la riga sotto le parole. `header: false` e `footer: false` lasciano la copertina senza numero di pagina.
+
+## Varianti
+
+### Dai più righe a un’attività
+
+Il numero di righe è l’altezza del riquadro della risposta: il suo `rules` traccia tante righe quante ne entrano. Cambialo nel modello, e ogni scheda che lo usa avrà quelle righe.
+
+```diff
+-    answer('lineas-1', 3),
++    answer('lineas-1', 5),
+```
+
+### Lascia rimpicciolire i passi prima di proseguire
+
+Un riquadro che può proseguire su un’altra pagina prosegue prima che il suo testo sia composto più piccolo. Con `fit.preferContinue: false` la scala compone prima i passi più piccoli, fino a `fit.minScale` (90 %), e li manda su un’altra pagina solo se non basta. In un libro per bambini conta più il corpo del testo che una pagina risparmiata, perciò la ricetta lascia il valore predefinito.
+
+```diff
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
+```
+
+## Errori frequenti
+
+- Un riquadro che non riceve nulla dà `slotEmpty` se non ha `optional: true`. Qui ce l’hanno tutti i riquadri delle risposte.
+- In una pila è il gruppo a collocare i riquadri, non il loro `placement`, tranne il primo: colloca il primo riquadro del gruppo, o la pila partirà dalla cima dell’area, sopra il titolo.

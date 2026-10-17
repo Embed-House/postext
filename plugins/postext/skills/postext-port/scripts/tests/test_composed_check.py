@@ -91,8 +91,14 @@ class Round(unittest.TestCase):
         self.assertTrue({"ladder", "contour", "sourceMap", "continuation", "labels"} <= lacks)
         self.assertNotIn("groups", lacks)
         p = cc.plan_for((1, 36, 0))
-        self.assertEqual({f["feature"] for f in p["lacks"]}, {"continuation", "labels", "migration"})
-        self.assertEqual(cc.plan_for((1, 37, 0))["lacks"], [])
+        lacks = {f["feature"] for f in p["lacks"]}
+        self.assertTrue({"continuation", "labels", "migration", "headingDesigns", "jumps"} <= lacks)
+        p = cc.plan_for((1, 37, 0))
+        self.assertEqual({f["feature"] for f in p["lacks"]},
+                         {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
+                          "partialTypes", "labelsOnPictures", "sandboxFixes"})
+        self.assertTrue(all(f["since"] == "1.38.0" for f in p["lacks"]))
+        self.assertEqual(cc.plan_for((1, 38, 0))["lacks"], [])
 
     def test_round_command(self):
         r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "round", "--version", "1.36.0", "--json"],
@@ -212,6 +218,10 @@ class Judge(unittest.TestCase):
         self.assertEqual([w["kind"] for w in v["notes"]], ["slotEmpty"])
         self.assertEqual(v["scaled"][0]["lines"], ["a: text at 95 %"])
 
+    def test_jump_target_missing_fails(self):
+        v = cc.judge({"warnings": [{"kind": "continueTargetMissing", "severity": "warning", "message": "no page"}]})
+        self.assertEqual([w["kind"] for w in v["fail"]], ["continueTargetMissing"])
+
     def test_stressed(self):
         v = cc.judge(self.REPORT, stressed=True, base={"warnings": [{"kind": "contrast.lowContrast"}]})
         self.assertEqual(v["fail"], [])
@@ -309,6 +319,21 @@ class Lint(unittest.TestCase):
             self.assertIn("templateUnknown: no pageTemplates entry 'nope'", out)
             self.assertIn("a ::::page is never closed", out)
             self.assertNotIn("is not a Postext container", out)
+
+    def test_comic_text_panel(self):
+        md = (':::page{split="30 / *"}\n::panel{text box=caja valign=middle}\nThe storm lasted three days.\n\n'
+              'Maya climbed the **steps**.\n::panel{text box=nada valign=sideways}\nmaya: not a script line here\n'
+              '::panel{art=x}\nmaya: Grandpa?\n:::\n\n'
+              ':::strip\n::panel{text}\nWords.\n:::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertNotIn("attribute 'text' is ignored", out)
+            self.assertNotIn("attribute 'box' is ignored", out)
+            self.assertNotIn("attribute 'valign' is ignored", out)
+            self.assertIn("box='nada' is not in calloutStyles", out)
+            self.assertIn("valign='sideways' is ignored", out)
+            self.assertIn("text panel on a strip", out)
+            self.assertNotIn("comicStrayText", out)
 
 
 @unittest.skipUnless(os.environ.get("POSTEXT_CLI"), "set POSTEXT_CLI to a postext command (1.35.0 or later)")

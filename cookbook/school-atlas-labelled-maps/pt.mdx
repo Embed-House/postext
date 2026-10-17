@@ -1,0 +1,64 @@
+---
+title: "Um atlas escolar rotulado a partir do Markdown"
+summary: "Mapas desenhados sem uma letra e nomeados por linhas ::label nas âncoras de cada recurso, em páginas compostas e numa página dupla, em três idiomas."
+plain: "Três páginas de um atlas escolar de um país inventado. Os mapas são desenhos sem texto; todos os nomes são escritos no texto, então uma tradução troca as palavras e deixa os mapas como estão."
+description: "Um atlas escolar composto com o Postext: mapas rotulados a partir do Markdown nas âncoras do recurso, um mapa em página dupla e uma edição em árabe."
+question: "Como coloco os nomes de um mapa a partir do texto, para que cada tradução use o mesmo desenho?"
+aliases: ["atlas", "atlas escolar", "rótulos de mapa", "topônimos", "âncoras", "estilos de rótulo", "mapa em página dupla", "página dupla", "da direita para a esquerda", "rótulos girados", "map labels"]
+---
+
+## O que você vai compor
+
+Três pranchas de um atlas escolar de Varenia, um país inventado para esta receita. A prancha 1 mostra onde ele fica no continente. A prancha 2 estende o mapa físico pelas duas páginas, do mar de Lira à fronteira com Brunavia, em cores hipsométricas, com três rios e a linha de um perfil. A prancha 3 desenha esse perfil através da serra de Albar. Cada prancha abre com uma faixa azul e fecha com uma legenda ou um glossário e algumas atividades para a turma. Os desenhos não levam nenhuma letra: os 43 nomes, altitudes e números da escala são linhas `::label` do Markdown, colocadas em âncoras que cada mapa guarda consigo. Por isso as edições em espanhol, inglês e árabe usam os mesmos três desenhos, e a árabe é lida e encadernada pela direita.
+
+## Preparo
+
+### 1 · Um lugar é um ponto do desenho
+
+<Excerpt region="anchors" />
+
+Uma âncora é um ponto em frações da largura e da altura da imagem, então vale em qualquer tamanho em que o bloco coloque o mapa, e quando a escada de ajuste reduz um mapa os nomes vão junto. `km()` converte nessas frações os quilômetros em que o desenho está traçado: o ponto de uma cidade e o nome dela saem ambos de `TOWNS` e não podem se separar. A âncora guarda o que é do lugar e não do idioma: o estilo, o giro do nome de um rio ou de uma serra ao longo do curso e o lado do rótulo que se apoia no ponto. Os nomes das cidades ficam centralizados acima do ponto, porque `align: 'start'` seria a esquerda de um nome em inglês e a direita de um em árabe.
+
+### 2 · Três arquivos de Markdown, um só recurso
+
+<Excerpt region="resources" />
+
+O recurso tem um só SVG e uma só lista de âncoras para todas as edições. Cada edição escreve uma linha `::label[…]{at="…"}` por âncora dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` caem no mesmo lugar, quebrados em duas linhas pelo `width` da âncora quando precisam. Só o texto alternativo muda com a edição, porque um recurso não recebe palavras do Markdown. Uma âncora com estilo que uma edição deixa sem rótulo gera o aviso `anchorUnlabelled`, e um rótulo cujo `at` não nomeia nenhuma âncora não é desenhado e gera `labelAnchorUnknown`.
+
+### 3 · Uma prancha e uma prancha dupla
+
+<Excerpt region="templates" />
+
+Os dois modelos têm os mesmos cinco blocos, então o Markdown de uma prancha tem a mesma forma em uma página ou em duas: o título, o texto que não nomeia nenhum slot, o mapa, a legenda e as atividades. Na prancha dupla, `spread: true` diagrama as duas páginas como uma só folha de 390 mm, e só o bloco do mapa usa `crossGutter`: ele atravessa a lombada enquanto o texto e os boxes ficam na própria página. Texto, mapa e legenda formam um grupo `stack`; no teste de estresse da bancada, com todos os textos 30 % mais longos, a edição árabe põe o mapa de localização a 87,5 % e os boxes de baixo sobem, sem nenhum aviso.
+
+### 4 · Uma paleta para a página, as cores e a legenda
+
+<Excerpt region="palette" />
+
+As cinco cores de altitude são entradas da paleta. O desenho preenche as faixas com `palette.low` a `palette.peak`, e a legenda da prancha 2 escreve `:swatch{color="low"}` com os mesmos identificadores, então um novo hexadecimal muda ao mesmo tempo o mapa e a legenda. Os nomes de água, em `water`, têm contraste de 6:1 sobre o mar raso e de 4,5:1 sobre o fundo, e o título branco, de 7,2:1 sobre `band`.
+
+### 5 · A edição em árabe
+
+O código está na [resposta curta](#a-resposta-curta) acima. `locale: 'ar'` compõe o texto da direita para a esquerda e encaderna o livro pela direita, então a página dupla abre na página da direita e os blocos seguem a área de conteúdo espelhada: o título e o texto ficam à direita, a legenda à direita das atividades. Os mapas não são espelhados, e cada nome em árabe fica onde o lugar está desenhado. Em árabe, os estilos de rótulo perdem o itálico e o espaçamento entre letras e crescem 15 %, porque o cúfico compõe pequeno. A decoração e os números de página continuam na folha, então o antetítulo passa para o alto à direita e os números trocam de lado.
+
+## Variações
+
+### Nomeie um lugar sem âncora
+
+Um rótulo pode ficar num ponto dado em porcentagens da imagem, com um estilo próprio.
+
+```diff
+ :::figure{resource="relief" slot="map"}
++::label[Nema Light]{at="7% 68%" style="town"}
+ ::label[Misty Ocean]{at="ocean"}
+```
+
+### Numere os mapas e dê legendas a eles
+
+Dê ao tipo de mapa um contador e um prefixo, e a cada recurso uma legenda: veja <RecipeLink slug="atlas-map-sheet">a prancha de atlas com mapas numerados</RecipeLink>, que põe as legendas dos mapas numa barra azul.
+
+## Erros comuns
+
+- O texto alternativo de cada mapa fica no recurso (`ALT`), uma string por edição: um recurso não recebe palavras do Markdown, então esse é o único texto da página fora de `content.<lang>.md`.
+- Numa página da direita para a esquerda os blocos seguem a área de conteúdo espelhada, mas a decoração do modelo não: posicione o antetítulo conforme a edição, como faz `kicker`.
+- Um bloco em duas colunas pode cortar um parágrafo uma linha antes do fim e deixar essa linha no alto da segunda coluna. Confira as colunas de cada edição e passe uma frase de um parágrafo para o seguinte quando isso acontecer.

@@ -354,6 +354,14 @@ describe("C39: the pages against the approved capture", () => {
     expect(compareFindings({ approved: null, run, changes: null, pages: 1, maxDiff: 12, pixels: true })[0]!.severity).toBe("info");
   });
 
+  it("warns, not fails, on a layout hash measured on another system (--hash-warn)", () => {
+    const out = compareFindings({ approved: { vdtHash: "bbbbbbbb22", engine: "1.35.0" }, run, changes: null, pages: 1, maxDiff: 12, pixels: false, hashWarn: true });
+    expect(out.map((f) => f.severity)).toEqual(["warn"]);
+    expect(out[0]!.detail).toContain("measured on another system");
+    const strict = compareFindings({ approved: { vdtHash: "bbbbbbbb22", engine: "1.35.0" }, run, changes: null, pages: 1, maxDiff: 12, pixels: false, hashWarn: true, strict: true });
+    expect(strict[0]!.severity).toBe("fail");
+  });
+
   it("fails a moved layout or a changed page on the approved engine, and warns on another", () => {
     const changes = [{ n: 2, detail: "worst cell 36.2 of 255, 14 cells over the threshold" }];
     const same = compareFindings({ approved: { vdtHash: "bbbbbbbb22", engine: "1.35.0" }, run, changes, pages: 3, maxDiff: 12, pixels: true });

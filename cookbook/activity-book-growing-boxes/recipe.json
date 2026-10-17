@@ -1,0 +1,118 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 159,
+  "status": "published",
+  "chapter": "boxes",
+  "order": 160,
+  "level": 3,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "frame-groups",
+      "frame-continuation",
+      "composed-pages"
+    ],
+    "also": [
+      "vertical-space",
+      "chips",
+      "callout-styles",
+      "callout-label-tabs",
+      "design-elements",
+      "design-images",
+      "heading-styles",
+      "bullet-lists",
+      "numbered-lists",
+      "mirrored-margins",
+      "running-heads",
+      "color-palette",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q179",
+    "Q180",
+    "Q80"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.38.0",
+    "postextPdf": "1.38.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es",
+      "fr"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "expect": {
+      "pages": [
+        5,
+        6
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Andika",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo 2",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Lexend",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-17",
+  "updated": "2026-10-17",
+  "downloads": {
+    "pdf": true
+  },
+  "related": [
+    "worksheet-answer-boxes",
+    "exam-paper",
+    "reading-primer-syllables"
+  ],
+  "workarounds": [
+    {
+      "package": "postext",
+      "note": "the answer frames carry a minHeight equal to their height: when a group runs short of room, the reflow ladder takes space back from the frames of a group down to their minimum, and an empty frame's minimum is otherwise nothing, so its ruled lines would lie on the next box"
+    }
+  ]
+}

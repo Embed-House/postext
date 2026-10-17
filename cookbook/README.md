@@ -124,7 +124,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture <slug> --stress 1.3 --check` | The stress test (C38, §11): each edition runs as written and once more with every text 30 % longer, and the second run reports what each page did. Implies `--check`. |
 | `pnpm cookbook capture <slug> --stress 1.3 --stress-out <dir>` (or `bench … --stress-out <dir>`) | Also writes the stretched edition to `<dir>/<slug>/<lang>/`: every page as `p01.png`…, the Markdown it was laid out from (`<lang>.stretched.md`) and `stress.json` with the C38 findings. `--preview-dir` writes the pages as written. |
 | `pnpm cookbook capture <slug> --check --compare [--max-diff 12] [--no-pixels] [--strict]` | Compares the layout and every published page with the approved capture of the same sources (C39, §11). |
-| `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
+| `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels] [--hash-warn]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
@@ -165,7 +165,7 @@ The TypeScript source of truth is `RecipeMeta` in `apps/web/src/lib/cookbook/typ
 | `genres` | 1–3 of `novel poetry textbook workbook manual paper report magazine newsletter catalogue photobook comic ephemera any`. |
 | `outputs` | 1–4 of `canvas html pdf epub bundle live`. `pdf` ⇔ the `pdf` kit block ⇔ an import from `https://esm.sh/postext-pdf` ⇔ `engine.postextPdf`; `epub` ⇔ an import from `https://esm.sh/postext-epub`. |
 | `features` | `primary`: 1–3 features the recipe **teaches**; `also`: up to 17 others it uses. Ids from `_registry/features.json`. |
-| `answers` | Question ids (`Q01`…`Q178`); `answers[0]` is the question the recipe page leads with. |
+| `answers` | Question ids (`Q01`…`Q185`); `answers[0]` is the question the recipe page leads with. |
 | `gaps` | Unsupported features the recipe works around (gives the Workaround badge). When the engine closes one (`fixedIn` in `gaps.json`) and the recipe pins that version or a later one, the id leaves the list: the lint fails it. |
 | `gotchas`, `explainsWarnings` | Shared pitfalls and warning kinds shown under Pitfalls. |
 | `related` | Up to four hand-picked sibling slugs; the rest are computed. |
@@ -789,7 +789,7 @@ share. Each file starts with a `"$comment"` that explains it; the loader ignores
 | `features.json` | about 150 user-facing features: label, definition, search aliases, group, docs anchor, research ids, optional detect rules | kebab-case id |
 | `apis.json` | exported engine symbols → docs section | symbol name |
 | `config.json` | top-level config keys → docs section | key |
-| `questions.json` | the reader questions Q01–Q178, how/why, index form, theme, gap | `Qnn` |
+| `questions.json` | the reader questions Q01–Q185, how/why, index form, theme, gap | `Qnn` |
 | `gaps.json` | what Postext does not do, with aliases and the workaround; a gap the engine closes keeps its entry with `fixedIn` (the version), so the questions and the older-pinned recipes that name it still resolve, but the site no longer offers it as a gap or gives its recipes the Workaround badge; a recipe that pins that version or a later one takes the id out of its `gaps` (the lint fails it) | kebab-case id |
 | `warnings.json` | every engine, parse and Sandbox warning: label, cause, fix | warning kind |
 | `gotchas.json` | shared pitfalls, tied to a feature and to the engine follow-up that would retire them; one the engine fixes keeps its entry with `fixedIn` (the version) and a body that tells the old behaviour as past: a recipe that pins an older engine still lists it, under a "fixed in postext X" kicker, and a recipe that pins that version or a later one no longer shows it nor is found by it | kebab-case id |
@@ -1105,7 +1105,7 @@ edition, before it is published:
   half of a spread and turned frames are passed over. On an engine without it, a note: the
   check starts when the pinned engine has it.
 - **C41, the configuration.** Under 1 MB of JSON, for every recipe: it is what the Sandbox
-  loads and what a reader copies.
+  loads and what a reader copies. `--hash-warn` turns a layout hash that differs into a warning: CI runs the bench on Linux, whose Chrome measures text by fractions of a pixel differently from the machine the captures are made on, so only the capture machine fails on it.
 
 `pnpm cookbook bench` runs all of it: with no slug, every recipe whose Markdown declares
 composed pages; each edition run and checked as a capture checks it (C1–C36), then C37, C40,

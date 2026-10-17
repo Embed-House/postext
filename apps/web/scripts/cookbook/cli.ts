@@ -128,6 +128,7 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
       compare: { type: "boolean" },
       "max-diff": { type: "int", value: "n", min: 0, max: 255 },
       "no-pixels": { type: "boolean" },
+      "hash-warn": { type: "boolean" },
       strict: { type: "boolean" },
       composed: { type: "boolean" },
     },
@@ -246,6 +247,7 @@ async function captureWith(args: ParsedArgs, command: string, bench = false): Pr
     ...(compare ? { compare } : {}),
     ...(maxDiff !== undefined ? { maxDiff } : {}),
     ...(flag(args, "no-pixels") ? { pixels: false } : {}),
+    ...(flag(args, "hash-warn") ? { hashWarn: true } : {}),
     ...(flag(args, "strict") ? { strict: true } : {}),
     ...(composed ? { composed } : {}),
   });
@@ -301,6 +303,7 @@ async function runBenchCommand(argv: readonly string[]): Promise<number> {
       "stress-out": { type: "string", value: "dir" },
       "max-diff": { type: "int", value: "n", min: 0, max: 255 },
       "no-pixels": { type: "boolean" },
+      "hash-warn": { type: "boolean" },
       strict: { type: "boolean" },
       engine: { type: "string", value: "spec" },
       report: { type: "string", value: "out.json" },
