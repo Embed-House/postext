@@ -20,7 +20,7 @@ import {
 import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
 import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest';
 import { DENSE_ANCHORS, LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
-import { MAX_STAGE_ZOOM, STAGE_NAMES_ZOOM, wheelZoom, zoomStep } from './stageZoom';
+import { MAX_STAGE_ZOOM, pinchZoom, scrollForFocus, STAGE_NAMES_ZOOM, touchPair, wheelZoom, zoomStep } from './stageZoom';
 
 // ---------------------------------------------------------------------------
 // Safe area & lettering marks of a picture. The field sums them up over a
@@ -299,6 +299,14 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const zoomFocus = useRef<{ fx: number; fy: number; ox: number; oy: number } | null>(null);
   const pan = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
+  /** The fingers on the stage, and the pinch two of them make (#970): the
+   *  zoom and distance when the second went down and the point of the
+   *  picture between them, as fractions of its extent. */
+  const touches = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ zoom: number; distance: number; fx: number; fy: number } | null>(null);
+  /** The name being placed when the press that a second finger took back
+   *  went down. */
+  const placingAtDown = useRef<string | null>(null);
   const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
   const [loaded, setLoaded] = useState<{ width: number; height: number } | undefined>(undefined);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -453,7 +461,66 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     if (t.kind === 'avoid' || t.kind === 'bystander') setSelZone(t);
   };
 
+  /** Two fingers went down (#970): they move and zoom the picture, and
+   *  the press the first one made on the marks is taken back. */
+  const startPinch = (e: PointerEvent<HTMLDivElement>) => {
+    const v = viewportRef.current;
+    const [a, b] = [...touches.current.values()];
+    if (!v || !a || !b) return;
+    const d = drag.current;
+    drag.current = null;
+    pan.current = null;
+    if (d) {
+      setMarks(d.before);
+      setPlacing(placingAtDown.current);
+    }
+    const pair = touchPair(a, b);
+    const box = v.getBoundingClientRect();
+    pinch.current = {
+      zoom: zoomValue.current,
+      distance: pair.distance,
+      fx: (v.scrollLeft + pair.cx - box.left) / Math.max(1, v.scrollWidth),
+      fy: (v.scrollTop + pair.cy - box.top) / Math.max(1, v.scrollHeight),
+    };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* not capturable */ }
+    e.preventDefault();
+  };
+  /** The fingers moved: zoom as far apart as they are, and keep the point
+   *  between them under them. */
+  const movePinch = () => {
+    const g = pinch.current;
+    const v = viewportRef.current;
+    const [a, b] = [...touches.current.values()];
+    if (!g || !v || !a || !b) return;
+    const pair = touchPair(a, b);
+    const z = pinchZoom(g.zoom, g.distance, pair.distance);
+    const box = v.getBoundingClientRect();
+    const ox = pair.cx - box.left;
+    const oy = pair.cy - box.top;
+    if (z !== zoomValue.current) {
+      zoomFocus.current = { fx: g.fx, fy: g.fy, ox, oy };
+      setZoom(z);
+      return;
+    }
+    const at = scrollForFocus(g.fx, g.fy, ox, oy, { width: v.scrollWidth, height: v.scrollHeight });
+    v.scrollLeft = at.left;
+    v.scrollTop = at.top;
+  };
+
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'touch') {
+      touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.current.size === 2) {
+        startPinch(e);
+        return;
+      }
+      // A third finger is nobody's.
+      if (touches.current.size > 2) {
+        e.preventDefault();
+        return;
+      }
+    }
+    placingAtDown.current = placingRef.current;
     // The hand tool, Space held down or the middle button move the zoomed
     // picture instead of the marks (#956).
     const v = viewportRef.current;
@@ -527,6 +594,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     e.preventDefault();
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (touches.current.has(e.pointerId)) {
+      touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch.current) {
+        movePinch();
+        return;
+      }
+    }
     const g = pan.current;
     const v = viewportRef.current;
     if (g && v) {
@@ -541,6 +615,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     setMarks(applyDrag(d, pointAt(e)));
   };
   const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
+    if (touches.current.delete(e.pointerId) && touches.current.size < 2) pinch.current = null;
     const d = drag.current;
     drag.current = null;
     pan.current = null;

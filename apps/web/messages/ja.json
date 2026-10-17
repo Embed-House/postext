@@ -3073,7 +3073,7 @@
     "resourceMarksEditLettering": "話者と回避エリア",
     "resourceMarksModeAria": "マークする対象",
     "resourceMarksZoomAria": "画像のズーム",
-    "resourceMarksZoomHint": "Ctrl＋スクロールまたはピンチで拡大縮小。キーボードの+、-、0。Spaceを押しながらドラッグするか、手のひらツールで移動",
+    "resourceMarksZoomHint": "Ctrl＋スクロールまたはピンチで拡大縮小。キーボードの+、-、0。Spaceを押しながらドラッグするか、手のひらツールで移動。タッチスクリーンでは2本の指で移動と拡大縮小",
     "resourceMarksZoomOut": "縮小",
     "resourceMarksZoomIn": "拡大",
     "resourceMarksZoomFit": "画像に合わせる",

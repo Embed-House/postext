@@ -3073,7 +3073,7 @@
     "resourceMarksEditLettering": "Locuteurs et zones à éviter",
     "resourceMarksModeAria": "Ce qu’il faut marquer",
     "resourceMarksZoomAria": "Zoom sur l’image",
-    "resourceMarksZoomHint": "Ctrl + molette ou pincement pour zoomer ; +, - et 0 au clavier ; maintenez Espace et glissez, ou prenez la main, pour déplacer",
+    "resourceMarksZoomHint": "Ctrl + molette ou pincement pour zoomer ; +, - et 0 au clavier ; maintenez Espace et glissez, ou prenez la main, pour déplacer ; sur un écran tactile, deux doigts déplacent et zooment",
     "resourceMarksZoomOut": "Zoom arrière",
     "resourceMarksZoomIn": "Zoom avant",
     "resourceMarksZoomFit": "Ajuster l’image",

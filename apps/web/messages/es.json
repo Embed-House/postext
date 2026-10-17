@@ -917,7 +917,7 @@
     "resourceMarksEditLettering": "Personajes y zonas libres",
     "resourceMarksModeAria": "Qué marcar",
     "resourceMarksZoomAria": "Ampliar la imagen",
-    "resourceMarksZoomHint": "Ctrl y rueda o pellizco para ampliar; +, - y 0 en el teclado; mantén Espacio y arrastra, o usa la mano, para moverla",
+    "resourceMarksZoomHint": "Ctrl y rueda o pellizco para ampliar; +, - y 0 en el teclado; mantén Espacio y arrastra, o usa la mano, para moverla; en una pantalla táctil, dos dedos la mueven y la amplían",
     "resourceMarksZoomOut": "Alejar",
     "resourceMarksZoomIn": "Acercar",
     "resourceMarksZoomFit": "Ajustar la imagen",

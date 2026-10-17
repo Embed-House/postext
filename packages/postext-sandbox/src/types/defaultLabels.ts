@@ -2483,7 +2483,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   resourceMarksEditLettering: "Speakers & avoid zones",
   resourceMarksModeAria: "What to mark",
   resourceMarksZoomAria: "Zoom the picture",
-  resourceMarksZoomHint: "Ctrl-scroll or pinch to zoom; +, - and 0 on the keyboard; hold Space and drag, or use the hand, to move",
+  resourceMarksZoomHint: "Ctrl-scroll or pinch to zoom; +, - and 0 on the keyboard; hold Space and drag, or use the hand, to move; two fingers move and zoom on a touch screen",
   resourceMarksZoomOut: "Zoom out",
   resourceMarksZoomIn: "Zoom in",
   resourceMarksZoomFit: "Fit the picture",

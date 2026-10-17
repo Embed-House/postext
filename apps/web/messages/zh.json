@@ -3073,7 +3073,7 @@
     "resourceMarksEditLettering": "角色与避让区",
     "resourceMarksModeAria": "标记内容",
     "resourceMarksZoomAria": "缩放图片",
-    "resourceMarksZoomHint": "按住Ctrl滚动滚轮或双指捏合来缩放；键盘上的+、-和0；按住空格拖动，或使用手形工具来移动",
+    "resourceMarksZoomHint": "按住Ctrl滚动滚轮或双指捏合来缩放；键盘上的+、-和0；按住空格拖动，或使用手形工具来移动；触摸屏上用两指移动和缩放",
     "resourceMarksZoomOut": "缩小",
     "resourceMarksZoomIn": "放大",
     "resourceMarksZoomFit": "适合窗口",
