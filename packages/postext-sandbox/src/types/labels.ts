@@ -3750,6 +3750,10 @@ export interface SandboxLabels {
   pageTemplatesContinueNone: string;
   pageTemplatesContinueNextPage: string;
   pageTemplatesContinueTemplate: string;
+  pageTemplatesContinuePage: string;
+  pageTemplatesContinuePageTyped: string;
+  pageTemplatesContinuePageId: string;
+  pageTemplatesContinuePageIdTooltip: string;
   pageTemplatesMark: string;
   pageTemplatesMarkTooltip: string;
   pageTemplatesMarkDefault: string;

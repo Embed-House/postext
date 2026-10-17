@@ -885,6 +885,10 @@ Recorded where the implementation settles a point the sections above leave open,
   `calloutStyleExtendsCycle`, WARNING_SINCE 1.39.0). The frame-style library (§2.4) merging on the
   look keeps a style whose `:::callout` boxes stand elsewhere as a thin style (`extends` + its
   position fields, `placesToKeep`), so a book ends with one style per kind of box and no box moves.
+- **Jump targets in the editor (#943).** The Sandbox template editor lists the book's page fences
+  with an `id` as `page:<id>` targets and takes a typed `page:` value. Jumps across chapter files
+  are not laid out (SP followup 943-rest: forward ids, carried story Markdown, chapter-qualified
+  source map, numbering, book-level marks).
 
 ## 6. Source map contract
 
