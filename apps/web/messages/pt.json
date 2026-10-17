@@ -3925,7 +3925,7 @@
     "headerFooterElementAnchorTo": "Ancorar em",
     "headerFooterElementAnchorToTooltip": "Ancora o elemento no contêiner do bloco, no quadro da página ou da sangria, ou num elemento irmão. Elementos ancorados em outro são posicionados em relação ao alvo, de modo que uma caixa empurra a vizinha ao crescer",
     "headerFooterElementAnchorContainer": "Contêiner",
-    "headerFooterElementAlignTooltip": "Alinhamento horizontal do elemento dentro do contêiner: esquerda, centro ou direita",
+    "headerFooterElementAlignTooltip": "Alinhamento horizontal do elemento dentro do contêiner: esquerda, centro, direita, ou o lado de início ou de fim das linhas",
     "headerFooterElementEdge": "Posição relativa",
     "headerFooterElementEdgeTooltip": "Borda do elemento de referência de que este bloco depende: à direita, à esquerda, acima, abaixo ou alinhado a um dos lados. Alinhar em cima e Alinhar à esquerda dão o mesmo lugar: os dois cantos superiores esquerdos juntos",
     "headerFooterElementEdgeRightOf": "À direita de",

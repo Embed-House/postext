@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "アンカー先",
     "headerFooterElementAnchorToTooltip": "要素を、スロットのコンテナー、ページまたは裁ち落としの枠、あるいは兄弟要素にアンカーします。要素へのアンカーは対象を基準に配置されるため、ボックスが大きくなると隣の要素を押し出せます。",
     "headerFooterElementAnchorContainer": "コンテナー",
-    "headerFooterElementAlignTooltip": "コンテナー内での要素の水平方向のそろえです。左、中央、右から選びます。",
+    "headerFooterElementAlignTooltip": "コンテナー内での要素の水平方向のそろえです。左、中央、右のほか、行の先頭側と末尾側も選べます。",
     "headerFooterElementEdge": "相対位置",
     "headerFooterElementEdgeTooltip": "このブロックを基準要素のどの辺に付けるかを指定します。右、左、上、下、またはいずれかの辺へのそろえです。「上端そろえ」と「左端そろえ」は同じ位置になり、2つの左上の角が重なります。",
     "headerFooterElementEdgeRightOf": "右側",

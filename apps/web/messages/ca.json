@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "Ancorar a",
     "headerFooterElementAnchorToTooltip": "Ancora l'element al contenidor del bloc, al marc de pàgina o de sang, o a un element germà. Els ancoratges a elements es posicionen respecte al seu destí, de manera que una caixa empeny la veïna quan creix",
     "headerFooterElementAnchorContainer": "Contenidor",
-    "headerFooterElementAlignTooltip": "Alineació horitzontal de l'element dins del contenidor: esquerra, centre o dreta",
+    "headerFooterElementAlignTooltip": "Alineació horitzontal de l'element dins del contenidor: esquerra, centre, dreta, o el costat d'inici o de final de les línies",
     "headerFooterElementEdge": "Posició relativa",
     "headerFooterElementEdgeTooltip": "Vora de l'element de referència del qual penja aquest bloc: a la dreta, a l'esquerra, a sobre, a sota o alineat amb un dels seus costats. Alinear a dalt i Alinear a l'esquerra donen el mateix lloc: les dues cantonades superiors esquerres juntes",
     "headerFooterElementEdgeRightOf": "A la dreta de",

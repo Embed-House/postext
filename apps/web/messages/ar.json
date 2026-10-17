@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "الربط بـ",
     "headerFooterElementAnchorToTooltip": "اربط العنصر بحاوية الموضع، أو بالصفحة أو إطار النزف، أو بعنصر مجاور. تُحدَّد مواضع العناصر المرتبطة بعنصر آخر نسبةً إلى هدفها، فيمكن لصندوق أن يدفع جاره حين يكبر",
     "headerFooterElementAnchorContainer": "الحاوية",
-    "headerFooterElementAlignTooltip": "المحاذاة الأفقية للعنصر داخل الحاوية: يسار، أو وسط، أو يمين",
+    "headerFooterElementAlignTooltip": "المحاذاة الأفقية للعنصر داخل الحاوية: يسار، أو وسط، أو يمين، أو جانب بداية الأسطر أو نهايتها",
     "headerFooterElementEdge": "الموضع النسبي",
     "headerFooterElementEdgeTooltip": "حافة العنصر المرجعي التي تتدلّى منها هذه الكتلة: يمينه، أو يساره، أو فوقه، أو تحته، أو محاذاةً لأحد جوانبه. «محاذاة الأعلى» و«محاذاة اليسار» تعطيان الموضع نفسه: الزاويتان العلويتان اليسريان متطابقتان",
     "headerFooterElementEdgeRightOf": "يمين",

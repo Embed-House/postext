@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "Anclar a",
     "headerFooterElementAnchorToTooltip": "Ancla el elemento al contenedor del bloque, al marco de página o de sangre, o a un elemento hermano. Los anclajes a elementos se posicionan respecto a su destino, de modo que una caja empuja a su vecina al crecer",
     "headerFooterElementAnchorContainer": "Contenedor",
-    "headerFooterElementAlignTooltip": "Alineación horizontal del elemento dentro del contenedor: izquierda, centro o derecha",
+    "headerFooterElementAlignTooltip": "Alineación horizontal del elemento dentro del contenedor: izquierda, centro, derecha, o el lado de inicio o de final de las líneas",
     "headerFooterElementEdge": "Posición relativa",
     "headerFooterElementEdgeTooltip": "Borde del elemento de referencia del que cuelga este bloque: derecha, izquierda, encima, debajo o alineado a uno de sus lados. Alinear arriba y Alinear a la izquierda dan el mismo sitio: las dos esquinas superiores izquierdas juntas",
     "headerFooterElementEdgeRightOf": "A la derecha de",

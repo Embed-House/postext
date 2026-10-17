@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "Ancrer à",
     "headerFooterElementAnchorToTooltip": "Ancrer l’élément au conteneur de l’emplacement, au cadre de la page ou du fond perdu, ou à un élément frère. Les éléments ancrés se positionnent par rapport à leur cible : une boîte peut ainsi pousser sa voisine quand elle grandit",
     "headerFooterElementAnchorContainer": "Conteneur",
-    "headerFooterElementAlignTooltip": "Alignement horizontal de l’élément dans le conteneur : gauche, centre ou droite",
+    "headerFooterElementAlignTooltip": "Alignement horizontal de l’élément dans le conteneur : gauche, centre, droite, ou le côté du début ou de la fin des lignes",
     "headerFooterElementEdge": "Position relative",
     "headerFooterElementEdgeTooltip": "Bord de l’élément de référence auquel ce bloc s’accroche : à droite, à gauche, au-dessus, en dessous, ou aligné sur l’un de ses côtés. Aligner en haut et Aligner à gauche donnent la même place : les deux coins supérieurs gauches ensemble",
     "headerFooterElementEdgeRightOf": "À droite de",

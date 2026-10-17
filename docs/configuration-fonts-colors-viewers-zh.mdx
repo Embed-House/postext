@@ -1336,7 +1336,7 @@ debug: {
 
 ### 配置警告
 
-配置本身的八类错误从不静默，也没有开关能隐藏它们。引擎不会因此失败：它会替换一个值，或略去该设置，并给出说明：
+配置本身的下列错误从不静默，也没有开关能隐藏它们，只有最后一项提到的那个除外。引擎不会因此失败：它会替换一个值，或略去该设置，并给出说明：
 
 - **未知编号格式**：有序列表的`numberFormat`、`page.pageNumbering.format`或资源类型的`counterFormat`不属于任何一种[编号格式写法](/zh/docs/configuration-page-layout#编号格式的写法)。此时按十进制编号。
 - **字体家族中写了字体栈**：`fontFamily`（或任何`…FontFamily`）中写了CSS字体栈。文字用字体栈中的第一个字体家族排（见[每个`fontFamily`只写一个字体家族](/zh/docs/configuration-text#每个fontfamily只写一个字体族)）。

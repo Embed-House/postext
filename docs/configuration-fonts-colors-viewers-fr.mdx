@@ -1335,7 +1335,7 @@ En plus de ceux-ci, le panneau liste toujours les avertissements que soulève la
 
 ### Avertissements de configuration
 
-Huit erreurs dans la configuration elle-même ne passent jamais sous silence, et aucun interrupteur ne les masque. Le moteur n’échoue sur aucune d’elles ; il substitue une valeur, ou ignore le réglage, et le signale :
+Ces erreurs de la configuration elle-même ne passent jamais sous silence, et aucun interrupteur ne les masque, sauf celui que nomme le dernier point. Le moteur n’échoue sur aucune d’elles ; il substitue une valeur, ou ignore le réglage, et le signale :
 
 - **Format de numérotation inconnu** : un `numberFormat` de liste numérotée, un `page.pageNumbering.format` ou le `counterFormat` d’un type de ressource qui ne correspond à aucune des [graphies de format de numérotation](/fr/docs/configuration-page-layout#graphies-des-formats-de-numérotation). La numérotation se fait en décimal.
 - **Pile de polices dans une famille** : un `fontFamily` (ou n’importe quel `…FontFamily`) qui contient une pile de polices CSS. Le texte est composé dans la première famille de la pile (voir [Une seule famille par `fontFamily`](/fr/docs/configuration-text#une-seule-famille-par-fontfamily)).

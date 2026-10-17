@@ -3928,7 +3928,7 @@
     "headerFooterElementAnchorTo": "锚定到",
     "headerFooterElementAnchorToTooltip": "把元素锚定到版面设计的容器、页面框或出血框，或某个同级元素。锚定到元素时按目标定位，所以一个框变大时可以推开相邻的框",
     "headerFooterElementAnchorContainer": "容器",
-    "headerFooterElementAlignTooltip": "元素在容器内的水平对齐：左、中或右",
+    "headerFooterElementAlignTooltip": "元素在容器内的水平对齐：左、居中、右，或行的起始侧、末尾侧",
     "headerFooterElementEdge": "相对位置",
     "headerFooterElementEdgeTooltip": "这个块挂靠在参照元素的哪一边：右侧、左侧、上方、下方，或与它的某一边对齐。“顶部对齐”和“左对齐”位置相同：两个左上角重合",
     "headerFooterElementEdgeRightOf": "右侧",

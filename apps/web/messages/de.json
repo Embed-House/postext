@@ -3929,7 +3929,7 @@
     "headerFooterElementAnchorTo": "Verankern an",
     "headerFooterElementAnchorToTooltip": "Das Element am Container des Bereichs, am Seiten- oder Anschnittrahmen oder an einem Geschwisterelement verankern. An Elementen verankerte Elemente werden relativ zu ihrem Ziel positioniert, sodass ein Kasten seinen Nachbarn verschieben kann, wenn er wächst",
     "headerFooterElementAnchorContainer": "Container",
-    "headerFooterElementAlignTooltip": "Horizontale Ausrichtung des Elements im Container: links, Mitte oder rechts",
+    "headerFooterElementAlignTooltip": "Horizontale Ausrichtung des Elements im Container: links, Mitte, rechts oder die Anfangs- oder Endseite der Zeilen",
     "headerFooterElementEdge": "Relative Position",
     "headerFooterElementEdgeTooltip": "Kante des Bezugselements, an der dieser Block hängt: rechts, links, darüber, darunter oder an einer seiner Seiten ausgerichtet. Oben ausrichten und Links ausrichten ergeben dieselbe Stelle: die beiden oberen linken Ecken aufeinander",
     "headerFooterElementEdgeRightOf": "Rechts von",

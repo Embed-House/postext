@@ -3929,7 +3929,7 @@
     "headerFooterElementAnchorTo": "Ancora a",
     "headerFooterElementAnchorToTooltip": "Ancora l’elemento al contenitore dello spazio, alla cornice della pagina o dell’abbondanza, o a un elemento fratello. Gli ancoraggi a un elemento si posizionano rispetto al loro bersaglio, così un riquadro può spingere quello accanto quando cresce",
     "headerFooterElementAnchorContainer": "Contenitore",
-    "headerFooterElementAlignTooltip": "Allineamento orizzontale dell’elemento dentro il contenitore: a sinistra, al centro o a destra",
+    "headerFooterElementAlignTooltip": "Allineamento orizzontale dell’elemento dentro il contenitore: a sinistra, al centro, a destra, oppure sul lato d’inizio o di fine delle righe",
     "headerFooterElementEdge": "Posizione relativa",
     "headerFooterElementEdgeTooltip": "Bordo dell’elemento di riferimento da cui dipende questo blocco: a destra, a sinistra, sopra, sotto, o allineato a uno dei suoi lati. Allinea in alto e Allinea a sinistra danno lo stesso punto: i due angoli superiori sinistri coincidono",
     "headerFooterElementEdgeRightOf": "A destra di",

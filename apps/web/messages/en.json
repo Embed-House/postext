@@ -3929,7 +3929,7 @@
     "headerFooterElementAnchorTo": "Anchor to",
     "headerFooterElementAnchorToTooltip": "Anchor the element to the slot container, the page or bleed frame, or a sibling element. Element anchors are positioned relative to their target, so a box can push its neighbour when it grows",
     "headerFooterElementAnchorContainer": "Container",
-    "headerFooterElementAlignTooltip": "Horizontal alignment of the element inside the container: left, center or right",
+    "headerFooterElementAlignTooltip": "Horizontal alignment of the element inside the container: left, center, right, or the start or end side of the lines",
     "headerFooterElementEdge": "Relative position",
     "headerFooterElementEdgeTooltip": "Edge of the reference element this block hangs from: right, left, above, below, or aligned to one of its sides. Align top and Align left give the same place: the two top-left corners together",
     "headerFooterElementEdgeRightOf": "Right of",

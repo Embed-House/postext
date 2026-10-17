@@ -1336,7 +1336,7 @@ Besides these, the panel always lists the warnings the layout itself raises (`VD
 
 ### Configuration warnings
 
-Eight mistakes in the configuration itself are never silent, and no toggle hides them. The engine does not fail on any of them; it substitutes a value, or leaves the setting out, and says so:
+These mistakes in the configuration itself are never silent, and no toggle hides them except the one the last item names. The engine does not fail on any of them; it substitutes a value, or leaves the setting out, and says so:
 
 - **Unknown number format** — an ordered-list `numberFormat`, a `page.pageNumbering.format` or a resource type's `counterFormat` that is none of the [numbering format spellings](/en/docs/configuration-page-layout#numbering-format-spellings). It numbers in decimal.
 - **Font stack in a font family** — a `fontFamily` (or any `…FontFamily`) that holds a CSS font stack. The text is set in the stack's first family (see [One family per `fontFamily`](/en/docs/configuration-text#one-family-per-fontfamily)).
