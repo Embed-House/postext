@@ -493,7 +493,7 @@ pageTemplates: [
 
 ### ما يطبّقه التنضيد
 
-يطبّق التنضيد موضع كل خانة وأحجامها (الشبكة، ونقاط التثبيت، و`min`/`max`، و`verticalAlign`)، ونمطها و`padding` الخاص بها، و`columns` و`layer` و`rotate` و`exclude` (ومعه `wrap`) و`flow` و`takes` و`next` و`overflow.continueIn` (`"#frame"` و`"next-page"` و`"template:<id>"`) مع `overflow.mark`، ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants` و`overflowTemplate`. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو: تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّان بالمجموعة؛ وتحتفظ خاناتها بمواضعها الخاصة)، و`fit`، و`writingMode` و`direction` في الخانة، و`bodyStyle` و`palette` في القالب. والعرض `'auto'` يُقرأ على أنه `'fill'`.
+يطبّق التنضيد موضع كل إطار وأحجامه (الشبكة، ونقاط التثبيت، و`min`/`max`، و`verticalAlign`)، ونمطه و`padding` الخاص به، و`columns` و`layer` و`rotate` و`exclude` (ومعه `wrap`) و`flow` و`takes` و`next` و`overflow.continueIn` (`"#frame"` و`"next-page"` و`"template:<id>"`) مع `overflow.mark`، و`fit` الخاص به (تصغير النص والصور في درجات إعادة التنضيد، انظر [حين لا يتسع المحتوى](#حين-لا-يتسع-المحتوى))؛ ويطبّق تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّين بالمجموعة، انظر [كيف تتقاسم المجموعات المساحة](#كيف-تتقاسم-المجموعات-المساحة))؛ ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants` و`overflowTemplate`. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو `writingMode` و`direction` في الإطار، و`bodyStyle` و`palette` في القالب. والعرض `'auto'` يُقرأ على أنه `'fill'`.
 
 ### الصفحتان المتقابلتان
 

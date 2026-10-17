@@ -493,7 +493,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）と`overflow.mark`、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`overflowTemplate`です。次の設定は読み込まれて検査されますが、まだ割り付けには反映されません。グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。グループのフレームはそれぞれの配置を保ちます）、`fit`、フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`です。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）と`overflow.mark`、フレームの`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`overflowTemplate`です。フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。幅の`'auto'`は`'fill'`として扱います。
 
 ### 見開き
 
