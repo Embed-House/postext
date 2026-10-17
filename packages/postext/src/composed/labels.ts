@@ -589,6 +589,52 @@ export function unmirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: num
   };
 }
 
+/** The run order of a line of `n` segments turned the other way: the
+ *  reverse of `order` (`undefined` = 0 … n − 1), or `undefined` when that
+ *  is the logical order. It is its own inverse, as the build's turn for a
+ *  mirrored frame is. */
+function reversedOrder(order: readonly number[] | undefined, n: number): number[] | undefined {
+  const visual = order ?? Array.from({ length: n }, (_, i) => i);
+  const flow = [...visual].reverse();
+  return flow.every((v, i) => v === i) ? undefined : flow;
+}
+
+/**
+ * The layout of a label of a mirrored page (a right-to-left book) as it
+ * stands on the sheet, for a renderer that does not paint through the
+ * page's reflection (the SVG layer of a reflowable EPUB, #969): its point
+ * and its lines reflected back about the body's axis, and the run order of
+ * each line turned back, so `order` is the order of the segments from left
+ * to right on the sheet. A vertical label comes back as
+ * {@link unmirrorLabelLayout} gives it. A layout of a page that is not
+ * mirrored must not be given: nothing marks one.
+ */
+export function labelLayoutOnSheet(layout: VDTFigureLabelLayout, bodyWidth: number): VDTFigureLabelLayout {
+  if (layout.mirrored) return unmirrorLabelLayout(layout, bodyWidth);
+  const flipBox = (r: BoundingBox): BoundingBox => ({ ...r, x: -(r.x + r.width) });
+  return {
+    ...layout,
+    x: bodyWidth - layout.x,
+    ...(layout.rotate !== undefined ? { rotate: -layout.rotate } : {}),
+    lines: layout.lines.map((line) => {
+      const n = line.segments?.length ?? 0;
+      const next: VDTLine = {
+        ...line,
+        bbox: { ...line.bbox, x: -(line.bbox.x + line.bbox.width) },
+        ...(line.measure ? { measure: { ...line.measure, x: -(line.measure.x + line.measure.width) } } : {}),
+      };
+      if (n >= 2) {
+        const order = reversedOrder(line.order, n);
+        if (order) next.order = order;
+        else delete next.order;
+      }
+      return next;
+    }),
+    box: flipBox(layout.box),
+    ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Reading
 // ---------------------------------------------------------------------------

@@ -663,6 +663,7 @@ describe("package exports", () => {
       "resolveLabelLook",
       "undrawnLabels",
       "unmirrorLabelLayout",
+      "labelLayoutOnSheet",
       "comicFramePaintOrder",
       "comicHoldsText",
       "comicPaintsUnderText",

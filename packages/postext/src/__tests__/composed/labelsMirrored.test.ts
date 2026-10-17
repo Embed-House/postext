@@ -3,6 +3,7 @@ import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { renderPageToCanvas } from '../../index';
 import { renderToHtmlIndexed } from '../../html-backend';
+import { labelLayoutOnSheet } from '../../composed/labels';
 import type { PostextConfig, Resource, VDTDocument } from '../../index';
 
 // #955: a vertical label on the mirrored page of a right-to-left book.
@@ -134,5 +135,40 @@ describe('the same label in the HTML (#955)', () => {
     expect(rtl).toMatch(/class="pt-unmirrored"[^>]*transform:matrix\(-1,0,0,1,[\d.]+,0\)[^>]*><div class="pt-figure-label"[^>]*transform:matrix\(0,1,-1,0,/);
     expect(rtl).toContain('.pt-flow-mirrored .pt-unmirrored');
     expect(html()).not.toContain('pt-unmirrored');
+  });
+});
+
+describe('a horizontal label of a mirrored page, back on the sheet (#969)', () => {
+  const labelsOf = (doc: VDTDocument) => {
+    const block = [...doc.blocks, ...doc.pages.flatMap((p) => p.floats ?? [])].find((b) => b.resourceBlock?.resource.id === 'tate')!;
+    return { rb: block.resourceBlock!, layouts: block.resourceBlock!.labels!.map((l) => l.layout!) };
+  };
+  const text = [
+    '::label[المحيط الأطلسي]{at="h"}',
+    '::label[Madrid المحيط 42]{at="h"}',
+    '::label[Madrid Toledo]{at="h"}',
+  ];
+
+  it('gives the layout the same label has on a left-to-right page: point, boxes and the order of the words', () => {
+    const ltr = labelsOf(build(fig(...text)));
+    const rtl = labelsOf(build(fig(...text), { locale: 'ar' }));
+    expect(rtl.layouts).toHaveLength(3);
+    rtl.layouts.forEach((layout, i) => {
+      const sheet = labelLayoutOnSheet(layout, rtl.rb.bodyRect.width);
+      const want = ltr.layouts[i]!;
+      expect(sheet.x).toBeCloseTo(want.x, 6);
+      expect(sheet.y).toBeCloseTo(want.y, 6);
+      expect(sheet.box.x).toBeCloseTo(want.box.x, 6);
+      expect(sheet.lines.map((l) => [Math.round(l.bbox.x * 1e6) / 1e6, l.order ?? null])).toEqual(want.lines.map((l) => [Math.round(l.bbox.x * 1e6) / 1e6, l.order ?? null]));
+      expect(sheet.lines.map((l) => l.segments?.map((g) => g.text).join('|'))).toEqual(want.lines.map((l) => l.segments?.map((g) => g.text).join('|')));
+    });
+  });
+
+  it('turns the rotation back too, and leaves a vertical label to unmirrorLabelLayout', () => {
+    const rotated: Resource = { ...MAP, anchors: [{ id: 'h', x: 0.3, y: 0.7, rotate: 30, style: 'small' }] };
+    const doc = buildDocument({ markdown: fig('::label[Madrid]{at="h"}'), resources: [rotated] }, { ...PAGE, locale: 'ar' }, createMeasurementCache());
+    const { rb, layouts } = labelsOf(doc);
+    expect(layouts[0]!.rotate).toBe(-30);
+    expect(labelLayoutOnSheet(layouts[0]!, rb.bodyRect.width).rotate).toBe(30);
   });
 });

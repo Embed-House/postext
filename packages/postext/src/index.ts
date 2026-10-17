@@ -636,6 +636,7 @@ export {
   resolveLabelLook,
   undrawnLabels,
   unmirrorLabelLayout,
+  labelLayoutOnSheet,
   type LabelLook,
   type LabelMatrix,
 } from './composed/labels';
