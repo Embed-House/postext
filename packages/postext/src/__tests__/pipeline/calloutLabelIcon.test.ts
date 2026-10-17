@@ -21,7 +21,6 @@ class StubCtx {
 };
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
-const px = (value: number) => ({ value, unit: 'px' as const });
 const RING: Resource = { id: 'ring', typeId: 'figure', kind: 'svg', altText: '', createdAt: 0, updatedAt: 0, svg: { fileId: 'ring.svg', width: 20, height: 10 } };
 
 const config = (placement?: 'beside' | 'inside', extra: Record<string, unknown> = {}): PostextConfig => ({
@@ -121,4 +120,3 @@ describe('label.icon.placement (#981)', () => {
     expect(words(blocks).lines[0]!.xOffset).toBeCloseTo(6, 3);
   });
 });
-void px;

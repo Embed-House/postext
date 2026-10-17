@@ -4220,7 +4220,7 @@
     "pageTemplatesGroupDecorationDescription": "صور وصناديق وخطوط ونصوص تُرسم تحت الأطر. يمكن لنص أو صورة أن يقرأ سمات الصفحة: '{'attr.name'}' لـ ::::page'{'name=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "العناصر الموروثة",
     "pageTemplatesDecorationInheritedHint": "زخرفة القالب الذي يقوم عليه هذا القالب. أوقف تشغيل عنصر لإخفائه في هذا القالب وحده.",
-    "pageTemplatesDecorationInheritedShowTooltip": "عند الإيقاف يُكتب { id, remove: true } في زخرفة هذا القالب (أو في المتغيّر الجاري تحريره): يبقى العنصر في القالب الذي جاء منه وفي القوالب الأخرى التي تمتدّ منه.",
+    "pageTemplatesDecorationInheritedShowTooltip": "عند الإيقاف يُكتب مدخل remove: true في زخرفة هذا القالب (أو في المتغيّر الجاري تحريره): يبقى العنصر في القالب الذي جاء منه وفي القوالب الأخرى التي تمتدّ منه.",
     "pageTemplatesFrameGroupIdentity": "الإطار",
     "pageTemplatesFrameName": "الاسم (الخانة)",
     "pageTemplatesFrameNameTooltip": "الخانة التي يتلقّاها هذا الإطار: محتوى الصفحة الموسوم slot=\"الاسم\" يذهب إليه.",

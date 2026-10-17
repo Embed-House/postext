@@ -3674,7 +3674,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   pageTemplatesGroupDecorationDescription: "Pictures, boxes, rules and texts drawn under the frames. A text or a picture may read the page's attributes: {attr.name} for ::::page{name=\"…\"}.",
   pageTemplatesDecorationInherited: "Inherited elements",
   pageTemplatesDecorationInheritedHint: "Decoration of the template this one is based on. Switch an element off to hide it on this template only.",
-  pageTemplatesDecorationInheritedShowTooltip: "Off writes { id, remove: true } in this template's decoration (or in the variant being edited): the element stays in the template it comes from and in the others that extend it.",
+  pageTemplatesDecorationInheritedShowTooltip: "Off writes a remove: true entry in this template's decoration (or in the variant being edited): the element stays in the template it comes from and in the others that extend it.",
   pageTemplatesFrameGroupIdentity: "Frame",
   pageTemplatesFrameName: "Name (slot)",
   pageTemplatesFrameNameTooltip: "The slot this frame receives: content of the page marked slot=\"name\" goes in it.",

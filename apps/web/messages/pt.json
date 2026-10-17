@@ -4217,7 +4217,7 @@
     "pageTemplatesGroupDecorationDescription": "Imagens, caixas, fios e textos desenhados sob os blocos. Um texto ou uma imagem pode ler os atributos da página: '{'attr.nome'}' para ::::page'{'nome=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "Elementos herdados",
     "pageTemplatesDecorationInheritedHint": "Decoração do modelo em que este se baseia. Desligue um elemento para escondê-lo só neste modelo.",
-    "pageTemplatesDecorationInheritedShowTooltip": "Desligado, escreve { id, remove: true } na decoração deste modelo (ou da variante em edição): o elemento continua no modelo de onde vem e nos outros que o estendem.",
+    "pageTemplatesDecorationInheritedShowTooltip": "Desligado, escreve uma entrada remove: true na decoração deste modelo (ou da variante em edição): o elemento continua no modelo de onde vem e nos outros que o estendem.",
     "pageTemplatesFrameGroupIdentity": "Bloco",
     "pageTemplatesFrameName": "Nome (vaga)",
     "pageTemplatesFrameNameTooltip": "A vaga que este bloco recebe: o conteúdo da página marcado slot=\"nome\" vai para ele.",

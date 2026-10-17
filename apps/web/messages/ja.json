@@ -4220,7 +4220,7 @@
     "pageTemplatesGroupDecorationDescription": "枠の下に描く画像、ボックス、罫、テキスト。テキストや画像はページの属性を読めます：::::page'{'名前=\"…\"'}' なら '{'attr.名前'}'。",
     "pageTemplatesDecorationInherited": "継承した要素",
     "pageTemplatesDecorationInheritedHint": "このテンプレートの元になっているテンプレートの装飾です。要素をオフにすると、このテンプレートでだけ非表示になります。",
-    "pageTemplatesDecorationInheritedShowTooltip": "オフにすると、このテンプレート（または編集中のバリアント）の装飾に { id, remove: true } が書き込まれます。要素は元のテンプレートと、それを拡張するほかのテンプレートには残ります。",
+    "pageTemplatesDecorationInheritedShowTooltip": "オフにすると、このテンプレート（または編集中のバリアント）の装飾に remove: true の項目 が書き込まれます。要素は元のテンプレートと、それを拡張するほかのテンプレートには残ります。",
     "pageTemplatesFrameGroupIdentity": "枠",
     "pageTemplatesFrameName": "名前（スロット）",
     "pageTemplatesFrameNameTooltip": "この枠が受け取るスロット。ページで slot=\"名前\" と指定した内容がここに入ります。",

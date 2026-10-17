@@ -26,7 +26,6 @@ class StubCtx {
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 const DPI = 300;
-const MM = DPI / 25.4;
 
 const CONFIG: PostextConfig = {
   page: { width: mm(200), height: mm(260), dpi: DPI, margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } } as never,

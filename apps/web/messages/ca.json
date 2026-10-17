@@ -4220,7 +4220,7 @@
     "pageTemplatesGroupDecorationDescription": "Imatges, caixes, filets i textos dibuixats sota els marcs. Un text o una imatge poden llegir els atributs de la pàgina: '{'attr.nom'}' per a ::::page'{'nom=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "Elements heretats",
     "pageTemplatesDecorationInheritedHint": "Decoració de la plantilla en què es basa aquesta. Apagueu un element per amagar-lo només en aquesta plantilla.",
-    "pageTemplatesDecorationInheritedShowTooltip": "Apagat, escriu { id, remove: true } a la decoració d'aquesta plantilla (o de la variant que s'edita): l'element continua a la plantilla d'on ve i a les altres que l'estenen.",
+    "pageTemplatesDecorationInheritedShowTooltip": "Apagat, escriu una entrada remove: true a la decoració d'aquesta plantilla (o de la variant que s'edita): l'element continua a la plantilla d'on ve i a les altres que l'estenen.",
     "pageTemplatesFrameGroupIdentity": "Marc",
     "pageTemplatesFrameName": "Nom (ranura)",
     "pageTemplatesFrameNameTooltip": "La ranura que rep aquest marc: el contingut de la pàgina marcat slot=\"nom\" hi va.",

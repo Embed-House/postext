@@ -4221,7 +4221,7 @@
     "pageTemplatesGroupDecorationDescription": "Bilder, Kästen, Linien und Texte unter den Rahmen. Ein Text oder ein Bild kann die Attribute der Seite lesen: '{'attr.name'}' für ::::page'{'name=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "Geerbte Elemente",
     "pageTemplatesDecorationInheritedHint": "Dekoration der Vorlage, auf der diese beruht. Schalten Sie ein Element aus, um es nur in dieser Vorlage auszublenden.",
-    "pageTemplatesDecorationInheritedShowTooltip": "Ausgeschaltet schreibt { id, remove: true } in die Dekoration dieser Vorlage (oder der bearbeiteten Variante): Das Element bleibt in der Vorlage, aus der es stammt, und in den anderen, die sie erweitern.",
+    "pageTemplatesDecorationInheritedShowTooltip": "Ausgeschaltet schreibt einen Eintrag remove: true in die Dekoration dieser Vorlage (oder der bearbeiteten Variante): Das Element bleibt in der Vorlage, aus der es stammt, und in den anderen, die sie erweitern.",
     "pageTemplatesFrameGroupIdentity": "Rahmen",
     "pageTemplatesFrameName": "Name (Platz)",
     "pageTemplatesFrameNameTooltip": "Der Platz, den dieser Rahmen aufnimmt: Inhalt der Seite mit slot=\"name\" kommt hinein.",

@@ -4221,7 +4221,7 @@
     "pageTemplatesGroupDecorationDescription": "Immagini, riquadri, filetti e testi disegnati sotto le cornici. Un testo o un'immagine può leggere gli attributi della pagina: '{'attr.nome'}' per ::::page'{'nome=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "Elementi ereditati",
     "pageTemplatesDecorationInheritedHint": "Decorazione del modello su cui si basa questo. Disattiva un elemento per nasconderlo solo in questo modello.",
-    "pageTemplatesDecorationInheritedShowTooltip": "Disattivato, scrive { id, remove: true } nella decorazione di questo modello (o della variante in modifica): l’elemento resta nel modello da cui viene e negli altri che lo estendono.",
+    "pageTemplatesDecorationInheritedShowTooltip": "Disattivato, scrive una voce remove: true nella decorazione di questo modello (o della variante in modifica): l’elemento resta nel modello da cui viene e negli altri che lo estendono.",
     "pageTemplatesFrameGroupIdentity": "Cornice",
     "pageTemplatesFrameName": "Nome (slot)",
     "pageTemplatesFrameNameTooltip": "Lo slot che questa cornice riceve: il contenuto della pagina marcato slot=\"nome\" va qui.",

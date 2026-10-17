@@ -4220,7 +4220,7 @@
     "pageTemplatesGroupDecorationDescription": "Imágenes, cajas, filetes y textos dibujados bajo los marcos. Un texto o una imagen pueden leer los atributos de la página: '{'attr.nombre'}' para ::::page'{'nombre=\"…\"'}'.",
     "pageTemplatesDecorationInherited": "Elementos heredados",
     "pageTemplatesDecorationInheritedHint": "Decoración de la plantilla en la que se basa esta. Apaga un elemento para ocultarlo solo en esta plantilla.",
-    "pageTemplatesDecorationInheritedShowTooltip": "Apagado, escribe { id, remove: true } en la decoración de esta plantilla (o de la variante que se edita): el elemento sigue en la plantilla de la que viene y en las demás que la extienden.",
+    "pageTemplatesDecorationInheritedShowTooltip": "Apagado, escribe una entrada remove: true en la decoración de esta plantilla (o de la variante que se edita): el elemento sigue en la plantilla de la que viene y en las demás que la extienden.",
     "pageTemplatesFrameGroupIdentity": "Marco",
     "pageTemplatesFrameName": "Nombre (ranura)",
     "pageTemplatesFrameNameTooltip": "La ranura que recibe este marco: el contenido de la página marcado slot=\"nombre\" va a él.",
