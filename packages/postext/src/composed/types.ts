@@ -42,6 +42,12 @@ export interface FrameFitConfig {
   scaleImages?: boolean;
   /** Smallest picture scale, above 0 and at most 1. Default 0.8. */
   imageMinScale?: number;
+  /** A frame whose `overflow.continueIn` sends content to another page
+   *  (`'next-page'`, `'template:<id>'`, `'page:<id>'`) goes on there
+   *  before its pictures or its text shrink, so a story keeps one size
+   *  from page to page (#920). `false`: shrink first and go on only when
+   *  shrinking is not enough. Default true. */
+  preferContinue?: boolean;
 }
 
 export interface FrameOverflowConfig {
@@ -242,6 +248,7 @@ export interface ResolvedFrameFit {
   minScale: number;
   scaleImages: boolean;
   imageMinScale: number;
+  preferContinue: boolean;
 }
 
 export interface ResolvedFrame {

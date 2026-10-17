@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "Quant es pot reduir el text, com a part de la seva mida.",
     "pageTemplatesFitScaleImages": "Reduir les imatges flexibles",
     "pageTemplatesFitImageMinScale": "Mida mínima de les imatges",
+    "pageTemplatesFitPreferContinue": "Continuar abans de reduir",
+    "pageTemplatesFitPreferContinueTooltip": "Quan la resta pot continuar en una altra pàgina, hi va abans que es redueixin les imatges o el text, i el text conserva la mateixa mida d'una pàgina a l'altra. Desactivat: el marc redueix primer i només continua si no n'hi ha prou.",
     "pageTemplatesFrameGroupGroups": "En un grup",
     "pageTemplatesFrameGroupGroupsDescription": "Com es reparteix el marc l'espai del grup amb els altres.",
     "pageTemplatesFrameGrow": "Créixer",

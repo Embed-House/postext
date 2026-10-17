@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "文字最多可缩小到原尺寸的比例。",
     "pageTemplatesFitScaleImages": "缩小可伸缩图片",
     "pageTemplatesFitImageMinScale": "图片最小尺寸",
+    "pageTemplatesFitPreferContinue": "先续排，再缩小",
+    "pageTemplatesFitPreferContinueTooltip": "其余内容可以转到另一页时，先转页，不缩小图片或文字，各页字号保持一致。关闭后，框先缩小，缩小仍放不下时才转页。",
     "pageTemplatesFrameGroupGroups": "在分组中",
     "pageTemplatesFrameGroupGroupsDescription": "此框如何与组内其他框分享空间。",
     "pageTemplatesFrameGrow": "伸展",

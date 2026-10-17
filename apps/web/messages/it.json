@@ -4172,6 +4172,8 @@
     "pageTemplatesFitMinScaleTooltip": "Quanto può ridursi il testo, come parte della sua dimensione.",
     "pageTemplatesFitScaleImages": "Riduci le immagini flessibili",
     "pageTemplatesFitImageMinScale": "Dimensione minima delle immagini",
+    "pageTemplatesFitPreferContinue": "Continua prima di ridurre",
+    "pageTemplatesFitPreferContinueTooltip": "Quando il resto può continuare in un'altra pagina, ci va prima che immagini o testo si riducano, così il testo resta della stessa dimensione da una pagina all'altra. Disattivato: la cornice riduce prima e continua solo se non basta.",
     "pageTemplatesFrameGroupGroups": "In un gruppo",
     "pageTemplatesFrameGroupGroupsDescription": "Come la cornice divide lo spazio del suo gruppo con le altre.",
     "pageTemplatesFrameGrow": "Crescita",

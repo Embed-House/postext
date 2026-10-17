@@ -4172,6 +4172,8 @@
     "pageTemplatesFitMinScaleTooltip": "How far the text may shrink, as a share of its size.",
     "pageTemplatesFitScaleImages": "Shrink flexible pictures",
     "pageTemplatesFitImageMinScale": "Smallest picture size",
+    "pageTemplatesFitPreferContinue": "Go on before shrinking",
+    "pageTemplatesFitPreferContinueTooltip": "When the rest can go on to another page, it goes there before the pictures or the text shrink, so the text keeps one size from page to page. Off: the frame shrinks first and goes on only when that is not enough.",
     "pageTemplatesFrameGroupGroups": "In a group",
     "pageTemplatesFrameGroupGroupsDescription": "How the frame shares the room of its group with the others.",
     "pageTemplatesFrameGrow": "Grow",

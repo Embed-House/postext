@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "Quanto o texto pode encolher, como parte do seu tamanho.",
     "pageTemplatesFitScaleImages": "Reduzir as imagens flexíveis",
     "pageTemplatesFitImageMinScale": "Tamanho mínimo das imagens",
+    "pageTemplatesFitPreferContinue": "Continuar antes de reduzir",
+    "pageTemplatesFitPreferContinueTooltip": "Quando o resto pode continuar em outra página, ele vai para lá antes de as imagens ou o texto diminuírem, e o texto mantém o mesmo tamanho de uma página para outra. Desligado: o quadro reduz primeiro e só continua se isso não bastar.",
     "pageTemplatesFrameGroupGroups": "Num grupo",
     "pageTemplatesFrameGroupGroupsDescription": "Como o bloco divide o espaço do grupo com os outros.",
     "pageTemplatesFrameGrow": "Crescer",

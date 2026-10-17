@@ -3709,6 +3709,8 @@ export interface SandboxLabels {
   pageTemplatesFitMinScaleTooltip: string;
   pageTemplatesFitScaleImages: string;
   pageTemplatesFitImageMinScale: string;
+  pageTemplatesFitPreferContinue: string;
+  pageTemplatesFitPreferContinueTooltip: string;
   pageTemplatesFrameGroupGroups: string;
   pageTemplatesFrameGroupGroupsDescription: string;
   pageTemplatesFrameGrow: string;

@@ -4172,6 +4172,8 @@
     "pageTemplatesFitMinScaleTooltip": "Wie weit der Text schrumpfen darf, als Anteil seiner Größe.",
     "pageTemplatesFitScaleImages": "Flexible Bilder verkleinern",
     "pageTemplatesFitImageMinScale": "Kleinste Bildgröße",
+    "pageTemplatesFitPreferContinue": "Erst weiterführen, dann verkleinern",
+    "pageTemplatesFitPreferContinueTooltip": "Kann der Rest auf einer anderen Seite weitergehen, geht er dorthin, bevor Bilder oder Text kleiner werden, und der Text bleibt von Seite zu Seite gleich groß. Aus: Der Rahmen verkleinert zuerst und geht erst weiter, wenn das nicht reicht.",
     "pageTemplatesFrameGroupGroups": "In einer Gruppe",
     "pageTemplatesFrameGroupGroupsDescription": "Wie der Rahmen den Platz seiner Gruppe mit den anderen teilt.",
     "pageTemplatesFrameGrow": "Wachsen",

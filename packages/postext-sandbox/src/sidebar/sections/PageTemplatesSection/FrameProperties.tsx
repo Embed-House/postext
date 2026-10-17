@@ -345,6 +345,7 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         <NumberInput label={labels.pageTemplatesFitMinScale} value={Math.round(fit.minScale * 100)} min={50} max={100} suffix="%" onChange={(n) => setIn('fit', 'minScale', n / 100)} tooltip={labels.pageTemplatesFitMinScaleTooltip} isDefault={!hasIn('fit', 'minScale')} onReset={() => setIn('fit', 'minScale', undefined)} />
         <ToggleSwitch label={labels.pageTemplatesFitScaleImages} checked={fit.scaleImages} onChange={(v) => setIn('fit', 'scaleImages', v)} isDefault={!hasIn('fit', 'scaleImages')} onReset={() => setIn('fit', 'scaleImages', undefined)} />
         <NumberInput label={labels.pageTemplatesFitImageMinScale} value={Math.round(fit.imageMinScale * 100)} min={30} max={100} suffix="%" onChange={(n) => setIn('fit', 'imageMinScale', n / 100)} isDefault={!hasIn('fit', 'imageMinScale')} onReset={() => setIn('fit', 'imageMinScale', undefined)} />
+        <ToggleSwitch label={labels.pageTemplatesFitPreferContinue} tooltip={labels.pageTemplatesFitPreferContinueTooltip} checked={fit.preferContinue} onChange={(v) => setIn('fit', 'preferContinue', v)} isDefault={!hasIn('fit', 'preferContinue')} onReset={() => setIn('fit', 'preferContinue', undefined)} />
       </FieldGroup>
 
       <FieldGroup title={labels.pageTemplatesFrameGroupGroups} description={labels.pageTemplatesFrameGroupGroupsDescription}>

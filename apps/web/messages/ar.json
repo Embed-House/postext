@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "إلى أيّ حدّ يجوز أن يصغر النص، نسبةً إلى حجمه.",
     "pageTemplatesFitScaleImages": "تصغير الصور المرنة",
     "pageTemplatesFitImageMinScale": "أصغر حجم للصور",
+    "pageTemplatesFitPreferContinue": "المتابعة قبل التصغير",
+    "pageTemplatesFitPreferContinueTooltip": "حين يمكن أن يكمل الباقي في صفحة أخرى، ينتقل إليها قبل أن تصغر الصور أو النص، فيبقى النص بحجم واحد من صفحة إلى أخرى. عند الإيقاف: يصغّر الإطار أولًا ولا يكمل إلا إذا لم يكفِ ذلك.",
     "pageTemplatesFrameGroupGroups": "في مجموعة",
     "pageTemplatesFrameGroupGroupsDescription": "كيف يتقاسم الإطار مساحة مجموعته مع الأطر الأخرى.",
     "pageTemplatesFrameGrow": "التمدّد",

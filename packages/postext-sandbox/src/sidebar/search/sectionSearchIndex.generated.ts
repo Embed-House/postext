@@ -5665,6 +5665,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'pageTemplatesFitImageMinScale',
       'pageTemplatesFitMinScale',
       'pageTemplatesFitMinScaleTooltip',
+      'pageTemplatesFitPreferContinue',
+      'pageTemplatesFitPreferContinueTooltip',
       'pageTemplatesFitScaleImages',
       'pageTemplatesFitShrinkText',
       'pageTemplatesFooter',

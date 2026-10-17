@@ -33,6 +33,7 @@ export const DEFAULT_FRAME_FIT: Readonly<ResolvedFrameFit> = {
   minScale: 0.9,
   scaleImages: true,
   imageMinScale: 0.8,
+  preferContinue: true,
 };
 
 /** What a frame that sets nothing comes to (besides its name). */
@@ -323,6 +324,7 @@ function normalizeFit(raw: unknown): ResolvedFrameFit {
     minScale: scale(f.minScale, DEFAULT_FRAME_FIT.minScale),
     scaleImages: typeof f.scaleImages === 'boolean' ? f.scaleImages : DEFAULT_FRAME_FIT.scaleImages,
     imageMinScale: scale(f.imageMinScale, DEFAULT_FRAME_FIT.imageMinScale),
+    preferContinue: typeof f.preferContinue === 'boolean' ? f.preferContinue : DEFAULT_FRAME_FIT.preferContinue,
   };
 }
 

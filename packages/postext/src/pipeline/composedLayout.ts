@@ -365,34 +365,47 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     //    that shrink gave space back when it was laid.
     if (movesOthers(frame)) steps.push('push');
     // 3. Pictures of the frame and its group, down to imageMinScale.
-    const heads = frame.fit.scaleImages ? pictureHeads(frame) : [];
-    if (heads.length > 0 && frame.fit.imageMinScale < 1) {
+    const scaleImages = (): boolean => {
+      const heads = frame.fit.scaleImages ? pictureHeads(frame) : [];
+      if (heads.length === 0 || frame.fit.imageMinScale >= 1) return false;
       steps.push('scaleImages');
-      if (searchScale(scaleSteps(frame.fit.imageMinScale), (s) => withPictures(fit, heads, s, name), name)) continue;
-    }
+      return searchScale(scaleSteps(frame.fit.imageMinScale), (s) => withPictures(fit, heads, s, name), name);
+    };
     // 4. Redistribute: every other frame of the group gives space (or
     //    width) back, down to its minimum or its content.
-    const g = groupOf.get(name);
-    if (g && g.frames.filter((m) => byName.has(m)).length > 1) {
+    const redistribute = (): boolean => {
+      const g = groupOf.get(name);
+      if (!g || g.frames.filter((m) => byName.has(m)).length <= 1) return false;
       steps.push('redistribute');
-      if (attempt({ ...fit, yieldAll: new Set([...fit.yieldAll, g.name]) }, name)) continue;
-    }
+      return attempt({ ...fit, yieldAll: new Set([...fit.yieldAll, g.name]) }, name);
+    };
     // 5. The frame's text (its whole story), down to fit.minScale.
-    if (frame.fit.shrinkText && frame.fit.minScale < 1 && holdsText(frame)) {
+    const shrinkText = (): boolean => {
+      if (!frame.fit.shrinkText || frame.fit.minScale >= 1 || !holdsText(frame)) return false;
       steps.push('shrinkText');
-      const head = headOf(name);
-      if (searchScale(scaleSteps(frame.fit.minScale), (s) => withText(fit, head, s), name)) continue;
-    }
-    // 6. Continuation on another page (`overflow.continueIn: 'next-page'`
-    //    or `'template:<id>'`, #859). On a page added by continuation, a
-    //    frame that would take none of what it receives sends nothing on
-    //    (it would go on for ever): it warns.
-    if (continuesOffPage(frame.overflow.continueIn)) {
+      return searchScale(scaleSteps(frame.fit.minScale), (s) => withText(fit, headOf(name), s), name);
+    };
+    // 6. Continuation on another page (`overflow.continueIn: 'next-page'`,
+    //    `'template:<id>'` or `'page:<id>'`, #859). On a page added by
+    //    continuation, a frame that would take none of what it receives
+    //    sends nothing on (it would go on for ever): it warns.
+    const goOn = (): boolean => {
+      if (!continuesOffPage(frame.overflow.continueIn)) return false;
       steps.push('continue');
       const before = { fit, cur };
-      if (attempt(goingOn(fit, frame), name) && (!input.continuing || cur.spills.get(name)?.advanced !== false)) continue;
+      if (attempt(goingOn(fit, frame), name) && (!input.continuing || cur.spills.get(name)?.advanced !== false)) return true;
       ({ fit, cur } = before);
-    }
+      return false;
+    };
+    // A frame whose content can go on to another page goes on before its
+    // pictures and text shrink (`fit.preferContinue`, #920): a story keeps
+    // one size from page to page. The pictures and the text shrink only
+    // when it cannot go on (the last page continuation may add, or a
+    // receiver that takes none of it).
+    const order = continuesOffPage(frame.overflow.continueIn) && frame.fit.preferContinue
+      ? [redistribute, goOn, scaleImages, shrinkText]
+      : [scaleImages, redistribute, shrinkText, goOn];
+    for (const step of order) if (step()) break;
   }
 
   // 7. Warn, with what would make each frame that still overflows fit.

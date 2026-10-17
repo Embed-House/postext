@@ -80,7 +80,8 @@ interface FrameConfig {
   takes?: 'h1'|'h2'|…|'h6'      // receives the first heading of that level with no slot
   pin?: boolean                 // never moves or resizes (aligned with artwork)
   grow?: number, shrink?: number, priority?: number   // group negotiation (§5)
-  fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number }
+  fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
+          preferContinue?: boolean }   // continue before 3 and 5 of the ladder (§5.4), default true
   overflow?: { continueIn?: string, mark?: string | false }
   writingMode?, direction?      // as the page; for a vertical box on a horizontal page
   optional?: boolean            // no slotEmpty warning
@@ -461,6 +462,14 @@ For a frame whose content does not fit, stop at the first step that makes it fit
 6. **Continue** (§5.6, §5.12) when `overflow.continueIn` sends content to another page.
 7. **Warn** `frameOverflow`. The content that does not fit is clipped at the frame's edge on paged
    output (it is never dropped from reflowable output, the source map, or the warning).
+
+A frame whose `overflow.continueIn` sends content to another page (`'next-page'`,
+`'template:<id>'`, `'page:<id>'`) takes step 6 right after step 4, before 3 and 5 (#920,
+`fit.preferContinue`, default true): free space, push, redistribute, continue, and only when it
+cannot go on (the last page continuation may add, a receiver that takes none of it) smaller
+pictures, then smaller text. A story set across pages keeps one size; a magazine's last page of an
+article is not set smaller than the pages before it. `fit.preferContinue: false` keeps the order
+above (shrink a few lines' worth, go on only when that is not enough).
 
 The ladder is deterministic: same input, same output; steps are tried in this order with fixed
 step sizes; ties break by template order. A change is confined to its page (or spread), except for

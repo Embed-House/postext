@@ -60,7 +60,7 @@ const FRAME_KEYS = {
   exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
   overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
-const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true } satisfies Record<keyof FrameFitConfig, true>;
+const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true, preferContinue: true } satisfies Record<keyof FrameFitConfig, true>;
 const OVERFLOW_KEYS = { continueIn: true, mark: true } satisfies Record<keyof FrameOverflowConfig, true>;
 const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisfies Record<keyof CalloutPaddingConfig, true>;
 const GROUP_KEYS = {

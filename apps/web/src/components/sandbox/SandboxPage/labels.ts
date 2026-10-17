@@ -3612,6 +3612,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     pageTemplatesFitMinScaleTooltip: t("pageTemplatesFitMinScaleTooltip"),
     pageTemplatesFitScaleImages: t("pageTemplatesFitScaleImages"),
     pageTemplatesFitImageMinScale: t("pageTemplatesFitImageMinScale"),
+    pageTemplatesFitPreferContinue: t("pageTemplatesFitPreferContinue"),
+    pageTemplatesFitPreferContinueTooltip: t("pageTemplatesFitPreferContinueTooltip"),
     pageTemplatesFrameGroupGroups: t("pageTemplatesFrameGroupGroups"),
     pageTemplatesFrameGroupGroupsDescription: t("pageTemplatesFrameGroupGroupsDescription"),
     pageTemplatesFrameGrow: t("pageTemplatesFrameGrow"),

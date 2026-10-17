@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "文字を元のサイズに対してどこまで縮めてよいか。",
     "pageTemplatesFitScaleImages": "可変の画像を縮小する",
     "pageTemplatesFitImageMinScale": "画像の最小サイズ",
+    "pageTemplatesFitPreferContinue": "縮小より先に続ける",
+    "pageTemplatesFitPreferContinueTooltip": "残りを別のページに続けられるときは、画像や文字を縮小する前にそのページへ続けるので、文字の大きさがページごとに変わりません。オフ：枠はまず縮小し、それでも収まらないときだけ続けます。",
     "pageTemplatesFrameGroupGroups": "グループ内",
     "pageTemplatesFrameGroupGroupsDescription": "この枠がグループのスペースをほかの枠とどう分け合うか。",
     "pageTemplatesFrameGrow": "伸長",

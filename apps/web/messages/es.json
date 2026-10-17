@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "Cuánto puede reducirse el texto, como parte de su tamaño.",
     "pageTemplatesFitScaleImages": "Reducir las imágenes flexibles",
     "pageTemplatesFitImageMinScale": "Tamaño mínimo de las imágenes",
+    "pageTemplatesFitPreferContinue": "Seguir antes de reducir",
+    "pageTemplatesFitPreferContinueTooltip": "Cuando el resto puede seguir en otra página, va allí antes de que se reduzcan las imágenes o el texto, y el texto conserva el mismo tamaño de una página a otra. Desactivado: el marco reduce primero y solo sigue si no basta.",
     "pageTemplatesFrameGroupGroups": "En un grupo",
     "pageTemplatesFrameGroupGroupsDescription": "Cómo se reparte el marco el sitio de su grupo con los demás.",
     "pageTemplatesFrameGrow": "Crecer",

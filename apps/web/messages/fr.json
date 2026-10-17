@@ -4171,6 +4171,8 @@
     "pageTemplatesFitMinScaleTooltip": "Jusqu’où le texte peut se réduire, en part de sa taille.",
     "pageTemplatesFitScaleImages": "Réduire les images souples",
     "pageTemplatesFitImageMinScale": "Taille minimale des images",
+    "pageTemplatesFitPreferContinue": "Continuer avant de réduire",
+    "pageTemplatesFitPreferContinueTooltip": "Quand le reste peut continuer sur une autre page, il y va avant que les images ou le texte rapetissent : le texte garde la même taille d’une page à l’autre. Désactivé : le bloc réduit d’abord et ne continue que si cela ne suffit pas.",
     "pageTemplatesFrameGroupGroups": "Dans un groupe",
     "pageTemplatesFrameGroupGroupsDescription": "Comment le bloc partage la place de son groupe avec les autres.",
     "pageTemplatesFrameGrow": "Croissance",
