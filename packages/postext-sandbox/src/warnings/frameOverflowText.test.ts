@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { valueInWords } from './proposalActions';
 import { fitProposalText, fitStepText, frameOverflowDetail } from './frameOverflowText';
 
 describe('frameOverflow in the Checks panel (#858)', () => {
@@ -25,5 +26,22 @@ describe('frameOverflow in the Checks panel (#858)', () => {
     expect(fitStepText('shrinkText', { scale: 0.925 }, DEFAULT_LABELS)).toBe('text down to 92.5 %');
     expect(fitStepText('continue', { scale: 1 }, DEFAULT_LABELS)).toContain('another page');
     expect(fitProposalText({ kind: 'shortenText', value: 9 }, DEFAULT_LABELS)).toBe('cut about 9 characters');
+  });
+
+  it('writes numbers in the interface language, not with a dot (#938)', () => {
+    expect(fitStepText('shrinkText', { scale: 0.725 }, DEFAULT_LABELS, 'es')).toBe('text down to 72,5 %');
+    expect(fitStepText('scaleImages', { scale: 1, imageScale: 0.825 }, DEFAULT_LABELS, 'de')).toContain('82,5 %');
+    expect(fitProposalText({ kind: 'allowShrink', path: '/x', value: 0.725 }, DEFAULT_LABELS, 'es')).toContain('72,5 %');
+    expect(fitProposalText({ kind: 'allowShrink', path: '/x', value: 0.725 }, DEFAULT_LABELS, 'en')).toContain('72.5 %');
+    expect(fitProposalText({ kind: 'raiseMax', path: '/x', value: { value: 66.5, unit: 'mm' } }, DEFAULT_LABELS, 'fr')).toContain('66,5 mm');
+    const text = frameOverflowDetail({
+      kind: 'frameOverflow', template: 'tema', frame: 'caja', fenceIndex: 0, overflowMm: 4.25, page: 3, configPath: '/pageTemplates/0/frames/2',
+      stepsTried: ['shrinkText'], scale: 0.725,
+      proposals: [{ kind: 'allowShrink', path: '/x', value: 0.725 }],
+    }, DEFAULT_LABELS, 'es');
+    expect(text).toContain('4,3 mm');
+    expect(text).toContain('72,5 %');
+    expect(text).not.toContain('72.5');
+    expect(valueInWords({ value: 66.5, unit: 'mm' }, 'es')).toBe('66,5 mm');
   });
 });

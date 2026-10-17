@@ -121,7 +121,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
       }
       const limit = (args.limit as number | undefined) ?? 100;
       const wanted = all.filter(({ warning }) => args.category === undefined || warningCategory(warning.payload.kind) === args.category);
-      const { labels } = store.getSnapshot();
+      const { labels, locale } = store.getSnapshot();
       return {
         laidOut,
         scope: whole ? 'book' : 'chapter',
@@ -136,7 +136,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
             kind: w.payload.kind,
             category: warningCategory(w.payload.kind),
             title: titleFor(w.payload, labels),
-            detail: detailFor(w.payload, labels),
+            detail: detailFor(w.payload, labels, locale),
             ...(chapter !== null ? { chapter } : {}),
             ...(w.chapterLine ?? w.line ? { line: w.chapterLine ?? w.line } : {}),
             ...(w.chapterStart !== undefined ? { offset: w.chapterStart, toOffset: w.chapterEnd ?? w.chapterStart } : {}),

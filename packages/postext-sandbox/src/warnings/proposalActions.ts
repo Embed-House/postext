@@ -23,6 +23,7 @@ import type { TextChange } from '../book/textChanges';
 import { fenceTemplateChange, templateFences } from '../templates/templateUsage';
 import { applyViewerEdit } from '../editor/viewerEdits';
 import type { Warning, WarningPayload } from './types';
+import { localNumber } from '../viewport/composed/reflowText';
 
 type FrameOverflowPayload = Extract<WarningPayload, { kind: 'frameOverflow' }>;
 
@@ -131,7 +132,7 @@ export function pointerInWords(config: PostextConfig, pointer: string): string {
 export function valueInWords(v: unknown, locale?: string): string {
   if (isRecord(v) && typeof v.value === 'number' && typeof v.unit === 'string') {
     const d = v as unknown as Dimension;
-    return `${Math.round(d.value * 10) / 10} ${d.unit}`;
+    return `${localNumber(d.value, locale)} ${d.unit}`;
   }
   if (typeof v === 'number') {
     try {

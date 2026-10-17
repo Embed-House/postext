@@ -13,6 +13,7 @@ import { preflightDetail, preflightTitle } from '../print/preflightText';
 import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { frameOverflowDetail } from '../warnings/frameOverflowText';
+import { localNumber } from '../viewport/composed/reflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
 import { isComposedCheckKind } from '../warnings/composedChecks';
@@ -525,7 +526,7 @@ function formatVariantList(
 }
 
 /** What the panel says under a warning's title. */
-export function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
+export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale?: string): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightDetail(payload.check, labels);
@@ -624,7 +625,7 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `:::page{template=…} — ${labels.warningsPageFenceLengthDetail}`;
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
-      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels, locale)}`;
     case 'continueTargetMissing':
       return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
         .replace('__page__', String(payload.page))
@@ -634,7 +635,7 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
         .replace('__page__', String(payload.page))
         .replace('__pages__', String(payload.pages))
-        .replace('__mm__', payload.overflowMm.toFixed(1))
+        .replace('__mm__', localNumber(payload.overflowMm, locale))
         .replace('__template__', payload.template)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
@@ -938,12 +939,15 @@ function isFontWarning(kind: WarningPayload['kind']): boolean {
 function WarningItem({
   warning,
   labels,
+  locale,
   multiChapter,
   onClick,
   onAnchor,
 }: {
   warning: Warning;
   labels: SandboxLabels;
+  /** The interface language, for numbers (#938). */
+  locale?: string;
   multiChapter: boolean;
   onClick: (w: Warning) => void;
   /** A figure label's warning (#866): the anchor in the picture's anchor
@@ -957,7 +961,7 @@ function WarningItem({
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
-  const detail = detailFor(warning.payload, labels);
+  const detail = detailFor(warning.payload, labels, locale);
   const line = warning.chapterLine ?? warning.line;
   const chapterTag = multiChapter && warning.chapterIndex !== undefined
     ? labels.warningsChapterLabel.replace('__n__', String(warning.chapterIndex + 1))
@@ -1057,7 +1061,7 @@ export function WarningsPanel() {
             editions={composed.editions}
             labels={labels}
             title={(w) => titleFor(w.payload, labels)}
-            detail={(w) => detailFor(w.payload, labels)}
+            detail={(w) => detailFor(w.payload, labels, state.locale)}
             onAnchor={handleAnchor}
           />
         )}
@@ -1068,7 +1072,7 @@ export function WarningsPanel() {
             <WarningGroup key={category} title={categoryLabel(category, labels)} count={items.length}>
               {items.map((w) => (
                 <li key={w.id}>
-                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
+                  <WarningItem warning={w} labels={labels} locale={state.locale} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
                 </li>
               ))}
             </WarningGroup>
