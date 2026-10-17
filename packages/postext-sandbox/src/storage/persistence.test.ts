@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CONFIG_VERSION } from 'postext/bundle';
 import { clearStorage, loadEpubLayout, loadPanel, loadProjectId, saveEpubLayout, saveProjectId } from './persistence';
 
@@ -366,5 +366,33 @@ describe('working configuration', () => {
     clearStorage();
     expect(map.has('postext-sandbox-config')).toBe(false);
     expect(map.has('postext-sandbox-config-version')).toBe(false);
+  });
+});
+
+describe('a full browser storage', () => {
+  it('does not crash the autosave of the configuration or the book', async () => {
+    const map = installStorage();
+    const full = { getItem: (k: string) => map.get(k) ?? null, removeItem: () => {}, setItem: () => { throw new DOMException('full', 'QuotaExceededError'); } };
+    (globalThis as { window?: unknown }).window = { localStorage: full };
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { saveBook, saveConfig } = await import('./persistence');
+    expect(() => saveConfig({ headings: { fontFamily: 'Georgia' } })).not.toThrow();
+    expect(() => saveBook({ chapters: [{ id: 'c1', title: 'One', markdown: '# One' }], activeChapterId: 'c1' } as never)).not.toThrow();
+    expect(warn).toHaveBeenCalledTimes(2);
+    expect(map.size).toBe(0);
+    warn.mockRestore();
+  });
+
+  it('writes the version stamp only after the configuration', async () => {
+    let writes = 0;
+    const map = new Map<string, string>();
+    (globalThis as { window?: unknown }).window = {
+      localStorage: { getItem: (k: string) => map.get(k) ?? null, removeItem: () => {}, setItem: (k: string, v: string) => { if (++writes > 1) throw new Error('full'); map.set(k, v); } },
+    };
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { saveConfig } = await import('./persistence');
+    expect(() => saveConfig({ headings: { fontFamily: 'Georgia' } })).not.toThrow();
+    expect([...map.keys()]).toEqual(['postext-sandbox-config']);
+    vi.restoreAllMocks();
   });
 });
