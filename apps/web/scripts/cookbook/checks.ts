@@ -212,9 +212,16 @@ export interface ComposedFrameFact {
   continuesTo?: string;
   continuedFrom?: string;
   filled?: true;
-  /** How far the reflow moved the frame past the foot of the type area,
-   *  where the template had it inside (#911). */
+  /** How far the reflow moved the frame past an edge of the type area,
+   *  where the template had it inside (#911; the four edges and the spread
+   *  sheet, #948). */
   pushedOutMm?: number;
+  /** Which edge: `foot`, `head`, `left` or `right` (in the frame the page
+   *  is laid out in). Absent from a probe before #948: the foot. */
+  pushedOutEdge?: "foot" | "head" | "left" | "right";
+  /** `bleed`: the template had the frame outside the area on that edge, and
+   *  it ran past the bleed. Absent: past the type area. */
+  pushedOutOf?: "bleed";
 }
 
 /** An entry of a composed page's reflow log (`VDTComposedPage.log`). */
@@ -1272,6 +1279,14 @@ export interface StressInput {
   base: ProbeFacts | null;
 }
 
+/** Where a frame was pushed to: "the foot of the type area", "the right
+ *  edge of the bleed"… */
+function pushedEdgeText(f: ComposedFrameFact): string {
+  const edge = f.pushedOutEdge ?? "foot";
+  const edgeName = edge === "head" ? "the head" : edge === "foot" ? "the foot" : `the ${edge} edge`;
+  return `${edgeName} of the ${f.pushedOutOf === "bleed" ? "bleed" : "type area"}`;
+}
+
 /**
  * C38: the stress test (`--stress 1.3`). The edition laid out again with
  * every text `factor` times as long (lib/cookbook/bench.ts
@@ -1306,10 +1321,11 @@ export function stressFindings(input: StressInput): Finding[] {
   const bases = basePages(stretchedPages, input.base?.composed?.pages);
   stretchedPages.forEach((page, i) => {
     add("info", pageStory(page, bases[i], stretchedPages));
-    // A frame pushed past the foot of the type area (#911): what it stands
-    // for (an answer space, a picture slot) is off the page.
+    // A frame pushed past an edge of the type area (#911) or, on a spread,
+    // of the sheet (#948): what it stands for (an answer space, a picture
+    // slot) is off the page.
     for (const f of page.frames) {
-      if ((f.pushedOutMm ?? 0) > 0) add("fail", `p. ${page.n} (${page.template}): frame "${f.name}" was pushed ${f.pushedOutMm} mm past the foot of the type area`);
+      if ((f.pushedOutMm ?? 0) > 0) add("fail", `p. ${page.n} (${page.template}): frame "${f.name}" was pushed ${f.pushedOutMm} mm past ${pushedEdgeText(f)}`);
     }
   });
   for (const w of c?.warnings ?? []) {
