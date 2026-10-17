@@ -133,6 +133,17 @@ describe('a story that jumps to a later chapter, in the book plan (#943)', () =>
     expect([...settled.docs.keys()]).toEqual(['b']);
   });
 
+  it('a chapter that receives a story referring to anchors gets the book\'s outline', () => {
+    const refs = [
+      newChapter('a', 'Artículo', `::::page{template="articulo" sigue="p-salto"}\n${para('art', 900)}\n\nVer :ref{id="anc"} y [el ancla]{#anc}.\n::::\n`, 1),
+      ...book().slice(1),
+    ];
+    const { plan } = paginate(refs);
+    expect(plan.byId.c!.continuation?.jumps?.[0]?.outline).toBe(true);
+    expect(plan.byId.c!.outline).toBeDefined();
+    expect(paginate(book()).plan.byId.c!.outline).toBeUndefined();
+  });
+
   it('a book without such stories keeps the keys it had', () => {
     const plain = [newChapter('a', 'A', '# A\n\ntexto\n', 1), newChapter('b', 'B', '# B\n\ntexto\n', 1)];
     const planner = createBookPlanner();
