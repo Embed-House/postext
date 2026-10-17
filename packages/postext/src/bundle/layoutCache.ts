@@ -17,6 +17,7 @@
 
 import type { OutlineEntry } from '../types';
 import type { StoryJump } from '../composed/carry';
+import type { CarriedPlace } from '../pipeline/carriedOutline';
 import type { VDTDocument } from '../vdt';
 
 /** What a build needs of a chapter laid out, besides its document: what
@@ -36,6 +37,9 @@ export interface ChapterRecord {
    *  (#943), kept apart from `doc` so they stand when the document is
    *  dropped. */
   jumps?: StoryJump[];
+  /** Where the marks, anchors and headings written in the stories this
+   *  chapter received landed (#988), for the sending chapters' entries. */
+  carried?: CarriedPlace[];
 }
 
 /** What the last build did with the chapters. */

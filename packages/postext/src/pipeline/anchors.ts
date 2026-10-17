@@ -55,7 +55,9 @@ export function locateAnchors(
 
   const lines: { start: number; end: number; page: number; x: number; y: number }[] = [];
   const add = (b: VDTBlock): void => {
-    if (b.pageIndex < 0 || b.hidden) return;
+    // Offsets of a story that came from another chapter are offsets in its
+    // file (#988): its anchors are located by `carriedOutline`.
+    if (b.pageIndex < 0 || b.hidden || b.sourceChapter !== undefined) return;
     // A display formula's line maps no source of its own: the formula is
     // where its labels' anchors land (#530).
     if (b.type === 'mathDisplay' && b.sourceStart !== undefined && b.sourceEnd !== undefined) {
@@ -82,6 +84,13 @@ export function locateAnchors(
     }
     return lo - 1;
   };
+  // The anchors written in the stories this chapter sent to another one
+  // (#988): the chapter that lays the words locates them.
+  const sent = new Set<number>();
+  for (const jump of doc.pendingJumps ?? []) {
+    if (jump.chapter !== undefined) continue;
+    for (const b of jump.blocks) for (const m of b.anchorMarks ?? []) sent.add(m.sourceStart);
+  }
   for (const mark of marks) {
     if (mark.anchor < 0 || lines.length === 0) continue;
     const at = mark.anchor + bodyOffset;
@@ -91,6 +100,7 @@ export function locateAnchors(
       const l = lines[j]!;
       if (at >= l.start && at < l.end && (line === undefined || l.page < line.page)) line = l;
     }
+    if (line === undefined && sent.has(mark.sourceStart)) continue;
     line ??= mark.attach === 'before' ? lines[i] ?? lines[i + 1] : lines[i + 1] ?? lines[i];
     if (!line) continue;
     out.push({ id: mark.anchorId, kind: 'anchor', pageIndex: line.page, x: line.x, y: line.y, sourceStart: mark.sourceStart });

@@ -13,6 +13,7 @@ import {
   pageIsVertical,
   flowRectToPage,
   type VDTDocument,
+  type VDTAnchor,
   type VDTBlock,
   type VDTColumn,
   type VDTExclusion,
@@ -81,6 +82,7 @@ import {
   planHeadingSections,
 } from './headingStyles';
 import { locateAnchors } from './anchors';
+import { locateCarriedOutline } from './carriedOutline';
 import { applyCitations, citationLocale, processCitations, withBibliographyStyle } from './citations';
 import { bookCitationContexts, needsCitationContext } from '../citations/context';
 import { anchorTargetsOf, hasAnchorRefs, printsAnchorPages } from './crossRefs';
@@ -9046,7 +9048,10 @@ function placeDocumentPass(
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   if (pendingJumps.length > 0) doc.pendingJumps = pendingJumps;
-  if (carried) stampCarriedSource(doc, carried, fenceEnd);
+  if (carried) {
+    stampCarriedSource(doc, carried, fenceEnd);
+    carriedByDoc.set(doc, { carried, bodyOffset });
+  }
   // The composition rules (#749): short lists cut, floats on opener pages.
   const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
@@ -9367,8 +9372,18 @@ export function resolveJumpMarks(docs: readonly VDTDocument[]): void {
   });
 }
 
+/** The stories carried into a document (#943) and its body offset, for
+ *  `withIndexMarks`: the marks, anchors and headings written in them are
+ *  located once the pages are final (#988). */
+const carriedByDoc = new WeakMap<VDTDocument, { carried: ImportedJumps; bodyOffset: number }>();
+
 /** `doc` with the page of each of its index marks (`doc.indexMarks`). */
 function withIndexMarks(doc: VDTDocument, content: PostextContent): VDTDocument {
+  const came = carriedByDoc.get(doc);
+  if (came) {
+    const located = locateCarriedOutline(doc, came.carried, came.bodyOffset);
+    if (located.length > 0) doc.carriedOutline = located;
+  }
   const { content: body, contentOffset } = extractFrontmatter(content.markdown);
   const blocks = parseMarkdownMemo(body, codeParseOptions(doc.config));
   if (content.markdown.includes(':index')) {
@@ -9378,6 +9393,11 @@ function withIndexMarks(doc: VDTDocument, content: PostextContent): VDTDocument 
   // Where every anchor landed (#261), for links and page references.
   const anchors = locateAnchors(doc, blocks, contentOffset);
   if (anchors) doc.anchors = anchors;
+  // The anchors written in a story that came in are destinations here, on
+  // the page of the words (#988).
+  const known = new Set((doc.anchors ?? []).map((a) => `${a.kind}:${a.id}`));
+  const carriedAnchors = (doc.carriedOutline ?? []).flatMap((c): VDTAnchor[] => (c.anchor && !known.has(`${c.kind === 'heading' ? 'heading' : 'anchor'}:${c.anchor.id}`) ? [{ id: c.anchor.id, kind: c.kind === 'heading' ? 'heading' : 'anchor', pageIndex: c.pageIndex, x: c.anchor.x, y: c.anchor.y, sourceStart: c.sourceStart, chapter: c.chapter }] : []));
+  if (carriedAnchors.length > 0) doc.anchors = [...(doc.anchors ?? []), ...carriedAnchors];
   return doc;
 }
 

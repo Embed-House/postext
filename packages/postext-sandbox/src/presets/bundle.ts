@@ -259,6 +259,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
         lastPageNumber: layout.lastPageNumber,
         lastPageFormat: layout.lastPageFormat,
         outlinePages: layout.outlinePages,
+        ...(layout.carriedOutline ? { carriedOutline: layout.carriedOutline } : {}),
         outlineKey: layout.outlineKey,
         // The stories the chapter sends to a page of a later one (#943).
         ...(layout.jumps ? { jumps: layout.jumps, jumpsKey: layout.jumpsKey } : {}),

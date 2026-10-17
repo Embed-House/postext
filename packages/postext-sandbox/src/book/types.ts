@@ -107,6 +107,17 @@ export interface OutlinePage {
   format: NumeralStyle;
 }
 
+/** Where an index mark, anchor or heading written in a story this chapter
+ *  received from another one landed (#988), keyed as the sending chapter's
+ *  outline entry is: `chapter` is its position in the book, `sourceStart`
+ *  the offset of the thing in that chapter's body. */
+export interface CarriedOutlinePage {
+  chapter: number;
+  kind: 'indexMark' | 'anchor' | 'heading';
+  sourceStart: number;
+  page: OutlinePage;
+}
+
 /** What the last layout of a chapter on its own recorded, with the inputs
  *  it was built from so a stale record is told from a current one. Page
  *  numbers are not part of the inputs: a chapter's page count only depends
@@ -161,6 +172,11 @@ export interface ChapterLayout {
    *  an entry that reached no page. The book's table of contents is
    *  assembled from these, placed on the current page chain. */
   outlinePages: (OutlinePage | null)[];
+  /** Where the index marks, anchors and headings of the stories the chapter
+   *  received landed (#988); the sending chapters' outline entries take
+   *  their pages from here. Absent when it received none or they hold
+   *  none. */
+  carriedOutline?: CarriedOutlinePage[];
   /** {@link ChapterPlan.outlineKey} at build time: the book outline a
    *  chapter printing the contents was laid out with (`''` otherwise). */
   outlineKey: string;

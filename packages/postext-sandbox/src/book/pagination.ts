@@ -6,9 +6,9 @@
 // on across chapters without ever laying out the whole book in a preview.
 
 import { builtWithoutFaces } from './withoutFaces';
-import { anchorOutline, bookCitationContexts, citationContextKey, citationSourceOf, mayNeedCitations, needsCitationContext, configUsesPlaceholder, contentOutline, continuationAfter, extractFrontmatter, formatNumeral, indexOutline, outlineFromDoc, outlineKey, parseMarkdown, resolveHeadingsConfig, resolvePageConfig, DEFAULT_PARTS_CONFIG, tocOutline } from 'postext';
-import type { CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
-import type { BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
+import { anchorOutline, bookCitationContexts, citationContextKey, citationSourceOf, mayNeedCitations, needsCitationContext, configUsesPlaceholder, contentOutline, continuationAfter, extractFrontmatter, formatNumeral, indexOutline, mergeCarriedOutline, outlineFromDoc, outlineKey, parseMarkdown, resolveHeadingsConfig, resolvePageConfig, DEFAULT_PARTS_CONFIG, tocOutline } from 'postext';
+import type { CarriedPlace, CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
+import type { BookPages, BookPlan, BookStart, CarriedOutlinePage, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
 import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
 import { createPageIdsCache, jumpsKeyOf, keyOf, laterIdsOfBook, routeJumps } from './jumps';
 import type { StoryJump } from 'postext';
@@ -32,6 +32,17 @@ function sameLineNumber(a: ChapterPageNumber | undefined, b: ChapterPageNumber |
 function lineCountBase(config: PostextConfig): number {
   const startAt = config.lineNumbers?.startAt;
   return (typeof startAt === 'number' && Number.isFinite(startAt) && startAt >= 0 ? Math.floor(startAt) : 1) - 1;
+}
+
+function sameCarriedOutline(a: readonly CarriedOutlinePage[] | undefined, b: readonly CarriedOutlinePage[] | undefined): boolean {
+  const x = a ?? [];
+  const y = b ?? [];
+  if (x.length !== y.length) return false;
+  return x.every((c, i) => {
+    const d = y[i]!;
+    return c.chapter === d.chapter && c.kind === d.kind && c.sourceStart === d.sourceStart
+      && c.page.index === d.page.index && c.page.format === d.page.format && samePageNumber(c.page.number, d.page.number);
+  });
 }
 
 function sameOutlinePages(a: readonly (OutlinePage | null)[], b: readonly (OutlinePage | null)[]): boolean {
@@ -212,7 +223,8 @@ export function sameChapterLayout(a: ChapterLayout | undefined, b: ChapterLayout
     && a.outlineKey === b.outlineKey
     && (a.jumpsKey ?? '') === (b.jumpsKey ?? '')
     && !!a.withoutFaces === !!b.withoutFaces
-    && sameOutlinePages(a.outlinePages, b.outlinePages);
+    && sameOutlinePages(a.outlinePages, b.outlinePages)
+    && sameCarriedOutline(a.carriedOutline, b.carriedOutline);
 }
 
 /** The number of a chapter whose outline is `outline`, after the counters
@@ -462,18 +474,46 @@ export function createBookPlanner(): BookPlanner {
         }
         return null;
       };
-      const bookOutline: OutlineEntry[] = anyToc
-        ? chapters.flatMap((_chapter, index) => {
+      // The entries each chapter's record places, then the pages the
+      // receiving chapters found for the marks, anchors and headings of the
+      // stories they carry put into the sender's (#988).
+      const placedOutlines = anyToc
+        ? chapters.map((_chapter, index): readonly OutlineEntry[] => {
           const text = entries[index]!.outline;
           const layout = records[index];
           const start = starts[index];
           if (!layout || !start || layout.outlinePages.length !== text.length) return text;
+          return placeOutline(text, layout.outlinePages, start);
+        })
+        : [];
+      const carriedPlaces = anyToc
+        ? records.map((layout, index): CarriedPlace[] | undefined => {
+          const start = starts[index];
+          if (!layout?.carriedOutline || !start) return undefined;
+          return layout.carriedOutline.map((c) => ({
+            chapter: c.chapter,
+            kind: c.kind,
+            sourceStart: c.sourceStart,
+            pageLabel: formatNumeral(resolvePageNumber(c.page.number, start.number), c.page.format),
+            pageIndex: start.physical + c.page.index,
+            pageFormat: c.page.format,
+          }));
+        })
+        : [];
+      const mergedOutlines = anyToc ? mergeCarriedOutline(placedOutlines, carriedPlaces) : [];
+      const bookOutline: OutlineEntry[] = anyToc
+        ? chapters.flatMap((_chapter, index) => {
+          const placed = mergedOutlines[index] as OutlineEntry[];
+          const text = entries[index]!.outline;
+          const layout = records[index];
+          const start = starts[index];
+          if (!layout || !start || layout.outlinePages.length !== text.length) return placed;
           // A part that reached no page of its chapter — set without a
           // divider page (`parts.page: false`) by a fence closing the
           // chapter — starts with the next chapter's content, as its
           // running heads do.
           let next: { pageLabel: string; pageIndex: number } | null | undefined;
-          return placeOutline(text, layout.outlinePages, start).map((entry) => {
+          return placed.map((entry) => {
             if (entry.kind !== 'part' || entry.pageIndex !== undefined) return entry;
             if (next === undefined) next = firstContentPageFrom(index + 1);
             return next ? { ...entry, ...next } : entry;
@@ -639,6 +679,11 @@ export function chapterLayoutFromDoc(
     const page = doc.pages[index];
     return page ? { index, number: numberOf(index), format: page.pageNumberFormat } : null;
   });
+  // The marks, anchors and headings of the stories that came in (#988).
+  const carriedOutline = (doc.carriedOutline ?? []).flatMap((c): CarriedOutlinePage[] => {
+    const page = doc.pages[c.pageIndex];
+    return page ? [{ chapter: c.chapter, kind: c.kind, sourceStart: c.sourceStart, page: { index: c.pageIndex, number: numberOf(c.pageIndex), format: page.pageNumberFormat } }] : [];
+  });
   return {
     chapterId: plan.chapterId,
     markdown: inputs.markdown,
@@ -658,6 +703,7 @@ export function chapterLayoutFromDoc(
       ? { lastLineNumber: doc.lineNumberRestarted ? { value: doc.lastLineNumber } : { delta: doc.lastLineNumber - (plan.continuation?.lineNumber ?? lineCountBase(inputs.config)) } }
       : {}),
     outlinePages,
+    ...(carriedOutline.length > 0 ? { carriedOutline } : {}),
     outlineKey: plan.outlineKey,
     // The stories the chapter sends to a page of a later one (#943).
     ...(doc.pendingJumps && doc.pendingJumps.length > 0 ? { jumps: doc.pendingJumps, jumpsKey: jumpsKeyOf(doc.pendingJumps) } : {}),

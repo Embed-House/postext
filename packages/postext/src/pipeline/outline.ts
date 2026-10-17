@@ -261,10 +261,29 @@ export function outlineFromDoc(doc: VDTDocument, parsedOutline: readonly Outline
   // Page (label and book index) per heading content index (first fragment
   // of a split heading).
   const headingPage = new Map<number, { pageLabel: string; pageIndex: number }>();
+  // The headings written in the stories this chapter sent to another one
+  // (#988), by their offset in its body: the chapter that has the page lays
+  // the rest, so they hold no place in the order of the heading blocks;
+  // those it laid itself are found by their source.
+  const sentHeadings = new Set<number>();
+  let sentOffset = 0;
+  for (const jump of doc.pendingJumps ?? []) {
+    if (jump.chapter !== undefined) continue;
+    sentOffset = jump.bodyOffset;
+    for (const block of jump.blocks) if (block.type === 'heading') sentHeadings.add(block.sourceStart);
+  }
+  const sentPage = new Map<number, { pageLabel: string; pageIndex: number }>();
   for (const b of doc.blocks) {
     if (b.type !== 'heading' || b.contentIndex === undefined || b.pageIndex < 0) continue;
+    // A heading of a story that came in is its sender's (#988).
+    if (b.sourceChapter !== undefined) continue;
     if (headingPage.has(b.contentIndex)) continue;
-    headingPage.set(b.contentIndex, { pageLabel: doc.pages[b.pageIndex]?.pageLabel ?? '', pageIndex: offset + b.pageIndex });
+    const where = { pageLabel: doc.pages[b.pageIndex]?.pageLabel ?? '', pageIndex: offset + b.pageIndex };
+    if (b.sourceStart !== undefined && sentHeadings.has(b.sourceStart - sentOffset)) {
+      if (!sentPage.has(b.sourceStart - sentOffset)) sentPage.set(b.sourceStart - sentOffset, where);
+      continue;
+    }
+    headingPage.set(b.contentIndex, where);
   }
   const partPages: ({ pageLabel: string; pageIndex: number } | undefined)[] = [];
   for (const page of doc.pages) if (page.partInfo) partPages.push({ pageLabel: page.pageLabel, pageIndex: offset + page.index });
@@ -282,7 +301,8 @@ export function outlineFromDoc(doc: VDTDocument, parsedOutline: readonly Outline
   for (const m of doc.indexMarks ?? []) markPage.set(m.sourceStart, m.pageIndex);
   // Anchors: the page the build found for each (`doc.anchors`).
   const anchorPage = new Map<number, number>();
-  for (const a of doc.anchors ?? []) if (a.sourceStart !== undefined) anchorPage.set(a.sourceStart, a.pageIndex);
+  // (An anchor written in a story that came in is its sender's, #988.)
+  for (const a of doc.anchors ?? []) if (a.sourceStart !== undefined && a.chapter === undefined) anchorPage.set(a.sourceStart, a.pageIndex);
   let h = 0;
   let p = 0;
   return parsedOutline.map((entry) => {
@@ -301,6 +321,10 @@ export function outlineFromDoc(doc: VDTDocument, parsedOutline: readonly Outline
     if (entry.kind === 'part') {
       const page = partPages[p++];
       return page !== undefined ? { ...entry, ...page } : { ...entry };
+    }
+    if (entry.headingSource !== undefined && sentHeadings.has(entry.headingSource)) {
+      const placed = sentPage.get(entry.headingSource);
+      return placed !== undefined ? { ...entry, ...placed } : { ...entry };
     }
     const idx = headingIndices[h++];
     const page = idx !== undefined ? headingPage.get(idx) : undefined;

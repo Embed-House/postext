@@ -260,6 +260,15 @@ function invertAffine([a, b, c, d, e, f]: Affine): Affine {
   return [d / det, -b / det, -c / det, a / det, (c * f - d * e) / det, (b * e - a * f) / det];
 }
 
+/** The editor's selection on text a story carried in from the chapter being
+ *  edited (#943, #988): `chapter` is that chapter's position in the book,
+ *  whose file the carried blocks' offsets are in. `only`: the page is not
+ *  the chapter's own, so nothing but those words is marked. */
+export interface CarriedSelection {
+  chapter: number;
+  only?: boolean;
+}
+
 export function drawOverlay(
   svg: SVGSVGElement,
   doc: VDTDocument,
@@ -269,6 +278,7 @@ export function drawOverlay(
   focused: boolean,
   caretBlockIdx: number,
   resourceSelection: ResourceSelection | null = null,
+  carried?: CarriedSelection,
 ): SVGRectElement | null {
   const selectionGroup = svg.querySelector<SVGGElement>('g[data-role="selection"]');
   const cursorGroup = svg.querySelector<SVGGElement>('g[data-role="cursor"]');
@@ -302,11 +312,11 @@ export function drawOverlay(
     blockId === undefined ? null : blockFrameMatrix(page, blockId);
 
   // A resource editor's selection paints regardless of Markdown editor focus.
-  if (resourceSelection) drawResourceSelection(selectionGroup, doc, pageIndex, resourceSelection, debug);
+  if (resourceSelection && !carried?.only) drawResourceSelection(selectionGroup, doc, pageIndex, resourceSelection, debug);
 
   // Loose-line highlight: paint lines whose justified space ratio exceeds the
   // threshold (the engine's `findLooseLines`, as `drawLooseLines` paints them).
-  if (looseLineGroup && debug.looseLineHighlight.enabled) {
+  if (looseLineGroup && debug.looseLineHighlight.enabled && !carried?.only) {
     const fill = debug.looseLineHighlight.color.hex;
     for (const loose of findLooseLines(doc, { threshold: debug.looseLineHighlight.threshold, pageIndex })) {
       appendRect(looseLineGroup, loose.x, loose.y, loose.width, loose.height, fill, matrixOf(loose.block.id));
@@ -325,7 +335,7 @@ export function drawOverlay(
   // active end). When the selection is collapsed this coincides with the
   // visible caret; when it isn't, the rect is still positioned but kept
   // invisible so callers can scroll it into view without drawing anything.
-  const bandTitles = bandTitleBlocks(doc, pageIndex);
+  const bandTitles = carried?.only ? [] : bandTitleBlocks(doc, pageIndex);
   // A band title's characters are measured here, in the language the
   // layout measured them in and the page paints them in (#770).
   const bandLang = documentShapingLanguage(doc);
@@ -423,7 +433,7 @@ export function drawOverlay(
   // each balloon's own frame, put on the sheet by its turn and lean; the
   // comics are laid out on the sheet, so the group's flow frame (a
   // vertical or mirrored page) is undone first.
-  if (page) {
+  if (page && !carried?.only) {
     const unframe = frameMatrix ? invertAffine(frameMatrix) : null;
     for (const comic of pageComics(page)) {
       for (const balloon of comic.balloons) {
@@ -449,8 +459,8 @@ export function drawOverlay(
   for (const block of blocks) {
     if (block.sourceStart === undefined || block.sourceEnd === undefined) continue;
     // Text a story carried in from another chapter (#943) is in that
-    // chapter's file: this selection is not in it.
-    if (block.sourceChapter !== undefined) continue;
+    // chapter's file: only a selection of that chapter is in it (#988).
+    if (block.sourceChapter !== carried?.chapter && (block.sourceChapter !== undefined || carried?.only)) continue;
     if (block.sourceEnd <= from) continue;
     if (block.sourceStart > to) continue;
 

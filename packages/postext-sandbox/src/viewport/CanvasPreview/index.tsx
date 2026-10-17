@@ -43,7 +43,7 @@ import {
   type GeomSnapshot,
   type ViewMode,
 } from './layoutUtils';
-import { findCaretBlockIdx } from './caret';
+import { findCaretBlockIdx, findCarriedCaretBlockIdx } from './caret';
 import { useAutoCover, type FirstChapterDoc } from '../../covers/useAutoCover';
 
 const NO_SELECTION: EditorSelection = { from: -1, to: -1, head: -1 };
@@ -971,12 +971,23 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       focusFrame: reflowFocus?.pageIndex === pageIndex ? reflowFocus.frame : null,
       locale: uiLocaleRef.current,
     });
+    // The pages that hold words a story of the chapter being edited carried
+    // from it (#988).
+    const carriedChapter = stitched && editorFocused ? carriedPosition(activeChapterId) : undefined;
+    const carriedPages = new Set<number>();
+    if (carriedChapter !== undefined) for (const b of doc.blocks) if (b.sourceChapter === carriedChapter) carriedPages.add(b.pageIndex);
     for (const [pageIndex, overlay] of overlayMapRef.current) {
       const page = doc.pages[pageIndex];
       if (!page) continue;
       if (chapterPages && (pageIndex < chapterPages.from || pageIndex >= chapterPages.to) && pageIndex !== resourcePage) {
         if (drawn.delete(pageIndex)) clearOverlay(overlay);
         if (page.composed) clearFrameMarks(overlay);
+        // The selection of the chapter being edited over the words one of
+        // its stories carried here (#988): offsets in that chapter's file.
+        if (carriedChapter !== undefined && carriedPages.has(pageIndex)) {
+          drawOverlay(overlay, doc, pageIndex, editorSelection, debug, true, findCarriedCaretBlockIdx(doc, editorSelection.head, carriedChapter, pageIndex), null, { chapter: carriedChapter, only: true });
+          drawn.add(pageIndex);
+        }
         // The text a story carried here from the chapter being edited
         // (#943) is picked on this page.
         drawPickedMark(overlay, doc, pageIndex, picked && picked.pageIndex === pageIndex && picked.chain.some((e) => e.chapter !== undefined || (e.source.kind === 'markdown' && e.source.chapter !== undefined)) ? picked : null);

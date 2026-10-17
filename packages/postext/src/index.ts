@@ -2,7 +2,8 @@ export { createLayout } from './createLayout';
 export { registerCodeHighlighter, highlightCode, builtinCodeLanguage } from './code/highlight';
 export { fencedCodeLines } from './parse/codeFence';
 export type { CodeHighlighter, CodeToken } from './code/highlight';
-export { buildDocument, resolveJumpMarks, BuildCancelledError, continuationAfter, contentOutline, pageFenceIds, laterPageIdsOf, computeOutline, computeOutlineFor, outlineFromDoc, outlineKey, sameOutline, hasTocDirective, hasIndexDirective, tocOutline, indexOutline, anchorOutline, hasAnchors, locateAnchors, duplicateAnchors } from './pipeline';
+export { buildDocument, resolveJumpMarks, BuildCancelledError, continuationAfter, contentOutline, pageFenceIds, laterPageIdsOf, computeOutline, computeOutlineFor, outlineFromDoc, outlineKey, sameOutline, hasTocDirective, hasIndexDirective, tocOutline, indexOutline, anchorOutline, hasAnchors, locateAnchors, duplicateAnchors, mergeCarriedOutline, carriedPlaces } from './pipeline';
+export type { CarriedPlace } from './pipeline';
 export type { BuildDocumentOptions } from './pipeline';
 export { formatFootnoteNumber, footnoteFormatOf, footnoteSymbol, DEFAULT_FOOTNOTE_SYMBOLS } from './pipeline/footnotes';
 export type { FootnoteFormat } from './pipeline/footnotes';
@@ -507,6 +508,7 @@ export type {
   VDTChipRun,
   VDTLine,
   VDTAnchor,
+  VDTCarriedOutlineEntry,
   VDTBlock,
   VDTColumn,
   VDTExclusion,

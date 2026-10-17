@@ -692,6 +692,10 @@ export interface VDTAnchor {
   /** Source offset of an inline anchor's mark in the markdown body (front
    *  matter excluded). */
   sourceStart?: number;
+  /** Set on an anchor written in a story that came in from another chapter
+   *  (#988): that chapter's place in the book, whose body `sourceStart` is
+   *  an offset in. */
+  chapter?: number;
 }
 
 export interface VDTLine {
@@ -3810,6 +3814,26 @@ export interface VDTDocument {
    *  to hand to that chapter (`LayoutContinuation.jumps`, with `chapter`
    *  set to this chapter's place in the book). Absent when none does. */
   pendingJumps?: StoryJump[];
+  /** Where the index marks, anchors and headings written in a story that
+   *  came in from another chapter landed here (#988): `chapter` is the
+   *  chapter whose file they are in, `sourceStart` their offset in that
+   *  chapter's body (the key of the entry the book's outline has for them)
+   *  and `pageIndex` the page of this document. A host merges them into
+   *  the sender's outline entries (`mergeCarriedOutline`). Absent when no
+   *  story came in or it holds none. */
+  carriedOutline?: VDTCarriedOutlineEntry[];
+}
+
+/** One index mark, anchor or heading of a carried story, located by the
+ *  chapter that laid it (`VDTDocument.carriedOutline`). */
+export interface VDTCarriedOutlineEntry {
+  chapter: number;
+  kind: 'indexMark' | 'anchor' | 'heading';
+  sourceStart: number;
+  pageIndex: number;
+  /** An inline anchor: its identifier and where its line stands on the
+   *  page (as `VDTAnchor`). */
+  anchor?: { id: string; x: number; y: number };
 }
 
 // ---------------------------------------------------------------------------
