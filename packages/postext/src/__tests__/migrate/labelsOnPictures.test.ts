@@ -43,6 +43,22 @@ describe('labels on pictures (#918)', () => {
     expect(collectConfigWarnings(config, { metadata }).filter((w) => w.kind === 'contentInConfig').map((w) => w.ownerId)).toEqual(['topic--p9']);
   });
 
+  it('keeps paired brackets in a label, and leaves a text whose brackets do not pair as a frame', () => {
+    const relabel = (content: string) => CONFIG.headingStyles!.map((st) => st.id !== 'topic--p2' ? st : {
+      ...st,
+      header: { elements: st.header!.elements.map((e) => (e.id === 'label-p2' ? { ...e, content } : e)) },
+    });
+    const migrate = (content: string) => moveTextToMarkdown({ config: { ...CONFIG, headingStyles: relabel(content) }, chapters: PORT_CHAPTERS, metadata, resources: RESOURCES }, { labelsOnPictures: true });
+    const paired = migrate('Gauge [B]');
+    const ch1 = paired.chapters.find((c) => c.id === 'ch1')!.markdown;
+    expect(ch1).toContain('::label[Gauge [B]]{at="gauge-b"}');
+    const doc = buildDocument({ markdown: ch1, resources: paired.resources! }, paired.config, createMeasurementCache());
+    expect(findLabel(doc, 'Gauge [B]')).toBeDefined();
+    const unpaired = migrate('Gauge B]');
+    expect(unpaired.report.labels.labels).toBe(0);
+    expect(unpaired.chapters.find((c) => c.id === 'ch1')!.markdown).toContain('Gauge B]');
+  });
+
   it('is off by default, and keeps a picture whose resource it does not know', () => {
     const off = moveTextToMarkdown({ config: CONFIG, chapters: PORT_CHAPTERS, metadata, resources: RESOURCES });
     expect(off.chapters.map((c) => c.markdown).join('\n')).not.toContain(':::figure');

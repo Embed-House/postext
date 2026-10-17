@@ -587,6 +587,18 @@ export function planDesign(input: DesignInput): PlannedDesign {
   };
 }
 
+/** Whether the brackets of a line pair up (escaped characters aside). */
+function bracketsPair(line: string): boolean {
+  let depth = 0;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]!;
+    if (ch === '\\') i++;
+    else if (ch === '[') depth++;
+    else if (ch === ']' && --depth < 0) return false;
+  }
+  return depth === 0;
+}
+
 /** Words of a design text as a reader counts them (marks aside). */
 const wordCount = (line: string): number => line.replace(/\*\*|[*_^~]/g, '').trim().split(/\s+/).filter(Boolean).length;
 
@@ -622,6 +634,9 @@ function findLabelledPictures(
   for (const p of pieces) {
     if (p.x === undefined || p.y === undefined || p.width === undefined || p.height === undefined || !p.heightSure) continue;
     if (p.lines.length !== 1 || wordCount(p.lines[0]!) > 4 || wordCount(p.lines[0]!) === 0) continue;
+    // `::label[…]` reads to its matching bracket and knows no escaped one:
+    // a text whose brackets do not pair stays a frame.
+    if (!bracketsPair(p.lines[0]!)) continue;
     if (p.look.writingMode || p.element.box || (p.element.stroke && p.element.stroke.hollow)) continue;
     const size = toMm(p.element.fontSize) ?? Infinity;
     if (size > maxSizeMm + 1e-6) continue;

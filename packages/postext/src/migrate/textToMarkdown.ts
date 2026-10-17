@@ -626,7 +626,7 @@ function writePage(
       const pic = f.picture;
       out.push('', `:::figure{resource="${pic.element.resourceId.replace(/["\\]/g, '')}" slot="${f.name!}"}`);
       for (const l of pic.labels) {
-        out.push(`::label[${labelText(l.lines[0]!)}]{at="${anchorOf(d, l)}"}`);
+        out.push(`::label[${l.lines[0]!}]{at="${anchorOf(d, l)}"}`);
         elements++;
         chars += l.chars;
       }
@@ -921,11 +921,6 @@ function renameStyles(markdown: string, renames: Map<string, string>): string {
       return to ? `${pre}"${to}"` : m;
     });
   }).join('\n');
-}
-
-/** A label's text inside `::label[…]`: its brackets escaped. */
-function labelText(line: string): string {
-  return line.replace(/(^|[^\\])([[\]])/g, '$1\\$2');
 }
 
 /** The pitch of a label's lines in ems when its style lends none
