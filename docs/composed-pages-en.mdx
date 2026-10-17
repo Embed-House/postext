@@ -126,9 +126,13 @@ A figure works in the running text as well as in a frame. Its labels are drawn o
 
 A `::label` names, with `at`, an anchor its figure's resource does not have. The label is not drawn; the reflowable EPUB still lists it and the picture's alternative text names it. The warning carries the resource, the anchor, the anchors the resource has (`known`), the locale, the page and the source range of the label's text. Correct the anchor id, add the anchor to the resource, or place the label with `at="x% y%"`.
 
+In the Sandbox's Checks panel the warning leads to the label in the Text panel, and its pin button opens the picture's anchors with that name ready to place: one click on the picture adds the anchor.
+
 ### anchorUnlabelled
 
 An anchor of the figure's resource names a label style, and no `::label` of the figure stands at it in this locale: the map has room for a word this edition leaves out. It is a note; `postext check` lists it as `info`. Anchors with no style, such as a comic speaker's, are not reported. The warning carries the resource, the anchor, its style, the locale, the page and the figure's source range. Write the label in this language's Markdown, or take the style off the anchor.
+
+In the Checks panel it leads to the figure in the Text panel, and its pin button opens the picture's anchors on that anchor.
 
 ## Example
 

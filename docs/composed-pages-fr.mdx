@@ -126,9 +126,13 @@ Une figure fonctionne dans le texte courant comme dans un bloc. Ses étiquettes 
 
 Une `::label` désigne avec `at` une ancre que la ressource de sa figure n’a pas. L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours et le texte alternatif de l’image la cite. L’avertissement porte la ressource, l’ancre, les ancres de la ressource (`known`), la langue, la page et la plage du texte de l’étiquette dans la source. Corrigez l’id de l’ancre, ajoutez l’ancre à la ressource ou placez l’étiquette avec `at="x% y%"`.
 
+Dans le panneau Vérifications du Sandbox, l’avertissement mène à l’étiquette dans le panneau Texte, et son bouton à l’épingle ouvre les ancres de l’image avec ce nom prêt à poser : un clic sur l’image ajoute l’ancre.
+
 ### anchorUnlabelled
 
 Une ancre de la ressource de la figure porte un style d’étiquette et aucune `::label` de la figure ne s’y trouve dans cette langue : la carte a de la place pour un mot que cette édition omet. C’est une note ; `postext check` la donne comme `info`. Les ancres sans style, comme celles d’un personnage de BD, ne sont pas signalées. L’avertissement porte la ressource, l’ancre, son style, la langue, la page et la plage de la figure dans la source. Écrivez l’étiquette dans le Markdown de cette langue, ou retirez le style de l’ancre.
+
+Dans le panneau Vérifications, il mène à la figure dans le panneau Texte, et son bouton à l’épingle ouvre les ancres de l’image sur cette ancre.
 
 ## Exemple
 

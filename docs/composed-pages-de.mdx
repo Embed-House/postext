@@ -126,9 +126,13 @@ Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Besch
 
 Ein `::label` nennt mit `at` einen Anker, den die Ressource seiner Abbildung nicht hat. Die Beschriftung wird nicht gezeichnet; das umfließende EPUB führt sie weiter auf, und der Alternativtext des Bilds nennt sie. Die Warnung enthält die Ressource, den Anker, die Anker der Ressource (`known`), die Sprache, die Seite und den Quellbereich des Beschriftungstexts. Korrigieren Sie die Anker-ID, legen Sie den Anker in der Ressource an oder setzen Sie die Beschriftung mit `at="x% y%"`.
 
+Im Panel Prüfungen der Sandbox führt die Warnung zur Beschriftung im Panel Text, und ihre Schaltfläche mit der Stecknadel öffnet die Anker des Bildes mit diesem Namen zum Setzen bereit: Ein Klick ins Bild fügt den Anker hinzu.
+
 ### anchorUnlabelled
 
 Ein Anker der Ressource der Abbildung nennt einen Beschriftungsstil, und in dieser Sprache steht dort kein `::label` der Abbildung: Die Karte hat Platz für ein Wort, das diese Ausgabe weglässt. Es ist ein Hinweis; `postext check` führt ihn als `info`. Anker ohne Stil, etwa der einer Comicfigur, werden nicht gemeldet. Die Warnung enthält die Ressource, den Anker, seinen Stil, die Sprache, die Seite und den Quellbereich der Abbildung. Schreiben Sie die Beschriftung in das Markdown dieser Sprache, oder nehmen Sie dem Anker den Stil.
+
+Im Panel Prüfungen führt sie zur Abbildung im Panel Text, und ihre Schaltfläche mit der Stecknadel öffnet die Anker des Bildes bei diesem Anker.
 
 ## Beispiel
 

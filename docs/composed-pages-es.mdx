@@ -126,9 +126,13 @@ Una figura funciona tanto en el texto corrido como en un marco. Sus rótulos se 
 
 Un `::label` nombra con `at` un ancla que el recurso de su figura no tiene. El rótulo no se dibuja; el EPUB adaptable lo sigue listando y el texto alternativo de la imagen lo nombra. El aviso lleva el recurso, el ancla, las anclas que tiene el recurso (`known`), el idioma, la página y el rango del texto del rótulo en el fuente. Corrige el id del ancla, añade el ancla al recurso o coloca el rótulo con `at="x% y%"`.
 
+En el panel Revisión del Sandbox, el aviso lleva al rótulo en el panel Texto, y su botón con el alfiler abre las anclas de la imagen con ese nombre listo para colocar: un clic en la imagen añade el ancla.
+
 ### anchorUnlabelled
 
 Un ancla del recurso de la figura nombra un estilo de rótulo y ningún `::label` de la figura está en ella en este idioma: el mapa tiene sitio para una palabra que esta edición no pone. Es una nota; `postext check` la da como `info`. Las anclas sin estilo, como las de un personaje de cómic, no se señalan. El aviso lleva el recurso, el ancla, su estilo, el idioma, la página y el rango de la figura en el fuente. Escribe el rótulo en el Markdown de este idioma o quita el estilo del ancla.
+
+En el panel Revisión lleva a la figura en el panel Texto, y su botón con el alfiler abre las anclas de la imagen en esa ancla.
 
 ## Ejemplo
 

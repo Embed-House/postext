@@ -420,6 +420,16 @@ no livro. `sandbox_list_resources` lista os recursos e, com um `id`, mostra um
 deles por inteiro (as células de uma tabela com a sua formatação, o código de
 um SVG).
 
+As `marks` de uma imagem levam também as suas âncoras. Num mapa ou num esquema são os pontos em que ficam as suas linhas `::label`: um `id`, `x` e `y` (frações da imagem inteira) e os campos de rótulo que um rótulo colocado ali herda (`style`, `align`, `verticalAlign`, `rotate`, `width`). A resposta avisa de um estilo de rótulo que o design não tem, e marcas novas num recurso são um passo do histórico (`sandbox_undo` responde `kind: "resource"`).
+
+```jsonc
+// duas âncoras de um mapa, com seus estilos de rótulo
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 As fontes enviadas para o livro passam por `sandbox_save_font`:
 
 ```json

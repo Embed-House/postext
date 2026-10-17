@@ -126,9 +126,13 @@ Una figura funziona nel testo corrente come dentro una cornice. Le sue etichette
 
 Una `::label` indica con `at` un’ancora che la risorsa della sua figura non ha. L’etichetta non viene disegnata; l’EPUB adattabile continua a elencarla e il testo alternativo dell’immagine la nomina. L’avviso riporta la risorsa, l’ancora, le ancore della risorsa (`known`), la lingua, la pagina e l’intervallo del testo dell’etichetta nel sorgente. Correggi l’id dell’ancora, aggiungi l’ancora alla risorsa o posiziona l’etichetta con `at="x% y%"`.
 
+Nel pannello Verifiche del Sandbox l’avviso porta all’etichetta nel pannello Testo, e il suo pulsante con la puntina apre le ancore dell’immagine con quel nome pronto da collocare: un clic sull’immagine aggiunge l’ancora.
+
 ### anchorUnlabelled
 
 Un’ancora della risorsa della figura indica uno stile di etichetta e in questa lingua nessuna `::label` della figura vi si trova: la mappa ha spazio per una parola che questa edizione tralascia. È una nota; `postext check` la riporta come `info`. Le ancore senza stile, come quelle di un personaggio di fumetto, non vengono segnalate. L’avviso riporta la risorsa, l’ancora, il suo stile, la lingua, la pagina e l’intervallo della figura nel sorgente. Scrivi l’etichetta nel Markdown di questa lingua, oppure togli lo stile all’ancora.
+
+Nel pannello Verifiche porta alla figura nel pannello Testo, e il suo pulsante con la puntina apre le ancore dell’immagine su quell’ancora.
 
 ## Esempio
 
