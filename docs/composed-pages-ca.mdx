@@ -641,6 +641,8 @@ Tot el que pinta una pàgina composta sap on està escrit, de manera que un edit
 
 `sourceAt(doc, pageIndex, x, y)` rep un punt d'una pàgina compaginada, en píxels de pàgina des del cantó superior esquerre del full, i torna el que hi ha, de dins cap a fora: cada element seguit dels que el contenen. Un caràcter d'una caixa arriba amb la seva línia, el seu paràgraf, el seu marc, els grups del marc i la plantilla; una paraula de la decoració, amb el seu element de disseny, la decoració i la plantilla. Cada element té un `level`, un `id` estable, un `source` i, gairebé sempre, el seu `rect` a la pàgina (dret, abans del `rotate` d'un marc girat).
 
+En una pàgina de dreta a esquerra o vertical, els marcs es col·loquen en el marc del flux de la pàgina, que el plec mostra en mirall o girat un quart de volta; la decoració i les capçaleres es queden al plec. `sourceAt` continua rebent punts del plec i els trasllada per als marcs. Un element el `rect` del qual és al marc del flux arriba amb `flow: true`, tant a `sourceAt` com a `elementsForSource` i `findElement`; `flowRectToPage(page, rect)` en dona la caixa al plec i `flowToPage(page, x, y)`, un punt. Fins a postext 1.38, un punt del plec sobre un marc d'una pàgina així només trobava la plantilla.
+
 <table>
   <thead>
     <tr>

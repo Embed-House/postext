@@ -22,7 +22,7 @@ import type { FrameEditorEvent } from '../templates/frameEvents';
 import { onFrameDragChange, setFrameDrag } from './frameDrag';
 
 export { frameDragNow, type FrameDrag } from './frameDrag';
-import { climb, climbable, atLevel, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
+import { climb, climbable, atLevel, elementRectOnSheet, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
 
 /** What carries a selection out (opens the editor or a panel at it): the
  *  viewer that made it. */
@@ -167,7 +167,7 @@ export function followFrameEditor(e: FrameEditorEvent, doc: VDTDocument | null, 
     case 'select': {
       if (!doc) return;
       const found = findElement(doc, e.frameId);
-      const rect = found?.element.rect;
+      const rect = found ? elementRectOnSheet(doc.pages[found.pageIndex], found.element) : undefined;
       if (!found || !rect) return;
       const point = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
       const chain = climbable(sourceAt(doc, found.pageIndex, point.x, point.y));

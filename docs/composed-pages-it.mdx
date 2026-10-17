@@ -641,6 +641,8 @@ Tutto ciò che una pagina composta disegna sa dove è scritto: un editor può an
 
 `sourceAt(doc, pageIndex, x, y)` riceve un punto di una pagina impaginata, in pixel di pagina dall’angolo superiore sinistro del foglio, e restituisce ciò che vi si trova, dall’interno verso l’esterno: ogni elemento seguito da quelli che lo contengono. Un carattere di un riquadro arriva con la sua riga, il suo paragrafo, la sua cornice, i gruppi della cornice e il modello; una parola della decorazione, con il suo elemento grafico, la decorazione e il modello. Ogni elemento ha un `level`, un `id` stabile, una `source` e, quasi sempre, il suo `rect` sulla pagina (diritto, prima del `rotate` di una cornice ruotata).
 
+In una pagina da destra a sinistra o verticale, le cornici stanno nel riferimento del flusso della pagina, che il foglio mostra specchiato o ruotato di un quarto di giro; la decorazione e le testatine restano sul foglio. `sourceAt` riceve sempre punti del foglio e li riporta per le cornici. Un elemento il cui `rect` è nel riferimento del flusso arriva con `flow: true`, in `sourceAt` come in `elementsForSource` e `findElement`; `flowRectToPage(page, rect)` ne dà il riquadro sul foglio e `flowToPage(page, x, y)` un punto. Fino a postext 1.38 un punto del foglio su una cornice di una pagina così trovava solo il modello.
+
 <table>
   <thead>
     <tr>

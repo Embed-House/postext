@@ -532,6 +532,16 @@ describe("C40: the source map round trip (#857)", () => {
     }
   });
 
+  it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("clicks a right-to-left page where the sheet shows each element (#929)", () => {
+    // The frames of a right-to-left page are laid in its mirrored flow frame:
+    // their boxes come flagged `flow`, and the probe clicks them on the sheet.
+    const config = { ...PAGE8_CONFIG, direction: "rtl" } as PostextConfig;
+    const { doc, composed } = layOut(content("en"), "en", config);
+    expect(doc.pages.find((p) => p.composed)!.flow).toBeDefined();
+    expect(composed.roundTrip?.misses).toEqual([]);
+    expect(composed.roundTrip?.levels.line?.checked).toBeGreaterThan(0);
+  });
+
   it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("fails the fixture when the source map answers for the wrong place", () => {
     const real = engine as unknown as { sourceAt: (doc: unknown, page: number, x: number, y: number) => unknown[] };
     // Every click answered as if it had landed in the page's top-left corner.

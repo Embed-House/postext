@@ -57,7 +57,7 @@ import { addFrame, namesInUse, uniqueName } from '../../templates/templateEdits'
 import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits';
 import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
 import { nextFrameName } from '../../templates/frameChain';
-import { frameHitAt } from './frameHit';
+import { flowBoxOnSheet, frameHitAt, sheetToFlow } from './frameHit';
 import { selectFrame as pickFrame } from '../../editing/editMode';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -152,10 +152,24 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const w = slot.getBoundingClientRect().width;
     return w > 0 ? pageWidthPx / w : 1;
   };
+  // The template is laid in the page's flow frame, mirrored on a
+  // right-to-left page and turned on a vertical one (#929): the pointer
+  // is read there, and the marks are drawn through the flow's matrix.
   const locate = (ev: MouseEvent): { x: number; y: number } | null => {
     const r = slot.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) return null;
-    return { x: (ev.clientX - r.left) * (pageWidthPx / r.width), y: (ev.clientY - r.top) * (pageHeightPx / r.height) };
+    return sheetToFlow(page(), (ev.clientX - r.left) * (pageWidthPx / r.width), (ev.clientY - r.top) * (pageHeightPx / r.height));
+  };
+  /** The flow frame's size: a vertical page's is the sheet turned. */
+  const flowSize = (): { width: number; height: number } =>
+    page()?.flow?.writingMode === 'vertical-rl' ? { width: pageHeightPx, height: pageWidthPx } : { width: pageWidthPx, height: pageHeightPx };
+  const flowMatrix = (): string | null => {
+    const flow = page()?.flow;
+    if (!flow) return null;
+    const m = flow.writingMode === 'vertical-rl'
+      ? [0, 1, -1, 0, flow.rotation.originX, flow.rotation.originY]
+      : [-1, 0, 0, 1, flow.mirror.originX, 0];
+    return `matrix(${m.join(' ')})`;
   };
   const dpi = (): number => refs.docRef.current?.config.page.dpi ?? 96;
 
@@ -182,7 +196,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     // A page of a spread (#861): the template's area is the sheet of two
     // pages, which this page shows one half of.
     const facing = c.spread && c.facingPage !== undefined ? doc.pages[c.facingPage] : undefined;
-    const areas = facing ? spreadPageAreas(p, facing, doc.trimOffset, c.spread === 'left' ? 0 : 1) : pageAreas(p, doc.trimOffset);
+    const sized = { ...flowSize(), contentArea: p.contentArea };
+    const areas = facing ? spreadPageAreas(sized, facing, doc.trimOffset, c.spread === 'left' ? 0 : 1) : pageAreas(sized, doc.trimOffset);
     const area = templateAreaRect(template.area, areas);
     const grid = template.grid ? gridGeometry(template.grid, area, dpi()) : undefined;
     return { p, c, host, config, template, areas, area, grid };
@@ -196,6 +211,11 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       return;
     }
     if (svg.parentNode !== slot) slot.appendChild(svg);
+    const root = svgEl('g', {});
+    const turned = flowMatrix();
+    if (turned) root.setAttribute('transform', turned);
+    svg.appendChild(root);
+    const { width: flowW, height: flowH } = flowSize();
     const g = geometry();
     const c = composed()!;
     const k = sheetPerCss();
@@ -203,18 +223,18 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     if (g) {
       // The margins and the template's area.
       const content = g.areas.content;
-      svg.appendChild(svgEl('rect', { x: content.x, y: content.y, width: content.width, height: content.height, fill: 'none', stroke: COLORS.margin, 'stroke-width': lw, 'stroke-dasharray': `${4 * k} ${3 * k}` }));
-      if (g.area !== content) svg.appendChild(svgEl('rect', { x: g.area.x, y: g.area.y, width: g.area.width, height: g.area.height, fill: 'none', stroke: COLORS.area, 'stroke-width': lw }));
+      root.appendChild(svgEl('rect', { x: content.x, y: content.y, width: content.width, height: content.height, fill: 'none', stroke: COLORS.margin, 'stroke-width': lw, 'stroke-dasharray': `${4 * k} ${3 * k}` }));
+      if (g.area !== content) root.appendChild(svgEl('rect', { x: g.area.x, y: g.area.y, width: g.area.width, height: g.area.height, fill: 'none', stroke: COLORS.area, 'stroke-width': lw }));
       if (g.grid) {
         for (const col of g.grid.cols) {
-          for (const row of g.grid.rows) svg.appendChild(svgEl('rect', { x: col.start, y: row.start, width: col.end - col.start, height: row.end - row.start, fill: COLORS.grid, stroke: COLORS.area, 'stroke-width': lw * 0.6 }));
+          for (const row of g.grid.rows) root.appendChild(svgEl('rect', { x: col.start, y: row.start, width: col.end - col.start, height: row.end - row.start, fill: COLORS.grid, stroke: COLORS.area, 'stroke-width': lw * 0.6 }));
         }
       }
       // The spine of a spread page: its gutter band on the inner edge.
       if (c.spread && g.template.spread) {
         const gutterPx = mmToPx(dimensionToMm(g.template.gutter), dpi()) / 2;
         const x = c.spread === 'left' ? g.areas.trim.x + g.areas.trim.width - gutterPx : g.areas.trim.x;
-        svg.appendChild(svgEl('rect', { x, y: 0, width: Math.max(gutterPx, 2 * k), height: pageHeightPx, fill: COLORS.gutter }));
+        root.appendChild(svgEl('rect', { x, y: 0, width: Math.max(gutterPx, 2 * k), height: flowH, fill: COLORS.gutter }));
       }
     }
     const selected = selectedHere();
@@ -235,8 +255,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       const y2 = to.rect.y;
       const angle = Math.atan2(y2 - y1, x2 - x1);
       const a = 7 * k;
-      svg.appendChild(svgEl('line', { x1, y1, x2, y2, stroke: COLORS.chain, 'stroke-width': 1.5 * lw }));
-      svg.appendChild(svgEl('polygon', {
+      root.appendChild(svgEl('line', { x1, y1, x2, y2, stroke: COLORS.chain, 'stroke-width': 1.5 * lw }));
+      root.appendChild(svgEl('polygon', {
         points: `${x2},${y2} ${x2 - a * Math.cos(angle - 0.45)},${y2 - a * Math.sin(angle - 0.45)} ${x2 - a * Math.cos(angle + 0.45)},${y2 - a * Math.sin(angle + 0.45)}`,
         fill: COLORS.chain,
       }));
@@ -245,14 +265,14 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       const s = 6 * k;
       for (const h of RESIZE_HANDLES) {
         const p = handlePoint(selected.rect, h);
-        svg.appendChild(svgEl('rect', { x: p.x - s / 2, y: p.y - s / 2, width: s, height: s, fill: '#ffffff', stroke: COLORS.frame, 'stroke-width': lw }));
+        root.appendChild(svgEl('rect', { x: p.x - s / 2, y: p.y - s / 2, width: s, height: s, fill: '#ffffff', stroke: COLORS.frame, 'stroke-width': lw }));
       }
     }
     const ghost = drag?.started ? drag.rect : pending;
     if (ghost) {
-      svg.appendChild(svgEl('rect', { x: ghost.x, y: ghost.y, width: ghost.width, height: ghost.height, fill: COLORS.ghost, stroke: COLORS.frame, 'stroke-width': 1.5 * lw }));
-      if (drag?.guideX !== undefined) svg.appendChild(svgEl('line', { x1: drag.guideX, y1: 0, x2: drag.guideX, y2: pageHeightPx, stroke: COLORS.guide, 'stroke-width': lw }));
-      if (drag?.guideY !== undefined) svg.appendChild(svgEl('line', { x1: 0, y1: drag.guideY, x2: pageWidthPx, y2: drag.guideY, stroke: COLORS.guide, 'stroke-width': lw }));
+      root.appendChild(svgEl('rect', { x: ghost.x, y: ghost.y, width: ghost.width, height: ghost.height, fill: COLORS.ghost, stroke: COLORS.frame, 'stroke-width': 1.5 * lw }));
+      if (drag?.guideX !== undefined) root.appendChild(svgEl('line', { x1: drag.guideX, y1: 0, x2: drag.guideX, y2: flowH, stroke: COLORS.guide, 'stroke-width': lw }));
+      if (drag?.guideY !== undefined) root.appendChild(svgEl('line', { x1: 0, y1: drag.guideY, x2: flowW, y2: drag.guideY, stroke: COLORS.guide, 'stroke-width': lw }));
     }
   };
 
@@ -318,8 +338,9 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       background: 'var(--background, #fff)', color: 'var(--foreground, #111)', border: '1px solid var(--rule, #ccc)',
       boxShadow: '0 4px 16px rgba(0,0,0,0.18)', font: '12px/1.35 system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: '0.35rem',
     } satisfies Partial<CSSStyleDeclaration>);
-    const left = Math.min(Math.max(0, to.x / pageWidthPx), 0.6) * 100;
-    const top = Math.min(Math.max(0, (to.y + to.height) / pageHeightPx), 0.8) * 100;
+    const shown = flowBoxOnSheet(page(), to).rect;
+    const left = Math.min(Math.max(0, shown.x / pageWidthPx), 0.6) * 100;
+    const top = Math.min(Math.max(0, (shown.y + shown.height) / pageHeightPx), 0.8) * 100;
     box.style.left = `${left}%`;
     box.style.top = `${top}%`;
     const text = document.createElement('p');
@@ -413,19 +434,24 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
 
   const cursorFor = (handle: Handle | null, onFrame: boolean): string => {
     if (!handle) return onFrame ? 'move' : 'crosshair';
+    // A mirrored or turned flow shows a handle's diagonal the other way
+    // round on the sheet, and a turned one its sides across.
+    const flow = page()?.flow;
+    const across = flow?.writingMode === 'vertical-rl';
+    const diagonal = (nesw: boolean): string => ((nesw !== !!flow) ? 'nesw-resize' : 'nwse-resize');
     switch (handle) {
       case 'move': return 'move';
       case 'n':
       case 's':
-        return 'ns-resize';
+        return across ? 'ew-resize' : 'ns-resize';
       case 'e':
       case 'w':
-        return 'ew-resize';
+        return across ? 'ns-resize' : 'ew-resize';
       case 'ne':
       case 'sw':
-        return 'nesw-resize';
+        return diagonal(true);
       default:
-        return 'nwse-resize';
+        return diagonal(false);
     }
   };
 

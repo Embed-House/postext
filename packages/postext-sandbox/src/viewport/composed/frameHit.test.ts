@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTComposedPage, VDTFrame } from 'postext';
-import { frameAtSource, frameById, frameByName, frameCorners, frameHandleAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame } from './frameHit';
+import { flowBoxOnSheet, frameAtSource, frameById, frameByName, frameCorners, frameHandleAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
 
 function frame(name: string, rect: VDTFrame['rect'], extra: Partial<VDTFrame> = {}): VDTFrame {
   return { id: `cp0:${name}`, name, rect, rotate: 0, layer: 1, scale: 1, overflowPx: 0, blockIds: [], configPath: '/pageTemplates/0/frames/0', ...extra };
@@ -65,5 +65,24 @@ describe('frameHitAt', () => {
     expect(frameHandleAt(body, 101, 101, 4)).toBe('se');
     expect(frameHandleAt(body, 50, -3, 4)).toBe('n');
     expect(frameHandleAt(body, 200, 200, 4)).toBeNull();
+  });
+});
+
+describe('frames of a page laid in a flow frame (#929)', () => {
+  const W = 1000;
+  const rtl = { flow: { writingMode: 'horizontal-tb' as const, direction: 'rtl' as const, mirror: { originX: W } } };
+  const vertical = { flow: { writingMode: 'vertical-rl' as const, rotation: { direction: 'cw' as const, originX: W, originY: 0, width: 1400, height: W } } };
+  const box = { x: 100, y: 200, width: 300, height: 50 };
+
+  it('maps a sheet point into the flow, the identity without one', () => {
+    expect(sheetToFlow(rtl as never, 900, 210)).toEqual({ x: 100, y: 210 });
+    expect(sheetToFlow(vertical as never, 900, 210)).toEqual({ x: 210, y: 100 });
+    expect(sheetToFlow({} as never, 900, 210)).toEqual({ x: 900, y: 210 });
+  });
+
+  it('puts a flow box on the sheet: mirrored with its turn reversed, or turned a quarter keeping it', () => {
+    expect(flowBoxOnSheet(rtl as never, box, 12)).toEqual({ rect: { x: 600, y: 200, width: 300, height: 50 }, rotate: -12 });
+    expect(flowBoxOnSheet(vertical as never, box, 12)).toEqual({ rect: { x: 750, y: 100, width: 50, height: 300 }, rotate: 12 });
+    expect(flowBoxOnSheet(null, box)).toEqual({ rect: box, rotate: 0 });
   });
 });

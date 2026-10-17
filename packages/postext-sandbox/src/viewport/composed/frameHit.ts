@@ -7,7 +7,7 @@
  * Design mode). Pure: sheet px, no DOM.
  */
 
-import { frameClips, frameContentRect, frameMatrix, frameOfBlock, pointInPolygon, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
+import { flowRectToPage, frameClips, frameContentRect, frameMatrix, frameOfBlock, pageToFlow, pointInPolygon, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
 
 /** Anything that may carry a composed page (a `VDTPage`, or a stand-in in a
  *  test). */
@@ -80,6 +80,26 @@ export function frameHitAt(page: ComposedPageLike | null | undefined, x: number,
     if (pointInFrame(f, x, y)) return f;
   }
   return null;
+}
+
+/** A sheet point in the frame of `page`'s flow, where a composed page's
+ *  frames are laid (#929): mirrored on a right-to-left page, turned on a
+ *  vertical one, the point itself elsewhere. */
+export function sheetToFlow(page: Pick<VDTPage, 'flow'> | null | undefined, x: number, y: number): FramePoint {
+  return page?.flow ? pageToFlow(page, x, y) : { x, y };
+}
+
+/** A box of `page`'s flow frame (a frame's, turned by `rotate` about its
+ *  centre) as the sheet shows it: the box mapped, and the turn reversed by
+ *  a right-to-left page's mirror (a vertical page's quarter turn keeps it). */
+export function flowBoxOnSheet(
+  page: Pick<VDTPage, 'flow'> | null | undefined,
+  rect: { x: number; y: number; width: number; height: number },
+  rotate = 0,
+): { rect: { x: number; y: number; width: number; height: number }; rotate: number } {
+  if (!page?.flow) return { rect: { ...rect }, rotate };
+  const mirrored = page.flow.writingMode === 'horizontal-tb';
+  return { rect: flowRectToPage(page, rect), rotate: rotate && mirrored ? -rotate : rotate };
 }
 
 /** Anything that may carry a comic page (a `VDTPage`, or a stand-in). */

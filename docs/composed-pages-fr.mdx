@@ -641,6 +641,8 @@ Tout ce que peint une page composée sait où il est écrit : un éditeur peut a
 
 `sourceAt(doc, pageIndex, x, y)` reçoit un point d’une page mise en page, en pixels de page depuis le coin supérieur gauche de la feuille, et renvoie ce qui s’y trouve, de l’intérieur vers l’extérieur : chaque élément suivi de ceux qui le contiennent. Un caractère d’un encadré arrive avec sa ligne, son paragraphe, son bloc, les groupes du bloc et le modèle ; un mot du décor, avec son élément de décor, le décor et le modèle. Chaque élément a un `level`, un `id` stable, une `source` et, presque toujours, son `rect` sur la page (droit, avant le `rotate` d’un bloc tourné).
 
+Sur une page de droite à gauche ou verticale, les blocs sont posés dans le repère du flux de la page, que la feuille montre en miroir ou tourné d’un quart de tour ; la décoration et les titres courants restent sur la feuille. `sourceAt` reçoit toujours des points de la feuille et les reporte pour les blocs. Un élément dont le `rect` est dans le repère du flux porte `flow: true`, dans `sourceAt` comme dans `elementsForSource` et `findElement` ; `flowRectToPage(page, rect)` donne sa boîte sur la feuille et `flowToPage(page, x, y)` un de ses points. Jusqu’à postext 1.38, un point de la feuille sur un bloc d’une telle page ne trouvait que le modèle.
+
 <table>
   <thead>
     <tr>

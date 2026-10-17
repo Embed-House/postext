@@ -16,7 +16,7 @@ import {
 import { fromBookOffset } from '../book/compose';
 import type { ComposedBook } from '../book/types';
 import { selectFrame } from '../editing/editMode';
-import { climbable } from '../selection/pageSelection';
+import { climbable, elementRectOnSheet } from '../selection/pageSelection';
 import { setPageSelection } from '../selection/selectionStore';
 import { sameLocaleTag } from '../presets/locale';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
@@ -27,10 +27,13 @@ import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type
  *  frame level (what a click on it and Esc from its text would pick).
  *  False when the source map does not find it there. */
 export function selectFrameOnPage(doc: VDTDocument, pageIndex: number, frameId: string, chapter?: string): boolean {
-  const frame = doc.pages[pageIndex]?.composed?.frames.find((f) => f.id === frameId);
-  if (!frame) return false;
-  // Its centre: on the sheet whatever its turn or scale.
-  const point = { x: frame.rect.x + frame.rect.width / 2, y: frame.rect.y + frame.rect.height / 2 };
+  const page = doc.pages[pageIndex];
+  const frame = page?.composed?.frames.find((f) => f.id === frameId);
+  if (!page || !frame) return false;
+  // Its centre: on the sheet whatever its turn or scale, out of the flow
+  // frame of a right-to-left or vertical page (#929).
+  const r = elementRectOnSheet(page, { rect: frame.rect, flow: true })!;
+  const point = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
   const chain = climbable(sourceAt(doc, pageIndex, point.x, point.y));
   const level = chain.findIndex((el) => el.level === 'frame' && el.id === frameId);
   if (level < 0) return false;

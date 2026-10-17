@@ -19,7 +19,7 @@
  * Pure: no DOM, no React. The store and the viewers build on it.
  */
 
-import { elementsForSource, findElement, sourceAt, type SourceElement, type SourceLevel, type SourceMapOptions, type VDTBlock, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
+import { elementsForSource, findElement, flowRectToPage, flowToPage, sourceAt, type SourceElement, type SourceLevel, type SourceMapOptions, type VDTBlock, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
 
 /** The levels a selection climbs through. A line of text is not one of
  *  them: a click goes from the characters to their paragraph. */
@@ -114,6 +114,14 @@ const inRect = (r: { x: number; y: number; width: number; height: number }, p: {
 /** Where an element of a chain is on `doc`: by its stable id, else (body
  *  text of a page that is not composed, whose ids follow the layout) by
  *  the Markdown it was written in. */
+/** `el`'s box as the sheet of `page` shows it: a box in the page's flow
+ *  frame (`flow`, a right-to-left or vertical page, #929) mapped out of
+ *  it, for a point `sourceAt` reads (which takes sheet points). */
+export function elementRectOnSheet(page: Pick<VDTPage, 'flow'> | undefined, el: Pick<SourceElement, 'rect' | 'flow'>): SourceElement['rect'] {
+  return el.rect && el.flow && page?.flow ? flowRectToPage(page, el.rect) : el.rect;
+}
+
+/** Where `el` is, its box on the sheet. */
 function locate(doc: VDTDocument, el: SourceElement, options: SourceMapOptions | undefined, ofChapter: (pageIndex: number) => boolean): { pageIndex: number; rect?: SourceElement['rect'] } | null {
   if (el.level === 'text') return null;
   // A running head or folio of a page that is not composed: its id names
@@ -126,14 +134,18 @@ function locate(doc: VDTDocument, el: SourceElement, options: SourceMapOptions |
     const block = flowHead[3] === undefined ? undefined : slot.blocks.find((b, i) => (b.elementId ?? `#${i}`) === flowHead[3]);
     return { pageIndex: page.index, rect: { ...(block ?? slot).bbox } };
   }
+  const at = (pageIndex: number, found: SourceElement) => {
+    const rect = elementRectOnSheet(doc.pages[pageIndex], found);
+    return { pageIndex, ...(rect ? { rect } : {}) };
+  };
   const byId = findElement(doc, el.id, options);
-  if (byId && ofChapter(byId.pageIndex)) return { pageIndex: byId.pageIndex, ...(byId.element.rect ? { rect: byId.element.rect } : {}) };
+  if (byId && ofChapter(byId.pageIndex)) return at(byId.pageIndex, byId.element);
   if (byId) {
     // The same id on another chapter's page: look on the chapter's own.
     for (const page of doc.pages) {
       if (!ofChapter(page.index)) continue;
       const one = findElement({ ...doc, pages: [page], blocks: doc.blocks.filter((b) => b.pageIndex === page.index) }, el.id, options);
-      if (one) return { pageIndex: page.index, ...(one.element.rect ? { rect: one.element.rect } : {}) };
+      if (one) return at(page.index, one.element);
     }
   }
   if (el.level === 'group') {
@@ -148,7 +160,7 @@ function locate(doc: VDTDocument, el: SourceElement, options: SourceMapOptions |
   if (el.source.kind === 'markdown' && (el.level === 'block' || el.level === 'box')) {
     const { start, end } = el.source;
     const hit = elementsForSource(doc, start, end, options).find((m) => ofChapter(m.pageIndex) && m.element.level === el.level && m.element.source.kind === 'markdown' && m.element.source.start === start);
-    if (hit) return { pageIndex: hit.pageIndex, ...(hit.element.rect ? { rect: hit.element.rect } : {}) };
+    if (hit) return at(hit.pageIndex, hit.element);
   }
   return null;
 }
@@ -179,8 +191,10 @@ export function resolveSelection(doc: VDTDocument, sel: PageSelection, options?:
     // The click's point, moved as far as the element moved; else the
     // element's centre; else the page's.
     const candidates: { x: number; y: number }[] = [];
-    if (found.rect && el.rect) {
-      const p = { x: sel.point.x + found.rect.x - el.rect.x, y: sel.point.y + found.rect.y - el.rect.y };
+    // Both boxes on the sheet, as the click's point is.
+    const was = elementRectOnSheet(doc.pages[sel.pageIndex] ?? page, el);
+    if (found.rect && was) {
+      const p = { x: sel.point.x + found.rect.x - was.x, y: sel.point.y + found.rect.y - was.y };
       if (inRect(found.rect, p)) candidates.push(p);
     }
     if (found.rect) candidates.push(centre(found.rect));
@@ -439,8 +453,12 @@ export function selectionAtSource(doc: VDTDocument, offset: number, options?: So
   const rect = hit.element.rect!;
   // Its first line, so the point lies on the text (not between columns).
   const line = matches.find((m) => m.element.level === 'line' && m.pageIndex === hit.pageIndex && m.element.id.startsWith(`${hit.element.id}:l`));
-  const r = line?.element.rect ?? rect;
-  const p = { x: r.x + Math.min(2, r.width / 2), y: r.y + r.height / 2 };
+  const flowed = line?.element.rect ? line.element : hit.element;
+  const r = flowed.rect ?? rect;
+  const inFlow = { x: r.x + Math.min(2, r.width / 2), y: r.y + r.height / 2 };
+  // `sourceAt` reads the sheet: a point of the flow frame is mapped out (#929).
+  const page = doc.pages[hit.pageIndex];
+  const p = flowed.flow && page?.flow ? flowToPage(page, inFlow.x, inFlow.y) : inFlow;
   const chain = climbable(sourceAt(doc, hit.pageIndex, p.x, p.y, options));
   const at = chain.findIndex((e) => e.id === hit.element.id && e.level === 'block');
   if (at < 0) return null;

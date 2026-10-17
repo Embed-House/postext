@@ -20,7 +20,7 @@ import type { SandboxLabels } from '../../types/labels';
 import { segmentAtOffset } from '../../book/compose';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import { editModeNow, selectFrame } from '../../editing/editMode';
-import { comicTextFrameAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame } from './frameHit';
+import { comicTextFrameAt, flowBoxOnSheet, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
 import { emptyMarkRect } from './frameOverlay';
 import { comicTextCaret, comicTextTargetAt, frameClickTarget, frameTextChange, frameTextTargetAt, type FrameTextTarget } from './frameLink';
 import { openFrameTextEditor, type FrameEditSurface } from './frameTextEditor';
@@ -74,9 +74,13 @@ export function frameOrMarkAt(page: VDTPage, x: number, y: number): VDTFrame | n
 
 export function createFrameTools(deps: FrameToolsDeps): FrameTools {
   const pageOf = (pageIndex: number): VDTPage | null => deps.docRef.current?.pages[pageIndex] ?? null;
+  // The pointer gives sheet points; a composed page's frames are in its
+  // flow frame (#929).
   const frameAt = (pageIndex: number, x: number, y: number): VDTFrame | null => {
     const page = pageOf(pageIndex);
-    return page?.composed ? frameOrMarkAt(page, x, y) : null;
+    if (!page?.composed) return null;
+    const f = sheetToFlow(page, x, y);
+    return frameOrMarkAt(page, f.x, f.y);
   };
 
   /** Focus the editor at a book offset of `book` (its chapter's). */
@@ -154,13 +158,14 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
         focusAt(book, at, page.comic.sourceStart);
         return true;
       }
-      const frame = page?.composed ? frameOrMarkAt(page, x, y) : null;
+      const f = sheetToFlow(page, x, y);
+      const frame = page?.composed ? frameOrMarkAt(page, f.x, f.y) : null;
       if (!page?.composed || !frame) return false;
       if (editModeNow() === 'design') {
         selectFrame({ pageIndex, frameId: frame.id, name: frame.name, template: page.composed.template, configPath: frame.configPath });
         return true;
       }
-      if (onFrameContent(page, frame, x, y)) return false;
+      if (onFrameContent(page, frame, f.x, f.y)) return false;
       return openSlot(pageIndex, frame);
     },
     openSlot,
@@ -173,15 +178,18 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
         const target = comicTextTargetAt(page, book.markdown, text, x, y);
         return target ? editOnPage(pageIndex, book, text, target, page.comic.sourceStart) : false;
       }
-      const frame = page?.composed ? frameHitAt(page, x, y) : null;
+      const f = sheetToFlow(page, x, y);
+      const frame = page?.composed ? frameHitAt(page, f.x, f.y) : null;
       if (!page?.composed || !frame) return false;
       if (editModeNow() === 'design') return true;
       const book = deps.sourceOfPage(pageIndex);
       const doc = deps.docRef.current;
       if (!book || !doc || !deps.surface) return false;
-      const target = frameTextTargetAt(doc, page, book.markdown, frame, x, y);
+      const target = frameTextTargetAt(doc, page, book.markdown, frame, f.x, f.y);
       if (!target) return false;
-      return editOnPage(pageIndex, book, frame, target, page.composed.sourceStart);
+      // The field opens over the words where the sheet shows them.
+      const onSheet = { ...target, rect: flowBoxOnSheet(page, target.rect).rect };
+      return editOnPage(pageIndex, book, frame, onSheet, page.composed.sourceStart);
     },
   };
 }

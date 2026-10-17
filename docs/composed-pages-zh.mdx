@@ -641,6 +641,8 @@ Con relojes de máquina
 
 `sourceAt(doc, pageIndex, x, y)`接收排好的页面上的一个点（页面像素，从纸张左上角算起），返回那里的内容，由内向外：每个元素后面跟着包含它的元素。标注框里的一个字会带上它所在的行、段落、框、框所属的组和模板；装饰里的一个词会带上它的设计元素、装饰和模板。每个元素都有`level`、稳定的`id`、`source`，大多还有它在页面上的`rect`（转正的，即旋转框的`rotate`之前的位置）。
 
+在从右到左或竖排的页面上，框排在页面的版流坐标系里，纸面上看是镜像的或转了四分之一圈；装饰和页眉留在纸面坐标里。`sourceAt`仍然接收纸面上的点，并为框做换算。`rect`位于版流坐标系的元素会带上`flow: true`，`sourceAt`、`elementsForSource`和`findElement`都是如此；`flowRectToPage(page, rect)`给出它在纸面上的框，`flowToPage(page, x, y)`换算其中一点。postext 1.38及以前，在这类页面的框上取纸面点，只能找到模板。
+
 <table>
   <thead>
     <tr>

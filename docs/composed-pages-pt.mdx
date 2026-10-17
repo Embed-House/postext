@@ -641,6 +641,8 @@ Tudo o que uma página composta pinta sabe onde foi escrito: um editor pode ir d
 
 `sourceAt(doc, pageIndex, x, y)` recebe um ponto de uma página diagramada, em pixels de página a partir do canto superior esquerdo da folha, e devolve o que está ali, de dentro para fora: cada elemento seguido dos que o contêm. Um caractere de um box chega com a sua linha, o seu parágrafo, o seu bloco, os grupos do bloco e o modelo; uma palavra da decoração, com o seu elemento de design, a decoração e o modelo. Cada elemento tem um `level`, um `id` estável, uma `source` e, quase sempre, o seu `rect` na página (em pé, antes do `rotate` de um bloco girado).
 
+Numa página da direita para a esquerda ou vertical, os blocos ficam no referencial do fluxo da página, que a folha mostra espelhado ou girado um quarto de volta; a decoração e os cabeçalhos ficam na folha. `sourceAt` continua recebendo pontos da folha e os converte para os blocos. Um elemento cujo `rect` está no referencial do fluxo vem com `flow: true`, em `sourceAt`, `elementsForSource` e `findElement`; `flowRectToPage(page, rect)` dá sua caixa na folha e `flowToPage(page, x, y)`, um ponto dela. Até o postext 1.38, um ponto da folha sobre um bloco de uma página assim só encontrava o modelo.
+
 <table>
   <thead>
     <tr>

@@ -641,6 +641,8 @@ Everything a composed page paints knows where it was written, so an editor can g
 
 `sourceAt(doc, pageIndex, x, y)` takes a point of a laid-out page, in page pixels from the sheet's top-left corner, and returns what is there, innermost first, each element followed by the ones that hold it. A glyph of a box comes with its line, its paragraph, its frame, the frame's groups and the template; a word of the decoration comes with its design element, the decoration and the template. Each element has a `level`, a stable `id`, a `source`, and, for most, its `rect` on the page (upright, before a turned frame's `rotate`).
 
+On a right-to-left or vertical page the frames are laid in the page's flow frame, mirrored or turned a quarter on the sheet, while the decoration and the running heads stay on the sheet. `sourceAt` still takes sheet points and maps them for the frames. An element whose `rect` is in the flow frame comes with `flow: true`, in `sourceAt`, `elementsForSource` and `findElement` alike; `flowRectToPage(page, rect)` gives its box on the sheet, and `flowToPage(page, x, y)` a point of it. Up to postext 1.38 a sheet point on a frame of such a page found only the template.
+
 <table>
   <thead>
     <tr>

@@ -641,6 +641,8 @@ Todo lo que pinta una página compuesta sabe dónde está escrito, de modo que u
 
 `sourceAt(doc, pageIndex, x, y)` recibe un punto de una página compuesta, en píxeles de página desde la esquina superior izquierda del pliego, y devuelve lo que hay allí, de dentro afuera: cada elemento seguido de los que lo contienen. Un carácter de un recuadro llega con su línea, su párrafo, su marco, los grupos del marco y la plantilla; una palabra de la decoración, con su elemento de diseño, la decoración y la plantilla. Cada elemento tiene un `level`, un `id` estable, un `source` y, casi siempre, su `rect` en la página (derecho, antes del `rotate` de un marco girado).
 
+En una página de derecha a izquierda o vertical, los marcos se colocan en el marco del flujo de la página, que el pliego muestra en espejo o girado un cuarto de vuelta; la decoración y las cabeceras se quedan en el pliego. `sourceAt` sigue recibiendo puntos del pliego y los traslada para los marcos. Un elemento cuyo `rect` está en el marco del flujo llega con `flow: true`, tanto en `sourceAt` como en `elementsForSource` y `findElement`; `flowRectToPage(page, rect)` da su caja en el pliego y `flowToPage(page, x, y)`, un punto suyo. Hasta postext 1.38, un punto del pliego sobre un marco de una página así solo encontraba la plantilla.
+
 <table>
   <thead>
     <tr>

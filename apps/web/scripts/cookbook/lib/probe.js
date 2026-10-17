@@ -763,7 +763,9 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
       continue;
     }
     for (const { element: el } of matches) {
-      const r = el.rect;
+      // A box in the flow frame of a right-to-left or vertical page (`flow`,
+      // #929) is clicked where the sheet shows it.
+      const r = el.rect && el.flow && typeof engine.flowRectToPage === 'function' ? engine.flowRectToPage(page, el.rect) : el.rect;
       if (!r || el.clipped || el.facing || el.rotate || r.width < 1 || r.height < 1) continue;
       const stat = (levels[el.level] ??= { checked: 0, missed: 0 });
       stat.checked++;

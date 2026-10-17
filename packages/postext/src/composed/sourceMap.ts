@@ -23,7 +23,7 @@ import { labelGlyphAt } from './labels';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
-import { composedPaintOrder, frameContentRect, frameMatrix, frameOfBlock } from './paint';
+import { composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
 import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
 
@@ -57,9 +57,14 @@ export interface SourceElement {
    *  frame's slot content, a composed page's fence, a box's fence. */
   content?: { start: number; end: number };
   /** The element's box on the page (px): upright, before its frame's turn
-   *  (`rotate`). In the page's flow frame for flow text on a vertical or
-   *  right-to-left page, as the VDT has it. */
+   *  (`rotate`). In the page's flow frame when {@link flow} is set, as the
+   *  VDT has it. */
   rect?: BoundingBox;
+  /** Set when `rect` is in the page's flow frame, not on the sheet: the
+   *  flow text of a vertical or right-to-left page, and a composed page's
+   *  frames and what they hold there (#929). `flowRectToPage` /
+   *  `flowToPage` put it on the sheet, where `sourceAt` reads its point. */
+  flow?: true;
   /** Degrees the element's frame is turned, clockwise about the frame's
    *  centre; absent when upright. */
   rotate?: number;
@@ -90,6 +95,13 @@ const fileOf = (options: SourceMapOptions | undefined, pageIndex: number): { fil
   const f = typeof options?.file === 'function' ? options.file(pageIndex) : options?.file;
   return f !== undefined ? { file: f } : {};
 };
+
+/** The flag of an element whose box is in `page`'s flow frame (#929). */
+const flowOf = (page: Pick<VDTPage, 'flow'> | undefined): { flow?: true } => (page?.flow ? { flow: true } : {});
+/** `chain` with the elements a frame sets flagged as in the flow frame;
+ *  its groups and the template (no box of their own) left as they are. */
+const inFlowFrame = (page: Pick<VDTPage, 'flow'>, chain: SourceElement[]): SourceElement[] =>
+  page.flow ? chain.map((e) => (e.level === 'group' || e.level === 'template' ? e : { ...e, flow: true as const })) : chain;
 
 // ---------------------------------------------------------------------------
 // Glyphs
@@ -577,20 +589,25 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   const comic = comicChainAt(page, p, file, designTextSource, onText);
   if (comic) return comic;
   if (composed) {
-    // A page of a spread paints its frames and decoration clipped to its
-    // part of the sheet (#861).
-    const clip = composed.sheetClip;
-    const items = clip && !inside(clip, p) ? [] : composedPaintOrder(page);
+    // The frames are laid in the page's flow frame, mirrored on a
+    // right-to-left page and turned on a vertical one (#929); the
+    // decoration stands on the sheet. A page of a spread paints both
+    // clipped to its part of the sheet (#861).
+    const fp = page.flow ? pageToFlow(page, x, y) : p;
+    const frameClip = composed.sheetClip;
+    const decorationClip = composedSheetClipOnSheet(page);
+    const items = composedPaintOrder(page);
     // Topmost first: the paint order read backwards.
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i]!;
       if (item.kind === 'frame') {
-        const chain = frameChain(doc, page, item.frame, item.blocks, p, file, item.facing);
-        if (chain) return chain;
+        if (frameClip && !inside(frameClip, fp)) continue;
+        const chain = frameChain(doc, page, item.frame, item.blocks, fp, file, item.facing);
+        if (chain) return inFlowFrame(page, chain);
         continue;
       }
       const deco = composed.decoration;
-      if (!deco) continue;
+      if (!deco || (decorationClip && !inside(decorationClip, p))) continue;
       for (let k = deco.blocks.length - 1; k >= 0; k--) {
         const chain = designChain(deco.blocks[k]!, k, p, (el) => designElementId(composed.fenceIndex, 'decoration', el), composed, file);
         if (!chain) continue;
@@ -607,19 +624,20 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   const all = [...onPage, ...floats.filter((f) => !onPage.includes(f))];
   const boxes = all.filter((b) => b.type === 'callout');
   // A heading drawn by its design, in a column or a box (#906).
+  const flowed = (chain: SourceElement[]): SourceElement[] => (page.flow ? chain.map((e) => ({ ...e, flow: true as const })) : chain);
   for (const b of all) {
     const chain = headingDesignChain(b, fp, file);
-    if (chain) return [...chain, ...enclosingBoxes(b, boxes, file)];
+    if (chain) return flowed([...chain, ...enclosingBoxes(b, boxes, file)]);
   }
   for (const b of all) {
     if (b.type === 'callout' || b.hidden || b.designOverlay) continue;
     if (!inside(b.bbox, fp)) continue;
-    return [...textChain(b, fp, file), ...enclosingBoxes(b, boxes, file), ...comicTextAncestors(page, b.id, file)];
+    return [...flowed([...textChain(b, fp, file), ...enclosingBoxes(b, boxes, file)]), ...comicTextAncestors(page, b.id, file)];
   }
   for (const b of boxes) {
     if (!inside(b.bbox, fp)) continue;
     const el = blockElement(b, file);
-    if (el) return [el, ...enclosingBoxes(b, boxes, file)];
+    if (el) return flowed([el, ...enclosingBoxes(b, boxes, file)]);
   }
   return [];
 }
@@ -662,7 +680,7 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       // that crosses the spine has most of its box on the facing page.
       const shown = composed.sheetClip && el.rect && !frame.rotate ? intersect(el.rect, composed.sheetClip) : el.rect;
       if (!shown) continue;
-      out.push({ pageIndex: page.index, element: { ...el, rect: shown } });
+      out.push({ pageIndex: page.index, element: { ...el, rect: shown, ...flowOf(page) } });
     }
     for (const [name, slot] of [['decoration', composed.decoration], ['header', page.header], ['footer', page.footer]] as const) {
       slot?.blocks.forEach((b, i) => {
@@ -691,6 +709,7 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     const extra = {
       ...(held?.frame.rotate ? { rotate: held.frame.rotate } : {}),
       ...(facing ? { facing: true as const } : {}),
+      ...flowOf(doc.pages[pageIndex]),
     };
     const id = facing ? unfacing(block.id) : block.id;
     // A page of a spread shows only its part of the sheet (#861): what a
@@ -760,7 +779,7 @@ export function findElement(doc: VDTDocument, id: string, options?: SourceMapOpt
     const composed = page.composed;
     if (!composed) continue;
     if (composedPageElementId(composed.fenceIndex) === id) return { pageIndex: page.index, element: templateElement(composed) };
-    for (const frame of composed.frames) if (frame.id === id) return { pageIndex: page.index, element: frameAncestors(doc, page, frame)[0]! };
+    for (const frame of composed.frames) if (frame.id === id) return { pageIndex: page.index, element: { ...frameAncestors(doc, page, frame)[0]!, ...flowOf(page) } };
     for (const [name, slot] of [['decoration', composed.decoration], ['header', page.header], ['footer', page.footer]] as const) {
       const i = slot?.blocks.findIndex((b, k) => designElementId(composed.fenceIndex, name, b.elementId ?? `#${k}`) === id) ?? -1;
       const b = i >= 0 ? slot!.blocks[i]! : undefined;
@@ -772,7 +791,7 @@ export function findElement(doc: VDTDocument, id: string, options?: SourceMapOpt
     if (label) {
       const el = labelChain(label, b.resourceBlock!.resource.id, b.id, { x: 0, y: 0 }, fileOf(options, b.pageIndex)).find((e) => e.level === 'label')!;
       const frame = frameOfBlock(doc.pages[b.pageIndex]?.composed, b.id);
-      return { pageIndex: b.pageIndex, element: el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el };
+      return { pageIndex: b.pageIndex, element: { ...(el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el), ...flowOf(doc.pages[b.pageIndex]) } };
     }
   }
   const block = doc.blocks.find((b) => b.id === id && b.pageIndex >= 0);
@@ -780,5 +799,5 @@ export function findElement(doc: VDTDocument, id: string, options?: SourceMapOpt
   const el = blockElement(block, fileOf(options, block.pageIndex));
   // Upright on the page when its frame's text is scaled (#858).
   const frame = frameOfBlock(doc.pages[block.pageIndex]?.composed, block.id);
-  return el ? { pageIndex: block.pageIndex, element: el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el } : undefined;
+  return el ? { pageIndex: block.pageIndex, element: { ...(el.rect && frame ? { ...el, rect: uprightRect(frame, el.rect) } : el), ...flowOf(doc.pages[block.pageIndex]) } } : undefined;
 }

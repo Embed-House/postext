@@ -43,7 +43,8 @@ export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageI
     }
   }
   if (!rect) return null;
-  let transform: string | null = null;
+  type M = [number, number, number, number, number, number];
+  let turn: M | null = null;
   if (el.rotate) {
     // Turned about its frame's centre.
     const frame = el.level === 'frame' ? el : sel.chain.find((e) => e.level === 'frame');
@@ -53,16 +54,32 @@ export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageI
     const a = (el.rotate * Math.PI) / 180;
     const cos = Math.cos(a);
     const sin = Math.sin(a);
-    // As `matrix()`, which the Folio's marks read too.
-    transform = `matrix(${[cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy].join(' ')})`;
-  } else if (!page.composed && page.flow && el.level !== 'design' && el.level !== 'slot') {
-    // Flow text of a vertical or right-to-left page: in its flow frame.
+    turn = [cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy];
+  }
+  // A box in the flow frame of a vertical or right-to-left page: the flow
+  // text, and a composed page's frames and their contents (#929); a group
+  // is the union of its frames there.
+  const inFlow = !!page.flow && (el.flow === true || (el.level === 'group' && !!page.composed));
+  let flowM: M | null = null;
+  if (inFlow && page.flow) {
     const flow = page.flow;
-    const m = flow.writingMode === 'vertical-rl'
+    flowM = flow.writingMode === 'vertical-rl'
       ? [0, 1, -1, 0, flow.rotation.originX, flow.rotation.originY]
       : [-1, 0, 0, 1, flow.mirror.originX, 0];
-    transform = `matrix(${m.join(' ')})`;
   }
+  // The flow frame's matrix after the frame's turn, as the backends paint.
+  const m: M | null = flowM && turn
+    ? [
+        flowM[0] * turn[0] + flowM[2] * turn[1],
+        flowM[1] * turn[0] + flowM[3] * turn[1],
+        flowM[0] * turn[2] + flowM[2] * turn[3],
+        flowM[1] * turn[2] + flowM[3] * turn[3],
+        flowM[0] * turn[4] + flowM[2] * turn[5] + flowM[4],
+        flowM[1] * turn[4] + flowM[3] * turn[5] + flowM[5],
+      ]
+    : flowM ?? turn;
+  // As `matrix()`, which the Folio's marks read too.
+  const transform = m ? `matrix(${m.join(' ')})` : null;
   return { rect: { ...rect }, transform };
 }
 

@@ -641,6 +641,8 @@ Alles, was eine zusammengesetzte Seite zeichnet, weiß, wo es geschrieben steht.
 
 `sourceAt(doc, pageIndex, x, y)` nimmt einen Punkt einer gesetzten Seite in Seitenpixeln, gemessen von der oberen linken Ecke des Bogens, und gibt zurück, was dort liegt, von innen nach außen: jedes Element, gefolgt von denen, die es enthalten. Ein Zeichen in einem Kasten kommt mit seiner Zeile, seinem Absatz, seinem Rahmen, den Gruppen des Rahmens und der Vorlage; ein Wort des Dekors mit seinem Gestaltungselement, dem Dekor und der Vorlage. Jedes Element hat ein `level`, eine stabile `id`, eine `source` und meist sein `rect` auf der Seite (aufrecht, vor dem `rotate` eines gedrehten Rahmens).
 
+Auf einer Seite, die von rechts nach links läuft oder vertikal gesetzt ist, liegen die Rahmen im Bezugssystem des Textflusses, das der Bogen gespiegelt oder um eine Vierteldrehung gedreht zeigt; Dekoration und Kolumnentitel bleiben auf dem Bogen. `sourceAt` nimmt weiterhin Punkte des Bogens und rechnet sie für die Rahmen um. Ein Element, dessen `rect` im Bezugssystem des Flusses liegt, trägt `flow: true`, in `sourceAt` ebenso wie in `elementsForSource` und `findElement`; `flowRectToPage(page, rect)` liefert seinen Kasten auf dem Bogen, `flowToPage(page, x, y)` einen Punkt davon. Bis postext 1.38 fand ein Punkt des Bogens auf einem Rahmen einer solchen Seite nur die Vorlage.
+
 <table>
   <thead>
     <tr>

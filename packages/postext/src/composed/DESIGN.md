@@ -890,6 +890,17 @@ Recorded where the implementation settles a point the sections above leave open,
   are not laid out (SP followup 943-rest: forward ids, carried story Markdown, chapter-qualified
   source map, numbering, book-level marks).
 
+- **Sheet points on flow pages (#929).** A composed page's frames are laid in the page's flow
+  frame (mirrored on a right-to-left page, turned on a vertical one); its decoration stands on the
+  sheet. `sourceAt` takes sheet points and maps them with `pageToFlow` for the frames (the spread
+  clip `sheetClip` read in the flow, the decoration's with `composedSheetClipOnSheet`). Every
+  element whose `rect` is in the flow frame carries `flow: true` (`sourceAt`, `elementsForSource`,
+  `findElement`; flow text of a vertical or right-to-left page too); `flowRectToPage` puts it on
+  the sheet. Sandbox: `frameHit.ts` `sheetToFlow` / `flowBoxOnSheet`; the frame tools, the Design
+  mode marks, the picked mark (flow matrix after the frame's turn), the selection's relocation
+  and the template editor (pointer read in the flow, marks drawn through the flow's matrix) use
+  them. The Cookbook's C40 probe clicks flagged boxes on the sheet.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
