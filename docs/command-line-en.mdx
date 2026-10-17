@@ -253,6 +253,15 @@ heading (`--no-split` keeps one), pictures and tables as resources, and
 formatting, typed numbering…). `--template` takes an import template (a
 `.json` saved from the Sandbox or a `.docx` that carries one).
 
+Character spacing is a property of a style, not of the text, so it is not in the
+Markdown. `docx` writes the `letterSpacing` of paragraph styles, heading styles
+and heading levels as the Word style's character spacing, and `import-docx`
+reads it back in em of the style's size: it sets `letterSpacing` on the book's
+styles that have none (the paragraph and heading styles of the `--config` file
+that the Word styles map to, and the heading levels), and leaves any tracking the
+book already sets as it is. With `--json`, `styleTracking` lists what was set
+(`applied`) and what was left (`skipped`). Since postext 1.39.
+
 ### pack and unpack
 
 ```bash

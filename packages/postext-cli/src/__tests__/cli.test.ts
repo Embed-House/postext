@@ -97,6 +97,22 @@ describe('postext cli', () => {
     expect(again).toContain('More text.');
   }, 60_000);
 
+  // #932: the character spacing of Word's styles goes on the book's styles that set none.
+  it('brings the character spacing of Word styles onto the book\'s styles that set none', () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n:::paragraphs{style="firma"}\nSigned\n:::\n');
+    const styled = { paragraphStyles: [{ id: 'firma', name: 'Firma', letterSpacing: { value: 0.05, unit: 'em' } }], headings: { levels: [{ level: 1, letterSpacing: { value: 0.02, unit: 'em' } }] } };
+    writeFileSync(join(dir, 'styled.json'), JSON.stringify(styled));
+    writeFileSync(join(dir, 'bare.json'), JSON.stringify({ paragraphStyles: [{ id: 'firma', name: 'Firma' }] }));
+    expect(run(['docx', 'ch', '-o', 'b.docx', '--config', 'styled.json', '-q'], dir).code).toBe(0);
+    const r = run(['import-docx', 'b.docx', '--config', 'bare.json', '-o', 'back', '--json'], dir);
+    expect(r.code).toBe(0);
+    expect(JSON.parse(r.stdout).styleTracking.applied.sort()).toEqual(['Firma 0.05 em', 'heading 1 0.02 em']);
+    const back = (JSON.parse(readFileSync(join(dir, 'back', 'preset.json'), 'utf8')) as { config: typeof styled }).config;
+    expect(back.paragraphStyles[0]!.letterSpacing).toEqual({ value: 0.05, unit: 'em' });
+    expect(back.headings.levels[0]).toEqual({ level: 1, letterSpacing: { value: 0.02, unit: 'em' } });
+  }, 60_000);
+
   it('renders one page to stdout', () => {
     const dir = book();
     const r = Bun.spawnSync([...cmd, 'image', 'ch', '--page', '#1', '-o', '-', '--dpi', '20', '--offline', '-q'], { cwd: dir, env: { ...process.env, POSTEXT_CACHE_DIR: join(dir, '.cache') } });

@@ -253,6 +253,15 @@ livello 1 (`--no-split` ne tiene uno solo), immagini e tabelle come risorse, e
 diretta, numerazione digitata a mano…). `--template` accetta un modello di importazione (un
 `.json` salvato dalla Sandbox o un `.docx` che ne contiene uno).
 
+La spaziatura tra i caratteri appartiene allo stile, non al testo, e quindi non sta nel
+Markdown. `docx` scrive il `letterSpacing` degli stili di paragrafo, degli stili di titolo
+e dei livelli di titolo come spaziatura tra i caratteri dello stile Word, e `import-docx`
+lo rilegge in em della dimensione dello stile: lo imposta come `letterSpacing` sugli stili del libro
+che non ne hanno uno (gli stili di paragrafo e di titolo del file `--config` a cui corrispondono
+gli stili Word, e i livelli di titolo), e lascia com’è ogni spaziatura che il libro definisce già.
+Con `--json`, `styleTracking` elenca ciò che è stato impostato (`applied`) e ciò che è rimasto
+fuori (`skipped`). Da postext 1.39.
+
 ### pack e unpack
 
 ```bash

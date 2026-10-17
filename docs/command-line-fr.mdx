@@ -264,6 +264,15 @@ forme directe, numérotation tapée à la main…). `--template` accepte un mod�
 d’importation (un `.json` enregistré depuis le Sandbox ou un `.docx` qui en
 contient un).
 
+L’espacement des caractères appartient au style, pas au texte : il n’est donc pas dans le
+Markdown. `docx` écrit le `letterSpacing` des styles de paragraphe, des styles de titre
+et des niveaux de titre comme espacement des caractères du style Word, et `import-docx`
+le relit en em de la taille du style : il le pose en `letterSpacing` sur les styles du livre
+qui n’en ont aucun (les styles de paragraphe et de titre du fichier `--config` auxquels
+correspondent les styles Word, et les niveaux de titre), et laisse tel quel tout espacement
+que le livre définit déjà. Avec `--json`, `styleTracking` énumère ce qui a été posé (`applied`)
+et ce qui a été laissé (`skipped`). Depuis postext 1.39.
+
 ### pack et unpack
 
 ```bash

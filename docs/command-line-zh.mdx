@@ -185,6 +185,8 @@ postext import-docx manuscript.docx -o manuscript.postext
 
 `docx`用Word样式写出各章的标题、段落、框、引文、列表和注释。Word无法表达的内容以*Postext Markup*样式按原样保留，导入模板也随文件一起保存，所以编辑修改过的文档能原样导入回来。`import-docx`把Word文档转成一本书：每个1级标题开始一章（`--no-split`保持为一章），图片和表格成为资源，`--report`打印沙盒显示的质量报告（使用中的样式、直接格式、手打的编号…）。`--template`接受一个导入模板（从沙盒保存的`.json`，或带有模板的`.docx`）。
 
+字符间距属于样式，不属于文字，所以不在Markdown里。`docx`把段落样式、标题样式和各级标题的`letterSpacing`写成Word样式的字符间距，`import-docx`再按样式字号的em把它读回来：设为书中尚未设置`letterSpacing`的样式（`--config`文件里与Word样式对应的段落样式和标题样式，以及各级标题），书中已有的字距保持不变。加上`--json`时，`styleTracking`列出已设置的（`applied`）和跳过的（`skipped`）。自postext 1.39起。
+
 ### pack和unpack
 
 ```bash

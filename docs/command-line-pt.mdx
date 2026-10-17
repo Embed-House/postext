@@ -259,6 +259,15 @@ qualidade que o Sandbox mostra (estilos em uso, formatação direta, numeração
 digitada…). `--template` recebe um modelo de importação (um `.json` salvo no
 Sandbox ou um `.docx` que traga um).
 
+O espaçamento entre caracteres é uma propriedade do estilo, não do texto, e por isso não está no
+Markdown. `docx` grava o `letterSpacing` dos estilos de parágrafo, dos estilos de título
+e dos níveis de título como espaçamento entre caracteres do estilo do Word, e `import-docx`
+o lê de volta em em do tamanho do estilo: ele o põe como `letterSpacing` nos estilos do livro
+que não têm nenhum (os estilos de parágrafo e de título do arquivo de `--config` aos quais
+os estilos do Word correspondem, e os níveis de título), e deixa como está qualquer espaçamento
+que o livro já define. Com `--json`, `styleTracking` lista o que foi aplicado (`applied`) e o que
+ficou de fora (`skipped`). Desde o postext 1.39.
+
 ### pack e unpack
 
 ```bash

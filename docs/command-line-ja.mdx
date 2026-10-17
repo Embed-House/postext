@@ -185,6 +185,8 @@ postext import-docx manuscript.docx -o manuscript.postext
 
 `docx`は、見出し、段落、囲み、引用、リスト、注にWordのスタイルを使って章を書き出します。Wordで表現できないものは*Postext Markup*のスタイルでそのまま残り、読み込み用のテンプレートがファイルの中に入るので、編集者が手を加えたあとでも、文書は変わらずに読み込み直せます。`import-docx`はWordの文書を本にします。レベル1の見出しごとに章を分け（`--no-split`なら1章のまま）、画像と表はリソースになります。`--report`は、Sandboxが表示する品質レポート（使われているスタイル、直接の書式、手入力の番号…）を出力します。`--template`は読み込み用のテンプレート（Sandboxから保存した`.json`、またはテンプレートを持つ`.docx`）を受け付けます。
 
+文字間隔は文字そのものではなくスタイルの性質なので、Markdownには入りません。`docx`は、段落スタイル、見出しスタイル、見出しのレベルの`letterSpacing`を、Wordスタイルの文字間隔として書き出します。`import-docx`はそれをスタイルのサイズに対するemで読み戻し、本の中で`letterSpacing`を持たないスタイル（Wordのスタイルに対応する`--config`ファイルの段落スタイルと見出しスタイル、および見出しのレベル）に設定します。本がすでに指定している字間はそのままです。`--json`を付けると、`styleTracking`に設定したもの（`applied`）と見送ったもの（`skipped`）が並びます。postext 1.39から。
+
 ### packとunpack
 
 ```bash

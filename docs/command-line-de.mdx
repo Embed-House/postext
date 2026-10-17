@@ -253,6 +253,15 @@ der Ebene 1 (`--no-split` behält eines), Bilder und Tabellen als Ressourcen, un
 Formatierung, getippte Nummerierung …). `--template` nimmt eine Importvorlage an (eine
 aus der Sandbox gespeicherte `.json`-Datei oder eine `.docx`-Datei, die eine enthält).
 
+Der Zeichenabstand gehört zur Formatvorlage, nicht zum Text, und steht deshalb nicht im
+Markdown. `docx` schreibt das `letterSpacing` der Absatzformate, der Überschriftenformate
+und der Überschriftenebenen als Zeichenabstand der Word-Formatvorlage, und `import-docx`
+liest ihn in em der Schriftgröße der Vorlage zurück: Er wird als `letterSpacing` auf die Formate
+des Buchs gesetzt, die keinen eigenen haben (die Absatz- und Überschriftenformate der
+`--config`-Datei, auf die sich die Word-Formatvorlagen abbilden, und die Überschriftenebenen);
+einen Zeichenabstand, den das Buch schon festlegt, lässt er unverändert. Mit `--json` führt
+`styleTracking` auf, was gesetzt wurde (`applied`) und was übrig blieb (`skipped`). Seit postext 1.39.
+
 ### pack und unpack
 
 ```bash
