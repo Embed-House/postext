@@ -31,6 +31,7 @@ import {
   type VDTFigureLabel,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
+import { withFigureWords } from './figureWords';
 import { contourOnPage } from '../contour';
 import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels';
 import { anchorBox } from '../design/layout';
@@ -775,6 +776,13 @@ function placeDocumentPass(
   // Code fences (#624) as `codeStyle` reads them: a configuration stored
   // before #624 reads their lines as Markdown (`codeStyle.blocks: false`).
   const parsedBody = numberTitlesFor(headingMarksFor(tashkilFor(literalBreaksFor(parseMarkdownMemo(markdownBody, codeParseOptions(resolved)), resolved), resolved.bodyText.tashkil), resolved), resolved);
+  // A figure's own words (#935): its alt, caption and note replace the
+  // resource's in this chapter, for the layout, the references and every
+  // output alike.
+  if (content.resources) {
+    const worded = withFigureWords(content.resources, parsedBody);
+    if (worded !== content.resources) content = { ...content, resources: worded };
+  }
   const citationContext = content.citations
     ?? (needsCitationContext(parsedBody, frontmatterMeta) ? bookCitationContexts([{ metadata: frontmatterMeta as Record<string, unknown>, blocks: parsedBody }], content.resources)[0] : undefined);
   // `citations.hyphenateNames: false`: the cited authors' names are never

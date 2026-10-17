@@ -606,7 +606,7 @@ export { composedPages } from './composed/document';
 export type { ParsedComposedPage, HeadingTake } from './composed/document';
 export { checkComposedSlots } from './composed/slotChecks';
 export type { ComposedSlotWarning } from './composed/slotChecks';
-export type { ComposedPageFence, BlockSlot, FigureInfo, FigureLabel } from './parse';
+export type { ComposedPageFence, BlockSlot, FigureInfo, FigureLabel, FigureWord, FigureWordKind } from './parse';
 export { computeSourceMap, parseInlineSnippetSpans, mapInlineSnippet, orientationMarkAt, contentHasMath, resourceHasMath } from './parse';
 export type { OrientationMark } from './parse';
 export type { InlineSnippetMapping } from './parse';

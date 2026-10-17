@@ -179,6 +179,22 @@ export interface FigureInfo {
   attrs: DirectiveAttrs;
   attrSources: Record<string, SourceRange>;
   labels: FigureLabel[];
+  /** The words of this edition (#935): the `alt`, `caption` and `note` the
+   *  figure gives in place of its resource's, from the fence's attributes
+   *  or from `::alt[…]`, `::caption[…]` and `::note[…]` lines (a line wins
+   *  over an attribute). Absent when the figure gives none. */
+  words?: Partial<Record<FigureWordKind, FigureWord>>;
+}
+
+/** The resource fields a `:::figure` can say in its own words. */
+export type FigureWordKind = 'alt' | 'caption' | 'note';
+
+/** One of a figure's own words (#935): the text as written (a caption and
+ *  a note keep their inline Markdown, as a resource's do) and the absolute
+ *  source range of that text. `text` may be empty: `alt=""` says the
+ *  picture is decorative. */
+export interface FigureWord extends SourceRange {
+  text: string;
 }
 
 /** Letter-case transform applied to the computed label of an inline `:ref`
