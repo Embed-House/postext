@@ -8,6 +8,7 @@
 import type { ContentWarning } from '../vdt';
 import type { ParsedComposedPage } from './document';
 import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate } from './types';
+import { continueInPage, resolveContinueIn } from './templates';
 
 /** The composed-page warnings, as {@link checkComposedSlots} returns them
  *  (source offsets as in the pages it read). */
@@ -71,7 +72,8 @@ function variantFrameNames(template: PageTemplate): Set<string> {
  *   heading of the page, and, for the flow frame, no content is left
  *   without a slot). Not raised for an `optional` frame, nor for a frame
  *   other frames continue into (`next`, `overflow.continueIn: '#x'`),
- *   which fills only when they overflow.
+ *   which fills only when they overflow, nor for the frame of a later page
+ *   that a story jumps to (`overflow.continueIn: 'page:<id>'`, #917).
  * - `spreadMismatch`: the fence's `spread` flag and the template's `spread`
  *   (inherited through `extends`) differ. The template decides: a spread
  *   template is laid over two facing pages, any other on one page. Points
@@ -87,6 +89,48 @@ export function checkComposedSlots(
   for (const t of Array.isArray(config?.pageTemplates) ? config!.pageTemplates : []) {
     if (t && typeof t.id === 'string' && !byId.has(t.id)) byId.set(t.id, t);
   }
+  /** Whether frame `f` of `page` receives content of the page itself. */
+  const filledOn = (page: ParsedComposedPage, frames: readonly FrameConfig[], f: FrameConfig): boolean => {
+    const known = new Set(frames.map((x) => x.name));
+    const taken = new Set<number>();
+    for (const x of frames) {
+      const idx = x.takes ? page.firstHeadings[x.takes] : undefined;
+      if (idx !== undefined) taken.add(idx);
+    }
+    const stray = Object.keys(page.slots).some((slot) => !known.has(slot));
+    const flowContent = stray || page.unassigned.some((i) => !taken.has(i));
+    return page.slots[f.name] !== undefined
+      || (f.takes !== undefined && page.firstHeadings[f.takes] !== undefined)
+      || (f.flow === true && flowContent);
+  };
+  // The frames later pages take jumping stories in (#917), by page: as
+  // the layout picks them, the frame `#<frame>` names, else the frame of
+  // the sending chain head's name, else the first frame left empty.
+  const jumpedInto = new Map<number, Set<string>>();
+  pages.forEach((page, at) => {
+    const template = byId.get(page.template);
+    if (!template) return;
+    const frames = templateFrames(template, byId);
+    const prev = new Map<string, string>();
+    for (const f of frames) if (f.next && !prev.has(f.next)) prev.set(f.next, f.name);
+    for (const f of frames) {
+      const rule = f.overflow?.continueIn;
+      const target = typeof rule === 'string' ? continueInPage(resolveContinueIn(rule, page.attrs as Record<string, string>)) : undefined;
+      if (!target) continue;
+      const k = pages.findIndex((p, i) => i > at && p.attrs.id === target.page);
+      const to = k >= 0 ? pages[k]! : undefined;
+      const toTemplate = to ? byId.get(to.template) : undefined;
+      if (!to || !toTemplate) continue;
+      const toFrames = templateFrames(toTemplate, byId);
+      let head = f.name;
+      for (const seen = new Set([head]); prev.has(head) && !seen.has(prev.get(head)!); ) { head = prev.get(head)!; seen.add(head); }
+      const empty = toFrames.filter((x) => !filledOn(to, toFrames, x)).map((x) => x.name);
+      const taken = jumpedInto.get(to.fenceIndex) ?? new Set<string>();
+      const pick = [target.frame, head, f.name, ...empty].find((n) => n !== undefined && empty.includes(n) && !taken.has(n));
+      if (pick !== undefined) taken.add(pick);
+      jumpedInto.set(to.fenceIndex, taken);
+    }
+  });
   for (const page of pages) {
     const template = byId.get(page.template);
     if (!template) {
@@ -126,7 +170,7 @@ export function checkComposedSlots(
       if (typeof to === 'string' && to.startsWith('#')) continued.add(to.slice(1));
     }
     for (const f of frames) {
-      if (f.optional || continued.has(f.name)) continue;
+      if (f.optional || continued.has(f.name) || jumpedInto.get(page.fenceIndex)?.has(f.name)) continue;
       const filled = page.slots[f.name] !== undefined
         || (f.takes !== undefined && page.firstHeadings[f.takes] !== undefined)
         || (f.flow === true && flowContent);
