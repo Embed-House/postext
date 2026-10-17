@@ -52,6 +52,9 @@ import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, t
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
 import { createMeasureMemo } from './measureMemo';
+import { computeOrderedListRunMetrics } from './lists';
+import { planParagraphContainers } from './paragraphContainers';
+import type { CarriedNumber, ImportedJumps } from '../composed/carry';
 import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
@@ -620,6 +623,69 @@ function trialPass(base: FrameLayoutPass, extra: readonly ContentBlock[], origin
     measureCtxFor: (startIdx, style) => trialCtx(base.measureCtxFor(measureOrigin.get(startIdx) ?? startIdx, style)),
     stripBlock: (raw, idx, width) => base.stripBlock(raw, at(idx), width),
     ...(base.headingDesign ? { headingDesign: (raw, blockIdx, heading, width) => base.headingDesign!(raw, at(blockIdx), heading, width) } : {}),
+  };
+}
+
+/**
+ * The pass the stories carried in from other chapters (#943) are laid with:
+ * `base` with their blocks appended to its content, and every lookup the
+ * box typesetter keys by content index answered for them from what the
+ * sender gave (heading numbers) or worked out again from the carried
+ * blocks alone (paragraph groups, ordered-list markers). A carried story's
+ * box is set in the context of the text, with the list indents its sender
+ * set its lists with; the typography of a styled section or a part of this
+ * chapter does not reach it.
+ */
+export function carriedPass(base: FrameLayoutPass, carried: ImportedJumps): FrameLayoutPass {
+  if (carried.blocks.length === 0) return base;
+  const n = base.contentBlocks.length;
+  const contentBlocks = [...base.contentBlocks, ...carried.blocks];
+  const local = planParagraphContainers(carried.blocks, base.resolved);
+  const byBlock = [...base.paragraphContainers.byBlock];
+  byBlock.length = n;
+  byBlock.push(...local.byBlock);
+  const paragraphContainers = { byId: new Map([...base.paragraphContainers.byId, ...local.byId]), byBlock };
+  const numberAt = new Map<number, CarriedNumber>();
+  for (const story of carried.stories.values()) for (const [at, num] of story.numbers) numberAt.set(at, num);
+  const extend = <T,>(arr: T[] | undefined, pick: (num: CarriedNumber) => T | undefined): T[] | undefined => {
+    if (!arr) return arr;
+    const out = [...arr];
+    out.length = n;
+    out.length = contentBlocks.length;
+    for (const [at, num] of numberAt) out[at] = pick(num) as T;
+    return out;
+  };
+  const contexts = new Map<BlockMeasureContext, Map<number, BlockMeasureContext>>();
+  const carriedCtx = (ctx: BlockMeasureContext, startIdx: number): BlockMeasureContext => {
+    const story = carried.stories.get(startIdx)!;
+    const of = contexts.get(ctx) ?? new Map<number, BlockMeasureContext>();
+    contexts.set(ctx, of);
+    const known = of.get(startIdx);
+    if (known) return known;
+    const metrics = computeOrderedListRunMetrics(carried.blocks, base.resolved, ctx.bodyStyle.fontSizePx);
+    const perBlock = new Map(ctx.orderedMetrics.perBlock);
+    for (const [i, m] of metrics.perBlock) perBlock.set(n + i, m);
+    const out: BlockMeasureContext = {
+      ...ctx,
+      contentBlocks,
+      headingPrefixes: extend(ctx.headingPrefixes, (num) => num.prefix)!,
+      ...(ctx.headingNumbers ? { headingNumbers: extend(ctx.headingNumbers, (num) => num.value)! } : {}),
+      orderedMetrics: { perBlock, maxWidthByDepth: ctx.orderedMetrics.maxWidthByDepth },
+      ...(story.jump.orderedLevelIndentsPx ? { orderedLevelIndentsPx: story.jump.orderedLevelIndentsPx } : {}),
+      dropCapNotes: new Map(),
+      joiningLetterSpacing: new Set(),
+    };
+    of.set(startIdx, out);
+    return out;
+  };
+  return {
+    ...base,
+    contentBlocks,
+    paragraphContainers,
+    measureCtxFor: (startIdx, style) => {
+      const ctx = base.measureCtxFor(startIdx, style);
+      return carried.stories.has(startIdx) ? carriedCtx(ctx, startIdx) : ctx;
+    },
   };
 }
 
@@ -1374,7 +1440,10 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         if (q) q.continuesTo = vdt.id;
       } else if (holds && cont?.receivers.has(frame.name)) {
         // Content from the page before (#859).
-        vdt.continuedFrom = cont.receivers.get(frame.name)!.fromFrameId;
+        const came = cont.receivers.get(frame.name)!;
+        vdt.continuedFrom = came.fromFrameId;
+        // From a page of an earlier chapter (#943).
+        if (came.foreign) vdt.continuedFromChapter = came.foreign.from;
       }
       if (result) {
         // The marks whose `{page}` the build fills in (#917).

@@ -21,6 +21,8 @@ import { computeOutline, hasIndexDirective, hasTocDirective } from './outline';
 import { lastFootnoteNumber, numberFootnotes, splitFootnoteDefinitions } from './footnotes';
 import { numberStatements } from './statementNumbering';
 import { lastVerseLineNumber } from './lineNumbers';
+import { composedPages } from '../composed/document';
+import { resolvePageTemplate } from '../composed/templates';
 
 const NO_HEADINGS: HeadingCounters = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
 
@@ -126,4 +128,37 @@ export function contentOutline(
     // A reference naming no resource may name an anchor of the book (#262).
     hasRefs: hasAnchorRefs(blocks, new Set((content.resources ?? []).map((r) => r.id))),
   };
+}
+
+/** The `id` of every composed page fence (`::::page{id="…"}`) of a chapter,
+ *  in order, whose template the configuration has (#943): what a story of
+ *  an earlier chapter can jump to (`overflow.continueIn: 'page:<id>'`). A
+ *  host collects them chapter by chapter into `PostextContent.laterPageIds`
+ *  (see `laterPageIdsOf`). */
+export function pageFenceIds(markdown: string, config?: PostextConfig): string[] {
+  if (!markdown.includes('id=')) return [];
+  const resolved = resolveAllConfig(config);
+  const source = { pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles };
+  const blocks = parseMarkdownMemo(extractFrontmatter(markdown).content, codeParseOptions(resolved));
+  const out: string[] = [];
+  for (const page of composedPages(blocks)) {
+    const id = page.attrs.id;
+    if (id !== undefined && id !== '' && !out.includes(id) && resolvePageTemplate(source, page.template)) out.push(id);
+  }
+  return out;
+}
+
+/** For each chapter of a book, the page fences of the chapters after it
+ *  (`PostextContent.laterPageIds`, #943): their `id`, and the position of
+ *  the nearest chapter that has it. `ids` are the chapters' own ids
+ *  (`pageFenceIds`). */
+export function laterPageIdsOf(ids: readonly (readonly string[])[]): Record<string, number>[] {
+  const out: Record<string, number>[] = new Array(ids.length);
+  // A Map, and `fromEntries`: an id may be any word, `__proto__` included.
+  const running = new Map<string, number>();
+  for (let i = ids.length - 1; i >= 0; i--) {
+    out[i] = Object.fromEntries(running);
+    for (const id of ids[i]!) running.set(id, i);
+  }
+  return out;
 }

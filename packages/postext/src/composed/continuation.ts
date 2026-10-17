@@ -72,6 +72,11 @@ export interface ComposedContinuation {
   trailing?: readonly string[];
   /** The sending frame's `overflow.fromMark` (#917). */
   fromMark?: string;
+  /** The story comes from another chapter of the book (#943): `chapter` is
+   *  the one whose file its text is in, `from` the one whose page sent it
+   *  on, positions in the book. `fromFrameId` is a frame id of that page,
+   *  which this document does not have. */
+  foreign?: { chapter: number; from: number };
 }
 
 /** What a page added by continuation receives. */

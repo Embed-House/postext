@@ -55,6 +55,8 @@ describe("package exports", () => {
       "BuildCancelledError",
       "continuationAfter",
       "contentOutline",
+      "pageFenceIds",
+      "laterPageIdsOf",
       "computeOutline",
       "computeOutlineFor",
       "outlineFromDoc",

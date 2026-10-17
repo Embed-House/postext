@@ -2,7 +2,7 @@ export { createLayout } from './createLayout';
 export { registerCodeHighlighter, highlightCode, builtinCodeLanguage } from './code/highlight';
 export { fencedCodeLines } from './parse/codeFence';
 export type { CodeHighlighter, CodeToken } from './code/highlight';
-export { buildDocument, BuildCancelledError, continuationAfter, contentOutline, computeOutline, computeOutlineFor, outlineFromDoc, outlineKey, sameOutline, hasTocDirective, hasIndexDirective, tocOutline, indexOutline, anchorOutline, hasAnchors, locateAnchors, duplicateAnchors } from './pipeline';
+export { buildDocument, BuildCancelledError, continuationAfter, contentOutline, pageFenceIds, laterPageIdsOf, computeOutline, computeOutlineFor, outlineFromDoc, outlineKey, sameOutline, hasTocDirective, hasIndexDirective, tocOutline, indexOutline, anchorOutline, hasAnchors, locateAnchors, duplicateAnchors } from './pipeline';
 export type { BuildDocumentOptions } from './pipeline';
 export { formatFootnoteNumber, footnoteFormatOf, footnoteSymbol, DEFAULT_FOOTNOTE_SYMBOLS } from './pipeline/footnotes';
 export type { FootnoteFormat } from './pipeline/footnotes';
@@ -659,6 +659,8 @@ export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
 export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMatch } from './composed/sourceMap';
 export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
 export { composedPagePaintKey } from './composed/pageMemo';
+// A story that jumps into a page of a later chapter (#943).
+export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carry';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,

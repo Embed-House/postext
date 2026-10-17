@@ -29,6 +29,7 @@ import {
   type ResolvedConfig,
   type ContentWarning,
   type VDTFigureLabel,
+  type ReflowEvent,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
 import { withFigureWords } from './figureWords';
@@ -91,7 +92,8 @@ import { layoutComposedSpread } from '../composed/spread';
 import { assignJumpReceivers, assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import { frameElementId } from '../composed/ids';
 import { nextFrameOf } from '../composed/geometry';
-import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { carriedPass, composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { importJumps, type CarriedNote, type CarriedNumber, type ImportedJumps, type StoryJump } from '../composed/carry';
 import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
@@ -869,6 +871,14 @@ function placeDocumentPass(
   // callout machinery places and splits.
   const codeBoxes = wrapCodeBlocks(spanEmbeds.blocks, resolved);
   const contentBlocks = codeBoxes.blocks;
+  // Stories of earlier chapters that jump into a page of this one (#943):
+  // appended past the chapter's blocks by the composed pages' layout, with
+  // the notes they cite numbered as their chapter numbered them.
+  const carried = continuation?.jumps && continuation.jumps.length > 0 ? importJumps(continuation.jumps, contentBlocks.length, bodyOffset) : undefined;
+  for (const note of carried?.footnotes ?? []) {
+    footnoteNumbering.numbers.set(note.id, note.number);
+    if (note.def) footnoteDefs.set(note.id, note.def);
+  }
   if (indexExpanded.warnings.length > 0) indexWarnings.set(doc, indexExpanded.warnings);
   const isNumbered = (b: ContentBlock): boolean => headingIsNumbered(b, resolved);
 
@@ -6304,6 +6314,87 @@ function placeDocumentPass(
   }
   /** Stories waiting for the later page fence they jump to, by its id. */
   const jumps = new Map<string, ComposedContinuation[]>();
+  /** The carried stories are laid through a pass that answers for them;
+   *  they wait for their fence with the others. */
+  const composedPass = carried ? carriedPass(framePass, carried) : framePass;
+  /** Stories of this chapter that jump into a page of a later one (#943). */
+  const pendingJumps: StoryJump[] = [];
+  /** The rest of the story `c` cut, as the chapter it goes to needs it
+   *  (#943): its box and children as this chapter has them ready to lay,
+   *  the cut, and the numbers the lookups by position would give. */
+  const exportJump = (c: ComposedContinuation, page: string): StoryJump => {
+    const startIdx = c.story.startIdx;
+    const again = carried?.stories.get(startIdx);
+    const all = composedPass.contentBlocks;
+    const blocks = all.slice(startIdx, c.story.plan.endIdx + 1);
+    const numbers: CarriedNumber[] = again ? [...(again.jump.numbers ?? [])] : [];
+    if (!again) {
+      for (let i = startIdx; i <= c.story.plan.endIdx; i++) {
+        if (headingPrefixes[i] === undefined && headingNumbers[i] === undefined) continue;
+        numbers.push({
+          at: i - startIdx,
+          ...(headingPrefixes[i] !== undefined ? { prefix: headingPrefixes[i]! } : {}),
+          ...(headingNumbers[i] !== undefined ? { value: headingNumbers[i]! } : {}),
+          ...(chapterNumberByBlock[i] ? { chapterNumber: chapterNumberByBlock[i]! } : {}),
+        });
+      }
+    }
+    const notes: CarriedNote[] = [];
+    const seen = new Set<string>();
+    for (const b of blocks) {
+      for (const span of b.spans) {
+        const id = span.footnote?.id;
+        if (id === undefined || seen.has(id)) continue;
+        seen.add(id);
+        const number = footnoteNumbering.numbers.get(id);
+        if (number === undefined) continue;
+        const def = footnoteDefs.get(id);
+        notes.push({ id, number, ...(def ? { def } : {}) });
+      }
+    }
+    const rule = c.rule;
+    const frame = continueInPage(rule)?.frame;
+    return {
+      ...(again ? { chapter: again.chapter } : {}),
+      target: page,
+      ...(frame !== undefined ? { targetFrame: frame } : {}),
+      rule,
+      frame: c.frame,
+      fromFrameId: c.fromFrameId,
+      head: c.head,
+      template: c.template,
+      collapsed: c.collapsed,
+      slot: c.slot,
+      pieces: c.pieces,
+      headBlockId: c.headBlockId,
+      ...(c.trailing ? { trailing: c.trailing } : {}),
+      ...(c.fromMark !== undefined ? { fromMark: c.fromMark } : {}),
+      cut: c.cut,
+      blocks: blocks as StoryJump['blocks'],
+      bodyOffset,
+      ...(numbers.length > 0 ? { numbers } : {}),
+      orderedLevelIndentsPx: again?.jump.orderedLevelIndentsPx ?? orderedLevelIndentsPx,
+      ...(notes.length > 0 ? { footnotes: notes } : {}),
+    };
+  };
+  for (const [id, list] of carried?.byTarget ?? []) {
+    if (fenceById.has(id)) {
+      jumps.set(id, [...(jumps.get(id) ?? []), ...list]);
+      continue;
+    }
+    // The host named this chapter for a page it does not have.
+    for (const c of list) {
+      composedNotes.push({
+        kind: 'continueTargetMissing',
+        template: c.template,
+        frame: c.frame,
+        fenceIndex: -1,
+        target: id,
+        fromChapter: c.foreign?.chapter ?? -1,
+        configPath: '',
+      });
+    }
+  }
   /** Set the composed page `planned` on a fresh page (#855), or a spread
    *  template on the two facing pages from the next verso (#861). */
   const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
@@ -6317,7 +6408,7 @@ function placeDocumentPass(
      *  other templates of the same kind (single pages for this side, or
      *  spreads). */
     const common = (page: VDTPage, current: { id: string; spread: boolean; parity?: 'recto' | 'verso' }) => ({
-      pass: framePass,
+      pass: composedPass,
       fence,
       startIdx: planned.startIdx,
       endIdx: planned.endIdx,
@@ -6459,17 +6550,23 @@ function placeDocumentPass(
     indexFrames(placed);
     /** The sending frame of `c` points to the frame `to` that took it, and
      *  its page's log says where it went. */
-    const link = (c: ComposedContinuation, to: string): void => {
-      const src = frameAt.get(c.fromFrameId);
-      const dst = frameAt.get(to);
-      if (!src || !dst) return;
-      src.frame.continuesTo = to;
+    const logContinued = (src: { page: VDTPage }, c: ComposedContinuation, event: Omit<ReflowEvent, 'frame' | 'kind'>): void => {
       const log = src.page.composed!.log;
       let at = log.length;
       for (let i = log.length - 1; i >= 0; i--) {
         if (log[i]!.frame === c.frame) { at = i + 1; break; }
       }
-      log.splice(at, 0, { frame: c.frame, kind: 'continued', toPage: dst.page.index, toFrame: to });
+      log.splice(at, 0, { frame: c.frame, kind: 'continued', ...event });
+    };
+    const link = (c: ComposedContinuation, to: string): void => {
+      // The sending frame is on a page of another chapter: the host links
+      // the two (`resolveJumpMarks`).
+      if (c.foreign) return;
+      const src = frameAt.get(c.fromFrameId);
+      const dst = frameAt.get(to);
+      if (!src || !dst) return;
+      src.frame.continuesTo = to;
+      logContinued(src, c, { toPage: dst.page.index, toFrame: to });
     };
     for (const [name, c] of jumpReceivers) link(c, frameElementId(fence.fenceIndex, name));
     /** Stories that jump to a later page fence (#917) wait for it; one
@@ -6488,6 +6585,16 @@ function placeDocumentPass(
           continue;
         }
         const from = frameAt.get(c.fromFrameId);
+        // A page of a later chapter (#943): the host hands the rest over.
+        const later = !to && content.laterPageIds && Object.prototype.hasOwnProperty.call(content.laterPageIds, target.page) ? content.laterPageIds[target.page] : undefined;
+        if (later !== undefined) {
+          pendingJumps.push(exportJump(c, target.page));
+          if (from) {
+            from.frame.continuesToChapter = later;
+            logContinued(from, c, { toChapter: later });
+          }
+          continue;
+        }
         composedNotes.push({
           kind: 'continueTargetMissing',
           template: c.template,
@@ -8943,6 +9050,8 @@ function placeDocumentPass(
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
+  if (pendingJumps.length > 0) doc.pendingJumps = pendingJumps;
+  if (carried) stampCarriedSource(doc, carried);
   // The composition rules (#749): short lists cut, floats on opener pages.
   const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
@@ -9127,6 +9236,24 @@ function afterTextWarnings(doc: VDTDocument): ContentWarning[] {
     }
   }
   return out;
+}
+
+/**
+ * Mark the blocks laid from stories that came in from other chapters
+ * (#943): `VDTBlock.sourceChapter` says whose file their source offsets
+ * are offsets in.
+ */
+function stampCarriedSource(doc: VDTDocument, carried: ImportedJumps): void {
+  const stories = [...carried.stories.values()];
+  const noteChapter = new Map(carried.footnotes.map((n) => [n.id, n.chapter]));
+  for (const block of doc.blocks) {
+    const note = block.footnoteNote !== undefined ? noteChapter.get(block.footnoteNote) : undefined;
+    if (note !== undefined) block.sourceChapter = note;
+    const at = block.contentIndex;
+    if (at === undefined) continue;
+    const story = stories.find((st) => at >= st.startIdx && at <= st.endIdx);
+    if (story) block.sourceChapter = story.chapter;
+  }
 }
 
 /**

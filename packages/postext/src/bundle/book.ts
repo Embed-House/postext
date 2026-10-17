@@ -11,7 +11,8 @@ import { bookCitationContexts, citationSourceOf, needsCitationContext } from '..
 import type { CitationContext } from '../citations/context';
 import type { DocumentMetadata, LayoutContinuation, OutlineEntry, PostextConfig, Resource } from '../types';
 import type { VDTDocument } from '../vdt';
-import { buildDocument, continuationAfter, contentOutline, outlineFromDoc, outlineKey } from '../pipeline';
+import { buildDocument, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds } from '../pipeline';
+import type { StoryJump } from '../composed/carry';
 import type { BuildDocumentOptions } from '../pipeline';
 import { createMeasurementCache } from '../measure';
 import type { MeasurementCache } from '../measure';
@@ -49,6 +50,9 @@ export interface BuildBundleOptions extends BuildDocumentOptions {
 const MAX_ROUNDS = 3;
 
 const FRONTMATTER_OPEN_RE = /^---[ \t]*(?:\r?\n|$)/;
+
+/** A chapter with a composed page fence. */
+const COMPOSED_PAGE_RE = /:::+page\b/;
 
 /** `markdown` with a leading front-matter block blanked out — every
  *  character but the line breaks turned into a space, so source offsets
@@ -108,8 +112,8 @@ function localCitationKey(ctx: CitationContext | undefined): unknown {
 /** The key a chapter's layout is recorded under: everything it reads that
  *  is not the book's. The JSON parts hold no raw NUL, so the text after
  *  the second one is the Markdown, whatever it holds. */
-function chapterKey(markdown: string, continuation: LayoutContinuation | undefined, outlineText: string, citations: CitationContext | undefined): string | undefined {
-  const head = jsonKey([continuation ?? null, localCitationKey(citations)]);
+function chapterKey(markdown: string, continuation: LayoutContinuation | undefined, outlineText: string, citations: CitationContext | undefined, laterIds: Record<string, number> | undefined): string | undefined {
+  const head = jsonKey([continuation ?? null, localCitationKey(citations), laterIds ?? null]);
   return head === undefined ? undefined : `${head}\u0000${outlineText}\u0000${markdown}`;
 }
 
@@ -144,6 +148,18 @@ export function buildBundle(
     return toc || hasIndex || hasRefs;
   }));
   const anyToc = hasToc.some(Boolean);
+  // The page fences of the chapters after each chapter (#943): where a
+  // story of a composed page may jump to. A book whose configuration names
+  // no `page:` target keeps none, and a chapter without a composed page
+  // does not depend on them.
+  const jumpsPossible = (jsonKey(config) ?? '').includes('page:');
+  const laterIds = jumpsPossible
+    ? laterPageIdsOf(sources.map((markdown) => (COMPOSED_PAGE_RE.test(markdown) ? build.derive(`ids\u0000${markdown}`, () => pageFenceIds(markdown, config)) : [])))
+    : undefined;
+  /** What each chapter needs of `laterIds` to be laid out: only the
+   *  chapters with a composed page jump. */
+  const laterIdsOf = (index: number): Record<string, number> | undefined =>
+    laterIds && COMPOSED_PAGE_RE.test(sources[index]!) && Object.keys(laterIds[index]!).length > 0 ? laterIds[index] : undefined;
   // Citations are numbered and listed across the book (#272): each chapter
   // is formatted against the book's references and citations.
   // Every chapter's front matter counts here (its references), not only
@@ -187,17 +203,21 @@ export function buildBundle(
     const outlineText = outline ? jsonKey(outline) : '';
     let counters: LayoutContinuation | undefined = Object.keys(startCounters).length > 0 ? startCounters : undefined;
     let physical = startOffset;
+    /** Stories that jump to a later chapter, by the chapter that has the
+     *  page, in the order they were sent (#943). */
+    const incoming = new Map<number, StoryJump[]>();
     let next: { startAt: number; format: VDTDocument['pages'][number]['pageNumberFormat'] } | undefined;
     const total = bookPageCount !== undefined ? { bookPageCount } : {};
     sources.forEach((markdown, index) => {
       const continuation: LayoutContinuation | undefined = index === 0
         ? (start || bookPageCount !== undefined ? { ...start, ...total } : undefined)
-        : { ...counters, pageIndexOffset: physical, ...(next ? { pageNumbering: next } : {}), ...total };
+        : { ...counters, pageIndexOffset: physical, ...(next ? { pageNumbering: next } : {}), ...(incoming.has(index) ? { jumps: incoming.get(index)! } : {}), ...total };
       const printsOutline = hasToc[index] && outline !== undefined;
-      const key = printsOutline && outlineText === undefined ? undefined : chapterKey(markdown, continuation, printsOutline ? outlineText! : '', citations?.[index]);
+      const laterOf = laterIdsOf(index);
+      const key = printsOutline && outlineText === undefined ? undefined : chapterKey(markdown, continuation, printsOutline ? outlineText! : '', citations?.[index], laterOf);
       const record = build.chapter(key, () => {
         const doc = buildDocument(
-          { markdown, metadata, resources, ...(continuation ? { continuation } : {}), ...(printsOutline ? { outline } : {}), ...(citations ? { citations: citations[index] } : {}) },
+          { markdown, metadata, resources, ...(continuation ? { continuation } : {}), ...(printsOutline ? { outline } : {}), ...(citations ? { citations: citations[index] } : {}), ...(laterOf ? { laterPageIds: laterOf } : {}) },
           config,
           cache,
           buildOptions,
@@ -206,6 +226,7 @@ export function buildBundle(
         const firstContent = firstContentPage(doc);
         return {
           doc,
+          ...(doc.pendingJumps ? { jumps: doc.pendingJumps } : {}),
           pageCount: doc.pages.length,
           ...(last ? { next: { startAt: last.pageNumberValue + 1, format: last.pageNumberFormat } } : {}),
           outline: outlineFromDoc(doc, contentOutline({ markdown }, config, continuation).outline),
@@ -213,6 +234,14 @@ export function buildBundle(
         };
       });
       records.push(record);
+      // The stories this chapter sends to a page of a later one.
+      for (const jump of record.jumps ?? []) {
+        const to = laterIds?.[index] && Object.prototype.hasOwnProperty.call(laterIds[index], jump.target) ? laterIds[index]![jump.target] : undefined;
+        if (to === undefined) continue;
+        const list = incoming.get(to) ?? [];
+        list.push({ ...jump, chapter: jump.chapter ?? index, fromChapter: index });
+        incoming.set(to, list);
+      }
       physical += record.pageCount;
       if (record.next) next = record.next;
       const before = counters;

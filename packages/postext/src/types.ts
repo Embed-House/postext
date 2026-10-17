@@ -1,5 +1,6 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
 import type { LabelStyle, PageTemplate } from './composed/types';
+import type { StoryJump } from './composed/carry';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
@@ -716,6 +717,14 @@ export interface PostextContent {
    *  `bookCitationContexts` gives a host for each chapter. When absent the
    *  document is a book of its own. */
   citations?: import('./citations/context').CitationContext;
+  /** The `id` of every page fence (`::::page{id="…"}`) of the chapters
+   *  after this one in its book, with the position of the chapter that has
+   *  it (#943). A frame whose `overflow.continueIn` is `'page:<id>'` for
+   *  one of them does not warn nor go on next page: the rest of its story
+   *  comes back in `VDTDocument.pendingJumps`, for the host to hand to
+   *  that chapter (`LayoutContinuation.jumps`). Absent: every `page:<id>`
+   *  names a page of this chapter. */
+  laterPageIds?: Record<string, number>;
 }
 
 /** An index mark as the book outline carries it (see
@@ -889,6 +898,13 @@ export interface LayoutContinuation {
    *  `numbering.counter` for its statements — each with the heading
    *  counters of its last count, which decide `resetOn`. */
   statementCounters?: Record<string, { counter: number; heading: HeadingCounters }>;
+  /** Stories of earlier chapters that jump into a page fence of this one
+   *  (#943, `overflow.continueIn: 'page:<id>'` with the page in a later
+   *  chapter file): what each of them returned in
+   *  `VDTDocument.pendingJumps`, with `chapter` set to the position of the
+   *  chapter it comes from. This chapter sets the rest of each story in the
+   *  frames its page with that `id` leaves free. */
+  jumps?: StoryJump[];
 }
 
 /** A part (section) as the running heads see it: number and title as

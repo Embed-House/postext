@@ -16,6 +16,7 @@
 // heading lays it out again wherever it is in the book.
 
 import type { OutlineEntry } from '../types';
+import type { StoryJump } from '../composed/carry';
 import type { VDTDocument } from '../vdt';
 
 /** What a build needs of a chapter laid out, besides its document: what
@@ -31,6 +32,10 @@ export interface ChapterRecord {
   outline: OutlineEntry[];
   /** The label and book index of the first page holding a block. */
   firstContent?: { pageLabel: string; pageIndex: number };
+  /** The stories of the chapter that jump into a page of a later one
+   *  (#943), kept apart from `doc` so they stand when the document is
+   *  dropped. */
+  jumps?: StoryJump[];
 }
 
 /** What the last build did with the chapters. */
