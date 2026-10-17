@@ -12,13 +12,15 @@ import type {
   Resource,
 } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../../context/SandboxContext';
-import { SelectInput, DimensionInput, ToggleSwitch } from '../../../controls';
+import { SelectInput, DimensionInput, NumberInput, ToggleSwitch } from '../../../controls';
 import { FieldRow } from '../../../controls/FieldRow';
 import { useBlobObjectUrl } from '../../../panels/resources/ResourcePreview';
 import { resourceFromFile } from '../../../panels/resources/uploadFiles';
 import { IconButton } from '../../../ui';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
 import { type SlotKind } from './placementAdapter';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
+import { FOCUS_CENTER, focusFromPercent, focusFromPointer, focusPercent, type FocusPoint } from './focusPoint';
 
 const DEFAULT_SIZE_DIM: Dimension = { value: 20, unit: 'mm' };
 const IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/svg+xml,.svg';
@@ -144,11 +146,91 @@ function ImageResourceField({ value, onChange }: { value: string; onChange: (id:
   );
 }
 
+/** Where a cover crop centres (#945): the picture, with its safe area
+ *  outlined, and a cross at the point; a press or a drag on it moves the
+ *  point, the two fields give it in percent. */
+function FocusField({ resource, value, onChange }: { resource: Resource | undefined; value: FocusPoint | undefined; onChange: (next: FocusPoint | undefined) => void }) {
+  const labels = useSandboxLabels();
+  const url = useBlobObjectUrl(resource ? imageFileId(resource) : undefined);
+  const point = value ?? FOCUS_CENTER;
+  const safe = resource?.safeArea;
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
+    const next = focusFromPointer(e.currentTarget.getBoundingClientRect(), e.clientX, e.clientY);
+    if (next) onChange(next);
+  };
+  const nudge = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const step = e.shiftKey ? 0.1 : 0.01;
+    const d = e.key === 'ArrowLeft' ? [-step, 0] : e.key === 'ArrowRight' ? [step, 0] : e.key === 'ArrowUp' ? [0, -step] : e.key === 'ArrowDown' ? [0, step] : null;
+    if (!d) return;
+    e.preventDefault();
+    onChange({ x: Math.min(1, Math.max(0, Math.round((point.x + d[0]!) * 100) / 100)), y: Math.min(1, Math.max(0, Math.round((point.y + d[1]!) * 100) / 100)) });
+  };
+  return (
+    <>
+      <FieldRow label={labels.headerFooterImageFocus} tooltip={labels.headerFooterImageFocusTooltip} stacked isDefault={value === undefined} onReset={() => onChange(undefined)}>
+        {url ? (
+          <div
+            role="group"
+            tabIndex={0}
+            aria-label={labels.headerFooterImageFocusPick}
+            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); move(e); }}
+            onPointerMove={(e) => { if (e.buttons === 1) move(e); }}
+            onKeyDown={nudge}
+            className="relative inline-block max-w-full cursor-crosshair touch-none select-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{ outlineColor: 'var(--brand)' }}
+            data-focus-picker=""
+          >
+            <img src={url} alt="" draggable={false} className="block max-h-40 max-w-full rounded border" style={{ borderColor: 'var(--rule)' }} />
+            {safe && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute border border-dashed"
+                style={{ left: `${safe.x * 100}%`, top: `${safe.y * 100}%`, width: `${safe.width * 100}%`, height: `${safe.height * 100}%`, borderColor: 'var(--brand)' }}
+              />
+            )}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
+              style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%`, borderColor: '#fff', boxShadow: '0 0 0 1.5px var(--foreground)', opacity: value ? 1 : 0.55 }}
+            />
+          </div>
+        ) : (
+          <span className="text-xs" style={{ color: 'var(--slate)' }}>{labels.headerFooterImageFocusNoPicture}</span>
+        )}
+      </FieldRow>
+      <NumberInput
+        label={labels.headerFooterImageFocusX}
+        value={focusPercent(point.x)}
+        onChange={(v) => onChange({ x: focusFromPercent(v), y: point.y })}
+        min={0}
+        max={100}
+        step={1}
+        suffix="%"
+        isDefault={value === undefined}
+        onReset={() => onChange(undefined)}
+      />
+      <NumberInput
+        label={labels.headerFooterImageFocusY}
+        value={focusPercent(point.y)}
+        onChange={(v) => onChange({ x: point.x, y: focusFromPercent(v) })}
+        min={0}
+        max={100}
+        step={1}
+        suffix="%"
+        isDefault={value === undefined}
+        onReset={() => onChange(undefined)}
+      />
+    </>
+  );
+}
+
 interface Props {
   raw: DesignImageElement;
   resolved: ResolvedDesignImageElement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** The frames and groups of the template, on a composed page's decoration. */
+  frames?: FrameTarget[];
   onChange: (next: DesignImageElement) => void;
 }
 
@@ -157,8 +239,9 @@ interface Props {
  *  alternative text in the output; heading and part designs only, since a
  *  running head's picture always is), the box it is fitted in (one side
  *  `auto` keeps the image's aspect ratio) and the shared placement fields. */
-export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], onChange }: Props) {
+export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], onChange }: Props) {
   const labels = useSandboxLabels();
+  const resources = useSandboxResources();
 
   const update = (partial: Partial<DesignImageElement>) => {
     onChange({ ...raw, ...partial });
@@ -174,6 +257,11 @@ export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], onC
   const height = sizeDim(resolved.placement.size?.height, DEFAULT_SIZE_DIM);
   const widthAuto = resolved.placement.size?.width === undefined || resolved.placement.size?.width === 'auto';
   const heightAuto = resolved.placement.size?.height === undefined || resolved.placement.size?.height === 'auto';
+  // A side may run to an edge of another box (#945).
+  const widthSize = resolved.placement.size?.width;
+  const heightSize = resolved.placement.size?.height;
+  const widthTo = isSizeTo(widthSize) ? widthSize : undefined;
+  const heightTo = isSizeTo(heightSize) ? heightSize : undefined;
 
   const updateSize = (next: { width?: ElementSize; height?: ElementSize }) => {
     update({
@@ -209,24 +297,30 @@ export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], onC
         }}
         tooltip={labels.headerFooterImageDecorativeTooltip}
       />}
-      <DimensionInput
-        label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
-        value={width}
-        onChange={(dim: Dimension) => updateSize({ width: dim })}
-        min={0}
-        step={1}
-        isDefault={widthAuto}
-        onReset={() => updateSize({ width: 'auto' })}
-      />
-      <DimensionInput
-        label={labels.height}
-        value={height}
-        onChange={(dim: Dimension) => updateSize({ height: dim })}
-        min={0}
-        step={1}
-        isDefault={heightAuto}
-        onReset={() => updateSize({ height: 'auto' })}
-      />
+      {!widthTo && (
+        <DimensionInput
+          label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
+          value={width}
+          onChange={(dim: Dimension) => updateSize({ width: dim })}
+          min={0}
+          step={1}
+          isDefault={widthAuto}
+          onReset={() => updateSize({ width: 'auto' })}
+        />
+      )}
+      <SizeToFields axis="width" value={widthTo} slotKind={slotKind} siblings={siblings} frames={frames} allowNone onChange={(to) => updateSize({ width: to ?? 'auto' })} />
+      {!heightTo && (
+        <DimensionInput
+          label={labels.height}
+          value={height}
+          onChange={(dim: Dimension) => updateSize({ height: dim })}
+          min={0}
+          step={1}
+          isDefault={heightAuto}
+          onReset={() => updateSize({ height: 'auto' })}
+        />
+      )}
+      <SizeToFields axis="height" value={heightTo} slotKind={slotKind} siblings={siblings} frames={frames} allowNone onChange={(to) => updateSize({ height: to ?? 'auto' })} />
       {/* Cover or contain (#923), for a box with both sides set. */}
       {!widthAuto && !heightAuto && (
         <SelectInput
@@ -248,6 +342,19 @@ export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], onC
           onReset={() => {
             const next: DesignImageElement = { ...raw };
             delete next.fit;
+            onChange(next);
+          }}
+        />
+      )}
+      {/* The point a cover crop centres (#945). */}
+      {!widthAuto && !heightAuto && raw.fit === 'cover' && (
+        <FocusField
+          resource={resources.find((r) => r.id === raw.resourceId)}
+          value={raw.focus}
+          onChange={(focus) => {
+            const next: DesignImageElement = { ...raw };
+            if (focus) next.focus = focus;
+            else delete next.focus;
             onChange(next);
           }}
         />

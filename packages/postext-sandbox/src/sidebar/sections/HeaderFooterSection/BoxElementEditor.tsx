@@ -15,6 +15,7 @@ import {
   DimensionInput,
   ColorPicker,
 } from '../../../controls';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
 import {
   type SlotKind,
@@ -39,10 +40,12 @@ interface Props {
   resolved: ResolvedDesignBoxElement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** The frames and groups of the template, on a composed page's decoration. */
+  frames?: FrameTarget[];
   onChange: (next: DesignBoxElement) => void;
 }
 
-export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], onChange }: Props) {
+export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], onChange }: Props) {
   const labels = useSandboxLabels();
 
   const update = (partial: Partial<DesignBoxElement>) => {
@@ -57,6 +60,11 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], onCha
 
   const width = sizeDim(resolved.placement.size?.width, DEFAULT_SIZE_DIM);
   const height = sizeDim(resolved.placement.size?.height, DEFAULT_SIZE_DIM);
+  // A side may run to an edge of another box (#945).
+  const widthSize = resolved.placement.size?.width;
+  const heightSize = resolved.placement.size?.height;
+  const widthTo = isSizeTo(widthSize) ? widthSize : undefined;
+  const heightTo = isSizeTo(heightSize) ? heightSize : undefined;
   const align = alignFromPlacement(resolved.placement);
   const inContainer = isContainerAnchor(resolved.placement);
   const resolvedMarginFromBody = marginFromBody(resolved.placement, slotKind);
@@ -80,7 +88,7 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], onCha
       ? colorsEqual(bgColor, DEFAULT_BOX_ELEMENT.style.backgroundColor)
       : bgColor === DEFAULT_BOX_ELEMENT.style.backgroundColor;
 
-  const updateSize = (next: { width?: Dimension; height?: Dimension }) => {
+  const updateSize = (next: { width?: ElementSize; height?: ElementSize }) => {
     update({
       placement: {
         ...resolved.placement,
@@ -98,19 +106,41 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], onCha
 
   return (
     <>
-      <DimensionInput
-        label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
-        value={width}
-        onChange={(dim: Dimension) => updateSize({ width: dim })}
-        min={0}
-        step={1}
+      {!widthTo && (
+        <DimensionInput
+          label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
+          value={width}
+          onChange={(dim: Dimension) => updateSize({ width: dim })}
+          min={0}
+          step={1}
+        />
+      )}
+      <SizeToFields
+        axis="width"
+        value={widthTo}
+        slotKind={slotKind}
+        siblings={siblings}
+        frames={frames}
+        allowNone
+        onChange={(to) => updateSize({ width: to ?? width })}
       />
-      <DimensionInput
-        label={labels.height}
-        value={height}
-        onChange={(dim: Dimension) => updateSize({ height: dim })}
-        min={0}
-        step={1}
+      {!heightTo && (
+        <DimensionInput
+          label={labels.height}
+          value={height}
+          onChange={(dim: Dimension) => updateSize({ height: dim })}
+          min={0}
+          step={1}
+        />
+      )}
+      <SizeToFields
+        axis="height"
+        value={heightTo}
+        slotKind={slotKind}
+        siblings={siblings}
+        frames={frames}
+        allowNone
+        onChange={(to) => updateSize({ height: to ?? height })}
       />
       <ColorPicker
         label={labels.headerFooterElementBoxBackgroundColor}

@@ -15,6 +15,7 @@ import {
   DimensionInput,
   ColorPicker,
 } from '../../../controls';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
 import {
   type SlotKind,
@@ -35,10 +36,12 @@ interface Props {
   resolved: ResolvedDesignRuleElement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** The frames and groups of the template, on a composed page's decoration. */
+  frames?: FrameTarget[];
   onChange: (next: DesignRuleElement) => void;
 }
 
-export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onChange }: Props) {
+export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], onChange }: Props) {
   const labels = useSandboxLabels();
 
   const update = (partial: Partial<DesignRuleElement>) => {
@@ -60,12 +63,14 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
   ];
   const vertical = resolved.direction === 'vertical';
   const heightSize = resolved.placement.size?.height;
-  // A length to another box's edge (#928) reads as full here.
+  // A length that runs to another box's edge (#928, #945) has fields of its own.
+  const lengthTo = isSizeTo(heightSize) ? heightSize : undefined;
   const lengthMode: 'full' | 'custom' = heightSize && typeof heightSize === 'object' && 'value' in heightSize ? 'custom' : 'full';
   const customLength: Dimension = heightSize && typeof heightSize === 'object' && 'value' in heightSize ? heightSize : { value: 40, unit: 'pt' };
 
   const mode = widthMode(resolved.placement.size);
   const ruleWidth = resolved.placement.size?.width;
+  const widthTo = isSizeTo(ruleWidth) ? ruleWidth : undefined;
   const customWidth: Dimension =
     ruleWidth && typeof ruleWidth === 'object' && 'value' in ruleWidth
       ? ruleWidth
@@ -117,19 +122,21 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
       />
       {vertical ? (
         <>
-          <SelectInput
-            label={labels.headerFooterElementLength}
-            value={lengthMode}
-            options={WIDTH_MODE_OPTIONS}
-            onChange={(v) => {
-              const size = { ...(resolved.placement.size ?? {}) };
-              if (v === 'full') delete size.height;
-              else size.height = customLength;
-              updateSize(size);
-            }}
-            tooltip={labels.headerFooterElementLengthTooltip}
-          />
-          {lengthMode === 'custom' && (
+          {!lengthTo && (
+            <SelectInput
+              label={labels.headerFooterElementLength}
+              value={lengthMode}
+              options={WIDTH_MODE_OPTIONS}
+              onChange={(v) => {
+                const size = { ...(resolved.placement.size ?? {}) };
+                if (v === 'full') delete size.height;
+                else size.height = customLength;
+                updateSize(size);
+              }}
+              tooltip={labels.headerFooterElementLengthTooltip}
+            />
+          )}
+          {!lengthTo && lengthMode === 'custom' && (
             <DimensionInput
               label={labels.headerFooterElementLength}
               value={customLength}
@@ -138,16 +145,32 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
               step={1}
             />
           )}
+          <SizeToFields
+            axis="height"
+            value={lengthTo}
+            slotKind={slotKind}
+            siblings={siblings}
+            frames={frames}
+            allowNone
+            onChange={(to) => {
+              const size = { ...(resolved.placement.size ?? {}) };
+              if (to) size.height = to;
+              else delete size.height;
+              updateSize(size);
+            }}
+          />
         </>
       ) : (
         <>
-          <SelectInput
-            label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
-            value={mode}
-            options={WIDTH_MODE_OPTIONS}
-            onChange={(v) => updateSize(applyWidthMode(resolved.placement.size, v as 'full' | 'custom'))}
-          />
-          {mode === 'custom' && (
+          {!widthTo && (
+            <SelectInput
+              label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
+              value={mode}
+              options={WIDTH_MODE_OPTIONS}
+              onChange={(v) => updateSize(applyWidthMode(resolved.placement.size, v as 'full' | 'custom'))}
+            />
+          )}
+          {!widthTo && mode === 'custom' && (
             <DimensionInput
               label={labels.headerFooterElementWidth} tooltip={labels.headerFooterElementWidthTooltip}
               value={customWidth}
@@ -156,6 +179,15 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
               step={1}
             />
           )}
+          <SizeToFields
+            axis="width"
+            value={widthTo}
+            slotKind={slotKind}
+            siblings={siblings}
+            frames={frames}
+            allowNone
+            onChange={(to) => updateSize(to ? { ...(resolved.placement.size ?? {}), width: to } : applyWidthMode(resolved.placement.size, 'full'))}
+          />
         </>
       )}
       <PlacementFields
@@ -192,7 +224,7 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
           onReset={() => update({ placement: applyMarginFromBody(resolved.placement, slotKind, ZERO) })}
         />
       )}
-      {inContainer && mode === 'custom' && align !== 'center' && (
+      {inContainer && mode === 'custom' && !widthTo && align !== 'center' && (
         <DimensionInput
           label={labels.headerFooterElementMarginFromEdge}
           value={resolvedMarginFromEdge}

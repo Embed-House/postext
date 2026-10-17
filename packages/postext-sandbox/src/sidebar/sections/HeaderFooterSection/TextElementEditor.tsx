@@ -31,6 +31,7 @@ import { lineHeightFieldValue, lineHeightFromField } from './lineHeight';
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { DropCapFields } from '../../settings/DropCapFields';
 import { useRightToLeftFlow } from '../../settings/flowSides';
+import { SizeToFields, defaultSizeTo, isSizeTo, type FrameTarget } from './sizeTo';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
 import {
   type SlotKind,
@@ -50,11 +51,12 @@ const ZERO: Dimension = { value: 0, unit: 'pt' };
 const DEFAULT_CUSTOM_WIDTH: Dimension = { value: 40, unit: 'mm' };
 const DEFAULT_CUSTOM_HEIGHT: Dimension = { value: 10, unit: 'mm' };
 
-type SizeMode = 'auto' | 'fill' | 'custom';
+type SizeMode = 'auto' | 'fill' | 'custom' | 'edge';
 
 function sizeMode(size: ElementSize | undefined): SizeMode {
-  // A size to another box's edge (#928) reads as a fill here.
-  if (size === 'fill' || (size && typeof size === 'object' && 'to' in size)) return 'fill';
+  // A size to another box's edge (#928, #945) is a mode of its own.
+  if (isSizeTo(size)) return 'edge';
+  if (size === 'fill') return 'fill';
   if (size && typeof size === 'object') return 'custom';
   return 'auto';
 }
@@ -68,12 +70,14 @@ interface Props {
   resolved: ResolvedDesignTextElement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** The frames and groups of the template, on a composed page's decoration. */
+  frames?: FrameTarget[];
   /** Placeholders of this slot alone (see `PlaceholderPicker`). */
   extraPlaceholders?: readonly string[];
   onChange: (next: DesignTextElement) => void;
 }
 
-export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extraPlaceholders, onChange }: Props) {
+export function TextElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], extraPlaceholders, onChange }: Props) {
   const labels = useSandboxLabels();
   const [showPicker, setShowPicker] = useState(false);
 
@@ -150,7 +154,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extr
     const fallback = axis === 'width' ? DEFAULT_CUSTOM_WIDTH : DEFAULT_CUSTOM_HEIGHT;
     const current = raw.placement.size?.[axis];
     updateSize({
-      [axis]: mode === 'auto' ? undefined : mode === 'fill' ? 'fill' : sizeDim(current, fallback),
+      [axis]: mode === 'auto' ? undefined : mode === 'fill' ? 'fill' : mode === 'edge' ? (isSizeTo(current) ? current : defaultSizeTo(axis)) : sizeDim(current, fallback),
     });
   };
 
@@ -158,6 +162,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extr
     { value: 'auto', label: labels.headerFooterElementSizeAuto },
     { value: 'fill', label: labels.headerFooterElementSizeFill },
     { value: 'custom', label: labels.headerFooterElementWidthCustom },
+    { value: 'edge', label: labels.headerFooterElementSizeToEdge },
   ];
   const VERTICAL_ALIGN_OPTIONS = [
     { value: 'top', label: labels.headerFooterElementVerticalAlignTop },
@@ -208,6 +213,16 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extr
           units={BOX_SIZE_UNITS}
         />
       )}
+      {widthMode === 'edge' && (
+        <SizeToFields
+          axis="width"
+          value={isSizeTo(raw.placement.size?.width) ? raw.placement.size?.width : undefined}
+          slotKind={slotKind}
+          siblings={siblings}
+          frames={frames}
+          onChange={(to) => updateSize({ width: to ?? 'fill' })}
+        />
+      )}
       {widthMode === 'auto' && (
         <DimensionInput
           label={labels.headerFooterElementMaxWidth}
@@ -238,6 +253,16 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], extr
           min={0}
           step={1}
           units={BOX_SIZE_UNITS}
+        />
+      )}
+      {heightMode === 'edge' && (
+        <SizeToFields
+          axis="height"
+          value={isSizeTo(raw.placement.size?.height) ? raw.placement.size?.height : undefined}
+          slotKind={slotKind}
+          siblings={siblings}
+          frames={frames}
+          onChange={(to) => updateSize({ height: to ?? 'fill' })}
         />
       )}
       <SelectInput
