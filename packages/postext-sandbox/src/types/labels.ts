@@ -2695,6 +2695,18 @@ export interface SandboxLabels {
   resourceLabelAnchorsRotate: string;
   resourceLabelAnchorsWidth: string;
   resourceLabelAnchorsWidthHint: string;
+  resourceLabelAnchorsWriting: string;
+  resourceLabelAnchorsWritingHorizontal: string;
+  resourceLabelAnchorsWritingVertical: string;
+  resourceLabelAnchorsSelectShown: string;
+  resourceLabelAnchorsSelectClear: string;
+  resourceLabelAnchorsSelectRow: string;
+  resourceLabelAnchorsSelected: string;
+  resourceLabelAnchorsBulkTitle: string;
+  resourceLabelAnchorsBulkHint: string;
+  resourceLabelAnchorsMixed: string;
+  resourceLabelAnchorsNamesOnPicture: string;
+  resourceLabelAnchorsNamesHint: string;
   resourceLabelAnchorsNoLabel: string;
   resourceLabelAnchorsFilter: string;
   resourceLabelAnchorsPointAria: string;

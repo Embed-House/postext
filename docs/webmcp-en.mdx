@@ -415,7 +415,7 @@ renames a resource and, by default, every reference to it in the book.
 `sandbox_list_resources` lists them, and with an `id` gives one in full (a
 table's cells with their formatting, an SVG's source).
 
-A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`).
+A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`).
 
 ```jsonc
 // two anchors of a map, with their label styles

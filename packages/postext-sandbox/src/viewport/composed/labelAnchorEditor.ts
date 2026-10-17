@@ -9,9 +9,12 @@
  * opens the picture in the Resources panel; a double click opens its anchor
  * editor on that anchor.
  *
- * Labels placed by percentages (`at="x% y%"`) show their box but do not
- * move: their place is in the text. Outside Design mode nothing is drawn
- * and the pointer is the text's (a click selects the label's text, #865).
+ * A label placed by percentages (`at="x% y%"`) moves the same way, and
+ * its drop rewrites the `at` value in the Markdown of the edition on
+ * screen (#931): the percentages are the edition's own words. The HTML
+ * and Folio previews show the same marks, read only (`labelMarks.ts`).
+ * Outside Design mode nothing is drawn and the pointer is the text's (a
+ * click selects the label's text, #865).
  * The listeners run in the capture phase before the page-template editor's
  * and take only the presses that land on a label.
  */
@@ -19,11 +22,15 @@
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
+import type { ComposedBook } from '../../book/types';
 import type { SandboxLabels } from '../../types/labels';
+import { segmentAtOffset } from '../../book/compose';
+import { applyViewerEdit } from '../../editor/viewerEdits';
 import { editModeNow, onEditModeChange } from '../../editing/editMode';
 import { templateEditorHost } from '../../templates/editorStore';
 import { requestAnchorEditor } from '../../panels/resources/anchorEditorRequest';
-import { cornersBounds, labelAt, labelsOnPage, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
+import { labelAt, labelsOnPage, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
+import { labelKey, labelMarkShapes, paintShapesSvg } from './labelMarks';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 /** CSS px a pointer may travel before a press becomes a drag. */
@@ -31,19 +38,13 @@ const DRAG_START_CSS_PX = 3;
 /** CSS px round an anchor point that grab it. */
 const POINT_CSS_PX = 9;
 
-const COLORS = {
-  box: 'rgba(15, 118, 110, 0.75)',
-  boxActive: '#0f766e',
-  overflow: '#dc2626',
-  point: '#0f766e',
-  ghost: 'rgba(15, 118, 110, 0.14)',
-  tag: 'rgba(17, 24, 39, 0.85)',
-};
-
 export interface LabelAnchorEditorRefs {
   docRef: MutableRefObject<VDTDocument | null>;
   dispatchRef: MutableRefObject<Dispatch<SandboxAction>>;
   labelsRef?: MutableRefObject<SandboxLabels>;
+  /** The book a page was laid out from, for the Markdown a label placed by
+   *  percentages is rewritten in (#931). */
+  sourceOfPage?: (pageIndex: number) => ComposedBook | null;
 }
 
 interface Drag {
@@ -68,7 +69,7 @@ let subscribed = false;
 /** The label last pressed (its stable id, else block id + text start). */
 let activeKey: string | null = null;
 
-const keyOf = (pl: PageLabel): string => pl.label.id ?? `${pl.block.id}:${pl.label.sourceStart}`;
+const keyOf = labelKey;
 
 /** Bring every page's label marks up to date (a relayout, a mode switch). */
 export function syncLabelAnchorEditors(): void {
@@ -84,8 +85,6 @@ function svgEl<K extends keyof SVGElementTagNameMap>(name: K, attrs: Record<stri
   return el;
 }
 
-const percent = (v: number) => `${Math.round(v * 1000) / 10}`;
-
 /** `resource` with anchor `id` moved to `(x, y)` (fractions, kept inside
  *  the picture, four decimals as the anchor editor stores them). */
 export function withAnchorMoved(resource: Resource, id: string, x: number, y: number, now = Date.now()): Resource | null {
@@ -97,6 +96,27 @@ export function withAnchorMoved(resource: Resource, id: string, x: number, y: nu
   const ny = round(y);
   if (anchors[i]!.x === nx && anchors[i]!.y === ny) return null;
   return { ...resource, anchors: anchors.map((a, k) => (k === i ? { ...a, x: nx, y: ny } : a)), updatedAt: now };
+}
+
+/** `x% y%` as `at="…"` writes a place: fractions of the whole picture,
+ *  kept inside it, to a tenth of a percent. */
+export function percentPlace(x: number, y: number): string {
+  const pct = (v: number) => Math.round(Math.max(0, Math.min(1, v)) * 1000) / 10;
+  return `${pct(x)}% ${pct(y)}%`;
+}
+
+/** The edit that moves a label placed by percentages to the picture point
+ *  `(x, y)`: its `at` value rewritten in the chapter the book's offsets
+ *  fall in; null when the label has no `at` to rewrite, the book is not
+ *  known, or the value is already that place. */
+export function percentMoveEdit(pl: Pick<PageLabel, 'label'>, x: number, y: number, book: ComposedBook | null): { chapterId: string; changes: { from: number; to: number; insert: string }[]; baseLength: number } | null {
+  const at = pl.label.atSource;
+  if (!at || 'anchor' in pl.label.at || !book || book.segments.length === 0) return null;
+  const seg = segmentAtOffset(book, at.start);
+  if (at.start < seg.start || at.end > seg.end) return null;
+  const insert = percentPlace(x, y);
+  if (book.markdown.slice(at.start, at.end) === insert) return null;
+  return { chapterId: seg.chapterId, changes: [{ from: at.start - seg.start, to: at.end - seg.start, insert }], baseLength: seg.end - seg.start };
 }
 
 export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pageWidthPx: number, pageHeightPx: number, refs: LabelAnchorEditorRefs): void {
@@ -125,15 +145,6 @@ export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pa
     return { x: (ev.clientX - r.left) * (pageWidthPx / r.width), y: (ev.clientY - r.top) * (pageHeightPx / r.height) };
   };
 
-  const tag = (text: string, x: number, y: number, k: number, color: string): void => {
-    const size = 10 * k;
-    const width = (text.length * 0.6 + 0.8) * size;
-    svg.appendChild(svgEl('rect', { x, y: y - size * 1.25, width, height: size * 1.4, rx: 2 * k, fill: COLORS.tag }));
-    const t = svgEl('text', { x: x + 0.4 * size, y: y - size * 0.25, fill: color === COLORS.overflow ? '#fecaca' : '#ffffff', 'font-size': size, 'font-family': 'system-ui, sans-serif' });
-    t.textContent = text;
-    svg.appendChild(t);
-  };
-
   const paint = (): void => {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     if (!active()) {
@@ -141,61 +152,31 @@ export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pa
       return;
     }
     if (svg.parentNode !== slot) slot.appendChild(svg);
-    const k = sheetPerCss();
     const words = refs.labelsRef?.current;
-    for (const pl of labels()) {
-      const key = keyOf(pl);
-      const dragged = drag?.started && keyOf(drag.label) === key ? drag : null;
-      const on = dragged !== null || key === hover || key === activeKey;
-      const color = pl.overflow ? COLORS.overflow : on ? COLORS.boxActive : COLORS.box;
-      const points = pl.corners.map((c) => `${c.x},${c.y}`).join(' ');
-      svg.appendChild(svgEl('polygon', {
-        points,
-        fill: 'none',
-        stroke: color,
-        'stroke-width': (on ? 1.6 : 1) * k,
-        ...(on || pl.overflow ? {} : { 'stroke-dasharray': `${3 * k} ${2 * k}` }),
-      }));
-      if (dragged) {
-        const moved = pl.corners.map((c) => `${c.x + dragged.dx},${c.y + dragged.dy}`).join(' ');
-        svg.appendChild(svgEl('polygon', { points: moved, fill: COLORS.ghost, stroke: COLORS.boxActive, 'stroke-width': 1.4 * k }));
-      }
-      if (pl.anchorId) {
-        const px = pl.point.x + (dragged?.dx ?? 0);
-        const py = pl.point.y + (dragged?.dy ?? 0);
-        const r = (on ? 6 : 4.5) * k;
-        svg.appendChild(svgEl('line', { x1: px - 2 * r, y1: py, x2: px + 2 * r, y2: py, stroke: '#ffffff', 'stroke-width': 2.4 * k }));
-        svg.appendChild(svgEl('line', { x1: px, y1: py - 2 * r, x2: px, y2: py + 2 * r, stroke: '#ffffff', 'stroke-width': 2.4 * k }));
-        svg.appendChild(svgEl('line', { x1: px - 2 * r, y1: py, x2: px + 2 * r, y2: py, stroke: COLORS.point, 'stroke-width': 1 * k }));
-        svg.appendChild(svgEl('line', { x1: px, y1: py - 2 * r, x2: px, y2: py + 2 * r, stroke: COLORS.point, 'stroke-width': 1 * k }));
-        svg.appendChild(svgEl('circle', { cx: px, cy: py, r, fill: '#ffffff', stroke: pl.overflow ? COLORS.overflow : COLORS.point, 'stroke-width': 1.5 * k }));
-      }
-      if (on || pl.overflow) {
-        const box = cornersBounds(pl.corners);
-        const parts = [pl.anchorId ?? (words?.labelAnchorsPlacedByPercent ?? '%')];
-        if (dragged) {
-          const p = sheetToPicture(pl, pl.point.x + dragged.dx, pl.point.y + dragged.dy);
-          if (p) parts.push(`${percent(p.x)} % · ${percent(p.y)} %`);
-        } else {
-          if (pl.scale !== undefined) parts.push(`${Math.round(pl.scale * 100)} %`);
-          if (pl.overflow) parts.push(words?.labelAnchorsOverflow ?? 'overflow');
-        }
-        tag(parts.join(' · '), box.x + (dragged?.dx ?? 0), box.y + (dragged?.dy ?? 0), k, color);
-      }
-    }
+    paintShapesSvg(svg, labelMarkShapes(labels(), sheetPerCss(), {
+      hover,
+      active: activeKey,
+      drag: drag?.started ? { key: keyOf(drag.label), dx: drag.dx, dy: drag.dy } : null,
+    }, words ? { placedByPercent: words.labelAnchorsPlacedByPercent, overflow: words.labelAnchorsOverflow } : undefined));
   };
 
-  /** Write the anchor dragged to where the pointer left it. */
+  /** Write the label dragged to where the pointer left it: its anchor on
+   *  the resource, or the percentages in the text. */
   const commit = (d: Drag): void => {
-    const host = templateEditorHost();
-    const id = d.label.anchorId;
-    if (!host || !id) return;
     const p = sheetToPicture(d.label, d.label.point.x + d.dx, d.label.point.y + d.dy);
     if (!p) return;
-    const resource = host.getState().resources.find((r) => r.id === d.label.resourceId);
-    const next = resource ? withAnchorMoved(resource, id, p.x, p.y) : null;
-    // One step of the history (#899) per drop.
-    if (next) refs.dispatchRef.current({ type: 'UPSERT_RESOURCE', payload: next, history: { merge: false } });
+    const id = d.label.anchorId;
+    if (id) {
+      const host = templateEditorHost();
+      if (!host) return;
+      const resource = host.getState().resources.find((r) => r.id === d.label.resourceId);
+      const next = resource ? withAnchorMoved(resource, id, p.x, p.y) : null;
+      // One step of the history (#899) per drop.
+      if (next) refs.dispatchRef.current({ type: 'UPSERT_RESOURCE', payload: next, history: { merge: false } });
+      return;
+    }
+    const edit = percentMoveEdit(d.label, p.x, p.y, refs.sourceOfPage?.(pageIndex) ?? null);
+    if (edit) applyViewerEdit(refs.dispatchRef.current, edit.chapterId, edit.changes, edit.baseLength);
   };
 
   /** A click on a label: its picture in the Resources panel. */

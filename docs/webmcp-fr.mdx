@@ -415,7 +415,7 @@ renomme une ressource et, par défaut, toutes les références à celle-ci dans 
 `sandbox_list_resources` les liste et, avec un `id`, en donne une en entier (les
 cellules d’un tableau avec leur mise en forme, la source d’un SVG).
 
-Les `marks` d’une image portent aussi ses ancres. Pour une carte ou un schéma, ce sont les points où se placent ses lignes `::label` : un `id`, `x` et `y` (fractions de l’image entière) et les champs d’étiquette que prend une étiquette placée là (`style`, `align`, `verticalAlign`, `rotate`, `width`). La réponse signale un style d’étiquette absent de la maquette, et de nouvelles marques sur une ressource sont une étape de l’historique (`sandbox_undo` répond `kind: "resource"`).
+Les `marks` d’une image portent aussi ses ancres. Pour une carte ou un schéma, ce sont les points où se placent ses lignes `::label` : un `id`, `x` et `y` (fractions de l’image entière) et les champs d’étiquette que prend une étiquette placée là (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La réponse signale un style d’étiquette absent de la maquette, et de nouvelles marques sur une ressource sont une étape de l’historique (`sandbox_undo` répond `kind: "resource"`).
 
 ```jsonc
 // deux ancres d’une carte, avec leurs styles d’étiquette

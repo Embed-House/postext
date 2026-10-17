@@ -15,6 +15,9 @@ import { drawMarksCanvas, type ComicMark, type ComicSurface } from './comics/com
 import { drawOverlay, multiplyAffine, type Affine } from './CanvasPreview/overlay';
 import { usePageNavigator } from './usePageNavigator';
 import { drawPickedMark } from '../selection/pickedOverlay';
+import { editModeNow, onEditModeChange } from '../editing/editMode';
+import { labelsOnPage } from './composed/labelAnchorGeometry';
+import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks';
 import { onPageSelectionChange } from '../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
 
@@ -128,17 +131,27 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
    *  pages changed). */
   const marksRef = useRef<Map<number, OverlayRect[]>>(new Map());
   const keysRef = useRef<Map<number, string>>(new Map());
+  /** The marks of the figures' labels (Design mode, #931), by page, and
+   *  their text. */
+  const labelMarksRef = useRef<Map<number, MarkShape[]>>(new Map());
+  const labelKeysRef = useRef<Map<number, string>>(new Map());
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   const decorate = useCallback((index: number, ctx: CanvasRenderingContext2D): boolean => {
     const rects = marksRef.current.get(index);
     const comic = comicMarksRef.current.get(index);
+    const labelMarks = labelMarksRef.current.get(index);
     if (comic) {
       ctx.save();
       drawMarksCanvas(ctx, comic.marks, comic.cssToSheet);
       ctx.restore();
     }
-    if (!rects?.length) return comic !== undefined;
+    if (labelMarks?.length) {
+      ctx.save();
+      paintShapesCanvas(ctx, labelMarks);
+      ctx.restore();
+    }
+    if (!rects?.length) return comic !== undefined || !!labelMarks?.length;
     // Over the print, as the canvas's overlay lies over its page.
     ctx.globalCompositeOperation = 'multiply';
     for (const r of rects) {
@@ -207,6 +220,23 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
     const changed: number[] = [];
     const next = new Map<number, OverlayRect[]>();
     const keys = new Map<number, string>();
+    const design = editModeNow() === 'design';
+    const labelWords = { placedByPercent: labelsRef.current.labelAnchorsPlacedByPercent, overflow: labelsRef.current.labelAnchorsOverflow };
+    const nextLabelMarks = new Map<number, MarkShape[]>();
+    const nextLabelKeys = new Map<number, string>();
+    for (const i of new Set([...pages, ...labelMarksRef.current.keys()])) {
+      const page = doc.pages[i];
+      if (!page) continue;
+      // The labels' marks (Design mode, read only), as if the page showed
+      // 600 CSS px wide: a page of the book has no fixed zoom.
+      const shapes = design && i >= lo && i <= hi ? labelMarkShapes(labelsOnPage(doc, i), page.width / 600, {}, labelWords) : [];
+      const shapeKey = shapes.length ? JSON.stringify(shapes) : '';
+      if (shapes.length) {
+        nextLabelMarks.set(i, shapes);
+        nextLabelKeys.set(i, shapeKey);
+      }
+      if ((labelKeysRef.current.get(i) ?? '') !== shapeKey) changed.push(i);
+    }
     for (const i of pages) {
       if (!doc.pages[i]) continue;
       const outside = chapterPages && (i < chapterPages.from || i >= chapterPages.to) && i !== resourcePage;
@@ -221,10 +251,12 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
         next.set(i, rects);
         keys.set(i, key);
       }
-      if ((keysRef.current.get(i) ?? '') !== key) changed.push(i);
+      if ((keysRef.current.get(i) ?? '') !== key && !changed.includes(i)) changed.push(i);
     }
     marksRef.current = next;
     keysRef.current = keys;
+    labelMarksRef.current = nextLabelMarks;
+    labelKeysRef.current = nextLabelKeys;
     if (changed.length) viewer.redecorate(changed);
 
     // Follow the caret to its page when the reader moved it in the editor
@@ -250,6 +282,8 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
   const refreshRef = useRef(refresh);
   refreshRef.current = refresh;
   useEffect(() => onPageSelectionChange(() => refreshRef.current()), []);
+  // The marks of the labels belong to Design mode.
+  useEffect(() => onEditModeChange(() => refreshRef.current()), []);
   useEffect(() => {
     refresh();
   }, [refresh, docKey]);

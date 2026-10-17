@@ -19,7 +19,7 @@ import {
 } from './pictureMarks';
 import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
 import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest';
-import { LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
+import { DENSE_ANCHORS, LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
 
 // ---------------------------------------------------------------------------
 // Safe area & lettering marks of a picture. The field sums them up over a
@@ -282,6 +282,12 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   /** The name the text uses that the next click on the picture places
    *  (Anchors mode). */
   const [placing, setPlacing] = useState<string | null>(null);
+  /** The anchors ticked to change their label fields together (#931), the
+   *  point the pointer is over, and whether a dense map names every point
+   *  (unset: only the points in hand). */
+  const [ticked, setTicked] = useState<ReadonlySet<number>>(() => new Set());
+  const [hoverAnchor, setHoverAnchor] = useState<number | null>(null);
+  const [namesOnDense, setNamesOnDense] = useState(false);
   const placingRef = useRef<string | null>(null);
   placingRef.current = placing;
   const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
@@ -328,6 +334,8 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     const asked = request?.anchor !== undefined ? saved.anchors.findIndex((a) => a.id === request.anchor) : -1;
     setSelAnchor(asked >= 0 ? asked : saved.anchors.length && initialMode !== 'labels' ? 0 : null);
     setSelZone(null);
+    setTicked(new Set());
+    setNamesOnDense(false);
     setShowIdErrors(false);
     // The Anchors mode starts placing the name asked for, else the first
     // name the text uses that the picture lacks: each click places one.
@@ -343,6 +351,23 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     focusNext.current = null;
     requestAnimationFrame(f);
   });
+
+  // Indices shift when an anchor is added or taken away: the ticks start over.
+  const anchorCount = marks.anchors.length;
+  useEffect(() => {
+    setTicked((t) => (t.size === 0 ? t : new Set()));
+  }, [anchorCount]);
+  const tick = (indices: readonly number[], on: boolean) => {
+    setTicked((t) => {
+      const next = new Set(t);
+      for (const i of indices) {
+        if (on) next.add(i);
+        else next.delete(i);
+      }
+      return next;
+    });
+  };
+  const denseMap = marks.anchors.length > DENSE_ANCHORS;
 
   const intrinsic = intrinsicOf(resource) ?? loaded;
   const area = marks.safeArea;
@@ -381,6 +406,15 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     // the pointer is grabbed.
     const hit = mode === 'labels' && placingRef.current ? null : markAt(e.target as HTMLElement);
     const base = { before, client: { x: e.clientX, y: e.clientY }, moved: false, origin: p };
+    // Shift- or Ctrl-click on a point ticks it for a change of several at
+    // once (#931) and does not move it.
+    if (mode === 'labels' && hit && hit.target.kind === 'mouth' && (e.shiftKey || e.metaKey || e.ctrlKey)) {
+      const index = hit.target.index;
+      tick([index], !ticked.has(index));
+      setSelAnchor(index);
+      e.preventDefault();
+      return;
+    }
     if (hit) {
       select(hit.target);
       drag.current = { ...base, ...hit, start: before };
@@ -809,15 +843,17 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                       color={color}
                       active={active}
                       selected={selected}
+                      ticked={labelMode && ticked.has(i)}
+                      onHover={labelMode ? (on) => setHoverAnchor((h) => (on ? i : h === i ? null : h)) : undefined}
                       label={(labelMode ? labels.resourceLabelAnchorsPointAria : labels.resourceAnchorMouthAria).replace('__id__', nameOf(i))}
                       onKeyDown={onMarkKeyDown(mouth)}
                       onFocus={() => setSelAnchor(i)}
-                      tag={
+                      tag={labelMode && denseMap && !namesOnDense && !selected && hoverAnchor !== i && !ticked.has(i) ? undefined : (
                         <>
                           {outside && <TriangleAlert size={10} aria-hidden="true" style={{ color: '#fbbf24' }} />}
                           <span dir="auto">{labelText ?? (a.id || '…')}</span>
                         </>
-                      }
+                      )}
                     />
                   </div>
                 );
@@ -865,6 +901,11 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                   showIdErrors={showIdErrors}
                   idInputs={idInputs}
                   addButton={addButton}
+                  ticked={ticked}
+                  onTick={tick}
+                  showNames={namesOnDense}
+                  onShowNames={setNamesOnDense}
+                  denseMap={denseMap}
                 />
               )}
 
@@ -1103,6 +1144,10 @@ interface PointMarkProps {
   color: string;
   active: boolean;
   selected?: boolean;
+  /** Ticked for a change of several anchors together (#931). */
+  ticked?: boolean;
+  /** The pointer enters or leaves the point. */
+  onHover?: (on: boolean) => void;
   label: string;
   onKeyDown: (e: KeyboardEvent<HTMLElement>) => void;
   onFocus: () => void;
@@ -1111,7 +1156,7 @@ interface PointMarkProps {
 
 /** A draggable point: a 44 px target centred on it, drawn as a filled dot
  *  (mouth) or a ring (head), with the speaker id beside the mouth. */
-function PointMark({ markRef, kind, index, point, color, active, selected, label, onKeyDown, onFocus, tag }: PointMarkProps) {
+function PointMark({ markRef, kind, index, point, color, active, selected, ticked, onHover, label, onKeyDown, onFocus, tag }: PointMarkProps) {
   const dot = kind === 'mouth' ? 14 : 12;
   return (
     <div
@@ -1123,6 +1168,8 @@ function PointMark({ markRef, kind, index, point, color, active, selected, label
       aria-label={active ? label : undefined}
       onKeyDown={active ? onKeyDown : undefined}
       onFocus={active ? onFocus : undefined}
+      onPointerEnter={onHover ? () => onHover(true) : undefined}
+      onPointerLeave={onHover ? () => onHover(false) : undefined}
       className="group absolute flex items-center justify-center rounded-full outline-none"
       style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%`, width: 44, height: 44, transform: 'translate(-50%, -50%)', cursor: active ? 'grab' : undefined }}
     >
@@ -1134,7 +1181,7 @@ function PointMark({ markRef, kind, index, point, color, active, selected, label
           height: dot,
           background: kind === 'mouth' ? color : 'rgba(0, 0, 0, 0.35)',
           border: kind === 'mouth' ? '2px solid #fff' : `3px solid ${color}`,
-          boxShadow: selected ? `0 0 0 3px rgba(0, 0, 0, 0.55), 0 0 0 6px ${color}` : '0 0 0 1.5px rgba(0, 0, 0, 0.6)',
+          boxShadow: selected ? `0 0 0 3px rgba(0, 0, 0, 0.55), 0 0 0 6px ${color}` : ticked ? `0 0 0 2px #fff, 0 0 0 4px ${color}` : '0 0 0 1.5px rgba(0, 0, 0, 0.6)',
         }}
       />
       {tag && (

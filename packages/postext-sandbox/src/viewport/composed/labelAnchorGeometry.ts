@@ -196,14 +196,19 @@ export function insideCorners(corners: ReadonlyArray<{ x: number; y: number }>, 
   return inside;
 }
 
+/** Whether a label can be moved on the page: it stands at an anchor, or at
+ *  percentages whose value the text holds (#931). */
+export const isMovable = (pl: Pick<PageLabel, 'anchorId' | 'label'>): boolean => pl.anchorId !== undefined || pl.label.atSource !== undefined;
+
 /** The label of `labels` a press at `(x, y)` takes: the anchor point within
  *  `tolerance` (sheet px) first, the nearest; else the topmost box holding
- *  the point. Only labels set at an anchor can be moved. */
+ *  the point. Only labels set at an anchor or at written percentages can be
+ *  moved. */
 export function labelAt(labels: readonly PageLabel[], x: number, y: number, tolerance: number): PageLabel | null {
   let best: PageLabel | null = null;
   let bestD = tolerance;
   for (const pl of labels) {
-    if (!pl.anchorId) continue;
+    if (!isMovable(pl)) continue;
     const d = Math.hypot(pl.point.x - x, pl.point.y - y);
     if (d <= bestD) {
       best = pl;
@@ -213,7 +218,7 @@ export function labelAt(labels: readonly PageLabel[], x: number, y: number, tole
   if (best) return best;
   for (let i = labels.length - 1; i >= 0; i--) {
     const pl = labels[i]!;
-    if (pl.anchorId && insideCorners(pl.corners, x, y)) return pl;
+    if (isMovable(pl) && insideCorners(pl.corners, x, y)) return pl;
   }
   return null;
 }

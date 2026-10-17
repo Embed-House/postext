@@ -307,3 +307,14 @@ describe('vertical labels (#902)', () => {
     expect(html).toContain('東');
   });
 });
+
+describe('the source of a label’s place (#931)', () => {
+  it('gives the range of the at value, the quotes left out, for a label placed by percentages', () => {
+    const md = figure('::label[Mar Negro]{at="62% 48%" style="small"}', '::label[Madrid]{at="a"}');
+    const doc = build(md);
+    const block = [...doc.blocks, ...doc.pages.flatMap((p) => p.floats ?? [])].find((b) => b.resourceBlock?.resource.id === 'mapa')!;
+    const [pct, named] = block.resourceBlock!.labels!;
+    expect(md.slice(pct!.atSource!.start, pct!.atSource!.end)).toBe('62% 48%');
+    expect(md.slice(named!.atSource!.start, named!.atSource!.end)).toBe('a');
+  });
+});

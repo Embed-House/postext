@@ -83,6 +83,7 @@ export function figureLabels(block: Pick<ContentBlock, 'figure'>, bodyOffset = 0
     sourceEnd: l.textEnd + bodyOffset,
     ...(l.id !== undefined ? { id: l.id } : {}),
     ...(l.anchorRef !== undefined ? { anchorRef: l.anchorRef } : {}),
+    ...(l.attrSources.at ? { atSource: { start: l.attrSources.at.sourceStart + bodyOffset, end: l.attrSources.at.sourceEnd + bodyOffset } } : {}),
     ...(l.sourceMap.length === l.text.length ? { sourceMap: l.sourceMap.map((o) => o + bodyOffset) } : {}),
   }));
 }

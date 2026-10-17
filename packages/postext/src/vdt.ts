@@ -1558,6 +1558,10 @@ export interface VDTFigureLabel {
   /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
    *  a label placed by percentages. */
   anchorRef?: string;
+  /** The source range of the value of its `at` attribute (absolute, the
+   *  quotes left out): what a viewer rewrites to move a label placed by
+   *  percentages (#931). */
+  atSource?: { start: number; end: number };
   /** Where the label is painted: the upright box round its text (and
    *  background), in the coordinates of the block's own frame (a page's
    *  flow, or the frame of a composed page its block stands in), stamped

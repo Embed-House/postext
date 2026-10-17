@@ -421,7 +421,7 @@ imagen. `newId` renombra un recurso y, por defecto, todas sus referencias en
 el libro. `sandbox_list_resources` los enumera y, con un `id`, da uno completo
 (las celdas de una tabla con su formato, el código de un SVG).
 
-Las `marks` de una imagen llevan también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`).
+Las `marks` de una imagen llevan también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`).
 
 ```jsonc
 // dos anclas de un mapa, con sus estilos de rótulo

@@ -31,6 +31,8 @@ import { onLateFonts } from '../../worker/LayoutService';
 import { createOverlaySvg } from '../CanvasPreview/dom';
 import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay';
 import { drawPickedMark } from '../../selection/pickedOverlay';
+import { drawLabelMarksOverlay } from '../composed/labelMarks';
+import { editModeNow, onEditModeChange } from '../../editing/editMode';
 import { onPageSelectionChange } from '../../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { attachSlotClickHandler } from '../CanvasPreview/interaction';
@@ -686,6 +688,9 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   // The element picked on a page (#865) is marked here too.
   const [pickTick, setPickTick] = useState(0);
   useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
+  // The marks of the figures' labels are Design mode's (#931).
+  const [designTick, setDesignTick] = useState(0);
+  useEffect(() => onEditModeChange(() => setDesignTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -734,6 +739,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       if (!page) continue;
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, state.resourceSelection);
       drawPickedMark(overlay, doc, pageIndex, picked);
+      drawLabelMarksOverlay(overlay, doc, pageIndex, editModeNow() === 'design', { placedByPercent: labelsRef.current.labelAnchorsPlacedByPercent, overflow: labelsRef.current.labelAnchorsOverflow });
       if (rect) activeCursorRect = rect;
     }
 
@@ -767,7 +773,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
         scroll.scrollLeft += cr.right - cn.right + padding;
       }
     }
-  }, [state.selection, state.selectionFromViewer, activeChapterId, state.config.debug, state.editorFocused, state.resourceSelection, docVersion, pickTick]);
+  }, [state.selection, state.selectionFromViewer, activeChapterId, state.config.debug, state.editorFocused, state.resourceSelection, docVersion, pickTick, designTick]);
 
   // Imperative API exposed to the viewport toolbar.
   // - regenerate: force a fresh relayout immediately.

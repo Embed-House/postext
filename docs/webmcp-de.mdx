@@ -434,7 +434,7 @@ Ressource um und standardmäßig auch jeden Verweis auf sie im Buch.
 vollständig (die Zellen einer Tabelle mit ihrer Formatierung, die Quelle eines
 SVG).
 
-Die `marks` eines Bildes tragen auch seine Anker. Bei einer Karte oder einem Schema sind das die Punkte, an denen seine `::label`-Zeilen stehen: eine `id`, `x` und `y` (Bruchteile des ganzen Bildes) und die Beschriftungsfelder, die eine dort gesetzte Beschriftung übernimmt (`style`, `align`, `verticalAlign`, `rotate`, `width`). Die Antwort weist auf einen Beschriftungsstil hin, den die Gestaltung nicht hat, und neue Markierungen einer Ressource sind ein Schritt des Verlaufs (`sandbox_undo` antwortet `kind: "resource"`).
+Die `marks` eines Bildes tragen auch seine Anker. Bei einer Karte oder einem Schema sind das die Punkte, an denen seine `::label`-Zeilen stehen: eine `id`, `x` und `y` (Bruchteile des ganzen Bildes) und die Beschriftungsfelder, die eine dort gesetzte Beschriftung übernimmt (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). Die Antwort weist auf einen Beschriftungsstil hin, den die Gestaltung nicht hat, und neue Markierungen einer Ressource sind ein Schritt des Verlaufs (`sandbox_undo` antwortet `kind: "resource"`).
 
 ```jsonc
 // zwei Anker einer Karte mit ihren Beschriftungsstilen

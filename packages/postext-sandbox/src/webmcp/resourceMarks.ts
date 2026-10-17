@@ -45,7 +45,7 @@ export const MARKS_SCHEMA: JsonSchema = {
     safeArea: { ...RECT_SCHEMA, type: ['object', 'null'], description: 'The part of the picture that must stay in view: the layout may crop what lies outside it to fit the page. null: the picture always shows whole. For a bitmap, an SVG or a video\'s poster.' },
     anchors: {
       type: ['array', 'null'],
-      description: 'The named points of the picture. For a map or a diagram, the anchors its labels stand at: a :::figure{resource="…"} sets ::label[TEXT]{at="id"} at the anchor with that id, and the anchor\'s label fields (style, align, verticalAlign, rotate, width) are what such a label takes unless it says otherwise. For a comic panel, the speakers: id is the key the script names (as in "ana: Hello"), x and y the mouth a speech balloon\'s tail points at, and optionally head (where a thought balloon points) and face (a rectangle no balloon covers).',
+      description: 'The named points of the picture. For a map or a diagram, the anchors its labels stand at: a :::figure{resource="…"} sets ::label[TEXT]{at="id"} at the anchor with that id, and the anchor\'s label fields (style, align, verticalAlign, rotate, width, writingMode) are what such a label takes unless it says otherwise. For a comic panel, the speakers: id is the key the script names (as in "ana: Hello"), x and y the mouth a speech balloon\'s tail points at, and optionally head (where a thought balloon points) and face (a rectangle no balloon covers).',
       items: {
         type: 'object',
         properties: {
@@ -58,7 +58,8 @@ export const MARKS_SCHEMA: JsonSchema = {
           align: { type: 'string', enum: ['start', 'center', 'end'], description: 'Which side of the label stands at the point, in the label\'s direction (default center).' },
           verticalAlign: { type: 'string', enum: ['top', 'middle', 'bottom'], description: 'Which edge of the label stands at the point (default middle).' },
           rotate: { type: 'number', description: 'Degrees, clockwise, about the point (default 0).' },
-          width: { type: 'number', description: 'The label\'s measure as a fraction of the picture\'s width (0 to 1); the label wraps within it. Unset: its natural width.' },
+          width: { type: 'number', description: 'The label\'s measure as a fraction of the picture\'s width (0 to 1; of its height for a vertical label); the label wraps within it. Unset: its natural width.' },
+          writingMode: { type: 'string', enum: ['horizontal-tb', 'vertical-rl'], description: 'vertical-rl sets the label in vertical writing, characters upright in columns from right to left (default horizontal-tb).' },
         },
         required: ['id', 'x', 'y'],
         additionalProperties: false,
@@ -72,12 +73,14 @@ export const MARKS_SCHEMA: JsonSchema = {
 
 const ALIGNS = new Set(['start', 'center', 'end']);
 const VERTICAL_ALIGNS = new Set(['top', 'middle', 'bottom']);
+const WRITING_MODES = new Set(['horizontal-tb', 'vertical-rl']);
 
 /** Why the label fields of `a` cannot be stored, if they cannot. */
 function labelFieldProblem(a: ResourceAnchor): string | undefined {
   if (a.align !== undefined && !ALIGNS.has(a.align)) return 'align is start, center or end';
   if (a.verticalAlign !== undefined && !VERTICAL_ALIGNS.has(a.verticalAlign)) return 'verticalAlign is top, middle or bottom';
   if (a.rotate !== undefined && !Number.isFinite(a.rotate)) return 'rotate is a number of degrees';
+  if (a.writingMode !== undefined && !WRITING_MODES.has(a.writingMode)) return 'writingMode is horizontal-tb or vertical-rl';
   if (a.width !== undefined && !(Number.isFinite(a.width) && a.width > 0 && a.width <= 1)) return 'width is a fraction of the picture\'s width, above 0 and up to 1';
   if (a.style !== undefined && (typeof a.style !== 'string' || !a.style.trim())) return 'style is a label style id';
   return undefined;
