@@ -165,7 +165,7 @@ The TypeScript source of truth is `RecipeMeta` in `apps/web/src/lib/cookbook/typ
 | `genres` | 1–3 of `novel poetry textbook workbook manual paper report magazine newsletter catalogue photobook comic ephemera any`. |
 | `outputs` | 1–4 of `canvas html pdf epub bundle live`. `pdf` ⇔ the `pdf` kit block ⇔ an import from `https://esm.sh/postext-pdf` ⇔ `engine.postextPdf`; `epub` ⇔ an import from `https://esm.sh/postext-epub`. |
 | `features` | `primary`: 1–3 features the recipe **teaches**; `also`: up to 17 others it uses. Ids from `_registry/features.json`. |
-| `answers` | Question ids (`Q01`…`Q180`); `answers[0]` is the question the recipe page leads with. |
+| `answers` | Question ids (`Q01`…`Q185`); `answers[0]` is the question the recipe page leads with. |
 | `gaps` | Unsupported features the recipe works around (gives the Workaround badge). When the engine closes one (`fixedIn` in `gaps.json`) and the recipe pins that version or a later one, the id leaves the list: the lint fails it. |
 | `gotchas`, `explainsWarnings` | Shared pitfalls and warning kinds shown under Pitfalls. |
 | `related` | Up to four hand-picked sibling slugs; the rest are computed. |
@@ -789,7 +789,7 @@ share. Each file starts with a `"$comment"` that explains it; the loader ignores
 | `features.json` | about 150 user-facing features: label, definition, search aliases, group, docs anchor, research ids, optional detect rules | kebab-case id |
 | `apis.json` | exported engine symbols → docs section | symbol name |
 | `config.json` | top-level config keys → docs section | key |
-| `questions.json` | the reader questions Q01–Q180, how/why, index form, theme, gap | `Qnn` |
+| `questions.json` | the reader questions Q01–Q185, how/why, index form, theme, gap | `Qnn` |
 | `gaps.json` | what Postext does not do, with aliases and the workaround; a gap the engine closes keeps its entry with `fixedIn` (the version), so the questions and the older-pinned recipes that name it still resolve, but the site no longer offers it as a gap or gives its recipes the Workaround badge; a recipe that pins that version or a later one takes the id out of its `gaps` (the lint fails it) | kebab-case id |
 | `warnings.json` | every engine, parse and Sandbox warning: label, cause, fix | warning kind |
 | `gotchas.json` | shared pitfalls, tied to a feature and to the engine follow-up that would retire them; one the engine fixes keeps its entry with `fixedIn` (the version) and a body that tells the old behaviour as past: a recipe that pins an older engine still lists it, under a "fixed in postext X" kicker, and a recipe that pins that version or a later one no longer shows it nor is found by it | kebab-case id |
