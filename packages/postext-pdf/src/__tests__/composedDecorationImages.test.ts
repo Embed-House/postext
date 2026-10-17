@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
-import { PDFDocument } from 'pdf-lib';
+import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
 import { renderToPdf } from '../pdf-backend';
@@ -67,5 +67,22 @@ describe('pictures of a composed page decoration in the PDF (#878)', () => {
       onWarning: (w) => warnings.push(w.kind),
     });
     expect(warnings).not.toContain('missingImage');
+  });
+
+  it('a cover crop (#923) is drawn whole over its uncropped box, clipped to the element', async () => {
+    const square = { ...config, pageTemplates: [{ ...config.pageTemplates![0]!, decoration: { elements: [{ kind: 'image', id: 'sky', resourceId: 'sky', decorative: true, fit: 'cover',
+      placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: mm(80), height: mm(80) } } }] } }] } as PostextConfig;
+    const doc = buildDocument({ markdown, resources }, square);
+    const block = doc.pages[0]!.composed!.decoration!.blocks.find((b) => b.kind === 'image')!;
+    expect(block.kind === 'image' && block.crop).toMatchObject({ width: 0.5, height: 1 });
+    const pdf = await PDFDocument.load(await renderToPdf(doc, { fontProvider: async () => new Uint8Array(fontBytes), resourceBytes: (id) => (id === 'sky.svg' ? SVG : undefined) }));
+    const contents = pdf.getPage(0).node.Contents();
+    const streams = contents instanceof PDFArray ? contents.asArray().map((r) => pdf.context.lookup(r)) : [contents];
+    const text = streams.map((st) => (st instanceof PDFRawStream ? Buffer.from(decodePDFRawStream(st).decode()).toString('latin1') : '')).join('\n');
+    // The clip is the 80 mm square at the top-left of the page (72 dpi:
+    // 1 px = 1 pt).
+    const side = (80 / 25.4) * 72;
+    const clips = [...text.matchAll(/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re\nW\nn/g)].map((m) => m.slice(1, 5).map(Number));
+    expect(clips.some((c) => Math.abs(c[0]!) < 0.01 && Math.abs(c[2]! - side) < 0.01 && Math.abs(c[3]! - side) < 0.01)).toBe(true);
   });
 });

@@ -335,14 +335,15 @@ function largestPlacements(doc: VDTDocument, blocks: VDTBlock[]): Map<string, { 
     }
     const overlay = block.designOverlay;
     if (overlay) {
-      for (const b of overlay.blocks) if (b.kind === 'image') note(b.fileId, b.bbox.width, b.bbox.height);
+      for (const b of overlay.blocks) if (b.kind === 'image') note(b.fileId, b.bbox.width / (b.crop?.width ?? 1), b.bbox.height / (b.crop?.height ?? 1));
     }
   }
   // Image elements of the page design slots (a logo on a title page).
   for (const page of doc.pages) {
-    for (const slot of [page.header, page.footer, page.openerBand]) {
+    // A cover crop (#923) draws the whole picture larger than its box.
+    for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
       if (!slot) continue;
-      for (const b of slot.blocks) if (b.kind === 'image') note(b.fileId, b.bbox.width, b.bbox.height);
+      for (const b of slot.blocks) if (b.kind === 'image') note(b.fileId, b.bbox.width / (b.crop?.width ?? 1), b.bbox.height / (b.crop?.height ?? 1));
     }
     // Comic panels: the whole picture is drawn at its box, which a crop
     // makes larger than the panel.

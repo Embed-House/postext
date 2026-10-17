@@ -1,5 +1,6 @@
 import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
 import { bitmapLayoutSize } from '../bitmapResolution';
+import { comicArtCrop } from '../comics/art';
 import type {
   AnchorEdge,
   ColorValue,
@@ -187,6 +188,8 @@ export interface ResolvedImagePrimitive extends ResolvedElementGeometry {
    *  caption as plain text; absent for a `decorative` element or a
    *  resource with neither. */
   altText?: string;
+  /** The part of the picture shown (a `fit: 'cover'` crop, #923). */
+  crop?: { x: number; y: number; width: number; height: number };
 }
 
 /** Placeholder characters the snippet parser leaves in span text (private
@@ -2031,12 +2034,36 @@ function layoutImageElement(
   else if (fixedW !== undefined) { boxW = fixedW; boxH = fixedW * natH / natW; }
   else if (fixedH !== undefined) { boxH = fixedH; boxW = fixedH * natW / natH; }
   else { boxW = natW; boxH = natH; }
+  const boxX = edgeXFromPin(pin.anchorX, pin.pinX, boxW);
+  const boxY = edgeYFromPin(pin.anchorY, pin.pinY, boxH);
+  if (el.fit === 'cover' && fixedW !== undefined && fixedH !== undefined && !upright && boxW > 0 && boxH > 0) {
+    // Cover (#923): the box filled, the picture cropped, its safe area
+    // kept (the comic panel's rule, `comics/art.ts`).
+    const cell = { x: boxX, y: boxY, width: boxW, height: boxH };
+    const cut = comicArtCrop({ width: picW, height: picH, cell, fit: 'cover', ...(resource?.safeArea ? { safeArea: resource.safeArea } : {}), ...(el.focus ? { focus: el.focus } : {}) });
+    const x0 = Math.max(cell.x, cut.box.x);
+    const y0 = Math.max(cell.y, cut.box.y);
+    const x1 = Math.min(cell.x + cell.width, cut.box.x + cut.box.width);
+    const y1 = Math.min(cell.y + cell.height, cut.box.y + cut.box.height);
+    const whole = cut.source.width >= 1 - 1e-6 && cut.source.height >= 1 - 1e-6;
+    return {
+      kind: 'image',
+      id: el.id,
+      x: x0,
+      y: y0,
+      width: Math.max(0, x1 - x0),
+      height: Math.max(0, y1 - y0),
+      fileId,
+      ...(resource?.bitmap?.format ? { format: resource.bitmap.format } : {}),
+      ...pictureTraits(resource, fileId),
+      ...(whole ? {} : { crop: { ...cut.source } }),
+      ...altTextOf(el, resource),
+    };
+  }
   // Aspect-fit inside the box, centred.
   const scale = Math.min(boxW / natW, boxH / natH);
   const w = natW * scale;
   const h = natH * scale;
-  const boxX = edgeXFromPin(pin.anchorX, pin.pinX, boxW);
-  const boxY = edgeYFromPin(pin.anchorY, pin.pinY, boxH);
   return {
     kind: 'image',
     id: el.id,

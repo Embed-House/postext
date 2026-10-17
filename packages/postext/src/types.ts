@@ -6467,6 +6467,20 @@ export interface DesignImageElement {
    *  picture's `alt` in HTML and a `Figure` with `/Alt` in a tagged PDF.
    *  Default `false`. */
   decorative?: boolean;
+  /** How the picture fills a box whose width and height are both set
+   *  (#923): `'contain'` (the default) fits the whole picture inside it,
+   *  centred; `'cover'` fills the box and crops what runs past it, as a
+   *  full-bleed photograph. A cover crop keeps the resource's `safeArea`
+   *  whole (where the box's shape cannot hold it, the smallest window that
+   *  does is shown, and the box is not filled on one axis); `focus` says
+   *  which point of the picture to centre. Ignored when a side is
+   *  `'auto'`. */
+  fit?: 'contain' | 'cover';
+  /** The point of the picture a `'cover'` crop centres, in fractions of
+   *  the picture (`{ x: 0.5, y: 0.3 }`: a face in the upper third), held
+   *  so the safe area stays in view. Default: the safe area's margins
+   *  cropped in proportion, else the centre. */
+  focus?: { x: number; y: number };
 }
 
 export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement;

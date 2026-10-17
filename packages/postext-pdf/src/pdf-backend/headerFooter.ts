@@ -288,7 +288,7 @@ function renderImageBlock(
 ): void {
   const { x, y, width, height } = block.bbox;
   const turned = !!ctx.vertical && width > 0 && height > 0;
-  if (!turned) tag?.();
+  if (!turned && !(block.crop && width > 0 && height > 0)) tag?.();
   if (width <= 0 || height <= 0) return;
   const embedded = images?.get(block.fileId);
   const draw = (bx: number, by: number, bw: number, bh: number): void => {
@@ -300,6 +300,18 @@ function renderImageBlock(
     }
   };
   if (!ctx.vertical) {
+    if (block.crop) {
+      // A cover crop (#923): the whole picture over its uncropped box,
+      // clipped to the element's. The tag opens inside the clip's state.
+      pushClipRect(ctx, x, y, width, height);
+      tag?.();
+      const c = block.crop;
+      const w = width / c.width;
+      const h = height / c.height;
+      draw(x - c.x * w, y - c.y * h, w, h);
+      popClip(ctx);
+      return;
+    }
     draw(x, y, width, height);
     return;
   }

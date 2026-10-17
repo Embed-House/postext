@@ -320,7 +320,8 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
             checkNearTrim(b.bbox);
           }
         } else if (b.kind === 'image') {
-          if (b.imageKind !== 'svg') checkImage(b.fileId, b.bbox.width, b.bbox.height, 1, 1, pageIndex, b.bbox);
+          // A cover crop (#923) shows a share of the picture in its box.
+          if (b.imageKind !== 'svg') checkImage(b.fileId, b.bbox.width, b.bbox.height, b.crop?.width ?? 1, b.crop?.height ?? 1, pageIndex, b.bbox);
           checkNearTrim(b.bbox);
         } else if (b.kind === 'text') {
           // What the block shows (a placeholder that resolved to nothing
@@ -392,6 +393,9 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
     checkSlot(page.footer);
     checkSlot(page.openerBand);
     checkSlot(page.lineNumbers);
+    // A composed page's decoration: its grounds, rules and full-bleed
+    // photographs (#923).
+    checkSlot(page.composed?.decoration);
     checkComic(page.comic);
   }
 

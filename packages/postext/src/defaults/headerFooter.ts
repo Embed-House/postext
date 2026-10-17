@@ -462,6 +462,10 @@ function resolveImageElement(el: DesignImageElement, idx: number): ResolvedDesig
     ...(el.reserve === false ? { reserve: false } : {}),
     ...(el.pin ? { pin: true } : {}),
     ...(el.decorative ? { decorative: true } : {}),
+    ...(el.fit === 'cover' ? { fit: 'cover' as const } : {}),
+    ...(el.focus && Number.isFinite(el.focus.x) && Number.isFinite(el.focus.y)
+      ? { focus: { x: Math.max(0, Math.min(1, el.focus.x)), y: Math.max(0, Math.min(1, el.focus.y)) } }
+      : {}),
   };
 }
 

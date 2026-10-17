@@ -3140,6 +3140,17 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
         `transform:translate(0,${height}px) rotate(-90deg) translate(${ox}px,${oy}px);transform-origin:0 0;${filter}" /></div>`
       );
     }
+    if (block.crop) {
+      // A cover crop (#923): the whole picture over its uncropped box, in a
+      // box that clips it to the element's.
+      const c = block.crop;
+      const w = width / c.width;
+      const h = height / c.height;
+      return (
+        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:hidden;">` +
+        `<img src="${esc(url)}" ${alt} style="position:absolute;left:${-c.x * w}px;top:${-c.y * h}px;width:${w}px;height:${h}px;max-width:none;${filter}" /></div>`
+      );
+    }
     return (
       `<img src="${esc(url)}" ${alt} style="position:absolute;` +
       `left:${x}px;top:${y}px;width:${width}px;height:${height}px;${filter}" />`
