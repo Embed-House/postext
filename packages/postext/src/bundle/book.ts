@@ -52,7 +52,19 @@ const MAX_ROUNDS = 3;
 const FRONTMATTER_OPEN_RE = /^---[ \t]*(?:\r?\n|$)/;
 
 /** A chapter with a composed page fence. */
-const COMPOSED_PAGE_RE = /:::+page\b/;
+/** Whether the Markdown holds a page fence (`::::page`, three colons or
+ *  more, then `page` as a whole word). A scan, not a regular expression: a
+ *  pattern that may start inside a long run of colons is quadratic on it. */
+const hasComposedPage = (markdown: string): boolean => {
+  for (let at = markdown.indexOf(':page'); at !== -1; at = markdown.indexOf(':page', at + 1)) {
+    let colons = 1;
+    while (colons < 3 && at - colons >= 0 && markdown[at - colons] === ':') colons++;
+    const next = markdown.charCodeAt(at + 5);
+    const wordChar = (next >= 48 && next <= 57) || (next >= 65 && next <= 90) || (next >= 97 && next <= 122) || next === 95;
+    if (colons >= 3 && !wordChar) return true;
+  }
+  return false;
+};
 
 /** `markdown` with a leading front-matter block blanked out — every
  *  character but the line breaks turned into a space, so source offsets
@@ -154,12 +166,12 @@ export function buildBundle(
   // does not depend on them.
   const jumpsPossible = (jsonKey(config) ?? '').includes('page:');
   const laterIds = jumpsPossible
-    ? laterPageIdsOf(sources.map((markdown) => (COMPOSED_PAGE_RE.test(markdown) ? build.derive(`ids\u0000${markdown}`, () => pageFenceIds(markdown, config)) : [])))
+    ? laterPageIdsOf(sources.map((markdown) => (hasComposedPage(markdown) ? build.derive(`ids\u0000${markdown}`, () => pageFenceIds(markdown, config)) : [])))
     : undefined;
   /** What each chapter needs of `laterIds` to be laid out: only the
    *  chapters with a composed page jump. */
   const laterIdsOf = (index: number): Record<string, number> | undefined =>
-    laterIds && COMPOSED_PAGE_RE.test(sources[index]!) && Object.keys(laterIds[index]!).length > 0 ? laterIds[index] : undefined;
+    laterIds && hasComposedPage(sources[index]!) && Object.keys(laterIds[index]!).length > 0 ? laterIds[index] : undefined;
   // Citations are numbered and listed across the book (#272): each chapter
   // is formatted against the book's references and citations.
   // Every chapter's front matter counts here (its references), not only

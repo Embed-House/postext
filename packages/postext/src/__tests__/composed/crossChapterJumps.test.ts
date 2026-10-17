@@ -312,4 +312,11 @@ describe('the source of the carried text is its own chapter (#943)', () => {
     expect(text).toContain('Ver el ancla y');
     expect(text).not.toContain('?');
   });
+  it('a chapter made of a long run of colons is read in linear time', () => {
+    const colons = ':'.repeat(60_000) + 'pagex';
+    const start = performance.now();
+    const docs = bundle([fence('articulo', para('uno', 400), ' sigue="p-salto"'), colons, jumpPage()]);
+    expect(performance.now() - start).toBeLessThan(5_000);
+    expect(composedPages(docs[2]!).some((p) => p.composed!.template === 'salto')).toBe(true);
+  });
 });
