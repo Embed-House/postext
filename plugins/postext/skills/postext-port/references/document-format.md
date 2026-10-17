@@ -390,6 +390,7 @@ Source: ; .
 - `count`: integer 2–6, default 2. `gap`: a length (`12pt`, `1em`); default `columnGap` in a box, a body line in the column, `layout.gutterWidth` across the page. `rule`: a rule down each gap (`layout.columnRule` colour/width).
 - `marginTop` / `marginBottom` (≥ 1.28): lengths on the fence, the space above and under the group. In the text a group is followed by the body's paragraph spacing (a line, or none with `paragraphSpacing: false`) and `marginBottom` replaces it (`marginBottom="0"` = none; a minimum, the flow snaps back to the grid, so it comes out in whole lines); `marginTop` merges with the space pending and gives way at a column head. In a box they merge with the neighbours' space (none above the box's first block, none kept at its foot). `em` = the size of the text around; unparsable or negative values are ignored. A poster's panels across the page: `:::columns{count=3 span="page" marginBottom="0.75em"}`, no frameless box needed.
 - **Splitting (≥ 1.25).** A group that does not fit (the rest of its column, or a box that splits) is cut and goes on in the next column/page. `flow="snake"` (default without `breaks`): one galley, columns filled in turn, cut between blocks or lines (≥ `layout.boxChildSplitMinLines` per side), the last part balanced. `flow="parallel"` (default with `breaks`): each `breaks` run is a stream kept in its own column, every stream going on in the same column of the next part: a poem and its translation stay level. A nested box in a group stays whole; a group inside a nested box is never cut. Groups that fit lay out as before. Warnings `columnsFlowUnknown`, `columnsTooNarrow`.
+- **Where a balanced group is cut (≥ 1.39).** A group set whole (and a frame with `columns`) keeps `bodyText.widowMinLines` / `orphanMinLines` lines on each side of a cut inside a paragraph or list item and takes the cut whose tallest column is shortest: two paragraphs of 6 and 5 lines set 6 | 5, never 5 | 1+5, and five one-line items set 2 | 2 | 1. Do not rewrite paragraphs to dodge a lone line at a column head or foot. Before 1.39 the cut fell at the line nearest an equal share.
 - `breaks`: a comma list of **1-based block indices** within the group where columns 2, 3, … start. Values must be > 1. Without `breaks`, the columns are balanced, and a cut may fall inside a paragraph or list item. With `breaks`, there is no mid-paragraph cut.
 - `breaks` counts blocks only: paragraphs, list items (one each), display formulas, figures, tables; a nested callout counts as **one**. Directives (`:::space`) are **not** counted. A value past the last block or not after the previous break is ignored.
 - `:::space` inside the group separates blocks, but is **dropped at the top of the group and at each column head** (so equal stanza gaps line up across columns). Put space before the `:::columns` fence to push the group down.
@@ -783,11 +784,12 @@ A panel with the flag `text` (postext ≥ 1.38) takes **Markdown** instead of a 
 paragraphs (blank lines between them), `**bold**`, `*italic*`, lists, headings, links and chips, up to the next
 `::panel` line. It is set as real text in the panel's frame in the book's body style (not the lettering face),
 `valign=middle|bottom` places it, `box=<calloutStyleId>` draws a box round it (background, border, radius and
-padding of that style). A narrator's page, a letter, a newspaper clipping. No `:::` blocks in the body; use it
-only on single `:::page`s of horizontal LTR books (on a `:::strip`, a `:::page{spread}`, or in an RTL or vertical
-edition the words fall into the flow after the comic: `comicPanelFrame` reason `strip`/`spread`/`flow`, so
-letter them as captions there). Text taller than the cell is clipped (`textOverflow`, `overflowMm`): shorten or
-enlarge the cell, the text is never shrunk. `box` also dresses a picture panel (`unknownBox` when the id is not a
+padding of that style), `shrink` / `shrink=0.7` lets it be set smaller until it fits (1.39). A narrator's page, a
+letter, a newspaper clipping. No `:::` blocks in the body; use it on single `:::page`s, right-to-left and
+vertical editions included from 1.39 (on a `:::strip` or a `:::page{spread}`, and before 1.39 in those editions,
+the words fall into the flow after the comic: `comicPanelFrame` reason `strip`/`spread`/`flow`, so letter them
+as captions there). Text taller than the cell at its smallest size is clipped (`textOverflow`, `overflowMm`):
+shorten or enlarge the cell. `box` also dresses a picture panel (`unknownBox` when the id is not a
 callout style).
 
 A `:::page` owns a whole page (the text after it starts a new page);
@@ -804,7 +806,8 @@ checks these blocks and sets their content in the running text on pages of
 its own; 1.34.1 lays the frames out; round 2 starts at 1.35.0 (groups,
 spreads, reading order in every output); `::label` words are drawn from
 1.37.0 (before, the figure is set as `::resource`); a story jumps to a later
-page fence from 1.38.0 (`id=` below).
+page fence from 1.38.0 (`id=` below); a figure carries its own alt text,
+caption and note from 1.39.0.
 `python3 scripts/composed_check.py round` says which round the installed
 version takes; with an older one the round-1 ladder (playbooks J) stays the
 method.
@@ -849,6 +852,25 @@ North, south, east and west.
   `at` names an anchor of the resource or a point in percent of the picture
   (`at="62% 48%"`); `style` is a `labelStyles` id. A figure in the flow is
   set as `::resource` with its labels.
+- The edition's own words for the picture (1.39), as attributes of the fence
+  or as lines among the labels (blank lines allowed; a line wins over the
+  attribute; nested brackets and `\\` are kept):
+
+  ```md
+  :::figure{resource="relieve" slot="map" alt="Physical map of Iberia"}
+  ::caption[Relief of the Iberian peninsula]
+  ::note[Source: national atlas]
+  ::label[Pyrenees]{at="pirineos"}
+  :::
+  ```
+
+  The resource of the chapter carries them (layout, captions, the alt text
+  of every output, tagged PDF, EPUB), the stored resource is untouched, and
+  a resource placed by two figures of one file takes the first figure's
+  words. `alt=""` or `::alt[]` marks the picture decorative. Translate a map
+  by writing these beside the labels, not by editing the resource per
+  language. A caption set so is not source-mapped per character and `:ref`
+  does not print it.
 - `id="p47"` on a fence is the target of a jump: a frame whose template says
   `overflow.continueIn: "page:p47"` (or `"page:{attr.sigue}"`, with `sigue="p47"` on
   the article's fence) sends the rest of its story there (1.38; within the chapter
@@ -865,7 +887,7 @@ North, south, east and west.
   met while one is open closes it, the closing fence closes any container
   still open inside; each is `unclosedContainer`. A fence of another colon
   count stays text. A `:::figure` ends at its first line that is neither a
-  label nor blank.
+  label, an `::alt` / `::caption` / `::note` line nor blank.
 
 Porting rule: a textbook page built by hand from fixed callouts,
 `:::pagebreak` and placed figures (title band, text, coloured boxes each

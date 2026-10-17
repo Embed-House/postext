@@ -1200,7 +1200,11 @@ The Sun rises in the **east** and sets in the **west**.
   for 121 boxes in the 28-page port), named by kind and position
   (`card-top-left`, `aside-right-mid`), never by page number. That is
   expected in round 1 and is no content in the config: the style holds the
-  place, size and colours, the words stay in the fence. In round 2
+  place, size and colours, the words stay in the fence. From postext 1.39
+  a style can be based on another (`"extends": "caja"`): write one full style
+  per look and, per box, a thin style that carries only its place
+  (`{ "id": "caja-p5", "extends": "caja", "placement": "fixed", "fixed": {…},
+  "marginBottom": … }`), instead of 115 full copies. In round 2
   page templates replace them with one template per kind of page, a frame
   per box and one callout style per kind of box (composed-pages.md §4, §9).
 - The box goes on the page where its fence falls in the flow; put the fence
@@ -1360,9 +1364,10 @@ captions, alt text, tables and the label SVGs, `localized.<lang>.config` for
 the locale, labels and faces only (F1). A translation that runs longer than
 the source reflows in its box or flow; it is never re-placed line by line
 at the source's coordinates. Run `postext check my-book --locale <lang>` and
-look at the pages of every locale. The Sandbox imports one edition of a
-multi-language bundle (it asks which), so import each edition to look at
-it; give each edition its own title with `localized.<lang>.name` and
+look at the pages of every locale. The Sandbox keeps every edition of a
+multi-language bundle in one book (postext ≥ 1.39; before, it asked which
+one and kept that edition only, so each was imported to look at it);
+give each edition its own title with `localized.<lang>.name` and
 `localized.<lang>.description` (postext ≥ 1.34.1, #891; the primary edition
 keeps the manifest's `name`; `postext check my-book --locale <lang>` prints
 it in the header, the library and the import dialog use it, and a showcase's

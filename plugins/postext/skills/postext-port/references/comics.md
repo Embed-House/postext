@@ -192,6 +192,7 @@ closing `:::`.
 | `text` | flag (≥ 1.38) | the panel's body is Markdown set in its frame, not a lettering script (§5b) |
 | `box` | callout style id (≥ 1.38) | dresses the panel in a callout style (§5b) |
 | `valign` | `middle` \| `bottom` (≥ 1.38) | where a text panel's text sits in its frame; unset: the top |
+| `shrink` | flag, number or percent (≥ 1.39) | a text panel's text may be set smaller until it fits: `shrink` alone down to 50 %, `shrink=0.7` / `shrink=70%` down to that (clamped to 25–100 %); unset: down to 90 % |
 | `#id` (or `id=`) | name | the panel's id in the layout (the Sandbox and the HTML output use it); not a `:ref` target |
 
 ### 5b. Text panels and box styles (postext ≥ 1.38)
@@ -222,14 +223,19 @@ maya: Grandpa?
   frame (`valign=middle|bottom` moves it down), over the panel's ground and picture and under the balloons.
 - `box=<calloutStyleId>` draws the panel in a callout style: its background, border colour and width and corner
   radius (the panel's own `border` and `bg` still win). On a text panel the box is drawn round the text with the
-  style's padding and the panel draws no border or ground of its own. In a slanted cell the text keeps to the
-  widest straight-sided box that fits inside.
-- Text is never shrunk. Taller than its frame: clipped and reported (`comicPanelFrame` reason `textOverflow`,
-  `overflowMm`): shorten it or give the cell room.
-- Text panels are set only on single `:::page`s of horizontal LTR books. On a `:::strip`, a `:::page{spread}`, or in
-  a right-to-left or vertical edition the text falls into the flow after the comic (`comicPanelFrame` reason
-  `strip`/`spread`/`flow`): letter those words as `caption:` lines there. A tagged PDF reads a text panel after
-  the page's panels.
+  style's padding and the panel draws no border or ground of its own.
+- In a slanted cell (1.39) a text set from the top with no `box` and no `valign` follows the slant line by line:
+  each line is as short as the outline leaves it. With `box=` or `valign=middle|bottom` the text keeps to the
+  widest straight-sided box that fits inside, as in 1.38.
+- Shrinking (1.39): `::panel{text shrink}` (or `shrink=0.7`, `shrink=70%`) sets the text smaller until it fits,
+  down to the value (50 % for the bare flag). Without it the text goes down to 90 % like any frame. Taller than
+  its frame at that size: clipped and reported (`comicPanelFrame` reason `textOverflow`, `overflowMm`): shorten
+  it or give the cell room. Before 1.39 the text was never shrunk.
+- Text panels are set in their frames on single `:::page`s in every writing mode (1.39): left-to-right,
+  right-to-left (from the right) and vertical. On a `:::strip` or a `:::page{spread}` the text still falls into
+  the flow after the comic (`comicPanelFrame` reason `strip`/`spread`): letter those words as `caption:` lines
+  there. Before 1.39 a right-to-left or vertical edition did the same (reason `flow`, no longer raised). A tagged
+  PDF reads a text panel inside the comic's `Div`, in its panel's place (before 1.39, after the page's panels).
 
 ## 6. Script lines: the lettering
 
@@ -617,7 +623,7 @@ sfx{plate at="77.3% 14.4%" rotate=-11 skew=-8}: Incantations\
 | `comicUnknownArt` | `art=`/`pop=` names no bitmap or SVG resource | add the resource; check the id |
 | `comicPanelLetterbox` | the cell's shape cannot hold the safe area under a crop: the picture shows whole with bands | widen/heighten the cell in the split, shrink the safe area, or set `fit=contain` and a `bg` on purpose |
 | `comicBalloonOverflow` | a balloon does not fit cleanly (`face`, `balloon`, `outside`, `avoid`, `anchor`; with the fallbacks tried). A crossing asked for with `break` or an `at=` pin is not counted as `outside` | shorten or break the line, give the panel more room, mark the face/avoid zones tighter, allow `break`, or pin it with `at=` |
-| `comicPanelFrame` (≥ 1.38) | `reason`: `unknownBox` (`box` names no callout style: the panel keeps its panel style), `textOverflow` (a text panel taller than its frame, `overflowMm`), `strip` / `spread` / `flow` (a text panel where frames take no text: its words are set after the comic) | correct the id or add the callout style; shorten the text or enlarge the cell; otherwise move the text panel to a single comic page, or letter its words as a caption |
+| `comicPanelFrame` (≥ 1.38) | `reason`: `unknownBox` (`box` names no callout style: the panel keeps its panel style), `textOverflow` (a text panel taller than its frame, `overflowMm`), `strip` / `spread` (a text panel where frames take no text: its words are set after the comic), `flow` (before 1.39 only: a right-to-left or vertical edition) | correct the id or add the callout style; shorten the text or enlarge the cell; otherwise move the text panel to a single comic page, or letter its words as a caption |
 | `comicUnknownSpeaker` (info) | a speaker no picture of the page marks and no cast entry names: its tail points off the panel | add the anchor to the picture, add a `cast` entry, or fix a renamed key |
 | `comicAnchorOutsideSafeArea` | an anchor lies outside its picture's safe area: a crop may cut the speaker | grow the safe area over the mouth |
 | `unknownConfigValue` (config) | a comics setting holds a word outside its choices (`readingDirection`, `artDirection`, panel `borderStyle`/`fit`, lettering `writingMode`/`textTransform`/`dropFinalStop`/`joinSameSpeaker`, balloon `shape`/`tail`/`target`/`position`/`align`/`textTransform`): read as the default; `used` and the closest word (`suggestion`) are given | write one of the listed words (§10) |

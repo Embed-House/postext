@@ -109,6 +109,10 @@ Gotchas:
   so an edited manuscript returns unchanged (docs: Sandbox → Word
   documents). Point them there; use the scripts below for the original's
   layout rules, batches of files, or what the dialog does not read.
+- `postext import-docx` (postext ≥ 1.39) sets the character spacing of Word paragraph and heading styles as
+  `letterSpacing` (em of the style's size) on the bundle's config styles that set none (`styleTracking` in
+  `--json`: `applied`, `skipped`; never into the Markdown), and `docx` export writes the levels' and heading
+  styles' `letterSpacing` back as the Word style's character spacing. Before 1.39 set the tracking by hand. The Sandbox's import dialog does not offer it yet.
 - `inventory.py doc.docx` gives sections (page size, margins, columns, mirror
   margins), paragraph styles in use with counts and samples, character styles,
   fonts, tables, images, footnotes and equations.

@@ -121,8 +121,8 @@ Conversion at `page.dpi` (default 300):
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
-| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; round 2, composed-pages.md) |
-| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0) |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; frame `writingMode`/`direction`, label checks from 1.39.0; round 2, composed-pages.md) |
+| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0, vertical and checked from 1.39.0) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -788,7 +788,9 @@ with explicit mm offsets measured from the trim corner, and split odd/even with 
 placement: {
   anchor: { to: 'container'|'page'|'bleed'|'#elementId',
             edge: container edges 'top-left'|'top'|'top-right'|'left'|'center'|'right'|'bottom-left'|'bottom'|'bottom-right'
-                  element edges  'right-of'|'left-of'|'below'|'above'|'align-top'|'align-bottom'|'align-left'|'align-right' },
+                  start/end (≥ 1.39) 'top-start'|'start'|'bottom-start'|'top-end'|'end'|'bottom-end'
+                  element edges  'right-of'|'left-of'|'below'|'above'|'align-top'|'align-bottom'|'align-left'|'align-right'
+                                 |'align-start'|'align-end' (≥ 1.39) },
   offset?: { x?: Dimension(abs), y?: Dimension(abs) },   // screen direction: +x right, +y DOWN (not "inward");
                                                          // a TEXT element's offset may be in em of its own size (≥ 1.9)
   size?: { width?: 'auto'|'fill'|Dimension|SizeTo, height?: 'auto'|'fill'|Dimension|SizeTo, maxWidth?: 'auto'|'fill'|Dimension }
@@ -798,6 +800,15 @@ placement: {
   right-anchored element needs a **negative** x offset to move inward; `bottom` anchors need
   negative y to move up (built-in header uses `bottom-right`, y = −16pt).
 - `'fill'` runs to the frame edge from the anchor point.
+- Start and end edges (≥ 1.39) name the sides by reading direction: the start is the left of a left-to-right
+  page and the right of a right-to-left or vertical page on the sheet, and `offset.x` then runs from start to
+  end (a kicker `top-start` with `x: 4mm` stands 4 mm in from the start side on both). They apply to
+  container, page, bleed and outer anchors and to `align-start` / `align-end` between elements, in running
+  heads, folios and a template's decoration (laid on the sheet); a design laid in the flow (heading
+  designs, openers) and a composed page's frames already read `start` as `left`, the flow being mirrored
+  or turned already. A template shared
+  by an Arabic and a Latin edition places its kicker and folio with these, not `top-left`/`top-right` per
+  edition.
 - `{ to, edge }` (≥ 1.38) runs from the anchor point to an edge of another box: `height: { to: 'bleed',
   edge: 'bottom' }` for a ground from the foot of a band down to the bleed, `{ to: '#band', edge: 'top' }`
   up to another element; `to: '#id'` also names a frame or group on a composed page's decoration, so the
@@ -1102,6 +1113,11 @@ type → first style. Declaring the array replaces the default `note`.
 All em values = the callout body font size.
 ```
 { id (REQUIRED), name?,
+  extends?                           ≥ 1.39: another style's id; every field this style leaves unset comes from it
+                                     (objects such as padding, fixed, titleStyle key by key; colours and lengths whole;
+                                     never id/name); chains allowed; unknown id → calloutStyleExtendsUnknown, a loop →
+                                     calloutStyleExtendsCycle (the style stands alone). One full style per look + a thin
+                                     one per place: { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: {…} }
   title = ''                         default title; fence title overrides
   span = 'column'                    'column' | 'page' (span block across columns) | 'side' (float-only side column)
   columns = 1                        ≥ 1.18: a floated (auto/top/bottom) span:'column' box across this many adjacent
@@ -1859,7 +1875,10 @@ says it for the installed one):
         frame; continueIn 'page:<id>', {page} in overflow.mark, overflow.fromMark; frame rules; stacks
         keep empty frames, rows of 'auto' cards negotiate width; design size {to, edge}, image fit
         'cover' + focus; drop caps in frames; spreads on vertical books; resourceTypes written in part
-not yet frame writingMode/direction, template bodyStyle/palette; 'auto' width reads as 'fill'
+1.39.0  frame writingMode and direction applied; labelOverlap/labelOverflow, vertical labels; calloutStyles
+        extends; start/end edges; :::columns and frame columns cut by the widow/orphan rules; a figure's
+        alt/caption/note in the Markdown; cover on upright pictures
+not yet template bodyStyle/palette; 'auto' width reads as 'fill'
 ```
 
 Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates (14 and
@@ -1894,14 +1913,18 @@ Frame
 ├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8), preferContinue (true, 1.38) }
 ├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>'|'page:<id>' (1.38; <id> may be {attr.x}),
 │                 mark?: string|false ({page} = the page it goes on on, 1.38), fromMark?: string (1.38) }
-└─ optional?, crossGutter?, writingMode?, direction?, remove?
+└─ optional?, crossGutter?, remove?
+   writingMode?  'horizontal-tb'|'vertical-rl' (applied from 1.39; before, read only): the frame's content is laid
+                 in its box turned a quarter turn (not on a right-to-left page); an 'auto' height is the least that
+                 holds the lines in the width, so give long vertical text a fixed height
+   direction?    'ltr'|'rtl' (applied from 1.39): the frame's story, blocks with their own {dir} keep theirs
 
 Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
          align?: 'start'|'center'|'end'|'space-between', remove? }
 
 LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle? ('normal'),
               color?, textTransform? ('none'), letterSpacing?, halo?: { color, width }, background?,
-              padding?, minScale? (0.85) }
+              padding?, minScale? (0.85), writingMode? ('vertical-rl', ≥ 1.39) }
 ```
 
 - **Merge** (`extends`): root first; scalars replace, `grid` per key, frames and groups by `name`
@@ -1916,7 +1939,8 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   lint` counts it; the engine from #874).
 - **Frame styles are callout styles** holding the dress only (fill, border, radius, padding, tab
   `label`, title, `body`); `placement`, `fixed`, `span`, `columns`, `width` and margins are ignored
-  on a frame, so one style serves every box of its kind; position and measure go in the frame.
+  on a frame, so one style serves every box of its kind; position and measure go in the frame. A
+  style may be based on another with `extends` (§12).
 - **Sizes that follow the text**: `height` `'auto'` (default) with the drawn height as `minHeight`
   and the room the page leaves as `maxHeight`; boxes one under another in a `stack` group (the
   first frame's placement starts it), side by side in a `row`; pictures beside a box are frames
@@ -1941,10 +1965,21 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   `{ to: 'container'|'page'|'bleed'|'outer'|'#id', edge: 'top'|'bottom'|'left'|'right' }` (7.2);
   an `image` takes `fit: 'contain'|'cover'` (both sides set) and `focus: {x, y}` (7.3).
 - **Frames are running text**: their paragraphs take drop caps (1.38) as the flow's do; a heading in
-  a frame draws its level's or style's design (1.37), and opens no styled section.
+  a frame draws its level's or style's design (1.37), and opens no styled section. From 1.39 a
+  `takes` frame's heading gives the text frame's first paragraph its level's drop cap, a drop-cap
+  paragraph is not cut above the initial's last line across `next` chains or continuations
+  (`dropCap` reason `split` = a frame too short for the initial), and a `columns` frame (like a
+  `:::columns` group set whole) is cut with `widowMinLines`/`orphanMinLines` lines each side.
 - **Resource anchors** gain `width` (a fraction of the picture width), `align` ('center'),
-  `verticalAlign` ('middle'), `rotate` and `style` (a `labelStyles` id); comics ignore them.
-  Anchors live on the resource, so every locale shares them.
+  `verticalAlign` ('middle'), `rotate`, `style` (a `labelStyles` id) and, from 1.39, `writingMode`
+  ('vertical-rl': `width` is then a fraction of the picture's height, `align` runs down the column with
+  `start` = top, `verticalAlign` across the columns with `top` = the first, right-hand one); comics ignore
+  them. Anchors live on the resource, so every locale shares them. From 1.39 `postext check` reports
+  `labelOverlap` (a label runs into an earlier one by more than 12 % of the smaller line height) and
+  `labelOverflow` (wider than `width` at `minScale`) per edition.
+- **Figure words** (1.39): `:::figure{resource alt caption note}`, or `::alt[…]`, `::caption[…]`,
+  `::note[…]` lines beside the `::label` lines, give the edition's alt text, caption and note for the
+  picture (document-format.md §12.2); the stored resource is untouched.
 - Scripts: `resolvePageTemplate(config, id, { parity: 'recto'|'verso' })` returns the merged
   template with defaults (`configPath`, per-field `fieldPaths`); `validatePageTemplates(config,
   { resources })` returns the warnings (verification.md, "Composed pages").

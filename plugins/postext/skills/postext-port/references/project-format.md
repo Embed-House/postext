@@ -289,7 +289,9 @@ embeds them with `::resource{id="…"}` (placement `here`).
 - Provide 400/700 normal + italic where the text uses them; semibold bold →
   add 600 and `bodyText.boldFontWeight: 600`.
 - `redistributable: false`: rendering and PDF embedding work, but a `.postext`
-  export leaves the files out (licensed faces). Subset them (`fonts.py subset`).
+  export leaves the files out (licensed faces). Subset them (`fonts.py subset`). A bundle that names
+  font files it does not carry imports into the Sandbox with the family reported as unknown (postext
+  ≥ 1.39, #904): the `fonts` entries need not be dropped from the manifest.
 - Variable fonts → static instances (`fonts.py instance`); collections →
   single faces (`fonts.py split`); horizontal scaling of the source layout →
   scaled derived face (`fonts.py scale`).
@@ -302,9 +304,10 @@ embeds them with `::resource{id="…"}` (placement `here`).
   `zip -r`, every file of the folder but `source/`, scripts and caches goes
   in, so keep work folders and tool outputs outside the project or add
   `--exclude GLOB`) and use Sandbox → Books → New → *Open a .postext file…*
-  at https://postext.dev/en/sandbox. A bundle with several languages asks
-  which one to import, and the new book holds that edition only: import
-  each edition to check it. The Sandbox
+  at https://postext.dev/en/sandbox. A bundle with several languages is kept
+  whole as one book from postext 1.39 (editions beside the one open, switched from
+  the Books row or the edition bar; before, the import asked which one to keep and
+  held that edition only: import each edition to check it). The Sandbox
   keeps the working book in about 5 MB of browser storage: keep the config
   under 1 MB (`preset_kit.py lint` prints its size and warns from 3 MB; a
   config of several MB can break the import and the saves).
