@@ -56,6 +56,12 @@ export interface PlaceholderContext {
    *  `computePageMarks`); backs `{firstMark.<key>}` / `{lastMark.<key>}`.
    *  Called lazily, once per key a template names. Absent → `''`. */
   marksFor?: (key: string) => PageMarks | undefined;
+  /** On a composed page (#984): the counter of the first numbered heading
+   *  its frames hold, in the document's digits, for `{headingNumber}`;
+   *  and the same by frame name, for `{headingNumber.<frame>}`. Absent or
+   *  missing → `''`. */
+  headingNumber?: string;
+  headingNumberByFrame?: Record<string, string>;
 }
 
 export interface PlaceholderResult {
@@ -85,6 +91,7 @@ const PLACEHOLDER_NAMES = new Set([
   'chapterNumberAtTop',
   'partTitle',
   'partNumber',
+  'headingNumber',
 ]);
 
 const METADATA_PLACEHOLDERS = new Set(['title', 'subtitle', 'author', 'publishDate']);
@@ -101,6 +108,17 @@ export function attrPlaceholderKey(name: string): string | undefined {
   if (!name.startsWith(ATTR_PLACEHOLDER_PREFIX)) return undefined;
   const key = name.slice(ATTR_PLACEHOLDER_PREFIX.length);
   return key.length > 0 ? key : undefined;
+}
+
+/** When `name` is `headingNumber` (the page's first numbered heading) or
+ *  `headingNumber.<frame>` (the one the frame `<frame>` holds), a composed
+ *  page's counter of the heading a frame takes (#984): `{}` or the frame's
+ *  name. Undefined for any other name. */
+export function headingNumberPlaceholder(name: string): { frame?: string } | undefined {
+  if (name === 'headingNumber') return {};
+  if (!name.startsWith('headingNumber.')) return undefined;
+  const frame = name.slice('headingNumber.'.length);
+  return frame.length > 0 ? { frame } : undefined;
 }
 
 /** When `name` is a running-mark placeholder — `firstMark.<key>` or
@@ -723,6 +741,12 @@ export function resolvePlaceholders(
         i = end + 1;
         continue;
       }
+      const heading = headingNumberPlaceholder(name);
+      if (heading) {
+        out += heading.frame === undefined ? ctx.headingNumber ?? '' : ctx.headingNumberByFrame?.[heading.frame] ?? '';
+        i = end + 1;
+        continue;
+      }
       if (!PLACEHOLDER_NAMES.has(name)) {
         unknown.push(name);
         i = end + 1;
@@ -829,7 +853,7 @@ export function stripPlaceholders(template: string): string {
 }
 
 export function isKnownPlaceholder(name: string): boolean {
-  return PLACEHOLDER_NAMES.has(name) || attrPlaceholderKey(name) !== undefined || markPlaceholder(name) !== undefined;
+  return PLACEHOLDER_NAMES.has(name) || attrPlaceholderKey(name) !== undefined || markPlaceholder(name) !== undefined || headingNumberPlaceholder(name) !== undefined;
 }
 
 export function isMetadataPlaceholder(name: string): boolean {

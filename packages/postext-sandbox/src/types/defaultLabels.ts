@@ -3123,6 +3123,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   headerFooterPlaceholderNumberOrdinalWords: 'Number (First, Second, Third)',
   headerFooterPlaceholderNumberOrdinalWordsLower: 'Number (first, second, third)',
   headerFooterPlaceholderNumberHan: 'Number in Chinese numerals (一, 十二)',
+  headerFooterPlaceholderFrameHeadingNumber: "Number of the heading a frame took",
   headerFooterPlaceholderLeader: 'Leader up to the page number',
   headerFooterPlaceholderAttrHint: 'inserts a heading attribute (# Title {key="value"}); in headers and footers, that of the current chapter',
   headerFooterPlaceholderBookTotalPages: 'Book total pages',

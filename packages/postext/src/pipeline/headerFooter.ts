@@ -49,6 +49,7 @@ import {
 } from '../design/layout';
 import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
 import { plainDesignText } from '../design/richText';
+import { withDigits } from '../arabicNumerals';
 
 /** Slots live in the page margin area between the body edge and the trim
  *  edge. Header slot container: from the trim top down to body top.
@@ -1646,9 +1647,24 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const collapsed = new Set<string>();
       /** Empty frames' ruled lines (#914), on the sheet. */
       const rules: VDTDesignRuleBlock[] = [];
+      /** The counter of the first numbered heading each frame holds
+       *  (#984), in the document's digits, and the first of the page. */
+      const headingNumberByFrame: Record<string, string> = {};
+      let headingNumber: string | undefined;
+      const floatById = new Map<string, VDTBlock>();
       const nameFrames = (p: VDTPage, dx: number) => {
+        for (const b of p.floats ?? []) floatById.set(b.id, b);
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
+          if (!f.facingBlocks) {
+            for (const id of f.blockIds) {
+              const n = floatById.get(id)?.headingNumber;
+              if (n === undefined) continue;
+              const text = withDigits(String(n), numerals);
+              headingNumberByFrame[f.name] ??= text;
+              headingNumber ??= text;
+            }
+          }
           if (f.facingBlocks) continue;
           // A frame in its own writing mode (#944) is anchored to by the box
           // the page gives it, not the turned box its content is laid in.
@@ -1700,6 +1716,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partTitleByPageIndex,
         partNumberByPageIndex,
         partPaletteByPageIndex,
+        ...(headingNumber !== undefined ? { headingNumber } : {}),
+        ...(Object.keys(headingNumberByFrame).length > 0 ? { headingNumberByFrame } : {}),
       };
       const slot = resolveDesignSlot(template.decoration, 'header');
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(

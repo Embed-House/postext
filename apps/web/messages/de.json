@@ -2775,6 +2775,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Nummer (First, Second, Third)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Nummer (first, second, third)",
     "headerFooterPlaceholderNumberHan": "Nummer in chinesischen Zahlzeichen (一, 十二)",
+    "headerFooterPlaceholderFrameHeadingNumber": "Nummer der Überschrift, die ein Rahmen aufgenommen hat",
     "headerFooterPlaceholderLeader": "Füllzeichen bis zur Seitenzahl",
     "headerFooterPlaceholderAttrHint": "fügt ein Attribut einer Überschrift ein (# Title '{key=\"value\"}'); in Kopf- und Fußzeilen das des aktuellen Kapitels",
     "headerFooterPlaceholderBookTotalPages": "Seitenzahl des Buchs",

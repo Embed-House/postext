@@ -3655,6 +3655,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Número (Primero, Segundo, Tercero)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Número (primero, segundo, tercero)",
     "headerFooterPlaceholderNumberHan": "Número en numerales chinos (一, 十二)",
+    "headerFooterPlaceholderFrameHeadingNumber": "Número del título que tomó un marco",
     "headerFooterPlaceholderLeader": "Línea de puntos hasta el número de página",
     "headerFooterPlaceholderAttrHint": "inserta un atributo del título (# Título '{key=\"valor\"}'); en encabezados y pies, el del capítulo actual",
     "headerFooterPlaceholderBookTotalPages": "Total de páginas del libro",

@@ -399,6 +399,7 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
               ...resolved.groups.map((g) => ({ name: g.name, kind: 'group' as const })),
             ]}
             raw={decoration}
+            extraPlaceholders={['headingNumber']}
             resolved={resolveDesignSlot(decoration, 'part')}
             onUpdate={(slot) => set({ decoration: joinDecoration(slot && slot.elements ? slot : undefined, hiddenElements) })}
           />

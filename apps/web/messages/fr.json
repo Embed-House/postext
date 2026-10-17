@@ -2774,6 +2774,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Numéro (Premier, Deuxième, Troisième)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Numéro (premier, deuxième, troisième)",
     "headerFooterPlaceholderNumberHan": "Numéro en numéraux chinois (一, 十二)",
+    "headerFooterPlaceholderFrameHeadingNumber": "Numéro du titre qu’un bloc a pris",
     "headerFooterPlaceholderLeader": "Points de conduite jusqu’au numéro de page",
     "headerFooterPlaceholderAttrHint": "insère un attribut de titre (# Title '{key=\"value\"}') ; dans les en-têtes et pieds de page, celui du chapitre courant",
     "headerFooterPlaceholderBookTotalPages": "Nombre de pages du livre",

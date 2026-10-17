@@ -646,13 +646,21 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
     const frameClip = composed.sheetClip;
     const decorationClip = composedSheetClipOnSheet(page);
     const items = composedPaintOrder(page);
+    /** A frame hit with nothing of its own at the point (its box, its
+     *  padding, an empty frame): a text element of the decoration under it
+     *  answers in its place (#984), and the frame when there is none. */
+    let bare: SourceElement[] | undefined;
     // Topmost first: the paint order read backwards.
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i]!;
       if (item.kind === 'frame') {
+        if (bare) continue;
         if (frameClip && !inside(frameClip, fp)) continue;
         const chain = frameChain(doc, page, item.frame, item.blocks, fp, file, item.facing);
-        if (chain) return inFlowFrame(page, chain);
+        if (!chain) continue;
+        const found = inFlowFrame(page, chain);
+        if (found[0]?.level !== 'frame') return found;
+        bare = found;
         continue;
       }
       const deco = composed.decoration;
@@ -660,10 +668,14 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
       for (let k = deco.blocks.length - 1; k >= 0; k--) {
         const chain = designChain(deco.blocks[k]!, k, p, (el) => designElementId(composed.fenceIndex, 'decoration', el), composed, file);
         if (!chain) continue;
+        // Under a bare frame only a text element wins (its words come from
+        // the Markdown, a page attribute or the configuration alike).
+        if (bare && deco.blocks[k]!.kind !== 'text') continue;
         const own = slotElement(deco, `cp${composed.fenceIndex}:decoration`);
         return [...chain, ...(own ? [own] : []), templateElement(composed)];
       }
     }
+    if (bare) return bare;
     return inside({ x: 0, y: 0, width: page.width, height: page.height }, p) ? [templateElement(composed)] : [];
   }
   // The flow: blocks are in the page's flow frame.

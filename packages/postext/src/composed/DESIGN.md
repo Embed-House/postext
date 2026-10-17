@@ -1176,6 +1176,18 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   anchor names (`pinX`), so frames anchored to it follow, and a group member is placed the same way. Not for a
   frame in its own writing mode, nor for a frame with nothing to lay (width 0 up to `minWidth`). The Sandbox
   already offered *Its content* for width.
+- **A decoration text over a frame, and the heading's number (#984).** `sourceAt` keeps the paint order (frames of
+  layer 0 and up over the decoration) but a frame hit that has nothing of its own at the point (the chain is the
+  frame alone: its box, its padding, an empty frame) is held back: a *text* element of the decoration under it
+  answers instead (whether its words come from the Markdown, a page attribute or the configuration), and the
+  held frame answers when none does. Rules, boxes and pictures of the decoration do not win over a frame. A
+  `layer` on decoration elements, to paint them over the frames, was not added: it would make the decoration two
+  paint items in every backend (canvas, HTML, PDF, tagged PDF, preflight, contrast, the source map); a frame
+  with a negative `layer` already goes under the decoration. `{headingNumber}` and `{headingNumber.<frame>}`
+  (`headingNumberPlaceholder`, `design/placeholders.ts`; allowed in the `'composed'` context only, so the running
+  heads of other pages do not list them) print the `headingNumber` counter of the first heading block each
+  frame holds, in the document's digits; `headerFooter.ts` gathers them while it names the page's frames and
+  hands them to the placeholder context. Empty when no frame holds a numbered heading.
 
 ## 6. Source map contract
 

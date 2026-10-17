@@ -2774,6 +2774,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "番号（First, Second, Third）",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "番号（first, second, third）",
     "headerFooterPlaceholderNumberHan": "漢数字の番号（一、十二）",
+    "headerFooterPlaceholderFrameHeadingNumber": "枠が受け取った見出しの番号",
     "headerFooterPlaceholderLeader": "ページ番号までのリーダー",
     "headerFooterPlaceholderAttrHint": "見出しの属性を挿入します（# Title '{key=\"value\"}'）。ヘッダーとフッターでは、現在の章の見出しの属性になります。",
     "headerFooterPlaceholderBookTotalPages": "本の総ページ数",

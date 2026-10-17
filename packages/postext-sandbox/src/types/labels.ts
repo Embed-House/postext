@@ -3303,6 +3303,7 @@ export interface SandboxLabels {
   headerFooterPlaceholderNumberOrdinalWords: string;
   headerFooterPlaceholderNumberOrdinalWordsLower: string;
   headerFooterPlaceholderNumberHan: string;
+  headerFooterPlaceholderFrameHeadingNumber: string;
   /** `{leader}` in a contents part row (#889). */
   headerFooterPlaceholderLeader: string;
   headerFooterPlaceholderAttrHint: string;

@@ -2774,6 +2774,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "Número (Primer, Segon, Tercer)",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "Número (primer, segon, tercer)",
     "headerFooterPlaceholderNumberHan": "Número en numerals xinesos (一, 十二)",
+    "headerFooterPlaceholderFrameHeadingNumber": "Número del títol que ha pres un marc",
     "headerFooterPlaceholderLeader": "Línia de punts fins al número de pàgina",
     "headerFooterPlaceholderAttrHint": "insereix un atribut del títol (# Títol '{key=\"valor\"}'); a les capçaleres i els peus, el del capítol actual",
     "headerFooterPlaceholderBookTotalPages": "Total de pàgines del llibre",

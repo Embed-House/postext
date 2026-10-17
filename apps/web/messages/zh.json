@@ -2774,6 +2774,7 @@
     "headerFooterPlaceholderNumberOrdinalWords": "编号（First, Second, Third）",
     "headerFooterPlaceholderNumberOrdinalWordsLower": "编号（first, second, third）",
     "headerFooterPlaceholderNumberHan": "中文数字编号（一、十二）",
+    "headerFooterPlaceholderFrameHeadingNumber": "框所取标题的编号",
     "headerFooterPlaceholderLeader": "到页码的引导线",
     "headerFooterPlaceholderAttrHint": "插入标题的一个属性（# Title '{key=\"value\"}'）；在页眉和页脚中取当前章的属性",
     "headerFooterPlaceholderBookTotalPages": "全书总页数",
