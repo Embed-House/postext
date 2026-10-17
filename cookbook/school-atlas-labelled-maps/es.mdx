@@ -1,7 +1,7 @@
 ---
 title: "Un atlas escolar rotulado desde el Markdown"
-summary: "Mapas dibujados sin una letra y rotulados con líneas ::label en las anclas de cada recurso, en páginas compuestas y a doble página, en tres idiomas."
-plain: "Tres páginas de un atlas escolar de un país inventado. Los mapas son dibujos sin texto; todos sus nombres se escriben en el texto, así que una traducción cambia las palabras y deja los mapas como están."
+summary: "Mapas pintados sin una letra y rotulados con líneas ::label en las anclas de cada recurso, en páginas compuestas y a doble página, en tres idiomas."
+plain: "Tres páginas de un atlas escolar de un país inventado. Los mapas son pinturas sin texto; todos sus nombres se escriben en el texto, así que una traducción cambia las palabras y deja los mapas como están."
 description: "Un atlas escolar compuesto con Postext: mapas rotulados desde el Markdown en las anclas del recurso, un mapa a doble página y una edición árabe."
 question: "¿Cómo pongo los nombres de un mapa desde el texto, para que cada traducción use el mismo dibujo?"
 aliases: ["atlas", "atlas escolar", "rótulos de mapa", "topónimos", "anclas", "estilos de rótulo", "mapa a doble página", "pliego", "derecha a izquierda", "rótulos girados", "map labels", "place names"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "Lámina 1: una banda azul con el antetítulo Lámina 1 · Sit
 
 ## Lo que vas a componer
 
-Tres láminas de un atlas escolar de Varenia, un país inventado para esta receta. La lámina 1 lo sitúa en su continente. La lámina 2 extiende el mapa físico por las dos páginas, del mar de Lira a la frontera con Brunavia, en tintas de altitud, con tres ríos y la línea de un corte. La lámina 3 dibuja ese corte a través de la sierra Albar. Cada lámina se abre con una banda azul y se cierra con una leyenda o un vocabulario y unas actividades para la clase. Los dibujos no llevan ni una letra: los 43 nombres, cotas y cifras de la escala son líneas `::label` del Markdown, colocadas en anclas que guarda cada mapa. Por eso las ediciones en español, inglés y árabe comparten los tres dibujos, y la árabe se lee y se encuaderna por la derecha.
+Tres láminas de un atlas escolar de Varenia, un país inventado para esta receta. La lámina 1 lo sitúa en su continente. La lámina 2 extiende el mapa físico por las dos páginas, del mar de Lira a la frontera con Brunavia, en tintas de altitud, con tres ríos y la línea de un corte. La lámina 3 dibuja ese corte a través de la sierra Albar. Cada lámina se abre con una banda azul y se cierra con una leyenda o un vocabulario y unas actividades para la clase. Los tres mapas son pinturas hechas con un modelo de imagen y no llevan ni una letra; las fronteras, las ciudades, la línea del corte, la escala y la flecha del norte son símbolos vectoriales encima de ellas. Los 43 nombres, cotas y cifras de la escala son líneas `::label` del Markdown, colocadas en anclas que guarda cada mapa. Por eso las ediciones en español, inglés y árabe comparten las tres pinturas, y la árabe se lee y se encuaderna por la derecha.
 
 ## Elaboración
 
@@ -18,13 +18,15 @@ Tres láminas de un atlas escolar de Varenia, un país inventado para esta recet
 
 <Excerpt region="anchors" />
 
-Un ancla es un punto en fracciones del ancho y el alto de la imagen, así que vale a cualquier tamaño al que el marco ponga el mapa, y cuando la escalera de ajuste reduce un mapa, sus nombres se van con él. `km()` convierte en esas fracciones los kilómetros en los que está trazado el dibujo: el punto de una ciudad y su nombre salen los dos de `TOWNS` y no pueden separarse. El ancla guarda lo que es del lugar y no del idioma: su estilo, el giro del nombre de un río o de una sierra a lo largo de su curso y el lado del rótulo que se apoya en el punto. Los nombres de ciudad van centrados encima de su punto, porque `align: 'start'` sería la izquierda de un nombre en español y la derecha de uno en árabe.
+Un ancla es un punto en fracciones del ancho y el alto de la imagen, así que vale a cualquier tamaño al que el marco ponga el mapa, y cuando la escalera de ajuste reduce un mapa, sus nombres se van con él. `km()` convierte en esas fracciones los kilómetros que se leen en una cuadrícula puesta sobre la pintura: el punto de una ciudad y su nombre salen los dos de `TOWNS` y no pueden separarse. El ancla guarda lo que es del lugar y no del idioma: su estilo, el giro del nombre de un río o de una sierra a lo largo de su curso y el lado del rótulo que se apoya en el punto. Los nombres de ciudad van centrados encima de su punto, porque `align: 'start'` sería la izquierda de un nombre en español y la derecha de uno en árabe.
+
+Las pinturas se hicieron en orden. Primero la lámina del relieve, pintada por un modelo de imagen a partir de un mapa de alturas del país con el relieve sombreado; el mapa de situación se pintó a partir de la lámina del relieve y el corte, con las mismas alturas, de modo que costas y alturas coinciden en los tres. Una cuadrícula dibujada sobre cada imagen dio los kilómetros de cada ancla, y las fronteras se cortaron donde llegan a la costa pintada.
 
 ### 2 · Tres archivos de Markdown, un solo recurso
 
 <Excerpt region="resources" />
 
-El recurso tiene un solo SVG y una sola lista de anclas para todas las ediciones. Cada edición escribe una línea `::label[…]{at="…"}` por ancla dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Llanura de Calvera]{at="plain"}` y `::label[Calvera Plain]{at="plain"}` caen en el mismo sitio, partidos en dos líneas por el `width` del ancla cuando hace falta. Solo el texto alternativo cambia con la edición, porque un recurso no toma palabras del Markdown. Un ancla con estilo que una edición deja sin rótulo da el aviso `anchorUnlabelled`, y un rótulo cuyo `at` no nombra ningún ancla no se dibuja y da `labelAnchorUnknown`.
+El recurso tiene una sola imagen (un SVG que lleva la pintura y, encima, los símbolos vectoriales) y una sola lista de anclas para todas las ediciones. Cada edición escribe una línea `::label[…]{at="…"}` por ancla dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Llanura de Calvera]{at="plain"}` y `::label[Calvera Plain]{at="plain"}` caen en el mismo sitio, partidos en dos líneas por el `width` del ancla cuando hace falta. El texto alternativo también cambia con la edición: cada `:::figure` lleva el suyo en una línea `::alt[…]`, y un pie o una nota irían igual con `::caption[…]` y `::note[…]`. Un ancla con estilo que una edición deja sin rótulo da el aviso `anchorUnlabelled`, y un rótulo cuyo `at` no nombra ningún ancla no se dibuja y da `labelAnchorUnknown`.
 
 ### 3 · Una lámina y una lámina doble
 
@@ -36,7 +38,7 @@ Las dos plantillas tienen los mismos cinco marcos, así que el Markdown de una l
 
 <Excerpt region="palette" />
 
-Las cinco tintas de altitud son entradas de la paleta. El dibujo rellena sus bandas con `palette.low` a `palette.peak` y la leyenda de la lámina 2 escribe `:swatch{color="low"}` con los mismos identificadores, así que un hexadecimal nuevo cambia a la vez el mapa y su leyenda. Los nombres de agua, en `water`, tienen un contraste de 6:1 sobre el mar somero y de 4,5:1 sobre el profundo, y el título blanco, de 7,2:1 sobre `band`.
+Las cinco tintas de altitud son entradas de la paleta (`palette.low` a `palette.peak`), fijadas al color mediano del relieve pintado en cada banda, y la leyenda de la lámina 2 escribe `:swatch{color="low"}` con los mismos identificadores. La pintura no lee la paleta: un hexadecimal nuevo cambia la leyenda y los símbolos vectoriales y deja la imagen como está; para cambiar los colores del mapa hay que volver a pintarlo. Los nombres de agua, en `water`, tienen un contraste de al menos 6:1 sobre el mar pintado, y el título blanco, de 7,2:1 sobre `band`.
 
 ### 5 · La edición árabe
 
@@ -60,6 +62,7 @@ Da al tipo de mapa un contador y un prefijo, y a cada recurso un pie: mira <Reci
 
 ## Errores frecuentes
 
-- El texto alternativo de cada mapa está en el recurso (`ALT`), una cadena por edición: un recurso no toma palabras del Markdown, así que es el único texto de la página que queda fuera de `content.<lang>.md`.
+- El texto alternativo de cada mapa está en el Markdown, en una línea `::alt[…]` dentro de su `:::figure`, una por edición. Una figura que no lo da conserva el `altText` del propio recurso; `script.js` no guarda ni una palabra de la página.
+- Las anclas y los símbolos vectoriales (fronteras, ciudades, cumbres, la línea del corte) están en kilómetros leídos sobre la pintura. Si se vuelve a pintar un mapa, sus costas, ríos y cordales se mueven: pon la cuadrícula sobre la imagen nueva y léelos otra vez, o un nombre caerá en el mar.
 - En una página de derecha a izquierda los marcos se reflejan con el área de contenido, pero la decoración de la plantilla no: coloca el antetítulo según la edición, como hace `kicker`.
 - Un marco a dos columnas puede cortar un párrafo una línea antes de su final y dejar esa línea en la cabeza de la segunda columna. Revisa las columnas de cada edición y pasa una frase de un párrafo al siguiente cuando ocurra.

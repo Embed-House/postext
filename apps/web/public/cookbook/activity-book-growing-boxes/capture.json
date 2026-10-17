@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "activity-book-growing-boxes",
-  "sourceHash": "3f180e9bd6ecf4d9c21ee173be0662a3b1bd63bb7b1155b2e17d419b8ae1b5cb",
+  "sourceHash": "3136bd59d067aa7f752777c7dffcfecb12412ccc8fba987fec260750e655bd74",
   "engine": {
-    "postext": "1.38.0",
-    "postextPdf": "1.38.0",
+    "postext": "1.39.0",
+    "postextPdf": "1.39.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T10:24:03.060Z",
+  "capturedAt": "2026-10-17T13:17:08.062Z",
   "variants": {
     "en": {
-      "hash8": "c8e11abf",
-      "vdtHash": "3f2630e19158b10d2483d47f7b002667e1970d23",
+      "hash8": "8302cac1",
+      "vdtHash": "ad2b06720783afac829e3a1df04351a0b703cf7e",
       "timings": {
-        "importMs": 3731,
-        "fontsMs": 44,
-        "buildMs": 95,
-        "totalMs": 5672,
+        "importMs": 627,
+        "fontsMs": 75,
+        "buildMs": 77,
+        "totalMs": 1548,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Lexend"
         ],
         "pages": 5,
-        "ownLines": 217
+        "ownLines": 220
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 27380,
+          "bytes": 200732,
           "alt": "Page 1: Water on the move."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 61490,
+          "bytes": 69248,
           "alt": "Page 2: Where is the water?"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 56882,
+          "bytes": 61572,
           "alt": "Page 3: Solid, liquid and gas."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 78952,
+          "bytes": 91394,
           "alt": "Page 4: Make a rain gauge."
         },
         {
@@ -126,17 +126,17 @@
       },
       "pdf": {
         "file": "activity-book-growing-boxes.pdf",
-        "bytes": 61056,
+        "bytes": 893008,
         "pages": 5
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 15340,
+        "bytes": 859894,
         "chapters": [
           {
             "pages": 5,
-            "hash": "ae73a84abcf9eb9c",
-            "lines": "d0d86b0994e617ef"
+            "hash": "74901849e0d3af0f",
+            "lines": "d40a354ea22904e6"
           }
         ]
       },
@@ -331,8 +331,8 @@
           "resourceTypes",
           "unorderedLists"
         ],
-        "configLeaves": 523,
-        "designElements": 10,
+        "configLeaves": 530,
+        "designElements": 11,
         "directives": [
           "::::page",
           ":::frame",
@@ -344,8 +344,8 @@
           ":chip"
         ],
         "resources": {
-          "svg": 4,
-          "bitmap": 0,
+          "svg": 1,
+          "bitmap": 4,
           "table": 0
         },
         "fonts": [
@@ -436,18 +436,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “Tom lives in Leeds. The water from his tap comes…”, p. 4 −5‰ “A rain gauge measures how much rain falls in one…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "6f5b308c",
-      "vdtHash": "98fdb14959727ab85a6a1b0ac6304c0943cea5b7",
+      "hash8": "80302fc7",
+      "vdtHash": "a83cce30f04b7a8f06244c55f5dc552d5ef2f49e",
       "timings": {
-        "importMs": 3759,
-        "fontsMs": 36,
-        "buildMs": 112,
-        "totalMs": 5963,
+        "importMs": 640,
+        "fontsMs": 86,
+        "buildMs": 78,
+        "totalMs": 1552,
         "builds": 1
       },
       "specimen": {
@@ -469,7 +474,7 @@
           "Lexend"
         ],
         "pages": 5,
-        "ownLines": 217
+        "ownLines": 220
       },
       "pages": [
         {
@@ -480,7 +485,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 30034,
+          "bytes": 204220,
           "alt": "Página 1: El agua, de viaje."
         },
         {
@@ -491,7 +496,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 63304,
+          "bytes": 71580,
           "alt": "Página 2: ¿Dónde está el agua?"
         },
         {
@@ -502,7 +507,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 58994,
+          "bytes": 63682,
           "alt": "Página 3: Sólida, líquida y gaseosa."
         },
         {
@@ -513,7 +518,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86276,
+          "bytes": 98648,
           "alt": "Página 4: Construye un pluviómetro."
         },
         {
@@ -556,17 +561,17 @@
       },
       "pdf": {
         "file": "activity-book-growing-boxes.pdf",
-        "bytes": 62165,
+        "bytes": 894159,
         "pages": 5
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 15659,
+        "bytes": 860182,
         "chapters": [
           {
             "pages": 5,
-            "hash": "aa2479133347cdf5",
-            "lines": "9182ad6b79b0cb31"
+            "hash": "51197911072d2433",
+            "lines": "d137336095971e9e"
           }
         ]
       },
@@ -761,8 +766,8 @@
           "resourceTypes",
           "unorderedLists"
         ],
-        "configLeaves": 523,
-        "designElements": 10,
+        "configLeaves": 530,
+        "designElements": 11,
         "directives": [
           "::::page",
           ":::frame",
@@ -774,8 +779,8 @@
           ":chip"
         ],
         "resources": {
-          "svg": 4,
-          "bitmap": 0,
+          "svg": 1,
+          "bitmap": 4,
           "table": 0
         },
         "fonts": [
@@ -856,18 +861,23 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 42 block, 22 frame, 62 line, 5 text"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "92ff9753",
-      "vdtHash": "c5d669b811ac1024c617543c867274d4b3f34959",
+      "hash8": "7bf02f18",
+      "vdtHash": "32750a13c4cb09f7a9e94ef4f659b9ecbefc4a77",
       "timings": {
-        "importMs": 3741,
-        "fontsMs": 36,
-        "buildMs": 113,
-        "totalMs": 5849,
+        "importMs": 634,
+        "fontsMs": 80,
+        "buildMs": 82,
+        "totalMs": 1554,
         "builds": 1
       },
       "specimen": {
@@ -889,7 +899,7 @@
           "Lexend"
         ],
         "pages": 5,
-        "ownLines": 217
+        "ownLines": 220
       },
       "pages": [
         {
@@ -900,7 +910,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 27784,
+          "bytes": 201644,
           "alt": "Page 1 : L’eau en voyage."
         },
         {
@@ -911,7 +921,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62466,
+          "bytes": 71298,
           "alt": "Page 2 : Où se trouve l’eau ?"
         },
         {
@@ -922,7 +932,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62456,
+          "bytes": 67080,
           "alt": "Page 3 : Solide, liquide et gazeuse."
         },
         {
@@ -933,7 +943,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86184,
+          "bytes": 98688,
           "alt": "Page 4 : Fabrique un pluviomètre."
         },
         {
@@ -976,17 +986,17 @@
       },
       "pdf": {
         "file": "activity-book-growing-boxes.pdf",
-        "bytes": 62599,
+        "bytes": 894677,
         "pages": 5
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 15568,
+        "bytes": 860045,
         "chapters": [
           {
             "pages": 5,
-            "hash": "bba2acfee23e8294",
-            "lines": "43e0f2d7776328a1"
+            "hash": "6fc9f9501416f45e",
+            "lines": "eeebd884c8d35b6a"
           }
         ]
       },
@@ -1181,8 +1191,8 @@
           "resourceTypes",
           "unorderedLists"
         ],
-        "configLeaves": 523,
-        "designElements": 10,
+        "configLeaves": 530,
+        "designElements": 11,
         "directives": [
           "::::page",
           ":::frame",
@@ -1194,8 +1204,8 @@
           ":chip"
         ],
         "resources": {
-          "svg": 4,
-          "bitmap": 0,
+          "svg": 1,
+          "bitmap": 4,
           "table": 0
         },
         "fonts": [
@@ -1286,6 +1296,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Chaque jour à la même heure, regarde de combien …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

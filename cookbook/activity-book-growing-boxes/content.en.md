@@ -13,7 +13,7 @@ Name
 :::
 
 :::frame{slot="colofon"}
-Set in Andika, Baloo 2 and Lexend (SIL OFL) · Text and drawings: original, CC BY 4.0
+Set in Andika, Baloo 2 and Lexend (SIL OFL) · Original text (CC BY 4.0) · Illustrations generated with diffusion models
 :::
 ::::
 

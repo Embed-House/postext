@@ -1,7 +1,7 @@
 ---
 title: "Un atlas scolaire étiqueté depuis le Markdown"
-summary: "Des cartes dessinées sans une lettre, nommées par des lignes ::label aux ancres de chaque ressource, en pages composées et sur double page, en trois langues."
-plain: "Trois pages d’un atlas scolaire d’un pays inventé. Les cartes sont des dessins sans texte ; tous leurs noms s’écrivent dans le texte, si bien qu’une traduction change les mots et laisse les cartes telles quelles."
+summary: "Des cartes peintes sans une lettre, nommées par des lignes ::label aux ancres de chaque ressource, en pages composées et sur double page, en trois langues."
+plain: "Trois pages d’un atlas scolaire d’un pays inventé. Les cartes sont des peintures sans texte ; tous leurs noms s’écrivent dans le texte, si bien qu’une traduction change les mots et laisse les cartes telles quelles."
 description: "Un atlas scolaire composé avec Postext : des cartes étiquetées depuis le Markdown aux ancres de la ressource, une carte sur une double page, une édition arabe."
 question: "Comment poser les noms d’une carte depuis le texte, pour que chaque traduction garde le même dessin ?"
 aliases: ["atlas", "atlas scolaire", "étiquettes de carte", "toponymes", "ancres", "styles d’étiquette", "carte sur double page", "double page", "de droite à gauche", "étiquettes tournées", "map labels"]
@@ -9,7 +9,7 @@ aliases: ["atlas", "atlas scolaire", "étiquettes de carte", "toponymes", "ancre
 
 ## Ce que vous allez composer
 
-Trois planches d’un atlas scolaire de Varenia, un pays inventé pour cette recette. La planche 1 le situe sur son continent. La planche 2 étend la carte du relief sur les deux pages, de la mer de Lira à la frontière avec Brunavia, en teintes hypsométriques, avec trois fleuves et le tracé d’une coupe. La planche 3 dessine cette coupe à travers la chaîne d’Albar. Chaque planche s’ouvre sur un bandeau bleu et se ferme sur une légende ou un lexique et quelques activités pour la classe. Les dessins ne portent aucune lettre : les 43 noms, altitudes et chiffres de l’échelle sont des lignes `::label` du Markdown, posées sur des ancres que chaque carte garde avec elle. Les éditions espagnole, anglaise et arabe partagent donc les trois dessins, et l’arabe se lit et se relie par la droite.
+Trois planches d’un atlas scolaire de Varenia, un pays inventé pour cette recette. La planche 1 le situe sur son continent. La planche 2 étend la carte du relief sur les deux pages, de la mer de Lira à la frontière avec Brunavia, en teintes hypsométriques, avec trois fleuves et le tracé d’une coupe. La planche 3 dessine cette coupe à travers la chaîne d’Albar. Chaque planche s’ouvre sur un bandeau bleu et se ferme sur une légende ou un lexique et quelques activités pour la classe. Les trois cartes sont des peintures faites avec un modèle d’image et ne portent aucune lettre ; les frontières, les villes, la ligne de coupe, l’échelle et la flèche du nord sont des symboles vectoriels posés dessus. Les 43 noms, altitudes et chiffres de l’échelle sont des lignes `::label` du Markdown, posées sur des ancres que chaque carte garde avec elle. Les éditions espagnole, anglaise et arabe partagent donc les trois peintures, et l’arabe se lit et se relie par la droite.
 
 ## Préparation
 
@@ -17,13 +17,15 @@ Trois planches d’un atlas scolaire de Varenia, un pays inventé pour cette rec
 
 <Excerpt region="anchors" />
 
-Une ancre est un point exprimé en fractions de la largeur et de la hauteur de l’image : elle tient à toutes les tailles où le bloc pose la carte, et quand la cascade de recomposition réduit une carte, ses noms la suivent. `km()` convertit en fractions les kilomètres dans lesquels le dessin est tracé : le point d’une ville et son nom viennent tous deux de `TOWNS` et ne peuvent pas se séparer. L’ancre porte ce qui appartient au lieu et non à la langue : son style, la rotation du nom d’un fleuve ou d’une chaîne le long de son cours, le côté de l’étiquette qui s’appuie sur le point. Les noms de ville sont centrés au-dessus de leur point, car `align: 'start'` désignerait la gauche d’un nom anglais et la droite d’un nom arabe.
+Une ancre est un point exprimé en fractions de la largeur et de la hauteur de l’image : elle tient à toutes les tailles où le bloc pose la carte, et quand la cascade de recomposition réduit une carte, ses noms la suivent. `km()` convertit en fractions les kilomètres lus sur une grille posée sur la peinture : le point d’une ville et son nom viennent tous deux de `TOWNS` et ne peuvent pas se séparer. L’ancre porte ce qui appartient au lieu et non à la langue : son style, la rotation du nom d’un fleuve ou d’une chaîne le long de son cours, le côté de l’étiquette qui s’appuie sur le point. Les noms de ville sont centrés au-dessus de leur point, car `align: 'start'` désignerait la gauche d’un nom anglais et la droite d’un nom arabe.
+
+Les peintures ont été faites dans l’ordre. La planche du relief d’abord, peinte par un modèle d’image à partir d’une carte des altitudes du pays aux reliefs ombrés ; la carte de situation a été peinte à partir de la planche du relief, et la coupe avec les mêmes altitudes, si bien que côtes et altitudes s’accordent sur les trois. Une grille tracée sur chaque image a donné les kilomètres de chaque ancre, et les frontières ont été coupées là où elles atteignent la côte peinte.
 
 ### 2 · Trois fichiers Markdown, une seule ressource
 
 <Excerpt region="resources" />
 
-La ressource a un seul SVG et une seule liste d’ancres pour toutes les éditions. Chaque édition écrit une ligne `::label[…]{at="…"}` par ancre dans `:::figure{resource="relief" slot="map"}` : `::label[Calvera Plain]{at="plain"}` et `::label[Llanura de Calvera]{at="plain"}` se posent au même endroit, coupés sur deux lignes par le `width` de l’ancre quand il le faut. Seul le texte alternatif change d’une édition à l’autre, car une ressource ne prend aucun mot dans le Markdown. Une ancre dotée d’un style qu’une édition laisse sans étiquette produit l’avertissement `anchorUnlabelled`, et une étiquette dont le `at` ne nomme aucune ancre n’est pas dessinée et produit `labelAnchorUnknown`.
+La ressource a une seule image (un SVG qui porte la peinture et, dessus, les symboles vectoriels) et une seule liste d’ancres pour toutes les éditions. Chaque édition écrit une ligne `::label[…]{at="…"}` par ancre dans `:::figure{resource="relief" slot="map"}` : `::label[Calvera Plain]{at="plain"}` et `::label[Llanura de Calvera]{at="plain"}` se posent au même endroit, coupés sur deux lignes par le `width` de l’ancre quand il le faut. Le texte alternatif change aussi d’une édition à l’autre : chaque `:::figure` porte le sien dans une ligne `::alt[…]`, et une légende ou une note iraient de même avec `::caption[…]` et `::note[…]`. Une ancre dotée d’un style qu’une édition laisse sans étiquette produit l’avertissement `anchorUnlabelled`, et une étiquette dont le `at` ne nomme aucune ancre n’est pas dessinée et produit `labelAnchorUnknown`.
 
 ### 3 · Une planche simple et une planche double
 
@@ -35,7 +37,7 @@ Les deux modèles ont les mêmes cinq blocs, si bien que le Markdown d’une pla
 
 <Excerpt region="palette" />
 
-Les cinq teintes d’altitude sont des entrées de la palette. Le dessin remplit ses bandes avec `palette.low` à `palette.peak`, et la légende de la planche 2 écrit `:swatch{color="low"}` avec les mêmes identifiants : une nouvelle valeur hexadécimale change à la fois la carte et sa légende. Les noms d’eau, en `water`, ont un contraste de 6:1 sur la mer peu profonde et de 4,5:1 sur la mer profonde, et le titre blanc de 7,2:1 sur `band`.
+Les cinq teintes d’altitude sont des entrées de la palette (`palette.low` à `palette.peak`), réglées sur la couleur médiane du relief peint dans chaque bande, et la légende de la planche 2 écrit `:swatch{color="low"}` avec les mêmes identifiants. La peinture ne lit pas la palette : une nouvelle valeur hexadécimale change la légende et les symboles vectoriels et laisse l’image telle quelle ; pour changer les couleurs de la carte, il faut la repeindre. Les noms d’eau, en `water`, ont un contraste d’au moins 6:1 sur la mer peinte, et le titre blanc de 7,2:1 sur `band`.
 
 ### 5 · L’édition arabe
 
@@ -59,6 +61,7 @@ Donnez au type de carte un compteur et un préfixe, et à chaque ressource une l
 
 ## Erreurs fréquentes
 
-- Le texte alternatif de chaque carte se trouve dans la ressource (`ALT`), une chaîne par édition : une ressource ne prend aucun mot dans le Markdown, c’est donc le seul texte de la page hors de `content.<lang>.md`.
+- Le texte alternatif de chaque carte se trouve dans le Markdown, dans une ligne `::alt[…]` à l’intérieur de son `:::figure`, une par édition. Une figure qui n’en donne pas garde l’`altText` de la ressource ; `script.js` ne contient aucun mot de la page.
+- Les ancres et les symboles vectoriels (frontières, villes, sommets, ligne de coupe) sont placés à des kilomètres lus sur la peinture. Si l’on repeint une carte, ses côtes, ses fleuves et ses crêtes bougent : posez la grille sur la nouvelle image et relisez-les, sinon un nom tombera dans la mer.
 - Sur une page de droite à gauche, les blocs suivent la zone de contenu en miroir, mais le décor du modèle reste en place : placez le surtitre selon l’édition, comme le fait `kicker`.
 - Un bloc sur deux colonnes peut couper un paragraphe une ligne avant sa fin et laisser cette ligne en tête de la seconde colonne. Relisez les colonnes de chaque édition et faites passer une phrase d’un paragraphe au suivant quand cela arrive.

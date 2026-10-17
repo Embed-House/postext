@@ -1105,6 +1105,8 @@ export function facts({ select = 'last', hero = [] } = {}) {
       } else if (/^::[a-z]/i.test(line)) {
         if (RESOURCE_RE.test(line) || RESOURCE_SLOT_RE.test(line)) { directives.add('resource'); return; }
         if (figureBody && line.startsWith('::label[')) { directives.add('label'); return; }
+        // A figure's own words (#935): ::alt, ::caption and ::note stand beside its labels.
+        if (figureBody && /^::(alt|caption|note)\[/.test(line)) return;
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^::([\w-]*)/.exec(line)?.[1] ?? '' });
       }
     });

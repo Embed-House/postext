@@ -1,7 +1,7 @@
 ---
 title: "Un atlante scolastico etichettato dal Markdown"
-summary: "Carte disegnate senza una lettera e nominate da righe ::label sulle ancore di ogni risorsa, in pagine composte e su una doppia pagina, in tre lingue."
-plain: "Tre pagine di un atlante scolastico di un paese inventato. Le carte sono disegni senza testo; tutti i nomi si scrivono nel testo, così una traduzione cambia le parole e lascia le carte come sono."
+summary: "Carte dipinte senza una lettera e nominate da righe ::label sulle ancore di ogni risorsa, in pagine composte e su una doppia pagina, in tre lingue."
+plain: "Tre pagine di un atlante scolastico di un paese inventato. Le carte sono dipinti senza testo; tutti i nomi si scrivono nel testo, così una traduzione cambia le parole e lascia le carte come sono."
 description: "Un atlante scolastico composto con Postext: carte etichettate dal Markdown sulle ancore della risorsa, una carta su doppia pagina e un’edizione araba."
 question: "Come metto i nomi di una carta dal testo, perché ogni traduzione usi lo stesso disegno?"
 aliases: ["atlante", "atlante scolastico", "etichette della carta", "toponimi", "ancore", "stili di etichetta", "carta su doppia pagina", "doppia pagina", "da destra a sinistra", "etichette ruotate", "map labels"]
@@ -9,7 +9,7 @@ aliases: ["atlante", "atlante scolastico", "etichette della carta", "toponimi", 
 
 ## Che cosa comporrai
 
-Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ricetta. La tavola 1 lo colloca nel suo continente. La tavola 2 stende la carta fisica sulle due pagine, dal mare di Lira al confine con Brunavia, in tinte altimetriche, con tre fiumi e la traccia di una sezione. La tavola 3 disegna quella sezione attraverso la catena dell’Albar. Ogni tavola si apre con una fascia blu e si chiude con una legenda o un glossario e alcune attività per la classe. I disegni non portano nessuna lettera: i 43 nomi, quote e cifre della scala sono righe `::label` del Markdown, poste su ancore che ogni carta conserva con sé. Per questo le edizioni spagnola, inglese e araba condividono gli stessi tre disegni, e quella araba si legge e si rilega da destra.
+Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ricetta. La tavola 1 lo colloca nel suo continente. La tavola 2 stende la carta fisica sulle due pagine, dal mare di Lira al confine con Brunavia, in tinte altimetriche, con tre fiumi e la traccia di una sezione. La tavola 3 disegna quella sezione attraverso la catena dell’Albar. Ogni tavola si apre con una fascia blu e si chiude con una legenda o un glossario e alcune attività per la classe. Le tre carte sono dipinti fatti con un modello d’immagine e non portano nessuna lettera; i confini, le città, la traccia della sezione, la scala e la freccia del nord sono simboli vettoriali sopra di essi. I 43 nomi, quote e cifre della scala sono righe `::label` del Markdown, poste su ancore che ogni carta conserva con sé. Per questo le edizioni spagnola, inglese e araba condividono gli stessi tre dipinti, e quella araba si legge e si rilega da destra.
 
 ## Preparazione
 
@@ -17,13 +17,15 @@ Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ri
 
 <Excerpt region="anchors" />
 
-Un’ancora è un punto espresso in frazioni della larghezza e dell’altezza dell’immagine, quindi vale a qualunque dimensione la cornice imposti la carta, e quando la sequenza di reimpaginazione rimpicciolisce una carta i suoi nomi la seguono. `km()` converte in frazioni i chilometri in cui è tracciato il disegno: il punto di una città e il suo nome vengono entrambi da `TOWNS` e non possono separarsi. L’ancora conserva ciò che appartiene al luogo e non alla lingua: lo stile, la rotazione del nome di un fiume o di una catena lungo il suo corso, il lato dell’etichetta che poggia sul punto. I nomi delle città stanno centrati sopra il loro punto, perché `align: 'start'` sarebbe la sinistra di un nome inglese e la destra di uno arabo.
+Un’ancora è un punto espresso in frazioni della larghezza e dell’altezza dell’immagine, quindi vale a qualunque dimensione la cornice imposti la carta, e quando la sequenza di reimpaginazione rimpicciolisce una carta i suoi nomi la seguono. `km()` converte in frazioni i chilometri letti su una griglia posata sul dipinto: il punto di una città e il suo nome vengono entrambi da `TOWNS` e non possono separarsi. L’ancora conserva ciò che appartiene al luogo e non alla lingua: lo stile, la rotazione del nome di un fiume o di una catena lungo il suo corso, il lato dell’etichetta che poggia sul punto. I nomi delle città stanno centrati sopra il loro punto, perché `align: 'start'` sarebbe la sinistra di un nome inglese e la destra di uno arabo.
+
+I dipinti sono stati fatti in ordine. Prima la tavola del rilievo, dipinta da un modello d’immagine a partire da una carta delle quote del paese con il rilievo ombreggiato; la carta di localizzazione è stata dipinta a partire dalla tavola del rilievo e la sezione con le stesse quote, così coste e quote coincidono nei tre. Una griglia tracciata su ogni immagine ha dato i chilometri di ogni ancora, e i confini sono stati tagliati dove raggiungono la costa dipinta.
 
 ### 2 · Tre file Markdown, una sola risorsa
 
 <Excerpt region="resources" />
 
-La risorsa ha un solo SVG e un solo elenco di ancore per tutte le edizioni. Ogni edizione scrive una riga `::label[…]{at="…"}` per ancora dentro `:::figure{resource="relief" slot="map"}`, così `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` cadono nello stesso punto, spezzati su due righe dal `width` dell’ancora quando serve. Solo il testo alternativo cambia con l’edizione, perché una risorsa non prende parole dal Markdown. Un’ancora con uno stile che un’edizione lascia senza etichetta dà l’avviso `anchorUnlabelled`, e un’etichetta il cui `at` non nomina nessuna ancora non viene disegnata e dà `labelAnchorUnknown`.
+La risorsa ha una sola immagine (un SVG che porta il dipinto e, sopra, i simboli vettoriali) e un solo elenco di ancore per tutte le edizioni. Ogni edizione scrive una riga `::label[…]{at="…"}` per ancora dentro `:::figure{resource="relief" slot="map"}`, così `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` cadono nello stesso punto, spezzati su due righe dal `width` dell’ancora quando serve. Cambia con l’edizione anche il testo alternativo: ogni `:::figure` porta il suo in una riga `::alt[…]`, e una didascalia o una nota andrebbero allo stesso modo con `::caption[…]` e `::note[…]`. Un’ancora con uno stile che un’edizione lascia senza etichetta dà l’avviso `anchorUnlabelled`, e un’etichetta il cui `at` non nomina nessuna ancora non viene disegnata e dà `labelAnchorUnknown`.
 
 ### 3 · Una tavola e una tavola doppia
 
@@ -35,7 +37,7 @@ I due modelli hanno le stesse cinque cornici, quindi il Markdown di una tavola h
 
 <Excerpt region="palette" />
 
-Le cinque tinte altimetriche sono voci della tavolozza. Il disegno riempie le sue fasce con `palette.low` fino a `palette.peak`, e la legenda della tavola 2 scrive `:swatch{color="low"}` con gli stessi identificativi, così un nuovo esadecimale cambia insieme la carta e la sua legenda. I nomi delle acque, in `water`, hanno un contrasto di 6:1 sul mare basso e di 4,5:1 su quello profondo, e il titolo bianco di 7,2:1 su `band`.
+Le cinque tinte altimetriche sono voci della tavolozza (da `palette.low` a `palette.peak`), regolate sul colore mediano del rilievo dipinto in ogni fascia, e la legenda della tavola 2 scrive `:swatch{color="low"}` con gli stessi identificativi. Il dipinto non legge la tavolozza: un nuovo esadecimale cambia la legenda e i simboli vettoriali e lascia l’immagine com’è; per cambiare i colori della carta bisogna dipingerla di nuovo. I nomi delle acque, in `water`, hanno un contrasto di almeno 6:1 sul mare dipinto, e il titolo bianco di 7,2:1 su `band`.
 
 ### 5 · L’edizione araba
 
@@ -59,6 +61,7 @@ Dai al tipo di carta un contatore e un prefisso, e a ogni risorsa una didascalia
 
 ## Errori frequenti
 
-- Il testo alternativo di ogni carta sta nella risorsa (`ALT`), una stringa per edizione: una risorsa non prende parole dal Markdown, quindi è l’unico testo della pagina fuori da `content.<lang>.md`.
+- Il testo alternativo di ogni carta sta nel Markdown, in una riga `::alt[…]` dentro la sua `:::figure`, una per edizione. Una figura che non lo dà conserva l’`altText` della risorsa; `script.js` non contiene nemmeno una parola della pagina.
+- Le ancore e i simboli vettoriali (confini, città, vette, traccia della sezione) stanno a chilometri letti sul dipinto. Se si dipinge di nuovo una carta, le sue coste, i fiumi e le creste si spostano: posa la griglia sull’immagine nuova e rileggili, o un nome finirà in mare.
 - In una pagina da destra a sinistra le cornici seguono l’area del contenuto rispecchiata, ma la decorazione del modello no: colloca l’occhiello secondo l’edizione, come fa `kicker`.
 - Una cornice a due colonne può tagliare un paragrafo una riga prima della fine e lasciare quella riga in cima alla seconda colonna. Controlla le colonne di ogni edizione e sposta una frase da un paragrafo al successivo quando succede.

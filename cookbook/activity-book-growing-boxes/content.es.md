@@ -13,7 +13,7 @@ Nombre y apellidos
 :::
 
 :::frame{slot="colofon"}
-Compuesto en Andika, Baloo 2 y Lexend (SIL OFL) · Texto y dibujos: originales, CC BY 4.0
+Compuesto en Andika, Baloo 2 y Lexend (SIL OFL) · Texto original (CC BY 4.0) · Ilustraciones generadas con modelos de difusión
 :::
 ::::
 
