@@ -863,6 +863,16 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Drop caps in frames (#922).** A story box (`FRAME_ATTR`) is not a box for `placesOf`; the box
   typesetter stamps `VDTBlock.dropCap` and `offsetBlock` moves it.
 
+### 5.15 Findings round G (#882)
+- **Drop caps in frame chains (#947).** `splitCalloutFragment` ranks a cut before a drop cap's
+  sink line (`VDTBlock.dropCap.sink` on the piece that holds the initial) last, after the soft cuts
+  of wrapped code: the paragraph moves on whole as in the flow, and is cut there only when no other
+  cut fits. `dropCapWarnings` reports such a piece (`split`) from the laid-out document, since a
+  box's trial cuts leave no notes. `wrapComposedPages` stamps the flow story's box with
+  `__capHeading` (the heading's `sourceStart`) when its first block is a paragraph that followed,
+  in the Markdown, a heading a `takes` frame took; `headingBefore` (`dropCap.ts`) reads it, so that
+  paragraph takes the level's drop cap.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:

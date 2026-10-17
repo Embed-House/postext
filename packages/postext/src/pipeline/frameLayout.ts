@@ -259,8 +259,11 @@ export const splitCalloutFragment = (
   const tail = tailOf(full) + full.continuesMarkerPx;
   /** Candidate cuts with the head's content bottom. A `soft` cut parts a
    *  wrapped code line from its continuation (#624): taken only when no
-   *  other cut fits. */
-  const candidates: { cut: CalloutCut; bottom: number; soft?: true }[] = [];
+   *  other cut fits. A `capSplit` cut falls before a drop cap's sink line
+   *  (#947): as in the flow, the paragraph moves on whole, and is cut
+   *  there only when nothing else fits (a frame too short for those
+   *  lines; `dropCapWarnings` reports it, reason `split`). */
+  const candidates: { cut: CalloutCut; bottom: number; soft?: true; capSplit?: true }[] = [];
   /** Collect the cuts among `units` (one box's items; `below` = the tails
    *  of the nested boxes around them), each side of a cut holding enough
    *  by the box's `min` lines: a block counts as one line, a nested box
@@ -329,6 +332,9 @@ export const splitCalloutFragment = (
           // since a part left behind already passed the test.
           const childMin = Math.min(min, pass.resolved.layout.boxChildSplitMinLines);
           const lineBase = k === from.child ? from.line : 0;
+          // The piece holds the paragraph's first line when it carries the
+          // initial (#947).
+          const sink = c.dropCap?.sink ?? 0;
           for (let l = childMin; l <= c.lines.length - childMin; l++) {
             const line = c.lines[l - 1]!;
             if (bothHold(linesBefore + l, blocksBefore, false)) {
@@ -336,6 +342,7 @@ export const splitCalloutFragment = (
                 cut: { child: k, line: lineBase + l, widths: k === from.child ? cutWidths(from, width) : [{ fromLine: 0, width }] },
                 bottom: line.bbox.y + line.bbox.height + below,
                 ...(c.lines[l]?.codeLine?.continued ? { soft: true as const } : {}),
+                ...(l < sink ? { capSplit: true as const } : {}),
               });
             }
           }
@@ -417,8 +424,10 @@ export const splitCalloutFragment = (
     .filter((c) => !insideGroup(c.cut))
     .sort((a, b) => b.bottom - a.bottom);
   // A wrapped code line stays with its continuations when a cut
-  // elsewhere fits (#624).
-  viable.sort((a, b) => (a.soft ? 1 : 0) - (b.soft ? 1 : 0));
+  // elsewhere fits (#624), and a drop cap's paragraph with its sink line
+  // (#947) when any other cut does.
+  const rank = (c: { soft?: true; capSplit?: true }): number => (c.capSplit ? 2 : c.soft ? 1 : 0);
+  viable.sort((a, b) => rank(a) - rank(b));
   for (const c of viable) {
     if (c.bottom + tail > roomPx + 0.01) continue;
     const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored, frame);

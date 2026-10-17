@@ -8872,7 +8872,7 @@ function placeDocumentPass(
   doc.converged = true;
   doc.iterationCount = 1;
   if (joiningLetterSpacing.size > 0) joiningSpacingWarnings.set(doc, joiningLetterSpacingWarnings(doc, joiningLetterSpacing));
-  if (dropCapNotes.size > 0) dropCapWarningsByDoc.set(doc, dropCapWarnings(doc, dropCapNotes));
+  if (dropCapNotes.size > 0 || doc.blocks.some((b) => b.dropCap)) dropCapWarningsByDoc.set(doc, dropCapWarnings(doc, dropCapNotes));
   // Pictures scaled to the room of their slot (#626), at the block citing them.
   const shrunk = floatShrinkWarnings(doc, (idx) => {
     const b = contentBlocks[idx];

@@ -34,6 +34,11 @@ export const FRAME_STYLE_ID = '__postext-frame';
 
 /** `containerAttrs` key of a story's box: the name of its first frame. */
 export const FRAME_ATTR = '__frame';
+/** `containerAttrs` key of the flow frame's story box whose first paragraph
+ *  followed, in the Markdown, a heading another frame `takes` (#947): the heading's
+ *  `sourceStart`. The paragraph takes the drop cap of that heading's level
+ *  as the first paragraph after it in the flow does. */
+export const CAP_HEADING_ATTR = '__capHeading';
 
 /** Container ids of the stories' boxes: past any id the parser hands out
  *  and clear of the other synthetic boxes'. */
@@ -197,17 +202,31 @@ function regroupPage(
     stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}) });
   }
   stories.sort((a, b) => Math.min(...a.indices) - Math.min(...b.indices));
+  /** The heading another story took that the flow story's first block
+   *  came right after in the Markdown (past fences and directives), if
+   *  that block is a paragraph (#947). */
+  const flowHead = story(undefined);
+  const capHeadingOf = (indices: readonly number[], head: string): ContentBlock | undefined => {
+    if (head !== flowHead) return undefined;
+    const at = indices.find((i) => blocks[i]!.type !== 'directive' && blocks[i]!.type !== 'containerStart' && blocks[i]!.type !== 'containerEnd');
+    if (at === undefined || blocks[at]!.type !== 'paragraph') return undefined;
+    let j = at - 1;
+    while (j >= 0 && (blocks[j]!.type === 'directive' || blocks[j]!.type === 'containerStart' || blocks[j]!.type === 'containerEnd')) j--;
+    const taker = taken.get(j);
+    return j >= 0 && blocks[j]!.type === 'heading' && taker !== undefined && taker !== head ? blocks[j] : undefined;
+  };
   const out: ContentBlock[] = [];
   for (const s of stories) {
     const id = nextId();
     const first = blocks[s.indices[0]!]!;
     const last = blocks[s.indices[s.indices.length - 1]!]!;
+    const capHeading = capHeadingOf(s.indices, s.head);
     out.push({
       type: 'containerStart',
       text: '',
       spans: [],
       containerName: 'callout',
-      containerAttrs: { ...s.attrs, type: FRAME_STYLE_ID, placement: 'here', span: 'column', [FRAME_ATTR]: s.head },
+      containerAttrs: { ...s.attrs, type: FRAME_STYLE_ID, placement: 'here', span: 'column', [FRAME_ATTR]: s.head, ...(capHeading ? { [CAP_HEADING_ATTR]: String(capHeading.sourceStart) } : {}) },
       // The frame fence's `label` and `title` keep their source (#857).
       ...(s.attrSources ? { containerAttrSources: s.attrSources } : {}),
       containerId: id,

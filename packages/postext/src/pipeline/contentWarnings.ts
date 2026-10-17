@@ -821,10 +821,18 @@ export function dropCapWarnings(
 ): ContentWarning[] {
   const out: ContentWarning[] = [];
   const seen = new Set<number>();
+  /** Paragraphs set in more than one piece. */
+  const pieces = new Map<number, number>();
+  for (const block of doc.blocks) {
+    if (block.type === 'paragraph' && block.contentIndex !== undefined) pieces.set(block.contentIndex, (pieces.get(block.contentIndex) ?? 0) + 1);
+  }
   for (const block of doc.blocks) {
     const idx = block.contentIndex;
     if (idx === undefined || seen.has(idx) || block.type !== 'paragraph') continue;
-    const note = notes.get(idx);
+    // A box or a frame chain that had to cut a paragraph before its drop
+    // cap's sink line (#947) shows it on the piece holding the initial.
+    const cutBeforeSink = block.dropCap !== undefined && block.lines.length < block.dropCap.sink && (pieces.get(idx) ?? 0) > 1;
+    const note = notes.get(idx) ?? (cutBeforeSink ? { reason: 'split' as const } : undefined);
     if (!note) continue;
     seen.add(idx);
     const start = block.dropCap?.sourceStart ?? block.sourceStart;
