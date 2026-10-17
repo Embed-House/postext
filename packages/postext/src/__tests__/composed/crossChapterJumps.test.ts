@@ -6,6 +6,7 @@ import { createMeasurementCache } from '../../measure';
 import type { PageTemplate } from '../../composed/types';
 import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { page8Fixture } from './fixtures/page8';
+import { elementsForSource, sourceAt } from '../../composed/sourceMap';
 
 // A story that jumps from one chapter file into a page fence of a later one
 // (#943): a magazine kept as one chapter file per article. The rest of the
@@ -254,5 +255,52 @@ describe('jumps that go on, and jumps that are lost (#943)', () => {
     expect(ws).toHaveLength(1);
     expect(ws[0]).toMatchObject({ target: 'p-salto', fromChapter: 0, frame: 'cuerpo' });
     expect(composedPages(receiver)).toHaveLength(1);
+  });
+});
+
+describe('the source of the carried text is its own chapter (#943)', () => {
+  const chapters = magazine();
+  const docs = bundle(chapters);
+  const target = composedPages(docs[2]!).find((p) => p.composed!.template === 'salto')!;
+  const got = frameOn(target, 'resto');
+  const firstBlock = blocksOf(target, got).find((b) => b.type !== 'callout')!;
+  const words = wordsOf(textOf([firstBlock]));
+
+  it('stamps the chapter on the blocks and the frame, with offsets of that chapter\'s file', () => {
+    expect(got.sourceChapter).toBe(0);
+    expect(frameOn(target, 'breve').sourceChapter).toBeUndefined();
+    for (const b of blocksOf(target, got)) expect(b.sourceChapter).toBe(0);
+    expect(chapters[0]!.slice(firstBlock.sourceStart!, firstBlock.sourceStart! + words[0]!.length)).toBe(words[0]);
+    expect(chapters[2]!.slice(firstBlock.sourceStart!, firstBlock.sourceStart! + words[0]!.length)).not.toBe(words[0]);
+    // The page's own text is this chapter's.
+    for (const b of blocksOf(target, frameOn(target, 'breve'))) expect(b.sourceChapter).toBeUndefined();
+  });
+
+  it('sourceAt on the carried words answers with the chapter and its file', () => {
+    const line = firstBlock.lines[0]!;
+    const frame = got;
+    const x = firstBlock.bbox.x + 3;
+    const y = line.bbox.y + line.bbox.height / 2;
+    const chain = sourceAt(docs[2]!, target.index, x, y, { file: 'c.md', chapterFile: (c) => `chapter-${c}.md` });
+    const text = chain.find((e) => e.level === 'text')!;
+    expect(text.source).toMatchObject({ kind: 'markdown', chapter: 0, file: 'chapter-0.md' });
+    if (text.source.kind === 'markdown') expect(chapters[0]!.slice(text.source.start, text.source.end)).toBe(words[0]!.slice(0, text.source.end - text.source.start));
+    expect(chain.find((e) => e.level === 'frame')).toMatchObject({ chapter: 0 });
+    // The page and its template are this chapter's.
+    expect(chain.find((e) => e.level === 'template')!.chapter).toBeUndefined();
+    expect(frame.sourceChapter).toBe(0);
+  });
+
+  it('elementsForSource finds the carried words by the sending chapter\'s offsets only when asked for that chapter', () => {
+    const start = firstBlock.sourceStart!;
+    const end = start + words[0]!.length;
+    const lines = (m: ReturnType<typeof elementsForSource>): number => m.filter((x) => x.element.level === 'line').length;
+    expect(lines(elementsForSource(docs[2]!, start, end))).toBe(0);
+    expect(lines(elementsForSource(docs[2]!, start, end, { chapter: 0, ownChapter: 2 }))).toBeGreaterThan(0);
+    expect(lines(elementsForSource(docs[2]!, start, end, { chapter: 1, ownChapter: 2 }))).toBe(0);
+    // And the page's own words by its own chapter.
+    const own = blocksOf(target, frameOn(target, 'breve'))[0]!;
+    expect(lines(elementsForSource(docs[2]!, own.sourceStart!, own.sourceStart! + 3, { chapter: 2, ownChapter: 2 }))).toBeGreaterThan(0);
+    expect(lines(elementsForSource(docs[2]!, own.sourceStart!, own.sourceStart! + 3, { chapter: 0, ownChapter: 2 }))).toBe(0);
   });
 });

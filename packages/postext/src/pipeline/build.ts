@@ -6316,6 +6316,8 @@ function placeDocumentPass(
   }
   /** Stories waiting for the later page fence they jump to, by its id. */
   const jumps = new Map<string, ComposedContinuation[]>();
+  /** The closing marker of the fence each composed page was set from. */
+  const fenceEnd = new Map<VDTComposedPage, number>();
   /** The carried stories are laid through a pass that answers for them;
    *  they wait for their fence with the others. */
   const composedPass = carried ? carriedPass(framePass, carried) : framePass;
@@ -6534,6 +6536,7 @@ function placeDocumentPass(
     const commit = (list: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[]): void => {
       for (const { page, composed, blocks } of list) {
         page.composed = composed;
+        fenceEnd.set(composed, planned.endIdx);
         const floats = (page.floats ??= []);
         for (const b of blocks) {
           floats.push(b);
@@ -9053,7 +9056,7 @@ function placeDocumentPass(
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   if (pendingJumps.length > 0) doc.pendingJumps = pendingJumps;
-  if (carried) stampCarriedSource(doc, carried);
+  if (carried) stampCarriedSource(doc, carried, fenceEnd);
   // The composition rules (#749): short lists cut, floats on opener pages.
   const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
@@ -9245,7 +9248,7 @@ function afterTextWarnings(doc: VDTDocument): ContentWarning[] {
  * (#943): `VDTBlock.sourceChapter` says whose file their source offsets
  * are offsets in.
  */
-function stampCarriedSource(doc: VDTDocument, carried: ImportedJumps): void {
+function stampCarriedSource(doc: VDTDocument, carried: ImportedJumps, fenceEnd: ReadonlyMap<VDTComposedPage, number>): void {
   const stories = [...carried.stories.values()];
   const noteChapter = new Map(carried.footnotes.map((n) => [n.id, n.chapter]));
   for (const block of doc.blocks) {
@@ -9255,6 +9258,17 @@ function stampCarriedSource(doc: VDTDocument, carried: ImportedJumps): void {
     if (at === undefined) continue;
     const story = stories.find((st) => at >= st.startIdx && at <= st.endIdx);
     if (story) block.sourceChapter = story.chapter;
+  }
+  // The frames that set a carried story's text: the box (a block of the
+  // frame) says whose it is.
+  for (const page of doc.pages) {
+    for (const frame of page.composed?.frames ?? []) {
+      const box = frame.blockIds.length > 0 ? page.floats?.find((b) => b.id === frame.blockIds[0]) : undefined;
+      if (box?.sourceChapter === undefined) continue;
+      frame.sourceChapter = box.sourceChapter;
+      const end = fenceEnd.get(page.composed!);
+      if (end !== undefined) frame.readIndex = end + 0.5;
+    }
   }
 }
 

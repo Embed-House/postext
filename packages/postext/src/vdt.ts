@@ -2684,6 +2684,15 @@ export interface VDTFrame {
   /** The content comes from a page of an earlier chapter (#943): its
    *  position in the book; `continuedFrom` is the frame's id on its pages. */
   continuedFromChapter?: number;
+  /** The frame holds text carried in from another chapter (#943): that
+   *  chapter's position; `sourceStart` and `sourceEnd` are offsets in its
+   *  file. */
+  sourceChapter?: number;
+  /** Where a tagged PDF reads a frame that holds carried text (#943) among
+   *  the content of its chapter: just after the page it stands on (the
+   *  content index of the page fence's closing marker, plus a half),
+   *  instead of after the whole chapter. */
+  readIndex?: number;
   /** The frame takes no room on this page (#912): on a page added by
    *  continuation that lays its template again for what goes on, a frame
    *  that receives nothing; on the page content goes on from, an empty

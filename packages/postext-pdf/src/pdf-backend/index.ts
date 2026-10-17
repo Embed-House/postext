@@ -859,6 +859,8 @@ function paintFrameBlocks(
   const { frame, blocks } = item;
   let readAt: number | undefined;
   for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
+  // Text carried in from another chapter (#943) is read at its page.
+  if (frame.readIndex !== undefined) readAt = frame.readIndex;
   const m = frameMatrix(frame);
   const clips = frameClips(frame);
   const outline = frame.polygon && frame.polygon.length >= 3 ? frame.polygon : undefined;
