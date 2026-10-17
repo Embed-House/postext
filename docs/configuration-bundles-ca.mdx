@@ -62,11 +62,11 @@ bundle.files;      // Map<ruta, Uint8Array>: tots els fitxers del paquet
     <tr><td><code>files</code></td><td>Tots els fitxers del zip, per la seva ruta.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>La ruta de la portada, i com demana el paquet que es mostri: la <code>view</code> del manifest, amb la <code>localized[…].view</code> de la llengua servida per sobre.</td></tr>
     <tr><td><code>start</code></td><td>On comença el llibre, per a un paquet que conté part d'un de més llarg: el <code>start</code> del manifest, o el <code>localized[…].start</code> de la llengua servida. No hi és en un llibre que comença pel principi.</td></tr>
-    <tr><td><code>warnings</code></td><td>Problemes que no impedeixen obrir-lo: un fitxer de font no admès, un màster d'impressió que falta.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problemes que no impedeixen obrir-lo: un fitxer de font no admès, un fitxer de font que el paquet no inclou, un màster d'impressió que falta.</td></tr>
   </tbody>
 </table>
 
-El **`fileId` de cada fitxer és la seva ruta dins del paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` i el `fileId` de cada variant de `customFonts` es cerquen directament a `bundle.files`. `openBundle` llança un error si els bytes no són un zip, si no hi ha un `preset.json` vàlid (a l'arrel o sota una única carpeta) o si falta un fitxer que el manifest anomena.
+El **`fileId` de cada fitxer és la seva ruta dins del paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` i el `fileId` de cada variant de `customFonts` es cerquen directament a `bundle.files`. `openBundle` llança un error si els bytes no són un zip, si no hi ha un `preset.json` vàlid (a l'arrel o sota una única carpeta) o si falta un capítol o un fitxer d'imatge que el manifest anomena. Un fitxer de font que el manifest anomena i el paquet no inclou (un paquet que ha deixat fora les tipografies amb llicència) no impedeix obrir-lo: aquesta tipografia s'omet amb un avís, la família que es queda sense cap es treu de `customFonts` i el llibre fa servir la tipografia de reserva, com amb qualsevol font que falta.
 
 #### Paquets escrits per postext 1.4 o anterior
 

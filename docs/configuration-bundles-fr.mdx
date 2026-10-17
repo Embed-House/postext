@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>Chaque fichier de l’archive, indexé par son chemin.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>Le chemin de l’image de couverture, et la façon dont le paquet demande à être affiché : la <code>view</code> du manifeste, surchargée par le <code>localized[…].view</code> de la langue servie.</td></tr>
     <tr><td><code>start</code></td><td>Où commence le livre, pour un paquet qui contient une partie d’un ouvrage plus long : le <code>start</code> du manifeste, ou le <code>localized[…].start</code> de la langue servie. Absent pour un livre qui commence à son début.</td></tr>
-    <tr><td><code>warnings</code></td><td>Problèmes non bloquants : un fichier de police non pris en charge, un original d’impression manquant.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problèmes non bloquants : un fichier de police non pris en charge, un fichier de police absent du paquet, un original d’impression manquant.</td></tr>
   </tbody>
 </table>
 
-Le **`fileId` d’un contenu est son chemin dans le paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` et le `fileId` de chaque variante de `customFonts` peuvent être cherchés directement dans `bundle.files`. `openBundle` lève une exception quand les octets ne sont pas un zip, quand il n’y a pas de `preset.json` valide (à la racine ou dans un unique dossier de premier niveau), ou quand un fichier que nomme le manifeste est absent.
+Le **`fileId` d’un contenu est son chemin dans le paquet**. `resource.svg.fileId`, `resource.bitmap.fileId` et le `fileId` de chaque variante de `customFonts` peuvent être cherchés directement dans `bundle.files`. `openBundle` lève une exception quand les octets ne sont pas un zip, quand il n’y a pas de `preset.json` valide (à la racine ou dans un unique dossier de premier niveau), ou quand un chapitre ou un fichier d’image que nomme le manifeste est absent. Un fichier de police que le manifeste nomme et que le paquet n’inclut pas (un paquet qui a laissé de côté les polices sous licence) n’empêche pas l’ouverture : cette police est omise avec un avertissement, la famille qui n’en a plus aucune est retirée de `customFonts`, et le livre se rabat sur une police de remplacement, comme pour toute police absente.
 
 #### Paquets écrits par postext 1.4 ou antérieur
 

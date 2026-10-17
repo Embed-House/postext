@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>アーカイブ内のすべてのファイル。キーはそのパスです。</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>表紙画像のパスと、バンドルが求める表示方法。マニフェストの<code>view</code>の上に、読み込んだ言語の<code>localized[…].view</code>を重ねたものです。</td></tr>
     <tr><td><code>start</code></td><td>バンドルがもっと長い本の一部だけを収めているときの、本の始まりの位置。マニフェストの<code>start</code>、または読み込んだ言語の<code>localized[…].start</code>です。最初から始まる本にはありません。</td></tr>
-    <tr><td><code>warnings</code></td><td>致命的でない問題。対応していないフォントファイル、印刷用マスターの欠落など。</td></tr>
+    <tr><td><code>warnings</code></td><td>致命的でない問題。対応していないフォントファイル、バンドルに入っていないフォントファイル、印刷用マスターの欠落など。</td></tr>
   </tbody>
 </table>
 
-**データ本体の`fileId`は、バンドル内でのそのパスです**。`resource.svg.fileId`、`resource.bitmap.fileId`、`customFonts`の各バリアントの`fileId`は、そのまま`bundle.files`で引けます。`openBundle`は、バイト列がzipでない場合、有効な`preset.json`が（ルートにも、トップレベルの1つのフォルダーの下にも）ない場合、マニフェストが指定するファイルが欠けている場合に例外を投げます。
+**データ本体の`fileId`は、バンドル内でのそのパスです**。`resource.svg.fileId`、`resource.bitmap.fileId`、`customFonts`の各バリアントの`fileId`は、そのまま`bundle.files`で引けます。`openBundle`は、バイト列がzipでない場合、有効な`preset.json`が（ルートにも、トップレベルの1つのフォルダーの下にも）ない場合、マニフェストが指定する章や画像のファイルが欠けている場合に例外を投げます。マニフェストが指定していてもバンドルに入っていないフォントファイル（ライセンスのある書体を外して作ったバンドルなど）は、読み込みを止めません。その書体は警告つきで省かれ、書体が1つも残らないファミリーは`customFonts`から外れ、本は欠けているフォントと同じく代替フォントで組まれます。
 
 #### postext 1.4以前で書き出したバンドル
 

@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>Ogni file dell’archivio, indicizzato per percorso.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>Il percorso dell’immagine di copertina, e come il pacchetto chiede di essere visualizzato: il <code>view</code> del manifest, con sopra il <code>localized[…].view</code> della lingua servita.</td></tr>
     <tr><td><code>start</code></td><td>Il punto in cui inizia il libro, per un pacchetto che contiene una parte di un libro più lungo: lo <code>start</code> del manifest, oppure il <code>localized[…].start</code> della lingua servita. Assente per un libro che inizia dal suo principio.</td></tr>
-    <tr><td><code>warnings</code></td><td>Problemi non bloccanti: un file di font non supportato, un master di stampa mancante.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problemi non bloccanti: un file di font non supportato, un file di font assente dal pacchetto, un master di stampa mancante.</td></tr>
   </tbody>
 </table>
 
-Il **`fileId` di un contenuto è il suo percorso dentro il pacchetto**. `resource.svg.fileId`, `resource.bitmap.fileId` e il `fileId` di ogni variante di `customFonts` si possono cercare direttamente in `bundle.files`. `openBundle` genera un errore quando i byte non sono uno zip, quando non c’è un `preset.json` valido (alla radice o sotto un’unica cartella di primo livello), o quando manca un file che il manifest nomina.
+Il **`fileId` di un contenuto è il suo percorso dentro il pacchetto**. `resource.svg.fileId`, `resource.bitmap.fileId` e il `fileId` di ogni variante di `customFonts` si possono cercare direttamente in `bundle.files`. `openBundle` genera un errore quando i byte non sono uno zip, quando non c’è un `preset.json` valido (alla radice o sotto un’unica cartella di primo livello), o quando manca un capitolo o un file immagine che il manifest nomina. Un file di font che il manifest nomina e il pacchetto non include (un pacchetto che ha lasciato fuori i caratteri con licenza) non impedisce l’apertura: quel carattere viene omesso con un avviso, la famiglia rimasta senza alcun carattere esce da `customFonts` e il libro ripiega su un font sostitutivo, come per ogni font mancante.
 
 #### Pacchetti scritti da postext 1.4 o precedenti
 

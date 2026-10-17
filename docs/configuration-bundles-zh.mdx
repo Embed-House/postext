@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
     <tr><td><code>files</code></td><td>压缩包中的所有文件，以路径为键。</td></tr>
     <tr><td><code>thumbnail</code>、<code>canvasScope</code></td><td>封面图片的路径，以及文件包希望的查看方式：清单的<code>view</code>，再以所提供语言的<code>localized[…].view</code>覆盖。</td></tr>
     <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：清单的<code>start</code>，或所提供语言的<code>localized[…].start</code>。从头开始的书没有这一项。</td></tr>
-    <tr><td><code>warnings</code></td><td>不致命的问题：不支持的字体文件、缺失的印刷母版等。</td></tr>
+    <tr><td><code>warnings</code></td><td>不致命的问题：不支持的字体文件、文件包中缺失的字体文件、缺失的印刷母版等。</td></tr>
   </tbody>
 </table>
 
-数据文件的<strong>`fileId`就是它在文件包内的路径</strong>。`resource.svg.fileId`、`resource.bitmap.fileId`以及每个`customFonts`变体的`fileId`都可以直接在`bundle.files`中查到。以下情况`openBundle`会抛出异常：字节不是zip；找不到有效的`preset.json`（在根目录或某个顶层文件夹下）；清单中列出的某个文件缺失。
+数据文件的<strong>`fileId`就是它在文件包内的路径</strong>。`resource.svg.fileId`、`resource.bitmap.fileId`以及每个`customFonts`变体的`fileId`都可以直接在`bundle.files`中查到。以下情况`openBundle`会抛出异常：字节不是zip；找不到有效的`preset.json`（在根目录或某个顶层文件夹下）；清单中列出的某个章节或图片文件缺失。清单中列出、但文件包里没有的字体文件不会中断打开：该字体带着一条警告被略去，一个字体族若一个字体都没剩下，就从`customFonts`中去掉，书会像遇到任何缺失字体那样改用备用字体。
 
 #### postext 1.4及更早版本写出的文件包
 

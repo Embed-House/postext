@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>كل ملف في الأرشيف، ومفتاحه مساره.</td></tr>
     <tr><td><code>thumbnail</code>، <code>canvasScope</code></td><td>مسار صورة الغلاف، وطريقة العرض التي تطلبها الحزمة: الحقل <code>view</code> في البيان، وفوقه <code>localized[…].view</code> الخاص باللغة المقدَّمة.</td></tr>
     <tr><td><code>start</code></td><td>موضع بداية الكتاب، في حزمة تضمّ جزءًا من كتاب أطول: <code>start</code> في البيان، أو <code>localized[…].start</code> للغة المقروءة. لا يوجد في كتاب يبدأ من أوله.</td></tr>
-    <tr><td><code>warnings</code></td><td>مشكلات لا توقف القراءة: ملف خط غير مدعوم، أو نسخة طباعة أصلية مفقودة.</td></tr>
+    <tr><td><code>warnings</code></td><td>مشكلات لا توقف القراءة: ملف خط غير مدعوم، أو ملف خط غير موجود في الحزمة، أو نسخة طباعة أصلية مفقودة.</td></tr>
   </tbody>
 </table>
 
-**معرّف `fileId` لأي ملف هو مساره داخل الحزمة**. يمكن البحث عن `resource.svg.fileId` و`resource.bitmap.fileId` و`fileId` الخاص بكل متغير في `customFonts` مباشرةً في `bundle.files`. ترمي `openBundle` خطأً إذا لم تكن البايتات أرشيف zip، أو لم يوجد `preset.json` صالح (في الجذر أو تحت مجلد واحد في المستوى الأعلى)، أو كان ملف يسمّيه البيان مفقودًا.
+**معرّف `fileId` لأي ملف هو مساره داخل الحزمة**. يمكن البحث عن `resource.svg.fileId` و`resource.bitmap.fileId` و`fileId` الخاص بكل متغير في `customFonts` مباشرةً في `bundle.files`. ترمي `openBundle` خطأً إذا لم تكن البايتات أرشيف zip، أو لم يوجد `preset.json` صالح (في الجذر أو تحت مجلد واحد في المستوى الأعلى)، أو كان ملف فصل أو صورة يسمّيه البيان مفقودًا. أما ملف خط يسمّيه البيان ولا تتضمنه الحزمة (حزمة تركت الخطوط المرخّصة خارجها) فلا يمنع الفتح: يُهمَل هذا الخط مع تحذير، وتُحذف من `customFonts` العائلة التي لم يبقَ لها أي خط، ويرجع الكتاب إلى خط بديل كما مع أي خط غير متوفر.
 
 #### الحزم التي كتبها postext 1.4 أو ما قبله
 
