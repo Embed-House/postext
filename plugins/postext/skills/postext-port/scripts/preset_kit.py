@@ -532,6 +532,9 @@ from preset_kit import (  # noqa: E402
 ID = {id!r}
 NAME = {name!r}
 LANGS = {langs!r}
+# Each other edition's own title (localized.<lang>.name, postext >= 1.34.1; the first language keeps NAME):
+TITLES = {{}}        # {{"es": "El libro"}}
+DESCRIPTIONS = {{}}  # {{"es": "Una línea sobre el libro"}}
 
 # ---- measured geometry (mm, from the trim) ---------------------------------
 PAGE_W, PAGE_H = 170, 240
@@ -605,8 +608,10 @@ def main() -> None:
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),
-        "localized": {{lang: {{"config": {{k: v for k, v in config(lang).items()
-                                        if k in ("locale", "bodyText", "resourceTypes")}}}}
+        "localized": {{lang: {{**({{"name": TITLES[lang]}} if lang in TITLES else {{}}),
+                              **({{"description": DESCRIPTIONS[lang]}} if lang in DESCRIPTIONS else {{}}),
+                              "config": {{k: v for k, v in config(lang).items()
+                                         if k in ("locale", "bodyText", "resourceTypes")}}}}
                       for lang in LANGS[1:]}},
         "resources": [{{k: v for k, v in r.items() if k != "source"}} for r in resources()],
         "fonts": font_families(HERE),

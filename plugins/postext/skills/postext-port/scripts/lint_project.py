@@ -1141,7 +1141,8 @@ COMIC_BLOCKS = {"page", "strip"}
 COMIC_PAGE_ATTRS = {"split", "gutter", "style", "bleed", "direction", "dir", "spread", "id"}
 COMIC_STRIP_ATTRS = {"split", "gutter", "style", "bleed", "direction", "dir", "span", "placement", "height", "aspect", "id",
                      "width", "align", "caption", "type"}
-COMIC_PANEL_ATTRS = {"art", "fit", "focus", "style", "border", "bg", "bleed", "mirror", "pop", "inset", "pad", "alt", "id"}
+COMIC_PANEL_ATTRS = {"art", "fit", "focus", "style", "border", "bg", "bleed", "mirror", "pop", "inset", "pad", "alt", "id",
+                     "text", "box", "valign"}
 # Keys a script line reads (comics/script.ts SCRIPT_KEYS); any other bare
 # flag names a balloon style.
 COMIC_SCRIPT_KEYS = {"at", "to", "tail", "join", "break", "rotate", "size", "color", "font", "style", "id",
@@ -1591,6 +1592,15 @@ def _check_panel_attrs(attrs: dict[str, str], where: str, ctx: dict, rep: Report
     if attrs.get("style") and attrs["style"] not in ctx["panel_styles"]:
         rep.warn(where, f"panel style {attrs['style']!r} is not in comics.panelStyles {sorted(ctx['panel_styles'])} "
                         "(the page's style is used)")
+    # postext >= 1.38: `text` (Markdown body), `box` (a calloutStyles id), `valign` for a text panel
+    if attrs.get("box") and ctx.get("callout_styles") is not None and attrs["box"] not in ctx["callout_styles"]:
+        rep.warn(where, f"box={attrs['box']!r} is not in calloutStyles {sorted(ctx['callout_styles'])}: the panel keeps "
+                        "its panel style (comicPanelFrame, unknownBox)")
+    if "valign" in attrs:
+        if "text" not in attrs:
+            rep.info(where, "valign places the text of a text panel: it does nothing without the text flag")
+        elif attrs["valign"].strip().lower() not in ("top", "middle", "bottom"):
+            rep.warn(where, f"valign={attrs['valign']!r} is ignored (top | middle | bottom)")
     if "border" in attrs and attrs["border"].strip() != "none" and not COMIC_DIM_RE.match(attrs["border"]):
         rep.warn(where, f"border={attrs['border']!r} is not none or a length (0.5mm, 1pt)")
     if "bg" in attrs:
@@ -1684,6 +1694,7 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
     panels = 0
     flow_panels = 0
     seen_panel = False
+    text_panel = False  # inside a `::panel{text}` body: Markdown, not script lines
     arts: list[str] = []
     open_item = False
     for ln, raw in body:
@@ -1700,6 +1711,10 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
                 continue
             pattrs = parse_attrs(m.group(1))
             _check_panel_attrs(pattrs, w, ctx, rep)
+            text_panel = "text" in pattrs
+            if text_panel and (kind == "strip" or "spread" in attrs):
+                rep.warn(w, f"text panel on a {'strip' if kind == 'strip' else 'spread'}: frames take no text there, the "
+                            "words are set in the flow after the comic (comicPanelFrame): letter them as captions")
             panels += 1
             if not pattrs.get("inset"):
                 flow_panels += 1
@@ -1708,6 +1723,11 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
             arts.append(pattrs.get("art", ""))
             seen_panel = True
             open_item = False
+            continue
+        if text_panel:
+            if line.startswith(":::"):
+                rep.warn(w, f"{line} inside a text panel is left out: the body is paragraphs, lists and emphasis "
+                            "(it runs to the next ::panel line)")
             continue
         if line.startswith(":::"):
             rep.error(w, f"{line} inside a :::{kind} block: comic blocks hold only ::panel lines and script lines "
@@ -1813,6 +1833,7 @@ def new_comic_ctx(cfg: dict, resources: list[dict], ids: dict[str, set[str]]) ->
             "speakers": {}, "arts": set(),
             "faces": set(), "blocks": [],
             "templates": templates, "label_styles": label_styles,
+            "callout_styles": ids.get("callout"),
             "anchors": {r.get("id"): {a.get("id") for a in r.get("anchors") or [] if isinstance(a, dict)}
                         for r in resources if isinstance(r, dict)}}
 
