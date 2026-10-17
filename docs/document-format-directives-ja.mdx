@@ -673,6 +673,7 @@ sfx{rotate=-8}: バキッ
     <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>枠に接する辺を、仕上がり線を越えて裁ち落としまで伸ばします（断ち切り）。</td></tr>
     <tr><td><code>pad="…"</code></td><td>コマを区画より小さくします。1〜4個の長さかパーセントです（上、終わり側、下、始まり側）。</td></tr>
     <tr><td><code>inset="x y w h"</code></td><td>区画を与えず、前のコマの上に、そのコマに対するパーセントで表した箱の位置に重ねます。</td></tr>
+    <tr><td><code>text</code>, <code>valign=middle</code>, <code>box=&lt;id&gt;</code></td><td>コマを文章コマにします。本文は台本ではなく、コマの枠に組む Markdown です（<code>valign</code> で位置を決める）。<code>box</code> はコマをボックススタイルで装います。<a href="/ja/docs/comics#文章コマ">漫画 › 文章コマ</a>を参照。</td></tr>
     <tr><td><code>pop=&lt;id&gt;</code></td><td>コマの絵と同じトリミングで枠線の上に描く、透明な地の切り抜きです（枠線破り）。</td></tr>
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>絵を左右反転するか、反転するページで描いたままにします。</td></tr>
     <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>代替テキスト（なければリソースの<code>altText</code>）と、アンカーのIDです。</td></tr>

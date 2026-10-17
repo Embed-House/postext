@@ -7,7 +7,7 @@
  * Design mode). Pure: sheet px, no DOM.
  */
 
-import { frameClips, frameContentRect, frameMatrix, frameOfBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
+import { frameClips, frameContentRect, frameMatrix, frameOfBlock, pointInPolygon, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
 
 /** Anything that may carry a composed page (a `VDTPage`, or a stand-in in a
  *  test). */
@@ -79,6 +79,27 @@ export function frameHitAt(page: ComposedPageLike | null | undefined, x: number,
   for (const f of framesTopFirst(page)) {
     if (pointInFrame(f, x, y)) return f;
   }
+  return null;
+}
+
+/** Anything that may carry a comic page (a `VDTPage`, or a stand-in). */
+export type ComicPageLike = Pick<VDTPage, 'comic'>;
+
+/** Whether a sheet point lies in a frame a comic's split generated
+ *  (#885): in its outline when a slanted line cut it, else in its box. */
+export function pointInComicFrame(frame: Pick<VDTFrame, 'rect' | 'polygon'>, x: number, y: number): boolean {
+  const r = frame.rect;
+  if (x < r.x || x > r.x + r.width || y < r.y || y > r.y + r.height) return false;
+  return frame.polygon && frame.polygon.length >= 3 ? pointInPolygon(frame.polygon, { x, y }) : true;
+}
+
+/** The text frame of a comic page (`::panel{text}`, #885) under the sheet
+ *  point, the one on top first; null off them or off a comic page. The
+ *  frames of a comic's picture panels are the comic tools' (`comicHit`). */
+export function comicTextFrameAt(page: ComicPageLike | null | undefined, x: number, y: number): VDTFrame | null {
+  const frames = (page?.comic?.frames ?? []).map((f, i) => ({ f, i })).filter(({ f }) => f.blockIds.length > 0);
+  frames.sort((a, b) => b.f.layer - a.f.layer || b.i - a.i);
+  for (const { f } of frames) if (pointInComicFrame(f, x, y)) return f;
   return null;
 }
 

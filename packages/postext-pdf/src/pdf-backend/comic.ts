@@ -432,10 +432,38 @@ export function renderComicPage(
   structure?: StructureFlow,
   div?: StructElem,
 ): void {
+  const tags = renderComicPanelsPdf(ctx, comic, images, structure, div);
+  renderComicLetteringPdf(ctx, comic, fontCache, tags);
+}
+
+/** The structure a comic's panels were tagged in, for its lettering. */
+export type ComicPanelTags = ComicTags | undefined;
+
+/** A comic's panels and their pop-outs (the first half of
+ *  {@link renderComicPage}): a page with text panels (#885) paints them
+ *  before its flow, the text frames over them, the lettering after. */
+export function renderComicPanelsPdf(
+  ctx: PageCtx,
+  comic: VDTComicPage,
+  images: ResourceImageMap | undefined,
+  structure?: StructureFlow,
+  div?: StructElem,
+): ComicPanelTags {
   const tags = structure ? comicStructure(ctx, structure, comic, div) : undefined;
   for (const panel of comic.panels) renderComicPanelPdf(ctx, panel, images, tags?.figures[panel.index], false);
   // The pop-outs over every panel: one that breaks out into the next
   // panel's cell is not covered by it (postext #668).
   for (const panel of comic.panels) renderComicPopPdf(ctx, panel, images, tags?.figures[panel.index]);
+  return tags;
+}
+
+/** A comic's lettering (the second half of {@link renderComicPage}). */
+export function renderComicLetteringPdf(ctx: PageCtx, comic: VDTComicPage, fontCache: FontCache, tags: ComicPanelTags): void {
   for (const group of comicBalloonGroups(comic.balloons)) renderBalloonGroup(ctx, group, fontCache, tags);
+}
+
+/** Push a graphics state clipped to a polygon (sheet px, a comic panel's
+ *  frame cut by a slanted line, #885); undo with `popClip`. */
+export function pushClipPolygon(ctx: PageCtx, points: readonly VDTPoint[]): void {
+  pushClipSegs(ctx, polygonSegs(points));
 }

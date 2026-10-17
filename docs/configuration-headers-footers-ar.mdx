@@ -634,6 +634,18 @@ header: {
       <td>الصورة زخرفية فقط (حلية، أو شريط): لا تعطي المخرجاتِ نصًا بديلًا حتى حين يكون لموردها نص بديل (انظر أدناه).</td>
     </tr>
     <tr>
+      <td><code>fit</code></td>
+      <td><code>'contain' | 'cover'</code></td>
+      <td><code>'contain'</code></td>
+      <td>حين يُحدَّد <code>width</code> و<code>height</code> كلاهما: يضع <code>'contain'</code> الصورة كاملة داخل الإطار في وسطه، ويملأ <code>'cover'</code> الإطار ويقصّ ما يزيد عنه، كما تفعل صورة تمتد حتى حافة الورقة. ويُبقي قصّ <code>'cover'</code> المنطقة الآمنة من المورد كاملة (انظر <a href="/ar/docs/document-format-resources">الموارد</a>)؛ وحين لا يتسع شكل الإطار لها، تُعرض أصغر نافذة تحويها ويبقى الإطار غير ممتلئ في أحد الاتجاهين. ويُتجاهل حين يكون أحد الجانبين <code>'auto'</code>. منذ postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>focus</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>—</td>
+      <td>النقطة من الصورة التي يتوسّطها قصّ <code>'cover'</code>، بكسورٍ من الصورة: <code>&#123; x: 0.5, y: 0.3 &#125;</code> لوجهٍ في الثلث الأعلى. ويبقى القصّ مُبقيًا المنطقة الآمنة في الإطار. ومن دونها تُقصّ الهوامش المحيطة بالمنطقة الآمنة بنسبة أحجامها، وإلا وُسِّطت الصورة.</td>
+    </tr>
+    <tr>
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>—</td>
@@ -676,7 +688,7 @@ interface ElementPlacement {
    *  content, so elements anchored to it stay attached, but a long text wraps or
    *  ellipsizes there — a running head can reserve room for the label hanging
    *  off it instead of squeezing that label out. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
+  size?: { width?: Size; height?: Size; maxWidth?: Size }; // Size: Dimension | 'fill' | 'auto' | { to, edge }
 }
 ```
 
@@ -699,6 +711,12 @@ interface ElementPlacement {
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
+```
+
+ويمكن أن يمتد الحجم أيضًا حتى حافة صندوق آخر: `{ to, edge }`، حيث يسمّي `to` الصندوق كما تفعل نقطة التثبيت (`'container'` أو `'page'` أو `'bleed'` أو `'outer'` أو `'#id'` لعنصر آخر، وفي زخرفة الصفحة المركّبة لإطار أو مجموعة)، ويحدّد `edge` أيّ حوافه: `'top'` أو `'bottom'` للارتفاع، و`'left'` أو `'right'` للعرض. ويمتد الطول من نقطة تثبيت العنصر إلى تلك الحافة، في الاتجاه الذي يكبر فيه العنصر؛ والحافة الواقعة خلف نقطة التثبيت تعطي 0، والحافة الواقعة على المحور الآخر أو الصندوق غير الموجود يُقرأ على أنه `'fill'`. وبهذا تبقى الأرضية الممتدة من أسفل شريطٍ حتى حدّ الطباعة الزائد داخل القالب، وتتبع الشريط حين يتحرك. منذ postext 1.38:
+
+```json
+{ "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
 ```
 
 مع تفعيل خطوط القص، يُقص كل ما يرسمه عنصر خارج صندوق النزف (انظر [خطوط القص](/ar/docs/configuration-page-layout#خطوط-القص)).

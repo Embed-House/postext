@@ -130,7 +130,7 @@ export function pageTools(host: SandboxToolHost): WebMcpTool[] {
   const inspectPages: WebMcpTool = {
     name: 'sandbox_inspect_pages',
     title: 'Sandbox: the pages in words',
-    description: 'What the layout engine put on the pages of a chapter, as data. Without a page: one line per page of the chapter (its number, whether it is blank, how many lines and figures, how it starts) — the map to pick pages from. With a page: every block on it with its text, column, number of lines, hyphenated lines, loose justified lines and how wide their spaces are, where it sits on the page, plus how full each column is. It waits for the layout to follow the last change.',
+    description: 'What the layout engine put on the pages of a chapter, as data. Without a page: one line per page of the chapter (its number, whether it is blank, how many lines and figures, how it starts) — the map to pick pages from. With a page: every block on it with its text, column, number of lines, hyphenated lines, loose justified lines and how wide their spaces are, where it sits on the page, plus how full each column is; on a composed page, its template and what the layout moved, grew or scaled so the content fits ("dinero grew 8.2 mm", "gasto moved down 8.2 mm"). It waits for the layout to follow the last change.',
     inputSchema: {
       type: 'object',
       properties: {

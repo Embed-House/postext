@@ -499,3 +499,88 @@ describe('the timeline stand-in (#861)', () => {
     });
   }
 });
+
+describe('spreads on vertical pages (#926)', () => {
+  const H = px(260);
+  /** Four rows down the flow, which on a vertical sheet runs from its
+   *  right edge to its left: rows 1–2 on the right page, 3–4 on the left;
+   *  a band across the spine. */
+  const VT: PageTemplate = {
+    id: 'vt',
+    spread: true,
+    gutter: mm(10),
+    area: 'content',
+    grid: { columns: 1, rows: 4, rowGap: mm(10) },
+    frames: [
+      { name: 'first', grid: { col: 1, row: 1 } },
+      { name: 'band', crossGutter: true, grid: { col: 1, row: 2, rows: 2 } },
+      { name: 'second', grid: { col: 1, row: 4 } },
+    ],
+    decoration: { elements: [{ kind: 'box', id: 'ground', placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: 'fill', height: mm(30) } }, style: { backgroundColor: { hex: '#f6efe0', model: 'hex' } } }] },
+  };
+  const md = [
+    '本文の前。', '',
+    '::::page{template="vt" spread}',
+    ':::frame{slot="first"}', '右のページ。', ':::', '',
+    ':::frame{slot="band"}', 'のどをまたぐ帯。', ':::', '',
+    ':::frame{slot="second"}', '左のページ。', ':::',
+    '::::', '', '後の本文。',
+  ].join('\n');
+  const vertical: PostextConfig = { locale: 'ja', layout: { layoutType: 'single', writingMode: 'vertical-rl' } as never, page: { ...PAGE.page, binding: 'right' } as never };
+
+  it('lays the sheet along the flow: the right page first, each frame on its page, the band read once', () => {
+    const doc = build(md, [VT], vertical);
+    const pages = spreadPages(doc);
+    expect(pages).toHaveLength(2);
+    const right = pages.find((p) => p.composed!.spread === 'right')!;
+    const left = pages.find((p) => p.composed!.spread === 'left')!;
+    // A right-bound book: the verso, first in reading order, is the right page.
+    expect(right.index).toBeLessThan(left.index);
+    expect(frameOn(right, 'first')!.blockIds.length).toBeGreaterThan(0);
+    expect(frameOn(left, 'second')!.blockIds.length).toBeGreaterThan(0);
+    expect(frameOn(right, 'second')).toBeUndefined();
+    expect(frameOn(left, 'first')).toBeUndefined();
+    // Every frame but the band stands on its page's own sheet.
+    for (const page of pages) {
+      for (const f of page.composed!.frames.filter((x) => x.name !== 'band')) {
+        const r = flowRectToPage(page, f.rect);
+        expect(r.x).toBeGreaterThanOrEqual(-0.5);
+        expect(r.x + r.width).toBeLessThanOrEqual(W + 0.5);
+        expect(r.y).toBeGreaterThanOrEqual(-0.5);
+        expect(r.y + r.height).toBeLessThanOrEqual(H + 0.5);
+      }
+    }
+    // The band crosses the spine: read on one page, painted on both.
+    const owners = pages.filter((p) => frameOn(p, 'band')!.blockIds.length > 0);
+    expect(owners).toHaveLength(1);
+    const facing = pages.find((p) => p !== owners[0])!;
+    expect(frameOn(facing, 'band')!.facingBlocks!.length).toBeGreaterThan(0);
+    expect(textOf(blocksOf(owners[0]!, frameOn(owners[0]!, 'band')!))).toContain('帯');
+    // The right page's half of the band touches its left edge (the spine),
+    // the left page's its right edge.
+    const halfOn = (p: VDTPage) => flowRectToPage(p, frameOn(p, 'band')!.rect);
+    expect(halfOn(right).x).toBeLessThanOrEqual(0.5);
+    expect(halfOn(left).x + halfOn(left).width).toBeGreaterThanOrEqual(W - 0.5);
+    expect((doc.contentWarnings ?? []).filter((w) => w.kind === 'frameOverflow' || w.kind === 'spreadMismatch')).toEqual([]);
+  });
+
+  it('cuts the decoration laid over the physical sheet, and clips each page to its own sheet', () => {
+    const doc = build(md, [VT], vertical);
+    for (const page of spreadPages(doc)) {
+      const ground = page.composed!.decoration!.blocks.find((b) => b.elementId === 'ground')!;
+      // The ground runs across both pages: each page holds its half, on
+      // its own sheet.
+      expect(ground.bbox.x).toBeLessThanOrEqual(0.5);
+      expect(ground.bbox.x + ground.bbox.width).toBeGreaterThanOrEqual(W - 0.5);
+      // The flow clip, mapped to the sheet, is the page's own sheet.
+      const clip = flowRectToPage(page, page.composed!.sheetClip!);
+      expect(clip.x).toBeCloseTo(0, 3);
+      expect(clip.width).toBeCloseTo(W, 3);
+      expect(clip.height).toBeCloseTo(H, 3);
+    }
+    const out = renderToHtmlIndexed(doc);
+    const html = spreadPages(doc).map((p) => out.pages[p.index]!.innerHtml + out.pages[p.index]!.decorationHtml).join('');
+    // The decoration's clip on the sheet: the page's physical box.
+    expect(html).toContain(`polygon(0px 0px,${W.toFixed(4)}px 0px,${W.toFixed(4)}px ${H.toFixed(4)}px,0px ${H.toFixed(4)}px)`);
+  });
+});

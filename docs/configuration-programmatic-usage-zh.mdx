@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>分页输出在那个框的底边裁掉剩下的部分；它仍留在文档、源码映射和流式版式的EPUB中。</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>框的<code>overflow.continueIn: 'page:&lt;id&gt;'</code>在文章所在的页面围栏之后找不到带有这个id的页面围栏（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>target</code>，那个围栏在前面时有<code>before</code>，<code>configPath</code>）。由排版给出，带有送出页的<code>pageIndex</code>。</td>
+      <td>其余部分排在送出页之后追加的一页上，与<code>'next-page'</code>相同。</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>模板页的开头一行与模板对跨页的设定不一致（<code>template</code>、<code>fenceIndex</code>；<code>fence</code>为开头一行的<code>spread</code>；<code>templateSpread</code>为模板的）。</td>
       <td>以模板为准：跨页模板排在两个对页上，其他模板排在一页上。</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>以<a href="/zh/docs/configuration-text#首字下沉">首字下沉</a>开头的段落无法按配置排出首字。<code>reason</code>：<code>'shortParagraph'</code>（段落行数少于首字下沉的行数；<code>handling</code>是<code>shortParagraph</code>所做的处理，<code>lines</code>是缩小后的首字所跨的行数）、<code>'split'</code>（段落单独位于过短的栏中，在首字的最后一行之前断开）、<code>'joiningScript'</code>（第一个字母与下一个字母相连）、<code>'verticalText'</code>或<code>'noLetter'</code>（以引用、公式或注释标记开头）。<code>text</code>是它的第一行。</td>
+      <td>以<a href="/zh/docs/configuration-text#首字下沉">首字下沉</a>开头的段落无法按配置排出首字。<code>reason</code>：<code>'shortParagraph'</code>（段落行数少于首字下沉的行数；<code>handling</code>是<code>shortParagraph</code>所做的处理，<code>lines</code>是缩小后的首字所跨的行数）、<code>'split'</code>（段落单独位于过短的栏中，在首字的最后一行之前断开）、<code>'joiningScript'</code>（第一个字母与下一个字母相连）、<code>'verticalText'</code>或<code>'noLetter'</code>（以引用、公式或注释标记开头）。<code>text</code>是它的第一行。 <code>'inBox'</code>：<code>:::paragraphs</code>组或段落样式在<code>:::callout</code>框里要求首字下沉，而框里不做首字下沉。</td>
       <td>按警告所说，保留空间、缩小首字或不排首字。</td>
     </tr>
     <tr>

@@ -11,6 +11,7 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameOverflowConfig,
+  FrameRulesConfig,
   LabelStyle,
   PageTemplate,
   PageTemplateGrid,
@@ -58,10 +59,11 @@ const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
   exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
-  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, remove: true,
+  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
-const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true } satisfies Record<keyof FrameFitConfig, true>;
-const OVERFLOW_KEYS = { continueIn: true, mark: true } satisfies Record<keyof FrameOverflowConfig, true>;
+const RULES_KEYS = { every: true, color: true, width: true, inset: true } satisfies Record<keyof FrameRulesConfig, true>;
+const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true, preferContinue: true } satisfies Record<keyof FrameFitConfig, true>;
+const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies Record<keyof FrameOverflowConfig, true>;
 const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisfies Record<keyof CalloutPaddingConfig, true>;
 const GROUP_KEYS = {
   name: true, kind: true, frames: true, gap: true, placement: true, grid: true, align: true, remove: true,
@@ -159,6 +161,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   unknownKeys(frame.fit, FIT_KEYS, `${path}/fit`, push);
   unknownKeys(frame.overflow, OVERFLOW_KEYS, `${path}/overflow`, push);
   unknownKeys(frame.padding, PADDING_KEYS, `${path}/padding`, push);
+  unknownKeys(frame.rules, RULES_KEYS, `${path}/rules`, push);
   choice(frame, 'verticalAlign', FRAME_VERTICAL_ALIGNS, DEFAULT_FRAME.verticalAlign, path, push);
   choice(frame, 'exclude', FRAME_EXCLUDES, DEFAULT_FRAME.exclude, path, push);
   choice(frame, 'wrap', FRAME_WRAPS, 'box', path, push);

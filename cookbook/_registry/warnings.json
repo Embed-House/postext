@@ -5139,6 +5139,60 @@
       }
     }
   },
+  "comicPanelFrame": {
+    "source": "engine",
+    "label": {
+      "en": "Panel frame falls back",
+      "es": "El marco de la viñeta no se aplica",
+      "ca": "El marc de la vinyeta no s'aplica",
+      "zh": "分格框未能按要求生效",
+      "ar": "إطار اللوحة لا يُطبَّق",
+      "ja": "コマの枠が反映されない",
+      "pt": "O quadro do painel não se aplica",
+      "fr": "Le cadre de la case ne s'applique pas",
+      "de": "Panelrahmen greift nicht",
+      "it": "Il riquadro della vignetta non si applica"
+    },
+    "cause": {
+      "en": "A comic panel's frame cannot do what the panel asks. reason unknownBox: its box names no callout style, and the panel keeps its panel style. textOverflow: a text panel's Markdown is taller than its frame, and the rest is clipped. strip, spread, flow: a text panel on a strip, on a spread, or in a vertical or right-to-left document, where frames take no text yet; its text is set in the flow after the comic.",
+      "es": "El marco de una viñeta no puede hacer lo que la viñeta pide. reason unknownBox: su box no nombra ningún estilo de recuadro, y la viñeta conserva su estilo de viñeta. textOverflow: el Markdown de una viñeta de texto es más alto que su marco, y lo que sobra se recorta. strip, spread, flow: una viñeta de texto en una tira, en una doble página o en un documento vertical o de derecha a izquierda, donde los marcos aún no reciben texto; el texto se compone en el flujo después del cómic.",
+      "ca": "El marc d'una vinyeta no pot fer el que la vinyeta demana. reason unknownBox: el seu box no anomena cap estil de requadre, i la vinyeta manté el seu estil de vinyeta. textOverflow: el Markdown d'una vinyeta de text és més alt que el seu marc, i el que sobra es retalla. strip, spread, flow: una vinyeta de text en una tira, en una doble pàgina o en un document vertical o de dreta a esquerra, on els marcs encara no reben text; el text es compon al flux després del còmic.",
+      "zh": "分格的框无法实现分格的要求。reason 为 unknownBox：box 指向的框样式不存在，分格保留原有分格样式。textOverflow：文字格的 Markdown 比框高，多出的部分被裁去。strip、spread、flow：文字格位于条漫、跨页或竖排、从右到左的文档中，那里的框暂不接收文字，文字排在漫画之后的正文流中。",
+      "ar": "لا يستطيع الإطار المولَّد لإطار القصة أن يفعل ما يطلبه. السبب unknownBox: لا يسمّي box أي نمط صندوق، فيحتفظ الإطار بنمطه. textOverflow: نص Markdown في الإطار النصي أطول من إطاره، فيُقصّ ما زاد. strip وspread وflow: إطار نصي في شريط أو في صفحة مزدوجة أو في مستند عمودي أو من اليمين إلى اليسار، حيث لا تستقبل الأطر نصًا بعد؛ فيُصفّ النص في المتن بعد القصة المصورة.",
+      "ja": "コマの枠が、コマの求めることを実現できません。reason が unknownBox：box がどのボックススタイルも指しておらず、コマは元のコマスタイルのまま。textOverflow：文章コマの Markdown が枠より高く、はみ出た分は切り取られる。strip、spread、flow：ストリップ、見開き、縦書きや右から左の文書にある文章コマで、そこの枠はまだ文章を受け取らず、文章は漫画の後の本文に組まれる。",
+      "pt": "O bloco de um quadro não consegue fazer o que o quadro pede. reason unknownBox: o seu box não nomeia nenhum estilo de destaque, e o quadro mantém o seu estilo de quadro. textOverflow: o Markdown de um quadro de texto é mais alto que o seu bloco, e o resto é cortado. strip, spread, flow: um quadro de texto numa tira, numa página dupla ou num documento vertical ou da direita para a esquerda, onde os blocos ainda não recebem texto; o texto é composto no fluxo depois dos quadrinhos.",
+      "fr": "Le bloc d'une case ne peut pas faire ce que la case demande. reason unknownBox : son box ne nomme aucun style d'encadré, et la case garde son style de case. textOverflow : le Markdown d'une case de texte est plus haut que son bloc, et le reste est rogné. strip, spread, flow : une case de texte dans un strip, une double page, ou un document vertical ou de droite à gauche, où les blocs ne reçoivent pas encore de texte ; son texte est composé dans le flux après la bande dessinée.",
+      "de": "Der Rahmen eines Panels kann nicht tun, was das Panel verlangt. reason unknownBox: sein box nennt keinen Kastenstil, und das Panel behält seinen Panelstil. textOverflow: das Markdown eines Textpanels ist höher als sein Rahmen, der Rest wird abgeschnitten. strip, spread, flow: ein Textpanel in einem Streifen, einer Doppelseite oder einem vertikalen oder rechtsläufigen Dokument, wo Rahmen noch keinen Text aufnehmen; sein Text steht im Fluss nach dem Comic.",
+      "it": "La cornice di una vignetta non può fare ciò che la vignetta chiede. reason unknownBox: il suo box non nomina alcuno stile di riquadro, e la vignetta mantiene il suo stile di vignetta. textOverflow: il Markdown di una vignetta di testo è più alto della sua cornice, e il resto viene tagliato. strip, spread, flow: una vignetta di testo in una striscia, in una doppia pagina o in un documento verticale o da destra a sinistra, dove le cornici non accolgono ancora testo; il testo è composto nel flusso dopo il fumetto."
+    },
+    "fix": {
+      "en": "Correct the box name or add the callout style; shorten the text or give the panel a larger cell; otherwise move the text panel to a single comic page, or letter its words as a caption.",
+      "es": "Corrige el nombre del box o añade el estilo de recuadro; acorta el texto o da a la viñeta una celda mayor; en los demás casos pasa la viñeta de texto a una página de cómic sencilla, o rotula sus palabras como cartela.",
+      "ca": "Corregeix el nom del box o afegeix l'estil de requadre; escurça el text o dona a la vinyeta una cel·la més gran; en els altres casos passa la vinyeta de text a una pàgina de còmic senzilla, o retola les seves paraules com a cartutx.",
+      "zh": "改正 box 的名称或添加该框样式；缩短文字，或给这一格更大的格子；其他情况下把文字格移到单页漫画中，或把文字写成旁白框。",
+      "ar": "صحّح اسم box أو أضف نمط الصندوق؛ اختصر النص أو امنح الإطار خلية أكبر؛ وفي غير ذلك انقل الإطار النصي إلى صفحة قصة مصورة مفردة، أو اكتب كلماته تعليقًا.",
+      "ja": "box の名前を直すか、そのボックススタイルを追加します。文章を短くするか、コマに大きいセルを与えます。それ以外は文章コマを単ページの漫画に移すか、文字をナレーションとして写植します。",
+      "pt": "Corrija o nome do box ou acrescente o estilo de destaque; encurte o texto ou dê ao quadro uma célula maior; nos outros casos passe o quadro de texto para uma página de quadrinhos simples, ou letreie as suas palavras como recordatório.",
+      "fr": "Corrigez le nom du box ou ajoutez le style d'encadré ; raccourcissez le texte ou donnez à la case une cellule plus grande ; sinon placez la case de texte sur une planche simple, ou lettrez ses mots en récitatif.",
+      "de": "Korrigiere den Namen in box oder lege den Kastenstil an; kürze den Text oder gib dem Panel eine größere Zelle; sonst verschiebe das Textpanel auf eine einfache Comicseite, oder setze seine Wörter als Erzähltextkasten.",
+      "it": "Correggi il nome del box o aggiungi lo stile di riquadro; accorcia il testo o dai alla vignetta una cella più grande; negli altri casi porta la vignetta di testo su una pagina di fumetto singola, o inserisci le sue parole come didascalia."
+    },
+    "docs": {
+      "slug": "comics",
+      "heading": {
+        "en": "Comic warnings",
+        "es": "Avisos de cómic",
+        "ca": "Avisos de còmic",
+        "zh": "漫画警告",
+        "ar": "تحذيرات القصص المصورة",
+        "ja": "漫画の警告",
+        "pt": "Avisos de quadrinhos",
+        "fr": "Avertissements de bande dessinée",
+        "de": "Comic-Warnungen",
+        "it": "Avvisi dei fumetti"
+      }
+    }
+  },
   "preflight": {
     "source": "sandbox",
     "label": {
@@ -6486,6 +6540,60 @@
         "fr": "frameContinuationLimit",
         "de": "frameContinuationLimit",
         "it": "frameContinuationLimit"
+      }
+    }
+  },
+  "continueTargetMissing": {
+    "source": "engine",
+    "label": {
+      "en": "A story jumps to a page that does not follow",
+      "es": "Una historia salta a una página que no viene después",
+      "ca": "Una història salta a una pàgina que no ve després",
+      "zh": "文章转到的页面不在其后",
+      "ar": "نص يُحال إلى صفحة لا تأتي بعده",
+      "ja": "記事の続き先のページが後ろにありません",
+      "pt": "Uma matéria salta para uma página que não vem depois",
+      "fr": "Un article renvoie à une page qui ne suit pas",
+      "de": "Ein Text springt auf eine Seite, die nicht folgt",
+      "it": "Un articolo rimanda a una pagina che non segue"
+    },
+    "cause": {
+      "en": "A frame's overflow.continueIn is 'page:<id>' (or 'page:{attr.name}', read from the page fence): what it cannot hold should go on in a frame of the page fence ::::page{id=\"<id>\"}, past the pages between. No fence with that id comes after the page the story is on: the id is misspelt, the fence lacks it, the attribute the template reads is missing, or the fence comes before. The rest goes on on a page added right after, as with 'next-page'.",
+      "es": "Un marco tiene overflow.continueIn 'page:<id>' (o 'page:{attr.nombre}', leído de la página): lo que no le cabe debería seguir en un marco de la página ::::page{id=\"<id>\"}, saltando las páginas intermedias. Ninguna página con ese id viene después de la página de la historia: el id está mal escrito, la página no lo tiene, falta el atributo que lee la plantilla o la página está antes. El resto sigue en una página añadida justo después, como con 'next-page'.",
+      "ca": "Un marc té overflow.continueIn 'page:<id>' (o 'page:{attr.nom}', llegit de la pàgina): el que no hi cap hauria de continuar en un marc de la pàgina ::::page{id=\"<id>\"}, saltant les pàgines del mig. Cap pàgina amb aquest id no ve després de la pàgina de la història: l'id està mal escrit, la pàgina no el té, falta l'atribut que llegeix la plantilla o la pàgina és abans. La resta continua en una pàgina afegida just després, com amb 'next-page'.",
+      "zh": "某个框的overflow.continueIn为'page:<id>'（或从页面围栏读取的'page:{attr.name}'）：放不下的内容应跳过中间的页面，转到::::page{id=\"<id>\"}那一页的某个框里。可是文章所在页之后没有带这个id的页面：id拼错了，页面没写id，模板读取的属性缺失，或者那一页在前面。其余内容像'next-page'一样，排到紧接着追加的一页上。",
+      "ar": "قيمة overflow.continueIn في إطار هي 'page:<id>' (أو 'page:{attr.name}' تُقرأ من سياج الصفحة): ما لا يتّسع له ينبغي أن يكمل في إطار من الصفحة ::::page{id=\"<id>\"} متخطّيًا الصفحات التي بينهما. لكن لا سياج بهذا المعرّف يأتي بعد الصفحة التي فيها النص: المعرّف مكتوب خطأ، أو لا تحمله الصفحة، أو تنقص السمة التي يقرؤها القالب، أو الصفحة قبله. يكمل الباقي في صفحة تُضاف بعده مباشرة، كما مع 'next-page'.",
+      "ja": "枠のoverflow.continueInが'page:<id>'（またはページ囲みから読む'page:{attr.name}'）です。収まらない分は、間のページを飛ばして::::page{id=\"<id>\"}のページの枠に続くはずですが、記事のあるページより後ろにその id のページがありません。id の書き間違い、ページに id がない、テンプレートが読む属性がない、またはそのページが前にある、のいずれかです。残りは'next-page'と同じく、すぐ後ろに追加したページに続きます。",
+      "pt": "Um quadro tem overflow.continueIn 'page:<id>' (ou 'page:{attr.nome}', lido da página): o que não cabe deveria continuar num quadro da página ::::page{id=\"<id>\"}, pulando as páginas do meio. Nenhuma página com esse id vem depois da página da matéria: o id está escrito errado, a página não o tem, falta o atributo que o modelo lê ou a página vem antes. O resto continua numa página acrescentada logo depois, como com 'next-page'.",
+      "fr": "Un bloc a overflow.continueIn 'page:<id>' (ou 'page:{attr.nom}', lu sur la page) : ce qu’il ne peut contenir devrait continuer dans un bloc de la page ::::page{id=\"<id>\"}, par-dessus les pages intermédiaires. Aucune page portant cet id ne suit la page de l’article : l’id est mal écrit, la page ne l’a pas, l’attribut que lit le gabarit manque, ou la page vient avant. La suite va sur une page ajoutée juste après, comme avec 'next-page'.",
+      "de": "Ein Rahmen hat overflow.continueIn 'page:<id>' (oder 'page:{attr.name}', aus dem Seitenzaun gelesen): Was er nicht fasst, soll in einem Rahmen der Seite ::::page{id=\"<id>\"} weitergehen, über die Seiten dazwischen hinweg. Keine Seite mit dieser id folgt auf die Seite des Textes: Die id ist falsch geschrieben, die Seite hat keine, das Attribut, das die Vorlage liest, fehlt, oder die Seite steht davor. Der Rest geht auf einer gleich danach angefügten Seite weiter, wie bei 'next-page'.",
+      "it": "Una cornice ha overflow.continueIn 'page:<id>' (o 'page:{attr.nome}', letto dalla pagina): ciò che non contiene dovrebbe continuare in una cornice della pagina ::::page{id=\"<id>\"}, saltando le pagine intermedie. Nessuna pagina con quell'id segue la pagina dell'articolo: l'id è scritto male, la pagina non ce l'ha, manca l'attributo che il modello legge o la pagina viene prima. Il resto continua su una pagina aggiunta subito dopo, come con 'next-page'."
+    },
+    "fix": {
+      "en": "Give the later page fence the id the frame names (::::page{template=\"…\" id=\"p47\"}), or fix the name in continueIn or in the fence attribute it reads. A fence that comes before the story cannot take it: move it after, or name a later page.",
+      "es": "Pon a la página posterior el id que nombra el marco (::::page{template=\"…\" id=\"p47\"}) o corrige el nombre en continueIn o en el atributo de la página que lee. Una página que va antes de la historia no puede recibirla: muévela detrás o nombra una posterior.",
+      "ca": "Posa a la pàgina posterior l'id que anomena el marc (::::page{template=\"…\" id=\"p47\"}) o corregeix el nom a continueIn o a l'atribut de la pàgina que llegeix. Una pàgina que va abans de la història no la pot rebre: mou-la darrere o anomena'n una de posterior.",
+      "zh": "给后面的页面围栏加上框所指的id（::::page{template=\"…\" id=\"p47\"}），或者改正continueIn里、或它所读取的围栏属性里的名称。文章前面的页面接不了它：把那一页移到后面，或者改指后面的页面。",
+      "ar": "أعطِ سياج الصفحة اللاحقة المعرّف الذي يسمّيه الإطار (::::page{template=\"…\" id=\"p47\"})، أو صحّح الاسم في continueIn أو في سمة السياج التي يقرؤها. السياج الذي يأتي قبل النص لا يمكنه استقباله: انقله إلى ما بعده أو سمِّ صفحة لاحقة.",
+      "ja": "後ろのページ囲みに枠が指す id を付ける（::::page{template=\"…\" id=\"p47\"}）か、continueIn または読み取る属性の名前を直してください。記事より前のページは続きを受けられません。後ろへ移すか、後ろのページを指定してください。",
+      "pt": "Dê à página posterior o id que o quadro indica (::::page{template=\"…\" id=\"p47\"}) ou corrija o nome em continueIn ou no atributo da página que ele lê. Uma página que vem antes da matéria não pode recebê-la: mova-a para depois ou indique uma posterior.",
+      "fr": "Donnez à la page placée plus loin l’id que nomme le bloc (::::page{template=\"…\" id=\"p47\"}), ou corrigez le nom dans continueIn ou dans l’attribut de page qu’il lit. Une page qui précède l’article ne peut pas le recevoir : déplacez-la après, ou nommez-en une plus loin.",
+      "de": "Geben Sie dem späteren Seitenzaun die id, die der Rahmen nennt (::::page{template=\"…\" id=\"p47\"}), oder korrigieren Sie den Namen in continueIn oder im gelesenen Attribut. Eine Seite vor dem Text kann ihn nicht aufnehmen: Setzen Sie sie dahinter oder nennen Sie eine spätere.",
+      "it": "Dai alla pagina successiva l'id che la cornice indica (::::page{template=\"…\" id=\"p47\"}) o correggi il nome in continueIn o nell'attributo della pagina che legge. Una pagina che viene prima dell'articolo non può riceverlo: spostala dopo o indicane una successiva."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "continueTargetMissing",
+        "es": "continueTargetMissing",
+        "ca": "continueTargetMissing",
+        "zh": "continueTargetMissing",
+        "ar": "continueTargetMissing",
+        "ja": "continueTargetMissing",
+        "pt": "continueTargetMissing",
+        "fr": "continueTargetMissing",
+        "de": "continueTargetMissing",
+        "it": "continueTargetMissing"
       }
     }
   },

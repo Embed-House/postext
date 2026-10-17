@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: an agent at work in the Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'What an AI agent in the browser can do with the Sandbox through its 39 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
+  description: 'What an AI agent in the browser can do with the Sandbox through its 40 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
@@ -23,7 +23,7 @@ picture of page 12, sets `bodyText.fontSize` to 10.5 pt, sees that the chapter
 went from 18 to 19 pages, and puts it back. It does what you do by eye, and
 it does it with your book, in your browser.
 
-There are 39 tools whose names start with `sandbox_`, registered while the
+There are 40 tools whose names start with `sandbox_`, registered while the
 Sandbox is on screen, and 8 tools of the site, `site_*`, on every page of
 postext.dev. This page sorts them by what you would ask an agent to do, and
 gives the call for each one.
@@ -39,7 +39,7 @@ finds them there. Nothing has to be installed or set up on the Postext side.
 WebMCP is still a draft. Chrome offers it as an origin trial, and behind the
 flag `chrome://flags/#enable-webmcp-testing`. The tools follow the page: on
 the home page or in the docs the agent has the `site_*` tools; once the
-Sandbox is on screen, the 39 `sandbox_*` tools appear as well.
+Sandbox is on screen, the 40 `sandbox_*` tools appear as well.
 
 ### In any other browser: `window.postextWebMcp`
 
@@ -412,6 +412,16 @@ renames a resource and, by default, every reference to it in the book.
 `sandbox_list_resources` lists them, and with an `id` gives one in full (a
 table's cells with their formatting, an SVG's source).
 
+A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`).
+
+```jsonc
+// two anchors of a map, with their label styles
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 Fonts uploaded into the book go through `sandbox_save_font`:
 
 ```json
@@ -547,6 +557,7 @@ again with the `from` values of the first answer.
 `chapter: 4` → for each warning, `sandbox_read_text` around its `line` and
 `sandbox_render_page` of its `page` → `sandbox_edit_text` or
 `sandbox_set_config` → `sandbox_get_warnings` again until it comes back empty.
+A frame of a composed page that does not fit comes with its fixes (`proposals`): `sandbox_apply_proposal` with its `frame` and a fix's number makes it, lays the chapter out again and answers `fits`.
 
 **"Make a book from this Word file and give me the PDF."** `sandbox_save_book`
 with `action: "new_blank"` → `sandbox_import_word` with `dryRun: true` →
@@ -626,7 +637,7 @@ each one come with `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Questions**: `sandbox_answer`.
-- **The checks**: `sandbox_get_warnings`.
+- **The checks**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
 
 ## When you embed the Sandbox
 

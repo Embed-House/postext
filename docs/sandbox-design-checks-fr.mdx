@@ -269,6 +269,7 @@ Des diagnostics en direct, recalculés à partir du texte, de la maquette, des f
   - *Colonnes trop étroites* : un groupe `:::columns` dont les colonnes sont plus étroites que six em de leur texte (`columnsTooNarrow`) ;
   - *Le texte déborde de son bloc* : le contenu d’un bloc d’une page composée dépasse le pied du bloc après la cascade de recomposition, et le bloc n’a plus de `next` où continuer, si bien que la sortie paginée coupe le reste ; l’entrée nomme le bloc, la langue du document et le modèle, donne la page et la hauteur coupée, en mm, les étapes essayées (par exemple *texte réduit à 90 %*) et les changements qui le feraient tenir, avec leurs valeurs (*portez maxHeight à 68 mm*, *coupez environ 180 caractères*) (`frameOverflow` ; voir [Pages composées](/fr/docs/composed-pages#lavertissement-et-ses-propositions)) ; un bloc qui continue sur des pages ajoutées (`overflow.continueIn`) ne le déclenche que lorsque le bloc d’une page ajoutée ne peut rien prendre de son contenu ;
   - *Le texte déborde encore après les pages ajoutées* : le contenu d’un bloc est parti sur les 16 pages qu’une page composée peut ajouter et ne tient toujours pas ; l’entrée nomme le bloc et le modèle de la dernière page ajoutée, donne cette page, le nombre de pages ajoutées et la hauteur coupée (`frameContinuationLimit` ; voir [Pages composées](/fr/docs/composed-pages#framecontinuationlimit)) ;
+  - *Un article renvoie à une page qui ne suit pas* : l’`overflow.continueIn: 'page:<id>'` d’un bloc ne nomme aucun délimiteur de page placé plus loin, si bien que le reste s’est poursuivi sur la page suivante ; l’entrée nomme le bloc, le modèle et l’id, et donne la page (`continueTargetMissing` ; voir [Pages composées](/fr/docs/composed-pages#continuetargetmissing)) ;
   - *Encadré ou figure latéral après la fin du texte* : un encadré latéral, ou une figure de la colonne latérale, placé sur une page sans texte parce que le texte de son chapitre s’est terminé pendant qu’il attendait de la place dans la colonne latérale ; l’entrée nomme la page (`afterText`) ;
   - *Sur aucune page* : un encadré ou un flottant qui attendait encore un emplacement à la fin de la mise en page, et qui ne se trouve sur aucune page (`unplaced`) ;
   - *Liste courte coupée entre colonnes* : une liste de quelques éléments composée sur deux colonnes ou deux pages ; listée quand **Texte courant → Listes courtes coupées entre colonnes** est sur *Avertir*, et sur *Éviter* pour une liste qu’aucune colonne ne pouvait contenir entière (`shortListSplit`) ;
@@ -296,6 +297,7 @@ La section rassemble :
 
 - *Le texte déborde de son bloc* (`frameOverflow`), avec les étapes essayées par la cascade de recomposition et les changements qui feraient tenir le bloc ;
 - *Le texte déborde encore après les pages ajoutées* (`frameContinuationLimit`) : le contenu du bloc a continué sur toutes les pages qu’une page composée peut ajouter et ne tient toujours pas ;
+- *Un article renvoie à une page qui ne suit pas* (`continueTargetMissing`) : aucun délimiteur de page placé plus loin ne porte l’id que nomme le `continueIn` du bloc ;
 - *Étiquette sur une ancre inconnue* et *Ancre sans étiquette* (`labelAnchorUnknown`, `anchorUnlabelled`), rangées sous le bloc qui compose la figure ;
 - *Slot sans bloc*, *Bloc vide*, *Modèle de page inconnu*, *Page composée avec trois deux-points* et *La double page ne correspond pas au modèle* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`) ;
 - *Bloc de la table des matières coupé entre colonnes* (`tocGroupSplit`) ;
@@ -332,3 +334,18 @@ Les options : **Les pages aux blocs placés aux mêmes endroits partagent un gab
 Restent dans la configuration, et sont listés sous **Reste dans la configuration** : un texte qui mêle des mots et des marqueurs (`Page {pageNumber}`), un texte accroché à la boîte de son en-tête ou à un autre élément, et le texte d’un dessin de titre (qui n’est pas une page). Sur les pages, le dessin d’un titre posé dans un bloc (l’onglet d’un titre encadré, les bandeaux tracés autour d’un titre) n’y est pas dessiné : une page de texte courant sous de tels titres paraît donc différente. Le contrôle de contraste mesure le texte d’un bloc contre la page et non contre une boîte de la décoration placée dessous ; il peut donc signaler une étiquette blanche sur une boîte colorée.
 
 Le même déplacement est une fonction du moteur, `moveTextToMarkdown({ config, chapters, metadata }, options)`, qui rend la nouvelle configuration, les chapitres et le rapport qu’affiche la fenêtre. Voir [Pages composées](/fr/docs/composed-pages#migrer-un-livre-dont-le-texte-est-dans-ses-styles).
+
+### Corriger un bloc en un clic
+
+Sous *Le texte déborde de son bloc*, les solutions que l'échelle de recomposition a calculées pour ce bloc sont des boutons, dans les mots mêmes de l'avertissement :
+
+- *laissez le texte descendre à 60 %* fixe le `fit.minScale` du bloc (et active `fit.shrinkText` s'il était désactivé) ;
+- *portez maxHeight à 66 mm* fixe son `maxHeight` ;
+- *baissez le minHeight de …* abaisse la hauteur minimale d'un autre bloc de son groupe ;
+- *faites-le continuer sur la page suivante* règle `overflow.continueIn` sur `next-page`, pour que ce qui ne tient pas continue sur une page ajoutée après celle-ci ;
+- *composez la page avec le modèle …* réécrit le `template` de la clôture `::::page` de la page dans le texte ;
+- *coupez environ 626 caractères* ne change rien : il sélectionne le texte du bloc dans le panneau **Texte** et dit combien de caractères retirer.
+
+Les autres boutons changent la forme du livre ; chacun demande donc d'abord, en nommant le réglage et sa valeur (*tema-fija › dinero › maxHeight = 66 mm*) ou le modèle que prendra la page. Un changement de maquette vaut pour toutes les pages composées avec ce modèle. **Modifier** fait le changement comme une étape de l'historique d'annulation : Cmd/Ctrl+Z, ou le bouton Annuler à côté de Contenu et Maquette, le défait. La page est recomposée, et l'avertissement disparaît, ou laisse place à ce que le changement a laissé (un bloc plus bas qui ne tient plus).
+
+Les mêmes boutons accompagnent le bloc dans le panneau **Ce qui a bougé, et pourquoi** du canevas. L'avertissement d'une édition qui n'est pas à l'écran propose d'ouvrir cette édition, où ses solutions peuvent être appliquées. Si le livre a changé depuis que la mise en page a proposé une solution (le modèle a été modifié, la clôture nomme un autre modèle), le bouton le dit et ne change rien. Un agent applique les mêmes solutions avec `sandbox_apply_proposal` ([WebMCP](/fr/docs/webmcp)).

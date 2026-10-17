@@ -19,6 +19,7 @@ import {
   type VDTComposedPage,
   type VDTExclusionContour,
   type VDTPage,
+  type VDTComicPage,
   type BoundingBox,
   type ResolvedResourceBlock,
   type VDTBalancing,
@@ -43,7 +44,7 @@ import {
 } from '../numbering';
 import { extractFrontmatter, normalizeMetadata } from '../frontmatter';
 import { collectConfigWarnings } from '../configWarnings';
-import { initHyphenator } from '../measure';
+import { initHyphenator, measureRichBlock } from '../measure';
 import { setHyphenationRules } from '../hyphenate';
 import { citedNames } from '../citations/names';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
@@ -84,9 +85,9 @@ import { applyStatementNumbering, numberStatements, outlineLookup } from './stat
 import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds';
 import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
-import { resolvePageTemplate } from '../composed/templates';
+import { continueInPage, resolvePageTemplate } from '../composed/templates';
 import { layoutComposedSpread } from '../composed/spread';
-import { assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
+import { assignJumpReceivers, assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import { frameElementId } from '../composed/ids';
 import { nextFrameOf } from '../composed/geometry';
 import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
@@ -137,6 +138,7 @@ import { chooseParagraphSplit } from './orphanWidow';
 import { layoutComicPage, comicPageLayoutWarnings } from '../comics/layoutPage';
 import { comicStripExtent, comicStripOffset, comicStripPlacement, comicStripWidth, layoutComicStrip } from '../comics/strip';
 import { isComicSpread, layoutComicSpread } from '../comics/spread';
+import { comicTextPanelsSupported, layoutComicTextFrames, planComicTextPanels, wrapComicTextPanels } from '../comics/textPanels';
 import type { ComicPageSource } from '../comics/types';
 import {
   applyStyleAttrs,
@@ -849,7 +851,10 @@ function placeDocumentPass(
   // in a frame is a group of its box.
   const templateSource = { pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles };
   const composedWrap = wrapComposedPages(numberedBlocks, templateSource);
-  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(composedWrap.blocks) : { blocks: composedWrap.blocks, wrapped: false };
+  // A comic page's text panels (#885): each panel's Markdown in a story
+  // box of the same kind, set in the panel's frame (below).
+  const comicText = wrapComicTextPanels(composedWrap.blocks, comicTextPanelsSupported(resolved));
+  const flowGroups = resolved.layout.flowColumns ? wrapFlowColumns(comicText.blocks) : { blocks: comicText.blocks, wrapped: false };
   const spanEmbeds = wrapPageSpanEmbeds(flowGroups.blocks, content.resources ?? [], effectiveResourceTypes(config, content.resources ?? []));
   // Code listings (#624): each in a box of the code style, which the
   // callout machinery places and splits.
@@ -918,7 +923,7 @@ function placeDocumentPass(
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
     // The frameless box of a composed page's story (#855).
-    ...(composedWrap.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
+    ...(composedWrap.wrapped || comicText.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
     // text column, a gutter apart across the page.
     ...(flowGroups.wrapped
@@ -935,7 +940,7 @@ function placeDocumentPass(
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
@@ -977,10 +982,12 @@ function placeDocumentPass(
   // story holds does not float. A reference in a frame to a picture set
   // elsewhere floats from the page's end, to the pages after it.
   const composedPlans = planComposedPages(contentBlocks, calloutPlan, templateSource);
-  if (composedPlans.size > 0) {
+  // A comic page's text panels (#885) likewise.
+  const comicTextPlans = comicText.wrapped ? planComicTextPanels(contentBlocks, calloutPlan) : new Map<number, PlannedComposedPage>();
+  if (composedPlans.size > 0 || comicTextPlans.size > 0) {
     for (let k = floatPlan.length - 1; k >= 0; k--) {
       const f = floatPlan[k]!;
-      const page = composedPageAt(composedPlans, f.firstBlockIdx);
+      const page = composedPageAt(composedPlans, f.firstBlockIdx) ?? composedPageAt(comicTextPlans, f.firstBlockIdx);
       if (!page) continue;
       const raw = contentBlocks[f.firstBlockIdx];
       if (raw?.type === 'resourceBlock' && raw.resourceId === f.resourceId && page.storyAt(f.firstBlockIdx)) floatPlan.splice(k, 1);
@@ -6262,6 +6269,18 @@ function placeDocumentPass(
       return false;
     },
   };
+  /** Every frame of the composed pages laid so far, by id: a story that
+   *  jumps to a later page (#917) links its pieces across pages. */
+  const frameAt = new Map<string, { page: VDTPage; frame: VDTComposedPage['frames'][number] }>();
+  /** The planned composed pages by their fence's `id` (#917): where a
+   *  `'page:<id>'` continuation lands. */
+  const fenceById = new Map<string, PlannedComposedPage>();
+  for (const pl of composedPlans.values()) {
+    const id = contentBlocks[pl.startIdx]?.composedPage?.attrs.id;
+    if (id !== undefined && id !== '' && !fenceById.has(id)) fenceById.set(id, pl);
+  }
+  /** Stories waiting for the later page fence they jump to, by its id. */
+  const jumps = new Map<string, ComposedContinuation[]>();
   /** Set the composed page `planned` on a fresh page (#855), or a spread
    *  template on the two facing pages from the next verso (#861). */
   const placeComposedPage = (planned: PlannedComposedPage, fence: ComposedPageFence): void => {
@@ -6311,11 +6330,15 @@ function placeDocumentPass(
       recto.columns = [createVDTColumn(0, recto.contentArea)];
       cursor.columnIndex = 0;
       // The sheet is laid in the pages' flow: the left page first, or the
-      // right one where the flow is mirrored (right to left).
+      // right one where the flow is mirrored (right to left) or turned (a
+      // vertical page, #926: the flow's y runs from the sheet's right edge
+      // to its left, and the right page comes first along it).
       const versoIsLeft = resolved.page.binding !== 'right';
-      const flowMirrored = pageIsMirrored(verso);
+      const vertical = pageIsVertical(verso);
+      const flowMirrored = pageIsMirrored(verso) || vertical;
       const left = versoIsLeft ? verso : recto;
       const right = versoIsLeft ? recto : verso;
+      const frames = designFramesOn(verso);
       const out = layoutComposedSpread({
         ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
         ...extra,
@@ -6323,8 +6346,9 @@ function placeDocumentPass(
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
         firstSide: flowMirrored ? 'right' : 'left',
-        trim: pageMetrics.physical.trimBox,
-        bleed: pageMetrics.physical.bleedBox,
+        trim: frames.page,
+        bleed: frames.bleed,
+        ...(vertical ? { axis: 'y' as const } : {}),
       });
       return { sides: out.sides as readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[], warnings: out.warnings, laid: out.laid, continuations: out.continuations };
     };
@@ -6340,9 +6364,37 @@ function placeDocumentPass(
       return { parity, template, areas: { area, page: frames.page, bleed: frames.bleed } };
     };
     let continuations: ComposedContinuation[] | undefined;
+    // Stories that jump to this page (#917): they go on in the frames its
+    // own content leaves empty; those that find none go on after it.
+    const incoming = fence.attrs.id !== undefined ? jumps.get(fence.attrs.id) ?? [] : [];
+    if (fence.attrs.id !== undefined) jumps.delete(fence.attrs.id);
+    let jumpReceivers = new Map<string, ComposedContinuation>();
+    let jumpLeft: ComposedContinuation[] = [];
+    const receive = (template: NonNullable<ReturnType<typeof resolvePageTemplate>>) => {
+      if (incoming.length === 0) return {};
+      const names = new Set(template.frames.map((f) => f.name));
+      const prev = new Map<string, string>();
+      for (const f of template.frames) {
+        const n = nextFrameOf(f);
+        if (n && names.has(n) && !prev.has(n)) prev.set(n, f.name);
+      }
+      const headOf = (n: string): string => {
+        const seen = new Set([n]);
+        let at = n;
+        for (let q = prev.get(at); q !== undefined && !seen.has(q); q = prev.get(at)) { seen.add(q); at = q; }
+        return at;
+      };
+      const assigned = assignJumpReceivers(template, incoming, (n) => planned.stories.has(headOf(n)));
+      jumpReceivers = assigned.receivers;
+      jumpLeft = assigned.left;
+      return {
+        stories: new Map([...planned.stories, ...[...jumpReceivers].map(([n, c]) => [n, c.story] as const)]),
+        continuing: { receivers: jumpReceivers, generation: 0, collapse: false, last: false, jump: true as const },
+      };
+    };
     const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
     if (sheet?.spread) {
-      const out = laySpread(sheet, {});
+      const out = laySpread(sheet, receive(sheet));
       placed.push(...out.sides);
       composedNotes.push(...out.warnings);
       laid = out.laid;
@@ -6350,19 +6402,19 @@ function placeDocumentPass(
     } else {
       const page = doc.pages[cursor.pageIndex]!;
       const { parity, template, areas } = singleOn(page, fence.template);
+      const extra = receive(template);
       // Kept by what it reads (#857): a page met again is not set again.
-      // A spread is laid out afresh each time (its two sides are one sheet).
-      const out = layoutComposedPageMemo({
-        ...common(page, { id: template.id, spread: false, parity }),
-        page,
-        template,
-        areas,
-      }, composedMemo);
+      // A spread is laid out afresh each time (its two sides are one sheet),
+      // and so is a page a story jumps to.
+      const args = { ...common(page, { id: template.id, spread: false, parity }), page, template, areas };
+      const out = extra.continuing ? layoutComposedPage({ ...args, ...extra }) : layoutComposedPageMemo(args, composedMemo);
       placed.push({ page, composed: out.composed, blocks: out.blocks });
       composedNotes.push(...out.warnings);
       laid = out.laid;
       continuations = out.continuations;
     }
+    // A jumping story that found no free frame here goes on after it.
+    if (jumpLeft.length > 0) continuations = [...(continuations ?? []), ...jumpLeft.map((c) => ({ ...c, rule: 'next-page', template: placed[0]!.composed.template, collapsed: false }))];
     const commit = (list: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[]): void => {
       for (const { page, composed, blocks } of list) {
         page.composed = composed;
@@ -6378,14 +6430,59 @@ function placeDocumentPass(
     // (or spread) per template it goes on to, generation after generation,
     // each laid afresh after the pages before it. The added pages are
     // ordinary pages (numbered, with running heads, sides kept).
-    const frameAt = new Map<string, { page: VDTPage; frame: VDTComposedPage['frames'][number] }>();
     const indexFrames = (list: readonly { page: VDTPage; composed: VDTComposedPage }[]): void => {
       for (const s of list) for (const f of s.composed.frames) if (!f.facingBlocks) frameAt.set(f.id, { page: s.page, frame: f });
     };
     indexFrames(placed);
+    /** The sending frame of `c` points to the frame `to` that took it, and
+     *  its page's log says where it went. */
+    const link = (c: ComposedContinuation, to: string): void => {
+      const src = frameAt.get(c.fromFrameId);
+      const dst = frameAt.get(to);
+      if (!src || !dst) return;
+      src.frame.continuesTo = to;
+      const log = src.page.composed!.log;
+      let at = log.length;
+      for (let i = log.length - 1; i >= 0; i--) {
+        if (log[i]!.frame === c.frame) { at = i + 1; break; }
+      }
+      log.splice(at, 0, { frame: c.frame, kind: 'continued', toPage: dst.page.index, toFrame: to });
+    };
+    for (const [name, c] of jumpReceivers) link(c, frameElementId(fence.fenceIndex, name));
+    /** Stories that jump to a later page fence (#917) wait for it; one
+     *  whose fence is not after this page goes on on the next page, and
+     *  says so. */
+    const route = (list: readonly ComposedContinuation[]): ComposedContinuation[] => {
+      const out: ComposedContinuation[] = [];
+      for (const c of list) {
+        const target = continueInPage(c.rule);
+        if (!target) { out.push(c); continue; }
+        const to = fenceById.get(target.page);
+        if (to && to.startIdx > planned.endIdx) {
+          const waiting = jumps.get(target.page) ?? [];
+          waiting.push(c);
+          jumps.set(target.page, waiting);
+          continue;
+        }
+        const from = frameAt.get(c.fromFrameId);
+        composedNotes.push({
+          kind: 'continueTargetMissing',
+          template: c.template,
+          frame: c.frame,
+          fenceIndex: fence.fenceIndex,
+          target: target.page,
+          configPath: resolvePageTemplate(templateSource, c.template)?.frames.find((f) => f.name === c.frame)?.configPath ?? '',
+          ...(to ? { before: true } : {}),
+          ...(from?.frame.sourceStart !== undefined ? { sourceStart: from.frame.sourceStart, sourceEnd: from.frame.sourceEnd } : {}),
+          ...(from ? { pageIndex: from.page.index } : {}),
+        });
+        out.push({ ...c, rule: 'next-page' });
+      }
+      return out;
+    };
     const overflowTemplateOf = (id: string): string | undefined => resolvePageTemplate(templateSource, id)?.overflowTemplate;
     const firstPage = placed[0]?.page.index ?? cursor.pageIndex;
-    let pending = continuations ?? [];
+    let pending = route(continuations ?? []);
     for (let generation = 1; pending.length > 0; generation++) {
       const last = generation >= MAX_CONTINUATION_PAGES;
       let queue = pending;
@@ -6462,20 +6559,8 @@ function placeDocumentPass(
         composedNotes.push(...notes);
         // Each frame that sent content on points to the frame that took it,
         // and its page's log says where it went.
-        for (const c of receivers.values()) {
-          const to = frameElementId(fence.fenceIndex, c.slot, generation);
-          const src = frameAt.get(c.fromFrameId);
-          const dst = frameAt.get(to);
-          if (!src || !dst) continue;
-          src.frame.continuesTo = to;
-          const log = src.page.composed!.log;
-          let at = log.length;
-          for (let i = log.length - 1; i >= 0; i--) {
-            if (log[i]!.frame === c.frame) { at = i + 1; break; }
-          }
-          log.splice(at, 0, { frame: c.frame, kind: 'continued', toPage: dst.page.index, toFrame: to });
-        }
-        if (more) pending.push(...more);
+        for (const c of receivers.values()) link(c, frameElementId(fence.fenceIndex, c.slot, generation));
+        if (more) pending.push(...route(more));
       }
     }
     for (const [head, story] of planned.stories) {
@@ -6484,6 +6569,38 @@ function placeDocumentPass(
     }
     pendingComposedBreak = 'page';
     flushPendingNumberingAtBoundary();
+  };
+
+  /**
+   * The text panels of a comic page (#885): each story set in its panel's
+   * frame (`layoutComicTextFrames`), its blocks floats of the page; the
+   * stories laid are done for the main loop.
+   */
+  const placeComicText = (page: VDTPage, comic: VDTComicPage, plan: PlannedComposedPage): void => {
+    const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
+    const out = layoutComicTextFrames({
+      pass: framePass,
+      resolved,
+      page,
+      comic,
+      plan,
+      styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
+      dpi,
+      emPx: bodyStyle.fontSizePx,
+      bodyOffset,
+      mirrored: mirroredOf(page),
+      pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
+      locale: resolvedLocale(resolved),
+    });
+    const floats = (page.floats ??= []);
+    for (const b of out.blocks) {
+      floats.push(b);
+      doc.blocks.push(b);
+    }
+    for (const [key, story] of plan.stories) {
+      if (!out.laid.has(key)) continue;
+      for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
+    }
   };
 
   /** The first block of the document that sets something: a heading there
@@ -6759,6 +6876,8 @@ function placeDocumentPass(
             sourceOffset: bodyOffset,
             mirrorMargins: pageMirrored(resolved, page.index, pageIndexOffset, true),
           });
+          const textPlan = comicTextPlans.get(blockIdx);
+          if (textPlan) placeComicText(page, page.comic, textPlan);
         }
         pendingComicBreak = true;
         flushPendingNumberingAtBoundary();
@@ -8707,6 +8826,9 @@ function placeDocumentPass(
     page.pageLabel = info.label;
     page.pageNumberFormat = info.format;
   }
+  // Continuation marks with a page number (#917): the page the rest goes
+  // on on, or comes from, now that pages are numbered.
+  fillPageMarks(doc.pages);
   const restarts = pageNumberSegments
     .filter((s, i) => i > 0 && s.startAt !== undefined && s.startPageIndex < doc.pages.length)
     .map((s) => s.startPageIndex);
@@ -8945,6 +9067,44 @@ function afterTextWarnings(doc: VDTDocument): ContentWarning[] {
     }
   }
   return out;
+}
+
+/**
+ * Write the page numbers into the continuation marks of composed pages'
+ * frames (#917, `VDTDesignTextBlock.pageMark`): `{page}` becomes the label
+ * of the page the frame's rest goes on on (`continuesTo`) or comes from
+ * (`continuedFrom`). The mark was laid out with a guess of the number; its
+ * lines are measured again with the true one and keep their alignment.
+ */
+function fillPageMarks(pages: readonly VDTPage[]): void {
+  const frames = new Map<string, VDTPage>();
+  for (const p of pages) for (const f of p.composed?.frames ?? []) if (!f.facingBlocks) frames.set(f.id, p);
+  for (const p of pages) {
+    for (const f of p.composed?.frames ?? []) {
+      for (const id of f.blockIds) {
+        const box = p.floats?.find((b) => b.id === id);
+        for (const d of box?.designOverlay?.blocks ?? []) {
+          if (d.kind !== 'text' || !d.pageMark) continue;
+          const other = d.pageMark.page === 'to' ? f.continuesTo : f.continuedFrom;
+          const at = other !== undefined ? frames.get(other) : undefined;
+          if (!at) continue;
+          const label = at.pageLabel ?? String(at.pageNumberValue ?? at.index + 1);
+          const text = d.pageMark.text.split('{page}').join(label);
+          const lh = d.lines.length > 0 ? d.bbox.height / d.lines.length : d.bbox.height;
+          const first = d.lines[0];
+          const slack0 = first ? d.bbox.width - first.width : 0;
+          const align = !first || first.xOffset < 0.5 ? 'left' : Math.abs(first.xOffset - slack0) < 0.5 ? 'right' : 'center';
+          const base = first ? first.baselineY - d.bbox.y : lh * 0.8;
+          const { lines } = measureRichBlock([{ text, bold: false, italic: false }], d.fontString, d.fontString, d.fontString, d.fontString, d.bbox.width, lh, { textAlign: 'left' });
+          if (lines.length === 0) continue;
+          d.lines = lines.map((ln, i) => {
+            const slack = Math.max(0, d.bbox.width - ln.bbox.width);
+            return { text: ln.text, xOffset: align === 'right' ? slack : align === 'center' ? slack / 2 : 0, baselineY: d.bbox.y + base + i * lh, width: ln.bbox.width };
+          });
+        }
+      }
+    }
+  }
 }
 
 /** `doc` with the page of each of its index marks (`doc.indexMarks`). */

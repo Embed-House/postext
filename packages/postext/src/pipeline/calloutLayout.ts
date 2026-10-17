@@ -363,6 +363,11 @@ export interface CalloutLayoutInput {
    *  over the placed block after placement (`buildHeadersAndFooters`).
    *  Absent: headings in boxes reserve nothing for a design. */
   headingDesign?: BoxHeadingDesign;
+  /** A continuation fragment that opens on another page than the piece
+   *  before it (#917, a frame's `overflow.fromMark`): words set at its
+   *  head, in the box's body face as the continuation marker is, before
+   *  the first child ("Continued from page 47"). */
+  continuedMark?: string;
 }
 
 /** See `CalloutLayoutInput.headingDesign`. `lines` are the heading's
@@ -582,6 +587,14 @@ export function offsetBlock(blk: VDTBlock, ox: number, oy: number): void {
   if (blk.prefixX !== undefined) blk.prefixX += ox;
   if (blk.bulletY !== undefined) blk.bulletY += oy;
   if (blk.bulletBaselineY !== undefined) blk.bulletBaselineY += oy;
+  if (blk.dropCap) {
+    blk.dropCap.x += ox;
+    blk.dropCap.baselineY += oy;
+    if (blk.dropCap.hang) {
+      blk.dropCap.hang.x += ox;
+      blk.dropCap.hang.baselineY += oy;
+    }
+  }
   if (blk.resourceBlock) offsetResourceBlock(blk.resourceBlock, ox, oy);
   // A nested box's frame carries its decoration on the overlay.
   if (blk.designOverlay) {
@@ -818,6 +831,32 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ...(repeatedTitle ? { artifact: true } : {}),
     }, titleTrackingPx);
     cursorY += titleHeight;
+  }
+  // "Continued from …" at the head of a piece that opens on another page
+  // (#917): pagination furniture, as the "Continued" marker is.
+  const fromText = input.continuation ? (input.continuedMark ?? '').trim() : '';
+  let fromBlock: VDTDesignTextBlock | undefined;
+  if (fromText.length > 0) {
+    const font = buildFontString(style.body.fontFamily, em, style.body.fontWeight.toString(), style.continuesMarkerItalic ? 'italic' : 'normal');
+    const lh = bodyStyle.lineHeightPx;
+    const { lines } = measureRichBlock([{ text: fromText, bold: false, italic: false }], font, font, font, font, innerWidth, lh, { textAlign: 'left' });
+    if (lines.length > 0) {
+      const top = cursorY;
+      const align = style.continuesMarkerAlign;
+      fromBlock = directText({
+        kind: 'text',
+        bbox: createBoundingBox(innerX, top, innerWidth, lines.length * lh),
+        fontString: font,
+        color: bodyStyle.color,
+        lines: lines.map((ln, i) => {
+          const slack = Math.max(0, innerWidth - ln.bbox.width);
+          return { text: ln.text, xOffset: align === 'right' ? slack : align === 'center' ? slack / 2 : 0, baselineY: top + i * lh + lineBaselineOffset(lh, font), width: ln.bbox.width };
+        }),
+        clip: false,
+        artifact: true,
+      });
+      cursorY += lines.length * lh;
+    }
   }
 
   // --- Children --------------------------------------------------------------
@@ -1069,6 +1108,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // with its lines short beside them. A child the range opens inside
     // keeps the lines it was counted with.
     const opensInside = lineCut ? lineCut.from > 0 : isFirstRealOf(k) && (input.lineFrom ?? 0) > 0;
+    // A drop cap (#623) in a composed page's frame (#922): on the piece
+    // that holds the paragraph's first line, its rise kept clear above.
+    const cap = measuredBlock.dropCap && !opensInside ? measuredBlock.dropCap : undefined;
+    if (cap && cap.rise > 0.5) st.cursorY += cap.rise;
     if (exclusions.length > 0 && !opensInside && !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender)) {
       const lineInsets = exclusionInsets(exclusions, x, width, st.cursorY, kind.style.lineHeightPx);
       if (lineInsets.length > 0) {
@@ -1142,6 +1185,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       height = blk.lines.length * bs.lineHeightPx;
       blk.sourceStart = keptLines[0]!.sourceStart ?? raw.sourceStart + ctx.bodyOffset;
       blk.sourceEnd = keptLines[keptLines.length - 1]!.sourceEnd ?? raw.sourceEnd + ctx.bodyOffset;
+      // A short paragraph keeps the room under its initial (`'reserve'`).
+      if (cap && cutTo === undefined) height = Math.max(height, cap.minLines * bs.lineHeightPx);
     }
 
     // A heading with a design of its own (#906): the box keeps the room
@@ -1172,6 +1217,29 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       line.baseline += st.cursorY;
     }
     if (blk.resourceBlock) offsetResourceBlock(blk.resourceBlock, x, st.cursorY);
+    const capLine = blk.lines[0];
+    if (cap && capLine && isTextRun) {
+      // As the flow stamps it (`build.ts`): on the baseline of the line it
+      // sinks to.
+      blk.dropCap = {
+        text: cap.text,
+        fontString: cap.fontString,
+        color: cap.color,
+        x: blk.bbox.x + cap.x,
+        baselineY: capLine.baseline + (cap.sink - 1) * bs.lineHeightPx,
+        width: cap.width,
+        fontSizePx: cap.fontSizePx,
+        lines: cap.lines,
+        sink: cap.sink,
+        ...(cap.sourceStart !== undefined ? { sourceStart: cap.sourceStart, sourceEnd: cap.sourceEnd } : {}),
+        plainStart: cap.plainStart,
+        plainEnd: cap.plainEnd,
+        word: cap.word,
+        wordRest: cap.wordRest,
+        ...(cap.hang ? { hang: { text: cap.hang.text, fontString: cap.hang.fontString, x: blk.bbox.x + cap.hang.x, baselineY: capLine.baseline, width: cap.hang.width } } : {}),
+      };
+      if (cap.sourceStart !== undefined && (blk.sourceStart === undefined || cap.sourceStart < blk.sourceStart)) blk.sourceStart = cap.sourceStart;
+    }
     // A code listing (#624): its language, numbers and fit; the lines a
     // fence highlights get a band across the box.
     if (code) {
@@ -1746,6 +1814,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const extra = iconSize - contentH;
     if (style.icon.align === 'center') {
       if (titleBlock) offsetDesignBlock(titleBlock, 0, extra / 2);
+      if (fromBlock) offsetDesignBlock(fromBlock, 0, extra / 2);
       if (continuesBlock) offsetDesignBlock(continuesBlock, 0, extra / 2);
       for (const blk of childBlocks) offsetBlock(blk, 0, extra / 2);
       for (const r of groupRules) offsetDesignBlock(r, 0, extra / 2);
@@ -1855,6 +1924,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   }
   overlayBlocks.push(...groupRules);
   if (titleBlock) overlayBlocks.push(titleBlock);
+  if (fromBlock) overlayBlocks.push(fromBlock);
   if (continuesBlock) overlayBlocks.push(continuesBlock);
 
   // --- Label tab ---------------------------------------------------------------

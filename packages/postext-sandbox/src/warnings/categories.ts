@@ -100,6 +100,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'comicBalloonOverflow':
     case 'frameOverflow':
     case 'frameContinuationLimit':
+    case 'continueTargetMissing':
       return 'typesetting';
     case 'storageUnavailable':
       return 'system';

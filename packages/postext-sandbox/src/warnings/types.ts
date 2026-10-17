@@ -44,6 +44,7 @@ export type WarningKind =
   | 'pageFenceLength'
   | 'frameOverflow'
   | 'frameContinuationLimit'
+  | 'continueTargetMissing'
   | 'spreadMismatch'
   | 'labelAnchorUnknown'
   | 'anchorUnlabelled'
@@ -139,7 +140,8 @@ export type WarningKind =
   | 'comicPanelLetterbox'
   | 'comicAnchorOutsideSafeArea'
   | 'comicBalloonOverflow'
-  | 'comicUnknownSpeaker';
+  | 'comicUnknownSpeaker'
+  | 'comicPanelFrame';
 
 export type WarningPayload =
   | { kind: 'missingFont'; family: string }
@@ -266,6 +268,10 @@ export type WarningPayload =
   /** A frame's content went on to as many added pages as a composed page
    *  may add (#859) and still does not fit there. */
   | { kind: 'frameContinuationLimit'; template: string; frame: string; fenceIndex: number; pages: number; overflowMm: number; page: number; configPath: string }
+  /** A frame's `overflow.continueIn: 'page:<id>'` names no later page
+   *  fence (#917; `before`: that fence comes before it): the rest went on
+   *  on the next page. */
+  | { kind: 'continueTargetMissing'; template: string; frame: string; fenceIndex: number; target: string; before: boolean; page: number; configPath: string }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */
@@ -489,7 +495,7 @@ export type WarningPayload =
    *  a page whose text block is wider (#901): `scale` of its print width;
    *  the print, column and text block widths in mm. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
-  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
+  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the
    *  key; `suggestion` names the setting it is closest to, when one is. */
@@ -546,6 +552,11 @@ export type WarningPayload =
   | { kind: 'comicBalloonOverflow'; panel?: number; panelIndex?: number; reasons?: string[] }
   /** A speaker no picture marks and the cast does not list. */
   | { kind: 'comicUnknownSpeaker'; speaker: string }
+  /** A panel's frame (#885) falls back: an unknown `box` style, a text
+   *  panel's text clipped (found by the layout), or a text panel set in
+   *  the flow (a strip, a spread, a vertical or right-to-left document).
+   *  `panel` is 0-based, in source order. */
+  | { kind: 'comicPanelFrame'; reason: 'unknownBox' | 'textOverflow' | 'strip' | 'spread' | 'flow'; panel: number; style?: string; overflowMm?: number }
   /** A print preflight finding (#605): the engine's check, or what a
    *  placed PDF brings in. `page` is the book page number to jump to. */
   | { kind: 'preflight'; check: PreflightCheck; page?: number }

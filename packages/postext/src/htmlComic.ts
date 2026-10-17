@@ -33,6 +33,9 @@ export interface ComicHtmlPaint {
   idBase: string;
   /** `comics.cast`: the names speakers are announced under. */
   cast?: readonly ComicCastMember[];
+  /** Markup laid over a panel, after its figure and before its lettering
+   *  (a text panel's frame, #885), by panel index. */
+  overPanel?: (panel: VDTComicPanel) => string;
 }
 
 /** Options of {@link comicPanelSvg}. */
@@ -221,6 +224,7 @@ export function renderComicHtml(comic: VDTComicPage, width: number, height: numb
     parts.push(
       `<figure class="pt-comic-panel"${id} data-panel="${panel.index}"${continued ? ' data-continued="" aria-hidden="true"' : ''} style="position:absolute;left:${n3(x)}px;top:${n3(y)}px;width:${n3(w)}px;height:${n3(h)}px;margin:0;">${svg}</figure>`,
     );
+    if (paint.overPanel) parts.push(paint.overPanel(panel));
     parts.push(lettering(byPanel.get(panel.index)));
   }
   // Lettering of no panel laid out (none expected): after the panels.

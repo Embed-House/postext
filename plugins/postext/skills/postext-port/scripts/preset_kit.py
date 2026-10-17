@@ -430,7 +430,9 @@ def font_families(project: Path | str, redistributable: dict[str, bool] | None =
         fams.setdefault(fam, []).append({"weight": weight, "style": style, "file": f"fonts/{f.name}"})
     out = []
     for name, variants in fams.items():
-        entry: dict = {"name": name, "variants": sorted(variants, key=lambda v: (v["style"], v["weight"]))}
+        # upright faces first: a loader that matches on the file's own flags
+        # takes the first face it meets for a weight
+        entry: dict = {"name": name, "variants": sorted(variants, key=lambda v: (v["style"] != "normal", v["weight"]))}
         if redistributable and redistributable.get(name) is False:
             entry["redistributable"] = False
         out.append(entry)

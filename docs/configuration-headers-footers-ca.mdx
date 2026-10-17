@@ -632,6 +632,18 @@ Un element `image` dibuixa un recurs de mapa de bits o SVG del document — el l
       <td>La imatge és només ornamental (un ornament, una banda): no aporta text alternatiu a la sortida encara que el seu recurs en tingui (vegeu més avall).</td>
     </tr>
     <tr>
+      <td><code>fit</code></td>
+      <td><code>'contain' | 'cover'</code></td>
+      <td><code>'contain'</code></td>
+      <td>Amb <code>width</code> i <code>height</code> fixades: <code>'contain'</code> encabeix la imatge sencera dins la caixa, centrada; <code>'cover'</code> omple la caixa i retalla el que sobra, com una fotografia a sang. El retall de <code>'cover'</code> conserva sencera la zona segura del recurs (vegeu <a href="/ca/docs/document-format-resources">Recursos</a>); si la forma de la caixa no la pot contenir, es mostra la finestra més petita que la conté i la caixa queda sense omplir en un sentit. No s'aplica si un costat és <code>'auto'</code>. Des de postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>focus</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>—</td>
+      <td>El punt de la imatge que centra el retall de <code>'cover'</code>, en fraccions de la imatge: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per a una cara al terç superior. El retall continua deixant a la vista la zona segura. Sense ell, els marges al voltant de la zona segura es retallen en proporció a la seva mida, o la imatge se centra.</td>
+    </tr>
+    <tr>
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>—</td>
@@ -674,7 +686,7 @@ interface ElementPlacement {
    *  contingut, de manera que els elements que s'hi ancoren no se'n desenganxen, però un text llarg
    *  es talla o es plega allà — una capçalera pot reservar lloc per a l'etiqueta que
    *  en penja en comptes d'expulsar-la. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
+  size?: { width?: Size; height?: Size; maxWidth?: Size }; // Size: Dimension | 'fill' | 'auto' | { to, edge }
 }
 ```
 
@@ -697,6 +709,12 @@ Una vora relativa a un altre element usada amb `'container'`, `'page'` o `'bleed
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
+```
+
+Una mida també pot arribar fins a una vora d'una altra caixa: `{ to, edge }`, on `to` anomena la caixa com ho fa un ancoratge (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` d'un altre element i, a la decoració d'una pàgina composta, d'un marc o d'un grup) i `edge` quina de les seves vores, `'top'` o `'bottom'` per a una alçada, `'left'` o `'right'` per a una amplada. La mida va del punt d'ancoratge de l'element fins a aquesta vora, en el sentit en què creix l'element; una vora per darrere del punt d'ancoratge dona 0, i una vora de l'altre eix, o una caixa que no hi és, es llegeix com a `'fill'`. Un fons que va del peu d'una banda fins al sagnat es queda a la plantilla i segueix la banda quan aquesta es mou. Des de postext 1.38:
+
+```json
+{ "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
 ```
 
 Amb les marques de tall activades, el que un element pinta fora de la caixa de sang es retalla (vegeu [Marques de tall](/ca/docs/configuration-page-layout#marques-de-tall)).

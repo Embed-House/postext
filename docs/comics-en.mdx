@@ -154,6 +154,9 @@ A `::panel{…}` line starts a panel; its script runs to the next `::panel` line
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Flip this panel's picture, or keep it as drawn when the page mirrors its pictures (see <a href="#reading-direction">Reading direction</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>The panel's text alternative, for the tagged PDF, HTML and EPUB. Unset: the resource's <code>altText</code>.</td></tr>
     <tr><td><code>id=…</code></td><td>An id for the panel, which the HTML and EPUB outputs use as an anchor.</td></tr>
+    <tr><td><code>text</code></td><td>The panel's body is Markdown set in the panel's frame instead of a lettering script (see <a href="#text-panels">Text panels</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Dress the panel in a callout style (see <a href="#box-styles">Box styles</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>Where a text panel's text sits in its frame. Unset: at the top.</td></tr>
   </tbody>
 </table>
 
@@ -470,6 +473,53 @@ tomas: y viene tormenta.
 
 What changes from one edition to another follows from the document's `locale`: the default lettering and sound-effect faces, vertical lettering for Japanese and Traditional Chinese, the dropped full stops of Chinese and Japanese, the leading, and the page direction of an Arabic edition. Text runs about a fifth longer in Spanish or French than in English, and much shorter in Chinese or Japanese; the balloons grow and shrink with it, and `comicBalloonOverflow` names the panels where a translation needs a shorter line or a pin. Sound effects are words like any other: translate them, or keep the original and add a small one under it as a subtitle.
 
+## Comic pages and composed pages
+
+A comic page is a [composed page](/en/docs/composed-pages) whose template its split writes: the `split` value is a shorthand that generates the page's frames. Each cell of the split, once its panel's `pad` is taken off, is a frame, and so is each `inset` panel, one layer above the frame it lies on. A frame holds its panel's picture, border and background; the lettering is still placed panel by panel, as described above. A page of pictures and scripts lays out exactly as it did before.
+
+<table>
+  <thead>
+    <tr>
+      <th>What the split generates</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Frames</td><td>One per cell, in reading order; an inset panel's frame comes after the frame it lies on.</td></tr>
+    <tr><td>Names</td><td>The panel's <code>id</code>, else <code>p1</code>, <code>p2</code>… in panel order.</td></tr>
+    <tr><td>Ids</td><td>The comic is <code>cm&lt;n&gt;</code>, <code>n</code> the ordinal of its fence in the chapter (pages and strips counted together, from 0); a frame is <code>cm&lt;n&gt;:&lt;name&gt;</code>; a balloon is <code>cm&lt;n&gt;:&lt;name&gt;:b&lt;k&gt;</code>, <code>k</code> its line in the panel's script. They are the same in every language of the chapter and after any relayout.</td></tr>
+    <tr><td>Outline</td><td>A frame cut by a slanted line keeps the cell's polygon: its content is clipped to it, and a point hits the frame only inside it.</td></tr>
+    <tr><td>In the VDT</td><td><code>page.comic.frames</code>: <code>VDTFrame</code> records, each with <code>panel</code>, the index of the panel it holds, and an empty <code>configPath</code>, since the frame comes from the Markdown and not from the configuration.</td></tr>
+  </tbody>
+</table>
+
+### Text panels
+
+A panel with the flag `text` takes Markdown instead of a lettering script, and its body is poured into the panel's frame as a slot is poured into a frame of a composed page:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+The storm had lasted three days when the keeper's lamp went out.
+
+Maya climbed the **hundred and twelve** steps alone.
+::panel{art=lh-stairs}
+maya: Grandpa?
+:::
+```
+
+The body is set in the book's text style, inside the panel's border and the lettering's inset (`comics.lettering.inset`), from the top of the frame (`valign=middle` or `valign=bottom` move it down). It is real text: paragraphs, headings, lists, emphasis, links and chips, which a reader can select and search, a screen reader reads, and the source map points back at. The body runs to the next `::panel` line, so it cannot hold `:::` blocks; such lines are left out. The text is painted over the panel's ground and picture, and under the lettering of the page. A tagged PDF and the reflowable EPUB read it after the page's panels.
+
+Text that does not fit its frame is clipped at the frame's edge and reported as `comicPanelFrame` (reason `textOverflow`). A strip or a spread takes no text in its frames, and neither does a document set vertically or from right to left yet: there the panel's text is set in the flow after the comic, and `comicPanelFrame` says so.
+
+### Box styles
+
+`box=<id>` dresses a panel in a callout style of `calloutStyles`, the styles composed pages draw their frames with: the panel takes the style's background, its border colour and width and its corner radius, and the panel's own `border` and `bg` still win. On a text panel the box is drawn round the text as a frame's box is, with the style's padding, and the panel draws no border or ground of its own. In a slanted cell the text and its box keep to the widest box with straight sides that fits inside the cell. A `box` that names no callout style leaves the panel in its panel style and is reported as `comicPanelFrame` (reason `unknownBox`).
+
+### Frames in the source map and the Sandbox
+
+`sourceAt`, `elementsForSource` and `findElement` ([Composed pages › Source map](/en/docs/composed-pages#source-map)) answer for comics too: a balloon's glyph, the balloon (level `box`), a panel's picture (`resource`), its frame (`frame`) and the comic (`template`), with the ids above. A text panel's words answer as text does, then their line, paragraph and box, the frame and the comic. In the Sandbox a text panel's words take the caret and the selection like the rest of the text, a click in a text panel off its words puts the caret at its text, and a double click on one of its paragraphs edits it on the page. Splitters, panels and balloons are edited as before.
+
 ## Comics output
 
 Every output paints the same comic: panel backgrounds, pictures clipped to the panels, borders, pop-out art, then the balloons of each join group (outlines stroked, then filled, then the text), and the sound effects last.
@@ -519,6 +569,7 @@ Every warning names the line or attribute it concerns, and the Sandbox's Checks 
     <tr><td>Speaker point outside the safe area<br /><code>comicAnchorOutsideSafeArea</code></td><td>A picture's anchor lies outside its safe area, so a crop may cut the speaker off and the tail would then point off the panel.</td><td>Grow the safe area to take in the mouth, or move the anchor. Nothing needs fixing if the speaker is meant to be off the panel at times.</td></tr>
     <tr><td>Balloon does not fit<br /><code>comicBalloonOverflow</code></td><td>After every fallback a balloon still covers a face, another balloon, an avoid zone or a mouth, runs its tail through another balloon, or runs out of its panel (a crossing asked for with <code>break</code> or an <code>at=</code> pin does not count). The warning names the panel and what is covered. While a balloon is dragged in the Sandbox, a face or avoid zone it would cover, or a border it would run past, shows before the drop.</td><td>Shorten the line or split it in two, give the panel more room, pin the balloon with <code>at=</code>, or let it cross the border with <code>break</code>. The text is never made smaller.</td></tr>
     <tr><td>Speaker with no point<br /><code>comicUnknownSpeaker</code></td><td>A speaker key that no picture of the page marks with an anchor and no cast entry names, most often a misspelt key. Its tails point off the panel. Raised only on pages whose pictures mark anchors; information only.</td><td>Correct the key, mark the speaker on the picture, or add a <code>comics.cast</code> entry for a speaker who is never shown.</td></tr>
+    <tr><td>Panel frame falls back<br /><code>comicPanelFrame</code></td><td><code>reason</code> says which: <code>unknownBox</code>, a <code>box</code> names no callout style (the panel keeps its panel style); <code>textOverflow</code>, a text panel's text is taller than its frame (the rest is clipped, and the warning gives the excess in mm); <code>strip</code>, <code>spread</code> or <code>flow</code>, a text panel on a strip, on a spread, or in a vertical or right-to-left document, where frames take no text (its text is set in the flow after the comic).</td><td>Correct the name or add the callout style; shorten the text or give the panel a larger cell; otherwise move the text panel to a single comic page, or letter its words as a caption.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ The laid-out comic is in the VDT: `page.comic` (`VDTComicPage`) holds the frame,
 - **Strips** cannot span a number of columns short of the page (`columns=2` on a page of three), and are read only at the top level of a chapter (not inside a callout, a table or a footnote). A citation in a strip's caption prints as written.
 - **Spreads.** A rounded panel cut at the spine loses all its round corners. A right-to-left comic in a left-bound book still opens on the left page, so its first panel lands on the second page of the spread.
 - **Pop-out art** takes the crop of the panel's art, so the cut-out must be the same size as the art picture.
+- **Text panels** are set only on single comic pages of horizontal, left-to-right documents. In a slanted cell their lines keep to the widest straight-sided box inside the cell rather than following the slant, the text is never made smaller to fit, and a tagged PDF reads it after the page's panels rather than inside the comic's `Div`.
 - **Outputs.** The fallback alternative text of a panel with no `alt` and no `altText` is "Panel N", in English. Region-based navigation describes slanted panels by their bounding boxes. Kindle Panel View copies the comic of a page once per panel, which makes the file larger, and has not been checked in Kindle Previewer.
 
 ## Sources

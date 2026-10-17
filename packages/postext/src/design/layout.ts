@@ -1,5 +1,6 @@
 import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
 import { bitmapLayoutSize } from '../bitmapResolution';
+import { comicArtCrop } from '../comics/art';
 import type {
   AnchorEdge,
   ColorValue,
@@ -8,6 +9,7 @@ import type {
   ElementBoxStyle,
   ElementPlacement,
   ElementSize,
+  ElementSizeTo,
   PageParity,
   PageRole,
   PageRoleFilter,
@@ -186,6 +188,8 @@ export interface ResolvedImagePrimitive extends ResolvedElementGeometry {
    *  caption as plain text; absent for a `decorative` element or a
    *  resource with neither. */
   altText?: string;
+  /** The part of the picture shown (a `fit: 'cover'` crop, #923). */
+  crop?: { x: number; y: number; width: number; height: number };
 }
 
 /** Placeholder characters the snippet parser leaves in span text (private
@@ -406,6 +410,17 @@ function anchorTargetId(placement: ElementPlacement): string | undefined {
   return to.slice(1);
 }
 
+/** The elements a placement's sizes run to (`{ to: '#id', edge }`, #928). */
+function sizeTargetIds(placement: ElementPlacement): string[] {
+  const size = placement.size;
+  if (!size) return [];
+  const out: string[] = [];
+  for (const v of [size.width, size.height, size.maxWidth]) {
+    if (typeof v === 'object' && v !== null && 'to' in v && typeof v.to === 'string' && v.to.startsWith('#')) out.push(v.to.slice(1));
+  }
+  return out;
+}
+
 /** The page-level frame an element anchors to, or `undefined` for
  *  container / element anchors (and when no frames were supplied). */
 function frameFor(placement: ElementPlacement, frames: DesignFrames | undefined): AnchorReference | undefined {
@@ -448,6 +463,11 @@ function topoSort(
     if (target) {
       const dep = byId.get(target);
       if (dep) visit(dep, [...path, el.id]);
+    }
+    // An element whose size runs to another's edge (#928) comes after it.
+    for (const id of sizeTargetIds(el.placement)) {
+      const dep = byId.get(id);
+      if (dep && dep !== el) visit(dep, [...path, el.id]);
     }
     visiting.delete(el.id);
     visited.add(el.id);
@@ -991,6 +1011,8 @@ function resolveFixedSize(
 ): number | 'auto' | 'fill' | undefined {
   if (size === undefined) return undefined;
   if (size === 'auto' || size === 'fill') return size;
+  // A `{ to, edge }` size is turned into px before layout (`withSizesTo`).
+  if (isSizeTo(size)) return 'fill';
   return dimPx(size, dpi, baseFontSizePx);
 }
 
@@ -1056,6 +1078,42 @@ function edgeYFromPin(anchorY: number, pinY: Pin, height: number): number {
 // Main engine
 // ---------------------------------------------------------------------------
 
+/** A size written as `{ to, edge }` (#928). */
+function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
+  return typeof size === 'object' && size !== null && 'to' in size && 'edge' in size;
+}
+
+/** `el` with each size written as `{ to, edge }` (#928) turned into the px
+ *  from its anchor point (`pin`) to that edge of the box `refOf` gives:
+ *  towards the side the element grows (down for a top pin, up for a foot
+ *  pin, both ways from a middle one), 0 when the edge is behind it. A box
+ *  that cannot be found, or an edge across the size's axis, reads as
+ *  `'fill'`. */
+function withSizesTo<T extends ResolvedDesignElement>(
+  el: T,
+  pin: AnchorResult,
+  refOf: (to: ElementSizeTo['to']) => AnchorReference | undefined,
+): T {
+  const size = el.placement.size;
+  if (!size || (!isSizeTo(size.width) && !isSizeTo(size.height) && !isSizeTo(size.maxWidth))) return el;
+  const along = (s: ElementSizeTo, axis: 'x' | 'y'): ElementSize => {
+    const ref = refOf(s.to);
+    const edges: Record<string, 'start' | 'end'> = axis === 'x' ? { left: 'start', right: 'end' } : { top: 'start', bottom: 'end' };
+    const side = edges[s.edge];
+    if (!ref || !side) return 'fill';
+    const at = axis === 'x' ? (side === 'start' ? ref.x : ref.x + ref.width) : (side === 'start' ? ref.y : ref.y + ref.height);
+    const from = axis === 'x' ? pin.anchorX : pin.anchorY;
+    const p = axis === 'x' ? pin.pinX : pin.pinY;
+    const room = p === 'start' ? at - from : p === 'end' ? from - at : 2 * Math.abs(at - from);
+    return { value: Math.max(0, room), unit: 'px' };
+  };
+  const out: NonNullable<ElementPlacement['size']> = { ...size };
+  if (isSizeTo(size.width)) out.width = along(size.width, 'x');
+  if (isSizeTo(size.height)) out.height = along(size.height, 'y');
+  if (isSizeTo(size.maxWidth)) out.maxWidth = along(size.maxWidth, 'x');
+  return { ...el, placement: { ...el.placement, size: out } };
+}
+
 /** Layout one design slot against its container. */
 export function layoutDesignSlot(
   slot: ResolvedDesignSlot,
@@ -1108,21 +1166,21 @@ export function layoutDesignSlot(
   // emit several: drop cap, rich runs…), emitted in `candidates` order.
   const primsByElement = new Map<ResolvedDesignElement, ResolvedPrimitive[]>();
 
-  for (const el of ordered) {
-    const target = anchorTargetId(el.placement);
+  for (const given of ordered) {
+    const target = anchorTargetId(given.placement);
     let refGeo: AnchorReference = containerRef;
     // Page/bleed anchors use that frame both as the anchor reference and as
     // the bounds for `size: 'fill'` / auto-width clamping, so a band can run
     // edge to edge regardless of the slot container.
     let fillRef: AnchorReference = containerRef;
     let useElementEdge = false;
-    const frame = frameFor(el.placement, context.frames);
+    const frame = frameFor(given.placement, context.frames);
     if (frame) {
       refGeo = frame;
       fillRef = frame;
     } else if (target) {
       const dep = resolvedGeo.get(target);
-      const outside = dep ? undefined : (el.pin ? context.frames?.declared?.[target] : undefined) ?? context.frames?.named?.[target];
+      const outside = dep ? undefined : (given.pin ? context.frames?.declared?.[target] : undefined) ?? context.frames?.named?.[target];
       if (dep) {
         refGeo = { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
         useElementEdge = true;
@@ -1130,21 +1188,30 @@ export function layoutDesignSlot(
         refGeo = { ...outside };
         // A nine-point edge on a frame is that point of its box; an
         // element edge (`below`, `right-of`…) reads as for an element.
-        useElementEdge = ELEMENT_TO_ELEMENT_EDGES.has(el.placement.anchor.edge);
+        useElementEdge = ELEMENT_TO_ELEMENT_EDGES.has(given.placement.anchor.edge);
         if (!useElementEdge) fillRef = refGeo;
       }
     }
     const anchor = useElementEdge
-      ? resolveElementAnchor(el.placement.anchor.edge, refGeo)
-      : resolveContainerAnchor(el.placement.anchor.edge, refGeo);
+      ? resolveElementAnchor(given.placement.anchor.edge, refGeo)
+      : resolveContainerAnchor(given.placement.anchor.edge, refGeo);
 
     // A text element's offset may be written in ems of its own size (a
     // running head four characters below the type area).
-    const emPx = el.kind === 'text' ? dimPx(el.fontSize, context.dpi) : undefined;
-    const offsetX = dimPx(el.placement.offset?.x, context.dpi, emPx);
-    const offsetY = dimPx(el.placement.offset?.y, context.dpi, emPx);
+    const emPx = given.kind === 'text' ? dimPx(given.fontSize, context.dpi) : undefined;
+    const offsetX = dimPx(given.placement.offset?.x, context.dpi, emPx);
+    const offsetY = dimPx(given.placement.offset?.y, context.dpi, emPx);
     const anchorX = anchor.anchorX + offsetX;
     const anchorY = anchor.anchorY + offsetY;
+    // A size that runs to an edge of another box (#928), in px from here.
+    const el = withSizesTo(given, { anchorX, anchorY, pinX: anchor.pinX, pinY: anchor.pinY }, (to) => {
+      if (to === 'container') return containerRef;
+      if (to === 'page' || to === 'bleed' || to === 'outer') return context.frames?.[to] ?? containerRef;
+      const id = to.slice(1);
+      const dep = resolvedGeo.get(id);
+      if (dep) return { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
+      return (given.pin ? context.frames?.declared?.[id] : undefined) ?? context.frames?.named?.[id];
+    });
 
     if (el.kind === 'text') {
       const pin: AnchorResult = { anchorX, anchorY, pinX: anchor.pinX, pinY: anchor.pinY };
@@ -1163,7 +1230,7 @@ export function layoutDesignSlot(
           ? layoutLeaderTextElement(el, text, leader, pin, fillRef, context.dpi, useElementEdge, context)
           : layoutTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, context, textSeams.get(el.id));
       resolvedGeo.set(el.id, prims[0]!);
-      primsByElement.set(el, prims);
+      primsByElement.set(given, prims);
       const truncated = prims[0]!.truncated;
       if (truncated) {
         const text = content.split(LEADER_MARK).join('');
@@ -1177,7 +1244,7 @@ export function layoutDesignSlot(
         pinY: anchor.pinY,
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
-      primsByElement.set(el, [prim]);
+      primsByElement.set(given, [prim]);
     } else if (el.kind === 'image') {
       const prim = layoutImageElement(el, {
         anchorX,
@@ -1187,7 +1254,7 @@ export function layoutDesignSlot(
       }, fillRef, context.dpi, context.resourceById, resolveDesignResourceId(el.resourceId, context.placeholders), context.frames?.upright === true);
       if (prim) {
         resolvedGeo.set(el.id, prim);
-        primsByElement.set(el, [prim]);
+        primsByElement.set(given, [prim]);
       }
     } else {
       const prim = layoutBoxElement(el, {
@@ -1197,7 +1264,7 @@ export function layoutDesignSlot(
         pinY: anchor.pinY,
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
-      primsByElement.set(el, [prim]);
+      primsByElement.set(given, [prim]);
     }
   }
 
@@ -1967,12 +2034,36 @@ function layoutImageElement(
   else if (fixedW !== undefined) { boxW = fixedW; boxH = fixedW * natH / natW; }
   else if (fixedH !== undefined) { boxH = fixedH; boxW = fixedH * natW / natH; }
   else { boxW = natW; boxH = natH; }
+  const boxX = edgeXFromPin(pin.anchorX, pin.pinX, boxW);
+  const boxY = edgeYFromPin(pin.anchorY, pin.pinY, boxH);
+  if (el.fit === 'cover' && fixedW !== undefined && fixedH !== undefined && !upright && boxW > 0 && boxH > 0) {
+    // Cover (#923): the box filled, the picture cropped, its safe area
+    // kept (the comic panel's rule, `comics/art.ts`).
+    const cell = { x: boxX, y: boxY, width: boxW, height: boxH };
+    const cut = comicArtCrop({ width: picW, height: picH, cell, fit: 'cover', ...(resource?.safeArea ? { safeArea: resource.safeArea } : {}), ...(el.focus ? { focus: el.focus } : {}) });
+    const x0 = Math.max(cell.x, cut.box.x);
+    const y0 = Math.max(cell.y, cut.box.y);
+    const x1 = Math.min(cell.x + cell.width, cut.box.x + cut.box.width);
+    const y1 = Math.min(cell.y + cell.height, cut.box.y + cut.box.height);
+    const whole = cut.source.width >= 1 - 1e-6 && cut.source.height >= 1 - 1e-6;
+    return {
+      kind: 'image',
+      id: el.id,
+      x: x0,
+      y: y0,
+      width: Math.max(0, x1 - x0),
+      height: Math.max(0, y1 - y0),
+      fileId,
+      ...(resource?.bitmap?.format ? { format: resource.bitmap.format } : {}),
+      ...pictureTraits(resource, fileId),
+      ...(whole ? {} : { crop: { ...cut.source } }),
+      ...altTextOf(el, resource),
+    };
+  }
   // Aspect-fit inside the box, centred.
   const scale = Math.min(boxW / natW, boxH / natH);
   const w = natW * scale;
   const h = natH * scale;
-  const boxX = edgeXFromPin(pin.anchorX, pin.pinX, boxW);
-  const boxY = edgeYFromPin(pin.anchorY, pin.pinY, boxH);
   return {
     kind: 'image',
     id: el.id,

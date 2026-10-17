@@ -23,7 +23,7 @@ export const metadata = {
 بعد أن كان 18، فيعيد القيمة كما كانت. يفعل ما تفعله أنت حين تنظر وتقارن،
 ويفعله بكتابك أنت وفي متصفحك.
 
-هناك 39 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
+هناك 40 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
 أدوات للموقع، `site_*`، في كل صفحة من postext.dev. وترتّب هذه الصفحة الأدوات
 بحسب ما قد تطلبه من الوكيل، وتعطي طريقة استدعاء كل واحدة منها.
 
@@ -399,6 +399,16 @@ await browser.close();
 كل إحالة إليه في الكتاب. ويسرد `sandbox_list_resources` الموارد، ومع `id` يعطي
 موردًا واحدًا كاملًا (خلايا الجدول بتنسيقها، ومصدر SVG).
 
+تحمل `marks` الصورة مراسيها أيضًا. وهي في الخريطة أو المخطط النقاط التي تقع عندها أسطر `::label`: معرّف `id`، و`x` و`y` (نسبتان من الصورة كلها)، وحقول التسمية التي تأخذها تسمية توضع هناك (`style` و`align` و`verticalAlign` و`rotate` و`width`). ينبّه الجواب إلى نمط تسمية لا يتضمنه التصميم، والعلامات الجديدة لمورد خطوة في السجل (يجيب `sandbox_undo` بـ`kind: "resource"`).
+
+```jsonc
+// مرساتان لخريطة مع نمطي تسميتهما
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 والخطوط المرفوعة إلى الكتاب تمرّ عبر `sandbox_save_font`:
 
 ```json
@@ -531,6 +541,7 @@ await browser.close();
 لكل تحذير، `sandbox_read_text` حول سطره `line` و`sandbox_render_page` لصفحته
 `page` ← `sandbox_edit_text` أو `sandbox_set_config` ← `sandbox_get_warnings`
 من جديد حتى يعود فارغًا.
+يأتي الإطار الذي لا يتّسع في صفحة مركّبة مع حلوله (`proposals`): تطبّق `sandbox_apply_proposal` مع `frame` الخاص به ورقم أحد الحلول ذلك الحل، وتعيد تنضيد الفصل، وتجيب بـ`fits`.
 
 **«اصنع كتابًا من ملف Word هذا وأعطني ملف PDF».** `sandbox_save_book` مع
 `action: "new_blank"` ← `sandbox_import_word` مع `dryRun: true` ← تصحيح
@@ -604,7 +615,7 @@ Sandbox، ويواصل العمل هناك بأدوات `sandbox_*`.
   و`sandbox_export`.
 - **Word**: `sandbox_import_word`، و`sandbox_word_templates`.
 - **الأسئلة**: `sandbox_answer`.
-- **الفحوص**: `sandbox_get_warnings`.
+- **الفحوص**: `sandbox_get_warnings`، و`sandbox_apply_proposal`.
 
 ## عند تضمين Sandbox
 

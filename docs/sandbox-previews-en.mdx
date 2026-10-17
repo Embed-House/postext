@@ -54,6 +54,19 @@ For a book in several languages, a bar over the canvas lists its editions (*ES �
 - A click on an edition opens it on the same composed page. The page is found by its `::::page` fence in the chapter, which is the same in every language, so you stay on it even when its number differs in the other edition; the frame you picked stays picked. On any other page the page number is kept.
 - **Side by side** shows the chapter on screen next to the same chapter of another edition (**next to** chooses it when the book has more than two). Both columns show the same page and scroll together; **Scroll together** turns that off. Between composed pages the columns count on from the last composed page they share. The frames that do not fit, or whose text was shrunk, are marked in both columns. The other edition is read only here: a click on one of its pages opens that edition at that page.
 
+#### What moved and why
+
+On a composed page the layout may change what the template draws so that the content fits: a box grows with its text, the boxes after it in its group move down, a frame gives up height to another, pictures or text are set smaller, what is left goes on to an added page. **Reflow**, in the bar over the canvas (it shows when the chapter has composed pages), opens the panel **What moved and why** and marks those changes on the pages.
+
+- The panel lists each composed page where something changed and, under a number, each frame that changed, with its changes in words: *dinero grew 13.9 mm to hold its content*, *gasto moved down 13.9 mm to make room for dinero*, *ahorro-fotos: its pictures are at 82.5 %*, *dinero continues on page 9*. A change names its cause when it has one: the frame whose growth moved this one, or the spine of a spread.
+- On the page, each of those frames carries a badge with the same number and its changes in short (*+13.9 mm*, *↓ 13.9 mm*, *82.5 %*). The box the template declares is drawn dashed, and arrows go from it to the box as laid out: one from its top for a move, one at its foot or its end edge for a change of size.
+- Pointing at a frame in the list draws it stronger on its page; a click on it, or on a page's heading, turns to that page.
+- A frame that still does not fit says by how much, and its fixes follow it in the list as buttons (see [the Checks panel](/en/docs/sandbox-design-checks)).
+
+The sentences are in the interface's language, numbers included (*13,9 mm* in Spanish). The marks are drawn over the canvas only: the PDF, the print and every export leave them out. The browser remembers whether the panel is open.
+
+In **Design** mode the frames also show how their template sizes them: *auto* where the height follows the content (or a fixed height may grow up to its maximum), a dashed line across the frame at its minimum height and another at its maximum, with the values in a badge at the frame's foot (*auto · min 36 mm · max 72 mm*), and a pin on a frame that keeps its declared box (`pin: true`) whatever the frames around it do.
+
 ### Selecting on the page
 
 The pages and the editors are two faces of one book: what you select on a page is selected in the Markdown or in the settings, and the other way round. It works the same on the Canvas, on the Folio in its **Select text** mode and on the HTML pages, and a selection made in one tab is still there when you open another.

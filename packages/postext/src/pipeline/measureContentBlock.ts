@@ -43,7 +43,7 @@ import { getMeasureDirection, mirrorLineSpans, shiftLineX } from '../measure/bid
 import { startEndAsLeftRight } from '../defaults/shared';
 import { prepareTabs } from './tabs';
 import { resolveResourceWrap } from './textWrap';
-import { fullPlainOffset, paragraphDropCap, prepareDropCap, type MeasuredDropCap, type PreparedDropCap } from './dropCap';
+import { dropCapRefusedInBox, fullPlainOffset, paragraphDropCap, prepareDropCap, type MeasuredDropCap, type PreparedDropCap } from './dropCap';
 import { lineIndentAt, lineInsetsAt, type LineInsetStep } from '../measure/types';
 import { measureCodeLines } from './codeLines';
 import { withInlineCode } from './codeInline';
@@ -94,7 +94,7 @@ export interface BlockMeasureContext
 /** Why a paragraph's drop cap was not set as configured (see
  *  `BlockMeasureContext.dropCapNotes`). */
 export interface DropCapNote {
-  reason: 'shortParagraph' | 'joiningScript' | 'verticalText' | 'noLetter' | 'split';
+  reason: 'shortParagraph' | 'joiningScript' | 'verticalText' | 'noLetter' | 'split' | 'inBox';
   handling?: 'reserve' | 'shrink' | 'skip';
   lines?: number;
 }
@@ -461,6 +461,8 @@ export function measureContentBlock(
   // break, and the lines it stands beside are indented by it.
   let dropCap: PreparedDropCap | undefined;
   const capSettings = vdtType === 'paragraph' && !opts?.dropCap?.skip ? paragraphDropCap(rawBlock, blockIdx, style, ctx) : undefined;
+  // Asked for in a box, where no drop cap is set (#922): said once.
+  if (!capSettings && vdtType === 'paragraph' && !opts?.dropCap && dropCapRefusedInBox(rawBlock, blockIdx, style, ctx)) ctx.dropCapNotes?.set(blockIdx, { reason: 'inBox' });
   if (capSettings) {
     if (!opts?.dropCap) ctx.dropCapNotes?.delete(blockIdx);
     const shrunk = opts?.dropCap?.lines;

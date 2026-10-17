@@ -382,7 +382,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
       }
 
       if (args.marks !== undefined) {
-        const marked = withMarks(base, args.marks as MarksInput);
+        const marked = withMarks(base, args.marks as MarksInput, (s.config.labelStyles ?? []).map((l) => l.id));
         base = marked.resource;
         notes.push(...marked.notes);
       }
@@ -431,7 +431,9 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
           answer.renamed = report;
         }
       }
-      if (!answer.renamed) actions.push({ type: 'UPSERT_RESOURCE', payload: base });
+      // New marks on a resource that was there are a step of the undo
+      // history (#866), as the Resources panel's are.
+      if (!answer.renamed) actions.push({ type: 'UPSERT_RESOURCE', payload: base, ...(existing && args.marks !== undefined ? { history: { merge: false } } : {}) });
       await dispatchAndWait(host, actions);
       if (stale) invalidateResourceImage(stale);
       return {

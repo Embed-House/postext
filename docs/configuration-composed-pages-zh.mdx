@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：组合页面',
   sidebarTitle: '组合页面设置',
-  description: '组合页面的页面模板：框架、组、装饰、继承与左右页变体、图片锚点的注记样式，以及模板可能给出的警告',
+  description: '组合页面的页面模板：框、组、装饰、继承与左右页变体、图片锚点的注记样式，以及模板可能给出的警告',
   lang: 'zh',
   lastUpdated: '2026-10-16',
   readingTime: '6分钟',
   order: 18,
   parent: 'configuration',
-  plainSummary: "本页讲页面模板。模板是在设置里画好的一个页面：一些有名字的方框，叫做框架，还规定每个框架放在哪里、最大能长到多大、是什么样子。组合页面的Markdown再按名字把内容填进这些框架，所以文字里从不写位置，设置里也从不写文字。一个模板可以从另一个模板出发，只改其中几个框架，左页和右页上还可以不一样。本页还列出写在图片上的文字所用的注记样式，以及模板可能给出的每一条警告和改正的办法。",
+  plainSummary: "本页讲页面模板。模板是在设置里画好的一个页面：一些有名字的方框（叫做框），以及每个框放在哪里、最大能长到多大、是什么样子。组合页面的Markdown再按名字把内容填进这些框，所以文字里从不写位置，设置里也从不写文字。一个模板可以从另一个模板出发，只改其中几个框，左页和右页上还可以不一样。本页还列出写在图片上的文字所用的注记样式，以及模板可能给出的每一条警告和改正的办法。",
 };
 
 # 配置：组合页面
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 页面模板
 
-组合页面的版式来自配置中的**模板**，内容来自`::::page{template="…"}`围栏中的Markdown。模板给一些矩形命名，这些矩形叫做**框架**；Markdown按名称（即框架的槽位）把每一段内容送进对应的框架。Markdown中从不出现几何信息，模板中也从不出现正文文字。`pageTemplates`属性保存全书的模板：
+组合页面的版式来自配置中的**模板**，内容来自`::::page{template="…"}`围栏中的Markdown。模板给一些矩形命名，这些矩形叫做**框**；Markdown按名称（即框的槽位）把每一段内容送进对应的框。Markdown中从不出现几何信息，模板中也从不出现正文文字。`pageTemplates`属性保存全书的模板：
 
 ```ts
 const config: PostextConfig = {
@@ -46,7 +46,7 @@ const config: PostextConfig = {
 };
 ```
 
-只设了`id`和一个框架的模板就是一整页，这个框架占满版心。其余字段都是可选的：
+只设了`id`和一个框的模板就是一整页，这个框占满版心。其余字段都是可选的：
 
 <table>
   <thead>
@@ -80,31 +80,31 @@ const config: PostextConfig = {
       <td><code>area</code></td>
       <td><code>'content' | 'trim' | 'bleed'</code></td>
       <td><code>'content'</code></td>
-      <td>框架位置所参照的矩形。<code>'content'</code>是页面的版心，像正文一样在左右页上镜像；<code>'trim'</code>是裁切后的页面；<code>'bleed'</code>是连同出血的页面。</td>
+      <td>框位置所参照的矩形。<code>'content'</code>是页面的版心，像正文一样在左右页上镜像；<code>'trim'</code>是裁切后的页面；<code>'bleed'</code>是连同出血的页面。</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
       <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
       <td>无</td>
-      <td>把区域分成单元格，框架或组就可以按单元格放置（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>，从1起数），不必用<code>placement</code>。间距默认为<code>0</code>。</td>
+      <td>把区域分成单元格，框或组就可以按单元格放置（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>，从1起数），不必用<code>placement</code>。间距默认为<code>0</code>。</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>各个框架，按模板顺序排列：先测量哪个框架、出现并列时以哪个为准，都按这个顺序。见<a href="#框架">框架</a>。</td>
+      <td>各个框，按模板顺序排列：先测量哪个框、出现并列时以哪个为准，都按这个顺序。见<a href="#框">框</a>。</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
       <td><code>FrameGroupConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>共享空间的纵向或横向框架序列。见<a href="#组">组</a>。</td>
+      <td>共享空间的一列或一行框。见<a href="#组">组</a>。</td>
     </tr>
     <tr>
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>无</td>
-      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面围栏某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框架或组（<code>'#dinero'</code>），并随之移动。装饰在框架之后排放，从不推开文字。</td>
+      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面围栏某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框或组（<code>'#dinero'</code>），并随之移动。装饰在框之后排放，从不推开文字。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -134,7 +134,7 @@ const config: PostextConfig = {
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>本模板</td>
-      <td>框架续排到下一页（<code>overflow.continueIn: 'next-page'</code>）时所加页面的模板。未设置时，所加的页面是把本模板再排一遍，只填入续排的框架，其他框架不占空间。这里设为跨页模板时，续排的部分也是跨页。见<a href="/zh/docs/composed-pages#文字续排时">模板页 › 文字续排时</a>。</td>
+      <td>框续排到下一页（<code>overflow.continueIn: 'next-page'</code>）时所加页面的模板。未设置时，所加的页面是把本模板再排一遍，只填入续排的框，其他框不占空间。这里设为跨页模板时，续排的部分也是跨页。见<a href="/zh/docs/composed-pages#文字续排时">模板页 › 文字续排时</a>。</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -157,11 +157,11 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-### 框架
+### 框
 
-框架是接收排好的内容的具名矩形。它的`name`就是Markdown所请求的槽位，在所属模板中唯一（组也不能使用框架的名称，因为锚点用同样的方式指向两者）。
+框是接收排好的内容的具名矩形。它的`name`就是Markdown所请求的槽位，在所属模板中唯一（组也不能使用框的名称，因为锚点用同样的方式指向两者）。
 
-模板有网格时，框架按它的`grid`单元格放置，否则按它的`placement`放置，后者与设计元素的定位相同：一个锚点（`'container'`表示区域，`'page'`、`'bleed'`，或用`'#name'`表示另一个框架或组）、一条边、一个偏移和一个尺寸。锚定到另一个框架的框架随之移动。两者都没有时，框架从区域的左上角开始，宽度与区域相同，高度按它的高度规则确定。内容如何灌入各框架、如何串接和裁切，见[组合页面 › 页面如何排出](/zh/docs/composed-pages#页面如何排出)。
+模板有网格时，框按它的`grid`单元格放置，否则按它的`placement`放置，后者与设计元素的定位相同：一个锚点（`'container'`表示区域，`'page'`、`'bleed'`，或用`'#name'`表示另一个框或组）、一条边、一个偏移和一个尺寸。锚定到另一个框的框随之移动。两者都没有时，框从区域的左上角开始，宽度与区域相同，高度按它的高度规则确定。内容如何灌入各框、如何串接和裁切，见[组合页面 › 页面如何排出](/zh/docs/composed-pages#页面如何排出)。
 
 <table>
   <thead>
@@ -183,7 +183,7 @@ const config: PostextConfig = {
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>整个区域</td>
-      <td>锚点、边、偏移和尺寸，与<a href="/zh/docs/configuration-headers-footers#元素定位">元素定位</a>相同。由网格单元格放置框架时忽略。</td>
+      <td>锚点、边、偏移和尺寸，与<a href="/zh/docs/configuration-headers-footers#元素定位">元素定位</a>相同。由网格单元格放置框时忽略。</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框架所锚定的那条边为止剩下的空间）。未设置时，框架读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。文本框架需要行宽，所以<code>'auto'</code>宽度只对只放一张图片的框架有意义（图片在框架高度下的宽度）。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
+      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框所锚定的那条边为止剩下的空间）。未设置时，框读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。文本框需要行宽，所以<code>'auto'</code>宽度只对只放一张图片的框有意义（图片在框高度下的宽度）。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
@@ -207,7 +207,7 @@ const config: PostextConfig = {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>无边框</td>
-      <td>一个<a href="/zh/docs/configuration-callouts#标注框样式">标注框样式</a>的id：框架用标注框样式绘制（底色、边框、内边距、色条、图标、标签页签、标题）。页签上的文字来自Markdown（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。标注框设置中决定框在正文中放在哪里的那些（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>……）不适用于框架。</td>
+      <td>一个<a href="/zh/docs/configuration-callouts#标注框样式">标注框样式</a>的id：框用标注框样式绘制（底色、边框、内边距、色条、图标、标签页签、标题）。页签上的文字来自Markdown（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。标注框设置中决定框在正文中放在哪里的那些（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>……）不适用于框。</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -231,55 +231,61 @@ const config: PostextConfig = {
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
       <td><code>'top'</code></td>
-      <td>框架比内容高时，内容放在什么位置。</td>
+      <td>框比内容高时，内容放在什么位置。</td>
     </tr>
     <tr>
       <td><code>columns</code>、<code>columnGap</code></td>
       <td><code>number</code>、<code>Dimension</code></td>
       <td><code>1</code>、样式的值</td>
-      <td>框架内的分栏。</td>
+      <td>框内的分栏。</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
       <td><code>'none' | 'push'</code></td>
       <td><code>'none'</code></td>
-      <td><code>'push'</code>：其他框架的文字绕开这个框架的矩形排。</td>
+      <td><code>'push'</code>：其他框的文字绕开这个框的矩形排。</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>'box' | 'contour'</code></td>
       <td><code>'box'</code></td>
-      <td>与<code>exclude: 'push'</code>同用：其他框架的文字绕开什么排。<code>'contour'</code>是框架所含图片的形状（它们的多边形或Alpha通道，见<a href="/zh/docs/document-format-resources#沿轮廓绕排">沿轮廓绕排</a>）；旋转的框架，或所含图片没有已知形状的框架，按自己的矩形推开文字。</td>
+      <td>与<code>exclude: 'push'</code>同用：其他框的文字绕开什么排。<code>'contour'</code>是框所含图片的形状（它们的多边形或Alpha通道，见<a href="/zh/docs/document-format-resources#沿轮廓绕排">沿轮廓绕排</a>）；旋转的框，或所含图片没有已知形状的框，按自己的矩形推开文字。</td>
     </tr>
     <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>框架接收没有指定槽位的内容。</td>
+      <td>框接收没有指定槽位的内容。</td>
     </tr>
     <tr>
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code></td>
       <td>无</td>
-      <td>框架接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。</td>
+      <td>框接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。</td>
     </tr>
     <tr>
       <td><code>next</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>链接：放不下的内容在同一页上以该值为名的框架中续排。</td>
+      <td>链接：放不下的内容在同一页上以该值为名的框中续排。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框架，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框架，按<code>overflowTemplate</code>来排）或<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框架，没有则进入它的<code>flow</code>框架）。追加页上的框架自己没有设规则时，沿用把内容带来的那条规则，最多追加16页。</td>
+      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框，按<code>overflowTemplate</code>来排）、<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框，没有则进入它的<code>flow</code>框）或<code>'page:&lt;id&gt;'</code>（后面的页面围栏<code>::::page&#123;id=…&#125;</code>中的一个框：<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>指定的那个，没有指定则是那一页自身内容留空的一个；<code>&lt;id&gt;</code>可以是<code>&#123;attr.name&#125;</code>，从页面围栏读取；见<a href="/zh/docs/composed-pages#跳转到后面的页面">组合页面 › 跳转到后面的页面</a>）。追加页上的框自己没有设规则时，沿用把内容带来的那条规则（跳转之后为<code>'next-page'</code>），最多追加16页。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>随语言</td>
-      <td>为续排到另一页而截断的部分末尾的标记。未设置时，使用框架样式的<code>continuesMarker</code>，它随文档语言而定（“Continued”“Continúa”“À suivre”等，与拆分表格所用的词相同）；设为字符串就用这些文字；<code>false</code>不加标记。同一页上用<code>next</code>串接的框架不带标记。</td>
+      <td>为续排到另一页而截断的部分末尾的标记。未设置时，使用框样式的<code>continuesMarker</code>，它随文档语言而定（“Continued”“Continúa”“À suivre”等，与拆分表格所用的词相同）；设为字符串就用这些文字，其中的<code>&#123;page&#125;</code>是其余部分所在那一页的页码；<code>false</code>不加标记。同一页上用<code>next</code>串接的框不带标记。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>在内容续排的那一页上、片段开头排的文字，<code>&#123;page&#125;</code>是内容所来自那一页的页码（<code>"接第 &#123;page&#125; 页"</code>）。接收内容的框自己的设置优先于送出内容的框的。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -297,31 +303,43 @@ const config: PostextConfig = {
       <td><code>fit.scaleImages</code>、<code>fit.imageMinScale</code></td>
       <td><code>boolean</code>、<code>number</code></td>
       <td><code>true</code>、<code>0.8</code></td>
-      <td>这个框架的内容放不下时，它和同组其他框架中的图片是否可以缩小，以及最小缩到多少。</td>
+      <td>这个框的内容放不下时，它和同组其他框中的图片是否可以缩小，以及最小缩到多少。</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>overflow.continueIn</code>把内容送到另一页的框，先到那一页上续排，再考虑缩小图片和文字，这样文章从一页到另一页保持同一个大小。<code>false</code>：图片和文字先缩小，不够时这个框才续排。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>框架从不移动，也不改变大小，用于必须与画面对齐的方框。组绕开它排列。</td>
+      <td>框从不移动，也不改变大小，用于必须与画面对齐的方框。组绕开它排列。</td>
     </tr>
     <tr>
       <td><code>grow</code>、<code>shrink</code>、<code>priority</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>框架怎样分享所在组的空间：<code>grow</code>分得多余空间的一份，<code>shrink</code>允许框架让出空间，<code>priority</code>较低的框架先让出。</td>
+      <td>框怎样分享所在组的空间：<code>grow</code>分得多余空间的一份，<code>shrink</code>允许框让出空间，<code>priority</code>较低的框先让出。</td>
     </tr>
     <tr>
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Markdown没有向框架发送任何内容时，不发出警告。</td>
+      <td>Markdown没有向框发送任何内容时，不发出警告。</td>
     </tr>
     <tr>
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
       <td>在跨页上，框可以跨过书脊带。框里的文字在其中心所在的那一页读；对面那一页画出它的一半。</td>
+    </tr>
+    <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.38 起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -333,14 +351,32 @@ const config: PostextConfig = {
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在扩展另一个模板的模板中，或在变体中：去掉继承来的同名框架。</td>
+      <td>在扩展另一个模板的模板中，或在变体中：去掉继承来的同名框。</td>
     </tr>
   </tbody>
 </table>
 
+**画横线的框。** 练习册里的答题区就是带`rules`的框：横线随框的高度而定，所以画几条由Markdown决定。固定高度的空框得到它容得下的横线；收到`:::space{lines=4}`的`'auto'`框得到四条，随文字增高的框得到更多。横线画在框背景之上、文字之下，画布、HTML、PDF和固定版式EPUB都会绘制；在Sandbox的框检查器中，可在“外观”里打开。
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
+
 ### 组
 
-组是一列（从上到下）或一行（从起始到末尾）共享空间、一起移动的框架。在组内，框架自己沿组方向的位置被忽略：组按顺序排列它们，彼此之间留出`gap`。某个框架的文字变长时，其后的框架随之移动。组也是一个方框，框架和装饰可以锚定到它（`'#pagina'`）。
+组是一列（从上到下）或一行（从起始到末尾）共享空间、一起移动的框。在组内，框自己沿组方向的位置被忽略：组按顺序排列它们，彼此之间留出`gap`。某个框的文字变长时，其后的框随之移动。组也是一个方框，框和装饰可以锚定到它（`'#pagina'`）。
 
 <table>
   <thead>
@@ -356,7 +392,7 @@ const config: PostextConfig = {
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td>必填</td>
-      <td>在模板的框架和组中唯一。</td>
+      <td>在模板的框和组中唯一。</td>
     </tr>
     <tr>
       <td><code>kind</code></td>
@@ -368,25 +404,25 @@ const config: PostextConfig = {
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>组中的框架，按它们在页面上的顺序排列。一个框架最多属于一个组；不是模板中框架的名称，或已经列出过的框架，会被跳过。</td>
+      <td>组中的框，按它们在页面上的顺序排列。一个框最多属于一个组；不是模板中框的名称，或已经列出过的框，会被跳过。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>组中相邻两个框架之间的距离。</td>
+      <td>组中相邻两个框之间的距离。</td>
     </tr>
     <tr>
       <td><code>placement</code>、<code>grid</code></td>
-      <td>同框架</td>
-      <td>其框架的外框</td>
-      <td>组自己的方框。未设置时，组从其第一个框架所在的位置开始，按各框架的需要向下延伸。</td>
+      <td>与框相同</td>
+      <td>各框的外框</td>
+      <td>组自己的方框。未设置时，组从其第一个框所在的位置开始，按各框的需要向下延伸。</td>
     </tr>
     <tr>
       <td><code>align</code></td>
       <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
       <td><code>'start'</code></td>
-      <td>组中没有框架伸展时，多余空间放在哪里。</td>
+      <td>组中没有框伸展时，多余空间放在哪里。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -399,20 +435,20 @@ const config: PostextConfig = {
 
 ### 组如何分配空间
 
-框架声明自己的尺寸：固定的`height`，或者`'auto'`，即所装内容的高度，限定在`minHeight`和`maxHeight`之间。照着印好的页面做模板时，把每个方框在页面上的高度写成它的`minHeight`：文字短，方框保持画出的大小；文字长，方框就变高。页面在同一遍排版中排两次，一次按模板的声明，一次按内容的需要，两次的差别就是[重排记录](/zh/docs/composed-pages#重排记录)。
+框声明自己的尺寸：固定的`height`，或者`'auto'`，即所装内容的高度，限定在`minHeight`和`maxHeight`之间。照着印好的页面做模板时，把每个方框在页面上的高度写成它的`minHeight`：文字短，方框保持画出的大小；文字长，方框就变高。页面在同一遍排版中排两次，一次按模板的声明，一次按内容的需要，两次的差别就是[重排记录](/zh/docs/composed-pages#重排记录)。
 
-**纵向组（`stack`）**：纵向组中的框架按各自的高度上下相接，彼此之间留出`gap`。每个框架保留自己的横向位置和宽度，它自己的纵向位置被忽略。
+**纵向组（`stack`）**：纵向组中的框按各自的高度上下相接，彼此之间留出`gap`。每个框保留自己的横向位置和宽度，它自己的纵向位置被忽略。
 
-- 没有自己的`placement`或`grid`的组，从第一个框架的定位所在之处开始，按框架的需要往下排，最远到模板区域的底边。一个框架变高时，后面的框架下移同样的距离。
-- 有自己方框的组把框架排在这个方框之内。框架需要的空间超出方框时，`shrink`大于0的框架让出空间，`priority`最低的先让；优先级相同的框架按各自`shrink`的比例让出；任何框架都不会小于它的`minHeight`。多余的空间按比例分给`grow`大于0的框架，最多到它们的`maxHeight`；没有这样的框架时，由`align`决定框架的位置（`'end'`靠底边，`'center'`居中，`'space-between'`首尾贴边、中间均分）。组中没有自己定位的框架以组的方框作为它的区域。
-- 再也没有框架能让出空间时，也没有框架会越过组的底边：内容放不下的框架按逐级重排的步骤依次尝试（见[内容放不下时](#内容放不下时)），仍然放不下的部分在那里截断，并报告为`frameOverflow`。
-- `height: 'fill'`的框架请求它的`minHeight`，并像设了`grow: 1`一样分得多余空间。
+- 没有自己的`placement`或`grid`的组，从第一个框的定位所在之处开始，按框的需要往下排，最远到模板区域的底边。一个框变高时，后面的框下移同样的距离。
+- 有自己方框的组把框排在这个方框之内。框需要的空间超出方框时，`shrink`大于0的框让出空间，`priority`最低的先让；优先级相同的框按各自`shrink`的比例让出；任何框都不会小于它的`minHeight`。多余的空间按比例分给`grow`大于0的框，最多到它们的`maxHeight`；没有这样的框时，由`align`决定框的位置（`'end'`靠底边，`'center'`居中，`'space-between'`首尾贴边、中间均分）。组中没有自己定位的框以组的方框作为它的区域。
+- 再也没有框能让出空间时，最靠近组底边的框先让，各自最多让到`minHeight`；固定高度的框保持原高，所以在一个增高的方框下面，空着的答题区或图片位仍留在页面上，让出空间的是方框自己的文字。没有框会越过组的底边：内容放不下的框按逐级重排的步骤依次尝试（见[内容放不下时](#内容放不下时)），仍然放不下的部分在那里截断，并报告为`frameOverflow`。被压到`minHeight`或固定高度以下的框，无论有没有内容，也会报告。
+- `height: 'fill'`的框请求它的`minHeight`，并像设了`grow: 1`一样分得多余空间。
 
-**横向组（`row`）**：横向组中的框架按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框架声明高度中最大的一个（固定高度的框架保持自己的高度）。某个框架的文字超出行高时，这个框架会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框架借宽度，每个框架都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。多余的宽度先分给`grow`大于0的框架，剩下的交给`align`。行中的框架从左向右排列。
+**横向组（`row`）**：横向组中的框按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框写明的高度中最大的一个：固定的`height`，否则是`minHeight`（`'auto'`框不再声明别的）；都没有写时，取最高的内容高度（固定高度的框保持自己的高度）。某个框的文字超出行高时，这个框会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框借宽度，每个框都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。因此，`height: 'auto'`并设了`minHeight`的卡片会先在这个高度上分配宽度，只有没有卡片能让出宽度时，行才加高。多余的宽度先分给`grow`大于0的框，剩下的交给`align`。行中的框从左向右排列。
 
-**固定（`pin`）**：`pin: true`的框架保持模板为它声明的方框，即使它所锚定的框架变高或移动也不变，照着画面画出的方框因此留在画面上。在组中，固定的框架守住自己的位置，其他框架绕过它继续排，两侧都留出`gap`；组外的固定框架，对会与它重叠的组内框架也是这样。
+**固定（`pin`）**：`pin: true`的框保持模板为它声明的方框，即使它所锚定的框变高或移动也不变，照着画面画出的方框因此留在画面上。在组中，固定的框守住自己的位置，其他框绕过它继续排，两侧都留出`gap`；组外的固定框，对会与它重叠的组内框也是这样。
 
-**装饰**：锚定到框架的装饰元素（`anchor: { to: '#dinero' }`）在框架变高或移动时随之移动。`pin: true`的元素留在模板画出那个框架的位置。
+**装饰**：锚定到框的装饰元素（`anchor: { to: '#dinero' }`）在框变高或移动时随之移动。`pin: true`的元素留在模板画出那个框的位置。
 
 <table>
   <thead>
@@ -428,7 +464,7 @@ const config: PostextConfig = {
       <td><code>pin</code>（装饰元素）</td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>用于组合页面的装饰：锚定到框架的元素停在模板放置那个框架的位置，不论框架的内容或所在的组怎样变化。在页眉、页脚和标题设计中忽略。</td>
+      <td>用于组合页面的装饰：锚定到框的元素停在模板放置那个框的位置，不论框的内容或所在的组怎样变化。在页眉、页脚和标题设计中忽略。</td>
     </tr>
   </tbody>
 </table>
@@ -451,15 +487,15 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 ### 内容放不下时
 
-框架的内容比组给它的空间高时，排版按顺序尝试[逐级重排](/zh/docs/composed-pages#仍然放不下时)的各个步骤，到第一个能让内容放下的为止：先占用空闲空间（最多到`maxHeight`），再由组推挤和让位，然后缩小图片，把组中其他框架压到最小高度，缩小文字，最后到另一页续排。下面这些框架设置决定每一步能走多远：
+框的内容比组给它的空间高时，排版按顺序尝试[逐级重排](/zh/docs/composed-pages#仍然放不下时)的各个步骤，到第一个能让内容放下的为止：先占用空闲空间（最多到`maxHeight`），再由组推挤和让位，然后缩小图片，把组中其他框压到最小高度，缩小文字，最后到另一页续排。下面这些框的设置决定每一步能走多远：
 
-- 固定`height`的框架上的`maxHeight`：在缩放任何东西之前，框架可以先长到这个高度。
-- 组中其他框架的`minHeight`：它们最多让出多少空间；框架绝不会小于它自己的内容所需。
-- `fit.scaleImages`和`fit.imageMinScale`：这个框架及其所在组中的图片是否可以缩小，以及最小缩到多少（默认80%）。
-- `fit.shrinkText`和`fit.minScale`：框架中的文字是否可以缩小，以及最小缩到多少（默认90%）。字号、行距和间距使用同一个比例；框架本身的尺寸不变。
-- `overflow.continueIn`：这些都不够时，内容到哪里续排：另一个框架，或这一页之后追加的一页（`'next-page'`、`'template:<id>'`），文字在那里接在截断部分的`overflow.mark`之后，按原来的大小续排。
+- 固定`height`的框上的`maxHeight`：在缩放任何东西之前，框可以先长到这个高度。
+- 组中其他框的`minHeight`：它们最多让出多少空间；框绝不会小于它自己的内容所需。
+- `fit.scaleImages`和`fit.imageMinScale`：这个框及其所在组中的图片是否可以缩小，以及最小缩到多少（默认80%）。
+- `fit.shrinkText`和`fit.minScale`：框中的文字是否可以缩小，以及最小缩到多少（默认90%）。字号、行距和间距使用同一个比例；框本身的尺寸不变。
+- `overflow.continueIn`：这些都不够时，内容到哪里续排：另一个框，或另一页（`'next-page'`、`'template:<id>'`、`'page:<id>'`），文字在那里接在截断部分的`overflow.mark`之后，按原来的大小续排。能续排到另一页的框会先续排，再缩小图片和文字，除非它的`fit.preferContinue`为`false`。
 
-缩放比例每级2.5%，排版取能放下的最大比例，所以只多出一行的文字排成97.5%，而不是直接降到最小值。必须保持字号的方框设`fit: { shrinkText: false }`；图片必须保持原大的页面，在其组中的各个框架上设`fit: { scaleImages: false }`：
+缩放比例每级2.5%，排版取能放下的最大比例，所以只多出一行的文字排成97.5%，而不是直接降到最小值。必须保持字号的方框设`fit: { shrinkText: false }`；图片必须保持原大的页面，在其组中的各个框上设`fit: { scaleImages: false }`：
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
@@ -493,7 +529,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`和`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）及`overflow.mark`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`和`overflowTemplate`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
 
 ### 跨页
 
@@ -521,6 +557,8 @@ pageTemplates: [{
 ```
 
 栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
+
+竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.38 起。
 
 ## 注记样式
 
@@ -668,7 +706,7 @@ labelStyles: [
 
 在其他地方，引擎会忽略它不认识的键。页面模板和注记样式则会被检查，每个问题都是一条配置警告，出现在`postext check`和沙盒的检查面板中。这些警告的`path`是指向出错字段的JSON指针：`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`。字段是继承来的时，指针指向写出它的模板。指出不存在的id或名称的警告，还会给出最接近的现有名称。
 
-模板、框架、组、网格、`fit`、`overflow`、变体或注记样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框架或组，会被忽略，并在该字段上报告`unknownConfigValue`。
+模板、框、组、网格、`fit`、`overflow`、变体或注记样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。
 
 <table>
   <thead>
@@ -696,43 +734,43 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>frameDuplicate</code></td>
-      <td>同一列表中的两个框架或两个组<code>name</code>相同，或者某个组与某个框架同名。后一个条目被忽略；锚定到该名称时读取框架。</td>
-      <td>给每个框架和组起各自的名称。要修改继承来的框架，写一个同名的条目即可。</td>
+      <td>同一列表中的两个框或两个组<code>name</code>相同，或者某个组与某个框同名。后一个条目被忽略；锚定到该名称时读取框。</td>
+      <td>给每个框和组起各自的名称。要修改继承来的框，写一个同名的条目即可。</td>
     </tr>
     <tr>
       <td><code>frameStyleUnknown</code></td>
-      <td>框架的<code>style</code>没有对应的标注框样式。框架绘制时不带方框。</td>
+      <td>框的<code>style</code>没有对应的标注框样式。框绘制时不带方框。</td>
       <td>改正id，或把该样式加到<code>calloutStyles</code>中。</td>
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>框架、组或装饰元素锚定到<code>'#name'</code>，而模板中没有这个名称的框架、组或元素；或者框架和组之间互相锚定，形成循环（也包括经过一个自己没有锚定、方框就是其框架外框的组）。该锚点按<code>'container'</code>（即区域）处理。</td>
-      <td>锚定到存在的框架或组，或把其中一个锚定到区域，打破循环。</td>
+      <td>框、组或装饰元素锚定到<code>'#name'</code>，而模板中没有这个名称的框、组或元素；或者框和组之间互相锚定，形成循环（也包括经过这样一个组：它自己没有锚定，方框就是其中各框的外框）。该锚点按<code>'container'</code>（即区域）处理。</td>
+      <td>锚定到存在的框或组，或把其中一个锚定到区域，打破循环。</td>
     </tr>
     <tr>
       <td><code>frameMinMax</code></td>
-      <td>最小值大于最大值（<code>minHeight 40mm &gt; maxHeight 30mm</code>），或者固定的<code>width</code>或<code>height</code>在限值之外。最小值优先，固定尺寸被拉回限值之间，<code>used</code>说明框架实际取的值。单位不同的长度按页面的分辨率比较，em按正文字号换算。</td>
+      <td>最小值大于最大值（<code>minHeight 40mm &gt; maxHeight 30mm</code>），或者固定的<code>width</code>或<code>height</code>在限值之外。最小值优先，固定尺寸被拉回限值之间，<code>used</code>说明框实际取的值。单位不同的长度按页面的分辨率比较，em按正文字号换算。</td>
       <td>让最小值不大于最大值，或去掉与固定尺寸矛盾的那个限值。</td>
     </tr>
     <tr>
       <td><code>groupFrameUnknown</code></td>
-      <td>组的<code>frames</code>列出了一个不是模板中框架的名称（可能已被子模板或变体去掉）。组跳过它。</td>
+      <td>组的<code>frames</code>列出了一个不是模板中框的名称（可能已被子模板或变体去掉）。组跳过它。</td>
       <td>改正名称，或把它从列表中去掉。</td>
     </tr>
     <tr>
       <td><code>groupFrameTwice</code></td>
-      <td>一个框架列在两个组中，或在同一个组中列了两次。一个框架只属于一个组：后面的那次被跳过。</td>
-      <td>只把框架留在它随之移动的那个组中。</td>
+      <td>一个框列在两个组中，或在同一个组中列了两次。一个框只属于一个组：后面的那次被跳过。</td>
+      <td>只把框留在它随之移动的那个组中。</td>
     </tr>
     <tr>
       <td><code>frameChainLoop</code></td>
-      <td>框架通过<code>next</code>或<code>overflow.continueIn: '#frame'</code>互相续排，形成循环（<code>a → b → a</code>）。闭合循环的那个链接被丢弃，所以链在它前面的框架处结束。</td>
-      <td>让链在最后一个框架处结束：去掉它的<code>next</code>，或让它续排到下一页。</td>
+      <td>框通过<code>next</code>或<code>overflow.continueIn: '#frame'</code>互相续排，形成循环（<code>a → b → a</code>）。闭合循环的那个链接被丢弃，所以链在它前面的框处结束。</td>
+      <td>让链在最后一个框处结束：去掉它的<code>next</code>，或让它续排到下一页。</td>
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>某个<code>next</code>没有指向模板中的框架；某个<code>overflow.continueIn</code>没有指向框架（<code>'#x'</code>）或模板（<code>'template:x'</code>），或者不属于<code>'#frame'</code>、<code>'next-page'</code>和<code>'template:&lt;id&gt;'</code>这三种形式；或者<code>overflowTemplate</code>没有指向模板。放不下的内容不会在那里续排。</td>
-      <td>改正名称或id，或写成三种形式之一。</td>
+      <td>某个<code>next</code>没有指向模板中的框；某个<code>overflow.continueIn</code>没有指向框（<code>'#x'</code>）或模板（<code>'template:x'</code>），或者不属于<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>和<code>'page:&lt;id&gt;'</code>这些形式；或者<code>overflowTemplate</code>没有指向模板。放不下的内容不会在那里续排。</td>
+      <td>改正名称或id，或写成四种形式之一。</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

@@ -16,6 +16,7 @@ import { SVG_NS } from '../CanvasPreview/dom';
 import { frameIsEmpty } from './frameHit';
 import { chainHeadOf, frameAtCaret } from './frameLink';
 import type { EditMode } from '../../editing/editMode';
+import { designBadgesFor, drawDesignBadge, type DesignBadgeLabels } from './designBadges';
 
 export interface FrameMarksOptions {
   mode: EditMode;
@@ -29,6 +30,11 @@ export interface FrameMarksOptions {
   writeHere: string;
   /** «Continues __frame__». */
   continues: string;
+  /** Design mode: the words of the sizing badges (#868); none drawn
+   *  without them. */
+  badges?: DesignBadgeLabels;
+  /** The reader's language, for the numbers on the badges. */
+  locale?: string;
 }
 
 /** What to draw on a page, apart from the DOM (tests). */
@@ -59,8 +65,9 @@ export function frameMarksFor(doc: Pick<VDTDocument, 'config'>, page: VDTPage, o
       continue;
     }
     // A page added by continuation (#859) holds what its fence's page sent
-    // on: its other frames are not places to write.
-    if (empty && composed.continuationOf === undefined) {
+    // on: its other frames are not places to write. A frame that takes no
+    // room (an answer space gone on with the rest, #912) is not either.
+    if (empty && composed.continuationOf === undefined && !frame.collapsed) {
       out.push({ frame, kind: 'empty', text: [frame.name, head !== frame.name ? opts.continues.replace('__frame__', head) : opts.writeHere] });
     }
   }
@@ -117,6 +124,8 @@ export function drawFrameMarks(svg: SVGSVGElement, doc: VDTDocument, pageIndex: 
   clearFrameMarks(svg);
   const unit = page.width / 600;
   const fs = markFontPx(page);
+  const placedBadges: { x: number; y: number; w: number }[] = [];
+  const badges = opts.mode === 'design' && opts.badges ? new Map(designBadgesFor(doc, page, opts.badges, opts.locale).map((b) => [b.frame.id, b])) : null;
   for (const mark of frameMarksFor(doc, page, opts)) {
     const { rotate } = mark.frame;
     // An empty frame whose height follows its content has none: its mark
@@ -169,5 +178,8 @@ export function drawFrameMarks(svg: SVGSVGElement, doc: VDTDocument, pageIndex: 
       item.appendChild(t);
     }
     g.appendChild(item);
+    // After the item is in the overlay: the badge measures its words.
+    const badge = badges?.get(mark.frame.id);
+    if (badge) drawDesignBadge(item, badge, fs, unit, placedBadges);
   }
 }

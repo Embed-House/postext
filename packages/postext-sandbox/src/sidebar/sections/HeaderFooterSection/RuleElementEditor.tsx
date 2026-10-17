@@ -60,13 +60,15 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], onCh
   ];
   const vertical = resolved.direction === 'vertical';
   const heightSize = resolved.placement.size?.height;
-  const lengthMode: 'full' | 'custom' = heightSize && typeof heightSize === 'object' ? 'custom' : 'full';
-  const customLength: Dimension = heightSize && typeof heightSize === 'object' ? heightSize : { value: 40, unit: 'pt' };
+  // A length to another box's edge (#928) reads as full here.
+  const lengthMode: 'full' | 'custom' = heightSize && typeof heightSize === 'object' && 'value' in heightSize ? 'custom' : 'full';
+  const customLength: Dimension = heightSize && typeof heightSize === 'object' && 'value' in heightSize ? heightSize : { value: 40, unit: 'pt' };
 
   const mode = widthMode(resolved.placement.size);
+  const ruleWidth = resolved.placement.size?.width;
   const customWidth: Dimension =
-    resolved.placement.size && typeof resolved.placement.size.width === 'object'
-      ? resolved.placement.size.width
+    ruleWidth && typeof ruleWidth === 'object' && 'value' in ruleWidth
+      ? ruleWidth
       : { value: 40, unit: 'pt' };
 
   const align = alignFromPlacement(resolved.placement);

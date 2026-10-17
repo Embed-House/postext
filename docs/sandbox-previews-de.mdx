@@ -54,6 +54,19 @@ Bei einem Buch in mehreren Sprachen zeigt eine Leiste über der Leinwand seine A
 - Ein Klick auf eine Ausgabe öffnet sie auf derselben zusammengesetzten Seite. Die Seite wird über ihren `::::page`-Zaun im Kapitel gefunden, der in jeder Sprache derselbe ist; Sie bleiben also auf ihr, auch wenn sie in der anderen Ausgabe eine andere Nummer trägt, und der ausgewählte Rahmen bleibt ausgewählt. Auf jeder anderen Seite bleibt die Seitenzahl erhalten.
 - **Nebeneinander** zeigt das angezeigte Kapitel neben demselben Kapitel einer anderen Ausgabe (**neben** wählt sie, wenn das Buch mehr als zwei hat). Beide Spalten zeigen dieselbe Seite und blättern gemeinsam; **Gemeinsam blättern** schaltet das ab. Zwischen zusammengesetzten Seiten zählen die Spalten von der letzten zusammengesetzten Seite weiter, die sie teilen. Rahmen, die nicht passen oder deren Text verkleinert wurde, sind in beiden Spalten markiert. Die andere Ausgabe wird hier nur gelesen: Ein Klick auf eine ihrer Seiten öffnet diese Ausgabe auf dieser Seite.
 
+#### Was sich bewegt hat und warum
+
+Auf einer zusammengesetzten Seite kann der Satz ändern, was die Vorlage zeichnet, damit der Inhalt passt: Ein Kasten wächst mit seinem Text, die folgenden Kästen seiner Gruppe rücken nach unten, ein Rahmen gibt einem anderen Höhe ab, Bilder oder Text werden kleiner gesetzt, der Rest geht auf einer hinzugefügten Seite weiter. **Verschiebungen** in der Leiste über der Leinwand (sie erscheint, wenn das Kapitel zusammengesetzte Seiten hat) öffnet das Feld **Was sich bewegt hat und warum** und markiert diese Änderungen auf den Seiten.
+
+- Das Feld führt jede zusammengesetzte Seite auf, auf der sich etwas geändert hat, und unter einer Nummer jeden Rahmen, der sich geändert hat, mit seinen Änderungen in Worten: *dinero ist um 13,9 mm gewachsen, damit sein Inhalt passt*, *gasto ist um 13,9 mm nach unten gerückt, um dinero Platz zu machen*, *ahorro-fotos: seine Bilder stehen bei 82,5 %*, *dinero geht auf Seite 9 weiter*. Eine Änderung nennt ihre Ursache, wenn sie eine hat: den Rahmen, der diesen beim Wachsen verschoben hat, oder den Bund einer Doppelseite.
+- Auf der Seite trägt jeder dieser Rahmen ein Abzeichen mit derselben Nummer und seinen Änderungen in Kürze (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). Der Rahmen, wie die Vorlage ihn angibt, wird gestrichelt gezeichnet, und Pfeile führen von ihm zum gesetzten Rahmen: einer von seiner Oberkante bei einer Verschiebung, einer an seinem Fuß oder seiner Endkante bei einer Größenänderung.
+- Zeigt man in der Liste auf einen Rahmen, wird er auf seiner Seite hervorgehoben; ein Klick darauf oder auf die Überschrift einer Seite blättert zu dieser Seite.
+- Ein Rahmen, der noch immer nicht passt, sagt, wie viel fehlt, und seine Lösungen folgen ihm in der Liste als Schaltflächen (siehe [das Prüffeld](/de/docs/sandbox-design-checks)).
+
+Die Sätze stehen in der Sprache der Oberfläche, Zahlen eingeschlossen (*13,9 mm*). Die Markierungen werden nur über der Leinwand gezeichnet: PDF, Druck und jeder Export lassen sie weg. Der Browser merkt sich, ob das Feld offen war.
+
+Im Modus **Gestaltung** zeigen die Rahmen außerdem, wie ihre Vorlage sie bemisst: *auto*, wo die Höhe dem Inhalt folgt (oder eine feste Höhe bis zu ihrem Höchstwert wachsen darf), eine gestrichelte Linie quer durch den Rahmen bei seiner Mindesthöhe und eine bei seiner Höchsthöhe, mit den Werten in einem Abzeichen am Fuß des Rahmens (*auto · min. 36 mm · max. 72 mm*), und eine Stecknadel auf einem Rahmen, der seinen angegebenen Kasten behält (`pin: true`), was die Rahmen um ihn herum auch tun.
+
 ### Auf der Seite auswählen
 
 Die Seiten und die Editoren sind zwei Seiten desselben Buchs: Was auf einer Seite ausgewählt wird, ist im Markdown oder in den Einstellungen ausgewählt, und umgekehrt. Das funktioniert auf der Leinwand, im Folio im Modus **Text auswählen** und auf den HTML-Seiten gleich, und eine Auswahl aus einem Tab ist noch da, wenn man einen anderen öffnet.

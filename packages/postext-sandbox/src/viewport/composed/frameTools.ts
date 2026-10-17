@@ -20,9 +20,9 @@ import type { SandboxLabels } from '../../types/labels';
 import { segmentAtOffset } from '../../book/compose';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import { editModeNow, selectFrame } from '../../editing/editMode';
-import { frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame } from './frameHit';
+import { comicTextFrameAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame } from './frameHit';
 import { emptyMarkRect } from './frameOverlay';
-import { frameClickTarget, frameTextChange, frameTextTargetAt } from './frameLink';
+import { comicTextCaret, comicTextTargetAt, frameClickTarget, frameTextChange, frameTextTargetAt, type FrameTextTarget } from './frameLink';
 import { openFrameTextEditor, type FrameEditSurface } from './frameTextEditor';
 
 export interface FrameToolsDeps {
@@ -117,10 +117,43 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     return true;
   };
 
+  /** Open a field over a frame's text that writes the Markdown back. */
+  const editOnPage = (pageIndex: number, book: ComposedBook, frame: VDTFrame, target: FrameTextTarget, pageStart: number): boolean => {
+    const labels = deps.labelsRef?.current;
+    return openFrameTextEditor(deps.surface!, pageIndex, target, {
+      label: (labels?.composedFrameEdit ?? 'Text of the frame __frame__').replace('__frame__', frame.name),
+      hint: labels?.composedFrameEditHint ?? '',
+      onCommit: (text) => {
+        const change = frameTextChange(target, text);
+        // The page may have been laid out again meanwhile: write only
+        // where the source still reads what the field was opened on.
+        const now = deps.sourceOfPage(pageIndex) ?? book;
+        if (!change || now.markdown.slice(target.start, target.end) !== target.text) return;
+        write(now, pageStart, [change]);
+      },
+    });
+  };
+
+  /** A comic page's text frame (`::panel{text}`, #885) under the point:
+   *  in Content mode a click off its words puts the caret at its text, a
+   *  double click on a paragraph edits it on the page. Its words keep the
+   *  viewer's own click; Design mode leaves the comic to its tools. */
+  const comicText = (page: VDTPage | null, x: number, y: number): VDTFrame | null =>
+    page && !page.composed && page.comic && editModeNow() !== 'design' ? comicTextFrameAt(page, x, y) : null;
+
   return {
     frameAt,
     click(pageIndex, x, y) {
       const page = pageOf(pageIndex);
+      const text = comicText(page, x, y);
+      if (page?.comic && text) {
+        if (onFrameContent(page, text, x, y)) return false;
+        const book = deps.sourceOfPage(pageIndex);
+        const at = comicTextCaret(page, text);
+        if (!book || at === null) return false;
+        focusAt(book, at, page.comic.sourceStart);
+        return true;
+      }
       const frame = page?.composed ? frameOrMarkAt(page, x, y) : null;
       if (!page?.composed || !frame) return false;
       if (editModeNow() === 'design') {
@@ -133,6 +166,13 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     openSlot,
     dblclick(pageIndex, x, y) {
       const page = pageOf(pageIndex);
+      const text = comicText(page, x, y);
+      if (page?.comic && text) {
+        const book = deps.sourceOfPage(pageIndex);
+        if (!book || !deps.surface) return false;
+        const target = comicTextTargetAt(page, book.markdown, text, x, y);
+        return target ? editOnPage(pageIndex, book, text, target, page.comic.sourceStart) : false;
+      }
       const frame = page?.composed ? frameHitAt(page, x, y) : null;
       if (!page?.composed || !frame) return false;
       if (editModeNow() === 'design') return true;
@@ -141,20 +181,7 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
       if (!book || !doc || !deps.surface) return false;
       const target = frameTextTargetAt(doc, page, book.markdown, frame, x, y);
       if (!target) return false;
-      const labels = deps.labelsRef?.current;
-      const pageStart = page.composed.sourceStart;
-      return openFrameTextEditor(deps.surface, pageIndex, target, {
-        label: (labels?.composedFrameEdit ?? 'Text of the frame __frame__').replace('__frame__', frame.name),
-        hint: labels?.composedFrameEditHint ?? '',
-        onCommit: (text) => {
-          const change = frameTextChange(target, text);
-          // The page may have been laid out again meanwhile: write only
-          // where the source still reads what the field was opened on.
-          const now = deps.sourceOfPage(pageIndex) ?? book;
-          if (!change || now.markdown.slice(target.start, target.end) !== target.text) return;
-          write(now, pageStart, [change]);
-        },
-      });
+      return editOnPage(pageIndex, book, frame, target, page.composed.sourceStart);
     },
   };
 }

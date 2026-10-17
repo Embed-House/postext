@@ -42,17 +42,50 @@ export interface FrameFitConfig {
   scaleImages?: boolean;
   /** Smallest picture scale, above 0 and at most 1. Default 0.8. */
   imageMinScale?: number;
+  /** A frame whose `overflow.continueIn` sends content to another page
+   *  (`'next-page'`, `'template:<id>'`, `'page:<id>'`) goes on there
+   *  before its pictures or its text shrink, so a story keeps one size
+   *  from page to page (#920). `false`: shrink first and go on only when
+   *  shrinking is not enough. Default true. */
+  preferContinue?: boolean;
 }
 
 export interface FrameOverflowConfig {
   /** Where content that does not fit goes on: `'#frame'` (another frame of
    *  the same page, as `next`), `'next-page'` (the same frame on a page
-   *  added after this one) or `'template:<id>'` (a page of that template).
-   *  Unset: nowhere; the frame runs the reflow ladder and warns. */
+   *  added after this one), `'template:<id>'` (a page of that template)
+   *  or `'page:<id>'` (#917: a frame of the later page fence
+   *  `::::page{id=…}`, the one it leaves empty, or the one named by
+   *  `'page:<id>#<frame>'`; `<id>` may be `{attr.name}`, read from the
+   *  fence). Unset: nowhere; the frame runs the reflow ladder and warns. */
   continueIn?: string;
   /** Continuation mark at the end of a cut piece; unset = the localized
-   *  default; `false` = none. */
+   *  default; `false` = none. `{page}` is the number of the page the rest
+   *  goes on on (#917). */
   mark?: string | false;
+  /** Words at the head of the piece that goes on on another page, `{page}`
+   *  being the number of the page it comes from (#917): "Continued from
+   *  page {page}". The receiving frame's own, else the sending frame's.
+   *  Unset: none. */
+  fromMark?: string;
+}
+
+/** Ruled lines across a frame (#914): an answer space, a writing frame.
+ *  One rule at the foot of each line slot of the frame's content box (its
+ *  box less its padding), as many as fit its height, so an `'auto'` frame
+ *  that receives `:::space{lines=4}` is ruled four times and a frame that
+ *  grows gets more. */
+export interface FrameRulesConfig {
+  /** The pitch: `'line'` (the default), the leading of the frame's text
+   *  (its style's body, else the book's), or a length. */
+  every?: 'line' | Dimension;
+  /** Default: a mid grey. */
+  color?: ColorValue;
+  /** The rules' thickness. Default 0.5 pt. */
+  width?: Dimension;
+  /** Room left at both ends of each rule, inside the content box, or per
+   *  side. Default 0. */
+  inset?: Dimension | { left?: Dimension; right?: Dimension };
 }
 
 export interface FrameConfig {
@@ -117,6 +150,8 @@ export interface FrameConfig {
   crossGutter?: boolean;
   writingMode?: 'horizontal-tb' | 'vertical-rl';
   direction?: 'ltr' | 'rtl';
+  /** Ruled lines across the frame at a pitch (#914). */
+  rules?: FrameRulesConfig;
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
 }
@@ -242,6 +277,7 @@ export interface ResolvedFrameFit {
   minScale: number;
   scaleImages: boolean;
   imageMinScale: number;
+  preferContinue: boolean;
 }
 
 export interface ResolvedFrame {
@@ -279,6 +315,8 @@ export interface ResolvedFrame {
   crossGutter: boolean;
   writingMode?: 'horizontal-tb' | 'vertical-rl';
   direction?: 'ltr' | 'rtl';
+  /** Ruled lines across the frame (#914), as written (lengths checked). */
+  rules?: FrameRulesConfig;
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;

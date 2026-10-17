@@ -54,6 +54,19 @@ In un libro in più lingue, una barra sopra il canvas mostra le sue edizioni (*E
 - Un clic su un’edizione la apre sulla stessa pagina composta. La pagina si ritrova dalla sua recinzione `::::page` nel capitolo, uguale in ogni lingua, quindi resti su quella pagina anche se nell’altra edizione ha un altro numero; la cornice selezionata resta selezionata. In ogni altra pagina il numero di pagina resta lo stesso.
 - **Affiancate** mostra il capitolo a schermo accanto allo stesso capitolo di un’altra edizione (**accanto a** la sceglie quando il libro ne ha più di due). Le due colonne mostrano la stessa pagina e scorrono insieme; **Scorri insieme** lo disattiva. Tra una pagina composta e l’altra le colonne contano dall’ultima pagina composta che condividono. Le cornici che non entrano, o il cui testo è stato ridotto, sono segnate in entrambe le colonne. L’altra edizione qui si legge soltanto: un clic su una delle sue pagine apre quell’edizione a quella pagina.
 
+#### Che cosa si è spostato e perché
+
+In una pagina composta l'impaginazione può cambiare ciò che il modello disegna perché il contenuto ci stia: una cornice cresce con il suo testo, quelle che la seguono nel gruppo scendono, una cornice cede altezza a un'altra, le immagini o il testo vengono composti più piccoli, il resto prosegue in una pagina aggiunta. **Spostamenti**, nella barra sopra la tela (compare quando il capitolo ha pagine composte), apre il pannello **Che cosa si è spostato e perché** e segna questi cambiamenti sulle pagine.
+
+- Il pannello elenca ogni pagina composta in cui qualcosa è cambiato e, sotto un numero, ogni cornice che è cambiata, con i suoi cambiamenti a parole: *dinero è cresciuta di 13,9 mm perché il contenuto ci stia*, *gasto è scesa di 13,9 mm per fare posto a dinero*, *ahorro-fotos: le sue immagini sono al 82,5 %*, *dinero prosegue a pagina 9*. Un cambiamento nomina la sua causa quando ne ha una: la cornice che, crescendo, ha spostato questa, o la piega di una doppia pagina.
+- Sulla pagina, ciascuna di queste cornici porta un distintivo con lo stesso numero e i suoi cambiamenti in breve (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La cornice come la dichiara il modello è disegnata tratteggiata, e delle frecce vanno da essa alla cornice come è stata posata: una dal bordo superiore per uno spostamento, una al piede o al bordo finale per un cambio di misura.
+- Passando su una cornice dell'elenco, la si evidenzia nella sua pagina; un clic su di essa, o sull'intestazione di una pagina, porta a quella pagina.
+- Una cornice che ancora non ci sta dice quanto le manca, e le sue soluzioni la seguono nell'elenco come pulsanti (vedi [il pannello delle verifiche](/it/docs/sandbox-design-checks)).
+
+Le frasi sono nella lingua dell'interfaccia, numeri compresi (*13,9 mm*). I segni sono disegnati solo sulla tela: il PDF, la stampa e ogni esportazione li lasciano fuori. Il browser ricorda se il pannello era aperto.
+
+In modalità **Grafica** le cornici mostrano anche come le misura il loro modello: *auto* dove l'altezza segue il contenuto (o un'altezza fissa può crescere fino al suo massimo), una linea tratteggiata attraverso la cornice alla sua altezza minima e una alla massima, con i valori in un distintivo al piede della cornice (*auto · min. 36 mm · max. 72 mm*), e una puntina sulla cornice che conserva la sua forma dichiarata (`pin: true`) qualunque cosa facciano le cornici intorno.
+
 ### Selezionare sulla pagina
 
 Le pagine e gli editor sono due facce dello stesso libro: ciò che si seleziona su una pagina risulta selezionato nel Markdown o nelle impostazioni, e viceversa. Funziona allo stesso modo sul canvas, sul Folio in modalità **Seleziona il testo** e sulle pagine HTML, e una selezione fatta in una scheda resta lì quando se ne apre un’altra.

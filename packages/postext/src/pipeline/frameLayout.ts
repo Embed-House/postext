@@ -30,7 +30,7 @@ import { fillGalley, galleyBreaks } from './columnsGroup';
 /** What a frame of a composed page (#855) adds to a box's layout: its exact
  *  height, where content shorter than it sits, the rectangles its text
  *  runs round, and the scale of its pictures (#858). Absent for callouts. */
-export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions' | 'pictureScale'>;
+export type FrameBoxOptions = Pick<CalloutLayoutInput, 'boxHeight' | 'verticalAlign' | 'exclusions' | 'pictureScale' | 'continuedMark'>;
 
 /** What the box typesetter reads of a layout pass. */
 export interface FrameLayoutPass {
@@ -185,6 +185,28 @@ export const makeCalloutLayouter = (
   return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange, groups };
 };
 
+/** What a cut of a composed page's frame keeps together besides
+ *  `splitMinLines` (#913), as the running text does: a heading with what
+ *  follows it, and the items of a list, at least `listOrphans` before the
+ *  cut and `listWidows` after it (a short list under `shortListSplit:
+ *  'avoid'` none: it moves whole). A list that cannot be cut so is cut
+ *  before it, or inside one of its items. */
+export interface FrameCutRules {
+  keepHeadings: boolean;
+  listOrphans: number;
+  listWidows: number;
+  /** Lists of at most this many items are never cut between items. */
+  wholeListMaxItems: number;
+}
+
+/** The cut rules of a frame under `resolved` (#913). */
+export const frameCutRules = (resolved: ResolvedConfig): FrameCutRules => ({
+  keepHeadings: resolved.headings.keepWithNext,
+  listOrphans: resolved.bodyText.avoidOrphansInLists ? 2 : 1,
+  listWidows: resolved.bodyText.avoidWidowsInLists ? 2 : 1,
+  wholeListMaxItems: resolved.bodyText.shortListSplit === 'avoid' ? resolved.bodyText.shortListMaxItems : 0,
+});
+
 export interface CalloutFragment {
   /** The cut the rest of the box starts at. */
   to: CalloutCut;
@@ -218,6 +240,7 @@ export const splitCalloutFragment = (
   minLines: number,
   mirrored = false,
   frame?: FrameBoxOptions,
+  rules?: FrameCutRules,
 ): CalloutFragment | null => {
   const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored, frame);
   /** Figures, tables and display formulas: never cut, not text lines. */
@@ -258,6 +281,35 @@ export const splitCalloutFragment = (
       holds(lines, blocks, betweenChildren) && holds(totalLines - lines, totalBlocks - blocks, betweenChildren);
     let linesBefore = 0;
     let blocksBefore = 0;
+    /** For each unit that is a list item, its place in its run of items
+     *  and the run's length (#913). */
+    const isItem = (u: CalloutUnit | undefined): boolean => u?.kind === 'block' && u.block.type === 'listItem';
+    const runAt: { at: number; of: number }[] = [];
+    if (rules) {
+      for (let i = 0; i < units.length; ) {
+        if (!isItem(units[i])) { i++; continue; }
+        let j = i;
+        while (j < units.length && isItem(units[j])) j++;
+        for (let k = i; k < j; k++) runAt[k] = { at: k - i, of: j - i };
+        i = j;
+      }
+    }
+    /** A cut after unit `i` (between two children) the frame's rules
+     *  allow: not after a heading, not leaving too few items of a list on
+     *  either side. */
+    const ruled = (i: number): boolean => {
+      if (!rules) return true;
+      const u = units[i]!;
+      if (rules.keepHeadings && u.kind === 'block' && u.block.type === 'heading') return false;
+      const run = runAt[i];
+      if (run && isItem(units[i + 1])) {
+        const before = run.at + 1;
+        const after = run.of - before;
+        if (run.of <= rules.wholeListMaxItems) return false;
+        if (before < rules.listOrphans || after < rules.listWidows) return false;
+      }
+      return true;
+    };
     units.forEach((u, i) => {
       let next: number | undefined;
       if (u.kind === 'block') {
@@ -297,7 +349,7 @@ export const splitCalloutFragment = (
       }
       linesBefore += lineCount(u);
       if (isBlock(u)) blocksBefore++;
-      if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true)) {
+      if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true) && ruled(i)) {
         candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below });
       }
     });

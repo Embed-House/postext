@@ -154,6 +154,9 @@ Una riga `::panel{…}` comincia una vignetta; la sua sceneggiatura va fino alla
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Ribalta l’immagine di questa vignetta, o la tiene com’è disegnata quando la tavola specchia le sue immagini (vedi <a href="#direzione-di-lettura">Direzione di lettura</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>Il testo alternativo della vignetta, per il PDF marcato, l’HTML e l’EPUB. Non impostato: l’<code>altText</code> della risorsa.</td></tr>
     <tr><td><code>id=…</code></td><td>Un id per la vignetta, che gli output HTML ed EPUB usano come ancora.</td></tr>
+    <tr><td><code>text</code></td><td>Il corpo della vignetta è Markdown composto nella cornice della vignetta invece di un copione da letterare (vedi <a href="#vignette-di-testo">Vignette di testo</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Veste la vignetta con uno stile di riquadro (vedi <a href="#stili-di-riquadro">Stili di riquadro</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>Dove sta il testo di una vignetta di testo nella sua cornice. Senza: in alto.</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ Ogni output dipinge lo stesso fumetto: sfondi delle vignette, immagini ritagliat
 
 La didascalia di una striscia si dipinge con il testo, come quella di una figura. In un PDF marcato è la `Caption` del `Div` della striscia, letta dopo le sue vignette (prima, quando sta sopra la striscia). Nell’HTML, nell’EPUB a layout fisso e nell’EPUB a layout fluido la striscia e la sua didascalia sono un’unica `<figure>`, con la didascalia come suo `<figcaption>`; su una pagina verticale o da destra a sinistra, dove l’immagine della striscia giace sopra il foglio, l’HTML tiene la didascalia nel testo per conto suo.
 
+## Pagine di fumetto e pagine composte
+
+Una pagina di fumetto è una [pagina composta](/it/docs/composed-pages) il cui modello è scritto dalla sua suddivisione: il valore di `split` è una forma abbreviata che genera le cornici della pagina. Ogni cella della suddivisione, tolto il `pad` della sua vignetta, è una cornice, e lo è anche ogni vignetta `inset`, uno strato sopra la cornice su cui poggia. Una cornice porta l'immagine, il bordo e lo sfondo della sua vignetta; il lettering continua a essere posizionato vignetta per vignetta, come descritto sopra. Una pagina di immagini e copione si compone esattamente come prima.
+
+<table>
+  <thead>
+    <tr>
+      <th>Cosa genera la suddivisione</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Cornici</td><td>Una per cella, in ordine di lettura; la cornice di una vignetta sovrapposta segue la cornice su cui poggia.</td></tr>
+    <tr><td>Nomi</td><td>L'<code>id</code> della vignetta, altrimenti <code>p1</code>, <code>p2</code>… nell'ordine delle vignette.</td></tr>
+    <tr><td>Identificativi</td><td>Il fumetto è <code>cm&lt;n&gt;</code>, dove <code>n</code> è l'ordinale del suo recinto nel capitolo (pagine e strisce contate insieme, da 0); una cornice è <code>cm&lt;n&gt;:&lt;nome&gt;</code>; un balloon è <code>cm&lt;n&gt;:&lt;nome&gt;:b&lt;k&gt;</code>, dove <code>k</code> è la sua riga nel copione della vignetta. Restano uguali in tutte le lingue del capitolo e dopo ogni nuova impaginazione.</td></tr>
+    <tr><td>Contorno</td><td>Una cornice tagliata da una linea obliqua conserva il poligono della cella: il suo contenuto vi viene ritagliato, e un punto cade nella cornice solo al suo interno.</td></tr>
+    <tr><td>Nel VDT</td><td><code>page.comic.frames</code>: record <code>VDTFrame</code>, ciascuno con <code>panel</code>, l'indice della vignetta che porta, e un <code>configPath</code> vuoto, perché la cornice viene dal Markdown e non dalla configurazione.</td></tr>
+  </tbody>
+</table>
+
+### Vignette di testo
+
+Una vignetta con il flag `text` accoglie Markdown invece di un copione da letterare, e il suo corpo viene versato nella cornice della vignetta come uno slot in una cornice di una pagina composta:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+La tempesta durava da tre giorni quando la lampada del guardiano si spense.
+
+Maya salì da sola i **centododici** gradini.
+::panel{art=lh-stairs}
+maya: Nonno?
+:::
+```
+
+Il corpo è composto nello stile di testo del libro, dentro il bordo della vignetta e il margine del lettering (`comics.lettering.inset`), dall'alto della cornice (`valign=middle` o `valign=bottom` lo spostano in basso). È testo vero: paragrafi, titoli, elenchi, enfasi, link ed etichette, che il lettore può selezionare e cercare, che uno screen reader legge e a cui rimanda la mappa delle origini. Il corpo arriva fino alla riga `::panel` successiva, quindi non può contenere blocchi `:::`; queste righe vengono omesse. Il testo è dipinto sopra lo sfondo e l'immagine della vignetta e sotto il lettering della pagina. Un PDF taggato e l'EPUB adattabile lo leggono dopo le vignette della pagina.
+
+Il testo che non entra nella sua cornice viene tagliato al bordo della cornice e segnalato come `comicPanelFrame` (motivo `textOverflow`). Né una striscia né una doppia pagina accolgono testo nelle loro cornici, e per ora nemmeno un documento composto in verticale o da destra a sinistra: lì il testo della vignetta è composto nel flusso dopo il fumetto, e `comicPanelFrame` lo segnala.
+
+### Stili di riquadro
+
+`box=<id>` veste una vignetta con uno stile di riquadro di `calloutStyles`, gli stili con cui le pagine composte disegnano le loro cornici: la vignetta prende lo sfondo dello stile, il colore e lo spessore del bordo e il raggio degli angoli, e i `border` e `bg` propri della vignetta continuano a prevalere. In una vignetta di testo il riquadro è disegnato attorno al testo come quello di una cornice, con il margine interno dello stile, e la vignetta non disegna né bordo né sfondo propri. In una cella obliqua il testo e il suo riquadro si limitano al rettangolo più largo a lati dritti che sta nella cella. Un `box` che non nomina alcuno stile di riquadro lascia la vignetta nel suo stile di vignetta ed è segnalato come `comicPanelFrame` (motivo `unknownBox`).
+
+### Le cornici nella mappa delle origini e nel Sandbox
+
+`sourceAt`, `elementsForSource` e `findElement` ([Pagine composte › Mappa delle origini](/it/docs/composed-pages#mappa-delle-origini)) rispondono anche per i fumetti: il glifo di un balloon, il balloon (livello `box`), l'immagine di una vignetta (`resource`), la sua cornice (`frame`) e il fumetto (`template`), con gli identificativi sopra. Le parole di una vignetta di testo rispondono come il resto del testo, poi la loro riga, il paragrafo e il riquadro, la cornice e il fumetto. Nel Sandbox le parole di una vignetta di testo prendono il cursore e la selezione come il resto del testo, un clic in una vignetta di testo fuori dalle sue parole porta il cursore al suo testo, e un doppio clic su uno dei suoi paragrafi lo modifica sulla pagina. Linee di suddivisione, vignette e balloon si modificano come prima.
+
 ## Modificare i fumetti nella Sandbox
 
 Nel canvas, nelle pagine HTML e nella modalità di selezione di Folio, una tavola si può modificare con il puntatore, e ogni modifica viene riscritta nel Markdown del capitolo (la [guida della Sandbox](/it/docs/sandbox-books-saving#modificare-i-fumetti) ha i dettagli):
@@ -519,6 +569,7 @@ Ogni avviso indica la riga o l’attributo a cui si riferisce, e il pannello Ver
     <tr><td>Punto del personaggio fuori dalla zona sicura<br /><code>comicAnchorOutsideSafeArea</code></td><td>L’ancora di un’immagine sta fuori dalla sua zona sicura, quindi un ritaglio può tagliare fuori il personaggio e il codino punterebbe allora fuori dalla vignetta.</td><td>Allarga la zona sicura per includere la bocca, o sposta l’ancora. Non c’è niente da correggere se il personaggio deve a volte stare fuori dalla vignetta.</td></tr>
     <tr><td>La nuvoletta non entra<br /><code>comicBalloonOverflow</code></td><td>Dopo ogni ripiego una nuvoletta copre ancora un volto, un’altra nuvoletta, una zona da evitare o una bocca, fa passare il codino attraverso un’altra nuvoletta, o esce dalla sua vignetta (un attraversamento richiesto con <code>break</code> o con un ancoraggio <code>at=</code> non conta). L’avviso indica la vignetta e ciò che viene coperto. Mentre trascini una nuvoletta nella Sandbox, un volto o una zona da evitare che coprirebbe, o un bordo che oltrepasserebbe, si vedono prima del rilascio.</td><td>Accorcia la riga o dividila in due, dai più spazio alla vignetta, ancora la nuvoletta con <code>at=</code>, o lasciala attraversare il bordo con <code>break</code>. Il testo non viene mai rimpicciolito.</td></tr>
     <tr><td>Personaggio senza punto<br /><code>comicUnknownSpeaker</code></td><td>Una chiave di personaggio che nessuna immagine della tavola segna con un’ancora e nessuna voce del cast nomina, molto spesso una chiave scritta male. I suoi codini puntano fuori dalla vignetta. Sollevato solo sulle tavole le cui immagini segnano ancore; solo informativo.</td><td>Correggi la chiave, segna il personaggio sull’immagine o aggiungi una voce in <code>comics.cast</code> per un personaggio che non si vede mai.</td></tr>
+    <tr><td>Il riquadro della vignetta non si applica<br /><code>comicPanelFrame</code></td><td><code>reason</code> dice quale: <code>unknownBox</code>, un <code>box</code> non nomina alcuno stile di riquadro (la vignetta mantiene il suo stile di vignetta); <code>textOverflow</code>, il testo di una vignetta di testo è più alto della sua cornice (il resto viene tagliato, e l'avviso indica l'eccedenza in mm); <code>strip</code>, <code>spread</code> o <code>flow</code>, una vignetta di testo in una striscia, in una doppia pagina o in un documento verticale o da destra a sinistra, dove le cornici non accolgono testo (il testo è composto nel flusso dopo il fumetto).</td><td>Correggi il nome o aggiungi lo stile di riquadro; accorcia il testo o dai alla vignetta una cella più grande; negli altri casi porta la vignetta di testo su una pagina di fumetto singola, o inserisci le sue parole come didascalia.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ Il fumetto impaginato sta nel VDT: `page.comic` (`VDTComicPage`) contiene la cor
 - **Le strisce** non possono occupare un numero di colonne inferiore a quello della pagina (`columns=2` in una pagina di tre), e vengono lette solo al livello principale di un capitolo (non dentro un riquadro, una tabella o una nota a piè di pagina). Una citazione nella didascalia di una striscia si stampa così come è scritta.
 - **Doppie pagine.** Una vignetta arrotondata tagliata in corrispondenza del dorso perde tutti gli angoli arrotondati. Un fumetto da destra a sinistra in un libro rilegato a sinistra si apre comunque sulla pagina di sinistra, quindi la sua prima vignetta finisce sulla seconda pagina della doppia pagina.
 - **Le figure che escono dalla vignetta** prendono il ritaglio dell’immagine della vignetta, quindi la scontornatura deve avere le stesse dimensioni dell’immagine.
+- **Vignette di testo**: si compongono solo su pagine di fumetto singole di documenti orizzontali da sinistra a destra. In una cella obliqua le loro righe si limitano al rettangolo più largo a lati dritti che vi sta invece di seguire l'inclinazione, il testo non viene mai rimpicciolito per entrare, e un PDF taggato lo legge dopo le vignette della pagina invece che dentro il `Div` del fumetto.
 - **Output.** Il testo alternativo di ripiego di una vignetta senza `alt` né `altText` è «Panel N», in inglese. La navigazione per regioni descrive le vignette inclinate con i loro riquadri di delimitazione. Kindle Panel View copia il fumetto di una pagina una volta per ogni vignetta, il che rende il file più grande, e non è stato verificato in Kindle Previewer.
 
 ## Fonti

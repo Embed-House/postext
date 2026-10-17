@@ -1,7 +1,8 @@
-// The marks of a picture as a tool hands them over — its safe area, the
-// speakers a comic's lettering points at, the zones and the faces no
-// balloon covers — checked and stored the way the "Safe area & lettering"
-// dialog stores them.
+// The marks of a picture as a tool hands them over — its safe area, its
+// anchors (the points a map's or a diagram's ::label lines stand at, #866,
+// and the speakers a comic's lettering points at), the zones and the faces
+// no balloon covers — checked and stored the way the "Safe area, anchors &
+// lettering" dialog stores them.
 
 import { normalizeSafeArea, type Resource, type ResourceAnchor, type ResourceSafeArea } from 'postext';
 import {
@@ -44,10 +45,21 @@ export const MARKS_SCHEMA: JsonSchema = {
     safeArea: { ...RECT_SCHEMA, type: ['object', 'null'], description: 'The part of the picture that must stay in view: the layout may crop what lies outside it to fit the page. null: the picture always shows whole. For a bitmap, an SVG or a video\'s poster.' },
     anchors: {
       type: ['array', 'null'],
-      description: 'The speakers of a comic panel\'s picture: id (the key the script names, as in "ana: Hello"), x and y of the mouth a speech balloon\'s tail points at, and optionally head (where a thought balloon points) and face (a rectangle no balloon covers).',
+      description: 'The named points of the picture. For a map or a diagram, the anchors its labels stand at: a :::figure{resource="…"} sets ::label[TEXT]{at="id"} at the anchor with that id, and the anchor\'s label fields (style, align, verticalAlign, rotate, width) are what such a label takes unless it says otherwise. For a comic panel, the speakers: id is the key the script names (as in "ana: Hello"), x and y the mouth a speech balloon\'s tail points at, and optionally head (where a thought balloon points) and face (a rectangle no balloon covers).',
       items: {
         type: 'object',
-        properties: { id: { type: 'string' }, x: { type: 'number' }, y: { type: 'number' }, head: POINT_SCHEMA, face: RECT_SCHEMA },
+        properties: {
+          id: { type: 'string' },
+          x: { type: 'number' },
+          y: { type: 'number' },
+          head: POINT_SCHEMA,
+          face: RECT_SCHEMA,
+          style: { type: 'string', description: 'A label style id of the design (labelStyles) for the label set here.' },
+          align: { type: 'string', enum: ['start', 'center', 'end'], description: 'Which side of the label stands at the point, in the label\'s direction (default center).' },
+          verticalAlign: { type: 'string', enum: ['top', 'middle', 'bottom'], description: 'Which edge of the label stands at the point (default middle).' },
+          rotate: { type: 'number', description: 'Degrees, clockwise, about the point (default 0).' },
+          width: { type: 'number', description: 'The label\'s measure as a fraction of the picture\'s width (0 to 1); the label wraps within it. Unset: its natural width.' },
+        },
         required: ['id', 'x', 'y'],
         additionalProperties: false,
       },
@@ -57,6 +69,19 @@ export const MARKS_SCHEMA: JsonSchema = {
   },
   additionalProperties: false,
 };
+
+const ALIGNS = new Set(['start', 'center', 'end']);
+const VERTICAL_ALIGNS = new Set(['top', 'middle', 'bottom']);
+
+/** Why the label fields of `a` cannot be stored, if they cannot. */
+function labelFieldProblem(a: ResourceAnchor): string | undefined {
+  if (a.align !== undefined && !ALIGNS.has(a.align)) return 'align is start, center or end';
+  if (a.verticalAlign !== undefined && !VERTICAL_ALIGNS.has(a.verticalAlign)) return 'verticalAlign is top, middle or bottom';
+  if (a.rotate !== undefined && !Number.isFinite(a.rotate)) return 'rotate is a number of degrees';
+  if (a.width !== undefined && !(Number.isFinite(a.width) && a.width > 0 && a.width <= 1)) return 'width is a fraction of the picture\'s width, above 0 and up to 1';
+  if (a.style !== undefined && (typeof a.style !== 'string' || !a.style.trim())) return 'style is a label style id';
+  return undefined;
+}
 
 const ID_PROBLEMS = {
   empty: 'is empty',
@@ -74,7 +99,7 @@ const storable = (rect: ResourceSafeArea): boolean => normalizeMarks({ anchors: 
  * be told of them: the speakers a crop to the safe area may hide. Throws a
  * {@link ToolError} for marks the dialog would not save.
  */
-export function withMarks(resource: Resource, input: MarksInput): { resource: Resource; notes: string[] } {
+export function withMarks(resource: Resource, input: MarksInput, labelStyles?: readonly string[]): { resource: Resource; notes: string[] } {
   const picture = resource.kind === 'bitmap' ? resource.bitmap?.fileId : resource.kind === 'svg' ? resource.svg?.fileId : undefined;
   const poster = resource.kind === 'video' ? resource.video?.poster?.fileId : undefined;
   if (!picture && !poster) {
@@ -84,7 +109,7 @@ export function withMarks(resource: Resource, input: MarksInput): { resource: Re
   }
   // A poster is cropped like a picture but never lettered.
   const lettering = (['anchors', 'avoid', 'faces'] as const).filter((k) => input[k] !== undefined && input[k] !== null && input[k]!.length > 0);
-  if (!picture && lettering.length > 0) throw new ToolError(`A video's poster takes a safe area only, not ${lettering.join(', ')}: lettering marks are for the bitmap and SVG pictures of comic panels.`);
+  if (!picture && lettering.length > 0) throw new ToolError(`A video's poster takes a safe area only, not ${lettering.join(', ')}: anchors and lettering marks are for bitmap and SVG pictures.`);
 
   const marks: PictureMarks = marksOf(resource);
   if (input.safeArea !== undefined) {
@@ -106,12 +131,19 @@ export function withMarks(resource: Resource, input: MarksInput): { resource: Re
     if (bad >= 0) throw new ToolError(`marks.anchors[${bad}].id ${JSON.stringify(anchors[bad]!.id)} ${ID_PROBLEMS[anchorIdProblem(anchors, bad)!]}.`);
     const face = anchors.findIndex((a) => a.face && !storable(a.face));
     if (face >= 0) throw new ToolError(`marks.anchors[${face}].face is not a rectangle inside the picture: x, y, width and height are fractions of it (0 to 1).`);
-    marks.anchors = anchors;
+    for (let i = 0; i < anchors.length; i++) {
+      const problem = labelFieldProblem(anchors[i]!);
+      if (problem) throw new ToolError(`marks.anchors[${i}]: ${problem}.`);
+    }
+    marks.anchors = anchors.map((a) => (a.style !== undefined ? { ...a, style: a.style.trim() } : a));
   }
   const next = applyMarks(resource, marks);
+  const notes: string[] = [];
   const hidden = (next.anchors ?? []).filter((a) => anchorOutsideSafeArea(a, next.safeArea)).map((a) => a.id);
-  return {
-    resource: next,
-    notes: hidden.length > 0 ? [`The mouth or the head of ${hidden.join(', ')} lies outside the safe area: a crop may hide it.`] : [],
-  };
+  if (hidden.length > 0) notes.push(`${hidden.join(', ')} lie${hidden.length === 1 ? 's' : ''} outside the safe area: a crop may hide ${hidden.length === 1 ? 'it' : 'them'}.`);
+  if (labelStyles && input.anchors) {
+    const unknown = [...new Set((next.anchors ?? []).map((a) => a.style).filter((st): st is string => !!st && !labelStyles.includes(st)))];
+    if (unknown.length > 0) notes.push(`No label style ${unknown.map((u) => JSON.stringify(u)).join(', ')} in the design (labelStyles: ${labelStyles.join(', ') || 'none'}): a label set there takes the body text's look. Add the style with sandbox_set_config.`);
+  }
+  return { resource: next, notes };
 }

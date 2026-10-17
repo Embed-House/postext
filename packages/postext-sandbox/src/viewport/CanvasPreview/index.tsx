@@ -16,6 +16,8 @@ import { createPaintedPages, type PaintedPages } from './pageReuse';
 import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
 import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks';
+import { clearReflowMarks, drawReflowMarks } from '../composed/reflowMarks';
+import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/reflowView';
 import { onFrameJumpChange } from '../../editions/frameJump';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { drawPickedMark } from '../../selection/pickedOverlay';
@@ -23,6 +25,7 @@ import { onPageSelectionChange } from '../../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { syncComicEditors } from '../comics/comicEditing';
 import { syncFrameEditors } from '../composed/frameEditor';
+import { syncLabelAnchorEditors } from '../composed/labelAnchorEditor';
 import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
@@ -907,13 +910,17 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
   // …and the fit marks the frame a check just reached (#867).
   useEffect(() => onFrameJumpChange(() => setEditModeTick((t) => t + 1)), []);
+  // …and the Reflow marks, with the frame the Reflow panel points at (#868).
+  useEffect(() => onReflowViewChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
     // The comic splitter handles follow the new layout (#568).
     syncComicEditors();
-    // So do the page-template marks of Design mode (#863).
+    // So do the page-template marks of Design mode (#863) and the figure
+    // labels' anchors (#866).
     syncFrameEditors();
+    syncLabelAnchorEditors();
     const debug = resolveDebugConfig(config.debug);
     // The editor selection is chapter-local; the document is the composed
     // book — or, stitched from every chapter, a document whose offsets are
@@ -955,6 +962,14 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
 
     let activeCursorRect: SVGRectElement | null = null;
     const drawn = drawnOverlaysRef.current;
+    // What the layout moved on composed pages (#868): in the overlay only.
+    const reflowShown = reflowShownNow();
+    const reflowFocus = reflowFocusNow();
+    const drawReflow = (overlay: SVGSVGElement, pageIndex: number) => drawReflowMarks(overlay, doc, pageIndex, {
+      shown: reflowShown,
+      focusFrame: reflowFocus?.pageIndex === pageIndex ? reflowFocus.frame : null,
+      locale: uiLocaleRef.current,
+    });
     for (const [pageIndex, overlay] of overlayMapRef.current) {
       const page = doc.pages[pageIndex];
       if (!page) continue;
@@ -963,7 +978,10 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         if (page.composed) clearFrameMarks(overlay);
         drawPickedMark(overlay, doc, pageIndex, null);
         // A frame that does not fit is marked on every page (#867).
-        if (page.composed) drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+        if (page.composed) {
+          drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+          drawReflow(overlay, pageIndex);
+        }
         continue;
       }
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, resourceSelection);
@@ -978,10 +996,22 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           selectedFrameId: selectedFrameNow()?.pageIndex === pageIndex ? selectedFrameNow()!.frameId : null,
           writeHere: labelsRef.current.composedFrameWriteHere,
           continues: labelsRef.current.composedFrameContinues,
+          // Design mode: auto sizes, minimums, maximums and pins (#868).
+          badges: {
+            auto: labelsRef.current.designBadgeAuto,
+            min: labelsRef.current.designBadgeMin,
+            max: labelsRef.current.designBadgeMax,
+            pinned: labelsRef.current.designBadgePinned,
+          },
+          locale: uiLocaleRef.current,
         });
         // Overflow and scale (#867): in the overlay, never on the page.
         drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
-      } else clearFitMarks(overlay);
+        drawReflow(overlay, pageIndex);
+      } else {
+        clearFitMarks(overlay);
+        clearReflowMarks(overlay);
+      }
       drawn.add(pageIndex);
       if (rect) activeCursorRect = rect;
     }

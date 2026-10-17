@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تقصّ المخرجات المقسّمة إلى صفحات الباقي عند أسفل ذلك الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>قيمة <code>overflow.continueIn: 'page:&lt;id&gt;'</code> في إطار لا تسمّي سور صفحة يأتي بعد السور الذي فيه مقاله (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>target</code>، و<code>before</code> حين يأتي ذلك السور قبله، و<code>configPath</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة المُرسِلة.</td>
+      <td>يستمر الباقي في صفحة تُضاف بعد الصفحة المُرسِلة، كما في <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>سطر فتح صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين (<code>template</code> و<code>fenceIndex</code>؛ و<code>fence</code> هي <code>spread</code> في سطر الفتح؛ و<code>templateSpread</code> ما في القالب).</td>
       <td>الحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>فقرة يفتتحها <a href="/ar/docs/configuration-text#الحروف-الاستهلالية">حرف استهلالي</a> ولا تستطيع أخذه كما ضُبط. <code>reason</code>: <code>'shortParagraph'</code> (أسطرها أقل مما ينزله الحرف الاستهلالي؛ و<code>handling</code> هو ما فعله <code>shortParagraph</code>، و<code>lines</code> عدد الأسطر التي يمتد عليها الحرف المصغَّر)، أو <code>'split'</code> (تنكسر قبل آخر سطر يجاور الحرف الاستهلالي، وهي وحدها في عمود أقصر من أن يسعه)، أو <code>'joiningScript'</code> (حرفها الأول يتصل بما بعده)، أو <code>'verticalText'</code>، أو <code>'noLetter'</code> (تُفتتح بإحالة أو صيغة أو علامة حاشية). و<code>text</code> هو سطرها الأول.</td>
+      <td>فقرة يفتتحها <a href="/ar/docs/configuration-text#الحروف-الاستهلالية">حرف استهلالي</a> ولا تستطيع أخذه كما ضُبط. <code>reason</code>: <code>'shortParagraph'</code> (أسطرها أقل مما ينزله الحرف الاستهلالي؛ و<code>handling</code> هو ما فعله <code>shortParagraph</code>، و<code>lines</code> عدد الأسطر التي يمتد عليها الحرف المصغَّر)، أو <code>'split'</code> (تنكسر قبل آخر سطر يجاور الحرف الاستهلالي، وهي وحدها في عمود أقصر من أن يسعه)، أو <code>'joiningScript'</code> (حرفها الأول يتصل بما بعده)، أو <code>'verticalText'</code>، أو <code>'noLetter'</code> (تُفتتح بإحالة أو صيغة أو علامة حاشية). و<code>text</code> هو سطرها الأول. <code>'inBox'</code>: تطلب مجموعة <code>:::paragraphs</code> أو نمط فقرة حرفًا استهلاليًا داخل صندوق <code>:::callout</code>، حيث لا يُصفّ أي حرف استهلالي.</td>
       <td>يُحفظ المكان، أو يُصغَّر الحرف الاستهلالي، أو يُترك، كما يقول التحذير.</td>
     </tr>
     <tr>

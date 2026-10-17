@@ -122,6 +122,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Fontsource's static cuts, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11): pages, lines and warnings. With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
 | `pnpm cookbook sandbox [slug…] --site https://postext.dev` | The same comparison on a deployed site: the Sandbox route a recipe page links to, one browser context per edition, the layout worker's documents read from the page. It also fails when the page fetched another edition's bundle. Page differences fail here (`--no-strict` makes them warnings). |
 | `pnpm cookbook capture <slug> --stress 1.3 --check` | The stress test (C38, §11): each edition runs as written and once more with every text 30 % longer, and the second run reports what each page did. Implies `--check`. |
+| `pnpm cookbook capture <slug> --stress 1.3 --stress-out <dir>` (or `bench … --stress-out <dir>`) | Also writes the stretched edition to `<dir>/<slug>/<lang>/`: every page as `p01.png`…, the Markdown it was laid out from (`<lang>.stretched.md`) and `stress.json` with the C38 findings. `--preview-dir` writes the pages as written. |
 | `pnpm cookbook capture <slug> --check --compare [--max-diff 12] [--no-pixels] [--strict]` | Compares the layout and every published page with the approved capture of the same sources (C39, §11). |
 | `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
@@ -1077,7 +1078,11 @@ edition, before it is published:
   code, maths, HTML, a table, front matter or a comic's raw body, so the markup and the language
   stay as they were. A note per composed page says what it did, from its reflow log: `p. 1
   (tema-cajas) rearranged: dinero grew 8.7 mm; gasto moved down 8.7 mm`, `goes on: continues
-  texto → cp0:resto`, `fits as it was`. A warning the longer text raises fails, except a
+  texto → resto of seguido on p. 2 (cp0:resto)`, `fits as it was`. Where the log is silent (a
+  frame with an `auto` height and no `minHeight` declares no height, so it never grows in the log
+  and what is anchored to it never moves), the note compares each frame's box with the same page
+  of the run on the text as written: `entradilla 6.2 mm taller than as written; col-1 moved down
+  6.2 mm from where it was as written`. A warning the longer text raises fails, except a
   `frameOverflow` whose proposals carry values, which is a warning that names them (the
   copy-fitter's next move); one with no such proposal fails. A stretched run that throws, does
   not converge or builds nothing fails too. The first note says how much longer the text came

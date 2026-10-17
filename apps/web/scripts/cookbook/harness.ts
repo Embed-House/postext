@@ -235,6 +235,9 @@ export interface RunOptions {
   /** Only the facts: no PDF, pages, card or bundle (the stretched run of
    *  the stress test). */
   factsOnly?: boolean;
+  /** The facts and every page as a PNG, no PDF, card or bundle: the
+   *  stretched run of the stress test with `--stress-out` (#915). */
+  pagesOnly?: boolean;
 }
 
 const PROBE = "/__cb/probe.js";
@@ -393,7 +396,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     run.kit = await within("kit", () => probe(page, "kitState"));
     run.epubs = await within("epubs", () => probe<EpubRecord[]>(page, "epubState"));
 
-    if (meta.downloads?.pdf && !opts.sandboxOnly && !opts.factsOnly) {
+    if (meta.downloads?.pdf && !opts.sandboxOnly && !opts.factsOnly && !opts.pagesOnly) {
       const button = await within("pdfButton", () => page.$("[data-postext-pdf]"));
       const pdf: NonNullable<VariantRun["pdf"]> = {
         wanted: true, button: !!button, timedOut: false, error: null, fontFailures: [], ms: 0, bytes: null,
@@ -433,6 +436,16 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     }
     const all = (run.facts.pages ?? []).map((p) => p.n);
     if (run.facts.selected < 0 || all.length === 0 || opts.factsOnly) return run;
+    if (opts.pagesOnly) {
+      const rendered = await within("pages", () => probe<{ pages?: { n: number; w: number; h: number; full: string; strip: string; png: string | null }[]; error?: string; taint?: boolean }>(
+        page, "renderPages", { select, pages: all, png: true },
+      ));
+      if (rendered.error) run.renderError = { message: rendered.error, taint: !!rendered.taint };
+      run.pages = (rendered.pages ?? []).map((p) => ({
+        n: p.n, w: p.w, h: p.h, full: dataUrlBytes(p.full), strip: dataUrlBytes(p.strip), png: p.png ? dataUrlBytes(p.png) : null,
+      }));
+      return run;
+    }
     const keep = meta.capture.sandbox ?? null;
     if (opts.sandboxOnly) {
       const sandbox = opts.sandbox;

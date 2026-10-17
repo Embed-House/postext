@@ -120,6 +120,12 @@ export interface ComicPanelSource {
    *  in a page that has none. */
   implicit?: true;
   items: ComicScriptItem[];
+  /** A text panel (`::panel{text}`, #885): the range of its body, the
+   *  Markdown poured into its frame (absolute; from the line after the
+   *  `::panel` line to the end of its last line with text). Its lines are
+   *  no script: `items` is empty. Absent for a panel lettered from a
+   *  script. */
+  text?: ComicSourceRange;
 }
 
 /** A comic page or strip as written. */
@@ -146,6 +152,10 @@ export interface ComicPageSource {
   stray: ComicSourceRange[];
   /** The closing `:::` was found (an unclosed page runs to the end). */
   closed: boolean;
+  /** Ordinal of the fence among the comic fences of its text (`:::page`
+   *  and `:::strip` counted together, from 0), set by the block parser: the
+   *  stable ids of the comic's frames and balloons (#885). */
+  fenceIndex?: number;
   sourceStart: number;
   sourceEnd: number;
 }

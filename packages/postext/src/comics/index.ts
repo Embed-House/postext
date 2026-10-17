@@ -30,7 +30,10 @@ export { layoutComicStrip, comicStripPlacement, comicStripExtent, comicStripAspe
 export type { ComicStripPlacement, ComicStripContext, ComicStripAlign } from './strip';
 export { layoutComicSpread, isComicSpread } from './spread';
 export type { ComicSpreadContext, ComicSpreadPage } from './spread';
-export { translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateSvgPath, comicBlockOnSheet, pageComics } from './transform';
+export { translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateComicFrame, translateSvgPath, comicBlockOnSheet, pageComics } from './transform';
+export { comicElementId, comicFrameElementId, comicBalloonElementId, comicFrameName, isComicTextPanel, comicBoxStyle, comicFrameSpecs } from './frames';
+export type { ComicFrameSpec } from './frames';
+export { comicTextPanelsSupported } from './textPanels';
 export { comicFontFamilies, markdownHasComics } from './fonts';
 export { COMIC_RESERVED_KEYS } from './types';
 export type { ComicPageSource, ComicPanelSource, ComicScriptItem, ComicScriptRole, ComicSourceRange, ComicTailSide } from './types';

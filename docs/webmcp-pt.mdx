@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: um agente trabalhando no Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 39 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
+  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 40 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -24,7 +24,7 @@ interface: ele lê o livro, pede uma imagem da página 12, define
 páginas e volta ao valor anterior. Ele faz o que você faz a olho, com o seu
 livro e no seu navegador.
 
-São 39 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
+São 40 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
 o Sandbox está na tela, e 8 ferramentas do site, `site_*`, em todas as páginas
 do postext.dev. Esta página as organiza pelo que você pediria a um agente e
 mostra a chamada de cada uma.
@@ -41,7 +41,7 @@ configurar nada do lado do Postext.
 O WebMCP ainda é um rascunho. O Chrome o oferece como teste de origem e atrás
 da flag `chrome://flags/#enable-webmcp-testing`. As ferramentas acompanham a
 página: na página inicial ou na documentação o agente tem as ferramentas
-`site_*`; quando o Sandbox está na tela, aparecem também as 39 ferramentas
+`site_*`; quando o Sandbox está na tela, aparecem também as 40 ferramentas
 `sandbox_*`.
 
 ### Em qualquer outro navegador: `window.postextWebMcp`
@@ -316,10 +316,10 @@ encontra famílias no catálogo aberto, e escrever o nome em um ajuste
 `fontFamily` a carrega.
 
 Os estilos de boxe têm uma biblioteca própria: `sandbox_frame_styles` dá cada
-estilo com os lugares onde o livro o usa (quadros de modelo, páginas compostas,
+estilo com os lugares onde o livro o usa (blocos de modelo, páginas compostas,
 boxes `:::callout` por capítulo) e as fusões de estilos quase iguais que sugere,
-como Design › Boxes › Estilos de quadro. `sandbox_merge_styles` recebe `groups`
-(`{ keep, merge }`) ou `all: true` e reescreve cada quadro e cada bloco que
+como Design › Boxes › Estilos de bloco. `sandbox_merge_styles` recebe `groups`
+(`{ keep, merge }`) ou `all: true` e reescreve cada bloco de modelo e cada cerca que
 nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
 boxes ficam em lugares diferentes, que então mudam de lugar.
 A resposta traz `undoSteps`: um passo por capítulo reescrito e outro para os estilos, que `sandbox_undo` desfaz começando pelos estilos.
@@ -419,6 +419,16 @@ imagem. `newId` renomeia um recurso e, por padrão, todas as referências a ele
 no livro. `sandbox_list_resources` lista os recursos e, com um `id`, mostra um
 deles por inteiro (as células de uma tabela com a sua formatação, o código de
 um SVG).
+
+As `marks` de uma imagem levam também as suas âncoras. Num mapa ou num esquema são os pontos em que ficam as suas linhas `::label`: um `id`, `x` e `y` (frações da imagem inteira) e os campos de rótulo que um rótulo colocado ali herda (`style`, `align`, `verticalAlign`, `rotate`, `width`). A resposta avisa de um estilo de rótulo que o design não tem, e marcas novas num recurso são um passo do histórico (`sandbox_undo` responde `kind: "resource"`).
+
+```jsonc
+// duas âncoras de um mapa, com seus estilos de rótulo
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
 
 As fontes enviadas para o livro passam por `sandbox_save_font`:
 
@@ -560,6 +570,7 @@ página densa para julgá-la → `sandbox_get_warnings` com
 em torno da sua `line` e `sandbox_render_page` da sua `page` →
 `sandbox_edit_text` ou `sandbox_set_config` → `sandbox_get_warnings` de novo,
 até a lista voltar vazia.
+Um bloco de página composta que não cabe vem com suas soluções (`proposals`): `sandbox_apply_proposal` com seu `frame` e o número de uma delas a aplica, diagrama o capítulo de novo e responde `fits`.
 
 **"Faça um livro com este arquivo do Word e me dê o PDF."** `sandbox_save_book`
 com `action: "new_blank"` → `sandbox_import_word` com `dryRun: true` →
@@ -592,7 +603,7 @@ evite que esse texto seja tomado por instruções.
 - **Trabalho longo leva tempo.** Uma ferramenta espera a diagramação antes de
   responder; `wait: false` responde na hora. O PDF ou o EPUB de um livro longo
   leva minutos.
-- **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, as configurações alteradas com `sandbox_set_config` ou no painel Design, os quadros arrastados. `redo: true` refaz. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
+- **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, as configurações alteradas com `sandbox_set_config` ou no painel Design, os blocos arrastados. `redo: true` refaz. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
 - **O livro na tela.** As ferramentas trabalham sobre o livro aberto. Só
   `sandbox_export` de um arquivo `.postext`, `sandbox_save_book` com
   `duplicate` e `sandbox_reset_to_original` com `sample` alcançam outro livro
@@ -642,7 +653,7 @@ cada uma vêm com `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Perguntas**: `sandbox_answer`.
-- **As verificações**: `sandbox_get_warnings`.
+- **As verificações**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
 
 ## Ao incorporar o Sandbox
 

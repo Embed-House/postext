@@ -193,7 +193,8 @@ describe("page renditions", () => {
         );
       }
     }
-  });
+    // Every page of two locales: over 30 s on a loaded machine.
+  }, 120_000);
 
   it("rejects unknown pages and locales", () => {
     expect(pageMarkdown("en", "/nope")).toBeNull();

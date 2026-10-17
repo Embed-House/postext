@@ -10,6 +10,7 @@ import { announce } from '../ui/announcer';
 import { useSandboxSelector } from '../context/SandboxContext';
 import { EditionBar } from './composed/EditionBar';
 import { EditionCompare } from './composed/EditionCompare';
+import { ReflowPanel, ReflowToggle } from './composed/ReflowPanel';
 import { useFrameJumpRunner } from '../editions/useFrameJumpRunner';
 import { loadCanvasViewMode, saveCanvasViewMode, loadCanvasFitMode, saveCanvasFitMode, loadCanvasZoom, saveCanvasZoom } from '../storage/persistence';
 
@@ -180,8 +181,14 @@ export function CanvasViewport() {
         onPageCountChange={handlePageCountChange}
         onCurrentPageChange={handleCurrentPageChange}
       />
-      <EditionBar comparing={comparing} onToggleCompare={() => setComparing((c) => !c)} />
+      {/* Over the canvas: the editions of the book (#867) and what the
+          layout moved on its composed pages (#868). */}
+      <div className="absolute start-2 top-2 z-20 flex items-center gap-1" data-canvas-bar="">
+        <EditionBar comparing={comparing} onToggleCompare={() => setComparing((c) => !c)} />
+        <ReflowToggle />
+      </div>
       {comparing && <EditionCompare onClose={() => setComparing(false)} />}
+      <ReflowPanel currentPage={currentPage} onJumpToPage={handleJumpToPage} />
       <div {...shell.hoverStripProps} />
       <CanvasToolbar
         zoom={zoom}

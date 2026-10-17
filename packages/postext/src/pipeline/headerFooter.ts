@@ -125,6 +125,7 @@ function imagePrimitiveToBlock(prim: ResolvedImagePrimitive): VDTDesignImageBloc
     ...(prim.pdfFileId ? { pdfFileId: prim.pdfFileId } : {}),
     ...(prim.upright ? { upright: true } : {}),
     ...(prim.altText ? { altText: prim.altText } : {}),
+    ...(prim.crop ? { crop: { ...prim.crop } } : {}),
   };
 }
 
@@ -1613,7 +1614,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // is laid once, on the sheet of its two pages, when its first page
     // comes, and cut for each page.
     const facing = page.composed?.facingPage !== undefined ? doc.pages[page.composed.facingPage] : undefined;
-    if (page.composed && template && template.decoration.elements.length > 0 && !(facing && spreadDecorated.has(page.index))) {
+    // Empty frames' ruled lines (#914) are painted with the decoration.
+    const ruled = (p: VDTPage | undefined): boolean => (p?.composed?.frames ?? []).some((f) => f.rules && !f.facingBlocks);
+    if (page.composed && template && (template.decoration.elements.length > 0 || ruled(page) || ruled(facing)) && !(facing && spreadDecorated.has(page.index))) {
       const pair = facing?.composed?.spread && page.composed.spread ? { left: page.composed.spread === 'left' ? page : facing, right: page.composed.spread === 'left' ? facing : page } : undefined;
       const trimBox = metrics.physical.trimBox;
       const bleedBox = metrics.physical.bleedBox;
@@ -1624,13 +1627,24 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       /** And the box its template gave it, before groups moved it
        *  (`declaredRect`: what a `pin`ned element keeps to). */
       const declared: Record<string, { x: number; y: number; width: number; height: number }> = {};
+      /** Frames that take no room on the page (#912): what anchors to
+       *  them is not drawn. */
+      const collapsed = new Set<string>();
+      /** Empty frames' ruled lines (#914), on the sheet. */
+      const rules: VDTDesignRuleBlock[] = [];
       const nameFrames = (p: VDTPage, dx: number) => {
         for (const f of p.composed?.frames ?? []) {
+          if (f.collapsed) collapsed.add(f.name);
           if (f.facingBlocks) continue;
           const r = flowRectToPage(p, f.rect);
           const d = flowRectToPage(p, f.declaredRect ?? f.rect);
           named[f.name] = { ...r, x: r.x + dx };
           declared[f.name] = { ...d, x: d.x + dx };
+          for (const rule of f.rules ?? []) {
+            // A vertical page's flow turns a rule across its lines.
+            const b = flowRectToPage(p, rule.bbox);
+            rules.push({ ...rule, bbox: { ...b, x: b.x + dx }, direction: b.height > b.width ? 'vertical' : 'horizontal' });
+          }
         }
       };
       let container: { x: number; y: number; width: number; height: number };
@@ -1671,8 +1685,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partNumberByPageIndex,
         partPaletteByPageIndex,
       };
-      const decoration = withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
-        resolveDesignSlot(template.decoration, 'header'),
+      const slot = resolveDesignSlot(template.decoration, 'header');
+      const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
+        collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,
         container,
         page.index + pageIndexOffset,
         placeholders,
@@ -1683,6 +1698,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
         },
       ));
+      const decoration = rules.length === 0 ? laidDecoration
+        : laidDecoration ? { ...laidDecoration, blocks: [...laidDecoration.blocks, ...rules] } : { bbox: { ...container }, blocks: rules };
       if (decoration && pair) {
         const halves = splitSpreadDecoration(decoration, shift, { left: bleedBox, right: { ...bleedBox, x: bleedBox.x + shift } });
         pair.left.composed!.decoration = halves.left;
@@ -1692,6 +1709,27 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       } else if (decoration) page.composed.decoration = decoration;
     }
   }
+}
+
+/** `slot` without the elements anchored to one of `frames` (`'#name'`),
+ *  directly or through other elements: the decoration of frames that take
+ *  no room on a page added by continuation (#912). */
+function withoutAnchoredTo(slot: ResolvedDesignSlot, frames: ReadonlySet<string>): ResolvedDesignSlot {
+  const dropped = new Set<string>();
+  const target = (el: ResolvedDesignSlot['elements'][number]): string | undefined => {
+    const to = el.placement.anchor.to;
+    return to.startsWith('#') ? to.slice(1) : undefined;
+  };
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const el of slot.elements) {
+      const t = target(el);
+      if (dropped.has(el.id) || t === undefined || (!frames.has(t) && !dropped.has(t))) continue;
+      dropped.add(el.id);
+      changed = true;
+    }
+  }
+  return dropped.size > 0 ? { ...slot, elements: slot.elements.filter((el) => !dropped.has(el.id)) } : slot;
 }
 
 /** Set `page.background` on the pages whose palette overrides (part and

@@ -154,7 +154,13 @@ export function frameTextTargetAt(doc: Pick<VDTDocument, 'blocks'>, page: VDTPag
       }
     }
   }
-  for (const id of ids.slice(1)) {
+  return frameBlockTargetAt(byId, markdown, frame, x, y);
+}
+
+/** The paragraph, heading or list item of a frame under `(x, y)` that a
+ *  double click edits (its Markdown source), among the blocks `byId`. */
+function frameBlockTargetAt(byId: ReadonlyMap<string, VDTBlock>, markdown: string, frame: VDTFrame, x: number, y: number): FrameTextTarget | null {
+  for (const id of frame.blockIds.slice(1)) {
     const b = byId.get(id);
     if (!b || !EDITABLE_BLOCKS.has(b.type) || b.sourceStart == null || b.sourceEnd == null) continue;
     if (!inRect(b.bbox, x, y)) continue;
@@ -165,6 +171,29 @@ export function frameTextTargetAt(doc: Pick<VDTDocument, 'blocks'>, page: VDTPag
     return { kind: 'block', frame, block: b, rect: { ...b.bbox }, start, end, text: markdown.slice(start, end), fontPx: first ? Math.max(6, first.bbox.height * 0.7) : 14 };
   }
   return null;
+}
+
+/**
+ * The paragraph of a comic page's text frame (`::panel{text}`, #885)
+ * under `(x, y)` that a double click edits on the page, as a composed
+ * frame's (`frameTextTargetAt`). Null off its paragraphs.
+ */
+export function comicTextTargetAt(page: Pick<VDTPage, 'floats'>, markdown: string, frame: VDTFrame, x: number, y: number): FrameTextTarget | null {
+  const byId = new Map<string, VDTBlock>();
+  for (const b of page.floats ?? []) byId.set(b.id, b);
+  return frameBlockTargetAt(byId, markdown, frame, x, y);
+}
+
+/** Where a click on a comic's text frame off its words puts the caret
+ *  (#885): the start of the Markdown poured into it. */
+export function comicTextCaret(page: Pick<VDTPage, 'floats'>, frame: Pick<VDTFrame, 'blockIds'>): number | null {
+  const ids = new Set(frame.blockIds.slice(1));
+  let best: number | null = null;
+  for (const b of page.floats ?? []) {
+    if (!ids.has(b.id) || b.sourceStart == null) continue;
+    if (best === null || b.sourceStart < best) best = b.sourceStart;
+  }
+  return best;
 }
 
 /** The source change that writes `text` in place of a target's. A label

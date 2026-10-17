@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：在沙盒里工作的智能体',
   sidebarTitle: 'WebMCP',
-  description: '浏览器里的AI智能体借助沙盒的39个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
+  description: '浏览器里的AI智能体借助沙盒的40个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
   lastUpdated: '2026-10-17',
   readingTime: '9分钟',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [沙盒](/zh/docs/sandbox)通过[WebMCP](https://webmachinelearning.github.io/webmcp/)把专门的工具交给智能体。WebMCP是一项Web标准草案，让网页可以把工具交给浏览器所连接的AI模型。有了这些工具，智能体不必在界面上一下一下地点：它读这本书，要一张第12页的图像，把`bodyText.fontSize`设为10.5 pt，看到这一章从18页变成了19页，再把值改回去。你凭眼睛做的事，它也照样做，用的是你的书，在你的浏览器里。
 
-以`sandbox_`开头的工具共有39个，沙盒显示在屏幕上时注册；另有8个网站工具`site_*`，postext.dev的每一页上都有。本页按你会请智能体做的事情给它们分类，并给出每个工具的调用方式。
+以`sandbox_`开头的工具共有40个，沙盒显示在屏幕上时注册；另有8个网站工具`site_*`，postext.dev的每一页上都有。本页按你会请智能体做的事情给它们分类，并给出每个工具的调用方式。
 
 ## 接入智能体
 
@@ -25,7 +25,7 @@ export const metadata = {
 
 沙盒挂载时把这些工具注册到`document.modelContext`，离开沙盒时收回。浏览器向其提供页面工具的智能体会在那里找到它们。Postext这边不需要安装或设置任何东西。
 
-WebMCP还是草案。Chrome以来源试用的方式提供它，也可以通过`chrome://flags/#enable-webmcp-testing`标志开启。工具随页面而变：在首页或文档中，智能体拿到的是`site_*`工具；沙盒一出现在屏幕上，37个`sandbox_*`工具也随之出现。
+WebMCP还是草案。Chrome以来源试用的方式提供它，也可以通过`chrome://flags/#enable-webmcp-testing`标志开启。工具随页面而变：在首页或文档中，智能体拿到的是`site_*`工具；沙盒一出现在屏幕上，40个`sandbox_*`工具也随之出现。
 
 ### 在其他浏览器中：`window.postextWebMcp`
 
@@ -317,6 +317,16 @@ await browser.close();
 
 回答给出保存下来的记录，以及安放它的那一行`::resource{id="prices"}`，智能体随后用`sandbox_edit_text`把这一行写进文字。对已有的`id`，调用只改动它给出的部分：图注、表格的单元格、安放位置、图片的安全区。`newId`给资源改名，默认同时改掉书中对它的所有引用。`sandbox_list_resources`列出全部资源；给出`id`时，返回其中一个的完整内容（表格的单元格及其格式、SVG的源代码）。
 
+图片的 `marks` 也包含它的锚点。对地图或示意图来说，锚点就是其 `::label` 行所在的位置：一个 `id`，`x` 和 `y`（整张图片的比例），以及放在那里的标注所沿用的标注字段（`style`、`align`、`verticalAlign`、`rotate`、`width`）。若版面设计中没有某个标注样式，回答会注明；资源的新标记算历史中的一步（`sandbox_undo` 回答 `kind: "resource"`）。
+
+```jsonc
+// 一张地图的两个锚点及其标注样式
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 上传到书里的字体通过`sandbox_save_font`处理：
 
 ```json
@@ -412,7 +422,7 @@ await browser.close();
 
 “**把字稍微放大一点，但书要控制在220页以内**”：`sandbox_get_state`（212页）→ `sandbox_set_config`把`bodyText.fontSize`设为`"10.5pt"`（219页）→ 对一个排得很密的页面运行`sandbox_render_page`，看看效果 → `sandbox_get_warnings`加上`category: "typesetting"`，查有没有新出现的段首孤行 → 如果哪里不对，再调用一次`sandbox_set_config`，用第一次回答中的`from`值。
 
-“**把检查在第4章发现的问题改掉**”：`sandbox_get_warnings`加上`chapter: 4` → 对每条警告，围绕它的`line`运行`sandbox_read_text`，对它的`page`运行`sandbox_render_page` → `sandbox_edit_text`或`sandbox_set_config` → 再次运行`sandbox_get_warnings`，直到返回空列表。
+“**把检查在第4章发现的问题改掉**”：`sandbox_get_warnings`加上`chapter: 4` → 对每条警告，围绕它的`line`运行`sandbox_read_text`，对它的`page`运行`sandbox_render_page` → `sandbox_edit_text`或`sandbox_set_config` → 再次运行`sandbox_get_warnings`，直到返回空列表。 模板页上放不下的框会附带修正办法（`proposals`）：用`sandbox_apply_proposal`加上它的`frame`和某个办法的编号即可执行，章节会重新排版，回答中的`fits`说明是否已经放下。
 
 “**用这个Word文件做一本书，把PDF给我**”：`sandbox_save_book`加上`action: "new_blank"` → `sandbox_import_word`加上`dryRun: true` → 修正`mapping`，再用`destination: "book"`正式导入 → `sandbox_get_warnings`加上`scope: "book"` → `sandbox_export`加上`format: "pdf"`和`scope: "book"`。
 
@@ -458,7 +468,7 @@ await browser.close();
 - **书和文件**：`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_delete_book`、`sandbox_import_book`、`sandbox_export`。
 - **Word**：`sandbox_import_word`、`sandbox_word_templates`。
 - **询问**：`sandbox_answer`。
-- **检查**：`sandbox_get_warnings`。
+- **检查**：`sandbox_get_warnings`、`sandbox_apply_proposal`。
 
 ## 嵌入沙盒时
 

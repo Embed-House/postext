@@ -178,6 +178,73 @@ stress test at 1.3, and the page images against the source.
 
 Section 8: one bundle for every edition.
 
+### 3.7 Drafting it from the PDF
+
+Three scripts do the measuring and the extraction of a PDF's composed
+pages in one pass; the result builds as it is and is then curated like any
+draft.
+
+```bash
+python3 scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions \
+    --lang es --fonts my-book/fonts [--font-map map.json] --overlay
+python3 scripts/template_dedupe.py work/regions          # kinds of page, styles, grounds
+python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
+postext check work/regions; python3 scripts/composed_check.py check work/regions
+```
+
+<table>
+<tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
+<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
+<tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged; <code>dedupe-report.json</code> with every merge and its largest difference</td></tr>
+<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
+<tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
+</table>
+
+What the extraction decides, so you know what to check:
+
+- **Text that prints.** MuPDF reads the text with ActualText ignored (it
+  otherwise drops words a marked-content replacement covers), and each
+  span is compared with a render of the page without text: a copy drawn
+  under a picture or a fill, clipped away or off the page is left out and
+  listed under `hiddenTexts` in the report.
+- **Shapes.** Large white fills are cards (kept in the ground); filled or
+  stroked rectangles and rounded rectangles that hold text or pictures are
+  boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
+  (on a box's top edge: the box's `label`; alone: a frame of its own; with
+  a heading in it: the title frame that `takes` the level); a rectangle
+  under many drawn shapes is a map's ground, not a box; wide coloured
+  strokes or fills hugging words are highlights (`:mark`, or `:chip` with
+  `--highlights chip`). A shape a render does not show is not read.
+- **Pictures and labels.** Images and clusters of line art are pictures,
+  cut at `--dpi` with all text removed. Words on a picture's ink, short
+  words on it or just off its edge (a globe's degrees) are its labels:
+  names set on several lines become one label with a `width`, a turned line
+  keeps its `rotate`. Raster images with transparency keep their alpha;
+  when a box's text runs into one on the source, the frame gets
+  `exclude: "push"` and `wrap: "contour"`. Any other picture lies over the
+  text as drawn.
+- **Geometry.** Area `trim`; frames anchor `below` the frame above them on
+  the same card; runs with equal gaps form `stack` groups, boxes of one
+  height side by side `row` groups; frames inside a box anchor to its
+  corner. Boxes get their drawn height as `minHeight`, the last frame on a
+  card the room to its foot as `maxHeight`.
+- **Furniture.** Text outside the cards (or in the top and foot bands of a
+  page without cards) is a running head (`{attr.head}`, the words on the
+  page fence) or a folio (`{pageNumber}`), decoration kept to its page's
+  side (`parity`).
+- **Faces.** The PDF's font names are matched to the PostScript names of
+  the files in `--fonts`; `--font-map` maps the rest (a map's lettering
+  face the book does not ship, to the nearest face it does). The report
+  lists every match.
+
+Curate after it: name the templates by role (`tema-cajas`), give pictures
+their `altText`, read the notes in `report.json` (a centred tab set at
+`top-left`, a tab's icon not drawn, paragraph spacing inside boxes), and
+compare the overlay with the source where a page reads wrongly. The 28-page
+social-science textbook drafted this way: 25 pages, 335 frames, 26
+templates after the merge, 70 callout styles, 258 labels, no
+`contentInConfig`, no `frameOverflow`.
+
 ## 4. The component library
 
 The library is the set of looks the book uses, each written once:
@@ -445,7 +512,8 @@ Con relojes mecánicos
 
 The source: a map with seas, countries and towns lettered on it, a legend.
 
-1. Cut the map without its lettering. With PyMuPDF: redact the text spans
+1. Cut the map without its lettering (`anchors.py` and `pdf_regions.py`
+   do steps 1–3; §3.7). With PyMuPDF: redact the text spans
    inside the map's box (`page.add_redact_annot(span_rect, fill=False)`),
    `page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
    graphics=fitz.PDF_REDACT_LINE_ART_NONE, text=fitz.PDF_REDACT_TEXT_REMOVE)`,

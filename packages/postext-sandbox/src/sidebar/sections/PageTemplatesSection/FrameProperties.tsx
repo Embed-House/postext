@@ -49,13 +49,13 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
   const reset = (k: keyof FrameConfig) => () => set({ [k]: undefined });
   /** A field of an object (`fit`, `overflow`, `padding`) set or taken off
    *  in the scope's entry; the object goes when it is left empty. */
-  const setIn = <K extends 'fit' | 'overflow' | 'padding'>(k: K, field: string, value: unknown) => {
+  const setIn = <K extends 'fit' | 'overflow' | 'padding' | 'rules'>(k: K, field: string, value: unknown) => {
     const before = { ...((entry?.[k] as Record<string, unknown> | undefined) ?? {}) };
     if (value === undefined) delete before[field];
     else before[field] = value;
     set({ [k]: Object.keys(before).length > 0 ? before : undefined });
   };
-  const hasIn = (k: 'fit' | 'overflow' | 'padding', field: string): boolean => (entry?.[k] as Record<string, unknown> | undefined)?.[field] !== undefined;
+  const hasIn = (k: 'fit' | 'overflow' | 'padding' | 'rules', field: string): boolean => (entry?.[k] as Record<string, unknown> | undefined)?.[field] !== undefined;
 
   const others = template.frames.filter((f) => f.name !== name).map((f) => f.name);
   const groups = template.groups.map((g) => g.name);
@@ -295,6 +295,27 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
             onReset={() => setIn('padding', side, undefined)}
           />
         ))}
+        {/* Ruled lines (#914): an answer space ruled at a pitch. */}
+        <ToggleSwitch label={labels.pageTemplatesFrameRules} tooltip={labels.pageTemplatesFrameRulesTooltip} checked={frame.rules !== undefined} onChange={(v) => set({ rules: v ? {} : undefined })} isDefault={!has('rules')} onReset={reset('rules')} />
+        {frame.rules && (
+          <>
+            <SelectInput
+              variant="segmented"
+              label={labels.pageTemplatesFrameRulesPitch}
+              value={frame.rules.every === undefined || frame.rules.every === 'line' ? 'line' : 'length'}
+              options={[
+                { value: 'line', label: labels.pageTemplatesFrameRulesPitchLine },
+                { value: 'length', label: labels.pageTemplatesFrameRulesPitchLength },
+              ]}
+              onChange={(v) => setIn('rules', 'every', v === 'length' ? { value: 8, unit: 'mm' } : undefined)}
+              isDefault={!hasIn('rules', 'every')}
+              onReset={() => setIn('rules', 'every', undefined)}
+            />
+            {frame.rules.every !== undefined && frame.rules.every !== 'line' && (
+              <DimensionInput label={labels.pageTemplatesFrameRulesPitchLength} value={frame.rules.every} onChange={(d) => setIn('rules', 'every', d)} isDefault={!hasIn('rules', 'every')} onReset={() => setIn('rules', 'every', undefined)} />
+            )}
+          </>
+        )}
       </FieldGroup>
 
       <FieldGroup title={labels.pageTemplatesFrameGroupContent}>
@@ -345,6 +366,7 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         <NumberInput label={labels.pageTemplatesFitMinScale} value={Math.round(fit.minScale * 100)} min={50} max={100} suffix="%" onChange={(n) => setIn('fit', 'minScale', n / 100)} tooltip={labels.pageTemplatesFitMinScaleTooltip} isDefault={!hasIn('fit', 'minScale')} onReset={() => setIn('fit', 'minScale', undefined)} />
         <ToggleSwitch label={labels.pageTemplatesFitScaleImages} checked={fit.scaleImages} onChange={(v) => setIn('fit', 'scaleImages', v)} isDefault={!hasIn('fit', 'scaleImages')} onReset={() => setIn('fit', 'scaleImages', undefined)} />
         <NumberInput label={labels.pageTemplatesFitImageMinScale} value={Math.round(fit.imageMinScale * 100)} min={30} max={100} suffix="%" onChange={(n) => setIn('fit', 'imageMinScale', n / 100)} isDefault={!hasIn('fit', 'imageMinScale')} onReset={() => setIn('fit', 'imageMinScale', undefined)} />
+        <ToggleSwitch label={labels.pageTemplatesFitPreferContinue} tooltip={labels.pageTemplatesFitPreferContinueTooltip} checked={fit.preferContinue} onChange={(v) => setIn('fit', 'preferContinue', v)} isDefault={!hasIn('fit', 'preferContinue')} onReset={() => setIn('fit', 'preferContinue', undefined)} />
       </FieldGroup>
 
       <FieldGroup title={labels.pageTemplatesFrameGroupGroups} description={labels.pageTemplatesFrameGroupGroupsDescription}>
@@ -382,6 +404,9 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
             <TextControl value={typeof overflow.mark === 'string' ? overflow.mark : ''} onChange={(v) => setIn('overflow', 'mark', v)} ariaLabel={labels.pageTemplatesMarkText} widthCh={14} />
           </FieldRow>
         )}
+        <FieldRow label={labels.pageTemplatesFromMark} tooltip={labels.pageTemplatesFromMarkTooltip}>
+          <TextControl value={overflow.fromMark ?? ''} onChange={(v) => setIn('overflow', 'fromMark', v.trim() === '' ? undefined : v)} ariaLabel={labels.pageTemplatesFromMark} widthCh={14} />
+        </FieldRow>
       </FieldGroup>
 
       <ConfirmPopover message={labels.pageTemplatesFrameDeleteConfirm.replace('__name__', name)} onConfirm={() => { write(removeFrame(templates, templateId, scope, name)); onRemoved(); }}>

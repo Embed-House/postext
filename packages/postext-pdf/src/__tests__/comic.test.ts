@@ -540,4 +540,20 @@ describe('strips and spreads in the PDF', () => {
     expect(divs.flatMap(figures)).toHaveLength(4);
     expect(divs[1]!.kids.filter((k) => k.type === 'Figure')).toHaveLength(1);
   }, 60_000);
+
+  it('paints a text panel over its ground and reads its words as text (#885)', async () => {
+    const md = 'Before.\n\n:::page{split="40 / *"}\n::panel{text bg="#ffeecc"}\nWords set in the panel.\n::panel{art=land}\n:::\n\nAfter.';
+    const d = buildDocument({ markdown: md, resources }, config);
+    const page = d.pages.find((p) => p.comic)!;
+    expect(page.comic!.frames![0]!.blockIds.length).toBeGreaterThan(1);
+    const out = await PDFDocument.load(await renderToPdf(d, { fontProvider, resourceBytes: (id) => files[id] }));
+    const ops = contentOps(out, page.index);
+    const ground = ops.indexOf('1 0.9333333333333333 0.8 rg');
+    const words = ops.search(/T[jJ]/);
+    expect(ground).toBeGreaterThan(-1);
+    expect(words).toBeGreaterThan(ground);
+    // Read as a paragraph of the page, after the comic's Div.
+    const kids = structRoot(out).kids.map((k) => k.type);
+    expect(kids.indexOf('P', kids.indexOf('Div'))).toBeGreaterThan(kids.indexOf('Div'));
+  }, 60_000);
 });

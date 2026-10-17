@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>La sortie paginée coupe le reste au pied de ce bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> d’un bloc ne nomme aucun délimiteur de page placé après celui où se trouve son article (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quand ce délimiteur vient avant, <code>configPath</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page qui envoie.</td>
+      <td>Le reste se poursuit sur une page ajoutée après la page qui envoie, comme avec <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L’ouverture d’une page composée et son modèle ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> de l’ouverture ; <code>templateSpread</code>, celui du modèle).</td>
       <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Un paragraphe ouvert par une <a href="/fr/docs/configuration-text#lettrines">lettrine</a> qui ne peut pas la recevoir telle qu’elle est configurée. <code>reason</code> : <code>'shortParagraph'</code> (moins de lignes que la lettrine n’en occupe ; <code>handling</code> indique ce qu’a fait <code>shortParagraph</code>, <code>lines</code> les lignes que couvre une lettrine réduite), <code>'split'</code> (il se coupe avant la dernière ligne de la lettrine, seul dans une colonne trop courte), <code>'joiningScript'</code> (sa première lettre se lie à la suivante), <code>'verticalText'</code> ou <code>'noLetter'</code> (il s’ouvre sur une référence, une formule ou un appel de note). <code>text</code> est sa première ligne.</td>
+      <td>Un paragraphe ouvert par une <a href="/fr/docs/configuration-text#lettrines">lettrine</a> qui ne peut pas la recevoir telle qu’elle est configurée. <code>reason</code> : <code>'shortParagraph'</code> (moins de lignes que la lettrine n’en occupe ; <code>handling</code> indique ce qu’a fait <code>shortParagraph</code>, <code>lines</code> les lignes que couvre une lettrine réduite), <code>'split'</code> (il se coupe avant la dernière ligne de la lettrine, seul dans une colonne trop courte), <code>'joiningScript'</code> (sa première lettre se lie à la suivante), <code>'verticalText'</code> ou <code>'noLetter'</code> (il s’ouvre sur une référence, une formule ou un appel de note). <code>text</code> est sa première ligne. <code>'inBox'</code> : un groupe <code>:::paragraphs</code> ou un style de paragraphe en demande une dans un encadré <code>:::callout</code>, où aucune n’est posée.</td>
       <td>La place est gardée, la lettrine est réduite ou omise, comme l’indique l’avertissement.</td>
     </tr>
     <tr>

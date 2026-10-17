@@ -227,6 +227,31 @@ export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], onC
         isDefault={heightAuto}
         onReset={() => updateSize({ height: 'auto' })}
       />
+      {/* Cover or contain (#923), for a box with both sides set. */}
+      {!widthAuto && !heightAuto && (
+        <SelectInput
+          variant="segmented"
+          label={labels.headerFooterImageFit}
+          tooltip={labels.headerFooterImageFitTooltip}
+          value={raw.fit ?? 'contain'}
+          options={[
+            { value: 'contain', label: labels.headerFooterImageFitContain },
+            { value: 'cover', label: labels.headerFooterImageFitCover },
+          ]}
+          onChange={(v) => {
+            const next: DesignImageElement = { ...raw };
+            if (v === 'cover') next.fit = 'cover';
+            else delete next.fit;
+            onChange(next);
+          }}
+          isDefault={raw.fit === undefined}
+          onReset={() => {
+            const next: DesignImageElement = { ...raw };
+            delete next.fit;
+            onChange(next);
+          }}
+        />
+      )}
       <PlacementFields
         placement={resolved.placement}
         slotKind={slotKind}

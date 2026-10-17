@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
+import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid, MapPin } from 'lucide-react';
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
-import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
@@ -94,6 +95,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'pageFenceLength':
     case 'frameOverflow':
     case 'frameContinuationLimit':
+    case 'continueTargetMissing':
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
@@ -186,6 +188,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'comicSplitSyntax':
     case 'comicSplitOverflow':
     case 'comicPanelCount':
+    case 'comicPanelFrame':
       return LayoutGrid;
     case 'comicUnknownArt':
     case 'comicPanelLetterbox':
@@ -284,6 +287,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameOverflowTitle;
     case 'frameContinuationLimit':
       return labels.warningsFrameContinuationLimitTitle;
+    case 'continueTargetMissing':
+      return labels.warningsContinueTargetMissingTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'labelAnchorUnknown':
@@ -475,6 +480,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsComicBalloonOverflowTitle;
     case 'comicUnknownSpeaker':
       return labels.warningsComicUnknownSpeakerTitle;
+    case 'comicPanelFrame':
+      return labels.warningsComicPanelFrameTitle;
   }
 }
 
@@ -612,6 +619,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+    case 'continueTargetMissing':
+      return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
+        .replace('__page__', String(payload.page))
+        .replace(/__target__/g, payload.target)
+        .replace('__template__', payload.template)}`;
     case 'frameContinuationLimit':
       return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
         .replace('__page__', String(payload.page))
@@ -805,7 +817,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         : payload.reason === 'split' ? labels.warningsDropCapSplit
           : payload.reason === 'joiningScript' ? labels.warningsDropCapJoining
             : payload.reason === 'verticalText' ? labels.warningsDropCapVertical
-              : labels.warningsDropCapNoLetter;
+              : payload.reason === 'inBox' ? labels.warningsDropCapInBox
+                : labels.warningsDropCapNoLetter;
       return detail.replace('__text__', payload.text).replace('__lines__', String(payload.lines ?? ''));
     }
     case 'unknownConfigKey':
@@ -874,6 +887,17 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     }
     case 'comicUnknownSpeaker':
       return `${payload.speaker}: — ${labels.warningsComicUnknownSpeakerDetail}`;
+    case 'comicPanelFrame': {
+      const detail = payload.reason === 'unknownBox' ? labels.warningsComicPanelFrameUnknownBoxDetail
+        : payload.reason === 'textOverflow' ? labels.warningsComicPanelFrameTextOverflowDetail
+          : payload.reason === 'strip' ? labels.warningsComicPanelFrameStripDetail
+            : payload.reason === 'spread' ? labels.warningsComicPanelFrameSpreadDetail
+              : labels.warningsComicPanelFrameFlowDetail;
+      return detail
+        .replace('__panel__', String(payload.panel + 1))
+        .replace('__style__', payload.style ?? '')
+        .replace('__mm__', String(payload.overflowMm ?? 0));
+    }
   }
 }
 
@@ -905,11 +929,15 @@ function WarningItem({
   labels,
   multiChapter,
   onClick,
+  onAnchor,
 }: {
   warning: Warning;
   labels: SandboxLabels;
   multiChapter: boolean;
   onClick: (w: Warning) => void;
+  /** A figure label's warning (#866): the anchor in the picture's anchor
+   *  editor (the row itself leads to the text). */
+  onAnchor?: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
   // A preflight or contrast finding, a design text cut on a page (#628)
@@ -940,6 +968,13 @@ function WarningItem({
         <span className="ms-auto shrink-0 text-[10px] font-medium" style={{ color: 'var(--slate)', fontVariantNumeric: 'tabular-nums' }}>
           {lineTag}
         </span>
+      ) : undefined}
+      actions={onAnchor && (warning.payload.kind === 'labelAnchorUnknown' || warning.payload.kind === 'anchorUnlabelled') ? (
+        <IconButton
+          label={(warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warning.payload.anchor)}
+          icon={<MapPin size={14} aria-hidden="true" />}
+          onClick={() => onAnchor(warning)}
+        />
       ) : undefined}
       className="mx-2 my-0.5"
     />
@@ -987,6 +1022,13 @@ export function WarningsPanel() {
     });
   };
 
+  // A figure label's warning (#866): a name to place on the picture, or
+  // the anchor left without a label, in the picture's anchor editor.
+  const handleAnchor = (w: Warning) => {
+    if (w.payload.kind === 'labelAnchorUnknown') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, place: w.payload.anchor });
+    else if (w.payload.kind === 'anchorUnlabelled') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, anchor: w.payload.anchor });
+  };
+
   const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
   const groups = WARNING_CATEGORY_ORDER
     .map((category) => ({ category, items: listed.filter((w) => warningCategory(w.payload.kind) === category) }))
@@ -1005,6 +1047,7 @@ export function WarningsPanel() {
             labels={labels}
             title={(w) => titleFor(w.payload, labels)}
             detail={(w) => detailFor(w.payload, labels)}
+            onAnchor={handleAnchor}
           />
         )}
         {total === 0 ? (
@@ -1014,7 +1057,7 @@ export function WarningsPanel() {
             <WarningGroup key={category} title={categoryLabel(category, labels)} count={items.length}>
               {items.map((w) => (
                 <li key={w.id}>
-                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} />
+                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
                 </li>
               ))}
             </WarningGroup>

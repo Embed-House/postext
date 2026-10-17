@@ -124,10 +124,14 @@ describe('the reflow ladder on the page-8 stand-in (#858)', () => {
     expect(toMm(frameOf(doc, 'gasto').rect.height)).toBeGreaterThanOrEqual(40 - 1e-6);
     expect(frameOf(doc, 'ahorro').scale).toBe(1);
     expect(eventsOf(doc, 'gasto')).toContain('gasto resized');
-    // Without the step (a fixed height of 62 with nothing under it), ahorro
-    // would not fit: the same text with the minimum at the height does not.
+    // Without the step (a fixed height of 62 with nothing under it), the
+    // boxes would not fit: the same text with the minimum at the height
+    // does not. ahorro keeps its minimum; dinero, which grew, gives way
+    // (#911).
     const rigid = build(standIn({ frames: { gasto: { height: mm(62), minHeight: mm(62) } }, markdown: moreMoney(6) }));
-    expect(frameOf(rigid, 'ahorro').scale < 1 || frameOf(rigid, 'ahorro').overflowPx > 0).toBe(true);
+    const short = (n: string): boolean => frameOf(rigid, n).scale < 1 || frameOf(rigid, n).overflowPx > 0;
+    expect(short('dinero') || short('ahorro')).toBe(true);
+    expect(toMm(frameOf(rigid, 'ahorro').rect.height)).toBeGreaterThanOrEqual(30 - 1e-6);
   });
 
   it('5. shrink text: down to fit.minScale in 2.5 % steps, the largest that fits; shrinkText: false turns it off', () => {
@@ -229,7 +233,9 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
     // An own-box stack: the three boxes share 140 mm; gasto stands at its 62 mm minimum.
     const groups: PageTemplate['groups'] = [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: mm(12), placement: { anchor: { to: '#texto', edge: 'below' }, offset: { y: mm(9) }, size: { width: mm(186), height: mm(150) } } }];
     const opts = { groups, frames: { dinero: { minHeight: mm(36) }, gasto: { minHeight: mm(62) }, ahorro: { minHeight: mm(30), fit: { shrinkText: false } } }, markdown: moreMoney(2) };
-    const w = overflowsOf(build(standIn(opts))).find((x) => x.frame === 'dinero' || x.frame === 'ahorro');
+    // ahorro, the last box, keeps its minimum (#911) and is still short of
+    // its text.
+    const w = overflowsOf(build(standIn(opts))).find((x) => x.frame === 'ahorro');
     expect(w).toBeDefined();
     const p = proposal(w!, 'lowerMin')!;
     expect(p).toMatchObject({ frame: 'gasto', path: '/pageTemplates/0/frames/4/minHeight' });

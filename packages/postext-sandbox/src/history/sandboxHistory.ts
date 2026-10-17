@@ -17,6 +17,12 @@
  *   and an edit made on the previews while the chapter's editor is closed
  *   is added to the chapter's saved state here.
  *
+ * - a **resource step** is recorded for an `UPSERT_RESOURCE` that asks for
+ *   it (`history`, #866): the marks of a picture (its label anchors, safe
+ *   area, lettering zones) saved from the Resources panel or dragged on a
+ *   page. Changes of the same resource within {@link COALESCE_MS} are one
+ *   step unless one says `merge: false`.
+ *
  * Undo takes back the latest step whichever kind it is: a config step by
  * putting back the leaves it changed on the configuration as it is now, a
  * text step through the chapter's own history (its editor's when open,
@@ -28,7 +34,7 @@
 import type { Dispatch } from 'react';
 import type { EditorState, Transaction } from '@codemirror/state';
 import { Transaction as Tr } from '@codemirror/state';
-import type { PostextConfig } from 'postext';
+import type { PostextConfig, Resource } from 'postext';
 import type { SandboxAction, SandboxState } from '../context/SandboxContext';
 import { applyTextChanges, changesApply } from '../book/textChanges';
 import { applyPatch, carryPatch, diffConfig, patchCovers, patchIsEmpty, patchSettingPaths, patchTopKeys, type ConfigPatch } from './configPatch';
@@ -46,12 +52,14 @@ export type ConfigHistoryMeta = false | { merge?: boolean };
 
 type TextStep = { kind: 'text'; chapterId: string; at: number };
 type ConfigStep = { kind: 'config'; patch: ConfigPatch; at: number; open: boolean; before: PostextConfig };
-type Step = TextStep | ConfigStep;
+type ResourceStep = { kind: 'resource'; resourceId: string; before: Resource; after: Resource; at: number; open: boolean };
+type Step = TextStep | ConfigStep | ResourceStep;
 
 /** A step as the toolbar, the announcements and the tools describe it. */
 export type HistoryStepInfo =
   | { kind: 'text'; chapterId: string }
-  | { kind: 'config'; paths: string[]; keys: string[] };
+  | { kind: 'config'; paths: string[]; keys: string[] }
+  | { kind: 'resource'; resourceId: string };
 
 /** The open editor of a chapter, as the history drives it. `run` undoes
  *  or redoes one step of its history, read only or not. */
@@ -75,7 +83,7 @@ export interface HistoryRunOptions {
   follow?: boolean;
   /** Only a step of this kind: when the latest is of the other kind,
    *  nothing is run (and null is answered). */
-  kind?: 'text' | 'config';
+  kind?: 'text' | 'config' | 'resource';
 }
 
 export interface SandboxHistory {
@@ -153,7 +161,7 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
 
   const sealTop = () => {
     const top = undoList[undoList.length - 1];
-    if (top?.kind === 'config') top.open = false;
+    if (top?.kind === 'config' || top?.kind === 'resource') top.open = false;
   };
   const push = (step: Step) => {
     sealTop();
@@ -164,7 +172,9 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
 
   const info = (step: Step): HistoryStepInfo => step.kind === 'text'
     ? { kind: 'text', chapterId: step.chapterId }
-    : { kind: 'config', paths: patchSettingPaths(step.before, step.patch), keys: patchTopKeys(step.patch) };
+    : step.kind === 'resource'
+      ? { kind: 'resource', resourceId: step.resourceId }
+      : { kind: 'config', paths: patchSettingPaths(step.before, step.patch), keys: patchTopKeys(step.patch) };
 
   // --- configuration -----------------------------------------------------
 
@@ -195,6 +205,56 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
     const next = applyPatch(currentConfig(), step.patch, dir === 'undo' ? 'before' : 'after');
     setEagerConfig(next);
     deps.dispatch({ type: 'SET_CONFIG', payload: next, history: false });
+  };
+
+  // --- resources (#866) --------------------------------------------------
+
+  // Resource writes dispatched before React renders them, as for the
+  // configuration: the next write of the batch builds on them.
+  let eagerResourcesBase: readonly Resource[] | null = null;
+  const eagerResources = new Map<string, Resource>();
+  const currentResource = (id: string): Resource | undefined => {
+    const list = deps.getState().resources;
+    if (list !== eagerResourcesBase) {
+      eagerResources.clear();
+      eagerResourcesBase = list;
+    }
+    return eagerResources.get(id) ?? list.find((r) => r.id === id);
+  };
+  const setEagerResource = (r: Resource) => {
+    currentResource(r.id);
+    eagerResources.set(r.id, r);
+  };
+
+  const recordResource = (action: Extract<SandboxAction, { type: 'UPSERT_RESOURCE' }>) => {
+    const before = currentResource(action.payload.id);
+    setEagerResource(action.payload);
+    const meta = action.history;
+    const s = deps.getState();
+    // Only a change of a resource that is there, asked for as a step.
+    if (!meta || !before || switching || !s.storeReady || s.booting) return;
+    if (sameResource(before, action.payload)) return;
+    const at = now();
+    const top = undoList[undoList.length - 1];
+    if (meta.merge !== false && top?.kind === 'resource' && top.open && top.resourceId === action.payload.id && at - top.at <= COALESCE_MS) {
+      top.after = action.payload;
+      top.at = at;
+      if (sameResource(top.before, top.after)) undoList.pop();
+      redoList.length = 0;
+    } else {
+      push({ kind: 'resource', resourceId: action.payload.id, before, after: action.payload, at, open: meta.merge !== false });
+    }
+    notify();
+  };
+
+  /** Put a resource back as it was before (or after) a step; false when it
+   *  is no longer in the book. */
+  const runResource = (step: ResourceStep, dir: 'undo' | 'redo'): boolean => {
+    if (!currentResource(step.resourceId)) return false;
+    const next = { ...(dir === 'undo' ? step.before : step.after), updatedAt: now() };
+    setEagerResource(next);
+    deps.dispatch({ type: 'UPSERT_RESOURCE', payload: next });
+    return true;
   };
 
   // --- text --------------------------------------------------------------
@@ -302,6 +362,9 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
       if (step.kind === 'config') {
         runConfig(step, dir);
         step.open = false;
+      } else if (step.kind === 'resource') {
+        if (!runResource(step, dir)) continue;
+        step.open = false;
       } else if (!runText(step, dir, options.follow === true)) {
         continue;
       }
@@ -335,6 +398,9 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
         break;
       case 'EDIT_CHAPTER_MARKDOWN':
         recordTextEdit(action);
+        break;
+      case 'UPSERT_RESOURCE':
+        recordResource(action);
         break;
       case 'SET_BOOK':
         startSwitch();
@@ -404,6 +470,11 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
       eagerText.clear();
     },
   };
+}
+
+/** Whether two versions of a resource differ in more than their stamp. */
+function sameResource(a: Resource, b: Resource): boolean {
+  return JSON.stringify({ ...a, updatedAt: 0 }) === JSON.stringify({ ...b, updatedAt: 0 });
 }
 
 // --- the history the module-level helpers reach ---------------------------

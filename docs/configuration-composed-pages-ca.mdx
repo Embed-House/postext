@@ -273,13 +273,19 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>cap</td>
-      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta, a partir d'<code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla: el seu marc del mateix nom o, si no en té, el seu marc de flux). Un marc d'una pàgina afegida sense regla pròpia continua amb la regla que hi ha portat el contingut, fins a 16 pàgines afegides.</td>
+      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta, a partir d'<code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla: el seu marc del mateix nom o, si no en té, el seu marc de flux) o <code>'page:&lt;id&gt;'</code> (un marc de la tanca de pàgina posterior <code>::::page&#123;id=…&#125;</code>: el que indica <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> o, si no, un que el seu propi contingut deixa buit; <code>&lt;id&gt;</code> pot ser <code>&#123;attr.name&#125;</code>, llegit de la tanca de pàgina; vegeu <a href="/ca/docs/composed-pages#saltar-a-una-pàgina-posterior">Pàgines compostes › Saltar a una pàgina posterior</a>). Un marc d'una pàgina afegida sense regla pròpia continua amb la regla que hi ha portat el contingut (després d'un salt, <code>'next-page'</code>), fins a 16 pàgines afegides.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la de la llengua</td>
-      <td>La marca al final d'un tros tallat per a una altra pàgina. Sense fixar, el <code>continuesMarker</code> de l'estil del marc, que segueix la llengua del document («Continued», «Continúa», «À suivre»…, les paraules que fan servir les taules partides); una cadena posa aquestes paraules; <code>false</code> no en posa cap. Un marc encadenat amb <code>next</code> a la mateixa pàgina no porta marca.</td>
+      <td>La marca al final d'un tros tallat per a una altra pàgina. Sense fixar, el <code>continuesMarker</code> de l'estil del marc, que segueix la llengua del document («Continued», «Continúa», «À suivre»…, les paraules que fan servir les taules partides); una cadena posa aquestes paraules, on <code>&#123;page&#125;</code> és el número de la pàgina on continua la resta; <code>false</code> no en posa cap. Un marc encadenat amb <code>next</code> a la mateixa pàgina no porta marca.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Paraules que es posen al capdamunt del tros a la pàgina on continua el contingut, on <code>&#123;page&#125;</code> és el número de la pàgina d'on ve (<code>"Ve de la pàgina &#123;page&#125;"</code>). El del marc que rep passa per davant del del marc que envia.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Si les imatges del marc i dels altres marcs del seu grup es poden compondre més petites quan el contingut d'aquest marc no hi cap, i fins a quina escala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un marc amb un <code>overflow.continueIn</code> que envia el contingut a una altra pàgina hi continua abans que les imatges i el text es componguin més petits, de manera que una història conserva la mateixa mida d'una pàgina a l'altra. <code>false</code>: primer es redueixen, i el marc només continua en una altra pàgina quan això no n'hi ha prou.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -324,6 +336,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td>En una doble pàgina, el marc pot travessar la banda del llom. El seu text es llegeix a la pàgina que conté el seu centre; la pàgina del davant en pinta la meitat.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Línies pautades d'un costat a l'altre de la caixa de contingut del marc: una al peu de cada línia, tantes com en càpiguen a la seva alçada. <code>every</code> és el pas, <code>'line'</code> (per defecte: l'interlineat del text del marc) o una mida; <code>color</code> és un gris mitjà per defecte, <code>width</code> el gruix (0,5 pt), <code>inset</code> el marge que queda a cada extrem de la línia, o <code>&#123; left, right &#125;</code>. Vegeu Marcs pautats, més avall. Des de postext 1.38.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>els de la pàgina</td>
@@ -337,6 +355,24 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
     </tr>
   </tbody>
 </table>
+
+**Marcs pautats.** Un espai de resposta d'un quadern d'activitats és un marc amb `rules`: les seves línies segueixen la seva alçada, de manera que és el Markdown el que decideix quantes n'hi ha. Un marc buit d'alçada fixa rep les línies que hi caben; un marc `'auto'` que rep `:::space{lines=4}` en rep quatre, i un marc que creix amb el seu text en rep més. Les línies es dibuixen sobre el fons del marc i sota el seu text, al llenç, a l'HTML, al PDF i a l'EPUB de maquetació fixa; l'inspector de marcs del Sandbox les activa a Aspecte.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Grups
 
@@ -405,10 +441,10 @@ Un marc declara la seva mida: un `height` fix, o `'auto'`, l'alçada del que con
 
 - Un grup sense `placement` ni `grid` propis comença allà on el situa la col·locació del seu primer marc i baixa tant com ho necessitin els marcs, fins al peu de l'àrea de la plantilla. Quan un marc creix, els marcs que el segueixen baixen la mateixa distància.
 - Un grup amb caixa pròpia col·loca els seus marcs dins d'aquesta caixa. Quan necessiten més espai del que hi ha, en tornen els marcs amb `shrink` més gran que 0, començant per la `priority` més baixa; els marcs d'una mateixa prioritat en cedeixen en proporció al seu `shrink`, i cap no baixa del seu `minHeight`. L'espai sobrant va als marcs amb `grow` més gran que 0, en proporció a aquest valor, fins al seu `maxHeight`; si no n'hi ha cap, `align` col·loca els marcs (`'end'` al peu, `'center'`, `'space-between'`). Un marc del grup sense col·locació pròpia pren la caixa del grup com a àrea.
-- Quan ja no pot cedir res més, cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`.
+- Quan ja no pot cedir res més, cedeixen primer els marcs més propers al peu del grup, cadascun fins al seu `minHeight`; un marc d'alçada fixa la conserva, de manera que un espai de resposta buit o el lloc d'una imatge sota una caixa que creix es queda a la pàgina i és el text de la caixa el que cedeix. Cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`. Un marc retallat per sota del seu `minHeight` o de la seva alçada fixa també es notifica, tingui contingut o no.
 - Un marc amb `height: 'fill'` demana el seu `minHeight` i pren l'espai sobrant com si tingués `grow: 1`.
 
-**Filera.** Els marcs d'una filera van l'un al costat de l'altre a les amplades declarades, i tots fan l'alçada de la filera: la de la caixa del grup o, si el grup no en té de pròpia, la més gran de les alçades declarades (un marc d'alçada fixa conserva la seva). Quan el text d'un marc passa de l'alçada de la filera, el marc s'eixampla: primer amb l'amplada sobrant de la filera, després amb la dels altres marcs que tenen `shrink` més gran que 0, començant per la `priority` més baixa, sense deixar-ne cap més estret que l'amplada en què encara hi cap el seu text. L'amplada que pren és el mínim de mil·límetres sencers amb què el text hi cap; si ni tot l'espai disponible no n'hi ha prou, el marc no en pren gens, i una filera sense caixa pròpia es fa més alta. L'amplada sobrant va als marcs amb `grow` més gran que 0 i, després, a `align`. Les fileres van d'esquerra a dreta.
+**Filera.** Els marcs d'una filera van l'un al costat de l'altre a les amplades declarades, i tots fan l'alçada de la filera: la de la caixa del grup o, si el grup no en té de pròpia, la més gran de les alçades que escriuen els seus marcs: una `height` fixa o, si no, el seu `minHeight` (un marc `'auto'` no en declara més), o, si no n'escriuen cap, la del contingut més alt (un marc d'alçada fixa conserva la seva). Quan el text d'un marc passa de l'alçada de la filera, el marc s'eixampla: primer amb l'amplada sobrant de la filera, després amb la dels altres marcs que tenen `shrink` més gran que 0, començant per la `priority` més baixa, sense deixar-ne cap més estret que l'amplada en què encara hi cap el seu text. L'amplada que pren és el mínim de mil·límetres sencers amb què el text hi cap; si ni tot l'espai disponible no n'hi ha prou, el marc no en pren gens, i una filera sense caixa pròpia es fa més alta. Així, unes targetes amb `height: 'auto'` i un `minHeight` es reparteixen l'amplada a aquesta alçada, i la filera només creix quan cap no té amplada per donar. L'amplada sobrant va als marcs amb `grow` més gran que 0 i, després, a `align`. Les fileres van d'esquerra a dreta.
 
 **Marcs fixats.** Un marc amb `pin: true` conserva la caixa que li declara la plantilla, encara que el marc al qual està ancorat creixi o es mogui: una caixa dibuixada perquè coincideixi amb la il·lustració s'hi queda a sobre. Dins d'un grup, un marc fixat no es mou del seu lloc i els altres marcs el salten, amb el `gap` a banda i banda; un marc fixat de fora del grup fa el mateix amb els marcs del grup que trepitjaria.
 
@@ -457,7 +493,7 @@ Quan el contingut d'un marc és més alt que l'espai que li dona el seu grup, la
 - `minHeight` en els altres marcs del grup: fins on tornen espai; un marc mai no baixa del que necessita el seu propi contingut.
 - `fit.scaleImages` i `fit.imageMinScale`: si les imatges del marc i del seu grup es poden compondre més petites, i fins a quina escala (80 % per defecte).
 - `fit.shrinkText` i `fit.minScale`: si el text del marc es pot compondre més petit, i fins a quina escala (90 % per defecte). L'escala és la mateixa per al cos, l'interlineat i els espais; el marc conserva la seva mida.
-- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou: en un altre marc o en una pàgina afegida darrere d'aquesta (`'next-page'`, `'template:<id>'`), on el text continua a mida completa després de l'`overflow.mark` del tros.
+- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou: en un altre marc o en una altra pàgina (`'next-page'`, `'template:<id>'`, `'page:<id>'`), on el text continua a mida completa després de l'`overflow.mark` del tros. Un marc que pot continuar en una altra pàgina ho fa abans que les imatges i el text es componguin més petits, tret que el seu `fit.preferContinue` sigui `false`.
 
 Les escales van en passos del 2,5 % i la maquetació pren la més gran amb què el contingut hi cap, de manera que un text que fa una línia de més es compon al 97,5 %, no al mínim. Una caixa que ha de conservar el cos de lletra porta `fit: { shrinkText: false }`; en una pàgina les imatges de la qual han de conservar la mida, els marcs del seu grup porten `fit: { scaleImages: false }`:
 
@@ -493,7 +529,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next` i `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) amb `overflow.mark`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ### Dobles pàgines
 
@@ -521,6 +557,8 @@ pageTemplates: [{
 ```
 
 Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos posen `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina que conté el seu centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
+
+En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.38.
 
 ## Estils de rètol
 
@@ -731,8 +769,8 @@ Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `o
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> no anomena cap marc de la plantilla; un <code>overflow.continueIn</code> no anomena cap marc (<code>'#x'</code>) ni cap plantilla (<code>'template:x'</code>), o no té cap de les formes <code>'#frame'</code>, <code>'next-page'</code> i <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no anomena cap plantilla. El contingut que no hi cap no hi continua.</td>
-      <td>Corregeix el nom o l'id, o escriu una de les tres formes.</td>
+      <td>Un <code>next</code> no anomena cap marc de la plantilla; un <code>overflow.continueIn</code> no anomena cap marc (<code>'#x'</code>) ni cap plantilla (<code>'template:x'</code>), o no té cap de les formes <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> i <code>'page:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no anomena cap plantilla. El contingut que no hi cap no hi continua.</td>
+      <td>Corregeix el nom o l'id, o escriu una de les quatre formes.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

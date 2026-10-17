@@ -10,9 +10,9 @@
  */
 
 import { useMemo, useState, type ReactNode } from 'react';
-import { ChevronRight, LayoutTemplate, Loader2 } from 'lucide-react';
+import { ChevronRight, LayoutTemplate, Loader2, MapPin } from 'lucide-react';
 import { useSandboxChapterDocsRef, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector } from '../context/SandboxContext';
-import { Collapsible, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui';
+import { Collapsible, IconButton, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui';
 import type { SandboxLabels } from '../types';
 import type { Warning } from '../warnings/types';
 import {
@@ -23,6 +23,7 @@ import { useBookEditions, type BookEditions } from '../editions/useBookEditions'
 import { requestFrameJump } from '../editions/frameJump';
 import { localeDisplayName, localeShortTag } from '../presets/localeNames';
 import { sameLocaleTag } from '../presets/locale';
+import { ProposalActions } from '../warnings/ProposalButtons';
 
 const ALL = '*';
 
@@ -81,9 +82,12 @@ export interface ComposedChecksSectionProps {
   labels: SandboxLabels;
   title: (w: Warning) => string;
   detail: (w: Warning) => string;
+  /** A figure label's check (#866): the anchor in the picture's anchor
+   *  editor (the row itself leads to the page). */
+  onAnchor?: (w: Warning) => void;
 }
 
-export function ComposedChecksSection({ checks, editions, labels, title, detail }: ComposedChecksSectionProps) {
+export function ComposedChecksSection({ checks, editions, labels, title, detail, onAnchor }: ComposedChecksSectionProps) {
   const uiLocale = useSandboxSelector((s) => s.locale);
   const [open, setOpen] = useState(true);
   const [by, setBy] = useState<ComposedGroupBy>('page');
@@ -226,8 +230,24 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail 
                           {c.frame && <span className="text-[10px] font-medium text-(--slate)">{c.frame}</span>}
                         </span>
                       )}
+                      actions={onAnchor && (c.warning.payload.kind === 'labelAnchorUnknown' || c.warning.payload.kind === 'anchorUnlabelled') ? (
+                        <IconButton
+                          label={(c.warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', c.warning.payload.anchor)}
+                          icon={<MapPin size={14} aria-hidden="true" />}
+                          onClick={() => onAnchor(c.warning)}
+                        />
+                      ) : undefined}
                       className="mx-2 my-0.5"
                     />
+                    {/* A frame that does not fit: its fixes, one click each (#868). */}
+                    {c.warning.payload.kind === 'frameOverflow' && (
+                      <ProposalActions
+                        warning={c.warning}
+                        onScreen={sameLocaleTag(c.locale, editions.activeLocale) || (c.locale === '' && editions.activeLocale === '')}
+                        openEdition={() => jump(c)}
+                        editionName={name(c.locale)}
+                      />
+                    )}
                   </li>
                 );
               })}

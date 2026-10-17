@@ -3,6 +3,7 @@ import type {
   VDTDocument,
   VDTPage,
   VDTComicPage,
+  VDTComicPanel,
   VDTBlock,
   VDTDropCap,
   VDTLine,
@@ -54,7 +55,7 @@ import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
 import { figureLabelMatrix, undrawnLabels } from './composed/labels';
-import { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix } from './composed/paint';
+import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -3139,6 +3140,17 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
         `transform:translate(0,${height}px) rotate(-90deg) translate(${ox}px,${oy}px);transform-origin:0 0;${filter}" /></div>`
       );
     }
+    if (block.crop) {
+      // A cover crop (#923): the whole picture over its uncropped box, in a
+      // box that clips it to the element's.
+      const c = block.crop;
+      const w = width / c.width;
+      const h = height / c.height;
+      return (
+        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:hidden;">` +
+        `<img src="${esc(url)}" ${alt} style="position:absolute;left:${-c.x * w}px;top:${-c.y * h}px;width:${w}px;height:${h}px;max-width:none;${filter}" /></div>`
+      );
+    }
     return (
       `<img src="${esc(url)}" ${alt} style="position:absolute;` +
       `left:${x}px;top:${y}px;width:${width}px;height:${height}px;${filter}" />`
@@ -3300,7 +3312,18 @@ function renderPageDetailed(
   // turned, it is laid over the sheet with the comic page.
   const comics = pageComics(page);
   const plainFlow = !vflow && page.flow?.writingMode !== 'horizontal-tb';
-  const comicMarkup = (comic: VDTComicPage): string => renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options);
+  // A comic page's text panels (#885): each frame's blocks laid over its
+  // panel, before the panel's lettering, inside the comic's markup.
+  const comicText = new Map<number, string>();
+  const comicTextBlocks: Array<{ id: string; html: string }> = [];
+  for (const item of comicFramePaintOrder(page)) {
+    if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
+    const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
+    comicTextBlocks.push(...parts);
+    comicText.set(item.frame.panel, composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>');
+  }
+  const comicMarkup = (comic: VDTComicPage): string => renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
+    comic === page.comic && comicText.size > 0 ? (panel) => comicText.get(panel.index) ?? '' : undefined);
   const stripInBlock = (block: VDTBlock): string =>
     plainFlow && block.comic && !block.hidden ? comicMarkup(comicBlockOnSheet(page, block)!) : '';
   const blocks: Array<{ id: string; html: string }> = [];
@@ -3317,6 +3340,9 @@ function renderPageDetailed(
     if (frameIds.has(fb.id)) continue;
     blocks.push({ id: fb.id, html: renderBlock(fb, options, stripInBlock(fb)) });
   }
+  // A comic page's text panels (#885) are written in the comic's markup;
+  // their blocks are the page's to patch.
+  blocks.push(...comicTextBlocks);
   // The frames, each in a box of its own that turns it and clips it, in
   // reading order (Markdown order, #862: what a screen reader and a
   // fixed-layout EPUB read), painted in layer order by their `z-index`
@@ -3331,7 +3357,15 @@ function renderPageDetailed(
     const [l, t, r, b] = [sheetClip.x, sheetClip.y, sheetClip.x + sheetClip.width, sheetClip.y + sheetClip.height].map(frameNum);
     return `<div class="pt-sheet-clip" style="position:absolute;left:0;top:0;width:0;height:0;overflow:visible;clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px);">${html}</div>`;
   };
-  const composedDecorationHtml = page.composed?.decoration ? sheetClipped(renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options)) : '';
+  // Through a flow frame the decoration stands on the sheet: its clip
+  // mapped there (#926).
+  const sheetOnSheet = composedSheetClipOnSheet(page);
+  const decorationClipped = (html: string): string => {
+    if (!composedFlow || !sheetOnSheet || html === '') return sheetClipped(html);
+    const [l, t, r, b] = [sheetOnSheet.x, sheetOnSheet.y, sheetOnSheet.x + sheetOnSheet.width, sheetOnSheet.y + sheetOnSheet.height].map(frameNum);
+    return `<div class="pt-sheet-clip" style="position:absolute;left:0;top:0;width:0;height:0;overflow:visible;clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px);">${html}</div>`;
+  };
+  const composedDecorationHtml = page.composed?.decoration ? decorationClipped(renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options)) : '';
   const composedParts: string[] = [];
   /** The frames' boxes and the decoration: what a patcher of blocks must
    *  also compare (`decorationHtml`). */
@@ -3440,11 +3474,15 @@ function frameNum(v: number): string {
  *  in reading order. The facing page's half of a frame across a spread's
  *  spine (#861) is hidden from assistive technology: the text is read on
  *  the other page. */
-function composedFrameOpen(frame: VDTFrame, z: number, facing = false): string {
+function composedFrameOpen(frame: VDTFrame, z: number | 'auto', facing = false): string {
   const decls = ['position:absolute', 'left:0', 'top:0', 'width:0', 'height:0', `z-index:${z}`];
   const m = frameMatrix(frame);
   if (m) decls.push('transform-origin:0 0', `transform:matrix(${m.map(frameNum).join(',')})`);
-  if (frameClips(frame)) {
+  if (frame.polygon && frame.polygon.length >= 3) {
+    // A frame with an outline of its own (a comic panel cut by a slanted
+    // line, #885): its content is clipped to it.
+    decls.push(`clip-path:polygon(${frame.polygon.map((p) => `${frameNum(p.x)}px ${frameNum(p.y)}px`).join(',')})`);
+  } else if (frameClips(frame)) {
     const { x, y, width, height } = frameContentRect(frame);
     const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
     decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
@@ -3458,13 +3496,14 @@ function composedFrameOpen(frame: VDTFrame, z: number, facing = false): string {
  *  placeholder), tinted to the ink when single ink applies; its lettering
  *  is design text. `k`: its place among the page's comics (`pageComics`),
  *  which keeps its ids apart from theirs. */
-function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, options: HtmlPaint): string {
+function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, options: HtmlPaint, overPanel?: (panel: VDTComicPanel) => string): string {
   return renderComicHtml(comic, page.width, page.height, {
     artUrl: (art) => imageUrl(options, art.fileId, art.resourceId),
     artStyle: (art, url) => inkFilterDecl(options, art.kind === 'svg', url),
     text: (block) => renderDesignTextBlock(block, options),
     idBase: `pt-p-${(options.pageIndexOffset ?? 0) + page.index}${k > 0 ? `-c${k}` : ''}-panel`,
     ...(options.comicCast ? { cast: options.comicCast } : {}),
+    ...(overPanel ? { overPanel } : {}),
   });
 }
 

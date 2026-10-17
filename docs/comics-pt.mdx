@@ -154,6 +154,9 @@ Uma linha `::panel{…}` inicia um quadro; o seu roteiro vai até a próxima lin
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Espelha o desenho deste quadro, ou o mantém como foi desenhado quando a página espelha os seus desenhos (veja <a href="#sentido-de-leitura">Sentido de leitura</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>O texto alternativo do quadro, para o PDF marcado, o HTML e o EPUB. Sem ele: o <code>altText</code> do recurso.</td></tr>
     <tr><td><code>id=…</code></td><td>Um id para o quadro, que as saídas HTML e EPUB usam como âncora.</td></tr>
+    <tr><td><code>text</code></td><td>O corpo do quadro é Markdown composto no bloco do quadro em vez de um roteiro de letreiramento (veja <a href="#quadros-de-texto">Quadros de texto</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Veste o quadro com um estilo de destaque (veja <a href="#estilos-de-caixa">Estilos de caixa</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>Onde fica o texto de um quadro de texto no seu bloco. Sem ele: no alto.</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ Todas as saídas pintam a mesma HQ: fundos dos quadros, desenhos recortados nos 
 
 A legenda de uma tira é pintada com o texto, como a de uma figura. Num PDF marcado, ela é o `Caption` do `Div` da tira, lido depois dos seus quadros (antes deles quando fica acima da tira). No HTML, no EPUB de layout fixo e no EPUB refluível, a tira e a sua legenda formam um único `<figure>`, e a legenda é o seu `<figcaption>`; numa página vertical ou da direita para a esquerda, onde o desenho da tira fica sobre a folha, o HTML mantém a legenda no texto, à parte.
 
+## Páginas de quadrinhos e páginas compostas
+
+Uma página de quadrinhos é uma [página composta](/pt/docs/composed-pages) cujo modelo é escrito pela sua divisão: o valor de `split` é uma forma abreviada que gera os blocos da página. Cada célula da divisão, tirado o `pad` do seu quadro, é um bloco, e também o é cada quadro `inset`, uma camada acima do bloco em que se apoia. Um bloco leva o desenho, a borda e o fundo do seu quadro; o letreiramento continua a ser posicionado quadro a quadro, como descrito acima. Uma página de desenhos e roteiro é composta exatamente como antes.
+
+<table>
+  <thead>
+    <tr>
+      <th>O que a divisão gera</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Blocos</td><td>Um por célula, na ordem de leitura; o bloco de um quadro sobreposto vem depois do bloco em que se apoia.</td></tr>
+    <tr><td>Nomes</td><td>O <code>id</code> do quadro, senão <code>p1</code>, <code>p2</code>… na ordem dos quadros.</td></tr>
+    <tr><td>Identificadores</td><td>Os quadrinhos são <code>cm&lt;n&gt;</code>, sendo <code>n</code> o ordinal da sua cerca no capítulo (páginas e tiras contadas juntas, a partir de 0); um bloco é <code>cm&lt;n&gt;:&lt;nome&gt;</code>; um balão é <code>cm&lt;n&gt;:&lt;nome&gt;:b&lt;k&gt;</code>, sendo <code>k</code> a sua linha no roteiro do quadro. São os mesmos em todos os idiomas do capítulo e depois de qualquer nova paginação.</td></tr>
+    <tr><td>Contorno</td><td>Um bloco cortado por uma linha inclinada mantém o polígono da célula: o seu conteúdo é recortado nele, e um ponto só atinge o bloco do lado de dentro.</td></tr>
+    <tr><td>No VDT</td><td><code>page.comic.frames</code>: registros <code>VDTFrame</code>, cada um com <code>panel</code>, o índice do quadro que leva, e um <code>configPath</code> vazio, porque o bloco vem do Markdown e não da configuração.</td></tr>
+  </tbody>
+</table>
+
+### Quadros de texto
+
+Um quadro com a marca `text` recebe Markdown em vez de um roteiro de letreiramento, e o seu corpo é despejado no bloco do quadro como um slot é despejado num bloco de uma página composta:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+A tempestade já durava três dias quando a lâmpada do faroleiro se apagou.
+
+Maya subiu sozinha os **cento e doze** degraus.
+::panel{art=lh-stairs}
+maya: Vovô?
+:::
+```
+
+O corpo é composto no estilo de texto do livro, dentro da borda do quadro e da margem do letreiramento (`comics.lettering.inset`), a partir do alto do bloco (`valign=middle` ou `valign=bottom` o descem). É texto de verdade: parágrafos, títulos, listas, ênfase, links e etiquetas, que o leitor pode selecionar e buscar, que um leitor de tela lê e para o qual aponta o mapa de origem. O corpo vai até a próxima linha `::panel`, então não pode conter blocos `:::`; essas linhas são omitidas. O texto é pintado sobre o fundo e o desenho do quadro e sob o letreiramento da página. Um PDF etiquetado e o EPUB refluível o leem depois dos quadros da página.
+
+O texto que não cabe no seu bloco é cortado na borda do bloco e avisado como `comicPanelFrame` (motivo `textOverflow`). Nem uma tira nem uma página dupla recebem texto nos seus blocos, nem, por enquanto, um documento composto na vertical ou da direita para a esquerda: ali o texto do quadro é composto no fluxo depois dos quadrinhos, e `comicPanelFrame` avisa.
+
+### Estilos de caixa
+
+`box=<id>` veste um quadro com um estilo de destaque de `calloutStyles`, os estilos com que as páginas compostas desenham os seus blocos: o quadro toma o fundo do estilo, a cor e a espessura da borda e o raio dos cantos, e os `border` e `bg` próprios do quadro continuam valendo. Num quadro de texto a caixa é desenhada em volta do texto como a de um bloco, com o recuo interno do estilo, e o quadro não desenha borda nem fundo próprios. Numa célula inclinada, o texto e a sua caixa se limitam à caixa de lados retos mais larga que cabe na célula. Um `box` que não nomeia nenhum estilo de destaque deixa o quadro no seu estilo de quadro e é avisado como `comicPanelFrame` (motivo `unknownBox`).
+
+### Os blocos no mapa de origem e no Sandbox
+
+`sourceAt`, `elementsForSource` e `findElement` ([Páginas compostas › Mapa de origem](/pt/docs/composed-pages#mapa-de-origem)) respondem também pelos quadrinhos: o glifo de um balão, o balão (nível `box`), o desenho de um quadro (`resource`), o seu bloco (`frame`) e os quadrinhos (`template`), com os identificadores acima. As palavras de um quadro de texto respondem como o resto do texto, depois a sua linha, o parágrafo e a caixa, o bloco e os quadrinhos. No Sandbox as palavras de um quadro de texto recebem o cursor e a seleção como o resto do texto, um clique num quadro de texto fora das suas palavras leva o cursor ao seu texto, e um duplo clique num dos seus parágrafos o edita na página. Linhas da divisão, quadros e balões se editam como antes.
+
 ## Editar quadrinhos no Sandbox
 
 No canvas, nas páginas HTML e no modo de seleção do Folio, uma página de quadrinhos pode ser editada com o ponteiro, e cada edição é gravada de volta no Markdown do capítulo (o [guia do Sandbox](/pt/docs/sandbox-books-saving#editar-quadrinhos) tem os detalhes):
@@ -519,6 +569,7 @@ Cada aviso indica a linha ou o atributo a que se refere, e o painel Verificaçõ
     <tr><td>Ponto de personagem fora da área segura<br /><code>comicAnchorOutsideSafeArea</code></td><td>A âncora de um desenho fica fora da sua área segura, então um recorte pode deixar o personagem de fora e o rabicho passaria a apontar para fora do quadro.</td><td>Aumente a área segura para incluir a boca, ou mova a âncora. Não há nada a corrigir se a intenção é que o personagem às vezes fique fora do quadro.</td></tr>
     <tr><td>O balão não cabe<br /><code>comicBalloonOverflow</code></td><td>Depois de todas as alternativas, um balão ainda cobre um rosto, outro balão, uma zona a evitar ou uma boca, o seu rabicho atravessa outro balão, ou sai do seu quadro (uma travessia pedida com <code>break</code> ou com um <code>at=</code> não conta). O aviso indica o quadro e o que está coberto. Enquanto um balão é arrastado no Sandbox, o rosto ou a zona a evitar que ele cobriria, ou a borda que ele ultrapassaria, aparece antes de soltá-lo.</td><td>Encurte a fala ou divida-a em duas, dê mais espaço ao quadro, fixe o balão com <code>at=</code> ou deixe-o atravessar a borda com <code>break</code>. O texto nunca é reduzido.</td></tr>
     <tr><td>Personagem sem ponto<br /><code>comicUnknownSpeaker</code></td><td>Uma chave de personagem que nenhum desenho da página marca com uma âncora e nenhuma entrada do elenco nomeia, quase sempre uma chave digitada errado. Os seus rabichos apontam para fora do quadro. Só aparece em páginas cujos desenhos marcam âncoras; é apenas informativo.</td><td>Corrija a chave, marque o personagem no desenho ou acrescente uma entrada em <code>comics.cast</code> para um personagem que nunca aparece.</td></tr>
+    <tr><td>O quadro do painel não se aplica<br /><code>comicPanelFrame</code></td><td><code>reason</code> diz qual: <code>unknownBox</code>, um <code>box</code> não nomeia nenhum estilo de destaque (o quadro mantém o seu estilo de quadro); <code>textOverflow</code>, o texto de um quadro de texto é mais alto que o seu bloco (o resto é cortado, e o aviso dá o excesso em mm); <code>strip</code>, <code>spread</code> ou <code>flow</code>, um quadro de texto numa tira, numa página dupla ou num documento vertical ou da direita para a esquerda, onde os blocos não recebem texto (o texto é composto no fluxo depois dos quadrinhos).</td><td>Corrija o nome ou acrescente o estilo de destaque; encurte o texto ou dê ao quadro uma célula maior; nos outros casos passe o quadro de texto para uma página de quadrinhos simples, ou letreie as suas palavras como recordatório.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ A HQ diagramada fica no VDT: `page.comic` (`VDTComicPage`) guarda a moldura, o s
 - **As tiras** não podem ocupar um número de colunas menor que o da página (`columns=2` numa página de três), e só são lidas no nível superior de um capítulo (não dentro de um boxe, de uma tabela ou de uma nota de rodapé). Uma citação na legenda de uma tira sai como foi escrita.
 - **Páginas duplas.** Um quadro arredondado cortado na lombada perde todos os cantos arredondados. Uma HQ da direita para a esquerda num livro com encadernação à esquerda continua abrindo na página da esquerda, então o seu primeiro quadro cai na segunda página da página dupla.
 - **A arte que sai do quadro** usa o recorte da arte do quadro, então o recorte transparente precisa ter o mesmo tamanho do desenho da arte.
+- **Quadros de texto** só são compostos em páginas de quadrinhos simples de documentos horizontais, da esquerda para a direita. Numa célula inclinada as suas linhas se limitam à caixa de lados retos mais larga que cabe nela em vez de seguir a inclinação, o texto nunca é reduzido para caber, e um PDF etiquetado o lê depois dos quadros da página em vez de dentro do `Div` dos quadrinhos.
 - **Saídas.** O texto alternativo de reserva de um quadro sem `alt` e sem `altText` é “Panel N”, em inglês. A navegação por regiões descreve os quadros inclinados pelas suas caixas delimitadoras. O Kindle Panel View copia a HQ de uma página uma vez por quadro, o que aumenta o arquivo, e não foi verificado no Kindle Previewer.
 
 ## Referências

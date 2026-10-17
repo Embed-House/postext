@@ -13,9 +13,9 @@ import { setSegmentLanguages } from './wordRuns';
 import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
 import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
-import { renderComicPage } from './comic';
-import { renderComposedDecoration, renderComposedFrames } from './composed';
-import { composedFrameBlockIds } from '../composed/paint';
+import { renderComicBalloons, renderComicPage, renderComicPanels } from './comic';
+import { renderComicTextFrames, renderComposedDecoration, renderComposedFrames } from './composed';
+import { comicPaintsUnderText, composedFrameBlockIds } from '../composed/paint';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
 import { resetContextState, restoreContext, saveContext } from './contextState';
@@ -230,6 +230,11 @@ function paintContext(
   // page through its mirror, text and pictures turned back about their
   // boxes (`beginMirroredFlow`). The running heads, folios, background and
   // crop marks stay on the sheet.
+  // A comic page with text panels (#885): its panels first, the text over
+  // them with the floats, its lettering after the flow.
+  const comicUnder = comicPaintsUnderText(page) ? page.comic : undefined;
+  if (comicUnder) renderComicPanels(ctx, comicUnder, inkHex);
+
   const flow = verticalFlowOf(page);
   let outerVertical: ReturnType<typeof setVerticalPaint> = null;
   let endMirror: (() => void) | undefined;
@@ -338,13 +343,17 @@ function paintContext(
     enterFlow();
     renderComposedFrames(ctx, page, inkHex, undefined, 'above');
   } else if (page.composed) renderComposedFrames(ctx, page, inkHex, page.composed.decoration);
+  if (comicUnder) renderComicTextFrames(ctx, page, inkHex);
   renderFootnoteRules(ctx, page);
 
   leaveFlow();
 
   // A comic page's panels and lettering (or its half of a spread), and the
   // strips set in its flow, on the sheet (never through the flow frame).
-  for (const comic of pageComics(page)) renderComicPage(ctx, comic, inkHex);
+  for (const comic of pageComics(page)) {
+    if (comic === comicUnder) renderComicBalloons(ctx, comic);
+    else renderComicPage(ctx, comic, inkHex);
+  }
 
   // Line numbers (#621) stand on the sheet beside the lines they number.
   if (page.lineNumbers) renderHeaderFooterSlot(ctx, page.lineNumbers, inkHex);

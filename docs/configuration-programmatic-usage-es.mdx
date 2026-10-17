@@ -135,6 +135,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>La salida paginada corta el resto al pie de ese marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>El <code>overflow.continueIn: 'page:&lt;id&gt;'</code> de un marco no nombra ninguna valla de página posterior a aquella en la que está su historia (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> cuando esa valla va antes, <code>configPath</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página que envía.</td>
+      <td>El resto sigue en una página añadida detrás de la página que envía, como con <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>La apertura de una página compuesta y su plantilla no coinciden en la doble página (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, el <code>spread</code> de la apertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.</td>
@@ -196,7 +201,7 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Un párrafo que abre una <a href="/es/docs/configuration-text#letras-capitulares">capitular</a> y que no puede llevarla tal como está configurada. <code>reason</code>: <code>'shortParagraph'</code> (tiene menos líneas de las que baja la capitular; <code>handling</code> es lo que hizo <code>shortParagraph</code>, y <code>lines</code>, las líneas que abarca una capitular reducida), <code>'split'</code> (se corta antes de la última línea de la capitular, solo en una columna demasiado corta), <code>'joiningScript'</code> (su primera letra se enlaza con la siguiente), <code>'verticalText'</code> o <code>'noLetter'</code> (empieza por una referencia, una fórmula o una llamada de nota). <code>text</code> es su primera línea.</td>
+      <td>Un párrafo que abre una <a href="/es/docs/configuration-text#letras-capitulares">capitular</a> y que no puede llevarla tal como está configurada. <code>reason</code>: <code>'shortParagraph'</code> (tiene menos líneas de las que baja la capitular; <code>handling</code> es lo que hizo <code>shortParagraph</code>, y <code>lines</code>, las líneas que abarca una capitular reducida), <code>'split'</code> (se corta antes de la última línea de la capitular, solo en una columna demasiado corta), <code>'joiningScript'</code> (su primera letra se enlaza con la siguiente), <code>'verticalText'</code> o <code>'noLetter'</code> (empieza por una referencia, una fórmula o una llamada de nota). <code>text</code> es su primera línea. <code>'inBox'</code>: un grupo <code>:::paragraphs</code> o un estilo de párrafo la pide dentro de un recuadro <code>:::callout</code>, donde no se pone ninguna.</td>
       <td>Se reserva el espacio, o la capitular se reduce o se omite, según diga el aviso.</td>
     </tr>
     <tr>

@@ -154,6 +154,9 @@ Eine Zeile `::panel{…}` beginnt ein Panel; sein Skript reicht bis zur nächste
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Das Bild dieses Panels spiegeln oder es wie gezeichnet lassen, wenn die Seite ihre Bilder spiegelt (siehe <a href="#leserichtung">Leserichtung</a>).</td></tr>
     <tr><td><code>alt="…"</code></td><td>Der Alternativtext des Panels für getaggtes PDF, HTML und EPUB. Ohne Angabe: der <code>altText</code> der Ressource.</td></tr>
     <tr><td><code>id=…</code></td><td>Eine ID für das Panel, die die HTML- und EPUB-Ausgabe als Anker verwenden.</td></tr>
+    <tr><td><code>text</code></td><td>Der Inhalt des Panels ist Markdown, das im Rahmen des Panels gesetzt wird, statt eines Letteringskripts (siehe <a href="#textpanels">Textpanels</a>).</td></tr>
+    <tr><td><code>box=&lt;id&gt;</code></td><td>Kleidet das Panel in einen Kastenstil (siehe <a href="#kastenstile">Kastenstile</a>).</td></tr>
+    <tr><td><code>valign=middle</code>, <code>valign=bottom</code></td><td>Wo der Text eines Textpanels in seinem Rahmen steht. Ohne Angabe: oben.</td></tr>
   </tbody>
 </table>
 
@@ -482,6 +485,53 @@ Jede Ausgabe malt denselben Comic: Panelhintergründe, auf die Panels beschnitte
 
 Die Legende eines Strips wird mit dem Text gemalt, wie die einer Abbildung. In einem getaggten PDF ist sie die `Caption` des `Div` des Strips, nach seinen Panels gelesen (davor, wenn sie über dem Strip steht). Im HTML, im EPUB mit festem Layout und im umfließenden EPUB sind der Strip und seine Legende eine einzige `<figure>`, die Legende deren `<figcaption>`; auf einer senkrechten Seite oder einer Seite von rechts nach links, wo das Bild des Strips über dem Blatt liegt, behält das HTML die Legende für sich im Text.
 
+## Comicseiten und zusammengesetzte Seiten
+
+Eine Comicseite ist eine [zusammengesetzte Seite](/de/docs/composed-pages), deren Vorlage ihre Aufteilung schreibt: Der Wert von `split` ist eine Kurzform, die die Rahmen der Seite erzeugt. Jede Zelle der Aufteilung ist, nachdem das `pad` ihres Panels abgezogen ist, ein Rahmen, und ebenso jedes `inset`-Panel, eine Ebene über dem Rahmen, auf dem es liegt. Ein Rahmen trägt Bild, Rand und Hintergrund seines Panels; das Lettering wird weiterhin Panel für Panel platziert, wie oben beschrieben. Eine Seite aus Bildern und Skript wird genau wie zuvor gesetzt.
+
+<table>
+  <thead>
+    <tr>
+      <th>Was die Aufteilung erzeugt</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Rahmen</td><td>Einer pro Zelle, in Lesereihenfolge; der Rahmen eines eingelegten Panels folgt dem Rahmen, auf dem es liegt.</td></tr>
+    <tr><td>Namen</td><td>Die <code>id</code> des Panels, sonst <code>p1</code>, <code>p2</code>… in Panelreihenfolge.</td></tr>
+    <tr><td>Kennungen</td><td>Der Comic ist <code>cm&lt;n&gt;</code>, wobei <code>n</code> die Ordnungszahl seiner Begrenzung im Kapitel ist (Seiten und Streifen zusammen gezählt, ab 0); ein Rahmen ist <code>cm&lt;n&gt;:&lt;name&gt;</code>; eine Sprechblase ist <code>cm&lt;n&gt;:&lt;name&gt;:b&lt;k&gt;</code>, wobei <code>k</code> ihre Zeile im Skript des Panels ist. Sie bleiben in allen Sprachen des Kapitels und nach jedem neuen Umbruch gleich.</td></tr>
+    <tr><td>Umriss</td><td>Ein Rahmen, den eine schräge Linie schneidet, behält das Polygon der Zelle: Sein Inhalt wird darauf beschnitten, und ein Punkt trifft den Rahmen nur innerhalb.</td></tr>
+    <tr><td>Im VDT</td><td><code>page.comic.frames</code>: <code>VDTFrame</code>-Einträge, jeder mit <code>panel</code>, dem Index des Panels, das er trägt, und einem leeren <code>configPath</code>, weil der Rahmen aus dem Markdown stammt und nicht aus der Konfiguration.</td></tr>
+  </tbody>
+</table>
+
+### Textpanels
+
+Ein Panel mit der Markierung `text` nimmt Markdown statt eines Letteringskripts auf, und sein Inhalt fließt in den Rahmen des Panels, so wie ein Slot in einen Rahmen einer zusammengesetzten Seite fließt:
+
+```md
+:::page{split="30 / *"}
+::panel{text box=recuadro}
+Der Sturm dauerte schon drei Tage, als die Lampe des Wärters erlosch.
+
+Maya stieg die **hundertzwölf** Stufen allein hinauf.
+::panel{art=lh-stairs}
+maya: Opa?
+:::
+```
+
+Der Inhalt wird im Textstil des Buchs gesetzt, innerhalb des Panelrands und des Lettering-Abstands (`comics.lettering.inset`), vom oberen Rand des Rahmens an (`valign=middle` oder `valign=bottom` setzen ihn tiefer). Es ist echter Text: Absätze, Überschriften, Listen, Hervorhebungen, Links und Chips, die man markieren und durchsuchen kann, die ein Screenreader vorliest und auf die die Quellenzuordnung zurückverweist. Der Inhalt reicht bis zur nächsten `::panel`-Zeile und kann daher keine `:::`-Blöcke enthalten; solche Zeilen werden ausgelassen. Der Text wird über Hintergrund und Bild des Panels und unter das Lettering der Seite gemalt. Ein getaggtes PDF und das umfließende EPUB lesen ihn nach den Panels der Seite.
+
+Text, der nicht in seinen Rahmen passt, wird am Rahmenrand abgeschnitten und als `comicPanelFrame` (Grund `textOverflow`) gemeldet. Ein Streifen oder eine Doppelseite nimmt in seinen Rahmen keinen Text auf, und ein vertikal oder von rechts nach links gesetztes Dokument vorerst auch nicht: Dort steht der Text des Panels im Fluss nach dem Comic, und `comicPanelFrame` meldet es.
+
+### Kastenstile
+
+`box=<id>` kleidet ein Panel in einen Kastenstil aus `calloutStyles`, die Stile, mit denen zusammengesetzte Seiten ihre Rahmen zeichnen: Das Panel übernimmt Hintergrund, Randfarbe und Randstärke sowie den Eckenradius des Stils, und die eigenen `border` und `bg` des Panels haben weiterhin Vorrang. Bei einem Textpanel wird der Kasten wie der Kasten eines Rahmens um den Text gezeichnet, mit dem Innenabstand des Stils, und das Panel zeichnet weder eigenen Rand noch eigenen Hintergrund. In einer schrägen Zelle halten sich Text und Kasten an das breiteste Rechteck mit geraden Seiten, das in die Zelle passt. Ein `box`, das keinen Kastenstil nennt, lässt das Panel in seinem Panelstil und wird als `comicPanelFrame` (Grund `unknownBox`) gemeldet.
+
+### Rahmen in der Quellenzuordnung und im Sandbox
+
+`sourceAt`, `elementsForSource` und `findElement` ([Zusammengesetzte Seiten › Quellenzuordnung](/de/docs/composed-pages#quellenzuordnung)) antworten auch für Comics: die Glyphe einer Sprechblase, die Sprechblase (Ebene `box`), das Bild eines Panels (`resource`), sein Rahmen (`frame`) und der Comic (`template`), mit den Kennungen oben. Die Wörter eines Textpanels antworten wie übriger Text, danach ihre Zeile, ihr Absatz und ihr Kasten, der Rahmen und der Comic. Im Sandbox nehmen die Wörter eines Textpanels Cursor und Auswahl wie der übrige Text an, ein Klick in ein Textpanel neben seine Wörter setzt den Cursor an seinen Text, und ein Doppelklick auf einen seiner Absätze bearbeitet ihn auf der Seite. Teilungslinien, Panels und Sprechblasen werden wie bisher bearbeitet.
+
 ## Comics in der Sandbox bearbeiten
 
 Im Canvas, in den HTML-Seiten und im Auswahlmodus von Folio lässt sich eine Comicseite mit dem Zeiger bearbeiten, und jede Änderung wird in das Markdown des Kapitels zurückgeschrieben (der [Sandbox-Leitfaden](/de/docs/sandbox-books-saving#comics-bearbeiten) hat die Einzelheiten):
@@ -519,6 +569,7 @@ Jede Warnung nennt die Zeile oder das Attribut, das sie betrifft, und das Bedien
     <tr><td>Sprecherpunkt außerhalb des Sicherheitsbereichs<br /><code>comicAnchorOutsideSafeArea</code></td><td>Ein Anker eines Bilds liegt außerhalb seines Sicherheitsbereichs, sodass ein Zuschnitt den Sprecher abschneiden kann und der Dorn dann aus dem Panel hinauszeigen würde.</td><td>Vergrößern Sie den Sicherheitsbereich, sodass er den Mund einschließt, oder verschieben Sie den Anker. Nichts ist zu tun, wenn der Sprecher bisweilen außerhalb des Panels sein soll.</td></tr>
     <tr><td>Sprechblase passt nicht<br /><code>comicBalloonOverflow</code></td><td>Nach jeder Ausweichstufe verdeckt eine Sprechblase noch ein Gesicht, eine andere Sprechblase, eine Sperrzone oder einen Mund, führt ihren Dorn durch eine andere Sprechblase oder läuft aus ihrem Panel (ein mit <code>break</code> oder einer <code>at=</code>-Fixierung gewünschtes Überschreiten zählt nicht). Die Warnung nennt das Panel und das, was verdeckt wird. Während eine Sprechblase in der Sandbox gezogen wird, ist ein Gesicht oder eine Sperrzone, die sie verdecken würde, oder ein Rahmen, über den sie hinauslaufen würde, schon vor dem Ablegen zu sehen.</td><td>Kürzen Sie die Zeile oder teilen Sie sie in zwei, geben Sie dem Panel mehr Raum, fixieren Sie die Sprechblase mit <code>at=</code>, oder lassen Sie sie mit <code>break</code> den Rahmen überschreiten. Der Text wird nie verkleinert.</td></tr>
     <tr><td>Figur ohne Punkt<br /><code>comicUnknownSpeaker</code></td><td>Ein Sprecherschlüssel, den kein Bild der Seite mit einem Anker markiert und kein Eintrag der Figurenliste nennt, meist ein falsch geschriebener Schlüssel. Seine Dorne zeigen aus dem Panel hinaus. Nur auf Seiten gemeldet, deren Bilder Anker markieren; nur zur Information.</td><td>Korrigieren Sie den Schlüssel, markieren Sie den Sprecher auf dem Bild, oder fügen Sie für einen Sprecher, der nie zu sehen ist, einen Eintrag in <code>comics.cast</code> hinzu.</td></tr>
+    <tr><td>Panelrahmen greift nicht<br /><code>comicPanelFrame</code></td><td><code>reason</code> sagt, welcher Fall: <code>unknownBox</code>, ein <code>box</code> nennt keinen Kastenstil (das Panel behält seinen Panelstil); <code>textOverflow</code>, der Text eines Textpanels ist höher als sein Rahmen (der Rest wird abgeschnitten, die Warnung nennt den Überstand in mm); <code>strip</code>, <code>spread</code> oder <code>flow</code>, ein Textpanel in einem Streifen, einer Doppelseite oder einem vertikalen oder rechtsläufigen Dokument, wo Rahmen keinen Text aufnehmen (der Text steht im Fluss nach dem Comic).</td><td>Korrigiere den Namen oder lege den Kastenstil an; kürze den Text oder gib dem Panel eine größere Zelle; sonst verschiebe das Textpanel auf eine einfache Comicseite, oder setze seine Wörter als Erzähltextkasten.</td></tr>
   </tbody>
 </table>
 
@@ -540,6 +591,7 @@ Der umbrochene Comic steht im VDT: `page.comic` (`VDTComicPage`) enthält den Ra
 - **Strips** können nicht über eine Anzahl von Spalten reichen, die kleiner ist als die der Seite (`columns=2` auf einer Seite mit drei), und werden nur auf der obersten Ebene eines Kapitels gelesen (nicht in einem Kasten, einer Tabelle oder einer Fußnote). Ein Literaturverweis in der Legende eines Strips wird so gedruckt, wie er geschrieben ist.
 - **Doppelseiten.** Ein abgerundetes Panel, das am Bund geschnitten wird, verliert alle seine runden Ecken. Ein Comic von rechts nach links in einem links gebundenen Buch beginnt weiterhin auf der linken Seite, sein erstes Panel landet also auf der zweiten Seite der Doppelseite.
 - **Herausragende Bildteile** übernehmen den Zuschnitt des Panelbilds; der Freisteller muss daher dieselbe Größe haben wie das Panelbild.
+- **Textpanels** werden nur auf einfachen Comicseiten horizontaler, linksläufiger Dokumente gesetzt. In einer schrägen Zelle halten sich ihre Zeilen an das breiteste Rechteck mit geraden Seiten darin, statt der Schräge zu folgen, der Text wird nie verkleinert, damit er passt, und ein getaggtes PDF liest ihn nach den Panels der Seite statt innerhalb des `Div` des Comics.
 - **Ausgaben.** Der Ersatz-Alternativtext eines Panels ohne `alt` und ohne `altText` lautet „Panel N“, auf Englisch. Die regionsbasierte Navigation beschreibt schräge Panels durch ihre umschließenden Rechtecke. Kindle Panel View kopiert den Comic einer Seite einmal pro Panel, was die Datei vergrößert, und wurde nicht im Kindle Previewer geprüft.
 
 ## Quellen

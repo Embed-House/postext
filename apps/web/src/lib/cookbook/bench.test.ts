@@ -6,7 +6,7 @@ import type { PostextConfig } from "postext";
 import { PAGE8_CONFIG, PAGE8_RESOURCES } from "../../../../../packages/postext/src/__tests__/composed/fixtures/page8";
 import { stressFactor, UsageError } from "../../../scripts/cookbook/args.ts";
 import {
-  compareFindings, composedFindings, configSizeFindings, roundTripFindings, runChecks, stressFindings, usefulProposal,
+  changesAgainstBase, compareFindings, composedFindings, configSizeFindings, roundTripFindings, runChecks, stressFindings, usefulProposal,
 } from "../../../scripts/cookbook/checks.ts";
 import type { CheckInput, ComposedFacts, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
 import { COMPOSED_FENCE as PROBE_FENCE, composedFacts, composedRoundTrip } from "../../../scripts/cookbook/lib/probe.js";
@@ -233,7 +233,9 @@ describe("the bench's fixture recipe (es, en, ca)", () => {
     const c37 = composedFindings(meta(), facts(composed));
     expect(c37.length).toBeGreaterThan(0);
     expect(c37.every((f) => f.check === "C37" && f.severity === "fail")).toBe(true);
-    expect(c37[0]!.detail).toMatch(/^frameOverflow: frame "ahorro" of template "tema-cajas" on page 1 is [\d.]+ mm short of its content after .*; to fit: /);
+    // The last box keeps its minimum; the first, which grew, gives way
+    // (#911).
+    expect(c37[0]!.detail).toMatch(/^frameOverflow: frame "dinero" of template "tema-cajas" on page 1 is [\d.]+ mm short of its content after .*; to fit: /);
   });
 });
 
@@ -298,11 +300,51 @@ describe("C38: the stress test", () => {
     expect(stressFindings({ ...base, facts: { ...facts(declared), selected: -1 } }).at(-1)!.detail).toBe("the stretched edition built nothing");
   });
 
+  it("reads how far the reflow pushed a frame past the foot of the type area (#911)", () => {
+    const frame = (name: string, y: number, declaredY?: number) => ({ name, rect: { x: 0, y, width: 100, height: 100 }, ...(declaredY !== undefined ? { declaredRect: { x: 0, y: declaredY, width: 100, height: 100 } } : {}), overflowPx: 0, scale: 1, blockIds: [] });
+    const doc = { config: { page: { dpi: 254 } }, contentWarnings: [], pages: [{ index: 0, contentArea: { x: 0, y: 0, width: 100, height: 1000 }, composed: { template: "t", fenceIndex: 0, log: [], frames: [frame("moved", 950, 800), frame("drawn", 950), frame("inside", 500, 400)] } }] };
+    const out = composedFacts(engine, [doc]) as ComposedFacts;
+    expect(out.pages[0]!.frames.map((f) => f.pushedOutMm)).toEqual([5, undefined, undefined]);
+  });
+
+  it("fails a frame the reflow pushed past the foot of the type area (#911)", () => {
+    const pushed = { ...page, frames: [{ name: "box", heightMm: 40 }, { name: "lines", heightMm: 16, pushedOutMm: 4.5 }] };
+    const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [pushed] }) });
+    expect(out.filter((f) => f.severity === "fail").map((f) => f.detail)).toEqual(['p. 1 (t): frame "lines" was pushed 4.5 mm past the foot of the type area']);
+  });
+
   it("says when the page goes on, and when the page count changed", () => {
     const going = { ...page, events: [], frames: [{ name: "a", heightMm: 30, continuesTo: "cp0:b" }] };
     const out = stressFindings({ ...base, base: facts(declared), facts: facts({ ...declared, pages: [going] }, { pages: [...facts(declared).pages!, { ...facts(declared).pages![0]!, n: 2 }] }) });
     expect(out.map((f) => f.detail)).toContain("p. 1 (t) goes on: continues a → cp0:b");
     expect(out.at(-1)!.detail).toBe("2 pages, 1 as written");
+  });
+
+  it("says what moved against the text as written when the log is silent (#925)", () => {
+    // A standfirst whose height follows its text (no minHeight) declares no
+    // height: it grows and the columns anchored below it move, and the
+    // reflow log says nothing.
+    const frames = (standfirst: number) => [
+      { name: "entradilla", heightMm: standfirst, box: [10, 10, 190, standfirst] as [number, number, number, number] },
+      { name: "col-1", heightMm: 200 - standfirst, box: [10, 17 + standfirst, 92, 200 - standfirst] as [number, number, number, number] },
+      { name: "titulo", heightMm: 20, box: [10, 250, 150, 20] as [number, number, number, number] },
+    ];
+    const asWritten = { n: 1, template: "apertura", fenceIndex: 0, frames: frames(24), events: [] };
+    const stretched = { ...asWritten, frames: frames(30.2) };
+    const out = stressFindings({ ...base, base: facts({ ...declared, pages: [asWritten] }), facts: facts({ ...declared, pages: [stretched] }) });
+    expect(out[1]!.detail).toBe("p. 1 (apertura) rearranged: entradilla 6.2 mm taller than as written; col-1 6.2 mm shorter than as written; col-1 moved down 6.2 mm from where it was as written");
+    // Without the run as written, as before.
+    expect(stressFindings({ ...base, facts: facts({ ...declared, pages: [stretched] }) })[1]!.detail).toBe("p. 1 (apertura) fits as it was");
+    // What the log says already is not said twice.
+    const logged = { ...stretched, events: [{ frame: "entradilla", kind: "grew", fromMm: 24, toMm: 30.2, text: "entradilla grew 6.2 mm" }] };
+    expect(changesAgainstBase(logged, asWritten)).toEqual(["col-1 6.2 mm shorter than as written", "col-1 moved down 6.2 mm from where it was as written"]);
+  });
+
+  it("names the frame a story goes on in by its name, template and page (#925)", () => {
+    const going = { ...page, events: [], frames: [{ name: "col-2", id: "cp0:col-2", heightMm: 30, continuesTo: "cp0:col-1~2" }] };
+    const after = { n: 2, template: "seguido-par", fenceIndex: 0, frames: [{ name: "col-1", id: "cp0:col-1~2", heightMm: 200, continuedFrom: "cp0:col-2" }], events: [] };
+    const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [going, after] }) });
+    expect(out.map((f) => f.detail)).toContain("p. 1 (t) goes on: continues col-2 → col-1 of seguido-par on p. 2 (cp0:col-1~2)");
   });
 });
 
@@ -347,6 +389,24 @@ describe("C40: the source map round trip (#857)", () => {
     expect(composedRoundTrip(found, doc)!.misses).toEqual([]);
     const out = roundTripFindings(facts({ ...declared, roundTrip: trip }));
     expect(out).toEqual([{ check: "C40", severity: "fail", detail: expect.stringMatching(/^p\. 1: a click inside frame cp0:dinero “The money in the box/) }]);
+  });
+
+  it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("probes a frame whose text was scaled at the rect the source map gives (#921)", () => {
+    // `dinero` at a fixed 56 mm with no maximum: one more paragraph makes
+    // the ladder scale its text (to 0.9). elementsForSource gives the lines
+    // upright on the sheet already; mapping them through frameMatrix again
+    // looked a line off at the frame's foot (4 misses here, 139 on Nº 160).
+    const tpl = PAGE8_CONFIG.pageTemplates![0]!;
+    const frames = tpl.frames!.map((f) => (f.name === "dinero" ? { ...f, height: { value: 56, unit: "mm" as const }, minHeight: undefined, maxHeight: undefined } : f));
+    const config = { ...PAGE8_CONFIG, pageTemplates: [{ ...tpl, frames }, ...PAGE8_CONFIG.pageTemplates!.slice(1)] } as PostextConfig;
+    const more = "More money 0 ".repeat(24).trim();
+    const markdown = content("en").replace(/(:::frame\{slot="dinero"[^\n]*\n)/, `$1${more}\n\n`);
+    const { doc, composed } = layOut(markdown, "en", config);
+    const dinero = doc.pages.find((p) => p.composed)!.composed!.frames.find((f) => f.name === "dinero")!;
+    expect(dinero.scale).toBeLessThan(0.95);
+    expect(dinero.overflowPx ?? 0).toBe(0);
+    expect(composed.roundTrip?.misses).toEqual([]);
+    expect(composed.roundTrip?.levels.line?.checked).toBeGreaterThan(0);
   });
 
   it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("brings every element of the fixture back on an engine with the source map", () => {

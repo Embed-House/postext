@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’uscita impaginata taglia il resto al piede di quella cornice; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> di una cornice non indica nessun recinto di pagina dopo quello in cui si trova il suo articolo (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quando quel recinto viene prima, <code>configPath</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina che invia.</td>
+      <td>Il resto prosegue in una pagina aggiunta dopo la pagina che invia, come con <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L’apertura di una pagina composta e il suo modello non concordano sulla doppia pagina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, lo <code>spread</code> dell’apertura; <code>templateSpread</code>, quello del modello).</td>
       <td>Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una.</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Un paragrafo aperto da un <a href="/it/docs/configuration-text#capilettera">capolettera</a> che non può accoglierlo come configurato. <code>reason</code>: <code>'shortParagraph'</code> (meno righe di quelle su cui scende l’iniziale; <code>handling</code> è ciò che ha fatto <code>shortParagraph</code>, <code>lines</code> le righe occupate da un’iniziale ridotta), <code>'split'</code> (si interrompe prima dell’ultima riga dell’iniziale, da solo in una colonna troppo corta), <code>'joiningScript'</code> (la sua prima lettera si lega alla successiva), <code>'verticalText'</code> o <code>'noLetter'</code> (si apre con un rimando, una formula o un richiamo di nota). <code>text</code> è la sua prima riga.</td>
+      <td>Un paragrafo aperto da un <a href="/it/docs/configuration-text#capilettera">capolettera</a> che non può accoglierlo come configurato. <code>reason</code>: <code>'shortParagraph'</code> (meno righe di quelle su cui scende l’iniziale; <code>handling</code> è ciò che ha fatto <code>shortParagraph</code>, <code>lines</code> le righe occupate da un’iniziale ridotta), <code>'split'</code> (si interrompe prima dell’ultima riga dell’iniziale, da solo in una colonna troppo corta), <code>'joiningScript'</code> (la sua prima lettera si lega alla successiva), <code>'verticalText'</code> o <code>'noLetter'</code> (si apre con un rimando, una formula o un richiamo di nota). <code>text</code> è la sua prima riga. <code>'inBox'</code>: un gruppo <code>:::paragraphs</code> o uno stile di paragrafo lo chiede dentro un riquadro <code>:::callout</code>, dove non se ne mette nessuno.</td>
       <td>Lo spazio viene mantenuto, l’iniziale si riduce o viene omessa, come dice l’avviso.</td>
     </tr>
     <tr>

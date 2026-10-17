@@ -88,7 +88,8 @@ export {
   comicSourceWarnings, COMIC_RESERVED_KEYS,
   layoutComicFrame, comicPageFrame, layoutComicStrip, comicStripPlacement, comicStripExtent, comicStripAspect, comicSplitGrid, parseComicAspect, parseComicStripWidth, parseComicStripAlign, comicStripWidth, comicStripOffset,
   layoutComicSpread, isComicSpread,
-  translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateSvgPath, comicBlockOnSheet, pageComics,
+  translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateComicFrame, translateSvgPath, comicBlockOnSheet, pageComics,
+  comicElementId, comicFrameElementId, comicBalloonElementId, comicFrameName, isComicTextPanel, comicBoxStyle, comicFrameSpecs, comicTextPanelsSupported,
   comicLetteringStyle, comicLetteringLocale, comicLetteringVertical, comicFontFamilies, markdownHasComics,
   letterPanel, letterPanelDetailed, presetLetteringStyles,
   comicBalloonKind, comicBalloonText, comicBalloonMatrix, comicSpeakerName, comicBalloonGroups, comicPanelPathData, comicBorderPathData, polygonPathData, comicPanelContinues, isComicSpreadPartner, joinComicSpread,
@@ -98,7 +99,7 @@ export type {
   ComicCell, ComicSplitLine, ComicGeometry, ComicGeometryInput, ComicFrameSide, ComicCropInput, ComicCrop, ComicPageContext, LetterPanelsInput,
   LetteringItem, LetteringPanel, LetteringStyle, LetteringAnchor, LetteringDiagnostic, LetteringResult, LetteringEnv,
   ComicPageSource, ComicPanelSource, ComicScriptItem, ComicScriptRole, ComicSourceRange, ComicTailSide,
-  ComicFrameContext, ComicStripPlacement, ComicStripContext, ComicStripAlign, ComicSpreadContext, ComicSpreadPage, ComicBalloonKind,
+  ComicFrameContext, ComicFrameSpec, ComicStripPlacement, ComicStripContext, ComicStripAlign, ComicSpreadContext, ComicSpreadPage, ComicBalloonKind,
 } from './comics';
 export { renderComicPanels, renderComicPanel, comicPanelPath, comicRoughBorder, renderComicBalloons, renderComicBalloon, renderComicPage } from './canvas-backend/comic';
 export { DEFAULT_PANEL_STYLE, DEFAULT_COMIC_GUTTER, DEFAULT_LETTERING_STATIC, DEFAULT_BALLOON_STYLES, DEFAULT_BALLOON_STYLE_IDS, defaultComicFont, defaultComicSfxFont, resolveComicsConfig, resolvedComics, comicReadingDirection, pickPanelStyle, pickBalloonStyle, stripComicsDefaults } from './defaults/comics';
@@ -466,6 +467,7 @@ export type {
   ElementAnchor,
   ElementPlacement,
   ElementSize,
+  ElementSizeTo,
   ElementBoxStyle,
   TextOverflow,
   DesignTextStroke,
@@ -636,7 +638,7 @@ export {
   type LabelLook,
   type LabelMatrix,
 } from './composed/labels';
-export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
+export { comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';
 export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
@@ -657,7 +659,7 @@ export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMat
 export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
 export { composedPagePaintKey } from './composed/pageMemo';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,

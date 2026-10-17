@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Paged output cuts the rest at the foot of that frame; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>A frame's <code>overflow.continueIn: 'page:&lt;id&gt;'</code> names no page fence after the one its story is on (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> when that fence comes earlier, <code>configPath</code>). Raised by the layout, with the <code>pageIndex</code> of the sending page.</td>
+      <td>The rest goes on on a page added after the sending page, as with <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>A composed page's fence and its template disagree about spreads (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, the fence's <code>spread</code>; <code>templateSpread</code>, the template's).</td>
       <td>The template decides: a spread template is laid over two facing pages, any other on one page.</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>A paragraph a <a href="/en/docs/configuration-text#drop-caps">drop cap</a> opens that cannot take it as configured. <code>reason</code>: <code>'shortParagraph'</code> (fewer lines than the initial sinks; <code>handling</code> is what <code>shortParagraph</code> did, <code>lines</code> the lines a shrunk initial spans), <code>'split'</code> (it breaks before the initial's last line, alone in a column too short), <code>'joiningScript'</code> (its first letter joins the next), <code>'verticalText'</code> or <code>'noLetter'</code> (it opens with a reference, a formula or a note mark). <code>text</code> is its first line.</td>
+      <td>A paragraph a <a href="/en/docs/configuration-text#drop-caps">drop cap</a> opens that cannot take it as configured. <code>reason</code>: <code>'shortParagraph'</code> (fewer lines than the initial sinks; <code>handling</code> is what <code>shortParagraph</code> did, <code>lines</code> the lines a shrunk initial spans), <code>'split'</code> (it breaks before the initial's last line, alone in a column too short), <code>'joiningScript'</code> (its first letter joins the next), <code>'verticalText'</code> or <code>'noLetter'</code> (it opens with a reference, a formula or a note mark). <code>text</code> is its first line. <code>'inBox'</code>: a <code>:::paragraphs</code> group or a paragraph style asks for one inside a <code>:::callout</code> box, where none is set.</td>
       <td>The room is kept, the initial shrinks or is left out, as the warning says.</td>
     </tr>
     <tr>

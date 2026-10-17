@@ -25,6 +25,13 @@
  *   shows its own half on each side.
  * - Decoration is laid once, over the physical sheet of two pages, then
  *   cut the same way ({@link splitSpreadDecoration}).
+ * - A vertical (`vertical-rl`) book (#926) lays its frames in the pages'
+ *   flow frame, where the sheet's right edge is the top of the page and
+ *   the lines run down: there the second page follows the first along
+ *   the flow's y (`axis: 'y'`, the right page first), the spine is a
+ *   line across the flow, and everything above reads that axis. The
+ *   template is written in the flow's frame, as a vertical book's single
+ *   pages are.
  */
 import type { BoundingBox, ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
 import { offsetBlock, offsetDesignBlock } from '../pipeline/calloutLayout';
@@ -38,12 +45,18 @@ const MM_PER_IN = 25.4;
 /** Below this a frame touches the spine without crossing it (px). */
 const SPINE_EPS = 0.5;
 
+/** The axis the second page of a spread follows the first along, in the
+ *  pages' flow frame: `'x'` on horizontal pages, `'y'` on vertical ones
+ *  (#926). */
+export type SpreadAxis = 'x' | 'y';
+
 /** The sheet of two pages a spread template is laid on. */
 export interface SpreadSheet {
   /** Where the second page's sheet starts in spread coordinates. */
   shift: number;
-  /** The spine's x. */
+  /** The spine's x (its y on `axis: 'y'`). */
   spine: number;
+  axis: SpreadAxis;
   /** The template's area, the trim and the bleed of the sheet. */
   areas: FrameAreas;
   /** What each page shows of the sheet: its bleed box, in spread
@@ -62,7 +75,19 @@ const unionOf = (a: Rect, b: Rect): Rect => {
  * same on every page, centred on the sheet, so a mirrored flow reads them
  * unchanged); `first` and `second` the pages' content areas.
  */
-export function spreadSheet(area: ResolvedPageTemplate['area'], first: Rect, second: Rect, trim: Rect, bleed: Rect): SpreadSheet {
+export function spreadSheet(area: ResolvedPageTemplate['area'], first: Rect, second: Rect, trim: Rect, bleed: Rect, axis: SpreadAxis = 'x'): SpreadSheet {
+  if (axis === 'y') {
+    // Transposed: the same sheet with the pages one after the other down
+    // the flow (#926).
+    const t = spreadSheet(area, transpose(first), transpose(second), transpose(trim), transpose(bleed));
+    return {
+      shift: t.shift,
+      spine: t.spine,
+      axis,
+      areas: { area: transpose(t.areas.area), page: transpose(t.areas.page), bleed: transpose(t.areas.bleed) },
+      shows: [transpose(t.shows[0]), transpose(t.shows[1])],
+    };
+  }
   const spine = trim.x + trim.width;
   const shift = spine - trim.x;
   const page: Rect = { x: trim.x, y: trim.y, width: shift + trim.width, height: trim.height };
@@ -71,10 +96,14 @@ export function spreadSheet(area: ResolvedPageTemplate['area'], first: Rect, sec
   return {
     shift,
     spine,
+    axis,
     areas: { area: area === 'trim' ? page : area === 'bleed' ? bleedBox : content, page, bleed: bleedBox },
     shows: [{ ...bleed }, { ...bleed, x: bleed.x + shift }],
   };
 }
+
+/** `r` with its axes swapped. */
+const transpose = (r: Rect): Rect => ({ x: r.y, y: r.x, width: r.height, height: r.width });
 
 /**
  * The box a frame takes on a spread: `rect` as placed, or, for a frame
@@ -83,8 +112,9 @@ export function spreadSheet(area: ResolvedPageTemplate['area'], first: Rect, sec
  * across the whole band is cut at the band's edge; one whose inner edge
  * falls inside the band moves out whole, keeping its width.
  */
-export function keepOffGutter(frame: Pick<ResolvedFrame, 'crossGutter'>, rect: Rect, spine: number, gutterPx: number): Rect {
+export function keepOffGutter(frame: Pick<ResolvedFrame, 'crossGutter'>, rect: Rect, spine: number, gutterPx: number, axis: SpreadAxis = 'x'): Rect {
   if (frame.crossGutter) return rect;
+  if (axis === 'y') return transpose(keepOffGutter(frame, transpose(rect), spine, gutterPx));
   const lo = spine - gutterPx / 2;
   const hi = spine + gutterPx / 2;
   const right = rect.x + rect.width;
@@ -116,23 +146,26 @@ export interface ComposedSpreadLayout {
 }
 
 export interface ComposedSpreadInput extends Omit<ComposedPageInput, 'page' | 'areas' | 'fitBox'> {
-  /** The page on the left of the flow, and the page after it in the flow. */
+  /** The page on the left of the flow, and the page after it in the flow
+   *  (on vertical pages, the right page and the left one). */
   first: VDTPage;
   second: VDTPage;
   /** Each page's physical side of the open book. */
   firstSide: 'left' | 'right';
-  /** One page's trim and bleed boxes. */
+  /** One page's trim and bleed boxes, in the pages' flow frame. */
   trim: Rect;
   bleed: Rect;
+  /** Default `'x'`; `'y'` on vertical pages (#926). */
+  axis?: SpreadAxis;
 }
 
-/** Copies of `blocks` moved by `dx` onto page `pageIndex` (ids suffixed
- *  `suffix`). The laid blocks are never moved in place: a box typesetter
- *  may share measured parts between runs. */
-function movedCopies(blocks: readonly VDTBlock[], dx: number, pageIndex: number, suffix: string): VDTBlock[] {
+/** Copies of `blocks` moved by `(dx, dy)` onto page `pageIndex` (ids
+ *  suffixed `suffix`). The laid blocks are never moved in place: a box
+ *  typesetter may share measured parts between runs. */
+function movedCopies(blocks: readonly VDTBlock[], dx: number, dy: number, pageIndex: number, suffix: string): VDTBlock[] {
   return blocks.map((b) => {
     const c = structuredClone(b);
-    if (dx !== 0) offsetBlock(c, dx, 0);
+    if (dx !== 0 || dy !== 0) offsetBlock(c, dx, dy);
     c.pageIndex = pageIndex;
     if (suffix) c.id = `${c.id}${suffix}`;
     return c;
@@ -148,51 +181,59 @@ function movedCopies(blocks: readonly VDTBlock[], dx: number, pageIndex: number,
  */
 export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpreadLayout {
   const { first, second, template, dpi } = input;
-  const sheet = spreadSheet(template.area, first.contentArea, second.contentArea, input.trim, input.bleed);
+  const axis = input.axis ?? 'x';
+  const sheet = spreadSheet(template.area, first.contentArea, second.contentArea, input.trim, input.bleed, axis);
   const gutterPx = lengthPx(template.gutter, dpi, input.emPx);
   const mm = (v: number): number => Math.round((v / dpi) * MM_PER_IN * 10) / 10;
   const out: ComposedPageLayout = layoutComposedPage({
     ...input,
     page: first,
     areas: sheet.areas,
-    fitBox: (frame, rect) => keepOffGutter(frame, rect, sheet.spine, gutterPx),
+    fitBox: (frame, rect) => keepOffGutter(frame, rect, sheet.spine, gutterPx, axis),
   });
+  /** A box along the spread's axis: its start and its length. */
+  const along = (r: Rect): { at: number; size: number } => (axis === 'x' ? { at: r.x, size: r.width } : { at: r.y, size: r.height });
   // What the gutter did, read off the layout the reflow ladder (#858)
   // settled on (not the ones it only tried).
   const resized = new Map<string, ReflowEvent>();
   for (const [name, { placed, kept }] of out.fitted ?? []) {
-    if (Math.abs(kept.width - placed.width) > 0.5) resized.set(name, { frame: name, kind: 'resized', fromMm: mm(placed.width), toMm: mm(kept.width), cause: 'gutter' });
-    else resized.set(name, { frame: name, kind: 'moved', fromMm: mm(placed.x), toMm: mm(kept.x), cause: 'gutter' });
+    const p = along(placed);
+    const k = along(kept);
+    if (Math.abs(k.size - p.size) > 0.5) resized.set(name, { frame: name, kind: 'resized', fromMm: mm(p.size), toMm: mm(k.size), cause: 'gutter' });
+    else resized.set(name, { frame: name, kind: 'moved', fromMm: mm(p.at), toMm: mm(k.at), cause: 'gutter' });
   }
   const pages = [first, second] as const;
   const byId = new Map(out.blocks.map((b) => [b.id, b]));
   const sideFrames: [VDTFrame[], VDTFrame[]] = [[], []];
   const sideBlocks: [VDTBlock[], VDTBlock[]] = [[], []];
   const sideOf = new Map<string, 0 | 1>();
+  /** The move onto the second page's own sheet. */
+  const back = (k: 0 | 1): { dx: number; dy: number } => (k === 0 ? { dx: 0, dy: 0 } : axis === 'x' ? { dx: -sheet.shift, dy: 0 } : { dx: 0, dy: -sheet.shift });
   for (const frame of out.composed.frames) {
-    const b = frameBounds(frame);
-    const onFirst = b.x < sheet.spine - SPINE_EPS;
-    const onSecond = b.x + b.width > sheet.spine + SPINE_EPS;
-    const owner: 0 | 1 = onFirst && onSecond ? (b.x + b.width / 2 <= sheet.spine + SPINE_EPS ? 0 : 1) : onSecond ? 1 : 0;
+    const b = along(frameBounds(frame));
+    const onFirst = b.at < sheet.spine - SPINE_EPS;
+    const onSecond = b.at + b.size > sheet.spine + SPINE_EPS;
+    const owner: 0 | 1 = onFirst && onSecond ? (b.at + b.size / 2 <= sheet.spine + SPINE_EPS ? 0 : 1) : onSecond ? 1 : 0;
     sideOf.set(frame.name, owner);
     const blocks = frame.blockIds.map((id) => byId.get(id)).filter((x): x is VDTBlock => x !== undefined);
-    const dx = owner === 0 ? 0 : -sheet.shift;
-    const own = owner === 0 ? blocks : movedCopies(blocks, dx, second.index, '');
+    const d = back(owner);
+    const own = owner === 0 ? blocks : movedCopies(blocks, d.dx, d.dy, second.index, '');
     for (const blk of own) blk.pageIndex = pages[owner].index;
-    const moved = (by: number): VDTFrame => ({
+    const moved = (by: { dx: number; dy: number }): VDTFrame => ({
       ...frame,
-      rect: { ...frame.rect, x: frame.rect.x + by },
-      ...(frame.declaredRect ? { declaredRect: { ...frame.declaredRect, x: frame.declaredRect.x + by } } : {}),
+      rect: { ...frame.rect, x: frame.rect.x + by.dx, y: frame.rect.y + by.dy },
+      ...(frame.declaredRect ? { declaredRect: { ...frame.declaredRect, x: frame.declaredRect.x + by.dx, y: frame.declaredRect.y + by.dy } } : {}),
+      ...(frame.rules ? { rules: frame.rules.map((r) => ({ ...r, bbox: { ...r.bbox, x: r.bbox.x + by.dx, y: r.bbox.y + by.dy } })) } : {}),
     });
-    sideFrames[owner].push(moved(dx));
+    sideFrames[owner].push(moved(d));
     sideBlocks[owner].push(...own);
     if (onFirst && onSecond) {
       const other: 0 | 1 = owner === 0 ? 1 : 0;
-      const odx = other === 0 ? 0 : -sheet.shift;
+      const od = back(other);
       sideFrames[other].push({
-        ...moved(odx),
+        ...moved(od),
         blockIds: [],
-        facingBlocks: movedCopies(blocks, odx, pages[other].index, '-facing'),
+        facingBlocks: movedCopies(blocks, od.dx, od.dy, pages[other].index, '-facing'),
       });
     }
   }
@@ -213,7 +254,7 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
       ...out.composed,
       spread: i === 0 ? input.firstSide : secondSide,
       facingPage: pages[i === 0 ? 1 : 0].index,
-      sheetClip: { ...show, x: show.x - (i === 0 ? 0 : sheet.shift) },
+      sheetClip: { ...show, x: show.x + back(i).dx, y: show.y + back(i).dy },
       frames: sideFrames[i],
       log: log[i],
     };

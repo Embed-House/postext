@@ -26,7 +26,7 @@ export const PAGE_TEMPLATE_KINDS = [
  *  cut between columns, figure labels at anchors (#860), design text that
  *  is content, and the templates themselves. */
 const COMPOSED_KINDS: ReadonlySet<WarningPayload['kind']> = new Set<WarningPayload['kind']>([
-  'frameOverflow', 'frameContinuationLimit', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
+  'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
   'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
 ]);
 
@@ -74,7 +74,7 @@ function fenceOf(p: WarningPayload): number | null {
 /** The frame a payload names: the frame that overflows or is left empty,
  *  the flow frame that takes an unknown slot's content. */
 function frameNameOf(p: WarningPayload): string | null {
-  if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'slotEmpty') return p.frame;
+  if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing' || p.kind === 'slotEmpty') return p.frame;
   if (p.kind === 'slotUnknown') return p.frame ?? null;
   return null;
 }
@@ -169,7 +169,7 @@ export function composedChecksOf(locale: string, chapters: readonly EditionChapt
         }
       }
       if (doc) {
-        if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit') {
+        if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing') {
           const i = docPageOf(doc, p.page);
           pageIndex = i >= 0 && doc.pages[i]!.composed?.fenceIndex === p.fenceIndex ? i : composedPageIndex(doc, p.fenceIndex, p.frame);
         } else if (p.kind === 'labelAnchorUnknown' || p.kind === 'anchorUnlabelled') {

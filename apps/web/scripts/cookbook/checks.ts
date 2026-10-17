@@ -59,6 +59,9 @@ export interface ProbePage {
   heading: string;
   captions: string[];
   legibility?: number;
+  /** A page added by a composed page's continuation (#915): `heading` is
+   *  the continued page fence's. */
+  continued?: boolean;
 }
 
 export interface ProbeFacts {
@@ -198,13 +201,20 @@ export interface ProbeFacts {
 /** A frame of a composed page as the bench reads it. */
 export interface ComposedFrameFact {
   name: string;
+  /** The frame's stable id (`cp0:dinero`, a continuation's `cp0:resto~2`). */
+  id?: string;
   heightMm: number;
+  /** x, y, width, height in mm on the page. */
+  box?: [number, number, number, number];
   overflowMm?: number;
   scale?: number;
   imageScale?: number;
   continuesTo?: string;
   continuedFrom?: string;
   filled?: true;
+  /** How far the reflow moved the frame past the foot of the type area,
+   *  where the template had it inside (#911). */
+  pushedOutMm?: number;
 }
 
 /** An entry of a composed page's reflow log (`VDTComposedPage.log`). */
@@ -232,7 +242,8 @@ export interface ComposedProposalFact {
 export interface ComposedFacts {
   /** A Markdown of the build has a `::::page{template=…}` fence. */
   declared: boolean;
-  pages: { n: number; template: string; fenceIndex: number; frames: ComposedFrameFact[]; events: ComposedEventFact[] }[];
+  /** `doc`: the build's index when the capture lays out several. */
+  pages: { n: number; doc?: number; template: string; fenceIndex: number; frames: ComposedFrameFact[]; events: ComposedEventFact[] }[];
   /** `frameOverflow`, `templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`. */
   warnings: {
     kind: string;
@@ -958,10 +969,13 @@ function collect(input: CheckInput): Finding[] {
   // and Korean lines by the space between their characters, which is how
   // they are justified: only a line past the cap, set short, is loose.
   const clipText = (text: string) => (text.length > 48 ? `${text.slice(0, 47).trimEnd()}…` : text);
+  // A ratio to two decimals, whatever the probe recorded (#924: an older
+  // probe left 2.8000000000000003).
+  const times = (v: number) => `${Math.round(v * 100) / 100}×`;
   const loose = facts.loose;
   if (loose && loose.total && loose.share > 0.02) {
-    const where = (loose.lines ?? []).slice(0, 3).map((l) => `p. ${l.page} ${l.ratio}× “${clipText(l.text)}”`);
-    add("C24", "warn", `${loose.count} of ${loose.total} justified lines (${pct(loose.share)}) stretch past ${loose.threshold}× (worst ${loose.worst}×)${where.length ? `; loosest: ${where.join(", ")}` : ""}`);
+    const where = (loose.lines ?? []).slice(0, 3).map((l) => `p. ${l.page} ${times(l.ratio)} “${clipText(l.text)}”`);
+    add("C24", "warn", `${loose.count} of ${loose.total} justified lines (${pct(loose.share)}) stretch past ${times(loose.threshold)} (worst ${times(loose.worst)})${where.length ? `; loosest: ${where.join(", ")}` : ""}`);
   }
   // C34: a justified line set ragged (its word spaces would have stretched
   // past 3×) is a line left short in the middle of a paragraph. A recipe
@@ -971,7 +985,7 @@ function collect(input: CheckInput): Finding[] {
     const accepted = meta.capture.expect?.raggedLines ?? 0;
     const s = (n: number) => `${n} justified line${n === 1 ? "" : "s"}`;
     if (raggedLines.count > accepted) {
-      const where = raggedLines.lines.slice(0, 5).map((l) => `${l.page === null ? "" : `p. ${l.page} `}${l.ratio}× “${clipText(l.text)}”`);
+      const where = raggedLines.lines.slice(0, 5).map((l) => `${l.page === null ? "" : `p. ${l.page} `}${times(l.ratio)} “${clipText(l.text)}”`);
       add("C34", "fail", `${s(raggedLines.count)} set ragged (word spaces past 3×)${accepted ? `, and the recipe accepts ${accepted}` : ""}: ${where.join(", ")}. Reword the copy, give the line a break it can take, or accept the count with capture.expect.raggedLines`);
     } else if (accepted > raggedLines.count) {
       add("C34", "info", `capture.expect.raggedLines accepts ${accepted}, and the edition has ${raggedLines.count}`);
@@ -1169,14 +1183,77 @@ export function configSizeFindings(facts: ProbeFacts | null | undefined): Findin
   return [{ check: "C41", severity: "fail", detail: `the configuration weighs ${(bytes / CONFIG_LIMIT_BYTES).toFixed(2)} MB of JSON (limit 1 MB): move pictures and text out of it` }];
 }
 
-/** A composed page of the stretched run in a line: what its frames did. */
-function pageStory(page: ComposedFacts["pages"][number]): string {
+type ComposedPageFact = ComposedFacts["pages"][number];
+
+/** Smallest change of a frame's box against the text as written, in mm. */
+const MOVE_MM = 0.5;
+const mmText = (v: number) => String(Math.round(v * 10) / 10);
+
+/**
+ * What the frames of a stretched page did against the same page on the
+ * text as written, for the changes its reflow log does not say (#925): a
+ * frame whose height follows its content and has no `minHeight` declares
+ * no height, so the log reads nothing when it grows, nor when the frames
+ * anchored to it move. «entradilla 6.2 mm taller than as written»,
+ * «col-1 moved down 6.2 mm from where it was as written».
+ */
+export function changesAgainstBase(page: ComposedPageFact, base: ComposedPageFact | undefined): string[] {
+  if (!base) return [];
+  const logged = new Set(page.events.filter((e) => e.kind === "grew" || e.kind === "moved" || e.kind === "resized").map((e) => `${e.frame} ${e.kind}`));
+  const before = new Map(base.frames.map((f) => [f.name, f]));
+  const out: string[] = [];
+  for (const f of page.frames) {
+    const b = before.get(f.name);
+    if (!f.box || !b?.box) continue;
+    const [x, y, w, h] = f.box;
+    const [bx, by, bw, bh] = b.box;
+    if (Math.abs(h - bh) >= MOVE_MM && !logged.has(`${f.name} grew`) && !logged.has(`${f.name} resized`)) {
+      out.push(`${f.name} ${mmText(Math.abs(h - bh))} mm ${h > bh ? "taller" : "shorter"} than as written`);
+    } else if (Math.abs(w - bw) >= MOVE_MM && !logged.has(`${f.name} grew`) && !logged.has(`${f.name} resized`)) {
+      out.push(`${f.name} ${mmText(Math.abs(w - bw))} mm ${w > bw ? "wider" : "narrower"} than as written`);
+    }
+    if (logged.has(`${f.name} moved`)) continue;
+    if (Math.abs(y - by) >= MOVE_MM) out.push(`${f.name} moved ${y > by ? "down" : "up"} ${mmText(Math.abs(y - by))} mm from where it was as written`);
+    else if (Math.abs(x - bx) >= MOVE_MM) out.push(`${f.name} moved ${x > bx ? "right" : "left"} ${mmText(Math.abs(x - bx))} mm from where it was as written`);
+  }
+  return out;
+}
+
+/** The base run's page for each stretched page: the same page fence and
+ *  template, the k-th of them (a fence's added pages share its index). */
+function basePages(pages: readonly ComposedPageFact[], base: readonly ComposedPageFact[] | undefined): (ComposedPageFact | undefined)[] {
+  const key = (p: ComposedPageFact) => `${p.doc ?? 0}\u0000${p.fenceIndex}\u0000${p.template}`;
+  const pool = new Map<string, ComposedPageFact[]>();
+  for (const p of base ?? []) (pool.get(key(p)) ?? pool.set(key(p), []).get(key(p))!).push(p);
+  const seen = new Map<string, number>();
+  return pages.map((p) => {
+    const k = seen.get(key(p)) ?? 0;
+    seen.set(key(p), k + 1);
+    return pool.get(key(p))?.[k];
+  });
+}
+
+/** A continuation's receiving frame by its name, template and page (#925):
+ *  «col-1 of seguido-par on p. 48», the id kept after it. */
+function receiver(id: string, pages: readonly ComposedPageFact[]): string {
+  for (const p of pages) {
+    const f = p.frames.find((fr) => fr.id === id);
+    if (f) return `${f.name} of ${p.template} on p. ${p.n} (${id})`;
+  }
+  return id;
+}
+
+/** A composed page of the stretched run in a line: what its frames did,
+ *  from its reflow log and, where the log is silent, against `base` (the
+ *  same page on the text as written). */
+function pageStory(page: ComposedPageFact, base?: ComposedPageFact, pages: readonly ComposedPageFact[] = []): string {
   const events = page.events.filter((e) => e.kind !== "overflow");
-  const continued = page.frames.filter((f) => f.continuesTo).map((f) => `${f.name} → ${f.continuesTo}`);
+  const continued = page.frames.filter((f) => f.continuesTo).map((f) => `${f.name} → ${receiver(f.continuesTo!, pages)}`);
   const said = events.map((e) => e.text ?? `${e.frame} ${e.kind}${e.fromMm !== undefined && e.toMm !== undefined ? ` ${e.fromMm}→${e.toMm} mm` : ""}${e.scale !== undefined ? ` ${Math.round(e.scale * 1000) / 10} %` : ""}`);
+  const against = changesAgainstBase(page, base);
   const short = page.frames.filter((f) => (f.overflowMm ?? 0) > 0).map((f) => `${f.name} ${f.overflowMm} mm short`);
-  const how = short.length ? "does not fit" : continued.length ? "goes on" : events.length ? "rearranged" : "fits as it was";
-  const parts = [...said, ...continued.map((c) => `continues ${c}`), ...short];
+  const how = short.length ? "does not fit" : continued.length ? "goes on" : events.length || against.length ? "rearranged" : "fits as it was";
+  const parts = [...said, ...against, ...continued.map((c) => `continues ${c}`), ...short];
   return `p. ${page.n} (${page.template}) ${how}${parts.length ? `: ${parts.slice(0, 6).join("; ")}${parts.length > 6 ? `; and ${parts.length - 6} more` : ""}` : ""}`;
 }
 
@@ -1190,7 +1267,8 @@ export interface StressInput {
   err?: string | null;
   pageErrors?: string[];
   facts: ProbeFacts | null;
-  /** The run on the text as written, for the page count. */
+  /** The run on the text as written: the page count, and each composed
+   *  page's frames to compare with (#925). */
   base: ProbeFacts | null;
 }
 
@@ -1224,7 +1302,16 @@ export function stressFindings(input: StressInput): Finding[] {
   if (facts.converged === false) add("fail", `the stretched edition did not converge (${facts.iterationCount} iterations)`);
   const expected = new Set(input.meta.capture.expect?.warnings ?? []);
   const c = facts.composed;
-  for (const page of c?.pages ?? []) add("info", pageStory(page));
+  const stretchedPages = c?.pages ?? [];
+  const bases = basePages(stretchedPages, input.base?.composed?.pages);
+  stretchedPages.forEach((page, i) => {
+    add("info", pageStory(page, bases[i], stretchedPages));
+    // A frame pushed past the foot of the type area (#911): what it stands
+    // for (an answer space, a picture slot) is off the page.
+    for (const f of page.frames) {
+      if ((f.pushedOutMm ?? 0) > 0) add("fail", `p. ${page.n} (${page.template}): frame "${f.name}" was pushed ${f.pushedOutMm} mm past the foot of the type area`);
+    }
+  });
   for (const w of c?.warnings ?? []) {
     if (w.kind !== "frameOverflow") {
       add("fail", `${w.kind}${pageOf(w.page)}${w.text ? `: ${w.text}` : ""}`);

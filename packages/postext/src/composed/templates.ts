@@ -2,12 +2,13 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
-import type { DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
+import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
 import type {
   FrameConfig,
   FrameGridCell,
   FrameGroupConfig,
   FrameOverflowConfig,
+  FrameRulesConfig,
   FrameSize,
   LabelStyle,
   PageSide,
@@ -33,6 +34,7 @@ export const DEFAULT_FRAME_FIT: Readonly<ResolvedFrameFit> = {
   minScale: 0.9,
   scaleImages: true,
   imageMinScale: 0.8,
+  preferContinue: true,
 };
 
 /** What a frame that sets nothing comes to (besides its name). */
@@ -125,6 +127,25 @@ export function continueInTemplate(continueIn: unknown): string | undefined {
   return typeof continueIn === 'string' && continueIn.startsWith('template:') && continueIn.length > 9 ? continueIn.slice(9) : undefined;
 }
 
+/** The later page fence `'page:<id>'` names, and the frame of it
+ *  `'page:<id>#<frame>'` names (#917): a story that jumps there. `<id>`
+ *  may be `{attr.name}`, the fence's attribute (`resolveContinueIn`). */
+export function continueInPage(continueIn: unknown): { page: string; frame?: string } | undefined {
+  if (typeof continueIn !== 'string' || !continueIn.startsWith('page:')) return undefined;
+  const rest = continueIn.slice(5);
+  const hash = rest.indexOf('#');
+  const page = (hash >= 0 ? rest.slice(0, hash) : rest).trim();
+  const frame = hash >= 0 ? rest.slice(hash + 1).trim() : '';
+  return page.length > 0 ? { page, ...(frame.length > 0 ? { frame } : {}) } : undefined;
+}
+
+/** `continueIn` with each `{attr.name}` read from the page fence's
+ *  attributes (#917): `'page:{attr.sigue}'` with `sigue="p47"` is
+ *  `'page:p47'`. An attribute the fence lacks reads as nothing. */
+export function resolveContinueIn(continueIn: string, attrs: Readonly<Record<string, string>>): string {
+  return continueIn.includes('{attr.') ? continueIn.replace(/\{attr\.([A-Za-z0-9_-]+)\}/g, (_, k: string) => attrs[k] ?? '') : continueIn;
+}
+
 // ---------------------------------------------------------------------------
 // The template table: which template each id means
 // ---------------------------------------------------------------------------
@@ -183,7 +204,7 @@ interface Merged {
 const SCALAR_KEYS = ['area', 'overflowTemplate', 'bodyStyle', 'palette', 'header', 'footer'] as const;
 const INHERITED_KEYS = ['spread', 'gutter', 'role'] as const;
 /** Frame fields merged key by key rather than replaced. */
-const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding']);
+const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding', 'rules']);
 
 /** A problem resolution met, with the JSON pointer of the field at fault.
  *  `validatePageTemplates` reports them as config warnings. */
@@ -323,6 +344,7 @@ function normalizeFit(raw: unknown): ResolvedFrameFit {
     minScale: scale(f.minScale, DEFAULT_FRAME_FIT.minScale),
     scaleImages: typeof f.scaleImages === 'boolean' ? f.scaleImages : DEFAULT_FRAME_FIT.scaleImages,
     imageMinScale: scale(f.imageMinScale, DEFAULT_FRAME_FIT.imageMinScale),
+    preferContinue: typeof f.preferContinue === 'boolean' ? f.preferContinue : DEFAULT_FRAME_FIT.preferContinue,
   };
 }
 
@@ -331,6 +353,7 @@ function normalizeOverflow(raw: unknown): FrameOverflowConfig {
   const out: FrameOverflowConfig = {};
   if (typeof raw.continueIn === 'string' && raw.continueIn !== '') out.continueIn = raw.continueIn;
   if (typeof raw.mark === 'string' || raw.mark === false) out.mark = raw.mark;
+  if (typeof raw.fromMark === 'string' && raw.fromMark.trim() !== '') out.fromMark = raw.fromMark;
   return out;
 }
 
@@ -389,6 +412,27 @@ export function normalizeFrame(
   if (oneOf(FRAME_TAKES, f.takes)) out.takes = f.takes;
   if (oneOf(FRAME_WRITING_MODES, f.writingMode)) out.writingMode = f.writingMode;
   if (oneOf(FRAME_DIRECTIONS, f.direction)) out.direction = f.direction;
+  const rules = normalizeRules(f.rules);
+  if (rules) out.rules = rules;
+  return out;
+}
+
+/** A frame's `rules` (#914) with the values the engine cannot use left
+ *  out (their defaults apply); none when it is not an object. */
+function normalizeRules(raw: unknown): FrameRulesConfig | undefined {
+  if (!isRecord(raw)) return undefined;
+  const out: FrameRulesConfig = {};
+  const every = raw.every === 'line' ? 'line' : dim(raw.every);
+  if (every) out.every = every;
+  if (isRecord(raw.color) && typeof raw.color.hex === 'string') out.color = raw.color as unknown as ColorValue;
+  const width = dim(raw.width);
+  if (width) out.width = width;
+  if (isFrameDimension(raw.inset)) out.inset = raw.inset;
+  else if (isRecord(raw.inset)) {
+    const left = dim(raw.inset.left);
+    const right = dim(raw.inset.right);
+    out.inset = { ...(left ? { left } : {}), ...(right ? { right } : {}) };
+  }
   return out;
 }
 
@@ -556,12 +600,13 @@ function settleReferences(
       const frameTarget = continueInFrame(continueIn);
       const templateTarget = continueInTemplate(continueIn);
       const ok = continueIn === 'next-page'
+        || continueInPage(continueIn) !== undefined
         || (frameTarget !== undefined && frameSet.has(frameTarget))
         || (templateTarget !== undefined && context.templateIds.has(templateTarget));
       if (!ok) {
         const known = frameTarget !== undefined ? frameNames.map((n) => `#${n}`)
           : templateTarget !== undefined ? [...context.templateIds].map((id) => `template:${id}`)
-            : ['next-page'];
+            : ['next-page', 'page:<id>'];
         issues.push({ kind: 'overflowTargetUnknown', path: f.fieldPaths['overflow/continueIn'] ?? `${f.configPath}/overflow/continueIn`, value: continueIn, used: '', known });
         f.overflow = { ...f.overflow };
         delete f.overflow.continueIn;

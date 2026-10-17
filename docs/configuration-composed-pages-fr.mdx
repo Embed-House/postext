@@ -273,13 +273,19 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Où continue le contenu qui ne tient pas : <code>'#frame'</code> (un autre bloc de la page, comme <code>next</code>), <code>'next-page'</code> (le même bloc sur une page ajoutée après celle-ci, d’après <code>overflowTemplate</code>) ou <code>'template:&lt;id&gt;'</code> (une page de ce gabarit : son bloc du même nom, sinon son bloc de flux). Un bloc d’une page ajoutée sans règle propre continue avec la règle qui a amené le contenu, jusqu’à 16 pages ajoutées.</td>
+      <td>Où continue le contenu qui ne tient pas : <code>'#frame'</code> (un autre bloc de la page, comme <code>next</code>), <code>'next-page'</code> (le même bloc sur une page ajoutée après celle-ci, d’après <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (une page de ce gabarit : son bloc du même nom, sinon son bloc de flux) ou <code>'page:&lt;id&gt;'</code> (un bloc du délimiteur de page <code>::::page&#123;id=…&#125;</code> qui vient plus loin : celui que nomme <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, sinon un bloc que son propre contenu laisse vide ; <code>&lt;id&gt;</code> peut être <code>&#123;attr.name&#125;</code>, lu sur le délimiteur de page ; voir <a href="/fr/docs/composed-pages#renvoyer-la-suite-à-une-page-plus-loin">Pages composées › Renvoyer la suite à une page plus loin</a>). Un bloc d’une page ajoutée sans règle propre continue avec la règle qui a amené le contenu (après un saut, <code>'next-page'</code>), jusqu’à 16 pages ajoutées.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>celle de la langue</td>
-      <td>La marque à la fin d’un morceau coupé pour une autre page. Non définie, le <code>continuesMarker</code> du style du bloc, qui suit la langue du document (« Continued », « Continúa », « À suivre »…, les mots des tableaux coupés) ; une chaîne fixe ces mots ; <code>false</code> n’en met aucune. Un bloc chaîné par <code>next</code> sur la même page n’en porte pas.</td>
+      <td>La marque à la fin d’un morceau coupé pour une autre page. Non définie, le <code>continuesMarker</code> du style du bloc, qui suit la langue du document (« Continued », « Continúa », « À suivre »…, les mots des tableaux coupés) ; une chaîne fixe ces mots, <code>&#123;page&#125;</code> y étant le numéro de la page où se poursuit le reste ; <code>false</code> n’en met aucune. Un bloc chaîné par <code>next</code> sur la même page n’en porte pas.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Des mots placés en tête du morceau, sur la page où se poursuit le contenu, <code>&#123;page&#125;</code> étant le numéro de la page d’où il vient (<code>"Suite de la page &#123;page&#125;"</code>). Celui du bloc qui reçoit l’emporte sur celui du bloc qui envoie.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Si les images du bloc et celles des autres blocs de son groupe peuvent être réduites quand le contenu de ce bloc ne tient pas, et jusqu’à quelle échelle.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un bloc dont l’<code>overflow.continueIn</code> envoie le contenu sur une autre page y continue avant que ses images et son texte ne soient réduits, si bien qu’un article garde le même corps d’une page à l’autre. <code>false</code> : ils sont réduits d’abord, et le bloc ne continue que si cela ne suffit pas.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -324,6 +336,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td>Sur une double page, le bloc peut traverser la bande du dos. Son texte est lu sur la page qui contient son centre ; la page en regard peint sa moitié.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>ceux de la page</td>
@@ -337,6 +355,24 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
     </tr>
   </tbody>
 </table>
+
+**Blocs réglés.** Un espace de réponse dans un cahier d’activités est un bloc avec `rules` : ses lignes suivent sa hauteur, si bien que c’est le Markdown qui décide de leur nombre. Un bloc vide de hauteur fixe reçoit les lignes qui y tiennent ; un bloc `'auto'` qui reçoit `:::space{lines=4}` en reçoit quatre, et un bloc qui grandit avec son texte en reçoit davantage. Les filets sont tracés par-dessus le fond du bloc et sous son texte, sur le canevas, dans le HTML, le PDF et l’EPUB à mise en page fixe ; l’inspecteur de blocs du Sandbox les active dans Apparence.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Groupes
 
@@ -405,10 +441,10 @@ Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu
 
 - Un groupe sans `placement` ni `grid` à lui commence là où le placement de son premier bloc le met et descend aussi loin que ses blocs l’exigent, jusqu’au pied de la zone du gabarit. Quand un bloc grandit, les blocs qui le suivent descendent d’autant.
 - Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
-- Quand plus rien ne peut céder, aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`.
+- Quand plus rien ne peut céder, les blocs les plus proches du pied du groupe cèdent les premiers, chacun jusqu’à son `minHeight` ; un bloc de hauteur fixe la garde, si bien qu’un espace de réponse vide ou l’emplacement d’une image sous une boîte qui grandit reste sur la page, et c’est le texte de la boîte qui cède. Aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`. Un bloc réduit sous son `minHeight` ou sa hauteur fixe est signalé lui aussi, qu’il ait du contenu ou non.
 - Un bloc en `height: 'fill'` demande son `minHeight` et prend l’espace libre comme s’il avait `grow: 1`.
 
-**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs déclarées (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
+**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs qu’écrivent ses blocs : une `height` fixe, sinon un `minHeight` (un bloc `'auto'` n’en déclare pas plus), ou, s’ils n’en écrivent aucune, celle du contenu le plus haut (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. Des cartes en `height: 'auto'` avec un `minHeight` se partagent donc la largeur à cette hauteur, et la rangée ne grandit que si aucune n’a de largeur à céder. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
 
 **Blocs épinglés.** Un bloc en `pin: true` garde la boîte que le gabarit lui déclare, même quand le bloc auquel il est ancré grandit ou se déplace : une boîte dessinée pour tomber juste sur l’illustration y reste. Dans un groupe, un bloc épinglé garde sa place et les autres blocs passent au-delà, avec `gap` conservé de part et d’autre ; un bloc épinglé hors du groupe fait de même pour les blocs du groupe qu’il chevaucherait.
 
@@ -457,7 +493,7 @@ Quand le contenu d’un bloc est plus haut que la place que lui donne son groupe
 - `minHeight` sur les autres blocs du groupe : jusqu’où ils rendent de l’espace ; un bloc ne descend jamais sous ce que demande son propre contenu.
 - `fit.scaleImages` et `fit.imageMinScale` : si les images du bloc et de son groupe peuvent être réduites, et jusqu’à quelle échelle (80 % par défaut).
 - `fit.shrinkText` et `fit.minScale` : si le texte du bloc peut être réduit, et jusqu’à quelle échelle (90 % par défaut). L’échelle est la même pour le corps, l’interlignage et les espacements ; le bloc garde sa taille.
-- `overflow.continueIn` : où le contenu se poursuit quand rien de tout cela ne suffit, soit un autre bloc, soit une page ajoutée après celle-ci (`'next-page'`, `'template:<id>'`), où le texte reprend à sa taille normale après l’`overflow.mark` du morceau.
+- `overflow.continueIn` : où le contenu se poursuit quand rien de tout cela ne suffit, soit un autre bloc, soit une autre page (`'next-page'`, `'template:<id>'`, `'page:<id>'`), où le texte reprend à sa taille normale après l’`overflow.mark` du morceau. Un bloc qui peut continuer sur une autre page le fait avant que ses images et son texte ne soient réduits, sauf si son `fit.preferContinue` vaut `false`.
 
 Les échelles vont par paliers de 2,5 % et la mise en page prend la plus grande qui convient : un texte trop long d’une ligne est composé à 97,5 %, pas au minimum. Un encadré qui doit garder son corps prend `fit: { shrinkText: false }` ; une page dont les images doivent garder leur taille met `fit: { scaleImages: false }` sur les blocs de son groupe :
 
@@ -493,7 +529,7 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next` et `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) avec `overflow.mark`, ainsi que l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` d’un groupe ; ses blocs gardent leur propre placement), `fit`, le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images de l’échelle de réajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
 
 ### Doubles pages
 
@@ -521,6 +557,8 @@ pageTemplates: [{
 ```
 
 Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun est lu sur la page qui contient son centre et peint sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
+
+Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent, si bien que le `x` du gabarit descend le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages lisent cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.38.
 
 ## Styles d’étiquette
 
@@ -731,8 +769,8 @@ Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> ne nomme aucun bloc du gabarit ; un <code>overflow.continueIn</code> ne nomme aucun bloc (<code>'#x'</code>) ou aucun gabarit (<code>'template:x'</code>), ou n’a aucune des formes <code>'#frame'</code>, <code>'next-page'</code> et <code>'template:&lt;id&gt;'</code> ; ou <code>overflowTemplate</code> ne nomme aucun gabarit. Le contenu qui ne tient pas n’y continue pas.</td>
-      <td>Corriger le nom ou l’id, ou écrire l’une des trois formes.</td>
+      <td>Un <code>next</code> ne nomme aucun bloc du gabarit ; un <code>overflow.continueIn</code> ne nomme aucun bloc (<code>'#x'</code>) ou aucun gabarit (<code>'template:x'</code>), ou n’a aucune des formes <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> et <code>'page:&lt;id&gt;'</code> ; ou <code>overflowTemplate</code> ne nomme aucun gabarit. Le contenu qui ne tient pas n’y continue pas.</td>
+      <td>Corriger le nom ou l’id, ou écrire l’une des quatre formes.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

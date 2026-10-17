@@ -53,13 +53,14 @@ const DEFAULT_CUSTOM_HEIGHT: Dimension = { value: 10, unit: 'mm' };
 type SizeMode = 'auto' | 'fill' | 'custom';
 
 function sizeMode(size: ElementSize | undefined): SizeMode {
-  if (size === 'fill') return 'fill';
+  // A size to another box's edge (#928) reads as a fill here.
+  if (size === 'fill' || (size && typeof size === 'object' && 'to' in size)) return 'fill';
   if (size && typeof size === 'object') return 'custom';
   return 'auto';
 }
 
 function sizeDim(size: ElementSize | undefined, fallback: Dimension): Dimension {
-  return size && typeof size === 'object' ? size : fallback;
+  return size && typeof size === 'object' && 'value' in size ? size : fallback;
 }
 
 interface Props {

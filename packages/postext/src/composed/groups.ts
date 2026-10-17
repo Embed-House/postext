@@ -38,6 +38,9 @@ export interface GroupItem {
   fixedHeight: boolean;
   /** The content's height at a width (rows negotiate widths with it). */
   need?: (width: number) => number;
+  /** The least height a stack cuts the frame to when nothing more yields
+   *  (#911): its `minHeight`. Default `min`. */
+  floor?: number;
 }
 
 export interface GroupLayoutInput {
@@ -151,8 +154,30 @@ function layoutStack(input: GroupLayoutInput): Map<string, Rect> {
     rects = place(heights);
   }
   if (bottomOf(rects) - foot > EPS) {
-    // Nothing more yields: no frame runs past the group's foot.
-    rects = rects.map((r) => ({ ...r, height: Math.max(0, Math.min(r.height, foot - r.y)) }));
+    // Nothing more yields: the frames nearest the foot give way first, each
+    // down to the least it may have (its `minHeight`; a fixed height its
+    // own: an answer space, a picture slot), their content running past
+    // their foot; so a box that grew does not push an empty frame under it
+    // off the page (#911).
+    for (let k = flow.length - 1; k >= 0; k--) {
+      const excess = bottomOf(rects) - foot;
+      if (excess <= EPS) break;
+      const it = flow[k]!;
+      const floor = it.floor ?? it.min;
+      const least = it.fixedHeight && floor <= EPS ? heights[k]! : Math.min(heights[k]!, floor);
+      const give = Math.min(excess, heights[k]! - least);
+      if (give <= EPS) continue;
+      heights[k] = heights[k]! - give;
+      rects = place(heights);
+    }
+  }
+  if (bottomOf(rects) - foot > EPS) {
+    // Still too tall with every frame at its least: no frame runs past the
+    // group's foot (what is cut shows as the frame's overflow).
+    rects = rects.map((r) => {
+      const y = Math.min(r.y, foot);
+      return { ...r, y, height: Math.max(0, Math.min(r.height, foot - y)) };
+    });
     return named(flow, rects, input.items);
   }
   if (input.elastic) return named(flow, rects, input.items);
@@ -183,8 +208,14 @@ function layoutRow(input: GroupLayoutInput): Map<string, Rect> {
   const obstacles = [...(input.obstacles ?? []), ...pins];
   const widths = flow.map((i) => clamp(i.own.width, i.minWidth, i.maxWidth));
   const declaredH = flow.map((i) => clamp(i.fixedHeight ? i.own.height : i.want, i.min, i.max));
-  /** The row's height: its box's, or the tallest frame's. */
-  const rowH = input.elastic ? Math.max(0, ...declaredH) : box.height;
+  /** The heights the template writes: a fixed height, else `minHeight`
+   *  (an `'auto'` frame declares no more). */
+  const writtenH = flow.map((i) => (i.fixedHeight ? declaredH[flow.indexOf(i)]! : Math.min(i.min, i.max)));
+  /** The row's height: its box's; with none, the tallest height its frames
+   *  write (#927: `'auto'` cards with a `minHeight` negotiate widths at it
+   *  before the row grows), or, when they write none, the tallest
+   *  content's. */
+  const rowH = !input.elastic ? box.height : Math.max(0, ...writtenH) > EPS ? Math.max(0, ...writtenH) : Math.max(0, ...declaredH);
   /** The height a frame has in the row: a fixed one its own, the others
    *  the row's. */
   const heightIn = (k: number, h: number): number => (flow[k]!.fixedHeight ? Math.min(declaredH[k]!, h) : clamp(h, flow[k]!.min, flow[k]!.max));

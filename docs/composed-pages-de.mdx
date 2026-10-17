@@ -126,9 +126,13 @@ Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Besch
 
 Ein `::label` nennt mit `at` einen Anker, den die Ressource seiner Abbildung nicht hat. Die Beschriftung wird nicht gezeichnet; das umfließende EPUB führt sie weiter auf, und der Alternativtext des Bilds nennt sie. Die Warnung enthält die Ressource, den Anker, die Anker der Ressource (`known`), die Sprache, die Seite und den Quellbereich des Beschriftungstexts. Korrigieren Sie die Anker-ID, legen Sie den Anker in der Ressource an oder setzen Sie die Beschriftung mit `at="x% y%"`.
 
+Im Panel Prüfungen der Sandbox führt die Warnung zur Beschriftung im Panel Text, und ihre Schaltfläche mit der Stecknadel öffnet die Anker des Bildes mit diesem Namen zum Setzen bereit: Ein Klick ins Bild fügt den Anker hinzu.
+
 ### anchorUnlabelled
 
 Ein Anker der Ressource der Abbildung nennt einen Beschriftungsstil, und in dieser Sprache steht dort kein `::label` der Abbildung: Die Karte hat Platz für ein Wort, das diese Ausgabe weglässt. Es ist ein Hinweis; `postext check` führt ihn als `info`. Anker ohne Stil, etwa der einer Comicfigur, werden nicht gemeldet. Die Warnung enthält die Ressource, den Anker, seinen Stil, die Sprache, die Seite und den Quellbereich der Abbildung. Schreiben Sie die Beschriftung in das Markdown dieser Sprache, oder nehmen Sie dem Anker den Stil.
+
+Im Panel Prüfungen führt sie zur Abbildung im Panel Text, und ihre Schaltfläche mit der Stecknadel öffnet die Anker des Bildes bei diesem Anker.
 
 ## Beispiel
 
@@ -193,7 +197,9 @@ Eine Überschrift in einem Rahmen behält die Gestaltung ihrer Ebene oder Übers
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter, neu umbrochen auf dessen Breite, ohne dass etwas verloren geht oder doppelt erscheint. `overflow.continueIn: "#frame"` bedeutet dasselbe. Wie der Text auf einer Seite weiterläuft, die nach dieser hinzukommt, beschreibt [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft).
+Der Text wird zwischen zwei Zeilen geteilt und läuft im nächsten Rahmen weiter, neu umbrochen auf dessen Breite, ohne dass etwas verloren geht oder doppelt erscheint. `overflow.continueIn: "#frame"` bedeutet dasselbe.
+
+Ein Rahmen wird geteilt wie der Fließtext. Eine Überschrift beendet nie ein Stück: Sie geht mit den Zeilen, die sie einleitet. Eine Teilung zwischen den Punkten einer Liste lässt vor und nach sich mindestens zwei Punkte stehen (einen, wenn `bodyText.avoidOrphansInLists` oder `bodyText.avoidWidowsInLists` aus ist), und mit `bodyText.shortListSplit: 'avoid'` wird eine Liste mit bis zu `bodyText.shortListMaxItems` Punkten nicht zwischen ihren Punkten geteilt. Lässt keine Teilung das zu, endet das Stück vor der Überschrift oder der Liste oder innerhalb eines ihrer Punkte. Wie der Text auf einer Seite weiterläuft, die nach dieser hinzukommt, beschreibt [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft).
 
 ### Rahmen, die Text verdrängen
 
@@ -252,7 +258,7 @@ Die Prüfungen lesen Markdown und Konfiguration vor jedem Umbruch. Deshalb ersch
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Ein Rahmen der Vorlage erhält auf dieser Seite nichts: Kein Slot nennt ihn, er übernimmt keine Überschrift, und beim Flussrahmen bleibt kein Inhalt ohne Slot übrig. Ein Rahmen, der nur die Fortsetzung eines anderen Rahmens aufnimmt (<code>next</code>), wird nicht gemeldet. <code>postext check</code> führt ihn als Hinweis auf.</td>
+      <td>Ein Rahmen der Vorlage erhält auf dieser Seite nichts: Kein Slot nennt ihn, er übernimmt keine Überschrift, und beim Flussrahmen bleibt kein Inhalt ohne Slot übrig. Ein Rahmen, der nur die Fortsetzung eines anderen Rahmens aufnimmt (<code>next</code>), wird nicht gemeldet. Ebenso wenig der Rahmen, in den ein Text von einer früheren Seite springt (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). <code>postext check</code> führt ihn als Hinweis auf.</td>
       <td>Schreiben Sie Inhalt mit seinem Slot für ihn, oder markieren Sie den Rahmen in der Vorlage mit <code>optional: true</code>.</td>
     </tr>
     <tr>
@@ -283,11 +289,19 @@ Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie ers
 
 **Behebung.** Übernehmen Sie einen der Vorschläge: Jeder bringt seinen Wert mit, auf der Seite berechnet (siehe [Die Warnung und ihre Vorschläge](#die-warnung-und-ihre-vorschläge)). Andernfalls geben Sie dem Rahmen mehr Platz, verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage.
 
+Auch ein leerer Rahmen wird gemeldet. In einem Stapel, dessen Rahmen nichts mehr abgeben können, läuft ein Rahmen, der unter seine `minHeight` oder seine feste Höhe gekürzt wird (ein Antwortfeld, ein Bildplatz), um die gekürzte Höhe über, ganz ohne Inhalt. Seine Vorschläge senken seine eigene `minHeight` oder die `minHeight` eines Rahmens seiner Gruppe, der weniger Inhalt hat; sie nehmen nie einem anderen leeren Rahmen den Platz.
+
 ### frameContinuationLimit
 
 **Ursache.** Ein Rahmen, dessen `overflow.continueIn` `'next-page'` oder `'template:<id>'` ist, hat auf eine hinzugefügte Seite geschickt, was er nicht fassen konnte, und der Rahmen dieser Seite hat den Rest weitergeschickt, Seite um Seite, bis die zusammengesetzte Seite so viele Seiten hinzugefügt hatte, wie sie darf: 16 (siehe [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft)). Was dann noch übrig ist, wird auf der letzten hinzugefügten Seite am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt Vorlage und Rahmen dieser Seite, die Zahl der hinzugefügten Seiten (`pages`), die abgeschnittene Höhe (`overflowMm`), den `configPath` des Rahmens und die Seite. Meist ist der Rahmen, der den Inhalt auf der hinzugefügten Seite aufnimmt, viel zu klein für den Text.
 
 **Behebung.** Geben Sie diesem Rahmen mehr Platz (eine größere Höhe oder ein `overflowTemplate` mit einem größeren Rahmen), oder kürzen Sie den Text. Ein Kasten, der über mehr als ein paar Seiten läuft, gehört meist in den Fließtext.
+
+### continueTargetMissing
+
+**Ursache.** Das `overflow.continueIn` eines Rahmens ist `'page:<id>'` (siehe [Auf eine spätere Seite springen](#auf-eine-spätere-seite-springen)), und nach der Seite, auf der der Artikel steht, folgt keine Seitenbegrenzung `::::page{id="<id>"}`: Die ID ist falsch geschrieben, der Begrenzung fehlt sie, das Attribut der Begrenzung, das die Regel liest (`'page:{attr.sigue}'`), fehlt, oder die Begrenzung steht davor (`before: true`). Der Rest läuft auf einer Seite weiter, die direkt danach hinzukommt, wie bei `'next-page'`. Die Warnung nennt Vorlage, Rahmen, `target` (die gesuchte ID), den `configPath` des Rahmens und die Seite.
+
+**Behebung.** Geben Sie der späteren Seitenbegrenzung diese ID, oder berichtigen Sie den Namen in `continueIn` oder in dem Attribut der Begrenzung, das es liest. Eine Seite vor dem Artikel kann ihn nicht aufnehmen: Setzen Sie diese Begrenzung hinter den Artikel, oder nennen Sie eine spätere Seite.
 
 ## Wenn der Text wächst
 
@@ -329,10 +343,12 @@ Ein Rahmen, dessen Inhalt nicht passt, probiert nacheinander die Wege aus, die i
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>): Er wird an seinem Fuß mit seinem Vermerk abgeschnitten, und der Rest läuft auf einer Seite weiter, die nach dieser hinzukommt (siehe <a href="#wenn-der-text-weiterläuft">Wenn der Text weiterläuft</a>). Text und Bilder kehren zu voller Größe zurück, denn was nicht passt, läuft ohnehin weiter. Eine Warnung gibt es nicht.</td>
+      <td>Der Rahmen geht auf einer anderen Seite weiter (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> oder <code>'page:&lt;id&gt;'</code>): Er wird an seinem Fuß mit seinem Vermerk abgeschnitten, und der Rest läuft auf einer Seite weiter, die nach dieser hinzukommt (siehe <a href="#wenn-der-text-weiterläuft">Wenn der Text weiterläuft</a>). Text und Bilder kehren zu voller Größe zurück, denn was nicht passt, läuft ohnehin weiter. Eine Warnung gibt es nicht.</td>
     </tr>
   </tbody>
 </table>
+
+Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, nimmt diese Stufe früher: nach `redistribute`, vor `scaleImages` und `shrinkText`. Ein Artikel, der über mehrere Seiten gesetzt wird, behält einen Schriftgrad, und seine letzte Seite wird nicht kleiner gesetzt als die Seiten davor. Bilder und Text schrumpfen nur, wenn er nicht weiterlaufen kann: auf der letzten Seite, die das Weiterlaufen hinzufügen darf, oder wenn der Rahmen, der den Rest aufnehmen würde, nichts davon aufnimmt. `fit.preferContinue: false` behält die Reihenfolge der Tabelle bei, für einen Kasten, der lieber ein paar Punkt verliert, als eine Seite hinzuzufügen.
 
 Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitten, behält die Skalierungen, die die Stufen erreicht haben, und der Umbruch meldet `frameOverflow`. Ein Rahmen auf einer hinzugefügten Seite, der nichts von dem Inhalt aufnimmt, den er erhält, schickt ihn nicht weiter (er würde endlos Seiten hinzufügen): Auch er meldet `frameOverflow`, mit `continue` unter den versuchten Stufen. Jede Stufe umbricht die ganze Seite neu, deshalb hängt das Ergebnis nur von dieser Seite ab: Dieselbe Eingabe ergibt dieselbe Seite, überlaufende Rahmen werden in der Reihenfolge der Vorlage behandelt, und eine Änderung auf einer zusammengesetzten Seite lässt alle anderen Seiten, wie sie waren. Die Einstellungen stehen unter [Konfiguration › Wenn der Inhalt nicht passt](/de/docs/configuration-composed-pages#wenn-der-inhalt-nicht-passt).
 
@@ -385,7 +401,7 @@ Das Bedienfeld Prüfungen zeigt denselben Eintrag in der Sprache der Oberfläche
 
 ## Wenn der Text weiterläuft
 
-Ein Rahmen kann, was er nicht fasst, auf eine Seite schicken, die nach seiner zusammengesetzten Seite hinzukommt. Die Regel dafür ist das `overflow.continueIn` des Rahmens:
+Ein Rahmen kann, was er nicht fasst, auf eine Seite schicken, die nach seiner zusammengesetzten Seite hinzukommt, oder auf eine spätere Seite des Buchs. Die Regel dafür ist das `overflow.continueIn` des Rahmens:
 
 <table>
   <thead>
@@ -407,6 +423,10 @@ Ein Rahmen kann, was er nicht fasst, auf eine Seite schicken, die nach seiner zu
       <td><code>'template:&lt;id&gt;'</code></td>
       <td>Auf einer Seite dieser Vorlage.</td>
     </tr>
+    <tr>
+      <td><code>'page:&lt;id&gt;'</code></td>
+      <td>In einem Rahmen der späteren Seitenbegrenzung <code>::::page&#123;id="&lt;id&gt;"&#125;</code>, über die Seiten dazwischen hinweg (siehe <a href="#auf-eine-spätere-seite-springen">Auf eine spätere Seite springen</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -419,13 +439,45 @@ Ein Rahmen kann, was er nicht fasst, auf eine Seite schicken, die nach seiner zu
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-Das Weiterlaufen ist die letzte der [Umbruchstufen](#wenn-der-inhalt-immer-noch-nicht-passt): Ein Rahmen wächst zuerst, schafft Platz in seiner Gruppe und lässt Bilder und Text kleiner setzen, soweit seine Vorlage es erlaubt, und erst wenn das nicht reicht, wird er an seinem Fuß abgeschnitten. Dann kehren Text und Bilder zu voller Größe zurück, das Stück endet mit dem Fortsetzungsvermerk, und der Rest läuft ab der Zeile weiter, an der geschnitten wurde, neu umbrochen auf die Breite des Rahmens, der ihn aufnimmt. Nichts geht verloren oder erscheint doppelt, und eine Warnung gibt es nicht.
+Das Weiterlaufen ist eine der [Umbruchstufen](#wenn-der-inhalt-immer-noch-nicht-passt): Ein Rahmen wächst zuerst und schafft Platz in seiner Gruppe, und wenn das nicht reicht, wird er an seinem Fuß abgeschnitten, bevor seine Bilder oder sein Text kleiner gesetzt werden (es sei denn, sein `fit.preferContinue` ist `false`). Text und Bilder bleiben in voller Größe, das Stück endet mit dem Fortsetzungsvermerk, und der Rest läuft ab der Zeile weiter, an der geschnitten wurde, neu umbrochen auf die Breite des Rahmens, der ihn aufnimmt. Nichts geht verloren oder erscheint doppelt, und eine Warnung gibt es nicht.
 
-- **Welcher Rahmen ihn aufnimmt.** Auf der hinzugefügten Seite läuft der Inhalt im gleichnamigen Rahmen weiter; hat die Vorlage keinen, in ihrem Flussrahmen; andernfalls in ihrem ersten Rahmen, der noch frei ist. Mehrere Rahmen einer Seite, die in dieselbe Vorlage weiterlaufen, teilen sich eine hinzugefügte Seite, wenn diese Vorlage für jeden einen Rahmen hat; sonst bekommt der nächste eine eigene Seite. Ein Rahmen der hinzugefügten Seite, der nichts erhält, bleibt leer.
+- **Welcher Rahmen ihn aufnimmt.** Auf der hinzugefügten Seite läuft der Inhalt im gleichnamigen Rahmen weiter; hat die Vorlage keinen, in ihrem Flussrahmen; andernfalls in ihrem ersten Rahmen, der noch frei ist. Ein Artikel, der mit `next` durch mehrere Rahmen läuft, geht dort weiter, wo seine Kette beginnt: Der Rest der dritten von drei verketteten Spalten läuft in der ersten Spalte der hinzugefügten Seite weiter (im Rahmen mit dem Namen des Kettenanfangs, sonst im Flussrahmen), sodass eine Vorlage für den Fließtext, die in sich selbst weiterläuft, jede Spalte jeder Seite füllt. Mehrere Rahmen einer Seite, die in dieselbe Vorlage weiterlaufen, teilen sich eine hinzugefügte Seite, wenn diese Vorlage für jeden einen Rahmen hat; sonst bekommt der nächste eine eigene Seite. Ein Rahmen der hinzugefügten Seite, der nichts erhält, bleibt leer.
 - **Seite um Seite.** Ein Stück, das noch immer nicht passt, läuft auf der nächsten hinzugefügten Seite weiter, mit dem eigenen `overflow.continueIn` des Rahmens, wenn er dort eines hat, sonst mit der Regel, die es dorthin gebracht hat. Eine zusammengesetzte Seite fügt höchstens 16 Seiten hintereinander hinzu; was auf der letzten noch immer nicht passt, wird abgeschnitten und als [`frameContinuationLimit`](#framecontinuationlimit) gemeldet. Ein Rahmen einer hinzugefügten Seite, der zu klein ist, um überhaupt etwas davon aufzunehmen, meldet `frameOverflow`, statt Seiten hinzuzufügen.
+- **Wo das Stück geteilt wird.** Wie auf der Seite: Eine Überschrift bleibt bei ihren ersten Zeilen, und eine Liste behält vor und nach der Teilung zwei Punkte (siehe [Rahmen verketten](#rahmen-verketten)). Passt nichts vom Kasten auf die Seite, läuft der ganze Kasten weiter, samt Reiter: Auf der Seite bleiben nicht Reiter und Vermerk über einem leeren Stück zurück. Er nimmt dann auf der Seite, die er verlässt, keinen Platz ein, und behielte der Antwortraum darunter dort seine Größe nicht, läuft der Kasten samt Antwortraum weiter.
+- **Was die Seiten behalten.** Der geteilte Rahmen verzichtet zuerst auf den Platz seiner Gruppe, sodass die Rahmen nach ihm ihre Größe behalten. Läuft der Rest in derselben, noch einmal gesetzten Vorlage weiter, gehen die leeren Rahmen direkt nach ihm in seinem Stapel mit (ein Antwortfeld unter einem Aufgabenkasten: Rahmen, die keinen Inhalt erhalten). Auf der Seite nehmen sie keinen Platz ein; auf der hinzugefügten Seite behalten sie ihre Größe unter dem Rest des Kastens, mit dem Dekor, das an ihnen verankert ist. Die übrigen Rahmen dieser hinzugefügten Seite nehmen keinen Platz ein, ihr Dekor wird nicht gezeichnet, und ein Stapel behält die Stelle, die sein erster Rahmen in der Vorlage hat, sodass der Rest des Kastens dort beginnt, wo der Stapel beginnt, frei von Dachzeile und Kolumnentitel der Seite.
 - **Gewöhnliche Seiten.** Die hinzugefügten Seiten sind Seiten des Buchs: Sie werden nummeriert, tragen die Kolumnentitel ihrer Vorlage (oder die des Abschnitts), übernehmen die `variants` für gerade oder ungerade Seiten, und das `{attr.x}` der Seitenbegrenzung erreicht weiterhin ihr Dekor. Eine Überlaufvorlage mit `spread: true` beginnt auf der nächsten linken Seite, wenn nötig mit einer Vakatseite davor, und nimmt die rechte Seite danach; eine Doppelseite, deren `overflowTemplate` eine Einzelseite ist, läuft auf Einzelseiten weiter. Der Text nach der Seitenbegrenzung beginnt auf der Seite nach der letzten hinzugefügten Seite.
 - **IDs.** Ein Rahmen der n-ten hinzugefügten Seite ist `cp0:<name>~<n>`; der Rahmen, der den Inhalt aufnimmt, heißt nach dem Rahmen auf der Seite der Begrenzung selbst, der ihn zuerst weitergeschickt hat (`cp0:dinero~1`, `cp0:dinero~2`), sodass eine Auswahl ihr Element behält, gleich welcher Rahmen es aufnimmt. Jeder Rahmen vermerkt den Rahmen, den er fortsetzt oder in dem er weiterläuft (`continuedFrom`, `continuesTo`), `VDTPage.composed.continuationOf` der Seite ist der Index der Seite der Begrenzung selbst, und die Blöcke der Stücke tragen die ID des Kastens mit `-cont-<n>`, wie bei geteilten Kästen.
 - **Neuumbruch.** Eine zusammengesetzte Seite, deren Inhalt weiterläuft, wird bei jedem Build samt ihren hinzugefügten Seiten von Grund auf neu umbrochen: Der Seitencache behält nur Seiten, deren Inhalt auf ihnen bleibt.
+
+### Auf eine spätere Seite springen
+
+Ein Zeitschriftenartikel, der über seine Seiten hinausläuft, springt auf eine Seite weiter hinten, über andere Artikel hinweg: „Fortsetzung auf Seite 47“. `overflow.continueIn: 'page:<id>'` schickt den Rest zur Seitenbegrenzung mit dieser `id`, wo immer sie später im Kapitel steht:
+
+```markdown
+::::page{template="articulo" sigue="p47"}
+…
+::::
+
+::::page{template="otra"}
+…
+::::
+
+::::page{template="saltos" id="p47"}
+…
+::::
+```
+
+```json
+{ "name": "cuerpo", "flow": true,
+  "overflow": { "continueIn": "page:{attr.sigue}",
+    "mark": "Fortsetzung auf Seite {page}", "fromMark": "Fortsetzung von Seite {page}" } }
+```
+
+- **Welche Seite.** `<id>` darf `{attr.name}` sein, gelesen an der Seitenbegrenzung, auf der der Artikel steht; so dient eine einzige Artikelvorlage allen Artikeln, und das Markdown sagt, wohin jeder springt.
+- **Welcher Rahmen.** Der Rahmen, den `'page:<id>#<frame>'` nennt; ohne Rahmennamen der Rahmen mit dem Namen des sendenden Kettenanfangs, sonst der erste Rahmen, den der eigene Inhalt dieser Seite leer lässt. Die Seite behält ihren eigenen Inhalt in ihren übrigen Rahmen.
+- **Nach dem Sprung.** Was dieser Rahmen nicht fasst, läuft auf Seiten weiter, die nach der Zielseite hinzukommen, wie es `'next-page'` von dort aus täte; ein Artikel, der auf der Zielseite keinen freien Rahmen findet, läuft ebenfalls auf diesen Seiten weiter.
+- **IDs und Verknüpfungen.** Die Rahmen der Zielseite behalten ihre eigenen IDs (`cp2:resto`). Das `continuesTo` des sendenden und das `continuedFrom` des aufnehmenden Rahmens verbinden die Stücke, und das Umbruchprotokoll der sendenden Seite vermerkt „cuerpo continued on page 47“. Das EPUB mit fließendem Layout und das getaggte PDF lesen den Artikel in einem Stück.
+- **Eine Seite, die nicht folgt.** Eine ID, die keine spätere Seitenbegrenzung trägt, führt zu [`continueTargetMissing`](#continuetargetmissing), und der Rest läuft auf der nächsten Seite weiter.
 
 ### Der Fortsetzungsvermerk
 
@@ -445,7 +497,7 @@ Das Weiterlaufen ist die letzte der [Umbruchstufen](#wenn-der-inhalt-immer-noch-
     </tr>
     <tr>
       <td>ein String</td>
-      <td>Genau diese Worte: <code>"weiter auf der nächsten Seite"</code>.</td>
+      <td>Genau diese Worte: <code>"weiter auf der nächsten Seite"</code>. <code>&#123;page&#125;</code> steht darin für die Nummer der Seite, auf der der Rest weiterläuft, so wie sie gedruckt wird: <code>"Fortsetzung auf Seite &#123;page&#125;"</code>.</td>
     </tr>
     <tr>
       <td><code>false</code></td>
@@ -454,13 +506,15 @@ Das Weiterlaufen ist die letzte der [Umbruchstufen](#wenn-der-inhalt-immer-noch-
   </tbody>
 </table>
 
+Ein Vermerk kann `{page}` enthalten: die gedruckte Nummer der Seite, auf der der Rest weitergeht, wie ein Magazin es schreibt (`mark: "Fortsetzung auf Seite {page}"`). Das gilt für eine hinzugefügte Seite (`'next-page'`, `'template:<id>'`) und für eine spätere Seitenbegrenzung, zu der die Geschichte springt (`'page:<id>'`). Die Nummern werden eingesetzt, sobald die Seiten nummeriert sind.
+
 Der Vermerk steht unter der letzten Zeile des Stücks, in der Textschrift des Kastens, ausgerichtet und geneigt, wie es `continuesMarkerAlign` und `continuesMarkerItalic` des Stils angeben (standardmäßig rechtsbündig und kursiv). Er gehört zum Seitenapparat: Das EPUB mit fließendem Layout lässt ihn weg, das getaggte PDF kennzeichnet ihn als Artefakt. Ein Rahmen, der auf derselben Seite mit `next` verkettet ist, trägt keinen Vermerk.
 
-Das Stück auf der hinzugefügten Seite beginnt ohne Reiter und Titel des Rahmens, wie die späteren Teile eines geteilten Kastens. Ein Stil mit `repeatTitle: true` wiederholt dort seinen Titel mit seinem `continuedSuffix` (auf Deutsch „(Forts.)“), der anzeigt, woher der Text kommt.
+Das Stück auf der anderen Seite beginnt ohne Reiter und Titel des Rahmens, wie die späteren Teile eines geteilten Kastens. `overflow.fromMark` legt Worte an seinem Kopf fest, wobei `{page}` die Nummer der Seite ist, von der es kommt: `"Fortsetzung von Seite {page}"`. Das eigene `fromMark` des aufnehmenden Rahmens geht dem des sendenden vor; ist keines von beiden gesetzt, beginnt das Stück ohne Worte. Ein Stil mit `repeatTitle: true` wiederholt dort seinen Titel mit seinem `continuedSuffix` (auf Deutsch „(Forts.)“). Beide Vermerke stehen in der Textschrift des Kastens, ausgerichtet und geneigt wie der Vermerk am Ende, und gehören zum Seitenapparat.
 
 ## Umbruchprotokoll
 
-Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer.
+Jede zusammengesetzte Seite führt ein Protokoll darüber, was der Umbruch gegenüber der Zeichnung der Vorlage verändert hat: welcher Rahmen gewachsen ist, Platz abgegeben oder sich verschoben hat, um wie viel und welcher Rahmen das ausgelöst hat. Passt der Text einer Seite in ihre Vorlage, bleibt das Protokoll leer. Ein Rahmen mit der Höhe `auto` und ohne `minHeight` gibt keine eigene Höhe an: Im Protokoll wächst er nie, und die an ihm verankerten Rahmen bewegen sich nie, wie lang sein Text auch wird (der Vorspann eines Magazins mit den Spalten darunter). Geben Sie ihm die gezeichnete Höhe als `minHeight`, damit beides protokolliert wird. Der Belastungstest der Rezepte (C38) vergleicht solche Rahmen stattdessen mit dem Durchlauf auf dem Text, wie er geschrieben ist.
 
 ```text
 dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; ahorro moved down 13.9 mm
@@ -547,6 +601,8 @@ Auf der Zeichenfläche, in der Doppelseitenansicht des Sandbox und im Folio steh
 
 Ein Buch aus der Zeit vor den zusammengesetzten Seiten kann den Text seiner Seiten in Überschriftenstilen halten: eine verborgene Überschrift auf jeder Seite, deren Kolumnentitel jeden Text dorthin setzt, wo die gedruckte Seite ihn hatte. Die Prüfung *Text in der Konfiguration* meldet es. Im Sandbox macht **Text ins Markdown verschieben** im Bedienfeld Prüfungen aus jedem Seitendesign eine Seitenvorlage, deren Rahmen dort stehen, wo die Texte standen, und aus jeder Seite eine Seitenbegrenzung mit ihrem Text in `:::frame`-Slots; es zeigt jede Seite vorher und nachher und lässt sich rückgängig machen. Siehe [Text ins Markdown verschieben](/de/docs/sandbox-design-checks#text-ins-markdown-verschieben). Aus dem Code tut `moveTextToMarkdown({ config, chapters, metadata }, options)` dasselbe und gibt die neue Konfiguration, die Kapitel und einen Bericht zurück.
 
+Mit `labelsOnPictures: true` (seit postext 1.38) werden die Wörter, die ein Design auf ein Bild gesetzt hat, zu Beschriftungen dieses Bildes statt zu Rahmen: ein Text aus einer Zeile und höchstens vier Wörtern, nicht größer als drei Viertel der Grundschrift (`labelsOnPictures: { maxFontSize }` setzt eine andere Grenze), dessen Box in einem Bild desselben Designs liegt. Das Bild verlässt die Dekoration und wird zu einem Rahmen in der Box, in der es gezeichnet war, mit einem `:::figure` und einer `::label`-Zeile je Text, und jeder Text wird zu einem Anker der Ressource des Bildes an der Stelle, an der das Design ihn gesetzt hat (seine erste Grundlinie, die Seite, die seine Ausrichtung nennt, die Breite seiner Box), mit einem Beschriftungsstil für sein Aussehen. Übergeben Sie die `resources` des Buchs in der Eingabe: Das Ergebnis gibt sie mit den Ankern zurück (`result.resources`), und eine Bitmap, die kleiner ist als die Box, über die das Design sie gestreckt hat, erhält die `resolution`, die sie auf diese Breite setzt. Ein Bild, das auf mehreren Seiten erscheint, teilt seine Anker. `labels` im Bericht zählt Bilder, Beschriftungen, Anker und Beschriftungsstile. Der Dialog der Sandbox bietet es noch nicht an.
+
 ## Aus dem Code
 
 `composedPages(blocks)` liest die geparsten Blöcke eines Kapitels (`parseMarkdownWithIssues(markdown).blocks`) und gibt der Reihe nach je Seitenbegrenzung einen Knoten zurück: `template`, `spread`, `attrs` mit dem Quellbereich jedes Werts (`attrSources`), `fenceIndex` (die Ordnungszahl der Begrenzung im Kapitel, in jeder Sprache dieselbe), `slots` (die Indizes der Blöcke jedes Slots, in der Reihenfolge des Markdowns), `unassigned` (die Blöcke ohne Slot) und den Quellbereich der ganzen Seite. Ein Block trägt den Slot, den er nennt, in `ContentBlock.slot`, mit dem Quellbereich des Werts; eine Abbildung ist ein `resourceBlock`, dessen `figure` ihre Attribute und Beschriftungen enthält, jede Beschriftung mit ihrem Text, ihren Inline-Spans und einer Zuordnung zurück zur Quelle im Markdown. `checkComposedSlots(pages, config)` gibt die drei Slot-Warnungen für diese Seiten zurück.
@@ -614,3 +670,7 @@ findElement(doc, 'cp0:dinero');   // derselbe Rahmen nach einem Neusatz, mit sei
 **Einträge des Inhaltsverzeichnisses.** Eine Zeile von `:::toc` trägt in `tocEntry.headingSource` die Position der Überschrift, die sie aufführt, im Markdown-Körper ihres Kapitels (ohne Front Matter, wie Gliederungen zählen); `sourceAt` gibt sie als `heading` am Block der Zeile aus.
 
 **Nur eine Seite neu setzen.** Der Satz jeder zusammengesetzten Seite wird nach dem aufbewahrt, was er liest: Vorlage, Markdown der Seite, Stile und Schriften, Sprache, Seite des Bogens und Geometrie. Ein späterer Satzlauf, der dieselbe Seite antrifft (der nächste Durchgang, eine Änderung an anderer Stelle im Kapitel, das Kapitel erneut im selben Worker umbrochen), übernimmt sie unverändert. Eine Änderung innerhalb einer Seite oder an einem Attribut ihrer Begrenzung setzt nur diese Seite neu; eine Änderung der Vorlage setzt alle Seiten neu, die sie verwenden. Eine Seite mit Fußnoten, Verweisen, Zitaten oder einem Inhaltsverzeichnis wird jedes Mal neu gesetzt, weil das, was sie druckt, vom Rest des Buches abhängt. Auch eine Doppelseite wird jedes Mal neu gesetzt: Ihre beiden Seiten sind ein Bogen. `VDTComposedPage.layoutKey` ist der Schlüssel der Rahmen einer Seite; `composedPagePaintKey(page)` nimmt hinzu, was um sie herum liegt (Kolumnentitel, Dekor, Seitenzahl), damit ein Host die gezeichneten Pixel behalten kann, solange sich der Schlüssel nicht ändert. Die Leinwand der Sandbox tut das: Eine Änderung auf einer Seite zeichnet nur diese Seite neu.
+
+## Comicseiten
+
+Eine Comicseite (`:::page{split}`) ist eine zusammengesetzte Seite, deren Rahmen ihre Aufteilung erzeugt: einer pro Panel, mit stabilen Kennungen `cm<n>:<name>`, einem Polygon für eine schräge Zelle, einem Kastenstil über `box` und Markdown in einem Textpanel. Siehe [Comics › Comicseiten und zusammengesetzte Seiten](/de/docs/comics#comicseiten-und-zusammengesetzte-seiten).

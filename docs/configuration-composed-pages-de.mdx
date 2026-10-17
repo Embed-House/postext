@@ -273,13 +273,19 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>) oder <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat, bis zu 16 hinzugefügte Seiten.</td>
+      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen) oder <code>'page:&lt;id&gt;'</code> (ein Rahmen der späteren Seitenbegrenzung <code>::::page&#123;id=…&#125;</code>: der, den <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> nennt, sonst einer, den ihr eigener Inhalt leer lässt; <code>&lt;id&gt;</code> darf <code>&#123;attr.name&#125;</code> sein, gelesen an der Seitenbegrenzung; siehe <a href="/de/docs/composed-pages#auf-eine-spätere-seite-springen">Zusammengesetzte Seiten › Auf eine spätere Seite springen</a>). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat (nach einem Sprung mit <code>'next-page'</code>), bis zu 16 hinzugefügte Seiten.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>je nach Sprache</td>
-      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
+      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte, wobei <code>&#123;page&#125;</code> darin die Nummer der Seite ist, auf der der Rest weiterläuft; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Worte am Kopf des Stücks auf der Seite, auf der der Inhalt weiterläuft, wobei <code>&#123;page&#125;</code> die Nummer der Seite ist, von der es kommt (<code>"Fortsetzung von Seite &#123;page&#125;"</code>). Das des aufnehmenden Rahmens geht dem des sendenden vor.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Ob die Bilder im Rahmen und in den übrigen Rahmen seiner Gruppe kleiner gesetzt werden dürfen, wenn der Inhalt dieses Rahmens nicht passt, und bis zu welchem Maßstab.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ein Rahmen, dessen <code>overflow.continueIn</code> Inhalt auf eine andere Seite schickt, läuft dort weiter, bevor seine Bilder und sein Text kleiner gesetzt werden, sodass ein Artikel von Seite zu Seite dieselbe Größe behält. <code>false</code>: Sie schrumpfen zuerst, und der Rahmen läuft erst weiter, wenn das nicht reicht.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -324,6 +336,12 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td>Auf einer Doppelseite darf der Rahmen über das Bundband laufen. Sein Text wird auf der Seite gelesen, die seine Mitte enthält; die gegenüberliegende Seite malt ihre Hälfte.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Linien quer über den Inhaltskasten des Rahmens: eine am Fuß jeder Zeile, so viele wie seine Höhe fasst. <code>every</code> ist der Abstand, <code>'line'</code> (Standard: der Zeilenabstand des Rahmentexts) oder eine Länge; <code>color</code> ist standardmäßig ein mittleres Grau, <code>width</code> die Stärke (0,5 pt), <code>inset</code> der Abstand an beiden Enden jeder Linie oder <code>&#123; left, right &#125;</code>. Siehe Linierte Rahmen weiter unten. Seit postext 1.38.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>die der Seite</td>
@@ -337,6 +355,24 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
     </tr>
   </tbody>
 </table>
+
+**Linierte Rahmen.** Ein Antwortfeld in einem Arbeitsheft ist ein Rahmen mit `rules`: Seine Linien folgen seiner Höhe, sodass das Markdown entscheidet, wie viele es sind. Ein leerer Rahmen mit fester Höhe bekommt die Linien, die hineinpassen; ein `'auto'`-Rahmen, der `:::space{lines=4}` erhält, bekommt vier, und ein Rahmen, der mit seinem Text wächst, bekommt mehr. Die Linien liegen über dem Hintergrund des Rahmens und unter seinem Text, auf dem Canvas, im HTML, im PDF und im EPUB mit festem Layout; im Rahmen-Inspektor des Sandbox schaltet man sie unter Aussehen ein.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Gruppen
 
@@ -405,10 +441,10 @@ Ein Rahmen gibt seine Größe an: eine feste `height` oder `'auto'`, die Höhe s
 
 - Eine Gruppe ohne eigenes `placement` oder `grid` beginnt dort, wo die Platzierung ihres ersten Rahmens sie hinsetzt, und reicht so weit nach unten, wie ihre Rahmen es brauchen, höchstens bis zum Fuß des Bereichs der Vorlage. Wächst ein Rahmen, rücken die Rahmen nach ihm um dasselbe Maß nach unten.
 - Eine Gruppe mit eigenem Kasten legt ihre Rahmen in diesen Kasten. Brauchen sie mehr Platz, als er bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt den Kasten der Gruppe als seinen Bereich.
-- Kann nichts mehr nachgeben, läuft trotzdem kein Rahmen über den Fuß der Gruppe hinaus: Der Rahmen, dessen Inhalt nicht passt, durchläuft die Umbruchstufen (siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)), und was dann noch nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet.
+- Kann nichts mehr nachgeben, geben zuerst die Rahmen nahe dem Fuß der Gruppe nach, jeder bis auf seine `minHeight`; ein Rahmen mit fester Höhe behält sie, sodass ein leeres Antwortfeld oder ein Bildplatz unter einem wachsenden Kasten auf der Seite bleibt und der Text des Kastens nachgibt. Kein Rahmen läuft über den Fuß der Gruppe hinaus: Der Rahmen, dessen Inhalt nicht passt, durchläuft die Umbruchstufen (siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)), und was dann noch nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet. Ein Rahmen, der unter seine `minHeight` oder seine feste Höhe gekürzt wird, wird ebenfalls gemeldet, ob er Inhalt hat oder nicht.
 - Ein Rahmen mit `height: 'fill'` verlangt sein `minHeight` und nimmt freien Platz, als hätte er `grow: 1`.
 
-**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte angegebene Höhe unter ihnen (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
+**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte Höhe, die ihre Rahmen angeben: eine feste `height`, sonst eine `minHeight` (ein `'auto'`-Rahmen gibt nicht mehr an), oder, wenn sie keine angeben, wie der höchste Inhalt (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Karten mit `height: 'auto'` und einer `minHeight` teilen sich so die Breite in dieser Höhe, und die Reihe wächst erst, wenn keine Karte Breite abgeben kann. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
 
 **Fixierte Rahmen.** Ein Rahmen mit `pin: true` behält den Kasten, den die Vorlage für ihn angibt, auch wenn der Rahmen, an dem er verankert ist, wächst oder sich verschiebt: Ein Kasten, der passend zur Illustration gezeichnet ist, bleibt auf ihr liegen. In einer Gruppe behält ein fixierter Rahmen seinen Platz, und die übrigen Rahmen weichen ihm aus, mit `gap` auf beiden Seiten. Ein fixierter Rahmen außerhalb der Gruppe wirkt ebenso auf die Rahmen der Gruppe, die ihn sonst überdecken würden.
 
@@ -457,7 +493,7 @@ Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, pr
 - `minHeight` an den übrigen Rahmen der Gruppe: wie weit sie Platz abgeben; ein Rahmen wird nie kleiner als das, was sein eigener Inhalt braucht.
 - `fit.scaleImages` und `fit.imageMinScale`: ob die Bilder des Rahmens und seiner Gruppe kleiner gesetzt werden dürfen, und bis zu welchem Maßstab (standardmäßig 80 %).
 - `fit.shrinkText` und `fit.minScale`: ob der Text des Rahmens kleiner gesetzt werden darf, und bis zu welchem Maßstab (standardmäßig 90 %). Der Maßstab gilt gleichermaßen für Schriftgröße, Zeilenabstand und Abstände; der Rahmen behält seine Größe.
-- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer Seite, die nach dieser hinzukommt (`'next-page'`, `'template:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter.
+- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer anderen Seite (`'next-page'`, `'template:<id>'`, `'page:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, tut das, bevor seine Bilder und sein Text kleiner gesetzt werden, es sei denn, sein `fit.preferContinue` ist `false`.
 
 Die Maßstäbe gehen in Schritten von 2,5 %, und der Umbruch nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
 
@@ -493,7 +529,7 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next` und `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) mit `overflow.mark`, dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants` und `overflowTemplate` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Umbruchstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
 
 ### Doppelseiten
 
@@ -521,6 +557,8 @@ pageTemplates: [{
 ```
 
 Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes wird auf der Seite gelesen, die seine Mitte enthält, und auf beiden gemalt. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Reitern, bleibt im Markdown.
+
+In einem vertikalen Buch (`vertical-rl`) wird eine Doppelseite im Fließrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Oben ist auf der Seite der rechte Rand des Bogens, und die Zeilen laufen nach unten, sodass das `x` der Vorlage den Bogen hinunterläuft und ihr `y` vom rechten Rand des Bogens zum linken. Der Bogen ist die rechte Seite, gefolgt von der linken entlang `y`, der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten lesen diese Achse; die Dekoration wird weiterhin auf dem physischen Bogen gesetzt und am Bund geschnitten. Eine waagrechte Zeitleiste, gezeichnet für ein waagrechtes Buch, erscheint in einem vertikalen gedreht: Schreiben Sie die Vorlage eines vertikalen Buches im Rahmen seines Flusses. Seit postext 1.38.
 
 ## Beschriftungsstile
 
@@ -731,8 +769,8 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code> und <code>'template:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
-      <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der drei Formen.</td>
+      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> und <code>'page:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
+      <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der vier Formen.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

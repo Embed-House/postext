@@ -3,7 +3,7 @@
 // lines are loose, where a word was broken). The picture of the page says
 // how it looks; this says what the engine did.
 
-import type { BoundingBox, VDTBlock, VDTDocument, VDTLine, VDTPage } from 'postext';
+import { describeReflowEvent, type BoundingBox, type VDTBlock, type VDTDocument, type VDTLine, type VDTPage } from 'postext';
 
 /** A justified line whose spaces are this much wider than set reads as
  *  loose (the Checks panel's own default threshold is higher: it lists
@@ -56,6 +56,9 @@ export interface PageSummary {
   footnotes?: number;
   header?: string;
   footer?: string;
+  /** A composed page (#846): its template, and what the layout moved,
+   *  grew or scaled so its content fits (the reflow log in words, #868). */
+  composed?: { template: string; reflow: string[] };
 }
 
 const blockText = (lines: readonly VDTLine[], max: number): string => {
@@ -136,6 +139,7 @@ export function summarisePage(doc: VDTDocument, index: number, maxText = 400): P
     ...(page.footnoteAreas?.length ? { footnotes: page.footnoteAreas.reduce((n, a) => n + a.noteIds.length, 0) } : {}),
     ...(slotText(page.header) ? { header: slotText(page.header) } : {}),
     ...(slotText(page.footer) ? { footer: slotText(page.footer) } : {}),
+    ...(page.composed ? { composed: { template: page.composed.template, reflow: page.composed.log.map((e) => describeReflowEvent(e)) } } : {}),
   };
 }
 

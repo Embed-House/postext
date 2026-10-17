@@ -634,6 +634,18 @@ Un elemento `image` disegna una risorsa bitmap o SVG del documento: il logo di u
       <td>L’immagine è solo decorativa (un ornamento, una fascia): non fornisce testo alternativo all’output nemmeno quando la sua risorsa ne ha uno (vedi più sotto).</td>
     </tr>
     <tr>
+      <td><code>fit</code></td>
+      <td><code>'contain' | 'cover'</code></td>
+      <td><code>'contain'</code></td>
+      <td>Con <code>width</code> e <code>height</code> impostate: <code>'contain'</code> fa entrare l’immagine intera nel riquadro, centrata; <code>'cover'</code> riempie il riquadro e ritaglia ciò che avanza, come una fotografia al vivo. Il ritaglio di <code>'cover'</code> tiene intera la zona sicura della risorsa (vedi <a href="/it/docs/document-format-resources">Risorse</a>); se la forma del riquadro non può contenerla, si mostra la finestra più piccola che la contiene e il riquadro resta non riempito in un senso. Ignorato se un lato è <code>'auto'</code>. Da postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>focus</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>—</td>
+      <td>Il punto dell’immagine che il ritaglio <code>'cover'</code> centra, in frazioni dell’immagine: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per un volto nel terzo superiore. Il ritaglio lascia comunque in vista la zona sicura. Senza di esso i margini intorno alla zona sicura si ritagliano in proporzione alla loro misura, oppure l’immagine si centra.</td>
+    </tr>
+    <tr>
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>—</td>
@@ -676,7 +688,7 @@ interface ElementPlacement {
    *  content, so elements anchored to it stay attached, but a long text wraps or
    *  ellipsizes there — a running head can reserve room for the label hanging
    *  off it instead of squeezing that label out. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
+  size?: { width?: Size; height?: Size; maxWidth?: Size }; // Size: Dimension | 'fill' | 'auto' | { to, edge }
 }
 ```
 
@@ -699,6 +711,12 @@ Un bordo relativo a un elemento usato con `'container'`, `'page'` o `'bleed'`, e
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
+```
+
+Una dimensione può anche arrivare fino a un bordo di un altro riquadro: `{ to, edge }`, dove `to` nomina il riquadro come fa un ancoraggio (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` di un altro elemento e, nella decorazione di una pagina composta, di una cornice o di un gruppo) e `edge` quale dei suoi bordi, `'top'` o `'bottom'` per un’altezza, `'left'` o `'right'` per una larghezza. La lunghezza va dal punto di ancoraggio dell’elemento fino a quel bordo, nel verso in cui l’elemento cresce; un bordo dietro il punto di ancoraggio dà 0, e un bordo dell’altro asse, o un riquadro che non c’è, si legge come `'fill'`. Un fondo che va dal piede di una banda fino al margine di rifilo resta nel modello e segue la banda quando questa si sposta. Da postext 1.38:
+
+```json
+{ "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
 ```
 
 Con i segni di taglio attivi, tutto ciò che un elemento dipinge oltre il riquadro dell’abbondanza viene tagliato (vedi [Segni di taglio](/it/docs/configuration-page-layout#segni-di-taglio)).

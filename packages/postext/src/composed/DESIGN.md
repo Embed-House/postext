@@ -80,7 +80,8 @@ interface FrameConfig {
   takes?: 'h1'|'h2'|…|'h6'      // receives the first heading of that level with no slot
   pin?: boolean                 // never moves or resizes (aligned with artwork)
   grow?: number, shrink?: number, priority?: number   // group negotiation (§5)
-  fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number }
+  fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
+          preferContinue?: boolean }   // continue before 3 and 5 of the ladder (§5.4), default true
   overflow?: { continueIn?: string, mark?: string | false }
   writingMode?, direction?      // as the page; for a vertical box on a horizontal page
   optional?: boolean            // no slotEmpty warning
@@ -462,6 +463,14 @@ For a frame whose content does not fit, stop at the first step that makes it fit
 7. **Warn** `frameOverflow`. The content that does not fit is clipped at the frame's edge on paged
    output (it is never dropped from reflowable output, the source map, or the warning).
 
+A frame whose `overflow.continueIn` sends content to another page (`'next-page'`,
+`'template:<id>'`, `'page:<id>'`) takes step 6 right after step 4, before 3 and 5 (#920,
+`fit.preferContinue`, default true): free space, push, redistribute, continue, and only when it
+cannot go on (the last page continuation may add, a receiver that takes none of it) smaller
+pictures, then smaller text. A story set across pages keeps one size; a magazine's last page of an
+article is not set smaller than the pages before it. `fit.preferContinue: false` keeps the order
+above (shrink a few lines' worth, go on only when that is not enough).
+
 The ladder is deterministic: same input, same output; steps are tried in this order with fixed
 step sizes; ties break by template order. A change is confined to its page (or spread), except for
 continuation, which also touches the pages it adds.
@@ -477,8 +486,17 @@ panel (U8): «dinero grew 8 mm; gasto moved down 8 mm; the photo is at 92 %».
 
 `overflow.continueIn`: `'#frame'` (another frame of the same page; equivalent to `next`),
 `'next-page'` (the same frame on a following page built from `overflowTemplate`, or from the same
-template with only that frame filled), or `'template:<id>'`. The remaining content resumes from
-the `CalloutCut` cursor, re-broken at the new width. Marks: `overflow.mark` text (string, or the
+template with only that frame filled), `'template:<id>'`, or `'page:<id>'` (a jump, #917: a frame
+of the later page fence `::::page{id="<id>"}`, past the pages between; `'page:<id>#<frame>'` names
+the frame, and `<id>` may be `{attr.name}`, read from the sending fence, so one article template
+serves every article: `continueIn: 'page:{attr.sigue}'` with `::::page{template="articulo"
+sigue="p47"}`). The remaining content resumes from
+the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the running text is (#913,
+`frameCutRules`, for `next` chains and continuation alike): a heading never ends a piece
+(`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
+(`bodyText.avoidOrphansInLists` / `avoidWidowsInLists`; one when off), and a list of up to
+`bodyText.shortListMaxItems` items under `shortListSplit: 'avoid'` is not cut between items. When
+no cut allows it the piece ends before the heading or the list, or inside one of its items. Marks: `overflow.mark` text (string, or the
 localized default from the engine's continuation words, as tables' `continuesLines` uses: es
 «sigue», en «continued», …; `false` for none), set at the end of the cut piece. Added pages keep
 page numbering, running heads and parity rules (they are ordinary pages with `role:
@@ -639,9 +657,14 @@ Recorded where the implementation settles a point the sections above leave open,
   physical sheet (left page at 0), `#frame` anchors read the frames' physical boxes
   (`flowRectToPage`, which also fixes `#frame` decoration on single right-to-left pages), then
   `splitSpreadDecoration` keeps the blocks that reach each page's bleed box, moved onto its sheet.
-- **Not done:** spreads on vertical (`vertical-rl`) pages (the sheet is laid in physical
-  boxes, the flow is rotated); per-side `mirrored` for frames' outer-corner icons (the first page's
-  is used); running-head placeholders in a spread's decoration read the first page met.
+- **Vertical pages (#926):** the sheet is laid in the pages' flow frame, as single vertical
+  composed pages are; the second page follows the first along the flow's y (`SpreadAxis` `'y'`:
+  `spreadSheet`, `keepOffGutter` and `layoutComposedSpread` transpose), the physically right page
+  first; trim and bleed are the flow frame's (`designFramesOn`). The decoration stays physical; its
+  clip is the page's `sheetClip` mapped to the sheet (`composedSheetClipOnSheet`).
+- **Not done:** frames with their own `writingMode` (a horizontal card on a vertical spread);
+  per-side `mirrored` for frames' outer-corner icons (the first page's is used); running-head
+  placeholders in a spread's decoration read the first page met.
 
 ### 5.11 What P5 built (#858)
 
@@ -745,7 +768,10 @@ Recorded where the implementation settles a point the sections above leave open,
   fresh page after the last one laid (a spread target opens on the next verso, `breakToEvenPage`),
   laid with `layoutComposedPage` and `ComposedPageInput.continuing` (no memo).
 - **Receivers** (`composed/continuation.ts`, `assignReceivers`): the frame of the same name, else
-  the flow frame, else the first frame free; a continuation that finds none waits for another page
+  the flow frame, else the first frame free; a story threaded through a chain (the sending frame
+  has a frame before it, `ComposedContinuation.head`) goes on where its chain starts: the frame of
+  the chain head's name, else the flow frame, else the sending frame's name (#919), so a body
+  template of three threaded columns that goes on into itself fills all three on every added page; a continuation that finds none waits for another page
   of the same target. A receiver starts its chain on the added page (`chainPrev` ignores links into
   it) and its story starts at the cut. `continuationTemplate` patches the added page's template:
   the last frame of each receiver's chain goes on with the rule that brought the content unless it
@@ -754,6 +780,22 @@ Recorded where the implementation settles a point the sections above leave open,
   (`MAX_CONTINUATION_PAGES`, 16) nothing goes on and a remaining overflow is reported as
   `frameContinuationLimit` instead of `frameOverflow`. A receiver that takes none of its content
   (the cut does not move) does not go on: the step is reverted and `frameOverflow` lists `continue`.
+- **What the pages keep (#912).** A frame cut for another page gives its group's room first
+  (it yields down to its minimum before any other frame), so the frames after it keep their size.
+  Empty frames right after it in its stack (no story, not pinned: an answer space under an
+  activity box, `trailingFrames`) go with the rest when it lands on the same template laid again:
+  on the sending page they take no room, and on the added page they keep their size after the
+  frame that takes the content (`ComposedContinuation.trailing`). A frame that takes no room is
+  `VDTFrame.collapsed`, and decoration anchored to it (directly or through other elements) is not
+  drawn. On a template laid again, a group whose first frame collapses starts its remaining frames
+  where that frame was placed (`collapseFrames`), so the rest of a box does not land on the
+  page's kicker. A frame none of whose content fits draws nothing and takes no room (it is laid with
+  no height): the whole box goes on (its tab with it), never a tab and a mark over an empty piece.
+  The empty frames go with the rest only when there is a rest: a frame that holds all its content
+  once they leave keeps them after it, unless they then cannot keep their size under it, in which
+  case the whole box goes on with them. A frame that can go on and squeezes the frames after it in
+  its stack below their declared size (the stack reached the foot and its last frames were cut) is
+  treated by the ladder as content that does not fit (`squeezes`).
 - **Marks.** The frame cut for another page is laid in its style with `continuesMarkerEnabled` (the
   callout layouter's marker under a fragment that goes on): `overflow.mark` string, `false` (none),
   unset = the style's `continuesMarker`, resolved from `defaultTableContinuationStrings(locale)`
@@ -772,6 +814,53 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Reflowable / tagged.** The EPUB walk opens no section for a page with `continuationOf`: its
   blocks go on in the open stories (by container id), so the box is one frame and a cut paragraph
   one paragraph with the page break inside. Tagged PDF already joins by container id (one `Div`).
+
+### 5.13 What the findings round E1 built (#912, #913, #917, #919, #920)
+
+- **Ladder order (#920).** `fit.preferContinue` (default true): for a frame that can go on to
+  another page the ladder runs free, push, redistribute, continue, then scaleImages and shrinkText
+  (§5.4). The Sandbox template editor has the toggle.
+- **Receivers (#919).** `ComposedContinuation.head`: a threaded story goes on where its chain
+  starts (§5.12).
+- **Cuts (#913).** `frameCutRules` in `splitCalloutFragment` for frames (§5.6).
+- **What the pages keep (#912).** Yield-first, `trailingFrames`, `collapseFrames`,
+  `VDTFrame.collapsed`, whole-box moves (§5.12).
+- **Jumps (#917).** `continueInPage` / `resolveContinueIn` (`templates.ts`) read the target;
+  `continuesOffPage` counts it, so it is the ladder's continue step. `build.ts`
+  (`placeComposedPage`): `fenceById` maps the chapter's planned fences by their `id`; `route` keeps
+  a jumping continuation in `jumps` until that fence is placed, or, when no fence of that id comes
+  after the sending page, raises `continueTargetMissing` (WARNING_SINCE 1.37.0; `before` when the
+  fence is earlier) and sends it on as `'next-page'`. The receiving fence is laid with its own
+  stories plus the jumping ones (`assignJumpReceivers`: the frame `#<frame>` names, else the frame
+  of the sending chain head's name, else the first frame its own content leaves empty) and
+  `ComposedContinuationInput.jump`: its frames keep the fence's ids (`cp<n>:<name>`, no `~k`), the
+  receiving chain's end goes on as `'next-page'` (pages added after it, numbered from it), and a
+  story that finds no free frame goes on there too. Such a page is never memoised. The sending
+  frame gets `continuesTo`, its page's log a `continued` event with the jump page; the EPUB walk
+  and tagged PDF already join the pieces by container id.
+- **Page numbers in marks (#917, #925, #915).** `overflow.mark` may hold `{page}` (the page the
+  rest goes on on), and `overflow.fromMark` (new; the receiving frame's, else the sending frame's)
+  sets words at the head of the first piece a frame lays of a story that came from another page,
+  `{page}` being the page it comes from (`CalloutLayoutInput.continuedMark`, laid as the
+  continuation marker is, pagination furniture). Both are laid out with a guessed number of the
+  right width and tagged `VDTDesignTextBlock.pageMark`; once the pages are numbered `fillPageMarks`
+  (`build.ts`) writes the printed label of the page `continuesTo` / `continuedFrom` points to and
+  measures the lines again, keeping their alignment.
+
+### 5.14 Findings round E2 (#882)
+- **Empty frames in stacks (#911).** When the tiers have nothing more to give, a stack cuts its
+  frames from the foot up, each down to `GroupItem.floor` (its `minHeight`; a fixed height without
+  one keeps it), before any frame is clamped at the foot. A frame left below that least height
+  overflows by the cut (`boxShort` → `VDTFrame.overflowPx`), content or none, and climbs the ladder
+  and warns. Proposals skip empty frames for `lowerMin`, and give an empty frame its own `lowerMin`
+  instead of `raiseMax`/`continueNextPage`.
+- **Elastic rows (#927).** `rowH` is the tallest height the cards write (fixed, else `minHeight`);
+  the content's only when none writes one. Widths are negotiated there, then the row grows.
+- **Ruled frames (#914).** `composed/rules.ts`: rules on the box's `designOverlay` (laid-out
+  coordinates, lengths over the text scale); an empty frame keeps them on `VDTFrame.rules` and the
+  decoration step adds them (mapped through the flow, turned on vertical pages).
+- **Drop caps in frames (#922).** A story box (`FRAME_ATTR`) is not a box for `placesOf`; the box
+  typesetter stamps `VDTBlock.dropCap` and `offsetBlock` moves it.
 
 ## 6. Source map contract
 
@@ -843,6 +932,64 @@ programme. P12 (later) re-implements them on templates: each split cell becomes 
 holding the panel art, lettering stays positioned by the comics code. Every comics fixture and
 Cookbook comics recipe must render unchanged before and after.
 
+### 7.1 What P12 built (#885)
+
+- **The split generates frames** (`comics/frames.ts`, `comicFrameSpecs`). The cells of the split
+  tree (`comicGeometry`, unchanged) in reading order, each with its panel's `pad` taken off, and
+  each `inset` panel over the frame laid before it (layer 2; cells are layer 1), are the page's
+  frames; `layoutComicFrame` builds each panel from its frame. Names: the panel's `id` when no
+  frame before took it, else `p<k>` (k = place in panel order, from 1). Ids follow §6:
+  `cm<n>` for the comic (`n` = the comic fence's ordinal in its chapter, `:::page` and `:::strip`
+  counted together, stamped by the block parser as `ComicPageSource.fenceIndex`),
+  `cm<n>:<name>` for a frame (also `VDTComicPanel.frameId`), `cm<n>:<name>:b<order>` for a balloon
+  (`VDTComicBalloon.elementId`; `id` keeps its layout-order value for the Sandbox).
+- **Decision: polygon on the frame.** `VDTFrame` gains `polygon?` (set only when the outline is
+  not the box: a cell cut by a slanted line) and `panel?` (the index in `VDTComicPage.panels`,
+  which marks a generated frame; its `configPath` is `''`). Content is clipped to the polygon in
+  canvas, PDF and HTML; hit-testing reads it. The comic keeps `VDTComicPanel.polygon` for its own
+  painters, so frames are a record beside the panels, not a second painter: `VDTComicPage.frames`
+  (pages, spread halves and strips; `translateComicPage` moves them, a spread half rebuilds them
+  from its cut panels with `comicFramesFor`). The comics VDT and the HTML of every existing comic
+  are unchanged (harness: 125 comic chapters of the public presets and the Cookbook bundles, all
+  locales, full page JSON with only the new keys ignored, 0 diffs; preset parity 583 chapters, 0
+  diffs).
+- **Text panels** (`comics/textPanels.ts`). `::panel{text}` makes the body Markdown
+  (`ComicPanelSource.text`, no script items). The block parser reads each body with the same
+  parser on a copy of the text blanked before the body (offsets stay absolute; `:::` lines in the
+  body are blanked, since a comic's body ends at its first bare `:::`) and emits its blocks right
+  after the comic directive, so outline, index marks, warnings and the flow fallback see ordinary
+  blocks. `wrapComicTextPanels` (beside `wrapComposedPages`) puts each body in a story box of
+  `FRAME_STYLE_ID` keyed `comic:<panel>`; the comic page branch of `build.ts` sets each story
+  with `layoutComposedPage` over a one-frame template whose area is the panel's text area (the
+  panel's box inside its border plus `comics.lettering.inset`, or the box itself with `box`; in a
+  slanted cell the widest straight-sided box inside the polygon, `innerBox`),
+  `valign` → `verticalAlign`; ids are renamed `cp<n>:` → `cm<n>:`; the blocks go to `page.floats`
+  and `doc.blocks`, the frame record gets `blockIds`, `overflowPx`, `scale`. A `::resource` in a
+  story does not float (the float plan treats the text plans as composed pages). Not wrapped, so
+  set in the flow after the comic: strips, spreads, documents whose flow is vertical or mirrored
+  (`comicTextPanelsSupported`), comics inside a container.
+- **Paint order** (`comicPaintsUnderText`, `comicFramePaintOrder` in `composed/paint.ts`): on a
+  comic page holding text frames the panels are painted before the flow, the text frames after
+  the floats (their ids are in `composedFrameBlockIds`), the lettering after the flow; elsewhere
+  the comic paints whole as before. The HTML writes each text frame inside the comic's markup
+  after its panel's figure (`ComicHtmlPaint.overPanel`), `z-index:auto`. Tagged PDF reads a text
+  frame as one float after the comic's `Div`; the reflowable EPUB reads it after the panels.
+- **Box styles.** `::panel{box=<calloutStyle>}` maps the style's background, border colour and
+  width and radius onto the panel (its own `border`/`bg` win); on a text panel the frame draws the
+  box (frame style = that callout style) and the panel draws none. `VDTFrame.styleId` names it.
+- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout), `strip`,
+  `spread`, `flow`; `panel` = source index).
+- **Source map** (`comics/sourceMap.ts`, called from `sourceAt`, `elementsForSource`,
+  `findElement`): balloon glyph (`text`) → balloon (`box`) → frame → comic (`template`); picture
+  (`resource`) → frame → comic; a text panel's words answer through the flow path with the frame
+  and the comic appended. Sandbox: `comicTextFrameAt` (frameHit.ts), text frames in
+  `frameTools` (Content mode: click off words → caret at the text, double click → in-place
+  edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
+  (they are not in `page.composed`).
+- **Not done:** text panels on vertical or right-to-left pages, on strips and spreads; lines
+  following a slanted edge (they keep to the inner box); shrink-to-fit for text panels; reading a text
+  panel inside the comic's `Div` in tagged PDF; the comic frames in the template editor's views.
+
 ## 8. HTML and EPUB
 
 - Reflowable HTML/EPUB: reading order is Markdown order. A composed page becomes a `<section>` in
@@ -890,7 +1037,7 @@ placeholders. Decoration text elements follow the same rule.
 <tr><td>Determinism</td><td>Fixed ladder order and step sizes, template-order ties (§5.4).</td></tr>
 <tr><td>Scope of a change</td><td>Its page or spread, plus continuation pages (§5.4, §6).</td></tr>
 <tr><td>Rotation</td><td>Any angle per frame (content and box), drawn with a matrix in every backend as comic balloons are.</td></tr>
-<tr><td>Comics</td><td>Unchanged now, generated frames later (P12).</td></tr>
+<tr><td>Comics</td><td>The split generates frames; text panels and box styles (P12, §7.1).</td></tr>
 </table>
 
 ## 11. Issue map
@@ -899,4 +1046,4 @@ P2 #853 config types/validation (§2) · P3 #854 parser (§3) · P4 #855 layout 
 decoration, backends) · P14 #856 groups (§5.3, log) · P16 #857 source map and page-scoped relayout
 (§6) · P5 #858 ladder and warnings (§5.4, §5.7) · P15 #859 continuation (§5.6) · P6 #860 anchors
 and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours (§5.12) ·
-P12 #885 comics on frames (§7).
+P12 #885 comics on frames (§7, §7.1).

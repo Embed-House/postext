@@ -3,7 +3,7 @@ import type { LabelStyle, PageTemplate } from './composed/types';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
@@ -6186,7 +6186,21 @@ export interface ElementAnchor {
   edge: AnchorEdge;
 }
 
-export type ElementSize = 'auto' | 'fill' | Dimension;
+/** A size that runs from the element's anchor point to an edge of another
+ *  box (#928): `to` names it as an anchor does (`'container'`, `'page'`,
+ *  `'bleed'`, `'outer'`, `'#id'` of another element or, on a composed
+ *  page's decoration, of a frame or group) and `edge` which of its edges:
+ *  `'top'` / `'bottom'` for a height, `'left'` / `'right'` for a width. A
+ *  ground from the foot of a band down to the bleed:
+ *  `height: { to: 'bleed', edge: 'bottom' }`; it follows the band when the
+ *  band moves. The other side's edge (a width to `'top'`) reads as
+ *  `'fill'`; an edge behind the anchor point gives 0. */
+export interface ElementSizeTo {
+  to: ElementAnchor['to'];
+  edge: 'top' | 'bottom' | 'left' | 'right';
+}
+
+export type ElementSize = 'auto' | 'fill' | Dimension | ElementSizeTo;
 
 export interface ElementPlacement {
   anchor: ElementAnchor;
@@ -6453,6 +6467,20 @@ export interface DesignImageElement {
    *  picture's `alt` in HTML and a `Figure` with `/Alt` in a tagged PDF.
    *  Default `false`. */
   decorative?: boolean;
+  /** How the picture fills a box whose width and height are both set
+   *  (#923): `'contain'` (the default) fits the whole picture inside it,
+   *  centred; `'cover'` fills the box and crops what runs past it, as a
+   *  full-bleed photograph. A cover crop keeps the resource's `safeArea`
+   *  whole (where the box's shape cannot hold it, the smallest window that
+   *  does is shown, and the box is not filled on one axis); `focus` says
+   *  which point of the picture to centre. Ignored when a side is
+   *  `'auto'`. */
+  fit?: 'contain' | 'cover';
+  /** The point of the picture a `'cover'` crop centres, in fractions of
+   *  the picture (`{ x: 0.5, y: 0.3 }`: a face in the upper third), held
+   *  so the safe area stays in view. Default: the safe area's margins
+   *  cropped in proportion, else the centre. */
+  focus?: { x: number; y: number };
 }
 
 export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement;

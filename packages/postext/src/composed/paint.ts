@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import type { VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
+import { flowRectToPage, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -21,6 +21,8 @@ export type ComposedPaintItem =
 export function composedFrameBlockIds(page: VDTPage): Set<string> {
   const ids = new Set<string>();
   for (const f of page.composed?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  // A comic page's text panels (#885) are painted with their frames too.
+  for (const f of page.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
   return ids;
 }
 
@@ -29,6 +31,25 @@ export function composedFrameBlockIds(page: VDTPage): Set<string> {
  *  apart (a page painted through a flow frame, whose decoration stands on
  *  the sheet). */
 export type ComposedPaintPart = 'below' | 'above';
+
+/** The frames of a comic page that hold text (`::panel{text}`, #885), with
+ *  their blocks, in panel order: painted over the panels and under the
+ *  lettering ({@link comicPaintsUnderText}). Empty on any other page. */
+export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
+  const frames = page.comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
+  if (frames.length === 0) return [];
+  const byId = new Map<string, VDTBlock>();
+  for (const b of page.floats ?? []) byId.set(b.id, b);
+  return frames.map((frame) => ({ kind: 'frame' as const, frame, blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
+}
+
+/** Whether a page's comic holds text panels (#885): its panels are then
+ *  painted before the page's flow, the text frames after the floats, and
+ *  its lettering last, so the text lies over its panel's ground and under
+ *  the balloons. */
+export function comicPaintsUnderText(page: VDTPage): boolean {
+  return page.comic?.frames?.some((f) => f.blockIds.length > 0) === true;
+}
 
 /** The paint order of a composed page: frames of a layer below 0, the
  *  decoration (layer 0), then the frames of layer 0 and up; frames of
@@ -105,6 +126,15 @@ export function composedReadingOrder(paint: readonly ComposedPaintItem[]): Compo
  *  page. */
 export function composedSheetClip(page: Pick<VDTPage, 'composed'>): { x: number; y: number; width: number; height: number } | undefined {
   return page.composed?.sheetClip;
+}
+
+/** {@link composedSheetClip} on the sheet, for what a page paints there
+ *  rather than through its flow frame (the decoration of a vertical or
+ *  right-to-left page): the clip, in the page's flow coordinates, mapped
+ *  to the page (#926). The same box on any other page. */
+export function composedSheetClipOnSheet(page: Pick<VDTPage, 'composed' | 'flow'>): { x: number; y: number; width: number; height: number } | undefined {
+  const clip = page.composed?.sheetClip;
+  return clip ? flowRectToPage(page, clip) : undefined;
 }
 
 type Affine = [number, number, number, number, number, number];

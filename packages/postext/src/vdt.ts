@@ -2290,6 +2290,12 @@ export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
    *  PDF marks it an artifact and the HTML hides it from assistive
    *  technology, so the text is read once. */
   artifact?: boolean;
+  /** A continuation mark of a composed page's frame with a page number
+   *  (#917): its words as written, `{page}` the number of the page the
+   *  rest goes on on (`'to'`, `VDTFrame.continuesTo`) or comes from
+   *  (`'from'`, `VDTFrame.continuedFrom`). The build sets `lines` from it
+   *  once the pages are numbered. */
+  pageMark?: { text: string; page: 'to' | 'from' };
   /** The base direction of the block's text (`DesignTextElement.direction`,
    *  by default the document's) when it is right to left: its lines'
    *  runs were ordered at that paragraph level, and an HTML line takes
@@ -2372,6 +2378,11 @@ export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
    *  text, and for callout icons: such a picture is decoration (`alt=""`,
    *  an artifact). */
   altText?: string;
+  /** The part of the picture shown in `bbox` (fractions of the picture as
+   *  stored), for a `fit: 'cover'` element (#923): renderers draw the whole
+   *  picture over `uncroppedPictureBox(bbox, crop)` clipped to `bbox`.
+   *  Absent: the whole picture fills `bbox`. */
+  crop?: { x: number; y: number; width: number; height: number };
 }
 
 export type VDTDesignBlock =
@@ -2440,6 +2451,10 @@ export interface VDTComicPanel {
   index: number;
   /** The panel's `#id`, when it has one. */
   id?: string;
+  /** Id of the frame the split generated for the panel (#885,
+   *  `VDTComicPage.frames`): `cm<fence>:<name>`, the same in every locale
+   *  and across relayouts. */
+  frameId?: string;
   /** The panel's source: from its `::panel` line to the end of its last
    *  script line. */
   sourceStart: number;
@@ -2500,6 +2515,9 @@ export interface VDTComicSplitter {
  *  paint order. */
 export interface VDTComicBalloon {
   id: string;
+  /** Stable id (#885): `cm<fence>:<frame>:b<order>`, the same in every
+   *  locale and across relayouts (`id` counts panels of the layout). */
+  elementId?: string;
   panelIndex: number;
   order: number;
   /** What the script line is: a speaker's balloon, a caption, a sound
@@ -2631,6 +2649,13 @@ export interface VDTFrame {
    *  after it). */
   continuedFrom?: string;
   continuesTo?: string;
+  /** The frame takes no room on this page (#912): on a page added by
+   *  continuation that lays its template again for what goes on, a frame
+   *  that receives nothing; on the page content goes on from, an empty
+   *  frame that follows the frame cut in its stack (an answer space) and
+   *  goes with the rest to the added page. Decoration anchored to it is
+   *  not drawn. */
+  collapsed?: true;
   /** Ids of the blocks set in this frame (its box first), in
    *  `page.floats` and `doc.blocks`. */
   blockIds: string[];
@@ -2643,6 +2668,15 @@ export interface VDTFrame {
   sourceEnd?: number;
   /** Other frames' text wraps round this frame's box (`exclude: 'push'`). */
   push?: true;
+  /** The frame's outline when it is not `rect` (#885): a comic panel cut
+   *  by a slanted split line, a convex polygon, clockwise, sheet px. Its
+   *  content is clipped to it and a point hits the frame inside it. */
+  polygon?: VDTPoint[];
+  /** Set on a frame a comic page's split generated (#885): the index of
+   *  the panel it holds in `VDTComicPage.panels`. Such a frame comes from
+   *  the Markdown (its `configPath` is empty); the template editor leaves
+   *  it alone. */
+  panel?: number;
   /** On a page of a spread (#861), a frame crossing the spine that is
    *  read on the facing page (the one holding its centre): this page
    *  shows its half. The blocks are copies of the facing page's, moved
@@ -2652,6 +2686,11 @@ export interface VDTFrame {
    *  PDF as an artifact, the HTML hidden from assistive technology.
    *  `blockIds` is empty on such a frame. */
   facingBlocks?: VDTBlock[];
+  /** The ruled lines (`FrameConfig.rules`, #914) of a frame that holds no
+   *  box (no content, no style), in the page's flow coordinates: the
+   *  template's decoration paints them. A frame with a box carries them on
+   *  the box's `designOverlay`. */
+  rules?: VDTDesignRuleBlock[];
 }
 
 /** A composed page (`::::page{template}`, #846): the template it was set
@@ -2735,6 +2774,16 @@ export interface VDTComicPage {
   splitters: VDTComicSplitter[];
   /** Reading order, paint order. */
   balloons: VDTComicBalloon[];
+  /** Stable id of the comic (#885): `cm<n>`, `n` the comic fence's ordinal
+   *  in its chapter (`:::page` and `:::strip` counted together). */
+  id?: string;
+  /** The frames the split generates (#885, DESIGN §7): one per panel, in
+   *  panel order, each the panel's box (and `polygon` when slanted), with
+   *  the panel's id and source. A text panel's frame (`::panel{text}`)
+   *  lists the blocks its Markdown was set in (`blockIds`, in
+   *  `page.floats`), which backends paint over the panels, under the
+   *  lettering. */
+  frames?: VDTFrame[];
 }
 
 /** A column rule resolved to px and hex (see `VDTPage.columnRule`). */
@@ -3168,6 +3217,19 @@ export type ContentWarning = ContentWarningBase & (
     overflowMm: number;
     configPath: string;
   }
+  /** A frame's `overflow.continueIn: 'page:<id>'` (#917) names no page
+   *  fence `::::page{id=…}` after the fence the story is on (`target`, its
+   *  `{attr.x}` read; `before`: the fence is there, but before or at this
+   *  page): the rest goes on on the next page instead. */
+  | {
+    kind: 'continueTargetMissing';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    target: string;
+    before?: true;
+    configPath: string;
+  }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): `::::page{template spread}` names a template that is a single
    *  page (`fence: true`, `templateSpread: false`; it is laid as one
@@ -3363,6 +3425,15 @@ export type ContentWarning = ContentWarningBase & (
    *  tails point off the panel. Only raised on pages whose pictures mark
    *  anchors. Informational. Points at the first line of that speaker. */
   | { kind: 'comicUnknownSpeaker'; speaker: string }
+  /** A comic panel's frame (#885) cannot do what the panel asks. `reason`:
+   *  `'unknownBox'`, its `box` names no callout style (`style`): the panel
+   *  keeps its panel style; `'textOverflow'`, a text panel's Markdown does
+   *  not fit its frame (`overflowMm` did not): the rest is clipped;
+   *  `'strip'`, `'spread'`, `'flow'`, a text panel on a strip, on a
+   *  spread, or in a document whose flow is vertical or right to left: its
+   *  Markdown is set in the flow after the comic. `panel`: the panel's
+   *  place in the page's source (0-based). Points at the panel. */
+  | { kind: 'comicPanelFrame'; reason: 'unknownBox' | 'textOverflow' | 'strip' | 'spread' | 'flow'; panel: number; style?: string; overflowMm?: number }
   /** A line number set in the side column (`lineNumbers.position:
    *  'side'`, #621) overlaps a side box, a side caption or another float
    *  of that column: both are painted where they are. Points at the line
@@ -3376,9 +3447,12 @@ export type ContentWarning = ContentWarningBase & (
    *  too short for it; `'joiningScript'`, its first letter joins the next
    *  (Arabic, Syriac, N'Ko) and is not set apart; `'verticalText'`, drop
    *  caps are set in horizontal text only; `'noLetter'`, it opens with no
-   *  letter or digit to set large (a reference, a formula, a note mark).
+   *  letter or digit to set large (a reference, a formula, a note mark);
+   *  `'inBox'` (#922), a `:::paragraphs{dropcap}` group or a paragraph
+   *  style with a drop cap inside a `:::callout` box, where none is set
+   *  (a composed page's frames take them).
    *  `text` is the paragraph's first line. Found by the layout. */
-  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
+  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** `codeOverflow` (#624): a code listing has lines wider than its box,
    *  fitted as `codeStyle.overflow` says: turned over (`'wrap'`), set
    *  smaller (`'shrink'`, at `scale` of its size; past `minFontScale` its

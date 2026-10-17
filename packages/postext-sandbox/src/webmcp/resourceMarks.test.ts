@@ -23,7 +23,7 @@ describe('the marks of a picture', () => {
     // A zone is kept inside the picture.
     expect(resource.avoid).toEqual([{ x: 0.8, y: 0.8, width: 0.2, height: 0.1 }]);
     expect(resource.faces).toHaveLength(1);
-    expect(notes).toEqual(['The mouth or the head of tomás lies outside the safe area: a crop may hide it.']);
+    expect(notes).toEqual(['tomás lies outside the safe area: a crop may hide it.']);
   });
 
   it('change one kind at a time, and null removes it', () => {
@@ -57,5 +57,28 @@ describe('the marks of a picture', () => {
     expect(withMarks(video, { safeArea: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 } }).resource.safeArea).toBeDefined();
     expect(fail({ faces: [{ x: 0, y: 0, width: 0.2, height: 0.2 }] }, video)).toMatch(/A video's poster takes a safe area only, not faces/);
     expect(fail({ safeArea: null }, { ...video, video: { source: 'youtube' } })).toMatch(/This video has no poster/);
+  });
+});
+
+describe('the anchors of a map (#866)', () => {
+  it('keep their label fields, rounded as the dialog keeps them, and name label styles the design lacks', () => {
+    const { resource, notes } = withMarks(picture, {
+      anchors: [
+        { id: 'albar', x: 0.2, y: 0.4, style: ' capital ', align: 'start', verticalAlign: 'bottom', rotate: 12.345, width: 0.123456 },
+        { id: 'rio', x: 0.3, y: 0.5, style: 'rio' },
+      ],
+    }, ['capital']);
+    expect(resource.anchors).toEqual([
+      { id: 'albar', x: 0.2, y: 0.4, style: 'capital', align: 'start', verticalAlign: 'bottom', rotate: 12.35, width: 0.1235 },
+      { id: 'rio', x: 0.3, y: 0.5, style: 'rio' },
+    ]);
+    expect(notes).toEqual([expect.stringContaining('No label style "rio" in the design')]);
+  });
+
+  it('refuse label fields the engine cannot read', () => {
+    expect(() => withMarks(picture, { anchors: [{ id: 'a', x: 0.1, y: 0.1, align: 'left' as never }] })).toThrow(/align is start, center or end/);
+    expect(() => withMarks(picture, { anchors: [{ id: 'a', x: 0.1, y: 0.1, verticalAlign: 'baseline' as never }] })).toThrow(/verticalAlign/);
+    expect(() => withMarks(picture, { anchors: [{ id: 'a', x: 0.1, y: 0.1, width: 2 }] })).toThrow(/width is a fraction/);
+    expect(() => withMarks(picture, { anchors: [{ id: 'a', x: 0.1, y: 0.1, rotate: Number.NaN }] })).toThrow(/rotate/);
   });
 });

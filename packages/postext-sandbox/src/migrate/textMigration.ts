@@ -121,6 +121,8 @@ function ownStep(step: HistoryStepInfo | null, chapters: ReadonlySet<string>, de
   if (!step) return null;
   // The design step writes the templates and the heading styles.
   if (step.kind === 'config') return !designDone && (step.keys.includes('pageTemplates') || step.keys.includes('headingStyles')) ? 'design' : null;
+  // A picture's marks (#866) are no step of a migration.
+  if (step.kind === 'resource') return null;
   return chapters.has(step.chapterId) ? 'text' : null;
 }
 

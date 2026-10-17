@@ -135,6 +135,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>La sortida paginada talla la resta al peu d'aquell marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>L'<code>overflow.continueIn: 'page:&lt;id&gt;'</code> d'un marc no anomena cap tanca de pàgina posterior a la que conté la seva història (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quan aquella tanca va abans, <code>configPath</code>). El dona la maquetació, amb el <code>pageIndex</code> de la pàgina que envia.</td>
+      <td>La resta continua en una pàgina afegida darrere de la pàgina que envia, com amb <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L'obertura d'una pàgina composta i la seva plantilla no coincideixen en la doble pàgina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, l'<code>spread</code> de l'obertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una.</td>
@@ -196,7 +201,7 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Un paràgraf que comença amb una <a href="/ca/docs/configuration-text#caplletres">caplletra</a> i que no la pot portar tal com està configurada. <code>reason</code>: <code>'shortParagraph'</code> (té menys línies de les que baixa la inicial; <code>handling</code> és el que ha fet <code>shortParagraph</code>, <code>lines</code> les línies que abasta una inicial reduïda), <code>'split'</code> (es talla abans de l'última línia de la inicial, sol en una columna massa curta), <code>'joiningScript'</code> (la seva primera lletra s'enllaça amb la següent), <code>'verticalText'</code> o <code>'noLetter'</code> (comença amb una referència, una fórmula o una marca de nota). <code>text</code> és la seva primera línia.</td>
+      <td>Un paràgraf que comença amb una <a href="/ca/docs/configuration-text#caplletres">caplletra</a> i que no la pot portar tal com està configurada. <code>reason</code>: <code>'shortParagraph'</code> (té menys línies de les que baixa la inicial; <code>handling</code> és el que ha fet <code>shortParagraph</code>, <code>lines</code> les línies que abasta una inicial reduïda), <code>'split'</code> (es talla abans de l'última línia de la inicial, sol en una columna massa curta), <code>'joiningScript'</code> (la seva primera lletra s'enllaça amb la següent), <code>'verticalText'</code> o <code>'noLetter'</code> (comença amb una referència, una fórmula o una marca de nota). <code>text</code> és la seva primera línia. <code>'inBox'</code>: un grup <code>:::paragraphs</code> o un estil de paràgraf la demana dins d'un requadre <code>:::callout</code>, on no se'n posa cap.</td>
       <td>Es reserva l'espai, la inicial es redueix o es deixa fora, segons digui l'avís.</td>
     </tr>
     <tr>

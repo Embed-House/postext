@@ -634,6 +634,18 @@ Ein Element `image` zeichnet eine Bitmap- oder SVG-Ressource des Dokuments – d
       <td>Das Bild ist reine Dekoration (ein Ornament, ein Band): Es gibt keinen Alternativtext an die Ausgabe weiter, auch wenn seine Ressource einen hat (siehe unten).</td>
     </tr>
     <tr>
+      <td><code>fit</code></td>
+      <td><code>'contain' | 'cover'</code></td>
+      <td><code>'contain'</code></td>
+      <td>Mit gesetzter <code>width</code> und <code>height</code>: <code>'contain'</code> passt das ganze Bild zentriert in den Kasten ein; <code>'cover'</code> füllt den Kasten und beschneidet, was übersteht, wie ein randabfallendes Foto. Der Zuschnitt von <code>'cover'</code> lässt den sicheren Bereich der Ressource ganz (siehe <a href="/de/docs/document-format-resources">Ressourcen</a>); kann die Form des Kastens ihn nicht fassen, wird das kleinste Fenster gezeigt, das ihn fasst, und der Kasten bleibt in einer Richtung ungefüllt. Wird ignoriert, wenn eine Seite <code>'auto'</code> ist. Seit postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>focus</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>—</td>
+      <td>Der Punkt des Bildes, auf den der <code>'cover'</code>-Zuschnitt zentriert, in Bruchteilen des Bildes: <code>&#123; x: 0.5, y: 0.3 &#125;</code> für ein Gesicht im oberen Drittel. Der sichere Bereich bleibt dabei sichtbar. Ohne ihn werden die Ränder um den sicheren Bereich im Verhältnis ihrer Größe beschnitten, sonst wird das Bild zentriert.</td>
+    </tr>
+    <tr>
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>—</td>
@@ -676,7 +688,7 @@ interface ElementPlacement {
    *  content, so elements anchored to it stay attached, but a long text wraps or
    *  ellipsizes there — a running head can reserve room for the label hanging
    *  off it instead of squeezing that label out. */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
+  size?: { width?: Size; height?: Size; maxWidth?: Size }; // Size: Dimension | 'fill' | 'auto' | { to, edge }
 }
 ```
 
@@ -699,6 +711,12 @@ Eine elementrelative Kante zusammen mit `'container'`, `'page'` oder `'bleed'` u
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
+```
+
+Eine Größe kann auch bis zu einer Kante eines anderen Kastens reichen: `{ to, edge }`, wobei `to` den Kasten wie ein Anker benennt (`'container'`, `'page'`, `'bleed'`, `'outer'` oder `'#id'` eines anderen Elements und, in der Dekoration einer zusammengesetzten Seite, eines Rahmens oder einer Gruppe) und `edge` welche seiner Kanten: `'top'` oder `'bottom'` für eine Höhe, `'left'` oder `'right'` für eine Breite. Die Länge reicht vom Ankerpunkt des Elements bis zu dieser Kante, in der Richtung, in die das Element wächst; eine Kante hinter dem Ankerpunkt ergibt 0, eine Kante der anderen Achse oder ein Kasten, den es nicht gibt, wird als `'fill'` gelesen. Ein Grund vom Fuß eines Bandes bis zum Anschnitt bleibt so in der Vorlage und folgt dem Band, wenn es sich verschiebt. Seit postext 1.38:
+
+```json
+{ "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
 ```
 
 Bei eingeschalteten Schnittmarken wird alles, was ein Element über die Anschnittbox hinaus zeichnet, abgeschnitten (siehe [Schnittmarken](/de/docs/configuration-page-layout#schnittmarken)).

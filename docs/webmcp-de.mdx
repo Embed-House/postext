@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: ein Agent bei der Arbeit in der Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Was ein KI-Agent im Browser mit den 39 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
+  description: 'Was ein KI-Agent im Browser mit den 40 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
@@ -24,7 +24,7 @@ Oberfläche: Er liest das Buch, fordert ein Bild von Seite 12 an, setzt
 gewachsen ist, und nimmt die Änderung zurück. Er tut, was Sie mit dem Auge tun,
 und er tut es mit Ihrem Buch, in Ihrem Browser.
 
-Es gibt 39 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
+Es gibt 40 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
 sind, solange die Sandbox auf dem Bildschirm ist, und 8 Werkzeuge der Website,
 `site_*`, auf jeder Seite von postext.dev. Diese Seite ordnet sie nach dem, was
 Sie einen Agenten tun lassen würden, und zeigt für jedes den Aufruf.
@@ -41,7 +41,7 @@ Postext muss nichts installiert oder eingerichtet werden.
 WebMCP ist noch ein Entwurf. Chrome bietet es als Origin Trial an und hinter
 dem Flag `chrome://flags/#enable-webmcp-testing`. Die Werkzeuge folgen der
 Seite: Auf der Startseite oder in der Dokumentation hat der Agent die
-Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 39
+Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 40
 Werkzeuge `sandbox_*` hinzu.
 
 ### In jedem anderen Browser: `window.postextWebMcp`
@@ -430,6 +430,16 @@ Ressource um und standardmäßig auch jeden Verweis auf sie im Buch.
 vollständig (die Zellen einer Tabelle mit ihrer Formatierung, die Quelle eines
 SVG).
 
+Die `marks` eines Bildes tragen auch seine Anker. Bei einer Karte oder einem Schema sind das die Punkte, an denen seine `::label`-Zeilen stehen: eine `id`, `x` und `y` (Bruchteile des ganzen Bildes) und die Beschriftungsfelder, die eine dort gesetzte Beschriftung übernimmt (`style`, `align`, `verticalAlign`, `rotate`, `width`). Die Antwort weist auf einen Beschriftungsstil hin, den die Gestaltung nicht hat, und neue Markierungen einer Ressource sind ein Schritt des Verlaufs (`sandbox_undo` antwortet `kind: "resource"`).
+
+```jsonc
+// zwei Anker einer Karte mit ihren Beschriftungsstilen
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 In das Buch hochgeladene Schriften laufen über `sandbox_save_font`:
 
 ```json
@@ -575,6 +585,7 @@ erneut `sandbox_set_config` mit den Werten `from` der ersten Antwort.
 rund um ihre `line` und `sandbox_render_page` ihrer `page` →
 `sandbox_edit_text` oder `sandbox_set_config` → erneut `sandbox_get_warnings`,
 bis die Liste leer zurückkommt.
+Ein Rahmen einer zusammengesetzten Seite, der nicht passt, bringt seine Lösungen mit (`proposals`): `sandbox_apply_proposal` mit seinem `frame` und der Nummer einer Lösung wendet sie an, setzt das Kapitel neu und antwortet mit `fits`.
 
 **„Mach aus dieser Word-Datei ein Buch und gib mir das PDF.“**
 `sandbox_save_book` mit `action: "new_blank"` → `sandbox_import_word` mit
@@ -660,7 +671,7 @@ und das Schema jedes Werkzeugs liefert `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Rückfragen**: `sandbox_answer`.
-- **Die Prüfungen**: `sandbox_get_warnings`.
+- **Die Prüfungen**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
 
 ## Wenn Sie die Sandbox einbetten
 

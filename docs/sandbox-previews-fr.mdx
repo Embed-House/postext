@@ -54,6 +54,19 @@ Pour un livre en plusieurs langues, une barre au-dessus du canevas présente ses
 - Un clic sur une édition l’ouvre à la même page composée. La page est retrouvée par sa clôture `::::page` dans le chapitre, la même dans toutes les langues : vous restez sur cette page même si son numéro diffère dans l’autre édition, et le bloc sélectionné le reste. Sur toute autre page, le numéro de page est conservé.
 - **Côte à côte** montre le chapitre à l’écran à côté du même chapitre d’une autre édition (**à côté de** la choisit quand le livre en a plus de deux). Les deux colonnes montrent la même page et défilent ensemble ; **Défiler ensemble** désactive ce lien. Entre deux pages composées, les colonnes comptent à partir de la dernière page composée qu’elles partagent. Les blocs qui ne tiennent pas, ou dont le texte a été réduit, sont marqués dans les deux colonnes. L’autre édition n’est ici qu’en lecture : un clic sur une de ses pages ouvre cette édition à cette page.
 
+#### Ce qui a bougé, et pourquoi
+
+Sur une page composée, la mise en page peut modifier ce que dessine le modèle pour que le contenu tienne : un bloc grandit avec son texte, ceux qui le suivent dans son groupe descendent, un bloc cède de la hauteur à un autre, les images ou le texte sont composés plus petits, le reste continue sur une page ajoutée. **Recomposition**, dans la barre au-dessus du canevas (elle apparaît quand le chapitre a des pages composées), ouvre le panneau **Ce qui a bougé, et pourquoi** et marque ces changements sur les pages.
+
+- Le panneau reprend chaque page composée où quelque chose a changé et, sous un numéro, chaque bloc qui a changé, avec ses changements en toutes lettres : *dinero a grandi de 13,9 mm pour que son contenu tienne*, *gasto est descendu de 13,9 mm pour faire place à dinero*, *ahorro-fotos : ses images sont à 82,5 %*, *dinero continue page 9*. Un changement nomme sa cause quand il en a une : le bloc qui, en grandissant, a déplacé celui-ci, ou le pli d'une double page.
+- Sur la page, chacun de ces blocs porte une pastille au même numéro, avec ses changements en bref (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). Le bloc tel que le modèle le déclare est tracé en tirets, et des flèches vont de lui au bloc tel qu'il a été posé : une depuis son bord supérieur pour un déplacement, une à son pied ou à son bord de fin pour un changement de taille.
+- Survoler un bloc dans la liste le fait ressortir sur sa page ; un clic sur lui, ou sur l'en-tête d'une page, mène à cette page.
+- Un bloc qui ne tient toujours pas dit de combien, et ses solutions le suivent dans la liste sous forme de boutons (voir [le panneau des vérifications](/fr/docs/sandbox-design-checks)).
+
+Les phrases sont dans la langue de l'interface, chiffres compris (*13,9 mm*). Les marques ne sont tracées que sur le canevas : le PDF, l'impression et toute exportation les laissent de côté. Le navigateur se souvient si le panneau était ouvert.
+
+En mode **Maquette**, les blocs montrent aussi comment leur modèle les dimensionne : *auto* là où la hauteur suit le contenu (ou une hauteur fixe peut grandir jusqu'à son maximum), une ligne en tirets à travers le bloc à sa hauteur minimale et une autre à sa hauteur maximale, avec les valeurs dans une pastille au pied du bloc (*auto · min. 36 mm · max. 72 mm*), et une épingle sur le bloc qui garde sa boîte déclarée (`pin: true`) quoi que fassent les blocs voisins.
+
 ### Sélectionner sur la page
 
 Les pages et les éditeurs sont les deux faces d’un même livre : ce que l’on sélectionne sur une page est sélectionné dans le Markdown ou dans les réglages, et inversement. Cela fonctionne de la même façon sur le canevas, sur le Folio en mode **Sélectionner du texte** et sur les pages HTML, et une sélection faite dans un onglet est toujours là quand on en ouvre un autre.

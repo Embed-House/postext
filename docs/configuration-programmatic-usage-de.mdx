@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die paginierte Ausgabe schneidet den Rest am Fuß dieses Rahmens ab; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt er erhalten.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>Das <code>overflow.continueIn: 'page:&lt;id&gt;'</code> eines Rahmens nennt keine Seitenbegrenzung nach der, auf der sein Artikel steht (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code>, wenn diese Begrenzung früher steht, <code>configPath</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der sendenden Seite.</td>
+      <td>Der Rest läuft auf einer Seite weiter, die nach der sendenden Seite hinzukommt, wie bei <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
       <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Ein Absatz, den eine <a href="/de/docs/configuration-text#initialen">Initiale</a> eröffnet und der sie so, wie sie konfiguriert ist, nicht aufnehmen kann. <code>reason</code>: <code>'shortParagraph'</code> (weniger Zeilen, als die Initiale tief ist; <code>handling</code> ist, was <code>shortParagraph</code> getan hat, <code>lines</code> die Zeilen, die eine verkleinerte Initiale überspannt), <code>'split'</code> (er bricht vor der letzten Zeile der Initiale um, allein in einer zu kurzen Spalte), <code>'joiningScript'</code> (sein erster Buchstabe verbindet sich mit dem nächsten), <code>'verticalText'</code> oder <code>'noLetter'</code> (er beginnt mit einem Verweis, einer Formel oder einem Fußnotenzeichen). <code>text</code> ist seine erste Zeile.</td>
+      <td>Ein Absatz, den eine <a href="/de/docs/configuration-text#initialen">Initiale</a> eröffnet und der sie so, wie sie konfiguriert ist, nicht aufnehmen kann. <code>reason</code>: <code>'shortParagraph'</code> (weniger Zeilen, als die Initiale tief ist; <code>handling</code> ist, was <code>shortParagraph</code> getan hat, <code>lines</code> die Zeilen, die eine verkleinerte Initiale überspannt), <code>'split'</code> (er bricht vor der letzten Zeile der Initiale um, allein in einer zu kurzen Spalte), <code>'joiningScript'</code> (sein erster Buchstabe verbindet sich mit dem nächsten), <code>'verticalText'</code> oder <code>'noLetter'</code> (er beginnt mit einem Verweis, einer Formel oder einem Fußnotenzeichen). <code>text</code> ist seine erste Zeile. <code>'inBox'</code>: Eine <code>:::paragraphs</code>-Gruppe oder eine Absatzvorlage verlangt eine in einem <code>:::callout</code>-Kasten, wo keine gesetzt wird.</td>
       <td>Der Raum bleibt frei, die Initiale wird verkleinert oder weggelassen, wie die Warnung sagt.</td>
     </tr>
     <tr>

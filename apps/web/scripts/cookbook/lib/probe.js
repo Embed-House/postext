@@ -119,7 +119,9 @@ function pagesOf(build) {
   return out;
 }
 
-const round = (value, step = 1) => Math.round(value / step) * step;
+/** `value` to the nearest `step`, without the float noise of the product
+ *  (`Math.round(2.8 / 0.01) * 0.01` is 2.8000000000000003, #924). */
+const round = (value, step = 1) => Number((Math.round(value / step) * step).toPrecision(12));
 
 /** Resolves when no build has been recorded for `quietMs` (harness need H10). */
 export async function settle(quietMs = 500, maxMs = 10000) {
@@ -333,6 +335,15 @@ function fontsOf(owner, prefix) {
 }
 
 /** Blocks laid out on a page: columns, floats, margin notes, footnotes. */
+/** A page's first heading as the alt text names it, else its opener band's text. */
+function pageHeading(page, blocks) {
+  const headingBlock = blocks.find((b) => b.type === 'heading');
+  const heading = headingBlock ? (headingBlock.lines ?? []).map((l) => l.text).join(' ').trim() : '';
+  if (heading || !page.openerBand) return heading;
+  return (page.openerBand.blocks ?? []).filter((b) => b.kind === 'text')
+    .map((b) => (b.lines ?? []).map((l) => l.text).join(' ')).join(' ').trim().slice(0, 120);
+}
+
 function pageBlocks(page) {
   return [
     ...(page.columns ?? []).flatMap((column) => column.blocks ?? []),
@@ -716,12 +727,6 @@ function probePoints(r) {
   return [at(0.5, 0.5), at(0.25, 0.5), at(0.75, 0.5), at(0.5, 0.25), at(0.5, 0.75), at(0.15, 0.5), at(0.85, 0.5)];
 }
 
-/** A point of a frame's own coordinates on the sheet, through `frameMatrix`. */
-function onSheet(engine, frame, [x, y]) {
-  const m = frame && typeof engine.frameMatrix === 'function' ? engine.frameMatrix(frame) : undefined;
-  return m ? [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]] : [x, y];
-}
-
 /** The Markdown range an element of the source map holds or comes from. */
 function rangeOf(el) {
   const s = el?.source;
@@ -757,20 +762,15 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
       misses.push({ page: pageOf(page.index), level: 'template', id: `cp${composed.fenceIndex}`, text: `elementsForSource threw: ${error?.message ?? error}` });
       continue;
     }
-    const frameOfBlock = new Map();
-    for (const f of composed.frames ?? []) for (const id of f.blockIds ?? []) frameOfBlock.set(id, f);
     for (const { element: el } of matches) {
       const r = el.rect;
       if (!r || el.clipped || el.facing || el.rotate || r.width < 1 || r.height < 1) continue;
       const stat = (levels[el.level] ??= { checked: 0, missed: 0 });
       stat.checked++;
-      // A frame and a page are on the sheet already; what a frame holds is
-      // in the frame's own coordinates when its text was scaled.
-      const inner = !['frame', 'group', 'template', 'slot', 'design'].includes(el.level);
-      const frame = inner ? frameOfBlock.get(String(el.id).replace(/:(l\d+|label:.*)$/, '')) : undefined;
+      // Every rect is upright on the sheet, a scaled frame's lines too (the
+      // source map scales them back, #921), and sourceAt takes sheet points.
       const want = rangeOf(el);
-      const found = probePoints(r).some((point) => {
-        const [x, y] = onSheet(engine, frame, point);
+      const found = probePoints(r).some(([x, y]) => {
         let chain = [];
         try {
           chain = engine.sourceAt(doc, page.index, x, y) ?? [];
@@ -790,6 +790,23 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
     }
   }
   return { levels, misses };
+}
+
+/**
+ * How far a composed frame's box runs past the foot of its page's type area
+ * when the template's box for it (`declaredRect`) did not (#911), in mm; 0
+ * otherwise.
+ *
+ * @param {any} f
+ * @param {any} area
+ * @param {number} dpi
+ */
+function pushedOutMm(f, area, dpi) {
+  if (!f.declaredRect || !area) return 0;
+  const foot = area.y + area.height;
+  if (f.declaredRect.y + f.declaredRect.height > foot + 0.5) return 0;
+  const past = f.rect.y + f.rect.height - foot;
+  return past > 0.5 ? mmOf(past, dpi) : 0;
 }
 
 /**
@@ -826,17 +843,25 @@ export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdown
       if (!c) continue;
       pages.push({
         n: pageOf(page.index),
+        ...(docs.length > 1 ? { doc: d } : {}),
         template: c.template,
         fenceIndex: c.fenceIndex,
         frames: (c.frames ?? []).map((f) => ({
           name: f.name,
+          ...(f.id ? { id: f.id } : {}),
           heightMm: mmOf(f.rect.height, dpi),
+          // Its box in mm (x, y, width, height): C38 compares it with the
+          // run on the text as written (#925).
+          box: [mmOf(f.rect.x, dpi), mmOf(f.rect.y, dpi), mmOf(f.rect.width, dpi), mmOf(f.rect.height, dpi)],
           ...(f.overflowPx > 0 ? { overflowMm: mmOf(f.overflowPx, dpi) } : {}),
           ...(f.scale !== undefined && f.scale !== 1 ? { scale: round(f.scale, 0.001) } : {}),
           ...(f.imageScale !== undefined ? { imageScale: round(f.imageScale, 0.001) } : {}),
           ...(f.continuesTo ? { continuesTo: f.continuesTo } : {}),
           ...(f.continuedFrom ? { continuedFrom: f.continuedFrom } : {}),
           ...(f.sourceStart !== undefined ? { filled: true } : {}),
+          // A frame the reflow moved past the foot of the type area where
+          // the template had it inside (#911): an answer space pushed off.
+          ...(pushedOutMm(f, page.contentArea, dpi) > 0 ? { pushedOutMm: pushedOutMm(f, page.contentArea, dpi) } : {}),
         })),
         events: (c.log ?? []).map((e) => ({
           frame: e.frame, kind: e.kind,
@@ -1253,7 +1278,7 @@ export function facts({ select = 'last', hero = [] } = {}) {
     .map((w) => ({
       kind: w.kind,
       page: w.pageIndex === undefined ? null : nOf(doc, w.pageIndex),
-      detail: layoutDetail(w) ?? (w.kind === 'floatShrunk' ? `${w.resourceId} at ${Math.round(w.scale * 100)} %: ${w.overflowPx} px past the text block` : w.kind === 'codeOverflow' ? `${w.mode}: ${w.lines} line(s)${w.lang ? ` of ${w.lang}` : ''}` : w.kind === 'dropCap' ? `${w.reason}${w.handling ? ` (${w.handling})` : ''}: ${w.text}` : w.kind === 'textWrap' ? `${w.resourceId ?? `box ${w.box ?? ''}`.trim()}: ${w.reason}` : w.text ?? (w.kind === 'lineNumberOverlap' ? `line ${w.number}` : w.kind === 'tabInVerticalText' ? ':tab' : comicDetail(w))),
+      detail: layoutDetail(w) ?? (w.kind === 'floatShrunk' ? `${w.resourceId} at ${Math.round(w.scale * 100)} %: ${round(w.overflowPx, 0.1)} px past the text block` : w.kind === 'codeOverflow' ? `${w.mode}: ${w.lines} line(s)${w.lang ? ` of ${w.lang}` : ''}` : w.kind === 'dropCap' ? `${w.reason}${w.handling ? ` (${w.handling})` : ''}: ${w.text}` : w.kind === 'textWrap' ? `${w.resourceId ?? `box ${w.box ?? ''}`.trim()}: ${w.reason}` : w.text ?? (w.kind === 'lineNumberOverlap' ? `line ${w.number}` : w.kind === 'tabInVerticalText' ? ':tab' : comicDetail(w))),
     })));
   // C34: the justified lines the engine set ragged because their word
   // spaces would have stretched past 3× (#732), from the builds' own
@@ -1364,12 +1389,12 @@ export function facts({ select = 'last', hero = [] } = {}) {
     const area = (b) => (b?.bbox ? Math.max(0, b.bbox.width) * Math.max(0, b.bbox.height) : 0);
     const inColumns = columns.flatMap((c) => c.blocks ?? []).filter((b) => !(b.containerId !== undefined && !b.callout));
     const covered = inColumns.reduce((sum, b) => sum + area(b), 0) + (page.floats ?? []).reduce((s, b) => s + area(b), 0);
-    const headingBlock = blocks.find((b) => b.type === 'heading');
-    let heading = headingBlock ? (headingBlock.lines ?? []).map((l) => l.text).join(' ').trim() : '';
-    if (!heading && page.openerBand) {
-      heading = (page.openerBand.blocks ?? []).filter((b) => b.kind === 'text')
-        .map((b) => (b.lines ?? []).map((l) => l.text).join(' ')).join(' ').trim().slice(0, 120);
-    }
+    // A page added by a composed page's continuation (#915) is named after
+    // the page fence it continues, not after a heading in the middle of
+    // the box that goes on there.
+    const from = page.composed?.continuationOf;
+    const fencePage = from !== undefined ? (doc.pages ?? []).find((p) => p.index === from) : undefined;
+    const heading = pageHeading(fencePage ?? page, fencePage ? pageBlocks(fencePage) : blocks);
     const captions = blocks.filter((b) => b.resourceBlock?.captionLines?.length)
       .map((b) => b.resourceBlock.captionLines.map((l) => l.text).join(' ').trim());
     const entry = {
@@ -1380,6 +1405,7 @@ export function facts({ select = 'last', hero = [] } = {}) {
       coverage: colArea ? Math.min(1, covered / colArea) : 1,
       h1: blocks.some((b) => b.type === 'heading' && b.headingLevel === 1),
       heading, captions,
+      ...(fencePage ? { continued: true } : {}),
     };
     if (heroSet.has(n)) entry.legibility = legibility(page, doc, blocks, resolved);
     return entry;

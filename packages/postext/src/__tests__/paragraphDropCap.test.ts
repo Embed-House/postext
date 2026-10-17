@@ -359,6 +359,46 @@ describe('which paragraphs open with one (#623)', () => {
   });
 });
 
+describe('drop caps in a composed page’s frames (#922)', () => {
+  const cfg = (extra: Partial<PostextConfig> = {}) => config({
+    paragraphStyles: [{ id: 'abre', dropCap: { lines: 3 } }],
+    calloutStyles: [{ id: 'box', title: 'Box' }],
+    pageTemplates: [{ id: 'feature', frames: [
+      { name: 'titulo', takes: 'h1' },
+      { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' } } },
+    ] }],
+    ...extra,
+  });
+  const page = (body: string) => `::::page{template="feature"}\n\n# One\n\n${body}\n\n::::`;
+
+  it('a :::paragraphs{dropcap} group in the flow frame opens with its initial, beside the lines it sinks', () => {
+    const doc = build(page(`:::paragraphs{style="abre" dropcap}\n${TEXT}\n\n${SECOND}\n:::`), cfg());
+    const frame = doc.pages.find((p) => p.composed)!.composed!.frames.find((f) => f.name === 'texto')!;
+    const ps = paragraphs(doc).filter((b) => frame.blockIds.includes(b.id));
+    const p = ps[0]!;
+    expect(p.dropCap).toBeDefined();
+    expect(p.dropCap!.text).toBe('L');
+    expect(p.dropCap!.lines).toBe(3);
+    // In the frame's box, on the left of its lines, on line 3's baseline.
+    expect(p.dropCap!.x).toBeCloseTo(p.bbox.x, 6);
+    expect(p.dropCap!.baselineY).toBeCloseTo(p.lines[2]!.baseline, 6);
+    for (const line of p.lines.slice(0, 3)) expect(line.bbox.x - p.bbox.x).toBeCloseTo(p.dropCap!.width + 1.5, 6);
+    expect(ps[1]!.dropCap).toBeUndefined();
+    expect(capWarnings(doc)).toEqual([]);
+    // Painted: the HTML draws the initial.
+    expect(renderToHtml(doc)).toContain('>L<');
+  });
+
+  it('a group asked for a drop cap inside a :::callout box is set without one and says so', () => {
+    const doc = build(`:::callout{type="box"}\n:::paragraphs{style="abre" dropcap}\n${TEXT}\n:::\n:::\n\n${SECOND}`, cfg());
+    expect(doc.blocks.filter((b) => b.dropCap)).toHaveLength(0);
+    expect(capWarnings(doc)).toEqual([expect.objectContaining({ reason: 'inBox' })]);
+    // A heading level's drop cap does not reach into a box, and asks nothing.
+    const levels = build(`# One\n\n:::callout{type="box"}\n${TEXT}\n:::`, withCap({ lines: 3 }, { calloutStyles: [{ id: 'box', title: 'Box' }] }));
+    expect(capWarnings(levels)).toEqual([]);
+  });
+});
+
 describe('scripts (#623)', () => {
   it('an Arabic letter that joins the next gets no initial, and a warning', () => {
     const doc = build('# One\n\nبسم الله الرحمن الرحيم، هذا كتاب يقرأ من اليمين إلى اليسار في سطور كثيرة.', withCap({ lines: 3 }, { direction: 'rtl', locale: 'ar' }));

@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>ページ単位の出力では、残りがその枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>枠の<code>overflow.continueIn: 'page:&lt;id&gt;'</code>が、記事のあるページフェンスより後ろのどのページフェンスも指していない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>target</code>、そのフェンスが前にあるときは<code>before</code>、<code>configPath</code>）。割り付けが出す警告で、送り出したページの<code>pageIndex</code>が付きます。</td>
+      <td>残りは、<code>'next-page'</code>と同じく、送り出したページの後に加えるページに続きます。</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>テンプレートページの開始行とテンプレートで見開きの指定が食い違っています（<code>template</code>、<code>fenceIndex</code>。<code>fence</code>は開始行の<code>spread</code>、<code>templateSpread</code>はテンプレートの指定）。</td>
       <td>テンプレートに従います。見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。</td>
@@ -196,7 +201,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td><a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>で始まる段落が、設定どおりにそれを組めない。<code>reason</code>は、<code>'shortParagraph'</code>（頭文字が沈む行数より段落の行が少ない。<code>handling</code>は<code>shortParagraph</code>が行った処理、<code>lines</code>は縮めた頭文字がまたがる行数）、<code>'split'</code>（短すぎる段に単独で置かれ、頭文字の最後の行より前で分割される）、<code>'joiningScript'</code>（最初の文字が次の文字と連結する）、<code>'verticalText'</code>、<code>'noLetter'</code>（参照、数式、注の印で始まる）のいずれかです。<code>text</code>はその1行目です。</td>
+      <td><a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>で始まる段落が、設定どおりにそれを組めない。<code>reason</code>は、<code>'shortParagraph'</code>（頭文字が沈む行数より段落の行が少ない。<code>handling</code>は<code>shortParagraph</code>が行った処理、<code>lines</code>は縮めた頭文字がまたがる行数）、<code>'split'</code>（短すぎる段に単独で置かれ、頭文字の最後の行より前で分割される）、<code>'joiningScript'</code>（最初の文字が次の文字と連結する）、<code>'verticalText'</code>、<code>'noLetter'</code>（参照、数式、注の印で始まる）のいずれかです。<code>text</code>はその1行目です。 <code>'inBox'</code>：<code>:::paragraphs</code>のグループか段落スタイルが、ドロップキャップを付けない<code>:::callout</code>の囲みの中でそれを求めた。</td>
       <td>警告が示すとおり、スペースが確保されるか、頭文字が縮むか、頭文字が省かれます。</td>
     </tr>
     <tr>

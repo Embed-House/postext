@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：Sandboxで作業するエージェント',
   sidebarTitle: 'WebMCP',
-  description: 'ブラウザーで動くAIエージェントが、39のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
+  description: 'ブラウザーで動くAIエージェントが、40のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
   lang: 'ja',
   lastUpdated: '2026-10-17',
   readingTime: '13分',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [Sandbox](/ja/docs/sandbox)は、[WebMCP](https://webmachinelearning.github.io/webmcp/)を通じてエージェントに専用のツールを渡します。WebMCPはWeb標準の草案で、ページがブラウザーとやり取りしているAIモデルにツールを渡せるようにするものです。エージェントはこのツールを使うので、画面をクリックしてたどる必要がありません。本を読み、12ページの画像を求め、`bodyText.fontSize`を10.5 ptにし、章が18ページから19ページに増えたのを見て、元に戻します。人が目で確かめながらすることを、あなたの本に対して、あなたのブラウザーの中で行います。
 
-ツールは、名前が`sandbox_`で始まるものが39個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
+ツールは、名前が`sandbox_`で始まるものが40個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
 
 ## エージェントをつなぐ
 
@@ -25,7 +25,7 @@ export const metadata = {
 
 ツールはSandboxがマウントされたときに`document.modelContext`に登録され、Sandboxを離れると取り下げられます。ブラウザーからページのツールを受け取るエージェントは、そこでツールを見つけます。Postext側でインストールや設定をするものはありません。
 
-WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると37個の`sandbox_*`のツールが加わります。
+WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると40個の`sandbox_*`のツールが加わります。
 
 ### そのほかのブラウザー：`window.postextWebMcp`
 
@@ -317,6 +317,16 @@ await browser.close();
 
 答えには、保存されたレコードと、それを配置する行`::resource{id="prices"}`が入ります。エージェントはこの行を`sandbox_edit_text`で本文に書き込みます。既存の`id`に対して呼ぶと、渡したものだけが変わります。キャプション、表のセル、配置、画像のセーフエリアなどです。`newId`はリソースの名前を変え、既定では本の中のそのリソースへの参照もすべて書き換えます。`sandbox_list_resources`はリソースを一覧にし、`id`を渡すとその1つを詳しく返します（表なら書式付きのセル、SVGならそのソース）。
 
+画像の `marks` にはアンカーも含まれます。地図や図解では、`::label` 行を置く点のことで、`id`、`x` と `y`（画像全体に対する割合）、そこに置くラベルが引き継ぐラベル設定（`style`、`align`、`verticalAlign`、`rotate`、`width`）を持ちます。デザインにないラベルスタイルは回答で指摘され、リソースの新しいマークは履歴の1ステップになります（`sandbox_undo` は `kind: "resource"` を返します）。
+
+```jsonc
+// 地図の2つのアンカーとそのラベルスタイル
+{ "id": "map", "marks": { "anchors": [
+  { "id": "albar", "x": 0.19, "y": 0.41, "style": "city", "verticalAlign": "bottom" },
+  { "id": "senne", "x": 0.22, "y": 0.54, "style": "river", "rotate": 68 }
+] } }
+```
+
 本にアップロードするフォントは`sandbox_save_font`で扱います。
 
 ```json
@@ -412,7 +422,7 @@ await browser.close();
 
 **「本文を少し大きくして。ただし本は220ページ未満に収めて」**：`sandbox_get_state`（212ページ）→ `bodyText.fontSize`を`"10.5pt"`にする`sandbox_set_config`（219ページ）→ 文字の詰まったページを`sandbox_render_page`で描いて確かめる → `category: "typesetting"`を渡した`sandbox_get_warnings`で新しいウィドウを探す → うまくいかなければ、最初の答えの`from`の値でもう一度`sandbox_set_config`。
 
-**「第4章で検査が見つけたものを直して」**：`chapter: 4`を渡した`sandbox_get_warnings` → 警告ごとに、その`line`の周りを`sandbox_read_text`で読み、その`page`を`sandbox_render_page`で描く → `sandbox_edit_text`または`sandbox_set_config` → 空の答えが返るまで、もう一度`sandbox_get_warnings`。
+**「第4章で検査が見つけたものを直して」**：`chapter: 4`を渡した`sandbox_get_warnings` → 警告ごとに、その`line`の周りを`sandbox_read_text`で読み、その`page`を`sandbox_render_page`で描く → `sandbox_edit_text`または`sandbox_set_config` → 空の答えが返るまで、もう一度`sandbox_get_warnings`。 テンプレートページで収まらない枠には解決策（`proposals`）が付きます。`sandbox_apply_proposal`にその`frame`と解決策の番号を渡すと適用され、章が組み直され、収まったかどうかが`fits`で返ります。
 
 **「このWordファイルから本を作って、PDFをちょうだい」**：`action: "new_blank"`を渡した`sandbox_save_book` → `dryRun: true`を渡した`sandbox_import_word` → `mapping`を直し、`destination: "book"`で本番の読み込み → `scope: "book"`を渡した`sandbox_get_warnings` → `format: "pdf"`と`scope: "book"`を渡した`sandbox_export`。
 
@@ -458,7 +468,7 @@ Sandboxが登録するときのまとまりで並べています。各ツール�
 - **本とファイル**：`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_delete_book`、`sandbox_import_book`、`sandbox_export`。
 - **Word**：`sandbox_import_word`、`sandbox_word_templates`。
 - **確認**：`sandbox_answer`。
-- **検査**：`sandbox_get_warnings`。
+- **検査**：`sandbox_get_warnings`、`sandbox_apply_proposal`。
 
 ## Sandboxを埋め込むとき
 

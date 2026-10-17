@@ -273,13 +273,19 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>ninguno</td>
-      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta, a partir de <code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una página de esa plantilla: su marco del mismo nombre o, si no lo tiene, su marco de flujo). Un marco de una página añadida sin regla propia sigue con la regla que trajo el contenido, hasta 16 páginas añadidas.</td>
+      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta, a partir de <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una página de esa plantilla: su marco del mismo nombre o, si no lo tiene, su marco de flujo) o <code>'page:&lt;id&gt;'</code> (un marco de la valla de página posterior <code>::::page&#123;id=…&#125;</code>: el que nombra <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> o, si no, uno que su propio contenido deja vacío; <code>&lt;id&gt;</code> puede ser <code>&#123;attr.name&#125;</code>, leído de la valla de página; véase <a href="/es/docs/composed-pages#saltar-a-una-página-posterior">Páginas compuestas › Saltar a una página posterior</a>). Un marco de una página añadida sin regla propia sigue con la regla que trajo el contenido (después de un salto, <code>'next-page'</code>), hasta 16 páginas añadidas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la del idioma</td>
-      <td>La marca al final de un trozo cortado para otra página. Sin fijar, el <code>continuesMarker</code> del estilo del marco, que sigue el idioma del documento («Continued», «Continúa», «À suivre»…, las palabras que usan las tablas partidas); una cadena pone esas palabras; <code>false</code> no pone ninguna. Un marco encadenado con <code>next</code> en la misma página no lleva marca.</td>
+      <td>La marca al final de un trozo cortado para otra página. Sin fijar, el <code>continuesMarker</code> del estilo del marco, que sigue el idioma del documento («Continued», «Continúa», «À suivre»…, las palabras que usan las tablas partidas); una cadena pone esas palabras, donde <code>&#123;page&#125;</code> es el número de la página en la que sigue el resto; <code>false</code> no pone ninguna. Un marco encadenado con <code>next</code> en la misma página no lleva marca.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Palabras que se ponen en la cabeza del trozo en la página en la que sigue el contenido, donde <code>&#123;page&#125;</code> es el número de la página de la que viene (<code>"Viene de la página &#123;page&#125;"</code>). El del marco que recibe tiene prioridad sobre el del marco que envía.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Si las imágenes del marco y de los demás marcos de su grupo se pueden componer más pequeñas cuando el contenido de este marco no cabe, y hasta qué escala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un marco cuyo <code>overflow.continueIn</code> envía el contenido a otra página sigue allí antes de que sus imágenes y su texto se compongan más pequeños, de modo que una historia conserva el mismo tamaño de una página a otra. <code>false</code>: primero se reducen, y el marco solo sigue en otra página cuando eso no basta.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -324,6 +336,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td>En una doble página, el marco puede cruzar la banda del lomo. Su texto se lee en la página que contiene su centro; la página de enfrente pinta su mitad.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Líneas pautadas a lo ancho de la caja de contenido del marco: una al pie de cada línea, tantas como quepan en su altura. <code>every</code> es el paso, <code>'line'</code> (por defecto: el interlineado del texto del marco) o una medida; <code>color</code> es un gris medio por defecto, <code>width</code> el grosor (0,5 pt), <code>inset</code> el margen que queda en cada extremo de la línea, o <code>&#123; left, right &#125;</code>. Véase Marcos pautados, más abajo. Desde postext 1.38.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>los de la página</td>
@@ -337,6 +355,24 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
     </tr>
   </tbody>
 </table>
+
+**Marcos pautados.** Un espacio de respuesta de un cuaderno de actividades es un marco con `rules`: sus líneas siguen su altura, así que es el Markdown el que decide cuántas hay. Un marco vacío de altura fija recibe las líneas que le caben; un marco `'auto'` que recibe `:::space{lines=4}` recibe cuatro, y un marco que crece con su texto recibe más. Las líneas se dibujan sobre el fondo del marco y bajo su texto, en el lienzo, en el HTML, en el PDF y en el EPUB de maquetación fija; el inspector de marcos del Sandbox las activa en Aspecto.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Grupos
 
@@ -405,10 +441,10 @@ Un marco declara su tamaño: una `height` fija, o `'auto'`, la altura de lo que 
 
 - Un grupo sin `placement` ni `grid` propios empieza donde lo deja la colocación de su primer marco y baja todo lo que necesiten sus marcos, hasta el pie del área de la plantilla. Cuando un marco crece, los que van detrás bajan lo mismo.
 - Un grupo con caja propia coloca sus marcos dentro de ella. Si necesitan más de lo que cabe, los marcos con `shrink` mayor que 0 devuelven espacio, primero los de `priority` más baja; los de la misma prioridad ceden en proporción a su `shrink`, y ninguno baja de su `minHeight`. El espacio sobrante va a los marcos con `grow` mayor que 0, en proporción, hasta su `maxHeight`; si no hay ninguno, `align` coloca los marcos (`'end'` al pie, `'center'`, `'space-between'`). Un marco del grupo sin colocación propia toma la caja del grupo como área.
-- Cuando ya no puede ceder nadie, ningún marco pasa del pie del grupo: el marco cuyo contenido no cabe recorre la escalera de ajuste (véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)), y lo que aun así no cabe se corta ahí y se avisa con `frameOverflow`.
+- Cuando ya no puede ceder nadie, ceden primero los marcos más cercanos al pie del grupo, cada uno hasta su `minHeight`; un marco de altura fija la conserva, así que un espacio de respuesta vacío o el hueco de una imagen bajo una caja que crece se queda en la página y es el texto de la caja el que cede. Ningún marco pasa del pie del grupo: el marco cuyo contenido no cabe recorre la escalera de ajuste (véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)), y lo que aun así no cabe se corta ahí y se avisa con `frameOverflow`. Un marco recortado por debajo de su `minHeight` o de su altura fija también se avisa, tenga contenido o no.
 - Un marco con `height: 'fill'` pide su `minHeight` y toma espacio sobrante como si tuviera `grow: 1`.
 
-**Fila.** Los marcos de una fila van uno al lado de otro con su anchura declarada y todos con la altura de la fila: la de la caja del grupo o, si el grupo no tiene caja propia, la mayor altura declarada de sus marcos (un marco de altura fija conserva la suya). Cuando el texto de un marco pasa de la altura de la fila, el marco gana anchura: primero la que sobra en la fila y después la de los hermanos con `shrink` mayor que 0, primero los de `priority` más baja, sin dejar a ninguno más estrecho que la anchura en la que todavía cabe su propio texto. Toma los milímetros enteros justos para que el texto quepa; si ni con todo el espacio disponible cabría, no toma nada, y una fila sin caja propia crece en altura. La anchura sobrante va a los marcos con `grow` mayor que 0 y después a `align`. Las filas se colocan de izquierda a derecha.
+**Fila.** Los marcos de una fila van uno al lado de otro con su anchura declarada y todos con la altura de la fila: la de la caja del grupo o, si el grupo no tiene caja propia, la mayor altura que escriben sus marcos: una `height` fija o, si no, su `minHeight` (un marco `'auto'` no declara más), o, si no escriben ninguna, la del contenido más alto (un marco de altura fija conserva la suya). Cuando el texto de un marco pasa de la altura de la fila, el marco gana anchura: primero la que sobra en la fila y después la de los hermanos con `shrink` mayor que 0, primero los de `priority` más baja, sin dejar a ninguno más estrecho que la anchura en la que todavía cabe su propio texto. Toma los milímetros enteros justos para que el texto quepa; si ni con todo el espacio disponible cabría, no toma nada, y una fila sin caja propia crece en altura. Así, unas tarjetas con `height: 'auto'` y un `minHeight` se reparten la anchura a esa altura, y la fila solo crece cuando ninguna tiene anchura que dar. La anchura sobrante va a los marcos con `grow` mayor que 0 y después a `align`. Las filas se colocan de izquierda a derecha.
 
 **Fijados.** Un marco con `pin: true` conserva la caja que le declara la plantilla aunque crezca o se mueva el marco al que está anclado: una caja dibujada sobre la ilustración sigue encima de ella. Dentro de un grupo, un marco fijado mantiene su sitio y los demás pasan de largo, con `gap` a cada lado; un marco fijado fuera del grupo hace lo mismo con los marcos del grupo que pisaría.
 
@@ -457,7 +493,7 @@ Cuando el contenido de un marco es más alto que el sitio que le da su grupo, la
 - `minHeight` en los demás marcos del grupo: hasta dónde devuelven espacio; un marco nunca baja de lo que necesita su propio contenido.
 - `fit.scaleImages` y `fit.imageMinScale`: si las imágenes del marco y de su grupo se pueden componer más pequeñas, y hasta qué escala (80 % por defecto).
 - `fit.shrinkText` y `fit.minScale`: si el texto del marco se puede componer más pequeño, y hasta qué escala (90 % por defecto). La escala es la misma para el cuerpo, el interlineado y los espacios; el marco conserva su tamaño.
-- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta: en otro marco o en una página añadida detrás de esta (`'next-page'`, `'template:<id>'`), donde el texto sigue a tamaño completo después de la `overflow.mark` del trozo.
+- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta: en otro marco o en otra página (`'next-page'`, `'template:<id>'`, `'page:<id>'`), donde el texto sigue a tamaño completo después de la `overflow.mark` del trozo. Un marco que puede seguir en otra página lo hace antes de que sus imágenes y su texto se compongan más pequeños, salvo que su `fit.preferContinue` sea `false`.
 
 Las escalas van en pasos del 2,5 % y la maquetación toma la mayor con la que cabe, así que un texto al que le sobra una línea se compone al 97,5 %, no al mínimo. Una caja que debe conservar su cuerpo de letra lleva `fit: { shrinkText: false }`; en una página cuyas imágenes deben conservar su tamaño, los marcos de su grupo llevan `fit: { scaleImages: false }`:
 
@@ -493,7 +529,7 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next` y `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) con `overflow.mark`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants` y el `overflowTemplate` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` y `overflow.fromMark`, y su `fit` (la reducción del texto y de las imágenes en la escalera de reajuste, véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)); el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo, véase [Cómo se reparten el espacio los grupos](#cómo-se-reparten-el-espacio-los-grupos)); y el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants`, `spread` y el `overflowTemplate` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
 
 ### Dobles páginas
 
@@ -521,6 +557,8 @@ pageTemplates: [{
 ```
 
 Un espacio entre columnas más ancho que el `gutter` mantiene las fichas de una rejilla simétrica lejos del lomo, así que ninguna se mueve. La segunda banda y la tira de dibujos ponen `crossGutter` para cruzarlo: cada una se lee en la página que contiene su centro y se pinta en las dos. Todas las palabras de la página, también los nombres de las edades de las pestañas, se quedan en el Markdown.
+
+En un libro vertical (`vertical-rl`) la doble página se compone en el marco del flujo de las páginas, como sus páginas compuestas sueltas: lo alto de la página es el borde derecho del pliego y las líneas bajan, así que la `x` de la plantilla baja por el pliego y su `y` va del borde derecho del pliego al izquierdo. El pliego es la página derecha seguida de la izquierda a lo largo de `y`, el lomo es una línea que cruza la plantilla, y `gutter`, `crossGutter` y el corte entre las páginas leen ese eje; la decoración se sigue componiendo sobre el pliego físico y se corta en el lomo. Una línea del tiempo horizontal dibujada para un libro horizontal sale girada en uno vertical: escribe la plantilla de un libro vertical en el marco de su flujo. Desde postext 1.38.
 
 ## Estilos de rótulo
 
@@ -731,8 +769,8 @@ Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> no nombra ningún marco de la plantilla; un <code>overflow.continueIn</code> no nombra ningún marco (<code>'#x'</code>) ni ninguna plantilla (<code>'template:x'</code>), o no tiene ninguna de las formas <code>'#frame'</code>, <code>'next-page'</code> y <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no nombra ninguna plantilla. El contenido que no cabe no continúa allí.</td>
-      <td>Corrige el nombre o el id, o escribe una de las tres formas.</td>
+      <td>Un <code>next</code> no nombra ningún marco de la plantilla; un <code>overflow.continueIn</code> no nombra ningún marco (<code>'#x'</code>) ni ninguna plantilla (<code>'template:x'</code>), o no tiene ninguna de las formas <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> y <code>'page:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no nombra ninguna plantilla. El contenido que no cabe no continúa allí.</td>
+      <td>Corrige el nombre o el id, o escribe una de las cuatro formas.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>
