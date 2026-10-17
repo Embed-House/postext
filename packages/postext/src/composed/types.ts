@@ -236,10 +236,13 @@ export interface LabelStyle {
   fontFamily?: string;
   fontSize?: Dimension;
   fontWeight?: number;
-  /** Default `'normal'`. */
+  /** Default `'normal'`. Written, `'normal'` also switches off the slant
+   *  of a borrowed `paragraphStyle` (#955); left out, that style's slant
+   *  holds. */
   fontStyle?: 'normal' | 'italic';
   color?: ColorValue;
-  /** Default `'none'`. */
+  /** Default `'none'`. Written, `'none'` also switches off the capitals
+   *  of a borrowed `paragraphStyle` (#955). */
   textTransform?: 'none' | 'uppercase';
   letterSpacing?: number;
   halo?: { color: ColorValue; width: Dimension };
@@ -371,8 +374,10 @@ export interface ResolvedPageTemplate {
 }
 
 export interface ResolvedLabelStyle extends LabelStyle {
-  fontStyle: 'normal' | 'italic';
-  textTransform: 'none' | 'uppercase';
+  /** Left out when the style does not say: a borrowed paragraph style's
+   *  slant holds then, while `'normal'` written overrides it (#955). */
+  fontStyle?: 'normal' | 'italic';
+  textTransform?: 'none' | 'uppercase';
   minScale: number;
 }
 

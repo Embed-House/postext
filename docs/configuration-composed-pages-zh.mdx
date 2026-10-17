@@ -657,7 +657,7 @@ labelStyles: [
   </tbody>
 </table>
 
-没有样式的注记，或样式没有指定字体的注记，使用正文的字体族、字号、字重和颜色。多行注记的行距是字号的1.15倍，或者是所借用段落样式的行距。通过`paragraphStyle`，注记还会沿用该样式的斜体和大写；`fontStyle: 'italic'`和`textTransform: 'uppercase'`可以为不借用段落样式的注记加上它们。为放下而缩小的注记，其光晕按比例缩小。
+没有样式的注记，或样式没有指定字体的注记，使用正文的字体族、字号、字重和颜色。多行注记的行距是字号的1.15倍，或者是所借用段落样式的行距。通过`paragraphStyle`，注记还会沿用该样式的斜体和大写；`fontStyle: 'italic'`和`textTransform: 'uppercase'`可以为不借用段落样式的注记加上它们。注记样式写下`fontStyle: 'normal'`或`textTransform: 'none'`，就会关掉所借段落样式的斜体或大写（自postext 1.40起）；不写则沿用段落样式的设置。为放下而缩小的注记，其光晕按比例缩小。
 
 ### 锚点的注记字段
 

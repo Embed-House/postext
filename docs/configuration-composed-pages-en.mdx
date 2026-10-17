@@ -657,7 +657,7 @@ labelStyles: [
   </tbody>
 </table>
 
-A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label set smaller to fit keeps its halo in proportion.
+A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label style that writes `fontStyle: 'normal'` or `textTransform: 'none'` turns off the italics or the capitals of the paragraph style it borrows from (since postext 1.40); left out, the paragraph style's hold. A label set smaller to fit keeps its halo in proportion.
 
 ### Label fields of an anchor
 

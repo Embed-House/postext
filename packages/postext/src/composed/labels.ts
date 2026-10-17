@@ -113,10 +113,11 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     weight: style?.fontWeight ?? para?.fontWeight ?? body.fontWeight,
     boldWeight: Math.max(para?.boldFontWeight ?? body.boldFontWeight, style?.fontWeight ?? 0),
     // A borrowed paragraph style's slant and capitals hold unless the
-    // label style turns them on itself.
-    italic: style?.fontStyle === 'italic' || para?.italic === true,
+    // label style says otherwise: 'italic' / 'uppercase' turn them on,
+    // 'normal' / 'none' written turn them off (#955).
+    italic: style?.fontStyle !== undefined ? style.fontStyle === 'italic' : para?.italic === true,
     color: hexOf(style?.color ?? para?.color, resolved, body.color),
-    uppercase: style?.textTransform === 'uppercase' || para?.textTransform === 'uppercase',
+    uppercase: style?.textTransform !== undefined ? style.textTransform === 'uppercase' : para?.textTransform === 'uppercase',
     letterSpacing: typeof style?.letterSpacing === 'number' && Number.isFinite(style.letterSpacing) ? style.letterSpacing : 0,
     lineHeight,
     ...(style?.halo && haloWidth !== undefined && haloWidth > 0
