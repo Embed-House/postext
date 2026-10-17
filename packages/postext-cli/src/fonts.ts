@@ -25,7 +25,7 @@ import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
-import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
+import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, fontFallbackOf, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
@@ -569,18 +569,14 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
     const styles = meta.styles.length > 0 ? meta.styles : ['normal' as const];
     shipped.set(family.toLowerCase(), meta.weights.flatMap((weight) => styles.map((style) => ({ weight, style }))));
   };
-  for (const [family, variants] of wanted) {
-    if (has(family) || dirFaces.some((f) => f.family.toLowerCase() === family.toLowerCase())) {
-      ships(family, await familyMeta(family, join(cacheRoot, slug(family)), true));
-    }
-    if (has(family)) continue;
+  // The faces of one family the book does not carry: --font-dir, the
+  // embedded faces, the cache and Google Fonts or Fontsource, variant by
+  // variant. Empty when the family is nowhere.
+  const lookup = async (family: string, variants: readonly FontVariantUse[]): Promise<Face[]> => {
     const key = family.toLowerCase();
     // 2. --font-dir.
     const fromDir = dirFaces.filter((f) => f.family.toLowerCase() === key);
-    if (fromDir.length > 0) {
-      faces.push(...fromDir.map((f) => ({ ...f, family })));
-      continue;
-    }
+    if (fromDir.length > 0) return fromDir.map((f) => ({ ...f, family }));
     // 3–5. Embedded faces, the cache and Google Fonts, variant by variant.
     const found: Face[] = embedded().filter((f) => f.family.toLowerCase() === key).map((f) => ({ ...f, family }));
     const missing = variants.filter((v) => !found.some((f) => f.weight === v.weight && f.style === v.style));
@@ -608,6 +604,36 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
         }
       }
     }
+    return found;
+  };
+  for (const [family, variants] of wanted) {
+    const named = fontFallbackOf(book.config.customFonts, family);
+    // The open family a bundle names for the faces it leaves out (#978):
+    // its cut of the same weight and slant stands in under this family's
+    // name, so the lines break near where the real face breaks them.
+    const standIn = async (have: readonly Face[]): Promise<Face[]> => {
+      if (!named) return [];
+      // All the faces of a family with no file; the slant it has none of
+      // otherwise (an italic), its own files answering the weights.
+      const lacking = variants.filter((v) => !have.some((f) => f.style === v.style));
+      if (lacking.length === 0) return [];
+      const stand = (await lookup(named, lacking)).map((f) => ({ ...f, family, standsInFor: named }));
+      if (stand.length > 0) reporter.info(`font family "${family}": ${have.length > 0 ? 'faces' : 'all faces'} not in the book, set in ${named} (the fallback the book names)`);
+      return stand;
+    };
+    if (has(family) || dirFaces.some((f) => f.family.toLowerCase() === family.toLowerCase())) {
+      ships(family, await familyMeta(family, join(cacheRoot, slug(family)), true));
+    }
+    if (has(family)) {
+      faces.push(...await standIn(faces.filter((f) => f.family.toLowerCase() === family.toLowerCase())));
+      continue;
+    }
+    // A family the book declares with a fallback is the book's own typeface:
+    // no catalogue has it, so only --font-dir is asked before the fallback.
+    let found = named
+      ? dirFaces.filter((f) => f.family.toLowerCase() === family.toLowerCase()).map((f) => ({ ...f, family }))
+      : await lookup(family, variants);
+    if (found.length === 0) found = await standIn([]);
     if (found.length > 0) {
       faces.push(...found);
       continue;

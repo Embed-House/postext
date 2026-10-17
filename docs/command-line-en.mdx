@@ -377,6 +377,8 @@ A family found nowhere is set in EB Garamond under its own name, so the layout
 and the PDF still agree, and a `missingFont` warning names it. `postext info`
 shows where each family came from.
 
+A bundle that leaves a licensed family's files out may name an open family of about the same width for it (`fallback` in the manifest's `fonts`, since postext 1.42). `postext` then looks that family up by the steps above and sets the faces the book does not carry in its cuts of the same weight and slant, under the licensed family's name, so the layout is close to the one with the files and `postext check` does not report a `missingFont` for it. A family the book carries only in part takes from the fallback just a slant it has none of. The PDF embeds the open face.
+
 ## For scripts and agents
 
 The command line is built to be driven by other programs, including coding

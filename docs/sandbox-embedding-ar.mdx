@@ -252,6 +252,7 @@ function App() {
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ function App() {
 - لا يسمح لك محرّر مصدر SVG بالكتابة إلا داخل العقد النصية (الملوّنة) لكي لا يُكسر الشكل عن طريق الخطأ؛ وزر القفل في رأسه يفتح المصدر كله، بإحداثياته وألوانه وبنيته، وإعادة القفل تعيد مسح العقد النصية.
 - `table.model` هو `TableModel` في Postext: `rows` مصفوفة من الخلايا مرتبة صفًا صفًا (`content`، و`colSpan` و`rowSpan` و`isHeader` و`align` و`verticalAlign` الاختيارية)، و`headerRowCount` عدد صفوف الرأس في البداية، و`columnWidths` مصفوفة اختيارية من الأوزان النسبية للأعمدة. ويسمّي `table.styleId` اختياريًا أحد أنماط `tableStyles` في الإعدادات.
 - تُخزَّن ملفات الخطوط في IndexedDB تحت معرّفات مشتقة من معرّف الإعداد المسبق ومسار الملف، وتُلحق العائلات بـ `config.customFonts` حين يُطبَّق الإعداد المسبق؛ وملف `index.json` المفقود أو المشوّه لا ينتج إعدادات مسبقة بدلًا من أن ينتج خطأ.
+- تُدرج العائلة التي لا يجوز للحزمة تسليمها مع `"redistributable": false` و`variants` فارغة؛ وأضف `"fallback"` باسم عائلة مفتوحة بعرض مقارب فتصفّ Sandbox وسطر الأوامر ومضيفات المحرّك أوجهها بتلك العائلة (منذ postext 1.42). ومن دونه يعود الكتاب إلى الخط الافتراضي وتُكسر أسطره في مواضع أخرى.
 - الملف `<preset-dir>/fingerprint.json` اختياري، وهو على مسار التطوير **مُولَّد عند الطلب**: حين لا يوجد مثل هذا الملف، يجيب `GET` بـ `{ "fingerprint": "<sha1 hex>", "files": <n> }` المحسوب من البيانات الوصفية لملفات المجلد (المسار النسبي ووقت التعديل وحجم كل ملف حتى عمق أربعة مستويات، مع تخطي الملفات المخفية و`node_modules`)، لا من محتويات الملفات أبدًا، مع `Cache-Control: no-store`. ويستطلعه Sandbox دوريًا ليتابع التعديلات على الحزمة (انظر [لوحة الكتب](/ar/docs/sandbox#لوحة-الكتب)). ويمكن للمضيف الثابت أن يقدّم ملف `fingerprint.json` حقيقيًا بالشكل نفسه، أو ألا يقدّم شيئًا، وعندها لا تُتابَع إعداداته المسبقة.

@@ -252,6 +252,7 @@ Anhang. Eine Vorlagenquelle ist ein Verzeichnis (über HTTP ausgeliefert), in de
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Hinweise:
 - Der Editor für SVG-Quellen lässt Sie nur innerhalb von Textknoten (eingefärbt) tippen, damit eine Abbildung nicht versehentlich kaputtgeht; die Schlossschaltfläche in seinem Kopf öffnet die ganze Quelle – Koordinaten, Farben, Struktur –, und erneutes Sperren liest die Textknoten neu ein.
 - `table.model` ist ein `TableModel` von Postext: `rows` ist ein zeilenweises Array von Zellen (`content`, optional `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` die Zahl der führenden Kopfzeilen und `columnWidths` ein optionales Array relativer Spaltengewichte. `table.styleId` nennt optional einen der `tableStyles` der Konfiguration.
 - Schriftdateien werden in IndexedDB unter IDs gespeichert, die aus der ID der Vorlage und dem Dateipfad abgeleitet sind, und die Familien werden beim Anwenden der Vorlage an `config.customFonts` angehängt; eine fehlende oder fehlerhafte `index.json` ergibt keine Vorlagen statt eines Fehlers.
+- Eine Familie, die das Paket nicht weitergeben darf, steht mit `"redistributable": false` und leerem `variants` im Manifest; fügen Sie `"fallback"` mit dem Namen einer freien Familie ähnlicher Breite hinzu, und die Sandbox, die Kommandozeile und die Hosts der Engine setzen ihre Schnitte in dieser (seit postext 1.42). Ohne ihn fällt das Buch auf die Standardschrift zurück, und seine Zeilen brechen anderswo um.
 - `<preset-dir>/fingerprint.json` ist optional und auf der Entwicklungsroute **virtuell**: Existiert keine solche Datei, beantwortet `GET` die Anfrage mit `{ "fingerprint": "<sha1 hex>", "files": <n> }`, berechnet aus den Dateimetadaten des Verzeichnisses (relativer Pfad, Änderungszeit und Größe jeder Datei bis zu vier Ebenen tief, wobei Dotfiles und `node_modules` übersprungen werden), nie aus dem Inhalt der Dateien, mit `Cache-Control: no-store`. Die Sandbox fragt sie regelmäßig ab, um Änderungen am Paket zu folgen (siehe [Bedienfeld Bücher](/de/docs/sandbox#bedienfeld-bücher)). Ein statischer Host kann eine echte `fingerprint.json` derselben Form ausliefern oder gar keine; dann wird seinen Vorlagen nicht gefolgt.

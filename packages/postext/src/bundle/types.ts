@@ -73,6 +73,12 @@ export interface BundleFontFamilySpec {
    *  pass the files on: writing the bundle out again leaves the family's
    *  files (and its `fonts[]` entry) behind. Defaults to true. */
   redistributable?: boolean;
+  /** An open family of about the same width for the faces of this one the
+   *  bundle does not carry (a licensed family it leaves out, #978): hosts
+   *  set those faces in it under this family's name, so a check of the
+   *  plain bundle breaks lines near where the real face does. `variants`
+   *  may then be empty. */
+  fallback?: string;
 }
 
 /** One chapter file inside a version 2 bundle (`chapters/01-intro.md`). */

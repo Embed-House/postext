@@ -6188,6 +6188,14 @@ export interface CustomFontFamily {
    *  export drops the family's files and its `fonts[]` entry). Defaults to
    *  true. */
   redistributable?: boolean;
+  /** An open family of about the same width that stands in for the faces
+   *  this one has no file for (#978): a bundle that leaves a licensed
+   *  family's files out names it, and every host sets the missing faces in
+   *  it (its cut of the same weight and slant) under this family's name, so
+   *  the lines break near where the real face breaks them. The family's own
+   *  files win where it has them. The configuration keeps naming this
+   *  family: only the font files change. */
+  fallback?: string;
 }
 
 export type PageParity = 'all' | 'odd' | 'even';

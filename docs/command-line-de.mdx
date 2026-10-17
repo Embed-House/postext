@@ -378,6 +378,8 @@ Eine nirgends gefundene Familie wird unter ihrem eigenen Namen in EB Garamond ge
 und PDF weiterhin übereinstimmen, und eine Warnung `missingFont` nennt sie. `postext info`
 zeigt, woher jede Familie stammt.
 
+Ein Bündel, das die Dateien einer lizenzierten Familie weglässt, kann dafür eine freie Familie ähnlicher Breite nennen (`fallback` in den `fonts` des Manifests, seit postext 1.42). `postext` sucht diese Familie dann nach den obigen Schritten und setzt die Schnitte, die das Buch nicht mitbringt, in deren Schnitten gleicher Stärke und Neigung unter dem Namen der lizenzierten Familie; das Layout kommt dem mit den Dateien nahe, und `postext check` meldet dafür kein `missingFont`. Eine Familie, die das Buch nur teilweise mitbringt, nimmt vom `fallback` nur die Neigung, von der sie keine Datei hat. Das PDF bettet die freie Schrift ein.
+
 ## Für Skripte und Agenten
 
 Die Kommandozeile ist dafür gebaut, von anderen Programmen gesteuert zu werden, auch von Coding-Agenten.

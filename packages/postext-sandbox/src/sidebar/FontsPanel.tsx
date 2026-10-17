@@ -311,6 +311,23 @@ export function FontsPanel() {
 
               {isOpen && (
               <div className="px-2 py-2">
+                <label className="mb-2 block text-xs" style={{ color: 'var(--muted)' }}>
+                  <span className="mb-0.5 block">{labels.customFontsFallback}</span>
+                  <input
+                    dir="auto"
+                    type="text"
+                    value={family.fallback ?? ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      updateFamily(family.name, { fallback: value.trim() === '' ? undefined : value });
+                    }}
+                    placeholder={labels.customFontsFallbackPlaceholder}
+                    aria-describedby={`font-fallback-help-${family.name}`}
+                    className="w-full rounded border bg-transparent px-1.5 py-1 text-xs"
+                    style={{ borderColor: 'var(--rule)', color: 'var(--foreground)' }}
+                  />
+                  <span id={`font-fallback-help-${family.name}`} className="mt-0.5 block">{labels.customFontsFallbackHelp}</span>
+                </label>
                 {family.variants.map((variant, index) => (
                   <VariantRow
                     key={`${variant.fileId}-${index}`}

@@ -99,6 +99,8 @@ interface CustomFontVariant {
 interface CustomFontFamily {
   name: string;             // 可用在任何能填Google Fonts字体家族名的地方
   variants: CustomFontVariant[];
+  redistributable?: boolean; // false：只在书里使用，不会被复制出去
+  fallback?: string;        // 宽度相近的开放字体，用于没有文件的字形（自postext 1.42起）
 }
 
 interface PostextConfig {
@@ -119,6 +121,10 @@ interface PostextConfig {
 4. **删除变体**或**删除家族**：从配置中移除该条目，*同时*删除IndexedDB中保存的字节数据。
 
 字体家族一经声明，所有字体选择器都会把它归入**自定义**组，排在Google Fonts列表上方。选中它，就会把这个字体家族写入你应用它的每个字体家族字段。
+
+### 授权字体的替代字体
+
+一本书可能用了所有者无权外传的字体。把这个字体家族标为`redistributable: false`，`.postext`文件就不带它的文件。在`fallback`里写一个宽度相近的开放字体家族，缺少这些文件而打开的文件，换行位置就接近真实字体，不会因为备用字体更宽而让框溢出。家族没有文件的字形，会以授权字体的名称，用`fallback`中粗细和倾斜相同的字形排版，预览、排版worker、PDF和命令行都是如此。家族有文件的部分保持不变；它只从`fallback`取自己一个文件也没有的那种倾斜，比如斜体，介于它自己文件之间的字重照常按任何字体家族的方式选取。在字体面板里，**替代字体**（在字体家族内、文件上方）填写名称；留空则与原来一样。这样排版的书，PDF嵌入的是开放字体，所以最终的PDF要用授权字体的文件来生成。自postext 1.42起。
 
 ### 渲染行为
 

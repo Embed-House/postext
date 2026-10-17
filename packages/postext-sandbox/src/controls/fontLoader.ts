@@ -13,6 +13,8 @@ import {
   fontSampleText,
   primaryFontFamily,
   cssWeightOrderOf,
+  fontFallbackOf,
+  hasOwnStyle,
   resolveBodyTextConfig,
   resolveHeaderFooterConfig,
   resolveHeadingsConfig,
@@ -986,15 +988,18 @@ function loadUse(font: string, use: FontVariantUse): Promise<void> {
 export function loadFont(font: string, uses: readonly FontVariantUse[] = REGULAR_USE): Promise<void> {
   const custom = getCustomFontFamily(font);
   if (custom) {
-    if (loadedFonts.has(font)) return Promise.resolve();
+    // The faces it has no file of come from its fallback family (#978);
+    // asked on every call, as a later call may name a weight not declared.
+    const stand = (): Promise<void> => (custom.fallback ? declareFallbackFaces(custom, uses) : Promise.resolve());
+    if (loadedFonts.has(font)) return stand();
     const existing = loadingPromises.get(font);
-    if (existing) return existing;
+    if (existing) return existing.then(stand);
     const promise = loadCustomFontFamily(custom).then(() => {
       loadedFonts.add(font);
       loadingPromises.delete(font);
     });
     loadingPromises.set(font, promise);
-    return promise;
+    return promise.then(stand);
   }
 
   // A generic keyword names no face: no style sheet to add, nothing to
@@ -1347,7 +1352,7 @@ export async function collectFontPayloadsForFaces(
   const byFamily = await Promise.all([...uses].map(async ([family, list]): Promise<FontPayload[]> => {
     try {
       const custom = getCustomFontFamily(family);
-      if (custom) return await fetchCustomFamilyPayloads(custom);
+      if (custom) return await fetchCustomFamilyPayloads(custom, list);
       const files = await familyFiles(family);
       if (!cps || !files.cuts) return await fetchFacePayloads(await familyCutFaces(family, list));
       // Cut by cut: each has files of its own for the same characters.
@@ -1665,6 +1670,9 @@ export function fontPayloadKey(payload: Pick<FontPayload, 'family' | 'weight' | 
 // ---------------------------------------------------------------------------
 
 const customFontRegistry = new Map<string, CustomFontFamily>();
+/** Families declared by an edition laid out behind the reader that the book
+ *  on screen does not have (see {@link declareEditionFonts}). */
+const editionFamilies = new Map<string, CustomFontFamily>();
 /** Names of families registered as a custom font since the book on screen
  *  was opened. Seeded by every `setCustomFonts` call so
  *  `isRemovedCustomFontFamily` can tell "deleted a custom family I had
@@ -1681,6 +1689,9 @@ const customFontListeners = new Set<(changedFamilies: string[]) => void>();
 /** Document-level FontFace instances we registered, keyed by family — so
  *  `setCustomFonts` can remove them when a family is updated or deleted. */
 const registeredCustomFaces = new Map<string, FontFace[]>();
+/** The `FontFace`s a family with a `fallback` has from that family (#978),
+ *  by family and face key, so they can be removed with it. */
+const fallbackFaces = new Map<string, Map<string, FontFace>>();
 
 function variantKey(v: CustomFontVariant): string {
   return `${v.weight}|${v.style}|${v.fileId}`;
@@ -1688,7 +1699,7 @@ function variantKey(v: CustomFontVariant): string {
 
 function familySignature(f: CustomFontFamily): string {
   const vs = [...f.variants].map(variantKey).sort();
-  return `${f.name}::${vs.join(';')}`;
+  return `${f.name}::${vs.join(';')}${f.fallback ? `::>${f.fallback}` : ''}`;
 }
 
 /** Replace the sandbox's known custom fonts. Invalidates every cached
@@ -1708,6 +1719,19 @@ export function setCustomFonts(list: CustomFontFamily[] | undefined, options: { 
   for (const name of customFontRegistry.keys()) {
     if (!next.has(name)) changed.push(name);
   }
+  // The families only a background edition declared (#968) give way to the
+  // book on screen's: its definition of the name wins, and another book's
+  // editions are not this one's.
+  for (const name of [...editionFamilies.keys()]) {
+    if (options.newBook || next.has(name)) {
+      editionFamilies.delete(name);
+      if (!changed.includes(name)) changed.push(name);
+    }
+  }
+  // A family set in another custom family's faces (#978) follows it.
+  for (const [name, fam] of next) {
+    if (fam.fallback && changed.includes(fam.fallback) && !changed.includes(name)) changed.push(name);
+  }
 
   customFontRegistry.clear();
   if (options.newBook) everSeenCustomFamilies.clear();
@@ -1716,6 +1740,22 @@ export function setCustomFonts(list: CustomFontFamily[] | undefined, options: { 
     everSeenCustomFamilies.add(name);
   }
 
+  forgetCustomFamilies(changed);
+
+  // Kick off FontFace registration on document.fonts for every currently
+  // declared custom family. Without this, the HTML viewport (which only
+  // applies the family via CSS) falls back to a system font because no
+  // FontFace matches the name.
+  if (typeof document !== 'undefined' && document.fonts) {
+    for (const name of customFontRegistry.keys()) {
+      loadFont(name).catch(() => { /* individual variant failures are logged below */ });
+    }
+  }
+}
+
+/** Drop what the loader holds of `families` (their loaded state, payloads,
+ *  declared faces) and tell the listeners. */
+function forgetCustomFamilies(changed: readonly string[]): void {
   for (const family of changed) {
     loadedFonts.delete(family);
     loadingPromises.delete(family);
@@ -1729,20 +1769,44 @@ export function setCustomFonts(list: CustomFontFamily[] | undefined, options: { 
       }
     }
     registeredCustomFaces.delete(family);
+    const stood = fallbackFaces.get(family);
+    if (stood && typeof document !== 'undefined' && document.fonts) {
+      for (const ff of stood.values()) {
+        try { document.fonts.delete(ff); } catch { /* ignore */ }
+      }
+    }
+    fallbackFaces.delete(family);
   }
 
   if (changed.length > 0) {
-    for (const cb of customFontListeners) cb(changed);
+    for (const cb of customFontListeners) cb([...changed]);
   }
+}
 
-  // Kick off FontFace registration on document.fonts for every currently
-  // declared custom family. Without this, the HTML viewport (which only
-  // applies the family via CSS) falls back to a system font because no
-  // FontFace matches the name.
+/**
+ * The custom families an edition laid out behind the reader declares (#968):
+ * the book on screen holds one edition's list (`setCustomFonts`), and an
+ * edition read from its draft or the bundle may name a family that list
+ * lacks. Laid out on the layout worker and painted in the side-by-side view
+ * with the book's families only, its text was measured in a fallback face.
+ * The families the book on screen does not declare are declared here, for
+ * the loader to serve as it serves its own (`getCustomFontFamily`); the
+ * book's definition of a name always wins, and another book (`newBook`)
+ * drops them.
+ */
+export function declareEditionFonts(list: readonly CustomFontFamily[] | undefined): void {
+  const changed: string[] = [];
+  for (const family of list ?? []) {
+    if (customFontRegistry.has(family.name)) continue;
+    const prev = editionFamilies.get(family.name);
+    if (prev && familySignature(prev) === familySignature(family)) continue;
+    editionFamilies.set(family.name, family);
+    changed.push(family.name);
+  }
+  if (changed.length === 0) return;
+  forgetCustomFamilies(changed);
   if (typeof document !== 'undefined' && document.fonts) {
-    for (const name of customFontRegistry.keys()) {
-      loadFont(name).catch(() => { /* individual variant failures are logged below */ });
-    }
+    for (const name of changed) loadFont(name).catch(() => { /* logged by the loader */ });
   }
 }
 
@@ -1757,7 +1821,7 @@ export function customFontsSignature(list?: CustomFontFamily[]): string {
 }
 
 export function getCustomFontFamily(name: string): CustomFontFamily | undefined {
-  return customFontRegistry.get(name);
+  return customFontRegistry.get(name) ?? editionFamilies.get(name);
 }
 
 export function listCustomFontFamilies(): CustomFontFamily[] {
@@ -1765,7 +1829,7 @@ export function listCustomFontFamilies(): CustomFontFamily[] {
 }
 
 export function isCustomFontFamily(name: string): boolean {
-  return customFontRegistry.has(name);
+  return customFontRegistry.has(name) || editionFamilies.has(name);
 }
 
 /** True when `name` was registered as a custom family since the book on
@@ -1818,8 +1882,73 @@ async function loadCustomFontFamily(family: CustomFontFamily): Promise<void> {
   registeredCustomFaces.set(family.name, faces);
 }
 
-async function fetchCustomFamilyPayloads(family: CustomFontFamily): Promise<FontPayload[]> {
+/** The faces `family` has no file of, as another family's (#978): its
+ *  `fallback`'s cuts of the weights and slants asked, in the slants the
+ *  family has no file of, named for the family. A fallback that is a custom
+ *  family gives its own files. */
+async function fallbackFacesOf(family: CustomFontFamily, uses: readonly FontVariantUse[]): Promise<FamilyFace[]> {
+  const stands = fontFallbackOf([family], family.name);
+  if (!stands || getCustomFontFamily(stands)) return [];
+  const wanted = [...STANDARD_FONT_VARIANTS, ...uses].filter((use) => !hasOwnStyle(family.variants, use.style));
+  if (wanted.length === 0) return [];
+  const faces = await familyCutFaces(stands, wanted);
+  return faces.filter((face) => !hasOwnStyle(family.variants, isSlanted(face.style) ? 'italic' : 'normal')).map((face) => ({ ...face, family: family.name }));
+}
+
+/** The files of another custom family a family stands in for (#978). */
+function fallbackCustomVariants(family: CustomFontFamily): CustomFontVariant[] {
+  const stands = fontFallbackOf([family], family.name);
+  const source = stands ? getCustomFontFamily(stands) : undefined;
+  return source ? source.variants.filter((v) => !hasOwnStyle(family.variants, v.style)) : [];
+}
+
+/** Declare on the page the faces `family` has from its fallback (#978),
+ *  under its own name, and load the one that holds the Latin letters. */
+async function declareFallbackFaces(family: CustomFontFamily, uses: readonly FontVariantUse[]): Promise<void> {
+  const FontFaceCtor = (globalThis as { FontFace?: typeof FontFace }).FontFace;
+  if (typeof document === 'undefined' || !document.fonts || !FontFaceCtor) return;
+  let held = fallbackFaces.get(family.name);
+  if (!held) fallbackFaces.set(family.name, (held = new Map()));
+  const first: FontFace[] = [];
+  const add = (key: string, make: () => FontFace, latin: boolean): void => {
+    if (held!.has(key)) return;
+    try {
+      const face = make();
+      held!.set(key, face);
+      document.fonts.add(face);
+      if (latin) first.push(face);
+    } catch (err) {
+      console.warn('[postext-sandbox] failed to declare fallback font face', family.name, err);
+    }
+  };
+  for (const face of await fallbackFacesOf(family, uses)) {
+    add(faceCacheKey(face), () => new FontFaceCtor(family.name, `url(${JSON.stringify(face.url)}) format('woff2')`, {
+      weight: face.weight,
+      style: face.style,
+      ...(face.unicodeRange ? { unicodeRange: face.unicodeRange } : {}),
+    }), faceHolds(face, 0x61));
+  }
+  for (const variant of fallbackCustomVariants(family)) {
+    const key = `${variant.weight}|${variant.style}|${variant.fileId}`;
+    if (held.has(key)) continue;
+    const buffer = await loadVariantBuffer(variant);
+    if (!buffer) continue;
+    add(key, () => new FontFaceCtor(family.name, buffer, { weight: String(variant.weight), style: variant.style }), true);
+  }
+  await Promise.all(first.map((face) => face.load().catch(() => undefined)));
+}
+
+async function fetchCustomFamilyPayloads(family: CustomFontFamily, uses: readonly FontVariantUse[] = []): Promise<FontPayload[]> {
   const payloads: FontPayload[] = [];
+  if (family.fallback) {
+    // Its fallback's faces, named for it (#978).
+    const stood = await fetchFacePayloads(await fallbackFacesOf(family, uses));
+    payloads.push(...stood);
+    await Promise.all(fallbackCustomVariants(family).map(async (variant) => {
+      const buffer = await loadVariantBuffer(variant);
+      if (buffer) payloads.push({ family: family.name, weight: String(variant.weight), style: variant.style, buffer: buffer.slice(0) });
+    }));
+  }
   await Promise.all(
     family.variants.map(async (variant) => {
       const buffer = await loadVariantBuffer(variant);
@@ -1857,8 +1986,11 @@ function missingVariants(family: CustomFontFamily, wanted: readonly FontVariantU
   const have = new Set(family.variants.map((v) => `${v.weight}|${v.style}`));
   const seen = new Set<string>();
   const out: FontVariantUse[] = [];
+  const stands = fontFallbackOf([family], family.name) !== undefined;
   for (const w of wanted) {
     const key = `${w.weight}|${w.style}`;
+    // A slant the fallback sets (#978) is not missing.
+    if (stands && !hasOwnStyle(family.variants, w.style)) continue;
     if (have.has(key) || seen.has(key)) continue;
     seen.add(key);
     out.push(w);

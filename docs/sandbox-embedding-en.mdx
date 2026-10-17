@@ -252,6 +252,7 @@ Appendix. A preset source is a directory (served over HTTP) whose root holds an 
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Notes:
 - The SVG source editor only lets you type inside text nodes (tinted) so a figure cannot be broken by accident; the lock button in its header opens the whole source — coordinates, colours, structure — and locking again rescans the text nodes.
 - `table.model` is a Postext `TableModel`: `rows` is a row-major array of cells (`content`, optional `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` the number of leading header rows, and `columnWidths` an optional array of relative column weights. `table.styleId` optionally names one of the config's `tableStyles`.
 - Font files are stored in IndexedDB under ids derived from the preset id and file path, and the families are appended to `config.customFonts` when the preset is applied; a missing or malformed `index.json` yields no presets rather than an error.
+- A family the bundle may not hand on is listed with `"redistributable": false` and an empty `variants`; add `"fallback"` with the name of an open family of about the same width and the Sandbox, the command line and the engine's hosts set its faces in that one (since postext 1.42). Without it, the book falls back to the default font and its lines break elsewhere.
 - `<preset-dir>/fingerprint.json` is optional and, on the development route, **virtual**: when no such file exists, `GET` answers `{ "fingerprint": "<sha1 hex>", "files": <n> }` computed from the directory's file metadata (relative path, modification time and size of every file up to four levels deep, dotfiles and `node_modules` skipped), never from file contents, with `Cache-Control: no-store`. The sandbox polls it to follow edits to the bundle (see [Books panel](/en/docs/sandbox#books-panel)). A static host can serve a real `fingerprint.json` with the same shape, or none at all, in which case its presets are not followed.

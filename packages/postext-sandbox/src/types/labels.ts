@@ -1992,6 +1992,9 @@ export interface SandboxLabels {
   customFonts: string;
   customFontsTooltip: string;
   customFontsNone: string;
+  customFontsFallback: string;
+  customFontsFallbackPlaceholder: string;
+  customFontsFallbackHelp: string;
   customFontsAddFamily: string;
   customFontsFamilyName: string;
   customFontsFamilyNamePlaceholder: string;

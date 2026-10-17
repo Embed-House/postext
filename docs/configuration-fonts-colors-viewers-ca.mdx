@@ -98,6 +98,8 @@ interface CustomFontVariant {
 interface CustomFontFamily {
   name: string;             // s'usa on encaixaria un nom de Google Font
   variants: CustomFontVariant[];
+  redistributable?: boolean; // false: s'usa aquí, mai es copia fora del llibre
+  fallback?: string;        // família oberta d'amplada semblant per a les cares sense fitxer (des de postext 1.42)
 }
 
 interface PostextConfig {
@@ -118,6 +120,10 @@ Obre el tauler **Fonts** des de la barra d'activitat de l'esquerra (entre Recurs
 4. **Suprimir variant** o **Suprimir família** — suprimeix l'entrada de la configuració *i* els bytes desats a IndexedDB.
 
 Un cop declarada la família, cada selector de font l'agrupa sota **Custom**, per damunt de la llista de Google Fonts. Quan la tries, queda connectada a tots els camps `fontFamily` on l'apliquis.
+
+### Una família de substitució per a una de llicenciada
+
+Un llibre pot composar-se en una lletra que el seu propietari no pot lliurar. Marca la família amb `redistributable: false` i un fitxer `.postext` en deixa fora els fitxers. Si a `fallback` anomenes una família oberta d'amplada semblant, el fitxer que s'obre sense ells talla les línies a prop d'on les talla la lletra real, en lloc de desbordar els marcs amb una font de reserva més ampla. Les cares de les quals la família no té fitxer es componen amb els talls del `fallback` del mateix pes i inclinació, amb el nom de la llicenciada, a les vistes prèvies, al worker de maquetació, al PDF i a la línia d'ordres. Una família amb fitxers els conserva i només pren del `fallback` la inclinació de què no en té cap, una cursiva per exemple; els pesos intermedis entre els seus fitxers s'escullen com en qualsevol família. Al tauler Fonts, **Família de substitució** (dins de la família, sobre els seus fitxers) rep el nom; buit, la família queda com estava. El PDF d'un llibre compost així incrusta la cara oberta, de manera que el PDF final es fa amb els fitxers llicenciats. Des de postext 1.42.
 
 ### Comportament de renderització
 

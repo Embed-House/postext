@@ -99,6 +99,8 @@ interface CustomFontVariant {
 interface CustomFontFamily {
   name: string;             // used anywhere a Google Font family name fits
   variants: CustomFontVariant[];
+  redistributable?: boolean; // false : sert ici, n’est jamais copiée hors du livre
+  fallback?: string;        // famille libre de chasse proche pour les faces sans fichier (depuis postext 1.42)
 }
 
 interface PostextConfig {
@@ -119,6 +121,10 @@ Ouvrez le panneau **Polices** depuis la barre d’activité de gauche (entre Res
 4. **Supprimer la variante** ou **Supprimer la famille** : retire l’entrée de la configuration *et* les octets stockés dans IndexedDB.
 
 Une fois une famille déclarée, chaque sélecteur de police la range sous **Personnalisées**, au-dessus de la liste Google Fonts. La choisir branche la famille sur chaque champ de famille de police auquel vous l’appliquez.
+
+### Une famille de remplacement pour une famille sous licence
+
+Un livre peut être composé dans un caractère que son propriétaire n’a pas le droit de transmettre. Marquez la famille `redistributable: false` et un fichier `.postext` laisse ses fichiers de côté. Nommez dans `fallback` une famille libre de chasse proche : le fichier qui s’ouvre sans eux coupe ses lignes près de l’endroit où les coupe le vrai caractère, au lieu de déborder de ses blocs dans une police de secours plus large. Les faces dont la famille n’a aucun fichier sont composées dans les coupes du `fallback` de même graisse et de même inclinaison, sous le nom de la famille sous licence, dans les aperçus, le worker de mise en page, le PDF et la ligne de commande. Une famille qui a des fichiers les garde ; elle ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier, un italique par exemple, et les graisses intermédiaires entre ses propres fichiers sont choisies comme pour toute famille. Dans le panneau Polices, **Famille de remplacement** (dans la famille, au-dessus de ses fichiers) reçoit le nom ; vide, la famille reste comme avant. Le PDF d’un livre composé ainsi embarque la face libre : le PDF final se fait donc avec les fichiers sous licence. Depuis postext 1.42.
 
 ### Comportement au rendu
 

@@ -99,6 +99,8 @@ interface CustomFontVariant {
 interface CustomFontFamily {
   name: string;             // usado em qualquer lugar onde caiba um nome de família do Google Fonts
   variants: CustomFontVariant[];
+  redistributable?: boolean; // false: usada aqui, nunca copiada para fora do livro
+  fallback?: string;        // família aberta de largura parecida para as faces sem arquivo (desde o postext 1.42)
 }
 
 interface PostextConfig {
@@ -119,6 +121,10 @@ Abra o painel **Fontes** na barra de atividades à esquerda (entre Recursos e De
 4. **Excluir variante** ou **Excluir família**: remove a entrada da configuração *e* os bytes guardados no IndexedDB.
 
 Depois que uma família é declarada, todo seletor de fonte a agrupa em **Personalizado**, acima da lista do Google Fonts. Selecioná-la liga a família a cada campo de família tipográfica em que você a aplicar.
+
+### Uma família substituta para uma família licenciada
+
+Um livro pode ser composto numa tipografia que o seu titular não pode repassar. Marque a família com `redistributable: false` e um arquivo `.postext` deixa os arquivos dela de fora. Se você nomear em `fallback` uma família aberta de largura parecida, o arquivo que abre sem eles quebra as linhas perto de onde as quebra a tipografia real, em vez de estourar os blocos com uma fonte reserva mais larga. As faces de que a família não tem arquivo são compostas nos cortes do `fallback` de mesmo peso e mesma inclinação, com o nome da licenciada, nas prévias, no worker de diagramação, no PDF e na linha de comando. Uma família com arquivos fica com eles; do `fallback` ela só toma a inclinação de que não tem nenhum arquivo, um itálico por exemplo, e os pesos intermediários entre os arquivos dela são escolhidos como em qualquer família. No painel Fontes, **Família substituta** (dentro da família, acima dos arquivos) recebe o nome; vazio, a família fica como estava. O PDF de um livro composto assim embute a face aberta, de modo que o PDF final é feito com os arquivos licenciados. Desde o postext 1.42.
 
 ### Comportamento na renderização
 

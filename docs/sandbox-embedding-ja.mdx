@@ -252,6 +252,7 @@ function App() {
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ function App() {
 - SVGのソースエディターでは、誤って図を壊さないよう、テキストノード（色付きで表示）の中でしか入力できません。ヘッダーの鍵ボタンを押すと、座標、色、構造を含むソース全体を編集できるようになり、再びロックするとテキストノードを探し直します。
 - `table.model`はPostextの`TableModel`です。`rows`はセル（`content`と、省略可能な`colSpan`、`rowSpan`、`isHeader`、`align`、`verticalAlign`）を行ごとに並べた配列、`headerRowCount`は先頭のヘッダー行の数、`columnWidths`は列の相対的な幅の比を表す省略可能な配列です。`table.styleId`では、設定の`tableStyles`のいずれかを指定できます（省略可）。
 - フォントファイルは、プリセットのidとファイルパスから導いたidでIndexedDBに保存され、プリセットを適用したときにそのファミリーが`config.customFonts`に追加されます。`index.json`がない場合や形式が正しくない場合は、エラーにはならず、プリセットがないものとして扱われます。
+- バンドルが外へ渡せないファミリーは、`"redistributable": false`と空の`variants`で並べます。`"fallback"`に幅の近いオープンなファミリーの名前を加えると、Sandbox、コマンドライン、エンジンのホストはその書体でこのファミリーを組みます（postext 1.42以降）。なければ、本は既定のフォントに戻り、行の折り返しも変わります。
 - `<preset-dir>/fingerprint.json`は省略可能で、開発用のルートでは**仮想**のファイルです。そのファイルがない場合、`GET`は`{ "fingerprint": "<sha1 hex>", "files": <n> }`を`Cache-Control: no-store`付きで返します。値はディレクトリーのファイルのメタデータ（4階層までのすべてのファイルの相対パス、更新日時、サイズ。ドットファイルと`node_modules`は除外）から計算し、ファイルの内容は使いません。Sandboxはこれをポーリングしてバンドルの編集を追跡します（[本パネル](/ja/docs/sandbox#本パネル)を参照）。静的ホストは、同じ形の実際の`fingerprint.json`を配信することも、まったく配信しないこともできます。配信しない場合、そのプリセットは追跡されません。

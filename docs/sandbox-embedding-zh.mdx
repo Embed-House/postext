@@ -252,6 +252,7 @@ function App() {
   "fonts": [
     {
       "name": "Some Family",           // 配置中使用的字体家族名
+      "fallback": "Source Serif 4",    // 可选：宽度相近的开放字体，用于文件包没有带上的字形
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ function App() {
 - SVG源代码编辑器只允许在文本节点（着色显示）内输入，以免意外破坏图；编辑器标题栏中的锁按钮会打开全部源代码（坐标、颜色、结构），再次锁定时会重新扫描文本节点。
 - `table.model`是Postext的`TableModel`：`rows`是按行排列的单元格数组（`content`，可选的`colSpan`、`rowSpan`、`isHeader`、`align`、`verticalAlign`），`headerRowCount`是开头的表头行数，`columnWidths`是可选的相对列宽数组。`table.styleId`可以指定配置的`tableStyles`之一。
 - 字体文件以由预设id和文件路径派生的id存入IndexedDB，应用预设时，其字体家族会追加到`config.customFonts`中；`index.json`缺失或格式错误时，不会产生预设，但也不报错。
+- 文件包不能外传的字体家族，用`"redistributable": false`和空的`variants`列出；再加上`"fallback"`，写一个宽度相近的开放字体家族的名称，Sandbox、命令行和引擎的宿主就用它来排这个家族的字形（自postext 1.42起）。没有它，书会退到默认字体，换行位置也随之不同。
 - `<preset-dir>/fingerprint.json`是可选的，在开发路由上是**虚拟的**：不存在这个文件时，`GET`会返回`{ "fingerprint": "<sha1 hex>", "files": <n> }`，它根据目录的文件元数据计算（深度不超过四层的每个文件的相对路径、修改时间和大小，跳过点文件和`node_modules`），从不读取文件内容，并带有`Cache-Control: no-store`。沙盒轮询它以跟踪文件包的修改（见[书库面板](/zh/docs/sandbox#书库面板)）。静态主机可以提供形状相同的真实`fingerprint.json`，也可以不提供，这时它的预设不会被跟踪。

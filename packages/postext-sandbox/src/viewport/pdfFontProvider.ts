@@ -1,5 +1,6 @@
 import type { PdfFontFile, PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
+import { fontFallbackOf, hasOwnStyle } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
 import { getFontFile } from '../storage/fontStorage';
@@ -220,13 +221,16 @@ async function loadCustomFontBytes(
  */
 export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontProvider {
   const raw = options.raw === true;
-  return async (family, weight, style, request) => {
+  const provider: PdfFontProvider = async (family, weight, style, request) => {
     // Custom families bypass the Google/Fontsource path entirely: resolve
     // bytes from IndexedDB and only decompress when the uploaded file was
     // .woff2. Skip the shared `bytesCache` because the user can re-upload
     // or delete variants at any time, and the fileId captures identity.
     const custom = getCustomFontFamily(family);
     if (custom) {
+      // A slant the family has no file of is the fallback's it names (#978).
+      const stands = fontFallbackOf([custom], custom.name);
+      if (stands && !hasOwnStyle(custom.variants, style)) return await provider(stands, weight, style, request);
       return await loadCustomFontBytes(custom, weight, style, raw);
     }
 
@@ -266,4 +270,5 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
       throw err;
     }
   };
+  return provider;
 }

@@ -393,6 +393,8 @@ se compone en EB Garamond con su propio nombre, para que la maquetación y el
 PDF sigan coincidiendo, y un aviso `missingFont` la nombra. `postext info`
 muestra de dónde salió cada familia.
 
+Un paquete que deja fuera los archivos de una familia licenciada puede nombrar para ella una familia abierta de ancho parecido (`fallback` en las `fonts` del manifiesto, desde postext 1.42). `postext` busca entonces esa familia por los pasos anteriores y compone las caras que el libro no trae con sus cortes del mismo peso e inclinación, con el nombre de la licenciada, de modo que la maquetación se parece a la que se obtiene con los archivos y `postext check` no avisa de un `missingFont` para ella. Una familia que el libro trae solo en parte toma del `fallback` únicamente la inclinación de la que no tiene ninguna. El PDF incrusta la cara abierta.
+
 ## Para scripts y agentes
 
 La línea de comandos está hecha para que la manejen otros programas, también

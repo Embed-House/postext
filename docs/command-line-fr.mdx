@@ -397,6 +397,8 @@ propre nom, pour que la mise en page et le PDF restent d’accord, et un
 avertissement `missingFont` la nomme. `postext info` indique d’où vient chaque
 famille.
 
+Un paquet qui laisse de côté les fichiers d’une famille sous licence peut lui nommer une famille libre de chasse proche (`fallback` dans les `fonts` du manifeste, depuis postext 1.42). `postext` cherche alors cette famille par les étapes ci-dessus et compose les faces que le livre n’embarque pas dans ses coupes de même graisse et de même inclinaison, sous le nom de la famille sous licence : la mise en page ressemble à celle obtenue avec les fichiers et `postext check` ne signale aucun `missingFont` pour elle. Une famille que le livre n’embarque qu’en partie ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier. Le PDF embarque la face libre.
+
 ## Pour les scripts et les agents
 
 La ligne de commande est conçue pour être pilotée par d’autres programmes, y

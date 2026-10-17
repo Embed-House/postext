@@ -257,6 +257,8 @@ postext build chapters/ --pdf book.pdf --watch
 
 缓存位于`~/.cache/postext`（Windows上为`%LOCALAPPDATA%\postext\cache`）；`POSTEXT_CACHE_DIR`或`--cache-dir`可以改变它的位置。`--offline`跳过下载。在哪里都找不到的字体族以它自己的名称用EB Garamond排版，这样版面和PDF仍然一致，同时一条`missingFont`警告会指出它。`postext info`显示每个字体族的来源。
 
+如果文件包没有带上某个授权字体家族的文件，它可以为该家族写一个宽度相近的开放字体家族（清单`fonts`里的`fallback`，自postext 1.42起）。`postext`会按上面的步骤查找这个家族，书里没有的字形就以授权家族的名称，用它同粗细、同倾斜的字形排版，所以版面接近有文件时的结果，`postext check`也不会为该家族报`missingFont`。书里只带了一部分的家族，只从`fallback`取自己一个文件也没有的那种倾斜。PDF嵌入的是开放字体。
+
 ## 用于脚本和智能体
 
 命令行就是为了让其他程序驱动而设计的，包括编程智能体。

@@ -113,6 +113,7 @@ export function isBundleManifest(data: unknown): data is BundleManifest {
     if (!Array.isArray(data.fonts)) return false;
     const ok = data.fonts.every((f) =>
       isRecord(f) && isNonEmptyString(f.name) && Array.isArray(f.variants)
+      && (f.fallback === undefined || isNonEmptyString(f.fallback))
       && f.variants.every((v) => isRecord(v) && typeof v.weight === 'number' && isNonEmptyString(v.file)),
     );
     if (!ok) return false;
@@ -502,6 +503,13 @@ export interface BundleFontFiles {
 
 const identity = (file: string): string => file;
 
+/** The `fallback` of a manifest family when it can stand in for it: a
+ *  name other than the family's own (#978). */
+function usableFallback(family: Pick<BundleFontFamilySpec, 'name' | 'fallback'>): string | undefined {
+  const fallback = typeof family.fallback === 'string' ? family.fallback.trim() : '';
+  return fallback.length > 0 && fallback.toLowerCase() !== family.name.trim().toLowerCase() ? fallback : undefined;
+}
+
 /** Turn manifest font families into `config.customFonts` entries plus the
  *  list of files to read. `.woff` is not supported by the PDF backend and
  *  is skipped with a warning, as is any unrecognised extension. */
@@ -526,8 +534,14 @@ export function fontsToCustomFonts(
       variants.push({ weight: v.weight, style, fileId, format, fileName });
       files.push({ fileId, fileName, format, file: v.file, family: family.name, weight: v.weight, style });
     }
-    if (variants.length > 0) {
-      families.push({ name: family.name, variants, ...(family.redistributable === false ? { redistributable: false } : {}) });
+    const fallback = usableFallback(family);
+    if (variants.length > 0 || fallback) {
+      families.push({
+        name: family.name,
+        variants,
+        ...(family.redistributable === false ? { redistributable: false } : {}),
+        ...(fallback ? { fallback } : {}),
+      });
     } else warnings.push(`${family.name}: no usable variants`);
   }
   return { families, files, warnings };

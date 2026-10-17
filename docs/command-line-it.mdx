@@ -378,6 +378,8 @@ Una famiglia non trovata da nessuna parte viene composta in EB Garamond con il p
 e il PDF restano coerenti, e un avviso `missingFont` la nomina. `postext info`
 mostra da dove proviene ogni famiglia.
 
+Un pacchetto che lascia fuori i file di una famiglia con licenza può nominare per essa una famiglia libera di larghezza simile (`fallback` nelle `fonts` del manifest, da postext 1.42). `postext` cerca allora quella famiglia con i passaggi sopra e compone i tagli che il libro non porta nei suoi tagli dello stesso peso e della stessa inclinazione, con il nome della famiglia con licenza: l’impaginazione somiglia a quella ottenuta con i file e `postext check` non segnala un `missingFont` per essa. Una famiglia che il libro porta solo in parte prende dal `fallback` soltanto l’inclinazione di cui non ha alcun file. Il PDF incorpora il carattere libero.
+
 ## Per script e agenti
 
 La riga di comando è fatta per essere pilotata da altri programmi, compresi gli agenti
