@@ -255,6 +255,10 @@ export interface LabelStyle {
   /** `'vertical-rl'` sets the label in vertical writing (#902), unless its
    *  anchor says otherwise. Default `'horizontal-tb'`. */
   writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** `'allow'` leaves the labels set in this style out of the
+   *  `labelOverlap` check: a map whose names touch in the source (#977).
+   *  An anchor's `overlap` wins. Default `'check'`. */
+  overlap?: 'check' | 'allow';
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)

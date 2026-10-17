@@ -85,6 +85,7 @@ export const FRAME_WRITING_MODES = ['horizontal-tb', 'vertical-rl'] as const;
 export const FRAME_DIRECTIONS = ['ltr', 'rtl'] as const;
 export const LABEL_FONT_STYLES = ['normal', 'italic'] as const;
 export const LABEL_TEXT_TRANSFORMS = ['none', 'uppercase'] as const;
+export const LABEL_OVERLAPS = ['check', 'allow'] as const;
 const DIMENSION_UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'];
 
 // ---------------------------------------------------------------------------
@@ -833,6 +834,7 @@ export function stripLabelStylesDefaults(styles: readonly LabelStyle[] | undefin
     if (!out.paragraphStyle && out.fontStyle === DEFAULT_LABEL_STYLE.fontStyle) delete out.fontStyle;
     if (!out.paragraphStyle && out.textTransform === DEFAULT_LABEL_STYLE.textTransform) delete out.textTransform;
     if (out.minScale === DEFAULT_LABEL_STYLE.minScale) delete out.minScale;
+    if (out.overlap === 'check') delete out.overlap;
     return out;
   });
 }

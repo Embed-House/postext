@@ -107,6 +107,36 @@ describe('a figure’s own words, laid out (#935)', () => {
   });
 });
 
+describe('two figures of one resource that say different words (#986)', () => {
+  const warningsOf = (md: string, resources: Resource[] = [RELIEF]) =>
+    (build(md, resources).contentWarnings ?? []).filter((w) => w.kind === 'figureWordsShared');
+
+  it('warns on the later figure, naming the words it gives that the pages do not show', () => {
+    const md = [':::figure{resource="relief" caption="First"}', ':::', '', ':::figure{resource="relief" caption="Second" note="Another note"}', ':::', ''].join('\n');
+    const found = warningsOf(md);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatchObject({ kind: 'figureWordsShared', resourceId: 'relief', words: ['caption', 'note'] });
+    const at = found[0]!;
+    expect(md.slice(at.sourceStart, at.sourceEnd)).toContain('Second');
+    expect(captionText(build(md))).toContain('First');
+  });
+
+  it('stays quiet when the second figure says the same words, none, or a second resource', () => {
+    const twice = (second: string, resources?: Resource[]) => warningsOf([':::figure{resource="relief" caption="First"}', ':::', '', second, ':::', ''].join('\n'), resources);
+    expect(twice(':::figure{resource="relief" caption="First"}')).toEqual([]);
+    expect(twice(':::figure{resource="relief"}')).toEqual([]);
+    const other: Resource = { ...RELIEF, id: 'relief-small' };
+    expect(twice(':::figure{resource="relief-small" caption="Second"}', [RELIEF, other])).toEqual([]);
+  });
+
+  it('counts words the first figure left unsaid as lost too, and reads ::caption lines', () => {
+    const md = [':::figure{resource="relief"}', '::alt[Mapa]', ':::', '', ':::figure{resource="relief"}', '::caption[Segundo]', ':::', ''].join('\n');
+    const found = warningsOf(md);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatchObject({ resourceId: 'relief', words: ['caption'] });
+  });
+});
+
 describe('a figure’s own words on a composed page (#935)', () => {
   it('sets the edition’s caption in the frame that holds the figure, and keeps its labels', () => {
     const md = ['::::page{template="t"}', ':::figure{resource="relief" slot="map"}', '::caption[Relieve de Varenia]', '::label[Mar]{at="mar"}', ':::', '::::', ''].join('\n');

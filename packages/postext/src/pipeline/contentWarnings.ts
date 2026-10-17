@@ -14,6 +14,7 @@ import { resourceRefId, unprefixedId } from './crossRefs';
 import { citationIssues } from './citations';
 import { bookCitationContexts, needsCitationContext } from '../citations/context';
 import { duplicateAnchors } from './anchors';
+import { figureWordConflicts } from './figureWords';
 import { computeChapterTitles } from './placeholders';
 import type { ContentBlock } from '../parse';
 import { KNOWN_CONTAINERS, KNOWN_DIRECTIVES, parseInlineSnippetSpans, parseMarkdownMemo } from '../parse';
@@ -269,6 +270,12 @@ export function collectContentWarnings(
       if (mark.path.length === 0) out.push({ kind: 'indexMarkInvalid', ...abs({ start: mark.sourceStart, end: mark.sourceEnd }) });
     }
   };
+
+  // Two figures of one resource that say different words (#986): the pages
+  // show the first figure's.
+  for (const c of figureWordConflicts(blocks)) {
+    out.push({ kind: 'figureWordsShared', resourceId: c.resourceId, words: c.words, ...abs({ start: c.start, end: c.end }) });
+  }
 
   let comics: ReturnType<typeof resolvedComics> | undefined;
   for (const b of blocks) {
@@ -957,7 +964,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       text = `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} is wider than its measure${w.widthPct > 0 ? ` (${w.widthPct}% of the picture)` : ''} even at ${Math.round(w.scale * 100)}% — it runs past it; widen the anchor's width, shorten the label, or lower the style's minScale`;
       break;
     case 'labelOverlap':
-      text = `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} runs into "${w.with}"${w.withAnchor ? ` at "${w.withAnchor}"` : ''}${w.count > 1 ? ` and ${w.count - 1} more` : ''} — move an anchor, narrow the label's width or shorten the words in this edition`;
+      text = w.withSymbol !== undefined
+        ? `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} runs onto symbol ${w.withSymbol} of the picture (an avoid zone)${w.count > 1 ? ` and ${w.count - 1} more` : ''} — move the anchor, narrow the label's width, shorten the words in this edition, or set overlap: 'allow' on the anchor if the source prints it so`
+        : `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} runs into "${w.with}"${w.withAnchor ? ` at "${w.withAnchor}"` : ''}${w.count > 1 ? ` and ${w.count - 1} more` : ''} — move an anchor, narrow the label's width or shorten the words in this edition`;
       break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
@@ -967,6 +976,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'paperAttributeInvalid':
       text = `:::paper ${w.key}="${w.value}" is not a value it reads — dropped, the pages keep the document's paper for it`;
+      break;
+    case 'figureWordsShared':
+      text = `Figure of "${w.resourceId}" gives its ${w.words.map((k) => (k === 'alt' ? 'alt text' : k)).join(' and ')} to a resource an earlier figure of this chapter already worded — the pages show the first figure's words and drop these; give this figure a resource of its own (a second entry for the same file) to keep both`;
       break;
     case 'unknownChipStyle':
       text = `Unknown chip style "${w.style}"${inRes} — the chip takes the first chip style`;

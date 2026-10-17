@@ -3338,8 +3338,11 @@ export type ContentWarning = ContentWarningBase & (
    *  order written, names the first earlier label it meets (`with`, and
    *  `withAnchor`) and how many earlier labels it meets in all (`count`,
    *  at least 1). Checked per edition, so a language whose words run
-   *  longer shows it. The source range is the later label's. */
-  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; locale?: string; labelId?: string }
+   *  longer shows it. The source range is the later label's. With
+   *  `withSymbol` (1-based), the label runs onto a symbol of the picture
+   *  instead (#969): one of its `avoid` zones, `count` of them in all;
+   *  `with` reads `symbol <n>`. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; withSymbol?: number; count: number; locale?: string; labelId?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`
@@ -3353,6 +3356,13 @@ export type ContentWarning = ContentWarningBase & (
    *  first one. `inResource` names the resource whose caption, note or
    *  cell holds it. */
   | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
+  /** A `:::figure` gives words (`alt`, `caption`, `note`) to a resource
+   *  that an earlier figure of the chapter already gave words to, and
+   *  they differ (#986): a resource has one set of words in a chapter, the
+   *  first figure's, so `words` of this figure are not shown. Give the
+   *  figure a resource of its own (a second entry for the same file). The
+   *  source range is the first of those words. */
+  | { kind: 'figureWordsShared'; resourceId: string; words: ('alt' | 'caption' | 'note')[] }
   /** A footnote marker `[^id]` with no `[^id]: …` definition in the
    *  document: the number prints, the note is empty. Points at the first
    *  such marker. */

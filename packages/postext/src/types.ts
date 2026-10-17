@@ -535,6 +535,11 @@ export interface ResourceAnchor {
    *  (`top` is the first, rightmost one); `rotate` turns it on top of the
    *  quarter turn. Default `'horizontal-tb'`. */
   writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** `'allow'` says the label set here may touch the labels beside it: the
+   *  source prints it that way (a dense map, two grids of degree figures
+   *  printed over each other), so `labelOverlap` is not raised for a pair
+   *  it belongs to (#977). Over the style's `overlap`. Default `'check'`. */
+  overlap?: 'check' | 'allow';
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are

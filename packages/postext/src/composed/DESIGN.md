@@ -1085,6 +1085,35 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the frames above it, so the ladder never squeezes them for it and an overlap is not reported. `footHold.test.ts` pins both
   directions.
 
+- **Label styles in the Sandbox (#969).** A Design section, `labelStyles` in the Figures & tables group
+  (`LabelStylesSection`, registry id `labelStyles`, counted by `sectionHasOverrides` when the list is not
+  empty), modelled on Mark styles: id (renamed on blur, never to a colliding one), name, then three
+  sub-sections: type (borrowed paragraph style, face, size, weight, slant, colour, letter case, tracking), halo
+  and plate, fit and layout (`minScale`, `writingMode`, `overlap`). No label style is built in, so the list
+  starts empty and `Add label style` writes `{ id, name }`. A field left unset shows what it inherits (the
+  borrowed paragraph style, else the body text); `fontStyle` and `textTransform` are three-way selects whose
+  *Inherited* is "not written", which keeps `resolveLabelLook`'s rule (#955: `'normal'` / `'none'` written turn
+  a borrowed style's slant or capitals off). Renaming an id does not rewrite the anchors and labels that name
+  it, as for chip and mark styles: the Checks panel flags them (`labelStyleUnknown`) until corrected. The
+  config tools needed no change: `labelStyles` was already a section of `sandbox_get_config` /
+  `sandbox_set_config`, items named by `[id=…]`, and the "every setting" tests walk it.
+- **`overlap: 'allow'` (#977).** `ResourceAnchor.overlap` and `LabelStyle.overlap` (`'check' | 'allow'`,
+  default `'check'`). `figureLabelWarnings` passes `overlappingLabels` a flag per label (anchor's value over
+  its style's, where the style is the label's own `style` else its anchor's); a pair is skipped when either of
+  its labels is allowed, since the overlap is as much the other's as that label's. The label style's value is
+  checked (`unknownConfigValue`) and `stripLabelStylesDefaults` drops `'check'`. The anchor editor has a
+  Check / Allow control (one anchor and the ticked ones), and the WebMCP marks schema takes the field. What the
+  issue asks of the extraction scripts (merge labels of the same text within 0.5 mm into one anchor) is the
+  porting skill's: its notes say so.
+- **Words per figure (#986): a warning, not a second model.** A resource is the unit of numbering, of `:ref`
+  and of the list of figures, so two figures cannot carry different words for one resource without becoming
+  two figures. The deliberate answer is the existing one (a second resource for the same file) plus
+  `figureWordsShared`, raised by `collectContentWarnings` from `figureWordConflicts` (figureWords.ts): for a
+  resource already worded by a figure of the chapter, a later figure whose `alt`, `caption` or `note` differs
+  from the first's, or that the first left unsaid (and so is not shown either). A figure that repeats the
+  first's words, or gives none, is quiet. The range is the first of the dropped words; the Sandbox files it
+  under Figures.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:

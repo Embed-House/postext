@@ -113,6 +113,101 @@ describe('overlapping labels (#902)', () => {
   });
 });
 
+describe('overlap the source prints that way (#977)', () => {
+  const withAnchors = (anchors: NonNullable<Resource['anchors']>, labelStyles?: PostextConfig['labelStyles']) => {
+    const dense: Resource = { ...MAP, anchors };
+    return buildDocument(
+      { markdown: figure('::label[Madrid]{at="a"}', '::label[Toledo]{at="b"}', '::label[Oslo]{at="far"}'), resources: [dense, MAP_B] },
+      labelStyles ? { ...PAGE, labelStyles } : PAGE,
+      createMeasurementCache(),
+    );
+  };
+  const A = { id: 'a', x: 0.2, y: 0.5, style: 'small' };
+  const B = { id: 'b', x: 0.22, y: 0.5, style: 'small' };
+  const FAR = { id: 'far', x: 0.8, y: 0.2, style: 'small' };
+
+  it('reports the pair by default', () => {
+    expect(kinds(withAnchors([A, B, FAR]), 'labelOverlap')).toHaveLength(1);
+  });
+
+  it('leaves a pair alone when the later anchor says overlap: "allow"', () => {
+    expect(kinds(withAnchors([A, { ...B, overlap: 'allow' }, FAR]), 'labelOverlap')).toEqual([]);
+  });
+
+  it('leaves it alone when the earlier anchor allows it too, since the overlap is that label’s as much as the other’s', () => {
+    expect(kinds(withAnchors([{ ...A, overlap: 'allow' }, B, FAR]), 'labelOverlap')).toEqual([]);
+  });
+
+  it('keeps reporting the pairs of labels that do not allow it', () => {
+    const doc = buildDocument(
+      { markdown: figure('::label[Madrid]{at="a"}', '::label[Toledo]{at="b"}', '::label[Avila]{at="c"}'), resources: [{ ...MAP, anchors: [A, { ...B, overlap: 'allow' }, { id: 'c', x: 0.21, y: 0.5, style: 'small' }] }, MAP_B] },
+      PAGE,
+      createMeasurementCache(),
+    );
+    const found = kinds(doc, 'labelOverlap') as Extract<ContentWarning, { kind: 'labelOverlap' }>[];
+    // Avila meets Madrid (allowed by neither), not only Toledo.
+    expect(found.map((w) => w.text)).toEqual(['Avila']);
+    expect(found[0]!.with).toBe('Madrid');
+    expect(found[0]!.count).toBe(1);
+  });
+
+  it('reads the choice from the label style too, for every label set in it', () => {
+    const styles = [{ id: 'small', fontSize: px(10), overlap: 'allow' as const }, { id: 'tight', fontSize: px(10), minScale: 0.5 }];
+    expect(kinds(withAnchors([A, B, FAR], styles), 'labelOverlap')).toEqual([]);
+  });
+
+  it('lets a label that names its own style win over its anchor’s', () => {
+    const styles = [{ id: 'small', fontSize: px(10) }, { id: 'tight', fontSize: px(10), overlap: 'allow' as const }];
+    const doc = buildDocument(
+      { markdown: figure('::label[Madrid]{at="a"}', '::label[Toledo]{at="b" style="tight"}'), resources: [{ ...MAP, anchors: [A, B] }, MAP_B] },
+      { ...PAGE, labelStyles: styles },
+      createMeasurementCache(),
+    );
+    expect(kinds(doc, 'labelOverlap')).toEqual([]);
+  });
+
+  it('rejects an overlap value it does not know in the configuration check', () => {
+    const doc = withAnchors([A, B, FAR], [{ id: 'small', fontSize: px(10), overlap: 'permit' as never }]);
+    const found = (doc.configWarnings ?? []).filter((w) => w.path.endsWith('/overlap'));
+    expect(found).toHaveLength(1);
+  });
+});
+
+describe('labels against the symbols of a picture (#969)', () => {
+  // `avoid` zones are the symbols' boxes, in fractions of the picture (400 × 300 px at 1:1 in these tests).
+  const withZones = (avoid: { x: number; y: number; width: number; height: number }[], anchors = MAP.anchors, markdown = figure('::label[Madrid]{at="a"}')) =>
+    buildDocument({ markdown, resources: [{ ...MAP, anchors, avoid }, MAP_B] }, PAGE, createMeasurementCache());
+  const symbols = (doc: VDTDocument) => (doc.contentWarnings ?? []).filter((w) => w.kind === 'labelOverlap' && w.withSymbol !== undefined) as Extract<ContentWarning, { kind: 'labelOverlap' }>[];
+
+  it('reports a label that runs onto a symbol, naming the symbol', () => {
+    // The word at a (80, 150 px) is about 35 px wide and 12 px high: this zone sits under it.
+    const doc = withZones([{ x: 0.2, y: 0.5, width: 0.03, height: 0.04 }]);
+    const found = symbols(doc);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatchObject({ resourceId: 'mapa', text: 'Madrid', anchor: 'a', withSymbol: 1, count: 1, pageIndex: 0 });
+    expect(formatWarning(found[0]!)).toContain('symbol 1');
+  });
+
+  it('is quiet for a symbol beside the label, and when the picture marks none', () => {
+    expect(symbols(withZones([{ x: 0.8, y: 0.8, width: 0.03, height: 0.04 }]))).toEqual([]);
+    expect(symbols(withZones([]))).toEqual([]);
+  });
+
+  it('counts the symbols a label meets, and leaves out a label that allows overlap', () => {
+    const zones = [{ x: 0.2, y: 0.5, width: 0.03, height: 0.04 }, { x: 0.22, y: 0.5, width: 0.03, height: 0.04 }];
+    expect(symbols(withZones(zones))[0]).toMatchObject({ withSymbol: 1, count: 2 });
+    const allowed = withZones(zones, [{ id: 'a', x: 0.2, y: 0.5, style: 'small', overlap: 'allow' }]);
+    expect(symbols(allowed)).toEqual([]);
+  });
+
+  it('follows the picture through a crop, as the labels do', () => {
+    const doc = withZones([{ x: 0.2, y: 0.5, width: 0.03, height: 0.04 }]);
+    const block = [...doc.blocks, ...doc.pages.flatMap((p) => p.floats ?? [])].find((b) => b.resourceBlock?.resource.id === 'mapa')!;
+    expect(block.resourceBlock!.resource.avoid).toHaveLength(1);
+    expect(symbols(doc)).toHaveLength(1);
+  });
+});
+
 describe('labelOverflow (#902)', () => {
   it('reports a label still too wide for its measure at the smallest scale its style allows', () => {
     // 0.04 × 400 = 16 px for "Gibraltar" (45 px at 10 px): 0.5 is not enough.

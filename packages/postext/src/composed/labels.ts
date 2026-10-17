@@ -671,8 +671,9 @@ export function polygonPenetration(a: readonly Pt[], b: readonly Pt[]): number {
 const OVERLAP_TOLERANCE = 0.12;
 
 /** The pairs of labels whose lines meet: for each label (by index) the
- *  indices of the earlier labels it meets. */
-export function overlappingLabels(labels: readonly Pick<VDTFigureLabel, 'layout'>[]): Map<number, number[]> {
+ *  indices of the earlier labels it meets. `allowed[i]` leaves label `i`
+ *  out: no pair it belongs to is reported (#977). */
+export function overlappingLabels(labels: readonly Pick<VDTFigureLabel, 'layout'>[], allowed?: readonly boolean[]): Map<number, number[]> {
   const shapes = labels.map((l) => (l.layout ? labelShapes(l.layout) : []));
   const heights = labels.map((l) => l.layout?.lines.reduce((m, line) => Math.min(m, line.bbox.height), Infinity) ?? Infinity);
   const bounds = shapes.map((quads) => {
@@ -683,8 +684,9 @@ export function overlappingLabels(labels: readonly Pick<VDTFigureLabel, 'layout'
   const out = new Map<number, number[]>();
   for (let j = 1; j < labels.length; j++) {
     if (shapes[j]!.length === 0) continue;
+    if (allowed?.[j]) continue;
     for (let i = 0; i < j; i++) {
-      if (shapes[i]!.length === 0) continue;
+      if (shapes[i]!.length === 0 || allowed?.[i]) continue;
       const a = bounds[i]!;
       const b = bounds[j]!;
       if (a[2] <= b[0] || b[2] <= a[0] || a[3] <= b[1] || b[3] <= a[1]) continue;
@@ -697,6 +699,43 @@ export function overlappingLabels(labels: readonly Pick<VDTFigureLabel, 'layout'
       }
     }
   }
+  return out;
+}
+
+/**
+ * The symbols of the picture (its `avoid` zones, in fractions of the whole
+ * picture) each label runs onto: for each label (by index) the 0-based
+ * indices of the zones its lines or plate meet (#969). `allowed[i]` leaves
+ * label `i` out. The zones are rectangles in the body's frame, through the
+ * picture's crop, so a picture shown smaller or cropped to its safe area
+ * moves them with the art.
+ */
+export function labelsOverSymbols(
+  labels: readonly Pick<VDTFigureLabel, 'layout'>[],
+  zones: readonly NonNullable<Resource['avoid']>[number][],
+  rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'bodySource'>,
+  allowed?: readonly boolean[],
+): Map<number, number[]> {
+  const out = new Map<number, number[]>();
+  if (zones.length === 0) return out;
+  const boxes: Pt[][] = zones.map((z) => {
+    const a = pictureToBody(rb, z.x, z.y);
+    const b = pictureToBody(rb, z.x + z.width, z.y + z.height);
+    return [[a.x, a.y], [b.x, a.y], [b.x, b.y], [a.x, b.y]];
+  });
+  labels.forEach((label, i) => {
+    if (!label.layout || allowed?.[i]) return;
+    const shapes = labelShapes(label.layout);
+    const height = label.layout.lines.reduce((m, line) => Math.min(m, line.bbox.height), Infinity);
+    const tolerance = Math.max(OVERLAP_TOLERANCE * height, 0.25);
+    boxes.forEach((box, z) => {
+      if (shapes.some((q) => polygonPenetration(q, box) > tolerance)) {
+        const list = out.get(i);
+        if (list) list.push(z);
+        else out.set(i, [z]);
+      }
+    });
+  });
   return out;
 }
 
@@ -766,8 +805,14 @@ export function figureLabelWarnings(doc: VDTDocument, figureSource: (block: VDTB
       });
     }
     // Labels whose boxes meet: reported once, on the later of the two in
-    // the order written (#902).
-    for (const [j, earlier] of overlappingLabels(labels)) {
+    // the order written (#902). A label whose anchor, or whose style,
+    // says `overlap: 'allow'` is left out: the source prints it so (#977).
+    const allowed = labels.map((l) => {
+      const anchor = anchors.find((a) => a.id === anchorOf(l));
+      const style = doc.config?.labelStyles?.find((st) => st.id === (l.style ?? anchor?.style));
+      return (anchor?.overlap ?? style?.overlap) === 'allow';
+    });
+    for (const [j, earlier] of overlappingLabels(labels, allowed)) {
       const label = labels[j]!;
       const other = labels[earlier[0]!]!;
       const anchor = anchorOf(label);
@@ -780,6 +825,26 @@ export function figureLabelWarnings(doc: VDTDocument, figureSource: (block: VDTB
         with: shortText(other),
         ...(otherAnchor !== undefined ? { withAnchor: otherAnchor } : {}),
         count: earlier.length,
+        ...(locale ? { locale } : {}),
+        ...(label.id ? { labelId: label.id } : {}),
+        sourceStart: label.sourceStart,
+        sourceEnd: label.sourceEnd,
+        pageIndex: block.pageIndex,
+      });
+    }
+    // Labels that run onto a symbol of the picture, marked as one of its
+    // `avoid` zones (#969): the first symbol and how many in all.
+    for (const [j, zones] of labelsOverSymbols(labels, rb.resource.avoid ?? [], rb, allowed)) {
+      const label = labels[j]!;
+      const anchor = anchorOf(label);
+      out.push({
+        kind: 'labelOverlap',
+        resourceId: rb.resource.id,
+        text: shortText(label),
+        ...(anchor !== undefined ? { anchor } : {}),
+        with: `symbol ${zones[0]! + 1}`,
+        withSymbol: zones[0]! + 1,
+        count: zones.length,
         ...(locale ? { locale } : {}),
         ...(label.id ? { labelId: label.id } : {}),
         sourceStart: label.sourceStart,
