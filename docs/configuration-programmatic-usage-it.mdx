@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’uscita impaginata taglia al piede della cornice quello che non entra; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>Il contenuto di una cornice è proseguito in pagine aggiunte dopo la sua pagina composta (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>) tante volte quante pagine può aggiungere una pagina composta, 16, e ancora non entra (<code>template</code> e <code>frame</code> dell’ultima pagina aggiunta, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> dell’ultima pagina aggiunta.</td>
+      <td>L’uscita impaginata taglia il resto al piede di quella cornice; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L’apertura di una pagina composta e il suo modello non concordano sulla doppia pagina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, lo <code>spread</code> dell’apertura; <code>templateSpread</code>, quello del modello).</td>
       <td>Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>Un’immagine flottante è stata composta più piccola della sua dimensione per entrare nello spazio disponibile (<code>placement.shrink</code>). <code>resourceId</code> la indica, <code>scale</code> è la frazione della sua larghezza che mantiene, e <code>overflowPx</code>, quando presente, quanto sborda ancora oltre il piede della gabbia del testo alla scala minima (<code>placement.minScale</code>), su una pagina nuova dove non aveva altro posto. Punta al paragrafo che la cita per primo.</td>
       <td>L’immagine viene stampata a quella scala; oltre la gabbia del testo solo quando lo dice <code>overflowPx</code>.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Una bitmap con dimensione di stampa (il suo <code>bitmap.resolution</code> o un numero in <code>layout.bitmapResolution</code>; non una risoluzione letta dal file) composta in una colonna che la tiene sotto la metà di quella dimensione, su una pagina con la gabbia di testo più larga della colonna. <code>resourceId</code> la nomina, <code>scale</code> è la parte della sua larghezza di stampa che conserva, <code>printWidthPx</code>, <code>widthPx</code> e <code>pageWidthPx</code> le larghezze di stampa, di colonna e di gabbia. Non si segnala un'immagine ristretta con <code>placement.width</code>, ridotta al suo spazio, ruotata o messa nella cornice di una pagina composta. Indica il paragrafo che la cita per primo. Da postext 1.37.</td>
+      <td>L'immagine si stampa alla larghezza della sua colonna. Un'immagine nel flusso non è mai più larga della sua colonna e la pagina predefinita ne ha due (<code>layout.layoutType: 'double'</code>): componi la pagina su una colonna, fai flottare l'immagine su tutta la pagina (<code>placement.span: 'page'</code>) o alzane la risoluzione se quella è la dimensione voluta.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Casse des paragraphes : <code>'uppercase'</code> les compose en capitales (une liste des personnages, une indication de jeu de scène), y compris les mots d’une pastille et le libellé d’un <code>:ref</code>. Longueur pour longueur, pour que la correspondance avec la source dans l’éditeur reste un pour un : une lettre dont la capitale est plus longue (<code>ß</code>) reste telle qu’elle est écrite. Les mathématiques ne sont pas modifiées, et un titre courant qui lit le paragraphe comme une marque (<code>&#123;firstMark.<em>style</em>&#125;</code>) prend le texte tel qu’il est écrit ; le <code>textTransform</code> propre à un texte de maquette le compose en capitales.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Approche ajoutée après chaque lettre des paragraphes, comme le <code>letter-spacing</code> de CSS : une valeur positive espace les lettres (un titre de page en capitales, <code>&#123; value: 0.015, unit: 'em' &#125;</code> pour +15/1000 em), une valeur négative resserre un grand corps. Une valeur en <code>em</code> compte le <code>fontSize</code> du style lui-même. Elle entre dans la mesure des lignes : un paragraphe interlettré coupe là où tombent ses mots élargis ; les lignes justifiées répartissent leurs espaces entre mots en plus, et une ligne courte que la mise en page resserre (<code>bodyText.maxRuntTracking</code>) part de cette valeur. Canvas, HTML, PDF et EPUB la peignent de la même façon, et un export Word l'écrit comme l'espacement des caractères du style. Les mots d'une écriture liée (arabe, syriaque, n'ko) restent sans approche et lèvent <code>joiningScriptLetterSpacing</code>. Depuis postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

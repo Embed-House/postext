@@ -5,10 +5,10 @@ import { DEFAULT_CHIP_STYLES, DEFAULT_MARK_STYLES, canonicalLocaleTag, defaultRe
 import { documentLanguage } from '../context/documentDirection';
 import { defaultDocumentLocale } from '../controls/hyphenation';
 import { useCodeMirror } from './useCodeMirror';
-import { registerEditorView } from './viewerEdits';
 import { EditorToolbar } from './EditorToolbar';
 import { useUiRtl } from '../ui/direction';
-import { useSandbox, useSandboxEditorStateRef } from '../context/SandboxContext';
+import { useSandbox, useSandboxEditorStateRef, useSandboxStore } from '../context/SandboxContext';
+import { runHistoryFromUi } from '../history/historyKeys';
 import { anchorsOf, referencesOf, type RefCompletionContext } from './refCompletion';
 import { indexTermsOf } from './indexSyntax';
 import { useEditMode } from '../editing/editMode';
@@ -20,6 +20,8 @@ interface MarkdownEditorProps {
 
 export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
   const { state, dispatch } = useSandbox();
+  const store = useSandboxStore();
+  const chapterId = state.activeChapterId;
   // Per-chapter persisted CodeMirror state: the panel remounts this editor
   // (keyed by chapter id) on every switch, so each chapter keeps its own
   // undo history and caret.
@@ -68,7 +70,7 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
   // names none), not the interface's.
   const language = documentLanguage(state.config, defaultDocumentLocale(state.locale));
   const lang = canonicalLocaleTag(language) ?? language;
-  const { containerRef, viewRef } = useCodeMirror({
+  const { containerRef, viewRef, runHistory } = useCodeMirror({
     initialValue: state.markdown,
     externalValue: state.markdown,
     onChange: (value) => dispatch({ type: 'SET_MARKDOWN', payload: value }),
@@ -82,14 +84,21 @@ export function MarkdownEditor({ isDark = true }: MarkdownEditorProps) {
     rtl,
     lang,
     readOnly,
+    // One history for the text and the design (#899).
+    historyCommands: {
+      undo: () => runHistoryFromUi(store.history, 'undo', store.getSnapshot) !== null,
+      redo: () => runHistoryFromUi(store.history, 'redo', store.getSnapshot) !== null,
+    },
+    onUpdate: (update) => store.history.editorUpdated(chapterId, update.state, update.transactions),
   });
 
-  // Edits made on the previews (#568) undo through this editor's history
-  // while it is open.
+  // The Sandbox's history (#899) drives this editor's own while it is
+  // open: edits made on the previews and Cmd/Ctrl+Z go through it.
   useEffect(() => {
-    registerEditorView(state.activeChapterId, viewRef.current);
     const id = state.activeChapterId;
-    return () => registerEditorView(id, null);
+    const view = viewRef.current;
+    if (view) store.history.attachEditor(id, { getState: () => view.state, run: runHistory });
+    return () => store.history.attachEditor(id, null);
     // The editor is keyed by chapter: one id for its whole life.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

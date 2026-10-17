@@ -286,7 +286,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
   };
 
   const writeTemplates = (templates: PostextConfig['pageTemplates']): void => {
-    refs.dispatchRef.current({ type: 'UPDATE_CONFIG', payload: { pageTemplates: templates && templates.length > 0 ? templates : undefined } });
+    // A drop is one step of the history (#899), never joined to the next.
+    refs.dispatchRef.current({ type: 'UPDATE_CONFIG', payload: { pageTemplates: templates && templates.length > 0 ? templates : undefined }, history: { merge: false } });
   };
 
   const closeQuestion = (): void => {

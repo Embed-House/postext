@@ -1,6 +1,7 @@
 import type { VDTDocument } from 'postext';
 import { lineTextAlign, pageIsMirrored, pageToFlow, resourceBlockToLocal } from 'postext';
-import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, isHiddenUnderBand } from './bandTitle';
+import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle';
+import { blockFrameMatrix, blockPointShown, intoBlockSpace } from '../composed/frameHit';
 import { documentShapingLanguage } from '../../controls/measureLanguage';
 
 type VDTBlock = VDTDocument['blocks'][number];
@@ -361,17 +362,22 @@ export function designImageFileIdAtPixel(
   const page = doc.pages[pageIndex];
   if (!page) return null;
   const slots: DesignSlotOf[] = [];
+  const flow = pageToFlow(page, xPage, yPage);
+  // An overlay is painted in its block's composed frame, if any (#910).
+  const inFrame = new Map<DesignSlotOf, { x: number; y: number }>();
   for (const b of doc.blocks) {
-    if (b.pageIndex === pageIndex && b.designOverlay) slots.push(b.designOverlay);
+    if (b.pageIndex !== pageIndex || !b.designOverlay) continue;
+    slots.push(b.designOverlay);
+    const m = blockFrameMatrix(page, b.id);
+    if (m) inFrame.set(b.designOverlay, intoBlockSpace(m, flow.x, flow.y));
   }
   if (page.openerBand) slots.push(page.openerBand);
-  const flow = pageToFlow(page, xPage, yPage);
   const sheetSlots = new Set<DesignSlotOf>();
   if (page.header) { slots.push(page.header); sheetSlots.add(page.header); }
   if (page.footer) { slots.push(page.footer); sheetSlots.add(page.footer); }
   let hit: string | null = null;
   for (const slot of slots) {
-    const { x, y } = sheetSlots.has(slot) ? { x: xPage, y: yPage } : flow;
+    const { x, y } = sheetSlots.has(slot) ? { x: xPage, y: yPage } : inFrame.get(slot) ?? flow;
     for (const block of slot.blocks) {
       if (block.kind !== 'image') continue;
       const r = block.bbox;
@@ -450,15 +456,19 @@ function segmentAtPixel(
 ): VDTSegment | null {
   const candidates: VDTBlock[] = doc.blocks.filter((b) => b.pageIndex === pageIndex && !b.resourceBlock);
   for (const rb of resourceBlocksOnPage(doc, pageIndex)) candidates.push(rb);
+  const page = doc.pages[pageIndex];
 
   for (const b of candidates) {
     if (b.hidden) continue;
-    if (xPage < b.bbox.x || xPage > b.bbox.x + b.bbox.width) continue;
-    if (yPage < b.bbox.y || yPage > b.bbox.y + b.bbox.height) continue;
+    // In the block's composed frame, if any (#910).
+    const { x, y } = intoBlockSpace(blockFrameMatrix(page, b.id), xPage, yPage);
+    if (!blockPointShown(page, b.id, { x, y })) continue;
+    if (x < b.bbox.x || x > b.bbox.x + b.bbox.width) continue;
+    if (y < b.bbox.y || y > b.bbox.y + b.bbox.height) continue;
     const rb = b.resourceBlock;
     if (rb) {
       // A rotated block keeps its lines in its upright frame.
-      const p = resourceBlockToLocal(rb, xPage, yPage);
+      const p = resourceBlockToLocal(rb, x, y);
       const inCaption = segmentInResourceLines(rb.captionLines, p.x, p.y);
       if (inCaption?.refResourceId !== undefined) return inCaption;
       if (rb.table) {
@@ -470,8 +480,8 @@ function segmentAtPixel(
       continue;
     }
     for (const line of b.lines) {
-      if (yPage < line.bbox.y || yPage > line.bbox.y + line.bbox.height) continue;
-      const hit = segmentInBlockLine(b, line, xPage);
+      if (y < line.bbox.y || y > line.bbox.y + line.bbox.height) continue;
+      const hit = segmentInBlockLine(b, line, x);
       if (hit !== null) return hit;
     }
   }
@@ -489,12 +499,14 @@ export function pageTargetAtPixel(
   xPage: number,
   yPage: number,
 ): number | null {
+  const page = doc.pages[pageIndex];
   for (const b of doc.blocks) {
     if (b.pageIndex !== pageIndex || b.hidden) continue;
     const target = b.tocEntry?.pageIndex ?? b.tocPart?.pageIndex;
     if (target === undefined) continue;
-    if (xPage < b.bbox.x || xPage > b.bbox.x + b.bbox.width) continue;
-    if (yPage < b.bbox.y || yPage > b.bbox.y + b.bbox.height) continue;
+    const { x, y } = intoBlockSpace(blockFrameMatrix(page, b.id), xPage, yPage);
+    if (x < b.bbox.x || x > b.bbox.x + b.bbox.width) continue;
+    if (y < b.bbox.y || y > b.bbox.y + b.bbox.height) continue;
     return target;
   }
   return null;
@@ -609,35 +621,45 @@ export function plainRangeInLine(
 export function pixelToSourceOffset(
   doc: VDTDocument,
   pageIndex: number,
-  xPage: number,
-  yPage: number,
+  xFlow: number,
+  yFlow: number,
 ): number | null {
+  // A composed frame's blocks (and the design overlays they carry) keep
+  // the frame's own coordinates, put on the page by its matrix (text
+  // scale, turn): the point is read in the frame of each block (#910).
+  const page = doc.pages[pageIndex];
+  const local = (blockId: string | undefined) =>
+    blockId === undefined ? { x: xFlow, y: yFlow } : intoBlockSpace(blockFrameMatrix(page, blockId), xFlow, yFlow);
+
   // 0. Opener bands render the heading / part title through a design slot.
   //    Those text blocks carry the title's source map, so a click on them
   //    lands the cursor on the clicked glyph — and takes precedence over the
   //    heading's invisible lines hidden under the band.
   const bandTitles = bandTitleBlocks(doc, pageIndex);
   for (const b of bandTitles) {
+    const { x, y } = local(bandTitleOwner(b));
     // Their characters are measured in the language the page paints them
     // in (#770).
     const boxes = bandLineBoxes(b, documentShapingLanguage(doc));
     // Hit either the element box or any of its line boxes (a small author
     // line has a thin element box; the line box covers the full leading).
     const inside = (r: { x: number; y: number; width: number; height: number }) =>
-      xPage >= r.x && xPage <= r.x + r.width && yPage >= r.y && yPage <= r.y + r.height;
+      x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + r.height;
     if (!inside(b.bbox) && !boxes.some(inside)) continue;
     if (boxes.length === 0) return b.sourceStart ?? null;
     let box = boxes[0]!;
     let best = Infinity;
     for (const candidate of boxes) {
-      const dy = yPage < candidate.y ? candidate.y - yPage : yPage > candidate.y + candidate.height ? yPage - candidate.y - candidate.height : 0;
+      const dy = y < candidate.y ? candidate.y - y : y > candidate.y + candidate.height ? y - candidate.y - candidate.height : 0;
       if (dy < best) { best = dy; box = candidate; }
     }
-    return bandPlainToSource(b, box.plainStart + bandCharAtX(box, xPage));
+    return bandPlainToSource(b, box.plainStart + bandCharAtX(box, x));
   }
 
   // 1. Find a block on this page whose bbox contains the click.
   let hitBlock: VDTDocument['blocks'][number] | undefined;
+  let xPage = xFlow;
+  let yPage = yFlow;
   for (const b of doc.blocks) {
     if (b.pageIndex !== pageIndex) continue;
     if (isHiddenUnderBand(b, bandTitles)) continue;
@@ -647,11 +669,17 @@ export function pixelToSourceOffset(
     // A callout frame spans its whole box but carries no text of its own;
     // its children follow in `doc.blocks` and own the clickable glyphs.
     if (b.type === 'callout') continue;
+    const p = local(b.id);
+    // Text a frame clips at its foot is not painted, so not clicked.
+    if (!blockPointShown(page, b.id, p)) continue;
     const bx = b.bbox.x;
     const by = b.bbox.y;
-    if (xPage < bx || xPage > bx + b.bbox.width) continue;
-    if (yPage < by || yPage > by + b.bbox.height) continue;
+    if (p.x < bx || p.x > bx + b.bbox.width) continue;
+    if (p.y < by || p.y > by + b.bbox.height) continue;
     hitBlock = b;
+    // The rest of the hit test reads the block's lines in its frame.
+    xPage = p.x;
+    yPage = p.y;
     break;
   }
   if (!hitBlock) return null;

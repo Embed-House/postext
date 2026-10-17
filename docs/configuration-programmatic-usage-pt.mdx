@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>A saída paginada corta o que não cabe no pé do bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>O conteúdo de um bloco continuou em páginas acrescentadas depois da sua página composta (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>) tantas vezes quantas páginas uma página composta pode acrescentar, 16, e ainda não cabe (<code>template</code> e <code>frame</code> da última página acrescentada, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Vem da diagramação, com o <code>pageIndex</code> da última página acrescentada.</td>
+      <td>A saída paginada corta o resto no pé desse bloco; o texto continua no documento, no mapa de origem e no EPUB de layout fluido.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>A abertura de uma página composta e o seu modelo discordam sobre a página dupla (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, o <code>spread</code> da abertura; <code>templateSpread</code>, o do modelo).</td>
       <td>Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>Uma imagem flutuante foi composta menor que o seu tamanho para caber no espaço da sua posição (<code>placement.shrink</code>). <code>resourceId</code> a identifica, <code>scale</code> é a fração da largura que ela mantém e <code>overflowPx</code>, quando presente, quanto ela ainda ultrapassa o pé da mancha de texto na sua escala mínima (<code>placement.minScale</code>), numa página nova onde não tinha outro lugar para onde ir. Aponta para o parágrafo que a cita primeiro.</td>
       <td>A imagem é impressa nessa escala; além da mancha de texto só quando <code>overflowPx</code> o diz.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Um bitmap com tamanho de impressão (o seu <code>bitmap.resolution</code> ou um número em <code>layout.bitmapResolution</code>; não uma resolução lida do arquivo) composto numa coluna que o deixa abaixo da metade desse tamanho, numa página cuja mancha de texto é mais larga que a coluna. <code>resourceId</code> o nomeia, <code>scale</code> é a parte da largura de impressão que ele mantém, e <code>printWidthPx</code>, <code>widthPx</code> e <code>pageWidthPx</code> são as larguras de impressão, de coluna e de mancha. Uma imagem estreitada por <code>placement.width</code>, reduzida ao seu espaço, girada ou posta no quadro de uma página composta não é avisada. Aponta para o parágrafo que a cita primeiro. Desde o postext 1.37.</td>
+      <td>A imagem é impressa na largura da sua coluna. Uma imagem no fluxo nunca é mais larga que a sua coluna e a página padrão tem duas (<code>layout.layoutType: 'double'</code>): componha a página numa coluna, faça a imagem flutuar sobre toda a página (<code>placement.span: 'page'</code>) ou aumente a resolução se esse for o tamanho desejado.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

@@ -1558,10 +1558,56 @@ export interface VDTFigureLabel {
   /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
    *  a label placed by percentages. */
   anchorRef?: string;
-  /** Where the label is painted (page px, upright), once labels are laid
-   *  out on the picture (#860); `sourceAt` answers a point inside it with
-   *  the label. Absent until then. */
+  /** Where the label is painted: the upright box round its text (and
+   *  background), in the coordinates of the block's own frame (a page's
+   *  flow, or the frame of a composed page its block stands in), stamped
+   *  once the pages exist (#860). `sourceAt` answers a point inside it
+   *  with the label. Absent for a label that is not drawn. */
   rect?: BoundingBox;
+  /** The label set on the picture (#860): absent when it is not drawn (its
+   *  anchor is unknown, the resource is no picture). */
+  layout?: VDTFigureLabelLayout;
+}
+
+/**
+ * A figure label laid out on its picture (#860, DESIGN §2.6). Everything is
+ * in the label's own frame: its origin is the anchor's point and its axes
+ * are turned by `rotate` degrees (clockwise) about it. That point is
+ * `(x, y)` px from the top-left corner of the picture's body (the block's
+ * `bodyRect` as drawn, its crop applied), so the label moves with its
+ * block. Painters: `translate(bodyX + x, bodyY + y) · rotate(rotate)`
+ * (`figureLabelMatrix`), then the halo, the background and the lines.
+ */
+export interface VDTFigureLabelLayout {
+  x: number;
+  y: number;
+  /** Degrees, clockwise. Absent = 0. */
+  rotate?: number;
+  /** The text, as caption lines are (segments, chips, marks, bidi order),
+   *  positioned in the label's frame. */
+  lines: VDTLine[];
+  /** The box of the lines in the label's frame. */
+  box: BoundingBox;
+  fontString: string;
+  boldFontString: string;
+  italicFontString: string;
+  boldItalicFontString: string;
+  /** Hex. */
+  color: string;
+  /** The glyphs stroked `2 × widthPx` wide in `color` under the text. */
+  halo?: { color: string; widthPx: number };
+  /** A fill behind the text: `rect` is the box grown by the style's
+   *  padding. */
+  background?: { color: string; rect: BoundingBox };
+  /** The scale the label was set at to fit its width (`minScale` at
+   *  least); absent at 1. */
+  scale?: number;
+  /** Still wider than its anchor's width at the style's `minScale`. */
+  overflow?: true;
+  /** The label style it was set in (`labelStyles[].id`). */
+  styleId?: string;
+  /** Set right to left (its text opens with a right-to-left letter). */
+  direction?: 'rtl';
 }
 
 /**
@@ -1688,6 +1734,20 @@ export interface VDTBlock {
   indexLevel?: number;
   /** Id of the heading style (`{style="…"}`) applied to this heading. */
   headingStyleId?: string;
+  /** A heading set in a box or a frame of a composed page whose level or
+   *  heading style has a design of its own (#906): what the design
+   *  (`designOverlay`) is laid out with. Such a heading carries no
+   *  `headingStyleId`, `attrs` or `titleBreaks`: in the flow those open a
+   *  styled section, a chapter's attributes, an opener band or a page's
+   *  role, which a heading inside a box does not. The block is as tall as
+   *  the design needs, as a heading in a column is. */
+  boxDesign?: {
+    styleId?: string;
+    attrs?: Record<string, string>;
+    attrSources?: Record<string, { start: number; end: number }>;
+    titleBreaks?: number[];
+    titleLength?: number;
+  };
   /** True for a heading whose style has `numbered: false`: it advances no
    *  counter and `{chapterNumber}` is empty on its pages. */
   unnumbered?: boolean;
@@ -2517,6 +2577,10 @@ export interface ReflowEvent {
   /** The frame whose change caused this event; `'gutter'` when the spine
    *  band of a spread template kept the frame off it (#861). */
   cause?: string;
+  /** `continued` (#859): the page (`VDTPage.index`) the frame's content
+   *  goes on on, and the frame there (`VDTFrame.id`, `cp<n>:<slot>~<k>`). */
+  toPage?: number;
+  toFrame?: string;
 }
 
 /** One frame of a composed page, in sheet coordinates. Its box and its
@@ -2527,8 +2591,10 @@ export interface ReflowEvent {
  *  turn, and how much of its content did not fit. */
 export interface VDTFrame {
   /** `cp<fenceIndex>:<name>`: the same in every locale and across
-   *  relayouts (`~<n>` is reserved for the n-th continuation piece on a
-   *  later page, #859). */
+   *  relayouts. On the n-th page added by continuation (#859) a frame is
+   *  `cp<fenceIndex>:<name>~<n>`, and the frame that takes content from
+   *  the page before is named by the frame of the fence's own page that
+   *  first sent it on (`cp0:dinero~1`). */
   id: string;
   /** The frame's name in its template (the slot it receives). */
   name: string;
@@ -2559,8 +2625,10 @@ export interface VDTFrame {
   /** Height of content that did not fit in the frame, px (0 = it fits).
    *  Past the frame's foot it is clipped on paged output. */
   overflowPx: number;
-  /** The frame of the same page whose content this one goes on with
-   *  (`next`), and the one this frame's content goes on in. */
+  /** The frame whose content this one goes on with (`next`, or on a page
+   *  added by continuation, #859, the frame of the page before), and the
+   *  one this frame's content goes on in (on this page, or on a page added
+   *  after it). */
   continuedFrom?: string;
   continuesTo?: string;
   /** Ids of the blocks set in this frame (its box first), in
@@ -2607,6 +2675,9 @@ export interface VDTComposedPage {
   sheetClip?: { x: number; y: number; width: number; height: number };
   /** The page fence's ordinal in its chapter (stable across locales). */
   fenceIndex: number;
+  /** On a page added by continuation (#859): the index (`VDTPage.index`)
+   *  of the fence's own page, whose frames' content goes on here. */
+  continuationOf?: number;
   /** The role the template reports to design slots (`role`, default
    *  `'composed'`). `page.role` is `'composed'` whatever this says. */
   role: string;
@@ -3084,6 +3155,19 @@ export type ContentWarning = ContentWarningBase & (
      *  out from the shortfall (each tried on the page where it can be). */
     proposals: FrameOverflowProposal[];
   }
+  /** A frame's content went on to other pages (#859) as many times as a
+   *  composed page may add (`pages`, 16) and still does not fit: what is
+   *  left is cut at the foot of the frame on the last page added
+   *  (`overflowMm`, `pageIndex`). */
+  | {
+    kind: 'frameContinuationLimit';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    pages: number;
+    overflowMm: number;
+    configPath: string;
+  }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): `::::page{template spread}` names a template that is a single
    *  page (`fence: true`, `templateSpread: false`; it is laid as one
@@ -3091,6 +3175,16 @@ export type ContentWarning = ContentWarningBase & (
    *  (`fence: false`, `templateSpread: true`; it is laid over two facing
    *  pages, as the template says). */
   | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
+  /** A `::label[…]{at="…"}` of a `:::figure` (#860) names an anchor its
+   *  resource does not have: the label is not drawn (the reflowable
+   *  output still lists it). `known` lists the resource's anchor ids. The
+   *  source range is the label's text. */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string }
+  /** An anchor of a figure's resource names a label `style` but no
+   *  `::label` of the figure stands at it in this locale (#860): a note,
+   *  the map lacks that word in this edition. The source range is the
+   *  figure's. */
+  | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; locale?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`
@@ -3298,6 +3392,15 @@ export type ContentWarning = ContentWarningBase & (
    *  where it had nowhere else to go. Found by the layout; information
    *  more than a fault, unless it overflows. */
   | { kind: 'floatShrunk'; resourceId: string; scale: number; overflowPx?: number }
+  /** `pictureBelowPrintSize` (#901): a bitmap with a print size (its own
+   *  `bitmap.resolution`, or a number in `layout.bitmapResolution`) set in
+   *  a column that holds it at under half of it, on a page whose text
+   *  block is wider than that column: `scale` is the share of its print
+   *  width it keeps, `printWidthPx` that width, `widthPx` the column's and
+   *  `pageWidthPx` the text block's. A picture in the flow is never wider
+   *  than its column, and the default page has two (`layout.layoutType:
+   *  'double'`). Found by the layout; reported once per picture. */
+  | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printWidthPx: number; widthPx: number; pageWidthPx: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than

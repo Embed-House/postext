@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: "La interfície del Sandbox: la barra d'activitat, els taulers de text, llibres, capítols, recursos i fonts, i la disposició als mòbils",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '32 min',
   order: 36,
   plainSummary: "El Sandbox és una eina gratuïta d'aquest web per provar Postext sense instal·lar res. Escrius el text a una banda i veus les pàgines acabades a l'altra, i canvien mentre escrius. Aquesta pàgina explica les parts de la pantalla i els taulers on escrius el text, organitzes llibres i capítols, afegeixes imatges i tries tipografies. Altres pàgines expliquen els paràmetres de disseny, les previsualitzacions, com desar i importar, i com posar el Sandbox al teu propi web.",
@@ -46,6 +46,18 @@ La barra que hi ha sobre la vista comença amb un commutador entre les dues mane
 - **Disseny**: s'editen les plantilles de pàgina i els estils. El tauler Text mostra el capítol només de lectura, amb un avís i un botó **Editar el text**, i la seva barra d'eines queda desactivada. Un clic en un marc d'una pàgina composta selecciona aquest marc per a l'editor de plantilles en lloc de col·locar-hi el cursor.
 
 **Alt+Maj+M** (**⌥⇧M** en un Mac) canvia de mode des de qualsevol lloc del Sandbox. Passar a Disseny amb el tauler Text obert obre el tauler Disseny, i en tornar s'obre de nou el tauler Text. El navegador recorda el mode. Els agents el llegeixen i el canvien amb `sandbox_set_view` (`mode`).
+
+### Desfer i refer
+
+El Sandbox guarda un sol historial per al text i el disseny del llibre obert. **Cmd/Ctrl+Z** desfà l'últim canvi, sigui del tipus que sigui: el que s'ha escrit al tauler Text, una edició feta damunt de les pàgines (el text d'un marc, una vinyeta de còmic redimensionada), un ajust canviat al tauler Disseny, un marc arrossegat o una plantilla de pàgina afegida en mode Disseny. **Maj+Cmd/Ctrl+Z** (o **Ctrl+Y**) el refà. Les tecles funcionen a qualsevol lloc del Sandbox excepte dins d'un quadre de text, que conserva el seu propi desfer per al que s'hi escriu. Els botons **Desfés** i **Refés**, al costat del commutador Contingut / Disseny, i els dos primers botons de la barra del tauler Text fan servir el mateix historial, i el lector de pantalla anuncia què s'ha desfet.
+
+- Un gest és un sol pas: un control lliscant arrossegat, un color triat arrossegant o un nombre teclejat xifra a xifra compten una vegada mentre les pauses no passin d'un segon. Cada cop que es deixa anar un marc és un pas a part.
+- Cada capítol conserva el seu propi historial de text. Desfer un canvi de text d'un altre capítol obre aquell capítol.
+- L'historial es manté en passar de Contingut a Disseny i a l'inrevés: una edició del text es pot desfer en mode Disseny, i l'arrossegament d'un marc en mode Contingut.
+- Obrir un altre llibre (des del tauler Llibres, un exemple, un fitxer `.postext` o un enllaç) comença un historial nou, igual que restablir el text o el llibre sencer. Restablir només el disseny és un pas més i es pot desfer.
+- Els capítols afegits, eliminats, dividits, units o moguts, els recursos i les fonts no entren a l'historial. Dura el que dura la visita: en tornar a carregar la pàgina és buit.
+
+Els agents desfan i refan amb `sandbox_undo` (vegeu [WebMCP](/ca/docs/webmcp)).
 
 ### Taulers laterals
 

@@ -567,6 +567,7 @@ export type {
   VDTComposedPage,
   VDTFrame,
   VDTFigureLabel,
+  VDTFigureLabelLayout,
   ReflowEvent,
   ReflowEventKind,
   FrameOverflowProposal,
@@ -622,10 +623,23 @@ export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
 export { altWithLabels } from './composed/labelText';
+export {
+  figureLabelBounds,
+  figureLabelMatrix,
+  figureLabelReading,
+  labelGlyphAt,
+  labelPlace,
+  layOutFigureLabels,
+  pictureToBody,
+  resolveLabelLook,
+  undrawnLabels,
+  type LabelLook,
+  type LabelMatrix,
+} from './composed/labels';
 export { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';
-export type { ComposedPaintItem } from './composed/paint';
+export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
 // Groups and the reflow log (#856): how frames negotiate space, and what the
 // layout changed from the template's drawing, in data and in words.
 export { layoutGroup, composedOrder } from './composed/groups';
@@ -648,9 +662,14 @@ export type {
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
 } from './composed/types';
-export { collectConfigWarnings, designTextLiteral } from './configWarnings';
+export { collectConfigWarnings, contentInConfigRule, designTextLiteral } from './configWarnings';
+export type { DesignTextVerdict } from './configWarnings';
 export type { ConfigWarningOptions } from './configWarnings';
 export { configDesignSlots } from './design/slots';
+// «Move the text to the Markdown» (#874): page designs held in heading
+// styles become page templates, their text `::::page` fences.
+export { moveTextToMarkdown } from './migrate/textToMarkdown';
+export type { TextMigrationChapter, TextMigrationInput, TextMigrationOptions, TextMigrationResult, TextMigrationReport, MigratedPage, ContentInConfigCount } from './migrate/textToMarkdown';
 export type { ConfigDesignSlot, ConfigDesignSlotKind } from './design/slots';
 export type { MathRender, MathPath, MathViewBox } from './math/types';
 export { initMathEngine, isMathReady, onMathReady, renderMath, placeholderRender, clearMathCache } from './math';

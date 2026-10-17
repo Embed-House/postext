@@ -63,6 +63,8 @@ export class StructureFlow {
   private readonly calloutTitles = new Map<number, StructElem>();
   private readonly resources = new Map<string, StructElem>();
   private readonly captions = new Map<StructElem, StructElem>();
+  /** The `Div` of each figure's drawn labels (#860), by resource id. */
+  private readonly figureLabels = new Map<string, StructElem>();
   private lists: OpenList[] = [];
   private callout: StructElem | null = null;
   private toc: StructElem | null = null;
@@ -313,6 +315,19 @@ export class StructureFlow {
       if (first && at > 0) owner.kids.unshift(...owner.kids.splice(at, 1));
     }
     return cap;
+  }
+
+  /** The labels a figure draws on its picture (#860): a `Div` beside the
+   *  figure (created once per figure), read after it, one `P` per label
+   *  in the order written. */
+  figureLabelsElem(block: VDTBlock): StructElem {
+    const key = block.resourceBlock?.resource.id ?? block.id;
+    let elem = this.figureLabels.get(key);
+    if (!elem) {
+      elem = this.enter(block).child('Div');
+      this.figureLabels.set(key, elem);
+    }
+    return elem;
   }
 
   /** A block-level paragraph beside a resource (its note), in the

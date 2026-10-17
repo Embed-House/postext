@@ -688,6 +688,18 @@ describe('reflowable rendition: hanging paragraph styles (#620)', () => {
   });
 });
 
+describe('reflowable rendition: tracked paragraph styles (#907)', () => {
+  it('writes a style\'s letter-spacing in its own ems, ligatures kept', async () => {
+    const em = (value: number) => ({ value, unit: 'em' as const });
+    const config = { ...baseConfig, paragraphStyles: [{ id: 'title', letterSpacing: em(0.015), textTransform: 'uppercase' as const }, { id: 'plain' }] };
+    const md = [':::paragraphs{style="title"}', 'Page title', ':::', '', ':::paragraphs{style="plain"}', 'A line.', ':::'].join('\n');
+    const { pub } = await render([layOut(md, config)]);
+    const css = pub.items.find((i) => i.href === 'styles/book.css')!.data as string;
+    expect(css).toMatch(/p\.ps-title[^{]*\{[^}]*letter-spacing: 0\.015em;\n {2}font-feature-settings: 'liga' 1, 'clig' 1;/);
+    expect(css).not.toMatch(/p\.ps-plain[^{]*\{[^}]*letter-spacing/);
+  });
+});
+
 describe('reflowable rendition: tab stops (#622)', () => {
   const config = { ...baseConfig, bodyText: { ...baseConfig.bodyText, tabStops: [{ position: 'end' as const, align: 'end' as const, leader: '.' }] } };
 

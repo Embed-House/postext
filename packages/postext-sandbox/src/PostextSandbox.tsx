@@ -17,6 +17,7 @@ import { ChaptersPanel } from './sidebar/ChaptersPanel';
 import { ResizableHandle } from './panels/ResizableHandle';
 import { ViewportTabs } from './viewport/ViewportTabs';
 import { CanvasViewport } from './viewport/CanvasViewport';
+import { SelectionBreadcrumb } from './selection/SelectionBreadcrumb';
 import { HtmlViewport } from './viewport/HtmlViewport';
 import { PdfViewport } from './viewport/PdfViewport';
 import { ChapterPaginator } from './viewport/ChapterPaginator';
@@ -25,6 +26,7 @@ import { useContourTraces } from './panels/resources/contourTraces';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { SandboxGlobalStyles, TooltipProvider, PortalProvider, PortalHost, uiDirectionOf, useUiRtl } from './ui';
 import { BundleReplaceDialog } from './BundleReplaceDialog';
+import { TextMigrationDialog } from './migrate/TextMigrationDialog';
 import { useCompactLayout } from './hooks/useCompactLayout';
 import { SandboxAnnouncer } from './ui/announcer';
 import { LargeTargetsProvider, useLargeTargets } from './ui/largeTargets';
@@ -228,6 +230,7 @@ function SandboxLayout({
         </div>
         <PortalHost />
         <BundleReplaceDialog />
+        <TextMigrationDialog />
       </main>
     );
   }
@@ -277,12 +280,14 @@ function SandboxLayout({
           />
           <div className="relative min-h-0 flex-1 overflow-hidden">
             {renderViewport()}
+            <SelectionBreadcrumb />
             {loadingCover}
           </div>
           </div>
           <SandboxAnnouncer />
           <PortalHost />
           <BundleReplaceDialog />
+          <TextMigrationDialog />
         </main>
         {activePanel !== null && (
           <section aria-label={panelLabel} className="absolute inset-0 z-30 flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
@@ -322,11 +327,13 @@ function SandboxLayout({
         <ViewportTabs />
         <div className="relative min-h-0 flex-1 overflow-hidden">
           {renderViewport()}
+          <SelectionBreadcrumb />
           {loadingCover}
         </div>
         <SandboxAnnouncer />
         <PortalHost />
         <BundleReplaceDialog />
+        <TextMigrationDialog />
       </main>
     </div>
   );

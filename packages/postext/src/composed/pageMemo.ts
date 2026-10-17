@@ -13,8 +13,9 @@
  * indices, container ids and page index are moved to where the page now
  * stands. A page whose layout reads what this key does not hold (a
  * footnote, a cross-reference, a citation, a contents or index listing, a
- * comic strip) or that leaves notes for the pass (a drop cap's warning, a
- * joining script's tracking) is always laid out afresh.
+ * comic strip), that leaves notes for the pass (a drop cap's warning, a
+ * joining script's tracking) or whose content goes on on pages it adds
+ * (#859) is always laid out afresh.
  */
 import type { ContentBlock, InlineSpan } from '../parse/types';
 import type { VDTPage } from '../vdt';
@@ -269,7 +270,9 @@ export function layoutComposedPageMemo(input: ComposedPageInput, ctx: ComposedMe
     return layout;
   }
   const layout = layoutComposedPage(input);
-  if (ctx.sideEffectsIn(from, to) || !selfContained(layout, new Set(ids), from, to)) {
+  // A page whose content goes on on pages it adds (#859) is laid out
+  // afresh with them: the added pages read where it cut its frames.
+  if (layout.continuations || ctx.sideEffectsIn(from, to) || !selfContained(layout, new Set(ids), from, to)) {
     stats.skipped++;
     return layout;
   }

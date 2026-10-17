@@ -10,6 +10,7 @@ import { SegmentedControl, cn, useUiRtl } from '../ui';
 import { VIEWPORT_TABS as ALL_TABS } from '../storage/viewHash';
 import { folioSupported } from './folioSupport';
 import { EditModeSwitch } from '../editing/EditModeSwitch';
+import { HistoryButtons } from '../history/HistoryButtons';
 
 /** The expansion of each tab label that is an abbreviation. */
 const TAB_ABBR: Partial<Record<ViewportTab, keyof SandboxLabels>> = { pdf: 'abbrPdf', html: 'abbrHtml', epub: 'abbrEpub' };
@@ -163,9 +164,10 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
       style={{ borderBottom: '1px solid var(--rule)', backgroundColor: 'var(--background)' }}
     >
       {leading && <div className={cn('flex shrink-0 items-center border-e px-1 pt-large:px-0', compact && 'h-11 pt-large:min-h-12')} style={{ borderColor: 'var(--rule)' }}>{leading}</div>}
-      {/* Content / Design (#864): always in view. */}
-      <div ref={modeRef} className={cn('flex shrink-0 items-center border-e', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-2')} style={{ borderColor: 'var(--rule)' }}>
+      {/* Content / Design (#864) and the one undo history (#899): always in view. */}
+      <div ref={modeRef} className={cn('flex shrink-0 items-center gap-1 border-e', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-2')} style={{ borderColor: 'var(--rule)' }}>
         <EditModeSwitch icons={compact} />
+        <HistoryButtons />
       </div>
       <div ref={slotRef} className={cn('relative flex min-w-0 flex-1 items-center overflow-hidden', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-3')}>
         {scopeControl(useIcons)}

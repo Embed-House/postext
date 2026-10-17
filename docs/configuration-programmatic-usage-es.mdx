@@ -130,6 +130,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>La salida paginada corta lo que no cabe al pie del marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>El contenido de un marco ha seguido en páginas añadidas detrás de su página compuesta (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>) tantas veces como páginas puede añadir una página compuesta, 16, y sigue sin caber (<code>template</code> y <code>frame</code> de la última página añadida, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Lo da la maquetación, con el <code>pageIndex</code> de la última página añadida.</td>
+      <td>La salida paginada corta el resto al pie de ese marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>La apertura de una página compuesta y su plantilla no coinciden en la doble página (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, el <code>spread</code> de la apertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.</td>
@@ -203,6 +208,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td><code>floatShrunk</code></td>
       <td>Una imagen flotante se compuso más pequeña que su tamaño para caber en el sitio de su hueco (<code>placement.shrink</code>). <code>resourceId</code> la nombra, <code>scale</code> es la fracción de su anchura que conserva y <code>overflowPx</code>, si aparece, cuánto sobresale aún del pie de la caja de texto a su escala mínima (<code>placement.minScale</code>), en una página nueva donde no tenía otro sitio adonde ir. Señala el párrafo que la cita por primera vez.</td>
       <td>La imagen se imprime a esa escala; fuera de la caja de texto solo cuando lo dice <code>overflowPx</code>.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Un mapa de bits con tamaño de impresión (su propio <code>bitmap.resolution</code> o un número en <code>layout.bitmapResolution</code>; no una resolución leída del archivo) compuesto en una columna que lo deja por debajo de la mitad de ese tamaño, en una página cuya caja de texto es más ancha que la columna. <code>resourceId</code> lo nombra, <code>scale</code> es la parte de su ancho de impresión que conserva, y <code>printWidthPx</code>, <code>widthPx</code> y <code>pageWidthPx</code> son los anchos de impresión, de columna y de caja. No se avisa de una imagen estrechada con <code>placement.width</code>, reducida a su hueco, girada o puesta en el marco de una página compuesta. Señala el párrafo que la cita primero. Desde postext 1.37.</td>
+      <td>La imagen se imprime al ancho de su columna. Una imagen en el flujo nunca es más ancha que su columna y la página por defecto tiene dos (<code>layout.layoutType: 'double'</code>): compón la página a una columna, haz flotar la imagen sobre toda la página (<code>placement.span: 'page'</code>) o sube su resolución si ese es el tamaño que buscas.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

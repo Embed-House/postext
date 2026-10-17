@@ -14,6 +14,9 @@ import { attachPageInteraction, type PageInteraction } from './CanvasPreview/int
 import { drawMarksCanvas, type ComicMark, type ComicSurface } from './comics/comicEditing';
 import { drawOverlay, multiplyAffine, type Affine } from './CanvasPreview/overlay';
 import { usePageNavigator } from './usePageNavigator';
+import { drawPickedMark } from '../selection/pickedOverlay';
+import { onPageSelectionChange } from '../selection/selectionStore';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
 
 /** A filled rectangle of a page's overlay, in the page's own pixels, with
  *  the transform of its group (a vertical page's flow frame). */
@@ -44,7 +47,7 @@ function matrixOf(el: Element): Affine | null {
 /** The rects an overlay SVG holds, as `drawOverlay` left them. */
 function rectsOf(svg: SVGSVGElement): OverlayRect[] {
   const out: OverlayRect[] = [];
-  for (const role of ['looseLines', 'selection', 'cursor']) {
+  for (const role of ['looseLines', 'selection', 'cursor', 'picked']) {
     const g = svg.querySelector<SVGGElement>(`g[data-role="${role}"]`);
     if (!g) continue;
     const matrix = matrixOf(g);
@@ -153,6 +156,7 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
   // repainted (each is a texture upload).
   const lastFollowedRef = useRef<string | null>(null);
   const followTimerRef = useRef(0);
+  const caretFollowRef = useRef<CaretFollow>({ key: null, doc: null });
   const selectionFromViewerRef = useRef(selectionFromViewer);
   selectionFromViewerRef.current = selectionFromViewer;
   const refresh = useCallback(() => {
@@ -178,6 +182,18 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
     }
     const caretBlockIdx = findCaretBlockIdx(doc, selection.head, chapterPages);
     const resourcePage = resourceSelection ? findResourceLocation(doc, resourceSelection.resourceId)?.pageIndex ?? -1 : -1;
+    // The editor's caret, moved there by the reader, is followed on the
+    // page (#865); the element picked is marked.
+    const caretKey = focused ? `${activeChapterId}:${selection.from}:${selection.to}:${selection.head}` : null;
+    if (focused && !selectionFromViewerRef.current && followsCaret(caretFollowRef.current, caretKey, doc)) {
+      caretFollowRef.current = { key: caretKey, doc };
+      followEditorCaret(doc, selection.head, {
+        dispatch: () => dispatchRef.current,
+        activePanel: () => activePanelRef.current,
+        sourceOfPage: (i) => (pageSourceRef.current ? pageSourceRef.current(i) : sourceRef.current),
+      }, chapterPages);
+    }
+    const picked = selectionOn(doc, chapterOfPages((i) => (pageSourceRef.current ? pageSourceRef.current(i) : sourceRef.current)));
 
     // The pages round the spread on show, and those marked last time.
     const open = viewer.state.pages;
@@ -197,6 +213,7 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
       let rects: OverlayRect[] = [];
       if (!outside) {
         drawOverlay(svg, doc, i, selection, debug, focused, caretBlockIdx, resourceSelection);
+        drawPickedMark(svg, doc, i, picked);
         rects = rectsOf(svg);
       }
       const key = rects.length ? JSON.stringify(rects) : '';
@@ -232,6 +249,7 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
 
   const refreshRef = useRef(refresh);
   refreshRef.current = refresh;
+  useEffect(() => onPageSelectionChange(() => refreshRef.current()), []);
   useEffect(() => {
     refresh();
   }, [refresh, docKey]);

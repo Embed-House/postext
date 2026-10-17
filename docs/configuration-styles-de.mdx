@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Groß- und Kleinschreibung der Absätze: <code>'uppercase'</code> setzt sie in Versalien (ein Personenverzeichnis, eine Zeile Bühnenhandlung), einschließlich der Wörter eines Chips und der Bezeichnung eines <code>:ref</code>. Länge für Länge, damit die Quellzuordnung des Editors eins zu eins bleibt: Ein Buchstabe, dessen Großbuchstabe länger ist (<code>ß</code>), bleibt, wie er geschrieben ist. Formeln bleiben unberührt, und ein Kolumnentitel, der den Absatz als Marke liest (<code>&#123;firstMark.<em>style</em>&#125;</code>), übernimmt den Text so, wie er geschrieben ist; das eigene <code>textTransform</code> eines Gestaltungstexts setzt ihn in Versalien.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Laufweite nach jedem Buchstaben der Absätze, wie <code>letter-spacing</code> in CSS: Positive Werte sperren die Buchstaben (ein Seitentitel in Versalien, <code>&#123; value: 0.015, unit: 'em' &#125;</code> für +15/1000 em), negative verengen einen Schaugrad. Ein Wert in <code>em</code> bezieht sich auf den <code>fontSize</code> des Stils selbst. Die Laufweite geht in die Zeilenmessung ein: Ein gesperrter Absatz bricht dort um, wo seine breiteren Wörter es verlangen; Blocksatzzeilen verteilen ihre Wortabstände zusätzlich, und eine kurze Ausgangszeile, die der Satz verengt (<code>bodyText.maxRuntTracking</code>), geht von diesem Wert aus. Canvas, HTML, PDF und EPUB malen sie gleich, ein Word-Export schreibt sie als Zeichenabstand des Stils. Wörter einer verbundenen Schrift (Arabisch, Syrisch, N'Ko) bleiben ungesperrt und lösen <code>joiningScriptLetterSpacing</code> aus. Seit postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

@@ -29,10 +29,15 @@ Look at page types, and design each one:
 Then mark every page **flow** (running text the engine places, with its
 figures and boxes) or **composed** (boxes, labels, maps and diagrams at set
 positions: a textbook spread, a worksheet, an infographic). Count both in the
-spec sheet. A composed page is built with fixed callouts, text-free image
-elements and live-text SVG resources, never with text in design elements
-(playbooks J); more than a third composed means the user chooses between an
-identical layout and editable, translatable text before you go on.
+spec sheet. With postext 1.35.0 or later (`composed_check.py round`) a
+composed page is a page template filled from the Markdown (composed-pages.md):
+sort the composed pages into kinds of page with the same boxes in the same
+places, measure each look once into the component library and each kind's
+frame boxes in mm, with every box's drawn height as its `minHeight`. With an
+older engine it is built with fixed callouts, text-free image elements and
+live-text SVG resources (playbooks J), and more than a third composed means
+the user chooses between an identical layout and editable, translatable text
+before you go on. Never text in design elements, in either round.
 
 ## 2. Geometry (mm, from the trim)
 

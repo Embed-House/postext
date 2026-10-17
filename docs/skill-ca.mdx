@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Instal·la la skill postext-port a Claude Code, Codex o qualsevol agent i deixa que converteixi un PDF, Word, PowerPoint, EPUB, InDesign o HTML en un projecte de Postext que segueix la maquetació original',
   lang: 'ca',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '10 min',
   order: 41,
   plainSummary: "Aquesta pàgina és per a qui ja té un llibre o un document en un altre format, com ara PDF, Word o InDesign, i el vol passar a Postext. Un assistent d'intel·ligència artificial, que s'anomena agent, pot fer gairebé tota la feina si li dones un petit complement anomenat skill. La skill ensenya l'agent a copiar el text i a reconstruir el disseny de l'original. La pàgina explica com instal·lar-la, què demanar-li i com revisar el resultat. Un vídeo d'uns cinc minuts mostra cada pas.",
@@ -229,7 +229,10 @@ L'agent segueix el flux de treball:
    mesurades: format, marges, columnes, interlineat, rols tipogràfics,
    paleta, obertures, cornises, famílies de requadres i costums de
    col·locació. Classifica cada pàgina com a text corregut o com a pàgina
-   composta (requadres, rètols i mapes en llocs fixos); si més d'un terç són
+   composta (requadres, rètols i mapes en llocs fixos); amb Postext 1.35 o
+   posterior agrupa les pàgines compostes per tipus de pàgina i munta cada
+   tipus amb una plantilla, de manera que la maqueta idèntica conserva un text
+   que pots editar i traduir; amb una versió anterior, si més d'un terç són
    compostes, et pregunta si prefereixes la maqueta idèntica o un text que
    puguis editar i traduir.
 3. **Projecte.** Crea `mi-libro/` amb un generador `build_preset.py` que
@@ -265,9 +268,14 @@ El fitxer lliurat no depèn del Sandbox. El paquet `postext` l'obre amb `openBun
   que dona la qualitat.
 - **El text es queda al Markdown.** La configuració guarda el disseny i cada
   paraula del llibre és als capítols, de manera que una correcció o una
-  traducció és una edició del Markdown. Les pàgines compostes es munten amb
-  requadres fixats al seu lloc, imatges de pàgina sense text i figures SVG amb
-  rètols vius. Quan Postext no pot expressar alguna cosa sense escriure text a
+  traducció és una edició del Markdown. Amb Postext 1.35 o posterior, les
+  pàgines compostes són plantilles de pàgina a la configuració amb marcs que
+  s'omplen amb el Markdown de cada capítol: un requadre creix amb una
+  traducció més llarga i empeny els que té a sota, i des de la 1.37 els noms
+  d'un mapa són rètols escrits al Markdown. Amb una versió anterior es munten
+  amb requadres fixats al seu lloc, imatges de pàgina sense text i figures SVG
+  amb rètols vius. L'informe diu quina de les dues vies ha fet servir l'agent
+  i amb quina versió. Quan Postext no pot expressar alguna cosa sense escriure text a
   la configuració, l'agent s'atura, redacta la mancança com a esborrany
   d'incidència i t'ho pregunta. La skill mai no modifica el motor per
   encaixar-hi un llibre.

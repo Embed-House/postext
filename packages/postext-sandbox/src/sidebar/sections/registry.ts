@@ -54,6 +54,7 @@ export type SettingsSectionId =
   | 'diagramStyle'
   | 'videoStyle'
   | 'calloutStyles'
+  | 'frameStyles'
   | 'comicsPanels'
   | 'comicsPanelStyles'
   | 'comicsLettering'
@@ -138,6 +139,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'diagramStyle', group: 'figures', labelKey: 'diagramStyleSection', configKeys: ['diagramStyle'] },
   { id: 'videoStyle', group: 'figures', labelKey: 'videoStyleSection', configKeys: ['videoStyle'] },
   { id: 'calloutStyles', group: 'callouts', labelKey: 'calloutStylesSection', configKeys: ['calloutStyles'] },
+  // The same styles as a library (#873): where each is used, merges.
+  { id: 'frameStyles', group: 'callouts', labelKey: 'frameStylesSection', configKeys: ['calloutStyles'] },
   // Comic pages (`:::page`): every section edits a part of `comics` (see
   // `sectionHasOverrides`).
   { id: 'comicsPanels', group: 'comics', labelKey: 'comicsPanelsSection', configKeys: ['comics'] },

@@ -22,6 +22,7 @@ import { presetCoverFor } from '../covers/autoCover';
 import { openBookThenShowChapters } from './openBook';
 import { RowActionsMenu } from './RowActionsMenu';
 import { LocaleTag } from './LocaleTag';
+import { openTextMigration } from '../migrate/migrationRequest';
 
 function GroupTitle({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
   return (
@@ -83,6 +84,10 @@ export function ProjectsPanel() {
   const importBytes = async (bytes: Uint8Array, fileName: string, locale?: string) => {
     try {
       await importBundleBytes(bytes, fileName, locale ? { locale } : {});
+      // A book that keeps its text in its styles (#874): offer to move it
+      // (the dialog reads the book once it is on screen, and stays shut
+      // when there is nothing to move).
+      openTextMigration('import');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setImportError(/preset\.json|zip/i.test(message) ? labels.projectImportInvalid : `${labels.projectImportError} (${message})`);

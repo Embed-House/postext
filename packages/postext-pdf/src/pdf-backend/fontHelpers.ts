@@ -110,6 +110,11 @@ function addBlockFonts(block: VDTBlock, out: FontText, vertical?: VerticalSettin
     addLinesFonts(rb.captionLines, caption, out);
     addLinesFonts(rb.noteLines, note, out);
     addLinesFonts(rb.continuesLines, note, out);
+    // A figure's labels drawn on its picture (#860).
+    for (const label of rb.labels ?? []) {
+      const l = label.layout;
+      if (l) addLinesFonts(l.lines, { normal: l.fontString, bold: l.boldFontString, italic: l.italicFontString, boldItalic: l.boldItalicFontString }, out);
+    }
     const t = rb.table;
     if (t) {
       const body: FaceSet = { normal: t.fontString, bold: t.boldFontString, italic: t.italicFontString, boldItalic: t.boldItalicFontString };

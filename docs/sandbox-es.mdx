@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'La interfaz del Sandbox: la barra de actividad, los paneles de texto, libros, capítulos, recursos y fuentes, y la disposición en móviles',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '32 min',
   order: 36,
   plainSummary: "El Sandbox es una herramienta gratuita de esta web para probar Postext sin instalar nada. Escribes el texto a un lado y ves las páginas terminadas al otro, y cambian mientras escribes. Esta página explica las partes de la pantalla y los paneles donde escribes el texto, organizas libros y capítulos, añades imágenes y eliges tipografías. Otras páginas explican los ajustes de diseño, las vistas previas, cómo guardar e importar, y cómo poner el Sandbox en tu propia web.",
@@ -47,6 +47,18 @@ La barra que hay sobre la vista empieza con un conmutador entre las dos maneras 
 - **Diseño**: se editan las plantillas de página y los estilos. El panel Texto muestra el capítulo en solo lectura, con un aviso y un botón **Editar el texto**, y su barra de herramientas queda desactivada. Un clic en un marco de una página compuesta selecciona ese marco para el editor de plantillas en lugar de colocar el cursor.
 
 **Alt+Mayús+M** (**⌥⇧M** en un Mac) cambia de modo desde cualquier parte del Sandbox. Pasar a Diseño con el panel Texto abierto abre el panel Diseño, y al volver se abre otra vez el panel Texto. El navegador recuerda el modo. Los agentes lo leen y lo cambian con `sandbox_set_view` (`mode`).
+
+### Deshacer y rehacer
+
+El Sandbox guarda un solo historial para el texto y el diseño del libro abierto. **Cmd/Ctrl+Z** deshace el último cambio, sea del tipo que sea: lo escrito en el panel Texto, una edición hecha sobre las páginas (el texto de un marco, una viñeta de cómic redimensionada), un ajuste cambiado en el panel Diseño, un marco arrastrado o una plantilla de página añadida en modo Diseño. **Mayús+Cmd/Ctrl+Z** (o **Ctrl+Y**) lo rehace. Las teclas funcionan en cualquier parte del Sandbox salvo dentro de una caja de texto, que conserva su propio deshacer para lo que se escribe en ella. Los botones **Deshacer** y **Rehacer**, junto al conmutador Contenido / Diseño, y los dos primeros botones de la barra del panel Texto usan el mismo historial, y el lector de pantalla anuncia qué se ha deshecho.
+
+- Un gesto es un solo paso: un deslizador arrastrado, un color elegido arrastrando o un número tecleado cifra a cifra cuentan una vez mientras las pausas no pasen de un segundo. Cada vez que se suelta un marco es un paso propio.
+- Cada capítulo conserva su propio historial de texto. Deshacer un cambio de texto de otro capítulo abre ese capítulo.
+- El historial se mantiene al pasar de Contenido a Diseño y al revés: una edición del texto se puede deshacer en modo Diseño, y el arrastre de un marco en modo Contenido.
+- Abrir otro libro (desde el panel Libros, un ejemplo, un archivo `.postext` o un enlace) empieza un historial nuevo, igual que restablecer el texto o el libro entero. Restablecer solo el diseño es un paso más y se puede deshacer.
+- Los capítulos añadidos, eliminados, divididos, unidos o movidos, los recursos y las fuentes no entran en el historial. Dura lo que dura la visita: al recargar la página está vacío.
+
+Los agentes deshacen y rehacen con `sandbox_undo` (ver [WebMCP](/es/docs/webmcp)).
 
 ### Paneles laterales
 

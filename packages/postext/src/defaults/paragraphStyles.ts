@@ -50,6 +50,8 @@ function resolveParagraphStyleConfig(
     // Kept as written; absent, the containers follow the document (#715).
     ...(partial.containerSpacing === 'collapse' || partial.containerSpacing === 'add' ? { containerSpacing: partial.containerSpacing } : {}),
     textTransform: partial.textTransform === 'uppercase' ? 'uppercase' : 'none',
+    // Absent unless set: untracked styles resolve as before (#907).
+    ...(partial.letterSpacing && partial.letterSpacing.value !== 0 && Number.isFinite(partial.letterSpacing.value) ? { letterSpacing: partial.letterSpacing } : {}),
     // Absent unless set: line numbers follow `lineNumbers.count` (#621).
     ...(typeof partial.lineNumbers === 'boolean' ? { lineNumbers: partial.lineNumbers } : {}),
     // Absent unless set: the paragraphs follow `cjk.wordBreak`.
@@ -70,7 +72,7 @@ export function resolveParagraphStylesConfig(
 }
 
 /** Drop fields equal to their static default (zero dimensions, `name` equal
- *  to `id`, `italic` / `smallCaps` off, `snapToGrid` on, no `textTransform`). Inherited typographic fields
+ *  to `id`, `italic` / `smallCaps` off, `snapToGrid` on, no `textTransform`, no `letterSpacing`). Inherited typographic fields
  *  (weights included) are kept whenever explicitly set,
  *  since their effective default depends on the body text. Returns
  *  `undefined` when no styles remain. */
@@ -104,6 +106,7 @@ export function stripParagraphStylesDefaults(
     // Kept even when it equals the document's value, which can change (#715).
     if (s.containerSpacing === 'collapse' || s.containerSpacing === 'add') r.containerSpacing = s.containerSpacing;
     if (s.textTransform !== undefined && s.textTransform !== 'none') r.textTransform = s.textTransform;
+    if (s.letterSpacing !== undefined && !isZero(s.letterSpacing)) r.letterSpacing = s.letterSpacing;
     if (s.wordBreak !== undefined) r.wordBreak = s.wordBreak;
     if (s.lineNumbers !== undefined) r.lineNumbers = s.lineNumbers;
     if (Array.isArray(s.tabStops)) r.tabStops = s.tabStops;

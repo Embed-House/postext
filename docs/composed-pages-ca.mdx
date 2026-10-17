@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pàgines compostes',
   description: 'El Markdown de les pàgines compostes: la tanca de pàgina de quatre dos punts que anomena una plantilla de pàgina, els marcs i l’atribut slot que porten el contingut als marcs de la plantilla, les figures amb rètols a les àncores d’una imatge i els avisos que comproven el contingut amb la plantilla',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext les anomena pàgines compostes. La forma de la pàgina és una plantilla de la configuració, i el Markdown només diu quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: la tanca de la pàgina, els marcs, els noms de slot i les imatges amb rètols, com els noms d'un mapa. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
@@ -112,7 +112,23 @@ Un `slot` fora d'una pàgina composta es llegeix i no canvia res.
 - `style` anomena un estil de rètol i s'imposa al de l'àncora.
 - El text entre claudàtors és Markdown en línia: negreta, cursiva, xips.
 
-Una figura funciona tant al text corregut com dins d'un marc. Els rètols es llegeixen i es guarden juntament amb la seva posició al Markdown; dibuixar-los sobre la imatge arribarà en una versió posterior, i fins aleshores la figura es compon igual que el seu recurs. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
+Una figura funciona tant al text corregut com dins d'un marc. Els seus rètols es dibuixen sobre la imatge com a text i van allà on vagi la figura: una columna, un flotant, un marc girat o amb el contingut reduït perquè hi càpiga, una doble pàgina. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
+
+### Com es compon un rètol
+
+- **On.** Un rètol es col·loca al punt de la seva àncora, una fracció de la imatge sencera, de manera que si la imatge es retalla a la seva zona segura o es compon més petita, el rètol es mou amb el dibuix. L'`align` de l'àncora diu quin costat del rètol queda al punt, i `verticalAlign`, quina vora queda a la seva altura. `start` i `end` segueixen la direcció del mateix rètol: en àrab, `start` és la vora dreta. `rotate` gira el rètol al voltant del punt, en el sentit de les agulles del rellotge i amb qualsevol angle: un riu al llarg del seu curs, una serra en diagonal.
+- **Aspecte.** L'`style` del rètol, o si no el de la seva àncora, anomena un estil de rètol (vegeu Configuració › Pàgines compostes); sense estil, el rètol pren la lletra del text general. L'halo traça el contorn de les lletres per sota del farciment; la placa (`background`) omple la caixa que envolta el text, eixamplada per `padding`.
+- **Ajust.** Si la seva àncora té `width`, el rètol es talla entre paraules dins d'aquesta mesura, mai dins d'una paraula. Quan una paraula és més ampla que la mesura, tot el rètol es compon més petit, fins al `minScale` del seu estil; si tot i així no hi cap, es dibuixa amb la paraula més ampla tallada. Sense `width`, el rètol ocupa una sola línia, llevat d'on es talla amb `\\`, com en un peu.
+- **Text.** El text entre claudàtors és Markdown en línia i es compon com un peu: negreta, cursiva, xips, marques de ressaltat, referències i fórmules en línia. Un nom de diverses paraules és un sol rètol, sigui quin sigui l'ordre de les paraules en cada llengua: `::label[OCEÀ ATLÀNTIC]` i `::label[ATLANTIC OCEAN]` són a la mateixa àncora. Els rètols de dreta a esquerra es componen de dreta a esquerra; els xinesos i japonesos es tallen entre caràcters.
+- **Sortides.** El llenç, el PDF, el visor HTML, l'EPUB de maquetació fixa i Folio dibuixen els rètols. En una pàgina de dreta a esquerra, el rètol es queda on la imatge el mostra.
+
+### labelAnchorUnknown
+
+Un `::label` anomena amb `at` una àncora que el recurs de la seva figura no té. El rètol no es dibuixa; l'EPUB adaptable el continua llistant i el text alternatiu de la imatge l'anomena. L'avís porta el recurs, l'àncora, les àncores que té el recurs (`known`), la llengua, la pàgina i l'interval del text del rètol a la font. Corregeix l'id de l'àncora, afegeix l'àncora al recurs o col·loca el rètol amb `at="x% y%"`.
+
+### anchorUnlabelled
+
+Una àncora del recurs de la figura anomena un estil de rètol i cap `::label` de la figura no hi és en aquesta llengua: el mapa té lloc per a una paraula que aquesta edició no posa. És una nota; `postext check` la dona com a `info`. Les àncores sense estil, com les d'un personatge de còmic, no s'assenyalen. L'avís porta el recurs, l'àncora, el seu estil, la llengua, la pàgina i l'interval de la figura a la font. Escriu el rètol al Markdown d'aquesta llengua o treu l'estil de l'àncora.
 
 ## Exemple
 
@@ -166,6 +182,8 @@ La seva alçada és fixa (una longitud o un percentatge), `fill` (fins a la vora
 
 El contingut que no anomena cap slot va al marc marcat amb `flow`; el primer encapçalament d'un nivell va al marc que el pren amb `takes`. Els marcs d'una pàgina es llegeixen en l'ordre en què el seu contingut apareix per primer cop al Markdown, cadascun sencer: un lector de pantalla, el PDF etiquetat i les sortides de maquetació fluida llegeixen una caixa després del text que obre la pàgina, no pas al mig.
 
+Un encapçalament posat en un marc conserva el disseny del seu nivell o del seu estil d'encapçalament (una pestanya, una banda, `{titleText}` compost pel disseny), compost a l'amplada del marc com en una columna de la pàgina, i el marc guarda el lloc que el disseny ocupa; si el text del marc es redueix, el disseny es redueix amb ell, i si el marc està girat, gira amb ell. Vegeu [En caixes i marcs](/ca/docs/configuration-headings#en-caixes-i-marcs). Fins a postext 1.36 aquest encapçalament es componia sense disseny.
+
 ### Encadenar marcs
 
 `next` envia el que un marc no pot contenir a un altre marc de la mateixa pàgina, i aquest a un altre, com els marcs de text enllaçats de la maquetació de sempre:
@@ -175,7 +193,7 @@ El contingut que no anomena cap slot va al marc marcat amb `flow`; el primer enc
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-El text es talla entre dues línies i continua al marc següent, partit de nou a l'amplada d'aquell marc, sense perdre ni repetir res. `overflow.continueIn: "#frame"` vol dir el mateix. Continuar a la pàgina següent està previst (`"next-page"`).
+El text es talla entre dues línies i continua al marc següent, partit de nou a l'amplada d'aquell marc, sense perdre ni repetir res. `overflow.continueIn: "#frame"` vol dir el mateix. Per continuar en una pàgina afegida després d'aquesta, vegeu [Quan el text continua](#quan-el-text-continua).
 
 ### Marcs que aparten el text
 
@@ -196,18 +214,18 @@ Els marcs es pinten en l'ordre de la seva `layer`: la decoració a la capa 0, el
 
 ### Contingut que no hi cap
 
-Un marc el contingut del qual és més alt que ell, sense cap marc següent on continuar, conserva tot aquest contingut al document però només mostra el que hi cap: la resta es talla al peu del marc a la sortida paginada, i l'avís [`frameOverflow`](#frameoverflow) diu quant. El contingut que no recull cap marc (no hi ha marc de flux, o en aquest costat falta un marc) es compon al text corregut, a la pàgina que segueix la pàgina composta.
+Un marc el contingut del qual és més alt que ell, sense cap marc següent on continuar ni cap pàgina on seguir (`overflow.continueIn`), conserva tot aquest contingut al document però només mostra el que hi cap: la resta es talla al peu del marc a la sortida paginada, i l'avís [`frameOverflow`](#frameoverflow) diu quant. El contingut que no recull cap marc (no hi ha marc de flux, o en aquest costat falta un marc) es compon al text corregut, a la pàgina que segueix la pàgina composta.
 
 ## Fora del paper: HTML, EPUB i PDF etiquetat
 
 Totes les sortides llegeixen una pàgina composta en l'ordre del seu Markdown, no en l'ordre en què la plantilla enumera els marcs ni en el que en pinta les capes.
 
-- **EPUB de maquetació fluida.** La pàgina es converteix en una secció (`<section class="pt-composed pt-composed-tema-cajas">`) que s'obre amb la marca de salt de pàgina. Cada marc és un bloc d'aquesta secció (`<div class="pt-frame pt-frame-dinero">`), col·locat on el seu contingut apareix per primera vegada al Markdown; un marc i els marcs on continua la seva cadena `next` formen un sol bloc. Un marc dibuixat amb un estil d'avís conserva la caixa d'aquest estil: fons, vora, marges interiors, text del cos i el seu `label` com a títol de la caixa. Un marc sense estil és un bloc i prou. La decoració (imatges de fons, targetes, textos de disseny) pertany a la pàgina impresa i queda fora.
-- **Rètols de les figures.** La imatge que porta l'EPUB no mostra els textos `::label` d'una `:::figure`, així que el llibre fluid els enumera just després de la imatge, dins de la figura i en l'ordre en què es van escriure: una llista amagada a la vista (`pt-figure-labels pt-hidden`) que un lector de pantalla llegeix una sola vegada. Al visor HTML, a l'EPUB de maquetació fixa i al PDF etiquetat van darrere del text alternatiu de la imatge, `Una família amb la cistella de la compra (Lloguer, Llum, Menjar)`; els rètols en xinès i japonès porten `（…、…）` i els àrabs, la coma àrab.
+- **EPUB de maquetació fluida.** La pàgina es converteix en una secció (`<section class="pt-composed pt-composed-tema-cajas">`) que s'obre amb la marca de salt de pàgina. Cada marc és un bloc d'aquesta secció (`<div class="pt-frame pt-frame-dinero">`), col·locat on el seu contingut apareix per primera vegada al Markdown; un marc i els marcs on continua la seva cadena `next` formen un sol bloc, i també un marc el contingut del qual continua en pàgines afegides: els trossos s'uneixen, un paràgraf tallat entre dues pàgines és un sol paràgraf i la marca de salt de la pàgina afegida queda dins seu, on comença el text d'aquella pàgina. Un marc dibuixat amb un estil d'avís conserva la caixa d'aquest estil: fons, vora, marges interiors, text del cos i el seu `label` com a títol de la caixa. Un marc sense estil és un bloc i prou. La decoració (imatges de fons, targetes, textos de disseny) pertany a la pàgina impresa i queda fora.
+- **Rètols de les figures.** El visor HTML i l'EPUB de maquetació fixa escriuen cada rètol dibuixat com a text just després de la seva imatge, en l'ordre en què es van escriure (`<div class="pt-figure-label">`, girat amb una matriu CSS), així que un lector de pantalla llegeix el text alternatiu de la imatge i després les seves paraules. La imatge que porta l'EPUB no els mostra, així que el llibre fluid els enumera després de la imatge, dins de la figura: una llista amagada a la vista (`pt-figure-labels pt-hidden`) que un lector de pantalla llegeix una sola vegada. Un rètol que no es dibuixa (perquè la seva àncora no existeix) va en canvi darrere del text alternatiu de la imatge, `Mapa d'Europa (Madrid)`; els rètols en xinès i japonès porten `（…、…）` i els àrabs, la coma àrab.
 - **Visor HTML i EPUB de maquetació fixa.** Tots dos mostren la pàgina impresa amb la plantilla aplicada: cada marc a la seva caixa, girat segons `rotate`, retallat quan el contingut desborda, pintat damunt dels marcs de capes inferiors i amb la decoració a la capa 0. El marcatge enumera els marcs en ordre de lectura i els pinta en ordre de capes amb `z-index`, de manera que les tecnologies de suport segueixen el Markdown mentre la pàgina es veu com impresa. Les imatges decoratives queden amagades per a les tecnologies de suport (`alt=""`). Les fonts de la decoració són entre les que el Sandbox incrusta en un EPUB; un EPUB de maquetació fixa escrit sense alguna d'elles avisa amb `missingFont`.
-- **PDF etiquetat.** L'arbre d'estructura llegeix els marcs en el mateix ordre. Cada marc, o cadena de marcs, és un `Div` amb els seus encapçalaments, paràgrafs i llistes; les imatges són elements `Figure` amb els rètols al seu `Alt`; la decoració és un artefacte de maquetació.
+- **PDF etiquetat.** L'arbre d'estructura llegeix els marcs en el mateix ordre. Cada marc, o cadena de marcs, és un `Div` amb els seus encapçalaments, paràgrafs i llistes, i els trossos d'un marc que continua en pàgines afegides formen aquest mateix `Div` (un paràgraf tallat entre pàgines és un sol `P`, i la marca de continuació, un artefacte); cada imatge és un `Figure` seguit d'un `Div` amb un `P` per rètol dibuixat, en l'ordre en què es van escriure. L'halo i la placa d'un rètol són artefactes de maquetació, així que les seves paraules es llegeixen una sola vegada; la decoració també és un artefacte de maquetació.
 
-Des del codi, els rètols d'una figura són al seu bloc, a `resourceBlock.labels` (text, àncora o punt, estil i interval a la font), i `composedReadingOrder(composedPaintOrder(page))` dona la decoració i els marcs d'una pàgina en ordre de lectura.
+Des del codi, els rètols d'una figura són al seu bloc, a `resourceBlock.labels`: text, àncora o punt, estil i interval a la font, més `layout` (les línies, la caixa, el gir i l'aspecte d'un rètol dibuixat) i `rect` (on es pinta, que és el que respon `sourceAt`). `composedReadingOrder(composedPaintOrder(page))` dona la decoració i els marcs d'una pàgina en ordre de lectura.
 
 ## Avisos
 
@@ -265,6 +283,12 @@ Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí 
 
 **Solució.** Aplica una de les propostes: cadascuna porta el seu valor, calculat sobre la pàgina (vegeu [L'avís i les seves propostes](#lavís-i-les-seves-propostes)). Si no, dona més espai al marc, encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla.
 
+### frameContinuationLimit
+
+**Causa.** Un marc amb `overflow.continueIn` igual a `'next-page'` o `'template:<id>'` ha enviat el que no hi cabia a una pàgina afegida, i el marc d'aquella pàgina ha tornat a enviar la resta, pàgina rere pàgina, fins que la pàgina composta ha afegit totes les pàgines que pot afegir: 16 (vegeu [Quan el text continua](#quan-el-text-continua)). El que queda es talla al peu del marc a l'última pàgina afegida; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla i el marc d'aquella pàgina, el nombre de pàgines afegides (`pages`), l'alçada tallada (`overflowMm`), el `configPath` del marc i la pàgina. El més habitual és que el marc que rep el contingut a la pàgina afegida sigui molt més petit que el text.
+
+**Solució.** Dona més espai a aquell marc (més alçada, o un `overflowTemplate` amb un marc més gran) o escurça el text. Una caixa que ocupa més d'unes quantes pàgines sol estar millor al text corregut.
+
 ## Quan el text creix
 
 Una pàgina composta es reorganitza dins dels límits que declara la seva plantilla. Si escrius un text més llarg a la primera caixa d'una pàgina les caixes de la qual formen un grup de tipus pila, la caixa creix per encabir-lo i les caixes de sota baixen, amb les fotos i la decoració que hi estan ancorades; cap línia de la plantilla no canvia. Amb un text més curt, la caixa recupera l'alçada declarada. Un marc o un element de decoració marcat amb `pin` es queda on el posa la plantilla, per a una caixa que ha de quedar damunt de la il·lustració. Com es reparteixen l'espai les piles i les fileres, i quin marc cedeix primer, es fixa a la plantilla: vegeu [Configuració › Com es reparteixen l'espai els grups](/ca/docs/configuration-composed-pages#com-es-reparteixen-lespai-els-grups).
@@ -305,12 +329,12 @@ Un marc el contingut del qual no hi cap prova, l'una darrere l'altra, les manere
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>El marc continua en una altra pàgina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>). Aquesta versió informa del pas; la pàgina afegida la maquetarà una versió posterior.</td>
+      <td>El marc continua en una altra pàgina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>): es talla al peu amb la seva marca i la resta continua en una pàgina afegida després d'aquesta (vegeu <a href="#quan-el-text-continua">Quan el text continua</a>). El text i les imatges tornen a la mida completa, perquè el que no hi cap continua igualment. No es dona cap avís.</td>
     </tr>
   </tbody>
 </table>
 
-Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, es queda amb la reducció a què ha arribat l'escala d'ajust i la maquetació dona l'avís `frameOverflow`. Cada pas torna a maquetar la pàgina sencera, de manera que el resultat només depèn d'aquesta pàgina: la mateixa entrada dona la mateixa pàgina, els marcs que desborden es tracten en l'ordre de la plantilla i un canvi en una pàgina composta deixa totes les altres com estaven. Els paràmetres són a [Configuració › Quan el contingut no hi cap](/ca/docs/configuration-composed-pages#quan-el-contingut-no-hi-cap).
+Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, es queda amb la reducció a què ha arribat l'escala d'ajust i la maquetació dona l'avís `frameOverflow`. Un marc d'una pàgina afegida que no pren res del contingut que rep no el torna a enviar (afegiria pàgines sense fi): també dona l'avís `frameOverflow`, amb `continue` entre els passos provats. Cada pas torna a maquetar la pàgina sencera, de manera que el resultat només depèn d'aquesta pàgina: la mateixa entrada dona la mateixa pàgina, els marcs que desborden es tracten en l'ordre de la plantilla i un canvi en una pàgina composta deixa totes les altres com estaven. Els paràmetres són a [Configuració › Quan el contingut no hi cap](/ca/docs/configuration-composed-pages#quan-el-contingut-no-hi-cap).
 
 ### L'avís i les seves propostes
 
@@ -359,6 +383,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 El tauler Revisió mostra la mateixa entrada en la llengua de la interfície.
 
+## Quan el text continua
+
+Un marc pot enviar el que no hi cap a una pàgina afegida després de la seva pàgina composta. Ho decideix l'`overflow.continueIn` del marc:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>On continua el contingut</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>En un altre marc de la mateixa pàgina, com amb <code>next</code> (vegeu <a href="#encadenar-marcs">Encadenar marcs</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>Al mateix marc, en una pàgina afegida després d'aquesta i construïda amb l'<code>overflowTemplate</code> de la plantilla. Si no en té, la pàgina és la mateixa plantilla composta de nou amb només aquell marc ple: els altres marcs no ocupen espai (la seva alçada segueix el seu contingut buit i surten dels seus grups), així que el marc comença a prop del cap de la pàgina, i la decoració i les capçaleres són les de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>En una pàgina d'aquella plantilla.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Continuar en una altra pàgina és l'últim pas de l'[escala d'ajust](#quan-tot-i-així-no-hi-cap): el marc primer creix, fa lloc al seu grup i compon més petites les imatges i el text, fins on li permet la plantilla, i només quan això no n'hi ha prou es talla al peu. Llavors el text i les imatges tornen a la mida completa, el tros acaba amb la marca de continuació i la resta continua des de la línia on s'ha tallat, partida de nou a l'amplada del marc que la rep. No es perd ni es repeteix res, i no es dona cap avís.
+
+- **Quin marc el rep.** A la pàgina afegida, el contingut continua al marc del mateix nom; si la plantilla no en té cap, al seu marc de flux i, si tampoc no en té, al seu primer marc que encara no estigui ocupat. Diversos marcs d'una pàgina que continuen a la mateixa plantilla comparteixen una pàgina afegida quan aquella plantilla té un marc per a cadascun; si no, el següent rep una pàgina per a ell sol. Un marc de la pàgina afegida que no rep res es queda buit.
+- **Una vegada i una altra.** Un tros que continua sense cabre torna a continuar a la pàgina afegida següent, amb l'`overflow.continueIn` que el marc hi tingui o, si no en té, amb la regla que l'hi ha portat. Una pàgina composta afegeix com a màxim 16 pàgines seguides; el que encara no cap a l'última es talla i es dona l'avís [`frameContinuationLimit`](#framecontinuationlimit). Un marc d'una pàgina afegida massa petit per prendre res d'aquest contingut dona l'avís `frameOverflow` en lloc d'afegir pàgines.
+- **Pàgines corrents.** Les pàgines afegides són pàgines del llibre: porten número, les capçaleres de la seva plantilla (o les de la secció) i les `variants` del seu costat, i el `{attr.x}` de la tanca de pàgina continua arribant a la seva decoració. Una plantilla de desbordament amb `spread: true` comença a la pàgina parella següent, amb un blanc de paritat al davant si cal, i ocupa també la senar que la segueix; una doble pàgina amb un `overflowTemplate` d'una sola pàgina continua en pàgines senzilles. El text que va després de la tanca de pàgina comença a la pàgina següent a l'última afegida.
+- **Ids.** Un marc de la n-èsima pàgina afegida és `cp0:<name>~<n>`; el marc que rep el contingut pren el nom del marc de la pàgina de la tanca que l'ha enviat primer (`cp0:dinero~1`, `cp0:dinero~2`), de manera que una selecció conserva el seu element sigui quin sigui el marc que el rep. Cada marc anota de quin marc ve i en quin continua (`continuedFrom`, `continuesTo`), el `VDTPage.composed.continuationOf` de la pàgina és l'índex de la pàgina de la tanca i els blocs dels trossos porten l'id de la caixa amb `-cont-<n>`, com les caixes partides.
+- **Remaquetació.** Una pàgina composta el contingut de la qual continua en altres pàgines es maqueta de nou, amb les pàgines afegides, a cada compilació: la memòria de pàgines només guarda les pàgines el contingut de les quals s'hi queda.
+
+### La marca de continuació
+
+`overflow.mark` fixa les paraules amb què acaba un tros tallat:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>Marca</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>sense fixar</td>
+      <td>Les paraules de continuació de l'estil del marc (el <code>continuesMarker</code> del seu estil d'avís), que segueixen la llengua del document: «Continued» en anglès, «Continúa» en castellà, «Continua» en català, italià i portuguès, «À suivre» en francès, «Wird fortgesetzt» en alemany, «接下页» en xinès, «次ページへ続く» en japonès i «يتبع» en àrab. Són les mateixes que fan servir les taules i les caixes partides.</td>
+    </tr>
+    <tr>
+      <td>una cadena</td>
+      <td>Aquestes paraules: <code>"continua a la pàgina següent"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>Cap marca; al tros hi cap una línia més.</td>
+    </tr>
+  </tbody>
+</table>
+
+La marca es compon sota l'última línia del tros, amb la lletra del cos de la caixa, alineada i inclinada segons `continuesMarkerAlign` i `continuesMarkerItalic` de l'estil (a la dreta i en cursiva per defecte). És un element de la paginació: l'EPUB de maquetació fluida la deixa fora i el PDF etiquetat la marca com a artefacte. Un marc encadenat amb `next` a la mateixa pàgina no porta marca.
+
+El tros de la pàgina afegida comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»), que indica que el text ve de la pàgina anterior.
+
 ## Registre de reajustament
 
 Cada pàgina composta guarda un registre del que la maquetació ha canviat respecte del dibuix de la plantilla: quin marc ha crescut, ha tornat espai o s'ha desplaçat, quant, i quin marc ho ha provocat. Una pàgina el text de la qual cap a la plantilla no registra res.
@@ -394,6 +493,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>L'escala d'ajust ha compost el text del marc a <code>scale</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>El contingut del marc continua en una pàgina afegida després d'aquesta: <code>toPage</code> és l'índex d'aquella pàgina al document i <code>toFrame</code>, l'id del marc que el rep allà (<code>cp0:dinero&#126;1</code>). En paraules: «dinero continued on page 9», amb el número imprès de la pàgina.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>
@@ -439,6 +542,10 @@ Al llenç, a la vista de doble pàgina del Sandbox i al Folio, les dues pàgines
 **Causa.** L'obertura de la pàgina i la seva plantilla no coincideixen: l'obertura porta `spread` i la plantilla és d'una sola pàgina, o la plantilla és de doble pàgina (pel seu propi `spread: true` o a través d'`extends`) i a l'obertura li falta. Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una. L'avís dona la plantilla, la marca de l'obertura (`fence`) i la de la plantilla (`templateSpread`), i assenyala l'atribut `spread`, o el nom de la plantilla quan l'obertura no el porta.
 
 **Correcció.** Fes que l'obertura digui el que és la plantilla: escriu `spread` a l'obertura d'una plantilla de doble pàgina, treu-lo de la d'una plantilla d'una sola, o tria una altra plantilla.
+
+## Migrar un llibre amb el text als estils
+
+Un llibre fet abans de les pàgines compostes pot guardar el text de les pàgines en estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca cada text on el tenia la pàgina impresa. La comprovació *Text desat a la configuració* ho assenyala. Al Sandbox, **Passar el text al Markdown** al tauler de revisió converteix cada disseny de pàgina en una plantilla de pàgina amb els marcs on eren els textos, i cada pàgina en una tanca de pàgina amb el text en slots `:::frame`; mostra cada pàgina abans i després, i es pot desfer. Vegeu [Passar el text al Markdown](/ca/docs/sandbox-design-checks#passar-el-text-al-markdown). Des del codi, `moveTextToMarkdown({ config, chapters, metadata }, options)` fa el mateix i torna la configuració nova, els capítols i un informe.
 
 ## Des del codi
 
@@ -500,7 +607,7 @@ elementsForSource(doc, 677, 690); // línies, blocs, marcs, pàgines i textos de
 findElement(doc, 'cp0:dinero');   // el mateix marc després de recompondre, amb el seu rect
 ```
 
-`elementsForSource(doc, start, end)` fa el camí invers i torna `{ pageIndex, element }` per cada línia, bloc, marc, pàgina composta i text de disseny que toca el tram. Una línia que queda per sota del peu del seu marc arriba amb `clipped: true`: a la pàgina es retalla, al mapa de procedència es conserva. En un plec doble, la meitat d'un marc que travessa el llom i es llegeix a la pàgina del davant respon amb els identificadors dels blocs que mostra i `facing: true`, a `sourceAt` i a `elementsForSource`. Un rètol de figura respon al nivell `label`, amb el seu identificador i la seva àncora, allà on es dibuixi sobre la imatge.
+`elementsForSource(doc, start, end)` fa el camí invers i torna `{ pageIndex, element }` per cada línia, bloc, marc, pàgina composta i text de disseny que toca el tram. Una línia que queda per sota del peu del seu marc arriba amb `clipped: true`: a la pàgina es retalla, al mapa de procedència es conserva. En un plec doble, la meitat d'un marc que travessa el llom i es llegeix a la pàgina del davant respon amb els identificadors dels blocs que mostra i `facing: true`, a `sourceAt` i a `elementsForSource`. Aquí `elementsForSource` dona a cada pàgina el marc amb la part de la seva caixa que pinta aquella pàgina com a `rect`, de manera que una banda que comença a prop del llom té un punt on fer clic a les dues pàgines. Un rètol de figura respon al nivell `label`, amb el seu identificador i la seva àncora, allà on es dibuixi sobre la imatge.
 
 **Identificadors estables.** Una pàgina composta és `cp<n>`, amb `n` l'ordinal de la seva tanca al capítol; un marc és `cp<n>:<marc>` (amb `~<k>` per al k-èsim tros del seu contingut que continua en una pàgina posterior), els seus blocs `cp<n>:<marc>-c0`, `-c1`…, un grup `cp<n>:group:<nom>`, un element de la decoració o de les capçaleres i peus `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, i un rètol d'una figura `cp<n>:<slot>:label:<àncora>`. Cap no depèn de posicions ni de les paraules, de manera que un identificador és el mateix després de qualsevol recomposició i en totes les llengües del capítol: una selecció sobreviu a una edició, i el mateix marc es troba a la traducció. `findElement(doc, id)` torna a trobar l'element.
 

@@ -196,8 +196,13 @@ describe('a composed page in the fixed-layout EPUB (#862)', () => {
     expect(deco).not.toBeNull();
     expect(page.indexOf('pt-frame-decoration')).toBeLessThan(page.indexOf('data-frame-id="cp0:titulo"'));
     expect(page).toMatch(/<img src="\.\.\/images\/banda-tema\.png" alt="" role="presentation"/);
-    // The labels the picture does not carry follow its alternative text.
-    expect(page).toContain('alt="A family with a shopping basket (Rent, Electricity, Food)"');
+    // The labels are drawn over the picture as text (#860), after it in
+    // the markup, so its alternative text no longer repeats them.
+    expect(page).toContain('alt="A family with a shopping basket"');
+    const img = page.indexOf('alt="A family with a shopping basket"');
+    const words = ['Rent', 'Electricity', 'Food'].map((w) => page.indexOf(`>${w}<`, img));
+    expect(words.every((i) => i > img)).toBe(true);
+    expect([...words].sort((a, b) => a - b)).toEqual(words);
     expect(page).toContain('alt="A piggy bank beside some coins"');
   });
 
@@ -210,5 +215,67 @@ describe('a composed page in the fixed-layout EPUB (#862)', () => {
     expect(documentFontFaces(d).some((f) => f.family === 'Decofont')).toBe(true);
     await renderToEpub([d], options('fixed', 'en', found));
     expect(found).toContainEqual({ kind: 'missingFont', family: 'Decofont' });
+  });
+});
+
+describe('a frame whose content goes on on an added page, in the reflowable EPUB (#859)', () => {
+  const PARAS = Array.from({ length: 6 }, (_, i) => `Paragraph ${i} ${'word '.repeat(60).trim()} end${i}.`);
+  const config: PostextConfig = {
+    locale: 'en-us',
+    page: { width: { value: 150, unit: 'mm' }, height: { value: 200, unit: 'mm' } } as never,
+    pageTemplates: [
+      {
+        id: 't',
+        overflowTemplate: 'more',
+        frames: [
+          { name: 'title', takes: 'h1' },
+          { name: 'box', placement: { anchor: { to: '#title', edge: 'below' } }, height: { value: 40, unit: 'mm' }, overflow: { continueIn: 'next-page', mark: 'Turn over' } },
+        ],
+      },
+      { id: 'more', frames: [{ name: 'box' }] },
+    ],
+  };
+  const markdown = ['::::page{template="t"}', '# The page', '', ':::frame{slot="box"}', ...PARAS.flatMap((p) => [p, '']), ':::', '::::', '', 'After the page.'].join('\n');
+  let doc: VDTDocument;
+  let xhtml: string;
+  beforeAll(async () => {
+    doc = buildDocument({ markdown }, config);
+    xhtml = chapter(readEpub(await renderToEpub([doc], options('reflowable', 'en'))));
+  }, 60_000);
+
+  it('the layout added pages', () => {
+    const pages = doc.pages.filter((p) => p.composed);
+    expect(pages.length).toBeGreaterThan(1);
+    expect(pages[1]!.composed!.continuationOf).toBe(pages[0]!.index);
+  });
+
+  it('reads the box in one piece: one section, one frame, every paragraph once and whole, the mark left out', () => {
+    expect(xhtml.split('<section class="pt-composed').length - 1).toBe(1);
+    expect(xhtml.split('pt-frame-box').length - 1).toBe(1);
+    const body = plain(xhtml);
+    let at = 0;
+    for (const p of PARAS) {
+      const found = body.indexOf(p, at);
+      expect(found, p.slice(0, 12)).toBeGreaterThanOrEqual(at);
+      at = found + p.length;
+    }
+    expect(body).not.toContain('Turn over');
+    expect(body.indexOf('After the page.')).toBeGreaterThan(at);
+    expect(checkXml(xhtml).errors).toEqual([]);
+  });
+
+  it('marks the added page where its text starts, inside the box', () => {
+    const frame = /<div class="pt-frame pt-frame-box">([\s\S]*?)<\/div>/.exec(xhtml)?.[1] ?? '';
+    expect(frame).toContain('id="page-2"');
+  });
+
+  it('the fixed layout draws each piece on its page, the mark on the first', async () => {
+    const book = readEpub(await renderToEpub([doc], options('fixed', 'en')));
+    const pages = book.spine.map((s) => text(book, s.path));
+    expect(pages[0]).toContain('data-frame-id="cp0:box"');
+    // The mark is drawn word by word, hidden from assistive technology.
+    expect(pages[0]).toContain('>Turn</span>');
+    expect(pages[1]).toContain('data-frame-id="cp0:box~1"');
+    expect(pages[1]).not.toContain('>Turn</span>');
   });
 });

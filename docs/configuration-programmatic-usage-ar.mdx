@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>استمر محتوى إطار في صفحات تُضاف بعد صفحته المركّبة (<code>overflow.continueIn: 'next-page'</code> أو <code>'template:&lt;id&gt;'</code>) بقدر ما يجوز للصفحة المركّبة أن تضيف من الصفحات، أي 16، ولا يزال لا يتّسع (<code>template</code> و<code>frame</code> لآخر صفحة مضافة، و<code>fenceIndex</code> و<code>pages</code> و<code>overflowMm</code> و<code>configPath</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> آخر صفحة مضافة.</td>
+      <td>تقصّ المخرجات المقسّمة إلى صفحات الباقي عند أسفل ذلك الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>سطر فتح صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين (<code>template</code> و<code>fenceIndex</code>؛ و<code>fence</code> هي <code>spread</code> في سطر الفتح؛ و<code>templateSpread</code> ما في القالب).</td>
       <td>الحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>صُفّت صورة عائمة أصغر من حجمها لتتسع في حيّز موضعها (<code>placement.shrink</code>). <code>resourceId</code> يسمّيها، و<code>scale</code> نسبة عرضها التي تحتفظ بها، و<code>overflowPx</code>، إن وُجد، مقدار ما لا تزال تتجاوز به أسفل مساحة النص بأصغر مقياس لها (<code>placement.minScale</code>)، في صفحة جديدة لم يكن لها مكان آخر تذهب إليه. يشير إلى الفقرة التي تحيل إليها أولًا.</td>
       <td>تُطبع الصورة بذلك المقياس؛ وتتجاوز مساحة النص فقط حين يقول ذلك <code>overflowPx</code>.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>صورة نقطية لها مقاس طباعة (دقّتها <code>bitmap.resolution</code>، أو رقم في <code>layout.bitmapResolution</code>؛ لا دقّة مقروءة من الملف) منضّدة في عمود يُبقيها دون نصف ذلك المقاس، في صفحة كتلة نصها أعرض من العمود. يسمّيها <code>resourceId</code>، و<code>scale</code> هي النسبة التي تبقى من عرض طباعتها، و<code>printWidthPx</code> و<code>widthPx</code> و<code>pageWidthPx</code> عروض الطباعة والعمود وكتلة النص. لا يُبلَّغ عن صورة ضيّقها <code>placement.width</code> أو صُغّرت لتسع موضعها أو أُديرت أو وُضعت في خانة صفحة مركّبة. يشير إلى الفقرة التي تذكرها أولًا. منذ postext 1.37.</td>
+      <td>تُطبع الصورة بعرض عمودها. الصورة في المتن لا تكون أعرض من عمودها أبدًا، وللصفحة الافتراضية عمودان (<code>layout.layoutType: 'double'</code>): نضّد الصفحة في عمود واحد، أو اجعل الصورة تطفو على عرض الصفحة (<code>placement.span: 'page'</code>)، أو ارفع دقّتها إن كان هذا المقاس هو المراد.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

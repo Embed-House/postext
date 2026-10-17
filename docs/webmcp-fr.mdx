@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'WebMCP : un agent au travail dans le Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 36 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
+  description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 39 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
   lang: 'fr',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Cette page s’adresse aux personnes qui veulent qu’un assistant d’intelligence artificielle travaille pour elles sur un livre dans le Sandbox. Tant que le Sandbox est ouvert, il donne à l’assistant une série d’outils : regarder n’importe quelle page, changer la maquette, modifier le texte, ajouter des images et des tableaux, trouver les problèmes et enregistrer des fichiers. Vous demandez avec vos propres mots, par exemple « grossissez un peu le texte et vérifiez que le livre tient toujours en 40 pages », et l’assistant utilise les outils et vous montre les pages. Tout reste dans votre navigateur. La page explique comment connecter un assistant, ce qu’il peut faire et comment chaque outil s’appelle.",
@@ -23,7 +23,7 @@ image de la page 12, règle `bodyText.fontSize` sur 10,5 pt, constate que le cha
 est passé de 18 à 19 pages, et revient en arrière. Il fait ce que vous faites à l’œil, et
 il le fait avec votre livre, dans votre navigateur.
 
-Il y a 36 outils dont le nom commence par `sandbox_`, enregistrés tant que le
+Il y a 39 outils dont le nom commence par `sandbox_`, enregistrés tant que le
 Sandbox est à l’écran, et 8 outils du site, `site_*`, sur chaque page de
 postext.dev. Cette page les classe selon ce que vous demanderiez à un agent, et
 donne l’appel de chacun.
@@ -39,7 +39,7 @@ les y trouve. Il n’y a rien à installer ni à configurer du côté de Postext
 WebMCP est encore un brouillon. Chrome le propose en origin trial, et derrière le
 flag `chrome://flags/#enable-webmcp-testing`. Les outils suivent la page : sur
 la page d’accueil ou dans la documentation, l’agent dispose des outils `site_*` ; dès que le
-Sandbox est à l’écran, les 36 outils `sandbox_*` apparaissent aussi.
+Sandbox est à l’écran, les 39 outils `sandbox_*` apparaissent aussi.
 
 ### Dans tout autre navigateur : `window.postextWebMcp`
 
@@ -214,6 +214,8 @@ ressource. Avec `select: true`, il fait aussi ce que fait un clic : le
 panneau Texte s’ouvre avec le curseur à cet endroit (`word: true` sélectionne le
 mot, `to` sélectionne jusqu’à un second point).
 
+La réponse donne aussi `elements` : ce qui se trouve en ce point, de l’intérieur vers l’extérieur, dans l’ordre où un clic sur la page le choisit et où chaque clic suivant ou Échap remonte (un caractère, son paragraphe, l’encadré qui l’entoure, le bloc d’une page composée, son groupe, la page et son gabarit ; ou un élément de maquette et son slot). Chacun vient avec son id stable, sa source (une plage du Markdown, un chemin de configuration, un attribut, une ressource) et son nom dans le chemin affiché par le Sandbox (`path`). Avec `select: true`, `level` (`block`, `frame`, `template`, `design`…) en choisit un comme le ferait une personne : en mode Contenu il sélectionne son Markdown, en mode Maquette il ouvre son bloc, son style ou son gabarit. `sandbox_get_state` indique l’élément choisi dans `pageSelection`.
+
 ### Changer la maquette
 
 N’importe quel réglage de la [configuration](/fr/docs/configuration) peut être modifié par
@@ -294,6 +296,8 @@ moteur a résolu autre chose que ce qui était demandé (une limite, un réglage
 dépend d’un autre), et une valeur de forme incorrecte, ou une configuration que le
 moteur ne peut pas résoudre, est refusée sans que rien ne change.
 
+Chaque appel est une étape de l’historique du Sandbox : `sandbox_undo` l’annule, comme Cmd/Ctrl+Z annule une modification faite dans le panneau Maquette.
+
 Pour des changements plus importants, `patch` fusionne un objet dans la configuration (les objets
 fusionnent, `null` supprime, les listes sont remplacées en entier) et `replace` met une
 configuration complète à la place de celle du livre, par exemple un export `postext-config.json`.
@@ -303,6 +307,16 @@ livre est parti.
 Les polices sont aussi des réglages : `sandbox_list_fonts` avec `search: "Garamond"` trouve
 des familles dans le catalogue ouvert, et écrire le nom dans un réglage `fontFamily`
 la charge.
+
+Les styles d’encadré ont leur propre bibliothèque : `sandbox_frame_styles`
+donne chaque style avec l’endroit où le livre s’en sert (blocs de gabarit, pages
+composées, encadrés `:::callout` par chapitre) et les fusions de styles presque
+identiques qu’il propose, comme Maquette › Encadrés › Styles de bloc.
+`sandbox_merge_styles` prend `groups` (`{ keep, merge }`) ou `all: true` et
+réécrit chaque bloc et chaque balise qui nommait un style fusionné ; avec
+`lookOnly: true`, il compare aussi des styles dont les encadrés sont placés à
+des endroits différents, qui se déplacent alors.
+La réponse donne `undoSteps` : un pas par chapitre réécrit et un pour les styles, que `sandbox_undo` défait en commençant par les styles.
 
 ### Modifier le texte
 
@@ -562,11 +576,7 @@ des instructions.
   URL `data:` ou du `base64` fonctionne toujours.
 - **Un long travail prend du temps.** Un outil attend la mise en page avant de répondre ;
   `wait: false` répond immédiatement. Le PDF ou l’EPUB d’un long livre prend plusieurs minutes.
-- **Ce que `sandbox_undo_text` annule** : les modifications de texte des outils (un
-  appel à la fois) et les modifications faites sur les aperçus. Pas ce que vous tapez dans
-  l’éditeur du panneau Texte (sa propre annulation s’en charge), ni les chapitres ajoutés ou déplacés, ni
-  les modifications de la maquette et des ressources : pour celles-ci, il y a le `from` de chaque
-  réponse. La liste est perdue quand la page est rechargée.
+- **Annuler** : `sandbox_undo` annule la dernière modification, du texte ou de la maquette, dans l’ordre où elles ont été faites, comme Cmd/Ctrl+Z dans le Sandbox : ce qui a été tapé dans le panneau Texte, les modifications des outils et celles faites sur les aperçus, les réglages changés par `sandbox_set_config` ou dans le panneau Maquette, les blocs déplacés. `redo: true` la rétablit. `sandbox_undo_text` n’annule qu’une modification du texte, et le dit quand la dernière portait sur la maquette. Les chapitres ajoutés, supprimés ou déplacés, les ressources et les polices ne sont pas dans l’historique ; ouvrir un autre livre le vide, tout comme recharger la page. `sandbox_get_state` indique ce que chacun annulerait (`history`).
 - **Le livre à l’écran.** Les outils agissent sur le livre ouvert. Seuls
   `sandbox_export` d’un fichier `.postext`, `sandbox_save_book` avec
   `duplicate` et `sandbox_reset_to_original` avec `sample` atteignent un autre livre
@@ -603,7 +613,9 @@ chacun s’obtiennent avec `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **La maquette** : `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
+- **Annuler** : `sandbox_undo`.
 - **L’affichage** : `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
 - **Ressources et polices** : `sandbox_list_resources`, `sandbox_save_resource`,

@@ -19,6 +19,8 @@ import {
   type VDTDesignBoxBlock,
   type VDTDesignImageBlock,
   type VDTDesignSlotKind,
+  type VDTColumn,
+  type VDTFrame,
   type VDTPage,
 } from '../vdt';
 import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
@@ -31,6 +33,7 @@ import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
 import { resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
+import { frameOfBlock } from '../composed/paint';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -1073,6 +1076,23 @@ export interface HeaderFooterInputs {
   flowColorValues?: (overrides: Readonly<Record<string, string>>) => FlowColorValues;
 }
 
+/**
+ * The page frames a heading design inside a composed-page frame is laid out
+ * with (#906): in the frame's blocks' own coordinates, where a frame whose
+ * text the reflow ladder scaled (#858) lays its content out `1 / scale` as
+ * large from its top-left, so a design element anchored to the page lands
+ * on the page once the frame is painted scaled. A turned frame's
+ * (`rotate`) are left upright: what is anchored to the page turns with the
+ * frame.
+ */
+export function framesInFrame(frames: DesignFrames | undefined, frame: Pick<VDTFrame, 'rect' | 'scale'>): DesignFrames | undefined {
+  const s = frame.scale;
+  if (!frames || !(s > 0) || Math.abs(s - 1) < 1e-9) return frames;
+  const o = frame.rect;
+  const back = (r: { x: number; y: number; width: number; height: number }) => ({ x: o.x + (r.x - o.x) / s, y: o.y + (r.y - o.y) / s, width: r.width / s, height: r.height / s });
+  return { ...frames, page: back(frames.page), bleed: back(frames.bleed), ...(frames.outer ? { outer: back(frames.outer) } : {}) };
+}
+
 export function buildHeadersAndFooters(doc: VDTDocument, resourceById?: ReadonlyMap<string, Resource>, inputs: HeaderFooterInputs = {}): void {
   // Each page's slots measure their text in the writing mode they are set
   // in (see the loop); the mode in force before is put back.
@@ -1101,7 +1121,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // Page roles drive the per-element `pages` filter of every slot below.
   classifyPages(doc, resolved);
 
-  const chapterTitleByPageIndex = computeChapterTitles(doc.blocks, doc.pages.length, doc.pages);
+  // The headings a composed page's frames set (#874) count as running
+  // marks too: they live in the page's floats, not in `doc.blocks`.
+  const markBlocks = withComposedHeadings(doc);
+  const chapterTitleByPageIndex = computeChapterTitles(markBlocks, doc.pages.length, doc.pages);
   // A heading style with an empty `numberingTemplate` prints no number, not
   // even the chapter ordinal `{chapterNumber}` falls back to.
   const numberlessStyles = new Set(resolved.headingStyles.filter((s) => s.numberingTemplate === '').map((s) => s.id));
@@ -1111,7 +1134,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // The digits of the chapter ordinals and page counts the slots print.
   const numerals = resolved.numerals;
   const chapterNumberByPageIndex = computeChapterNumbers(
-    doc.blocks,
+    markBlocks,
     doc.pages.length,
     doc.pages,
     doc.chapterOrdinalOffset ?? 0,
@@ -1121,9 +1144,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // The chapter in force at the top of each page (`{chapterTitleAtTop}`,
   // `{chapterNumberAtTop}`): the one a page runs on from, even where a new
   // chapter starts lower down (EF-187).
-  const chapterTitleAtTopByPageIndex = computeChapterTitlesAtTop(doc.blocks, doc.pages.length, doc.pages);
+  const chapterTitleAtTopByPageIndex = computeChapterTitlesAtTop(markBlocks, doc.pages.length, doc.pages);
   const chapterNumberAtTopByPageIndex = computeChapterNumbersAtTop(
-    doc.blocks,
+    markBlocks,
     doc.pages.length,
     doc.pages,
     doc.chapterOrdinalOffset ?? 0,
@@ -1186,7 +1209,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // and bleed boxes are the sheet's (centred, so their own mirror images).
     const frames = pageIsVertical(page) ? verticalFrames : physicalFrames;
     const extras: SlotLayoutExtras = {
-      frames, pageRole: page.role, resourceById,
+      // A composed page reports its template's role (`role`, default
+      // `'composed'`) to the `pages` filter of its slots' elements.
+      frames, pageRole: (page.composed?.role as PageRole | undefined) ?? page.role, resourceById,
       metadataSources: doc.metadataSources, metadata: doc.metadata as Record<string, unknown>,
       // Right-to-left text: the document's direction, and the mirror of a
       // right-to-left page's flow, which the slots below are painted in.
@@ -1410,11 +1435,85 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         }
       }
     }
-    // In-column heading advanced-design overlays: any heading whose level
-    // has `advancedDesign.enabled` and a non-empty slot gets its default
-    // text rendering replaced with a design overlay laid out inside the
-    // block's bbox. `span: 'page'` headings are handled via `openerBand`
-    // above (and are already `hidden`), so they're skipped here.
+    // Heading advanced-design overlays: any heading whose level has
+    // `advancedDesign.enabled` and a non-empty slot gets its default text
+    // rendering replaced with a design overlay laid out inside the block's
+    // bbox. `span: 'page'` headings are handled via `openerBand` above (and
+    // are already `hidden`), so they're skipped here, except in a box.
+    // `boxFrames`: the page frames in the coordinates of the frame the
+    // heading is set in (see `framesInFrame`).
+    const overlayHeading = (block: VDTBlock, col: VDTColumn | undefined, boxFrames?: DesignFrames): void => {
+      if (block.type !== 'heading' || !block.headingLevel) return;
+      // A heading set in a box or a frame (#906) is laid out as in a page
+      // column, against its own block, whatever its span: there is no page
+      // band to open inside a box. Its style and attributes are on
+      // `boxDesign`.
+      const inBox = block.containerId !== undefined;
+      const own = inBox ? block.boxDesign : undefined;
+      if (inBox && !own) return;
+      const lvl = headingLevels.forLevel(block.headingLevel, own ? own.styleId : block.headingStyleId);
+      if (!lvl) return;
+      const attrs = own ? own.attrs : block.attrs;
+      // A page-span heading opened mid-page (`spanBreak: false`, #539)
+      // heads a band under the page's first: its design, or the default
+      // opener, is laid out across the content area at the heading.
+      const midPage = !inBox && lvl.span === 'page' && (col?.band ?? 0) > 0 && !headingIsHidden(block, lvl);
+      const designed = lvl.advancedDesign.enabled && lvl.advancedDesign.slot.elements.length > 0;
+      if (lvl.span === 'page' && !midPage && !inBox) return;
+      if (!midPage && !designed) return;
+      const pref = block.numberPrefix ?? '';
+      // The lines joined back into the title (EF-162), with a forced break
+      // (`\\`) as a newline, as the block's height was measured
+      // (`build.ts`) and as an opener prints it (EF-152).
+      const { titleText: title, marked } = own
+        ? defaultOpenerTitle(block.lines, pref, own.titleBreaks, own.titleLength ?? -1, block.numberSeparator)
+        : defaultOpenerTitle(block.lines, pref, block.titleBreaks, block.titleLength ?? -1, block.numberSeparator);
+      const placeholders: DesignPlaceholderContext = {
+        kind: 'heading',
+        page,
+        allPages: doc.pages,
+        metadata: doc.metadata,
+        chapterTitleByPageIndex,
+        chapterNumberByPageIndex,
+        chapterAttrsByPageIndex,
+        bookTotalPages,
+        numerals,
+        marksFor,
+        partTitleByPageIndex,
+        partNumberByPageIndex,
+        partPaletteByPageIndex,
+        heading: {
+          titleText: title,
+          ...(marked !== undefined ? { titleMarked: marked } : {}),
+          formattedNumber: pref,
+          numericValue: block.headingNumber,
+          locale,
+          chapterNumber: chapterNumberOf(block, page.index),
+          attrs,
+        },
+      };
+      const overlay = layoutSlotToVdt(
+        designed
+          ? lvl.advancedDesign.slot
+          : synthesiseDefaultOpenerSlot(lvl, pref.length > 0, resolved.headings.textAlign, marked !== undefined),
+        midPage
+          ? openerContainerBbox(block, contentArea)
+          : { x: block.bbox.x, y: block.bbox.y, width: block.bbox.width, height: block.bbox.height },
+        page.index + pageIndexOffset,
+        placeholders,
+        dpi,
+        {
+          ...extras,
+          ...(boxFrames ? { frames: boxFrames } : {}),
+          titleSource: headingTitleSource(block, title),
+          attrSources: own ? own.attrSources : block.attrSources,
+          attrs,
+          headingSource: headingLineSource(block),
+          slot: 'heading',
+        },
+      );
+      if (overlay) block.designOverlay = overlay;
+    };
     for (const col of page.columns) {
       for (const block of col.blocks) {
         if (block.hidden) continue;
@@ -1462,65 +1561,22 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           if (overlay) block.designOverlay = overlay;
           continue;
         }
-        if (block.type !== 'heading' || !block.headingLevel) continue;
-        const lvl = headingLevels.forLevel(block.headingLevel, block.headingStyleId);
-        if (!lvl) continue;
-        // A page-span heading opened mid-page (`spanBreak: false`, #539)
-        // heads a band under the page's first: its design, or the default
-        // opener, is laid out across the content area at the heading.
-        const midPage = lvl.span === 'page' && (col.band ?? 0) > 0 && !headingIsHidden(block, lvl);
-        const designed = lvl.advancedDesign.enabled && lvl.advancedDesign.slot.elements.length > 0;
-        if (lvl.span === 'page' && !midPage) continue;
-        if (!midPage && !designed) continue;
-        const pref = block.numberPrefix ?? '';
-        // The lines joined back into the title (EF-162), with a forced break
-        // (`\\`) as a newline, as the block's height was measured
-        // (`build.ts`) and as an opener prints it (EF-152).
-        const { titleText: title, marked } = defaultOpenerTitle(block.lines, pref, block.titleBreaks, block.titleLength ?? -1, block.numberSeparator);
-        const placeholders: DesignPlaceholderContext = {
-          kind: 'heading',
-          page,
-          allPages: doc.pages,
-          metadata: doc.metadata,
-          chapterTitleByPageIndex,
-          chapterNumberByPageIndex,
-          chapterAttrsByPageIndex,
-          bookTotalPages,
-          numerals,
-          marksFor,
-          partTitleByPageIndex,
-          partNumberByPageIndex,
-          partPaletteByPageIndex,
-          heading: {
-            titleText: title,
-            ...(marked !== undefined ? { titleMarked: marked } : {}),
-            formattedNumber: pref,
-            numericValue: block.headingNumber,
-            locale,
-            chapterNumber: chapterNumberOf(block, page.index),
-            attrs: block.attrs,
-          },
-        };
-        const overlay = layoutSlotToVdt(
-          designed
-            ? lvl.advancedDesign.slot
-            : synthesiseDefaultOpenerSlot(lvl, pref.length > 0, resolved.headings.textAlign, marked !== undefined),
-          midPage
-            ? openerContainerBbox(block, contentArea)
-            : { x: block.bbox.x, y: block.bbox.y, width: block.bbox.width, height: block.bbox.height },
-          page.index + pageIndexOffset,
-          placeholders,
-          dpi,
-          {
-            ...extras,
-            titleSource: headingTitleSource(block, title),
-            attrSources: block.attrSources,
-            attrs: block.attrs,
-            headingSource: headingLineSource(block),
-            slot: 'heading',
-          },
-        );
-        if (overlay) block.designOverlay = overlay;
+        overlayHeading(block, col);
+      }
+    }
+    // The headings of boxes and frames set out of the columns (#906): fixed
+    // and floated callouts, the frames of a composed page and the halves of
+    // a spread's frames shown on this page.
+    const composed = page.composed;
+    for (const block of page.floats ?? []) {
+      if (block.type !== 'heading' || block.hidden || block.containerId === undefined) continue;
+      const frame = composed ? frameOfBlock(composed, block.id) : undefined;
+      overlayHeading(block, undefined, frame ? framesInFrame(extras.frames, frame) : undefined);
+    }
+    for (const frame of composed?.frames ?? []) {
+      for (const block of frame.facingBlocks ?? []) {
+        if (block.type !== 'heading' || block.hidden || block.containerId === undefined) continue;
+        overlayHeading(block, undefined, framesInFrame(extras.frames, frame));
       }
     }
     if (furniture && footerSlot.elements.length > 0) {
@@ -1660,4 +1716,47 @@ export function stampPageBackgrounds(
     const hex = overrides[id]!.startsWith('#') ? overrides[id]! : `#${overrides[id]}`;
     if (hex.toLowerCase() !== base) page.background = hex;
   }
+}
+
+/** `doc.blocks` as the running marks read them (#874): on a composed page
+ *  only its headings count, in frame order, so a chapter that opens in one
+ *  of its frames opens the page (`{chapterTitleAtTop}`) even though the
+ *  story boxes of the frames come first. The same array when the document
+ *  has no composed page. */
+function withComposedHeadings(doc: VDTDocument): VDTBlock[] {
+  const composed = new Set<number>();
+  for (const page of doc.pages) if (page.composed) composed.add(page.index);
+  if (composed.size === 0) return doc.blocks;
+  const out: VDTBlock[] = [];
+  const seen = new Set<string>();
+  let lastComposed = -1;
+  const pushFrames = (index: number) => {
+    const page = doc.pages[index];
+    if (!page?.composed) return;
+    const byId = new Map((page.floats ?? []).map((b) => [b.id, b]));
+    for (const f of page.composed.frames) {
+      for (const id of f.blockIds) {
+        const b = byId.get(id);
+        if (b && b.headingLevel !== undefined && !seen.has(b.id)) {
+          seen.add(b.id);
+          out.push(b);
+        }
+      }
+    }
+  };
+  for (const b of doc.blocks) {
+    if (!composed.has(b.pageIndex)) {
+      out.push(b);
+      continue;
+    }
+    if (b.pageIndex !== lastComposed) {
+      lastComposed = b.pageIndex;
+      pushFrames(b.pageIndex);
+    }
+    if (b.headingLevel !== undefined && !seen.has(b.id)) {
+      seen.add(b.id);
+      out.push(b);
+    }
+  }
+  return out;
 }

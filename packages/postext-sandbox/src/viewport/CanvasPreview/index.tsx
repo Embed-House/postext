@@ -15,7 +15,12 @@ import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { createPaintedPages, type PaintedPages } from './pageReuse';
 import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
+import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks';
+import { onFrameJumpChange } from '../../editions/frameJump';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
+import { drawPickedMark } from '../../selection/pickedOverlay';
+import { onPageSelectionChange } from '../../selection/selectionStore';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { syncComicEditors } from '../comics/comicEditing';
 import { syncFrameEditors } from '../composed/frameEditor';
 import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
@@ -119,6 +124,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   labelsRef.current = labels;
   // The page-template editor reads and writes the book through the canvas (#863).
   useTemplateEditorHost();
+  const uiLocaleRef = useRef(locale);
+  uiLocaleRef.current = locale;
   // Whole-book mode: the chapter of every page of the stitched document,
   // and the book a page's offsets belong to (its chapter's).
   const chapterOfPageRef = useRef<((pageIndex: number) => number) | null>(null);
@@ -891,9 +898,15 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // the editor's reports on the way there (a chapter switch remounts it)
   // would pull the page from under the pointer.
   const lastFollowedRef = useRef<string | null>(null);
+  const caretFollowRef = useRef<CaretFollow>({ key: null, doc: null });
   // The frame marks follow the Content / Design mode and the frame picked.
   const [editModeTick, setEditModeTick] = useState(0);
   useEffect(() => onEditModeChange(() => setEditModeTick((t) => t + 1)), []);
+  // The element picked on a page (#865) is marked and named in the path.
+  const [pickTick, setPickTick] = useState(0);
+  useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
+  // …and the fit marks the frame a check just reached (#867).
+  useEffect(() => onFrameJumpChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -927,6 +940,19 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     // A resource editor's selection paints on the page holding the resource.
     const resourcePage = stitched && resourceSelection ? findResourceLocation(doc, resourceSelection.resourceId)?.pageIndex ?? -1 : -1;
 
+    // The editor's caret, moved there by the reader, is followed on the
+    // page (#865): the path names where it is.
+    const followKey = focused ? `${activeChapterId}:${selection.from}:${selection.to}:${selection.head}` : null;
+    if (focused && !selectionFromViewerRef.current && followsCaret(caretFollowRef.current, followKey, doc)) {
+      caretFollowRef.current = { key: followKey, doc };
+      followEditorCaret(doc, selection.head, {
+        dispatch: () => dispatchRef.current,
+        activePanel: () => activePanelRef.current,
+        sourceOfPage: (i) => (pageSourceRef.current ? pageSourceRef.current(i) : builtSourceRef.current),
+      }, chapterPages);
+    }
+    const picked = selectionOn(doc, chapterOfPages((i) => (pageSourceRef.current ? pageSourceRef.current(i) : builtSourceRef.current)));
+
     let activeCursorRect: SVGRectElement | null = null;
     const drawn = drawnOverlaysRef.current;
     for (const [pageIndex, overlay] of overlayMapRef.current) {
@@ -935,9 +961,13 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       if (chapterPages && (pageIndex < chapterPages.from || pageIndex >= chapterPages.to) && pageIndex !== resourcePage) {
         if (drawn.delete(pageIndex)) clearOverlay(overlay);
         if (page.composed) clearFrameMarks(overlay);
+        drawPickedMark(overlay, doc, pageIndex, null);
+        // A frame that does not fit is marked on every page (#867).
+        if (page.composed) drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
         continue;
       }
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, resourceSelection);
+      drawPickedMark(overlay, doc, pageIndex, picked);
       // A composed page's empty frames, the caret's frame, the frames in
       // Design mode (#864): in the overlay, never on the page itself.
       if (page.composed) {
@@ -949,7 +979,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           writeHere: labelsRef.current.composedFrameWriteHere,
           continues: labelsRef.current.composedFrameContinues,
         });
-      }
+        // Overflow and scale (#867): in the overlay, never on the page.
+        drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+      } else clearFitMarks(overlay);
       drawn.add(pageIndex);
       if (rect) activeCursorRect = rect;
     }
@@ -959,7 +991,6 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     const scrollEnabled = isCollapsed
       ? debug.cursorSync.enabled
       : debug.selectionSync.enabled;
-    const followKey = focused ? `${activeChapterId}:${selection.from}:${selection.to}:${selection.head}` : null;
     const selectionMoved = followKey !== null && followKey !== lastFollowedRef.current;
     if (focused) lastFollowedRef.current = followKey;
     if (
@@ -984,7 +1015,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         container.scrollLeft += cr.right - cn.right + padding;
       }
     }
-  }, [editorSelection, activeChapterId, config.debug, editorFocused, resourceSelection, docVersion, chapterDocsRef, editModeTick]);
+  }, [editorSelection, activeChapterId, config.debug, editorFocused, resourceSelection, docVersion, chapterDocsRef, editModeTick, pickTick]);
 
   // Imperative API: regenerate by bumping rebuildKey; jumpToPage by scrolling
   // the slot element with the matching data-page-index into view.

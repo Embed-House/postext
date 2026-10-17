@@ -519,6 +519,9 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       s.smallCaps && 'font-variant: small-caps',
       !s.hyphenation && 'hyphens: manual',
       s.textTransform === 'uppercase' && 'text-transform: uppercase',
+      // The style's own tracking (#907), in its own ems.
+      s.letterSpacing && s.letterSpacing.value !== 0 && `letter-spacing: ${round(px(s.letterSpacing, sPx) / sPx)}em`,
+      s.letterSpacing && s.letterSpacing.value !== 0 && TRACKED_LIGATURES,
       // The style's own line breaking between CJK characters (#463).
       s.wordBreak && `word-break: ${s.wordBreak}`,
       px(s.indent, sPx) > 0 && `margin-inline-start: ${round(px(s.indent, sPx) / sPx)}em`,

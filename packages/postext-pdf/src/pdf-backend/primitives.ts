@@ -48,6 +48,9 @@ import { shapesAsCanvas, shapingKey, withShapingScript } from '../shapingLanguag
 
 export interface PageCtx {
   page: PDFPage;
+  /** Set while a figure label's halo is painted (#860): every text drawn
+   *  without an outline of its own takes this one. */
+  textOutline?: TextOutline;
   pageHeightPt: number;
   scale: number;
   /** The output colour: a PDF colour space, or an ICC print mode. */
@@ -183,13 +186,19 @@ export function counterFlipPx(ctx: PageCtx, leftPx: number, widthPx: number, pai
     return;
   }
   const s = ctx.scale;
+  // The transform closes the open marked content (#900): the picture or
+  // formula is painted in the element (or artifact) it was routed to, and
+  // so is what its painter draws after it.
+  const open = ctx.tags?.current ?? null;
   pushTransform(ctx, [-1, 0, 0, 1, (2 * leftPx + widthPx) * s, 0]);
+  ctx.tags?.resume(open);
   ctx.mirror = false;
   try {
     paint();
   } finally {
     ctx.mirror = true;
     popTransform(ctx);
+    ctx.tags?.resume(open);
   }
 }
 
@@ -247,11 +256,19 @@ export function outerRectMap(ctx: PageCtx): PageCtx['mapRectPt'] {
   return outer ? (r) => mapRectThrough(outer, r) : undefined;
 }
 
-/** Map a rect `[x1, y1, x2, y2]` through `m`, re-normalised to min / max. */
+/** Map a rect `[x1, y1, x2, y2]` through `m`: the box its four corners
+ *  cover, min / max (a frame turned by any angle, #910, covers more than
+ *  the box of two opposite corners). */
 export function mapRectThrough(m: PdfMatrix, rect: [number, number, number, number]): [number, number, number, number] {
-  const a = applyMatrix(m, rect[0], rect[1]);
-  const b = applyMatrix(m, rect[2], rect[3]);
-  return [Math.min(a.x, b.x), Math.min(a.y, b.y), Math.max(a.x, b.x), Math.max(a.y, b.y)];
+  const pts = [
+    applyMatrix(m, rect[0], rect[1]),
+    applyMatrix(m, rect[2], rect[1]),
+    applyMatrix(m, rect[0], rect[3]),
+    applyMatrix(m, rect[2], rect[3]),
+  ];
+  const xs = pts.map((p) => p.x);
+  const ys = pts.map((p) => p.y);
+  return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
 }
 
 /** Inline colour swatch (`:swatch{…}`): a square of `sidePx` on the
@@ -1213,6 +1230,7 @@ export function drawTextPx(
   direction?: 'ltr' | 'rtl',
 ): void {
   if (!text) return;
+  outline ??= ctx.textOutline;
   if (ctx.vertical) {
     verticalPainter?.(ctx, text, xPx, baselinePx, font, sizePx, color, outline, actualText, orient);
     return;
@@ -1348,6 +1366,7 @@ export function pushTextObject(
   advancePx?: number,
 ): void {
   const { scale, pageHeightPt } = ctx;
+  outline ??= ctx.textOutline;
   const textMatrix = ctx.mirror
     ? setTextMatrix(-1, 0, 0, 1, (xPx + (advancePx ?? ctx.runAdvancePx ?? 0)) * scale, pageHeightPt - baselinePx * scale)
     : setTextMatrix(1, 0, 0, 1, xPx * scale, pageHeightPt - baselinePx * scale);

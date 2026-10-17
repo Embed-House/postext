@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Installieren Sie den Skill postext-port in Claude Code, Codex oder einem anderen Agenten und lassen Sie ihn eine PDF-, Word-, PowerPoint-, EPUB-, InDesign- oder HTML-Quelle in ein Postext-Projekt umwandeln, das dem Layout des Originals folgt',
   lang: 'de',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 41,
   plainSummary: "Diese Seite richtet sich an Menschen, die ein Buch oder Dokument bereits in einem anderen Format haben, etwa als PDF, Word- oder InDesign-Datei, und es nach Postext übertragen möchten. Ein KI-Helfer, ein sogenannter Agent, kann den größten Teil der Arbeit erledigen, wenn Sie ihm eine kleine Erweiterung geben, einen sogenannten Skill. Der Skill bringt dem Agenten bei, den Text zu übernehmen und die Gestaltung des Originals nachzubauen. Die Seite erklärt, wie Sie ihn installieren, worum Sie bitten und wie Sie das Ergebnis prüfen. Ein Video von etwa fünf Minuten zeigt jeden Schritt.",
@@ -228,9 +228,12 @@ Der Agent folgt dem Arbeitsablauf:
    Zeilenabstand, typografische Rollen, Farbpalette, Kapitelauftakte,
    Kolumnentitel, Kastenfamilien und Gewohnheiten der Platzierung. Er ordnet
    jede Seite als Fließtextseite oder als frei gestaltete Seite ein (Kästen,
-   Beschriftungen und Karten an festen Stellen); ist mehr als ein Drittel
-   frei gestaltet, fragt er, ob Sie das identische Layout wollen oder Text,
-   den Sie bearbeiten und übersetzen können.
+   Beschriftungen und Karten an festen Stellen); ab Postext 1.35 fasst er die
+   frei gestalteten Seiten nach Seitentyp zusammen und setzt jeden Typ aus
+   einer Seitenvorlage, sodass das identische Layout Text behält, den Sie
+   bearbeiten und übersetzen können; mit einer älteren Version fragt er, wenn
+   mehr als ein Drittel frei gestaltet ist, ob Sie das identische Layout
+   wollen oder Text, den Sie bearbeiten und übersetzen können.
 3. **Projekt.** Er legt das Gerüst `my-book/` mit einem Generator
    `build_preset.py` an, der das Datenblatt als Konstanten enthält und
    `preset.json` erzeugt.
@@ -265,9 +268,14 @@ Die gelieferte Datei ist nicht an die Sandbox gebunden. Das Paket `postext` öff
   Aus dieser Durchsicht kommt die Qualität.
 - **Der Text bleibt im Markdown.** Die Konfiguration enthält die Gestaltung,
   jedes Wort des Buchs steht in den Kapiteln; eine Korrektur oder eine
-  Übersetzung ist also eine Änderung am Markdown. Frei gestaltete Seiten
-  entstehen aus Kästen, die an ihrem Platz fixiert sind, Seitenbildern ohne
-  Text und SVG-Abbildungen, deren Beschriftungen echter Text bleiben. Wenn
+  Übersetzung ist also eine Änderung am Markdown. Ab Postext 1.35 sind frei
+  gestaltete Seiten Seitenvorlagen in der Konfiguration, deren Rahmen aus dem
+  Markdown jedes Kapitels gefüllt werden: Ein Kasten wächst mit einer längeren
+  Übersetzung und schiebt die Kästen darunter weiter, und ab 1.37 sind die
+  Namen auf einer Karte Beschriftungen im Markdown. Mit einer älteren Version
+  entstehen sie aus Kästen, die an ihrem Platz fixiert sind, Seitenbildern
+  ohne Text und SVG-Abbildungen, deren Beschriftungen echter Text bleiben. Der
+  Bericht nennt den gewählten Weg und die Version. Wenn
   Postext etwas nur ausdrücken könnte, indem Text in die Konfiguration
   geschrieben wird, hält der Agent an, beschreibt die Lücke als Entwurf für
   ein Issue und fragt Sie. Der Skill ändert nie die Engine, um ein einzelnes

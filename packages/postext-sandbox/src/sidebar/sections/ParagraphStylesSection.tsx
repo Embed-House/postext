@@ -26,6 +26,8 @@ const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const SPACING_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const ZERO_EM: Dimension = { value: 0, unit: 'em' };
+/** Tracking (#907): ems of the style's own size first. */
+const TRACKING_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-1.5 py-1 text-xs';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)' } as const;
@@ -131,7 +133,7 @@ function ParagraphStyleCard({
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
+    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
       <div className="mb-2 flex items-center justify-between gap-1">
         <span
           className="truncate text-xs font-medium"
@@ -292,6 +294,17 @@ function ParagraphStyleCard({
         tooltip={labels.paragraphStyleTextTransformTooltip}
         isDefault={unset('textTransform')}
         onReset={() => onResetField('textTransform')}
+      />
+      <DimensionInput
+        label={labels.paragraphStyleLetterSpacing}
+        value={resolved.letterSpacing ?? ZERO_EM}
+        onChange={(v) => onChange({ letterSpacing: v })}
+        min={-1}
+        step={0.005}
+        units={TRACKING_UNITS}
+        tooltip={labels.paragraphStyleLetterSpacingTooltip}
+        isDefault={unset('letterSpacing')}
+        onReset={() => onResetField('letterSpacing')}
       />
       <SelectInput
         label={labels.alignmentLabel} tooltip={labels.alignmentHelp}

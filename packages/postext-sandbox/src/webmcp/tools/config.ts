@@ -266,7 +266,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
         warnings = [];
       }
       const pagesBefore = bookPagesSummary(host, before);
-      await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next });
+      await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next, history: { merge: false } });
       const answer: Record<string, unknown> = {
         changed: reported,
         ...(followed.length > 0 ? { followed, ...(followedMore > 0 ? { followedMore } : {}) } : {}),

@@ -164,12 +164,15 @@ describe('the reflow ladder on the page-8 stand-in (#858)', () => {
     expect(overflowsOf(off)[0]!.stepsTried).not.toContain('shrinkText');
   });
 
-  it('6. continuation: a frame that continues on another page reports the step (laid out by #859)', () => {
+  it('6. continuation: a frame that continues on another page is cut there, at full size, and warns no more (#859)', () => {
     const doc = build(standIn({ frames: { dinero: { height: mm(36), minHeight: undefined, overflow: { continueIn: 'next-page' } } }, markdown: moreMoney(4) }));
-    const [w] = overflowsOf(doc);
-    expect(w!.frame).toBe('dinero');
-    expect(w!.stepsTried[w!.stepsTried.length - 1]).toBe('continue');
-    expect(w!.proposals.some((p) => p.kind === 'continueNextPage')).toBe(false);
+    expect(overflowsOf(doc)).toEqual([]);
+    const d = frameOf(doc, 'dinero');
+    expect(d.overflowPx).toBe(0);
+    expect(d.scale).toBe(1);
+    expect(d.continuesTo).toBe('cp0:dinero~1');
+    expect(eventsOf(doc, 'dinero')).toEqual(['dinero continued']);
+    expect(doc.pages.filter((p) => p.composed).length).toBeGreaterThan(1);
   });
 });
 
@@ -316,7 +319,7 @@ describe('the ladder is deterministic and stays on its page (#858)', () => {
     const one = standIn({ frames: { dinero: { height: mm(36), minHeight: undefined } } });
     const page = one.markdown;
     const longer = moreWords(40)(page);
-    const twice = (first: string) => ({ ...one, markdown: `${first}\n\n${page.replace('::::page{template="tema-cajas"', '::::page{template="tema-cajas"')}` });
+    const twice = (first: string) => ({ ...one, markdown: `${first}\n\n${page}` });
     const before = build(twice(page));
     const after = build(twice(longer));
     const pages = (d: VDTDocument) => d.pages.filter((p) => p.composed);

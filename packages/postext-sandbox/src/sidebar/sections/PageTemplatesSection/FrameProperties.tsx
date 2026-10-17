@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxDocRef, useSandboxLabels } from '../../../context/SandboxContext';
+import { useFrameDrag } from '../../../selection/frameDrag';
 import { DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover } from '../../../ui';
 import { frameEntry, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
@@ -36,7 +37,12 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
   const entry = frameEntry(templates, templateId, scope, name) as (FrameConfig & Record<string, unknown>) | undefined;
   const [nameDraft, setNameDraft] = useState(name);
   useEffect(() => setNameDraft(name), [name]);
+  // The frame dragged on the page (#865): its box while the pointer moves,
+  // before the drop writes it.
+  const drag = useFrameDrag(name);
+  const docRef = useSandboxDocRef();
   if (!template || !frame) return null;
+  const mmOf = (px: number) => (px * 25.4 / (docRef.current?.config.page.dpi ?? 96)).toFixed(1);
 
   const has = (k: keyof FrameConfig): boolean => entry !== undefined && entry[k] !== undefined;
   const set = (patch: Partial<Record<keyof FrameConfig, unknown>>) => write(updateFrame(templates, templateId, scope, name, patch));
@@ -161,6 +167,15 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
 
   return (
     <div className="mt-2 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-frame={name}>
+      {drag && (
+        <p role="status" className="mb-1.5 rounded px-1.5 py-1 text-[0.7rem] text-(--brand)" style={{ backgroundColor: 'var(--surface)' }}>
+          {labels.selectionFrameDrag
+            .replace('__x__', mmOf(drag.rect.x))
+            .replace('__y__', mmOf(drag.rect.y))
+            .replace('__w__', mmOf(drag.rect.width))
+            .replace('__h__', mmOf(drag.rect.height))}
+        </p>
+      )}
       <FieldGroup title={labels.pageTemplatesFrameGroupIdentity}>
         <FieldRow stacked label={labels.pageTemplatesFrameName} tooltip={labels.pageTemplatesFrameNameTooltip} hint={labels.pageTemplatesFrameNameHint}>
           <TextControl

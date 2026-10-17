@@ -64,6 +64,9 @@ import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
 import { hasSeveralColumns } from '../settings/multiColumnBook';
 import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns';
 import { TabStopsField } from '../settings/TabStopsField';
+import { useBookTexts } from '../../frameStyles/useBookTexts';
+import { planRename } from '../../frameStyles/styleMerge';
+import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -336,7 +339,7 @@ interface CalloutStyleCardProps {
  *  per-field reset while the key is set, so a style only stores what
  *  differs from the built-in defaults (and from the body text, headings and
  *  list sections it inherits from). */
-function CalloutStyleCard({
+export function CalloutStyleCard({
   style,
   resolved,
   otherIds,
@@ -529,7 +532,7 @@ function CalloutStyleCard({
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden={stored}>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
+    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
       <div className="mb-2 flex items-center justify-between gap-1">
         <span
           className="truncate text-xs font-medium"
@@ -1565,16 +1568,20 @@ function CalloutStyleCard({
   );
 }
 
-/** Config-panel section for the named callout styles selected by
- *  `:::callout{type="…"}` (`config.calloutStyles`). While the config has no
- *  list, the built-in `note` style is shown so it can be edited in place. */
-export const CalloutStylesSection = memo(function CalloutStylesSection() {
+/** The callout styles of the book and how to edit them: what the Box
+ *  styles section and the frame-style library (#873) both write. A rename
+ *  also renames the style in every `:::callout` fence and template frame
+ *  that names it. */
+export function useCalloutStyleEdits() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
   const raw = useSandboxSelector((s) => s.config.calloutStyles);
+  const pageTemplates = useSandboxSelector((s) => s.config.pageTemplates);
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const headingsRaw = useSandboxSelector((s) => s.config.headings);
   const unorderedListsRaw = useSandboxSelector((s) => s.config.unorderedLists);
+  const chapters = useBookTexts();
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
   const resources = useSandboxResources();
   const iconResources = resources.filter((r) => r.kind === 'svg' || r.kind === 'bitmap');
 
@@ -1587,7 +1594,7 @@ export const CalloutStylesSection = memo(function CalloutStylesSection() {
   const styles: CalloutStyleConfig[] = raw ?? DEFAULT_CALLOUT_STYLES;
   const resolved = resolveCalloutStylesConfig(styles, bodyText, headings, unorderedLists, docLocale);
   const resolveOne = (style: CalloutStyleConfig): ResolvedCalloutStyleConfig =>
-    resolveCalloutStylesConfig([style], bodyText, headings, unorderedLists, docLocale)[0]!;
+    resolved[styles.indexOf(style)] ?? resolveCalloutStylesConfig([style], bodyText, headings, unorderedLists, docLocale)[0]!;
 
   const write = (next: CalloutStyleConfig[]) => {
     dispatch({
@@ -1628,12 +1635,37 @@ export const CalloutStylesSection = memo(function CalloutStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
-    write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
+    const plan = planRename({ calloutStyles: raw, pageTemplates }, styles, chapters, id, nextId);
+    applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId), activeChapterId);
   };
 
   const removeStyle = (id: string) => {
     write(styles.filter((s) => s.id !== id));
   };
+
+  const cardProps = (style: CalloutStyleConfig) => ({
+    style,
+    resolved: resolveOne(style),
+    otherIds: new Set(styles.filter((s) => s.id !== style.id).map((s) => s.id)),
+    stored: raw !== undefined,
+    iconResources,
+    listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight },
+    onChange: (partial: Partial<CalloutStyleConfig>) => updateStyle(style.id, partial),
+    onResetField: (field: keyof CalloutStyleConfig) => resetStyleField(style.id, field),
+    onRename: (nextId: string) => renameStyle(style.id, nextId),
+    onDuplicate: () => duplicateStyle(style.id),
+    onRemove: () => removeStyle(style.id),
+  });
+
+  return { raw, styles, resolved, addStyle, cardProps, dispatch };
+}
+
+/** Config-panel section for the named callout styles selected by
+ *  `:::callout{type="…"}` (`config.calloutStyles`). While the config has no
+ *  list, the built-in `note` style is shown so it can be edited in place. */
+export const CalloutStylesSection = memo(function CalloutStylesSection() {
+  const labels = useSandboxLabels();
+  const { raw, styles, addStyle, cardProps, dispatch } = useCalloutStyleEdits();
 
   return (
     <CollapsibleSection
@@ -1649,21 +1681,8 @@ export const CalloutStylesSection = memo(function CalloutStylesSection() {
           {labels.calloutStylesEmpty}
         </p>
       )}
-      {styles.map((style, i) => (
-        <CalloutStyleCard
-          key={style.id}
-          style={style}
-          resolved={resolved[i] ?? resolveOne(style)}
-          otherIds={new Set(styles.filter((s) => s.id !== style.id).map((s) => s.id))}
-          stored={raw !== undefined}
-          iconResources={iconResources}
-          listDefaults={{ bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight }}
-          onChange={(partial) => updateStyle(style.id, partial)}
-          onResetField={(field) => resetStyleField(style.id, field)}
-          onRename={(nextId) => renameStyle(style.id, nextId)}
-          onDuplicate={() => duplicateStyle(style.id)}
-          onRemove={() => removeStyle(style.id)}
-        />
+      {styles.map((style) => (
+        <CalloutStyleCard key={style.id} {...cardProps(style)} />
       ))}
       <Button variant="outline" size="xs" icon={<Plus size={12} />} onClick={addStyle} className="mt-1">
         {labels.calloutStyleAdd}

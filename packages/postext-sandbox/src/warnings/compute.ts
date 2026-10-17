@@ -53,6 +53,7 @@ import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastSto
 import type { ComposedBook } from '../book/types';
 import { fromBookLine, fromBookOffset } from '../book/compose';
 import { frontmatterRange } from '../book/frontmatter';
+import { isComposedCheckKind } from './composedChecks';
 
 function lineNumberForOffset(markdown: string, offset: number): number {
   if (offset <= 0) return 1;
@@ -133,6 +134,18 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
     // wider than their line and the styles whose letter-spacing such words
     // do not take, and the comic panels and balloons the layout had to
     // force (a letterboxed picture, a balloon that does not fit).
+    if (w.kind === 'pictureBelowPrintSize') {
+      // A picture its column holds under half its print size (#901), in mm.
+      const mm = (v: number) => Math.round((v * 254) / doc.config.page.dpi) / 10;
+      out.push({
+        id: `layout-pictureBelowPrintSize-${w.resourceId}-${i}`,
+        payload: { kind: 'pictureBelowPrintSize', resourceId: w.resourceId, scale: w.scale, printMm: mm(w.printWidthPx), columnMm: mm(w.widthPx), pageMm: mm(w.pageWidthPx) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'floatShrunk') {
       // A picture scaled to its slot (#626); an overrun in mm, as for boxes.
       const mmPerPx = 25.4 / doc.config.page.dpi;
@@ -202,6 +215,33 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
           ...(w.imageScale !== undefined ? { imageScale: w.imageScale } : {}),
           proposals: w.proposals ?? [],
         },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
+    if (w.kind === 'frameContinuationLimit') {
+      // A frame's content that went on to the most pages a composed page
+      // may add and still does not fit (#859), by its book page.
+      out.push({
+        id: `layout-frameContinuationLimit-${w.fenceIndex}-${w.frame}-${i}`,
+        payload: { kind: 'frameContinuationLimit', template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), configPath: w.configPath },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
+    if (w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled') {
+      // A figure's label at an anchor its picture lacks, or an anchor left
+      // without a word in this locale (#860), by its book page.
+      const page = (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0);
+      out.push({
+        id: `layout-${w.kind}-${w.resourceId}-${w.anchor}-${w.sourceStart ?? 'x'}-${i}`,
+        payload: w.kind === 'labelAnchorUnknown'
+          ? { kind: 'labelAnchorUnknown', resourceId: w.resourceId, anchor: w.anchor, known: w.known, page, ...(w.locale ? { locale: w.locale } : {}) }
+          : { kind: 'anchorUnlabelled', resourceId: w.resourceId, anchor: w.anchor, style: w.style, page, ...(w.locale ? { locale: w.locale } : {}) },
         sourceStart: w.sourceStart,
         sourceEnd: w.sourceEnd,
         line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
@@ -1083,6 +1123,28 @@ export function computeWarnings(params: {
   if (doc) warnings.push(...collectContrastWarnings(doc, config, preflight?.transform));
   if (!book) return warnings;
   return attributeToChapters(warnings, book, chapterTitles);
+}
+
+/** The checks of a composed book in one chapter (#867): frames that do
+ *  not fit, slots, fences, contents cut between columns, and the
+ *  configuration's templates and design texts that hold content. What the
+ *  Checks panel reads for every edition of a book, the one on screen and
+ *  the others it lays out behind it. With `book`, chapter-attributed. */
+export function computeComposedWarnings(params: {
+  markdown: string;
+  config: PostextConfig;
+  doc: VDTDocument | null;
+  resources?: Resource[];
+  book?: ComposedBook;
+}): Warning[] {
+  const { markdown, config, doc, resources = [], book } = params;
+  const metadata = book?.metadata ?? (extractFrontmatter(markdown).metadata as Record<string, unknown> | undefined);
+  const found = [
+    ...(doc ? collectLayoutWarnings(doc, markdown) : []),
+    ...collectEngineContentWarnings(markdown, config, resources),
+    ...collectConfigValueWarnings(config, resources, metadata),
+  ].filter((w) => isComposedCheckKind(w.payload.kind));
+  return book ? attributeToChapters(found, book) : found;
 }
 
 /** The contrast check (#748) of the laid-out document: the text and ground

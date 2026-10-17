@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'WebMCP: um agente trabalhando no Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 36 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
+  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 39 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Esta página é para quem quer que um assistente de inteligência artificial trabalhe por você em um livro no Sandbox. Enquanto o Sandbox está aberto, ele entrega ao assistente um conjunto de ferramentas para olhar qualquer página, mudar o design, editar o texto, adicionar imagens e tabelas, encontrar problemas e salvar arquivos. Você pede com as suas palavras, por exemplo \"aumente um pouco a letra e confira se o livro continua cabendo em 40 páginas\", e o assistente usa as ferramentas e mostra as páginas para você. Tudo fica no seu navegador. A página explica como conectar um assistente, o que ele pode fazer e como cada ferramenta é chamada.",
@@ -24,7 +24,7 @@ interface: ele lê o livro, pede uma imagem da página 12, define
 páginas e volta ao valor anterior. Ele faz o que você faz a olho, com o seu
 livro e no seu navegador.
 
-São 36 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
+São 39 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
 o Sandbox está na tela, e 8 ferramentas do site, `site_*`, em todas as páginas
 do postext.dev. Esta página as organiza pelo que você pediria a um agente e
 mostra a chamada de cada uma.
@@ -41,7 +41,7 @@ configurar nada do lado do Postext.
 O WebMCP ainda é um rascunho. O Chrome o oferece como teste de origem e atrás
 da flag `chrome://flags/#enable-webmcp-testing`. As ferramentas acompanham a
 página: na página inicial ou na documentação o agente tem as ferramentas
-`site_*`; quando o Sandbox está na tela, aparecem também as 36 ferramentas
+`site_*`; quando o Sandbox está na tela, aparecem também as 39 ferramentas
 `sandbox_*`.
 
 ### Em qualquer outro navegador: `window.postextWebMcp`
@@ -220,6 +220,8 @@ a legenda de um recurso. Com `select: true`, ela também faz o que um clique
 faz: o painel Texto se abre com o cursor naquele lugar (`word: true` seleciona
 a palavra, `to` seleciona até um segundo ponto).
 
+A resposta também traz `elements`: o que está naquele ponto, de dentro para fora, na ordem em que um clique na página o escolhe e cada clique seguinte ou Esc sobe (um caractere, o parágrafo dele, o boxe em volta, o bloco de uma página composta, o grupo dele, a página e o modelo dela; ou um elemento de design e o slot dele). Cada um vem com o seu id estável, a sua origem (um trecho do Markdown, um caminho da configuração, um atributo, um recurso) e o seu nome no caminho que o Sandbox mostra (`path`). Com `select: true`, `level` (`block`, `frame`, `template`, `design`…) escolhe um deles como uma pessoa faria: no modo Conteúdo seleciona o Markdown dele, no modo Design abre o bloco, o estilo ou o modelo dele. `sandbox_get_state` informa o elemento escolhido em `pageSelection`.
+
 ### Mudar o design
 
 Qualquer ajuste da [configuração](/pt/docs/configuration) pode ser mudado
@@ -301,6 +303,8 @@ motor resolveu algo diferente do que foi pedido (um limite, um ajuste que
 depende de outro), e um valor com o formato errado, ou uma configuração que o
 motor não consegue resolver, é recusado sem mudar nada.
 
+Cada chamada é um passo do histórico do Sandbox: `sandbox_undo` a desfaz, como Cmd/Ctrl+Z desfaz uma mudança feita no painel Design.
+
 Para mudanças maiores, `patch` mescla um objeto na configuração (os objetos se
 mesclam, `null` remove, as listas são substituídas inteiras) e `replace`
 coloca uma configuração inteira no lugar da do livro, como um
@@ -310,6 +314,15 @@ coloca uma configuração inteira no lugar da do livro, como um
 As fontes também são ajustes: `sandbox_list_fonts` com `search: "Garamond"`
 encontra famílias no catálogo aberto, e escrever o nome em um ajuste
 `fontFamily` a carrega.
+
+Os estilos de boxe têm uma biblioteca própria: `sandbox_frame_styles` dá cada
+estilo com os lugares onde o livro o usa (quadros de modelo, páginas compostas,
+boxes `:::callout` por capítulo) e as fusões de estilos quase iguais que sugere,
+como Design › Boxes › Estilos de quadro. `sandbox_merge_styles` recebe `groups`
+(`{ keep, merge }`) ou `all: true` e reescreve cada quadro e cada bloco que
+nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
+boxes ficam em lugares diferentes, que então mudam de lugar.
+A resposta traz `undoSteps`: um passo por capítulo reescrito e outro para os estilos, que `sandbox_undo` desfaz começando pelos estilos.
 
 ### Editar o texto
 
@@ -579,12 +592,7 @@ evite que esse texto seja tomado por instruções.
 - **Trabalho longo leva tempo.** Uma ferramenta espera a diagramação antes de
   responder; `wait: false` responde na hora. O PDF ou o EPUB de um livro longo
   leva minutos.
-- **O que `sandbox_undo_text` desfaz**: as edições de texto das ferramentas
-  (uma chamada por vez) e as edições feitas nas prévias. Não desfaz o que você
-  digita no editor do painel Texto (o desfazer do próprio editor cuida disso),
-  capítulos adicionados ou movidos, nem mudanças no design e nos recursos:
-  para essas, use o `from` de cada resposta. A lista se perde quando a página
-  é recarregada.
+- **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, as configurações alteradas com `sandbox_set_config` ou no painel Design, os quadros arrastados. `redo: true` refaz. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
 - **O livro na tela.** As ferramentas trabalham sobre o livro aberto. Só
   `sandbox_export` de um arquivo `.postext`, `sandbox_save_book` com
   `duplicate` e `sandbox_reset_to_original` com `sample` alcançam outro livro
@@ -621,7 +629,9 @@ cada uma vêm com `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **O design**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
+- **Desfazer**: `sandbox_undo`.
 - **Como é mostrado**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
 - **Recursos e fontes**: `sandbox_list_resources`, `sandbox_save_resource`,

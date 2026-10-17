@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Caixa dels paràgrafs: <code>'uppercase'</code> els compon en majúscules (un repartiment, una acotació), també les paraules d'un xip i l'etiqueta d'una <code>:ref</code>. Conserva la longitud lletra a lletra, perquè el mapa de posicions de l'editor continuï sent un a un: una lletra la majúscula de la qual és més llarga (<code>ß</code>) es queda tal qual. Les fórmules no canvien, i un titolet que llegeix el paràgraf com a marca (<code>&#123;firstMark.<em>estil</em>&#125;</code>) pren el text tal com està escrit; el <code>textTransform</code> propi d'un text de disseny el passa a majúscules.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espai després de cada lletra dels paràgrafs, com el <code>letter-spacing</code> de CSS: un valor positiu obre les lletres (un títol de pàgina en versals, <code>&#123; value: 0.015, unit: 'em' &#125;</code> per a +15/1000 em) i un de negatiu estreny un cos gran. Un valor en <code>em</code> compta el <code>fontSize</code> de l'estil mateix. Entra en la mesura de les línies, de manera que un paràgraf espaiat talla on cauen les seves paraules més amples; les línies justificades reparteixen els espais entre paraules a més d'ell, i una línia curta que la composició estreny (<code>bodyText.maxRuntTracking</code>) parteix d'aquest valor. Canvas, HTML, PDF i EPUB el pinten igual, i una exportació a Word l'escriu com l'espaiat de caràcters de l'estil. Les paraules d'una escriptura lligada (àrab, siríac, n'ko) queden sense espaiar i donen l'avís <code>joiningScriptLetterSpacing</code>. Des de postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

@@ -13,6 +13,9 @@ import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { frameOverflowDetail } from '../warnings/frameOverflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
+import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
+import { isComposedCheckKind } from '../warnings/composedChecks';
+import { TextMigrationOffer } from '../migrate/TextMigrationOffer';
 
 /** Open a book page in the viewer: the fragment names it, and the viewer
  *  follows a fragment change (see `usePageHashSync`). */
@@ -90,7 +93,10 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'slotEmpty':
     case 'pageFenceLength':
     case 'frameOverflow':
+    case 'frameContinuationLimit':
     case 'spreadMismatch':
+    case 'labelAnchorUnknown':
+    case 'anchorUnlabelled':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -133,6 +139,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'danglingTypeRef':
     case 'bitmapTooSmall':
     case 'floatShrunk':
+    case 'pictureBelowPrintSize':
     case 'textWrap':
     case 'unknownTableStyle':
     case 'raggedTableGrid':
@@ -275,8 +282,14 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsPageFenceLengthTitle;
     case 'frameOverflow':
       return labels.warningsFrameOverflowTitle;
+    case 'frameContinuationLimit':
+      return labels.warningsFrameContinuationLimitTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
+    case 'labelAnchorUnknown':
+      return labels.warningsLabelAnchorUnknownTitle;
+    case 'anchorUnlabelled':
+      return labels.warningsAnchorUnlabelledTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -352,6 +365,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsBitmapTooSmallTitle;
     case 'floatShrunk':
       return labels.warningsFloatShrunkTitle;
+    case 'pictureBelowPrintSize':
+      return labels.warningsPictureBelowPrintSizeTitle;
     case 'unknownTableStyle':
       return labels.warningsUnknownTableStyleTitle;
     case 'raggedTableGrid':
@@ -597,8 +612,24 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+    case 'frameContinuationLimit':
+      return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
+        .replace('__page__', String(payload.page))
+        .replace('__pages__', String(payload.pages))
+        .replace('__mm__', payload.overflowMm.toFixed(1))
+        .replace('__template__', payload.template)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
+    case 'labelAnchorUnknown':
+      return `at="${payload.anchor}"${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsLabelAnchorUnknownDetail
+        .replace('__resource__', payload.resourceId)
+        .replace('__page__', String(payload.page))
+        .replace('__known__', payload.known.length > 0 ? payload.known.slice(0, 8).join(', ') + (payload.known.length > 8 ? '…' : '') : '—')}`;
+    case 'anchorUnlabelled':
+      return `${payload.anchor}${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsAnchorUnlabelledDetail
+        .replace('__resource__', payload.resourceId)
+        .replace('__page__', String(payload.page))
+        .replace('__style__', payload.style)}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':
@@ -697,6 +728,12 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `#${payload.resourceId} — ${(payload.overflowMm !== undefined ? labels.warningsFloatShrunkOverflowDetail : labels.warningsFloatShrunkDetail)
         .replace('__scale__', String(Math.round(payload.scale * 100)))
         .replace('__mm__', String(payload.overflowMm ?? 0))}`;
+    case 'pictureBelowPrintSize':
+      return `#${payload.resourceId} — ${labels.warningsPictureBelowPrintSizeDetail
+        .replace('__scale__', String(Math.round(payload.scale * 100)))
+        .replace('__print__', String(payload.printMm))
+        .replace('__column__', String(payload.columnMm))
+        .replace('__page__', String(payload.pageMm))}`;
     case 'unknownTableStyle':
       return `#${payload.resourceId} · styleId="${payload.styleId}" — ${labels.warningsUnknownTableStyleDetail}`;
     case 'raggedTableGrid': {
@@ -914,6 +951,10 @@ export function WarningsPanel() {
   const { labels } = state;
   const warnings = useSandboxWarnings();
   const multiChapter = state.chapters.length > 1;
+  // A book of composed pages (#867): their checks in every edition, by
+  // page, frame and language, in a section of their own.
+  const composedBook = (state.config.pageTemplates?.length ?? 0) > 0;
+  const composed = useComposedChecks(warnings, composedBook);
 
   const handleClick = (w: Warning) => {
     // A preflight finding opens its page in the viewer.
@@ -946,15 +987,27 @@ export function WarningsPanel() {
     });
   };
 
+  const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
   const groups = WARNING_CATEGORY_ORDER
-    .map((category) => ({ category, items: warnings.filter((w) => warningCategory(w.payload.kind) === category) }))
+    .map((category) => ({ category, items: listed.filter((w) => warningCategory(w.payload.kind) === category) }))
     .filter((g) => g.items.length > 0);
+  const total = listed.length + (composedBook ? composed.checks.length : 0);
 
   return (
     <div className="flex h-full flex-col">
-      <PanelHeader title={labels.navWarnings} count={warnings.length} />
+      <PanelHeader title={labels.navWarnings} count={total} />
       <PanelBody>
-        {warnings.length === 0 ? (
+        <TextMigrationOffer contentWarnings={warnings.filter((w) => w.payload.kind === 'contentInConfig').length} />
+        {composedBook && (
+          <ComposedChecksSection
+            checks={composed.checks}
+            editions={composed.editions}
+            labels={labels}
+            title={(w) => titleFor(w.payload, labels)}
+            detail={(w) => detailFor(w.payload, labels)}
+          />
+        )}
+        {total === 0 ? (
           <EmptyState icon={<CircleCheck size={32} />} title={labels.warningsEmpty} description={labels.warningsEmptyDescription} />
         ) : (
           groups.map(({ category, items }) => (

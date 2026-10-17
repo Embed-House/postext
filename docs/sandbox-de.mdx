@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'Die Oberfläche der Sandbox: die Aktivitätsleiste, die Bedienfelder Text, Bücher, Kapitel, Ressourcen und Schriften und die Darstellung auf Telefonen',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '28 min',
   order: 36,
   plainSummary: "Die Sandbox ist ein kostenloses Werkzeug auf dieser Website, mit dem Sie Postext ausprobieren können, ohne etwas zu installieren. Sie schreiben Ihren Text auf der einen Seite und sehen auf der anderen die fertigen Seiten, die sich beim Tippen mitändern. Diese Seite erklärt die Teile des Bildschirms und die Bedienfelder, in denen Sie den Text schreiben, Bücher und Kapitel verwalten, Bilder hinzufügen und Schriften wählen. Andere Seiten behandeln die Gestaltungseinstellungen, die Vorschauen, das Speichern und Importieren und das Einbinden der Sandbox in Ihre eigene Website.",
@@ -47,6 +47,18 @@ Die Leiste über der Vorschau beginnt mit einem Umschalter zwischen den zwei Art
 - **Gestaltung**: Seitenvorlagen und Stile werden bearbeitet. Der Bereich Text zeigt das Kapitel schreibgeschützt, mit einem Hinweis und der Schaltfläche **Text bearbeiten**, und seine Werkzeugleiste ist abgeschaltet. Ein Klick auf einen Rahmen einer zusammengesetzten Seite wählt diesen Rahmen für den Vorlageneditor aus, statt die Einfügemarke zu setzen.
 
 **Alt+Umschalt+M** (**⌥⇧M** auf dem Mac) wechselt den Modus von überall im Sandbox aus. Wer bei offenem Bereich Text zu Gestaltung wechselt, bekommt den Bereich Gestaltung, und beim Zurückwechseln wieder den Bereich Text. Der Browser merkt sich den Modus. Agenten lesen und setzen ihn mit `sandbox_set_view` (`mode`).
+
+### Rückgängig und Wiederholen
+
+Der Sandbox führt einen einzigen Verlauf für Text und Gestaltung des offenen Buchs. **Cmd/Strg+Z** nimmt die letzte Änderung zurück, gleich welcher Art: Getipptes im Bereich Text, eine Bearbeitung auf den Seiten (der Text eines Rahmens, ein Comic-Panel in anderer Größe), eine Einstellung im Bereich Gestaltung, ein verschobener Rahmen oder eine neue Seitenvorlage im Modus Gestaltung. **Umschalt+Cmd/Strg+Z** (oder **Strg+Y**) stellt sie wieder her. Die Tasten wirken überall im Sandbox außer in einem Textfeld, das seine eigene Rückgängig-Funktion für das darin Getippte behält. Die Schaltflächen **Rückgängig** und **Wiederholen** neben dem Umschalter Inhalt / Gestaltung und die ersten beiden Schaltflächen der Werkzeugleiste im Bereich Text arbeiten mit demselben Verlauf; Screenreader sagen an, was zurückgenommen wurde.
+
+- Eine Geste ist ein Schritt: Ein gezogener Schieberegler, eine durch Ziehen gewählte Farbe oder eine Zahl, die Ziffer für Ziffer getippt wird, zählen einmal, solange die Pausen unter einer Sekunde bleiben. Jedes Ablegen eines Rahmens ist ein eigener Schritt.
+- Jedes Kapitel hat seinen eigenen Textverlauf. Wird eine Textänderung in einem anderen Kapitel zurückgenommen, öffnet sich dieses Kapitel.
+- Der Verlauf bleibt beim Wechsel zwischen Inhalt und Gestaltung erhalten: Eine Textänderung lässt sich im Modus Gestaltung zurücknehmen, ein verschobener Rahmen im Modus Inhalt.
+- Wer ein anderes Buch öffnet (über den Bereich Bücher, ein Beispiel, eine `.postext`-Datei oder einen Link), beginnt einen neuen Verlauf; ebenso beim Zurücksetzen des Textes oder des ganzen Buchs. Wird nur die Gestaltung zurückgesetzt, ist das ein Schritt und lässt sich zurücknehmen.
+- Hinzugefügte, entfernte, geteilte, zusammengeführte oder verschobene Kapitel, Ressourcen und Schriften gehören nicht zum Verlauf. Er gilt für den Besuch: Nach dem Neuladen ist er leer.
+
+Agenten nehmen Änderungen mit `sandbox_undo` zurück und stellen sie damit wieder her (siehe [WebMCP](/de/docs/webmcp)).
 
 ### Bedienfelder der Seitenleiste
 

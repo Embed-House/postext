@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'WebMCP: an agent at work in the Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'What an AI agent in the browser can do with the Sandbox through its 36 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
+  description: 'What an AI agent in the browser can do with the Sandbox through its 39 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '12 min',
   order: 43,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
@@ -23,7 +23,7 @@ picture of page 12, sets `bodyText.fontSize` to 10.5 pt, sees that the chapter
 went from 18 to 19 pages, and puts it back. It does what you do by eye, and
 it does it with your book, in your browser.
 
-There are 36 tools whose names start with `sandbox_`, registered while the
+There are 39 tools whose names start with `sandbox_`, registered while the
 Sandbox is on screen, and 8 tools of the site, `site_*`, on every page of
 postext.dev. This page sorts them by what you would ask an agent to do, and
 gives the call for each one.
@@ -39,7 +39,7 @@ finds them there. Nothing has to be installed or set up on the Postext side.
 WebMCP is still a draft. Chrome offers it as an origin trial, and behind the
 flag `chrome://flags/#enable-webmcp-testing`. The tools follow the page: on
 the home page or in the docs the agent has the `site_*` tools; once the
-Sandbox is on screen, the 36 `sandbox_*` tools appear as well.
+Sandbox is on screen, the 39 `sandbox_*` tools appear as well.
 
 ### In any other browser: `window.postextWebMcp`
 
@@ -214,6 +214,8 @@ a resource. With `select: true` it also does what a click does: the
 Manuscript panel opens with the caret at that place (`word: true` selects the
 word, `to` selects up to a second point).
 
+The answer also lists `elements`: what lies at the point, innermost first, in the order a click on the page picks them and each further click or Esc climbs (a glyph, its paragraph, the box round it, the frame of a composed page, its group, the page and its template; or a design element and its slot). Each comes with its stable id, its source (a Markdown range, a config path, an attribute, a resource) and its name in the path the Sandbox shows (`path`). With `select: true`, `level` (`block`, `frame`, `template`, `design`…) picks one of them as a person would: Content mode selects its Markdown, Design mode opens its frame, style or template. `sandbox_get_state` reports the element picked as `pageSelection`.
+
 ### Change the design
 
 Any setting of the [configuration](/en/docs/configuration) can be changed by
@@ -294,6 +296,8 @@ engine resolved something other than what was asked (a limit, a setting that
 depends on another), and a value of the wrong shape, or a configuration the
 engine cannot resolve, is refused with nothing changed.
 
+Each call is one step of the Sandbox's history: `sandbox_undo` takes it back, as Cmd/Ctrl+Z does for a change made in the Design panel.
+
 For larger changes, `patch` merges an object into the configuration (objects
 merge, `null` removes, lists are replaced whole) and `replace` puts a whole
 configuration in place of the book's, such as a `postext-config.json` export.
@@ -303,6 +307,15 @@ book started from.
 Fonts are settings too: `sandbox_list_fonts` with `search: "Garamond"` finds
 families in the open catalogue, and writing the name into a `fontFamily`
 setting loads it.
+
+Box styles have a library of their own: `sandbox_frame_styles` lists every
+callout style with where the book uses it (template frames, composed pages,
+`:::callout` boxes per chapter) and the merges of near-identical styles it
+suggests, the same as Design › Boxes › Frame styles. `sandbox_merge_styles`
+takes `groups` (`{ keep, merge }`) or `all: true` and rewrites every frame and
+fence that named a merged style; `lookOnly: true` also compares styles whose
+boxes stand at different places, which then move.
+Its answer gives `undoSteps`: one per chapter rewritten and one for the styles, which `sandbox_undo` takes back, the styles first.
 
 ### Edit the text
 
@@ -563,11 +576,7 @@ instructions.
   `data:` URL or `base64` always works.
 - **Long work takes time.** A tool waits for the layout before it answers;
   `wait: false` answers at once. A PDF or EPUB of a long book takes minutes.
-- **What `sandbox_undo_text` takes back**: the text edits of the tools (one
-  call at a time) and the edits made on the previews. Not what you type in the
-  Manuscript editor (its own undo does that), chapters added or moved, or
-  changes to the design and the resources: for those, the `from` of each
-  answer. The list is lost when the page is reloaded.
+- **Undo**: `sandbox_undo` takes back the last change, to the text or to the design, in the order the changes were made, as Cmd/Ctrl+Z does in the Sandbox: text typed in the Text panel, the edits of the tools and those made on the previews, settings changed by `sandbox_set_config` or in the Design panel, frames dragged. `redo: true` puts a change back. `sandbox_undo_text` takes back only a text edit, and says so when the last change was to the design. Chapters added, removed or moved, resources and fonts are not in the history; opening another book empties it, and so does a reload. `sandbox_get_state` says what each would take back (`history`).
 - **The book on screen.** The tools work on the open book. Only
   `sandbox_export` of a `.postext` file, `sandbox_save_book` with
   `duplicate` and `sandbox_reset_to_original` with `sample` reach another book
@@ -604,7 +613,9 @@ each one come with `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **The design**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
+- **Undo**: `sandbox_undo`.
 - **How it is shown**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
 - **Resources and fonts**: `sandbox_list_resources`, `sandbox_save_resource`,

@@ -61,7 +61,7 @@ export interface BlockStyle {
    *  before it is measured. */
   uppercase?: boolean;
   /** Tracking the style itself sets (px after every glyph; negative
-   *  tightens) — a heading level's `letterSpacing`. Measured on the rich
+   *  tightens) — a heading level's or a paragraph style's `letterSpacing`. Measured on the rich
    *  path and stamped on the block (`VDTBlock.letterSpacing`). Unset: none. */
   letterSpacingPx?: number;
   /** How the style sets `*…*` when not in italics (`bodyText.emphasis`,
@@ -320,6 +320,9 @@ export function resolveParagraphStyle(
   const marginBottomPx = dimensionToPx(style.spaceBetween, dpi, fontSizePx);
   const indentPx = style.indent ? dimensionToPx(style.indent, dpi, fontSizePx) : 0;
   const endIndentPx = style.endIndent ? dimensionToPx(style.endIndent, dpi, fontSizePx) : 0;
+  // Tracking (#907): left unset at zero so untracked styles measure (and
+  // cache) exactly as before.
+  const trackingPx = style.letterSpacing ? dimensionToPx(style.letterSpacing, dpi, fontSizePx) : 0;
   return {
     ...faces,
     fontSizePx,
@@ -342,6 +345,7 @@ export function resolveParagraphStyle(
     ...(Number.isFinite(endIndentPx) && endIndentPx > 0 ? { endIndentPx } : {}),
     ...(style.smallCaps ? { smallCaps: true } : {}),
     ...(style.textTransform === 'uppercase' ? { uppercase: true } : {}),
+    ...(Number.isFinite(trackingPx) && trackingPx !== 0 ? { letterSpacingPx: trackingPx } : {}),
     ...(style.wordBreak ? { cjkWordBreak: style.wordBreak } : {}),
     ...tabFields(style.tabStops ?? body.tabStops, style.tabInterval ?? body.tabInterval),
     ...(style.dropCap ? { dropCap: style.dropCap } : {}),

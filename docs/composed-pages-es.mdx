@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'El Markdown de las páginas compuestas: la valla de página de cuatro dos puntos que nombra una plantilla de página, los marcos y el atributo slot que llevan el contenido a los marcos de la plantilla, las figuras con rótulos en las anclas de una imagen y los avisos que comprueban el contenido frente a la plantilla',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página es una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: la valla de la página, los marcos, los nombres de slot y las imágenes con rótulos, como los nombres de un mapa. También recoge los avisos que da Postext cuando el texto y la plantilla no casan.",
@@ -112,7 +112,23 @@ Un `slot` fuera de una página compuesta se lee y no cambia nada.
 - `style` nombra un estilo de rótulo y se impone al del ancla.
 - El texto entre corchetes es Markdown en línea: negrita, cursiva, chips.
 
-Una figura funciona tanto en el texto corrido como en un marco. Los rótulos se leen y se guardan junto con su posición en el Markdown; dibujarlos sobre la imagen llegará en una versión posterior, y hasta entonces la figura se compone igual que su recurso. Una línea dentro de una figura que no es un rótulo ni está en blanco termina una figura a la que le falta el `:::` de cierre, y se señala como contenedor sin cerrar.
+Una figura funciona tanto en el texto corrido como en un marco. Sus rótulos se dibujan sobre la imagen como texto y van adonde vaya la figura: una columna, un flotante, un marco girado o con su contenido reducido para caber, una doble página. Una línea dentro de una figura que no es un rótulo ni está en blanco termina una figura a la que le falta el `:::` de cierre, y se señala como contenedor sin cerrar.
+
+### Cómo se compone un rótulo
+
+- **Dónde.** Un rótulo se coloca en el punto de su ancla, una fracción de la imagen entera, de modo que si la imagen se recorta a su zona segura o se compone más pequeña, el rótulo se mueve con el dibujo. El `align` del ancla dice qué lado del rótulo queda en el punto, y `verticalAlign`, qué borde queda a su altura. `start` y `end` siguen la dirección del propio rótulo: en árabe, `start` es el borde derecho. `rotate` gira el rótulo alrededor del punto, en el sentido de las agujas del reloj y con cualquier ángulo: un río a lo largo de su curso, una sierra en diagonal.
+- **Aspecto.** El `style` del rótulo, o si no el de su ancla, nombra un estilo de rótulo (véase Configuración › Páginas compuestas); sin estilo, el rótulo toma la letra del texto general. El halo traza el contorno de las letras por debajo de su relleno; la placa (`background`) rellena la caja que rodea el texto, ensanchada por `padding`.
+- **Ajuste.** Si su ancla tiene `width`, el rótulo se corta entre palabras dentro de esa medida, nunca dentro de una palabra. Cuando una palabra es más ancha que la medida, todo el rótulo se compone más pequeño, hasta el `minScale` de su estilo; si aun así no cabe, se dibuja con su palabra más ancha cortada. Sin `width`, el rótulo ocupa una sola línea, salvo donde se corta con `\\`, como en un pie.
+- **Texto.** El texto entre corchetes es Markdown en línea y se compone como un pie: negrita, cursiva, chips, marcas de resaltado, referencias y fórmulas en línea. Un nombre de varias palabras es un solo rótulo, cualquiera que sea el orden de sus palabras en cada idioma: `::label[OCÉANO ATLÁNTICO]` y `::label[ATLANTIC OCEAN]` están en la misma ancla. Los rótulos de derecha a izquierda se componen de derecha a izquierda; los chinos y japoneses se cortan entre caracteres.
+- **Salidas.** El lienzo, el PDF, el visor HTML, el EPUB de maquetación fija y Folio dibujan los rótulos. En una página de derecha a izquierda, el rótulo se queda donde la imagen lo muestra.
+
+### labelAnchorUnknown
+
+Un `::label` nombra con `at` un ancla que el recurso de su figura no tiene. El rótulo no se dibuja; el EPUB adaptable lo sigue listando y el texto alternativo de la imagen lo nombra. El aviso lleva el recurso, el ancla, las anclas que tiene el recurso (`known`), el idioma, la página y el rango del texto del rótulo en el fuente. Corrige el id del ancla, añade el ancla al recurso o coloca el rótulo con `at="x% y%"`.
+
+### anchorUnlabelled
+
+Un ancla del recurso de la figura nombra un estilo de rótulo y ningún `::label` de la figura está en ella en este idioma: el mapa tiene sitio para una palabra que esta edición no pone. Es una nota; `postext check` la da como `info`. Las anclas sin estilo, como las de un personaje de cómic, no se señalan. El aviso lleva el recurso, el ancla, su estilo, el idioma, la página y el rango de la figura en el fuente. Escribe el rótulo en el Markdown de este idioma o quita el estilo del ancla.
 
 ## Ejemplo
 
@@ -166,6 +182,8 @@ Su altura es fija (una longitud o un porcentaje), `fill` (hasta el borde del ár
 
 El contenido que no nombra ningún slot va al marco marcado con `flow`; el primer encabezado de un nivel va al marco que lo toma con `takes`. Los marcos de una página se leen en el orden en que su contenido aparece por primera vez en el Markdown, cada uno entero: un lector de pantalla, el PDF etiquetado y las salidas de maquetación fluida leen una caja después del texto que abre la página, no en medio de él.
 
+Un encabezado puesto en un marco conserva el diseño de su nivel o de su estilo de encabezado (una pestaña, una banda, `{titleText}` compuesto por el diseño), compuesto al ancho del marco como en una columna de la página, y el marco guarda el sitio que el diseño ocupa; si el texto del marco se reduce, el diseño se reduce con él, y si el marco está girado, gira con él. Véase [En cajas y marcos](/es/docs/configuration-headings#en-cajas-y-marcos). Hasta postext 1.36 ese encabezado se componía sin diseño.
+
 ### Encadenar marcos
 
 `next` envía lo que un marco no puede contener a otro marco de la misma página, y ese a otro, como los marcos de texto enlazados de la maquetación tradicional:
@@ -175,7 +193,7 @@ El contenido que no nombra ningún slot va al marco marcado con `flow`; el prime
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nuevo al ancho de ese marco, sin perder ni repetir nada. `overflow.continueIn: "#frame"` significa lo mismo. Seguir en la página siguiente está previsto (`"next-page"`).
+El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nuevo al ancho de ese marco, sin perder ni repetir nada. `overflow.continueIn: "#frame"` significa lo mismo. Para seguir en una página añadida después de esta, consulta [Cuando el texto sigue](#cuando-el-texto-sigue).
 
 ### Marcos que apartan el texto
 
@@ -196,18 +214,18 @@ Los marcos se pintan en el orden de su `layer`: la decoración en la capa 0, los
 
 ### Contenido que no cabe
 
-Un marco cuyo contenido es más alto que él, sin un marco siguiente donde continuar, conserva todo ese contenido en el documento pero solo muestra lo que cabe: el resto se corta al pie del marco en la salida paginada, y el aviso [`frameOverflow`](#frameoverflow) dice cuánto. El contenido que no recoge ningún marco (no hay marco de flujo, o en ese lado falta un marco) se compone en el texto corrido, en la página que sigue a la página compuesta.
+Un marco cuyo contenido es más alto que él, sin un marco siguiente donde continuar ni una página en la que seguir (`overflow.continueIn`), conserva todo ese contenido en el documento pero solo muestra lo que cabe: el resto se corta al pie del marco en la salida paginada, y el aviso [`frameOverflow`](#frameoverflow) dice cuánto. El contenido que no recoge ningún marco (no hay marco de flujo, o en ese lado falta un marco) se compone en el texto corrido, en la página que sigue a la página compuesta.
 
 ## Fuera del papel: HTML, EPUB y PDF etiquetado
 
 Todas las salidas leen una página compuesta en el orden de su Markdown, no en el orden en que la plantilla enumera sus marcos ni en el que pinta sus capas.
 
-- **EPUB de maquetación fluida.** La página se convierte en una sección (`<section class="pt-composed pt-composed-tema-cajas">`) que se abre con la marca de salto de página. Cada marco es un bloque de esa sección (`<div class="pt-frame pt-frame-dinero">`), colocado donde su contenido aparece por primera vez en el Markdown; un marco y los marcos en los que sigue su cadena `next` forman un solo bloque. Un marco dibujado con un estilo de aviso conserva la caja de ese estilo: fondo, borde, márgenes interiores, texto del cuerpo y su `label` como título de la caja. Un marco sin estilo es un bloque sin más. La decoración (imágenes de fondo, tarjetas, textos de diseño) pertenece a la página impresa y se deja fuera.
-- **Rótulos de las figuras.** La imagen que lleva el EPUB no muestra los textos `::label` de una `:::figure`, así que el libro fluido los enumera justo después de la imagen, dentro de su figura y en el orden en que se escribieron: una lista oculta a la vista (`pt-figure-labels pt-hidden`) que un lector de pantalla lee una sola vez. En el visor HTML, en el EPUB de maquetación fija y en el PDF etiquetado van detrás del texto alternativo de la imagen, `Una familia con la cesta de la compra (Alquiler, Luz, Comida)`; los rótulos en chino y japonés llevan `（…、…）` y los árabes, la coma árabe.
+- **EPUB de maquetación fluida.** La página se convierte en una sección (`<section class="pt-composed pt-composed-tema-cajas">`) que se abre con la marca de salto de página. Cada marco es un bloque de esa sección (`<div class="pt-frame pt-frame-dinero">`), colocado donde su contenido aparece por primera vez en el Markdown; un marco y los marcos en los que sigue su cadena `next` forman un solo bloque, igual que un marco cuyo contenido sigue en páginas añadidas: los trozos se unen, un párrafo cortado entre dos páginas es un solo párrafo y la marca de salto de la página añadida queda dentro de él, donde empieza el texto de esa página. Un marco dibujado con un estilo de aviso conserva la caja de ese estilo: fondo, borde, márgenes interiores, texto del cuerpo y su `label` como título de la caja. Un marco sin estilo es un bloque sin más. La decoración (imágenes de fondo, tarjetas, textos de diseño) pertenece a la página impresa y se deja fuera.
+- **Rótulos de las figuras.** El visor HTML y el EPUB de maquetación fija escriben cada rótulo dibujado como texto justo después de su imagen, en el orden en que se escribieron (`<div class="pt-figure-label">`, girado con una matriz CSS), así que un lector de pantalla lee el texto alternativo de la imagen y después sus palabras. La imagen que lleva el EPUB no los muestra, así que el libro fluido los enumera después de la imagen, dentro de su figura: una lista oculta a la vista (`pt-figure-labels pt-hidden`) que un lector de pantalla lee una sola vez. Un rótulo que no se dibuja (porque su ancla no existe) va en cambio detrás del texto alternativo de la imagen, `Mapa de Europa (Madrid)`; los rótulos en chino y japonés llevan `（…、…）` y los árabes, la coma árabe.
 - **Visor HTML y EPUB de maquetación fija.** Los dos muestran la página impresa con su plantilla aplicada: cada marco en su caja, girado según `rotate`, recortado cuando su contenido desborda, pintado sobre los marcos de capas inferiores y con la decoración en la capa 0. El marcado enumera los marcos en orden de lectura y los pinta en orden de capas con `z-index`, de modo que las tecnologías de apoyo siguen el Markdown mientras la página se ve como impresa. Las imágenes decorativas quedan ocultas para las tecnologías de apoyo (`alt=""`). Las fuentes de la decoración están entre las que el Sandbox incrusta en un EPUB; un EPUB de maquetación fija escrito sin alguna de ellas avisa con `missingFont`.
-- **PDF etiquetado.** El árbol de estructura lee los marcos en el mismo orden. Cada marco, o cadena de marcos, es un `Div` con sus encabezados, párrafos y listas; sus imágenes son elementos `Figure` cuyo `Alt` incluye los rótulos; la decoración es un artefacto de maquetación.
+- **PDF etiquetado.** El árbol de estructura lee los marcos en el mismo orden. Cada marco, o cadena de marcos, es un `Div` con sus encabezados, párrafos y listas, y los trozos de un marco que sigue en páginas añadidas forman ese mismo `Div` (un párrafo cortado entre páginas es un solo `P`, y la marca de continuación, un artefacto); cada una de sus imágenes es un `Figure` seguido de un `Div` con un `P` por rótulo dibujado, en el orden en que se escribieron. El halo y la placa de un rótulo son artefactos de maquetación, así que sus palabras se leen una sola vez; la decoración también es un artefacto de maquetación.
 
-Desde el código, los rótulos de una figura están en su bloque, en `resourceBlock.labels` (texto, ancla o punto, estilo y rango en el fuente), y `composedReadingOrder(composedPaintOrder(page))` da la decoración y los marcos de una página en orden de lectura.
+Desde el código, los rótulos de una figura están en su bloque, en `resourceBlock.labels`: texto, ancla o punto, estilo y rango en el fuente, más `layout` (las líneas, la caja, el giro y el aspecto de un rótulo dibujado) y `rect` (dónde se pinta, que es lo que responde `sourceAt`). `composedReadingOrder(composedPaintOrder(page))` da la decoración y los marcos de una página en orden de lectura.
 
 ## Avisos
 
@@ -265,6 +283,12 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 
 **Solución.** Aplica una de las propuestas: cada una trae su valor, calculado sobre la página (véase [El aviso y sus propuestas](#el-aviso-y-sus-propuestas)). Si no, da más sitio al marco, encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla.
 
+### frameContinuationLimit
+
+**Causa.** Un marco cuyo `overflow.continueIn` es `'next-page'` o `'template:<id>'` ha enviado lo que no le cabía a una página añadida, y el marco de esa página ha vuelto a enviar el resto, página tras página, hasta que la página compuesta ha añadido todas las páginas que puede añadir: 16 (véase [Cuando el texto sigue](#cuando-el-texto-sigue)). Lo que queda se corta al pie del marco en la última página añadida; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla y el marco de esa página, el número de páginas añadidas (`pages`), la altura cortada (`overflowMm`), el `configPath` del marco y la página. Lo más habitual es que el marco que recibe el contenido en la página añadida sea mucho más pequeño que el texto.
+
+**Solución.** Da más sitio a ese marco (más altura, o un `overflowTemplate` con un marco mayor) o acorta el texto. Una caja que ocupa más de unas pocas páginas suele estar mejor en el texto corrido.
+
 ## Cuando el texto crece
 
 Una página compuesta se recoloca dentro de los límites que declara su plantilla. Si el texto de la primera caja de una página cuyas cajas forman un grupo apilado se alarga, la caja crece para darle cabida y las cajas de debajo, con las fotos y la decoración ancladas a ellas, bajan; no cambia ni una línea de la plantilla. Con un texto más corto, la caja recupera la altura declarada. Un marco o un elemento de decoración con `pin` se queda donde lo pone la plantilla, para una caja que tiene que caer sobre la ilustración. Cómo se reparten el espacio las pilas y las filas, y qué marco cede primero, se decide en la plantilla: consulta [Configuración › Cómo se reparten el espacio los grupos](/es/docs/configuration-composed-pages#cómo-se-reparten-el-espacio-los-grupos).
@@ -305,12 +329,12 @@ Un marco cuyo contenido no cabe prueba, uno tras otro, los modos de hacer sitio 
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>El marco sigue en otra página (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>). Esta versión informa del paso; la página añadida la compondrá una versión posterior.</td>
+      <td>El marco sigue en otra página (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>): se corta al pie con su marca y el resto sigue en una página añadida después de esta (véase <a href="#cuando-el-texto-sigue">Cuando el texto sigue</a>). Su texto y sus imágenes vuelven a su tamaño completo, porque lo que no cabe sigue de todos modos. No se da ningún aviso.</td>
     </tr>
   </tbody>
 </table>
 
-Si ningún paso consigue que el contenido quepa, el marco se corta al pie, se queda con las escalas a las que llegó la escalera y la maquetación avisa con `frameOverflow`. Cada paso vuelve a maquetar la página entera, así que el resultado depende solo de esa página: la misma entrada da la misma página, los marcos que desbordan se tratan en el orden de la plantilla y un cambio en una página compuesta deja todas las demás como estaban. Los ajustes están en [Configuración › Cuando el contenido no cabe](/es/docs/configuration-composed-pages#cuando-el-contenido-no-cabe).
+Si ningún paso consigue que el contenido quepa, el marco se corta al pie, se queda con las escalas a las que llegó la escalera y la maquetación avisa con `frameOverflow`. Un marco de una página añadida que no toma nada del contenido que recibe no lo vuelve a enviar (añadiría páginas sin fin): también avisa con `frameOverflow`, con `continue` entre los pasos probados. Cada paso vuelve a maquetar la página entera, así que el resultado depende solo de esa página: la misma entrada da la misma página, los marcos que desbordan se tratan en el orden de la plantilla y un cambio en una página compuesta deja todas las demás como estaban. Los ajustes están en [Configuración › Cuando el contenido no cabe](/es/docs/configuration-composed-pages#cuando-el-contenido-no-cabe).
 
 ### El aviso y sus propuestas
 
@@ -359,6 +383,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 El panel Revisión muestra la misma entrada en el idioma de la interfaz.
 
+## Cuando el texto sigue
+
+Un marco puede enviar lo que no le cabe a una página añadida después de su página compuesta. Lo decide el `overflow.continueIn` del marco:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>Dónde sigue el contenido</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>En otro marco de la misma página, como con <code>next</code> (véase <a href="#encadenar-marcos">Encadenar marcos</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>En el mismo marco, en una página añadida después de esta y construida con el <code>overflowTemplate</code> de la plantilla. Si no lo tiene, la página es la misma plantilla compuesta de nuevo con solo ese marco lleno: los demás marcos no ocupan sitio (su altura sigue a su contenido vacío y salen de sus grupos), así que el marco empieza cerca de la cabeza de la página, y la decoración y las cabeceras son las de la plantilla.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>En una página de esa plantilla.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Seguir en otra página es el último paso de la [escalera de ajuste](#cuando-aun-así-no-cabe): el marco primero crece, hace sitio en su grupo y compone más pequeños sus imágenes y su texto, hasta donde le deja su plantilla, y solo cuando eso no basta se corta al pie. Entonces su texto y sus imágenes vuelven a su tamaño completo, el trozo termina con la marca de continuación y el resto sigue desde la línea donde se cortó, partido de nuevo al ancho del marco que lo recibe. No se pierde ni se repite nada, y no se da ningún aviso.
+
+- **Qué marco lo recibe.** En la página añadida, el contenido sigue en el marco del mismo nombre; si la plantilla no tiene ninguno, en su marco de flujo y, si tampoco, en su primer marco que no esté ya ocupado. Varios marcos de una página que siguen en la misma plantilla comparten una página añadida cuando esa plantilla tiene un marco para cada uno; si no, el siguiente recibe una página para él solo. Un marco de la página añadida que no recibe nada se queda vacío.
+- **Una y otra vez.** Un trozo que sigue sin caber vuelve a seguir en la siguiente página añadida, con el `overflow.continueIn` que el marco tenga allí o, si no tiene, con la regla que lo trajo. Una página compuesta añade como mucho 16 páginas seguidas; lo que aún no cabe en la última se corta y se avisa con [`frameContinuationLimit`](#framecontinuationlimit). Un marco de una página añadida demasiado pequeño para tomar nada de ese contenido avisa con `frameOverflow` en vez de añadir páginas.
+- **Páginas corrientes.** Las páginas añadidas son páginas del libro: llevan número, las cabeceras de su plantilla (o las de la sección) y las `variants` de su lado, y el `{attr.x}` de la valla de página sigue llegando a su decoración. Una plantilla de desbordamiento con `spread: true` empieza en la siguiente página par, con un blanco de paridad delante si hace falta, y ocupa también la impar que la sigue; una doble página cuyo `overflowTemplate` es de una sola página sigue en páginas sencillas. El texto que va después de la valla de página empieza en la página siguiente a la última añadida.
+- **Ids.** Un marco de la n-ésima página añadida es `cp0:<name>~<n>`; el marco que recibe el contenido toma el nombre del marco de la página de la valla que lo envió primero (`cp0:dinero~1`, `cp0:dinero~2`), de modo que una selección conserva su elemento sea cual sea el marco que lo recibe. Cada marco anota de qué marco viene y en cuál sigue (`continuedFrom`, `continuesTo`), el `VDTPage.composed.continuationOf` de la página es el índice de la página de la valla y los bloques de los trozos llevan el id de la caja con `-cont-<n>`, como las cajas partidas.
+- **Recomposición.** Una página compuesta cuyo contenido sigue en otras páginas se maqueta de nuevo, con sus páginas añadidas, en cada compilación: la memoria de páginas solo guarda las páginas cuyo contenido se queda en ellas.
+
+### La marca de continuación
+
+`overflow.mark` fija las palabras con las que termina un trozo cortado:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Valor</th>
+      <th>Marca</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>sin fijar</td>
+      <td>Las palabras de continuación del estilo del marco (el <code>continuesMarker</code> de su estilo de aviso), que siguen el idioma del documento: «Continued» en inglés, «Continúa» en español, «Continua» en catalán, italiano y portugués, «À suivre» en francés, «Wird fortgesetzt» en alemán, «接下页» en chino, «次ページへ続く» en japonés y «يتبع» en árabe. Son las mismas que usan las tablas y las cajas partidas.</td>
+    </tr>
+    <tr>
+      <td>una cadena</td>
+      <td>Esas palabras: <code>"sigue en la página siguiente"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>Ninguna marca; en el trozo cabe una línea más.</td>
+    </tr>
+  </tbody>
+</table>
+
+La marca se compone bajo la última línea del trozo, con la letra del cuerpo de la caja, alineada e inclinada según `continuesMarkerAlign` y `continuesMarkerItalic` del estilo (a la derecha y en cursiva por defecto). Es un elemento de la paginación: el EPUB de maquetación fluida la deja fuera y el PDF etiquetado la marca como artefacto. Un marco encadenado con `next` en la misma página no lleva marca.
+
+El trozo de la página añadida empieza sin la pestaña ni el título del marco, como las partes siguientes de una caja partida. Un estilo con `repeatTitle: true` repite allí su título seguido de su `continuedSuffix` («(cont.)»), que avisa de que el texto viene de la página anterior.
+
 ## Registro de recomposición
 
 Cada página compuesta guarda un registro de lo que la composición cambió respecto al dibujo de su plantilla: qué marco creció, cedió espacio o se movió, cuánto, y qué marco lo provocó. Una página cuyo texto cabe en su plantilla no registra nada.
@@ -394,6 +493,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>La escalera de ajuste ha compuesto el texto del marco a <code>scale</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>El contenido del marco sigue en una página añadida después de esta: <code>toPage</code> es el índice de esa página en el documento y <code>toFrame</code>, el id del marco que lo recibe allí (<code>cp0:dinero&#126;1</code>). En palabras: «dinero continued on page 9», con el número impreso de la página.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>
@@ -439,6 +542,10 @@ En el lienzo, en la vista de doble página del Sandbox y en el Folio, las dos p�
 **Causa.** La apertura de la página y su plantilla no coinciden: la apertura lleva `spread` y la plantilla es de una sola página, o la plantilla es de doble página (por su propio `spread: true` o a través de `extends`) y a la apertura le falta. Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una. El aviso da la plantilla, la marca de la apertura (`fence`) y la de la plantilla (`templateSpread`), y señala el atributo `spread`, o el nombre de la plantilla cuando la apertura no lo lleva.
 
 **Corrección.** Haz que la apertura diga lo que es la plantilla: escribe `spread` en la apertura de una plantilla de doble página, quítalo de la de una plantilla de una sola, o elige otra plantilla.
+
+## Migrar un libro con el texto en sus estilos
+
+Un libro hecho antes de las páginas compuestas puede guardar el texto de sus páginas en estilos de título: un título oculto en cada página cuya cabecera coloca cada texto donde lo tenía la página impresa. La comprobación *Texto guardado en la configuración* lo señala. En el Sandbox, **Pasar el texto al Markdown** en el panel de revisión convierte cada diseño de página en una plantilla de página con los marcos donde estaban los textos, y cada página en una valla de página con su texto en slots `:::frame`; enseña cada página antes y después, y se puede deshacer. Véase [Pasar el texto al Markdown](/es/docs/sandbox-design-checks#pasar-el-texto-al-markdown). Desde el código, `moveTextToMarkdown({ config, chapters, metadata }, options)` hace lo mismo y devuelve la configuración nueva, los capítulos y un informe.
 
 ## Desde el código
 
@@ -500,7 +607,7 @@ elementsForSource(doc, 677, 690); // líneas, bloques, marcos, páginas y textos
 findElement(doc, 'cp0:dinero');   // el mismo marco tras recomponer, con su rect
 ```
 
-`elementsForSource(doc, start, end)` hace el camino inverso y devuelve `{ pageIndex, element }` por cada línea, bloque, marco, página compuesta y texto de diseño que toca el tramo. Una línea que queda por debajo del pie de su marco llega con `clipped: true`: en la página se recorta, en el mapa de origen se conserva. En un pliego doble, la mitad de un marco que cruza el lomo y se lee en la página de enfrente responde con los identificadores de los bloques que muestra y `facing: true`, en `sourceAt` y en `elementsForSource`. Un rótulo de figura responde en el nivel `label`, con su identificador y su ancla, allí donde se dibuje sobre la imagen.
+`elementsForSource(doc, start, end)` hace el camino inverso y devuelve `{ pageIndex, element }` por cada línea, bloque, marco, página compuesta y texto de diseño que toca el tramo. Una línea que queda por debajo del pie de su marco llega con `clipped: true`: en la página se recorta, en el mapa de origen se conserva. En un pliego doble, la mitad de un marco que cruza el lomo y se lee en la página de enfrente responde con los identificadores de los bloques que muestra y `facing: true`, en `sourceAt` y en `elementsForSource`. Ahí `elementsForSource` da a cada página el marco con la parte de su caja que pinta esa página como `rect`, así que una banda que empieza cerca del lomo tiene un punto donde hacer clic en las dos páginas. Un rótulo de figura responde en el nivel `label`, con su identificador y su ancla, allí donde se dibuje sobre la imagen.
 
 **Identificadores estables.** Una página compuesta es `cp<n>`, con `n` el ordinal de su valla en el capítulo; un marco es `cp<n>:<marco>` (con `~<k>` para el k-ésimo trozo de su contenido que sigue en una página posterior), sus bloques `cp<n>:<marco>-c0`, `-c1`…, un grupo `cp<n>:group:<nombre>`, un elemento de la decoración o de las cabeceras y pies `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, y un rótulo de una figura `cp<n>:<slot>:label:<ancla>`. Ninguno depende de posiciones ni de las palabras, así que un identificador es el mismo después de cualquier recomposición y en todos los idiomas del capítulo: una selección sobrevive a una edición, y el mismo marco se encuentra en la traducción. `findElement(doc, id)` vuelve a encontrar el elemento.
 

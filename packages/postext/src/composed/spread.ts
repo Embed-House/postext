@@ -32,6 +32,7 @@ import { layoutComposedPage, lengthPx, type ComposedPageInput, type ComposedPage
 import { frameBounds } from './paint';
 import type { FrameAreas, Rect } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { ComposedContinuation } from './continuation';
 
 const MM_PER_IN = 25.4;
 /** Below this a frame touches the spine without crossing it (px). */
@@ -110,6 +111,8 @@ export interface ComposedSpreadLayout {
   sides: [ComposedSpreadSide, ComposedSpreadSide];
   warnings: ContentWarning[];
   laid: Set<string>;
+  /** Content the sheet's frames send on to other pages (#859). */
+  continuations?: ComposedContinuation[];
 }
 
 export interface ComposedSpreadInput extends Omit<ComposedPageInput, 'page' | 'areas' | 'fitBox'> {
@@ -216,7 +219,7 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
     };
     return { page, composed, blocks: sideBlocks[i] };
   };
-  return { sides: [side(0), side(1)], warnings, laid: out.laid };
+  return { sides: [side(0), side(1)], warnings, laid: out.laid, ...(out.continuations ? { continuations: out.continuations } : {}) };
 }
 
 /**

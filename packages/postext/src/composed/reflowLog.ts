@@ -30,21 +30,25 @@ const round = (mm: number): number => Math.round(mm * 10 + (mm >= 0 ? 1e-6 : -1e
 export function reflowEvents(motions: readonly FrameMotion[], pxPerMm: number): ReflowEvent[] {
   const mm = (v: number): number => v / pxPerMm;
   const sized = new Set<string>();
+  const grew = new Set<string>();
   const moved = new Set<string>();
   for (const m of motions) {
     if (Math.abs(mm(m.final.height - m.declared.height)) >= MIN_MM || Math.abs(mm(m.final.width - m.declared.width)) >= MIN_MM) sized.add(m.name);
+    if (mm(m.final.height - m.declared.height) >= MIN_MM || mm(m.final.width - m.declared.width) >= MIN_MM) grew.add(m.name);
     if (Math.abs(mm(m.final.y - m.declared.y)) >= MIN_MM || Math.abs(mm(m.final.x - m.declared.x)) >= MIN_MM) moved.add(m.name);
   }
   const byName = new Map(motions.map((m) => [m.name, m]));
   const causes = new Map<string, string | undefined>();
   /** The frame whose change set this one off: the nearest dependency that
-   *  changed size, else the cause of the nearest one that moved. */
+   *  grew, else the nearest that changed size, else the cause of the
+   *  nearest one that moved. In a row, the cards that give width to a
+   *  sibling name that sibling, not each other (#877). */
   const causeOf = (name: string, seen: Set<string> = new Set()): string | undefined => {
     if (causes.has(name)) return causes.get(name);
     if (seen.has(name)) return undefined;
     seen.add(name);
     const deps = byName.get(name)?.deps ?? [];
-    let found = deps.find((d) => sized.has(d) && d !== name);
+    let found = deps.find((d) => grew.has(d) && d !== name) ?? deps.find((d) => sized.has(d) && d !== name);
     if (!found) {
       const via = deps.find((d) => moved.has(d) && d !== name);
       if (via) found = causeOf(via, seen) ?? via;
@@ -91,8 +95,14 @@ const num = (v: number): string => String(Math.round(v * 10) / 10);
 const pct = (v: number): string => `${Math.round(v * 1000) / 10} %`;
 
 /** One event in words, in English (the command line's language):
- *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm». */
+ *  «dinero grew 8 mm», «gasto moved down 8 mm», «foto narrowed 4 mm»,
+ *  «dinero continued on page 9» (the page's index + 1; `composedReflowLog`
+ *  names it by its printed number). */
 export function describeReflowEvent(e: ReflowEvent): string {
+  return describeEvent(e);
+}
+
+function describeEvent(e: ReflowEvent, pageLabel?: (index: number) => string): string {
   const delta = e.fromMm !== undefined && e.toMm !== undefined ? Math.abs(e.toMm - e.fromMm) : undefined;
   const by = delta !== undefined ? ` ${num(delta)} mm` : '';
   const x = e.axis === 'x';
@@ -114,7 +124,7 @@ export function describeReflowEvent(e: ReflowEvent): string {
     case 'textScaled':
       return `${e.frame}: text at ${pct(e.scale ?? 1)}`;
     case 'continued':
-      return `${e.frame} continued${e.cause ? ` in ${e.cause}` : ''}`;
+      return `${e.frame} continued${e.toPage !== undefined ? ` on page ${pageLabel ? pageLabel(e.toPage) : String(e.toPage + 1)}` : ''}${e.cause ? ` in ${e.cause}` : ''}`;
     default:
       return `${e.frame} ${String(e.kind)}`;
   }
@@ -136,7 +146,7 @@ export function describeFitStep(step: FrameFitStep, at: { scale?: number; imageS
     case 'shrinkText':
       return at.scale !== undefined && at.scale < 1 ? `text down to ${pct(at.scale)}` : 'smaller text';
     case 'continue':
-      return 'continuing on another page (not laid out yet)';
+      return 'continuing on another page (its frame there takes none of it)';
     default:
       return String(step);
   }
@@ -181,6 +191,10 @@ export interface ComposedPageReflow {
 /** The reflow log of every composed page of `doc` that has one. */
 export function composedReflowLog(doc: Pick<VDTDocument, 'pages'>): ComposedPageReflow[] {
   const out: ComposedPageReflow[] = [];
+  const labelOf = (index: number): string => {
+    const p = doc.pages.find((q) => q.index === index);
+    return String(p?.pageLabel ?? p?.pageNumberValue ?? index + 1);
+  };
   for (const page of doc.pages) {
     const c = page.composed;
     if (!c || c.log.length === 0) continue;
@@ -190,7 +204,7 @@ export function composedReflowLog(doc: Pick<VDTDocument, 'pages'>): ComposedPage
       template: c.template,
       fenceIndex: c.fenceIndex,
       events: c.log.map((e) => ({ ...e })),
-      lines: c.log.map(describeReflowEvent),
+      lines: c.log.map((e) => describeEvent(e, labelOf)),
     });
   }
   return out;

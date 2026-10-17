@@ -1,6 +1,6 @@
 ---
 name: postext-port
-description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language; when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
+description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language, and fixed-page textbooks, workbooks and magazines as composed pages (page templates with frames filled from the Markdown); when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
 license: MIT
 metadata:
   homepage: https://postext.dev/en/docs/skill
@@ -83,10 +83,12 @@ in the config, and its bundle broke the Sandbox's import.
   `postext check` warns too.
 - **One style per kind of page**, never one per page. Styles named after
   page numbers (`page-05`, `tema--p13`) that carry text are the sign that
-  content went into the config. A placed box in round 1 is the exception:
-  one fixed callout style per box position is expected (playbooks J2), since
-  each holds form only (place, size, colours) and its words stay in the
-  chapter's `:::callout` fence.
+  content went into the config. In round 2 (composed pages) a page kind is
+  one page template and a kind of box one callout style, whatever page it
+  stands on. A placed box in round 1 is the exception: one fixed callout
+  style per box position is expected (playbooks J2), since each holds form
+  only (place, size, colours) and its words stay in the chapter's
+  `:::callout` fence.
 - **Size budget.** The Sandbox keeps the working book in about 5 MB of
   browser storage. Aim for a config under 1 MB; `preset_kit.py lint` warns
   from 3 MB and `--max-size 1` makes it fail above 1 MB.
@@ -102,43 +104,61 @@ in the config, and its bundle broke the Sandbox's import.
 In the inventory (step 1) classify every page as **flow** (running text with
 figures, boxes and floats the engine places) or **composed** (boxes, labels,
 diagrams and maps at set positions: a children's textbook, a worksheet, an
-infographic page). Postext 1.34 reads page templates (`pageTemplates`,
-`labelStyles`, configuration.md §19g) and the composed-page Markdown
-(`::::page{template}`, `:::frame{slot}`, `:::figure` + `::label`,
-document-format.md §12.2), but it does not lay a composed page out yet: that
-comes with #855, in a later release, and until then a `::::page` sets its
-content in the running text on pages of its own. Check the installed
-version (`postext --version`, and the release notes for "composed pages")
-before you choose. Until the release that lays composed pages out, set a
-composed page with this ladder (round 1), first rung first (playbooks J):
+infographic page, a magazine spread). How composed pages are ported depends
+on the installed Postext; the skill chooses by itself:
 
-1. **Placed boxes**: one callout style per position, `placement: "fixed"`
-   with `fixed: {anchor, offset}`; the box's text is a `:::callout{type="…"}`
-   in the chapter, at the page it belongs to. A box that cannot take its
-   place moves to the next page and nothing warns: check the page count.
-2. **Page backgrounds and furniture**: image elements with no text in the
-   opener design of a `span: "page"` heading style (`reserve: false`),
-   which is painted under the text; the running head and foot are painted
-   over it, so only furniture that never sits under text goes there. Keep
-   that heading visible (`hidden` skips its design). One style serves every
-   page of its kind with `resourceId: "{attr.fondo}"`, the picture named by
-   the heading (`# Topic {style="topic" fondo="bg-p05"}`, postext ≥ 1.8).
-3. **Maps and diagrams with many labels**: an SVG resource with live
-   `<text>` labels, translated by `localized.<lang>.resources[].file`
-   (playbooks D6). Its words live in the SVG or in the strings file your
-   script builds it from: that file is the second place the book's text
-   lives in round 1, and the report says how many words it holds.
-4. **Forbidden**: literal text in design elements; heading styles that hold
-   content (a hidden style per page carrying its text); one preset or bundle
-   per language; the source's line breaks copied into the paragraphs.
+```bash
+python3 scripts/composed_check.py round      # reads postext --version (or the npm package of render.mjs)
+```
 
-With more than a third of the pages composed, go back to the brief and,
-unless it already says which (then follow it and name the choice in the
-report), ask the user to choose: **identical layout** (rungs 1–3 at the source's
-positions; edited or translated text must still fit its box, and what
-Postext cannot place is listed as a gap) or **editable, translatable text**
-(the composed pages set as flow pages with the source's type, colours and
-boxes, placed by the engine).
+- **Round 2, postext ≥ 1.35.0: composed pages.** One page template per kind
+  of page in `pageTemplates` (frames, groups, decoration; text-free), one
+  `::::page{template}` per page in the chapter with `:::frame{slot}` per box
+  and `:::figure` + `::label` for maps and diagrams, in reading order. Boxes
+  grow with their text and push the ones after them; from 1.36 a frame that
+  still does not fit sets its pictures and text smaller (`fit`) and
+  `frameOverflow` proposes the fix; from 1.37 a box goes on on an added page
+  and map words are drawn at the picture's anchors. Follow
+  [references/composed-pages.md](references/composed-pages.md). The script
+  lists what the installed version lacks and what to do instead.
+- **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page
+  grounds in an opener design, live-text SVG labels), first rung first:
+
+  1. **Placed boxes**: one callout style per position, `placement: "fixed"`
+     with `fixed: {anchor, offset}`; the box's text is a `:::callout{type="…"}`
+     in the chapter, at the page it belongs to. A box that cannot take its
+     place moves to the next page and nothing warns: check the page count.
+  2. **Page backgrounds and furniture**: image elements with no text in the
+     opener design of a `span: "page"` heading style (`reserve: false`),
+     painted under the text. Keep that heading visible (`hidden` skips its
+     design). One style serves every page of its kind with
+     `resourceId: "{attr.fondo}"` (`# Topic {style="topic" fondo="bg-p05"}`).
+  3. **Maps and diagrams with many labels**: an SVG resource with live
+     `<text>` labels, translated by `localized.<lang>.resources[].file`
+     (playbooks D6). Its words live in the SVG or in the strings file your
+     script builds it from: the second place the book's text lives in round
+     1, and the report says how many words it holds.
+  4. **Forbidden** in both rounds: literal text in design elements (a
+     template's decoration included); heading styles that hold content (a
+     hidden style per page carrying its text); one preset or bundle per
+     language; the source's line breaks copied into the paragraphs.
+
+Update the command line first (Setup): an old executable on the PATH makes
+the skill pick round 1 for no reason. The version that counts is the one
+the book will open in (the Sandbox runs the latest release; a program, the
+`postext` version it pins). The report names the round, the version and
+the features worked around. A book ported with round 1 or with postext
+1.33 moves to round 2 as composed-pages.md §9 says (`moveTextToMarkdown`
+for the 1.33 pattern).
+
+With more than a third of the pages composed **in round 1**, go back to the
+brief and, unless it already says which (then follow it and name the choice
+in the report), ask the user to choose: **identical layout** (rungs 1–3 at
+the source's positions; edited or translated text must still fit its box,
+and what Postext cannot place is listed as a gap) or **editable,
+translatable text** (the composed pages set as flow pages with the source's
+type, colours and boxes, placed by the engine). Round 2 gives both, so ask
+only when the brief wants composed pages reflowed as running text.
 
 ## Read before writing anything
 
@@ -168,7 +188,10 @@ Postext Markdown is **not CommonMark**. These habits break a port:
   line as written, or a classical Arabic poem, one bayt a line split at
   `||`), plus inline index marks
   (`:index[…]`, `:index{term="…"}`), and the comic blocks `:::page` and
-  `:::strip` (comics.md). Anything else prints literally.
+  `:::strip` (comics.md); on composed pages (postext ≥ 1.34) the
+  four-colon `::::page{template}` with `:::frame{slot}`, `:::figure` +
+  `::label` and `slot=` (document-format.md §12.2). Anything else prints
+  literally.
 - **Extra blank lines add no space.** Where the source has deliberate
   vertical space (a scene break, room above a signature), write
   `:::space` (one body line) or `:::space{lines=N}`.
@@ -376,6 +399,13 @@ Full references (load the one you need):
   Folio 3D viewer, fixed-page books such as children's textbooks with their
   placed boxes, backgrounds and labelled maps…) and which public preset
   shows each.
+- [references/composed-pages.md](references/composed-pages.md): round 2
+  for fixed pages: choosing the round by version, the template/slot model,
+  the component library, templates with `extends` and variants, recipes (a
+  box with a tab, a category tree, a double-page timeline, a labelled map,
+  photos with captions, text round an illustration, a box that continues
+  on the next page, a magazine thread), the composed-page checks, one
+  bundle for every edition, and moving a round-1 or 1.33 port over.
 - [references/comics.md](references/comics.md): comic pages, strips and
   spreads: the split grammar, panels, script lines, the `comics` config,
   speaker anchors and safe areas, reading direction, editions per language,
@@ -469,8 +499,12 @@ styles in use, media, vector-heavy pages (infographics) and text-less pages
 Classify every page as flow or composed (see "Flow pages and composed
 pages" above; `vector_heavy_pages` and pages with many short text runs at
 scattered positions are the composed candidates) and write the list into
-the spec sheet. More than a third composed: ask the user the layout
-question before measuring further.
+the spec sheet; run `composed_check.py round` and write the round there
+too. In round 2, sort the composed pages into kinds of page (same boxes in
+the same places, within about 3 mm): one template per kind, `extends` for
+small differences, `variants` for recto and verso, a spread template for a
+two-page design (composed-pages.md §3.1). In round 1, more than a third
+composed: ask the user the layout question before measuring further.
 
 ### 2. Measure the design (spec sheet)
 Follow [design-analysis.md](references/design-analysis.md).
@@ -481,6 +515,11 @@ Follow [design-analysis.md](references/design-analysis.md).
   colour).
 - Record page types, openers, running heads, box families, table and caption
   looks, placement habits and palette colours.
+- Composed pages (round 2): a **component library**, each look measured
+  once (frame styles = callout styles holding the dress only, paragraph,
+  chip, mark and label styles), never one per page; and per kind of page
+  the frame boxes in mm, each box's drawn height as its `minHeight`
+  (composed-pages.md §3.2, §4).
 
 Write each number with where you measured it.
 
@@ -509,7 +548,11 @@ This creates `build_preset.py`, a generator using the `preset_kit` helpers
 (`mm`, `pt`, `color`, `palette`, `text_el`, `rule_el`, `box_el`, `image_el`,
 `place`, `bitmap`, `svg`, `table`, `chapters_from_dir`, `font_families`,
 `write_manifest`). Put the spec sheet in it as constants and build `config`
-from them. Always generate `preset.json`; never hand-edit it.
+from them. Always generate `preset.json`; never hand-edit it. Composed
+pages (round 2): the templates are built there from the geometry constants,
+text-free, shared ones first, then `extends` + patches and variants,
+single-use templates only for pages like no other, named by role
+(composed-pages.md §3.3, §5).
 
 ### 4. Extract the content into draft chapters
 Pick the path per [sources.md](references/sources.md):
@@ -551,6 +594,14 @@ Pick the path per [sources.md](references/sources.md):
   sources.md; reuse `scripts/postext_md.py` to write safe Markdown
   (`render_runs`, `escape`, `heading`, `fence`, `attr_value`,
   `guard_line_start`).
+
+- **Composed pages** (round 2): one `::::page{template="…"}` per source page
+  (or spread) with the content in the source's reading order, a
+  `:::frame{slot label}` per box, `::resource{id slot}` per picture, maps and
+  diagrams cut without their lettering as `:::figure` + one
+  `::label[…]{at="anchor"}` per word with the anchors on the resource,
+  per-page design values as fence attributes (`fondo=`, `tema=`); the same
+  fences, slots and anchors in every edition (composed-pages.md §3.4, §6).
 
 Every extractor writes `chapters/<lang>/*.md`, `resources.json` and a
 `report.md` of decisions to review. Copy the chapters into `my-book/chapters/`
@@ -682,7 +733,11 @@ the watch log does not replace: `lint_project.py`, `preset_kit.py lint my-book`
 (content in the config, config size), `postext check my-book --locale es
 --json` for **every** locale (every warning with chapter file:line and page;
 exit 3 on errors) and, with the Node tools, `render.mjs` for its
-`SANDBOX-WARN` lines.
+`SANDBOX-WARN` lines. With composed pages, `composed_check.py check my-book
+--stress 1.3` runs every edition and fails on `frameOverflow`,
+`contentInConfig`, template and slot warnings and a page whose HTML reading
+order is not the Markdown's, and lays the text out 30 % longer as the
+Cookbook bench does (composed-pages.md §7).
 
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
@@ -691,6 +746,8 @@ Fix the config or the Markdown until you reach:
 
 - zero lint errors, and `preset_kit.py lint` clean (no content in the
   config, config under 1 MB);
+- with composed pages, `composed_check.py check` passed in every edition
+  (no `frameOverflow`, reading order = source order, the stress test);
 - `converged=true`;
 - no warnings;
 - the same page breaks on most pages, within ±1 page per chapter.
@@ -704,7 +761,10 @@ python3 scripts/preset_kit.py pack my-book --manifest-only   # my-book.postext: 
 python3 scripts/preset_kit.py lint my-book.postext --max-size 1   # no content in the config, config under 1 MB
 ```
 
-and `postext check my-book.postext --locale <lang>` for each locale.
+and `postext check my-book.postext --locale <lang>` for each locale (with
+composed pages, `composed_check.py check my-book.postext`). Every edition
+goes in this one bundle: chapters per locale, templates, styles and
+anchors shared.
 
 `pack` without `--manifest-only` zips the whole folder except `source/`,
 scripts, dot files and caches: a `work/` folder, label sources or tool
@@ -712,9 +772,9 @@ outputs would ship too (`--exclude GLOB` leaves more out).
 
 Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…). A
 bundle with several languages asks which one, and the new book holds that
-edition only: import each edition to look at it. The Sandbox names the book
-after the manifest `name` in every language (`localized.<lang>` has no
-`name`, #891). Or
+edition only: import each edition to look at it. Each edition takes its title
+from `localized.<lang>.name` (postext ≥ 1.34.1, #891; earlier, the
+manifest `name` in every language). Or
 serve a presets folder to a local sandbox (`preset_kit.py index <root>` +
 `POSTEXT_PRIVATE_PRESETS_DIR`). The same file loads in the user's own
 program through the `postext` npm package (`openBundle` → `buildBundle` →

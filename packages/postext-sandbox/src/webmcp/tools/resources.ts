@@ -247,7 +247,8 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
         const withVideo = typesWithVideo(types, s.locale);
         if (withVideo) {
           types = withVideo;
-          actions.push({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withVideo } });
+          // The Video type comes with the video (#454): no step of its own.
+          actions.push({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withVideo }, history: false });
           answer.addedType = 'video';
         }
       }
@@ -543,7 +544,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
       const s = store.getSnapshot();
       const families: CustomFontFamily[] = [...(s.config.customFonts ?? [])];
       const write = async (next: CustomFontFamily[]): Promise<void> => {
-        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: { customFonts: next.length > 0 ? next : undefined } });
+        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: { customFonts: next.length > 0 ? next : undefined }, history: { merge: false } });
       };
       const facesOf = (list: readonly CustomFontFamily[], family: string) => (list.find((f) => f.name === family)?.variants ?? []).map(faceOf);
       if (args.action === 'remove_all') {

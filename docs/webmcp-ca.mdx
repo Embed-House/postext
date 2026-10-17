@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 36 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 39 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 43,
   plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial treballi per ell en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 36 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+Hi ha 39 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -39,7 +39,7 @@ pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
 pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
-quan el Sandbox és a la pantalla, apareixen també les 36 eines `sandbox_*`.
+quan el Sandbox és a la pantalla, apareixen també les 39 eines `sandbox_*`.
 
 ### En qualsevol altre navegador: `window.postextWebMcp`
 
@@ -219,6 +219,8 @@ o el peu d'un recurs. Amb `select: true` també fa el que fa un clic: s'obre el
 tauler Text amb el cursor en aquell lloc (`word: true` selecciona la paraula,
 `to` selecciona fins a un segon punt).
 
+La resposta també porta `elements`: el que hi ha en aquell punt, de dins cap a fora, en l'ordre en què un clic a la pàgina el tria i cada clic més o Esc puja (un caràcter, el seu paràgraf, el requadre que l'envolta, el marc d'una pàgina composta, el seu grup, la pàgina i la seva plantilla; o un element de disseny i el seu slot). Cadascun duu el seu id estable, el seu origen (un tram del Markdown, una ruta de la configuració, un atribut, un recurs) i el seu nom a la ruta que mostra el Sandbox (`path`). Amb `select: true`, `level` (`block`, `frame`, `template`, `design`…) en tria un com ho faria una persona: en mode Contingut en selecciona el Markdown i en mode Disseny n'obre el marc, l'estil o la plantilla. `sandbox_get_state` informa de l'element triat a `pageSelection`.
+
 ### Canviar el disseny
 
 Qualsevol ajust de la [configuració](/ca/docs/configuration) es pot canviar per
@@ -299,6 +301,8 @@ quan el motor ha resolt una cosa diferent de la demanada (un límit, un ajust
 que en depèn d'un altre), i un valor amb una forma equivocada, o una
 configuració que el motor no pot resoldre, es rebutja sense canviar res.
 
+Cada crida és un pas de l'historial del Sandbox: `sandbox_undo` la desfà, com Cmd/Ctrl+Z desfà un canvi fet al tauler Disseny.
+
 Per a canvis més grans, `patch` fusiona un objecte amb la configuració (els
 objectes es fusionen, `null` elimina i les llistes se substitueixen senceres) i
 `replace` posa una configuració sencera en lloc de la del llibre, com ara un
@@ -308,6 +312,16 @@ restaura el disseny amb què va començar el llibre.
 Les fonts també són ajustos: `sandbox_list_fonts` amb `search: "Garamond"`
 troba famílies al catàleg obert, i escriure el nom en un ajust `fontFamily` la
 carrega.
+
+Els estils de requadre tenen una biblioteca pròpia: `sandbox_frame_styles`
+dona cada estil amb on el fa servir el llibre (marcs de plantilla, pàgines
+compostes, requadres `:::callout` per capítol) i les fusions d'estils gairebé
+iguals que proposa, com Disseny › Requadres › Estils de marc.
+`sandbox_merge_styles` rep `groups` (`{ keep, merge }`) o `all: true` i
+reescriu cada marc i cada bloc que anomenava un estil fusionat; amb
+`lookOnly: true` compara també estils els requadres dels quals són en llocs
+diferents, que aleshores es mouen.
+La resposta dona `undoSteps`: un pas per capítol reescrit i un altre per als estils, que `sandbox_undo` reverteix començant pels estils.
 
 ### Editar el text
 
@@ -576,12 +590,7 @@ navegador pugui evitar que aquest text es prengui per instruccions.
 - **La feina llarga triga.** Una eina espera la maquetació abans de respondre;
   `wait: false` respon de seguida. Un PDF o un EPUB d'un llibre llarg triga
   minuts.
-- **Què desfà `sandbox_undo_text`**: les edicions de text de les eines (una
-  crida cada vegada) i les edicions fetes a les previsualitzacions. No desfà el
-  que escrius a l'editor del tauler Text (ho fa el desfer de l'editor), els
-  capítols afegits o moguts, ni els canvis al disseny i als recursos: per a
-  això hi ha el `from` de cada resposta. La llista es perd quan es torna a
-  carregar la pàgina.
+- **Desfer**: `sandbox_undo` desfà l'últim canvi, del text o del disseny, en l'ordre en què es van fer, com Cmd/Ctrl+Z al Sandbox: el que s'ha escrit al tauler Text, les edicions de les eines i les fetes damunt de les vistes, els ajustos canviats amb `sandbox_set_config` o al tauler Disseny, els marcs arrossegats. `redo: true` el refà. `sandbox_undo_text` només desfà una edició del text, i ho diu quan l'últim canvi va ser del disseny. Els capítols afegits, eliminats o moguts, els recursos i les fonts no són a l'historial; obrir un altre llibre el buida, i tornar a carregar la pàgina també. `sandbox_get_state` diu què desfaria cadascuna (`history`).
 - **El llibre de la pantalla.** Les eines treballen sobre el llibre obert.
   Només `sandbox_export` d'un fitxer `.postext`, `sandbox_save_book` amb
   `duplicate` i `sandbox_reset_to_original` amb `sample` arriben a un altre
@@ -619,7 +628,9 @@ de cadascuna s'obtenen amb `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **El disseny**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
+- **Desfer**: `sandbox_undo`.
 - **Com es mostra**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
 - **Recursos i fonts**: `sandbox_list_resources`, `sandbox_save_resource`,

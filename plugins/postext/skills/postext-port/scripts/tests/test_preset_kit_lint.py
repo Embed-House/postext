@@ -120,11 +120,25 @@ class Engine(unittest.TestCase):
         # A bad limit falls back to the default, as in the engine.
         self.assertEqual(len(kit.content_in_config({**el, "checks": {"contentInConfig": {"maxWords": -1}}})[0]), 1)
 
+    def test_page_templates_count(self):
+        # Decoration and running heads of a template, and its variants', as
+        # the engine's configDesignSlots lists them (#874).
+        cfg = {"pageTemplates": [{"id": "t", "decoration": {"elements": [text("d", "A sentence typed into a template"),
+                                                                          text("ok", "{attr.tema}")]},
+                                  "variants": {"verso": {"footer": {"elements": [text("f", "Another sentence in a footer")]}}}}]}
+        res = kit.lint_manifest(cfg)
+        got = [(f["owner"], f["ownerId"], f["slot"], f["path"]) for f in res["findings"]]
+        self.assertEqual(got, [
+            ("config.pageTemplates[0]", "t", "decoration", "config.pageTemplates[0].decoration.elements[0]"),
+            ("config.pageTemplates[0]", "t", "variants.verso.footer", "config.pageTemplates[0].variants.verso.footer.elements[0]"),
+        ])
+        self.assertEqual(res["other"], [])
+
     def test_only_the_engine_slots_count(self):
-        cfg = {"pageTemplates": [{"id": "t", "decoration": {"elements": [text("d", "A sentence typed into a template")]}}]}
+        cfg = {"calloutStyles": [{"id": "c", "decoration": {"elements": [text("d", "A sentence typed into a box style")]}}]}
         res = kit.lint_manifest(cfg)
         self.assertEqual(res["findings"], [])
-        self.assertEqual([o["path"] for o in res["other"]], ["config.pageTemplates[0].decoration.elements[0]"])
+        self.assertEqual([o["path"] for o in res["other"]], ["config.calloutStyles[0].decoration.elements[0]"])
 
 
 class Walk(unittest.TestCase):

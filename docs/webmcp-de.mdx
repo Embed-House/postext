@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'WebMCP: ein Agent bei der Arbeit in der Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Was ein KI-Agent im Browser mit den 36 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
+  description: 'Was ein KI-Agent im Browser mit den 39 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
-  lastUpdated: '2026-10-13',
+  lastUpdated: '2026-10-17',
   readingTime: '12 min',
   order: 43,
   plainSummary: "Diese Seite ist für alle, die einen KI-Helfer für sich an einem Buch in der Sandbox arbeiten lassen möchten. Solange die Sandbox geöffnet ist, gibt sie dem Helfer eine Reihe von Werkzeugen: um jede Seite anzusehen, die Gestaltung zu ändern, den Text zu bearbeiten, Bilder und Tabellen hinzuzufügen, Probleme zu finden und Dateien zu speichern. Sie bitten mit Ihren eigenen Worten, zum Beispiel „mach die Schrift etwas größer und prüf, ob das Buch noch auf 40 Seiten passt“, und der Helfer setzt die Werkzeuge ein und zeigt Ihnen die Seiten. Alles bleibt in Ihrem Browser. Die Seite erklärt, wie Sie einen Helfer verbinden, was er tun kann und wie jedes Werkzeug aufgerufen wird.",
@@ -24,7 +24,7 @@ Oberfläche: Er liest das Buch, fordert ein Bild von Seite 12 an, setzt
 gewachsen ist, und nimmt die Änderung zurück. Er tut, was Sie mit dem Auge tun,
 und er tut es mit Ihrem Buch, in Ihrem Browser.
 
-Es gibt 36 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
+Es gibt 39 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
 sind, solange die Sandbox auf dem Bildschirm ist, und 8 Werkzeuge der Website,
 `site_*`, auf jeder Seite von postext.dev. Diese Seite ordnet sie nach dem, was
 Sie einen Agenten tun lassen würden, und zeigt für jedes den Aufruf.
@@ -41,7 +41,7 @@ Postext muss nichts installiert oder eingerichtet werden.
 WebMCP ist noch ein Entwurf. Chrome bietet es als Origin Trial an und hinter
 dem Flag `chrome://flags/#enable-webmcp-testing`. Die Werkzeuge folgen der
 Seite: Auf der Startseite oder in der Dokumentation hat der Agent die
-Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 36
+Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 39
 Werkzeuge `sandbox_*` hinzu.
 
 ### In jedem anderen Browser: `window.postextWebMcp`
@@ -224,6 +224,8 @@ außerdem, was ein Klick tut: Das Bedienfeld Text öffnet sich mit der
 Einfügemarke an dieser Stelle (`word: true` wählt das Wort aus, `to` wählt bis
 zu einem zweiten Punkt aus).
 
+Die Antwort enthält außerdem `elements`: was an dem Punkt liegt, von innen nach außen, in der Reihenfolge, in der ein Klick auf der Seite es wählt und jeder weitere Klick oder Esc aufsteigt (ein Zeichen, sein Absatz, der Kasten darum, der Rahmen einer zusammengesetzten Seite, seine Gruppe, die Seite und ihre Vorlage; oder ein Gestaltungselement und sein Slot). Jedes Element bringt seine stabile Id mit, seine Quelle (ein Bereich des Markdowns, ein Konfigurationspfad, ein Attribut, eine Ressource) und seinen Namen im Pfad, den die Sandbox zeigt (`path`). Mit `select: true` wählt `level` (`block`, `frame`, `template`, `design` …) eines davon so aus, wie es ein Mensch täte: Im Modus Inhalt wird sein Markdown ausgewählt, im Modus Gestaltung öffnen sich sein Rahmen, sein Stil oder seine Vorlage. `sandbox_get_state` meldet das ausgewählte Element als `pageSelection`.
+
 ### Die Gestaltung ändern
 
 Jede Einstellung der [Konfiguration](/de/docs/configuration) lässt sich über
@@ -307,6 +309,8 @@ aufgelöst hat als verlangt (eine Grenze, eine Einstellung, die von einer
 anderen abhängt), und ein Wert in falscher Form oder eine Konfiguration, die
 die Engine nicht auflösen kann, wird abgewiesen, ohne dass sich etwas ändert.
 
+Jeder Aufruf ist ein Schritt im Verlauf des Sandbox: `sandbox_undo` nimmt ihn zurück, so wie Cmd/Strg+Z eine Änderung im Bereich Gestaltung zurücknimmt.
+
 Für größere Änderungen führt `patch` ein Objekt in die Konfiguration ein
 (Objekte werden zusammengeführt, `null` entfernt, Listen werden als Ganzes
 ersetzt), und `replace` setzt eine ganze Konfiguration an die Stelle der des
@@ -317,6 +321,16 @@ her, mit der das Buch begonnen hat.
 Auch Schriften sind Einstellungen: `sandbox_list_fonts` mit
 `search: "Garamond"` findet Familien im offenen Katalog, und wenn Sie den Namen in eine
 Einstellung `fontFamily` schreiben, wird die Schrift geladen.
+
+Kastenstile haben eine eigene Bibliothek: `sandbox_frame_styles` nennt jeden
+Stil mit den Stellen, an denen das Buch ihn verwendet (Rahmen von Vorlagen,
+zusammengesetzte Seiten, `:::callout`-Kästen je Kapitel), und die
+vorgeschlagenen Zusammenführungen fast gleicher Stile, wie Gestaltung › Kästen ›
+Rahmenstile. `sandbox_merge_styles` nimmt `groups` (`{ keep, merge }`) oder
+`all: true` und schreibt jeden Rahmen und jeden Block um, der einen
+zusammengeführten Stil nannte; mit `lookOnly: true` vergleicht es auch Stile,
+deren Kästen an verschiedenen Stellen stehen und sich dann verschieben.
+Die Antwort nennt `undoSteps`: einen Schritt je umgeschriebenem Kapitel und einen für die Stile, die `sandbox_undo` zurücknimmt, die Stile zuerst.
 
 ### Den Text bearbeiten
 
@@ -593,12 +607,7 @@ verhindern kann, dass dieser Text für Anweisungen gehalten wird.
 - **Lange Arbeiten brauchen Zeit.** Ein Werkzeug wartet mit seiner Antwort auf
   das Layout; `wait: false` antwortet sofort. Ein PDF oder EPUB eines langen
   Buches dauert Minuten.
-- **Was `sandbox_undo_text` zurücknimmt**: die Textbearbeitungen der Werkzeuge
-  (einen Aufruf nach dem anderen) und die Bearbeitungen in den Vorschauen.
-  Nicht, was Sie im Manuskript-Editor tippen (das erledigt dessen eigenes
-  Rückgängig), hinzugefügte oder verschobene Kapitel oder Änderungen an
-  Gestaltung und Ressourcen: Dafür gibt es das `from` jeder Antwort. Die Liste
-  geht verloren, wenn die Seite neu geladen wird.
+- **Rückgängig**: `sandbox_undo` nimmt die letzte Änderung zurück, am Text oder an der Gestaltung, in der Reihenfolge, in der sie gemacht wurden, wie Cmd/Strg+Z im Sandbox: im Bereich Text Getipptes, die Bearbeitungen der Werkzeuge und die auf den Vorschauen, mit `sandbox_set_config` oder im Bereich Gestaltung geänderte Einstellungen, verschobene Rahmen. `redo: true` stellt eine Änderung wieder her. `sandbox_undo_text` nimmt nur eine Textbearbeitung zurück und sagt es, wenn die letzte Änderung die Gestaltung betraf. Hinzugefügte, entfernte oder verschobene Kapitel, Ressourcen und Schriften stehen nicht im Verlauf; ein anderes Buch zu öffnen leert ihn, ebenso das Neuladen der Seite. `sandbox_get_state` sagt, was beide zurücknehmen würden (`history`).
 - **Das Buch auf dem Bildschirm.** Die Werkzeuge arbeiten mit dem geöffneten
   Buch. Nur `sandbox_export` einer `.postext`-Datei, `sandbox_save_book` mit
   `duplicate` und `sandbox_reset_to_original` mit `sample` erreichen ein
@@ -638,7 +647,9 @@ und das Schema jedes Werkzeugs liefert `postextWebMcp.listTools()`.
   `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
   `sandbox_manage_chapters`, `sandbox_remove_chapter`.
 - **Die Gestaltung**: `sandbox_get_config`, `sandbox_set_config`,
-  `sandbox_find_setting`, `sandbox_reset_to_original`.
+  `sandbox_find_setting`, `sandbox_reset_to_original`,
+  `sandbox_frame_styles`, `sandbox_merge_styles`.
+- **Rückgängig**: `sandbox_undo`.
 - **Die Anzeige**: `sandbox_set_view`, `sandbox_go_to_page`,
   `sandbox_run_viewer`.
 - **Ressourcen und Schriften**: `sandbox_list_resources`, `sandbox_save_resource`,

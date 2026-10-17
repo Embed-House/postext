@@ -134,7 +134,7 @@ Una plantilla que només fixa el seu `id` i un marc és una pàgina sencera amb 
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>aquesta plantilla</td>
-      <td>La plantilla de les pàgines que s'afegeixen quan un marc continua a la pàgina següent (<code>overflow.continueIn: 'next-page'</code>). Sense fixar, la pàgina afegida fa servir aquesta plantilla amb només els marcs que continuen plens.</td>
+      <td>La plantilla de les pàgines que s'afegeixen quan un marc continua a la pàgina següent (<code>overflow.continueIn: 'next-page'</code>). Sense fixar, la pàgina afegida és aquesta plantilla composta de nou amb només els marcs que continuen plens; els altres no ocupen espai. Una doble pàgina aquí fa que la continuació sigui una doble pàgina. Vegeu <a href="/ca/docs/composed-pages#quan-el-text-continua">Pàgines compostes › Quan el text continua</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>cap</td>
-      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta) o <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla).</td>
+      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta, a partir d'<code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla: el seu marc del mateix nom o, si no en té, el seu marc de flux). Un marc d'una pàgina afegida sense regla pròpia continua amb la regla que hi ha portat el contingut, fins a 16 pàgines afegides.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la de la llengua</td>
-      <td>La marca al final d'un tros tallat. Sense fixar, la paraula de continuació de la llengua del document (la mateixa que fan servir les taules partides); <code>false</code> no en posa cap.</td>
+      <td>La marca al final d'un tros tallat per a una altra pàgina. Sense fixar, el <code>continuesMarker</code> de l'estil del marc, que segueix la llengua del document («Continued», «Continúa», «À suivre»…, les paraules que fan servir les taules partides); una cadena posa aquestes paraules; <code>false</code> no en posa cap. Un marc encadenat amb <code>next</code> a la mateixa pàgina no porta marca.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ Quan el contingut d'un marc és més alt que l'espai que li dona el seu grup, la
 - `minHeight` en els altres marcs del grup: fins on tornen espai; un marc mai no baixa del que necessita el seu propi contingut.
 - `fit.scaleImages` i `fit.imageMinScale`: si les imatges del marc i del seu grup es poden compondre més petites, i fins a quina escala (80 % per defecte).
 - `fit.shrinkText` i `fit.minScale`: si el text del marc es pot compondre més petit, i fins a quina escala (90 % per defecte). L'escala és la mateixa per al cos, l'interlineat i els espais; el marc conserva la seva mida.
-- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou.
+- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou: en un altre marc o en una pàgina afegida darrere d'aquesta (`'next-page'`, `'template:<id>'`), on el text continua a mida completa després de l'`overflow.mark` del tros.
 
 Les escales van en passos del 2,5 % i la maquetació pren la més gran amb què el contingut hi cap, de manera que un text que fa una línia de més es compon al 97,5 %, no al mínim. Una caixa que ha de conservar el cos de lletra porta `fit: { shrinkText: false }`; en una pàgina les imatges de la qual han de conservar la mida, els marcs del seu grup porten `fit: { scaleImages: false }`:
 
@@ -493,7 +493,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next` i `overflow.continueIn: "#frame"`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer` i les `variants` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, `overflow.continueIn: "next-page"` i `overflowTemplate`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next` i `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) amb `overflow.mark`, i també l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup; els seus marcs conserven la seva pròpia col·locació), `fit`, el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ### Dobles pàgines
 
@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Un rètol sense estil, o amb un estil que no fixa la lletra, pren la família, el cos, el gruix i el color del text general. Les línies d'un rètol de diverses línies van a 1,15 vegades el seu cos, o a l'interlineat de l'estil de paràgraf que pren en préstec. Amb `paragraphStyle`, el rètol pren també la cursiva i les majúscules d'aquest estil; `fontStyle: 'italic'` i `textTransform: 'uppercase'` les afegeixen a un estil que no en pren cap. Un rètol reduït per cabre conserva l'halo en proporció.
+
 ### Camps de rètol d'un ancoratge
 
 Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els còmics per als parlants) admeten uns quants camps opcionals per a rètols. Són fraccions de la imatge, de manera que valen en totes les llengües i amb qualsevol retall de la imatge. Els còmics els ignoren.
@@ -659,6 +661,8 @@ Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els c�
     </tr>
   </tbody>
 </table>
+
+`start` i `end` segueixen la direcció del rètol: en un rètol àrab, `start` és la seva vora dreta. Un ancoratge que comparteixen les edicions d'esquerra a dreta i de dreta a esquerra d'un mateix mapa funciona millor amb el rètol centrat a sobre o a sota del punt. Un rètol amb `width` es talla entre paraules; una paraula més ampla que la mesura redueix tot el rètol, fins al `minScale` del seu estil. Com es dibuixen els rètols s'explica a [Pàgines compostes](/ca/docs/composed-pages).
 
 ## Avisos de les plantilles de pàgina
 

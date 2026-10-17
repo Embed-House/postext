@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>حالة أحرف الفقرات: <code>'uppercase'</code> تنضّدها بالحروف الكبيرة (قائمة الشخصيات، سطر من الحركة المسرحية)، بما في ذلك كلمات الشارة وتسمية <code>:ref</code>. الطول يبقى على حاله، فتبقى خريطة المصدر في المحرّر مطابقة حرفًا بحرف: الحرف الذي صيغته الكبيرة أطول (<code>ß</code>) يُترك كما كُتب. تُترك الرياضيات كما هي، والترويسة التي تقرأ الفقرة علامةً (<code>&#123;firstMark.<em>style</em>&#125;</code>) تأخذ النص كما كُتب؛ أما نص التصميم فتنضّده بالحروف الكبيرة خاصيته <code>textTransform</code>.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>مسافة بعد كل حرف من الفقرات، مثل <code>letter-spacing</code> في CSS: القيمة الموجبة تباعد الحروف (عنوان صفحة بالأحرف الكبيرة، <code>&#123; value: 0.015, unit: 'em' &#125;</code> لزيادة 15/1000 em)، والسالبة تضيّق حجمًا كبيرًا. وتُحسب قيمة <code>em</code> من <code>fontSize</code> النمط نفسه. تدخل في قياس الأسطر، فتنكسر الفقرة المتباعدة حيث تقع كلماتها الأعرض؛ وتوزّع الأسطر المضبوطة مسافات ما بين الكلمات فوقها، والسطر القصير الذي يضيّقه التنضيد (<code>bodyText.maxRuntTracking</code>) ينطلق من هذه القيمة. ترسمها canvas وHTML وPDF وEPUB بالطريقة نفسها، ويكتبها التصدير إلى Word تباعدًا لحروف النمط. أما كلمات الكتابات المتصلة (العربية والسريانية والنكو) فتبقى بلا تباعد وتُطلق التحذير <code>joiningScriptLetterSpacing</code>. منذ postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

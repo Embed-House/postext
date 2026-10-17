@@ -232,16 +232,28 @@ function paintContext(
   // crop marks stay on the sheet.
   const flow = verticalFlowOf(page);
   let outerVertical: ReturnType<typeof setVerticalPaint> = null;
-  if (flow) {
-    saveContext(ctx);
-    ctx.transform(0, 1, -1, 0, page.width, 0);
-    outerVertical = setVerticalPaint({
-      region: doc.config.cjk?.region ?? 'mainland',
-      uprightDigits: doc.config.cjk?.uprightDigits ?? 2,
-      ...(flow.centralBaselines ? { axes: flow.centralBaselines } : {}),
-    });
-  }
-  const endMirror = page.flow?.writingMode === 'horizontal-tb' ? beginMirroredFlow(ctx, page.flow.mirror.originX) : undefined;
+  let endMirror: (() => void) | undefined;
+  const enterFlow = (): void => {
+    if (flow) {
+      saveContext(ctx);
+      ctx.transform(0, 1, -1, 0, page.width, 0);
+      outerVertical = setVerticalPaint({
+        region: doc.config.cjk?.region ?? 'mainland',
+        uprightDigits: doc.config.cjk?.uprightDigits ?? 2,
+        ...(flow.centralBaselines ? { axes: flow.centralBaselines } : {}),
+      });
+    }
+    if (page.flow?.writingMode === 'horizontal-tb') endMirror = beginMirroredFlow(ctx, page.flow.mirror.originX);
+  };
+  const leaveFlow = (): void => {
+    if (flow) {
+      setVerticalPaint(outerVertical);
+      restoreContext(ctx);
+    }
+    endMirror?.();
+  };
+  enterFlow();
+  const throughFlow = !!flow || endMirror !== undefined;
 
   if (doc.config.page.baselineGrid.enabled) {
     // Bound the grid to the page's actual text: from the first text line to
@@ -315,15 +327,20 @@ function paintContext(
       renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, inkHex);
     }
   }
-  if (page.composed) renderComposedFrames(ctx, page, inkHex, flow || endMirror ? undefined : page.composed.decoration);
+  if (page.composed && throughFlow) {
+    // The decoration stands on the sheet, so the flow frame is left for
+    // it, between the frames under layer 0 and the others: a title frame
+    // on a band reads over the band on a right-to-left or vertical page
+    // as on any other.
+    renderComposedFrames(ctx, page, inkHex, undefined, 'below');
+    leaveFlow();
+    renderComposedDecoration(ctx, page, inkHex);
+    enterFlow();
+    renderComposedFrames(ctx, page, inkHex, undefined, 'above');
+  } else if (page.composed) renderComposedFrames(ctx, page, inkHex, page.composed.decoration);
   renderFootnoteRules(ctx, page);
 
-  if (flow) {
-    setVerticalPaint(outerVertical);
-    restoreContext(ctx);
-  }
-  endMirror?.();
-  if (page.composed?.decoration && (flow || endMirror)) renderComposedDecoration(ctx, page, inkHex);
+  leaveFlow();
 
   // A comic page's panels and lettering (or its half of a spread), and the
   // strips set in its flow, on the sheet (never through the flow frame).

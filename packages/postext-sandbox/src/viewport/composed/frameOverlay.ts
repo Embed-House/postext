@@ -4,7 +4,8 @@
  * an export):
  *
  * - an empty frame: a dashed outline, its name and «Write here» (a frame
- *   a chain continues into says which frame it continues instead);
+ *   a chain continues into says which frame it continues instead; a page
+ *   added by continuation, #859, marks none);
  * - Content mode: the frame of the slot the editor's caret is in;
  * - Design mode: every frame's outline and name, the frame picked
  *   stronger.
@@ -57,7 +58,9 @@ export function frameMarksFor(doc: Pick<VDTDocument, 'config'>, page: VDTPage, o
       out.push({ frame, kind: 'active', text: empty ? [frame.name, opts.writeHere] : [] });
       continue;
     }
-    if (empty) {
+    // A page added by continuation (#859) holds what its fence's page sent
+    // on: its other frames are not places to write.
+    if (empty && composed.continuationOf === undefined) {
       out.push({ frame, kind: 'empty', text: [frame.name, head !== frame.name ? opts.continues.replace('__frame__', head) : opts.writeHere] });
     }
   }

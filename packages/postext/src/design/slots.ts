@@ -1,10 +1,11 @@
 import type { DesignSlot, PostextConfig } from '../types';
 
 /** What a design slot of the configuration draws: a running head
- *  (`header`, `footer`, a heading style's own), a heading design, a part
- *  page (`parts.design`, `parts.versoDesign`) or a contents part row
- *  (`toc.parts.design`). */
-export type ConfigDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow';
+ *  (`header`, `footer`, a heading style's own, a page template's own), a
+ *  heading design, a part page (`parts.design`, `parts.versoDesign`), a
+ *  contents part row (`toc.parts.design`) or a page template's decoration
+ *  (`pageTemplates[i].decoration`, and its variants'). */
+export type ConfigDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow' | 'decoration';
 
 export interface ConfigDesignSlot {
   /** Where the slot sits: `header`, `headingStyles[2].advancedDesign.slot`,
@@ -12,11 +13,11 @@ export interface ConfigDesignSlot {
    *  `<path>.elements[i]`. */
   path: string;
   kind: ConfigDesignSlotKind;
-  /** The setting the slot belongs to: the heading style or heading level
-   *  as a whole (`headingStyles[2]`, `headings.levels[0]`), else the slot
-   *  itself. */
+  /** The setting the slot belongs to: the heading style, heading level or
+   *  page template as a whole (`headingStyles[2]`, `headings.levels[0]`,
+   *  `pageTemplates[1]`), else the slot itself. */
   owner: string;
-  /** The `id` of the heading style the slot belongs to. */
+  /** The `id` of the heading style or page template the slot belongs to. */
   ownerId?: string;
   slot: DesignSlot;
 }
@@ -28,8 +29,9 @@ function isSlot(value: unknown): value is DesignSlot {
 /**
  * Every design slot a configuration sets, in a fixed order: the page header
  * and footer, each heading level's and heading style's design (and a
- * style's running heads), the part page and its verso, the contents part
- * rows — then the same in `htmlViewer.overrides`. Only the slots the config
+ * style's running heads), each page template's decoration and running
+ * heads (its variants' after its own), the part page and its verso, the
+ * contents part rows — then the same in `htmlViewer.overrides`. Only the slots the config
  * writes: the defaults are not listed. Pure.
  */
 export function configDesignSlots(config: PostextConfig | undefined): ConfigDesignSlot[] {
@@ -56,6 +58,26 @@ export function configDesignSlots(config: PostextConfig | undefined): ConfigDesi
         add(s.advancedDesign?.slot, `${owner}.advancedDesign.slot`, 'heading', owner, id);
         add(s.header, `${owner}.header`, 'header', owner, id);
         add(s.footer, `${owner}.footer`, 'footer', owner, id);
+      });
+    }
+    const templates = (c as { pageTemplates?: unknown }).pageTemplates;
+    if (Array.isArray(templates)) {
+      templates.forEach((t, i) => {
+        if (!t || typeof t !== 'object') return;
+        const owner = `${prefix}pageTemplates[${i}]`;
+        const id = typeof (t as { id?: unknown }).id === 'string' ? (t as { id: string }).id : undefined;
+        const patch = (p: unknown, at: string) => {
+          if (!p || typeof p !== 'object') return;
+          const q = p as { decoration?: unknown; header?: unknown; footer?: unknown };
+          add(q.decoration, `${at}.decoration`, 'decoration', owner, id);
+          add(q.header, `${at}.header`, 'header', owner, id);
+          add(q.footer, `${at}.footer`, 'footer', owner, id);
+        };
+        patch(t, owner);
+        const variants = (t as { variants?: Record<string, unknown> }).variants;
+        if (variants && typeof variants === 'object') {
+          for (const side of ['recto', 'verso']) patch(variants[side], `${owner}.variants.${side}`);
+        }
       });
     }
     add(c.parts?.design, `${prefix}parts.design`, 'part');

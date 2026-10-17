@@ -19,6 +19,7 @@
  * level and find the same element again after a relayout or in another
  * locale of the chapter.
  */
+import { labelGlyphAt } from './labels';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
@@ -274,7 +275,7 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
     const resourceId = block.resourceBlock.resource.id;
     // A label laid on the picture (#860): its glyph, then the label.
     const label = block.resourceBlock.labels?.find((l) => l.rect && inside(l.rect, p));
-    if (label) out.push(...labelChain(label, resourceId, block.id, p, file));
+    if (label) out.push(...labelChain(label, resourceId, block.id, p, file, block));
     out.push({ level: 'resource', id: `${block.id}:resource`, source: { kind: 'resource', resourceId }, rect: { ...block.bbox } });
   } else {
     const hit = lineAt(block, p.y);
@@ -292,14 +293,17 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
 
 /** A figure label's glyph at `p` (its text spread over its rect) and the
  *  label itself, its source the resource at its anchor. */
-function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }): SourceElement[] {
+function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }, block?: VDTBlock): SourceElement[] {
   const id = label.id ?? `${blockId}:label:${'anchor' in label.at ? label.at.anchor : label.sourceStart}`;
   const anchor = label.anchorRef ? label.anchorRef.slice(label.anchorRef.indexOf('#') + 1) : undefined;
   const out: SourceElement[] = [];
   const map = label.sourceMap;
   if (label.rect && map && map.length > 0) {
+    // The glyph under the point on the label's lines, through its turn
+    // (#860); else its text spread over its box.
+    const k = block && label.layout ? labelGlyphAt(label, block, p.x, p.y) : undefined;
     const frac = label.rect.width > 0 ? Math.max(0, Math.min(0.9999, (p.x - label.rect.x) / label.rect.width)) : 0;
-    const at = map[Math.min(map.length - 1, Math.floor(frac * map.length))]!;
+    const at = map[Math.min(map.length - 1, k ?? Math.floor(frac * map.length))]!;
     out.push({ level: 'text', id: `${id}@${at}`, source: { kind: 'markdown', start: at, end: at + 1, ...file } });
   }
   out.push({
@@ -357,6 +361,24 @@ function designTextSource(b: VDTDesignTextBlock, p: Point): { start: number; end
   const k = Math.min(text.length - 1, lineStart + Math.floor(frac * Math.max(1, line.text.length)));
   const s = map[Math.max(0, k)]!;
   return { start: s, end: s + 1 };
+}
+
+/** What a heading's own design shows at `p` (#906): the glyph of the
+ *  title it prints (`{titleText}`, or an attribute), then the heading. The
+ *  heading's lines are not painted: its design is what the page shows. */
+function headingDesignChain(block: VDTBlock, p: Point, file: { file?: string }): SourceElement[] | undefined {
+  const overlay = block.designOverlay;
+  if (block.type !== 'heading' || !overlay || block.hidden) return undefined;
+  for (let i = overlay.blocks.length - 1; i >= 0; i--) {
+    const b = overlay.blocks[i]!;
+    if (b.kind !== 'text' || !inside(b.bbox, p)) continue;
+    const src = designTextSource(b, p);
+    if (!src) continue;
+    const source: SourceRef = b.attr !== undefined ? { kind: 'attr', name: b.attr, ...src, ...file } : { kind: 'markdown', ...src, ...file };
+    const el = blockElement(block, file);
+    return [{ level: 'text', id: `${block.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...(el ? [el] : [])];
+  }
+  return undefined;
 }
 
 /** The chain of a design block at `p` (`idOf` names its element),
@@ -500,9 +522,15 @@ function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: 
       return [{ level: 'text', id: `${frame.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...frameAncestors(doc, page, frame)];
     }
   }
+  const boxes = blocks.filter((b) => b.type === 'callout');
+  // The title a heading's design prints in the frame (#906), a tab above
+  // the heading included.
+  for (const b of blocks) {
+    const chain = headingDesignChain(b, p, file);
+    if (chain) return [...chain, ...enclosingBoxes(b, boxes, file).filter((e) => e.id !== boxId), ...frameAncestors(doc, page, frame)];
+  }
   // `p` is in the blocks' own coordinates: a scaled frame's are larger.
   if (!inside(frameContentRect(frame), p)) return undefined;
-  const boxes = blocks.filter((b) => b.type === 'callout');
   // Content: the leaf block under `p` (text, a picture), then its boxes.
   for (const b of blocks) {
     if (b.type === 'callout' || b.hidden) continue;
@@ -572,6 +600,11 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   const floats = page.floats ?? [];
   const all = [...onPage, ...floats.filter((f) => !onPage.includes(f))];
   const boxes = all.filter((b) => b.type === 'callout');
+  // A heading drawn by its design, in a column or a box (#906).
+  for (const b of all) {
+    const chain = headingDesignChain(b, fp, file);
+    if (chain) return [...chain, ...enclosingBoxes(b, boxes, file)];
+  }
   for (const b of all) {
     if (b.type === 'callout' || b.hidden || b.designOverlay) continue;
     if (!inside(b.bbox, fp)) continue;
@@ -591,6 +624,8 @@ export interface SourceMatch {
   element: SourceElement;
 }
 
+const overlaps = (a: BoundingBox, b: BoundingBox): boolean =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 const meets = (a: { start: number; end: number }, start: number, end: number): boolean =>
   end > start ? a.start < end && a.end > start : a.start <= start && a.end >= start;
 
@@ -614,7 +649,12 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       for (const id of frame.blockIds) blockFrame.set(id, { frame, page });
       if (frame.sourceStart === undefined || frame.sourceEnd === undefined) continue;
       if (!meets({ start: frame.sourceStart, end: frame.sourceEnd }, start, end)) continue;
-      out.push({ pageIndex: page.index, element: frameAncestors(doc, page, frame)[0]! });
+      const el = frameAncestors(doc, page, frame)[0]!;
+      // On a spread, the part of the frame this page paints (#877): a band
+      // that crosses the spine has most of its box on the facing page.
+      const shown = composed.sheetClip && el.rect && !frame.rotate ? intersect(el.rect, composed.sheetClip) : el.rect;
+      if (!shown) continue;
+      out.push({ pageIndex: page.index, element: { ...el, rect: shown } });
     }
     for (const [name, slot] of [['decoration', composed.decoration], ['header', page.header], ['footer', page.footer]] as const) {
       slot?.blocks.forEach((b, i) => {
@@ -645,9 +685,13 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
       ...(facing ? { facing: true as const } : {}),
     };
     const id = facing ? unfacing(block.id) : block.id;
+    // A page of a spread shows only its part of the sheet (#861): what a
+    // frame across the spine sets on the other half is the facing page's.
+    const clip = doc.pages[pageIndex]?.composed?.sheetClip;
+    const shown = (r: BoundingBox): boolean => !clip || overlaps(clip, r);
     block.lines.forEach((line, index) => {
       const range = lineRange(block, line);
-      if (!range || !meets(range, start, end)) return;
+      if (!range || !meets(range, start, end) || !shown(uprightRect(held?.frame, line.bbox))) return;
       out.push({
         pageIndex,
         element: {
@@ -665,7 +709,9 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     for (const label of rb?.labels ?? []) {
       if (!meets({ start: label.sourceStart, end: label.sourceEnd }, start, end)) continue;
       const el = labelChain(label, rb!.resource.id, id, { x: 0, y: 0 }, file).find((e) => e.level === 'label')!;
-      out.push({ pageIndex, element: { ...el, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });
+      const rect = el.rect ? uprightRect(held?.frame, el.rect) : undefined;
+      if (rect && !shown(rect)) continue;
+      out.push({ pageIndex, element: { ...el, ...(rect ? { rect } : {}), ...extra } });
     }
     const el = blockElement(block, file);
     if (el) out.push({ pageIndex, element: { ...el, id, ...(el.rect ? { rect: uprightRect(held?.frame, el.rect) } : {}), ...extra } });
@@ -683,6 +729,15 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     }
   }
   return out.sort((a, b) => a.pageIndex - b.pageIndex);
+}
+
+/** The overlap of two rectangles, or undefined when they do not meet. */
+function intersect(a: BoundingBox, b: BoundingBox): BoundingBox | undefined {
+  const x = Math.max(a.x, b.x);
+  const y = Math.max(a.y, b.y);
+  const right = Math.min(a.x + a.width, b.x + b.width);
+  const bottom = Math.min(a.y + a.height, b.y + b.height);
+  return right > x && bottom > y ? { x, y, width: right - x, height: bottom - y } : undefined;
 }
 
 /** The element of `doc` with stable id `id` (a frame `cp0:dinero`, a

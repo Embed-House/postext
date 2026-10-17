@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Visualizações',
   description: 'As abas Canvas, PDF, Folio, HTML e EPUB 3 da área de visualização principal: o que cada uma mostra e o que permite fazer',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '16 min',
   order: 38,
   parent: 'sandbox',
@@ -45,6 +45,28 @@ Numa página composta (`::::page{template="…"}`), o canvas liga cada bloco ao 
 - Um bloco vazio mostra um contorno tracejado, o nome e **Escreva aqui**; um bloco que só continua outro diz qual. Essas marcas são desenhadas apenas sobre o canvas: o PDF, a impressão e qualquer exportação as deixam de fora.
 - Um clique duplo na aba de etiqueta de uma caixa abre por cima um campo que edita o `label="…"` da cerca; num parágrafo, num título ou num item de lista, um campo com o seu Markdown. **Enter** guarda a alteração, **Shift+Enter** começa outra linha e **Esc** deixa o texto como estava. A alteração é gravada no capítulo e desfeita com Cmd/Ctrl+Z como qualquer edição feita nas visualizações. Corrigir uma legenda pede um clique duplo e as palavras novas, sem abrir nenhum estilo. Um bloco girado é editado no painel Texto.
 - No modo Design, todos os blocos mostram o contorno e o nome, e um clique seleciona um para o editor de modelos.
+- Um bloco cujo conteúdo não cabe ganha um contorno vermelho, com uma faixa abaixo do pé tão alta quanto o que foi cortado e o que falta (*faltam 15 mm*). Um bloco cujo texto a escada de ajuste reduziu mostra a escala usada (*texto a 85%*, e *imagens a 80%* quando as imagens também foram reduzidas). Como as outras marcas, aparecem só sobre o canvas.
+
+#### Edições de um livro
+
+Num livro em vários idiomas, uma barra sobre o canvas mostra as edições dele (*ES · EN · CA*) e **Lado a lado**.
+
+- Um clique numa edição abre essa edição na mesma página composta. A página é encontrada pela cerca `::::page` dela no capítulo, que é a mesma em todos os idiomas; assim você continua nela mesmo que na outra edição o número seja outro, e o bloco selecionado continua selecionado. Em qualquer outra página o número da página se mantém.
+- **Lado a lado** mostra o capítulo na tela ao lado do mesmo capítulo de outra edição (**ao lado de** escolhe qual quando o livro tem mais de duas). As duas colunas mostram a mesma página e rolam juntas; **Rolar junto** desliga isso. Entre páginas compostas, as colunas contam a partir da última página composta que compartilham. Os blocos que não cabem, ou cujo texto foi reduzido, ficam marcados nas duas colunas. A outra edição aqui é só leitura: um clique numa das páginas dela abre essa edição nessa página.
+
+### Selecionar na página
+
+As páginas e os editores são duas faces do mesmo livro: o que se seleciona numa página fica selecionado no Markdown ou nas configurações, e vice-versa. Funciona do mesmo jeito no canvas, no Folio no modo **Selecionar texto** e nas páginas HTML, e uma seleção feita numa aba continua lá quando se abre outra.
+
+- **Um clique escolhe o elemento mais interno.** Um clique numa palavra leva o cursor àquele caractere do Markdown, esteja onde estiver: um título, um parágrafo, um item de lista, um chip, a aba de um boxe (o `label="…"` dele na cerca), uma legenda, o rótulo de um mapa (`::label`) ou um texto que mostra um atributo da cerca da página (`{attr.tema}`). Um clique numa linha do sumário vai até a página dela e seleciona, no capítulo, o título que a linha traz.
+- **Outro clique no mesmo ponto, ou Esc, sobe um nível**: dos caracteres ao parágrafo, ao boxe em volta, ao bloco, ao grupo de blocos e à página composta com o modelo dela. Cada nível seleciona o que o escreve: o Markdown do parágrafo, o conteúdo do bloco, a cerca `::::page` inteira. Esc no último nível solta a seleção. Um clique triplo vai direto ao parágrafo.
+- **O caminho.** Enquanto há algo escolhido, uma barra no pé da prévia mostra onde está, da página para dentro: “Página 8 › cajas › dinero › parágrafo 2”. Cada item do caminho escolhe o seu nível. Os níveis por onde um clique passou ao subir ficam depois do escolhido, mais apagados, para descer de novo. O botão ↖ sobe um nível e × solta a seleção.
+- **O que não é conteúdo leva à sua forma**, em qualquer dos dois modos: um clique na decoração abre o modelo dela em **Design › Página e colunas › Modelos de página**, um cabeço ou um fólio abre **Design › Cabeços e rodapés**, uma imagem abre o recurso dela no painel Recursos. O painel abre no cartão do próprio elemento (o texto de um cabeço, uma imagem da decoração) com o primeiro campo em foco, e um estilo de caixa ou de parágrafo escolhido no modo Design abre no cartão desse estilo.
+- **Modos Conteúdo e Design.** No modo Conteúdo cada nível abre o Markdown. No modo Design um clique escolhe o bloco e o abre no editor de modelos, subindo chega-se ao grupo e depois ao modelo, e um boxe, um parágrafo ou um título escolhidos no caminho abrem o estilo deles (estilos de boxe, texto principal, estilos de parágrafo, títulos).
+- **Do editor para a página.** Ao mover o cursor no painel Texto, a seleção na página passa ao parágrafo onde ele está, e o caminho o acompanha.
+- **Durante a edição.** Uma configuração alterada ou uma palavra digitada redesenham a página na hora, já recomposta, e a seleção fica no seu elemento mesmo que ele tenha se movido ou passado para outra página. Ao arrastar um bloco no modo Design a marca vai junto, e as propriedades do bloco mostram a caixa dele em milímetros até soltá-lo. Trocar o idioma do livro mantém a seleção no mesmo slot, porque os elementos de uma página composta mantêm o nome em todos os idiomas. As alterações feitas na página se desfazem com Cmd/Ctrl+Z, como as digitadas no editor. Um quadro arrastado no modo Design e uma configuração alterada no painel Design entram no mesmo histórico, na ordem em que foram feitos (veja [Desfazer e refazer](/pt/docs/sandbox)).
+
+A marca em volta do elemento escolhido é desenhada só sobre as páginas: o PDF, a impressão e qualquer exportação a deixam de fora.
 
 ### Aba PDF
 

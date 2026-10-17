@@ -61,3 +61,64 @@ export function reportSettingsChangedOnly(on: boolean): void {
 export function settingsChangedOnly(): boolean {
   return changedOnlyShown;
 }
+
+/** A section of the Design panel asked for from the pages (#865): a
+ *  design element, a style, a template picked on a page opens where it is
+ *  edited. */
+export interface SettingsSectionRequest {
+  group: SettingsGroupId;
+  /** The section to bring into view; null: the group's page alone. */
+  section: string | null;
+  /** The entry of the section to bring into view and focus (#899). */
+  focus?: SettingsFocus;
+}
+
+/** An entry of a Design panel section: a design element by its config
+ *  pointer (`/header/elements/0`, `/pageTemplates/2/decoration/elements/1`),
+ *  or a style by its id. The panel scrolls to the row and focuses its
+ *  first control (sidebar/settingsFocus.ts). */
+export interface SettingsFocus {
+  path?: string;
+  styleId?: string;
+}
+
+let pendingSection: SettingsSectionRequest | null = null;
+const sectionRequests = new Set<(req: SettingsSectionRequest) => void>();
+
+/** Ask the Design panel for a group and a section in it. The request waits
+ *  for the panel when it is closed (opened by the caller): the panel takes
+ *  it when it mounts. False when no panel took it now. */
+export function requestSettingsSection(req: SettingsSectionRequest): boolean {
+  pendingSection = req;
+  for (const open of sectionRequests) open(req);
+  return sectionRequests.size > 0;
+}
+
+/** The Design panel's side of {@link requestSettingsSection}. */
+export function onSettingsSectionRequest(open: (req: SettingsSectionRequest) => void): () => void {
+  sectionRequests.add(open);
+  return () => { sectionRequests.delete(open); };
+}
+
+/** The section request not yet shown for `group` (taken: it is shown
+ *  once). */
+export function takeSettingsSection(group: SettingsGroupId): string | null {
+  if (!pendingSection || pendingSection.group !== group) return null;
+  const section = pendingSection.section;
+  pendingSection = null;
+  return section;
+}
+
+/** The entry the section request waiting for `group` names (taken:
+ *  it is focused once). Read before {@link takeSettingsSection}. */
+export function takeSettingsFocus(group: SettingsGroupId): SettingsFocus | null {
+  if (!pendingSection || pendingSection.group !== group || !pendingSection.focus) return null;
+  const focus = pendingSection.focus;
+  pendingSection = { ...pendingSection, focus: undefined };
+  return focus;
+}
+
+/** The group of the section request waiting for the panel, if any. */
+export function pendingSettingsGroup(): SettingsGroupId | null {
+  return pendingSection?.group ?? null;
+}

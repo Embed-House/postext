@@ -1405,6 +1405,53 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
   };
 }
 
+/** What {@link layoutLabelLines} sets a figure label with (#860). */
+export interface LabelLinesInput {
+  /** The label's text as the parser read it (inline Markdown). */
+  spans: InlineSpan[];
+  /** Normal, bold, italic and bold italic faces. */
+  fonts: SnippetFonts;
+  fontPx: number;
+  lineHeightPx: number;
+  /** The measure the text wraps at. */
+  maxWidthPx: number;
+  letterSpacingPx?: number;
+  direction?: 'ltr' | 'rtl';
+  resolved: ResolvedConfig;
+  resourceNumbering?: ResourceNumberingMap;
+  resourceTypes?: ResourceType[];
+  resources?: Resource[];
+  cache?: MeasurementCache;
+}
+
+/**
+ * A figure label's text as lines (#860), set as a caption is: references,
+ * formulas, swatches, chips and highlight marks resolved, forced breaks
+ * (`\\`) kept, every line flush left at its natural width from y = 0.
+ */
+export function layoutLabelLines(input: LabelLinesInput): VDTLine[] {
+  return withSnippetCache(input.cache, () => {
+    const { resolved, fontPx, lineHeightPx } = input;
+    const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
+    const spans = annotatedSpans(resolveChipSpans(resolveSwatchSpans(resolveRefSpans(
+      snippetMathSpans(input.spans, fontPx, lineHeightPx, resolved.math),
+      input.resourceNumbering ?? {},
+      input.resourceTypes ?? [],
+      input.resources ?? [],
+      refStyle,
+    ), resolved.colorPalette), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
+    const tracking = input.letterSpacingPx ?? 0;
+    // A name on a map breaks between words only.
+    const lines = measureSnippetLines(spans, input.fonts, Math.max(1, input.maxWidthPx), lineHeightPx, {
+      textAlign: 'left',
+      hyphenate: false,
+      ...(tracking !== 0 ? { letterSpacingPx: tracking } : {}),
+      ...(input.direction ? { direction: input.direction } : {}),
+    });
+    return tracking !== 0 ? lines.map((line) => ({ ...line, letterSpacing: tracking })) : lines;
+  });
+}
+
 export function layoutResourceBlock(input: ResourceLayoutInput): ResourceBlockLayout {
   return withSnippetCache(input.cache, () => layoutResourceBlockIn(input));
 }

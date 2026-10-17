@@ -511,6 +511,14 @@ Un élément ancré à un élément qui ne réserve pas compte quand même, sauf
 # Letter from the chair
 ```
 
+#### Dans les encadrés et les blocs
+
+Un titre placé dans un encadré (`:::callout`) ou dans un bloc d’une [page composée](/fr/docs/composed-pages) est lui aussi dessiné par sa maquette : l’`advancedDesign` de son niveau ou de son style de titre pose l’onglet, le bandeau, les filets et `{titleText}` à la place de ses lignes, comme dans une colonne de la page. La maquette se compose sur la boîte du titre lui-même, aussi large que le texte de l’encadré, et l’encadré garde la place qu’elle prend : la plus haute entre le texte du titre, le bas du contenu de la maquette et `minHeight` ([Hauteur réservée](#hauteur-réservée)). Un encadré n’a pas de grille de lignes de base, donc cette place n’est pas arrondie à une ligne ; le `marginBottom` du titre suit, comme après tout titre de l’encadré. Un élément ancré au conteneur avec un décalage négatif sort de la boîte du titre, sur la marge intérieure ou l’onglet de l’encadré ; l’encadré ne le coupe pas, sauf si le contenu d’un bloc dépasse son pied (un bloc qui déborde rogne tout ce qu’il contient). Les éléments ancrés à `'page'` ou `'bleed'` restent rapportés à la page.
+
+Un titre `span: 'page'` dans un encadré se compose comme un titre de colonne, à la largeur de l’encadré : un encadré n’ouvre ni page ni bandeau d’ouverture. Son style de titre lui donne toujours son aspect, mais un titre dans un encadré n’ouvre pas de section stylée : les titres courants, le rôle de la page et les valeurs `{attr.…}` du chapitre viennent toujours des titres du flux. Un encadré n’est jamais coupé entre les lignes d’un titre que sa maquette dessine.
+
+Dans un bloc dont l’échelle de réajustement réduit le texte (`fit.minScale`), la maquette est réduite avec le texte et un élément ancré à la page reste au coin de la page, ses décalages à la même échelle ; un bloc pivoté fait pivoter la maquette avec lui ; sur une double page, la moitié d’un bloc vue sur la page d’en face montre aussi la maquette. Un clic sur le titre imprimé par la maquette mène au Markdown du titre (`sourceAt`). Jusqu’à postext 1.36, les titres des encadrés étaient composés sans maquette : un encadré fixe, flottant ou de page composée n’en dessinait aucune, la maquette d’un style de titre n’était dessinée dans aucun encadré, et celle d’un niveau, dans un encadré de la colonne, était serrée dans la hauteur du texte du titre, par-dessus ce qui suivait. Depuis postext 1.37.
+
 ### Numéros en toutes lettres
 
 Deux suffixes de modèle de numérotation écrivent un compteur en toutes lettres, dans la langue du document (la `locale` de premier niveau, sinon la langue de césure ; voir [Langue du document](/fr/docs/configuration-language#langue-du-document)) : `words` pour le cardinal et `ordinal` pour l’ordinal. La casse du suffixe fixe la casse des mots, comme `A` / `a` le fait pour les lettres :

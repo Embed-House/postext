@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>Le contenu d’un bloc est parti sur des pages ajoutées après sa page composée (<code>overflow.continueIn: 'next-page'</code> ou <code>'template:&lt;id&gt;'</code>) autant de fois qu’une page composée peut ajouter de pages, 16, et ne tient toujours pas (<code>template</code> et <code>frame</code> de la dernière page ajoutée, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la dernière page ajoutée.</td>
+      <td>La sortie paginée coupe le reste au pied de ce bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L’ouverture d’une page composée et son modèle ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> de l’ouverture ; <code>templateSpread</code>, celui du modèle).</td>
       <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>Une image flottante a été composée plus petite que sa taille pour tenir dans la place de son emplacement (<code>placement.shrink</code>). <code>resourceId</code> la nomme, <code>scale</code> est la part de sa largeur qu’elle garde, et <code>overflowPx</code>, s’il est présent, la distance dont elle dépasse encore le pied du bloc de texte à son échelle minimale (<code>placement.minScale</code>), sur une nouvelle page où elle n’avait nulle part ailleurs où aller. Pointe sur le paragraphe qui la cite en premier.</td>
       <td>L’image est imprimée à cette échelle ; au-delà du bloc de texte seulement lorsque <code>overflowPx</code> l’indique.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Un bitmap doté d'une taille d'impression (son propre <code>bitmap.resolution</code>, ou un nombre dans <code>layout.bitmapResolution</code> ; pas une résolution lue dans le fichier) composé dans une colonne qui le tient sous la moitié de cette taille, sur une page au bloc de texte plus large que la colonne. <code>resourceId</code> le nomme, <code>scale</code> est la part de sa largeur d'impression qu'il garde, <code>printWidthPx</code>, <code>widthPx</code> et <code>pageWidthPx</code> les largeurs d'impression, de colonne et de bloc. Une image rétrécie par <code>placement.width</code>, réduite à son emplacement, tournée ou placée dans un bloc de page composée n'est pas signalée. Désigne le paragraphe qui la cite en premier. Depuis postext 1.37.</td>
+      <td>L'image s'imprime à la largeur de sa colonne. Une image dans le flux n'est jamais plus large que sa colonne, et la page par défaut en a deux (<code>layout.layoutType: 'double'</code>) : composez la page sur une colonne, faites flotter l'image sur toute la page (<code>placement.span: 'page'</code>), ou relevez sa résolution si cette taille est voulue.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

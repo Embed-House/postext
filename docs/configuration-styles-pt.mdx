@@ -201,6 +201,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Caixa das letras dos parágrafos: <code>'uppercase'</code> os compõe em maiúsculas (uma lista de personagens, uma linha de rubrica), incluindo as palavras de um chip e o rótulo de um <code>:ref</code>. Letra por letra, para que o mapa de origem do editor continue um para um: uma letra cuja maiúscula é mais longa (<code>ß</code>) fica como foi escrita. As fórmulas matemáticas não são alteradas, e um cabeço que lê o parágrafo como marca (<code>&#123;firstMark.<em>style</em>&#125;</code>) recebe o texto como foi escrito; o <code>textTransform</code> próprio de um texto de design o compõe em maiúsculas.</td>
     </tr>
     <tr>
+      <td><code>letterSpacing</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espaço depois de cada letra dos parágrafos, como o <code>letter-spacing</code> do CSS: um valor positivo abre as letras (um título de página em maiúsculas, <code>&#123; value: 0.015, unit: 'em' &#125;</code> para +15/1000 em), um negativo aperta um tamanho grande. Um valor em <code>em</code> conta o <code>fontSize</code> do próprio estilo. Entra na medida das linhas, então um parágrafo espaçado quebra onde caem as palavras mais largas; as linhas justificadas distribuem os espaços entre palavras além dele, e uma linha curta que a composição aperta (<code>bodyText.maxRuntTracking</code>) parte deste valor. Canvas, HTML, PDF e EPUB o pintam igual, e uma exportação para o Word o escreve como o espaçamento de caracteres do estilo. Palavras de uma escrita ligada (árabe, siríaco, n'ko) ficam sem espaçamento e geram <code>joiningScriptLetterSpacing</code>. Desde o postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>

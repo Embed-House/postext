@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Installez le skill postext-port dans Claude Code, Codex ou tout autre agent, et laissez-le transformer une source PDF, Word, PowerPoint, EPUB, InDesign ou HTML en un projet Postext qui suit la mise en page de l’original',
   lang: 'fr',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '11 min',
   order: 41,
   plainSummary: "Cette page s’adresse aux personnes qui ont déjà un livre ou un document dans un autre format, comme PDF, Word ou InDesign, et qui veulent le passer dans Postext. Un assistant d’intelligence artificielle, appelé agent, peut faire l’essentiel du travail si vous lui donnez un petit module appelé skill. Le skill apprend à l’agent à reprendre le texte et à reconstruire la maquette de l’original. La page explique comment l’installer, quoi demander et comment vérifier le résultat. Une vidéo d’environ cinq minutes montre chaque étape.",
@@ -223,10 +223,13 @@ L’agent suit la méthode de travail :
    de faits mesurés : format, marges, colonnes, interlignage, rôles
    typographiques, palette, ouvertures, titres courants, familles d’encadrés
    et habitudes de placement. Il classe chaque page en texte courant ou en
-   page composée (encadrés, étiquettes et cartes à des places fixes) ; si
-   plus d’un tiers des pages sont composées, il vous demande si vous voulez
-   une mise en page identique ou un texte que vous pourrez corriger et
-   traduire.
+   page composée (encadrés, étiquettes et cartes à des places fixes) ; avec
+   Postext 1.35 ou plus récent, il regroupe les pages composées par type de
+   page et monte chaque type à partir d’un gabarit, si bien que la mise en
+   page identique garde un texte que vous pouvez corriger et traduire ; avec
+   une version plus ancienne, si plus d’un tiers des pages sont composées, il
+   vous demande si vous voulez une mise en page identique ou un texte que vous
+   pourrez corriger et traduire.
 3. **Projet.** Il crée la structure de `my-book/` avec un générateur `build_preset.py`
    qui garde la fiche technique sous forme de constantes et produit `preset.json`.
 4. **Contenu.** Il extrait des brouillons de chapitres avec l’extracteur adapté, puis
@@ -258,9 +261,15 @@ Le fichier livré n’est pas lié au Sandbox. Le package `postext` l’ouvre av
   que vient la qualité.
 - **Le texte reste dans le Markdown.** La configuration porte la maquette et
   chaque mot du livre se trouve dans les chapitres : une correction ou une
-  traduction se fait donc dans le Markdown. Les pages composées sont montées
-  avec des encadrés fixés à leur place, des images de page sans texte et des
-  figures SVG dont les étiquettes restent du vrai texte. Quand Postext ne sait
+  traduction se fait donc dans le Markdown. Avec Postext 1.35 ou plus récent,
+  les pages composées sont des gabarits de page dans la configuration, dont
+  les blocs se remplissent avec le Markdown de chaque chapitre : un encadré
+  s’allonge avec une traduction plus longue et repousse ceux du dessous, et
+  depuis la 1.37 les noms d’une carte sont des étiquettes écrites dans le
+  Markdown. Avec une version plus ancienne, elles sont montées avec des
+  encadrés fixés à leur place, des images de page sans texte et des figures
+  SVG dont les étiquettes restent du vrai texte. Le rapport indique laquelle
+  des deux voies l’agent a suivie, et avec quelle version. Quand Postext ne sait
   pas exprimer quelque chose sans écrire du texte dans la configuration,
   l’agent s’arrête, rédige la lacune sous forme de brouillon de ticket et vous
   pose la question. Le skill ne modifie jamais le moteur pour l’adapter à un

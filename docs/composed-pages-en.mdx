@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: 'The Markdown of composed pages: the four-colon page fence that names a page template, frames and the slot attribute that send content to the frames of the template, figures with labels at the anchors of a picture, and the warnings that check the content against the template',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
   plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, and pictures with labels such as the names on a map. It also lists the warnings Postext gives when the text and the template do not match.",
@@ -112,7 +112,23 @@ A `slot` outside a composed page is read and changes nothing.
 - `style` names a label style and overrides the anchor's.
 - The text in brackets is inline Markdown: bold, italic, chips.
 
-A figure works in the running text as well as in a frame. Labels are read and kept with their source; drawing them on the picture comes in a later release, and until then a figure is set as its resource is. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
+A figure works in the running text as well as in a frame. Its labels are drawn on the picture as text and go wherever the figure goes: a column, a float, a frame turned or scaled by the reflow ladder, a spread. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
+
+### How a label is set
+
+- **Where.** A label stands at its anchor's point, a fraction of the whole picture, so a crop to the picture's safe area or a picture set smaller moves the label with the art. The anchor's `align` says which side of the label stands at the point, and `verticalAlign` which edge stands at its height. `start` and `end` follow the label's own direction: in Arabic, `start` is the label's right edge. `rotate` turns the label about the point, clockwise, at any angle: a river along its course, hills on a slant.
+- **Look.** The label's own `style`, else its anchor's, names a label style (see Configuration › Composed pages); without one the label takes the body text's type. A halo strokes the letters under their fill; a plate (`background`) fills the box round the text, `padding` wider.
+- **Fit.** With a `width` on its anchor, the label breaks between words within that measure, never inside a word. When a word is wider than the measure, the whole label is set smaller, down to its style's `minScale`; a label still too wide at that size is drawn with its widest word cut. Without a `width` the label keeps to one line, except where it breaks with `\\`, as in a caption.
+- **Text.** The text in brackets is inline Markdown, set as a caption is: bold, italic, chips, highlight marks, references, inline formulas. A name of several words is one label, whatever the order of its words in each language: `::label[ATLANTIC OCEAN]` and `::label[OCÉANO ATLÁNTICO]` stand at the same anchor. Right-to-left labels are set right to left; Chinese and Japanese labels break between characters.
+- **Outputs.** The canvas, the PDF, the HTML viewer, the fixed-layout EPUB and Folio draw the labels. On a right-to-left page a label stays where the picture shows it.
+
+### labelAnchorUnknown
+
+A `::label` names, with `at`, an anchor its figure's resource does not have. The label is not drawn; the reflowable EPUB still lists it and the picture's alternative text names it. The warning carries the resource, the anchor, the anchors the resource has (`known`), the locale, the page and the source range of the label's text. Correct the anchor id, add the anchor to the resource, or place the label with `at="x% y%"`.
+
+### anchorUnlabelled
+
+An anchor of the figure's resource names a label style, and no `::label` of the figure stands at it in this locale: the map has room for a word this edition leaves out. It is a note; `postext check` lists it as `info`. Anchors with no style, such as a comic speaker's, are not reported. The warning carries the resource, the anchor, its style, the locale, the page and the figure's source range. Write the label in this language's Markdown, or take the style off the anchor.
 
 ## Example
 
@@ -166,6 +182,8 @@ Its height is fixed (a length or a percentage), `fill` (down to the edge of the 
 
 Content that names no slot goes to the frame marked `flow`; the first heading of a level goes to the frame that `takes` it. The frames of a page are read in the order their content first appears in the Markdown, each one whole: a screen reader, the tagged PDF and the reflowable outputs read a box after the text that opens the page, not in the middle of it.
 
+A heading set in a frame keeps the design of its level or heading style (a tab, a band, `{titleText}` set by the design), laid out at the frame's width as in a page column, and the frame keeps the room the design takes; a frame whose text is scaled scales the design with it, a turned frame turns it. See [In boxes and frames](/en/docs/configuration-headings#in-boxes-and-frames). Up to postext 1.36 such a heading was set plain.
+
 ### Chaining frames
 
 `next` sends what a frame cannot hold to another frame of the same page, and that frame to another, like threaded text frames:
@@ -175,7 +193,7 @@ Content that names no slot goes to the frame marked `flow`; the first heading of
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-The text is cut between lines and goes on in the next frame, broken again at that frame's width, with nothing lost or repeated. `overflow.continueIn: "#frame"` means the same. Continuing on the next page is planned (`"next-page"`).
+The text is cut between lines and goes on in the next frame, broken again at that frame's width, with nothing lost or repeated. `overflow.continueIn: "#frame"` means the same. To go on on a page added after this one, see [When the text continues](#when-the-text-continues).
 
 ### Frames that push text
 
@@ -196,18 +214,18 @@ Frames paint in the order of their `layer`: the decoration at layer 0, frames at
 
 ### Content that does not fit
 
-A frame whose content is taller than the frame, with no next frame to go on in, keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
+A frame whose content is taller than the frame, with no next frame to go on in and no page to continue on (`overflow.continueIn`), keeps all of it in the document but shows only what fits: the rest is cut at the frame's foot on paged output, and the warning [`frameOverflow`](#frameoverflow) says how much. Content that no frame takes (no flow frame, or a frame missing on this side) is set in the running text on the page after the composed page.
 
 ## Outside print: HTML, EPUB and tagged PDF
 
 Every output reads a composed page in the order of its Markdown, not in the order the template lists its frames or paints its layers.
 
-- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
-- **Figure labels.** The picture an EPUB carries does not show the `::label` texts of a `:::figure`, so the reflowable book lists them right after the picture, inside its figure, in the order written: a list hidden from sight (`pt-figure-labels pt-hidden`) that a screen reader reads once. In the HTML viewer, the fixed-layout EPUB and the tagged PDF they follow the picture's alternative text, `A family with a shopping basket (Rent, Electricity, Food)`; Chinese and Japanese labels take `（…、…）`, Arabic ones the Arabic comma.
+- **Reflowable EPUB.** The page becomes a section (`<section class="pt-composed pt-composed-tema-cajas">`) that opens with the page's page-break marker. Each frame is one block of it (`<div class="pt-frame pt-frame-dinero">`), placed where its content first appears in the Markdown; a frame and the frames its `next` chain goes on in make one block, and so does a frame whose content continues on added pages: the pieces are joined, a paragraph cut between two pages is one paragraph, and the added page's page-break marker stands inside it, where that page's text starts. A frame drawn in a callout style keeps that style's box: background, border, padding, body text, and its `label` as the box's title. A frame with no style is a plain block. The decoration (background pictures, cards, design text) belongs to the printed page and is left out.
+- **Figure labels.** The HTML viewer and the fixed-layout EPUB write each drawn label as text right after its picture, in the order written (`<div class="pt-figure-label">`, turned by a CSS matrix), so a screen reader reads the picture's alternative text and then its words. The picture an EPUB carries does not show them, so the reflowable book lists them after the picture, inside its figure: a list hidden from sight (`pt-figure-labels pt-hidden`) that a screen reader reads once. A label that is not drawn (its anchor is unknown) follows the picture's alternative text instead, `A map of Europe (Madrid)`; Chinese and Japanese labels take `（…、…）`, Arabic ones the Arabic comma.
 - **HTML viewer and fixed-layout EPUB.** Both show the printed page with its template applied: each frame in its box, turned by `rotate`, clipped when its content overflows, painted over the frames of lower layers, the decoration at layer 0. The markup lists the frames in reading order and paints them in layer order with `z-index`, so assistive technology follows the Markdown while the page looks as printed. Decorative pictures are hidden from assistive technology (`alt=""`). The decoration's faces are among those the Sandbox embeds in an EPUB; a fixed-layout EPUB written without one of them reports `missingFont`.
-- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists; its pictures are `Figure` elements whose `Alt` carries the labels; the decoration is a layout artifact.
+- **Tagged PDF.** The structure tree reads the frames in the same order. Each frame, or chain of frames, is a `Div` holding its headings, paragraphs and lists, and the pieces of a frame continued on added pages are that same `Div` (a paragraph cut between pages is one `P`, the continuation mark an artifact); each of its pictures is a `Figure`, followed by a `Div` with one `P` per drawn label in the order written. A label's halo and plate are layout artifacts, so its words are read once; the decoration is a layout artifact too.
 
-From code, a figure's labels are on its block as `resourceBlock.labels` (text, anchor or point, style and source range), and `composedReadingOrder(composedPaintOrder(page))` lists a page's decoration and frames in reading order.
+From code, a figure's labels are on its block as `resourceBlock.labels`: text, anchor or point, style and source range, plus `layout` (the lines, box, turn and look of a drawn label) and `rect` (where it is painted, which `sourceAt` answers). `composedReadingOrder(composedPaintOrder(page))` lists a page's decoration and frames in reading order.
 
 ## Warnings
 
@@ -265,6 +283,12 @@ This warning comes from the layout, not from the source checks above: it appears
 
 **Fix.** Apply one of the proposals: each comes with its value, worked out on the page (see [The warning and its proposals](#the-warning-and-its-proposals)). Otherwise give the frame more room, chain it to another frame with `next`, shorten the text, or set the page with another template.
 
+### frameContinuationLimit
+
+**Cause.** A frame whose `overflow.continueIn` is `'next-page'` or `'template:<id>'` sent what it could not hold to an added page, and that page's frame sent the rest on again, page after page, until the composed page had added the most pages it may: 16 (see [When the text continues](#when-the-text-continues)). What is left is cut at the foot of the frame on the last added page; it stays in the document, the source map and the reflowable EPUB. The warning gives the template and frame of that page, the number of pages added (`pages`), the height cut (`overflowMm`), the frame's `configPath` and the page. Most often the frame that takes the content on the added page is far smaller than the text.
+
+**Fix.** Give that frame more room (its height, or an `overflowTemplate` with a larger frame), or shorten the text. A box that runs over more than a few pages usually belongs in the running text.
+
 ## When the text grows
 
 A composed page rearranges itself inside the limits its template declares. Write a longer text in the first box of a page whose boxes form a stack group, and the box grows to hold it while the boxes below, and the photos and decoration anchored to them, move down; no line of the template changes. A shorter text gives the box back its declared height. A frame or a decoration element marked `pin` stays where the template puts it, for a box that has to sit on the artwork. How stacks and rows share space, and which frame gives way first, is set in the template: see [Configuration › How groups share space](/en/docs/configuration-composed-pages#how-groups-share-space).
@@ -305,12 +329,12 @@ A frame whose content does not fit tries, one after another, the ways its templa
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>). This release reports the step; the added page is laid out by a later one.</td>
+      <td>The frame continues on another page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>): it is cut at its foot with its mark and the rest goes on on a page added after this one (see <a href="#when-the-text-continues">When the text continues</a>). Its text and pictures go back to full size, since what does not fit goes on anyway. No warning is raised.</td>
     </tr>
   </tbody>
 </table>
 
-When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
+When no step makes the content fit, the frame is cut at its foot, keeps the scales the ladder reached, and the layout reports `frameOverflow`. A frame on an added page that takes none of the content it receives does not send it on again (it would add pages for ever): it reports `frameOverflow` too, with `continue` among the steps tried. Each step lays the whole page out again, so the result depends only on that page: the same input gives the same page, frames that overflow are taken in template order, and a change on one composed page leaves every other page as it was. The settings are in [Configuration › When content does not fit](/en/docs/configuration-composed-pages#when-content-does-not-fit).
 
 ### The warning and its proposals
 
@@ -359,6 +383,81 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 The Checks panel shows the same entry in the language of the interface.
 
+## When the text continues
+
+A frame can send what it cannot hold to a page added after its composed page. The rule is the frame's `overflow.continueIn`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Value</th>
+      <th>Where the content goes on</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'#frame'</code></td>
+      <td>Another frame of the same page, as <code>next</code> (see <a href="#chaining-frames">Chaining frames</a>).</td>
+    </tr>
+    <tr>
+      <td><code>'next-page'</code></td>
+      <td>The same frame on a page added after this one, built from the template's <code>overflowTemplate</code>. Without one, the page is the same template laid again with only that frame filled: the other frames take no room (their heights follow their empty content and they leave their groups), so the frame starts near the head of the page, and the decoration and running heads are the template's.</td>
+    </tr>
+    <tr>
+      <td><code>'template:&lt;id&gt;'</code></td>
+      <td>A page of that template.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json
+{ "id": "tema-cajas", "overflowTemplate": "tema-sigue",
+  "frames": [
+    { "name": "dinero", "style": "caja-azul", "maxHeight": { "value": 40, "unit": "mm" },
+      "overflow": { "continueIn": "next-page" } } ] },
+{ "id": "tema-sigue",
+  "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
+```
+
+Continuing is the last step of the [reflow ladder](#when-it-still-does-not-fit): a frame first grows, makes room in its group and has its pictures and text set smaller as its template allows, and only when that is not enough is it cut at its foot. Then its text and pictures go back to full size, the piece ends with the continuation mark, and the rest goes on, broken again at the width of the frame that takes it, from the line where it was cut. Nothing is lost or repeated, and no warning is raised.
+
+- **Which frame takes it.** On the added page the content goes on in the frame of the same name; when the template has none, in its flow frame; failing that, in its first frame not already taken. Several frames of a page that continue to the same template share one added page when that template has a frame for each; otherwise the next one gets a page of its own. A frame of the added page that receives nothing is left empty.
+- **Again and again.** A piece that still does not fit goes on again, on the next added page, with the frame's own `overflow.continueIn` when it has one there, or else with the rule that brought it. A composed page adds at most 16 pages one after another; what still does not fit on the last one is cut and reported as [`frameContinuationLimit`](#framecontinuationlimit). A frame of an added page too small to take any of it reports `frameOverflow` instead of adding pages.
+- **Ordinary pages.** The added pages are pages of the book: they are numbered, carry the running heads of their template (or the section's), take the `variants` of their side, and the `{attr.x}` of the page fence still reaches their decoration. An overflow template with `spread: true` opens on the next verso, with a parity blank before it when needed, and takes the recto after it; a spread whose `overflowTemplate` is a single page continues on single pages. The text after the page fence starts on the page after the last added page.
+- **Ids.** A frame of the n-th added page is `cp0:<name>~<n>`; the frame that takes the content is named after the frame of the fence's own page that first sent it on (`cp0:dinero~1`, `cp0:dinero~2`), so a selection keeps its element whichever frame takes it. Each frame records the frame it continues from or into (`continuedFrom`, `continuesTo`), the page's `VDTPage.composed.continuationOf` is the index of the fence's own page, and the blocks of the pieces carry the box's id with `-cont-<n>`, as split callouts do.
+- **Relayout.** A composed page whose content continues is laid out afresh, with its added pages, on every build: the page memo keeps only pages whose content stays on them.
+
+### The continuation mark
+
+`overflow.mark` sets the words at the end of a cut piece:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Value</th>
+      <th>Mark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>unset</td>
+      <td>The continuation words of the frame's style (<code>continuesMarker</code> of its callout style), which follow the document's language: «Continued» in English, «Continúa» in Spanish, «Continua» in Catalan, Italian and Portuguese, «À suivre» in French, «Wird fortgesetzt» in German, «接下页» in Chinese, «次ページへ続く» in Japanese, «يتبع» in Arabic. They are the words split tables and split boxes use.</td>
+    </tr>
+    <tr>
+      <td>a string</td>
+      <td>Those words: <code>"sigue en la página siguiente"</code>.</td>
+    </tr>
+    <tr>
+      <td><code>false</code></td>
+      <td>No mark; the piece holds a line more.</td>
+    </tr>
+  </tbody>
+</table>
+
+The mark is set under the piece's last line, in the box's body face, aligned and slanted as the style's `continuesMarkerAlign` and `continuesMarkerItalic` say (right and italic by default). It is pagination furniture: the reflowable EPUB leaves it out, the tagged PDF marks it as an artifact. A frame chained with `next` on the same page carries no mark.
+
+The piece on the added page opens without the frame's tab and title, as the later parts of a split box do. A style with `repeatTitle: true` repeats its title there with its `continuedSuffix` («(cont.)»), which serves as a "continued from" mark.
+
 ## Reflow log
 
 Each composed page keeps a log of what the layout changed against the template's own drawing: which frame grew, gave space back or moved, by how much, and which frame set it off. A page whose text fits its template logs nothing.
@@ -394,6 +493,10 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>textScaled</code></td>
       <td>The reflow ladder set the frame's text at <code>scale</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continued</code></td>
+      <td>The frame's content goes on on a page added after this one: <code>toPage</code> is that page's index in the document and <code>toFrame</code> the id of the frame that takes it there (<code>cp0:dinero&#126;1</code>). In words: «dinero continued on page 9», with the page's printed number.</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>
@@ -439,6 +542,10 @@ On the canvas, in the Sandbox's spread view and in the Folio the two pages stand
 **Cause.** The page fence and its template disagree: the fence has `spread` and the template is a single page, or the template is a spread (by its own `spread: true` or through `extends`) and the fence lacks the flag. The template decides: a spread template is laid over two facing pages, any other on one page. The warning gives the template, the fence's flag (`fence`) and the template's (`templateSpread`), and points at the `spread` attribute, or at the template's name when the fence has none.
 
 **Fix.** Make the fence say what the template is: write `spread` on the fence of a spread template, remove it from the fence of a single-page one, or choose another template.
+
+## Migrating a book with text in its styles
+
+A book made before composed pages may hold the text of its pages in heading styles: a hidden heading on each page whose running head places every text where the printed page had it. The *Text held in the configuration* check lists it. In the Sandbox, **Move the text to the Markdown** in the Checks panel turns each page design into a page template whose frames stand where the texts stood, and each page into a page fence with its text in `:::frame` slots; it shows every page before and after, and can be undone. See [Moving the text to the Markdown](/en/docs/sandbox-design-checks#moving-the-text-to-the-markdown). From code, `moveTextToMarkdown({ config, chapters, metadata }, options)` does the same and returns the new configuration, the chapters and a report.
 
 ## From code
 
@@ -500,7 +607,7 @@ elementsForSource(doc, 677, 690); // lines, blocks, frames, pages and design tex
 findElement(doc, 'cp0:dinero');   // the same frame after a relayout, with its rect
 ```
 
-`elementsForSource(doc, start, end)` goes the other way and returns `{ pageIndex, element }` for every line, block, frame, composed page and design text the range touches. A line set past its frame's foot comes with `clipped: true`: it is cut on the page and kept in the source map. On a spread, the half of a frame that crosses the spine and is read on the facing page answers with the ids of the blocks it shows and `facing: true`, in `sourceAt` and in `elementsForSource`. A figure label answers at level `label`, with its id and its anchor, wherever it is drawn on the picture.
+`elementsForSource(doc, start, end)` goes the other way and returns `{ pageIndex, element }` for every line, block, frame, composed page and design text the range touches. A line set past its frame's foot comes with `clipped: true`: it is cut on the page and kept in the source map. On a spread, the half of a frame that crosses the spine and is read on the facing page answers with the ids of the blocks it shows and `facing: true`, in `sourceAt` and in `elementsForSource`. There `elementsForSource` gives each page the frame with the part of its box that page paints as its `rect`, so a band that starts near the spine has a point to click on both pages. A figure label answers at level `label`, with its id and its anchor, wherever it is drawn on the picture.
 
 **Stable ids.** A composed page is `cp<n>`, `n` the ordinal of its page fence in the chapter; a frame is `cp<n>:<frame>` (with `~<k>` for the k-th piece of its content that goes on on a later page), its blocks `cp<n>:<frame>-c0`, `-c1`…, a group `cp<n>:group:<name>`, an element of the decoration or the running heads `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, and a label of a figure `cp<n>:<slot>:label:<anchor>`. None of them depends on positions or on the words, so an id is the same after any relayout and in every language of the chapter: a selection survives an edit, and the same frame can be found in the translation. `findElement(doc, id)` finds the element again.
 

@@ -24,11 +24,23 @@ export function composedFrameBlockIds(page: VDTPage): Set<string> {
   return ids;
 }
 
+/** The frames painted under the decoration (`'below'`: layers below 0)
+ *  or over it (`'above'`), for a backend that paints the decoration
+ *  apart (a page painted through a flow frame, whose decoration stands on
+ *  the sheet). */
+export type ComposedPaintPart = 'below' | 'above';
+
 /** The paint order of a composed page: frames of a layer below 0, the
  *  decoration (layer 0), then the frames of layer 0 and up; frames of
  *  one layer in template order. Each frame comes with its blocks, in
- *  `page.floats` order (its box first). */
-export function composedPaintOrder(page: VDTPage): ComposedPaintItem[] {
+ *  `page.floats` order (its box first). With `part`, only the frames on
+ *  that side of the decoration, and no decoration item. */
+export function composedPaintOrder(page: VDTPage, part?: ComposedPaintPart): ComposedPaintItem[] {
+  if (part) {
+    const all = composedPaintOrder(page);
+    const at = all.findIndex((item) => item.kind === 'decoration');
+    return part === 'below' ? all.slice(0, at) : all.slice(at + 1);
+  }
   const composed = page.composed;
   if (!composed) return [];
   const byId = new Map<string, VDTBlock>();

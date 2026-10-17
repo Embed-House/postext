@@ -13,6 +13,7 @@ import { applyFindReplace, findInText, numberedLines } from '../textEdits';
 import { describeRange, lineRange, occurrencesOf, positionOf } from '../textPositions';
 import { readFileInput, type FileInput } from './resources';
 import { viewState } from './view';
+import { historyState } from './history';
 
 export const CHAPTER_PARAM = {
   type: ['integer', 'string'],
@@ -123,7 +124,7 @@ export function bookTools(host: SandboxToolHost): WebMcpTool[] {
   const getState: WebMcpTool = {
     name: 'sandbox_get_state',
     title: 'Sandbox: what is open',
-    description: 'The book open in the Postext Sandbox and how it is shown: its chapters with their page ranges, the chapter and page on screen, the viewer tab and its display settings, the open side panel, the interface language, the selection (or the caret) of the Manuscript editor, the resource open in the Resources panel, and how many warnings the layout has. What needs attention is added when there is any: waitingFor (why ready is false), notice (the Books panel\'s message, cleared with sandbox_answer), status (an operation on the books that is busy or failed), sampleUpdated (the sample on screen was reloaded because its source changed), sampleStale (its source changed but the reader\'s edits were kept; sandbox_reset_to_original loads the new version) and question (a dialog asking the reader something, answered with sandbox_answer). Start here, and call it again to see where things stand.',
+    description: 'The book open in the Postext Sandbox and how it is shown: its chapters with their page ranges, the chapter and page on screen, the viewer tab and its display settings, the open side panel, the interface language, the selection (or the caret) of the Manuscript editor, the resource open in the Resources panel, how many warnings the layout has, and the change sandbox_undo would take back and the one it would put back (history). What needs attention is added when there is any: waitingFor (why ready is false), notice (the Books panel\'s message, cleared with sandbox_answer), status (an operation on the books that is busy or failed), sampleUpdated (the sample on screen was reloaded because its source changed), sampleStale (its source changed but the reader\'s edits were kept; sandbox_reset_to_original loads the new version) and question (a dialog asking the reader something, answered with sandbox_answer). Start here, and call it again to see where things stand.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     annotations: { readOnlyHint: true, untrustedContentHint: true },
     execute: () => {
@@ -158,6 +159,7 @@ export function bookTools(host: SandboxToolHost): WebMcpTool[] {
         resources: s.resources.length,
         ...(s.activeResourceId !== null ? { openResource: s.activeResourceId } : {}),
         warnings: store.getWarnings(s).length,
+        ...historyState(host),
         ...libraryStanding(s),
       };
     },
@@ -279,7 +281,7 @@ export function bookTools(host: SandboxToolHost): WebMcpTool[] {
   const undoText: WebMcpTool = {
     name: 'sandbox_undo_text',
     title: 'Sandbox: take back a text edit',
-    description: "Take back the last edit to a chapter's text, or with redo put back the last one taken back. It undoes what sandbox_write_text, sandbox_edit_text and sandbox_import_word (into a chapter) changed, one call at a time, latest first whatever the chapter, and the edits the reader made on the previews (a comic panel resized, split or merged) — the edits Cmd/Ctrl+Z takes back over the previews. It does not undo what is typed in the Manuscript editor (the editor's own undo does), chapters added, removed, split, merged or moved, a book replaced, or changes to the design and the resources. An edit whose chapter was changed since by other means is refused and forgotten rather than applied to other text. The list is kept for this visit: it is empty after the page is reloaded.",
+    description: "Take back the last change when it is an edit to a chapter's text, or with redo put back the last one taken back. The Sandbox keeps one history of text and design, in the order the changes were made (the one Cmd/Ctrl+Z undoes): text typed in the Manuscript editor, the edits the reader made on the previews (a comic panel resized, a frame's text), and what sandbox_write_text, sandbox_edit_text and sandbox_import_word (into a chapter) changed, one call at a time, latest first whatever the chapter. When the last change was to the design it is refused, with the settings it touched: sandbox_undo takes back the last change whatever it is. Chapters added, removed, split, merged or moved, resources and fonts are not in the history, and opening another book empties it. An edit is taken back over the changes made to the chapter since by other means, which stay. The history is kept for this visit: it is empty after the page is reloaded.",
     inputSchema: {
       type: 'object',
       properties: {

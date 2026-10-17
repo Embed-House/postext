@@ -486,7 +486,7 @@ const PARAGRAPH_STYLE_KEYS = {
   id: true, name: true, fontFamily: true, fontSize: true, lineHeight: true, color: true, textAlign: true,
   boldColor: true, italicColor: true, fontWeight: true, boldFontWeight: true, italic: true, smallCaps: true,
   hyphenation: true, indent: true, endIndent: true, firstLineIndent: true, hangingIndent: true, spaceBetween: true,
-  marginTop: true, marginBottom: true, snapToGrid: true, containerSpacing: true, textTransform: true, wordBreak: true, lineNumbers: true,
+  marginTop: true, marginBottom: true, snapToGrid: true, containerSpacing: true, textTransform: true, letterSpacing: true, wordBreak: true, lineNumbers: true,
   tabStops: true, tabInterval: true, dropCap: true,
 } satisfies Record<keyof ParagraphStyleConfig, true>;
 // A body paragraph's drop cap (#623) and its lead-in.
@@ -792,6 +792,40 @@ function metadataPhrases(metadata: DocumentMetadata | undefined): string[] {
   return out;
 }
 
+/** How the `contentInConfig` check reads one design text: its literal
+ *  (placeholders removed), what is left once the allowed phrases are taken
+ *  out (`rest`, compared without case), the letters and digits of `rest`,
+ *  and whether the text counts as content. */
+export interface DesignTextVerdict {
+  literal: string;
+  rest: string;
+  chars: number;
+  content: boolean;
+}
+
+/** The `contentInConfig` rule of a configuration (#849), as a function of a
+ *  design text's `content`: the check's settings and allowed phrases (and
+ *  the metadata's) read once. Disabled checks still answer, as if enabled:
+ *  the migration of #874 asks what the check would say. Pure. */
+export function contentInConfigRule(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): (content: string) => DesignTextVerdict {
+  const check = resolveContentInConfigCheck(config?.checks?.contentInConfig);
+  const allow = [...new Set([...check.allow, ...metadataPhrases(options.metadata)].map(comparableLiteral).filter(Boolean))]
+    .sort((a, b) => b.length - a.length);
+  return (content: string): DesignTextVerdict => {
+    const literal = designTextLiteral(content);
+    if (!LETTER_OR_DIGIT.test(literal)) return { literal, rest: '', chars: 0, content: false };
+    let rest = comparableLiteral(literal);
+    for (const phrase of allow) rest = withoutPhrase(rest, phrase);
+    const chars = rest.match(LETTERS_OR_DIGITS)?.length ?? 0;
+    if (chars === 0) return { literal, rest, chars, content: false };
+    const unspaced = rest.match(UNSPACED_LETTERS)?.length ?? 0;
+    const weight = chars + unspaced * (UNSPACED_CHAR_WEIGHT - 1);
+    // A run of unspaced script is no word count: its characters are weighed.
+    const words = rest.split(' ').filter((w) => LETTER_OR_DIGIT.test(w) && !UNSPACED_SCRIPT.test(w)).length;
+    return { literal, rest, chars, content: words > check.maxWords || weight > check.maxChars };
+  };
+}
+
 /** Content held in the configuration (#849): design text elements whose
  *  literal text — their content with every placeholder removed, and the
  *  phrases of `checks.contentInConfig.allow` (and of the metadata) taken
@@ -803,24 +837,14 @@ function metadataPhrases(metadata: DocumentMetadata | undefined): string[] {
 function collectContentInConfigWarnings(config: PostextConfig, options: ConfigWarningOptions): ConfigWarning[] {
   const check = resolveContentInConfigCheck(config.checks?.contentInConfig);
   if (!check.enabled) return [];
-  const allow = [...new Set([...check.allow, ...metadataPhrases(options.metadata)].map(comparableLiteral).filter(Boolean))]
-    .sort((a, b) => b.length - a.length);
+  const verdict = contentInConfigRule(config, options);
   const groups = new Map<string, { ownerId?: string; elements: string[]; count: number; chars: number; sample: string }>();
   for (const slot of configDesignSlots(config)) {
     slot.slot.elements.forEach((el, i) => {
       const e = el as { kind?: unknown; content?: unknown } | null;
       if (!e || typeof e !== 'object' || e.kind !== 'text' || typeof e.content !== 'string') return;
-      const literal = designTextLiteral(e.content);
-      if (!LETTER_OR_DIGIT.test(literal)) return;
-      let rest = comparableLiteral(literal);
-      for (const phrase of allow) rest = withoutPhrase(rest, phrase);
-      const chars = rest.match(LETTERS_OR_DIGITS)?.length ?? 0;
-      if (chars === 0) return;
-      const unspaced = rest.match(UNSPACED_LETTERS)?.length ?? 0;
-      const weight = chars + unspaced * (UNSPACED_CHAR_WEIGHT - 1);
-      // A run of unspaced script is no word count: its characters are weighed.
-      const words = rest.split(' ').filter((w) => LETTER_OR_DIGIT.test(w) && !UNSPACED_SCRIPT.test(w)).length;
-      if (words <= check.maxWords && weight <= check.maxChars) return;
+      const { literal, chars, content } = verdict(e.content);
+      if (!content) return;
       let g = groups.get(slot.owner);
       if (!g) {
         const points = Array.from(literal);

@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>Der Inhalt eines Rahmens ist auf Seiten weitergelaufen, die nach seiner zusammengesetzten Seite hinzukommen (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>), so oft, wie eine zusammengesetzte Seite Seiten hinzufügen darf, 16-mal, und passt noch immer nicht (<code>template</code> und <code>frame</code> der letzten hinzugefügten Seite, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der letzten hinzugefügten Seite.</td>
+      <td>Die paginierte Ausgabe schneidet den Rest am Fuß dieses Rahmens ab; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt er erhalten.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
       <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>Ein gleitendes Bild wurde kleiner als in seiner Größe gesetzt, damit es in den Raum seines Platzes passt (<code>placement.shrink</code>). <code>resourceId</code> nennt es, <code>scale</code> ist der Anteil seiner Breite, den es behält, und <code>overflowPx</code>, falls vorhanden, wie weit es bei seiner kleinsten Skalierung (<code>placement.minScale</code>) noch über den Fuß des Satzspiegels hinausragt, auf einer neuen Seite, auf der es keinen anderen Platz hatte. Verweist auf den Absatz, der es zuerst zitiert.</td>
       <td>Das Bild wird in dieser Skalierung gedruckt; über den Satzspiegel hinaus nur, wenn <code>overflowPx</code> es sagt.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Ein Bitmap mit Druckgröße (eigenes <code>bitmap.resolution</code> oder eine Zahl in <code>layout.bitmapResolution</code>; keine aus der Datei gelesene Auflösung), gesetzt in einer Spalte, die es unter der Hälfte dieser Größe hält, auf einer Seite, deren Satzspiegel breiter als die Spalte ist. <code>resourceId</code> nennt es, <code>scale</code> ist der Anteil seiner Druckbreite, den es behält, <code>printWidthPx</code>, <code>widthPx</code> und <code>pageWidthPx</code> sind die Breiten von Druck, Spalte und Satzspiegel. Ein Bild, das <code>placement.width</code> schmaler macht, das auf seinen Platz verkleinert, gedreht oder in den Rahmen einer zusammengesetzten Seite gesetzt ist, wird nicht gemeldet. Zeigt auf den Absatz, der es zuerst zitiert. Seit postext 1.37.</td>
+      <td>Das Bild wird in Spaltenbreite gedruckt. Ein Bild im Fluss ist nie breiter als seine Spalte, und die Standardseite hat zwei (<code>layout.layoutType: 'double'</code>): Setzen Sie die Seite einspaltig, lassen Sie das Bild über die ganze Seite floaten (<code>placement.span: 'page'</code>) oder erhöhen Sie seine Auflösung, wenn diese Größe gewollt ist.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

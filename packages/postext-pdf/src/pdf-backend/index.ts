@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -475,19 +475,26 @@ function paintPage(
   // written. Link and structure rects map through the frame too.
   let flowMatrix: PdfMatrix | undefined;
   const vflow = verticalFlowOf(vdtPage);
-  if (vflow) {
-    flowMatrix = quarterTurnMatrix(vflow.rotation, scale, pageHeightPt);
+  if (vflow) flowMatrix = quarterTurnMatrix(vflow.rotation, scale, pageHeightPt);
+  else if (vdtPage.flow?.writingMode === 'horizontal-tb') flowMatrix = mirrorMatrix(vdtPage.flow.mirror.originX, scale);
+  const enterFlow = (): void => {
+    if (!flowMatrix) return;
     pushFrame(ctx, flowMatrix);
-    ctx.vertical = {
-      region: doc.config.cjk?.region ?? 'mainland',
-      uprightDigits: doc.config.cjk?.uprightDigits ?? 2,
-      ...(vflow.centralBaselines ? { axes: vflow.centralBaselines } : {}),
-    };
-  } else if (vdtPage.flow?.writingMode === 'horizontal-tb') {
-    flowMatrix = mirrorMatrix(vdtPage.flow.mirror.originX, scale);
-    pushFrame(ctx, flowMatrix);
-    ctx.mirror = true;
-  }
+    if (vflow) {
+      ctx.vertical = {
+        region: doc.config.cjk?.region ?? 'mainland',
+        uprightDigits: doc.config.cjk?.uprightDigits ?? 2,
+        ...(vflow.centralBaselines ? { axes: vflow.centralBaselines } : {}),
+      };
+    } else ctx.mirror = true;
+  };
+  const leaveFlow = (): void => {
+    if (!flowMatrix) return;
+    popFrame(ctx);
+    delete ctx.vertical;
+    delete ctx.mirror;
+  };
+  enterFlow();
 
   tagArtifact(ctx, { type: 'Layout' });
   if (doc.config.page.baselineGrid.enabled) {
@@ -606,8 +613,9 @@ function paintPage(
   // A composed page's frames (#855) are floats painted with their frames.
   const frameIds = composedFrameBlockIds(vdtPage);
   if (vdtPage.floats) {
-    for (const fb of vdtPage.floats) {
-      if (frameIds.has(fb.id)) continue;
+    const floats = vdtPage.floats.filter((fb) => !frameIds.has(fb.id));
+    for (let i = 0; i < floats.length; i++) {
+      const fb = floats[i]!;
       if (fb.comic) {
         // A floated strip: read after the text that comes before it,
         // painted on the sheet below.
@@ -616,7 +624,18 @@ function paintPage(
         else strips.push(readStrip(fb));
         continue;
       }
-      const paint = () => renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
+      // The blocks a floated (or fixed) box sets on the page are read as
+      // one float, anchored by its first block (#893), so a list in it
+      // stays one list, as in a composed frame (#862).
+      let end = i + 1;
+      if (fb.containerId !== undefined) {
+        while (end < floats.length && floats[end]!.containerId === fb.containerId && !floats[end]!.comic) end++;
+      }
+      const group = floats.slice(i, end);
+      i = end - 1;
+      const paint = () => {
+        for (const b of group) renderBlock(ctx, b, b.bbox.width, b.bbox.x, fontCache, resourceCtx);
+      };
       if (structure) structure.readFloat(fb, paint);
       else paint();
     }
@@ -626,7 +645,23 @@ function paintPage(
   const decorationMark: SlotMark | undefined = structure
     ? { artifact: { type: 'Layout' }, figure: (alt, attributes, after) => structure.designFigure(alt, attributes, after) }
     : undefined;
-  if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, flowMatrix ? undefined : decorationMark, !flowMatrix);
+  if (vdtPage.composed && flowMatrix) {
+    // The decoration stands on the sheet, so the flow frame is left for
+    // it, between the frames under layer 0 and the others: a title frame
+    // on a band reads over the band on a right-to-left or vertical page
+    // as on any other.
+    paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'below');
+    leaveFlow();
+    if (vdtPage.composed.decoration) {
+      // On a page of a spread (#861), its share of the sheet only.
+      const sheet = composedSheetClip(vdtPage);
+      if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
+      renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
+      if (sheet) popClip(ctx);
+    }
+    enterFlow();
+    paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'above');
+  } else if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, decorationMark, true);
 
   // The footnote separators are layout.
   if (vdtPage.footnoteAreas?.some((a) => a.rule)) {
@@ -634,18 +669,7 @@ function paintPage(
     renderFootnoteRules(ctx, vdtPage);
   }
 
-  if (flowMatrix) {
-    popFrame(ctx);
-    delete ctx.vertical;
-    delete ctx.mirror;
-    if (vdtPage.composed?.decoration) {
-      // On a page of a spread (#861), its share of the sheet only.
-      const sheet = composedSheetClip(vdtPage);
-      if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
-      renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
-      if (sheet) popClip(ctx);
-    }
-  }
+  leaveFlow();
 
   // A comic page's panels and lettering (or its half of a spread), then
   // the strips the page holds, on the sheet (never through the flow
@@ -705,6 +729,7 @@ function paintComposedFrames(
   resourceCtx: ResourceRenderContext,
   mark: SlotMark | undefined,
   withDecoration: boolean,
+  part?: ComposedPaintPart,
 ): void {
   const structure = resourceCtx.structure;
   // On a page of a spread (#861) the frames and the decoration show the
@@ -712,7 +737,7 @@ function paintComposedFrames(
   const sheet = composedSheetClip(vdtPage);
   if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
   try {
-    paintComposedItems(ctx, vdtPage, fontCache, resourceCtx, mark, withDecoration, structure);
+    paintComposedItems(ctx, vdtPage, fontCache, resourceCtx, mark, withDecoration, structure, part);
   } finally {
     if (sheet) popClip(ctx);
   }
@@ -726,8 +751,9 @@ function paintComposedItems(
   mark: SlotMark | undefined,
   withDecoration: boolean,
   structure: ResourceRenderContext['structure'],
+  part?: ComposedPaintPart,
 ): void {
-  for (const item of composedPaintOrder(vdtPage)) {
+  for (const item of composedPaintOrder(vdtPage, part)) {
     if (item.kind === 'decoration') {
       const decoration = vdtPage.composed?.decoration;
       if (withDecoration && decoration) renderHeaderFooterSlot(ctx, decoration, fontCache, resourceCtx.images, mark);

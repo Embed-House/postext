@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Install the postext-port skill in Claude Code, Codex or any agent and let it turn a PDF, Word, PowerPoint, EPUB, InDesign or HTML source into a Postext project that follows the original layout',
   lang: 'en',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 41,
   plainSummary: "This page is for people who already have a book or document in another format, such as PDF, Word or InDesign, and want to move it into Postext. An AI helper, called an agent, can do most of the work if you give it a small add-on called a skill. The skill teaches the agent how to copy the text and rebuild the design of the original. The page explains how to install it, what to ask for and how to check the result. A video of about five minutes shows every step.",
@@ -220,8 +220,11 @@ The agent follows the workflow:
    of measured facts: trim, margins, columns, leading, type roles, palette,
    openers, running heads, box families and placement habits. It classifies
    every page as running text or as a composed page (boxes, labels and maps
-   at set places); when more than a third are composed, it asks whether you
-   want the identical layout or text you can edit and translate.
+   at set places); with Postext 1.35 or later it groups the composed pages by
+   kind of page and sets each kind from one page template, so the identical
+   layout keeps text you can edit and translate; with an older version, when
+   more than a third are composed, it asks whether you want the identical
+   layout or text you can edit and translate.
 3. **Project.** It scaffolds `my-book/` with a `build_preset.py` generator
    that holds the spec as constants and produces `preset.json`.
 4. **Content.** It extracts draft chapters with the right extractor, then
@@ -253,8 +256,13 @@ The delivered file is not tied to the Sandbox. The `postext` package opens it wi
   quality comes from.
 - **The text stays in the Markdown.** The configuration holds the design and
   every word of the book is in the chapters, so a correction or a translation
-  is an edit to Markdown. Composed pages are set with boxes pinned to their
-  place, page pictures without text and SVG figures with live labels. When
+  is an edit to Markdown. With Postext 1.35 or later, composed pages are page
+  templates in the configuration whose frames are filled from each chapter's
+  Markdown: a box grows with a longer translation and pushes the boxes below
+  it, and from 1.37 the words on a map are labels written in the Markdown.
+  With an older version they are set with boxes pinned to their place, page
+  pictures without text and SVG figures with live labels. The report says
+  which of the two the agent used, and with which version. When
   Postext cannot express something without typing text into the configuration,
   the agent stops, writes the gap as an issue draft and asks you. The skill
   never changes the engine to fit one book.

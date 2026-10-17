@@ -28,9 +28,11 @@
  * What it reads: the lines of every block (inline bold, italic, reference
  * and chip colours included), list markers, drop caps, captions, notes and
  * table cells, and the text of design slots (running heads, openers,
- * heading designs, box titles). The ground is the topmost fill under the
- * text: a design box, a callout, a caption bar, a table cell, a chip, else
- * the page's paper colour; a translucent colour is blended with what is
+ * heading designs, box titles, a composed page's decoration). The ground
+ * is the topmost fill under the text: a design box, a callout, a caption
+ * bar, a table cell, a chip, the box of a composed page's frame or the
+ * template decoration under it (in the page's paint order,
+ * `composedPaintOrder`), else the page's paper colour; a translucent colour is blended with what is
  * under it. Text over a picture is skipped (its ground is not a colour),
  * as are comic lettering, ruby and formulas.
  */
@@ -44,6 +46,7 @@ import { resolveContrastConfig } from './defaults/contrast';
 import { findPxSize, parseFontString } from './measure/fontString';
 import { dimensionToPx } from './units';
 import { taskBoxText } from './taskBox';
+import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint';
 
 export type ContrastMedium = 'screen' | 'print';
 
@@ -298,6 +301,21 @@ function fontSizePx(fontString: string | undefined): number | undefined {
 
 const normal = (color: string) => color.trim().toLowerCase();
 
+type Affine = [number, number, number, number, number, number];
+
+/** The axis-aligned box of `rect` put through `m` (canvas order). */
+function transformRect(m: Affine, rect: BoundingBox): BoundingBox {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const [x, y] of [[rect.x, rect.y], [rect.x + rect.width, rect.y], [rect.x, rect.y + rect.height], [rect.x + rect.width, rect.y + rect.height]] as const) {
+    xs.push(m[0] * x + m[2] * y + m[4]);
+    ys.push(m[1] * x + m[3] * y + m[5]);
+  }
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
+}
+
 /**
  * Every text and ground combination `doc` sets, with its ratio on screen
  * and, when `options.transform` is given, on paper — passing or not, one
@@ -335,7 +353,14 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
 
   for (const page of doc.pages) {
     const pageIndex = page.index + offset;
-    const sheet = (rect: BoundingBox, inFlow: boolean): BoundingBox => (inFlow ? flowRectToPage(page, rect) : rect);
+    /** The matrix of the composed-page frame being walked (#908): its
+     *  blocks are in the frame's own coordinates, turned and scaled onto
+     *  the sheet by it. */
+    let frameToSheet: Affine | undefined;
+    const sheet = (rect: BoundingBox, inFlow: boolean): BoundingBox => {
+      const r = inFlow ? flowRectToPage(page, rect) : rect;
+      return frameToSheet ? transformRect(frameToSheet, r) : r;
+    };
     const paperRaw = page.background ?? doc.config.page.backgroundColor.hex;
     const fills: Fill[] = [{
       rect: { x: -Infinity, y: -Infinity, width: Infinity, height: Infinity },
@@ -607,7 +632,23 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
     // In paint order: what is painted later lies over what came before.
     walkSlot(page.openerBand, true, 'design');
     for (const column of page.columns) for (const block of column.blocks) walkBlock(block);
-    for (const block of page.floats ?? []) walkBlock(block);
+    const inFrames = composedFrameBlockIds(page);
+    for (const block of page.floats ?? []) if (!inFrames.has(block.id)) walkBlock(block);
+    // A composed page (#908): its frames in layer order with the template's
+    // decoration at layer 0, as the backends paint them, so frame text is
+    // read on its frame's own box, else on the decoration under it, else
+    // on the paper. The half of a frame read on the facing page of a
+    // spread is checked there.
+    for (const item of composedPaintOrder(page)) {
+      if (item.kind === 'decoration') {
+        walkSlot(page.composed?.decoration, false, 'design');
+        continue;
+      }
+      if (item.facing) continue;
+      frameToSheet = frameMatrix(item.frame);
+      for (const block of item.blocks) walkBlock(block);
+      frameToSheet = undefined;
+    }
     for (const block of page.marginNotes) walkBlock(block);
     // A comic page is pictures and lettering from edge to edge.
     if (page.comic) picture({ x: 0, y: 0, width: page.width, height: page.height });

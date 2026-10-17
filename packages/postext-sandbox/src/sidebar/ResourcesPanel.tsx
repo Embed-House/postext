@@ -73,7 +73,8 @@ export function ResourcesPanel({ isDark = true }: ResourcesPanelProps) {
   // types predate them gets the built-in Video type when it adds one.
   const videoTypeId = (): string => {
     const withVideo = typesWithVideo(types, locale);
-    if (withVideo) dispatch({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withVideo } });
+    // The Video type comes with the video: no step of the history (#899).
+    if (withVideo) dispatch({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withVideo }, history: false });
     return 'video';
   };
 

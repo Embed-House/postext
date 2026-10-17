@@ -27,11 +27,12 @@ import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk';
 import { fillSegmentWord, type WordRun } from './wordRuns';
 import { paintedSegments } from './wordPieces';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
+import { figureLabelMatrix } from '../composed/labels';
 import { mirroredPaintActive } from './mirrorFrame';
 import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { fillContextText } from './contextText';
+import { fillContextText, strokeContextText } from './contextText';
 
 /** A decoded image the canvas backend can `drawImage`. */
 export type ResourceImageSource = CanvasImageSource;
@@ -732,6 +733,58 @@ function renderTable(
   }
 }
 
+/** A context that strokes what the painters fill (`fillText` →
+ *  `strokeText`) in one colour: a label's halo painted by the same line
+ *  painter as its text. */
+function haloContext(ctx: CanvasRenderingContext2D, color: string, widthPx: number): CanvasRenderingContext2D {
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2 * widthPx;
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  return new Proxy(ctx, {
+    get(target, key) {
+      if (key === 'fillText') return (text: string, x: number, y: number) => strokeContextText(target, text, x, y);
+      const value = (target as unknown as Record<PropertyKey, unknown>)[key];
+      return typeof value === 'function' ? (value as (...a: unknown[]) => unknown).bind(target) : value;
+    },
+    set(target, key, value) {
+      // The painters' colours give way to the halo's.
+      if (key === 'fillStyle' || key === 'strokeStyle') return true;
+      (target as unknown as Record<PropertyKey, unknown>)[key] = value;
+      return true;
+    },
+  });
+}
+
+/** The labels of a `:::figure` drawn on its picture (#860), its body's
+ *  top-left corner at (`bx`, `by`): each one through its matrix, its
+ *  plate, its halo, then its lines. */
+export function paintFigureLabels(ctx: CanvasRenderingContext2D, rb: ResolvedResourceBlock, bx: number, by: number): void {
+  for (const label of rb.labels ?? []) {
+    const layout = label.layout;
+    if (!layout) continue;
+    const m = figureLabelMatrix(layout, bx, by);
+    saveContext(ctx);
+    ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+    ctx.textAlign = 'left';
+    if (layout.background) {
+      const r = layout.background.rect;
+      ctx.fillStyle = layout.background.color;
+      ctx.fillRect(r.x, r.y, r.width, r.height);
+    }
+    const { fontString: f, boldFontString: b, italicFontString: i, boldItalicFontString: bi, color } = layout;
+    if (layout.halo && layout.halo.widthPx > 0) {
+      saveContext(ctx);
+      const halo = haloContext(ctx, layout.halo.color, layout.halo.widthPx);
+      for (const line of layout.lines) paintLine(halo, line.highlights ? { ...line, highlights: undefined } : line, f, b, i, bi, layout.halo.color, layout.halo.color);
+      restoreContext(ctx);
+    }
+    for (const line of layout.lines) paintLine(ctx, line, f, b, i, bi, color, rb.linkColor);
+    restoreContext(ctx);
+  }
+}
+
 export function renderResourceBlock(
   ctx: CanvasRenderingContext2D,
   block: VDTBlock,
@@ -785,6 +838,8 @@ export function renderResourceBlock(
       drawPlaceholder(ctx, bx, by, bw, bh, rb.kind === 'svg' ? 'SVG' : 'Image');
     }
     if (rb.video) paintVideoOverlays(ctx, rb.video, bx, by, bw);
+    // A figure's labels, over the picture (#860).
+    if (rb.labels) paintFigureLabels(ctx, rb, bx, by);
   } else if (rb.kind === 'table') {
     renderTable(ctx, rb, bx, by, inkHex);
   }

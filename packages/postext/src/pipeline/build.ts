@@ -31,6 +31,7 @@ import {
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
 import { contourOnPage } from '../contour';
+import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels';
 import { anchorBox } from '../design/layout';
 import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
 import {
@@ -85,7 +86,10 @@ import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowCo
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
 import { resolvePageTemplate } from '../composed/templates';
 import { layoutComposedSpread } from '../composed/spread';
-import { composedPageAt, frameStyleOf, planComposedPages, type PlannedComposedPage } from './composedLayout';
+import { assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
+import { frameElementId } from '../composed/ids';
+import { nextFrameOf } from '../composed/geometry';
+import { composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
 import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
 import { expandTocDirectives } from './toc';
@@ -239,7 +243,7 @@ import {
   capRetryLimit,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
 import { dropCapSinkAfter } from './dropCap';
 import { mostlyJoiningScript } from '../measure/joining';
 import { composesAsCjk } from '../measure/cjkCompose';
@@ -617,6 +621,8 @@ function placeDocumentPass(
   // their own `resolution` from here on (#631); under the default policy
   // the content is untouched.
   const stampedResources = content.resources && withBitmapResolutions(content.resources, resolved.layout.bitmapResolution);
+  /** The resources as given: whose print size is the author's (#901). */
+  const givenResources = content.resources;
   if (stampedResources && stampedResources !== content.resources) content = { ...content, resources: stampedResources as Resource[] };
   // Tracking rungs a loose paragraph may climb: none, then 5‰ steps up to
   // the cap (`headings.balancing.maxTracking`, thousandths of an em), the
@@ -896,10 +902,10 @@ function placeDocumentPass(
   }
   // The labels of each `:::figure` (#862), by resource: a figure that
   // floats is laid out by its id alone.
-  const figureLabelsById = new Map<string, VDTFigureLabel[]>();
+  const figureLabelsById = new Map<string, { labels: VDTFigureLabel[]; parsed: NonNullable<ContentBlock['figure']>['labels'] }>();
   for (const b of contentBlocks) {
     const labels = b.resourceId !== undefined && !figureLabelsById.has(b.resourceId) ? figureLabels(b, bodyOffset) : undefined;
-    if (labels) figureLabelsById.set(b.resourceId!, labels);
+    if (labels) figureLabelsById.set(b.resourceId!, { labels, parsed: b.figure!.labels });
   }
 
   // Resolve styles
@@ -1669,7 +1675,11 @@ function placeDocumentPass(
     const { block: rb, totalHeight } = laid;
     const id = slice && slice.startRow > 0 ? `float-${resourceId}-cont-${slice.startRow}` : `float-${resourceId}`;
     const blk = createVDTBlock(id, 'resource', bodyStyle.fontString, bodyStyle.color, bodyStyle.textAlign);
-    const labels = figureLabelsById.get(resourceId);
+    // A floated figure's labels, laid out on its picture as set (#860).
+    const figure = figureLabelsById.get(resourceId);
+    const labels = figure
+      ? layOutFigureLabels(figure.labels, figure.parsed, rb, { resolved, resourceNumbering, resourceTypes, resources, ...(cache ? { cache } : {}) })
+      : undefined;
     blk.resourceBlock = labels ? { ...rb, labels } : rb;
     blk.dirty = false;
     blk.snappedToGrid = false;
@@ -4315,6 +4325,17 @@ function placeDocumentPass(
     withStripPlaceholder(blk, stripGeometry(idx, raw.comic, width, contentArea.height - 2 * floatGapPx, pageIsVertical(doc.pages[cursor.pageIndex]!)));
     return blk;
   };
+  /** The room a heading's design takes in a box or a frame (#906): as in
+   *  a column (see the heading placement below), against the heading's
+   *  box; a `span: 'page'` heading is laid out at the box's width too. */
+  const boxHeadingDesign = (raw: ContentBlock, blockIdx: number, lines: readonly VDTLine[], pref: string, headingNumber: number | undefined, width: number): number | undefined => {
+    const lvl = headingLevels.forBlock(raw);
+    if (!lvl?.advancedDesign.enabled) return undefined;
+    const { titleText, marked } = defaultOpenerTitle(lines, pref, raw.titleBreaks, raw.text.length, lvl.numberSeparator);
+    const info: HeadingPlaceholderInfo = { titleText, ...(marked !== undefined ? { titleMarked: marked } : {}), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: raw.attrs };
+    const design = measureHeadingDesign(lvl, info, width, resolved.page.dpi, doc.metadata, cursor.pageIndex, undefined, undefined, resourceById);
+    return Math.max(design.height, design.textFloor);
+  };
   /** What the box typesetter (`frameLayout.ts`) reads of this pass. */
   const framePass: FrameLayoutPass = {
     contentBlocks,
@@ -4328,6 +4349,7 @@ function placeDocumentPass(
       : measureCtx),
     stripBlock: calloutStripBlock,
     columnHeight: () => contentArea.height,
+    headingDesign: (raw, blockIdx, heading, width) => boxHeadingDesign(raw, blockIdx, heading.lines, heading.numberPrefix, heading.headingNumber, width),
   };
   const makeCalloutLayouter = (startIdx: number, plan: PlannedCallout, style: ResolvedCalloutStyleConfig): CalloutLayouter =>
     makeCalloutLayouterIn(framePass, startIdx, plan, style);
@@ -6274,10 +6296,10 @@ function placeDocumentPass(
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
     let laid: Set<string>;
-    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
-    if (sheet?.spread) {
-      // A spread opens on a verso, a parity blank before it when needed,
-      // as a comic spread does; the recto after it takes the other half.
+    /** Lay a spread template over the next verso and the recto after it
+     *  (`breakToEvenPage` opens the verso, a parity blank before it when
+     *  needed, as a comic spread does). */
+    const laySpread = (sheet: NonNullable<ReturnType<typeof resolvePageTemplate>>, extra: { stories?: PlannedComposedPage['stories']; continuing?: ComposedContinuationInput }) => {
       breakToEvenPage();
       const verso = doc.pages[cursor.pageIndex]!;
       verso.columns = [createVDTColumn(0, verso.contentArea)];
@@ -6296,6 +6318,7 @@ function placeDocumentPass(
       const right = versoIsLeft ? recto : verso;
       const out = layoutComposedSpread({
         ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
+        ...extra,
         template: sheet,
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
@@ -6303,35 +6326,156 @@ function placeDocumentPass(
         trim: pageMetrics.physical.trimBox,
         bleed: pageMetrics.physical.bleedBox,
       });
+      return { sides: out.sides as readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[], warnings: out.warnings, laid: out.laid, continuations: out.continuations };
+    };
+    /** The template `id` for the current page's side, and the boxes its
+     *  `area` reads. */
+    const singleOn = (page: VDTPage, id: string) => {
+      page.columns = [createVDTColumn(0, page.contentArea)];
+      // The physical side: a recto has an odd folio (in either binding).
+      const parity: 'recto' | 'verso' = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+      const template = resolvePageTemplate(templateSource, id, { parity })!;
+      const frames = designFramesOn(page);
+      const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+      return { parity, template, areas: { area, page: frames.page, bleed: frames.bleed } };
+    };
+    let continuations: ComposedContinuation[] | undefined;
+    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
+    if (sheet?.spread) {
+      const out = laySpread(sheet, {});
       placed.push(...out.sides);
       composedNotes.push(...out.warnings);
       laid = out.laid;
+      continuations = out.continuations;
     } else {
       const page = doc.pages[cursor.pageIndex]!;
-      page.columns = [createVDTColumn(0, page.contentArea)];
-      // The physical side: a recto has an odd folio (in either binding).
-      const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
-      const template = resolvePageTemplate(templateSource, fence.template, { parity })!;
-      const frames = designFramesOn(page);
-      const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
+      const { parity, template, areas } = singleOn(page, fence.template);
       // Kept by what it reads (#857): a page met again is not set again.
       // A spread is laid out afresh each time (its two sides are one sheet).
       const out = layoutComposedPageMemo({
         ...common(page, { id: template.id, spread: false, parity }),
         page,
         template,
-        areas: { area, page: frames.page, bleed: frames.bleed },
+        areas,
       }, composedMemo);
       placed.push({ page, composed: out.composed, blocks: out.blocks });
       composedNotes.push(...out.warnings);
       laid = out.laid;
+      continuations = out.continuations;
     }
-    for (const { page, composed, blocks } of placed) {
-      page.composed = composed;
-      const floats = (page.floats ??= []);
-      for (const b of blocks) {
-        floats.push(b);
-        doc.blocks.push(b);
+    const commit = (list: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[]): void => {
+      for (const { page, composed, blocks } of list) {
+        page.composed = composed;
+        const floats = (page.floats ??= []);
+        for (const b of blocks) {
+          floats.push(b);
+          doc.blocks.push(b);
+        }
+      }
+    };
+    commit(placed);
+    // Content that goes on on pages added after this one (#859): one page
+    // (or spread) per template it goes on to, generation after generation,
+    // each laid afresh after the pages before it. The added pages are
+    // ordinary pages (numbered, with running heads, sides kept).
+    const frameAt = new Map<string, { page: VDTPage; frame: VDTComposedPage['frames'][number] }>();
+    const indexFrames = (list: readonly { page: VDTPage; composed: VDTComposedPage }[]): void => {
+      for (const s of list) for (const f of s.composed.frames) if (!f.facingBlocks) frameAt.set(f.id, { page: s.page, frame: f });
+    };
+    indexFrames(placed);
+    const overflowTemplateOf = (id: string): string | undefined => resolvePageTemplate(templateSource, id)?.overflowTemplate;
+    const firstPage = placed[0]?.page.index ?? cursor.pageIndex;
+    let pending = continuations ?? [];
+    for (let generation = 1; pending.length > 0; generation++) {
+      const last = generation >= MAX_CONTINUATION_PAGES;
+      let queue = pending;
+      pending = [];
+      while (queue.length > 0) {
+        const target = continuationTarget(queue[0]!, overflowTemplateOf);
+        const same = (c: ComposedContinuation): boolean => {
+          const t = continuationTarget(c, overflowTemplateOf);
+          return t.template === target.template && t.collapse === target.collapse;
+        };
+        const batch = queue.filter(same);
+        queue = queue.filter((c) => !same(c));
+        const spreadSheetT = resolvePageTemplate(templateSource, target.template, { spread: true });
+        // A template with no frames takes nothing.
+        if (!spreadSheetT || spreadSheetT.frames.length === 0) continue;
+        // A fresh page after the last one laid.
+        const start = cursor.pageIndex;
+        do {
+          advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
+        } while (cursor.pageIndex === start);
+        cursor.columnIndex = 0;
+        const storiesOf = (receivers: ReadonlyMap<string, ComposedContinuation>) => new Map([...receivers].map(([name, c]) => [name, c.story]));
+        let sides: readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[];
+        let notes: ContentWarning[];
+        let more: ComposedContinuation[] | undefined;
+        let receivers: Map<string, ComposedContinuation>;
+        let laidTemplate: NonNullable<ReturnType<typeof resolvePageTemplate>>;
+        if (spreadSheetT.spread) {
+          const assigned = assignReceivers(spreadSheetT, batch);
+          receivers = assigned.receivers;
+          queue = [...assigned.left, ...queue];
+          laidTemplate = spreadSheetT;
+          const out = laySpread(spreadSheetT, { stories: storiesOf(receivers), continuing: { receivers, generation, collapse: target.collapse, last } });
+          sides = out.sides;
+          notes = out.warnings;
+          more = out.continuations;
+        } else {
+          const page = doc.pages[cursor.pageIndex]!;
+          const { parity, template, areas } = singleOn(page, target.template);
+          const assigned = assignReceivers(template, batch);
+          receivers = assigned.receivers;
+          queue = [...assigned.left, ...queue];
+          laidTemplate = template;
+          const out = layoutComposedPage({
+            ...common(page, { id: template.id, spread: false, parity }),
+            page,
+            template,
+            areas,
+            stories: storiesOf(receivers),
+            continuing: { receivers, generation, collapse: target.collapse, last },
+          });
+          sides = [{ page, composed: out.composed, blocks: out.blocks }];
+          notes = out.warnings;
+          more = out.continuations;
+        }
+        for (const s of sides) s.composed.continuationOf = firstPage;
+        // On the last page allowed, a frame whose content would still go on
+        // says so (it is cut at its foot).
+        if (last) {
+          const chained = new Set<string>();
+          const nextOf = (n: string): string | undefined => {
+            const f = laidTemplate.frames.find((x) => x.name === n);
+            return f ? nextFrameOf(f) : undefined;
+          };
+          for (const name of receivers.keys()) {
+            for (let n: string | undefined = name; n !== undefined && !chained.has(n); n = nextOf(n)) chained.add(n);
+          }
+          notes = notes.map((w) => (w.kind === 'frameOverflow' && chained.has(w.frame)
+            ? { kind: 'frameContinuationLimit' as const, template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: generation, overflowMm: w.overflowMm, configPath: w.configPath, ...(w.sourceStart !== undefined ? { sourceStart: w.sourceStart, sourceEnd: w.sourceEnd } : {}), ...(w.pageIndex !== undefined ? { pageIndex: w.pageIndex } : {}) }
+            : w));
+        }
+        commit(sides);
+        indexFrames(sides);
+        composedNotes.push(...notes);
+        // Each frame that sent content on points to the frame that took it,
+        // and its page's log says where it went.
+        for (const c of receivers.values()) {
+          const to = frameElementId(fence.fenceIndex, c.slot, generation);
+          const src = frameAt.get(c.fromFrameId);
+          const dst = frameAt.get(to);
+          if (!src || !dst) continue;
+          src.frame.continuesTo = to;
+          const log = src.page.composed!.log;
+          let at = log.length;
+          for (let i = log.length - 1; i >= 0; i--) {
+            if (log[i]!.frame === c.frame) { at = i + 1; break; }
+          }
+          log.splice(at, 0, { frame: c.frame, kind: 'continued', toPage: dst.page.index, toFrame: to });
+        }
+        if (more) pending.push(...more);
       }
     }
     for (const [head, story] of planned.stories) {
@@ -8596,6 +8740,8 @@ function placeDocumentPass(
   // Right-to-left pages: lines advance through the mirrored flow in the
   // reverse of their visual order.
   if (doc.pages.some((p) => pageIsMirrored(p))) orientLinesToFrames(doc);
+  // Figure labels (#860): where each one is painted, for the source map.
+  stampFigureLabelRects(doc);
 
   doc.converged = true;
   doc.iterationCount = 1;
@@ -8606,7 +8752,12 @@ function placeDocumentPass(
     const b = contentBlocks[idx];
     return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
   });
-  if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
+  // Pictures whose column holds them under half their print size (#901).
+  const belowPrint = pictureBelowPrintSizeWarnings(doc, givenResources, (idx) => {
+    const b = contentBlocks[idx];
+    return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
+  });
+  if (shrunk.length > 0 || belowPrint.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint]);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
@@ -8715,6 +8866,9 @@ export function* buildDocumentGen(
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
   // Design texts cut to fit their width (#628).
   loose.push(...designTruncationWarnings(doc));
+  // Figure labels at anchors their picture lacks, anchors left without a
+  // word in this locale (#860).
+  loose.push(...figureLabelWarnings(doc, (b) => (b.sourceStart !== undefined && b.sourceEnd !== undefined ? { start: b.sourceStart, end: b.sourceEnd } : undefined)));
   // Comic panels whose cell cannot hold their picture's safe area (#556).
   for (const page of doc.pages) {
     if (page.comic) loose.push(...comicPageLayoutWarnings(page.comic));
@@ -8758,7 +8912,8 @@ const indexWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
 const joiningSpacingWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `dropCap` warnings of the last pass, per document (#623). */
 const dropCapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
-/** The `floatShrunk` warnings of a build (#626), found by its last pass. */
+/** The `floatShrunk` (#626) and `pictureBelowPrintSize` (#901) warnings
+ *  of a build, found by its last pass. */
 const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */

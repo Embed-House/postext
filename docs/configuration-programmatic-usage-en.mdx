@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>A frame's content went on to pages added after its composed page (<code>overflow.continueIn: 'next-page'</code> or <code>'template:&lt;id&gt;'</code>) as many times as a composed page may add pages, 16, and still does not fit (<code>template</code> and <code>frame</code> of the last added page, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Raised by the layout, with the <code>pageIndex</code> of the last added page.</td>
+      <td>Paged output cuts the rest at the foot of that frame; it stays in the document, the source map and the reflowable EPUB.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>A composed page's fence and its template disagree about spreads (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, the fence's <code>spread</code>; <code>templateSpread</code>, the template's).</td>
       <td>The template decides: a spread template is laid over two facing pages, any other on one page.</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>A floated picture was set smaller than its size to fit the room of its slot (<code>placement.shrink</code>). <code>resourceId</code> names it, <code>scale</code> is the share of its width it keeps, and <code>overflowPx</code>, when present, how far it still runs past the foot of the text block at its smallest scale (<code>placement.minScale</code>), on a fresh page where it had nowhere else to go. Points at the paragraph that first cites it.</td>
       <td>The picture is printed at that scale; past the text block only when <code>overflowPx</code> says so.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>A bitmap with a print size (its own <code>bitmap.resolution</code>, or a number in <code>layout.bitmapResolution</code>; not a resolution read from the file) set in a column that holds it at under half of it, on a page whose text block is wider than the column. <code>resourceId</code> names it, <code>scale</code> is the share of its print width it keeps, <code>printWidthPx</code>, <code>widthPx</code> and <code>pageWidthPx</code> the print, column and text block widths. A picture narrowed by <code>placement.width</code>, shrunk to its slot, turned or set in a composed page's frame is not reported. Points at the paragraph that first cites it. Since postext 1.37.</td>
+      <td>The picture is printed at its column's width. A picture in the flow is never wider than its column and the default page has two (<code>layout.layoutType: 'double'</code>): set the page in one column, float it across the page (<code>placement.span: 'page'</code>), or raise its resolution if that size is the one wanted.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

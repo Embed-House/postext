@@ -130,6 +130,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>La sortida paginada talla el que no hi cap al peu del marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>El contingut d'un marc ha continuat en pàgines afegides darrere de la seva pàgina composta (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>) tantes vegades com pàgines pot afegir una pàgina composta, 16, i encara no hi cap (<code>template</code> i <code>frame</code> de l'última pàgina afegida, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). El dona la maquetació, amb el <code>pageIndex</code> de l'última pàgina afegida.</td>
+      <td>La sortida paginada talla la resta al peu d'aquell marc; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L'obertura d'una pàgina composta i la seva plantilla no coincideixen en la doble pàgina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, l'<code>spread</code> de l'obertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una.</td>
@@ -203,6 +208,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td><code>floatShrunk</code></td>
       <td>Una imatge flotant es va compondre més petita que la seva mida per cabre a l'espai del seu buit (<code>placement.shrink</code>). <code>resourceId</code> l'anomena, <code>scale</code> és la fracció de la seva amplada que conserva i <code>overflowPx</code>, si hi és, quant sobresurt encara del peu de la caixa de text a la seva escala mínima (<code>placement.minScale</code>), en una pàgina nova on no tenia cap altre lloc on anar. Assenyala el paràgraf que la cita per primer cop.</td>
       <td>La imatge s'imprimeix a aquesta escala; fora de la caixa de text només quan ho diu <code>overflowPx</code>.</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>Un mapa de bits amb mida d'impressió (el seu <code>bitmap.resolution</code> o un nombre a <code>layout.bitmapResolution</code>; no una resolució llegida del fitxer) compost en una columna que el deixa per sota de la meitat d'aquesta mida, en una pàgina amb la caixa de text més ampla que la columna. <code>resourceId</code> l'anomena, <code>scale</code> és la part de l'amplada d'impressió que conserva, i <code>printWidthPx</code>, <code>widthPx</code> i <code>pageWidthPx</code> són les amplades d'impressió, de columna i de caixa. No s'avisa d'una imatge estrenyida amb <code>placement.width</code>, reduïda al seu buit, girada o posada al marc d'una pàgina composta. Assenyala el paràgraf que la cita primer. Des de postext 1.37.</td>
+      <td>La imatge s'imprimeix a l'amplada de la seva columna. Una imatge al flux mai no és més ampla que la seva columna i la pàgina per defecte en té dues (<code>layout.layoutType: 'double'</code>): compon la pàgina a una columna, fes flotar la imatge sobre tota la pàgina (<code>placement.span: 'page'</code>) o puja'n la resolució si aquesta és la mida que busques.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

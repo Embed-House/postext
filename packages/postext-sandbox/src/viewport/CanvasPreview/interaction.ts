@@ -20,6 +20,10 @@ import type { SandboxLabels } from '../../types/labels';
 import { createComicEditor, slotComicSurface, type BalloonTextPress, type ComicEditor, type ComicSurface } from '../comics/comicEditing';
 import { createFrameTools, type FrameTools } from '../composed/frameTools';
 import { editModeNow } from '../../editing/editMode';
+import { pickAt, type PageSelection } from '../../selection/pageSelection';
+import { clearPageSelection, pageSelectionNow, selectionChapters, setPageSelection } from '../../selection/selectionStore';
+import { createSelectionApply } from '../../selection/applySelection';
+import { chapterOfPages } from '../../selection/viewerSelection';
 
 function sameTarget(a: ResourceFocusTarget, b: ResourceFocusTarget): boolean {
   if (a.kind !== b.kind) return false;
@@ -209,6 +213,7 @@ export interface PageInteraction {
  */
 export function attachPageInteraction(target: HTMLElement, opts: PageInteractionOptions): PageInteraction {
   const { locate, docRef, dispatchRef, activePanelRef, sourceRef, navigateRef, resourcesRef, pageSourceRef } = opts;
+  const pagesHost = target;
   const on = () => opts.enabled?.() ?? true;
   // The page the drag (or the click) started on: its book maps the offsets.
   let pageIndex = -1;
@@ -248,6 +253,55 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   });
   /** A press on a frame in Design mode picks it: no text is selected. */
   const designFrameAt = (at: PagePointer): boolean => editModeNow() === 'design' && frames?.frameAt(at.pageIndex, at.x, at.y) != null;
+
+  // The page selection (#865): what a click picks, at which level, carried
+  // out on the editors (the Markdown, the Design panel, the Resources
+  // panel, the template editor).
+  const selectionApply = createSelectionApply({
+    dispatch: () => dispatchRef.current,
+    activePanel: () => activePanelRef.current,
+    sourceOfPage: (page) => sourceOfPage(page),
+    chapters: selectionChapters,
+    openFrameSlot: (page, frame) => frames?.openSlot(page, frame) ?? false,
+  });
+  /** Pick at a click: the innermost element, the next level up on a click
+   *  again on the spot; the frame first in Design mode; the paragraph on
+   *  a triple click. */
+  const pick = (at: PagePointer, detail: number): PageSelection | null => {
+    const doc = docRef.current;
+    if (!doc) return null;
+    const now = pageSelectionNow();
+    const prev = now && now.doc === doc && detail < 3 ? now.selection : null;
+    let sel = pickAt(doc, at.pageIndex, at.x, at.y, prev);
+    if (!sel) {
+      clearPageSelection();
+      return null;
+    }
+    if (sel.level === 0) {
+      const frameAt = sel.chain.findIndex((e) => e.level === 'frame');
+      const blockAt = sel.chain.findIndex((e) => e.level === 'block' || e.level === 'box');
+      if (detail >= 3 && blockAt > 0) sel = { ...sel, level: blockAt };
+      else if (editModeNow() === 'design' && frameAt > 0) sel = { ...sel, level: frameAt };
+    }
+    const chapter = chapterOfPages(sourceOfPage)(at.pageIndex);
+    if (chapter !== undefined) sel = { ...sel, chapter };
+    setPageSelection(sel, doc, selectionApply);
+    return sel;
+  };
+  /** Whether a pick is carried out by the selection rather than by the
+   *  viewer's own click: a level climbed to, Design mode, or what is not
+   *  body text (a design element, an attribute, a figure label). */
+  const selectionLeads = (sel: PageSelection, at: PagePointer): boolean => {
+    if (editModeNow() === 'design') {
+      // An empty frame's mark (its «Write here» box) is the frame's, though
+      // the source map sees the page there.
+      const frame = frames?.frameAt(at.pageIndex, at.x, at.y);
+      return !frame || sel.chain.some((e) => e.id === frame.id);
+    }
+    if (sel.level > 0) return true;
+    const el = sel.chain[0]!;
+    return el.level === 'design' || el.level === 'slot' || el.level === 'attr' || el.level === 'label' || (el.level === 'text' && el.source.kind === 'attr');
+  };
 
   const resolveSheetPoint = (ev: MouseEvent): PagePointer | null => locate(ev);
   // The point in the page's flow frame, where the text, the floats and
@@ -457,6 +511,8 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       const dy = ev.clientY - dragAnchorClient.y;
       if (dx * dx + dy * dy < DRAG_THRESHOLD_PX * DRAG_THRESHOLD_PX) return;
       dragging = true;
+      // A drag selects characters: no element is picked.
+      clearPageSelection();
     }
     ev.preventDefault();
     if (dragBalloonText) {
@@ -532,7 +588,18 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     if (!at) return;
     pageIndex = at.pageIndex;
     const sel = window.getSelection();
-    if (sel && !sel.isCollapsed && sel.toString().length > 0) return;
+    // A text selection the reader made on these pages (the HTML preview's
+    // own text) keeps the click; one in the editor (a range a page pick
+    // selected there, #865) does not.
+    if (sel && !sel.isCollapsed && sel.toString().length > 0 && sel.anchorNode && pagesHost.contains(sel.anchorNode)) return;
+    // The page selection (#865); the second click of a double click is the
+    // double click's.
+    const picked = ev.detail === 2 || touchTap ? null : pick(at, ev.detail);
+    if (picked && selectionLeads(picked, at) && docRef.current) {
+      ev.preventDefault();
+      selectionApply(picked, docRef.current);
+      return;
+    }
     // A click on a link — a `:ref` to a resource or an anchor, a footnote
     // marker, an index page number, a Markdown link — follows it (#265).
     // The preventDefault also stops the HTML preview's native <a href="#…">
@@ -547,7 +614,15 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     const target = resolvePageTarget(ev);
     if (target !== null && docRef.current) {
       ev.preventDefault();
-      navigateRef!.current!(target, docRef.current);
+      const doc = docRef.current;
+      navigateRef!.current!(target, doc);
+      // A contents entry: the heading it lists is selected in its chapter.
+      const entry = picked?.chain.findIndex((e) => e.heading !== undefined) ?? -1;
+      if (picked && entry >= 0) {
+        const at = { ...picked, level: entry };
+        setPageSelection(at, doc, selectionApply);
+        selectionApply(at, doc);
+      }
       return;
     }
     // A cover picture or logo drawn by a design slot: open its resource so

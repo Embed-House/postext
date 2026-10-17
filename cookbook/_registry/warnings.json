@@ -5571,6 +5571,60 @@
       }
     }
   },
+  "pictureBelowPrintSize": {
+    "source": "engine",
+    "label": {
+      "en": "Picture under its print size",
+      "es": "Imagen por debajo de su tamaño de impresión",
+      "ca": "Imatge per sota de la seva mida d'impressió",
+      "zh": "图片小于其印刷尺寸",
+      "ar": "صورة أصغر من مقاس طباعتها",
+      "ja": "印刷サイズより小さい画像",
+      "pt": "Imagem abaixo do tamanho de impressão",
+      "fr": "Image sous sa taille d’impression",
+      "de": "Bild unter seiner Druckgröße",
+      "it": "Immagine sotto la sua dimensione di stampa"
+    },
+    "cause": {
+      "en": "A bitmap with a print size (its own bitmap.resolution, or a number in layout.bitmapResolution) is set in the flow, where a picture is never wider than its column, and the column holds it at under half that size while the page's text block is wider. The default page has two columns (layout.layoutType 'double'), so a picture meant to fill the page comes out about half as wide.",
+      "es": "Un mapa de bits con tamaño de impresión (su propio bitmap.resolution o un número en layout.bitmapResolution) va en el flujo, donde una imagen nunca es más ancha que su columna, y la columna lo deja por debajo de la mitad de ese tamaño mientras la caja de texto de la página es más ancha. La página por defecto tiene dos columnas (layout.layoutType 'double'), así que una imagen pensada para llenar la página sale a la mitad de ancho, más o menos.",
+      "ca": "Un mapa de bits amb mida d'impressió (el seu bitmap.resolution o un nombre a layout.bitmapResolution) va al flux, on una imatge mai no és més ampla que la seva columna, i la columna el deixa per sota de la meitat d'aquella mida mentre la caixa de text de la pàgina és més ampla. La pàgina per defecte té dues columnes (layout.layoutType 'double'), de manera que una imatge pensada per omplir la pàgina surt a la meitat d'amplada, poc o molt.",
+      "zh": "带印刷尺寸的位图（它自己的 bitmap.resolution，或 layout.bitmapResolution 中的数值）排在正文流中，而流中的图片不会比所在栏更宽；栏宽只够它印刷尺寸的一半以下，版心却更宽。默认页面有两栏（layout.layoutType 'double'），所以本想排满整页的图片只有大约一半宽。",
+      "ar": "صورة نقطية لها مقاس طباعة (دقّتها bitmap.resolution، أو رقم في layout.bitmapResolution) موضوعة في المتن، حيث لا تكون الصورة أعرض من عمودها أبدًا، والعمود يُبقيها دون نصف ذلك المقاس بينما كتلة نص الصفحة أعرض. للصفحة الافتراضية عمودان (layout.layoutType 'double')، فتخرج الصورة المقصود بها ملء الصفحة بنحو نصف عرضها.",
+      "ja": "印刷サイズを持つビットマップ（自身の bitmap.resolution、または layout.bitmapResolution の数値）が本文の流れに置かれています。流れの中の画像は段より広くならず、段の幅は印刷サイズの半分に満たないのに、ページの版面はそれより広くなっています。既定のページは2段（layout.layoutType 'double'）なので、ページいっぱいにするつもりの画像がおよそ半分の幅になります。",
+      "pt": "Um bitmap com tamanho de impressão (o seu bitmap.resolution ou um número em layout.bitmapResolution) está no fluxo, onde uma imagem nunca é mais larga que a sua coluna, e a coluna o deixa abaixo da metade desse tamanho enquanto a mancha de texto da página é mais larga. A página padrão tem duas colunas (layout.layoutType 'double'), então uma imagem pensada para encher a página sai com mais ou menos metade da largura.",
+      "fr": "Un bitmap doté d'une taille d'impression (son bitmap.resolution, ou un nombre dans layout.bitmapResolution) est placé dans le flux, où une image n'est jamais plus large que sa colonne, et la colonne le tient sous la moitié de cette taille alors que le bloc de texte de la page est plus large. La page par défaut a deux colonnes (layout.layoutType 'double') : une image prévue pour remplir la page sort à peu près à moitié de largeur.",
+      "de": "Ein Bitmap mit Druckgröße (eigenes bitmap.resolution oder eine Zahl in layout.bitmapResolution) steht im Fluss, wo ein Bild nie breiter als seine Spalte ist, und die Spalte hält es unter der Hälfte dieser Größe, obwohl der Satzspiegel der Seite breiter ist. Die Standardseite hat zwei Spalten (layout.layoutType 'double'), ein Bild, das die Seite füllen soll, kommt also etwa halb so breit heraus.",
+      "it": "Una bitmap con una dimensione di stampa (il suo bitmap.resolution o un numero in layout.bitmapResolution) sta nel flusso, dove un'immagine non è mai più larga della sua colonna, e la colonna la tiene sotto la metà di quella dimensione mentre la gabbia di testo della pagina è più larga. La pagina predefinita ha due colonne (layout.layoutType 'double'), quindi un'immagine pensata per riempire la pagina esce larga più o meno la metà."
+    },
+    "fix": {
+      "en": "To set it at the page's width: layout.layoutType 'single' for a page of one column, or placement { position: 'top', span: 'page' } (a float across the columns), or put it in a composed page's frame. If the size it has is the one you want, give it a higher resolution so the print size matches.",
+      "es": "Para componerla al ancho de la página: layout.layoutType 'single' para una página a una columna, o placement { position: 'top', span: 'page' } (un flotante sobre las columnas), o llévala al marco de una página compuesta. Si el tamaño que tiene es el que quieres, súbele la resolución para que el tamaño de impresión coincida.",
+      "ca": "Per compondre-la a l'amplada de la pàgina: layout.layoutType 'single' per a una pàgina d'una columna, o placement { position: 'top', span: 'page' } (un flotant damunt les columnes), o porta-la al marc d'una pàgina composta. Si la mida que té és la que vols, puja-li la resolució perquè la mida d'impressió hi coincideixi.",
+      "zh": "要按页面宽度排：用 layout.layoutType 'single' 把页面改为单栏，或用 placement { position: 'top', span: 'page' }（跨栏浮动），或把它放进组合页面的框架。如果现在的尺寸正是想要的，就提高它的分辨率，让印刷尺寸与之一致。",
+      "ar": "لتنضيدها بعرض الصفحة: layout.layoutType 'single' لصفحة بعمود واحد، أو placement { position: 'top', span: 'page' } (عنصر عائم يمتد فوق الأعمدة)، أو ضعها في خانة صفحة مركّبة. وإن كان مقاسها الحالي هو ما تريده فارفع دقّتها ليطابقه مقاس الطباعة.",
+      "ja": "ページ幅で組むには、layout.layoutType 'single' でページを1段組みにするか、placement { position: 'top', span: 'page' }（段をまたぐフロート）にするか、テンプレートページのフレームに入れます。今のサイズでよければ、印刷サイズが合うよう解像度を上げてください。",
+      "pt": "Para compô-la na largura da página: layout.layoutType 'single' para uma página de uma coluna, ou placement { position: 'top', span: 'page' } (um flutuante sobre as colunas), ou leve-a para o quadro de uma página composta. Se o tamanho que ela tem é o que você quer, aumente a resolução para que o tamanho de impressão coincida.",
+      "fr": "Pour la composer à la largeur de la page : layout.layoutType 'single' pour une page sur une colonne, ou placement { position: 'top', span: 'page' } (un flottant sur toutes les colonnes), ou placez-la dans un bloc d'une page composée. Si la taille obtenue est celle que vous voulez, relevez sa résolution pour que la taille d'impression corresponde.",
+      "de": "Um es in Seitenbreite zu setzen: layout.layoutType 'single' für eine einspaltige Seite, oder placement { position: 'top', span: 'page' } (ein Float über die Spalten), oder setzen Sie es in den Rahmen einer zusammengesetzten Seite. Ist die jetzige Größe gewollt, erhöhen Sie seine Auflösung, damit die Druckgröße dazu passt.",
+      "it": "Per comporla alla larghezza della pagina: layout.layoutType 'single' per una pagina a una colonna, oppure placement { position: 'top', span: 'page' } (un flottante su tutte le colonne), oppure mettila nella cornice di una pagina composta. Se la dimensione che ha è quella che vuoi, alzane la risoluzione perché la dimensione di stampa coincida."
+    },
+    "docs": {
+      "slug": "document-format-resources",
+      "heading": {
+        "en": "Bitmap size",
+        "es": "Tamaño de los mapas de bits",
+        "ca": "Mida dels mapes de bits",
+        "zh": "位图尺寸",
+        "ar": "مقاس الصورة النقطية",
+        "ja": "ビットマップのサイズ",
+        "pt": "Tamanho do bitmap",
+        "fr": "Taille des bitmaps",
+        "de": "Bitmap-Größe",
+        "it": "Dimensione delle bitmap"
+      }
+    }
+  },
   "designTextTruncated": {
     "source": "engine",
     "label": {
@@ -6381,6 +6435,60 @@
       }
     }
   },
+  "frameContinuationLimit": {
+    "source": "engine",
+    "label": {
+      "en": "Text still runs past its last added page",
+      "es": "El texto sigue sin caber tras las páginas añadidas",
+      "ca": "El text encara no cap després de les pàgines afegides",
+      "zh": "追加页之后文字仍放不下",
+      "ar": "نص لا يتّسع حتى بعد الصفحات المضافة",
+      "ja": "追加したページでも収まらないテキスト",
+      "pt": "O texto ainda não cabe depois das páginas acrescentadas",
+      "fr": "Le texte déborde encore après les pages ajoutées",
+      "de": "Text passt auch nach den angefügten Seiten nicht",
+      "it": "Il testo non entra nemmeno dopo le pagine aggiunte"
+    },
+    "cause": {
+      "en": "A frame whose overflow.continueIn is 'next-page' or 'template:<id>' sent what it could not hold to a page added after its composed page, and that page's frame sent the rest on again, page after page, until the composed page had added the most pages it may (16). What is left is cut at the foot of the frame on the last added page; it stays in the document, the source map and the reflowable EPUB. Most often the frame that takes the content on the added page is far smaller than the text, or the text is much longer than the page was drawn for.",
+      "es": "Un marco con overflow.continueIn 'next-page' o 'template:<id>' mandó lo que no le cabía a una página añadida tras su página compuesta, y el marco de esa página volvió a mandar el resto, página tras página, hasta que la página compuesta añadió las páginas que como mucho puede añadir (16). Lo que queda se corta al pie del marco de la última página añadida; sigue en el documento, en el mapa de origen y en el EPUB adaptable. Casi siempre el marco que recibe el contenido en la página añadida es mucho más pequeño que el texto, o el texto es mucho más largo de lo que se previó al dibujar la página.",
+      "ca": "Un marc amb overflow.continueIn 'next-page' o 'template:<id>' va enviar el que no hi cabia a una pàgina afegida després de la seva pàgina composta, i el marc d'aquella pàgina va tornar a enviar la resta, pàgina rere pàgina, fins que la pàgina composta va afegir les pàgines que com a màxim pot afegir (16). El que queda es talla al peu del marc de l'última pàgina afegida; continua al document, al mapa d'origen i a l'EPUB adaptable. Gairebé sempre el marc que rep el contingut a la pàgina afegida és molt més petit que el text, o el text és molt més llarg del que es va preveure en dibuixar la pàgina.",
+      "zh": "overflow.continueIn为'next-page'或'template:<id>'的框把放不下的内容送到组合页之后追加的一页，那一页的框又把剩下的继续往后送，一页接一页，直到这个组合页追加到最多可追加的页数（16页）。剩下的部分在最后一页追加页的框底被裁掉，但仍保留在文档、源映射和可重排EPUB中。多半是追加页上接收内容的框比文字小得多，或者文字比设计页面时预想的长得多。",
+      "ar": "إطار قيمة overflow.continueIn فيه 'next-page' أو 'template:<id>' أرسل ما لا يتّسع له إلى صفحة تُضاف بعد صفحته المركّبة، ثم أرسل إطار تلك الصفحة الباقي من جديد، صفحة بعد صفحة، حتى أضافت الصفحة المركّبة أقصى عدد من الصفحات يحقّ لها (16). يُقصّ ما يبقى عند أسفل الإطار في آخر صفحة مضافة، ويبقى في المستند وخريطة المصدر وEPUB المرن. في الغالب يكون الإطار الذي يستقبل المحتوى في الصفحة المضافة أصغر بكثير من النص، أو يكون النص أطول بكثير ممّا رُسمت له الصفحة.",
+      "ja": "overflow.continueInが'next-page'または'template:<id>'の枠が、収まらない部分を組版ページの後ろに追加したページへ送り、そのページの枠がさらに残りを次へ送り、組版ページが追加できる上限（16ページ）に達しました。残りは最後の追加ページの枠の下端で切れますが、文書、ソースマップ、リフロー型EPUBには残ります。たいていは、追加ページで内容を受ける枠がテキストに比べてずっと小さいか、ページを設計したときの想定よりテキストがずっと長いかのどちらかです。",
+      "pt": "Um bloco com overflow.continueIn 'next-page' ou 'template:<id>' mandou o que não cabia para uma página acrescentada depois da sua página composta, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar o máximo de páginas que pode (16). O que sobra é cortado no pé do bloco da última página acrescentada; continua no documento, no mapa de origem e no EPUB refluível. Quase sempre o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto, ou o texto é bem mais longo do que se previu ao desenhar a página.",
+      "fr": "Un bloc dont overflow.continueIn vaut 'next-page' ou 'template:<id>' a envoyé ce qu’il ne pouvait contenir sur une page ajoutée après sa page composée, et le bloc de cette page a renvoyé la suite plus loin, page après page, jusqu’à ce que la page composée ait ajouté le maximum de pages permis (16). Ce qui reste est coupé au pied du bloc de la dernière page ajoutée ; il reste dans le document, la carte des sources et l’EPUB recomposable. Le plus souvent, le bloc qui reçoit le contenu sur la page ajoutée est bien plus petit que le texte, ou le texte est bien plus long que ce que la page prévoyait.",
+      "de": "Ein Rahmen mit overflow.continueIn 'next-page' oder 'template:<id>' hat, was er nicht fassen konnte, auf eine nach seiner komponierten Seite angefügte Seite geschickt, und der Rahmen dieser Seite hat den Rest weitergeschickt, Seite um Seite, bis die komponierte Seite so viele Seiten angefügt hatte, wie sie darf (16). Was übrig bleibt, wird am Fuß des Rahmens auf der letzten angefügten Seite abgeschnitten; im Dokument, in der Quellzuordnung und im umfließenden EPUB bleibt es erhalten. Meist ist der Rahmen, der den Inhalt auf der angefügten Seite aufnimmt, viel kleiner als der Text, oder der Text ist viel länger, als die Seite vorsah.",
+      "it": "Una cornice con overflow.continueIn 'next-page' o 'template:<id>' ha mandato ciò che non conteneva su una pagina aggiunta dopo la sua pagina composta, e la cornice di quella pagina ha mandato avanti il resto, pagina dopo pagina, finché la pagina composta ha aggiunto il massimo di pagine consentito (16). Ciò che resta viene tagliato al piede della cornice dell’ultima pagina aggiunta; rimane nel documento, nella mappa delle sorgenti e nell’EPUB adattabile. Quasi sempre la cornice che riceve il contenuto sulla pagina aggiunta è molto più piccola del testo, o il testo è molto più lungo di quanto la pagina prevedesse."
+    },
+    "fix": {
+      "en": "Give the frame that takes the content on the added page more room (its height, or a page from overflowTemplate with a larger frame), or shorten the text. A box that runs to more than a few pages usually belongs in the running text, not in a frame.",
+      "es": "Da más sitio al marco que recibe el contenido en la página añadida (su altura, o una página de overflowTemplate con un marco más grande) o acorta el texto. Un recuadro que ocupa más de unas pocas páginas suele estar mejor en el texto corrido que en un marco.",
+      "ca": "Dona més espai al marc que rep el contingut a la pàgina afegida (la seva alçada, o una pàgina d'overflowTemplate amb un marc més gran) o escurça el text. Un requadre que ocupa més d'unes poques pàgines sol estar millor al text corrent que en un marc.",
+      "zh": "给追加页上接收内容的框更多空间（加大它的高度，或者用overflowTemplate指定一个框更大的页面），或者缩短文字。一个要排好几页的文本框，通常更适合放进正文，而不是放在框里。",
+      "ar": "أعطِ الإطار الذي يستقبل المحتوى في الصفحة المضافة مساحة أكبر (ارتفاعه، أو صفحة من overflowTemplate بإطار أكبر)، أو اختصر النص. والمربّع الذي يمتدّ إلى أكثر من بضع صفحات يكون مكانه في الغالب النص الجاري لا الإطار.",
+      "ja": "追加ページで内容を受ける枠を大きくする（高さを上げる、またはoverflowTemplateで枠の大きいページを指定する）か、テキストを短くしてください。数ページにわたる囲みは、たいてい枠ではなく本文に置くほうが合っています。",
+      "pt": "Dê mais espaço ao bloco que recebe o conteúdo na página acrescentada (a altura dele, ou uma página de overflowTemplate com um bloco maior) ou encurte o texto. Um quadro que ocupa mais do que algumas páginas costuma ficar melhor no texto corrido do que num bloco.",
+      "fr": "Donnez plus de place au bloc qui reçoit le contenu sur la page ajoutée (sa hauteur, ou une page d’overflowTemplate au bloc plus grand), ou raccourcissez le texte. Un encadré qui court sur plus de quelques pages a en général sa place dans le texte courant plutôt que dans un bloc.",
+      "de": "Geben Sie dem Rahmen, der den Inhalt auf der angefügten Seite aufnimmt, mehr Platz (seine Höhe, oder eine Seite aus overflowTemplate mit einem größeren Rahmen), oder kürzen Sie den Text. Ein Kasten, der über mehr als ein paar Seiten läuft, gehört meist in den Fließtext, nicht in einen Rahmen.",
+      "it": "Dai più spazio alla cornice che riceve il contenuto sulla pagina aggiunta (la sua altezza, o una pagina di overflowTemplate con una cornice più grande) o accorcia il testo. Un riquadro che occupa più di qualche pagina di solito sta meglio nel testo corrente che in una cornice."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameContinuationLimit",
+        "es": "frameContinuationLimit",
+        "ca": "frameContinuationLimit",
+        "zh": "frameContinuationLimit",
+        "ar": "frameContinuationLimit",
+        "ja": "frameContinuationLimit",
+        "pt": "frameContinuationLimit",
+        "fr": "frameContinuationLimit",
+        "de": "frameContinuationLimit",
+        "it": "frameContinuationLimit"
+      }
+    }
+  },
   "spreadMismatch": {
     "source": "engine",
     "label": {
@@ -7188,6 +7296,114 @@
         "fr": "Table des matières",
         "de": "Inhaltsverzeichnis",
         "it": "Indice dei contenuti"
+      }
+    }
+  },
+  "labelAnchorUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Label at an unknown anchor",
+      "es": "Rótulo en un ancla que no existe",
+      "ca": "Rètol en una àncora que no existeix",
+      "zh": "标注指向不存在的锚点",
+      "ar": "تسمية على مرساة غير موجودة",
+      "ja": "存在しないアンカーのラベル",
+      "pt": "Rótulo numa âncora inexistente",
+      "fr": "Étiquette sur une ancre inconnue",
+      "de": "Beschriftung an einem unbekannten Anker",
+      "it": "Etichetta su un'ancora inesistente"
+    },
+    "cause": {
+      "en": "A ::label of a :::figure names, with at=, an anchor that the figure's resource does not have. The label is not drawn on the picture; the reflowable EPUB still lists it and the picture's alternative text names it.",
+      "es": "Un ::label de una :::figure nombra con at= un ancla que el recurso de la figura no tiene. El rótulo no se dibuja sobre la imagen; el EPUB adaptable lo sigue listando y el texto alternativo de la imagen lo nombra.",
+      "ca": "Un ::label d'una :::figure anomena amb at= una àncora que el recurs de la figura no té. El rètol no es dibuixa sobre la imatge; l'EPUB adaptable el continua llistant i el text alternatiu de la imatge l'anomena.",
+      "zh": "某个 :::figure 中的 ::label 用 at= 指向了该图资源中不存在的锚点。这个标注不会画在图片上；可重排 EPUB 仍会列出它，图片的替代文本也会提到它。",
+      "ar": "تسمّي ‎::label‎ في ‎:::figure‎ عبر at= مرساةً لا يملكها مورد الشكل. فلا تُرسم التسمية على الصورة؛ ويظل ملف EPUB المرن يدرجها ويذكرها النص البديل للصورة.",
+      "ja": ":::figure の ::label が at= で、図のリソースにないアンカーを指しています。ラベルは画像の上に描かれません。リフロー型 EPUB では引き続き一覧に出て、画像の代替テキストにも含まれます。",
+      "pt": "Um ::label de uma :::figure nomeia com at= uma âncora que o recurso da figura não tem. O rótulo não é desenhado sobre a imagem; o EPUB fluido continua a listá-lo e o texto alternativo da imagem o menciona.",
+      "fr": "Une ::label d'une :::figure désigne avec at= une ancre que la ressource de la figure n'a pas. L'étiquette n'est pas dessinée sur l'image ; l'EPUB recomposable la liste toujours et le texte alternatif de l'image la cite.",
+      "de": "Ein ::label einer :::figure nennt mit at= einen Anker, den die Ressource der Abbildung nicht hat. Die Beschriftung wird nicht auf das Bild gezeichnet; das umfließende EPUB führt sie weiter auf, und der Alternativtext des Bildes nennt sie.",
+      "it": "Una ::label di una :::figure indica con at= un'ancora che la risorsa della figura non ha. L'etichetta non viene disegnata sull'immagine; l'EPUB adattabile continua a elencarla e il testo alternativo dell'immagine la nomina."
+    },
+    "fix": {
+      "en": "Correct the anchor id in at= (the warning lists the resource's anchors), add the anchor to the resource, or place the label with at=\"x% y%\".",
+      "es": "Corrige el id del ancla en at= (el aviso lista las anclas del recurso), añade el ancla al recurso o coloca el rótulo con at=\"x% y%\".",
+      "ca": "Corregeix l'id de l'àncora a at= (l'avís llista les àncores del recurs), afegeix l'àncora al recurs o col·loca el rètol amb at=\"x% y%\".",
+      "zh": "修改 at= 中的锚点 id（警告会列出资源已有的锚点），在资源中添加该锚点，或用 at=\"x% y%\" 指定位置。",
+      "ar": "صحّح معرّف المرساة في at= (يذكر التحذير مراسي المورد)، أو أضف المرساة إلى المورد، أو ضع التسمية باستخدام at=\"x% y%\".",
+      "ja": "at= のアンカー id を直す（警告にリソースのアンカーが並びます）か、リソースにアンカーを追加するか、at=\"x% y%\" で位置を指定してください。",
+      "pt": "Corrija o id da âncora em at= (o aviso lista as âncoras do recurso), adicione a âncora ao recurso ou posicione o rótulo com at=\"x% y%\".",
+      "fr": "Corrigez l'id de l'ancre dans at= (l'avertissement liste les ancres de la ressource), ajoutez l'ancre à la ressource ou placez l'étiquette avec at=\"x% y%\".",
+      "de": "Korrigieren Sie die Anker-ID in at= (die Warnung listet die Anker der Ressource), legen Sie den Anker in der Ressource an oder setzen Sie die Beschriftung mit at=\"x% y%\".",
+      "it": "Correggi l'id dell'ancora in at= (l'avviso elenca le ancore della risorsa), aggiungi l'ancora alla risorsa o posiziona l'etichetta con at=\"x% y%\"."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "labelAnchorUnknown",
+        "es": "labelAnchorUnknown",
+        "ca": "labelAnchorUnknown",
+        "zh": "labelAnchorUnknown",
+        "ar": "labelAnchorUnknown",
+        "ja": "labelAnchorUnknown",
+        "pt": "labelAnchorUnknown",
+        "fr": "labelAnchorUnknown",
+        "de": "labelAnchorUnknown",
+        "it": "labelAnchorUnknown"
+      }
+    }
+  },
+  "anchorUnlabelled": {
+    "source": "engine",
+    "label": {
+      "en": "Anchor without a label",
+      "es": "Ancla sin rótulo",
+      "ca": "Àncora sense rètol",
+      "zh": "锚点缺少标注",
+      "ar": "مرساة بلا تسمية",
+      "ja": "ラベルのないアンカー",
+      "pt": "Âncora sem rótulo",
+      "fr": "Ancre sans étiquette",
+      "de": "Anker ohne Beschriftung",
+      "it": "Ancora senza etichetta"
+    },
+    "cause": {
+      "en": "An anchor of a figure's resource names a label style, and no ::label of the figure stands at it in this language: the word the map has room for is missing from this edition. A note, not an error: anchors without a style (a comic speaker's) are not reported.",
+      "es": "Un ancla del recurso de una figura nombra un estilo de rótulo y ningún ::label de la figura está en ella en este idioma: a esta edición le falta la palabra para la que el mapa tiene sitio. Es una nota, no un error; las anclas sin estilo (las de los personajes de un cómic) no se señalan.",
+      "ca": "Una àncora del recurs d'una figura anomena un estil de rètol i cap ::label de la figura no hi és en aquesta llengua: a aquesta edició li falta la paraula per a la qual el mapa té lloc. És una nota, no un error; les àncores sense estil (les dels personatges d'un còmic) no s'assenyalen.",
+      "zh": "图资源的某个锚点设置了标注样式，但在当前语言中图里没有任何 ::label 位于此处：地图为这个词留了位置，这一版本却缺了它。这只是提示，不是错误；没有样式的锚点（例如漫画角色的锚点）不会报告。",
+      "ar": "تسمّي مرساةٌ في مورد الشكل نمطَ تسمية، ولا توجد عندها أي ‎::label‎ من الشكل بهذه اللغة: الخريطة تتسع للكلمة لكن هذه الطبعة تخلو منها. هذه ملاحظة لا خطأ؛ ولا يُبلَّغ عن المراسي التي بلا نمط (مثل مراسي شخصيات القصص المصورة).",
+      "ja": "図のリソースのアンカーにラベルスタイルが設定されているのに、この言語ではそこに図の ::label がひとつもありません。地図に場所がある語がこの版では抜けています。エラーではなく注意です。スタイルのないアンカー（漫画の話者のものなど）は報告されません。",
+      "pt": "Uma âncora do recurso de uma figura nomeia um estilo de rótulo e nenhum ::label da figura fica nela neste idioma: falta a esta edição a palavra para a qual o mapa tem espaço. É uma nota, não um erro; âncoras sem estilo (as dos personagens de um quadrinho) não são indicadas.",
+      "fr": "Une ancre de la ressource d'une figure porte un style d'étiquette et aucune ::label de la figure ne s'y trouve dans cette langue : il manque à cette édition le mot pour lequel la carte a de la place. C'est une note, pas une erreur ; les ancres sans style (celles des personnages d'une BD) ne sont pas signalées.",
+      "de": "Ein Anker der Ressource einer Abbildung nennt einen Beschriftungsstil, und in dieser Sprache steht dort kein ::label der Abbildung: Dieser Ausgabe fehlt das Wort, für das die Karte Platz hat. Ein Hinweis, kein Fehler; Anker ohne Stil (etwa die von Comicfiguren) werden nicht gemeldet.",
+      "it": "Un'ancora della risorsa di una figura indica uno stile di etichetta e in questa lingua nessuna ::label della figura vi si trova: a questa edizione manca la parola per cui la mappa ha spazio. È una nota, non un errore; le ancore senza stile (quelle dei personaggi di un fumetto) non vengono segnalate."
+    },
+    "fix": {
+      "en": "Write the label in this language's Markdown (::label[…]{at=\"anchor\"}), or take the style off the anchor if this edition leaves the word out.",
+      "es": "Escribe el rótulo en el Markdown de este idioma (::label[…]{at=\"ancla\"}) o quita el estilo del ancla si esta edición prescinde de la palabra.",
+      "ca": "Escriu el rètol al Markdown d'aquesta llengua (::label[…]{at=\"àncora\"}) o treu l'estil de l'àncora si aquesta edició prescindeix de la paraula.",
+      "zh": "在该语言的 Markdown 中写上标注（::label[…]{at=\"锚点\"}）；如果这一版本不需要这个词，就删除锚点上的样式。",
+      "ar": "اكتب التسمية في Markdown هذه اللغة (‎::label[…]{at=\"مرساة\"}‎)، أو أزل النمط من المرساة إذا كانت هذه الطبعة تستغني عن الكلمة.",
+      "ja": "この言語の Markdown にラベルを書く（::label[…]{at=\"アンカー\"}）か、この版でその語を使わないならアンカーのスタイルを外してください。",
+      "pt": "Escreva o rótulo no Markdown deste idioma (::label[…]{at=\"âncora\"}) ou tire o estilo da âncora se esta edição dispensa a palavra.",
+      "fr": "Écrivez l'étiquette dans le Markdown de cette langue (::label[…]{at=\"ancre\"}), ou retirez le style de l'ancre si cette édition se passe du mot.",
+      "de": "Schreiben Sie die Beschriftung in das Markdown dieser Sprache (::label[…]{at=\"anker\"}), oder nehmen Sie dem Anker den Stil, wenn diese Ausgabe das Wort weglässt.",
+      "it": "Scrivi l'etichetta nel Markdown di questa lingua (::label[…]{at=\"ancora\"}), oppure togli lo stile all'ancora se questa edizione fa a meno della parola."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "anchorUnlabelled",
+        "es": "anchorUnlabelled",
+        "ca": "anchorUnlabelled",
+        "zh": "anchorUnlabelled",
+        "ar": "anchorUnlabelled",
+        "ja": "anchorUnlabelled",
+        "pt": "anchorUnlabelled",
+        "fr": "anchorUnlabelled",
+        "de": "anchorUnlabelled",
+        "it": "anchorUnlabelled"
       }
     }
   }

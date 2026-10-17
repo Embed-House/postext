@@ -134,7 +134,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>diese Vorlage</td>
-      <td>Die Vorlage der Seiten, die hinzukommen, wenn ein Rahmen auf der nächsten Seite weiterläuft (<code>overflow.continueIn: 'next-page'</code>). Nicht gesetzt, verwendet die hinzugefügte Seite diese Vorlage, in der nur die fortgesetzten Rahmen gefüllt sind.</td>
+      <td>Die Vorlage der Seiten, die hinzukommen, wenn ein Rahmen auf der nächsten Seite weiterläuft (<code>overflow.continueIn: 'next-page'</code>). Nicht gesetzt, ist die hinzugefügte Seite diese Vorlage, noch einmal gesetzt, in der nur die fortgesetzten Rahmen gefüllt sind; die übrigen nehmen keinen Platz ein. Ist hier eine Doppelseite angegeben, wird auch die Fortsetzung eine Doppelseite. Siehe <a href="/de/docs/composed-pages#wenn-der-text-weiterläuft">Zusammengesetzte Seiten › Wenn der Text weiterläuft</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt) oder <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage).</td>
+      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>) oder <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat, bis zu 16 hinzugefügte Seiten.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>je nach Sprache</td>
-      <td>Die Marke am Ende eines abgeschnittenen Stücks. Nicht gesetzt, das Fortsetzungswort der Dokumentsprache (wie bei geteilten Tabellen); <code>false</code> setzt keine.</td>
+      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, pr
 - `minHeight` an den übrigen Rahmen der Gruppe: wie weit sie Platz abgeben; ein Rahmen wird nie kleiner als das, was sein eigener Inhalt braucht.
 - `fit.scaleImages` und `fit.imageMinScale`: ob die Bilder des Rahmens und seiner Gruppe kleiner gesetzt werden dürfen, und bis zu welchem Maßstab (standardmäßig 80 %).
 - `fit.shrinkText` und `fit.minScale`: ob der Text des Rahmens kleiner gesetzt werden darf, und bis zu welchem Maßstab (standardmäßig 90 %). Der Maßstab gilt gleichermaßen für Schriftgröße, Zeilenabstand und Abstände; der Rahmen behält seine Größe.
-- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht.
+- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer Seite, die nach dieser hinzukommt (`'next-page'`, `'template:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter.
 
 Die Maßstäbe gehen in Schritten von 2,5 %, und der Umbruch nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
 
@@ -493,7 +493,7 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next` und `overflow.continueIn: "#frame"`, dazu `area`, `grid`, `decoration`, `header`, `footer` und `variants` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `overflow.continueIn: "next-page"` und `overflowTemplate`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next` und `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) mit `overflow.mark`, dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants` und `overflowTemplate` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden: die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` einer Gruppe; ihre Rahmen behalten ihre eigene Platzierung), `fit`, `writingMode` und `direction` eines Rahmens sowie `bodyStyle` und `palette` der Vorlage. Eine Breite `'auto'` wird als `'fill'` gelesen.
 
 ### Doppelseiten
 
@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Eine Beschriftung ohne Stil, oder mit einem Stil, der keine Schrift festlegt, übernimmt Schriftfamilie, Größe, Strichstärke und Farbe des Grundtexts. Die Zeilen einer mehrzeiligen Beschriftung stehen im 1,15-Fachen ihrer Größe, oder im Zeilenabstand des geliehenen Absatzstils. Über `paragraphStyle` übernimmt die Beschriftung auch Kursive und Versalien dieses Stils; `fontStyle: 'italic'` und `textTransform: 'uppercase'` fügen sie einem Stil hinzu, der nichts leiht. Eine zum Einpassen verkleinerte Beschriftung behält ihren Halo im Verhältnis.
+
 ### Beschriftungsfelder eines Ankers
 
 Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher verwenden) nehmen einige optionale Felder für Beschriftungen auf. Es sind Bruchteile des Bilds, daher gelten sie in jeder Sprache und bei jedem Zuschnitt des Bilds. Comics ignorieren sie.
@@ -659,6 +661,8 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
     </tr>
   </tbody>
 </table>
+
+`start` und `end` folgen der Richtung der Beschriftung: In einer arabischen Beschriftung ist `start` die rechte Kante. Ein Anker, den die links- und die rechtsläufige Ausgabe einer Karte teilen, liest sich am besten mit der Beschriftung zentriert über oder unter dem Punkt. Eine Beschriftung mit `width` bricht zwischen den Wörtern um; ein Wort, das breiter als die Satzbreite ist, verkleinert die ganze Beschriftung bis zum `minScale` ihres Stils. Wie Beschriftungen gezeichnet werden, steht unter [Zusammengesetzte Seiten](/de/docs/composed-pages).
 
 ## Warnungen zu Seitenvorlagen
 

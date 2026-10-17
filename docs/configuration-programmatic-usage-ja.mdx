@@ -130,6 +130,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
+      <td><code>frameContinuationLimit</code></td>
+      <td>枠の内容が、テンプレートページの後に加えるページへ（<code>overflow.continueIn: 'next-page'</code>または<code>'template:&lt;id&gt;'</code>）、テンプレートページが加えられる上限の16ページ分続いても、まだ収まらない（<code>template</code>と<code>frame</code>は最後の追加ページのもの、<code>fenceIndex</code>、<code>pages</code>、<code>overflowMm</code>、<code>configPath</code>）。割り付けが出す警告で、最後の追加ページの<code>pageIndex</code>が付きます。</td>
+      <td>ページ単位の出力では、残りがその枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>テンプレートページの開始行とテンプレートで見開きの指定が食い違っています（<code>template</code>、<code>fenceIndex</code>。<code>fence</code>は開始行の<code>spread</code>、<code>templateSpread</code>はテンプレートの指定）。</td>
       <td>テンプレートに従います。見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。</td>
@@ -203,6 +208,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>floatShrunk</code></td>
       <td>フロートの図版を、置き場所の空きに収めるため元より小さく組みました（<code>placement.shrink</code>）。<code>resourceId</code>はその図版、<code>scale</code>は保った幅の比率です。<code>overflowPx</code>があれば、ほかに行き場のない新しいページで、最小倍率（<code>placement.minScale</code>）で組んでもなお版面の下端からはみ出す量です。最初に引用している段落を指します。</td>
       <td>図版はその倍率で印刷されます。版面からはみ出すのは<code>overflowPx</code>があるときだけです。</td>
+    </tr>
+    <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページのフレームに置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
+      <td>画像は段の幅で印刷されます。本文の流れの中の画像は段より広くならず、既定のページは2段です（<code>layout.layoutType: 'double'</code>）。ページを1段組みにするか、画像をページ全幅のフロートにする（<code>placement.span: 'page'</code>）か、そのサイズでよければ解像度を上げてください。</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>

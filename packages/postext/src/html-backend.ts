@@ -53,6 +53,7 @@ import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
+import { figureLabelMatrix, undrawnLabels } from './composed/labels';
 import { composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
@@ -2770,6 +2771,42 @@ function renderResourceTable(rb: ResolvedResourceBlock, bx: number, by: number, 
   return parts.join('');
 }
 
+/**
+ * The labels of a `:::figure` drawn on its picture (#860), its body's
+ * top-left corner at (`bx`, `by`): one box per label, turned by its
+ * matrix about the block's frame, holding its plate and its lines. The
+ * labels follow the picture in the markup, in the order written, so they
+ * are read after it; a halo strokes the letters under their fill.
+ */
+function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: number, options: HtmlPaint): string {
+  const n2 = (v: number): string => String(+v.toFixed(4));
+  const parts: string[] = [];
+  for (const label of rb.labels ?? []) {
+    const layout = label.layout;
+    if (!layout) continue;
+    const m = figureLabelMatrix(layout, bx, by);
+    const fonts: ResourceLineFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
+    const halo = layout.halo && layout.halo.widthPx > 0
+      ? `-webkit-text-stroke:${n2(2 * layout.halo.widthPx)}px ${layout.halo.color};paint-order:stroke fill;stroke-linejoin:round;`
+      : '';
+    const inner: string[] = [];
+    if (layout.background) {
+      const r = layout.background.rect;
+      inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;background:${layout.background.color};"></div>`);
+    }
+    layout.lines.forEach((line, i) => {
+      inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
+    });
+    const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
+    const id = label.id ? ` data-label="${esc(label.id)}"` : '';
+    parts.push(
+      `<div class="pt-figure-label"${id}${dir} style="position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;` +
+      `transform:matrix(${m.map(n2).join(',')});${halo}">` + inner.join('') + '</div>',
+    );
+  }
+  return parts.join('');
+}
+
 function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
   const rb = block.resourceBlock;
   if (!rb) return '';
@@ -2803,8 +2840,10 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
   } else if (rb.kind === 'bitmap' || rb.kind === 'svg') {
     const url = rb.fileId ? imageUrl(options, rb.fileId, rb.resource.id) : undefined;
     // `<img>`, or a neutral placeholder matching the canvas backend's colours.
-    // A `:::figure`'s labels follow its alternative text (#862).
-    parts.push(renderFittedImage(url, altWithLabels(rb.resource.altText ?? '', rb.labels), rb.kind === 'svg' ? 'SVG' : 'Image', bx, by, bw, bh, options, rb.kind === 'svg', rb.bodySource));
+    // A `:::figure`'s labels follow its alternative text (#862) unless
+    // they are drawn as text over it (#860).
+    parts.push(renderFittedImage(url, altWithLabels(rb.resource.altText ?? '', undrawnLabels(rb.labels)), rb.kind === 'svg' ? 'SVG' : 'Image', bx, by, bw, bh, options, rb.kind === 'svg', rb.bodySource));
+    if (rb.labels) parts.push(renderFigureLabelsHtml(rb, bx, by, options));
   } else if (rb.kind === 'table') {
     parts.push(renderResourceTable(rb, bx, by, options));
   }

@@ -134,7 +134,7 @@ const config: PostextConfig = {
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>本模板</td>
-      <td>框架续排到下一页（<code>overflow.continueIn: 'next-page'</code>）时所加页面的模板。未设置时，所加的页面使用本模板，只填入续排的框架。</td>
+      <td>框架续排到下一页（<code>overflow.continueIn: 'next-page'</code>）时所加页面的模板。未设置时，所加的页面是把本模板再排一遍，只填入续排的框架，其他框架不占空间。这里设为跨页模板时，续排的部分也是跨页。见<a href="/zh/docs/composed-pages#文字续排时">模板页 › 文字续排时</a>。</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框架，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框架）或<code>'template:&lt;id&gt;'</code>（该模板的一页）。</td>
+      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框架，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框架，按<code>overflowTemplate</code>来排）或<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框架，没有则进入它的<code>flow</code>框架）。追加页上的框架自己没有设规则时，沿用把内容带来的那条规则，最多追加16页。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>随语言</td>
-      <td>被截断部分末尾的标记。未设置时，使用文档语言的续排词（与拆分表格相同）；<code>false</code>不加标记。</td>
+      <td>为续排到另一页而截断的部分末尾的标记。未设置时，使用框架样式的<code>continuesMarker</code>，它随文档语言而定（“Continued”“Continúa”“À suivre”等，与拆分表格所用的词相同）；设为字符串就用这些文字；<code>false</code>不加标记。同一页上用<code>next</code>串接的框架不带标记。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 - 组中其他框架的`minHeight`：它们最多让出多少空间；框架绝不会小于它自己的内容所需。
 - `fit.scaleImages`和`fit.imageMinScale`：这个框架及其所在组中的图片是否可以缩小，以及最小缩到多少（默认80%）。
 - `fit.shrinkText`和`fit.minScale`：框架中的文字是否可以缩小，以及最小缩到多少（默认90%）。字号、行距和间距使用同一个比例；框架本身的尺寸不变。
-- `overflow.continueIn`：这些都不够时，内容到哪里续排。
+- `overflow.continueIn`：这些都不够时，内容到哪里续排：另一个框架，或这一页之后追加的一页（`'next-page'`、`'template:<id>'`），文字在那里接在截断部分的`overflow.mark`之后，按原来的大小续排。
 
 缩放比例每级2.5%，排版取能放下的最大比例，所以只多出一行的文字排成97.5%，而不是直接降到最小值。必须保持字号的方框设`fit: { shrinkText: false }`；图片必须保持原大的页面，在其组中的各个框架上设`fit: { scaleImages: false }`：
 
@@ -493,7 +493,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`和`overflow.continueIn: "#frame"`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`和`variants`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、`overflow.continueIn: "next-page"`和`overflowTemplate`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框架的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`和`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`）及`overflow.mark`，以及模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`和`overflowTemplate`。以下设置会被读取和检查，但还没有应用：组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`；组内框架保持各自的位置）、`fit`、框架的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`。宽度`'auto'`按`'fill'`处理。
 
 ### 跨页
 
@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+没有样式的注记，或样式没有指定字体的注记，使用正文的字体族、字号、字重和颜色。多行注记的行距是字号的1.15倍，或者是所借用段落样式的行距。通过`paragraphStyle`，注记还会沿用该样式的斜体和大写；`fontStyle: 'italic'`和`textTransform: 'uppercase'`可以为不借用段落样式的注记加上它们。为放下而缩小的注记，其光晕按比例缩小。
+
 ### 锚点的注记字段
 
 图片的锚点（`Resource.anchors`，漫画用来标记说话人的那些点）可以带几个供注记使用的可选字段。这些字段都是相对于图片的比例，所以在每种语言中、在图片的任何裁切下都成立。漫画忽略它们。
@@ -659,6 +661,8 @@ labelStyles: [
     </tr>
   </tbody>
 </table>
+
+`start`和`end`按注记的书写方向理解：阿拉伯文注记的`start`是它的右边。同一张地图的从左向右版本和从右向左版本共用的锚点，最好让注记居中放在点的上方或下方。设有`width`的注记在词与词之间换行；比宽度还宽的词会让整个注记缩小，最小到其样式的`minScale`。注记的绘制方式见[模板页](/zh/docs/composed-pages)。
 
 ## 页面模板警告
 

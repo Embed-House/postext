@@ -134,7 +134,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>esta plantilla</td>
-      <td>La plantilla de las páginas que se añaden cuando un marco continúa en la página siguiente (<code>overflow.continueIn: 'next-page'</code>). Sin fijar, la página añadida usa esta plantilla con solo los marcos que continúan llenos.</td>
+      <td>La plantilla de las páginas que se añaden cuando un marco continúa en la página siguiente (<code>overflow.continueIn: 'next-page'</code>). Sin fijar, la página añadida es esta plantilla compuesta de nuevo con solo los marcos que continúan llenos; los demás no ocupan sitio. Una doble página aquí hace que la continuación sea una doble página. Consulta <a href="/es/docs/composed-pages#cuando-el-texto-sigue">Páginas compuestas › Cuando el texto sigue</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>ninguno</td>
-      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta) o <code>'template:&lt;id&gt;'</code> (una página de esa plantilla).</td>
+      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta, a partir de <code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una página de esa plantilla: su marco del mismo nombre o, si no lo tiene, su marco de flujo). Un marco de una página añadida sin regla propia sigue con la regla que trajo el contenido, hasta 16 páginas añadidas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la del idioma</td>
-      <td>La marca al final de un trozo cortado. Sin fijar, la palabra de continuación del idioma del documento (la misma que usan las tablas partidas); <code>false</code> no pone ninguna.</td>
+      <td>La marca al final de un trozo cortado para otra página. Sin fijar, el <code>continuesMarker</code> del estilo del marco, que sigue el idioma del documento («Continued», «Continúa», «À suivre»…, las palabras que usan las tablas partidas); una cadena pone esas palabras; <code>false</code> no pone ninguna. Un marco encadenado con <code>next</code> en la misma página no lleva marca.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ Cuando el contenido de un marco es más alto que el sitio que le da su grupo, la
 - `minHeight` en los demás marcos del grupo: hasta dónde devuelven espacio; un marco nunca baja de lo que necesita su propio contenido.
 - `fit.scaleImages` y `fit.imageMinScale`: si las imágenes del marco y de su grupo se pueden componer más pequeñas, y hasta qué escala (80 % por defecto).
 - `fit.shrinkText` y `fit.minScale`: si el texto del marco se puede componer más pequeño, y hasta qué escala (90 % por defecto). La escala es la misma para el cuerpo, el interlineado y los espacios; el marco conserva su tamaño.
-- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta.
+- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta: en otro marco o en una página añadida detrás de esta (`'next-page'`, `'template:<id>'`), donde el texto sigue a tamaño completo después de la `overflow.mark` del trozo.
 
 Las escalas van en pasos del 2,5 % y la maquetación toma la mayor con la que cabe, así que un texto al que le sobra una línea se compone al 97,5 %, no al mínimo. Una caja que debe conservar su cuerpo de letra lleva `fit: { shrinkText: false }`; en una página cuyas imágenes deben conservar su tamaño, los marcos de su grupo llevan `fit: { scaleImages: false }`:
 
@@ -493,7 +493,7 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next` y `overflow.continueIn: "#frame"`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer` y las `variants` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, `overflow.continueIn: "next-page"` y `overflowTemplate`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next` y `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) con `overflow.mark`, y también el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants` y el `overflowTemplate` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo; sus marcos conservan su propia colocación), `fit`, el `writingMode` y la `direction` de un marco, y el `bodyStyle` y la `palette` de la plantilla. Un ancho `'auto'` se lee como `'fill'`.
 
 ### Dobles páginas
 
@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+Un rótulo sin estilo, o con un estilo que no fija la letra, toma la familia, el cuerpo, el grosor y el color del texto general. Las líneas de un rótulo de varias líneas van a 1,15 veces su cuerpo, o al interlineado del estilo de párrafo que toma prestado. Con `paragraphStyle`, el rótulo toma también la cursiva y las mayúsculas de ese estilo; `fontStyle: 'italic'` y `textTransform: 'uppercase'` las añaden a un estilo que no toma ninguno. Un rótulo reducido para caber conserva su halo en proporción.
+
 ### Campos de rótulo de un anclaje
 
 Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics para los hablantes) admiten unos pocos campos opcionales para rótulos. Son fracciones de la imagen, así que valen en todos los idiomas y con cualquier recorte de la imagen. Los cómics los ignoran.
@@ -659,6 +661,8 @@ Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics 
     </tr>
   </tbody>
 </table>
+
+`start` y `end` siguen la dirección del rótulo: en un rótulo árabe, `start` es su borde derecho. Un anclaje que comparten las ediciones de izquierda a derecha y de derecha a izquierda de un mismo mapa funciona mejor con el rótulo centrado encima o debajo del punto. Un rótulo con `width` se corta entre palabras; una palabra más ancha que la medida reduce todo el rótulo, hasta el `minScale` de su estilo. Cómo se dibujan los rótulos se explica en [Páginas compuestas](/es/docs/composed-pages).
 
 ## Avisos de las plantillas de página
 

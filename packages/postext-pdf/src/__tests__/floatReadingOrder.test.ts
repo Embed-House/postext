@@ -254,3 +254,45 @@ describe('a float heading the page that cites it is read after its citation (#63
     expect(types.slice(0, 17).every((t) => t === 'P')).toBe(true);
   }, 60_000);
 });
+
+// #893: each block of a floated box was read in a `readFloat` call of its
+// own, which put the flow's grouping state back after it, so every item of
+// a list in the box opened a new `L`. The blocks a box floats are now read
+// in one call, as a composed frame's are (#862).
+describe('a list in a floated or fixed box reads as one list (#893)', () => {
+  const shape = (e: Elem): string => `${e.type}(${e.kids.map(shape).join(' ')})`;
+  const tree = async (md: string) => {
+    const layout = buildDocument({ markdown: md }, config);
+    expect(layout.pages.some((p) => (p.floats ?? []).some((f) => f.type === 'callout'))).toBe(true);
+    const pdf = await PDFDocument.load(await renderToPdf(layout, { fontProvider }));
+    const treeRoot = pdf.catalog.lookup(PDFName.of('StructTreeRoot'), PDFDict);
+    return readElem(pdf, (treeRoot.get(PDFName.of('K')) as PDFArray).get(0) as PDFRef);
+  };
+  const box = (root: Elem) => root.kids.find((k) => k.type === 'Div')!;
+
+  it('reads a top box as Div(L(LI LI)) between its paragraphs', async () => {
+    const root = await tree('Intro.\n\n:::callout{placement="top"}\n- one\n- two\n:::\n\nOutro.');
+    expect(root.kids.map((k) => k.type)).toEqual(['P', 'Div', 'P']);
+    expect(box(root).kids.map((k) => k.type)).toEqual(['L']);
+    expect(box(root).kids[0]!.kids.map((k) => k.type)).toEqual(['LI', 'LI']);
+  }, 60_000);
+
+  it('keeps a nested list and the text around it in a bottom box', async () => {
+    const root = await tree([
+      'Intro.', '', ':::callout{placement="bottom"}', 'Lead.', '', '- one', '  - one a', '  - one b', '- two', '', 'After.', ':::', '', 'Outro.',
+    ].join('\n'));
+    const div = box(root);
+    expect(div.kids.map((k) => k.type)).toEqual(['P', 'L', 'P']);
+    const list = div.kids[1]!;
+    expect(list.kids.map((k) => k.type)).toEqual(['LI', 'LI']);
+    // The nested list sits in the first item's body.
+    expect(shape(list.kids[0]!)).toContain('L(LI(');
+    expect(list.kids[0]!.kids.find((k) => k.type === 'LBody')!.kids.filter((k) => k.type === 'L')).toHaveLength(1);
+  }, 60_000);
+
+  it('reads a fixed box as one list too', async () => {
+    const root = await tree('Intro.\n\n:::callout{placement="fixed"}\n1. one\n2. two\n3. three\n:::\n\nOutro.');
+    expect(box(root).kids.map((k) => k.type)).toEqual(['L']);
+    expect(box(root).kids[0]!.kids).toHaveLength(3);
+  }, 60_000);
+});

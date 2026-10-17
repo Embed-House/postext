@@ -245,8 +245,38 @@ those lines, or run the script.
   its content or mark the frame `optional: true`; chain targets are never reported); `WARN
   pageFenceLength` (`:::page{template=…}` with three colons, read as a comic page: use four);
   `unclosedContainer` with `composedPage` (no closing fence of the same colon count: "a ::::page is never
-  closed by a fence of as many colons"). Until the release that lays composed pages out (#855), their
-  content is set in the running text on pages of its own: judge the warnings, not the page images.
+  closed by a fence of as many colons"); `WARN spreadMismatch` (postext ≥ 1.35: the fence's `spread`
+  and the template's disagree; the template decides). On 1.34.0 the content of a composed page is set
+  in the running text on pages of its own: judge the warnings, not the page images.
+- `WARN frameOverflow` (postext ≥ 1.34.1; proposals from 1.36.0): a frame's content does not fit after
+  the reflow ladder (free space, the group pushing and yielding, pictures down to `fit.imageMinScale`,
+  the group's frames down to `minHeight`, text down to `fit.minScale`); paged output cuts the rest at the
+  frame's foot. `--json` `data`: `template`, `frame`, `locale`, `overflowMm`, `configPath`, `stepsTried`,
+  `scale`, `imageScale`, `proposals` (`{kind, path, value}`: `allowShrink`, `raiseMax`, `lowerMin`,
+  `continueNextPage`; `useTemplate` and `shortenText` carry a Markdown range). Take the proposal that
+  matches the design: `raiseMax`/`lowerMin` when the page has room, `allowShrink` only within the house
+  minimum, `continueNextPage` for a box the source continues, `shortenText` last. A longer translation
+  is the usual cause: fix the template's limits for every edition.
+- `WARN frameContinuationLimit` (postext ≥ 1.37): a frame went on over 16 added pages and was cut; its
+  frame on the added pages is far too small (an `overflowTemplate` with a larger one), or the box
+  belongs in the running text.
+- `WARN labelAnchorUnknown` (postext ≥ 1.37): a `::label` names an anchor its figure's resource lacks; it
+  is not drawn (`known` lists the anchors). `NOTE anchorUnlabelled`: an anchor with a label style has no
+  word in this edition (a missing translation, or take the style off).
+- `WARN textWrap` reason `noContour` (postext ≥ 1.36): a `wrap: 'contour'` picture has no known shape (no
+  alpha channel, no `contour.points`); the text ran round its box.
+- `reflow p. N (template): dinero grew 8 mm; gasto moved down 8 mm` (postext ≥ 1.35; `--json` `reflow[]`):
+  what the layout changed from the template's drawing. Empty on the source's own text when the
+  template matches it; a box that grew there means its `minHeight` is short of what the book's fonts
+  need. `text at 92.5 %` / `picture at 80 %` (1.36) and `continued on page 9` (1.37) per edition go in the
+  report.
+- **Composed pages, all at once**: `python3 scripts/composed_check.py check my-book [--stress 1.3]` runs
+  `postext check --json` and `postext html` for every edition and fails on the warnings above, on
+  `contentInConfig`, `tocGroupSplit` and template warnings, and on a page whose frames the HTML reads in
+  another order than the Markdown; it warns when editions read a page differently and lists the scaled
+  frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
+  page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
+  fails (composed-pages.md §7).
 - `CONFIG cjkGridClamped`: `cjk.grid` asked for more characters or lines than the margins leave room for.
 - `PDF-WARN missingGlyph` (with `--out`): characters no file of a face has a glyph for; they print as
   empty boxes. `variableFontDefaultInstance`: a variable font printed at its default weight.
@@ -349,8 +379,8 @@ lettering, every page, every language.
 Open the project in the sandbox: import the `.postext` (`preset_kit.py pack
 --manifest-only`), or serve the presets folder. A bundle in several languages
 asks which one to import, and the new book holds that edition only (named
-after the manifest `name` whatever the language: `localized.<lang>` has no
-`name`, #891): import each edition to check it. Check the canvas, the HTML viewer, the Folio
+by `localized.<lang>.name` from postext 1.34.1, #891, else by the manifest
+`name`): import each edition to check it. Check the canvas, the HTML viewer, the Folio
 tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading
 hierarchy, design anchors and placeholders, parity issues. The PDF tab's
@@ -409,6 +439,11 @@ the page images instead of claiming the port is visually verified.
 | Manga panels read left to right | `comics.artDirection: 'rtl'` (or the page's `direction=rtl`); never reverse the split by hand |
 | Spread's panel 1 on the second page | the book's binding: a right-to-left comic in a left-bound book; give the config a `comics` section and leave `page.binding` on `'auto'`, or set `'right'` |
 | Lettering too small on an A4 album | `comics.lettering.fontSize` (default 7.5 pt): 9–10 pt |
+| A box of a composed page does not grow, the boxes under it do not move | put the boxes in a `stack` group and give each its drawn height as `minHeight` (`height` `auto`), not a fixed `height` |
+| A translation overflows a box that fits in the source language | `maxHeight` up to what the page absorbs, `fit.minScale` (≥ 0.9), `overflow.continueIn: "next-page"`; take `frameOverflow`'s proposals; never a smaller font for one edition |
+| A screen reader reads a box before the page's text | the Markdown order inside the `::::page`: text first, each box then its pictures |
+| A frame's tab prints no words | the frame's callout style needs a `label` block; the words are the fence's `label="…"` |
+| A titled box loses the heading design of its title | heading designs are not drawn inside frames yet (#906): make the title its own styled frame |
 
 Accept remaining deviations explicitly and list them as known gaps, for
 example a paragraph the source wraps around a box, or a caption set 1–5 %

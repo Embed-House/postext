@@ -3,6 +3,7 @@ import { mapInlineSnippet, resourceBlockRectToPage, resourceBlockToLocal, uncrop
 import type { ResourceFocusTarget } from '../../context/SandboxContext';
 import { hitSvgTextIndex, type SvgTextIndex } from '../../controls/svgSource';
 import { addsHyphen, foldRefRuns, resourceBlocksOnPage, segmentPlainLength } from './geometry';
+import { blockFrameMatrix, intoBlockSpace } from '../composed/frameHit';
 
 // ---------------------------------------------------------------------------
 // Resource text hit-testing (pure). Resource runs — table cells, captions,
@@ -228,13 +229,16 @@ export function resourceTextAtPixel(
   yPage: number,
   svgIndexFor?: (fileId: string) => SvgTextIndex | undefined,
 ): ResourceTextHit | null {
+  const page = doc.pages[pageIndex];
   for (const block of resourceBlocksOnPage(doc, pageIndex)) {
-    if (!inside(block.bbox, xPage, yPage)) continue;
+    // A block of a composed frame is read in the frame's coordinates (#910).
+    const at = intoBlockSpace(blockFrameMatrix(page, block.id), xPage, yPage);
+    if (!inside(block.bbox, at.x, at.y)) continue;
     const rb = block.resourceBlock!;
     const resourceId = rb.resource.id;
     // A rotated block keeps its geometry in its upright frame: test the
     // point there.
-    const { x: xLocal, y: yLocal } = resourceBlockToLocal(rb, xPage, yPage);
+    const { x: xLocal, y: yLocal } = resourceBlockToLocal(rb, at.x, at.y);
 
     for (const kind of ['caption', 'note'] as const) {
       const lines = kind === 'caption' ? rb.captionLines : rb.noteLines;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { strToU8, zipSync } from 'fflate';
+import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { parseMarkdown } from '../parse';
 import type { PostextConfig } from '../types';
 import { analyzeDocx } from './analyze';
@@ -429,6 +429,17 @@ describe('tabs (#622)', () => {
     expect(back).toContain('Name :tab Value');
     expect(back).toContain('Soup :tab 8.50');
     expect(back).toContain('Signed :tab{at=end leader=rule}');
+  });
+});
+
+describe('paragraph style tracking in Word (#907)', () => {
+  it('writes a style\'s letterSpacing as its character spacing', () => {
+    const cfg = { ...config, paragraphStyles: [{ id: 'titulo', name: 'Título de página', fontSize: { value: 20, unit: 'pt' }, letterSpacing: { value: 0.015, unit: 'em' } }] } as PostextConfig;
+    const md = [':::paragraphs{style="titulo"}', 'El dinero', ':::'].join('\n');
+    const bytes = postextToDocx([{ title: 'One', markdown: md }], { template: emptyTemplate(), config: cfg, book: false });
+    const styles = strFromU8(unzipSync(bytes)['word/styles.xml']!);
+    // 0.015 em of 20 pt = 0.3 pt = 6 twentieths, after the colour and before the size.
+    expect(styles).toMatch(/Título de página[\s\S]*?<w:spacing w:val="6"\/><w:sz w:val="40"\/>/);
   });
 });
 

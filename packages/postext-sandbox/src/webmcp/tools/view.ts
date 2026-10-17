@@ -6,6 +6,9 @@ import type { PostextConfig } from 'postext';
 import { requestSettingsGroup, requestSettingsSwitches, settingsChangedOnly } from '../../context/settingsNavigation';
 import { printPreviewOn, setPrintPreview } from '../../print/printPreviewToggle';
 import { EDIT_MODES, editModeNow, selectedFrameNow, setEditMode, type EditMode } from '../../editing/editMode';
+import { breadcrumb, breadcrumbText, selectedElement } from '../../selection/pageSelection';
+import { pageSelectionNow } from '../../selection/selectionStore';
+import type { SandboxLabels } from '../../types/labels';
 import { SETTINGS_GROUPS, isSettingsGroupId } from '../../sidebar/sections/registry';
 import { loadSettingsHelpMode, saveSettingsGroup, saveSettingsHelpMode } from '../../storage/persistence';
 import { VIEWPORT_TABS, readViewHash, viewHashFragment } from '../../storage/viewHash';
@@ -71,6 +74,22 @@ export function screenPosition(host: SandboxToolHost): { chapterIndex: number; p
   return { chapterIndex, page: hash.page };
 }
 
+/** The element picked on a page (#865) and its path, when one is. */
+function pageSelectionState(labels: SandboxLabels): Record<string, unknown> {
+  const now = pageSelectionNow();
+  if (!now) return {};
+  const el = selectedElement(now.selection);
+  return {
+    pageSelection: {
+      path: breadcrumbText(breadcrumb(now.doc, now.selection), labels),
+      level: el.level,
+      id: el.id,
+      page: now.doc.pages[now.selection.pageIndex]?.pageLabel ?? null,
+      origin: now.selection.origin,
+    },
+  };
+}
+
 /** How the book is shown right now. */
 export function viewState(host: SandboxToolHost): Record<string, unknown> {
   const s = host.store.getSnapshot();
@@ -80,6 +99,7 @@ export function viewState(host: SandboxToolHost): Record<string, unknown> {
     viewer: s.activeViewport,
     mode: editModeNow(),
     ...(selectedFrameNow() ? { frame: selectedFrameNow() } : {}),
+    ...pageSelectionState(s.labels),
     panel: s.activePanel ?? 'none',
     ...(s.activeResourceId ? { resource: s.activeResourceId } : {}),
     settingsHelp: loadSettingsHelpMode(),
@@ -294,7 +314,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
           debugChanged = true;
         }
         if (debugChanged) patch.debug = debug;
-        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: patch });
+        await dispatchAndWait(host, { type: 'UPDATE_CONFIG', payload: patch, history: { merge: false } });
       }
 
       // The viewers take their settings on their next render.

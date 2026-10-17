@@ -43,7 +43,10 @@ export type WarningKind =
   | 'slotEmpty'
   | 'pageFenceLength'
   | 'frameOverflow'
+  | 'frameContinuationLimit'
   | 'spreadMismatch'
+  | 'labelAnchorUnknown'
+  | 'anchorUnlabelled'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -107,6 +110,7 @@ export type WarningKind =
   | 'tocGroupSplit'
   | 'codeOverflow'
   | 'floatShrunk'
+  | 'pictureBelowPrintSize'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
   | 'templateDuplicate'
@@ -259,10 +263,20 @@ export type WarningPayload =
     imageScale?: number;
     proposals: FrameOverflowProposal[];
   }
+  /** A frame's content went on to as many added pages as a composed page
+   *  may add (#859) and still does not fit there. */
+  | { kind: 'frameContinuationLimit'; template: string; frame: string; fenceIndex: number; pages: number; overflowMm: number; page: number; configPath: string }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */
   | { kind: 'spreadMismatch'; template: string; fenceIndex: number; fence: boolean; templateSpread: boolean }
+  /** A `::label[…]{at="…"}` of a `:::figure` names an anchor its resource
+   *  does not have (#860): the label is not drawn. `known` lists the
+   *  resource's anchors; `page` is the book page the figure is on. */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; page: number; locale?: string }
+  /** An anchor of a figure's resource names a label style and no label of
+   *  the figure stands at it in this locale (#860): a note. */
+  | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; page: number; locale?: string }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
@@ -471,6 +485,10 @@ export type WarningPayload =
    *  (`placement.shrink`, #626), at `scale` of its width; `overflowMm`:
    *  at its smallest scale it still runs that far past the text block. */
   | { kind: 'floatShrunk'; resourceId: string; scale: number; overflowMm?: number }
+  /** A bitmap with a print size its column holds at under half of it, on
+   *  a page whose text block is wider (#901): `scale` of its print width;
+   *  the print, column and text block widths in mm. */
+  | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
   | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the

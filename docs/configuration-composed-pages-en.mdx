@@ -134,7 +134,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>this template</td>
-      <td>The template of the pages added when a frame continues on the next page (<code>overflow.continueIn: 'next-page'</code>). Unset, the added page uses this template with only the continued frames filled.</td>
+      <td>The template of the pages added when a frame continues on the next page (<code>overflow.continueIn: 'next-page'</code>). Unset, the added page is this template laid again with only the continued frames filled; the others take no room. A spread here makes the continuation a spread. See <a href="/en/docs/composed-pages#when-the-text-continues">Composed pages › When the text continues</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -273,13 +273,13 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one) or <code>'template:&lt;id&gt;'</code> (a page of that template).</td>
+      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one, from <code>overflowTemplate</code>) or <code>'template:&lt;id&gt;'</code> (a page of that template: its frame of the same name, else its flow frame). A frame of an added page with no rule of its own goes on with the rule that brought the content, up to 16 added pages.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>the language's</td>
-      <td>The mark at the end of a cut piece. Unset, the continuation word of the document language (as split tables use); <code>false</code> sets none.</td>
+      <td>The mark at the end of a piece cut for another page. Unset, the frame style's <code>continuesMarker</code>, which follows the document language («Continued», «Continúa», «À suivre»…, the words split tables use); a string sets those words; <code>false</code> sets none. A frame chained with <code>next</code> on the same page carries no mark.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -457,7 +457,7 @@ When a frame's content is taller than the room its group gives it, the layout tr
 - `minHeight` on the other frames of the group: how far they give space back; a frame never goes below what its own content needs.
 - `fit.scaleImages` and `fit.imageMinScale`: whether the pictures of the frame and of its group may be set smaller, and down to what scale (80 % by default).
 - `fit.shrinkText` and `fit.minScale`: whether the frame's text may be set smaller, and down to what scale (90 % by default). The scale is the same for the font size, the leading and the spacing; the frame keeps its size.
-- `overflow.continueIn`: where the content goes on when none of this is enough.
+- `overflow.continueIn`: where the content goes on when none of this is enough: another frame, or a page added after this one (`'next-page'`, `'template:<id>'`), where the text goes on at full size after the piece's `overflow.mark`.
 
 Scales go in steps of 2.5 % and the layout takes the largest that fits, so a text that is a line too long is set at 97.5 %, not at the minimum. A box that must keep its type size sets `fit: { shrinkText: false }`; a page whose pictures must keep their size sets `fit: { scaleImages: false }` on the frames of its group:
 
@@ -493,7 +493,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next` and `overflow.continueIn: "#frame"`, and the template's `area`, `grid`, `decoration`, `header`, `footer` and `variants`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, `overflow.continueIn: "next-page"` and `overflowTemplate`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next` and `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`) with `overflow.mark`, and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants` and `overflowTemplate`. Read and checked, but not yet applied: a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and a group's `gap` and `align`; its frames keep their own placement), `fit`, a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
 
 ### Spreads
 
@@ -613,6 +613,8 @@ labelStyles: [
   </tbody>
 </table>
 
+A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label set smaller to fit keeps its halo in proportion.
+
 ### Label fields of an anchor
 
 A picture's anchors (`Resource.anchors`, the points comics use for speakers) take a few optional fields for labels. They are fractions of the picture, so they hold in every language and through any crop of the picture. Comics ignore them.
@@ -659,6 +661,8 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
     </tr>
   </tbody>
 </table>
+
+`start` and `end` follow the label's direction: in an Arabic label, `start` is its right edge. An anchor shared by left-to-right and right-to-left editions of one map reads best with the label centred above or below its point. A label with a `width` breaks between words; a word wider than the measure sets the whole label smaller, down to its style's `minScale`. How labels are drawn is described in [Composed pages](/en/docs/composed-pages).
 
 ## Page template warnings
 

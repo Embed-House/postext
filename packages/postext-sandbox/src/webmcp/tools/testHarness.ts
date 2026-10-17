@@ -4,6 +4,7 @@
 import { buildDocument } from 'postext';
 import { sandboxReducer, type SandboxAction, type SandboxState, type SandboxStore } from '../../context/SandboxContext';
 import { createBookPlanner } from '../../book/pagination';
+import { createSandboxHistory, setActiveHistory } from '../../history/sandboxHistory';
 import { DEFAULT_LABELS } from '../../types';
 import type { SandboxToolHost } from '../host';
 import { runTool, type WebMcpTool } from '../modelContext';
@@ -80,18 +81,26 @@ export function harness(initial: Partial<SandboxState> = {}, storeExtras: Partia
   let current: SandboxState = { ...state(), ...initial };
   const listeners = new Set<() => void>();
   const planner = createBookPlanner();
+  const reduce = (action: SandboxAction) => {
+    const next = sandboxReducer(current, action);
+    if (next === current) return;
+    current = next;
+    queueMicrotask(() => { for (const l of [...listeners]) l(); });
+  };
+  // The provider's one history of text and design (#899), over the
+  // chapters' saved editor states (no editor is open here).
+  const editorStates = new Map<string, unknown>();
+  const history = createSandboxHistory({ dispatch: reduce, getState: () => current, editorStates: () => editorStates });
+  setActiveHistory(history);
   const store = {
     getSnapshot: () => current,
     subscribe: (cb: () => void) => {
       listeners.add(cb);
       return () => { listeners.delete(cb); };
     },
-    dispatch: (action: SandboxAction) => {
-      const next = sandboxReducer(current, action);
-      if (next === current) return;
-      current = next;
-      queueMicrotask(() => { for (const l of [...listeners]) l(); });
-    },
+    dispatch: history.dispatch,
+    history,
+    editorStatesRef: { current: editorStates },
     getPlan: (s: SandboxState) => planner.plan(s.chapters, s.config, s.resources, s.chapterLayouts, s.bookStart),
     getWarnings: () => [],
     ...storeExtras,

@@ -283,22 +283,40 @@ describe('the text', () => {
     expect((await call('sandbox_undo_text', { redo: true })).error).toMatch(/no edit to put back/);
   });
 
-  it('refuses to take back an edit the chapter has moved on from', async () => {
+  it('takes an edit back over what was changed since by other means, and forgets the edits of a chapter removed', async () => {
     const { call, get, host } = harness();
     await call('sandbox_edit_text', { edits: [{ find: '# Opening', replace: '# First' }], wait: false });
     await call('sandbox_edit_text', { edits: [{ find: 'The last words of the opening.', replace: 'The end.' }], wait: false });
-    // The reader types in the editor.
-    host.store.dispatch({ type: 'SET_MARKDOWN', payload: `${get().markdown}\nTyped by hand.\n` });
-    const typed = get().markdown;
-    expect((await call('sandbox_undo_text')).error).toMatch(/Chapter 1 was changed after that edit.*it was forgotten/);
-    expect((await call('sandbox_undo_text')).error).toMatch(/Chapter 1 was changed after that edit/);
-    expect(get().markdown).toBe(typed);
-    expect((await call('sandbox_undo_text')).error).toMatch(/no edit to take back/);
+    // The chapter is changed by other means (no step of the history).
+    host.store.dispatch({ type: 'SET_MARKDOWN', payload: `${get().markdown}\nAdded by other means.\n` });
+    expect(await call('sandbox_undo_text', { wait: false })).toMatchObject({ undone: true, chapter: 1 });
+    // The edit is taken back, what came after it stays (#899).
+    expect(get().markdown).toContain('The last words of the opening.');
+    expect(get().markdown).toContain('Added by other means.');
+    expect(get().markdown).toContain('# First');
 
-    // An edit to a chapter that is gone.
+    // An edit to a chapter that is gone is forgotten: the one before it comes back.
     await call('sandbox_write_text', { chapter: 2, markdown: '# Short\n', wait: false });
     await call('sandbox_remove_chapter', { chapter: 2, wait: false });
-    expect((await call('sandbox_undo_text')).error).toMatch(/no longer in the book/);
+    expect(await call('sandbox_undo_text', { wait: false })).toMatchObject({ undone: true, chapter: 1, canUndo: false });
+    expect(get().markdown.startsWith('# Opening')).toBe(true);
+    expect((await call('sandbox_undo_text')).error).toMatch(/no edit to take back/);
+  });
+
+  it('refuses a design change, which sandbox_undo takes back', async () => {
+    const { call, get } = harness();
+    await call('sandbox_edit_text', { edits: [{ find: '# Opening', replace: '# First' }], wait: false });
+    expect((await call('sandbox_set_config', { changes: [{ path: 'bodyText.fontSize', value: { value: 11, unit: 'pt' } }], wait: false })).ok).toBe(true);
+    expect((await call('sandbox_undo_text')).error).toMatch(/was to the design \(bodyText\.fontSize\).*sandbox_undo/);
+    expect(await call('sandbox_undo', { wait: false })).toMatchObject({ undone: { kind: 'design', settings: ['bodyText.fontSize'] }, canUndo: true, canRedo: true });
+    expect(get().config.bodyText?.fontSize).toBeUndefined();
+    expect(await call('sandbox_undo', { wait: false })).toMatchObject({ undone: { kind: 'text', chapter: 1, title: 'Opening' }, canUndo: false });
+    expect(get().markdown.startsWith('# Opening')).toBe(true);
+    expect((await call('sandbox_get_state')).history).toEqual({ undo: null, redo: { kind: 'text', chapter: 1, title: 'Opening' } });
+    expect(await call('sandbox_undo', { redo: true, wait: false })).toMatchObject({ redone: { kind: 'text', chapter: 1 } });
+    expect(await call('sandbox_undo', { redo: true, wait: false })).toMatchObject({ redone: { kind: 'design' }, canRedo: false });
+    expect(get().config.bodyText?.fontSize).toEqual({ value: 11, unit: 'pt' });
+    expect((await call('sandbox_undo', { redo: true })).error).toMatch(/nothing to put back/);
   });
 
   it('places the caret or a selection, and opens the Manuscript panel on it', async () => {

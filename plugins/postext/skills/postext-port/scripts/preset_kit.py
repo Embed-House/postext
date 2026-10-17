@@ -286,9 +286,14 @@ def _placement(position: str | None, span: str | None, **more) -> dict | None:
 
 
 def _picture_marks(r: dict, safe_area: dict | None, anchors: list | None, avoid: list | None,
-                   faces: list | None = None) -> None:
-    """Safe area, comic speaker anchors, avoid zones and the faces of people
-    who do not speak (fractions of the picture)."""
+                   faces: list | None = None, contour: dict | None = None) -> None:
+    """Safe area, anchors (comic speakers, or the points `::label` words
+    stand at: `{id, x, y, width?, align?, verticalAlign?, rotate?, style?}`),
+    avoid zones, the faces of people who do not speak (fractions of the
+    picture) and the outline text runs round (`contour`: `{points?, alpha?,
+    threshold?, margin?}`, postext >= 1.36)."""
+    if contour:
+        r["contour"] = contour
     if safe_area:
         r["safeArea"] = safe_area
     if anchors:
@@ -303,7 +308,7 @@ def bitmap(project: Path | str, id_: str, file: str, caption: str = "", *, type_
            alt: str | None = None, note: str | None = None, position: str | None = None,
            span: str | None = None, safe_area: dict | None = None, anchors: list | None = None,
            avoid: list | None = None, faces: list | None = None, resolution: float | None = None,
-           **placement) -> dict:
+           contour: dict | None = None, **placement) -> dict:
     """A bitmap resource with its pixel size (Node renderers cannot decode it).
     `resolution` (postext >= 1.24) is its ppi at its natural print size, on a
     page of any dpi. A comic panel picture takes `safe_area`, `anchors`,
@@ -316,7 +321,7 @@ def bitmap(project: Path | str, id_: str, file: str, caption: str = "", *, type_
         r["width"], r["height"] = size
     if resolution:
         r["resolution"] = resolution
-    _picture_marks(r, safe_area, anchors, avoid, faces)
+    _picture_marks(r, safe_area, anchors, avoid, faces, contour)
     if note:
         r["note"] = note
     pl = _placement(position, span, **placement)
@@ -329,13 +334,13 @@ def svg(project: Path | str, id_: str, file: str, caption: str = "", *, type_id:
         pdf_file: str | None = None, alt: str | None = None, note: str | None = None,
         position: str | None = None, span: str | None = None, safe_area: dict | None = None,
         anchors: list | None = None, avoid: list | None = None, faces: list | None = None,
-        inline_fonts: bool = True, **placement) -> dict:
+        inline_fonts: bool = True, contour: dict | None = None, **placement) -> dict:
     size = svg_size(Path(project) / file)
     r = {"id": id_, "typeId": type_id, "kind": "svg", "file": file, "caption": caption,
          "altText": alt if alt is not None else re.sub(r"[*_^~]", "", caption)}
     if size:
         r["width"], r["height"] = round(size[0], 2), round(size[1], 2)
-    _picture_marks(r, safe_area, anchors, avoid, faces)
+    _picture_marks(r, safe_area, anchors, avoid, faces, contour)
     if pdf_file:
         r["pdfFile"] = pdf_file
     if not inline_fonts:
@@ -903,8 +908,11 @@ def _get(node: Any, *keys: str) -> Any:
 def design_slots(config: Any) -> list[dict]:
     """The design slots the engine checks (configDesignSlots), in its order:
     `path` (`headingStyles[2].header`), `slot` (the key under the owner),
-    `owner` (`headingStyles[2]`, `headings.levels[0]`, else the slot itself),
-    `ownerId` (the heading style's id) and `elements`."""
+    `owner` (`headingStyles[2]`, `headings.levels[0]`, `pageTemplates[1]`,
+    else the slot itself), `ownerId` (the heading style's or template's id)
+    and `elements`. Page templates' decoration and running heads (and
+    their variants') count as the engine counts them from #874; an older
+    engine leaves them out of its warning, the lint never does."""
     out: list[dict] = []
 
     def from_(c: Any, prefix: str) -> None:
@@ -933,6 +941,26 @@ def design_slots(config: Any) -> list[dict]:
                 add(_get(s, "advancedDesign", "slot"), f"{owner}.advancedDesign.slot", owner, sid)
                 add(s.get("header"), f"{owner}.header", owner, sid)
                 add(s.get("footer"), f"{owner}.footer", owner, sid)
+        # Page templates (postext with #874): decoration and running heads,
+        # then each side's variant, under the template as owner.
+        templates = c.get("pageTemplates")
+        if isinstance(templates, list):
+            for i, t in enumerate(templates):
+                if not isinstance(t, dict):
+                    continue
+                owner = f"{prefix}pageTemplates[{i}]"
+                tid = t["id"] if isinstance(t.get("id"), str) else None
+
+                def patch(q: Any, at: str) -> None:
+                    if isinstance(q, dict):
+                        add(q.get("decoration"), f"{at}.decoration", owner, tid)
+                        add(q.get("header"), f"{at}.header", owner, tid)
+                        add(q.get("footer"), f"{at}.footer", owner, tid)
+                patch(t, owner)
+                variants = t.get("variants")
+                if isinstance(variants, dict):
+                    for side in ("recto", "verso"):
+                        patch(variants.get(side), f"{owner}.variants.{side}")
         add(_get(c, "parts", "design"), f"{prefix}parts.design")
         add(_get(c, "parts", "versoDesign"), f"{prefix}parts.versoDesign")
         add(_get(c, "toc", "parts", "design"), f"{prefix}toc.parts.design")

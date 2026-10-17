@@ -11,7 +11,7 @@ import { parseFontString } from '../fontString';
 // fixture) reads the composed page's frames in Markdown order — the
 // title, the running text, each box followed by its photo — whatever
 // order the template's layers paint them in, and a `:::figure`'s labels
-// as part of its figure's alternative text.
+// after its figure, as the text drawn on it (#860).
 
 const fontBytes = fs.readFileSync(new URL('../../../../apps/web/public/fonts/Lora-Regular.ttf', import.meta.url));
 const face = fontkit.create(fontBytes);
@@ -79,7 +79,9 @@ describe('the composed page 8 stand-in in the tagged PDF (#862)', () => {
       'Div(P() P() P())',
       'Div(Figure[A card payment])',
       'Div(P() P() L(LI(Lbl() LBody()) LI(Lbl() LBody()) LI(Lbl() LBody())))',
-      'Div(Figure[A shopping basket (Rent, Electricity, Food)])',
+      // The labels drawn on the photo are text (#860): read after it, one
+      // paragraph each, and no longer part of its alternative text.
+      'Div(Figure[A shopping basket] Div(P() P() P()))',
       'Div(P() P())',
       'Div(Figure[A piggy bank])',
     ]);

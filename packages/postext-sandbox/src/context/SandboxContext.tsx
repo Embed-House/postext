@@ -36,6 +36,7 @@ import { loadResources, saveResource, deleteResource } from '../storage/resource
 import { customFontsSignature, setCustomFonts } from '../controls/fontLoader';
 import { pruneFontFiles } from '../storage/fontStorage';
 import { pruneBlobs } from '../storage/blobStore';
+import { keepMigrationSnapshots } from '../migrate/textMigration';
 import { collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects';
 import {
   decideDraftSave,
@@ -87,6 +88,8 @@ import { withDefaultResourceTypes } from './defaultConfig';
 import { createPostextGuideConfig } from './guideConfig';
 import { createProjectActions } from './projectActions';
 import type { ProjectActions } from './projectActions';
+import { createSandboxHistory, setActiveHistory, type ConfigHistoryMeta, type SandboxHistory } from '../history/sandboxHistory';
+import { installHistoryKeys } from '../history/historyKeys';
 import { presetCoverKey, type CoverTarget } from '../covers/autoCover';
 import { bytesToDataUrl, listPresetCovers, putPresetCoverIfMissing } from '../storage/presetCovers';
 import {
@@ -304,8 +307,11 @@ export type SandboxAction =
    *  `baseLength` long and every change finds the text it expects, so a
    *  change computed on a layout older than the text never lands. */
   | { type: 'EDIT_CHAPTER_MARKDOWN'; payload: { chapterId: string; changes: TextChange[]; baseLength?: number } }
-  | { type: 'SET_CONFIG'; payload: PostextConfig }
-  | { type: 'UPDATE_CONFIG'; payload: Partial<PostextConfig> }
+  /** `history` says how the write enters the undo history (#899):
+   *  `false` not at all (a book opened), `{ merge: false }` as a step of
+   *  its own (a frame dropped, a tool call). */
+  | { type: 'SET_CONFIG'; payload: PostextConfig; history?: ConfigHistoryMeta }
+  | { type: 'UPDATE_CONFIG'; payload: Partial<PostextConfig>; history?: ConfigHistoryMeta }
   | { type: 'TOGGLE_PANEL'; payload: PanelId }
   | { type: 'SET_PANEL'; payload: PanelId | null }
   | { type: 'SET_SIDEBAR_PERCENT'; payload: number }
@@ -743,6 +749,8 @@ export interface SandboxStore {
   /** Persisted CodeMirror state (doc, selection, undo history) per chapter
    *  id, so switching chapters keeps each one's history and caret. */
   editorStatesRef: MutableRefObject<Map<string, unknown>>;
+  /** The undo history of the text and the configuration (#899). */
+  history: SandboxHistory;
   /** Ref to the most recently built VDT document from whichever viewport
    *  last rendered. Null until the first successful build. Updated together
    *  with a `BUMP_DOC_VERSION` dispatch so consumers can react. */
@@ -767,6 +775,9 @@ export interface SandboxStore {
    *  the viewer locale applies. Resolves to whether the preset was
    *  applied. */
   loadPreset: (id: string, locale?: string) => Promise<boolean>;
+  /** The provider of a preset (its bundle in every language), for reading
+   *  an edition that is not on screen (#867). */
+  presetProvider: (id: string) => PresetProvider | undefined;
   /** Re-fetch the active preset and re-apply the given parts. `all`
    *  restores the original (its draft is dropped). */
   reloadPreset: (parts: PresetApplyParts) => Promise<void>;
@@ -1035,6 +1046,12 @@ export function useSandboxBookActions(): {
   };
 }
 
+/** The provider of a preset, read on demand (see
+ *  `SandboxStore.presetProvider`). */
+export function useSandboxPresetProvider(): SandboxStore['presetProvider'] {
+  return useStore().presetProvider;
+}
+
 /** Stable ref to the most recently built VDT document. Does not subscribe
  *  to state changes — read inside effects/handlers via `.current`. */
 export function useSandboxDocRef(): MutableRefObject<VDTDocument | null> {
@@ -1239,7 +1256,7 @@ export function SandboxProvider({
   if (initialBundleRef.current === undefined) {
     initialBundleRef.current = typeof window === 'undefined' ? null : parseHashBundle(window.location.hash, hashBundleKeys);
   }
-  const [state, dispatch] = useReducer(sandboxReducer, undefined, () => {
+  const [state, reducerDispatch] = useReducer(sandboxReducer, undefined, () => {
     const savedBook = loadBook(migration);
     const loadedBook = savedBook ?? sampleBook(defaultMd, generateChapterId, mergedLabels.presetPostextGuideName);
     // A `#chapter=C` fragment (a reload, a shared link) names the chapter to
@@ -1327,6 +1344,27 @@ export function SandboxProvider({
       bundleReplacePrompt: null,
     };
   });
+
+  // One undo history for the text and the configuration (#899): every
+  // action passes through it on its way to the reducer.
+  const historyRef = useRef<SandboxHistory | null>(null);
+  if (historyRef.current === null) {
+    historyRef.current = createSandboxHistory({
+      dispatch: reducerDispatch,
+      getState: () => stateRef.current,
+      editorStates: () => editorStatesRef.current,
+    });
+  }
+  const undoHistory = historyRef.current;
+  const dispatch = undoHistory.dispatch;
+  useEffect(() => {
+    setActiveHistory(undoHistory);
+    const uninstall = installHistoryKeys(undoHistory, () => stateRef.current);
+    return () => {
+      uninstall();
+      setActiveHistory(null);
+    };
+  }, [undoHistory]);
 
   // Skip redundant initial save — state already contains localStorage values
   const hydratedRef = useRef(false);
@@ -1892,7 +1930,7 @@ export function SandboxProvider({
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onVisible);
     };
-  }, [state.activePresetId, state.presetSummaries, state.activeProjectId]);
+  }, [state.activePresetId, state.presetSummaries, state.activeProjectId, dispatch]);
 
   // Auto-hide the "updated from disk" notice.
   useEffect(() => {
@@ -1902,7 +1940,7 @@ export function SandboxProvider({
       PRESET_NOTICE_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [state.presetUpdatedAt]);
+  }, [state.presetUpdatedAt, dispatch]);
 
   // Persist resource changes to IndexedDB by diffing against the previous
   // snapshot. Skips until the initial async load completes so the load itself
@@ -2052,7 +2090,7 @@ export function SandboxProvider({
         if (Object.keys(stored).length > 0) dispatch({ type: 'SET_CHAPTER_LAYOUTS', payload: stored });
       })
       .catch(() => undefined);
-  }, [state.chapters]);
+  }, [state.chapters, dispatch]);
   const layoutsSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     clearTimeout(layoutsSaveTimerRef.current);
@@ -2074,7 +2112,8 @@ export function SandboxProvider({
     for (const id of editorStatesRef.current.keys()) {
       if (!live.has(id)) editorStatesRef.current.delete(id);
     }
-  }, [state.chapters]);
+    undoHistory.pruneChapters(live);
+  }, [state.chapters, undoHistory]);
 
   // Save viewport tab and active panel immediately (skip until hydrated)
   useEffect(() => {
@@ -2131,6 +2170,8 @@ export function SandboxProvider({
       for (const id of refs.blobIds) live.blobIds.add(id);
       for (const id of refs.fontIds) live.fontIds.add(id);
     }
+    // The book as it was before a move of its text to the Markdown (#874).
+    await keepMigrationSnapshots(live.blobIds);
     if (gcSuspendedRef.current > 0) return;
     await Promise.all([pruneFontFiles(live.fontIds), pruneBlobs(live.blobIds)]);
   };
@@ -2316,6 +2357,7 @@ export function SandboxProvider({
       return () => { listenersRef.current.delete(cb); };
     },
     dispatch,
+    history: undoHistory,
     editorStatesRef,
     docRef,
     warningsRef,
@@ -2324,6 +2366,7 @@ export function SandboxProvider({
     getWarnings: (s) => getWarningsRef.current(s),
     getPlan: (s) => getPlanRef.current(s),
     loadPreset: (id, locale) => openPresetRef.current(id, locale),
+    presetProvider: (id) => presetProvidersRef.current.find((p) => p.summary.id === id),
     reloadPreset: async (parts) => {
       if (stateRef.current.activeProjectId !== null) {
         await projectActions.resetToSource(parts);
@@ -2357,7 +2400,7 @@ export function SandboxProvider({
       if (stored) dispatch({ type: 'ADD_PRESET_COVER', payload: { key: presetCoverKey(target.id, target.locale), url: bytesToDataUrl(bytes, mime) } });
       return stored;
     },
-  }), [dispatch, projectActions, hashBundleKeys]);
+  }), [dispatch, undoHistory, projectActions, hashBundleKeys]);
 
   return (
     <SandboxStoreContext.Provider value={store}>

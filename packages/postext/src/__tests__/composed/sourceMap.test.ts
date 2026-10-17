@@ -386,6 +386,33 @@ describe('spreads in the source map (#857, #861)', () => {
     expect(hits.some((h) => h.element.facing)).toBe(true);
   });
 
+  it('a frame across the spine is found again by a click on the part each page paints (#877)', () => {
+    // A band that starts near the spine on the verso and runs over the recto: most of its box
+    // is on the recto, so a point of its whole box on the verso falls off the page.
+    const banded: PageTemplate = {
+      id: 'tl', spread: true, gutter: mm(10), grid: { columns: 2, rows: 4, columnGap: mm(30) },
+      frames: [
+        { name: 'left', grid: { col: 1, row: 1 } },
+        { name: 'band', crossGutter: true, width: 'fill', height: mm(9), padding: { left: mm(40) },
+          placement: { anchor: { to: '#left', edge: 'right-of' } } },
+      ],
+    } as never;
+    const src = ['::::page{template="tl" spread}', ':::frame{slot="left"}', 'Left', ':::', '', ':::frame{slot="band"}', 'Words on the recto', ':::', '::::'].join('\n');
+    const d = buildDocument({ markdown: src }, { ...PAGE, pageTemplates: [banded] }, createMeasurementCache());
+    const at = src.indexOf('Words');
+    const frames = elementsForSource(d, at, at + 5).filter((h) => h.element.level === 'frame' && h.element.id === 'cp0:band');
+    expect(frames.length).toBe(2);
+    for (const { pageIndex, element } of frames) {
+      const page = d.pages[pageIndex]!;
+      const clip = page.composed!.sheetClip!;
+      const r = element.rect!;
+      expect(r.x).toBeGreaterThanOrEqual(clip.x - 0.01);
+      expect(r.x + r.width).toBeLessThanOrEqual(clip.x + clip.width + 0.01);
+      const c = centre(r);
+      expect(sourceAt(d, pageIndex, c.x, c.y).find((e) => e.level === 'frame')?.id).toBe('cp0:band');
+    }
+  });
+
   it('a spread is laid out afresh each time: no layout key', () => {
     expect(doc().pages.filter((p) => p.composed?.spread).every((p) => p.composed!.layoutKey === undefined)).toBe(true);
   });

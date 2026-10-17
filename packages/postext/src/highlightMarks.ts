@@ -160,6 +160,11 @@ function resourceTexts(block: VDTBlock): { lines: VDTLine[]; like: BlockLike }[]
   }
   add(rb.captionLines, { fontString: rb.captionFontString, boldFontString: rb.captionBoldFontString, italicFontString: rb.captionItalicFontString, boldItalicFontString: rb.captionBoldItalicFontString });
   add(rb.noteLines, { fontString: rb.noteFontString, boldFontString: rb.noteBoldFontString, italicFontString: rb.noteItalicFontString, boldItalicFontString: rb.noteBoldItalicFontString });
+  // A figure's labels drawn on its picture (#860).
+  for (const label of rb.labels ?? []) {
+    const l = label.layout;
+    if (l) add(l.lines, { fontString: l.fontString, boldFontString: l.boldFontString, italicFontString: l.italicFontString, boldItalicFontString: l.boldItalicFontString });
+  }
   return out;
 }
 
