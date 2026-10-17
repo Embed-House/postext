@@ -55,7 +55,7 @@ const FRONTMATTER_OPEN_RE = /^---[ \t]*(?:\r?\n|$)/;
 /** Whether the Markdown holds a page fence (`::::page`, three colons or
  *  more, then `page` as a whole word). A scan, not a regular expression: a
  *  pattern that may start inside a long run of colons is quadratic on it. */
-const hasComposedPage = (markdown: string): boolean => {
+export const hasComposedPage = (markdown: string): boolean => {
   for (let at = markdown.indexOf(':page'); at !== -1; at = markdown.indexOf(':page', at + 1)) {
     let colons = 1;
     while (colons < 3 && at - colons >= 0 && markdown[at - colons] === ':') colons++;

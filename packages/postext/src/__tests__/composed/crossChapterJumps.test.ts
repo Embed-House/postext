@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { buildBundle } from '../../bundle';
+import { hasComposedPage } from '../../bundle/book';
 import { resolveJumpMarks } from '../../index';
 import { createMeasurementCache } from '../../measure';
 import type { PageTemplate } from '../../composed/types';
@@ -312,11 +313,20 @@ describe('the source of the carried text is its own chapter (#943)', () => {
     expect(text).toContain('Ver el ancla y');
     expect(text).not.toContain('?');
   });
-  it('a chapter made of a long run of colons is read in linear time', () => {
-    const colons = ':'.repeat(60_000) + 'pagex';
-    const start = performance.now();
-    const docs = bundle([fence('articulo', para('uno', 400), ' sigue="p-salto"'), colons, jumpPage()]);
-    expect(performance.now() - start).toBeLessThan(5_000);
+  it('a chapter made of a long run of colons does not hide the page fences', () => {
+    const docs = bundle([fence('articulo', para('uno', 400), ' sigue="p-salto"'), ':'.repeat(5_000) + 'pagex', jumpPage()]);
     expect(composedPages(docs[2]!).some((p) => p.composed!.template === 'salto')).toBe(true);
+  });
+
+  it('finds a page fence in linear time, whatever runs of colons come before it', () => {
+    expect(hasComposedPage('::::page{template="a"}')).toBe(true);
+    expect(hasComposedPage(':::page')).toBe(true);
+    expect(hasComposedPage('::page')).toBe(false);
+    expect(hasComposedPage('::::pages')).toBe(false);
+    expect(hasComposedPage('text ::::page_x')).toBe(false);
+    // A quadratic pattern takes minutes on this; the scan, milliseconds.
+    const start = performance.now();
+    expect(hasComposedPage(':'.repeat(400_000) + 'pagex')).toBe(false);
+    expect(performance.now() - start).toBeLessThan(2_000);
   });
 });
