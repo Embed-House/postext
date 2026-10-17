@@ -341,6 +341,21 @@ class AnchorsTest(unittest.TestCase):
         self.assertIn('::label[Black \\[Sea\\]]{at="mar"}', block)
         self.assertTrue(block.startswith(':::figure{resource="mapa" slot="map"}'))
 
+    def test_figure_words_in_the_block(self):
+        labels = [{"at": "mar", "text": "Black Sea", "plain": "Black Sea"}]
+        strings = {"@alt": "Map of [Europe]", "@caption": "Relief\nof Spain", "@note": "Source: IGN", "Mar": "x"}
+        self.assertEqual(anc.words_from(strings), {"alt": "Map of [Europe]", "caption": "Relief\nof Spain",
+                                                   "note": "Source: IGN"})
+        self.assertEqual(anc.words_from(None), {})
+        block = anc.figure_block("mapa", None, labels, anc.words_from(strings))
+        self.assertEqual(block.splitlines(), [
+            ":::figure{resource=\"mapa\"}", "::alt[Map of \\[Europe\\]]", "::caption[Relief of Spain]",
+            "::note[Source: IGN]", '::label[Black Sea]{at="mar"}', ":::"])
+        # no words: the block is what it was
+        self.assertEqual(anc.figure_block("mapa", None, labels).splitlines()[1], '::label[Black Sea]{at="mar"}')
+        # an empty alt marks the picture decorative
+        self.assertIn("::alt[]", anc.figure_block("mapa", None, labels, {"alt": ""}))
+
     def test_cli_on_pdf(self):
         import contextlib
 

@@ -18,11 +18,15 @@ the round-2 checks of a ported book, edition by edition.
           contentInConfig, tocGroupSplit,
           the composed pages' source warnings (templateUnknown, slotUnknown,
           pageFenceLength, spreadMismatch, unclosedContainer), the page
-          templates' config warnings and labelAnchorUnknown;
+          templates' config warnings, labelAnchorUnknown, labelOverflow
+          (1.39: a label wider than its anchor at the style's minScale) and
+          calloutStyleExtendsUnknown / calloutStyleExtendsCycle (1.39);
         - a composed page whose frames the HTML writes in another order than
           the Markdown sends content to them (reading order = source order);
       warns when two editions read the frames of one page fence in different
-      orders, and lists the reflow log (text or pictures the ladder scaled).
+      orders, lists the reflow log (text or pictures the ladder scaled) and
+      the notes to read edition by edition (slotEmpty, anchorUnlabelled,
+      labelOverlap: two labels that run into each other, 1.39).
       --stress 1.3 lays every edition out again with each paragraph, heading
       and list item 30 % longer (its own words repeated, markup untouched),
       as the Cookbook bench does (C38): a warning the longer text raises
@@ -108,6 +112,38 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "into labels", "those words stay frames"),
     ((1, 38, 0), "sandboxFixes", "Sandbox Canvas > Reflow, anchors placed by a click, "
      "sandbox_apply_proposal", "apply the proposals' values to the configuration by hand"),
+    ((1, 39, 0), "labelChecks", "labelOverlap / labelOverflow per edition; writingMode 'vertical-rl' on an "
+     "anchor or a label style (vertical map names)",
+     "look at every edition's map pages for names that collide or overflow; set a CJK map's names "
+     "horizontally and name the gap"),
+    ((1, 39, 0), "figureWords", "alt, caption and note of a figure in the Markdown "
+     "(:::figure{alt} + ::caption[] / ::note[] lines), per edition",
+     "alt text, captions and notes of the shared resource in localized.<lang>.resources"),
+    ((1, 39, 0), "styleExtends", "calloutStyles[].extends: a thin style per place on one full style per look",
+     "one full style per box; merge styles by their look alone only when the boxes take their "
+     "place from template frames"),
+    ((1, 39, 0), "frameModes", "a frame's own writingMode and direction (a vertical box on a horizontal "
+     "page, a horizontal card on a vertical one, an rtl quotation in an ltr book)",
+     "keep the card in the page's mode; a right-to-left quotation as a {dir=rtl} block"),
+    ((1, 39, 0), "startEnd", "top-start / start / bottom-start / top-end / end / bottom-end and "
+     "align-start / align-end edges for design elements",
+     "choose top-left or top-right per edition in the generator"),
+    ((1, 39, 0), "cuts", "widow and orphan rules in :::columns groups and frame columns; drop caps that "
+     "follow the flow's rules across frame cuts; a takes title frame gives the text frame its initial",
+     "copy edits against a lone line at a column head or foot; a :::paragraphs{dropcap} group in the "
+     "text frame"),
+    ((1, 39, 0), "textPanelsMirrored", "comic text panels set in their frames on right-to-left and "
+     "vertical pages, slanted lines, ::panel{text shrink}",
+     "letter those editions' words as caption: lines"),
+    ((1, 39, 0), "coverUpright", "fit 'cover' crops an upright picture of a vertical flow",
+     "cut the picture to the box's ratio for vertical editions"),
+    ((1, 39, 0), "sourceAtFlow", "sourceAt reads frames in the flow frame on right-to-left and vertical "
+     "composed pages (SourceElement.flow, flowRectToPage)",
+     "a sheet point on such a frame finds only the template: map the point to the flow by hand"),
+    ((1, 39, 0), "editionsKept", "the Sandbox keeps every edition of a bundle imported as a project "
+     "(#project=ID&lang=L)", "import each edition to look at it"),
+    ((1, 39, 0), "wordTracking", "postext import-docx sets Word styles' character spacing as letterSpacing; "
+     "docx export writes it", "set the paragraph styles' tracking by hand"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)
@@ -466,8 +502,10 @@ FAIL_KINDS = {
     "templateDuplicate", "templateExtendsCycle", "templateExtendsUnknown", "frameDuplicate",
     "frameStyleUnknown", "frameAnchorUnknown", "frameMinMax", "groupFrameUnknown", "groupFrameTwice",
     "frameChainLoop", "overflowTargetUnknown", "labelStyleUnknown", "labelAnchorUnknown",
+    "labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle",
 }
-NOTE_KINDS = {"slotEmpty", "anchorUnlabelled"}
+# labelOverlap is a note: whether two labels that meet are wrong is the reader's call
+NOTE_KINDS = {"slotEmpty", "anchorUnlabelled", "labelOverlap"}
 
 
 def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dict:
