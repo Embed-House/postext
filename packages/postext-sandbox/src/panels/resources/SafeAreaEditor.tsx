@@ -303,7 +303,8 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
    *  zoom and distance when the second went down and the point of the
    *  picture between them, as fractions of its extent. */
   const touches = useRef(new Map<number, { x: number; y: number }>());
-  const pinch = useRef<{ zoom: number; distance: number; fx: number; fy: number } | null>(null);
+  const pinch = useRef<{ zoom: number; distance: number; fx: number; fy: number; last: number; ox: number; oy: number } | null>(null);
+  const pinchFrame = useRef(0);
   /** The name being placed when the press that a second finger took back
    *  went down. */
   const placingAtDown = useRef<string | null>(null);
@@ -481,30 +482,43 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
       distance: pair.distance,
       fx: (v.scrollLeft + pair.cx - box.left) / Math.max(1, v.scrollWidth),
       fy: (v.scrollTop + pair.cy - box.top) / Math.max(1, v.scrollHeight),
+      last: zoomValue.current,
+      ox: pair.cx - box.left,
+      oy: pair.cy - box.top,
     };
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* not capturable */ }
     e.preventDefault();
   };
   /** The fingers moved: zoom as far apart as they are, and keep the point
-   *  between them under them. */
+   *  between them under them. The work is done once a frame, from where the
+   *  fingers are then: moves come faster than renders. */
   const movePinch = () => {
     const g = pinch.current;
     const v = viewportRef.current;
     const [a, b] = [...touches.current.values()];
     if (!g || !v || !a || !b) return;
     const pair = touchPair(a, b);
-    const z = pinchZoom(g.zoom, g.distance, pair.distance);
     const box = v.getBoundingClientRect();
-    const ox = pair.cx - box.left;
-    const oy = pair.cy - box.top;
-    if (z !== zoomValue.current) {
-      zoomFocus.current = { fx: g.fx, fy: g.fy, ox, oy };
-      setZoom(z);
-      return;
-    }
-    const at = scrollForFocus(g.fx, g.fy, ox, oy, { width: v.scrollWidth, height: v.scrollHeight });
-    v.scrollLeft = at.left;
-    v.scrollTop = at.top;
+    g.last = pinchZoom(g.zoom, g.distance, pair.distance);
+    g.ox = pair.cx - box.left;
+    g.oy = pair.cy - box.top;
+    if (pinchFrame.current) return;
+    pinchFrame.current = requestAnimationFrame(() => {
+      pinchFrame.current = 0;
+      const now = pinch.current;
+      const el = viewportRef.current;
+      if (!now || !el) return;
+      if (now.last !== zoomValue.current) {
+        // The scroll that keeps the point under the fingers follows the
+        // new size (`zoomFocus`).
+        zoomFocus.current = { fx: now.fx, fy: now.fy, ox: now.ox, oy: now.oy };
+        setZoom(now.last);
+        return;
+      }
+      const at = scrollForFocus(now.fx, now.fy, now.ox, now.oy, { width: el.scrollWidth, height: el.scrollHeight });
+      el.scrollLeft = at.left;
+      el.scrollTop = at.top;
+    });
   };
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {

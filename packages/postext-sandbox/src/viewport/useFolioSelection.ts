@@ -19,6 +19,7 @@ import { editModeNow, onEditModeChange } from '../editing/editMode';
 import { labelsOnPage } from './composed/labelAnchorGeometry';
 import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks';
 import type { LabelSurface } from './composed/labelAnchorEditor';
+import { useTemplateEditorHost } from '../templates/useTemplateEditorHost';
 import { carriedPosition, onPageSelectionChange } from '../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
 
@@ -94,6 +95,9 @@ interface Options {
  */
 export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsRef, sourceRef, interactionRef, docKey }: Options) {
   const dispatch = useSandboxDispatch();
+  // The label editor writes the anchor it drops on the resource through the
+  // book's state, which the canvas lends it while it is mounted (#970).
+  useTemplateEditorHost();
   const { chapterId: activeChapterId } = useLayoutSource();
   const editorSelection = useSandboxSelector((s) => s.selection);
   const editorFocused = useSandboxSelector((s) => s.editorFocused);
@@ -400,6 +404,9 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
       labelSurface,
       labelsEnabled: () => interactionRef.current === 'select',
     });
+    // The marks of the pages the viewer opens on: nothing else asks for
+    // them until the book turns (the first refresh found no viewer).
+    queueMicrotask(() => refreshRef.current());
   }, [docRef, sourceRef, interactionRef, navigateRef]);
 
   /** The book came to rest on (or was sent to) another spread: mark the
