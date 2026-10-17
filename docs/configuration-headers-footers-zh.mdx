@@ -634,6 +634,18 @@ header: {
       <td>图片只起装饰作用（花饰、色带）：即使它的资源带有替代文本，也不向输出提供替代文本（见下文）。</td>
     </tr>
     <tr>
+      <td><code>fit</code></td>
+      <td><code>'contain' | 'cover'</code></td>
+      <td><code>'contain'</code></td>
+      <td><code>width</code>和<code>height</code>都设定时：<code>'contain'</code>把整张图居中放进框内；<code>'cover'</code>填满框，裁去多出的部分，就像出血的照片。<code>'cover'</code>的裁切会完整保留资源的安全区（见<a href="/zh/docs/document-format-resources">资源</a>）；框的形状放不下安全区时，显示能放下它的最小窗口，框在一个方向上不填满。有一边为<code>'auto'</code>时不起作用。自 postext 1.37 起。</td>
+    </tr>
+    <tr>
+      <td><code>focus</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>—</td>
+      <td><code>'cover'</code>裁切时居中的那一点，以图片的比例表示：<code>&#123; x: 0.5, y: 0.3 &#125;</code>表示人脸在上方三分之一处。裁切仍会让安全区留在画面内。不设时，安全区周围的边距按各自大小成比例裁去；没有安全区时图片居中。</td>
+    </tr>
+    <tr>
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>—</td>
@@ -675,7 +687,7 @@ interface ElementPlacement {
    *  `maxWidth` 限制 'auto' 宽度（文本）的上限：元素仍收缩贴合其内容，
    *  所以锚定到它的元素保持相连，但长文本会在此处折行或加省略号，
    *  这样书眉可以为挂在它旁边的标签预留空间，而不会把标签挤掉。 */
-  size?: { width?: Dimension | 'fill' | 'auto'; height?: Dimension | 'fill' | 'auto'; maxWidth?: Dimension };
+  size?: { width?: Size; height?: Size; maxWidth?: Size }; // Size: Dimension | 'fill' | 'auto' | { to, edge }
 }
 ```
 
@@ -698,6 +710,12 @@ interface ElementPlacement {
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
+```
+
+尺寸也可以一直延伸到另一个方框的某条边：`{ to, edge }`。`to`像锚点那样指明方框（`'container'`、`'page'`、`'bleed'`、`'outer'`，或另一个元素的`'#id'`；在模板页的装饰中，还可以是框架或组），`edge`指明哪条边：高度用`'top'`或`'bottom'`，宽度用`'left'`或`'right'`。长度从元素的锚点量到那条边，方向就是元素伸展的方向；边在锚点背后时为0，边不在这个尺寸的轴上或方框不存在时，按`'fill'`处理。这样，从一条色带底边一直铺到出血位的底色就留在模板里，色带移动时也会跟着走。自 postext 1.37 起：
+
+```json
+{ "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
 ```
 
 开启裁切线时，元素画出出血框之外的部分都会被裁掉（见[裁切线](/zh/docs/configuration-page-layout#裁切线)）。
