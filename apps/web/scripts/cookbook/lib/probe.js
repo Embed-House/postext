@@ -793,20 +793,6 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
 }
 
 /**
- * What the composed pages of a build did (C37, C38, C40): each composed
- * page with its template, its frames (the height each was given, what did
- * not fit, the scale its text and pictures were left at, where it goes
- * on) and the reflow log; the composed-page content warnings with their
- * steps and proposals, in words when the engine says them; the contents
- * blocks cut between columns (`tocGroupSplit`); and the source-map round
- * trip, or `roundTrip: null` when the engine has none. `declared`: a
- * Markdown of the build has a `::::page{template=…}` fence.
- *
- * @param {any} engine
- * @param {any[]} docs
- * @param {{ nOf?: (doc: any, pageIndex: number) => number, markdowns?: string[] }} [options]
- */
-/**
  * How far a composed frame's box runs past the foot of its page's type area
  * when the template's box for it (`declaredRect`) did not (#911), in mm; 0
  * otherwise.
@@ -823,6 +809,20 @@ function pushedOutMm(f, area, dpi) {
   return past > 0.5 ? mmOf(past, dpi) : 0;
 }
 
+/**
+ * What the composed pages of a build did (C37, C38, C40): each composed
+ * page with its template, its frames (the height each was given, what did
+ * not fit, the scale its text and pictures were left at, where it goes
+ * on) and the reflow log; the composed-page content warnings with their
+ * steps and proposals, in words when the engine says them; the contents
+ * blocks cut between columns (`tocGroupSplit`); and the source-map round
+ * trip, or `roundTrip: null` when the engine has none. `declared`: a
+ * Markdown of the build has a `::::page{template=…}` fence.
+ *
+ * @param {any} engine
+ * @param {any[]} docs
+ * @param {{ nOf?: (doc: any, pageIndex: number) => number, markdowns?: string[] }} [options]
+ */
 export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdowns = [] } = {}) {
   const pages = [];
   const warnings = [];
