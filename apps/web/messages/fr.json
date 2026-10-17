@@ -3636,6 +3636,8 @@
     "calloutStyleTitleGap": "Écart",
     "calloutStyleTitleGapTooltip": "Espace entre le titre et le premier bloc, et entre la colonne de l’icône et le contenu",
     "calloutStyleTitleLetterSpacing": "Approche du titre",
+    "calloutStyleBodyLetterSpacing": "Interlettrage",
+    "calloutStyleBodyLetterSpacingTooltip": "Espace ajouté après chaque lettre des paragraphes et des éléments de liste de l’encadré (approche). En em, il compte le corps du texte : -0,03 em resserre de 30/1000. Mesuré dans les lignes : un encadré serré de quelques pour cent coupe là où coupent les lignes de l’original. Un paragraphe d’un bloc de style de paragraphe garde l’approche de son propre style.",
     "calloutStyleTitleIndent": "Retrait du titre",
     "calloutStyleTitleIndentTooltip": "Retrait supplémentaire du titre depuis le bord intérieur gauche de la boîte (place pour un badge en coin)",
     "calloutStyleTitleLineHeight": "Interlignage du titre",

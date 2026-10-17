@@ -3637,6 +3637,8 @@
     "calloutStyleTitleGap": "Abstand",
     "calloutStyleTitleGapTooltip": "Raum zwischen dem Titel und dem ersten Block sowie zwischen der Icon-Spalte und dem Inhalt",
     "calloutStyleTitleLetterSpacing": "Titel-Laufweite",
+    "calloutStyleBodyLetterSpacing": "Laufweite",
+    "calloutStyleBodyLetterSpacingTooltip": "Zusätzlicher Raum nach jedem Buchstaben der Absätze und Listeneinträge des Kastens (Laufweite). In em zählt der Schriftgrad des Textes: -0,03 em rückt um 30/1000 enger. In die Zeilen hineingemessen: Ein Kasten, der um einige Prozent enger läuft, bricht dort um, wo auch die Zeilen der Vorlage umbrechen. Ein Absatz in einem Absatzstil-Block behält die Laufweite seines eigenen Stils.",
     "calloutStyleTitleIndent": "Titeleinzug",
     "calloutStyleTitleIndentTooltip": "Zusätzlicher Einzug des Titels von der inneren linken Kante des Kastens (Platz für eine Eckplakette)",
     "calloutStyleTitleLineHeight": "Titel-Zeilenabstand",

@@ -3637,6 +3637,8 @@
     "calloutStyleTitleGap": "Distanza",
     "calloutStyleTitleGapTooltip": "Spazio tra il titolo e il primo blocco, e tra la colonna dell’icona e il contenuto",
     "calloutStyleTitleLetterSpacing": "Tracking del titolo",
+    "calloutStyleBodyLetterSpacing": "Spaziatura lettere",
+    "calloutStyleBodyLetterSpacingTooltip": "Spazio aggiunto dopo ogni lettera dei paragrafi e degli elementi di elenco del riquadro (tracking). In em conta il corpo del testo: -0,03 em stringe di 30/1000. Misurato dentro le righe: un riquadro stretto di qualche punto percentuale va a capo dove vanno a capo le righe dell’originale. Un paragrafo in un blocco di stile di paragrafo mantiene la spaziatura del proprio stile.",
     "calloutStyleTitleIndent": "Rientro del titolo",
     "calloutStyleTitleIndentTooltip": "Rientro aggiuntivo del titolo dal bordo interno sinistro del riquadro (spazio per un bollino d’angolo)",
     "calloutStyleTitleLineHeight": "Interlinea del titolo",

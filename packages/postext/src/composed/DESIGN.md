@@ -1155,6 +1155,15 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   selection and the caret of the chapter being edited over the carried words on the later chapter's page
   (`drawOverlay` with `CarriedSelection`).
 
+### 5.18 Findings round I (#882)
+
+- **Tracking in a box's body (#974).** `CalloutBodyStyleConfig.letterSpacing` (em of the body size, negative
+  tightens; absent when zero) rides on the derived `bodyText` of a box (`deriveCalloutResolvedConfig`), so
+  `resolveBodyStyle` gives the body style a `letterSpacingPx` and paragraphs and list items are measured, stamped
+  (`VDTBlock.letterSpacing`) and painted as a paragraph style's tracking is (#907). A paragraph in a
+  `:::paragraphs` fence keeps its own style's tracking, code listings none. A frame takes it through its callout
+  style; a frame's own override of it is the `look` of #976.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:

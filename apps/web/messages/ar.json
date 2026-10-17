@@ -3636,6 +3636,8 @@
     "calloutStyleTitleGap": "المسافة",
     "calloutStyleTitleGapTooltip": "المسافة بين العنوان وأول كتلة، وبين عمود الأيقونة والمحتوى",
     "calloutStyleTitleLetterSpacing": "تتبّع العنوان",
+    "calloutStyleBodyLetterSpacing": "تباعد الحروف",
+    "calloutStyleBodyLetterSpacingTooltip": "مسافة إضافية بعد كل حرف من فقرات الصندوق وعناصر قوائمه (التتبّع). بوحدة em تُحسب من حجم خط النص: القيمة -0.03 em تضيّق بمقدار 30/1000. تدخل في قياس الأسطر، فيُقطع الصندوق المضيَّق بنسب مئوية قليلة عند المواضع التي تُقطع عندها أسطر الأصل. أما الفقرة داخل كتلة نمط فقرة فتحتفظ بتباعد نمطها.",
     "calloutStyleTitleIndent": "إزاحة العنوان",
     "calloutStyleTitleIndentTooltip": "إزاحة إضافية للعنوان عن الحافة اليسرى الداخلية للإطار (لإفساح مكان لشارة الزاوية)",
     "calloutStyleTitleLineHeight": "ارتفاع سطر العنوان",

@@ -3636,6 +3636,8 @@
     "calloutStyleTitleGap": "Separació",
     "calloutStyleTitleGapTooltip": "Espai entre el títol i el primer bloc, i entre la columna de la icona i el contingut",
     "calloutStyleTitleLetterSpacing": "Interlletratge del títol",
+    "calloutStyleBodyLetterSpacing": "Espaiat entre lletres",
+    "calloutStyleBodyLetterSpacingTooltip": "Espai afegit després de cada lletra dels paràgrafs i elements de llista de la caixa (tracking). En em compta el cos del text: -0,03 em tanca 30/1000. Es mesura dins de les línies, de manera que una caixa tancada uns quants punts percentuals talla on tallen les línies de l'original. Un paràgraf dins d'un bloc d'estil de paràgraf conserva l'espaiat del seu propi estil.",
     "calloutStyleTitleIndent": "Sagnat del títol",
     "calloutStyleTitleIndentTooltip": "Sagnat addicional del títol des de la vora interior esquerra de la caixa (espai per a una insígnia a la cantonada)",
     "calloutStyleTitleLineHeight": "Interlineat del títol",

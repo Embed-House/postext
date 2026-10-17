@@ -184,9 +184,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>body</code></td>
-      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, letterSpacing, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
       <td><code>bodyText</code>を継承。<code>italic</code>/<code>smallCaps</code>は<code>false</code></td>
-      <td>囲みの中の段落とリスト項目の文字組みです。未設定のフィールドはすべて本文テキストを継承します。<code>italicColor</code>はイタリックの部分の色を設定します（囲みの色でイタリックにした引用文など）。<code>fontWeight</code>/<code>boldFontWeight</code>は通常と太字の部分のウェイトを設定します。<code>italic</code>は囲み全体をイタリックにし、<code>*…*</code>の部分は立体に戻ります。<code>smallCaps</code>は囲み全体をスモールキャピタルにします。<code>tabStops</code>と<code>tabInterval</code>は囲みの中で本文のものを置き換えます（<a href="/ja/docs/configuration-text#タブ位置">タブ位置</a>を参照）。囲みのテキストがほかに何を引き継ぐかは<a href="#囲みの中の文字組み">囲みの中の文字組み</a>を参照してください。</td>
+      <td>囲みの中の段落とリスト項目の文字組みです。未設定のフィールドはすべて本文テキストを継承します。<code>italicColor</code>はイタリックの部分の色を設定します（囲みの色でイタリックにした引用文など）。<code>fontWeight</code>/<code>boldFontWeight</code>は通常と太字の部分のウェイトを設定します。<code>italic</code>は囲み全体をイタリックにし、<code>*…*</code>の部分は立体に戻ります。<code>smallCaps</code>は囲み全体をスモールキャピタルにします。<code>tabStops</code>と<code>tabInterval</code>は囲みの中で本文のものを置き換えます（<a href="/ja/docs/configuration-text#タブ位置">タブ位置</a>を参照）。囲みのテキストがほかに何を引き継ぐかは<a href="#囲みの中の文字組み">囲みの中の文字組み</a>を参照してください。postext 1.42 から、<code>letterSpacing</code>で囲みの段落とリスト項目の字間を調整できます。<code>em</code>では本文のサイズが基準で、負の値は詰めます。字間は行の測定に含まれるので、数パーセント詰めて組んだ囲みは原稿と同じ位置で改行します。<code>:::paragraphs</code>フェンス内の段落は、そのスタイル自身の字間を保ちます。このスタイルを使う枠にも同じ設定が適用されます。</td>
     </tr>
     <tr>
       <td><code>lists</code></td>

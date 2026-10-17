@@ -3636,6 +3636,8 @@
     "calloutStyleTitleGap": "间距",
     "calloutStyleTitleGapTooltip": "标题与第一个块之间的空间，以及图标栏与内容之间的空间",
     "calloutStyleTitleLetterSpacing": "标题字距",
+    "calloutStyleBodyLetterSpacing": "字距",
+    "calloutStyleBodyLetterSpacingTooltip": "在框内段落和列表项的每个字母之后加的额外间距。以 em 为单位时按正文字号计算：-0.03 em 即收紧 30/1000。字距计入行的测量，所以排得紧几个百分点的框会在原稿换行的地方换行。段落样式围栏中的段落保留其样式自己的字距。",
     "calloutStyleTitleIndent": "标题缩进",
     "calloutStyleTitleIndentTooltip": "标题距框内左边缘的额外缩进（为角标留出空间）",
     "calloutStyleTitleLineHeight": "标题行距",

@@ -241,6 +241,8 @@ function resolveCalloutStyleConfig(
       boldFontWeight: partial.body?.boldFontWeight ?? bodyText.boldFontWeight,
       italic: partial.body?.italic ?? false,
       smallCaps: partial.body?.smallCaps ?? false,
+      // Absent unless set to something other than zero (#974).
+      ...(partial.body?.letterSpacing && partial.body.letterSpacing.value !== 0 ? { letterSpacing: partial.body.letterSpacing } : {}),
       textAlign: partial.body?.textAlign === 'start' ? 'left' : partial.body?.textAlign ?? (bodyText.textAlign === 'justify' ? 'justify' : 'left'),
       hyphenation: partial.body?.hyphenation ?? bodyText.hyphenation.enabled,
       paragraphSpacing: partial.body?.paragraphSpacing ?? bodyText.paragraphSpacing,
@@ -518,6 +520,7 @@ export function stripCalloutStylesDefaults(
       if (s.body.boldFontWeight !== undefined) b.boldFontWeight = s.body.boldFontWeight;
       if (s.body.italic) b.italic = true;
       if (s.body.smallCaps) b.smallCaps = true;
+      if (s.body.letterSpacing !== undefined && !dimensionsEqual(s.body.letterSpacing, PT0)) b.letterSpacing = s.body.letterSpacing;
       if (s.body.textAlign !== undefined) b.textAlign = s.body.textAlign;
       if (s.body.hyphenation !== undefined) b.hyphenation = s.body.hyphenation;
       if (s.body.paragraphSpacing !== undefined) b.paragraphSpacing = s.body.paragraphSpacing;

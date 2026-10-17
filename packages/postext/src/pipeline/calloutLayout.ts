@@ -192,6 +192,7 @@ export function deriveCalloutResolvedConfig(
       boldFontWeight: body.boldFontWeight,
       ...(body.italic ? { italic: true } : {}),
       ...(body.smallCaps ? { smallCaps: true } : {}),
+      ...(body.letterSpacing ? { letterSpacing: body.letterSpacing } : {}),
       textAlign: body.textAlign,
       hyphenation: { ...resolved.bodyText.hyphenation, enabled: body.hyphenation },
       paragraphSpacing: body.paragraphSpacing,

@@ -3049,6 +3049,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   calloutStyleTitleGap: 'Gap',
   calloutStyleTitleGapTooltip: 'Space between the title and the first block, and between the icon column and the content',
   calloutStyleTitleLetterSpacing: "Title tracking",
+  calloutStyleBodyLetterSpacing: "Letter spacing",
+  calloutStyleBodyLetterSpacingTooltip: "Extra space after every letter of the box's paragraphs and list items (tracking). In em it counts the body size: -0.03 em is 30/1000 tighter. Measured into the lines, so a box set a few per cent tight breaks where the original's lines break. A paragraph in a paragraph-style fence keeps its own style's tracking.",
   calloutStyleTitleIndent: "Title indent",
   calloutStyleTitleIndentTooltip: "Extra indent of the title from the inner left edge of the box (room for a corner badge)",
   calloutStyleTitleLineHeight: "Title line height",

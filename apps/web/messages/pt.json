@@ -3633,6 +3633,8 @@
     "calloutStyleTitleGap": "Distância",
     "calloutStyleTitleGapTooltip": "Espaço entre o título e o primeiro bloco, e entre a coluna do ícone e o conteúdo",
     "calloutStyleTitleLetterSpacing": "Tracking do título",
+    "calloutStyleBodyLetterSpacing": "Espaçamento entre letras",
+    "calloutStyleBodyLetterSpacingTooltip": "Espaço extra depois de cada letra dos parágrafos e itens de lista do boxe (tracking). Em em, conta o tamanho do texto: -0,03 em aperta 30/1000. Medido dentro das linhas: um boxe fechado alguns por cento quebra onde quebram as linhas do original. Um parágrafo num bloco de estilo de parágrafo mantém o espaçamento do seu próprio estilo.",
     "calloutStyleTitleIndent": "Recuo do título",
     "calloutStyleTitleIndentTooltip": "Recuo extra do título a partir da borda interna esquerda do boxe (espaço para um selo no canto)",
     "calloutStyleTitleLineHeight": "Entrelinha do título",

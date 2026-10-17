@@ -1484,6 +1484,8 @@
     "calloutStyleTitleGap": "Separación",
     "calloutStyleTitleGapTooltip": "Espacio entre el título y el primer bloque, y entre la columna del icono y el contenido",
     "calloutStyleTitleLetterSpacing": "Interletraje del título",
+    "calloutStyleBodyLetterSpacing": "Espaciado entre letras",
+    "calloutStyleBodyLetterSpacingTooltip": "Espacio añadido tras cada letra de los párrafos y elementos de lista de la caja (tracking). En em cuenta el cuerpo del texto: -0,03 em cierra 30/1000. Se mide dentro de las líneas, así que una caja cerrada unos puntos porcentuales corta donde cortan las líneas del original. Un párrafo dentro de un bloque de estilo de párrafo conserva el espaciado de su propio estilo.",
     "calloutStyleTitleIndent": "Sangría del título",
     "calloutStyleTitleIndentTooltip": "Sangría adicional del título desde el borde interior izquierdo de la caja (sitio para una insignia en la esquina)",
     "calloutStyleTitleLineHeight": "Interlineado del título",

@@ -3230,6 +3230,8 @@ export interface SandboxLabels {
   calloutStyleTitleGap: string;
   calloutStyleTitleGapTooltip: string;
   calloutStyleTitleLetterSpacing: string;
+  calloutStyleBodyLetterSpacing: string;
+  calloutStyleBodyLetterSpacingTooltip: string;
   calloutStyleTitleIndent: string;
   calloutStyleTitleIndentTooltip: string;
   calloutStyleTitleLineHeight: string;

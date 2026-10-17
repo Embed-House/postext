@@ -3636,6 +3636,8 @@
     "calloutStyleTitleGap": "アキ",
     "calloutStyleTitleGapTooltip": "タイトルと最初のブロックのアキ、およびアイコンの列と内容のアキです。",
     "calloutStyleTitleLetterSpacing": "タイトルの字間",
+    "calloutStyleBodyLetterSpacing": "字間",
+    "calloutStyleBodyLetterSpacingTooltip": "囲みの段落とリスト項目の各文字の後に加えるアキです（トラッキング）。em は本文のサイズが基準で、-0.03 em なら 30/1000 詰めます。行の測定に含まれるため、数パーセント詰めて組んだ囲みは原稿と同じ位置で改行します。段落スタイルのフェンス内の段落は、そのスタイル自身の字間を保ちます。",
     "calloutStyleTitleIndent": "タイトルのインデント",
     "calloutStyleTitleIndentTooltip": "囲みの内側の左端からタイトルまでの追加のインデントです（角のバッジのための余地）。",
     "calloutStyleTitleLineHeight": "タイトルの行送り",

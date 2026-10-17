@@ -2407,6 +2407,9 @@ export interface ResolvedBodyTextConfig {
    *  document is always upright, in lowercase. */
   italic?: boolean;
   smallCaps?: boolean;
+  /** Set only in the derived config of a callout whose `body.letterSpacing`
+   *  is not zero (#974). */
+  letterSpacing?: Dimension;
 }
 
 // ---------------------------------------------------------------------------
@@ -3371,6 +3374,15 @@ export interface CalloutBodyStyleConfig {
   /** Set the box's paragraphs and list items in small capitals (see
    *  `ParagraphStyleConfig.smallCaps`). Default `false`. */
   smallCaps?: boolean;
+  /** Tracking after every glyph of the box's paragraphs and list items
+   *  (#974); negative tightens. An `em` value is relative to the body's
+   *  `fontSize`. Measured into the lines (a tracked box breaks where its
+   *  wider or narrower words put it) and painted the same by canvas, HTML,
+   *  PDF and EPUB, as {@link ParagraphStyleConfig.letterSpacing} does. A
+   *  paragraph set in a `:::paragraphs{style}` keeps its style's own
+   *  tracking; words of a joining script stay untracked. A frame with this
+   *  style takes it too. Default `0`. */
+  letterSpacing?: Dimension;
   /** `'start'` is `'left'` (see {@link TextAlignKeyword}). */
   textAlign?: 'left' | 'justify' | 'start';
   /** Hyphenate when justified — and, when `bodyText.hyphenation.ragged` is
@@ -3683,6 +3695,8 @@ export interface ResolvedCalloutStyleConfig {
     boldFontWeight: number;
     italic: boolean;
     smallCaps: boolean;
+    /** Absent unless the style sets a non-zero one (#974). */
+    letterSpacing?: Dimension;
     textAlign: 'left' | 'justify';
     hyphenation: boolean;
     paragraphSpacing: boolean;

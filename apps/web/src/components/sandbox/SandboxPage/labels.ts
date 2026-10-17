@@ -3028,6 +3028,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     calloutStyleTitleGap: t("calloutStyleTitleGap"),
     calloutStyleTitleGapTooltip: t("calloutStyleTitleGapTooltip"),
     calloutStyleTitleLetterSpacing: t("calloutStyleTitleLetterSpacing"),
+    calloutStyleBodyLetterSpacing: t("calloutStyleBodyLetterSpacing"),
+    calloutStyleBodyLetterSpacingTooltip: t("calloutStyleBodyLetterSpacingTooltip"),
     calloutStyleTitleIndent: t("calloutStyleTitleIndent"),
     calloutStyleTitleIndentTooltip: t("calloutStyleTitleIndentTooltip"),
     calloutStyleTitleLineHeight: t("calloutStyleTitleLineHeight"),
