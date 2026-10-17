@@ -760,20 +760,6 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
         pictures.append({"box": b, "images": c["images"], "vector": c["n"] - len(c["images"])})
     # pictures that overlap become one (a photo on a drawn map)
     pictures = merge_pictures(pictures)
-    # A picture that lies on a card is cut no further than the card: a map whose
-    # overflow is masked by white rectangles at the card's edge, and the folio's
-    # icons a millimetre from them, would otherwise carry a strip of the page's
-    # own colour past the card, which then covers the ground when another
-    # edition's shorter text moves the picture up.
-    for pic in pictures:
-        b = pic["box"]
-        card = max((c for c in out["cards"] if inter(b, c.box) > 0.6 * area(b)), key=lambda c: inter(b, c.box), default=None)
-        if card is None:
-            continue
-        cb = card.box
-        clipped = (max(b[0], cb[0]), max(b[1], cb[1]), min(b[2], cb[2]), min(b[3], cb[3]))
-        if clipped != tuple(b) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
-            pic["box"] = clipped
     out["pictures"] = [p for p in pictures if area(p["box"]) < 0.6 * page_area]
     out["art"] = art
     return out
@@ -1182,7 +1168,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         if f.kind in ("picture", "figure"):
             pic_n += 1
             rid = f"{rid_base}-{f.name}"
-            f.resource = cut_picture(pdf_path, doc, pno, f, origin, rid, opts, renders)
+            f.resource = cut_picture(pdf_path, doc, pno, f, origin, rid, opts, renders, cards)
             res.append(f.resource)
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
@@ -1489,7 +1475,7 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
 
 
 def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: tuple, rid: str,
-                opts: argparse.Namespace, renders: Renders) -> dict:
+                opts: argparse.Namespace, renders: Renders, cards: list | None = None) -> dict:
     p = f.picture
     out_dir = Path(opts.out) / "resources"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1521,6 +1507,17 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 im.save(file, optimize=True)
                 alpha = True
     if file is None:
+        # A picture cut from the page (no transparency to cut out) lies on its card and is cut no
+        # further than the card. A map whose overflow is masked by white rectangles at the card's
+        # edge, and the folio's icons a millimetre from them, made a cluster that reached past the
+        # card; the cut carried a strip of the page's own colour, which covered the ground when
+        # another edition's shorter text moved the picture up. A cut-out with an alpha channel
+        # (a photo standing over the card's edge) keeps its overhang.
+        if cards and f.zone >= 0:
+            cb = cards[f.zone].box
+            clipped = (max(f.box[0], cb[0]), max(f.box[1], cb[1]), min(f.box[2], cb[2]), min(f.box[3], cb[3]))
+            if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
+                f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
         page.add_redact_annot(page.rect, fill=False)

@@ -276,11 +276,12 @@ Also decided by the drafting, checked on a real textbook in three languages:
   hangs from the picture; a longer text makes the box taller and the
   pictures follow. Anchored to the top they stay put and the text runs under
   them.
-- **Pictures are cut no further than their card.** A map whose overflow is
-  masked by white rectangles at the card's edge, next to the folio's icons,
-  made a cluster that reached past the card; the cut carried a strip of the
-  page's colour, which covered the ground when a shorter translation moved
-  the picture up.
+- **Pictures cut from the page are cut no further than their card.** A map
+  whose overflow is masked by white rectangles at the card's edge, next to
+  the folio's icons, made a cluster that reached past the card; the cut
+  carried a strip of the page's colour, which covered the ground when a
+  shorter translation moved the picture up. A cut-out with an alpha channel
+  (a photo standing over the card's edge) keeps its overhang.
 - **The ground is checked against the render**: a band or box fill the
   redaction left (MuPDF removes line art only when a rectangle covers the
   whole path, and misses wide strokes under a transform) is painted out with
@@ -360,7 +361,7 @@ The library is the set of looks the book uses, each written once:
   with a tab also `label.background` and the border colour). Group the draft's
   styles by kind (fill or not, border or not, tab or not, face, pill or box)
   first, then by tint: the 28-page textbook's 86 draft styles came to 17
-  full styles and 43 thin ones. A tab's `offset`, `inset` and `paddingX` are
+  full styles and 44 thin ones. A tab's `offset`, `inset` and `paddingX` are
   style fields too (a frame overrides none of them), so boxes whose tabs stand
   at different heights are thin styles as well; never merge them away: the
   box would draw lower and its text with it. The Sandbox's Frame styles library still
