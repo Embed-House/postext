@@ -492,8 +492,8 @@ export function createBookPlanner(): BookPlanner {
       if (entries.some((e) => e.hasIndex)) printedKeys.index = outlineKey(outlines.index);
       if (entries.some((e) => e.hasRefs)) printedKeys.refs = outlineKey(outlines.refs);
       /** The outline a chapter is laid out with, and its key. */
-      const chapterOutline = (entry: CountersEntry): { outline?: OutlineEntry[]; key: string } => {
-        if (entry.hasRefs) {
+      const chapterOutline = (entry: CountersEntry, carriesRefs: boolean): { outline?: OutlineEntry[]; key: string } => {
+        if (entry.hasRefs || carriesRefs) {
           // The parts the chapter prints, in book order, with the anchors.
           const outline = bookOutline.filter((e) => e.anchorId !== undefined
             || (entry.hasToc && (e.kind === 'heading' || e.kind === 'part'))
@@ -548,7 +548,7 @@ export function createBookPlanner(): BookPlanner {
             ...(lineStarts[index] !== undefined ? { lineNumber: lineStarts[index] } : {}),
             ...total,
           };
-        const { outline: printedOutline, key: printedKey } = chapterOutline(entries[index]!);
+        const { outline: printedOutline, key: printedKey } = chapterOutline(entries[index]!, (jumpsIn.get(index) ?? []).some((j) => j.outline));
         const citations = citationContexts?.[index];
         const chapterOutlineKey = citations ? `${printedKey}\n\ncite:${sharedCitationKey}|${citations.local.join(',')}|${citations.last ? 1 : 0}${citations.captions ? `|${JSON.stringify(citations.captions)}` : ''}` : printedKey;
         const layout = records[index]!;
