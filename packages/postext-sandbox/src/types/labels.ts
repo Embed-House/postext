@@ -4448,6 +4448,11 @@ export interface SandboxLabels {
   wordOptionPageBreaksKeep: string;
   wordOptionImages: string;
   wordOptionTables: string;
+  wordOptionTracking: string;
+  wordTrackingEntry: string;
+  wordTrackingApplied: string;
+  wordTrackingSkipped: string;
+  wordTrackingCalloutTitle: string;
   wordDestinationHeading: string;
   wordDestinationChapter: string;
   wordDestinationChapterHelp: string;

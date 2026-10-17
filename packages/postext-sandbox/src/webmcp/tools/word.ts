@@ -18,11 +18,13 @@ import {
   templateFile,
   type CharacterTarget,
   type ParagraphTarget,
+  type StyleTracking,
   type WordDocument,
   type WordImportOptions,
   type WordTemplate,
 } from 'postext/word';
 import { wordCount } from '../../book/chapterOps';
+import type { SandboxLabels } from '../../types';
 import type { SandboxAction } from '../../context/SandboxContext';
 import { downloadBytes } from '../../storage/persistence';
 import {
@@ -38,7 +40,10 @@ import {
   removeTemplate,
   saveLastTemplateId,
   storeTemplate,
+  trackingTargetName,
   wordImportActions,
+  wordTrackingPlan,
+  type WordTrackingPlan,
   type WordDestination,
 } from '../../word/sandboxImport';
 import { chapterText, editChapter } from '../chapterEdits';
@@ -111,6 +116,20 @@ function overlaid<T>(base: Record<string, T>, over: Record<string, T>): Record<s
   return { ...Object.fromEntries(kept), ...over };
 }
 
+/** What the character spacing of the Word styles does (or would): the
+ *  styles it is set on and the ones the book keeps as they are. */
+function spacingAnswer(plan: WordTrackingPlan, on: boolean, config: PostextConfig, labels: SandboxLabels): Record<string, unknown> {
+  if (plan.applied.length + plan.skipped.length === 0) return {};
+  const entry = (t: StyleTracking) => ({ style: t.style, goesTo: trackingTargetName(t, config, labels), em: t.letterSpacing.value });
+  return {
+    characterSpacing: {
+      taken: on && plan.applied.length > 0,
+      ...(plan.applied.length > 0 ? { setOn: plan.applied.map(entry) } : {}),
+      ...(plan.skipped.length > 0 ? { leftAsTheBookHasIt: plan.skipped.map(entry) } : {}),
+    },
+  };
+}
+
 export function wordTools(host: SandboxToolHost): WebMcpTool[] {
   const { store } = host;
 
@@ -138,6 +157,7 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
         pageBreaks: { type: 'string', enum: ['drop', 'keep'], description: 'Page breaks typed in Word: dropped (the default; the design decides where pages turn) or kept as :::pagebreak.' },
         images: { type: 'boolean', description: 'Pictures become resources placed where they were (default true).' },
         tables: { type: 'boolean', description: 'Tables become table resources placed where they were (default true).' },
+        characterSpacing: { type: 'boolean', description: "The character spacing (letter-spacing) of the Word styles in use is put, in em, on the book's paragraph styles, heading styles, heading levels and callout titles they map to, where the book sets none (what it sets itself stays). Default true when there is something to put; the dry run lists it under characterSpacing." },
         saveTemplateAs: { type: 'string', description: 'Also keep the mapping used, with every style of the document written out, as a saved template of this name (the dialog\'s "Save as"); it becomes the template last used. Not on a dry run.' },
         previewCharacters: { type: 'integer', minimum: 0, maximum: PREVIEW_LIMIT, description: `dryRun: how much of the converted Markdown to answer with (default ${PREVIEW_DEFAULT}).` },
         wait: WAIT_PARAM,
@@ -212,6 +232,9 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
       const target = destination === 'book' ? null : chapterOf(s, args.chapter);
 
       const report = analyzeDocx(doc, working, config);
+      const spacing = wordTrackingPlan(doc, working, config);
+      const takeSpacing = (args.characterSpacing as boolean | undefined) ?? spacing.applied.length > 0;
+      const spacingPatch = takeSpacing ? spacing.patch : {};
       const result = convertWordDocument(doc, {
         template: working,
         config,
@@ -271,6 +294,7 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
           paragraphStyles: report.paragraphStyles.map((u) => ({ name: u.name, uses: u.count, ...(u.sample ? { sample: u.sample } : {}), becomes: paragraphTargetByName(doc, u.name, working, config) })),
           characterStyles: report.characterStyles.map((u) => ({ name: u.name, uses: u.count, ...(u.sample ? { sample: u.sample } : {}), becomes: characterTargetOf(doc, u.name, working, config) })),
           ...made,
+          ...spacingAnswer(spacing, takeSpacing, config, labels),
           preview: markdown.slice(0, limit),
           ...(markdown.length > limit ? { previewOf: markdown.length } : {}),
         };
@@ -281,10 +305,11 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
       const types = config.resourceTypes ?? defaultResourceTypes(s.locale);
       const created = await importedResources(result, types);
       const resources: SandboxAction[] = created.map((r) => ({ type: 'UPSERT_RESOURCE', payload: r }));
+      const styles: SandboxAction[] = Object.keys(spacingPatch).length > 0 ? [{ type: 'UPDATE_CONFIG', payload: spacingPatch }] : [];
       let chapters: Record<string, unknown>[];
       let changed = true;
       if (destination === 'chapter') {
-        if (resources.length > 0) await dispatchAndWait(host, resources);
+        if (resources.length + styles.length > 0) await dispatchAndWait(host, [...styles, ...resources]);
         const before = chapterText(store.getSnapshot(), target!.chapter.id);
         if (before === null) throw new ToolError('That chapter is no longer in the book.');
         const markdown = result.chapters[0]!.markdown;
@@ -293,7 +318,7 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
         chapters = [{ chapter: target!.index + 1, title: target!.chapter.title, characters: markdown.length }];
       } else {
         const now = store.getSnapshot();
-        const placed = wordImportActions(result, destination, { chapters: now.chapters, activeChapterId: target?.chapter.id ?? now.activeChapterId });
+        const placed = wordImportActions(result, destination, { chapters: now.chapters, activeChapterId: target?.chapter.id ?? now.activeChapterId }, spacingPatch);
         const after = await dispatchAndWait(host, [...resources, ...placed]);
         const ids = placed.flatMap((a) => (a.type === 'ADD_CHAPTER' ? [a.payload.chapter.id] : a.type === 'SET_BOOK' ? a.payload.chapters.map((c) => c.id) : []));
         chapters = after.chapters.flatMap((c, i) => (ids.includes(c.id) ? [{ chapter: i + 1, id: c.id, title: c.title, characters: c.markdown.length }] : []));
@@ -315,6 +340,7 @@ export function wordTools(host: SandboxToolHost): WebMcpTool[] {
         ...(made.skippedPictures ? { skippedPictures: made.skippedPictures } : {}),
         ...(made.droppedHeadingNotes ? { droppedHeadingNotes: made.droppedHeadingNotes } : {}),
         verdict: report.verdict,
+        ...(Object.keys(spacingPatch).length > 0 ? spacingAnswer(spacing, true, config, labels) : {}),
         ...(templateSaved ? { templateSaved } : {}),
         ...(destination === 'chapter' && changed ? { undo: UNDO_HINT } : {}),
         ...(await layoutAnswer(host, args.wait, signal)),
