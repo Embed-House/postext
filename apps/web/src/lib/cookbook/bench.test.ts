@@ -298,6 +298,19 @@ describe("C38: the stress test", () => {
     expect(stressFindings({ ...base, facts: { ...facts(declared), selected: -1 } }).at(-1)!.detail).toBe("the stretched edition built nothing");
   });
 
+  it("reads how far the reflow pushed a frame past the foot of the type area (#911)", () => {
+    const frame = (name: string, y: number, declaredY?: number) => ({ name, rect: { x: 0, y, width: 100, height: 100 }, ...(declaredY !== undefined ? { declaredRect: { x: 0, y: declaredY, width: 100, height: 100 } } : {}), overflowPx: 0, scale: 1, blockIds: [] });
+    const doc = { config: { page: { dpi: 254 } }, contentWarnings: [], pages: [{ index: 0, contentArea: { x: 0, y: 0, width: 100, height: 1000 }, composed: { template: "t", fenceIndex: 0, log: [], frames: [frame("moved", 950, 800), frame("drawn", 950), frame("inside", 500, 400)] } }] };
+    const out = composedFacts(engine, [doc]) as ComposedFacts;
+    expect(out.pages[0]!.frames.map((f) => f.pushedOutMm)).toEqual([5, undefined, undefined]);
+  });
+
+  it("fails a frame the reflow pushed past the foot of the type area (#911)", () => {
+    const pushed = { ...page, frames: [{ name: "box", heightMm: 40 }, { name: "lines", heightMm: 16, pushedOutMm: 4.5 }] };
+    const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [pushed] }) });
+    expect(out.filter((f) => f.severity === "fail").map((f) => f.detail)).toEqual(['p. 1 (t): frame "lines" was pushed 4.5 mm past the foot of the type area']);
+  });
+
   it("says when the page goes on, and when the page count changed", () => {
     const going = { ...page, events: [], frames: [{ name: "a", heightMm: 30, continuesTo: "cp0:b" }] };
     const out = stressFindings({ ...base, base: facts(declared), facts: facts({ ...declared, pages: [going] }, { pages: [...facts(declared).pages!, { ...facts(declared).pages![0]!, n: 2 }] }) });

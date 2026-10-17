@@ -806,6 +806,23 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
  * @param {any[]} docs
  * @param {{ nOf?: (doc: any, pageIndex: number) => number, markdowns?: string[] }} [options]
  */
+/**
+ * How far a composed frame's box runs past the foot of its page's type area
+ * when the template's box for it (`declaredRect`) did not (#911), in mm; 0
+ * otherwise.
+ *
+ * @param {any} f
+ * @param {any} area
+ * @param {number} dpi
+ */
+function pushedOutMm(f, area, dpi) {
+  if (!f.declaredRect || !area) return 0;
+  const foot = area.y + area.height;
+  if (f.declaredRect.y + f.declaredRect.height > foot + 0.5) return 0;
+  const past = f.rect.y + f.rect.height - foot;
+  return past > 0.5 ? mmOf(past, dpi) : 0;
+}
+
 export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdowns = [] } = {}) {
   const pages = [];
   const warnings = [];
@@ -842,6 +859,9 @@ export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdown
           ...(f.continuesTo ? { continuesTo: f.continuesTo } : {}),
           ...(f.continuedFrom ? { continuedFrom: f.continuedFrom } : {}),
           ...(f.sourceStart !== undefined ? { filled: true } : {}),
+          // A frame the reflow moved past the foot of the type area where
+          // the template had it inside (#911): an answer space pushed off.
+          ...(pushedOutMm(f, page.contentArea, dpi) > 0 ? { pushedOutMm: pushedOutMm(f, page.contentArea, dpi) } : {}),
         })),
         events: (c.log ?? []).map((e) => ({
           frame: e.frame, kind: e.kind,

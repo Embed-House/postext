@@ -212,6 +212,9 @@ export interface ComposedFrameFact {
   continuesTo?: string;
   continuedFrom?: string;
   filled?: true;
+  /** How far the reflow moved the frame past the foot of the type area,
+   *  where the template had it inside (#911). */
+  pushedOutMm?: number;
 }
 
 /** An entry of a composed page's reflow log (`VDTComposedPage.log`). */
@@ -1301,7 +1304,14 @@ export function stressFindings(input: StressInput): Finding[] {
   const c = facts.composed;
   const stretchedPages = c?.pages ?? [];
   const bases = basePages(stretchedPages, input.base?.composed?.pages);
-  stretchedPages.forEach((page, i) => add("info", pageStory(page, bases[i], stretchedPages)));
+  stretchedPages.forEach((page, i) => {
+    add("info", pageStory(page, bases[i], stretchedPages));
+    // A frame pushed past the foot of the type area (#911): what it stands
+    // for (an answer space, a picture slot) is off the page.
+    for (const f of page.frames) {
+      if ((f.pushedOutMm ?? 0) > 0) add("fail", `p. ${page.n} (${page.template}): frame "${f.name}" was pushed ${f.pushedOutMm} mm past the foot of the type area`);
+    }
+  });
   for (const w of c?.warnings ?? []) {
     if (w.kind !== "frameOverflow") {
       add("fail", `${w.kind}${pageOf(w.page)}${w.text ? `: ${w.text}` : ""}`);
