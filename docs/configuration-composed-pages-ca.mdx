@@ -345,7 +345,7 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>els de la pàgina</td>
-      <td>Una caixa vertical en una pàgina horitzontal, o a l'inrevés.</td>
+      <td>Un marc amb el seu propi mode d'escriptura o direcció: una caixa vertical en una pàgina horitzontal, una fitxa horitzontal en una de vertical, una cita de dreta a esquerra en un llibre d'esquerra a dreta. Un marc de l'altre mode d'escriptura es compon en la seva caixa girada un quart de volta: les línies en recorren l'alçada i se succeeixen al llarg de l'amplada, i una alçada <code>'auto'</code> és la menor que les conté en aquesta amplada. El text es pinta com una pàgina d'aquest mode pinta el seu. <code>direction</code> compon la història del marc en aquesta direcció, com una caixa amb <code>&#123;dir=…&#125;</code>; un bloc o una caixa que escriu el seu propi <code>dir</code> el conserva. Des de postext 1.39. Un marc vertical en una pàgina de dreta a esquerra conserva el mode de la pàgina; una imatge en un marc de l'altre mode gira amb el marc; l'EPUB adaptable compon el text del marc en el mode del llibre.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -439,7 +439,7 @@ Un marc declara la seva mida: un `height` fix, o `'auto'`, l'alçada del que con
 
 **Pila.** Els marcs d'una pila van l'un sota l'altre, cadascun a la seva alçada, amb `gap` entre ells. Cada marc conserva el seu lloc horitzontal i la seva amplada; el seu lloc vertical s'ignora.
 
-- Un grup sense `placement` ni `grid` propis comença allà on el situa la col·locació del seu primer marc i baixa tant com ho necessitin els marcs, fins al peu de l'àrea de la plantilla. Quan un marc creix, els marcs que el segueixen baixen la mateixa distància.
+- Un grup sense `placement` ni `grid` propis comença allà on es col·loca el seu primer marc (el seu `placement`, o la seva cel·la `grid` en una plantilla amb graella) i baixa tant com ho necessitin els marcs, fins al peu de l'àrea de la plantilla. Quan un marc creix, els marcs que el segueixen baixen la mateixa distància.
 - Un grup amb caixa pròpia col·loca els seus marcs dins d'aquesta caixa. Quan necessiten més espai del que hi ha, en tornen els marcs amb `shrink` més gran que 0, començant per la `priority` més baixa; els marcs d'una mateixa prioritat en cedeixen en proporció al seu `shrink`, i cap no baixa del seu `minHeight`. L'espai sobrant va als marcs amb `grow` més gran que 0, en proporció a aquest valor, fins al seu `maxHeight`; si no n'hi ha cap, `align` col·loca els marcs (`'end'` al peu, `'center'`, `'space-between'`). Un marc del grup sense col·locació pròpia pren la caixa del grup com a àrea.
 - Quan ja no pot cedir res més, cedeixen primer els marcs més propers al peu del grup, cadascun fins al seu `minHeight`; un marc d'alçada fixa la conserva, de manera que un espai de resposta buit o el lloc d'una imatge sota una caixa que creix es queda a la pàgina i és el text de la caixa el que cedeix. Cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`. Un marc retallat per sota del seu `minHeight` o de la seva alçada fixa també es notifica, tingui contingut o no.
 - Un marc amb `height: 'fill'` demana el seu `minHeight` i pren l'espai sobrant com si tingués `grow: 1`.
@@ -529,7 +529,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `bodyStyle` i la `palette` de la plantilla. El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ### Dobles pàgines
 
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos posen `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina que conté el seu centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
 
-En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.38.
+En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.38. Una fitxa que s'hagi de llegir al llarg del plec porta `writingMode: 'horizontal-tb'`: es compon en horitzontal i queda dreta a la pàgina vertical (des de postext 1.39).
 
 ## Estils de rètol
 
@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Fins a quina mida es pot reduir un rètol quan no cap en la seva amplada.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Escriptura vertical per als rètols d'aquest estil: caràcters drets en cel·les una sota l'altra, columnes de dreta a esquerra, com es retola un mapa xinès o japonès. El <code>writingMode</code> propi d'una àncora mana.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els c�
       <td><code>string</code></td>
       <td>cap</td>
       <td>Un id de <code>labelStyles</code>. Un rètol que anomena el seu propi estil el substitueix.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compon el rètol en vertical, com es retola un mapa xinès o japonès o un llom. Aleshores el seu <code>width</code> és una fracció de l'alçada de la imatge, <code>align</code> va al llarg de la columna (<code>start</code> és l'extrem superior) i <code>verticalAlign</code> a través de les columnes (<code>top</code> és la primera, la de la dreta).</td>
     </tr>
   </tbody>
 </table>

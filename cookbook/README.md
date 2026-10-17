@@ -1082,7 +1082,12 @@ edition, before it is published:
   frame with an `auto` height and no `minHeight` declares no height, so it never grows in the log
   and what is anchored to it never moves), the note compares each frame's box with the same page
   of the run on the text as written: `entradilla 6.2 mm taller than as written; col-1 moved down
-  6.2 mm from where it was as written`. A warning the longer text raises fails, except a
+  6.2 mm from where it was as written`. A frame the longer text pushed off the page fails too,
+  where the template had it inside: past the foot, the head, the left or the right edge of the
+  type area (`frame "row" was pushed 3.2 mm past the right edge of the type area`), or, on an
+  edge where the template already put it outside the area, past the bleed. On a spread the limits
+  are those of the sheet of two pages, so a band across the spine is judged against the outer
+  edges and not against its own page. A warning the longer text raises fails, except a
   `frameOverflow` whose proposals carry values, which is a warning that names them (the
   copy-fitter's next move); one with no such proposal fails. A stretched run that throws, does
   not converge or builds nothing fails too. The first note says how much longer the text came

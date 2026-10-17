@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: todos os arquivos do pacote
     <tr><td><code>files</code></td><td>Todos os arquivos do zip, indexados pelo caminho.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>O caminho da imagem de capa e o modo como o pacote pede para ser visto: o <code>view</code> do manifesto, com o <code>localized[…].view</code> do idioma servido por cima.</td></tr>
     <tr><td><code>start</code></td><td>Onde o livro começa, para um pacote que contém parte de um mais longo: o <code>start</code> do manifesto, ou o <code>localized[…].start</code> do idioma servido. Ausente num livro que começa pelo início.</td></tr>
-    <tr><td><code>warnings</code></td><td>Problemas não fatais: um arquivo de fonte sem suporte, uma matriz de impressão faltando.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problemas não fatais: um arquivo de fonte sem suporte, um arquivo de fonte ausente do pacote, uma matriz de impressão faltando.</td></tr>
   </tbody>
 </table>
 
-O **`fileId` de um conteúdo é o seu caminho dentro do pacote**. `resource.svg.fileId`, `resource.bitmap.fileId` e o `fileId` de cada variante de `customFonts` podem ser buscados diretamente em `bundle.files`. `openBundle` lança um erro quando os bytes não são um zip, quando não há um `preset.json` válido (na raiz ou dentro de uma única pasta de primeiro nível) ou quando falta um arquivo que o manifesto nomeia.
+O **`fileId` de um conteúdo é o seu caminho dentro do pacote**. `resource.svg.fileId`, `resource.bitmap.fileId` e o `fileId` de cada variante de `customFonts` podem ser buscados diretamente em `bundle.files`. `openBundle` lança um erro quando os bytes não são um zip, quando não há um `preset.json` válido (na raiz ou dentro de uma única pasta de primeiro nível) ou quando falta um capítulo ou um arquivo de imagem que o manifesto nomeia. Um arquivo de fonte que o manifesto nomeia e o pacote não inclui (um pacote que deixou de fora as fontes licenciadas) não impede a abertura: essa fonte é omitida com um aviso, a família que fica sem nenhuma sai de `customFonts` e o livro usa uma fonte substituta, como com qualquer fonte que falta.
 
 #### Pacotes gravados pelo postext 1.4 ou anterior
 

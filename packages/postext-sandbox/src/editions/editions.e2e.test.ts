@@ -189,6 +189,9 @@ describe('a composed book in three editions', () => {
     // In a project (one edition), the fragment keeps the book on screen.
     expect(frameJumpFragment({ ...EMPTY_VIEW_HASH, project: 'p1', chapter: 1 }, { presetId: null, locale: 'es', chapterIndex: 0, page: 3 }))
       .toBe('#project=p1&view=canvas&chapter=1&page=3');
+    // A project that keeps several editions opens the one a check is in (#903).
+    expect(frameJumpFragment({ ...EMPTY_VIEW_HASH, project: 'p1', lang: 'es', chapter: 1 }, { presetId: null, projectId: 'p1', locale: 'ca', chapterIndex: 1, page: 4 }))
+      .toBe('#project=p1&lang=ca&view=canvas&chapter=2&page=4');
   });
 
   it('picks the frame a check reaches as the page selection, at frame level', () => {

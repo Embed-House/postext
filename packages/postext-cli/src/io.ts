@@ -12,10 +12,18 @@ export function ensureDir(dir: string): void {
   }
 }
 
+/** Write to stdout and resolve once the data has left the process. A
+ *  piped stdout is asynchronous under Bun: `process.exit` straight after
+ *  `process.stdout.write` cut a large report at the pipe's 64 KiB buffer
+ *  (#939). Every write of data goes through here. */
+export function writeStdout(data: Uint8Array | string): Promise<void> {
+  return new Promise<void>((resolve, reject) => process.stdout.write(data, (err) => (err ? reject(err) : resolve())));
+}
+
 /** Write `bytes` to `path`, creating its folder; "-" writes to stdout. */
 export async function writeOut(path: string, bytes: Uint8Array | string): Promise<void> {
   if (path === '-') {
-    await new Promise<void>((resolve, reject) => process.stdout.write(bytes, (err) => (err ? reject(err) : resolve())));
+    await writeStdout(bytes);
     return;
   }
   ensureDir(dirname(path));

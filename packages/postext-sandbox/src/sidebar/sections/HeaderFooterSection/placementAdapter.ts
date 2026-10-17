@@ -11,23 +11,32 @@ export type SlotKind = 'header' | 'footer' | 'heading' | 'part';
 
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 
-/** Derive a simple align (left/center/right) from a placement anchor. */
-export function alignFromPlacement(placement: ElementPlacement): HAlign {
+/** Where an element stands across its container: a side, the centre, or
+ *  the page's start or end side (#936: the right of a right-to-left page). */
+export type PlacementAlign = HAlign | 'start' | 'end';
+
+/** Derive a simple align (left/center/right, start/end) from a placement anchor. */
+export function alignFromPlacement(placement: ElementPlacement): PlacementAlign {
   const edge = placement.anchor.edge;
   if (edge.endsWith('-left') || edge === 'left') return 'left';
   if (edge.endsWith('-right') || edge === 'right') return 'right';
+  if (edge.endsWith('-start') || edge === 'start') return 'start';
+  if (edge.endsWith('-end') || edge === 'end') return 'end';
   return 'center';
 }
 
-function edgeFor(slotKind: SlotKind, align: HAlign): AnchorEdge {
+function edgeFor(slotKind: SlotKind, align: PlacementAlign): AnchorEdge {
   // Heading opener and footer anchor at the top of their container (band
   // grows downward from there); header anchors at the bottom (band grows
   // upward toward the body above).
   const vertical = slotKind === 'header' ? 'bottom' : 'top';
-  if (align === 'left') return `${vertical}-left` as AnchorEdge;
-  if (align === 'right') return `${vertical}-right` as AnchorEdge;
-  return vertical;
+  if (align === 'center') return vertical;
+  return `${vertical}-${align}` as AnchorEdge;
 }
+
+/** Whether a margin from the side is measured leftwards (a negative x):
+ *  from the right, or from the end side (whose `x` runs from the start). */
+const fromFarSide = (align: PlacementAlign): boolean => align === 'right' || align === 'end';
 
 /** Convert marginFromBody (always positive) into a signed y offset. */
 export function marginFromBody(placement: ElementPlacement, slotKind: SlotKind): Dimension {
@@ -48,10 +57,10 @@ export function marginFromEdge(placement: ElementPlacement): Dimension {
 export function applyAlign(
   placement: ElementPlacement,
   slotKind: SlotKind,
-  align: HAlign,
+  align: PlacementAlign,
 ): ElementPlacement {
   const currentMargin = marginFromEdge(placement);
-  const signedX: Dimension = align === 'right'
+  const signedX: Dimension = fromFarSide(align)
     ? { ...currentMargin, value: -currentMargin.value }
     : align === 'center'
       ? ZERO
@@ -93,7 +102,7 @@ export function applyMarginFromEdge(
   dim: Dimension,
 ): ElementPlacement {
   const align = alignFromPlacement(placement);
-  const signed: Dimension = align === 'right'
+  const signed: Dimension = fromFarSide(align)
     ? { ...dim, value: -Math.abs(dim.value) }
     : align === 'center'
       ? ZERO
@@ -119,6 +128,12 @@ export const CONTAINER_EDGES: AnchorEdge[] = [
   'left', 'center', 'right',
   'bottom-left', 'bottom', 'bottom-right',
 ];
+
+/** The start and end edges a design slot's element may take (#936): the
+ *  left of a left-to-right page, the right of a right-to-left or vertical
+ *  one, on the sheet. */
+export const LOGICAL_CONTAINER_EDGES: AnchorEdge[] = ['top-start', 'start', 'bottom-start', 'top-end', 'end', 'bottom-end'];
+export const LOGICAL_ELEMENT_EDGES: AnchorEdge[] = ['align-start', 'align-end'];
 
 /** Anchor targets that are frames rather than sibling elements (`outer`,
  *  the page's outer margin, in header and footer slots only). */
@@ -167,7 +182,7 @@ export function applyAnchorTarget(
     // element anchor starts centred on the slot's natural edge.
     const prev = placement.anchor.edge;
     const fromFrame = !isElementAnchor(placement);
-    const edge = fromFrame && (CONTAINER_EDGES as string[]).includes(prev)
+    const edge = fromFrame && ([...CONTAINER_EDGES, ...LOGICAL_CONTAINER_EDGES] as string[]).includes(prev)
       ? (prev as AnchorEdge)
       : edgeFor(slotKind, 'center');
     return {
@@ -177,7 +192,7 @@ export function applyAnchorTarget(
     };
   }
   const prev = placement.anchor.edge;
-  const edge = (ELEMENT_EDGES as string[]).includes(prev) ? (prev as AnchorEdge) : 'right-of';
+  const edge = ([...ELEMENT_EDGES, ...LOGICAL_ELEMENT_EDGES] as string[]).includes(prev) ? (prev as AnchorEdge) : 'right-of';
   return {
     ...placement,
     anchor: { to: `#${target}`, edge },

@@ -4,7 +4,7 @@
 // resources and file payloads; `planBundle` / `resolveBundleFiles` do the
 // reverse. Nothing here touches storage.
 
-import type { PostextConfig, Resource } from '../types';
+import type { CustomFontFamily, PostextConfig, Resource } from '../types';
 import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults';
 import {
   bitmapInfo,
@@ -302,9 +302,29 @@ export async function readBundle(
 
   const fontSet = fontsToCustomFonts(manifest.fonts ?? [], ids.font);
   for (const w of fontSet.warnings) onWarning?.(w);
-  const fonts: BundleFontFile[] = await Promise.all(
-    fontSet.files.map(async (f) => ({ ...f, bytes: await readFile(f.file) })),
+  // A font file the manifest names but the bundle does not carry (a pack
+  // that left the licensed faces out, #904) is not an error: the face is
+  // dropped with a warning, and the families the book sets in it fall back
+  // as any missing font does (the Sandbox's font checks report them).
+  const notPacked = new Set<string>();
+  const read = await Promise.all(
+    fontSet.files.map(async (f): Promise<BundleFontFile | null> => {
+      try {
+        return { ...f, bytes: await readFile(f.file) };
+      } catch {
+        notPacked.add(f.fileId);
+        onWarning?.(`${f.family}: font file "${f.file}" is not in the bundle, the face is left out`);
+        return null;
+      }
+    }),
   );
+  const fonts = read.filter((f): f is BundleFontFile => f !== null);
+  const families: CustomFontFamily[] = [];
+  for (const family of fontSet.families) {
+    const variants = family.variants.filter((v) => !notPacked.has(v.fileId));
+    if (variants.length > 0) families.push(variants.length === family.variants.length ? family : { ...family, variants });
+    else onWarning?.(`${family.name}: none of its font files are in the bundle, it is left out`);
+  }
 
   // A manifest written for older rules (postext 1.4 or earlier has no
   // `configVersion`) is read with the heading breaks, the maths size and
@@ -318,7 +338,7 @@ export async function readBundle(
     manifest.configVersion,
     { content: chapters.map((c) => c.markdown) },
   );
-  const customFonts = [...(manifest.config?.customFonts ?? []), ...fontSet.families];
+  const customFonts = [...(manifest.config?.customFonts ?? []), ...families];
   let config = customFonts.length > 0 ? { ...baseConfig, customFonts } : baseConfig;
   // An uploaded output profile (`print.customProfile`), named by its path in
   // the bundle.

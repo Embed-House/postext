@@ -1,0 +1,112 @@
+{/* docs/sandbox-composed-pages-ca.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: les pàgines compostes',
+  sidebarTitle: 'Pàgines compostes',
+  description: "Plantilles de pàgina i marcs editats sobre la pàgina, la biblioteca d'estils de marc, les revisions de les pàgines compostes en totes les edicions, el pas del text al Markdown i l'arranjament d'un marc amb un clic",
+  lang: 'ca',
+  lastUpdated: '2026-10-17',
+  readingTime: '14 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Aquesta pàgina reuneix el que el Sandbox ofereix per a les pàgines compostes, aquelles el text de les quals s'aboca en marcs col·locats per una plantilla. Els marcs d'una plantilla es dibuixen i es mouen directament sobre la pàgina, i els estils de marc s'ordenen en una biblioteca. El tauler Revisió avisa, en cada llengua del llibre, de quines pàgines compostes tenen un text que no hi cap, i ofereix botons que arreglen un marc. Un llibre fet abans de les pàgines compostes pot passar el text de les seves pàgines al Markdown d'un sol cop.",
+};
+
+# Sandbox: les pàgines compostes
+
+Aquesta pàgina reuneix les parts dels taulers de disseny i de revisió que tracten de les pàgines compostes (els blocs `::::page` que aboquen el contingut en els marcs d'una plantilla de pàgina). La resta dels dos taulers és a [Sandbox: els taulers de disseny i de revisió](/ca/docs/sandbox-design-checks); com s'escriu una pàgina composta, a [Pàgines compostes](/ca/docs/composed-pages).
+
+
+## Plantilles de pàgina
+
+**Disseny › Pàgina i columnes › Plantilles de pàgina** edita `pageTemplates`, les maquetes on una pàgina composta (`::::page{template="…"}`) aboca el seu contingut, sense obrir el fitxer de configuració.
+
+- **La llista** mostra cada plantilla amb un dibuix dels seus marcs, el seu id, quantes pàgines del llibre la fan servir (una doble pàgina en compta dues) i la plantilla en què està **Basada**. **Nova** comença una plantilla amb un marc que rep el text solt de la pàgina; **Duplicar** copia l'oberta; **Desar la maqueta com a plantilla** converteix la pàgina composta que has triat (o la primera maquetada) en una plantilla nova amb els marcs on han quedat, amb mides fixes en mil·límetres, i en conserva els estils i la resta de camps.
+- **Editar per a** tria què canvien els camps: *Totes les pàgines* (la plantilla), *Senar (recto)* o *Parell (verso)* (`variants.recto`, `variants.verso`). Un camp que aquest àmbit no fixa mostra, atenuat, el valor que hereta, i el seu botó de restablir l'hi torna. Una plantilla de **Doble pàgina**, amb el seu **Mitjanil del llom**, es dibuixa com un sol plec de dues pàgines amb la banda del llom marcada, i no té variants.
+- **Plantilla**: id (si el canvieu, canvia a tots els blocs de pàgina que el nomenen), nom, **Basada en** (`extends`), l'interruptor de doble pàgina, **Marcs mesurats des de** (`area`), **Les pàgines afegides fan servir** (`overflowTemplate`: la plantilla de les pàgines on continua el contingut d'un marc, vegeu [Quan el text continua](/ca/docs/composed-pages#quan-el-text-continua)), la retícula i **Esborrar la plantilla** (diu quantes pàgines la nomenen; les plantilles basades en aquesta conserven el que van heretar).
+- **Marcs**: un botó per marc, **Afegir un marc** i les propietats del marc triat: nom (la ranura) i **Pot quedar buit**; posició (ancorat a l'àrea de la plantilla, a la pàgina refilada, al sang o a un altre marc o grup, amb la vora i els desplaçaments) o una cel·la de la retícula; amplada i alçada (*Fixa*, *Part de l'àrea*, *El contingut*, *Fins a la vora*) amb els seus límits; estil de caixa, capa, gir, on queda el contingut, columnes i farciment per costat; **Rep el text solt de la pàgina** (`flow`), **Rep el primer títol** (`takes`), **El text que no hi cap continua a** (`next`), **El text d'altres marcs l'envolta** (`exclude: "push"`) i, quan ho fa, **Apartar amb** *Caixa* o *Contorn* (`wrap`, la forma de les imatges que conté); l'ajust (`fit`); créixer, encongir, prioritat i fix per als grups; la continuació (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **El contingut que no hi cap va a** ofereix cap altra pàgina, la pàgina següent, un altre marc, una altra plantilla i cada tanca de pàgina del llibre que porta `id` (`page:<id>`); *Una pàgina posterior pel seu id…* accepta un valor escrit com `{attr.sigue}` o `p47#resto`. Cada camp té la seva ajuda i el seu botó de restablir.
+- **Grups**: nom, apilats o en filera, l'espai entre marcs, on va l'espai sobrant i els marcs del grup en l'ordre de la pàgina. Un grup amb **Caixa pròpia** reparteix l'espai que li sobra i deixa que els seus marcs hi cedeixin espai; sense ella és la unió de les caixes dels seus marcs.
+- **Capçaleres i peus** (*Els del llibre*, *Amagats*, *Propis*) i **Decoració**, que s'editen com la capçalera i el peu del llibre; un text de la decoració pot llegir els atributs de la pàgina (`{attr.nom}`).
+
+**A la pàgina, en mode Disseny.** Amb el selector de sobre de la previsualització a **Disseny** (o **Editar els marcs a la pàgina** a la secció), una pàgina composta mostra els marges, la retícula, el llom d'una doble pàgina i una fletxa per cada cadena. Prémer un marc el tria i n'obre les propietats; arrossegar-lo el mou; les vuit nanses del marc triat li canvien la mida; arrossegar en un espai buit dibuixa un marc nou. Les caixes s'ajusten als marges, a la retícula i a les vores i centres dels altres marcs (amb Alt premuda es col·loquen lliurement; Escape cancel·la l'arrossegament). La caixa s'escriu en mil·límetres: un marc penjat d'un altre conserva la seva àncora i en canvia el desplaçament. Quan altres pàgines fan servir la plantilla, la pàgina pregunta on va el canvi: **Canviar la plantilla** (amb el nombre de pàgines) o **Només aquesta pàgina**, que crea per a aquella pàgina una plantilla basada en la primera i fa que el seu bloc la nomeni. Un marc girat es mou a la pàgina i la mida se li dona als camps. Els camps permeten fer amb el teclat tot el que fa l'arrossegament.
+
+
+## Estils de marc
+
+**Disseny › Requadres › Estils de marc** mostra els estils de requadre (`calloutStyles`) com una biblioteca. Els marcs de les plantilles de pàgina es vesteixen amb aquests mateixos estils (`frames[].style`), de manera que un estil serveix igual per a un requadre `:::callout` del text que per a un marc d'una pàgina composta.
+
+- **Cada estil** el dibuixa el motor amb un paràgraf de mostra, i una pestanya de mostra quan l'estil té pestanya d'etiqueta, tal com el porta un marc: amb 80 mm d'amplada (més si el farciment deixa menys de 40 mm de mida), en el flux i sense el lloc fix que un estil de requadre pot donar a la seva caixa. Sota el nom, la secció diu on el fa servir el llibre: marcs de plantilla, pàgines compostes amb aquestes plantilles i requadres del text. Quan l'obres, l'estil llista cada marc (**Obrir** hi porta a Plantilles de pàgina) i cada capítol amb els seus requadres (**Veure** selecciona el bloc següent al tauler Text; un bloc sense `type` compta per al primer estil, que és el que li dona el motor), i **Editar l'estil** obre allà mateix l'editor d'Estils de requadre. **Mostrar** filtra la llista: *A les plantilles* (el que es veu primer quan una plantilla fa servir algun estil), *Al text*, *Sense ús*, *Tots*.
+- **Fusions proposades** agrupa els estils gairebé iguals al voltant del més usat: «Aquests 3 estils només canvien en farciment: els fusionem?». Els estils es comparen pel que resol el motor, ajust per ajust, sense comptar-ne l'id ni el nom. Les mides a menys de 0,5 mm i els colors a menys de ΔE 2 compten com a iguals, els quatre costats d'un farciment compten com un sol ajust, i **Ajustos que poden canviar** (2 per defecte) fixa quants ajustos poden ser diferents.
+- El lloc d'un requadre `:::callout` (col·locació, posició fixa, amplada que ocupa, espai de dalt i de baix) ha de coincidir, perquè si no la fusió mouria la caixa. **Comparar només l'aspecte** el deixa fora, i aleshores la revisió diu quants requadres es mourien; mentre està apagat, la secció diu quants estils més fusionaria. Els estils que només fan servir marcs de plantilla es comparen sempre per l'aspecte: un marc pren el lloc de la plantilla.
+- **Deixar cada requadre on és** (apareix amb *Comparar només l'aspecte*, activat per defecte): un estil els requadres del qual són en un altre lloc que els de l'estil que es queda no es fusiona del tot. Es queda només amb el seu lloc (col·locació, posició fixa, amplada, espai de dalt i de baix), basat en l'estil que es queda (`extends`), de manera que els seus requadres prenen aquest aspecte i no es mouen; la revisió diu quants estils es queden així.
+- **Revisar** llista cada estil que se'n va, en què es distingeix i els capítols i marcs que es reescriuen. **Fusionar a** (o **Fusionar totes les propostes**) reescriu el `style` de cada marc de plantilla, variants incloses, i el `type` de cada bloc de cada capítol perquè anomenin l'estil que es queda, treu els altres i posa el que es queda on era el primer del grup, de manera que un bloc sense `type` conserva l'aspecte. La fusió entra a l'historial de desfer del Sandbox com un pas per cada capítol reescrit i un altre per als estils i les plantilles. **Desfer**, a la mateixa secció, reverteix la fusió sencera mentre no s'hagi canviat res després; Cmd/Ctrl+Z la reverteix pas a pas, primer els estils, de manera que cada estat intermedi anomena estils que existeixen.
+- En canviar el nom d'un estil a *Estils de requadre*, també es canvia a cada bloc i a cada marc de plantilla.
+
+La fusió reescriu els capítols de l'edició oberta: un altre idioma del llibre, desat com a esborrany o projecte a part, conserva els seus estils. Els agents tenen la mateixa biblioteca amb `sandbox_frame_styles` i `sandbox_merge_styles` (vegeu [WebMCP](/ca/docs/webmcp)).
+
+
+## Pàgines compostes en totes les edicions
+
+En un llibre amb plantilles de pàgina (`pageTemplates`), el tauler comença per **Pàgines compostes**: les comprovacions de cada pàgina composta de cada capítol, en cada edició que porta el llibre. Un paquet en castellà, anglès i català es revisa en totes tres mentre una d'elles és a la pantalla. Les edicions que no són a la pantalla es componen en segon pla, i cadascuna es llegeix com es llegiria en obrir-la: el seu esborrany si s'ha editat, si no el text del paquet en aquell idioma. Una línia sota els controls diu quines edicions s'estan component i, quan acaben, quines s'han revisat.
+
+La secció recull:
+
+- *El text no cap al seu marc* (`frameOverflow`), amb els passos que ha provat l'escala d'ajust i els canvis que farien cabre el marc;
+- *El text encara no cap després de les pàgines afegides* (`frameContinuationLimit`): el contingut del marc ha continuat en totes les pàgines que pot afegir una pàgina composta i encara no hi cap;
+- *Una història salta a una pàgina que no ve després* (`continueTargetMissing`): cap tanca de pàgina posterior no porta l'id que anomena el `continueIn` del marc;
+- *Rètol en una àncora que no existeix* i *Àncora sense rètol* (`labelAnchorUnknown`, `anchorUnlabelled`), amb el marc que compon la figura;
+- *Rètol més ample que la seva mesura* i *Rètols que es trepitgen* (`labelOverflow`, `labelOverlap`), amb el mateix marc: els rètols de cada edició es mesuren amb les seves paraules, de manera que una llengua de paraules més llargues es desborda on una altra no;
+- *Slot sense marc*, *Marc buit*, *Plantilla de pàgina desconeguda*, *Pàgina composta amb tres dos punts* i *La doble pàgina no coincideix amb la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloc de l'índex partit entre columnes* (`tocGroupSplit`);
+- els avisos de les mateixes plantilles (un estil o una àncora de marc que no existeix, mides que es contradiuen, una cadena que torna sobre si mateixa) i el text de disseny que guarda contingut del llibre (`contentInConfig`).
+
+Aquestes entrades no es repeteixen als grups de sota.
+
+**Pàgina**, **Marc** i **Idioma** agrupen la llista per pàgina composta (la mateixa pàgina en totes les edicions, porti el número que porti en cadascuna), per marc o per edició. Els tres menús de sota deixen un sol idioma, una sola pàgina o un sol marc. Cada entrada mostra l'etiqueta de l'edició (*CA*), el número de pàgina en aquella edició i el nom del marc.
+
+Un clic en una entrada porta al seu marc en la seva edició. Si a la pantalla hi ha una altra edició, el llibre canvia a l'idioma de l'entrada; després s'obren el capítol i la pàgina, el marc queda seleccionat a la pàgina (la seva ruta apareix al peu de la previsualització) i el cursor va al començament del seu slot al tauler **Text**. Un avís de la mateixa plantilla obre la primera pàgina composta amb ella, amb el marc seleccionat; el text de disseny amb contingut obre el tauler **Disseny**.
+
+Un projecte local importat d'un paquet en diversos idiomes els conserva tots, de manera que les seves pàgines compostes es revisen en cada idioma com les d'un llibre de mostra, i una revisió d'un altre idioma et porta a ella amb el projecte canviat a aquest idioma. Un llibre en un sol idioma té una sola edició, i la línia sota els controls ho diu. El comptador de la barra d'activitat compta els avisos del capítol a la pantalla, en l'edició a la pantalla.
+
+
+## Passar el text al Markdown
+
+Un llibre fet abans de les pàgines compostes pot guardar el text de pàgines senceres als estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca desenes de textos, caixes i imatges on els tenia la pàgina impresa. El tauler de revisió mostra llavors *Text desat a la configuració* i ofereix **Passar el text al Markdown** al capdamunt. Un llibre amb estils així que s'importa des del tauler de llibres obre el mateix quadre just després d'importar-lo.
+
+El quadre explica què farà el canvi abans de fer res:
+
+- Cada disseny de pàgina passa a ser una plantilla de pàgina (`pageTemplates`). Cada text es converteix en un marc on era; els blocs de text amb el mateix aspecte col·locats l'un sota l'altre a la mateixa distància formen un sol marc. Les caixes, els filets i les imatges passen a la decoració de la plantilla, que es pinta sobre el text corregut de la pàgina com es pintava la capçalera, i una imatge que cobreix la pàgina passa a ser l'atribut `background` de la pàgina, que llegeix la decoració (`{attr.background}`).
+- Cada pàgina d'un capítol es converteix en una pàgina composta, `::::page{template="…"}`, amb els títols i el text corregut de la pàgina i un `:::frame{slot="…"}` per marc amb el seu text. Les negretes i les cursives es mantenen; els finals de línia del disseny queden com a salts de línia forçats.
+- La família, el cos, el gruix, el color, l'alineació i l'interlineat de cada text formen un estil de paràgraf: el del llibre quan coincideix del tot, si no un de nou amb el nom de la família i el cos. Una caixa de color sota paraules en negreta passa a ser un xip de l'estil de xip del llibre d'aquell color, o d'un de nou.
+- Les pàgines amb els marcs als mateixos llocs comparteixen una plantilla (`page-base`) que amplien les seves plantilles pròpies (`extends`); una pàgina que no hi afegeix res la fa servir tal com és.
+- Els estils de títol que queden iguals un cop se'n va la capçalera es fusionen (`tema--p04`, `tema--p05` → `tema`) i es canvien als títols; els títols ocults que només canviaven la capçalera desapareixen. Una pàgina que començava amb un títol que demanava pàgina parella o senar rep un `:::pagebreak{parity="…"}` abans de la seva tanca.
+
+Les xifres de **Què canvia** són els textos i les lletres que es passen, les pàgines escrites, les plantilles proposades, els estils de títol abans i després, els estils creats, la mida de la configuració i els avisos de *Text desat a la configuració*, abans i després.
+
+**Abans i després** compon cada capítol dues vegades amb la composició del mateix Sandbox i dibuixa cada pàgina que canvia, l'anterior al costat de la nova. La llista del costat diu quines pàgines es veuen diferents i per què, quan se sap: la caixa, el contorn o la caplletra propis d'un text, una pàgina de la qual no se sap el costat, text corregut que ara va al marc de flux de la plantilla. **Marcar en vermell el que canvia** pinta els píxels diferents.
+
+Les opcions: **Les pàgines amb marcs als mateixos llocs comparteixen plantilla**, **Una caixa de ressaltat sota paraules en negreta es converteix en xip** i, quan n'hi ha, **Esborrar els estils de títol amb text que no fa servir cap títol**.
+
+Amb **Les paraules sobre les imatges es converteixen en els seus rètols**, que s'ofereix quan el disseny posa paraules curtes sobre les imatges del llibre (els noms d'un mapa, les xifres d'un diagrama), aquestes paraules passen a ser les línies `::label` d'una `:::figure`, la imatge rep un marc propi i el seu recurs rep les àncores. El resum compta els rètols, les imatges, les àncores i els estils de rètol. L'opció està apagada fins que s'activa, perquè aquestes pàgines són les que més canvien: els rètols es componen de nou amb les fonts del llibre, així que convé mirar-los al costat de les pàgines antigues. Les àncores s'escriuen al recurs de la imatge com un pas de desfer cadascuna, entre el text i el disseny, i **Desfer** i **Deixar el llibre com estava** també les desfan.
+
+**Passar el text** escriu el canvi a l'historial de desfer del llibre: un pas per cada capítol reescrit i després un per al disseny. Cmd/Ctrl+Z desfà primer el disseny i després els capítols, i **Desfer** al quadre els desfà tots mentre siguin els darrers. A més, el llibre tal com era es guarda, també en recarregar, fins que es tria **Quedar-me amb el canvi** al tauler de revisió; fins aleshores **Deixar el llibre com estava** torna a escriure el disseny i el text anteriors, com a passos que també es poden desfer.
+
+Queda a la configuració, i s'enumera a **Queda a la configuració**: un text que barreja paraules i marcadors (`Pàgina {pageNumber}`), un text que penja de la caixa pròpia de la capçalera o d'un altre element, i el text d'un disseny de títol (que no és una pàgina). Un títol col·locat en un marc hi conserva el disseny (la pestanya d'un títol amb caixa, les bandes dibuixades al voltant d'un títol; vegeu [Títols en caixes i marcs](/ca/docs/configuration-headings#en-caixes-i-marcs)). La comprovació de contrast llegeix el text d'un marc sobre la caixa del propi marc o sobre la caixa de la decoració que hi ha a sota, així que una etiqueta blanca sobre una caixa de color es mesura sobre aquest color (vegeu [Què es llegeix](/ca/docs/configuration-fonts-colors-viewers#què-es-llegeix)).
+
+El mateix canvi és una funció del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que torna la configuració nova, els capítols i l'informe que mostra el quadre. Vegeu [Pàgines compostes](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils).
+
+
+## Arreglar un marc amb un clic
+
+Sota *El text no cap al seu marc*, les solucions que l'escala de reajustament ha calculat per a aquell marc són botons, amb les mateixes paraules de l'avís:
+
+- *deixa que el text baixi al 60 %* fixa el `fit.minScale` del marc (i activa `fit.shrinkText` si estava desactivat);
+- *puja maxHeight a 66 mm* fixa el `maxHeight`;
+- *abaixa el minHeight de …* rebaixa l'alçada mínima d'un altre marc del grup;
+- *fes que continuï a la pàgina següent* posa `overflow.continueIn` a `next-page`, de manera que el que no hi cap continua en una pàgina afegida després d'aquesta;
+- *compon la pàgina amb la plantilla …* reescriu el `template` de la tanca `::::page` de la pàgina al text;
+- *retalla uns 626 caràcters* no canvia res: selecciona el text del marc al tauler **Text** i diu quants caràcters cal treure.
+
+Els altres botons canvien la forma del llibre, així que cadascun pregunta abans i diu l'ajust i el valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que prendrà la pàgina. Un canvi de disseny val per a totes les pàgines compostes amb aquella plantilla. **Canvia-ho** fa el canvi com un pas de l'historial de desfer: Cmd/Ctrl+Z, o el botó Desfés al costat de Contingut i Disseny, el desfà. La pàgina es torna a maquetar i l'avís desapareix, o deixa pas al que el canvi hagi deixat (una caixa més avall que ara no hi cap).
+
+Els mateixos botons acompanyen el marc al tauler **Què s'ha mogut i per què** del llenç. L'avís d'una edició que no és a la pantalla ofereix obrir aquella edició, on es poden aplicar les solucions. Si el llibre ha canviat des que la maquetació va proposar una solució (s'ha editat la plantilla, la tanca diu una altra plantilla), el botó ho diu i no canvia res. Un agent aplica les mateixes solucions amb `sandbox_apply_proposal` ([WebMCP](/ca/docs/webmcp)).

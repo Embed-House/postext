@@ -1,7 +1,7 @@
 import type { SandboxState } from '../../context/SandboxContext';
-import { frameStyleLibrary } from '../../frameStyles/library';
+import { bookCompareOptions, frameStyleLibrary } from '../../frameStyles/library';
 import { stylesAfterMerging, type CompareOptions } from '../../frameStyles/styleCompare';
-import { planMerges, type MergeGroup } from '../../frameStyles/styleMerge';
+import { placesToKeep, planMerges, type MergeGroup } from '../../frameStyles/styleMerge';
 import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
 import type { UsageChapter } from '../../frameStyles/styleUsage';
 import type { SandboxToolHost } from '../host';
@@ -78,6 +78,7 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
         },
         all: { type: 'boolean', description: 'Take every suggestion.' },
         ...COMPARE_PROPERTIES,
+        keepPlaces: { type: 'boolean', description: 'With lookOnly: a style whose :::callout boxes stand elsewhere than the kept style\'s is not merged away but stays with only its place, based on the kept style (extends), so no box moves (default true).' },
         wait: { type: 'boolean', description: 'Wait for the book to be laid out again (default true).' },
       },
       additionalProperties: false,
@@ -99,10 +100,12 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
       }
       if (groups.length === 0) return { merged: [], styles: lib.styles.length, note: 'No suggestion to take.' };
       const before = { calloutStyles: s.config.calloutStyles, pageTemplates: s.config.pageTemplates };
-      const plan = planMerges(before, lib.styles, chapters, groups);
+      const places = args.lookOnly === true && args.keepPlaces !== false ? placesToKeep(groups, lib, bookCompareOptions(s.config)) : undefined;
+      const plan = planMerges(before, lib.styles, chapters, groups, places);
       const record = applyStyleRewrite(store.dispatch, before, plan, '', s.activeChapterId);
       return {
         merged: plan.from,
+        ...(plan.stays.length > 0 ? { keptForTheirPlace: plan.stays } : {}),
         styles: plan.calloutStyles.length,
         fencesRewritten: plan.fenceCount,
         inChapters: plan.chapters.map((c) => c.chapterIndex + 1),

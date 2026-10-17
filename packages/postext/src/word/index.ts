@@ -8,6 +8,8 @@ export { wordToPostext, pictureResolution, paragraphTargetOf, characterTargetOf,
 export type { ChapterMode, ImportedPicture, ImportedTable, ImportedChapter, ImportResult, ImportSettings } from './toMarkdown';
 export { postextToDocx, DEFAULT_STYLE_NAMES } from './toDocx';
 export type { ExportChapter, WordStyleNames, ExportSettings } from './toDocx';
+export { wordStyleTracking, applyStyleTracking } from './tracking';
+export type { StyleTracking } from './tracking';
 export { analyzeDocx } from './analyze';
 export type { StyleUse, FindingId, QualityFinding, QualityVerdict, QualityReport } from './analyze';
 export {

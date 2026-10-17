@@ -637,13 +637,13 @@ Un elemento `image` dibuja un recurso de mapa de bits o SVG del documento — el
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.38.</td>
+      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.38. Una imagen que se mantiene derecha en el flujo de una página vertical (el diseño de un encabezado en un libro vertical) se recorta tal como la muestra el pliego, desde postext 1.39; hasta la 1.38 se encajaba entera.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>El punto de la imagen que centra el recorte de <code>'cover'</code>, en fracciones de la imagen: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para una cara en el tercio superior. El recorte sigue dejando a la vista la zona segura. Sin él, los márgenes alrededor de la zona segura se recortan en proporción a su tamaño, o la imagen se centra.</td>
+      <td>El punto de la imagen que centra el recorte de <code>'cover'</code>, en fracciones de la imagen: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para una cara en el tercio superior. El recorte sigue dejando a la vista la zona segura. Sin él, los márgenes alrededor de la zona segura se recortan en proporción a su tamaño, o la imagen se centra. En el Sandbox, el <strong>Punto de interés</strong> del editor de imagen muestra la imagen con la parte que conserva el recorte recuadrada; un clic en ella, o las flechas, fijan el punto (desde postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Cada borde relativo a otro elemento pone una esquina del elemento sobre una esqu
 - `align-right`: su esquina superior derecha sobre la superior derecha del de referencia.
 
 Un borde relativo a otro elemento usado con `'container'`, `'page'` o `'bleed'`, y un borde de contenedor usado con `'#id'`, se leen como la esquina superior izquierda.
+
+**Bordes de inicio y de final.** `top-start`, `start`, `bottom-start`, `top-end`, `end` y `bottom-end` (con `'container'`, `'page'`, `'bleed'` u `'outer'`), y `align-start` y `align-end` (con `'#id'`), nombran el lado por el que empiezan las líneas de la página en lugar de un lado fijo. En una página de izquierda a derecha, `top-start` es `top-left`; en una página de derecha a izquierda, y en una página vertical, cuyas líneas se suceden desde la derecha, es `top-right`. Con estos bordes, la `x` del desplazamiento va del lado de inicio al lado final, así que en una página de derecha a izquierda una `x` positiva mueve el elemento hacia la izquierda: el elemento es la imagen en espejo del de izquierda a derecha. La decoración de una plantilla y las cabeceras se colocan en el pliego, de modo que un antetítulo escrito `top-start` queda sobre el marco del título tanto en una edición árabe como en una española. Un marco se coloca en el flujo de la página, que ya está en espejo o girado, donde `start` es siempre su izquierda, igual que `left`. En el diseño de un encabezado, que también se coloca en el flujo, `start` es `left`. En el Sandbox, la lista **Alineación** del editor de la ranura tiene **Inicio** y **Final**, y las listas de bordes tienen los lados de inicio y final. Desde postext 1.39; hasta la 1.38 estas palabras se leían como `top-left`.
 
 `anchor.to: 'page'` ancla el elemento a la **caja de corte** (la página física una vez cortada) y `'bleed'` a la caja de corte ampliada por `cutLines.bleed` en todos los lados (idéntica a la caja de corte mientras las marcas de corte estén desactivadas). Ambos marcos pasan a ser también la referencia de `size: 'fill'` y del recorte automático de anchura, de modo que una banda de color puede ir de borde a borde independientemente de los márgenes de página:
 

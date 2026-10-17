@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import { GlobalFonts, createCanvas } from '@napi-rs/canvas';
 import { EMBEDDED_FACES, readEmbedded } from '../assets';
-import { fontsourceFiles, matchedFace, matchedVariants, readFontMeta, resolveFonts, restyleFace, skiaFontShorthand, wantedVariants, type FamilyMeta } from '../fonts';
+import { fileStyleFlags, fontsourceFiles, matchedFace, matchedVariants, readFontMeta, resolveFonts, restyleFace, skiaFontShorthand, wantedVariants, type FamilyMeta } from '../fonts';
 import type { Book } from '../input';
 import type { Reporter } from '../log';
 
@@ -103,6 +103,68 @@ describe('the weight Skia is asked for (#757)', () => {
     expect(skiaFontShorthand(`40px "${family}"`)).toBe(`40px "${family}"`);
     // A family Skia has no face of: the hundred next to the weight, so the size stays the size.
     expect(skiaFontShorthand('550 40px Nowhere Sans')).toBe('500 40px Nowhere Sans');
+  });
+});
+
+// #940: a bundle manifest lists an italic first whose file does not set the
+// italic bit (a family such as Frutiger Serif LT Pro): Skia, which reads the
+// weight and the slant from the file, took it for the upright and set the
+// body in italic. The manifest's weight and style win.
+describe('the manifest decides the weight and the slant (#940)', () => {
+  const face = (weight: number, style: 'normal' | 'italic') => readEmbedded(EMBEDDED_FACES.find((f) => f.family === 'Open Sans' && f.weight === weight && f.style === style)!.path);
+  // Italic outlines in a file that says it is a 400 upright.
+  const flatItalic = restyleFace(face(400, 'italic'), 400, 'normal')!;
+  const flatBoldItalic = restyleFace(face(700, 'italic'), 700, 'normal')!;
+  const silent = { info: () => {}, warn: () => {}, time: async <T>(_name: string, run: () => T | Promise<T>) => run() } as unknown as Reporter;
+  const bookOf = (family: string, order: 'italic first' | 'upright first') => {
+    const italics = [
+      { family, weight: 400, style: 'italic', file: 'It.otf', bytes: flatItalic },
+      { family, weight: 700, style: 'italic', file: 'BoldIt.otf', bytes: flatBoldItalic },
+    ];
+    const uprights = [
+      { family, weight: 400, style: 'normal', file: 'Regular.otf', bytes: face(400, 'normal') },
+      { family, weight: 700, style: 'normal', file: 'Bold.otf', bytes: face(700, 'normal') },
+    ];
+    return {
+      kind: 'folder', name: 'probe', id: 'probe', locale: 'en', resources: [], files: new Map(), watchPaths: [],
+      config: { bodyText: { fontFamily: family } },
+      chapters: [{ title: 'One', markdown: 'Text.' }],
+      fonts: order === 'italic first' ? [...italics, ...uprights] : [...uprights, ...italics],
+    } as unknown as Book;
+  };
+  const width = (family: string, spec: string) => {
+    const ctx = createCanvas(10, 10).getContext('2d');
+    ctx.font = `${spec} 40px "${family}"`;
+    return ctx.measureText('Hamburgefonstiv 0123').width;
+  };
+
+  it('reads the flags a file sets, as the ones Skia reads', () => {
+    expect(fileStyleFlags(face(400, 'normal'))).toEqual({ weight: 400, italic: false });
+    expect(fileStyleFlags(face(700, 'italic'))).toEqual({ weight: 700, italic: true });
+    expect(fileStyleFlags(flatItalic)).toEqual({ weight: 400, italic: false });
+    expect(fileStyleFlags(new Uint8Array(8))).toBeUndefined();
+  });
+
+  it('sets the upright upright and the italic italic whichever the manifest lists first', async () => {
+    const widths = new Map<string, number[]>();
+    for (const order of ['italic first', 'upright first'] as const) {
+      const family = `Flat Italic ${order === 'italic first' ? 'A' : 'B'}`;
+      await resolveFonts(bookOf(family, order), { fontDirs: [], offline: true }, silent);
+      widths.set(order, [width(family, '400'), width(family, 'italic 400'), width(family, '700'), width(family, 'italic 700')]);
+    }
+    const [first, second] = [widths.get('italic first')!, widths.get('upright first')!];
+    expect(first).toEqual(second);
+    const ref = (weight: number, style: 'normal' | 'italic') => {
+      const name = `Ref ${weight} ${style}`;
+      GlobalFonts.register(Buffer.from(face(weight, style)), name);
+      return width(name, '');
+    };
+    expect(first[0]).toBe(ref(400, 'normal'));
+    expect(first[1]).toBe(ref(400, 'italic'));
+    expect(first[2]).toBe(ref(700, 'normal'));
+    expect(first[3]).toBe(ref(700, 'italic'));
+    // Upright and italic really are different faces.
+    expect(first[0]).not.toBe(first[1]);
   });
 });
 

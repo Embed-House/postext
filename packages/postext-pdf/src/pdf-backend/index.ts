@@ -424,7 +424,10 @@ function paintPage(
     page.setTrimBox(trimPt, trimPt, pageWidthPt - 2 * trimPt, pageHeightPt - 2 * trimPt);
     page.setBleedBox(bleedPt, bleedPt, pageWidthPt - 2 * bleedPt, pageHeightPt - 2 * bleedPt);
   }
-  const ctx: PageCtx = { page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}) };
+  const ctx: PageCtx = {
+    page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}),
+    frameCjk: { region: doc.config.cjk?.region ?? 'mainland', uprightDigits: doc.config.cjk?.uprightDigits ?? 2 },
+  };
   const structure = resourceCtx.structure;
 
   // Background: full page white first (cut-mark area stays white), then the
@@ -667,7 +670,7 @@ function paintPage(
     enterFlow();
     paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'above');
   } else if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, decorationMark, true);
-  if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx);
+  if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx, comicTags);
 
   // The footnote separators are layout.
   if (vdtPage.footnoteAreas?.some((a) => a.rule)) {
@@ -772,9 +775,13 @@ function paintComposedItems(
 
 /** The text frames of a comic page (`::panel{text}`, #885), over its
  *  panels: each read as one float, as a composed page's frame is. */
-function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext): void {
+function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext, tags: ComicPanelTags): void {
   for (const item of comicFramePaintOrder(vdtPage)) {
-    if (item.kind === 'frame') paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure);
+    if (item.kind !== 'frame') continue;
+    // Read in the comic's `Div`, in its panel's place (#909).
+    const panel = item.frame.panel !== undefined ? vdtPage.comic?.panels[item.frame.panel]?.index : undefined;
+    const into = panel !== undefined ? tags?.texts[panel] : undefined;
+    paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure, into);
   }
 }
 
@@ -787,9 +794,38 @@ function paintFrameItem(
   fontCache: FontCache,
   resourceCtx: ResourceRenderContext,
   structure: ResourceRenderContext['structure'],
+  into?: StructElem,
 ): void {
   const { frame, blocks } = item;
   if (blocks.length === 0) return;
+  // A frame set in its own writing mode (#944): its text is painted as a
+  // page of that mode paints its flow, set vertically (or not).
+  if (frame.writingMode) {
+    const outer = ctx.vertical;
+    if (frame.writingMode === 'vertical-rl') {
+      const cjk = ctx.frameCjk ?? { region: 'mainland' as const, uprightDigits: 2 };
+      ctx.vertical = { region: cjk.region, uprightDigits: cjk.uprightDigits, ...(frame.centralBaselines ? { axes: frame.centralBaselines } : {}) };
+    } else delete ctx.vertical;
+    try {
+      paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure, into);
+    } finally {
+      if (outer) ctx.vertical = outer;
+      else delete ctx.vertical;
+    }
+    return;
+  }
+  paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure, into);
+}
+
+function paintFrameBlocks(
+  ctx: PageCtx,
+  item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  structure: ResourceRenderContext['structure'],
+  into?: StructElem,
+): void {
+  const { frame, blocks } = item;
   let readAt: number | undefined;
   for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
   const m = frameMatrix(frame);
@@ -814,7 +850,8 @@ function paintFrameItem(
       const paint = () => {
         for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
       };
-      if (structure) structure.readFloat(blocks[0]!, paint, readAt);
+      if (structure && into) structure.readInto(into, paint);
+      else if (structure) structure.readFloat(blocks[0]!, paint, readAt);
       else paint();
     }
   } finally {

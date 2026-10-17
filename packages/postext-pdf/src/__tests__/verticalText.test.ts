@@ -417,3 +417,34 @@ describe('vertical text in the PDF (#191)', () => {
     expect([...fonts.values()].some((f) => f.get(PDFName.of('Encoding')) === PDFName.of('Identity-V'))).toBe(false);
   });
 });
+
+describe('a composed page’s frame set in its own writing mode (#944)', () => {
+  const horizontal = (mode?: 'vertical-rl'): PostextConfig => {
+    const base = config('zh-Hant');
+    return {
+      ...base,
+      layout: { layoutType: 'single' },
+      pageTemplates: [{
+        id: 'sheet',
+        frames: [
+          { name: 'main', flow: true, width: pt(120), height: pt(200), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+          { name: 'side', width: pt(60), height: pt(200), placement: { anchor: { to: 'container', edge: 'top-right' } }, ...(mode ? { writingMode: mode } : {}) },
+        ],
+      }],
+    } as PostextConfig;
+  };
+  const md = '::::page{template="sheet"}\nThe page.\n\n:::frame{slot="side"}\n此開卷第一回也\n:::\n::::\n';
+
+  it('a vertical frame on a horizontal page shows its characters upright through the Identity-V twin', async () => {
+    const { pdf } = await render(md, horizontal('vertical-rl'));
+    const fonts = pageFonts(pdf);
+    const shows = uprightShows(pageOps(pdf), fonts);
+    expect(shows.length).toBeGreaterThan(0);
+    expect(shows.reduce((n, s) => n + s.cids.length, 0)).toBe(7);
+  });
+
+  it('the same frame in the page’s own mode is set across, as before', async () => {
+    const { pdf } = await render(md, horizontal());
+    expect(uprightShows(pageOps(pdf), pageFonts(pdf))).toHaveLength(0);
+  });
+});

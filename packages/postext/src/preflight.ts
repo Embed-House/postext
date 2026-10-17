@@ -16,7 +16,7 @@
  * - Rules, borders and strokes thinner than `minRuleWidth`.
  * - Text under `smallTextSize` set with more than one ink.
  * - Colours whose separation exceeds the ink limit.
- * - Text inside the safe zone near the trim, and boxes or pictures that
+ * - Text inside the safe zone near the trim (a figure's labels too, #902), and boxes or pictures that
  *   stop short of the trim by less than `bleedSnap` without bleeding.
  */
 
@@ -321,7 +321,12 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           }
         } else if (b.kind === 'image') {
           // A cover crop (#923) shows a share of the picture in its box.
-          if (b.imageKind !== 'svg') checkImage(b.fileId, b.bbox.width, b.bbox.height, b.crop?.width ?? 1, b.crop?.height ?? 1, pageIndex, b.bbox);
+          // An upright picture of a vertical flow stands turned in its box:
+          // its width is the box's height (#946).
+          if (b.imageKind !== 'svg') {
+            const [w, h] = b.upright ? [b.bbox.height, b.bbox.width] : [b.bbox.width, b.bbox.height];
+            checkImage(b.fileId, w, h, b.crop?.width ?? 1, b.crop?.height ?? 1, pageIndex, b.bbox);
+          }
           checkNearTrim(b.bbox);
         } else if (b.kind === 'text') {
           // What the block shows (a placeholder that resolved to nothing
@@ -364,6 +369,28 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
       const rb = block.resourceBlock;
       if (rb) {
         if (rb.captionLines.length > 0) checkLines(rb.captionLines, rb.captionFontString, rb.captionColor, src, false);
+        // The words drawn on the picture (#902): small multi-ink type and
+        // ink coverage like any text, their plate and halo coloured fills,
+        // and the safe zone for the box they cover.
+        for (const label of rb.labels ?? []) {
+          const layout = label.layout;
+          if (!layout) continue;
+          const lsrc = { start: label.sourceStart, end: label.sourceEnd };
+          checkLines(layout.lines, layout.fontString, layout.color, lsrc, false);
+          checkCoverage(layout.halo?.color, pageIndex);
+          if (layout.background) checkCoverage(layout.background.color, pageIndex);
+          const r = label.rect;
+          if (r && !flowPage && !rb.rotation) {
+            const d = Math.min(r.x - trim.x, r.y - trim.y, trim.x + trim.width - (r.x + r.width), trim.y + trim.height - (r.y + r.height));
+            if (d < safePx - 1e-6 && d > -safePx) {
+              out.push({
+                kind: 'safeZone', severity: 'warning', pageIndex, rect: r,
+                distanceMm: Math.round(pxToMm(Math.max(0, d)) * 10) / 10, safeZoneMm: Math.round(pxToMm(safePx) * 10) / 10, text: layout.lines.map((l) => l.text).join(' ').trim().slice(0, 40),
+                sourceStart: label.sourceStart, sourceEnd: label.sourceEnd,
+              });
+            }
+          }
+        }
         const body: BoundingBox = { x: block.bbox.x + rb.bodyRect.x, y: block.bbox.y + rb.bodyRect.y, width: rb.bodyRect.width, height: rb.bodyRect.height };
         if (rb.kind === 'bitmap') {
           const s = rb.bodySource;

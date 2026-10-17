@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyTextChanges } from '../book/textChanges';
-import { countTemplatePages, fenceTemplateChange, renameTemplateChanges, templateFences } from './templateUsage';
+import { countTemplatePages, fenceTemplateChange, pageFenceIds, renameTemplateChanges, templateFences } from './templateUsage';
 
 const BOOK = [
   '# One',
@@ -56,5 +56,19 @@ describe('fenceTemplateChange', () => {
     expect(out).toContain('::::page{template="tema" fondo="banda"}');
     // The code block keeps its text.
     expect(out).toContain('```\n::::page{template="tema-cajas"}\n```');
+  });
+});
+
+describe('pageFenceIds (#943)', () => {
+  it('lists the ids of the page fences of every chapter, once, outside code', () => {
+    const one = ['::::page{template="articulo" id="p1" sigue="p47"}', '::::', '```', '::::page{id="en-codigo"}', '```', "::::page{id='p3'}", '::::'].join('\n');
+    const two = ['::::page{template=salto id=p47}', '::::', '::::page{id="p1"}', '::::', '::::page{template="x"}', '::::'].join('\n');
+    expect(pageFenceIds([{ markdown: one }, { markdown: two }])).toEqual([
+      { id: 'p1', chapter: 0 },
+      { id: 'p3', chapter: 0 },
+      { id: 'p47', chapter: 1 },
+    ]);
+    expect(templateFences(two)[0]!.id).toBe('p47');
+    expect(templateFences(two)[2]!.id).toBeUndefined();
   });
 });

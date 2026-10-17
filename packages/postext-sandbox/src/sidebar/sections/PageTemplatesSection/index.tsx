@@ -388,6 +388,10 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
           <SlotEditor
             slotKey="part"
             configPath={`/pageTemplates/${templates.findIndex((t) => t.id === id)}${effScope === 'base' ? '' : `/variants/${effScope}`}/decoration`}
+            frames={[
+              ...resolved.frames.map((f) => ({ name: f.name, kind: 'frame' as const })),
+              ...resolved.groups.map((g) => ({ name: g.name, kind: 'group' as const })),
+            ]}
             raw={decoration}
             resolved={resolveDesignSlot(decoration, 'part')}
             onUpdate={(slot) => set({ decoration: slot && slot.elements && slot.elements.length > 0 ? slot : undefined })}

@@ -76,6 +76,9 @@ export interface PageCtx {
   /** Set while a vertical page's flow (or a vertical design text) paints:
    *  text is set down the column (see `verticalText.ts`). */
   vertical?: VerticalPaint;
+  /** The document's CJK region and upright digits, what a composed page's
+   *  vertical frame (#944) sets its text with. */
+  frameCjk?: { region: CjkRegion; uprightDigits: number };
   /** The character spacing (px) set with {@link setTrackingPx}: the
    *  vertical painter reads it, since it sets its own spacing inside its
    *  text objects. */

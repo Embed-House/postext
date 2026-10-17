@@ -637,13 +637,13 @@ Um elemento `image` desenha um recurso bitmap ou SVG do documento: o logotipo da
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Com <code>width</code> e <code>height</code> definidos: <code>'contain'</code> encaixa a imagem inteira dentro da caixa, centrada; <code>'cover'</code> preenche a caixa e recorta o que sobra, como uma fotografia sangrada. O recorte de <code>'cover'</code> mantém inteira a zona segura do recurso (veja <a href="/pt/docs/document-format-resources">Recursos</a>); se a forma da caixa não puder contê-la, mostra-se a menor janela que a contém e a caixa fica sem preencher num sentido. Ignorado quando um lado é <code>'auto'</code>. Desde postext 1.38.</td>
+      <td>Com <code>width</code> e <code>height</code> definidos: <code>'contain'</code> encaixa a imagem inteira dentro da caixa, centrada; <code>'cover'</code> preenche a caixa e recorta o que sobra, como uma fotografia sangrada. O recorte de <code>'cover'</code> mantém inteira a zona segura do recurso (veja <a href="/pt/docs/document-format-resources">Recursos</a>); se a forma da caixa não puder contê-la, mostra-se a menor janela que a contém e a caixa fica sem preencher num sentido. Ignorado quando um lado é <code>'auto'</code>. Desde postext 1.38. Uma imagem que fica de pé no fluxo de uma página vertical (o desenho de um título num livro vertical) é recortada como a folha a mostra, desde o postext 1.39; até o 1.38 era encaixada inteira.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>O ponto da imagem que o recorte <code>'cover'</code> centraliza, em frações da imagem: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para um rosto no terço superior. O recorte continua deixando a zona segura à vista. Sem ele, as margens em volta da zona segura são recortadas em proporção ao seu tamanho, ou a imagem é centralizada.</td>
+      <td>O ponto da imagem que o recorte <code>'cover'</code> centraliza, em frações da imagem: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para um rosto no terço superior. O recorte continua deixando a zona segura à vista. Sem ele, as margens em volta da zona segura são recortadas em proporção ao seu tamanho, ou a imagem é centralizada. No Sandbox, o <strong>Ponto de foco</strong> do editor de imagem mostra a imagem com a parte que o recorte mantém contornada; um clique nela, ou as setas, definem o ponto (desde o postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Cada borda relativa a um elemento põe um canto do elemento sobre um canto do el
 - `align-right`: o canto superior direito sobre o canto superior direito do alvo.
 
 Uma borda relativa a um elemento usada com `'container'`, `'page'` ou `'bleed'`, e uma borda de contêiner usada com `'#id'`, são lidas como o canto superior esquerdo.
+
+**Bordas de início e de fim.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (com `'container'`, `'page'`, `'bleed'` ou `'outer'`), e `align-start` e `align-end` (com `'#id'`), nomeiam o lado em que começam as linhas da página em vez de um lado fixo. Numa página da esquerda para a direita, `top-start` é `top-left`; numa página da direita para a esquerda, e numa página vertical, cujas linhas se sucedem a partir da direita, é `top-right`. Com essas bordas, o `x` do deslocamento vai do lado inicial ao lado final: numa página da direita para a esquerda, um `x` positivo move o elemento para a esquerda, e o elemento é o espelho do elemento da esquerda para a direita. A decoração de um modelo e os cabeçalhos ficam na folha, então um antetítulo escrito `top-start` fica sobre o bloco do título tanto numa edição árabe quanto numa brasileira. Um bloco fica no fluxo da página, já espelhado ou girado, onde `start` é sempre a sua esquerda, como `left`. No desenho de um título, que também fica no fluxo, `start` é `left`. No Sandbox, a lista **Alinhamento** do editor do espaço tem **Início** e **Fim**, e as listas de bordas têm os lados inicial e final. Desde o postext 1.39; até o 1.38 essas palavras valiam `top-left`.
 
 `anchor.to: 'page'` ancora o elemento na **caixa de refile** (a página física depois do corte) e `'bleed'`, na caixa de refile ampliada por `cutLines.bleed` em todos os lados (idêntica à caixa de refile enquanto as marcas de corte estão desativadas). Os dois quadros também passam a ser a referência para `size: 'fill'` e para a limitação automática de largura, de modo que uma faixa colorida pode ir de borda a borda, independentemente das margens da página:
 

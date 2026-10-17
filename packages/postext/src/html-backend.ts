@@ -2795,9 +2795,22 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       const r = layout.background.rect;
       inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;background:${layout.background.color};"></div>`);
     }
-    layout.lines.forEach((line, i) => {
-      inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
-    });
+    if (layout.vertical) {
+      // A vertical label (#902): its frame is turned a quarter turn by the
+      // matrix, as a vertical page's flow is, and each line is set down the
+      // column like a body line, from a block that stands for the label.
+      const vt = layout.vertical;
+      const v: VerticalHtml = { region: vt.region, uprightDigits: vt.uprightDigits, axes: vt.centralBaselines };
+      const host = {
+        id: label.id ?? '', fontString: layout.fontString, boldFontString: layout.boldFontString, italicFontString: layout.italicFontString,
+        boldItalicFontString: layout.boldItalicFontString, color: layout.color, textAlign: 'left', bbox: layout.box,
+      } as unknown as VDTBlock;
+      layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1])));
+    } else {
+      layout.lines.forEach((line, i) => {
+        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
+      });
+    }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
     const id = label.id ? ` data-label="${esc(label.id)}"` : '';
     parts.push(
@@ -3130,12 +3143,15 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
       // `height` across it (sized for that when `upright`, else fitted
       // keeping its proportions, as the canvas draws it).
       const k = block.upright ? 1 : Math.min(height / width, width / height);
-      const dw = block.upright ? height : width * k;
-      const dh = block.upright ? width : height * k;
-      const ox = block.upright ? 0 : (height - dw) / 2;
-      const oy = block.upright ? 0 : (width - dh) / 2;
+      // A cover crop (#946): the whole picture over its uncropped box in
+      // the upright frame, the box clipping it.
+      const c = block.upright ? block.crop : undefined;
+      const dw = c ? height / c.width : block.upright ? height : width * k;
+      const dh = c ? width / c.height : block.upright ? width : height * k;
+      const ox = c ? -c.x * dw : block.upright ? 0 : (height - dw) / 2;
+      const oy = c ? -c.y * dh : block.upright ? 0 : (width - dh) / 2;
       return (
-        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;">` +
+        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;${c ? 'overflow:hidden;' : ''}">` +
         `<img src="${esc(url)}" ${alt} style="position:absolute;left:0;top:0;width:${dw}px;height:${dh}px;` +
         `transform:translate(0,${height}px) rotate(-90deg) translate(${ox}px,${oy}px);transform-origin:0 0;${filter}" /></div>`
       );
@@ -3316,11 +3332,20 @@ function renderPageDetailed(
   // panel, before the panel's lettering, inside the comic's markup.
   const comicText = new Map<number, string>();
   const comicTextBlocks: Array<{ id: string; html: string }> = [];
+  // On a vertical or right-to-left page the text is set in the page's flow
+  // frame (#909): each frame is written in a box that turns or mirrors it
+  // as the page's flow box does, over the panel on the sheet.
+  const flowBox = vflow
+    ? `<div class="pt-flow" style="position:absolute;left:0;top:0;width:${page.height}px;height:${page.width}px;transform:translate(${page.width}px,0) rotate(90deg);transform-origin:0 0;">`
+    : page.flow?.writingMode === 'horizontal-tb'
+      ? `<div class="pt-flow pt-flow-mirrored" style="position:absolute;left:0;top:0;width:${page.width}px;height:${page.height}px;transform:scaleX(-1);transform-origin:${page.flow.mirror.originX / 2}px 0;">${MIRRORED_FLOW_STYLE}`
+      : '';
   for (const item of comicFramePaintOrder(page)) {
     if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
     const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
     comicTextBlocks.push(...parts);
-    comicText.set(item.frame.panel, composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>');
+    const frameHtml = composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>';
+    comicText.set(item.frame.panel, flowBox ? `${flowBox}${frameHtml}</div>` : frameHtml);
   }
   const comicMarkup = (comic: VDTComicPage): string => renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
     comic === page.comic && comicText.size > 0 ? (panel) => comicText.get(panel.index) ?? '' : undefined);
@@ -3382,8 +3407,14 @@ function renderPageDetailed(
       const open = composedFrameOpen(item.frame, z, item.facing);
       composedShape.push(open);
       composedParts.push(open);
+      // A frame set in its own writing mode (#944) writes its lines as a
+      // page of that mode does: set vertically, or across.
+      const f = item.frame;
+      const frameOptions: HtmlPaint = f.writingMode === 'vertical-rl'
+        ? { ...options, vertical: { region: verticalRegion ?? 'mainland', uprightDigits: verticalDigits ?? 2, ...(f.centralBaselines ? { axes: f.centralBaselines } : {}), ...(f.dashAdvances ? { dashes: f.dashAdvances } : {}) } }
+        : f.writingMode === 'horizontal-tb' ? { ...options, vertical: undefined } : options;
       for (const b of item.blocks) {
-        const html = renderBlock(b, options, stripInBlock(b));
+        const html = renderBlock(b, frameOptions, stripInBlock(b));
         // The facing page's half of a frame across a spread's spine is
         // painted only: no block of the page's to patch or select.
         if (item.facing) composedShape.push(html);

@@ -6,7 +6,7 @@ import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import type { DuplicateSource, SandboxState } from '../../context/SandboxContext';
 import { slugify } from '../../panels/resources/slugify';
 import { isDocumentUntouched } from '../../presets';
-import { bundleContentLocales, choosePresetOpen, isEditionOnScreen } from '../../presets/locale';
+import { bundleContentLocales, choosePresetOpen, isEditionOnScreen, sameLocaleTag } from '../../presets/locale';
 import { readBundleZipManifest } from '../../presets/zip';
 import { downloadBytes, exportConfigToJson, exportMarkdownFile } from '../../storage/persistence';
 import type { ViewportTab } from '../../types';
@@ -75,7 +75,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const listBooks: WebMcpTool = {
     name: 'sandbox_list_books',
     title: 'Sandbox: the books',
-    description: "The books the Sandbox can open: the samples it ships (each in one or more languages; one the reader edited keeps their version, and editedLanguages says in which languages) and the reader's own projects, stored in this browser (cover: true on those with a cover picture). Says which one is on screen.",
+    description: "The books the Sandbox can open: the samples it ships (each in one or more languages; one the reader edited keeps their version, and editedLanguages says in which languages) and the reader's own projects, stored in this browser (cover: true on those with a cover picture; languages on those that keep a book in several languages, language being the one that opens). Says which one is on screen.",
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     annotations: { readOnlyHint: true, untrustedContentHint: true },
     execute: () => {
@@ -101,6 +101,8 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           name: p.name,
           ...(p.description ? { description: p.description } : {}),
           ...(p.locale ? { language: p.locale } : {}),
+          // A book imported in several languages keeps them all (#903).
+          ...(p.locales ? { languages: p.locales } : {}),
           chapters: p.chapterCount,
           ...(p.thumbnail ? { cover: true } : {}),
           updated: new Date(p.updatedAt).toISOString(),
@@ -119,7 +121,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
       properties: {
         kind: { type: 'string', enum: ['sample', 'project'] },
         id: { type: 'string', description: 'The id, as sandbox_list_books gives it.' },
-        language: { type: 'string', description: 'A sample in several languages: the one to open (en, es, zh-Hans…). The language of the interface when left out.' },
+        language: { type: 'string', description: 'A sample or project in several languages: the one to open (en, es, zh-Hans…). A sample opens in the language of the interface when left out; a project in the language it was left in.' },
       },
       required: ['kind', 'id'],
       additionalProperties: false,
@@ -134,7 +136,14 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
         if (!opened) throw new ToolError(store.getSnapshot().presetError ?? 'The sample did not open.');
       } else {
         if (!s.projects.some((p) => p.id === args.id)) throw new ToolError(`No project with id ${JSON.stringify(args.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`);
-        await projects.activate(args.id as string);
+        const language = args.language as string | undefined;
+        const project = s.projects.find((p) => p.id === args.id)!;
+        if (language && project.locales) {
+          if (!project.locales.some((l) => sameLocaleTag(l, language))) throw new ToolError(`That project has no ${language} edition. Its languages: ${project.locales.join(', ')}.`);
+          await projects.switchEdition(project.id, language);
+        } else {
+          await projects.activate(args.id as string);
+        }
       }
       await sleep(50);
       const laidOut = await whenSettled(host, { signal });
@@ -298,7 +307,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const importBook: WebMcpTool = {
     name: 'sandbox_import_book',
     title: 'Sandbox: import a .postext book',
-    description: 'Import a .postext file (a book with its chapters, design, resources and fonts in one archive) as a new project, and open it. A file may carry the book in several languages: inspect: true reads the file and answers with them without importing, as the Books panel asks before it imports; language then says which to open.',
+    description: 'Import a .postext file (a book with its chapters, design, resources and fonts in one archive) as a new project, and open it. A file may carry the book in several languages: the project keeps every one of them (the checks, the language switcher and the side-by-side view of composed pages work on it), and language says which opens first. inspect: true reads the file and answers with them without importing.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -308,7 +317,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           properties: { url: { type: 'string' }, base64: { type: 'string' }, fileName: { type: 'string' } },
           additionalProperties: false,
         },
-        language: { type: 'string', description: 'A file in several languages: the one to open. The interface language when left out.' },
+        language: { type: 'string', description: 'A file in several languages: the one to open first (all are kept). The interface language when left out.' },
         inspect: { type: 'boolean', description: 'Read the file and answer with its name and the languages it carries, without importing it.' },
       },
       required: ['file'],
@@ -441,7 +450,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           if (other?.kind === 'project') {
             const project = s.projects.find((p) => p.id === other.id);
             if (!project) throw new ToolError(`No project with id ${JSON.stringify(other.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`);
-            if (other.language !== undefined) throw new ToolError('A project is in one language; "language" picks among those of a sample.');
+            if (other.language !== undefined) throw new ToolError('A project exports all its languages in one archive; "language" picks among those of a sample.');
             target = { kind: 'project', id: project.id };
             name = project.name;
           } else if (other) {

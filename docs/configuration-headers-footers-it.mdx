@@ -637,13 +637,13 @@ Un elemento `image` disegna una risorsa bitmap o SVG del documento: il logo di u
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Con <code>width</code> e <code>height</code> impostate: <code>'contain'</code> fa entrare l’immagine intera nel riquadro, centrata; <code>'cover'</code> riempie il riquadro e ritaglia ciò che avanza, come una fotografia al vivo. Il ritaglio di <code>'cover'</code> tiene intera la zona sicura della risorsa (vedi <a href="/it/docs/document-format-resources">Risorse</a>); se la forma del riquadro non può contenerla, si mostra la finestra più piccola che la contiene e il riquadro resta non riempito in un senso. Ignorato se un lato è <code>'auto'</code>. Da postext 1.38.</td>
+      <td>Con <code>width</code> e <code>height</code> impostate: <code>'contain'</code> fa entrare l’immagine intera nel riquadro, centrata; <code>'cover'</code> riempie il riquadro e ritaglia ciò che avanza, come una fotografia al vivo. Il ritaglio di <code>'cover'</code> tiene intera la zona sicura della risorsa (vedi <a href="/it/docs/document-format-resources">Risorse</a>); se la forma del riquadro non può contenerla, si mostra la finestra più piccola che la contiene e il riquadro resta non riempito in un senso. Ignorato se un lato è <code>'auto'</code>. Da postext 1.38. Un’immagine che resta dritta nel flusso di una pagina verticale (il disegno di un titolo in un libro verticale) viene ritagliata come la mostra il foglio, da postext 1.39; fino alla 1.38 veniva adattata intera.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Il punto dell’immagine che il ritaglio <code>'cover'</code> centra, in frazioni dell’immagine: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per un volto nel terzo superiore. Il ritaglio lascia comunque in vista la zona sicura. Senza di esso i margini intorno alla zona sicura si ritagliano in proporzione alla loro misura, oppure l’immagine si centra.</td>
+      <td>Il punto dell’immagine che il ritaglio <code>'cover'</code> centra, in frazioni dell’immagine: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per un volto nel terzo superiore. Il ritaglio lascia comunque in vista la zona sicura. Senza di esso i margini intorno alla zona sicura si ritagliano in proporzione alla loro misura, oppure l’immagine si centra. Nel Sandbox il <strong>Punto focale</strong> dell’editor dell’immagine mostra l’immagine con la parte che il ritaglio conserva riquadrata; un clic sull’immagine, o le frecce, fissano il punto (da postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Ogni bordo relativo a un elemento mette un angolo dell’elemento su un angolo d
 - `align-right`: il suo angolo in alto a destra sull’angolo in alto a destra dell’elemento di riferimento.
 
 Un bordo relativo a un elemento usato con `'container'`, `'page'` o `'bleed'`, e un bordo del contenitore usato con `'#id'`, vengono letti come l’angolo in alto a sinistra.
+
+**Bordi d’inizio e di fine.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (con `'container'`, `'page'`, `'bleed'` o `'outer'`), e `align-start` e `align-end` (con `'#id'`), indicano il lato da cui partono le righe della pagina invece di un lato fisso. In una pagina da sinistra a destra `top-start` è `top-left`; in una pagina da destra a sinistra, e in una pagina verticale, le cui righe si susseguono da destra, è `top-right`. Con questi bordi la `x` dello spostamento va dal lato d’inizio al lato di fine: in una pagina da destra a sinistra una `x` positiva sposta l’elemento verso sinistra, e l’elemento è lo specchio di quello da sinistra a destra. La decorazione di un modello e le testatine stanno sul foglio, quindi un occhiello scritto `top-start` resta sopra la cornice del titolo in un’edizione araba come in una italiana. Una cornice sta nel flusso della pagina, già specchiato o ruotato, dove `start` è sempre la sua sinistra, come `left`. Nel disegno di un titolo, anch’esso nel flusso, `start` è `left`. Nel Sandbox l’elenco **Allineamento** dell’editor dello slot ha **Inizio** e **Fine**, e gli elenchi dei bordi hanno i lati d’inizio e di fine. Da postext 1.39; fino alla 1.38 queste parole valevano `top-left`.
 
 `anchor.to: 'page'` ancora l’elemento al **formato rifilato** (la pagina fisica dopo il taglio) e `'bleed'` al formato rifilato allargato di `cutLines.bleed` su ogni lato (identico al formato rifilato finché i segni di taglio sono disattivati). Entrambe le cornici diventano anche il riferimento per `size: 'fill'` e per il limite automatico della larghezza, così una fascia colorata può andare da bordo a bordo indipendentemente dai margini della pagina:
 

@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'es',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 43,
+  order: 44,
   plainSummary: "Esta página es para quien quiere que un asistente de inteligencia artificial trabaje por él en un libro del Sandbox. Mientras el Sandbox está abierto, le da al asistente un juego de herramientas: mirar cualquier página, cambiar el diseño, editar el texto, añadir imágenes y tablas, encontrar problemas y guardar archivos. Tú se lo pides con tus palabras, por ejemplo «sube un poco la letra y comprueba que el libro sigue cabiendo en 40 páginas», y el asistente usa las herramientas y te enseña las páginas. Todo se queda en tu navegador. La página explica cómo conectar un asistente, qué puede hacer y cómo se llama cada herramienta.",
 };
 
@@ -320,7 +320,10 @@ iguales que propone, como Diseño › Recuadros › Estilos de marco.
 `sandbox_merge_styles` recibe `groups` (`{ keep, merge }`) o `all: true` y
 reescribe cada marco y cada bloque que nombraba un estilo fusionado; con
 `lookOnly: true` compara también estilos cuyos recuadros están en sitios
-distintos, que entonces se mueven.
+distintos. Ese estilo se queda entonces solo con su sitio, basado en el estilo
+que se queda (`extends`), así que sus recuadros no se mueven y la respuesta lo
+lista en `keptForTheirPlace`; con `keepPlaces: false` se fusiona del todo y sus
+recuadros se mueven.
 La respuesta da `undoSteps`: un paso por capítulo reescrito y otro para los estilos, que `sandbox_undo` revierte empezando por los estilos.
 
 ### Editar el texto
@@ -418,7 +421,7 @@ imagen. `newId` renombra un recurso y, por defecto, todas sus referencias en
 el libro. `sandbox_list_resources` los enumera y, con un `id`, da uno completo
 (las celdas de una tabla con su formato, el código de un SVG).
 
-Las `marks` de una imagen llevan también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`).
+Las `marks` de una imagen llevan también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`).
 
 ```jsonc
 // dos anclas de un mapa, con sus estilos de rótulo

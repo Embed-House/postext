@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Nome legível (só na interface do editor).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>O id de outro estilo em que este se baseia: todo campo que ele deixa sem valor vem desse estilo. Veja <a href="#estilos-baseados-em-outro">Estilos baseados em outro</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -216,7 +222,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Com <code>true</code>, o boxe é mantido inteiro: um boxe que não cabe no espaço restante passa inteiro para a coluna ou página seguinte. Só um boxe mais alto que uma coluna vazia e completa (uma página inteira para um boxe <code>span: 'page'</code>) não pode ser mantido inteiro: ele se divide pelas regras de <code>false</code> abaixo em vez de transbordar, começando onde aparece, e uma continuação que caiba em uma coluna passa inteira adiante; um boxe flutuante (<code>placement: 'top' | 'bottom' | 'auto'</code>) com essa altura não flutua, fica no fluxo onde aparece. Com <code>false</code>, qualquer boxe pode quebrar entre os seus blocos filhos ou entre as linhas de um parágrafo ou item de lista: o corte mais fundo que couber fecha a coluna atual (ou, para um boxe <code>span: 'page'</code>, a página, rente ao pé das colunas) e o resto continua no alto da seguinte, em um boxe próprio (mesmo quadro e faixa, sem ícone e sem título, a menos que <code>repeatTitle</code> o repita), dividindo-se de novo se ainda for alto demais. O texto de cada fragmento mantém, vazia, a coluna que um ícone em linha ocupa no primeiro trecho, para que o boxe tenha uma única medida em todas as páginas. Um corte dentro de um item de lista deixa o marcador com o primeiro trecho. O quadro de cada fragmento compartilha o <code>contentIndex</code> / <code>containerId</code> do delimitador e registra <code>callout.part</code> / <code>callout.continued</code>. Use-o em um boxe longo de “pontos-chave” no fim do capítulo junto com <code>headings.balancing.beforeSpan</code>, ou em um estilo de nota cujos boxes nunca devem empurrar uma figura para fora da página. Um boxe aninhado (um <code>:::callout</code> dentro de outro) é um filho do seu pai: um corte pode cair antes ou depois dele, e dentro dele só quando o seu próprio estilo permite a divisão (<code>keepTogether: false</code>, ou mais alto que uma coluna completa), segundo o seu próprio <code>splitMinLines</code>.</td>
+      <td>Com <code>true</code>, o boxe é mantido inteiro: um boxe que não cabe no espaço restante passa inteiro para a coluna ou página seguinte. Só um boxe mais alto que uma coluna vazia e completa (uma página inteira para um boxe <code>span: 'page'</code>) não pode ser mantido inteiro: ele se divide pelas regras de <code>false</code> abaixo em vez de transbordar, começando onde aparece, e uma continuação que caiba em uma coluna passa inteira adiante; um boxe flutuante (<code>placement: 'top' | 'bottom' | 'auto'</code>) com essa altura não flutua, fica no fluxo onde aparece. Com <code>false</code>, qualquer boxe pode quebrar entre os seus blocos filhos ou entre as linhas de um parágrafo ou item de lista: o corte mais fundo que couber fecha a coluna atual (ou, para um boxe <code>span: 'page'</code>, a página, rente ao pé das colunas) e o resto continua no alto da seguinte, em um boxe próprio (mesmo quadro e faixa, sem ícone e sem título, a menos que <code>repeatTitle</code> o repita), dividindo-se de novo se ainda for alto demais. O texto de cada fragmento mantém, vazia, a coluna que um ícone em linha ocupa no primeiro trecho, para que o boxe tenha uma única medida em todas as páginas. Um corte dentro de um item de lista deixa o marcador com o primeiro trecho. O quadro de cada fragmento compartilha o <code>contentIndex</code> / <code>containerId</code> do delimitador e registra <code>callout.part</code> / <code>callout.continued</code>. Use-o em um boxe longo de “pontos-chave” no fim do capítulo junto com <code>headings.balancing.beforeSpan</code>, ou em um estilo de nota cujos boxes nunca devem empurrar uma figura para fora da página. Um boxe aninhado (um <code>:::callout</code> dentro de outro) é um filho do seu pai: um corte pode cair antes ou depois dele, e dentro dele só quando o seu próprio estilo permite a divisão (<code>keepTogether: false</code>, ou mais alto que uma coluna completa), segundo o seu próprio <code>splitMinLines</code>. Desde o postext 1.39 o corte segue as regras do texto corrido, como o de um bloco de uma página composta: um título nunca fecha um fragmento (<code>headings.keepWithNext</code>), um corte entre os itens de uma lista deixa pelo menos dois de cada lado (<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>; um quando desligados) e uma lista de até <code>bodyText.shortListMaxItems</code> itens com <code>shortListSplit: 'avoid'</code> não é cortada entre itens. Quando nenhum corte o permite, o fragmento termina antes do título ou da lista, ou dentro de um dos seus itens.</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Estilos baseados em outro
+
+`extends` nomeia outro estilo de `calloutStyles`, e todo campo que o estilo deixa sem valor vem dele. Objetos como `padding`, `border`, `titleStyle` ou `fixed` são combinados chave a chave, então um estilo pode mudar só um lado do preenchimento ou só `fixed.offset`; uma cor ou um comprimento vêm inteiros; `id` e `name` nunca são herdados. Um estilo base pode, por sua vez, basear-se em outro. Um livro com boxes em muitos lugares guarda um estilo para a aparência e um estilo mínimo por lugar:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Mude a aparência de `caja` e todos os boxes acompanham, cada um onde está. Um `extends` que não nomeia nenhum estilo gera `calloutStyleExtendsUnknown` (o aviso sugere o id mais próximo, e o estilo fica sozinho, com os valores padrão), e estilos baseados uns nos outros em círculo geram `calloutStyleExtendsCycle` (ficam sozinhos até que um se baseie num estilo fora do círculo). No Sandbox, o campo **Baseado em** de um estilo de boxe define isso; apagar um estilo em que outros se baseiam escreve as configurações dele nesses estilos, e os seus boxes não mudam. Na seção **Estilos de bloco**, fundir com **Comparar só a aparência** mantém como estilo mínimo desse tipo o estilo cujos boxes ficam em outro lugar quando **Deixar cada boxe onde está** está ligado (padrão), e nenhum boxe se move. Desde o postext 1.39.
 
 ### O contêiner `:::callout`
 

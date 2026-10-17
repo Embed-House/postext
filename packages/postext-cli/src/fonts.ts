@@ -183,10 +183,44 @@ function register(face: Face): void {
   const key = `${face.family}|${face.weight}|${face.style}|${face.source}|${face.bytes.byteLength}`;
   if (registered.has(key)) return;
   registered.add(key);
-  // Skia reads the weight and the slant from the file itself, as the
-  // browser does from @font-face; the alias is the family the book names.
-  GlobalFonts.register(Buffer.from(face.bytes.buffer, face.bytes.byteOffset, face.bytes.byteLength), face.family);
-  noteSvgFont(face.bytes, face.family);
+  // Skia reads the weight and the slant from the file itself, where the
+  // browser takes them from the @font-face descriptors: a file whose flags
+  // disagree with what the book declares (an italic without the italic
+  // bit) would register under the wrong face, and the first one listed
+  // would answer for it. The face is registered with the declared weight
+  // and slant (#940); the alias is the family the book names.
+  const bytes = declaredFace(face);
+  GlobalFonts.register(Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength), face.family);
+  noteSvgFont(bytes, face.family);
+}
+
+/** The weight class and whether the slant bits (`OS/2` fsSelection, `head`
+ *  macStyle) a TrueType / OpenType file sets, as Skia reads them. Undefined
+ *  for a collection or a file with no `OS/2` table. */
+export function fileStyleFlags(bytes: Uint8Array): { weight: number; italic: boolean } | undefined {
+  if (bytes.byteLength < 12) return undefined;
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const count = view.getUint16(4);
+  if (12 + count * 16 > bytes.byteLength) return undefined;
+  let os2: number | undefined;
+  let head: number | undefined;
+  for (let i = 0; i < count; i++) {
+    const record = 12 + i * 16;
+    const tag = String.fromCharCode(bytes[record]!, bytes[record + 1]!, bytes[record + 2]!, bytes[record + 3]!);
+    if (tag === 'OS/2') os2 = view.getUint32(record + 8);
+    else if (tag === 'head') head = view.getUint32(record + 8);
+  }
+  if (os2 === undefined || os2 + 64 > bytes.byteLength) return undefined;
+  const slanted = (view.getUint16(os2 + 62) & 0x01) !== 0 || (head !== undefined && head + 46 <= bytes.byteLength && (view.getUint16(head + 44) & 0x2) !== 0);
+  return { weight: view.getUint16(os2 + 4), italic: slanted };
+}
+
+/** The bytes Skia is given for a face: the file itself when its flags say
+ *  what the book declares of it, else a copy that says so (#940). */
+function declaredFace(face: Face): Uint8Array {
+  const flags = fileStyleFlags(face.bytes);
+  if (!flags || (flags.weight === face.weight && flags.italic === (face.style === 'italic'))) return face.bytes;
+  return restyleFace(face.bytes, face.weight, face.style) ?? face.bytes;
 }
 
 /** How much heavier than the face it is drawn from a weight must be for

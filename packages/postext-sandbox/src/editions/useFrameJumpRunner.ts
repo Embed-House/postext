@@ -16,7 +16,7 @@ import {
 import { fromBookOffset } from '../book/compose';
 import type { ComposedBook } from '../book/types';
 import { selectFrame } from '../editing/editMode';
-import { climbable } from '../selection/pageSelection';
+import { climbable, elementRectOnSheet } from '../selection/pageSelection';
 import { setPageSelection } from '../selection/selectionStore';
 import { sameLocaleTag } from '../presets/locale';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
@@ -27,10 +27,13 @@ import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type
  *  frame level (what a click on it and Esc from its text would pick).
  *  False when the source map does not find it there. */
 export function selectFrameOnPage(doc: VDTDocument, pageIndex: number, frameId: string, chapter?: string): boolean {
-  const frame = doc.pages[pageIndex]?.composed?.frames.find((f) => f.id === frameId);
-  if (!frame) return false;
-  // Its centre: on the sheet whatever its turn or scale.
-  const point = { x: frame.rect.x + frame.rect.width / 2, y: frame.rect.y + frame.rect.height / 2 };
+  const page = doc.pages[pageIndex];
+  const frame = page?.composed?.frames.find((f) => f.id === frameId);
+  if (!page || !frame) return false;
+  // Its centre: on the sheet whatever its turn or scale, out of the flow
+  // frame of a right-to-left or vertical page (#929).
+  const r = elementRectOnSheet(page, { rect: frame.rect, flow: true })!;
+  const point = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
   const chain = climbable(sourceAt(doc, pageIndex, point.x, point.y));
   const level = chain.findIndex((el) => el.level === 'frame' && el.id === frameId);
   if (level < 0) return false;
@@ -63,6 +66,7 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
   const docSourceRef = useSandboxDocSourceRef();
   const chapterDocsRef = useSandboxChapterDocsRef();
   const activeProjectId = useSandboxSelector((s) => s.activeProjectId);
+  const projectLocale = useSandboxSelector((s) => (s.activeProjectId === null ? null : s.projects.find((p) => p.id === s.activeProjectId)?.locale ?? null));
   const activePresetId = useSandboxSelector((s) => s.activePresetId);
   const appliedLocale = useSandboxSelector((s) => (s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null));
   const presetStatus = useSandboxSelector((s) => s.presetStatus);
@@ -80,6 +84,10 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     if (jump.presetId !== null) {
       if (activeProjectId !== null || activePresetId !== jump.presetId || presetStatus === 'loading') return;
       if (jump.locale !== '' && (appliedLocale === null || !sameLocaleTag(appliedLocale, jump.locale))) return;
+    } else if (jump.projectId) {
+      // A project in several languages (#903): its edition on screen.
+      if (activeProjectId !== jump.projectId) return;
+      if (jump.locale !== '' && (projectLocale === null || !sameLocaleTag(projectLocale, jump.locale))) return;
     }
     const chapter = jump.chapterIndex !== null ? chapters[jump.chapterIndex] : chapters.find((c) => c.id === activeChapterId);
     if (!chapter) {
@@ -153,5 +161,5 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     if (anchor === undefined) return;
     dispatch({ type: 'SET_PANEL', payload: 'markdown' });
     dispatch({ type: 'SET_PENDING_EDITOR_FOCUS', payload: { chapterId: chapter.id, anchor, head: anchor, selectWord: false, fromViewer: true } });
-  }, [pending, activeProjectId, activePresetId, appliedLocale, presetStatus, chapters, activeChapterId, docVersion, dispatch, docRef, docSourceRef, chapterDocsRef]);
+  }, [pending, activeProjectId, projectLocale, activePresetId, appliedLocale, presetStatus, chapters, activeChapterId, docVersion, dispatch, docRef, docSourceRef, chapterDocsRef]);
 }

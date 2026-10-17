@@ -244,7 +244,26 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
     expect(overflowsOf(fitted).filter((x) => x.frame === w!.frame)).toEqual([]);
   });
 
-  it('useTemplate: another template of the book with a frame of that name where it fits', () => {
+  it('useTemplate: another template of the book where the page fits once set with it', () => {
+    // A full copy of the template whose `dinero` takes the height its text
+    // needs: the page fits there.
+    const base = standIn().config.pageTemplates![0]! as PageTemplate;
+    const auto: PageTemplate = { ...base, id: 'tema-auto', frames: base.frames!.map((f) => (f.name === 'dinero' ? { ...f, height: 'auto' as const } : f)) };
+    const tight: PageTemplate = { id: 'otra', frames: [{ name: 'dinero', height: mm(10) }] };
+    const w = overflowsOf(build(standIn({ ...tooLong, more: [tight, auto] })))[0]!;
+    expect(proposal(w, 'useTemplate')).toMatchObject({ kind: 'useTemplate', value: 'tema-auto' });
+    const at = proposal(w, 'useTemplate')!;
+    const md = standIn(tooLong).markdown;
+    expect(md.slice(at.sourceStart!, at.sourceEnd!)).toBe('tema-cajas');
+    // Applied, the page fits.
+    const applied = build(standIn({ ...tooLong, more: [tight, auto], markdown: (m) => moreMoney(4)(m).replace('template="tema-cajas"', 'template="tema-auto"') }));
+    expect(overflowsOf(applied)).toEqual([]);
+  });
+
+  it('useTemplate is not proposed for a template where the page overflows once its slots are regrouped (#937)', () => {
+    // Only titulo, texto (flow) and dinero: the page's other slots (gasto,
+    // ahorro, the photos) would go to texto, which grows and pushes dinero
+    // off the page.
     const roomy: PageTemplate = {
       id: 'tema-amplio',
       frames: [
@@ -253,12 +272,11 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
         { name: 'dinero', placement: { anchor: { to: '#texto', edge: 'below' } } },
       ],
     };
-    const tight: PageTemplate = { id: 'otra', frames: [{ name: 'dinero', height: mm(10) }] };
-    const w = overflowsOf(build(standIn({ ...tooLong, more: [tight, roomy] })))[0]!;
-    expect(proposal(w, 'useTemplate')).toMatchObject({ kind: 'useTemplate', value: 'tema-amplio' });
-    const at = proposal(w, 'useTemplate')!;
-    const md = standIn(tooLong).markdown;
-    expect(md.slice(at.sourceStart!, at.sourceEnd!)).toBe('tema-cajas');
+    const w = overflowsOf(build(standIn({ ...tooLong, more: [roomy] })))[0]!;
+    expect(proposal(w, 'useTemplate')).toBeUndefined();
+    // Applied all the same, it overflows: the proposal was right to stay out.
+    const applied = build(standIn({ ...tooLong, more: [roomy], markdown: (m) => moreMoney(4)(m).replace('template="tema-cajas"', 'template="tema-amplio"') }));
+    expect(overflowsOf(applied).length).toBeGreaterThan(0);
   });
 
   it('shortenText: about the characters of the lines that do not fit; cutting them makes it fit', () => {

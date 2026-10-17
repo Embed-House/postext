@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
-import { renderPageToCanvas } from '../../index';
+import { flowToPage, renderPageToCanvas } from '../../index';
 import { elementsForSource, sourceAt } from '../../composed/sourceMap';
 import { composedPaintOrder } from '../../composed/paint';
 import type { PageTemplate } from '../../composed/types';
@@ -79,7 +79,10 @@ for (const [name, extra] of [['left to right', {}], ['right to left', { directio
           // Inside the page's part of the sheet, not on the facing page.
           expect(r.x).toBeGreaterThanOrEqual(0);
           expect(r.x + r.width).toBeLessThanOrEqual(page.width);
-          const chain = sourceAt(doc, page.index, r.x + r.width / 2, r.y + r.height / 2);
+          // sourceAt reads sheet points; the label's box is in the flow frame on a
+          // right-to-left page (#929).
+          const at = element.flow ? flowToPage(page, r.x + r.width / 2, r.y + r.height / 2) : { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+          const chain = sourceAt(doc, page.index, at.x, at.y);
           expect(chain.find((e) => e.level === 'label')?.id).toBe(element.id);
         }
       }

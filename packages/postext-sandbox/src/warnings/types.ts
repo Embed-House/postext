@@ -48,6 +48,8 @@ export type WarningKind =
   | 'spreadMismatch'
   | 'labelAnchorUnknown'
   | 'anchorUnlabelled'
+  | 'labelOverflow'
+  | 'labelOverlap'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -114,6 +116,8 @@ export type WarningKind =
   | 'pictureBelowPrintSize'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
+  | 'calloutStyleExtendsUnknown'
+  | 'calloutStyleExtendsCycle'
   | 'templateDuplicate'
   | 'templateExtendsCycle'
   | 'templateExtendsUnknown'
@@ -283,6 +287,12 @@ export type WarningPayload =
   /** An anchor of a figure's resource names a label style and no label of
    *  the figure stands at it in this locale (#860): a note. */
   | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; page: number; locale?: string }
+  /** A figure label still wider than its measure at its style's
+   *  `minScale` (#902): drawn at `scale` and running past it. */
+  | { kind: 'labelOverflow'; resourceId: string; text: string; anchor?: string; widthPct: number; scale: number; page: number; locale?: string }
+  /** A label whose lines meet an earlier label's (#902): `count` earlier
+   *  labels in all, `with` the first of them. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; page: number; locale?: string }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
@@ -505,6 +515,10 @@ export type WarningPayload =
    *  `suggestion` names the word it is closest to, when one is (the
    *  comics settings, #590). */
   | { kind: 'unknownConfigValue'; path: string; value: string; used: string; suggestion?: string }
+  /** A box style based on another (#905) whose `extends` names no style
+   *  (`suggestion` the closest id), or that comes back to it (`value` the
+   *  loop): the style stands alone. */
+  | { kind: 'calloutStyleExtendsUnknown' | 'calloutStyleExtendsCycle'; path: string; value: string; used: string; suggestion?: string }
   /** A page template problem (#853), from the engine's
    *  `validatePageTemplates`: `path` is a JSON pointer
    *  (`/pageTemplates/3/frames/2/style`), `value` the id, name, loop or

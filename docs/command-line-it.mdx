@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Riga di comando',
   description: 'Un unico eseguibile autonomo per macOS, Linux e Windows che trasforma un libro .postext, una cartella di libro o file Markdown sparsi in PDF, HTML, EPUB, immagini delle pagine e Word, crea pacchetti e verifica i libri, con output JSON per script e agenti',
   lang: 'it',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 42,
+  order: 43,
   plainSummary: "Questa pagina è per chi vuole fare libri con Postext da un terminale invece che dal sito. Scarichi un solo file per il tuo computer e lo esegui, senza installare nulla. Gli dai il tuo libro, o qualche file di testo, e lui produce un PDF, una pagina web, un e-book, immagini delle pagine o un documento Word. Può anche cercare problemi in un libro e riunire i suoi file in uno solo. Lo possono usare anche i programmi e gli assistenti di intelligenza artificiale, perché sa rispondere in un formato che leggono facilmente.",
 };
 
@@ -253,6 +253,15 @@ livello 1 (`--no-split` ne tiene uno solo), immagini e tabelle come risorse, e
 diretta, numerazione digitata a mano…). `--template` accetta un modello di importazione (un
 `.json` salvato dalla Sandbox o un `.docx` che ne contiene uno).
 
+La spaziatura tra i caratteri appartiene allo stile, non al testo, e quindi non sta nel
+Markdown. `docx` scrive il `letterSpacing` degli stili di paragrafo, degli stili di titolo
+e dei livelli di titolo come spaziatura tra i caratteri dello stile Word, e `import-docx`
+lo rilegge in em della dimensione dello stile: lo imposta come `letterSpacing` sugli stili del libro
+che non ne hanno uno (gli stili di paragrafo e di titolo del file `--config` a cui corrispondono
+gli stili Word, e i livelli di titolo), e lascia com’è ogni spaziatura che il libro definisce già.
+Con `--json`, `styleTracking` elenca ciò che è stato impostato (`applied`) e ciò che è rimasto
+fuori (`skipped`). Da postext 1.39.
+
 ### pack e unpack
 
 ```bash
@@ -294,6 +303,8 @@ libro al posto dei segnaposto (`contentInConfig`), una volta per stile di
 titolo, titolo corrente o design di parte, con il percorso di ogni testo:
 sposta quel testo nel Markdown, oppure aggiungi il titolo o il nome
 dell’editore a `checks.contentInConfig.allow`.
+
+In un libro con modelli di pagina, `check` segnala anche il testo che non entra nella sua cornice (`frameOverflow`, con i passi provati dalla scala di reimpaginazione e le modifiche che lo farebbero entrare), una storia che supera le pagine che una cornice può aggiungere (`frameContinuationLimit`), un salto a una pagina che non segue (`continueTargetMissing`) e le etichette di figura che non si possono disegnare o che si urtano (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Dopo gli avvisi stampa una riga `reflow` per ogni pagina composta con eventi, e `--json` porta i passi, le proposte e il registro di reimpaginazione come dati. Vedi [Pagine composte › Avvisi](/it/docs/composed-pages#avvisi) e [Registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
 
 ### build e --watch
 

@@ -114,6 +114,22 @@ A `slot` outside a composed page is read and changes nothing.
 
 A figure works in the running text as well as in a frame. Its labels are drawn on the picture as text and go wherever the figure goes: a column, a float, a frame turned or scaled by the reflow ladder, a spread. A line inside a figure that is neither a label nor blank ends a figure whose closing `:::` is missing, and is reported as an unclosed container.
 
+### A figure's own words
+
+The resource holds one picture, its anchors and one set of words, but each edition of a book says its own. A figure can give its `alt`, its `caption` and its `note` itself, in the fence or in lines of its own, and they replace the resource's for the pages of that file:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- As fence attributes `alt`, `caption` and `note` take a short text between quotes. The `::alt[…]`, `::caption[…]` and `::note[…]` lines take the text in brackets, which may hold inline Markdown and `\\` for a line break, as a resource's caption and note do. A line wins over an attribute of the same name; lines go among the labels, with blank lines allowed.
+- A word the figure does not give stays the resource's. An empty one says nothing: `caption=""` drops the caption, `alt=""` marks the picture as decorative.
+- The words replace the resource's in the chapter that says them: the layout, the alternative text of every output and the tagged PDF read them, and the resource itself is unchanged. A resource set by two figures of one file takes the words of the first. Unlike a label, a caption is not mapped character by character to the Markdown; `sourceAt` answers a click on it as it does for a resource's caption.
+
 ### How a label is set
 
 - **Where.** A label stands at its anchor's point, a fraction of the whole picture, so a crop to the picture's safe area or a picture set smaller moves the label with the art. The anchor's `align` says which side of the label stands at the point, and `verticalAlign` which edge stands at its height. `start` and `end` follow the label's own direction: in Arabic, `start` is the label's right edge. `rotate` turns the label about the point, clockwise, at any angle: a river along its course, hills on a slant.
@@ -121,6 +137,8 @@ A figure works in the running text as well as in a frame. Its labels are drawn o
 - **Fit.** With a `width` on its anchor, the label breaks between words within that measure, never inside a word. When a word is wider than the measure, the whole label is set smaller, down to its style's `minScale`; a label still too wide at that size is drawn with its widest word cut. Without a `width` the label keeps to one line, except where it breaks with `\\`, as in a caption.
 - **Text.** The text in brackets is inline Markdown, set as a caption is: bold, italic, chips, highlight marks, references, inline formulas. A name of several words is one label, whatever the order of its words in each language: `::label[ATLANTIC OCEAN]` and `::label[OCÉANO ATLÁNTICO]` stand at the same anchor. Right-to-left labels are set right to left; Chinese and Japanese labels break between characters.
 - **Outputs.** The canvas, the PDF, the HTML viewer, the fixed-layout EPUB and Folio draw the labels. On a right-to-left page a label stays where the picture shows it.
+- **Vertical.** With `writingMode: 'vertical-rl'` on the anchor (or on its label style) the label is set as a vertical page is: its characters upright in cells one under another, the columns going from right to left, Latin words and long numbers turned sideways, short numbers in one cell. `width` is then a share of the picture's height, the length of a column, and a Chinese or Japanese label wraps into more columns. `align` runs along the column (`start` is its top), `verticalAlign` across the columns (`top` is the first, right-hand one), and `rotate` turns the label further.
+- **Checks.** A label still wider than its measure at its style's `minScale` raises `labelOverflow`; two labels whose lines meet raise `labelOverlap` on the later one. Both are checked in each edition, so a translation with longer words shows where it needs room. A part's palette (`:::part{palette="…"}`) recolours the labels on its pages as it does captions. The contrast check reads a label on its plate, else inside its halo; a label bare on the picture is skipped, since its ground is the picture. The print preflight counts a label's small process-colour type, its inks and its distance to the trim.
 
 ### labelAnchorUnknown
 
@@ -133,6 +151,14 @@ In the Sandbox's Checks panel the warning leads to the label in the Text panel, 
 An anchor of the figure's resource names a label style, and no `::label` of the figure stands at it in this locale: the map has room for a word this edition leaves out. It is a note; `postext check` lists it as `info`. Anchors with no style, such as a comic speaker's, are not reported. The warning carries the resource, the anchor, its style, the locale, the page and the figure's source range. Write the label in this language's Markdown, or take the style off the anchor.
 
 In the Checks panel it leads to the figure in the Text panel, and its pin button opens the picture's anchors on that anchor.
+
+### labelOverflow
+
+A label is still wider than its anchor's `width` at the smallest scale its label style allows (`minScale`): it is drawn at that scale and runs past its measure. The warning carries the resource, the label's text, its anchor (none for a label placed by percentages), the width it was given, the scale reached, the locale, the page and the source range of the label's text. It is checked in each edition, so a language with longer words overflows where another does not. Widen the anchor's `width`, shorten the word in this edition's Markdown, or lower the label style's `minScale`. A Chinese or Japanese label breaks between characters and does not overflow this way. Since postext 1.39.
+
+### labelOverlap
+
+The lines of two labels of one figure meet; a label with a plate counts as its plate. The later label, in the order written, carries the warning, with the text of the first earlier label it meets and how many earlier labels it meets in all. The test uses each line's own box, turned with the label, so a short line beside a long one leaves its side free, and lets two lines run into each other by up to an eighth of a line's height. It is checked in each edition. Move one of the anchors, narrow a label's `width` so that it breaks, or shorten the words in this edition's Markdown. In the Sandbox's Checks panel the pin button opens the picture's anchors at the label's anchor. Since postext 1.39.
 
 ## Example
 
@@ -214,7 +240,7 @@ With `"wrap": "contour"` as well, the frame pushes with the shape of the picture
 
 ### Decoration, running heads and layers
 
-The template's `decoration` (pictures, rules, boxes and short texts) is laid once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print.
+The template's `decoration` (pictures, rules, boxes and short texts) is laid once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print. On a right-to-left or vertical page the frames follow the mirrored or turned flow while the decoration stays on the sheet: an element placed at a start or end edge (`top-start`, see [Element placement](/en/docs/configuration-headers-footers#element-placement)) stands by its frame in every edition.
 
 Frames paint in the order of their `layer`: the decoration at layer 0, frames at 1 by default, a higher layer over a lower one, a negative layer under the decoration. `rotate` turns a frame and its content together by any angle, about the frame's centre, in the canvas, the PDF, the HTML viewer and the fixed-layout EPUB.
 
@@ -382,7 +408,7 @@ When no step makes the content fit, the frame is cut at its foot, keeps the scal
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
+      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. The trial sets the page as the build would with that template: the slots it has no frame for go to its flow frame, its own ladder runs, and it is proposed only when no frame overflows and nothing goes on to another page (since postext 1.39). A page added by continuation gets no such proposal. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>
@@ -599,9 +625,9 @@ On the canvas, in the Sandbox's spread view and in the Folio the two pages stand
 
 ## Migrating a book with text in its styles
 
-A book made before composed pages may hold the text of its pages in heading styles: a hidden heading on each page whose running head places every text where the printed page had it. The *Text held in the configuration* check lists it. In the Sandbox, **Move the text to the Markdown** in the Checks panel turns each page design into a page template whose frames stand where the texts stood, and each page into a page fence with its text in `:::frame` slots; it shows every page before and after, and can be undone. See [Moving the text to the Markdown](/en/docs/sandbox-design-checks#moving-the-text-to-the-markdown). From code, `moveTextToMarkdown({ config, chapters, metadata }, options)` does the same and returns the new configuration, the chapters and a report.
+A book made before composed pages may hold the text of its pages in heading styles: a hidden heading on each page whose running head places every text where the printed page had it. The *Text held in the configuration* check lists it. In the Sandbox, **Move the text to the Markdown** in the Checks panel turns each page design into a page template whose frames stand where the texts stood, and each page into a page fence with its text in `:::frame` slots; it shows every page before and after, and can be undone. See [Moving the text to the Markdown](/en/docs/sandbox-composed-pages#moving-the-text-to-the-markdown). From code, `moveTextToMarkdown({ config, chapters, metadata }, options)` does the same and returns the new configuration, the chapters and a report.
 
-With `labelsOnPictures: true` (since postext 1.38), the words a design placed on a picture become the picture's labels instead of frames: a text of one line and at most four words, no larger than three quarters of the body text (`labelsOnPictures: { maxFontSize }` sets another limit), whose box lies inside a picture of the same design. The picture leaves the decoration for a frame at the box it was drawn in, holding a `:::figure` with one `::label` line per text, and each text becomes an anchor of the picture's resource at the point where the design set it (its first baseline, the side its alignment names, its box's width), with a label style for its look. Pass the book's `resources` in the input: the result returns them with the anchors (`result.resources`), and a bitmap smaller than the box the design stretched it over gets the `resolution` that sets it at that width. A picture shown on several pages shares its anchors. The report's `labels` counts the pictures, labels, anchors and label styles. The Sandbox's dialog does not offer it yet.
+With `labelsOnPictures: true` (since postext 1.38), the words a design placed on a picture become the picture's labels instead of frames: a text of one line and at most four words, no larger than three quarters of the body text (`labelsOnPictures: { maxFontSize }` sets another limit), whose box lies inside a picture of the same design. The picture leaves the decoration for a frame at the box it was drawn in, holding a `:::figure` with one `::label` line per text, and each text becomes an anchor of the picture's resource at the point where the design set it (its first baseline, the side its alignment names, its box's width), with a label style for its look. Pass the book's `resources` in the input: the result returns them with the anchors (`result.resources`), and a bitmap smaller than the box the design stretched it over gets the `resolution` that sets it at that width. A picture shown on several pages shares its anchors. The report's `labels` counts the pictures, labels, anchors and label styles. The Sandbox's dialog offers it as an option, off until asked for, when the book has words to turn into labels.
 
 ## From code
 
@@ -614,6 +640,8 @@ After layout, a composed page's `VDTPage.composed` records its template, the var
 Everything a composed page paints knows where it was written, so an editor can go from a point of the page to the Markdown or the configuration, and from a range of the Markdown to what it became on the page.
 
 `sourceAt(doc, pageIndex, x, y)` takes a point of a laid-out page, in page pixels from the sheet's top-left corner, and returns what is there, innermost first, each element followed by the ones that hold it. A glyph of a box comes with its line, its paragraph, its frame, the frame's groups and the template; a word of the decoration comes with its design element, the decoration and the template. Each element has a `level`, a stable `id`, a `source`, and, for most, its `rect` on the page (upright, before a turned frame's `rotate`).
+
+On a right-to-left or vertical page the frames are laid in the page's flow frame, mirrored or turned a quarter on the sheet, while the decoration and the running heads stay on the sheet. `sourceAt` still takes sheet points and maps them for the frames. An element whose `rect` is in the flow frame comes with `flow: true`, in `sourceAt`, `elementsForSource` and `findElement` alike; `flowRectToPage(page, rect)` gives its box on the sheet, and `flowToPage(page, x, y)` a point of it. Up to postext 1.38 a sheet point on a frame of such a page found only the template.
 
 <table>
   <thead>

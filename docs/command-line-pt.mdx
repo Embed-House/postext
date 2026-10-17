@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Linha de comando',
   description: 'Um único executável autossuficiente para macOS, Linux e Windows que transforma um livro .postext, uma pasta de livro ou arquivos Markdown soltos em PDF, HTML, EPUB, imagens das páginas e Word, empacota pacotes e verifica livros, com saída JSON para scripts e agentes',
   lang: 'pt',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 42,
+  order: 43,
   plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o seu livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
 };
 
@@ -259,6 +259,15 @@ qualidade que o Sandbox mostra (estilos em uso, formatação direta, numeração
 digitada…). `--template` recebe um modelo de importação (um `.json` salvo no
 Sandbox ou um `.docx` que traga um).
 
+O espaçamento entre caracteres é uma propriedade do estilo, não do texto, e por isso não está no
+Markdown. `docx` grava o `letterSpacing` dos estilos de parágrafo, dos estilos de título
+e dos níveis de título como espaçamento entre caracteres do estilo do Word, e `import-docx`
+o lê de volta em em do tamanho do estilo: ele o põe como `letterSpacing` nos estilos do livro
+que não têm nenhum (os estilos de parágrafo e de título do arquivo de `--config` aos quais
+os estilos do Word correspondem, e os níveis de título), e deixa como está qualquer espaçamento
+que o livro já define. Com `--json`, `styleTracking` lista o que foi aplicado (`applied`) e o que
+ficou de fora (`skipped`). Desde o postext 1.39.
+
 ### pack e unpack
 
 ```bash
@@ -300,6 +309,8 @@ em vez de marcadores (`contentInConfig`), uma vez por estilo de título, cabeço
 ou design de parte, com o caminho de cada texto: leve esse texto para o
 Markdown, ou acrescente o título ou o nome da editora a
 `checks.contentInConfig.allow`.
+
+Em um livro com modelos de página, o `check` informa também o texto que não cabe no seu bloco (`frameOverflow`, com os passos que a escada de reajuste tentou e as mudanças que o fariam caber), uma história que passa das páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não segue (`continueTargetMissing`) e os rótulos de figura que não podem ser desenhados ou que se chocam (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
 
 ### build e --watch
 

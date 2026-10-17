@@ -5,7 +5,7 @@
  * positions back into the original markdown.
  */
 
-import type { BlockSlot, CodeBlockInfo, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types';
+import type { BlockSlot, CodeBlockInfo, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, FigureWord, FigureWordKind, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types';
 import type { SourceRange } from '../composed/types';
 import { attachEquationAnchors } from './equationLabels';
 import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './attrs';
@@ -39,6 +39,8 @@ const PAGE_FENCE_RE = /^(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
 const LONG_CLOSE_RE = /^(:{4,})\s*$/;
 /** A `::label[TEXT]{…}` line of a `:::figure` (#854). */
 const LABEL_LINE_RE = /^::label\[/;
+/** `::alt[…]`, `::caption[…]`, `::note[…]`: a figure's own words (#935). */
+const FIGURE_WORD_LINE_RE = /^::(alt|caption|note)\[/;
 /** `at="62% 48%"`: a label's place in percents of the picture. */
 const LABEL_AT_PERCENT_RE = /^\s*(-?\d+(?:\.\d+)?)\s*%\s+(-?\d+(?:\.\d+)?)\s*%\s*$/;
 /** A bayt's hemistichs cut at a `\\` with a space on each side (the
@@ -738,6 +740,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     const blobStart = lineOffsets[start]! + fenceLine.indexOf('{') + 1;
     const attrSources = attrsRaw ? attrSourcesOf(attrsRaw, blobStart) : {};
     const labels: FigureLabel[] = [];
+    const lineWords: Partial<Record<FigureWordKind, FigureWord>> = {};
     let k = start + 1;
     let last = start;
     let closed = false;
@@ -751,11 +754,26 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         k++;
         continue;
       }
+      const word = FIGURE_WORD_LINE_RE.test(t) ? parseFigureWord(k) : undefined;
+      if (word) {
+        lineWords[word.kind] = word.word;
+        last = k;
+        k++;
+        continue;
+      }
       const label = LABEL_LINE_RE.test(t) ? parseLabel(k) : undefined;
       if (!label) break;
       labels.push(label);
       last = k;
       k++;
+    }
+    // The figure's own words (#935): lines win over attributes.
+    const words: Partial<Record<FigureWordKind, FigureWord>> = {};
+    for (const kind of ['alt', 'caption', 'note'] as const) {
+      const fromLine = lineWords[kind];
+      const value = attrs[kind];
+      if (fromLine) words[kind] = fromLine;
+      else if (value !== undefined && attrSources[kind]) words[kind] = { text: value, sourceStart: attrSources[kind]!.sourceStart, sourceEnd: attrSources[kind]!.sourceEnd };
     }
     const slot = attrsRaw ? slotOf(attrs, attrsRaw, blobStart) : undefined;
     // Each label's anchor (`resourceId#anchorId`) and, on a composed page,
@@ -775,7 +793,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       text: '',
       spans: [],
       resourceId,
-      figure: { attrs, attrSources, labels },
+      figure: { attrs, attrSources, labels, ...(Object.keys(words).length > 0 ? { words } : {}) },
       ...(slot ? { slot } : {}),
       sourceStart: lineOffsets[start]!,
       sourceEnd: closed ? lineEndOffset(k) : lineEndOffset(last),
@@ -792,6 +810,21 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       });
     }
     return closed ? k + 1 : last + 1;
+  };
+
+  /** The `::alt[…]`, `::caption[…]` or `::note[…]` on line `k` (#935): the
+   *  text between the brackets, as written, or undefined when the line is
+   *  not one (text after the bracket, an unclosed bracket). */
+  const parseFigureWord = (k: number): { kind: FigureWordKind; word: FigureWord } | undefined => {
+    const raw = rawLines[k]!;
+    const lead = raw.length - raw.trimStart().length;
+    const body = raw.trimEnd();
+    const kind = FIGURE_WORD_LINE_RE.exec(body.slice(lead))![1] as FigureWordKind;
+    const open = lead + `::${kind}[`.length;
+    const close = closingBracket(body, open);
+    if (close < 0 || body.slice(close + 1).trim() !== '') return undefined;
+    const lineStart = lineOffsets[k]!;
+    return { kind, word: { text: body.slice(open, close), sourceStart: lineStart + open, sourceEnd: lineStart + close } };
   };
 
   /** The `::label[TEXT]{at=… style=…}` on line `k` (#854), or undefined

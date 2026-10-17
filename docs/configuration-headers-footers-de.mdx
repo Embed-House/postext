@@ -637,13 +637,13 @@ Ein Element `image` zeichnet eine Bitmap- oder SVG-Ressource des Dokuments – d
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Mit gesetzter <code>width</code> und <code>height</code>: <code>'contain'</code> passt das ganze Bild zentriert in den Kasten ein; <code>'cover'</code> füllt den Kasten und beschneidet, was übersteht, wie ein randabfallendes Foto. Der Zuschnitt von <code>'cover'</code> lässt den sicheren Bereich der Ressource ganz (siehe <a href="/de/docs/document-format-resources">Ressourcen</a>); kann die Form des Kastens ihn nicht fassen, wird das kleinste Fenster gezeigt, das ihn fasst, und der Kasten bleibt in einer Richtung ungefüllt. Wird ignoriert, wenn eine Seite <code>'auto'</code> ist. Seit postext 1.38.</td>
+      <td>Mit gesetzter <code>width</code> und <code>height</code>: <code>'contain'</code> passt das ganze Bild zentriert in den Kasten ein; <code>'cover'</code> füllt den Kasten und beschneidet, was übersteht, wie ein randabfallendes Foto. Der Zuschnitt von <code>'cover'</code> lässt den sicheren Bereich der Ressource ganz (siehe <a href="/de/docs/document-format-resources">Ressourcen</a>); kann die Form des Kastens ihn nicht fassen, wird das kleinste Fenster gezeigt, das ihn fasst, und der Kasten bleibt in einer Richtung ungefüllt. Wird ignoriert, wenn eine Seite <code>'auto'</code> ist. Seit postext 1.38. Ein Bild, das im Fluss einer vertikalen Seite aufrecht steht (das Design einer Überschrift in einem vertikalen Buch), wird beschnitten, wie der Bogen es zeigt, seit postext 1.39; bis 1.38 wurde es ganz eingepasst.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Der Punkt des Bildes, auf den der <code>'cover'</code>-Zuschnitt zentriert, in Bruchteilen des Bildes: <code>&#123; x: 0.5, y: 0.3 &#125;</code> für ein Gesicht im oberen Drittel. Der sichere Bereich bleibt dabei sichtbar. Ohne ihn werden die Ränder um den sicheren Bereich im Verhältnis ihrer Größe beschnitten, sonst wird das Bild zentriert.</td>
+      <td>Der Punkt des Bildes, auf den der <code>'cover'</code>-Zuschnitt zentriert, in Bruchteilen des Bildes: <code>&#123; x: 0.5, y: 0.3 &#125;</code> für ein Gesicht im oberen Drittel. Der sichere Bereich bleibt dabei sichtbar. Ohne ihn werden die Ränder um den sicheren Bereich im Verhältnis ihrer Größe beschnitten, sonst wird das Bild zentriert. Im Sandbox zeigt der <strong>Fokuspunkt</strong> des Bild-Editors das Bild mit dem Teil, den der Beschnitt behält, umrandet; ein Klick darauf oder die Pfeiltasten setzen den Punkt (seit postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Jede elementrelative Kante setzt eine Ecke des Elements auf eine Ecke des Elemen
 - `align-right`: seine obere rechte Ecke auf die obere rechte Ecke des Ziels.
 
 Eine elementrelative Kante zusammen mit `'container'`, `'page'` oder `'bleed'` und eine Containerkante zusammen mit `'#id'` werden als obere linke Ecke gelesen.
+
+**Anfangs- und Endkanten.** `top-start`, `start`, `bottom-start`, `top-end`, `end` und `bottom-end` (mit `'container'`, `'page'`, `'bleed'` oder `'outer'`) sowie `align-start` und `align-end` (mit `'#id'`) nennen die Seite, an der die Zeilen der Seite beginnen, statt einer festen Seite. Auf einer Seite von links nach rechts ist `top-start` gleich `top-left`; auf einer Seite von rechts nach links und auf einer vertikalen Seite, deren Zeilen von rechts aufeinander folgen, ist es `top-right`. Mit diesen Kanten läuft das `x` des Versatzes von der Anfangs- zur Endseite: Auf einer Seite von rechts nach links schiebt ein positives `x` das Element nach links, das Element ist das Spiegelbild des linksläufigen. Die Dekoration einer Vorlage und die Kolumnentitel werden auf dem Bogen gesetzt, also steht eine Dachzeile mit `top-start` in einer arabischen wie in einer deutschen Ausgabe über dem Rahmen des Titels. Ein Rahmen wird im Fluss der Seite gesetzt, der schon gespiegelt oder gedreht ist; dort ist `start` immer seine linke Seite, wie `left`. Im Design einer Überschrift, das ebenfalls im Fluss liegt, ist `start` gleich `left`. Im Sandbox hat die Liste **Ausrichtung** des Slot-Editors **Anfang** und **Ende**, und die Kantenlisten haben die Anfangs- und Endseiten. Seit postext 1.39; bis 1.38 galten diese Wörter als `top-left`.
 
 `anchor.to: 'page'` verankert das Element an der **Trim-Box** (der physischen Seite nach dem Beschnitt) und `'bleed'` an der Trim-Box, die auf jeder Seite um `cutLines.bleed` vergrößert ist (identisch mit der Trim-Box, solange Schnittmarken ausgeschaltet sind). Beide Rahmen werden außerdem zum Bezug für `size: 'fill'` und für die automatische Breitenbegrenzung, sodass ein farbiges Band unabhängig von den Seitenrändern von Kante zu Kante laufen kann:
 

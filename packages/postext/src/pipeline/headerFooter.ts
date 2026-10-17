@@ -33,7 +33,7 @@ import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
 import { resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
-import { frameOfBlock } from '../composed/paint';
+import { frameOfBlock, framePageRect } from '../composed/paint';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -415,6 +415,8 @@ export interface SlotLayoutExtras {
    *  flow of a mirrored page (see `LayoutContext`). */
   direction?: 'ltr' | 'rtl';
   mirrored?: boolean;
+  /** Start and end edges read the start on the right (`LayoutContext`). */
+  startRight?: boolean;
   /** See `LayoutContext.arabicNumbers` (#665). */
   arabicNumbers?: boolean;
   pageRole?: PageRole;
@@ -541,6 +543,7 @@ export function layoutSlotToVdt(
       container, dpi, placeholders, frames: extras?.frames, pageRole: extras?.pageRole, resourceById: extras?.resourceById,
       ...(extras?.direction ? { direction: extras.direction } : {}),
       ...(extras?.mirrored ? { mirrored: true } : {}),
+      ...(extras?.startRight ? { startRight: true } : {}),
       ...(extras?.arabicNumbers ? { arabicNumbers: true } : {}),
     },
     pageIndex,
@@ -1231,7 +1234,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     const outer = outerRight
       ? { x: sheetArea.x + sheetArea.width, y: sheetArea.y, width: Math.max(0, trim.x + trim.width - (sheetArea.x + sheetArea.width)), height: sheetArea.height }
       : { x: trim.x, y: sheetArea.y, width: Math.max(0, sheetArea.x - trim.x), height: sheetArea.height };
-    const sheetExtras: SlotLayoutExtras = { ...extras, frames: { ...physicalFrames, outer }, mirrored: false };
+    // On the sheet, the start of a right-to-left page, and of a vertical one
+    // (its lines follow each other leftwards), is its right (#936).
+    const startRight = resolved.direction === 'rtl' || pageIsVertical(page);
+    const sheetExtras: SlotLayoutExtras = { ...extras, frames: { ...physicalFrames, outer }, mirrored: false, ...(startRight ? { startRight: true } : {}) };
     const section = sectionByPage[page.index];
     // A composed page (#855) takes its template's running heads: a slot of
     // its own, `false` for none, unset for the section's.
@@ -1636,8 +1642,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
           if (f.facingBlocks) continue;
-          const r = flowRectToPage(p, f.rect);
-          const d = flowRectToPage(p, f.declaredRect ?? f.rect);
+          // A frame in its own writing mode (#944) is anchored to by the box
+          // the page gives it, not the turned box its content is laid in.
+          const r = flowRectToPage(p, framePageRect(f));
+          const d = flowRectToPage(p, framePageRect({ rect: f.declaredRect ?? f.rect, writingMode: f.writingMode }));
           named[f.name] = { ...r, x: r.x + dx };
           declared[f.name] = { ...d, x: d.x + dx };
           for (const rule of f.rules ?? []) {

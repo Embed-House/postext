@@ -3,6 +3,7 @@
  *
  *     #preset=P&lang=L&view=V&chapter=C&page=N
  *     #project=ID&view=V&chapter=C&page=N
+ *     #project=ID&lang=L&view=V&chapter=C&page=N   (a project in several languages)
  *
  * The book on screen is a preset (its manifest id, plus the content locale
  * a bilingual bundle was opened in) or a local project (its storage id —
@@ -30,7 +31,8 @@ export interface ViewHash {
   /** Storage id of the local project on screen, or null. */
   project: string | null;
   /** Content locale the preset was opened in (`es`, `en`, `zh-Hant`…),
-   *  as a canonical BCP 47 tag (`zh-hant` reads `zh-Hant`), or null. */
+   *  as a canonical BCP 47 tag (`zh-hant` reads `zh-Hant`), or null. A
+   *  project names it only when it keeps several editions (#903). */
   lang: string | null;
   /** Viewer tab, or null. */
   view: ViewportTab | null;
@@ -104,7 +106,7 @@ export function parseViewHash(hash: string): ViewHash {
   return {
     preset,
     project,
-    lang: preset !== null ? lang : null,
+    lang,
     view: isViewportTab(view) ? view : null,
     chapter: chapter === null ? null : chapter - 1,
     page: readNumber(hash, 'page'),
@@ -120,8 +122,11 @@ export function readViewHash(): ViewHash {
 /** Fragment for a view, every null (or missing) part left out. */
 export function viewHashFragment(view: Partial<ViewHash>): string {
   const parts: string[] = [];
-  if (view.project != null) parts.push(`project=${encodeURIComponent(view.project)}`);
-  else if (view.preset != null) {
+  if (view.project != null) {
+    parts.push(`project=${encodeURIComponent(view.project)}`);
+    // The edition of a project that keeps several languages (#903).
+    if (view.lang != null) parts.push(`lang=${encodeURIComponent(view.lang)}`);
+  } else if (view.preset != null) {
     parts.push(`preset=${encodeURIComponent(view.preset)}`);
     if (view.lang != null) parts.push(`lang=${encodeURIComponent(view.lang)}`);
   }
@@ -161,7 +166,11 @@ export type ViewHashBook = Pick<ViewHash, 'preset' | 'project' | 'lang'>;
  *  whatever is open; a preset without a locale names it in any locale.
  *  Locale tags compare case aside. */
 export function sameBook(wanted: ViewHashBook, actual: ViewHashBook): boolean {
-  if (wanted.project !== null) return wanted.project === actual.project;
+  if (wanted.project !== null) {
+    if (wanted.project !== actual.project) return false;
+    // A project in one language names none: any edition matches then.
+    return wanted.lang === null || actual.lang === null || sameLang(wanted.lang, actual.lang);
+  }
   if (wanted.preset !== null) {
     if (actual.project !== null || wanted.preset !== actual.preset) return false;
     return wanted.lang === null || sameLang(wanted.lang, actual.lang);

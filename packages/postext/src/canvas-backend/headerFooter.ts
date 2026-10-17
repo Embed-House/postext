@@ -231,16 +231,19 @@ function renderImageBlock(ctx: CanvasRenderingContext2D, block: VDTDesignImageBl
   // Single ink tints an SVG picture, never a bitmap; a VDT without the
   // kind leaves it to the registry.
   const svg = block.imageKind === undefined ? undefined : block.imageKind === 'svg';
-  if (block.crop && !block.upright) {
+  if (block.crop) {
     // A cover crop (#923): the whole picture over its uncropped box,
-    // clipped to the element's.
+    // clipped to the element's; an upright picture of a vertical flow
+    // (#946) in its own upright frame, the box turned back.
     const c = block.crop;
-    const w = width / c.width;
-    const h = height / c.height;
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.clip();
-    drawResourceImage(ctx, block.fileId, x - c.x * w, y - c.y * h, w, h, { inkHex, svg });
+    drawUprightInBox(ctx, x, y, width, height, (bx, by, bw, bh) => {
+      const w = bw / c.width;
+      const h = bh / c.height;
+      ctx.beginPath();
+      ctx.rect(bx, by, bw, bh);
+      ctx.clip();
+      drawResourceImage(ctx, block.fileId, bx - c.x * w, by - c.y * h, w, h, { inkHex, svg });
+    }, block.upright === true);
     restoreContext(ctx);
     return;
   }

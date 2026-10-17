@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, File
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { warningAnchor } from '../warnings/anchorTarget';
 import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
@@ -13,6 +14,7 @@ import { preflightDetail, preflightTitle } from '../print/preflightText';
 import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { frameOverflowDetail } from '../warnings/frameOverflowText';
+import { localNumber } from '../viewport/composed/reflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
 import { isComposedCheckKind } from '../warnings/composedChecks';
@@ -99,6 +101,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
+    case 'labelOverflow':
+    case 'labelOverlap':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -165,6 +169,8 @@ function iconFor(kind: WarningPayload['kind']) {
       return List;
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'calloutStyleExtendsUnknown':
+    case 'calloutStyleExtendsCycle':
     case 'contentInConfig':
       return FileWarning;
     case 'templateDuplicate':
@@ -295,6 +301,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsLabelAnchorUnknownTitle;
     case 'anchorUnlabelled':
       return labels.warningsAnchorUnlabelledTitle;
+    case 'labelOverflow':
+      return labels.warningsLabelOverflowTitle;
+    case 'labelOverlap':
+      return labels.warningsLabelOverlapTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -426,6 +436,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
       return labels.warningsUnknownConfigValueTitle;
+    case 'calloutStyleExtendsUnknown':
+      return labels.warningsCalloutStyleExtendsUnknownTitle;
+    case 'calloutStyleExtendsCycle':
+      return labels.warningsCalloutStyleExtendsCycleTitle;
     case 'templateDuplicate':
       return labels.warningsTemplateDuplicateTitle;
     case 'templateExtendsCycle':
@@ -519,7 +533,7 @@ function formatVariantList(
 }
 
 /** What the panel says under a warning's title. */
-export function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
+export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale?: string): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightDetail(payload.check, labels);
@@ -618,7 +632,7 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `:::page{template=…} — ${labels.warningsPageFenceLengthDetail}`;
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
-      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels, locale)}`;
     case 'continueTargetMissing':
       return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
         .replace('__page__', String(payload.page))
@@ -628,7 +642,7 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
         .replace('__page__', String(payload.page))
         .replace('__pages__', String(payload.pages))
-        .replace('__mm__', payload.overflowMm.toFixed(1))
+        .replace('__mm__', localNumber(payload.overflowMm, locale))
         .replace('__template__', payload.template)}`;
     case 'spreadMismatch':
       return `::::page{template="${payload.template}"${payload.fence ? ' spread' : ''}} — ${(payload.templateSpread ? labels.warningsSpreadMismatchSpreadDetail : labels.warningsSpreadMismatchSingleDetail).replace('__template__', payload.template)}`;
@@ -642,6 +656,17 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
         .replace('__resource__', payload.resourceId)
         .replace('__page__', String(payload.page))
         .replace('__style__', payload.style)}`;
+    case 'labelOverflow':
+      return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsLabelOverflowDetail
+        .replace('__text__', payload.text)
+        .replace('__page__', String(payload.page))
+        .replace('__scale__', String(Math.round(payload.scale * 100)))}`;
+    case 'labelOverlap':
+      return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${(payload.count > 1 ? labels.warningsLabelOverlapDetailMany : labels.warningsLabelOverlapDetail)
+        .replace('__text__', payload.text)
+        .replace('__with__', payload.with)
+        .replace('__more__', String(payload.count - 1))
+        .replace('__page__', String(payload.page))}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':
@@ -825,6 +850,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.path} — ${labels.warningsUnknownConfigKeyDetail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
     case 'unknownConfigValue':
       return `${payload.path}: "${payload.value}" — ${labels.warningsUnknownConfigValueDetail.replace('__used__', payload.used)}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    case 'calloutStyleExtendsUnknown':
+    case 'calloutStyleExtendsCycle': {
+      const detail = payload.kind === 'calloutStyleExtendsUnknown' ? labels.warningsCalloutStyleExtendsUnknownDetail : labels.warningsCalloutStyleExtendsCycleDetail;
+      return `${payload.path}: "${payload.value}" — ${detail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    }
     case 'templateDuplicate':
     case 'templateExtendsCycle':
     case 'templateExtendsUnknown':
@@ -927,12 +957,15 @@ function isFontWarning(kind: WarningPayload['kind']): boolean {
 function WarningItem({
   warning,
   labels,
+  locale,
   multiChapter,
   onClick,
   onAnchor,
 }: {
   warning: Warning;
   labels: SandboxLabels;
+  /** The interface language, for numbers (#938). */
+  locale?: string;
   multiChapter: boolean;
   onClick: (w: Warning) => void;
   /** A figure label's warning (#866): the anchor in the picture's anchor
@@ -946,7 +979,7 @@ function WarningItem({
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
-  const detail = detailFor(warning.payload, labels);
+  const detail = detailFor(warning.payload, labels, locale);
   const line = warning.chapterLine ?? warning.line;
   const chapterTag = multiChapter && warning.chapterIndex !== undefined
     ? labels.warningsChapterLabel.replace('__n__', String(warning.chapterIndex + 1))
@@ -969,9 +1002,9 @@ function WarningItem({
           {lineTag}
         </span>
       ) : undefined}
-      actions={onAnchor && (warning.payload.kind === 'labelAnchorUnknown' || warning.payload.kind === 'anchorUnlabelled') ? (
+      actions={onAnchor && warningAnchor(warning.payload) ? (
         <IconButton
-          label={(warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warning.payload.anchor)}
+          label={(warningAnchor(warning.payload)!.place ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warningAnchor(warning.payload)!.anchor)}
           icon={<MapPin size={14} aria-hidden="true" />}
           onClick={() => onAnchor(warning)}
         />
@@ -1025,8 +1058,10 @@ export function WarningsPanel() {
   // A figure label's warning (#866): a name to place on the picture, or
   // the anchor left without a label, in the picture's anchor editor.
   const handleAnchor = (w: Warning) => {
-    if (w.payload.kind === 'labelAnchorUnknown') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, place: w.payload.anchor });
-    else if (w.payload.kind === 'anchorUnlabelled') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, anchor: w.payload.anchor });
+    const target = warningAnchor(w.payload);
+    const resourceId = 'resourceId' in w.payload ? w.payload.resourceId : undefined;
+    if (!target || !resourceId) return;
+    requestAnchorEditor(dispatch, target.place ? { resourceId, place: target.anchor } : { resourceId, anchor: target.anchor });
   };
 
   const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
@@ -1046,7 +1081,7 @@ export function WarningsPanel() {
             editions={composed.editions}
             labels={labels}
             title={(w) => titleFor(w.payload, labels)}
-            detail={(w) => detailFor(w.payload, labels)}
+            detail={(w) => detailFor(w.payload, labels, state.locale)}
             onAnchor={handleAnchor}
           />
         )}
@@ -1057,7 +1092,7 @@ export function WarningsPanel() {
             <WarningGroup key={category} title={categoryLabel(category, labels)} count={items.length}>
               {items.map((w) => (
                 <li key={w.id}>
-                  <WarningItem warning={w} labels={labels} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
+                  <WarningItem warning={w} labels={labels} locale={state.locale} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
                 </li>
               ))}
             </WarningGroup>

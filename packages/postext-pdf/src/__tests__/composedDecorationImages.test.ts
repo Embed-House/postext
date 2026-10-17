@@ -85,4 +85,34 @@ describe('pictures of a composed page decoration in the PDF (#878)', () => {
     const clips = [...text.matchAll(/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re\nW\nn/g)].map((m) => m.slice(1, 5).map(Number));
     expect(clips.some((c) => Math.abs(c[0]!) < 0.01 && Math.abs(c[2]! - side) < 0.01 && Math.abs(c[3]! - side) < 0.01)).toBe(true);
   });
+
+  it('an upright picture of a vertical flow (#946) is clipped inside its turned frame', async () => {
+    const vertical = {
+      locale: 'ja',
+      page: { dpi: 72 },
+      header: { elements: [] },
+      footer: { elements: [] },
+      layout: { writingMode: 'vertical-rl', layoutType: 'single' },
+      headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] },
+      headingStyles: [{ id: 'opener', advancedDesign: { enabled: true, slot: { elements: [{ kind: 'image', id: 'sky', resourceId: 'sky', decorative: true, fit: 'cover',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: mm(40), height: mm(40) } } }] } } }],
+    } as unknown as PostextConfig;
+    const doc = buildDocument({ markdown: '# Opening {style="opener"}\n\nText.\n', resources }, vertical);
+    const block = doc.blocks.flatMap((b) => b.designOverlay?.blocks ?? []).find((b) => b.kind === 'image')!;
+    expect(block.kind === 'image' && block.upright && block.crop).toMatchObject({ width: 0.5, height: 1 });
+    const pdf = await PDFDocument.load(await renderToPdf(doc, { fontProvider: async () => new Uint8Array(fontBytes), resourceBytes: (id) => (id === 'sky.svg' ? SVG : undefined) }));
+    const contents = pdf.getPage(0).node.Contents();
+    const streams = contents instanceof PDFArray ? contents.asArray().map((r) => pdf.context.lookup(r)) : [contents];
+    const text = streams.map((st) => (st instanceof PDFRawStream ? Buffer.from(decodePDFRawStream(st).decode()).toString('latin1') : '')).join('\n');
+    // The 40 mm square, turned back upright: a clip of its own size after
+    // the quarter turn, the whole picture (twice as wide) drawn in it.
+    const side = (40 / 25.4) * 72;
+    const clip = [...text.matchAll(/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re\nW\nn/g)].find((m) => Math.abs(Number(m[3]) - side) < 0.01 && Math.abs(Number(m[4]) - side) < 0.01);
+    expect(clip).toBeDefined();
+    const turn = text.lastIndexOf(' cm', clip!.index);
+    expect(turn).toBeGreaterThan(-1);
+    // The vector picture's own box, after the clip: twice the side across.
+    const whole = [...text.matchAll(/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re\nW\nn/g)].find((m) => m.index! > clip!.index! && Math.abs(Number(m[3]) - 2 * side) < 0.01);
+    expect(whole).toBeDefined();
+  });
 });

@@ -60,6 +60,7 @@ import { outputProfileInfo } from './color/catalogue';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
 import { closestKey } from './util/closestKey';
 import { isResourceCounterReset } from './defaults/resourceTypes';
+import { calloutStyleChain } from './defaults/calloutStyles';
 import { validatePageTemplates } from './composed/validate';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
 
@@ -103,9 +104,37 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
   return [
     ...collectValueWarnings(config), ...collectSideColumnWarnings(config), ...collectColumnCountWarnings(config), ...collectUnknownKeyWarnings(config),
     ...collectCjkGridWarnings(config), ...collectChoiceWarnings(config), ...collectNumeralsWarnings(config),
-    ...collectPageTemplateWarnings(config, options),
+    ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config),
     ...collectContentInConfigWarnings(config, options),
   ];
+}
+
+/** Box styles based on another (#905): an `extends` that names no style
+ *  (`calloutStyleExtendsUnknown`) or that comes back to the style
+ *  (`calloutStyleExtendsCycle`, once per loop, on its first style). */
+function collectCalloutStyleWarnings(config: PostextConfig): ConfigWarning[] {
+  const styles = config.calloutStyles ?? [];
+  if (!styles.some((s) => s?.extends !== undefined)) return [];
+  const out: ConfigWarning[] = [];
+  const ids = styles.map((s) => s?.id).filter((id): id is string => typeof id === 'string');
+  const loops = new Set<string>();
+  styles.forEach((s, i) => {
+    if (!s || s.extends === undefined) return;
+    const path = `calloutStyles[${i}].extends`;
+    const parent = String(s.extends);
+    if (!ids.includes(parent)) {
+      const suggestion = closestKey(parent, ids.filter((id) => id !== s.id));
+      out.push({ kind: 'calloutStyleExtendsUnknown', path, value: parent, used: '', ...(suggestion ? { suggestion } : {}) });
+      return;
+    }
+    const { cycle } = calloutStyleChain(styles, i);
+    if (!cycle || cycle[0] !== i) return;
+    const key = [...cycle.slice(0, -1)].sort((a, b) => a - b).join(',');
+    if (loops.has(key)) return;
+    loops.add(key);
+    out.push({ kind: 'calloutStyleExtendsCycle', path, value: cycle.map((k) => styles[k]!.id).join(' → '), used: '' });
+  });
+  return out;
 }
 
 /** What else the config checks may read. */

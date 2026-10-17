@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
 import { useSandboxDocRef, useSandboxLabels } from '../../../context/SandboxContext';
@@ -9,6 +9,8 @@ import { DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextCon
 import { Button, ConfirmPopover } from '../../../ui';
 import { frameEntry, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
+import { useBookTexts } from '../../../frameStyles/useBookTexts';
+import { pageFenceIds } from '../../../templates/templateUsage';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
@@ -17,6 +19,9 @@ const ELEMENT_EDGES: AnchorEdge[] = ['below', 'above', 'right-of', 'left-of', 'a
 type SizeMode = 'fixed' | 'percent' | 'auto' | 'fill';
 
 const sizeMode = (s: FrameSize): SizeMode => (s === 'auto' ? 'auto' : s === 'fill' ? 'fill' : 'percent' in s ? 'percent' : 'fixed');
+
+/** The Continue in choice of a `page:` value typed in (#943). */
+const PAGE_TYPED = '__page:';
 
 interface FramePropertiesProps {
   templateId: string;
@@ -41,6 +46,12 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
   // before the drop writes it.
   const drag = useFrameDrag(name);
   const docRef = useSandboxDocRef();
+  // The book's page fences a story may jump to (#943), and whether the
+  // `page:` value is being typed.
+  const texts = useBookTexts();
+  const fenceIds = useMemo(() => pageFenceIds(texts), [texts]);
+  const [pageTyped, setPageTyped] = useState(false);
+  useEffect(() => setPageTyped(false), [name, templateId, scope]);
   if (!template || !frame) return null;
   const mmOf = (px: number) => (px * 25.4 / (docRef.current?.config.page.dpi ?? 96)).toFixed(1);
 
@@ -157,12 +168,20 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
 
   const fit = frame.fit;
   const overflow = frame.overflow;
+  const continueIn = overflow.continueIn ?? '';
   const continueOptions = [
     { value: '', label: labels.pageTemplatesContinueNone },
     { value: 'next-page', label: labels.pageTemplatesContinueNextPage },
     ...others.map((n) => ({ value: `#${n}`, label: labels.pageTemplatesAnchorFrame.replace('__name__', n) })),
     ...templates.filter((t) => t.id !== templateId).map((t) => ({ value: `template:${t.id}`, label: labels.pageTemplatesContinueTemplate.replace('__name__', t.name || t.id) })),
+    // A later page of the book (#943): the page fences that carry an `id`,
+    // and any other `page:` value, typed below.
+    ...fenceIds.map((f) => ({ value: `page:${f.id}`, label: labels.pageTemplatesContinuePage.replace('__id__', f.id) })),
+    { value: PAGE_TYPED, label: labels.pageTemplatesContinuePageTyped },
   ];
+  /** A `page:` value no listed fence matches (`page:{attr.sigue}`,
+   *  `page:p47#resto`), or the typed choice while it is empty. */
+  const typedPage = pageTyped || (continueIn.startsWith('page:') && !continueOptions.some((o) => o.value === continueIn));
   const markMode = overflow.mark === undefined ? 'default' : overflow.mark === false ? 'none' : 'custom';
 
   return (
@@ -266,6 +285,33 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         />
         <NumberInput label={labels.pageTemplatesFrameLayer} value={frame.layer} min={-10} max={10} onChange={(n) => set({ layer: n })} tooltip={labels.pageTemplatesFrameLayerTooltip} isDefault={!has('layer')} onReset={reset('layer')} />
         <NumberInput label={labels.pageTemplatesFrameRotate} value={frame.rotate} min={-180} max={180} suffix="°" onChange={(n) => set({ rotate: n })} tooltip={labels.pageTemplatesFrameRotateTooltip} isDefault={!has('rotate')} onReset={reset('rotate')} />
+        {/* The frame's own writing mode and direction (#944). */}
+        <SelectInput
+          label={labels.writingMode}
+          value={frame.writingMode ?? ''}
+          options={[
+            { value: '', label: labels.pageTemplatesFrameAsPage },
+            { value: 'horizontal-tb', label: labels.writingModeHorizontal },
+            { value: 'vertical-rl', label: labels.writingModeVerticalShort },
+          ]}
+          onChange={(v) => set({ writingMode: v || undefined })}
+          tooltip={labels.pageTemplatesFrameWritingModeTooltip}
+          isDefault={!has('writingMode')}
+          onReset={reset('writingMode')}
+        />
+        <SelectInput
+          label={labels.headerFooterElementDirection}
+          value={frame.direction ?? ''}
+          options={[
+            { value: '', label: labels.pageTemplatesFrameAsPage },
+            { value: 'ltr', label: labels.documentDirectionLtr },
+            { value: 'rtl', label: labels.documentDirectionRtl },
+          ]}
+          onChange={(v) => set({ direction: v || undefined })}
+          tooltip={labels.pageTemplatesFrameDirectionTooltip}
+          isDefault={!has('direction')}
+          onReset={reset('direction')}
+        />
         <SelectInput
           label={labels.pageTemplatesFrameVerticalAlign}
           value={frame.verticalAlign}
@@ -379,13 +425,26 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
       <FieldGroup title={labels.pageTemplatesFrameGroupContinuation}>
         <SelectInput
           label={labels.pageTemplatesContinueIn}
-          value={overflow.continueIn ?? ''}
-          options={continueOptions.some((o) => o.value === (overflow.continueIn ?? '')) ? continueOptions : [...continueOptions, { value: overflow.continueIn!, label: overflow.continueIn! }]}
-          onChange={(v) => setIn('overflow', 'continueIn', v || undefined)}
+          value={typedPage ? PAGE_TYPED : continueIn}
+          options={continueOptions.some((o) => o.value === continueIn) || continueIn.startsWith('page:') ? continueOptions : [...continueOptions, { value: continueIn, label: continueIn }]}
+          onChange={(v) => {
+            setPageTyped(v === PAGE_TYPED);
+            if (v !== PAGE_TYPED) setIn('overflow', 'continueIn', v || undefined);
+          }}
           tooltip={labels.pageTemplatesContinueInTooltip}
           isDefault={!hasIn('overflow', 'continueIn')}
-          onReset={() => setIn('overflow', 'continueIn', undefined)}
+          onReset={() => { setPageTyped(false); setIn('overflow', 'continueIn', undefined); }}
         />
+        {typedPage && (
+          <FieldRow label={labels.pageTemplatesContinuePageId} tooltip={labels.pageTemplatesContinuePageIdTooltip}>
+            <TextControl
+              value={continueIn.startsWith('page:') ? continueIn.slice('page:'.length) : ''}
+              onChange={(v) => setIn('overflow', 'continueIn', v.trim() === '' ? undefined : `page:${v.trim()}`)}
+              ariaLabel={labels.pageTemplatesContinuePageId}
+              widthCh={14}
+            />
+          </FieldRow>
+        )}
         <SelectInput
           label={labels.pageTemplatesMark}
           value={markMode}

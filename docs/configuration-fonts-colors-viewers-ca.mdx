@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Fonts, colors i sortida',
   description: 'Les unitats, els colors i la paleta, les fonts personalitzades, el visor HTML, el PDF i la producció per a impremta, el visor Folio i la depuració',
   lang: 'ca',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '41 min',
   order: 19,
   parent: 'configuration',
@@ -661,7 +661,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)` executa les revisions sobre un document compost i retorna una llista d'incidències, cadascuna amb un `kind`, una `severity` (`'critical'`, `'warning'` o `'info'`), el `pageIndex` absolut dins del llibre, el `rect` afectat (px de pàgina) i, quan l'element en té, el seu interval al text font. Els tipus són `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` i `nearTrim`. Sense `transform`, un neutre compta com una tinta i qualsevol altre color com tres, i la cobertura no es revisa; amb un `transform`, els recomptes i la cobertura són exactes. La resolució d'una imatge es calcula amb els píxels que declara el seu recurs, o amb els del fitxer mateix quan `imageSize(fileId)` els dona (`bitmapInfo` sobre els bytes, o la imatge descodificada): una declaració que s'allunya més d'un píxel del fitxer s'assenyala un cop com a `declaredPixelsMismatch`, un avís quan declara més píxels dels que té el fitxer. `placedImageResolutions(doc, { resources, imageSize })` enumera cada mapa de bits col·locat amb els seus ppp efectius, tant si el preflight està activat com si no.
+`preflightDocument(doc, options)` executa les revisions sobre un document compost i retorna una llista d'incidències, cadascuna amb un `kind`, una `severity` (`'critical'`, `'warning'` o `'info'`), el `pageIndex` absolut dins del llibre, el `rect` afectat (px de pàgina) i, quan l'element en té, el seu interval al text font. Els tipus són `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` i `nearTrim`. Sense `transform`, un neutre compta com una tinta i qualsevol altre color com tres, i la cobertura no es revisa; amb un `transform`, els recomptes i la cobertura són exactes. La resolució d'una imatge es calcula amb els píxels que declara el seu recurs, o amb els del fitxer mateix quan `imageSize(fileId)` els dona (`bitmapInfo` sobre els bytes, o la imatge descodificada): una declaració que s'allunya més d'un píxel del fitxer s'assenyala un cop com a `declaredPixelsMismatch`, un avís quan declara més píxels dels que té el fitxer. `placedImageResolutions(doc, { resources, imageSize })` enumera cada mapa de bits col·locat amb els seus ppp efectius, tant si el preflight està activat com si no. Els rètols d'una figura compten com a text per a `smallProcessText`, `inkLimit` i `safeZone`.
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -782,7 +782,7 @@ El text clar calat sobre un fons de tinta s'empasta a màquina quan és petit o 
 
 ### Què es llegeix
 
-La comprovació llegeix les línies de cada bloc amb els seus colors en línia (negreta, cursiva, referències, xips), els marcadors de llista, les caplletres, els peus, les notes i les cel·les de taula, i el text de les ranures de disseny: capçaleres, obertures, dissenys d'encapçalament, títols de requadre. El fons és l'emplenament que hi ha immediatament sota el text: una caixa de disseny, un requadre, una barra de peu, una cel·la de taula, un xip o, si no n'hi ha cap, el color de la pàgina (`page.backgroundColor`, o el paper que la paleta d'una part dona a les seves pàgines). Un color translúcid es barreja amb el que té a sota. El text sobre una imatge se salta, perquè el seu fons no és un sol color, i també la retolació dels còmics, les lectures ruby i les fórmules.
+La comprovació llegeix les línies de cada bloc amb els seus colors en línia (negreta, cursiva, referències, xips), els marcadors de llista, les caplletres, els peus, les notes i les cel·les de taula, i el text de les ranures de disseny: capçaleres, obertures, dissenys d'encapçalament, títols de requadre. El fons és l'emplenament que hi ha immediatament sota el text: una caixa de disseny, un requadre, una barra de peu, una cel·la de taula, un xip o, si no n'hi ha cap, el color de la pàgina (`page.backgroundColor`, o el paper que la paleta d'una part dona a les seves pàgines). Un color translúcid es barreja amb el que té a sota. El text sobre una imatge se salta, perquè el seu fons no és un sol color, i també la retolació dels còmics, les lectures ruby i les fórmules. Les paraules dels rètols d'una figura es llegeixen sobre la seva placa o, si no, dins del seu halo; els rètols nus sobre la imatge s'ometen, com tot text sobre una imatge.
 
 En una pàgina composta la comprovació segueix l'ordre en què es pinta la pàgina: els marcs per capa, amb la `decoration` de la plantilla a la capa 0. El text d'un marc es llegeix sobre la caixa del mateix marc quan el seu estil la pinta; si no, sobre la caixa de la decoració que té a sota (una imatge de la decoració el deixa fora, com qualsevol imatge), i si no, sobre el color de la pàgina. Així, unes lletres blanques sobre una pestanya de color de la decoració es mesuren contra aquella pestanya. Un marc girat o escalat es porta al plec abans de llegir-ne el fons, i el text de la decoració mateixa es comprova igual. Des de postext 1.37.
 
@@ -868,7 +868,7 @@ Es llegeixen totes les ranures de disseny: `header`, `footer`, l'`advancedDesign
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1334,7 +1334,7 @@ A més d'aquests, el tauler mostra sempre els avisos que emet la mateixa maqueta
 
 ### Avisos de configuració
 
-Vuit errors de la configuració mateixa no passen mai en silenci, i cap interruptor no els amaga. El motor no falla per cap d'ells: substitueix el valor, o prescindeix de l'ajust, i ho diu.
+Aquests errors de la configuració mateixa no passen mai en silenci, i cap interruptor no els amaga llevat del que anomena l'últim punt. El motor no falla per cap d'ells: substitueix el valor, o prescindeix de l'ajust, i ho diu.
 
 - **Format de numeració desconegut**: un `numberFormat` de llista numerada, un `page.pageNumbering.format` o el `counterFormat` d'un tipus de recurs que no és cap de les [grafies dels formats de numeració](/ca/docs/configuration-page-layout#grafies-dels-formats-de-numeració). Numera en decimal.
 - **Llista de fonts en una família**: un `fontFamily` (o qualsevol `…FontFamily`) que conté una llista de fonts CSS. El text es compon en la primera família de la llista (vegeu [Una sola família per `fontFamily`](/ca/docs/configuration-text#una-sola-família-per-fontfamily)).
@@ -1345,6 +1345,7 @@ Vuit errors de la configuració mateixa no passen mai en silenci, i cap interrup
 - **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`.
 - **Números de línia en text vertical**: `lineNumbers.enabled: true` en un document compost en vertical (`layout.writingMode: 'vertical-rl'`). Les pàgines verticals no porten números de línia, i `used` és `false` (`lineNumbersUnsupported`; vegeu [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
 - **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format-resources#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
+- **Estil de requadre basat en un altre** — un estil d'avís l'`extends` del qual no anomena cap estil de `calloutStyles` (`calloutStyleExtendsUnknown`, amb l'id més semblant a `suggestion`), o la cadena d'`extends` del qual hi torna (`calloutStyleExtendsCycle`, `value` el bucle `a → b → a`). L'estil queda sol, amb els valors de sèrie en el que no fixa (vegeu [Estils basats en un altre](/ca/docs/configuration-callouts#estils-basats-en-un-altre)).
 - **Plantilles de pàgina i estils de rètol** — un problema a `pageTemplates` o `labelStyles`: un id o un nom repetit, `extends`, ancoratges o marcs encadenats que formen un bucle, un estil, marc o plantilla que no existeix, un mínim més gran que el seu màxim, un estil de rètol d'un ancoratge que `labelStyles` no té (es comprova quan es passen els recursos: `collectConfigWarnings(config, { resources })`). El seu `path` és un punter JSON (`/pageTemplates/3/frames/2/style`); cada tipus apareix amb la causa i la solució a [Avisos de les plantilles de pàgina](/ca/docs/configuration-composed-pages#avisos-de-les-plantilles-de-pàgina).
 - **Contingut en un disseny** — un element de text de disseny el text del qual, a més dels marcadors, és més llarg que una etiqueta breu: el text del llibre desat a la configuració. Un avís per ajust (un estil de títol, la capçalera, el disseny de les parts), amb el camí de cada text (`contentInConfig`; vegeu [Comprovació del contingut](#comprovació-del-contingut-configuració)). A diferència dels altres, es pot desactivar: `checks.contentInConfig.enabled: false`.
 

@@ -637,13 +637,13 @@ An `image` element draws a bitmap or SVG resource of the document — a publishe
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.38.</td>
+      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.38. A picture that stands upright in a vertical page's flow (a heading's design in a vertical book) is cropped as the sheet shows it, since postext 1.39; up to 1.38 it was fitted whole.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>The point of the picture a cover crop centres, in fractions of the picture: <code>&#123; x: 0.5, y: 0.3 &#125;</code> for a face in the upper third. The crop still keeps the safe area in view. Without it the margins round the safe area are cropped in proportion to their sizes, or the picture is centred.</td>
+      <td>The point of the picture a cover crop centres, in fractions of the picture: <code>&#123; x: 0.5, y: 0.3 &#125;</code> for a face in the upper third. The crop still keeps the safe area in view. Without it the margins round the safe area are cropped in proportion to their sizes, or the picture is centred. In the Sandbox the image editor's <strong>Focus point</strong> shows the picture with the part the crop keeps outlined; a click on it, or the arrow keys, set the point (since postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Each element-relative edge puts one corner of the element on a corner of the ele
 - `align-right`: its top-right corner on the target's top-right corner.
 
 An element-relative edge used with `'container'`, `'page'` or `'bleed'`, and a container edge used with `'#id'`, are read as the top-left corner.
+
+**Start and end edges.** `top-start`, `start`, `bottom-start`, `top-end`, `end` and `bottom-end` (with `'container'`, `'page'`, `'bleed'` or `'outer'`), and `align-start` and `align-end` (with `'#id'`), name the side the page's lines start from instead of a fixed side. On a left-to-right page `top-start` is `top-left`; on a right-to-left page, and on a vertical page, whose lines follow each other from the right, it is `top-right`. With these edges the offset's `x` runs from the start side to the end side, so on a right-to-left page a positive `x` moves the element left: the element is the mirror image of the left-to-right one. A template's decoration and the running heads are laid on the sheet, so a kicker written `top-start` stands over the title frame in an Arabic edition and in a Spanish one alike. A frame is laid in the page's flow, already mirrored or turned, where `start` is always its left, the same as `left`. In a heading's design, laid in the flow too, `start` is `left`. In the Sandbox the slot editor's **Alignment** list has **Start** and **End**, and the edge lists have the start and end sides. Since postext 1.39; up to 1.38 these words read as `top-left`.
 
 `anchor.to: 'page'` anchors the element to the **trim box** (the physical page after cutting) and `'bleed'` to the trim box grown by `cutLines.bleed` on every side (identical to the trim box while cut lines are disabled). Both frames also become the reference for `size: 'fill'` and for the automatic width clamp, so a coloured band can run edge to edge regardless of the page margins:
 

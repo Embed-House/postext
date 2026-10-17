@@ -59,6 +59,8 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'wrapUnsupported':
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'calloutStyleExtendsUnknown':
+    case 'calloutStyleExtendsCycle':
     case 'templateDuplicate':
     case 'templateExtendsCycle':
     case 'templateExtendsUnknown':

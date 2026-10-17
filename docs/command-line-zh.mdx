@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: '命令行',
   description: '一个适用于macOS、Linux和Windows的独立可执行文件，把.postext图书、图书文件夹或零散的Markdown文件转换成PDF、HTML、EPUB、页面图像和Word文档，打包文件包并检查图书，还为脚本和智能体输出JSON',
   lang: 'zh',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '9分钟',
-  order: 42,
+  order: 43,
   plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你为自己的电脑下载一个文件，直接运行它，不用安装别的东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
 };
 
@@ -185,6 +185,8 @@ postext import-docx manuscript.docx -o manuscript.postext
 
 `docx`用Word样式写出各章的标题、段落、框、引文、列表和注释。Word无法表达的内容以*Postext Markup*样式按原样保留，导入模板也随文件一起保存，所以编辑修改过的文档能原样导入回来。`import-docx`把Word文档转成一本书：每个1级标题开始一章（`--no-split`保持为一章），图片和表格成为资源，`--report`打印沙盒显示的质量报告（使用中的样式、直接格式、手打的编号…）。`--template`接受一个导入模板（从沙盒保存的`.json`，或带有模板的`.docx`）。
 
+字符间距属于样式，不属于文字，所以不在Markdown里。`docx`把段落样式、标题样式和各级标题的`letterSpacing`写成Word样式的字符间距，`import-docx`再按样式字号的em把它读回来：设为书中尚未设置`letterSpacing`的样式（`--config`文件里与Word样式对应的段落样式和标题样式，以及各级标题），书中已有的字距保持不变。加上`--json`时，`styleTracking`列出已设置的（`applied`）和跳过的（`skipped`）。自postext 1.39起。
+
 ### pack和unpack
 
 ```bash
@@ -208,6 +210,8 @@ postext check chapters/ --strict --json
 `check`排版整本书，并报告沙盒检查面板显示的内容：没有闭合的Markdown，未知的资源、指令和样式，排版时不得不强制处理的框，缺失的字体，引擎不得不替换的设置；对于为印刷设置的书（或加上`--preflight`时），还有印前检查：低分辨率图片、过细线条、多色小字、超出上限的墨量、靠近裁切线的文字。它还列出在底色上看不清的文字（`contrast`），每对颜色列一次，带有屏幕上的对比度，检查印刷时还有输出特性文件的纸张上的对比度。每个问题都指明所在的章文件、行和页。发现错误时退出码为3，加上`--strict`时有任何警告也是3。
 
 它还会报告配置中存放书的正文而不是占位符的设计文字（`contentInConfig`），每个标题样式、页眉或部分设计报告一次，并附每条文字的路径：把这些文字移到 Markdown 中，或把书名、出版社名称加入`checks.contentInConfig.allow`。
+
+对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、超出框可添加页数的连排内容（`frameContinuationLimit`）、跳向并不在后面的页的跳转（`continueTargetMissing`），以及画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）。警告之后，每个有事件的组合页打印一行`reflow`，`--json`把步骤、建议和重排记录作为数据带上。见[组合页›警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
 
 ### build和--watch
 

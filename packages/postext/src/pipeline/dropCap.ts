@@ -36,6 +36,10 @@ import { uppercasePreservingLength } from './buildBlockKind';
 /** `containerAttrs` key of a composed page's story box (`FRAME_ATTR` of
  *  `composed/wrap.ts`). */
 const STORY_ATTR = '__frame';
+/** `containerAttrs` key of a story box whose first paragraph followed a
+ *  heading another frame takes (`CAP_HEADING_ATTR` of `composed/wrap.ts`,
+ *  #947): that heading's `sourceStart`. */
+const CAP_HEADING_ATTR = '__capHeading';
 
 /** The share of a letter's size its capitals take when a face gives no
  *  ink metrics (the design text's `CAP_HEIGHT_RATIO`, EF-127). */
@@ -126,6 +130,13 @@ function headingBefore(idx: number, ctx: DropCapContext): number | undefined {
     if (prev.type === 'resourceBlock' && prev.resourceId !== undefined && ctx.floatedIds.has(prev.resourceId)) {
       i--;
       continue;
+    }
+    // A composed page's story whose heading another frame takes (#947):
+    // its first paragraph follows that heading.
+    const capHeading = prev.type === 'containerStart' ? prev.containerAttrs?.[CAP_HEADING_ATTR] : undefined;
+    if (capHeading !== undefined) {
+      const at = blocks.findIndex((b) => b.type === 'heading' && String(b.sourceStart) === capHeading);
+      return at >= 0 ? at : undefined;
     }
     // A box's own start: the paragraph is the box's (never reached for
     // one, which `inBox` already turned away).

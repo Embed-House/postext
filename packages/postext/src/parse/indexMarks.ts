@@ -389,6 +389,7 @@ export function remapParseOffsets(
     if (b.composedPage) Object.values(b.composedPage.attrSources).forEach(range);
     if (b.figure) {
       Object.values(b.figure.attrSources).forEach(range);
+      for (const word of Object.values(b.figure.words ?? {})) range(word);
       for (const label of b.figure.labels) {
         range(label);
         label.textStart = toOriginal(label.textStart);

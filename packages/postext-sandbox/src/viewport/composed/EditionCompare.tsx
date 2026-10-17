@@ -212,6 +212,7 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
     if (!page || !other) return;
     requestFrameJump({
       presetId: base.presetId,
+      projectId: base.projectId,
       locale: other,
       chapterIndex: activeIndex >= 0 ? activeIndex : null,
       page: page.pageNumberValue,

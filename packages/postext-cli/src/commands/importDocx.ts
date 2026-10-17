@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 import type { PostextConfig, Resource } from 'postext';
 import { bitmapInfo, bundleBaseConfig, createBundle, svgSize } from 'postext/bundle';
-import { analyzeDocx, emptyTemplate, parseTemplate, pictureResolution, readDocx, wordToPostext, type ImportResult } from 'postext/word';
+import { analyzeDocx, applyStyleTracking, emptyTemplate, parseTemplate, pictureResolution, readDocx, wordStyleTracking, wordToPostext, type ImportResult } from 'postext/word';
 import { CliError, UsageError } from '../args';
 import type { CommandContext } from '../context';
 import { deepMerge } from '../input';
@@ -76,6 +76,15 @@ export default async function importDocx(ctx: CommandContext): Promise<void> {
   }));
   for (const name of result.skippedPictures) reporter.warn({ kind: 'unsupportedPicture', severity: 'warning', message: `${name}: EMF, WMF and TIFF pictures are left out` });
   if (result.droppedHeadingNotes > 0) reporter.warn({ kind: 'headingNote', severity: 'warning', message: `${result.droppedHeadingNotes} footnote(s) on headings were dropped` });
+  // The character spacing of Word's styles goes on the book's styles that
+  // set none (#932): a style is form, which the Markdown cannot carry.
+  const tracked = applyStyleTracking(userConfig, wordStyleTracking(doc, template, config));
+  if (tracked.applied.length + tracked.skipped.length > 0) {
+    const say = (t: { style: string; letterSpacing: { value: number } }) => `${t.style} ${t.letterSpacing.value} em`;
+    reporter.data.styleTracking = { applied: tracked.applied.map(say), skipped: tracked.skipped.map(say) };
+    if (tracked.applied.length > 0) reporter.info(`character spacing from Word styles: ${tracked.applied.map(say).join(', ')}`);
+    if (tracked.skipped.length > 0) reporter.info(`character spacing left out (the book sets its own, or has no such style): ${tracked.skipped.map(say).join(', ')}`);
+  }
   const files = new Map<string, Uint8Array>();
   const resources = importedResources(result, files);
   const name = opts.string('name') ?? doc.title?.trim() ?? basename(file, extname(file));
@@ -83,7 +92,7 @@ export default async function importDocx(ctx: CommandContext): Promise<void> {
     name,
     locale,
     chapters: result.chapters,
-    config: userConfig,
+    config: tracked.config,
     resources,
     files,
     mtime: new Date(1980, 0, 1),

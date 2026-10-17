@@ -62,11 +62,11 @@ bundle.files;      // Map<ruta, Uint8Array>: todos los archivos del paquete
     <tr><td><code>files</code></td><td>Todos los archivos del zip, por su ruta.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>La ruta de la portada, y cómo pide el paquete que se muestre: la <code>view</code> del manifiesto, con la <code>localized[…].view</code> del idioma servido por encima.</td></tr>
     <tr><td><code>start</code></td><td>Dónde empieza el libro, para un paquete que contiene parte de uno más largo: el <code>start</code> del manifiesto, o el <code>localized[…].start</code> del idioma servido. Falta en un libro que empieza por su principio.</td></tr>
-    <tr><td><code>warnings</code></td><td>Problemas que no impiden abrirlo: un archivo de fuente no admitido, un máster de impresión que falta.</td></tr>
+    <tr><td><code>warnings</code></td><td>Problemas que no impiden abrirlo: un archivo de fuente no admitido, un archivo de fuente que el paquete no incluye, un máster de impresión que falta.</td></tr>
   </tbody>
 </table>
 
-El **`fileId` de cada archivo es su ruta dentro del paquete**. `resource.svg.fileId`, `resource.bitmap.fileId` y el `fileId` de cada variante de `customFonts` se buscan directamente en `bundle.files`. `openBundle` lanza un error si los bytes no son un zip, si no hay un `preset.json` válido (en la raíz o bajo una única carpeta) o si falta un archivo que el manifiesto nombra.
+El **`fileId` de cada archivo es su ruta dentro del paquete**. `resource.svg.fileId`, `resource.bitmap.fileId` y el `fileId` de cada variante de `customFonts` se buscan directamente en `bundle.files`. `openBundle` lanza un error si los bytes no son un zip, si no hay un `preset.json` válido (en la raíz o bajo una única carpeta) o si falta un capítulo o un archivo de imagen que el manifiesto nombra. Un archivo de fuente que el manifiesto nombra y el paquete no incluye (un paquete que dejó fuera las tipografías con licencia) no impide abrirlo: esa tipografía se omite con un aviso, la familia que se queda sin ninguna se quita de `customFonts` y el libro usa la tipografía de reserva, como con cualquier fuente que falta.
 
 #### Paquetes escritos por postext 1.4 o anterior
 

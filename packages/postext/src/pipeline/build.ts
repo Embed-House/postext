@@ -31,6 +31,7 @@ import {
   type VDTFigureLabel,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
+import { withFigureWords } from './figureWords';
 import { contourOnPage } from '../contour';
 import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels';
 import { anchorBox } from '../design/layout';
@@ -182,6 +183,7 @@ import {
   fragmentRange,
   makeCalloutLayouter as makeCalloutLayouterIn,
   splitCalloutFragment as splitCalloutFragmentIn,
+  frameCutRules,
   tallerThanColumn as tallerThanColumnIn,
   type CalloutCut,
   type CalloutFragment,
@@ -774,6 +776,13 @@ function placeDocumentPass(
   // Code fences (#624) as `codeStyle` reads them: a configuration stored
   // before #624 reads their lines as Markdown (`codeStyle.blocks: false`).
   const parsedBody = numberTitlesFor(headingMarksFor(tashkilFor(literalBreaksFor(parseMarkdownMemo(markdownBody, codeParseOptions(resolved)), resolved), resolved.bodyText.tashkil), resolved), resolved);
+  // A figure's own words (#935): its alt, caption and note replace the
+  // resource's in this chapter, for the layout, the references and every
+  // output alike.
+  if (content.resources) {
+    const worded = withFigureWords(content.resources, parsedBody);
+    if (worded !== content.resources) content = { ...content, resources: worded };
+  }
   const citationContext = content.citations
     ?? (needsCitationContext(parsedBody, frontmatterMeta) ? bookCitationContexts([{ metadata: frontmatterMeta as Record<string, unknown>, blocks: parsedBody }], content.resources)[0] : undefined);
   // `citations.hyphenateNames: false`: the cited authors' names are never
@@ -4389,6 +4398,9 @@ function placeDocumentPass(
   };
 
 
+  /** A box of the running text is cut as a composed page's frame is
+   *  (#942): a heading with its text, two list items on each side. */
+  const calloutCutRules = frameCutRules(resolved);
   const splitCalloutFragment = (
     L: CalloutLayouter,
     from: CalloutCut,
@@ -4398,7 +4410,7 @@ function placeDocumentPass(
     continuation: boolean,
     minLines: number,
     mirrored = false,
-  ): CalloutFragment | null => splitCalloutFragmentIn(framePass, L, from, width, roomPx, frameId, continuation, minLines, mirrored);
+  ): CalloutFragment | null => splitCalloutFragmentIn(framePass, L, from, width, roomPx, frameId, continuation, minLines, mirrored, undefined, calloutCutRules);
 
 
   const tallerThanColumn = (result: CalloutLayoutResult): boolean => tallerThanColumnIn(framePass, result);
@@ -8858,7 +8870,7 @@ function placeDocumentPass(
   if (codeBoxes.wrapped) buildCodeLineNumbers(doc);
 
   // Vertical pages: the axis each font's upright characters turn about.
-  if (doc.pages.some((p) => pageIsVertical(p))) stampCentralBaselines(doc);
+  if (doc.pages.some((p) => pageIsVertical(p) || p.composed?.frames.some((f) => f.writingMode === 'vertical-rl'))) stampCentralBaselines(doc);
   // Right-to-left pages: lines advance through the mirrored flow in the
   // reverse of their visual order.
   if (doc.pages.some((p) => pageIsMirrored(p))) orientLinesToFrames(doc);
@@ -8868,7 +8880,7 @@ function placeDocumentPass(
   doc.converged = true;
   doc.iterationCount = 1;
   if (joiningLetterSpacing.size > 0) joiningSpacingWarnings.set(doc, joiningLetterSpacingWarnings(doc, joiningLetterSpacing));
-  if (dropCapNotes.size > 0) dropCapWarningsByDoc.set(doc, dropCapWarnings(doc, dropCapNotes));
+  if (dropCapNotes.size > 0 || doc.blocks.some((b) => b.dropCap)) dropCapWarningsByDoc.set(doc, dropCapWarnings(doc, dropCapNotes));
   // Pictures scaled to the room of their slot (#626), at the block citing them.
   const shrunk = floatShrinkWarnings(doc, (idx) => {
     const b = contentBlocks[idx];

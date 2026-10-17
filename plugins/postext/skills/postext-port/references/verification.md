@@ -270,8 +270,25 @@ those lines, or run the script.
 - `WARN labelAnchorUnknown` (postext ≥ 1.37): a `::label` names an anchor its figure's resource lacks; it
   is not drawn (`known` lists the anchors). `NOTE anchorUnlabelled`: an anchor with a label style has no
   word in this edition (a missing translation, or take the style off).
+- `WARN labelOverlap` (postext ≥ 1.39): a label runs into an earlier one by more than 12 % of the smaller
+  line height (a label with a plate counts as its plate). The later label in the order written carries it,
+  with its text, anchor, the first label it meets (`with`, `withAnchor`), how many it meets in all (`count`),
+  locale, page and source range. Per edition: a translation with longer words shows where it needs room.
+  Fix: move an anchor, narrow the anchor's `width` so the name wraps, or shorten the words in that
+  edition's Markdown. `WARN labelOverflow` (≥ 1.39): a label is still wider than its anchor's `width` at the
+  style's `minScale` (`text`, `anchor`, `widthPct`, `scale`). Fix: widen `width`, shorten the word, or lower
+  `minScale`. Run `postext check --json` for every language of a map; `composed_check.py` fails on
+  `labelOverflow` and lists `labelOverlap` as a note. The contrast check skips a label bare on the picture
+  (give a busy ground a halo or a plate); part palettes, the contrast check and the print preflight read
+  label colours.
+- `WARN calloutStyleExtendsUnknown` / `calloutStyleExtendsCycle` (postext ≥ 1.39): `calloutStyles[i].extends`
+  names no style, or the chain loops (`a → b → a`); the style stands alone, without the parent's fields.
+  `lint_project.py` reports both before the engine does.
 - `WARN dropCap` reason `inBox` (postext ≥ 1.38): a drop cap asked inside a `:::callout` is not set (a frame
-  of a composed page is running text and takes it). `WARN pictureBelowPrintSize` (postext ≥ 1.37): a bitmap
+  of a composed page is running text and takes it). Reason `split` (≥ 1.39): a paragraph whose piece with the
+  initial has fewer lines than the initial sinks and goes on in another piece: the frame is too short for the
+  initial's lines (raise it or lengthen the frame; the engine moves the paragraph whole to the next frame when
+  it can). `WARN pictureBelowPrintSize` (postext ≥ 1.37): a bitmap
   with a print size (its own `resolution`, or `layout.bitmapResolution`) is held at under half of it by a column
   narrower than the text block; a one-picture page ported as a `:::figure` in the flow wants
   `layout.layoutType: 'single'`, `placement: { position: 'top', span: 'page' }` or a composed-page frame
@@ -279,8 +296,8 @@ those lines, or run the script.
   real finding when `resolution` came from the source's print size.
 - `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
   used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
-  (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread`/`flow` (text panel where
-  frames take no text: its words are set after the comic).
+  (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (text panel where
+  frames take no text: its words are set after the comic; `flow`, a right-to-left or vertical edition, only before 1.39).
 - Contrast (postext ≥ 1.37): on a composed page the check follows the paint order: frame text stands on its
   frame's own box, else on the template `decoration` box under it, else on the paper; text over a decoration
   picture is skipped. White tab lettering in a frameless frame over a coloured decoration box is measured
@@ -401,11 +418,11 @@ lettering, every page, every language.
 
 Open the project in the sandbox: import the `.postext` (`preset_kit.py pack
 --manifest-only`), or serve the presets folder. A bundle in several languages
-asks which one to import, and the new book holds that edition only (named
-by `localized.<lang>.name` from postext 1.34.1, #891, else by the manifest
-`name`): import each edition to check it, or open the bundle as a preset or bundle instead (not imported as a project: a
-project keeps one edition), where the Checks panel's Composed pages section lists every composed-page warning
-per edition with its locale, page and frame, and «Side by side» aligns two editions (composed-pages.md §7).
+is kept whole by the new book from postext 1.39 (each edition named by `localized.<lang>.name` from 1.34.1,
+#891, else by the manifest `name`; switch from the Books row or the edition bar; permalink `#project=ID&lang=L`).
+Before 1.39 the import asked which one to keep and held that edition only: import each edition to check it, or open
+the bundle as a preset or bundle instead. The Checks panel's Composed pages section lists every composed-page
+warning per edition with its locale, page and frame, and «Side by side» aligns two editions (composed-pages.md §7).
 Check the canvas, the HTML viewer, the Folio
 tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading

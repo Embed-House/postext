@@ -236,8 +236,8 @@ export function nextAnchorId(anchors: readonly ResourceAnchor[], prefix = 'speak
 
 /** The label fields of an anchor (#853/#866): what a `::label` set at it
  *  takes unless it says otherwise. */
-export type LabelFields = Pick<ResourceAnchor, 'style' | 'align' | 'verticalAlign' | 'rotate' | 'width'>;
-export const LABEL_FIELD_KEYS = ['style', 'align', 'verticalAlign', 'rotate', 'width'] as const;
+export type LabelFields = Pick<ResourceAnchor, 'style' | 'align' | 'verticalAlign' | 'rotate' | 'width' | 'writingMode'>;
+export const LABEL_FIELD_KEYS = ['style', 'align', 'verticalAlign', 'rotate', 'width', 'writingMode'] as const;
 
 /** The label fields `a` sets. */
 export function labelFieldsOf(a: ResourceAnchor | undefined): LabelFields {
@@ -271,7 +271,7 @@ export function withLabelFields(marks: PictureMarks, index: number, patch: { [K 
     const next: ResourceAnchor = { ...a };
     for (const k of Object.keys(patch) as (keyof LabelFields)[]) {
       const v = patch[k];
-      const isDefault = v === undefined || v === '' || (k === 'align' && v === 'center') || (k === 'verticalAlign' && v === 'middle') || (k === 'rotate' && v === 0);
+      const isDefault = v === undefined || v === '' || (k === 'align' && v === 'center') || (k === 'verticalAlign' && v === 'middle') || (k === 'rotate' && v === 0) || (k === 'writingMode' && v === 'horizontal-tb');
       if (isDefault) delete next[k];
       else (next as unknown as Record<string, unknown>)[k] = v;
     }
@@ -337,6 +337,7 @@ export function normalizeMarks(marks: PictureMarks): PictureMarks {
     if (a.verticalAlign !== undefined) out.verticalAlign = a.verticalAlign;
     if (a.rotate !== undefined) out.rotate = Number.isFinite(a.rotate) ? Math.round(a.rotate * 100) / 100 : a.rotate;
     if (a.style !== undefined) out.style = a.style;
+    if (a.writingMode !== undefined) out.writingMode = a.writingMode;
     return out;
   });
   const avoid = marks.avoid.map(validRect).filter((r): r is ResourceSafeArea => !!r).map(roundRect);

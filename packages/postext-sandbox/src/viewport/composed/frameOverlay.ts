@@ -13,7 +13,7 @@
 
 import { resolvePageTemplate, type PageTemplateSource, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
 import { SVG_NS } from '../CanvasPreview/dom';
-import { frameIsEmpty } from './frameHit';
+import { flowBoxOnSheet, frameIsEmpty } from './frameHit';
 import { chainHeadOf, frameAtCaret } from './frameLink';
 import type { EditMode } from '../../editing/editMode';
 import { designBadgesFor, drawDesignBadge, type DesignBadgeLabels } from './designBadges';
@@ -127,10 +127,11 @@ export function drawFrameMarks(svg: SVGSVGElement, doc: VDTDocument, pageIndex: 
   const placedBadges: { x: number; y: number; w: number }[] = [];
   const badges = opts.mode === 'design' && opts.badges ? new Map(designBadgesFor(doc, page, opts.badges, opts.locale).map((b) => [b.frame.id, b])) : null;
   for (const mark of frameMarksFor(doc, page, opts)) {
-    const { rotate } = mark.frame;
     // An empty frame whose height follows its content has none: its mark
     // keeps room for its name and «Write here» (the page is not changed).
-    const rect = mark.text.length > 1 ? emptyMarkRect(page, mark.frame) : mark.frame.rect;
+    // Drawn where the sheet shows the frame, which a right-to-left or
+    // vertical page lays in its flow frame (#929); the words stay upright.
+    const { rect, rotate } = flowBoxOnSheet(page, mark.text.length > 1 ? emptyMarkRect(page, mark.frame) : mark.frame.rect, mark.frame.rotate);
     const item = document.createElementNS(SVG_NS, 'g');
     item.dataset.frameId = mark.frame.id;
     item.dataset.mark = mark.kind;
@@ -180,6 +181,13 @@ export function drawFrameMarks(svg: SVGSVGElement, doc: VDTDocument, pageIndex: 
     g.appendChild(item);
     // After the item is in the overlay: the badge measures its words.
     const badge = badges?.get(mark.frame.id);
-    if (badge) drawDesignBadge(item, badge, fs, unit, placedBadges);
+    if (badge) {
+      // On the sheet's box; a vertical page's size lines would run across
+      // the flow's, so they are left out there.
+      const vertical = page.flow?.writingMode === 'vertical-rl';
+      const { min, max, ...rest } = badge;
+      const onSheet = page.flow ? { ...rest, ...(vertical ? {} : { ...(min ? { min } : {}), ...(max ? { max } : {}) }), frame: { ...badge.frame, rect } } : badge;
+      drawDesignBadge(item, onSheet, fs, unit, placedBadges);
+    }
   }
 }

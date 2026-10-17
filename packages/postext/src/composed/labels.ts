@@ -32,10 +32,12 @@ import type {
   VDTFigureLabel,
   VDTFigureLabelLayout,
   VDTLine,
+  VDTVerticalText,
 } from '../vdt';
 import type { MeasurementCache } from '../measure';
 import type { ResourceNumberingMap } from '../pipeline/resourceNumbering';
-import { buildFontString, measureTextWidth } from '../measure';
+import { buildFontString } from '../measure';
+import { flowTextWidth, fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../measure/vertical';
 import { dimensionToPx } from '../units';
 import { resolveColorValue } from '../defaults/shared';
 import { layoutLabelLines } from '../pipeline/resourceLayout';
@@ -68,6 +70,8 @@ export interface LabelLook {
   background?: string;
   paddingPx: number;
   minScale: number;
+  /** Set in vertical writing (the label style's; an anchor's wins). */
+  vertical?: boolean;
 }
 
 const hexOf = (value: ColorValue | undefined, resolved: ResolvedConfig, fallback: ColorValue): string =>
@@ -121,6 +125,7 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     ...(style?.background ? { background: hexOf(style.background, resolved, { hex: '#ffffff', model: 'hex' }) } : {}),
     paddingPx: Math.max(0, px(style?.padding, dpi, fontPx) ?? 0),
     minScale: style ? Math.min(1, Math.max(0.1, style.minScale)) : 0.85,
+    ...(style?.writingMode === 'vertical-rl' ? { vertical: true } : {}),
   };
 }
 
@@ -159,6 +164,10 @@ export function pictureToBody(rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'body
 const pictureWidthPx = (rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'bodySource'>): number =>
   rb.bodyRect.width / (rb.bodySource && rb.bodySource.width > 0 ? rb.bodySource.width : 1);
 
+/** The height of the whole picture in px, as its body draws it. */
+const pictureHeightPx = (rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'bodySource'>): number =>
+  rb.bodyRect.height / (rb.bodySource && rb.bodySource.height > 0 ? rb.bodySource.height : 1);
+
 /** What laying the labels out needs besides the block. */
 export interface FigureLabelContext {
   resolved: ResolvedConfig;
@@ -191,6 +200,15 @@ function spanText(spans: readonly InlineSpan[]): string {
   return spans.map((s) => (s.chip ? s.chip.spans.map((c) => c.text).join('') : s.text)).join('');
 }
 
+const CJK_CHAR = '\\u2E80-\\u303F\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF\\uFF00-\\uFFEF';
+const PIECES = new RegExp(`[${CJK_CHAR}]|[^${CJK_CHAR}\\s]+`, 'gu');
+
+/** The pieces of `text` a line cannot be cut inside: the words between
+ *  spaces, and each Chinese, Japanese or Korean character on its own. */
+function unbreakablePieces(text: string): string[] {
+  return text.match(PIECES) ?? [];
+}
+
 /**
  * Lay out one label: its lines in its look, wrapped within `widthPx` (none:
  * one line per forced break), set smaller (down to `minScale`) while a
@@ -200,13 +218,19 @@ function spanText(spans: readonly InlineSpan[]): string {
 export function layOutLabel(
   spans: readonly InlineSpan[],
   look: LabelLook,
-  place: { x: number; y: number; widthPx?: number; align?: ResourceAnchor['align']; verticalAlign?: ResourceAnchor['verticalAlign']; rotate?: number },
+  place: { x: number; y: number; widthPx?: number; align?: ResourceAnchor['align']; verticalAlign?: ResourceAnchor['verticalAlign']; rotate?: number; vertical?: boolean },
   ctx: FigureLabelContext,
 ): VDTFigureLabelLayout | undefined {
   const text = withForcedBreaks(look.uppercase ? upperSpans(spans) : [...spans]);
   const plain = spanText(text);
   if (plain.trim().length === 0) return undefined;
-  const rtl = firstStrongDirection(plain) === 'rtl';
+  // Vertical writing (#902): measured as a vertical page's flow is, in the
+  // label's own frame, which the matrix then turns a quarter turn
+  // clockwise; the text reads top to bottom in columns from right to left.
+  const vertical = place.vertical ?? look.vertical ?? false;
+  const region = ctx.resolved.cjk.region;
+  const inMode = <T,>(fn: () => T): T => (vertical ? withMeasureWritingMode('vertical-rl', fn, region) : fn());
+  const rtl = !vertical && firstStrongDirection(plain) === 'rtl';
   const widthPx = place.widthPx !== undefined && place.widthPx > 0 ? place.widthPx : undefined;
   const fontsAt = (sizePx: number): [string, string, string, string] => {
     const w = look.weight === 400 ? 'normal' : String(look.weight);
@@ -220,7 +244,7 @@ export function layOutLabel(
       buildFontString(look.fontFamily, sizePx, b, flip),
     ];
   };
-  const measure = (scale: number) => {
+  const measure = (scale: number) => inMode(() => {
     const sizePx = look.fontPx * scale;
     const fonts = fontsAt(sizePx);
     const lines = layoutLabelLines({
@@ -242,13 +266,13 @@ export function layOutLabel(
     // does not fit.
     const cut = widthPx !== undefined && (widest > widthPx + 0.01 || lines.some((l) => l.hyphenated && !l.hardHyphen));
     return { lines, fonts, widest, sizePx, cut };
-  };
+  });
   let scale = 1;
   if (widthPx !== undefined) {
     // The widest word sets the first guess.
     const font = fontsAt(look.fontPx)[0];
     const tracking = look.letterSpacing * look.fontPx;
-    const word = plain.split(/\s+/).reduce((m, w) => Math.max(m, measureTextWidth(w, font) + tracking * [...w].length), 0);
+    const word = inMode(() => unbreakablePieces(plain).reduce((m, w) => Math.max(m, flowTextWidth(w, font) + tracking * [...w].length), 0));
     if (word > widthPx) scale = Math.max(look.minScale, (widthPx / word) * 0.999);
   }
   let set = measure(scale);
@@ -276,7 +300,11 @@ export function layOutLabel(
   });
   const box: BoundingBox = { x: left, y: top, width: boxW, height: boxH };
   const pad = look.paddingPx;
-  const rotate = place.rotate !== undefined && Number.isFinite(place.rotate) && Math.abs(place.rotate % 360) > 1e-9 ? place.rotate % 360 : undefined;
+  // A vertical label's frame is the flow frame of a vertical page: turned
+  // a quarter turn clockwise on the picture, and further by `rotate`.
+  const turn = (place.rotate !== undefined && Number.isFinite(place.rotate) ? place.rotate : 0) + (vertical ? 90 : 0);
+  const rotate = Math.abs(turn % 360) > 1e-9 ? turn % 360 : undefined;
+  const verticalText: VDTVerticalText | undefined = vertical ? verticalTextOf(set.lines, set.fonts, region, ctx) : undefined;
   return {
     x: place.x,
     y: place.y,
@@ -294,7 +322,27 @@ export function layOutLabel(
     ...(set.cut ? { overflow: true as const } : {}),
     ...(look.styleId !== undefined ? { styleId: look.styleId } : {}),
     ...(rtl ? { direction: 'rtl' as const } : {}),
+    ...(verticalText ? { vertical: verticalText } : {}),
   };
+}
+
+/** How a vertical label is painted: the document's region and upright
+ *  digits, and the central axis of each family it is set in. */
+function verticalTextOf(lines: readonly VDTLine[], fonts: readonly string[], region: VDTVerticalText['region'], ctx: FigureLabelContext): VDTVerticalText {
+  const centralBaselines: Record<string, number> = {};
+  const add = (font: string | undefined): void => {
+    if (!font) return;
+    const family = fontFamilyOf(font);
+    if (family && !(family in centralBaselines)) centralBaselines[family] = measureCentralBaseline(family);
+  };
+  for (const font of fonts) add(font);
+  for (const line of lines) {
+    for (const seg of line.segments ?? []) {
+      add(seg.fontString);
+      for (const run of seg.chip?.runs ?? []) add(run.fontString);
+    }
+  }
+  return { region, uprightDigits: ctx.resolved.cjk.uprightDigits, centralBaselines };
 }
 
 /**
@@ -313,6 +361,7 @@ export function layOutFigureLabels(
   if (rb.kind !== 'bitmap' && rb.kind !== 'svg') return [...labels];
   if (!(rb.bodyRect.width > 0) || !(rb.bodyRect.height > 0)) return [...labels];
   const pictureW = pictureWidthPx(rb);
+  const pictureH = pictureHeightPx(rb);
   return labels.map((label, i) => {
     const place = labelPlace(label, rb.resource);
     if (!place) return label;
@@ -320,10 +369,14 @@ export function layOutFigureLabels(
     const at = pictureToBody(rb, place.x, place.y);
     const look = resolveLabelLook(label.style ?? anchor?.style, ctx.resolved);
     const spans = parsed?.[i]?.spans ?? [{ text: label.text, bold: false, italic: false }];
+    // The anchor's writing mode wins over the style's; a vertical label's
+    // measure is a share of the picture's height.
+    const vertical = anchor?.writingMode !== undefined ? anchor.writingMode === 'vertical-rl' : look.vertical === true;
     const layout = layOutLabel(spans, look, {
       x: at.x,
       y: at.y,
-      ...(anchor?.width !== undefined && anchor.width > 0 ? { widthPx: anchor.width * pictureW } : {}),
+      vertical,
+      ...(anchor?.width !== undefined && anchor.width > 0 ? { widthPx: anchor.width * (vertical ? pictureH : pictureW) } : {}),
       ...(anchor?.align ? { align: anchor.align } : {}),
       ...(anchor?.verticalAlign ? { verticalAlign: anchor.verticalAlign } : {}),
       ...(anchor?.rotate !== undefined ? { rotate: anchor.rotate } : {}),
@@ -527,11 +580,104 @@ export function figureLabelReading(label: VDTFigureLabel): string {
 // Warnings
 // ---------------------------------------------------------------------------
 
+type Pt = [number, number];
+
+/** The share of a line box, at its top and at its foot, that holds no ink. */
+const INK_MARGIN = 0.12;
+
+/** The shapes a label covers in the body's frame, as convex quadrilaterals:
+ *  its plate when it has one, else the box of each of its lines (a short
+ *  line beside a long one leaves its side free). */
+function labelShapes(layout: VDTFigureLabelLayout): Pt[][] {
+  const m = figureLabelMatrix(layout, 0, 0);
+  const quad = (r: BoundingBox): Pt[] => [apply(m, r.x, r.y), apply(m, r.x + r.width, r.y), apply(m, r.x + r.width, r.y + r.height), apply(m, r.x, r.y + r.height)];
+  if (layout.background) return [quad(layout.background.rect)];
+  // A line's box is taller than its ink (it is the line pitch): the band
+  // the letters stand in is its middle, so two names set one under the
+  // other at a tighter leading than the label's own do not meet.
+  return layout.lines
+    .filter((l) => l.bbox.width > 0 && l.bbox.height > 0)
+    .map((l) => quad({ x: l.bbox.x, y: l.bbox.y + l.bbox.height * INK_MARGIN, width: l.bbox.width, height: l.bbox.height * (1 - 2 * INK_MARGIN) }));
+}
+
+/** How far two convex polygons run into each other: the shortest push that
+ *  frees them (separating axis test), 0 when they do not meet. */
+export function polygonPenetration(a: readonly Pt[], b: readonly Pt[]): number {
+  let depth = Infinity;
+  for (const poly of [a, b]) {
+    for (let i = 0; i < poly.length; i++) {
+      const p = poly[i]!;
+      const q = poly[(i + 1) % poly.length]!;
+      let nx = q[1] - p[1];
+      let ny = p[0] - q[0];
+      const len = Math.hypot(nx, ny);
+      if (len < 1e-12) continue;
+      nx /= len;
+      ny /= len;
+      const proj = (pts: readonly Pt[]): [number, number] => {
+        let lo = Infinity;
+        let hi = -Infinity;
+        for (const pt of pts) {
+          const d = pt[0] * nx + pt[1] * ny;
+          if (d < lo) lo = d;
+          if (d > hi) hi = d;
+        }
+        return [lo, hi];
+      };
+      const [aLo, aHi] = proj(a);
+      const [bLo, bHi] = proj(b);
+      const overlap = Math.min(aHi, bHi) - Math.max(aLo, bLo);
+      if (overlap <= 0) return 0;
+      if (overlap < depth) depth = overlap;
+    }
+  }
+  return Number.isFinite(depth) ? depth : 0;
+}
+
+/** The share of a line's height two labels may run into each other before
+ *  they count as meeting: line boxes are taller than the ink. */
+const OVERLAP_TOLERANCE = 0.12;
+
+/** The pairs of labels whose lines meet: for each label (by index) the
+ *  indices of the earlier labels it meets. */
+export function overlappingLabels(labels: readonly Pick<VDTFigureLabel, 'layout'>[]): Map<number, number[]> {
+  const shapes = labels.map((l) => (l.layout ? labelShapes(l.layout) : []));
+  const heights = labels.map((l) => l.layout?.lines.reduce((m, line) => Math.min(m, line.bbox.height), Infinity) ?? Infinity);
+  const bounds = shapes.map((quads) => {
+    let x0 = Infinity; let y0 = Infinity; let x1 = -Infinity; let y1 = -Infinity;
+    for (const q of quads) for (const [x, y] of q) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    return [x0, y0, x1, y1] as const;
+  });
+  const out = new Map<number, number[]>();
+  for (let j = 1; j < labels.length; j++) {
+    if (shapes[j]!.length === 0) continue;
+    for (let i = 0; i < j; i++) {
+      if (shapes[i]!.length === 0) continue;
+      const a = bounds[i]!;
+      const b = bounds[j]!;
+      if (a[2] <= b[0] || b[2] <= a[0] || a[3] <= b[1] || b[3] <= a[1]) continue;
+      const tolerance = OVERLAP_TOLERANCE * Math.min(heights[i]!, heights[j]!);
+      const meet = shapes[i]!.some((p) => shapes[j]!.some((q) => polygonPenetration(p, q) > Math.max(tolerance, 0.25)));
+      if (meet) {
+        const list = out.get(j);
+        if (list) list.push(i);
+        else out.set(j, [i]);
+      }
+    }
+  }
+  return out;
+}
+
+const shortText = (label: Pick<VDTFigureLabel, 'text'>): string => label.text.replace(/\s+/g, ' ').trim().slice(0, 40);
+const anchorOf = (label: Pick<VDTFigureLabel, 'at'>): string | undefined => ('anchor' in label.at ? label.at.anchor : undefined);
+
 /**
  * The anchors the figures of `doc` name wrongly (`labelAnchorUnknown`, at
  * the label's text) or leave without a word (`anchorUnlabelled`, a note
  * at the figure: an anchor that names a label style and that no label of
- * the figure stands at), each on the page its figure landed on.
+ * the figure stands at), the labels that do not fit their measure
+ * (`labelOverflow`) and those whose boxes meet (`labelOverlap`, #902),
+ * each on the page its figure landed on.
  */
 export function figureLabelWarnings(doc: VDTDocument, figureSource: (block: VDTBlock) => { start: number; end: number } | undefined): ContentWarning[] {
   const out: ContentWarning[] = [];
@@ -559,6 +705,49 @@ export function figureLabelWarnings(doc: VDTDocument, figureSource: (block: VDTB
         resourceId: rb.resource.id,
         anchor: id,
         known,
+        ...(locale ? { locale } : {}),
+        ...(label.id ? { labelId: label.id } : {}),
+        sourceStart: label.sourceStart,
+        sourceEnd: label.sourceEnd,
+        pageIndex: block.pageIndex,
+      });
+    }
+    // Labels that do not fit their measure even at the smallest scale
+    // their style allows (#902).
+    for (const label of labels) {
+      const layout = label.layout;
+      if (!layout?.overflow) continue;
+      const anchor = anchorOf(label);
+      const width = anchor !== undefined ? anchors.find((a) => a.id === anchor)?.width : undefined;
+      out.push({
+        kind: 'labelOverflow',
+        resourceId: rb.resource.id,
+        text: shortText(label),
+        ...(anchor !== undefined ? { anchor } : {}),
+        widthPct: width !== undefined ? Math.round(width * 1000) / 10 : 0,
+        scale: Math.round((layout.scale ?? 1) * 1000) / 1000,
+        ...(locale ? { locale } : {}),
+        ...(label.id ? { labelId: label.id } : {}),
+        sourceStart: label.sourceStart,
+        sourceEnd: label.sourceEnd,
+        pageIndex: block.pageIndex,
+      });
+    }
+    // Labels whose boxes meet: reported once, on the later of the two in
+    // the order written (#902).
+    for (const [j, earlier] of overlappingLabels(labels)) {
+      const label = labels[j]!;
+      const other = labels[earlier[0]!]!;
+      const anchor = anchorOf(label);
+      const otherAnchor = anchorOf(other);
+      out.push({
+        kind: 'labelOverlap',
+        resourceId: rb.resource.id,
+        text: shortText(label),
+        ...(anchor !== undefined ? { anchor } : {}),
+        with: shortText(other),
+        ...(otherAnchor !== undefined ? { withAnchor: otherAnchor } : {}),
+        count: earlier.length,
         ...(locale ? { locale } : {}),
         ...(label.id ? { labelId: label.id } : {}),
         sourceStart: label.sourceStart,

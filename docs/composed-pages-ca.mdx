@@ -114,6 +114,22 @@ Un `slot` fora d'una pàgina composta es llegeix i no canvia res.
 
 Una figura funciona tant al text corregut com dins d'un marc. Els seus rètols es dibuixen sobre la imatge com a text i van allà on vagi la figura: una columna, un flotant, un marc girat o amb el contingut reduït perquè hi càpiga, una doble pàgina. Una línia dins d'una figura que no és un rètol ni és en blanc acaba una figura a la qual falta el `:::` de tancament, i s'assenyala com a contenidor sense tancar.
 
+### Les paraules pròpies d'una figura
+
+El recurs guarda una imatge, les seves àncores i un sol joc de paraules, però cada edició d'un llibre diu les seves. Una figura pot donar ella mateixa el seu `alt`, el seu `caption` i el seu `note`, a la tanca o en línies pròpies, i substitueixen els del recurs a les pàgines d'aquell fitxer:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Com a atributs de la tanca, `alt`, `caption` i `note` prenen un text breu entre cometes. Les línies `::alt[…]`, `::caption[…]` i `::note[…]` prenen el text entre claudàtors, que pot portar Markdown en línia i `\\` per a un salt de línia, com el peu i la nota d'un recurs. Una línia guanya a l'atribut del mateix nom; les línies van entre els rètols, amb línies en blanc si es vol.
+- El que la figura no diu es queda com al recurs. Una paraula buida no diu res: `caption=""` treu el peu i `alt=""` marca la imatge com a decorativa.
+- Les paraules substitueixen les del recurs al capítol que les diu: la composició, el text alternatiu de totes les sortides i el PDF etiquetat les llegeixen, i el recurs en si no canvia. Un recurs que posen dues figures d'un mateix fitxer pren les paraules de la primera. A diferència d'un rètol, el peu no s'associa caràcter a caràcter amb el Markdown; `sourceAt` respon a un clic sobre ell com ho fa amb el peu d'un recurs.
+
 ### Com es compon un rètol
 
 - **On.** Un rètol es col·loca al punt de la seva àncora, una fracció de la imatge sencera, de manera que si la imatge es retalla a la seva zona segura o es compon més petita, el rètol es mou amb el dibuix. L'`align` de l'àncora diu quin costat del rètol queda al punt, i `verticalAlign`, quina vora queda a la seva altura. `start` i `end` segueixen la direcció del mateix rètol: en àrab, `start` és la vora dreta. `rotate` gira el rètol al voltant del punt, en el sentit de les agulles del rellotge i amb qualsevol angle: un riu al llarg del seu curs, una serra en diagonal.
@@ -121,6 +137,8 @@ Una figura funciona tant al text corregut com dins d'un marc. Els seus rètols e
 - **Ajust.** Si la seva àncora té `width`, el rètol es talla entre paraules dins d'aquesta mesura, mai dins d'una paraula. Quan una paraula és més ampla que la mesura, tot el rètol es compon més petit, fins al `minScale` del seu estil; si tot i així no hi cap, es dibuixa amb la paraula més ampla tallada. Sense `width`, el rètol ocupa una sola línia, llevat d'on es talla amb `\\`, com en un peu.
 - **Text.** El text entre claudàtors és Markdown en línia i es compon com un peu: negreta, cursiva, xips, marques de ressaltat, referències i fórmules en línia. Un nom de diverses paraules és un sol rètol, sigui quin sigui l'ordre de les paraules en cada llengua: `::label[OCEÀ ATLÀNTIC]` i `::label[ATLANTIC OCEAN]` són a la mateixa àncora. Els rètols de dreta a esquerra es componen de dreta a esquerra; els xinesos i japonesos es tallen entre caràcters.
 - **Sortides.** El llenç, el PDF, el visor HTML, l'EPUB de maquetació fixa i Folio dibuixen els rètols. En una pàgina de dreta a esquerra, el rètol es queda on la imatge el mostra.
+- **Vertical.** Amb `writingMode: 'vertical-rl'` a l'àncora (o al seu estil de rètol), el rètol es compon com una pàgina vertical: els caràcters drets, en cel·les una sota l'altra, les columnes de dreta a esquerra, les paraules llatines i els números llargs girats de costat i els números curts en una sola cel·la. Aleshores `width` és una part de l'alçada de la imatge, la llargada d'una columna, i un rètol xinès o japonès es reparteix en més columnes. `align` va al llarg de la columna (`start` és el seu extrem superior), `verticalAlign` a través de les columnes (`top` és la primera, la de la dreta), i `rotate` continua girant el rètol.
+- **Comprovacions.** Un rètol que continua més ample que la seva mesura amb el `minScale` del seu estil dóna `labelOverflow`; dos rètols amb les línies tocant-se donen `labelOverlap` al posterior. Totes dues es comproven a cada edició, de manera que una traducció de paraules més llargues mostra on necessita lloc. La paleta d'una part (`:::part{palette="…"}`) recolora els rètols de les seves pàgines com fa amb els peus. La comprovació de contrast llegeix un rètol sobre la seva placa o, si no, dins del seu halo; el rètol nu sobre la imatge s'omet, perquè el seu fons és la imatge. La verificació d'impressió compta la lletra petita del rètol en colors de procés, les seves tintes i la distància al tall.
 
 ### labelAnchorUnknown
 
@@ -133,6 +151,14 @@ Al tauler Revisió del Sandbox, l'avís porta al rètol al tauler Text, i el seu
 Una àncora del recurs de la figura anomena un estil de rètol i cap `::label` de la figura no hi és en aquesta llengua: el mapa té lloc per a una paraula que aquesta edició no posa. És una nota; `postext check` la dona com a `info`. Les àncores sense estil, com les d'un personatge de còmic, no s'assenyalen. L'avís porta el recurs, l'àncora, el seu estil, la llengua, la pàgina i l'interval de la figura a la font. Escriu el rètol al Markdown d'aquesta llengua o treu l'estil de l'àncora.
 
 Al tauler Revisió porta a la figura al tauler Text, i el seu botó amb l'agulla obre les àncores de la imatge en aquella àncora.
+
+### labelOverflow
+
+Un rètol continua sent més ample que el `width` de la seva àncora a l'escala més petita que permet el seu estil de rètol (`minScale`): es dibuixa a aquesta escala i sobrepassa la seva mesura. L'avís porta el recurs, el text del rètol, la seva àncora (cap si el rètol es col·loca amb percentatges), l'amplada que se li va donar, l'escala assolida, la llengua, la pàgina i el rang del text del rètol al font. Es comprova a cada edició, de manera que una llengua de paraules més llargues es desborda on una altra no. Eixampla el `width` de l'àncora, escurça la paraula al Markdown d'aquesta edició o abaixa el `minScale` de l'estil de rètol. Un rètol xinès o japonès es talla entre caràcters i no es desborda així. Des de postext 1.39.
+
+### labelOverlap
+
+Es toquen les línies de dos rètols d'una mateixa figura; un rètol amb placa compta com la seva placa. L'avís el porta el rètol posterior, en l'ordre en què estan escrits, amb el text del primer rètol anterior que toca i quants rètols anteriors toca en total. La prova fa servir la caixa pròpia de cada línia, girada amb el rètol, de manera que una línia curta al costat d'una de llarga deixa lliure el seu costat, i deixa que dues línies es trepitgin fins a una vuitena part de l'alçada d'una línia. Es comprova a cada edició. Mou una de les àncores, estreny el `width` d'un rètol perquè es parteixi o escurça les paraules al Markdown d'aquesta edició. Al tauler de comprovacions del Sandbox, el botó de la xinxeta obre les àncores de la imatge a l'àncora del rètol. Des de postext 1.39.
 
 ## Exemple
 
@@ -214,7 +240,7 @@ Si a més té `"wrap": "contour"`, el marc aparta el text amb la forma de les im
 
 ### Decoració, capçaleres i capes
 
-La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo. Els seus textos llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la tanca de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció.
+La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo. Els seus textos llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la tanca de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció. En una pàgina de dreta a esquerra o vertical, els marcs segueixen el flux en mirall o girat mentre la decoració es queda al plec: un element col·locat en una vora d'inici o de final (`top-start`, vegeu [Posicionament d'elements](/ca/docs/configuration-headers-footers#posicionament-delements)) queda al costat del seu marc en totes les edicions.
 
 Els marcs es pinten en l'ordre de la seva `layer`: la decoració a la capa 0, els marcs a la 1 per defecte, una capa més alta damunt d'una de més baixa i una capa negativa a sota de la decoració. `rotate` gira un marc juntament amb el seu contingut, en qualsevol angle i al voltant del centre del marc, al llenç, al PDF, al visor HTML i a l'EPUB de maquetació fixa.
 
@@ -382,7 +408,7 @@ Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, 
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Una altra plantilla del llibre amb un marc del mateix nom en què el contingut cap tal com és, provada sobre la pàgina en l'ordre de <code>pageTemplates</code>. És un canvi al Markdown: <code>sourceStart</code> i <code>sourceEnd</code> donen l'interval del valor <code>template</code> de la tanca de la pàgina.</td>
+      <td>Una altra plantilla del llibre amb un marc del mateix nom en què el contingut cap tal com és, provada sobre la pàgina en l'ordre de <code>pageTemplates</code>. La prova compon la pàgina com ho faria la compilació amb aquesta plantilla: els buits per als quals no té marc van al seu marc de flux, es recorre la seva pròpia escala i només es proposa si cap marc no desborda i res no continua en una altra pàgina (des de postext 1.39). Una pàgina afegida per continuació no rep aquesta proposta. És un canvi al Markdown: <code>sourceStart</code> i <code>sourceEnd</code> donen l'interval del valor <code>template</code> de la tanca de la pàgina.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>
@@ -599,9 +625,9 @@ Al llenç, a la vista de doble pàgina del Sandbox i al Folio, les dues pàgines
 
 ## Migrar un llibre amb el text als estils
 
-Un llibre fet abans de les pàgines compostes pot guardar el text de les pàgines en estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca cada text on el tenia la pàgina impresa. La comprovació *Text desat a la configuració* ho assenyala. Al Sandbox, **Passar el text al Markdown** al tauler de revisió converteix cada disseny de pàgina en una plantilla de pàgina amb els marcs on eren els textos, i cada pàgina en una tanca de pàgina amb el text en slots `:::frame`; mostra cada pàgina abans i després, i es pot desfer. Vegeu [Passar el text al Markdown](/ca/docs/sandbox-design-checks#passar-el-text-al-markdown). Des del codi, `moveTextToMarkdown({ config, chapters, metadata }, options)` fa el mateix i torna la configuració nova, els capítols i un informe.
+Un llibre fet abans de les pàgines compostes pot guardar el text de les pàgines en estils de títol: un títol ocult a cada pàgina amb una capçalera que col·loca cada text on el tenia la pàgina impresa. La comprovació *Text desat a la configuració* ho assenyala. Al Sandbox, **Passar el text al Markdown** al tauler de revisió converteix cada disseny de pàgina en una plantilla de pàgina amb els marcs on eren els textos, i cada pàgina en una tanca de pàgina amb el text en slots `:::frame`; mostra cada pàgina abans i després, i es pot desfer. Vegeu [Passar el text al Markdown](/ca/docs/sandbox-composed-pages#passar-el-text-al-markdown). Des del codi, `moveTextToMarkdown({ config, chapters, metadata }, options)` fa el mateix i torna la configuració nova, els capítols i un informe.
 
-Amb `labelsOnPictures: true` (des de postext 1.38), les paraules que un disseny va col·locar sobre una imatge passen a ser rètols d'aquesta imatge en lloc de marcs: un text d'una línia i quatre paraules com a màxim, no més gran que tres quarts del text principal (`labelsOnPictures: { maxFontSize }` fixa un altre límit), la caixa del qual cau dins d'una imatge del mateix disseny. La imatge surt de la decoració i passa a un marc a la caixa on es dibuixava, amb un `:::figure` i una línia `::label` per text, i cada text es converteix en un ancoratge del recurs de la imatge al punt on el disseny el situava (la seva primera línia de base, el costat que indica la seva alineació, l'amplada de la seva caixa), amb un estil de rètol per al seu aspecte. Passeu els `resources` del llibre a l'entrada: el resultat els retorna amb els ancoratges (`result.resources`), i un mapa de bits més petit que la caixa sobre la qual el disseny l'estirava rep la `resolution` que el posa a aquesta amplada. Una imatge que surt a diverses pàgines comparteix els seus ancoratges. El `labels` de l'informe compta imatges, rètols, ancoratges i estils de rètol. El diàleg del Sandbox encara no ho ofereix.
+Amb `labelsOnPictures: true` (des de postext 1.38), les paraules que un disseny va col·locar sobre una imatge passen a ser rètols d'aquesta imatge en lloc de marcs: un text d'una línia i quatre paraules com a màxim, no més gran que tres quarts del text principal (`labelsOnPictures: { maxFontSize }` fixa un altre límit), la caixa del qual cau dins d'una imatge del mateix disseny. La imatge surt de la decoració i passa a un marc a la caixa on es dibuixava, amb un `:::figure` i una línia `::label` per text, i cada text es converteix en un ancoratge del recurs de la imatge al punt on el disseny el situava (la seva primera línia de base, el costat que indica la seva alineació, l'amplada de la seva caixa), amb un estil de rètol per al seu aspecte. Passeu els `resources` del llibre a l'entrada: el resultat els retorna amb els ancoratges (`result.resources`), i un mapa de bits més petit que la caixa sobre la qual el disseny l'estirava rep la `resolution` que el posa a aquesta amplada. Una imatge que surt a diverses pàgines comparteix els seus ancoratges. El `labels` de l'informe compta imatges, rètols, ancoratges i estils de rètol. El diàleg del Sandbox ho ofereix com a opció, apagada fins que es demani, quan el llibre té paraules per convertir en rètols.
 
 ## Des del codi
 
@@ -614,6 +640,8 @@ Després de la maquetació, el `VDTPage.composed` d'una pàgina composta registr
 Tot el que pinta una pàgina composta sap on està escrit, de manera que un editor pot anar d'un punt de la pàgina al Markdown o a la configuració, i d'un tram del Markdown al que n'ha sortit a la pàgina.
 
 `sourceAt(doc, pageIndex, x, y)` rep un punt d'una pàgina compaginada, en píxels de pàgina des del cantó superior esquerre del full, i torna el que hi ha, de dins cap a fora: cada element seguit dels que el contenen. Un caràcter d'una caixa arriba amb la seva línia, el seu paràgraf, el seu marc, els grups del marc i la plantilla; una paraula de la decoració, amb el seu element de disseny, la decoració i la plantilla. Cada element té un `level`, un `id` estable, un `source` i, gairebé sempre, el seu `rect` a la pàgina (dret, abans del `rotate` d'un marc girat).
+
+En una pàgina de dreta a esquerra o vertical, els marcs es col·loquen en el marc del flux de la pàgina, que el plec mostra en mirall o girat un quart de volta; la decoració i les capçaleres es queden al plec. `sourceAt` continua rebent punts del plec i els trasllada per als marcs. Un element el `rect` del qual és al marc del flux arriba amb `flow: true`, tant a `sourceAt` com a `elementsForSource` i `findElement`; `flowRectToPage(page, rect)` en dona la caixa al plec i `flowToPage(page, x, y)`, un punt. Fins a postext 1.38, un punt del plec sobre un marc d'una pàgina així només trobava la plantilla.
 
 <table>
   <thead>

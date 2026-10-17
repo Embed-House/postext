@@ -94,11 +94,16 @@ class Round(unittest.TestCase):
         lacks = {f["feature"] for f in p["lacks"]}
         self.assertTrue({"continuation", "labels", "migration", "headingDesigns", "jumps"} <= lacks)
         p = cc.plan_for((1, 37, 0))
+        v138 = {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
+                "partialTypes", "labelsOnPictures", "sandboxFixes"}
+        self.assertTrue(v138 <= {f["feature"] for f in p["lacks"]})
+        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0") for f in p["lacks"]))
+        p = cc.plan_for((1, 38, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
-                         {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
-                          "partialTypes", "labelsOnPictures", "sandboxFixes"})
-        self.assertTrue(all(f["since"] == "1.38.0" for f in p["lacks"]))
-        self.assertEqual(cc.plan_for((1, 38, 0))["lacks"], [])
+                         {"labelChecks", "figureWords", "styleExtends", "frameModes", "startEnd", "cuts",
+                          "textPanelsMirrored", "coverUpright", "sourceAtFlow", "editionsKept", "wordTracking"})
+        self.assertTrue(all(f["since"] == "1.39.0" for f in p["lacks"]))
+        self.assertEqual(cc.plan_for((1, 39, 0))["lacks"], [])
 
     def test_round_command(self):
         r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "round", "--version", "1.36.0", "--json"],
@@ -222,6 +227,20 @@ class Judge(unittest.TestCase):
         v = cc.judge({"warnings": [{"kind": "continueTargetMissing", "severity": "warning", "message": "no page"}]})
         self.assertEqual([w["kind"] for w in v["fail"]], ["continueTargetMissing"])
 
+    def test_label_checks_and_style_extends(self):
+        v = cc.judge({"warnings": [
+            {"kind": "labelOverflow", "severity": "warning", "message": "too wide", "page": "3"},
+            {"kind": "labelOverlap", "severity": "warning", "message": "meets Belgium", "page": "3"},
+            {"kind": "calloutStyleExtendsUnknown", "severity": "warning", "message": "no parent"},
+            {"kind": "calloutStyleExtendsCycle", "severity": "warning", "message": "a > b > a"}]})
+        self.assertEqual([w["kind"] for w in v["fail"]],
+                         ["labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle"])
+        self.assertEqual([w["kind"] for w in v["notes"]], ["labelOverlap"])
+        # a longer text does not make an overlap fail the stress run
+        v = cc.judge({"warnings": [{"kind": "labelOverlap", "severity": "warning", "message": "m"}]},
+                     stressed=True, base={"warnings": []})
+        self.assertEqual(v["fail"], [])
+
     def test_stressed(self):
         v = cc.judge(self.REPORT, stressed=True, base={"warnings": [{"kind": "contrast.lowContrast"}]})
         self.assertEqual(v["fail"], [])
@@ -315,7 +334,7 @@ class Lint(unittest.TestCase):
             self.assertIn("spreadMismatch", out)
             self.assertIn("labelAnchorUnknown: resource 'tira' has no anchor 'b'", out)
             self.assertIn("label style 'rio' is not in labelStyles", out)
-            self.assertIn("a :::figure ends at its first line that is neither a ::label nor blank", out)
+            self.assertIn("a :::figure ends at its first line that is neither a ::label, ::alt / ::caption / ::note nor blank", out)
             self.assertIn("templateUnknown: no pageTemplates entry 'nope'", out)
             self.assertIn("a ::::page is never closed", out)
             self.assertNotIn("is not a Postext container", out)
@@ -334,6 +353,51 @@ class Lint(unittest.TestCase):
             self.assertIn("valign='sideways' is ignored", out)
             self.assertIn("text panel on a strip", out)
             self.assertNotIn("comicStrayText", out)
+
+    def test_comic_text_panel_shrink(self):
+        md = (':::page{split="30 / *"}\n::panel{text shrink}\nWords.\n::panel{text shrink=70%}\nMore.\n'
+              '::panel{text shrink=lots}\nEven more.\n::panel{art=x shrink=0.8}\nmaya: Hi\n:::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertNotIn("attribute 'shrink' is ignored", out)
+            self.assertIn("shrink='lots' is not a number or a percent", out)
+            self.assertIn("shrink sets a text panel's text smaller until it fits: it does nothing without the text flag", out)
+            self.assertNotIn("shrink='70%'", out)
+
+    def test_callout_extends(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.project(d, "Texto.\n")
+            data = json.loads((root / "preset.json").read_text())
+            data["config"]["calloutStyles"] = [
+                {"id": "caja"}, {"id": "caja-p5", "extends": "caja"}, {"id": "huerfana", "extends": "nada"},
+                {"id": "a", "extends": "b"}, {"id": "b", "extends": "a"}]
+            (root / "preset.json").write_text(json.dumps(data))
+            out = run_lint(root)
+            self.assertIn("calloutStyleExtendsUnknown: calloutStyles 'huerfana' extends 'nada'", out)
+            self.assertEqual(out.count("calloutStyleExtendsCycle"), 1, out)
+            self.assertIn("a -> b -> a", out)
+            self.assertNotIn("'caja-p5' extends", out)
+
+    def test_figure_words(self):
+        md = ('::::page{template="linea"}\n'
+              ':::figure{resource="tira" slot="tira" alt="Mapa físico"}\n'
+              '::caption[Relieve [de] la península]\n::note[Fuente: IGN]\n\n::label[Pirineos]{at="a"}\n:::\n'
+              ':::figure{resource="tira" slot="tira"}\n::alt[Otro texto]\n::label[X]{at="a"}\n:::\n'
+              '::::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertNotIn("a :::figure ends at its first line", out)
+            self.assertIn("already has its alt/caption/note from the figure at line 2", out)
+        md = ':::figure{resource="tira"}\n::alt[]\n::note[a]\n::note[b]\n::label[X]{at="a"}\n:::\n'
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertIn("::alt[] marks the picture decorative", out)
+            self.assertIn("::note given twice in one :::figure", out)
+            self.assertNotIn("a :::figure ends at its first line", out)
+        md = ':::figure{resource="tira"}\n::label[X]{at="a"}\nsome text\n:::\n'
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertIn("neither a ::label, ::alt / ::caption / ::note nor blank", out)
 
 
 @unittest.skipUnless(os.environ.get("POSTEXT_CLI"), "set POSTEXT_CLI to a postext command (1.35.0 or later)")

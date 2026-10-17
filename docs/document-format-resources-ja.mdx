@@ -293,7 +293,7 @@ canvasのプレビュー、HTMLビューアー、PDF出力の3つのバックエ
 
 どの場合も、画像は縦横比を保ったまま置き場所を上限とし、それより小さい画像が拡大されることはありません。表のセルの画像や、サイズが`'auto'`のデザインの`image`要素にも、同じ原寸が使われます。PDFはファイルをそのまま、配置したサイズで埋め込みます。各画像が印刷される解像度は[プリフライト](/ja/docs/configuration-fonts-colors-viewers#プリフライト)で検査され、Sandboxの[**リソース**パネル](/ja/docs/sandbox#リソースパネル)には画像ごとに表示されます。postext 1.24から。
 
-本文の流れの中の画像（`position: 'here'` または段内のフロート）の置き場所はその段で、既定のページは2段組み（`layout.layoutType: 'double'`）です。ページ全体の大きさで用意した画像は、そこではおよそ印刷サイズの半分になります。そうしたページは1段組みにする（`layout.layoutType: 'single'`）か、画像をページ全幅のフロートにする（`placement: { position: 'top', span: 'page' }`）か、[テンプレートページ](/ja/docs/composed-pages)のフレームに置いてください。印刷サイズを持つビットマップ（自身の `resolution`、または `layout.bitmapResolution` の数値）がページより狭い段で半分未満に抑えられると、組版は `pictureBelowPrintSize` を報告します。postext 1.37 から。
+本文の流れの中の画像（`position: 'here'` または段内のフロート）の置き場所はその段で、既定のページは2段組み（`layout.layoutType: 'double'`）です。ページ全体の大きさで用意した画像は、そこではおよそ印刷サイズの半分になります。そうしたページは1段組みにする（`layout.layoutType: 'single'`）か、画像をページ全幅のフロートにする（`placement: { position: 'top', span: 'page' }`）か、[テンプレートページ](/ja/docs/composed-pages)の枠に置いてください。印刷サイズを持つビットマップ（自身の `resolution`、または `layout.bitmapResolution` の数値）がページより狭い段で半分未満に抑えられると、組版は `pictureBelowPrintSize` を報告します。postext 1.37 から。
 
 ```json
 { "id": "harbour", "typeId": "figure", "kind": "bitmap", "caption": "The harbour at dawn.",

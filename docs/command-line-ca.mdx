@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: "Línia d'ordres",
   description: "Un sol executable autònom per a macOS, Linux i Windows que converteix un llibre .postext, una carpeta de llibre o Markdown solt en PDF, HTML, EPUB, imatges de pàgina i Word, empaqueta paquets i revisa llibres, amb sortida JSON per a scripts i agents",
   lang: 'ca',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 42,
+  order: 43,
   plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir-ne tots els fitxers en un de sol. Els programes i els assistents d'intel·ligència artificial també el poden fer servir, perquè pot respondre en un format que llegeixen sense dificultat.",
 };
 
@@ -263,6 +263,15 @@ Sandbox (estils en ús, format directe, numeració escrita a mà…). `--templat
 pren una plantilla d'importació (un `.json` desat des del Sandbox o un `.docx`
 que en porti una).
 
+L'espaiat entre caràcters és una propietat de l'estil, no del text, de manera que no és al
+Markdown. `docx` escriu el `letterSpacing` dels estils de paràgraf, dels estils de títol
+i dels nivells de títol com a espaiat entre caràcters de l'estil de Word, i `import-docx`
+el llegeix de tornada en em de la mida de l'estil: el posa com a `letterSpacing` als estils del llibre
+que no en tenen cap (els estils de paràgraf i de títol del fitxer de `--config` als quals
+s'assignen els estils de Word, i els nivells de títol), i deixa tal com són els espaiats que el
+llibre ja defineix. Amb `--json`, `styleTracking` enumera el que s'ha aplicat (`applied`) i el que
+s'ha deixat (`skipped`). Des de postext 1.39.
+
 ### pack i unpack
 
 ```bash
@@ -307,6 +316,8 @@ llibre en lloc de marcadors (`contentInConfig`), un cop per estil de títol,
 títol corrent o disseny de part, amb el camí de cada text: porta aquest text al
 Markdown, o afegeix el títol o el nom de l'editorial a
 `checks.contentInConfig.allow`.
+
+En un llibre amb plantilles de pàgina, `check` informa a més del text que no cap al seu marc (`frameOverflow`, amb els passos que ha provat l'escala de reajustament i els canvis que ho arreglarien), d'una història que passa de les pàgines que un marc pot afegir (`frameContinuationLimit`), d'un salt a una pàgina que no segueix (`continueTargetMissing`) i dels rètols de figura que no es poden dibuixar o que xoquen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Després dels avisos imprimeix una línia `reflow` per cada pàgina composta amb esdeveniments, i `--json` porta els passos, les propostes i el registre de reajustament com a dades. Vegeu [Pàgines compostes › Avisos](/ca/docs/composed-pages#avisos) i [Registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament).
 
 ### build i --watch
 

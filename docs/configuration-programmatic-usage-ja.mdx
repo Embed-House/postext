@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'プログラムからの利用',
   description: 'コードからPostextを使う：buildDocumentとその警告、既定値、フォント、キャッシュ、Web Worker',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '32分',
   order: 20,
   parent: 'configuration',
@@ -145,6 +145,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>テンプレートに従います。見開きのテンプレートは向かい合う2ページに、それ以外は1ページに組まれます。</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td><code>:::figure</code>の<code>::label</code>が<code>at</code>で、その図のリソースにないアンカーを指しています（<code>resourceId</code>、<code>anchor</code>、リソースにあるアンカーの<code>known</code>、<code>locale</code>）。</td>
+      <td>ラベルは描かれません。リフロー型EPUBでは引き続き一覧に出ます。</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>図のリソースのアンカーがラベルスタイルを指しているのに、この言語ではそのアンカーに<code>::label</code>がありません（<code>resourceId</code>、<code>anchor</code>、<code>style</code>、<code>locale</code>）。通知です。</td>
+      <td>アンカーには何も描かれません。</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>図のラベルが、ラベルスタイルの許す最小の倍率でもアンカーの<code>width</code>より幅広いままです（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>widthPct</code>、<code>scale</code>、<code>locale</code>）。</td>
+      <td>ラベルはその倍率で描かれ、幅からはみ出します。</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>同じ図の2つのラベルの行が触れ合っています（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>with</code>、<code>withAnchor</code>、<code>count</code>、<code>locale</code>）。書かれた順で後ろのラベルに付きます。</td>
+      <td>2つのラベルはそれぞれの場所に描かれます。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがない。</td>
       <td>チップには最初のチップスタイルが使われます。</td>
@@ -216,7 +236,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページのフレームに置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
+      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページの枠に置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
       <td>画像は段の幅で印刷されます。本文の流れの中の画像は段より広くならず、既定のページは2段です（<code>layout.layoutType: 'double'</code>）。ページを1段組みにするか、画像をページ全幅のフロートにする（<code>placement.span: 'page'</code>）か、そのサイズでよければ解像度を上げてください。</td>
     </tr>
     <tr>

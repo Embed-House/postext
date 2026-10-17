@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Uso programático',
   description: 'Postext desde el código: buildDocument y sus avisos, los valores por defecto, las fuentes, las cachés y el Web Worker',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '32 min',
   order: 20,
   parent: 'configuration',
@@ -143,6 +143,26 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td><code>spreadMismatch</code></td>
       <td>La apertura de una página compuesta y su plantilla no coinciden en la doble página (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, el <code>spread</code> de la apertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.</td>
+    </tr>
+    <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Un <code>::label</code> de un <code>:::figure</code> nombra con <code>at</code> un ancla que el recurso de su figura no tiene (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, las anclas del recurso; <code>locale</code>).</td>
+      <td>El rótulo no se dibuja; el EPUB adaptable lo sigue listando.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Un ancla del recurso de la figura nombra un estilo de rótulo y ningún <code>::label</code> de la figura está en ella en este idioma (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). Es una nota.</td>
+      <td>No se dibuja nada en el ancla.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Un rótulo de una figura sigue siendo más ancho que el <code>width</code> de su ancla en la escala más pequeña que permite su estilo de rótulo (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>El rótulo se dibuja a esa escala y sobrepasa su medida.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>Las líneas de dos rótulos de una misma figura se tocan (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). Lo lleva el rótulo posterior, en el orden en que están escritos.</td>
+      <td>Los dos rótulos se dibujan donde están.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

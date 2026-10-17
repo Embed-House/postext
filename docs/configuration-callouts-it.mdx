@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Nome leggibile (solo nell’interfaccia dell’editor).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>L’id di un altro stile su cui si basa questo: ogni campo che lascia vuoto viene da quello stile. Vedi <a href="#stili-basati-su-un-altro">Stili basati su un altro</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -216,7 +222,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Con <code>true</code> il riquadro resta intero: un riquadro che non sta nello spazio rimanente passa intero alla colonna o alla pagina successiva. Solo un riquadro più alto di una colonna vuota e completa (un’intera pagina per un riquadro <code>span: 'page'</code>) non può restare intero: si divide secondo le regole di <code>false</code> descritte sotto invece di eccedere, a partire dal punto in cui compare, e una continuazione che sta in una colonna passa poi avanti intera; un riquadro flottante (<code>placement: 'top' | 'bottom' | 'auto'</code>) così alto non flotta ma resta nel flusso dove compare. Con <code>false</code> qualsiasi riquadro può dividersi tra i suoi blocchi figli o tra le righe di un paragrafo o di un elemento di elenco: il taglio più profondo che ci sta chiude la colonna corrente (o, per un riquadro <code>span: 'page'</code>, la pagina, a filo del fondo delle colonne) e il resto prosegue in cima alla successiva in un riquadro proprio (stessa cornice e stessa fascia, nessuna icona, e nessun titolo a meno che <code>repeatTitle</code> non lo ripeta), dividendosi di nuovo se è ancora troppo alto. Il testo di ogni frammento conserva, vuota, la colonna che un’icona in linea occupa nella parte iniziale, così il riquadro ha una sola giustezza su ogni pagina. Un taglio dentro un elemento di elenco lascia il suo punto elenco con la parte iniziale. La cornice di ogni frammento condivide <code>contentIndex</code> / <code>containerId</code> del recinto e registra <code>callout.part</code> / <code>callout.continued</code>. Usalo su un lungo riquadro di chiusura con i «punti chiave» insieme a <code>headings.balancing.beforeSpan</code>, o su uno stile di nota i cui riquadri non devono mai spingere una figura fuori dalla pagina. Un riquadro annidato (un <code>:::callout</code> dentro un altro) è un figlio del suo genitore: un taglio può cadere prima o dopo di esso, e al suo interno solo quando il suo stile consente la divisione (<code>keepTogether: false</code>, o più alto di una colonna intera), secondo il suo <code>splitMinLines</code>.</td>
+      <td>Con <code>true</code> il riquadro resta intero: un riquadro che non sta nello spazio rimanente passa intero alla colonna o alla pagina successiva. Solo un riquadro più alto di una colonna vuota e completa (un’intera pagina per un riquadro <code>span: 'page'</code>) non può restare intero: si divide secondo le regole di <code>false</code> descritte sotto invece di eccedere, a partire dal punto in cui compare, e una continuazione che sta in una colonna passa poi avanti intera; un riquadro flottante (<code>placement: 'top' | 'bottom' | 'auto'</code>) così alto non flotta ma resta nel flusso dove compare. Con <code>false</code> qualsiasi riquadro può dividersi tra i suoi blocchi figli o tra le righe di un paragrafo o di un elemento di elenco: il taglio più profondo che ci sta chiude la colonna corrente (o, per un riquadro <code>span: 'page'</code>, la pagina, a filo del fondo delle colonne) e il resto prosegue in cima alla successiva in un riquadro proprio (stessa cornice e stessa fascia, nessuna icona, e nessun titolo a meno che <code>repeatTitle</code> non lo ripeta), dividendosi di nuovo se è ancora troppo alto. Il testo di ogni frammento conserva, vuota, la colonna che un’icona in linea occupa nella parte iniziale, così il riquadro ha una sola giustezza su ogni pagina. Un taglio dentro un elemento di elenco lascia il suo punto elenco con la parte iniziale. La cornice di ogni frammento condivide <code>contentIndex</code> / <code>containerId</code> del recinto e registra <code>callout.part</code> / <code>callout.continued</code>. Usalo su un lungo riquadro di chiusura con i «punti chiave» insieme a <code>headings.balancing.beforeSpan</code>, o su uno stile di nota i cui riquadri non devono mai spingere una figura fuori dalla pagina. Un riquadro annidato (un <code>:::callout</code> dentro un altro) è un figlio del suo genitore: un taglio può cadere prima o dopo di esso, e al suo interno solo quando il suo stile consente la divisione (<code>keepTogether: false</code>, o più alto di una colonna intera), secondo il suo <code>splitMinLines</code>. Da postext 1.39 il taglio segue le regole del testo corrente, come quello di una cornice di una pagina composta: un titolo non chiude mai un frammento (<code>headings.keepWithNext</code>), un taglio tra le voci di un elenco ne lascia almeno due per parte (<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>; una se disattivati) e un elenco di al massimo <code>bodyText.shortListMaxItems</code> voci con <code>shortListSplit: 'avoid'</code> non si taglia tra le voci. Se nessun taglio lo consente, il frammento finisce prima del titolo o dell’elenco, o dentro una delle sue voci.</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Stili basati su un altro
+
+`extends` nomina un altro stile di `calloutStyles`, e ogni campo che lo stile lascia vuoto viene da quello. Gli oggetti come `padding`, `border`, `titleStyle` o `fixed` si uniscono chiave per chiave, così uno stile può cambiare un solo lato del riempimento o il solo `fixed.offset`; un colore o una lunghezza si prendono interi; `id` e `name` non si ereditano mai. Uno stile base può a sua volta basarsi su un altro. Un libro con riquadri in molti punti tiene uno stile per il loro aspetto e uno stile minimo per ogni posizione:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Cambia l’aspetto di `caja` e tutti i riquadri lo seguono, ognuno dove si trova. Un `extends` che non nomina alcuno stile dà `calloutStyleExtendsUnknown` (l’avviso propone l’id più vicino, e lo stile resta da solo, con i valori predefiniti), e gli stili basati l’uno sull’altro in cerchio danno `calloutStyleExtendsCycle` (restano da soli finché uno non si basa su uno stile fuori dal cerchio). Nel Sandbox lo imposta il campo **Basato su** di uno stile di riquadro; eliminare uno stile su cui altri si basano scrive le sue impostazioni in questi, e i loro riquadri non cambiano. Nella sezione **Stili delle cornici**, unire con **Confronta solo l’aspetto** conserva come stile minimo di questo tipo lo stile i cui riquadri stanno altrove quando **Lasciare ogni riquadro dov’è** è attivo (predefinito), e nessun riquadro si sposta. Da postext 1.39.
 
 ### Il contenitore `:::callout`
 

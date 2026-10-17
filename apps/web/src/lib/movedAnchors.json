@@ -342,5 +342,37 @@
       "sandbox-books-saving": "libri-e-capitoli modificare-i-fumetti documenti-word persistenza esportazione-e-importazione",
       "sandbox-embedding": "agenti-webmcp uso-autonomo props requisiti-css formato-dei-pacchetti-preset indexjson presetjson"
     }
+  },
+  "sandbox-design-checks": {
+    "en": {
+      "sandbox-composed-pages": "page-templates frame-styles composed-pages-in-every-edition moving-the-text-to-the-markdown fixing-a-frame-in-one-click"
+    },
+    "es": {
+      "sandbox-composed-pages": "plantillas-de-página estilos-de-marco páginas-compuestas-en-todas-las-ediciones pasar-el-texto-al-markdown arreglar-un-marco-con-un-clic"
+    },
+    "ca": {
+      "sandbox-composed-pages": "plantilles-de-pàgina estils-de-marc pàgines-compostes-en-totes-les-edicions passar-el-text-al-markdown arreglar-un-marc-amb-un-clic"
+    },
+    "zh": {
+      "sandbox-composed-pages": "页面模板 框样式库 所有版本中的模板页 把文字移到-markdown 一键修正一个框"
+    },
+    "ar": {
+      "sandbox-composed-pages": "قوالب-الصفحات أنماط-الأطر الصفحات-المركّبة-في-كل-النسخ نقل-النص-إلى-markdown إصلاح-إطار-بنقرة-واحدة"
+    },
+    "ja": {
+      "sandbox-composed-pages": "ページテンプレート 枠のスタイル すべての版のテンプレートページ テキストをmarkdownへ移す ワンクリックで枠を直す"
+    },
+    "pt": {
+      "sandbox-composed-pages": "modelos-de-página estilos-de-bloco páginas-compostas-em-todas-as-edições levar-o-texto-para-o-markdown corrigir-um-bloco-com-um-clique"
+    },
+    "fr": {
+      "sandbox-composed-pages": "gabarits-de-page styles-de-bloc pages-composées-dans-toutes-les-éditions déplacer-le-texte-dans-le-markdown corriger-un-bloc-en-un-clic"
+    },
+    "de": {
+      "sandbox-composed-pages": "seitenvorlagen rahmenstile zusammengesetzte-seiten-in-allen-ausgaben text-ins-markdown-verschieben einen-rahmen-mit-einem-klick-beheben"
+    },
+    "it": {
+      "sandbox-composed-pages": "modelli-di-pagina stili-delle-cornici pagine-composte-in-tutte-le-edizioni spostare-il-testo-nel-markdown sistemare-una-cornice-con-un-clic"
+    }
   }
 }

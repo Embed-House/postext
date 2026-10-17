@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef, useState, type MutableRefObject } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 import { MapPin, Plus, Trash2, TriangleAlert, X } from 'lucide-react';
 import type { LabelStyle, ResourceAnchor, ResourceSafeArea } from 'postext';
 import { useSandboxLabels } from '../../context/SandboxContext';
-import { Button, IconButton, NumberField, SegmentedControl, Select } from '../../ui';
-import { anchorIdProblem, anchorOutsideSafeArea, withAnchor, withLabelFields, type AnchorIdProblem, type PictureMarks } from './pictureMarks';
+import { Button, IconButton, NumberField, SegmentedControl, Select, Switch } from '../../ui';
+import { anchorIdProblem, anchorOutsideSafeArea, withAnchor, withLabelFields, type AnchorIdProblem, type LabelFields, type PictureMarks } from './pictureMarks';
 import type { MarkdownLabel } from './figureLabels';
 
 // ---------------------------------------------------------------------------
@@ -14,7 +14,10 @@ import type { MarkdownLabel } from './figureLabels';
 // uses that the picture has no anchor for are offered first; the one
 // picked is placed by the next click on the picture. Each anchor has a
 // name, a label style and the label fields a label set at it takes
-// (alignment, vertical alignment, rotation, width).
+// (alignment, vertical alignment, rotation, width, writing). Anchors can be
+// ticked, in the list or Shift-clicked on the picture (#931), and the ticked
+// ones take a style, an alignment or a writing mode together; a dense map
+// names only the points picked, hovered or ticked.
 // ---------------------------------------------------------------------------
 
 /** One colour per label style (cycled), so the points of a style read as
@@ -52,10 +55,49 @@ export interface LabelAnchorsPanelProps {
   showIdErrors: boolean;
   idInputs: MutableRefObject<Map<number, HTMLInputElement>>;
   addButton: MutableRefObject<HTMLButtonElement | null>;
+  /** The anchors ticked for a change of all at once. */
+  ticked: ReadonlySet<number>;
+  onTick: (indices: readonly number[], on: boolean) => void;
+  /** The names on the picture: every point's, or those of the points picked,
+   *  hovered or ticked. */
+  showNames: boolean;
+  onShowNames: (on: boolean) => void;
+  denseMap: boolean;
+}
+
+/** From how many anchors a map is dense: names are shown for the points in
+ *  hand only unless asked for. */
+export const DENSE_ANCHORS = 24;
+
+/** The value of `field` the ticked anchors share, undefined when they differ
+ *  (or when there are none). `undefined` as a value is read as the default
+ *  by `fieldOf`. */
+export function sharedField<K extends keyof LabelFields>(anchors: readonly ResourceAnchor[], indices: Iterable<number>, key: K, fallback: LabelFields[K]): { value: LabelFields[K]; mixed: boolean } | undefined {
+  let first = true;
+  let value: LabelFields[K] = fallback;
+  for (const i of indices) {
+    const a = anchors[i];
+    if (!a) continue;
+    const v = (a[key] ?? fallback) as LabelFields[K];
+    if (first) {
+      value = v;
+      first = false;
+    } else if (v !== value) {
+      return { value: fallback, mixed: true };
+    }
+  }
+  return first ? undefined : { value, mixed: false };
+}
+
+/** `marks` with `patch` set on every ticked anchor: one change. */
+export function withTickedFields(marks: PictureMarks, indices: Iterable<number>, patch: Parameters<typeof withLabelFields>[2]): PictureMarks {
+  let next = marks;
+  for (const i of indices) next = withLabelFields(next, i, patch);
+  return next;
 }
 
 export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
-  const { marks, area, labelStyles, byAnchor, waiting, waitingLabel, placing, onPlacing, selected, onSelect, commit, edit, beginEdit, remove, addAtCentre, showIdErrors, idInputs, addButton } = props;
+  const { marks, area, labelStyles, byAnchor, waiting, waitingLabel, placing, onPlacing, selected, onSelect, commit, edit, beginEdit, remove, addAtCentre, showIdErrors, idInputs, addButton, ticked, onTick, showNames, onShowNames, denseMap } = props;
   const labels = useSandboxLabels();
   const [filter, setFilter] = useState('');
   const uid = useId();
@@ -147,6 +189,27 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
           style={{ borderColor: 'var(--pt-control-border)' }}
         />
       )}
+      {marks.anchors.length > 1 && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+          <Button size="sm" onClick={() => onTick(visible.map(({ i }) => i), true)}>{labels.resourceLabelAnchorsSelectShown}</Button>
+          {ticked.size > 0 && (
+            <>
+              <span role="status" aria-live="polite" className="text-(--slate)">{labels.resourceLabelAnchorsSelected.replace('__n__', String(ticked.size))}</span>
+              <Button size="sm" onClick={() => onTick([...ticked], false)}>{labels.resourceLabelAnchorsSelectClear}</Button>
+            </>
+          )}
+          {denseMap && (
+            <span className="ms-auto inline-flex items-center gap-2">
+              <span id={`${uid}-names`} className="text-(--slate)">{labels.resourceLabelAnchorsNamesOnPicture}</span>
+              <Switch checked={showNames} onCheckedChange={onShowNames} ariaLabelledBy={`${uid}-names`} ariaDescribedBy={`${uid}-names-hint`} />
+            </span>
+          )}
+        </div>
+      )}
+      {marks.anchors.length > 1 && <p id={`${uid}-names-hint`} className="m-0 text-[11px] text-(--slate)">{ticked.size === 0 ? labels.resourceLabelAnchorsBulkHint : denseMap ? labels.resourceLabelAnchorsNamesHint : ''}</p>}
+      {ticked.size > 0 && (
+        <TickedFields marks={marks} ticked={ticked} styleOptions={styleOptions} commit={commit} />
+      )}
       <ul ref={list} className="relative m-0 flex max-h-[58dvh] list-none flex-col gap-1 overflow-y-auto p-0" aria-label={labels.resourceMarksModeAnchors}>
         {visible.map(({ a, i }) => {
           const open = selected === i;
@@ -165,16 +228,20 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
               onFocusCapture={() => { if (!open) onSelect(i); }}
             >
               {!open ? (
-                <button type="button" className="flex min-h-7 w-full cursor-pointer items-center gap-2 text-start text-xs pt-large:min-h-11" onClick={() => onSelect(i)}>
-                  <span className="font-mono text-(--foreground)" dir="auto">{a.id || '…'}</span>
-                  <span dir="auto" className="min-w-0 flex-1 truncate" style={{ color: texts.length ? 'var(--foreground)' : 'var(--slate)', fontStyle: texts.length ? undefined : 'italic' }}>
-                    {texts.length ? texts[0]!.text : labels.resourceLabelAnchorsNoLabel}
-                  </span>
-                  {styleName && <span className="shrink-0 text-[11px] text-(--slate)">{styleName}</span>}
-                  {(shown || outside) && <TriangleAlert size={12} aria-hidden="true" style={{ color: shown ? '#ef4444' : '#d97706' }} />}
-                </button>
+                <div className="flex items-center gap-2">
+                  <TickBox checked={ticked.has(i)} label={labels.resourceLabelAnchorsSelectRow.replace('__id__', a.id || String(i + 1))} onChange={(on) => onTick([i], on)} />
+                  <button type="button" className="flex min-h-7 min-w-0 flex-1 cursor-pointer items-center gap-2 text-start text-xs pt-large:min-h-11" onClick={() => onSelect(i)}>
+                    <span className="font-mono text-(--foreground)" dir="auto">{a.id || '…'}</span>
+                    <span dir="auto" className="min-w-0 flex-1 truncate" style={{ color: texts.length ? 'var(--foreground)' : 'var(--slate)', fontStyle: texts.length ? undefined : 'italic' }}>
+                      {texts.length ? texts[0]!.text : labels.resourceLabelAnchorsNoLabel}
+                    </span>
+                    {styleName && <span className="shrink-0 text-[11px] text-(--slate)">{styleName}</span>}
+                    {(shown || outside) && <TriangleAlert size={12} aria-hidden="true" style={{ color: shown ? '#ef4444' : '#d97706' }} />}
+                  </button>
+                </div>
               ) : (
                 <AnchorFields
+                  tick={<TickBox checked={ticked.has(i)} label={labels.resourceLabelAnchorsSelectRow.replace('__id__', a.id || String(i + 1))} onChange={(on) => onTick([i], on)} />}
                   anchor={a}
                   index={i}
                   marks={marks}
@@ -202,6 +269,8 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
 }
 
 interface AnchorFieldsProps {
+  /** The checkbox that ticks the anchor, before its name. */
+  tick: ReactNode;
   anchor: ResourceAnchor;
   index: number;
   marks: PictureMarks;
@@ -218,13 +287,14 @@ interface AnchorFieldsProps {
 }
 
 /** The fields of the anchor picked in the list. */
-function AnchorFields({ anchor: a, index: i, marks, texts, styleOptions, problem, problemText, outside, commit, edit, beginEdit, remove, idInputs }: AnchorFieldsProps) {
+function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, problem, problemText, outside, commit, edit, beginEdit, remove, idInputs }: AnchorFieldsProps) {
   const labels = useSandboxLabels();
   const uid = useId();
   const set = (patch: Parameters<typeof withLabelFields>[2]) => commit(withLabelFields(marks, i, patch));
   return (
     <div className="flex flex-col gap-1.5 py-1 text-xs">
       <div className="flex items-center gap-2">
+        {tick}
         <label htmlFor={`${uid}-id`} className="shrink-0 text-(--slate)">{labels.resourceLabelAnchorsNameLabel}</label>
         <input
           ref={(el) => { if (el) idInputs.current.set(i, el); else idInputs.current.delete(i); }}
@@ -304,6 +374,20 @@ function AnchorFields({ anchor: a, index: i, marks, texts, styleOptions, problem
           ]}
         />
       </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span id={`${uid}-writing`} className="w-24 shrink-0 text-(--slate)">{labels.resourceLabelAnchorsWriting}</span>
+        <SegmentedControl<'horizontal-tb' | 'vertical-rl'>
+          size="sm"
+          value={a.writingMode ?? 'horizontal-tb'}
+          onValueChange={(v) => set({ writingMode: v })}
+          ariaLabel={labels.resourceLabelAnchorsWriting}
+          ariaLabelledBy={`${uid}-writing`}
+          options={[
+            { value: 'horizontal-tb', label: labels.resourceLabelAnchorsWritingHorizontal },
+            { value: 'vertical-rl', label: labels.resourceLabelAnchorsWritingVertical },
+          ]}
+        />
+      </div>
       {/* Typing a number is one step of Undo, recorded at its first change. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" onFocusCapture={() => beginEdit(i)}>
         <span className="inline-flex items-center gap-2">
@@ -338,5 +422,114 @@ function AnchorFields({ anchor: a, index: i, marks, texts, styleOptions, problem
       </div>
       <p id={`${uid}-width-hint`} className="m-0 text-[11px] text-(--slate)">{labels.resourceLabelAnchorsWidthHint}</p>
     </div>
+  );
+}
+
+/** The checkbox that ticks an anchor for a change of several at once. */
+function TickBox({ checked, label, onChange }: { checked: boolean; label: string; onChange: (on: boolean) => void }) {
+  return (
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      aria-label={label}
+      className="size-3.5 shrink-0 cursor-pointer accent-(--brand) pt-large:size-5"
+    />
+  );
+}
+
+interface TickedFieldsProps {
+  marks: PictureMarks;
+  ticked: ReadonlySet<number>;
+  styleOptions: { value: string; label: string }[];
+  commit: (next: PictureMarks) => void;
+}
+
+const MIXED = '__mixed__';
+
+/** A choice among a few words for the ticked anchors: pressed when they all
+ *  have it, nothing pressed when they differ; every button can be reached
+ *  by Tab, since no one of them is the current value. */
+function BulkChoice<T extends string>({ labelId, label, current, options, onPick }: { labelId: string; label: string; current: T | undefined; options: readonly { value: T; label: string }[]; onPick: (value: T) => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span id={labelId} className="w-24 shrink-0 text-(--slate)">{label}</span>
+      <div role="group" aria-labelledby={labelId} className="inline-flex h-[1.3rem] items-stretch overflow-hidden rounded-full border pt-large:h-11" style={{ borderColor: 'var(--pt-control-border)' }}>
+        {options.map((o) => {
+          const on = current === o.value;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              aria-pressed={on}
+              onClick={() => onPick(o.value)}
+              className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap px-2 text-[0.66rem] focus-visible:outline-2 focus-visible:-outline-offset-2 outline-(--brand) pt-large:min-w-11 ${on ? 'bg-(--brand-soft,var(--surface)) font-medium text-(--foreground)' : 'bg-transparent text-(--slate) hover:bg-(--surface) hover:text-(--foreground)'}`}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** The fields of the ticked anchors, set for all of them in one change. */
+function TickedFields({ marks, ticked, styleOptions, commit }: TickedFieldsProps) {
+  const labels = useSandboxLabels();
+  const uid = useId();
+  const set = (patch: Parameters<typeof withLabelFields>[2]) => commit(withTickedFields(marks, ticked, patch));
+  const style = sharedField(marks.anchors, ticked, 'style', '');
+  const align = sharedField(marks.anchors, ticked, 'align', 'center');
+  const vertical = sharedField(marks.anchors, ticked, 'verticalAlign', 'middle');
+  const writing = sharedField(marks.anchors, ticked, 'writingMode', 'horizontal-tb');
+  const options = style?.mixed ? [{ value: MIXED, label: labels.resourceLabelAnchorsMixed }, ...styleOptions] : styleOptions;
+  return (
+    <section aria-labelledby={`${uid}-title`} className="flex flex-col gap-1.5 rounded-md border p-2 text-xs" style={{ borderColor: 'var(--brand)' }}>
+      <h3 id={`${uid}-title`} className="m-0 text-xs font-semibold">{labels.resourceLabelAnchorsBulkTitle.replace('__n__', String(ticked.size))}</h3>
+      <div className="flex items-center gap-2">
+        <span id={`${uid}-style`} className="w-24 shrink-0 text-(--slate)">{labels.resourceLabelAnchorsStyle}</span>
+        <Select
+          value={style?.mixed ? MIXED : (style?.value ?? '')}
+          onValueChange={(v) => { if (v !== MIXED) set({ style: v || undefined }); }}
+          options={options}
+          ariaLabelledBy={`${uid}-style`}
+          muted={!style?.mixed && !style?.value}
+          className="min-w-0 flex-1"
+        />
+      </div>
+      <BulkChoice<'start' | 'center' | 'end'>
+        labelId={`${uid}-align`}
+        label={labels.resourceLabelAnchorsAlign}
+        current={align?.mixed ? undefined : (align?.value as 'start' | 'center' | 'end' | undefined)}
+        onPick={(v) => set({ align: v })}
+        options={[
+          { value: 'start', label: labels.resourceLabelAnchorsAlignStart },
+          { value: 'center', label: labels.resourceLabelAnchorsAlignCenter },
+          { value: 'end', label: labels.resourceLabelAnchorsAlignEnd },
+        ]}
+      />
+      <BulkChoice<'top' | 'middle' | 'bottom'>
+        labelId={`${uid}-valign`}
+        label={labels.resourceLabelAnchorsVerticalAlign}
+        current={vertical?.mixed ? undefined : (vertical?.value as 'top' | 'middle' | 'bottom' | undefined)}
+        onPick={(v) => set({ verticalAlign: v })}
+        options={[
+          { value: 'top', label: labels.resourceLabelAnchorsVerticalTop },
+          { value: 'middle', label: labels.resourceLabelAnchorsVerticalMiddle },
+          { value: 'bottom', label: labels.resourceLabelAnchorsVerticalBottom },
+        ]}
+      />
+      <BulkChoice<'horizontal-tb' | 'vertical-rl'>
+        labelId={`${uid}-writing`}
+        label={labels.resourceLabelAnchorsWriting}
+        current={writing?.mixed ? undefined : (writing?.value as 'horizontal-tb' | 'vertical-rl' | undefined)}
+        onPick={(v) => set({ writingMode: v })}
+        options={[
+          { value: 'horizontal-tb', label: labels.resourceLabelAnchorsWritingHorizontal },
+          { value: 'vertical-rl', label: labels.resourceLabelAnchorsWritingVertical },
+        ]}
+      />
+    </section>
   );
 }

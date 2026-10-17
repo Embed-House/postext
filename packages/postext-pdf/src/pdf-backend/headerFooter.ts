@@ -321,6 +321,19 @@ function renderImageBlock(
   // sized for that (`upright`) is filled; any other picture (a callout
   // icon) is fitted inside it, keeping its proportions.
   pushFrame(ctx, quarterTurnMatrix({ direction: 'ccw', originX: x, originY: y + height }, ctx.scale, ctx.pageHeightPt));
+  if (block.upright && block.crop) {
+    // A cover crop (#946): the whole picture over its uncropped box in the
+    // upright frame, clipped to the box turned back.
+    pushClipRect(ctx, 0, 0, height, width);
+    tag?.();
+    const c = block.crop;
+    const w = height / c.width;
+    const h = width / c.height;
+    draw(-c.x * w, -c.y * h, w, h);
+    popClip(ctx);
+    popFrame(ctx);
+    return;
+  }
   tag?.();
   if (block.upright) draw(0, 0, height, width);
   else {

@@ -122,7 +122,12 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   keeps its design; from 1.38 a frame that can go on does so before it
   shrinks, a story jumps to a later page (`page:<id>`, "continued on page
   47"), answer lines are ruled frames, and photos and grounds size
-  themselves (`fit: "cover"`, `{ to, edge }`). Follow
+  themselves (`fit: "cover"`, `{ to, edge }`); from 1.39 the labels of
+  every edition are checked (`labelOverlap`, `labelOverflow`) and may be
+  vertical, a figure's alt text, caption and note live in the Markdown,
+  callout styles can be based on one another (`extends`), a frame has its
+  own `writingMode` and `direction`, a template's kicker is `top-start`
+  for every script, and columns are cut by the widow and orphan rules. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead.
 - **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page
@@ -409,7 +414,8 @@ Full references (load the one you need):
   box with a tab, a category tree, a double-page timeline, a labelled map,
   photos with captions, text round an illustration, a box that continues
   on the next page, a magazine thread with jumps, an activity sheet with
-  answer lines, a photo and its ground), the composed-page checks, one
+  answer lines, a photo and its ground), the figure's own words and the
+  label checks, the composed-page checks, one
   bundle for every edition, and moving a round-1 or 1.33 port over.
 - [references/comics.md](references/comics.md): comic pages, strips and
   spreads: the split grammar, panels, script lines, the `comics` config,
@@ -751,7 +757,8 @@ exit 3 on errors) and, with the Node tools, `render.mjs` for its
 --stress 1.3` runs every edition and fails on `frameOverflow`,
 `contentInConfig`, template and slot warnings and a page whose HTML reading
 order is not the Markdown's, and lays the text out 30 % longer as the
-Cookbook bench does (composed-pages.md §7).
+Cookbook bench does (composed-pages.md §7). `labelOverflow` fails it too;
+`labelOverlap` is listed as a note to read in every language.
 
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
@@ -785,8 +792,11 @@ scripts, dot files and caches: a `work/` folder, label sources or tool
 outputs would ship too (`--exclude GLOB` leaves more out).
 
 Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…). A
-bundle with several languages asks which one, and the new book holds that
-edition only: import each edition to look at it. Each edition takes its title
+bundle with several languages is kept whole as one book (postext ≥ 1.39: the
+editions sit beside the one open, switchable from the Books row, the edition
+bar and the permalink `#project=ID&lang=L`; earlier the import asked for one
+language and the new book held that edition only, so each edition was
+imported to look at it). Each edition takes its title
 from `localized.<lang>.name` (postext ≥ 1.34.1, #891; earlier, the
 manifest `name` in every language). Or
 serve a presets folder to a local sandbox (`preset_kit.py index <root>` +

@@ -150,6 +150,8 @@ describe("links and inline HTML", () => {
   });
 
   it("leaves no site-relative link or stray inline HTML in any rendition (nor so in llms-full.txt)", () => {
+    // One assertion at the end: an expect per line made this test outlast CI's timeout.
+    const offending: string[] = [];
     for (const locale of ["en", "es", "ca", "zh", "ja", "ar", "pt"]) {
       for (const path of markdownPaths(locale)) {
         // Prose only: fenced blocks and code spans hold samples.
@@ -158,11 +160,13 @@ describe("links and inline HTML", () => {
           if (/^\s*(```|~~~)/.test(line)) fence = !fence;
           if (fence) continue;
           const prose = line.replace(/(`+)[\s\S]*?\1/g, "");
-          expect(prose, `${locale}${path}`).not.toMatch(/\]\(\/(?!\/)/);
-          expect(prose, `${locale}${path}`).not.toMatch(/<\/?(?:a|em|strong|code)\b[^>]*>/);
+          if (/\]\(\/(?!\/)/.test(prose) || /<\/?(?:a|em|strong|code)\b[^>]*>/.test(prose)) {
+            offending.push(`${locale}${path}: ${prose}`);
+          }
         }
       }
     }
+    expect(offending).toEqual([]);
     // Seven locales of renditions: past the CI default of 120 s.
   }, 300_000);
 });

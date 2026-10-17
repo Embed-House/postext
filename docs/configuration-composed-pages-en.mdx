@@ -345,7 +345,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>the page's</td>
-      <td>A vertical box on a horizontal page, or the other way round.</td>
+      <td>A frame set in its own writing mode or direction: a vertical box on a horizontal page, a horizontal card on a vertical one, a right-to-left quotation in a left-to-right book. A frame of the other writing mode is laid out in its box turned a quarter turn: its lines run along the box's height and follow each other across its width, and an <code>'auto'</code> height is the least that holds them in that width. Its text is painted as a page of that mode paints its own. <code>direction</code> sets the frame's story in that direction, as a box fenced <code>&#123;dir=…&#125;</code> is; a block or box that writes its own <code>dir</code> keeps it. Since postext 1.39. A vertical frame on a right-to-left page keeps the page's mode; a picture in a frame of the other mode turns with the frame; the reflowable EPUB sets the frame's text in the book's mode.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -439,7 +439,7 @@ A frame declares its size: a fixed `height`, or `'auto'`, the height of what it 
 
 **Stack.** The frames of a stack go one under another at their heights, `gap` between them. Each keeps its own horizontal place and width; its own vertical place is ignored.
 
-- A group with no `placement` or `grid` of its own starts where the placement of its first frame puts it and runs down as far as its frames need, to the foot of the template's area. When one frame grows, the frames after it move down by as much.
+- A group with no `placement` or `grid` of its own starts where its first frame is placed (its `placement`, or its `grid` cell in a template with a grid) and runs down as far as its frames need, to the foot of the template's area. When one frame grows, the frames after it move down by as much.
 - A group with a box of its own lays its frames inside that box. When they need more than it holds, the frames with `shrink` above 0 give space back, the lowest `priority` first; frames of the same priority give in proportion to their `shrink`; none goes below its `minHeight`. Spare space goes to the frames with `grow` above 0, in proportion to it, up to their `maxHeight`; with none, `align` places the frames (`'end'` at the foot, `'center'`, `'space-between'`). A frame of the group with no placement of its own takes the group's box as its area.
 - When nothing more can give, the frames nearest the group's foot give way first, each down to its `minHeight`; a frame with a fixed height keeps it, so an empty answer space or picture slot under a box that grows stays on the page and the box's own text gives way instead. No frame runs past the group's foot: the frame whose content does not fit climbs the reflow ladder (see [When content does not fit](#when-content-does-not-fit)), and what still does not fit is cut there and reported as `frameOverflow`. A frame cut below its `minHeight` or its fixed height is reported too, whether it holds content or not.
 - A frame with `height: 'fill'` asks for its `minHeight` and takes spare space as if it had `grow: 1`.
@@ -529,7 +529,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Read and checked, but not yet applied: a frame's `writingMode` and `direction`, and the template's `bodyStyle` and `palette`. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Read and checked, but not yet applied: the template's `bodyStyle` and `palette`. A frame's `writingMode` and `direction` are applied since postext 1.39. An `'auto'` width reads as `'fill'`.
 
 ### Spreads
 
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 A column gap wider than the `gutter` keeps the cards of a symmetric grid clear of the spine, so none of them is moved. The second band and the picture strip set `crossGutter` to run across it: each is read on the page that holds its centre and painted on both. Every word of the page, the era names on the tabs included, stays in the Markdown.
 
-On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as its single composed pages are: the top of a page is the sheet's right edge and the lines run down, so the template's `x` runs down the sheet and its `y` from the sheet's right edge to its left. The sheet is the right page followed by the left one along `y`, the spine is a line across the template, and `gutter`, `crossGutter` and the cut between the pages read that axis; decoration is still laid over the physical sheet and cut at the spine. A horizontal timeline drawn for a horizontal book comes out turned on a vertical one: write a vertical book's template in its flow's frame. Since postext 1.38.
+On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as its single composed pages are: the top of a page is the sheet's right edge and the lines run down, so the template's `x` runs down the sheet and its `y` from the sheet's right edge to its left. The sheet is the right page followed by the left one along `y`, the spine is a line across the template, and `gutter`, `crossGutter` and the cut between the pages read that axis; decoration is still laid over the physical sheet and cut at the spine. A horizontal timeline drawn for a horizontal book comes out turned on a vertical one: write a vertical book's template in its flow's frame. Since postext 1.38. A card that should read across the sheet takes `writingMode: 'horizontal-tb'`: it is set horizontally and stands upright on the vertical page (since postext 1.39).
 
 ## Label styles
 
@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>How small a label may be set when it does not fit its width.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
       <td><code>string</code></td>
       <td>none</td>
       <td>A <code>labelStyles</code> id. A label that names its own style overrides it.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> sets the label vertically, as a Chinese or Japanese map or a spine is lettered. Its <code>width</code> is then a fraction of the picture's height, <code>align</code> runs along the column (<code>start</code> is the top) and <code>verticalAlign</code> across the columns (<code>top</code> is the first, right-hand one).</td>
     </tr>
   </tbody>
 </table>

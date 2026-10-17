@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Fonts, colours and output',
   description: 'Units, colours and the palette, custom fonts, the HTML viewer, PDF and print production, the Folio viewer and the debug overlays',
   lang: 'en',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '36 min',
   order: 19,
   parent: 'configuration',
@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)` runs the checks on a laid-out document and returns a list of issues, each with a `kind`, a `severity` (`'critical'`, `'warning'` or `'info'`), the book-absolute `pageIndex`, the offending `rect` (page px) and, when the element has one, its source range. The kinds are `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` and `nearTrim`. Without a `transform` a neutral counts one ink and any other colour three, and coverage is not checked; with one, the counts and the coverage are exact. The resolution of a picture is worked out from the pixels its resource declares, or from the file's own when `imageSize(fileId)` gives them (`bitmapInfo` on the bytes, or the decoded image): a declaration more than a pixel away from the file is reported once as `declaredPixelsMismatch`, a warning when it claims more pixels than the file has. `placedImageResolutions(doc, { resources, imageSize })` lists every placed bitmap with its effective ppi, whether the preflight is on or not.
+`preflightDocument(doc, options)` runs the checks on a laid-out document and returns a list of issues, each with a `kind`, a `severity` (`'critical'`, `'warning'` or `'info'`), the book-absolute `pageIndex`, the offending `rect` (page px) and, when the element has one, its source range. The kinds are `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` and `nearTrim`. Without a `transform` a neutral counts one ink and any other colour three, and coverage is not checked; with one, the counts and the coverage are exact. The resolution of a picture is worked out from the pixels its resource declares, or from the file's own when `imageSize(fileId)` gives them (`bitmapInfo` on the bytes, or the decoded image): a declaration more than a pixel away from the file is reported once as `declaredPixelsMismatch`, a warning when it claims more pixels than the file has. `placedImageResolutions(doc, { resources, imageSize })` lists every placed bitmap with its effective ppi, whether the preflight is on or not. The labels of a figure count as text for `smallProcessText`, `inkLimit` and `safeZone`.
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,7 +783,7 @@ Light text knocked out of an inked ground fills in on press when it is small or 
 
 ### What is read
 
-The check reads the lines of every block with their inline colours (bold, italic, references, chips), list markers, drop caps, captions, notes and table cells, and the text of design slots: running heads, openers, heading designs, box titles. The ground is the topmost fill under the text: a design box, a callout, a caption bar, a table cell, a chip, or else the page colour (`page.backgroundColor`, or the paper a part's palette gives its pages). A translucent colour is blended with what is under it. Text over a picture is skipped, since its ground is not one colour, and so are comic lettering, ruby readings and formulas.
+The check reads the lines of every block with their inline colours (bold, italic, references, chips), list markers, drop caps, captions, notes and table cells, and the text of design slots: running heads, openers, heading designs, box titles. The ground is the topmost fill under the text: a design box, a callout, a caption bar, a table cell, a chip, or else the page colour (`page.backgroundColor`, or the paper a part's palette gives its pages). A translucent colour is blended with what is under it. Text over a picture is skipped, since its ground is not one colour, and so are comic lettering, ruby readings and formulas. The words of a figure's labels are read on their plate, or inside their halo when they have one; labels bare on the picture are skipped like any text over a picture.
 
 On a composed page the check follows the order the page is painted in: the frames by layer, with the template's `decoration` at layer 0. Frame text stands on its frame's own box when the frame's style paints one, else on the decoration box under it (a picture of the decoration skips it, as any picture does), else on the page colour, so white lettering on a coloured tab of the decoration is measured against that tab. A turned or scaled frame is put on the sheet before its ground is read, and the decoration's own text is checked the same way. Since postext 1.37.
 
@@ -869,7 +869,7 @@ Every design slot is read: `header`, `footer`, each heading level's `advancedDes
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1336,7 +1336,7 @@ Besides these, the panel always lists the warnings the layout itself raises (`VD
 
 ### Configuration warnings
 
-Eight mistakes in the configuration itself are never silent, and no toggle hides them. The engine does not fail on any of them; it substitutes a value, or leaves the setting out, and says so:
+These mistakes in the configuration itself are never silent, and no toggle hides them except the one the last item names. The engine does not fail on any of them; it substitutes a value, or leaves the setting out, and says so:
 
 - **Unknown number format** — an ordered-list `numberFormat`, a `page.pageNumbering.format` or a resource type's `counterFormat` that is none of the [numbering format spellings](/en/docs/configuration-page-layout#numbering-format-spellings). It numbers in decimal.
 - **Font stack in a font family** — a `fontFamily` (or any `…FontFamily`) that holds a CSS font stack. The text is set in the stack's first family (see [One family per `fontFamily`](/en/docs/configuration-text#one-family-per-fontfamily)).
@@ -1347,6 +1347,7 @@ Eight mistakes in the configuration itself are never silent, and no toggle hides
 - **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`.
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
 - **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format-resources#text-wrap)). A `wrap` that names no side is an unknown setting value.
+- **Box style based on another** — a callout style whose `extends` names no style of `calloutStyles` (`calloutStyleExtendsUnknown`, with the closest id as `suggestion`), or whose `extends` chain comes back to it (`calloutStyleExtendsCycle`, `value` the loop `a → b → a`). The style stands alone, with the built-in values for what it leaves unset (see [Styles based on another](/en/docs/configuration-callouts#styles-based-on-another)).
 - **Page templates and label styles** — a problem in `pageTemplates` or `labelStyles`: an id or a name used twice, `extends`, anchors or chained frames that loop, a style, frame or template that does not exist, a minimum above its maximum, an anchor's label style that `labelStyles` lacks (checked when the resources are given: `collectConfigWarnings(config, { resources })`). Their `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`); each kind is listed with its cause and fix in [Page template warnings](/en/docs/configuration-composed-pages#page-template-warnings).
 - **Content in a design** — a design text element whose text, beyond its placeholders, is longer than a short label: the book's text kept in the configuration. One warning per setting (a heading style, the header, a part design), with the path of each text (`contentInConfig`; see [Content check](#content-check-config)). Unlike the others, it can be turned off: `checks.contentInConfig.enabled: false`.
 

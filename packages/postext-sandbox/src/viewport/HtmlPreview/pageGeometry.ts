@@ -1,3 +1,4 @@
+import { composedFrameBlockIds, frameBounds } from 'postext';
 import type { BoundingBox, LayoutType, VDTBlock, VDTDocument, VDTPage } from 'postext';
 
 export interface PageGeometryInput {
@@ -99,7 +100,12 @@ function columnContentBottom(page: VDTPage): number {
  *  has no foot to speak of, so they follow the text instead, keeping their
  *  arrangement (a floated callout and its content move together). */
 function liftStrandedFloats(page: VDTPage, gapPx: number): void {
-  const floats = page.floats ?? [];
+  // The blocks of a composed frame (or a comic's text panel) are floats in
+  // the frame's own coordinates, painted through its matrix (#858): they
+  // are not boxes on the page and move with their frame or not at all
+  // (#930).
+  const inFrames = composedFrameBlockIds(page);
+  const floats = (page.floats ?? []).filter((f) => !inFrames.has(f.id));
   if (floats.length === 0) return;
   const bottom = columnContentBottom(page);
   const stranded = floats.filter((f) => f.bbox.y >= bottom);
@@ -133,7 +139,15 @@ export function fitPagesToContent(doc: VDTDocument, padPx: number): void {
         for (const ob of block.designOverlay?.blocks ?? []) take(ob.bbox);
       }
     }
-    for (const float of page.floats ?? []) take(float.bbox);
+    // A composed page holds its frames, not their blocks: those are in the
+    // frame's own space (scaled by the reflow ladder, turned), so the page
+    // measures each frame's box on the sheet (#930), with its decoration.
+    const inFrames = composedFrameBlockIds(page);
+    for (const float of page.floats ?? []) if (!inFrames.has(float.id)) take(float.bbox);
+    for (const frame of page.composed?.frames ?? []) {
+      if (!frame.collapsed) take(frameBounds(frame));
+    }
+    for (const ob of page.composed?.decoration?.blocks ?? []) take(ob.bbox);
     for (const ob of page.openerBand?.blocks ?? []) take(ob.bbox);
     // A comic page is its leaf (`comics.viewerLeaf`), as wide as it is:
     // wider than the text's page when the viewport is.

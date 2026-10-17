@@ -113,7 +113,7 @@ describe('the labels of a page on the sheet (#866)', () => {
     expect(sheetToPicture(mirrored, ...Object.values(pictureToSheet(mirrored, 0.4, 0.6)) as [number, number])).toEqual({ x: 0.4, y: 0.6 });
   });
 
-  it('a press takes the nearest anchor point, else the box under it; a label placed in the text is not taken', () => {
+  it('a press takes the nearest anchor point, else the box under it; a label placed by percentages is taken too, by its written place (#931)', () => {
     const doc = composed();
     const labels = labelsOnPage(doc, pageOf(doc));
     const [madrid, , mar] = labels;
@@ -121,7 +121,7 @@ describe('the labels of a page on the sheet (#866)', () => {
     const c = cornersBounds(madrid!.corners);
     expect(labelAt(labels, c.x + 1, c.y + 1, 0.1)?.anchorId).toBe('madrid');
     const m = cornersBounds(mar!.corners);
-    expect(labelAt(labels, m.x + m.width / 2, m.y + m.height / 2, 0.1)).toBeNull();
+    expect(labelAt(labels, m.x + m.width / 2, m.y + m.height / 2, 0.1)).toBe(mar);
     expect(labelAt(labels, -100, -100, 5)).toBeNull();
   });
 

@@ -75,7 +75,12 @@ export function buildPagesDom(
     attachSlotClickHandler(slot, pageIndex, pageWidthPx, pageHeightPx, docRef, dispatchRef, activePanelRef, sourceRef, navigateRef, resourcesRef, pageSourceRef, labelsRef);
     // The labels of figures in Design mode (#866): a press on one is theirs,
     // before the page-template editor's.
-    attachLabelAnchorEditor(slot, pageIndex, pageWidthPx, pageHeightPx, { docRef, dispatchRef, ...(labelsRef ? { labelsRef } : {}) });
+    attachLabelAnchorEditor(slot, pageIndex, pageWidthPx, pageHeightPx, {
+      docRef,
+      dispatchRef,
+      ...(labelsRef ? { labelsRef } : {}),
+      sourceOfPage: (i) => (pageSourceRef?.current ? pageSourceRef.current(i) : sourceRef.current),
+    });
     // The page-template editor of Design mode (#863): first on the page's pointer.
     attachFrameEditor(slot, pageIndex, pageWidthPx, pageHeightPx, { docRef, dispatchRef, sourceRef, pageSourceRef, ...(labelsRef ? { labelsRef } : {}) });
     allSlots.push(slot);

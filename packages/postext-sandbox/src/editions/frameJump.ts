@@ -16,6 +16,8 @@ import type { FrameJump } from '../warnings/composedChecks';
 export interface PendingFrameJump extends FrameJump {
   /** The book the jump is for: a preset's id (null for a project). */
   presetId: string | null;
+  /** The local project it is for, when that is the book (#903). */
+  projectId?: string | null;
   /** Leave the editor where it is (the edition switcher). */
   keepEditor?: boolean;
   /** When it was asked for: a jump the book never reaches is dropped. */
@@ -68,11 +70,15 @@ export function setJumpFlash(next: JumpFlash | null): void {
 
 /** The fragment a jump writes: the edition (for a preset), the canvas, the
  *  chapter and the page. Pure (tests). */
-export function frameJumpFragment(current: ReturnType<typeof readViewHash>, jump: Pick<PendingFrameJump, 'presetId' | 'locale' | 'chapterIndex' | 'page'>): string {
-  const otherEdition = jump.presetId !== null && jump.locale !== '';
+export function frameJumpFragment(current: ReturnType<typeof readViewHash>, jump: Pick<PendingFrameJump, 'presetId' | 'projectId' | 'locale' | 'chapterIndex' | 'page'>): string {
+  const otherEdition = (jump.presetId !== null || (jump.projectId ?? null) !== null) && jump.locale !== '';
   return viewHashFragment({
     ...current,
-    ...(otherEdition ? { preset: jump.presetId, project: null, lang: jump.locale } : {}),
+    ...(otherEdition
+      ? jump.presetId !== null
+        ? { preset: jump.presetId, project: null, lang: jump.locale }
+        : { preset: null, project: jump.projectId ?? null, lang: jump.locale }
+      : {}),
     view: 'canvas',
     chapter: jump.chapterIndex ?? current.chapter,
     page: jump.page ?? null,

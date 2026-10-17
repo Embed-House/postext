@@ -1031,3 +1031,19 @@ describe('page template warnings (#853)', () => {
     }
   });
 });
+
+describe('box styles based on another (#905)', () => {
+  it('lists an unknown parent and a loop in the design group', () => {
+    const config: PostextConfig = {
+      calloutStyles: [{ id: 'caja' }, { id: 'p5', extends: 'cajas' }, { id: 'a', extends: 'b' }, { id: 'b', extends: 'a' }],
+    };
+    const found = computeWarnings({ markdown: 'Text.', config, doc: null, resources: [] })
+      .filter((w) => w.payload.kind.startsWith('calloutStyleExtends'));
+    expect(found.map((w) => w.payload)).toEqual([
+      { kind: 'calloutStyleExtendsUnknown', path: 'calloutStyles[1].extends', value: 'cajas', used: '', suggestion: 'caja' },
+      { kind: 'calloutStyleExtendsCycle', path: 'calloutStyles[2].extends', value: 'a → b → a', used: '' },
+    ]);
+    expect(warningCategory('calloutStyleExtendsUnknown')).toBe('design');
+    expect(warningCategory('calloutStyleExtendsCycle')).toBe('design');
+  });
+});

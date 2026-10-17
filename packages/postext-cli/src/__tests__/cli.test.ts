@@ -97,6 +97,22 @@ describe('postext cli', () => {
     expect(again).toContain('More text.');
   }, 60_000);
 
+  // #932: the character spacing of Word's styles goes on the book's styles that set none.
+  it('brings the character spacing of Word styles onto the book\'s styles that set none', () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n:::paragraphs{style="firma"}\nSigned\n:::\n');
+    const styled = { paragraphStyles: [{ id: 'firma', name: 'Firma', letterSpacing: { value: 0.05, unit: 'em' } }], headings: { levels: [{ level: 1, letterSpacing: { value: 0.02, unit: 'em' } }] } };
+    writeFileSync(join(dir, 'styled.json'), JSON.stringify(styled));
+    writeFileSync(join(dir, 'bare.json'), JSON.stringify({ paragraphStyles: [{ id: 'firma', name: 'Firma' }] }));
+    expect(run(['docx', 'ch', '-o', 'b.docx', '--config', 'styled.json', '-q'], dir).code).toBe(0);
+    const r = run(['import-docx', 'b.docx', '--config', 'bare.json', '-o', 'back', '--json'], dir);
+    expect(r.code).toBe(0);
+    expect(JSON.parse(r.stdout).styleTracking.applied.sort()).toEqual(['Firma 0.05 em', 'heading 1 0.02 em']);
+    const back = (JSON.parse(readFileSync(join(dir, 'back', 'preset.json'), 'utf8')) as { config: typeof styled }).config;
+    expect(back.paragraphStyles[0]!.letterSpacing).toEqual({ value: 0.05, unit: 'em' });
+    expect(back.headings.levels[0]).toEqual({ level: 1, letterSpacing: { value: 0.02, unit: 'em' } });
+  }, 60_000);
+
   it('renders one page to stdout', () => {
     const dir = book();
     const r = Bun.spawnSync([...cmd, 'image', 'ch', '--page', '#1', '-o', '-', '--dpi', '20', '--offline', '-q'], { cwd: dir, env: { ...process.env, POSTEXT_CACHE_DIR: join(dir, '.cache') } });
@@ -261,6 +277,24 @@ describe('postext cli', () => {
       await proc.exited;
     }
   }, 90_000);
+
+  // #939: a JSON report longer than the pipe's 64 KiB buffer reaches a reader
+  // that starts late whole (the process used to exit with the pipe still full).
+  it('writes a long --json report to a pipe without cutting it', async () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), `# Three\n\n${Array.from({ length: 600 }, (_, i) => `::resource{id="nowhere${i}"}\n`).join('\n')}`);
+    // A real OS pipe with a reader that starts late (`sleep`), as a Python
+    // subprocess.run is.
+    const proc = Bun.spawn(['sh', '-c', '"$@" | { sleep 3; cat; }', 'sh', ...cmd, 'check', 'ch', '--offline', '--json'], {
+      cwd: dir, env: { ...process.env, NO_COLOR: '1', POSTEXT_CACHE_DIR: join(dir, '.cache') }, stdout: 'pipe', stderr: 'ignore',
+    });
+    const text = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(text.length).toBeGreaterThan(70_000);
+    const report = JSON.parse(text);
+    expect(report.warnings.filter((w: { kind: string }) => w.kind === 'unknownResourceId').length).toBe(600);
+    expect(report.exitCode).toBe(0);
+  }, 60_000);
 
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();

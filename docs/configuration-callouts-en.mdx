@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Human-readable name (editor UI only).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>The id of another style this one is based on: every field it leaves unset comes from that style. See <a href="#styles-based-on-another">Styles based on another</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -216,7 +222,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>When <code>true</code> the box is kept whole: a callout that does not fit the remaining space moves whole to the next column or page. Only a box taller than an empty, full column — a whole page for a <code>span: 'page'</code> box — cannot be kept whole: it splits by the <code>false</code> rules below instead of overflowing, starting where it occurs, and a continuation that fits a column then moves on whole; a floated box (<code>placement: 'top' | 'bottom' | 'auto'</code>) that tall does not float but stays in the flow where it occurs. When <code>false</code> any box may break between its child blocks or between the lines of a paragraph or list item: the deepest cut that fits closes the current column (or, for a <code>span: 'page'</code> box, the page, flush with the bottom of the columns) and the rest continues at the top of the next one in a box of its own — same frame and stripe, no icon, and no title unless <code>repeatTitle</code> repeats it — splitting again if it is still too tall. The text of every fragment keeps the column an inline icon takes on the head, empty, so the box has one measure on every page. A cut inside a list item leaves its bullet with the head. Every fragment's frame shares the fence's <code>contentIndex</code> / <code>containerId</code> and records <code>callout.part</code> / <code>callout.continued</code>. Use it on a long closing "key points" box together with <code>headings.balancing.beforeSpan</code>, or on a note style whose boxes must never push a figure off the page. A nested box (a <code>:::callout</code> inside another) is one child of its parent: a cut may fall before or after it, and inside it only when its own style allows splitting (<code>keepTogether: false</code>, or taller than a full column), by its own <code>splitMinLines</code>.</td>
+      <td>When <code>true</code> the box is kept whole: a callout that does not fit the remaining space moves whole to the next column or page. Only a box taller than an empty, full column — a whole page for a <code>span: 'page'</code> box — cannot be kept whole: it splits by the <code>false</code> rules below instead of overflowing, starting where it occurs, and a continuation that fits a column then moves on whole; a floated box (<code>placement: 'top' | 'bottom' | 'auto'</code>) that tall does not float but stays in the flow where it occurs. When <code>false</code> any box may break between its child blocks or between the lines of a paragraph or list item: the deepest cut that fits closes the current column (or, for a <code>span: 'page'</code> box, the page, flush with the bottom of the columns) and the rest continues at the top of the next one in a box of its own — same frame and stripe, no icon, and no title unless <code>repeatTitle</code> repeats it — splitting again if it is still too tall. The text of every fragment keeps the column an inline icon takes on the head, empty, so the box has one measure on every page. A cut inside a list item leaves its bullet with the head. Every fragment's frame shares the fence's <code>contentIndex</code> / <code>containerId</code> and records <code>callout.part</code> / <code>callout.continued</code>. Use it on a long closing "key points" box together with <code>headings.balancing.beforeSpan</code>, or on a note style whose boxes must never push a figure off the page. A nested box (a <code>:::callout</code> inside another) is one child of its parent: a cut may fall before or after it, and inside it only when its own style allows splitting (<code>keepTogether: false</code>, or taller than a full column), by its own <code>splitMinLines</code>. Since postext 1.39 the cut follows the running text's rules, as a composed page's frame does: a heading never ends a fragment (<code>headings.keepWithNext</code>), a cut between the items of a list leaves at least two items on each side (<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>; one when off), and a list of up to <code>bodyText.shortListMaxItems</code> items under <code>shortListSplit: 'avoid'</code> is not cut between its items. When no cut allows it, the fragment ends before the heading or the list, or inside one of its items.</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Styles based on another
+
+`extends` names another style of `calloutStyles`, and every field the style leaves unset comes from it. Objects such as `padding`, `border`, `titleStyle` or `fixed` are merged key by key, so a style can change one side of the padding or the `fixed.offset` alone; a colour or a length is taken whole; `id` and `name` are never inherited. A parent may itself be based on another. A book whose boxes stand at many places keeps one style for their look and a thin style per place:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Change the look of `caja` and every box follows, each where it stands. An `extends` that names no style raises `calloutStyleExtendsUnknown` (the warning suggests the closest id, and the style stands alone with the built-in values), and styles based on each other in a loop raise `calloutStyleExtendsCycle` (they stand alone until one of them is based on a style outside the loop). In the Sandbox the **Based on** field of a box style sets it; deleting a style that others are based on writes its settings into them, so their boxes do not change. In the **Frame styles** section, merging with **Compare the look only** keeps a style whose boxes stand elsewhere as such a thin style when **Keep each box where it stands** is on (the default), so no box moves. Since postext 1.39.
 
 ### The `:::callout` container
 

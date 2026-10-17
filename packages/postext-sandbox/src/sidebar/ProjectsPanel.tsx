@@ -13,7 +13,7 @@ import {
 } from '../context/SandboxContext';
 import { Button, Collapsible, ConfirmPopover, EmptyState, IconButton, ListRow, Menu, MenuItem, MenuSeparator, PanelBody, PanelHeader, RowTag } from '../ui';
 import { isPresetHideable, partitionPresets } from '../presets/hidden';
-import { activeLocaleTag, bundleContentLocales, choosePresetOpen, presetLocales } from '../presets/locale';
+import { activeLocaleTag, bundleContentLocales, choosePresetOpen, presetLocales, sameLocaleTag } from '../presets/locale';
 import { readBundleZipManifest } from '../presets/zip';
 import { localeDisplayName, localeShortTag } from '../presets/localeNames';
 import { useBlobObjectUrl } from '../panels/resources/ResourcePreview';
@@ -56,6 +56,7 @@ export function ProjectsPanel() {
     rename,
     remove,
     importBundleBytes,
+    switchEdition,
     exportProject,
     setThumbnail,
   } = projectsValue;
@@ -289,6 +290,8 @@ export function ProjectsPanel() {
                 isActive={project.id === activeProjectId}
                 disabled={busy}
                 onActivate={() => openThenShow(() => activate(project.id))}
+                onActivateEdition={(locale) => openThenShow(() => switchEdition(project.id, locale))}
+                uiLocale={viewerLocale}
                 onShowChapters={showChapters}
                 onRename={(name, description) => { void rename(project.id, name, description); }}
                 onDuplicate={() => { void duplicate({ kind: 'project', id: project.id }); }}
@@ -329,6 +332,9 @@ interface ProjectRowProps {
   isActive: boolean;
   disabled: boolean;
   onActivate: () => void;
+  /** Open the project in another of its editions (#903). */
+  onActivateEdition: (locale: string) => void;
+  uiLocale: string;
   /** A click on the open book: the Chapters panel. */
   onShowChapters: () => void;
   onRename: (name: string, description: string) => void;
@@ -344,6 +350,8 @@ function ProjectRow({
   isActive,
   disabled,
   onActivate,
+  onActivateEdition,
+  uiLocale,
   onShowChapters,
   onRename,
   onDuplicate,
@@ -428,7 +436,28 @@ function ProjectRow({
 
   const tags = (
     <>
-      {project.locale && <LocaleTag locale={project.locale} />}
+      {project.locales
+        // A book kept in several languages: one tag per edition, each
+        // opening the project in that language; the one on screen is marked.
+        ? project.locales.map((l) => {
+            const short = localeShortTag(l, project.locales!);
+            const text = short.lang ? <span lang={short.lang}>{short.text}</span> : short.text;
+            const name = localeDisplayName(l, uiLocale);
+            const current = sameLocaleTag(l, project.locale ?? '');
+            if (current || disabled) {
+              return (
+                <RowTag key={l} accent={isActive && current} label={(current ? labels.presetLocaleActive : labels.presetLocaleLoad).replace('__locale__', name)}>
+                  {text}
+                </RowTag>
+              );
+            }
+            return (
+              <RowTag key={l} onClick={() => onActivateEdition(l)} pressed={false} label={labels.presetLocaleLoad.replace('__locale__', name)}>
+                {text}
+              </RowTag>
+            );
+          })
+        : project.locale && <LocaleTag locale={project.locale} />}
       {project.chapterCount > 1 && <RowTag>{labels.chapterCountTag.replace('__n__', String(project.chapterCount))}</RowTag>}
       {isActive && <RowTag accent>{labels.presetActive}</RowTag>}
     </>

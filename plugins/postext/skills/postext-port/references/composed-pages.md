@@ -40,6 +40,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.36.0</td><td>the reflow ladder (<code>fit</code>: pictures then text set smaller) and <code>frameOverflow</code> with proposals; the source map (<code>sourceAt</code>, stable ids); contour wrap (<code>wrap: "contour"</code>); the Sandbox template editor</td><td>2</td></tr>
 <tr><td>1.37.0</td><td>continuation on added pages (<code>overflow.continueIn: "next-page" | "template:&lt;id&gt;"</code>, <code>overflowTemplate</code>, <code>frameContinuationLimit</code>); <code>::label</code> words drawn at a picture's anchors (<code>labelAnchorUnknown</code>, <code>anchorUnlabelled</code>); <code>moveTextToMarkdown</code>; headings keep their design in frames and boxes; <code>paragraphStyles[].letterSpacing</code>; the contrast check reads frame text on its box or the decoration under it; <code>pictureBelowPrintSize</code>; Sandbox: frame-style library, one undo history, a click on the page selects the Markdown or the setting behind it (<code>sandbox_inspect_point</code> answers with <code>elements</code>)</td><td>2</td></tr>
 <tr><td>1.38.0</td><td>a frame that can go on to another page does so before it shrinks (<code>fit.preferContinue</code>); a threaded story goes on in the frame its chain starts in; cuts keep a heading with its text and two list items on each side; the answer space under a box goes on with it; <code>continueIn: "page:&lt;id&gt;"</code> jumps to a later page, <code>{page}</code> in <code>overflow.mark</code>, <code>overflow.fromMark</code>, <code>continueTargetMissing</code>; stacks keep their empty frames, rows of <code>auto</code> cards share width without a box; ruled frames (<code>rules</code>); <code>{ to, edge }</code> sizes and <code>fit: "cover"</code> + <code>focus</code> for design images; drop caps in frames; spreads on vertical books; comic <code>::panel{text}</code> and <code>box</code>; <code>moveTextToMarkdown</code> with <code>labelsOnPictures</code>; resource types written in part take the defaults; Sandbox: Canvas &rsaquo; Reflow, anchors placed by a click, <code>sandbox_apply_proposal</code></td><td>2</td></tr>
+<tr><td>1.39.0</td><td>checks that read the labels of every edition (<code>labelOverlap</code>, <code>labelOverflow</code>) and vertical labels (<code>writingMode</code> on an anchor or a label style); a figure's own <code>alt</code>, <code>caption</code> and <code>note</code> in the Markdown, per edition; callout styles based on another (<code>extends</code>); a frame's own <code>writingMode</code> and <code>direction</code>; <code>start</code>/<code>end</code> placement edges; widow and orphan rules in <code>:::columns</code> groups and frame columns; drop caps that follow the flow's rules across frame cuts, and the initial a <code>takes</code> title frame gives; comic text panels on vertical and right-to-left pages (<code>shrink</code>); <code>fit: "cover"</code> on upright pictures; <code>sourceAt</code> on mirrored and vertical composed pages (<code>flow</code>); the Sandbox keeps every edition of an imported bundle, lists <code>page:&lt;id&gt;</code> jump targets and edits <code>{ to, edge }</code> sizes, cover focus and dense anchors</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -54,7 +55,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
   the rest of the text typed into a second page fence); without labels, the
   round-1 live-text SVG (playbooks J4) for maps and diagrams only. The
   recipes in section 6 say what each gap costs in a sentence that starts
-  with "Before 1.37" or "Before 1.38".
+  with "Before 1.37", "Before 1.38" or "Before 1.39".
 - **Say which.** The port's report names the round, the engine version and
   every feature it worked around.
 - **The layout question.** Round 1 made the user choose between an
@@ -159,7 +160,11 @@ geometry constants, with helpers of your own (`frame(name, …)`,
 - Words drawn on a picture (a map, a diagram, labels among photos): cut the
   picture **without** its lettering, store one anchor per word on the
   resource, and write `:::figure{resource="…" slot="…"}` with one
-  `::label[TEXT]{at="anchor"}` line per word (recipe 6.4).
+  `::label[TEXT]{at="anchor"}` line per word (recipe 6.4). The edition's
+  own `alt`, `caption` and `note` for that picture go in the same fence
+  (1.39): `:::figure{resource="relieve" alt="…"}` with `::caption[…]` and
+  `::note[…]` lines beside the labels. Never an alt table in the generator
+  or a resource edited per language.
 - Per-page values that only the design prints (the ground picture, the
   topic's name in a corner): page fence attributes (`fondo="banda-retos"
   tema="Living together"`) read as `{attr.fondo}` / `{attr.tema}`.
@@ -277,6 +282,16 @@ The library is the set of looks the book uses, each written once:
   (`placement`, `width`, `padding` per frame for the room a picture over
   the box needs), and keep the tab's `label.inset` small: the frame's width
   places the tab.
+- **A style can be based on another** (1.39): `calloutStyles[].extends:
+  "<id>"` takes every field the style leaves unset from that style
+  (objects such as `padding`, `fixed` or `titleStyle` key by key; colours
+  and lengths whole; never `id` or `name`), and chains are allowed. Write
+  one full style per look and, where a box needs its own place or margin,
+  a thin style `{ "id": "caja-p5", "extends": "caja", "placement":
+  "fixed", "fixed": { … }, "marginBottom": … }`. A parent that does not
+  exist is `calloutStyleExtendsUnknown`, a loop `calloutStyleExtendsCycle`
+  (the style then stands alone). It carries no text, so `contentInConfig`
+  and `preset_kit.py lint` are unaffected.
 - **Tracking belongs to the paragraph style** (1.37): a page title tracked
   +15/1000 em is `letterSpacing: { value: 0.015, unit: "em" }` on the style
   its `:::paragraphs{style}` uses, in a frame or in the flow (InDesign
@@ -289,13 +304,17 @@ The library is the set of looks the book uses, each written once:
   (`caja-azul`, `pie-foto`, `mar`, `ciudad`), never a page.
 - The Sandbox's frame-style library (1.37; Design › Boxes › Frame styles,
   `sandbox_frame_styles` / `sandbox_merge_styles` with `groups: [{ keep,
-  merge }]`) proposes the merges after a port. Take them with
-  `lookOnly: true` (compare the look, not the position) only once the boxes
-  take their place from template frames: a style that `:::callout` fences
-  also use carries the box's place (`placement`, `fixed`, margins), and
-  merging styles that place boxes differently moves the boxes. Measured on
-  the round-1 textbook: position-safe merges leave 115 of 117 styles, the
-  look alone 16.
+  merge }]`) proposes the merges after a port. A style that `:::callout`
+  fences also use carries the box's place (`placement`, `fixed`, margins),
+  and merging styles that place boxes differently moves the boxes. Before
+  1.39, take `lookOnly: true` (compare the look, not the position) only
+  once the boxes take their place from template frames. From 1.39 take it
+  at any time: with *Keep each box where it stands* (on by default;
+  `keepPlaces`, answer `keptForTheirPlace`) a merged style whose boxes
+  stand elsewhere stays as a thin style that `extends` the kept one with
+  its position fields, and no fence is rewritten. Measured on the round-1
+  textbook: position-safe merges leave 115 of 117 styles, the look alone 16
+  full styles (the other 101 become thin ones).
 - **Words of a tab** come from the Markdown (`:::frame{label="El dinero"}`):
   give the style a `label` block (font, colours, height, `paddingX`,
   `offset`, `position`) or no tab prints. A style's own `title` default is
@@ -331,7 +350,23 @@ The library is the set of looks the book uses, each written once:
   template's `area`, `page` = trim, `bleed`, or `#frame` / `#group` with
   `below`, `right-of`, `left-of`, `above`, `align-*` or a corner such as
   `top-right`), else the area's top-left at full width. A frame anchored to
-  another moves with it.
+  another moves with it. A `row` group with no box of its own starts at
+  the `grid` cell of its first frame (1.39 documents it; it worked
+  before): give the first card `grid: { col, row }` rather than an offset
+  computed in the generator.
+- **Writing mode and direction of a frame** (1.39): a frame may set its
+  own `writingMode` and `direction`. A vertical box on a horizontal page:
+  `writingMode: "vertical-rl"` (not on a right-to-left page, whose frames
+  keep the page's mode). A horizontal card on a vertical page (a timeline
+  card in a vertical book's spread): `writingMode: "horizontal-tb"`.
+  `direction: "rtl" | "ltr"` sets the frame's story in that direction
+  (a block with its own `{dir}` keeps it), so a right-to-left quotation in
+  a left-to-right book is a frame, not a hack. The frame's box is placed as
+  written and its content is laid in that box turned a quarter turn (lines
+  along its height); an `auto` height is the least that holds the lines in
+  its width, so give a frame of long text a fixed height. Up to 1.38 both
+  keys were read and checked, not applied. A `next` chain whose frames
+  differ in writing mode is not supported (one measure cuts the story).
 - **Sizes.** `width` defaults to `fill`; `height` to `auto` (the content's
   height, between `minHeight` and `maxHeight`, never past the area's foot).
   Give a box its drawn height as `minHeight`, so the template draws the
@@ -362,7 +397,14 @@ The library is the set of looks the book uses, each written once:
   few points rather than add a page.
 - **Decoration** is laid after the frames and anchors to `#frame`; it never
   pushes text and is dropped from reflowable output, so no word of the book
-  goes there. A ground or a band that runs to another box's edge takes its
+  goes there. Its edges can be `top-start`, `start`, `bottom-start`,
+  `top-end`, `end`, `bottom-end` and `align-start` / `align-end` (1.39):
+  the start is the left of a left-to-right page and the right of a
+  right-to-left or vertical one on the sheet, and `offset.x` runs from
+  start to end. A kicker or folio of a template shared by an Arabic and a
+  Latin edition is `top-start`, once; do not choose `top-left` or
+  `top-right` per edition. Frames are laid in the flow, where `start` is
+  `left` already. A ground or a band that runs to another box's edge takes its
   size from it (1.38): `size.height: { "to": "bleed", "edge": "bottom" }`
   anchored `below` a band, or `{ "to": "#band", "edge": "top" }`; it
   follows the band when the band moves. Do not work heights out from the
@@ -567,10 +609,13 @@ Con relojes mecánicos
   pages' flow frame: the template's `x` runs down the sheet and its `y`
   from the sheet's right edge leftwards, the right page first; `gutter`,
   `crossGutter` and the cut at the spine read that axis; decoration stays
-  on the physical sheet. A horizontal timeline drawn for a horizontal book
-  comes out turned: write the template for the flow's frame. Before 1.38
-  a vertical book's spread had the wrong frame and no warning: keep the
-  timeline horizontal and say so in the report.
+  on the physical sheet. Write the template for the flow's frame. A card
+  of a horizontal timeline would come out turned with the page's mode: give
+  it `writingMode: "horizontal-tb"` (1.39) and its text is laid across, in
+  a box placed as written (a fixed `height` for a long card). Before 1.39
+  the card came out vertical; before 1.38 a vertical book's spread had the
+  wrong frame and no warning: keep the timeline horizontal and say so in
+  the report.
 
 ### 6.4 A labelled map
 
@@ -626,10 +671,49 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
 - Label styles per script: Arabic gets no italic and `letterSpacing: 0`
   (letter-spaced Arabic is a `joiningScriptLetterSpacing` failure) and
   usually about 15 % more size. On right-to-left composed pages the frames
-  follow the mirrored content area and the decoration does not: place
-  kickers and folios by edition.
-  Alt text and captions of a resource are per edition in the resource, with
-  no Markdown hook.
+  follow the mirrored content area and the decoration does not: place a
+  template's kickers and folios with `top-start` / `top-end` (1.39), which
+  stand on the same side of the reading direction in every edition. Before
+  1.39 a template shared by both directions placed them by edition
+  (`top-left` or `top-right`).
+- **The figure's own words** (1.39). The edition's alt text, caption and
+  note go in the Markdown, beside the labels:
+
+  ```md
+  :::figure{resource="relieve" slot="mapa" alt="Mapa físico de la península"}
+  ::caption[Relieve de la península ibérica]
+  ::note[Fuente: IGN]
+  ::label[Pirineos]{at="pirineos"}
+  :::
+  ```
+
+  `alt`, `caption` and `note` may be attributes or `::alt[…]`,
+  `::caption[…]`, `::note[…]` lines (a line wins); `alt=""` marks the
+  picture decorative. Every output reads them (layout, HTML alt, tagged PDF,
+  EPUB), the stored resource is untouched, and a resource that two figures
+  of one file place takes the first figure's words. A translation of a map
+  that shares one resource across editions needs no ALT table in the
+  script and no resource edited per language. A caption set this way is not
+  source-mapped per character, and `:ref` does not print it. Before 1.39
+  these were per edition in the resource, with no Markdown hook.
+- **Checks on the labels** (1.39), per edition, because a translation with
+  longer words is where they fail: `labelOverlap` (a label runs into
+  another by more than 12 % of the smaller line height; the later label
+  carries the warning, with the one it meets and a count) and
+  `labelOverflow` (still wider than the anchor's `width` at the style's
+  `minScale`). Run `postext check --json` for every language. For an
+  overlap move an anchor, narrow the anchor's `width` so the name wraps, or
+  shorten the words of that edition's Markdown; for an overflow widen
+  `width`, shorten the word or lower the style's `minScale`. The contrast
+  check, the print preflight and part palettes read label colours: a label
+  bare on the picture is skipped by the contrast check, so give a label on
+  a busy ground a halo or a plate.
+- **Vertical labels** (1.39): `writingMode: "vertical-rl"` on the anchor or
+  the label style, for a map in a CJK edition. `width` is then a fraction of
+  the picture's height; `align` runs down the column (`start` = top) and
+  `verticalAlign` across the columns (`top` = the first, right-hand one).
+  Do not use `rotate: 90` for it: the glyphs would lie on their side.
+  Vertical labels on mirrored right-to-left pages are not exercised.
 - A full-page map goes in a frame of the page's width; in the running text
   a figure may be capped smaller.
 - Give the picture `altText` too: the labels are added to it in HTML and
@@ -839,6 +923,11 @@ Otra historia, entera…
   and its own frame ids (`cp2:resto`). The jump goes forward within one
   chapter file only: an id no later fence has is `continueTargetMissing`
   (the rest goes on on the next page); check that `postext check` has none.
+  A jump from one chapter file into a later chapter's page fence is not
+  supported: keep an article and its jump page in one chapter file. The Sandbox's template editor
+  lists every page fence that carries an `id` as `page:<id>` under
+  «Content that does not fit goes to» (1.39), and a «Page id» field writes
+  any value, such as `{attr.sigue}`.
   In `check --json` a jump is a `continued` event whose `toPage` is the
   jump page, and the receiving frame's `continuedFrom` is the sending
   frame. Before 1.38 a jump had no expression: set the rest on the page
@@ -861,13 +950,28 @@ Otra historia, entera…
   `bleed` with `resourceId: "{attr.foto}"`, the photo chosen on the fence
   (6.10); they need postext-pdf 1.37 or later to print (older releases
   printed them grey).
-- **Drop caps** (1.38): a frame is running text, not a box, so its first
-  paragraph takes one: `:::paragraphs{style="entradilla" dropcap}` inside the
-  `:::frame`, a paragraph style with `dropCap`, or a heading level's
-  `dropCap` for the paragraph after a heading in the same frame (a heading
-  the template sends to a frame of its own opens none in the text frame:
-  give that frame's first group `dropcap`). Inside a `:::callout` the drop
-  cap is not set and warns `dropCap` (`inBox`). Before 1.38 frames set none.
+- **Drop caps** (1.38, 1.39): a frame is running text, not a box, so its
+  first paragraph takes one: a heading level's `dropCap` for the paragraph
+  after a heading in the same frame, a paragraph style with `dropCap`, or
+  `:::paragraphs{style="entradilla" dropcap}` inside the `:::frame`. From
+  1.39 a heading a `takes` frame took (a title frame of `takes: "h1"`) also
+  gives the text frame's first paragraph that level's initial (`{dropcap=off}`
+  on the heading turns it off, a paragraph of another slot gets none), so
+  no `dropcap` group is needed for it; keep one only for a style-specific
+  initial. A drop-cap paragraph is not cut above the initial's last line
+  across a `next` chain or a continuation: it moves on whole, as in the
+  flow. A `dropCap` warning `split` means a frame too short for the
+  initial's lines (raise it or lengthen the frame); `inBox` means a
+  `:::callout`, where the drop cap is not set. Before 1.39 a title frame
+  left the text frame's first paragraph without its initial and a cut could
+  strand the initial's lines. Before 1.38 frames set none.
+- **Columns cut by the widow and orphan rules** (1.39): a `:::columns`
+  group set whole, and a frame with `columns`, keeps `bodyText.widowMinLines`
+  and `orphanMinLines` lines on each side of a cut and takes the cut whose
+  tallest column is shortest, so two paragraphs of 6 and 5 lines set 6 | 5,
+  never 5 | 1+5; a group of one-line items balances fullest first (2 | 2 | 1).
+  Do not rewrite paragraphs to dodge a lone line at a column head or foot.
+  Before 1.39 the cut fell at the nearest line to an equal share.
 - Narrow columns (60 mm at 9.8 pt) set justified text loosely and rag the
   first line after an indent: `bodyText.maxJustifyTracking: 12` halves the
   loose lines; the rest needs copy edits or a smaller indent.
@@ -963,13 +1067,20 @@ decoration = [
   and crops what runs past it; the resource's `safeArea` stays in view and
   `focus` says which point to centre. Do not cut the photograph to the
   box's ratio in the generator. `fit: "contain"` (default) shows it whole.
-  Before 1.38 the photograph was pre-cut to the ratio of its box.
+  Before 1.38 the photograph was pre-cut to the ratio of its box. From 1.39
+  `cover` also crops an upright picture of a vertical page's flow (a
+  heading design's image in a vertical book); before, it was fitted whole
+  there, so a vertical edition needed the picture cut to the box by hand.
+  The Sandbox's image editor has a *Focus point* picker (the window the crop
+  keeps outlined; a click sets `focus`, arrows move it 1 %, Shift 10 %).
 - **`size: { to, edge }`** (1.38): a height runs from the element's anchor
   point to the `top`/`bottom` edge of another box, a width to its
   `left`/`right` edge; `to` is `container`, `page`, `bleed`, `outer` or
   `#id` (on a composed page's decoration, a frame or a group). The ground
   follows the band when the band moves. Before 1.38 the generator computed
-  the heights from the page geometry.
+  the heights from the page geometry. The Sandbox's slot editor has the
+  controls (1.39): «Width runs to» / «Height runs to» with an edge, and
+  *To an edge* as a mode of a text's width and height.
 - The photograph is chosen on the page fence (`foto="…"`), never written in
   the template; an id that resolves to nothing draws nothing, so name the
   attribute in every fence of the template.
@@ -999,7 +1110,12 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
 - No `templateUnknown`, `slotUnknown`, `pageFenceLength`, `spreadMismatch`,
   `unclosedContainer`, no template config warning (`frameStyleUnknown`,
   `frameAnchorUnknown`, `frameMinMax`, `frameChainLoop`,
-  `overflowTargetUnknown`…), no `labelAnchorUnknown`, no `tocGroupSplit`.
+  `overflowTargetUnknown`…), no `labelAnchorUnknown`, no `tocGroupSplit`,
+  no `calloutStyleExtendsUnknown` / `calloutStyleExtendsCycle`.
+  `labelOverlap` and `labelOverflow` (1.39, per edition; 6.4) are
+  warnings to read in every language: `composed_check.py` fails on
+  `labelOverflow` and lists `labelOverlap` as a note, because only the
+  reader can say whether two labels that meet are wrong.
   `slotEmpty` (a frame given nothing) and `anchorUnlabelled` (an anchor this
   edition gives no word) are notes: read each, mark deliberate empties
   `optional: true`.
@@ -1014,7 +1130,13 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   Each page must rearrange (the reflow log) or go on; a `frameOverflow`
   whose proposals carry values is a warning (the next move of whoever fits
   the copy), any other new warning fails. Fix the template (`fit`,
-  `maxHeight`, `next`, `overflow`), never the factor.
+  `maxHeight`, `next`, `overflow`), never the factor. The script works from
+  the command line's JSON and does not read frame boxes; the Cookbook bench's
+  C38 does, and since 1.39 it also fails a frame pushed past any edge of the
+  type area (foot, head, left, right) or of the bleed, and on a spread
+  measures the sheet of both pages (a band across the spine is judged
+  against the sheet's outer edges). Run it on the book's recipe when the
+  Cookbook is at hand.
 
 Then:
 
@@ -1042,16 +1164,27 @@ Then:
   (`sourceAt`, `elementsForSource`; the Sandbox's `sandbox_inspect_point`
   answers with `elements` and their `source`). Nothing on a composed page
   should answer with a `config` source except decoration and running heads.
+  `sourceAt(doc, page, x, y)` takes sheet points. On a right-to-left or
+  vertical page the frames and the flow text are read in the flow frame,
+  and every element whose `rect` is there carries `flow: true` (also from
+  `elementsForSource` and `findElement`); a script that clicks an element
+  "at its rect" maps a flagged rect with `flowRectToPage(page, rect)` first.
+  Up to 1.38 a sheet point on a frame of such a page found only the
+  template.
 - In the Sandbox: Content mode (Alt+Shift+M switches) to correct text on
   the page, Design mode for templates and styles (Design › Page & columns ›
   Page templates; frames dragged and resized on the page write
   `placement.offset` and `width`/`height` in mm; «Only this page» adds a
   `<id>-page` template that extends the first); a red outline «N mm short»
   is a frame that does not fit, an amber «text at 85 %» a frame the ladder
-  shrank. Open a multi-language bundle as a preset or bundle, not as a
-  project (a project keeps one edition): the Checks panel's Composed pages
-  section then lists every composed-page warning per edition with its
-  locale, page and frame, and «Side by side» shows two editions aligned.
+  shrank. A bundle in several languages imported into the Sandbox keeps
+  every edition in one project (1.39; Books row tags, the edition bar, the
+  permalink `#project=ID&lang=L`; before, the import asked for one language
+  and kept only that): the Checks panel's Composed pages section lists every
+  composed-page warning per edition with its locale, page and frame, and
+  «Side by side» shows two editions aligned. A bundle that names font files
+  it does not carry (licensed faces left out of the pack) imports with the
+  family reported as unknown, so `pack.py` need not drop them from `fonts`.
 - **Why a page differs from its template** (1.38): Canvas › Reflow lists, per
   page, each frame that changed and why, with the declared box dashed and
   an arrow to the laid one; the same log is `sandbox_inspect_pages`
@@ -1073,7 +1206,12 @@ Then:
   `resource.anchors` (or `sandbox_save_resource` `marks.anchors`). In Design
   mode the canvas shows each label's box (red = overflowing at the style's
   `minScale`) and its anchor, which can be dragged; `at="` in a `::label`
-  completes the picture's anchors.
+  completes the picture's anchors. A label placed with `at="x% y%"` is
+  dragged on the Canvas too and rewrites the `at` value of the edition on
+  screen (1.39). Anchors mode on a dense map (24 or more points) shows a
+  point's name only when picked, hovered or ticked; tick anchors (checkbox,
+  Shift-click, *Select shown* after a filter) to set style, alignment and
+  writing of many at once.
 
 ## 8. One bundle for every edition
 
@@ -1119,7 +1257,9 @@ Then:
   container or to another element, texts mixing words and placeholders, the
   text of a heading design. Letter spacing is no longer left: it goes into
   the paragraph style the text becomes (em of its size, 1.37).
-  With `labelsOnPictures: true` (1.38; pass the book's `resources` as
+  With `labelsOnPictures: true` (1.38; the Sandbox's dialog offers it from
+  1.39 as *Words on pictures become their labels (N)*, off by default; pass
+  the book's `resources` as
   `input.resources` and write back `result.resources`; or `{ maxFontSize }`)
   the short words a design placed on a picture (one line, at most four
   words, no larger than three quarters of the body size) become the
@@ -1128,8 +1268,9 @@ Then:
   anchor of the resource (first baseline, alignment side, box width) with a
   `labelStyles` entry, a bitmap smaller than its box gets the `resolution`
   that sets it at that width. Longer or bigger texts on the picture stay
-  frames; the report's `labels` counts them. The Sandbox's dialog does not
-  offer it yet.
+  frames; the report's `labels` counts them. After turning it on, look at
+  the pages the dialog marks «Looks different»: decoration that was painted
+  over a picture (`overPicture`) now lies under the picture's frame.
 - **A round-1 port** (#848: fixed callouts, grounds in a page-span opener
   design, live-text SVG labels) has no text in the config, so nothing
   migrates it by itself. Move it page kind by page kind: each page's
@@ -1146,17 +1287,27 @@ Then:
 ## 10. Limits to name in the report
 
 - Tabs are square and stand at a top corner, start or end; no centred tab.
-- Rows run left to right in every writing direction; a frame's
-  `writingMode`/`direction` and a template's `bodyStyle`/`palette` are read
-  but not applied yet.
+- Rows run left to right in every writing direction; a template's
+  `bodyStyle`/`palette` is read but not applied yet. A frame's own
+  `writingMode` is not applied on a right-to-left page, a picture in a
+  frame of the other mode turns with the frame, the reflowable EPUB sets
+  the frame's text in the book's mode, and a `next` chain across frames of
+  different modes is not supported.
 - `'auto'` width reads as `'fill'`.
 - A continuation goes on right after its page, or, with `page:<id>`, on a
   later page fence of the same chapter file; a jump never goes back or to
-  another file. Before 1.38 a mark took no page number.
+  another chapter file. Before 1.38 a mark took no page number.
 - Text on both sides of a contour in the middle of a measure is not set.
-- Text panels of comics are set only on single comic pages of horizontal,
-  left-to-right books (comics.md); elsewhere the words are lettered as
-  captions.
+- Text panels of comics are set in their frames on single comic pages of
+  any writing mode (1.39; horizontal left-to-right only before). On strips
+  and spreads the words still fall into the flow after the comic: letter
+  them as captions (comics.md).
+- A caption set in a `:::figure` is not source-mapped per character (a
+  click answers the figure), and `:ref` does not print it. The template
+  editor draws spreads of right-to-left and vertical pages as if they were
+  left to right.
 - Before 1.37 headings in frames were plain; before 1.38 spreads were not
-  laid on vertical books and frames set no drop caps: name the gap when the
-  installed version is older.
+  laid on vertical books and frames set no drop caps; before 1.39 frames
+  ignored their `writingMode` and `direction`, column cuts could strand one
+  line, and labels were unchecked: name the gap when the installed version
+  is older.

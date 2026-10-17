@@ -83,7 +83,7 @@ interface FrameConfig {
   fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
           preferContinue?: boolean }   // continue before 3 and 5 of the ladder (§5.4), default true
   overflow?: { continueIn?: string, mark?: string | false }
-  writingMode?, direction?      // as the page; for a vertical box on a horizontal page
+  writingMode?, direction?      // as the page; for a vertical box on a horizontal page (#944, §5.15)
   optional?: boolean            // no slotEmpty warning
   crossGutter?: boolean         // on a spread: may cross the spine band
   remove?: boolean              // in a patch: drop the inherited frame
@@ -492,7 +492,8 @@ the frame, and `<id>` may be `{attr.name}`, read from the sending fence, so one 
 serves every article: `continueIn: 'page:{attr.sigue}'` with `::::page{template="articulo"
 sigue="p47"}`). The remaining content resumes from
 the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the running text is (#913,
-`frameCutRules`, for `next` chains and continuation alike): a heading never ends a piece
+`frameCutRules`, for `next` chains and continuation alike, and since #942 for a
+`keepTogether: false` box of the running text too): a heading never ends a piece
 (`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
 (`bodyText.avoidOrphansInLists` / `avoidWidowsInLists`; one when off), and a list of up to
 `bodyText.shortListMaxItems` items under `shortListSplit: 'avoid'` is not cut between items. When
@@ -862,6 +863,84 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Drop caps in frames (#922).** A story box (`FRAME_ATTR`) is not a box for `placesOf`; the box
   typesetter stamps `VDTBlock.dropCap` and `offsetBlock` moves it.
 
+### 5.15 Findings round G (#882)
+- **Drop caps in frame chains (#947).** `splitCalloutFragment` ranks a cut before a drop cap's
+  sink line (`VDTBlock.dropCap.sink` on the piece that holds the initial) last, after the soft cuts
+  of wrapped code: the paragraph moves on whole as in the flow, and is cut there only when no other
+  cut fits. `dropCapWarnings` reports such a piece (`split`) from the laid-out document, since a
+  box's trial cuts leave no notes. `wrapComposedPages` stamps the flow story's box with
+  `__capHeading` (the heading's `sourceStart`) when its first block is a paragraph that followed,
+  in the Markdown, a heading a `takes` frame took; `headingBefore` (`dropCap.ts`) reads it, so that
+  paragraph takes the level's drop cap.
+- **`useTemplate` regroups (#937).** `fitsWithTemplate` lays the page with the other template as
+  the build would: `regroupStories` keeps a story whose head names a frame of it, sends one a
+  `takes` frame took to its frame that takes the same level, and the rest to its flow frame after
+  its own content (merged boxes appended past the pass's content blocks, a derived
+  `FrameLayoutPass` whose `measureCtxFor` reads the first story's index), then runs
+  `layoutComposedPage` with its ladder. Proposed only when no frame overflows, every story is laid
+  and nothing continues; never on a page continuation added.
+- **Box styles based on another (#905).** `CalloutStyleConfig.extends` (`defaults/calloutStyles.ts`:
+  `inheritCalloutStyles` before resolving, objects merged key by key, colours and lengths whole,
+  `id`/`name` never; `calloutStyleChain`; warnings `calloutStyleExtendsUnknown` /
+  `calloutStyleExtendsCycle`, WARNING_SINCE 1.39.0). The frame-style library (§2.4) merging on the
+  look keeps a style whose `:::callout` boxes stand elsewhere as a thin style (`extends` + its
+  position fields, `placesToKeep`), so a book ends with one style per kind of box and no box moves.
+- **Jump targets in the editor (#943).** The Sandbox template editor lists the book's page fences
+  with an `id` as `page:<id>` targets and takes a typed `page:` value. Jumps across chapter files
+  are not laid out (SP followup 943-rest: forward ids, carried story Markdown, chapter-qualified
+  source map, numbering, book-level marks).
+
+- **Sheet points on flow pages (#929).** A composed page's frames are laid in the page's flow
+  frame (mirrored on a right-to-left page, turned on a vertical one); its decoration stands on the
+  sheet. `sourceAt` takes sheet points and maps them with `pageToFlow` for the frames (the spread
+  clip `sheetClip` read in the flow, the decoration's with `composedSheetClipOnSheet`). Every
+  element whose `rect` is in the flow frame carries `flow: true` (`sourceAt`, `elementsForSource`,
+  `findElement`; flow text of a vertical or right-to-left page too); `flowRectToPage` puts it on
+  the sheet. Sandbox: `frameHit.ts` `sheetToFlow` / `flowBoxOnSheet`; the frame tools, the Design
+  mode marks, the picked mark (flow matrix after the frame's turn), the selection's relocation
+  and the template editor (pointer read in the flow, marks drawn through the flow's matrix) use
+  them. The Cookbook's C40 probe clicks flagged boxes on the sheet.
+- **Start and end edges (#936).** `AnchorEdge` gains `top-start`, `start`, `bottom-start`,
+  `top-end`, `end`, `bottom-end`, `align-start`, `align-end` (`design/logicalEdges.ts`:
+  `physicalEdge`, `physicalPlacement`). `LayoutContext.startRight` (set for slots laid on the
+  sheet of a right-to-left or vertical page: running heads and a template's decoration, through
+  `sheetExtras`) reads the start on the right and reverses the offset's `x`; frames (`anchorOn`),
+  fixed boxes (`anchorBox`) and heading designs are laid in the flow, where the start is the left.
+  So one decoration element follows the frames to the right of an Arabic page. Sandbox: the slot
+  editor's Alignment list has Start / End and its edge lists the start and end sides.
+- **Cover in vertical flows (#946).** `layoutImageElement` crops an upright picture (`DesignFrames.upright`)
+  in its own upright frame (the box `boxH` × `boxW`) and maps the visible part back into the flow; the
+  primitive keeps `upright` and `crop`. Canvas (`drawUprightInBox` + clip), HTML (the turned `<img>` at its
+  uncropped size in an `overflow:hidden` box) and PDF (clip inside the quarter turn) paint it; preflight
+  reads an upright picture's printed width as its box's height. Sandbox: the image editor's Focus point
+  (`focusPoint.ts`: a click or the arrow keys; the window the crop keeps outlined, `comicArtCrop`).
+- **Frames in their own writing mode and direction (#944).** `direction`: `wrapComposedPages` stamps the
+  chain head's direction on the story box and on every block of the story that no `{dir}` of its own (or of a
+  box round it) sets, so the box typesetter sets it against the page as a `{dir}` box. `writingMode` other
+  than the page's flow (`composedLayout.ts` `ownMode`; not on a mirrored page): the frame's box as placed is
+  turned a quarter turn about its centre (`quarterTurnedRect`) and the story laid out in it under
+  `withMeasureWritingMode`; `VDTFrame.writingMode`, `rotate` ± 90 on top of the frame's own
+  (`frameModeTurn`), `rect` the turned box (`framePageRect` turns it back: decoration anchors, the template
+  editor). An `'auto'` height is the least whose lines fit the box's width across (`turnedNaturalOf`,
+  bisection to a px). Pushing frames do not wrap its text; empty frames' rules turn with it.
+  `stampCentralBaselines` stamps `centralBaselines` / `dashAdvances` on a vertical frame. Canvas
+  (`setVerticalPaint` per frame), PDF (`ctx.vertical` per frame, fonts collected with the frame's mode) and
+  HTML (`vertical` paint options per frame) paint its text as a page of that mode does; the source map and
+  the Sandbox's clicks read it through `frameMatrix`. Not done: a picture in such a frame turns with it; the
+  reflowable EPUB sets its text in the book's mode.
+- **Comic text panels (#909).** On a vertical or right-to-left page a text panel is set in its frame
+  (`comicTextPanelsSupported` is true for every document): `layoutComicTextFrames` maps the text area
+  into the page's flow frame (`pageRectToFlow`), where the story is laid (set vertically on a vertical
+  page); the comic's frame record stays on the sheet, and `comicFramePaintOrder` hands the backends the
+  frame mapped into the flow (rect, polygon), painted inside the flow transform (canvas, PDF; the HTML
+  writes it in a `pt-flow` box over its panel). `sourceAt` and the Sandbox's comic tools read its words
+  through `pageToFlow`. A frameless text set from the top in a slanted cell takes the whole cell, each
+  line set short by `slantExclusions` (contour exclusions per 2 px band, `edge` off the outline,
+  `ComposedPageInput.frameExclusions`); with a box or `valign` middle/bottom it keeps `innerBox`.
+  `::panel{text shrink}` lowers the frame's `fit.minScale` (`shrinkScale`: 0.5, or the value given,
+  0.25–1). Tagged PDF: `comicStructure` makes a `Div` in the comic's `Div` at the text panel's place
+  (`ComicTags.texts`); `StructureFlow.readInto` moves the frame's elements into it.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
@@ -986,9 +1065,9 @@ Cookbook comics recipe must render unchanged before and after.
   `frameTools` (Content mode: click off words → caret at the text, double click → in-place
   edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
   (they are not in `page.composed`).
-- **Not done:** text panels on vertical or right-to-left pages, on strips and spreads; lines
-  following a slanted edge (they keep to the inner box); shrink-to-fit for text panels; reading a text
-  panel inside the comic's `Div` in tagged PDF; the comic frames in the template editor's views.
+- **Not done:** text panels on strips and spreads; the comic frames in the template editor's
+  views. (Vertical and right-to-left pages, lines following a slanted edge, `shrink` and the tagged
+  PDF's reading order: round G, §5.15.)
 
 ## 8. HTML and EPUB
 

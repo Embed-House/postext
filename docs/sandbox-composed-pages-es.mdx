@@ -1,0 +1,112 @@
+{/* docs/sandbox-composed-pages-es.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: las páginas compuestas',
+  sidebarTitle: 'Páginas compuestas',
+  description: 'Plantillas de página y marcos editados sobre la página, la biblioteca de estilos de marco, las revisiones de las páginas compuestas en todas las ediciones, el paso del texto al Markdown y el arreglo de un marco con un clic',
+  lang: 'es',
+  lastUpdated: '2026-10-17',
+  readingTime: '14 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Esta página reúne lo que el Sandbox ofrece para las páginas compuestas, aquellas cuyo texto se vierte en marcos colocados por una plantilla. Los marcos de una plantilla se dibujan y se mueven directamente sobre la página, y los estilos de marco se ordenan en una biblioteca. El panel Revisión avisa, en cada idioma del libro, de qué páginas compuestas tienen un texto que no cabe, y ofrece botones que arreglan un marco. Un libro hecho antes de las páginas compuestas puede pasar el texto de sus páginas al Markdown de una sola vez.",
+};
+
+# Sandbox: las páginas compuestas
+
+Esta página reúne las partes de los paneles de diseño y de revisión que tratan de las páginas compuestas (los bloques `::::page` que vierten su contenido en los marcos de una plantilla de página). El resto de ambos paneles está en [Sandbox: los paneles de diseño y de revisión](/es/docs/sandbox-design-checks); cómo se escribe una página compuesta, en [Páginas compuestas](/es/docs/composed-pages).
+
+
+## Plantillas de página
+
+**Diseño › Página y columnas › Plantillas de página** edita `pageTemplates`, las maquetas en las que una página compuesta (`::::page{template="…"}`) vierte su contenido, sin abrir el archivo de configuración.
+
+- **La lista** muestra cada plantilla con un dibujo de sus marcos, su id, cuántas páginas del libro la usan (una doble página cuenta dos) y la plantilla en la que está **Basada**. **Nueva** empieza una plantilla con un marco que recibe el texto suelto de la página; **Duplicar** copia la abierta; **Guardar maqueta como plantilla** convierte la página compuesta que elegiste (o la primera maquetada) en una plantilla nueva cuyos marcos quedan donde salieron, con tamaños fijos en milímetros, y conservan sus estilos y el resto de sus campos.
+- **Editar para** elige qué cambian los campos: *Todas las páginas* (la plantilla), *Impar (recto)* o *Par (verso)* (`variants.recto`, `variants.verso`). Un campo que ese ámbito no fija muestra, atenuado, el valor que hereda, y su botón de restablecer se lo devuelve. Una plantilla de **Doble página**, con su **Medianil del lomo**, se dibuja como un solo pliego de dos páginas con la banda del lomo marcada, y no tiene variantes.
+- **Plantilla**: id (al cambiarlo cambia en todos los bloques de página que lo nombran), nombre, **Basada en** (`extends`), el interruptor de doble página, **Marcos medidos desde** (`area`), **Las páginas añadidas usan** (`overflowTemplate`: la plantilla de las páginas a las que sigue el contenido de un marco, véase [Cuando el texto sigue](/es/docs/composed-pages#cuando-el-texto-sigue)), la retícula y **Borrar plantilla** (dice cuántas páginas la nombran; las plantillas basadas en ella conservan lo que heredaron).
+- **Marcos**: un botón por marco, **Añadir marco** y las propiedades del marco elegido: nombre (la ranura) y **Puede quedar vacío**; posición (anclado al área de la plantilla, a la página refilada, al sangrado o a otro marco o grupo, con el borde y los desplazamientos) o una celda de la retícula; ancho y alto (*Fijo*, *Parte del área*, *Su contenido*, *Hasta el borde*) con sus límites; estilo de caja, capa, giro, dónde queda el contenido, columnas y relleno por lado; **Recibe el texto suelto de la página** (`flow`), **Recibe el primer título** (`takes`), **El texto que no cabe sigue en** (`next`), **El texto de otros marcos lo rodea** (`exclude: "push"`) y, cuando lo hace, **Apartar con** *Caja* o *Contorno* (`wrap`, la forma de las imágenes que contiene); el ajuste (`fit`); crecer, encoger, prioridad y fijo para los grupos; la continuación (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **El contenido que no cabe va a** ofrece ninguna otra página, la página siguiente, otro marco, otra plantilla y cada valla de página del libro que lleva `id` (`page:<id>`); *Una página posterior por su id…* acepta un valor escrito como `{attr.sigue}` o `p47#resto`. Cada campo tiene su ayuda y su botón de restablecer.
+- **Grupos**: nombre, apilados o en fila, el espacio entre marcos, adónde va el sitio sobrante y los marcos del grupo en el orden de la página. Un grupo con **Caja propia** reparte el sitio que le sobra y deja que sus marcos cedan sitio dentro de ella; sin ella es la unión de las cajas de sus marcos.
+- **Cabeceras y pies** (*Los del libro*, *Ocultos*, *Propios*) y **Decoración**, que se editan como la cabecera y el pie del libro; un texto de la decoración puede leer los atributos de la página (`{attr.nombre}`).
+
+**En la página, en modo Diseño.** Con el selector de encima de la vista previa en **Diseño** (o **Editar los marcos en la página** en la sección), una página compuesta muestra sus márgenes, su retícula, el lomo de una doble página y una flecha por cada cadena. Pulsar un marco lo elige y abre sus propiedades; arrastrarlo lo mueve; los ocho tiradores del marco elegido le cambian el tamaño; arrastrar en un hueco vacío dibuja un marco nuevo. Las cajas se ajustan a los márgenes, a la retícula y a los bordes y centros de los demás marcos (con Alt pulsada se colocan libremente; Escape cancela el arrastre). La caja se escribe en milímetros: un marco colgado de otro conserva su ancla y cambia su desplazamiento. Cuando otras páginas usan la plantilla, la página pregunta adónde va el cambio: **Cambiar la plantilla** (con el número de páginas) o **Solo esta página**, que crea para esa página una plantilla basada en la primera y hace que su bloque la nombre. Un marco girado se mueve en la página y su tamaño se da en sus campos. Los campos permiten hacer con el teclado todo lo que hace el arrastre.
+
+
+## Estilos de marco
+
+**Diseño › Recuadros › Estilos de marco** muestra los estilos de recuadro (`calloutStyles`) como una biblioteca. Los marcos de las plantillas de página se visten con esos mismos estilos (`frames[].style`), así que un estilo sirve igual para un recuadro `:::callout` del texto que para un marco de una página compuesta.
+
+- **Cada estilo** lo dibuja el motor con un párrafo de muestra, y una pestaña de muestra cuando el estilo tiene pestaña de etiqueta, tal como lo lleva un marco: con 80 mm de ancho (más si su relleno deja menos de 40 mm de medida), en el flujo y sin el sitio fijo que un estilo de recuadro puede dar a su caja. Bajo el nombre, la sección dice dónde lo usa el libro: marcos de plantilla, páginas compuestas con esas plantillas y recuadros del texto. Al abrirlo, el estilo lista cada marco (**Abrir** lleva a él en Plantillas de página) y cada capítulo con sus recuadros (**Ver** selecciona el siguiente bloque en el panel Texto; un bloque sin `type` cuenta para el primer estilo, que es el que le da el motor), y **Editar el estilo** abre ahí mismo el editor de Estilos de recuadro. **Mostrar** filtra la lista: *En plantillas* (lo que se ve primero cuando una plantilla usa algún estilo), *En el texto*, *Sin usar*, *Todos*.
+- **Fusiones propuestas** agrupa los estilos casi iguales alrededor del más usado: «Estos 3 estilos solo cambian en relleno interior: ¿fusionarlos?». Los estilos se comparan por lo que el motor resuelve, ajuste a ajuste, sin contar su id ni su nombre. Las medidas a menos de 0,5 mm y los colores a menos de ΔE 2 cuentan como iguales, los cuatro lados de un relleno cuentan como un ajuste, y **Ajustes que pueden cambiar** (2 por defecto) fija cuántos ajustes pueden ser distintos.
+- El sitio de un recuadro `:::callout` (colocación, posición fija, ancho que abarca, espacio de arriba y de abajo) tiene que coincidir, porque si no la fusión movería la caja. **Comparar solo el aspecto** lo deja fuera, y la revisión dice entonces cuántos recuadros se moverían; mientras está apagado, la sección dice cuántos estilos más fusionaría. Los estilos que solo usan marcos de plantilla se comparan siempre por su aspecto: un marco toma su sitio de la plantilla.
+- **Dejar cada recuadro donde está** (aparece con *Comparar solo el aspecto*, activado por defecto): un estilo cuyos recuadros están en otro sitio que los del estilo que se queda no se fusiona del todo. Se queda solo con su sitio (colocación, posición fija, ancho, espacio de arriba y de abajo), basado en el estilo que se queda (`extends`), así que sus recuadros toman ese aspecto y no se mueven; la revisión dice cuántos estilos se quedan así.
+- **Revisar** lista cada estilo que se va, en qué se distingue y los capítulos y marcos que se reescriben. **Fusionar en** (o **Fusionar todas las propuestas**) reescribe el `style` de cada marco de plantilla, variantes incluidas, y el `type` de cada bloque de cada capítulo para que nombren el estilo que se queda, quita los demás y pone el que se queda donde estaba el primero de su grupo, de modo que un bloque sin `type` conserva su aspecto. La fusión entra en el historial de deshacer del Sandbox como un paso por cada capítulo reescrito y otro para los estilos y las plantillas. **Deshacer**, en la propia sección, revierte la fusión entera mientras no se haya cambiado nada después; Cmd/Ctrl+Z la revierte paso a paso, primero los estilos, de modo que cada estado intermedio nombra estilos que existen.
+- Al renombrar un estilo en *Estilos de recuadro* se renombra también en cada bloque y en cada marco de plantilla.
+
+La fusión reescribe los capítulos de la edición abierta: otro idioma del libro, guardado como borrador o proyecto aparte, conserva sus estilos. Los agentes tienen la misma biblioteca con `sandbox_frame_styles` y `sandbox_merge_styles` (véase [WebMCP](/es/docs/webmcp)).
+
+
+## Páginas compuestas en todas las ediciones
+
+En un libro con plantillas de página (`pageTemplates`), el panel empieza por **Páginas compuestas**: las comprobaciones de cada página compuesta de cada capítulo, en cada edición que trae el libro. Un paquete en español, inglés y catalán se revisa en las tres mientras una de ellas está en pantalla. Las ediciones que no están en pantalla se componen en segundo plano, y cada una se lee como se leería al abrirla: su borrador si se editó, si no el texto del paquete en ese idioma. Una línea bajo los controles dice qué ediciones se están componiendo y, cuando terminan, cuáles se revisaron.
+
+La sección recoge:
+
+- *El texto no cabe en su marco* (`frameOverflow`), con los pasos que probó la escalera de ajuste y los cambios que harían caber el marco;
+- *El texto sigue sin caber tras las páginas añadidas* (`frameContinuationLimit`): el contenido del marco siguió en todas las páginas que puede añadir una página compuesta y aún no cabe;
+- *Una historia salta a una página que no viene después* (`continueTargetMissing`): ninguna valla de página posterior lleva el id que nombra el `continueIn` del marco;
+- *Rótulo en un ancla que no existe* y *Ancla sin rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), con el marco que compone la figura;
+- *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelOverflow`, `labelOverlap`), con el mismo marco: los rótulos de cada edición se miden con sus propias palabras, de modo que un idioma de palabras más largas se desborda donde otro no;
+- *Slot sin marco*, *Marco vacío*, *Plantilla de página desconocida*, *Página compuesta con tres dos puntos* y *La doble página no coincide con la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloque del índice partido entre columnas* (`tocGroupSplit`);
+- los avisos de las propias plantillas (un estilo o un ancla de marco que no existe, tamaños que se contradicen, una cadena que vuelve sobre sí misma) y el texto de diseño que guarda contenido del libro (`contentInConfig`).
+
+Estas entradas no se repiten en los grupos de debajo.
+
+**Página**, **Marco** e **Idioma** agrupan la lista por página compuesta (la misma página en todas las ediciones, lleve el número que lleve en cada una), por marco o por edición. Los tres menús de debajo dejan un solo idioma, una sola página o un solo marco. Cada entrada muestra la etiqueta de la edición (*CA*), el número de página en esa edición y el nombre del marco.
+
+Un clic en una entrada lleva a su marco en su edición. Si en pantalla hay otra edición, el libro cambia al idioma de la entrada; después se abren el capítulo y la página, el marco queda seleccionado en la página (su ruta aparece al pie de la vista previa) y el cursor va al principio de su slot en el panel **Texto**. Un aviso de la propia plantilla abre la primera página compuesta con ella, con su marco seleccionado; el texto de diseño con contenido abre el panel **Diseño**.
+
+Un proyecto local importado de un paquete en varios idiomas los conserva todos, de modo que sus páginas compuestas se revisan en cada idioma como las de un libro de muestra, y una revisión de otro idioma te lleva a ella con el proyecto cambiado a ese idioma. Un libro en un solo idioma tiene una sola edición, y la línea bajo los controles lo dice. El contador de la barra de actividad cuenta los avisos del capítulo en pantalla, en la edición en pantalla.
+
+
+## Pasar el texto al Markdown
+
+Un libro hecho antes de las páginas compuestas puede guardar el texto de páginas enteras en sus estilos de título: un título oculto en cada página cuya cabecera coloca decenas de textos, cajas e imágenes donde los tenía la página impresa. El panel de revisión muestra entonces *Texto guardado en la configuración* y ofrece **Pasar el texto al Markdown** en su cabecera. Un libro con estilos así que se importa desde el panel de libros abre el mismo cuadro justo después de importarlo.
+
+El cuadro explica lo que hará el cambio antes de hacer nada:
+
+- Cada diseño de página pasa a ser una plantilla de página (`pageTemplates`). Cada texto se convierte en un marco donde estaba; los bloques de texto con el mismo aspecto colocados uno bajo otro a la misma distancia forman un solo marco. Las cajas, filetes e imágenes pasan a la decoración de la plantilla, que se pinta sobre el texto corrido de la página como se pintaba la cabecera, y una imagen que cubre la página pasa a ser el atributo `background` de la página, que lee la decoración (`{attr.background}`).
+- Cada página de un capítulo se convierte en una página compuesta, `::::page{template="…"}`, con los títulos y el texto corrido de la página y un `:::frame{slot="…"}` por marco con su texto. Las negritas y cursivas se mantienen; los finales de línea del diseño quedan como saltos de línea forzados.
+- La familia, el cuerpo, el peso, el color, la alineación y el interlineado de cada texto forman un estilo de párrafo: el del libro cuando coincide del todo, si no uno nuevo con el nombre de la familia y el cuerpo. Una caja de color bajo palabras en negrita pasa a ser un chip del estilo de chip del libro de ese color, o de uno nuevo.
+- Las páginas con los marcos en los mismos sitios comparten una plantilla (`page-base`) que amplían sus propias plantillas (`extends`); una página que no añade nada la usa tal cual.
+- Los estilos de título que quedan iguales una vez que se va su cabecera se fusionan (`tema--p04`, `tema--p05` → `tema`) y se cambian en los títulos; los títulos ocultos que solo cambiaban la cabecera desaparecen. Una página que empezaba con un título que pedía página par o impar recibe un `:::pagebreak{parity="…"}` antes de su valla.
+
+Las cifras de **Qué cambia** son los textos y las letras que se pasan, las páginas escritas, las plantillas propuestas, los estilos de título antes y después, los estilos creados, el tamaño de la configuración y los avisos de *Texto guardado en la configuración*, antes y después.
+
+**Antes y después** compone cada capítulo dos veces con la composición del propio Sandbox y dibuja cada página que cambia, la anterior junto a la nueva. La lista de al lado dice qué páginas se ven distintas y por qué, cuando se sabe: la caja, el contorno o la capitular propios de un texto, una página de la que no se sabe el lado, texto corrido que ahora va en el marco de flujo de la plantilla. **Marcar en rojo lo que cambia** pinta los píxeles distintos.
+
+Las opciones: **Las páginas con marcos en los mismos sitios comparten plantilla**, **Una caja de resaltado bajo palabras en negrita se convierte en chip** y, cuando los hay, **Borrar los estilos de título con texto que no usa ningún título**.
+
+Con **Las palabras sobre las imágenes se convierten en sus rótulos**, que se ofrece cuando el diseño pone palabras cortas sobre las imágenes del libro (los nombres de un mapa, las cifras de un diagrama), esas palabras pasan a ser las líneas `::label` de una `:::figure`, la imagen recibe un marco propio y su recurso recibe las anclas. El resumen cuenta los rótulos, las imágenes, las anclas y los estilos de rótulo. La opción está apagada hasta que se activa, porque estas páginas son las que más cambian: los rótulos se componen de nuevo con las fuentes del libro, así que conviene mirarlos junto a las páginas antiguas. Las anclas se escriben en el recurso de la imagen como un paso de deshacer cada una, entre el texto y el diseño, y **Deshacer** y **Dejar el libro como estaba** también las deshacen.
+
+**Pasar el texto** escribe el cambio en el historial de deshacer del libro: un paso por cada capítulo reescrito y luego otro para el diseño. Cmd/Ctrl+Z deshace primero el diseño y después los capítulos, y **Deshacer** en el cuadro los deshace todos mientras sean los últimos. Además, el libro tal como estaba se guarda, también al recargar, hasta que se elige **Quedarme con el cambio** en el panel de revisión; hasta entonces **Dejar el libro como estaba** vuelve a escribir el diseño y el texto anteriores, como pasos que a su vez se pueden deshacer.
+
+Queda en la configuración, y se enumera en **Queda en la configuración**: un texto que mezcla palabras y marcadores (`Página {pageNumber}`), un texto que cuelga de la caja propia de su cabecera o de otro elemento, y el texto de un diseño de título (que no es una página). Un título colocado en un marco conserva ahí su diseño (la pestaña de un título con caja, las bandas dibujadas alrededor de un título; véase [Títulos en cajas y marcos](/es/docs/configuration-headings#en-cajas-y-marcos)). La comprobación de contraste lee el texto de un marco sobre la caja del propio marco o sobre la caja de la decoración que hay debajo, así que una etiqueta blanca sobre una caja de color se mide sobre ese color (véase [Qué se lee](/es/docs/configuration-fonts-colors-viewers#qué-se-lee)).
+
+El mismo cambio es una función del motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro. Véase [Páginas compuestas](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos).
+
+
+## Arreglar un marco con un clic
+
+Bajo *El texto no cabe en su marco*, las soluciones que la escalera de reajuste ha calculado para ese marco son botones, con las mismas palabras del aviso:
+
+- *deja que el texto baje al 60 %* fija el `fit.minScale` del marco (y activa `fit.shrinkText` si estaba desactivado);
+- *sube maxHeight a 66 mm* fija su `maxHeight`;
+- *baja el minHeight de …* rebaja la altura mínima de otro marco de su grupo;
+- *haz que siga en la página siguiente* pone `overflow.continueIn` en `next-page`, de modo que lo que no cabe sigue en una página añadida después de esta;
+- *compón la página con la plantilla …* reescribe el `template` de la valla `::::page` de la página en el texto;
+- *recorta unos 626 caracteres* no cambia nada: selecciona el texto del marco en el panel **Texto** y dice cuántos caracteres hay que quitar.
+
+Los demás botones cambian la forma del libro, así que cada uno pregunta antes y nombra el ajuste y su valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que tomará la página. Un cambio de diseño vale para todas las páginas compuestas con esa plantilla. **Cambiar** hace el cambio como un paso del historial de deshacer: Cmd/Ctrl+Z, o el botón Deshacer junto a Contenido y Diseño, lo deshace. La página se vuelve a maquetar y el aviso desaparece, o deja paso a lo que el cambio haya dejado (una caja más abajo que ahora no cabe).
+
+Los mismos botones acompañan al marco en el panel **Qué se ha movido y por qué** del lienzo. El aviso de una edición que no está en pantalla ofrece abrir esa edición, donde se pueden aplicar sus soluciones. Si el libro ha cambiado desde que la maquetación propuso una solución (se ha editado la plantilla, la valla nombra otra plantilla), el botón lo dice y no cambia nada. Un agente aplica las mismas soluciones con `sandbox_apply_proposal` ([WebMCP](/es/docs/webmcp)).

@@ -19,7 +19,10 @@ writes its own words at those anchors (references/composed-pages.md §6.4).
       --strings LANG=FILE gives another edition's words: a JSON object keyed
       by the source text (or by the anchor id) whose values are the
       translations; a word with no translation keeps the source text and is
-      listed as untranslated.
+      listed as untranslated. The keys "@alt", "@caption" and "@note"
+      (postext >= 1.39) hold the edition's alt text, caption and note for the
+      picture: they are written as `::alt[…]`, `::caption[…]`, `::note[…]`
+      lines in the figure block, beside the labels, and are no label.
 
   anchors.py relabel anchors.json --strings en=strings.en.json [--out DIR]
       Writes the `:::figure` blocks of other editions from an anchors file
@@ -224,9 +227,25 @@ def translate(labels: list[dict], strings: dict[str, str] | None) -> tuple[list[
     return out, missing
 
 
-def figure_block(resource: str, slot: str | None, labels: list[dict]) -> str:
+#: the figure's own words (postext >= 1.39): the key in a strings file and the line it writes
+WORD_KEYS = ("alt", "caption", "note")
+
+
+def words_from(strings: dict[str, str] | None) -> dict[str, str]:
+    """The edition's `@alt` / `@caption` / `@note` entries of a strings file."""
+    return {k: strings[f"@{k}"] for k in WORD_KEYS if strings and isinstance(strings.get(f"@{k}"), str)}
+
+
+def word_line(key: str, text: str) -> str:
+    """`::caption[TEXT]`; one line, brackets escaped. An empty `alt` marks the picture decorative."""
+    t = " ".join(text.split()).replace("[", "\\[").replace("]", "\\]")
+    return f"::{key}[{t}]"
+
+
+def figure_block(resource: str, slot: str | None, labels: list[dict], words: dict[str, str] | None = None) -> str:
     a = f'resource="{pmd.attr_value(resource)}"' + (f' slot="{pmd.attr_value(slot)}"' if slot else "")
-    body = [label_line(l["text"], l["at"]) for l in labels if l["text"].strip()]
+    body = [word_line(k, words[k]) for k in WORD_KEYS if words and k in words]
+    body += [label_line(l["text"], l["at"]) for l in labels if l["text"].strip()]
     return ":::figure{" + a + "}\n" + "\n".join(body) + ("\n" if body else "") + ":::"
 
 
@@ -287,7 +306,7 @@ def cmd_pdf(args) -> None:
               "untranslated": {}}
     for lang, strings in _parse_strings(args.strings).items():
         tl, miss = translate(labels, strings)
-        result["markdown"][lang] = figure_block(rid, args.slot, tl)
+        result["markdown"][lang] = figure_block(rid, args.slot, tl, words_from(strings))
         result["untranslated"][lang] = miss
     _write(result, args.out, args.json)
 
@@ -300,7 +319,7 @@ def cmd_relabel(args) -> None:
         md, untranslated = {}, {}
         for lang, strings in _parse_strings(args.strings).items():
             tl, miss = translate(fig["labels"], strings)
-            md[lang] = figure_block(fig["resource"], fig.get("slot"), tl)
+            md[lang] = figure_block(fig["resource"], fig.get("slot"), tl, words_from(strings))
             untranslated[lang] = miss
         out["figures"].append({"resource": fig["resource"], "markdown": md, "untranslated": untranslated})
     if args.out:

@@ -1558,6 +1558,10 @@ export interface VDTFigureLabel {
   /** The anchor it is set at, as `resourceId#anchorId` (#857); absent for
    *  a label placed by percentages. */
   anchorRef?: string;
+  /** The source range of the value of its `at` attribute (absolute, the
+   *  quotes left out): what a viewer rewrites to move a label placed by
+   *  percentages (#931). */
+  atSource?: { start: number; end: number };
   /** Where the label is painted: the upright box round its text (and
    *  background), in the coordinates of the block's own frame (a page's
    *  flow, or the frame of a composed page its block stands in), stamped
@@ -1608,6 +1612,11 @@ export interface VDTFigureLabelLayout {
   styleId?: string;
   /** Set right to left (its text opens with a right-to-left letter). */
   direction?: 'rtl';
+  /** Set in vertical writing (#902, `ResourceAnchor.writingMode`): the
+   *  lines are laid out as a vertical page's flow is, in the label's frame
+   *  turned a quarter turn clockwise (`rotate` includes it), and painted
+   *  with the vertical glyph painter, characters upright in their cells. */
+  vertical?: VDTVerticalText;
 }
 
 /**
@@ -2691,6 +2700,21 @@ export interface VDTFrame {
    *  template's decoration paints them. A frame with a box carries them on
    *  the box's `designOverlay`. */
   rules?: VDTDesignRuleBlock[];
+  /** Set on a frame set in a writing mode other than its page's flow
+   *  (`FrameConfig.writingMode`, #944): a vertical box on a horizontal
+   *  page, a horizontal card on a vertical one. Its content is laid out in
+   *  that mode in `rect`, the box the page gives it turned a quarter turn
+   *  (its width and height swapped about the same centre), and `rotate`
+   *  holds that quarter turn (90 for a vertical frame, −90 for a
+   *  horizontal one on a vertical page) on top of the frame's own; so
+   *  {@link frameMatrix} puts it on the page, and backends paint its text
+   *  as a page of that mode is painted. `framePageRect` gives the box on
+   *  the page. */
+  writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** For a `'vertical-rl'` frame: what its vertical lines need, as a
+   *  vertical page's flow has it (`VDTVerticalFlowFrame`). */
+  centralBaselines?: Record<string, number>;
+  dashAdvances?: Record<string, Record<string, number>>;
 }
 
 /** A composed page (`::::page{template}`, #846): the template it was set
@@ -2989,6 +3013,12 @@ export interface ConfigWarning {
    *  `wrapUnsupported`: a resource type's `defaultPlacement.wrap` in a
    *  vertical document (#627), whose figures keep their bands whole;
    *  `used` is `none`.
+   *  `calloutStyleExtendsUnknown` (#905): a box style's `extends` names no
+   *  style of `calloutStyles` (`path` `calloutStyles[i].extends`, `value`
+   *  the id, `suggestion` the closest id); the style stands alone, from
+   *  that parent up. `calloutStyleExtendsCycle`: its `extends` chain comes
+   *  back to itself (`value` the chain, `a → b → a`); the style stands
+   *  alone. `used` is empty for both.
    *
    *  Page templates (`pageTemplates`, #853; see `validatePageTemplates`),
    *  whose `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`):
@@ -3029,6 +3059,7 @@ export interface ConfigWarning {
    *  texts, how many letters and where. The fix is to move the text into
    *  the Markdown and keep only placeholders in the design. */
   kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported' | 'contentInConfig'
+    | 'calloutStyleExtendsUnknown' | 'calloutStyleExtendsCycle'
     | PageTemplateWarningKind;
   /** Where the value sits in the config, e.g.
    *  `orderedLists.levels[1].numberFormat`, `header.elements[0].fontFamily`,
@@ -3247,6 +3278,20 @@ export type ContentWarning = ContentWarningBase & (
    *  the map lacks that word in this edition. The source range is the
    *  figure's. */
   | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; locale?: string }
+  /** A figure label (#902) that is still wider than its anchor's `width`
+   *  at its style's `minScale` (`layout.overflow`): it is drawn at that
+   *  scale and runs past the measure. `anchor` is its anchor (absent for a
+   *  label placed by percentages), `text` its plain text (40 characters),
+   *  `widthPct` the measure it was given (percent of the picture's
+   *  width) and `scale` the scale it reached. The source range is the
+   *  label's. */
+  | { kind: 'labelOverflow'; resourceId: string; text: string; anchor?: string; widthPct: number; scale: number; locale?: string; labelId?: string }
+  /** Two labels of a figure whose boxes meet (#902): the later one, in the
+   *  order written, names the first earlier label it meets (`with`, and
+   *  `withAnchor`) and how many earlier labels it meets in all (`count`,
+   *  at least 1). Checked per edition, so a language whose words run
+   *  longer shows it. The source range is the later label's. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; locale?: string; labelId?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

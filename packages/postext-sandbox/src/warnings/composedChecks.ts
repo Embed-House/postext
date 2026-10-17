@@ -27,7 +27,7 @@ export const PAGE_TEMPLATE_KINDS = [
  *  is content, and the templates themselves. */
 const COMPOSED_KINDS: ReadonlySet<WarningPayload['kind']> = new Set<WarningPayload['kind']>([
   'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
-  'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
+  'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'labelOverflow', 'labelOverlap', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
 ]);
 
 export function isComposedCheckKind(kind: WarningPayload['kind']): boolean {
@@ -172,7 +172,7 @@ export function composedChecksOf(locale: string, chapters: readonly EditionChapt
         if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing') {
           const i = docPageOf(doc, p.page);
           pageIndex = i >= 0 && doc.pages[i]!.composed?.fenceIndex === p.fenceIndex ? i : composedPageIndex(doc, p.fenceIndex, p.frame);
-        } else if (p.kind === 'labelAnchorUnknown' || p.kind === 'anchorUnlabelled') {
+        } else if (p.kind === 'labelAnchorUnknown' || p.kind === 'anchorUnlabelled' || p.kind === 'labelOverflow' || p.kind === 'labelOverlap') {
           // A figure's label (#860): its page, the frame that sets the figure.
           pageIndex = docPageOf(doc, p.page);
           const page = pageIndex >= 0 ? doc.pages[pageIndex] : undefined;

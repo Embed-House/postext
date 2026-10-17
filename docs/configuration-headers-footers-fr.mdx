@@ -637,13 +637,13 @@ Un élément `image` dessine une ressource bitmap ou SVG du document : le logo 
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.38.</td>
+      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.38. Une image qui reste droite dans le flux d’une page verticale (le dessin d’un titre dans un livre vertical) est recadrée telle que la feuille la montre, depuis postext 1.39 ; jusqu’à la 1.38, elle était ajustée entière.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Le point de l’image que centre le recadrage <code>'cover'</code>, en fractions de l’image : <code>&#123; x: 0.5, y: 0.3 &#125;</code> pour un visage dans le tiers supérieur. Le recadrage garde toujours la zone sûre visible. Sans lui, les marges autour de la zone sûre sont rognées en proportion de leur taille, ou l’image est centrée.</td>
+      <td>Le point de l’image que centre le recadrage <code>'cover'</code>, en fractions de l’image : <code>&#123; x: 0.5, y: 0.3 &#125;</code> pour un visage dans le tiers supérieur. Le recadrage garde toujours la zone sûre visible. Sans lui, les marges autour de la zone sûre sont rognées en proportion de leur taille, ou l’image est centrée. Dans le Sandbox, le <strong>Point d’intérêt</strong> de l’éditeur d’image montre l’image avec la partie que garde le recadrage encadrée ; un clic dessus, ou les flèches, fixent le point (depuis postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -706,6 +706,8 @@ Chaque bord relatif à un élément place un coin de l’élément sur un coin d
 - `align-right` : son coin supérieur droit sur le coin supérieur droit de la cible.
 
 Un bord relatif à un élément utilisé avec `'container'`, `'page'` ou `'bleed'`, et un bord de conteneur utilisé avec `'#id'`, sont lus comme le coin supérieur gauche.
+
+**Bords de début et de fin.** `top-start`, `start`, `bottom-start`, `top-end`, `end` et `bottom-end` (avec `'container'`, `'page'`, `'bleed'` ou `'outer'`), ainsi que `align-start` et `align-end` (avec `'#id'`), désignent le côté où commencent les lignes de la page plutôt qu’un côté fixe. Sur une page de gauche à droite, `top-start` vaut `top-left` ; sur une page de droite à gauche, et sur une page verticale, dont les lignes se suivent depuis la droite, il vaut `top-right`. Avec ces bords, le `x` du décalage va du côté début au côté fin : sur une page de droite à gauche, un `x` positif déplace l’élément vers la gauche, et l’élément est le reflet de celui de gauche à droite. La décoration d’un modèle et les titres courants sont posés sur la feuille : un surtitre écrit `top-start` se tient au-dessus du bloc du titre dans une édition arabe comme dans une édition française. Un bloc est posé dans le flux de la page, déjà en miroir ou tourné, où `start` est toujours sa gauche, comme `left`. Dans le dessin d’un titre, posé lui aussi dans le flux, `start` vaut `left`. Dans le Sandbox, la liste **Alignement** de l’éditeur d’emplacement propose **Début** et **Fin**, et les listes de bords les côtés début et fin. Depuis postext 1.39 ; jusqu’à la 1.38, ces mots se lisaient comme `top-left`.
 
 `anchor.to: 'page'` ancre l’élément à la **zone de coupe** (la page physique après rognage) et `'bleed'` à la zone de coupe agrandie de `cutLines.bleed` de chaque côté (identique à la zone de coupe tant que les traits de coupe sont désactivés). Ces deux cadres servent aussi de référence pour `size: 'fill'` et pour la limitation automatique de la largeur, si bien qu’une bande de couleur peut aller d’un bord à l’autre quelles que soient les marges de la page :
 

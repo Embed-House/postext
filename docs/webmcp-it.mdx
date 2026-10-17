@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'it',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
-  order: 43,
+  order: 44,
   plainSummary: "Questa pagina è per chi vuole che un assistente di intelligenza artificiale lavori al posto suo su un libro nella Sandbox. Mentre la Sandbox è aperta, dà all’assistente una serie di strumenti: per guardare qualunque pagina, cambiare la grafica, modificare il testo, aggiungere immagini e tabelle, trovare problemi e salvare file. Chiedi con parole tue, per esempio «ingrandisci un po’ il testo e controlla che il libro stia ancora in 40 pagine», e l’assistente usa gli strumenti e ti mostra le pagine. Tutto resta nel tuo browser. La pagina spiega come collegare un assistente, che cosa può fare e come si chiama ogni strumento.",
 };
 
@@ -314,8 +314,11 @@ composte, riquadri `:::callout` per capitolo) e le unioni di stili quasi uguali
 che propone, come Design › Riquadri › Stili delle cornici.
 `sandbox_merge_styles` prende `groups` (`{ keep, merge }`) o `all: true` e
 riscrive ogni cornice e ogni blocco che nominava uno stile unito; con
-`lookOnly: true` confronta anche stili i cui riquadri stanno in punti diversi,
-che allora si spostano.
+`lookOnly: true` confronta anche stili i cui riquadri stanno in punti diversi.
+Uno stile così resta allora con il solo posto, basato sullo stile che resta
+(`extends`), così i suoi riquadri non si spostano e la risposta lo elenca in
+`keptForTheirPlace`; con `keepPlaces: false` viene unito del tutto e i suoi
+riquadri si spostano.
 La risposta dà `undoSteps`: un passo per capitolo riscritto e uno per gli stili, che `sandbox_undo` annulla cominciando dagli stili.
 
 ### Modificare il testo
@@ -412,7 +415,7 @@ rinomina una risorsa e, per impostazione predefinita, ogni riferimento a essa ne
 `sandbox_list_resources` le elenca e, con un `id`, ne dà una per intero (le celle di una
 tabella con la loro formattazione, il sorgente di un SVG).
 
-Le `marks` di un’immagine portano anche le sue ancore. In una mappa o in uno schema sono i punti in cui si collocano le sue righe `::label`: un `id`, `x` e `y` (frazioni dell’immagine intera) e i campi di etichetta che prende un’etichetta collocata lì (`style`, `align`, `verticalAlign`, `rotate`, `width`). La risposta segnala uno stile di etichetta che la grafica non ha, e i nuovi segni di una risorsa sono un passo della cronologia (`sandbox_undo` risponde `kind: "resource"`).
+Le `marks` di un’immagine portano anche le sue ancore. In una mappa o in uno schema sono i punti in cui si collocano le sue righe `::label`: un `id`, `x` e `y` (frazioni dell’immagine intera) e i campi di etichetta che prende un’etichetta collocata lì (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La risposta segnala uno stile di etichetta che la grafica non ha, e i nuovi segni di una risorsa sono un passo della cronologia (`sandbox_undo` risponde `kind: "resource"`).
 
 ```jsonc
 // due ancore di una mappa, con i loro stili di etichetta

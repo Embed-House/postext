@@ -34,14 +34,14 @@ export function proposalQuestion(plan: ProposalPlan, warning: Warning, labels: S
 
 /** Carry a proposal out now (after the question, or without one for a
  *  selection): what the live region says afterwards. */
-export function runProposal(plan: ProposalPlan, warning: Warning, labels: SandboxLabels, dispatch: Parameters<typeof applyProposalPlan>[1]): string {
+export function runProposal(plan: ProposalPlan, warning: Warning, labels: SandboxLabels, dispatch: Parameters<typeof applyProposalPlan>[1], locale?: string): string {
   if (plan.kind === 'stale') return labels.proposalStale;
   applyProposalPlan(plan, dispatch);
   if (plan.kind === 'select') {
     const frame = warning.payload.kind === 'frameOverflow' ? warning.payload.frame : '';
     return fill(labels.proposalSelected, { frame, chars: plan.chars });
   }
-  return fill(labels.proposalApplied, { change: fitProposalText(plan.proposal, labels) });
+  return fill(labels.proposalApplied, { change: fitProposalText(plan.proposal, labels, locale) });
 }
 
 export interface ProposalActionsProps {
@@ -70,13 +70,13 @@ export function ProposalActions({ warning, onScreen, openEdition, editionName }:
   }
   const locale = state.locale;
   const plan = (proposal: FrameOverflowProposal) => planProposal(warning, proposal, proposalContextOf(state));
-  const run = (proposal: FrameOverflowProposal) => announce(runProposal(plan(proposal), warning, labels, dispatch));
+  const run = (proposal: FrameOverflowProposal) => announce(runProposal(plan(proposal), warning, labels, dispatch, locale));
   return (
     <div className="flex flex-col gap-0.5 px-3 pb-1.5 ps-9" data-proposals="" role="group" aria-label={fill(labels.proposalsTitle, { frame: p.frame })}>
       <span className="text-[0.62rem] font-semibold uppercase tracking-[0.04em] text-(--slate)">{fill(labels.proposalsTitle, { frame: p.frame })}</span>
       <div className="flex flex-wrap gap-1">
         {p.proposals.map((proposal, i) => {
-          const text = fitProposalText(proposal, labels);
+          const text = fitProposalText(proposal, labels, locale);
           if (!proposalChangesForm(proposal)) {
             return (
               <Button key={i} size="xs" variant="outline" title={labels.proposalSelectHint} onClick={() => run(proposal)} className="h-auto max-w-full shrink whitespace-normal py-0.5 text-start" data-proposal={proposal.kind}>

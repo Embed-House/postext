@@ -23,6 +23,7 @@ import { ImageElementEditor } from './ImageElementEditor';
 import { applyAlign, type SlotKind } from './placementAdapter';
 import { foreEdgeElements } from './foreEdge';
 import { newTextElement } from './elementTemplates';
+import type { FrameTarget } from './sizeTo';
 
 interface SlotEditorProps {
   slotKey: SlotKind;
@@ -36,6 +37,9 @@ interface SlotEditorProps {
    *  `/pageTemplates/0/decoration`): each element's card carries its own,
    *  so an element picked on a page opens at its card (#899). */
   configPath?: string;
+  /** The frames and groups of the page template, when the slot is a
+   *  composed page's decoration: a size can run to their edges (#945). */
+  frames?: readonly FrameTarget[];
 }
 
 function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>): string {
@@ -44,7 +48,7 @@ function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>):
   return `${kind}${i}`;
 }
 
-export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath }: SlotEditorProps) {
+export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
 
@@ -195,6 +199,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   resolved={resolvedEl}
                   slotKind={slotKey}
                   siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
                   extraPlaceholders={extraPlaceholders}
                   onChange={(next) => updateAt(idx, next)}
                 />
@@ -204,6 +209,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   resolved={resolvedEl}
                   slotKind={slotKey}
                   siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : rawEl.kind === 'box' && resolvedEl?.kind === 'box' ? (
@@ -212,6 +218,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   resolved={resolvedEl}
                   slotKind={slotKey}
                   siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : rawEl.kind === 'image' && resolvedEl?.kind === 'image' ? (
@@ -220,6 +227,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   resolved={resolvedEl}
                   slotKind={slotKey}
                   siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : null}

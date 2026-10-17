@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Programmatische Nutzung',
   description: 'Postext aus Code aufrufen: buildDocument und seine Warnungen, Standardwerte, Schriften, Caches und der Web Worker',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '28 min',
   order: 20,
   parent: 'configuration',
@@ -143,6 +143,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>spreadMismatch</code></td>
       <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
       <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>
+    </tr>
+    <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Ein <code>::label</code> einer <code>:::figure</code> nennt mit <code>at</code> einen Anker, den die Ressource seiner Abbildung nicht hat (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, die Anker der Ressource; <code>locale</code>).</td>
+      <td>Die Beschriftung wird nicht gezeichnet; das umfließende EPUB führt sie weiter auf.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Ein Anker der Ressource der Abbildung nennt einen Beschriftungsstil, und kein <code>::label</code> der Abbildung steht in dieser Sprache an ihm (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). Ein Hinweis.</td>
+      <td>Am Anker wird nichts gezeichnet.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Die Beschriftung einer Abbildung ist auch im kleinsten Maßstab, den ihr Beschriftungsstil erlaubt, noch breiter als die <code>width</code> ihres Ankers (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>Die Beschriftung wird in diesem Maßstab gezeichnet und ragt über ihr Maß hinaus.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>Die Zeilen zweier Beschriftungen einer Abbildung berühren sich (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). Die Warnung trägt die spätere Beschriftung in der Reihenfolge des Schreibens.</td>
+      <td>Beide Beschriftungen werden dort gezeichnet, wo sie stehen.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

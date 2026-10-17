@@ -307,6 +307,110 @@ describe("C38: the stress test", () => {
     expect(out.pages[0]!.frames.map((f) => f.pushedOutMm)).toEqual([5, undefined, undefined]);
   });
 
+  describe("frames pushed off the edges (#948)", () => {
+    // 254 dpi: 10 px a mm. Area 100..900 x 100..1300 on a 1000 x 1400 sheet.
+    const rect = (x: number, y: number, width = 200, height = 100) => ({ x, y, width, height });
+    const frame = (name: string, at: ReturnType<typeof rect>, declaredRect?: ReturnType<typeof rect>) => ({ name, rect: at, ...(declaredRect ? { declaredRect } : {}), overflowPx: 0, scale: 1, blockIds: [] });
+    const pageOf = (frames: unknown[], extra: Record<string, unknown> = {}, composed: Record<string, unknown> = {}) => ({
+      index: 0, width: 1000, height: 1400, contentArea: { x: 100, y: 100, width: 800, height: 1200 },
+      composed: { template: "t", fenceIndex: 0, log: [], frames, ...composed }, ...extra,
+    });
+    const docOf = (pages: unknown[], config: Record<string, unknown> = {}) => ({ config: { page: { dpi: 254, ...config } }, contentWarnings: [], pages });
+    const pushedOf = (doc: unknown) => (composedFacts(engine, [doc]) as ComposedFacts).pages.flatMap((p) => p.frames.map((f) => [f.name, f.pushedOutMm, f.pushedOutEdge, f.pushedOutOf]));
+
+    it("catches a frame grown past the right edge, the head and the left edge of the area, as well as the foot", () => {
+      const doc = docOf([pageOf([
+        frame("right", rect(780, 500), rect(700, 500)),
+        frame("head", rect(300, 80), rect(300, 150)),
+        frame("left", rect(60, 500), rect(120, 500)),
+        frame("foot", rect(300, 1250), rect(300, 1150)),
+        frame("inside", rect(300, 500), rect(300, 400)),
+      ])]);
+      expect(pushedOf(doc)).toEqual([
+        ["right", 8, "right", undefined],
+        ["head", 2, "head", undefined],
+        ["left", 4, "left", undefined],
+        ["foot", 5, "foot", undefined],
+        ["inside", undefined, undefined, undefined],
+      ]);
+    });
+
+    it("measures a frame the template places outside the area against the bleed", () => {
+      // 3 mm of bleed (30 px) and no marks: a 1060 px sheet around a 1000 px trim, the bleed box the whole sheet.
+      const cutLines = { enabled: true, bleed: { value: 3, unit: "mm" }, markLength: { value: 0, unit: "mm" }, markOffset: { value: 0, unit: "mm" } };
+      const doc = docOf([{ ...pageOf([
+        frame("band", rect(0, 600, 1060), rect(0, 600, 1040)),
+        frame("past", rect(0, 600, 1100), rect(0, 600, 1060)),
+        frame("margin note", rect(10, 600), rect(10, 600)),
+        frame("note grown", rect(10, 600, 200, 300), rect(10, 600, 200, 100)),
+      ]), width: 1060, height: 1460 }], { cutLines });
+      expect(pushedOf(doc)).toEqual([
+        ["band", undefined, undefined, undefined],
+        ["past", 4, "right", "bleed"],
+        ["margin note", undefined, undefined, undefined],
+        ["note grown", undefined, undefined, undefined],
+      ]);
+    });
+
+    it("judges a frame of a spread against the sheet of both pages, not its own page", () => {
+      // Two 1000 px pages; the area runs 100..900 on the first and 100..900 on the second (1100..1900 as a spread).
+      const left = { index: 0, composed: { spread: "left", facingPage: 1 } };
+      const right = { index: 1, composed: { spread: "right", facingPage: 0 } };
+      const area = { x: 100, y: 100, width: 800, height: 1200 };
+      const mk = (side: typeof left, frames: unknown[]) => ({ ...pageOf(frames), ...side, composed: { template: "t", fenceIndex: 0, log: [], frames, ...side.composed } });
+      const pages = [
+        mk(left, [
+          // Grew across the spine, to the right edge of the second page's area: still the spread's area.
+          frame("band", rect(100, 200, 1700), rect(100, 200, 1600)),
+          // Past the outer edge of the sheet.
+          frame("outer", rect(40, 500), rect(120, 500)),
+          // Declared inside the area, now beyond the whole spread's right edge.
+          frame("wide", rect(900, 700, 1100), rect(900, 700, 1000)),
+        ]),
+        mk(right, [
+          frame("band", rect(-900, 200, 1700), rect(-900, 200, 1600)),
+          frame("right", rect(780, 500), rect(700, 500)),
+        ]),
+      ].map((p) => ({ ...p, contentArea: area }));
+      const out = Object.fromEntries(pushedOf(docOf(pages)).map(([name, mm, edge], i) => [`${i < 3 ? "L" : "R"}:${name}`, [mm, edge]]));
+      expect(out["L:band"]).toEqual([undefined, undefined]);
+      expect(out["L:outer"]).toEqual([6, "left"]);
+      expect(out["L:wide"]).toEqual([10, "right"]);
+      expect(out["R:band"]).toEqual([undefined, undefined]);
+      expect(out["R:right"]).toEqual([8, "right"]);
+    });
+
+    it("lays out a real spread whose frames cross the spine without pushing any off the sheet", () => {
+      const mm = (value: number) => ({ value, unit: "mm" as const });
+      const config = {
+        page: { width: mm(200), height: mm(260), margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } },
+        pageTemplates: [{
+          id: "tl", spread: true, gutter: mm(10), grid: { columns: 4, rows: 4, columnGap: mm(12) },
+          frames: [
+            { name: "band", crossGutter: true, grid: { col: 1, row: 1, cols: 4 } },
+            { name: "left", grid: { col: 1, row: 2 } },
+            { name: "right", grid: { col: 4, row: 2 } },
+          ],
+        }],
+      } as unknown as PostextConfig;
+      const md = ["::::page{template=\"tl\" spread}", ":::frame{slot=\"band\"}", "Band across the spine", ":::", "", ":::frame{slot=\"left\"}", "Left card", ":::", "", ":::frame{slot=\"right\"}", "Right card", ":::", "::::"].join("\n");
+      const doc = engine.buildDocument({ markdown: md }, config, engine.createMeasurementCache());
+      const spread = doc.pages.filter((p) => p.composed?.spread);
+      expect(spread).toHaveLength(2);
+      const out = composedFacts(engine, [doc]) as ComposedFacts;
+      expect(out.pages.flatMap((p) => p.frames).filter((f) => f.pushedOutMm !== undefined)).toEqual([]);
+    });
+
+    it("names the edge in the finding", () => {
+      const pushed = { ...page, frames: [{ name: "row", heightMm: 20, pushedOutMm: 3.2, pushedOutEdge: "right" as const }, { name: "band", heightMm: 20, pushedOutMm: 1, pushedOutEdge: "head" as const, pushedOutOf: "bleed" as const }] };
+      const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [pushed] }) });
+      expect(out.filter((f) => f.severity === "fail").map((f) => f.detail)).toEqual([
+        'p. 1 (t): frame "row" was pushed 3.2 mm past the right edge of the type area',
+        'p. 1 (t): frame "band" was pushed 1 mm past the head of the bleed',
+      ]);
+    });
+  });
+
   it("fails a frame the reflow pushed past the foot of the type area (#911)", () => {
     const pushed = { ...page, frames: [{ name: "box", heightMm: 40 }, { name: "lines", heightMm: 16, pushedOutMm: 4.5 }] };
     const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [pushed] }) });
@@ -426,6 +530,16 @@ describe("C40: the source map round trip (#857)", () => {
         { check: "C40", severity: "info", detail: expect.stringMatching(/^every element came back to its source: .*\d+ frame.*\d+ line/) },
       ]);
     }
+  });
+
+  it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("clicks a right-to-left page where the sheet shows each element (#929)", () => {
+    // The frames of a right-to-left page are laid in its mirrored flow frame:
+    // their boxes come flagged `flow`, and the probe clicks them on the sheet.
+    const config = { ...PAGE8_CONFIG, direction: "rtl" } as PostextConfig;
+    const { doc, composed } = layOut(content("en"), "en", config);
+    expect(doc.pages.find((p) => p.composed)!.flow).toBeDefined();
+    expect(composed.roundTrip?.misses).toEqual([]);
+    expect(composed.roundTrip?.levels.line?.checked).toBeGreaterThan(0);
   });
 
   it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("fails the fixture when the source map answers for the wrong place", () => {

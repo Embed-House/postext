@@ -5,6 +5,7 @@ import { parseMarkdown } from '../../parse';
 import { elementsForSource, findElement, sourceAt, type SourceElement } from '../../composed/sourceMap';
 import type { PageTemplate } from '../../composed/types';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTPage } from '../../index';
+import { flowRectToPage, flowToPage } from '../../vdt';
 import { page8Fixture } from './fixtures/page8';
 
 // Seven px per character, whatever the face (no DOM in node).
@@ -415,5 +416,68 @@ describe('spreads in the source map (#857, #861)', () => {
 
   it('a spread is laid out afresh each time: no layout key', () => {
     expect(doc().pages.filter((p) => p.composed?.spread).every((p) => p.composed!.layoutKey === undefined)).toBe(true);
+  });
+});
+
+describe('sourceAt on composed pages set through a flow frame (#929)', () => {
+  // A title frame at the template's top-left (the right of a right-to-left page, the
+  // top right of a vertical one), a body frame under it, and a band of decoration on the
+  // sheet's left edge, which stays where the template puts it on the sheet.
+  const t: PageTemplate = {
+    id: 'sheet',
+    frames: [
+      { name: 'title', takes: 'h1', width: mm(80), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { name: 'body', flow: true, width: mm(80), height: mm(60), placement: { anchor: { to: '#title', edge: 'below' } } },
+    ],
+    decoration: { elements: [{ kind: 'box', id: 'band', style: { backgroundColor: { hex: '#1d5f73', model: 'hex' } },
+      placement: { anchor: { to: 'bleed', edge: 'top-left' }, size: { width: mm(12), height: 'fill' } } }] } as never,
+  };
+  const md = '::::page{template="sheet"}\n# A title\n\nWords in the body frame, a line or two of them.\n::::\n';
+  const cases = [
+    ['right to left', { direction: 'rtl' }],
+    ['vertical', { locale: 'ja', layout: { layoutType: 'single', writingMode: 'vertical-rl' } }],
+  ] as const;
+  for (const [name, extra] of cases) {
+    it(`${name}: a sheet point on a frame's words picks them, the decoration stays on the sheet`, () => {
+      const d = buildDocument({ markdown: md }, { ...PAGE, ...extra, pageTemplates: [t] } as PostextConfig, createMeasurementCache());
+      const page = composed(d);
+      expect(page.flow).toBeDefined();
+      const body = frameBlocks(page).find((b) => b.type !== 'callout' && b.lines.length > 0 && b.type !== 'heading')!;
+      const line = body.lines[0]!;
+      const flowPoint = { x: line.bbox.x + 3, y: line.bbox.y + line.bbox.height / 2 };
+      const sheet = flowToPage(page, flowPoint.x, flowPoint.y);
+      const chain = sourceAt(d, page.index, sheet.x, sheet.y);
+      expect(levels(chain).slice(0, 4)).toEqual(['text', 'line', 'block', 'frame']);
+      expect(chain.find((e) => e.level === 'frame')!.id).toBe('cp0:body');
+      // Boxes in the flow frame say so; the template has none of its own.
+      expect(chain.filter((e) => e.level !== 'template').every((e) => e.flow === true)).toBe(true);
+      expect(chain.find((e) => e.level === 'template')!.flow).toBeUndefined();
+      // The line's own box, put on the sheet, holds the point clicked.
+      const r = flowRectToPage(page, chain.find((e) => e.level === 'line')!.rect!);
+      expect(sheet.x).toBeGreaterThanOrEqual(r.x - 0.01);
+      expect(sheet.x).toBeLessThanOrEqual(r.x + r.width + 0.01);
+      // The band of decoration, at the sheet's left edge.
+      const band = page.composed!.decoration!.blocks.find((b) => b.elementId === 'band')!;
+      const onBand = sourceAt(d, page.index, band.bbox.x + 2, band.bbox.y + band.bbox.height / 2);
+      expect(onBand[0]!.level).toBe('design');
+      expect(onBand[0]!.flow).toBeUndefined();
+      // The reverse map flags the same boxes, and its frame comes back from the sheet.
+      const at = md.indexOf('Words');
+      const frame = elementsForSource(d, at, at + 5).find((m) => m.element.level === 'frame')!.element;
+      expect(frame.flow).toBe(true);
+      const c = flowToPage(page, frame.rect!.x + frame.rect!.width / 2, frame.rect!.y + 4);
+      expect(sourceAt(d, page.index, c.x, c.y).find((e) => e.level === 'frame')?.id).toBe('cp0:body');
+      expect(findElement(d, 'cp0:body')!.element.flow).toBe(true);
+    });
+  }
+
+  it('left to right: nothing is flagged', () => {
+    const d = buildDocument({ markdown: md }, { ...PAGE, pageTemplates: [t] } as PostextConfig, createMeasurementCache());
+    const page = composed(d);
+    const body = frameBlocks(page).find((b) => b.type !== 'callout' && b.lines.length > 0 && b.type !== 'heading')!;
+    const line = body.lines[0]!;
+    const chain = sourceAt(d, page.index, line.bbox.x + 3, line.bbox.y + line.bbox.height / 2);
+    expect(levels(chain).slice(0, 4)).toEqual(['text', 'line', 'block', 'frame']);
+    expect(chain.some((e) => e.flow)).toBe(false);
   });
 });

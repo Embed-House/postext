@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll, beforeEach } from 'vitest';
-import { buildDocument, createMeasurementCache, sourceAt } from 'postext';
+import { buildDocument, createMeasurementCache, flowToPage, sourceAt } from 'postext';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from 'postext';
 import { atLevel, breadcrumb, breadcrumbText, climb, pickAt, resolveSelection, selectedElement, selectionAtSource, type CrumbLabels, type PageSelection } from './pageSelection';
 import { headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets';
@@ -413,5 +413,61 @@ describe('labels, contents entries and spreads (#865)', () => {
     expect(sectionForConfigPath('/calloutStyles/2')).toEqual({ group: 'callouts', section: 'calloutStyles' });
     expect(sectionForConfigPath('/pageTemplates/0/decoration/elements/1')?.group).toBe('page');
     expect(sectionForConfigPath('')).toBeNull();
+  });
+});
+
+describe('right-to-left composed pages: sheet points against mirrored frames (#929)', () => {
+  beforeEach(() => resetPageSelection());
+  const rtl = (edit?: (md: string) => string) => {
+    const f = page8Fixture('en');
+    const md = edit ? edit(f.markdown) : f.markdown;
+    return { md, doc: build(md, { ...f.config, direction: 'rtl' } as PostextConfig, f.resources) };
+  };
+  /** A flow point of `page` on the sheet. */
+  const sheet = (page: VDTPage, p: { x: number; y: number }) => flowToPage(page, p.x, p.y);
+
+  it('a click on a frame’s words picks them, and the mark stands where the sheet shows them', () => {
+    const { doc } = rtl();
+    const page = composedPage(doc);
+    expect(page.flow?.writingMode).toBe('horizontal-tb');
+    const second = frameBlocks(page, 'dinero').filter((b) => b.type === 'paragraph')[1]!;
+    const at = sheet(page, onText(second));
+    const sel = pickAt(doc, page.index, at.x, at.y, null)!;
+    expect(sel.chain.map((e) => e.level)).toEqual(['text', 'block', 'frame', 'group', 'template']);
+    const block = atLevel(sel, 1);
+    expect(selectedElement(block).id).toBe(second.id);
+    const mark = pickedMarkFor(doc, block, page.index)!;
+    expect(mark.transform).toBe(`matrix(-1 0 0 1 ${page.width} 0)`);
+    // The mark's box, mirrored as the transform draws it, holds the click.
+    const x0 = page.width - (mark.rect.x + mark.rect.width);
+    expect(at.x).toBeGreaterThanOrEqual(x0);
+    expect(at.x).toBeLessThanOrEqual(x0 + mark.rect.width);
+    // The template has no box in the flow: no transform.
+    expect(pickedMarkFor(doc, atLevel(sel, 4), page.index)!.transform).toBeNull();
+  });
+
+  it('a paragraph picked is found again after a relayout, at a point on the sheet', () => {
+    const before = rtl();
+    const page = composedPage(before.doc);
+    const second = frameBlocks(page, 'dinero').filter((b) => b.type === 'paragraph')[1]!;
+    const at = sheet(page, onText(second));
+    const sel = atLevel(pickAt(before.doc, page.index, at.x, at.y, null)!, 1);
+    const after = rtl((md) => md.replace('Not long ago', `${'One more sentence that makes the text longer. '.repeat(6)}Not long ago`));
+    const again = resolveSelection(after.doc, sel)!;
+    expect(selectedElement(again)).toMatchObject({ level: 'block', id: second.id });
+    // Its point is on the sheet: sourceAt reads the same block there.
+    expect(sourceAt(after.doc, again.pageIndex, again.point.x, again.point.y).some((e) => e.id === second.id)).toBe(true);
+  });
+
+  it('the editor’s caret and the template editor’s picks select on the sheet', () => {
+    const { md, doc } = rtl();
+    const page = composedPage(doc);
+    const at = md.indexOf('Not long ago');
+    const sel = selectionAtSource(doc, at + 2)!;
+    expect(sel).not.toBeNull();
+    expect(selectedElement(sel).level).toBe('block');
+    const frame = page.composed!.frames.find((f) => f.name === 'gasto')!;
+    followFrameEditor({ type: 'select', pageIndex: page.index, templateId: 'tema-cajas', frame: 'gasto', frameId: frame.id }, doc, null);
+    expect(selectedElement(pageSelectionNow()!.selection)).toMatchObject({ level: 'frame', id: frame.id });
   });
 });

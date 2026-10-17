@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>Jede Datei im Archiv, mit ihrem Pfad als Schlüssel.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>Der Pfad des Umschlagbildes und wie das Paket angezeigt werden möchte: der <code>view</code> des Manifests, darüber der <code>localized[…].view</code> der ausgelieferten Sprache.</td></tr>
     <tr><td><code>start</code></td><td>Wo das Buch beginnt, für ein Paket, das einen Teil eines längeren enthält: das <code>start</code> des Manifests oder das <code>localized[…].start</code> der ausgelieferten Sprache. Fehlt bei einem Buch, das an seinem Anfang beginnt.</td></tr>
-    <tr><td><code>warnings</code></td><td>Nicht fatale Probleme: eine nicht unterstützte Schriftdatei, ein fehlendes Druckoriginal.</td></tr>
+    <tr><td><code>warnings</code></td><td>Nicht fatale Probleme: eine nicht unterstützte Schriftdatei, eine Schriftdatei, die im Paket fehlt, ein fehlendes Druckoriginal.</td></tr>
   </tbody>
 </table>
 
-Die **`fileId` von Nutzdaten ist ihr Pfad innerhalb des Pakets**. `resource.svg.fileId`, `resource.bitmap.fileId` und die `fileId` jeder Variante von `customFonts` lassen sich direkt in `bundle.files` nachschlagen. `openBundle` wirft einen Fehler, wenn die Bytes kein Zip sind, wenn es keine gültige `preset.json` gibt (in der Wurzel oder unter einem Ordner der obersten Ebene) oder wenn eine Datei fehlt, die das Manifest nennt.
+Die **`fileId` von Nutzdaten ist ihr Pfad innerhalb des Pakets**. `resource.svg.fileId`, `resource.bitmap.fileId` und die `fileId` jeder Variante von `customFonts` lassen sich direkt in `bundle.files` nachschlagen. `openBundle` wirft einen Fehler, wenn die Bytes kein Zip sind, wenn es keine gültige `preset.json` gibt (in der Wurzel oder unter einem Ordner der obersten Ebene) oder wenn ein Kapitel oder eine Bilddatei fehlt, die das Manifest nennt. Eine Schriftdatei, die das Manifest nennt und das Paket nicht enthält (ein Paket, das die lizenzierten Schriften ausgelassen hat), verhindert das Öffnen nicht: Die Schrift wird mit einer Warnung ausgelassen, eine Familie ohne jede Schrift fällt aus `customFonts` heraus, und das Buch weicht auf eine Ersatzschrift aus, wie bei jeder fehlenden Schrift.
 
 #### Pakete, die postext 1.4 oder früher geschrieben hat
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Fontes, cores e saída',
   description: 'As unidades, as cores e a paleta, as fontes personalizadas, o visualizador HTML, o PDF e a produção gráfica, o visualizador Folio e a depuração',
   lang: 'pt',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '41 min',
   order: 19,
   parent: 'configuration',
@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)` executa as verificações num documento diagramado e devolve uma lista de problemas, cada um com um `kind`, uma `severity` (`'critical'`, `'warning'` ou `'info'`), o `pageIndex` absoluto no livro, o `rect` do elemento em questão (px da página) e, quando o elemento tem, o seu intervalo no código-fonte. Os tipos são `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` e `nearTrim`. Sem um `transform`, uma cor neutra conta como uma tinta e qualquer outra como três, e a cobertura não é verificada; com um, as contagens e a cobertura são exatas. A resolução de uma imagem é calculada a partir dos pixels que o seu recurso declara, ou dos do próprio arquivo quando `imageSize(fileId)` os fornece (`bitmapInfo` sobre os bytes, ou a imagem decodificada): uma declaração que se afasta do arquivo em mais de um pixel é informada uma vez como `declaredPixelsMismatch`, um aviso quando declara mais pixels do que o arquivo tem. `placedImageResolutions(doc, { resources, imageSize })` lista cada bitmap colocado com o seu ppi efetivo, com o preflight ligado ou não.
+`preflightDocument(doc, options)` executa as verificações num documento diagramado e devolve uma lista de problemas, cada um com um `kind`, uma `severity` (`'critical'`, `'warning'` ou `'info'`), o `pageIndex` absoluto no livro, o `rect` do elemento em questão (px da página) e, quando o elemento tem, o seu intervalo no código-fonte. Os tipos são `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` e `nearTrim`. Sem um `transform`, uma cor neutra conta como uma tinta e qualquer outra como três, e a cobertura não é verificada; com um, as contagens e a cobertura são exatas. A resolução de uma imagem é calculada a partir dos pixels que o seu recurso declara, ou dos do próprio arquivo quando `imageSize(fileId)` os fornece (`bitmapInfo` sobre os bytes, ou a imagem decodificada): uma declaração que se afasta do arquivo em mais de um pixel é informada uma vez como `declaredPixelsMismatch`, um aviso quando declara mais pixels do que o arquivo tem. `placedImageResolutions(doc, { resources, imageSize })` lista cada bitmap colocado com o seu ppi efetivo, com o preflight ligado ou não. Os rótulos de uma figura contam como texto para `smallProcessText`, `inkLimit` e `safeZone`.
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,7 +783,7 @@ O texto claro vazado sobre um fundo de tinta entope na impressão quando é pequ
 
 ### O que é lido
 
-A verificação lê as linhas de cada bloco com as suas cores na linha (negrito, itálico, referências, chips), os marcadores de lista, as capitulares, as legendas, as notas e as células de tabela, e o texto dos espaços de design: cabeços, aberturas, designs de título, títulos de boxes. O fundo é o preenchimento mais acima sob o texto: uma caixa de design, um boxe, uma barra de legenda, uma célula de tabela, um chip ou, na falta deles, a cor da página (`page.backgroundColor`, ou o papel que a paleta de uma parte dá às suas páginas). Uma cor translúcida é mesclada com o que está sob ela. O texto sobre uma imagem fica de fora, já que o fundo dele não é uma cor só, assim como o letreiramento dos quadrinhos, as leituras em rubi e as fórmulas.
+A verificação lê as linhas de cada bloco com as suas cores na linha (negrito, itálico, referências, chips), os marcadores de lista, as capitulares, as legendas, as notas e as células de tabela, e o texto dos espaços de design: cabeços, aberturas, designs de título, títulos de boxes. O fundo é o preenchimento mais acima sob o texto: uma caixa de design, um boxe, uma barra de legenda, uma célula de tabela, um chip ou, na falta deles, a cor da página (`page.backgroundColor`, ou o papel que a paleta de uma parte dá às suas páginas). Uma cor translúcida é mesclada com o que está sob ela. O texto sobre uma imagem fica de fora, já que o fundo dele não é uma cor só, assim como o letreiramento dos quadrinhos, as leituras em rubi e as fórmulas. As palavras dos rótulos de uma figura são lidas sobre a sua placa ou, se não houver, dentro do seu halo; os rótulos nus sobre a imagem são ignorados, como todo texto sobre uma imagem.
 
 Numa página composta a verificação segue a ordem em que a página é pintada: os quadros por camada, com a `decoration` do modelo na camada 0. O texto de um quadro é lido sobre a caixa do próprio quadro quando o estilo dele pinta uma; senão, sobre a caixa da decoração que fica por baixo (uma imagem da decoração deixa-o de fora, como qualquer imagem); senão, sobre a cor da página. Letras brancas sobre uma aba colorida da decoração são, portanto, medidas contra essa aba. Um quadro girado ou escalado é levado à folha antes de se ler o seu fundo, e o texto da própria decoração é verificado da mesma forma. Desde o postext 1.37.
 
@@ -869,7 +869,7 @@ Todos os espaços de design são lidos: `header`, `footer`, o `advancedDesign.sl
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1336,7 +1336,7 @@ Além desses, o painel sempre lista os avisos que a própria diagramação gera 
 
 ### Avisos de configuração
 
-Oito erros na própria configuração nunca passam em silêncio, e nenhuma opção os oculta. O motor não falha em nenhum deles; ele substitui o valor, ou ignora a configuração, e avisa:
+Estes erros na própria configuração nunca passam em silêncio, e nenhuma opção os oculta, exceto a que o último item nomeia. O motor não falha em nenhum deles; ele substitui o valor, ou ignora a configuração, e avisa:
 
 - **Formato de numeração desconhecido**: um `numberFormat` de lista numerada, um `page.pageNumbering.format` ou o `counterFormat` de um tipo de recurso que não é nenhuma das [grafias de formato de numeração](/pt/docs/configuration-page-layout#grafias-dos-formatos-de-numeração). A numeração sai em decimal.
 - **Pilha de fontes em uma família**: um `fontFamily` (ou qualquer `…FontFamily`) que contém uma pilha de fontes CSS. O texto é composto na primeira família da pilha (veja [Uma família por `fontFamily`](/pt/docs/configuration-text#uma-família-por-fontfamily)).
@@ -1347,6 +1347,7 @@ Oito erros na própria configuração nunca passam em silêncio, e nenhuma opç�
 - **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima. O `level` e o `mode` da verificação de contraste são verificados da mesma forma: `used` é `'AA'` ou `'auto'`.
 - **Números de linha em texto vertical**: `lineNumbers.enabled: true` num documento composto na vertical (`layout.writingMode: 'vertical-rl'`). Páginas verticais não recebem números de linha, e `used` é `false` (`lineNumbersUnsupported`; veja [Numeração de linhas](/pt/docs/configuration-notes-references#numeração-de-linhas)).
 - **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
+- **Estilo de boxe baseado em outro** — um estilo de boxe cujo `extends` não nomeia nenhum estilo de `calloutStyles` (`calloutStyleExtendsUnknown`, com o id mais próximo em `suggestion`), ou cuja cadeia de `extends` volta a ele (`calloutStyleExtendsCycle`, `value` o círculo `a → b → a`). O estilo fica sozinho, com os valores padrão no que deixa sem valor (veja [Estilos baseados em outro](/pt/docs/configuration-callouts#estilos-baseados-em-outro)).
 - **Modelos de página e estilos de rótulo** — um problema em `pageTemplates` ou `labelStyles`: um id ou nome repetido, `extends`, âncoras ou blocos encadeados que formam um círculo, um estilo, bloco ou modelo que não existe, um mínimo maior que o seu máximo, um estilo de rótulo de uma âncora que `labelStyles` não tem (verificado quando os recursos são passados: `collectConfigWarnings(config, { resources })`). O `path` deles é um ponteiro JSON (`/pageTemplates/3/frames/2/style`); cada tipo aparece com a causa e a solução em [Avisos dos modelos de página](/pt/docs/configuration-composed-pages#avisos-dos-modelos-de-página).
 - **Conteúdo em um design** — um elemento de texto de design cujo texto, além dos marcadores, é mais longo que um rótulo curto: o texto do livro guardado na configuração. Um aviso por configuração (um estilo de título, o cabeçalho, o design das partes), com o caminho de cada texto (`contentInConfig`; veja [Verificação do conteúdo](#verificação-do-conteúdo-configuração)). Ao contrário dos outros, pode ser desligado: `checks.contentInConfig.enabled: false`.
 

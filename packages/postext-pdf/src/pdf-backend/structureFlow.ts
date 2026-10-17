@@ -376,6 +376,28 @@ export class StructureFlow {
    * same place with a `readAt` it goes in `readAt` order, whatever order
    * they were painted in.
    */
+  /**
+   * Tag blocks painted by `paint` and read them inside `target` (a comic's
+   * text panel, #909, read in the comic's `Div` after its panel's
+   * picture): the elements they add to the document are moved into it.
+   * Not part of the flow (no float is read after them); the grouping state
+   * of the flow is kept (see {@link aside}).
+   */
+  readInto(target: StructElem, paint: () => void): void {
+    const root = this.tree.root;
+    const start = root.kids.length;
+    this.floating = true;
+    try {
+      this.aside(paint);
+    } finally {
+      this.floating = false;
+    }
+    for (const kid of root.kids.splice(start)) {
+      if (kid.kind === 'elem') kid.elem.parent = target;
+      target.kids.push(kid);
+    }
+  }
+
   readFloat(block: VDTBlock, paint: () => void, readAt?: number): void {
     const root = this.tree.root;
     const index = readAt ?? block.contentIndex;

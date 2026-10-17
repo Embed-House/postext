@@ -43,7 +43,7 @@
  * `comicDrag.ts`, the source edits in `comicSource.ts`.
  */
 
-import { comicTextFrameAt } from '../composed/frameHit';
+import { comicTextFrameAt, sheetToFlow } from '../composed/frameHit';
 import type { Dispatch, MutableRefObject } from 'react';
 import { pageComics, type Resource, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter, type VDTDocument, type VDTPoint } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
@@ -1379,7 +1379,9 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
     const frame = page ? comicTextFrameAt(page, at.x, at.y) : null;
     if (!page || !frame) return false;
     const ids = new Set(frame.blockIds.slice(1));
-    return (page.floats ?? []).some((b) => ids.has(b.id) && at.x >= b.bbox.x && at.x <= b.bbox.x + b.bbox.width && at.y >= b.bbox.y && at.y <= b.bbox.y + b.bbox.height);
+    // Its blocks are in the page's flow frame (#909).
+    const p = sheetToFlow(page, at.x, at.y);
+    return (page.floats ?? []).some((b) => ids.has(b.id) && p.x >= b.bbox.x && p.x <= b.bbox.x + b.bbox.width && p.y >= b.bbox.y && p.y <= b.bbox.y + b.bbox.height);
   };
 
   const pressAt = (at: ComicPointer | null): ComicPress | null => {

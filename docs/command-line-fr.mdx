@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Ligne de commande',
   description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
   lang: 'fr',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 42,
+  order: 43,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
 };
 
@@ -264,6 +264,15 @@ forme directe, numérotation tapée à la main…). `--template` accepte un mod�
 d’importation (un `.json` enregistré depuis le Sandbox ou un `.docx` qui en
 contient un).
 
+L’espacement des caractères appartient au style, pas au texte : il n’est donc pas dans le
+Markdown. `docx` écrit le `letterSpacing` des styles de paragraphe, des styles de titre
+et des niveaux de titre comme espacement des caractères du style Word, et `import-docx`
+le relit en em de la taille du style : il le pose en `letterSpacing` sur les styles du livre
+qui n’en ont aucun (les styles de paragraphe et de titre du fichier `--config` auxquels
+correspondent les styles Word, et les niveaux de titre), et laisse tel quel tout espacement
+que le livre définit déjà. Avec `--json`, `styleTracking` énumère ce qui a été posé (`applied`)
+et ce qui a été laissé (`skipped`). Depuis postext 1.39.
+
 ### pack et unpack
 
 ```bash
@@ -307,6 +316,8 @@ texte du livre au lieu de variables (`contentInConfig`), une fois par style de
 titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
 déplacez ce texte dans le Markdown, ou ajoutez le titre ou le nom de l’éditeur
 à `checks.contentInConfig.allow`.
+
+Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes essayées par l’échelle de recomposition et les changements qui le feraient tenir), une histoire qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`) et les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
 
 ### build et --watch
 

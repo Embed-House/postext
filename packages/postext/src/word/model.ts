@@ -25,6 +25,11 @@ export interface WordStyle {
   outlineLevel?: number;
   /** `w:tabs`: the tab stops the style sets or clears (#622). */
   tabs?: WordTabStop[];
+  /** `w:spacing` of the style's run properties: the character spacing, in
+   *  twentieths of a point (negative condenses; #932). */
+  letterSpacing?: number;
+  /** `w:sz` of the style's run properties, in half-points. */
+  fontSizeHalfPoints?: number;
 }
 
 /** A tab stop of a Word paragraph or style (`w:tab` in `w:tabs`, #622):
@@ -124,6 +129,8 @@ export interface WordDocument {
   styles: Map<string, WordStyle>;
   /** Id of the default paragraph style (`Normal`). */
   defaultParagraphStyle: string;
+  /** `w:docDefaults` size, half-points: the size of text whose styles set none. */
+  defaultFontSizeHalfPoints?: number;
   numbering: WordNumbering;
   footnotes: Map<string, WordBlock[]>;
   endnotes: Map<string, WordBlock[]>;

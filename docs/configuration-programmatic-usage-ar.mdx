@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'الاستخدام البرمجي',
   description: 'استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، و Web Worker',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '31 دقيقة',
   order: 20,
   parent: 'configuration',
@@ -143,6 +143,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>spreadMismatch</code></td>
       <td>سطر فتح صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين (<code>template</code> و<code>fenceIndex</code>؛ و<code>fence</code> هي <code>spread</code> في سطر الفتح؛ و<code>templateSpread</code> ما في القالب).</td>
       <td>الحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
+    </tr>
+    <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>تسمّي <code>::label</code> في <code>:::figure</code> عبر <code>at</code> مرساةً لا يملكها مورد شكلها (<code>resourceId</code> و<code>anchor</code> و<code>known</code> أي مراسي المورد و<code>locale</code>).</td>
+      <td>لا تُرسم التسمية؛ ويظل EPUB المرن يدرجها.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>مرساة في مورد الشكل تسمّي نمط تسمية، ولا توجد عندها أي <code>::label</code> للشكل في هذه اللغة (<code>resourceId</code> و<code>anchor</code> و<code>style</code> و<code>locale</code>). وهي ملاحظة.</td>
+      <td>لا يُرسم شيء عند المرساة.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>تسمية شكل ما زالت أعرض من <code>width</code> مرساتها حتى عند أصغر مقياس يسمح به نمط تسميتها (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>widthPct</code> و<code>scale</code> و<code>locale</code>).</td>
+      <td>تُرسم التسمية بذلك المقياس وتتجاوز قياسها.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>يتلامس سطرا تسميتين في شكل واحد (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>with</code> و<code>withAnchor</code> و<code>count</code> و<code>locale</code>). ويحمل التحذير التسمية اللاحقة بترتيب الكتابة.</td>
+      <td>تُرسم التسميتان حيث هما.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

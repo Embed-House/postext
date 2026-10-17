@@ -552,8 +552,14 @@ describe('strips and spreads in the PDF', () => {
     const words = ops.search(/T[jJ]/);
     expect(ground).toBeGreaterThan(-1);
     expect(words).toBeGreaterThan(ground);
-    // Read as a paragraph of the page, after the comic's Div.
-    const kids = structRoot(out).kids.map((k) => k.type);
-    expect(kids.indexOf('P', kids.indexOf('Div'))).toBeGreaterThan(kids.indexOf('Div'));
+    // Read inside the comic's Div, in its panel's place: before the second
+    // panel's picture (#909), not after the comic.
+    const root = structRoot(out);
+    const comicDiv = root.kids.find((k) => k.type === 'Div' && k.kids.some((c) => c.type === 'Figure'))!;
+    expect(comicDiv.kids.map((k) => k.type)).toEqual(['Div', 'Figure']);
+    const types = (e: { type: string; kids: { type: string; kids: unknown[] }[] }): string[] => [e.type, ...e.kids.flatMap((k) => types(k as never))];
+    expect(types(comicDiv.kids[0]! as never)).toContain('P');
+    // The page reads Before, the comic, After.
+    expect(root.kids.map((k) => k.type)).toEqual(['P', 'Div', 'P']);
   }, 60_000);
 });

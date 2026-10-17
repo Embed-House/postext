@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Línea de comandos',
   description: 'Un ejecutable autónomo para macOS, Linux y Windows que convierte un libro .postext, una carpeta de libro o Markdown suelto en PDF, HTML, EPUB, imágenes de página y Word, crea paquetes y revisa libros, con salida JSON para scripts y agentes',
   lang: 'es',
-  lastUpdated: '2026-10-09',
+  lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 42,
+  order: 43,
   plainSummary: "Esta página es para quien quiere hacer libros con Postext desde una terminal en lugar de desde la web. Descargas un único archivo para tu ordenador y lo ejecutas, sin instalar nada más. Le das tu libro, o unos cuantos archivos de texto, y te hace un PDF, una página web, un libro electrónico, imágenes de las páginas o un documento de Word. También puede revisar un libro en busca de problemas y juntar todos sus archivos en uno. Otros programas y los asistentes de inteligencia artificial también pueden usarlo, porque sabe responder en un formato que leen con facilidad.",
 };
 
@@ -263,6 +263,15 @@ muestra el Sandbox (estilos en uso, formato directo, numeración escrita a
 mano…). `--template` toma una plantilla de importación (un `.json` guardado
 desde el Sandbox o un `.docx` que la lleve).
 
+El espaciado entre caracteres es una propiedad del estilo, no del texto, así que no está en el
+Markdown. `docx` escribe el `letterSpacing` de los estilos de párrafo, de los estilos de título
+y de los niveles de título como espaciado entre caracteres del estilo de Word, e `import-docx`
+lo lee de vuelta en em del tamaño del estilo: lo pone como `letterSpacing` en los estilos del libro
+que no tienen ninguno (los estilos de párrafo y de título del archivo de `--config` a los que
+se asignan los estilos de Word, y los niveles de título), y deja como están los espaciados que el
+libro ya define. Con `--json`, `styleTracking` enumera lo que se aplicó (`applied`) y lo que se
+dejó (`skipped`). Desde postext 1.39.
+
 ### pack y unpack
 
 ```bash
@@ -306,6 +315,8 @@ del libro en lugar de marcadores (`contentInConfig`), una vez por estilo de
 título, titulillo o diseño de parte, con la ruta de cada texto: lleva ese texto
 al Markdown, o añade el título o el nombre de la editorial a
 `checks.contentInConfig.allow`.
+
+En un libro con plantillas de página, `check` informa además del texto que no cabe en su marco (`frameOverflow`, con los pasos que probó la escalera de recomposición y los cambios que lo arreglarían), de una historia que pasa de las páginas que un marco puede añadir (`frameContinuationLimit`), de un salto a una página que no sigue (`continueTargetMissing`) y de los rótulos de figura que no se pueden dibujar o que chocan (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Tras los avisos imprime una línea `reflow` por cada página compuesta con eventos, y `--json` lleva los pasos, las propuestas y el registro de recomposición como datos. Véanse [Páginas compuestas › Avisos](/es/docs/composed-pages#avisos) y [Registro de recomposición](/es/docs/composed-pages#registro-de-recomposición).
 
 ### build y --watch
 

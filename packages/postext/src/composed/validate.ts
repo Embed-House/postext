@@ -71,6 +71,7 @@ const GROUP_KEYS = {
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
+  writingMode: true,
 } satisfies Record<keyof LabelStyle, true>;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -310,6 +311,7 @@ function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {
     unknownKeys(s, LABEL_STYLE_KEYS, path, push);
     choice(s, 'fontStyle', LABEL_FONT_STYLES, DEFAULT_LABEL_STYLE.fontStyle, path, push);
     choice(s, 'textTransform', LABEL_TEXT_TRANSFORMS, DEFAULT_LABEL_STYLE.textTransform, path, push);
+    choice(s, 'writingMode', FRAME_WRITING_MODES, 'horizontal-tb', path, push);
   });
 }
 

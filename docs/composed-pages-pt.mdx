@@ -114,6 +114,22 @@ Um `slot` fora de uma página composta é lido e não muda nada.
 
 Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os seus rótulos são desenhados sobre a imagem como texto e vão aonde a figura for: uma coluna, um flutuante, um bloco girado ou com o conteúdo reduzido para caber, uma página dupla. Uma linha dentro de uma figura que não é um rótulo nem está em branco encerra uma figura que ficou sem o `:::` de fechamento, e é assinalada como contêiner não fechado.
 
+### As palavras próprias de uma figura
+
+O recurso guarda uma imagem, as suas âncoras e um único conjunto de palavras, mas cada edição de um livro diz as suas. Uma figura pode dar ela mesma o seu `alt`, a sua `caption` e a sua `note`, na cerca ou em linhas próprias, e eles substituem os do recurso nas páginas desse arquivo:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Como atributos da cerca, `alt`, `caption` e `note` recebem um texto curto entre aspas. As linhas `::alt[…]`, `::caption[…]` e `::note[…]` recebem o texto entre colchetes, que pode conter Markdown em linha e `\\` para uma quebra de linha, como a legenda e a nota de um recurso. Uma linha prevalece sobre o atributo de mesmo nome; as linhas ficam entre os rótulos, com linhas em branco se quiser.
+- O que a figura não diz continua o do recurso. Um valor vazio não diz nada: `caption=""` tira a legenda, `alt=""` marca a imagem como decorativa.
+- As palavras substituem as do recurso no capítulo que as diz: a composição, o texto alternativo de todas as saídas e o PDF com tags as leem, e o próprio recurso não muda. Um recurso posto por duas figuras de um mesmo arquivo recebe as palavras da primeira. Ao contrário de um rótulo, a legenda não é associada caractere a caractere ao Markdown; `sourceAt` responde a um clique nela como faz com a legenda de um recurso.
+
 ### Como um rótulo é composto
 
 - **Onde.** Um rótulo fica no ponto da sua âncora, uma fração da imagem inteira; se a imagem for recortada na sua zona segura ou composta menor, o rótulo acompanha o desenho. O `align` da âncora diz qual lado do rótulo fica no ponto, e `verticalAlign`, qual borda fica na sua altura. `start` e `end` seguem a direção do próprio rótulo: em árabe, `start` é a borda direita. `rotate` gira o rótulo em torno do ponto, no sentido horário e em qualquer ângulo: um rio ao longo do seu curso, uma serra na diagonal.
@@ -121,6 +137,8 @@ Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os seus r�
 - **Ajuste.** Se a sua âncora tem `width`, o rótulo quebra entre palavras dentro dessa medida, nunca no meio de uma palavra. Quando uma palavra é mais larga que a medida, o rótulo inteiro é composto menor, até o `minScale` do seu estilo; um rótulo que ainda assim não cabe é desenhado com a palavra mais larga cortada. Sem `width`, o rótulo fica numa só linha, exceto onde quebra com `\\`, como numa legenda.
 - **Texto.** O texto entre colchetes é Markdown em linha, composto como uma legenda: negrito, itálico, chips, marcações de destaque, referências, fórmulas em linha. Um nome de várias palavras é um único rótulo, qualquer que seja a ordem das palavras em cada idioma: `::label[OCEANO ATLÂNTICO]` e `::label[ATLANTIC OCEAN]` ficam na mesma âncora. Rótulos da direita para a esquerda são compostos da direita para a esquerda; os chineses e japoneses quebram entre caracteres.
 - **Saídas.** O canvas, o PDF, o visualizador HTML, o EPUB de layout fixo e o Folio desenham os rótulos. Numa página da direita para a esquerda, o rótulo fica onde a imagem o mostra.
+- **Vertical.** Com `writingMode: 'vertical-rl'` na âncora (ou no seu estilo de rótulo), o rótulo é composto como uma página vertical: os caracteres em pé, em células uma sob a outra, as colunas da direita para a esquerda, as palavras latinas e os números longos virados de lado e os números curtos numa só célula. Então `width` é uma parte da altura da imagem, o comprimento de uma coluna, e um rótulo chinês ou japonês se reparte em mais colunas. `align` corre ao longo da coluna (`start` é a sua ponta de cima), `verticalAlign` através das colunas (`top` é a primeira, a da direita), e `rotate` continua a girar o rótulo.
+- **Verificações.** Um rótulo que continua mais largo do que a sua medida no `minScale` do seu estilo gera `labelOverflow`; dois rótulos cujas linhas se tocam geram `labelOverlap` no posterior. As duas são verificadas em cada edição, então uma tradução de palavras mais longas mostra onde precisa de espaço. A paleta de uma parte (`:::part{palette="…"}`) recolore os rótulos das suas páginas como faz com as legendas. A verificação de contraste lê um rótulo sobre a sua placa ou, se não houver, dentro do seu halo; o rótulo nu sobre a imagem é ignorado, porque o seu fundo é a imagem. O preflight de impressão conta a letra pequena do rótulo em cores de processo, as suas tintas e a sua distância ao corte.
 
 ### labelAnchorUnknown
 
@@ -133,6 +151,14 @@ No painel Verificações do Sandbox, o aviso leva ao rótulo no painel Texto, e 
 Uma âncora do recurso da figura nomeia um estilo de rótulo e nenhum `::label` da figura fica nela neste idioma: o mapa tem espaço para uma palavra que esta edição deixa de fora. É uma nota; o `postext check` a lista como `info`. Âncoras sem estilo, como a de um personagem de quadrinhos, não são indicadas. O aviso traz o recurso, a âncora, o seu estilo, o idioma, a página e o intervalo da figura no fonte. Escreva o rótulo no Markdown deste idioma ou tire o estilo da âncora.
 
 No painel Verificações leva à figura no painel Texto, e o botão com o alfinete abre as âncoras da imagem nessa âncora.
+
+### labelOverflow
+
+Um rótulo continua mais largo do que a `width` da sua âncora na menor escala que o seu estilo de rótulo permite (`minScale`): é desenhado nessa escala e ultrapassa a sua medida. O aviso traz o recurso, o texto do rótulo, a sua âncora (nenhuma, se o rótulo foi posto com porcentagens), a largura que lhe foi dada, a escala atingida, o idioma, a página e o intervalo do texto do rótulo no fonte. É verificado em cada edição, então um idioma de palavras mais longas transborda onde outro não. Alargue a `width` da âncora, encurte a palavra no Markdown desta edição ou baixe o `minScale` do estilo de rótulo. Um rótulo chinês ou japonês quebra entre caracteres e não transborda assim. Desde o postext 1.39.
+
+### labelOverlap
+
+As linhas de dois rótulos da mesma figura se tocam; um rótulo com placa conta como a sua placa. O aviso fica no rótulo posterior, na ordem em que foram escritos, com o texto do primeiro rótulo anterior que ele toca e quantos rótulos anteriores toca no total. O teste usa a caixa própria de cada linha, girada com o rótulo, de modo que uma linha curta ao lado de uma longa deixa livre o seu lado, e deixa duas linhas se invadirem em até um oitavo da altura de uma linha. É verificado em cada edição. Mova uma das âncoras, estreite a `width` de um rótulo para que ele quebre ou encurte as palavras no Markdown desta edição. No painel de verificações do Sandbox, o botão do alfinete abre as âncoras da imagem na âncora do rótulo. Desde o postext 1.39.
 
 ## Exemplo
 
@@ -214,7 +240,7 @@ Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens 
 
 ### Decoração, cabeços e camadas
 
-A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção.
+A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção. Numa página da direita para a esquerda ou vertical, os blocos seguem o fluxo espelhado ou girado enquanto a decoração fica na folha: um elemento colocado numa borda de início ou de fim (`top-start`, veja [Posicionamento de elementos](/pt/docs/configuration-headers-footers#posicionamento-de-elementos)) fica junto do seu bloco em todas as edições.
 
 Os blocos são pintados na ordem da sua `layer`: a decoração na camada 0, os blocos na 1 por padrão, uma camada mais alta por cima de uma mais baixa e uma camada negativa por baixo da decoração. `rotate` gira um bloco junto com o seu conteúdo, em qualquer ângulo e em torno do centro do bloco, no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo.
 
@@ -382,7 +408,7 @@ O `frameOverflow` nomeia a página, o modelo, o bloco e o idioma do documento, d
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
+      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. O teste compõe a página como a compilação faria com esse modelo: os slots para os quais ele não tem bloco vão para o seu bloco de fluxo, a sua própria escada é percorrida, e ele só é proposto se nenhum bloco transbordar e nada continuar em outra página (desde o postext 1.39). Uma página acrescentada por continuação não recebe essa proposta. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>
@@ -599,9 +625,9 @@ Na tela, na visualização de página dupla do Sandbox e no Folio, as duas pági
 
 ## Migrar um livro com o texto nos estilos
 
-Um livro feito antes das páginas compostas pode guardar o texto das suas páginas em estilos de título: um título oculto em cada página cujo cabeçalho coloca cada texto onde a página impressa o tinha. A verificação *Texto guardado na configuração* aponta isso. No Sandbox, **Levar o texto para o Markdown** no painel Verificações transforma cada desenho de página num modelo de página com os blocos onde os textos estavam, e cada página numa cerca de página com o seu texto em slots `:::frame`; mostra cada página antes e depois, e pode ser desfeito. Veja [Levar o texto para o Markdown](/pt/docs/sandbox-design-checks#levar-o-texto-para-o-markdown). No código, `moveTextToMarkdown({ config, chapters, metadata }, options)` faz o mesmo e devolve a nova configuração, os capítulos e um relatório.
+Um livro feito antes das páginas compostas pode guardar o texto das suas páginas em estilos de título: um título oculto em cada página cujo cabeçalho coloca cada texto onde a página impressa o tinha. A verificação *Texto guardado na configuração* aponta isso. No Sandbox, **Levar o texto para o Markdown** no painel Verificações transforma cada desenho de página num modelo de página com os blocos onde os textos estavam, e cada página numa cerca de página com o seu texto em slots `:::frame`; mostra cada página antes e depois, e pode ser desfeito. Veja [Levar o texto para o Markdown](/pt/docs/sandbox-composed-pages#levar-o-texto-para-o-markdown). No código, `moveTextToMarkdown({ config, chapters, metadata }, options)` faz o mesmo e devolve a nova configuração, os capítulos e um relatório.
 
-Com `labelsOnPictures: true` (desde o postext 1.38), as palavras que um design pôs sobre uma imagem passam a ser rótulos dessa imagem em vez de blocos: um texto de uma linha e no máximo quatro palavras, não maior que três quartos do texto principal (`labelsOnPictures: { maxFontSize }` define outro limite), cuja caixa fica dentro de uma imagem do mesmo design. A imagem sai da decoração e vai para um bloco na caixa em que era desenhada, com um `:::figure` e uma linha `::label` por texto, e cada texto vira uma âncora do recurso da imagem no ponto em que o design o colocava (a primeira linha de base, o lado que o alinhamento indica, a largura da caixa), com um estilo de rótulo para a sua aparência. Passe os `resources` do livro na entrada: o resultado os devolve com as âncoras (`result.resources`), e um bitmap menor que a caixa sobre a qual o design o esticava recebe a `resolution` que o põe nessa largura. Uma imagem que aparece em várias páginas compartilha as suas âncoras. O `labels` do relatório conta imagens, rótulos, âncoras e estilos de rótulo. O diálogo do Sandbox ainda não oferece a opção.
+Com `labelsOnPictures: true` (desde o postext 1.38), as palavras que um design pôs sobre uma imagem passam a ser rótulos dessa imagem em vez de blocos: um texto de uma linha e no máximo quatro palavras, não maior que três quartos do texto principal (`labelsOnPictures: { maxFontSize }` define outro limite), cuja caixa fica dentro de uma imagem do mesmo design. A imagem sai da decoração e vai para um bloco na caixa em que era desenhada, com um `:::figure` e uma linha `::label` por texto, e cada texto vira uma âncora do recurso da imagem no ponto em que o design o colocava (a primeira linha de base, o lado que o alinhamento indica, a largura da caixa), com um estilo de rótulo para a sua aparência. Passe os `resources` do livro na entrada: o resultado os devolve com as âncoras (`result.resources`), e um bitmap menor que a caixa sobre a qual o design o esticava recebe a `resolution` que o põe nessa largura. Uma imagem que aparece em várias páginas compartilha as suas âncoras. O `labels` do relatório conta imagens, rótulos, âncoras e estilos de rótulo. O diálogo do Sandbox oferece a opção, desligada até ser pedida, quando o livro tem palavras para virar rótulos.
 
 ## No código
 
@@ -614,6 +640,8 @@ Depois da diagramação, o `VDTPage.composed` de uma página composta registra o
 Tudo o que uma página composta pinta sabe onde foi escrito: um editor pode ir de um ponto da página ao Markdown ou à configuração, e de um trecho do Markdown ao que ele virou na página.
 
 `sourceAt(doc, pageIndex, x, y)` recebe um ponto de uma página diagramada, em pixels de página a partir do canto superior esquerdo da folha, e devolve o que está ali, de dentro para fora: cada elemento seguido dos que o contêm. Um caractere de um box chega com a sua linha, o seu parágrafo, o seu bloco, os grupos do bloco e o modelo; uma palavra da decoração, com o seu elemento de design, a decoração e o modelo. Cada elemento tem um `level`, um `id` estável, uma `source` e, quase sempre, o seu `rect` na página (em pé, antes do `rotate` de um bloco girado).
+
+Numa página da direita para a esquerda ou vertical, os blocos ficam no referencial do fluxo da página, que a folha mostra espelhado ou girado um quarto de volta; a decoração e os cabeçalhos ficam na folha. `sourceAt` continua recebendo pontos da folha e os converte para os blocos. Um elemento cujo `rect` está no referencial do fluxo vem com `flow: true`, em `sourceAt`, `elementsForSource` e `findElement`; `flowRectToPage(page, rect)` dá sua caixa na folha e `flowToPage(page, x, y)`, um ponto dela. Até o postext 1.38, um ponto da folha sobre um bloco de uma página assim só encontrava o modelo.
 
 <table>
   <thead>

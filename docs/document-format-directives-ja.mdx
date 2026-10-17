@@ -230,7 +230,7 @@ Keep the lantern lit **every** night.
   </tbody>
 </table>
 
-丸ごと組まれるグループは、段の高さが最もそろう位置で切られます。切る位置はブロックの間か、段落やリスト項目の行の間で、後者の場合は残りが行頭記号なしで次の段の先頭に続きます。`breaks`で段の開始位置を固定した場合は、段落の途中では切りません。図の段の横にテキストの段を置く場合などです。
+丸ごと組まれるグループは、段の高さが最もそろう位置で切られます。切る位置はブロックの間か、段落やリスト項目の行の間で、後者の場合は残りが行頭記号なしで次の段の先頭に続きます。`breaks`で段の開始位置を固定した場合は、段落の途中では切りません。図の段の横にテキストの段を置く場合などです。 段落やリスト項目の途中で切る場合は、段の下端に少なくとも`bodyText.widowMinLines`行、次の段の先頭に`bodyText.orphanMinLines`行を残します（既定はどちらも2行。`avoidWidows`や`avoidOrphans`をオフにすると1行）。ブロックの前のアキは段の先頭では消えます。これらの規則で許される切り方のうち、いちばん高い段が最も低くなるものを選ぶので、6行と5行の二つの段落は 6 | 5 に組まれ、5 | 1 + 5 にはなりません（postext 1.39 から）。
 
 **グループの前後のアキ**。本文中では、グループのあとに本文の段落間のアキが入ります（`bodyText.paragraphSpacing`がオンなら1行、オフならなし）。囲みの中では、グループ自身のアキはありません。フェンスの`marginTop`と`marginBottom`でこれを指定できます：`:::columns{count=3 span="page" marginBottom="0.75em"}`。どちらも最小値で、隣のブロックが自分のために取るアキと相殺されます。囲みのマージンと同じ扱いです。本文中では、グループの下でテキストがベースライングリッドに戻るので、アキは行単位になります。段やページをまたいで分かれたグループでは、上のマージンは最初の部分に、下のマージンは最後の部分に付きます。`em`はグループが置かれたテキストの文字サイズです。長さとして読めない値や負の値は無視されます。
 
@@ -673,7 +673,7 @@ sfx{rotate=-8}: バキッ
     <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>枠に接する辺を、仕上がり線を越えて裁ち落としまで伸ばします（断ち切り）。</td></tr>
     <tr><td><code>pad="…"</code></td><td>コマを区画より小さくします。1〜4個の長さかパーセントです（上、終わり側、下、始まり側）。</td></tr>
     <tr><td><code>inset="x y w h"</code></td><td>区画を与えず、前のコマの上に、そのコマに対するパーセントで表した箱の位置に重ねます。</td></tr>
-    <tr><td><code>text</code>, <code>valign=middle</code>, <code>box=&lt;id&gt;</code></td><td>コマを文章コマにします。本文は台本ではなく、コマの枠に組む Markdown です（<code>valign</code> で位置を決める）。<code>box</code> はコマをボックススタイルで装います。<a href="/ja/docs/comics#文章コマ">漫画 › 文章コマ</a>を参照。</td></tr>
+    <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>コマを文章コマにします。本文は台本ではなく、コマの枠に組む Markdown です（<code>valign</code> で位置を決める）。<code>box</code> はコマをボックススタイルで装います。<a href="/ja/docs/comics#文章コマ">漫画 › 文章コマ</a>を参照。</td></tr>
     <tr><td><code>pop=&lt;id&gt;</code></td><td>コマの絵と同じトリミングで枠線の上に描く、透明な地の切り抜きです（枠線破り）。</td></tr>
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>絵を左右反転するか、反転するページで描いたままにします。</td></tr>
     <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>代替テキスト（なければリソースの<code>altText</code>）と、アンカーのIDです。</td></tr>

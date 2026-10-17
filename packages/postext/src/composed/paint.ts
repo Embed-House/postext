@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -40,7 +40,13 @@ export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
   if (frames.length === 0) return [];
   const byId = new Map<string, VDTBlock>();
   for (const b of page.floats ?? []) byId.set(b.id, b);
-  return frames.map((frame) => ({ kind: 'frame' as const, frame, blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
+  // The frames stand on the sheet with their comic; their text is set in
+  // the page's flow frame (#909), where the backends paint it: the frame
+  // given there.
+  const inFlow = (frame: VDTFrame): VDTFrame => (page.flow
+    ? { ...frame, rect: pageRectToFlow(page, frame.rect), ...(frame.polygon ? { polygon: frame.polygon.map((q) => pageToFlow(page, q.x, q.y)) } : {}) }
+    : frame);
+  return frames.map((frame) => ({ kind: 'frame' as const, frame: inFlow(frame), blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
 }
 
 /** Whether a page's comic holds text panels (#885): its panels are then
@@ -173,6 +179,26 @@ export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<P
   const cy = frame.rect.y + frame.rect.height / 2;
   const turn: Affine = [cos, sin, -sin, cos, cx - cos * cx + sin * cy, cy - sin * cx - cos * cy];
   return scaled ? multiply(turn, scaled) : turn;
+}
+
+/** The quarter turn a frame set in its own writing mode (#944) adds to its
+ *  `rotate`: 90 for a vertical frame on a horizontal page, −90 for a
+ *  horizontal one on a vertical page; 0 for any other frame. */
+export function frameModeTurn(frame: Pick<VDTFrame, 'writingMode'>): number {
+  return frame.writingMode === 'vertical-rl' ? 90 : frame.writingMode === 'horizontal-tb' ? -90 : 0;
+}
+
+/** A box turned a quarter turn about its centre: its width and height
+ *  swapped. */
+export function quarterTurnedRect(r: { x: number; y: number; width: number; height: number }): { x: number; y: number; width: number; height: number } {
+  return { x: r.x + r.width / 2 - r.height / 2, y: r.y + r.height / 2 - r.width / 2, width: r.height, height: r.width };
+}
+
+/** The box the page gives a frame, before the frame's own `rotate`: its
+ *  `rect`, or, for a frame set in its own writing mode (#944), `rect`
+ *  turned back a quarter turn. */
+export function framePageRect(frame: Pick<VDTFrame, 'rect' | 'writingMode'>): { x: number; y: number; width: number; height: number } {
+  return frame.writingMode ? quarterTurnedRect(frame.rect) : { ...frame.rect };
 }
 
 /** A frame's box in its blocks' own coordinates: `rect` itself, or, for a

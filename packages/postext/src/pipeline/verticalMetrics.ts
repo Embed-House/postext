@@ -120,10 +120,25 @@ function dashAdvances(dashes: Map<string, Set<string>>): Record<string, Record<s
 }
 
 /** Measure and store the central baseline of every family set in the flow
- *  of each vertical page, and the advance of the dashes it stretches.
- *  Horizontal pages are left alone. */
+ *  of each vertical page, and the advance of the dashes it stretches; and
+ *  the same, on the frame, for each vertical frame of a composed page set
+ *  in a mode of its own (#944). Horizontal pages are otherwise left alone. */
 export function stampCentralBaselines(doc: VDTDocument): void {
   for (const page of doc.pages) {
+    // A vertical frame on a page of another mode (#944): its own.
+    for (const frame of page.composed?.frames ?? []) {
+      if (frame.writingMode !== 'vertical-rl') continue;
+      const found: FlowFonts = { fonts: new Set(), dashes: new Map() };
+      const ids = new Set(frame.blockIds);
+      for (const b of page.floats ?? []) if (ids.has(b.id)) addBlock(b, found);
+      const out: Record<string, number> = {};
+      for (const family of familiesOf(found.fonts)) out[family] = measureCentralBaseline(family);
+      if (Object.keys(out).length > 0) frame.centralBaselines = out;
+      else delete frame.centralBaselines;
+      const dashes = dashAdvances(found.dashes);
+      if (dashes) frame.dashAdvances = dashes;
+      else delete frame.dashAdvances;
+    }
     const flow = verticalFlowOf(page);
     if (!flow) continue;
     const found = flowFonts(page);

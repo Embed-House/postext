@@ -30,7 +30,7 @@ const w = (id: string, payload: Warning['payload']): Warning => ({ id, payload }
 
 describe('composed checks of the label and continuation warnings', () => {
   it('counts them as composed checks', () => {
-    for (const kind of ['frameContinuationLimit', 'continueTargetMissing', 'labelAnchorUnknown', 'anchorUnlabelled'] as const) expect(isComposedCheckKind(kind)).toBe(true);
+    for (const kind of ['frameContinuationLimit', 'continueTargetMissing', 'labelAnchorUnknown', 'anchorUnlabelled', 'labelOverflow', 'labelOverlap'] as const) expect(isComposedCheckKind(kind)).toBe(true);
     expect(isComposedCheckKind('looseLine')).toBe(false);
   });
 
@@ -57,5 +57,13 @@ describe('composed checks of the label and continuation warnings', () => {
       [8, 0, 'tema', 'mapa', 'cp0:mapa'],
       [8, 0, 'tema', 'mapa', 'cp0:mapa'],
     ]);
+  });
+
+  it('places the labels that overflow or overlap (#902) in the frame of their figure', () => {
+    const checks = composedChecksOf('en', [{ index: 0, doc, warnings: [
+      w('a', { kind: 'labelOverflow', resourceId: 'foto-mapa', text: 'Gibraltar', anchor: 'estrecho', widthPct: 4, scale: 0.5, page: 2 }),
+      w('b', { kind: 'labelOverlap', resourceId: 'foto-mapa', text: 'Toledo', anchor: 'b', with: 'Madrid', withAnchor: 'a', count: 1, page: 2 }),
+    ] }]);
+    expect(checks.map((c) => [c.page, c.template, c.frame])).toEqual([[8, 'tema', 'mapa'], [8, 'tema', 'mapa']]);
   });
 });

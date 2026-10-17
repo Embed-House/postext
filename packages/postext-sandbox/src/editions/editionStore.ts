@@ -17,6 +17,9 @@ import { ensureConfigFontsLoaded } from '../controls/fontLoader';
 import { ensureResourceImages } from '../controls/resourceImages';
 import { getBlob, putBlobsAt } from '../storage/blobStore';
 import { getPresetDraft, type PresetDraftSummary } from '../storage/presetDrafts';
+import { getChapterLayouts } from '../storage/layouts';
+import { editionContentOf, getProject } from '../storage/projects';
+import { withDefaultResourceTypes } from '../context/defaultConfig';
 import { sameLocaleTag } from '../presets/locale';
 import type { LoadedPresetBlob, PresetProvider } from '../presets/types';
 import { layOutEdition, type EditionLayout, type EditionSource } from './editionLayout';
@@ -166,6 +169,30 @@ export async function loadPresetEdition(
       ...(loaded.start ? { start: loaded.start } : {}),
     },
     blobs: loaded.blobs,
+  };
+}
+
+/** Read another edition of a local project (#903): the content the record
+ *  keeps aside for it (or its own, when it is the one the record opens),
+ *  with the pagination stored for its chapters. */
+export async function loadProjectEdition(
+  projectId: string,
+  locale: string,
+): Promise<{ source: EditionSource; blobs?: readonly LoadedPresetBlob[] }> {
+  const record = await getProject(projectId);
+  const content = record ? editionContentOf(record, locale) : null;
+  if (!record || !content) throw new Error(`Edition "${locale}" not found`);
+  const layouts = await getChapterLayouts(content.chapters.map((c) => c.id)).catch(() => ({}));
+  return {
+    source: {
+      locale,
+      chapters: content.chapters,
+      // The record keeps the configuration without its defaults.
+      config: withDefaultResourceTypes(content.config, locale),
+      resources: content.resources,
+      layouts,
+      ...(content.start ? { start: content.start } : {}),
+    },
   };
 }
 

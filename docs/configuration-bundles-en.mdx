@@ -62,11 +62,11 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>files</code></td><td>Every file in the archive, keyed by its path.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>The cover picture's path, and how the bundle asks to be viewed: the manifest's <code>view</code>, with the served language's <code>localized[…].view</code> over it.</td></tr>
     <tr><td><code>start</code></td><td>Where the book starts, for a bundle that holds part of a longer one: the manifest's <code>start</code>, or the <code>localized[…].start</code> of the served language. Absent for a book that starts at its beginning.</td></tr>
-    <tr><td><code>warnings</code></td><td>Non-fatal problems: an unsupported font file, a missing print master.</td></tr>
+    <tr><td><code>warnings</code></td><td>Non-fatal problems: an unsupported font file, a font file the archive does not hold, a missing print master.</td></tr>
   </tbody>
 </table>
 
-A payload's **`fileId` is its path inside the bundle**. `resource.svg.fileId`, `resource.bitmap.fileId` and every `customFonts` variant's `fileId` can be looked up directly in `bundle.files`. `openBundle` throws when the bytes are not a zip, when there is no valid `preset.json` (at the root or under one top-level folder), or when a file the manifest names is missing.
+A payload's **`fileId` is its path inside the bundle**. `resource.svg.fileId`, `resource.bitmap.fileId` and every `customFonts` variant's `fileId` can be looked up directly in `bundle.files`. `openBundle` throws when the bytes are not a zip, when there is no valid `preset.json` (at the root or under one top-level folder), or when a chapter or a picture file the manifest names is missing. A font file it names that the archive leaves out (a pack that kept the licensed faces out) does not stop the import: that face is left out with a warning, a family left with no face is dropped from `customFonts`, and the book falls back as for any font it does not have.
 
 #### Bundles written by postext 1.4 or earlier
 

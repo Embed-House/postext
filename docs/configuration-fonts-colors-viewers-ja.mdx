@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'フォント、色、出力',
   description: '単位、色とカラーパレット、カスタムフォント、HTMLビューアー、PDFと印刷出力、Folioビューアー、デバッグ',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '40分',
   order: 19,
   parent: 'configuration',
@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)`は組み上がった文書を検査し、問題の一覧を返します。各問題は、`kind`、`severity`（`'critical'`、`'warning'`、`'info'`）、本全体での`pageIndex`、問題のある`rect`（ページのpx）と、要素が持っていればそのソースの範囲を持ちます。`kind`は`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`、`nearTrim`です。`transform`を渡さないときは、無彩色を1色、それ以外の色を3色と数え、インキ量は検査しません。渡すと、色数もインキ量も正確に求めます。画像の解像度は、リソースが宣言するピクセル数から求めます。`imageSize(fileId)`がファイル自体のピクセル数を返すとき（バイト列に対する`bitmapInfo`、またはデコードした画像）は、そちらを使います。宣言がファイルと1ピクセルより大きく食い違うと`declaredPixelsMismatch`として1回報告され、ファイルにあるより多いピクセル数を宣言している場合は警告になります。`placedImageResolutions(doc, { resources, imageSize })`は、プリフライトの有効・無効にかかわらず、配置したすべてのビットマップをその実効ppiとともに一覧にします。
+`preflightDocument(doc, options)`は組み上がった文書を検査し、問題の一覧を返します。各問題は、`kind`、`severity`（`'critical'`、`'warning'`、`'info'`）、本全体での`pageIndex`、問題のある`rect`（ページのpx）と、要素が持っていればそのソースの範囲を持ちます。`kind`は`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`、`nearTrim`です。`transform`を渡さないときは、無彩色を1色、それ以外の色を3色と数え、インキ量は検査しません。渡すと、色数もインキ量も正確に求めます。画像の解像度は、リソースが宣言するピクセル数から求めます。`imageSize(fileId)`がファイル自体のピクセル数を返すとき（バイト列に対する`bitmapInfo`、またはデコードした画像）は、そちらを使います。宣言がファイルと1ピクセルより大きく食い違うと`declaredPixelsMismatch`として1回報告され、ファイルにあるより多いピクセル数を宣言している場合は警告になります。`placedImageResolutions(doc, { resources, imageSize })`は、プリフライトの有効・無効にかかわらず、配置したすべてのビットマップをその実効ppiとともに一覧にします。図のラベルは、`smallProcessText`、`inkLimit`、`safeZone`では文字として数えます。
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,9 +783,9 @@ Postextは同じページを画面用にも印刷機用にも組みますが、�
 
 ### 検査する文字と地
 
-検査は、すべてのブロックの行をインラインの色（太字、イタリック、参照、チップ）とともに読み、リストのマーカー、ドロップキャップ、キャプション、注、表のセルも読みます。デザインスロットのテキスト、つまり柱、扉、見出しのデザイン、囲みのタイトルも対象です。地は、文字の下にあるいちばん上の塗りです。デザインのボックス、囲み、キャプションの帯、表のセル、チップのいずれかで、どれもなければページの色（`page.backgroundColor`、または部のパレットがそのページに与える紙の色）になります。半透明の色は、その下にあるものと合成します。画像の上の文字は、地が1色ではないので検査しません。漫画の写植、ルビ、数式も検査しません。
+検査は、すべてのブロックの行をインラインの色（太字、イタリック、参照、チップ）とともに読み、リストのマーカー、ドロップキャップ、キャプション、注、表のセルも読みます。デザインスロットのテキスト、つまり柱、扉、見出しのデザイン、囲みのタイトルも対象です。地は、文字の下にあるいちばん上の塗りです。デザインのボックス、囲み、キャプションの帯、表のセル、チップのいずれかで、どれもなければページの色（`page.backgroundColor`、または部のパレットがそのページに与える紙の色）になります。半透明の色は、その下にあるものと合成します。画像の上の文字は、地が1色ではないので検査しません。漫画の写植、ルビ、数式も検査しません。図のラベルの文字は、プレートがあればその上で、なければハローの内側で読みます。絵の上にそのまま置いたラベルは、絵の上の他の文字と同じく対象外です。
 
-テンプレートページでは、検査はページを描く順序に従います。フレームはレイヤー順、テンプレートの `decoration` はレイヤー 0 です。フレームの文字は、フレームのスタイルが地の箱を描いていればその箱の上で、描いていなければその下にある装飾の箱の上で、それもなければページの色の上で読みます（下が装飾の画像なら、ほかの画像の上の文字と同じく対象外です）。装飾の色付きのタブに置いた白い文字は、そのタブの色と比べて測られます。回転や拡大縮小をしたフレームは紙面上の位置に直してから地を読み、装飾そのものの文字も同じように検査します。postext 1.37 から。
+テンプレートページでは、検査はページを描く順序に従います。枠はレイヤー順、テンプレートの `decoration` はレイヤー 0 です。枠の文字は、枠のスタイルが地の箱を描いていればその箱の上で、描いていなければその下にある装飾の箱の上で、それもなければページの色の上で読みます（下が装飾の画像なら、ほかの画像の上の文字と同じく対象外です）。装飾の色付きのタブに置いた白い文字は、そのタブの色と比べて測られます。回転や拡大縮小をした枠は紙面上の位置に直してから地を読み、装飾そのものの文字も同じように検査します。postext 1.37 から。
 
 ### 検査の実行
 
@@ -869,7 +869,7 @@ interface ChecksConfig {
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1336,7 +1336,7 @@ debug: {
 
 ### 設定の警告
 
-設定そのものにある次の8種類の誤りは、決して黙って処理されず、どの切り替えでも隠せません。エンジンはどれについても失敗せず、値を置き換えるか設定を除外し、そのことを報告します：
+設定そのものにある次の誤りは、決して黙って処理されず、切り替えでも隠せません。ただし最後の項目に挙げたものだけは、専用の切り替えがあります。エンジンはどれについても失敗せず、値を置き換えるか設定を除外し、そのことを報告します：
 
 - **不明な番号形式**：番号付きリストの`numberFormat`、`page.pageNumbering.format`、リソースタイプの`counterFormat`のいずれかが、[番号書式の表記](/ja/docs/configuration-page-layout#番号書式の表記)のどれでもない場合です。10進数で番号を振ります。
 - **フォントファミリーにフォントスタックを指定**：`fontFamily`（または任意の`…FontFamily`）がCSSのフォントスタックを持つ場合です。テキストはスタックの最初のファミリーで組まれます（[`fontFamily`には1つのファミリー](/ja/docs/configuration-text#fontfamilyには1つのファミリー)を参照）。
@@ -1347,7 +1347,8 @@ debug: {
 - **不明な設定値**：いくつかの語のうち1つを取る設定に、別の値が入っている場合です。たとえば`direction: 'right'`です（`auto`、`ltr`、`rtl`のいずれかを取ります）。エンジンは代わりに既定値を読み、`used`がその結果を示します。`direction`なら文書の言語の方向になります（`unknownConfigValue`）。タブ位置の`align`が4つの語のどれでもなければ`'start'`として読み、`position`が長さでも`'end'`でも割合でもなければそのタブ位置を除外します（`used`は`'none'`）。漫画の設定の語も検査されます（[漫画 › 漫画の警告](/ja/docs/comics#漫画の警告)）。そのとき`used`は設定が解決された値（組み込みの吹き出しのスタイルでは、そのスタイル自身の既定値）で、近い語があれば`suggestion`がその語を示します。コントラストの検査の`level`と`mode`も同じように検査されます。`used`は`'AA'`または`'auto'`です。
 - **縦組みの行番号**：縦組みの文書（`layout.writingMode: 'vertical-rl'`）で`lineNumbers.enabled: true`を指定した場合です。縦組みのページには行番号が付かず、`used`は`false`です（`lineNumbersUnsupported`。[行番号](/ja/docs/configuration-notes-references#行番号)を参照）。
 - **縦組みでの回り込み** — 縦組みの文書でのリソースタイプの`defaultPlacement.wrap`。縦組みのページでは図版の横に本文を組まず、`used`は`none`です（`wrapUnsupported`。[文書の書式 › 回り込み](/ja/docs/document-format-resources#回り込み)を参照）。側を指さない`wrap`は不明な設定値です。
-- **ページテンプレートとラベルスタイル** — `pageTemplates`または`labelStyles`の問題。idや名前の重複、`extends`・アンカー・フレームの続き先の循環、存在しないスタイル・フレーム・テンプレート、最大値より大きい最小値、`labelStyles`にないアンカーのラベルスタイル（リソースを渡したときに検査：`collectConfigWarnings(config, { resources })`）。これらの警告の`path`はJSONポインター（`/pageTemplates/3/frames/2/style`）です。種類ごとの原因と直し方は[ページテンプレートの警告](/ja/docs/configuration-composed-pages#ページテンプレートの警告)にあります。
+- **ほかのスタイルを元にした囲みスタイル** — 囲みスタイルの`extends`が`calloutStyles`にないスタイルを指している（`calloutStyleExtendsUnknown`。`suggestion`にいちばん近いid）、または`extends`をたどると元に戻る（`calloutStyleExtendsCycle`。`value`は循環`a → b → a`）。スタイルは単独で使われ、設定していない項目は既定値になります（[ほかのスタイルを元にしたスタイル](/ja/docs/configuration-callouts#ほかのスタイルを元にしたスタイル)を参照）。
+- **ページテンプレートとラベルスタイル** — `pageTemplates`または`labelStyles`の問題。idや名前の重複、`extends`・アンカー・枠の続き先の循環、存在しないスタイル・枠・テンプレート、最大値より大きい最小値、`labelStyles`にないアンカーのラベルスタイル（リソースを渡したときに検査：`collectConfigWarnings(config, { resources })`）。これらの警告の`path`はJSONポインター（`/pageTemplates/3/frames/2/style`）です。種類ごとの原因と直し方は[ページテンプレートの警告](/ja/docs/configuration-composed-pages#ページテンプレートの警告)にあります。
 - **デザイン内の本文** — デザインのテキスト要素で、プレースホルダー以外の文字が短いラベルより長いもの。つまり設定に置かれた本の本文です。設定（見出しスタイル、ヘッダー、部扉のデザイン）ごとに警告を1つ出し、各テキストのパスを添えます（`contentInConfig`、[本文の検査](#本文の検査設定)を参照）。ほかの警告と違い、`checks.contentInConfig.enabled: false`で止められます。
 
 Sandboxはこれらを**検査**パネルに、設定のパスとともに表示します。コードでは、`buildDocument`が文書に`configWarnings`として付け（設定に問題がなければ存在しません）、`collectConfigWarnings(config)`はレイアウトを行わずにこれらを返します：

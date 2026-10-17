@@ -34,6 +34,11 @@ export const FRAME_STYLE_ID = '__postext-frame';
 
 /** `containerAttrs` key of a story's box: the name of its first frame. */
 export const FRAME_ATTR = '__frame';
+/** `containerAttrs` key of the flow frame's story box whose first paragraph
+ *  followed, in the Markdown, a heading another frame `takes` (#947): the heading's
+ *  `sourceStart`. The paragraph takes the drop cap of that heading's level
+ *  as the first paragraph after it in the flow does. */
+export const CAP_HEADING_ATTR = '__capHeading';
 
 /** Container ids of the stories' boxes: past any id the parser hands out
  *  and clear of the other synthetic boxes'. */
@@ -54,7 +59,7 @@ export function frameChain(template: ResolvedPageTemplate, head: string): Resolv
 }
 
 /** The head of the chain frame `name` belongs to. */
-function chainHead(template: ResolvedPageTemplate, name: string): string {
+export function chainHead(template: ResolvedPageTemplate, name: string): string {
   const prev = new Map<string, string>();
   for (const f of template.frames) {
     const n = nextFrameOf(f);
@@ -197,24 +202,54 @@ function regroupPage(
     stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}) });
   }
   stories.sort((a, b) => Math.min(...a.indices) - Math.min(...b.indices));
+  /** The heading another story took that the flow story's first block
+   *  came right after in the Markdown (past fences and directives), if
+   *  that block is a paragraph (#947). */
+  const flowHead = story(undefined);
+  const capHeadingOf = (indices: readonly number[], head: string): ContentBlock | undefined => {
+    if (head !== flowHead) return undefined;
+    const at = indices.find((i) => blocks[i]!.type !== 'directive' && blocks[i]!.type !== 'containerStart' && blocks[i]!.type !== 'containerEnd');
+    if (at === undefined || blocks[at]!.type !== 'paragraph') return undefined;
+    let j = at - 1;
+    while (j >= 0 && (blocks[j]!.type === 'directive' || blocks[j]!.type === 'containerStart' || blocks[j]!.type === 'containerEnd')) j--;
+    const taker = taken.get(j);
+    return j >= 0 && blocks[j]!.type === 'heading' && taker !== undefined && taker !== head ? blocks[j] : undefined;
+  };
   const out: ContentBlock[] = [];
   for (const s of stories) {
     const id = nextId();
     const first = blocks[s.indices[0]!]!;
     const last = blocks[s.indices[s.indices.length - 1]!]!;
+    const capHeading = capHeadingOf(s.indices, s.head);
+    // A frame's own `direction` (#944): its story is set in it, as a box
+    // fenced `{dir=…}` is; a block or a box inside that writes its own
+    // `dir` keeps it.
+    const frameDir = names.has(s.head) ? frameChain(template, s.head)[0]?.direction : undefined;
+    // Boxes inside the story that write their own `dir` are open while
+    // their blocks pass: those keep the direction they were given.
+    const owning: boolean[] = [];
+    const directed = (b: ContentBlock): ContentBlock => {
+      if (b.type === 'containerEnd') {
+        owning.pop();
+        return b;
+      }
+      const kept = owning.includes(true) || ownsDirection(b);
+      if (b.type === 'containerStart') owning.push(ownsDirection(b));
+      return frameDir && !kept ? { ...b, direction: frameDir } : b;
+    };
     out.push({
       type: 'containerStart',
       text: '',
       spans: [],
       containerName: 'callout',
-      containerAttrs: { ...s.attrs, type: FRAME_STYLE_ID, placement: 'here', span: 'column', [FRAME_ATTR]: s.head },
+      containerAttrs: { ...s.attrs, type: FRAME_STYLE_ID, placement: 'here', span: 'column', [FRAME_ATTR]: s.head, ...(capHeading ? { [CAP_HEADING_ATTR]: String(capHeading.sourceStart) } : {}) },
       // The frame fence's `label` and `title` keep their source (#857).
       ...(s.attrSources ? { containerAttrSources: s.attrSources } : {}),
       containerId: id,
       sourceStart: first.sourceStart,
       sourceEnd: first.sourceStart,
       sourceMap: [],
-      ...(first.direction ? { direction: first.direction } : {}),
+      ...(frameDir ? { direction: frameDir } : first.direction ? { direction: first.direction } : {}),
     });
     // A frame set in columns (`columns`), alone in its story: its content
     // is a `:::columns` group of the box (a chain's frames may differ in
@@ -225,12 +260,22 @@ function regroupPage(
       const gap: Record<string, string> = cols.columnGap ? { gap: `${cols.columnGap.value}${cols.columnGap.unit}` } : {};
       out.push({ type: 'containerStart', text: '', spans: [], containerName: 'columns', containerAttrs: { count: String(cols.columns), ...gap }, containerId: id + COLUMNS_ID_OFFSET, sourceStart: first.sourceStart, sourceEnd: first.sourceStart, sourceMap: [] });
     }
-    for (const i of s.indices) out.push(blocks[i]!);
+    for (const i of s.indices) out.push(directed(blocks[i]!));
     if (cols) out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'columns', containerId: id + COLUMNS_ID_OFFSET, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
     out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'callout', containerId: id, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
   }
   for (const i of loose.sort((a, b) => a - b)) out.push(blocks[i]!);
   return out;
+}
+
+/** Whether a block sets its own direction in the Markdown (a heading's or
+ *  a box's `{dir=…}`), which a frame's `direction` leaves as written. */
+function ownsDirection(b: ContentBlock): boolean {
+  const own = (attrs: Record<string, string> | undefined): boolean => {
+    const v = attrs?.dir?.trim().toLowerCase();
+    return v === 'ltr' || v === 'rtl';
+  };
+  return own(b.type === 'heading' ? b.attrs : undefined) || own(b.containerAttrs) || own(b.verse?.attrs);
 }
 
 const ZERO = { value: 0, unit: 'pt' as const };

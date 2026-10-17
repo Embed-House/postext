@@ -774,6 +774,11 @@ export function paintFigureLabels(ctx: CanvasRenderingContext2D, rb: ResolvedRes
       ctx.fillRect(r.x, r.y, r.width, r.height);
     }
     const { fontString: f, boldFontString: b, italicFontString: i, boldItalicFontString: bi, color } = layout;
+    // A vertical label (#902) is painted as a vertical page's flow is: its
+    // frame was turned a quarter turn by the matrix, and the vertical
+    // painter stands each character upright in its cell.
+    const vertical = layout.vertical;
+    const outerPaint = vertical ? setVerticalPaint({ region: vertical.region, uprightDigits: vertical.uprightDigits, axes: vertical.centralBaselines }) : null;
     if (layout.halo && layout.halo.widthPx > 0) {
       saveContext(ctx);
       const halo = haloContext(ctx, layout.halo.color, layout.halo.widthPx);
@@ -781,6 +786,7 @@ export function paintFigureLabels(ctx: CanvasRenderingContext2D, rb: ResolvedRes
       restoreContext(ctx);
     }
     for (const line of layout.lines) paintLine(ctx, line, f, b, i, bi, color, rb.linkColor);
+    if (vertical) setVerticalPaint(outerPaint);
     restoreContext(ctx);
   }
 }

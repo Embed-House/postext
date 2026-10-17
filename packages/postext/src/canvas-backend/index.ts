@@ -326,6 +326,8 @@ function paintContext(
   // the template's decoration at layer 0. A page painted through a flow
   // frame paints its decoration on the sheet, after the flow.
   const frameIds = composedFrameBlockIds(page);
+  // A vertical frame's text (#944) is set in the document's CJK region.
+  const frameCjk = { region: doc.config.cjk?.region ?? 'mainland', uprightDigits: doc.config.cjk?.uprightDigits ?? 2 };
   if (page.floats) {
     for (const fb of page.floats) {
       if (frameIds.has(fb.id)) continue;
@@ -337,12 +339,12 @@ function paintContext(
     // it, between the frames under layer 0 and the others: a title frame
     // on a band reads over the band on a right-to-left or vertical page
     // as on any other.
-    renderComposedFrames(ctx, page, inkHex, undefined, 'below');
+    renderComposedFrames(ctx, page, inkHex, undefined, 'below', frameCjk);
     leaveFlow();
     renderComposedDecoration(ctx, page, inkHex);
     enterFlow();
-    renderComposedFrames(ctx, page, inkHex, undefined, 'above');
-  } else if (page.composed) renderComposedFrames(ctx, page, inkHex, page.composed.decoration);
+    renderComposedFrames(ctx, page, inkHex, undefined, 'above', frameCjk);
+  } else if (page.composed) renderComposedFrames(ctx, page, inkHex, page.composed.decoration, undefined, frameCjk);
   if (comicUnder) renderComicTextFrames(ctx, page, inkHex);
   renderFootnoteRules(ctx, page);
 

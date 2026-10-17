@@ -79,6 +79,20 @@ RESOURCE_SLOT_RE = re.compile(r'^::resource\s*\{(?:id="([^"]+)"\s+slot="([^"]+)"
 # `:::figure` with `::label` lines inside it.
 PAGE_FENCE_RE = re.compile(r"^(:{4,})page\b\s*(?:\{([^}]*)\})?\s*$")
 LABEL_RE = re.compile(r"^::label\[(.*)\](?:\{([^{}]*)\})?\s*$")
+# A figure's own words (postext >= 1.39): `::alt[…]`, `::caption[…]`, `::note[…]` lines among the labels
+FIGURE_WORD_KEYS = ("alt", "caption", "note")
+
+
+def figure_word(line: str) -> tuple[str, str] | None:
+    """(key, text) of a `::alt[…]` / `::caption[…]` / `::note[…]` line, else None."""
+    s = line.rstrip()
+    for key in FIGURE_WORD_KEYS:
+        head = f"::{key}["
+        if s.startswith(head) and s.endswith("]"):
+            return key, s[len(head):-1]
+    return None
+
+
 PERCENT_AT_RE = re.compile(r"^\s*-?\d+(?:\.\d+)?%\s+-?\d+(?:\.\d+)?%\s*$")
 COMPOSED_CONTAINERS = {"frame", "figure"}
 ORDERED_RE = re.compile(r"^\s*\d+[.)]\s+")
@@ -315,6 +329,32 @@ CODE_TOKEN_KINDS = {"keyword", "string", "number", "comment", "function", "type"
                     "variable", "meta", "prompt", "output"}
 INLINE_CODE_KEYS = {"fontFamily", "fontSize", "color", "bold", "italic", "background", "borderColor", "borderWidth",
                     "borderRadius", "paddingX", "paddingY"}
+
+
+def check_callout_extends(cfg: dict, where: str, rep: Report) -> None:
+    """`calloutStyles[].extends` (postext >= 1.39): the parent must exist and the chain must not loop
+    (calloutStyleExtendsUnknown, calloutStyleExtendsCycle: the style then stands alone)."""
+    styles = [c for c in cfg.get("calloutStyles") or [] if isinstance(c, dict)]
+    parent = {c.get("id"): c.get("extends") for c in styles if c.get("id")}
+    reported: set[str] = set()
+    for c in styles:
+        sid, up = c.get("id"), c.get("extends")
+        if up is None:
+            continue
+        if not isinstance(up, str) or up not in parent:
+            rep.error(where, f"calloutStyleExtendsUnknown: calloutStyles {sid!r} extends {up!r}, which is not a "
+                             f"calloutStyles id ({sorted(x for x in parent if x)[:8]}); the style stands alone")
+            continue
+        seen, cur = [sid], up
+        while isinstance(cur, str) and cur not in seen and parent.get(cur) is not None:
+            seen.append(cur)
+            cur = parent[cur]
+        if cur in seen:
+            key = min(seen[seen.index(cur):])
+            if key not in reported:
+                reported.add(key)
+                rep.error(where, "calloutStyleExtendsCycle: " + " -> ".join([*seen[seen.index(cur):], cur])
+                          + "; those styles stand alone")
 
 
 def check_code_style(cfg: dict, where: str, rep: Report) -> None:
@@ -1142,7 +1182,7 @@ COMIC_PAGE_ATTRS = {"split", "gutter", "style", "bleed", "direction", "dir", "sp
 COMIC_STRIP_ATTRS = {"split", "gutter", "style", "bleed", "direction", "dir", "span", "placement", "height", "aspect", "id",
                      "width", "align", "caption", "type"}
 COMIC_PANEL_ATTRS = {"art", "fit", "focus", "style", "border", "bg", "bleed", "mirror", "pop", "inset", "pad", "alt", "id",
-                     "text", "box", "valign"}
+                     "text", "box", "valign", "shrink"}
 # Keys a script line reads (comics/script.ts SCRIPT_KEYS); any other bare
 # flag names a balloon style.
 COMIC_SCRIPT_KEYS = {"at", "to", "tail", "join", "break", "rotate", "size", "color", "font", "style", "id",
@@ -1601,6 +1641,17 @@ def _check_panel_attrs(attrs: dict[str, str], where: str, ctx: dict, rep: Report
             rep.info(where, "valign places the text of a text panel: it does nothing without the text flag")
         elif attrs["valign"].strip().lower() not in ("top", "middle", "bottom"):
             rep.warn(where, f"valign={attrs['valign']!r} is ignored (top | middle | bottom)")
+    if "shrink" in attrs:  # postext >= 1.39: a text panel's text may be set smaller until it fits
+        sv = attrs["shrink"].strip()
+        num = sv[:-1] if sv.endswith("%") else sv
+        try:
+            ok = sv in ("", "true") or float(num) > 0
+        except ValueError:
+            ok = False
+        if not ok:
+            rep.warn(where, f"shrink={attrs['shrink']!r} is not a number or a percent (shrink, shrink=0.7, shrink=70%)")
+        elif "text" not in attrs:
+            rep.info(where, "shrink sets a text panel's text smaller until it fits: it does nothing without the text flag")
     if "border" in attrs and attrs["border"].strip() != "none" and not COMIC_DIM_RE.match(attrs["border"]):
         rep.warn(where, f"border={attrs['border']!r} is not none or a length (0.5mm, 1pt)")
     if "bg" in attrs:
@@ -2019,6 +2070,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
     comic: dict | None = None  # an open :::page / :::strip block, read raw to its closing :::
     page: dict | None = None  # an open ::::page composed page: colons, line, template, frames, depth
     figure: dict | None = None  # an open :::figure: its ::label lines up to :::
+    figure_words: dict[str, int] = {}  # resource id -> line of the first figure of this file that carries words
 
     def check_slot(slot: str | None, where: str, what: str) -> None:
         if slot is None:
@@ -2121,9 +2173,24 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
         # a :::figure's ::label lines, up to its :::
         if figure is not None:
             if line == ":::":
+                if figure["words"]:
+                    first = figure_words.setdefault(figure["resource"], figure["line"])
+                    if first != figure["line"]:
+                        rep.warn(f"{name}:{figure['line']}",
+                                 f"resource {figure['resource']!r} already has its alt/caption/note from the figure at "
+                                 f"line {first}: a resource placed by two figures of one file takes the first figure's words")
                 figure = None
                 stack.pop()
                 prev_nonblank, prev_kind = True, "fence"
+                continue
+            fw = figure_word(line)
+            if fw:
+                # postext >= 1.39: the edition's own words for the picture (a line wins over the attribute)
+                if fw[0] in figure["words"] and figure["words"][fw[0]] == "line":
+                    rep.warn(where, f"::{fw[0]} given twice in one :::figure: the last one counts")
+                figure["words"][fw[0]] = "line"
+                if fw[0] == "alt" and not fw[1].strip():
+                    rep.info(where, "::alt[] marks the picture decorative (no alt text)")
                 continue
             lm = LABEL_RE.match(line)
             if lm:
@@ -2142,8 +2209,9 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 if st and st not in comic_ctx.get("label_styles", set()):
                     rep.error(where, f"label style {st!r} is not in labelStyles {sorted(comic_ctx.get('label_styles', set()))}")
                 continue
-            rep.error(f"{name}:{figure['line']}", "a :::figure ends at its first line that is neither a ::label nor "
-                                                  "blank: close it with ::: before line " + str(i + 1))
+            rep.error(f"{name}:{figure['line']}", "a :::figure ends at its first line that is neither a ::label, "
+                                                  "::alt / ::caption / ::note nor blank: close it with ::: before line "
+                                                  + str(i + 1))
             figure = None
             stack.pop()
         # composed pages: four or more colons, closed by as many
@@ -2225,7 +2293,8 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                         if rid not in res_ids:
                             rep.error(where, f"unknown resource id {rid!r}")
                     check_slot(attrs.get("slot"), where, "a :::figure")
-                    figure = {"resource": rid, "line": i + 1}
+                    figure = {"resource": rid, "line": i + 1,
+                              "words": {k: "attr" for k in FIGURE_WORD_KEYS if k in attrs}}
                     stack.append((fname, i + 1))
                 prev_nonblank, prev_kind = True, "fence"
                 continue
@@ -2635,6 +2704,7 @@ def main() -> None:
                     rep.warn(f"localized.{lang}.config.{k}", f"replaces the shared `{k}` wholesale; missing keys {sorted(set(shared[k]) - set(v))[:6]} fall back to defaults")
         check_line_numbers(cfg, f"config ({lang})", rep)
         check_code_style(cfg, f"config ({lang})", rep)
+        check_callout_extends(cfg, f"config ({lang})", rep)
         ids = style_ids(cfg)
         for r in resources:
             if r.get("typeId") and r["typeId"] not in ids["types"]:

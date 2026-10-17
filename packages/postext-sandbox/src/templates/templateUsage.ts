@@ -23,12 +23,16 @@ export interface TemplateFence {
   missing: boolean;
   /** The fence carries `spread` (any value but `false`). */
   spread: boolean;
+  /** The fence's `id` (#943): a story of an earlier page may jump to it
+   *  (`overflow.continueIn: 'page:<id>'`). */
+  id?: string;
 }
 
 const PAGE_FENCE_RE = /^(\s{0,3})(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
 const CODE_FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
 const TEMPLATE_ATTR_RE = /(^|\s)template\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+))/;
 const SPREAD_ATTR_RE = /(^|\s)spread(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+)))?(?=\s|$)/;
+const ID_ATTR_RE = /(^|\s)id\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+))/;
 
 /** Every composed-page fence of `markdown`, outside code blocks. */
 export function templateFences(markdown: string): TemplateFence[] {
@@ -58,18 +62,36 @@ export function templateFences(markdown: string): TemplateFence[] {
     const spreadMatch = SPREAD_ATTR_RE.exec(blob);
     const spreadValue = spreadMatch ? (spreadMatch[2] ?? spreadMatch[3] ?? spreadMatch[4]) : undefined;
     const spread = !!spreadMatch && spreadValue !== 'false';
+    const idMatch = ID_ATTR_RE.exec(blob);
+    const idValue = idMatch ? (idMatch[2] ?? idMatch[3] ?? idMatch[4] ?? '').trim() : '';
+    const id = idValue !== '' ? { id: idValue } : {};
     const t = TEMPLATE_ATTR_RE.exec(blob);
     if (!t) {
       const at = blobStart + blob.length;
-      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread });
+      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread, ...id });
       continue;
     }
     const value = t[2] ?? t[3] ?? t[4] ?? '';
     const quoted = t[2] !== undefined || t[3] !== undefined;
     const valueEndInBlob = t.index + t[0].length - (quoted ? 1 : 0);
     const from = blobStart + valueEndInBlob - value.length;
-    out.push({ fenceStart: start, template: value, valueFrom: from, valueTo: from + value.length, missing: false, spread });
+    out.push({ fenceStart: start, template: value, valueFrom: from, valueTo: from + value.length, missing: false, spread, ...id });
   }
+  return out;
+}
+
+/** The ids of the book's page fences (#943), each once, in book order, with
+ *  the chapter (0-based) that holds it: the pages a story may jump to. */
+export function pageFenceIds(chapters: readonly { markdown: string }[]): { id: string; chapter: number }[] {
+  const seen = new Set<string>();
+  const out: { id: string; chapter: number }[] = [];
+  chapters.forEach((ch, chapter) => {
+    for (const f of templateFences(ch.markdown)) {
+      if (f.id === undefined || seen.has(f.id)) continue;
+      seen.add(f.id);
+      out.push({ id: f.id, chapter });
+    }
+  });
   return out;
 }
 

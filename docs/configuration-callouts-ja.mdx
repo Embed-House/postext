@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>人が読むための名前です（エディターのUIでのみ使います）。</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>このスタイルが元にする別のスタイルの id。設定していない項目はそのスタイルから受け継ぎます。<a href="#ほかのスタイルを元にしたスタイル">ほかのスタイルを元にしたスタイル</a>を参照。</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -216,7 +222,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>true</code>のとき、囲みは分割しません。残りの場所に収まらない囲みは、まるごと次の段かページに送ります。分割せずに保てないのは、何も入っていない1段分（<code>span: 'page'</code>の囲みでは1ページ分）より高い囲みだけです。そうした囲みは、はみ出す代わりに後述の<code>false</code>の規則で分割し、現れた位置から始めます。1段に収まる続きは、そこからまるごと送ります。それほど高いフロートの囲み（<code>placement: 'top' | 'bottom' | 'auto'</code>）はフロートにならず、現れた位置で流れの中にとどまります。<code>false</code>のとき、どの囲みも子ブロックの間、または段落やリスト項目の行の間で分割できます。収まる最も深い切れ目で現在の段（<code>span: 'page'</code>の囲みではページ。段の下端にそろえます）を閉じ、残りは次の段の先頭で独立した囲みとして続きます。枠と帯は同じで、アイコンはなく、<code>repeatTitle</code>で繰り返さない限りタイトルもありません。それでも高すぎれば、さらに分割します。インラインのアイコンが先頭の部分で占める列は、どの断片でも空けたまま残すので、囲みはどのページでも同じ行長になります。リスト項目の中で切るときは、行頭記号を先頭の部分に残します。どの断片の枠もフェンスの<code>contentIndex</code>/<code>containerId</code>を共有し、<code>callout.part</code>/<code>callout.continued</code>を記録します。章を締めくくる長い「要点」の囲みには<code>headings.balancing.beforeSpan</code>と組み合わせて、また囲みが図をページから押し出してはならない注記のスタイルに使います。入れ子の囲み（別の囲みの中の<code>:::callout</code>）は親の子要素の1つとして扱います。切れ目はその前後に入り、入れ子の囲みの中で切るのは、そのスタイルが分割を許すとき（<code>keepTogether: false</code>、または1段より高いとき）だけで、そのスタイル自身の<code>splitMinLines</code>に従います。</td>
+      <td><code>true</code>のとき、囲みは分割しません。残りの場所に収まらない囲みは、まるごと次の段かページに送ります。分割せずに保てないのは、何も入っていない1段分（<code>span: 'page'</code>の囲みでは1ページ分）より高い囲みだけです。そうした囲みは、はみ出す代わりに後述の<code>false</code>の規則で分割し、現れた位置から始めます。1段に収まる続きは、そこからまるごと送ります。それほど高いフロートの囲み（<code>placement: 'top' | 'bottom' | 'auto'</code>）はフロートにならず、現れた位置で流れの中にとどまります。<code>false</code>のとき、どの囲みも子ブロックの間、または段落やリスト項目の行の間で分割できます。収まる最も深い切れ目で現在の段（<code>span: 'page'</code>の囲みではページ。段の下端にそろえます）を閉じ、残りは次の段の先頭で独立した囲みとして続きます。枠と帯は同じで、アイコンはなく、<code>repeatTitle</code>で繰り返さない限りタイトルもありません。それでも高すぎれば、さらに分割します。インラインのアイコンが先頭の部分で占める列は、どの断片でも空けたまま残すので、囲みはどのページでも同じ行長になります。リスト項目の中で切るときは、行頭記号を先頭の部分に残します。どの断片の枠もフェンスの<code>contentIndex</code>/<code>containerId</code>を共有し、<code>callout.part</code>/<code>callout.continued</code>を記録します。章を締めくくる長い「要点」の囲みには<code>headings.balancing.beforeSpan</code>と組み合わせて、また囲みが図をページから押し出してはならない注記のスタイルに使います。入れ子の囲み（別の囲みの中の<code>:::callout</code>）は親の子要素の1つとして扱います。切れ目はその前後に入り、入れ子の囲みの中で切るのは、そのスタイルが分割を許すとき（<code>keepTogether: false</code>、または1段より高いとき）だけで、そのスタイル自身の<code>splitMinLines</code>に従います。postext 1.39 からは、組版ページの枠と同じく本文の規則に従って切ります。見出しで断片が終わることはなく（<code>headings.keepWithNext</code>）、リスト項目の間で切るときは前後に少なくとも2項目を残し（<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>。オフなら1項目）、<code>shortListSplit: 'avoid'</code> のもとで <code>bodyText.shortListMaxItems</code> 項目以下のリストは項目の間では切りません。どの切り方も規則を満たさないときは、見出しやリストの前で断片を終えるか、項目の途中で切ります。</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### ほかのスタイルを元にしたスタイル
+
+`extends` には `calloutStyles` の別のスタイルを指定します。このスタイルで設定していない項目は、すべてそのスタイルから受け継ぎます。`padding`、`border`、`titleStyle`、`fixed` のようなオブジェクトはキーごとに合わせるので、内側のアキの一辺だけ、あるいは `fixed.offset` だけを変えられます。色と長さは丸ごと受け継ぎ、`id` と `name` は受け継ぎません。元のスタイル自体がさらに別のスタイルを元にしてもかまいません。囲みをいろいろな場所に置く本では、見た目を一つのスタイルにまとめ、置き場所ごとに場所だけを書いた小さなスタイルを作れます。
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+`caja` の見た目を変えれば、どの囲みもそれぞれの場所のまま変わります。存在しないスタイルを指す `extends` は `calloutStyleExtendsUnknown` を出し（警告がいちばん近い id を示し、スタイルは既定値で単独に使われます）、互いを元にして循環するスタイルは `calloutStyleExtendsCycle` を出します（どれかが循環の外のスタイルを元にするまで、単独で使われます）。Sandbox では囲みスタイルの **元にするスタイル** で設定します。ほかのスタイルの元になっているスタイルを削除すると、その設定を子のスタイルに書き込むので、囲みは変わりません。**枠のスタイル** の節で **見た目だけを比べる** で統合するとき、**囲みを今の場所に残す** がオン（既定）なら、置き場所の違うスタイルはこうした小さなスタイルとして残り、囲みは動きません。postext 1.39 から。
 
 ### `:::callout`コンテナー
 

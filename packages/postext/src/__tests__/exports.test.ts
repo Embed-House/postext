@@ -385,6 +385,8 @@ describe("package exports", () => {
       "DEFAULT_CALLOUT_STYLE_STATIC",
       "resolveCalloutStylesConfig",
       "stripCalloutStylesDefaults",
+      "inheritCalloutStyles",
+      "calloutStyleChain",
       "DEFAULT_CHIP_STYLES",
       "DEFAULT_CHIP_STYLE_STATIC",
       "resolveChipStylesConfig",

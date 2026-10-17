@@ -11,10 +11,11 @@
  * the undo history: ./applyRewrite.
  */
 
-import type { CalloutStyleConfig, FrameConfig, PageTemplate, PageTemplatePatch, PostextConfig } from 'postext';
+import type { CalloutStyleConfig, FrameConfig, PageTemplate, PageTemplatePatch, PostextConfig, ResolvedCalloutStyleConfig } from 'postext';
 import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
 import { retypeCalloutChanges } from './calloutFences';
-import type { UsageChapter } from './styleUsage';
+import { differingGroups, POSITION_FIELDS, type CompareOptions } from './styleCompare';
+import type { StyleUsage, UsageChapter } from './styleUsage';
 
 export interface ChapterRewrite {
   chapterId: string;
@@ -43,6 +44,9 @@ export interface StyleRewritePlan {
   frames: FrameRewrite[];
   /** Fences rewritten, all chapters together. */
   fenceCount: number;
+  /** Styles kept for the place of their boxes (#905), based on the kept
+   *  style: their fences are not rewritten. */
+  stays: string[];
 }
 
 function retypeFrames(frames: FrameConfig[] | undefined, renames: ReadonlyMap<string, string>, found: (frame: string, style: string) => void): FrameConfig[] | undefined {
@@ -99,16 +103,52 @@ export interface MergeGroup {
   merge: readonly string[];
 }
 
+/** The styles of a merge whose `:::callout` boxes stand elsewhere than the
+ *  kept style's (#905): a setting of where a box stands differs (see
+ *  `POSITION_FIELDS`) and boxes of the text use them. Each maps to what it
+ *  keeps of its own, those settings as the engine resolves them, so that
+ *  based on the kept style it stands where it stood. */
+export function placesToKeep(
+  groups: readonly MergeGroup[],
+  library: { styles: readonly CalloutStyleConfig[]; resolved: readonly ResolvedCalloutStyleConfig[]; usage: ReadonlyMap<string, StyleUsage> },
+  compare: CompareOptions = {},
+): Map<string, Partial<CalloutStyleConfig>> {
+  const resolvedOf = new Map(library.styles.map((s, i) => [s.id, library.resolved[i]]));
+  const out = new Map<string, Partial<CalloutStyleConfig>>();
+  for (const g of groups) {
+    const kept = resolvedOf.get(g.keep);
+    if (!kept) continue;
+    for (const id of g.merge) {
+      const own = resolvedOf.get(id);
+      if (!own || id === g.keep || (library.usage.get(id)?.fenceCount ?? 0) === 0) continue;
+      const place = differingGroups(kept, own, compare).filter((f) => POSITION_FIELDS.has(f));
+      if (place.length === 0) continue;
+      out.set(id, Object.fromEntries(place.map((f) => [f, structuredClone((own as unknown as Record<string, unknown>)[f])])) as Partial<CalloutStyleConfig>);
+    }
+  }
+  return out;
+}
+
 /** What merging each group's `merge` into its `keep` changes in the book,
- *  every group in one rewrite. */
+ *  every group in one rewrite. A style of `places` (`placesToKeep`) is not
+ *  merged away: it stays with only its place, based on the kept style
+ *  (#905), so its boxes keep the look of the kept one and do not move. */
 export function planMerges(
   config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates'>,
   styles: readonly CalloutStyleConfig[],
   chapters: readonly UsageChapter[],
   groups: readonly MergeGroup[],
+  places: ReadonlyMap<string, Partial<CalloutStyleConfig>> = new Map(),
 ): StyleRewritePlan {
   const renames = new Map<string, string>();
-  for (const g of groups) for (const id of g.merge) if (id !== g.keep && !renames.has(id)) renames.set(id, g.keep);
+  const thin = new Map<string, string>();
+  for (const g of groups) {
+    for (const id of g.merge) {
+      if (id === g.keep || renames.has(id) || thin.has(id)) continue;
+      if (places.has(id)) thin.set(id, g.keep);
+      else renames.set(id, g.keep);
+    }
+  }
   // A kept style is never itself merged away by another group.
   for (const g of groups) renames.delete(g.keep);
   const ids = styles.map((s) => s.id);
@@ -123,8 +163,14 @@ export function planMerges(
   const calloutStyles: CalloutStyleConfig[] = [];
   styles.forEach((s, i) => {
     const kept = placeOf.get(i);
+    const base = thin.get(s.id);
     if (kept) calloutStyles.push(kept);
+    else if (base !== undefined) calloutStyles.push({ id: s.id, ...(s.name !== undefined ? { name: s.name } : {}), extends: base, ...places.get(s.id) });
     else if (!keptIds.has(s.id) && !renames.has(s.id)) calloutStyles.push(s);
+  });
+  // A style based on one merged away (#905) is based on the kept one.
+  calloutStyles.forEach((s, i) => {
+    if (s.extends !== undefined && renames.has(s.extends)) calloutStyles[i] = { ...s, extends: renames.get(s.extends)! };
   });
   const frames: FrameRewrite[] = [];
   const pageTemplates = retypeTemplates(config.pageTemplates, renames, frames);
@@ -137,6 +183,7 @@ export function planMerges(
     chapters: rewrites,
     frames,
     fenceCount: rewrites.reduce((n, c) => n + c.changes.length, 0),
+    stays: [...thin.keys()],
   };
 }
 
@@ -166,11 +213,16 @@ export function planRename(
   return {
     to,
     from: [from],
-    calloutStyles: styles.map((s) => (s.id === from ? { ...s, id: to } : s)),
+    // A style based on it (#905) names it by its new id.
+    calloutStyles: styles.map((s) => {
+      const next = s.id === from ? { ...s, id: to } : s;
+      return next.extends === from ? { ...next, extends: to } : next;
+    }),
     pageTemplates: retypeTemplates(config.pageTemplates, renames, frames),
     chapters: rewrites,
     frames,
     fenceCount: rewrites.reduce((n, c) => n + c.changes.length, 0),
+    stays: [],
   };
 }
 

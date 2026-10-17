@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'en',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
-  order: 43,
+  order: 44,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
 };
 
@@ -314,7 +314,10 @@ callout style with where the book uses it (template frames, composed pages,
 suggests, the same as Design › Boxes › Frame styles. `sandbox_merge_styles`
 takes `groups` (`{ keep, merge }`) or `all: true` and rewrites every frame and
 fence that named a merged style; `lookOnly: true` also compares styles whose
-boxes stand at different places, which then move.
+boxes stand at different places. Such a style then stays with only its place,
+based on the kept style (`extends`), so its boxes keep where they stand and the
+answer lists it as `keptForTheirPlace`; `keepPlaces: false` merges it away and
+its boxes move.
 Its answer gives `undoSteps`: one per chapter rewritten and one for the styles, which `sandbox_undo` takes back, the styles first.
 
 ### Edit the text
@@ -412,7 +415,7 @@ renames a resource and, by default, every reference to it in the book.
 `sandbox_list_resources` lists them, and with an `id` gives one in full (a
 table's cells with their formatting, an SVG's source).
 
-A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`).
+A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`).
 
 ```jsonc
 // two anchors of a map, with their label styles

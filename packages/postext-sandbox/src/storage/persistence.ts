@@ -44,11 +44,20 @@ function getStorage(): Storage | null {
   }
 }
 
+/** The working configuration. As `saveBook`, a quota error is swallowed: the
+ *  active project record in IndexedDB still holds the truth. The version
+ *  stamp is written only after the configuration, so a write that fails never
+ *  stamps an older copy as current. */
 export function saveConfig(config: PostextConfig): void {
   const stripped = stripConfigDefaults(config);
   const storage = getStorage();
-  storage?.setItem(CONFIG_KEY, JSON.stringify(stripped));
-  storage?.setItem(CONFIG_VERSION_KEY, String(PROJECT_RECORD_VERSION));
+  if (!storage) return;
+  try {
+    storage.setItem(CONFIG_KEY, JSON.stringify(stripped));
+    storage.setItem(CONFIG_VERSION_KEY, String(PROJECT_RECORD_VERSION));
+  } catch (err) {
+    console.warn('[postext-sandbox] could not persist the working configuration', err);
+  }
 }
 
 /** The markdown of the saved working book (or of the legacy single

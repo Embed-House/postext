@@ -399,6 +399,86 @@ describe('drop caps in a composed page’s frames (#922)', () => {
   });
 });
 
+describe('a drop cap paragraph in a chain of frames (#947)', () => {
+  const pt2 = (n: number) => pt(n);
+  const cfg = () => config({
+    paragraphStyles: [{ id: 'abre', dropCap: { lines: 3 } }],
+    pageTemplates: [{ id: 'cadena', header: false, footer: false, frames: [
+      { name: 'uno', flow: true, width: pt2(260), height: pt2(14 * 6), next: 'dos', placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { name: 'dos', width: pt2(260), height: pt2(14 * 20), placement: { anchor: { to: '#uno', edge: 'below' }, offset: { y: pt2(20) } } },
+    ] }],
+  });
+  const word = (k: number) => `palabra${k}`;
+  const intro = (n: number) => Array.from({ length: n }, (_, k) => word(k)).join(' ');
+  const page = (n: number) => `::::page{template="cadena"}\n\n${intro(n)}\n\n:::paragraphs{style="abre" dropcap}\n${TEXT}\n\n${SECOND}\n:::\n\n::::`;
+  const pieces = (doc: VDTDocument, name: string): VDTBlock[] => {
+    const frame = doc.pages.find((p) => p.composed)!.composed!.frames.find((f) => f.name === name)!;
+    return paragraphs(doc).filter((b) => frame.blockIds.includes(b.id));
+  };
+
+  it('is never cut before its sink line: it moves to the next frame whole', () => {
+    let moved = 0;
+    let cut = 0;
+    for (let n = 2; n < 80; n += 3) {
+      const doc = build(page(n), cfg());
+      const head = pieces(doc, 'uno').find((b) => b.lines.some((l) => l.text.includes('Long') || l.text.includes('ong')) && b.dropCap);
+      if (head) {
+        // On the head piece the initial has all the lines it sinks.
+        expect(head.lines.length).toBeGreaterThanOrEqual(head.dropCap!.sink);
+        if (pieces(doc, 'dos').some((b) => b.contentIndex === head.contentIndex)) cut++;
+      } else {
+        // It went on whole: the next frame opens it with its initial.
+        const rest = pieces(doc, 'dos').find((b) => b.dropCap);
+        expect(rest?.dropCap?.text).toBe('L');
+        moved++;
+      }
+      expect(capWarnings(doc)).toEqual([]);
+    }
+    expect(moved).toBeGreaterThan(3);
+    expect(cut).toBeGreaterThan(0);
+  });
+
+  it('cut before its sink line all the same when it opens a frame too short, and says so', () => {
+    const tight = cfg();
+    tight.pageTemplates![0]!.frames![0]!.height = pt2(14 * 2);
+    const doc = build(`::::page{template="cadena"}\n\n:::paragraphs{style="abre" dropcap}\n${TEXT}\n\n${SECOND}\n:::\n\n::::`, tight);
+    const head = pieces(doc, 'uno').find((b) => b.dropCap);
+    expect(head).toBeDefined();
+    expect(head!.lines.length).toBeLessThan(head!.dropCap!.sink);
+    expect(capWarnings(doc)).toEqual([expect.objectContaining({ reason: 'split' })]);
+  });
+
+  it('a heading sent to its own frame (takes) gives the text frame’s first paragraph its level’s drop cap', () => {
+    const feature = (extra: Partial<PostextConfig> = {}) => withCap({ lines: 3 }, {
+      pageTemplates: [{ id: 'feature', frames: [
+        { name: 'titulo', takes: 'h1' },
+        { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' } } },
+      ] }],
+      ...extra,
+    });
+    const doc = build(`::::page{template="feature"}\n\n# One\n\n${TEXT}\n\n${SECOND}\n\n::::`, feature());
+    const frames = doc.pages.find((p) => p.composed)!.composed!.frames;
+    const texto = frames.find((f) => f.name === 'texto')!;
+    const ps = paragraphs(doc).filter((b) => texto.blockIds.includes(b.id));
+    expect(ps[0]!.dropCap?.text).toBe('L');
+    expect(ps[0]!.dropCap?.lines).toBe(3);
+    expect(ps[1]!.dropCap).toBeUndefined();
+    // `{dropcap=off}` on the heading turns it off there too.
+    const off = build(`::::page{template="feature"}\n\n# One {dropcap=off}\n\n${TEXT}\n\n::::`, feature());
+    expect(off.blocks.filter((b) => b.dropCap)).toHaveLength(0);
+    // Nor the paragraph of another frame's slot, nor a text that did not
+    // follow the heading.
+    const aside = (extra: string) => build(`::::page{template="feature"}\n\n# One {dropcap=${extra}}\n\n:::frame{slot="nota"}\nAside of the page.\n:::\n\n${TEXT}\n\n::::`, feature({
+      pageTemplates: [{ id: 'feature', frames: [
+        { name: 'titulo', takes: 'h1' },
+        { name: 'nota', placement: { anchor: { to: '#titulo', edge: 'below' } } },
+        { name: 'texto', flow: true, placement: { anchor: { to: '#nota', edge: 'below' } } },
+      ] }],
+    }));
+    expect(aside('on').blocks.filter((b) => b.dropCap)).toHaveLength(0);
+  });
+});
+
 describe('scripts (#623)', () => {
   it('an Arabic letter that joins the next gets no initial, and a warning', () => {
     const doc = build('# One\n\nبسم الله الرحمن الرحيم، هذا كتاب يقرأ من اليمين إلى اليسار في سطور كثيرة.', withCap({ lines: 3 }, { direction: 'rtl', locale: 'ar' }));

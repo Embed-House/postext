@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Fuentes, colores y salida',
   description: 'Las unidades, los colores y la paleta, las fuentes personalizadas, el visor HTML, el PDF y la producción para imprenta, el visor Folio y la depuración',
   lang: 'es',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '41 min',
   order: 19,
   parent: 'configuration',
@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)` ejecuta las comprobaciones sobre un documento maquetado y devuelve una lista de incidencias, cada una con un `kind`, una `severity` (`'critical'`, `'warning'` o `'info'`), el `pageIndex` absoluto en el libro, el `rect` afectado (px de página) y, cuando el elemento lo tiene, su rango en el texto fuente. Los tipos son `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` y `nearTrim`. Sin un `transform`, un neutro cuenta como una tinta y cualquier otro color como tres, y la cobertura no se comprueba; con él, los recuentos y la cobertura son exactos. La resolución de una imagen se calcula con los píxeles que declara su recurso, o con los del propio archivo cuando `imageSize(fileId)` los da (`bitmapInfo` sobre los bytes, o la imagen decodificada): una declaración que se aleja más de un píxel del archivo se señala una vez como `declaredPixelsMismatch`, un aviso cuando declara más píxeles de los que tiene el archivo. `placedImageResolutions(doc, { resources, imageSize })` enumera cada mapa de bits colocado con sus ppp efectivos, esté activado el preflight o no.
+`preflightDocument(doc, options)` ejecuta las comprobaciones sobre un documento maquetado y devuelve una lista de incidencias, cada una con un `kind`, una `severity` (`'critical'`, `'warning'` o `'info'`), el `pageIndex` absoluto en el libro, el `rect` afectado (px de página) y, cuando el elemento lo tiene, su rango en el texto fuente. Los tipos son `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` y `nearTrim`. Sin un `transform`, un neutro cuenta como una tinta y cualquier otro color como tres, y la cobertura no se comprueba; con él, los recuentos y la cobertura son exactos. La resolución de una imagen se calcula con los píxeles que declara su recurso, o con los del propio archivo cuando `imageSize(fileId)` los da (`bitmapInfo` sobre los bytes, o la imagen decodificada): una declaración que se aleja más de un píxel del archivo se señala una vez como `declaredPixelsMismatch`, un aviso cuando declara más píxeles de los que tiene el archivo. `placedImageResolutions(doc, { resources, imageSize })` enumera cada mapa de bits colocado con sus ppp efectivos, esté activado el preflight o no. Los rótulos de una figura cuentan como texto para `smallProcessText`, `inkLimit` y `safeZone`.
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,7 +783,7 @@ El texto claro calado sobre un fondo de tinta se empasta en máquina cuando es p
 
 ### Qué se lee
 
-La comprobación lee las líneas de cada bloque con sus colores en línea (negrita, cursiva, referencias, chips), los marcadores de lista, las capitulares, los pies, las notas y las celdas de tabla, y el texto de las ranuras de diseño: cabeceras y pies, aperturas, diseños de encabezado, títulos de recuadro. El fondo es el relleno más alto que hay bajo el texto: una caja de diseño, un recuadro, una barra de pie, una celda de tabla, un chip o, si no hay ninguno, el color de la página (`page.backgroundColor`, o el papel que la paleta de una parte da a sus páginas). Un color translúcido se funde con lo que tiene debajo. El texto sobre una imagen se omite, porque su fondo no es un solo color, y también la rotulación de cómic, las lecturas ruby y las fórmulas.
+La comprobación lee las líneas de cada bloque con sus colores en línea (negrita, cursiva, referencias, chips), los marcadores de lista, las capitulares, los pies, las notas y las celdas de tabla, y el texto de las ranuras de diseño: cabeceras y pies, aperturas, diseños de encabezado, títulos de recuadro. El fondo es el relleno más alto que hay bajo el texto: una caja de diseño, un recuadro, una barra de pie, una celda de tabla, un chip o, si no hay ninguno, el color de la página (`page.backgroundColor`, o el papel que la paleta de una parte da a sus páginas). Un color translúcido se funde con lo que tiene debajo. El texto sobre una imagen se omite, porque su fondo no es un solo color, y también la rotulación de cómic, las lecturas ruby y las fórmulas. Las palabras de los rótulos de una figura se leen sobre su placa o, si no, dentro de su halo; los rótulos desnudos sobre la imagen se omiten, como todo texto sobre una imagen.
 
 En una página compuesta la comprobación sigue el orden en que se pinta la página: los marcos por capa, con la `decoration` de la plantilla en la capa 0. El texto de un marco se lee sobre la caja del propio marco cuando su estilo la pinta; si no, sobre la caja de la decoración que tiene debajo (una imagen de la decoración lo deja fuera, como cualquier imagen), y si no, sobre el color de la página. Así, unas letras blancas sobre una pestaña de color de la decoración se miden contra esa pestaña. Un marco girado o escalado se lleva al pliego antes de leer su fondo, y el texto de la propia decoración se comprueba igual. Desde postext 1.37.
 
@@ -869,7 +869,7 @@ Se leen todas las ranuras de diseño: `header`, `footer`, el `advancedDesign.slo
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1336,7 +1336,7 @@ Además de estos, el panel muestra siempre los avisos que emite la propia maquet
 
 ### Avisos de configuración
 
-Ocho errores de la propia configuración nunca pasan en silencio, y ningún interruptor los oculta. El motor no falla por ninguno de ellos: sustituye el valor, o prescinde del ajuste, y lo dice.
+Estos errores de la propia configuración nunca pasan en silencio, y ningún interruptor los oculta salvo el que nombra el último punto. El motor no falla por ninguno de ellos: sustituye el valor, o prescinde del ajuste, y lo dice.
 
 - **Formato de numeración desconocido**: un `numberFormat` de lista numerada, un `page.pageNumbering.format` o el `counterFormat` de un tipo de recurso que no es ninguna de las [grafías de los formatos de numeración](/es/docs/configuration-page-layout#grafías-de-los-formatos-de-numeración). Numera en decimal.
 - **Lista de fuentes en una familia**: un `fontFamily` (o cualquier `…FontFamily`) que contiene una lista de fuentes CSS. El texto se compone en la primera familia de la lista (ver [Una sola familia por `fontFamily`](/es/docs/configuration-text#una-sola-familia-por-fontfamily)).
@@ -1347,6 +1347,7 @@ Ocho errores de la propia configuración nunca pasan en silencio, y ningún inte
 - **Valor de ajuste desconocido**: un ajuste que admite unas pocas palabras lleva otra, como `direction: 'right'` (admite `auto`, `ltr` o `rtl`). El motor lee en su lugar el valor por defecto, y `used` dice en qué quedó: para `direction`, la dirección del idioma del documento (`unknownConfigValue`). Un `align` de tabulación que no es ninguna de sus cuatro palabras se lee como `'start'`, y una `position` que no es una longitud, `'end'` ni un porcentaje descarta la tabulación (`used` es `'none'`). También se comprueban las palabras de los ajustes de cómic ([Cómics › Avisos de cómic](/es/docs/comics#avisos-de-cómic)): `used` es el valor en que quedó el ajuste (el valor por defecto del propio estilo de bocadillo, en un estilo integrado), y `suggestion` nombra la palabra a la que más se parece el valor, cuando hay una cercana. El `level` y el `mode` de la comprobación del contraste se comprueban igual: `used` es `'AA'` o `'auto'`.
 - **Números de línea en texto vertical**: `lineNumbers.enabled: true` en un documento compuesto en vertical (`layout.writingMode: 'vertical-rl'`). Las páginas verticales no llevan números de línea, y `used` es `false` (`lineNumbersUnsupported`; véase [Numeración de líneas](/es/docs/configuration-notes-references#numeración-de-líneas)).
 - **Ajuste del texto en escritura vertical** — el `defaultPlacement.wrap` de un tipo de recurso en un documento compuesto en vertical. Las páginas verticales no componen texto al lado de una figura, y `used` es `none` (`wrapUnsupported`; véase [Formato del documento › Ajuste del texto](/es/docs/document-format-resources#ajuste-del-texto)). Un `wrap` que no nombra ningún lado es un valor de ajuste desconocido.
+- **Estilo de recuadro basado en otro** — un estilo de aviso cuyo `extends` no nombra ningún estilo de `calloutStyles` (`calloutStyleExtendsUnknown`, con el id más parecido en `suggestion`), o cuya cadena de `extends` vuelve a él (`calloutStyleExtendsCycle`, `value` el bucle `a → b → a`). El estilo queda solo, con los valores de serie en lo que no fija (véase [Estilos basados en otro](/es/docs/configuration-callouts#estilos-basados-en-otro)).
 - **Plantillas de página y estilos de rótulo** — un problema en `pageTemplates` o `labelStyles`: un id o un nombre repetido, `extends`, anclajes o marcos encadenados que forman un bucle, un estilo, marco o plantilla que no existe, un mínimo mayor que su máximo, un estilo de rótulo de un anclaje que `labelStyles` no tiene (se comprueba cuando se pasan los recursos: `collectConfigWarnings(config, { resources })`). Su `path` es un puntero JSON (`/pageTemplates/3/frames/2/style`); cada tipo aparece con su causa y su solución en [Avisos de las plantillas de página](/es/docs/configuration-composed-pages#avisos-de-las-plantillas-de-página).
 - **Contenido en un diseño** — un elemento de texto de diseño cuyo texto, además de los marcadores, es más largo que una etiqueta breve: el texto del libro guardado en la configuración. Un aviso por ajuste (un estilo de título, la cabecera, el diseño de las partes), con la ruta de cada texto (`contentInConfig`; ver [Comprobación del contenido](#comprobación-del-contenido-configuración)). A diferencia de los demás, se puede desactivar: `checks.contentInConfig.enabled: false`.
 

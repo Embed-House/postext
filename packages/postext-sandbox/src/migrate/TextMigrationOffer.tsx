@@ -38,11 +38,13 @@ export function TextMigrationOffer({ contentWarnings }: { contentWarnings: numbe
     if (same) {
       // The same chapters: the old text and design as steps of the one
       // history, so the restore can be undone in turn.
-      writeBook(dispatch, s, snapshot.config, new Map(snapshot.chapters.map((c) => [c.id, c.markdown])));
+      writeBook(dispatch, s, snapshot.config, new Map(snapshot.chapters.map((c) => [c.id, c.markdown])), snapshot.resources);
     } else {
       // Chapters added or removed since: the book as it was, whole.
       dispatch({ type: 'SET_CONFIG', payload: snapshot.config, history: false });
       dispatch({ type: 'SET_BOOK', payload: bookFromSnapshot(snapshot, s) });
+      // The anchors the move gave the pictures, as they were.
+      for (const r of snapshot.resources ?? []) dispatch({ type: 'UPSERT_RESOURCE', payload: { ...r, updatedAt: Date.now() } });
     }
     await dropMigrationSnapshot(key);
     announce(labels.textMigrationUndone);

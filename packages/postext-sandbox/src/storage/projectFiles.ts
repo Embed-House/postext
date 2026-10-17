@@ -133,3 +133,44 @@ export async function cloneContentForProject(
   const missing = await copyContentFiles(remapped);
   return { content: remapped.content, missing };
 }
+
+/** Like {@link cloneContentForProject}, for a project that keeps several
+ *  editions (#903): the edition on screen and the ones aside are given
+ *  files of their own in one pass. A file two editions share is copied
+ *  once; two files that would take the same name (the same resource id
+ *  with different artwork) get distinct ones. */
+export async function cloneEditionsForProject(
+  content: ProjectContent,
+  editions: Record<string, ProjectContent> | undefined,
+  newProjectId: string,
+): Promise<{ content: ProjectContent; editions?: Record<string, ProjectContent>; missing: CopiedFiles }> {
+  const given = new Map<string, string>();
+  const taken = new Set<string>();
+  const map: FileIdMapper = (old, kind, hint) => {
+    const key = `${kind}|${old}`;
+    const known = given.get(key);
+    if (known !== undefined) return known;
+    const make = kind === 'blob' ? projectFileId : projectFontFileId;
+    let id = make(newProjectId, hint);
+    for (let n = 2; taken.has(id); n++) id = make(newProjectId, `${n}-${hint}`);
+    taken.add(id);
+    given.set(key, id);
+    return id;
+  };
+  const first = remapContentFileIds(content, map);
+  const blobPairs = [...first.blobPairs];
+  const fontPairs = [...first.fontPairs];
+  const others: Record<string, ProjectContent> = {};
+  for (const [locale, edition] of Object.entries(editions ?? {})) {
+    const remapped = remapContentFileIds(edition, map);
+    others[locale] = remapped.content;
+    blobPairs.push(...remapped.blobPairs);
+    fontPairs.push(...remapped.fontPairs);
+  }
+  const unique = <T extends [string, string, ...unknown[]]>(pairs: T[]): T[] => {
+    const seen = new Set<string>();
+    return pairs.filter((p) => !seen.has(`${p[0]}>${p[1]}`) && !!seen.add(`${p[0]}>${p[1]}`));
+  };
+  const missing = await copyContentFiles({ blobPairs: unique(blobPairs), fontPairs: unique(fontPairs) });
+  return { content: first.content, ...(editions ? { editions: others } : {}), missing };
+}

@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
-import { renderPageToCanvas, type PostextConfig, type TextMigrationReport, type VDTDocument } from 'postext';
+import { renderPageToCanvas, type PostextConfig, type Resource, type TextMigrationReport, type VDTDocument } from 'postext';
 import { useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter, useSandboxStore } from '../context/SandboxContext';
 import { composeBookMemo } from '../book/compose';
 import type { Chapter } from '../book/types';
@@ -16,6 +16,7 @@ import { closeTextMigration, useTextMigrationRequest, type TextMigrationReason }
 import {
   PAGE_DIFFERENCE_THRESHOLD,
   bookKeyOf,
+  changedResources,
   dropMigrationSnapshot,
   formatBytes,
   holdsContent,
@@ -129,18 +130,31 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
   const [share, setShare] = useState(true);
   const [chips, setChips] = useState(true);
   const [removeUnused, setRemoveUnused] = useState(true);
+  // Words on pictures as their labels (#941): offered when the book has
+  // some, and off until asked for (the pages move the most).
+  const [labelsOn, setLabelsOn] = useState(false);
   const [mark, setMark] = useState(false);
   const [phase, setPhase] = useState<'ask' | 'working' | 'done' | 'undone'>('ask');
   // The book as it was when the dialog opened: the preview compares with it,
   // and the move applies to it.
-  const [source] = useState(() => ({ config, chapters }));
+  const [source] = useState(() => ({ config, chapters, resources }));
   const [snapshotKey, setSnapshotKey] = useState<string | null>(null);
   const [record, setRecord] = useState<MigrationRecord | null>(null);
   const history = useSandboxStore().history;
 
   const result = useMemo(
-    () => migrateBook(source, { shareTemplates: share, highlightsToChips: chips, unusedStyles: removeUnused ? 'remove' : 'keep' }),
-    [source, share, chips, removeUnused],
+    () => migrateBook(source, { shareTemplates: share, highlightsToChips: chips, unusedStyles: removeUnused ? 'remove' : 'keep', ...(labelsOn ? { labelsOnPictures: true } : {}) }),
+    [source, share, chips, removeUnused, labelsOn],
+  );
+  // How many words the option would turn into labels: looked for once,
+  // when the book has a picture to put them on.
+  const labelCandidates = useMemo(
+    () => (source.resources.some((r) => r.kind === 'bitmap' || r.kind === 'svg')
+      ? migrateBook(source, { shareTemplates: share, highlightsToChips: chips, unusedStyles: removeUnused ? 'remove' : 'keep', labelsOnPictures: true }).report.labels.labels
+      : 0),
+    // The count of words on pictures does not depend on the other options.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [source],
   );
   const report = result.report;
   const stylesBefore = source.config.headingStyles?.length ?? 0;
@@ -167,21 +181,21 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
       return md === undefined ? c : { ...c, markdown: md };
     });
     const ids = [...new Set(report.pages.map((p) => p.chapterId))];
-    const build = (chaptersList: readonly Chapter[], cfg: PostextConfig, id: string, side: string) => {
+    const build = (chaptersList: readonly Chapter[], cfg: PostextConfig, id: string, side: string, bookResources: readonly Resource[]) => {
       const book = composeBookMemo(chaptersList, id);
       const chapterPlan = plan.byId[id];
       return service.build({
         clientId: `${clientBase}:${side}:${id}`,
         priority: 'background',
-        content: { markdown: book.markdown, metadata: book.metadata, resources, ...(chapterPlan?.continuation ? { continuation: chapterPlan.continuation } : {}), ...(chapterPlan?.outline ? { outline: chapterPlan.outline } : {}) },
+        content: { markdown: book.markdown, metadata: book.metadata, resources: bookResources as Resource[], ...(chapterPlan?.continuation ? { continuation: chapterPlan.continuation } : {}), ...(chapterPlan?.outline ? { outline: chapterPlan.outline } : {}) },
         config: withHyphenationLocale(cfg, locale),
       });
     };
     void (async () => {
       for (const id of ids) {
         try {
-          const before = await build(source.chapters, source.config, id, 'before');
-          const after = await build(afterChapters, result.config, id, 'after');
+          const before = await build(source.chapters, source.config, id, 'before', source.resources);
+          const after = await build(afterChapters, result.config, id, 'after', result.resources ?? source.resources);
           if (cancelled) return;
           const next: Record<string, PagePicture> = {};
           for (const p of report.pages.filter((x) => x.chapterId === id)) {
@@ -229,10 +243,12 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
       activeChapterId: s.activeChapterId,
       movedChars: report.movedChars,
       templates: report.templates.length,
+      // The pictures the move gives anchors to, as they were.
+      resources: changedResources(source.resources, result.resources).map((r) => source.resources.find((o) => o.id === r.id)!),
     };
     await saveMigrationSnapshot(key, snap);
     // Steps of the one history: the chapters, then the design.
-    setRecord(writeBook(dispatch, getState(), result.config, new Map(result.chapters.map((c) => [c.id, c.markdown]))));
+    setRecord(writeBook(dispatch, getState(), result.config, new Map(result.chapters.map((c) => [c.id, c.markdown])), result.resources));
     setSnapshotKey(key);
     setPhase('done');
     announce(labels.textMigrationDone.replace('__pages__', fmt(report.pages.length)).replace('__templates__', fmt(report.templates.length)));
@@ -242,7 +258,7 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
     // The move's own steps while they are the latest; else the book as it
     // was written back as new steps (undoable in turn).
     if (history && record && canUndoMigrationWrite(history, record)) undoMigrationWrite(history, record);
-    else writeBook(dispatch, getState(), source.config, new Map(source.chapters.map((c) => [c.id, c.markdown])));
+    else writeBook(dispatch, getState(), source.config, new Map(source.chapters.map((c) => [c.id, c.markdown])), source.resources);
     if (snapshotKey) await dropMigrationSnapshot(snapshotKey);
     setPhase('undone');
     announce(labels.textMigrationUndone);
@@ -291,6 +307,11 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
                     .replace('__reused__', fmt(report.paragraphStylesReused.length))
                     .replace('__chips__', fmt(report.chipStylesCreated.length)))}
                   {report.chips > 0 && statRow(labels.textMigrationChips.replace('__count__', fmt(report.chips)))}
+                  {labelsOn && report.labels.labels > 0 && statRow(labels.textMigrationLabels
+                    .replace('__labels__', fmt(report.labels.labels))
+                    .replace('__pictures__', fmt(report.labels.pictures))
+                    .replace('__anchors__', fmt(report.labels.anchors))
+                    .replace('__styles__', fmt(report.labels.labelStylesCreated.length + report.labels.labelStylesReused.length)))}
                   {statRow(labels.textMigrationConfigSize.replace('__before__', formatBytes(report.configBytesBefore)).replace('__after__', formatBytes(report.configBytesAfter)))}
                   {statRow(labels.textMigrationCheckCount.replace('__before__', fmt(report.contentInConfigBefore.warnings)).replace('__after__', fmt(report.contentInConfigAfter.warnings)))}
                 </ul>
@@ -301,6 +322,12 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
                   <h3 id={`${titleId}-options`} className="m-0 text-[13px] font-semibold">{labels.textMigrationOptionsHeading}</h3>
                   <OptionRow label={labels.textMigrationOptionShare} checked={share} onChange={setShare} />
                   <OptionRow label={labels.textMigrationOptionChips} checked={chips} onChange={setChips} />
+                  {labelCandidates > 0 && (
+                    <>
+                      <OptionRow label={labels.textMigrationOptionLabels.replace('__count__', fmt(labelCandidates))} checked={labelsOn} onChange={setLabelsOn} describedBy={`${titleId}-labels-hint`} />
+                      <p id={`${titleId}-labels-hint`} className="m-0 text-[11px] text-(--slate)">{labels.textMigrationOptionLabelsHint}</p>
+                    </>
+                  )}
                   {report.unusedStyles.length > 0 || (removeUnused && report.headingStylesRemoved.length > 0)
                     ? <OptionRow label={labels.textMigrationOptionUnused.replace('__count__', fmt(Math.max(report.unusedStyles.length, report.headingStylesRemoved.length)))} checked={removeUnused} onChange={setRemoveUnused} />
                     : null}
@@ -393,12 +420,12 @@ function TextMigrationPopup({ reason }: { reason: TextMigrationReason }) {
   );
 }
 
-function OptionRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+function OptionRow({ label, checked, onChange, describedBy }: { label: string; checked: boolean; onChange: (v: boolean) => void; describedBy?: string }) {
   const id = useId();
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <label htmlFor={id} className="text-xs">{label}</label>
-      <Switch id={id} checked={checked} onCheckedChange={onChange} ariaLabel={label} />
+      <Switch id={id} checked={checked} onCheckedChange={onChange} ariaLabel={label} {...(describedBy ? { ariaDescribedBy: describedBy } : {})} />
     </div>
   );
 }

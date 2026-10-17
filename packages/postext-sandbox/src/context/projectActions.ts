@@ -34,9 +34,11 @@ import {
 import { cloneBook, singleChapterBook } from '../book/chapterOps';
 import type { BookContent, BookStart, Chapter } from '../book/types';
 import { createBookPlanner } from '../book/pagination';
-import { cloneContentForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
+import { cloneContentForProject, cloneEditionsForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
+import { projectEditionFields } from '../storage/projectEditions';
 import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
 import {
+  allEditionChapters,
   deleteProject,
   generateChapterId,
   generateProjectId,
@@ -44,6 +46,7 @@ import {
   putProject,
   toSummary,
   updateProject,
+  withActiveEdition,
   type ProjectContent,
   type ProjectRecord,
   type ProjectThumbnail,
@@ -51,7 +54,8 @@ import {
 import { createBlankBookConfig, withDefaultResourceTypes } from './defaultConfig';
 import type { SandboxAction, SandboxState } from './SandboxContext';
 import type { ChapterLayout } from '../book/types';
-import { deleteChapterLayouts, getChapterLayouts } from '../storage/layouts';
+import { deleteChapterLayouts, getChapterLayouts, putChapterLayouts } from '../storage/layouts';
+import { bundleContentLocales, sameLocaleTag } from '../presets/locale';
 import { getPresetDraft } from '../storage/presetDrafts';
 import { getPresetCover } from '../storage/presetCovers';
 import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover';
@@ -109,6 +113,10 @@ export interface ProjectActions {
    *  a book opened from a host link (see `ProjectRecord.origin`); `locale`
    *  picks the language of a bundle in several (the viewer's otherwise). */
   importBundleBytes: (bytes: ArrayBuffer | Uint8Array, fileName: string, opts?: { origin?: string; locale?: string }) => Promise<string>;
+  /** Open another edition of a project that keeps several (#903), the one
+   *  on screen going aside. Opens the project too when it is not the one
+   *  on screen. */
+  switchEdition: (id: string, locale: string) => Promise<void>;
   exportProject: (target?: DuplicateSource) => Promise<void>;
   /** Replace a project's cover picture with `file`, or drop it with null. */
   setThumbnail: (id: string, file: File | null) => Promise<void>;
@@ -239,6 +247,34 @@ function bookOfState(s: SandboxState): BookContent {
   return { chapters: s.chapters, activeChapterId: s.activeChapterId, ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}), ...(s.bookStart ? { start: s.bookStart } : {}) };
 }
 
+/** The slices of a stored book a project owns, nothing else of the record
+ *  or draft it came from (its id, name, draft key…), with chapters under
+ *  new ids. */
+function ownContent(source: ProjectContent): ProjectContent {
+  return { ...cloneBook(source, generateChapterId), ...(source.canvasScope ? { canvasScope: source.canvasScope } : {}), config: source.config, resources: source.resources };
+}
+
+/** A copy of a project's other editions, chapters under new ids. */
+function ownEditions(editions: Record<string, ProjectContent> | undefined): Record<string, ProjectContent> | undefined {
+  return editions ? Object.fromEntries(Object.entries(editions).map(([locale, e]) => [locale, ownContent(e)])) : undefined;
+}
+
+/** `record` with the other editions of the project it is copied from. */
+function withEditionsOf(record: ProjectRecord, from: Pick<ProjectRecord, 'editionLocales'> | undefined, editions: Record<string, ProjectContent> | undefined): ProjectRecord {
+  if (!editions) return record;
+  return { ...record, editions, ...(from?.editionLocales ? { editionLocales: from.editionLocales } : {}), editionsRev: Date.now() };
+}
+
+/** The other editions of a project as a bundle writes them (#903). */
+function localizedOf(record: ProjectRecord): BundleContent['localized'] | undefined {
+  if (!record.locale || !record.editions) return undefined;
+  const out: NonNullable<BundleContent['localized']> = {};
+  for (const [locale, e] of Object.entries(record.editions)) {
+    out[locale] = { chapters: e.chapters, config: withDefaultResourceTypes(e.config, locale), resources: e.resources, ...(e.start ? { start: e.start } : {}) };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 /** File id a preset's cover picture is handed to the bundle builder under
  *  while an export is being assembled (never stored). */
 const PRESET_THUMBNAIL_ID = 'preset-thumbnail';
@@ -342,8 +378,11 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       }
       await deps.flushWorkingSave();
       const cur = deps.getState();
-      const { content } = await cloneContentForProject(
+      // The other editions of a book in several languages come along.
+      const source = cur.activeProjectId ? await getProject(cur.activeProjectId).catch(() => null) : null;
+      const { content, editions } = await cloneEditionsForProject(
         { ...cloneBook(bookOfState(cur), generateChapterId), config: cur.config, resources: cur.resources },
+        ownEditions(source?.editions),
         id,
       );
       const active = cur.activeProjectId ? cur.projects.find((p) => p.id === cur.activeProjectId) : undefined;
@@ -353,14 +392,14 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       const thumbnail = active
         ? await copyThumbnail(active.thumbnail, id)
         : preset ? await adoptPresetThumbnail(preset, id, cur.presetApplied?.presetId === preset.id ? cur.presetApplied.locale : undefined) : undefined;
-      return persistNew(newRecord(content, {
+      return persistNew(withEditionsOf(newRecord(content, {
         name: name ?? (active ? copyName(active.name) : preset?.name ?? deps.labels().projectUntitled),
         description: active?.description ?? preset?.description,
         locale: active?.locale ?? preset?.locale ?? cur.locale,
         bundleId: active?.bundleId ?? (cur.activeProjectId ? undefined : cur.activePresetId),
         sourcePresetId: active ? active.sourcePresetId : cur.activePresetId,
         thumbnail,
-      }, id));
+      }, id), source ?? undefined, editions));
     });
 
   const duplicate: ProjectActions['duplicate'] = (source) =>
@@ -372,7 +411,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         const summary = s.presetSummaries.find((p) => p.id === source.id);
         if (draft) {
           await deps.flushWorkingSave();
-          const { content } = await cloneContentForProject({ ...draft, ...cloneBook(draft, generateChapterId) }, id);
+          const { content } = await cloneContentForProject(ownContent(draft), id);
           return persistNew(newRecord(content, {
             name: summary?.name ?? source.id,
             description: summary?.description,
@@ -387,15 +426,15 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         const record = await getProject(source.id);
         if (!record) throw new Error('Project not found');
         await deps.flushWorkingSave();
-        const { content } = await cloneContentForProject({ ...record, ...cloneBook(record, generateChapterId) }, id);
-        return persistNew(newRecord(content, {
+        const { content, editions } = await cloneEditionsForProject(ownContent(record), ownEditions(record.editions), id);
+        return persistNew(withEditionsOf(newRecord(content, {
           name: copyName(record.name),
           description: record.description,
           locale: record.locale,
           bundleId: record.bundleId,
           sourcePresetId: record.sourcePresetId,
           thumbnail: await copyThumbnail(record.thumbnail, id),
-        }, id));
+        }, id), record, editions));
       }
       const provider = deps.getProviders().find((p) => p.summary.id === source.id);
       if (!provider) throw new Error('Preset not found');
@@ -432,7 +471,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       }
       const record = await getProject(id);
       await deleteProject(id);
-      if (record) await deleteChapterLayouts(record.chapters.map((c) => c.id)).catch(() => undefined);
+      if (record) await deleteChapterLayouts(allEditionChapters(record).map((c) => c.id)).catch(() => undefined);
       dispatch({ type: 'REMOVE_PROJECT_SUMMARY', payload: id });
       if (wasActive) await deps.openPreset(deps.getBuiltin().summary.id);
     });
@@ -447,23 +486,44 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       const opened = openBundleZip(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes));
       const manifestId = (opened.manifest as { id?: unknown } | null)?.id;
       const summaryId = typeof manifestId === 'string' ? manifestId : slugify(fileName) || 'project';
-      const loaded = await parseBundle(opened.manifest, opened.readFile, {
-        // The content locale picked on import (a bundle in several
-        // languages), else the viewer's: a bundle in one language is read
-        // in its own whatever is asked.
-        locale: opts.locale ?? s.locale,
+      const readEdition = (locale: string): Promise<LoadedPreset> => parseBundle(opened.manifest, opened.readFile, {
+        locale,
         summary: { id: summaryId, name: summaryId, source: 'private', available: true },
         ids: { blob: (f) => projectFileId(id, f), font: (f) => projectFontFileId(id, f) },
         chapterIds: generateChapterId,
         untitledChapter: (n) => deps.labels().chapterUntitled.replace('__n__', String(n)),
       });
+      // The content locale picked on import (a bundle in several
+      // languages), else the viewer's: a bundle in one language is read
+      // in its own whatever is asked.
+      const loaded = await readEdition(opts.locale ?? s.locale);
+      // A bundle in several languages keeps every edition in the project
+      // (#903): the one picked is the record's own content, the rest are
+      // read the same way and kept aside until the reader switches to them.
+      const tags = bundleContentLocales(opened.manifest).locales;
+      const asides: LoadedPreset[] = [];
+      for (const tag of tags) {
+        if (sameLocaleTag(tag, loaded.locale)) continue;
+        asides.push(await readEdition(tag));
+      }
+      const everyEdition = [loaded, ...asides];
+      const written = new Set<string>();
       await Promise.all([
-        ...loaded.blobs.map(async (b) => {
+        ...everyEdition.flatMap((l) => l.blobs).map(async (b) => {
+          if (written.has(b.fileId)) return;
+          written.add(b.fileId);
           await putBlobAt(b.fileId, b.bytes, b.mime);
           invalidateResourceImage(b.fileId);
         }),
-        ...loaded.fonts.map((f) => putFontFile(f)),
+        ...everyEdition.flatMap((l) => l.fonts).map(async (f) => {
+          if (written.has(f.fileId)) return;
+          written.add(f.fileId);
+          await putFontFile(f);
+        }),
       ]);
+      // The pagination each edition's bundle carries, kept so that the
+      // checks and the side-by-side view do not paginate it again.
+      await putChapterLayouts(asides.flatMap((l) => Object.values(l.layouts ?? {}))).catch(() => undefined);
       // The title of the edition imported (`localized.<lang>.name`, #891),
       // else the manifest's.
       const manifestName = isBundleManifest(opened.manifest) ? pickBundleMeta(opened.manifest, loaded.locale).name : undefined;
@@ -475,7 +535,8 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         const bytes = await opened.readFile(manifestThumbnail).catch(() => null);
         if (bytes) thumbnail = (await storeThumbnail(id, bytes, mimeForFile(manifestThumbnail))) ?? undefined;
       }
-      const projectId = await persistNew(newRecord(
+      const edition = projectEditionFields(loaded, asides, tags);
+      const record = newRecord(
         { ...bookFromLoaded(loaded), config: loaded.config, resources: loaded.resources },
         {
           name: typeof manifestName === 'string' && manifestName ? manifestName : summaryId,
@@ -486,11 +547,38 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           ...(opts.origin ? { origin: opts.origin } : {}),
         },
         id,
-      ));
+      );
+      if (edition) {
+        record.editions = edition.editions;
+        record.editionLocales = edition.editionLocales;
+        record.editionsRev = Date.now();
+      }
+      const projectId = await persistNew(record);
       // The bundle's pagination, when it still applies: the book opens
       // paginated (the records are written to storage with the state).
       if (loaded.layouts) dispatch({ type: 'SET_CHAPTER_LAYOUTS', payload: loaded.layouts });
       return projectId;
+    });
+
+  /** Open another edition of a project (#903): the project's edition on
+   *  screen goes aside as it is and the one asked for takes its place. A
+   *  project of one language, or an edition it lacks, changes nothing. */
+  const switchEdition: ProjectActions['switchEdition'] = (id, locale) =>
+    run(async () => {
+      const s = deps.getState();
+      const wasActive = s.activeProjectId === id;
+      if (wasActive) await deps.flushWorkingSave();
+      const record = await getProject(id);
+      if (!record) throw new Error('Project not found');
+      const next = withActiveEdition(record, locale);
+      if (next === record) {
+        if (!wasActive) await activateRecord(record);
+        return;
+      }
+      // The record holds both editions as the reader left them.
+      await putProject({ ...next, updatedAt: Date.now() });
+      dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(next) });
+      await activateRecord(next);
     });
 
   const exportProject: ProjectActions['exportProject'] = (target) =>
@@ -534,7 +622,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // the records written then still fingerprint the same.
         const config = withDefaultResourceTypes(record.config, s.locale);
         const layouts = await storedCurrentLayouts(record.chapters, config, record.resources, {}, record.start);
-        content = { ...record, config, layouts };
+        content = { ...record, config, layouts, ...(localizedOf(record) ? { localized: localizedOf(record)! } : {}) };
       } else {
         await deps.flushWorkingSave();
         const cur = deps.getState();
@@ -558,12 +646,17 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
             thumbnail = { fileId: PRESET_THUMBNAIL_ID, mime: cover.mime };
           }
         }
+        // The other editions of a project in several languages go along.
+        const record = active ? await getProject(active.id).catch(() => null) : null;
+        const localized = record ? localizedOf(record) : undefined;
+        if (localized && meta.locale === undefined) meta = { ...meta, locale: record!.locale };
         content = {
           ...bookOfState(cur),
           config: cur.config,
           resources: cur.resources,
           layouts: deps.currentLayouts(),
           ...(thumbnail ? { thumbnail } : {}),
+          ...(localized ? { localized } : {}),
         };
       }
 
@@ -634,5 +727,5 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       applyRecord({ ...merged, config }, parts);
     });
 
-  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, exportProject, setThumbnail, adoptGeneratedThumbnail, resetToSource };
+  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, resetToSource };
 }

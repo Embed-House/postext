@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '字体、颜色与输出',
   description: '单位、颜色与调色板，自定义字体，HTML查看器，PDF与印刷输出，书页视图和调试',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-17',
   readingTime: '28分钟',
   order: 19,
   parent: 'configuration',
@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`，声明的像素多于文件实有的像素时为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。
+`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`，声明的像素多于文件实有的像素时为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。图中的标注在`smallProcessText`、`inkLimit`和`safeZone`中按文字计算。
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,7 +783,7 @@ Postext排出的同一批页面既供屏幕显示，也供印刷机印刷，而�
 
 ### 检查哪些内容
 
-检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。
+检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。图中标注的文字会在其底板上读取，没有底板就在光晕内读取；直接放在图片上的标注和其他压在图片上的文字一样被跳过。
 
 在组合页面上，检查按页面的绘制顺序进行：各框架按图层排列，模板的 `decoration` 位于第 0 层。框架文字先看框架自身样式绘制的底框；没有底框时，看它下面的装饰方框（下面是装饰图片时跳过，与其他图片上的文字相同）；再没有，就看页面颜色。所以装饰中彩色页签上的白字，是拿那个页签的颜色来衡量的。旋转或缩放过的框架先换算到版面上再读取底色，装饰本身的文字也按同样方式检查。自 postext 1.37 起。
 
@@ -869,7 +869,7 @@ interface ChecksConfig {
 ```js
 import { collectConfigWarnings } from 'postext';
 
-collectConfigWarnings(config, { metadata: { title: 'The Third-Floor Detectives' } });
+collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 // [{ kind: 'contentInConfig', path: 'headingStyles[3]', ownerId: 'lesson-4',
 //    value: 'Look at the picture and answer the questi…', used: '',
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
@@ -1336,7 +1336,7 @@ debug: {
 
 ### 配置警告
 
-配置本身的八类错误从不静默，也没有开关能隐藏它们。引擎不会因此失败：它会替换一个值，或略去该设置，并给出说明：
+配置本身的下列错误从不静默，也没有开关能隐藏它们，只有最后一项提到的那个除外。引擎不会因此失败：它会替换一个值，或略去该设置，并给出说明：
 
 - **未知编号格式**：有序列表的`numberFormat`、`page.pageNumbering.format`或资源类型的`counterFormat`不属于任何一种[编号格式写法](/zh/docs/configuration-page-layout#编号格式的写法)。此时按十进制编号。
 - **字体家族中写了字体栈**：`fontFamily`（或任何`…FontFamily`）中写了CSS字体栈。文字用字体栈中的第一个字体家族排（见[每个`fontFamily`只写一个字体家族](/zh/docs/configuration-text#每个fontfamily只写一个字体族)）。
@@ -1347,6 +1347,7 @@ debug: {
 - **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
+- **基于其他样式的标注框样式** — 标注框样式的`extends`指向`calloutStyles`中不存在的样式（`calloutStyleExtendsUnknown`，`suggestion`给出最接近的id），或沿`extends`追溯会回到它自己（`calloutStyleExtendsCycle`，`value`为环`a → b → a`）。该样式单独成立，未设置的项使用内置默认值（见[基于其他样式的样式](/zh/docs/configuration-callouts#基于其他样式的样式)）。
 - **页面模板和注记样式** — `pageTemplates`或`labelStyles`中的问题：id或名称重复，`extends`、锚定或框接续成环，样式、框或模板不存在，最小值大于最大值，锚点的注记样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
 - **设计中的正文** — 设计文字元素在占位符之外的文字超过一个简短标签的长度：也就是存放在配置中的书的正文。每个设置（一个标题样式、页眉、部分设计）一条警告，附每条文字的路径（`contentInConfig`；见[正文检查](#正文检查配置)）。与其他警告不同，它可以关闭：`checks.contentInConfig.enabled: false`。
 

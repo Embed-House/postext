@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Utilisation programmatique',
   description: 'Appeler Postext depuis le code : buildDocument et ses avertissements, les valeurs par défaut, les polices, les caches et le Web Worker',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-17',
   readingTime: '33 min',
   order: 20,
   parent: 'configuration',
@@ -143,6 +143,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>spreadMismatch</code></td>
       <td>L’ouverture d’une page composée et son modèle ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> de l’ouverture ; <code>templateSpread</code>, celui du modèle).</td>
       <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
+    </tr>
+    <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Une <code>::label</code> d’une <code>:::figure</code> désigne avec <code>at</code> une ancre que la ressource de sa figure n’a pas (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, les ancres de la ressource ; <code>locale</code>).</td>
+      <td>L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Une ancre de la ressource de la figure désigne un style d’étiquette et aucune <code>::label</code> de la figure ne s’y trouve dans cette langue (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). C’est une note.</td>
+      <td>Rien n’est dessiné à l’ancre.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Une étiquette de figure est encore plus large que le <code>width</code> de son ancre à la plus petite échelle que permet son style d’étiquette (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>L’étiquette est dessinée à cette échelle et dépasse sa mesure.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>Les lignes de deux étiquettes d’une même figure se touchent (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). L’avertissement revient à l’étiquette postérieure, dans l’ordre d’écriture.</td>
+      <td>Les deux étiquettes sont dessinées là où elles sont.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>
