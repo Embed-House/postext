@@ -2120,6 +2120,9 @@ export interface SandboxLabels {
   textMigrationOptionShare: string;
   textMigrationOptionChips: string;
   textMigrationOptionUnused: string;
+  textMigrationOptionLabels: string;
+  textMigrationOptionLabelsHint: string;
+  textMigrationLabels: string;
   textMigrationPreviewHeading: string;
   textMigrationPagesHeading: string;
   textMigrationPageRow: string;

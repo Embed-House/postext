@@ -4,6 +4,7 @@ import type { Chapter } from '../book/types';
 import {
   bookFromSnapshot,
   bookKeyOf,
+  changedResources,
   dropMigrationSnapshot,
   formatBytes,
   holdsContent,
@@ -21,6 +22,16 @@ import { sandboxReducer, type SandboxAction, type SandboxState } from '../contex
 import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
 import { resetViewerEdits } from '../editor/viewerEdits';
 import { state as baseState } from '../webmcp/tools/testHarness';
+
+class StubCtx {
+  font = '';
+  measureText(s: string): { width: number } {
+    return { width: s.length * 7 };
+  }
+}
+(globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {
+  getContext(): StubCtx { return new StubCtx(); }
+};
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });
@@ -115,7 +126,7 @@ describe('the move on the one history (#899)', () => {
       const target = new Map(result.chapters.map((c) => [c.id, c.markdown]));
       expect(chapterEdits(CHAPTERS, target).map((e) => e.chapterId)).toEqual(['c1']);
       const record = writeBook(history.dispatch, current, result.config, target);
-      expect(record).toEqual({ chapters: ['c1'], steps: 2 });
+      expect(record).toEqual({ chapters: ['c1'], resources: [], steps: 2 });
       expect(current.config).toBe(result.config);
       expect(current.markdown).toContain('::::page{template="p1"}');
       expect(history.peek()).toMatchObject({ kind: 'config' });
@@ -130,6 +141,74 @@ describe('the move on the one history (#899)', () => {
       history.dispatch({ type: 'UPDATE_CONFIG', payload: { bodyText: { fontSize: pt(13) } } as never, history: { merge: false } });
       expect(canUndoMigrationWrite(history, record)).toBe(false);
       expect(undoMigrationWrite(history, record)).toBe(0);
+    } finally {
+      setActiveHistory(null);
+      resetViewerEdits();
+    }
+  });
+});
+
+// #941: words on a picture as its labels, in the same move.
+
+describe('labels on pictures in the Sandbox’s move (#941)', () => {
+  const PAGE = { anchor: { to: 'page', edge: 'top-left' }, size: undefined };
+  const at = (x: number, y: number, width?: number, height?: number) => ({
+    anchor: { to: 'page' as const, edge: 'top-left' as const },
+    offset: { x: mm(x), y: mm(y) },
+    ...(width !== undefined ? { size: { width: mm(width), ...(height !== undefined ? { height: mm(height) } : {}) } } : {}),
+  });
+  void PAGE;
+  const MAP_CONFIG: PostextConfig = {
+    page: { sizePreset: 'custom', width: mm(200), height: mm(260), margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } } as never,
+    bodyText: { fontFamily: 'Fixture Serif', fontSize: pt(12), lineHeight: pt(18) } as never,
+    resourceTypes: [{ id: 'deco', name: 'Picture', shortLabel: '', numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal', captionPrefix: '' }] as never,
+    headingStyles: [{
+      id: 'map--p1',
+      hidden: true,
+      header: {
+        elements: [
+          { kind: 'image', id: 'art', resourceId: 'atlas', decorative: true, placement: at(0, 0, 200, 260) },
+          { kind: 'text', id: 'gauge', content: 'Rain gauge', fontFamily: 'Fixture Sans', fontSize: pt(9), fontWeight: 400, color: { hex: '#231f20', model: 'hex' }, align: 'left', verticalAlign: 'top', lineHeight: 1.5, overflow: 'wrap', placement: at(120, 150, 30) },
+          { kind: 'text', id: 'intro', content: 'The map shows the coast and the river, drawn for this test.', fontFamily: 'Fixture Sans', fontSize: pt(14), fontWeight: 400, color: { hex: '#231f20', model: 'hex' }, align: 'left', verticalAlign: 'top', lineHeight: 1.5, overflow: 'wrap', placement: at(20, 30, 160) },
+        ],
+      },
+    }],
+  } as never;
+  const ATLAS = { id: 'atlas', typeId: 'deco', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'atlas.png', format: 'png', width: 2000, height: 2600 } } as never;
+  const MAP_CHAPTERS = [chapter('c1', '# Atlas {style="map--p1" id="t1"}\n')];
+
+  it('turns the short words on the picture into labels at its anchors, and returns the resource with them', () => {
+    const off = migrateBook({ config: MAP_CONFIG, chapters: MAP_CHAPTERS, resources: [ATLAS] });
+    expect(off.report.labels.labels).toBe(0);
+    expect(changedResources([ATLAS], off.resources)).toEqual([]);
+    const on = migrateBook({ config: MAP_CONFIG, chapters: MAP_CHAPTERS, resources: [ATLAS] }, { labelsOnPictures: true });
+    expect(on.report.labels).toMatchObject({ pictures: 1, labels: 1, anchors: 1 });
+    expect(on.chapters[0]!.markdown).toContain('::label[Rain gauge]');
+    const written = changedResources([ATLAS], on.resources);
+    expect(written.map((r) => r.id)).toEqual(['atlas']);
+    expect(written[0]!.anchors).toHaveLength(1);
+    // Without the book's resources the picture is unknown: nothing to label.
+    expect(migrateBook({ config: MAP_CONFIG, chapters: MAP_CHAPTERS }, { labelsOnPictures: true }).report.labels.labels).toBe(0);
+  });
+
+  it('writes the anchors as steps between the text and the design, and takes them back with the move', () => {
+    let current: SandboxState = { ...baseState(), chapters: MAP_CHAPTERS.slice(), activeChapterId: 'c1', markdown: MAP_CHAPTERS[0]!.markdown, config: MAP_CONFIG, resources: [ATLAS] };
+    const history = createSandboxHistory({
+      dispatch: (a: SandboxAction) => { current = sandboxReducer(current, a); },
+      getState: () => current,
+      editorStates: (() => { const m = new Map<string, unknown>(); return () => m; })(),
+    });
+    setActiveHistory(history);
+    try {
+      const result = migrateBook({ config: MAP_CONFIG, chapters: MAP_CHAPTERS, resources: [ATLAS] }, { labelsOnPictures: true });
+      const record = writeBook(history.dispatch, current, result.config, new Map(result.chapters.map((c) => [c.id, c.markdown])), result.resources);
+      expect(record).toEqual({ chapters: ['c1'], resources: ['atlas'], steps: 3 });
+      expect(current.resources[0]!.anchors).toHaveLength(1);
+      expect(canUndoMigrationWrite(history, record)).toBe(true);
+      expect(undoMigrationWrite(history, record)).toBe(3);
+      expect(current.resources[0]!.anchors).toBeUndefined();
+      expect(current.markdown).toBe(MAP_CHAPTERS[0]!.markdown);
+      expect(holdsContent(current.config, current.chapters)).toBe(true);
     } finally {
       setActiveHistory(null);
       resetViewerEdits();

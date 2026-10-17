@@ -582,6 +582,9 @@ export function figureLabelReading(label: VDTFigureLabel): string {
 
 type Pt = [number, number];
 
+/** The share of a line box, at its top and at its foot, that holds no ink. */
+const INK_MARGIN = 0.12;
+
 /** The shapes a label covers in the body's frame, as convex quadrilaterals:
  *  its plate when it has one, else the box of each of its lines (a short
  *  line beside a long one leaves its side free). */
@@ -589,7 +592,12 @@ function labelShapes(layout: VDTFigureLabelLayout): Pt[][] {
   const m = figureLabelMatrix(layout, 0, 0);
   const quad = (r: BoundingBox): Pt[] => [apply(m, r.x, r.y), apply(m, r.x + r.width, r.y), apply(m, r.x + r.width, r.y + r.height), apply(m, r.x, r.y + r.height)];
   if (layout.background) return [quad(layout.background.rect)];
-  return layout.lines.filter((l) => l.bbox.width > 0 && l.bbox.height > 0).map((l) => quad(l.bbox));
+  // A line's box is taller than its ink (it is the line pitch): the band
+  // the letters stand in is its middle, so two names set one under the
+  // other at a tighter leading than the label's own do not meet.
+  return layout.lines
+    .filter((l) => l.bbox.width > 0 && l.bbox.height > 0)
+    .map((l) => quad({ x: l.bbox.x, y: l.bbox.y + l.bbox.height * INK_MARGIN, width: l.bbox.width, height: l.bbox.height * (1 - 2 * INK_MARGIN) }));
 }
 
 /** How far two convex polygons run into each other: the shortest push that

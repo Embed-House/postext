@@ -87,6 +87,18 @@ describe('overlapping labels (#902)', () => {
     expect(kinds(build(figure('::label[Madrid]{at="a"}', '::label[Toledo]{at="below"}')), 'labelOverlap')).toEqual([]);
   });
 
+  it('lets two names stand one under the other at a leading tighter than the label’s own pitch', () => {
+    // `below` is 12 px under `a`: the 11.5 px line boxes touch; 9 px apart they overlap by
+    // 2.5 px of box, which is margin, not ink.
+    const tight: Resource = { ...MAP, id: 'mapa', anchors: [{ id: 'los', x: 0.2, y: 0.5, style: 'small' }, { id: 'angeles', x: 0.2, y: 0.5 + 9 / 300, style: 'small' }] };
+    const doc = buildDocument({ markdown: figure('::label[Los]{at="los"}', '::label[Angeles]{at="angeles"}'), resources: [tight, MAP_B] }, PAGE, createMeasurementCache());
+    expect(kinds(doc, 'labelOverlap')).toEqual([]);
+    // Four px apart they really run into each other.
+    const close: Resource = { ...tight, anchors: [tight.anchors![0]!, { id: 'angeles', x: 0.2, y: 0.5 + 4 / 300, style: 'small' }] };
+    const doc2 = buildDocument({ markdown: figure('::label[Los]{at="los"}', '::label[Angeles]{at="angeles"}'), resources: [close, MAP_B] }, PAGE, createMeasurementCache());
+    expect(kinds(doc2, 'labelOverlap')).toHaveLength(1);
+  });
+
   it('is checked in each edition: longer words in one language meet where the short ones do not', () => {
     const short = build(figure('::label[M]{at="a"}', '::label[T]{at="b"}'));
     const long = build(figure('::label[Madrid]{at="a"}', '::label[Toledo]{at="b"}'));
