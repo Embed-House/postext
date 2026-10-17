@@ -56,8 +56,8 @@ export interface ScanOptions {
   breaksPage: (heading: HeadingLine) => boolean;
 }
 
-const HEADING_RE = /^(#{1,6})[ \t]+(.*?)[ \t]*$/;
-const FENCE_RE = /^(:{3,})[ \t]*([A-Za-z][\w-]*)?[ \t]*(\{.*\})?[ \t]*$/;
+const HEADING_RE = /^(#{1,6})[ \t]+(.*)$/;
+const FENCE_RE = /^(:{3,})(?:[ \t]*([A-Za-z][\w-]*))?(?:[ \t]*(\{.*\}))?$/;
 const CODE_RE = /^[ \t]{0,3}(`{3,}|~{3,})/;
 /** Containers, and the blocks the parser reads whole up to a bare `:::`. */
 const OPENS = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper', 'frame', 'references', 'verse', 'figure', 'page', 'strip']);
@@ -90,7 +90,7 @@ export function parseAttrBlock(raw: string): { attrs: Record<string, string>; to
 export function readHeading(line: string, index: number): HeadingLine | null {
   const m = line.match(HEADING_RE);
   if (!m) return null;
-  let title = m[2]!;
+  let title = m[2]!.trimEnd();
   let attrsRaw: string | undefined;
   if (title.endsWith('}')) {
     const open = title.lastIndexOf('{');

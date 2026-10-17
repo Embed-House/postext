@@ -223,14 +223,24 @@ function boldRuns(lines: readonly string[]): { runs: BoldRun[][]; } {
  *  prints as the design printed it. With `marks`, the inline marks of the
  *  design (`**`, `*`, `_`, `^`, `~`) stay marks. */
 function escapeText(text: string, marks: boolean): string {
-  // A backslash before a character that gets escaped is doubled (`\\*`
-  // prints a backslash and an escaped asterisk); any other prints as it
-  // is. With inline marks a backslash before a marker is the design's own
-  // escape (`\*`) and stays.
-  const special = marks ? /\\(?=[$`])/g : /\\(?=[*_^~$`\\])/g;
-  const out = text.replace(special, '\\\\');
-  const markup = out.replace(/\$/g, '\\$').replace(/`/g, '\\`');
-  return marks ? markup : markup.replace(/([*_^~])/g, '\\$1');
+  // One pass over the characters. A backslash before a character that gets
+  // escaped is doubled (`\\*` prints a backslash and an escaped asterisk);
+  // any other prints as it is. With inline marks a backslash before a
+  // marker is the design's own escape (`\*`) and stays, and the markers
+  // are left alone.
+  const escaped = marks ? '$`' : '*_^~$`';
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]!;
+    if (ch === '\\') {
+      const next = text[i + 1];
+      const doubles = next !== undefined && (escaped.includes(next) || (!marks && next === '\\'));
+      out += doubles ? '\\\\' : ch;
+      continue;
+    }
+    out += escaped.includes(ch) ? `\\${ch}` : ch;
+  }
+  return out;
 }
 
 /** A line that the block parser would read as a list item, a heading, a

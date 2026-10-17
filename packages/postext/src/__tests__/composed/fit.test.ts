@@ -319,7 +319,7 @@ describe('the ladder is deterministic and stays on its page (#858)', () => {
     const one = standIn({ frames: { dinero: { height: mm(36), minHeight: undefined } } });
     const page = one.markdown;
     const longer = moreWords(40)(page);
-    const twice = (first: string) => ({ ...one, markdown: `${first}\n\n${page.replace('::::page{template="tema-cajas"', '::::page{template="tema-cajas"')}` });
+    const twice = (first: string) => ({ ...one, markdown: `${first}\n\n${page}` });
     const before = build(twice(page));
     const after = build(twice(longer));
     const pages = (d: VDTDocument) => d.pages.filter((p) => p.composed);
