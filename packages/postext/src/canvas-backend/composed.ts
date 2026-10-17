@@ -6,7 +6,7 @@
  * (#861) all of it is clipped to the page's share of the sheet.
  */
 import type { VDTBlock, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
-import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
+import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
@@ -87,7 +87,7 @@ export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPa
 export function renderComposedDecoration(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null): void {
   const decoration = page.composed?.decoration;
   if (!decoration) return;
-  const sheet = composedSheetClip(page);
+  const sheet = composedSheetClipOnSheet(page);
   if (!sheet) {
     renderHeaderFooterSlot(ctx, decoration, inkHex);
     return;

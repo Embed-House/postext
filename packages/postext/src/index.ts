@@ -638,7 +638,7 @@ export {
   type LabelLook,
   type LabelMatrix,
 } from './composed/labels';
-export { comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
+export { comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameMatrix, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';
 export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';

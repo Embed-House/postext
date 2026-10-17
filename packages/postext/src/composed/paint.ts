@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import type { VDTBlock, VDTComposedPage, VDTFrame, VDTPage } from '../vdt';
+import { flowRectToPage, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -126,6 +126,15 @@ export function composedReadingOrder(paint: readonly ComposedPaintItem[]): Compo
  *  page. */
 export function composedSheetClip(page: Pick<VDTPage, 'composed'>): { x: number; y: number; width: number; height: number } | undefined {
   return page.composed?.sheetClip;
+}
+
+/** {@link composedSheetClip} on the sheet, for what a page paints there
+ *  rather than through its flow frame (the decoration of a vertical or
+ *  right-to-left page): the clip, in the page's flow coordinates, mapped
+ *  to the page (#926). The same box on any other page. */
+export function composedSheetClipOnSheet(page: Pick<VDTPage, 'composed' | 'flow'>): { x: number; y: number; width: number; height: number } | undefined {
+  const clip = page.composed?.sheetClip;
+  return clip ? flowRectToPage(page, clip) : undefined;
 }
 
 type Affine = [number, number, number, number, number, number];

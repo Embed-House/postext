@@ -6330,11 +6330,15 @@ function placeDocumentPass(
       recto.columns = [createVDTColumn(0, recto.contentArea)];
       cursor.columnIndex = 0;
       // The sheet is laid in the pages' flow: the left page first, or the
-      // right one where the flow is mirrored (right to left).
+      // right one where the flow is mirrored (right to left) or turned (a
+      // vertical page, #926: the flow's y runs from the sheet's right edge
+      // to its left, and the right page comes first along it).
       const versoIsLeft = resolved.page.binding !== 'right';
-      const flowMirrored = pageIsMirrored(verso);
+      const vertical = pageIsVertical(verso);
+      const flowMirrored = pageIsMirrored(verso) || vertical;
       const left = versoIsLeft ? verso : recto;
       const right = versoIsLeft ? recto : verso;
+      const frames = designFramesOn(verso);
       const out = layoutComposedSpread({
         ...common(flowMirrored ? right : left, { id: sheet.id, spread: true }),
         ...extra,
@@ -6342,8 +6346,9 @@ function placeDocumentPass(
         first: flowMirrored ? right : left,
         second: flowMirrored ? left : right,
         firstSide: flowMirrored ? 'right' : 'left',
-        trim: pageMetrics.physical.trimBox,
-        bleed: pageMetrics.physical.bleedBox,
+        trim: frames.page,
+        bleed: frames.bleed,
+        ...(vertical ? { axis: 'y' as const } : {}),
       });
       return { sides: out.sides as readonly { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[], warnings: out.warnings, laid: out.laid, continuations: out.continuations };
     };

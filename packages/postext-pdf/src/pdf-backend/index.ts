@@ -11,8 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
-import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -658,8 +657,9 @@ function paintPage(
     paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'below');
     leaveFlow();
     if (vdtPage.composed.decoration) {
-      // On a page of a spread (#861), its share of the sheet only.
-      const sheet = composedSheetClip(vdtPage);
+      // On a page of a spread (#861), its share of the sheet only (the
+      // clip, in flow coordinates, mapped to the sheet, #926).
+      const sheet = composedSheetClipOnSheet(vdtPage);
       if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
       renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
       if (sheet) popClip(ctx);
