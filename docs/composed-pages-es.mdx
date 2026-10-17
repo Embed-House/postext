@@ -42,6 +42,7 @@ Una página compuesta se abre con una línea de **cuatro dos puntos** seguida de
     <tr><td><code>template="…"</code></td><td>Obligatorio. El id de una entrada de <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>La página es una doble página que ocupa dos páginas enfrentadas (consulta <a href="#dobles-páginas">Dobles páginas</a>). Tiene que coincidir con el <code>spread</code> de la plantilla; si no, manda la plantilla y <code>spreadMismatch</code> lo avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que apunta a ella imprime la página en la que cae la página compuesta.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Colores de las entradas de la paleta de esta página, como pares <code>entrada=#hex</code> separados por comas: <code>palette="tinte=#f6c3d0"</code> para una página cuyas cajas toman el tono del tema. Todo color de sus marcos y su decoración vinculado a la paleta los toma, por encima de la <code>palette</code> de la plantilla. Desde postext 1.42.</td></tr>
     <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
   </tbody>
 </table>

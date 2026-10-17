@@ -146,7 +146,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>aucune</td>
-      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties.</td>
+      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties : des paires <code>entrée=#hex</code> séparées par des virgules (<code>teinte=#f6c3d0</code>). Toute couleur des blocs et du décor de la page liée à cette entrée de la palette (ou égale à sa valeur) la prend, et l’attribut <code>palette</code> de la clôture de page passe par-dessus. Depuis postext 1.42 la valeur est appliquée ; auparavant elle était lue puis ignorée.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un modèle enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

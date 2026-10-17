@@ -18,7 +18,7 @@ import type { StyleUsage } from '../../../frameStyles/styleUsage';
 import { templateEditor } from '../../../templates/editorStore';
 import { showPageTemplatesSection } from '../../../templates/showSection';
 import { StylePreview } from './StylePreview';
-import { boxesText, groupsText, pagesText, suggestionText, usageText } from './text';
+import { boxesText, groupsText, kindText, pagesText, suggestionText, usageText } from './text';
 
 const noSubscription = () => () => undefined;
 const noVersion = () => 0;
@@ -150,6 +150,23 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
           <div role="status" className="mb-2 flex items-center gap-2 rounded border px-2 py-1.5 text-xs" style={{ borderColor: 'var(--rule)', color: 'var(--foreground)' }}>
             <span className="min-w-0 flex-1">{last.message}</span>
             <Button variant="outline" size="xs" icon={<Undo2 size={12} />} onClick={undo}>{labels.undo}</Button>
+          </div>
+        )}
+
+        {library.kinds.length > 0 && (
+          <div className="mb-3">
+            <h4 className="mb-1 text-xs font-semibold" style={{ color: 'var(--foreground)' }}>{labels.frameStylesKinds}</h4>
+            <p className="mb-2 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.frameStylesKindsHint}</p>
+            <ul className="m-0 flex list-none flex-col gap-1 p-0">
+              {library.kinds.map((k) => (
+                <li key={k.base} className="rounded border p-2 text-xs" style={{ borderColor: 'var(--rule)' }}>
+                  <p className="mb-1 font-medium" style={{ color: 'var(--foreground)' }}>{kindText(k, styleName(byId.get(k.base), k.base), labels, uiLocale)}</p>
+                  <p className="m-0 text-[0.7rem]" style={{ color: 'var(--slate)' }}>
+                    <span dir="auto">{mergedNames(k.variants.map((v) => v.id), byId, labels)}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

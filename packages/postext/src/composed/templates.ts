@@ -7,6 +7,7 @@ import type {
   FrameConfig,
   FrameGridCell,
   FrameGroupConfig,
+  FrameLook,
   FrameOverflowConfig,
   FrameRulesConfig,
   FrameSize,
@@ -86,6 +87,21 @@ export const FRAME_DIRECTIONS = ['ltr', 'rtl'] as const;
 export const LABEL_FONT_STYLES = ['normal', 'italic'] as const;
 export const LABEL_TEXT_TRANSFORMS = ['none', 'uppercase'] as const;
 export const LABEL_OVERLAPS = ['check', 'allow'] as const;
+
+/** The shape of a frame's `look` (#976): which keys it has and what each
+ *  holds, a colour or a length. */
+export const LOOK_TREE = {
+  background: 'color',
+  border: { color: 'color' },
+  stripe: { color: 'color' },
+  icon: { color: 'color' },
+  marker: { color: 'color', rule: { color: 'color' } },
+  titleStyle: { color: 'color' },
+  body: { color: 'color', boldColor: 'color', italicColor: 'color', letterSpacing: 'tracking' },
+  label: { color: 'color', background: 'color', rule: { color: 'color' } },
+} as const;
+type LookTree = { readonly [key: string]: 'color' | 'tracking' | LookTree };
+
 const DIMENSION_UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'];
 
 // ---------------------------------------------------------------------------
@@ -254,6 +270,11 @@ function mergeNamed<T extends { name?: unknown; remove?: unknown }>(
     for (const [key, value] of Object.entries(raw)) {
       if (key === 'name' || key === 'remove' || value === undefined) continue;
       const target = entry.value as Record<string, unknown>;
+      if (key === 'look' && isRecord(value)) {
+        target.look = mergeLook(target.look, value);
+        entry.fieldPaths.look = `${path}/look`;
+        continue;
+      }
       if (MERGED_OBJECT_KEYS.has(key) && isRecord(value)) {
         const before = target[key];
         const merged: Record<string, unknown> = isRecord(before) ? { ...before } : {};
@@ -421,6 +442,40 @@ export function normalizeFrame(
   if (oneOf(FRAME_DIRECTIONS, f.direction)) out.direction = f.direction;
   const rules = normalizeRules(f.rules);
   if (rules) out.rules = rules;
+  const look = normalizeLook(f.look, LOOK_TREE);
+  if (look) out.look = look as FrameLook;
+  return out;
+}
+
+/** A frame's `look` (#976) with what the engine cannot use left out: a
+ *  key that is not in the tree, a colour with no `hex`, a bad length. */
+function normalizeLook(raw: unknown, tree: LookTree): Record<string, unknown> | undefined {
+  if (!isRecord(raw)) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [key, kind] of Object.entries(tree)) {
+    const value = raw[key];
+    if (kind === 'color') {
+      if (isRecord(value) && typeof value.hex === 'string') out[key] = value;
+    } else if (kind === 'tracking') {
+      // A length that may be negative.
+      if (isRecord(value) && finite(value.value) && typeof value.unit === 'string' && DIMENSION_UNITS.includes(value.unit)) out[key] = { value: value.value, unit: value.unit };
+    } else {
+      const inner = normalizeLook(value, kind);
+      if (inner) out[key] = inner;
+    }
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** `look` over `below`, key by key at every level (colours and lengths
+ *  replaced whole). */
+function mergeLook(below: unknown, look: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = isRecord(below) ? { ...below } : {};
+  for (const [key, value] of Object.entries(look)) {
+    if (value === undefined) continue;
+    const here = out[key];
+    out[key] = isRecord(value) && !('hex' in value) && !('unit' in value) && isRecord(here) ? mergeLook(here, value) : value;
+  }
   return out;
 }
 

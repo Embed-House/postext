@@ -42,6 +42,7 @@ Una pagina composta si apre con una riga di **quattro due punti** seguita da `pa
     <tr><td><code>template="…"</code></td><td>Obbligatorio. L’id di una voce di <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>La pagina è una doppia pagina su due pagine affiancate (vedi <a href="#doppie-pagine">Doppie pagine</a>). Deve concordare con lo <code>spread</code> del modello; altrimenti decide il modello e <code>spreadMismatch</code> lo segnala.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un’ancora: un <code>:ref</code> che la cita stampa la pagina su cui cade la pagina composta.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Colori delle voci della tavolozza di questa pagina, come coppie <code>voce=#hex</code> separate da virgole: <code>palette="tinta=#f6c3d0"</code> per una pagina i cui riquadri prendono la tinta dell’argomento. Ogni colore delle sue cornici e della sua decorazione legato alla tavolozza li prende, sopra la <code>palette</code> del modello. Da postext 1.42.</td></tr>
     <tr><td>qualsiasi altro</td><td>Un valore che il modello legge come <code>&#123;attr.name&#125;</code>, per esempio un’immagine di sfondo scelta pagina per pagina: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> nella decorazione.</td></tr>
   </tbody>
 </table>

@@ -10,7 +10,7 @@
  * padding: merge?».
  */
 
-import { srgbToLab, deltaE, type CalloutStyleConfig, type ResolvedCalloutStyleConfig } from 'postext';
+import { calloutStyleChain, srgbToLab, deltaE, type CalloutStyleConfig, type ResolvedCalloutStyleConfig } from 'postext';
 import { framesOnly, usageWeight, type StyleUsage } from './styleUsage';
 
 /** The fields a frame ignores (DESIGN §2.4: its rectangle comes from the
@@ -169,6 +169,18 @@ export function styleDiff(
   return out.sort();
 }
 
+/** Whether `paths` are all colours on both sides: two styles of one shape
+ *  in different tints (#976). A field one style has and the other lacks
+ *  is a difference in shape. */
+export function onlyColours(paths: readonly string[], a: Map<string, StyleLeaf>, b: Map<string, StyleLeaf>): boolean {
+  return paths.length > 0 && paths.every((p) => a.get(p)?.kind === 'color' && b.get(p)?.kind === 'color');
+}
+
+/** The ids of the styles a style is based on (`extends`), nearest first. */
+function basesOf(styles: readonly CalloutStyleConfig[], index: number): string[] {
+  return calloutStyleChain(styles, index).chain.slice(1).map((i) => styles[i]!.id);
+}
+
 export interface MergeSuggestion {
   /** The style kept: the most used of the group. */
   keep: string;
@@ -196,6 +208,9 @@ export function mergeSuggestions(
   const items = styles
     .map((s, index) => ({ id: s.id, index, fields: styleFields(resolved[index] ?? s), weight: usageWeight(usage.get(s.id)), framesOnly: framesOnly(usage.get(s.id)) }))
     .filter((s) => !s.id.startsWith('__postext-'));
+  // A style that differs from another in colours only is a tint of it
+  // (#976), a variant of one kind and not a duplicate: it is left out of
+  // the suggestions (see `styleKinds`).
   // Seeds: the most used first, then list order.
   const order = [...items].sort((x, y) => y.weight - x.weight || x.index - y.index);
   const taken = new Set<string>();
@@ -212,6 +227,7 @@ export function mergeSuggestions(
       // A box of the text that would stand elsewhere is no near twin.
       if (position && placed) continue;
       const diff = full.filter((p) => !POSITION_FIELDS.has(fieldGroup(p)));
+      if (onlyColours(diff, seed.fields, other.fields)) continue;
       if (countFields(diff) > o.maxFields) continue;
       // Its boxes in the text take the kept style's place.
       const moved = !other.framesOnly && placed;
@@ -228,6 +244,59 @@ export function mergeSuggestions(
       groups: [...new Set(fields.map(fieldGroup))].sort(),
       moves: members.reduce((n, m) => n + m.moves, 0),
     });
+  }
+  return out;
+}
+
+export interface StyleKind {
+  /** The style the others are variants of: the most used of the group. */
+  base: string;
+  variants: {
+    id: string;
+    /** Based on the kind's base (`extends`), however far up. */
+    extendsBase: boolean;
+    /** The fields it sets differently from the base (colours only, for a
+     *  style not based on it). */
+    fields: string[];
+    /** Their top-level keys, sorted. */
+    groups: string[];
+  }[];
+}
+
+/** The kinds of box a book has (#976): styles that extend another, or
+ *  differ from it only in colours (a box in seven tints), grouped under the
+ *  most used of them. A style that is nobody's variant has no entry. The
+ *  merge suggestions leave these out: a variant is not a duplicate. */
+export function styleKinds(
+  styles: readonly CalloutStyleConfig[],
+  resolved: readonly ResolvedCalloutStyleConfig[],
+  usage: ReadonlyMap<string, StyleUsage>,
+  options: CompareOptions = {},
+): StyleKind[] {
+  const o = withDefaults(options);
+  const items = styles
+    .map((s, index) => ({ id: s.id, index, fields: styleFields(resolved[index] ?? s), weight: usageWeight(usage.get(s.id)), bases: basesOf(styles, index) }))
+    .filter((s) => !s.id.startsWith('__postext-'));
+  const order = [...items].sort((x, y) => y.weight - x.weight || x.index - y.index);
+  const taken = new Set<string>();
+  const out: StyleKind[] = [];
+  for (const seed of order) {
+    if (taken.has(seed.id)) continue;
+    const variants: StyleKind['variants'] = [];
+    for (const other of items) {
+      if (other.id === seed.id || taken.has(other.id)) continue;
+      const extendsBase = other.bases.includes(seed.id);
+      const diff = styleDiff(seed.fields, other.fields, { ...o, position: false });
+      // A style with nothing to tell it from its base is a duplicate (a
+      // merge suggestion), not a variant.
+      if (diff.length === 0) continue;
+      if (!extendsBase && !onlyColours(diff, seed.fields, other.fields)) continue;
+      variants.push({ id: other.id, extendsBase, fields: diff, groups: [...new Set(diff.map(fieldGroup))].sort() });
+    }
+    if (variants.length === 0) continue;
+    taken.add(seed.id);
+    for (const v of variants) taken.add(v.id);
+    out.push({ base: seed.id, variants });
   }
   return out;
 }

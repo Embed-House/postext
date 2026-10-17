@@ -146,7 +146,7 @@ Um modelo que define só o seu `id` e um bloco é uma página inteira com esse b
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>nenhuma</td>
-      <td>Uma paleta própria para a página, como os estilos de título e as partes têm.</td>
+      <td>Uma paleta própria para a página, como os estilos de título e as partes têm: pares <code>entrada=#hex</code> separados por vírgulas (<code>tom=#f6c3d0</code>). Toda cor dos blocos e da decoração da página ligada a essa entrada da paleta (ou igual ao seu valor) a recebe, e o atributo <code>palette</code> da cerca de página vale por cima. Desde o postext 1.42 o valor é aplicado; antes era lido e ignorado.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Linhas pautadas de lado a lado da caixa de conteúdo do bloco: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do bloco) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Blocos pautados, mais abaixo. Desde postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>O que este bloco muda do aspecto do seu estilo de caixa, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Desde o postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

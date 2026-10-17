@@ -146,7 +146,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>ninguna</td>
-      <td>Una paleta propia para la página, como la que tienen los estilos de encabezado y las partes.</td>
+      <td>Una paleta propia para la página, como la que tienen los estilos de encabezado y las partes: pares <code>entrada=#hex</code> separados por comas (<code>tinte=#f6c3d0</code>). Todo color de los marcos y la decoración de la página vinculado a esa entrada de la paleta (o igual a su valor) la toma, y el atributo <code>palette</code> del bloque de página va por encima. Desde postext 1.42 el valor se aplica; antes se leía y se ignoraba.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Líneas pautadas a lo ancho de la caja de contenido del marco: una al pie de cada línea, tantas como quepan en su altura. <code>every</code> es el paso, <code>'line'</code> (por defecto: el interlineado del texto del marco) o una medida; <code>color</code> es un gris medio por defecto, <code>width</code> el grosor (0,5 pt), <code>inset</code> el margen que queda en cada extremo de la línea, o <code>&#123; left, right &#125;</code>. Véase Marcos pautados, más abajo. Desde postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>Lo que este marco cambia del aspecto de su estilo de recuadro, con los nombres y el anidamiento del propio estilo: colores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> y <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) y el espaciado entre letras del texto (<code>body.letterSpacing</code>). Un <code>background</code> activa además el relleno del estilo; el color de una pestaña solo cuenta si el estilo tiene pestaña. En una plantilla hija se combina clave a clave con el marco al que sustituye. Un libro con una forma de caja en varios tonos conserva un estilo y escribe aquí el tono, o deja que <code>palette</code> recolore un relleno vinculado a la paleta. Desde postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

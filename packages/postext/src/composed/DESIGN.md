@@ -1194,6 +1194,25 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   tab is the plain one. The overlay is the same box, image and text blocks, so no backend changes. The picture
   keeps its colours; a tint from the tab's text colour would need a colour on `VDTDesignImageBlock` and the same
   in canvas, HTML and PDF, and is left (SP followup).
+- **A frame's own colours, the page's palette, and the kinds of box (#976).** Decision: one callout style per *shape*,
+  the tint elsewhere. Three levers, from the narrowest:
+  (1) `FrameConfig.look` (`FrameLook`): colours named and nested as in the callout style (fill, border, stripe,
+  icon, marker and its rule, title, body text, the tab's colours and rule) and `body.letterSpacing` (#974's
+  frame override). `normalizeFrame` keeps what the engine can use (`LOOK_TREE`: a colour has a `hex`, tracking
+  is a length that may be negative), a patch merges it key by key at every level (`mergeLook`), and
+  `frameStyleOf` writes it over the resolved style (`styleWithLook`, memoised per style and look, so the `body`
+  and `lists` objects a measurement is keyed by keep their identity). A fill colour turns the fill on; tab colours
+  apply only to a style that has a tab. `validatePageTemplates` reports unknown keys at any depth. A `look` colour
+  with a `paletteId` follows the palette like every colour of the config.
+  (2) The template's `palette` and the page fence's `palette="id=#hex"`, which the engine read and ignored:
+  `buildHeadersAndFooters` stacks them on the part's and section's overrides for a composed page, so the
+  palette-linked colours of its frames (boxes recoloured by value, `partPalette.ts`) and decoration take the
+  page's value. One style with a fill linked to a palette entry then serves every tint, each page fence naming
+  its own.
+  (3) Sandbox library: `styleKinds` groups a style with those that extend it or differ from it only in colours
+  (`onlyColours`: every differing field a colour on both sides), and `mergeSuggestions` no longer proposes such
+  a pair; a pair that also differs in a length, a switch or a word still is. The Frame styles section lists the
+  kinds. What stays: a book whose boxes differ in colours *and* shape still has one style per shape.
 
 ## 6. Source map contract
 

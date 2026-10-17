@@ -42,6 +42,7 @@ Uma página composta abre com uma linha de **quatro dois-pontos** seguida de `pa
     <tr><td><code>template="…"</code></td><td>Obrigatório. O id de uma entrada de <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas lado a lado (veja <a href="#páginas-duplas">Páginas duplas</a>). Ela precisa concordar com o <code>spread</code> do modelo; caso contrário, vale o modelo e <code>spreadMismatch</code> avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime a página em que a página composta cai.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Cores das entradas da paleta desta página, como pares <code>entrada=#hex</code> separados por vírgulas: <code>palette="tom=#f6c3d0"</code> para uma página cujas caixas recebem a cor do tema. Toda cor dos seus blocos e da sua decoração ligada à paleta as recebe, por cima da <code>palette</code> do modelo. Desde o postext 1.42.</td></tr>
     <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
   </tbody>
 </table>

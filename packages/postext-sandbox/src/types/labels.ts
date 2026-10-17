@@ -2946,6 +2946,10 @@ export interface SandboxLabels {
   frameStylesPreviewOf: string;
   frameStylesSuggestions: string;
   frameStylesSuggestionsNone: string;
+  frameStylesKinds: string;
+  frameStylesKindsHint: string;
+  frameStylesKindOne: string;
+  frameStylesKindMany: string;
   frameStylesSuggestionSame: string;
   frameStylesSuggestionOnly: string;
   frameStylesAnd: string;
@@ -3728,6 +3732,8 @@ export interface SandboxLabels {
   pageTemplatesAreaTooltip: string;
   pageTemplatesOverflowTemplate: string;
   pageTemplatesOverflowTemplateTooltip: string;
+  pageTemplatesPalette: string;
+  pageTemplatesPaletteTooltip: string;
   pageTemplatesOverflowTemplateSame: string;
   pageTemplatesAreaContent: string;
   pageTemplatesAreaTrim: string;
@@ -3792,6 +3798,14 @@ export interface SandboxLabels {
   pageTemplatesMaxHeight: string;
   pageTemplatesLimitTooltip: string;
   pageTemplatesFrameGroupLook: string;
+  pageTemplatesFrameGroupColours: string;
+  pageTemplatesFrameGroupColoursDescription: string;
+  pageTemplatesLookBackground: string;
+  pageTemplatesLookBorder: string;
+  pageTemplatesLookTab: string;
+  pageTemplatesLookTabText: string;
+  pageTemplatesLookText: string;
+  pageTemplatesLookTracking: string;
   pageTemplatesFrameStyle: string;
   pageTemplatesFrameStyleNone: string;
   pageTemplatesFrameStyleTooltip: string;

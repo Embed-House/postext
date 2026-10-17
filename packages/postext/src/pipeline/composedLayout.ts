@@ -44,7 +44,7 @@ import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../co
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
 import { anchorTarget, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
+import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
@@ -1689,7 +1689,7 @@ function stampFrameAttrText(
 export function frameStyleOf(base: ResolvedCalloutStyleConfig, frame: ResolvedFrame): ResolvedCalloutStyleConfig {
   const padding = frame.padding ? { ...base.padding, ...frame.padding } : base.padding;
   return {
-    ...base,
+    ...(frame.look ? styleWithLook(base, frame.look) : base),
     padding,
     width: 'fill',
     placement: 'here',
@@ -1697,6 +1697,57 @@ export function frameStyleOf(base: ResolvedCalloutStyleConfig, frame: ResolvedFr
     marginTop: { value: 0, unit: 'px' },
     marginBottom: { value: 0, unit: 'px' },
   };
+}
+
+const lookedStyles = new WeakMap<object, WeakMap<object, ResolvedCalloutStyleConfig>>();
+
+/** `base` with what a frame's `look` sets (#976) written over it: colours
+ *  of the fill, border, stripe, icon, marker, title, text and label tab,
+ *  and the tracking of the body. A fill colour turns the fill on. A part
+ *  the style does not have (a label tab it lacks) is left out. Kept per
+ *  style and look, so the pieces a measurement is keyed by (`body`,
+ *  `lists`) keep their identity from one call to the next. */
+export function styleWithLook(base: ResolvedCalloutStyleConfig, look: FrameLook): ResolvedCalloutStyleConfig {
+  let byLook = lookedStyles.get(base);
+  if (!byLook) lookedStyles.set(base, (byLook = new WeakMap()));
+  const known = byLook.get(look);
+  if (known) return known;
+  const out: ResolvedCalloutStyleConfig = { ...base };
+  if (look.background) {
+    out.background = look.background;
+    out.backgroundEnabled = true;
+  }
+  if (look.border?.color) out.border = { ...base.border, color: look.border.color };
+  if (look.stripe?.color) out.stripe = { ...base.stripe, color: look.stripe.color };
+  if (look.icon?.color) out.icon = { ...base.icon, color: look.icon.color };
+  if (look.marker?.color || look.marker?.rule?.color) {
+    out.marker = {
+      ...base.marker,
+      ...(look.marker.color ? { color: look.marker.color } : {}),
+      ...(look.marker.rule?.color ? { rule: { ...base.marker.rule, color: look.marker.rule.color } } : {}),
+    };
+  }
+  if (look.titleStyle?.color) out.titleStyle = { ...base.titleStyle, color: look.titleStyle.color };
+  if (look.body) {
+    const b = look.body;
+    out.body = {
+      ...base.body,
+      ...(b.color ? { color: b.color } : {}),
+      ...(b.boldColor ? { boldColor: b.boldColor } : {}),
+      ...(b.italicColor ? { italicColor: b.italicColor } : {}),
+      ...(b.letterSpacing ? (b.letterSpacing.value !== 0 ? { letterSpacing: b.letterSpacing } : { letterSpacing: undefined }) : {}),
+    };
+  }
+  if (look.label && base.label) {
+    out.label = {
+      ...base.label,
+      ...(look.label.color ? { color: look.label.color } : {}),
+      ...(look.label.background ? { background: look.label.background } : {}),
+      ...(look.label.rule?.color ? { rule: { ...base.label.rule, color: look.label.rule.color } } : {}),
+    };
+  }
+  byLook.set(look, out);
+  return out;
 }
 
 /** The story heads of a composed page's stories, by the head frame's

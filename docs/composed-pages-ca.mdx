@@ -42,6 +42,7 @@ Una pàgina composta s'obre amb una línia de **quatre dos punts** seguida de `p
     <tr><td><code>template="…"</code></td><td>Obligatori. L'id d'una entrada de <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>La pàgina és una doble pàgina que ocupa dues pàgines encarades (vegeu <a href="#dobles-pàgines">Dobles pàgines</a>). Ha de coincidir amb l'<code>spread</code> de la plantilla; si no, mana la plantilla i <code>spreadMismatch</code> ho avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Una àncora: un <code>:ref</code> que hi apunta imprimeix la pàgina on cau la pàgina composta.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Colors de les entrades de la paleta d'aquesta pàgina, com a parells <code>entrada=#hex</code> separats per comes: <code>palette="to=#f6c3d0"</code> per a una pàgina les caixes de la qual prenen el to del tema. Tot color dels seus marcs i de la seva decoració vinculat a la paleta els pren, per damunt de la <code>palette</code> de la plantilla. Des de postext 1.42.</td></tr>
     <tr><td>qualsevol altre</td><td>Un valor que la plantilla llegeix com a <code>&#123;attr.name&#125;</code>, per exemple una imatge de fons triada pàgina a pàgina: <code>fondo="banda-retos"</code> amb <code>resourceId: "&#123;attr.fondo&#125;"</code> a la decoració.</td></tr>
   </tbody>
 </table>

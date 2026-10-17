@@ -42,6 +42,7 @@ Eine zusammengesetzte Seite beginnt mit einer Zeile aus **vier Doppelpunkten**, 
     <tr><td><code>template="…"</code></td><td>Pflicht. Die ID eines Eintrags von <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten (siehe <a href="#doppelseiten">Doppelseiten</a>). Sie muss zum <code>spread</code> der Vorlage passen; sonst entscheidet die Vorlage, und <code>spreadMismatch</code> meldet es.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Ein Anker: Ein <code>:ref</code> darauf druckt die Seite, auf der die zusammengesetzte Seite landet.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Farben der Paletteneinträge dieser Seite, als Paare <code>Eintrag=#hex</code>, durch Kommas getrennt: <code>palette="farbton=#f6c3d0"</code> für eine Seite, deren Kästen den Farbton des Themas tragen. Jede an die Palette gebundene Farbe ihrer Rahmen und ihrer Dekoration übernimmt sie, über der <code>palette</code> der Vorlage. Seit postext 1.42.</td></tr>
     <tr><td>jedes andere</td><td>Ein Wert, den die Vorlage als <code>&#123;attr.name&#125;</code> liest, etwa ein Hintergrundbild, das Seite für Seite gewählt wird: <code>fondo="banda-retos"</code> mit <code>resourceId: "&#123;attr.fondo&#125;"</code> im Dekor.</td></tr>
   </tbody>
 </table>

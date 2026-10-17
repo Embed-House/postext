@@ -146,7 +146,7 @@ Una plantilla que només fixa el seu `id` i un marc és una pàgina sencera amb 
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>cap</td>
-      <td>Una paleta pròpia per a la pàgina, com la que tenen els estils d'encapçalament i les parts.</td>
+      <td>Una paleta pròpia per a la pàgina, com la que tenen els estils d'encapçalament i les parts: parells <code>entrada=#hex</code> separats per comes (<code>to=#f6c3d0</code>). Tot color dels marcs i de la decoració de la pàgina vinculat a aquesta entrada de la paleta (o igual al seu valor) la pren, i l'atribut <code>palette</code> del bloc de pàgina va per damunt. Des de postext 1.42 el valor s'aplica; abans es llegia i s'ignorava.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Línies pautades d'un costat a l'altre de la caixa de contingut del marc: una al peu de cada línia, tantes com en càpiguen a la seva alçada. <code>every</code> és el pas, <code>'line'</code> (per defecte: l'interlineat del text del marc) o una mida; <code>color</code> és un gris mitjà per defecte, <code>width</code> el gruix (0,5 pt), <code>inset</code> el marge que queda a cada extrem de la línia, o <code>&#123; left, right &#125;</code>. Vegeu Marcs pautats, més avall. Des de postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>El que aquest marc canvia de l'aspecte del seu estil de requadre, amb els noms i l'aniuament de l'estil mateix: colors (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> i <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) i l'espaiat entre lletres del text (<code>body.letterSpacing</code>). Un <code>background</code> activa a més el farciment de l'estil; el color d'una pestanya només compta si l'estil té pestanya. En una plantilla filla es combina clau a clau amb el marc al qual substitueix. Un llibre amb una forma de caixa en diversos tons conserva un estil i hi escriu el to, o deixa que <code>palette</code> recolori un farciment vinculat a la paleta. Des de postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

@@ -155,8 +155,30 @@ export interface FrameConfig {
   direction?: 'ltr' | 'rtl';
   /** Ruled lines across the frame at a pitch (#914). */
   rules?: FrameRulesConfig;
+  /** What this frame changes of its callout style's look (#976): colours,
+   *  and the tracking of the body. A book with one box in a dozen tints
+   *  keeps one style and writes the tint here. Merged key by key over the
+   *  parent's in a patch. */
+  look?: FrameLook;
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
+}
+
+/** The fields of a callout style a frame may set for itself (#976), named
+ *  and nested as in {@link CalloutStyleConfig}. A `background` also turns
+ *  the style's fill on. */
+export interface FrameLook {
+  background?: ColorValue;
+  border?: { color?: ColorValue };
+  stripe?: { color?: ColorValue };
+  icon?: { color?: ColorValue };
+  marker?: { color?: ColorValue; rule?: { color?: ColorValue } };
+  titleStyle?: { color?: ColorValue };
+  /** Colours of the box's text, and its tracking (see
+   *  `CalloutBodyStyleConfig.letterSpacing`, #974). */
+  body?: { color?: ColorValue; boldColor?: ColorValue; italicColor?: ColorValue; letterSpacing?: Dimension };
+  /** The label tab's colours; only on a style that has a tab. */
+  label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
 export interface FrameGroupConfig {
@@ -345,6 +367,9 @@ export interface ResolvedFrame {
   direction?: 'ltr' | 'rtl';
   /** Ruled lines across the frame (#914), as written (lengths checked). */
   rules?: FrameRulesConfig;
+  /** What the frame changes of its style's look (#976), colours and
+   *  lengths checked. */
+  look?: FrameLook;
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;

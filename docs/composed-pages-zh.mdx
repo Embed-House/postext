@@ -42,6 +42,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>template="…"</code></td><td>必填。<code>pageTemplates</code>中某一项的id。</td></tr>
     <tr><td><code>spread</code></td><td>这一页是由两个对页组成的跨页（见<a href="#跨页">跨页</a>）。它必须与模板的<code>spread</code>一致；不一致时以模板为准，并给出<code>spreadMismatch</code>警告。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
+    <tr><td><code>palette="…"</code></td><td>此页调色板条目的颜色，写成以逗号分隔的<code>条目=#hex</code>对：<code>palette="tint=#f6c3d0"</code>，用于其中的框采用该主题色调的页面。页面的框和装饰中所有与调色板关联的颜色都会采用，优先于模板的<code>palette</code>。自 postext 1.42 起。</td></tr>
     <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
   </tbody>
 </table>

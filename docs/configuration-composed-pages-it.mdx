@@ -146,7 +146,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>nessuna</td>
-      <td>Una tavolozza sostitutiva per la pagina, come quella degli stili dei titoli e delle parti.</td>
+      <td>Una tavolozza sostitutiva per la pagina, come quella degli stili dei titoli e delle parti: coppie <code>voce=#hex</code> separate da virgole (<code>tinta=#f6c3d0</code>). Ogni colore delle cornici e della decorazione della pagina legato a quella voce della tavolozza (o uguale al suo valore) la prende, e l’attributo <code>palette</code> del blocco di pagina ha la precedenza. Da postext 1.42 il valore viene applicato; prima era letto e ignorato.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Righe tracciate lungo la scatola del contenuto della cornice: una al piede di ogni riga, quante ne entrano nella sua altezza. <code>every</code> è il passo, <code>'line'</code> (predefinito: l’interlinea del testo della cornice) o una lunghezza; <code>color</code> è un grigio medio per impostazione predefinita, <code>width</code> lo spessore (0,5 pt), <code>inset</code> lo spazio lasciato a ciascuna estremità della riga, oppure <code>&#123; left, right &#125;</code>. Vedi Cornici rigate, più sotto. Da postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>Ciò che questa cornice cambia dell’aspetto del suo stile di riquadro, con i nomi e l’annidamento dello stile stesso: colori (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e spaziatura delle lettere del testo (<code>body.letterSpacing</code>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta conta solo se lo stile ha una linguetta. In un modello figlio si fonde chiave per chiave con la cornice che sostituisce. Un libro con una forma di riquadro in più tinte conserva uno stile e scrive qui la tinta, oppure lascia che <code>palette</code> ricolori un riempimento legato alla tavolozza. Da postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

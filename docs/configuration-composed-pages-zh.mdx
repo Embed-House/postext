@@ -146,7 +146,7 @@ const config: PostextConfig = {
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>页面的调色板覆盖，用法与标题样式和篇中的相同。</td>
+      <td>页面的调色板覆盖，用法与标题样式和篇中的相同：以逗号分隔的<code>条目=#hex</code>对（<code>tint=#f6c3d0</code>）。页面的框和装饰中，凡与该调色板条目关联（或颜色值相同）的颜色都会采用它，页面围栏的<code>palette</code>属性优先。自 postext 1.42 起该值才会生效；此前它会被读取但被忽略。</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ const config: PostextConfig = {
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.38 起。</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。自 postext 1.42 起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>

@@ -146,7 +146,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>keine</td>
-      <td>Eine abweichende Palette für die Seite, wie sie Überschriftenformate und Teile haben.</td>
+      <td>Eine abweichende Palette für die Seite, wie sie Überschriftenformate und Teile haben: Paare <code>Eintrag=#hex</code>, durch Kommas getrennt (<code>farbton=#f6c3d0</code>). Jede Farbe der Rahmen und der Dekoration der Seite, die an diesen Paletteneintrag gebunden ist (oder seinem Wert gleicht), übernimmt ihn, und das Attribut <code>palette</code> des Seitenblocks gilt obendrein. Seit postext 1.42 wird der Wert angewendet; vorher wurde er gelesen und ignoriert.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Linien quer über den Inhaltskasten des Rahmens: eine am Fuß jeder Zeile, so viele wie seine Höhe fasst. <code>every</code> ist der Abstand, <code>'line'</code> (Standard: der Zeilenabstand des Rahmentexts) oder eine Länge; <code>color</code> ist standardmäßig ein mittleres Grau, <code>width</code> die Stärke (0,5 pt), <code>inset</code> der Abstand an beiden Enden jeder Linie oder <code>&#123; left, right &#125;</code>. Siehe Linierte Rahmen weiter unten. Seit postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Reiters gilt nur für einen Stil mit Reiter. In einer Kindvorlage wird es Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den es überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Seit postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

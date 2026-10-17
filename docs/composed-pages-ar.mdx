@@ -42,6 +42,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>template="…"</code></td><td>إلزامية. معرّف مدخل من <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>الصفحة مزدوجة تمتد على صفحتين متقابلتين (انظر <a href="#الصفحتان-المتقابلتان">الصفحتان المتقابلتان</a>). ويجب أن توافق <code>spread</code> في القالب؛ وإلا فالحكم للقالب ويُنبّه <code>spreadMismatch</code> إلى ذلك.</td></tr>
     <tr><td><code>id="…"</code>، <code>#id</code></td><td>مرساة: الإحالة <code>:ref</code> إليها تطبع رقم الصفحة التي تقع فيها الصفحة المركّبة.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>ألوان مدخلات لوحة هذه الصفحة، أزواجًا <code>مدخل=#hex</code> مفصولة بفواصل: <code>palette="tint=#f6c3d0"</code> لصفحة تأخذ صناديقها لون الموضوع. كل لون في إطاراتها وزخرفتها مرتبط باللوحة يأخذها، وتعلو <code>palette</code> القالب. منذ postext 1.42.</td></tr>
     <tr><td>أي سمة أخرى</td><td>قيمة يقرؤها القالب بوصفها <code>&#123;attr.name&#125;</code>، مثل صورة خلفية تُختار صفحةً صفحة: <code>fondo="banda-retos"</code> في الصفحة مع <code>resourceId: "&#123;attr.fondo&#125;"</code> في الزخرفة.</td></tr>
   </tbody>
 </table>

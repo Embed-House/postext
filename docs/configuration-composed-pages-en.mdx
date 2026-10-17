@@ -146,7 +146,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>A palette override for the page, as heading styles and parts have.</td>
+      <td>A palette override for the page, as heading styles and parts have: pairs <code>entry=#hex</code> separated by commas (<code>tint=#f6c3d0</code>). Every colour of the page's frames and decoration that is linked to that palette entry (or equals its value) takes it, and the page fence's <code>palette</code> attribute goes on top. Since postext 1.42 the value is applied; before, it was read and ignored.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>Ruled lines across the frame's content box: one at the foot of each line slot, as many as its height holds. <code>every</code> is the pitch, <code>'line'</code> (the default: the leading of the frame's text) or a length; <code>color</code> is a mid grey by default, <code>width</code> the thickness (0.5 pt), <code>inset</code> the room left at both ends of each rule, or <code>&#123; left, right &#125;</code>. See Ruled frames below. Since postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>What this frame changes of its callout style's look, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. Since postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>

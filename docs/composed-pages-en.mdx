@@ -42,6 +42,7 @@ A composed page opens with a line of **four colons** followed by `page` and its 
     <tr><td><code>template="…"</code></td><td>Required. The id of an entry of <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>The page is a spread of two facing pages (see <a href="#spreads">Spreads</a>). It must agree with the template's <code>spread</code>; otherwise the template decides and <code>spreadMismatch</code> says so.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page the composed page lands on.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Colours of this page's palette entries, as <code>entry=#hex</code> pairs separated by commas: <code>palette="tint=#f6c3d0"</code> for a page whose boxes take the topic's tint. Every palette-linked colour of its frames and decoration takes them, over the template's <code>palette</code>. Since postext 1.42.</td></tr>
     <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
   </tbody>
 </table>

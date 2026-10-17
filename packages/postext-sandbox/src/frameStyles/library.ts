@@ -15,7 +15,7 @@ import {
   type PostextConfig,
   type ResolvedCalloutStyleConfig,
 } from 'postext';
-import { mergeSuggestions, type CompareOptions, type MergeSuggestion } from './styleCompare';
+import { mergeSuggestions, styleKinds, type CompareOptions, type MergeSuggestion, type StyleKind } from './styleCompare';
 import { bookCalloutStyles, styleUsage, type StyleUsage, type UsageChapter } from './styleUsage';
 import { toPt } from '../controls/units';
 
@@ -27,6 +27,8 @@ export interface FrameStyleLibrary {
   resolved: ResolvedCalloutStyleConfig[];
   usage: Map<string, StyleUsage>;
   suggestions: MergeSuggestion[];
+  /** Styles that extend another or differ from it in colours only (#976). */
+  kinds: StyleKind[];
 }
 
 /** The document language the engine resolves continuation strings in. */
@@ -60,5 +62,6 @@ export function frameStyleLibrary(
   const resolved = resolveBookStyles(config, styles, locale);
   const usage = styleUsage(config, styles, chapters);
   const suggestions = config.calloutStyles ? mergeSuggestions(styles, resolved, usage, bookCompareOptions(config, options)) : [];
-  return { styles, stored: config.calloutStyles !== undefined, resolved, usage, suggestions };
+  const kinds = config.calloutStyles ? styleKinds(styles, resolved, usage, bookCompareOptions(config, options)) : [];
+  return { styles, stored: config.calloutStyles !== undefined, resolved, usage, suggestions, kinds };
 }

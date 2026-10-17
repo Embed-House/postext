@@ -42,6 +42,7 @@ Une page composée s’ouvre par une ligne de **quatre deux-points** suivie de `
     <tr><td><code>template="…"</code></td><td>Obligatoire. L’id d’une entrée de <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard (voir <a href="#doubles-pages">Doubles pages</a>). Elle doit s’accorder avec le <code>spread</code> du modèle ; sinon le modèle décide et <code>spreadMismatch</code> le signale.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Une ancre : un <code>:ref</code> qui la vise imprime le numéro de la page où tombe la page composée.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Couleurs des entrées de la palette de cette page, en paires <code>entrée=#hex</code> séparées par des virgules : <code>palette="teinte=#f6c3d0"</code> pour une page dont les encadrés prennent la teinte du thème. Toute couleur de ses blocs et de son décor liée à la palette les prend, par-dessus la <code>palette</code> du modèle. Depuis postext 1.42.</td></tr>
     <tr><td>tout autre attribut</td><td>Une valeur que le modèle lit sous la forme <code>&#123;attr.name&#125;</code>, par exemple une image de fond choisie page par page : <code>fondo="banda-retos"</code> avec <code>resourceId: "&#123;attr.fondo&#125;"</code> dans le décor.</td></tr>
   </tbody>
 </table>

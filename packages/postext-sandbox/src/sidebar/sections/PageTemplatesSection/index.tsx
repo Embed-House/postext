@@ -332,6 +332,15 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             isDefault={!has('overflowTemplate')}
             onReset={() => set({ overflowTemplate: undefined })}
           />
+          <FieldRow stacked label={labels.pageTemplatesPalette} tooltip={labels.pageTemplatesPaletteTooltip}>
+            <TextControl
+              value={scoped.palette ?? ''}
+              onChange={(v) => set({ palette: v.trim() === '' ? undefined : v })}
+              ariaLabel={labels.pageTemplatesPalette}
+              placeholder="tint=#f6c3d0"
+              widthCh={24}
+            />
+          </FieldRow>
           <NumberInput
             label={labels.pageTemplatesGridColumns}
             value={resolved.grid?.columns ?? 0}

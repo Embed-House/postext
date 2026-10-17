@@ -42,6 +42,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>template="…"</code></td><td>必須。<code>pageTemplates</code>の項目のIDです。</td></tr>
     <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします（<a href="#見開き">見開き</a>を参照）。テンプレートの<code>spread</code>と一致している必要があり、食い違うとテンプレートに従って組まれ、<code>spreadMismatch</code>が出ます。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>アンカーです。これを指す<code>:ref</code>は、テンプレートページが入ったページの番号を印字します。</td></tr>
+    <tr><td><code>palette="…"</code></td><td>このページのパレットエントリの色を、カンマ区切りの<code>エントリ=#hex</code>の組で指定します。<code>palette="tint=#f6c3d0"</code>は、囲みがそのテーマの色合いになるページに使います。枠と装飾のうちパレットにリンクした色はすべてこれに従い、テンプレートの<code>palette</code>より優先されます。postext 1.42 から。</td></tr>
     <tr><td>その他の属性</td><td>テンプレートが<code>&#123;attr.name&#125;</code>として読む値です。たとえばページごとに選ぶ背景の絵なら、ページに<code>fondo="banda-retos"</code>、飾りに<code>resourceId: "&#123;attr.fondo&#125;"</code>と書きます。</td></tr>
   </tbody>
 </table>

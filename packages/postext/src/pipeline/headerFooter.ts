@@ -24,7 +24,7 @@ import {
   type VDTPage,
 } from '../vdt';
 import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
-import { parsePartNumber, partMarkPages } from './parts';
+import { parsePartNumber, parsePartPalette, partMarkPages } from './parts';
 import { computePageMetrics, sheetRectToFlow } from './buildHelpers';
 import { arabicNumbersOf, resolvedLocale } from './config';
 import { classifyPages } from './pageRoles';
@@ -1189,9 +1189,30 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // the document's on their pages, and their palette overrides stack on the
   // part's.
   const sectionByPage = computeSectionStyles(doc.blocks, doc.pages.length, doc.pages, resolved);
+  // A composed page (#976) stacks its template's `palette` and the page
+  // fence's `palette="id=#hex"` on top of those: the palette-linked fills
+  // of its frames and decoration take the page's value.
+  const composedPalettes = new Map<string, Record<string, string>>();
+  const composedPaletteOf = (page: VDTPage | undefined): Record<string, string> | undefined => {
+    const composed = page?.composed;
+    if (!page || !composed) return undefined;
+    const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+    const key = `${composed.template}|${parity}`;
+    let fromTemplate = composedPalettes.get(key);
+    if (!fromTemplate) {
+      const template = resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, composed.template, { parity });
+      fromTemplate = parsePartPalette(template?.palette);
+      composedPalettes.set(key, fromTemplate);
+    }
+    const fromFence = parsePartPalette(composed.attrs.palette);
+    const merged = { ...fromTemplate, ...fromFence };
+    return Object.keys(merged).length > 0 ? merged : undefined;
+  };
   const partPaletteByPageIndex = partValues.partPaletteByPageIndex.map((palette, i) => {
     const section = sectionByPage[i];
-    return section && Object.keys(section.palette).length > 0 ? { ...palette, ...section.palette } : palette;
+    const base = section && Object.keys(section.palette).length > 0 ? { ...palette, ...section.palette } : palette;
+    const own = composedPaletteOf(doc.pages[i]);
+    return own ? { ...base, ...own } : base;
   });
   // The same overrides recolour the palette-linked colours of the flow,
   // and of the line numbers (#621).

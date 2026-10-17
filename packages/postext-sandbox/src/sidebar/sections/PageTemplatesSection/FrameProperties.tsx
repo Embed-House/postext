@@ -2,16 +2,17 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
-import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
-import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels } from '../../../context/SandboxContext';
+import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type ColorValue, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
+import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { applyViewerEdit } from '../../../editor/viewerEdits';
 import { useFrameDrag } from '../../../selection/frameDrag';
-import { DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
+import { ColorPicker, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover } from '../../../ui';
 import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
 import { useBookTexts } from '../../../frameStyles/useBookTexts';
 import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage';
+import { resolveBookStyles } from '../../../frameStyles/library';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
@@ -55,6 +56,7 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
   const fenceIds = useMemo(() => pageFenceIds(texts), [texts]);
   const [pageTyped, setPageTyped] = useState(false);
   useEffect(() => setPageTyped(false), [name, templateId, scope]);
+  const bookConfig = useSandboxSelector((s) => s.config);
   if (!template || !frame) return null;
   const mmOf = (px: number) => (px * 25.4 / (docRef.current?.config.page.dpi ?? 96)).toFixed(1);
 
@@ -70,6 +72,42 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
     set({ [k]: Object.keys(before).length > 0 ? before : undefined });
   };
   const hasIn = (k: 'fit' | 'overflow' | 'padding' | 'rules', field: string): boolean => (entry?.[k] as Record<string, unknown> | undefined)?.[field] !== undefined;
+
+  // The frame's own look (#976): a colour or a length at a path of it, set
+  // or taken off in the scope's entry (empty objects go with the last
+  // value), and what the frame shows there when the scope sets nothing: the
+  // look it inherits, else its style's.
+  const lookEntry = (entry?.look as Record<string, unknown> | undefined) ?? undefined;
+  const lookAt = (root: Record<string, unknown> | undefined, path: readonly string[]): unknown =>
+    path.reduce<unknown>((node, key) => (node && typeof node === 'object' ? (node as Record<string, unknown>)[key] : undefined), root);
+  const setLook = (path: readonly string[], value: unknown) => {
+    const next = structuredClone(lookEntry ?? {});
+    const parents: Record<string, unknown>[] = [next];
+    for (const key of path.slice(0, -1)) {
+      const here = parents[parents.length - 1]!;
+      if (value === undefined && !here[key]) return;
+      here[key] = (here[key] as Record<string, unknown> | undefined) ?? {};
+      parents.push(here[key] as Record<string, unknown>);
+    }
+    const last = path[path.length - 1]!;
+    if (value === undefined) delete parents[parents.length - 1]![last];
+    else parents[parents.length - 1]![last] = value;
+    for (let i = parents.length - 1; i > 0; i--) if (Object.keys(parents[i]!).length === 0) delete parents[i - 1]![path[i - 1]!];
+    set({ look: Object.keys(next).length > 0 ? next : undefined });
+  };
+  const styleLooks = frame.style ? resolveBookStyles(bookConfig, calloutStyles ?? DEFAULT_CALLOUT_STYLES).find((r) => r.id === frame.style) : undefined;
+  const WHITE: ColorValue = { hex: '#ffffff', model: 'hex' };
+  const lookColor = (path: readonly string[], label: string) => (
+    <ColorPicker
+      key={path.join('.')}
+      label={label}
+      value={(lookAt(frame.look as Record<string, unknown> | undefined, path) ?? lookAt(styleLooks as unknown as Record<string, unknown> | undefined, path) ?? WHITE) as ColorValue}
+      onChange={(c) => setLook(path, c)}
+      isDefault={lookAt(lookEntry, path) === undefined}
+      onReset={() => setLook(path, undefined)}
+      fieldId={`frame-look-${path.join('-')}`}
+    />
+  );
 
   const others = template.frames.filter((f) => f.name !== name).map((f) => f.name);
   const groups = template.groups.map((g) => g.name);
@@ -375,6 +413,26 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
           </>
         )}
       </FieldGroup>
+
+      {frame.style && (
+        <FieldGroup title={labels.pageTemplatesFrameGroupColours} description={labels.pageTemplatesFrameGroupColoursDescription}>
+          {lookColor(['background'], labels.pageTemplatesLookBackground)}
+          {lookColor(['border', 'color'], labels.pageTemplatesLookBorder)}
+          {styleLooks?.label && lookColor(['label', 'background'], labels.pageTemplatesLookTab)}
+          {styleLooks?.label && lookColor(['label', 'color'], labels.pageTemplatesLookTabText)}
+          {lookColor(['body', 'color'], labels.pageTemplatesLookText)}
+          <DimensionInput
+            label={labels.pageTemplatesLookTracking}
+            value={(lookAt(frame.look as Record<string, unknown> | undefined, ['body', 'letterSpacing']) ?? styleLooks?.body.letterSpacing ?? { value: 0, unit: 'em' }) as Dimension}
+            onChange={(d) => setLook(['body', 'letterSpacing'], d)}
+            min={-1}
+            step={0.005}
+            units={['em', 'pt', 'px']}
+            isDefault={lookAt(lookEntry, ['body', 'letterSpacing']) === undefined}
+            onReset={() => setLook(['body', 'letterSpacing'], undefined)}
+          />
+        </FieldGroup>
+      )}
 
       <FieldGroup title={labels.pageTemplatesFrameGroupContent}>
         <ToggleSwitch label={labels.pageTemplatesFrameFlow} tooltip={labels.pageTemplatesFrameFlowTooltip} checked={frame.flow} onChange={(v) => set({ flow: v })} isDefault={!has('flow')} onReset={reset('flow')} />

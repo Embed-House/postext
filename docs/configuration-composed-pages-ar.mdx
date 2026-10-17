@@ -146,7 +146,7 @@ const config: PostextConfig = {
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>لا شيء</td>
-      <td>تجاوز للوحة الألوان في الصفحة، كما في أنماط العناوين والأجزاء.</td>
+      <td>تجاوز للوحة الألوان في الصفحة، كما في أنماط العناوين والأجزاء: أزواج <code>مدخل=#hex</code> مفصولة بفواصل (<code>tint=#f6c3d0</code>). كل لون في إطارات الصفحة وزخرفتها مرتبط بمدخل اللوحة هذا (أو يساوي قيمته) يأخذها، وتعلوها سمة <code>palette</code> في سياج الصفحة. منذ postext 1.42 تُطبَّق القيمة؛ وكانت قبل ذلك تُقرأ ثم تُهمل.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -340,6 +340,12 @@ const config: PostextConfig = {
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
       <td>أسطر كتابة تمتد عبر صندوق محتوى الإطار: سطر عند أسفل كل سطر من النص، بقدر ما يتسع له ارتفاعه. <code>every</code> هو المسافة بين الأسطر، إما <code>'line'</code> (الافتراضي: تباعد أسطر نص الإطار) وإما طول؛ و<code>color</code> رمادي متوسط افتراضيًا، و<code>width</code> سُمك الخط (0.5 pt)، و<code>inset</code> الفراغ المتروك عند طرفي كل خط، أو <code>&#123; left, right &#125;</code>. انظر «الإطارات المسطَّرة» أدناه. منذ postext 1.38.</td>
+    </tr>
+    <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>ما يغيّره هذا الإطار في مظهر نمط صندوقه، بأسماء النمط نفسه وبنيته المتداخلة: الألوان (<code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>) وتباعد حروف النص (<code>body.letterSpacing</code>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان. وفي قالب ابن يُدمج مفتاحًا مفتاحًا مع الإطار الذي يتجاوزه. الكتاب الذي له شكل صندوق واحد بعدة ألوان يحتفظ بنمط واحد ويكتب اللون هنا، أو يدع <code>palette</code> يعيد تلوين تعبئة مرتبطة باللوحة. منذ postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code> و<code>direction</code></td>
