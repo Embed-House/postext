@@ -151,7 +151,10 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
       const page = pageOf(pageIndex);
       const text = comicText(page, x, y);
       if (page?.comic && text) {
-        if (onFrameContent(page, text, x, y)) return false;
+        // The text frame stands on the sheet; its blocks are in the page's
+        // flow frame (#909).
+        const f = sheetToFlow(page, x, y);
+        if (onFrameContent(page, text, f.x, f.y)) return false;
         const book = deps.sourceOfPage(pageIndex);
         const at = comicTextCaret(page, text);
         if (!book || at === null) return false;
@@ -175,8 +178,9 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
       if (page?.comic && text) {
         const book = deps.sourceOfPage(pageIndex);
         if (!book || !deps.surface) return false;
-        const target = comicTextTargetAt(page, book.markdown, text, x, y);
-        return target ? editOnPage(pageIndex, book, text, target, page.comic.sourceStart) : false;
+        const f = sheetToFlow(page, x, y);
+        const target = comicTextTargetAt(page, book.markdown, text, f.x, f.y);
+        return target ? editOnPage(pageIndex, book, text, { ...target, rect: flowBoxOnSheet(page, target.rect).rect }, page.comic.sourceStart) : false;
       }
       const f = sheetToFlow(page, x, y);
       const frame = page?.composed ? frameHitAt(page, f.x, f.y) : null;

@@ -230,6 +230,9 @@ export const comicBalloonText: (balloon: Pick<VDTComicBalloon, 'text'>) => strin
 interface ComicTags {
   figures: Array<StructElem | undefined>;
   balloons: Map<VDTComicBalloon, StructElem>;
+  /** The element each text panel's frame (#909) is read in, by panel
+   *  index: a `Div` of the comic's, after the panel's picture. */
+  texts: Array<StructElem | undefined>;
 }
 
 /** Alternative text of a panel's picture: its own, else a plain label. */
@@ -250,6 +253,8 @@ function comicStructure(ctx: PageCtx, structure: StructureFlow, comic: VDTComicP
     balloons.set(b, isComicSoundEffect(b) ? div.child('P').child('Span', { actualText: text }) : div.child('P'));
   };
   const known = new Set<number>();
+  const texts: ComicTags['texts'] = [];
+  const holdsText = new Set((comic.frames ?? []).filter((f) => f.blockIds.length > 0 && f.panel !== undefined).map((f) => comic.panels[f.panel!]?.index));
   for (const panel of comic.panels) {
     known.add(panel.index);
     const { x, y, width, height } = panel.bbox;
@@ -258,11 +263,13 @@ function comicStructure(ctx: PageCtx, structure: StructureFlow, comic: VDTComicP
     figures[panel.index] = (panel.art || panel.pop) && !comicPanelContinues(comic, panel)
       ? div.child('Figure', { alt: panelAlt(panel), attributes: figureLayout(ctx, x, y, width, height) })
       : undefined;
+    // A text panel's words (#909): read here, in the panel's place.
+    if (holdsText.has(panel.index)) texts[panel.index] = div.child('Div');
     for (const b of comic.balloons) if (b.panelIndex === panel.index) addBalloon(b);
   }
   // Lettering of no panel (none expected): read after the panels.
   for (const b of comic.balloons) if (!known.has(b.panelIndex)) addBalloon(b);
-  return { figures, balloons };
+  return { figures, balloons, texts };
 }
 
 // ------------------------------------------------------------ panels

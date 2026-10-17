@@ -85,6 +85,9 @@ export interface ComposedPageInput {
    *  crosses the gutter. An `'auto'` height is measured at the width it
    *  returns. */
   fitBox?: (frame: ResolvedFrame, rect: Rect) => Rect;
+  /** Shapes a frame's lines keep off, by frame name, in page (flow)
+   *  coordinates: a comic text panel's slanted edges (#909). */
+  frameExclusions?: ReadonlyMap<string, readonly BoxExclusion[]>;
   /** The document's locale (`config.locale`), named by `frameOverflow`. */
   locale?: string;
   /** The book's other templates, resolved for this page's side, in
@@ -929,6 +932,10 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
      *  meets, in the frame block's coordinates. */
     const exclusionsFor = (frame: ResolvedFrame, rect: Rect, open: boolean): FrameBoxOptions['exclusions'] => {
       const out: BoxExclusion[] = [];
+      // The frame's own shapes (a comic panel's slanted edges, #909).
+      for (const ex of input.frameExclusions?.get(frame.name) ?? []) {
+        out.push({ x: ex.x - rect.x, y: ex.y - rect.y, width: ex.width, height: ex.height, ...(ex.contour ? { contour: shiftContour(ex.contour, -rect.x, -rect.y) } : {}) });
+      }
       const g = input.pushGapPx;
       for (const p of pushed) {
         if (p.name === frame.name) continue;

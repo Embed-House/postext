@@ -19,11 +19,11 @@
 import type { ContentBlock } from '../parse/types';
 import type { CalloutPaddingConfig, Dimension, ResolvedCalloutStyleConfig } from '../types';
 import type { ContentWarning, ResolvedConfig, VDTBlock, VDTComicPage, VDTPage } from '../vdt';
-import { pageIsMirrored, pageIsVertical } from '../vdt';
+import { pageRectToFlow, pageToFlow, type VDTContourSpan } from '../vdt';
 import { FRAME_ATTR, FRAME_STYLE_ID } from '../composed/wrap';
 import { normalizeFrame } from '../composed/templates';
 import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types';
-import type { PlannedCallout } from '../pipeline/calloutLayout';
+import type { BoxExclusion, PlannedCallout } from '../pipeline/calloutLayout';
 import type { FrameLayoutPass } from '../pipeline/frameLayout';
 import { composedStories, layoutComposedPage, type ComposedStory, type PlannedComposedPage } from '../pipeline/composedLayout';
 import { resolvedDirection } from '../pipeline/config';
@@ -45,12 +45,14 @@ const COMIC_TEXT_CONTAINER_BASE = 1_900_000_000;
 /** The story key of a text panel (its box's `FRAME_ATTR`). */
 export const comicTextStoryKey = (panelIndex: number): string => `comic:${panelIndex}`;
 
-/** Whether text panels can be set in their frames in a document: frames
- *  take text on pages whose flow is the sheet (horizontal, left to right).
- *  On a vertical or right-to-left document the text is set in the flow
- *  after the comic. */
-export function comicTextPanelsSupported(resolved: Pick<ResolvedConfig, 'layout'> & Parameters<typeof resolvedDirection>[0]): boolean {
-  return resolved.layout.writingMode !== 'vertical-rl' && resolvedDirection(resolved) !== 'rtl';
+/** Whether text panels can be set in their frames in a document: in every
+ *  one since postext 1.39 (#909). Up to 1.38 a vertical or right-to-left
+ *  document set them in the flow after the comic; now the frame takes the
+ *  text in the page's flow frame, mirrored or turned (set vertically on a
+ *  vertical page). Kept for the callers that ask. */
+export function comicTextPanelsSupported(resolved?: Pick<ResolvedConfig, 'layout'> & Parameters<typeof resolvedDirection>[0]): boolean {
+  void resolved;
+  return true;
 }
 
 /** Why a text panel's Markdown is set in the flow instead of its frame:
@@ -180,7 +182,7 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
   const { comic, page, plan, resolved, dpi } = input;
   const blocks: VDTBlock[] = [];
   const laid = new Set<string>();
-  if (!comic.frames || pageIsVertical(page) || pageIsMirrored(page)) return { blocks, laid };
+  if (!comic.frames) return { blocks, laid };
   const sources = comicPanelSources(comic);
   const insetPx = dimensionToPx(resolvedComics(resolved).lettering.inset, dpi);
   const warnings: ContentWarning[] = [];
@@ -195,11 +197,23 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
     const panel = comic.panels[panelIndex]!;
     const box = comicBoxStyle(resolved, src.attrs.box);
     const edge = box ? 0 : panel.border.width + insetPx;
-    // A slanted cell: the widest box with straight sides inside its outline,
-    // so that no line runs past the slant.
-    const r = frame.polygon ? innerBox(frame.polygon, panel.bbox) : panel.bbox;
-    const area = { x: r.x + edge, y: r.y + edge, width: Math.max(1, r.width - 2 * edge), height: Math.max(1, r.height - 2 * edge) };
     const valign = src.attrs.valign?.trim().toLowerCase();
+    // A slanted cell: frameless text set from the top takes the whole cell,
+    // each line set short where a slant crosses it (#909); a box drawn round
+    // the text, or text set to the middle or the foot, keeps to the widest
+    // box with straight sides inside the outline.
+    const follows = !!frame.polygon && !box && valign !== 'middle' && valign !== 'bottom';
+    const r = frame.polygon && !follows ? innerBox(frame.polygon, panel.bbox) : panel.bbox;
+    const onSheet = { x: r.x + edge, y: r.y + edge, width: Math.max(1, r.width - 2 * edge), height: Math.max(1, r.height - 2 * edge) };
+    // The comic stands on the sheet; the text is set in the page's flow
+    // frame (#909), mirrored on a right-to-left page and turned on a
+    // vertical one (where it is set vertically).
+    const area = page.flow ? pageRectToFlow(page, onSheet) : onSheet;
+    const outline = follows ? (page.flow ? frame.polygon!.map((q) => pageToFlow(page, q.x, q.y)) : frame.polygon!) : undefined;
+    const slants = outline ? slantExclusions(outline, area, edge) : [];
+    // `shrink` (#909): the text set smaller until it fits, down to half
+    // its size or the `shrink=` given; else the frames' least, 90 %.
+    const minScale = shrinkScale(src.attrs.shrink);
     const padding: CalloutPaddingConfig | undefined = box ? undefined : { top: px(0), right: px(0), bottom: px(0), left: px(0) };
     const resolvedFrame = normalizeFrame({
       name: frame.name,
@@ -208,6 +222,7 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
       ...(box ? { style: box.id } : {}),
       ...(valign === 'middle' || valign === 'bottom' ? { verticalAlign: valign } : {}),
       ...(padding ? { padding } : {}),
+      ...(minScale !== undefined ? { fit: { shrinkText: true, minScale } } : {}),
     });
     const template: ResolvedPageTemplate = {
       id: comic.id ?? 'comic',
@@ -237,6 +252,7 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
       bodyOffset: input.bodyOffset,
       mirrored: input.mirrored,
       pushGapPx: input.pushGapPx,
+      ...(slants.length > 0 ? { frameExclusions: new Map([[frame.name, slants]]) } : {}),
       ...(input.locale ? { locale: input.locale } : {}),
     });
     const set = out.composed.frames[0];
@@ -273,6 +289,56 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
   });
   if (warnings.length > 0) setComicLayoutWarnings(comic, [...comicPageLayoutWarnings(comic), ...warnings]);
   return { blocks, laid };
+}
+
+/** The least scale a text panel's `shrink` attribute lets its text take
+ *  (#909): `shrink` alone, 0.5; `shrink=0.7` (or `70%`), that, kept
+ *  between 0.25 and 1; undefined without it (or `shrink=false`). */
+export function shrinkScale(value: string | undefined): number | undefined {
+  if (value === undefined) return undefined;
+  const v = value.trim().toLowerCase();
+  if (v === 'false' || v === 'no') return undefined;
+  if (v === '' || v === 'true' || v === 'shrink') return 0.5;
+  const pct = v.endsWith('%');
+  const n = Number(pct ? v.slice(0, -1) : v);
+  if (!Number.isFinite(n)) return 0.5;
+  return Math.min(1, Math.max(0.25, pct ? n / 100 : n));
+}
+
+/** The shapes a frameless text set in a slanted cell keeps off (#909):
+ *  for each band of `area` (2 px tall) what lies outside the cell's
+ *  outline, `edge` in from it, on the left and on the right, as two
+ *  contours (page coordinates of the outline's frame). */
+export function slantExclusions(poly: readonly { x: number; y: number }[], area: { x: number; y: number; width: number; height: number }, edge: number): BoxExclusion[] {
+  const step = 2;
+  const left: VDTContourSpan[] = [];
+  const right: VDTContourSpan[] = [];
+  const x0 = area.x;
+  const x1 = area.x + area.width;
+  for (let y = area.y; y < area.y + area.height; y += step) {
+    const h = Math.min(step, area.y + area.height - y);
+    // The room the band has, `edge` off the outline above and below it too.
+    let lo = -Infinity;
+    let hi = Infinity;
+    for (const at of [y - edge, y, y + h / 2, y + h, y + h + edge]) {
+      const c = crossing(poly, 'y', at);
+      if (!c) continue;
+      lo = Math.max(lo, c[0] + edge);
+      hi = Math.min(hi, c[1] - edge);
+    }
+    if (!Number.isFinite(lo) || !Number.isFinite(hi)) continue;
+    if (lo > x0 + 0.5) left.push({ y, height: h, left: x0, right: Math.min(x1, lo) });
+    if (hi < x1 - 0.5) right.push({ y, height: h, left: Math.max(x0, hi), right: x1 });
+  }
+  const shape = (spans: VDTContourSpan[]): BoxExclusion | undefined => {
+    if (spans.length === 0) return undefined;
+    const bx0 = Math.min(...spans.map((s) => s.left));
+    const bx1 = Math.max(...spans.map((s) => s.right));
+    const by0 = spans[0]!.y;
+    const by1 = spans[spans.length - 1]!.y + spans[spans.length - 1]!.height;
+    return { x: bx0, y: by0, width: bx1 - bx0, height: by1 - by0, contour: { spans, margin: 0 } };
+  };
+  return [shape(left), shape(right)].filter((e): e is BoxExclusion => e !== undefined);
 }
 
 /** Where a horizontal (`axis: 'y'`, at height `at`) or vertical line

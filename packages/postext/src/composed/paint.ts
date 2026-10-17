@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -40,7 +40,13 @@ export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
   if (frames.length === 0) return [];
   const byId = new Map<string, VDTBlock>();
   for (const b of page.floats ?? []) byId.set(b.id, b);
-  return frames.map((frame) => ({ kind: 'frame' as const, frame, blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
+  // The frames stand on the sheet with their comic; their text is set in
+  // the page's flow frame (#909), where the backends paint it: the frame
+  // given there.
+  const inFlow = (frame: VDTFrame): VDTFrame => (page.flow
+    ? { ...frame, rect: pageRectToFlow(page, frame.rect), ...(frame.polygon ? { polygon: frame.polygon.map((q) => pageToFlow(page, q.x, q.y)) } : {}) }
+    : frame);
+  return frames.map((frame) => ({ kind: 'frame' as const, frame: inFlow(frame), blocks: frame.blockIds.map((id) => byId.get(id)).filter((b): b is VDTBlock => b !== undefined), facing: false }));
 }
 
 /** Whether a page's comic holds text panels (#885): its panels are then

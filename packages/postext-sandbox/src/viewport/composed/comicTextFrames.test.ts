@@ -4,9 +4,9 @@
  * paragraph a double click edits on the page.
  */
 import { describe, expect, it } from 'vitest';
-import { buildDocument } from 'postext';
+import { buildDocument, flowToPage } from 'postext';
 import type { VDTPage } from 'postext';
-import { comicTextFrameAt, frameHitAt, pointInComicFrame } from './frameHit';
+import { comicTextFrameAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit';
 import { comicTextCaret, comicTextTargetAt, frameTextChange } from './frameLink';
 
 class StubCtx {
@@ -54,5 +54,19 @@ describe('text panels in the viewers', () => {
     expect(target.kind).toBe('block');
     expect(target.text).toBe('A second paragraph.');
     expect(frameTextChange(target, 'Another paragraph.')).toEqual({ from: target.start, to: target.end, insert: 'Another paragraph.' });
+  });
+
+  it('on a right-to-left page: the frame on the sheet, its words in the mirrored flow (#909)', () => {
+    const md = markdown.replace('40~50 / *', '50 / *');
+    const doc = buildDocument({ markdown: md, resources: [] }, { direction: 'rtl', locale: 'ar' } as never);
+    const page = doc.pages.find((p) => p.comic)!;
+    const frame = page.comic!.frames![0]!;
+    const para = page.floats!.filter((b) => b.type === 'paragraph')[1]!;
+    // A point of the paragraph as the sheet shows it.
+    const sheet = flowToPage(page, para.bbox.x + 2, para.bbox.y + 2);
+    expect(comicTextFrameAt(page, sheet.x, sheet.y)?.id).toBe('cm0:p1');
+    const inFlow = sheetToFlow(page, sheet.x, sheet.y);
+    const target = comicTextTargetAt(page, md, frame, inFlow.x, inFlow.y)!;
+    expect(target.text).toBe('A second paragraph.');
   });
 });

@@ -928,6 +928,18 @@ Recorded where the implementation settles a point the sections above leave open,
   HTML (`vertical` paint options per frame) paint its text as a page of that mode does; the source map and
   the Sandbox's clicks read it through `frameMatrix`. Not done: a picture in such a frame turns with it; the
   reflowable EPUB sets its text in the book's mode.
+- **Comic text panels (#909).** On a vertical or right-to-left page a text panel is set in its frame
+  (`comicTextPanelsSupported` is true for every document): `layoutComicTextFrames` maps the text area
+  into the page's flow frame (`pageRectToFlow`), where the story is laid (set vertically on a vertical
+  page); the comic's frame record stays on the sheet, and `comicFramePaintOrder` hands the backends the
+  frame mapped into the flow (rect, polygon), painted inside the flow transform (canvas, PDF; the HTML
+  writes it in a `pt-flow` box over its panel). `sourceAt` and the Sandbox's comic tools read its words
+  through `pageToFlow`. A frameless text set from the top in a slanted cell takes the whole cell, each
+  line set short by `slantExclusions` (contour exclusions per 2 px band, `edge` off the outline,
+  `ComposedPageInput.frameExclusions`); with a box or `valign` middle/bottom it keeps `innerBox`.
+  `::panel{text shrink}` lowers the frame's `fit.minScale` (`shrinkScale`: 0.5, or the value given,
+  0.25–1). Tagged PDF: `comicStructure` makes a `Div` in the comic's `Div` at the text panel's place
+  (`ComicTags.texts`); `StructureFlow.readInto` moves the frame's elements into it.
 
 ## 6. Source map contract
 
@@ -1053,9 +1065,9 @@ Cookbook comics recipe must render unchanged before and after.
   `frameTools` (Content mode: click off words → caret at the text, double click → in-place
   edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
   (they are not in `page.composed`).
-- **Not done:** text panels on vertical or right-to-left pages, on strips and spreads; lines
-  following a slanted edge (they keep to the inner box); shrink-to-fit for text panels; reading a text
-  panel inside the comic's `Div` in tagged PDF; the comic frames in the template editor's views.
+- **Not done:** text panels on strips and spreads; the comic frames in the template editor's
+  views. (Vertical and right-to-left pages, lines following a slanted edge, `shrink` and the tagged
+  PDF's reading order: round G, §5.15.)
 
 ## 8. HTML and EPUB
 

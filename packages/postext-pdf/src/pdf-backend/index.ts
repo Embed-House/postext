@@ -670,7 +670,7 @@ function paintPage(
     enterFlow();
     paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'above');
   } else if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, decorationMark, true);
-  if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx);
+  if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx, comicTags);
 
   // The footnote separators are layout.
   if (vdtPage.footnoteAreas?.some((a) => a.rule)) {
@@ -775,9 +775,13 @@ function paintComposedItems(
 
 /** The text frames of a comic page (`::panel{text}`, #885), over its
  *  panels: each read as one float, as a composed page's frame is. */
-function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext): void {
+function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext, tags: ComicPanelTags): void {
   for (const item of comicFramePaintOrder(vdtPage)) {
-    if (item.kind === 'frame') paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure);
+    if (item.kind !== 'frame') continue;
+    // Read in the comic's `Div`, in its panel's place (#909).
+    const panel = item.frame.panel !== undefined ? vdtPage.comic?.panels[item.frame.panel]?.index : undefined;
+    const into = panel !== undefined ? tags?.texts[panel] : undefined;
+    paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure, into);
   }
 }
 
@@ -790,6 +794,7 @@ function paintFrameItem(
   fontCache: FontCache,
   resourceCtx: ResourceRenderContext,
   structure: ResourceRenderContext['structure'],
+  into?: StructElem,
 ): void {
   const { frame, blocks } = item;
   if (blocks.length === 0) return;
@@ -802,14 +807,14 @@ function paintFrameItem(
       ctx.vertical = { region: cjk.region, uprightDigits: cjk.uprightDigits, ...(frame.centralBaselines ? { axes: frame.centralBaselines } : {}) };
     } else delete ctx.vertical;
     try {
-      paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure);
+      paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure, into);
     } finally {
       if (outer) ctx.vertical = outer;
       else delete ctx.vertical;
     }
     return;
   }
-  paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure);
+  paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure, into);
 }
 
 function paintFrameBlocks(
@@ -818,6 +823,7 @@ function paintFrameBlocks(
   fontCache: FontCache,
   resourceCtx: ResourceRenderContext,
   structure: ResourceRenderContext['structure'],
+  into?: StructElem,
 ): void {
   const { frame, blocks } = item;
   let readAt: number | undefined;
@@ -844,7 +850,8 @@ function paintFrameBlocks(
       const paint = () => {
         for (const fb of blocks) renderBlock(ctx, fb, fb.bbox.width, fb.bbox.x, fontCache, resourceCtx);
       };
-      if (structure) structure.readFloat(blocks[0]!, paint, readAt);
+      if (structure && into) structure.readInto(into, paint);
+      else if (structure) structure.readFloat(blocks[0]!, paint, readAt);
       else paint();
     }
   } finally {

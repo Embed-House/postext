@@ -3,8 +3,9 @@
  * a callout style (`box`) and Markdown text (`::panel{text}`).
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics, sourceAt, elementsForSource, findElement } from '../../index';
+import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics, sourceAt, elementsForSource, findElement, flowRectToPage, flowToPage, pageRectToFlow } from '../../index';
 import type { PostextConfig, Resource } from '../../types';
+import { shrinkScale } from '../../comics/textPanels';
 import type { VDTDocument, VDTPage } from '../../vdt';
 
 class StubCtx {
@@ -189,8 +190,11 @@ describe('text panels', () => {
     };
     for (const b of page.floats!.filter((x) => x.type === 'paragraph')) {
       for (const l of b.lines) {
-        expect(inPoly(l.bbox.x, l.bbox.y + l.bbox.height)).toBe(true);
-        expect(inPoly(l.bbox.x + l.bbox.width, l.bbox.y + l.bbox.height)).toBe(true);
+        // The span the line is set in: its narrowed measure beside the
+        // slant (#909), else its box.
+        const span = l.measure ?? { x: l.bbox.x, width: l.bbox.width };
+        expect(inPoly(span.x, l.bbox.y + l.bbox.height)).toBe(true);
+        expect(inPoly(span.x + span.width, l.bbox.y + l.bbox.height)).toBe(true);
       }
     }
   });
@@ -215,19 +219,109 @@ describe('text panels', () => {
     expect(w).toMatchObject({ reason: 'textOverflow', panel: 0, pageIndex: page.index });
   });
 
-  it('sets the text in the flow after a strip, a spread or a right-to-left comic', () => {
+  it('sets the text in the flow after a strip or a spread', () => {
     const strip = 'Before.\n\n:::strip{split="* | *"}\n::panel{text}\nStrip words.\n::panel\n:::\n';
     const sdoc = buildDocument({ markdown: strip, resources: [] }, {});
     expect(sdoc.blocks.some((b) => b.lines.some((l) => l.text.includes('Strip words.')))).toBe(true);
     expect(collectContentWarnings(strip, {}).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'strip' });
     const spread = ':::page{spread split="* | *"}\n::panel{text}\nSpread words.\n::panel\n:::\n';
     expect(collectContentWarnings(spread, {}).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'spread' });
-    const rtl = { direction: 'rtl', locale: 'ar' } as unknown as PostextConfig;
-    const single = ':::page{split="50 / *"}\n::panel{text}\nكلمات.\n::panel\n:::\n';
-    const rdoc = buildDocument({ markdown: single, resources: [] }, rtl);
-    expect(comicPage(rdoc).comic!.frames![0]!.blockIds).toEqual([]);
-    expect(rdoc.blocks.some((b) => b.lines.some((l) => l.text.includes('كلمات')))).toBe(true);
-    expect(collectContentWarnings(single, rtl).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'flow' });
+  });
+
+  for (const [name, config] of [
+    ['right-to-left', { direction: 'rtl', locale: 'ar' }],
+    ['vertical', { locale: 'ja', layout: { writingMode: 'vertical-rl', layoutType: 'single' } }],
+  ] as const) {
+    it(`sets a ${name} book's text panel in its frame, in the page's flow frame (#909)`, () => {
+      const single = ':::page{split="50 / *"}\n::panel{text}\nكلمات 言葉 words.\n::panel\n:::\n';
+      const doc = buildDocument({ markdown: single, resources: [] }, config as unknown as PostextConfig);
+      const page = comicPage(doc);
+      expect(page.flow).toBeDefined();
+      const frame = page.comic!.frames![0]!;
+      expect(frame.blockIds.length).toBeGreaterThan(0);
+      expect(collectContentWarnings(single, config as unknown as PostextConfig).some((x) => x.kind === 'comicPanelFrame')).toBe(false);
+      // Its paragraph, in the flow frame, lies inside the panel as the sheet shows it.
+      const para = page.floats!.find((b) => frame.blockIds.includes(b.id) && b.type === 'paragraph')!;
+      const onSheet = flowRectToPage(page, para.bbox);
+      const panel = page.comic!.panels[0]!.bbox;
+      expect(onSheet.x).toBeGreaterThanOrEqual(panel.x - 0.5);
+      expect(onSheet.x + onSheet.width).toBeLessThanOrEqual(panel.x + panel.width + 0.5);
+      expect(onSheet.y).toBeGreaterThanOrEqual(panel.y - 0.5);
+      expect(onSheet.y + onSheet.height).toBeLessThanOrEqual(panel.y + panel.height + 0.5);
+      // The text is not set again in the flow after the comic.
+      expect(doc.blocks.filter((b) => b.lines.some((l) => l.text.includes('words'))).length).toBe(1);
+      // A click on its words, on the sheet, finds them, then the frame and the comic.
+      const line = para.lines[0]!;
+      const at = flowToPage(page, line.bbox.x + 4, line.bbox.y + line.bbox.height / 2);
+      const chain = sourceAt(doc, page.index, at.x, at.y);
+      expect(chain[0]!.level).toBe('text');
+      expect(chain.slice(-2).map((e) => e.id)).toEqual(['cm0:p1', 'cm0']);
+      // The backends paint it in the flow frame: the frame given there.
+      const painted = comicFramePaintOrder(page)[0]!;
+      expect(painted.kind === 'frame' && painted.frame.rect).toEqual(pageRectToFlow(page, frame.rect));
+      // The HTML writes it over its panel in a box that turns or mirrors it as the flow is.
+      const html = renderToHtml(doc);
+      const i = html.indexOf('data-frame-id="cm0:p1"');
+      expect(html.lastIndexOf('class="pt-flow', i)).toBeGreaterThan(html.lastIndexOf('class="pt-comic', i));
+    });
+  }
+});
+
+describe('text panels that shrink, and lines that follow a slant (#909)', () => {
+  const long = 'Words of the narrator. '.repeat(200);
+  const page = (attrs: string, split = '30 / *') =>
+    comicPage(buildDocument({ markdown: `:::page{split="${split}"}\n::panel{text${attrs}}\n${long}\n::panel\n:::\n`, resources: [] }, {}));
+
+  it('without shrink the text stops at 90 % and overflows; with it, it is set smaller until it fits', () => {
+    const plain = page('').comic!.frames![0]!;
+    expect(plain.scale).toBeCloseTo(0.9, 6);
+    expect(plain.overflowPx).toBeGreaterThan(0);
+    const shrunk = page(' shrink').comic!.frames![0]!;
+    expect(shrunk.scale).toBeLessThan(0.9);
+    expect(shrunk.scale).toBeGreaterThanOrEqual(0.5);
+    expect(shrunk.overflowPx).toBe(0);
+    // A floor of its own: never under it.
+    const floor = page(' shrink=0.8').comic!.frames![0]!;
+    expect(floor.scale).toBeGreaterThanOrEqual(0.8 - 1e-9);
+  });
+
+  it('reads the shrink attribute', () => {
+    expect(shrinkScale(undefined)).toBeUndefined();
+    expect(shrinkScale('')).toBe(0.5);
+    expect(shrinkScale('70%')).toBe(0.7);
+    expect(shrinkScale('0.1')).toBe(0.25);
+    expect(shrinkScale('false')).toBeUndefined();
+  });
+
+  it('sets the lines of a slanted cell short where the slant crosses them, inside its outline', () => {
+    const md = ':::page{split="40~60 / *"}\n::panel{text}\n' + 'Words follow the edge of the cell. '.repeat(14) + '\n::panel\n:::\n';
+    const doc = buildDocument({ markdown: md, resources: [] }, {});
+    const p = comicPage(doc);
+    const frame = p.comic!.frames![0]!;
+    expect(frame.polygon).toBeDefined();
+    const lines = p.floats!.filter((b) => frame.blockIds.includes(b.id) && b.type === 'paragraph').flatMap((b) => b.lines);
+    expect(lines.length).toBeGreaterThan(2);
+    // Every line's ends lie inside the cell's outline (its slanted foot).
+    const inPoly = (x: number, y: number) => {
+      const poly = frame.polygon!;
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i]!;
+        const b = poly[j]!;
+        if ((a.y > y) !== (b.y > y) && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+      }
+      return inside;
+    };
+    for (const l of lines) {
+      const y = l.bbox.y + l.bbox.height;
+      const segs = l.segments ?? [];
+      const w = segs.reduce((n, sg) => n + sg.width, 0);
+      expect(inPoly(l.bbox.x + 0.5, y - 0.5)).toBe(true);
+      expect(inPoly(l.bbox.x + w - 0.5, y - 0.5)).toBe(true);
+    }
+    // The lines are not all one length: the slant shortens some.
+    const widths = new Set(lines.slice(0, -1).map((l) => Math.round((l.segments ?? []).reduce((n, sg) => n + sg.width, 0) / 10)));
+    expect(widths.size).toBeGreaterThan(1);
   });
 });
 

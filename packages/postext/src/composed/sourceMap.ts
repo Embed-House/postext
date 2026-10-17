@@ -585,7 +585,9 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
   if (head) return head;
   // A comic's balloons and panels (#885), on the sheet over the flow; a
   // text panel's words answer below, as the page's blocks.
-  const onText = (frame: VDTFrame): boolean => (page.floats ?? []).some((b) => b.type !== 'callout' && frame.blockIds.includes(b.id) && inside(b.bbox, p));
+  // Its blocks are in the page's flow frame (#909).
+  const textPoint = page.flow ? pageToFlow(page, x, y) : p;
+  const onText = (frame: VDTFrame): boolean => (page.floats ?? []).some((b) => b.type !== 'callout' && frame.blockIds.includes(b.id) && inside(b.bbox, textPoint));
   const comic = comicChainAt(page, p, file, designTextSource, onText);
   if (comic) return comic;
   if (composed) {
