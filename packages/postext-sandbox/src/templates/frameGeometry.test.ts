@@ -10,6 +10,8 @@ import {
   mmToPx,
   pageAreas,
   pxToMm,
+  spreadFlowSide,
+  spreadGutterBand,
   spreadPageAreas,
   snapLines,
   snapRect,
@@ -159,5 +161,31 @@ describe('spreadPageAreas (#861)', () => {
     expect(a.content.x).toBe(30 - 180);
     expect(a.content.x + a.content.width).toBe(180);
     expect(a.bleed).toEqual({ x: -180, y: 0, width: 380, height: 300 });
+  });
+  it('along y on vertical pages: the facing page follows down the flow (#961)', () => {
+    const first = spreadPageAreas(pg, facing, 10, 0, 'y');
+    expect(first.shift).toBe(280);
+    expect(first.content).toEqual({ x: 20, y: 20, width: 160, height: 280 + 260 });
+    expect(first.trim).toEqual({ x: 10, y: 10, width: 180, height: 560 });
+    const second = spreadPageAreas(pg, facing, 10, 1, 'y');
+    expect(second.content).toEqual({ x: 20, y: 20 - 280, width: 160, height: 280 + 260 });
+    expect(second.bleed).toEqual({ x: 0, y: -280, width: 200, height: 580 });
+  });
+
+  it('puts the gutter band on the page\'s own inner edge, whichever side it is on (#961)', () => {
+    const p = { width: 200, height: 300 };
+    // Along x: the end of the first page, the start of the second; the trim starts after the bleed.
+    expect(spreadGutterBand(p, 10, 0, 15, 0)).toEqual({ x: 190 - 15, y: 0, width: 15, height: 300 });
+    expect(spreadGutterBand(p, 10, 1, 15, 0)).toEqual({ x: 10, y: 0, width: 15, height: 300 });
+    // Along y, across the whole page.
+    expect(spreadGutterBand(p, 10, 0, 15, 0, 'y')).toEqual({ x: 0, y: 290 - 15, width: 200, height: 15 });
+    expect(spreadGutterBand(p, 10, 1, 15, 0, 'y')).toEqual({ x: 0, y: 10, width: 200, height: 15 });
+    // A band thinner than the least that shows is drawn that thick.
+    expect(spreadGutterBand(p, 0, 1, 0.5, 2).width).toBe(2);
+  });
+
+  it('tells the first page along the flow: the left page unless the flow is mirrored or turned (#961)', () => {
+    expect([spreadFlowSide('left', false), spreadFlowSide('right', false)]).toEqual([0, 1]);
+    expect([spreadFlowSide('left', true), spreadFlowSide('right', true)]).toEqual([1, 0]);
   });
 });
