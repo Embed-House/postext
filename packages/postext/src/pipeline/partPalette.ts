@@ -71,11 +71,13 @@ export type FrameColorRole = 'fill' | 'border' | 'rule' | 'text';
  *   (chip styles), `caption:<setting>` (the document's caption style) and
  *   `caption:<setting>@<resource type id>` (a resource type's own): one
  *   colour of those styles, as `table:headerBackground` or
- *   `caption:note.color`.
+ *   `caption:note.color`;
+ * - `label:<setting>@<label style id>` and `label:<setting>` (figure label
+ *   styles, #902): `color`, `halo.color` or `background`.
  */
 export type FlowColorKind =
   | `text:${TextColorRole}` | `toc:${TocColorRole}` | 'heading' | `heading:${number}` | `heading@${string}`
-  | `box:${string}` | `table:${string}` | `chip:${string}` | `caption:${string}`;
+  | `box:${string}` | `table:${string}` | `chip:${string}` | `caption:${string}` | `label:${string}`;
 
 /** For base values (lower-case hex) that palette entries share: the values
  *  each kind of flow colour takes under a page's palette overrides. */
@@ -188,6 +190,10 @@ function kindsOfPath(path: readonly string[], cfg: ResolvedConfig): FlowColorKin
     }
     case 'captionStyle':
       return [`caption:${rest(1)}`];
+    case 'labelStyles': {
+      const id = cfg.labelStyles?.[index]?.id;
+      return id !== undefined ? [`label:${rest(2)}@${id}`, `label:${rest(2)}`] : [`label:${rest(2)}`];
+    }
     case 'codeStyle': {
       // Code listings (#624): the code and its tokens, the box's frame
       // (a box of the build's own style), inline code (a chip).
@@ -434,6 +440,19 @@ function recolorBlock(block: VDTBlock, r: PageRemaps): void {
   recolorLines(rb.captionLines, captionRuns, r);
   recolorLines(rb.noteLines, captionRuns, r);
   recolorLines(rb.continuesLines, captionRuns, r);
+  // The words on a picture (#902): the colour of each label, its halo and
+  // its plate, from the label style that sets them (a label that sets none
+  // takes the paragraph style's or the body's).
+  for (const label of rb.labels ?? []) {
+    const layout = label.layout;
+    if (!layout) continue;
+    const styleId = layout.styleId;
+    const groups = (setting: string, ...rest: FlowColorKind[]): KindGroups =>
+      styleId !== undefined ? [[`label:${setting}@${styleId}`], [`label:${setting}`], rest] : [[`label:${setting}`], rest];
+    layout.color = r.by(groups('color', 'text:color'))(layout.color) ?? layout.color;
+    if (layout.halo) layout.halo = { ...layout.halo, color: r.by(groups('halo.color'))(layout.halo.color) ?? layout.halo.color };
+    if (layout.background) layout.background = { ...layout.background, color: r.by(groups('background'))(layout.background.color) ?? layout.background.color };
+  }
   if (rb.table) {
     const t = rb.table;
     const trec = t as unknown as Record<string, string | undefined>;

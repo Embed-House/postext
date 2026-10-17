@@ -3254,6 +3254,20 @@ export type ContentWarning = ContentWarningBase & (
    *  the map lacks that word in this edition. The source range is the
    *  figure's. */
   | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; locale?: string }
+  /** A figure label (#902) that is still wider than its anchor's `width`
+   *  at its style's `minScale` (`layout.overflow`): it is drawn at that
+   *  scale and runs past the measure. `anchor` is its anchor (absent for a
+   *  label placed by percentages), `text` its plain text (40 characters),
+   *  `widthPct` the measure it was given (percent of the picture's
+   *  width) and `scale` the scale it reached. The source range is the
+   *  label's. */
+  | { kind: 'labelOverflow'; resourceId: string; text: string; anchor?: string; widthPct: number; scale: number; locale?: string; labelId?: string }
+  /** Two labels of a figure whose boxes meet (#902): the later one, in the
+   *  order written, names the first earlier label it meets (`with`, and
+   *  `withAnchor`) and how many earlier labels it meets in all (`count`,
+   *  at least 1). Checked per edition, so a language whose words run
+   *  longer shows it. The source range is the later label's. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; locale?: string; labelId?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`

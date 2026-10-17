@@ -27,7 +27,9 @@
  *
  * What it reads: the lines of every block (inline bold, italic, reference
  * and chip colours included), list markers, drop caps, captions, notes and
- * table cells, and the text of design slots (running heads, openers,
+ * table cells, the words drawn on a picture (a figure's labels, #902, read
+ * on their plate, else inside their halo; bare on the picture they are
+ * skipped), and the text of design slots (running heads, openers,
  * heading designs, box titles, a composed page's decoration). The ground
  * is the topmost fill under the text: a design box, a callout, a caption
  * bar, a table cell, a chip, the box of a composed page's frame or the
@@ -51,7 +53,7 @@ import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './compos
 export type ContrastMedium = 'screen' | 'print';
 
 /** What a piece of text is, for a host that words its findings. */
-export type ContrastRole = 'body' | 'heading' | 'caption' | 'table' | 'runningHead' | 'design' | 'chip' | 'marker';
+export type ContrastRole = 'body' | 'heading' | 'caption' | 'table' | 'runningHead' | 'design' | 'chip' | 'marker' | 'label';
 
 /** Why reversed text is reported: under the size for any face, or under
  *  the size for thin strokes while italic or light. */
@@ -608,6 +610,23 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
         };
         if (rb.noteLines.length > 0) noteLines(rb.noteLines, noteStyle, beneath, () => box, 'caption', src);
         if (rb.continuesLines.length > 0) noteLines(rb.continuesLines, noteStyle, beneath, () => box, 'caption', src);
+        // The words on the picture (#902): a plate is their ground, else the
+        // halo they are read inside; with neither the ground is the picture.
+        for (const label of rb.labels ?? []) {
+          const layout = label.layout;
+          if (!layout) continue;
+          const ground = over(layout.background?.color, undefined) ?? over(layout.halo?.color, undefined);
+          if (!ground) continue;
+          const labelBox = label.rect ? sheet(label.rect, true) : box;
+          noteLines(layout.lines, {
+            font: layout.fontString,
+            boldFont: layout.boldFontString,
+            italicFont: layout.italicFontString,
+            boldItalicFont: layout.boldItalicFontString,
+            color: layout.color,
+            refColor: rb.linkColor,
+          }, ground, () => labelBox, 'label', { start: label.sourceStart, end: label.sourceEnd });
+        }
         return;
       }
       const role: ContrastRole = heading ? 'heading' : 'body';

@@ -951,6 +951,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'anchorUnlabelled':
       text = `Anchor "${w.anchor}" of "${w.resourceId}" names the label style "${w.style}" but no label of the figure stands at it${w.locale ? ` in ${w.locale}` : ''} — add ::label[…]{at="${w.anchor}"}, or drop the anchor's style`;
       break;
+    case 'labelOverflow':
+      text = `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} is wider than its measure${w.widthPct > 0 ? ` (${w.widthPct}% of the picture)` : ''} even at ${Math.round(w.scale * 100)}% — it runs past it; widen the anchor's width, shorten the label, or lower the style's minScale`;
+      break;
+    case 'labelOverlap':
+      text = `Label "${w.text}"${w.anchor ? ` at anchor "${w.anchor}"` : ''} of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''} runs into "${w.with}"${w.withAnchor ? ` at "${w.withAnchor}"` : ''}${w.count > 1 ? ` and ${w.count - 1} more` : ''} — move an anchor, narrow the label's width or shorten the words in this edition`;
+      break;
     case 'pageFenceLength':
       text = 'A composed page needs four colons (::::page{template="…"} … ::::) — this :::page is read as a comic page';
       break;
