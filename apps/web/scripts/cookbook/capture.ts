@@ -78,6 +78,10 @@ export interface CaptureOptions {
   /** The stress test (#869, C38): each edition is laid out again with its
    *  text this many times as long. Writes nothing. */
   stress?: number;
+  /** With `stress`: write every page of the stretched edition, its
+   *  stretched Markdown and its C38 findings to `<dir>/<slug>/<lang>/`
+   *  (`--stress-out`, #915). */
+  stressOut?: string;
   /** Compare every published page with the approved capture (C39). */
   compare?: boolean;
   /** C39's threshold: the largest mean difference of a cell, of 255. */
@@ -943,18 +947,44 @@ async function stressRun(task: Prepared, variant: SampleLocale, base: VariantRun
   const content = readRecipeSources(task.slug).content;
   const stretch = stretchedEdition(content, variant, task.meta.sample.locales[0] ?? variant, factor);
   process.stderr.write(dim(`  stretching ${task.slug} ${variant} · text × ${factor}\n`));
+  const stretched = new Map<string, string>();
   try {
     const run = await runVariant({
-      hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet, factsOnly: true,
-      transformContent: (text) => stretchMarkdown(text, factor).markdown,
+      hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet,
+      ...(opts.stressOut ? { pagesOnly: true } : { factsOnly: true }),
+      transformContent: (text, key) => {
+        const out = stretchMarkdown(text, factor).markdown;
+        stretched.set(key, out);
+        return out;
+      },
     });
     sayFallbacks(run);
-    return stressFindings({
+    const findings = stressFindings({
       meta: task.meta, factor, stretch, done: run.done, err: run.err, pageErrors: run.pageErrors, facts: run.facts, base: base.facts,
     });
+    if (opts.stressOut) writeStressOut(path.join(userPath(opts.stressOut), task.slug, variant), run, stretched, factor, findings);
+    return findings;
   } catch (error) {
     return [{ check: "C38", severity: "fail", detail: `the stretched edition: ${harnessDetail(error)}` }];
   }
+}
+
+/** `--stress-out` (#915): the stretched edition's pages (`p01.png`…), the
+ *  Markdown it was laid out from (`<key>.stretched.md`) and its C38
+ *  findings (`stress.json`), an earlier run's pages removed first. */
+function writeStressOut(dir: string, run: VariantRun, stretched: ReadonlyMap<string, string>, factor: number, findings: Finding[]): void {
+  fs.mkdirSync(dir, { recursive: true });
+  for (const name of fs.readdirSync(dir)) if (/^p\d+\.png$|\.stretched\.md$/.test(name)) fs.rmSync(path.join(dir, name));
+  for (const p of run.pages) if (p.png) fs.writeFileSync(path.join(dir, `p${pad(p.n)}.png`), p.png);
+  // The edition's own files (`en`, `notes.en`), else every file it was given.
+  const own = [...stretched.keys()].filter((key) => key.split(".").pop() === path.basename(dir));
+  for (const [key, text] of stretched) {
+    if (own.length && !own.includes(key)) continue;
+    fs.writeFileSync(path.join(dir, `${key.replace(/[^\w.-]+/g, "_")}.stretched.md`), text);
+  }
+  const record = { factor, pages: run.pages.length, renderError: run.renderError ?? null, findings };
+  fs.writeFileSync(path.join(dir, "stress.json"), `${JSON.stringify(record, null, 2)}\n`);
+  process.stderr.write(dim(`  stretched pages: ${dir} (${run.pages.length})\n`));
 }
 
 // ─── --sandbox-only ─────────────────────────────────────────────────────────

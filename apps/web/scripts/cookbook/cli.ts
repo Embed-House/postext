@@ -63,6 +63,9 @@ const CAPTURE_USAGE = `pnpm cookbook capture [slug…] [options]
   --stress <factor>      The stress test (C38): each edition is laid out again with
                          every text this many times as long (1.3 = 30 % longer;
                          from 1.05 to 3); implies --check
+  --stress-out <dir>     With --stress: write the stretched edition's pages
+                         (p01.png…), the Markdown they were laid out from and
+                         stress.json (the C38 findings) to <dir>/<slug>/<lang>/
   --compare              Compare each published page with the approved capture of
                          the same sources, cell by cell (C39); a page past the
                          threshold fails
@@ -121,6 +124,7 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
       "sandbox-only": { type: "boolean" },
       verify: { type: "boolean" },
       stress: { type: "string", value: "factor" },
+      "stress-out": { type: "string", value: "dir" },
       compare: { type: "boolean" },
       "max-diff": { type: "int", value: "n", min: 0, max: 255 },
       "no-pixels": { type: "boolean" },
@@ -142,6 +146,8 @@ async function captureWith(args: ParsedArgs, command: string, bench = false): Pr
   const stress = stressFactor(str(args, "stress"), command) ?? (bench ? 1.3 : undefined);
   const composed = bench ? !args.positionals.length : flag(args, "composed");
   if (composed && (all || args.positionals.length)) throw new UsageError("--composed picks the recipes itself: drop the slugs and --all", command);
+  const stressOut = str(args, "stress-out");
+  if (stressOut && stress === undefined) throw new UsageError("--stress-out writes the stretched pages: add --stress <factor>", command);
   const compare = bench || flag(args, "compare");
   const maxDiff = int(args, "max-diff");
   if (stress !== undefined || compare || composed) {
@@ -236,6 +242,7 @@ async function captureWith(args: ParsedArgs, command: string, bench = false): Pr
     previewDir: previewDir && userPath(previewDir),
     verify,
     ...(stress !== undefined ? { stress } : {}),
+    ...(stressOut ? { stressOut: userPath(stressOut) } : {}),
     ...(compare ? { compare } : {}),
     ...(maxDiff !== undefined ? { maxDiff } : {}),
     ...(flag(args, "no-pixels") ? { pixels: false } : {}),
@@ -268,6 +275,8 @@ const BENCH_USAGE = `pnpm cookbook bench [slug…] [options]
 
   --lang <en,es>         Only these sample editions
   --stress <factor>      How much longer the text is made (default 1.3)
+  --stress-out <dir>     Write the stretched pages, their Markdown and stress.json
+                         to <dir>/<slug>/<lang>/
   --max-diff <n>         C39's threshold, of 255 (default 12)
   --no-pixels            C39 compares the layout hash only (CI: Linux against captures
                          made on another system)
@@ -289,6 +298,7 @@ async function runBenchCommand(argv: readonly string[]): Promise<number> {
     {
       lang: { type: "list", value: "en,es", choices: SAMPLE_LOCALES },
       stress: { type: "string", value: "factor" },
+      "stress-out": { type: "string", value: "dir" },
       "max-diff": { type: "int", value: "n", min: 0, max: 255 },
       "no-pixels": { type: "boolean" },
       strict: { type: "boolean" },
