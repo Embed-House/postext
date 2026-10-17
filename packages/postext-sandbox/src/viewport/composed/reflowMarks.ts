@@ -39,6 +39,19 @@ export interface ReflowMark {
 
 const MIN_ARROW_PX = 2;
 
+/** `p`, a point of `rect` drawn upright, where it is on the sheet once the
+ *  box is turned `rotate` degrees about its centre (as the backends paint
+ *  a turned frame, and as `frameTurnMatrix` draws its marks). */
+export function turnAbout(rect: Box, rotate: number, p: Point): Point {
+  if (!rotate) return p;
+  const cx = rect.x + rect.width / 2;
+  const cy = rect.y + rect.height / 2;
+  const a = (rotate * Math.PI) / 180;
+  const dx = p.x - cx;
+  const dy = p.y - cy;
+  return { x: cx + dx * Math.cos(a) - dy * Math.sin(a), y: cy + dx * Math.sin(a) + dy * Math.cos(a) };
+}
+
 /** The marks of one page, in the panel's order (frames on the facing
  *  page of a spread are marked where they are read). */
 export function reflowMarksFor(page: Pick<VDTPage, 'composed'>, locale?: string): ReflowMark[] {
@@ -53,19 +66,21 @@ export function reflowMarksFor(page: Pick<VDTPage, 'composed'>, locale?: string)
     const arrows: ReflowArrow[] = [];
     if (declared) {
       // A move: from the declared box's top (a quarter in) to the laid one's.
-      const from = { x: declared.x + declared.width * 0.25, y: declared.y };
-      const to = { x: final.x + final.width * 0.25, y: final.y };
+      // A turned frame: each end on its own box as turned.
+      const turn = frame.rotate;
+      const from = turnAbout(declared, turn, { x: declared.x + declared.width * 0.25, y: declared.y });
+      const to = turnAbout(final, turn, { x: final.x + final.width * 0.25, y: final.y });
       if (Math.hypot(to.x - from.x, to.y - from.y) >= MIN_ARROW_PX) arrows.push({ kind: 'move', from, to });
       // A change of height: at the foot, three quarters in, from where the
       // declared height ends to where the laid one does.
       if (Math.abs(final.height - declared.height) >= MIN_ARROW_PX) {
         const x = final.x + final.width * 0.75;
-        arrows.push({ kind: 'size', from: { x, y: final.y + declared.height }, to: { x, y: final.y + final.height } });
+        arrows.push({ kind: 'size', from: turnAbout(final, turn, { x, y: final.y + declared.height }), to: turnAbout(final, turn, { x, y: final.y + final.height }) });
       }
       // A change of width: at mid height, on the end edge.
       if (Math.abs(final.width - declared.width) >= MIN_ARROW_PX) {
         const y = final.y + final.height * 0.5;
-        arrows.push({ kind: 'size', from: { x: final.x + declared.width, y }, to: { x: final.x + final.width, y } });
+        arrows.push({ kind: 'size', from: turnAbout(final, turn, { x: final.x + declared.width, y }), to: turnAbout(final, turn, { x: final.x + final.width, y }) });
       }
     }
     const short = entry.events.map((e) => reflowShort(e, locale)).filter(Boolean).join(' ');
@@ -161,6 +176,11 @@ export function drawReflowMarks(
       item.appendChild(laid);
     }
     for (const a of mark.arrows) arrow(item, a, unit, strong);
+    // The badge sits in the frame's corner, turned with it.
+    const badge = document.createElementNS(SVG_NS, 'g');
+    const badgeTurn = frameTurnMatrix(mark.frame.rect, mark.frame.rotate);
+    if (badgeTurn) badge.setAttribute('transform', badgeTurn);
+    item.appendChild(badge);
     // The badge: the number in a disc, the changes beside it.
     const r = fs * 0.8;
     const cx = mark.frame.rect.x + r + unit * 2;
@@ -170,7 +190,7 @@ export function drawReflowMarks(
     if (mark.short) {
       const t = el('text', { x: cx + r + fs * 0.35, y: cy + fs * 0.35, 'font-size': fs, 'font-family': 'system-ui, sans-serif', 'font-weight': 600, fill: INK });
       t.textContent = mark.short;
-      item.appendChild(t);
+      badge.appendChild(t);
       // The pill fits the text as drawn (an estimate where it cannot be
       // measured yet).
       let textW = fs * 0.62 * mark.short.length;
@@ -181,11 +201,11 @@ export function drawReflowMarks(
         // Not laid out: keep the estimate.
       }
       const w = r + fs * 0.35 + textW + fs * 0.5;
-      item.insertBefore(el('rect', { x: cx, y: cy - fs * 0.75, width: w, height: fs * 1.5, rx: fs * 0.3, fill: '#ffffff', stroke: INK, 'stroke-width': unit }), t);
+      badge.insertBefore(el('rect', { x: cx, y: cy - fs * 0.75, width: w, height: fs * 1.5, rx: fs * 0.3, fill: '#ffffff', stroke: INK, 'stroke-width': unit }), t);
     }
-    item.appendChild(el('circle', { cx, cy, r, fill: INK }));
+    badge.appendChild(el('circle', { cx, cy, r, fill: INK }));
     const n = el('text', { x: cx, y: cy + fs * 0.36, 'font-size': fs, 'font-family': 'system-ui, sans-serif', 'font-weight': 700, 'text-anchor': 'middle', fill: '#ffffff' });
     n.textContent = String(mark.number);
-    item.appendChild(n);
+    badge.appendChild(n);
   }
 }

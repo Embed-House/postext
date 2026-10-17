@@ -9,7 +9,7 @@ import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource, VDTDocument, VDTFrame, VDTPage } from 'postext';
 import { DEFAULT_LABELS, type SandboxLabels } from '../../types';
 import { documentReflow, reflowEntries, reflowSentence, reflowShort } from './reflowText';
-import { reflowMarksFor } from './reflowMarks';
+import { reflowMarksFor, turnAbout } from './reflowMarks';
 import { designBadgesFor } from './designBadges';
 
 // Every glyph the same width: the layout is the same on every machine.
@@ -146,6 +146,25 @@ describe('the Reflow panel on the p. 8 stand-in (#868)', () => {
         expect(tokens(labels[key] as string), `${locale} ${key}`).toEqual(tokens(DEFAULT_LABELS[key] as string));
       }
     }
+  });
+
+  it('a turned frame: the arrows run between its boxes as turned', () => {
+    const rect = { x: 100, y: 200, width: 40, height: 20 };
+    const declared = { x: 100, y: 180, width: 40, height: 20 };
+    const page = {
+      composed: {
+        frames: [{ id: 'cp0:a', name: 'a', rect, declaredRect: declared, rotate: 90, blockIds: [] }],
+        log: [{ frame: 'a', kind: 'moved', fromMm: 10, toMm: 12 }],
+      },
+    } as unknown as VDTPage;
+    const [mark] = reflowMarksFor(page);
+    const [move] = mark!.arrows;
+    // A quarter along the top edge, turned a quarter about each box's centre.
+    expect(move!.from.x).toBeCloseTo(130, 6);
+    expect(move!.from.y).toBeCloseTo(180, 6);
+    expect(move!.to.x).toBeCloseTo(130, 6);
+    expect(move!.to.y).toBeCloseTo(200, 6);
+    expect(turnAbout(rect, 0, { x: 1, y: 2 })).toEqual({ x: 1, y: 2 });
   });
 
   it('numbers a page’s frames once each, in log order', () => {
