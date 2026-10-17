@@ -339,7 +339,7 @@ const config: PostextConfig = {
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.37 起。</td>
+      <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.38 起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
 
-竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.37 起。
+竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.38 起。
 
 ## 注记样式
 

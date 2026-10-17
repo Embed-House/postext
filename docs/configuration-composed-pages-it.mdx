@@ -339,7 +339,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Righe tracciate lungo la scatola del contenuto della cornice: una al piede di ogni riga, quante ne entrano nella sua altezza. <code>every</code> è il passo, <code>'line'</code> (predefinito: l’interlinea del testo della cornice) o una lunghezza; <code>color</code> è un grigio medio per impostazione predefinita, <code>width</code> lo spessore (0,5 pt), <code>inset</code> lo spazio lasciato a ciascuna estremità della riga, oppure <code>&#123; left, right &#125;</code>. Vedi Cornici rigate, più sotto. Da postext 1.37.</td>
+      <td>Righe tracciate lungo la scatola del contenuto della cornice: una al piede di ogni riga, quante ne entrano nella sua altezza. <code>every</code> è il passo, <code>'line'</code> (predefinito: l’interlinea del testo della cornice) o una lunghezza; <code>color</code> è un grigio medio per impostazione predefinita, <code>width</code> lo spessore (0,5 pt), <code>inset</code> lo spazio lasciato a ciascuna estremità della riga, oppure <code>&#123; left, right &#125;</code>. Vedi Cornici rigate, più sotto. Da postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Uno spazio tra le colonne più largo del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si dipinge su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
 
-In un libro verticale (`vertical-rl`) la doppia pagina si compone nel riferimento del flusso delle pagine, come le sue pagine composte singole: l’alto della pagina è il bordo destro del foglio e le righe scendono, quindi la `x` del modello scende lungo il foglio e la sua `y` va dal bordo destro del foglio a quello sinistro. Il foglio è la pagina destra seguita dalla sinistra lungo `y`, il dorso è una linea che attraversa il modello, e `gutter`, `crossGutter` e il taglio fra le pagine leggono quell’asse; la decorazione si compone sempre sul foglio fisico e si taglia al dorso. Una linea del tempo orizzontale disegnata per un libro orizzontale esce ruotata in uno verticale: scrivi il modello di un libro verticale nel riferimento del suo flusso. Da postext 1.37.
+In un libro verticale (`vertical-rl`) la doppia pagina si compone nel riferimento del flusso delle pagine, come le sue pagine composte singole: l’alto della pagina è il bordo destro del foglio e le righe scendono, quindi la `x` del modello scende lungo il foglio e la sua `y` va dal bordo destro del foglio a quello sinistro. Il foglio è la pagina destra seguita dalla sinistra lungo `y`, il dorso è una linea che attraversa il modello, e `gutter`, `crossGutter` e il taglio fra le pagine leggono quell’asse; la decorazione si compone sempre sul foglio fisico e si taglia al dorso. Una linea del tempo orizzontale disegnata per un libro orizzontale esce ruotata in uno verticale: scrivi il modello di un libro verticale nel riferimento del suo flusso. Da postext 1.38.
 
 ## Stili delle etichette
 

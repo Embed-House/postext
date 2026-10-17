@@ -339,7 +339,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Linien quer über den Inhaltskasten des Rahmens: eine am Fuß jeder Zeile, so viele wie seine Höhe fasst. <code>every</code> ist der Abstand, <code>'line'</code> (Standard: der Zeilenabstand des Rahmentexts) oder eine Länge; <code>color</code> ist standardmäßig ein mittleres Grau, <code>width</code> die Stärke (0,5 pt), <code>inset</code> der Abstand an beiden Enden jeder Linie oder <code>&#123; left, right &#125;</code>. Siehe Linierte Rahmen weiter unten. Seit postext 1.37.</td>
+      <td>Linien quer über den Inhaltskasten des Rahmens: eine am Fuß jeder Zeile, so viele wie seine Höhe fasst. <code>every</code> ist der Abstand, <code>'line'</code> (Standard: der Zeilenabstand des Rahmentexts) oder eine Länge; <code>color</code> ist standardmäßig ein mittleres Grau, <code>width</code> die Stärke (0,5 pt), <code>inset</code> der Abstand an beiden Enden jeder Linie oder <code>&#123; left, right &#125;</code>. Siehe Linierte Rahmen weiter unten. Seit postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes wird auf der Seite gelesen, die seine Mitte enthält, und auf beiden gemalt. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Reitern, bleibt im Markdown.
 
-In einem vertikalen Buch (`vertical-rl`) wird eine Doppelseite im Fließrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Oben ist auf der Seite der rechte Rand des Bogens, und die Zeilen laufen nach unten, sodass das `x` der Vorlage den Bogen hinunterläuft und ihr `y` vom rechten Rand des Bogens zum linken. Der Bogen ist die rechte Seite, gefolgt von der linken entlang `y`, der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten lesen diese Achse; die Dekoration wird weiterhin auf dem physischen Bogen gesetzt und am Bund geschnitten. Eine waagrechte Zeitleiste, gezeichnet für ein waagrechtes Buch, erscheint in einem vertikalen gedreht: Schreiben Sie die Vorlage eines vertikalen Buches im Rahmen seines Flusses. Seit postext 1.37.
+In einem vertikalen Buch (`vertical-rl`) wird eine Doppelseite im Fließrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Oben ist auf der Seite der rechte Rand des Bogens, und die Zeilen laufen nach unten, sodass das `x` der Vorlage den Bogen hinunterläuft und ihr `y` vom rechten Rand des Bogens zum linken. Der Bogen ist die rechte Seite, gefolgt von der linken entlang `y`, der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten lesen diese Achse; die Dekoration wird weiterhin auf dem physischen Bogen gesetzt und am Bund geschnitten. Eine waagrechte Zeitleiste, gezeichnet für ein waagrechtes Buch, erscheint in einem vertikalen gedreht: Schreiben Sie die Vorlage eines vertikalen Buches im Rahmen seines Flusses. Seit postext 1.38.
 
 ## Beschriftungsstile
 

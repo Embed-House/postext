@@ -339,7 +339,7 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Linhas pautadas de lado a lado da caixa de conteúdo do bloco: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do bloco) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Blocos pautados, mais abaixo. Desde postext 1.37.</td>
+      <td>Linhas pautadas de lado a lado da caixa de conteúdo do bloco: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do bloco) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Blocos pautados, mais abaixo. Desde postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Um espaço entre colunas maior que o `gutter` mantém as fichas de uma grade simétrica longe da lombada, e nenhuma é movida. A segunda faixa e a tira de ilustrações têm `crossGutter` para atravessá-la: cada uma é lida na página que contém o seu centro e pintada nas duas. Todas as palavras da página, inclusive os nomes das eras nas abas, ficam no Markdown.
 
-Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do fluxo das páginas, como as suas páginas compostas avulsas: o alto da página é a borda direita da folha e as linhas descem, então o `x` do modelo desce pela folha e o seu `y` vai da borda direita da folha para a esquerda. A folha é a página direita seguida da esquerda ao longo de `y`, a lombada é uma linha que atravessa o modelo, e `gutter`, `crossGutter` e o corte entre as páginas leem esse eixo; a decoração continua composta sobre a folha física e cortada na lombada. Uma linha do tempo horizontal desenhada para um livro horizontal sai girada num vertical: escreva o modelo de um livro vertical no referencial do seu fluxo. Desde postext 1.37.
+Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do fluxo das páginas, como as suas páginas compostas avulsas: o alto da página é a borda direita da folha e as linhas descem, então o `x` do modelo desce pela folha e o seu `y` vai da borda direita da folha para a esquerda. A folha é a página direita seguida da esquerda ao longo de `y`, a lombada é uma linha que atravessa o modelo, e `gutter`, `crossGutter` e o corte entre as páginas leem esse eixo; a decoração continua composta sobre a folha física e cortada na lombada. Uma linha do tempo horizontal desenhada para um livro horizontal sai girada num vertical: escreva o modelo de um livro vertical no referencial do seu fluxo. Desde postext 1.38.
 
 ## Estilos de rótulo
 

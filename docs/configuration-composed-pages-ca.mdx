@@ -339,7 +339,7 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Línies pautades d'un costat a l'altre de la caixa de contingut del marc: una al peu de cada línia, tantes com en càpiguen a la seva alçada. <code>every</code> és el pas, <code>'line'</code> (per defecte: l'interlineat del text del marc) o una mida; <code>color</code> és un gris mitjà per defecte, <code>width</code> el gruix (0,5 pt), <code>inset</code> el marge que queda a cada extrem de la línia, o <code>&#123; left, right &#125;</code>. Vegeu Marcs pautats, més avall. Des de postext 1.37.</td>
+      <td>Línies pautades d'un costat a l'altre de la caixa de contingut del marc: una al peu de cada línia, tantes com en càpiguen a la seva alçada. <code>every</code> és el pas, <code>'line'</code> (per defecte: l'interlineat del text del marc) o una mida; <code>color</code> és un gris mitjà per defecte, <code>width</code> el gruix (0,5 pt), <code>inset</code> el marge que queda a cada extrem de la línia, o <code>&#123; left, right &#125;</code>. Vegeu Marcs pautats, més avall. Des de postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos posen `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina que conté el seu centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
 
-En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.37.
+En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.38.
 
 ## Estils de rètol
 

@@ -637,7 +637,7 @@ VDTでは、縦組みのブロックは`vertical`を持ちます（`VDTDesignTex
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td><code>width</code>と<code>height</code>の両方を指定したとき、<code>'contain'</code>は画像全体を枠の中央に収め、<code>'cover'</code>は裁ち落としの写真のように枠を埋めて、はみ出す部分を切り落とします。<code>'cover'</code>の切り抜きはリソースのセーフエリアをすべて残します（<a href="/ja/docs/document-format-resources">リソース</a>を参照）。枠の形にセーフエリアが収まらないときは、それが収まる最小の範囲を見せ、枠は一方向で埋まりません。どちらかの辺が<code>'auto'</code>のときは無視されます。postext 1.37 から。</td>
+      <td><code>width</code>と<code>height</code>の両方を指定したとき、<code>'contain'</code>は画像全体を枠の中央に収め、<code>'cover'</code>は裁ち落としの写真のように枠を埋めて、はみ出す部分を切り落とします。<code>'cover'</code>の切り抜きはリソースのセーフエリアをすべて残します（<a href="/ja/docs/document-format-resources">リソース</a>を参照）。枠の形にセーフエリアが収まらないときは、それが収まる最小の範囲を見せ、枠は一方向で埋まりません。どちらかの辺が<code>'auto'</code>のときは無視されます。postext 1.38 から。</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
@@ -713,7 +713,7 @@ interface ElementPlacement {
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-サイズは、別のボックスの辺まで伸ばすこともできます。`{ to, edge }`と書き、`to`でアンカーと同じようにボックスを指定し（`'container'`、`'page'`、`'bleed'`、`'outer'`、別の要素の`'#id'`、テンプレートページの装飾ではフレームやグループも）、`edge`でその辺を選びます。高さなら`'top'`か`'bottom'`、幅なら`'left'`か`'right'`です。長さは要素のアンカー点からその辺まで、要素が伸びる向きに測ります。辺がアンカー点の後ろにあれば0、別の軸の辺や存在しないボックスは`'fill'`として扱います。帯の下端から裁ち落としまでの地色はテンプレートの中で完結し、帯が動けば一緒に動きます。postext 1.37 から：
+サイズは、別のボックスの辺まで伸ばすこともできます。`{ to, edge }`と書き、`to`でアンカーと同じようにボックスを指定し（`'container'`、`'page'`、`'bleed'`、`'outer'`、別の要素の`'#id'`、テンプレートページの装飾ではフレームやグループも）、`edge`でその辺を選びます。高さなら`'top'`か`'bottom'`、幅なら`'left'`か`'right'`です。長さは要素のアンカー点からその辺まで、要素が伸びる向きに測ります。辺がアンカー点の後ろにあれば0、別の軸の辺や存在しないボックスは`'fill'`として扱います。帯の下端から裁ち落としまでの地色はテンプレートの中で完結し、帯が動けば一緒に動きます。postext 1.38 から：
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

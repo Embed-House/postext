@@ -637,7 +637,7 @@ Un élément `image` dessine une ressource bitmap ou SVG du document : le logo 
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.37.</td>
+      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.38.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
@@ -713,7 +713,7 @@ Un bord relatif à un élément utilisé avec `'container'`, `'page'` ou `'bleed
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Une taille peut aussi aller jusqu’à un bord d’une autre boîte : `{ to, edge }`, où `to` nomme la boîte comme le fait un ancrage (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` d’un autre élément et, dans le décor d’une page composée, d’un bloc ou d’un groupe) et `edge` lequel de ses bords, `'top'` ou `'bottom'` pour une hauteur, `'left'` ou `'right'` pour une largeur. La longueur va du point d’ancrage de l’élément jusqu’à ce bord, dans le sens où l’élément grandit ; un bord situé derrière le point d’ancrage donne 0, et un bord de l’autre axe, ou une boîte absente, se lit comme `'fill'`. Un fond qui va du pied d’un bandeau jusqu’au fond perdu reste dans le gabarit et suit le bandeau quand celui-ci bouge. Depuis postext 1.37 :
+Une taille peut aussi aller jusqu’à un bord d’une autre boîte : `{ to, edge }`, où `to` nomme la boîte comme le fait un ancrage (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` d’un autre élément et, dans le décor d’une page composée, d’un bloc ou d’un groupe) et `edge` lequel de ses bords, `'top'` ou `'bottom'` pour une hauteur, `'left'` ou `'right'` pour une largeur. La longueur va du point d’ancrage de l’élément jusqu’à ce bord, dans le sens où l’élément grandit ; un bord situé derrière le point d’ancrage donne 0, et un bord de l’autre axe, ou une boîte absente, se lit comme `'fill'`. Un fond qui va du pied d’un bandeau jusqu’au fond perdu reste dans le gabarit et suit le bandeau quand celui-ci bouge. Depuis postext 1.38 :
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

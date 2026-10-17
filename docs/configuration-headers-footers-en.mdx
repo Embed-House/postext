@@ -637,7 +637,7 @@ An `image` element draws a bitmap or SVG resource of the document — a publishe
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.37.</td>
+      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.38.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
@@ -713,7 +713,7 @@ An element-relative edge used with `'container'`, `'page'` or `'bleed'`, and a c
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` which of its edges, `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.37:
+A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` which of its edges, `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

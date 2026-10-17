@@ -339,7 +339,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Ruled lines across the frame's content box: one at the foot of each line slot, as many as its height holds. <code>every</code> is the pitch, <code>'line'</code> (the default: the leading of the frame's text) or a length; <code>color</code> is a mid grey by default, <code>width</code> the thickness (0.5 pt), <code>inset</code> the room left at both ends of each rule, or <code>&#123; left, right &#125;</code>. See Ruled frames below. Since postext 1.37.</td>
+      <td>Ruled lines across the frame's content box: one at the foot of each line slot, as many as its height holds. <code>every</code> is the pitch, <code>'line'</code> (the default: the leading of the frame's text) or a length; <code>color</code> is a mid grey by default, <code>width</code> the thickness (0.5 pt), <code>inset</code> the room left at both ends of each rule, or <code>&#123; left, right &#125;</code>. See Ruled frames below. Since postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 A column gap wider than the `gutter` keeps the cards of a symmetric grid clear of the spine, so none of them is moved. The second band and the picture strip set `crossGutter` to run across it: each is read on the page that holds its centre and painted on both. Every word of the page, the era names on the tabs included, stays in the Markdown.
 
-On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as its single composed pages are: the top of a page is the sheet's right edge and the lines run down, so the template's `x` runs down the sheet and its `y` from the sheet's right edge to its left. The sheet is the right page followed by the left one along `y`, the spine is a line across the template, and `gutter`, `crossGutter` and the cut between the pages read that axis; decoration is still laid over the physical sheet and cut at the spine. A horizontal timeline drawn for a horizontal book comes out turned on a vertical one: write a vertical book's template in its flow's frame. Since postext 1.37.
+On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as its single composed pages are: the top of a page is the sheet's right edge and the lines run down, so the template's `x` runs down the sheet and its `y` from the sheet's right edge to its left. The sheet is the right page followed by the left one along `y`, the spine is a line across the template, and `gutter`, `crossGutter` and the cut between the pages read that axis; decoration is still laid over the physical sheet and cut at the spine. A horizontal timeline drawn for a horizontal book comes out turned on a vertical one: write a vertical book's template in its flow's frame. Since postext 1.38.
 
 ## Label styles
 

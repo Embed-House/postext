@@ -339,7 +339,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.37.</td>
+      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun est lu sur la page qui contient son centre et peint sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
 
-Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent, si bien que le `x` du gabarit descend le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages lisent cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.37.
+Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent, si bien que le `x` du gabarit descend le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages lisent cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.38.
 
 ## Styles d’étiquette
 

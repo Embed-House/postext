@@ -637,7 +637,7 @@ Un elemento `image` dibuja un recurso de mapa de bits o SVG del documento — el
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.37.</td>
+      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.38.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
@@ -713,7 +713,7 @@ Un borde relativo a otro elemento usado con `'container'`, `'page'` o `'bleed'`,
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Un tamaño también puede llegar hasta un borde de otra caja: `{ to, edge }`, donde `to` nombra la caja como lo hace un anclaje (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` de otro elemento y, en la decoración de una página compuesta, de un marco o de un grupo) y `edge` cuál de sus bordes, `'top'` o `'bottom'` para una altura, `'left'` o `'right'` para una anchura. La medida va del punto de anclaje del elemento hasta ese borde, en el sentido en que crece el elemento; un borde por detrás del punto de anclaje da 0, y un borde del otro eje, o una caja que no existe, se lee como `'fill'`. Un fondo que va del pie de una banda hasta el sangrado se queda en la plantilla y sigue a la banda cuando esta se mueve. Desde postext 1.37:
+Un tamaño también puede llegar hasta un borde de otra caja: `{ to, edge }`, donde `to` nombra la caja como lo hace un anclaje (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` de otro elemento y, en la decoración de una página compuesta, de un marco o de un grupo) y `edge` cuál de sus bordes, `'top'` o `'bottom'` para una altura, `'left'` o `'right'` para una anchura. La medida va del punto de anclaje del elemento hasta ese borde, en el sentido en que crece el elemento; un borde por detrás del punto de anclaje da 0, y un borde del otro eje, o una caja que no existe, se lee como `'fill'`. Un fondo que va del pie de una banda hasta el sangrado se queda en la plantilla y sigue a la banda cuando esta se mueve. Desde postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
