@@ -15,13 +15,13 @@ As páginas 46 a 49 de *Patio*, uma revista trimestral inventada sobre a vida na
 
 ### 1 · Um modelo, um texto
 
-O código é [a resposta curta](#a-resposta-curta) lá em cima. A reportagem inteira é uma única diretiva `::::page{template="apertura" spread}`: o título vai para o bloco que `takes: 'h1'`, os números e a linha fina para os seus slots, e todo o resto, que não nomeia nenhum, para o bloco de fluxo `col-1`. Quando `col-1` enche, o texto continua em `col-2`, quebrado de novo na largura dela, e o que não cabe em `col-2` segue numa página acrescentada depois da página dupla (`overflow.continueIn: 'template:seguido-par'`), após a palavra *Continued* no idioma da edição. O texto não nomeia colunas nem páginas: tire um parágrafo e todas as linhas seguintes recuam.
+O código é [a resposta curta](#a-resposta-curta) lá em cima. A reportagem inteira é uma única diretiva `::::page{template="apertura" spread}`: o título vai para o bloco que `takes: 'h1'`, os números e a linha fina para os seus slots, e todo o resto, que não nomeia nenhum, para o bloco de fluxo `col-1`. Quando `col-1` enche, o texto continua em `col-2`, quebrado de novo na largura dela, e o que não cabe em `col-2` segue numa página acrescentada depois da página dupla (`overflow.continueIn: 'template:seguido'`), após a palavra *Continued* no idioma da edição. O texto não nomeia colunas nem páginas: tire um parágrafo e todas as linhas seguintes recuam.
 
 ### 2 · As páginas que o texto acrescenta
 
 <Excerpt region="pages-after" />
 
-Cada página acrescentada tem três colunas encadeadas de 60,3 mm. Dois modelos passam o texto um para o outro porque o que continua cai no bloco que tem o nome daquele que o cortou: um modelo que continuasse em si mesmo voltaria a encher só a sua terceira coluna. Com nomes diferentes nas duas páginas, o texto recomeça no bloco de fluxo e desce pelas três. `KEEP` desliga o degrau da escada de ajuste que reduz texto e imagens, que de outro modo viria antes de uma página nova: um texto com cinco linhas a mais seria composto a 92,5 % na sua última página.
+Cada página acrescentada tem três colunas encadeadas de 60,3 mm, e um único modelo serve para todas. A terceira coluna continua nesse mesmo modelo, e o texto segue no bloco onde a sua cadeia começa, `seguido-1`: cada página acrescentada enche as três colunas, quantas forem precisas. Também nada precisa fixar o corpo: um bloco que pode continuar em outra página continua antes de o texto ser composto menor, e um texto com cinco linhas a mais ganha uma página nova, não 92,5 % na última.
 
 ### 3 · Dois blocos que afastam as colunas
 
@@ -33,7 +33,7 @@ Nenhum dos dois blocos faz parte do texto: cada um afasta as linhas das colunas 
 
 <Excerpt region="pictures" />
 
-A composição lê uma imagem pelo tamanho, nunca pelos pixels, então a silhueta sai uma única vez do canal alfa do PNG, com `traceResourceContour`, e vai no recurso como `contour.traced`. A colmeia é um PNG de 720 px com 200 cores e fundo transparente (225 KB). A fotografia do verso é uma imagem da decoração, `resourceId: '{attr.foto}'`: a diretiva escolhe a foto e o modelo, o lugar dela.
+A composição lê uma imagem pelo tamanho, nunca pelos pixels, então a silhueta sai uma única vez do canal alfa do PNG, com `traceResourceContour`, e vai no recurso como `contour.traced`. A colmeia é um PNG de 720 px com 200 cores e fundo transparente (225 KB). A fotografia do verso é uma imagem da decoração, `resourceId: '{attr.foto}'`: a diretiva escolhe a foto e o modelo, o lugar dela. Leva `fit: 'cover'`: quaisquer que sejam as proporções da foto, ela enche a página par e a caixa corta o que sobra.
 
 ### 5 · Cabeços que leem a diretiva
 
@@ -57,10 +57,10 @@ Sem `wrap: 'contour'` o bloco afasta o texto com o seu retângulo, e as linhas a
 `mark: false` termina o trecho cortado na sua última linha, sem a palavra *Continued*: a coluna ganha uma linha.
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## Erros comuns
 
-- Um parágrafo dentro de um bloco nunca leva capitular, então a reportagem abre sem ela: os blocos são caixas, e o `dropCap` de um estilo de parágrafo só vale para o texto corrido.
+- Um título que o modelo manda para um bloco próprio não abre capitular nos blocos de texto. O primeiro parágrafo da reportagem vai envolto em `:::paragraphs{style="inicio"}`, e é o estilo que leva o `dropCap`.

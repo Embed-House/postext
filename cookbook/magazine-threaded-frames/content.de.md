@@ -31,7 +31,9 @@ Text: Lucía Ferrán
 
 ::resource{id="cesto" slot="recorte"}
 
+:::paragraphs{style="inicio"}
 Um halb sieben am Morgen hält das Dach noch die Kälte der Nacht. Carmen Aldaba steigt die Eisentreppe hinauf, den brennenden Smoker in der einen Hand, eine Kiste mit leeren Rähmchen in der anderen, und die Taschenlampe lässt sie aus: Die zweiundzwanzig Stufen kennt sie auswendig. Oben stehen in einer Reihe auf dem Kies vierzehn Holzbeuten, grün, ocker und blau gestrichen, jede mit einem Kreidebuchstaben auf dem Deckel.
+:::
 
 „A ist die Stechfreudigste“, sagt sie und hebelt einen Deckel auf. „M ist die Fleißigste. Die anderen kommen und gehen.“
 

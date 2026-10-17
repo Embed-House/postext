@@ -15,13 +15,13 @@ Les pàgines 46 a 49 de *Patio*, una revista trimestral inventada sobre la vida 
 
 ### 1 · Una plantilla, un text
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Tot el reportatge és una sola directiva `::::page{template="apertura" spread}`: el títol va al marc que `takes: 'h1'`, les xifres i l'entradeta a les seves ranures, i tota la resta, que no n'anomena cap, al marc de flux `col-1`. Quan `col-1` és ple, el text continua a `col-2`, tallat de nou a la seva amplada, i el que no cap a `col-2` passa a una pàgina que s'afegeix després de la doble pàgina (`overflow.continueIn: 'template:seguido-par'`), darrere la paraula *Continúa* en la llengua de l'edició. El text no anomena columnes ni pàgines: si treus un paràgraf, totes les línies que el segueixen reculen.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Tot el reportatge és una sola directiva `::::page{template="apertura" spread}`: el títol va al marc que `takes: 'h1'`, les xifres i l'entradeta a les seves ranures, i tota la resta, que no n'anomena cap, al marc de flux `col-1`. Quan `col-1` és ple, el text continua a `col-2`, tallat de nou a la seva amplada, i el que no cap a `col-2` passa a una pàgina que s'afegeix després de la doble pàgina (`overflow.continueIn: 'template:seguido'`), darrere la paraula *Continúa* en la llengua de l'edició. El text no anomena columnes ni pàgines: si treus un paràgraf, totes les línies que el segueixen reculen.
 
 ### 2 · Les pàgines que afegeix el text
 
 <Excerpt region="pages-after" />
 
-Cada pàgina afegida té tres columnes enllaçades de 60,3 mm. Dues plantilles es passen el text perquè el que continua cau al marc que es diu igual que el que l'ha tallat: una plantilla que continués en ella mateixa només tornaria a omplir la tercera columna. Amb noms diferents a les dues pàgines, el text torna a començar al marc de flux i baixa per les tres. `KEEP` desactiva el graó de l'escala de reajust que redueix el text i les imatges, que si no arribaria abans que una pàgina nova: un text amb cinc línies de més es compondria al 92,5 % a la seva última pàgina.
+Cada pàgina afegida té tres columnes enllaçades de 60,3 mm i hi ha una sola plantilla per a totes. La tercera columna continua en aquesta mateixa plantilla, i el text segueix al marc on comença la seva cadena, `seguido-1`: cada pàgina afegida omple les tres columnes, tantes com calgui. Tampoc cal res que fixi el cos: un marc que pot continuar en una altra pàgina continua abans de compondre el text més petit, de manera que un text amb cinc línies de més rep una pàgina nova, no un 92,5 % a l'última.
 
 ### 3 · Dos marcs que aparten les columnes
 
@@ -33,7 +33,7 @@ Cap dels dos marcs no forma part del text: cadascun aparta les línies de les co
 
 <Excerpt region="pictures" />
 
-La composició llegeix les imatges per la mida, mai pels píxels, així que la silueta surt una sola vegada del canal alfa del PNG, amb `traceResourceContour`, i va dins el recurs com a `contour.traced`. El rusc és un PNG de 720 px amb 200 colors i fons transparent (225 KB). La fotografia de la pàgina parella és una imatge de la decoració, `resourceId: '{attr.foto}'`: la directiva tria la foto i la plantilla, el lloc.
+La composició llegeix les imatges per la mida, mai pels píxels, així que la silueta surt una sola vegada del canal alfa del PNG, amb `traceResourceContour`, i va dins el recurs com a `contour.traced`. El rusc és un PNG de 720 px amb 200 colors i fons transparent (225 KB). La fotografia de la pàgina parella és una imatge de la decoració, `resourceId: '{attr.foto}'`: la directiva tria la foto i la plantilla, el lloc. Porta `fit: 'cover'`: siguin quines siguin les proporcions de la foto, omple la pàgina parell i el requadre retalla el que sobra.
 
 ### 5 · Capçaleres que llegeixen la directiva
 
@@ -57,10 +57,10 @@ Sense `wrap: 'contour'` el marc aparta el text amb el seu rectangle, i les líni
 `mark: false` acaba el tros tallat a la seva última línia, sense la paraula *Continúa*: la columna hi guanya una línia.
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## Errors freqüents
 
-- Un paràgraf dins d'un marc no porta mai caplletra, així que el reportatge obre sense: els marcs són requadres, i el `dropCap` d'un estil de paràgraf només s'aplica al text corregut.
+- Un títol que la plantilla envia a un marc propi no obre caplletra als marcs de text. El primer paràgraf del reportatge va embolcallat en `:::paragraphs{style="inicio"}`, i és l'estil el que porta el `dropCap`.

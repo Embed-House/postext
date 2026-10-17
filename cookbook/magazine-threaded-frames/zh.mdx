@@ -15,13 +15,13 @@ aliases: ["串接框", "流文框", "续排", "转下页", "绕排", "沿轮廓�
 
 ### 1 · 一个模板，一篇文章
 
-代码就是上面的[简短回答](#简短回答)。整篇专题是一个 `::::page{template="apertura" spread}` 围栏：标题进入 `takes: 'h1'` 的框，数字和导语进入各自的槽位，其余没有指定槽位的内容都进入流文框 `col-1`。`col-1` 排满后，文字接着进入 `col-2`，按它的宽度重新断行；`col-2` 放不下的部分，在截断处印上 *Continúa* 之后，续排到跨页后面新增的一页（`overflow.continueIn: 'template:seguido-par'`）。文字既不指定栏，也不指定页：删掉一段，后面的每一行都往回移。
+代码就是上面的[简短回答](#简短回答)。整篇专题是一个 `::::page{template="apertura" spread}` 围栏：标题进入 `takes: 'h1'` 的框，数字和导语进入各自的槽位，其余没有指定槽位的内容都进入流文框 `col-1`。`col-1` 排满后，文字接着进入 `col-2`，按它的宽度重新断行；`col-2` 放不下的部分，在截断处印上 *Continúa* 之后，续排到跨页后面新增的一页（`overflow.continueIn: 'template:seguido'`）。文字既不指定栏，也不指定页：删掉一段，后面的每一行都往回移。
 
 ### 2 · 文章新增的页
 
 <Excerpt region="pages-after" />
 
-每个新增页有三个串接的栏，各宽 60.3 毫米。两个模板轮流接手文章，是因为续排的内容会落进与截断它的框同名的框：续排到自身的模板，每次只会重新填满它的第三栏。两页上的框名字不同，文章就从流文框重新开始，依次排满三栏。`KEEP` 关掉重排步骤里缩小文字和图片的那几步，否则它们会先于新增页被尝试：一篇多出五行的文章，最后一页会缩到 92.5% 排出。
+每个新增页有三个串接的栏，各宽 60.3 毫米，所有新增页共用一个模板。第三栏续排到这个模板本身，文章接在它的串接起点 `seguido-1` 里：不论要加几页，每页都排满三栏。字号也不必另行固定：能续到别页的框，会先续排，再考虑把文字缩小，所以多出五行的文章会得到一页新页，而不是在最后一页缩到 92.5%。
 
 ### 3 · 两个推开栏文的框
 
@@ -33,7 +33,7 @@ aliases: ["串接框", "流文框", "续排", "转下页", "绕排", "沿轮廓�
 
 <Excerpt region="pictures" />
 
-排版只按尺寸读取图片，从不读像素，所以轮廓用 `traceResourceContour` 从 PNG 的 Alpha 通道里取一次，作为 `contour.traced` 跟着资源走。蜂笼是一张 720 像素、200 色、透明底的 PNG（225 KB）。左页的照片是装饰图片 `resourceId: '{attr.foto}'`：用哪张照片由围栏决定，放在哪里由模板决定。
+排版只按尺寸读取图片，从不读像素，所以轮廓用 `traceResourceContour` 从 PNG 的 Alpha 通道里取一次，作为 `contour.traced` 跟着资源走。蜂笼是一张 720 像素、200 色、透明底的 PNG（225 KB）。左页的照片是装饰图片 `resourceId: '{attr.foto}'`：用哪张照片由围栏决定，放在哪里由模板决定。 它带有 `fit: 'cover'`：照片的比例不论如何，都会铺满左页，超出框的部分被裁掉。
 
 ### 5 · 从围栏读取的书眉
 
@@ -57,10 +57,10 @@ aliases: ["串接框", "流文框", "续排", "转下页", "绕排", "沿轮廓�
 设 `mark: false`，截断的片段排到最后一行就结束，不印 *Continúa*，这一栏能多放一行。
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## 常见问题
 
-- 框里的段落不会有首字下沉，所以这篇专题开头没有：框按方框处理，段落样式的 `dropCap` 只作用于正文。
+- 模板送进独立框的标题，不会让文字框里的段落首字下沉。专题的第一段包在 `:::paragraphs{style="inicio"}` 里，`dropCap` 写在这个样式上。

@@ -15,13 +15,13 @@ Las páginas 46 a 49 de *Patio*, una revista trimestral inventada sobre la vida 
 
 ### 1 · Una plantilla, un texto
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Todo el reportaje es un único bloque `::::page{template="apertura" spread}`: el título va al marco que `takes: 'h1'`, las cifras y la entradilla a sus ranuras, y todo lo demás, que no nombra ninguna, al marco de flujo `col-1`. Cuando `col-1` se llena, el texto sigue en `col-2`, cortado de nuevo a su ancho, y lo que no cabe en `col-2` continúa en una página que se añade tras la doble (`overflow.continueIn: 'template:seguido-par'`), después de la palabra *Continúa* en el idioma del lector. El texto no nombra columnas ni páginas: si quitas un párrafo, todas las líneas siguientes retroceden.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Todo el reportaje es un único bloque `::::page{template="apertura" spread}`: el título va al marco que `takes: 'h1'`, las cifras y la entradilla a sus ranuras, y todo lo demás, que no nombra ninguna, al marco de flujo `col-1`. Cuando `col-1` se llena, el texto sigue en `col-2`, cortado de nuevo a su ancho, y lo que no cabe en `col-2` continúa en una página que se añade tras la doble (`overflow.continueIn: 'template:seguido'`), después de la palabra *Continúa* en el idioma del lector. El texto no nombra columnas ni páginas: si quitas un párrafo, todas las líneas siguientes retroceden.
 
 ### 2 · Las páginas que añade el texto
 
 <Excerpt region="pages-after" />
 
-Cada página añadida tiene tres columnas enlazadas de 60,3 mm. Dos plantillas se pasan el texto porque lo que continúa cae en el marco que se llama como el que lo cortó: una plantilla que siguiera en sí misma volvería a llenar sólo su tercera columna. Con nombres distintos en las dos páginas, el texto empieza otra vez en el marco de flujo y recorre las tres. `KEEP` desactiva el paso de la escalera de ajuste que reduce texto e imágenes, que si no llega antes que una página nueva: a un texto al que le sobran cinco líneas lo compondría al 92,5 % en su última página.
+Cada página añadida tiene tres columnas enlazadas de 60,3 mm y hay una sola plantilla para todas. La tercera columna continúa en esa misma plantilla, y el texto sigue en el marco donde empieza su cadena, `seguido-1`: cada página añadida llena las tres columnas, cuantas haga falta. Tampoco hay nada que fije el cuerpo: un marco que puede seguir en otra página sigue antes de componer el texto más pequeño, así que a un texto al que le sobran cinco líneas le sale una página nueva, no un 92,5 % en la última.
 
 ### 3 · Dos marcos que apartan las columnas
 
@@ -33,7 +33,7 @@ Ninguno de los dos marcos forma parte del texto: cada uno aparta las líneas de 
 
 <Excerpt region="pictures" />
 
-La composición lee las imágenes por su tamaño, nunca por sus píxeles, así que la silueta sale una sola vez del canal alfa del PNG, con `traceResourceContour`, y viaja en el recurso como `contour.traced`. El cesto es un PNG de 720 px con 200 colores y fondo transparente (225 KB). La fotografía de la página par es una imagen de la decoración, `resourceId: '{attr.foto}'`: el bloque elige la foto y la plantilla su sitio.
+La composición lee las imágenes por su tamaño, nunca por sus píxeles, así que la silueta sale una sola vez del canal alfa del PNG, con `traceResourceContour`, y viaja en el recurso como `contour.traced`. El cesto es un PNG de 720 px con 200 colores y fondo transparente (225 KB). La fotografía de la página par es una imagen de la decoración, `resourceId: '{attr.foto}'`: el bloque elige la foto y la plantilla su sitio. Lleva `fit: 'cover'`: sean cuales sean las proporciones de la foto, llena la página par y el recuadro recorta lo que sobra.
 
 ### 5 · Cabeceras que leen el bloque
 
@@ -57,10 +57,10 @@ Sin `wrap: 'contour'` el marco aparta el texto con su rectángulo, y las líneas
 `mark: false` termina el trozo cortado en su última línea, sin la palabra *Continúa*: la columna gana una línea.
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## Errores frecuentes
 
-- Un párrafo dentro de un marco nunca lleva capitular, así que el reportaje abre sin ella: los marcos son recuadros, y el `dropCap` de un estilo de párrafo sólo se aplica al texto corrido.
+- Un título que la plantilla envía a un marco propio no abre capitular en los marcos de texto. El primer párrafo del reportaje va envuelto en `:::paragraphs{style="inicio"}`, y es el estilo el que lleva el `dropCap`.

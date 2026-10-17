@@ -31,7 +31,9 @@ Words: Lucía Ferrán
 
 ::resource{id="cesto" slot="recorte"}
 
+:::paragraphs{style="inicio"}
 At half past six in the morning the roof still holds the cold of the night. Carmen Aldaba climbs the iron stairs with a lit smoker in one hand and a box of empty frames in the other, and she does not switch on her torch: she knows all twenty-two steps by heart. At the top, in a row on the gravel, stand fourteen wooden boxes painted green, ochre and blue, each with a letter chalked on its lid.
+:::
 
 “A is the fierce one,” she says, levering up a lid. “M is the hard worker. The rest come and go.”
 

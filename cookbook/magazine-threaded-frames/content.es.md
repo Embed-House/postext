@@ -31,7 +31,9 @@ Texto: Lucía Ferrán
 
 ::resource{id="cesto" slot="recorte"}
 
+:::paragraphs{style="inicio"}
 A las seis y media de la mañana la azotea todavía guarda el frío de la noche. Carmen Aldaba sube por la escalera de hierro con el ahumador encendido en una mano y una caja de cuadros vacíos en la otra, y no enciende la linterna: se sabe de memoria los veintidós peldaños. Arriba, en fila sobre la grava, esperan catorce cajas de madera pintadas de verde, ocre y azul, cada una con una letra escrita a tiza en la tapa.
+:::
 
 —La A es la más brava —dice mientras levanta la tapa con la palanca—. La M es la más trabajadora. Las demás van y vienen.
 

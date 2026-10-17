@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 160 · A magazine feature threaded through frames ═════
 // https://postext.dev/en/cookbook/magazine-threaded-frames
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: Generated With Diffusion Models
-// Fonts: Literata, Fraunces, Instrument Sans (SIL OFL 1.1) · Needs postext ≥ 1.37.0
+// Fonts: Literata, Fraunces, Instrument Sans (SIL OFL 1.1) · Needs postext ≥ 1.38.0
 //
 // A six-page feature of an invented city magazine, set as one composed page: an opening
 // spread whose frames are drawn in the config, and pages the text adds as it runs on.
@@ -45,9 +45,6 @@ const at = (to, edge, x = 0, y = 0) => ({ anchor: { to, edge }, offset: { x: mm(
 const RECTO = W - OUT + IN;
 const COLUMN = 92; // the two columns of the recto
 const GAP = 7;
-// Body columns keep the body's size: a story that runs long goes on to another page
-// instead of being set smaller to fit (the reflow ladder's shrinkText comes before continue).
-const KEEP = { fit: { shrinkText: false, scaleImages: false } };
 
 // #region push: two frames that push the columns' lines aside, by box and by outline
 const pushers = [
@@ -56,7 +53,7 @@ const pushers = [
     placement: at('#entradilla', 'below', COLUMN - 27.5, 82) },
   // The skep's frame pushes with the shape of its picture, read from the PNG's alpha.
   { name: 'recorte', exclude: 'push', wrap: 'contour', layer: 2, width: mm(58),
-    placement: at('container', 'bottom-right', 9, -11) },
+    placement: at('container', 'bottom-right', 9, -8) },
 ];
 // #endregion
 
@@ -73,16 +70,17 @@ const opening = {
     { name: 'entradilla', width: mm(2 * COLUMN + GAP),
       placement: at('container', 'top-left', RECTO) },
     // The story names no slot, so it goes to the flow frame, then on down the chain.
-    { name: 'col-1', flow: true, next: 'col-2', width: mm(COLUMN), height: 'fill', ...KEEP,
+    { name: 'col-1', flow: true, next: 'col-2', width: mm(COLUMN), height: 'fill',
       placement: at('#entradilla', 'below', 0, 7) },
     // What the last column cannot hold goes on to a page added after the spread.
-    { name: 'col-2', width: mm(COLUMN), height: 'fill', ...KEEP,
+    { name: 'col-2', width: mm(COLUMN), height: 'fill',
       placement: at('#col-1', 'right-of', GAP),
-      overflow: { continueIn: 'template:seguido-par' } },
+      overflow: { continueIn: 'template:seguido' } },
     ...pushers,
   ],
   decoration: { elements: [
     { kind: 'image', id: 'foto', resourceId: '{attr.foto}',
+      fit: 'cover',
       placement: { ...at('bleed', 'top-left'), size: { width: mm(W), height: 'fill' } } },
     { kind: 'text', id: 'seccion', content: '{attr.seccion}', fontFamily: SANS, fontSize: pt(9),
       fontWeight: 700, letterSpacing: pt(2), textTransform: 'uppercase', color: col('paper'),
@@ -91,22 +89,20 @@ const opening = {
 };
 // #endregion
 
-// #region pages-after: the pages the story adds, three chained columns each
-// Two templates that hand the story to each other: content that goes on lands in the frame
-// of the same name, so a template continuing into itself would refill only its last column.
-// gotcha: continuation-lands-in-chain-tail
-const page = (id, next) => ({
-  id,
+// #region pages-after: the page the story adds, three chained columns, as often as needed
+// The third column continues into this same template: the story goes on in the frame its
+// chain starts in, so every added page fills all three columns.
+const seguido = {
+  id: 'seguido',
   frames: [
-    { name: `${id}-1`, flow: true, next: `${id}-2`, height: 'fill', width: mm(60.3), ...KEEP },
-    { name: `${id}-2`, next: `${id}-3`, height: 'fill', width: mm(60.3), ...KEEP,
-      placement: at(`#${id}-1`, 'right-of', 5) },
-    { name: `${id}-3`, height: 'fill', width: mm(60.3), ...KEEP,
-      placement: at(`#${id}-2`, 'right-of', 5),
-      overflow: { continueIn: `template:${next}` } },
+    { name: 'seguido-1', flow: true, next: 'seguido-2', height: 'fill', width: mm(60.3) },
+    { name: 'seguido-2', next: 'seguido-3', height: 'fill', width: mm(60.3),
+      placement: at('#seguido-1', 'right-of', 5) },
+    { name: 'seguido-3', height: 'fill', width: mm(60.3),
+      placement: at('#seguido-2', 'right-of', 5),
+      overflow: { continueIn: 'template:seguido' } },
   ],
-});
-const pagesAfter = [page('seguido-par', 'seguido-impar'), page('seguido-impar', 'seguido-par')];
+};
 // #endregion
 
 // #region running-heads: magazine name on the verso, section on the recto, folios outside
@@ -156,6 +152,10 @@ const config = {
   paragraphStyles: [
     { id: 'entradilla', fontFamily: DISPLAY, fontSize: pt(15), lineHeight: pt(20), italic: true,
       textAlign: 'left', firstLineIndent: pt(0), color: col('ink') },
+    // The first paragraph of the story opens with an initial in a frame, as it would in the flow.
+    { id: 'inicio', firstLineIndent: pt(0),
+      dropCap: { lines: 3, fontFamily: DISPLAY, fontWeight: 600, color: col('honey'),
+        leadIn: { words: 3 } } },
     { id: 'firma', fontFamily: SANS, fontSize: pt(8), lineHeight: pt(12), fontWeight: 600,
       textTransform: 'uppercase', textAlign: 'left',
       firstLineIndent: pt(0), color: col('honey'), marginTop: pt(6) },
@@ -179,14 +179,13 @@ const config = {
     labelColor: col('honey'), note: { color: col('muted') } },
   header,
   footer: { elements: [] },
-  pageTemplates: [opening, ...pagesAfter],
+  pageTemplates: [opening, seguido],
 };
 
 // ─── 2 · Content ────────────────────────────────────────────────────────────
 const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookbook
 
 // #region pictures: the photo, and a cut-out whose alpha channel is the wrap's outline
-// The photo is cut to the page's 225 : 297, since a design image is fitted inside its box.
 const photo = { id: 'azotea', typeId: 'foto', kind: 'bitmap', createdAt: 0, updatedAt: 0,
   caption: '', altText: t({
     es: 'Seis colmenas de colores en la azotea de una fábrica, con la ciudad al amanecer',

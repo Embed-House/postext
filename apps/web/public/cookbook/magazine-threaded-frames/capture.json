@@ -1,0 +1,1243 @@
+{
+  "schemaVersion": 1,
+  "slug": "magazine-threaded-frames",
+  "sourceHash": "c58fb50f6d1367caad2af1fc5eb4ecae71af39fdc616d2124feb6523028048cf",
+  "engine": {
+    "postext": "1.38.0",
+    "postextPdf": "1.38.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-17T10:23:16.170Z",
+  "variants": {
+    "en": {
+      "hash8": "fbaa2275",
+      "vdtHash": "698d0f4d2ce612416d63367a9e39edbe6b194b16",
+      "timings": {
+        "importMs": 22565,
+        "fontsMs": 136,
+        "buildMs": 425,
+        "totalMs": 24682,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          225,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Literata",
+          "sizePt": 9.8,
+          "leadingPt": 13.6
+        },
+        "families": [
+          "Fraunces",
+          "Instrument Sans",
+          "Literata"
+        ],
+        "pages": 4,
+        "ownLines": 210
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "46",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 112850,
+          "alt": "Page 46: The bees on the roof."
+        },
+        {
+          "n": 2,
+          "label": "47",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 229210,
+          "alt": "Page 47: A ROOF NOBODY WANTED."
+        },
+        {
+          "n": 3,
+          "label": "48",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 249700,
+          "alt": "Page 48: The bees on the roof (continued)."
+        },
+        {
+          "n": 4,
+          "label": "49",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 75064,
+          "alt": "Page 49: The bees on the roof (continued)."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "magazine-threaded-frames.pdf",
+        "bytes": 691650,
+        "pages": 4
+      },
+      "sandbox": {
+        "file": "magazine-threaded-frames.postext",
+        "bytes": 534160,
+        "folio": "6a05e16e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "04e15a6f11689c85",
+            "lines": "df3707f6a962ceac"
+          }
+        ],
+        "warnings": [
+          "spreadMismatch"
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "traceResourceContour",
+          "withContourTrace"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italic",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.labelBold",
+          "captionStyle.labelColor",
+          "captionStyle.note",
+          "captionStyle.note.color",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].exclude",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].height",
+          "pageTemplates[].frames[].layer",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].next",
+          "pageTemplates[].frames[].overflow",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].frames[].wrap",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].dropCap",
+          "paragraphStyles[].dropCap.color",
+          "paragraphStyles[].dropCap.fontFamily",
+          "paragraphStyles[].dropCap.fontWeight",
+          "paragraphStyles[].dropCap.leadIn",
+          "paragraphStyles[].dropCap.lines",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italic",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "paragraphStyles[].textTransform",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 317,
+        "designElements": 6,
+        "directives": [
+          "::::page",
+          ":::frame",
+          ":::paragraphs",
+          "::resource"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 2,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fraunces",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Fraunces",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "body-drop-caps",
+          "composed-pages",
+          "composed-spreads",
+          "frame-continuation",
+          "frame-decoration",
+          "frame-text-push",
+          "inline-embeds",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "threaded-frames"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 10,
+          "share": 0.0412,
+          "worst": 2.55
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 51 block, 11 frame, 299 line, 2 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.webp weighs 92 KB (aim for ≤ 90 KB)"
+          },
+          {
+            "check": "C24",
+            "severity": "warn",
+            "detail": "10 of 243 justified lines (4.1 %) stretch past 2× (worst 2.55×); loosest: p. 4 2.55× “By the end of October the roof”, p. 4 2.53× “The honey is extracted where she”, p. 3 2.49× “kilometre and the honeybees take”"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ “For thirty years Carmen Aldaba set books by hand…”, p. 3 −5‰ “For four years she has taught a beginners’ cours…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "08639e05",
+      "vdtHash": "4ab979bf7bb75aa2248cdef731384cd3734adb9f",
+      "timings": {
+        "importMs": 22586,
+        "fontsMs": 131,
+        "buildMs": 527,
+        "totalMs": 24793,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          225,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Literata",
+          "sizePt": 9.8,
+          "leadingPt": 13.6
+        },
+        "families": [
+          "Fraunces",
+          "Instrument Sans",
+          "Literata"
+        ],
+        "pages": 4,
+        "ownLines": 210
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "46",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 113748,
+          "alt": "Página 46: Las abejas del tejado."
+        },
+        {
+          "n": 2,
+          "label": "47",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 229904,
+          "alt": "Página 47: UNA AZOTEA SIN USO."
+        },
+        {
+          "n": 3,
+          "label": "48",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 248652,
+          "alt": "Página 48: Las abejas del tejado (continuación)."
+        },
+        {
+          "n": 4,
+          "label": "49",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 85188,
+          "alt": "Página 49: Las abejas del tejado (continuación)."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "magazine-threaded-frames.pdf",
+        "bytes": 692505,
+        "pages": 4
+      },
+      "sandbox": {
+        "file": "magazine-threaded-frames.postext",
+        "bytes": 534352,
+        "folio": "6a05e16e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "de86cfa8099d0f20",
+            "lines": "fa8700c0b3130816"
+          }
+        ],
+        "warnings": [
+          "spreadMismatch"
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "traceResourceContour",
+          "withContourTrace"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italic",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.labelBold",
+          "captionStyle.labelColor",
+          "captionStyle.note",
+          "captionStyle.note.color",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].exclude",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].height",
+          "pageTemplates[].frames[].layer",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].next",
+          "pageTemplates[].frames[].overflow",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].frames[].wrap",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].dropCap",
+          "paragraphStyles[].dropCap.color",
+          "paragraphStyles[].dropCap.fontFamily",
+          "paragraphStyles[].dropCap.fontWeight",
+          "paragraphStyles[].dropCap.leadIn",
+          "paragraphStyles[].dropCap.lines",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italic",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "paragraphStyles[].textTransform",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 317,
+        "designElements": 6,
+        "directives": [
+          "::::page",
+          ":::frame",
+          ":::paragraphs",
+          "::resource"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 2,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fraunces",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Fraunces",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "body-drop-caps",
+          "composed-pages",
+          "composed-spreads",
+          "frame-continuation",
+          "frame-decoration",
+          "frame-text-push",
+          "inline-embeds",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "threaded-frames"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 1,
+          "share": 0.004,
+          "worst": 2.22
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 49 block, 12 frame, 306 line, 2 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.webp weighs 92 KB (aim for ≤ 90 KB)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "de": {
+      "hash8": "e5d5ab83",
+      "vdtHash": "0b5fec9eca7dd5087cf3fa8df9e60fe1ff5be4d4",
+      "timings": {
+        "importMs": 22554,
+        "fontsMs": 145,
+        "buildMs": 600,
+        "totalMs": 25004,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          225,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Literata",
+          "sizePt": 9.8,
+          "leadingPt": 13.6
+        },
+        "families": [
+          "Fraunces",
+          "Instrument Sans",
+          "Literata"
+        ],
+        "pages": 4,
+        "ownLines": 210
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "46",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 113946,
+          "alt": "Seite 46: Die Bienen auf dem Dach."
+        },
+        {
+          "n": 2,
+          "label": "47",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 233792,
+          "alt": "Seite 47: EIN DACH, DAS NIEMAND BRAUCHTE."
+        },
+        {
+          "n": 3,
+          "label": "48",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 258722,
+          "alt": "Seite 48: Die Bienen auf dem Dach (Fortsetzung)."
+        },
+        {
+          "n": 4,
+          "label": "49",
+          "role": "composed",
+          "w": 1000,
+          "h": 1320,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 132158,
+          "alt": "Seite 49: Die Bienen auf dem Dach (Fortsetzung)."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "magazine-threaded-frames.pdf",
+        "bytes": 696356,
+        "pages": 4
+      },
+      "sandbox": {
+        "file": "magazine-threaded-frames.postext",
+        "bytes": 535025,
+        "folio": "6a05e16e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "46564cab781397a5",
+            "lines": "8bec01ac2a005e76"
+          }
+        ],
+        "warnings": [
+          "spreadMismatch"
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "traceResourceContour",
+          "withContourTrace"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italic",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.labelBold",
+          "captionStyle.labelColor",
+          "captionStyle.note",
+          "captionStyle.note.color",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].exclude",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].height",
+          "pageTemplates[].frames[].layer",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].next",
+          "pageTemplates[].frames[].overflow",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].frames[].wrap",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].dropCap",
+          "paragraphStyles[].dropCap.color",
+          "paragraphStyles[].dropCap.fontFamily",
+          "paragraphStyles[].dropCap.fontWeight",
+          "paragraphStyles[].dropCap.leadIn",
+          "paragraphStyles[].dropCap.lines",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italic",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "paragraphStyles[].textTransform",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 317,
+        "designElements": 6,
+        "directives": [
+          "::::page",
+          ":::frame",
+          ":::paragraphs",
+          "::resource"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 2,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fraunces",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Fraunces",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Instrument Sans",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Literata",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "body-drop-caps",
+          "composed-pages",
+          "composed-spreads",
+          "frame-continuation",
+          "frame-decoration",
+          "frame-text-push",
+          "inline-embeds",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "threaded-frames"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 10,
+          "share": 0.0358,
+          "worst": 2.68
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 51 block, 12 frame, 335 line, 2 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "the edition's images weigh 0.94 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.webp weighs 95 KB (aim for ≤ 90 KB)"
+          },
+          {
+            "check": "C24",
+            "severity": "warn",
+            "detail": "10 of 279 justified lines (3.6 %) stretch past 2× (worst 2.68×); loosest: p. 3 2.68× “nen sind voller Honig und haben”, p. 3 2.49× “rung, die die Genossenschaft vom”, p. 4 2.36× “kein Wasser eingedrungen ist. Sie”"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 3 −10‰ “Die Königin im Gewimmel zu finden, braucht Gedul…”, p. 4 −5‰ “„Stellst du auf einen Quadratkilometer hundert V…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -15,13 +15,13 @@ Le pagine da 46 a 49 di *Patio*, un trimestrale inventato sulla vita in città: 
 
 ### 1 · Un modello, un testo
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. L’intero servizio è una sola direttiva `::::page{template="apertura" spread}`: il titolo va alla cornice che `takes: 'h1'`, le cifre e il catenaccio ai loro slot, e tutto il resto, che non nomina nessuno slot, alla cornice di flusso `col-1`. Quando `col-1` è piena il testo prosegue in `col-2`, spezzato di nuovo alla sua larghezza, e ciò che `col-2` non riesce a contenere passa a una pagina aggiunta dopo la doppia pagina (`overflow.continueIn: 'template:seguido-par'`), dietro la parola *Continued* nella lingua dell’edizione. Il testo non nomina colonne né pagine: togli un paragrafo e tutte le righe che lo seguono arretrano.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. L’intero servizio è una sola direttiva `::::page{template="apertura" spread}`: il titolo va alla cornice che `takes: 'h1'`, le cifre e il catenaccio ai loro slot, e tutto il resto, che non nomina nessuno slot, alla cornice di flusso `col-1`. Quando `col-1` è piena il testo prosegue in `col-2`, spezzato di nuovo alla sua larghezza, e ciò che `col-2` non riesce a contenere passa a una pagina aggiunta dopo la doppia pagina (`overflow.continueIn: 'template:seguido'`), dietro la parola *Continued* nella lingua dell’edizione. Il testo non nomina colonne né pagine: togli un paragrafo e tutte le righe che lo seguono arretrano.
 
 ### 2 · Le pagine che il testo aggiunge
 
 <Excerpt region="pages-after" />
 
-Ogni pagina aggiunta ha tre colonne concatenate da 60,3 mm. Due modelli si passano il testo perché ciò che prosegue cade nella cornice che porta il nome di quella che l’ha tagliato: un modello che proseguisse in sé stesso riempirebbe di nuovo solo la sua terza colonna. Con nomi diversi sulle due pagine, il testo riparte dalla cornice di flusso e scende per tutte e tre. `KEEP` disattiva il gradino della scala di adattamento che rimpicciolisce testo e immagini, che altrimenti verrebbe prima di una pagina nuova: un testo lungo cinque righe di troppo verrebbe composto al 92,5 % nella sua ultima pagina.
+Ogni pagina aggiunta ha tre colonne concatenate da 60,3 mm, e un solo modello serve per tutte. La terza colonna prosegue in questo stesso modello, e il testo riparte dalla cornice in cui inizia la sua catena, `seguido-1`: ogni pagina aggiunta riempie le tre colonne, quante ne servono. Neppure il corpo va bloccato: una cornice che può proseguire su un’altra pagina prosegue prima che il testo sia composto più piccolo, e un testo lungo cinque righe di troppo ottiene una pagina nuova, non il 92,5 % nell’ultima.
 
 ### 3 · Due cornici che spostano le colonne
 
@@ -33,7 +33,7 @@ Nessuna delle due cornici fa parte del testo: ciascuna sposta le righe delle col
 
 <Excerpt region="pictures" />
 
-L’impaginazione legge un’immagine dalle sue dimensioni, mai dai suoi pixel, quindi la sagoma si ricava una volta sola dal canale alfa del PNG, con `traceResourceContour`, e resta nella risorsa come `contour.traced`. Il bugno è un PNG da 720 px con 200 colori e fondo trasparente (225 KB). La fotografia del verso è un’immagine della decorazione, `resourceId: '{attr.foto}'`: la direttiva sceglie la foto, il modello il suo posto.
+L’impaginazione legge un’immagine dalle sue dimensioni, mai dai suoi pixel, quindi la sagoma si ricava una volta sola dal canale alfa del PNG, con `traceResourceContour`, e resta nella risorsa come `contour.traced`. Il bugno è un PNG da 720 px con 200 colori e fondo trasparente (225 KB). La fotografia del verso è un’immagine della decorazione, `resourceId: '{attr.foto}'`: la direttiva sceglie la foto, il modello il suo posto. Porta `fit: 'cover'`: qualunque siano le proporzioni della foto, riempie la pagina sinistra e il riquadro taglia ciò che sporge.
 
 ### 5 · Testatine che leggono la direttiva
 
@@ -57,10 +57,10 @@ Senza `wrap: 'contour'` la cornice sposta il testo con il suo rettangolo, e le r
 `mark: false` chiude il pezzo tagliato sulla sua ultima riga, senza la parola *Continued*: la colonna guadagna una riga.
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## Errori frequenti
 
-- Un paragrafo dentro una cornice non prende mai il capolettera, quindi il servizio si apre senza: le cornici sono riquadri, e il `dropCap` di uno stile di paragrafo vale solo per il testo corrente.
+- Un titolo che il modello manda in una cornice propria non apre il capolettera nelle cornici di testo. Il primo paragrafo del servizio è avvolto in `:::paragraphs{style="inicio"}`, ed è lo stile a portare il `dropCap`.

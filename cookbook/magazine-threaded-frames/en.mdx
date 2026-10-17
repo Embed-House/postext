@@ -15,13 +15,13 @@ Pages 46 to 49 of *Patio*, an invented quarterly about city life: a feature on a
 
 ### 1 · One template, one story
 
-The code is [the short answer](#the-short-answer) above. The whole feature is one `::::page{template="apertura" spread}` fence: the heading goes to the frame that `takes: 'h1'`, the figures and the standfirst to their slots, and everything else, which names no slot, to the flow frame `col-1`. When `col-1` is full the text goes on in `col-2`, broken again at its width, and what `col-2` cannot hold goes on to a page added after the spread (`overflow.continueIn: 'template:seguido-par'`), after the words *Continued* in the reader's language. The text names no column and no page: cut a paragraph and every line after it moves back.
+The code is [the short answer](#the-short-answer) above. The whole feature is one `::::page{template="apertura" spread}` fence: the heading goes to the frame that `takes: 'h1'`, the figures and the standfirst to their slots, and everything else, which names no slot, to the flow frame `col-1`. When `col-1` is full the text goes on in `col-2`, broken again at its width, and what `col-2` cannot hold goes on to a page added after the spread (`overflow.continueIn: 'template:seguido'`), after the words *Continued* in the reader's language. The text names no column and no page: cut a paragraph and every line after it moves back.
 
 ### 2 · The pages the story adds
 
 <Excerpt region="pages-after" />
 
-Each added page is three chained columns of 60.3 mm. Two templates hand the story to each other because content that goes on lands in the frame whose name is that of the frame that cut it: a template continuing into itself would refill only its third column. With different names on the two pages, the story starts again in the flow frame and runs down all three. `KEEP` turns off the reflow ladder's smaller text and pictures, which would otherwise come before a new page: a story five lines too long would be set at 92.5 % on its last page.
+Each added page is three chained columns of 60.3 mm, and one template serves all of them. The third column continues into this same template, and the story goes on in the frame its chain starts in, `seguido-1`: every added page fills all three columns, however many it takes. Nothing has to pin the type size either: a frame that can go on to another page goes on before the text is set smaller, so a story five lines too long gets a new page, not 92.5 % on its last.
 
 ### 3 · Two frames that push the columns aside
 
@@ -33,7 +33,7 @@ Neither frame takes part in the story: each pushes the lines of the columns it o
 
 <Excerpt region="pictures" />
 
-The layout reads a picture by its size, never by its pixels, so the outline comes from the PNG's alpha channel once, with `traceResourceContour`, and travels on the resource as `contour.traced`. The skep is a 720 px PNG with 200 colours and a transparent ground (225 KB). The photograph on the verso is a decoration image, `resourceId: '{attr.foto}'`, so the fence chooses the picture and the template its place.
+The layout reads a picture by its size, never by its pixels, so the outline comes from the PNG's alpha channel once, with `traceResourceContour`, and travels on the resource as `contour.traced`. The skep is a 720 px PNG with 200 colours and a transparent ground (225 KB). The photograph on the verso is a decoration image, `resourceId: '{attr.foto}'`, so the fence chooses the picture and the template its place. It is set with `fit: 'cover'`: whatever the photograph's proportions, it fills the verso and the box crops what runs past it.
 
 ### 5 · Running heads that read the fence
 
@@ -57,10 +57,10 @@ Without `wrap: 'contour'` the frame pushes with its rectangle, and the lines bes
 `mark: false` ends the cut piece on its last line, without the words *Continued*: the column holds one line more.
 
 ```diff
--      overflow: { continueIn: 'template:seguido-par' } },
-+      overflow: { continueIn: 'template:seguido-par', mark: false } },
+-      overflow: { continueIn: 'template:seguido' } },
++      overflow: { continueIn: 'template:seguido', mark: false } },
 ```
 
 ## Pitfalls
 
-- A paragraph inside a frame never takes a drop cap, so the feature opens without one: frames are boxes, and a paragraph style's `dropCap` applies to the running text only.
+- A heading the template sends to a frame of its own opens no drop cap in the text frames. The first paragraph of the story is wrapped in `:::paragraphs{style="inicio"}`, and the style carries the `dropCap`.

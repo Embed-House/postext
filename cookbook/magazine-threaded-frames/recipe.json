@@ -2,7 +2,7 @@
   "$schema": "../recipe.schema.json",
   "schemaVersion": 1,
   "number": 160,
-  "status": "draft",
+  "status": "published",
   "chapter": "publications",
   "order": 100,
   "level": 3,
@@ -16,6 +16,7 @@
       "hyphenation-languages",
       "running-heads",
       "paragraph-styles",
+      "drop-caps",
       "callout-styles",
       "color-palette",
       "resources",
@@ -23,8 +24,8 @@
       "pdf-export"
     ]
   },
-  "answers": ["Q183", "Q42", "Q78"],
-  "gotchas": ["continuation-lands-in-chain-tail", "frame-text-shrinks-before-continuing"],
+  "answers": ["Q185", "Q42", "Q78"],
+  "gotchas": [],
   "explainsWarnings": [],
   "related": [
     "magazine-cover-and-contents",
@@ -32,8 +33,8 @@
     "magazine-feature-opener"
   ],
   "engine": {
-    "postext": "1.37.0",
-    "postextPdf": "1.37.0"
+    "postext": "1.38.0",
+    "postextPdf": "1.38.0"
   },
   "kit": ["core", "fonts", "viewer", "pdf", "images"],
   "sample": {
@@ -112,16 +113,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-17",
-  "workarounds": [
-    {
-      "followup": "EF-879-1",
-      "package": "postext",
-      "note": "the pages after the spread alternate two templates (seguido-par, seguido-impar) whose column frames have other names: content that goes on lands in the frame with the name of the frame that cut it, so one template continuing into itself refills only its third column on every added page"
-    },
-    {
-      "package": "postext",
-      "note": "the body frames set fit: { shrinkText: false, scaleImages: false } so a story a few lines too long goes on to another page at full size instead of being set at 92.5 % (the reflow ladder tries shrinkText before continue)"
-    }
-  ]
+  "updated": "2026-10-17"
 }
