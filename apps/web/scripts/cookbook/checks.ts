@@ -966,10 +966,13 @@ function collect(input: CheckInput): Finding[] {
   // and Korean lines by the space between their characters, which is how
   // they are justified: only a line past the cap, set short, is loose.
   const clipText = (text: string) => (text.length > 48 ? `${text.slice(0, 47).trimEnd()}…` : text);
+  // A ratio to two decimals, whatever the probe recorded (#924: an older
+  // probe left 2.8000000000000003).
+  const times = (v: number) => `${Math.round(v * 100) / 100}×`;
   const loose = facts.loose;
   if (loose && loose.total && loose.share > 0.02) {
-    const where = (loose.lines ?? []).slice(0, 3).map((l) => `p. ${l.page} ${l.ratio}× “${clipText(l.text)}”`);
-    add("C24", "warn", `${loose.count} of ${loose.total} justified lines (${pct(loose.share)}) stretch past ${loose.threshold}× (worst ${loose.worst}×)${where.length ? `; loosest: ${where.join(", ")}` : ""}`);
+    const where = (loose.lines ?? []).slice(0, 3).map((l) => `p. ${l.page} ${times(l.ratio)} “${clipText(l.text)}”`);
+    add("C24", "warn", `${loose.count} of ${loose.total} justified lines (${pct(loose.share)}) stretch past ${times(loose.threshold)} (worst ${times(loose.worst)})${where.length ? `; loosest: ${where.join(", ")}` : ""}`);
   }
   // C34: a justified line set ragged (its word spaces would have stretched
   // past 3×) is a line left short in the middle of a paragraph. A recipe
@@ -979,7 +982,7 @@ function collect(input: CheckInput): Finding[] {
     const accepted = meta.capture.expect?.raggedLines ?? 0;
     const s = (n: number) => `${n} justified line${n === 1 ? "" : "s"}`;
     if (raggedLines.count > accepted) {
-      const where = raggedLines.lines.slice(0, 5).map((l) => `${l.page === null ? "" : `p. ${l.page} `}${l.ratio}× “${clipText(l.text)}”`);
+      const where = raggedLines.lines.slice(0, 5).map((l) => `${l.page === null ? "" : `p. ${l.page} `}${times(l.ratio)} “${clipText(l.text)}”`);
       add("C34", "fail", `${s(raggedLines.count)} set ragged (word spaces past 3×)${accepted ? `, and the recipe accepts ${accepted}` : ""}: ${where.join(", ")}. Reword the copy, give the line a break it can take, or accept the count with capture.expect.raggedLines`);
     } else if (accepted > raggedLines.count) {
       add("C34", "info", `capture.expect.raggedLines accepts ${accepted}, and the edition has ${raggedLines.count}`);

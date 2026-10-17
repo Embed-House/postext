@@ -119,7 +119,9 @@ function pagesOf(build) {
   return out;
 }
 
-const round = (value, step = 1) => Math.round(value / step) * step;
+/** `value` to the nearest `step`, without the float noise of the product
+ *  (`Math.round(2.8 / 0.01) * 0.01` is 2.8000000000000003, #924). */
+const round = (value, step = 1) => Number((Math.round(value / step) * step).toPrecision(12));
 
 /** Resolves when no build has been recorded for `quietMs` (harness need H10). */
 export async function settle(quietMs = 500, maxMs = 10000) {

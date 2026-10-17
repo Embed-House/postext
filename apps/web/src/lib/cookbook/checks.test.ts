@@ -130,6 +130,15 @@ describe("C24: loose lines", () => {
     const loose = { count: 3, total: 100, share: 0.03, worst: 2.4, threshold: 2, lines: [{ page: 1, ratio: 2.4, text: "a loose line" }] };
     expect(of("C24", runChecks(input({ facts: facts({ loose }) })))[0].detail).toMatch(/^3 of 100 justified lines \(3\.0 %\) stretch past 2×/);
   });
+
+  it("prints ratios to two decimals, whatever float noise the probe kept (#924)", () => {
+    const loose = { count: 3, total: 100, share: 0.03, worst: 2.8000000000000003, threshold: 2.5500000000000003, lines: [{ page: 47, ratio: 2.8000000000000003, text: "Sie im Gewimmel zu finden," }] };
+    expect(of("C24", runChecks(input({ facts: facts({ loose }) })))[0].detail).toBe(
+      "3 of 100 justified lines (3.0 %) stretch past 2.55× (worst 2.8×); loosest: p. 47 2.8× “Sie im Gewimmel zu finden,”",
+    );
+    const raggedLines = { count: 1, lines: [{ page: 48, ratio: 3.3000000000000003, text: "„Beim Schwärmen stechen sie" }] };
+    expect(of("C34", runChecks(input({ facts: facts({ raggedLines }) })))[0].detail).toMatch(/^1 justified line set ragged \(word spaces past 3×\): p\. 48 3\.3× “„Beim/);
+  });
 });
 
 describe("C25: characters the PDF cannot set", () => {
