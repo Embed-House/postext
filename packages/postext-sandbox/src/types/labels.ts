@@ -2653,6 +2653,12 @@ export interface SandboxLabels {
   resourceMarksSummary: string;
   resourceMarksEditLettering: string;
   resourceMarksModeAria: string;
+  resourceMarksZoomAria: string;
+  resourceMarksZoomHint: string;
+  resourceMarksZoomOut: string;
+  resourceMarksZoomIn: string;
+  resourceMarksZoomFit: string;
+  resourceMarksZoomHand: string;
   resourceMarksModeSpeakers: string;
   resourceMarksModeAvoid: string;
   resourceMarksUndo: string;

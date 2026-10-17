@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { Crop, MapPin, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X } from 'lucide-react';
+import { Crop, Hand, MapPin, Maximize2, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import type { LabelStyle, Resource, ResourceSafeArea } from 'postext';
 import { safeAreaHeightRange, safeAreaSource } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
@@ -20,6 +20,7 @@ import {
 import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
 import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest';
 import { DENSE_ANCHORS, LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
+import { MAX_STAGE_ZOOM, STAGE_NAMES_ZOOM, wheelZoom, zoomStep } from './stageZoom';
 
 // ---------------------------------------------------------------------------
 // Safe area & lettering marks of a picture. The field sums them up over a
@@ -290,6 +291,14 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   const [namesOnDense, setNamesOnDense] = useState(false);
   const placingRef = useRef<string | null>(null);
   placingRef.current = placing;
+  /** The zoom of the picture (1 = the picture fits), the hand tool, and the
+   *  scroll a zoom step keeps under its focus (#956). */
+  const [zoom, setZoom] = useState(1);
+  const [hand, setHand] = useState(false);
+  const [spaceDown, setSpaceDown] = useState(false);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const zoomFocus = useRef<{ fx: number; fy: number; ox: number; oy: number } | null>(null);
+  const pan = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
   const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
   const [loaded, setLoaded] = useState<{ width: number; height: number } | undefined>(undefined);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -336,6 +345,8 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     setSelZone(null);
     setTicked(new Set());
     setNamesOnDense(false);
+    setZoom(1);
+    setHand(false);
     setShowIdErrors(false);
     // The Anchors mode starts placing the name asked for, else the first
     // name the text uses that the picture lacks: each click places one.
@@ -369,6 +380,51 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   };
   const denseMap = marks.anchors.length > DENSE_ANCHORS;
 
+  /** Zoom to `next`, keeping the point of the viewport at (`cx`, `cy`)
+   *  (client pixels; the middle of it by default) under its place. */
+  const zoomTo = (next: number, cx?: number, cy?: number) => {
+    const v = viewportRef.current;
+    const z = clamp(next, 1, MAX_STAGE_ZOOM);
+    if (!v || z === zoom) return;
+    const box = v.getBoundingClientRect();
+    const ox = (cx ?? box.left + box.width / 2) - box.left;
+    const oy = (cy ?? box.top + box.height / 2) - box.top;
+    zoomFocus.current = { fx: (v.scrollLeft + ox) / Math.max(1, v.scrollWidth), fy: (v.scrollTop + oy) / Math.max(1, v.scrollHeight), ox, oy };
+    setZoom(z);
+  };
+  const zoomRef = useRef(zoomTo);
+  zoomRef.current = zoomTo;
+  const zoomValue = useRef(zoom);
+  zoomValue.current = zoom;
+  // The scroll that keeps the focus of a zoom step where it was.
+  useLayoutEffect(() => {
+    const f = zoomFocus.current;
+    const v = viewportRef.current;
+    zoomFocus.current = null;
+    if (!f || !v) return;
+    v.scrollLeft = f.fx * v.scrollWidth - f.ox;
+    v.scrollTop = f.fy * v.scrollHeight - f.oy;
+  }, [zoom]);
+  // Ctrl-scroll and a pinch zoom about the pointer (a plain scroll moves
+  // the picture when it is zoomed, natively). A native listener, attached
+  // when the viewport mounts: React's wheel handlers cannot cancel the
+  // page's own zoom.
+  const wheelOff = useRef<(() => void) | null>(null);
+  const setViewport = useCallback((el: HTMLDivElement | null) => {
+    wheelOff.current?.();
+    wheelOff.current = null;
+    viewportRef.current = el;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      zoomRef.current(zoomValue.current * wheelZoom(e.deltaY), e.clientX, e.clientY);
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    wheelOff.current = () => el.removeEventListener('wheel', onWheel);
+  }, []);
+  const panning = hand || spaceDown;
+
   const intrinsic = intrinsicOf(resource) ?? loaded;
   const area = marks.safeArea;
 
@@ -398,6 +454,15 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   };
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    // The hand tool, Space held down or the middle button move the zoomed
+    // picture instead of the marks (#956).
+    const v = viewportRef.current;
+    if (v && (e.button === 1 || (e.button === 0 && panning))) {
+      pan.current = { x: e.clientX, y: e.clientY, left: v.scrollLeft, top: v.scrollTop };
+      e.currentTarget.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      return;
+    }
     if (e.button !== 0) return;
     const p = pointAt(e);
     const before = marksRef.current;
@@ -462,6 +527,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     e.preventDefault();
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const g = pan.current;
+    const v = viewportRef.current;
+    if (g && v) {
+      v.scrollLeft = g.left - (e.clientX - g.x);
+      v.scrollTop = g.top - (e.clientY - g.y);
+      return;
+    }
     const d = drag.current;
     if (!d) return;
     if (!d.moved && Math.hypot(e.clientX - d.client.x, e.clientY - d.client.y) < 3) return;
@@ -471,6 +543,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     drag.current = null;
+    pan.current = null;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     if (!d) return;
     if (d.created === 'avoid' && !d.moved && d.target.kind === 'avoid') {
@@ -672,8 +745,29 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
             if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && !(e.target instanceof HTMLInputElement)) {
               e.preventDefault();
               undo();
+              return;
+            }
+            // Zoom (+, -, 0) and Space for the hand, outside the controls
+            // that use those keys themselves (#956).
+            const t = e.target;
+            const typing = t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement || (t instanceof HTMLElement && t.isContentEditable);
+            if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+            if (e.key === '+' || e.key === '=') {
+              e.preventDefault();
+              zoomTo(zoomStep(zoom, 1));
+            } else if (e.key === '-' || e.key === '_') {
+              e.preventDefault();
+              zoomTo(zoomStep(zoom, -1));
+            } else if (e.key === '0') {
+              e.preventDefault();
+              zoomTo(1);
+            } else if (e.key === ' ' && !(t instanceof HTMLButtonElement)) {
+              e.preventDefault();
+              setSpaceDown(true);
             }
           }}
+          onKeyUp={(e) => { if (e.key === ' ') setSpaceDown(false); }}
+          onBlur={() => setSpaceDown(false)}
         >
           <div className="flex items-start justify-between gap-2">
             <Dialog.Title style={{ fontSize: 15, lineHeight: '20px', fontWeight: 600, margin: 0 }}>
@@ -700,12 +794,29 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
           </Dialog.Description>
 
           <div className={`flex flex-wrap items-start gap-4 ${mode === 'labels' ? 'min-h-0 flex-1' : ''}`}>
-            {/* The picture with the marks over it. */}
+            {/* The picture with the marks over it, in a viewport that
+                scrolls when the picture is zoomed (#956). */}
+            <div className="flex flex-col gap-1.5" style={{ maxWidth: '100%' }}>
+              <div role="group" aria-label={labels.resourceMarksZoomAria} className="flex items-center gap-0.5 self-start" title={labels.resourceMarksZoomHint}>
+                <IconButton label={labels.resourceMarksZoomOut} icon={<ZoomOut size={14} aria-hidden="true" />} disabled={zoom <= 1} onClick={() => zoomTo(zoomStep(zoom, -1))} />
+                <span className="min-w-10 text-center text-xs tabular-nums text-(--slate)" aria-live="polite">{Math.round(zoom * 100)}%</span>
+                <IconButton label={labels.resourceMarksZoomIn} icon={<ZoomIn size={14} aria-hidden="true" />} disabled={zoom >= MAX_STAGE_ZOOM} onClick={() => zoomTo(zoomStep(zoom, 1))} />
+                <IconButton label={labels.resourceMarksZoomFit} icon={<Maximize2 size={14} aria-hidden="true" />} disabled={zoom === 1} onClick={() => zoomTo(1)} />
+                <IconButton label={labels.resourceMarksZoomHand} icon={<Hand size={14} aria-hidden="true" />} active={hand} disabled={zoom === 1} onClick={() => setHand((h) => !h)} />
+              </div>
+              <div
+                ref={setViewport}
+                data-testid="picture-marks-viewport"
+                className="relative overflow-auto"
+                style={intrinsic && intrinsic.height > 0
+                  ? { width: `min(600px, calc(55dvh * ${intrinsic.width / intrinsic.height}))`, maxWidth: '100%', aspectRatio: `${intrinsic.width} / ${intrinsic.height}` }
+                  : { display: 'inline-block', maxWidth: 'min(600px, 100%)' }}
+              >
             <div
               ref={stageRef}
               data-testid="picture-marks-stage"
-              className="relative inline-block touch-none select-none"
-              style={{ cursor: 'crosshair', maxWidth: '100%', overflow: 'hidden' }}
+              className="relative touch-none select-none"
+              style={{ cursor: panning ? (pan.current ? 'grabbing' : 'grab') : 'crosshair', overflow: 'hidden', width: intrinsic && intrinsic.height > 0 ? `${zoom * 100}%` : undefined, display: intrinsic && intrinsic.height > 0 ? 'block' : 'inline-block', maxWidth: intrinsic && intrinsic.height > 0 ? undefined : '100%' }}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
@@ -719,9 +830,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                 // Sized from the picture's ratio, so the stage the marks are
                 // laid over is the picture's own box: a picture held back by
                 // the height limit would otherwise leave the stage wider
-                // than it, and every mark off (#866).
+                // than it, and every mark off (#866). The viewport is that
+                // box; the stage fills it, or `zoom` times it.
                 style={intrinsic && intrinsic.height > 0
-                  ? { width: `min(600px, calc(55dvh * ${intrinsic.width / intrinsic.height}))`, maxWidth: '100%', height: 'auto' }
+                  ? { width: '100%', height: 'auto' }
                   : { maxWidth: 'min(600px, 100%)', maxHeight: '55dvh' }}
                 onLoad={(e) => setLoaded({ width: e.currentTarget.naturalWidth, height: e.currentTarget.naturalHeight })}
               />
@@ -848,7 +960,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                       label={(labelMode ? labels.resourceLabelAnchorsPointAria : labels.resourceAnchorMouthAria).replace('__id__', nameOf(i))}
                       onKeyDown={onMarkKeyDown(mouth)}
                       onFocus={() => setSelAnchor(i)}
-                      tag={labelMode && denseMap && !namesOnDense && !selected && hoverAnchor !== i && !ticked.has(i) ? undefined : (
+                      tag={labelMode && denseMap && !namesOnDense && zoom < STAGE_NAMES_ZOOM && !selected && hoverAnchor !== i && !ticked.has(i) ? undefined : (
                         <>
                           {outside && <TriangleAlert size={10} aria-hidden="true" style={{ color: '#fbbf24' }} />}
                           <span dir="auto">{labelText ?? (a.id || '…')}</span>
@@ -858,6 +970,8 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                   </div>
                 );
               })}
+            </div>
+              </div>
             </div>
 
             {/* The side panel of the mode. */}

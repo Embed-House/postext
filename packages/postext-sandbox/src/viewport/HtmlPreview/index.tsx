@@ -31,8 +31,9 @@ import { onLateFonts } from '../../worker/LayoutService';
 import { createOverlaySvg } from '../CanvasPreview/dom';
 import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay';
 import { drawPickedMark } from '../../selection/pickedOverlay';
-import { drawLabelMarksOverlay } from '../composed/labelMarks';
-import { editModeNow, onEditModeChange } from '../../editing/editMode';
+import { attachLabelAnchorEditor, syncLabelAnchorEditors } from '../composed/labelAnchorEditor';
+import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
+import { onEditModeChange } from '../../editing/editMode';
 import { onPageSelectionChange } from '../../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { attachSlotClickHandler } from '../CanvasPreview/interaction';
@@ -151,6 +152,10 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   const navigateRef = usePageNavigator(chapterOfPageRef);
   const docRef = useRef<VDTDocument | null>(null);
   const overlayMapRef = useRef<Map<number, SVGSVGElement>>(new Map());
+  // The label editor writes anchors through the book's state (#956).
+  useTemplateEditorHost();
+  // The page elements whose label editor is attached (#956).
+  const labelEditorPages = useMemo(() => new WeakSet<HTMLElement>(), []);
   // Previous indexed render — drives block-level DOM patching so that an
   // edit that changed a single paragraph touches only that paragraph's DOM.
   const lastRenderRef = useRef<HtmlRenderIndex | null>(null);
@@ -547,6 +552,18 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
           undefined,
           labelsRef,
         );
+        // The labels of figures in Design mode (#956): their marks are
+        // dragged here as on the Canvas. One editor per page element, which
+        // outlives a patch of the page's markup.
+        if (!labelEditorPages.has(pageEl)) {
+          labelEditorPages.add(pageEl);
+          attachLabelAnchorEditor(pageEl, pageIndex, pageWidthPx, pageHeightPx, {
+            docRef,
+            dispatchRef,
+            labelsRef,
+            sourceOfPage: () => builtSourceRef.current,
+          });
+        }
       };
 
       // Decide whether we can patch incrementally. Any structural shift
@@ -739,9 +756,10 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       if (!page) continue;
       const rect = drawOverlay(overlay, doc, pageIndex, selection, debug, focused, caretBlockIdx, state.resourceSelection);
       drawPickedMark(overlay, doc, pageIndex, picked);
-      drawLabelMarksOverlay(overlay, doc, pageIndex, editModeNow() === 'design', { placedByPercent: labelsRef.current.labelAnchorsPlacedByPercent, overflow: labelsRef.current.labelAnchorsOverflow });
       if (rect) activeCursorRect = rect;
     }
+    // The marks of the figures' labels, moved here in Design mode (#956).
+    syncLabelAnchorEditors();
 
     const scroll = scrollHostRef.current;
     const isCollapsed = selection.from === selection.to;
