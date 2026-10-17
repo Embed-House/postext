@@ -161,8 +161,13 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Les línies de dos rètols d'una mateixa figura es toquen (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). El porta el rètol posterior, en l'ordre en què estan escrits.</td>
+      <td>Les línies de dos rètols d'una mateixa figura es toquen (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). El porta el rètol posterior, en l'ordre en què estan escrits.</td>
       <td>Els dos rètols es dibuixen on són.</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>Una <code>:::figure</code> dona paraules (<code>alt</code>, <code>caption</code>, <code>note</code>) a un recurs al qual una figura anterior del capítol ja va donar les seves, i són diferents (<code>resourceId</code>, <code>words</code>).</td>
+      <td>Les pàgines mostren les paraules de la primera figura; les de la posterior s'ometen.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

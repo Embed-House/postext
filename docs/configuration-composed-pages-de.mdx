@@ -582,7 +582,7 @@ In einem vertikalen Buch (`vertical-rl`) wird eine Doppelseite im Fließrahmen d
 
 ## Beschriftungsstile
 
-Die Eigenschaft `labelStyles` benennt das Aussehen der Beschriftungen auf einem Bild: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung nennt.
+Die Eigenschaft `labelStyles` benennt das Aussehen der Beschriftungen auf einem Bild: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung nennt. Im Sandbox werden sie unter **Gestaltung › Abbildungen & Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertikale Schreibrichtung für die Beschriftungen dieses Stils: aufrechte Zeichen in Zellen untereinander, Spalten von rechts nach links, wie eine chinesische oder japanische Karte beschriftet wird. Das eigene <code>writingMode</code> eines Ankers hat Vorrang.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> besagt, dass die an diesem Anker gesetzte Beschriftung ihre Nachbarn berühren darf, wie die Vorlage sie druckt: für ein Paar, zu dem sie gehört, wird <code>labelOverlap</code> nicht ausgelöst. Geht dem <code>overlap</code> des Stils vor. Seit postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> nimmt die Beschriftungen dieses Stils aus der Prüfung <code>labelOverlap</code> aus, für eine Karte, deren Namen sich in der Vorlage berühren. Das eigene <code>overlap</code> eines Ankers geht vor. Seit postext 1.42.</td>
     </tr>
   </tbody>
 </table>

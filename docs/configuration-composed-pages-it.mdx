@@ -582,7 +582,7 @@ In un libro verticale (`vertical-rl`) la doppia pagina si compone nel riferiment
 
 ## Stili delle etichette
 
-La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta in un ancoraggio dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile che indica l’ancoraggio o l’etichetta.
+La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta in un ancoraggio dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile che indica l’ancoraggio o l’etichetta. Nel Sandbox si modificano in **Grafica › Figure e tabelle › Stili di etichetta** (da postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Scrittura verticale per le etichette di questo stile: caratteri dritti in celle una sotto l’altra, colonne da destra a sinistra, come si scrive una mappa cinese o giapponese. Il <code>writingMode</code> proprio di un’ancora prevale.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> dice che l’etichetta posta su questa ancora può toccare le vicine, come la stampa l’originale: <code>labelOverlap</code> non viene segnalato per una coppia di cui fa parte. Ha la precedenza sull’<code>overlap</code> dello stile. Da postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> esclude le etichette di questo stile dal controllo <code>labelOverlap</code>, per una carta i cui nomi si toccano nell’originale. L’<code>overlap</code> proprio di un’ancora ha la precedenza. Da postext 1.42.</td>
     </tr>
   </tbody>
 </table>

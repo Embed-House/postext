@@ -582,7 +582,7 @@ On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as
 
 ## Label styles
 
-The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names.
+The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. Over the style's <code>overlap</code>. Since postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> leaves the labels of this style out of the <code>labelOverlap</code> check, for a map whose names touch in the source. An anchor's own <code>overlap</code> wins. Since postext 1.42.</td>
     </tr>
   </tbody>
 </table>

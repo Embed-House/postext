@@ -161,8 +161,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>同一幅插图的两个标注的文字行相碰（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>with</code>、<code>withAnchor</code>、<code>count</code>、<code>locale</code>）。警告记在按书写顺序靠后的那个标注上。</td>
+      <td>同一幅插图的两个标注的文字行相碰（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>with</code>、<code>withAnchor</code>, <code>withSymbol</code>、<code>count</code>、<code>locale</code>）。警告记在按书写顺序靠后的那个标注上。</td>
       <td>两个标注都画在原处。</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>某幅<code>:::figure</code>为一个资源写了文字（<code>alt</code>、<code>caption</code>、<code>note</code>），而本章中前面的图已经给过这个资源文字，两者又不同（<code>resourceId</code>、<code>words</code>）。</td>
+      <td>页面显示第一幅图的文字，后面那幅图的文字被略去。</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

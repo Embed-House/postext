@@ -582,7 +582,7 @@ En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del 
 
 ## Estils de rètol
 
-La propietat `labelStyles` dona nom als aspectes dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en un ancoratge de la imatge (un punt desat amb el recurs, com els parlants d'un còmic) i pren l'estil que anomena l'ancoratge o el rètol.
+La propietat `labelStyles` dona nom als aspectes dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en un ancoratge de la imatge (un punt desat amb el recurs, com els parlants d'un còmic) i pren l'estil que anomena l'ancoratge o el rètol. Al Sandbox s'editen a **Disseny › Figures i taules › Estils de rètol** (des de postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escriptura vertical per als rètols d'aquest estil: caràcters drets en cel·les una sota l'altra, columnes de dreta a esquerra, com es retola un mapa xinès o japonès. El <code>writingMode</code> propi d'una àncora mana.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indica que el rètol posat en aquest ancoratge pot tocar els veïns, com l'imprimeix l'original: no s'avisa amb <code>labelOverlap</code> d'una parella en què sigui. Preval sobre l'<code>overlap</code> de l'estil. Des de postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deixa els rètols d'aquest estil fora de la comprovació <code>labelOverlap</code>, per a un mapa els noms del qual es toquen a l'original. L'<code>overlap</code> propi d'un ancoratge preval. Des de postext 1.42.</td>
     </tr>
   </tbody>
 </table>

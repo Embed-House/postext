@@ -161,8 +161,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Le righe di due etichette di una stessa figura si toccano (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). L’avviso spetta all’etichetta successiva, nell’ordine in cui sono scritte.</td>
+      <td>Le righe di due etichette di una stessa figura si toccano (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). L’avviso spetta all’etichetta successiva, nell’ordine in cui sono scritte.</td>
       <td>Le due etichette sono disegnate dove stanno.</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>Una <code>:::figure</code> dà parole (<code>alt</code>, <code>caption</code>, <code>note</code>) a una risorsa a cui una figura precedente del capitolo ha già dato le sue, e sono diverse (<code>resourceId</code>, <code>words</code>).</td>
+      <td>Le pagine mostrano le parole della prima figura; quelle della successiva sono omesse.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

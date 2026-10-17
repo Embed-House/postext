@@ -161,8 +161,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Die Zeilen zweier Beschriftungen einer Abbildung berühren sich (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). Die Warnung trägt die spätere Beschriftung in der Reihenfolge des Schreibens.</td>
+      <td>Die Zeilen zweier Beschriftungen einer Abbildung berühren sich (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). Die Warnung trägt die spätere Beschriftung in der Reihenfolge des Schreibens.</td>
       <td>Beide Beschriftungen werden dort gezeichnet, wo sie stehen.</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>Eine <code>:::figure</code> gibt einer Ressource Worte (<code>alt</code>, <code>caption</code>, <code>note</code>), der eine frühere Abbildung des Kapitels schon ihre gegeben hat, und sie unterscheiden sich (<code>resourceId</code>, <code>words</code>).</td>
+      <td>Die Seiten zeigen die Worte der ersten Abbildung; die der späteren werden ausgelassen.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

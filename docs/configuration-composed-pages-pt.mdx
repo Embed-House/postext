@@ -582,7 +582,7 @@ Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do
 
 ## Estilos de rótulo
 
-A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como os falantes de quadrinhos) e usa o estilo que a âncora ou o rótulo nomeia.
+A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como os falantes de quadrinhos) e usa o estilo que a âncora ou o rótulo nomeia. No Sandbox eles são editados em **Design › Figuras e tabelas › Estilos de rótulo** (desde o postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escrita vertical para os rótulos deste estilo: caracteres em pé em células uma sob a outra, colunas da direita para a esquerda, como se rotula um mapa chinês ou japonês. O <code>writingMode</code> próprio de uma âncora prevalece.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> diz que o rótulo posto nesta âncora pode tocar os vizinhos, como o original o imprime: <code>labelOverlap</code> não é gerado para um par de que ele faça parte. Prevalece sobre o <code>overlap</code> do estilo. Desde o postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deixa os rótulos deste estilo fora da verificação <code>labelOverlap</code>, para um mapa cujos nomes se tocam no original. O <code>overlap</code> próprio de uma âncora prevalece. Desde o postext 1.42.</td>
     </tr>
   </tbody>
 </table>

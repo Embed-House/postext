@@ -582,7 +582,7 @@ pageTemplates: [{
 
 ## ラベルスタイル
 
-`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話し手と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。
+`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話し手と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。 Sandboxでは、**デザイン › 図と表 › ラベルのスタイル**で編集します（postext 1.42から）。
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>このスタイルのラベルを縦書きにします。文字は正立のまま1文字ずつ上から下へ、列は右から左へ並びます。中国語や日本語の地図の注記と同じ組み方です。アンカー自身の<code>writingMode</code>が優先されます。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>は、このアンカーに置いたラベルが、原稿の印刷どおりに隣のラベルへ接してよいことを表します。それを含む組には<code>labelOverlap</code>が出ません。スタイルの<code>overlap</code>より優先されます。postext 1.42から。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>にすると、このスタイルのラベルは<code>labelOverlap</code>の検査から外れます。原稿で名前が接している地図向けです。アンカー自身の<code>overlap</code>が優先されます。postext 1.42から。</td>
     </tr>
   </tbody>
 </table>

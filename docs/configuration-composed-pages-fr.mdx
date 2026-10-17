@@ -582,7 +582,7 @@ Dans un livre vertical (`vertical-rl`), la double page se compose dans le repèr
 
 ## Styles d’étiquette
 
-La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette.
+La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Écriture verticale pour les étiquettes de ce style : caractères droits dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> dit que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas levé pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> écarte les étiquettes de ce style du contrôle <code>labelOverlap</code>, pour une carte dont les noms se touchent dans la source. L’<code>overlap</code> propre à une ancre l’emporte. Depuis postext 1.42.</td>
     </tr>
   </tbody>
 </table>

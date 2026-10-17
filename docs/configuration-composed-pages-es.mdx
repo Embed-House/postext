@@ -582,7 +582,7 @@ En un libro vertical (`vertical-rl`) la doble página se compone en el marco del
 
 ## Estilos de rótulo
 
-La propiedad `labelStyles` da nombre a los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un anclaje de la imagen (un punto guardado con el recurso, como los hablantes de un cómic) y toma el estilo que nombra el anclaje o el rótulo.
+La propiedad `labelStyles` da nombre a los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un anclaje de la imagen (un punto guardado con el recurso, como los hablantes de un cómic) y toma el estilo que nombra el anclaje o el rótulo. En el Sandbox se editan en **Diseño › Figuras y tablas › Estilos de rótulo** (desde postext 1.42).
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escritura vertical para los rótulos de este estilo: caracteres derechos en celdas una bajo otra, columnas de derecha a izquierda, como se rotula un mapa chino o japonés. El <code>writingMode</code> propio de un ancla manda.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indica que el rótulo puesto en este anclaje puede tocar a sus vecinos, como lo imprime el original: no se avisa con <code>labelOverlap</code> de una pareja en la que esté. Prevalece sobre el <code>overlap</code> del estilo. Desde postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deja los rótulos de este estilo fuera de la comprobación <code>labelOverlap</code>, para un mapa cuyos nombres se tocan en el original. El <code>overlap</code> propio de un anclaje prevalece. Desde postext 1.42.</td>
     </tr>
   </tbody>
 </table>

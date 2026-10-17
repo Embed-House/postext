@@ -161,8 +161,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>يتلامس سطرا تسميتين في شكل واحد (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>with</code> و<code>withAnchor</code> و<code>count</code> و<code>locale</code>). ويحمل التحذير التسمية اللاحقة بترتيب الكتابة.</td>
+      <td>يتلامس سطرا تسميتين في شكل واحد (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>with</code> و<code>withAnchor</code>, <code>withSymbol</code> و<code>count</code> و<code>locale</code>). ويحمل التحذير التسمية اللاحقة بترتيب الكتابة.</td>
       <td>تُرسم التسميتان حيث هما.</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>يعطي <code>:::figure</code> موردًا كلمات (<code>alt</code> أو <code>caption</code> أو <code>note</code>) سبق أن أعطاه شكلٌ سابق في الفصل كلماته، وهي مختلفة (<code>resourceId</code> و<code>words</code>).</td>
+      <td>تعرض الصفحات كلمات الشكل الأول وتُسقط كلمات الشكل اللاحق.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

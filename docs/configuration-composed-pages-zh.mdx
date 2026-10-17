@@ -582,7 +582,7 @@ pageTemplates: [{
 
 ## 注记样式
 
-`labelStyles`属性为写在图片上的注记命名各种外观：地图上的海洋和城镇，示意图的各个部分。注记位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或注记所指定的样式。
+`labelStyles`属性为写在图片上的注记命名各种外观：地图上的海洋和城镇，示意图的各个部分。注记位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或注记所指定的样式。 在Sandbox中，它们在**版面设计 › 图与表 › 标注样式**里编辑（自postext 1.42起）。
 
 ```ts
 labelStyles: [
@@ -673,6 +673,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>这种样式的标注竖排：字符直立，一格一格自上而下，各列从右向左，如同中文或日文地图上的注记。锚点自己的<code>writingMode</code>优先。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>表示放在这个锚点上的标注可以挨着邻近的标注，就像原稿印的那样：包含它的一对不会给出<code>labelOverlap</code>。优先于样式的<code>overlap</code>。自postext 1.42起。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>让这个样式的标注不再参与<code>labelOverlap</code>检查，适用于原稿里名称本来就相互贴着的地图。锚点自己的<code>overlap</code>优先。自postext 1.42起。</td>
     </tr>
   </tbody>
 </table>
