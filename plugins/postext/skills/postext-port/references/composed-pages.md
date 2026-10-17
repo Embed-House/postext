@@ -242,7 +242,7 @@ their `altText`, read the notes in `report.json` (a centred tab set at
 `top-left`, a tab's icon not drawn, paragraph spacing inside boxes), and
 compare the overlay with the source where a page reads wrongly. The 28-page
 social-science textbook drafted this way: 25 pages, 335 frames, 26
-templates after the merge, 71 callout styles, 254 labels, no
+templates after the merge, 70 callout styles, 258 labels, no
 `contentInConfig`, no `frameOverflow`.
 
 ## 4. The component library

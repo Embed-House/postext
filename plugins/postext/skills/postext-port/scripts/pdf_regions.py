@@ -1034,12 +1034,14 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     # the picture's box takes them in
     body_size = ctx["heading_min"] / 1.35
     for p in pictures:
-        near = (p["box"][0] - opts.label_reach, p["box"][1] - opts.label_reach,
-                p["box"][2] + opts.label_reach, p["box"][3] + opts.label_reach)
-        extra = [l.box for l in lines if inside_mm(l.box, near, 0.0) and not inside_mm(l.box, p["box"], 1.0)
-                 and len(l.plain.split()) <= 3 and l.size <= 0.8 * body_size
-                 and not any(inside_mm(l.box, t.box, 1.0) for t in tabs)]
-        if extra:
+        for _ in range(8):      # a row of degrees round a globe: one word after another
+            near = (p["box"][0] - opts.label_reach, p["box"][1] - opts.label_reach,
+                    p["box"][2] + opts.label_reach, p["box"][3] + opts.label_reach)
+            extra = [l.box for l in lines if inside_mm(l.box, near, 0.0) and not inside_mm(l.box, p["box"], 1.0)
+                     and few_words(l.plain) and l.size <= 0.8 * body_size
+                     and not any(inside_mm(l.box, t.box, 1.0) for t in tabs)]
+            if not extra:
+                break
             p["box"] = union([p["box"]] + extra)
     # every line to its owner
     owners: dict[int, Any] = {}
@@ -1055,7 +1057,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             if inside_mm(l.box, p["box"], 1.0):
                 bg = container_bg(p["box"])
                 # a word on the art, or a short one set on the picture's margin (a map's degrees)
-                if len(l.plain.split()) <= 3 or renders.ink_fraction(to_pt(l.box, origin), bg) >= opts.label_ink:
+                if few_words(l.plain) or renders.ink_fraction(to_pt(l.box, origin), bg) >= opts.label_ink:
                     cands.append((area(p["box"]), "picture", p))
         if cands:
             owners[id(l)] = min(cands, key=lambda c: c[0])[1:]
@@ -1228,6 +1230,11 @@ def write_overlay(pdf_path: str, pno: int, origin: tuple, frames: list, out: Pat
         page.insert_text((r.x0 + 1, r.y0 + 7), f.name, fontsize=7, color=col)
     out.parent.mkdir(parents=True, exist_ok=True)
     page.get_pixmap(dpi=dpi).save(str(out))
+
+
+def few_words(text: str) -> bool:
+    """Up to three words, or figures and signs with few letters (`20 °N 10 °N`)."""
+    return len(text.split()) <= 3 or sum(ch.isalpha() for ch in text) <= 6
 
 
 def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
@@ -2099,8 +2106,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="a rectangle holding this many drawn shapes is the ground of a picture, not a box (default 12)")
     p.add_argument("--overlay", action="store_true", help="also write overlay/pNN.png: the page with its frames drawn")
     p.add_argument("--label-ink", type=float, default=0.3, help="a word over a picture is a label when this share of its box is art (default 0.3)")
-    p.add_argument("--label-reach", type=float, default=3.0,
-                   help="small words this close to a picture's edge (mm) are its lettering (default 3)")
+    p.add_argument("--label-reach", type=float, default=4.0,
+                   help="small words this close to a picture's edge (mm) are its lettering (default 4)")
     p.add_argument("--link-gap", type=float, default=25.0, help="a frame anchors below the frame above when they are this close (mm, default 25)")
     p.add_argument("--margin-band", type=float, default=15.0, help="on a page without cards, text this close to the top or foot is a running head (mm)")
     p.add_argument("--fit", type=float, help="give text frames and boxes fit.minScale (0.9: the ladder may set the text down to 90 %%)")
