@@ -1035,6 +1035,27 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   Sandbox does not paint the editor selection of the sending chapter on the later page (the picked path follows
   the caret).
 
+### 5.18 Findings round I (#882)
+
+- **Frame names by role (#979).** A drafted page names its frames by kind and order, a different box in the next
+  template. `template_dedupe.py` renames them after the merge (`name_frames`): the callout style id for a box or a
+  tab (the tab a style draws is already in the id, `box-light-blue-tab-white`), `picture`, `figure`,
+  `caption-of-<picture>` for a text or box set `below` one, `<role>-in-<parent>` for a frame laid inside another,
+  `rotated-text`, the flow `text` and the heading `title`. Content (a tab's `label` words) never enters a name. Names
+  are the same in every template that has the role, a second one is numbered from 2, a child keeps the names of
+  the template it extends, and a name that is not the positional `kind-N` form is left alone, so the pass is
+  idempotent. The anchors, groups and the `slot="…"` of every page fence under `chapters/` follow. The Sandbox
+  frame rename (`renameFrame`) now reaches the same family (`frameFamily`: the template that defines the frame and
+  everything that extends it, siblings included) and rewrites the fences of every chapter on screen
+  (`renameSlotChanges`) and of the other editions of a local project (`renameFrameInEdition`,
+  `ProjectActions.renameFrameInEditions`, one `updateProject` transaction). A sample's bundle keeps its other
+  editions read-only: only the edition open is renamed.
+- **Image budget of a painted book (#985).** C20 stays at 0.9 MB for nine pages (+0.1 MB a page), failing at 1.4 MB.
+  A recipe whose pages are paintings states the weight it means to publish in `capture.expect.imageMb` (above 0.9,
+  at most 2): silent up to it, a failure past it, an info when it is not needed or 15 % too high; the card files take
+  `capture.expect.cardKb` the same way. A budget that counted the painted area was rejected: the bytes of the
+  rendered page, not the area, say what it weighs.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
