@@ -2,7 +2,7 @@
   "$schema": "../../recipe.schema.json",
   "schemaVersion": 1,
   "number": 158,
-  "status": "draft",
+  "status": "published",
   "chapter": "page",
   "order": 180,
   "level": 3,
@@ -37,12 +37,10 @@
     "Q183",
     "Q184"
   ],
-  "gotchas": [
-    "row-needs-a-height"
-  ],
+  "gotchas": [],
   "engine": {
-    "postext": "1.36.1",
-    "postextPdf": "1.36.1"
+    "postext": "1.38.0",
+    "postextPdf": "1.38.0"
   },
   "kit": [
     "core",
