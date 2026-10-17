@@ -56,6 +56,7 @@ import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLay
 import { cssEscape, measureBodyBaselineOffset } from './baseline';
 import { htmlVideoPlayers, htmlVideoState, playHtmlVideo } from './videos';
 import { pickVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from '../viewerVideos';
+import { planContent } from '../../book/jumps';
 
 interface HtmlPreviewProps {
   fontScale: number;
@@ -463,7 +464,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
           resources: resourcesRef.current,
           ...(currentWholeBook
             ? (bookStartRef.current ? { continuation: bookStartRef.current } : {})
-            : { continuation: currentLayout.continuation, outline: currentLayout.plan.outline, ...(currentLayout.plan.citations ? { citations: currentLayout.plan.citations } : {}) }),
+            : { continuation: currentLayout.continuation, ...planContent(currentLayout.plan) }),
         },
         configOverride,
       );

@@ -26,8 +26,11 @@ import { idName, selectedElement, type PageSelection } from './pageSelection';
 /** Where a selection leads. Markdown offsets are the page's document
  *  offsets (its composed book's), as the VDT carries them. */
 export type SelectionTarget =
-  | { kind: 'caret'; offset: number }
-  | { kind: 'markdown'; start: number; end: number }
+  /** `chapter`: the offsets are another chapter's (its position in the
+   *  book) and the file's own, not the page's book's: text a story carried
+   *  in from an earlier chapter (#943). */
+  | { kind: 'caret'; offset: number; chapter?: number }
+  | { kind: 'markdown'; start: number; end: number; chapter?: number }
   /** A contents entry: the heading it lists, at `bodyOffset` of its
    *  chapter's body (front matter not counted), titled `title`. */
   | { kind: 'heading'; bodyOffset: number; title: string }
@@ -84,6 +87,8 @@ function blockSettings(block: VDTBlock | undefined): SelectionTarget {
   }
 }
 
+const chapterOf = (chapter: number | undefined): { chapter?: number } => (chapter !== undefined ? { chapter } : {});
+
 /** The frame of the composed page `el` names. */
 function frameOf(page: VDTPage | undefined, el: SourceElement): VDTFrame | undefined {
   return page?.composed?.frames.find((f) => f.id === el.id);
@@ -94,12 +99,12 @@ function contentTarget(doc: VDTDocument, sel: PageSelection, el: SourceElement):
   const page = doc.pages[sel.pageIndex];
   switch (el.level) {
     case 'text':
-      if (el.source.kind === 'markdown' || el.source.kind === 'attr') return { kind: 'caret', offset: el.source.start };
+      if (el.source.kind === 'markdown' || el.source.kind === 'attr') return { kind: 'caret', offset: el.source.start, ...chapterOf(el.source.chapter) };
       return { kind: 'none' };
     case 'attr':
-      return el.source.kind === 'attr' ? { kind: 'markdown', start: el.source.start, end: el.source.end } : { kind: 'none' };
+      return el.source.kind === 'attr' ? { kind: 'markdown', start: el.source.start, end: el.source.end, ...chapterOf(el.source.chapter) } : { kind: 'none' };
     case 'label':
-      return el.content ? { kind: 'markdown', start: el.content.start, end: el.content.end } : { kind: 'none' };
+      return el.content ? { kind: 'markdown', start: el.content.start, end: el.content.end, ...chapterOf(el.chapter) } : { kind: 'none' };
     case 'resource':
       return el.source.kind === 'resource' ? { kind: 'resource', resourceId: el.source.resourceId } : { kind: 'none' };
     case 'block':
@@ -108,10 +113,10 @@ function contentTarget(doc: VDTDocument, sel: PageSelection, el: SourceElement):
         const block = blockOf(doc, page, el.id);
         return { kind: 'heading', bodyOffset: el.heading, title: tocTitle(block) };
       }
-      return el.source.kind === 'markdown' ? { kind: 'markdown', start: el.source.start, end: el.source.end } : { kind: 'none' };
+      return el.source.kind === 'markdown' ? { kind: 'markdown', start: el.source.start, end: el.source.end, ...chapterOf(el.source.chapter) } : { kind: 'none' };
     }
     case 'frame': {
-      if (el.content && el.content.end > el.content.start) return { kind: 'markdown', start: el.content.start, end: el.content.end };
+      if (el.content && el.content.end > el.content.start) return { kind: 'markdown', start: el.content.start, end: el.content.end, ...chapterOf(el.chapter) };
       const frame = frameOf(page, el);
       if (!frame || !page?.composed) return { kind: 'none' };
       // A piece on an added page (#859) goes to the slot it continues,

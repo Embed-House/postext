@@ -936,7 +936,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       text = `Frame "${w.frame}" of template "${w.template}" went on to ${w.pages} added pages, the most a composed page may add, and is still ${w.overflowMm} mm short — the rest is cut at the frame's foot; give the frame there more room, or shorten the text`;
       break;
     case 'continueTargetMissing':
-      text = w.before
+      text = w.fromChapter !== undefined
+        ? `A story of chapter ${w.fromChapter + 1} jumps to page "${w.target}" (frame "${w.frame}" of template "${w.template}"), and this chapter has no ::::page{id="${w.target}"} fence with a known template — the rest is not set; give the page its fence back, or fix the name in the chapter that sends the story`
+        : w.before
         ? `Frame "${w.frame}" of template "${w.template}" jumps to page "${w.target}", which comes before it — the rest goes on on the next page; move the ::::page{id="${w.target}"} fence after this page, or name a later one`
         : `Frame "${w.frame}" of template "${w.template}" jumps to page "${w.target}", and no ::::page{id="${w.target}"} fence follows — the rest goes on on the next page; give a later page fence that id, or fix the name`;
       break;

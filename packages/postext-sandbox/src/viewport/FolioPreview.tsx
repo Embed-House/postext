@@ -23,6 +23,7 @@ import type { BookPageMap } from './usePageHashSync';
 import { FolioLoading } from './FolioLoading';
 import { useFolioSelection } from './useFolioSelection';
 import { pickVideo, type PlayableVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from './viewerVideos';
+import { planContent } from '../book/jumps';
 
 interface FolioPreviewProps {
   /** What the left button does on the book. */
@@ -405,7 +406,7 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
       }
       const source = deferredSource.book;
       const built = await layoutWorker.build(
-        { markdown: source.markdown, metadata: source.metadata, resources: deferredResources, continuation: deferredSource.continuation, outline: deferredSource.plan.outline, ...(deferredSource.plan.citations ? { citations: deferredSource.plan.citations } : {}) },
+        { markdown: source.markdown, metadata: source.metadata, resources: deferredResources, continuation: deferredSource.continuation, ...planContent(deferredSource.plan) },
         deferredConfig,
         {
           cacheKey: layoutCacheKey({

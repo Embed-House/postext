@@ -557,6 +557,20 @@ describe('layouts.json round trip', () => {
     expect(first.resourcesKey).toBe(resourcesKeyOf(loaded.resources));
   });
 
+  // #943: the stories a chapter sends to a page of a later one are part of its
+  // pagination, as the chapter that has the page is keyed on them.
+  it('carries the stories a chapter sends to a page of a later chapter', async () => {
+    const jump = { target: 'p47', rule: 'page:p47', frame: 'cuerpo', fromFrameId: 'cp0:cuerpo', head: 'cuerpo', template: 'articulo', collapsed: false, slot: 'cuerpo', pieces: 0, headBlockId: 'cp0:cuerpo', cut: { child: 1, line: 3 }, blocks: [], bodyOffset: 0 };
+    const layouts = { c1: { ...layoutOf(chapters[0]!, config, resources), jumps: [jump], jumpsKey: 'abc' }, c2: layoutOf(chapters[1]!, config, resources) };
+    const built = await buildBundleFiles(meta, { chapters, config, resources, layouts }, sources);
+    const opened = openBundleZip(zipBundle(built.files));
+    let n = 0;
+    const loaded = await parseBundle(opened.manifest, opened.readFile, { locale: 'en', summary, chapterIds: () => `new-${++n}` });
+    expect(loaded.layouts!['new-1']!.jumps).toEqual([jump]);
+    expect(loaded.layouts!['new-1']!.jumpsKey).toBe('abc');
+    expect(loaded.layouts!['new-2']!.jumps).toBeUndefined();
+  });
+
   it('leaves out the record of a chapter laid out without a face it asked for (#757)', async () => {
     const layouts = { c1: { ...layoutOf(chapters[0]!, config, resources), withoutFaces: true as const }, c2: layoutOf(chapters[1]!, config, resources) };
     const built = await buildBundleFiles(meta, { chapters, config, resources, layouts }, sources);

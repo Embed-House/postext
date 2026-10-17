@@ -17,6 +17,8 @@ export function findCaretBlockIdx(doc: VDTDocument, head: number, pages?: { from
   for (let i = 0; i < doc.blocks.length; i++) {
     const b = doc.blocks[i]!;
     if (!inRange(b)) continue;
+    // Text carried in from another chapter (#943) has that file's offsets.
+    if (b.sourceChapter !== undefined) continue;
     last = i;
     if (b.sourceStart === undefined || b.sourceEnd === undefined) continue;
     if (head >= b.sourceStart && head <= b.sourceEnd) { caretBlockIdx = i; break; }
@@ -24,7 +26,7 @@ export function findCaretBlockIdx(doc: VDTDocument, head: number, pages?: { from
   if (caretBlockIdx === -1) {
     for (let i = 0; i < doc.blocks.length; i++) {
       const b = doc.blocks[i]!;
-      if (!inRange(b) || b.sourceStart === undefined) continue;
+      if (!inRange(b) || b.sourceStart === undefined || b.sourceChapter !== undefined) continue;
       if (b.sourceStart >= head) { caretBlockIdx = i; break; }
     }
   }

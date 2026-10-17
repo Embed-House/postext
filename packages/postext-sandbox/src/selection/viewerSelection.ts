@@ -30,12 +30,17 @@ export function chapterOfPages(sourceOfPage: (pageIndex: number) => ComposedBook
  * The editor's caret moved (the reader moved it, not a click on a page):
  * the page selection follows it, at the block it is in, so the path shows
  * where the caret is on the page. `head` is a document offset; `pages`
- * limits the search to the chapter's pages of a whole book.
+ * limits the search to the chapter's pages of a whole book; `carriedChapter`
+ * is the position in the book of the chapter being edited, whose text a
+ * story may have carried to a page of a later one.
  */
-export function followEditorCaret(doc: VDTDocument, head: number, deps: SelectionApplyDeps, pages?: { from: number; to: number }): void {
+export function followEditorCaret(doc: VDTDocument, head: number, deps: SelectionApplyDeps, pages?: { from: number; to: number }, carriedChapter?: number): void {
   if (head < 0) return;
   const now = pageSelectionNow();
-  const sel = selectionAtSource(doc, head, pages ? { pages } : undefined);
+  // The caret may be in text a story of this chapter carried to a page of
+  // a later one (#943): the chapter's own pages do not show it.
+  const sel = selectionAtSource(doc, head, pages ? { pages } : undefined)
+    ?? (carriedChapter !== undefined ? selectionAtSource(doc, head, { chapter: carriedChapter }) : null);
   if (!sel) {
     if (now?.selection.origin === 'editor') clearPageSelection();
     return;

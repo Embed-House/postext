@@ -20,6 +20,7 @@ import type { BookStart, Chapter, ChapterLayout, ComposedBook } from '../book/ty
 import { withHyphenationLocale } from '../controls/hyphenation';
 import { computeComposedWarnings } from '../warnings/compute';
 import type { Warning } from '../warnings/types';
+import { planContent } from '../book/jumps';
 
 /** An edition of a book, as the Sandbox would open it. */
 export interface EditionSource {
@@ -108,8 +109,7 @@ export async function layOutEdition(source: EditionSource, build: EditionBuild, 
       metadata: book.metadata,
       resources,
       continuation: chapterPlan.continuation,
-      outline: chapterPlan.outline,
-      ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}),
+      ...planContent(chapterPlan),
     };
     abortIfNeeded(options.signal);
     const doc = await build(content, config, layoutCacheKey({

@@ -10,6 +10,8 @@ import { anchorOutline, bookCitationContexts, citationContextKey, citationSource
 import type { CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
 import type { BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
 import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
+import { createPageIdsCache, jumpsKeyOf, keyOf, laterIdsOfBook, routeJumps } from './jumps';
+import type { StoryJump } from 'postext';
 
 /** The page number `n` resolves to when the chapter's first page is
  *  numbered `start`. */
@@ -208,6 +210,7 @@ export function sameChapterLayout(a: ChapterLayout | undefined, b: ChapterLayout
     && a.lastPageFormat === b.lastPageFormat
     && sameLineNumber(a.lastLineNumber, b.lastLineNumber)
     && a.outlineKey === b.outlineKey
+    && (a.jumpsKey ?? '') === (b.jumpsKey ?? '')
     && !!a.withoutFaces === !!b.withoutFaces
     && sameOutlinePages(a.outlinePages, b.outlinePages);
 }
@@ -286,6 +289,8 @@ function usesBookTotalPages(config: PostextConfig): boolean {
  *  and the chain stops at chapter 10). */
 export function createBookPlanner(): BookPlanner {
   const cache = new Map<string, CountersEntry>();
+  /** The page fence ids of each chapter (#943). */
+  const pageIdsOf = createPageIdsCache();
   /** Each chapter's parsed form for the citations, by its text. */
   const citationCache = new Map<string, { markdown: string; captions: boolean; source: CitationSource }>();
   /** `captions`: some resource's caption or note cites (#529), so every
@@ -366,6 +371,11 @@ export function createBookPlanner(): BookPlanner {
       // pages hold whatever book outline it was laid out with — the
       // contents' rows do not move the pages after them — so the chain is
       // settled before the outline is assembled and never re-broken by it.
+      // The page fences of the chapters after each chapter (#943), where a
+      // story of a composed page may jump to, and the stories the
+      // chapters laid out so far send on, by the chapter that has the page.
+      const laterIds = laterIdsOfBook(chapters, config, (i) => pageIdsOf(chapters[i]!, config));
+      const jumpsIn = new Map<number, StoryJump[]>();
       const starts: (PageStart | null)[] = [];
       const keys: string[] = [];
       const records: (ChapterLayout | null)[] = [];
@@ -390,16 +400,24 @@ export function createBookPlanner(): BookPlanner {
         let linesKnown = true;
         let countersFingerprint = '';
         chapters.forEach((chapter, index) => {
-          const continuationKey = index === 0
+          // What the chapters before it send it, and the ids it may send
+          // to: its layout depends on them, and so does its key. They
+          // stay out of a book without such stories, whose keys are what
+          // they were.
+          const sent = jumpsKeyOf(jumpsIn.get(index));
+          const reach = laterIds[index];
+          const extra = `${sent ? `|j${sent}` : ''}${reach ? `|l${keyOf(reach)}` : ''}`;
+          const continuationKey = (index === 0
             ? firstContinuationKey(start)
             : pages
               ? `${countersFingerprint}|${pages.physical % 2}|${pages.format}`
-              : `${countersFingerprint}|?`;
+              : `${countersFingerprint}|?`) + extra;
           const stored = layouts[chapter.id];
           const layout = pages && chapterLayoutIsCurrent(stored, chapter, config, resources, continuationKey) ? stored : null;
           starts.push(pages);
           keys.push(continuationKey);
           records.push(layout);
+          if (layout) routeJumps(index, layout.jumps, reach, jumpsIn);
           lineStarts.push(linesKnown ? lines : undefined);
           if (layout && pages) {
             const last = layout.lastLineNumber;
@@ -520,10 +538,12 @@ export function createBookPlanner(): BookPlanner {
         const provisional = !pages && entry.opensEven
           ? { pageIndexOffset: 1, pageNumbering: { format: numbering.format, startAt: numbering.startAt + 1 } }
           : {};
+        const incoming = jumpsIn.get(index);
         const continuation: LayoutContinuation | undefined = first
           ? (start ? { ...start, ...total } : total)
           : {
             ...counters,
+            ...(incoming ? { jumps: incoming } : {}),
             ...(pages ? { pageIndexOffset: pages.physical, pageNumbering: { format: pages.format, startAt: pages.number } } : provisional),
             ...(lineStarts[index] !== undefined ? { lineNumber: lineStarts[index] } : {}),
             ...total,
@@ -541,6 +561,7 @@ export function createBookPlanner(): BookPlanner {
           number: chapterNumber(entries[index]!.outline, counters),
           ...(part ? { part } : {}),
           continuation,
+          ...(laterIds[index] ? { laterPageIds: laterIds[index] } : {}),
           paginated: pages !== null,
           continuationKey: keys[index]!,
           layout,
@@ -638,6 +659,8 @@ export function chapterLayoutFromDoc(
       : {}),
     outlinePages,
     outlineKey: plan.outlineKey,
+    // The stories the chapter sends to a page of a later one (#943).
+    ...(doc.pendingJumps && doc.pendingJumps.length > 0 ? { jumps: doc.pendingJumps, jumpsKey: jumpsKeyOf(doc.pendingJumps) } : {}),
     // Laid out without a face it asked for (#757): not the chapter's pages.
     ...(builtWithoutFaces(doc) ? { withoutFaces: true as const } : {}),
   };

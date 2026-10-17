@@ -1,6 +1,6 @@
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
-import { pageToFlow } from 'postext';
+import { pageToFlow, sourceAt } from 'postext';
 import type { ResourceFocusTarget, SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
 import { toChapterFocus } from './chapterFocus';
@@ -313,12 +313,23 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     return pt && page ? { pageIndex: pt.pageIndex, ...pageToFlow(page, pt.x, pt.y) } : pt;
   };
 
+  /** The chapter the text under the last point resolved belongs to when a
+   *  story carried it in from another one (#943): its position in the
+   *  book; undefined for the page's own text. */
+  let offsetChapter: number | undefined;
   const resolveOffset = (ev: MouseEvent): number | null => {
     const doc = docRef.current;
+    offsetChapter = undefined;
     if (!doc) return null;
     const pt = resolvePagePoint(ev);
     if (!pt) return null;
-    return pixelToSourceOffset(doc, pt.pageIndex, pt.x, pt.y);
+    const offset = pixelToSourceOffset(doc, pt.pageIndex, pt.x, pt.y);
+    if (offset !== null && doc.pages[pt.pageIndex]?.composed) {
+      const sheet = resolveSheetPoint(ev);
+      const el = sheet ? sourceAt(doc, sheet.pageIndex, sheet.x, sheet.y).find((e) => e.source.kind === 'markdown') : undefined;
+      if (el?.source.kind === 'markdown') offsetChapter = el.source.chapter;
+    }
+    return offset;
   };
 
   const resolveLink = (ev: MouseEvent): LinkTarget | null => {
@@ -393,12 +404,19 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     return resourceTextAtPixel(doc, pt.pageIndex, pt.x, pt.y, getSvgTextIndex);
   };
 
-  const focusEditor = (anchor: number, head: number, selectWord: boolean): void => {
+  const focusEditor = (anchor: number, head: number, selectWord: boolean, chapter?: number): void => {
     const dispatch = dispatchRef.current;
     if (activePanelRef.current !== 'markdown') {
       dispatch({ type: 'SET_PANEL', payload: 'markdown' });
     }
-    dispatch({ type: 'SET_PENDING_EDITOR_FOCUS', payload: { ...toChapterFocus(sourceOfPage(), anchor, head, selectWord), fromViewer: true } });
+    // Text carried in from another chapter: its offsets are that file's.
+    const owner = chapter !== undefined ? selectionChapters()[chapter] : undefined;
+    dispatch({
+      type: 'SET_PENDING_EDITOR_FOCUS',
+      payload: owner
+        ? { chapterId: owner.id, anchor, head, selectWord, fromViewer: true }
+        : { ...toChapterFocus(sourceOfPage(), anchor, head, selectWord), fromViewer: true },
+    });
   };
 
   // Open the Resources panel on a resource (no editor selection).
@@ -427,6 +445,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
 
   const DRAG_THRESHOLD_PX = 3;
   let dragAnchorOffset: number | null = null;
+  let dragChapter: number | undefined;
   // Set when the drag started on resource text: the head stays inside the
   // same resource run (a drag that leaves the cell keeps its last head).
   let dragResource: ResourceTextHit | null = null;
@@ -476,6 +495,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     dragBalloonText = balloonText;
     dragResource = resourceHit;
     dragAnchorOffset = offset;
+    dragChapter = balloonText || resourceHit ? undefined : offsetChapter;
     dragAnchorClient = { x: ev.clientX, y: ev.clientY };
     dragPointerId = ev.pointerId;
     dragging = false;
@@ -532,9 +552,11 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     }
     const head = resolveOffset(ev);
     if (head === null) return;
+    // One editor shows one chapter: a drag stays in the text it began in.
+    if (offsetChapter !== dragChapter) return;
     if (head === lastHead) return;
     lastHead = head;
-    focusEditor(dragAnchorOffset, head, false);
+    focusEditor(dragAnchorOffset, head, false, dragChapter);
   });
 
   const endDrag = (ev: PointerEvent): void => {
@@ -665,7 +687,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     }
     const offset = resolveOffset(ev);
     if (offset === null) return;
-    focusEditor(offset, offset, false);
+    focusEditor(offset, offset, false, offsetChapter);
   });
 
   target.addEventListener('dblclick', (ev) => {
@@ -712,7 +734,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     const offset = resolveOffset(ev);
     if (offset === null) return;
     ev.preventDefault();
-    focusEditor(offset, offset, true);
+    focusEditor(offset, offset, true, offsetChapter);
   });
 
   return { comic, frames };

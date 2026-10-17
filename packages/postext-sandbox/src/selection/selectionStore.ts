@@ -141,6 +141,12 @@ export function selectionChapters(): readonly Chapter[] {
   return chaptersOf?.() ?? [];
 }
 
+/** The position in the book of the chapter `id`, or undefined (#943). */
+export function carriedPosition(id: string): number | undefined {
+  const at = selectionChapters().findIndex((c) => c.id === id);
+  return at >= 0 ? at : undefined;
+}
+
 let templatesOf: (() => readonly PageTemplate[] | undefined) | null = null;
 
 /** The book's page templates, for a design element of one picked on a

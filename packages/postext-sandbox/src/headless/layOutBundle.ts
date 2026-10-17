@@ -30,6 +30,7 @@ import { putFontFile } from '../storage/fontStorage';
 import { projectFileId, projectFontFileId } from '../storage/projectFiles';
 import { generateChapterId, generateProjectId } from '../storage/projects';
 import { createLayoutService } from '../worker/LayoutService';
+import { planContent } from '../book/jumps';
 
 export interface LayOutBundleOptions {
   /** The interface language the Sandbox would open the bundle in: the
@@ -222,8 +223,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
       const book = composeBookMemo(chapters, id);
       const content: PostextContent = {
         markdown: book.markdown, metadata: book.metadata, resources,
-        continuation: chapterPlan.continuation, outline: chapterPlan.outline,
-        ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}),
+        continuation: chapterPlan.continuation, ...planContent(chapterPlan),
       };
       step(`build ${builds + 1}, chapter ${chapters.findIndex((c) => c.id === id) + 1} of ${chapters.length}`);
       const doc = await service.build({
