@@ -51,7 +51,7 @@
     "bilingual-arabic-english-report"
   ],
   "engine": {
-    "postext": "1.38.0"
+    "postext": "1.39.0"
   },
   "kit": [
     "core",
