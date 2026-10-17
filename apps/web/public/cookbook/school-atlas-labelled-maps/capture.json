@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "school-atlas-labelled-maps",
-  "sourceHash": "2a13817d195f3cd69a691130e633dde9ee2303a514d4ac867a7f974c4d2a872a",
+  "sourceHash": "b61eaed057bc6a37f555565046e60c4207c04d81ea9a95d49dc0dd046aaaee97",
   "engine": {
-    "postext": "1.38.0",
+    "postext": "1.39.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T10:25:01.070Z",
+  "capturedAt": "2026-10-17T13:10:24.567Z",
   "variants": {
     "en": {
-      "hash8": "940ae4a7",
-      "vdtHash": "b2aebc53c029f32795ff267602a2361fe950bb66",
+      "hash8": "d082d69c",
+      "vdtHash": "e12cf6ef75e722005563fb44e2b7c70647afe28c",
       "timings": {
-        "importMs": 2632,
-        "fontsMs": 638,
-        "buildMs": 115,
-        "totalMs": 4978,
+        "importMs": 465,
+        "fontsMs": 121,
+        "buildMs": 84,
+        "totalMs": 1327,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 249
+        "ownLines": 234
       },
       "pages": [
         {
@@ -48,7 +48,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 50922,
+          "bytes": 79644,
           "alt": "Page 1: Varenia on the map."
         },
         {
@@ -59,7 +59,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62802,
+          "bytes": 87532,
           "alt": "Page 2: The relief and rivers of Varenia."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 44724,
+          "bytes": 62962,
           "alt": "Page 3."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61826,
+          "bytes": 80976,
           "alt": "Page 4: A section through the Albar Range."
         }
       ],
@@ -113,13 +113,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 214004,
+        "bytes": 610726,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "624ac483d6ef2225",
-            "lines": "9b992376a6736088"
+            "hash": "723b0f498c84a165",
+            "lines": "8bc9f24366db9f01"
           }
         ]
       },
@@ -297,7 +297,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 426,
+        "configLeaves": 425,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -358,19 +358,24 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 66 line, 3 text"
+            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "57d56a3f",
-      "vdtHash": "6c7ebe84168351bbaf37764b6e3b7cdf9d5a1686",
+      "hash8": "fca55ed3",
+      "vdtHash": "41c601af07a6e6d1af7aeee330511d38d0f9d44f",
       "timings": {
-        "importMs": 2631,
-        "fontsMs": 613,
-        "buildMs": 112,
-        "totalMs": 4969,
+        "importMs": 465,
+        "fontsMs": 122,
+        "buildMs": 85,
+        "totalMs": 1321,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +396,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 249
+        "ownLines": 234
       },
       "pages": [
         {
@@ -402,7 +407,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 50840,
+          "bytes": 81522,
           "alt": "Página 1: Varenia en el mapa."
         },
         {
@@ -413,7 +418,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62038,
+          "bytes": 86742,
           "alt": "Página 2: El relieve y los ríos de Varenia."
         },
         {
@@ -424,7 +429,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 44608,
+          "bytes": 63400,
           "alt": "Página 3."
         },
         {
@@ -435,7 +440,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61718,
+          "bytes": 81632,
           "alt": "Página 4: Un corte de la sierra Albar."
         }
       ],
@@ -467,13 +472,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 213847,
+        "bytes": 610538,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "0a684c79a9e2bd09",
-            "lines": "78d2ce0bbf1aed59"
+            "hash": "65b930f607f7c928",
+            "lines": "ccb29a08a33e6c04"
           }
         ]
       },
@@ -651,7 +656,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 426,
+        "configLeaves": 425,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -712,19 +717,24 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 66 line, 3 text"
+            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "70d5a205",
-      "vdtHash": "4b3d742c82ebe90c05eb91d7e519fb113d2a4eea",
+      "hash8": "918034a4",
+      "vdtHash": "f52cb4e21b1c634b1a7e23bfcf6c6639789c38b6",
       "timings": {
-        "importMs": 2645,
-        "fontsMs": 635,
-        "buildMs": 120,
-        "totalMs": 4969,
+        "importMs": 480,
+        "fontsMs": 107,
+        "buildMs": 88,
+        "totalMs": 1344,
         "builds": 1
       },
       "specimen": {
@@ -745,7 +755,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 4,
-        "ownLines": 249
+        "ownLines": 234
       },
       "pages": [
         {
@@ -756,7 +766,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 51382,
+          "bytes": 81956,
           "alt": "الصفحة ١: فارينيا على الخريطة."
         },
         {
@@ -767,7 +777,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 60254,
+          "bytes": 79454,
           "alt": "الصفحة ٢: تضاريس فارينيا وأنهارها."
         },
         {
@@ -778,7 +788,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 43892,
+          "bytes": 66268,
           "alt": "الصفحة ٣."
         },
         {
@@ -789,7 +799,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 58570,
+          "bytes": 78458,
           "alt": "الصفحة ٤: مقطع في سلسلة ألبار."
         }
       ],
@@ -822,13 +832,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 215239,
+        "bytes": 611783,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "a41a6a791ca78b7f",
-            "lines": "0bdd38332c87d83d"
+            "hash": "ccc8d5469b048130",
+            "lines": "eea24eafbe3549c9"
           }
         ]
       },
@@ -1001,7 +1011,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 421,
+        "configLeaves": 420,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -1070,7 +1080,12 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 27 label, 64 line, 3 text"
+            "detail": "every element came back to its source: 29 block, 16 frame, 27 label, 65 line, 3 text"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
