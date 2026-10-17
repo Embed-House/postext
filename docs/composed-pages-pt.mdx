@@ -382,7 +382,7 @@ O `frameOverflow` nomeia a página, o modelo, o bloco e o idioma do documento, d
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
+      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. O teste compõe a página como a compilação faria com esse modelo: os slots para os quais ele não tem bloco vão para o seu bloco de fluxo, a sua própria escada é percorrida, e ele só é proposto se nenhum bloco transbordar e nada continuar em outra página (desde o postext 1.39). Uma página acrescentada por continuação não recebe essa proposta. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

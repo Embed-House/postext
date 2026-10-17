@@ -382,7 +382,7 @@ When no step makes the content fit, the frame is cut at its foot, keeps the scal
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
+      <td>Another template of the book with a frame of the same name in which the content fits as it is, tried on the page in the order of <code>pageTemplates</code>. The trial sets the page as the build would with that template: the slots it has no frame for go to its flow frame, its own ladder runs, and it is proposed only when no frame overflows and nothing goes on to another page (since postext 1.39). A page added by continuation gets no such proposal. It is a change to the Markdown: <code>sourceStart</code> and <code>sourceEnd</code> give the range of the page fence's <code>template</code> value.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

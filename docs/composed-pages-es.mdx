@@ -382,7 +382,7 @@ Si ningún paso consigue que el contenido quepa, el marco se corta al pie, se qu
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Otra plantilla del libro con un marco del mismo nombre en el que el contenido cabe tal como está, probada sobre la página en el orden de <code>pageTemplates</code>. Es un cambio en el Markdown: <code>sourceStart</code> y <code>sourceEnd</code> dan el rango del valor <code>template</code> de la valla de la página.</td>
+      <td>Otra plantilla del libro con un marco del mismo nombre en el que el contenido cabe tal como está, probada sobre la página en el orden de <code>pageTemplates</code>. La prueba compone la página como lo haría la compilación con esa plantilla: los huecos para los que no tiene marco van a su marco de flujo, se recorre su propia escalera y solo se propone si ningún marco desborda y nada sigue en otra página (desde postext 1.39). Una página añadida por continuación no recibe esta propuesta. Es un cambio en el Markdown: <code>sourceStart</code> y <code>sourceEnd</code> dan el rango del valor <code>template</code> de la valla de la página.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

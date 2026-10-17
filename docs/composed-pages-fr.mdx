@@ -382,7 +382,7 @@ Quand aucune étape ne fait tenir le contenu, le bloc est coupé à son pied, ga
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Un autre modèle du livre, avec un bloc du même nom, dans lequel le contenu tient tel quel, essayé sur la page dans l’ordre de <code>pageTemplates</code>. C’est un changement du Markdown : <code>sourceStart</code> et <code>sourceEnd</code> donnent la plage de la valeur <code>template</code> du délimiteur de page.</td>
+      <td>Un autre modèle du livre, avec un bloc du même nom, dans lequel le contenu tient tel quel, essayé sur la page dans l’ordre de <code>pageTemplates</code>. L’essai compose la page comme le ferait la compilation avec ce modèle : les emplacements pour lesquels il n’a pas de bloc vont à son bloc de flux, sa propre échelle est parcourue, et il n’est proposé que si aucun bloc ne déborde et que rien ne se poursuit sur une autre page (depuis postext 1.39). Une page ajoutée par continuation ne reçoit pas cette proposition. C’est un changement du Markdown : <code>sourceStart</code> et <code>sourceEnd</code> donnent la plage de la valeur <code>template</code> du délimiteur de page.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

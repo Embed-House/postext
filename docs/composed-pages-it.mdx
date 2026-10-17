@@ -382,7 +382,7 @@ Quando nessun passo fa entrare il contenuto, la cornice viene tagliata al piede,
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Un altro modello del libro, con una cornice dello stesso nome, in cui il contenuto entra così com’è, provato sulla pagina nell’ordine di <code>pageTemplates</code>. È una modifica al Markdown: <code>sourceStart</code> e <code>sourceEnd</code> danno l’intervallo del valore <code>template</code> del recinto della pagina.</td>
+      <td>Un altro modello del libro, con una cornice dello stesso nome, in cui il contenuto entra così com’è, provato sulla pagina nell’ordine di <code>pageTemplates</code>. La prova compone la pagina come farebbe la compilazione con quel modello: gli slot per cui non ha una cornice vanno alla sua cornice di flusso, si percorre la sua scala, e viene proposto solo se nessuna cornice trabocca e nulla prosegue in un’altra pagina (da postext 1.39). Una pagina aggiunta per continuazione non riceve questa proposta. È una modifica al Markdown: <code>sourceStart</code> e <code>sourceEnd</code> danno l’intervallo del valore <code>template</code> del recinto della pagina.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

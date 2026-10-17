@@ -37,7 +37,7 @@ import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
 import { frameContour } from '../composed/contour';
 import { dimensionToPx } from '../units';
 import { frameBounds } from '../composed/paint';
-import { FRAME_ATTR } from '../composed/wrap';
+import { chainHead, FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
@@ -495,6 +495,8 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       dpi,
       emPx: input.emPx,
       alternatives: input.alternatives,
+      // Not on a page continuation added: its template is not the fence's.
+      ...(input.continuing ? {} : { fitsWithTemplate: (alt: ResolvedPageTemplate) => fitsWithTemplate(given, alt) }),
       templateSource: templateAttr ? { sourceStart: templateAttr.sourceStart + input.bodyOffset, sourceEnd: templateAttr.sourceEnd + input.bodyOffset } : undefined,
       budgetLeft: () => runs < COMPOSE_BUDGET,
       holdsText: holdsText(frame),
@@ -563,6 +565,76 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
 }
 
+/** The page's stories as `wrapComposedPages` would group them for template
+ *  `alt` (#937): a story whose head names a frame of `alt` stays the story
+ *  of that frame's chain, one a `takes` frame took goes to `alt`'s frame
+ *  that takes the same level, and the rest go to `alt`'s flow frame, after
+ *  its own content, in Markdown order. Merged stories are boxes appended
+ *  past the pass's content blocks (a pass of their own), so the page can
+ *  be laid with them. `undefined` when some content would leave the page
+ *  (no frame of `alt` takes it). */
+function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { pass: FrameLayoutPass; stories: Map<string, ComposedStory> } | undefined {
+  const names = new Set(alt.frames.map((f) => f.name));
+  const flow = alt.frames.find((f) => f.flow);
+  const flowHead = flow ? chainHead(alt, flow.name) : undefined;
+  const current = input.template.frames;
+  const headIn = (head: string): string | undefined => {
+    if (names.has(head)) return chainHead(alt, head);
+    const takes = current.find((f) => f.name === head)?.takes;
+    const taker = takes ? alt.frames.find((f) => f.takes === takes) : undefined;
+    return taker ? chainHead(alt, taker.name) : flowHead;
+  };
+  const groups = new Map<string, [string, ComposedStory][]>();
+  for (const [head, story] of [...input.stories].sort((a, b) => a[1].startIdx - b[1].startIdx)) {
+    const to = headIn(head);
+    if (to === undefined) return undefined;
+    groups.set(to, [...(groups.get(to) ?? []), [head, story]]);
+  }
+  if ([...groups].every(([to, list]) => list.length === 1 && list[0]![0] === to)) return { pass: input.pass, stories: new Map(input.stories) };
+  const base = input.pass.contentBlocks;
+  const extra: ContentBlock[] = [];
+  /** Where each appended box's blocks come from: the first story's box. */
+  const origin = new Map<number, number>();
+  let nextId = base.reduce((m, b) => Math.max(m, b.containerId ?? 0), 0) + 1;
+  const stories = new Map<string, ComposedStory>();
+  for (const [to, list] of groups) {
+    if (list.length === 1 && list[0]![0] === to) {
+      stories.set(to, list[0]![1]);
+      continue;
+    }
+    const own = list.find(([h]) => h === to)?.[1] ?? list[0]![1];
+    const open = base[own.startIdx]!;
+    const id = nextId++;
+    const startIdx = base.length + extra.length;
+    const attrs = { ...own.plan.attrs, [FRAME_ATTR]: to };
+    extra.push({ ...open, containerAttrs: attrs, containerId: id });
+    for (const [, s] of list) extra.push(...base.slice(s.startIdx + 1, s.plan.endIdx));
+    const close = base[list[list.length - 1]![1].plan.endIdx]!;
+    extra.push({ ...close, containerId: id });
+    origin.set(startIdx, own.startIdx);
+    stories.set(to, { startIdx, plan: { endIdx: base.length + extra.length - 1, attrs, containerId: id } });
+  }
+  const pass: FrameLayoutPass = {
+    ...input.pass,
+    contentBlocks: [...base, ...extra],
+    measureCtxFor: (startIdx, style) => input.pass.measureCtxFor(origin.get(startIdx) ?? startIdx, style),
+  };
+  return { pass, stories };
+}
+
+/** The page fits when set with template `alt` (#937): its stories regrouped
+ *  for it (`regroupStories`), its own reflow ladder run; no frame
+ *  overflows, every story is laid, and nothing goes on to another page. */
+function fitsWithTemplate(input: ComposedPageInput, alt: ResolvedPageTemplate): boolean {
+  const regrouped = regroupStories(input, alt);
+  if (!regrouped) return false;
+  // No proposals of its own (`alternatives` left out).
+  const trial = layoutComposedPage({ ...input, template: alt, pass: regrouped.pass, stories: regrouped.stories, alternatives: undefined, continuing: undefined });
+  return !trial.continuations
+    && trial.warnings.every((w) => w.kind !== 'frameOverflow')
+    && [...regrouped.stories.keys()].every((h) => trial.laid.has(h));
+}
+
 interface ProposalContext {
   frame: ResolvedFrame;
   vdt: VDTFrame;
@@ -579,6 +651,9 @@ interface ProposalContext {
   dpi: number;
   emPx: number;
   alternatives?: () => readonly ResolvedPageTemplate[];
+  /** The page set with another template as the build would set it (#937):
+   *  every frame fits and nothing goes on to another page. */
+  fitsWithTemplate?(alt: ResolvedPageTemplate): boolean;
   templateSource?: { sourceStart: number; sourceEnd: number };
   budgetLeft(): boolean;
   /** The frame sets text, which a smaller scale would shrink. */
@@ -663,13 +738,12 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
   if (holds && !frame.overflow.continueIn) out.push({ kind: 'continueNextPage', path: path('overflow/continueIn'), value: 'next-page' });
 
   // Another template of the book with a frame of this name, where the
-  // content fits as it is.
+  // page fits once set with it: its stories regrouped for it and its own
+  // ladder run (#937).
   for (const alt of c.alternatives?.() ?? []) {
-    if (!c.budgetLeft()) break;
+    if (!c.budgetLeft() || !c.fitsWithTemplate) break;
     if (!alt.frames.some((f) => f.name === name)) continue;
-    const trial = c.compose(NO_FIT, alt);
-    const laidThere = trial.frames.find((f) => f.name === name);
-    if (laidThere && laidThere.blockIds.length > 0 && laidThere.overflowPx <= 0.5) {
+    if (c.fitsWithTemplate(alt)) {
       out.push({ kind: 'useTemplate', value: alt.id, ...(c.templateSource ?? {}) });
       break;
     }

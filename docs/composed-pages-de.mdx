@@ -382,7 +382,7 @@ Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitte
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Eine andere Vorlage des Buches mit einem Rahmen gleichen Namens, in den der Inhalt unverändert passt, auf der Seite in der Reihenfolge von <code>pageTemplates</code> ausprobiert. Das ist eine Änderung am Markdown: <code>sourceStart</code> und <code>sourceEnd</code> geben den Bereich des Werts <code>template</code> der Seitenbegrenzung an.</td>
+      <td>Eine andere Vorlage des Buches mit einem Rahmen gleichen Namens, in den der Inhalt unverändert passt, auf der Seite in der Reihenfolge von <code>pageTemplates</code> ausprobiert. Der Versuch setzt die Seite so, wie der Build sie mit dieser Vorlage setzen würde: Slots ohne eigenen Rahmen gehen in ihren Flussrahmen, ihre eigene Leiter wird durchlaufen, und sie wird nur vorgeschlagen, wenn kein Rahmen überläuft und nichts auf einer anderen Seite weitergeht (seit postext 1.39). Eine durch Fortsetzung hinzugefügte Seite bekommt diesen Vorschlag nicht. Das ist eine Änderung am Markdown: <code>sourceStart</code> und <code>sourceEnd</code> geben den Bereich des Werts <code>template</code> der Seitenbegrenzung an.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

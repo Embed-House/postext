@@ -382,7 +382,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>同じ名前の枠を持ち、中身がそのまま収まる本の別のテンプレートです。<code>pageTemplates</code>の順にそのページで試して選びます。これはMarkdownの変更で、<code>sourceStart</code>と<code>sourceEnd</code>がページフェンスの<code>template</code>の値の範囲を示します。</td>
+      <td>同じ名前の枠を持ち、中身がそのまま収まる本の別のテンプレートです。<code>pageTemplates</code>の順にそのページで試して選びます。試し組みはそのテンプレートでビルドするときと同じようにページを組みます。対応するフレームのないスロットは流し込みフレームに入り、そのテンプレート自身の段階的な調整を通し、どのフレームもあふれず、ほかのページに続くものもない場合にだけ提案します（postext 1.39 から）。続きのために追加されたページにはこの提案は出ません。これはMarkdownの変更で、<code>sourceStart</code>と<code>sourceEnd</code>がページフェンスの<code>template</code>の値の範囲を示します。</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

@@ -382,7 +382,7 @@ Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, 
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Una altra plantilla del llibre amb un marc del mateix nom en què el contingut cap tal com és, provada sobre la pàgina en l'ordre de <code>pageTemplates</code>. És un canvi al Markdown: <code>sourceStart</code> i <code>sourceEnd</code> donen l'interval del valor <code>template</code> de la tanca de la pàgina.</td>
+      <td>Una altra plantilla del llibre amb un marc del mateix nom en què el contingut cap tal com és, provada sobre la pàgina en l'ordre de <code>pageTemplates</code>. La prova compon la pàgina com ho faria la compilació amb aquesta plantilla: els buits per als quals no té marc van al seu marc de flux, es recorre la seva pròpia escala i només es proposa si cap marc no desborda i res no continua en una altra pàgina (des de postext 1.39). Una pàgina afegida per continuació no rep aquesta proposta. És un canvi al Markdown: <code>sourceStart</code> i <code>sourceEnd</code> donen l'interval del valor <code>template</code> de la tanca de la pàgina.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>

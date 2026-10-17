@@ -872,6 +872,13 @@ Recorded where the implementation settles a point the sections above leave open,
   `__capHeading` (the heading's `sourceStart`) when its first block is a paragraph that followed,
   in the Markdown, a heading a `takes` frame took; `headingBefore` (`dropCap.ts`) reads it, so that
   paragraph takes the level's drop cap.
+- **`useTemplate` regroups (#937).** `fitsWithTemplate` lays the page with the other template as
+  the build would: `regroupStories` keeps a story whose head names a frame of it, sends one a
+  `takes` frame took to its frame that takes the same level, and the rest to its flow frame after
+  its own content (merged boxes appended past the pass's content blocks, a derived
+  `FrameLayoutPass` whose `measureCtxFor` reads the first story's index), then runs
+  `layoutComposedPage` with its ladder. Proposed only when no frame overflows, every story is laid
+  and nothing continues; never on a page continuation added.
 
 ## 6. Source map contract
 

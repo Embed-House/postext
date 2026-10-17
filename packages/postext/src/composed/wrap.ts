@@ -59,7 +59,7 @@ export function frameChain(template: ResolvedPageTemplate, head: string): Resolv
 }
 
 /** The head of the chain frame `name` belongs to. */
-function chainHead(template: ResolvedPageTemplate, name: string): string {
+export function chainHead(template: ResolvedPageTemplate, name: string): string {
   const prev = new Map<string, string>();
   for (const f of template.frames) {
     const n = nextFrameOf(f);

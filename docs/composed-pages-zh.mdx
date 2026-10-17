@@ -382,7 +382,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>书中另一个有同名框、能把内容原样放下的模板，按<code>pageTemplates</code>的顺序在这一页上试出。这是对Markdown的修改：<code>sourceStart</code>和<code>sourceEnd</code>给出页面围栏中<code>template</code>值的范围。</td>
+      <td>书中另一个有同名框、能把内容原样放下的模板，按<code>pageTemplates</code>的顺序在这一页上试出。试排时按构建使用该模板的方式排这一页：它没有对应框的插槽归入它的流动框，并走完它自己的调整阶梯；只有没有框溢出、也没有内容续排到其他页面时才提出（postext 1.39 起）。续排添加的页面不给出这项建议。这是对Markdown的修改：<code>sourceStart</code>和<code>sourceEnd</code>给出页面围栏中<code>template</code>值的范围。</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>
