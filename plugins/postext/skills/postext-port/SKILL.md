@@ -133,10 +133,24 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   right-to-left pages, and `sandbox_get_composed_checks` checks every
   edition at once; from 1.41 a story jumps into a page of a later chapter
   file; from 1.42 a box can be tracked (`body.letterSpacing`), a child
-  template can remove a base decoration element, and renaming a frame in the
-  Sandbox renames the slot of its page fences. Follow
+  template can remove a base decoration element, renaming a frame in the
+  Sandbox renames the slot of its page fences, one box style serves every
+  tint (a frame's `look`, the `palette` of a template or a page fence), a
+  title tab is as wide as its title (`width: "auto"`), a contents page is a
+  frame that `takes: "toc"` over its template's ground, a number badge reads
+  `{headingNumber}`, a map's touching names are `overlap: "allow"` and its
+  dots are `avoid` zones, a licensed font the bundle leaves out has an open
+  stand-in (`fonts[].fallback`), and a second figure with other words needs a
+  second resource (`figureWordsShared`). Follow
   [references/composed-pages.md](references/composed-pages.md). The script
-  lists what the installed version lacks and what to do instead.
+  lists what the installed version lacks and what to do instead. To a person
+  who has not made a composed page, point to the two docs pages rather than
+  retelling them: [Composed-page books](https://postext.dev/en/docs/composed-page-books)
+  (build a template, fill it from the Markdown, label a map, translate,
+  review overflows) and [Moving a book to composed pages](https://postext.dev/en/docs/migrating-to-composed-pages)
+  (a book that keeps its text in heading styles; the Sandbox's *Move the
+  text to the Markdown*, or by hand). Both come in the ten site languages,
+  and every page has a `.md` rendition (append `.md`).
 - **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page
   grounds in an opener design, live-text SVG labels), first rung first:
 
@@ -629,7 +643,10 @@ Pick the path per [sources.md](references/sources.md):
   `scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts` to lay
   the draft out and compare it with the source. `scripts/anchors.py` does a
   single map or diagram (`--page 6 --box x0,y0,x1,y1`) and writes other
-  editions' `::label` lines from a strings file (`--strings en=en.json`).
+  editions' `::label` lines from a strings file (`--strings en=en.json`); it
+  merges a label printed twice at one point and writes `overlap: "allow"`
+  for names the source prints touching, and `scripts/pdf_figures.py symbols`
+  lists a map's dots as `avoid` zones.
 
 Every extractor writes `chapters/<lang>/*.md`, `resources.json` and a
 `report.md` of decisions to review. Copy the chapters into `my-book/chapters/`
@@ -642,7 +659,9 @@ Read each chapter against the source pages and apply
 - styles as containers: `:::callout{type}`, `:::paragraphs{style}`;
 - parts at the top of their first chapter;
 - the contents as `:::toc`, always (playbooks A3), never retyped from the
-  source. Where each block (a part, a section heading) must stay with its
+  source; on a composed page (postext ≥ 1.42) it is a frame that
+  `takes: "toc"` over the template's ground, not a flow page with a heading
+  design. Where each block (a part, a section heading) must stay with its
   entries, use `toc.groups` / `:::toc{keep="part"}` when the installed
   Postext supports `toc.groups` (postext ≥ 1.34: check with
   `postext --version` and the docs' contents settings); otherwise a
@@ -680,7 +699,12 @@ lines, `altText`, and bitmap `width`/`height`. Keep the source's wording;
 list deliberate deviations.
 
 ### 6. Fonts and images
-- Fonts: `scripts/fonts.py info|instance|subset|scale|split`.
+- Fonts: `scripts/fonts.py info|instance|subset|scale|split|width`. A licensed
+  family the pack leaves out gets an open stand-in (postext ≥ 1.42,
+  `fonts[].fallback`) chosen by measurement: `fonts.py width LICENSED.ttf
+  CANDIDATE.ttf… --text-from chapters/<lang>/` for regular, bold and italic
+  (within about 2 %), then `preset_kit.py pack --fallback "Family=Open family"`
+  (project-format.md §4, playbooks E2).
 - Chinese faces: subset a TrueType build to the book's text first
   (`fonts.py subset NotoSerifTC[wght].ttf --out work/ --text-from chapters/ --ranges latin,punct,cjk-punct`),
   then cut static weights (`fonts.py instance`). Layout features (`vert`)

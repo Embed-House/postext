@@ -125,6 +125,12 @@ automatically.
   `:ref{id="…" style="pageNumber"}` page numbers and list it in the report
   as a documented gap. Never retype the source's page numbers, and never
   draw the contents in a design slot.
+- On a book of composed pages (postext ≥ 1.42) the contents page is one
+  too: a frame with `takes: "toc"` (or `:::toc` inside a `:::frame`) lays the
+  same rows, part rows, leaders and links over the page ground the template
+  draws, and the title heading is `{toc="false"}` as above
+  (composed-pages.md §6.11). Do not set it as a flow page with a heading
+  design to get the ground.
 
 ### A4. Parts / sections with their own colour
 Put the part fence **at the top of the first chapter file of the part**. Its
@@ -796,6 +802,13 @@ Make static instances per weight and italic at a fixed `opsz`/`wdth`
 Subset them to the characters used (`fonts.py subset FONT… --out fonts/ --text-from chapters/ --woff2`)
 and mark them `"redistributable": false`. Check the embedding permission
 (`fonts.py info`, where `restricted` means the face may not be embedded).
+Name the open family that stands in for it (postext ≥ 1.42,
+`fonts[].fallback`, project-format.md §4): the plain bundle without the
+faces is then set in a face of about the same width, so the checks of a
+composed book mean something on it. Pick it by measurement
+(`fonts.py width LICENSED.ttf CANDIDATE.ttf… --text-from chapters/<lang>/`,
+within about 2 % in regular, bold and italic) and pack with
+`preset_kit.py pack --fallback "Family=Open family"`.
 
 ### E3. Faces missing weights or glyphs
 - Semibold used as bold: add a 600 face plus `boldFontWeight: 600`.

@@ -14,7 +14,10 @@ my-book/
   fingerprint.json            optional {"fingerprint": "<sha1>"}: lets the sandbox notice edits
   layouts.json                engine-written pagination cache — never write it by hand
   layouts.<lang>.json         the same, one per edition of a multilingual book (read before layouts.json;
-                              postext ≥ 1.9.1): saved from the sandbox, valid for one engine version
+                              postext ≥ 1.9.1): saved from the sandbox, valid for one engine version.
+                              From 1.42 the Sandbox's export writes one for every edition that has a
+                              current pagination (layouts.json is the primary edition's); a stale one
+                              is ignored
   build_preset.py, source/, resources.json, CREDITS.md …   yours; ignored by the loader
 ```
 
@@ -125,7 +128,11 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   that edition; the primary edition keeps the manifest's `name`. Before
   1.34.1 every edition is named after the manifest `name`. The title the
   book prints is its first chapter's front matter `title` (what `{title}`
-  prints).
+  prints). From 1.42 the Sandbox shows an imported book's edition titles
+  (Books row, window title) as the edition on screen changes, until the reader
+  renames the project: that name then stands in every language, and an export
+  writes each edition's own title back as `localized.<lang>.name` only when
+  the project was not renamed.
 - `start` (postext after 1.26.3): where the book starts, for a bundle that
   holds part of a longer publication (an article that runs on pages 58 to 61
   of an issue, one chapter of a textbook ported on its own). It is the
@@ -288,6 +295,34 @@ embeds them with `::resource{id="…"}` (placement `here`).
   family with a stand-in face and embeds only bundled faces in its PDF.
 - Provide 400/700 normal + italic where the text uses them; semibold bold →
   add 600 and `bodyText.boldFontWeight: 600`.
+- `fallback` (postext ≥ 1.42): `"fallback": "<open family>"` on a `fonts` entry
+  names the family that stands in for a licensed one the pack leaves out. Write
+  such a family as `{ "name": "Adobe Garamond Pro", "redistributable": false,
+  "variants": [], "fallback": "EB Garamond" }`: it stays in the manifest with
+  no file, and every host (the Sandbox, `postext`, `postext-pdf`'s bundle font
+  provider, `loadBundleFonts`) sets the faces it has no file of in the
+  fallback's cuts of the same weight and slant, under the licensed name. A
+  family that keeps files keeps them and takes only a slant it has none of
+  (an italic) from the fallback. Why: the plain bundle used to lay out in the
+  generic fallback face, wider than the real one, so about every twentieth
+  frame of a composed book reported `frameOverflow` and `missingFont` /
+  `bundle` warnings filled the report; with a stand-in of about the same
+  width the plain bundle checks near the real one, and `composed_check.py` and
+  the Checks panel can be run on it. The final PDF is still made from the
+  bundle that carries the faces (the PDF of the plain one embeds the open
+  face). The import prints one line per family (`none of its font files are in
+  the bundle, those faces are set in <fallback>`) in place of a `missingFont`
+  per face; a family with no `fallback` behaves as before.
+- Pick the stand-in by measurement, not by name: `fonts.py width LICENSED.ttf
+  CANDIDATE.ttf… --text-from chapters/<lang>/` sets a paragraph of the book in
+  each face at the body size and prints the candidate's width as a ratio of the
+  licensed face's (serif candidates: Source Serif 4, Noto Serif, PT Serif, EB
+  Garamond, Libre Baskerville, Lora; sans: Source Sans 3, Open Sans, Noto Sans,
+  Lato). Run it for regular, bold and italic and keep the candidate within
+  about 2 % in all three. If none is within 5 %, say so in the port notes and
+  deliver both bundles with the warning that only the one with its faces is
+  checked. `preset_kit.py pack --fallback "Adobe Garamond Pro=EB Garamond"`
+  writes the entry; record the choice and the measured ratio in the port notes.
 - `redistributable: false`: rendering and PDF embedding work, but a `.postext`
   export leaves the files out (licensed faces). Subset them (`fonts.py subset`). A bundle that names
   font files it does not carry imports into the Sandbox with the family reported as unknown (postext
