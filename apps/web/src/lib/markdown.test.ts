@@ -65,6 +65,18 @@ describe("mdxToMarkdown", () => {
     );
   });
 
+  it("renders a Sandbox capture as an image at its address on the site, with its caption", () => {
+    const src = [
+      "Before.",
+      "",
+      '<Screenshot src="/docs-shots/en/template.webp" alt="The Design panel [with] a template." caption="Frames of the template." />',
+      "",
+      "After.",
+    ].join("\n");
+    const md = mdxToMarkdown(src, "en", PAGE);
+    expect(md).toBe("Before.\n\n![The Design panel with a template.](https://postext.dev/docs-shots/en/template.webp)\n\n*Frames of the template.*\n\nAfter.");
+  });
+
   it("leaves fenced code untouched", () => {
     const src = ["```tsx", "export const a = <div style={{ a: 1 }} />;", "<table>", "", "", "", "b", "```"].join("\n");
     expect(mdxToMarkdown(src, "en", PAGE)).toBe(src);

@@ -1120,6 +1120,22 @@ html {
 .docs-content .docs-figure-box {
   margin-bottom: 0.5rem;
 }
+/* A capture of the Sandbox: the whole picture, whatever the column, with a
+   thin edge so its dark interface does not blend into a dark page. */
+.docs-content .docs-shot {
+  margin-block: 1.5rem;
+}
+.docs-content .docs-shot-link {
+  display: block;
+  line-height: 0;
+}
+.docs-content .docs-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 0.6rem;
+  border: 1px solid var(--rule);
+}
 .docs-content .docs-figure-box > .scroll-wrapper {
   margin-bottom: 0;
   display: flex;
