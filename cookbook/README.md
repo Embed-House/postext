@@ -1078,7 +1078,11 @@ edition, before it is published:
   code, maths, HTML, a table, front matter or a comic's raw body, so the markup and the language
   stay as they were. A note per composed page says what it did, from its reflow log: `p. 1
   (tema-cajas) rearranged: dinero grew 8.7 mm; gasto moved down 8.7 mm`, `goes on: continues
-  texto → cp0:resto`, `fits as it was`. A warning the longer text raises fails, except a
+  texto → resto of seguido on p. 2 (cp0:resto)`, `fits as it was`. Where the log is silent (a
+  frame with an `auto` height and no `minHeight` declares no height, so it never grows in the log
+  and what is anchored to it never moves), the note compares each frame's box with the same page
+  of the run on the text as written: `entradilla 6.2 mm taller than as written; col-1 moved down
+  6.2 mm from where it was as written`. A warning the longer text raises fails, except a
   `frameOverflow` whose proposals carry values, which is a warning that names them (the
   copy-fitter's next move); one with no such proposal fails. A stretched run that throws, does
   not converge or builds nothing fails too. The first note says how much longer the text came
