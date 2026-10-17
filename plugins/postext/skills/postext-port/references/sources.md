@@ -112,7 +112,11 @@ Gotchas:
 - `postext import-docx` (postext ≥ 1.39) sets the character spacing of Word paragraph and heading styles as
   `letterSpacing` (em of the style's size) on the bundle's config styles that set none (`styleTracking` in
   `--json`: `applied`, `skipped`; never into the Markdown), and `docx` export writes the levels' and heading
-  styles' `letterSpacing` back as the Word style's character spacing. Before 1.39 set the tracking by hand. The Sandbox's import dialog does not offer it yet.
+  styles' `letterSpacing` back as the Word style's character spacing. Before 1.39 set the tracking by hand. The Sandbox's import dialog and `sandbox_import_word` do the same from 1.40
+  (**Take the character spacing of the Word styles**, on while the document's styles carry any; the dry run lists
+  `characterSpacing.setOn` and `leftAsTheBookHasIt`; a style the book already tracks keeps its value), as their
+  own step in the configuration history. For a manuscript set in Word styles with spacing, import first, then
+  read the styles' `letterSpacing` in the Design panel rather than copying it by hand.
 - `inventory.py doc.docx` gives sections (page size, margins, columns, mirror
   margins), paragraph styles in use with counts and samples, character styles,
   fonts, tables, images, footnotes and equations.

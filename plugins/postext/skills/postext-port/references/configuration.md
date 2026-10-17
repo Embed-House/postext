@@ -121,8 +121,8 @@ Conversion at `page.dpi` (default 300):
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
-| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; frame `writingMode`/`direction`, label checks from 1.39.0; round 2, composed-pages.md) |
-| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0, vertical and checked from 1.39.0) |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; frame `writingMode`/`direction`, label checks from 1.39.0; label styles that switch off a borrowed italic, frames in their own mode on right-to-left pages from 1.40.0; round 2, composed-pages.md) |
+| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0, vertical and checked from 1.39.0; `fontStyle` / `textTransform` left unset follow a borrowed paragraph style from 1.40.0) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -1878,6 +1878,9 @@ says it for the installed one):
 1.39.0  frame writingMode and direction applied; labelOverlap/labelOverflow, vertical labels; calloutStyles
         extends; start/end edges; :::columns and frame columns cut by the widow/orphan rules; a figure's
         alt/caption/note in the Markdown; cover on upright pictures
+1.40.0  label style fontStyle/textTransform unset (a borrowed paragraph style's italics and capitals
+        hold; 'normal' / 'none' turn them off); vertical labels on right-to-left pages; frame writingMode
+        on right-to-left pages, pictures upright in a vertical frame; comic text panels on strips and spreads
 not yet template bodyStyle/palette; 'auto' width reads as 'fill'
 ```
 
@@ -1915,17 +1918,24 @@ Frame
 │                 mark?: string|false ({page} = the page it goes on on, 1.38), fromMark?: string (1.38) }
 └─ optional?, crossGutter?, remove?
    writingMode?  'horizontal-tb'|'vertical-rl' (applied from 1.39; before, read only): the frame's content is laid
-                 in its box turned a quarter turn (not on a right-to-left page); an 'auto' height is the least that
+                 in its box turned a quarter turn (right-to-left pages too from 1.40; a picture in it stands
+                 upright); an 'auto' height is the least that
                  holds the lines in the width, so give long vertical text a fixed height
    direction?    'ltr'|'rtl' (applied from 1.39): the frame's story, blocks with their own {dir} keep theirs
 
 Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
          align?: 'start'|'center'|'end'|'space-between', remove? }
 
-LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle? ('normal'),
-              color?, textTransform? ('none'), letterSpacing?, halo?: { color, width }, background?,
+LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle?,
+              color?, textTransform?, letterSpacing?, halo?: { color, width }, background?,
               padding?, minScale? (0.85), writingMode? ('vertical-rl', ≥ 1.39) }
 ```
+
+- **Label styles and a borrowed paragraph style** (≥ 1.40): `fontStyle` and `textTransform` stay unset
+  unless written, so the `paragraphStyle`'s italics and capitals hold; write `fontStyle: 'normal'` /
+  `textTransform: 'none'` to turn them off. Without a `paragraphStyle` the plain look is the default
+  and those two values are dropped on save. Before 1.40 the default filled them in and a borrowed
+  italic or capital could not be switched off.
 
 - **Merge** (`extends`): root first; scalars replace, `grid` per key, frames and groups by `name`
   (the fields written override; `fit`, `overflow`, `padding` per key; `placement` whole;
