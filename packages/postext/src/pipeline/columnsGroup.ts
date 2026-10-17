@@ -44,10 +44,11 @@ const EPS = 0.01;
 
 /** The places a galley may be cut, in order (the galley's start and end
  *  are not among them). A cut inside a text item leaves at least
- *  `minLines` of its lines on each side, counted over this galley's part
- *  of it. */
-export function galleyBreaks(items: readonly GalleyItem[], minLines: number): GalleyBreak[] {
+ *  `minLines` of its lines before it and `minAfter` (default `minLines`)
+ *  after it, counted over this galley's part of it. */
+export function galleyBreaks(items: readonly GalleyItem[], minLines: number, minAfter = minLines): GalleyBreak[] {
   const min = Math.max(1, minLines);
+  const after = Math.max(1, minAfter);
   const out: GalleyBreak[] = [];
   items.forEach((it, i) => {
     if (i > 0) {
@@ -56,7 +57,7 @@ export function galleyBreaks(items: readonly GalleyItem[], minLines: number): Ga
     }
     const lines = it.lineBottoms;
     if (!lines || lines.length < 2) return;
-    for (let l = min; l <= lines.length - min; l++) {
+    for (let l = min; l <= lines.length - after; l++) {
       const y = it.y + lines[l - 1]!;
       out.push({ item: i, line: l, endY: y, startY: y });
     }

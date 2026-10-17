@@ -1481,35 +1481,25 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   /** A column start in a group's stack: before item `block`, or past its
    *  first `line` lines, at `y` in the stack. */
   interface ColumnCut { y: number; block: number; line: number }
-  /** Balanced cuts: each column start at the item or line boundary nearest
-   *  an even share of the stack's height. */
-  const balancedCuts = (stack: readonly GroupItem[] & { end?: number }, cols: number): ColumnCut[] => {
+  /** Balanced cuts (#934): the cuts at which the galley fills `cols`
+   *  columns with the tallest as short as it can be, as a group that goes
+   *  on is cut (`minFillHeight`). A cut inside a paragraph leaves at least
+   *  the body's widow lines at the foot of a column and its orphan lines
+   *  at the head of the next (`bodyText.avoidWidows` / `widowMinLines`,
+   *  `avoidOrphans` / `orphanMinLines`), and the space before an item
+   *  vanishes at a column's head, so a paragraph boundary beats a line
+   *  cut that leaves a lone line. */
+  const balancedCuts = (stack: readonly GroupItem[], cols: number): ColumnCut[] => {
     if (stack.length === 0) return [];
-    const total = stack.end ?? 0;
-    // Cut candidates: item boundaries and the line boundaries of text blocks.
-    const candidates: ColumnCut[] = [];
-    stack.forEach((item, i) => {
-      const blk = item.blocks[0]!;
-      if (i > 0) candidates.push({ y: blk.bbox.y, block: i, line: 0 });
-      const cuttable = item.unit.kind === 'block' && blk.type !== 'resource' && blk.type !== 'mathDisplay' && blk.lines.length > 1 && !blk.mathRender;
-      if (cuttable) {
-        for (let l = 1; l < blk.lines.length; l++) candidates.push({ y: blk.lines[l]!.bbox.y, block: i, line: l });
-      }
-    });
-    const cuts: ColumnCut[] = [];
-    let prevY = 0;
-    for (let c = 1; c < cols; c++) {
-      const target = (total * c) / cols;
-      let best: ColumnCut | undefined;
-      for (const cand of candidates) {
-        if (cand.y <= prevY + 0.01) continue;
-        if (!best || Math.abs(cand.y - target) < Math.abs(best.y - target)) best = cand;
-      }
-      if (!best) break;
-      cuts.push(best);
-      prevY = best.y;
-    }
-    return cuts;
+    const body = input.resolved.bodyText;
+    const galley = galleyOf(stack);
+    const breaks = galleyBreaks(
+      galley,
+      body.avoidWidows ? Math.max(1, body.widowMinLines) : 1,
+      body.avoidOrphans ? Math.max(1, body.orphanMinLines) : 1,
+    );
+    const fill = fillGalley(galley, breaks, cols, minFillHeight(galley, breaks, cols));
+    return fill.cuts.map((j) => ({ y: breaks[j]!.startY, block: breaks[j]!.item, line: breaks[j]!.line }));
   };
   /** The stack indices `breaks` starts columns at (`breaks="3"`: the third
    *  child opens the second column), at most `cols - 1` of them, rising. */
