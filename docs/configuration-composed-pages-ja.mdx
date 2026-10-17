@@ -3,13 +3,13 @@
 export const metadata = {
   title: '設定：テンプレートページ',
   sidebarTitle: 'テンプレートページの設定',
-  description: 'テンプレートページのためのページテンプレート：フレーム、グループ、装飾、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
+  description: 'テンプレートページのためのページテンプレート：枠、グループ、装飾、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
   lang: 'ja',
   lastUpdated: '2026-10-16',
   readingTime: '6分',
   order: 18,
   parent: 'configuration',
-  plainSummary: "このページでは、ページテンプレートを説明します。テンプレートは設定の中に描いたページで、フレームと呼ぶ名前付きの箱と、それぞれの位置、どこまで大きくなれるか、どう見えるかを決めます。テンプレートページのMarkdownは、そのフレームに名前で中身を入れます。そのため本文に位置を書くことはなく、設定に本文を書くこともありません。テンプレートはほかのテンプレートをもとにして一部のフレームだけを変えられ、左ページと右ページで違う形にもできます。画像の上に置く文字のラベルスタイルと、テンプレートが出すすべての警告とその直し方も載せています。",
+  plainSummary: "このページでは、ページテンプレートを説明します。テンプレートは設定の中に描いたページで、枠と呼ぶ名前付きの箱と、それぞれの位置、どこまで大きくなれるか、どう見えるかを決めます。テンプレートページのMarkdownは、その枠に名前で中身を入れます。そのため本文に位置を書くことはなく、設定に本文を書くこともありません。テンプレートはほかのテンプレートをもとにして一部の枠だけを変えられ、左ページと右ページで違う形にもできます。画像の上に置く文字のラベルスタイルと、テンプレートが出すすべての警告とその直し方も載せています。",
 };
 
 # 設定：テンプレートページ
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## ページテンプレート
 
-テンプレートページは、形を設定の**テンプレート**から、中身を`::::page{template="…"}`フェンスのMarkdownから受け取るページです。テンプレートは**フレーム**と呼ぶ長方形に名前を付け、Markdownはそれぞれの中身を名前（スロット）でフレームに送ります。Markdownに位置や大きさが現れることはなく、テンプレートに本文が現れることもありません。本のテンプレートは`pageTemplates`プロパティに入れます。
+テンプレートページは、形を設定の**テンプレート**から、中身を`::::page{template="…"}`フェンスのMarkdownから受け取るページです。テンプレートは**枠**と呼ぶ長方形に名前を付け、Markdownはそれぞれの中身を名前（スロット）で枠に送ります。Markdownに位置や大きさが現れることはなく、テンプレートに本文が現れることもありません。本のテンプレートは`pageTemplates`プロパティに入れます。
 
 ```ts
 const config: PostextConfig = {
@@ -46,7 +46,7 @@ const config: PostextConfig = {
 };
 ```
 
-`id`とフレーム1つだけを指定したテンプレートは、そのフレームが版面いっぱいに広がる1ページになります。ほかの項目はすべて省略できます。
+`id`と枠1つだけを指定したテンプレートは、その枠が版面いっぱいに広がる1ページになります。ほかの項目はすべて省略できます。
 
 <table>
   <thead>
@@ -80,31 +80,31 @@ const config: PostextConfig = {
       <td><code>area</code></td>
       <td><code>'content' | 'trim' | 'bleed'</code></td>
       <td><code>'content'</code></td>
-      <td>フレームの位置の基準になる長方形です。<code>'content'</code>はページの版面で、本文と同じく左右のページで鏡像になります。<code>'trim'</code>は断裁後のページ、<code>'bleed'</code>は塗り足しを含めたページです。</td>
+      <td>枠の位置の基準になる長方形です。<code>'content'</code>はページの版面で、本文と同じく左右のページで鏡像になります。<code>'trim'</code>は断裁後のページ、<code>'bleed'</code>は塗り足しを含めたページです。</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
       <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
       <td>なし</td>
-      <td>領域をセルに分け、フレームやグループを<code>placement</code>の代わりにセルで配置できるようにします（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>、1から数えます）。間隔の既定値は<code>0</code>です。</td>
+      <td>領域をセルに分け、枠やグループを<code>placement</code>の代わりにセルで配置できるようにします（<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>、1から数えます）。間隔の既定値は<code>0</code>です。</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>フレームをテンプレートの順に並べます。この順序で先に測り、優劣がつかないときもこの順序で決めます。<a href="#フレーム">フレーム</a>を参照してください。</td>
+      <td>枠をテンプレートの順に並べます。この順序で先に測り、優劣がつかないときもこの順序で決めます。<a href="#枠">枠</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
       <td><code>FrameGroupConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>空間を分け合うフレームの縦の積み重ねと横の並びです。<a href="#グループ">グループ</a>を参照してください。</td>
+      <td>空間を分け合う枠の縦の積み重ねと横の並びです。<a href="#グループ">グループ</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>なし</td>
-      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページのフェンスの属性を表す<code>&#123;attr.x&#125;</code>）。要素はフレームやグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾はフレームの後に置かれ、本文を押しのけることはありません。</td>
+      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページのフェンスの属性を表す<code>&#123;attr.x&#125;</code>）。要素は枠やグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾は枠の後に置かれ、本文を押しのけることはありません。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -134,7 +134,7 @@ const config: PostextConfig = {
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>このテンプレート</td>
-      <td>フレームが次のページに続くとき（<code>overflow.continueIn: 'next-page'</code>）に加えるページのテンプレートです。未設定なら、加えたページはこのテンプレートをもう一度組んで続きのフレームだけを埋めたものになり、ほかのフレームは場所をとりません。ここに見開きのテンプレートを指定すると、続きも見開きになります。<a href="/ja/docs/composed-pages#文章が追加ページに続くとき">テンプレートページ › 文章が追加ページに続くとき</a>を参照してください。</td>
+      <td>枠が次のページに続くとき（<code>overflow.continueIn: 'next-page'</code>）に加えるページのテンプレートです。未設定なら、加えたページはこのテンプレートをもう一度組んで続きの枠だけを埋めたものになり、ほかの枠は場所をとりません。ここに見開きのテンプレートを指定すると、続きも見開きになります。<a href="/ja/docs/composed-pages#文章が追加ページに続くとき">テンプレートページ › 文章が追加ページに続くとき</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -157,11 +157,11 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-### フレーム
+### 枠
 
-フレームは、組まれた中身を受け取る名前付きの長方形です。`name`がMarkdownの指定するスロットで、テンプレートの中で一意です（アンカーはフレームとグループを同じ書き方で指すので、グループもフレームの名前を使えません）。
+枠は、組まれた中身を受け取る名前付きの長方形です。`name`がMarkdownの指定するスロットで、テンプレートの中で一意です（アンカーは枠とグループを同じ書き方で指すので、グループも枠の名前を使えません）。
 
-テンプレートにグリッドがあればフレームは`grid`のセルで、なければ`placement`で配置します。`placement`はデザイン要素の配置と同じしくみで、アンカー（`'container'`は領域、`'page'`、`'bleed'`、ほかのフレームやグループなら`'#name'`）、辺、オフセット、サイズからなります。ほかのフレームに固定したフレームは、そのフレームと一緒に動きます。どちらもなければ、フレームは領域の左上の角から始まり、幅は領域と同じで、高さは高さの指定に従います。中身をフレームに流し込み、つなぎ、切り詰める仕組みは、[テンプレートページ › ページの組み方](/ja/docs/composed-pages#ページの組み方)で説明しています。
+テンプレートにグリッドがあれば枠は`grid`のセルで、なければ`placement`で配置します。`placement`はデザイン要素の配置と同じしくみで、アンカー（`'container'`は領域、`'page'`、`'bleed'`、ほかの枠やグループなら`'#name'`）、辺、オフセット、サイズからなります。ほかの枠に固定した枠は、その枠と一緒に動きます。どちらもなければ、枠は領域の左上の角から始まり、幅は領域と同じで、高さは高さの指定に従います。中身を枠に流し込み、つなぎ、切り詰める仕組みは、[テンプレートページ › ページの組み方](/ja/docs/composed-pages#ページの組み方)で説明しています。
 
 <table>
   <thead>
@@ -183,7 +183,7 @@ const config: PostextConfig = {
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>領域全体</td>
-      <td>アンカー、辺、オフセット、サイズで、<a href="/ja/docs/configuration-headers-footers#要素の配置">要素の配置</a>と同じです。グリッドのセルでフレームを配置するときは無視されます。</td>
+      <td>アンカー、辺、オフセット、サイズで、<a href="/ja/docs/configuration-headers-footers#要素の配置">要素の配置</a>と同じです。グリッドのセルで枠を配置するときは無視されます。</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（フレームを固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。テキストのフレームには行長が要るので、幅の<code>'auto'</code>が意味を持つのは画像を1枚だけ入れるフレームです（フレームの高さに合わせたときの画像の幅になります）。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
+      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（枠を固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。テキストの枠には行長が要るので、幅の<code>'auto'</code>が意味を持つのは画像を1枚だけ入れる枠です（枠の高さに合わせたときの画像の幅になります）。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
@@ -207,7 +207,7 @@ const config: PostextConfig = {
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>枠なし</td>
-      <td><a href="/ja/docs/configuration-callouts#囲みスタイル">囲みスタイル</a>のidです。フレームは囲みスタイルで描きます（背景、枠線、パディング、帯、アイコン、ラベルのタブ、タイトル）。タブの文字はMarkdownから受け取ります（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。囲みの設定のうち、本文の中での箱の置き場所に関するもの（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>など）はフレームには効きません。</td>
+      <td><a href="/ja/docs/configuration-callouts#囲みスタイル">囲みスタイル</a>のidです。枠は囲みスタイルで描きます（背景、枠線、パディング、帯、アイコン、ラベルのタブ、タイトル）。タブの文字はMarkdownから受け取ります（<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>）。囲みの設定のうち、本文の中での箱の置き場所に関するもの（<code>placement</code>、<code>span</code>、<code>columns</code>、<code>width</code>、<code>fixed</code>など）は枠には効きません。</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -231,61 +231,61 @@ const config: PostextConfig = {
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
       <td><code>'top'</code></td>
-      <td>フレームが中身より高いとき、中身をどこに置くかです。</td>
+      <td>枠が中身より高いとき、中身をどこに置くかです。</td>
     </tr>
     <tr>
       <td><code>columns</code>、<code>columnGap</code></td>
       <td><code>number</code>、<code>Dimension</code></td>
       <td><code>1</code>、スタイルの値</td>
-      <td>フレームの中の段組みです。</td>
+      <td>枠の中の段組みです。</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
       <td><code>'none' | 'push'</code></td>
       <td><code>'none'</code></td>
-      <td><code>'push'</code>にすると、ほかのフレームの文字がこのフレームの長方形を避けて回り込みます。</td>
+      <td><code>'push'</code>にすると、ほかの枠の文字がこの枠の長方形を避けて回り込みます。</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>'box' | 'contour'</code></td>
       <td><code>'box'</code></td>
-      <td><code>exclude: 'push'</code>と併せて、ほかのフレームの文字が何を避けて回り込むかを決めます。<code>'contour'</code>はフレームが持つ画像の形です（多角形またはアルファチャンネル。<a href="/ja/docs/document-format-resources#輪郭に沿った回り込み">輪郭に沿った回り込み</a>を参照）。回転したフレームや、画像の形がわからないフレームは、長方形で押しのけます。</td>
+      <td><code>exclude: 'push'</code>と併せて、ほかの枠の文字が何を避けて回り込むかを決めます。<code>'contour'</code>は枠が持つ画像の形です（多角形またはアルファチャンネル。<a href="/ja/docs/document-format-resources#輪郭に沿った回り込み">輪郭に沿った回り込み</a>を参照）。回転した枠や、画像の形がわからない枠は、長方形で押しのけます。</td>
     </tr>
     <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>スロットを指定していない中身を、このフレームが受け取ります。</td>
+      <td>スロットを指定していない中身を、この枠が受け取ります。</td>
     </tr>
     <tr>
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code></td>
       <td>なし</td>
-      <td>スロットを指定していないそのレベルの最初の見出しを、このフレームが受け取ります。そのため、ページのタイトルはフェンスの先頭に<code># Title</code>と書くだけです。</td>
+      <td>スロットを指定していないそのレベルの最初の見出しを、この枠が受け取ります。そのため、ページのタイトルはフェンスの先頭に<code># Title</code>と書くだけです。</td>
     </tr>
     <tr>
       <td><code>next</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>連結です。入りきらない中身は、同じページのその名前のフレームに続きます。</td>
+      <td>連結です。入りきらない中身は、同じページのその名前の枠に続きます。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前のフレーム、なければ<code>flow</code>のフレーム）、<code>'page:&lt;id&gt;'</code>（後ろのページフェンス<code>::::page&#123;id=…&#125;</code>のフレームで、<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>で指定したもの、なければそのページ自身の中身が空のまま残すもの。<code>&lt;id&gt;</code>は<code>&#123;attr.name&#125;</code>でもよく、ページフェンスから読まれます。<a href="/ja/docs/composed-pages#後ろのページへ飛ぶ">テンプレートページ › 後ろのページへ飛ぶ</a>を参照）のいずれかです。追加ページのフレームに自分の規則がなければ、内容を運んできた規則（飛んだ後は<code>'next-page'</code>）で続け、追加ページは16ページまでです。</td>
+      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかの枠で、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じ枠）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前の枠、なければ<code>flow</code>の枠）、<code>'page:&lt;id&gt;'</code>（後ろのページフェンス<code>::::page&#123;id=…&#125;</code>の枠で、<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>で指定したもの、なければそのページ自身の中身が空のまま残すもの。<code>&lt;id&gt;</code>は<code>&#123;attr.name&#125;</code>でもよく、ページフェンスから読まれます。<a href="/ja/docs/composed-pages#後ろのページへ飛ぶ">テンプレートページ › 後ろのページへ飛ぶ</a>を参照）のいずれかです。追加ページの枠に自分の規則がなければ、内容を運んできた規則（飛んだ後は<code>'next-page'</code>）で続け、追加ページは16ページまでです。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>言語による</td>
-      <td>別のページへ続けるために切れた部分の終わりに付ける目印です。未設定なら、フレームのスタイルの<code>continuesMarker</code>を使い、これは文書の言語に従います（「Continued」「Continúa」「À suivre」など、分割した表と同じ語）。文字列を指定すればその文字列で、その中の<code>&#123;page&#125;</code>は残りが続くページのノンブルになります。<code>false</code>なら何も付けません。同じページで<code>next</code>によってつないだフレームには付きません。</td>
+      <td>別のページへ続けるために切れた部分の終わりに付ける目印です。未設定なら、枠のスタイルの<code>continuesMarker</code>を使い、これは文書の言語に従います（「Continued」「Continúa」「À suivre」など、分割した表と同じ語）。文字列を指定すればその文字列で、その中の<code>&#123;page&#125;</code>は残りが続くページのノンブルになります。<code>false</code>なら何も付けません。同じページで<code>next</code>によってつないだ枠には付きません。</td>
     </tr>
     <tr>
       <td><code>overflow.fromMark</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>内容が続く先のページで、断片の先頭に置く文字列です。<code>&#123;page&#125;</code>は続きの出どころのページのノンブルです（<code>"&#123;page&#125; ページから続く"</code>）。受け取るフレーム自身の設定が、送るフレームのものより優先します。</td>
+      <td>内容が続く先のページで、断片の先頭に置く文字列です。<code>&#123;page&#125;</code>は続きの出どころのページのノンブルです（<code>"&#123;page&#125; ページから続く"</code>）。受け取る枠自身の設定が、送る枠のものより優先します。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -303,31 +303,31 @@ const config: PostextConfig = {
       <td><code>fit.scaleImages</code>、<code>fit.imageMinScale</code></td>
       <td><code>boolean</code>、<code>number</code></td>
       <td><code>true</code>、<code>0.8</code></td>
-      <td>このフレームの中身が収まらないとき、フレームとそのグループのほかのフレームの画像を小さくしてよいか、どこまで小さくしてよいかです。</td>
+      <td>この枠の中身が収まらないとき、枠とそのグループのほかの枠の画像を小さくしてよいか、どこまで小さくしてよいかです。</td>
     </tr>
     <tr>
       <td><code>fit.preferContinue</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>overflow.continueIn</code>で中身を別のページへ送るフレームは、画像やテキストを小さくする前にそのページへ続くので、記事はページからページへ同じ大きさを保ちます。<code>false</code>なら先に縮め、それでも足りないときだけ続きます。</td>
+      <td><code>overflow.continueIn</code>で中身を別のページへ送る枠は、画像やテキストを小さくする前にそのページへ続くので、記事はページからページへ同じ大きさを保ちます。<code>false</code>なら先に縮め、それでも足りないときだけ続きます。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>フレームが動かず、大きさも変わりません。絵柄と位置をそろえておく必要のあるボックスに使います。グループはそれを避けて並びます。</td>
+      <td>枠が動かず、大きさも変わりません。絵柄と位置をそろえておく必要のあるボックスに使います。グループはそれを避けて並びます。</td>
     </tr>
     <tr>
       <td><code>grow</code>、<code>shrink</code>、<code>priority</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>フレームがグループの空間をどう分け合うかです。<code>grow</code>は余った空間の取り分、<code>shrink</code>はフレームが空間を返せるかどうかを決め、<code>priority</code>の低いフレームから先に返します。</td>
+      <td>枠がグループの空間をどう分け合うかです。<code>grow</code>は余った空間の取り分、<code>shrink</code>は枠が空間を返せるかどうかを決め、<code>priority</code>の低い枠から先に返します。</td>
     </tr>
     <tr>
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Markdownがこのフレームに何も送らなくても警告しません。</td>
+      <td>Markdownがこの枠に何も送らなくても警告しません。</td>
     </tr>
     <tr>
       <td><code>crossGutter</code></td>
@@ -339,24 +339,24 @@ const config: PostextConfig = {
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>フレームの内容領域に罫を引きます。各行の下端に1本ずつ、高さに収まるだけ引きます。<code>every</code>は間隔で、<code>'line'</code>（既定値。フレームの文章の行送り）か長さです。<code>color</code>の既定値は中間の灰色、<code>width</code>は罫の太さ（0.5 pt）、<code>inset</code>は罫の両端に残す余白で、<code>&#123; left, right &#125;</code>とも書けます。下の「罫線付きフレーム」を参照。postext 1.38 から。</td>
+      <td>枠の内容領域に罫を引きます。各行の下端に1本ずつ、高さに収まるだけ引きます。<code>every</code>は間隔で、<code>'line'</code>（既定値。枠の文章の行送り）か長さです。<code>color</code>の既定値は中間の灰色、<code>width</code>は罫の太さ（0.5 pt）、<code>inset</code>は罫の両端に残す余白で、<code>&#123; left, right &#125;</code>とも書けます。下の「罫線付き枠」を参照。postext 1.38 から。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>ページの値</td>
-      <td>独自の書字方向や文字方向で組むフレームです。横組みのページの縦組みのボックス、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向のフレームは、四分の一回転したボックスの中で組まれます。行はボックスの高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>はフレームの内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けたボックスと同じで、自分で<code>dir</code>を書いた段落やボックスはそれを保ちます。postext 1.39 から。右から左へ進むページの縦組みフレームはページの書字方向のままです。もう一方の書字方向のフレーム内の画像はフレームと一緒に回転します。リフロー型 EPUB では、フレームの文字は本の書字方向で組まれます。</td>
+      <td>独自の書字方向や文字方向で組む枠です。横組みのページの縦組みのボックス、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向の枠は、四分の一回転したボックスの中で組まれます。行はボックスの高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>は枠の内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けたボックスと同じで、自分で<code>dir</code>を書いた段落やボックスはそれを保ちます。postext 1.39 から。右から左へ進むページの縦組み枠はページの書字方向のままです。もう一方の書字方向の枠内の画像は枠と一緒に回転します。リフロー型 EPUB では、枠の文字は本の書字方向で組まれます。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>ほかのテンプレートを拡張するテンプレートやバリアントの中で、同じ名前の継承したフレームを取り除きます。</td>
+      <td>ほかのテンプレートを拡張するテンプレートやバリアントの中で、同じ名前の継承した枠を取り除きます。</td>
     </tr>
   </tbody>
 </table>
 
-**罫線付きフレーム。** ドリルの解答欄は`rules`を持つフレームです。罫はフレームの高さに従うので、何本引くかはMarkdownが決めます。固定の高さを持つ空のフレームには入るだけの罫が引かれ、`:::space{lines=4}`を受け取る`'auto'`のフレームには4本、文章とともに伸びるフレームにはさらに多く引かれます。罫はフレームの背景の上、文章の下に描かれ、キャンバス、HTML、PDF、固定レイアウトのEPUBのどれにも出ます。Sandboxのフレームインスペクターでは「外観」で有効にします。
+**罫線付き枠。** ドリルの解答欄は`rules`を持つ枠です。罫は枠の高さに従うので、何本引くかはMarkdownが決めます。固定の高さを持つ空の枠には入るだけの罫が引かれ、`:::space{lines=4}`を受け取る`'auto'`の枠には4本、文章とともに伸びる枠にはさらに多く引かれます。罫は枠の背景の上、文章の下に描かれ、キャンバス、HTML、PDF、固定レイアウトのEPUBのどれにも出ます。Sandboxの枠インスペクターでは「外観」で有効にします。
 
 ```ts
 frames: [
@@ -376,7 +376,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
 
 ### グループ
 
-グループは、空間を分け合って一緒に動くフレームの積み重ね（上から下）または並び（始端から終端）です。グループの中では、グループの方向に沿ったフレーム自身の位置は無視され、グループが順に並べて、あいだに`gap`を空けます。あるフレームの文字が増えると、その後のフレームが一緒に動きます。グループはボックスでもあり、フレームや装飾をそこに固定できます（`'#pagina'`）。
+グループは、空間を分け合って一緒に動く枠の積み重ね（上から下）または並び（始端から終端）です。グループの中では、グループの方向に沿った枠自身の位置は無視され、グループが順に並べて、あいだに`gap`を空けます。ある枠の文字が増えると、その後の枠が一緒に動きます。グループはボックスでもあり、枠や装飾をそこに固定できます（`'#pagina'`）。
 
 <table>
   <thead>
@@ -392,7 +392,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td>必須</td>
-      <td>テンプレートのフレームとグループのあいだで一意です。</td>
+      <td>テンプレートの枠とグループのあいだで一意です。</td>
     </tr>
     <tr>
       <td><code>kind</code></td>
@@ -404,25 +404,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>グループのフレームを、ページ上の順に並べます。1つのフレームが属するグループは多くても1つです。テンプレートのフレームではない名前や、すでに挙げたフレームは飛ばします。</td>
+      <td>グループの枠を、ページ上の順に並べます。1つの枠が属するグループは多くても1つです。テンプレートの枠ではない名前や、すでに挙げた枠は飛ばします。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>グループの隣り合う2つのフレームのあいだの空きです。</td>
+      <td>グループの隣り合う2つの枠のあいだの空きです。</td>
     </tr>
     <tr>
       <td><code>placement</code>、<code>grid</code></td>
-      <td>フレームと同じ</td>
-      <td>フレームを囲む箱</td>
-      <td>グループ自身のボックスです。未設定なら、グループは最初のフレームの位置から始まり、フレームが必要とするところまで伸びます。</td>
+      <td>枠と同じ</td>
+      <td>枠を囲む箱</td>
+      <td>グループ自身のボックスです。未設定なら、グループは最初の枠の位置から始まり、枠が必要とするところまで伸びます。</td>
     </tr>
     <tr>
       <td><code>align</code></td>
       <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
       <td><code>'start'</code></td>
-      <td>グループのどのフレームも伸びないとき、余った空間をどこに置くかです。</td>
+      <td>グループのどの枠も伸びないとき、余った空間をどこに置くかです。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -435,20 +435,20 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
 
 ### グループが空間を分け合うしくみ
 
-フレームは自分の大きさを宣言します。固定の`height`か、`'auto'`です。`'auto'`は中身の高さで、`minHeight`と`maxHeight`のあいだに収まります。印刷されたページをもとにテンプレートを作るときは、各ボックスのページ上の高さを`minHeight`に指定します。文章が短ければボックスは描いたとおりの大きさのままで、長ければ高くなります。ページは1回の処理の中で2度組まれます。1度はテンプレートの宣言どおりに、もう1度は中身が必要とするとおりに組み、その2つの違いが[リフローの記録](/ja/docs/composed-pages#リフローの記録)になります。
+枠は自分の大きさを宣言します。固定の`height`か、`'auto'`です。`'auto'`は中身の高さで、`minHeight`と`maxHeight`のあいだに収まります。印刷されたページをもとにテンプレートを作るときは、各ボックスのページ上の高さを`minHeight`に指定します。文章が短ければボックスは描いたとおりの大きさのままで、長ければ高くなります。ページは1回の処理の中で2度組まれます。1度はテンプレートの宣言どおりに、もう1度は中身が必要とするとおりに組み、その2つの違いが[リフローの記録](/ja/docs/composed-pages#リフローの記録)になります。
 
-**積み重ね（`stack`）**：積み重ねのフレームは、それぞれの高さで上から順に並び、あいだに`gap`を空けます。横の位置と幅は各フレームのものを保ち、フレーム自身の縦の位置は無視されます。
+**積み重ね（`stack`）**：積み重ねの枠は、それぞれの高さで上から順に並び、あいだに`gap`を空けます。横の位置と幅は各枠のものを保ち、枠自身の縦の位置は無視されます。
 
-- 自分の`placement`も`grid`も持たないグループは、最初のフレームが置かれた位置（その`placement`、グリッドのあるテンプレートでは`grid`のセル）から始まり、フレームが必要とするだけ下へ伸びます。伸びる先はテンプレートの領域の下端までです。あるフレームが高くなると、その後のフレームが同じだけ下がります。
-- 自分のボックスを持つグループは、そのボックスの中にフレームを並べます。フレームがボックスに入りきらないときは、`shrink`が0より大きいフレームが空間を返します。返すのは`priority`の低いフレームからで、優先度が同じなら`shrink`の比で返し、どのフレームも`minHeight`より小さくはなりません。余った空間は、`grow`が0より大きいフレームにその比で、`maxHeight`まで配られます。そういうフレームがなければ、`align`がフレームの位置を決めます（`'end'`なら下端、`'center'`なら中央、`'space-between'`なら上下の端に寄せてあいだを均等に空けます）。グループの中で自分の配置を持たないフレームは、グループのボックスを領域として使います。
-- どのフレームもそれ以上返せなくなったら、グループの下端に近いフレームから順に、それぞれ`minHeight`まで縮みます。固定の高さを持つフレームはその高さを保つので、伸びたボックスの下にある空の解答欄や画像の枠はページに残り、縮むのはボックス自身の文章です。グループの下端を越えるフレームはありません。中身が入りきらないフレームは収めるための手順を順に試し（[内容が収まらないとき](#内容が収まらないとき)を参照）、それでも入りきらない分はそこで切れ、`frameOverflow`として報告されます。`minHeight`や固定の高さより低く切り詰められたフレームも、中身の有無にかかわらず報告されます。
-- `height: 'fill'`のフレームは、`minHeight`を求めたうえで、`grow: 1`を持つものとして余った空間を受け取ります。
+- 自分の`placement`も`grid`も持たないグループは、最初の枠が置かれた位置（その`placement`、グリッドのあるテンプレートでは`grid`のセル）から始まり、枠が必要とするだけ下へ伸びます。伸びる先はテンプレートの領域の下端までです。ある枠が高くなると、その後の枠が同じだけ下がります。
+- 自分のボックスを持つグループは、そのボックスの中に枠を並べます。枠がボックスに入りきらないときは、`shrink`が0より大きい枠が空間を返します。返すのは`priority`の低い枠からで、優先度が同じなら`shrink`の比で返し、どの枠も`minHeight`より小さくはなりません。余った空間は、`grow`が0より大きい枠にその比で、`maxHeight`まで配られます。そういう枠がなければ、`align`が枠の位置を決めます（`'end'`なら下端、`'center'`なら中央、`'space-between'`なら上下の端に寄せてあいだを均等に空けます）。グループの中で自分の配置を持たない枠は、グループのボックスを領域として使います。
+- どの枠もそれ以上返せなくなったら、グループの下端に近い枠から順に、それぞれ`minHeight`まで縮みます。固定の高さを持つ枠はその高さを保つので、伸びたボックスの下にある空の解答欄や画像の枠はページに残り、縮むのはボックス自身の文章です。グループの下端を越える枠はありません。中身が入りきらない枠は収めるための手順を順に試し（[内容が収まらないとき](#内容が収まらないとき)を参照）、それでも入りきらない分はそこで切れ、`frameOverflow`として報告されます。`minHeight`や固定の高さより低く切り詰められた枠も、中身の有無にかかわらず報告されます。
+- `height: 'fill'`の枠は、`minHeight`を求めたうえで、`grow: 1`を持つものとして余った空間を受け取ります。
 
-**並び（`row`）**：並びのフレームは、宣言した幅で横に並び、どれも並びと同じ高さになります。その高さはグループのボックスの高さで、グループが自分のボックスを持たなければ、フレームが書いた高さ（固定の`height`、なければ`minHeight`。`'auto'`のフレームはそれ以上を宣言しません）のうち最も大きいもので、どのフレームも書いていなければ最も高い中身の高さです（固定の高さを持つフレームは自分の高さを保ちます）。あるフレームの文章が並びの高さを超えると、そのフレームは幅を広げます。まず並びの余った幅を使い、次に`shrink`が0より大きい兄弟のフレームから、`priority`の低い順に幅をもらいます。どのフレームも、自分の文章がまだ収まる幅より狭くはなりません。広げる幅は、文章が収まる最少の整数ミリメートルです。使える空間をすべてもらっても収まらないなら幅は広げず、代わりに、自分のボックスを持たない並びが高くなります。そのため、`height: 'auto'`に`minHeight`を付けたカードは、まずその高さで幅を分け合い、どのカードも幅を譲れないときにだけ並びが高くなります。余った幅は`grow`が0より大きいフレームに配られ、残りは`align`に従います。並びは左から右へ進みます。
+**並び（`row`）**：並びの枠は、宣言した幅で横に並び、どれも並びと同じ高さになります。その高さはグループのボックスの高さで、グループが自分のボックスを持たなければ、枠が書いた高さ（固定の`height`、なければ`minHeight`。`'auto'`の枠はそれ以上を宣言しません）のうち最も大きいもので、どの枠も書いていなければ最も高い中身の高さです（固定の高さを持つ枠は自分の高さを保ちます）。ある枠の文章が並びの高さを超えると、その枠は幅を広げます。まず並びの余った幅を使い、次に`shrink`が0より大きい兄弟の枠から、`priority`の低い順に幅をもらいます。どの枠も、自分の文章がまだ収まる幅より狭くはなりません。広げる幅は、文章が収まる最少の整数ミリメートルです。使える空間をすべてもらっても収まらないなら幅は広げず、代わりに、自分のボックスを持たない並びが高くなります。そのため、`height: 'auto'`に`minHeight`を付けたカードは、まずその高さで幅を分け合い、どのカードも幅を譲れないときにだけ並びが高くなります。余った幅は`grow`が0より大きい枠に配られ、残りは`align`に従います。並びは左から右へ進みます。
 
-**ピン留め（`pin`）**：`pin: true`のフレームは、固定先のフレームが高くなったり動いたりしても、テンプレートが宣言したボックスを保ちます。絵柄に合わせて描いたボックスは、絵柄の上から離れません。グループの中では、ピン留めしたフレームは自分の位置を守り、ほかのフレームは前後に`gap`を空けてそれを飛び越えます。グループの外にあるピン留めのフレームも、重なりそうなグループのフレームに対して同じように働きます。
+**ピン留め（`pin`）**：`pin: true`の枠は、固定先の枠が高くなったり動いたりしても、テンプレートが宣言したボックスを保ちます。絵柄に合わせて描いたボックスは、絵柄の上から離れません。グループの中では、ピン留めした枠は自分の位置を守り、ほかの枠は前後に`gap`を空けてそれを飛び越えます。グループの外にあるピン留めの枠も、重なりそうなグループの枠に対して同じように働きます。
 
-**装飾**：フレームに固定した装飾の要素（`anchor: { to: '#dinero' }`）は、フレームが高くなったり動いたりすると一緒に動きます。`pin: true`の要素は、テンプレートがそのフレームを描く位置にとどまります。
+**装飾**：枠に固定した装飾の要素（`anchor: { to: '#dinero' }`）は、枠が高くなったり動いたりすると一緒に動きます。`pin: true`の要素は、テンプレートがその枠を描く位置にとどまります。
 
 <table>
   <thead>
@@ -464,7 +464,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>pin</code>（装飾の要素）</td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>テンプレートページの装飾で使います。フレームに固定した要素は、フレームの中身やグループがどう変わっても、テンプレートがそのフレームを置く位置にとどまります。柱、ノンブル、見出しのデザインでは無視されます。</td>
+      <td>テンプレートページの装飾で使います。枠に固定した要素は、枠の中身やグループがどう変わっても、テンプレートがその枠を置く位置にとどまります。柱、ノンブル、見出しのデザインでは無視されます。</td>
     </tr>
   </tbody>
 </table>
@@ -487,15 +487,15 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 ### 内容が収まらないとき
 
-フレームの中身がグループの与える場所より高いとき、割り付けは[収めるための手順](/ja/docs/composed-pages#それでも収まらないとき)を順に試し、最初に中身が収まったところで止まります。`maxHeight`までの空き場所、グループの押し下げと譲り合い、画像の縮小、グループのほかのフレームを最小まで縮めること、テキストの縮小、別のページへの続き、の順です。各手順をどこまで進めてよいかは、次のフレームの設定で決まります。
+枠の中身がグループの与える場所より高いとき、割り付けは[収めるための手順](/ja/docs/composed-pages#それでも収まらないとき)を順に試し、最初に中身が収まったところで止まります。`maxHeight`までの空き場所、グループの押し下げと譲り合い、画像の縮小、グループのほかの枠を最小まで縮めること、テキストの縮小、別のページへの続き、の順です。各手順をどこまで進めてよいかは、次の枠の設定で決まります。
 
-- 固定の`height`を持つフレームの`maxHeight`：何かを縮小する前に、フレームはそこまで伸びられます。
-- グループのほかのフレームの`minHeight`：それらがどこまで空間を返すかを決めます。どのフレームも、自分の中身に必要な高さより小さくはなりません。
-- `fit.scaleImages`と`fit.imageMinScale`：フレームとそのグループの画像を小さくしてよいか、どこまで小さくしてよいか（既定は80%）。
-- `fit.shrinkText`と`fit.minScale`：フレームのテキストを小さくしてよいか、どこまで小さくしてよいか（既定は90%）。文字サイズ、行送り、アキは同じ比率で縮み、フレームの大きさは変わりません。
-- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。別のフレームか、別のページ（`'next-page'`、`'template:<id>'`、`'page:<id>'`）で、続き先では断片の`overflow.mark`の後、テキストが元の大きさで続きます。別のページへ続けられるフレームは、`fit.preferContinue`が`false`でないかぎり、画像とテキストを小さくする前に続きます。
+- 固定の`height`を持つ枠の`maxHeight`：何かを縮小する前に、枠はそこまで伸びられます。
+- グループのほかの枠の`minHeight`：それらがどこまで空間を返すかを決めます。どの枠も、自分の中身に必要な高さより小さくはなりません。
+- `fit.scaleImages`と`fit.imageMinScale`：枠とそのグループの画像を小さくしてよいか、どこまで小さくしてよいか（既定は80%）。
+- `fit.shrinkText`と`fit.minScale`：枠のテキストを小さくしてよいか、どこまで小さくしてよいか（既定は90%）。文字サイズ、行送り、アキは同じ比率で縮み、枠の大きさは変わりません。
+- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。別の枠か、別のページ（`'next-page'`、`'template:<id>'`、`'page:<id>'`）で、続き先では断片の`overflow.mark`の後、テキストが元の大きさで続きます。別のページへ続けられる枠は、`fit.preferContinue`が`false`でないかぎり、画像とテキストを小さくする前に続きます。
 
-縮小率は2.5%刻みで、割り付けは収まるもっとも大きな値を選びます。1行だけ長いテキストなら、最小値ではなく97.5%で組まれます。文字サイズを変えてはいけない囲みには`fit: { shrinkText: false }`を、画像の大きさを変えてはいけないページにはグループのフレームに`fit: { scaleImages: false }`を設定します。
+縮小率は2.5%刻みで、割り付けは収まるもっとも大きな値を選びます。1行だけ長いテキストなら、最小値ではなく97.5%で組まれます。文字サイズを変えてはいけない囲みには`fit: { shrinkText: false }`を、画像の大きさを変えてはいけないページにはグループの枠に`fit: { scaleImages: false }`を設定します。
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
@@ -529,7 +529,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、フレームの`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。フレームの`writingMode`と`direction`は postext 1.39 から反映されます。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。枠の`writingMode`と`direction`は postext 1.39 から反映されます。幅の`'auto'`は`'fill'`として扱います。
 
 ### 見開き
 
@@ -718,7 +718,7 @@ labelStyles: [
 
 ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
 
-テンプレート、フレーム、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のないフレームとグループは無視され、その項目に`unknownConfigValue`が出ます。
+テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。
 
 <table>
   <thead>
@@ -746,42 +746,42 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>frameDuplicate</code></td>
-      <td>1つのリストの中の2つのフレームまたは2つのグループが同じ<code>name</code>を持っているか、グループがフレームと同じ名前を持っています。後の項目は無視され、その名前へのアンカーはフレームを指します。</td>
-      <td>フレームとグループにそれぞれ別の名前を付けます。継承したフレームを変えるには、その名前の項目を1つだけ書きます。</td>
+      <td>1つのリストの中の2つの枠または2つのグループが同じ<code>name</code>を持っているか、グループが枠と同じ名前を持っています。後の項目は無視され、その名前へのアンカーは枠を指します。</td>
+      <td>枠とグループにそれぞれ別の名前を付けます。継承した枠を変えるには、その名前の項目を1つだけ書きます。</td>
     </tr>
     <tr>
       <td><code>frameStyleUnknown</code></td>
-      <td>フレームの<code>style</code>が、どの囲みスタイルも指していません。フレームは枠なしで描かれます。</td>
+      <td>枠の<code>style</code>が、どの囲みスタイルも指していません。枠は囲みなしで描かれます。</td>
       <td>idを直すか、<code>calloutStyles</code>にそのスタイルを加えます。</td>
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>フレーム、グループ、装飾の要素が<code>'#name'</code>に固定されているのに、テンプレートにその名前のフレーム、グループ、要素がありません。または、フレームとグループが互いに輪になって固定されています（自分では何にも固定せず、ボックスがフレームを囲む箱になるグループを経由する場合も含みます）。アンカーは<code>'container'</code>、つまり領域として扱われます。</td>
-      <td>存在するフレームかグループに固定するか、どれか1つを領域に固定して輪を断ちます。</td>
+      <td>枠、グループ、装飾の要素が<code>'#name'</code>に固定されているのに、テンプレートにその名前の枠、グループ、要素がありません。または、枠とグループが互いに輪になって固定されています（自分では何にも固定せず、ボックスが枠を囲む箱になるグループを経由する場合も含みます）。アンカーは<code>'container'</code>、つまり領域として扱われます。</td>
+      <td>存在する枠かグループに固定するか、どれか1つを領域に固定して輪を断ちます。</td>
     </tr>
     <tr>
       <td><code>frameMinMax</code></td>
-      <td>最小値が最大値より大きい（<code>minHeight 40mm &gt; maxHeight 30mm</code>）か、固定の<code>width</code>や<code>height</code>が範囲の外にあります。最小値が優先され、固定のサイズは範囲の中に収められ、<code>used</code>がフレームの実際の値を示します。単位の違う長さはページの解像度で比べ、emは本文のサイズで換算します。</td>
+      <td>最小値が最大値より大きい（<code>minHeight 40mm &gt; maxHeight 30mm</code>）か、固定の<code>width</code>や<code>height</code>が範囲の外にあります。最小値が優先され、固定のサイズは範囲の中に収められ、<code>used</code>が枠の実際の値を示します。単位の違う長さはページの解像度で比べ、emは本文のサイズで換算します。</td>
       <td>最小値を最大値以下にするか、固定のサイズと矛盾する制限を外します。</td>
     </tr>
     <tr>
       <td><code>groupFrameUnknown</code></td>
-      <td>グループの<code>frames</code>に、テンプレートのフレームではない名前があります（子のテンプレートやバリアントで取り除かれたのかもしれません）。グループはそれを飛ばします。</td>
+      <td>グループの<code>frames</code>に、テンプレートの枠ではない名前があります（子のテンプレートやバリアントで取り除かれたのかもしれません）。グループはそれを飛ばします。</td>
       <td>名前を直すか、リストから外します。</td>
     </tr>
     <tr>
       <td><code>groupFrameTwice</code></td>
-      <td>1つのフレームが2つのグループに、または1つのグループに2回挙げられています。フレームが属するグループは1つだけなので、後のほうは飛ばします。</td>
-      <td>フレームを、一緒に動くべき1つのグループだけに残します。</td>
+      <td>1つの枠が2つのグループに、または1つのグループに2回挙げられています。枠が属するグループは1つだけなので、後のほうは飛ばします。</td>
+      <td>枠を、一緒に動くべき1つのグループだけに残します。</td>
     </tr>
     <tr>
       <td><code>frameChainLoop</code></td>
-      <td>フレームが<code>next</code>や<code>overflow.continueIn: '#frame'</code>で輪になって続いています（<code>a → b → a</code>）。輪を閉じるつながりが捨てられ、連鎖はその手前のフレームで終わります。</td>
-      <td>連鎖を最後のフレームで終わらせます。その<code>next</code>を外すか、次のページに続けます。</td>
+      <td>枠が<code>next</code>や<code>overflow.continueIn: '#frame'</code>で輪になって続いています（<code>a → b → a</code>）。輪を閉じるつながりが捨てられ、連鎖はその手前の枠で終わります。</td>
+      <td>連鎖を最後の枠で終わらせます。その<code>next</code>を外すか、次のページに続けます。</td>
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td><code>next</code>がテンプレートのどのフレームも指していない、<code>overflow.continueIn</code>がどのフレーム（<code>'#x'</code>）もテンプレート（<code>'template:x'</code>）も指していないか、<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>、<code>'page:&lt;id&gt;'</code>のどの形でもない、または<code>overflowTemplate</code>がどのテンプレートも指していない、のいずれかです。入りきらない中身はそこには続きません。</td>
+      <td><code>next</code>がテンプレートのどの枠も指していない、<code>overflow.continueIn</code>がどの枠（<code>'#x'</code>）もテンプレート（<code>'template:x'</code>）も指していないか、<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>、<code>'page:&lt;id&gt;'</code>のどの形でもない、または<code>overflowTemplate</code>がどのテンプレートも指していない、のいずれかです。入りきらない中身はそこには続きません。</td>
       <td>名前やidを直すか、4つの形のどれかで書きます。</td>
     </tr>
     <tr>

@@ -236,7 +236,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページのフレームに置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
+      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページの枠に置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
       <td>画像は段の幅で印刷されます。本文の流れの中の画像は段より広くならず、既定のページは2段です（<code>layout.layoutType: 'double'</code>）。ページを1段組みにするか、画像をページ全幅のフロートにする（<code>placement.span: 'page'</code>）か、そのサイズでよければ解像度を上げてください。</td>
     </tr>
     <tr>
