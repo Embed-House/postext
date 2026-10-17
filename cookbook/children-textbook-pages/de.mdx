@@ -1,0 +1,72 @@
+---
+title: "Eine Schulbuch-Einheit für Kinder in drei Sprachen"
+summary: "Neun Seiten einer Einheit für die 3. Klasse auf Spanisch, Katalanisch und Englisch: Doppelseiten auf Farbgrund, wachsende Kästen mit Reiter, beschriftete Karte."
+plain: "Eine Schulbuch-Einheit über einen Fluss, neun Seiten lang. Jedes Thema ist eine Doppelseite auf Farbgrund mit Titelreiter, Text, Bildern und Kästen. Auf der Karte ist kein Wort gemalt: Ihre Namen kommen aus dem Text."
+description: "Eine Schulbuch-Einheit in Postext: Vorlagen, die eine Basis erweitern, verkettete Kastenstile und eine gemalte Karte, aus dem Markdown beschriftet."
+question: "Wie setze ich eine Schulbuch-Einheit in drei Sprachen mit denselben Seitenvorlagen?"
+aliases: ["Schulbuch", "Lehrbuch", "Grundschule", "Einheit", "Doppelseite", "Themenseite", "Seitenhintergrund", "Titelreiter", "beschriftete Karte", "Inhalt nach Teilen", "Vorlagenvererbung", "Spanisch Katalanisch Englisch", "textbook"]
+pageNotes: {"1": "Der Einheitenauftakt: ein Gemälde eines Flusstals von schneebedeckten Bergen bis zum Meer füllt den oberen Teil, in der Ecke sitzen zwei Kinder im Gras. Darunter ein blauer Reiter mit dem Titel Unser Fluss, ein Absatz und ein hellblauer Kasten, Das lernst du.", "2": "Das Inhaltsverzeichnis: ein blauer Titelreiter, zwei Teilzeilen (A und B) mit ihren Themen und Abschnitten, Füllpunkte und Seitenzahlen, unten die Karte als kleines Bild.", "4": "Thema 1, Wo ein Fluss entsteht, auf hellblauem Grund: ein nummerierter Titelreiter, zwei Textspalten, ein Streifen aus drei gemalten Bildern mit Bildunterschrift und ein Kasten Probier es aus; rechts drei Kästen mit Reiter.", "6": "Thema 2, Vom Gebirge zum Meer, auf hellgrünem Grund: eine gemalte Karte über beide Seiten mit aufgesetzten Namen, unter der rechten Seite drei Kästen für die Flussläufe.", "8": "Thema 3, Die Menschen und der Fluss, auf Sandgrund: Text und zwei Kästen links, rechts drei Kästen mit je einem Gemälde."}
+---
+
+## Was Sie setzen
+
+Neun Seiten von *Unser Fluss*, Einheit 4 eines erfundenen Sachkundebuchs für die 3. Klasse, auf einer Seite von 210 × 280 mm, auf Spanisch, Katalanisch und Englisch. Ein gemaltes Tal eröffnet die Einheit, eine Inhaltsseite führt zwei Teile auf, dann folgen drei Themen als Doppelseiten, jedes auf eigenem Grund: Wasserblau, Feldgrün, Sonnensand. Jedes Thema hat einen Reiter mit Nummer und Titel, Text in zwei Spalten und Kästen mit Reiter, die mit ihrem Text wachsen. Das zweite Thema ist eine einzige gemalte Karte über beide Seiten, auf der Fluss, Dörfer und die drei Flussläufe aus dem Markdown benannt sind. Die drei Texte sind um ein Fünftel oder mehr verschieden lang und passen in dieselben Vorlagen: Ein Kasten nimmt die Höhe, die seine Wörter brauchen, und schiebt den nächsten nach unten, und die Karte wird etwas kleiner gesetzt, bevor irgendein Text es wird.
+
+## Zubereitung
+
+### 1 · Die Kästen mit `extends` bauen
+
+<Excerpt region="boxes" />
+
+Ein Kastenstil entsteht in drei Schritten. `caja` hält Form, Schrift und die Geometrie des Reiters; `caja-agua`, `caja-campo` und `caja-sol` legen die Farbe einer Familie auf Reiter und Aufzählungszeichen; `dato-`, `palabras-` und `actividad-` bestimmen die Art: getönter Kasten, umrandeter oder mit Streifen. Eine neue Familie sind drei Farben in `FAMILIES`, und kein Stil wird zweimal geschrieben.
+
+### 2 · Jedes Thema eine Basisvorlage erweitern lassen
+
+<Excerpt region="answer" />
+
+Die Basis ist eine Doppelseite: ein Grund bis zum Anschnitt, ein Titelreiter mit Nummer und ein Text in zwei Spalten. Ein Thema erweitert sie (`extends: 'tema'`), ändert die Farben dreier Dekorationselemente über ihre `id` und fügt eigene Rahmen hinzu. Reiter und Nummer sind am Titelrahmen verankerte Dekoration: Der Reiter ist so hoch wie der Titel, den die Sprache braucht, und die Nummer steht links vom Rahmen, wo nichts sie verdeckt.
+
+### 3 · Die Gruppen den Platz teilen lassen
+
+Jedes Thema hat zwei Gruppen. Die linke Seite ist ein Stapel: Titel, Text, dann der Bildstreifen oder die Karte. Die rechte ist ein weiterer Stapel aus Kästen oder eine Reihe aus drei Kästen, die sich die Breite teilen. Ein Rahmen ist so hoch wie seine Wörter, nie niedriger als sein `minHeight`; der spanische Text schiebt also alles unter sich nach unten, und keine Position der Vorlage ändert sich. Wird eine Seite knapp, holt die [Anpassungsleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Platz zurück, setzt Karte und Bilder kleiner und den Text zuletzt, bis auf 90 %. `pnpm cookbook bench` setzt die drei Ausgaben noch einmal mit 30 % längerem Text.
+
+### 4 · Die Namen der Karte aus dem Text setzen
+
+<Excerpt region="art-labels" />
+
+Die Karte ist ein Gemälde ohne einen Buchstaben. Jeder Ort ist ein Anker des Bildes, ein Punkt in Bruchteilen von Breite und Höhe mit einem Beschriftungsstil, und jede Ausgabe schreibt ihre eigenen `::label`-Zeilen an diese Anker. *Penalta Reservoir*, *Pantà de Penyalta* und *Embalse de Peñalta* stehen an derselben Stelle, und ein längerer Name bricht innerhalb der `width` des Ankers um.
+
+### 5 · Jeden Teil des Inhaltsverzeichnisses zusammenhalten
+
+<Excerpt region="contents" />
+
+`:::toc{keep="part" levels="1-2"}` listet die Themen und ihre Abschnitte auf und hält jede Teilzeile bei ihren Einträgen. Eine `:::part`-Begrenzung mit `parts.page: false` ist nur eine Zeile des Verzeichnisses und ein Abschnitt für die Kolumnentitel: Sie fügt keine Trennseite hinzu. Das Verzeichnis ist eine Fließtextseite und kein Rahmen, denn ein `:::toc` in einem Rahmen verliert seine Teilzeilen.
+
+## Varianten
+
+### Eine vierte Familie hinzufügen
+
+Ein Thema über das Meer ist ein vierter Eintrag in `FAMILIES` und eine Vorlage aus `topic('tema-mar', 'mar', { frames })`. Die Schleife über `FAMILIES` schreibt die Stile dazu, `caja-mar`, `dato-mar` und die übrigen.
+
+```diff
+-  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  mar: { main: '#0f5a6b', tint: '#dcf0f2', ground: '#cbe6ea' },
+```
+
+### Den Text in seiner Größe lassen
+
+Ein Rahmen, der seinen Text nicht verkleinern darf, bekommt `fit: { shrinkText: false }`. Ein längerer Text drückt dann stärker auf die Rahmen ringsum, und die Leiter erreicht die Bilder früher.
+
+```diff
+-  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
+-    fit: { minScale: 0.9 } }],
++  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
++    fit: { shrinkText: false } }],
+```
+
+## Häufige Fehler
+
+- Ein ins Bild gemalter Name könnte sich nicht mit der Sprache ändern: Die Karte trägt kein Wort, und jeder Name ist eine Beschriftung.
+- Ein Dekorationselement unter einem Rahmen lässt sich im Sandbox nicht anklicken; darum steht die Nummer jedes Themas links vom Titelrahmen und nicht darin.
+- Zwei Abbildungen, die dieselbe Ressource belegen, übernehmen die Worte der ersten: Die kleine Karte auf der Inhaltsseite ist dieselbe Datei unter einer eigenen Ressource, `rio`, ohne Anker.

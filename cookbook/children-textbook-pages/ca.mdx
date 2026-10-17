@@ -1,0 +1,72 @@
+---
+title: "Una unitat de llibre de text infantil en tres idiomes"
+summary: "Nou pàgines d’una unitat de 3r en castellà, català i anglès: dobles pàgines sobre fons de color, requadres amb solapa que creixen i un mapa retolat."
+plain: "Una unitat de llibre de text sobre un riu, de nou pàgines. Cada tema és una doble pàgina sobre un fons de color, amb solapa de títol, text, imatges i requadres. El mapa no porta cap paraula pintada: els noms surten del text."
+description: "Una unitat de llibre de text infantil a Postext: plantilles que hereten d’una base, estils de requadre encadenats i un mapa pintat retolat des del Markdown."
+question: "Com composo una unitat de llibre de text en tres idiomes amb les mateixes plantilles?"
+aliases: ["llibre de text", "llibre escolar", "primària", "unitat didàctica", "doble pàgina", "pàgina de tema", "fons de pàgina", "solapa de títol", "mapa retolat", "índex per parts", "herència de plantilles", "castellà català anglès", "textbook"]
+pageNotes: {"1": "L’obertura de la unitat: una pintura d’una vall amb el seu riu, de les muntanyes nevades al mar, ocupa la part de dalt, amb dos nens asseguts a l’herba en un racó. A sota, una solapa blava amb el títol El nostre riu, un paràgraf i un requadre blau clar, Aprendràs.", "2": "L’índex: una solapa blava de títol, dues files de part (A i B) amb els seus temes i apartats, punts guia i números de pàgina, i el mapa com a imatge petita al peu.", "4": "Tema 1, On neix un riu, sobre un fons blau clar: solapa de títol amb el número, dues columnes de text, una tira de tres pintures amb peu, un requadre Prova-ho; a la pàgina dreta, tres requadres amb solapa.", "6": "Tema 2, De la muntanya al mar, sobre un fons verd clar: un sol mapa pintat a doble pàgina amb els noms posats a sobre i tres requadres de curs sota la pàgina dreta.", "8": "Tema 3, Les persones i el riu, sobre un fons arena: text i dos requadres a la pàgina esquerra, tres requadres amb una pintura cadascun a la dreta."}
+---
+
+## Què compondràs
+
+Nou pàgines d’*El nostre riu*, unitat 4 d’un llibre inventat de Ciències socials de 3r, en una pàgina de 210 × 280 mm, en castellà, català i anglès. Una vall pintada obre la unitat, una pàgina d’índex llista dues parts i segueixen tres temes a doble pàgina, cadascun sobre el seu fons: blau aigua, verd camp, arena sol. Cada tema porta una solapa amb el número i el títol, text a dues columnes i requadres amb solapa que creixen amb el seu text. El segon tema és un únic mapa pintat a doble pàgina, amb el riu, els pobles i els tres cursos anomenats des del Markdown. Els tres textos difereixen en una cinquena part o més i caben a les mateixes plantilles: un requadre pren l’alçada que demanen les seves paraules i empeny el següent, i el mapa es redueix una mica abans que qualsevol text.
+
+## Elaboració
+
+### 1 · Construeix els requadres amb `extends`
+
+<Excerpt region="boxes" />
+
+Un estil de requadre es fa en tres passos. `caja` guarda la forma, la tipografia i la geometria de la solapa; `caja-agua`, `caja-campo` i `caja-sol` posen el color d’una família a la solapa i a les vinyetes; `dato-`, `palabras-` i `actividad-` fixen el tipus: requadre amb fons, amb vora o amb franja. Una família nova són tres colors a `FAMILIES` i cap estil s’escriu dues vegades.
+
+### 2 · Fes que cada tema hereti d’una plantilla base
+
+<Excerpt region="answer" />
+
+La base és una doble pàgina: un fons fins al sagnat, una solapa de títol amb el número i un text a dues columnes. Un tema l’estén (`extends: 'tema'`), canvia els colors de tres elements de decoració pel seu `id` i hi afegeix els seus marcs. La solapa i el número són decoració ancorada al marc del títol, de manera que la solapa és tan alta com el títol que demani l’idioma, i el número queda a l’esquerra del marc, on res no el tapa.
+
+### 3 · Deixa que els grups es repartin el lloc
+
+Cada tema té dos grups. La pàgina esquerra és una pila: títol, text i després la tira d’imatges o el mapa. La dreta és una altra pila de requadres, o una fila de tres requadres que es reparteixen l’amplada. Un marc és tan alt com les seves paraules i mai menys que el seu `minHeight`, així que el text en català empeny tot el que té a sota i cap posició de la plantilla no canvia. Quan a una pàgina li falta lloc, l’[escala d’ajust](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) recupera espai, redueix el mapa i les imatges i deixa el text per al final, fins al 90 %. `pnpm cookbook bench` torna a compondre les tres edicions amb el text un 30 % més llarg.
+
+### 4 · Posa els noms del mapa des del text
+
+<Excerpt region="art-labels" />
+
+El mapa és una pintura sense una sola lletra. Cada lloc és una àncora de la imatge, un punt en fraccions de l’ample i l’alt amb un estil de rètol, i cada edició escriu les seves pròpies línies `::label` a aquestes àncores. *Penalta Reservoir*, *Pantà de Penyalta* i *Embalse de Peñalta* queden al mateix lloc, i un nom més llarg es parteix dins del `width` de l’àncora.
+
+### 5 · Mantén unida cada part de l’índex
+
+<Excerpt region="contents" />
+
+`:::toc{keep="part" levels="1-2"}` llista els temes i els seus apartats i manté cada fila de part amb les seves entrades. Una tanca `:::part` amb `parts.page: false` és només una fila de l’índex i una secció per a les capçaleres: no afegeix portadella. L’índex és una pàgina de text corregut i no un marc, perquè un `:::toc` dins d’un marc perd les files de part.
+
+## Variants
+
+### Afegeix una quarta família
+
+Un tema sobre el mar és una quarta entrada de `FAMILIES` i una plantilla feta amb `topic('tema-mar', 'mar', { frames })`. El bucle sobre `FAMILIES` n’escriu els estils, `caja-mar`, `dato-mar` i els altres.
+
+```diff
+-  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  mar: { main: '#0f5a6b', tint: '#dcf0f2', ground: '#cbe6ea' },
+```
+
+### Deixa el text de la seva mida
+
+Un marc que no ha de reduir el text porta `fit: { shrinkText: false }`. Un text més llarg empeny llavors amb més força els marcs del voltant i l’escala arriba abans a les imatges.
+
+```diff
+-  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
+-    fit: { minScale: 0.9 } }],
++  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
++    fit: { shrinkText: false } }],
+```
+
+## Errors freqüents
+
+- Un nom pintat dins d’una imatge no podria canviar amb l’idioma: el mapa no porta cap paraula i cada nom és un rètol.
+- Un element de decoració que queda sota un marc no es pot prémer al Sandbox, per això el número de cada tema és a l’esquerra del marc del títol i no a dins.
+- Dues figures que fixen el mateix recurs prenen les paraules de la primera: el mapa petit de l’índex és el mateix arxiu sota un altre recurs, `rio`, sense àncores.

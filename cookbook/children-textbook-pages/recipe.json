@@ -1,0 +1,240 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 156,
+  "status": "published",
+  "chapter": "publications",
+  "order": 110,
+  "level": 3,
+  "genres": [
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "composed-pages",
+      "frame-groups",
+      "callout-label-tabs"
+    ],
+    "also": [
+      "figure-labels",
+      "toc",
+      "composed-spreads",
+      "callout-styles",
+      "design-elements",
+      "design-images",
+      "design-anchoring",
+      "frame-decoration",
+      "mirrored-margins",
+      "running-heads",
+      "heading-styles",
+      "color-palette",
+      "resources",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q186",
+    "Q179",
+    "Q181"
+  ],
+  "gotchas": [
+    "toc-in-composed-frame"
+  ],
+  "engine": {
+    "postext": "1.40.0",
+    "postextPdf": "1.40.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images"
+  ],
+  "sample": {
+    "locales": [
+      "es",
+      "en",
+      "ca"
+    ]
+  },
+  "capture": {
+    "hero": [
+      6,
+      7
+    ],
+    "card": "spread",
+    "pages": "all",
+    "expect": {
+      "pages": [
+        9,
+        9
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Your Name",
+        "github": "your-github"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "Our river, a children's textbook unit written for this recipe in Spanish, Catalan and English",
+          "es": "Nuestro río, una unidad de libro de texto infantil escrita para esta receta en español, catalán e inglés"
+        },
+        "who": "Postext Cookbook",
+        "license": "CC-BY-4.0"
+      }
+    ],
+    "images": [
+      {
+        "what": {
+          "en": "The valley of the River Aldara, painted from the mountains to the sea, with two children watching the water.",
+          "es": "El valle del río Aldara pintado de la montaña al mar, con dos niños que miran el agua."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "portada-1400.jpg"
+      },
+      {
+        "what": {
+          "en": "The painted map of the valley, from the spring to the port, with no lettering: the names are labels set from the Markdown.",
+          "es": "El mapa pintado del valle, del nacimiento al puerto, sin una letra: los nombres son rótulos puestos desde el Markdown."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mapa-1900.jpg"
+      },
+      {
+        "what": {
+          "en": "A spring between mossy rocks.",
+          "es": "Un manantial entre rocas cubiertas de musgo."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "nacimiento-720.jpg"
+      },
+      {
+        "what": {
+          "en": "A mountain stream over round stones.",
+          "es": "Un arroyo de montaña sobre piedras redondas."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "arroyo-720.jpg"
+      },
+      {
+        "what": {
+          "en": "A small waterfall into a green pool.",
+          "es": "Una pequeña cascada que cae en una poza verde."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "cascada-720.jpg"
+      },
+      {
+        "what": {
+          "en": "A farmer opening the gate of an irrigation canal.",
+          "es": "Un agricultor abre la compuerta de una acequia."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "riego-720.jpg"
+      },
+      {
+        "what": {
+          "en": "An old stone watermill with its wheel.",
+          "es": "Un viejo molino de piedra con su rueda."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "molino-720.jpg"
+      },
+      {
+        "what": {
+          "en": "Children paddling canoes on a calm river.",
+          "es": "Niños que reman en piraguas por un río tranquilo."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "piraguas-720.jpg"
+      },
+      {
+        "what": {
+          "en": "Children and a teacher picking up litter on a river bank.",
+          "es": "Niños y una maestra recogen basura en la orilla de un río."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "limpieza-720.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Nunito",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Fredoka",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-17",
+  "updated": "2026-10-17",
+  "downloads": {
+    "pdf": true
+  },
+  "workarounds": [
+    {
+      "followup": "EF-875-1",
+      "package": "postext",
+      "note": "the contents are a flow page (a heading style that paints the title tab, then :::toc{keep=\"part\"}) because a :::toc inside a composed page's frame loses its part rows and puts a blank line between entries; the page keeps no ground colour for the same reason, since a heading's design stops at the column's margin"
+    },
+    {
+      "package": "postext",
+      "note": "the three topic spreads extend one base template and the callout styles extend each other, so a topic's colours are the only thing its template and its box styles say"
+    },
+    {
+      "package": "postext",
+      "note": "the title's tab and number are decoration anchored to the title frame, with the number left of the frame: a decoration element under a frame cannot be clicked, so the number stands where no frame covers it (check C40)"
+    }
+  ],
+  "related": [
+    "school-atlas-labelled-maps",
+    "activity-book-growing-boxes",
+    "illustrated-timeline-spread",
+    "textbook-box-family"
+  ],
+  "folio": {
+    "paper": {
+      "type": "coatedMatte",
+      "grammage": 115,
+      "showThrough": false
+    },
+    "binding": {
+      "type": "hardcover",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#1b6aa0"
+    },
+    "surface": {
+      "type": "oak"
+    },
+    "lighting": {
+      "environment": "daylight"
+    }
+  }
+}
