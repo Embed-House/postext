@@ -1214,6 +1214,48 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   a pair; a pair that also differs in a length, a switch or a word still is. The Frame styles section lists the
   kinds. What stays: a book whose boxes differ in colours *and* shape still has one style per shape.
 
+### 5.18 Findings round I (#882)
+
+**Sandbox, editions and bundles (#968, #970, #978).**
+
+- **A licensed family names an open one (#978).** `CustomFontFamily.fallback` and the manifest's `fonts[].fallback` name a
+  family of about the same width for the faces the book has no file of. The configuration keeps naming the licensed
+  family (the book is still set "in" it; `fontFamily` fields are never rewritten): hosts load the fallback's cuts and
+  register them *under the licensed name*, so measuring, painting and the PDF need no other change. The rule is one
+  sentence, `hasOwnStyle`: a family with no file at all is set wholly in the fallback; a family with files keeps them
+  and takes from the fallback only a slant it has none of (an italic). Weights between its own files stay with CSS
+  matching, as for any family. It is not a general font-substitution map: `fontFallbackOf` reads only
+  `config.customFonts`, so a Google or system family cannot be aliased this way (a family nobody has is still
+  `missingFont`). Where it is done: the bundle reader keeps a family with a fallback and no file and warns once
+  instead of once per file; the bundle writer writes a family it may not hand on as `{ name, variants: [], fallback,
+  redistributable: false }`; `bundleFontProvider` and `loadBundleFonts` take the fallback's faces from the bundle or from
+  the host; the CLI's `resolveFonts` looks the fallback up like any family (and asks no catalogue for the licensed
+  name); the Sandbox's font loader declares the fallback's faces under the licensed name for the page, the layout
+  worker and the PDF provider, and the Fonts panel has a Stand-in family field. A fallback that is itself a custom
+  family (bundled open face) works too. Limits: a fallback with no static cuts (a Google family served only by its
+  style sheet) is not aliased in the Sandbox; EPUB and HTML keep leaving the licensed family's reference to the reader.
+  No new warning kind: the stand-in is announced by the import warning and shown in the Fonts panel; the PDF embeds
+  the open face, which the docs say.
+- **Editions (#968).** *Title:* `ProjectRecord.editionTitles` keeps `localized.<lang>.name` and `description` of every
+  edition; the record's name follows the edition on screen (`withActiveEdition`) until the reader renames the
+  project (`renamePatch` sets `titleEdited` on a book with editions when the title changed); then that title stands in
+  every edition and an export gives no edition a title of its own. A copy's "… copy" name is the reader's. *Pagination:*
+  the Sandbox writes `layouts.<locale>.json` for every edition (the records kept under its chapter ids, current for
+  the edition's text, configuration and resources, keyed by the chapter files `BundlePlan.localeChapterFiles` reports);
+  the reader already read it before `layouts.json`. *Fonts:* the families an edition laid out behind the reader declares
+  and the book on screen lacks are served as the book's (`declareEditionFonts`, a second registry the book's own
+  `setCustomFonts` overrides and `newBook` empties); two editions that give one name different files are not told apart.
+  The Activity-bar badge still counts the edition on screen (#903); not wired.
+- **The label editor of a surface (#970).** The hit test, hover, drag with its ghost, drop, click and double click are
+  `createLabelEditor`, which knows nothing of the page: a `LabelSurface` paints its marks (`paint(page, shapes | null)`)
+  and says how big a CSS pixel is there. The Canvas and the HTML preview adapt it per page element
+  (`attachLabelAnchorEditor`, same capture-phase listeners as before); the Folio gives `attachPageInteraction` a
+  surface that paints into the page texture (`viewer.redecorate`) in place of the page's own marks while a label is
+  hovered or dragged, and enables it in select mode only (a drag never starts a page flip: flipping is hand mode's).
+  The drop is `dropLabel` (anchor on the resource, or the `at` percentages in the Markdown), one history step, through
+  the template editor host, which the Folio now lends too. The anchors dialog takes two fingers (move and pinch).
+
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
