@@ -1992,6 +1992,8 @@ export interface SandboxLabels {
   warningsFloatShrunkTitle: string;
   warningsFloatShrunkDetail: string;
   warningsFloatShrunkOverflowDetail: string;
+  warningsPictureBelowPrintSizeTitle: string;
+  warningsPictureBelowPrintSizeDetail: string;
   warningsTextWrapTitle: string;
   warningsColumnsTooNarrowTitle: string;
   warningsColumnsTooNarrowDetail: string;

@@ -2487,6 +2487,8 @@
     "warningsFloatShrunkTitle": "Immagine ridotta per entrare",
     "warningsFloatShrunkDetail": "composta al __scale__ % della sua dimensione per entrare nello spazio della sua pagina.",
     "warningsFloatShrunkOverflowDetail": "alla scala minima, __scale__ %, sporge ancora di __mm__ mm oltre il piede della gabbia del testo. Abbassa la sua scala minima o dalle più spazio.",
+    "warningsPictureBelowPrintSizeTitle": "Immagine sotto la sua dimensione di stampa",
+    "warningsPictureBelowPrintSizeDetail": "composta al __scale__ % della sua dimensione di stampa: __print__ mm alla sua risoluzione, in una colonna di __column__ mm su una gabbia di testo di __page__ mm. Un'immagine nel flusso non è mai più larga della sua colonna, e la pagina predefinita ne ha due. Falle occupare la pagina (placement span: page), componi la pagina su una colonna o alzane la risoluzione se questa è la dimensione che vuoi.",
     "warningsTextWrapTitle": "Immagine o riquadro scontornato",
     "warningsColumnsTooNarrowTitle": "Colonne troppo strette",
     "warningsColumnsTooNarrowDetail": "Le __columns__ colonne di questo gruppo :::columns sono più strette di sei em del loro testo: entrano poche parole per riga. Imposta meno colonne o una distanza minore.",

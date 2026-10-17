@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "صورة مصغَّرة لتتسع",
     "warningsFloatShrunkDetail": "صُفّت بنسبة __scale__ % من حجمها لتتسع في حيّز صفحتها.",
     "warningsFloatShrunkOverflowDetail": "بأصغر مقياس لها، __scale__ %، لا تزال تتجاوز أسفل مساحة النص بمقدار __mm__ مم. اخفض أصغر مقياس لها أو امنحها حيّزًا أكبر.",
+    "warningsPictureBelowPrintSizeTitle": "صورة أصغر من مقاس طباعتها",
+    "warningsPictureBelowPrintSizeDetail": "تُنضَّد بنسبة __scale__ % من مقاس طباعتها: __print__ مم بدقّتها، في عمود عرضه __column__ مم على كتلة نص عرضها __page__ مم. الصورة في المتن لا تكون أعرض من عمودها أبدًا، والصفحة الافتراضية فيها عمودان. اجعلها تمتد على الصفحة (placement span: page)، أو نضّد الصفحة في عمود واحد، أو ارفع دقّتها إن كان هذا هو المقاس الذي تريده.",
     "warningsTextWrapTitle": "صورة أو صندوق يلتف حوله النص",
     "warningsColumnsTooNarrowTitle": "أعمدة ضيقة جدًا",
     "warningsColumnsTooNarrowDetail": "أعمدة مجموعة :::columns هذه (__columns__) أضيق من ستة em من نصها: لا يتسع السطر إلا لكلمات قليلة. قلّل عدد الأعمدة أو المسافة بينها.",

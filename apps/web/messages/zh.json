@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "图片已缩小以放下",
     "warningsFloatShrunkDetail": "按原尺寸的 __scale__ % 排入，以放进所在页的空间。",
     "warningsFloatShrunkOverflowDetail": "按最小比例 __scale__ % 排入，仍超出版心底部 __mm__ mm。请降低最小比例，或给它更多空间。",
+    "warningsPictureBelowPrintSizeTitle": "图片小于其印刷尺寸",
+    "warningsPictureBelowPrintSizeDetail": "按印刷尺寸的 __scale__ % 排出：按其分辨率应为 __print__ mm，所在栏宽 __column__ mm，版心宽 __page__ mm。正文流中的图片不会比所在栏更宽，而默认页面有两栏。可让它跨页排（placement span: page），把页面改为单栏，或者如果想要这个尺寸，就提高它的分辨率。",
     "warningsTextWrapTitle": "绕排的图片或框",
     "warningsColumnsTooNarrowTitle": "分栏过窄",
     "warningsColumnsTooNarrowDetail": "此 :::columns 组的 __columns__ 栏比其文字的六个全身还窄，每行只放得下很少的字词。请减少栏数或缩小栏间距。",

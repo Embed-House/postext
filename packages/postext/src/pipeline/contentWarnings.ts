@@ -36,6 +36,8 @@ import { comicSourceWarnings } from '../comics/warnings';
 import { resolvedComics } from '../defaults/comics';
 import { effectiveResourceTypes } from '../defaults/resourceTypes';
 import { composedPages } from '../composed/document';
+import { composedFrameBlockIds } from '../composed/paint';
+import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution';
 import { checkComposedSlots } from '../composed/slotChecks';
 import { describeFitStep, describeFrameOverflowProposal } from '../composed/reflowLog';
 import type { ComposedPagesConfigKeys } from '../composed/types';
@@ -737,6 +739,74 @@ export function floatShrinkWarnings(
   return out;
 }
 
+/** Under this share of its print size a picture is reported. */
+const PRINT_SIZE_SCALE = 0.5;
+/** …when the text block is at least this much wider than its column. */
+const WIDER_PAGE = 1.25;
+
+/** A `pictureBelowPrintSize` warning (#901) for each bitmap with a print
+ *  size that its column holds at under half of it, on a page whose text
+ *  block is wider than the column: a picture meant to fill a page, set in
+ *  one of its two default columns. A print size is the resource's own
+ *  `bitmap.resolution` or a number in `layout.bitmapResolution` (a
+ *  resolution read from the file under `'file'` is no statement of the
+ *  author's). A picture narrowed on purpose (`placement.width`), shrunk to
+ *  its slot (`floatShrunk`), turned, or set in a composed page's frame is
+ *  left alone. `resources` are the document's, as given (before the
+ *  layout stamps its policy on them). Once per picture, where it is first
+ *  placed; `sourceRangeOf` gives the range of the content block citing it. */
+export function pictureBelowPrintSizeWarnings(
+  doc: VDTDocument,
+  resources: readonly Resource[] | undefined,
+  sourceRangeOf?: (contentIndex: number) => { start: number; end: number } | undefined,
+): ContentWarning[] {
+  if (!resources || resources.length === 0) return [];
+  const own = new Map(resources.map((r) => [r.id, r]));
+  const policy = doc.config.layout.bitmapResolution;
+  const dpi = doc.config.page.dpi;
+  const out: ContentWarning[] = [];
+  const seen = new Set<string>();
+  for (const page of doc.pages) {
+    const inFrames = page.composed ? composedFrameBlockIds(page) : undefined;
+    const blocks = [...page.columns.flatMap((c) => c.blocks), ...(page.floats ?? []).filter((b) => !inFrames?.has(b.id))];
+    for (const block of blocks) {
+      const rb = block.resourceBlock;
+      if (!rb || rb.kind !== 'bitmap' || rb.rotation || rb.shrinkScale !== undefined || block.comic) continue;
+      const id = rb.resource.id;
+      if (seen.has(id)) continue;
+      const resource = own.get(id) ?? rb.resource;
+      const bitmap = resource.bitmap;
+      if (!bitmap) continue;
+      const ppi = bitmapResolutionFor({ resolution: bitmap.resolution }, typeof policy === 'number' ? policy : 'document');
+      if (ppi === undefined) continue;
+      const frac = resource.placement?.width;
+      if (typeof frac === 'number' && frac > 0 && frac < 1) continue;
+      const printWidthPx = bitmapLayoutSize({ ...bitmap, resolution: ppi }, dpi).width;
+      const widthPx = rb.bodyRect.width;
+      if (!(printWidthPx > 0) || widthPx / printWidthPx >= PRINT_SIZE_SCALE) continue;
+      // The column caps it (no other fit set it smaller), and spanning the
+      // page would give it more room.
+      const slotPx = block.bbox.width;
+      if (widthPx < slotPx - 1) continue;
+      const pageWidthPx = page.contentArea.width;
+      if (pageWidthPx < slotPx * WIDER_PAGE) continue;
+      seen.add(id);
+      const range = block.contentIndex !== undefined ? sourceRangeOf?.(block.contentIndex) : undefined;
+      out.push({
+        kind: 'pictureBelowPrintSize',
+        resourceId: id,
+        scale: Math.round((widthPx / printWidthPx) * 1000) / 1000,
+        printWidthPx: Math.round(printWidthPx),
+        widthPx: Math.round(widthPx),
+        pageWidthPx: Math.round(pageWidthPx),
+        ...(range ? { sourceStart: range.start, sourceEnd: range.end } : {}),
+        pageIndex: page.index,
+      });
+    }
+  }
+  return out;
+}
+
 /** A `dropCap` warning for the first placed part of each paragraph (by
  *  content index) whose drop cap could not be set as configured (#623). */
 export function dropCapWarnings(
@@ -1000,6 +1070,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
               : `${what} is shorter than layout.wrap.minLinesBeside lines — it takes its band whole, with no text beside it`;
       break;
     }
+    case 'pictureBelowPrintSize':
+      text = `The picture "${w.resourceId}" is set at ${Math.round(w.scale * 100)} % of its print size: its column is ${w.widthPx} px wide, the picture ${w.printWidthPx} px at its resolution, the text block ${w.pageWidthPx} px. A picture in the flow is never wider than its column, and the default page has two. Span the page (placement.span: 'page'), set the page in one column (layout.layoutType: 'single'), or give the picture a higher resolution if this size is the one you want`;
+      break;
     case 'floatShrunk':
       text = w.overflowPx !== undefined
         ? `The picture "${w.resourceId}" is set at its smallest scale, ${Math.round(w.scale * 100)} % of its size, and still runs ${w.overflowPx} px past the foot of the page's text block`

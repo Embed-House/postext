@@ -1868,6 +1868,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsFloatShrunkTitle: t("warningsFloatShrunkTitle"),
     warningsFloatShrunkDetail: t("warningsFloatShrunkDetail"),
     warningsFloatShrunkOverflowDetail: t("warningsFloatShrunkOverflowDetail"),
+    warningsPictureBelowPrintSizeTitle: t("warningsPictureBelowPrintSizeTitle"),
+    warningsPictureBelowPrintSizeDetail: t("warningsPictureBelowPrintSizeDetail"),
     warningsTextWrapTitle: t("warningsTextWrapTitle"),
     warningsColumnsTooNarrowTitle: t("warningsColumnsTooNarrowTitle"),
     warningsColumnsTooNarrowDetail: t("warningsColumnsTooNarrowDetail"),

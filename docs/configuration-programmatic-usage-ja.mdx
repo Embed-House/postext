@@ -210,6 +210,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>図版はその倍率で印刷されます。版面からはみ出すのは<code>overflowPx</code>があるときだけです。</td>
     </tr>
     <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページのフレームに置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
+      <td>画像は段の幅で印刷されます。本文の流れの中の画像は段より広くならず、既定のページは2段です（<code>layout.layoutType: 'double'</code>）。ページを1段組みにするか、画像をページ全幅のフロートにする（<code>placement.span: 'page'</code>）か、そのサイズでよければ解像度を上げてください。</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>、<code>'noContour'</code>（形がわからない画像に輪郭に沿った回り込みを指定した。<code>contour.points</code>のないSVG、透明部分のないビットマップ、ホストがトレースしていないアルファチャンネル）。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
       <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。<code>'noContour'</code>では、本文は画像の枠で回り込みます。画像に多角形を与えるか、透明部分のあるPNGを使うか、トレースを行う<code>readBundle</code>かSandboxで読み込んでください。</td>

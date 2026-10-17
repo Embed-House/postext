@@ -210,6 +210,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>图片按这个比例印出；只有<code>overflowPx</code>这样说时才超出版心。</td>
     </tr>
     <tr>
+      <td><code>pictureBelowPrintSize</code></td>
+      <td>带印刷尺寸的位图（它自己的 <code>bitmap.resolution</code>，或 <code>layout.bitmapResolution</code> 中的数值；不是从文件读出的分辨率）排在一栏里，栏宽只够它印刷尺寸的一半以下，而该页的版心比栏宽。<code>resourceId</code> 指明图片，<code>scale</code> 是保留的印刷宽度比例，<code>printWidthPx</code>、<code>widthPx</code> 和 <code>pageWidthPx</code> 分别是印刷、栏和版心的宽度。用 <code>placement.width</code> 收窄的、为放进位置而缩小的、旋转的或排在组合页面框架里的图片不报告。指向最先引用它的段落。自 postext 1.37 起。</td>
+      <td>图片按栏宽印出。正文流中的图片不会比所在栏更宽，而默认页面有两栏（<code>layout.layoutType: 'double'</code>）：把页面改为单栏，让图片跨整页浮动（<code>placement.span: 'page'</code>），或者如果想要这个尺寸，就提高它的分辨率。</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）未能按要求排版。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（矮于<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）、<code>'verticalText'</code>，或<code>'noContour'</code>（沿形状绕排的图片形状未知：没有<code>contour.points</code>的SVG、没有透明度的位图，或宿主没有描摹的Alpha通道）。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
       <td>按原因所述，对象占满整条，或放在下一栏；为<code>'noContour'</code>时，正文绕图片的框排。给图片一个多边形，改用带透明度的PNG，或通过<code>readBundle</code>或沙盒读取它，两者都会描摹。</td>

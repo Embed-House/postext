@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "収まるよう縮小した図版",
     "warningsFloatShrunkDetail": "ページの空きに収まるよう、元の __scale__ % で組みました。",
     "warningsFloatShrunkOverflowDetail": "最小倍率 __scale__ % で組んでも、版面の下端から __mm__ mm はみ出します。最小倍率を下げるか、空きを増やしてください。",
+    "warningsPictureBelowPrintSizeTitle": "印刷サイズより小さい画像",
+    "warningsPictureBelowPrintSizeDetail": "印刷サイズの __scale__ % で組まれています。解像度どおりなら __print__ mm ですが、段の幅は __column__ mm、版面の幅は __page__ mm です。本文の流れの中の画像は段より広くならず、既定のページは2段です。ページ全幅に置く（placement span: page）か、ページを1段組みにするか、このサイズでよければ解像度を上げてください。",
     "warningsTextWrapTitle": "回り込む図版・ボックス",
     "warningsColumnsTooNarrowTitle": "段が狭すぎる",
     "warningsColumnsTooNarrowDetail": "この :::columns グループの __columns__ 段は、文字の6全角より狭く、1行に入る語がわずかです。段数を減らすか、段間を狭くしてください。",

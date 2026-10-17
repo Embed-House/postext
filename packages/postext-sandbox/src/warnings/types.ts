@@ -110,6 +110,7 @@ export type WarningKind =
   | 'tocGroupSplit'
   | 'codeOverflow'
   | 'floatShrunk'
+  | 'pictureBelowPrintSize'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
   | 'templateDuplicate'
@@ -484,6 +485,10 @@ export type WarningPayload =
    *  (`placement.shrink`, #626), at `scale` of its width; `overflowMm`:
    *  at its smallest scale it still runs that far past the text block. */
   | { kind: 'floatShrunk'; resourceId: string; scale: number; overflowMm?: number }
+  /** A bitmap with a print size its column holds at under half of it, on
+   *  a page whose text block is wider (#901): `scale` of its print width;
+   *  the print, column and text block widths in mm. */
+  | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
   | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the

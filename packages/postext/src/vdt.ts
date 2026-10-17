@@ -3392,6 +3392,15 @@ export type ContentWarning = ContentWarningBase & (
    *  where it had nowhere else to go. Found by the layout; information
    *  more than a fault, unless it overflows. */
   | { kind: 'floatShrunk'; resourceId: string; scale: number; overflowPx?: number }
+  /** `pictureBelowPrintSize` (#901): a bitmap with a print size (its own
+   *  `bitmap.resolution`, or a number in `layout.bitmapResolution`) set in
+   *  a column that holds it at under half of it, on a page whose text
+   *  block is wider than that column: `scale` is the share of its print
+   *  width it keeps, `printWidthPx` that width, `widthPx` the column's and
+   *  `pageWidthPx` the text block's. A picture in the flow is never wider
+   *  than its column, and the default page has two (`layout.layoutType:
+   *  'double'`). Found by the layout; reported once per picture. */
+  | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printWidthPx: number; widthPx: number; pageWidthPx: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than

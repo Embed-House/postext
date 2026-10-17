@@ -134,6 +134,18 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
     // wider than their line and the styles whose letter-spacing such words
     // do not take, and the comic panels and balloons the layout had to
     // force (a letterboxed picture, a balloon that does not fit).
+    if (w.kind === 'pictureBelowPrintSize') {
+      // A picture its column holds under half its print size (#901), in mm.
+      const mm = (v: number) => Math.round((v * 254) / doc.config.page.dpi) / 10;
+      out.push({
+        id: `layout-pictureBelowPrintSize-${w.resourceId}-${i}`,
+        payload: { kind: 'pictureBelowPrintSize', resourceId: w.resourceId, scale: w.scale, printMm: mm(w.printWidthPx), columnMm: mm(w.widthPx), pageMm: mm(w.pageWidthPx) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'floatShrunk') {
       // A picture scaled to its slot (#626); an overrun in mm, as for boxes.
       const mmPerPx = 25.4 / doc.config.page.dpi;

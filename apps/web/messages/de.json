@@ -2487,6 +2487,8 @@
     "warningsFloatShrunkTitle": "Bild verkleinert",
     "warningsFloatShrunkDetail": "auf __scale__ % seiner Größe gesetzt, damit es in den Platz auf seiner Seite passt.",
     "warningsFloatShrunkOverflowDetail": "selbst bei seiner kleinsten Skalierung, __scale__ %, ragt es noch __mm__ mm über den Fuß des Satzspiegels hinaus. Verringern Sie seine kleinste Skalierung oder geben Sie ihm mehr Platz.",
+    "warningsPictureBelowPrintSizeTitle": "Bild unter seiner Druckgröße",
+    "warningsPictureBelowPrintSizeDetail": "auf __scale__ % seiner Druckgröße gesetzt: __print__ mm bei seiner Auflösung, in einer Spalte von __column__ mm auf einem Satzspiegel von __page__ mm. Ein Bild im Fluss ist nie breiter als seine Spalte, und die Standardseite hat zwei. Lassen Sie es über die Seite laufen (placement span: page), setzen Sie die Seite einspaltig oder erhöhen Sie seine Auflösung, wenn diese Größe gewollt ist.",
     "warningsTextWrapTitle": "Umflossenes Bild oder umflossener Kasten",
     "warningsColumnsTooNarrowTitle": "Spalten zu schmal",
     "warningsColumnsTooNarrowDetail": "Die __columns__ Spalten dieser Gruppe :::columns sind schmaler als sechs Geviert ihres Texts: In eine Zeile passen nur wenige Wörter. Setzen Sie weniger Spalten oder einen kleineren Abstand.",

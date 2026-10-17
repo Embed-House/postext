@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "Imatge reduïda perquè hi càpiga",
     "warningsFloatShrunkDetail": "composta al __scale__ % de la seva mida per cabre a l'espai de la seva pàgina.",
     "warningsFloatShrunkOverflowDetail": "a la seva escala mínima, el __scale__ %, encara sobresurt __mm__ mm del peu de la caixa de text. Abaixa'n l'escala mínima o dona-li més espai.",
+    "warningsPictureBelowPrintSizeTitle": "Imatge per sota de la seva mida d'impressió",
+    "warningsPictureBelowPrintSizeDetail": "es compon al __scale__ % de la seva mida d'impressió: __print__ mm a la seva resolució, en una columna de __column__ mm sobre una caixa de text de __page__ mm. Una imatge al flux mai no és més ampla que la seva columna, i la pàgina per defecte en té dues. Fes-la ocupar la pàgina (placement span: page), compon la pàgina a una columna o puja'n la resolució si aquesta és la mida que vols.",
     "warningsTextWrapTitle": "Imatge o caixa amb text al voltant",
     "warningsColumnsTooNarrowTitle": "Columnes massa estretes",
     "warningsColumnsTooNarrowDetail": "Les __columns__ columnes d'aquest grup :::columns són més estretes que sis emes del seu text: hi caben poques paraules per línia. Posa-hi menys columnes o un espai menor entre elles.",

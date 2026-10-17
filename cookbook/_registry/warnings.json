@@ -5571,6 +5571,60 @@
       }
     }
   },
+  "pictureBelowPrintSize": {
+    "source": "engine",
+    "label": {
+      "en": "Picture under its print size",
+      "es": "Imagen por debajo de su tamaño de impresión",
+      "ca": "Imatge per sota de la seva mida d'impressió",
+      "zh": "图片小于其印刷尺寸",
+      "ar": "صورة أصغر من مقاس طباعتها",
+      "ja": "印刷サイズより小さい画像",
+      "pt": "Imagem abaixo do tamanho de impressão",
+      "fr": "Image sous sa taille d’impression",
+      "de": "Bild unter seiner Druckgröße",
+      "it": "Immagine sotto la sua dimensione di stampa"
+    },
+    "cause": {
+      "en": "A bitmap with a print size (its own bitmap.resolution, or a number in layout.bitmapResolution) is set in the flow, where a picture is never wider than its column, and the column holds it at under half that size while the page's text block is wider. The default page has two columns (layout.layoutType 'double'), so a picture meant to fill the page comes out about half as wide.",
+      "es": "Un mapa de bits con tamaño de impresión (su propio bitmap.resolution o un número en layout.bitmapResolution) va en el flujo, donde una imagen nunca es más ancha que su columna, y la columna lo deja por debajo de la mitad de ese tamaño mientras la caja de texto de la página es más ancha. La página por defecto tiene dos columnas (layout.layoutType 'double'), así que una imagen pensada para llenar la página sale a la mitad de ancho, más o menos.",
+      "ca": "Un mapa de bits amb mida d'impressió (el seu bitmap.resolution o un nombre a layout.bitmapResolution) va al flux, on una imatge mai no és més ampla que la seva columna, i la columna el deixa per sota de la meitat d'aquella mida mentre la caixa de text de la pàgina és més ampla. La pàgina per defecte té dues columnes (layout.layoutType 'double'), de manera que una imatge pensada per omplir la pàgina surt a la meitat d'amplada, poc o molt.",
+      "zh": "带印刷尺寸的位图（它自己的 bitmap.resolution，或 layout.bitmapResolution 中的数值）排在正文流中，而流中的图片不会比所在栏更宽；栏宽只够它印刷尺寸的一半以下，版心却更宽。默认页面有两栏（layout.layoutType 'double'），所以本想排满整页的图片只有大约一半宽。",
+      "ar": "صورة نقطية لها مقاس طباعة (دقّتها bitmap.resolution، أو رقم في layout.bitmapResolution) موضوعة في المتن، حيث لا تكون الصورة أعرض من عمودها أبدًا، والعمود يُبقيها دون نصف ذلك المقاس بينما كتلة نص الصفحة أعرض. للصفحة الافتراضية عمودان (layout.layoutType 'double')، فتخرج الصورة المقصود بها ملء الصفحة بنحو نصف عرضها.",
+      "ja": "印刷サイズを持つビットマップ（自身の bitmap.resolution、または layout.bitmapResolution の数値）が本文の流れに置かれています。流れの中の画像は段より広くならず、段の幅は印刷サイズの半分に満たないのに、ページの版面はそれより広くなっています。既定のページは2段（layout.layoutType 'double'）なので、ページいっぱいにするつもりの画像がおよそ半分の幅になります。",
+      "pt": "Um bitmap com tamanho de impressão (o seu bitmap.resolution ou um número em layout.bitmapResolution) está no fluxo, onde uma imagem nunca é mais larga que a sua coluna, e a coluna o deixa abaixo da metade desse tamanho enquanto a mancha de texto da página é mais larga. A página padrão tem duas colunas (layout.layoutType 'double'), então uma imagem pensada para encher a página sai com mais ou menos metade da largura.",
+      "fr": "Un bitmap doté d'une taille d'impression (son bitmap.resolution, ou un nombre dans layout.bitmapResolution) est placé dans le flux, où une image n'est jamais plus large que sa colonne, et la colonne le tient sous la moitié de cette taille alors que le bloc de texte de la page est plus large. La page par défaut a deux colonnes (layout.layoutType 'double') : une image prévue pour remplir la page sort à peu près à moitié de largeur.",
+      "de": "Ein Bitmap mit Druckgröße (eigenes bitmap.resolution oder eine Zahl in layout.bitmapResolution) steht im Fluss, wo ein Bild nie breiter als seine Spalte ist, und die Spalte hält es unter der Hälfte dieser Größe, obwohl der Satzspiegel der Seite breiter ist. Die Standardseite hat zwei Spalten (layout.layoutType 'double'), ein Bild, das die Seite füllen soll, kommt also etwa halb so breit heraus.",
+      "it": "Una bitmap con una dimensione di stampa (il suo bitmap.resolution o un numero in layout.bitmapResolution) sta nel flusso, dove un'immagine non è mai più larga della sua colonna, e la colonna la tiene sotto la metà di quella dimensione mentre la gabbia di testo della pagina è più larga. La pagina predefinita ha due colonne (layout.layoutType 'double'), quindi un'immagine pensata per riempire la pagina esce larga più o meno la metà."
+    },
+    "fix": {
+      "en": "To set it at the page's width: layout.layoutType 'single' for a page of one column, or placement { position: 'top', span: 'page' } (a float across the columns), or put it in a composed page's frame. If the size it has is the one you want, give it a higher resolution so the print size matches.",
+      "es": "Para componerla al ancho de la página: layout.layoutType 'single' para una página a una columna, o placement { position: 'top', span: 'page' } (un flotante sobre las columnas), o llévala al marco de una página compuesta. Si el tamaño que tiene es el que quieres, súbele la resolución para que el tamaño de impresión coincida.",
+      "ca": "Per compondre-la a l'amplada de la pàgina: layout.layoutType 'single' per a una pàgina d'una columna, o placement { position: 'top', span: 'page' } (un flotant damunt les columnes), o porta-la al marc d'una pàgina composta. Si la mida que té és la que vols, puja-li la resolució perquè la mida d'impressió hi coincideixi.",
+      "zh": "要按页面宽度排：用 layout.layoutType 'single' 把页面改为单栏，或用 placement { position: 'top', span: 'page' }（跨栏浮动），或把它放进组合页面的框架。如果现在的尺寸正是想要的，就提高它的分辨率，让印刷尺寸与之一致。",
+      "ar": "لتنضيدها بعرض الصفحة: layout.layoutType 'single' لصفحة بعمود واحد، أو placement { position: 'top', span: 'page' } (عنصر عائم يمتد فوق الأعمدة)، أو ضعها في خانة صفحة مركّبة. وإن كان مقاسها الحالي هو ما تريده فارفع دقّتها ليطابقه مقاس الطباعة.",
+      "ja": "ページ幅で組むには、layout.layoutType 'single' でページを1段組みにするか、placement { position: 'top', span: 'page' }（段をまたぐフロート）にするか、テンプレートページのフレームに入れます。今のサイズでよければ、印刷サイズが合うよう解像度を上げてください。",
+      "pt": "Para compô-la na largura da página: layout.layoutType 'single' para uma página de uma coluna, ou placement { position: 'top', span: 'page' } (um flutuante sobre as colunas), ou leve-a para o quadro de uma página composta. Se o tamanho que ela tem é o que você quer, aumente a resolução para que o tamanho de impressão coincida.",
+      "fr": "Pour la composer à la largeur de la page : layout.layoutType 'single' pour une page sur une colonne, ou placement { position: 'top', span: 'page' } (un flottant sur toutes les colonnes), ou placez-la dans un bloc d'une page composée. Si la taille obtenue est celle que vous voulez, relevez sa résolution pour que la taille d'impression corresponde.",
+      "de": "Um es in Seitenbreite zu setzen: layout.layoutType 'single' für eine einspaltige Seite, oder placement { position: 'top', span: 'page' } (ein Float über die Spalten), oder setzen Sie es in den Rahmen einer zusammengesetzten Seite. Ist die jetzige Größe gewollt, erhöhen Sie seine Auflösung, damit die Druckgröße dazu passt.",
+      "it": "Per comporla alla larghezza della pagina: layout.layoutType 'single' per una pagina a una colonna, oppure placement { position: 'top', span: 'page' } (un flottante su tutte le colonne), oppure mettila nella cornice di una pagina composta. Se la dimensione che ha è quella che vuoi, alzane la risoluzione perché la dimensione di stampa coincida."
+    },
+    "docs": {
+      "slug": "document-format-resources",
+      "heading": {
+        "en": "Bitmap size",
+        "es": "Tamaño de los mapas de bits",
+        "ca": "Mida dels mapes de bits",
+        "zh": "位图尺寸",
+        "ar": "مقاس الصورة النقطية",
+        "ja": "ビットマップのサイズ",
+        "pt": "Tamanho do bitmap",
+        "fr": "Taille des bitmaps",
+        "de": "Bitmap-Größe",
+        "it": "Dimensione delle bitmap"
+      }
+    }
+  },
   "designTextTruncated": {
     "source": "engine",
     "label": {

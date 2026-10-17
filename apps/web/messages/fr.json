@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "Image réduite pour tenir",
     "warningsFloatShrunkDetail": "composée à __scale__ % de sa taille pour tenir dans la place disponible sur sa page.",
     "warningsFloatShrunkOverflowDetail": "à son échelle minimale, __scale__ %, elle dépasse encore de __mm__ mm le pied du bloc de texte. Abaissez son échelle minimale ou donnez-lui plus de place.",
+    "warningsPictureBelowPrintSizeTitle": "Image sous sa taille d’impression",
+    "warningsPictureBelowPrintSizeDetail": "composée à __scale__ % de sa taille d’impression : __print__ mm à sa résolution, dans une colonne de __column__ mm sur un bloc de texte de __page__ mm. Une image dans le flux n’est jamais plus large que sa colonne, et la page par défaut en a deux. Faites-la couvrir la page (placement span: page), composez la page sur une colonne, ou relevez sa résolution si cette taille est celle que vous voulez.",
     "warningsTextWrapTitle": "Image ou encadré habillé",
     "warningsColumnsTooNarrowTitle": "Colonnes trop étroites",
     "warningsColumnsTooNarrowDetail": "Les __columns__ colonnes de ce groupe :::columns font moins de six em de leur texte : peu de mots tiennent sur une ligne. Réduisez le nombre de colonnes ou l’écart.",

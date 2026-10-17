@@ -2486,6 +2486,8 @@
     "warningsFloatShrunkTitle": "Imagem reduzida para caber",
     "warningsFloatShrunkDetail": "composta a __scale__ % do seu tamanho para caber no espaço da sua página.",
     "warningsFloatShrunkOverflowDetail": "na sua escala mínima, __scale__ %, ainda ultrapassa __mm__ mm o pé da mancha de texto. Baixe a sua escala mínima ou dê-lhe mais espaço.",
+    "warningsPictureBelowPrintSizeTitle": "Imagem abaixo do tamanho de impressão",
+    "warningsPictureBelowPrintSizeDetail": "composta a __scale__ % do seu tamanho de impressão: __print__ mm na sua resolução, numa coluna de __column__ mm sobre uma mancha de texto de __page__ mm. Uma imagem no fluxo nunca é mais larga que a sua coluna, e a página padrão tem duas. Faça-a ocupar a página (placement span: page), componha a página numa coluna ou aumente a resolução se este for o tamanho que você quer.",
     "warningsTextWrapTitle": "Imagem ou caixa com texto ao redor",
     "warningsColumnsTooNarrowTitle": "Colunas estreitas demais",
     "warningsColumnsTooNarrowDetail": "As __columns__ colunas deste grupo :::columns são mais estreitas que seis emes do seu texto: cabem poucas palavras por linha. Use menos colunas ou um espaço menor entre elas.",

@@ -243,7 +243,7 @@ import {
   capRetryLimit,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
 import { dropCapSinkAfter } from './dropCap';
 import { mostlyJoiningScript } from '../measure/joining';
 import { composesAsCjk } from '../measure/cjkCompose';
@@ -621,6 +621,8 @@ function placeDocumentPass(
   // their own `resolution` from here on (#631); under the default policy
   // the content is untouched.
   const stampedResources = content.resources && withBitmapResolutions(content.resources, resolved.layout.bitmapResolution);
+  /** The resources as given: whose print size is the author's (#901). */
+  const givenResources = content.resources;
   if (stampedResources && stampedResources !== content.resources) content = { ...content, resources: stampedResources as Resource[] };
   // Tracking rungs a loose paragraph may climb: none, then 5‰ steps up to
   // the cap (`headings.balancing.maxTracking`, thousandths of an em), the
@@ -8750,7 +8752,12 @@ function placeDocumentPass(
     const b = contentBlocks[idx];
     return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
   });
-  if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
+  // Pictures whose column holds them under half their print size (#901).
+  const belowPrint = pictureBelowPrintSizeWarnings(doc, givenResources, (idx) => {
+    const b = contentBlocks[idx];
+    return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
+  });
+  if (shrunk.length > 0 || belowPrint.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint]);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
@@ -8905,7 +8912,8 @@ const indexWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
 const joiningSpacingWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `dropCap` warnings of the last pass, per document (#623). */
 const dropCapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
-/** The `floatShrunk` warnings of a build (#626), found by its last pass. */
+/** The `floatShrunk` (#626) and `pictureBelowPrintSize` (#901) warnings
+ *  of a build, found by its last pass. */
 const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */
