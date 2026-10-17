@@ -145,6 +145,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>The template decides: a spread template is laid over two facing pages, any other on one page.</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>A <code>::label</code> of a <code>:::figure</code> names, with <code>at</code>, an anchor its figure's resource does not have (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, the resource's anchors; <code>locale</code>).</td>
+      <td>The label is not drawn; the reflowable EPUB still lists it.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>An anchor of the figure's resource names a label style, and no <code>::label</code> of the figure stands at it in this locale (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). A note.</td>
+      <td>Nothing is drawn at the anchor.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>A figure's label is still wider than its anchor's <code>width</code> at the smallest scale its label style allows (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>The label is drawn at that scale and runs past its measure.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>The lines of two labels of one figure meet (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). The later label, in the order written, carries it.</td>
+      <td>Both labels are drawn where they are.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> names no chip style.</td>
       <td>The chip takes the first chip style.</td>

@@ -204,7 +204,7 @@ Diagnostica dal vivo, ricalcolata a partire dal testo, dalla grafica, dalle figu
   - formule `$…$` / `$$…$$` non valide o non chiuse;
   - nomi di direttiva sconosciuti (si accetta ogni nome che il parser conosce: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` e `columns`), attributi di numerazione o di parità non validi, e un `:::space{lines=N}` fuori dall’intervallo 0–20 righe;
   - un recinto di contenitore `:::` lasciato aperto alla fine del documento (un clic porta il focus sulla sua riga di apertura);
-  - un `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` o un `{style="…"}` di titolo il cui stile non è configurato;
+  - un `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}`, `:mark[…]{style="…"}` o un `{style="…"}` di titolo il cui stile non è configurato;
   - una riga `::resource` che viene stampata come testo, perché malformata o attaccata sotto un paragrafo senza una riga vuota;
   - *Markup a larghezza piena*: markup digitato con un metodo di input cinese o giapponese (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), che viene stampato come testo; la voce mostra la forma ASCII da digitare;
   - *Chiave di attributo non letta*: una chiave di attributo scritta fuori dall’ASCII (`作者=曹雪芹`), che il parser ignora;

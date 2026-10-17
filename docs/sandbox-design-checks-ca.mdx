@@ -204,7 +204,7 @@ Diagnòstics en viu, recalculats a partir del text, el disseny, les figures i l'
   - fórmules `$…$` / `$$…$$` invàlides o sense tancar;
   - noms de directiva desconeguts (s'accepta qualsevol nom que conegui el parser: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` i `columns`), atributs de numeració o paritat invàlids i un `:::space{lines=N}` fora de 0–20 línies;
   - una tanca de contenidor `:::` sense tancar al final del document (en fer-hi clic s'enfoca la seva línia d'obertura);
-  - un `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` o un `{style="…"}` de títol l'estil del qual no està configurat;
+  - un `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}`, `:mark[…]{style="…"}` o un `{style="…"}` de títol l'estil del qual no està configurat;
   - una línia `::resource` que s'imprimeix com a text, perquè està mal formada o enganxada sota un paràgraf sense línia en blanc;
   - *Marques en amplada completa*: marques escrites amb un mètode d'entrada xinès o japonès (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), que s'imprimeixen com a text; l'avís mostra la forma ASCII que cal escriure;
   - *Clau d'atribut no llegida*: una clau d'atribut escrita fora de l'ASCII (`作者=曹雪芹`), que l'analitzador ignora;

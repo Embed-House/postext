@@ -204,7 +204,7 @@ export const metadata = {
   - 无效或未闭合的`$…$` / `$$…$$`公式；
   - 未知的指令名称（解析器认识的名称都接受：`pagebreak`、`columnbreak`、`space`、`numbering`、`toc`、`callout`、`paragraphs`、`part`和`columns`）、无效的编号或奇偶属性，以及超出0–20行范围的`:::space{lines=N}`；
   - 到文档末尾仍未闭合的`:::`容器围栏（点击它会让编辑器聚焦到开头那一行）；
-  - 样式未配置的`:::paragraphs{style="…"}`、`:::callout{type="…"}`、`:chip[…]{style="…"}`或标题`{style="…"}`；
+  - 样式未配置的`:::paragraphs{style="…"}`、`:::callout{type="…"}`、`:chip[…]{style="…"}`、`:mark[…]{style="…"}`或标题`{style="…"}`；
   - 被当作文字印出的`::resource`行——格式错误，或紧贴在段落下方、中间没有空行；
   - *全角标记*：用中文或日文输入法输入的标记（`：：：`、`＃`、`［＾…］`、`｛…｝`、`＊＊…＊＊`），会被当作文字印出；条目会给出应输入的ASCII形式；
   - *属性键未被读取*：用非ASCII字符写的属性键（`作者=曹雪芹`），解析器会忽略它；

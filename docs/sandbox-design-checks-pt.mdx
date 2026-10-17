@@ -204,7 +204,7 @@ Diagnósticos ao vivo, recalculados a partir do texto, do design, das figuras e 
   - fórmulas `$…$` / `$$…$$` inválidas ou não fechadas;
   - nomes de diretiva desconhecidos (todo nome que o analisador conhece é aceito: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` e `columns`), atributos de numeração ou de paridade inválidos, e um `:::space{lines=N}` fora do intervalo de 0 a 20 linhas;
   - uma cerca de contêiner `:::` não fechada no fim do documento (clicar nela dá foco à linha de abertura);
-  - um `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` ou `{style="…"}` de título cujo estilo não está configurado;
+  - um `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}`, `:mark[…]{style="…"}` ou `{style="…"}` de título cujo estilo não está configurado;
   - uma linha `::resource` que é impressa como texto, por estar malformada ou colada sob um parágrafo sem uma linha em branco;
   - *Marcação de largura total*: marcação digitada com um método de entrada chinês ou japonês (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), que é impressa como texto; a entrada mostra a forma ASCII que deve ser digitada;
   - *Chave de atributo não lida*: uma chave de atributo escrita fora do ASCII (`作者=曹雪芹`), que o analisador ignora;

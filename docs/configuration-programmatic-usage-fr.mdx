@@ -145,6 +145,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Une <code>::label</code> d’une <code>:::figure</code> désigne avec <code>at</code> une ancre que la ressource de sa figure n’a pas (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, les ancres de la ressource ; <code>locale</code>).</td>
+      <td>L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Une ancre de la ressource de la figure désigne un style d’étiquette et aucune <code>::label</code> de la figure ne s’y trouve dans cette langue (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). C’est une note.</td>
+      <td>Rien n’est dessiné à l’ancre.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Une étiquette de figure est encore plus large que le <code>width</code> de son ancre à la plus petite échelle que permet son style d’étiquette (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>L’étiquette est dessinée à cette échelle et dépasse sa mesure.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>Les lignes de deux étiquettes d’une même figure se touchent (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). L’avertissement revient à l’étiquette postérieure, dans l’ordre d’écriture.</td>
+      <td>Les deux étiquettes sont dessinées là où elles sont.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> ne nomme aucun style de pastille.</td>
       <td>La pastille prend le premier style de pastille.</td>

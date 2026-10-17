@@ -204,7 +204,7 @@ Laufende Diagnosen, neu berechnet aus dem Text, der Gestaltung, den Abbildungen 
   - ungültige oder nicht geschlossene Formeln `$…$` / `$$…$$`;
   - unbekannte Direktivennamen (jeder Name, den der Parser kennt, wird akzeptiert: `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` und `columns`), ungültige Nummerierungs- oder Paritätsattribute und ein `:::space{lines=N}` außerhalb von 0–20 Zeilen;
   - ein Direktivenblock `:::`, der am Ende des Dokuments nicht geschlossen ist (ein Klick fokussiert seine Anfangszeile);
-  - ein `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}` oder ein `{style="…"}` an einer Überschrift, dessen Stil nicht konfiguriert ist;
+  - ein `:::paragraphs{style="…"}`, `:::callout{type="…"}`, `:chip[…]{style="…"}`, `:mark[…]{style="…"}` oder ein `{style="…"}` an einer Überschrift, dessen Stil nicht konfiguriert ist;
   - eine Zeile `::resource`, die als Text gedruckt wird – fehlerhaft oder ohne Leerzeile unter einen Absatz geklebt;
   - *Markup in voller Breite*: Markup, das mit einer chinesischen oder japanischen Eingabemethode getippt wurde (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`) und als Text gedruckt wird; der Eintrag zeigt die ASCII-Form, die zu tippen ist;
   - *Attributschlüssel nicht gelesen*: ein Attributschlüssel, der nicht in ASCII geschrieben ist (`作者=曹雪芹`) und den der Parser ignoriert;

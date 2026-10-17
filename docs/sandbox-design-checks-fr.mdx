@@ -204,7 +204,7 @@ Des diagnostics en direct, recalculés à partir du texte, de la maquette, des f
   - les formules `$…$` / `$$…$$` invalides ou non fermées ;
   - les noms de directive inconnus (tout nom que connaît l’analyseur est accepté : `pagebreak`, `columnbreak`, `space`, `numbering`, `toc`, `callout`, `paragraphs`, `part` et `columns`), les attributs de numérotation ou de parité invalides, et un `:::space{lines=N}` hors de l’intervalle 0–20 lignes ;
   - un délimiteur de conteneur `:::` resté ouvert à la fin du document (cliquer dessus donne le focus à sa ligne d’ouverture) ;
-  - un `:::paragraphs{style="…"}`, un `:::callout{type="…"}`, un `:chip[…]{style="…"}` ou un `{style="…"}` de titre dont le style n’est pas configuré ;
+  - un `:::paragraphs{style="…"}`, un `:::callout{type="…"}`, un `:chip[…]{style="…"}`, un `:mark[…]{style="…"}` ou un `{style="…"}` de titre dont le style n’est pas configuré ;
   - une ligne `::resource` qui s’imprime comme du texte, parce qu’elle est mal formée ou collée sous un paragraphe sans ligne vide ;
   - *Balisage pleine chasse* : du balisage tapé avec une méthode de saisie chinoise ou japonaise (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊…＊＊`), qui s’imprime comme du texte ; l’entrée montre la forme ASCII à taper ;
   - *Clé d’attribut non lue* : une clé d’attribut écrite hors ASCII (`作者=曹雪芹`), que l’analyseur ignore ;

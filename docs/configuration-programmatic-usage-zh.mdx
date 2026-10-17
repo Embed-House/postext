@@ -145,6 +145,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>以模板为准：跨页模板排在两个对页上，其他模板排在一页上。</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td><code>::label</code>用<code>at</code>指向了其<code>:::figure</code>的资源中不存在的锚点（<code>resourceId</code>、<code>anchor</code>、<code>known</code>即资源已有的锚点、<code>locale</code>）。</td>
+      <td>这个标注不会画出；可重排EPUB仍会列出它。</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>插图资源的某个锚点指定了标注样式，而该插图在这种语言中没有任何<code>::label</code>位于其上（<code>resourceId</code>、<code>anchor</code>、<code>style</code>、<code>locale</code>）。这只是一条提示。</td>
+      <td>锚点处什么也不画。</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>插图的某个标注即使缩到其标注样式允许的最小比例，仍比锚点的<code>width</code>宽（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>widthPct</code>、<code>scale</code>、<code>locale</code>）。</td>
+      <td>标注按该比例画出，并超出它的宽度。</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>同一幅插图的两个标注的文字行相碰（<code>resourceId</code>、<code>text</code>、<code>anchor</code>、<code>with</code>、<code>withAnchor</code>、<code>count</code>、<code>locale</code>）。警告记在按书写顺序靠后的那个标注上。</td>
+      <td>两个标注都画在原处。</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code>指定的行内标签样式不存在。</td>
       <td>该行内标签采用第一个行内标签样式。</td>

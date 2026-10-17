@@ -145,6 +145,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma.</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Um <code>::label</code> de uma <code>:::figure</code> nomeia com <code>at</code> uma âncora que o recurso da sua figura não tem (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, as âncoras do recurso; <code>locale</code>).</td>
+      <td>O rótulo não é desenhado; o EPUB fluido continua a listá-lo.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Uma âncora do recurso da figura nomeia um estilo de rótulo e nenhum <code>::label</code> da figura está nela neste idioma (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). É uma nota.</td>
+      <td>Nada é desenhado na âncora.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Um rótulo de uma figura ainda é mais largo que o <code>width</code> da sua âncora na menor escala que o seu estilo de rótulo permite (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>O rótulo é desenhado nessa escala e passa da sua medida.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>As linhas de dois rótulos de uma mesma figura se tocam (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). Quem o leva é o rótulo posterior, na ordem em que foram escritos.</td>
+      <td>Os dois rótulos são desenhados onde estão.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> cita um estilo de chip que não existe.</td>
       <td>O chip recebe o primeiro estilo de chip.</td>

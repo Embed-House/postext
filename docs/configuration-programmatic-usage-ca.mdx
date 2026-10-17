@@ -145,6 +145,26 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>Mana la plantilla: una plantilla de doble pàgina es compon en dues pàgines encarades, i qualsevol altra en una.</td>
     </tr>
     <tr>
+      <td><code>labelAnchorUnknown</code></td>
+      <td>Un <code>::label</code> d'un <code>:::figure</code> anomena amb <code>at</code> una àncora que el recurs de la seva figura no té (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, les àncores del recurs; <code>locale</code>).</td>
+      <td>El rètol no es dibuixa; l'EPUB adaptable el continua llistant.</td>
+    </tr>
+    <tr>
+      <td><code>anchorUnlabelled</code></td>
+      <td>Una àncora del recurs de la figura anomena un estil de rètol i cap <code>::label</code> de la figura no hi és en aquesta llengua (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). És una nota.</td>
+      <td>No es dibuixa res a l'àncora.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverflow</code></td>
+      <td>Un rètol d'una figura continua sent més ample que el <code>width</code> de la seva àncora a l'escala més petita que permet el seu estil de rètol (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
+      <td>El rètol es dibuixa a aquesta escala i sobrepassa la seva mesura.</td>
+    </tr>
+    <tr>
+      <td><code>labelOverlap</code></td>
+      <td>Les línies de dos rètols d'una mateixa figura es toquen (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). El porta el rètol posterior, en l'ordre en què estan escrits.</td>
+      <td>Els dos rètols es dibuixen on són.</td>
+    </tr>
+    <tr>
       <td><code>unknownChipStyle</code></td>
       <td><code>:chip[…]{'{'}style{'}'}</code> no anomena cap estil de xip.</td>
       <td>El xip pren el primer estil de xip.</td>
