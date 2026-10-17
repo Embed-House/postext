@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { cardProblems, sidesOf, spreadsOf } from "../../../scripts/cookbook/cards.ts";
+import { altText, cardProblems, sidesOf, spreadsOf } from "../../../scripts/cookbook/cards.ts";
 import { detect, detectFeatures, readBackFindings, runChecks } from "../../../scripts/cookbook/checks.ts";
-import type { BundleReadBack, CheckInput, EpubRecord, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
+import type { BundleReadBack, CheckInput, EpubRecord, ProbeFacts, ProbePage } from "../../../scripts/cookbook/checks.ts";
 import { blankFont, mathErrorsOf, textOfFaces } from "../../../scripts/cookbook/lib/probe.js";
 import { loadRegistry } from "./registry.ts";
 import type { ComposedPen, RecipeMeta } from "./types.ts";
@@ -229,6 +229,34 @@ describe("C12: CJK and Arabic files loaded after the layout", () => {
     expect(of("C12", runChecks(input({ facts: facts({ faces }) })))[0].detail).toBe(
       "Amiri 700 sets ا ل ل ي (p2 heading) from files not loaded when the layout ran: list the weight in FONTS and load it with loadArabicFonts(FONTS, markdown) before the build",
     );
+  });
+});
+
+describe("the alt text of a page (#915)", () => {
+  const at = (heading: string, extra: Partial<ProbePage> = {}): ProbePage => ({
+    n: 2, book: 2, docIndex: 0, index: 1, label: "2", role: "body", w: 100, h: 100, trimOffset: 0, blank: false,
+    blocks: 3, coverage: 0.9, h1: true, heading, captions: [], ...extra,
+  });
+
+  it("adds no stop after a heading that ends in a question or exclamation mark", () => {
+    expect(altText(at("¿Dónde está el agua?"), "es")).toBe("Página 2: ¿Dónde está el agua?");
+    expect(altText(at("Where is the water?"), "en")).toBe("Page 2: Where is the water?");
+    expect(altText(at("¡Al agua!"), "es")).toBe("Página 2: ¡Al agua!");
+    expect(altText(at("«Qui hi ha?»"), "ca")).toBe("Pàgina 2: «Qui hi ha?»");
+    expect(altText(at("水在哪里？"), "zh")).toBe("第 2 页：水在哪里？");
+    expect(altText(at("أين الماء؟"), "ar")).toBe("الصفحة 2: أين الماء؟");
+    expect(altText(at("The water cycle"), "en")).toBe("Page 2: The water cycle.");
+  });
+
+  it("joins a caption after such a heading with a space", () => {
+    expect(altText(at("Where is the water?", { captions: ["Figure 1.1 A river."] }), "en")).toBe("Page 2: Where is the water? Figure 1.1 A river.");
+    expect(altText(at("The water cycle", { captions: ["Figure 1.1 A river"] }), "en")).toBe("Page 2: The water cycle. Figure 1.1 A river.");
+  });
+
+  it("names a page a composed box went on to after the page it continues", () => {
+    expect(altText(at("¿Dónde está el agua?", { continued: true }), "es")).toBe("Página 2: ¿Dónde está el agua? (continuación).");
+    expect(altText(at("Where is the water?", { continued: true }), "en")).toBe("Page 2: Where is the water? (continued).");
+    expect(altText(at("水在哪里？", { continued: true }), "zh")).toBe("第 2 页：水在哪里？（续）。");
   });
 });
 

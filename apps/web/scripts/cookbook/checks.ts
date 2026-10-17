@@ -59,6 +59,9 @@ export interface ProbePage {
   heading: string;
   captions: string[];
   legibility?: number;
+  /** A page added by a composed page's continuation (#915): `heading` is
+   *  the continued page fence's. */
+  continued?: boolean;
 }
 
 export interface ProbeFacts {

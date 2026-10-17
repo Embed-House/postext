@@ -333,6 +333,15 @@ function fontsOf(owner, prefix) {
 }
 
 /** Blocks laid out on a page: columns, floats, margin notes, footnotes. */
+/** A page's first heading as the alt text names it, else its opener band's text. */
+function pageHeading(page, blocks) {
+  const headingBlock = blocks.find((b) => b.type === 'heading');
+  const heading = headingBlock ? (headingBlock.lines ?? []).map((l) => l.text).join(' ').trim() : '';
+  if (heading || !page.openerBand) return heading;
+  return (page.openerBand.blocks ?? []).filter((b) => b.kind === 'text')
+    .map((b) => (b.lines ?? []).map((l) => l.text).join(' ')).join(' ').trim().slice(0, 120);
+}
+
 function pageBlocks(page) {
   return [
     ...(page.columns ?? []).flatMap((column) => column.blocks ?? []),
@@ -1353,12 +1362,12 @@ export function facts({ select = 'last', hero = [] } = {}) {
     const area = (b) => (b?.bbox ? Math.max(0, b.bbox.width) * Math.max(0, b.bbox.height) : 0);
     const inColumns = columns.flatMap((c) => c.blocks ?? []).filter((b) => !(b.containerId !== undefined && !b.callout));
     const covered = inColumns.reduce((sum, b) => sum + area(b), 0) + (page.floats ?? []).reduce((s, b) => s + area(b), 0);
-    const headingBlock = blocks.find((b) => b.type === 'heading');
-    let heading = headingBlock ? (headingBlock.lines ?? []).map((l) => l.text).join(' ').trim() : '';
-    if (!heading && page.openerBand) {
-      heading = (page.openerBand.blocks ?? []).filter((b) => b.kind === 'text')
-        .map((b) => (b.lines ?? []).map((l) => l.text).join(' ')).join(' ').trim().slice(0, 120);
-    }
+    // A page added by a composed page's continuation (#915) is named after
+    // the page fence it continues, not after a heading in the middle of
+    // the box that goes on there.
+    const from = page.composed?.continuationOf;
+    const fencePage = from !== undefined ? (doc.pages ?? []).find((p) => p.index === from) : undefined;
+    const heading = pageHeading(fencePage ?? page, fencePage ? pageBlocks(fencePage) : blocks);
     const captions = blocks.filter((b) => b.resourceBlock?.captionLines?.length)
       .map((b) => b.resourceBlock.captionLines.map((l) => l.text).join(' ').trim());
     const entry = {
@@ -1369,6 +1378,7 @@ export function facts({ select = 'last', hero = [] } = {}) {
       coverage: colArea ? Math.min(1, covered / colArea) : 1,
       h1: blocks.some((b) => b.type === 'heading' && b.headingLevel === 1),
       heading, captions,
+      ...(fencePage ? { continued: true } : {}),
     };
     if (heroSet.has(n)) entry.legibility = legibility(page, doc, blocks, resolved);
     return entry;

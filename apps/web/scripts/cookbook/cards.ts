@@ -139,18 +139,31 @@ const PUNCT: Record<Locale, { colon: string; stop: string }> = {
   it: { colon: ": ", stop: ". " },
 };
 
+/** What follows the heading of a page a composed page's box went on to (#915). */
+const CONTINUED: Record<Locale, string> = {
+  en: " (continued)", es: " (continuación)", ca: " (continuació)", zh: "（续）", ar: " (تابع)",
+  ja: "（続き）", pt: " (continuação)", fr: " (suite)", de: " (Fortsetzung)", it: " (continua)",
+};
+
+/** A sentence's own end: a question or exclamation mark, an ellipsis (the
+ *  full-width, Arabic and Spanish closing forms too), maybe inside a closing
+ *  quote or bracket. The alt text adds no stop after one. */
+const SENTENCE_END = /[?!…？！。؟][»”’"')）」』]*$/;
+
 /** Role and folio, the page's first heading, then its figure captions, in
- *  the sample's language. */
+ *  the sample's language. A heading or caption that ends in `?` or `!`
+ *  keeps its mark and takes no stop after it. */
 export function altText(page: ProbePage, lang: Locale): string {
   const clean = (s: string) => s.replace(/\s+/g, " ").trim();
   const words = ROLE_WORDS[lang][page.role] ?? ROLE_WORDS[lang].body;
   const { colon, stop } = PUNCT[lang];
   let text = words.replace("{n}", String(page.label || page.n));
   const heading = clean(page.heading ?? "");
-  if (heading) text += `${colon}${heading}`;
+  if (heading) text += `${colon}${heading}${page.continued ? CONTINUED[lang] : ""}`;
   const captions = (page.captions ?? []).map(clean).filter(Boolean);
-  if (captions.length) text += `${stop}${captions.join(" · ")}`;
+  const joint = (s: string) => (SENTENCE_END.test(s) ? (stop.endsWith(" ") ? " " : "") : stop);
+  if (captions.length) text += `${joint(text)}${captions.join(" · ")}`;
   text = text.replace(/[.:。：]$/, "");
-  const end = stop.trimEnd();
+  const end = SENTENCE_END.test(text) ? "" : stop.trimEnd();
   return text.length > 280 ? `${text.slice(0, 277).trimEnd()}…` : `${text}${end}`;
 }
