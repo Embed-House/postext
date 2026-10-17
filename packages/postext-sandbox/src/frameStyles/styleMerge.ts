@@ -11,7 +11,7 @@
  * the undo history: ./applyRewrite.
  */
 
-import type { CalloutStyleConfig, FrameConfig, PageTemplate, PageTemplatePatch, PostextConfig, ResolvedCalloutStyleConfig } from 'postext';
+import { calloutStyleChain, inheritCalloutStyles, type CalloutStyleConfig, type FrameConfig, type PageTemplate, type PageTemplatePatch, type PostextConfig, type ResolvedCalloutStyleConfig } from 'postext';
 import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
 import { retypeCalloutChanges } from './calloutFences';
 import { differingGroups, POSITION_FIELDS, type CompareOptions } from './styleCompare';
@@ -154,8 +154,14 @@ export function planMerges(
   const ids = styles.map((s) => s.id);
   const placeOf = new Map<number, CalloutStyleConfig>();
   for (const g of groups) {
-    const kept = styles.find((s) => s.id === g.keep);
+    let kept = styles.find((s) => s.id === g.keep);
     if (!kept) continue;
+    // A kept style based (however far up) on a style merged into it would
+    // end up based on itself: it takes its inherited settings in and stands
+    // on its own, its look unchanged (#964).
+    const keptAt = ids.indexOf(g.keep);
+    const above = calloutStyleChain(styles, keptAt).chain.slice(1).map((i) => ids[i]!);
+    if (above.some((id) => renames.has(id) || thin.has(id))) kept = inheritCalloutStyles(styles)[keptAt] ?? kept;
     const at = ids.findIndex((id) => id === g.keep || renames.get(id) === g.keep);
     if (at >= 0) placeOf.set(at, kept);
   }

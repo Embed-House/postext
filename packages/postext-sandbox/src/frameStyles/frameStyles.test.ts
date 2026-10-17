@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import type { CalloutStyleConfig, PageTemplate, PostextConfig } from 'postext';
 import { applyTextChanges } from '../book/textChanges';
 import { calloutFences, retypeCalloutChanges } from './calloutFences';
-import { frameStyleLibrary } from './library';
+import { frameStyleLibrary, resolveBookStyles } from './library';
 import { countFields, mergeSuggestions, parseHex, styleDiff, styleFields, stylesAfterMerging } from './styleCompare';
 import { placesToKeep, planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge';
-import { inheritCalloutStyles } from 'postext';
+import { calloutStyleChain, inheritCalloutStyles } from 'postext';
+import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { groupsText, suggestionText } from '../sidebar/sections/FrameStylesSection/text';
 import { styleUsage } from './styleUsage';
-import { frameDress, previewConfig, previewMarkdown } from './stylePreview';
+import { frameDress, inheritedStyle, previewConfig, previewMarkdown } from './stylePreview';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pad = (v: number) => ({ top: mm(v), right: mm(v), bottom: mm(v), left: mm(v) });
@@ -296,5 +298,105 @@ describe('the preview of a style', () => {
     const sample = { text: 'Texto de muestra.', label: 'Una "etiqueta" {rara}' };
     expect(previewMarkdown({ id: 'caja', label: {} }, sample)).toBe(':::callout{type="caja" label="Una etiqueta rara"}\nTexto de muestra.\n:::\n');
     expect(previewMarkdown({ id: 'nota' }, sample)).toBe(':::callout{type="nota"}\nTexto de muestra.\n:::\n');
+  });
+});
+
+describe('the sample and the merge card of styles based on another (#964)', () => {
+  const colour = (hex: string) => ({ hex, model: 'hex' as const });
+  const note: CalloutStyleConfig = {
+    id: 'note',
+    title: 'Good to know',
+    background: colour('#e3f1fa'),
+    border: { enabled: true, color: colour('#1d70b8'), width: { value: 1, unit: 'pt' } },
+    padding: pad(3),
+    titleStyle: { fontWeight: 700, color: colour('#1d70b8') },
+  };
+  const at = (edge: 'top-right' | 'bottom-left') => ({ placement: 'fixed' as const, fixed: { anchor: { to: 'container' as const, edge }, offset: { x: mm(0), y: mm(0) } } });
+  const top: CalloutStyleConfig = { id: 'note-top', extends: 'note', ...at('top-right') };
+  const foot: CalloutStyleConfig = { id: 'note-foot', extends: 'note', ...at('bottom-left') };
+  const book = [note, top, foot];
+  const boxes = (ids: string[]) => [{ id: 'c', markdown: ids.map((id) => `:::callout{type="${id}"}\nx\n:::`).join('\n\n') }];
+
+  it('draws a style with what it inherits from its parent, dressed as a frame', () => {
+    const config = previewConfig({ calloutStyles: book }, top);
+    const [drawn] = config.calloutStyles!;
+    expect(drawn).toMatchObject({ id: 'note-top', background: colour('#e3f1fa'), padding: pad(3), title: 'Good to know', placement: 'here', width: 'fill' });
+    expect(drawn!.extends).toBeUndefined();
+    expect(drawn!.fixed).toBeUndefined();
+    // What the engine resolves for the sample is the shared look.
+    const [resolved] = resolveBookStyles({}, config.calloutStyles!);
+    expect(resolved!.background.hex).toBe('#e3f1fa');
+    expect(resolved!.border.enabled).toBe(true);
+    expect(resolved!.titleStyle.color?.hex).toBe('#1d70b8');
+  });
+
+  it('reads the parent in the book, whatever the style passed in changes', () => {
+    const draft: CalloutStyleConfig = { ...top, padding: pad(7) };
+    const [drawn] = previewConfig({ calloutStyles: book }, draft).calloutStyles!;
+    expect(drawn!.padding).toEqual(pad(7));
+    expect(drawn!.background).toEqual(colour('#e3f1fa'));
+    // A style the book does not list yet stands last; a missing parent leaves it alone.
+    expect(previewConfig({ calloutStyles: [note] }, { id: 'new', extends: 'note' }).calloutStyles![0]!.background).toEqual(colour('#e3f1fa'));
+    expect(previewConfig({ calloutStyles: [note] }, { id: 'lost', extends: 'gone', padding: pad(1) }).calloutStyles![0]).toMatchObject({ id: 'lost', padding: pad(1) });
+  });
+
+  it('keys the picture on the look the style is drawn with: a change in the parent paints again', () => {
+    const a = inheritedStyle({ calloutStyles: book }, top);
+    const b = inheritedStyle({ calloutStyles: [{ ...note, background: colour('#ffeecc') }, top, foot] }, top);
+    expect(JSON.stringify(a)).not.toBe(JSON.stringify(b));
+    expect(inheritedStyle({ calloutStyles: book }, note)).toBe(note);
+  });
+
+  it('compares styles as the engine resolves them: two thin styles on one base look the same', () => {
+    const lib = frameStyleLibrary({ calloutStyles: book }, boxes(['note', 'note-top', 'note-foot']), { ignorePosition: true });
+    expect(lib.suggestions).toEqual([{ keep: 'note', merge: ['note-top', 'note-foot'], fields: [], groups: [], moves: 2 }]);
+    expect(suggestionText(lib.suggestions[0]!, DEFAULT_LABELS)).toBe('These 3 styles look the same: merge?');
+  });
+
+  it('names a difference that is the title text as the default title, not the title style', () => {
+    const lib = frameStyleLibrary({ calloutStyles: [note, top, { ...foot, title: 'Before you leave' }] }, boxes(['note', 'note-top', 'note-foot']), { ignorePosition: true });
+    expect(lib.suggestions[0]).toMatchObject({ keep: 'note', merge: ['note-top', 'note-foot'], groups: ['title'] });
+    expect(suggestionText(lib.suggestions[0]!, DEFAULT_LABELS)).toBe('These 3 styles differ only in default title: merge?');
+    expect(groupsText(['titleStyle'], DEFAULT_LABELS)).toBe('title style');
+  });
+
+  it('a style that overrides a setting of the parent differs from the base in that setting only', () => {
+    const lib = frameStyleLibrary({ calloutStyles: [note, { ...top, background: colour('#ffeecc') }] }, boxes(['note', 'note-top']), { ignorePosition: true });
+    expect(lib.suggestions[0]).toMatchObject({ groups: ['background'] });
+  });
+
+  it('merging a base into the style that is based on it leaves no loop and no look changed', () => {
+    const config: PostextConfig = { calloutStyles: book };
+    const chapters = boxes(['note', 'note-top', 'note-foot']);
+    // The style kept is the child: its parent is merged into it.
+    const plan = planMerges(config, book, chapters, [{ keep: 'note-top', merge: ['note'] }]);
+    const out = plan.calloutStyles;
+    expect(out.map((s) => s.id)).toEqual(['note-top', 'note-foot']);
+    for (let i = 0; i < out.length; i++) {
+      expect(calloutStyleChain(out, i).cycle).toBeUndefined();
+      expect(calloutStyleChain(out, i).unknown).toBeUndefined();
+    }
+    expect(out[1]!.extends).toBe('note-top');
+    const resolved = resolveBookStyles({ calloutStyles: out }, out);
+    expect(resolved[0]!.background.hex).toBe('#e3f1fa');
+    expect(resolved[0]!.title).toBe('Good to know');
+    expect(resolved[0]!.placement).toBe('fixed');
+    expect(resolved[1]!.background.hex).toBe('#e3f1fa');
+  });
+
+  it('merging a base into a style two steps down its chain leaves no loop', () => {
+    const chain: CalloutStyleConfig[] = [{ id: 'a', padding: pad(2) }, { id: 'b', extends: 'a', title: 'B' }, { id: 'c', extends: 'b', background: colour('#112233') }];
+    const plan = planMerges({ calloutStyles: chain }, chain, boxes(['a', 'b', 'c']), [{ keep: 'c', merge: ['a'] }]);
+    const out = plan.calloutStyles;
+    expect(out.map((s) => s.id)).toEqual(['c', 'b']);
+    for (let i = 0; i < out.length; i++) {
+      const found = calloutStyleChain(out, i);
+      expect(found.cycle).toBeUndefined();
+      expect(found.unknown).toBeUndefined();
+    }
+    const resolved = resolveBookStyles({}, out);
+    expect(resolved[0]!.padding.left.value).toBe(2);
+    expect(resolved[0]!.title).toBe('B');
+    expect(resolved[0]!.background.hex).toBe('#112233');
   });
 });

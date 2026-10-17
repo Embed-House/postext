@@ -8,7 +8,7 @@
  * (DESIGN §2.4).
  */
 
-import { buildDocument, renderPageToCanvas, type CalloutStyleConfig, type PostextConfig, type Resource } from 'postext';
+import { buildDocument, inheritCalloutStyles, renderPageToCanvas, type CalloutStyleConfig, type PostextConfig, type Resource } from 'postext';
 
 export interface PreviewSample {
   text: string;
@@ -56,6 +56,19 @@ export function previewMeasureMm(style: CalloutStyleConfig): number {
   return Math.max(PREVIEW_MEASURE_MM, Math.ceil(padding + 40));
 }
 
+/** `style` with what it inherits through `extends` (#905) written in and
+ *  `extends` left out, read against the book's own styles (`style` taking
+ *  the place of the one of its id, or standing last when the book has none
+ *  of it). The sample holds only this one style, so its parent has to be
+ *  folded in before it is drawn. */
+export function inheritedStyle(config: Pick<PostextConfig, 'calloutStyles'>, style: CalloutStyleConfig): CalloutStyleConfig {
+  if (style.extends === undefined) return style;
+  const book = config.calloutStyles ?? [];
+  const at = book.findIndex((s) => s.id === style.id);
+  const list = at >= 0 ? book.map((s, i) => (i === at ? style : s)) : [...book, style];
+  return inheritCalloutStyles(list)[at >= 0 ? at : list.length - 1] ?? style;
+}
+
 /** The book's settings for a page holding only the sample box (see
  *  {@link previewMeasureMm}): one column, no running heads, templates, line numbers, print
  *  marks or debug drawing. */
@@ -73,7 +86,7 @@ export function previewConfig(config: PostextConfig, style: CalloutStyleConfig):
       cutLines: undefined,
     },
     layout: { ...config.layout, layoutType: 'single' },
-    calloutStyles: [previewDress(style)],
+    calloutStyles: [previewDress(inheritedStyle(config, style))],
     pageTemplates: undefined,
     header: { elements: [] },
     footer: { elements: [] },

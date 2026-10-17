@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { CalloutStyleConfig, PostextConfig, Resource } from 'postext';
-import { paintStylePreview, requestStylePreview, type PreviewSample } from '../../../frameStyles/stylePreview';
+import { inheritedStyle, paintStylePreview, requestStylePreview, type PreviewSample } from '../../../frameStyles/stylePreview';
 
 interface StylePreviewProps {
   style: CalloutStyleConfig;
@@ -46,7 +46,9 @@ export function StylePreview({ style, config, contextKey, resources, sample, wid
     return () => io.disconnect();
   }, []);
 
-  const styleJson = JSON.stringify(style);
+  // The look of a style based on another (#905) is its parent's too: the key
+  // follows the style as it is drawn, so a change in the parent paints again.
+  const styleJson = JSON.stringify(inheritedStyle(config, style));
   useEffect(() => {
     if (!visible) return;
     const dpr = typeof window !== 'undefined' ? Math.min(2, window.devicePixelRatio || 1) : 1;
