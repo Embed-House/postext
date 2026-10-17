@@ -26,13 +26,13 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 2 · Den Stapel die Linien mit den Kästen verschieben lassen
 
-Jeder Kasten hat eine `minHeight` von 22 mm, die Höhe, in der er gezeichnet ist, und darüber eine Höhe `auto`. Die Gruppe legt ihre fünf Rahmen mit 4,5 mm Abstand untereinander, ab der Stelle, an der `act-1` unter den Text gesetzt ist; ein höherer Kasten schiebt also alles nach ihm nach unten. Die Linien sind Linien der Dekoration, verankert an ihrem leeren Rahmen (`#lineas-1`), und Dekoration, die einem Rahmen folgt, bewegt sich mit ihm. Geben Sie den Antwortrahmen eine `minHeight` gleich ihrer Höhe: Wird der Platz in einer Gruppe knapp, holt sich die [Umbruchleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Raum von den Rahmen der Gruppe bis zu deren Minimum zurück, und das Minimum eines leeren Rahmens ist null; die Linien lägen dann auf dem nächsten Kasten.
+Jeder Kasten hat eine `minHeight` von 22 mm, die Höhe, in der er gezeichnet ist, und darüber eine Höhe `auto`. Die Gruppe legt ihre fünf Rahmen mit 4,5 mm Abstand untereinander, ab der Stelle, an der `act-1` unter den Text gesetzt ist; ein höherer Kasten schiebt also alles nach ihm nach unten. Die Linien gehören zum leeren Rahmen: Sein `rules` zeichnet am Fuß jedes 8-mm-Streifens seiner Höhe eine Linie, unter dem Text, sodass die Linien mit dem Rahmen wandern und ein längerer Antwortplatz ein höherer Rahmen ist. Geben Sie den Antwortrahmen eine `minHeight` gleich ihrer Höhe: Wird der Platz in einer Gruppe knapp, holt sich die [Umbruchleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Raum von den Rahmen der Gruppe bis zu deren Minimum zurück, und das Minimum eines leeren Rahmens ist null; die Linien lägen dann auf dem nächsten Kasten. Der letzte Kasten des Blatts, `act-3`, läuft auf der nächsten Seite weiter (`overflow.continueIn: 'next-page'`), wenn sein Text die Seite sprengt, und die Antwortlinien unter ihm gehen mit.
 
 ### 3 · Das Projekt auf die nächste Seite tragen
 
 <Excerpt region="continue" />
 
-Der Kasten mit den Schritten hat keine feste Höhe: Er ist so hoch wie sein Text und endet am Fuß des Satzspiegels. `fit: { shrinkText: false }` hindert die Leiter daran, die Schritte auf 90 % zu verkleinern, damit sie passen. Der Kasten wird deshalb in voller Größe zwischen zwei Zeilen geteilt, endet mit dem Vermerk der Sprache (*Continúa*, *Continued*, *À suivre*, aus `locale`) und läuft im gleichnamigen Rahmen einer Seite von `proyecto-sigue` weiter ([wenn der Text weiterläuft](/de/docs/composed-pages#wenn-der-text-weiterläuft)). Die eingefügte Seite zeichnet die Beobachtungslinien unter den Rest des Kastens, mit der Überschrift, die der Seitenblock in `notas="What I noticed"` nennt; die Worte bleiben so im Markdown und wechseln mit jeder Ausgabe.
+Der Kasten mit den Schritten hat keine feste Höhe: Er ist so hoch wie sein Text und endet am Fuß des Satzspiegels. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, läuft weiter, bevor sein Text kleiner gesetzt wird. Der Kasten wird deshalb in voller Größe zwischen zwei Zeilen geteilt, endet mit dem Vermerk der Sprache (*Continúa*, *Continued*, *À suivre*, aus `locale`) und läuft im gleichnamigen Rahmen einer Seite von `proyecto-sigue` weiter ([wenn der Text weiterläuft](/de/docs/composed-pages#wenn-der-text-weiterläuft)). Die eingefügte Seite zeichnet die Beobachtungslinien unter den Rest des Kastens, mit der Überschrift, die der Seitenblock in `notas="What I noticed"` nennt; die Worte bleiben so im Markdown und wechseln mit jeder Ausgabe.
 
 ### 4 · Den Umschlag bis in den Anschnitt zeichnen
 
@@ -44,23 +44,20 @@ Auch der Umschlag ist eine zusammengesetzte Seite: Sein Bild ist Dekoration, am 
 
 ### Einer Aufgabe mehr Linien geben
 
-Die Zahl der Linien ist die Höhe des Antwortrahmens und die Linien, die darauf gezeichnet werden. Ändern Sie beides in der Vorlage, und jedes Blatt, das sie nutzt, bekommt diese Linien.
+Die Zahl der Linien ist die Höhe des Antwortrahmens: Sein `rules` zeichnet so viele Linien, wie hineinpassen. Ändern Sie sie in der Vorlage, und jedes Blatt, das sie nutzt, bekommt diese Linien.
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### Die Schritte vor dem Weiterlaufen kleiner setzen lassen
 
-Ohne `shrinkText: false` setzt die Leiter die Schritte zuerst kleiner, bis `fit.minScale` (90 %), und schickt sie erst auf eine andere Seite, wenn das nicht reicht. In einem Kinderbuch zählt die Schriftgröße mehr als eine gesparte Seite.
+Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, läuft weiter, bevor sein Text kleiner gesetzt wird. Mit `fit.preferContinue: false` setzt die Leiter die Schritte zuerst kleiner, bis `fit.minScale` (90 %), und schickt sie erst auf eine andere Seite, wenn das nicht reicht. In einem Kinderbuch zählt die Schriftgröße mehr als eine gesparte Seite, deshalb bleibt das Rezept beim Standard.
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## Häufige Fehler

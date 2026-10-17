@@ -26,13 +26,13 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 2 · Let the stack move the lines with the boxes
 
-Each box has a `minHeight` of 22 mm, the height it is drawn at, and an `auto` height above that. The group lays its five frames one under another with 4.5 mm between them, from where `act-1` is placed under the text, so a taller box moves everything after it. The ruled lines are rules of the decoration anchored to their empty frame (`#lineas-1`), and decoration that follows a frame moves with it. Give the answer frames a `minHeight` equal to their height: when a group runs short of room, the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) takes space back from the frames of the group down to their minimum, and an empty frame's minimum is otherwise nothing, which would leave the lines lying on the next box.
+Each box has a `minHeight` of 22 mm, the height it is drawn at, and an `auto` height above that. The group lays its five frames one under another with 4.5 mm between them, from where `act-1` is placed under the text, so a taller box moves everything after it. The ruled lines belong to the empty frame: its `rules` draw one line at the foot of every 8 mm of its height, under its text, so the lines move with the frame and a longer answer space is a taller frame. Give the answer frames a `minHeight` equal to their height: when a group runs short of room, the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) takes space back from the frames of the group down to their minimum, and an empty frame's minimum is otherwise nothing, which would leave the lines lying on the next box. The last box of a sheet, `act-3`, goes on overleaf (`overflow.continueIn: 'next-page'`) when its text outgrows the page, and the answer lines under it go with it.
 
 ### 3 · Carry the project over the page
 
 <Excerpt region="continue" />
 
-The steps box has no fixed height: it is as tall as its text and stops at the foot of the area. `fit: { shrinkText: false }` keeps the ladder from setting the steps at 90 % to squeeze them in, so the box is cut between two lines at full size, ends with the language's mark (*Continúa*, *Continued*, *À suivre*, from `locale`) and goes on in the frame of the same name on a page of `proyecto-sigue` ([when the text continues](/en/docs/composed-pages#when-the-text-continues)). The added page draws the notes lines under the rest of the box, with the heading that the fence names in `notas="What I noticed"`, so the words stay in the Markdown and change with each edition.
+The steps box has no fixed height: it is as tall as its text and stops at the foot of the area. A frame that can go on to another page goes on before its text is set smaller, so the box is cut between two lines at full size, ends with the language's mark (*Continúa*, *Continued*, *À suivre*, from `locale`) and goes on in the frame of the same name on a page of `proyecto-sigue` ([when the text continues](/en/docs/composed-pages#when-the-text-continues)). The added page draws the notes lines under the rest of the box, with the heading that the fence names in `notas="What I noticed"`, so the words stay in the Markdown and change with each edition.
 
 ### 4 · Draw the cover to the bleed
 
@@ -44,23 +44,20 @@ The cover is a composed page too: its picture is decoration anchored to the blee
 
 ### Give an activity more lines
 
-The number of lines is the answer frame's height and the rules drawn over it. Change both in the template, and every sheet that uses it gets the lines.
+The number of lines is the answer frame's height: its `rules` draw as many lines as fit. Change it in the template, and every sheet that uses it gets the lines.
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### Let the steps shrink before they continue
 
-Without `shrinkText: false`, the ladder first sets the steps smaller, down to `fit.minScale` (90 %), and continues only if that is not enough. For a child's book the type size matters more than one page saved.
+A frame that can go on to another page goes on before its text is set smaller. With `fit.preferContinue: false` the ladder sets the steps smaller first, down to `fit.minScale` (90 %), and continues only if that is not enough. For a child's book the type size matters more than one page saved, so the recipe keeps the default.
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## Pitfalls

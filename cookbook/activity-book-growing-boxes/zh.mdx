@@ -26,13 +26,13 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 2 · 让堆叠组带着横线和框一起移动
 
-每个框的 `minHeight` 是 22 mm，也就是它画出来的高度，超过这个高度就是 `auto`。组从 `act-1` 被放在正文下方的位置开始，把五个框一个接一个往下排，间隔 4.5 mm，所以一个框变高，后面的一切都会往下移。横线是装饰里的线条，锚定在各自的空框上（`#lineas-1`），跟随框的装饰会随框移动。给答题框设一个等于其高度的 `minHeight`：组里地方不够时，[重排阶梯](/zh/docs/composed-pages#仍然放不下时)会从组内各框收回空间，直到它们的最小值，而空框的最小值是零，横线就会压到下一个框上。
+每个框的 `minHeight` 是 22 mm，也就是它画出来的高度，超过这个高度就是 `auto`。组从 `act-1` 被放在正文下方的位置开始，把五个框一个接一个往下排，间隔 4.5 mm，所以一个框变高，后面的一切都会往下移。横线属于空框本身：它的 `rules` 在框高度每隔 8 mm 的位置、文字下方画一条线，所以横线随框移动，答题空间写长了，框就变高。给答题框设一个等于其高度的 `minHeight`：组里地方不够时，[重排阶梯](/zh/docs/composed-pages#仍然放不下时)会从组内各框收回空间，直到它们的最小值，而空框的最小值是零，横线就会压到下一个框上。每张练习页的最后一个框 `act-3`，文字超出页面时会续到下一页（`overflow.continueIn: 'next-page'`），它下面的答题横线一起过去。
 
 ### 3 · 把项目接到下一页
 
 <Excerpt region="continue" />
 
-步骤框没有固定高度：它随文字变高，最多到版心底部为止。`fit: { shrinkText: false }` 不让阶梯把步骤缩到 90 % 硬塞进去，所以框以原字号在两行之间截断，末尾加上该语言的续排标记（*Continúa*、*Continued*、*À suivre*，由 `locale` 决定），再接到 `proyecto-sigue` 模板一页里的同名框（[文字续排时](/zh/docs/composed-pages#文字续排时)）。新增的一页在框的剩余部分下面画出观察记录的横线，标题来自围栏里的 `notas="What I noticed"`，这样文字仍在 Markdown 里，随每个版本变化。
+步骤框没有固定高度：它随文字变高，最多到版心底部为止。能续到别页的框会先续排，再考虑把文字缩小，所以框以原字号在两行之间截断，末尾加上该语言的续排标记（*Continúa*、*Continued*、*À suivre*，由 `locale` 决定），再接到 `proyecto-sigue` 模板一页里的同名框（[文字续排时](/zh/docs/composed-pages#文字续排时)）。新增的一页在框的剩余部分下面画出观察记录的横线，标题来自围栏里的 `notas="What I noticed"`，这样文字仍在 Markdown 里，随每个版本变化。
 
 ### 4 · 封面画到出血位
 
@@ -44,23 +44,20 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 给一个活动多几条横线
 
-横线的数量就是答题框的高度加上画在上面的线。在模板里把两者都改了，用这个模板的每张练习页都会有这些横线。
+横线的条数就是答题框的高度：它的 `rules` 画出放得下的所有横线。在模板里改这一个值，所有用这个模板的练习页都会有这些横线。
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### 续排之前先让步骤缩小
 
-去掉 `shrinkText: false` 后，阶梯会先把步骤缩小，最多到 `fit.minScale`（90 %），仍不够时才移到另一页。给孩子看的书，字号比省一页更要紧。
+能续到别页的框会先续排，再考虑把文字缩小。写上 `fit.preferContinue: false` 后，阶梯会先把步骤缩小，最多到 `fit.minScale`（90 %），仍不够时才移到另一页。给孩子看的书，字号比省一页更要紧，所以这份示例保留默认值。
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## 常见问题

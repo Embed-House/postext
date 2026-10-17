@@ -1,7 +1,7 @@
-// ═══ Postext Cookbook · Nº 156 · Activity book with boxes that grow ══════════════
+// ═══ Postext Cookbook · Nº 159 · Activity book with boxes that grow ══════════════
 // https://postext.dev/en/cookbook/activity-book-growing-boxes
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: drawn in code
-// Fonts: Andika, Baloo 2, Lexend (SIL OFL 1.1) · Needs postext ≥ 1.37.0
+// Fonts: Andika, Baloo 2, Lexend (SIL OFL 1.1) · Needs postext ≥ 1.38.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -46,29 +46,29 @@ const opening = [
   { name: 'dibujo', width: mm(44), placement: at('#titulo', 'below', W - 44, 4) },
 ];
 
-// #region answer: boxes in a stack grow with their text; empty frames carry the lines
-// An empty frame is an answer space: the Markdown sends it nothing (optional: no slotEmpty),
-// and its ruled lines are decoration anchored to it, so they move when a box above grows.
-// minHeight too: a box that runs out of room may not take the lines away from the child.
+// #region answer: boxes in a stack grow with their text; empty ruled frames hold the answers
+// An empty frame is an answer space: the Markdown sends it nothing (optional: no slotEmpty).
+// Its `rules` draw a line at the foot of every LINE mm of its height, so the lines are part
+// of the frame and move with it when a box above grows. minHeight too: a box that runs out of
+// room may not take the lines away from the child.
 const answer = (name, lines) => ({ name, optional: true, width: mm(W), height: mm(LINE * lines),
-  minHeight: mm(LINE * lines) });
-const ruled = (frame, lines) => Array.from({ length: lines }, (_, i) => ({
-  kind: 'rule', id: `${frame}-${i + 1}`, direction: 'horizontal', thickness: pt(0.75),
-  color: col('rule'), placement: { ...at(`#${frame}`, 'top-left', 0, LINE * (i + 1) - 1),
-    size: { width: mm(W) } } }));
+  minHeight: mm(LINE * lines),
+  rules: { every: mm(LINE), color: col('rule'), width: pt(0.75) } });
 // A box is as tall as its text, never less than drawn: a longer text makes it taller and
 // pushes everything after it in the group down the page.
 const box = (name, style, minHeight) => ({ name, style, width: mm(W), minHeight: mm(minHeight) });
 const sheet = {
   id: 'ficha',
-  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
+  decoration: { elements: [kicker] },
   frames: [
     ...opening,
     // The group starts where its first box is placed: under the text, and runs down from there.
     { ...box('act-1', 'actividad', 22), placement: at('#texto', 'below', 0, 6) },
     answer('lineas-1', 3),
     box('act-2', 'actividad', 22),
-    box('act-3', 'actividad', 22),
+    // The last box goes on overleaf, with the answer space after it, when its text outgrows
+    // the page; the other two push it down instead.
+    { ...box('act-3', 'actividad', 22), overflow: { continueIn: 'next-page' } },
     answer('lineas-3', 2),
   ],
   groups: [{ name: 'actividades', kind: 'stack', gap: mm(4.5),
@@ -86,8 +86,7 @@ const project = {
     { ...box('material', 'material', 20), placement: at('#texto', 'below', 0, 9) },
     // As tall as its text, never past the foot of the page, at full size: the rest ends
     // with the language's mark (Continúa, Continued, À suivre) and goes on on an added page.
-    { name: 'pasos', style: 'proyecto', width: mm(W),
-      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
+    { name: 'pasos', style: 'proyecto', width: mm(W), overflow: { continueIn: 'next-page' } },
   ],
   groups: [{ name: 'trabajo', kind: 'stack', gap: mm(9), frames: ['material', 'pasos'] }],
 };
@@ -95,7 +94,7 @@ const project = {
 // under a heading the page fence names (notas="…").
 const projectGoesOn = {
   id: 'proyecto-sigue',
-  decoration: { elements: [kicker, ...ruled('notas', 6),
+  decoration: { elements: [kicker,
     { kind: 'text', id: 'notas-titulo', content: '{attr.notas}', fontFamily: DISPLAY,
       fontSize: pt(15), fontWeight: 700, color: col('sea'),
       placement: { ...at('#notas', 'top-left', 0, -3), size: { width: mm(W) } } }] },

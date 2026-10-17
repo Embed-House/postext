@@ -26,13 +26,13 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 2 · Lascia che la pila sposti le righe con i riquadri
 
-Ogni riquadro ha un `minHeight` di 22 mm, l’altezza a cui è disegnato, e sopra quella un’altezza `auto`. Il gruppo mette i suoi cinque riquadri uno sotto l’altro, a 4,5 mm, a partire dal punto in cui `act-1` è collocato sotto il testo: un riquadro più alto sposta in basso tutto ciò che lo segue. Le righe sono filetti della decorazione ancorati al loro riquadro vuoto (`#lineas-1`), e la decorazione che segue un riquadro si muove con lui. Dai ai riquadri delle risposte un `minHeight` pari alla loro altezza: quando un gruppo resta senza spazio, la [scala di reimpaginazione](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) riprende spazio dai riquadri del gruppo fino al loro minimo, e il minimo di un riquadro vuoto è zero; le righe finirebbero sul riquadro seguente.
+Ogni riquadro ha un `minHeight` di 22 mm, l’altezza a cui è disegnato, e sopra quella un’altezza `auto`. Il gruppo mette i suoi cinque riquadri uno sotto l’altro, a 4,5 mm, a partire dal punto in cui `act-1` è collocato sotto il testo: un riquadro più alto sposta in basso tutto ciò che lo segue. Le righe appartengono al riquadro vuoto: il suo `rules` traccia una riga al piede di ogni fascia di 8 mm della sua altezza, sotto il testo, così le righe si muovono con il riquadro e uno spazio di risposta più lungo è un riquadro più alto. Dai ai riquadri delle risposte un `minHeight` pari alla loro altezza: quando un gruppo resta senza spazio, la [scala di reimpaginazione](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) riprende spazio dai riquadri del gruppo fino al loro minimo, e il minimo di un riquadro vuoto è zero; le righe finirebbero sul riquadro seguente. L’ultimo riquadro della scheda, `act-3`, prosegue nella pagina seguente (`overflow.continueIn: 'next-page'`) quando il suo testo non entra, e le righe di risposta sotto di lui lo accompagnano.
 
 ### 3 · Porta il progetto nella pagina seguente
 
 <Excerpt region="continue" />
 
-Il riquadro dei passi non ha un’altezza fissa: è alto quanto il suo testo e si ferma in fondo all’area. `fit: { shrinkText: false }` impedisce alla scala di comporre i passi al 90 % per farli entrare, così il riquadro si taglia tra due righe a corpo pieno, termina con il segno della lingua (*Continúa*, *Continued*, *À suivre*, da `locale`) e prosegue nel riquadro con lo stesso nome di una pagina di `proyecto-sigue` ([quando il testo prosegue](/it/docs/composed-pages#quando-il-testo-prosegue)). La pagina aggiunta disegna le righe delle osservazioni sotto il resto del riquadro, con il titolo che il recinto indica in `notas="What I noticed"`: le parole restano nel Markdown e cambiano con ogni edizione.
+Il riquadro dei passi non ha un’altezza fissa: è alto quanto il suo testo e si ferma in fondo all’area. Un riquadro che può proseguire su un’altra pagina prosegue prima che il suo testo sia composto più piccolo, così il riquadro si taglia tra due righe a corpo pieno, termina con il segno della lingua (*Continúa*, *Continued*, *À suivre*, da `locale`) e prosegue nel riquadro con lo stesso nome di una pagina di `proyecto-sigue` ([quando il testo prosegue](/it/docs/composed-pages#quando-il-testo-prosegue)). La pagina aggiunta disegna le righe delle osservazioni sotto il resto del riquadro, con il titolo che il recinto indica in `notas="What I noticed"`: le parole restano nel Markdown e cambiano con ogni edizione.
 
 ### 4 · Disegna la copertina fino all’abbondanza
 
@@ -44,23 +44,20 @@ Anche la copertina è una pagina composta: il disegno è decorazione ancorata al
 
 ### Dai più righe a un’attività
 
-Il numero di righe è l’altezza del riquadro della risposta più i filetti disegnati sopra. Cambia entrambi nel modello, e ogni scheda che lo usa avrà quelle righe.
+Il numero di righe è l’altezza del riquadro della risposta: il suo `rules` traccia tante righe quante ne entrano. Cambialo nel modello, e ogni scheda che lo usa avrà quelle righe.
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### Lascia rimpicciolire i passi prima di proseguire
 
-Senza `shrinkText: false`, la scala compone prima i passi più piccoli, fino a `fit.minScale` (90 %), e li manda su un’altra pagina solo se non basta. In un libro per bambini conta più il corpo del testo che una pagina risparmiata.
+Un riquadro che può proseguire su un’altra pagina prosegue prima che il suo testo sia composto più piccolo. Con `fit.preferContinue: false` la scala compone prima i passi più piccoli, fino a `fit.minScale` (90 %), e li manda su un’altra pagina solo se non basta. In un libro per bambini conta più il corpo del testo che una pagina risparmiata, perciò la ricetta lascia il valore predefinito.
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## Errori frequenti

@@ -1,8 +1,8 @@
 {
   "$schema": "../recipe.schema.json",
   "schemaVersion": 1,
-  "number": 156,
-  "status": "draft",
+  "number": 159,
+  "status": "published",
   "chapter": "boxes",
   "order": 160,
   "level": 3,
@@ -44,8 +44,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.37.0",
-    "postextPdf": "1.37.0"
+    "postext": "1.38.0",
+    "postextPdf": "1.38.0"
   },
   "kit": [
     "core",
@@ -112,11 +112,7 @@
   "workarounds": [
     {
       "package": "postext",
-      "note": "the answer frames carry a minHeight equal to their height: the reflow ladder's redistribute step takes room back from the frames of a group down to their minimum, and an empty frame's minimum is otherwise nothing, so the lines would lie on the next box"
-    },
-    {
-      "package": "postext",
-      "note": "only the project's steps continue (overflow.continueIn on pasos): a sheet box continued on the same template's added page loses its answer frame and the page's unit line (finding R-878-added-page-drops-empty-frames), so the sheets keep room for a third more text instead"
+      "note": "the answer frames carry a minHeight equal to their height: when a group runs short of room, the reflow ladder takes space back from the frames of a group down to their minimum, and an empty frame's minimum is otherwise nothing, so its ruled lines would lie on the next box"
     }
   ]
 }

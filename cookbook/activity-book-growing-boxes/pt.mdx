@@ -26,13 +26,13 @@ Tom lives in Leeds. The water from his tap comes from a reservoir in the hills�
 
 ### 2 · Deixe a pilha mover as linhas junto com os boxes
 
-Cada boxe tem um `minHeight` de 22 mm, a altura em que está desenhado, e acima disso uma altura `auto`. O grupo coloca os cinco quadros um embaixo do outro, a 4,5 mm, a partir do lugar onde `act-1` fica sob o texto, de modo que um boxe mais alto desce tudo o que vem depois. As linhas são fios da decoração ancorados ao seu quadro vazio (`#lineas-1`), e a decoração que segue um quadro se move com ele. Dê aos quadros de resposta um `minHeight` igual à sua altura: quando um grupo fica sem espaço, a [escada de reajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço dos quadros do grupo até o mínimo de cada um, e o mínimo de um quadro vazio é zero; as linhas acabariam em cima do boxe seguinte.
+Cada boxe tem um `minHeight` de 22 mm, a altura em que está desenhado, e acima disso uma altura `auto`. O grupo coloca os cinco quadros um embaixo do outro, a 4,5 mm, a partir do lugar onde `act-1` fica sob o texto, de modo que um boxe mais alto desce tudo o que vem depois. As linhas pertencem ao quadro vazio: o seu `rules` traça uma linha no pé de cada faixa de 8 mm da sua altura, sob o texto, de modo que as linhas se movem com o quadro e um espaço de resposta mais longo é um quadro mais alto. Dê aos quadros de resposta um `minHeight` igual à sua altura: quando um grupo fica sem espaço, a [escada de reajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço dos quadros do grupo até o mínimo de cada um, e o mínimo de um quadro vazio é zero; as linhas acabariam em cima do boxe seguinte. O último boxe da ficha, `act-3`, continua na página seguinte (`overflow.continueIn: 'next-page'`) quando o texto não cabe, e as linhas de resposta que ficam embaixo vão com ele.
 
 ### 3 · Leve o projeto para a página seguinte
 
 <Excerpt region="continue" />
 
-O boxe dos passos não tem altura fixa: tem a altura do seu texto e para no pé da área. `fit: { shrinkText: false }` impede a escada de compor os passos a 90 % para que caibam, então o boxe é cortado entre duas linhas em corpo cheio, termina com a marca do idioma (*Continúa*, *Continued*, *À suivre*, conforme `locale`) e continua no quadro de mesmo nome de uma página de `proyecto-sigue` ([quando o texto continua](/pt/docs/composed-pages#quando-o-texto-continua)). A página acrescentada desenha as linhas das observações sob o resto do boxe, com o título que a cerca dá em `notas="What I noticed"`; assim as palavras ficam no Markdown e mudam em cada edição.
+O boxe dos passos não tem altura fixa: tem a altura do seu texto e para no pé da área. Um quadro que pode continuar em outra página continua antes de o seu texto ser composto menor, então o boxe é cortado entre duas linhas em corpo cheio, termina com a marca do idioma (*Continúa*, *Continued*, *À suivre*, conforme `locale`) e continua no quadro de mesmo nome de uma página de `proyecto-sigue` ([quando o texto continua](/pt/docs/composed-pages#quando-o-texto-continua)). A página acrescentada desenha as linhas das observações sob o resto do boxe, com o título que a cerca dá em `notas="What I noticed"`; assim as palavras ficam no Markdown e mudam em cada edição.
 
 ### 4 · Desenhe a capa até a sangria
 
@@ -44,23 +44,20 @@ A capa também é uma página composta: o desenho é decoração ancorada à san
 
 ### Dê mais linhas a uma atividade
 
-O número de linhas é a altura do quadro de resposta e os fios desenhados sobre ele. Mude as duas coisas no modelo, e todas as fichas que o usam terão essas linhas.
+O número de linhas é a altura do quadro de resposta: o seu `rules` traça tantas linhas quantas couberem. Mude-o no modelo e todas as fichas que o usam terão essas linhas.
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### Deixe os passos diminuírem antes de continuar
 
-Sem `shrinkText: false`, a escada primeiro compõe os passos menores, até `fit.minScale` (90 %), e só os leva a outra página se isso não bastar. Num livro para crianças, o corpo da letra importa mais do que uma página a menos.
+Um quadro que pode continuar em outra página continua antes de o seu texto ser composto menor. Com `fit.preferContinue: false`, a escada compõe primeiro os passos menores, até `fit.minScale` (90 %), e só os leva a outra página se isso não bastar. Num livro para crianças, o corpo da letra importa mais do que uma página a menos, por isso a receita mantém o padrão.
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## Erros comuns

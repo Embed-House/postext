@@ -26,13 +26,13 @@ Marta vive en Zaragoza. El agua de su grifo sale del río Ebro…
 
 ### 2 · Deixa que la pila mogui les línies amb els requadres
 
-Cada requadre té un `minHeight` de 22 mm, l’alçada a què està dibuixat, i per sobre una alçada `auto`. El grup col·loca els cinc marcs l’un sota l’altre, a 4,5 mm, a partir del lloc on `act-1` es col·loca sota el text, de manera que un requadre més alt baixa tot el que el segueix. Les línies són filets de la decoració ancorats al seu marc buit (`#lineas-1`), i la decoració que segueix un marc es mou amb ell. Dona als marcs de resposta un `minHeight` igual a la seva alçada: quan un grup es queda sense lloc, l’[escala de reajustament](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) recupera espai dels marcs del grup fins al seu mínim, i el mínim d’un marc buit és res, amb la qual cosa les línies quedarien damunt del requadre següent.
+Cada requadre té un `minHeight` de 22 mm, l’alçada a què està dibuixat, i per sobre una alçada `auto`. El grup col·loca els cinc marcs l’un sota l’altre, a 4,5 mm, a partir del lloc on `act-1` es col·loca sota el text, de manera que un requadre més alt baixa tot el que el segueix. Les línies són del mateix marc buit: el seu `rules` dibuixa una línia al peu de cada 8 mm de la seva alçada, sota el text, de manera que les línies es mouen amb el marc i un espai de resposta més llarg és un marc més alt. Dona als marcs de resposta un `minHeight` igual a la seva alçada: quan un grup es queda sense lloc, l’[escala de reajustament](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) recupera espai dels marcs del grup fins al seu mínim, i el mínim d’un marc buit és res, amb la qual cosa les línies quedarien damunt del requadre següent. L’últim requadre de la fitxa, `act-3`, continua a la pàgina següent (`overflow.continueIn: 'next-page'`) quan el seu text no hi cap, i les línies de resposta que té a sota se’n van amb ell.
 
 ### 3 · Porta el projecte a la pàgina següent
 
 <Excerpt region="continue" />
 
-El requadre dels passos no té alçada fixa: fa el que fa el seu text i s’atura al peu de l’àrea. `fit: { shrinkText: false }` impedeix que l’escala compongui els passos al 90 % perquè hi càpiguen, així que el requadre es talla entre dues línies a cos complet, acaba amb la marca de la llengua (*Continúa*, *Continued*, *À suivre*, segons `locale`) i continua al marc del mateix nom d’una pàgina de `proyecto-sigue` ([quan el text continua](/ca/docs/composed-pages#quan-el-text-continua)). La pàgina afegida dibuixa les línies de les observacions sota la resta del requadre, amb el títol que la tanca dona a `notas="Mis observaciones"`, de manera que les paraules són al Markdown i canvien amb cada edició.
+El requadre dels passos no té alçada fixa: fa el que fa el seu text i s’atura al peu de l’àrea. Un marc que pot continuar en una altra pàgina continua abans de compondre el seu text més petit, així que el requadre es talla entre dues línies a cos complet, acaba amb la marca de la llengua (*Continúa*, *Continued*, *À suivre*, segons `locale`) i continua al marc del mateix nom d’una pàgina de `proyecto-sigue` ([quan el text continua](/ca/docs/composed-pages#quan-el-text-continua)). La pàgina afegida dibuixa les línies de les observacions sota la resta del requadre, amb el títol que la tanca dona a `notas="Mis observaciones"`, de manera que les paraules són al Markdown i canvien amb cada edició.
 
 ### 4 · Dibuixa la coberta fins a la sang
 
@@ -44,23 +44,20 @@ La coberta també és una pàgina composta: el dibuix és decoració ancorada a 
 
 ### Dona més línies a una activitat
 
-El nombre de línies és l’alçada del marc de resposta i els filets que s’hi dibuixen a sobre. Canvia les dues coses a la plantilla i totes les fitxes que la fan servir tindran aquestes línies.
+El nombre de línies és l’alçada del marc de resposta: el seu `rules` dibuixa tantes línies com hi caben. Canvia’l a la plantilla i totes les fitxes que la fan servir tindran aquestes línies.
 
 ```diff
 -    answer('lineas-1', 3),
 +    answer('lineas-1', 5),
-…
--  decoration: { elements: [kicker, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] },
-+  decoration: { elements: [kicker, ...ruled('lineas-1', 5), ...ruled('lineas-3', 2)] },
 ```
 
 ### Deixa que els passos es redueixin abans de continuar
 
-Sense `shrinkText: false`, l’escala primer compon els passos més petits, fins a `fit.minScale` (90 %), i només els porta a una altra pàgina si això no n’hi ha prou. En un llibre per a infants importa més el cos de la lletra que estalviar una pàgina.
+Un marc que pot continuar en una altra pàgina continua abans de compondre el seu text més petit. Amb `fit.preferContinue: false` l’escala compon primer els passos més petits, fins a `fit.minScale` (90 %), i només els porta a una altra pàgina si això no n’hi ha prou. En un llibre per a infants importa més el cos de la lletra que estalviar una pàgina, així que la recepta deixa el valor per defecte.
 
 ```diff
--      fit: { shrinkText: false, scaleImages: false }, overflow: { continueIn: 'next-page' } },
-+      overflow: { continueIn: 'next-page' } },
+-      overflow: { continueIn: 'next-page' } },
++      fit: { preferContinue: false }, overflow: { continueIn: 'next-page' } },
 ```
 
 ## Errors freqüents
