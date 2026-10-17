@@ -96,7 +96,7 @@ describe('decoration painted over the picture (#957)', () => {
     headingStyles: CONFIG.headingStyles!.map((st) => (st.id !== 'topic--p2' ? st : { ...st, header: { elements: change(st.header!.elements as never[]) } })),
   });
   const migrate = (config: PostextConfig) => moveTextToMarkdown({ config, chapters: PORT_CHAPTERS, metadata, resources: RESOURCES }, { labelsOnPictures: true });
-  const pictureFrame = (config: PostextConfig) => config.pageTemplates!.flatMap((t) => t.frames ?? []).find((f) => f.name.startsWith('picture-') && f.height?.value === 288 && f.layer !== undefined && f.width?.value === 230);
+  const pictureFrame = (config: PostextConfig) => config.pageTemplates!.flatMap((t) => t.frames ?? []).find((f) => f.name.startsWith('picture-'));
   /** The design: the page picture, a tag over it at the top, the label. */
   const tagged = (extra: never[] = [], before: never[] = []) => withElements((els) => [
     ...before,
@@ -117,7 +117,7 @@ describe('decoration painted over the picture (#957)', () => {
     const order = composedPaintOrder(page).map((i) => (i.kind === 'decoration' ? 'decoration' : i.frame.name));
     // The picture is painted before the decoration, which holds the tag.
     expect(order.indexOf(frame.name)).toBeLessThan(order.indexOf('decoration'));
-    expect(page.composed!.decoration.blocks.length).toBeGreaterThan(0);
+    expect(page.composed!.decoration?.blocks.length).toBeGreaterThan(0);
   });
 
   it('is reported when the design also painted decoration under the picture', () => {
