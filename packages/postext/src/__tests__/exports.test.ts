@@ -71,6 +71,8 @@ describe("package exports", () => {
       "hasAnchors",
       "locateAnchors",
       "duplicateAnchors",
+      "mergeCarriedOutline",
+      "carriedPlaces",
       "formatFootnoteNumber",
       "footnoteFormatOf",
       "footnoteSymbol",
