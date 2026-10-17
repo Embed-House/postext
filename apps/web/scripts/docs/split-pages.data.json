@@ -34,9 +34,11 @@
     "arabic-layout",
     "japanese-layout",
     "comics",
+    "composed-pages",
     "contributing",
     "sandbox",
     "sandbox-design-checks",
+    "sandbox-composed-pages",
     "sandbox-previews",
     "sandbox-books-saving",
     "sandbox-embedding",
@@ -47,6 +49,7 @@
   "splits": [
     {
       "from": "architecture",
+      "done": true,
       "entry": {
         "en": {
           "description": "Technical architecture of the Postext layout engine: its concepts, the document tree, rhythm, backends and performance",
@@ -162,6 +165,7 @@
     },
     {
       "from": "configuration-page-layout",
+      "done": true,
       "entry": {
         "en": {
           "description": "The page size, margins and baseline grid, page numbering, and the columns and their gutters",
@@ -277,6 +281,7 @@
     },
     {
       "from": "configuration-text",
+      "done": true,
       "entry": {
         "en": {
           "title": "Configuration: body text",
@@ -622,6 +627,7 @@
     },
     {
       "from": "configuration-styles",
+      "done": true,
       "entry": {
         "en": {
           "description": "Named styles for paragraphs, chips, code listings and headings, and the pages that open each part",
@@ -737,6 +743,7 @@
     },
     {
       "from": "configuration-programmatic-usage",
+      "done": true,
       "entry": {
         "en": {
           "description": "Calling Postext from code: buildDocument and its warnings, defaults, fonts, caches and the Web Worker",
@@ -990,6 +997,7 @@
     },
     {
       "from": "document-format",
+      "done": true,
       "entry": {
         "en": {
           "description": "The Markdown subset Postext parses: frontmatter, headings, lists and code blocks, what it ignores, and the rules for authoring source documents",
@@ -1314,6 +1322,7 @@
     },
     {
       "from": "sandbox",
+      "done": true,
       "entry": {
         "en": {
           "description": "The Sandbox's interface: the activity bar and the Text, Books, Chapters, Resources and Fonts panels, and the layout on phones",
@@ -1632,6 +1641,105 @@
               "sidebarTitle": "Agenti, integrazione e preset",
               "description": "Gli strumenti WebMCP per gli agenti di IA, il componente PostextSandbox nella tua applicazione con le sue props e il suo CSS, e il formato dei pacchetti preset",
               "plainSummary": "Questa pagina è per chi costruisce siti web o usa assistenti di IA. Un assistente che funziona nel browser può leggere e cambiare il libro nella Sandbox attraverso una serie di strumenti. Puoi inserire la Sandbox nel tuo sito come un unico componente, e questa pagina elenca le sue opzioni e gli stili di cui ha bisogno. L’ultima sezione descrive i file di un libro di esempio, che la Sandbox sa aprire."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "from": "sandbox-design-checks",
+      "entry": {
+        "en": {},
+        "es": {},
+        "ca": {},
+        "fr": {},
+        "de": {},
+        "it": {},
+        "pt": {},
+        "zh": {},
+        "ja": {},
+        "ar": {}
+      },
+      "pages": [
+        {
+          "slug": "sandbox-composed-pages",
+          "sections": [
+            "Design panel > Page templates",
+            "Design panel > Frame styles",
+            "Checks panel > Composed pages in every edition",
+            "Checks panel > Moving the text to the Markdown",
+            "Checks panel > Fixing a frame in one click"
+          ],
+          "locales": {
+            "en": {
+              "title": "Sandbox: composed pages",
+              "sidebarTitle": "Composed pages",
+              "description": "Page templates and frames edited on the page, the library of frame styles, the checks of composed pages in every edition, moving a book's text to the Markdown, and fixing a frame in one click",
+              "plainSummary": "This page covers what the Sandbox offers for composed pages, the pages whose text is poured into frames laid out by a template. You draw and move the frames of a template right on the page, and you tidy the frame styles in a library. The Checks panel tells you, in every language of the book, which composed pages have text that does not fit, and it offers buttons that fix a frame. A book made before composed pages can have the text of its pages moved into the Markdown in one step.",
+              "intro": "This page gathers the parts of the Design and Checks panels that deal with composed pages (`::::page` blocks that pour their content into the frames of a page template). The rest of both panels is on [Sandbox: the Design and Checks panels](/en/docs/sandbox-design-checks); how a composed page is written is on [Composed pages](/en/docs/composed-pages)."
+            },
+            "es": {
+              "title": "Sandbox: las páginas compuestas",
+              "sidebarTitle": "Páginas compuestas",
+              "description": "Plantillas de página y marcos editados sobre la página, la biblioteca de estilos de marco, las revisiones de las páginas compuestas en todas las ediciones, el paso del texto al Markdown y el arreglo de un marco con un clic",
+              "plainSummary": "Esta página reúne lo que el Sandbox ofrece para las páginas compuestas, aquellas cuyo texto se vierte en marcos colocados por una plantilla. Los marcos de una plantilla se dibujan y se mueven directamente sobre la página, y los estilos de marco se ordenan en una biblioteca. El panel Revisión avisa, en cada idioma del libro, de qué páginas compuestas tienen un texto que no cabe, y ofrece botones que arreglan un marco. Un libro hecho antes de las páginas compuestas puede pasar el texto de sus páginas al Markdown de una sola vez.",
+              "intro": "Esta página reúne las partes de los paneles de diseño y de revisión que tratan de las páginas compuestas (los bloques `::::page` que vierten su contenido en los marcos de una plantilla de página). El resto de ambos paneles está en [Sandbox: los paneles de diseño y de revisión](/es/docs/sandbox-design-checks); cómo se escribe una página compuesta, en [Páginas compuestas](/es/docs/composed-pages)."
+            },
+            "ca": {
+              "title": "Sandbox: les pàgines compostes",
+              "sidebarTitle": "Pàgines compostes",
+              "description": "Plantilles de pàgina i marcs editats sobre la pàgina, la biblioteca d'estils de marc, les revisions de les pàgines compostes en totes les edicions, el pas del text al Markdown i l'arranjament d'un marc amb un clic",
+              "plainSummary": "Aquesta pàgina reuneix el que el Sandbox ofereix per a les pàgines compostes, aquelles el text de les quals s'aboca en marcs col·locats per una plantilla. Els marcs d'una plantilla es dibuixen i es mouen directament sobre la pàgina, i els estils de marc s'ordenen en una biblioteca. El tauler Revisió avisa, en cada llengua del llibre, de quines pàgines compostes tenen un text que no hi cap, i ofereix botons que arreglen un marc. Un llibre fet abans de les pàgines compostes pot passar el text de les seves pàgines al Markdown d'un sol cop.",
+              "intro": "Aquesta pàgina reuneix les parts dels taulers de disseny i de revisió que tracten de les pàgines compostes (els blocs `::::page` que aboquen el contingut en els marcs d'una plantilla de pàgina). La resta dels dos taulers és a [Sandbox: els taulers de disseny i de revisió](/ca/docs/sandbox-design-checks); com s'escriu una pàgina composta, a [Pàgines compostes](/ca/docs/composed-pages)."
+            },
+            "fr": {
+              "title": "Sandbox : les pages composées",
+              "sidebarTitle": "Pages composées",
+              "description": "Gabarits de page et blocs modifiés sur la page, bibliothèque de styles de bloc, vérifications des pages composées dans toutes les éditions, passage du texte dans le Markdown et correction d’un bloc en un clic",
+              "plainSummary": "Cette page réunit ce que le Sandbox offre pour les pages composées, celles dont le texte est versé dans des blocs placés par un gabarit. Les blocs d’un gabarit se dessinent et se déplacent directement sur la page, et les styles de bloc se rangent dans une bibliothèque. Le panneau Vérifications signale, dans chaque langue du livre, les pages composées dont le texte ne tient pas, et propose des boutons qui corrigent un bloc. Un livre fait avant les pages composées peut faire passer le texte de ses pages dans le Markdown en une seule fois.",
+              "intro": "Cette page réunit les parties des panneaux Maquette et Vérifications qui concernent les pages composées (les pages écrites avec `::::page`, qui versent leur contenu dans les blocs d’un gabarit de page). Le reste des deux panneaux est dans [Sandbox : les panneaux Maquette et Vérifications](/fr/docs/sandbox-design-checks) ; la façon d’écrire une page composée est dans [Pages composées](/fr/docs/composed-pages)."
+            },
+            "de": {
+              "title": "Sandbox: zusammengesetzte Seiten",
+              "sidebarTitle": "Zusammengesetzte Seiten",
+              "description": "Seitenvorlagen und Rahmen direkt auf der Seite bearbeiten, die Bibliothek der Rahmenstile, die Prüfungen der zusammengesetzten Seiten in allen Ausgaben, der Umzug des Textes ins Markdown und das Beheben eines Rahmens mit einem Klick",
+              "plainSummary": "Diese Seite versammelt, was die Sandbox für zusammengesetzte Seiten bietet, also für Seiten, deren Text in Rahmen fließt, die eine Vorlage anordnet. Die Rahmen einer Vorlage zeichnen und verschieben Sie direkt auf der Seite, und die Rahmenstile ordnen Sie in einer Bibliothek. Das Bedienfeld Prüfungen meldet in jeder Sprache des Buchs, welche zusammengesetzten Seiten Text haben, der nicht passt, und bietet Schaltflächen an, die einen Rahmen beheben. Ein Buch, das vor den zusammengesetzten Seiten entstand, kann den Text seiner Seiten in einem Schritt ins Markdown verschieben.",
+              "intro": "Diese Seite versammelt die Teile der Bedienfelder Gestaltung und Prüfungen, die von zusammengesetzten Seiten handeln (die `::::page`-Blöcke, die ihren Inhalt in die Rahmen einer Seitenvorlage gießen). Der Rest beider Bedienfelder steht auf [Sandbox: die Bedienfelder Gestaltung und Prüfungen](/de/docs/sandbox-design-checks), wie man eine zusammengesetzte Seite schreibt, auf [Zusammengesetzte Seiten](/de/docs/composed-pages)."
+            },
+            "it": {
+              "title": "Sandbox: le pagine composte",
+              "sidebarTitle": "Pagine composte",
+              "description": "Modelli di pagina e cornici modificati sulla pagina, la libreria degli stili delle cornici, le verifiche delle pagine composte in tutte le edizioni, il passaggio del testo al Markdown e la correzione di una cornice con un clic",
+              "plainSummary": "Questa pagina raccoglie ciò che la Sandbox offre per le pagine composte, quelle il cui testo viene versato in cornici disposte da un modello. Le cornici di un modello si disegnano e si spostano direttamente sulla pagina, e gli stili delle cornici si ordinano in una libreria. Il pannello Verifiche segnala, in ogni lingua del libro, quali pagine composte hanno un testo che non ci sta, e offre pulsanti che sistemano una cornice. Un libro fatto prima delle pagine composte può spostare il testo delle sue pagine nel Markdown in un solo passaggio.",
+              "intro": "Questa pagina raccoglie le parti dei pannelli Grafica e Verifiche che riguardano le pagine composte (i blocchi `::::page` che versano il loro contenuto nelle cornici di un modello di pagina). Il resto dei due pannelli è in [Sandbox: i pannelli Grafica e Verifiche](/it/docs/sandbox-design-checks); come si scrive una pagina composta, in [Pagine composte](/it/docs/composed-pages)."
+            },
+            "pt": {
+              "title": "Sandbox: as páginas compostas",
+              "sidebarTitle": "Páginas compostas",
+              "description": "Modelos de página e blocos editados sobre a página, a biblioteca de estilos de bloco, as verificações das páginas compostas em todas as edições, a passagem do texto para o Markdown e a correção de um bloco com um clique",
+              "plainSummary": "Esta página reúne o que o Sandbox oferece para as páginas compostas, aquelas cujo texto é despejado em blocos dispostos por um modelo. Os blocos de um modelo são desenhados e movidos direto na página, e os estilos de bloco ficam organizados numa biblioteca. O painel Verificações avisa, em cada idioma do livro, quais páginas compostas têm um texto que não cabe, e oferece botões que corrigem um bloco. Um livro feito antes das páginas compostas pode levar o texto de suas páginas para o Markdown de uma só vez.",
+              "intro": "Esta página reúne as partes dos painéis Design e Verificações que tratam das páginas compostas (os trechos `::::page` que despejam o conteúdo nos blocos de um modelo de página). O resto dos dois painéis está em [Sandbox: os painéis Design e Verificações](/pt/docs/sandbox-design-checks); como se escreve uma página composta, em [Páginas compostas](/pt/docs/composed-pages)."
+            },
+            "zh": {
+              "title": "沙盒：模板页",
+              "sidebarTitle": "模板页",
+              "description": "在页面上直接编辑页面模板和框，框样式库，所有版本中模板页的检查，把文字移到 Markdown，以及一键修正一个框",
+              "plainSummary": "本页汇集沙盒为模板页提供的功能。模板页的文字灌进由页面模板排好的框里。模板里的框可以直接在页面上画出和移动，框样式则收在一个样式库里。检查面板会告诉你，书的每种语言里哪些模板页的文字放不下，并给出一键修正一个框的按钮。在有模板页之前做的书，可以一次把各页的文字移进 Markdown。",
+              "intro": "本页汇集版面设计面板和检查面板中与模板页有关的部分（用 `::::page` 写成的页，内容灌入页面模板的框里）。两个面板的其余部分见[沙盒：版面设计面板与检查面板](/zh/docs/sandbox-design-checks)，模板页怎么写见[模板页](/zh/docs/composed-pages)。"
+            },
+            "ja": {
+              "title": "Sandbox：テンプレートページ",
+              "sidebarTitle": "テンプレートページ",
+              "description": "ページ上で編集するページテンプレートと枠、枠スタイルのライブラリ、すべての版でのテンプレートページの検査、テキストのMarkdownへの移行、ワンクリックでの枠の修正",
+              "plainSummary": "このページでは、Sandboxがテンプレートページのために用意している機能をまとめます。テンプレートページは、ページテンプレートが並べた枠にテキストを流し込むページです。テンプレートの枠は、ページの上で直接描いたり動かしたりでき、枠のスタイルはライブラリにまとまっています。検査パネルは、本のどの言語で、どのテンプレートページのテキストが枠に収まっていないかを知らせ、枠を直すボタンも出します。テンプレートページができる前に作った本は、各ページのテキストを一度にMarkdownへ移せます。",
+              "intro": "このページは、デザインパネルと検査パネルのうち、テンプレートページ（`::::page` で書き、ページテンプレートの枠に内容を流し込むページ）に関わる部分をまとめたものです。両パネルのそのほかの部分は[Sandbox：デザインパネルと検査パネル](/ja/docs/sandbox-design-checks)に、テンプレートページの書き方は[テンプレートページ](/ja/docs/composed-pages)にあります。"
+            },
+            "ar": {
+              "title": "Sandbox: الصفحات المركّبة",
+              "sidebarTitle": "الصفحات المركّبة",
+              "description": "قوالب الصفحات والإطارات تُحرَّر على الصفحة نفسها، ومكتبة أنماط الأطر، وفحوص الصفحات المركّبة في كل النسخ، ونقل النص إلى Markdown، وإصلاح إطار بنقرة واحدة",
+              "plainSummary": "تجمع هذه الصفحة ما يقدّمه Sandbox للصفحات المركّبة، أي الصفحات التي يُصبّ نصها في إطارات يرتّبها قالب. تُرسم إطارات القالب وتُحرَّك على الصفحة مباشرةً، وتُحفظ أنماط الإطارات في مكتبة. وتخبرك لوحة الفحوص، في كل لغة من لغات الكتاب، أيّ الصفحات المركّبة لا يتسع إطارها لنصها، وتعرض أزرارًا تصلح الإطار. ويمكن للكتاب الذي صُنع قبل الصفحات المركّبة أن ينقل نص صفحاته إلى Markdown دفعةً واحدة.",
+              "intro": "تجمع هذه الصفحة أجزاء لوحتَي التصميم والفحوص التي تتعلق بالصفحات المركّبة (الصفحات المكتوبة بـ `::::page`، وتصبّ محتواها في إطارات قالب الصفحة). وباقي اللوحتين في [Sandbox: لوحتا التصميم والفحوص](/ar/docs/sandbox-design-checks)، وطريقة كتابة الصفحة المركّبة في [الصفحات المركّبة](/ar/docs/composed-pages)."
             }
           }
         }

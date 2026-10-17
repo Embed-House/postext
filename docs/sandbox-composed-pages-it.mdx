@@ -1,0 +1,109 @@
+{/* docs/sandbox-composed-pages-it.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: le pagine composte',
+  sidebarTitle: 'Pagine composte',
+  description: 'Modelli di pagina e cornici modificati sulla pagina, la libreria degli stili delle cornici, le verifiche delle pagine composte in tutte le edizioni, il passaggio del testo al Markdown e la correzione di una cornice con un clic',
+  lang: 'it',
+  lastUpdated: '2026-10-17',
+  readingTime: '13 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Questa pagina raccoglie ciò che la Sandbox offre per le pagine composte, quelle il cui testo viene versato in cornici disposte da un modello. Le cornici di un modello si disegnano e si spostano direttamente sulla pagina, e gli stili delle cornici si ordinano in una libreria. Il pannello Verifiche segnala, in ogni lingua del libro, quali pagine composte hanno un testo che non ci sta, e offre pulsanti che sistemano una cornice. Un libro fatto prima delle pagine composte può spostare il testo delle sue pagine nel Markdown in un solo passaggio.",
+};
+
+# Sandbox: le pagine composte
+
+Questa pagina raccoglie le parti dei pannelli Grafica e Verifiche che riguardano le pagine composte (i blocchi `::::page` che versano il loro contenuto nelle cornici di un modello di pagina). Il resto dei due pannelli è in [Sandbox: i pannelli Grafica e Verifiche](/it/docs/sandbox-design-checks); come si scrive una pagina composta, in [Pagine composte](/it/docs/composed-pages).
+
+
+## Modelli di pagina
+
+**Grafica › Pagina e colonne › Modelli di pagina** modifica `pageTemplates`, le impaginazioni in cui una pagina composta (`::::page{template="…"}`) versa il suo contenuto, senza aprire il file di configurazione.
+
+- **L’elenco** mostra ogni modello con un disegno delle sue cornici, il suo id, quante pagine del libro lo usano (una doppia pagina conta due) e il modello su cui è **Basato**. **Nuovo** comincia un modello con una cornice che riceve il testo libero della pagina; **Duplica** copia quello aperto; **Salva l’impaginazione come modello** trasforma la pagina composta scelta (o la prima impaginata) in un modello nuovo le cui cornici restano dove sono cadute, in misure fisse in millimetri, con i loro stili e il resto dei loro campi.
+- **Modifica per** sceglie che cosa cambiano i campi: *Tutte le pagine* (il modello), *Dispari (recto)* o *Pari (verso)* (`variants.recto`, `variants.verso`). Un campo che quell’ambito non fissa mostra, attenuato, il valore che eredita, e il suo pulsante di ripristino glielo restituisce. Un modello a **Doppia pagina**, con il suo **Margine del dorso**, si disegna come un solo foglio di due pagine con la banda del dorso segnata, e non ha varianti.
+- **Modello**: id (rinominarlo lo rinomina in tutti i blocchi di pagina che lo nominano), nome, **Basato su** (`extends`), l’interruttore della doppia pagina, **Cornici misurate da** (`area`), **Le pagine aggiunte usano** (`overflowTemplate`: il modello delle pagine su cui prosegue il contenuto di una cornice, vedi [Quando il testo prosegue](/it/docs/composed-pages#quando-il-testo-prosegue)), la griglia ed **Elimina il modello** (dice quante pagine lo nominano; i modelli basati su di esso conservano ciò che hanno ereditato).
+- **Cornici**: un pulsante per cornice, **Aggiungi cornice** e le proprietà della cornice scelta: nome (lo slot) e **Può restare vuota**; posizione (ancorata all’area del modello, alla pagina rifilata, all’abbondanza o a un’altra cornice o gruppo, con bordo e scostamenti) o una cella della griglia; larghezza e altezza (*Fissa*, *Parte dell’area*, *Il suo contenuto*, *Fino al bordo*) con i loro limiti; stile del riquadro, livello, rotazione, posizione del contenuto, colonne e spaziatura interna per lato; **Riceve il testo libero della pagina** (`flow`), **Riceve il primo titolo** (`takes`), **Il testo che non ci sta continua in** (`next`), **Il testo delle altre cornici le scorre attorno** (`exclude: "push"`) e, in quel caso, **Sposta con** *Riquadro* o *Contorno* (`wrap`, la forma delle immagini che contiene); l’adattamento (`fit`); crescita, riduzione, priorità e blocco per i gruppi; il seguito (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **Il contenuto che non ci sta va in** offre nessun’altra pagina, la pagina successiva, un’altra cornice, un altro modello e ogni recinto di pagina del libro che ha un `id` (`page:<id>`); *Una pagina successiva per id…* accetta un valore scritto come `{attr.sigue}` o `p47#resto`. Ogni campo ha il suo aiuto e il suo ripristino.
+- **Gruppi**: nome, impilate o in fila, lo spazio tra le cornici, dove va lo spazio avanzato e le cornici del gruppo nell’ordine della pagina. Un gruppo con un **Riquadro proprio** distribuisce lo spazio avanzato e lascia che le sue cornici vi cedano spazio; senza, è l’unione dei riquadri delle sue cornici.
+- **Testatine** (*Come nel libro*, *Nascosti*, *Propri*) e **Decorazione**, che si modificano come intestazione e piè di pagina del libro; un testo della decorazione può leggere gli attributi della pagina (`{attr.nome}`).
+
+**Sulla pagina, in modalità Grafica.** Con il selettore sopra l’anteprima su **Grafica** (o **Modifica le cornici sulla pagina** nella sezione), una pagina composta mostra i margini, la griglia, il dorso di una doppia pagina e una freccia per ogni catena. Premere una cornice la sceglie e ne apre le proprietà; trascinarla la sposta; le otto maniglie della cornice scelta la ridimensionano; trascinare in un punto vuoto disegna una cornice nuova. I riquadri si agganciano ai margini, alla griglia e a bordi e centri delle altre cornici (con Alt premuto si posano liberamente; Esc annulla il trascinamento). Il riquadro viene scritto in millimetri: una cornice appesa a un’altra mantiene la sua ancora e cambia il suo scostamento. Quando altre pagine usano il modello, la pagina chiede dove va la modifica: **Cambia il modello** (con il numero di pagine) o **Solo questa pagina**, che crea per quella pagina un modello basato sul primo e fa sì che il suo blocco lo nomini. Una cornice ruotata si sposta sulla pagina e si dimensiona nei suoi campi. Con i campi si fa da tastiera tutto ciò che fa il trascinamento.
+
+
+## Stili delle cornici
+
+**Grafica › Riquadri › Stili delle cornici** mostra gli stili di riquadro (`calloutStyles`) come una biblioteca. Le cornici dei modelli di pagina vestono gli stessi stili (`frames[].style`), quindi uno stile serve tanto un riquadro `:::callout` del testo quanto una cornice di una pagina composta.
+
+- **Ogni stile** è disegnato dal motore con un paragrafo di prova, e una linguetta di prova quando lo stile ha una linguetta di etichetta, come lo porta una cornice: largo 80 mm (di più se la spaziatura interna lascia meno di 40 mm di giustezza), nel flusso, senza il posto fisso che uno stile di riquadro può dare alla sua scatola. Sotto il nome, la sezione dice dove il libro lo usa: cornici di modello, pagine composte con quei modelli e riquadri del testo. Aperto, uno stile elenca ogni cornice (**Apri** ci porta in Modelli di pagina) e ogni capitolo con i suoi riquadri (**Vedi** seleziona il blocco successivo nel pannello Testo; un blocco senza `type` conta per il primo stile, quello che gli dà il motore), e **Modifica lo stile** apre lì l’editor degli Stili dei riquadri. **Mostra** filtra l’elenco: *Nei modelli* (ciò che compare per primo appena un modello usa uno stile), *Nel testo*, *Non usati*, *Tutti*.
+- **Unioni proposte** raggruppa gli stili quasi uguali attorno al più usato: «Questi 3 stili cambiano solo in spaziatura interna: unirli?». Gli stili si confrontano su ciò che il motore ne risolve, impostazione per impostazione, senza id né nome. Le misure entro 0,5 mm e i colori entro ΔE 2 valgono come uguali, i quattro lati di una spaziatura interna contano come una sola impostazione, e **Impostazioni che possono cambiare** (2 di base) fissa quante impostazioni possono differire.
+- Il posto di un riquadro `:::callout` (collocazione, posizione fissa, larghezza occupata, spazio sopra e sotto) deve coincidere, altrimenti l’unione sposterebbe la scatola. **Confronta solo l’aspetto** lo lascia fuori, e il controllo dice allora quanti riquadri si sposterebbero; finché è spento, la sezione dice quanti stili in più unirebbe. Gli stili usati solo da cornici di modello si confrontano sempre sull’aspetto: una cornice prende il posto dal suo modello.
+- **Lasciare ogni riquadro dov’è** (compare con *Confronta solo l’aspetto*, attivo per impostazione predefinita): uno stile i cui riquadri stanno altrove rispetto a quelli dello stile che resta non viene unito del tutto. Resta con il solo posto (collocazione, posizione fissa, larghezza, spazio sopra e sotto), basato sullo stile che resta (`extends`), così i suoi riquadri prendono quell’aspetto e non si spostano; la revisione dice quanti stili restano così.
+- **Controlla** elenca ogni stile che se ne va, in che cosa differisce e i capitoli e le cornici riscritti. **Unisci in** (o **Unisci tutte le proposte**) riscrive lo `style` di ogni cornice di modello, varianti comprese, e il `type` di ogni blocco di ogni capitolo perché indichino lo stile che resta, toglie gli altri e mette lo stile che resta al posto del primo del suo gruppo, così un blocco senza `type` mantiene il suo aspetto. L’unione entra nella cronologia di annullamento della Sandbox come un passo per ogni capitolo riscritto e uno per stili e modelli. **Annulla**, nella sezione stessa, toglie l’unione intera finché dopo non è cambiato nulla; Cmd/Ctrl+Z la toglie un passo alla volta, prima gli stili, così ogni stato intermedio nomina stili che esistono.
+- Rinominare uno stile in *Stili dei riquadri* lo rinomina anche in ogni blocco e in ogni cornice di modello.
+
+L’unione riscrive i capitoli dell’edizione aperta: un’altra lingua del libro, salvata come bozza o progetto a parte, mantiene i suoi stili. Gli agenti hanno la stessa biblioteca con `sandbox_frame_styles` e `sandbox_merge_styles` (vedi [WebMCP](/it/docs/webmcp)).
+
+
+## Pagine composte in tutte le edizioni
+
+In un libro con modelli di pagina (`pageTemplates`) il pannello si apre con **Pagine composte**: i controlli di ogni pagina composta di ogni capitolo, in ogni edizione che il libro contiene. Un pacchetto in spagnolo, inglese e catalano viene controllato in tutte e tre mentre una di esse è a schermo. Le edizioni che non sono a schermo vengono impaginate in sottofondo, ciascuna letta come la leggerebbe la sua apertura: la sua bozza se è stata modificata, altrimenti il testo del pacchetto in quella lingua. Una riga sotto i comandi dice quali edizioni si stanno impaginando e, quando hanno finito tutte, quali sono state controllate.
+
+La sezione raccoglie:
+
+- *Il testo non entra nella cornice* (`frameOverflow`), con i passi tentati dalla sequenza di reimpaginazione e le modifiche che farebbero entrare la cornice;
+- *Il testo non entra nemmeno dopo le pagine aggiunte* (`frameContinuationLimit`): il contenuto della cornice è proseguito su tutte le pagine che una pagina composta può aggiungere e ancora non entra;
+- *Un articolo rimanda a una pagina che non segue* (`continueTargetMissing`): nessun recinto di pagina successivo porta l’id indicato dal `continueIn` della cornice;
+- *Etichetta su un'ancora inesistente* e *Ancora senza etichetta* (`labelAnchorUnknown`, `anchorUnlabelled`), sotto la cornice che compone la figura;
+- *Slot senza cornice*, *Cornice vuota*, *Modello di pagina sconosciuto*, *Pagina composta con tre due punti* e *La doppia pagina non corrisponde al modello* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Blocco dell'indice diviso tra colonne* (`tocGroupSplit`);
+- gli avvisi dei modelli stessi (uno stile o un’ancora di cornice che non esiste, misure che si contraddicono, una catena che torna su sé stessa) e il testo di grafica che contiene contenuto del libro (`contentInConfig`).
+
+Queste voci non si ripetono nei gruppi sottostanti.
+
+**Pagina**, **Cornice** e **Lingua** raggruppano l’elenco per pagina composta (la stessa pagina in ogni edizione, qualunque numero abbia in ciascuna), per cornice o per edizione. I tre menu sotto lasciano una sola lingua, una sola pagina o una sola cornice. Ogni voce mostra la sigla dell’edizione (*CA*), il numero di pagina in quell’edizione e il nome della cornice.
+
+Un clic su una voce porta alla sua cornice nella sua edizione. Se a schermo c’è un’altra edizione, il libro passa alla lingua della voce; poi si aprono il capitolo e la pagina, la cornice resta selezionata sulla pagina (il suo percorso compare in fondo all’anteprima) e il cursore va all’inizio del suo slot nel pannello **Testo**. Un avviso proprio di un modello apre la prima pagina composta con quel modello, con la cornice selezionata; il testo di grafica che contiene contenuto apre il pannello **Grafica**.
+
+Un progetto locale importato da un pacchetto in più lingue le conserva tutte: le sue pagine composte si controllano in ogni lingua come quelle di un libro di esempio, e un controllo in un’altra lingua ti porta lì, portando il progetto in quella lingua. Un libro in una sola lingua ha una sola edizione, e lo dice la riga sotto i comandi. Il contatore della barra delle attività conta gli avvisi del capitolo a schermo, nell’edizione a schermo.
+
+
+## Spostare il testo nel Markdown
+
+Un libro fatto prima delle pagine composte può tenere il testo di pagine intere nei suoi stili di titolo: un titolo nascosto in ogni pagina la cui testatina colloca decine di testi, caselle e immagini dove li aveva la pagina stampata. Il pannello Verifiche mostra allora *Testo tenuto nella configurazione* e propone in cima **Spostare il testo nel Markdown**. Un libro fatto così, importato dal pannello dei libri, apre la stessa finestra subito dopo l’importazione.
+
+La finestra dice che cosa farà lo spostamento prima di toccare qualcosa:
+
+- Ogni disegno di pagina diventa un modello di pagina (`pageTemplates`). Ogni testo diventa una cornice dove stava; i blocchi di testo con lo stesso aspetto posti uno sotto l’altro alla stessa distanza diventano una sola cornice. Le caselle, i filetti e le immagini passano alla decorazione del modello, dipinta sopra il testo corrente della pagina come lo era la testatina, e un’immagine che copre la pagina diventa l’attributo `background` della pagina, che la decorazione legge (`{attr.background}`).
+- Ogni pagina di un capitolo diventa una pagina composta, `::::page{template="…"}`, con i titoli e il testo corrente della pagina e un `:::frame{slot="…"}` per cornice con il suo testo. Grassetto e corsivo restano; i fine riga del disegno restano a capo forzati.
+- Il carattere, il corpo, il peso, il colore, l’allineamento e l’interlinea di ogni testo formano uno stile di paragrafo: quello del libro quando coincide del tutto, altrimenti uno nuovo che prende il nome dal carattere e dal corpo. Una casella colorata sotto parole in grassetto diventa un chip dello stile di chip del libro di quel colore, o di uno nuovo.
+- Le pagine con le cornici negli stessi punti condividono un modello (`page-base`) che i loro modelli propri estendono (`extends`); una pagina che non aggiunge nulla lo usa così com’è.
+- Gli stili di titolo che restano uguali una volta tolta la testatina vengono uniti (`tema--p04`, `tema--p05` → `tema`) e rinominati nei titoli; i titoli nascosti che servivano solo a cambiare testatina spariscono. Una pagina che cominciava con un titolo che chiedeva una pagina pari o dispari riceve un `:::pagebreak{parity="…"}` prima del suo recinto.
+
+Le cifre di **Che cosa cambia** sono i testi e le lettere spostati, le pagine scritte, i modelli proposti, gli stili di titolo prima e dopo, gli stili creati, la dimensione della configurazione e gli avvisi *Testo tenuto nella configurazione*, prima e dopo.
+
+**Prima e dopo** impagina ogni capitolo due volte con l’impaginazione dello stesso Sandbox e disegna ogni pagina che cambia, la vecchia accanto alla nuova. L’elenco a fianco dice quali pagine appaiono diverse e perché, quando lo si sa: la casella, il contorno o il capolettera propri di un testo, una pagina di cui non si sa il lato, testo corrente che ora va nella cornice di flusso del modello. **Segnare in rosso ciò che cambia** dipinge i pixel diversi.
+
+Le opzioni: **Le pagine con cornici negli stessi punti condividono un modello**, **Una casella di evidenziazione sotto parole in grassetto diventa un chip** e, quando ce ne sono, **Eliminare gli stili di titolo con testo che nessun titolo usa**.
+
+**Spostare il testo** scrive il cambiamento nella cronologia di annullamento del libro: un passo per ogni capitolo riscritto, poi uno per il disegno. Cmd/Ctrl+Z annulla prima il disegno e poi i capitoli, e **Annulla lo spostamento** nella finestra li annulla tutti finché sono gli ultimi. Il libro di prima resta anche salvato, pure ricaricando, finché nel pannello Verifiche non si sceglie **Tenere lo spostamento**; fino ad allora **Rimettere il libro com’era** riscrive il disegno e il testo di prima, come passi che si possono a loro volta annullare.
+
+Resta nella configurazione, ed è elencato sotto **Resta nella configurazione**: un testo che mescola parole e segnaposto (`Pagina {pageNumber}`), un testo appeso alla casella della sua testatina o a un altro elemento, e il testo di un disegno di titolo (che non è una pagina). Nelle pagine, il disegno di un titolo posto in una cornice (la linguetta di un titolo incorniciato, le fasce disegnate attorno a un titolo) lì non viene disegnato, quindi una pagina con testo corrente sotto titoli così appare diversa. La verifica del contrasto misura il testo di una cornice contro la pagina e non contro una casella della decorazione che sta sotto, quindi può segnalare un’etichetta bianca su una casella colorata.
+
+Lo stesso spostamento è una funzione del motore, `moveTextToMarkdown({ config, chapters, metadata }, options)`, che restituisce la nuova configurazione, i capitoli e il resoconto che mostra la finestra. Vedi [Pagine composte](/it/docs/composed-pages#migrare-un-libro-con-il-testo-negli-stili).
+
+
+## Sistemare una cornice con un clic
+
+Sotto *Il testo non entra nella cornice*, le soluzioni che la scala di reimpaginazione ha calcolato per quella cornice sono pulsanti, con le parole stesse dell'avviso:
+
+- *lascia scendere il testo al 60 %* imposta il `fit.minScale` della cornice (e attiva `fit.shrinkText` se era spento);
+- *porta maxHeight a 66 mm* imposta il suo `maxHeight`;
+- *abbassa il minHeight di …* abbassa l'altezza minima di un'altra cornice del suo gruppo;
+- *fallo proseguire nella pagina seguente* imposta `overflow.continueIn` su `next-page`, così ciò che non entra prosegue in una pagina aggiunta dopo questa;
+- *componi la pagina con il modello …* riscrive il `template` del recinto `::::page` della pagina nel testo;
+- *taglia circa 626 caratteri* non cambia nulla: seleziona il testo della cornice nel pannello **Testo** e dice quanti caratteri togliere.
+
+Gli altri pulsanti cambiano la forma del libro, perciò ciascuno chiede prima, nominando l'impostazione e il suo valore (*tema-fija › dinero › maxHeight = 66 mm*) o il modello che la pagina prenderà. Una modifica della grafica vale per tutte le pagine composte con quel modello. **Cambia** esegue la modifica come un passo della cronologia di annullamento: Cmd/Ctrl+Z, o il pulsante Annulla accanto a Contenuto e Grafica, la annulla. La pagina viene reimpaginata e l'avviso sparisce, o lascia il posto a ciò che la modifica ha lasciato (una cornice più in basso che ora non entra).
+
+Gli stessi pulsanti accompagnano la cornice nel pannello **Che cosa si è spostato e perché** della tela. L'avviso di un'edizione che non è sullo schermo propone di aprire quell'edizione, dove le sue soluzioni si possono applicare. Se il libro è cambiato da quando l'impaginazione ha proposto una soluzione (il modello è stato modificato, il recinto nomina un altro modello), il pulsante lo dice e non cambia nulla. Un agente applica le stesse soluzioni con `sandbox_apply_proposal` ([WebMCP](/it/docs/webmcp)).

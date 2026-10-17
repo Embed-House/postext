@@ -28,20 +28,28 @@
  *
  * It checks that the split loses and repeats no line. Like
  * split-configuration.mjs, it is done: a second run would split the pages
- * that were split already, and fails on their missing sections.
+ * that were split already, and fails on their missing sections. A split run
+ * already is marked `"done": true` in the data and skipped, so one more split
+ * (the Sandbox's composed pages, #884 / #846) is added to the data and run
+ * alone: it keeps the other pages' reading time, merges its redirects into
+ * `movedAnchors.json` and takes an optional `intro` paragraph per language
+ * for the new page.
  */
 import fs from "node:fs";
 import path from "node:path";
 import GithubSlugger from "github-slugger";
 
 const LOCALES = ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr", "de", "it"];
-const LAST_UPDATED = "2026-10-16";
+const LAST_UPDATED = "2026-10-17";
 const ROOT = path.resolve(import.meta.dirname, "../../../..");
 const DOCS = path.join(ROOT, "docs");
 const COOKBOOK = path.join(ROOT, "cookbook");
 const data = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, "split-pages.data.json"), "utf8"));
 const ORDER = data.order;
-const FROM = new Set(data.splits.map((s) => s.from));
+// A split marked `done` was run already (its pages exist and its links are
+// rewritten); only the others are split now.
+const SPLITS = data.splits.filter((s) => !s.done);
+const FROM = new Set(SPLITS.map((s) => s.from));
 
 const report = [];
 const fail = (message) => {
@@ -184,7 +192,7 @@ const originals = {};
 
 const enStructure = {};
 
-for (const split of data.splits) {
+for (const split of SPLITS) {
   originals[split.from] = {};
   const en = headings(bodyLines(fs.readFileSync(path.join(DOCS, `${split.from}-en.mdx`), "utf8")));
   const enPaths = paths(en);
@@ -243,7 +251,7 @@ for (const split of data.splits) {
     const pages = [{ slug: split.from, lines: keep, shift: new Map() }];
     split.pages.forEach((page, p) => {
       const text = page.locales[l] ?? fail(`${page.slug}: no text for ${l}`);
-      const lines = ["", `# ${text.title}`, "", ""];
+      const lines = ["", `# ${text.title}`, "", ...(text.intro ? [text.intro, "", ""] : [""])];
       const shiftAt = new Map();
       for (const s of page.sections) {
         const root = enPaths.indexOf(s);
@@ -437,7 +445,7 @@ const orderOf = (slug) => {
 
 // The split pages: relink, then metadata.
 for (const l of LOCALES) {
-  for (const split of data.splits) {
+  for (const split of SPLITS) {
     for (const slug of [split.from, ...split.pages.map((p) => p.slug)]) {
       const lines = pagesOut[l][slug].map((line) => relinkAbsolute(relinkInPage(line, l, split.from, slug, `${slug}-${l}`), `${slug}-${l}`, slug, l));
       pagesOut[l][slug] = lines;
@@ -461,16 +469,19 @@ for (const file of fs.readdirSync(DOCS)) {
   if (pagesOut[locale][slug]) continue;
   const full = path.join(DOCS, file);
   let source = relinkAbsolute(fs.readFileSync(full, "utf8"), file);
-  if (slug === "configuration") {
+  if (slug === "configuration" && SPLITS.some((s) => s.from.startsWith("configuration"))) {
     source = rebuildIndex(locale, source);
     const text = data.configurationIndex.locales[locale];
     const meta = { ...metaOf(source), description: text.description, plainSummary: text.plainSummary, lastUpdated: LAST_UPDATED };
     source = [...metadataLines(file, meta), ...bodyLines(source)].join("\n");
   }
-  const minutes = readingMinutes(locale, bodyLines(source));
-  source = source
-    .replace(/^(\s*order:\s*)\d+/m, `$1${orderOf(slug)}`)
-    .replace(/^(\s*readingTime:\s*)'[^']*'/m, `$1'${readingTime(locale, minutes)}'`);
+  source = source.replace(/^(\s*order:\s*)\d+/m, `$1${orderOf(slug)}`);
+  // The reading time of a page that is not split is kept (a rerun is for one
+  // more split, not for a recount of the whole site).
+  if (SPLITS.some((s) => s.from.startsWith("configuration")) || data.recountReadingTime) {
+    const minutes = readingMinutes(locale, bodyLines(source));
+    source = source.replace(/^(\s*readingTime:\s*)'[^']*'/m, `$1'${readingTime(locale, minutes)}'`);
+  }
   write(full, source);
 }
 
@@ -485,12 +496,13 @@ const blank = (line) =>
     .replace(/href="[^"]*"/g, 'href="…"')
     .replace(/^#{2,6}\s/, "# ");
 
-for (const split of data.splits) {
+for (const split of SPLITS) {
   for (const l of LOCALES) {
+    const intros = new Set(split.pages.map((p) => p.locales[l].intro).filter(Boolean));
     const was = originals[split.from][l].filter((line) => line.trim() !== "" && !/^# /.test(line)).map(blank).sort();
     const is = [split.from, ...split.pages.map((p) => p.slug)]
       .flatMap((slug) => bodyLines(fs.readFileSync(path.join(DOCS, `${slug}-${l}.mdx`), "utf8")))
-      .filter((line) => line.trim() !== "" && !/^# /.test(line))
+      .filter((line) => line.trim() !== "" && !/^# /.test(line) && !intros.has(line))
       .map(blank)
       .sort();
     if (was.length !== is.length) fail(`${split.from}-${l}: ${was.length} lines before, ${is.length} after`);
@@ -577,8 +589,9 @@ write(CONFIG_ANCHORS, `${JSON.stringify(configAnchors, null, 2)}\n`);
 
 // The redirect data of the split pages: every id that left a page (or was
 // renamed on it), under the page that holds it now.
-const moved = {};
-for (const split of data.splits) {
+const MOVED = path.join(ROOT, "apps/web/src/lib/movedAnchors.json");
+const moved = fs.existsSync(MOVED) ? JSON.parse(fs.readFileSync(MOVED, "utf8")) : {};
+for (const split of SPLITS) {
   moved[split.from] = {};
   for (const l of LOCALES) {
     const table = {};
@@ -593,7 +606,7 @@ for (const split of data.splits) {
     );
   }
 }
-write(path.join(ROOT, "apps/web/src/lib/movedAnchors.json"), `${JSON.stringify(moved, null, 2)}\n`);
+write(MOVED, `${JSON.stringify(moved, null, 2)}\n`);
 
 for (const line of report) console.log(line);
 console.log(`${written.length} files written`);

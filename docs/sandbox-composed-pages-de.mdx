@@ -1,0 +1,109 @@
+{/* docs/sandbox-composed-pages-de.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: zusammengesetzte Seiten',
+  sidebarTitle: 'Zusammengesetzte Seiten',
+  description: 'Seitenvorlagen und Rahmen direkt auf der Seite bearbeiten, die Bibliothek der Rahmenstile, die Prüfungen der zusammengesetzten Seiten in allen Ausgaben, der Umzug des Textes ins Markdown und das Beheben eines Rahmens mit einem Klick',
+  lang: 'de',
+  lastUpdated: '2026-10-17',
+  readingTime: '12 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Diese Seite versammelt, was die Sandbox für zusammengesetzte Seiten bietet, also für Seiten, deren Text in Rahmen fließt, die eine Vorlage anordnet. Die Rahmen einer Vorlage zeichnen und verschieben Sie direkt auf der Seite, und die Rahmenstile ordnen Sie in einer Bibliothek. Das Bedienfeld Prüfungen meldet in jeder Sprache des Buchs, welche zusammengesetzten Seiten Text haben, der nicht passt, und bietet Schaltflächen an, die einen Rahmen beheben. Ein Buch, das vor den zusammengesetzten Seiten entstand, kann den Text seiner Seiten in einem Schritt ins Markdown verschieben.",
+};
+
+# Sandbox: zusammengesetzte Seiten
+
+Diese Seite versammelt die Teile der Bedienfelder Gestaltung und Prüfungen, die von zusammengesetzten Seiten handeln (die `::::page`-Blöcke, die ihren Inhalt in die Rahmen einer Seitenvorlage gießen). Der Rest beider Bedienfelder steht auf [Sandbox: die Bedienfelder Gestaltung und Prüfungen](/de/docs/sandbox-design-checks), wie man eine zusammengesetzte Seite schreibt, auf [Zusammengesetzte Seiten](/de/docs/composed-pages).
+
+
+## Seitenvorlagen
+
+**Gestaltung › Seite und Spalten › Seitenvorlagen** bearbeitet `pageTemplates`, die Layouts, in die eine gestaltete Seite (`::::page{template="…"}`) ihren Inhalt gießt, ohne die Konfigurationsdatei zu öffnen.
+
+- **Die Liste** zeigt jede Vorlage mit einer Zeichnung ihrer Rahmen, ihrer ID, der Zahl der Seiten des Buchs, die sie verwenden (eine Doppelseite zählt doppelt), und der Vorlage, auf der sie **basiert**. **Neu** beginnt eine Vorlage mit einem Rahmen, der den freien Text der Seite aufnimmt; **Duplizieren** kopiert die geöffnete; **Layout als Vorlage speichern** macht aus der gewählten gestalteten Seite (oder der ersten umbrochenen) eine neue Vorlage, deren Rahmen dort stehen, wo sie gefallen sind, in festen Größen in Millimetern, mit ihren Stilen und ihren übrigen Feldern.
+- **Bearbeiten für** wählt, was die Felder ändern: *Alle Seiten* (die Vorlage), *Rechte Seite (ungerade)* oder *Linke Seite (gerade)* (`variants.recto`, `variants.verso`). Ein Feld, das dieser Bereich nicht setzt, zeigt gedämpft den geerbten Wert, und sein Zurücksetzen gibt ihn zurück. Eine Vorlage für eine **Doppelseite** mit ihrem **Bundsteg** wird als ein Bogen über zwei Seiten mit markiertem Bundband gezeichnet und hat keine Varianten.
+- **Vorlage**: ID (Umbenennen benennt sie in allen Seitenblöcken um, die sie nennen), Name, **Basiert auf** (`extends`), der Schalter für die Doppelseite, **Rahmen gemessen ab** (`area`), **Angefügte Seiten nach** (`overflowTemplate`: die Vorlage der Seiten, auf denen der Inhalt eines Rahmens weiterläuft, siehe [Wenn der Text weiterläuft](/de/docs/composed-pages#wenn-der-text-weiterläuft)), das Raster und **Vorlage löschen** (es nennt die Zahl der Seiten, die sie nennen; Vorlagen auf ihrer Basis behalten, was sie geerbt haben).
+- **Rahmen**: ein Knopf je Rahmen, **Rahmen hinzufügen** und die Eigenschaften des gewählten Rahmens: Name (der Platz) und **Darf leer bleiben**; Lage (verankert am Bereich der Vorlage, an der beschnittenen Seite, am Anschnitt oder an einem anderen Rahmen oder einer Gruppe, mit Kante und Versatz) oder eine Rasterzelle; Breite und Höhe (*Fest*, *Anteil des Bereichs*, *Sein Inhalt*, *Bis zum Rand*) mit ihren Grenzen; Kastenstil, Ebene, Drehung, Lage des Inhalts, Spalten und Innenabstand je Seite; **Nimmt den freien Text der Seite auf** (`flow`), **Nimmt die erste Überschrift auf** (`takes`), **Text, der nicht passt, läuft weiter in** (`next`), **Text anderer Rahmen umfließt ihn** (`exclude: "push"`) und dann **Verdrängen mit** *Kasten* oder *Kontur* (`wrap`, die Form der Bilder darin); das Einpassen (`fit`); Wachsen, Schrumpfen, Priorität und Fixieren für Gruppen; die Fortsetzung (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **Inhalt, der nicht passt, geht nach** bietet keine andere Seite, die nächste Seite, einen anderen Rahmen, eine andere Vorlage und jeden Seitenzaun des Buches mit `id` (`page:<id>`); *Eine spätere Seite über ihre ID …* nimmt einen getippten Wert wie `{attr.sigue}` oder `p47#resto`. Jedes Feld hat seine Hilfe und sein Zurücksetzen.
+- **Gruppen**: Name, gestapelt oder in einer Reihe, der Abstand zwischen den Rahmen, wohin übriger Platz geht, und die Rahmen der Gruppe in Seitenreihenfolge. Eine Gruppe mit **Eigenem Kasten** verteilt ihren übrigen Platz und lässt ihre Rahmen darin Platz abgeben; ohne ihn ist sie die Vereinigung der Kästen ihrer Rahmen.
+- **Kolumnentitel** (*Wie im Buch*, *Ausgeblendet*, *Eigene*) und **Dekoration**, bearbeitet wie Kopf- und Fußzeile des Buchs; ein Text der Dekoration kann die Attribute der Seite lesen (`{attr.name}`).
+
+**Auf der Seite, im Gestaltungsmodus.** Steht der Schalter über der Vorschau auf **Gestaltung** (oder **Rahmen auf der Seite bearbeiten** im Abschnitt), zeigt eine gestaltete Seite ihre Ränder, ihr Raster, den Bund einer Doppelseite und einen Pfeil für jede Verkettung. Ein Klick auf einen Rahmen wählt ihn und öffnet seine Eigenschaften; Ziehen verschiebt ihn; die acht Griffe des gewählten Rahmens ändern seine Größe; Ziehen an einer leeren Stelle zeichnet einen neuen Rahmen. Die Kästen rasten an den Rändern, am Raster und an Kanten und Mitten der anderen Rahmen ein (mit gedrückter Alt-Taste frei; Escape bricht das Ziehen ab). Der Kasten wird in Millimetern zurückgeschrieben: Ein an einem anderen hängender Rahmen behält seinen Anker und ändert seinen Versatz. Verwenden andere Seiten die Vorlage, fragt die Seite, wohin die Änderung geht: **Vorlage ändern** (mit der Zahl der Seiten) oder **Nur diese Seite**, das für diese Seite eine Vorlage auf Basis der ersten anlegt und ihren Seitenblock darauf verweisen lässt. Ein gedrehter Rahmen wird auf der Seite verschoben und in seinen Feldern bemessen. Über die Felder geht alles, was das Ziehen kann, auch mit der Tastatur.
+
+
+## Rahmenstile
+
+**Gestaltung › Kästen › Rahmenstile** zeigt die Kastenstile (`calloutStyles`) als Bibliothek. Die Rahmen der Seitenvorlagen tragen dieselben Stile (`frames[].style`), ein Stil dient also einem `:::callout`-Kasten im Text ebenso wie einem Rahmen auf einer zusammengesetzten Seite.
+
+- **Jeden Stil** zeichnet die Engine mit einem Beispielabsatz, und mit einem Beispielreiter, wenn der Stil einen Etikettreiter hat, so wie ein Rahmen ihn trägt: 80 mm breit (breiter, wenn sein Innenabstand weniger als 40 mm Satzbreite lässt), im Fluss, ohne den festen Platz, den ein Kastenstil seinem Kasten geben kann. Unter dem Namen steht, wo das Buch ihn verwendet: Rahmen von Vorlagen, damit gesetzte zusammengesetzte Seiten und Kästen im Text. Aufgeklappt listet ein Stil jeden Rahmen (**Öffnen** führt zu ihm in den Seitenvorlagen) und jedes Kapitel mit seinen Kästen (**Zeigen** markiert den nächsten Block im Textbereich; ein Block ohne `type` zählt für den ersten Stil, den die Engine ihm gibt), und **Stil bearbeiten** öffnet an Ort und Stelle den Editor der Kastenstile. **Anzeigen** filtert die Liste: *In Vorlagen* (die Voreinstellung, sobald eine Vorlage einen Stil verwendet), *Im Text*, *Unbenutzt*, *Alle*.
+- **Vorgeschlagene Zusammenführungen** fassen fast gleiche Stile um den meistverwendeten zusammen: „Diese 3 Stile unterscheiden sich nur in Innenabstand: zusammenführen?“. Verglichen wird, was die Engine aus den Stilen auflöst, Einstellung für Einstellung, ohne ID und Namen. Längen innerhalb von 0,5 mm und Farben innerhalb von ΔE 2 gelten als gleich, die vier Seiten eines Innenabstands zählen als eine Einstellung, und **Abweichende Einstellungen** (Voreinstellung 2) legt fest, wie viele Einstellungen abweichen dürfen.
+- Der Platz eines `:::callout`-Kastens (Platzierung, feste Position, Spannweite, Abstand darüber und darunter) muss übereinstimmen, sonst würde die Zusammenführung den Kasten verschieben. **Nur das Aussehen vergleichen** lässt ihn weg; die Prüfung sagt dann, wie viele Kästen sich verschieben. Solange es aus ist, nennt der Abschnitt, wie viele Stile es zusätzlich zusammenführen würde. Stile, die nur Rahmen von Vorlagen verwenden, werden immer nach dem Aussehen verglichen: Ein Rahmen erhält seinen Platz von seiner Vorlage.
+- **Jeden Kasten an seinem Platz lassen** (erscheint mit *Nur das Aussehen vergleichen*, standardmäßig an): Ein Stil, dessen Kästen woanders stehen als die des behaltenen Stils, wird nicht ganz zusammengeführt. Er bleibt nur mit seinem Platz (Platzierung, feste Position, Spannweite, Abstand darüber und darunter), auf Basis des behaltenen Stils (`extends`), sodass seine Kästen dessen Aussehen übernehmen und stehen bleiben; die Prüfung nennt, wie viele Stile so bleiben.
+- **Prüfen** listet jeden Stil, der wegfällt, worin er abweicht und welche Kapitel und Rahmen umgeschrieben werden. **In … zusammenführen** (oder **Alle Vorschläge zusammenführen**) schreibt den `style` jedes Rahmens der Vorlagen samt Varianten und den `type` jedes Blocks in jedem Kapitel auf den behaltenen Stil um, entfernt die anderen und setzt den behaltenen Stil an die Stelle des ersten seiner Gruppe, damit ein Block ohne `type` sein Aussehen behält. Die Zusammenführung kommt als ein Schritt je umgeschriebenem Kapitel und einer für Stile und Vorlagen in den Rückgängig-Verlauf der Sandbox. **Rückgängig** im Abschnitt nimmt die ganze Zusammenführung zurück, solange danach nichts geändert wurde; Cmd/Strg+Z nimmt sie Schritt für Schritt zurück, zuerst die Stile, sodass jeder Zwischenstand nur vorhandene Stile nennt.
+- Wer einen Stil unter *Kastenstile* umbenennt, benennt ihn auch in jedem Block und jedem Rahmen einer Vorlage um.
+
+Die Zusammenführung schreibt die Kapitel der geöffneten Ausgabe um: Eine andere Sprache des Buchs, als eigener Entwurf oder eigenes Projekt gespeichert, behält ihre Stile. Agenten erhalten dieselbe Bibliothek über `sandbox_frame_styles` und `sandbox_merge_styles` (siehe [WebMCP](/de/docs/webmcp)).
+
+
+## Zusammengesetzte Seiten in allen Ausgaben
+
+In einem Buch mit Seitenvorlagen (`pageTemplates`) beginnt das Bedienfeld mit **Zusammengesetzte Seiten**: den Prüfungen jeder zusammengesetzten Seite jedes Kapitels, in jeder Ausgabe, die das Buch enthält. Ein Paket auf Spanisch, Englisch und Katalanisch wird in allen dreien geprüft, während eine davon angezeigt wird. Die nicht angezeigten Ausgaben werden im Hintergrund gesetzt, jede so gelesen, wie das Öffnen sie lesen würde: ihr Entwurf, wenn sie bearbeitet wurde, sonst der Text des Pakets in dieser Sprache. Eine Zeile unter den Bedienelementen nennt die Ausgaben, die gerade gesetzt werden, und, sobald alle fertig sind, die geprüften.
+
+Der Abschnitt führt auf:
+
+- *Text passt nicht in seinen Rahmen* (`frameOverflow`), mit den Umbruchstufen, die versucht wurden, und den Änderungen, mit denen der Rahmen passen würde;
+- *Text passt auch nach den angefügten Seiten nicht* (`frameContinuationLimit`): Der Inhalt des Rahmens lief über so viele Seiten weiter, wie eine zusammengesetzte Seite anfügen darf, und passt immer noch nicht;
+- *Ein Text springt auf eine Seite, die nicht folgt* (`continueTargetMissing`): Keine spätere Seitenbegrenzung trägt die ID, die das `continueIn` des Rahmens nennt;
+- *Beschriftung an einem unbekannten Anker* und *Anker ohne Beschriftung* (`labelAnchorUnknown`, `anchorUnlabelled`), beim Rahmen, der die Abbildung setzt;
+- *Slot ohne Rahmen*, *Leerer Rahmen*, *Unbekannte Seitenvorlage*, *Zusammengesetzte Seite mit drei Doppelpunkten* und *Doppelseite passt nicht zur Vorlage* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Inhaltsverzeichnis-Block zwischen Spalten geteilt* (`tocGroupSplit`);
+- die Warnungen der Vorlagen selbst (ein Rahmenstil oder Anker, den es nicht gibt, Größen, die sich widersprechen, eine Kette, die in sich selbst zurückläuft) und Gestaltungstext, der Inhalt des Buchs enthält (`contentInConfig`).
+
+Diese Einträge werden in den Gruppen darunter nicht wiederholt.
+
+**Seite**, **Rahmen** und **Sprache** gruppieren die Liste nach zusammengesetzter Seite (dieselbe Seite in jeder Ausgabe, welche Nummer sie dort auch trägt), nach Rahmen oder nach Ausgabe. Die drei Menüs darunter beschränken sie auf eine Sprache, eine Seite oder einen Rahmen. Jeder Eintrag zeigt das Kürzel der Ausgabe (*CA*), die Seitenzahl in dieser Ausgabe und den Namen des Rahmens.
+
+Ein Klick auf einen Eintrag führt zu seinem Rahmen in seiner Ausgabe. Wird gerade eine andere Ausgabe angezeigt, wechselt das Buch in die Sprache des Eintrags; dann öffnen sich Kapitel und Seite, der Rahmen ist auf der Seite ausgewählt (sein Pfad steht unten in der Vorschau) und der Cursor steht am Anfang seines Slots im Bedienfeld **Text**. Eine Warnung einer Vorlage öffnet die erste Seite, die mit dieser Vorlage gesetzt ist, mit ausgewähltem Rahmen; Gestaltungstext mit Inhalt öffnet das Bedienfeld **Gestaltung**.
+
+Ein lokales Projekt, das aus einem Paket in mehreren Sprachen importiert wurde, behält alle Sprachen: Seine zusammengesetzten Seiten werden wie die eines Beispielbuchs in jeder Sprache geprüft, und eine Prüfung in einer anderen Sprache führt Sie dorthin, indem das Projekt auf diese Sprache umgestellt wird. Ein Buch in nur einer Sprache hat eine einzige Ausgabe, und die Zeile unter den Bedienelementen sagt es. Das Abzeichen in der Aktivitätsleiste zählt die Warnungen des angezeigten Kapitels in der angezeigten Ausgabe.
+
+
+## Text ins Markdown verschieben
+
+Ein Buch aus der Zeit vor den zusammengesetzten Seiten kann den Text ganzer Seiten in seinen Überschriftenstilen halten: eine verborgene Überschrift auf jeder Seite, deren Kolumnentitel Dutzende Textelemente, Kästen und Bilder dorthin setzt, wo die gedruckte Seite sie hatte. Das Bedienfeld Prüfungen zeigt dann *Text in der Konfiguration* und bietet oben **Text ins Markdown verschieben** an. Ein solches Buch, über das Bedienfeld Bücher importiert, öffnet denselben Dialog gleich nach dem Import.
+
+Der Dialog sagt, was das Verschieben tun wird, bevor er etwas ändert:
+
+- Jedes Seitendesign wird zu einer Seitenvorlage (`pageTemplates`). Jeder Text wird zu einem Rahmen an seiner Stelle; Textblöcke gleichen Aussehens, die in gleichem Abstand untereinanderstehen, werden ein Rahmen. Kästen, Linien und Bilder kommen in die Dekoration der Vorlage, die über den Fließtext der Seite gemalt wird, wie es der Kolumnentitel wurde, und ein Bild, das die Seite bedeckt, wird zum Attribut `background` der Seite, das die Dekoration liest (`{attr.background}`).
+- Jede Seite eines Kapitels wird zu einer zusammengesetzten Seite, `::::page{template="…"}`, mit den Überschriften und dem Fließtext der Seite und einem `:::frame{slot="…"}` je Rahmen mit dessen Text. Fett und kursiv bleiben; die Zeilenenden des Designs bleiben als erzwungene Umbrüche.
+- Schrift, Grad, Stärke, Farbe, Ausrichtung und Zeilenabstand jedes Textes werden ein Absatzstil: der des Buches, wenn er genau passt, sonst ein neuer, benannt nach Schrift und Grad. Ein farbiger Kasten unter fetten Wörtern wird ein Chip des Chip-Stils des Buches in dieser Farbe oder eines neuen.
+- Seiten, deren Rahmen an denselben Stellen stehen, teilen sich eine Vorlage (`page-base`), die ihre eigenen Vorlagen erweitern (`extends`); eine Seite, die nichts hinzufügt, nimmt sie so, wie sie ist.
+- Überschriftenstile, die ohne ihren Kolumnentitel gleich sind, werden zusammengelegt (`tema--p04`, `tema--p05` → `tema`) und in den Überschriften umbenannt; verborgene Überschriften, die nur den Kolumnentitel wechselten, fallen weg. Eine Seite, die mit einer Überschrift für eine gerade oder ungerade Seite begann, bekommt vor ihrer Seitenbegrenzung ein `:::pagebreak{parity="…"}`.
+
+Die Zahlen unter **Was sich ändert** sind die verschobenen Texte und Buchstaben, die geschriebenen Seiten, die vorgeschlagenen Vorlagen, die Überschriftenstile vorher und nachher, die neuen Stile, die Größe der Konfiguration und die Warnungen *Text in der Konfiguration*, vorher und nachher.
+
+**Vorher und nachher** setzt jedes Kapitel zweimal mit dem Satz des Sandbox selbst und zeichnet jede Seite, die sich ändert, die alte neben der neuen. Die Liste daneben sagt, welche Seiten anders aussehen und warum, wenn der Grund bekannt ist: ein eigener Kasten, eine Kontur oder Initiale eines Textes, eine Seite, deren Seite des Bogens unbekannt ist, Fließtext, der jetzt im Flussrahmen der Vorlage steht. **Geändertes rot markieren** malt die abweichenden Pixel.
+
+Die Optionen: **Seiten mit Rahmen an denselben Stellen teilen sich eine Vorlage**, **Ein Markierungskasten unter fetten Wörtern wird zum Chip** und, wenn es welche gibt, **Überschriftenstile mit Text löschen, die keine Überschrift verwendet**.
+
+**Text verschieben** schreibt die Änderung in den einen Rückgängig-Verlauf des Buches: einen Schritt je umgeschriebenem Kapitel, dann einen für das Design. Cmd/Strg+Z nimmt zuerst das Design zurück, dann die Kapitel, und **Rückgängig** im Dialog nimmt alle zurück, solange sie die letzten sind. Das Buch von vorher bleibt außerdem gespeichert, auch über ein Neuladen hinweg, bis Sie im Bedienfeld Prüfungen **Änderung behalten** wählen; bis dahin schreibt **Buch wiederherstellen** das alte Design und den alten Text zurück, als Schritte, die sich ihrerseits rückgängig machen lassen.
+
+In der Konfiguration bleibt, und unter **Bleibt in der Konfiguration** aufgeführt: ein Text, der Wörter mit Platzhaltern mischt (`Seite {pageNumber}`), ein Text, der am eigenen Kasten seines Kolumnentitels oder an einem anderen Element hängt, und der Text eines Überschriftendesigns (keine Seite). Auf den Seiten wird das Design einer Überschrift, die in einem Rahmen steht (der Reiter einer gerahmten Überschrift, Bänder um eine Überschrift), dort nicht gezeichnet; eine Seite mit Fließtext unter solchen Überschriften sieht daher anders aus. Die Kontrastprüfung misst den Text eines Rahmens gegen die Seite und nicht gegen einen Kasten der Dekoration darunter und kann daher ein weißes Etikett auf einem farbigen Kasten melden.
+
+Dasselbe Verschieben ist eine Funktion der Engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, die die neue Konfiguration, die Kapitel und den Bericht des Dialogs zurückgibt. Siehe [Zusammengesetzte Seiten](/de/docs/composed-pages#ein-buch-mit-text-in-seinen-stilen-umstellen).
+
+
+## Einen Rahmen mit einem Klick beheben
+
+Unter *Text passt nicht in seinen Rahmen* sind die Lösungen, die die Leiter des Satzes für diesen Rahmen errechnet hat, Schaltflächen, in den Worten der Warnung:
+
+- *den Text auf 60 % verkleinern lassen* setzt `fit.minScale` des Rahmens (und schaltet `fit.shrinkText` ein, wenn es aus war);
+- *maxHeight auf 66 mm anheben* setzt seine `maxHeight`;
+- *minHeight von … senken* senkt die Mindesthöhe eines anderen Rahmens seiner Gruppe;
+- *auf der nächsten Seite fortsetzen* setzt `overflow.continueIn` auf `next-page`, sodass, was nicht passt, auf einer nach dieser hinzugefügten Seite weitergeht;
+- *die Seite mit der Vorlage … setzen* schreibt das `template` des `::::page`-Zauns der Seite im Text um;
+- *etwa 626 Zeichen kürzen* ändert nichts: Es wählt den Text des Rahmens im Feld **Text** aus und sagt, wie viele Zeichen wegmüssen.
+
+Die anderen Schaltflächen ändern die Form des Buchs, deshalb fragt jede zuerst und nennt die Einstellung und ihren Wert (*tema-fija › dinero › maxHeight = 66 mm*) oder die Vorlage, die die Seite bekommt. Eine Änderung der Gestaltung gilt für alle Seiten mit dieser Vorlage. **Ändern** nimmt die Änderung als einen Schritt des Rückgängig-Verlaufs vor: Cmd/Strg+Z oder die Schaltfläche Rückgängig neben Inhalt und Gestaltung nimmt sie zurück. Die Seite wird neu gesetzt, und die Warnung verschwindet oder macht dem Platz, was die Änderung hinterlassen hat (ein Kasten weiter unten, der jetzt nicht mehr passt).
+
+Dieselben Schaltflächen begleiten den Rahmen im Feld **Was sich bewegt hat und warum** der Leinwand. Die Warnung einer Ausgabe, die nicht angezeigt wird, bietet an, diese Ausgabe zu öffnen, wo ihre Lösungen angewendet werden können. Hat sich das Buch geändert, seit der Satz eine Lösung vorgeschlagen hat (die Vorlage wurde bearbeitet, der Zaun nennt eine andere Vorlage), sagt die Schaltfläche das und ändert nichts. Ein Agent wendet dieselben Lösungen mit `sandbox_apply_proposal` an ([WebMCP](/de/docs/webmcp)).

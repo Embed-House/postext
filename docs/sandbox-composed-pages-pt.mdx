@@ -1,0 +1,109 @@
+{/* docs/sandbox-composed-pages-pt.mdx */}
+
+export const metadata = {
+  title: 'Sandbox: as páginas compostas',
+  sidebarTitle: 'Páginas compostas',
+  description: 'Modelos de página e blocos editados sobre a página, a biblioteca de estilos de bloco, as verificações das páginas compostas em todas as edições, a passagem do texto para o Markdown e a correção de um bloco com um clique',
+  lang: 'pt',
+  lastUpdated: '2026-10-17',
+  readingTime: '13 min',
+  order: 38,
+  parent: 'sandbox',
+  plainSummary: "Esta página reúne o que o Sandbox oferece para as páginas compostas, aquelas cujo texto é despejado em blocos dispostos por um modelo. Os blocos de um modelo são desenhados e movidos direto na página, e os estilos de bloco ficam organizados numa biblioteca. O painel Verificações avisa, em cada idioma do livro, quais páginas compostas têm um texto que não cabe, e oferece botões que corrigem um bloco. Um livro feito antes das páginas compostas pode levar o texto de suas páginas para o Markdown de uma só vez.",
+};
+
+# Sandbox: as páginas compostas
+
+Esta página reúne as partes dos painéis Design e Verificações que tratam das páginas compostas (os trechos `::::page` que despejam o conteúdo nos blocos de um modelo de página). O resto dos dois painéis está em [Sandbox: os painéis Design e Verificações](/pt/docs/sandbox-design-checks); como se escreve uma página composta, em [Páginas compostas](/pt/docs/composed-pages).
+
+
+## Modelos de página
+
+**Design › Página e colunas › Modelos de página** edita `pageTemplates`, as diagramações em que uma página composta (`::::page{template="…"}`) despeja seu conteúdo, sem abrir o arquivo de configuração.
+
+- **A lista** mostra cada modelo com um desenho dos seus blocos, o id, quantas páginas do livro o usam (uma página dupla conta duas) e o modelo em que é **Baseado**. **Novo** começa um modelo com um bloco que recebe o texto solto da página; **Duplicar** copia o aberto; **Salvar diagramação como modelo** transforma a página composta escolhida (ou a primeira diagramada) num modelo novo cujos blocos ficam onde caíram, em tamanhos fixos em milímetros, com seus estilos e os demais campos.
+- **Editar para** escolhe o que os campos mudam: *Todas as páginas* (o modelo), *Ímpar (anverso)* ou *Par (verso)* (`variants.recto`, `variants.verso`). Um campo que esse escopo não define mostra, esmaecido, o valor que herda, e o botão de redefinir o devolve. Um modelo de **Página dupla**, com sua **Medianiz**, é desenhado como uma só folha de duas páginas com a faixa da lombada marcada, e não tem variantes.
+- **Modelo**: id (renomear muda o nome em todas as cercas de página que o citam), nome, **Baseado em** (`extends`), a chave de página dupla, **Blocos medidos a partir de** (`area`), **As páginas acrescentadas usam** (`overflowTemplate`: o modelo das páginas em que continua o conteúdo de um bloco, veja [Quando o texto continua](/pt/docs/composed-pages#quando-o-texto-continua)), a grade e **Apagar modelo** (diz quantas páginas o citam; os modelos baseados nele mantêm o que herdaram).
+- **Blocos**: um botão por bloco, **Adicionar bloco** e as propriedades do bloco escolhido: nome (a vaga) e **Pode ficar vazio**; posição (ancorado à área do modelo, à página refilada, à sangria ou a outro bloco ou grupo, com a borda e os deslocamentos) ou uma célula da grade; largura e altura (*Fixa*, *Parte da área*, *O conteúdo*, *Até a borda*) com seus limites; estilo de caixa, camada, rotação, onde fica o conteúdo, colunas e preenchimento por lado; **Recebe o texto solto da página** (`flow`), **Recebe o primeiro título** (`takes`), **O texto que não cabe continua em** (`next`), **O texto de outros blocos o contorna** (`exclude: "push"`) e, nesse caso, **Afastar com** *Caixa* ou *Contorno* (`wrap`, a forma das imagens que ele contém); o ajuste (`fit`); crescer, encolher, prioridade e fixo para os grupos; a continuação (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **O conteúdo que não cabe vai para** oferece nenhuma outra página, a página seguinte, outro bloco, outro modelo e cada cerca de página do livro que tem `id` (`page:<id>`); *Uma página posterior pelo id…* aceita um valor digitado como `{attr.sigue}` ou `p47#resto`. Cada campo tem sua ajuda e seu botão de redefinir.
+- **Grupos**: nome, empilhados ou em fileira, o espaço entre blocos, para onde vai o espaço que sobra e os blocos do grupo na ordem da página. Um grupo com **Caixa própria** distribui o espaço que sobra e deixa seus blocos cederem espaço dentro dela; sem ela, é a união das caixas dos seus blocos.
+- **Cabeços e rodapés** (*Os do livro*, *Ocultos*, *Próprios*) e **Decoração**, editados como o cabeçalho e o rodapé do livro; um texto da decoração pode ler os atributos da página (`{attr.nome}`).
+
+**Na página, no modo Design.** Com o seletor acima da prévia em **Design** (ou **Editar os blocos na página** na seção), uma página composta mostra as margens, a grade, a lombada de uma página dupla e uma seta para cada encadeamento. Clicar num bloco o escolhe e abre suas propriedades; arrastá-lo o move; as oito alças do bloco escolhido mudam seu tamanho; arrastar num espaço vazio desenha um bloco novo. As caixas se encaixam nas margens, na grade e nas bordas e centros dos outros blocos (com Alt pressionada ficam livres; Esc cancela o arrasto). A caixa é gravada em milímetros: um bloco pendurado em outro mantém a âncora e muda o deslocamento. Quando outras páginas usam o modelo, a página pergunta para onde vai a mudança: **Mudar o modelo** (com o número de páginas) ou **Só esta página**, que cria para essa página um modelo baseado no primeiro e faz a cerca dela citá-lo. Um bloco girado se move na página e tem o tamanho dado nos campos. Pelos campos, tudo o que o arrasto faz também se faz pelo teclado.
+
+
+## Estilos de bloco
+
+**Design › Boxes › Estilos de bloco** mostra os estilos de boxe (`calloutStyles`) como uma biblioteca. Os blocos dos modelos de página vestem os mesmos estilos (`frames[].style`), então um estilo serve tanto a um boxe `:::callout` do texto quanto a um bloco de uma página composta.
+
+- **Cada estilo** é desenhado pelo motor com um parágrafo de exemplo, e uma aba de exemplo quando o estilo tem aba de rótulo, do jeito que um bloco o usa: com 80 mm de largura (mais, se o preenchimento deixar menos de 40 mm de medida), no fluxo, sem o lugar fixo que um estilo de boxe pode dar à sua caixa. Sob o nome, a seção diz onde o livro o usa: blocos de modelo, páginas compostas com esses modelos e boxes do texto. Aberto, o estilo lista cada bloco de modelo (**Abrir** leva a ele em Modelos de página) e cada capítulo com seus boxes (**Ver** seleciona a próxima cerca no painel Texto; uma cerca sem `type` conta para o primeiro estilo, que é o que o motor lhe dá), e **Editar o estilo** abre ali mesmo o editor de Estilos de boxe. **Mostrar** filtra a lista: *Nos modelos* (o que aparece primeiro quando algum modelo usa um estilo), *No texto*, *Sem uso*, *Todos*.
+- **Fusões sugeridas** agrupa os estilos quase iguais em torno do mais usado: «Estes 3 estilos só mudam em preenchimento: fundir?». Os estilos são comparados pelo que o motor resolve, ajuste por ajuste, sem o id nem o nome. Medidas a menos de 0,5 mm e cores a menos de ΔE 2 contam como iguais, os quatro lados de um preenchimento contam como um ajuste, e **Ajustes que podem mudar** (2 por padrão) define quantos ajustes podem diferir.
+- O lugar de um boxe `:::callout` (posicionamento, posição fixa, largura ocupada, espaço acima e abaixo) precisa coincidir, senão a fusão moveria a caixa. **Comparar só a aparência** deixa isso de fora, e a revisão diz então quantos boxes mudariam de lugar; enquanto está desligado, a seção diz quantos estilos a mais ele fundiria. Os estilos usados só por blocos de modelo são sempre comparados pela aparência: um bloco recebe o lugar do seu modelo.
+- **Deixar cada boxe onde está** (aparece com *Comparar só a aparência*, ligado por padrão): um estilo cujos boxes ficam em outro lugar que os do estilo que fica não é fundido por inteiro. Fica só com o seu lugar (posicionamento, posição fixa, largura, espaço acima e abaixo), baseado no estilo que fica (`extends`), então os seus boxes ganham essa aparência e não se movem; a revisão diz quantos estilos ficam assim.
+- **Revisar** lista cada estilo que sai, em que difere e os capítulos e blocos reescritos. **Fundir em** (ou **Fundir todas as sugestões**) reescreve o `style` de cada bloco de modelo, variantes incluídas, e o `type` de cada cerca de cada capítulo para nomearem o estilo que fica, remove os outros e põe o estilo que fica no lugar do primeiro do grupo, de modo que uma cerca sem `type` mantém a aparência. A fusão entra no histórico de desfazer do Sandbox como um passo por capítulo reescrito e outro para os estilos e os modelos. **Desfazer**, na própria seção, desfaz a fusão inteira enquanto nada tiver mudado depois; Cmd/Ctrl+Z a desfaz passo a passo, primeiro os estilos, de modo que cada estado intermediário nomeia estilos que existem.
+- Renomear um estilo em *Estilos de boxe* também o renomeia em cada cerca e em cada bloco de modelo.
+
+A fusão reescreve os capítulos da edição aberta: outro idioma do livro, salvo como rascunho ou projeto à parte, mantém os seus estilos. Os agentes têm a mesma biblioteca com `sandbox_frame_styles` e `sandbox_merge_styles` (veja [WebMCP](/pt/docs/webmcp)).
+
+
+## Páginas compostas em todas as edições
+
+Num livro com modelos de página (`pageTemplates`), o painel começa por **Páginas compostas**: as verificações de cada página composta de cada capítulo, em cada edição que o livro traz. Um pacote em espanhol, inglês e catalão é verificado nas três enquanto uma delas está na tela. As edições que não estão na tela são diagramadas em segundo plano, cada uma lida como seria lida ao abri-la: o rascunho dela, se foi editada, senão o texto do pacote naquele idioma. Uma linha abaixo dos controles diz quais edições estão sendo diagramadas e, quando todas terminam, quais foram verificadas.
+
+A seção reúne:
+
+- *O texto não cabe no bloco* (`frameOverflow`), com os passos que a escada de ajuste tentou e as mudanças que fariam o bloco caber;
+- *O texto ainda não cabe depois das páginas acrescentadas* (`frameContinuationLimit`): o conteúdo do bloco seguiu por todas as páginas que uma página composta pode acrescentar e ainda não cabe;
+- *Uma matéria salta para uma página que não vem depois* (`continueTargetMissing`): nenhuma cerca de página posterior tem o id que o `continueIn` do bloco nomeia;
+- *Rótulo numa âncora inexistente* e *Âncora sem rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), junto ao bloco que compõe a figura;
+- *Slot sem bloco*, *Bloco vazio*, *Modelo de página desconhecido*, *Página composta com três dois-pontos* e *A página dupla não corresponde ao modelo* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloco do sumário dividido entre colunas* (`tocGroupSplit`);
+- os avisos dos próprios modelos (um estilo ou uma âncora de bloco que não existe, tamanhos que se contradizem, uma cadeia que volta sobre si mesma) e o texto de design que guarda conteúdo do livro (`contentInConfig`).
+
+Essas entradas não se repetem nos grupos abaixo.
+
+**Página**, **Bloco** e **Idioma** agrupam a lista por página composta (a mesma página em todas as edições, seja qual for o número dela em cada uma), por bloco ou por edição. Os três menus logo abaixo deixam um só idioma, uma só página ou um só bloco. Cada entrada mostra a sigla da edição (*CA*), o número da página naquela edição e o nome do bloco.
+
+Um clique numa entrada leva ao bloco dela na edição dela. Se outra edição estiver na tela, o livro passa para o idioma da entrada; depois abrem o capítulo e a página, o bloco fica selecionado na página (o caminho dele aparece no pé da prévia) e o cursor vai para o começo do slot no painel **Texto**. Um aviso do próprio modelo abre a primeira página composta com ele, com o bloco selecionado; o texto de design com conteúdo abre o painel **Design**.
+
+Um projeto local importado de um pacote em vários idiomas guarda todos eles, de modo que suas páginas compostas são verificadas em cada idioma como as de um livro de exemplo, e uma verificação em outro idioma leva você até ela, passando o projeto para esse idioma. Um livro em um só idioma tem uma só edição, e a linha abaixo dos controles avisa. O contador da barra de atividades conta os avisos do capítulo na tela, na edição na tela.
+
+
+## Levar o texto para o Markdown
+
+Um livro feito antes das páginas compostas pode guardar o texto de páginas inteiras nos estilos de título: um título oculto em cada página cujo cabeçalho coloca dezenas de textos, caixas e imagens onde a página impressa os tinha. O painel Verificações mostra então *Texto guardado na configuração* e oferece **Levar o texto para o Markdown** no topo. Um livro assim, importado pelo painel de livros, abre a mesma janela logo depois da importação.
+
+A janela diz o que a mudança vai fazer antes de mexer em qualquer coisa:
+
+- Cada desenho de página vira um modelo de página (`pageTemplates`). Cada texto vira um bloco onde estava; blocos de texto com a mesma aparência postos um embaixo do outro com o mesmo espaço viram um só bloco. As caixas, os fios e as imagens vão para a decoração do modelo, pintada por cima do texto corrido da página como o cabeçalho era, e uma imagem que cobre a página vira o atributo `background` da página, que a decoração lê (`{attr.background}`).
+- Cada página de um capítulo vira uma página composta, `::::page{template="…"}`, com os títulos e o texto corrido da página e um `:::frame{slot="…"}` por bloco com o seu texto. Negrito e itálico ficam; os fins de linha do desenho ficam como quebras de linha forçadas.
+- A fonte, o corpo, o peso, a cor, o alinhamento e a entrelinha de cada texto formam um estilo de parágrafo: o do livro quando ele coincide por completo, senão um novo, com o nome da fonte e do corpo. Uma caixa colorida sob palavras em negrito vira um chip do estilo de chip do livro daquela cor, ou de um novo.
+- Páginas com os blocos nos mesmos lugares compartilham um modelo (`page-base`) que os seus próprios modelos estendem (`extends`); uma página que não acrescenta nada usa esse modelo como ele é.
+- Estilos de título que ficam iguais depois que o cabeçalho sai são fundidos (`tema--p04`, `tema--p05` → `tema`) e renomeados nos títulos; títulos ocultos que só trocavam o cabeçalho somem. Uma página que começava com um título que pedia página par ou ímpar recebe um `:::pagebreak{parity="…"}` antes da sua cerca.
+
+Os números de **O que muda** são os textos e as letras levados, as páginas escritas, os modelos propostos, os estilos de título antes e depois, os estilos criados, o tamanho da configuração e os avisos *Texto guardado na configuração*, antes e depois.
+
+**Antes e depois** diagrama cada capítulo duas vezes com a diagramação do próprio Sandbox e desenha cada página que muda, a antiga ao lado da nova. A lista ao lado diz quais páginas parecem diferentes e por quê, quando se sabe: a caixa, o contorno ou a capitular próprios de um texto, uma página cujo lado não se conhece, texto corrido que agora fica no bloco de fluxo do modelo. **Marcar em vermelho o que muda** pinta os pixels diferentes.
+
+As opções: **Páginas com blocos nos mesmos lugares compartilham um modelo**, **Uma caixa de destaque sob palavras em negrito vira um chip** e, quando houver, **Apagar os estilos de título com texto que nenhum título usa**.
+
+**Levar o texto** grava a mudança no histórico de desfazer do livro: um passo para cada capítulo reescrito e depois um para o desenho. Cmd/Ctrl+Z desfaz primeiro o desenho e depois os capítulos, e **Desfazer** na janela desfaz todos enquanto forem os últimos. Além disso, o livro de antes fica guardado, mesmo ao recarregar, até você escolher **Ficar com a mudança** no painel Verificações; até lá **Deixar o livro como estava** grava de novo o desenho e o texto anteriores, como passos que também podem ser desfeitos.
+
+Fica na configuração, e aparece em **Fica na configuração**: um texto que mistura palavras e marcadores (`Página {pageNumber}`), um texto preso à caixa do seu cabeçalho ou a outro elemento, e o texto de um desenho de título (que não é uma página). Nas páginas, o desenho de um título posto num bloco (a aba de um título com caixa, as faixas desenhadas em volta de um título) não é desenhado ali, então uma página com texto corrido sob títulos assim parece diferente. A verificação de contraste mede o texto de um bloco contra a página e não contra uma caixa da decoração que esteja embaixo, então pode apontar um rótulo branco sobre uma caixa colorida.
+
+A mesma mudança é uma função do motor, `moveTextToMarkdown({ config, chapters, metadata }, options)`, que devolve a nova configuração, os capítulos e o relatório que a janela mostra. Veja [Páginas compostas](/pt/docs/composed-pages#migrar-um-livro-com-o-texto-nos-estilos).
+
+
+## Corrigir um bloco com um clique
+
+Sob *O texto não cabe no bloco*, as soluções que a escada de rearranjo calculou para esse bloco são botões, nas palavras do próprio aviso:
+
+- *deixe o texto descer a 60 %* define o `fit.minScale` do bloco (e liga `fit.shrinkText` se estava desligado);
+- *suba maxHeight para 66 mm* define o seu `maxHeight`;
+- *baixe o minHeight de …* baixa a altura mínima de outro bloco do grupo;
+- *faça-o continuar na página seguinte* põe `overflow.continueIn` em `next-page`, para que o que não cabe continue numa página acrescentada depois desta;
+- *componha a página com o modelo …* reescreve o `template` da cerca `::::page` da página no texto;
+- *corte cerca de 626 caracteres* não muda nada: seleciona o texto do bloco no painel **Texto** e diz quantos caracteres tirar.
+
+Os outros botões mudam a forma do livro, por isso cada um pergunta antes, dizendo o ajuste e o valor (*tema-fija › dinero › maxHeight = 66 mm*) ou o modelo que a página vai tomar. Uma mudança de design vale para todas as páginas compostas com esse modelo. **Mudar** faz a mudança como um passo do histórico de desfazer: Cmd/Ctrl+Z, ou o botão Desfazer ao lado de Conteúdo e Design, desfaz. A página é diagramada de novo, e o aviso some, ou dá lugar ao que a mudança deixou (um bloco mais abaixo que agora não cabe).
+
+Os mesmos botões acompanham o bloco no painel **O que se moveu e por quê** da tela. O aviso de uma edição que não está na tela oferece abrir essa edição, onde suas soluções podem ser aplicadas. Se o livro mudou depois que a diagramação propôs uma solução (o modelo foi editado, a cerca cita outro modelo), o botão avisa e não muda nada. Um agente aplica as mesmas soluções com `sandbox_apply_proposal` ([WebMCP](/pt/docs/webmcp)).

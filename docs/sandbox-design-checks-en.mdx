@@ -6,7 +6,7 @@ export const metadata = {
   description: "The Design panel's groups, pages, search and summary, and the Checks panel's live warnings, grouped by kind",
   lang: 'en',
   lastUpdated: '2026-10-17',
-  readingTime: '34 min',
+  readingTime: '38 min',
   order: 37,
   parent: 'sandbox',
   plainSummary: "This page covers two panels of the Sandbox. The Design panel holds every setting of the book, such as the page size, the fonts and the colours, sorted into groups with a search box. The Checks panel lists the problems Postext finds while you work, such as a missing picture or a line that is too loose. Each problem says where it is and takes you there when you click it.",
@@ -42,7 +42,7 @@ The groups, in browsing order:
     - **Numbering**: the page-number format and the number the pages start at.
   - *Columns*: the layout is chosen from picture cards: *One column* (novels, essays), *Two columns* (textbooks, magazines, reference works), *Column and a half* (a main column plus a narrow side column for notes and small figures) or *Multiple columns* (three to eight equal columns for newspapers and magazines, with a **Columns** count; since postext 1.18). The section also has the gutter, the side column, **Shrink figures that don't fit** (`layout.fitFiguresToPage`), **Bitmap resolution** (`layout.bitmapResolution`: *Page dpi*, *From file*, which also reads the resolution of pictures uploaded before, or *Fixed* with its ppi), **Shrink floated pictures** with its **Smallest scale** (`layout.floatShrink`), **Floats head the page that cites them** (`layout.floatsAtCitingPage`) with **Largest float at the head of its citing page** (`layout.maxTopFraction`), **Floats under a page-wide heading, from the first column** (`layout.floatsUnderOpener`, on by default since postext 1.25: a float fenced right after a heading set across several columns takes the head of the first one), **Space around inline figures** (`layout.inlineResourceGap`), **Space around figures in boxes** (`layout.inlineResourceGapInBoxes`), **Lines of a paragraph at a box cut** (`layout.boxChildSplitMinLines`), **Columns in the text, and groups that split** (`layout.flowColumns`, on by default since postext 1.25: a `:::columns` group outside a box sets its blocks in columns, and a group that does not fit goes on in the next column or page) and **Closing floats hug the text** (`layout.hugClosingFloats`).
   - *Text wrap*: **Text wrap gap**, **Narrowest text beside**, **Fewest lines beside** and **Wrapped width** (`layout.wrap`), the defaults of the pictures and boxes the text runs beside.
-  - *Page templates* (`pageTemplates`): the layouts of composed pages, with their frames drawn and moved on the page; see [Page templates](#page-templates) below.
+  - *Page templates* (`pageTemplates`): the layouts of composed pages, with their frames drawn and moved on the page; see [Page templates](/en/docs/sandbox-composed-pages#page-templates).
 - **Writing system**. The page opens with the drawing of Page & columns. Its spread carries folios: 2 | 3 in a book bound on the left, 3 | 2 in one bound on the right, whose odd page is the left one; the caption says when the book is bound on the right and when its lines are vertical.
   - *Language and direction*:
     - **Document language**, with Chinese as 中文（简体）, 中文（繁體） and 中文（香港）, and Arabic as العربية, العربية (مصر) and العربية (المغرب) (the region sets regional defaults such as the digits). A tag the list lacks (`es-ES`, `zh-TW`, `sv`) shows as an extra option, named after the language it reads as. Changing it renames the built-in figure and table types when they are still the ones of the previous language (a Spanish book switched to Chinese prints 图 and 表, not *Figura* and *Tabla*); types you renamed keep their names.
@@ -127,7 +127,7 @@ The groups, in browsing order:
     - the marker column, a fixed anchor, keep-together and split-min-lines, and the float-barrier controls;
     - a **Side Box at a Column End** choice (`sideAtColumnEnd`) for side boxes whose text does not go on in the same column: beside the text before the fence, or beside the text after it;
     - a **Split boxes** group: repeat the title with a suffix on every continuation (`repeatTitle`, `continuedSuffix`), and a continuation marker under each part that goes on, with its text, alignment and italic (`continuesMarkerEnabled`, `continuesMarker`, `continuesMarkerAlign`, `continuesMarkerItalic`). The strings default to the document language.
-  - *Frame styles*: the same styles as a library, each drawn by the engine with where the book uses it, and merges of near-identical styles; see [Frame styles](#frame-styles) below.
+  - *Frame styles*: the same styles as a library, each drawn by the engine with where the book uses it, and merges of near-identical styles; see [Frame styles](/en/docs/sandbox-composed-pages#frame-styles).
 - **Headers & footers**
   - *Headers & footers*: per-slot text, rule, box and image elements.
     - **Text elements**: vertical alignment, **text alignment** within their own box (`align`: flush left, centred or flush right, visible when the box is wider than the text, or justified, which stretches the spaces of every line but the last of each paragraph to fill the box and, with **Hyphenation** on, splits a word at a syllable to fill a line), line height, letter spacing (negative to tighten a display title), letter case, a fitted, filled or fixed width and height, and a maximum width. **Inline marks** (`inlineMarks`) sets `**bold**`, `*italic*` and the other inline marks in the element's text, and an outline draws the letters' contour: **Outline width**, **Outline color** and **Hollow letters** (`stroke`).
@@ -192,33 +192,6 @@ Controls are context-aware. The gutter width only appears for multi-column layou
 
 The panel header also offers **Reset** (asks for confirmation; only shown when the design differs from the open sample book's, and it restores that sample's design, fonts included), **Export** and **Import**. See [Export and import](/en/docs/sandbox-books-saving#export-and-import).
 
-
-### Page templates
-
-**Design › Page & columns › Page templates** edits `pageTemplates`, the layouts a composed page (`::::page{template="…"}`) pours its content into, without opening the configuration file.
-
-- **The list** shows each template with a drawing of its frames, its id, the number of pages of the book that use it (a spread counts two) and the template it is **Based on**. **New** starts a template with one frame that takes the page's loose text; **Duplicate** copies the one open; **Save layout as template** turns the composed page you picked (or the first one laid out) into a new template whose frames stand where they came out, at fixed sizes in millimetres, keeping their styles and the rest of their fields.
-- **Edit for** chooses what the fields change: *All pages* (the template), *Recto (odd)* or *Verso (even)* (`variants.recto`, `variants.verso`). A field the scope does not set shows the value it inherits, muted, and its reset button hands it back. A spread template (**Two facing pages**, with its **Gutter**) is drawn as one sheet across two pages with the spine band marked, and has no variants.
-- **Template**: id (renaming it renames every page fence that names it), name, **Based on** (`extends`), the spread switch, **Frames measured from** (`area`), **Added pages use** (`overflowTemplate`: the template of the pages a frame's content goes on to, see [When the text continues](/en/docs/composed-pages#when-the-text-continues)), the grid, **Delete template** (it says how many pages name it; templates based on it keep what they inherited).
-- **Frames**: one button per frame, **Add frame**, and the properties of the frame picked: name (the slot), **May stay empty**; position (anchor to the template area, the trimmed page, the bleed or another frame or group, the edge, offsets) or a grid cell; width and height (*Fixed*, *Share of the area*, *Its content*, *Up to the edge*) with their limits; box style, layer, rotation, where the content sits, columns, padding per side; **Takes the page's loose text** (`flow`), **Takes the first heading** (`takes`), **Text that does not fit goes on in** (`next`), **Other frames' text runs round it** (`exclude: "push"`) and, once it does, **Push with** *Box* or *Contour* (`wrap`, the shape of the pictures it holds); fitting (`fit`); grow, shrink, priority and pin for groups; continuation (`overflow.continueIn`, `overflow.mark`, `overflow.fromMark`): **Content that does not fit goes to** also lists every page fence with an `id` (`page:<id>`), and *A later page by its id…* takes a typed value (`{attr.sigue}`). Every field has its help and its reset.
-- **Groups**: name, stacked or in a row, the space between frames, where spare room goes, and the members in page order. A group with a **Box of its own** shares out its spare room and lets its frames give room back inside it; without one it is the union of its frames' boxes.
-- **Running heads** (*As in the book*, *Hidden*, *Its own*) and **Decoration**, edited like the book's header and footer; a text there may read the page's attributes (`{attr.name}`).
-
-**On the page, in Design mode.** With the switch above the preview on **Design** (or **Edit frames on the page** in the section), a composed page shows its margins, its grid, the gutter of a spread and an arrow for each chain. A press on a frame picks it and opens its properties; a drag moves it; the eight handles of the frame picked resize it; a drag on an empty spot draws a new frame. Boxes snap to the margins, the grid and the other frames' edges and centres (hold Alt to place freely; Escape cancels the drag). The box is written back in millimetres: a frame hung from another keeps its anchor and changes its offset. When other pages use the template, the page asks where the change goes: **Change the template** (with the number of pages) or **Only this page**, which makes a template for that page based on the first one and points the page's fence at it. A rotated frame moves on the page and is sized in its fields. The fields are the keyboard way to do everything the drag does.
-
-
-### Frame styles
-
-**Design › Boxes › Frame styles** shows the box styles (`calloutStyles`) as a library. The frames of page templates are dressed with the same styles (`frames[].style`), so one style serves a `:::callout` box in the text and a frame on a composed page alike.
-
-- **Each style** is drawn by the engine with a sample paragraph, and a sample tab when the style has a label tab, the way a frame wears it: 80 mm wide (wider when its padding leaves less than 40 mm of measure), in the flow, without the fixed place a callout style may give its box. Under its name the section says where the book uses it: template frames, composed pages laid with those templates, and boxes in the text. Opened, a style lists every frame (**Open** goes to it in Page templates) and every chapter with its boxes (**Show** selects the next fence in the Text panel; a fence with no `type` counts for the first style, which the engine gives it), and **Edit the style** opens the Box styles editor in place. **Show** filters the list: *In templates* (the default once a template uses a style), *In the text*, *Unused*, *All*.
-- **Merge suggestions** group near-identical styles around the most used one: «These 3 styles differ only in padding: merge?». Styles are compared on what the engine resolves them to, setting by setting, leaving out their id and name. Lengths within 0.5 mm and colours within ΔE 2 count as equal, the four sides of a padding count as one setting, and **Settings that may differ** (2 by default) sets how many settings may differ.
-- Where a `:::callout` box stands (placement, fixed position, span, the space above and below) has to match, or merging would move the box. **Compare the look only** leaves it out, and the review then says how many boxes would move; while it is off, the section says how many more styles it would merge. Styles that only template frames use are always compared on their look: a frame takes its place from its template.
-- **Keep each box where it stands** (with *Compare the look only*, on by default): a style whose boxes stand elsewhere stays with only its place, based on the kept style (`extends`), so its boxes take the kept look without moving.
-- **Review** lists each style that goes, what it differs in, and the chapters and frames rewritten. **Merge into** (or **Merge every suggestion**) rewrites the `style` of every template frame, variants included, and the `type` of every fence of every chapter to the kept style, removes the others, and puts the kept style where the first of its group stood, so a fence with no `type` keeps its look. The merge enters the Sandbox's undo history as one step per chapter rewritten and one for the styles and templates. **Undo** in the section takes the whole merge back while nothing was changed after it; Cmd/Ctrl+Z takes it back a step at a time, the styles first, so every state on the way names styles that exist.
-- Renaming a style in *Box styles* renames it in every fence and template frame as well.
-
-The merge rewrites the chapters of the edition that is open: another language of the book, kept as a draft or a project of its own, keeps its own styles. Agents get the same library through `sandbox_frame_styles` and `sandbox_merge_styles` (see [WebMCP](/en/docs/webmcp)).
 
 ## Checks panel
 
@@ -294,63 +267,3 @@ Live diagnostics, recomputed from the text, the design, the figures and the last
 
 Each entry shows an icon, a title, a one-line detail and, where it applies, the chapter and source line (*Ch. 2 · Line 12* in a multi-chapter book). Clicking an entry with a source location switches to that chapter and focuses the editor at that spot. When nothing is wrong, the panel shows **All clear**. Which checks run is set in **Design → Advanced → Warnings**.
 
-### Composed pages in every edition
-
-In a book with page templates (`pageTemplates`), the panel opens with **Composed pages**: the checks of every composed page of every chapter, in every edition the book carries. A bundle in Spanish, English and Catalan is checked in all three while one of them is on screen. The editions not on screen are laid out in the background, each read the way opening it would read it: its draft when it was edited, else the bundle's text in that language. A line under the controls says which editions are being laid out and, once they are all done, which were checked.
-
-The section lists:
-
-- *Text does not fit its frame* (`frameOverflow`), with the steps the reflow ladder tried and the changes that would make the frame fit;
-- *Text still runs past its last added page* (`frameContinuationLimit`): the frame's content went on to the most pages a composed page may add and still does not fit;
-- *A story jumps to a page that does not follow* (`continueTargetMissing`): no later page fence has the id the frame's `continueIn` names;
-- *Label at an unknown anchor* and *Anchor without a label* (`labelAnchorUnknown`, `anchorUnlabelled`), filed under the frame that sets the figure;
-- *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
-- *Contents block cut between columns* (`tocGroupSplit`);
-- the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).
-
-These entries are not repeated in the groups below.
-
-**Page**, **Frame** and **Language** group the list by composed page (the same page in every edition, whatever number it carries there), by frame or by edition. The three menus under them keep one language, one page or one frame. Each entry shows the edition's tag (*CA*), the page number in that edition and the frame's name.
-
-A click on an entry takes you to its frame in its edition. When another edition is on screen, the book switches to the entry's language; then the chapter and the page open, the frame is picked on the page (its path shows at the foot of the preview) and the caret goes to the start of its slot in the **Text** panel. A template's own warning opens the first page set with that template, with its frame picked; design text that holds content opens the **Design** panel.
-
-A local project imported from a bundle in several languages keeps all of them, so its composed pages are checked in every language as a sample's are, and a check in another language takes you to it with the project switched to that language. A book in one language has one edition, and the line under the controls says so. The badge on the activity bar counts the warnings of the chapter on screen, in the edition on screen.
-
-### Moving the text to the Markdown
-
-A book made before composed pages may keep the text of whole pages in its heading styles: a hidden heading on each page whose running head places dozens of text elements, boxes and pictures where the printed page had them. The Checks panel then lists *Text held in the configuration* and offers **Move the text to the Markdown** at its head. A book imported from the Books panel with such styles opens the same dialog right after the import.
-
-The dialog says what the move will do before it does anything:
-
-- Each page design becomes a page template (`pageTemplates`). Every text becomes a frame where the text stood; text blocks of one look set one under another at an even spacing become one frame. The boxes, rules and pictures become the template's decoration, painted over the page's running text as the running head was, and a picture that covers the page becomes the page's `background` attribute, which the decoration reads (`{attr.background}`).
-- Each page of a chapter becomes a page fence, `::::page{template="…"}`, holding the page's headings and running text and a `:::frame{slot="…"}` per frame with its text. Bold and italics stay; the line ends of the design stay as forced breaks.
-- The face, size, weight, colour, alignment and leading of each text become a paragraph style: the book's own when one matches exactly, else a new one named after the face and the size. A filled box under bold words becomes a chip of the book's chip style of that colour, or of a new one.
-- Pages whose frames stand in the same places share a template (`page-base`) that their own templates extend (`extends`); a page that adds nothing uses it as it is.
-- Heading styles that come out the same once their running heads have left are merged (`tema--p04`, `tema--p05` → `tema`) and the headings are renamed; hidden headings that only switched the running head are dropped. A page that opened with a heading set to an even or odd page gets a `:::pagebreak{parity="…"}` before its fence.
-
-The numbers under **What changes** are the texts and letters moved, the pages written, the templates proposed, the heading styles before and after, the styles created, the size of the configuration and the *Text held in the configuration* warnings, before and after.
-
-**Before and after** lays each chapter out twice with the Sandbox's own layout and draws every page that changes, the old one beside the new one. The list beside them says which pages look different and why, when the reason is known: a text's own box, outline or drop cap, a page whose side was not known, running text now set in the template's flow frame. **Mark in red what changed** paints the pixels that differ.
-
-The options: **Pages with frames in the same places share a template**, **A highlight box under bold words becomes a chip**, and, when there are some, **Delete the heading styles with text that no heading uses**.
-
-**Move the text** writes the change into the book's one undo history: a step for each chapter rewritten, then one for the design. Cmd/Ctrl+Z takes the design back first, then the chapters, and the dialog's **Undo** takes back all of them while they are the latest. The book as it was also stays stored, across reloads, until **Keep the move** in the Checks panel; until then **Put the book back as it was** writes the old design and text back, as steps that can be undone in turn.
-
-Left in the configuration, and listed under **Left in the configuration**: a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from its running head's own box or from another element, and the text of a heading design (not a page). On the pages, a heading design set in a frame (the tab of a boxed heading, bands drawn around a heading) is not drawn there, so a page with running text under such headings looks different. The contrast check reads a frame's text against the page and not against a box of the decoration under it, so it may list a white label on a coloured box.
-
-The same migration is a function of the engine, `moveTextToMarkdown({ config, chapters, metadata }, options)`, which returns the new configuration, the chapters and the report the dialog shows. See [Composed pages](/en/docs/composed-pages#migrating-a-book-with-text-in-its-styles).
-
-### Fixing a frame in one click
-
-Under *Text does not fit its frame*, the fixes the reflow ladder worked out for that frame are buttons, in the warning's own words:
-
-- *let the text shrink to 60 %* sets the frame's `fit.minScale` (and turns `fit.shrinkText` on when it was off);
-- *raise maxHeight to 66 mm* sets its `maxHeight`;
-- *lower the minHeight of …* lowers the minimum height of another frame of its group;
-- *continue it on the next page* sets `overflow.continueIn` to `next-page`, so what does not fit goes on to a page added after this one;
-- *set the page with template …* rewrites the `template` of the page's `::::page` fence in the text;
-- *cut about 626 characters* changes nothing: it selects the frame's text in the **Text** panel and says how many characters to cut.
-
-The other buttons change the book's form, so each asks first, naming the setting and its value (*tema-fija › dinero › maxHeight = 66 mm*) or the template the page will take. A design change applies to every page set with that template. **Change it** makes the change as one step of the undo history: Cmd/Ctrl+Z, or the Undo button beside Content and Design, takes it back. The page is laid out again, and the warning goes, or gives way to what the change left (a box further down that no longer fits).
-
-The same buttons follow the frame in the canvas's **What moved and why** panel. The warning of an edition that is not on screen offers to open that edition instead, where its fixes can be made. When the book changed after the layout proposed a fix (the template was edited, the fence names another template), the button says so and changes nothing. An agent makes the same fixes with `sandbox_apply_proposal` ([WebMCP](/en/docs/webmcp)).

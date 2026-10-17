@@ -35,7 +35,7 @@ const CONFIGURATION_PAGES = [
 const CHAPTER_PAGES: Record<string, string[]> = {
   architecture: ["architecture-layout-pipeline"],
   "document-format": ["document-format-directives", "document-format-inline", "document-format-notes-references", "document-format-resources"],
-  sandbox: ["sandbox-design-checks", "sandbox-previews", "sandbox-books-saving", "sandbox-embedding"],
+  sandbox: ["sandbox-design-checks", "sandbox-composed-pages", "sandbox-previews", "sandbox-books-saving", "sandbox-embedding"],
 };
 
 /** The chapter a page belongs to ("" for a chapter). */
@@ -100,7 +100,7 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 43 and gives Part II the Configuration reference, the craft pages, Comics and Composed pages", () => {
+  it("numbers the pages 1 to 44 and gives Part II the Configuration reference, the craft pages, Comics and Composed pages", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
     expect(order("configuration")).toBe(4);
     expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual(CONFIGURATION_PAGES.map((_, i) => 5 + i));
@@ -116,7 +116,7 @@ describe("docs table of contents", () => {
     for (const slug of ["contributing", "sandbox", ...CHAPTER_PAGES.sandbox!, "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([35, 36, 41, 42, 43]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([35, 36, 42, 43, 44]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {

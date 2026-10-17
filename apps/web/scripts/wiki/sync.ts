@@ -62,6 +62,7 @@ const DOC_PAGES: Record<string, string> = {
   contributing: "Contributing",
   sandbox: "Sandbox",
   "sandbox-design-checks": "Sandbox-Design-and-Checks-Panels",
+  "sandbox-composed-pages": "Sandbox-Composed-Pages",
   "sandbox-previews": "Sandbox-Previews",
   "sandbox-books-saving": "Sandbox-Books-Word-and-Saving",
   "sandbox-embedding": "Sandbox-Agents-Embedding-and-Presets",
