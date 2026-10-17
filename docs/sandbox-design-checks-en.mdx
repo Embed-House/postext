@@ -269,6 +269,7 @@ Live diagnostics, recomputed from the text, the design, the figures and the last
   - *Columns too narrow*: a `:::columns` group whose columns are narrower than six ems of their text (`columnsTooNarrow`);
   - *Text does not fit its frame*: the content of a frame of a composed page runs past the frame's foot after the reflow ladder, and the frame has no `next` frame left to continue in, so paged output cuts the rest; the entry names the frame, the document's language and the template, gives the page and the height cut, in mm, the steps tried (such as *text down to 90 %*) and the changes that would make it fit, with their values (*raise maxHeight to 68 mm*, *cut about 180 characters*) (`frameOverflow`; see [Composed pages](/en/docs/composed-pages#the-warning-and-its-proposals)); a frame that continues on added pages (`overflow.continueIn`) raises it only when the frame on an added page can take none of its content;
   - *Text still runs past its last added page*: a frame's content went on to the 16 pages a composed page may add and still does not fit; the entry names the frame and the template of the last added page, gives that page, the number of pages added and the height cut (`frameContinuationLimit`; see [Composed pages](/en/docs/composed-pages#framecontinuationlimit));
+  - *A story jumps to a page that does not follow*: a frame's `overflow.continueIn: 'page:<id>'` names no later page fence, so the rest went on on the next page; the entry names the frame, the template and the id, and gives the page (`continueTargetMissing`; see [Composed pages](/en/docs/composed-pages#continuetargetmissing));
   - *Side box or figure after the end of the text*: a side box, or a figure of the side column, set on a page with no text because its chapter's text ended while it waited for room in the side column; the entry names the page (`afterText`);
   - *Not on any page*: a box or a float still waiting for a slot when the layout ended, which is on no page (`unplaced`);
   - *Short list cut between columns*: a list of a few items set in two columns or pages; listed when **Body text → Short lists cut between columns** is on *Warn*, and on *Avoid* for a list no column could hold whole (`shortListSplit`);
@@ -296,6 +297,7 @@ The section lists:
 
 - *Text does not fit its frame* (`frameOverflow`), with the steps the reflow ladder tried and the changes that would make the frame fit;
 - *Text still runs past its last added page* (`frameContinuationLimit`): the frame's content went on to the most pages a composed page may add and still does not fit;
+- *A story jumps to a page that does not follow* (`continueTargetMissing`): no later page fence has the id the frame's `continueIn` names;
 - *Label at an unknown anchor* and *Anchor without a label* (`labelAnchorUnknown`, `anchorUnlabelled`), filed under the frame that sets the figure;
 - *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Contents block cut between columns* (`tocGroupSplit`);

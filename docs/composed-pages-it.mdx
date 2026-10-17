@@ -197,7 +197,9 @@ Un titolo messo in una cornice conserva il progetto grafico del suo livello o de
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-Il testo si interrompe fra due righe e prosegue nella cornice seguente, spezzato di nuovo alla larghezza di quella cornice, senza perdere né ripetere nulla. `overflow.continueIn: "#frame"` vuol dire la stessa cosa. Per proseguire in una pagina aggiunta dopo questa, vedi [Quando il testo prosegue](#quando-il-testo-prosegue).
+Il testo si interrompe fra due righe e prosegue nella cornice seguente, spezzato di nuovo alla larghezza di quella cornice, senza perdere né ripetere nulla. `overflow.continueIn: "#frame"` vuol dire la stessa cosa.
+
+Una cornice si taglia come il testo corrente. Un titolo non chiude mai un pezzo: va con le righe che introduce. Un taglio fra le voci di un elenco lascia almeno due voci da ciascuna parte (una sola quando `bodyText.avoidOrphansInLists` o `bodyText.avoidWidowsInLists` è disattivato), e con `bodyText.shortListSplit: 'avoid'` un elenco di al massimo `bodyText.shortListMaxItems` voci non si taglia fra le sue voci. Quando nessun taglio lo consente, il pezzo finisce prima del titolo o dell’elenco, oppure dentro una delle voci dell’elenco. Per proseguire in una pagina aggiunta dopo questa, vedi [Quando il testo prosegue](#quando-il-testo-prosegue).
 
 ### Cornici che spostano il testo
 
@@ -256,7 +258,7 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Una cornice del modello non riceve nulla in questa pagina: nessuno slot la indica, non prende alcun titolo e, se è la cornice di flusso, nessun contenuto resta senza slot. Una cornice che riceve solo il seguito di un’altra cornice (<code>next</code>) non viene segnalata. <code>postext check</code> la elenca come nota.</td>
+      <td>Una cornice del modello non riceve nulla in questa pagina: nessuno slot la indica, non prende alcun titolo e, se è la cornice di flusso, nessun contenuto resta senza slot. Una cornice che riceve solo il seguito di un’altra cornice (<code>next</code>) non viene segnalata. Né la cornice in cui riprende un articolo da una pagina precedente (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). <code>postext check</code> la elenca come nota.</td>
       <td>Scrivi un contenuto per quella cornice con il suo slot, oppure marca la cornice come <code>optional: true</code> nel modello.</td>
     </tr>
     <tr>
@@ -292,6 +294,12 @@ Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descrit
 **Causa.** Una cornice con `overflow.continueIn` uguale a `'next-page'` o `'template:<id>'` ha mandato in una pagina aggiunta ciò che non riusciva a contenere, e la cornice di quella pagina ha rimandato avanti il resto, pagina dopo pagina, finché la pagina composta non ha aggiunto tutte le pagine che può: 16 (vedi [Quando il testo prosegue](#quando-il-testo-prosegue)). Quello che avanza viene tagliato al piede della cornice nell’ultima pagina aggiunta; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido. L’avviso riporta il modello e la cornice di quella pagina, il numero di pagine aggiunte (`pages`), l’altezza tagliata (`overflowMm`), il `configPath` della cornice e la pagina. Il più delle volte la cornice che riceve il contenuto nella pagina aggiunta è troppo piccola per il testo.
 
 **Correzione.** Dai più spazio a quella cornice (la sua altezza, o un `overflowTemplate` con una cornice più grande), oppure accorcia il testo. Un riquadro che occupa più di qualche pagina di solito sta meglio nel testo corrente.
+
+### continueTargetMissing
+
+**Causa.** L’`overflow.continueIn` di una cornice è `'page:<id>'` (vedi [Saltare a una pagina più avanti](#saltare-a-una-pagina-più-avanti)), e dopo la pagina in cui si trova l’articolo non viene nessun recinto di pagina `::::page{id="<id>"}`: l’id è scritto male, il recinto non lo ha, manca l’attributo del recinto che la regola legge (`'page:{attr.sigue}'`), oppure il recinto viene prima (`before: true`). Il resto prosegue in una pagina aggiunta subito dopo, come con `'next-page'`. L’avviso riporta il modello, la cornice, `target` (l’id cercato), il `configPath` della cornice e la pagina.
+
+**Correzione.** Dai quell’id al recinto della pagina che deve ricevere il seguito, oppure correggi il nome in `continueIn` o nell’attributo del recinto che legge. Una pagina che viene prima dell’articolo non può riceverlo: sposta quel recinto dopo l’articolo, oppure indica una pagina più avanti.
 
 ## Quando il testo cresce
 
@@ -333,10 +341,12 @@ Una cornice il cui contenuto non entra prova, uno dopo l’altro, i modi che il 
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>La cornice prosegue in un’altra pagina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>): viene tagliata al piede con il suo segno e il resto prosegue in una pagina aggiunta dopo questa (vedi <a href="#quando-il-testo-prosegue">Quando il testo prosegue</a>). Testo e immagini tornano alla dimensione piena, perché quello che non entra prosegue comunque. Non viene emesso alcun avviso.</td>
+      <td>La cornice prosegue in un’altra pagina (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> o <code>'page:&lt;id&gt;'</code>): viene tagliata al piede con il suo segno e il resto prosegue in una pagina aggiunta dopo questa (vedi <a href="#quando-il-testo-prosegue">Quando il testo prosegue</a>). Testo e immagini tornano alla dimensione piena, perché quello che non entra prosegue comunque. Non viene emesso alcun avviso.</td>
     </tr>
   </tbody>
 </table>
+
+Una cornice che può proseguire in un’altra pagina fa questo passo prima: dopo `redistribute`, prima di `scaleImages` e `shrinkText`. Un articolo composto su più pagine mantiene un solo corpo, e la sua ultima pagina non è composta più piccola delle precedenti. Le sue immagini e il suo testo si riducono solo quando non può proseguire: nell’ultima pagina che la continuazione può aggiungere, o quando la cornice che riceverebbe il resto non ne prende nulla. `fit.preferContinue: false` mantiene l’ordine della tabella, per un riquadro che deve perdere qualche punto piuttosto che aggiungere una pagina.
 
 Quando nessun passo fa entrare il contenuto, la cornice viene tagliata al piede, conserva le scale raggiunte e l’impaginazione segnala `frameOverflow`. Una cornice di una pagina aggiunta che non prende nulla del contenuto che riceve non lo rimanda avanti (aggiungerebbe pagine all’infinito): segnala anch’essa `frameOverflow`, con `continue` fra i passi tentati. Ogni passo reimpagina l’intera pagina, quindi il risultato dipende solo da quella pagina: lo stesso input dà la stessa pagina, le cornici che traboccano vengono trattate nell’ordine del modello e una modifica a una pagina composta lascia tutte le altre come erano. Le impostazioni sono in [Configurazione › Quando il contenuto non entra](/it/docs/configuration-composed-pages#quando-il-contenuto-non-entra).
 
@@ -389,7 +399,7 @@ Il pannello Verifiche mostra la stessa voce nella lingua dell’interfaccia.
 
 ## Quando il testo prosegue
 
-Una cornice può mandare ciò che non riesce a contenere in una pagina aggiunta dopo la sua pagina composta. La regola è l’`overflow.continueIn` della cornice:
+Una cornice può mandare ciò che non riesce a contenere in una pagina aggiunta dopo la sua pagina composta, o in una pagina più avanti nel libro. La regola è l’`overflow.continueIn` della cornice:
 
 <table>
   <thead>
@@ -411,6 +421,10 @@ Una cornice può mandare ciò che non riesce a contenere in una pagina aggiunta 
       <td><code>'template:&lt;id&gt;'</code></td>
       <td>In una pagina di quel modello.</td>
     </tr>
+    <tr>
+      <td><code>'page:&lt;id&gt;'</code></td>
+      <td>In una cornice del recinto di pagina <code>::::page&#123;id="&lt;id&gt;"&#125;</code> che viene più avanti, scavalcando le pagine in mezzo (vedi <a href="#saltare-a-una-pagina-più-avanti">Saltare a una pagina più avanti</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -423,13 +437,45 @@ Una cornice può mandare ciò che non riesce a contenere in una pagina aggiunta 
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-Proseguire è l’ultimo passo della [sequenza di reimpaginazione](#quando-il-contenuto-ancora-non-entra): una cornice prima cresce, si fa spazio nel suo gruppo e riduce immagini e testo quanto il modello le consente, e solo quando questo non basta viene tagliata al piede. Allora testo e immagini tornano alla dimensione piena, il pezzo si chiude con il segno di continuazione e il resto prosegue dalla riga in cui è stato tagliato, spezzato di nuovo alla larghezza della cornice che lo riceve. Non si perde né si ripete nulla, e non viene emesso alcun avviso.
+Proseguire è un passo della [sequenza di reimpaginazione](#quando-il-contenuto-ancora-non-entra): una cornice prima cresce e si fa spazio nel suo gruppo, e quando questo non basta viene tagliata al piede, prima che le sue immagini o il suo testo si riducano (a meno che il suo `fit.preferContinue` sia `false`). Testo e immagini restano alla dimensione piena, il pezzo si chiude con il segno di continuazione e il resto prosegue dalla riga in cui è stato tagliato, spezzato di nuovo alla larghezza della cornice che lo riceve. Non si perde né si ripete nulla, e non viene emesso alcun avviso.
 
-- **Quale cornice lo riceve.** Nella pagina aggiunta il contenuto prosegue nella cornice con lo stesso nome; se il modello non ne ha una, nella sua cornice di flusso; altrimenti nella sua prima cornice ancora libera. Più cornici di una pagina che proseguono verso lo stesso modello condividono una sola pagina aggiunta quando quel modello ha una cornice per ciascuna; altrimenti la successiva riceve una pagina tutta sua. Una cornice della pagina aggiunta che non riceve nulla resta vuota.
+- **Quale cornice lo riceve.** Nella pagina aggiunta il contenuto prosegue nella cornice con lo stesso nome; se il modello non ne ha una, nella sua cornice di flusso; altrimenti nella sua prima cornice ancora libera. Un articolo che scorre in cornici concatenate con `next` prosegue dove comincia la sua catena: il resto della terza di tre colonne concatenate prosegue nella prima colonna della pagina aggiunta (la cornice con il nome della testa della catena, altrimenti la cornice di flusso), così un modello di testo corrente che prosegue in se stesso riempie ogni colonna di ogni pagina. Più cornici di una pagina che proseguono verso lo stesso modello condividono una sola pagina aggiunta quando quel modello ha una cornice per ciascuna; altrimenti la successiva riceve una pagina tutta sua. Una cornice della pagina aggiunta che non riceve nulla resta vuota.
 - **Di pagina in pagina.** Un pezzo che ancora non entra prosegue di nuovo, nella pagina aggiunta seguente, con l’`overflow.continueIn` della cornice se lì ne ha uno, altrimenti con la regola che ce lo ha portato. Una pagina composta aggiunge al massimo 16 pagine di seguito; quello che ancora non entra nell’ultima viene tagliato e segnalato come [`frameContinuationLimit`](#framecontinuationlimit). Una cornice di una pagina aggiunta troppo piccola per prenderne anche solo una parte segnala `frameOverflow` invece di aggiungere pagine.
+- **Dove si taglia il pezzo.** Come nella pagina: un titolo resta con le sue prime righe e un elenco tiene due voci da ciascuna parte (vedi [Concatenare le cornici](#concatenare-le-cornici)). Quando nulla del riquadro entra nella pagina, prosegue il riquadro intero, linguetta compresa: la pagina non resta con una linguetta e un segno sopra un pezzo vuoto. Non occupa spazio nella pagina che lascia e, se lo spazio per le risposte sotto di esso lì non manterrebbe la sua misura, il riquadro prosegue intero insieme a quello.
+- **Che cosa conservano le pagine.** La cornice tagliata rinuncia per prima allo spazio del suo gruppo, così le cornici che la seguono mantengono la loro dimensione. Quando il resto prosegue nello stesso modello impaginato di nuovo, le cornici vuote che la seguono subito nella sua pila (lo spazio per le risposte sotto un riquadro di attività: cornici che non ricevono contenuto) vanno con essa. Nella pagina non occupano spazio; nella pagina aggiunta mantengono la loro dimensione sotto il resto del riquadro, con la decorazione ancorata a esse. Le altre cornici di quella pagina aggiunta non occupano spazio e la loro decorazione non viene disegnata, e una pila mantiene il posto che la sua prima cornice ha nel modello, così il resto del riquadro comincia dove comincia la pila, lontano dall’occhiello e dalla testatina della pagina.
 - **Pagine come le altre.** Le pagine aggiunte sono pagine del libro: sono numerate, portano le testatine del loro modello (o quelle della sezione), prendono le `variants` del loro lato, e l’`{attr.x}` del recinto della pagina arriva ancora alla loro decorazione. Un modello di proseguimento con `spread: true` si apre sul verso seguente, preceduto se serve da una pagina bianca di parità, e prende il recto successivo; una doppia pagina il cui `overflowTemplate` è una pagina singola prosegue su pagine singole. Il testo dopo il recinto della pagina comincia nella pagina che segue l’ultima pagina aggiunta.
 - **Id.** Una cornice dell’n-esima pagina aggiunta è `cp0:<name>~<n>`; la cornice che riceve il contenuto prende il nome dalla cornice della pagina del recinto che per prima lo ha mandato avanti (`cp0:dinero~1`, `cp0:dinero~2`), così una selezione mantiene il suo elemento qualunque sia la cornice che lo riceve. Ogni cornice registra la cornice da cui prosegue o in cui continua (`continuedFrom`, `continuesTo`), il `VDTPage.composed.continuationOf` della pagina è l’indice della pagina del recinto stesso, e i blocchi dei pezzi portano l’id del riquadro con `-cont-<n>`, come quelli dei riquadri divisi.
 - **Reimpaginazione.** Una pagina composta il cui contenuto prosegue viene impaginata da capo, con le sue pagine aggiunte, a ogni build: la cache delle pagine conserva solo le pagine il cui contenuto resta su di esse.
+
+### Saltare a una pagina più avanti
+
+Un articolo di rivista che supera le sue pagine salta a una pagina più avanti, scavalcando altri articoli: «continua a pagina 47». `overflow.continueIn: 'page:<id>'` manda il resto al recinto di pagina con quell’`id`, ovunque venga più avanti nel capitolo:
+
+```markdown
+::::page{template="articulo" sigue="p47"}
+…
+::::
+
+::::page{template="otra"}
+…
+::::
+
+::::page{template="saltos" id="p47"}
+…
+::::
+```
+
+```json
+{ "name": "cuerpo", "flow": true,
+  "overflow": { "continueIn": "page:{attr.sigue}",
+    "mark": "Continua a pagina {page}", "fromMark": "Segue da pagina {page}" } }
+```
+
+- **Quale pagina.** `<id>` può essere `{attr.name}`, letto dal recinto della pagina in cui si trova l’articolo: così un solo modello di articolo serve per tutti gli articoli, e il Markdown dice dove salta ciascuno.
+- **Quale cornice.** Quella indicata da `'page:<id>#<frame>'`; senza nome, la cornice con il nome della testa della catena che invia, altrimenti la prima cornice che il contenuto proprio di quella pagina lascia vuota. La pagina mantiene il suo contenuto nelle altre cornici.
+- **Dopo il salto.** Quello che quella cornice non riesce a contenere prosegue in pagine aggiunte dopo la pagina di arrivo, come farebbe `'next-page'` da lì; anche un articolo che nella pagina di arrivo non trova nessuna cornice libera prosegue in quelle pagine.
+- **Id e collegamenti.** Le cornici della pagina di arrivo mantengono i loro id (`cp2:resto`). Il `continuesTo` della cornice che invia e il `continuedFrom` della cornice che riceve collegano i pezzi, e il registro di reimpaginazione della pagina di partenza riporta «cuerpo continued on page 47». L’EPUB a layout fluido e il PDF taggato leggono l’articolo tutto di seguito.
+- **Una pagina che non segue.** Un id che nessun recinto di pagina successivo porta genera [`continueTargetMissing`](#continuetargetmissing), e il resto prosegue nella pagina seguente.
 
 ### Il segno di continuazione
 
@@ -449,7 +495,7 @@ Proseguire è l’ultimo passo della [sequenza di reimpaginazione](#quando-il-co
     </tr>
     <tr>
       <td>una stringa</td>
-      <td>Proprio quelle parole: <code>"continua alla pagina seguente"</code>.</td>
+      <td>Proprio quelle parole: <code>"continua alla pagina seguente"</code>. <code>&#123;page&#125;</code> vi indica il numero della pagina in cui prosegue il resto, così come è stampato: <code>"Continua a pagina &#123;page&#125;"</code>.</td>
     </tr>
     <tr>
       <td><code>false</code></td>
@@ -462,7 +508,7 @@ Un segno può contenere `{page}`: il numero stampato della pagina dove prosegue 
 
 Il segno si compone sotto l’ultima riga del pezzo, nel carattere del testo del riquadro, allineato e inclinato come dicono `continuesMarkerAlign` e `continuesMarkerItalic` dello stile (a destra e in corsivo per impostazione predefinita). Fa parte dell’apparato di impaginazione: l’EPUB reflowable lo omette, il PDF taggato lo marca come artefatto. Una cornice concatenata con `next` nella stessa pagina non porta segno.
 
-Il pezzo nella pagina aggiunta si apre senza la linguetta e il titolo della cornice, come le parti successive di un riquadro diviso. Uno stile con `repeatTitle: true` vi ripete il titolo seguito dal suo `continuedSuffix` («(segue)» in italiano), che indica da dove viene il testo.
+Il pezzo nell’altra pagina si apre senza la linguetta e il titolo della cornice, come le parti successive di un riquadro diviso. `overflow.fromMark` stabilisce parole in testa al pezzo, dove `{page}` è il numero della pagina da cui viene: `"Segue da pagina {page}"`. Il `fromMark` della cornice che riceve prevale su quello della cornice che invia; se non è impostato, non ce n’è nessuno. Uno stile con `repeatTitle: true` vi ripete il titolo seguito dal suo `continuedSuffix` («(segue)» in italiano). Entrambi i segni si compongono nel carattere del testo del riquadro, allineati e inclinati come il segno finale, e fanno parte dell’apparato di impaginazione.
 
 ## Registro di reimpaginazione
 

@@ -273,13 +273,19 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nenhum</td>
-      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro bloco da página, como <code>next</code>), <code>'next-page'</code> (o mesmo bloco numa página acrescentada depois desta, a partir de <code>overflowTemplate</code>) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo: o bloco de mesmo nome ou, se não houver, o bloco de fluxo dele). Um bloco de uma página acrescentada sem regra própria continua com a regra que trouxe o conteúdo, até 16 páginas acrescentadas.</td>
+      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro bloco da página, como <code>next</code>), <code>'next-page'</code> (o mesmo bloco numa página acrescentada depois desta, a partir de <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (uma página desse modelo: o bloco de mesmo nome ou, se não houver, o bloco de fluxo dele) ou <code>'page:&lt;id&gt;'</code> (um bloco da cerca de página posterior <code>::::page&#123;id=…&#125;</code>: o que <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> indica ou, sem indicação, um que o próprio conteúdo da página deixa vazio; <code>&lt;id&gt;</code> pode ser <code>&#123;attr.name&#125;</code>, lido da cerca de página; veja <a href="/pt/docs/composed-pages#saltar-para-uma-página-posterior">Páginas compostas › Saltar para uma página posterior</a>). Um bloco de uma página acrescentada sem regra própria continua com a regra que trouxe o conteúdo (depois de um salto, <code>'next-page'</code>), até 16 páginas acrescentadas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>a do idioma</td>
-      <td>A marca no fim de um trecho cortado para outra página. Sem valor, o <code>continuesMarker</code> do estilo do bloco, que segue o idioma do documento (“Continued”, “Continúa”, “À suivre”…, as palavras das tabelas divididas); uma string põe essas palavras; <code>false</code> não põe nenhuma. Um bloco encadeado com <code>next</code> na mesma página não leva marca.</td>
+      <td>A marca no fim de um trecho cortado para outra página. Sem valor, o <code>continuesMarker</code> do estilo do bloco, que segue o idioma do documento (“Continued”, “Continúa”, “À suivre”…, as palavras das tabelas divididas); uma string põe essas palavras, sendo <code>&#123;page&#125;</code> o número da página em que o resto continua; <code>false</code> não põe nenhuma. Um bloco encadeado com <code>next</code> na mesma página não leva marca.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Palavras postas no alto do trecho na página em que o conteúdo continua, sendo <code>&#123;page&#125;</code> o número da página de onde ele vem (<code>"Continuação da página &#123;page&#125;"</code>). O do bloco que recebe vale mais que o do bloco que envia.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Se as imagens do bloco e dos outros blocos do grupo podem ser diagramadas menores quando o conteúdo deste bloco não cabe, e até que escala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Um quadro cujo <code>overflow.continueIn</code> manda o conteúdo para outra página continua ali antes que as imagens e o texto sejam diagramados menores, de modo que uma matéria mantém o mesmo tamanho de uma página para outra. <code>false</code>: eles diminuem primeiro, e o quadro só continua em outra página quando isso não basta.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ Quando o conteúdo de um bloco é mais alto que o espaço que o grupo lhe dá, a
 - `minHeight` nos outros blocos do grupo: até onde eles devolvem espaço; um bloco nunca fica abaixo do que o próprio conteúdo precisa.
 - `fit.scaleImages` e `fit.imageMinScale`: se as imagens do bloco e do grupo podem ser diagramadas menores, e até que escala (80 % por padrão).
 - `fit.shrinkText` e `fit.minScale`: se o texto do bloco pode ser diagramado menor, e até que escala (90 % por padrão). A escala é a mesma para o corpo, a entrelinha e o espaçamento; o bloco mantém o seu tamanho.
-- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta: em outro bloco ou numa página acrescentada depois desta (`'next-page'`, `'template:<id>'`), onde o texto segue no tamanho integral depois da `overflow.mark` do trecho.
+- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta: em outro bloco ou em outra página (`'next-page'`, `'template:<id>'`, `'page:<id>'`), onde o texto segue no tamanho integral depois da `overflow.mark` do trecho. Um bloco que pode continuar em outra página faz isso antes que as imagens e o texto sejam diagramados menores, a não ser que o seu `fit.preferContinue` seja `false`.
 
 As escalas vão em passos de 2,5 % e a diagramação usa a maior com que o conteúdo cabe, então um texto que passa uma linha do limite fica em 97,5 %, não no mínimo. Uma caixa que precisa manter o corpo do texto usa `fit: { shrinkText: false }`; numa página cujas imagens precisam manter o tamanho, os blocos do grupo usam `fit: { scaleImages: false }`:
 
@@ -731,8 +743,8 @@ Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Um <code>next</code> não nomeia nenhum bloco do modelo; um <code>overflow.continueIn</code> não nomeia nenhum bloco (<code>'#x'</code>) nem nenhum modelo (<code>'template:x'</code>), ou não está em nenhuma das formas <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; ou <code>overflowTemplate</code> não nomeia nenhum modelo. O conteúdo que não cabe não continua ali.</td>
-      <td>Corrija o nome ou o id, ou escreva uma das três formas.</td>
+      <td>Um <code>next</code> não nomeia nenhum bloco do modelo; um <code>overflow.continueIn</code> não nomeia nenhum bloco (<code>'#x'</code>) nem nenhum modelo (<code>'template:x'</code>), ou não está em nenhuma das formas <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> e <code>'page:&lt;id&gt;'</code>; ou <code>overflowTemplate</code> não nomeia nenhum modelo. O conteúdo que não cabe não continua ali.</td>
+      <td>Corrija o nome ou o id, ou escreva uma das quatro formas.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

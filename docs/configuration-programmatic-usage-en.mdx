@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Paged output cuts the rest at the foot of that frame; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>A frame's <code>overflow.continueIn: 'page:&lt;id&gt;'</code> names no page fence after the one its story is on (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> when that fence comes earlier, <code>configPath</code>). Raised by the layout, with the <code>pageIndex</code> of the sending page.</td>
+      <td>The rest goes on on a page added after the sending page, as with <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>A composed page's fence and its template disagree about spreads (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, the fence's <code>spread</code>; <code>templateSpread</code>, the template's).</td>
       <td>The template decides: a spread template is laid over two facing pages, any other on one page.</td>

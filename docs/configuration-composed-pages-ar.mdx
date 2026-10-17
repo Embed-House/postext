@@ -273,13 +273,19 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>لا شيء</td>
-      <td>أين يستمر المحتوى الذي لا يتسع: <code>'#frame'</code> (إطار آخر في الصفحة، كما في <code>next</code>)، أو <code>'next-page'</code> (الإطار نفسه في صفحة تُضاف بعد هذه، من <code>overflowTemplate</code>)، أو <code>'template:&lt;id&gt;'</code> (صفحة من ذلك القالب: إطاره الذي يحمل الاسم نفسه، وإلا إطار <code>flow</code> فيه). والإطار الذي ليست له قاعدة خاصة به في صفحة مضافة يستمر بالقاعدة التي جاءت بالمحتوى، حتى 16 صفحة مضافة.</td>
+      <td>أين يستمر المحتوى الذي لا يتسع: <code>'#frame'</code> (إطار آخر في الصفحة، كما في <code>next</code>)، أو <code>'next-page'</code> (الإطار نفسه في صفحة تُضاف بعد هذه، من <code>overflowTemplate</code>)، أو <code>'template:&lt;id&gt;'</code> (صفحة من ذلك القالب: إطاره الذي يحمل الاسم نفسه، وإلا إطار <code>flow</code> فيه)، أو <code>'page:&lt;id&gt;'</code> (إطار في سور الصفحة اللاحق <code>::::page&#123;id=…&#125;</code>: الذي يسمّيه <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>، وإلا الإطار الذي يتركه محتوى تلك الصفحة نفسها فارغًا؛ ويجوز أن يكون <code>&lt;id&gt;</code> هو <code>&#123;attr.name&#125;</code>، فيُقرأ من سور الصفحة؛ انظر <a href="/ar/docs/composed-pages#القفز-إلى-صفحة-لاحقة">الصفحات المركّبة › القفز إلى صفحة لاحقة</a>). والإطار في صفحة مضافة الذي ليست له قاعدة خاصة به يستمر بالقاعدة التي جاءت بالمحتوى (وبعد القفز <code>'next-page'</code>)، حتى 16 صفحة مضافة.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>بحسب اللغة</td>
-      <td>العلامة في نهاية الجزء المقطوع ليستمر في صفحة أخرى. وإن لم تُحدَّد فهي <code>continuesMarker</code> في نمط الإطار، ويتبع لغة المستند («Continued»، «Continúa»، «À suivre»…، وهي كلمات الجداول المقسومة)؛ والنص يضع تلك الكلمات؛ و<code>false</code> لا تضع شيئًا. والإطار المربوط بـ<code>next</code> في الصفحة نفسها لا يحمل علامة.</td>
+      <td>العلامة في نهاية الجزء المقطوع ليستمر في صفحة أخرى. وإن لم تُحدَّد فهي <code>continuesMarker</code> في نمط الإطار، ويتبع لغة المستند («Continued»، «Continúa»، «À suivre»…، وهي كلمات الجداول المقسومة)؛ والنص يضع تلك الكلمات، و<code>&#123;page&#125;</code> فيه رقم الصفحة التي يستمر فيها الباقي؛ و<code>false</code> لا تضع شيئًا. والإطار المربوطة بـ<code>next</code> في الصفحة نفسها لا تحمل علامة.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>كلمات تُنضَّد في رأس الجزء في الصفحة التي يستمر فيها المحتوى، و<code>&#123;page&#125;</code> فيها رقم الصفحة التي جاء منها (<code>"تابع من الصفحة &#123;page&#125;"</code>). وقيمة الإطار المستقبِل تتقدّم على قيمة الإطار المُرسِل.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ const config: PostextConfig = {
       <td><code>boolean</code> و<code>number</code></td>
       <td><code>true</code> و<code>0.8</code></td>
       <td>هل يجوز تصغير الصور التي في الإطار وفي الإطارات الأخرى من مجموعته حين لا يتسع محتوى هذا الإطار، وإلى أي مقياس.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>الإطار الذي يرسل <code>overflow.continueIn</code> فيه المحتوى إلى صفحة أخرى يُكمل هناك قبل أن تُصغَّر صوره ونصه، فيحتفظ المقال بحجم واحد من صفحة إلى صفحة. ومع <code>false</code> يُصغَّر أولًا، ولا يُكمل الإطار إلا حين لا يكفي ذلك.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 - `minHeight` في الإطارات الأخرى من المجموعة: إلى أي حد تتنازل عن المساحة؛ ولا ينزل إطار أبدًا دون ما يحتاجه محتواه.
 - `fit.scaleImages` و`fit.imageMinScale`: هل يجوز تصغير صور الإطار وصور مجموعته، وإلى أي مقياس (80% افتراضيًا).
 - `fit.shrinkText` و`fit.minScale`: هل يجوز تصغير نص الإطار، وإلى أي مقياس (90% افتراضيًا). والمقياس واحد لحجم الخط والمسافة بين الأسطر والتباعد، ويحتفظ الإطار بحجمه.
-- `overflow.continueIn`: أين يُكمل المحتوى حين لا يكفي شيء من ذلك: إطار آخر، أو صفحة تُضاف بعد هذه (`'next-page'`، `'template:<id>'`)، يستمر فيها النص بحجمه الكامل بعد `overflow.mark` الذي يُختم به الجزء.
+- `overflow.continueIn`: أين يُكمل المحتوى حين لا يكفي شيء من ذلك: إطار آخر، أو صفحة أخرى (`'next-page'`، `'template:<id>'`، `'page:<id>'`)، يستمر فيها النص بحجمه الكامل بعد `overflow.mark` الذي يُختم به الجزء. والإطار الذي يستطيع أن يُكمل في صفحة أخرى يفعل ذلك قبل أن تُصغَّر صوره ونصه، ما لم تكن قيمة `fit.preferContinue` فيه `false`.
 
 تمضي المقاييس بدرجات قدرها 2.5%، ويأخذ التنضيد أكبرها مما يتسع فيه المحتوى، فالنص الذي يزيد بسطر واحد يُنضَّد بمقياس 97.5%، لا بالحد الأدنى. والصندوق الذي يجب أن يحتفظ بحجم حروفه يضبط `fit: { shrinkText: false }`؛ والصفحة التي يجب أن تحتفظ صورها بحجمها تضبط `fit: { scaleImages: false }` في إطارات مجموعتها:
 
@@ -731,8 +743,8 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td><code>next</code> لا يسمّي إطارًا في القالب؛ أو <code>overflow.continueIn</code> لا يسمّي إطارًا (<code>'#x'</code>) أو قالبًا (<code>'template:x'</code>)، أو لا يأتي على أيّ من الصيغ <code>'#frame'</code> و<code>'next-page'</code> و<code>'template:&lt;id&gt;'</code>؛ أو <code>overflowTemplate</code> لا يسمّي قالبًا. فلا يستمر هناك المحتوى الذي لا يتسع.</td>
-      <td>صحّح الاسم أو المعرّف، أو اكتب إحدى الصيغ الثلاث.</td>
+      <td><code>next</code> لا يسمّي إطارًا في القالب؛ أو <code>overflow.continueIn</code> لا يسمّي إطارًا (<code>'#x'</code>) أو قالبًا (<code>'template:x'</code>)، أو لا يأتي على أيّ من الصيغ <code>'#frame'</code> و<code>'next-page'</code> و<code>'template:&lt;id&gt;'</code> و<code>'page:&lt;id&gt;'</code>؛ أو <code>overflowTemplate</code> لا يسمّي قالبًا. فلا يستمر هناك المحتوى الذي لا يتسع.</td>
+      <td>صحّح الاسم أو المعرّف، أو اكتب إحدى الصيغ الأربع.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

@@ -273,13 +273,19 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>ninguno</td>
-      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta, a partir de <code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una página de esa plantilla: su marco del mismo nombre o, si no lo tiene, su marco de flujo). Un marco de una página añadida sin regla propia sigue con la regla que trajo el contenido, hasta 16 páginas añadidas.</td>
+      <td>Dónde sigue el contenido que no cabe: <code>'#frame'</code> (otro marco de la página, como <code>next</code>), <code>'next-page'</code> (el mismo marco en una página que se añade detrás de esta, a partir de <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una página de esa plantilla: su marco del mismo nombre o, si no lo tiene, su marco de flujo) o <code>'page:&lt;id&gt;'</code> (un marco de la valla de página posterior <code>::::page&#123;id=…&#125;</code>: el que nombra <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> o, si no, uno que su propio contenido deja vacío; <code>&lt;id&gt;</code> puede ser <code>&#123;attr.name&#125;</code>, leído de la valla de página; véase <a href="/es/docs/composed-pages#saltar-a-una-página-posterior">Páginas compuestas › Saltar a una página posterior</a>). Un marco de una página añadida sin regla propia sigue con la regla que trajo el contenido (después de un salto, <code>'next-page'</code>), hasta 16 páginas añadidas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la del idioma</td>
-      <td>La marca al final de un trozo cortado para otra página. Sin fijar, el <code>continuesMarker</code> del estilo del marco, que sigue el idioma del documento («Continued», «Continúa», «À suivre»…, las palabras que usan las tablas partidas); una cadena pone esas palabras; <code>false</code> no pone ninguna. Un marco encadenado con <code>next</code> en la misma página no lleva marca.</td>
+      <td>La marca al final de un trozo cortado para otra página. Sin fijar, el <code>continuesMarker</code> del estilo del marco, que sigue el idioma del documento («Continued», «Continúa», «À suivre»…, las palabras que usan las tablas partidas); una cadena pone esas palabras, donde <code>&#123;page&#125;</code> es el número de la página en la que sigue el resto; <code>false</code> no pone ninguna. Un marco encadenado con <code>next</code> en la misma página no lleva marca.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Palabras que se ponen en la cabeza del trozo en la página en la que sigue el contenido, donde <code>&#123;page&#125;</code> es el número de la página de la que viene (<code>"Viene de la página &#123;page&#125;"</code>). El del marco que recibe tiene prioridad sobre el del marco que envía.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Si las imágenes del marco y de los demás marcos de su grupo se pueden componer más pequeñas cuando el contenido de este marco no cabe, y hasta qué escala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un marco cuyo <code>overflow.continueIn</code> envía el contenido a otra página sigue allí antes de que sus imágenes y su texto se compongan más pequeños, de modo que una historia conserva el mismo tamaño de una página a otra. <code>false</code>: primero se reducen, y el marco solo sigue en otra página cuando eso no basta.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ Cuando el contenido de un marco es más alto que el sitio que le da su grupo, la
 - `minHeight` en los demás marcos del grupo: hasta dónde devuelven espacio; un marco nunca baja de lo que necesita su propio contenido.
 - `fit.scaleImages` y `fit.imageMinScale`: si las imágenes del marco y de su grupo se pueden componer más pequeñas, y hasta qué escala (80 % por defecto).
 - `fit.shrinkText` y `fit.minScale`: si el texto del marco se puede componer más pequeño, y hasta qué escala (90 % por defecto). La escala es la misma para el cuerpo, el interlineado y los espacios; el marco conserva su tamaño.
-- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta: en otro marco o en una página añadida detrás de esta (`'next-page'`, `'template:<id>'`), donde el texto sigue a tamaño completo después de la `overflow.mark` del trozo.
+- `overflow.continueIn`: dónde sigue el contenido cuando nada de esto basta: en otro marco o en otra página (`'next-page'`, `'template:<id>'`, `'page:<id>'`), donde el texto sigue a tamaño completo después de la `overflow.mark` del trozo. Un marco que puede seguir en otra página lo hace antes de que sus imágenes y su texto se compongan más pequeños, salvo que su `fit.preferContinue` sea `false`.
 
 Las escalas van en pasos del 2,5 % y la maquetación toma la mayor con la que cabe, así que un texto al que le sobra una línea se compone al 97,5 %, no al mínimo. Una caja que debe conservar su cuerpo de letra lleva `fit: { shrinkText: false }`; en una página cuyas imágenes deben conservar su tamaño, los marcos de su grupo llevan `fit: { scaleImages: false }`:
 
@@ -731,8 +743,8 @@ Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> no nombra ningún marco de la plantilla; un <code>overflow.continueIn</code> no nombra ningún marco (<code>'#x'</code>) ni ninguna plantilla (<code>'template:x'</code>), o no tiene ninguna de las formas <code>'#frame'</code>, <code>'next-page'</code> y <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no nombra ninguna plantilla. El contenido que no cabe no continúa allí.</td>
-      <td>Corrige el nombre o el id, o escribe una de las tres formas.</td>
+      <td>Un <code>next</code> no nombra ningún marco de la plantilla; un <code>overflow.continueIn</code> no nombra ningún marco (<code>'#x'</code>) ni ninguna plantilla (<code>'template:x'</code>), o no tiene ninguna de las formas <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> y <code>'page:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no nombra ninguna plantilla. El contenido que no cabe no continúa allí.</td>
+      <td>Corrige el nombre o el id, o escribe una de las cuatro formas.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

@@ -273,13 +273,19 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>) oder <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat, bis zu 16 hinzugefügte Seiten.</td>
+      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen) oder <code>'page:&lt;id&gt;'</code> (ein Rahmen der späteren Seitenbegrenzung <code>::::page&#123;id=…&#125;</code>: der, den <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> nennt, sonst einer, den ihr eigener Inhalt leer lässt; <code>&lt;id&gt;</code> darf <code>&#123;attr.name&#125;</code> sein, gelesen an der Seitenbegrenzung; siehe <a href="/de/docs/composed-pages#auf-eine-spätere-seite-springen">Zusammengesetzte Seiten › Auf eine spätere Seite springen</a>). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat (nach einem Sprung mit <code>'next-page'</code>), bis zu 16 hinzugefügte Seiten.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>je nach Sprache</td>
-      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
+      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte, wobei <code>&#123;page&#125;</code> darin die Nummer der Seite ist, auf der der Rest weiterläuft; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>keins</td>
+      <td>Worte am Kopf des Stücks auf der Seite, auf der der Inhalt weiterläuft, wobei <code>&#123;page&#125;</code> die Nummer der Seite ist, von der es kommt (<code>"Fortsetzung von Seite &#123;page&#125;"</code>). Das des aufnehmenden Rahmens geht dem des sendenden vor.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Ob die Bilder im Rahmen und in den übrigen Rahmen seiner Gruppe kleiner gesetzt werden dürfen, wenn der Inhalt dieses Rahmens nicht passt, und bis zu welchem Maßstab.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Ein Rahmen, dessen <code>overflow.continueIn</code> Inhalt auf eine andere Seite schickt, läuft dort weiter, bevor seine Bilder und sein Text kleiner gesetzt werden, sodass ein Artikel von Seite zu Seite dieselbe Größe behält. <code>false</code>: Sie schrumpfen zuerst, und der Rahmen läuft erst weiter, wenn das nicht reicht.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, pr
 - `minHeight` an den übrigen Rahmen der Gruppe: wie weit sie Platz abgeben; ein Rahmen wird nie kleiner als das, was sein eigener Inhalt braucht.
 - `fit.scaleImages` und `fit.imageMinScale`: ob die Bilder des Rahmens und seiner Gruppe kleiner gesetzt werden dürfen, und bis zu welchem Maßstab (standardmäßig 80 %).
 - `fit.shrinkText` und `fit.minScale`: ob der Text des Rahmens kleiner gesetzt werden darf, und bis zu welchem Maßstab (standardmäßig 90 %). Der Maßstab gilt gleichermaßen für Schriftgröße, Zeilenabstand und Abstände; der Rahmen behält seine Größe.
-- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer Seite, die nach dieser hinzukommt (`'next-page'`, `'template:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter.
+- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer anderen Seite (`'next-page'`, `'template:<id>'`, `'page:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, tut das, bevor seine Bilder und sein Text kleiner gesetzt werden, es sei denn, sein `fit.preferContinue` ist `false`.
 
 Die Maßstäbe gehen in Schritten von 2,5 %, und der Umbruch nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
 
@@ -731,8 +743,8 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code> und <code>'template:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
-      <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der drei Formen.</td>
+      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> und <code>'page:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
+      <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der vier Formen.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

@@ -269,6 +269,7 @@ export const metadata = {
   - *分栏过窄*：`:::columns`组的栏窄于其文字的6 em（`columnsTooNarrow`）；
   - *框内放不下文字*：模板页某个框的内容经过逐级重排仍超出框底，而这个框没有可以接续的`next`框，分页输出会裁掉多出的部分；条目给出框名、文档的语言和所属模板，以及页码、被裁掉的高度（mm）、尝试过的步骤（如*文字缩到90%*）和能让内容放下的修改及其取值（*把maxHeight调到68 mm*、*删掉约180个字符*）（`frameOverflow`；见[模板页](/zh/docs/composed-pages#警告及其建议)）；内容续排到追加页上的框（`overflow.continueIn`），只有在追加页上的框一点内容也接不下时才给出这一条；
   - *追加页之后文字仍放不下*：某个框的内容续排满了一个模板页最多可追加的16页，仍然放不下；条目给出最后一个追加页上的框和模板，以及那一页、追加的页数和被裁掉的高度（`frameContinuationLimit`；见[模板页](/zh/docs/composed-pages#framecontinuationlimit)）；
+  - *文章转到的页面不在其后*：框的`overflow.continueIn: 'page:<id>'`没有指向后面的页面围栏，所以其余部分排到了下一页；条目给出框、模板和id，以及页码（`continueTargetMissing`；见[模板页](/zh/docs/composed-pages#continuetargetmissing)）；
   - *侧栏框或侧栏图排在正文结束之后*：侧栏框或侧栏中的图排在没有正文的页面上，因为所在章的正文结束时它还在等侧栏的空位；条目给出页码（`afterText`）；
   - *未排入任何页面*：排版结束时仍在等空位的框或浮动体，不在任何页面上（`unplaced`）；
   - *短列表跨栏拆分*：只有几项的列表排在了两栏或两页中；**正文→短列表跨栏拆分**设为*警告*时列出，设为*避免*时只列出没有哪一栏放得下整个列表的情况（`shortListSplit`）；
@@ -296,6 +297,7 @@ export const metadata = {
 
 - *框内放不下文字*（`frameOverflow`），附上逐级重排尝试过的步骤，以及能让框放下内容的修改；
 - *追加页之后文字仍放不下*（`frameContinuationLimit`）：框的内容已接续到模板页最多可追加的页数，仍放不下；
+- *文章转到的页面不在其后*（`continueTargetMissing`）：后面没有哪个页面围栏带有框的`continueIn`所指的id；
 - *标注指向不存在的锚点*和*锚点缺少标注*（`labelAnchorUnknown`、`anchorUnlabelled`），归在排这幅图的框下；
 - *槽位没有对应的框*、*空框*、*未知的页面模板*、*模板页只写了三个冒号*和*跨页标记与模板不符*（`slotUnknown`、`slotEmpty`、`templateUnknown`、`pageFenceLength`、`spreadMismatch`）；
 - *目录分组跨栏拆分*（`tocGroupSplit`）；

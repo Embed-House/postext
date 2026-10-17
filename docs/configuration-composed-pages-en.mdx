@@ -273,13 +273,19 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one, from <code>overflowTemplate</code>) or <code>'template:&lt;id&gt;'</code> (a page of that template: its frame of the same name, else its flow frame). A frame of an added page with no rule of its own goes on with the rule that brought the content, up to 16 added pages.</td>
+      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one, from <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (a page of that template: its frame of the same name, else its flow frame) or <code>'page:&lt;id&gt;'</code> (a frame of the later page fence <code>::::page&#123;id=…&#125;</code>: the one <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> names, else one its own content leaves empty; <code>&lt;id&gt;</code> may be <code>&#123;attr.name&#125;</code>, read from the page fence; see <a href="/en/docs/composed-pages#jumping-to-a-later-page">Composed pages › Jumping to a later page</a>). A frame of an added page with no rule of its own goes on with the rule that brought the content (after a jump, <code>'next-page'</code>), up to 16 added pages.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>the language's</td>
-      <td>The mark at the end of a piece cut for another page. Unset, the frame style's <code>continuesMarker</code>, which follows the document language («Continued», «Continúa», «À suivre»…, the words split tables use); a string sets those words; <code>false</code> sets none. A frame chained with <code>next</code> on the same page carries no mark.</td>
+      <td>The mark at the end of a piece cut for another page. Unset, the frame style's <code>continuesMarker</code>, which follows the document language («Continued», «Continúa», «À suivre»…, the words split tables use); a string sets those words, <code>&#123;page&#125;</code> in it being the number of the page the rest goes on on; <code>false</code> sets none. A frame chained with <code>next</code> on the same page carries no mark.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>Words set at the head of the piece on the page the content goes on on, <code>&#123;page&#125;</code> being the number of the page it comes from (<code>"Continued from page &#123;page&#125;"</code>). The receiving frame's own wins over the sending frame's.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Whether the pictures in the frame and in the other frames of its group may be set smaller when this frame's content does not fit, and down to what scale.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>A frame whose <code>overflow.continueIn</code> sends content to another page goes on there before its pictures and text are set smaller, so a story keeps one size from page to page. <code>false</code>: they shrink first, and the frame goes on only when that is not enough.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ When a frame's content is taller than the room its group gives it, the layout tr
 - `minHeight` on the other frames of the group: how far they give space back; a frame never goes below what its own content needs.
 - `fit.scaleImages` and `fit.imageMinScale`: whether the pictures of the frame and of its group may be set smaller, and down to what scale (80 % by default).
 - `fit.shrinkText` and `fit.minScale`: whether the frame's text may be set smaller, and down to what scale (90 % by default). The scale is the same for the font size, the leading and the spacing; the frame keeps its size.
-- `overflow.continueIn`: where the content goes on when none of this is enough: another frame, or a page added after this one (`'next-page'`, `'template:<id>'`), where the text goes on at full size after the piece's `overflow.mark`.
+- `overflow.continueIn`: where the content goes on when none of this is enough: another frame, or another page (`'next-page'`, `'template:<id>'`, `'page:<id>'`), where the text goes on at full size after the piece's `overflow.mark`. A frame that can go on to another page does so before its pictures and text are set smaller, unless its `fit.preferContinue` is `false`.
 
 Scales go in steps of 2.5 % and the layout takes the largest that fits, so a text that is a line too long is set at 97.5 %, not at the minimum. A box that must keep its type size sets `fit: { shrinkText: false }`; a page whose pictures must keep their size sets `fit: { scaleImages: false }` on the frames of its group:
 
@@ -731,8 +743,8 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>A <code>next</code> names no frame of the template; an <code>overflow.continueIn</code> names no frame (<code>'#x'</code>) or no template (<code>'template:x'</code>), or is in none of the forms <code>'#frame'</code>, <code>'next-page'</code> and <code>'template:&lt;id&gt;'</code>; or <code>overflowTemplate</code> names no template. Content that does not fit does not continue there.</td>
-      <td>Correct the name or the id, or write one of the three forms.</td>
+      <td>A <code>next</code> names no frame of the template; an <code>overflow.continueIn</code> names no frame (<code>'#x'</code>) or no template (<code>'template:x'</code>), or is in none of the forms <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> and <code>'page:&lt;id&gt;'</code>; or <code>overflowTemplate</code> names no template. Content that does not fit does not continue there.</td>
+      <td>Correct the name or the id, or write one of the four forms.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

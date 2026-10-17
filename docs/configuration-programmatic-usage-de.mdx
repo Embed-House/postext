@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Die paginierte Ausgabe schneidet den Rest am Fuß dieses Rahmens ab; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt er erhalten.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>Das <code>overflow.continueIn: 'page:&lt;id&gt;'</code> eines Rahmens nennt keine Seitenbegrenzung nach der, auf der sein Artikel steht (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code>, wenn diese Begrenzung früher steht, <code>configPath</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der sendenden Seite.</td>
+      <td>Der Rest läuft auf einer Seite weiter, die nach der sendenden Seite hinzukommt, wie bei <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
       <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>

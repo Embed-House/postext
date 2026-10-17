@@ -197,7 +197,9 @@ Un encapçalament posat en un marc conserva el disseny del seu nivell o del seu 
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-El text es talla entre dues línies i continua al marc següent, partit de nou a l'amplada d'aquell marc, sense perdre ni repetir res. `overflow.continueIn: "#frame"` vol dir el mateix. Per continuar en una pàgina afegida després d'aquesta, vegeu [Quan el text continua](#quan-el-text-continua).
+El text es talla entre dues línies i continua al marc següent, partit de nou a l'amplada d'aquell marc, sense perdre ni repetir res. `overflow.continueIn: "#frame"` vol dir el mateix.
+
+Un marc es talla com el text corregut. Un encapçalament no tanca mai un tros: continua amb les línies que introdueix. Un tall entre els elements d'una llista deixa almenys dos elements a cada costat (un si `bodyText.avoidOrphansInLists` o `bodyText.avoidWidowsInLists` estan desactivats), i amb `bodyText.shortListSplit: 'avoid'` una llista de fins a `bodyText.shortListMaxItems` elements no es talla entre els seus elements. Quan cap tall no ho permet, el tros acaba abans de l'encapçalament o de la llista, o dins d'un dels elements de la llista. Per continuar en una pàgina afegida després d'aquesta, vegeu [Quan el text continua](#quan-el-text-continua).
 
 ### Marcs que aparten el text
 
@@ -256,7 +258,7 @@ Les comprovacions llegeixen el Markdown i la configuració abans de maquetar res
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Un marc de la plantilla no rep res en aquesta pàgina: cap slot no l'anomena, no pren cap encapçalament i, si és el marc de flux, no queda contingut sense slot. No s'assenyala un marc que només rep el que un altre marc hi continua (<code>next</code>). <code>postext check</code> el llista com a nota.</td>
+      <td>Un marc de la plantilla no rep res en aquesta pàgina: cap slot no l'anomena, no pren cap encapçalament i, si és el marc de flux, no queda contingut sense slot. No s'assenyala un marc que només rep el que un altre marc hi continua (<code>next</code>). Tampoc el marc on salta una història des d'una pàgina anterior (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). <code>postext check</code> el llista com a nota.</td>
       <td>Escriu contingut per a aquest marc amb el seu slot, o marca'l com a <code>optional: true</code> a la plantilla.</td>
     </tr>
     <tr>
@@ -292,6 +294,12 @@ Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí 
 **Causa.** Un marc amb `overflow.continueIn` igual a `'next-page'` o `'template:<id>'` ha enviat el que no hi cabia a una pàgina afegida, i el marc d'aquella pàgina ha tornat a enviar la resta, pàgina rere pàgina, fins que la pàgina composta ha afegit totes les pàgines que pot afegir: 16 (vegeu [Quan el text continua](#quan-el-text-continua)). El que queda es talla al peu del marc a l'última pàgina afegida; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla i el marc d'aquella pàgina, el nombre de pàgines afegides (`pages`), l'alçada tallada (`overflowMm`), el `configPath` del marc i la pàgina. El més habitual és que el marc que rep el contingut a la pàgina afegida sigui molt més petit que el text.
 
 **Solució.** Dona més espai a aquell marc (més alçada, o un `overflowTemplate` amb un marc més gran) o escurça el text. Una caixa que ocupa més d'unes quantes pàgines sol estar millor al text corregut.
+
+### continueTargetMissing
+
+**Causa.** L'`overflow.continueIn` d'un marc és `'page:<id>'` (vegeu [Saltar a una pàgina posterior](#saltar-a-una-pàgina-posterior)) i cap tanca de pàgina `::::page{id="<id>"}` no va després de la pàgina on és la història: l'id està mal escrit, la tanca no el porta, falta l'atribut de la tanca que llegeix la regla (`'page:{attr.sigue}'`) o la tanca va abans (`before: true`). La resta continua en una pàgina afegida just després, com amb `'next-page'`. L'avís indica la plantilla, el marc, `target` (l'id que buscava), el `configPath` del marc i la pàgina.
+
+**Solució.** Posa aquest id a la tanca de la pàgina posterior, o corregeix el nom a `continueIn` o a l'atribut de la tanca que llegeix. Una pàgina anterior a la història no la pot rebre: mou aquella tanca darrere de la història o indica una pàgina posterior.
 
 ## Quan el text creix
 
@@ -333,10 +341,12 @@ Un marc el contingut del qual no hi cap prova, l'una darrere l'altra, les manere
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>El marc continua en una altra pàgina (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>): es talla al peu amb la seva marca i la resta continua en una pàgina afegida després d'aquesta (vegeu <a href="#quan-el-text-continua">Quan el text continua</a>). El text i les imatges tornen a la mida completa, perquè el que no hi cap continua igualment. No es dona cap avís.</td>
+      <td>El marc continua en una altra pàgina (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> o <code>'page:&lt;id&gt;'</code>): es talla al peu amb la seva marca i la resta continua en una pàgina afegida després d'aquesta (vegeu <a href="#quan-el-text-continua">Quan el text continua</a>). El text i les imatges tornen a la mida completa, perquè el que no hi cap continua igualment. No es dona cap avís.</td>
     </tr>
   </tbody>
 </table>
+
+Un marc que pot continuar en una altra pàgina fa aquest pas abans: després de `redistribute` i abans de `scaleImages` i `shrinkText`. Una història composta al llarg de diverses pàgines conserva un sol cos de lletra, i la seva última pàgina no surt més petita que les anteriors. Les imatges i el text només es redueixen quan ja no pot continuar: a l'última pàgina que pot afegir la continuació, o quan el marc que n'hauria de prendre la resta no en pren res. `fit.preferContinue: false` manté l'ordre de la taula, per a una caixa que ha de perdre uns quants punts abans que afegir una pàgina.
 
 Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, es queda amb la reducció a què ha arribat l'escala d'ajust i la maquetació dona l'avís `frameOverflow`. Un marc d'una pàgina afegida que no pren res del contingut que rep no el torna a enviar (afegiria pàgines sense fi): també dona l'avís `frameOverflow`, amb `continue` entre els passos provats. Cada pas torna a maquetar la pàgina sencera, de manera que el resultat només depèn d'aquesta pàgina: la mateixa entrada dona la mateixa pàgina, els marcs que desborden es tracten en l'ordre de la plantilla i un canvi en una pàgina composta deixa totes les altres com estaven. Els paràmetres són a [Configuració › Quan el contingut no hi cap](/ca/docs/configuration-composed-pages#quan-el-contingut-no-hi-cap).
 
@@ -389,7 +399,7 @@ El tauler Revisió mostra la mateixa entrada en la llengua de la interfície.
 
 ## Quan el text continua
 
-Un marc pot enviar el que no hi cap a una pàgina afegida després de la seva pàgina composta. Ho decideix l'`overflow.continueIn` del marc:
+Un marc pot enviar el que no hi cap a una pàgina afegida després de la seva pàgina composta, o a una pàgina posterior del llibre. Ho decideix l'`overflow.continueIn` del marc:
 
 <table>
   <thead>
@@ -411,6 +421,10 @@ Un marc pot enviar el que no hi cap a una pàgina afegida després de la seva p�
       <td><code>'template:&lt;id&gt;'</code></td>
       <td>En una pàgina d'aquella plantilla.</td>
     </tr>
+    <tr>
+      <td><code>'page:&lt;id&gt;'</code></td>
+      <td>En un marc de la tanca de pàgina posterior <code>::::page&#123;id="&lt;id&gt;"&#125;</code>, saltant-se les pàgines del mig (vegeu <a href="#saltar-a-una-pàgina-posterior">Saltar a una pàgina posterior</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -423,13 +437,45 @@ Un marc pot enviar el que no hi cap a una pàgina afegida després de la seva p�
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-Continuar en una altra pàgina és l'últim pas de l'[escala d'ajust](#quan-tot-i-així-no-hi-cap): el marc primer creix, fa lloc al seu grup i compon més petites les imatges i el text, fins on li permet la plantilla, i només quan això no n'hi ha prou es talla al peu. Llavors el text i les imatges tornen a la mida completa, el tros acaba amb la marca de continuació i la resta continua des de la línia on s'ha tallat, partida de nou a l'amplada del marc que la rep. No es perd ni es repeteix res, i no es dona cap avís.
+Continuar en una altra pàgina és un pas de l'[escala d'ajust](#quan-tot-i-així-no-hi-cap): el marc primer creix i fa lloc al seu grup, i quan això no n'hi ha prou es talla al peu, abans que les imatges o el text es componguin més petits (tret que el seu `fit.preferContinue` sigui `false`). El text i les imatges conserven la mida completa, el tros acaba amb la marca de continuació i la resta continua des de la línia on s'ha tallat, partida de nou a l'amplada del marc que la rep. No es perd ni es repeteix res, i no es dona cap avís.
 
-- **Quin marc el rep.** A la pàgina afegida, el contingut continua al marc del mateix nom; si la plantilla no en té cap, al seu marc de flux i, si tampoc no en té, al seu primer marc que encara no estigui ocupat. Diversos marcs d'una pàgina que continuen a la mateixa plantilla comparteixen una pàgina afegida quan aquella plantilla té un marc per a cadascun; si no, el següent rep una pàgina per a ell sol. Un marc de la pàgina afegida que no rep res es queda buit.
+- **Quin marc el rep.** A la pàgina afegida, el contingut continua al marc del mateix nom; si la plantilla no en té cap, al seu marc de flux i, si tampoc no en té, al seu primer marc que encara no estigui ocupat. Una història enfilada per marcs amb `next` continua on comença la seva cadena: la resta de la tercera de tres columnes encadenades continua a la primera columna de la pàgina afegida (el marc amb el nom del cap de la cadena o, si no, el marc de flux), de manera que una plantilla de cos que continua en ella mateixa omple totes les columnes de totes les pàgines. Diversos marcs d'una pàgina que continuen a la mateixa plantilla comparteixen una pàgina afegida quan aquella plantilla té un marc per a cadascun; si no, el següent rep una pàgina per a ell sol. Un marc de la pàgina afegida que no rep res es queda buit.
 - **Una vegada i una altra.** Un tros que continua sense cabre torna a continuar a la pàgina afegida següent, amb l'`overflow.continueIn` que el marc hi tingui o, si no en té, amb la regla que l'hi ha portat. Una pàgina composta afegeix com a màxim 16 pàgines seguides; el que encara no cap a l'última es talla i es dona l'avís [`frameContinuationLimit`](#framecontinuationlimit). Un marc d'una pàgina afegida massa petit per prendre res d'aquest contingut dona l'avís `frameOverflow` en lloc d'afegir pàgines.
+- **On es talla el tros.** Com a la pàgina: un encapçalament es queda amb les seves primeres línies i una llista conserva dos elements a cada costat (vegeu [Encadenar marcs](#encadenar-marcs)). Quan res de la caixa no cap a la pàgina, la caixa sencera continua a l'altra, amb la pestanya i tot: la pàgina no es queda amb una pestanya i una marca damunt d'un tros buit. Tampoc no ocupa lloc a la pàgina que deixa, i si l'espai de resposta que va a sota no hi cabria amb la seva mida, la caixa continua sencera amb ell.
+- **Què conserven les pàgines.** El marc que es talla és el primer a cedir l'espai del seu grup, de manera que els marcs que el segueixen conserven la mida. Quan la resta continua a la mateixa plantilla composta de nou, els marcs buits que van just darrere seu a la pila (l'espai per a la resposta sota una caixa d'activitat: marcs que no reben contingut) se'n van amb ell. A la pàgina no ocupen espai; a la pàgina afegida conserven la mida sota la resta de la caixa, amb la decoració que hi està ancorada. Els altres marcs d'aquella pàgina afegida no ocupen espai i la seva decoració no es dibuixa, i una pila conserva el lloc que el seu primer marc té a la plantilla, de manera que la resta de la caixa comença on comença la pila, sense trepitjar l'entradeta ni la capçalera de la pàgina.
 - **Pàgines corrents.** Les pàgines afegides són pàgines del llibre: porten número, les capçaleres de la seva plantilla (o les de la secció) i les `variants` del seu costat, i el `{attr.x}` de la tanca de pàgina continua arribant a la seva decoració. Una plantilla de desbordament amb `spread: true` comença a la pàgina parella següent, amb un blanc de paritat al davant si cal, i ocupa també la senar que la segueix; una doble pàgina amb un `overflowTemplate` d'una sola pàgina continua en pàgines senzilles. El text que va després de la tanca de pàgina comença a la pàgina següent a l'última afegida.
 - **Ids.** Un marc de la n-èsima pàgina afegida és `cp0:<name>~<n>`; el marc que rep el contingut pren el nom del marc de la pàgina de la tanca que l'ha enviat primer (`cp0:dinero~1`, `cp0:dinero~2`), de manera que una selecció conserva el seu element sigui quin sigui el marc que el rep. Cada marc anota de quin marc ve i en quin continua (`continuedFrom`, `continuesTo`), el `VDTPage.composed.continuationOf` de la pàgina és l'índex de la pàgina de la tanca i els blocs dels trossos porten l'id de la caixa amb `-cont-<n>`, com les caixes partides.
 - **Remaquetació.** Una pàgina composta el contingut de la qual continua en altres pàgines es maqueta de nou, amb les pàgines afegides, a cada compilació: la memòria de pàgines només guarda les pàgines el contingut de les quals s'hi queda.
+
+### Saltar a una pàgina posterior
+
+Una història de revista que no cap a les seves pàgines salta a una pàgina més endavant, per damunt d'altres històries: «continua a la pàgina 47». `overflow.continueIn: 'page:<id>'` envia la resta a la tanca de pàgina amb aquest `id`, sigui on sigui més endavant al capítol:
+
+```markdown
+::::page{template="articulo" sigue="p47"}
+…
+::::
+
+::::page{template="otra"}
+…
+::::
+
+::::page{template="saltos" id="p47"}
+…
+::::
+```
+
+```json
+{ "name": "cuerpo", "flow": true,
+  "overflow": { "continueIn": "page:{attr.sigue}",
+    "mark": "Continua a la pàgina {page}", "fromMark": "Ve de la pàgina {page}" } }
+```
+
+- **Quina pàgina.** `<id>` pot ser `{attr.name}`, llegit de la tanca de pàgina on és la història, de manera que una sola plantilla d'article serveix per a tots els articles i el Markdown diu on salta cadascun.
+- **Quin marc.** El que indica `'page:<id>#<frame>'`; si no n'indica cap, el marc amb el nom del cap de la cadena que envia o, si no, el primer marc que el contingut propi d'aquella pàgina deixa buit. La pàgina conserva el seu propi contingut als altres marcs.
+- **Després del salt.** El que aquell marc no pot contenir continua en pàgines afegides després de la pàgina de destinació, com fa `'next-page'` des d'allà; una història que no hi troba cap marc lliure també continua en aquestes pàgines.
+- **Ids i enllaços.** Els marcs de la pàgina de destinació conserven els seus propis ids (`cp2:resto`). El `continuesTo` del marc que envia i el `continuedFrom` del que rep enllacen els trossos, i el registre de reajustament de la pàgina que envia diu «cuerpo continued on page 47». L'EPUB de maquetació fluida i el PDF etiquetat llegeixen la història seguida, com un sol text.
+- **Una pàgina que no ve després.** Un id que no porta cap tanca de pàgina posterior dona l'avís [`continueTargetMissing`](#continuetargetmissing), i la resta continua a la pàgina següent.
 
 ### La marca de continuació
 
@@ -449,7 +495,7 @@ Continuar en una altra pàgina és l'últim pas de l'[escala d'ajust](#quan-tot-
     </tr>
     <tr>
       <td>una cadena</td>
-      <td>Aquestes paraules: <code>"continua a la pàgina següent"</code>.</td>
+      <td>Aquestes paraules: <code>"continua a la pàgina següent"</code>. Un <code>&#123;page&#125;</code> dins seu és el número de la pàgina on continua la resta, tal com s'imprimeix: <code>"Continua a la pàgina &#123;page&#125;"</code>.</td>
     </tr>
     <tr>
       <td><code>false</code></td>
@@ -462,7 +508,7 @@ Una marca pot portar `{page}`: el número imprès de la pàgina on continua la r
 
 La marca es compon sota l'última línia del tros, amb la lletra del cos de la caixa, alineada i inclinada segons `continuesMarkerAlign` i `continuesMarkerItalic` de l'estil (a la dreta i en cursiva per defecte). És un element de la paginació: l'EPUB de maquetació fluida la deixa fora i el PDF etiquetat la marca com a artefacte. Un marc encadenat amb `next` a la mateixa pàgina no porta marca.
 
-El tros de la pàgina afegida comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»), que indica que el text ve de la pàgina anterior.
+El tros de l'altra pàgina comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. `overflow.fromMark` hi fixa unes paraules al capdamunt, on `{page}` és el número de la pàgina d'on ve: `"Ve de la pàgina {page}"`. El `fromMark` del marc que rep passa per davant del del marc que envia; sense fixar, no n'hi ha cap. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»). Totes dues marques es componen amb la lletra del cos de la caixa, alineades i inclinades com la marca final, i són elements de la paginació.
 
 ## Registre de reajustament
 

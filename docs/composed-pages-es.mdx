@@ -197,7 +197,9 @@ Un encabezado puesto en un marco conserva el diseño de su nivel o de su estilo 
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nuevo al ancho de ese marco, sin perder ni repetir nada. `overflow.continueIn: "#frame"` significa lo mismo. Para seguir en una página añadida después de esta, consulta [Cuando el texto sigue](#cuando-el-texto-sigue).
+El texto se corta entre dos líneas y sigue en el marco siguiente, partido de nuevo al ancho de ese marco, sin perder ni repetir nada. `overflow.continueIn: "#frame"` significa lo mismo.
+
+Un marco se corta igual que el texto corrido. Un encabezado nunca cierra un trozo: sigue con las líneas que introduce. Un corte entre los elementos de una lista deja al menos dos elementos a cada lado (uno si `bodyText.avoidOrphansInLists` o `bodyText.avoidWidowsInLists` están desactivados), y con `bodyText.shortListSplit: 'avoid'` una lista de hasta `bodyText.shortListMaxItems` elementos no se corta entre sus elementos. Cuando ningún corte lo permite, el trozo termina antes del encabezado o de la lista, o dentro de uno de los elementos de la lista. Para seguir en una página añadida después de esta, consulta [Cuando el texto sigue](#cuando-el-texto-sigue).
 
 ### Marcos que apartan el texto
 
@@ -256,7 +258,7 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Un marco de la plantilla no recibe nada en esta página: ningún slot lo nombra, no toma ningún encabezado y, si es el marco de flujo, no queda contenido sin slot. No se señala un marco que solo recibe lo que otro marco continúa en él (<code>next</code>). <code>postext check</code> lo lista como nota.</td>
+      <td>Un marco de la plantilla no recibe nada en esta página: ningún slot lo nombra, no toma ningún encabezado y, si es el marco de flujo, no queda contenido sin slot. No se señala un marco que solo recibe lo que otro marco continúa en él (<code>next</code>). Tampoco el marco al que salta una historia desde una página anterior (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). <code>postext check</code> lo lista como nota.</td>
       <td>Escribe contenido para ese marco con su slot, o márcalo como <code>optional: true</code> en la plantilla.</td>
     </tr>
     <tr>
@@ -292,6 +294,12 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 **Causa.** Un marco cuyo `overflow.continueIn` es `'next-page'` o `'template:<id>'` ha enviado lo que no le cabía a una página añadida, y el marco de esa página ha vuelto a enviar el resto, página tras página, hasta que la página compuesta ha añadido todas las páginas que puede añadir: 16 (véase [Cuando el texto sigue](#cuando-el-texto-sigue)). Lo que queda se corta al pie del marco en la última página añadida; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla y el marco de esa página, el número de páginas añadidas (`pages`), la altura cortada (`overflowMm`), el `configPath` del marco y la página. Lo más habitual es que el marco que recibe el contenido en la página añadida sea mucho más pequeño que el texto.
 
 **Solución.** Da más sitio a ese marco (más altura, o un `overflowTemplate` con un marco mayor) o acorta el texto. Una caja que ocupa más de unas pocas páginas suele estar mejor en el texto corrido.
+
+### continueTargetMissing
+
+**Causa.** El `overflow.continueIn` de un marco es `'page:<id>'` (véase [Saltar a una página posterior](#saltar-a-una-página-posterior)) y ninguna valla de página `::::page{id="<id>"}` va después de la página en la que está la historia: el id está mal escrito, la valla no lo lleva, falta el atributo de la valla que lee la regla (`'page:{attr.sigue}'`) o la valla va antes (`before: true`). El resto sigue en una página añadida justo después, como con `'next-page'`. El aviso indica la plantilla, el marco, `target` (el id que buscaba), el `configPath` del marco y la página.
+
+**Solución.** Pon ese id en la valla de la página posterior, o corrige el nombre en `continueIn` o en el atributo de la valla que lee. Una página anterior a la historia no puede recibirla: mueve esa valla detrás de la historia o nombra una página posterior.
 
 ## Cuando el texto crece
 
@@ -333,10 +341,12 @@ Un marco cuyo contenido no cabe prueba, uno tras otro, los modos de hacer sitio 
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>El marco sigue en otra página (<code>overflow.continueIn: 'next-page'</code> o <code>'template:&lt;id&gt;'</code>): se corta al pie con su marca y el resto sigue en una página añadida después de esta (véase <a href="#cuando-el-texto-sigue">Cuando el texto sigue</a>). Su texto y sus imágenes vuelven a su tamaño completo, porque lo que no cabe sigue de todos modos. No se da ningún aviso.</td>
+      <td>El marco sigue en otra página (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> o <code>'page:&lt;id&gt;'</code>): se corta al pie con su marca y el resto sigue en una página añadida después de esta (véase <a href="#cuando-el-texto-sigue">Cuando el texto sigue</a>). Su texto y sus imágenes vuelven a su tamaño completo, porque lo que no cabe sigue de todos modos. No se da ningún aviso.</td>
     </tr>
   </tbody>
 </table>
+
+Un marco que puede seguir en otra página da ese paso antes: después de `redistribute` y antes de `scaleImages` y `shrinkText`. Una historia compuesta a lo largo de varias páginas conserva un solo cuerpo de letra, y su última página no sale más pequeña que las anteriores. Sus imágenes y su texto solo se reducen cuando ya no puede seguir: en la última página que puede añadir la continuación, o cuando el marco que tomaría el resto no toma nada. `fit.preferContinue: false` mantiene el orden de la tabla, para una caja que debe perder unos puntos antes que añadir una página.
 
 Si ningún paso consigue que el contenido quepa, el marco se corta al pie, se queda con las escalas a las que llegó la escalera y la maquetación avisa con `frameOverflow`. Un marco de una página añadida que no toma nada del contenido que recibe no lo vuelve a enviar (añadiría páginas sin fin): también avisa con `frameOverflow`, con `continue` entre los pasos probados. Cada paso vuelve a maquetar la página entera, así que el resultado depende solo de esa página: la misma entrada da la misma página, los marcos que desbordan se tratan en el orden de la plantilla y un cambio en una página compuesta deja todas las demás como estaban. Los ajustes están en [Configuración › Cuando el contenido no cabe](/es/docs/configuration-composed-pages#cuando-el-contenido-no-cabe).
 
@@ -389,7 +399,7 @@ El panel Revisión muestra la misma entrada en el idioma de la interfaz.
 
 ## Cuando el texto sigue
 
-Un marco puede enviar lo que no le cabe a una página añadida después de su página compuesta. Lo decide el `overflow.continueIn` del marco:
+Un marco puede enviar lo que no le cabe a una página añadida después de su página compuesta, o a una página posterior del libro. Lo decide el `overflow.continueIn` del marco:
 
 <table>
   <thead>
@@ -411,6 +421,10 @@ Un marco puede enviar lo que no le cabe a una página añadida después de su p�
       <td><code>'template:&lt;id&gt;'</code></td>
       <td>En una página de esa plantilla.</td>
     </tr>
+    <tr>
+      <td><code>'page:&lt;id&gt;'</code></td>
+      <td>En un marco de la valla de página posterior <code>::::page&#123;id="&lt;id&gt;"&#125;</code>, saltándose las páginas intermedias (véase <a href="#saltar-a-una-página-posterior">Saltar a una página posterior</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -423,13 +437,45 @@ Un marco puede enviar lo que no le cabe a una página añadida después de su p�
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-Seguir en otra página es el último paso de la [escalera de ajuste](#cuando-aun-así-no-cabe): el marco primero crece, hace sitio en su grupo y compone más pequeños sus imágenes y su texto, hasta donde le deja su plantilla, y solo cuando eso no basta se corta al pie. Entonces su texto y sus imágenes vuelven a su tamaño completo, el trozo termina con la marca de continuación y el resto sigue desde la línea donde se cortó, partido de nuevo al ancho del marco que lo recibe. No se pierde ni se repite nada, y no se da ningún aviso.
+Seguir en otra página es un paso de la [escalera de ajuste](#cuando-aun-así-no-cabe): el marco primero crece y hace sitio en su grupo, y cuando eso no basta se corta al pie, antes de que sus imágenes o su texto se compongan más pequeños (salvo que su `fit.preferContinue` sea `false`). Su texto y sus imágenes conservan su tamaño completo, el trozo termina con la marca de continuación y el resto sigue desde la línea donde se cortó, partido de nuevo al ancho del marco que lo recibe. No se pierde ni se repite nada, y no se da ningún aviso.
 
-- **Qué marco lo recibe.** En la página añadida, el contenido sigue en el marco del mismo nombre; si la plantilla no tiene ninguno, en su marco de flujo y, si tampoco, en su primer marco que no esté ya ocupado. Varios marcos de una página que siguen en la misma plantilla comparten una página añadida cuando esa plantilla tiene un marco para cada uno; si no, el siguiente recibe una página para él solo. Un marco de la página añadida que no recibe nada se queda vacío.
+- **Qué marco lo recibe.** En la página añadida, el contenido sigue en el marco del mismo nombre; si la plantilla no tiene ninguno, en su marco de flujo y, si tampoco, en su primer marco que no esté ya ocupado. Una historia enhebrada por marcos con `next` sigue donde empieza su cadena: el resto de la tercera de tres columnas encadenadas sigue en la primera columna de la página añadida (el marco con el nombre de la cabeza de la cadena o, si no, el marco de flujo), de modo que una plantilla de cuerpo que sigue en sí misma llena todas las columnas de todas las páginas. Varios marcos de una página que siguen en la misma plantilla comparten una página añadida cuando esa plantilla tiene un marco para cada uno; si no, el siguiente recibe una página para él solo. Un marco de la página añadida que no recibe nada se queda vacío.
 - **Una y otra vez.** Un trozo que sigue sin caber vuelve a seguir en la siguiente página añadida, con el `overflow.continueIn` que el marco tenga allí o, si no tiene, con la regla que lo trajo. Una página compuesta añade como mucho 16 páginas seguidas; lo que aún no cabe en la última se corta y se avisa con [`frameContinuationLimit`](#framecontinuationlimit). Un marco de una página añadida demasiado pequeño para tomar nada de ese contenido avisa con `frameOverflow` en vez de añadir páginas.
+- **Dónde se corta el trozo.** Como en la página: un encabezado se queda con sus primeras líneas y una lista conserva dos elementos a cada lado (véase [Encadenar marcos](#encadenar-marcos)). Cuando nada de la caja cabe en la página, la caja entera sigue en la otra, con su pestaña y todo: la página no se queda con una pestaña y una marca sobre un trozo vacío. Tampoco ocupa sitio en la página que deja, y si el espacio de respuesta que va debajo no cabría allí con su tamaño, la caja sigue entera con él.
+- **Qué conservan las páginas.** El marco que se corta es el primero en ceder el sitio de su grupo, así que los marcos que van detrás conservan su tamaño. Cuando el resto sigue en la misma plantilla compuesta de nuevo, los marcos vacíos que van justo detrás de él en su pila (el espacio para la respuesta bajo una caja de actividad: marcos que no reciben contenido) se van con él. En la página no ocupan sitio; en la página añadida conservan su tamaño bajo el resto de la caja, con la decoración anclada a ellos. Los demás marcos de esa página añadida no ocupan sitio y su decoración no se dibuja, y una pila conserva el lugar que su primer marco tiene en la plantilla, así que el resto de la caja empieza donde empieza la pila, sin pisar la entradilla ni la cabecera de la página.
 - **Páginas corrientes.** Las páginas añadidas son páginas del libro: llevan número, las cabeceras de su plantilla (o las de la sección) y las `variants` de su lado, y el `{attr.x}` de la valla de página sigue llegando a su decoración. Una plantilla de desbordamiento con `spread: true` empieza en la siguiente página par, con un blanco de paridad delante si hace falta, y ocupa también la impar que la sigue; una doble página cuyo `overflowTemplate` es de una sola página sigue en páginas sencillas. El texto que va después de la valla de página empieza en la página siguiente a la última añadida.
 - **Ids.** Un marco de la n-ésima página añadida es `cp0:<name>~<n>`; el marco que recibe el contenido toma el nombre del marco de la página de la valla que lo envió primero (`cp0:dinero~1`, `cp0:dinero~2`), de modo que una selección conserva su elemento sea cual sea el marco que lo recibe. Cada marco anota de qué marco viene y en cuál sigue (`continuedFrom`, `continuesTo`), el `VDTPage.composed.continuationOf` de la página es el índice de la página de la valla y los bloques de los trozos llevan el id de la caja con `-cont-<n>`, como las cajas partidas.
 - **Recomposición.** Una página compuesta cuyo contenido sigue en otras páginas se maqueta de nuevo, con sus páginas añadidas, en cada compilación: la memoria de páginas solo guarda las páginas cuyo contenido se queda en ellas.
+
+### Saltar a una página posterior
+
+Una historia de revista que no cabe en sus páginas salta a una página más adelante, pasando por encima de otras historias: «sigue en la página 47». `overflow.continueIn: 'page:<id>'` envía el resto a la valla de página con ese `id`, esté donde esté más adelante en el capítulo:
+
+```markdown
+::::page{template="articulo" sigue="p47"}
+…
+::::
+
+::::page{template="otra"}
+…
+::::
+
+::::page{template="saltos" id="p47"}
+…
+::::
+```
+
+```json
+{ "name": "cuerpo", "flow": true,
+  "overflow": { "continueIn": "page:{attr.sigue}",
+    "mark": "Sigue en la página {page}", "fromMark": "Viene de la página {page}" } }
+```
+
+- **Qué página.** `<id>` puede ser `{attr.name}`, leído de la valla de página en la que está la historia, de modo que una sola plantilla de artículo sirve para todos los artículos y el Markdown dice adónde salta cada uno.
+- **Qué marco.** El que nombra `'page:<id>#<frame>'`; si no nombra ninguno, el marco con el nombre de la cabeza de la cadena que envía o, si no, el primer marco que el contenido propio de esa página deja vacío. La página conserva su propio contenido en sus otros marcos.
+- **Después del salto.** Lo que ese marco no puede contener sigue en páginas añadidas después de la página de destino, como hace `'next-page'` desde allí; una historia que no encuentra en ella ningún marco libre también sigue en esas páginas.
+- **Ids y enlaces.** Los marcos de la página de destino conservan sus propios ids (`cp2:resto`). El `continuesTo` del marco que envía y el `continuedFrom` del que recibe enlazan los trozos, y el registro de recomposición de la página que envía dice «cuerpo continued on page 47». El EPUB de maquetación fluida y el PDF etiquetado leen la historia de un tirón, como un solo texto.
+- **Una página que no viene después.** Un id que no lleva ninguna valla de página posterior da el aviso [`continueTargetMissing`](#continuetargetmissing), y el resto sigue en la página siguiente.
 
 ### La marca de continuación
 
@@ -449,7 +495,7 @@ Seguir en otra página es el último paso de la [escalera de ajuste](#cuando-aun
     </tr>
     <tr>
       <td>una cadena</td>
-      <td>Esas palabras: <code>"sigue en la página siguiente"</code>.</td>
+      <td>Esas palabras: <code>"sigue en la página siguiente"</code>. Un <code>&#123;page&#125;</code> en ellas es el número de la página en la que sigue el resto, tal como se imprime: <code>"Sigue en la página &#123;page&#125;"</code>.</td>
     </tr>
     <tr>
       <td><code>false</code></td>
@@ -462,7 +508,7 @@ Una marca puede llevar `{page}`: el número impreso de la página donde sigue el
 
 La marca se compone bajo la última línea del trozo, con la letra del cuerpo de la caja, alineada e inclinada según `continuesMarkerAlign` y `continuesMarkerItalic` del estilo (a la derecha y en cursiva por defecto). Es un elemento de la paginación: el EPUB de maquetación fluida la deja fuera y el PDF etiquetado la marca como artefacto. Un marco encadenado con `next` en la misma página no lleva marca.
 
-El trozo de la página añadida empieza sin la pestaña ni el título del marco, como las partes siguientes de una caja partida. Un estilo con `repeatTitle: true` repite allí su título seguido de su `continuedSuffix` («(cont.)»), que avisa de que el texto viene de la página anterior.
+El trozo de la otra página empieza sin la pestaña ni el título del marco, como las partes siguientes de una caja partida. `overflow.fromMark` fija unas palabras en su cabeza, donde `{page}` es el número de la página de la que viene: `"Viene de la página {page}"`. El `fromMark` del marco que recibe tiene prioridad sobre el del marco que envía; sin fijar, no hay ninguna. Un estilo con `repeatTitle: true` repite allí su título seguido de su `continuedSuffix` («(cont.)»). Las dos marcas se componen con la letra del cuerpo de la caja, alineadas e inclinadas como la marca final, y son elementos de la paginación.
 
 ## Registro de recomposición
 

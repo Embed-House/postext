@@ -273,13 +273,19 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa, con <code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una pagina di quel modello: la sua cornice con lo stesso nome, altrimenti la sua cornice di flusso). Una cornice di una pagina aggiunta senza una regola propria prosegue con la regola che ha portato il contenuto, fino a 16 pagine aggiunte.</td>
+      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa, con <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una pagina di quel modello: la sua cornice con lo stesso nome, altrimenti la sua cornice di flusso) o <code>'page:&lt;id&gt;'</code> (una cornice del recinto di pagina <code>::::page&#123;id=…&#125;</code> che viene più avanti: quella indicata da <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, altrimenti una che il suo contenuto lascia vuota; <code>&lt;id&gt;</code> può essere <code>&#123;attr.name&#125;</code>, letto dal recinto della pagina; vedi <a href="/it/docs/composed-pages#saltare-a-una-pagina-più-avanti">Pagine composte › Saltare a una pagina più avanti</a>). Una cornice di una pagina aggiunta senza una regola propria prosegue con la regola che ha portato il contenuto (dopo un salto, <code>'next-page'</code>), fino a 16 pagine aggiunte.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>quello della lingua</td>
-      <td>Il segno alla fine di un pezzo tagliato per un’altra pagina. Se non è impostato, il <code>continuesMarker</code> dello stile della cornice, che segue la lingua del documento («Continued», «Continúa», «À suivre»…, le parole delle tabelle divise); una stringa imposta quelle parole; <code>false</code> non ne mette nessuno. Una cornice concatenata con <code>next</code> nella stessa pagina non porta segno.</td>
+      <td>Il segno alla fine di un pezzo tagliato per un’altra pagina. Se non è impostato, il <code>continuesMarker</code> dello stile della cornice, che segue la lingua del documento («Continued», «Continúa», «À suivre»…, le parole delle tabelle divise); una stringa imposta quelle parole, dove <code>&#123;page&#125;</code> è il numero della pagina in cui prosegue il resto; <code>false</code> non ne mette nessuno. Una cornice concatenata con <code>next</code> nella stessa pagina non porta segno.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Parole in testa al pezzo nella pagina in cui prosegue il contenuto, dove <code>&#123;page&#125;</code> è il numero della pagina da cui viene (<code>"Segue da pagina &#123;page&#125;"</code>). Quello della cornice che riceve prevale su quello della cornice che invia.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Se le immagini della cornice e quelle delle altre cornici del suo gruppo si possono rimpicciolire quando il contenuto di questa cornice non entra, e fino a quale scala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Una cornice il cui <code>overflow.continueIn</code> manda il contenuto in un’altra pagina prosegue lì prima che le sue immagini e il suo testo si riducano, così un articolo mantiene la stessa dimensione da una pagina all’altra. <code>false</code>: si riducono prima, e la cornice prosegue solo quando questo non basta.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ Quando il contenuto di una cornice è più alto dello spazio che le dà il suo g
 - `minHeight` sulle altre cornici del gruppo: fin dove restituiscono spazio; una cornice non scende mai sotto quanto richiede il suo contenuto.
 - `fit.scaleImages` e `fit.imageMinScale`: se le immagini della cornice e del suo gruppo si possono rimpicciolire, e fino a quale scala (80 % per impostazione predefinita).
 - `fit.shrinkText` e `fit.minScale`: se il testo della cornice si può rimpicciolire, e fino a quale scala (90 % per impostazione predefinita). La scala è la stessa per il corpo, l’interlinea e le spaziature; la cornice mantiene la sua dimensione.
-- `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta, in un’altra cornice o in una pagina aggiunta dopo questa (`'next-page'`, `'template:<id>'`), dove il testo riprende a dimensione piena dopo l’`overflow.mark` del pezzo.
+- `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta, in un’altra cornice o in un’altra pagina (`'next-page'`, `'template:<id>'`, `'page:<id>'`), dove il testo riprende a dimensione piena dopo l’`overflow.mark` del pezzo. Una cornice che può proseguire in un’altra pagina lo fa prima che le sue immagini e il suo testo si riducano, a meno che il suo `fit.preferContinue` sia `false`.
 
 Le scale vanno a passi del 2,5 % e l’impaginazione sceglie la più grande che funziona, così un testo che sfora di una riga viene composto al 97,5 %, non al minimo. Un riquadro che deve mantenere il suo corpo imposta `fit: { shrinkText: false }`; una pagina le cui immagini devono mantenere la loro dimensione imposta `fit: { scaleImages: false }` sulle cornici del suo gruppo:
 
@@ -731,8 +743,8 @@ Una chiave scritta male di un modello, di una cornice, di un gruppo, di una grig
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> non indica nessuna cornice del modello; un <code>overflow.continueIn</code> non indica nessuna cornice (<code>'#x'</code>) o nessun modello (<code>'template:x'</code>), oppure non ha nessuna delle forme <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; oppure <code>overflowTemplate</code> non indica nessun modello. Il contenuto che non entra non prosegue lì.</td>
-      <td>Correggi il nome o l’id, o scrivi una delle tre forme.</td>
+      <td>Un <code>next</code> non indica nessuna cornice del modello; un <code>overflow.continueIn</code> non indica nessuna cornice (<code>'#x'</code>) o nessun modello (<code>'template:x'</code>), oppure non ha nessuna delle forme <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> e <code>'page:&lt;id&gt;'</code>; oppure <code>overflowTemplate</code> non indica nessun modello. Il contenuto che non entra non prosegue lì.</td>
+      <td>Correggi il nome o l’id, o scrivi una delle quattro forme.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

@@ -273,13 +273,19 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>cap</td>
-      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta, a partir d'<code>overflowTemplate</code>) o <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla: el seu marc del mateix nom o, si no en té, el seu marc de flux). Un marc d'una pàgina afegida sense regla pròpia continua amb la regla que hi ha portat el contingut, fins a 16 pàgines afegides.</td>
+      <td>On continua el contingut que no hi cap: <code>'#frame'</code> (un altre marc de la pàgina, com <code>next</code>), <code>'next-page'</code> (el mateix marc en una pàgina que s'afegeix darrere d'aquesta, a partir d'<code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una pàgina d'aquesta plantilla: el seu marc del mateix nom o, si no en té, el seu marc de flux) o <code>'page:&lt;id&gt;'</code> (un marc de la tanca de pàgina posterior <code>::::page&#123;id=…&#125;</code>: el que indica <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> o, si no, un que el seu propi contingut deixa buit; <code>&lt;id&gt;</code> pot ser <code>&#123;attr.name&#125;</code>, llegit de la tanca de pàgina; vegeu <a href="/ca/docs/composed-pages#saltar-a-una-pàgina-posterior">Pàgines compostes › Saltar a una pàgina posterior</a>). Un marc d'una pàgina afegida sense regla pròpia continua amb la regla que hi ha portat el contingut (després d'un salt, <code>'next-page'</code>), fins a 16 pàgines afegides.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>la de la llengua</td>
-      <td>La marca al final d'un tros tallat per a una altra pàgina. Sense fixar, el <code>continuesMarker</code> de l'estil del marc, que segueix la llengua del document («Continued», «Continúa», «À suivre»…, les paraules que fan servir les taules partides); una cadena posa aquestes paraules; <code>false</code> no en posa cap. Un marc encadenat amb <code>next</code> a la mateixa pàgina no porta marca.</td>
+      <td>La marca al final d'un tros tallat per a una altra pàgina. Sense fixar, el <code>continuesMarker</code> de l'estil del marc, que segueix la llengua del document («Continued», «Continúa», «À suivre»…, les paraules que fan servir les taules partides); una cadena posa aquestes paraules, on <code>&#123;page&#125;</code> és el número de la pàgina on continua la resta; <code>false</code> no en posa cap. Un marc encadenat amb <code>next</code> a la mateixa pàgina no porta marca.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Paraules que es posen al capdamunt del tros a la pàgina on continua el contingut, on <code>&#123;page&#125;</code> és el número de la pàgina d'on ve (<code>"Ve de la pàgina &#123;page&#125;"</code>). El del marc que rep passa per davant del del marc que envia.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
       <td>Si les imatges del marc i dels altres marcs del seu grup es poden compondre més petites quan el contingut d'aquest marc no hi cap, i fins a quina escala.</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un marc amb un <code>overflow.continueIn</code> que envia el contingut a una altra pàgina hi continua abans que les imatges i el text es componguin més petits, de manera que una història conserva la mateixa mida d'una pàgina a l'altra. <code>false</code>: primer es redueixen, i el marc només continua en una altra pàgina quan això no n'hi ha prou.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ Quan el contingut d'un marc és més alt que l'espai que li dona el seu grup, la
 - `minHeight` en els altres marcs del grup: fins on tornen espai; un marc mai no baixa del que necessita el seu propi contingut.
 - `fit.scaleImages` i `fit.imageMinScale`: si les imatges del marc i del seu grup es poden compondre més petites, i fins a quina escala (80 % per defecte).
 - `fit.shrinkText` i `fit.minScale`: si el text del marc es pot compondre més petit, i fins a quina escala (90 % per defecte). L'escala és la mateixa per al cos, l'interlineat i els espais; el marc conserva la seva mida.
-- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou: en un altre marc o en una pàgina afegida darrere d'aquesta (`'next-page'`, `'template:<id>'`), on el text continua a mida completa després de l'`overflow.mark` del tros.
+- `overflow.continueIn`: on continua el contingut quan res d'això no n'hi ha prou: en un altre marc o en una altra pàgina (`'next-page'`, `'template:<id>'`, `'page:<id>'`), on el text continua a mida completa després de l'`overflow.mark` del tros. Un marc que pot continuar en una altra pàgina ho fa abans que les imatges i el text es componguin més petits, tret que el seu `fit.preferContinue` sigui `false`.
 
 Les escales van en passos del 2,5 % i la maquetació pren la més gran amb què el contingut hi cap, de manera que un text que fa una línia de més es compon al 97,5 %, no al mínim. Una caixa que ha de conservar el cos de lletra porta `fit: { shrinkText: false }`; en una pàgina les imatges de la qual han de conservar la mida, els marcs del seu grup porten `fit: { scaleImages: false }`:
 
@@ -731,8 +743,8 @@ Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `o
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> no anomena cap marc de la plantilla; un <code>overflow.continueIn</code> no anomena cap marc (<code>'#x'</code>) ni cap plantilla (<code>'template:x'</code>), o no té cap de les formes <code>'#frame'</code>, <code>'next-page'</code> i <code>'template:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no anomena cap plantilla. El contingut que no hi cap no hi continua.</td>
-      <td>Corregeix el nom o l'id, o escriu una de les tres formes.</td>
+      <td>Un <code>next</code> no anomena cap marc de la plantilla; un <code>overflow.continueIn</code> no anomena cap marc (<code>'#x'</code>) ni cap plantilla (<code>'template:x'</code>), o no té cap de les formes <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> i <code>'page:&lt;id&gt;'</code>; o <code>overflowTemplate</code> no anomena cap plantilla. El contingut que no hi cap no hi continua.</td>
+      <td>Corregeix el nom o l'id, o escriu una de les quatre formes.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

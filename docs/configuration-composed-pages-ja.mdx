@@ -273,13 +273,19 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前のフレーム、なければ<code>flow</code>のフレーム）のいずれかです。追加ページのフレームに自分の規則がなければ、内容を運んできた規則で続け、追加ページは16ページまでです。</td>
+      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかのフレームで、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じフレーム）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前のフレーム、なければ<code>flow</code>のフレーム）、<code>'page:&lt;id&gt;'</code>（後ろのページフェンス<code>::::page&#123;id=…&#125;</code>のフレームで、<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>で指定したもの、なければそのページ自身の中身が空のまま残すもの。<code>&lt;id&gt;</code>は<code>&#123;attr.name&#125;</code>でもよく、ページフェンスから読まれます。<a href="/ja/docs/composed-pages#後ろのページへ飛ぶ">テンプレートページ › 後ろのページへ飛ぶ</a>を参照）のいずれかです。追加ページのフレームに自分の規則がなければ、内容を運んできた規則（飛んだ後は<code>'next-page'</code>）で続け、追加ページは16ページまでです。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>言語による</td>
-      <td>別のページへ続けるために切れた部分の終わりに付ける目印です。未設定なら、フレームのスタイルの<code>continuesMarker</code>を使い、これは文書の言語に従います（「Continued」「Continúa」「À suivre」など、分割した表と同じ語）。文字列を指定すればその文字列、<code>false</code>なら何も付けません。同じページで<code>next</code>によってつないだフレームには付きません。</td>
+      <td>別のページへ続けるために切れた部分の終わりに付ける目印です。未設定なら、フレームのスタイルの<code>continuesMarker</code>を使い、これは文書の言語に従います（「Continued」「Continúa」「À suivre」など、分割した表と同じ語）。文字列を指定すればその文字列で、その中の<code>&#123;page&#125;</code>は残りが続くページのノンブルになります。<code>false</code>なら何も付けません。同じページで<code>next</code>によってつないだフレームには付きません。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>内容が続く先のページで、断片の先頭に置く文字列です。<code>&#123;page&#125;</code>は続きの出どころのページのノンブルです（<code>"&#123;page&#125; ページから続く"</code>）。受け取るフレーム自身の設定が、送るフレームのものより優先します。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ const config: PostextConfig = {
       <td><code>boolean</code>、<code>number</code></td>
       <td><code>true</code>、<code>0.8</code></td>
       <td>このフレームの中身が収まらないとき、フレームとそのグループのほかのフレームの画像を小さくしてよいか、どこまで小さくしてよいかです。</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>overflow.continueIn</code>で中身を別のページへ送るフレームは、画像やテキストを小さくする前にそのページへ続くので、記事はページからページへ同じ大きさを保ちます。<code>false</code>なら先に縮め、それでも足りないときだけ続きます。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 - グループのほかのフレームの`minHeight`：それらがどこまで空間を返すかを決めます。どのフレームも、自分の中身に必要な高さより小さくはなりません。
 - `fit.scaleImages`と`fit.imageMinScale`：フレームとそのグループの画像を小さくしてよいか、どこまで小さくしてよいか（既定は80%）。
 - `fit.shrinkText`と`fit.minScale`：フレームのテキストを小さくしてよいか、どこまで小さくしてよいか（既定は90%）。文字サイズ、行送り、アキは同じ比率で縮み、フレームの大きさは変わりません。
-- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。別のフレームか、このページの後に加えるページ（`'next-page'`、`'template:<id>'`）で、追加ページでは断片の`overflow.mark`の後、テキストが元の大きさで続きます。
+- `overflow.continueIn`：これらのどれでも足りないとき、中身の続きをどこに流すか。別のフレームか、別のページ（`'next-page'`、`'template:<id>'`、`'page:<id>'`）で、続き先では断片の`overflow.mark`の後、テキストが元の大きさで続きます。別のページへ続けられるフレームは、`fit.preferContinue`が`false`でないかぎり、画像とテキストを小さくする前に続きます。
 
 縮小率は2.5%刻みで、割り付けは収まるもっとも大きな値を選びます。1行だけ長いテキストなら、最小値ではなく97.5%で組まれます。文字サイズを変えてはいけない囲みには`fit: { shrinkText: false }`を、画像の大きさを変えてはいけないページにはグループのフレームに`fit: { scaleImages: false }`を設定します。
 
@@ -731,8 +743,8 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td><code>next</code>がテンプレートのどのフレームも指していない、<code>overflow.continueIn</code>がどのフレーム（<code>'#x'</code>）もテンプレート（<code>'template:x'</code>）も指していないか、<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>のどの形でもない、または<code>overflowTemplate</code>がどのテンプレートも指していない、のいずれかです。入りきらない中身はそこには続きません。</td>
-      <td>名前やidを直すか、3つの形のどれかで書きます。</td>
+      <td><code>next</code>がテンプレートのどのフレームも指していない、<code>overflow.continueIn</code>がどのフレーム（<code>'#x'</code>）もテンプレート（<code>'template:x'</code>）も指していないか、<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>、<code>'page:&lt;id&gt;'</code>のどの形でもない、または<code>overflowTemplate</code>がどのテンプレートも指していない、のいずれかです。入りきらない中身はそこには続きません。</td>
+      <td>名前やidを直すか、4つの形のどれかで書きます。</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

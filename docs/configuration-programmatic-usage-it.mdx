@@ -135,6 +135,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’uscita impaginata taglia il resto al piede di quella cornice; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> di una cornice non indica nessun recinto di pagina dopo quello in cui si trova il suo articolo (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quando quel recinto viene prima, <code>configPath</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina che invia.</td>
+      <td>Il resto prosegue in una pagina aggiunta dopo la pagina che invia, come con <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>L’apertura di una pagina composta e il suo modello non concordano sulla doppia pagina (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, lo <code>spread</code> dell’apertura; <code>templateSpread</code>, quello del modello).</td>
       <td>Decide il modello: un modello a doppia pagina viene composto su due pagine affiancate, qualsiasi altro su una.</td>

@@ -273,13 +273,19 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框，按<code>overflowTemplate</code>来排）或<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框，没有则进入它的<code>flow</code>框）。追加页上的框自己没有设规则时，沿用把内容带来的那条规则，最多追加16页。</td>
+      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框，按<code>overflowTemplate</code>来排）、<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框，没有则进入它的<code>flow</code>框）或<code>'page:&lt;id&gt;'</code>（后面的页面围栏<code>::::page&#123;id=…&#125;</code>中的一个框：<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>指定的那个，没有指定则是那一页自身内容留空的一个；<code>&lt;id&gt;</code>可以是<code>&#123;attr.name&#125;</code>，从页面围栏读取；见<a href="/zh/docs/composed-pages#跳转到后面的页面">组合页面 › 跳转到后面的页面</a>）。追加页上的框自己没有设规则时，沿用把内容带来的那条规则（跳转之后为<code>'next-page'</code>），最多追加16页。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>随语言</td>
-      <td>为续排到另一页而截断的部分末尾的标记。未设置时，使用框样式的<code>continuesMarker</code>，它随文档语言而定（“Continued”“Continúa”“À suivre”等，与拆分表格所用的词相同）；设为字符串就用这些文字；<code>false</code>不加标记。同一页上用<code>next</code>串接的框不带标记。</td>
+      <td>为续排到另一页而截断的部分末尾的标记。未设置时，使用框样式的<code>continuesMarker</code>，它随文档语言而定（“Continued”“Continúa”“À suivre”等，与拆分表格所用的词相同）；设为字符串就用这些文字，其中的<code>&#123;page&#125;</code>是其余部分所在那一页的页码；<code>false</code>不加标记。同一页上用<code>next</code>串接的框不带标记。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.fromMark</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>在内容续排的那一页上、片段开头排的文字，<code>&#123;page&#125;</code>是内容所来自那一页的页码（<code>"接第 &#123;page&#125; 页"</code>）。接收内容的框自己的设置优先于送出内容的框的。</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -298,6 +304,12 @@ const config: PostextConfig = {
       <td><code>boolean</code>、<code>number</code></td>
       <td><code>true</code>、<code>0.8</code></td>
       <td>这个框的内容放不下时，它和同组其他框中的图片是否可以缩小，以及最小缩到多少。</td>
+    </tr>
+    <tr>
+      <td><code>fit.preferContinue</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td><code>overflow.continueIn</code>把内容送到另一页的框架，先到那一页上续排，再考虑缩小图片和文字，这样文章从一页到另一页保持同一个大小。<code>false</code>：图片和文字先缩小，不够时框架才续排。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -457,7 +469,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 - 组中其他框的`minHeight`：它们最多让出多少空间；框绝不会小于它自己的内容所需。
 - `fit.scaleImages`和`fit.imageMinScale`：这个框及其所在组中的图片是否可以缩小，以及最小缩到多少（默认80%）。
 - `fit.shrinkText`和`fit.minScale`：框中的文字是否可以缩小，以及最小缩到多少（默认90%）。字号、行距和间距使用同一个比例；框本身的尺寸不变。
-- `overflow.continueIn`：这些都不够时，内容到哪里续排：另一个框，或这一页之后追加的一页（`'next-page'`、`'template:<id>'`），文字在那里接在截断部分的`overflow.mark`之后，按原来的大小续排。
+- `overflow.continueIn`：这些都不够时，内容到哪里续排：另一个框，或另一页（`'next-page'`、`'template:<id>'`、`'page:<id>'`），文字在那里接在截断部分的`overflow.mark`之后，按原来的大小续排。能续排到另一页的框会先续排，再缩小图片和文字，除非它的`fit.preferContinue`为`false`。
 
 缩放比例每级2.5%，排版取能放下的最大比例，所以只多出一行的文字排成97.5%，而不是直接降到最小值。必须保持字号的方框设`fit: { shrinkText: false }`；图片必须保持原大的页面，在其组中的各个框上设`fit: { scaleImages: false }`：
 
@@ -731,8 +743,8 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>某个<code>next</code>没有指向模板中的框；某个<code>overflow.continueIn</code>没有指向框（<code>'#x'</code>）或模板（<code>'template:x'</code>），或者不属于<code>'#frame'</code>、<code>'next-page'</code>和<code>'template:&lt;id&gt;'</code>这三种形式；或者<code>overflowTemplate</code>没有指向模板。放不下的内容不会在那里续排。</td>
-      <td>改正名称或id，或写成三种形式之一。</td>
+      <td>某个<code>next</code>没有指向模板中的框；某个<code>overflow.continueIn</code>没有指向框（<code>'#x'</code>）或模板（<code>'template:x'</code>），或者不属于<code>'#frame'</code>、<code>'next-page'</code>、<code>'template:&lt;id&gt;'</code>和<code>'page:&lt;id&gt;'</code>这些形式；或者<code>overflowTemplate</code>没有指向模板。放不下的内容不会在那里续排。</td>
+      <td>改正名称或id，或写成四种形式之一。</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>

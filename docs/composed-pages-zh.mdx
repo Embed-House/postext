@@ -197,7 +197,9 @@ Si necesitas o quieres comprar algo muy caro…
 { "name": "columna-2", "placement": { "anchor": { "to": "#columna-1", "edge": "right-of" } } }
 ```
 
-文字在两行之间断开，在下一个框中接着排，按那个框的宽度重新断行，不丢也不重复。`overflow.continueIn: "#frame"`的意思相同。要在这一页之后追加的页上接着排，见[文字续排时](#文字续排时)。
+文字在两行之间断开，在下一个框中接着排，按那个框的宽度重新断行，不丢也不重复。`overflow.continueIn: "#frame"`的意思相同。
+
+框的断开方式与正文相同。标题绝不排在片段的末尾：它跟着它引出的那几行走。在列表的项与项之间断开时，两边各至少留两项（`bodyText.avoidOrphansInLists`或`bodyText.avoidWidowsInLists`关闭时为一项）；在`bodyText.shortListSplit: 'avoid'`下，不超过`bodyText.shortListMaxItems`项的列表不在项与项之间断开。没有哪个断点满足这些条件时，片段在标题或列表之前结束，或者在列表的某一项中间结束。要在这一页之后追加的页上接着排，见[文字续排时](#文字续排时)。
 
 ### 推开文字的框
 
@@ -256,7 +258,7 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>模板中的某个框在这一页上什么也没收到：没有槽位指向它，它不接收标题；如果它是流文框，也没有剩下无槽位的内容。只接收另一个框延续过来的内容（<code>next</code>）的框不报告。<code>postext check</code>把它列为提示。</td>
+      <td>模板中的某个框在这一页上什么也没收到：没有槽位指向它，它不接收标题；如果它是流文框，也没有剩下无槽位的内容。只接收另一个框延续过来的内容（<code>next</code>）的框不报告。前面某页的文章跳转过来的框（<code>overflow.continueIn: 'page:&lt;id&gt;'</code>）也不报告。<code>postext check</code>把它列为提示。</td>
       <td>为它写上带其槽位的内容，或者在模板中把这个框标为<code>optional: true</code>。</td>
     </tr>
     <tr>
@@ -292,6 +294,12 @@ Si necesitas o quieres comprar algo muy caro…
 **原因**：`overflow.continueIn`为`'next-page'`或`'template:<id>'`的框把容纳不下的内容送到追加页，那一页上的框又把剩下的继续往后送，一页接一页，直到这个模板页追加的页数达到上限，即16页（见[文字续排时](#文字续排时)）。剩下的部分在最后一个追加页上于框底被裁掉；它仍留在文档、源码映射和流式版式的EPUB中。警告给出那一页的模板和框、追加的页数（`pages`）、被裁掉的高度（`overflowMm`）、框的`configPath`以及页码。最常见的情况是追加页上接收内容的框比文字小得多。
 
 **解决**：给那个框更多空间（加大它的高度，或者用带有更大框的`overflowTemplate`），或者缩短文字。要跨好几页才排得下的方框，通常应该放进正文。
+
+### continueTargetMissing
+
+**原因**：框的`overflow.continueIn`为`'page:<id>'`（见[跳转到后面的页面](#跳转到后面的页面)），而文章所在的页之后没有页面围栏`::::page{id="<id>"}`：id拼错了，围栏上没有写这个id，规则读取的围栏属性（`'page:{attr.sigue}'`）缺失，或者那个围栏在前面（`before: true`）。其余部分与`'next-page'`一样，排在紧接着追加的一页上。警告给出模板、框、`target`（要找的id）、框的`configPath`以及页码。
+
+**解决**：给后面那个页面围栏加上这个id，或者改正`continueIn`中的名称或它读取的围栏属性。文章之前的页接不了续排：把那个围栏移到文章之后，或者指定后面的一页。
 
 ## 文字变长时
 
@@ -333,10 +341,12 @@ Si necesitas o quieres comprar algo muy caro…
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>框到另一页上续排（<code>overflow.continueIn: 'next-page'</code>或<code>'template:&lt;id&gt;'</code>）：它在底边截断并带上续排标记，其余部分在这一页之后追加的页上接着排（见<a href="#文字续排时">文字续排时</a>）。它的文字和图片恢复原来的大小，因为放不下的部分反正会接着排。这一步不发出警告。</td>
+      <td>框到另一页上续排（<code>overflow.continueIn: 'next-page'</code>、<code>'template:&lt;id&gt;'</code>或<code>'page:&lt;id&gt;'</code>）：它在底边截断并带上续排标记，其余部分在这一页之后追加的页上接着排（见<a href="#文字续排时">文字续排时</a>）。它的文字和图片恢复原来的大小，因为放不下的部分反正会接着排。这一步不发出警告。</td>
     </tr>
   </tbody>
 </table>
+
+能续排到另一页的框会提前走这一步：在`redistribute`之后、`scaleImages`和`shrinkText`之前。跨几页排的文章保持同一个字号，最后一页也不会排得比前面几页小。只有在无法再续排时，它的图片和文字才会缩小：在续排所能追加的最后一页上，或者应该接收其余部分的框一点也接不下时。`fit.preferContinue: false`保持表中的顺序，适用于宁可缩小几个点也不愿多加一页的方框。
 
 没有哪一步能让内容放下时，框在底边截断，保留逐级重排达到的缩放比例，排版报告`frameOverflow`。追加页上的框如果收到的内容一点也接不下，就不再往后送（否则会无休止地追加页面）：它同样报告`frameOverflow`，尝试过的步骤中包括`continue`。每一步都把整页重排一遍，所以结果只取决于这一页：同样的输入得到同样的页面，溢出的框按模板中的顺序处理，修改一个模板页不会改变其他任何页面。相关设置见[配置 › 内容放不下时](/zh/docs/configuration-composed-pages#内容放不下时)。
 
@@ -389,7 +399,7 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 ## 文字续排时
 
-框可以把容纳不下的内容送到模板页之后追加的一页上。规则由框的`overflow.continueIn`决定：
+框可以把容纳不下的内容送到模板页之后追加的一页上，或者送到书中后面的某一页。规则由框的`overflow.continueIn`决定：
 
 <table>
   <thead>
@@ -411,6 +421,10 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
       <td><code>'template:&lt;id&gt;'</code></td>
       <td>那个模板的一页。</td>
     </tr>
+    <tr>
+      <td><code>'page:&lt;id&gt;'</code></td>
+      <td>后面的页面围栏<code>::::page&#123;id="&lt;id&gt;"&#125;</code>中的一个框，跳过中间的各页（见<a href="#跳转到后面的页面">跳转到后面的页面</a>）。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -423,13 +437,45 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-续排是[逐级重排](#仍然放不下时)的最后一步：框先变高，在组中腾出空间，在模板允许的范围内把图片和文字缩小排，这些都不够时才在底边截断。截断之后，它的文字和图片恢复原来的大小，这一片段以续排标记结束，其余部分从截断的那一行起接着排，按接收它的框的宽度重新断行。内容不丢也不重复，也不发出警告。
+续排是[逐级重排](#仍然放不下时)中的一步：框先变高，在组中腾出空间，这些不够时就在底边截断，而不先把图片或文字缩小（除非它的`fit.preferContinue`为`false`）。它的文字和图片保持原来的大小，这一片段以续排标记结束，其余部分从截断的那一行起接着排，按接收它的框的宽度重新断行。内容不丢也不重复，也不发出警告。
 
-- **哪个框接收。** 在追加页上，内容进入同名的框；模板中没有同名的框时，进入它的流文框；再没有，就进入它第一个还没被占用的框。一页上有几个框续排到同一个模板时，如果那个模板为每个框都备有一个框，它们共用一个追加页；否则后面那个框单独占一页。追加页上什么也没收到的框留空。
+- **哪个框接收。** 在追加页上，内容进入同名的框；模板中没有同名的框时，进入它的流文框；再没有，就进入它第一个还没被占用的框。用`next`串接的文章从串的开头接着排：三个串接的栏中第三栏剩下的内容，进入追加页的第一栏（与串首同名的框，没有则进入流文框），所以续排到自身的正文模板会填满每一页的每一栏。一页上有几个框续排到同一个模板时，如果那个模板为每个框都备有一个框，它们共用一个追加页；否则后面那个框单独占一页。追加页上什么也没收到的框留空。
 - **一次又一次。** 仍然放不下的片段再接着排到下一个追加页：框在那一页上有自己的`overflow.continueIn`时按它来，否则沿用把内容带来的那条规则。一个模板页最多连续追加16页；最后一页上仍放不下的部分被裁掉，并报告为[`frameContinuationLimit`](#framecontinuationlimit)。追加页上的框如果小到一点内容也接不下，就报告`frameOverflow`，而不再追加页面。
+- **在哪里截断。** 与页面上相同：标题跟着它的头几行，列表两边各留两项（见[串接框](#串接框)）。方框一点也放不进这一页时，整个方框连同标签一起接着排：页面上不会留下一个标签和一个续排标记，下面却是空的片段。此时方框在原页面上不占位置；如果它下面的答题区在那里保持不了原有大小，方框就连同答题区一起整体转到后面。
+- **各页保留什么。** 被截断的框先让出它在组中的空间，所以它后面的框保持原来的大小。其余部分在再排一遍的同一个模板上接着排时，纵向组里紧跟在它后面的空框（活动方框下面留给作答的空白：不接收内容的框）随它一起走。它们在本页上不占空间；在追加页上，它们在方框剩下的部分下方保持原来的大小，锚定在它们上面的装饰也一样。那个追加页上的其他框不占空间，它们的装饰也不画出；纵向组保持它的第一个框在模板中的位置，所以方框剩下的部分从纵向组开始的地方排起，避开该页的引题和书眉。
 - **普通的页。** 追加页是书中的页：它们有页码，带有所用模板（或所在章节）的书眉，采用所在一侧的`variants`，页面围栏的`{attr.x}`也照样传到它们的装饰。设了`spread: true`的续排模板从下一个偶数页开始，需要时先插一个为奇偶而留的空白页，并占用紧接着的奇数页；`overflowTemplate`为单页模板的跨页，续排到单页上。页面围栏之后的文字从最后一个追加页的下一页开始。
 - **id。** 第n个追加页上的框是`cp0:<name>~<n>`；接收内容的框，以围栏本页上最先把内容送出的那个框来命名（`cp0:dinero~1`、`cp0:dinero~2`），所以不论由哪个框接收，选区都保持原来的元素。每个框记下它从哪个框接续而来、又接续到哪个框（`continuedFrom`、`continuesTo`），该页的`VDTPage.composed.continuationOf`是围栏本页的索引，各片段的块带有方框的id加上`-cont-<n>`，与拆分框相同。
 - **重新排版。** 内容续排的模板页每次构建都连同追加页一起重新排：页面缓存只保留内容不越出本页的页面。
+
+### 跳转到后面的页面
+
+杂志文章在自己的页上排不完时，会跳过别的文章，转到后面的某一页：“转第47页”。`overflow.continueIn: 'page:<id>'`把其余部分送到带有那个`id`的页面围栏，不论它在本章后面的什么地方：
+
+```markdown
+::::page{template="articulo" sigue="p47"}
+…
+::::
+
+::::page{template="otra"}
+…
+::::
+
+::::page{template="saltos" id="p47"}
+…
+::::
+```
+
+```json
+{ "name": "cuerpo", "flow": true,
+  "overflow": { "continueIn": "page:{attr.sigue}",
+    "mark": "转第 {page} 页", "fromMark": "接第 {page} 页" } }
+```
+
+- **哪一页。** `<id>`可以是`{attr.name}`，从文章所在的页面围栏读取，这样一个文章模板就能用于每一篇文章，每篇转到哪里由Markdown来写。
+- **哪个框。** 由`'page:<id>#<frame>'`指定的框；没有指定时，进入与送出内容的串首同名的框，没有则进入那一页自身内容留空的第一个框。那一页在其他框中照样排自己的内容。
+- **跳转之后。** 那个框容纳不下的部分，排在跳转页之后追加的页上，从那里起与`'next-page'`相同；在跳转页上找不到空框的文章也到那里接着排。
+- **id与链接。** 跳转页上的框保留自己的id（`cp2:resto`）。送出内容的框的`continuesTo`和接收内容的框的`continuedFrom`把各片段连起来，送出页的重排记录写着“cuerpo continued on page 47”。流式EPUB和带标签的PDF把文章当作一个整体来读。
+- **不在后面的页。** 后面没有哪个页面围栏带有这个id时，报告[`continueTargetMissing`](#continuetargetmissing)，其余部分排在下一页上。
 
 ### 续排标记
 
@@ -449,7 +495,7 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
     </tr>
     <tr>
       <td>字符串</td>
-      <td>就用这些文字：<code>"下页接续"</code>。</td>
+      <td>就用这些文字：<code>"下页接续"</code>。其中的<code>&#123;page&#125;</code>是其余部分所在那一页印出的页码：<code>"转第 &#123;page&#125; 页"</code>。</td>
     </tr>
     <tr>
       <td><code>false</code></td>
@@ -462,7 +508,7 @@ warning frameOverflow (chapters/03.md:12, page 17): Frame "recuadro" of template
 
 续排标记排在片段最后一行的下方，用方框的正文字体，对齐和倾斜按样式的`continuesMarkerAlign`和`continuesMarkerItalic`（默认右对齐、斜体）。它属于分页用的附属内容：流式EPUB不输出它，带标签的PDF把它标为版面工件。同一页上用`next`串接的框不带标记。
 
-追加页上的片段开头不带框的标签和标题，与拆分框后面的各部分一样。设了`repeatTitle: true`的样式在那里重复标题，并加上`continuedSuffix`（“(cont.)”），起“接上页”标记的作用。
+另一页上的片段开头不带框的标签和标题，与拆分框后面的各部分一样。`overflow.fromMark`设定片段开头的文字，`{page}`是内容所来自那一页的页码：`"接第 {page} 页"`。接收内容的框自己的`fromMark`优先于送出内容的框的；不设置就没有。设了`repeatTitle: true`的样式在那里重复标题，并加上`continuedSuffix`（“(cont.)”）。两种标记都用方框的正文字体，对齐和倾斜与末尾的标记相同，也都属于分页用的附属内容。
 
 ## 重排记录
 

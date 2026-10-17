@@ -135,6 +135,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>La salida paginada corta el resto al pie de ese marco; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida.</td>
     </tr>
     <tr>
+      <td><code>continueTargetMissing</code></td>
+      <td>El <code>overflow.continueIn: 'page:&lt;id&gt;'</code> de un marco no nombra ninguna valla de página posterior a aquella en la que está su historia (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> cuando esa valla va antes, <code>configPath</code>). Lo da la maquetación, con el <code>pageIndex</code> de la página que envía.</td>
+      <td>El resto sigue en una página añadida detrás de la página que envía, como con <code>'next-page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>spreadMismatch</code></td>
       <td>La apertura de una página compuesta y su plantilla no coinciden en la doble página (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, el <code>spread</code> de la apertura; <code>templateSpread</code>, el de la plantilla).</td>
       <td>Manda la plantilla: una plantilla de doble página se compone en dos páginas enfrentadas, y cualquier otra en una.</td>
