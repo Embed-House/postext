@@ -260,6 +260,39 @@ class ExtractTest(unittest.TestCase):
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class CardClipTest(unittest.TestCase):
+    def test_picture_is_cut_no_further_than_its_card(self):
+        import contextlib
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            doc = fitz.open()
+            page = doc.new_page(width=210 * MM, height=297 * MM)
+            page.draw_rect(R(0, 0, 210, 297), color=None, fill=(0.05, 0.7, 0.6))
+            page.draw_rect(R(10, 20, 200, 250), color=None, fill=(1, 1, 1), radius=0.02)   # the card
+            for i in range(24):   # a map on it
+                x, y = 20 + (i % 4) * 40, 120 + (i // 4) * 20
+                pts = [fitz.Point((x + dx) * MM, (y + dy) * MM) for dx, dy in ((0, 0), (36, 2), (40, 20), (8, 22), (-2, 10))]
+                page.draw_polyline(pts + [pts[0]], color=(0.2, 0.5, 0.2), fill=(0.6, 0.8, 0.5), closePath=True)
+            # white masks that hide the map's overflow past the card, and the folio's icons close under them
+            page.draw_rect(R(20, 240, 190, 253.5), color=None, fill=(1, 1, 1))
+            for i in range(3):
+                page.draw_rect(R(20 + i * 2, 254.2, 21.2 + i * 2, 255.4), color=None, fill=(0.0, 0.68, 0.55))
+            text(page, 100, 270, "BOOK 1", size=10)
+            pdf = root / "card.pdf"
+            doc.save(str(pdf))
+            out = root / "out"
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                pr.main(["extract", str(pdf), "--out", str(out), "--lang", "en"])
+            regions = json.loads((out / "regions.json").read_text(encoding="utf-8"))
+            card = regions[0]["cards"][0]
+            pics = [f for f in regions[0]["frames"] if f["kind"] in ("picture", "figure")]
+            self.assertTrue(pics)
+            for f in pics:
+                self.assertLessEqual(f["box"][3], card[3] + 0.05, f)
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
 class HelpersTest(unittest.TestCase):
     def test_parse_pages(self):
         self.assertEqual(pr.parse_pages("2-4,7", 10), [2, 3, 4, 7])
@@ -283,6 +316,13 @@ class HelpersTest(unittest.TestCase):
             self.assertEqual(f.face("OddFace"), ("Other", 500, False))
         finally:
             os.unlink(fh.name)
+
+    def test_wrap_slack(self):
+        # the right padding of a box gives up per cent of the measure (at most 2.5 mm), never below 0.5 mm
+        self.assertAlmostEqual(pr.give_slack(3.0, 80.0, {"wrap_slack": 2.5}), 1.0)
+        self.assertAlmostEqual(pr.give_slack(3.0, 200.0, {"wrap_slack": 2.5}), 0.5)
+        self.assertAlmostEqual(pr.give_slack(3.0, 80.0, {"wrap_slack": 0.0}), 3.0)
+        self.assertAlmostEqual(pr.give_slack(0.2, 80.0, {"wrap_slack": 2.5}), 0.2)
 
     def test_xy_order(self):
         F = pr.Frame
@@ -436,6 +476,20 @@ class DedupeTest(unittest.TestCase):
         moved = next(f for f in patch["frames"] if f["name"] == "box-1")
         self.assertEqual(moved["placement"]["offset"]["y"]["value"], 60)
         self.assertNotIn("width", moved)
+
+    def test_image_distance_sees_a_thin_difference(self):
+        # two pages mostly white paper: a thin drawing elsewhere is a difference, noise is not
+        a = Image.new("RGB", (512, 512), "white")
+        b = a.copy()
+        for x in range(60, 400):
+            b.putpixel((x, 300), (0, 0, 0))
+            b.putpixel((x, 301), (0, 0, 0))
+        self.assertEqual(td.image_distance(a, b), 255.0)
+        c = a.copy()
+        for x in range(0, 512, 7):
+            c.putpixel((x, 5), (230, 230, 230))
+        self.assertLess(td.image_distance(a, c), 1.0)
+        self.assertEqual(td.image_distance(a, a.resize((256, 256))), 255.0)
 
     def test_rewrite_markdown(self):
         md = '::::page{template="p01" ground="g2"}\nA :mark[word]{style="mark-1"} here.\n::::\n'

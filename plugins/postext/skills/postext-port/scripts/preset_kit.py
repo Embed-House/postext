@@ -427,6 +427,7 @@ def font_families(project: Path | str, redistributable: dict[str, bool] | None =
         if f.suffix.lower() not in (".ttf", ".otf", ".woff2"):
             continue
         fam, weight, style = _font_meta(f)
+        fam, style = _ps_width_italic(f, fam, style)
         fams.setdefault(fam, []).append({"weight": weight, "style": style, "file": f"fonts/{f.name}"})
     out = []
     for name, variants in fams.items():
@@ -442,6 +443,36 @@ def font_families(project: Path | str, redistributable: dict[str, bool] | None =
 _WEIGHTS = {"thin": 100, "extralight": 200, "ultralight": 200, "light": 300, "regular": 400, "book": 400,
             "normal": 400, "medium": 500, "semibold": 600, "demibold": 600, "demi": 600, "bold": 700,
             "extrabold": 800, "ultrabold": 800, "black": 900, "heavy": 900}
+
+
+_WIDTH_WORDS = ("cn", "cond", "condensed", "narrow", "compressed", "comp", "extended", "ext", "wide",
+                "semicondensed", "extracondensed", "xcn")
+
+
+def _ps_width_italic(path: Path, fam: str, style: str) -> tuple[str, str]:
+    """The width and slant the PostScript name says and the name tables do
+    not: Humanist Sans's `-BoldCn` names its family «Humanist Sans»
+    (two faces of one family, weight and style, one of them lost), and
+    Humanist Serif's `-It` sets no italic flag (the upright text came
+    out italic). The width word joins the family («Humanist Sans Cn»), as
+    pdf_regions.py names the faces of a PDF."""
+    ps = path.stem
+    try:
+        from fontTools.ttLib import TTFont  # type: ignore
+
+        with TTFont(str(path), lazy=True, fontNumber=0) as ft:
+            ps = ft["name"].getDebugName(6) or path.stem
+    except Exception:
+        pass
+    sub = ps.partition("-")[2]
+    low = sub.lower()
+    if any(w in low for w in ("italic", "oblique")) or re.search(r"(^|[a-z])it$", low) or low.endswith("ita"):
+        style = "italic"
+    tokens = [t.lower() for t in re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?![a-z])|\d+", sub)]
+    for wd in (t for t in tokens if t in _WIDTH_WORDS):
+        if wd not in fam.lower().replace(" ", ""):
+            fam = f"{fam} {wd.capitalize()}"
+    return fam, style
 
 
 def _font_meta(path: Path) -> tuple[str, int, str]:

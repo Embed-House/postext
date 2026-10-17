@@ -33,7 +33,7 @@ chapters/<lang>/*.md. The script rewrites the three in place (with
   by page number; the page fences follow the new ids.
 - **Pictures.** Resources that a template's decoration reads from a page
   attribute (`resourceId: "{attr.fondo}"`) and look alike (mean difference
-  of a 64-pixel thumbnail at most --image-tol on 0–255) become one; the
+  of a 512-pixel thumbnail at most --image-tol on 0–255) become one; the
   page fences name the one kept and the other files are deleted.
 
 The report lists every merge with the largest difference it accepted, so a
@@ -613,7 +613,13 @@ def common_base(templates: list[dict], tol: float, max_diff: int, used: set[str]
                 frames.remove(f)
                 changed = True
     elements: list[dict] = []
-    keys = sorted({element_key(e) for t in roots for e in decoration_of(t)})
+    # in paint order (the first template that has each element says where it
+    # goes): sorted by key, the page's ground came after the folios and the
+    # running heads and painted over them
+    keys = list(dict.fromkeys(element_key(e) for t in roots for e in decoration_of(t)))
+    grounds = [k for k in keys if any(e.get("kind") == "image" and element_key(e) == k
+                                      for t in roots for e in decoration_of(t))]
+    keys = grounds + [k for k in keys if k not in grounds]
     for k in keys:
         cands = [e for t in roots for e in decoration_of(t) if element_key(e) == k]
         best = None
@@ -692,15 +698,27 @@ def thumb(path: Path):
     from PIL import Image  # type: ignore
 
     im = Image.open(path).convert("RGB")
-    im.thumbnail((64, 64))
+    im.thumbnail((512, 512))
     return im
 
 
 def image_distance(a, b) -> float:
+    """Mean difference of two thumbnails (0-255), or 255 when they differ
+    in place: a page that is mostly white paper (a cover, a contents page)
+    has a small mean difference from another such page even when its
+    drawings are elsewhere, and a thin rule (a diagram's connectors on the
+    ground) changes few pixels, so more than 0.05 % of the pixels of a
+    512-pixel thumbnail differing by over 48 on a channel makes two
+    pictures different."""
     if a.size != b.size:
         return 255.0
-    pa, pb = list(a.tobytes()), list(b.tobytes())
-    return sum(abs(x - y) for x, y in zip(pa, pb)) / max(1, len(pa))
+    pa, pb = a.tobytes(), b.tobytes()
+    diffs = [abs(x - y) for x, y in zip(pa, pb)]
+    n_px = max(1, len(diffs) // 3)
+    far = sum(1 for i in range(0, len(diffs) - 2, 3) if max(diffs[i], diffs[i + 1], diffs[i + 2]) > 48)
+    if far > 0.0005 * n_px:
+        return 255.0
+    return sum(diffs) / max(1, len(diffs))
 
 
 def dedupe_images(resources: list[dict], ids: list[str], root: Path, tol: float) -> tuple[dict[str, str], list[dict]]:
