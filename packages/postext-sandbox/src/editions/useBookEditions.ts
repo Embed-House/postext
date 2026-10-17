@@ -3,8 +3,8 @@
 /**
  * The editions of the book on screen (#867): the locales a preset's bundle
  * carries, the one open, and their layouts behind the reader (see
- * `editionStore.ts`). A local project holds the one edition it was
- * imported in.
+ * `editionStore.ts`). A local project keeps every edition of the bundle
+ * it was imported from (#903).
  */
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
@@ -13,15 +13,17 @@ import { useSandboxPresetProvider, useSandboxSelector } from '../context/Sandbox
 import { presetLocales, sameLocaleTag } from '../presets/locale';
 import { useLayoutService } from '../worker/LayoutServiceContext';
 import { onLateFonts } from '../worker/LayoutService';
-import { editionEntry, editionsVersion, ensureEdition, loadPresetEdition, subscribeEditions, type EditionEntry } from './editionStore';
+import { editionEntry, editionsVersion, ensureEdition, loadPresetEdition, loadProjectEdition, subscribeEditions, type EditionEntry } from './editionStore';
 
 export interface BookEditions {
   /** `preset:<id>` or `project:<id>`. */
   bookKey: string;
   /** The preset on screen, null for a local project. */
   presetId: string | null;
-  /** Every edition, in the bundle's order (the one on screen alone for a
-   *  project). */
+  /** The local project on screen, null for a preset. */
+  projectId: string | null;
+  /** Every edition, in the bundle's order (a project keeps the ones it was
+   *  imported with, #903). */
   locales: string[];
   /** The edition on screen (`''` when the book names no language). */
   activeLocale: string;
@@ -41,6 +43,7 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
   const activePresetId = useSandboxSelector((s) => s.activePresetId);
   const appliedLocale = useSandboxSelector((s) => (s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null));
   const summary = useSandboxSelector((s) => s.presetSummaries.find((p) => p.id === s.activePresetId));
+  const project = useSandboxSelector((s) => (s.activeProjectId === null ? undefined : s.projects.find((p) => p.id === s.activeProjectId)));
   const drafts = useSandboxSelector((s) => s.presetDrafts);
   const chapters = useSandboxSelector((s) => s.chapters);
   const config = useSandboxSelector((s) => s.config);
@@ -53,12 +56,14 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
 
   const presetId = activeProjectId === null ? activePresetId : null;
   const bookKey = presetId !== null ? `preset:${presetId}` : `project:${activeProjectId}`;
-  const activeLocale = appliedLocale ?? config.locale ?? '';
+  const activeLocale = presetId === null ? project?.locale ?? config.locale ?? '' : appliedLocale ?? config.locale ?? '';
+  const projectLocales = project?.locales;
   const locales = useMemo(() => {
-    const listed = presetId !== null && summary ? presetLocales(summary) : [];
+    const listed = presetId !== null && summary ? presetLocales(summary) : projectLocales ?? [];
     if (listed.length === 0) return [activeLocale];
     return listed.some((l) => sameLocaleTag(l, activeLocale)) || activeLocale === '' ? listed : [activeLocale, ...listed];
-  }, [presetId, summary, activeLocale]);
+  }, [presetId, summary, projectLocales, activeLocale]);
+  const editionsRev = project?.editionsRev;
   const onlyKey = only?.join('|') ?? '';
   // Faces that land after a layout measured it without them: the editions
   // are laid out again, as the previews are.
@@ -102,7 +107,31 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
   }, [enabled, bookKey, activeLocale, chapters, config, resources, chapterLayouts, bookStart, service, onlyKey, fontsEpoch]);
 
-  // The other editions: their draft, else the bundle's text.
+  // The other editions of a local project: the content its record keeps
+  // aside for them (#903).
+  useEffect(() => {
+    if (!enabled || presetId !== null || activeProjectId === null || locales.length < 2) return;
+    const timer = setTimeout(() => {
+      for (const locale of locales) {
+        if (sameLocaleTag(locale, activeLocale)) continue;
+        if (only && !only.some((l) => sameLocaleTag(l, locale))) continue;
+        ensureEdition({
+          bookKey,
+          locale,
+          // Moves when the editions swap places (an import, a switch), not
+          // with every autosave of the edition on screen.
+          identity: [editionsRev ?? 'original', fontsEpoch],
+          other: true,
+          service,
+          load: () => loadProjectEdition(activeProjectId, locale),
+        });
+      }
+    }, fontsEpoch === 0 ? 0 : ACTIVE_EDITION_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
+  }, [enabled, presetId, activeProjectId, bookKey, locales, activeLocale, editionsRev, service, onlyKey, fontsEpoch]);
+
+  // The other editions of a preset: their draft, else the bundle's text.
   useEffect(() => {
     if (!enabled || presetId === null) return;
     const provider = presetProvider(presetId);
@@ -134,5 +163,5 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `version` changes with every entry
   }, [bookKey, locales, version]);
 
-  return { bookKey, presetId, locales, activeLocale, entries };
+  return { bookKey, presetId, projectId: activeProjectId, locales, activeLocale, entries };
 }

@@ -42,8 +42,8 @@ describe('view hash', () => {
     expect(parseViewHash('#project=3f2a1c4e-9b7d-4a10-8c2e-5d6f7a8b9c0d&view=pdf&chapter=3')).toEqual({
       ...EMPTY_VIEW_HASH, project: '3f2a1c4e-9b7d-4a10-8c2e-5d6f7a8b9c0d', view: 'pdf', chapter: 2,
     });
-    // A locale belongs to a preset; a project carries its own.
-    expect(parseViewHash('#project=p1&lang=es')).toEqual({ ...EMPTY_VIEW_HASH, project: 'p1' });
+    // A project in several languages names the edition on screen (#903).
+    expect(parseViewHash('#project=p1&lang=es')).toEqual({ ...EMPTY_VIEW_HASH, project: 'p1', lang: 'es' });
     // Both named: the project wins.
     expect(parseViewHash('#preset=x&project=p1')).toEqual({ ...EMPTY_VIEW_HASH, project: 'p1' });
     // Locale tags are normalised; junk is dropped.
@@ -68,8 +68,10 @@ describe('view hash', () => {
     expect(viewHashFragment({ chapter: null, page: null })).toBe('');
     expect(viewHashFragment({ preset: 'bioquimica-feduchi', lang: 'es', view: 'canvas', chapter: 0, page: 7 }))
       .toBe('#preset=bioquimica-feduchi&lang=es&view=canvas&chapter=1&page=7');
-    // A project's fragment carries no locale; a preset is not named beside it.
-    expect(viewHashFragment({ project: 'p1', preset: 'x', lang: 'es', view: 'html' })).toBe('#project=p1&view=html');
+    // A project carries its edition when it keeps several (#903); a preset
+    // is not named beside it.
+    expect(viewHashFragment({ project: 'p1', preset: 'x', lang: 'es', view: 'html' })).toBe('#project=p1&lang=es&view=html');
+    expect(viewHashFragment({ project: 'p1', lang: null, view: 'html' })).toBe('#project=p1&view=html');
     expect(viewHashFragment({ project: 'p1', view: 'epub', chapter: 0 })).toBe('#project=p1&view=epub&chapter=1');
     expect(viewHashFragment({ preset: 'libro/uno' })).toBe('#preset=libro%2Funo');
   });
@@ -117,6 +119,13 @@ describe('view hash', () => {
     expect(sameBook({ preset: null, project: 'p1', lang: null }, onProject)).toBe(true);
     expect(sameBook({ preset: null, project: 'p2', lang: null }, onProject)).toBe(false);
     expect(sameBook({ preset: null, project: 'p1', lang: null }, onPreset)).toBe(false);
+    // A project in several languages (#903): its edition on screen, or any.
+    const onEdition = { preset: null, project: 'p1', lang: 'es' };
+    expect(sameBook({ preset: null, project: 'p1', lang: null }, onEdition)).toBe(true);
+    expect(sameBook({ preset: null, project: 'p1', lang: 'ES' }, onEdition)).toBe(true);
+    expect(sameBook({ preset: null, project: 'p1', lang: 'ca' }, onEdition)).toBe(false);
+    // A project in one language names no edition: a link's is not held against it.
+    expect(sameBook({ preset: null, project: 'p1', lang: 'ca' }, onProject)).toBe(true);
   });
 
   // #198: a Chinese edition named by a mixed-case tag.

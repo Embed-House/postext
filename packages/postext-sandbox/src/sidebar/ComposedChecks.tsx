@@ -133,7 +133,7 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
   const name = (l: string) => (l ? localeDisplayName(l, uiLocale) : '?');
 
   const jump = (c: ComposedCheck) => {
-    requestFrameJump({ ...jumpFor(c), presetId: editions.presetId });
+    requestFrameJump({ ...jumpFor(c), presetId: editions.presetId, projectId: editions.projectId });
   };
 
   return (

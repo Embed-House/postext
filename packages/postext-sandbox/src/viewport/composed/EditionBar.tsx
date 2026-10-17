@@ -26,8 +26,8 @@ export function EditionBar({ comparing, onToggleCompare }: { comparing: boolean;
   const chapters = useSandboxSelector((s) => s.chapters);
   const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
   const docRef = useSandboxDocRef();
-  const { presetId, locales, activeLocale } = useBookEditions(false);
-  if (presetId === null || locales.length < 2) return null;
+  const { presetId, projectId, locales, activeLocale } = useBookEditions(false);
+  if ((presetId === null && projectId === null) || locales.length < 2) return null;
 
   const switchTo = (locale: string) => {
     if (sameLocaleTag(locale, activeLocale)) return;
@@ -40,6 +40,7 @@ export function EditionBar({ comparing, onToggleCompare }: { comparing: boolean;
     // its number.
     requestFrameJump({
       presetId,
+      projectId,
       locale,
       chapterIndex: chapterIndex >= 0 ? chapterIndex : null,
       page: page?.composed ? null : hash.page,

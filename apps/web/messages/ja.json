@@ -2466,7 +2466,7 @@
     "projectBusy": "処理中…",
     "projectImportError": "ファイルを読み込めませんでした",
     "projectImportInvalid": "有効な.postextバンドルではありません（preset.jsonがないか、形式が正しくありません）",
-    "projectImportLocale": "「__name__」は複数の言語で提供されています。読み込む言語：",
+    "projectImportLocale": "「__name__」は複数の言語で提供されており、すべて保持されます。開く言語：",
     "projectExportWarnings": "警告付きで書き出しました：__list__",
     "projectMissingFile": "「__id__」のファイルがないため、スキップしました",
     "projectFontSkipped": "フォント「__name__」をスキップしました（未対応の形式）",

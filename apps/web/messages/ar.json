@@ -2466,7 +2466,7 @@
     "projectBusy": "جارٍ العمل…",
     "projectImportError": "تعذّر استيراد الملف",
     "projectImportInvalid": "ليست حزمة ⁦.postext⁩ صالحة (الملف preset.json مفقود أو تالف)",
-    "projectImportLocale": "«__name__» متاح بعدة لغات. استورده بلغة:",
+    "projectImportLocale": "«__name__» متاح بعدة لغات وتُحفَظ كلها. افتحه بلغة:",
     "projectExportWarnings": "صُدّر مع تحذيرات: __list__",
     "projectMissingFile": "الملف الخاص بـ «__id__» مفقود، فتم تخطيه",
     "projectFontSkipped": "تم تخطي الخط «__name__» (صيغة غير مدعومة)",

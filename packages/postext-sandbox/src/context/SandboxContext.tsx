@@ -37,7 +37,7 @@ import { customFontsSignature, setCustomFonts } from '../controls/fontLoader';
 import { pruneFontFiles } from '../storage/fontStorage';
 import { pruneBlobs } from '../storage/blobStore';
 import { keepMigrationSnapshots } from '../migrate/textMigration';
-import { collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects';
+import { allEditionChapters, collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects';
 import {
   decideDraftSave,
   deletePresetDraft,
@@ -1036,14 +1036,15 @@ export function useSandboxActiveProjectId(): string | null {
  *  project — without subscribing to any state. */
 export function useSandboxBookActions(): {
   loadPreset: SandboxStore['loadPreset'];
-  activateProject: ProjectActions['activate'];
+  /** Open a project, in the edition `locale` when it keeps several (#903). */
+  activateProject: (id: string, locale?: string) => Promise<void>;
   openHashBundle: SandboxStore['openHashBundle'];
   hashBundleKeys: readonly string[];
 } {
   const store = useStore();
   return {
     loadPreset: store.loadPreset,
-    activateProject: store.projectActions.activate,
+    activateProject: (id, locale) => (locale ? store.projectActions.switchEdition(id, locale) : store.projectActions.activate(id)),
     openHashBundle: store.openHashBundle,
     hashBundleKeys: store.hashBundleKeys,
   };
@@ -1665,7 +1666,7 @@ export function SandboxProvider({
         projectsLoadedRef.current = true;
         // Layout records of chapters no book holds any more are dropped.
         void pruneChapterLayoutStore(new Set([
-          ...projects.flatMap((p) => p.chapters.map((c) => c.id)),
+          ...projects.flatMap((p) => allEditionChapters(p).map((c) => c.id)),
           ...drafts.flatMap((d) => d.chapters.map((c) => c.id)),
           ...stateRef.current.chapters.map((c) => c.id),
         ])).catch(() => undefined);
@@ -1743,9 +1744,10 @@ export function SandboxProvider({
         const onScreen: ViewHashBook = {
           project: before.activeProjectId,
           preset: before.activeProjectId === null ? before.activePresetId : null,
-          lang: before.activeProjectId === null && before.presetApplied?.presetId === before.activePresetId
-            ? before.presetApplied.locale ?? null
-            : null,
+          lang: before.activeProjectId === null
+            ? before.presetApplied?.presetId === before.activePresetId ? before.presetApplied.locale ?? null : null
+            // A project in several languages is on screen in one of them (#903).
+            : (() => { const p = projects.find((x) => x.id === before.activeProjectId); return p?.editions ? p.locale ?? null : null; })(),
         };
         // A homepage link (`restore=ask`) to a preset the reader has edited
         // in the locale it opens in: they choose between their version and
@@ -1784,7 +1786,7 @@ export function SandboxProvider({
         if (!bundleRef && !linkNamesBookOnScreen(wanted, onScreen, summaries)) {
           if (wanted.project !== null && projects.some((p) => p.id === wanted.project)) {
             await saveOutgoing();
-            await projectActions.activate(wanted.project).catch(() => undefined);
+            await (wanted.lang ? projectActions.switchEdition(wanted.project, wanted.lang) : projectActions.activate(wanted.project)).catch(() => undefined);
             return;
           }
           const provider = wanted.preset === null ? undefined : providers.find((p) => p.summary.id === wanted.preset);

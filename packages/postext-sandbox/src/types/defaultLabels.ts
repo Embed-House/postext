@@ -1865,7 +1865,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   projectBusy: 'Working…',
   projectImportError: 'The file could not be imported',
   projectImportInvalid: 'Not a valid .postext bundle (preset.json missing or malformed)',
-  projectImportLocale: '“__name__” comes in several languages. Import it in:',
+  projectImportLocale: '“__name__” comes in several languages and keeps them all. Open it in:',
   projectExportWarnings: 'Exported with warnings: __list__',
   projectMissingFile: 'Missing file for "__id__", skipped',
   projectFontSkipped: 'Font "__name__" skipped (unsupported format)',

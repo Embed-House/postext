@@ -29,6 +29,13 @@ export interface ProjectThumbnail {
   mime: string;
 }
 
+/** One edition of a project imported from a bundle in several languages
+ *  (#903): what a record holds of the book (chapters, configuration,
+ *  resources). The record's own content is the edition on screen
+ *  (`ProjectRecord.locale`); the others are kept aside in `editions`, by
+ *  locale tag, and swap places with it when the reader switches. */
+export type ProjectEditionContent = ProjectContent;
+
 export interface ProjectRecord extends ProjectContent {
   /** Record shape; legacy records (single `markdown`) are migrated on read. */
   version: typeof PROJECT_RECORD_VERSION;
@@ -50,6 +57,17 @@ export interface ProjectRecord extends ProjectContent {
    *  `hashBundles`). The same link opens this project again instead of
    *  importing a second copy. */
   origin?: string;
+  /** The editions other than the one in the record's own content, by
+   *  locale tag (a bundle imported with several languages keeps them all,
+   *  #903). Absent for a book in one language. */
+  editions?: Record<string, ProjectEditionContent>;
+  /** Every edition's tag, in the bundle's order, the record's own
+   *  included. Present with `editions`. */
+  editionLocales?: string[];
+  /** When the set of other editions last changed (an import, a switch):
+   *  the checks and the side-by-side view lay an edition out again when it
+   *  moves, not at every autosave. */
+  editionsRev?: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -57,11 +75,78 @@ export interface ProjectRecord extends ProjectContent {
 export type ProjectSummary = Pick<
   ProjectRecord,
   'id' | 'name' | 'description' | 'locale' | 'bundleId' | 'sourcePresetId' | 'thumbnail' | 'origin' | 'createdAt' | 'updatedAt'
-> & { chapterCount: number };
+> & {
+  chapterCount: number;
+  /** The editions of a book in several languages (two or more). */
+  locales?: string[];
+  editionsRev?: number;
+};
 
 export function toSummary(r: ProjectRecord): ProjectSummary {
   const { id, name, description, locale, bundleId, sourcePresetId, thumbnail, origin, createdAt, updatedAt } = r;
-  return { id, name, description, locale, bundleId, sourcePresetId, thumbnail, ...(origin ? { origin } : {}), createdAt, updatedAt, chapterCount: r.chapters.length };
+  const locales = r.editions && r.editionLocales && r.editionLocales.length > 1 ? r.editionLocales : undefined;
+  return {
+    id, name, description, locale, bundleId, sourcePresetId, thumbnail, ...(origin ? { origin } : {}), createdAt, updatedAt, chapterCount: r.chapters.length,
+    ...(locales ? { locales, ...(r.editionsRev !== undefined ? { editionsRev: r.editionsRev } : {}) } : {}),
+  };
+}
+
+const sameTag = (a: string, b: string): boolean => a.toLowerCase() === b.toLowerCase();
+
+/** The record with the edition `locale` on screen: its content moves to
+ *  the record's own fields and the edition that was there goes aside, so
+ *  nothing is lost either way. The same record when `locale` is already
+ *  the record's, or no edition has it. Pure. */
+export function withActiveEdition(record: ProjectRecord, locale: string): ProjectRecord {
+  const editions = record.editions;
+  if (!editions || (record.locale !== undefined && sameTag(record.locale, locale))) return record;
+  const key = Object.keys(editions).find((k) => sameTag(k, locale));
+  if (key === undefined) return record;
+  const target = editions[key]!;
+  const { [key]: _taken, ...rest } = editions;
+  void _taken;
+  const aside: ProjectEditionContent = {
+    chapters: record.chapters,
+    activeChapterId: record.activeChapterId,
+    ...(record.canvasScope ? { canvasScope: record.canvasScope } : {}),
+    ...(record.start ? { start: record.start } : {}),
+    config: record.config,
+    resources: record.resources,
+  };
+  const nextEditions = record.locale !== undefined ? { ...rest, [record.locale]: aside } : rest;
+  const next: ProjectRecord = {
+    ...record,
+    chapters: target.chapters,
+    activeChapterId: target.activeChapterId,
+    config: target.config,
+    resources: target.resources,
+    locale: key,
+    editions: nextEditions,
+    editionsRev: Date.now(),
+  };
+  if (target.canvasScope) next.canvasScope = target.canvasScope;
+  else delete next.canvasScope;
+  if (target.start) next.start = target.start;
+  else delete next.start;
+  return next;
+}
+
+/** The content of an edition of a record: its own when `locale` is the
+ *  record's, else the one aside. */
+export function editionContentOf(record: ProjectRecord, locale: string): ProjectEditionContent | null {
+  if (record.locale === undefined || sameTag(record.locale, locale)) return record;
+  const key = Object.keys(record.editions ?? {}).find((k) => sameTag(k, locale));
+  return key === undefined ? null : record.editions![key]!;
+}
+
+/** The chapters of every edition of a record (the active one first). */
+export function allEditionChapters(record: Pick<ProjectRecord, 'chapters' | 'editions'>): ProjectContent['chapters'] {
+  return [...record.chapters, ...Object.values(record.editions ?? {}).flatMap((e) => e.chapters)];
+}
+
+function strippedEditions(editions: Record<string, ProjectEditionContent> | undefined): Record<string, ProjectEditionContent> | undefined {
+  if (!editions) return undefined;
+  return Object.fromEntries(Object.entries(editions).map(([k, e]) => [k, { ...e, config: stripConfigDefaults(e.config) }]));
 }
 
 export function generateProjectId(): string {
@@ -98,7 +183,8 @@ export function getProject(id: string, migration: MigrationDeps = DEFAULT_MIGRAT
 /** Write a record as-is (config stored stripped of defaults, like
  *  localStorage, so records stay small and survive default changes). */
 export function putProject(record: ProjectRecord): Promise<void> {
-  const stored: ProjectRecord = { ...record, version: PROJECT_RECORD_VERSION, config: stripConfigDefaults(record.config) };
+  const editions = strippedEditions(record.editions);
+  const stored: ProjectRecord = { ...record, version: PROJECT_RECORD_VERSION, config: stripConfigDefaults(record.config), ...(editions ? { editions } : {}) };
   return runInStore(PROJECTS_STORE, 'readwrite', (store) =>
     store.put(stored) as IDBRequest<IDBValidKey>,
   ).then(() => undefined);
@@ -126,7 +212,8 @@ export function updateProject(
     const changes = typeof patch === 'function' ? patch(existing) : patch;
     if (!changes) return existing;
     const next: ProjectRecord = { ...existing, ...changes, id, createdAt: existing.createdAt, updatedAt: Date.now() };
-    store.put({ ...next, version: PROJECT_RECORD_VERSION, config: stripConfigDefaults(next.config) });
+    const editions = strippedEditions(next.editions);
+    store.put({ ...next, version: PROJECT_RECORD_VERSION, config: stripConfigDefaults(next.config), ...(editions ? { editions } : {}) });
     return next;
   });
 }
@@ -170,9 +257,12 @@ export function referencedFileIds(content: { resources: Resource[]; config: Post
 export async function collectProjectFileIds(): Promise<ReferencedFileIds> {
   const out: ReferencedFileIds = { blobIds: new Set(), fontIds: new Set() };
   for (const p of await listProjects()) {
-    const refs = referencedFileIds(p);
-    for (const id of refs.blobIds) out.blobIds.add(id);
-    for (const id of refs.fontIds) out.fontIds.add(id);
+    // The editions aside keep their pictures and faces too (#903).
+    for (const part of [p, ...Object.values(p.editions ?? {})]) {
+      const refs = referencedFileIds(part);
+      for (const id of refs.blobIds) out.blobIds.add(id);
+      for (const id of refs.fontIds) out.fontIds.add(id);
+    }
   }
   return out;
 }

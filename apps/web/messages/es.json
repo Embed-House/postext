@@ -3286,7 +3286,7 @@
     "projectBusy": "Procesando…",
     "projectImportError": "No se pudo importar el archivo",
     "projectImportInvalid": "No es un paquete .postext válido (falta preset.json o está mal formado)",
-    "projectImportLocale": "«__name__» está en varios idiomas. Importarlo en:",
+    "projectImportLocale": "«__name__» está en varios idiomas y se conservan todos. Abrirlo en:",
     "projectExportWarnings": "Exportado con avisos: __list__",
     "projectMissingFile": "Falta el archivo de «__id__», omitido",
     "projectFontSkipped": "Fuente «__name__» omitida (formato no compatible)",

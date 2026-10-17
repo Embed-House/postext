@@ -2466,7 +2466,7 @@
     "projectBusy": "Traitement…",
     "projectImportError": "Impossible d’importer le fichier",
     "projectImportInvalid": "Paquet .postext non valide (preset.json manquant ou mal formé)",
-    "projectImportLocale": "« __name__ » existe en plusieurs langues. L’importer en :",
+    "projectImportLocale": "« __name__ » existe en plusieurs langues, toutes sont conservées. L’ouvrir en :",
     "projectExportWarnings": "Exporté avec des avertissements : __list__",
     "projectMissingFile": "Fichier manquant pour « __id__ », ignoré",
     "projectFontSkipped": "Police « __name__ » ignorée (format non pris en charge)",

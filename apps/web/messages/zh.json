@@ -2466,7 +2466,7 @@
     "projectBusy": "处理中…",
     "projectImportError": "无法导入该文件",
     "projectImportInvalid": "不是有效的.postext文件包（缺少preset.json或格式错误）",
-    "projectImportLocale": "“__name__”有多种语言版本。导入为：",
+    "projectImportLocale": "“__name__”有多种语言版本，全部都会保留。打开为：",
     "projectExportWarnings": "导出时有警告：__list__",
     "projectMissingFile": "“__id__”缺少文件，已跳过",
     "projectFontSkipped": "已跳过字体“__name__”（格式不受支持）",

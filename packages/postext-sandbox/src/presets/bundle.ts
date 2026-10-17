@@ -178,6 +178,18 @@ export interface BundleContent {
   /** The cover picture, carried as the manifest's `thumbnail` so a project
    *  keeps it across an export/import round trip. */
   thumbnail?: { fileId: string; mime: string };
+  /** The other editions of a book in several languages (#903), by locale
+   *  tag, written as the manifest's `locales`, a chapter map and
+   *  `localized` (`BundleMeta.locale` then names the language of the rest). */
+  localized?: Record<string, BundleEdition>;
+}
+
+/** An edition of a book in several languages beside the primary one. */
+export interface BundleEdition {
+  chapters: readonly Chapter[];
+  config: PostextConfig;
+  resources: Resource[];
+  start?: BookStart;
 }
 
 /** `layouts.json`: the pagination of the bundle's chapters, keyed by
@@ -221,6 +233,14 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     ...(content.canvasScope ? { canvasScope: content.canvasScope } : {}),
     ...(content.start ? { start: content.start } : {}),
     ...(content.thumbnail ? { thumbnail: content.thumbnail } : {}),
+    ...(content.localized && Object.keys(content.localized).length > 0
+      ? { localized: Object.fromEntries(Object.entries(content.localized).map(([locale, e]) => [locale, {
+          chapters: e.chapters.map((c) => ({ title: c.title, markdown: c.markdown })),
+          config: e.config,
+          resources: e.resources,
+          ...(e.start ? { start: e.start } : {}),
+        }])) }
+      : {}),
   });
 
   const layoutChapters: BundleLayoutsFile['chapters'] = {};

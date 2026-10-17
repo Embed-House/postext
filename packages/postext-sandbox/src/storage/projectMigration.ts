@@ -6,7 +6,7 @@ import type { PostextConfig, Resource } from 'postext';
 import { CONFIG_VERSION, migrateConfig as migrateEngineConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats , bundleStart } from 'postext/bundle';
 import { deriveChapterTitle, newChapter } from '../book/chapterOps';
 import type { BookContent, Chapter } from '../book/types';
-import type { ProjectThumbnail } from './projects';
+import type { ProjectEditionContent, ProjectThumbnail } from './projects';
 
 /** Record shape: the engine's `CONFIG_VERSION` (`postext/bundle`) itself,
  *  so records, the working copy and `postext-config.json` exports are
@@ -137,6 +137,25 @@ export function normalizeBookContent(raw: unknown, deps: MigrationDeps): BookCon
  *  `pinLegacyOpenerHeadFloats` in `postext/bundle`). */
 export { pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats };
 
+/** The other editions of a project imported from a bundle in several
+ *  languages (#903), each read as a record's own content is: a book slice
+ *  with its configuration (migrated) and resources. Editions that cannot
+ *  be read are left out. */
+function readEditions(raw: Record<string, unknown>, deps: MigrationDeps): Record<string, ProjectEditionContent> | undefined {
+  if (!isRecord(raw.editions)) return undefined;
+  const out: Record<string, ProjectEditionContent> = {};
+  for (const [locale, value] of Object.entries(raw.editions)) {
+    const book = normalizeBookContent(value, deps);
+    if (!book || !isRecord(value)) continue;
+    out[locale] = {
+      ...book,
+      config: isRecord(value.config) ? migrateConfig(value.config as PostextConfig, raw.version, book.chapters.map((c) => c.markdown)) : {},
+      resources: Array.isArray(value.resources) ? (value.resources as Resource[]) : [],
+    };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 export interface MigratedProjectRecord extends BookContent {
   version: typeof PROJECT_RECORD_VERSION;
   id: string;
@@ -147,6 +166,9 @@ export interface MigratedProjectRecord extends BookContent {
   sourcePresetId?: string;
   thumbnail?: ProjectThumbnail;
   origin?: string;
+  editions?: Record<string, ProjectEditionContent>;
+  editionLocales?: string[];
+  editionsRev?: number;
   createdAt: number;
   updatedAt: number;
   config: PostextConfig;
@@ -182,6 +204,14 @@ export function migrateProjectRecord(raw: unknown, deps: MigrationDeps): Migrate
   const book = normalizeBookContent(raw, deps);
   if (!book) return null;
   const now = Date.now();
+  const editions = readEditions(raw, deps);
+  const record = typeof raw.locale === 'string' ? raw.locale : undefined;
+  // Every edition's tag in the bundle's order: the record's own first
+  // when the list is missing.
+  const editionLocales = editions
+    ? (Array.isArray(raw.editionLocales) ? (raw.editionLocales as unknown[]).filter((l): l is string => typeof l === 'string') : [])
+    : undefined;
+  const listed = editions ? [...new Set([...(editionLocales ?? []), ...(record !== undefined ? [record] : []), ...Object.keys(editions)])] : undefined;
   return {
     version: PROJECT_RECORD_VERSION,
     id: raw.id,
@@ -192,6 +222,7 @@ export function migrateProjectRecord(raw: unknown, deps: MigrationDeps): Migrate
     ...(typeof raw.sourcePresetId === 'string' ? { sourcePresetId: raw.sourcePresetId } : {}),
     ...(isThumbnail(raw.thumbnail) ? { thumbnail: raw.thumbnail } : {}),
     ...(typeof raw.origin === 'string' && raw.origin ? { origin: raw.origin } : {}),
+    ...(editions && listed ? { editions, editionLocales: listed, ...(typeof raw.editionsRev === 'number' ? { editionsRev: raw.editionsRev } : {}) } : {}),
     createdAt: typeof raw.createdAt === 'number' ? raw.createdAt : now,
     updatedAt: typeof raw.updatedAt === 'number' ? raw.updatedAt : now,
     config: isRecord(raw.config) ? migrateConfig(raw.config as PostextConfig, raw.version, book.chapters.map((c) => c.markdown)) : {},

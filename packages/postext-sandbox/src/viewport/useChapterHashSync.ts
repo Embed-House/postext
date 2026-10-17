@@ -198,7 +198,7 @@ export function useChapterHashSync(): void {
       // cannot open leaves the fragment naming the one on screen.
       const open = hash.project !== null
         ? projectIdsRef.current.split('\n').includes(hash.project)
-          ? activateProject(hash.project)
+          ? activateProject(hash.project, hash.lang ?? undefined)
           : null
         : hash.preset !== null
           ? loadPreset(hash.preset, hash.lang ?? undefined)
@@ -229,8 +229,12 @@ export function useChapterHashSync(): void {
 /** The book on screen as the fragment names it: the active project, or
  *  the active preset in the locale it was applied in (unknown while it is
  *  still loading, or for a snapshot from before locale switching). */
-function bookOnScreen(s: { activeProjectId: string | null; activePresetId: string; presetApplied: { presetId: string; locale?: string } | null }): ViewHashBook {
-  if (s.activeProjectId !== null) return { preset: null, project: s.activeProjectId, lang: null };
+function bookOnScreen(s: { activeProjectId: string | null; activePresetId: string; presetApplied: { presetId: string; locale?: string } | null; projects: readonly { id: string; locale?: string; locales?: string[] }[] }): ViewHashBook {
+  if (s.activeProjectId !== null) {
+    // A project in several languages is named with the edition on screen (#903).
+    const project = s.projects.find((p) => p.id === s.activeProjectId);
+    return { preset: null, project: s.activeProjectId, lang: project?.locales ? project.locale ?? null : null };
+  }
   const lang = s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null;
   return { preset: s.activePresetId, project: null, lang };
 }

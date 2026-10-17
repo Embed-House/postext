@@ -2466,7 +2466,7 @@
     "projectBusy": "S'està processant…",
     "projectImportError": "No s'ha pogut importar el fitxer",
     "projectImportInvalid": "No és un paquet .postext vàlid (falta preset.json o està mal format)",
-    "projectImportLocale": "«__name__» està en diversos idiomes. Importar-lo en:",
+    "projectImportLocale": "«__name__» està en diversos idiomes i es conserven tots. Obrir-lo en:",
     "projectExportWarnings": "Exportat amb avisos: __list__",
     "projectMissingFile": "Falta el fitxer de «__id__», omès",
     "projectFontSkipped": "Font «__name__» omesa (format no compatible)",
