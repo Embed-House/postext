@@ -311,7 +311,7 @@ export function FontsPanel() {
 
               {isOpen && (
               <div className="px-2 py-2">
-                <label className="mb-2 block text-xs" style={{ color: 'var(--muted)' }}>
+                <label className="mb-2 block text-xs text-(--slate)">
                   <span className="mb-0.5 block">{labels.customFontsFallback}</span>
                   <input
                     dir="auto"
