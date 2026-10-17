@@ -289,6 +289,8 @@ Questo avviso viene dall’impaginazione, non dai controlli sul sorgente descrit
 
 **Correzione.** Applica una delle proposte: ciascuna arriva con il suo valore, calcolato sulla pagina (vedi [L’avviso e le sue proposte](#lavviso-e-le-sue-proposte)). Altrimenti dai più spazio alla cornice, collegala a un’altra cornice con `next`, accorcia il testo o componi la pagina con un altro modello.
 
+Anche una cornice vuota viene segnalata. In una pila le cui cornici non hanno più niente da cedere, una cornice ridotta sotto il suo `minHeight` o la sua altezza fissa (uno spazio per la risposta, il posto di un’immagine) trabocca dell’altezza tagliata, anche senza alcun contenuto. Le sue proposte abbassano il suo `minHeight`, o il `minHeight` di una cornice del suo gruppo che ha meno contenuto di così; non tolgono mai lo spazio a un’altra cornice vuota.
+
 ### frameContinuationLimit
 
 **Causa.** Una cornice con `overflow.continueIn` uguale a `'next-page'` o `'template:<id>'` ha mandato in una pagina aggiunta ciò che non riusciva a contenere, e la cornice di quella pagina ha rimandato avanti il resto, pagina dopo pagina, finché la pagina composta non ha aggiunto tutte le pagine che può: 16 (vedi [Quando il testo prosegue](#quando-il-testo-prosegue)). Quello che avanza viene tagliato al piede della cornice nell’ultima pagina aggiunta; resta nel documento, nella mappa del sorgente e nell’EPUB a layout fluido. L’avviso riporta il modello e la cornice di quella pagina, il numero di pagine aggiunte (`pages`), l’altezza tagliata (`overflowMm`), il `configPath` della cornice e la pagina. Il più delle volte la cornice che riceve il contenuto nella pagina aggiunta è troppo piccola per il testo.

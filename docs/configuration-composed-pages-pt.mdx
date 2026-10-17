@@ -336,6 +336,12 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td>Em uma página dupla, o bloco pode atravessar a faixa da lombada. O texto dele é lido na página que contém o seu centro; a página em frente pinta a metade dele.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Linhas pautadas de lado a lado da caixa de conteúdo do quadro: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do quadro) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Quadros pautados, mais abaixo. Desde postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>os da página</td>
@@ -349,6 +355,24 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
     </tr>
   </tbody>
 </table>
+
+**Quadros pautados.** Um espaço de resposta num caderno de atividades é um quadro com `rules`: as linhas seguem a altura dele, então é o Markdown que decide quantas são. Um quadro vazio de altura fixa recebe as linhas que cabem nele; um quadro `'auto'` que recebe `:::space{lines=4}` recebe quatro, e um quadro que cresce com o seu texto recebe mais. As linhas são desenhadas sobre o fundo do quadro e sob o seu texto, no canvas, no HTML, no PDF e no EPUB de layout fixo; o inspetor de quadros do Sandbox as liga em Aparência.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Grupos
 
@@ -417,10 +441,10 @@ Um bloco declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que e
 
 - Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro bloco o coloca e desce o quanto os blocos precisarem, até o pé da área do modelo. Quando um bloco cresce, os blocos que vêm depois dele descem o mesmo tanto.
 - Um grupo com caixa própria arranja os seus blocos dentro dela. Quando eles precisam de mais do que ela comporta, os blocos com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; blocos da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os blocos com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os blocos (`'end'` no pé, `'center'`, `'space-between'`). Um bloco do grupo sem posicionamento próprio usa a caixa do grupo como área.
-- Quando nada mais pode ceder, nenhum bloco passa do pé do grupo: o bloco cujo conteúdo não cabe percorre a escada de ajuste (veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)), e o que ainda assim não cabe é cortado ali e aparece como `frameOverflow`.
+- Quando nada mais pode ceder, cedem primeiro os blocos mais próximos do pé do grupo, cada um até o seu `minHeight`; um bloco de altura fixa a mantém, de modo que um espaço de resposta vazio ou o lugar de uma imagem sob uma caixa que cresce fica na página, e é o texto da caixa que cede. Nenhum bloco passa do pé do grupo: o bloco cujo conteúdo não cabe percorre a escada de ajuste (veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)), e o que ainda assim não cabe é cortado ali e aparece como `frameOverflow`. Um bloco cortado abaixo do seu `minHeight` ou da sua altura fixa também aparece no aviso, tenha conteúdo ou não.
 - Um bloco com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
 
-**Fileira.** Os blocos de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um bloco de altura fixa mantém a sua). Quando o texto de um bloco passa da altura da fileira, o bloco ganha largura: primeiro a que sobra na fileira, depois a dos outros blocos com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o bloco não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os blocos com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
+**Fileira.** Os blocos de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura que os seus blocos escrevem: uma `height` fixa, senão um `minHeight` (um bloco `'auto'` não declara mais nada), ou, se não escreverem nenhuma, a do conteúdo mais alto (um bloco de altura fixa mantém a sua). Quando o texto de um bloco passa da altura da fileira, o bloco ganha largura: primeiro a que sobra na fileira, depois a dos outros blocos com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o bloco não toma nada, e uma fileira sem caixa própria fica mais alta. Assim, cartões com `height: 'auto'` e um `minHeight` dividem a largura nessa altura, e a fileira só cresce quando nenhum tem largura para ceder. A largura que sobra vai para os blocos com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
 
 **Blocos fixos.** Um bloco com `pin: true` mantém a caixa que o modelo declara para ele, mesmo quando o bloco ao qual está ancorado cresce ou se move: uma caixa desenhada para coincidir com a arte continua sobre ela. Num grupo, um bloco fixo não sai do lugar e os outros blocos passam por ele, com o `gap` mantido dos dois lados; um bloco fixo fora do grupo faz o mesmo com os blocos do grupo que ele encobriria.
 
@@ -505,7 +529,7 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada bloco (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `layer`, `rotate`, `exclude` (e o seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) com `overflow.mark` e `overflow.fromMark`, e o seu `fit` (a redução do texto e das imagens na escada de reajuste, veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)); a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` do grupo, veja [Como os grupos dividem o espaço](#como-os-grupos-dividem-o-espaço)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants` e `overflowTemplate` do modelo. São lidos e verificados, mas ainda não aplicados: o `writingMode` e a `direction` de um bloco, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
+A diagramação aplica o posicionamento e os tamanhos de cada bloco (grade, âncoras, `min`/`max`, `verticalAlign`), o seu estilo e o seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e o seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) com `overflow.mark` e `overflow.fromMark`, e o seu `fit` (a redução do texto e das imagens na escada de reajuste, veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)); a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` do grupo, veja [Como os grupos dividem o espaço](#como-os-grupos-dividem-o-espaço)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` do modelo. São lidos e verificados, mas ainda não aplicados: o `writingMode` e a `direction` de um bloco, e o `bodyStyle` e a `palette` do modelo. Uma largura `'auto'` é lida como `'fill'`.
 
 ### Páginas duplas
 
@@ -533,6 +557,8 @@ pageTemplates: [{
 ```
 
 Um espaço entre colunas maior que o `gutter` mantém as fichas de uma grade simétrica longe da lombada, e nenhuma é movida. A segunda faixa e a tira de ilustrações têm `crossGutter` para atravessá-la: cada uma é lida na página que contém o seu centro e pintada nas duas. Todas as palavras da página, inclusive os nomes das eras nas abas, ficam no Markdown.
+
+Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do fluxo das páginas, como as suas páginas compostas avulsas: o alto da página é a borda direita da folha e as linhas descem, então o `x` do modelo desce pela folha e o seu `y` vai da borda direita da folha para a esquerda. A folha é a página direita seguida da esquerda ao longo de `y`, a lombada é uma linha que atravessa o modelo, e `gutter`, `crossGutter` e o corte entre as páginas leem esse eixo; a decoração continua composta sobre a folha física e cortada na lombada. Uma linha do tempo horizontal desenhada para um livro horizontal sai girada num vertical: escreva o modelo de um livro vertical no referencial do seu fluxo. Desde postext 1.37.
 
 ## Estilos de rótulo
 

@@ -289,6 +289,8 @@ Cet avertissement vient de la mise en page, pas des vérifications de la source 
 
 **Correction.** Appliquez l’une des propositions : chacune arrive avec sa valeur, calculée sur la page (voir [L’avertissement et ses propositions](#lavertissement-et-ses-propositions)). Sinon, donnez plus de place au bloc, chaînez-le à un autre bloc avec `next`, raccourcissez le texte ou composez la page avec un autre modèle.
 
+Un bloc vide est signalé lui aussi. Dans une pile dont les blocs n’ont plus rien à céder, un bloc réduit sous son `minHeight` ou sa hauteur fixe (un espace de réponse, l’emplacement d’une image) déborde de la hauteur coupée, même sans aucun contenu. Ses propositions abaissent son propre `minHeight`, ou le `minHeight` d’un bloc de son groupe qui a moins de contenu que cela ; elles ne prennent jamais la place d’un autre bloc vide.
+
 ### frameContinuationLimit
 
 **Cause.** Un bloc dont l’`overflow.continueIn` vaut `'next-page'` ou `'template:<id>'` a envoyé ce qu’il ne pouvait pas contenir sur une page ajoutée, et le bloc de cette page a renvoyé le reste plus loin, page après page, jusqu’à ce que la page composée ait ajouté autant de pages qu’elle le peut : 16 (voir [Quand le texte se poursuit](#quand-le-texte-se-poursuit)). Ce qui n’a pas trouvé place est coupé au pied du bloc sur la dernière page ajoutée ; il reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable. L’avertissement donne le modèle et le bloc de cette page, le nombre de pages ajoutées (`pages`), la hauteur coupée (`overflowMm`), le `configPath` du bloc et la page. Le plus souvent, le bloc qui reçoit le contenu sur la page ajoutée est bien trop petit pour le texte.

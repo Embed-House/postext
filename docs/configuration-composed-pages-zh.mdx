@@ -336,6 +336,12 @@ const config: PostextConfig = {
       <td>在跨页上，框可以跨过书脊带。框里的文字在其中心所在的那一页读；对面那一页画出它的一半。</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>在框架的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框架文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框架”。自 postext 1.37 起。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>页面的值</td>
@@ -349,6 +355,24 @@ const config: PostextConfig = {
     </tr>
   </tbody>
 </table>
+
+**画横线的框架。** 练习册里的答题区就是带`rules`的框架：横线随框架的高度而定，所以画几条由Markdown决定。固定高度的空框架得到它容得下的横线；收到`:::space{lines=4}`的`'auto'`框架得到四条，随文字增高的框架得到更多。横线画在框架背景之上、文字之下，画布、HTML、PDF和固定版式EPUB都会绘制；在Sandbox的框架检查器中，可在“外观”里打开。
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### 组
 
@@ -417,10 +441,10 @@ const config: PostextConfig = {
 
 - 没有自己的`placement`或`grid`的组，从第一个框的定位所在之处开始，按框的需要往下排，最远到模板区域的底边。一个框变高时，后面的框下移同样的距离。
 - 有自己方框的组把框排在这个方框之内。框需要的空间超出方框时，`shrink`大于0的框让出空间，`priority`最低的先让；优先级相同的框按各自`shrink`的比例让出；任何框都不会小于它的`minHeight`。多余的空间按比例分给`grow`大于0的框，最多到它们的`maxHeight`；没有这样的框时，由`align`决定框的位置（`'end'`靠底边，`'center'`居中，`'space-between'`首尾贴边、中间均分）。组中没有自己定位的框以组的方框作为它的区域。
-- 再也没有框能让出空间时，也没有框会越过组的底边：内容放不下的框按逐级重排的步骤依次尝试（见[内容放不下时](#内容放不下时)），仍然放不下的部分在那里截断，并报告为`frameOverflow`。
+- 再也没有框能让出空间时，最靠近组底边的框先让，各自最多让到`minHeight`；固定高度的框保持原高，所以在一个增高的方框下面，空着的答题区或图片位仍留在页面上，让出空间的是方框自己的文字。没有框会越过组的底边：内容放不下的框按逐级重排的步骤依次尝试（见[内容放不下时](#内容放不下时)），仍然放不下的部分在那里截断，并报告为`frameOverflow`。被压到`minHeight`或固定高度以下的框，无论有没有内容，也会报告。
 - `height: 'fill'`的框请求它的`minHeight`，并像设了`grow: 1`一样分得多余空间。
 
-**横向组（`row`）**：横向组中的框按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框声明高度中最大的一个（固定高度的框保持自己的高度）。某个框的文字超出行高时，这个框会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框借宽度，每个框都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。多余的宽度先分给`grow`大于0的框，剩下的交给`align`。行中的框从左向右排列。
+**横向组（`row`）**：横向组中的框按声明的宽度左右并排，高度都与这一行相同。行高就是组的方框的高度；组没有自己的方框时，取各框写明的高度中最大的一个：固定的`height`，否则是`minHeight`（`'auto'`框不再声明别的）；都没有写时，取最高的内容高度（固定高度的框保持自己的高度）。某个框的文字超出行高时，这个框会加宽：先用行中多余的宽度，再按`priority`从低到高，向`shrink`大于0的同组框借宽度，每个框都不会窄过它自己的文字仍能放下的宽度。加宽的量是让文字放下所需的最少整毫米数；即使把能用的空间全部给它也放不下时，它不加宽，没有自己方框的行改为加高。因此，`height: 'auto'`并设了`minHeight`的卡片会先在这个高度上分配宽度，只有没有卡片能让出宽度时，行才加高。多余的宽度先分给`grow`大于0的框，剩下的交给`align`。行中的框从左向右排列。
 
 **固定（`pin`）**：`pin: true`的框保持模板为它声明的方框，即使它所锚定的框变高或移动也不变，照着画面画出的方框因此留在画面上。在组中，固定的框守住自己的位置，其他框绕过它继续排，两侧都留出`gap`；组外的固定框，对会与它重叠的组内框也是这样。
 
@@ -505,7 +529,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
 
 ### 跨页
 
@@ -533,6 +557,8 @@ pageTemplates: [{
 ```
 
 栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
+
+竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.37 起。
 
 ## 注记样式
 

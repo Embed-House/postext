@@ -289,6 +289,8 @@ Este aviso lo da la maquetación, no las comprobaciones del código fuente de ar
 
 **Solución.** Aplica una de las propuestas: cada una trae su valor, calculado sobre la página (véase [El aviso y sus propuestas](#el-aviso-y-sus-propuestas)). Si no, da más sitio al marco, encadénalo a otro marco con `next`, acorta el texto o compón la página con otra plantilla.
 
+También se avisa de un marco vacío. En una pila cuyos marcos ya no tienen nada que ceder, un marco recortado por debajo de su `minHeight` o de su altura fija (un espacio de respuesta, el hueco de una imagen) desborda en la altura recortada, aunque no tenga contenido. Sus propuestas bajan su propio `minHeight`, o el `minHeight` de un marco de su grupo que tiene menos contenido que eso; nunca le quitan el sitio a otro marco vacío.
+
 ### frameContinuationLimit
 
 **Causa.** Un marco cuyo `overflow.continueIn` es `'next-page'` o `'template:<id>'` ha enviado lo que no le cabía a una página añadida, y el marco de esa página ha vuelto a enviar el resto, página tras página, hasta que la página compuesta ha añadido todas las páginas que puede añadir: 16 (véase [Cuando el texto sigue](#cuando-el-texto-sigue)). Lo que queda se corta al pie del marco en la última página añadida; sigue en el documento, en el mapa de origen y en el EPUB de maquetación fluida. El aviso indica la plantilla y el marco de esa página, el número de páginas añadidas (`pages`), la altura cortada (`overflowMm`), el `configPath` del marco y la página. Lo más habitual es que el marco que recibe el contenido en la página añadida sea mucho más pequeño que el texto.

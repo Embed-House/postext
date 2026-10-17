@@ -289,6 +289,8 @@ This warning comes from the layout, not from the source checks above: it appears
 
 **Fix.** Apply one of the proposals: each comes with its value, worked out on the page (see [The warning and its proposals](#the-warning-and-its-proposals)). Otherwise give the frame more room, chain it to another frame with `next`, shorten the text, or set the page with another template.
 
+An empty frame is reported too. In a stack whose frames have nothing more to give, a frame cut below its `minHeight` or its fixed height (an answer space, a picture slot) overflows by the height cut, with no content at all. Its proposals lower its own `minHeight`, or the `minHeight` of a frame of its group that holds less content than that; they never take the room of another empty frame.
+
 ### frameContinuationLimit
 
 **Cause.** A frame whose `overflow.continueIn` is `'next-page'` or `'template:<id>'` sent what it could not hold to an added page, and that page's frame sent the rest on again, page after page, until the composed page had added the most pages it may: 16 (see [When the text continues](#when-the-text-continues)). What is left is cut at the foot of the frame on the last added page; it stays in the document, the source map and the reflowable EPUB. The warning gives the template and frame of that page, the number of pages added (`pages`), the height cut (`overflowMm`), the frame's `configPath` and the page. Most often the frame that takes the content on the added page is far smaller than the text.

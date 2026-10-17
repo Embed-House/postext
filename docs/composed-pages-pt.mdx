@@ -289,6 +289,8 @@ Este aviso vem da diagramação, não das verificações do código-fonte descri
 
 **Correção.** Aplique uma das propostas: cada uma vem com o seu valor, calculado na página (veja [O aviso e suas propostas](#o-aviso-e-suas-propostas)). Se não, dê mais espaço ao bloco, encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo.
 
+Um quadro vazio também é avisado. Numa pilha cujos quadros já não têm nada a ceder, um quadro cortado abaixo do seu `minHeight` ou da sua altura fixa (um espaço de resposta, o lugar de uma imagem) transborda na altura cortada, mesmo sem conteúdo nenhum. As propostas baixam o seu próprio `minHeight`, ou o `minHeight` de um quadro do seu grupo que tem menos conteúdo que isso; nunca tiram o lugar de outro quadro vazio.
+
 ### frameContinuationLimit
 
 **Causa.** Um bloco com `overflow.continueIn` igual a `'next-page'` ou `'template:<id>'` mandou o que não cabia nele para uma página acrescentada, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar todas as páginas que pode: 16 (veja [Quando o texto continua](#quando-o-texto-continua)). O que sobra é cortado no pé do bloco na última página acrescentada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo e o bloco dessa página, o número de páginas acrescentadas (`pages`), a altura cortada (`overflowMm`), o `configPath` do bloco e a página. Na maioria das vezes, o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto.

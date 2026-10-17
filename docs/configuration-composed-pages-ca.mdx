@@ -336,6 +336,12 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
       <td>En una doble pàgina, el marc pot travessar la banda del llom. El seu text es llegeix a la pàgina que conté el seu centre; la pàgina del davant en pinta la meitat.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Línies pautades d'un costat a l'altre de la caixa de contingut del marc: una al peu de cada línia, tantes com en càpiguen a la seva alçada. <code>every</code> és el pas, <code>'line'</code> (per defecte: l'interlineat del text del marc) o una mida; <code>color</code> és un gris mitjà per defecte, <code>width</code> el gruix (0,5 pt), <code>inset</code> el marge que queda a cada extrem de la línia, o <code>&#123; left, right &#125;</code>. Vegeu Marcs pautats, més avall. Des de postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>els de la pàgina</td>
@@ -349,6 +355,24 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
     </tr>
   </tbody>
 </table>
+
+**Marcs pautats.** Un espai de resposta d'un quadern d'activitats és un marc amb `rules`: les seves línies segueixen la seva alçada, de manera que és el Markdown el que decideix quantes n'hi ha. Un marc buit d'alçada fixa rep les línies que hi caben; un marc `'auto'` que rep `:::space{lines=4}` en rep quatre, i un marc que creix amb el seu text en rep més. Les línies es dibuixen sobre el fons del marc i sota el seu text, al llenç, a l'HTML, al PDF i a l'EPUB de maquetació fixa; l'inspector de marcs del Sandbox les activa a Aspecte.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Grups
 
@@ -417,10 +441,10 @@ Un marc declara la seva mida: un `height` fix, o `'auto'`, l'alçada del que con
 
 - Un grup sense `placement` ni `grid` propis comença allà on el situa la col·locació del seu primer marc i baixa tant com ho necessitin els marcs, fins al peu de l'àrea de la plantilla. Quan un marc creix, els marcs que el segueixen baixen la mateixa distància.
 - Un grup amb caixa pròpia col·loca els seus marcs dins d'aquesta caixa. Quan necessiten més espai del que hi ha, en tornen els marcs amb `shrink` més gran que 0, començant per la `priority` més baixa; els marcs d'una mateixa prioritat en cedeixen en proporció al seu `shrink`, i cap no baixa del seu `minHeight`. L'espai sobrant va als marcs amb `grow` més gran que 0, en proporció a aquest valor, fins al seu `maxHeight`; si no n'hi ha cap, `align` col·loca els marcs (`'end'` al peu, `'center'`, `'space-between'`). Un marc del grup sense col·locació pròpia pren la caixa del grup com a àrea.
-- Quan ja no pot cedir res més, cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`.
+- Quan ja no pot cedir res més, cedeixen primer els marcs més propers al peu del grup, cadascun fins al seu `minHeight`; un marc d'alçada fixa la conserva, de manera que un espai de resposta buit o el lloc d'una imatge sota una caixa que creix es queda a la pàgina i és el text de la caixa el que cedeix. Cap marc no passa del peu del grup: el marc el contingut del qual no hi cap recorre l'escala d'ajust (vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)), i el que tot i així no hi cap es talla allà i es notifica com a `frameOverflow`. Un marc retallat per sota del seu `minHeight` o de la seva alçada fixa també es notifica, tingui contingut o no.
 - Un marc amb `height: 'fill'` demana el seu `minHeight` i pren l'espai sobrant com si tingués `grow: 1`.
 
-**Filera.** Els marcs d'una filera van l'un al costat de l'altre a les amplades declarades, i tots fan l'alçada de la filera: la de la caixa del grup o, si el grup no en té de pròpia, la més gran de les alçades declarades (un marc d'alçada fixa conserva la seva). Quan el text d'un marc passa de l'alçada de la filera, el marc s'eixampla: primer amb l'amplada sobrant de la filera, després amb la dels altres marcs que tenen `shrink` més gran que 0, començant per la `priority` més baixa, sense deixar-ne cap més estret que l'amplada en què encara hi cap el seu text. L'amplada que pren és el mínim de mil·límetres sencers amb què el text hi cap; si ni tot l'espai disponible no n'hi ha prou, el marc no en pren gens, i una filera sense caixa pròpia es fa més alta. L'amplada sobrant va als marcs amb `grow` més gran que 0 i, després, a `align`. Les fileres van d'esquerra a dreta.
+**Filera.** Els marcs d'una filera van l'un al costat de l'altre a les amplades declarades, i tots fan l'alçada de la filera: la de la caixa del grup o, si el grup no en té de pròpia, la més gran de les alçades que escriuen els seus marcs: una `height` fixa o, si no, el seu `minHeight` (un marc `'auto'` no en declara més), o, si no n'escriuen cap, la del contingut més alt (un marc d'alçada fixa conserva la seva). Quan el text d'un marc passa de l'alçada de la filera, el marc s'eixampla: primer amb l'amplada sobrant de la filera, després amb la dels altres marcs que tenen `shrink` més gran que 0, començant per la `priority` més baixa, sense deixar-ne cap més estret que l'amplada en què encara hi cap el seu text. L'amplada que pren és el mínim de mil·límetres sencers amb què el text hi cap; si ni tot l'espai disponible no n'hi ha prou, el marc no en pren gens, i una filera sense caixa pròpia es fa més alta. Així, unes targetes amb `height: 'auto'` i un `minHeight` es reparteixen l'amplada a aquesta alçada, i la filera només creix quan cap no té amplada per donar. L'amplada sobrant va als marcs amb `grow` més gran que 0 i, després, a `align`. Les fileres van d'esquerra a dreta.
 
 **Marcs fixats.** Un marc amb `pin: true` conserva la caixa que li declara la plantilla, encara que el marc al qual està ancorat creixi o es mogui: una caixa dibuixada perquè coincideixi amb la il·lustració s'hi queda a sobre. Dins d'un grup, un marc fixat no es mou del seu lloc i els altres marcs el salten, amb el `gap` a banda i banda; un marc fixat de fora del grup fa el mateix amb els marcs del grup que trepitjaria.
 
@@ -505,7 +529,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `writingMode` i la `direction` d'un marc, i el `bodyStyle` i la `palette` de la plantilla. Una amplada `'auto'` es llegeix com a `'fill'`.
 
 ### Dobles pàgines
 
@@ -533,6 +557,8 @@ pageTemplates: [{
 ```
 
 Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos posen `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina que conté el seu centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
+
+En un llibre vertical (`vertical-rl`) la doble pàgina es compon en el marc del flux de les pàgines, com les seves pàgines compostes soles: el capdamunt de la pàgina és la vora dreta del plec i les línies baixen, de manera que la `x` de la plantilla baixa pel plec i la seva `y` va de la vora dreta del plec a l'esquerra. El plec és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre el plec físic i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el marc del seu flux. Des de postext 1.37.
 
 ## Estils de rètol
 

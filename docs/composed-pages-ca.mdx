@@ -289,6 +289,8 @@ Aquest avís el dona la maquetació, no les comprovacions del codi font d'aquí 
 
 **Solució.** Aplica una de les propostes: cadascuna porta el seu valor, calculat sobre la pàgina (vegeu [L'avís i les seves propostes](#lavís-i-les-seves-propostes)). Si no, dona més espai al marc, encadena'l a un altre marc amb `next`, escurça el text o compon la pàgina amb una altra plantilla.
 
+També es notifica un marc buit. En una pila els marcs de la qual ja no tenen res per cedir, un marc retallat per sota del seu `minHeight` o de la seva alçada fixa (un espai de resposta, el lloc d'una imatge) desborda en l'alçada retallada, encara que no tingui contingut. Les seves propostes abaixen el seu propi `minHeight`, o el `minHeight` d'un marc del seu grup que té menys contingut que això; mai no prenen el lloc a un altre marc buit.
+
 ### frameContinuationLimit
 
 **Causa.** Un marc amb `overflow.continueIn` igual a `'next-page'` o `'template:<id>'` ha enviat el que no hi cabia a una pàgina afegida, i el marc d'aquella pàgina ha tornat a enviar la resta, pàgina rere pàgina, fins que la pàgina composta ha afegit totes les pàgines que pot afegir: 16 (vegeu [Quan el text continua](#quan-el-text-continua)). El que queda es talla al peu del marc a l'última pàgina afegida; continua al document, al mapa d'origen i a l'EPUB de maquetació fluida. L'avís indica la plantilla i el marc d'aquella pàgina, el nombre de pàgines afegides (`pages`), l'alçada tallada (`overflowMm`), el `configPath` del marc i la pàgina. El més habitual és que el marc que rep el contingut a la pàgina afegida sigui molt més petit que el text.

@@ -336,6 +336,12 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td>Sur une double page, le bloc peut traverser la bande du dos. Son texte est lu sur la page qui contient son centre ; la page en regard peint sa moitié.</td>
     </tr>
     <tr>
+      <td><code>rules</code></td>
+      <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
+      <td>—</td>
+      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.37.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>ceux de la page</td>
@@ -349,6 +355,24 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
     </tr>
   </tbody>
 </table>
+
+**Blocs réglés.** Un espace de réponse dans un cahier d’activités est un bloc avec `rules` : ses lignes suivent sa hauteur, si bien que c’est le Markdown qui décide de leur nombre. Un bloc vide de hauteur fixe reçoit les lignes qui y tiennent ; un bloc `'auto'` qui reçoit `:::space{lines=4}` en reçoit quatre, et un bloc qui grandit avec son texte en reçoit davantage. Les filets sont tracés par-dessus le fond du bloc et sous son texte, sur le canevas, dans le HTML, le PDF et l’EPUB à mise en page fixe ; l’inspecteur de blocs du Sandbox les active dans Apparence.
+
+```ts
+frames: [
+  { name: 'pregunta', style: 'actividad' },
+  { name: 'respuesta', rules: { color: { hex: '#93bcd8', model: 'hex' }, width: { value: 0.75, unit: 'pt' } } },
+],
+groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, frames: ['pregunta', 'respuesta'] }],
+```
+
+```markdown
+:::frame{slot="respuesta"}
+
+:::space{lines=4}
+
+:::
+```
 
 ### Groupes
 
@@ -417,10 +441,10 @@ Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu
 
 - Un groupe sans `placement` ni `grid` à lui commence là où le placement de son premier bloc le met et descend aussi loin que ses blocs l’exigent, jusqu’au pied de la zone du gabarit. Quand un bloc grandit, les blocs qui le suivent descendent d’autant.
 - Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
-- Quand plus rien ne peut céder, aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`.
+- Quand plus rien ne peut céder, les blocs les plus proches du pied du groupe cèdent les premiers, chacun jusqu’à son `minHeight` ; un bloc de hauteur fixe la garde, si bien qu’un espace de réponse vide ou l’emplacement d’une image sous une boîte qui grandit reste sur la page, et c’est le texte de la boîte qui cède. Aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`. Un bloc réduit sous son `minHeight` ou sa hauteur fixe est signalé lui aussi, qu’il ait du contenu ou non.
 - Un bloc en `height: 'fill'` demande son `minHeight` et prend l’espace libre comme s’il avait `grow: 1`.
 
-**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs déclarées (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
+**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs qu’écrivent ses blocs : une `height` fixe, sinon un `minHeight` (un bloc `'auto'` n’en déclare pas plus), ou, s’ils n’en écrivent aucune, celle du contenu le plus haut (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. Des cartes en `height: 'auto'` avec un `minHeight` se partagent donc la largeur à cette hauteur, et la rangée ne grandit que si aucune n’a de largeur à céder. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
 
 **Blocs épinglés.** Un bloc en `pin: true` garde la boîte que le gabarit lui déclare, même quand le bloc auquel il est ancré grandit ou se déplace : une boîte dessinée pour tomber juste sur l’illustration y reste. Dans un groupe, un bloc épinglé garde sa place et les autres blocs passent au-delà, avec `gap` conservé de part et d’autre ; un bloc épinglé hors du groupe fait de même pour les blocs du groupe qu’il chevaucherait.
 
@@ -505,7 +529,7 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images de l’échelle de réajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images de l’échelle de réajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : le `writingMode` et la `direction` d’un bloc, et le `bodyStyle` et la `palette` du gabarit. Une largeur `'auto'` se lit comme `'fill'`.
 
 ### Doubles pages
 
@@ -533,6 +557,8 @@ pageTemplates: [{
 ```
 
 Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun est lu sur la page qui contient son centre et peint sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
+
+Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent, si bien que le `x` du gabarit descend le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages lisent cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.37.
 
 ## Styles d’étiquette
 

@@ -289,6 +289,8 @@ Diese Warnung kommt aus dem Umbruch, nicht aus den Quellprüfungen oben: Sie ers
 
 **Behebung.** Übernehmen Sie einen der Vorschläge: Jeder bringt seinen Wert mit, auf der Seite berechnet (siehe [Die Warnung und ihre Vorschläge](#die-warnung-und-ihre-vorschläge)). Andernfalls geben Sie dem Rahmen mehr Platz, verketten Sie ihn mit `next` mit einem weiteren Rahmen, kürzen Sie den Text oder setzen Sie die Seite mit einer anderen Vorlage.
 
+Auch ein leerer Rahmen wird gemeldet. In einem Stapel, dessen Rahmen nichts mehr abgeben können, läuft ein Rahmen, der unter seine `minHeight` oder seine feste Höhe gekürzt wird (ein Antwortfeld, ein Bildplatz), um die gekürzte Höhe über, ganz ohne Inhalt. Seine Vorschläge senken seine eigene `minHeight` oder die `minHeight` eines Rahmens seiner Gruppe, der weniger Inhalt hat; sie nehmen nie einem anderen leeren Rahmen den Platz.
+
 ### frameContinuationLimit
 
 **Ursache.** Ein Rahmen, dessen `overflow.continueIn` `'next-page'` oder `'template:<id>'` ist, hat auf eine hinzugefügte Seite geschickt, was er nicht fassen konnte, und der Rahmen dieser Seite hat den Rest weitergeschickt, Seite um Seite, bis die zusammengesetzte Seite so viele Seiten hinzugefügt hatte, wie sie darf: 16 (siehe [Wenn der Text weiterläuft](#wenn-der-text-weiterläuft)). Was dann noch übrig ist, wird auf der letzten hinzugefügten Seite am Fuß des Rahmens abgeschnitten; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten. Die Warnung nennt Vorlage und Rahmen dieser Seite, die Zahl der hinzugefügten Seiten (`pages`), die abgeschnittene Höhe (`overflowMm`), den `configPath` des Rahmens und die Seite. Meist ist der Rahmen, der den Inhalt auf der hinzugefügten Seite aufnimmt, viel zu klein für den Text.
