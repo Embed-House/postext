@@ -161,6 +161,8 @@ The lamp of the first entry opens with an initial.
 
 On a heading line, `dropcap=false` leaves the paragraph after that heading without the drop cap its level or style sets, `dropcap=N` sets it over `N` lines, and a bare `dropcap` gives that paragraph one (three lines, the paragraph's face) where the level sets none. On a `:::paragraphs` fence the attribute does the same for the group's first paragraph, or for every paragraph when the style says `each: true`. The paragraph after a heading is found past fences, directives, boxes that left the flow and floated figures; a paragraph inside a box, a list item, a quotation or a poem never takes a drop cap. Since postext 1.23.
 
+In a composed page the frames are running text: `:::paragraphs{style="opening" dropcap}` in a frame opens its first paragraph with the initial. Inside a `:::callout` box the paragraphs take none, and asking for one there raises a `dropCap` warning.
+
 ### Code blocks
 
 A listing goes between two fences of three or more backticks (or three or more tildes), each on a line of its own, up to three spaces in. Everything between them is kept as written: leading spaces and runs of spaces, tabs, blank lines, and lines that start with `#`, `-`, `1.`, `>`, `$` or `:::`. Nothing inside is read as Markdown: no emphasis, no `:ref`, no maths, no chips, no directives, no headings. The closing fence uses the opening one's character and is at least as long, so a listing that shows a fence goes in a longer one or in tildes:

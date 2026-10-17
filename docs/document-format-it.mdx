@@ -161,6 +161,8 @@ The lamp of the first entry opens with an initial.
 
 Su una riga di titolo, `dropcap=false` lascia il paragrafo che segue quel titolo senza il capolettera impostato dal suo livello o stile, `dropcap=N` lo compone su `N` righe, e un `dropcap` semplice dà un capolettera a quel paragrafo (tre righe, nel carattere del paragrafo) dove il livello non ne imposta nessuno. Sulla recinzione di `:::paragraphs` l’attributo fa lo stesso per il primo paragrafo del gruppo, o per ogni paragrafo quando lo stile indica `each: true`. Il paragrafo che segue un titolo viene cercato oltre recinzioni, direttive, riquadri usciti dal flusso e figure flottanti; un paragrafo dentro un riquadro, una voce di elenco, una citazione o una poesia non prende mai un capolettera. Da postext 1.23.
 
+In una pagina composta le cornici sono testo corrente: `:::paragraphs{style="apertura" dropcap}` in una cornice apre il suo primo paragrafo con il capolettera. Dentro un riquadro `:::callout` i paragrafi non ne prendono, e chiederlo lì dà un avviso `dropCap`.
+
 ### Blocchi di codice
 
 Un listato va tra due recinzioni di tre o più apici inversi (o tre o più tilde), ciascuna su una riga a sé, con al massimo tre spazi di rientro. Tutto ciò che sta tra le due viene conservato come è scritto: spazi iniziali e sequenze di spazi, tabulazioni, righe vuote e righe che iniziano con `#`, `-`, `1.`, `>`, `$` o `:::`. Nulla al suo interno viene letto come Markdown: niente enfasi, niente `:ref`, niente formule, niente chip, niente direttive, niente titoli. La recinzione di chiusura usa il carattere di quella di apertura ed è lunga almeno quanto lei, quindi un listato che mostra una recinzione va dentro una più lunga o tra tilde:
