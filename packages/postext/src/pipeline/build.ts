@@ -29,6 +29,8 @@ import {
   type ResolvedConfig,
   type ContentWarning,
   type VDTFigureLabel,
+  type VDTFrame,
+  type VDTDesignTextBlock,
   type ReflowEvent,
 } from '../vdt';
 import { figureLabels } from './buildMeasurement';
@@ -9266,17 +9268,35 @@ function stampCarriedSource(doc: VDTDocument, carried: ImportedJumps): void {
 function fillPageMarks(pages: readonly VDTPage[]): void {
   const frames = new Map<string, VDTPage>();
   for (const p of pages) for (const f of p.composed?.frames ?? []) if (!f.facingBlocks) frames.set(f.id, p);
+  forEachPageMark(pages, (f, d) => {
+    // A page of another chapter is `resolveJumpMarks`'s (its frame ids are
+    // another chapter's).
+    if ((d.pageMark!.page === 'to' ? f.continuesToChapter : f.continuedFromChapter) !== undefined) return undefined;
+    const other = d.pageMark!.page === 'to' ? f.continuesTo : f.continuedFrom;
+    const at = other !== undefined ? frames.get(other) : undefined;
+    return at ? pageLabelOf(at) : undefined;
+  });
+}
+
+/** The label a page prints. */
+const pageLabelOf = (page: VDTPage): string => page.pageLabel ?? String(page.pageNumberValue ?? page.index + 1);
+
+/** Each continuation mark with a page number of `pages`' composed frames,
+ *  with `label` answering for the page it names: the mark's text is laid
+ *  out again with the number when it answers. */
+function forEachPageMark(
+  pages: readonly VDTPage[],
+  label: (frame: VDTFrame, mark: VDTDesignTextBlock) => string | undefined,
+): void {
   for (const p of pages) {
     for (const f of p.composed?.frames ?? []) {
       for (const id of f.blockIds) {
         const box = p.floats?.find((b) => b.id === id);
         for (const d of box?.designOverlay?.blocks ?? []) {
           if (d.kind !== 'text' || !d.pageMark) continue;
-          const other = d.pageMark.page === 'to' ? f.continuesTo : f.continuedFrom;
-          const at = other !== undefined ? frames.get(other) : undefined;
-          if (!at) continue;
-          const label = at.pageLabel ?? String(at.pageNumberValue ?? at.index + 1);
-          const text = d.pageMark.text.split('{page}').join(label);
+          const shown = label(f, d);
+          if (shown === undefined) continue;
+          const text = d.pageMark.text.split('{page}').join(shown);
           const lh = d.lines.length > 0 ? d.bbox.height / d.lines.length : d.bbox.height;
           const first = d.lines[0];
           const slack0 = first ? d.bbox.width - first.width : 0;
@@ -9292,6 +9312,55 @@ function fillPageMarks(pages: readonly VDTPage[]): void {
       }
     }
   }
+}
+
+/**
+ * Link the stories that jump from one chapter to a page of another (#943)
+ * and write the page numbers into their continuation marks. `docs` is the
+ * book laid out, one document per chapter, in the order of the book (a
+ * story's `chapter` is its position in it): the sending frame gets the
+ * frame that took the rest (`continuesTo`, its `continued` event the page
+ * and frame there), and every mark naming a page of another chapter
+ * prints that page's label as its chapter numbered it. Marks within a
+ * chapter were filled by its own build. Safe to run again on the same
+ * documents.
+ */
+export function resolveJumpMarks(docs: readonly VDTDocument[]): void {
+  const byId = docs.map((doc) => {
+    const out = new Map<string, VDTPage>();
+    for (const p of doc.pages) for (const f of p.composed?.frames ?? []) if (!f.facingBlocks) out.set(f.id, p);
+    return out;
+  });
+  const frameOf = (chapter: number, id: string): { page: VDTPage; frame: VDTFrame } | undefined => {
+    const page = byId[chapter]?.get(id);
+    const frame = page?.composed?.frames.find((f) => f.id === id);
+    return page && frame ? { page, frame } : undefined;
+  };
+  // The receiving frames name where their story came from; give the
+  // sending frame the way on.
+  docs.forEach((doc) => {
+    for (const p of doc.pages) {
+      for (const f of p.composed?.frames ?? []) {
+        if (f.continuedFromChapter === undefined || f.continuedFrom === undefined) continue;
+        const from = frameOf(f.continuedFromChapter, f.continuedFrom);
+        if (!from) continue;
+        from.frame.continuesTo = f.id;
+        const event = from.page.composed!.log.find((e) => e.kind === 'continued' && e.frame === from.frame.name && e.toChapter !== undefined);
+        if (event) {
+          event.toPage = p.index;
+          event.toFrame = f.id;
+        }
+      }
+    }
+  });
+  docs.forEach((doc) => {
+    forEachPageMark(doc.pages, (f, d) => {
+      const [chapter, id] = d.pageMark!.page === 'to' ? [f.continuesToChapter, f.continuesTo] : [f.continuedFromChapter, f.continuedFrom];
+      if (chapter === undefined || id === undefined) return undefined;
+      const at = byId[chapter]?.get(id);
+      return at ? pageLabelOf(at) : undefined;
+    });
+  });
 }
 
 /** `doc` with the page of each of its index marks (`doc.indexMarks`). */

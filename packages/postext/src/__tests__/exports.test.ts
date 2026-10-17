@@ -52,6 +52,7 @@ describe("package exports", () => {
       "builtinCodeLanguage",
       "fencedCodeLines",
       "buildDocument",
+      "resolveJumpMarks",
       "BuildCancelledError",
       "continuationAfter",
       "contentOutline",

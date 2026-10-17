@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { buildBundle } from '../../bundle';
+import { resolveJumpMarks } from '../../index';
 import { createMeasurementCache } from '../../measure';
 import type { PageTemplate } from '../../composed/types';
 import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
@@ -104,6 +105,30 @@ describe('a story that jumps to a page of a later chapter (#943)', () => {
     expect(inChapter.rect).toEqual(got.rect);
     expect(textOf(blocksOf(pages[2]!, inChapter))).toBe(textOf(blocksOf(target, got)));
     expect(textOf(blocksOf(pages[0]!, frameOn(pages[0]!, 'cuerpo')))).toBe(textOf(blocksOf(from, sent)));
+  });
+
+  const overlayOf = (box: VDTBlock | undefined): string[] =>
+    (box?.designOverlay?.blocks ?? []).flatMap((d) => (d.kind === 'text' ? [d.lines.map((l) => l.text).join(' ')] : []));
+
+  it('marks name the page of the other chapter with the number its chapter gave it', () => {
+    // One page a chapter: the jump page is the third of the book.
+    expect(target.pageLabel).toBe('3');
+    expect(overlayOf(blocksOf(from, sent)[0])).toContain('Sigue en la página 3');
+    expect(overlayOf(blocksOf(target, got)[0])).toContain('Viene de la página 1');
+    // The frames and the log know the way.
+    expect(sent.continuesTo).toBe(got.id);
+    expect(from.composed!.log).toContainEqual({ frame: 'cuerpo', kind: 'continued', toChapter: 2, toPage: target.index, toFrame: got.id });
+  });
+
+  it('marks follow the page numbers when the chapters between grow', () => {
+    const longer = bundle([article('p-salto'), `${other()}\n${other()}\n${other()}`, jumpPage()]);
+    const first = composedPages(longer[0]!)[0]!;
+    const last = composedPages(longer[2]!).find((p) => p.composed!.template === 'salto')!;
+    expect(last.pageLabel).toBe('5');
+    expect(overlayOf(blocksOf(first, frameOn(first, 'cuerpo'))[0])).toContain('Sigue en la página 5');
+    // Resolving again changes nothing.
+    resolveJumpMarks(longer);
+    expect(overlayOf(blocksOf(first, frameOn(first, 'cuerpo'))[0])).toContain('Sigue en la página 5');
   });
 
   it('leaves the chapter between untouched', () => {

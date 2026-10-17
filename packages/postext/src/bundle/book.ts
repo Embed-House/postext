@@ -11,7 +11,7 @@ import { bookCitationContexts, citationSourceOf, needsCitationContext } from '..
 import type { CitationContext } from '../citations/context';
 import type { DocumentMetadata, LayoutContinuation, OutlineEntry, PostextConfig, Resource } from '../types';
 import type { VDTDocument } from '../vdt';
-import { buildDocument, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds } from '../pipeline';
+import { buildDocument, resolveJumpMarks, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds } from '../pipeline';
 import type { StoryJump } from '../composed/carry';
 import type { BuildDocumentOptions } from '../pipeline';
 import { createMeasurementCache } from '../measure';
@@ -274,6 +274,9 @@ export function buildBundle(
     if (!again) break;
   }
   const docs = build.finish();
+  // Stories that jump from one chapter to a page of another (#943): the
+  // marks that name the page print its number.
+  if (laterIds) resolveJumpMarks(docs);
   if (onChapter) docs.forEach((doc, index) => onChapter(index, doc));
   return docs;
 

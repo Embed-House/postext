@@ -1,3 +1,4 @@
+export { resolveJumpMarks } from './build';
 export { buildDocument, buildDocumentAsync, buildDocumentGen, yieldToEventLoop, BuildCancelledError } from './build';
 export type { BuildDocumentOptions, BuildPassInfo, BuildProgress } from './build';
 export { continuationAfter, contentOutline, pageFenceIds, laterPageIdsOf } from './continuation';
