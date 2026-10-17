@@ -23,6 +23,7 @@ import { useBookEditions, type BookEditions } from '../editions/useBookEditions'
 import { requestFrameJump } from '../editions/frameJump';
 import { localeDisplayName, localeShortTag } from '../presets/localeNames';
 import { sameLocaleTag } from '../presets/locale';
+import { ProposalActions } from '../warnings/ProposalButtons';
 
 const ALL = '*';
 
@@ -238,6 +239,15 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
                       ) : undefined}
                       className="mx-2 my-0.5"
                     />
+                    {/* A frame that does not fit: its fixes, one click each (#868). */}
+                    {c.warning.payload.kind === 'frameOverflow' && (
+                      <ProposalActions
+                        warning={c.warning}
+                        onScreen={sameLocaleTag(c.locale, editions.activeLocale) || (c.locale === '' && editions.activeLocale === '')}
+                        openEdition={() => jump(c)}
+                        editionName={name(c.locale)}
+                      />
+                    )}
                   </li>
                 );
               })}

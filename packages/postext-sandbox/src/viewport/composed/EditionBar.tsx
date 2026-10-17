@@ -54,7 +54,7 @@ export function EditionBar({ comparing, onToggleCompare }: { comparing: boolean;
     <div
       role="group"
       aria-label={labels.editionSwitch}
-      className="absolute start-2 top-2 z-20 flex items-center gap-0.5 rounded-md border px-0.5 py-0.5 shadow-sm"
+      className="flex items-center gap-0.5 rounded-md border px-0.5 py-0.5 shadow-sm"
       style={{ borderColor: 'var(--rule)', background: 'var(--background)' }}
       data-edition-bar=""
     >

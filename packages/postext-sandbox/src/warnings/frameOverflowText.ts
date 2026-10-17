@@ -2,7 +2,7 @@
  * The Checks panel's words for a frame of a composed page whose content
  * does not fit (#858): where it overflows, the steps of the reflow ladder
  * it tried, and the changes that would make it fit, with their values.
- * The one-click versions of the proposals are U8's (#868).
+ * The one-click versions of the proposals: ./proposalActions.ts (#868).
  */
 import type { FrameFitStep, FrameOverflowProposal } from 'postext';
 import type { SandboxLabels } from '../types';
