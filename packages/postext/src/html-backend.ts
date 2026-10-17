@@ -3337,7 +3337,8 @@ function renderPageDetailed(
   const plainFlow = !vflow && page.flow?.writingMode !== 'horizontal-tb';
   // A comic page's text panels (#885): each frame's blocks laid over its
   // panel, before the panel's lettering, inside the comic's markup.
-  const comicText = new Map<number, string>();
+  // Those of a strip (#959) likewise, inside the strip's markup.
+  const comicText = new Map<VDTComicPage, Map<number, string>>();
   const comicTextBlocks: Array<{ id: string; html: string }> = [];
   // On a vertical or right-to-left page the text is set in the page's flow
   // frame (#909): each frame is written in a box that turns or mirrors it
@@ -3347,15 +3348,22 @@ function renderPageDetailed(
     : page.flow?.writingMode === 'horizontal-tb'
       ? `<div class="pt-flow pt-flow-mirrored" style="position:absolute;left:0;top:0;width:${page.width}px;height:${page.height}px;transform:scaleX(-1);transform-origin:${page.flow.mirror.originX / 2}px 0;">${MIRRORED_FLOW_STYLE}`
       : '';
-  for (const item of comicFramePaintOrder(page)) {
-    if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
-    const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
-    comicTextBlocks.push(...parts);
-    const frameHtml = composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>';
-    comicText.set(item.frame.panel, flowBox ? `${flowBox}${frameHtml}</div>` : frameHtml);
+  for (const comic of comics) {
+    for (const item of comicFramePaintOrder(page, comic)) {
+      if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
+      const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
+      comicTextBlocks.push(...parts);
+      const frameHtml = composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>';
+      const byPanel = comicText.get(comic) ?? new Map<number, string>();
+      byPanel.set(item.frame.panel, flowBox ? `${flowBox}${frameHtml}</div>` : frameHtml);
+      comicText.set(comic, byPanel);
+    }
   }
-  const comicMarkup = (comic: VDTComicPage): string => renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
-    comic === page.comic && comicText.size > 0 ? (panel) => comicText.get(panel.index) ?? '' : undefined);
+  const comicMarkup = (comic: VDTComicPage): string => {
+    const text = comicText.get(comic);
+    return renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
+      text ? (panel) => text.get(panel.index) ?? '' : undefined);
+  };
   const stripInBlock = (block: VDTBlock): string =>
     plainFlow && block.comic && !block.hidden ? comicMarkup(comicBlockOnSheet(page, block)!) : '';
   const blocks: Array<{ id: string; html: string }> = [];

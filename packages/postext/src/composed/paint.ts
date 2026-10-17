@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -21,8 +21,14 @@ export type ComposedPaintItem =
 export function composedFrameBlockIds(page: VDTPage): Set<string> {
   const ids = new Set<string>();
   for (const f of page.composed?.frames ?? []) for (const id of f.blockIds) ids.add(id);
-  // A comic page's text panels (#885) are painted with their frames too.
+  // A comic page's text panels (#885) are painted with their frames too,
+  // and those of the strips it holds (#959).
   for (const f of page.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  const strip = (b: VDTBlock): void => {
+    for (const f of b.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  };
+  for (const col of page.columns) for (const b of col.blocks) strip(b);
+  for (const b of page.floats ?? []) strip(b);
   return ids;
 }
 
@@ -32,11 +38,13 @@ export function composedFrameBlockIds(page: VDTPage): Set<string> {
  *  the sheet). */
 export type ComposedPaintPart = 'below' | 'above';
 
-/** The frames of a comic page that hold text (`::panel{text}`, #885), with
+/** The frames of a comic that hold text (`::panel{text}`, #885), with
  *  their blocks, in panel order: painted over the panels and under the
- *  lettering ({@link comicPaintsUnderText}). Empty on any other page. */
-export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
-  const frames = page.comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
+ *  lettering ({@link comicPaintsUnderText}). `comic` (on the sheet) is the
+ *  page's comic page by default; pass a strip's (`pageComics`, #959) for
+ *  its frames. Empty when the comic holds none. */
+export function comicFramePaintOrder(page: VDTPage, comic: Pick<VDTComicPage, 'frames'> | undefined = page.comic): ComposedPaintItem[] {
+  const frames = comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
   if (frames.length === 0) return [];
   const byId = new Map<string, VDTBlock>();
   for (const b of page.floats ?? []) byId.set(b.id, b);
@@ -54,7 +62,12 @@ export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
  *  its lettering last, so the text lies over its panel's ground and under
  *  the balloons. */
 export function comicPaintsUnderText(page: VDTPage): boolean {
-  return page.comic?.frames?.some((f) => f.blockIds.length > 0) === true;
+  return comicHoldsText(page.comic);
+}
+
+/** Whether a comic (on the sheet) holds a text frame with text in it. */
+export function comicHoldsText(comic: Pick<VDTComicPage, 'frames'> | undefined): boolean {
+  return comic?.frames?.some((f) => f.blockIds.length > 0) === true;
 }
 
 /** The paint order of a composed page: frames of a layer below 0, the

@@ -5,7 +5,7 @@
  * decoration at layer 0 (`composedPaintOrder`). On a page of a spread
  * (#861) all of it is clipped to the page's share of the sheet.
  */
-import type { VDTBlock, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
+import type { VDTBlock, VDTComicPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
 import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { setVerticalPaint } from './verticalText';
@@ -105,8 +105,8 @@ function paintFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks
 
 /** The text frames of a comic page (`::panel{text}`, #885), over its
  *  panels (`comicFramePaintOrder`). */
-export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null): void {
-  for (const item of comicFramePaintOrder(page)) if (item.kind === 'frame') renderFrameBlocks(ctx, item.frame, item.blocks, inkHex);
+export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null, comic: VDTComicPage | undefined = page.comic): void {
+  for (const item of comicFramePaintOrder(page, comic)) if (item.kind === 'frame') renderFrameBlocks(ctx, item.frame, item.blocks, inkHex);
 }
 
 /** A composed page's decoration painted on the sheet (a page painted

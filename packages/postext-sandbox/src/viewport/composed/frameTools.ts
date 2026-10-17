@@ -12,7 +12,7 @@
  */
 
 import type { Dispatch, MutableRefObject } from 'react';
-import { resolvePageTemplate, type PageTemplateSource, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
+import { resolvePageTemplate, type PageTemplateSource, type VDTComicPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
 import type { PanelId } from '../../types';
@@ -20,7 +20,7 @@ import type { SandboxLabels } from '../../types/labels';
 import { segmentAtOffset } from '../../book/compose';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import { editModeNow, selectFrame } from '../../editing/editMode';
-import { comicTextFrameAt, flowBoxOnSheet, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
+import { comicTextHitAt, flowBoxOnSheet, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
 import { emptyMarkRect } from './frameOverlay';
 import { comicTextCaret, comicTextTargetAt, frameClickTarget, frameTextChange, frameTextTargetAt, type FrameTextTarget } from './frameLink';
 import { openFrameTextEditor, type FrameEditSurface } from './frameTextEditor';
@@ -138,27 +138,28 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     });
   };
 
-  /** A comic page's text frame (`::panel{text}`, #885) under the point:
-   *  in Content mode a click off its words puts the caret at its text, a
-   *  double click on a paragraph edits it on the page. Its words keep the
-   *  viewer's own click; Design mode leaves the comic to its tools. */
-  const comicText = (page: VDTPage | null, x: number, y: number): VDTFrame | null =>
-    page && !page.composed && page.comic && editModeNow() !== 'design' ? comicTextFrameAt(page, x, y) : null;
+  /** A comic's text frame (`::panel{text}`, #885) under the point, on a
+   *  comic page or a strip (#959): in Content mode a click off its words
+   *  puts the caret at its text, a double click on a paragraph edits it on
+   *  the page. Its words keep the viewer's own click; Design mode leaves
+   *  the comic to its tools. */
+  const comicText = (page: VDTPage | null, x: number, y: number): { comic: VDTComicPage; frame: VDTFrame } | null =>
+    page && !page.composed && editModeNow() !== 'design' ? comicTextHitAt(page, x, y) : null;
 
   return {
     frameAt,
     click(pageIndex, x, y) {
       const page = pageOf(pageIndex);
-      const text = comicText(page, x, y);
-      if (page?.comic && text) {
+      const hit = comicText(page, x, y);
+      if (page && hit) {
         // The text frame stands on the sheet; its blocks are in the page's
         // flow frame (#909).
         const f = sheetToFlow(page, x, y);
-        if (onFrameContent(page, text, f.x, f.y)) return false;
+        if (onFrameContent(page, hit.frame, f.x, f.y)) return false;
         const book = deps.sourceOfPage(pageIndex);
-        const at = comicTextCaret(page, text);
+        const at = comicTextCaret(page, hit.frame);
         if (!book || at === null) return false;
-        focusAt(book, at, page.comic.sourceStart);
+        focusAt(book, at, hit.comic.sourceStart);
         return true;
       }
       const f = sheetToFlow(page, x, y);
@@ -174,13 +175,13 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     openSlot,
     dblclick(pageIndex, x, y) {
       const page = pageOf(pageIndex);
-      const text = comicText(page, x, y);
-      if (page?.comic && text) {
+      const hit = comicText(page, x, y);
+      if (page && hit) {
         const book = deps.sourceOfPage(pageIndex);
         if (!book || !deps.surface) return false;
         const f = sheetToFlow(page, x, y);
-        const target = comicTextTargetAt(page, book.markdown, text, f.x, f.y);
-        return target ? editOnPage(pageIndex, book, text, { ...target, rect: flowBoxOnSheet(page, target.rect).rect }, page.comic.sourceStart) : false;
+        const target = comicTextTargetAt(page, book.markdown, hit.frame, f.x, f.y);
+        return target ? editOnPage(pageIndex, book, hit.frame, { ...target, rect: flowBoxOnSheet(page, target.rect).rect }, hit.comic.sourceStart) : false;
       }
       const f = sheetToFlow(page, x, y);
       const frame = page?.composed ? frameHitAt(page, f.x, f.y) : null;

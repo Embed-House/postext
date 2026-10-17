@@ -661,6 +661,7 @@ describe("package exports", () => {
       "undrawnLabels",
       "unmirrorLabelLayout",
       "comicFramePaintOrder",
+      "comicHoldsText",
       "comicPaintsUnderText",
       "composedFrameBlockIds",
       "composedPaintOrder",

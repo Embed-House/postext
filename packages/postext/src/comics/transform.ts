@@ -140,7 +140,7 @@ export function translateComicPage(comic: VDTComicPage, dx: number, dy: number):
 }
 
 /** Strip comics moved onto the sheet, kept while their block stays put. */
-const onSheet = new WeakMap<VDTComicPage, { x: number; y: number; comic: VDTComicPage }>();
+const onSheet = new WeakMap<VDTComicPage, { x: number; y: number; frames: VDTComicPage['frames']; comic: VDTComicPage }>();
 
 /**
  * The comic of a strip block (`VDTBlock.comic`, #566) on the sheet of
@@ -153,9 +153,11 @@ export function comicBlockOnSheet(page: Pick<VDTPage, 'flow'>, block: Pick<VDTBl
   if (!comic) return undefined;
   const box = flowRectToPage(page, block.bbox);
   const memo = onSheet.get(comic);
-  if (memo && memo.x === box.x && memo.y === box.y) return memo.comic;
+  // (A strip's text frames are laid after it is placed, #959: `frames` is
+  // replaced then, and the copy made before it is stale.)
+  if (memo && memo.x === box.x && memo.y === box.y && memo.frames === comic.frames) return memo.comic;
   const moved = translateComicPage(comic, box.x, box.y);
-  onSheet.set(comic, { x: box.x, y: box.y, comic: moved });
+  onSheet.set(comic, { x: box.x, y: box.y, frames: comic.frames, comic: moved });
   return moved;
 }
 

@@ -951,6 +951,23 @@ Recorded where the implementation settles a point the sections above leave open,
   `::panel{text shrink}` lowers the frame's `fit.minScale` (`shrinkScale`: 0.5, or the value given,
   0.25–1). Tagged PDF: `comicStructure` makes a `Div` in the comic's `Div` at the text panel's place
   (`ComicTags.texts`); `StructureFlow.readInto` moves the frame's elements into it.
+- **Comic text panels on strips and spreads, valign in slanted cells (#959).** Strips: the stories are done
+  for the main loop from the start (`composedLaid`), and `placeStripTexts` lays them at the end of the pass
+  (after `centrePageText`), where each strip block stands: `layoutStripTextFrames` moves the block's comic
+  onto the sheet (`flowRectToPage` + `translateComicPage`, the panel sources copied with
+  `copyComicPanelSources`), runs `layoutComicTextFrames` there, and writes the frames' results (`blockIds`,
+  `overflowPx`, `scale`, warnings) back on the block's comic, whose `frames` array is replaced
+  (`comicBlockOnSheet`'s memo checks it). A page-wide strip set where it stands is boxed by
+  `wrapPageSpanEmbeds`, so `planComicTextPanels` hops the box's closing marker. Spreads: each half lays
+  the text panels that have most of their width on it (`only`), off the 8 mm about the spine
+  (`comicSpreadGutter` → `avoid`, a rectangular exclusion). Painting: `comicFramePaintOrder(page, comic)`
+  and `composedFrameBlockIds` read the strips too; canvas and PDF paint a strip's panels, the flow
+  frame's text frames, then its lettering in the strip loop after the flow (`comicHoldsText`); the HTML
+  keys the over-panel markup by comic. `comicTextAncestors` and `sourceAt` answer for a strip's words
+  before the strip block. Slanted cells: text set to the middle or the foot is laid with the slant moved
+  by the room the alignment leaves above it (bisection on that shift, at most ten layouts, a layout kept
+  only when every line lies inside the outline and none is empty); not settled → `innerBox`. Frames
+  of a half are found by the panel's `index` (`comicPanelOfFrame`), not its place in `panels`.
 
 ## 6. Source map contract
 
@@ -1056,8 +1073,8 @@ Cookbook comics recipe must render unchanged before and after.
   `valign` → `verticalAlign`; ids are renamed `cp<n>:` → `cm<n>:`; the blocks go to `page.floats`
   and `doc.blocks`, the frame record gets `blockIds`, `overflowPx`, `scale`. A `::resource` in a
   story does not float (the float plan treats the text plans as composed pages). Not wrapped, so
-  set in the flow after the comic: strips, spreads, documents whose flow is vertical or mirrored
-  (`comicTextPanelsSupported`), comics inside a container.
+  set in the flow after the comic: comics inside a container (strips and spreads since #959, vertical and
+  mirrored documents since #909; `comicTextPanelsSupported` is true for every document).
 - **Paint order** (`comicPaintsUnderText`, `comicFramePaintOrder` in `composed/paint.ts`): on a
   comic page holding text frames the panels are painted before the flow, the text frames after
   the floats (their ids are in `composedFrameBlockIds`), the lettering after the flow; elsewhere
@@ -1067,8 +1084,8 @@ Cookbook comics recipe must render unchanged before and after.
 - **Box styles.** `::panel{box=<calloutStyle>}` maps the style's background, border colour and
   width and radius onto the panel (its own `border`/`bg` win); on a text panel the frame draws the
   box (frame style = that callout style) and the panel draws none. `VDTFrame.styleId` names it.
-- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout), `strip`,
-  `spread`, `flow`; `panel` = source index).
+- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout); `strip`, `spread` and
+  `flow` were raised up to 1.39 and stay in the type for old reports; `panel` = source index).
 - **Source map** (`comics/sourceMap.ts`, called from `sourceAt`, `elementsForSource`,
   `findElement`): balloon glyph (`text`) → balloon (`box`) → frame → comic (`template`); picture
   (`resource`) → frame → comic; a text panel's words answer through the flow path with the frame
@@ -1076,9 +1093,9 @@ Cookbook comics recipe must render unchanged before and after.
   `frameTools` (Content mode: click off words → caret at the text, double click → in-place
   edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
   (they are not in `page.composed`).
-- **Not done:** text panels on strips and spreads; the comic frames in the template editor's
-  views. (Vertical and right-to-left pages, lines following a slanted edge, `shrink` and the tagged
-  PDF's reading order: round G, §5.15.)
+- **Not done:** the comic frames in the template editor's views. (Vertical and right-to-left pages, lines
+  following a slanted edge, `shrink` and the tagged PDF's reading order: round G, §5.15; strips, spreads and
+  text set to the middle or the foot of a slanted cell: #959.)
 
 ## 8. HTML and EPUB
 

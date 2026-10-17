@@ -4,9 +4,9 @@
  * paragraph a double click edits on the page.
  */
 import { describe, expect, it } from 'vitest';
-import { buildDocument, flowToPage } from 'postext';
+import { buildDocument, comicBlockOnSheet, flowToPage } from 'postext';
 import type { VDTPage } from 'postext';
-import { comicTextFrameAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit';
+import { comicTextFrameAt, comicTextHitAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit';
 import { comicTextCaret, comicTextTargetAt, frameTextChange } from './frameLink';
 
 class StubCtx {
@@ -67,6 +67,26 @@ describe('text panels in the viewers', () => {
     expect(comicTextFrameAt(page, sheet.x, sheet.y)?.id).toBe('cm0:p1');
     const inFlow = sheetToFlow(page, sheet.x, sheet.y);
     const target = comicTextTargetAt(page, md, frame, inFlow.x, inFlow.y)!;
+    expect(target.text).toBe('A second paragraph.');
+  });
+
+  it('finds the text frame of a strip, with the strip\'s comic, and its caret and paragraph (#959)', () => {
+    const md = 'Before.\n\n:::strip{split="* | *" aspect=2.5}\n::panel{text}\nThe narrator speaks here.\n\nA second paragraph.\n::panel\nana: Hello!\n:::\n';
+    const doc = buildDocument({ markdown: md, resources: [] }, {});
+    const page = doc.pages.find((p) => p.columns.some((c) => c.blocks.some((b) => b.comic)))!;
+    const strip = page.columns.flatMap((c) => c.blocks).find((b) => b.comic)!;
+    const frame = strip.comic!.frames![0]!;
+    const para = page.floats!.filter((b) => frame.blockIds.includes(b.id) && b.type === 'paragraph')[1]!;
+    const hit = comicTextHitAt(page, para.bbox.x + 2, para.bbox.y + 2)!;
+    expect(hit.frame.id).toBe('cm0:p1');
+    expect(hit.comic).toBe(comicBlockOnSheet(page, strip));
+    expect(comicTextFrameAt(page, para.bbox.x + 2, para.bbox.y + 2)?.id).toBe('cm0:p1');
+    // The picture panel holds no text.
+    const second = hit.comic.panels[1]!.bbox;
+    expect(comicTextHitAt(page, second.x + second.width / 2, second.y + second.height / 2)).toBeNull();
+    const at = comicTextCaret(page, hit.frame)!;
+    expect(md.slice(at)).toMatch(/^The narrator speaks here\./);
+    const target = comicTextTargetAt(page, md, hit.frame, para.bbox.x + 2, para.bbox.y + 2)!;
     expect(target.text).toBe('A second paragraph.');
   });
 });

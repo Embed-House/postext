@@ -186,6 +186,14 @@ function isAxisRect(poly: readonly VDTPoint[], box: BoundingBox): boolean {
   return poly.every((p) => onX(p.x) && onY(p.y));
 }
 
+/** The panel a frame of a comic holds (`VDTFrame.panel` is the panel's
+ *  `index`, which is its place in the comic laid out whole: on a half of a
+ *  spread, whose panels are the ones that reach the page, it is not its
+ *  place in `panels`). */
+export function comicPanelOfFrame(comic: Pick<VDTComicPage, 'panels'>, frame: Pick<VDTFrame, 'panel'>): VDTComicPanel | undefined {
+  return frame.panel === undefined ? undefined : comic.panels.find((p) => p.index === frame.panel);
+}
+
 /** The frames of a comic whose panels were moved or cut (a spread's half,
  *  #567): each frame of `whole` whose panel `panels` still holds, on that
  *  panel's box and outline; a text frame keeps its blocks. */

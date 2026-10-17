@@ -15,6 +15,7 @@
 import type { BoundingBox, VDTComicBalloon, VDTComicPage, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt';
 import type { SourceElement } from '../composed/sourceMap';
 import { pointInPolygon } from './geometry';
+import { comicPanelOfFrame } from './frames';
 import { comicPanelContinues } from './paint';
 import { pageComics } from './transform';
 
@@ -31,7 +32,7 @@ export function comicElement(comic: VDTComicPage, file: File): SourceElement | u
 /** A frame the split generated as an element: its panel's source. */
 export function comicFrameElement(comic: VDTComicPage, frame: VDTFrame, file: File): SourceElement | undefined {
   if (frame.sourceStart === undefined || frame.sourceEnd === undefined) return undefined;
-  const panel = frame.panel !== undefined ? comic.panels[frame.panel] : undefined;
+  const panel = comicPanelOfFrame(comic, frame);
   return {
     level: 'frame',
     id: frame.id,
@@ -116,7 +117,7 @@ export function comicChainAt(
       if (!pointInComicFrame(frame, p)) continue;
       // A text panel's words: the caller's.
       if (frame.blockIds.length > 0 && onText(frame)) return undefined;
-      const panel = frame.panel !== undefined ? comic.panels[frame.panel] : undefined;
+      const panel = comicPanelOfFrame(comic, frame);
       const out: SourceElement[] = [];
       if (panel?.art) out.push({ level: 'resource', id: `${frame.id}:art`, source: { kind: 'resource', resourceId: panel.art.resourceId }, rect: { ...panel.bbox } });
       const fe = comicFrameElement(comic, frame, file);
@@ -132,7 +133,8 @@ export function comicChainAt(
  *  round it (its frame, the comic): what a text panel's words answer after
  *  their own chain. */
 export function comicTextAncestors(page: VDTPage, blockId: string, file: File): SourceElement[] {
-  const comic = page.comic;
+  // The page's comic page or a strip (#959).
+  const comic = pageComics(page).find((c) => c.frames?.some((f) => f.blockIds.includes(blockId)));
   const frame = comic?.frames?.find((f) => f.blockIds.includes(blockId));
   if (!comic || !frame) return [];
   const fe = comicFrameElement(comic, frame, file);
@@ -163,7 +165,7 @@ export function findComicElement(page: VDTPage, id: string, file: File): SourceE
     if (comic.id === id) return comicElement(comic, file);
     for (const frame of comic.frames ?? []) {
       if (frame.id !== id) continue;
-      const panel = frame.panel !== undefined ? comic.panels[frame.panel] : undefined;
+      const panel = comicPanelOfFrame(comic, frame);
       // The half of a panel across a spread's spine read on this page.
       if (panel && comicPanelContinues(comic, panel)) continue;
       return comicFrameElement(comic, frame, file);

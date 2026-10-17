@@ -15,7 +15,7 @@ import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
 import { renderComicBalloons, renderComicPage, renderComicPanels } from './comic';
 import { renderComicTextFrames, renderComposedDecoration, renderComposedFrames } from './composed';
-import { comicPaintsUnderText, composedFrameBlockIds } from '../composed/paint';
+import { comicHoldsText, comicPaintsUnderText, composedFrameBlockIds } from '../composed/paint';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
 import { resetContextState, restoreContext, saveContext } from './contextState';
@@ -354,7 +354,15 @@ function paintContext(
   // strips set in its flow, on the sheet (never through the flow frame).
   for (const comic of pageComics(page)) {
     if (comic === comicUnder) renderComicBalloons(ctx, comic);
-    else renderComicPage(ctx, comic, inkHex);
+    else if (comicHoldsText(comic)) {
+      // A strip with text panels (#959): its panels, the text in the flow
+      // frame over them, then its lettering.
+      renderComicPanels(ctx, comic, inkHex);
+      enterFlow();
+      renderComicTextFrames(ctx, page, inkHex, comic);
+      leaveFlow();
+      renderComicBalloons(ctx, comic);
+    } else renderComicPage(ctx, comic, inkHex);
   }
 
   // Line numbers (#621) stand on the sheet beside the lines they number.
