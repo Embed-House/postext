@@ -4,7 +4,8 @@ import { applyTextChanges } from '../book/textChanges';
 import { calloutFences, retypeCalloutChanges } from './calloutFences';
 import { frameStyleLibrary } from './library';
 import { countFields, mergeSuggestions, parseHex, styleDiff, styleFields, stylesAfterMerging } from './styleCompare';
-import { planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge';
+import { placesToKeep, planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge';
+import { inheritCalloutStyles } from 'postext';
 import { styleUsage } from './styleUsage';
 import { frameDress, previewConfig, previewMarkdown } from './stylePreview';
 
@@ -228,6 +229,44 @@ describe('planMerge', () => {
     expect(plan.calloutStyles.map((s) => s.id)).toEqual(['nota', 'caja-p4', 'caja-p5', 'caja-verso', 'caja-p7', 'aviso']);
     expect(plan.frames).toEqual([{ templateId: 'tema', frame: 'dinero', scope: 'verso', from: 'caja-p6' }]);
     expect(rewrittenTexts(CHAPTERS, plan).get('c2')).toContain("type = 'caja-verso'");
+  });
+});
+
+describe('styles based on another (#905)', () => {
+  const fixed = (id: string, y: number): CalloutStyleConfig => ({ id, placement: 'fixed', fixed: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(20), y: mm(y) } }, padding: pad(2), background: { hex: '#fde9d9', model: 'hex' } });
+  const styles = [fixed('t-31', 31), fixed('t-58', 58), { ...fixed('t-90', 90), padding: pad(2.2) }];
+  const chapters = [{ id: 'c', markdown: styles.map((s) => `:::callout{type="${s.id}"}\nx\n:::`).join('\n\n') }];
+  const config: PostextConfig = { calloutStyles: styles };
+
+  it('a merge on the look keeps a style per place, based on the kept one: no box moves', () => {
+    const lib = frameStyleLibrary(config, chapters, { maxFields: 1, ignorePosition: true });
+    const places = placesToKeep(lib.suggestions, lib);
+    expect([...places.keys()]).toEqual(['t-58', 't-90']);
+    const plan = planMerges(config, styles, chapters, lib.suggestions, places);
+    expect(plan.from).toEqual([]);
+    expect(plan.stays).toEqual(['t-58', 't-90']);
+    expect(plan.fenceCount).toBe(0);
+    expect(plan.calloutStyles[1]).toEqual({ id: 't-58', extends: 't-31', fixed: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(20), y: mm(58) } } });
+    // Each box keeps its place and takes the kept look (its padding too).
+    const after = frameStyleLibrary({ calloutStyles: plan.calloutStyles }, chapters);
+    const before = frameStyleLibrary(config, chapters);
+    expect(after.resolved.map((r) => r.fixed)).toEqual(before.resolved.map((r) => r.fixed));
+    expect(after.resolved[2]!.padding).toEqual(before.resolved[0]!.padding);
+    expect(inheritCalloutStyles(plan.calloutStyles)[2]!.background).toEqual(styles[0]!.background);
+  });
+
+  it('without places the merge moves the boxes, as before', () => {
+    const lib = frameStyleLibrary(config, chapters, { maxFields: 1, ignorePosition: true });
+    const plan = planMerges(config, styles, chapters, lib.suggestions);
+    expect(plan.from).toEqual(['t-58', 't-90']);
+    expect(plan.stays).toEqual([]);
+    expect(plan.fenceCount).toBe(2);
+  });
+
+  it('a rename or a merge keeps the styles based on it pointing at it', () => {
+    const based: CalloutStyleConfig[] = [{ id: 'a' }, { id: 'b' }, { id: 'c', extends: 'b' }];
+    expect(planRename({ calloutStyles: based }, based, [], 'b', 'base').calloutStyles[2]).toEqual({ id: 'c', extends: 'base' });
+    expect(planMerge({ calloutStyles: based }, based, [], 'a', ['b']).calloutStyles).toEqual([{ id: 'a' }, { id: 'c', extends: 'a' }]);
   });
 });
 

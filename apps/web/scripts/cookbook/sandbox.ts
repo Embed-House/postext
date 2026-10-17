@@ -154,6 +154,8 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   pictureBelowPrintSize: "1.37.0",
   comicPanelFrame: "1.38.0",
   continueTargetMissing: "1.38.0",
+  calloutStyleExtendsUnknown: "1.39.0",
+  calloutStyleExtendsCycle: "1.39.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

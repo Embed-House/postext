@@ -2067,6 +2067,10 @@ export interface SandboxLabels {
   warningsUnknownConfigKeySuggestion: string;
   warningsUnknownConfigValueTitle: string;
   warningsUnknownConfigValueDetail: string;
+  warningsCalloutStyleExtendsUnknownTitle: string;
+  warningsCalloutStyleExtendsUnknownDetail: string;
+  warningsCalloutStyleExtendsCycleTitle: string;
+  warningsCalloutStyleExtendsCycleDetail: string;
   warningsTemplateDuplicateTitle: string;
   warningsTemplateDuplicateDetail: string;
   warningsTemplateExtendsCycleTitle: string;
@@ -2890,6 +2894,8 @@ export interface SandboxLabels {
   frameStylesMaxFieldsTooltip: string;
   frameStylesIgnorePosition: string;
   frameStylesIgnorePositionTooltip: string;
+  frameStylesKeepPlaces: string;
+  frameStylesKeepPlacesTooltip: string;
   frameStylesTolerances: string;
   frameStylesHiddenByPosition: string;
   frameStylesReview: string;
@@ -2899,6 +2905,7 @@ export interface SandboxLabels {
   frameStylesNoDifference: string;
   frameStylesReviewSummary: string;
   frameStylesReviewMoves: string;
+  frameStylesReviewStays: string;
   frameStylesReviewUndo: string;
   frameStylesMerged: string;
   frameStylesMergedAll: string;
@@ -2986,6 +2993,9 @@ export interface SandboxLabels {
   calloutStyleUsageHint: string;
   calloutStyleNameLabel: string;
   calloutStyleNameAria: string;
+  calloutStyleExtends: string;
+  calloutStyleExtendsNone: string;
+  calloutStyleExtendsTooltip: string;
   calloutStyleTitle: string;
   calloutStyleTitleTooltip: string;
   calloutStyleSpan: string;

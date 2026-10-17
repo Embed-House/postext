@@ -237,7 +237,7 @@ await browser.close();
 
 字体也是设置：`sandbox_list_fonts`加上`search: "Garamond"`在开放字体目录中查找字族，把字族名写进某个`fontFamily`设置，字体就会加载。
 
-标注框样式有自己的样式库：`sandbox_frame_styles`列出每种样式在书中用到的地方（模板框、模板页、各章的`:::callout`标注框），以及它建议合并的相近样式，与“版面设计 › 标注框 › 框样式库”相同。`sandbox_merge_styles`接受`groups`（`{ keep, merge }`）或`all: true`，把每个写着被合并样式的框和标记改成保留的样式；加上`lookOnly: true`时，位置不同的框的样式也参与比较，合并后这些框会移动。
+标注框样式有自己的样式库：`sandbox_frame_styles`列出每种样式在书中用到的地方（模板框、模板页、各章的`:::callout`标注框），以及它建议合并的相近样式，与“版面设计 › 标注框 › 框样式库”相同。`sandbox_merge_styles`接受`groups`（`{ keep, merge }`）或`all: true`，把每个写着被合并样式的框和标记改成保留的样式；加上`lookOnly: true`时，位置不同的框的样式也参与比较。这样的样式会只保留自己的位置，并基于保留样式（`extends`），它的框不会移动，回答在`keptForTheirPlace`中列出它；设为`keepPlaces: false`时则完全合并，这些框会移动。
 回答中的`undoSteps`给出步数：每个被改写的章节一步，样式一步；`sandbox_undo`会先撤回样式，再撤回各章。
 
 ### 编辑文字

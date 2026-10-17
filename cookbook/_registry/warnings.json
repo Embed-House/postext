@@ -6813,6 +6813,114 @@
       }
     }
   },
+  "calloutStyleExtendsUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Box style based on an unknown style",
+      "es": "Estilo de recuadro basado en uno que no existe",
+      "ca": "Estil de requadre basat en un que no existeix",
+      "zh": "标注框样式基于不存在的样式",
+      "ar": "نمط إطار مبني على نمط غير موجود",
+      "ja": "存在しないスタイルを元にした囲みスタイル",
+      "pt": "Estilo de boxe baseado num estilo que não existe",
+      "fr": "Style d’encadré basé sur un style inconnu",
+      "de": "Kastenstil basiert auf einem unbekannten Stil",
+      "it": "Stile di riquadro basato su uno stile inesistente"
+    },
+    "cause": {
+      "en": "A box style's `extends` names an id no style of `calloutStyles` has; the style is used on its own, with the built-in values for what it leaves unset.",
+      "es": "El `extends` de un estilo de recuadro nombra un id que ningún estilo de `calloutStyles` tiene; el estilo se usa solo, con los valores de serie en lo que no fija.",
+      "ca": "L'`extends` d'un estil de requadre anomena un id que cap estil de `calloutStyles` no té; l'estil es fa servir sol, amb els valors de sèrie en el que no fixa.",
+      "zh": "标注框样式的`extends`指向`calloutStyles`中不存在的id；该样式单独使用，未设置的项使用内置默认值。",
+      "ar": "يذكر `extends` في نمط إطار معرّفًا لا يحمله أي نمط في `calloutStyles`؛ فيُستخدم النمط وحده، وتأخذ الإعدادات التي يتركها دون قيمة القيم الافتراضية.",
+      "ja": "囲みスタイルの`extends`が、`calloutStyles`のどのスタイルにもないidを指しています。スタイルは単独で使われ、設定していない項目は既定値になります。",
+      "pt": "O `extends` de um estilo de boxe cita um id que nenhum estilo de `calloutStyles` tem; o estilo é usado sozinho, com os valores padrão no que deixa sem valor.",
+      "fr": "L’`extends` d’un style d’encadré cite un identifiant qu’aucun style de `calloutStyles` ne porte ; le style est utilisé seul, avec les valeurs par défaut pour ce qu’il laisse vide.",
+      "de": "Das `extends` eines Kastenstils nennt eine ID, die kein Stil in `calloutStyles` hat; der Stil wird für sich genutzt, mit den eingebauten Werten für alles, was er offenlässt.",
+      "it": "L’`extends` di uno stile di riquadro nomina un id che nessuno stile di `calloutStyles` ha; lo stile si usa da solo, con i valori predefiniti per ciò che lascia vuoto."
+    },
+    "fix": {
+      "en": "Correct the id (the warning suggests the closest one), add the parent style, or clear Based on.",
+      "es": "Corrige el id (el aviso propone el más parecido), añade el estilo base o deja vacío Basado en.",
+      "ca": "Corregeix l'id (l'avís proposa el més semblant), afegeix l'estil base o deixa buit Basat en.",
+      "zh": "改正id（警告会给出最接近的那个），添加父样式，或清空“基于”。",
+      "ar": "صحّح المعرّف (يقترح التحذير أقربها)، أو أضف النمط الأب، أو أفرغ حقل «مبني على».",
+      "ja": "idを直す（警告がいちばん近いidを示します）か、元のスタイルを追加するか、「元にするスタイル」を空にしてください。",
+      "pt": "Corrija o id (o aviso sugere o mais próximo), adicione o estilo base ou deixe Baseado em vazio.",
+      "fr": "Corrigez l’identifiant (l’avertissement propose le plus proche), ajoutez le style parent, ou videz Basé sur.",
+      "de": "Korrigieren Sie die ID (die Warnung schlägt die nächstliegende vor), legen Sie den Elternstil an oder leeren Sie Basiert auf.",
+      "it": "Correggi l’id (l’avviso propone il più vicino), aggiungi lo stile base oppure svuota Basato su."
+    },
+    "docs": {
+      "slug": "configuration-callouts",
+      "heading": {
+        "en": "Styles based on another",
+        "es": "Estilos basados en otro",
+        "ca": "Estils basats en un altre",
+        "zh": "基于其他样式的样式",
+        "ar": "أنماط مبنية على غيرها",
+        "ja": "ほかのスタイルを元にしたスタイル",
+        "pt": "Estilos baseados em outro",
+        "fr": "Styles basés sur un autre",
+        "de": "Stile, die auf einem anderen basieren",
+        "it": "Stili basati su un altro"
+      }
+    }
+  },
+  "calloutStyleExtendsCycle": {
+    "source": "engine",
+    "label": {
+      "en": "Box styles based on each other in a loop",
+      "es": "Estilos de recuadro basados unos en otros en bucle",
+      "ca": "Estils de requadre basats els uns en els altres en bucle",
+      "zh": "标注框样式相互基于，形成循环",
+      "ar": "أنماط إطارات مبني بعضها على بعض في حلقة",
+      "ja": "囲みスタイルが互いを元にして循環",
+      "pt": "Estilos de boxe baseados uns nos outros em círculo",
+      "fr": "Styles d’encadré basés les uns sur les autres en boucle",
+      "de": "Kastenstile basieren im Kreis aufeinander",
+      "it": "Stili di riquadro basati l’uno sull’altro in cerchio"
+    },
+    "cause": {
+      "en": "Following `extends` from a box style comes back to it (`a → b → a`); the styles of the loop are used on their own.",
+      "es": "Siguiendo `extends` desde un estilo de recuadro se vuelve a él (`a → b → a`); los estilos del bucle se usan solos.",
+      "ca": "Seguint `extends` des d'un estil de requadre s'hi torna (`a → b → a`); els estils del bucle es fan servir sols.",
+      "zh": "从某个标注框样式沿`extends`追溯会回到它自己（`a → b → a`）；环中的样式各自单独使用。",
+      "ar": "تتبُّع `extends` من نمط إطار يعود إليه (`a → b → a`)؛ فتُستخدم أنماط الحلقة كلٌّ وحده.",
+      "ja": "囲みスタイルから`extends`をたどると元に戻ります（`a → b → a`）。循環の中のスタイルはそれぞれ単独で使われます。",
+      "pt": "Seguindo `extends` a partir de um estilo de boxe volta-se a ele (`a → b → a`); os estilos do círculo são usados sozinhos.",
+      "fr": "En suivant `extends` depuis un style d’encadré, on revient à lui (`a → b → a`) ; les styles de la boucle sont utilisés seuls.",
+      "de": "Wer von einem Kastenstil aus `extends` folgt, kommt zu ihm zurück (`a → b → a`); die Stile des Kreises werden für sich genutzt.",
+      "it": "Seguendo `extends` da uno stile di riquadro si torna a esso (`a → b → a`); gli stili del cerchio si usano da soli."
+    },
+    "fix": {
+      "en": "Base one style of the loop on a style outside it, or on none.",
+      "es": "Basa un estilo del bucle en un estilo de fuera, o en ninguno.",
+      "ca": "Basa un estil del bucle en un estil de fora, o en cap.",
+      "zh": "让环中的一个样式改为基于环外的样式，或不基于任何样式。",
+      "ar": "ابنِ أحد أنماط الحلقة على نمط من خارجها، أو على لا شيء.",
+      "ja": "循環の中のスタイルを一つ、外のスタイルを元にするか、元なしにしてください。",
+      "pt": "Baseie um estilo do círculo num estilo de fora, ou em nenhum.",
+      "fr": "Basez un style de la boucle sur un style extérieur, ou sur aucun.",
+      "de": "Lassen Sie einen Stil des Kreises auf einem Stil außerhalb basieren oder auf keinem.",
+      "it": "Basa uno stile del cerchio su uno stile esterno, o su nessuno."
+    },
+    "docs": {
+      "slug": "configuration-callouts",
+      "heading": {
+        "en": "Styles based on another",
+        "es": "Estilos basados en otro",
+        "ca": "Estils basats en un altre",
+        "zh": "基于其他样式的样式",
+        "ar": "أنماط مبنية على غيرها",
+        "ja": "ほかのスタイルを元にしたスタイル",
+        "pt": "Estilos baseados em outro",
+        "fr": "Styles basés sur un autre",
+        "de": "Stile, die auf einem anderen basieren",
+        "it": "Stili basati su un altro"
+      }
+    }
+  },
   "frameDuplicate": {
     "source": "engine",
     "label": {

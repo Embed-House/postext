@@ -321,7 +321,10 @@ boxes `:::callout` por capítulo) e as fusões de estilos quase iguais que suger
 como Design › Boxes › Estilos de bloco. `sandbox_merge_styles` recebe `groups`
 (`{ keep, merge }`) ou `all: true` e reescreve cada bloco de modelo e cada cerca que
 nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
-boxes ficam em lugares diferentes, que então mudam de lugar.
+boxes ficam em lugares diferentes. Esse estilo fica então só com o seu lugar,
+baseado no estilo que fica (`extends`), então os seus boxes não se movem e a
+resposta o lista em `keptForTheirPlace`; com `keepPlaces: false` ele é fundido
+por inteiro e os seus boxes mudam de lugar.
 A resposta traz `undoSteps`: um passo por capítulo reescrito e outro para os estilos, que `sandbox_undo` desfaz começando pelos estilos.
 
 ### Editar o texto

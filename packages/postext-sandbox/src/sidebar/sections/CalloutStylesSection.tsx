@@ -35,6 +35,8 @@ import type {
 } from 'postext';
 import {
   DEFAULT_CALLOUT_STYLES,
+  calloutStyleChain,
+  inheritCalloutStyles,
   resolveBodyTextConfig,
   resolveCalloutStylesConfig,
   resolveHeadingsConfig,
@@ -322,6 +324,9 @@ interface CalloutStyleCardProps {
   style: CalloutStyleConfig;
   resolved: ResolvedCalloutStyleConfig;
   otherIds: Set<string>;
+  /** The styles this one may be based on (#905): every other style but
+   *  those based on it, in list order, with their names. */
+  parents: { id: string; name: string }[];
   /** Whether the style is stored in the config (the built-in style shown
    *  while the config has no list is not an override). */
   stored: boolean;
@@ -343,6 +348,7 @@ export function CalloutStyleCard({
   style,
   resolved,
   otherIds,
+  parents,
   stored,
   iconResources,
   listDefaults,
@@ -597,6 +603,23 @@ export function CalloutStyleCard({
           />
         </Field>
       </div>
+
+      {(parents.length > 0 || style.extends !== undefined) && (
+        <SelectInput
+          label={labels.calloutStyleExtends}
+          value={style.extends ?? ''}
+          options={[
+            { value: '', label: labels.calloutStyleExtendsNone },
+            ...parents.map((p) => ({ value: p.id, label: p.name })),
+            // A parent that no longer exists stays visible until changed.
+            ...(style.extends !== undefined && !parents.some((p) => p.id === style.extends) ? [{ value: style.extends, label: style.extends }] : []),
+          ]}
+          onChange={(v) => (v === '' ? onResetField('extends') : onChange({ extends: v }))}
+          tooltip={labels.calloutStyleExtendsTooltip}
+          isDefault={unset('extends')}
+          onReset={() => onResetField('extends')}
+        />
+      )}
 
       <TextInput
         label={labels.calloutStyleTitle}
@@ -1639,14 +1662,27 @@ export function useCalloutStyleEdits() {
     applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId), activeChapterId);
   };
 
+  /** A removed style's children (#905) take its look over, and its parent
+   *  if it had one, so no box changes. */
   const removeStyle = (id: string) => {
-    write(styles.filter((s) => s.id !== id));
+    const gone = styles.find((s) => s.id === id);
+    write(styles.filter((s) => s.id !== id).map((s) => {
+      if (!gone || s.extends !== id) return s;
+      const [, child] = inheritCalloutStyles([{ ...gone, id: '__parent' }, { ...s, extends: '__parent' }]);
+      return { ...child!, id: s.id, ...(s.name !== undefined ? { name: s.name } : {}), ...(gone.extends !== undefined ? { extends: gone.extends } : {}) };
+    }));
   };
+  /** The styles `style` may be based on: not itself, nor one based on it
+   *  (directly or further down), which would close a loop. */
+  const parentsOf = (style: CalloutStyleConfig) => styles
+    .filter((s, i) => s.id !== style.id && !calloutStyleChain(styles, i).chain.some((k) => styles[k]?.id === style.id))
+    .map((s) => ({ id: s.id, name: s.name || s.id }));
 
   const cardProps = (style: CalloutStyleConfig) => ({
     style,
     resolved: resolveOne(style),
     otherIds: new Set(styles.filter((s) => s.id !== style.id).map((s) => s.id)),
+    parents: parentsOf(style),
     stored: raw !== undefined,
     iconResources,
     listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight },

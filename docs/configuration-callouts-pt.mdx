@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Nome legível (só na interface do editor).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>O id de outro estilo em que este se baseia: todo campo que ele deixa sem valor vem desse estilo. Veja <a href="#estilos-baseados-em-outro">Estilos baseados em outro</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Estilos baseados em outro
+
+`extends` nomeia outro estilo de `calloutStyles`, e todo campo que o estilo deixa sem valor vem dele. Objetos como `padding`, `border`, `titleStyle` ou `fixed` são combinados chave a chave, então um estilo pode mudar só um lado do preenchimento ou só `fixed.offset`; uma cor ou um comprimento vêm inteiros; `id` e `name` nunca são herdados. Um estilo base pode, por sua vez, basear-se em outro. Um livro com boxes em muitos lugares guarda um estilo para a aparência e um estilo mínimo por lugar:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Mude a aparência de `caja` e todos os boxes acompanham, cada um onde está. Um `extends` que não nomeia nenhum estilo gera `calloutStyleExtendsUnknown` (o aviso sugere o id mais próximo, e o estilo fica sozinho, com os valores padrão), e estilos baseados uns nos outros em círculo geram `calloutStyleExtendsCycle` (ficam sozinhos até que um se baseie num estilo fora do círculo). No Sandbox, o campo **Baseado em** de um estilo de boxe define isso; apagar um estilo em que outros se baseiam escreve as configurações dele nesses estilos, e os seus boxes não mudam. Na seção **Estilos de bloco**, fundir com **Comparar só a aparência** mantém como estilo mínimo desse tipo o estilo cujos boxes ficam em outro lugar quando **Deixar cada boxe onde está** está ligado (padrão), e nenhum boxe se move. Desde o postext 1.39.
 
 ### O contêiner `:::callout`
 

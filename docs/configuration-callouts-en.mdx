@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Human-readable name (editor UI only).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>The id of another style this one is based on: every field it leaves unset comes from that style. See <a href="#styles-based-on-another">Styles based on another</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Styles based on another
+
+`extends` names another style of `calloutStyles`, and every field the style leaves unset comes from it. Objects such as `padding`, `border`, `titleStyle` or `fixed` are merged key by key, so a style can change one side of the padding or the `fixed.offset` alone; a colour or a length is taken whole; `id` and `name` are never inherited. A parent may itself be based on another. A book whose boxes stand at many places keeps one style for their look and a thin style per place:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Change the look of `caja` and every box follows, each where it stands. An `extends` that names no style raises `calloutStyleExtendsUnknown` (the warning suggests the closest id, and the style stands alone with the built-in values), and styles based on each other in a loop raise `calloutStyleExtendsCycle` (they stand alone until one of them is based on a style outside the loop). In the Sandbox the **Based on** field of a box style sets it; deleting a style that others are based on writes its settings into them, so their boxes do not change. In the **Frame styles** section, merging with **Compare the look only** keeps a style whose boxes stand elsewhere as such a thin style when **Keep each box where it stands** is on (the default), so no box moves. Since postext 1.39.
 
 ### The `:::callout` container
 

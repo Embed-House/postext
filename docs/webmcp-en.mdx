@@ -314,7 +314,10 @@ callout style with where the book uses it (template frames, composed pages,
 suggests, the same as Design › Boxes › Frame styles. `sandbox_merge_styles`
 takes `groups` (`{ keep, merge }`) or `all: true` and rewrites every frame and
 fence that named a merged style; `lookOnly: true` also compares styles whose
-boxes stand at different places, which then move.
+boxes stand at different places. Such a style then stays with only its place,
+based on the kept style (`extends`), so its boxes keep where they stand and the
+answer lists it as `keptForTheirPlace`; `keepPlaces: false` merges it away and
+its boxes move.
 Its answer gives `undoSteps`: one per chapter rewritten and one for the styles, which `sandbox_undo` takes back, the styles first.
 
 ### Edit the text

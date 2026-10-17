@@ -2989,6 +2989,12 @@ export interface ConfigWarning {
    *  `wrapUnsupported`: a resource type's `defaultPlacement.wrap` in a
    *  vertical document (#627), whose figures keep their bands whole;
    *  `used` is `none`.
+   *  `calloutStyleExtendsUnknown` (#905): a box style's `extends` names no
+   *  style of `calloutStyles` (`path` `calloutStyles[i].extends`, `value`
+   *  the id, `suggestion` the closest id); the style stands alone, from
+   *  that parent up. `calloutStyleExtendsCycle`: its `extends` chain comes
+   *  back to itself (`value` the chain, `a → b → a`); the style stands
+   *  alone. `used` is empty for both.
    *
    *  Page templates (`pageTemplates`, #853; see `validatePageTemplates`),
    *  whose `path` is a JSON pointer (`/pageTemplates/3/frames/2/style`):
@@ -3029,6 +3035,7 @@ export interface ConfigWarning {
    *  texts, how many letters and where. The fix is to move the text into
    *  the Markdown and keep only placeholders in the design. */
   kind: 'unknownNumberFormat' | 'fontFamilyStack' | 'sideColumnPercentClamped' | 'columnCountClamped' | 'unknownConfigKey' | 'cjkGridClamped' | 'unknownConfigValue' | 'unknownNumerals' | 'lineNumbersUnsupported' | 'wrapUnsupported' | 'contentInConfig'
+    | 'calloutStyleExtendsUnknown' | 'calloutStyleExtendsCycle'
     | PageTemplateWarningKind;
   /** Where the value sits in the config, e.g.
    *  `orderedLists.levels[1].numberFormat`, `header.elements[0].fontFamily`,

@@ -879,6 +879,12 @@ Recorded where the implementation settles a point the sections above leave open,
   `FrameLayoutPass` whose `measureCtxFor` reads the first story's index), then runs
   `layoutComposedPage` with its ladder. Proposed only when no frame overflows, every story is laid
   and nothing continues; never on a page continuation added.
+- **Box styles based on another (#905).** `CalloutStyleConfig.extends` (`defaults/calloutStyles.ts`:
+  `inheritCalloutStyles` before resolving, objects merged key by key, colours and lengths whole,
+  `id`/`name` never; `calloutStyleChain`; warnings `calloutStyleExtendsUnknown` /
+  `calloutStyleExtendsCycle`, WARNING_SINCE 1.39.0). The frame-style library (§2.4) merging on the
+  look keeps a style whose `:::callout` boxes stand elsewhere as a thin style (`extends` + its
+  position fields, `placesToKeep`), so a book ends with one style per kind of box and no box moves.
 
 ## 6. Source map contract
 

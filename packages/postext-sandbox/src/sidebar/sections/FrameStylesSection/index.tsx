@@ -10,8 +10,8 @@ import { Button, SegmentedControl, Switch } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
 import { CalloutStyleCard, useCalloutStyleEdits } from '../CalloutStylesSection';
 import { bookCompareOptions, frameStyleLibrary, type FrameStyleLibrary } from '../../../frameStyles/library';
-import { differingGroups, mergeSuggestions, stylesAfterMerging, type CompareOptions, type MergeSuggestion } from '../../../frameStyles/styleCompare';
-import { planMerges } from '../../../frameStyles/styleMerge';
+import { differingGroups, mergeSuggestions, POSITION_FIELDS, stylesAfterMerging, type CompareOptions, type MergeSuggestion } from '../../../frameStyles/styleCompare';
+import { placesToKeep, planMerges } from '../../../frameStyles/styleMerge';
 import { applyStyleRewrite, canUndoStyleRewrite, undoStyleRewrite, type StyleRewriteRecord } from '../../../frameStyles/applyRewrite';
 import { useBookTexts } from '../../../frameStyles/useBookTexts';
 import type { StyleUsage } from '../../../frameStyles/styleUsage';
@@ -61,6 +61,9 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
   const chapters = useBookTexts();
   const edits = useCalloutStyleEdits();
   const [ignorePosition, setIgnorePosition] = useState(false);
+  // Merging on the look only: a style whose boxes stand elsewhere stays,
+  // with only its place, based on the kept style (#905).
+  const [keepPlaces, setKeepPlaces] = useState(true);
   const [maxFields, setMaxFields] = useState(2);
   const [filter, setFilter] = useState<Filter | null>(null);
   const [reviewing, setReviewing] = useState<string | null>(null);
@@ -105,7 +108,7 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
   const merge = (list: readonly MergeSuggestion[]) => {
     if (list.length === 0) return;
     const before = { calloutStyles: config.calloutStyles, pageTemplates: config.pageTemplates };
-    const plan = planMerges(before, library.styles, chapters, list);
+    const plan = planMerges(before, library.styles, chapters, list, placesOf(list));
     const merged = plan.from.length;
     const message = list.length === 1
       ? labels.frameStylesMerged.replace('__count__', String(merged)).replace('__name__', styleName(byId.get(list[0]!.keep), list[0]!.keep))
@@ -113,6 +116,11 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
     setLast(applyStyleRewrite(dispatch, before, plan, message, activeChapterId));
     setReviewing(null);
   };
+
+  /** The styles a merge keeps for their place (#905). */
+  function placesOf(list: readonly MergeSuggestion[]) {
+    return ignorePosition && keepPlaces ? placesToKeep(list, library, compare) : new Map<string, Partial<CalloutStyleConfig>>();
+  }
 
   const undo = () => {
     if (history && last) undoStyleRewrite(history, last);
@@ -157,6 +165,11 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
             <FieldRow label={labels.frameStylesIgnorePosition} tooltip={labels.frameStylesIgnorePositionTooltip}>
               <Switch ariaLabel={labels.frameStylesIgnorePosition} checked={ignorePosition} onCheckedChange={setIgnorePosition} />
             </FieldRow>
+            {ignorePosition && (
+              <FieldRow label={labels.frameStylesKeepPlaces} tooltip={labels.frameStylesKeepPlacesTooltip}>
+                <Switch ariaLabel={labels.frameStylesKeepPlaces} checked={keepPlaces} onCheckedChange={setKeepPlaces} />
+              </FieldRow>
+            )}
             <p className="mb-2 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.frameStylesTolerances}</p>
             {library.suggestions.length === 0 && (
               <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>{labels.frameStylesSuggestionsNone}</p>
@@ -170,6 +183,7 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
                   <ReviewPanel
                     suggestions={library.suggestions}
                     library={library}
+                    places={placesOf(library.suggestions)}
                     compare={compare}
                     chapterTitle={chapterTitle}
                     uiLocale={uiLocale}
@@ -208,6 +222,7 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
                     <ReviewPanel
                       suggestions={[s]}
                       library={library}
+                      places={placesOf([s])}
                     compare={compare}
                       chapterTitle={chapterTitle}
                       uiLocale={uiLocale}
@@ -266,6 +281,8 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
 interface ReviewPanelProps {
   suggestions: readonly MergeSuggestion[];
   library: FrameStyleLibrary;
+  /** The styles that stay for the place of their boxes (#905). */
+  places: ReadonlyMap<string, unknown>;
   compare: CompareOptions;
   chapterTitle: (index: number) => string;
   uiLocale: string;
@@ -277,24 +294,28 @@ interface ReviewPanelProps {
 /** What a merge changes, before it is made: each style that goes, what it
  *  differs in, the boxes and frames that will name the kept style, and the
  *  boxes that will move. */
-function ReviewPanel({ suggestions, library, compare, chapterTitle, uiLocale, confirmLabel, onConfirm, onCancel }: ReviewPanelProps) {
+function ReviewPanel({ suggestions, library, places, compare, chapterTitle, uiLocale, confirmLabel, onConfirm, onCancel }: ReviewPanelProps) {
   const labels = useSandboxLabels();
   const byId = new Map(library.styles.map((s) => [s.id, s]));
   const resolvedById = new Map(library.styles.map((s, i) => [s.id, library.resolved[i]]));
+  const resolvedOf = (id: string) => resolvedById.get(id) ?? byId.get(id)!;
   let fences = 0;
   let frames = 0;
   let moves = 0;
   const chapterSet = new Set<number>();
   for (const s of suggestions) {
-    moves += s.moves;
     for (const id of s.merge) {
       const u = library.usage.get(id);
+      // A style that stays for its place keeps its boxes and their type.
+      if (places.has(id)) continue;
+      // Its boxes move to where the kept style's stand.
+      if ((u?.fenceCount ?? 0) > 0 && differingGroups(resolvedOf(s.keep), resolvedOf(id), compare).some((f) => POSITION_FIELDS.has(f))) moves += u!.fenceCount;
       fences += u?.fences.reduce((n, f) => n + f.offsets.length - f.implicit, 0) ?? 0;
       frames += u?.frames.length ?? 0;
       for (const f of u?.fences ?? []) if (f.offsets.length > f.implicit) chapterSet.add(f.chapterIndex);
     }
   }
-  const removed = suggestions.reduce((n, s) => n + s.merge.length, 0);
+  const removed = suggestions.reduce((n, s) => n + s.merge.filter((id) => !places.has(id)).length, 0);
   return (
     <div className="mt-2 rounded border p-2 text-xs" style={{ borderColor: 'var(--brand)', color: 'var(--foreground)' }}>
       <ul className="m-0 mb-2 flex max-h-64 list-none flex-col gap-1 overflow-auto p-0">
@@ -327,6 +348,9 @@ function ReviewPanel({ suggestions, library, compare, chapterTitle, uiLocale, co
         <p className="mb-1 font-medium" style={{ color: 'var(--pt-warning, var(--foreground))' }}>
           {labels.frameStylesReviewMoves.replace('__count__', String(moves))}
         </p>
+      )}
+      {places.size > 0 && (
+        <p className="mb-1">{labels.frameStylesReviewStays.replace('__count__', String(places.size))}</p>
       )}
       <p className="mb-2" style={{ color: 'var(--slate)' }}>{labels.frameStylesReviewUndo}</p>
       <div className="flex flex-wrap gap-2">

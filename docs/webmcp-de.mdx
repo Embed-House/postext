@@ -329,7 +329,11 @@ vorgeschlagenen Zusammenführungen fast gleicher Stile, wie Gestaltung › Käst
 Rahmenstile. `sandbox_merge_styles` nimmt `groups` (`{ keep, merge }`) oder
 `all: true` und schreibt jeden Rahmen und jeden Block um, der einen
 zusammengeführten Stil nannte; mit `lookOnly: true` vergleicht es auch Stile,
-deren Kästen an verschiedenen Stellen stehen und sich dann verschieben.
+deren Kästen an verschiedenen Stellen stehen. Ein solcher Stil bleibt dann nur
+mit seinem Platz, auf Basis des behaltenen Stils (`extends`), sodass seine
+Kästen stehen bleiben und die Antwort ihn unter `keptForTheirPlace` nennt; mit
+`keepPlaces: false` wird er ganz zusammengeführt und seine Kästen verschieben
+sich.
 Die Antwort nennt `undoSteps`: einen Schritt je umgeschriebenem Kapitel und einen für die Stile, die `sandbox_undo` zurücknimmt, die Stile zuerst.
 
 ### Den Text bearbeiten

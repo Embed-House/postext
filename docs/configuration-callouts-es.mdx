@@ -78,6 +78,12 @@ El cristal sigue caliente una hora después de apagar la llama.
       <td>Nombre legible (solo para la interfaz del editor).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>El id de otro estilo en el que se basa este: todo campo que no fija lo toma de ese estilo. Véase <a href="#estilos-basados-en-otro">Estilos basados en otro</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ El cristal sigue caliente una hora después de apagar la llama.
     </tr>
   </tbody>
 </table>
+
+### Estilos basados en otro
+
+`extends` nombra otro estilo de `calloutStyles`, y todo campo que el estilo no fija lo toma de él. Los objetos como `padding`, `border`, `titleStyle` o `fixed` se combinan clave a clave, así que un estilo puede cambiar solo un lado del relleno o solo `fixed.offset`; un color o una longitud se toman enteros; `id` y `name` nunca se heredan. Un estilo base puede basarse a su vez en otro. Un libro con recuadros en muchos sitios guarda un estilo para su aspecto y un estilo mínimo por sitio:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Cambia el aspecto de `caja` y todos los recuadros lo siguen, cada uno donde está. Un `extends` que no nombra ningún estilo da el aviso `calloutStyleExtendsUnknown` (propone el id más parecido, y el estilo queda solo, con los valores de serie), y los estilos basados unos en otros en bucle dan `calloutStyleExtendsCycle` (quedan solos hasta que uno se base en un estilo de fuera del bucle). En el Sandbox lo fija el campo **Basado en** de un estilo de recuadro; borrar un estilo en el que se basan otros escribe sus ajustes en ellos, así que sus recuadros no cambian. En la sección **Estilos de marco**, fusionar con **Comparar solo el aspecto** conserva como estilo mínimo de ese tipo el estilo cuyos recuadros están en otro sitio si **Dejar cada recuadro donde está** está activado (por defecto), y ningún recuadro se mueve. Desde postext 1.39.
 
 ### El contenedor `:::callout`
 

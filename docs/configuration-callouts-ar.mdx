@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>اسم مقروء للبشر (لواجهة المحرّر فقط).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>معرّف نمط آخر يُبنى عليه هذا النمط: كل حقل يتركه دون قيمة يأخذه من ذلك النمط. انظر <a href="#أنماط-مبنية-على-غيرها">أنماط مبنية على غيرها</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### أنماط مبنية على غيرها
+
+يسمّي `extends` نمطًا آخر من `calloutStyles`، وكل حقل يتركه النمط دون قيمة يأخذه منه. وتُدمج الكائنات مثل `padding` و`border` و`titleStyle` و`fixed` مفتاحًا مفتاحًا، فيستطيع النمط أن يغيّر جانبًا واحدًا من الحشوة أو `fixed.offset` وحده؛ ويؤخذ اللون أو الطول كاملًا؛ ولا يُورث `id` ولا `name`. ويمكن أن يُبنى النمط الأب بدوره على نمط آخر. والكتاب الذي تقع إطاراته في مواضع كثيرة يحتفظ بنمط واحد لمظهرها وبنمط صغير لكل موضع:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+غيّر مظهر `caja` فتتبعه الإطارات كلها، كلٌّ في موضعه. والـ`extends` الذي لا يسمّي أي نمط يطلق `calloutStyleExtendsUnknown` (يقترح التحذير أقرب معرّف، ويبقى النمط وحده بالقيم الافتراضية)، والأنماط المبني بعضها على بعض في حلقة تطلق `calloutStyleExtendsCycle` (تبقى وحدها حتى يُبنى أحدها على نمط من خارج الحلقة). وفي Sandbox يضبطه حقل **مبني على** في نمط الإطار؛ وحذف نمط تُبنى عليه أنماط أخرى يكتب إعداداته فيها، فلا تتغير إطاراتها. وفي قسم **أنماط الأطر**، يُبقي الدمج مع **مقارنة المظهر وحده** النمطَ الذي تقع إطاراته في موضع آخر نمطًا صغيرًا من هذا النوع إذا كان **إبقاء كل إطار في موضعه** مفعّلًا (وهو الافتراضي)، فلا يتحرك أي إطار. منذ postext 1.39.
 
 ### الحاوية `:::callout`
 

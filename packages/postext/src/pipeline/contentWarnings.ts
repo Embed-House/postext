@@ -1181,6 +1181,13 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'cjkGridClamped':
       text = `${w.path}: ${w.value} ${w.path.endsWith('charsPerLine') ? 'characters per line' : 'lines'} do not fit inside the margins — the grid is set with ${w.used}`;
       break;
+    // Box styles based on another (#905).
+    case 'calloutStyleExtendsUnknown':
+      text = `${w.path}: no box style has the id "${w.value}"${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the style stands alone`;
+      break;
+    case 'calloutStyleExtendsCycle':
+      text = `${w.path}: the box styles extend each other in a loop (${w.value}) — the style stands alone`;
+      break;
     // Page templates (#853): `path` is a JSON pointer.
     case 'templateDuplicate':
       text = `${w.path}: another template already has the id "${w.value}" — this one is ignored`;

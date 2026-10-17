@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>人が読むための名前です（エディターのUIでのみ使います）。</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>このスタイルが元にする別のスタイルの id。設定していない項目はそのスタイルから受け継ぎます。<a href="#ほかのスタイルを元にしたスタイル">ほかのスタイルを元にしたスタイル</a>を参照。</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### ほかのスタイルを元にしたスタイル
+
+`extends` には `calloutStyles` の別のスタイルを指定します。このスタイルで設定していない項目は、すべてそのスタイルから受け継ぎます。`padding`、`border`、`titleStyle`、`fixed` のようなオブジェクトはキーごとに合わせるので、内側のアキの一辺だけ、あるいは `fixed.offset` だけを変えられます。色と長さは丸ごと受け継ぎ、`id` と `name` は受け継ぎません。元のスタイル自体がさらに別のスタイルを元にしてもかまいません。囲みをいろいろな場所に置く本では、見た目を一つのスタイルにまとめ、置き場所ごとに場所だけを書いた小さなスタイルを作れます。
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+`caja` の見た目を変えれば、どの囲みもそれぞれの場所のまま変わります。存在しないスタイルを指す `extends` は `calloutStyleExtendsUnknown` を出し（警告がいちばん近い id を示し、スタイルは既定値で単独に使われます）、互いを元にして循環するスタイルは `calloutStyleExtendsCycle` を出します（どれかが循環の外のスタイルを元にするまで、単独で使われます）。Sandbox では囲みスタイルの **元にするスタイル** で設定します。ほかのスタイルの元になっているスタイルを削除すると、その設定を子のスタイルに書き込むので、囲みは変わりません。**枠のスタイル** の節で **見た目だけを比べる** で統合するとき、**囲みを今の場所に残す** がオン（既定）なら、置き場所の違うスタイルはこうした小さなスタイルとして残り、囲みは動きません。postext 1.39 から。
 
 ### `:::callout`コンテナー
 

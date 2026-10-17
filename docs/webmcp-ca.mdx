@@ -320,7 +320,10 @@ iguals que proposa, com Disseny › Requadres › Estils de marc.
 `sandbox_merge_styles` rep `groups` (`{ keep, merge }`) o `all: true` i
 reescriu cada marc i cada bloc que anomenava un estil fusionat; amb
 `lookOnly: true` compara també estils els requadres dels quals són en llocs
-diferents, que aleshores es mouen.
+diferents. Aquest estil es queda aleshores només amb el seu lloc, basat en
+l'estil que es queda (`extends`), de manera que els seus requadres no es mouen i
+la resposta el llista a `keptForTheirPlace`; amb `keepPlaces: false` es fusiona
+del tot i els seus requadres es mouen.
 La resposta dona `undoSteps`: un pas per capítol reescrit i un altre per als estils, que `sandbox_undo` reverteix començant pels estils.
 
 ### Editar el text

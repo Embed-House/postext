@@ -165,6 +165,8 @@ function iconFor(kind: WarningPayload['kind']) {
       return List;
     case 'unknownConfigKey':
     case 'unknownConfigValue':
+    case 'calloutStyleExtendsUnknown':
+    case 'calloutStyleExtendsCycle':
     case 'contentInConfig':
       return FileWarning;
     case 'templateDuplicate':
@@ -426,6 +428,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
       return labels.warningsUnknownConfigValueTitle;
+    case 'calloutStyleExtendsUnknown':
+      return labels.warningsCalloutStyleExtendsUnknownTitle;
+    case 'calloutStyleExtendsCycle':
+      return labels.warningsCalloutStyleExtendsCycleTitle;
     case 'templateDuplicate':
       return labels.warningsTemplateDuplicateTitle;
     case 'templateExtendsCycle':
@@ -825,6 +831,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.path} — ${labels.warningsUnknownConfigKeyDetail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
     case 'unknownConfigValue':
       return `${payload.path}: "${payload.value}" — ${labels.warningsUnknownConfigValueDetail.replace('__used__', payload.used)}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    case 'calloutStyleExtendsUnknown':
+    case 'calloutStyleExtendsCycle': {
+      const detail = payload.kind === 'calloutStyleExtendsUnknown' ? labels.warningsCalloutStyleExtendsUnknownDetail : labels.warningsCalloutStyleExtendsCycleDetail;
+      return `${payload.path}: "${payload.value}" — ${detail}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
+    }
     case 'templateDuplicate':
     case 'templateExtendsCycle':
     case 'templateExtendsUnknown':

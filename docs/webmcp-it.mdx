@@ -314,8 +314,11 @@ composte, riquadri `:::callout` per capitolo) e le unioni di stili quasi uguali
 che propone, come Design › Riquadri › Stili delle cornici.
 `sandbox_merge_styles` prende `groups` (`{ keep, merge }`) o `all: true` e
 riscrive ogni cornice e ogni blocco che nominava uno stile unito; con
-`lookOnly: true` confronta anche stili i cui riquadri stanno in punti diversi,
-che allora si spostano.
+`lookOnly: true` confronta anche stili i cui riquadri stanno in punti diversi.
+Uno stile così resta allora con il solo posto, basato sullo stile che resta
+(`extends`), così i suoi riquadri non si spostano e la risposta lo elenca in
+`keptForTheirPlace`; con `keepPlaces: false` viene unito del tutto e i suoi
+riquadri si spostano.
 La risposta dà `undoSteps`: un passo per capitolo riscritto e uno per gli stili, che `sandbox_undo` annulla cominciando dagli stili.
 
 ### Modificare il testo

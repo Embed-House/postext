@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>Nom lisible (interface de l’éditeur uniquement).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>L’identifiant d’un autre style sur lequel celui-ci est basé : tout champ qu’il laisse vide vient de ce style. Voir <a href="#styles-basés-sur-un-autre">Styles basés sur un autre</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Styles basés sur un autre
+
+`extends` nomme un autre style de `calloutStyles`, et tout champ que le style laisse vide vient de lui. Les objets comme `padding`, `border`, `titleStyle` ou `fixed` sont fusionnés clé par clé, si bien qu’un style peut changer un seul côté du remplissage ou le seul `fixed.offset` ; une couleur ou une longueur est prise entière ; `id` et `name` ne s’héritent jamais. Un style parent peut lui-même être basé sur un autre. Un livre dont les encadrés sont placés à de nombreux endroits garde un style pour leur aspect et un style minimal par place :
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Changez l’aspect de `caja` et tous les encadrés suivent, chacun à sa place. Un `extends` qui ne nomme aucun style lève `calloutStyleExtendsUnknown` (l’avertissement propose l’identifiant le plus proche, et le style reste seul, avec les valeurs par défaut), et des styles basés les uns sur les autres en boucle lèvent `calloutStyleExtendsCycle` (ils restent seuls tant que l’un d’eux n’est pas basé sur un style hors de la boucle). Dans le Sandbox, le champ **Basé sur** d’un style d’encadré le règle ; supprimer un style sur lequel d’autres sont basés écrit ses réglages dans ceux-ci, et leurs encadrés ne changent pas. Dans la section **Styles de bloc**, fusionner avec **Comparer l’aspect seulement** garde un style dont les encadrés sont ailleurs sous la forme d’un tel style minimal quand **Laisser chaque encadré à sa place** est activé (par défaut), et aucun encadré ne bouge. Depuis postext 1.39.
 
 ### Le conteneur `:::callout`
 

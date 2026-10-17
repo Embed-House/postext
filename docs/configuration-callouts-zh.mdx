@@ -78,6 +78,12 @@ The glass stays hot for an hour after the flame is out.
       <td>便于阅读的名称（仅用于编辑器界面）。</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>此样式所基于的另一个样式的 id：它没有设置的每个字段都取自该样式。见<a href="#基于其他样式的样式">基于其他样式的样式</a>。</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### 基于其他样式的样式
+
+`extends` 指定 `calloutStyles` 中的另一个样式，本样式没有设置的每个字段都取自它。`padding`、`border`、`titleStyle`、`fixed` 这类对象逐键合并，所以一个样式可以只改内边距的一边，或只改 `fixed.offset`；颜色和长度整体取用；`id` 和 `name` 从不继承。父样式本身也可以基于另一个样式。框分布在许多位置的书，可以用一个样式定外观，每个位置一个只写位置的小样式：
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+修改 `caja` 的外观，所有框都随之改变，各自留在原位。`extends` 指向不存在的样式时给出 `calloutStyleExtendsUnknown`（警告会建议最接近的 id，该样式单独成立，使用内置默认值）；相互基于、形成循环的样式给出 `calloutStyleExtendsCycle`（在其中某个样式改为基于环外的样式之前，它们都单独成立）。在 Sandbox 中，标注框样式的 **基于** 字段用来设置它；删除一个被其他样式基于的样式时，会把它的设置写进这些样式，它们的框不会改变。在 **框样式库** 中，开启 **只比较外观** 合并时，如果 **每个框留在原位** 处于开启状态（默认），框位置不同的样式会保留为这样的小样式，没有框会移动。自 postext 1.39 起。
 
 ### `:::callout`容器
 

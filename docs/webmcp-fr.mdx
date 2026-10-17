@@ -315,7 +315,10 @@ identiques qu’il propose, comme Maquette › Encadrés › Styles de bloc.
 `sandbox_merge_styles` prend `groups` (`{ keep, merge }`) ou `all: true` et
 réécrit chaque bloc et chaque balise qui nommait un style fusionné ; avec
 `lookOnly: true`, il compare aussi des styles dont les encadrés sont placés à
-des endroits différents, qui se déplacent alors.
+des endroits différents. Un tel style reste alors avec sa seule place, basé sur
+le style gardé (`extends`), si bien que ses encadrés ne bougent pas et que la
+réponse le liste dans `keptForTheirPlace` ; avec `keepPlaces: false`, il est
+fusionné entièrement et ses encadrés se déplacent.
 La réponse donne `undoSteps` : un pas par chapitre réécrit et un pour les styles, que `sandbox_undo` défait en commençant par les styles.
 
 ### Modifier le texte

@@ -320,7 +320,10 @@ iguales que propone, como Diseño › Recuadros › Estilos de marco.
 `sandbox_merge_styles` recibe `groups` (`{ keep, merge }`) o `all: true` y
 reescribe cada marco y cada bloque que nombraba un estilo fusionado; con
 `lookOnly: true` compara también estilos cuyos recuadros están en sitios
-distintos, que entonces se mueven.
+distintos. Ese estilo se queda entonces solo con su sitio, basado en el estilo
+que se queda (`extends`), así que sus recuadros no se mueven y la respuesta lo
+lista en `keptForTheirPlace`; con `keepPlaces: false` se fusiona del todo y sus
+recuadros se mueven.
 La respuesta da `undoSteps`: un paso por capítulo reescrito y otro para los estilos, que `sandbox_undo` revierte empezando por los estilos.
 
 ### Editar el texto

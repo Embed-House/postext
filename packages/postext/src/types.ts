@@ -3374,6 +3374,15 @@ export interface CalloutStyleConfig {
   id: string;
   /** Human-readable name (editor UI only). Defaults to {@link id}. */
   name?: string;
+  /** The id of another style of `calloutStyles` this one is based on
+   *  (#905): every field it leaves unset comes from that style (objects
+   *  such as `padding`, `titleStyle` or `fixed` key by key; a colour or a
+   *  length whole), so a style per place (`placement: 'fixed'`, its
+   *  `fixed.offset`) can share the look of one. `id` and `name` are not
+   *  inherited. A parent may extend another; an id no style has, or a
+   *  loop, leaves the style standing alone (`calloutStyleExtendsUnknown`,
+   *  `calloutStyleExtendsCycle`). */
+  extends?: string;
   /** Default title text; empty / unset = no title. The fence `title`
    *  attribute overrides it per instance. */
   title?: string;

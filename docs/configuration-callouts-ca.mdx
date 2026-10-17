@@ -78,6 +78,12 @@ El vidre continua calent una hora després d'apagar la flama.
       <td>Nom llegible (només per a la interfície de l'editor).</td>
     </tr>
     <tr>
+      <td><code>extends</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>L'id d'un altre estil en què es basa aquest: tot camp que no fixa el pren d'aquest estil. Vegeu <a href="#estils-basats-en-un-altre">Estils basats en un altre</a>.</td>
+    </tr>
+    <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
@@ -274,6 +280,24 @@ El vidre continua calent una hora després d'apagar la flama.
     </tr>
   </tbody>
 </table>
+### Estils basats en un altre
+
+`extends` anomena un altre estil de `calloutStyles`, i tot camp que l'estil no fixa el pren d'aquest. Els objectes com `padding`, `border`, `titleStyle` o `fixed` es combinen clau a clau, de manera que un estil pot canviar només un costat del farciment o només `fixed.offset`; un color o una longitud es prenen sencers; `id` i `name` no s'hereten mai. Un estil base es pot basar al seu torn en un altre. Un llibre amb requadres en molts llocs guarda un estil per a l'aspecte i un estil mínim per lloc:
+
+```ts
+calloutStyles: [
+  {
+    id: 'caja',
+    background: { model: 'hex', hex: '#dff0fa' },
+    padding: { top: { value: 3, unit: 'mm' }, right: { value: 4, unit: 'mm' }, bottom: { value: 3, unit: 'mm' }, left: { value: 4, unit: 'mm' } },
+  },
+  { id: 'caja-p5', extends: 'caja', placement: 'fixed', fixed: { offset: { x: { value: 12, unit: 'mm' }, y: { value: -40, unit: 'mm' } } } },
+  { id: 'caja-p9', extends: 'caja', placement: 'fixed', fixed: { anchor: { to: 'container', edge: 'top-right' } } },
+]
+```
+
+Canvia l'aspecte de `caja` i tots els requadres el segueixen, cadascun on és. Un `extends` que no anomena cap estil dona l'avís `calloutStyleExtendsUnknown` (proposa l'id més semblant, i l'estil queda sol, amb els valors de sèrie), i els estils basats els uns en els altres en bucle donen `calloutStyleExtendsCycle` (queden sols fins que un es basi en un estil de fora del bucle). Al Sandbox ho fixa el camp **Basat en** d'un estil de requadre; esborrar un estil en què se'n basen d'altres n'escriu els ajustos en aquests, de manera que els seus requadres no canvien. A la secció **Estils de marc**, fusionar amb **Comparar només l'aspecte** conserva com a estil mínim d'aquest tipus l'estil els requadres del qual són en un altre lloc si **Deixar cada requadre on és** està activat (per defecte), i cap requadre no es mou. Des de postext 1.39.
+
 ### El contenidor `:::callout`
 
 Una línia `:::callout{type="<id>"}` obre la caixa i una línia `:::` tota sola la tanca. La tanca admet cinc atributs — `type` (l'id de l'estil), `title` (sobreescriu el títol de l'estil), `span`, `placement` i `columns` (sobreescriuen els valors de l'estil) — i el contingut intermedi es compon dins la caixa: un títol opcional i després els paràgrafs, llistes, cites, fórmules o recursos incrustats, cadascun amb la tipografia `body` / `lists` de l'estil (els encapçalaments conserven els seus estils habituals). Els marges entre fills es fonen com en el text corregut; l'interior abandona la retícula de base i el flux hi torna després de la caixa garantint com a mínim `marginBottom` per sota (la retícula mana; el marge és un mínim — la mateixa convenció que segueixen els recursos). Un estil amb `snapToGrid: false` conserva, en canvi, el `marginBottom` exacte, i el text després de la caixa queda fora de la retícula fins al següent encapçalament o final de llista. Un encapçalament immediatament anterior a un avís es manté unit a ell.

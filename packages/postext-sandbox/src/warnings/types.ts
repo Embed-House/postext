@@ -114,6 +114,8 @@ export type WarningKind =
   | 'pictureBelowPrintSize'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
+  | 'calloutStyleExtendsUnknown'
+  | 'calloutStyleExtendsCycle'
   | 'templateDuplicate'
   | 'templateExtendsCycle'
   | 'templateExtendsUnknown'
@@ -505,6 +507,10 @@ export type WarningPayload =
    *  `suggestion` names the word it is closest to, when one is (the
    *  comics settings, #590). */
   | { kind: 'unknownConfigValue'; path: string; value: string; used: string; suggestion?: string }
+  /** A box style based on another (#905) whose `extends` names no style
+   *  (`suggestion` the closest id), or that comes back to it (`value` the
+   *  loop): the style stands alone. */
+  | { kind: 'calloutStyleExtendsUnknown' | 'calloutStyleExtendsCycle'; path: string; value: string; used: string; suggestion?: string }
   /** A page template problem (#853), from the engine's
    *  `validatePageTemplates`: `path` is a JSON pointer
    *  (`/pageTemplates/3/frames/2/style`), `value` the id, name, loop or
