@@ -19,14 +19,16 @@ Compuesto en Nunito y Fredoka (SIL OFL) · Texto original (CC BY 4.0) · Ilustra
 :::
 ::::
 
-# En esta unidad {style="indice"}
+::::page{template="indice"}
+# En esta unidad {style="previo"}
 
 :::toc{keep="part" levels="1-2"}
 
-:::figure{resource="rio"}
+:::figure{resource="rio" slot="mapa"}
 ::alt[Mapa pintado del valle del río Aldara, desde las montañas nevadas hasta el mar.]
 ::caption[El río Aldara, desde su nacimiento hasta el mar. El mapa está en las páginas 6 y 7.]
 :::
+::::
 
 ::::page{template="saberes"}
 # ¿Qué sabes de los ríos? {style="previo"}
@@ -49,7 +51,7 @@ Antes de empezar, piensa en los ríos que has visto. Escribe tus ideas en las l�
 :::part{number="A" title="Un río de la montaña al mar"}
 :::
 
-::::page{template="tema-agua" spread numero="1"}
+::::page{template="tema-agua" spread}
 # Dónde nace un río
 
 Llueve y nieva en las montañas. Parte del agua baja por las laderas y parte se cuela en la tierra. Bajo tierra avanza despacio, hasta que choca con una roca que no puede atravesar. Entonces sale al aire libre. El lugar donde el agua brota de la tierra se llama **manantial**.
@@ -98,7 +100,7 @@ En su nacimiento, el Aldara es un hilo de agua que se puede saltar. Después de 
 :::
 ::::
 
-::::page{template="tema-campo" spread numero="2"}
+::::page{template="tema-campo" spread}
 # De la montaña al mar
 
 El río Aldara mide 94 kilómetros. Nace en la sierra Blanca, cruza un valle y una llanura y llega al mar en Aldamar. Los geógrafos dividen un río en tres partes. Cada parte se llama **curso** y cada una tiene un aspecto distinto.
@@ -138,7 +140,7 @@ La tierra es casi llana. El río es ancho y lento, y dibuja grandes curvas. En A
 :::part{number="B" title="Las personas y el río"}
 :::
 
-::::page{template="tema-sol" spread numero="3"}
+::::page{template="tema-sol" spread}
 # Las personas y el río
 
 Las personas siempre se han instalado cerca de los ríos. Necesitan agua para beber, para lavarse y para cultivar alimentos. Un río también da peces, un camino para las barcas y la fuerza que hace girar una rueda.

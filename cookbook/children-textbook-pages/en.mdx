@@ -5,7 +5,7 @@ plain: "A school textbook unit about a river, nine pages long. Each topic is a d
 description: "A children's textbook unit in Postext: templates that extend a base, box styles that extend each other, a painted map labelled from the Markdown, contents."
 question: "How do I set a textbook unit in three languages from the same page templates?"
 aliases: ["textbook", "school book", "primary school", "unit", "double page", "topic page", "page ground", "title tab", "labelled map", "contents by part", "template inheritance", "Spanish Catalan English", "libro de texto"]
-pageNotes: {"1": "The unit opener: a painting of a river valley from snow-capped mountains to the sea fills the top, with two children sitting on the grass in the corner. Under it a blue tab with the title Our river, a paragraph and a pale blue box, You will learn.", "2": "The contents: a blue title tab, two part rows (A and B) with their topics and sections, dotted leaders and page numbers, and the map as a small picture at the foot.", "4": "Topic 1, Where a river is born, on a pale blue ground: a numbered title tab, two columns of text, a strip of three painted pictures with captions and a Try it box; on the right page three boxes with tabs.", "6": "Topic 2, From the mountains to the sea, on a pale green ground: one painted map across both pages with names set on it, and three course boxes under the right page.", "8": "Topic 3, People and the river, on a sand ground: text and two boxes on the left page, three boxes with a painting each on the right page."}
+pageNotes: {"1": "The unit opener: a painting of a river valley from snow-capped mountains to the sea fills the top, with two children sitting on the grass in the corner. Under it a blue tab with the title Our river, a paragraph and a pale blue box, You will learn.", "2": "The contents: on a pale blue ground, a blue title tab, two part rows (A and B) with their topics and sections, dotted leaders and page numbers, and the map as a small picture at the foot.", "4": "Topic 1, Where a river is born, on a pale blue ground: a numbered title tab, two columns of text, a strip of three painted pictures with captions and a Try it box; on the right page three boxes with tabs.", "6": "Topic 2, From the mountains to the sea, on a pale green ground: one painted map across both pages with names set on it, and three course boxes under the right page.", "8": "Topic 3, People and the river, on a sand ground: text and two boxes on the left page, three boxes with a painting each on the right page."}
 ---
 
 ## What you'll build
@@ -18,13 +18,13 @@ Nine pages of *Our river*, unit 4 of an invented Year 3 social science book, on 
 
 <Excerpt region="boxes" />
 
-A box style is made in three steps. `caja` holds the shape, the type and the geometry of the tab; `caja-agua`, `caja-campo` and `caja-sol` add a family's colour to the tab and the bullets; `dato-`, `palabras-` and `actividad-` set the kind: a tinted box, an outlined one or one with a stripe. A new family is three colours in `FAMILIES`, and no style is written twice.
+A box style is made in three steps. `caja` holds the shape, the type and the geometry of the tab; `caja-tema` puts the topic's colour on the tab and the bullets; `dato`, `palabras` and `actividad` set the kind: a tinted box, an outlined one or one with a stripe. Their colours are palette entries (`tema`, `tema-tint`), so each style is written once and a topic's template tints it.
 
 ### 2 · Let every topic extend one base template
 
 <Excerpt region="answer" />
 
-The base is a spread: a ground to the bleed, a title tab with its number, and a text in two columns. A topic extends it (`extends: 'tema'`), changes the colours of three decoration elements by their `id` and adds its own frames. The tab and the number are decoration anchored to the title frame, so the tab is as tall as the title the language needs, and the number stands left of the frame, where nothing covers it.
+The base is a spread: a ground to the bleed, a title tab with its number, and a text in two columns. A topic extends it (`extends: 'tema'`), sets its `palette` (the three `tema` entries take the family's colours, and the ground, the tab, the number and every box change together) and adds its own frames. The tab and the number are decoration anchored to the title frame, so the tab is as tall as the title the language needs. The number is `{headingNumber}`, the counter of the heading the frame took, painted over the frame's left padding: no page fence repeats it, and a click on it reaches the number, not the frame.
 
 ### 3 · Let the groups share the room
 
@@ -40,13 +40,13 @@ The map is a painting with no letter on it. Each place is an anchor of the pictu
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` lists the topics and their sections and keeps each part row with its entries. A `:::part` fence with `parts.page: false` is only a row of the contents and a section for the running heads: it adds no divider page. The contents are a flow page and not a frame, because a `:::toc` inside a frame loses its part rows.
+`:::toc{keep="part" levels="1-2"}` lists the topics and their sections and keeps each part row with its entries. A `:::part` fence with `parts.page: false` is only a row of the contents and a section for the running heads: it adds no divider page. The contents are a composed page: its template has a frame with `takes: "toc"` that receives the `:::toc` and lays it by the contents' own rules, so the part rows, the leaders and `keep` work as in the running text, and the pale ground is the template's decoration.
 
 ## Variations
 
 ### Add a fourth family
 
-A topic about the sea is a fourth entry in `FAMILIES` and a template made with `topic('tema-mar', 'mar', { frames })`. The loop over `FAMILIES` writes its styles, `caja-mar`, `dato-mar` and the rest.
+A topic about the sea is a fourth entry in `FAMILIES` and a template made with `topic('tema-mar', 'mar', { frames })`. `swap('mar')` writes its palette, and the boxes and the ground follow it.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ A frame that must not shrink its text takes `fit: { shrinkText: false }`. A long
 ## Pitfalls
 
 - A name painted into a picture could not change with the language: the map carries no word, and every name is a label.
-- A decoration element lying under a frame cannot be clicked in the Sandbox, which is why the number of each topic stands left of its title frame and not inside it.
+A topic's palette changes the `tema` entries only. The folios and the contents use `agua`, which has the same blue, so they stay blue on the green and sand pages; link them to `tema` and they follow the topic.
 - Two figures that set the same resource take the words of the first one: the small map on the contents page is the same file under its own resource, `rio`, with no anchors.

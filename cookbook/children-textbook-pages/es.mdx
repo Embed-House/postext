@@ -5,7 +5,7 @@ plain: "Una unidad de libro de texto sobre un río, de nueve páginas. Cada tema
 description: "Una unidad de libro de texto infantil en Postext: plantillas que heredan de una base, estilos de recuadro encadenados y un mapa rotulado desde el Markdown."
 question: "¿Cómo compongo una unidad de libro de texto en tres idiomas con las mismas plantillas?"
 aliases: ["libro de texto", "libro escolar", "primaria", "unidad didáctica", "doble página", "página de tema", "fondo de página", "pestaña de título", "mapa rotulado", "índice por partes", "herencia de plantillas", "español catalán inglés", "textbook"]
-pageNotes: {"1": "La apertura de la unidad: una pintura de un valle con su río, de las montañas nevadas al mar, ocupa la parte de arriba, con dos niños sentados en la hierba en una esquina. Debajo, una pestaña azul con el título Nuestro río, un párrafo y un recuadro azul claro, Vas a aprender.", "2": "El índice: una pestaña azul de título, dos filas de parte (A y B) con sus temas y apartados, puntos guía y números de página, y el mapa como imagen pequeña al pie.", "4": "Tema 1, Dónde nace un río, sobre un fondo azul claro: pestaña de título con su número, dos columnas de texto, una tira de tres pinturas con pie, un recuadro Pruébalo; en la página derecha, tres recuadros con pestaña.", "6": "Tema 2, De la montaña al mar, sobre un fondo verde claro: un solo mapa pintado a doble página con los nombres puestos encima y tres recuadros de curso bajo la página derecha.", "8": "Tema 3, Las personas y el río, sobre un fondo arena: texto y dos recuadros en la página izquierda, tres recuadros con una pintura cada uno en la derecha."}
+pageNotes: {"1": "La apertura de la unidad: una pintura de un valle con su río, de las montañas nevadas al mar, ocupa la parte de arriba, con dos niños sentados en la hierba en una esquina. Debajo, una pestaña azul con el título Nuestro río, un párrafo y un recuadro azul claro, Vas a aprender.", "2": "El índice: sobre fondo azul claro, una pestaña azul de título, dos filas de parte (A y B) con sus temas y apartados, puntos guía y números de página, y el mapa como imagen pequeña al pie.", "4": "Tema 1, Dónde nace un río, sobre un fondo azul claro: pestaña de título con su número, dos columnas de texto, una tira de tres pinturas con pie, un recuadro Pruébalo; en la página derecha, tres recuadros con pestaña.", "6": "Tema 2, De la montaña al mar, sobre un fondo verde claro: un solo mapa pintado a doble página con los nombres puestos encima y tres recuadros de curso bajo la página derecha.", "8": "Tema 3, Las personas y el río, sobre un fondo arena: texto y dos recuadros en la página izquierda, tres recuadros con una pintura cada uno en la derecha."}
 ---
 
 ## Lo que vas a componer
@@ -18,13 +18,13 @@ Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias soc
 
 <Excerpt region="boxes" />
 
-Un estilo de recuadro se hace en tres pasos. `caja` guarda la forma, la tipografía y la geometría de la pestaña; `caja-agua`, `caja-campo` y `caja-sol` ponen el color de una familia en la pestaña y las viñetas; `dato-`, `palabras-` y `actividad-` fijan el tipo: recuadro con fondo, con borde o con franja. Una familia nueva son tres colores en `FAMILIES` y ningún estilo se escribe dos veces.
+Un estilo de recuadro se hace en tres pasos. `caja` guarda la forma, la tipografía y la geometría de la pestaña; `caja-tema` pone el color del tema en la pestaña y las viñetas; `dato`, `palabras` y `actividad` fijan el tipo: recuadro con fondo, con borde o con franja. Sus colores son entradas de la paleta (`tema`, `tema-tint`), así que cada estilo se escribe una vez y la plantilla de un tema lo tiñe.
 
 ### 2 · Haz que cada tema herede de una plantilla base
 
 <Excerpt region="answer" />
 
-La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), cambia los colores de tres elementos de decoración por su `id` y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma, y el número queda a la izquierda del marco, donde nada lo tapa.
+La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), fija su `palette` (las tres entradas `tema` toman los colores de la familia, y el fondo, la pestaña, el número y todos los recuadros cambian a la vez) y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma. El número es `{headingNumber}`, el contador del título que tomó el marco, pintado sobre el relleno izquierdo del marco: ninguna valla de página lo repite, y un clic sobre él llega al número, no al marco.
 
 ### 3 · Deja que los grupos se repartan el sitio
 
@@ -40,13 +40,13 @@ El mapa es una pintura sin una sola letra. Cada lugar es un ancla de la imagen, 
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` lista los temas y sus apartados y mantiene cada fila de parte con sus entradas. Una valla `:::part` con `parts.page: false` es solo una fila del índice y una sección para las cabeceras: no añade portadilla. El índice es una página de texto corrido y no un marco, porque un `:::toc` dentro de un marco pierde sus filas de parte.
+`:::toc{keep="part" levels="1-2"}` lista los temas y sus apartados y mantiene cada fila de parte con sus entradas. Una valla `:::part` con `parts.page: false` es solo una fila del índice y una sección para las cabeceras: no añade portadilla. El índice es una página compuesta: su plantilla tiene un marco con `takes: "toc"` que recibe el `:::toc` y lo compone con las reglas del propio índice, así que las filas de parte, los puntos guía y `keep` funcionan como en el texto corrido, y el fondo claro es la decoración de la plantilla.
 
 ## Variantes
 
 ### Añade una cuarta familia
 
-Un tema sobre el mar es una cuarta entrada de `FAMILIES` y una plantilla hecha con `topic('tema-mar', 'mar', { frames })`. El bucle sobre `FAMILIES` escribe sus estilos, `caja-mar`, `dato-mar` y los demás.
+Un tema sobre el mar es una cuarta entrada de `FAMILIES` y una plantilla hecha con `topic('tema-mar', 'mar', { frames })`. `swap('mar')` escribe su paleta, y los recuadros y el fondo la siguen.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Un marco que no debe reducir su texto lleva `fit: { shrinkText: false }`. Un tex
 ## Errores frecuentes
 
 - Un nombre pintado dentro de una imagen no podría cambiar con el idioma: el mapa no lleva ninguna palabra y cada nombre es un rótulo.
-- Un elemento de decoración que queda bajo un marco no se puede pulsar en el Sandbox, por eso el número de cada tema está a la izquierda del marco del título y no dentro.
+La paleta de un tema cambia solo las entradas `tema`. Los folios y el índice usan `agua`, que tiene el mismo azul, así que siguen azules en las páginas verdes y arena; enlázalos con `tema` y seguirán al tema.
 - Dos figuras que fijan el mismo recurso toman las palabras de la primera: el mapa pequeño del índice es el mismo archivo bajo otro recurso, `rio`, sin anclas.

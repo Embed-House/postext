@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "5e96695402d9b5fe15962ede268408f206a413e81824dba1342df9f23cf17870",
+  "sourceHash": "1ca6c3221bfb57fb1037796c107725a8b1f7bc101d6d44d5ceff50144670d063",
   "engine": {
-    "postext": "1.40.0",
-    "postextPdf": "1.40.0",
+    "postext": "1.42.0",
+    "postextPdf": "1.42.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T17:28:27.358Z",
+  "capturedAt": "2026-10-17T21:03:59.441Z",
   "variants": {
     "en": {
-      "hash8": "cb4d77a3",
-      "vdtHash": "c142adaeffa396897994b3cbed790e8d11806d68",
+      "hash8": "8ebf9f95",
+      "vdtHash": "31ce1776c1ac1e5206c97118c137a2d42670b81d",
       "timings": {
-        "importMs": 496,
-        "fontsMs": 87,
-        "buildMs": 89,
-        "totalMs": 1355,
+        "importMs": 534,
+        "fontsMs": 100,
+        "buildMs": 109,
+        "totalMs": 1460,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 280
+        "ownLines": 276
       },
       "pages": [
         {
@@ -55,12 +55,12 @@
         {
           "n": 2,
           "label": "2",
-          "role": "body",
+          "role": "composed",
           "w": 1000,
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122626,
+          "bytes": 117936,
           "alt": "Page 2: In this unit. The River Aldara from its spring to the sea. The map is on pages 6 and 7."
         },
         {
@@ -177,18 +177,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1730919,
+        "bytes": 1730978,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100668,
+        "bytes": 2100224,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "a59a773b468fde2b",
-            "lines": "bb5079ad297f3713"
+            "hash": "464629cb8764fd8f",
+            "lines": "40ba681cf34e7a94"
           }
         ]
       },
@@ -301,10 +301,6 @@
           "header.elements[].placement",
           "header.elements[].textTransform",
           "headingStyles",
-          "headingStyles[].advancedDesign",
-          "headingStyles[].advancedDesign.enabled",
-          "headingStyles[].advancedDesign.minHeight",
-          "headingStyles[].advancedDesign.slot",
           "headingStyles[].fontSize",
           "headingStyles[].id",
           "headingStyles[].lineHeight",
@@ -388,6 +384,7 @@
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
+          "pageTemplates[].palette",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -453,8 +450,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 837,
-        "designElements": 24,
+        "configLeaves": 760,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -512,7 +509,6 @@
           "frame-text-push",
           "heading-attributes",
           "heading-styles",
-          "opener-design",
           "part-dividers",
           "pdf-export",
           "pdf-fonts",
@@ -543,34 +539,29 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 52 block, 37 frame, 7 label, 95 line, 4 text"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "the edition's images weigh 1.30 MB (warning at 0.9 MB for 9 pages)"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "card.webp weighs 102 KB (aim for ≤ 90 KB)"
+            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 103 line, 1 text"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “The valley is wider and the river slows down. Fa…”, p. 7 −10‰ “The land is almost flat. The river is wide and s…”, p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "94393f4a",
-      "vdtHash": "d5d7b1588dc8497ac14a985bc20df3c954480ccb",
+      "hash8": "b6ecd287",
+      "vdtHash": "f47e204624c2f8ff2e079b2968e90ed1058c5082",
       "timings": {
-        "importMs": 502,
-        "fontsMs": 101,
-        "buildMs": 91,
-        "totalMs": 1400,
+        "importMs": 520,
+        "fontsMs": 86,
+        "buildMs": 112,
+        "totalMs": 1492,
         "builds": 1
       },
       "specimen": {
@@ -591,7 +582,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 280
+        "ownLines": 276
       },
       "pages": [
         {
@@ -608,12 +599,12 @@
         {
           "n": 2,
           "label": "2",
-          "role": "body",
+          "role": "composed",
           "w": 1000,
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 123352,
+          "bytes": 118372,
           "alt": "Página 2: En esta unidad. El río Aldara, desde su nacimiento hasta el mar. El mapa está en las páginas 6 y 7."
         },
         {
@@ -730,18 +721,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731948,
+        "bytes": 1732044,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100507,
+        "bytes": 2100056,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "fb453c8ce959c34a",
-            "lines": "a6e09efbb1f3bbab"
+            "hash": "e12fb732c39e0986",
+            "lines": "7d56d28abc6aa868"
           }
         ]
       },
@@ -854,10 +845,6 @@
           "header.elements[].placement",
           "header.elements[].textTransform",
           "headingStyles",
-          "headingStyles[].advancedDesign",
-          "headingStyles[].advancedDesign.enabled",
-          "headingStyles[].advancedDesign.minHeight",
-          "headingStyles[].advancedDesign.slot",
           "headingStyles[].fontSize",
           "headingStyles[].id",
           "headingStyles[].lineHeight",
@@ -941,6 +928,7 @@
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
+          "pageTemplates[].palette",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -1006,8 +994,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 837,
-        "designElements": 24,
+        "configLeaves": 760,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -1065,7 +1053,6 @@
           "frame-text-push",
           "heading-attributes",
           "heading-styles",
-          "opener-design",
           "part-dividers",
           "pdf-export",
           "pdf-fonts",
@@ -1096,34 +1083,29 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 52 block, 37 frame, 7 label, 98 line, 4 text"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "the edition's images weigh 1.31 MB (warning at 0.9 MB for 9 pages)"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "card.webp weighs 102 KB (aim for ≤ 90 KB)"
+            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 106 line, 1 text"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "6 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El valle es más ancho y el río va más despacio. …”, p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "71c7e7b3",
-      "vdtHash": "4562779bb80b07114cd225d3ee6fce2ea79dbaf1",
+      "hash8": "35a4175d",
+      "vdtHash": "e13eeaf3d5e0e3718998812e4cfe832dd3fbc524",
       "timings": {
-        "importMs": 490,
-        "fontsMs": 74,
-        "buildMs": 90,
-        "totalMs": 1355,
+        "importMs": 534,
+        "fontsMs": 119,
+        "buildMs": 111,
+        "totalMs": 1494,
         "builds": 1
       },
       "specimen": {
@@ -1144,7 +1126,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 280
+        "ownLines": 276
       },
       "pages": [
         {
@@ -1161,12 +1143,12 @@
         {
           "n": 2,
           "label": "2",
-          "role": "body",
+          "role": "composed",
           "w": 1000,
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 123418,
+          "bytes": 118428,
           "alt": "Pàgina 2: En aquesta unitat. El riu Aldara des del seu naixement fins al mar. El mapa és a les pàgines 6 i 7."
         },
         {
@@ -1283,18 +1265,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731637,
+        "bytes": 1731710,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100567,
+        "bytes": 2100129,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "8a42d43b26b498cf",
-            "lines": "dffcf2bdbfba818f"
+            "hash": "01f7c1a060b41416",
+            "lines": "ed3b6937420118d5"
           }
         ]
       },
@@ -1407,10 +1389,6 @@
           "header.elements[].placement",
           "header.elements[].textTransform",
           "headingStyles",
-          "headingStyles[].advancedDesign",
-          "headingStyles[].advancedDesign.enabled",
-          "headingStyles[].advancedDesign.minHeight",
-          "headingStyles[].advancedDesign.slot",
           "headingStyles[].fontSize",
           "headingStyles[].id",
           "headingStyles[].lineHeight",
@@ -1494,6 +1472,7 @@
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
+          "pageTemplates[].palette",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -1559,8 +1538,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 837,
-        "designElements": 24,
+        "configLeaves": 760,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -1618,7 +1597,6 @@
           "frame-text-push",
           "heading-attributes",
           "heading-styles",
-          "opener-design",
           "part-dividers",
           "pdf-export",
           "pdf-fonts",
@@ -1649,22 +1627,17 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 52 block, 37 frame, 7 label, 96 line, 4 text"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "the edition's images weigh 1.29 MB (warning at 0.9 MB for 9 pages)"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "card.webp weighs 101 KB (aim for ≤ 90 KB)"
+            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 104 line, 1 text"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El pendent és fort. L’aigua és freda, clara i rà…”, p. 7 −5‰ “La vall és més ampla i el riu va més a poc a poc…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

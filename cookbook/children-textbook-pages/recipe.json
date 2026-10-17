@@ -42,12 +42,10 @@
     "Q179",
     "Q181"
   ],
-  "gotchas": [
-    "toc-in-composed-frame"
-  ],
+  "gotchas": [],
   "engine": {
-    "postext": "1.40.0",
-    "postextPdf": "1.40.0"
+    "postext": "1.42.0",
+    "postextPdf": "1.42.0"
   },
   "kit": [
     "core",
@@ -74,7 +72,11 @@
       "pages": [
         9,
         9
-      ]
+      ],
+      "imageMb": 1.35,
+      "cardKb": {
+        "card": 110
+      }
     }
   },
   "credits": {
@@ -197,21 +199,6 @@
   "downloads": {
     "pdf": true
   },
-  "workarounds": [
-    {
-      "followup": "EF-875-1",
-      "package": "postext",
-      "note": "the contents are a flow page (a heading style that paints the title tab, then :::toc{keep=\"part\"}) because a :::toc inside a composed page's frame loses its part rows and puts a blank line between entries; the page keeps no ground colour for the same reason, since a heading's design stops at the column's margin"
-    },
-    {
-      "package": "postext",
-      "note": "the three topic spreads extend one base template and the callout styles extend each other, so a topic's colours are the only thing its template and its box styles say"
-    },
-    {
-      "package": "postext",
-      "note": "the title's tab and number are decoration anchored to the title frame, with the number left of the frame: a decoration element under a frame cannot be clicked, so the number stands where no frame covers it (check C40)"
-    }
-  ],
   "related": [
     "school-atlas-labelled-maps",
     "activity-book-growing-boxes",
