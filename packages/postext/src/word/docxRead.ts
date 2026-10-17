@@ -91,9 +91,17 @@ function runFlags(rPr: XmlElement | undefined): Pick<WordStyle, 'bold' | 'italic
   };
 }
 
-function readStyles(root: XmlElement | undefined): { styles: Map<string, WordStyle>; defaultParagraph: string } {
+/** A whole number attribute (`w:val` of `w:spacing` or `w:sz`). */
+function intAttr(el: XmlElement | undefined, local: string): number | undefined {
+  const v = attr(el, local);
+  if (v === undefined || !/^-?\d{1,6}$/.test(v)) return undefined;
+  return Number(v);
+}
+
+function readStyles(root: XmlElement | undefined): { styles: Map<string, WordStyle>; defaultParagraph: string; defaultSize?: number } {
   const styles = new Map<string, WordStyle>();
   let defaultParagraph = '';
+  const defaultSize = intAttr(child(child(child(child(root, 'docDefaults'), 'rPrDefault'), 'rPr'), 'sz'), 'val');
   for (const s of children(root, 'style')) {
     const id = attr(s, 'styleId');
     const type = attr(s, 'type') as WordStyle['type'] | undefined;
@@ -102,6 +110,9 @@ function readStyles(root: XmlElement | undefined): { styles: Map<string, WordSty
     const pPr = child(s, 'pPr');
     const numPr = child(pPr, 'numPr');
     const outline = attr(child(pPr, 'outlineLvl'), 'val');
+    const styleRPr = child(s, 'rPr');
+    const spacing = intAttr(child(styleRPr, 'spacing'), 'val');
+    const size = intAttr(child(styleRPr, 'sz'), 'val');
     const style: WordStyle = {
       id,
       name,
@@ -112,12 +123,14 @@ function readStyles(root: XmlElement | undefined): { styles: Map<string, WordSty
       ilvl: numPr ? Number(attr(child(numPr, 'ilvl'), 'val') ?? 0) : undefined,
       outlineLevel: outline !== undefined ? Number(outline) : undefined,
       ...(child(pPr, 'tabs') ? { tabs: readTabs(pPr) } : {}),
+      ...(spacing !== undefined ? { letterSpacing: spacing } : {}),
+      ...(size !== undefined ? { fontSizeHalfPoints: size } : {}),
     };
     styles.set(id, style);
     const isDefault = s.attrs['w:default'];
     if (type === 'paragraph' && (isDefault === '1' || isDefault === 'true' || isDefault === 'on')) defaultParagraph = id;
   }
-  return { styles, defaultParagraph };
+  return { styles, defaultParagraph, ...(defaultSize !== undefined ? { defaultSize } : {}) };
 }
 
 function readNumbering(root: XmlElement | undefined): WordNumbering {
@@ -559,7 +572,7 @@ export function readDocx(data: ArrayBuffer | Uint8Array): WordDocument {
   const rels = readRels(files, docPath);
   const partOf = (type: string): string | undefined => [...rels.values()].find((r) => r.type === type)?.target;
 
-  const { styles, defaultParagraph } = readStyles(readXml(files, partOf('styles') ?? 'word/styles.xml'));
+  const { styles, defaultParagraph, defaultSize } = readStyles(readXml(files, partOf('styles') ?? 'word/styles.xml'));
   const numbering = readNumbering(readXml(files, partOf('numbering') ?? 'word/numbering.xml'));
   const revisions = { insertions: 0, deletions: 0, comments: 0 };
   const ctx: ReadContext = { rels, styles, revisions, fields: [] };
@@ -583,6 +596,7 @@ export function readDocx(data: ArrayBuffer | Uint8Array): WordDocument {
     blocks,
     styles,
     defaultParagraphStyle: defaultParagraph,
+    ...(defaultSize !== undefined ? { defaultFontSizeHalfPoints: defaultSize } : {}),
     numbering,
     footnotes,
     endnotes,

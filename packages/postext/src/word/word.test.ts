@@ -7,6 +7,7 @@ import { readDocx } from './docxRead';
 import { parseInline, renderInline } from './inline';
 import { displayStyleName, emptyTemplate, guessCharacterTarget, guessParagraphTarget, parseTemplate, type WordTemplate } from './template';
 import { postextToDocx } from './toDocx';
+import { applyStyleTracking, wordStyleTracking } from './tracking';
 import { wordToPostext } from './toMarkdown';
 
 const config = {
@@ -440,6 +441,90 @@ describe('paragraph style tracking in Word (#907)', () => {
     const styles = strFromU8(unzipSync(bytes)['word/styles.xml']!);
     // 0.015 em of 20 pt = 0.3 pt = 6 twentieths, after the colour and before the size.
     expect(styles).toMatch(/Título de página[\s\S]*?<w:spacing w:val="6"\/><w:sz w:val="40"\/>/);
+  });
+});
+
+describe('character spacing of styles (#932)', () => {
+  const stylesOf = (md: string, cfg: PostextConfig): string => strFromU8(unzipSync(postextToDocx([{ title: 'One', markdown: md }], { template: emptyTemplate(), config: cfg, book: false }))['word/styles.xml']!);
+  const styleXml = (styles: string, name: string): string => new RegExp(`<w:style [^>]*><w:name w:val="${name}"/>.*?</w:style>`).exec(styles)![0];
+  const em = (value: number) => ({ value, unit: 'em' as const });
+  const cfg = {
+    ...config,
+    headings: { levels: [{ level: 1, letterSpacing: em(0.02) }, { level: 2, letterSpacing: { value: -0.5, unit: 'pt' } }] },
+    headingStyles: [{ id: 'portada', name: 'Portada', letterSpacing: em(0.1) }, { id: 'plana', name: 'Plana', letterSpacing: em(0) }],
+    paragraphStyles: [{ id: 'firma', name: 'Firma', letterSpacing: em(0.05) }, { id: 'titulo', name: 'Título', fontSize: { value: 20, unit: 'pt' }, letterSpacing: em(0.015) }],
+  } as unknown as PostextConfig;
+  const md = [
+    '# One', '', '## Two', '', '# The lantern {style="portada"}', '', '# Flat {style="plana"}', '',
+    ':::paragraphs{style="firma"}', 'Signed', ':::', '', ':::paragraphs{style="titulo"}', 'Big', ':::', '',
+  ].join('\n');
+
+  it('writes the tracking of heading levels and heading styles, as it does a paragraph style\'s', () => {
+    const styles = stylesOf(md, cfg);
+    // 0.02 em of the 20 pt Heading 1 = 0.4 pt = 8 twentieths; -0.5 pt = -10.
+    expect(styleXml(styles, 'heading 1')).toMatch(/<w:b\/><w:spacing w:val="8"\/><w:sz w:val="40"\/>/);
+    expect(styleXml(styles, 'heading 2')).toMatch(/<w:b\/><w:spacing w:val="-10"\/><w:sz w:val="32"\/>/);
+    expect(styleXml(styles, 'heading 3')).not.toMatch(/w:val="[-\d]+"\/><w:sz/);
+    // A heading style's own, even at zero (it takes the level's off), in its own size's em.
+    expect(styleXml(styles, 'Portada')).toMatch(/<w:rPr><w:spacing w:val="40"\/><\/w:rPr>/);
+    expect(styleXml(styles, 'Plana')).toMatch(/<w:rPr><w:spacing w:val="0"\/><\/w:rPr>/);
+    // 0.05 em of the 11 pt body = 0.55 pt = 11; 0.015 em of 20 pt = 6.
+    expect(styleXml(styles, 'Firma')).toMatch(/<w:spacing w:val="11"\/>/);
+    expect(styleXml(styles, 'Título')).toMatch(/<w:spacing w:val="6"\/><w:sz w:val="40"\/>/);
+  });
+
+  it('reads a style\'s character spacing, its own or its ancestor\'s, in em of the style\'s size', () => {
+    const doc = readDocx(docx([p('Firma', r('Signed')), p('Verse2', r('Child')), p('Plain', r('Plain'))].join(''), {
+      styles: [
+        '<w:docDefaults><w:rPrDefault><w:rPr><w:sz w:val="24"/></w:rPr></w:rPrDefault></w:docDefaults>',
+        '<w:style w:type="paragraph" w:styleId="Firma"><w:name w:val="Firma"/><w:rPr><w:spacing w:val="12"/><w:sz w:val="20"/></w:rPr></w:style>',
+        '<w:style w:type="paragraph" w:styleId="Verse2"><w:name w:val="Firma hija"/><w:basedOn w:val="Firma"/></w:style>',
+        '<w:style w:type="paragraph" w:styleId="Plain"><w:name w:val="Plain"/><w:rPr><w:spacing w:val="0"/></w:rPr></w:style>',
+      ].join(''),
+    }));
+    expect(doc.defaultFontSizeHalfPoints).toBe(24);
+    expect(doc.styles.get('Firma')).toMatchObject({ letterSpacing: 12, fontSizeHalfPoints: 20 });
+    const tracking = wordStyleTracking(doc, emptyTemplate(), config);
+    // 12 twentieths = 0.6 pt of a 10 pt style = 0.06 em; 'Firma hija' goes to body text and is left out.
+    expect(tracking).toEqual([{ style: 'Firma', target: { kind: 'paragraphs', style: 'firma' }, letterSpacing: { value: 0.06, unit: 'em' } }]);
+  });
+
+  it('puts it on the book\'s styles that set none, and leaves what the book already sets', () => {
+    const bare = { ...cfg, headings: undefined, paragraphStyles: [{ id: 'firma', name: 'Firma' }, { id: 'titulo', name: 'Título', letterSpacing: em(0.2) }], headingStyles: [{ id: 'portada', name: 'Portada' }] } as unknown as PostextConfig;
+    const bytes = postextToDocx([{ title: 'One', markdown: md }], { template: emptyTemplate(), config: cfg, book: false });
+    const doc = readDocx(bytes);
+    const template = parseTemplate(doc.embeddedTemplate)!;
+    const tracking = wordStyleTracking(doc, template, bare);
+    const byStyle = Object.fromEntries(tracking.map((t) => [t.style, t.letterSpacing.value]));
+    expect(byStyle).toMatchObject({ 'heading 1': 0.02, Portada: 0.1, Firma: 0.05 });
+    const out = applyStyleTracking(bare, tracking);
+    expect(out.config.paragraphStyles).toEqual([{ id: 'firma', name: 'Firma', letterSpacing: em(0.05) }, { id: 'titulo', name: 'Título', letterSpacing: em(0.2) }]);
+    expect(out.config.headingStyles).toEqual([{ id: 'portada', name: 'Portada', letterSpacing: em(0.1) }]);
+    // Heading 2 was -0.5 pt of 16 pt.
+    expect(out.config.headings?.levels?.map((l) => [l.level, l.letterSpacing!.value])).toEqual([[1, 0.02], [2, -0.0312]]);
+    expect(out.skipped.map((t) => t.style)).toEqual(['Título']);
+    expect(bare.paragraphStyles![0]).toEqual({ id: 'firma', name: 'Firma' });
+  });
+
+  it('comes back as the same tracking when the book carries none: export, read, apply', () => {
+    const doc = readDocx(postextToDocx([{ title: 'One', markdown: md }], { template: emptyTemplate(), config: cfg, book: false }));
+    const bare = { ...cfg, headings: undefined, headingStyles: [{ id: 'portada', name: 'Portada' }, { id: 'plana', name: 'Plana' }], paragraphStyles: [{ id: 'firma', name: 'Firma' }, { id: 'titulo', name: 'Título', fontSize: { value: 20, unit: 'pt' } }], calloutStyles: [{ id: 'note', name: 'Nota' }] } as unknown as PostextConfig;
+    const { config: back } = applyStyleTracking(bare, wordStyleTracking(doc, parseTemplate(doc.embeddedTemplate)!, bare));
+    expect(back.paragraphStyles!.map((s) => s.letterSpacing)).toEqual([em(0.05), em(0.015)]);
+    expect(back.headingStyles!.map((s) => s.letterSpacing)).toEqual([em(0.1), undefined]);
+    expect(back.headings?.levels?.find((l) => l.level === 1)?.letterSpacing).toEqual(em(0.02));
+  });
+
+  it('puts the spacing of a callout\'s title style on the callout type, when the book lists it', () => {
+    const title = '<w:style w:type="paragraph" w:styleId="NotaTitle"><w:name w:val="Callout: Nota: title"/><w:rPr><w:spacing w:val="20"/><w:sz w:val="20"/></w:rPr></w:style>';
+    const doc = readDocx(docx(p('NotaTitle', r('Heads up')), { styles: title }));
+    const listed = { ...config, calloutStyles: [{ id: 'note', name: 'Nota', titleStyle: { fontFamily: 'Serif' } }, { id: 'keypoints', name: 'Ideas clave' }] } as unknown as PostextConfig;
+    const tracking = wordStyleTracking(doc, emptyTemplate(), listed);
+    expect(tracking).toEqual([{ style: 'Callout: Nota: title', target: { kind: 'calloutTitle', type: 'note' }, letterSpacing: em(0.1) }]);
+    expect(applyStyleTracking(listed, tracking).config.calloutStyles![0]).toEqual({ id: 'note', name: 'Nota', titleStyle: { fontFamily: 'Serif', letterSpacing: em(0.1) } });
+    // A book that lists no callout styles uses the engine's: nothing to set it on.
+    const defaults = { ...config, calloutStyles: undefined } as unknown as PostextConfig;
+    expect(applyStyleTracking(defaults, wordStyleTracking(doc, emptyTemplate(), defaults)).applied).toEqual([]);
   });
 });
 

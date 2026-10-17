@@ -392,14 +392,21 @@ function halfPoints(d: Dimension | undefined, base = 10): number | undefined {
 }
 
 /** A tracking as Word's character spacing (`w:spacing`, twentieths of a
- *  point); `em` counts the style's size (10 pt when it sets none in pt). */
-function trackingTwips(d: Dimension | undefined, fontSize: Dimension | undefined): number | undefined {
-  if (!d || !Number.isFinite(d.value) || d.value === 0) return undefined;
-  const sizePt = fontSize?.unit === 'pt' ? fontSize.value : fontSize?.unit === 'px' ? fontSize.value * 0.75 : 10;
-  const pt = d.unit === 'pt' ? d.value : d.unit === 'px' ? d.value * 0.75 : d.unit === 'mm' ? d.value * 2.8346 : d.unit === 'cm' ? d.value * 28.346 : d.unit === 'in' ? d.value * 72 : d.value * sizePt;
-  const tw = pt === undefined ? 0 : Math.round(pt * 20);
-  return tw !== 0 ? tw : undefined;
+ *  point); `em` counts `basePt`, the size of the text the style sets.
+ *  Undefined for an unset or non-finite tracking; 0 stays 0. */
+function trackingTwips(d: Dimension | undefined, basePt: number): number | undefined {
+  if (!d || !Number.isFinite(d.value)) return undefined;
+  const pt = d.unit === 'pt' ? d.value : d.unit === 'px' ? d.value * 0.75 : d.unit === 'mm' ? d.value * 2.8346 : d.unit === 'cm' ? d.value * 28.346 : d.unit === 'in' ? d.value * 72 : d.value * basePt;
+  return Math.round(pt * 20);
 }
+
+/** The sizes the export gives Word's heading styles, half-points. */
+const HEADING_HALF_POINTS = [40, 32, 28, 26, 24, 22];
+/** The size a heading level is set at in Word, pt. */
+const headingPt = (level: number): number => (HEADING_HALF_POINTS[level - 1] ?? 22) / 2;
+
+/** The `w:spacing` run property for a tracking (nothing for none). */
+const spacingXml = (tw: number | undefined): string => (tw !== undefined ? `<w:spacing w:val="${tw}"/>` : '');
 
 function twips(d: Dimension | undefined, base = 10): number | undefined {
   const hp = halfPoints(d, base);
@@ -433,14 +440,19 @@ class Styles {
   private byName = new Map<string, StyleDef>();
   readonly paragraphs: Record<string, ParagraphTarget> = {};
   readonly characters: Record<string, CharacterTarget> = {};
+  /** The size of the body text, pt: what an `em` tracking counts where a style sets no size. */
+  private readonly bodyPt: number;
 
   constructor(private template: WordTemplate, private config: PostextConfig, private names: WordStyleNames) {
     const body = config.bodyText;
     const bodySize = halfPoints(body?.fontSize) ?? 22;
+    this.bodyPt = bodySize / 2;
     this.define({ id: 'Normal', name: 'Normal', kind: 'paragraph', builtin: true, pPr: '<w:spacing w:after="120" w:line="276" w:lineRule="auto"/>', rPr: `<w:sz w:val="${bodySize}"/>` });
-    const sizes = [40, 32, 28, 26, 24, 22];
+    const sizes = HEADING_HALF_POINTS;
     for (let l = 1; l <= 6; l++) {
-      this.define({ id: `Heading${l}`, name: BUILTIN_HEADING(l), kind: 'paragraph', builtin: true, basedOn: 'Normal', pPr: `<w:keepNext/><w:spacing w:before="${l === 1 ? 480 : 240}" w:after="120"/><w:outlineLvl w:val="${l - 1}"/>`, rPr: `<w:b/><w:sz w:val="${sizes[l - 1]}"/>` });
+      // The level's tracking (#932), before the size as Word orders them.
+      const tracking = trackingTwips(config.headings?.levels?.find((x) => x.level === l)?.letterSpacing, sizes[l - 1]! / 2);
+      this.define({ id: `Heading${l}`, name: BUILTIN_HEADING(l), kind: 'paragraph', builtin: true, basedOn: 'Normal', pPr: `<w:keepNext/><w:spacing w:before="${l === 1 ? 480 : 240}" w:after="120"/><w:outlineLvl w:val="${l - 1}"/>`, rPr: `<w:b/>${tracking ? spacingXml(tracking) : ''}<w:sz w:val="${sizes[l - 1]}"/>` });
     }
     this.define({ id: 'Quote', name: 'Quote', kind: 'paragraph', builtin: true, basedOn: 'Normal', pPr: '<w:ind w:left="720" w:right="720"/>', rPr: '<w:i/><w:color w:val="595959"/>' });
     this.define({ id: 'ListParagraph', name: 'List Paragraph', kind: 'paragraph', builtin: true, basedOn: 'Normal', pPr: '<w:ind w:left="720"/><w:contextualSpacing/>' });
@@ -513,7 +525,12 @@ class Styles {
     return this.paragraph(
       { kind: 'heading', level, ...(style ? { style } : {}) },
       () => (hs ? hs.name ?? hs.id : style ?? BUILTIN_HEADING(level)),
-      () => ({ basedOn: `Heading${level}` }),
+      () => {
+        // A heading style's own tracking (#932): written even at 0, which
+        // takes the level's off.
+        const own = trackingTwips(hs?.letterSpacing, headingPt(level));
+        return { basedOn: `Heading${level}`, ...(own !== undefined ? { rPr: spacingXml(own) } : {}) };
+      },
     );
   }
 
@@ -528,9 +545,9 @@ class Styles {
       const c = hex(ps?.color);
       if (c) rPr += `<w:color w:val="${c}"/>`;
       // Tracking (#907) in twentieths of a point, after the colour.
-      const spacing = trackingTwips(ps?.letterSpacing, ps?.fontSize);
-      if (spacing) rPr += `<w:spacing w:val="${spacing}"/>`;
       const sz = halfPoints(ps?.fontSize);
+      const spacing = trackingTwips(ps?.letterSpacing, (sz ?? this.bodyPt * 2) / 2);
+      if (spacing) rPr += spacingXml(spacing);
       if (sz) rPr += `<w:sz w:val="${sz}"/>`;
       const jc = ps?.textAlign === 'center' ? 'center' : ps?.textAlign === 'right' || ps?.textAlign === 'end' ? 'right' : ps?.textAlign === 'justify' ? 'both' : ps?.textAlign ? 'left' : undefined;
       // Schema order: tabs, then ind before jc.
