@@ -1136,7 +1136,7 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   object must add a copier); a layout holding a comic page or an object that is not plain data is never kept.
   The writes a layout makes to the measure context (drop cap notes, joining-script marks) are recorded with the
   entry and replayed on a hit. `layoutMemoSwitch` turns it off for the test that lays a page both ways. Parity
-  0 diffs; the heaviest composed chapter of the Cookbook (a magazine of threaded frames) lays out about 40 %
+  0 diffs; the heaviest composed chapter of the Cookbook (a magazine of threaded frames) lays out about 45 %
   faster.
 - **Marks, anchors and headings written in the rest of a story that went to another chapter (#988).** The
   receiving chapter locates them (`locateCarriedOutline`, called from `withIndexMarks` once the pages are
