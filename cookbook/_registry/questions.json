@@ -5042,5 +5042,61 @@
       "it": "Riquadri proseguiti, su una pagina aggiunta"
     },
     "theme": "boxes"
+  },
+  "Q181": {
+    "kind": "how",
+    "text": {
+      "en": "How do I put the names on a map from the text, so a translation changes the words and not the drawing?",
+      "es": "¿Cómo pongo los nombres de un mapa desde el texto, para que una traducción cambie las palabras y no el dibujo?",
+      "ca": "Com poso els noms d’un mapa des del text, perquè una traducció canviï les paraules i no el dibuix?",
+      "zh": "怎样从正文里给地图写上地名，让译本只换文字、不动地图本身？",
+      "ar": "كيف أضع أسماء الخريطة من النص، بحيث تغيّر الترجمة الكلمات ولا تمسّ الرسم؟",
+      "ja": "地図の地名を本文の側から入れて、翻訳では絵に手を付けずに言葉だけを替えるには？",
+      "pt": "Como coloco os nomes de um mapa a partir do texto, para que uma tradução troque as palavras e não o desenho?",
+      "fr": "Comment poser les noms d’une carte depuis le texte, pour qu’une traduction change les mots et pas le dessin ?",
+      "de": "Wie setze ich die Namen einer Karte aus dem Text, damit eine Übersetzung die Wörter ändert und nicht die Zeichnung?",
+      "it": "Come metto i nomi di una carta dal testo, perché una traduzione cambi le parole e non il disegno?"
+    },
+    "index": {
+      "en": "Maps, labelled from the Markdown",
+      "es": "Mapas, rotulados desde el Markdown",
+      "ca": "Mapes, retolats des del Markdown",
+      "zh": "地图，从Markdown标注",
+      "ar": "الخرائط، تسميتها من Markdown",
+      "ja": "地図、Markdownからのラベル付け",
+      "pt": "Mapas, rotulados a partir do Markdown",
+      "fr": "Cartes, étiquetées depuis le Markdown",
+      "de": "Karten, aus dem Markdown beschriftet",
+      "it": "Carte, etichettate dal Markdown"
+    },
+    "theme": "figures"
+  },
+  "Q182": {
+    "kind": "how",
+    "text": {
+      "en": "How do I lay one map across a double page and keep its names readable in a right-to-left edition?",
+      "es": "¿Cómo extiendo un mapa por una doble página y mantengo legibles sus nombres en una edición de derecha a izquierda?",
+      "ca": "Com estenc un mapa per una doble pàgina i mantinc llegibles els seus noms en una edició de dreta a esquerra?",
+      "zh": "怎样把一幅地图铺满跨页，并在从右到左的版本里让地名照样好读？",
+      "ar": "كيف أمدّ خريطة واحدة على صفحتين متقابلتين وأُبقي أسماءها مقروءة في طبعة تُقرأ من اليمين إلى اليسار؟",
+      "ja": "1枚の地図を見開きに広げ、右から左に読む版でも地名を読みやすく保つには？",
+      "pt": "Como estendo um mapa por uma página dupla e mantenho seus nomes legíveis numa edição da direita para a esquerda?",
+      "fr": "Comment étendre une carte sur une double page et garder ses noms lisibles dans une édition de droite à gauche ?",
+      "de": "Wie lege ich eine Karte über eine Doppelseite und halte ihre Namen in einer Ausgabe von rechts nach links lesbar?",
+      "it": "Come stendo una carta su una doppia pagina e tengo leggibili i nomi in un’edizione da destra a sinistra?"
+    },
+    "index": {
+      "en": "Maps, across a double page",
+      "es": "Mapas, a doble página",
+      "ca": "Mapes, a doble pàgina",
+      "zh": "地图，跨页",
+      "ar": "الخرائط، على صفحتين متقابلتين",
+      "ja": "地図、見開きの",
+      "pt": "Mapas, em página dupla",
+      "fr": "Cartes, sur une double page",
+      "de": "Karten, über eine Doppelseite",
+      "it": "Carte, su doppia pagina"
+    },
+    "theme": "figures"
   }
 }

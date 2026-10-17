@@ -23823,5 +23823,214 @@
         "pageTemplates[].overflowTemplate"
       ]
     }
+  },
+  "composed-spreads": {
+    "label": {
+      "en": "Spread templates",
+      "es": "Plantillas a doble página",
+      "ca": "Plantilles a doble pàgina",
+      "zh": "跨页模板",
+      "ar": "قوالب الصفحتين المتقابلتين",
+      "ja": "見開きのテンプレート",
+      "pt": "Modelos em página dupla",
+      "fr": "Modèles en double page",
+      "de": "Vorlagen für Doppelseiten",
+      "it": "Modelli su doppia pagina"
+    },
+    "definition": {
+      "en": "A template with spread: true lays two facing pages as one sheet from a verso; a frame with crossGutter runs across the spine, and the others keep off the gutter band.",
+      "es": "Una plantilla con spread: true maqueta dos páginas enfrentadas como una sola hoja a partir de una página par; un marco con crossGutter cruza el lomo, y los demás se apartan de la banda del medianil.",
+      "ca": "Una plantilla amb spread: true maqueta dues pàgines encarades com un sol full a partir d’una pàgina parella; un marc amb crossGutter travessa el llom, i els altres s’aparten de la banda del mitjà.",
+      "zh": "spread: true的模板从左页开始，把相对的两页当作一张纸来排；带crossGutter的框可以跨过书脊，其余的框避开订口带。",
+      "ar": "القالب الذي فيه spread: true ينضّد صفحتين متقابلتين ورقةً واحدة ابتداءً من الصفحة اليسرى؛ والإطار الذي فيه crossGutter يعبر الكعب، وتبتعد الإطارات الأخرى عن شريط الهامش الداخلي.",
+      "ja": "spread: trueのテンプレートは、左ページから向かい合う2ページを1枚のシートとして組みます。crossGutterの枠はのどをまたぎ、ほかの枠はのどの帯をよけます。",
+      "pt": "Um modelo com spread: true diagrama duas páginas espelhadas como uma só folha, a partir de uma página da esquerda; um bloco com crossGutter atravessa a lombada, e os outros se afastam da faixa da medianiz.",
+      "fr": "Un modèle avec spread: true met en page deux pages en vis-à-vis comme une seule feuille à partir d’une page paire ; un bloc avec crossGutter traverse le dos, les autres s’écartent de la bande du petit fond.",
+      "de": "Eine Vorlage mit spread: true legt zwei gegenüberliegende Seiten als einen Bogen an, beginnend mit einer linken Seite; ein Rahmen mit crossGutter läuft über den Bund, die anderen halten Abstand vom Bundsteg.",
+      "it": "Un modello con spread: true impagina due pagine affiancate come un solo foglio a partire da una pagina pari; una cornice con crossGutter attraversa il dorso, le altre stanno fuori dalla fascia della piega."
+    },
+    "aliases": {
+      "en": [
+        "double page",
+        "spread",
+        "across the spine",
+        "gutter"
+      ],
+      "es": [
+        "doble página",
+        "pliego",
+        "lomo",
+        "medianil"
+      ],
+      "ca": [
+        "doble pàgina",
+        "llom"
+      ],
+      "zh": [
+        "跨页",
+        "对页",
+        "书脊"
+      ],
+      "ar": [
+        "صفحة مزدوجة",
+        "الكعب"
+      ],
+      "ja": [
+        "見開き",
+        "のど",
+        "ノド"
+      ],
+      "pt": [
+        "página dupla",
+        "lombada"
+      ],
+      "fr": [
+        "double page",
+        "dos",
+        "petit fond"
+      ],
+      "de": [
+        "Doppelseite",
+        "Bund"
+      ],
+      "it": [
+        "doppia pagina",
+        "dorso",
+        "piega"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Spreads",
+        "es": "Dobles páginas",
+        "ca": "Dobles pàgines",
+        "zh": "跨页",
+        "ar": "الصفحتان المتقابلتان",
+        "ja": "見開き",
+        "pt": "Páginas duplas",
+        "fr": "Doubles pages",
+        "de": "Doppelseiten",
+        "it": "Doppie pagine"
+      }
+    },
+    "since": "1.35.0",
+    "detect": {
+      "markdown": [
+        "^::::+\\s*page\\s*\\{[^}\\n]*\\bspread\\b"
+      ],
+      "config": [
+        "pageTemplates[].spread"
+      ]
+    }
+  },
+  "figure-labels": {
+    "label": {
+      "en": "Labels on a picture",
+      "es": "Rótulos sobre la imagen",
+      "ca": "Rètols sobre la imatge",
+      "zh": "图上的标注",
+      "ar": "تسميات على الصورة",
+      "ja": "図に載せるラベル",
+      "pt": "Rótulos sobre a imagem",
+      "fr": "Étiquettes sur l’image",
+      "de": "Beschriftungen auf dem Bild",
+      "it": "Etichette sull’immagine"
+    },
+    "definition": {
+      "en": ":::figure{resource} with one ::label[TEXT]{at} line per name: each label stands at an anchor of the resource (a point with its side, turn, measure and style) or at x% y%, in a labelStyles style, and the drawing carries no letters.",
+      "es": ":::figure{resource} con una línea ::label[TEXTO]{at} por nombre: cada rótulo se coloca en un ancla del recurso (un punto con su lado, su giro, su medida y su estilo) o en x% y%, con un estilo de labelStyles, y el dibujo no lleva ninguna letra.",
+      "ca": ":::figure{resource} amb una línia ::label[TEXT]{at} per nom: cada rètol es col·loca en una àncora del recurs (un punt amb el seu costat, el seu gir, la seva mesura i el seu estil) o en x% y%, amb un estil de labelStyles, i el dibuix no porta cap lletra.",
+      "zh": ":::figure{resource}里每个名称写一行::label[文字]{at}：每个标注放在资源的锚点上（一个带对齐边、旋转角度、宽度和样式的点），或放在x% y%处，使用labelStyles中的样式，图本身不含任何文字。",
+      "ar": ":::figure{resource} مع سطر ::label[النص]{at} لكل اسم: تقف كل تسمية عند مرساة من مراسي المورد (نقطة لها جهة وزاوية دوران وعرض ونمط) أو عند x% y%، بنمط من labelStyles، ولا يحمل الرسم أي حرف.",
+      "ja": ":::figure{resource}の中に、名前ごとに::label[テキスト]{at}を1行ずつ書きます。各ラベルはリソースのアンカー（基準の側、回転、幅、スタイルを持つ点）か x% y% の位置に、labelStylesのスタイルで置かれ、絵そのものには文字が入りません。",
+      "pt": ":::figure{resource} com uma linha ::label[TEXTO]{at} por nome: cada rótulo fica numa âncora do recurso (um ponto com seu lado, giro, medida e estilo) ou em x% y%, com um estilo de labelStyles, e o desenho não leva nenhuma letra.",
+      "fr": ":::figure{resource} avec une ligne ::label[TEXTE]{at} par nom : chaque étiquette se place sur une ancre de la ressource (un point avec son côté, sa rotation, sa mesure et son style) ou en x% y%, dans un style de labelStyles, et le dessin ne porte aucune lettre.",
+      "de": ":::figure{resource} mit einer Zeile ::label[TEXT]{at} je Name: Jede Beschriftung steht an einem Anker der Ressource (ein Punkt mit Bezugsseite, Drehung, Breite und Format) oder bei x% y%, in einem Format aus labelStyles; die Zeichnung selbst trägt keinen Buchstaben.",
+      "it": ":::figure{resource} con una riga ::label[TESTO]{at} per nome: ogni etichetta si colloca su un’ancora della risorsa (un punto con il suo lato, la sua rotazione, la sua misura e il suo stile) o in x% y%, con uno stile di labelStyles, e il disegno non porta nessuna lettera."
+    },
+    "aliases": {
+      "en": [
+        "map labels",
+        "place names",
+        "anchors",
+        "label styles",
+        "lettering on a map",
+        "annotated diagram"
+      ],
+      "es": [
+        "rótulos de mapa",
+        "topónimos",
+        "anclas",
+        "estilos de rótulo",
+        "leyenda sobre el mapa"
+      ],
+      "ca": [
+        "rètols de mapa",
+        "topònims",
+        "àncores"
+      ],
+      "zh": [
+        "地图标注",
+        "地名",
+        "锚点"
+      ],
+      "ar": [
+        "تسميات الخريطة",
+        "أسماء الأماكن",
+        "المراسي"
+      ],
+      "ja": [
+        "地図のラベル",
+        "地名",
+        "アンカー"
+      ],
+      "pt": [
+        "rótulos de mapa",
+        "topônimos",
+        "âncoras"
+      ],
+      "fr": [
+        "étiquettes de carte",
+        "toponymes",
+        "ancres"
+      ],
+      "de": [
+        "Kartenbeschriftung",
+        "Ortsnamen",
+        "Anker"
+      ],
+      "it": [
+        "etichette della carta",
+        "toponimi",
+        "ancore"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Figures with labels",
+        "es": "Figuras con rótulos",
+        "ca": "Figures amb rètols",
+        "fr": "Figures avec étiquettes",
+        "de": "Abbildungen mit Beschriftungen",
+        "it": "Figure con etichette",
+        "pt": "Figuras com rótulos",
+        "zh": "带标注的插图",
+        "ja": "ラベル付きの図",
+        "ar": "أشكال بتسميات"
+      }
+    },
+    "since": "1.37.0",
+    "detect": {
+      "markdown": [
+        "^::label\\["
+      ],
+      "config": [
+        "labelStyles"
+      ]
+    }
   }
 }
