@@ -7,7 +7,7 @@ same page ground on every page) become one resource.
 
   template_dedupe.py DIR [--geom-tol 3] [--style-tol 0.5] [--padding-tol 1.5]
                          [--delta-e 3] [--max-diff 2] [--image-tol 2]
-                         [--dry-run] [--json]
+                         [--keep-frame-names] [--dry-run] [--json]
 
 DIR is what `pdf_regions.py extract` wrote: library.json (pageTemplates,
 calloutStyles, markStyles, chipStyles, labelStyles), resources.json and
@@ -31,6 +31,22 @@ chapters/<lang>/*.md. The script rewrites the three in place (with
   only the frames that differ (`remove: true` for a frame it lacks).
   Templates are named by what they hold (`title-text-box2-picture`), never
   by page number; the page fences follow the new ids.
+- **Frame names.** `pdf_regions.py` names a frame by kind and order on its
+  page (`box-4`, `picture-7`), which says nothing to whoever corrects or
+  translates the page and means a different box in the next template. Once
+  the templates are merged, a frame named that way is renamed by its role,
+  never by what it says: a box after its callout style (`box-light-blue`,
+  `box-light-blue-tab-white` when the style carries a tab), a picture or a
+  figure `picture` / `figure`, a frame inside another `<role>-in-<parent>`,
+  a text or box set under a picture or a figure `caption-of-<picture>`, the
+  flowing text `text`, the heading `title`. The same role has the same name
+  in every template that has it, so a page can change template without its
+  Markdown changing; two of one role in a template are numbered in reading
+  order (`picture`, `picture-2`). Children keep the names of the template
+  they extend; frames you named yourself are left alone. Anchors, groups and
+  the `slot="…"` of every page fence, in every language, follow. The report
+  lists each renamed frame; `--keep-frame-names` leaves the names as they
+  are.
 - **Pictures.** Resources that a template's decoration reads from a page
   attribute (`resourceId: "{attr.fondo}"`) and look alike (mean difference
   of a 512-pixel thumbnail at most --image-tol on 0–255) become one; the
@@ -683,6 +699,168 @@ def _decoration_extends(base: dict, child: dict, tol: float) -> bool:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# frame names
+# ---------------------------------------------------------------------------
+
+POSITIONAL_RE = re.compile(r"^(title|text|box|tab|picture|figure)(?:-(\d+))?$")
+POSITIONAL_STYLE_RE = re.compile(r"^(?:box|tab|text|title)-\d+$")
+
+
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def resolved_frames(t: dict, resolved: dict[str, list[dict]]) -> list[dict]:
+    """The frames a template ends up with: those of the template it extends
+    (already resolved), minus the ones the patch removes, with the patch's
+    changes laid over them, plus the frames it adds."""
+    parent = t.get("extends")
+    if not parent:
+        return [dict(f) for f in t.get("frames", [])]
+    frames = [dict(f) for f in resolved.get(parent, [])]
+    index = {f["name"]: i for i, f in enumerate(frames)}
+    for f in t.get("frames", []):
+        n = f["name"]
+        if f.get("remove"):
+            if n in index:
+                frames[index[n]] = {}
+            continue
+        if n in index and frames[index[n]]:
+            frames[index[n]].update(f)
+        else:
+            index[n] = len(frames)
+            frames.append(dict(f))
+    return [f for f in frames if f]
+
+
+def frame_role(f: dict, styles: dict[str, dict], names: dict[str, str], by_old: dict[str, dict],
+               naming: set[str]) -> str:
+    """The role name of a positionally named frame, before numbering."""
+    m = POSITIONAL_RE.match(f["name"])
+    kind = m.group(1) if m else "box"
+    if kind == "title":
+        return "title"
+    if kind == "text" and f.get("flow"):
+        return "text"
+    if kind == "text" and f.get("rotate"):
+        return "rotated-text"
+    anchor = (f.get("placement") or {}).get("anchor") or {}
+    to = anchor.get("to") if isinstance(anchor.get("to"), str) else None
+    target = to[1:] if to and to.startswith("#") and to[1:] in by_old and to[1:] not in naming else None
+    sid = f.get("style")
+    base = kind
+    if kind in ("box", "tab") and isinstance(sid, str) and sid and not POSITIONAL_STYLE_RE.match(sid):
+        base = _slug(sid) or kind
+    if target is not None:
+        tn = name_of(target, styles, names, by_old, naming)
+        tm = POSITIONAL_RE.match(target)
+        tkind = tm.group(1) if tm else tn.split("-")[0]
+        edge = anchor.get("edge")
+        if edge == "below" and kind in ("text", "box") and tkind in ("picture", "figure"):
+            return f"caption-of-{tn}"
+        if edge in ("top-left", "bottom-left") and (f.get("layer") or 1) > 1:
+            return f"{base}-in-{tn}"
+    return base
+
+
+def name_of(old: str, styles: dict[str, dict], names: dict[str, str], by_old: dict[str, dict],
+            naming: set[str]) -> str:
+    """The new name of frame `old`, worked out when it has none yet: its
+    role, numbered from 2 when the template already has one."""
+    if old in names:
+        return names[old]
+    naming.add(old)
+    role = frame_role(by_old[old], styles, names, by_old, naming)
+    naming.discard(old)
+    taken = set(names.values())
+    new, n = role, 2
+    while new in taken:
+        new, n = f"{role}-{n}", n + 1
+    names[old] = new
+    return new
+
+
+def name_frames(templates: list[dict], styles: list[dict]) -> tuple[list[dict], dict[str, dict[str, str]], list[dict]]:
+    """(templates, template id -> {old frame name: new name}, report).
+    Frames whose name is not the positional `box-4` form keep it."""
+    by_style = {s["id"]: s for s in styles}
+    by_id = {t["id"]: t for t in templates}
+    order: list[dict] = []
+    seen: set[str] = set()
+
+    def visit(t: dict) -> None:
+        if t["id"] in seen:
+            return
+        seen.add(t["id"])
+        parent = by_id.get(t.get("extends") or "")
+        if parent is not None:
+            visit(parent)
+        order.append(t)
+
+    for t in templates:
+        visit(t)
+    resolved: dict[str, list[dict]] = {}
+    maps: dict[str, dict[str, str]] = {}
+    for t in order:
+        frames = resolved[t["id"]] = resolved_frames(t, resolved)
+        by_old = {f["name"]: f for f in frames}
+        parent_map = maps.get(t.get("extends") or "", {})
+        names: dict[str, str] = {}
+        for f in frames:
+            n = f["name"]
+            if n in parent_map:
+                names[n] = parent_map[n]
+            elif not POSITIONAL_RE.match(n):
+                names[n] = n
+        # a name kept by hand or inherited is taken before any is made up
+        for f in frames:
+            if f["name"] not in names:
+                name_of(f["name"], by_style, names, by_old, set())
+        maps[t["id"]] = names
+    out, report = [], []
+    for t in templates:
+        names = maps[t["id"]]
+        nt = json.loads(json.dumps(t))
+        rename_in_template(nt, names)
+        out.append(nt)
+        changed = {o: n for o, n in names.items() if o != n and any(f["name"] == o for f in t.get("frames", []))}
+        if changed:
+            report.append({"id": t["id"], "renamed": changed})
+    return out, maps, report
+
+
+def rename_in_template(t: dict, names: dict[str, str]) -> None:
+    """Apply a frame rename to a template's frames, anchors, groups and
+    overflow targets."""
+    def ref(v: Any) -> Any:
+        if isinstance(v, str) and v.startswith("#") and v[1:] in names:
+            return "#" + names[v[1:]]
+        return v
+
+    for f in t.get("frames", []):
+        f["name"] = names.get(f["name"], f["name"])
+        anchor = (f.get("placement") or {}).get("anchor")
+        if isinstance(anchor, dict) and "to" in anchor:
+            anchor["to"] = ref(anchor["to"])
+        if isinstance(f.get("next"), str):
+            f["next"] = names.get(f["next"], f["next"])
+        ov = f.get("overflow")
+        if isinstance(ov, dict) and "continueIn" in ov:
+            ov["continueIn"] = ref(ov["continueIn"])
+    for g in t.get("groups", []):
+        if isinstance(g.get("frames"), list):
+            g["frames"] = [names.get(n, n) for n in g["frames"]]
+    for el in decoration_of(t):
+        anchor = (el.get("placement") or {}).get("anchor")
+        if isinstance(anchor, dict) and "to" in anchor:
+            anchor["to"] = ref(anchor["to"])
+
+
+SLOT_LINE_RE = re.compile(r"^\s*(?::{2,}[A-Za-z]|#{1,6}\s)")
+SLOT_ATTR_RE = re.compile(r'(?<=[\s{])slot="([^"]*)"')
+
+
 def attr_images(templates: list[dict]) -> set[str]:
     """Page-fence attributes that a decoration image reads (`{attr.fondo}`)."""
     out = set()
@@ -754,23 +932,51 @@ FENCE_RE = re.compile(r"^(\s*:{4,}page)\{([^}]*)\}\s*$")
 ATTR_RE = re.compile(r'([\w-]+)="([^"]*)"')
 
 
+CODE_FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+PAGE_CLOSE_RE = re.compile(r"^\s*:{4,}\s*$")
+
+
 def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, dict[str, str]],
-                     styles: dict[str, str]) -> str:
+                     styles: dict[str, str], slots: dict[str, dict[str, str]] | None = None) -> str:
+    """The text with the new template ids, page attributes and mark styles
+    and, inside a page fence, the new slot names of that page's template
+    (`slots`: template id -> {old frame name: new})."""
     out = []
+    current: dict[str, str] | None = None
+    code: str | None = None
     for line in text.split("\n"):
         m = FENCE_RE.match(line)
-        if m:
+        cm = CODE_FENCE_RE.match(line)
+        if cm and m is None:
+            mark = cm.group(1)
+            if code is None:
+                code = mark
+            elif mark[0] == code[0] and len(mark) >= len(code):
+                code = None
+        elif code is not None:
+            pass
+        elif m:
+            tid = ""
+
             def sub(a: re.Match) -> str:
+                nonlocal tid
                 k, v = a.group(1), a.group(2)
                 if k == "template":
                     v = templates.get(v, v)
+                    tid = v
                 elif k in attrs_map:
                     v = attrs_map[k].get(v, v)
                 return f'{k}="{v}"'
             line = m.group(1) + "{" + ATTR_RE.sub(sub, m.group(2)) + "}"
-        elif styles and "style=" in line:
-            line = re.sub(r'(:(?:mark|chip)\[(?:\\.|[^\]\\])*\]\{[^}]*?style=")([^"]*)(")',
-                          lambda a: a.group(1) + styles.get(a.group(2), a.group(2)) + a.group(3), line)
+            current = (slots or {}).get(tid) or None
+        elif PAGE_CLOSE_RE.match(line):
+            current = None
+        else:
+            if current and SLOT_LINE_RE.match(line):
+                line = SLOT_ATTR_RE.sub(lambda a: f'slot="{current.get(a.group(1), a.group(1))}"', line)
+            if styles and "style=" in line:
+                line = re.sub(r'(:(?:mark|chip)\[(?:\\.|[^\]\\])*\]\{[^}]*?style=")([^"]*)(")',
+                              lambda a: a.group(1) + styles.get(a.group(2), a.group(2)) + a.group(3), line)
         out.append(line)
     return "\n".join(out)
 
@@ -804,7 +1010,8 @@ def fence_attr_values(markdowns: list[str], key: str) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: bool = False) -> dict:
+def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: bool = False,
+               name_frames_by_role: bool = True) -> dict:
     lib_path, res_path = root / "library.json", root / "resources.json"
     library = json.loads(lib_path.read_text(encoding="utf-8"))
     resources = json.loads(res_path.read_text(encoding="utf-8")) if res_path.exists() else []
@@ -887,8 +1094,15 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
     report["after"]["pageTemplates"] = len(new_templates)
     report["after"]["extends"] = sum(1 for t in new_templates if t.get("extends"))
 
+    # 4. frame names by role, in the templates and in every page fence
+    slot_maps: dict[str, dict[str, str]] = {}
+    if name_frames_by_role:
+        new_templates, slot_maps, frame_report = name_frames(new_templates, library.get("calloutStyles") or [])
+        library["pageTemplates"] = new_templates
+        report["frames"] = frame_report
+
     mark_map = {**style_maps.get("markStyles", {}), **style_maps.get("chipStyles", {})}
-    new_md = [rewrite_markdown(t, tmap, attrs_map, mark_map) for t in markdowns]
+    new_md = [rewrite_markdown(t, tmap, attrs_map, mark_map, slot_maps) for t in markdowns]
     if not dry_run:
         lib_path.write_text(json.dumps(library, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         kept_res = [r for r in resources if r["id"] not in dropped]
@@ -923,6 +1137,12 @@ def print_report(rep: dict) -> None:
             print(f"  {t['id']}: extends {t['extends']} ({what}); pages {', '.join(t['from'])}")
         else:
             print(f"  {t['id']}: {len(t['from'])} page(s) {', '.join(t['from'])} (largest difference {t['largest']} mm)")
+    renamed = rep.get("frames") or []
+    if renamed:
+        n = sum(len(t["renamed"]) for t in renamed)
+        print(f"frames renamed by role: {n} in {len(renamed)} template(s)")
+        for t in renamed:
+            print(f"  {t['id']}: " + ", ".join(f"{o} -> {x}" for o, x in t["renamed"].items()))
     if rep.get("pictures"):
         print(f"pictures: {sum(len(p['from']) - 1 for p in rep['pictures'])} merged into {len(rep['pictures'])}")
 
@@ -937,12 +1157,13 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--delta-e", type=float, default=3.0, help="colours within this CIEDE2000 distance are one (default 3)")
     ap.add_argument("--max-diff", type=int, default=2, help="a template that differs in at most this many frames extends a shared one (default 2)")
     ap.add_argument("--image-tol", type=float, default=2.0, help="pictures whose thumbnails differ by at most this (0-255) are one (default 2)")
+    ap.add_argument("--keep-frame-names", action="store_true", help="leave the frames named by kind and order (box-4)")
     ap.add_argument("--dry-run", action="store_true", help="report only")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
     tol = {"geom": args.geom_tol, "dim": args.style_tol, "padding": args.padding_tol, "font": args.font_tol,
            "delta_e": args.delta_e}
-    rep = dedupe_dir(Path(args.dir), tol, args.max_diff, args.image_tol, args.dry_run)
+    rep = dedupe_dir(Path(args.dir), tol, args.max_diff, args.image_tol, args.dry_run, not args.keep_frame_names)
     if args.json:
         print(json.dumps(rep, ensure_ascii=False, indent=1))
     else:
