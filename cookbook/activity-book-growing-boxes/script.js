@@ -1,6 +1,6 @@
 // ═══ Postext Cookbook · Nº 159 · Activity book with boxes that grow ══════════════
 // https://postext.dev/en/cookbook/activity-book-growing-boxes
-// Code: MIT · Text: original (CC BY 4.0) · Pictures: drawn in code
+// Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
 // Fonts: Andika, Baloo 2, Lexend (SIL OFL 1.1) · Needs postext ≥ 1.38.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
@@ -15,9 +15,8 @@ const RECIPE = 'activity-book-growing-boxes';
 const palette = {
   ink: '#1f2d38', // text
   sea: '#1d659c', // titles, tabs, list numbers
-  sky: '#e2f0f9', // activity boxes, the cover's sky
-  sun: '#f0a531', // the project's box, the sun
-  leaf: '#4c8f55', // the cover's hills
+  sky: '#e2f0f9', // activity boxes
+  sun: '#f0a531', // the project's box
   sand: '#fcf0d8', // the materials box
   rule: '#93bcd8', // answer lines, blanks
   paper: '#ffffff',
@@ -107,11 +106,15 @@ const projectGoesOn = {
 };
 // #endregion
 
-// #region cover: a sky drawn to the bleed, the title, and a line for the child's name
+// #region cover: a painted landscape to the bleed with the cycle's arrows over it, the title,
+// and a line for the child's name
 const cover = {
   id: 'portada', header: false, footer: false,
   decoration: { elements: [
     { kind: 'image', id: 'cielo', resourceId: 'portada', decorative: true,
+      placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: mm(178) } } },
+    // The arrows are vector, over the painting: the same frame, so they stay on its features.
+    { kind: 'image', id: 'ciclo', resourceId: 'ciclo', decorative: true,
       placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: mm(178) } } },
     { kind: 'rule', id: 'nombre-linea', direction: 'horizontal', thickness: pt(1),
       color: col('sea'), placement: { ...at('#nombre', 'bottom-left', 0, 1),
@@ -218,91 +221,91 @@ const config = {
 // ─── 2 · Content ────────────────────────────────────────────────────────────
 const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookbook
 
-// #region art: the water cycle on the cover, the planet, the three states, the rain gauge
+// #region art: a painted cover and three vignettes; only the cycle's arrows are vector
+// The pictures were painted with a diffusion model on white (the cover on a white edge it fades
+// into), cut to the frames' aspect and declared with their pixels. The cover's arrows are an
+// SVG in the same frame as the painting, 210 × 178 mm, with their points read off the painting
+// in percent of its width and height: the sea's mist, the clouds, the rain, the river.
 const P = palette;
-const svgDoc = (w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" `
-  + `width="${w * 10}" height="${h * 10}">${body}</svg>`;
-const cloud = (x, y, s, fill = P.paper) => `<g transform="translate(${x} ${y}) scale(${s})" `
-  + `fill="${fill}">`
-  + '<circle cx="0" cy="0" r="9"/><circle cx="11" cy="-5" r="11"/><circle cx="24" cy="0" r="9"/>'
-  + '<rect x="-9" y="0" width="42" height="9" rx="4.5"/></g>';
-const arrow = (x1, y1, x2, y2, color) => {
-  const a = Math.atan2(y2 - y1, x2 - x1);
-  const tip = (d, o) => `${(x2 - d * Math.cos(a + o)).toFixed(1)},`
-    + `${(y2 - d * Math.sin(a + o)).toFixed(1)}`;
-  return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${color}" stroke-width="1.6" `
-    + `stroke-linecap="round" stroke-dasharray="3 3" fill="none"/>`
-    + `<path d="M${x2} ${y2} L${tip(5, 0.45)} L${tip(5, -0.45)} Z" fill="${color}"/>`;
+const ARROW_X = 2.1; // mm per percent of the cover's width
+const ARROW_Y = 1.78; // mm per percent of its height
+// A smooth stroke through the points, with the head turned to the last stretch.
+const arrow = (...pts) => {
+  const p = pts.map(([x, y]) => [x * ARROW_X, y * ARROW_Y]);
+  let d = `M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const [a, b] = [p[Math.max(i - 1, 0)], p[i + 2] ?? p[i + 1]];
+    const c1 = [p[i][0] + (p[i + 1][0] - a[0]) / 6, p[i][1] + (p[i + 1][1] - a[1]) / 6];
+    const c2 = [p[i + 1][0] - (b[0] - p[i][0]) / 6, p[i + 1][1] - (b[1] - p[i][1]) / 6];
+    d += ` C${c1.map((v) => v.toFixed(1)).join(' ')} ${c2.map((v) => v.toFixed(1)).join(' ')} `
+      + `${p[i + 1][0].toFixed(1)} ${p[i + 1][1].toFixed(1)}`;
+  }
+  const [t, e] = [p[p.length - 2], p[p.length - 1]];
+  const ang = Math.atan2(e[1] - t[1], e[0] - t[0]);
+  const tip = (back, side) => `${(e[0] + back * Math.cos(ang) - side * Math.sin(ang)).toFixed(1)},`
+    + `${(e[1] + back * Math.sin(ang) + side * Math.cos(ang)).toFixed(1)}`;
+  const head = `${tip(3.4, 0)} ${tip(-1, 2.5)} ${tip(-1, -2.5)}`;
+  return `<path d="${d}" fill="none" stroke="${P.sea}" stroke-width="2.2" stroke-linecap="round"/>`
+    + `<polygon points="${head}" fill="${P.sea}" stroke="${P.sea}" stroke-width="1.4" `
+    + 'stroke-linejoin="round"/>'
+    + `<path d="${d}" fill="none" stroke="${P.paper}" stroke-width="1.1" stroke-linecap="round"/>`
+    + `<polygon points="${head}" fill="${P.paper}"/>`;
 };
-const rain = (x, y) => [0, 6, 12, 18].map((dx, i) => `<path d="M${x + dx} ${y + (i % 2) * 3} `
-  + `l-2 7" stroke="${P.sea}" stroke-width="1.6" stroke-linecap="round"/>`).join('');
-const ART = {
-  portada: [210, 178, () => `<rect width="210" height="178" fill="${P.sky}"/>`
-    + `<circle cx="168" cy="38" r="17" fill="${P.sun}"/>`
-    + Array.from({ length: 12 }, (_, i) => {
-      const a = (i * Math.PI) / 6;
-      const p = (r) => `${(168 + r * Math.cos(a)).toFixed(1)} ${(38 + r * Math.sin(a)).toFixed(1)}`;
-      return `<path d="M${p(22)} L${p(29)}" stroke="${P.sun}" stroke-width="2.4" `
-        + 'stroke-linecap="round"/>';
-    }).join('')
-    + cloud(28, 40, 1.2) + cloud(86, 26, 0.9) + rain(30, 58)
-    + `<path d="M0 132 L34 84 L52 104 L74 70 L112 132 Z" fill="${P.leaf}"/>`
-    + `<path d="M74 70 L66 82 L72 80 L76 85 L81 80 L74 70 Z" fill="${P.paper}"/>`
-    + `<path d="M58 132 C70 120 64 112 76 104" stroke="${P.sea}" stroke-width="3" fill="none"/>`
-    + `<path d="M0 132 L210 132 L210 178 L0 178 Z" fill="${P.sea}"/>`
-    + [140, 152, 164].map((y) => `<path d="M${y - 120} ${y} q8 -4 16 0 t16 0 t16 0" `
-      + `stroke="${P.sky}" stroke-width="1.4" fill="none"/>`).join('')
-    + arrow(150, 126, 128, 66, P.paper) + arrow(176, 124, 160, 70, P.paper)
-    + arrow(120, 30, 70, 34, P.paper)],
-  planeta: [56, 46, () => `<circle cx="26" cy="23" r="20" fill="${P.sea}"/>`
-    + `<path d="M14 10 q8 -2 10 6 q-2 7 -9 6 q-5 -4 -1 -12 Z" fill="${P.leaf}"/>`
-    + `<path d="M30 26 q9 -3 11 4 q-1 8 -8 9 q-6 -5 -3 -13 Z" fill="${P.leaf}"/>`
-    + `<path d="M20 5 q6 -3 12 0 q-6 3 -12 0 Z" fill="${P.sky}"/>`
-    + `<path d="M48 18 q-5 8 0 12 q5 -4 0 -12 Z" fill="${P.sea}" stroke="${P.paper}" `
-    + 'stroke-width="1"/>'],
-  estados: [56, 46, () => `<rect x="3" y="24" width="14" height="14" rx="2.5" fill="${P.sky}" `
-    + `stroke="${P.sea}" stroke-width="1.4"/>`
-    + `<path d="M22 18 L24 42 L36 42 L38 18 Z" fill="${P.sky}" stroke="${P.sea}" `
-    + 'stroke-width="1.4"/>'
-    + `<path d="M23 27 L37 27" stroke="${P.sea}" stroke-width="1"/>`
-    + `<path d="M23.3 27 L24 42 L36 42 L36.7 27 Z" fill="${P.sea}"/>`
-    + [44, 49, 54].map((x) => `<path d="M${x - 4} 40 q-3 -6 0 -12 t0 -12" stroke="${P.rule}" `
-      + `stroke-width="1.6" fill="none" stroke-linecap="round"/>`).join('')],
-  pluviometro: [56, 46, () => `<path d="M18 10 L40 10 L40 42 Q40 44 38 44 L20 44 Q18 44 18 42 Z" `
-    + `fill="${P.sky}" stroke="${P.sea}" stroke-width="1.4"/>`
-    + `<path d="M16 10 L42 10 L33 19 L25 19 Z" fill="${P.paper}" stroke="${P.sea}" `
-    + 'stroke-width="1.4"/>'
-    + '<path d="M18.7 30 L39.3 30 L39.3 42 Q39.3 43.3 38 43.3 L20 43.3 Q18.7 43.3 18.7 42 Z" '
-    + `fill="${P.sea}"/>`
-    + [22, 26, 30, 34, 38].map((y) => `<path d="M40 ${y} l5 0" stroke="${P.ink}" `
-      + 'stroke-width="1"/>').join('')
-    + cloud(4, 4, 0.35, P.rule) + rain(6, 8).replaceAll('l-2 7', 'l-1 4')],
-};
+const CYCLE = [
+  [84, 54, 81, 42, 82, 30], // evaporation: the mist rises off the sea
+  [93, 54, 95, 42, 92, 31],
+  [64, 21, 54, 17, 45, 12], // the clouds drift inland to the mountains
+  [29, 8, 28, 14, 27, 20], // precipitation: rain on the peaks
+  [22, 43.6, 26, 45.3, 30, 47.8], // run-off: the river down from the waterfall
+  [37, 57.5, 46, 59.3, 55, 60.8], // and out across the plain to the sea
+];
+const cycleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 178" width="2100" `
+  + `height="1780">${CYCLE.map((a) => arrow(...Array.from({ length: a.length / 2 },
+    (_, i) => [a[2 * i], a[2 * i + 1]]))).join('')}</svg>`;
+await loadSvg('ciclo.svg', cycleSvg);
+
 const ALT = {
   portada: t({
-    es: 'El ciclo del agua: el sol calienta el mar, el vapor sube a las nubes y la lluvia cae '
-      + 'en la montaña y vuelve por el río',
-    en: 'The water cycle: the sun warms the sea, vapour rises to the clouds, and rain falls on '
-      + 'the hills and runs back down the river',
-    fr: 'Le cycle de l’eau : le soleil chauffe la mer, la vapeur monte aux nuages, la pluie '
-      + 'tombe sur la montagne et revient par la rivière' }),
-  planeta: t({ es: 'La Tierra, casi toda azul, y una gota de agua',
-    en: 'The Earth, mostly blue, and a drop of water',
-    fr: 'La Terre, presque toute bleue, et une goutte d’eau' }),
-  estados: t({ es: 'Un cubito de hielo, un vaso de agua y vapor',
-    en: 'An ice cube, a glass of water and steam',
-    fr: 'Un glaçon, un verre d’eau et de la vapeur' }),
-  pluviometro: t({ es: 'Una botella cortada con una regla: el pluviómetro',
-    en: 'A cut bottle with a ruler: the rain gauge',
-    fr: 'Une bouteille coupée avec une règle : le pluviomètre' }),
+    es: 'El ciclo del agua en un paisaje: el sol calienta el mar, el vapor sube a las nubes, '
+      + 'la lluvia cae sobre las montañas nevadas y el río baja de nuevo al mar',
+    en: 'The water cycle in a landscape: the sun warms the sea, vapour rises to the clouds, '
+      + 'rain falls on the snowy mountains and the river runs back down to the sea',
+    fr: 'Le cycle de l’eau dans un paysage : le soleil chauffe la mer, la vapeur monte aux '
+      + 'nuages, la pluie tombe sur les montagnes enneigées et la rivière redescend vers la mer' }),
+  ciclo: t({ es: 'Flechas: el vapor sube del mar, las nubes van hacia la montaña, la lluvia cae '
+      + 'y el río vuelve al mar',
+    en: 'Arrows: vapour rises from the sea, the clouds drift to the mountains, rain falls and '
+      + 'the river returns to the sea',
+    fr: 'Flèches : la vapeur monte de la mer, les nuages vont vers la montagne, la pluie tombe '
+      + 'et la rivière retourne à la mer' }),
+  planeta: t({ es: 'La Tierra vista desde el espacio, casi toda azul, y una gota de agua',
+    en: 'The Earth seen from space, mostly blue, and a drop of water',
+    fr: 'La Terre vue de l’espace, presque toute bleue, et une goutte d’eau' }),
+  estados: t({ es: 'Un cubito de hielo que se derrite, un vaso de agua y una taza que echa vapor',
+    en: 'An ice cube melting, a glass of water and a steaming cup',
+    fr: 'Un glaçon qui fond, un verre d’eau et une tasse qui fume' }),
+  pluviometro: t({ es: 'Una botella cortada con una regla pegada, piedras y un embudo bajo la lluvia: '
+      + 'el pluviómetro',
+    en: 'A cut bottle with a ruler taped on, stones and a funnel in the rain: the rain gauge',
+    fr: 'Une bouteille coupée avec une règle collée, des cailloux et un entonnoir sous la pluie : '
+      + 'le pluviomètre' }),
 };
-const resources = Object.entries(ART).map(([id, [w, h]]) => ({
-  id, typeId: 'dibujo', kind: 'svg', caption: '', altText: ALT[id], createdAt: 0, updatedAt: 0,
-  svg: { fileId: `${id}.svg`, width: w * 10, height: h * 10 },
-}));
-for (const [id, [w, h, draw]] of Object.entries(ART)) {
-  await loadSvg(`${id}.svg`, svgDoc(w, h, draw()));
-}
+// Bitmaps: file, pixels and ppi (the vignettes are 44 mm wide, the cover 210 mm).
+const BITMAPS = {
+  portada: ['portada-1440.jpg', 1440, 1221, 174],
+  planeta: ['planeta-960.jpg', 960, 873, 554],
+  estados: ['estados-960.jpg', 960, 873, 554],
+  pluviometro: ['pluviometro-960.jpg', 960, 873, 554],
+};
+const resources = [
+  ...(await Promise.all(Object.entries(BITMAPS).map(async ([id, [fileId, w, h, ppi]]) => {
+    await loadImage(fileId, asset(fileId));
+    return { id, typeId: 'dibujo', kind: 'bitmap', caption: '', altText: ALT[id], createdAt: 0,
+      updatedAt: 0, bitmap: { fileId, format: 'jpeg', width: w, height: h, resolution: ppi } };
+  }))),
+  { id: 'ciclo', typeId: 'dibujo', kind: 'svg', caption: '', altText: ALT.ciclo, createdAt: 0,
+    updatedAt: 0, svg: { fileId: 'ciclo.svg', width: 2100, height: 1780 } },
+];
 // #endregion
 
 // ─── 3 · Fonts ──────────────────────────────────────────────────────────────

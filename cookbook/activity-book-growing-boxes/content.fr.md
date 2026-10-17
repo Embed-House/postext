@@ -13,7 +13,7 @@ Prénom et nom
 :::
 
 :::frame{slot="colofon"}
-Composé en Andika, Baloo 2 et Lexend (SIL OFL) · Texte et dessins : originaux, CC BY 4.0
+Composé en Andika, Baloo 2 et Lexend (SIL OFL) · Texte original (CC BY 4.0) · Illustrations générées avec des modèles de diffusion
 :::
 ::::
 

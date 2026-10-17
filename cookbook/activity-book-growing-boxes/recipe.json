@@ -79,7 +79,44 @@
       }
     ],
     "text": [],
-    "images": [],
+    "images": [
+      {
+        "what": {
+          "en": "The water cycle in a landscape: snowy mountains, a river, a coast and the sea, under sun and rain clouds.",
+          "es": "El ciclo del agua en un paisaje: montañas nevadas, un río, una costa y el mar, bajo el sol y nubes de lluvia."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "portada-1440.jpg"
+      },
+      {
+        "what": {
+          "en": "The Earth seen from space, with a drop of water.",
+          "es": "La Tierra vista desde el espacio, con una gota de agua."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "planeta-960.jpg"
+      },
+      {
+        "what": {
+          "en": "An ice cube melting, a glass of water and a steaming cup.",
+          "es": "Un cubito de hielo que se derrite, un vaso de agua y una taza que echa vapor."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "estados-960.jpg"
+      },
+      {
+        "what": {
+          "en": "A rain gauge made from a cut bottle, with a ruler and stones.",
+          "es": "Un pluviómetro hecho con una botella cortada, con regla y piedras."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "pluviometro-960.jpg"
+      }
+    ],
     "fonts": [
       {
         "family": "Andika",
