@@ -3688,6 +3688,11 @@ export interface SandboxLabels {
   pageTemplatesPaddingBottom: string;
   pageTemplatesPaddingLeft: string;
   pageTemplatesPaddingTooltip: string;
+  pageTemplatesFrameRules: string;
+  pageTemplatesFrameRulesTooltip: string;
+  pageTemplatesFrameRulesPitch: string;
+  pageTemplatesFrameRulesPitchLine: string;
+  pageTemplatesFrameRulesPitchLength: string;
   pageTemplatesFrameGroupContent: string;
   pageTemplatesFrameFlow: string;
   pageTemplatesFrameFlowTooltip: string;
