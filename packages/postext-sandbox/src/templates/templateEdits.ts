@@ -317,20 +317,36 @@ export function namesInUse(templates: Templates, id: string): Set<string> {
   return names;
 }
 
+/** The templates that share frame `name` as seen from template `id`: the
+ *  nearest-to-the-root template of its `extends` chain that defines the
+ *  frame (in its base or a variant), and everything that extends that one,
+ *  siblings of `id` included. A rename applied to this set (and to the page
+ *  fences that name those templates) leaves no template reading the old
+ *  name. */
+export function frameFamily(templates: Templates, id: string, name: string): string[] {
+  const defines = (tid: string): boolean => {
+    const t = templateAt(templates, tid)?.template;
+    return !!t && [t, t.variants?.recto, t.variants?.verso].some((p) => p?.frames?.some((f) => f.name === name));
+  };
+  const chain = [id, ...ancestorsOf(templates, id)];
+  const definer = [...chain].reverse().find(defines) ?? id;
+  return [definer, ...descendantsOf(templates, definer)];
+}
+
 /** `#from` read as `#to` in an anchor. */
 const renameAnchor = <T extends { placement?: FrameConfig['placement'] }>(item: T, from: string, to: string): T =>
   item.placement?.anchor.to === `#${from}` ? { ...item, placement: { ...item.placement, anchor: { ...item.placement.anchor, to: `#${to}` } } } : item;
 
 /**
  * Frame (or group) `from` renamed `to` in template `id`, its variants and
- * the templates that extend it, with every reference in them: `next`,
+ * the templates that share it (`frameFamily`), with every reference in them: `next`,
  * `overflow.continueIn: '#…'`, anchors, group members and decoration
  * anchors. The Markdown's `slot="…"` names are left alone (the caller
  * says so).
  */
 export function renameFrame(templates: Templates, id: string, from: string, to: string): PageTemplate[] {
   if (from === to || namesInUse(templates, id).has(to)) return [...templates];
-  const scopeIds = new Set([id, ...descendantsOf(templates, id), ...ancestorsOf(templates, id)]);
+  const scopeIds = new Set(frameFamily(templates, id, from));
   const fixPatch = (p: PageTemplatePatch): PageTemplatePatch => {
     const out: PageTemplatePatch = { ...p };
     if (p.frames) {

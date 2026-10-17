@@ -51,6 +51,7 @@ import {
   type ProjectRecord,
   type ProjectThumbnail,
 } from '../storage/projects';
+import { renameFrameInEdition } from '../templates/slotRename';
 import { createBlankBookConfig, withDefaultResourceTypes } from './defaultConfig';
 import type { SandboxAction, SandboxState } from './SandboxContext';
 import type { ChapterLayout } from '../book/types';
@@ -123,6 +124,11 @@ export interface ProjectActions {
   /** Give a project without a cover the picture taken from its first page
    *  (never replaces one; no busy state). Resolves to whether it was set. */
   adoptGeneratedThumbnail: (id: string, bytes: ArrayBuffer, mime: string) => Promise<boolean>;
+  /** Rename a frame of a page template in the editions a local project
+   *  keeps aside (#979): the templates and the page fences of each one
+   *  that has the frame (the edition on screen is the caller's). Resolves
+   *  to the number of editions changed. */
+  renameFrameInEditions: (id: string, templateId: string, from: string, to: string) => Promise<number>;
   /** Reset the active project (or parts of it) to the preset it came from. */
   resetToSource: (parts: PresetApplyParts) => Promise<void>;
 }
@@ -701,6 +707,25 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       return true;
     }).catch(() => false);
 
+  const renameFrameInEditions: ProjectActions['renameFrameInEditions'] = async (id, templateId, from, to) => {
+    let count = 0;
+    // One transaction: the autosave of the edition on screen may write the
+    // same record, and neither may drop what the other wrote.
+    const updated = await updateProject(id, (existing) => {
+      const editions = existing.editions;
+      if (!editions) return null;
+      const next: Record<string, ProjectContent> = {};
+      for (const [locale, content] of Object.entries(editions)) {
+        const renamed = renameFrameInEdition(content, templateId, from, to);
+        if (renamed) count++;
+        next[locale] = renamed ?? content;
+      }
+      return count > 0 ? { editions: next, editionsRev: Date.now() } : null;
+    }).catch(() => null);
+    if (updated && count > 0) dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });
+    return updated ? count : 0;
+  };
+
   const resetToSource: ProjectActions['resetToSource'] = (parts) =>
     run(async () => {
       const s = deps.getState();
@@ -727,5 +752,5 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       applyRecord({ ...merged, config }, parts);
     });
 
-  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, resetToSource };
+  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, renameFrameInEditions, resetToSource };
 }

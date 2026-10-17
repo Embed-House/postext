@@ -3,14 +3,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
-import { useSandboxDocRef, useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels } from '../../../context/SandboxContext';
+import { applyViewerEdit } from '../../../editor/viewerEdits';
 import { useFrameDrag } from '../../../selection/frameDrag';
 import { DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover } from '../../../ui';
-import { frameEntry, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
+import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
 import { useBookTexts } from '../../../frameStyles/useBookTexts';
-import { pageFenceIds } from '../../../templates/templateUsage';
+import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
@@ -36,7 +37,9 @@ interface FramePropertiesProps {
  *  back to what the frame inherits. */
 export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved }: FramePropertiesProps) {
   const labels = useSandboxLabels();
-  const { templates, calloutStyles, write } = usePageTemplates();
+  const { templates, calloutStyles, write, dispatch: bookDispatch } = usePageTemplates();
+  const projectId = useSandboxActiveProjectId();
+  const { renameFrameInEditions } = useSandboxEditionActions();
   const template = resolveAt({ pageTemplates: templates }, templateId, scope);
   const frame = template?.frames.find((f) => f.name === name);
   const entry = frameEntry(templates, templateId, scope, name) as (FrameConfig & Record<string, unknown>) | undefined;
@@ -78,7 +81,16 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
       setNameDraft(name);
       return;
     }
+    // The slot names the pages write follow the frame (#979): in every
+    // chapter of the edition on screen, and in the editions a local project
+    // keeps aside.
+    const family = new Set(frameFamily(templates, templateId, name));
     write(renameFrame(templates, templateId, name, next));
+    for (const ch of texts) {
+      const changes = renameSlotChanges(ch.markdown, family, name, next);
+      if (changes.length > 0) applyViewerEdit(bookDispatch, ch.id, changes, ch.markdown.length);
+    }
+    if (projectId !== null) void renameFrameInEditions(projectId, templateId, name, next);
     onRenamed(next);
   };
 
