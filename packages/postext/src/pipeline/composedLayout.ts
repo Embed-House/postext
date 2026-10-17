@@ -51,6 +51,7 @@ import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
+import { createLayoutMemo, layoutMemoSwitch } from './layoutMemo';
 import { createMeasureMemo } from './measureMemo';
 import { computeOrderedListRunMetrics } from './lists';
 import { planParagraphContainers } from './paragraphContainers';
@@ -241,7 +242,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // frames collapsed).
   // The ladder lays the page again at each step: the measurements of one
   // step answer the next (#953).
-  const memoed: ComposedPageInput = { ...given, pass: { ...given.pass, measureMemo: createMeasureMemo() } };
+  const memoed: ComposedPageInput = { ...given, pass: { ...given.pass, measureMemo: createMeasureMemo(), ...(layoutMemoSwitch.enabled ? { layoutMemo: createLayoutMemo() } : {}) } };
   const input: ComposedPageInput = given.continuing ? { ...memoed, template: continuationTemplate(given.template, given.continuing) } : memoed;
   const { template, fence, dpi } = input;
   const fi = fence.fenceIndex;
@@ -1146,7 +1147,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // The room a vertical page's upright picture may take down the page
         // is the flow's whole extent: the frame's height is what it settles.
         const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, input.areas.area.height / s) };
-        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
+        const r = p.st!.L.peekRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
         const h = r.totalHeight * s;
         memo.set(key, h);
         return h;
@@ -1163,7 +1164,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       if (known !== undefined) return known;
       const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, width / s) };
       const across = (measure: number): number => inMode(p.frame, () =>
-        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
+        p.st!.L.peekRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
       const most = Math.max(input.areas.area.height, input.emPx);
       let h = most;
       if (across(most) <= width + 0.5) {

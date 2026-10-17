@@ -400,6 +400,10 @@ const designedBoxHeadings = new WeakSet<VDTBlock>();
 /** Whether `block` is a heading of a box set with its own design (see
  *  `CalloutLayoutInput.headingDesign`). */
 export const isDesignedBoxHeading = (block: VDTBlock): boolean => designedBoxHeadings.has(block);
+/** Mark `to`, a copy of `from`, as a designed heading when `from` is one. */
+export const copyDesignedBoxHeading = (from: VDTBlock, to: VDTBlock): void => {
+  if (designedBoxHeadings.has(from)) designedBoxHeadings.add(to);
+};
 
 /** The measures of `layoutCallout`'s first child across widths (see
  *  `CalloutLayoutInput.lineWidths`), per resolved configuration and

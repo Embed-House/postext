@@ -14,6 +14,7 @@ import type { ResolvedConfig, VDTBlock } from '../vdt';
 import type { BlockMeasureContext } from './measureContentBlock';
 import type { ParagraphContainerPlan } from './paragraphContainers';
 import type { MeasureMemo } from './measureMemo';
+import { layoutKey, memoLayout, type LayoutMemo } from './layoutMemo';
 import { isMarkerBlock } from './buildHelpers';
 import {
   isDesignedBoxHeading,
@@ -62,6 +63,9 @@ export interface FrameLayoutPass {
   /** The measurements of one layout of a composed page (#953), dropped
    *  with it. */
   measureMemo?: MeasureMemo;
+  /** The whole layouts of one layout of a composed page (#972), dropped
+   *  with it. */
+  layoutMemo?: LayoutMemo;
 }
 
 /** The widths a child's lines are counted at in a fragment `width` wide
@@ -92,6 +96,10 @@ export interface CalloutLayouter {
    *  box — a `continuation` (every fragment after the head) without
    *  title / icon. A cut inside a child keeps only the lines on its side. */
   layoutRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean, frame?: FrameBoxOptions) => CalloutLayoutResult;
+  /** `layoutRange` for a caller that only reads the result (the split
+   *  probes): with a layout memo (#972) the stored layout itself, never to
+   *  be moved or changed. */
+  peekRange: (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored?: boolean, frame?: FrameBoxOptions) => CalloutLayoutResult;
 }
 
 export const makeCalloutLayouter = (
@@ -116,7 +124,7 @@ export const makeCalloutLayouter = (
       groups.push([k, e]);
     }
   });
-  const layoutRange = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false, frame?: FrameBoxOptions) => {
+  const layoutRangeOf = (from: CalloutCut, to: CalloutCut, width: number, frameId: string, continuation: boolean, mirrored = false, frame?: FrameBoxOptions) => {
     let n = 0;
     // A fragment that opens inside a `:::columns` group starts at its
     // opening marker and one that ends inside it at its closing marker:
@@ -172,7 +180,14 @@ export const makeCalloutLayouter = (
       ...frame,
     });
   };
-  return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange, groups };
+  const through = (shared: boolean): CalloutLayouter['layoutRange'] => (from, to, width, frameId, continuation, mirrored = false, frame) => {
+    const memo = pass.layoutMemo;
+    if (!memo) return layoutRangeOf(from, to, width, frameId, continuation, mirrored, frame);
+    const ctx = pass.measureCtxFor(startIdx, style);
+    const key = layoutKey(memo, pass, ctx, startIdx, plan.endIdx, style, from, to, width, frameId, continuation, mirrored, frame);
+    return memoLayout(memo, key, ctx, shared, () => layoutRangeOf(from, to, width, frameId, continuation, mirrored, frame));
+  };
+  return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange: through(false), peekRange: through(true), groups };
 };
 
 /** What a cut of a composed page's frame keeps together besides
@@ -232,7 +247,7 @@ export const splitCalloutFragment = (
   frame?: FrameBoxOptions,
   rules?: FrameCutRules,
 ): CalloutFragment | null => {
-  const full = L.layoutRange(from, L.end, width, frameId, continuation, mirrored, frame);
+  const full = L.peekRange(from, L.end, width, frameId, continuation, mirrored, frame);
   /** Figures, tables and display formulas: never cut, not text lines. */
   const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay';
   const unitBottom = (u: CalloutUnit): number => {
@@ -471,8 +486,10 @@ export const splitCalloutFragment = (
   viable.sort((a, b) => rank(a) - rank(b));
   for (const c of viable) {
     if (c.bottom + tail > roomPx + 0.01) continue;
-    const result = L.layoutRange(from, c.cut, width, frameId, continuation, mirrored, frame);
-    if (result.totalHeight <= roomPx + 0.01) return { to: c.cut, result };
+    const result = L.peekRange(from, c.cut, width, frameId, continuation, mirrored, frame);
+    // The caller may move what it is given: a layout memo's stored layout
+    // is read, not handed over.
+    if (result.totalHeight <= roomPx + 0.01) return { to: c.cut, result: pass.layoutMemo ? L.layoutRange(from, c.cut, width, frameId, continuation, mirrored, frame) : result };
   }
   return null;
 };
