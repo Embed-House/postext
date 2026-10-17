@@ -131,7 +131,10 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   1.40 a label style can switch off a borrowed italic, comic text panels
   work on strips and spreads, frames keep their own writing mode on
   right-to-left pages, and `sandbox_get_composed_checks` checks every
-  edition at once. Follow
+  edition at once; from 1.41 a story jumps into a page of a later chapter
+  file; from 1.42 a box can be tracked (`body.letterSpacing`), a child
+  template can remove a base decoration element, and renaming a frame in the
+  Sandbox renames the slot of its page fences. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead.
 - **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page
@@ -621,7 +624,8 @@ Pick the path per [sources.md](references/sources.md):
   `scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions --lang es --fonts my-book/fonts --overlay`
   (frames, styles, ground, pictures cut without their text, labels, page
   fences), `scripts/template_dedupe.py work/regions` (one template per kind
-  of page, `extends` children, merged styles and grounds), and
+  of page, `extends` children, merged styles and grounds, frames named by
+  role with their `slot="…"` rewritten in every language), and
   `scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts` to lay
   the draft out and compare it with the source. `scripts/anchors.py` does a
   single map or diagram (`--page 6 --box x0,y0,x1,y1`) and writes other

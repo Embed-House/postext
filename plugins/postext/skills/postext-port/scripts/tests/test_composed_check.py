@@ -93,24 +93,28 @@ class Round(unittest.TestCase):
         p = cc.plan_for((1, 36, 0))
         lacks = {f["feature"] for f in p["lacks"]}
         self.assertTrue({"continuation", "labels", "migration", "headingDesigns", "jumps"} <= lacks)
+        V142 = {"boxTracking", "decorationRemove", "slotRename"}
         p = cc.plan_for((1, 37, 0))
         v138 = {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
                 "partialTypes", "labelsOnPictures", "sandboxFixes"}
         self.assertTrue(v138 <= {f["feature"] for f in p["lacks"]})
-        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0", "1.40.0") for f in p["lacks"]))
+        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0", "1.40.0", "1.41.0", "1.42.0") for f in p["lacks"]))
         p = cc.plan_for((1, 38, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
                          {"labelChecks", "figureWords", "styleExtends", "frameModes", "startEnd", "cuts",
                           "textPanelsMirrored", "coverUpright", "sourceAtFlow", "editionsKept", "wordTracking"}
                          | {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
-                            "editionChecks", "wordTrackingSandbox"})
-        self.assertTrue(all(f["since"] in ("1.39.0", "1.40.0") for f in p["lacks"]))
+                            "editionChecks", "wordTrackingSandbox", "jumpsAcrossChapters"}
+                            | V142)
+        self.assertTrue(all(f["since"] in ("1.39.0", "1.40.0", "1.41.0", "1.42.0") for f in p["lacks"]))
         p = cc.plan_for((1, 39, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
                          {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
-                          "editionChecks", "wordTrackingSandbox"})
-        self.assertTrue(all(f["since"] == "1.40.0" for f in p["lacks"]))
-        self.assertEqual(cc.plan_for((1, 40, 0))["lacks"], [])
+                          "editionChecks", "wordTrackingSandbox", "jumpsAcrossChapters"} | V142)
+        self.assertTrue(all(f["since"] in ("1.40.0", "1.41.0", "1.42.0") for f in p["lacks"]))
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 40, 0))["lacks"]}, {"jumpsAcrossChapters"} | V142)
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 41, 0))["lacks"]}, V142)
+        self.assertEqual(cc.plan_for((1, 42, 0))["lacks"], [])
 
     def test_round_command(self):
         r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "round", "--version", "1.36.0", "--json"],

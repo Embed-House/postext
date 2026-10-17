@@ -61,8 +61,10 @@ to its corner and keep its text off (`exclude: "push"`). A box's drawn
 height is its `minHeight`; the last frame of a card gets the room to the
 card's foot as `maxHeight`, so text that does not fit is reported
 (`frameOverflow`) instead of running off the card. Frame names are slots by
-role and order (`title`, `text`, `box-1`, `picture-2`, `figure-1`, `tab-1`),
-so pages of one kind name their frames alike.
+kind and order (`title`, `text`, `box-1`, `picture-2`, `figure-1`, `tab-1`),
+so pages of one kind name their frames alike; `template_dedupe.py` renames
+them by role (`box-light-blue`, `caption-of-picture`) once the templates are
+merged.
 
 Requires PyMuPDF, numpy and Pillow (`pip install pymupdf numpy pillow`);
 fontTools when --fonts is given.

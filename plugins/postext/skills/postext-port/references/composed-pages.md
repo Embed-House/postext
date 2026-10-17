@@ -42,6 +42,8 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.38.0</td><td>a frame that can go on to another page does so before it shrinks (<code>fit.preferContinue</code>); a threaded story goes on in the frame its chain starts in; cuts keep a heading with its text and two list items on each side; the answer space under a box goes on with it; <code>continueIn: "page:&lt;id&gt;"</code> jumps to a later page, <code>{page}</code> in <code>overflow.mark</code>, <code>overflow.fromMark</code>, <code>continueTargetMissing</code>; stacks keep their empty frames, rows of <code>auto</code> cards share width without a box; ruled frames (<code>rules</code>); <code>{ to, edge }</code> sizes and <code>fit: "cover"</code> + <code>focus</code> for design images; drop caps in frames; spreads on vertical books; comic <code>::panel{text}</code> and <code>box</code>; <code>moveTextToMarkdown</code> with <code>labelsOnPictures</code>; resource types written in part take the defaults; Sandbox: Canvas &rsaquo; Reflow, anchors placed by a click, <code>sandbox_apply_proposal</code></td><td>2</td></tr>
 <tr><td>1.39.0</td><td>checks that read the labels of every edition (<code>labelOverlap</code>, <code>labelOverflow</code>) and vertical labels (<code>writingMode</code> on an anchor or a label style); a figure's own <code>alt</code>, <code>caption</code> and <code>note</code> in the Markdown, per edition; callout styles based on another (<code>extends</code>); a frame's own <code>writingMode</code> and <code>direction</code>; <code>start</code>/<code>end</code> placement edges; widow and orphan rules in <code>:::columns</code> groups and frame columns; drop caps that follow the flow's rules across frame cuts, and the initial a <code>takes</code> title frame gives; comic text panels on vertical and right-to-left pages (<code>shrink</code>); <code>fit: "cover"</code> on upright pictures; <code>sourceAt</code> on mirrored and vertical composed pages (<code>flow</code>); the Sandbox keeps every edition of an imported bundle, lists <code>page:&lt;id&gt;</code> jump targets and edits <code>{ to, edge }</code> sizes, cover focus and dense anchors</td><td>2</td></tr>
 <tr><td>1.40.0</td><td>a label style can switch off the italics and capitals of the paragraph style it borrows (<code>fontStyle: "normal"</code>, <code>textTransform: "none"</code>); vertical labels on right-to-left pages; the reflowable EPUB draws plain figure labels over the picture; <code>moveTextToMarkdown</code> puts a picture's frame under decoration the design painted over it; comic text panels on <code>:::strip</code> and <code>:::page{spread}</code> (<code>comicPanelFrame</code> no longer raises <code>strip</code> / <code>spread</code>) and <code>valign</code> that follows a slanted cell; a frame's own <code>writingMode</code> on right-to-left pages, pictures upright in a vertical frame, reflowable EPUB frames with their own <code>writing-mode</code>; <code>useTemplate</code> proposals tried as the build lays the page; Sandbox: <code>sandbox_get_composed_checks</code> (every edition), <em>Check every edition</em> on big books, zoom and pan in the anchors dialog, label anchors dragged in the HTML viewer, the template editor's spreads on right-to-left and vertical books, the Word import's character spacing</td><td>2</td></tr>
+<tr><td>1.41.0</td><td>a story jumps into a page fence of a later chapter file (<code>continueIn: "page:&lt;id&gt;"</code>, one chapter file per article); Sandbox: the template editor's spread sheet on right-to-left and vertical books, box styles that extend another drawn with the look they inherit</td><td>2</td></tr>
+<tr><td>1.42.0</td><td><code>calloutStyles[].body.letterSpacing</code>; <code>{ "id": …, "remove": true }</code> takes a decoration element of the base template out in a child or variant; Sandbox: renaming a frame renames the <code>slot</code> of the page fences that fill it, in every chapter and in the other editions of a local project</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -141,9 +143,20 @@ geometry constants, with helpers of your own (`frame(name, …)`,
   from the page fence's attributes or from the Markdown.
 - Shared templates first, then `extends` + small patches, then variants.
   Restating a default in a child is meaningful (it overrides the parent).
+  From 1.42 a child or a variant takes an element of its base's decoration
+  out with `{ "id": "head-even", "remove": true }` in `decoration.elements`:
+  use it for the page kinds that lack an element of the base template (a
+  running head on the even page, say) instead of redefining the element with
+  an empty text.
 - Frame names are slot names: by role (`titulo`, `texto`, `dinero`,
   `dinero-fotos`, `mapa`, `pie-1`), the same in every template that has
   that box, so a page can change template without its Markdown changing.
+  A draft names its frames by kind and order (`box-4`, `picture-7`), which
+  is a different box in the next template; `template_dedupe.py` renames them
+  by role (§3.7). Rename a frame later in the Sandbox's Design › Page
+  templates (the name field of the frame): the `slot="…"` of its page fences
+  follows, in the chapters on screen and in the other editions a local
+  project keeps.
 - `lint_project.py` checks templates, slots, spreads, anchors and label
   styles; `postext check` gives the template warnings with JSON pointers.
 
@@ -210,10 +223,31 @@ postext check work/regions; python3 scripts/composed_check.py check work/regions
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
 <tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
-<tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged; <code>dedupe-report.json</code> with every merge and its largest difference</td></tr>
+<tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference and every frame renamed</td></tr>
 <tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
 <tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
 </table>
+
+Frame names. `extract` names a frame by kind and order on its page, and a
+person correcting or translating the page cannot tell what `box-4` is.
+`template_dedupe.py` renames them once the templates are merged, by role and
+never by the words they hold: `title`, `text` (the flowing text),
+`rotated-text`, a box after its callout style (`box-light-blue`, and
+`box-light-blue-tab-white` when the style draws a tab, which is where the
+tab shows in the name), `picture`, `figure`, `caption-of-picture` for a text
+or box set under a picture or figure, `tab-white-in-box-light-blue` for a
+frame laid inside another. The same role has the same name in every template
+that has it, a second one of a role is numbered in reading order
+(`picture`, `picture-2`), a child keeps the names of the template it extends,
+and a frame you named yourself is left alone. The anchors, the groups and the
+`slot="…"` of every page fence, in every language under `chapters/`, follow;
+`dedupe-report.json` (key `frames`) and the printed report list each rename,
+and `--keep-frame-names` turns it off. The names come from the callout
+styles, so merge the styles first (the script does) and give those a real
+name (`box-light-blue` to `tip`) before the pages are translated: rename a
+style and the frames named after it keep their names, rename the frames in
+the Sandbox when a role word is better. A label word on a tab
+(`label="Tip"`) is content and never goes into a name.
 
 What the extraction decides, so you know what to check:
 
@@ -352,7 +386,12 @@ The library is the set of looks the book uses, each written once:
   its `:::paragraphs{style}` uses, in a frame or in the flow (InDesign
   tracking / 1000 = the em value). It is measured into the lines. Do not
   set such a title as a hidden heading in a `takes: "h1"` frame just to
-  keep the tracking. Arabic-script words stay untracked.
+  keep the tracking. Arabic-script words stay untracked. A box set tighter
+  than its face's widths (InDesign tracking in a callout) takes it from 1.42
+  as `calloutStyles[].body.letterSpacing` (em of the body size, negative
+  tightens), on the paragraphs and list items of the box and of the frames
+  that use the style: set it there instead of wrapping every paragraph in a
+  `:::paragraphs{style}` fence or shrinking the text with `fit.minScale`.
 - **Tints are thin styles.** A frame may override its padding and size but
   not its fill or its tab's colour, so the topic colours of a book (the same
   box in yellow, pink, blue, green, grey) are one full style per kind of box
@@ -1005,11 +1044,27 @@ Otra historia, entera…
   first frame the jump page's own content leaves empty (not reported
   `slotEmpty`); what that frame cannot hold goes on on pages added after
   the jump page. The jump page keeps its own content in its other frames
-  and its own frame ids (`cp2:resto`). The jump goes forward within one
-  chapter file only: an id no later fence has is `continueTargetMissing`
-  (the rest goes on on the next page); check that `postext check` has none.
-  A jump from one chapter file into a later chapter's page fence is not
-  supported: keep an article and its jump page in one chapter file. The Sandbox's template editor
+  and its own frame ids (`cp2:resto`). An id no later fence has is
+  `continueTargetMissing` (the rest goes on on the next page); check that
+  `postext check` has none. Before 1.41 the jump went forward within one
+  chapter file only: keep an article and its jump page in one chapter
+  file. From 1.41 a magazine kept as one chapter file per article jumps
+  into a page fence of a later file (`::::page{template="saltos" id="p47"}`
+  in `chapters/09-back.md`, the article's fence `next="p47"` with
+  `continueIn: "page:{attr.next}"`): no text is copied, the chapter that has
+  the page lays the rest, `{page}` in `overflow.mark` / `fromMark` prints
+  the book's page numbers across the files, and the nearest later chapter
+  with that `id` wins (keep the ids unique in the book). The id must be on a
+  fence of a later chapter whose template exists, or it is
+  `continueTargetMissing` (the porter's check lists the `target`). The rest
+  is set in the book's body typography, not in a styled section of the
+  receiving chapter, and index marks and anchors written in it are listed at
+  the page where the story starts: put them in the part that stays on the
+  first page when they matter. `postext check` and `postext build` handle it
+  (`buildBundle`); a chapter checked alone with `--chapters` knows only the
+  chapters selected. In a tagged PDF the story reads in its chapter and the
+  rest after the jump page's own frames; in the reflowable EPUB the rest
+  comes in the chapter that has the page. The Sandbox's template editor
   lists every page fence that carries an `id` as `page:<id>` under
   «Content that does not fit goes to» (1.39), and a «Page id» field writes
   any value, such as `{attr.sigue}`.

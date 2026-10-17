@@ -165,6 +165,14 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "check each edition by switching to it; read `fits` of every useTemplate proposal"),
     ((1, 40, 0), "wordTrackingSandbox", "the Sandbox's Word import takes the character spacing of the "
      "Word styles (sandbox_import_word characterSpacing)", "run postext import-docx or set the tracking by hand"),
+    ((1, 41, 0), "jumpsAcrossChapters", "continueIn 'page:<id>' reaches a page fence of a later chapter file "
+     "(one chapter file per article)", "keep an article and its jump page in one chapter file"),
+    ((1, 42, 0), "boxTracking", "calloutStyles[].body.letterSpacing tracks the paragraphs and list items of a box",
+     "wrap the box's paragraphs in a :::paragraphs{style} fence of a tracked paragraph style"),
+    ((1, 42, 0), "decorationRemove", "a child template or variant takes a base decoration element out with "
+     "{ id, remove: true }", "split the base so the element lives in the templates that have it"),
+    ((1, 42, 0), "slotRename", "the Sandbox renames a frame together with the slot of the page fences that "
+     "fill it (and in the other editions of a local project)", "rename the slot in every edition's Markdown by hand"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)

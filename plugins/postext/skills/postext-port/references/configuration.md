@@ -1152,7 +1152,9 @@ All em values = the callout body font size.
                  lineHeight=1.2em (em = title size; set the body leading to keep boxes a whole number of lines) }
   body = { fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight,
            textAlign: 'left'|'justify', hyphenation: boolean, paragraphSpacing, firstLineIndent,
-           tabStops, tabInterval (≥ 1.23, §4a: replace the body's inside the box) }   → inherit bodyText
+           tabStops, tabInterval (≥ 1.23, §4a: replace the body's inside the box),
+           letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
+           list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
   lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight? }  → inherit unorderedLists
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
@@ -1881,6 +1883,9 @@ says it for the installed one):
 1.40.0  label style fontStyle/textTransform unset (a borrowed paragraph style's italics and capitals
         hold; 'normal' / 'none' turn them off); vertical labels on right-to-left pages; frame writingMode
         on right-to-left pages, pictures upright in a vertical frame; comic text panels on strips and spreads
+1.41.0  a story jumps into a page fence of a later chapter file (continueIn 'page:<id>')
+1.42.0  calloutStyles[].body.letterSpacing; decoration elements removed in a child template or variant
+        ({ id, remove: true })
 not yet template bodyStyle/palette; 'auto' width reads as 'fill'
 ```
 
