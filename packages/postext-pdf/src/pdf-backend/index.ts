@@ -805,6 +805,28 @@ function paintFrameItem(
   structure: ResourceRenderContext['structure'],
   into?: StructElem,
 ): void {
+  // A vertical frame of a right-to-left page (#960) is placed by a matrix
+  // that includes the page's mirror: its text is not turned back again.
+  if (item.frame.unmirrorX === undefined || !ctx.mirror) {
+    paintFrameItemIn(ctx, item, fontCache, resourceCtx, structure, into);
+    return;
+  }
+  delete ctx.mirror;
+  try {
+    paintFrameItemIn(ctx, item, fontCache, resourceCtx, structure, into);
+  } finally {
+    ctx.mirror = true;
+  }
+}
+
+function paintFrameItemIn(
+  ctx: PageCtx,
+  item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  structure: ResourceRenderContext['structure'],
+  into?: StructElem,
+): void {
   const { frame, blocks } = item;
   if (blocks.length === 0) return;
   // A frame set in its own writing mode (#944): its text is painted as a

@@ -3533,7 +3533,7 @@ function composedFrameOpen(frame: VDTFrame, z: number | 'auto', facing = false):
     const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
     decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
   }
-  return `<div class="pt-frame" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}"${facing ? ' data-facing="true" aria-hidden="true"' : ''} style="${decls.join(';')};">`;
+  return `<div class="pt-frame${frame.unmirrorX !== undefined ? ' pt-unmirrored' : ''}" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}"${facing ? ' data-facing="true" aria-hidden="true"' : ''} style="${decls.join(';')};">`;
 }
 
 /** The markup of a comic on a page (its comic page, a half of a spread or
@@ -3563,10 +3563,11 @@ function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, opti
 const MIRRORED_FLOW_STYLE =
   '<style>.pt-flow-mirrored [style*="white-space:pre"],.pt-flow-mirrored img,' +
   '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
-  // A box reflected back about its body (a vertical label, #955): what is
-  // in it is not mirrored, so nothing is turned back.
+  // A box reflected back about its body (a vertical label, #955) or a
+  // vertical frame of the page placed by a matrix that includes the mirror
+  // (#960): what is in it is not mirrored, so nothing is turned back.
   '.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"],.pt-flow-mirrored .pt-unmirrored img,' +
-  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid){transform:none;}</style>';
+  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
 
 /** The character grid (稿纸) as one SVG path over the page, under the
  *  text (see `cjkGridCells`). */

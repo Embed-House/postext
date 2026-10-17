@@ -18,7 +18,7 @@
 //     document of its own and the chapter goes on in a new one.
 
 import type { ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from 'postext';
-import { canonicalLocaleTag, comicBalloonKind, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
+import { canonicalLocaleTag, comicBalloonKind, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, framePageRect, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
 import type {
   CalloutNode,
   ComicNode,
@@ -740,6 +740,13 @@ class DocWalker {
     if (frame) {
       if (own.frame === undefined) {
         own.frame = frame.name;
+        if (frame.writingMode !== undefined) {
+          // The box as the page shows it: its lines run along its height
+          // (a vertical frame) or its width (a horizontal card).
+          const box = framePageRect(frame);
+          const along = frame.writingMode === 'vertical-rl' ? box.height : box.width;
+          own.frameMode = { mode: frame.writingMode, em: Math.round((along / this.bodyPx) * 100) / 100 };
+        }
         if (frame.styleId) {
           own.styleId = frame.styleId;
           (this.book.frameStyles ??= new Set()).add(frame.styleId);

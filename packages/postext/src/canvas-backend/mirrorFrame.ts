@@ -36,6 +36,25 @@ export function mirroredPaintActive(): boolean {
   return active > 0;
 }
 
+/**
+ * Run `paint` as on a left-to-right page, inside the mirrored flow: the
+ * counter-flip is off while it runs (#960). A frame set in its own writing
+ * mode on a right-to-left page is placed by a matrix that already
+ * includes the mirror (`VDTFrame.unmirrorX`), so what it paints reads as
+ * written without being turned back.
+ */
+export function withoutMirroredPaint<T>(paint: () => T): T {
+  const outer = { active, whole };
+  active = 0;
+  whole = 0;
+  try {
+    return paint();
+  } finally {
+    active = outer.active;
+    whole = outer.whole;
+  }
+}
+
 /** Whether a run painted in several calls is being painted (see
  *  {@link paintAsOneRun}): the frame turned the whole of it back, so the
  *  calls inside paint as on a left-to-right page. */

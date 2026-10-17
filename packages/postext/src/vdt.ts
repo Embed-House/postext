@@ -2719,6 +2719,15 @@ export interface VDTFrame {
    *  as a page of that mode is painted. `framePageRect` gives the box on
    *  the page. */
   writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** Set on a vertical frame of a right-to-left page (#960): the page's
+   *  mirror (`VDTMirroredFlowFrame.mirror.originX`), which the frame's
+   *  content is turned back through. The page's flow is painted mirrored,
+   *  which would set a vertical frame's lines from left to right; the
+   *  frame is laid out as on a left-to-right page, {@link frameMatrix}
+   *  puts it where the page shows it (the mirror included) and the
+   *  backends paint its text without the flow's counter-flip, as the
+   *  sheet reads it. */
+  unmirrorX?: number;
   /** For a `'vertical-rl'` frame: what its vertical lines need, as a
    *  vertical page's flow has it (`VDTVerticalFlowFrame`). */
   centralBaselines?: Record<string, number>;

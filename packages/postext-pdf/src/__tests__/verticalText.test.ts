@@ -115,6 +115,34 @@ function uprightShows(ops: string, fonts: Map<string, PDFDict>) {
   return out;
 }
 
+/** Where each upright run lands on the page: its text matrix taken through
+ *  the `cm` operators in force, `[a b c d e f]` (y up). */
+function placedUprightShows(ops: string, fonts: Map<string, PDFDict>): number[][] {
+  type M = number[];
+  const mul = (m: M, n: M): M => [
+    m[0]! * n[0]! + m[1]! * n[2]!, m[0]! * n[1]! + m[1]! * n[3]!,
+    m[2]! * n[0]! + m[3]! * n[2]!, m[2]! * n[1]! + m[3]! * n[3]!,
+    m[4]! * n[0]! + m[5]! * n[2]! + n[4]!, m[4]! * n[1]! + m[5]! * n[3]! + n[5]!,
+  ];
+  let ctm: M = [1, 0, 0, 1, 0, 0];
+  const stack: M[] = [];
+  let font = '';
+  let tm: M = [1, 0, 0, 1, 0, 0];
+  const out: M[] = [];
+  for (const line of ops.split('\n')) {
+    if (line === 'q') stack.push(ctm);
+    else if (line === 'Q') ctm = stack.pop() ?? ctm;
+    const cm = /^([-\d. e]+) cm$/.exec(line);
+    if (cm) ctm = mul(cm[1]!.trim().split(/\s+/).map(Number), ctm);
+    const tf = /^\/(\S+) [\d.]+ Tf$/.exec(line);
+    if (tf) font = tf[1]!;
+    const m = /^([-\d. ]+) Tm$/.exec(line);
+    if (m) tm = m[1]!.trim().split(/\s+/).map(Number);
+    if (/ (Tj|TJ)$/.test(line) && fonts.get(font)?.get(PDFName.of('Encoding')) === PDFName.of('Identity-V')) out.push(mul(tm, ctm));
+  }
+  return out;
+}
+
 describe('vertical text in the PDF (#191)', () => {
   it('shows upright characters through an Identity-V twin sharing the font', async () => {
     const { pdf } = await render('此開卷第一回也。', config('zh-Hant'));
@@ -446,5 +474,24 @@ describe('a composed page’s frame set in its own writing mode (#944)', () => {
   it('the same frame in the page’s own mode is set across, as before', async () => {
     const { pdf } = await render(md, horizontal());
     expect(uprightShows(pageOps(pdf), pageFonts(pdf))).toHaveLength(0);
+  });
+
+  it('a vertical frame on a right-to-left page shows its characters upright too, in the box the mirrored flow puts it in (#960)', async () => {
+    const { pdf } = await render(md, { ...horizontal('vertical-rl'), direction: 'rtl' });
+    const shows = uprightShows(pageOps(pdf), pageFonts(pdf));
+    expect(shows.reduce((n, s) => n + s.cids.length, 0)).toBe(7);
+    // The same frame on a left-to-right page, 180 pt to the right (the
+    // flow's top right is the sheet's left on this page): glyphs turned
+    // as there, not over by the page's counter-flip.
+    const placed = (r: Awaited<ReturnType<typeof render>>) => placedUprightShows(pageOps(r.pdf), pageFonts(r.pdf));
+    const rtl = placed({ pdf } as never);
+    const ltr = placed(await render(md, horizontal('vertical-rl')));
+    expect(rtl.length).toBe(ltr.length);
+    expect(rtl.length).toBeGreaterThan(0);
+    rtl.forEach((m, i) => {
+      for (let k = 0; k < 4; k++) expect(m[k]!).toBeCloseTo(ltr[i]![k]!, 3);
+      expect(m[4]! - (ltr[i]![4]! - 180)).toBeCloseTo(0, 1);
+      expect(m[5]!).toBeCloseTo(ltr[i]![5]!, 1);
+    });
   });
 });

@@ -133,25 +133,44 @@ function orientBlock(block: VDTBlock): void {
   if (block.resourceBlock) block.resourceBlock = orientResourceBlock(block.resourceBlock);
 }
 
+/** The blocks of the frames of `page` painted unmirrored through its
+ *  mirrored flow (`VDTFrame.unmirrorX`, #960): set as on a left-to-right
+ *  page, their lines keep the measurer's order. */
+function unmirroredBlocks(page: VDTPage): Set<VDTBlock> {
+  const out = new Set<VDTBlock>();
+  const frames = (page.composed?.frames ?? []).filter((f) => f.unmirrorX !== undefined);
+  if (frames.length === 0) return out;
+  const ids = new Set(frames.flatMap((f) => f.blockIds));
+  for (const block of page.floats ?? []) if (ids.has(block.id)) out.add(block);
+  for (const f of frames) for (const block of f.facingBlocks ?? []) out.add(block);
+  return out;
+}
+
 /** Turn the line order of everything set in the flow of `page` when its
  *  flow is mirrored (columns, floats, margin notes); see the module
- *  comment. Design slots are left alone. */
+ *  comment. Design slots are left alone, and so are the frames painted
+ *  unmirrored (#960). */
 export function orientPageLinesToFrame(page: VDTPage): void {
   if (!pageIsMirrored(page)) return;
+  const skip = unmirroredBlocks(page);
   for (const col of page.columns) for (const block of col.blocks) orientBlock(block);
-  for (const block of page.floats ?? []) orientBlock(block);
+  for (const block of page.floats ?? []) if (!skip.has(block)) orientBlock(block);
   for (const block of page.marginNotes) orientBlock(block);
   // The half of a spread frame painted on the facing page (#861): a copy
   // of the frame's blocks, set in this page's mirrored frame like its own.
-  for (const frame of page.composed?.frames ?? []) for (const block of frame.facingBlocks ?? []) orientBlock(block);
+  for (const frame of page.composed?.frames ?? []) for (const block of frame.facingBlocks ?? []) if (!skip.has(block)) orientBlock(block);
 }
 
 /** {@link orientPageLinesToFrame} on every page of `doc`. */
 export function orientLinesToFrames(doc: VDTDocument): void {
-  for (const page of doc.pages) orientPageLinesToFrame(page);
+  const skip = new Set<VDTBlock>();
+  for (const page of doc.pages) {
+    orientPageLinesToFrame(page);
+    if (pageIsMirrored(page)) for (const b of unmirroredBlocks(page)) skip.add(b);
+  }
   // Blocks the pages do not list (none today) are turned with their page.
   for (const block of doc.blocks) {
     const page = block.pageIndex >= 0 ? doc.pages[block.pageIndex] : undefined;
-    if (page && pageIsMirrored(page)) orientBlock(block);
+    if (page && pageIsMirrored(page) && !skip.has(block)) orientBlock(block);
   }
 }

@@ -461,6 +461,10 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   if (options.composed) {
     out.push(rule('section.pt-composed', ['margin-block: 1em']));
     out.push(rule('div.pt-frame', ['margin: 0 0 1em']));
+    // A frame set in a writing mode of its own (#960): its lines run along
+    // the length written on the box (`height` for a vertical frame).
+    out.push(rule('div.pt-frame-vertical', ['writing-mode: vertical-rl', '-epub-writing-mode: vertical-rl', '-webkit-writing-mode: vertical-rl']));
+    out.push(rule('div.pt-frame-horizontal', ['writing-mode: horizontal-tb', '-epub-writing-mode: horizontal-tb', '-webkit-writing-mode: horizontal-tb']));
     out.push(rule('div.pt-frame.pt-callout', ['padding: 0.75em 1em', 'page-break-inside: avoid']));
   }
   const frameStyles = new Set(options.composed?.frameStyles ?? []);

@@ -382,7 +382,11 @@ class Writer {
         // A frame of a composed page (#862): a block of the page's section
         // (the page's own text, not an aside), with its style's box.
         if (node.frame !== undefined) {
-          return `<div${this.classAttr(['pt-frame', idOf('pt-frame-', node.frame), node.styleId && 'pt-callout', node.styleId && idOf('pt-callout-', node.styleId)])}>\n${title}${this.nodes(node.children)}\n</div>`;
+          // A frame of another writing mode than the book's (#960) sets its
+          // lines along the length it has on the page.
+          const mode = node.frameMode;
+          const modeAttr = mode ? ` style="${mode.mode === 'vertical-rl' ? 'height' : 'width'}:${mode.em}em"` : '';
+          return `<div${this.classAttr(['pt-frame', idOf('pt-frame-', node.frame), mode && (mode.mode === 'vertical-rl' ? 'pt-frame-vertical' : 'pt-frame-horizontal'), node.styleId && 'pt-callout', node.styleId && idOf('pt-callout-', node.styleId)])}${modeAttr}>\n${title}${this.nodes(node.children)}\n</div>`;
         }
         // A pull quote keeps its box on the page; one that repeats the
         // text is hidden from assistive technology (`doc-pullquote`, a

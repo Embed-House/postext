@@ -862,11 +862,13 @@ function frameLimits(engine, doc, page, dpi) {
  * @param {number} dpi
  * @returns {{ mm: number, edge: 'head' | 'foot' | 'left' | 'right', of: 'area' | 'bleed' } | null}
  */
-function pushedOut(f, limits, dpi) {
+function pushedOut(f, limits, dpi, engine) {
   if (!f.declaredRect || !limits) return null;
   const { area, bleed } = limits;
-  const d = f.declaredRect;
-  const r = f.rect;
+  // A frame set in its own writing mode (#944) is laid out in its box turned
+  // a quarter turn: the page's box is that turned back.
+  const d = pageBox(engine, f.declaredRect, f);
+  const r = pageBox(engine, f.rect, f);
   const tol = 0.5;
   /** @type {{ past: number, edge: 'head' | 'foot' | 'left' | 'right', of: 'area' | 'bleed' }[]} */
   const found = [];
@@ -882,9 +884,19 @@ function pushedOut(f, limits, dpi) {
   return worst && worst.past > tol ? { mm: mmOf(worst.past, dpi), edge: worst.edge, of: worst.of } : null;
 }
 
-/** @param {any} f @param {any} limits @param {number} dpi */
-function pushedFacts(f, limits, dpi) {
-  const out = pushedOut(f, limits, dpi);
+/**
+ * `rect` (a frame's `rect` or `declaredRect`) as the page gives it: the
+ * frame's own, or, for a frame set in its own writing mode, turned back
+ * (`framePageRect`, #960).
+ * @param {any} engine @param {{ x: number, y: number, width: number, height: number }} rect @param {any} f
+ */
+function pageBox(engine, rect, f) {
+  return f.writingMode && typeof engine?.framePageRect === 'function' ? engine.framePageRect({ rect, writingMode: f.writingMode }) : rect;
+}
+
+/** @param {any} f @param {any} limits @param {number} dpi @param {any} [engine] */
+function pushedFacts(f, limits, dpi, engine) {
+  const out = pushedOut(f, limits, dpi, engine);
   return out ? { pushedOutMm: out.mm, pushedOutEdge: out.edge, ...(out.of === 'bleed' ? { pushedOutOf: 'bleed' } : {}) } : {};
 }
 
@@ -929,10 +941,10 @@ export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdown
         frames: (c.frames ?? []).map((f) => ({
           name: f.name,
           ...(f.id ? { id: f.id } : {}),
-          heightMm: mmOf(f.rect.height, dpi),
+          heightMm: mmOf(pageBox(engine, f.rect, f).height, dpi),
           // Its box in mm (x, y, width, height): C38 compares it with the
           // run on the text as written (#925).
-          box: [mmOf(f.rect.x, dpi), mmOf(f.rect.y, dpi), mmOf(f.rect.width, dpi), mmOf(f.rect.height, dpi)],
+          box: (({ x, y, width, height }) => [mmOf(x, dpi), mmOf(y, dpi), mmOf(width, dpi), mmOf(height, dpi)])(pageBox(engine, f.rect, f)),
           ...(f.overflowPx > 0 ? { overflowMm: mmOf(f.overflowPx, dpi) } : {}),
           ...(f.scale !== undefined && f.scale !== 1 ? { scale: round(f.scale, 0.001) } : {}),
           ...(f.imageScale !== undefined ? { imageScale: round(f.imageScale, 0.001) } : {}),
@@ -942,7 +954,7 @@ export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdown
           // A frame the reflow pushed past an edge of the type area (or of
           // the bleed) where the template had it inside (#911, #948): an
           // answer space pushed off the foot, a row grown past the right edge.
-          ...pushedFacts(f, limits, dpi),
+          ...pushedFacts(f, limits, dpi, engine),
         })),
         events: (c.log ?? []).map((e) => ({
           frame: e.frame, kind: e.kind,

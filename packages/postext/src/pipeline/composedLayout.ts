@@ -901,10 +901,30 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
    *  mode, else undefined. Its content is laid out in that mode, its lines
    *  along the box's height and following each other across its width. */
   const pageMode = pageIsVertical(input.page) ? 'vertical-rl' : 'horizontal-tb';
-  // Not on a right-to-left page, whose mirrored flow would set a vertical
-  // frame's lines from left to right: there it keeps the page's mode.
   const ownMode = (frame: ResolvedFrame): 'horizontal-tb' | 'vertical-rl' | undefined =>
-    frame.writingMode !== undefined && frame.writingMode !== pageMode && !pageIsMirrored(input.page) ? frame.writingMode : undefined;
+    frame.writingMode !== undefined && frame.writingMode !== pageMode ? frame.writingMode : undefined;
+  /** A vertical frame of a right-to-left page (#960): the page's flow is
+   *  painted mirrored, which would set its lines from left to right, so the
+   *  frame is laid out as on a left-to-right page and painted unmirrored
+   *  (`VDTFrame.unmirrorX`). The mirror's origin, else undefined. */
+  const unmirroredAt = (frame: ResolvedFrame): number | undefined => {
+    const flow = input.page.flow;
+    return ownMode(frame) && flow?.writingMode === 'horizontal-tb' ? flow.mirror.originX : undefined;
+  };
+  /** Whether a frame's lines are set as on a mirrored page: those of the
+   *  page's own mode, not an unmirrored frame's. */
+  const mirroredIn = (frame: ResolvedFrame): boolean => input.mirrored && unmirroredAt(frame) === undefined;
+  /** The widest a picture's upright frame may be in a vertical frame of a
+   *  horizontal page (#960): the frame's extent across its lines, less the
+   *  box's padding. The page turns such a frame a quarter turn, so its
+   *  pictures are laid out counter-rotated to stand upright; none of that
+   *  in a frame of the page's own mode. */
+  const uprightIn = (frame: ResolvedFrame, across: number): Pick<FrameBoxOptions, 'uprightMaxLength'> => {
+    if (ownMode(frame) !== 'vertical-rl') return {};
+    const pad = styleOf(frame).padding;
+    const room = across - lengthPx(pad.top, dpi, input.emPx) - lengthPx(pad.bottom, dpi, input.emPx);
+    return { uprightMaxLength: Math.max(1, room) };
+  };
   /** `fn` measured in the frame's own writing mode. */
   const inMode = <T>(frame: ResolvedFrame, fn: () => T): T => {
     const mode = ownMode(frame);
@@ -1070,9 +1090,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const key = Math.round(width * 1000);
       const known = memo.get(key);
       if (known !== undefined) return known;
-      const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+      const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, width / s) };
       const across = (measure: number): number => inMode(p.frame, () =>
-        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
+        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
       const most = Math.max(input.areas.area.height, input.emPx);
       let h = most;
       if (across(most) <= width + 0.5) {
@@ -1277,9 +1297,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // Text running round the frames that push it runs along the page's
         // lines: a frame set across them keeps its whole box.
         const exclusions = turned ? undefined : unscale(exclusionsFor(frame, rect, false), s);
-        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(frame, laidH) };
         const opts: FrameBoxOptions = { boxHeight: laidH, verticalAlign: frame.verticalAlign, ...extra };
-        const whole = inMode(frame, () => st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts));
+        const whole = inMode(frame, () => st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, mirroredIn(frame), opts));
         const nextName = nextFrameOf(frame);
         const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
         const chained = nextFrame !== undefined && !vdtByName.has(nextFrame.name);
@@ -1291,11 +1311,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const minLines = Math.max(1, style.splitMinLines);
           // A heading stays with what follows it, a list keeps two items
           // on each side of the cut (#913).
-          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined ? extra : undefined, cutRules));
+          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, mirroredIn(frame), extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined || extra.uprightMaxLength !== undefined ? extra : undefined, cutRules));
           const to = frag?.to ?? from;
           // A frame none of whose content fits draws nothing: the whole box
           // goes on (#912), not a tab and a mark over an empty piece.
-          result = frag ? inMode(frame, () => st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)) : undefined;
+          result = frag ? inMode(frame, () => st!.L.layoutRange(from, to, laidW, blockId, continuation, mirroredIn(frame), opts)) : undefined;
           st!.cut = to;
         } else {
           goesOn = false;
@@ -1305,7 +1325,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         }
       } else if (st && frame.style) {
         // A styled frame with nothing (left) to hold still draws its box.
-        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH }));
+        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, mirroredIn(frame), { boxHeight: laidH }));
       }
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).
@@ -1333,6 +1353,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         rect: { ...rect },
         rotate: frame.rotate + (turned ? frameModeTurn({ writingMode: turned }) : 0),
         ...(turned ? { writingMode: turned } : {}),
+        ...(unmirroredAt(frame) !== undefined ? { unmirrorX: unmirroredAt(frame)! } : {}),
         layer: frame.layer,
         ...(frame.style ? { styleId: frame.style } : {}),
         scale: s,

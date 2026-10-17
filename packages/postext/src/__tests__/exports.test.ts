@@ -669,6 +669,7 @@ describe("package exports", () => {
       "composedSheetClip",
       "composedSheetClipOnSheet",
       "frameMatrix",
+      "framePageRect",
       "frameClips",
       "frameBounds",
       "frameContentRect",

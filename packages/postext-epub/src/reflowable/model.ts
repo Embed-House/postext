@@ -143,6 +143,13 @@ export interface CalloutNode {
    *  starts in (the slot). Written as a block of the page's section, with
    *  the frame's callout style when it has one (`styleId`). */
   frame?: string;
+  /** A frame set in a writing mode other than its book's (#960,
+   *  `FrameConfig.writingMode`): its mode, and the length of the box's
+   *  extent the lines run along (a vertical frame's height, a horizontal
+   *  card's width) in ems of the body text. A box of another writing mode
+   *  in a reflowable page needs that extent, or a reader sizes it to the
+   *  page. */
+  frameMode?: { mode: 'vertical-rl' | 'horizontal-tb'; em: number };
 }
 
 /** A composed page (`::::page{template}`, #862): a section holding its

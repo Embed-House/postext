@@ -176,12 +176,26 @@ const scaleOf = (frame: Partial<Pick<VDTFrame, 'scale'>>): number => {
 };
 
 /** The affine matrix `[a, b, c, d, e, f]` (canvas `transform` order,
- *  y down) that puts a frame's blocks on the sheet: scaled by the frame's
+ *  y down) that puts a frame's blocks on the sheet (in the page's flow frame, #929): scaled by the frame's
  *  text `scale` about the top-left of its box (#858; the blocks are laid
  *  out `1 / scale` as large), then turned `rotate` degrees clockwise about
  *  the centre of its box. Undefined for an upright frame at full size. */
-export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale'>>): Affine | undefined {
+export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale' | 'unmirrorX'>>): Affine | undefined {
   const s = scaleOf(frame);
+  const unmirrorX = frame.unmirrorX;
+  if (unmirrorX !== undefined) {
+    // A frame of a right-to-left page painted through the mirrored flow,
+    // as it stands on a left-to-right sheet (#960): the matrix of the
+    // frame's box mirrored to where the sheet shows it, preceded by the
+    // move of the content there and followed by the page's mirror, which
+    // turns the whole back into a plain placement.
+    const r = frame.rect;
+    const shown = { x: unmirrorX - (r.x + r.width), y: r.y, width: r.width, height: r.height };
+    const there = frameMatrix({ rect: shown, rotate: frame.rotate, scale: s });
+    const move: Affine = [1, 0, 0, 1, shown.x - r.x, 0];
+    const mirror: Affine = [-1, 0, 0, 1, unmirrorX, 0];
+    return multiply(mirror, there ? multiply(there, move) : move);
+  }
   const scaled: Affine | undefined = s === 1 ? undefined : [s, 0, 0, s, frame.rect.x * (1 - s), frame.rect.y * (1 - s)];
   const deg = frame.rotate % 360;
   if (!Number.isFinite(deg) || Math.abs(deg) < 1e-9) return scaled;
