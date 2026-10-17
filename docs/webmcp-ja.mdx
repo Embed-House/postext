@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP：Sandboxで作業するエージェント',
   sidebarTitle: 'WebMCP',
-  description: 'ブラウザーで動くAIエージェントが、40のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
+  description: 'ブラウザーで動くAIエージェントが、41のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
   lang: 'ja',
   lastUpdated: '2026-10-17',
   readingTime: '13分',
@@ -17,7 +17,7 @@ export const metadata = {
 
 [Sandbox](/ja/docs/sandbox)は、[WebMCP](https://webmachinelearning.github.io/webmcp/)を通じてエージェントに専用のツールを渡します。WebMCPはWeb標準の草案で、ページがブラウザーとやり取りしているAIモデルにツールを渡せるようにするものです。エージェントはこのツールを使うので、画面をクリックしてたどる必要がありません。本を読み、12ページの画像を求め、`bodyText.fontSize`を10.5 ptにし、章が18ページから19ページに増えたのを見て、元に戻します。人が目で確かめながらすることを、あなたの本に対して、あなたのブラウザーの中で行います。
 
-ツールは、名前が`sandbox_`で始まるものが40個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
+ツールは、名前が`sandbox_`で始まるものが41個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
 
 ## エージェントをつなぐ
 
@@ -25,7 +25,7 @@ export const metadata = {
 
 ツールはSandboxがマウントされたときに`document.modelContext`に登録され、Sandboxを離れると取り下げられます。ブラウザーからページのツールを受け取るエージェントは、そこでツールを見つけます。Postext側でインストールや設定をするものはありません。
 
-WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると40個の`sandbox_*`のツールが加わります。
+WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると41個の`sandbox_*`のツールが加わります。
 
 ### そのほかのブラウザー：`window.postextWebMcp`
 
@@ -361,6 +361,8 @@ await browser.close();
 
 エージェントは警告からその場所に移り（`sandbox_select_text`に`offset`と`toOffset`を渡すか、`sandbox_go_to_page`を使います）、ページを見て、本文か設定を直せます。`category`で一覧を絞り込めます。長い本では、`scope: "book"`はすべての章を組むので時間がかかります。
 
+複数の版を持つ本（サンプルのバンドル、またはそこから読み込んだプロジェクト）では、組ページの確認も各言語で行えます。`sandbox_get_composed_checks`は各版を組み、パネルの「組ページ」と同じく言語・章・ページ・枠ごとに確認結果を一覧にします。`language`を指定すると一つの版だけになります（postext 1.40以降）。`sandbox_get_warnings`は、画面に表示中の言語の一つの章を確認するままです。
+
 ### 画面で見せる
 
 エージェントが変えたものは、あなたにも見えます。何かを指し示したいときは次のようにします。
@@ -470,7 +472,7 @@ Sandboxが登録するときのまとまりで並べています。各ツール�
 - **本とファイル**：`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_delete_book`、`sandbox_import_book`、`sandbox_export`。
 - **Word**：`sandbox_import_word`、`sandbox_word_templates`。
 - **確認**：`sandbox_answer`。
-- **検査**：`sandbox_get_warnings`、`sandbox_apply_proposal`。
+- **検査**：`sandbox_get_warnings`、`sandbox_get_composed_checks`、`sandbox_apply_proposal`。
 
 ## Sandboxを埋め込むとき
 

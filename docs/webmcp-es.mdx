@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agente trabajando en el Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 40 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
+  description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 41 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
   lang: 'es',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ libro, pide una imagen de la página 12, pone `bodyText.fontSize` a 10,5 pt, ve
 que el capítulo ha pasado de 18 a 19 páginas y lo deja como estaba. Hace lo
 mismo que tú haces a ojo, con tu libro y en tu navegador.
 
-Hay 40 herramientas cuyo nombre empieza por `sandbox_`, registradas mientras el
+Hay 41 herramientas cuyo nombre empieza por `sandbox_`, registradas mientras el
 Sandbox está en pantalla, y 8 herramientas del sitio, `site_*`, en todas las
 páginas de postext.dev. Esta página las ordena según lo que le pedirías a un
 agente y da la llamada de cada una.
@@ -40,7 +40,7 @@ instalar ni configurar.
 WebMCP sigue siendo un borrador. Chrome lo ofrece como prueba de origen y tras
 la opción `chrome://flags/#enable-webmcp-testing`. Las herramientas dependen de
 la página: en la portada o en la documentación el agente tiene las herramientas
-`site_*`; cuando el Sandbox está en pantalla aparecen además las 40
+`site_*`; cuando el Sandbox está en pantalla aparecen además las 41
 herramientas `sandbox_*`.
 
 ### En cualquier otro navegador: `window.postextWebMcp`
@@ -474,6 +474,8 @@ Desde un aviso el agente puede ir a su lugar (`sandbox_select_text` con
 texto o el ajuste. `category` acota la lista; en un libro largo,
 `scope: "book"` maqueta todos los capítulos y tarda un rato.
 
+Un libro con varias ediciones (el paquete de un ejemplo o un proyecto importado de uno) tiene también sus comprobaciones de páginas compuestas en todos los idiomas: `sandbox_get_composed_checks` maqueta cada edición y las enumera por idioma, capítulo, página y marco, como hace el panel en *Páginas compuestas*, con `language` para quedarse con una (desde postext 1.40). `sandbox_get_warnings` sigue comprobando un capítulo del idioma en pantalla.
+
 ### Mostrar al lector
 
 Lo que cambia el agente, lo ves tú. Para señalarte algo:
@@ -660,7 +662,7 @@ de cada una se obtienen con `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Preguntas**: `sandbox_answer`.
-- **La revisión**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
+- **La revisión**: `sandbox_get_warnings`, `sandbox_get_composed_checks`, `sandbox_apply_proposal`.
 
 ## Al incrustar el Sandbox
 

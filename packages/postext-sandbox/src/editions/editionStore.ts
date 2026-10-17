@@ -56,6 +56,22 @@ export function editionsVersion(): number {
   return version;
 }
 
+/** The books whose editions the reader asked to check all at once, for
+ *  books too big to be laid out unasked (see `onDemand.ts`). */
+const askedBooks = new Set<string>();
+
+/** Whether the reader asked for the editions of `bookKey`. */
+export function editionsAsked(bookKey: string): boolean {
+  return askedBooks.has(bookKey);
+}
+
+/** Ask for every edition of `bookKey` to be laid out and checked. */
+export function askEditions(bookKey: string): void {
+  if (askedBooks.has(bookKey)) return;
+  askedBooks.add(bookKey);
+  emit();
+}
+
 export function editionKey(bookKey: string, locale: string): string {
   return `${bookKey}|${locale}`;
 }
@@ -93,15 +109,9 @@ export function ensureEdition(opts: EnsureEditionOptions): void {
   emit();
   const clientId = `edition:${key}`;
   void (async () => {
-    const { source, blobs } = await opts.load();
+    const loaded = await opts.load();
     if (controller.signal.aborted) return;
-    if (opts.other) {
-      await ensureConfigFontsLoaded(source.config, source.chapters.map((c) => c.markdown)).catch(() => undefined);
-      await storeEditionPictures(source, blobs ?? []).catch(() => undefined);
-    }
-    const layout = await layOutEdition(source, (content, config, cacheKey) => opts.service.build({
-      clientId, priority: 'background', content, config, cacheKey,
-    }), { signal: controller.signal });
+    const layout = await layOutLoadedEdition(opts.service, clientId, loaded, { other: opts.other, signal: controller.signal });
     if (controller.signal.aborted) return;
     entries.set(key, { locale: opts.locale, status: 'ready', layout, identity: opts.identity });
     emit();
@@ -112,6 +122,26 @@ export function ensureEdition(opts: EnsureEditionOptions): void {
   }).finally(() => {
     if (running.get(key) === controller) running.delete(key);
   });
+}
+
+/** Lay out an edition that was read (its faces and pictures first when it
+ *  is not the one on screen), on the layout worker at background priority,
+ *  under `clientId`. The entries above and the WebMCP checks (#952) both
+ *  lay editions out this way, so the worker's cache is shared. */
+export async function layOutLoadedEdition(
+  service: LayoutService,
+  clientId: string,
+  loaded: { source: EditionSource; blobs?: readonly LoadedPresetBlob[] },
+  options: { other: boolean; signal?: AbortSignal },
+): Promise<EditionLayout> {
+  const { source, blobs } = loaded;
+  if (options.other) {
+    await ensureConfigFontsLoaded(source.config, source.chapters.map((c) => c.markdown)).catch(() => undefined);
+    await storeEditionPictures(source, blobs ?? []).catch(() => undefined);
+  }
+  return layOutEdition(source, (content, config, cacheKey) => service.build({
+    clientId, priority: 'background', content, config, cacheKey,
+  }), { signal: options.signal });
 }
 
 /** Stop the layouts of a book (it left the screen). */
@@ -201,5 +231,6 @@ export function resetEditions(): void {
   for (const c of running.values()) c.abort();
   running.clear();
   entries.clear();
+  askedBooks.clear();
   emit();
 }

@@ -2259,6 +2259,8 @@
     "composedChecksChecking": "確認のため組版中：__locale__…",
     "composedChecksChecked": "すべての版を確認済み：__locales__",
     "composedChecksOneEdition": "この本は版が一つだけなので、その版のページだけを確認します。",
+    "composedChecksOnDemand": "ここで確認するのは画面に表示中の章だけです。この本は __chapters__ 章・__editions__ 版あるため、すべてを確認するのは依頼があるまで待ちます。",
+    "composedChecksOnDemandAction": "すべての版を確認",
     "composedChecksEditionError": "__locale__版を読み込めませんでした：__error__",
     "composedChecksEmpty": "すべての版で、どのテンプレートページの枠にも収まっています。",
     "composedChecksJump": "__check__（__where__）：枠へ移動",

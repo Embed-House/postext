@@ -2256,6 +2256,8 @@
     "composedChecksChecking": "Diagramando para verificar: __locale__…",
     "composedChecksChecked": "Verificado em todas as edições: __locales__",
     "composedChecksOneEdition": "Este livro tem uma só edição: só as páginas dela são verificadas.",
+    "composedChecksOnDemand": "Aqui só o capítulo na tela é verificado. O livro tem __chapters__ capítulos em __editions__ edições; verificar todos espera até você pedir.",
+    "composedChecksOnDemandAction": "Verificar todas as edições",
     "composedChecksEditionError": "Não foi possível ler a edição em __locale__: __error__",
     "composedChecksEmpty": "Todos os blocos de todas as páginas compostas cabem, em todas as edições.",
     "composedChecksJump": "__check__ (__where__): ir para o bloco",

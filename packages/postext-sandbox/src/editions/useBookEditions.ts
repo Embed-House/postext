@@ -7,13 +7,15 @@
  * it was imported from (#903).
  */
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { onFontsChanged } from 'postext';
 import { useSandboxPresetProvider, useSandboxSelector } from '../context/SandboxContext';
-import { presetLocales, sameLocaleTag } from '../presets/locale';
+import { sameLocaleTag } from '../presets/locale';
+import { activeEditionLocale, bookEditionLocales } from './bookLocales';
+import { editionsOnDemand } from './onDemand';
 import { useLayoutService } from '../worker/LayoutServiceContext';
 import { onLateFonts } from '../worker/LayoutService';
-import { editionEntry, editionsVersion, ensureEdition, loadPresetEdition, loadProjectEdition, subscribeEditions, type EditionEntry } from './editionStore';
+import { askEditions, editionEntry, editionsAsked, editionsVersion, ensureEdition, loadPresetEdition, loadProjectEdition, subscribeEditions, type EditionEntry } from './editionStore';
 
 export interface BookEditions {
   /** `preset:<id>` or `project:<id>`. */
@@ -29,6 +31,11 @@ export interface BookEditions {
   activeLocale: string;
   /** Their layouts, by locale. */
   entries: Record<string, EditionEntry | undefined>;
+  /** The book is big enough to wait for the reader's word before its
+   *  editions are laid out (`onDemand`, #952): nothing is, yet. */
+  waiting: boolean;
+  /** Lay every edition out now (what the Checks panel's button does). */
+  layOutNow: () => void;
 }
 
 /** How long the book on screen rests before its other chapters are laid
@@ -37,8 +44,10 @@ const ACTIVE_EDITION_DEBOUNCE_MS = 1500;
 
 /** The editions of the book on screen; with `enabled`, laid out behind the
  *  reader (the Checks panel, the side-by-side view). `only` limits the
- *  layouts to some locales. */
-export function useBookEditions(enabled: boolean, only?: readonly string[]): BookEditions {
+ *  layouts to some locales. With `onDemand`, a book too big to lay out
+ *  unasked (see `editionsOnDemand`) waits until `layOutNow` is called, once
+ *  per book for the session. */
+export function useBookEditions(enabledAsked: boolean, only?: readonly string[], options: { onDemand?: boolean } = {}): BookEditions {
   const activeProjectId = useSandboxSelector((s) => s.activeProjectId);
   const activePresetId = useSandboxSelector((s) => s.activePresetId);
   const appliedLocale = useSandboxSelector((s) => (s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null));
@@ -56,13 +65,16 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
 
   const presetId = activeProjectId === null ? activePresetId : null;
   const bookKey = presetId !== null ? `preset:${presetId}` : `project:${activeProjectId}`;
-  const activeLocale = presetId === null ? project?.locale ?? config.locale ?? '' : appliedLocale ?? config.locale ?? '';
+  const activeLocale = activeEditionLocale({ presetId, appliedLocale, projectLocale: project?.locale, configLocale: config.locale });
   const projectLocales = project?.locales;
-  const locales = useMemo(() => {
-    const listed = presetId !== null && summary ? presetLocales(summary) : projectLocales ?? [];
-    if (listed.length === 0) return [activeLocale];
-    return listed.some((l) => sameLocaleTag(l, activeLocale)) || activeLocale === '' ? listed : [activeLocale, ...listed];
-  }, [presetId, summary, projectLocales, activeLocale]);
+  const locales = useMemo(
+    () => bookEditionLocales({ presetId, summary, projectLocales, activeLocale }),
+    [presetId, summary, projectLocales, activeLocale],
+  );
+  const waiting = enabledAsked && options.onDemand === true && editionsOnDemand(chapters.length, locales.length) && !editionsAsked(bookKey);
+  // A book waiting for the reader's word lays nothing out.
+  const enabled = enabledAsked && !waiting;
+  const layOutNow = useCallback(() => askEditions(bookKey), [bookKey]);
   const editionsRev = project?.editionsRev;
   const onlyKey = only?.join('|') ?? '';
   // Faces that land after a layout measured it without them: the editions
@@ -163,5 +175,5 @@ export function useBookEditions(enabled: boolean, only?: readonly string[]): Boo
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `version` changes with every entry
   }, [bookKey, locales, version]);
 
-  return { bookKey, presetId, projectId: activeProjectId, locales, activeLocale, entries };
+  return { bookKey, presetId, projectId: activeProjectId, locales, activeLocale, entries, waiting, layOutNow };
 }

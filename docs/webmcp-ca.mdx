@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 40 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 41 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 40 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+Hi ha 41 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -39,7 +39,7 @@ pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
 pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
-quan el Sandbox és a la pantalla, apareixen també les 40 eines `sandbox_*`.
+quan el Sandbox és a la pantalla, apareixen també les 41 eines `sandbox_*`.
 
 ### En qualsevol altre navegador: `window.postextWebMcp`
 
@@ -475,6 +475,8 @@ A partir d'un avís, l'agent pot anar al seu lloc (`sandbox_select_text` amb
 text o l'ajust. `category` restringeix la llista; en un llibre llarg,
 `scope: "book"` maqueta tots els capítols i triga una estona.
 
+Un llibre amb diverses edicions (el paquet d'un exemple o un projecte importat d'un) té també les seves comprovacions de pàgines compostes en tots els idiomes: `sandbox_get_composed_checks` maqueta cada edició i les llista per idioma, capítol, pàgina i marc, com fa el tauler a *Pàgines compostes*, amb `language` per quedar-se'n una (des de postext 1.40). `sandbox_get_warnings` continua comprovant un capítol de l'idioma en pantalla.
+
 ### Mostrar-te les pàgines
 
 El que canvia l'agent, ho veus tu. Per assenyalar-te alguna cosa:
@@ -661,7 +663,7 @@ de cadascuna s'obtenen amb `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Preguntes**: `sandbox_answer`.
-- **La revisió**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
+- **La revisió**: `sandbox_get_warnings`, `sandbox_get_composed_checks`, `sandbox_apply_proposal`.
 
 ## Quan incrustes el Sandbox
 

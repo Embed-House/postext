@@ -3091,6 +3091,8 @@
     "composedChecksChecking": "Componiendo para revisar: __locale__…",
     "composedChecksChecked": "Revisado en todas las ediciones: __locales__",
     "composedChecksOneEdition": "Este libro tiene una sola edición: solo se revisan sus páginas.",
+    "composedChecksOnDemand": "Aquí solo se comprueba el capítulo en pantalla. El libro tiene __chapters__ capítulos en __editions__ ediciones; comprobarlos todos espera a que lo pidas.",
+    "composedChecksOnDemandAction": "Comprobar todas las ediciones",
     "composedChecksEditionError": "No se pudo leer la edición en __locale__: __error__",
     "composedChecksEmpty": "Todos los marcos de todas las páginas compuestas caben, en todas las ediciones.",
     "composedChecksJump": "__check__ (__where__): ir al marco",

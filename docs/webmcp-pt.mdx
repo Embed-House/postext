@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: um agente trabalhando no Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 40 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
+  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 41 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
@@ -24,7 +24,7 @@ interface: ele lê o livro, pede uma imagem da página 12, define
 páginas e volta ao valor anterior. Ele faz o que você faz a olho, com o seu
 livro e no seu navegador.
 
-São 40 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
+São 41 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
 o Sandbox está na tela, e 8 ferramentas do site, `site_*`, em todas as páginas
 do postext.dev. Esta página as organiza pelo que você pediria a um agente e
 mostra a chamada de cada uma.
@@ -41,7 +41,7 @@ configurar nada do lado do Postext.
 O WebMCP ainda é um rascunho. O Chrome o oferece como teste de origem e atrás
 da flag `chrome://flags/#enable-webmcp-testing`. As ferramentas acompanham a
 página: na página inicial ou na documentação o agente tem as ferramentas
-`site_*`; quando o Sandbox está na tela, aparecem também as 40 ferramentas
+`site_*`; quando o Sandbox está na tela, aparecem também as 41 ferramentas
 `sandbox_*`.
 
 ### Em qualquer outro navegador: `window.postextWebMcp`
@@ -476,6 +476,8 @@ com `offset` e `toOffset`, ou `sandbox_go_to_page`), olhar a página e mudar o
 texto ou o ajuste. `category` restringe a lista; em um livro longo,
 `scope: "book"` diagrama todos os capítulos e leva um tempo.
 
+Um livro com várias edições (o pacote de um exemplo ou um projeto importado de um) tem também as verificações das páginas compostas em cada idioma: `sandbox_get_composed_checks` diagrama cada edição e as lista por idioma, capítulo, página e bloco, como o painel faz em *Páginas compostas*, com `language` para ficar com uma só (desde o postext 1.40). `sandbox_get_warnings` continua verificando um capítulo do idioma na tela.
+
 ### Mostrar ao leitor
 
 O que o agente muda, você vê. Para chamar a sua atenção para algo:
@@ -662,7 +664,7 @@ cada uma vêm com `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Perguntas**: `sandbox_answer`.
-- **As verificações**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
+- **As verificações**: `sandbox_get_warnings`, `sandbox_get_composed_checks`, `sandbox_apply_proposal`.
 
 ## Ao incorporar o Sandbox
 

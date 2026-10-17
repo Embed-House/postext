@@ -2260,6 +2260,8 @@
     "composedChecksChecking": "Impaginazione per il controllo: __locale__…",
     "composedChecksChecked": "Controllato in tutte le edizioni: __locales__",
     "composedChecksOneEdition": "Questo libro ha una sola edizione: si controllano solo le sue pagine.",
+    "composedChecksOnDemand": "Qui si controlla solo il capitolo a schermo. Il libro ha __chapters__ capitoli in __editions__ edizioni; controllarli tutti aspetta che lo si chieda.",
+    "composedChecksOnDemandAction": "Controlla tutte le edizioni",
     "composedChecksEditionError": "Impossibile leggere l’edizione __locale__: __error__",
     "composedChecksEmpty": "Ogni cornice di ogni pagina composta ci sta, in ogni edizione.",
     "composedChecksJump": "__check__ (__where__): vai alla cornice",

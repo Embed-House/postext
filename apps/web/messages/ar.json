@@ -2259,6 +2259,8 @@
     "composedChecksChecking": "جارٍ التنضيد للفحص: __locale__…",
     "composedChecksChecked": "فُحصت كل النسخ: __locales__",
     "composedChecksOneEdition": "لهذا الكتاب نسخة واحدة، فتُفحص صفحاتها وحدها.",
+    "composedChecksOnDemand": "يُفحص هنا الفصل المعروض فقط. في الكتاب __chapters__ فصلًا في __editions__ نسخ، وفحصها كلها ينتظر طلبك.",
+    "composedChecksOnDemandAction": "فحص كل النسخ",
     "composedChecksEditionError": "تعذّرت قراءة نسخة __locale__: __error__",
     "composedChecksEmpty": "كل إطار في كل صفحة مركّبة يتّسع لمحتواه، في كل النسخ.",
     "composedChecksJump": "__check__ (__where__): انتقل إلى الإطار",

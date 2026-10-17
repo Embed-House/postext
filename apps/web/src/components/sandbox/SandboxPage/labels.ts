@@ -1641,6 +1641,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     composedChecksChecking: t("composedChecksChecking"),
     composedChecksChecked: t("composedChecksChecked"),
     composedChecksOneEdition: t("composedChecksOneEdition"),
+    composedChecksOnDemand: t("composedChecksOnDemand"),
+    composedChecksOnDemandAction: t("composedChecksOnDemandAction"),
     composedChecksEditionError: t("composedChecksEditionError"),
     composedChecksEmpty: t("composedChecksEmpty"),
     composedChecksJump: t("composedChecksJump"),

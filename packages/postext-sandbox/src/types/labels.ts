@@ -1733,6 +1733,8 @@ export interface SandboxLabels {
   composedChecksChecking: string;
   composedChecksChecked: string;
   composedChecksOneEdition: string;
+  composedChecksOnDemand: string;
+  composedChecksOnDemandAction: string;
   composedChecksEditionError: string;
   composedChecksEmpty: string;
   composedChecksJump: string;

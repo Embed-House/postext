@@ -2259,6 +2259,8 @@
     "composedChecksChecking": "正在排版以便检查：__locale__…",
     "composedChecksChecked": "已检查所有版本：__locales__",
     "composedChecksOneEdition": "本书只有一个版本，只检查该版本的页面。",
+    "composedChecksOnDemand": "这里只检查屏幕上的这一章。本书有 __chapters__ 章、__editions__ 个版本，要检查全部，需要你发出请求。",
+    "composedChecksOnDemandAction": "检查所有版本",
     "composedChecksEditionError": "无法读取__locale__版本：__error__",
     "composedChecksEmpty": "所有版本中，每个模板页的每个框都放得下。",
     "composedChecksJump": "__check__（__where__）：转到该框",

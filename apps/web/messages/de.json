@@ -2260,6 +2260,8 @@
     "composedChecksChecking": "Wird zur Prüfung gesetzt: __locale__ …",
     "composedChecksChecked": "In allen Ausgaben geprüft: __locales__",
     "composedChecksOneEdition": "Dieses Buch hat nur eine Ausgabe: Nur ihre Seiten werden geprüft.",
+    "composedChecksOnDemand": "Hier wird nur das Kapitel auf dem Bildschirm geprüft. Das Buch hat __chapters__ Kapitel in __editions__ Ausgaben; alle zu prüfen, wartet, bis es angefordert wird.",
+    "composedChecksOnDemandAction": "Alle Ausgaben prüfen",
     "composedChecksEditionError": "Die Ausgabe __locale__ konnte nicht gelesen werden: __error__",
     "composedChecksEmpty": "Jeder Rahmen jeder zusammengesetzten Seite passt, in jeder Ausgabe.",
     "composedChecksJump": "__check__ (__where__): zum Rahmen springen",

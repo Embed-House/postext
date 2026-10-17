@@ -2259,6 +2259,8 @@
     "composedChecksChecking": "Component per revisar: __locale__…",
     "composedChecksChecked": "Revisat en totes les edicions: __locales__",
     "composedChecksOneEdition": "Aquest llibre té una sola edició: només se'n revisen les pàgines.",
+    "composedChecksOnDemand": "Aquí només es comprova el capítol en pantalla. El llibre té __chapters__ capítols en __editions__ edicions; comprovar-los tots espera que ho demanis.",
+    "composedChecksOnDemandAction": "Comprovar totes les edicions",
     "composedChecksEditionError": "No s'ha pogut llegir l'edició en __locale__: __error__",
     "composedChecksEmpty": "Tots els marcs de totes les pàgines compostes hi caben, en totes les edicions.",
     "composedChecksJump": "__check__ (__where__): anar al marc",

@@ -2260,6 +2260,8 @@
     "composedChecksChecking": "Laying out to check: __locale__…",
     "composedChecksChecked": "Checked in every edition: __locales__",
     "composedChecksOneEdition": "This book holds one edition: only its pages are checked.",
+    "composedChecksOnDemand": "Only the chapter on screen is checked here. The book holds __chapters__ chapters in __editions__ editions, so checking them all waits until you ask.",
+    "composedChecksOnDemandAction": "Check every edition",
     "composedChecksEditionError": "The __locale__ edition could not be read: __error__",
     "composedChecksEmpty": "Every frame of every composed page fits, in every edition.",
     "composedChecksJump": "__check__ (__where__): go to the frame",
