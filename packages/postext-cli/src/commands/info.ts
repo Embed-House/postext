@@ -1,5 +1,6 @@
 import type { BundleStart } from 'postext/bundle';
 import type { CommandContext } from '../context';
+import { writeStdout } from '../io';
 import { layOut } from '../layout';
 import { style } from '../log';
 import { openBook } from '../session';
@@ -71,5 +72,5 @@ export default async function info(ctx: CommandContext): Promise<void> {
     const tag = f.source.includes('fallback') ? style.yellow(f.source) : style.dim(f.source);
     out.push(`  ${f.family.padEnd(28)} ${tag}  ${style.dim(f.variants.join(' '))}`);
   }
-  process.stdout.write(`${out.join('\n')}\n`);
+  await writeStdout(`${out.join('\n')}\n`);
 }

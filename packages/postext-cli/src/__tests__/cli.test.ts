@@ -262,6 +262,24 @@ describe('postext cli', () => {
     }
   }, 90_000);
 
+  // #939: a JSON report longer than the pipe's 64 KiB buffer reaches a reader
+  // that starts late whole (the process used to exit with the pipe still full).
+  it('writes a long --json report to a pipe without cutting it', async () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), `# Three\n\n${Array.from({ length: 600 }, (_, i) => `::resource{id="nowhere${i}"}\n`).join('\n')}`);
+    // A real OS pipe with a reader that starts late (`sleep`), as a Python
+    // subprocess.run is.
+    const proc = Bun.spawn(['sh', '-c', '"$@" | { sleep 3; cat; }', 'sh', ...cmd, 'check', 'ch', '--offline', '--json'], {
+      cwd: dir, env: { ...process.env, NO_COLOR: '1', POSTEXT_CACHE_DIR: join(dir, '.cache') }, stdout: 'pipe', stderr: 'ignore',
+    });
+    const text = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(text.length).toBeGreaterThan(70_000);
+    const report = JSON.parse(text);
+    expect(report.warnings.filter((w: { kind: string }) => w.kind === 'unknownResourceId').length).toBe(600);
+    expect(report.exitCode).toBe(0);
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');

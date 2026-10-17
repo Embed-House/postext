@@ -2,6 +2,7 @@
 import { CliError, Options, parseArgs, UsageError } from './args';
 import { COMMANDS, commandOptions, findCommand, GLOBAL_OPTIONS } from './commands';
 import { commandHelp, mainHelp } from './help';
+import { writeStdout } from './io';
 import { Reporter, setColor, style } from './log';
 import { ENGINE_VERSION, VERSION } from './version';
 
@@ -21,18 +22,18 @@ function closest(name: string): string | undefined {
 async function main(argv: string[]): Promise<number> {
   const [first, ...rest] = argv;
   if (first === undefined) {
-    process.stdout.write(`${mainHelp()}\n`);
+    await writeStdout(`${mainHelp()}\n`);
     return 0;
   }
   if (first === '--version' || first === '-v' || first === 'version') {
-    process.stdout.write(`postext ${VERSION} (engine ${ENGINE_VERSION}, ${process.platform}-${process.arch})\n`);
+    await writeStdout(`postext ${VERSION} (engine ${ENGINE_VERSION}, ${process.platform}-${process.arch})\n`);
     return 0;
   }
   if (first === '--help' || first === '-h' || first === 'help') {
     const topic = first === 'help' ? rest[0] : undefined;
     const spec = topic ? findCommand(topic) : undefined;
     if (topic && !spec) throw new UsageError(`Unknown command "${topic}"`);
-    process.stdout.write(`${spec ? commandHelp(spec) : mainHelp()}\n`);
+    await writeStdout(`${spec ? commandHelp(spec) : mainHelp()}\n`);
     return 0;
   }
   if (first.startsWith('-')) {
@@ -50,11 +51,11 @@ async function main(argv: string[]): Promise<number> {
   const opts = new Options(parsed.options);
   setColor(opts.flag('color'));
   if (opts.flag('help')) {
-    process.stdout.write(`${commandHelp(spec)}\n`);
+    await writeStdout(`${commandHelp(spec)}\n`);
     return 0;
   }
   if (opts.flag('version')) {
-    process.stdout.write(`postext ${VERSION} (engine ${ENGINE_VERSION})\n`);
+    await writeStdout(`postext ${VERSION} (engine ${ENGINE_VERSION})\n`);
     return 0;
   }
   const json = opts.flag('json') === true;
@@ -93,7 +94,7 @@ async function main(argv: string[]): Promise<number> {
       ...(error ? { error: (error as Error).message } : {}),
       exitCode: code,
     };
-    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+    await writeStdout(`${JSON.stringify(report, null, 2)}\n`);
   }
   if (error) {
     if (!json || level !== 'quiet') printError(error, spec.name, level === 'verbose');
