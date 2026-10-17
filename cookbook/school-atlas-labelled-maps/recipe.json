@@ -109,7 +109,35 @@
       }
     ],
     "text": [],
-    "images": [],
+    "images": [
+      {
+        "what": {
+          "en": "The locator map of Varenia and its neighbours, painted as a physical map with a golden wash over Varenia.",
+          "es": "El mapa de situación de Varenia y sus vecinos, pintado como mapa físico con un lavado dorado sobre Varenia."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "locator-1776.jpg"
+      },
+      {
+        "what": {
+          "en": "The relief map of Varenia across a double page: hypsometric tints, hill shading, coastal shelf, rivers and a lake.",
+          "es": "El mapa físico de Varenia a doble página: tintas hipsométricas, sombreado del relieve, plataforma costera, ríos y un lago."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "relief-1984.jpg"
+      },
+      {
+        "what": {
+          "en": "The section from A to B painted as a slice of land cut along the line, in the height bands of the map.",
+          "es": "El corte de A a B pintado como una rebanada de tierra cortada por la línea, en las bandas de altitud del mapa."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "section-1760.jpg"
+      }
+    ],
     "fonts": [
       {
         "family": "Source Sans 3",

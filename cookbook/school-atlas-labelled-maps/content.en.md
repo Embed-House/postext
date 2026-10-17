@@ -10,6 +10,7 @@ Varenia is a country in the south of the continent, with Ostelia to the north an
 The capital, Almaren, stands on the River Merel a few kilometres from Lake Ormo. Almost half the people live on the coast, in port towns such as Calvera, Tessa and Port Sora. This map shows where Varenia is; the next two pages show its relief and its rivers.
 
 :::figure{resource="locator" slot="map"}
+::alt[Locator map painted as a physical map: Varenia, washed in gold, on the south coast of a continent between Ostelia to the north, Brunavia to the east, the Lira Sea to the west and the Misty Ocean to the south.]
 ::label[Varenia]{at="varenia"}
 ::label[Ostelia]{at="ostelia"}
 ::label[Brunavia]{at="brunavia"}
@@ -41,6 +42,7 @@ The Albar Range crosses the west of the country from south-west to north-east. I
 The rivers rise in the mountains and run down to the sea. The Sela flows west and reaches the sea at Calvera. The Duna, short and fast, runs south. The Merel, the longest, passes through Lake Ormo and flows into the Gulf of Sora. The line A–B marks the section on Plate 3.
 
 :::figure{resource="relief" slot="map"}
+::alt[Physical map of Varenia painted in height tints from green lowlands to brown peaks, with the Albar Range, the Grey Hills, the Ormo Plateau, the rivers Sela, Duna and Merel, Lake Ormo and the line of section A–B.]
 ::label[Misty Ocean]{at="ocean"}
 ::label[Lira Sea]{at="lira"}
 ::label[Gulf of Sora]{at="gulf"}
@@ -95,10 +97,11 @@ A section shows the shape of the land as if it were cut along a line. This one f
 The line A–B is 126 km long. To make the mountains easy to see, the vertical scale is stretched about fourteen times, so the slopes in the drawing look much steeper than they are.
 
 :::paragraphs{style="colophon"}
-Varenia and its maps were invented for this atlas. Text and maps: CC BY 4.0. Set in Source Sans 3 and Source Serif 4 (SIL OFL).
+Varenia was invented for this atlas. Text and maps: CC BY 4.0. The maps are paintings generated with diffusion models; borders, symbols and names are set by Postext. Set in Source Sans 3 and Source Serif 4 (SIL OFL).
 :::
 
 :::figure{resource="section" slot="map"}
+::alt[Section from A to B painted as a slice of land: low hills, the Sela valley, the steep Albar Range with its brown crest above 2,100 m and the coastal plain, in the height bands of the map.]
 ::label[A]{at="a"}
 ::label[B]{at="b"}
 ::label[500 m]{at="m500"}

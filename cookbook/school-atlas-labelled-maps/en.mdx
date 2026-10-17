@@ -1,7 +1,7 @@
 ---
 title: "A school atlas labelled from the Markdown"
-summary: "Maps drawn without a letter, named by ::label lines at the anchors of each resource, on composed pages and a double-page spread, in three languages."
-plain: "Three pages of a school atlas of an invented country. The maps are plain drawings; every name on them is written in the text, so a translation changes the words and leaves the maps alone."
+summary: "Maps painted without a letter, named by ::label lines at the anchors of each resource, on composed pages and a double-page spread, in three languages."
+plain: "Three pages of a school atlas of an invented country. The maps are paintings with no lettering; every name on them is written in the text, so a translation changes the words and leaves the maps alone."
 description: "A school atlas set with Postext: maps labelled from the Markdown at the resource's anchors, a relief map across a spread, an Arabic edition."
 question: "How do I name the places on a map from the text, so each translation keeps the same drawing?"
 aliases: ["atlas", "school atlas", "map labels", "place names", "anchors", "label styles", "double page map", "spread", "right to left", "rotated labels", "rótulos", "topónimos"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "Plate 1: a blue band with the kicker Plate 1 · Location and 
 
 ## What you'll build
 
-Three plates from a school atlas of Varenia, a country invented for this recipe. Plate 1 places it on its continent. Plate 2 spreads the relief map across both pages, from the Lira Sea to the border with Brunavia, in height tints with three rivers and the line of a section. Plate 3 draws that section through the Albar Range. Each plate opens on a blue band and ends with a key or a glossary and a few activities for the class. The drawings carry no letter. The 43 names, heights and scale figures are `::label` lines in the Markdown, set at anchors stored with each map, so the Spanish, English and Arabic editions share the same three drawings, and the Arabic one reads and binds from the right.
+Three plates from a school atlas of Varenia, a country invented for this recipe. Plate 1 places it on its continent. Plate 2 spreads the relief map across both pages, from the Lira Sea to the border with Brunavia, in height tints with three rivers and the line of a section. Plate 3 draws that section through the Albar Range. Each plate opens on a blue band and ends with a key or a glossary and a few activities for the class. The three maps are paintings made with an image model and carry no letter; borders, towns, the line of section, the scale and the north arrow are vector symbols over them. The 43 names, heights and scale figures are `::label` lines in the Markdown, set at anchors stored with each map, so the Spanish, English and Arabic editions share the same three paintings, and the Arabic one reads and binds from the right.
 
 ## Method
 
@@ -18,13 +18,15 @@ Three plates from a school atlas of Varenia, a country invented for this recipe.
 
 <Excerpt region="anchors" />
 
-An anchor is a point in fractions of the picture's width and height, so it holds at any size the frame sets the map, and when the reflow ladder sets a map smaller its names go with it. `km()` turns the kilometres the drawing is laid out in into those fractions: a town's dot and its name both come from `TOWNS` and cannot drift apart. The anchor holds what belongs to the place, not to the language: its style, the turn of a river's or a range's name along its course, and the side of the name that stands at the point. Town names stand centred above their dot, because `align: 'start'` would be the left of an English name and the right of an Arabic one.
+An anchor is a point in fractions of the picture's width and height, so it holds at any size the frame sets the map, and when the reflow ladder sets a map smaller its names go with it. `km()` turns the kilometres read off a grid laid over the painting into those fractions: a town's dot and its name both come from `TOWNS` and cannot drift apart. The anchor holds what belongs to the place, not to the language: its style, the turn of a river's or a range's name along its course, and the side of the name that stands at the point. Town names stand centred above their dot, because `align: 'start'` would be the left of an English name and the right of an Arabic one.
+
+The paintings were made in order. The relief plate came first, painted by an image model from a hill-shaded height map of the country; the locator map was painted from the relief plate and the section from the same heights, so coasts and heights agree on all three. A grid drawn over each picture gave the kilometres of every anchor, and the borders were cut where they reach the painted coast.
 
 ### 2 · Three Markdown files, one resource
 
 <Excerpt region="resources" />
 
-The resource has one SVG and one list of anchors for every edition. Each edition writes one `::label[…]{at="…"}` line per anchor inside `:::figure{resource="relief" slot="map"}`, so `::label[Calvera Plain]{at="plain"}` and `::label[Llanura de Calvera]{at="plain"}` stand on the same spot, broken into two lines by the anchor's `width` when they need it. Only the alternative text changes with the edition, since a resource takes no words from the Markdown. An anchor with a style that an edition leaves without a label is reported as `anchorUnlabelled`, and a label whose `at` names no anchor is not drawn and is reported as `labelAnchorUnknown`.
+The resource has one picture (an SVG that holds the painting and the vector symbols over it) and one list of anchors for every edition. Each edition writes one `::label[…]{at="…"}` line per anchor inside `:::figure{resource="relief" slot="map"}`, so `::label[Calvera Plain]{at="plain"}` and `::label[Llanura de Calvera]{at="plain"}` stand on the same spot, broken into two lines by the anchor's `width` when they need it. The alternative text changes with the edition too: each `:::figure` carries its own in a `::alt[…]` line, and a caption or a note would go the same way with `::caption[…]` and `::note[…]`. An anchor with a style that an edition leaves without a label is reported as `anchorUnlabelled`, and a label whose `at` names no anchor is not drawn and is reported as `labelAnchorUnknown`.
 
 ### 3 · A sheet and a double sheet
 
@@ -36,7 +38,7 @@ Both templates have the same five frames, so a plate's Markdown has the same sha
 
 <Excerpt region="palette" />
 
-The five height tints are palette entries. The drawing fills its bands with `palette.low` to `palette.peak`, and the key of plate 2 writes `:swatch{color="low"}` with the same ids, so one new hex changes the map and its key together. Water names in `water` have a contrast of 6:1 on the shallow sea and 4.5:1 on the deep one, and the white title has 7.2:1 on `band`.
+The five height tints are palette entries (`palette.low` to `palette.peak`), set to the median colour of the painted relief in each height band, and the key of plate 2 writes `:swatch{color="low"}` with the same ids. The painting does not read the palette: a new hex changes the key and the vector symbols and leaves the picture as it is, so to change the map's colours you paint it again. Water names in `water` have a contrast of at least 6:1 on the painted sea, and the white title has 7.2:1 on `band`.
 
 ### 5 · The Arabic edition
 
@@ -60,6 +62,7 @@ Give the map type a counter and a prefix, and each resource a caption: see <Reci
 
 ## Pitfalls
 
-- The alternative text of each map lives in the resource (`ALT`), one string per edition: a resource takes no words from the Markdown, so this is the one text of the page outside `content.<lang>.md`.
+- The alternative text of each map lives in the Markdown, as a `::alt[…]` line inside its `:::figure`, one per edition. A figure that gives none keeps the resource's own `altText`; `script.js` holds no word of the page.
+- The anchors and the vector symbols (borders, towns, peaks, the line of section) stand at kilometres read off the painting. Paint a map again and its coasts, rivers and ridges move: lay the grid over the new picture and read them again, or a name will land in the sea.
 - On a right-to-left page the frames are mirrored with the content area, but the template's decoration is not: place a kicker by edition, as `kicker` does.
 - A frame in two columns may cut a paragraph one line before its end and leave that line at the head of the second column. Read the columns of each edition and move a sentence from one paragraph to the next when that happens.
