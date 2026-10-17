@@ -1608,6 +1608,11 @@ export interface VDTFigureLabelLayout {
   styleId?: string;
   /** Set right to left (its text opens with a right-to-left letter). */
   direction?: 'rtl';
+  /** Set in vertical writing (#902, `ResourceAnchor.writingMode`): the
+   *  lines are laid out as a vertical page's flow is, in the label's frame
+   *  turned a quarter turn clockwise (`rotate` includes it), and painted
+   *  with the vertical glyph painter, characters upright in their cells. */
+  vertical?: VDTVerticalText;
 }
 
 /**

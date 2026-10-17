@@ -32,10 +32,12 @@ import type {
   VDTFigureLabel,
   VDTFigureLabelLayout,
   VDTLine,
+  VDTVerticalText,
 } from '../vdt';
 import type { MeasurementCache } from '../measure';
 import type { ResourceNumberingMap } from '../pipeline/resourceNumbering';
-import { buildFontString, measureTextWidth } from '../measure';
+import { buildFontString } from '../measure';
+import { flowTextWidth, fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../measure/vertical';
 import { dimensionToPx } from '../units';
 import { resolveColorValue } from '../defaults/shared';
 import { layoutLabelLines } from '../pipeline/resourceLayout';
@@ -68,6 +70,8 @@ export interface LabelLook {
   background?: string;
   paddingPx: number;
   minScale: number;
+  /** Set in vertical writing (the label style's; an anchor's wins). */
+  vertical?: boolean;
 }
 
 const hexOf = (value: ColorValue | undefined, resolved: ResolvedConfig, fallback: ColorValue): string =>
@@ -121,6 +125,7 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     ...(style?.background ? { background: hexOf(style.background, resolved, { hex: '#ffffff', model: 'hex' }) } : {}),
     paddingPx: Math.max(0, px(style?.padding, dpi, fontPx) ?? 0),
     minScale: style ? Math.min(1, Math.max(0.1, style.minScale)) : 0.85,
+    ...(style?.writingMode === 'vertical-rl' ? { vertical: true } : {}),
   };
 }
 
@@ -159,6 +164,10 @@ export function pictureToBody(rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'body
 const pictureWidthPx = (rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'bodySource'>): number =>
   rb.bodyRect.width / (rb.bodySource && rb.bodySource.width > 0 ? rb.bodySource.width : 1);
 
+/** The height of the whole picture in px, as its body draws it. */
+const pictureHeightPx = (rb: Pick<ResolvedResourceBlock, 'bodyRect' | 'bodySource'>): number =>
+  rb.bodyRect.height / (rb.bodySource && rb.bodySource.height > 0 ? rb.bodySource.height : 1);
+
 /** What laying the labels out needs besides the block. */
 export interface FigureLabelContext {
   resolved: ResolvedConfig;
@@ -191,6 +200,15 @@ function spanText(spans: readonly InlineSpan[]): string {
   return spans.map((s) => (s.chip ? s.chip.spans.map((c) => c.text).join('') : s.text)).join('');
 }
 
+const CJK_CHAR = '\\u2E80-\\u303F\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF\\uFF00-\\uFFEF';
+const PIECES = new RegExp(`[${CJK_CHAR}]|[^${CJK_CHAR}\\s]+`, 'gu');
+
+/** The pieces of `text` a line cannot be cut inside: the words between
+ *  spaces, and each Chinese, Japanese or Korean character on its own. */
+function unbreakablePieces(text: string): string[] {
+  return text.match(PIECES) ?? [];
+}
+
 /**
  * Lay out one label: its lines in its look, wrapped within `widthPx` (none:
  * one line per forced break), set smaller (down to `minScale`) while a
@@ -200,13 +218,19 @@ function spanText(spans: readonly InlineSpan[]): string {
 export function layOutLabel(
   spans: readonly InlineSpan[],
   look: LabelLook,
-  place: { x: number; y: number; widthPx?: number; align?: ResourceAnchor['align']; verticalAlign?: ResourceAnchor['verticalAlign']; rotate?: number },
+  place: { x: number; y: number; widthPx?: number; align?: ResourceAnchor['align']; verticalAlign?: ResourceAnchor['verticalAlign']; rotate?: number; vertical?: boolean },
   ctx: FigureLabelContext,
 ): VDTFigureLabelLayout | undefined {
   const text = withForcedBreaks(look.uppercase ? upperSpans(spans) : [...spans]);
   const plain = spanText(text);
   if (plain.trim().length === 0) return undefined;
-  const rtl = firstStrongDirection(plain) === 'rtl';
+  // Vertical writing (#902): measured as a vertical page's flow is, in the
+  // label's own frame, which the matrix then turns a quarter turn
+  // clockwise; the text reads top to bottom in columns from right to left.
+  const vertical = place.vertical ?? look.vertical ?? false;
+  const region = ctx.resolved.cjk.region;
+  const inMode = <T,>(fn: () => T): T => (vertical ? withMeasureWritingMode('vertical-rl', fn, region) : fn());
+  const rtl = !vertical && firstStrongDirection(plain) === 'rtl';
   const widthPx = place.widthPx !== undefined && place.widthPx > 0 ? place.widthPx : undefined;
   const fontsAt = (sizePx: number): [string, string, string, string] => {
     const w = look.weight === 400 ? 'normal' : String(look.weight);
@@ -220,7 +244,7 @@ export function layOutLabel(
       buildFontString(look.fontFamily, sizePx, b, flip),
     ];
   };
-  const measure = (scale: number) => {
+  const measure = (scale: number) => inMode(() => {
     const sizePx = look.fontPx * scale;
     const fonts = fontsAt(sizePx);
     const lines = layoutLabelLines({
@@ -242,13 +266,13 @@ export function layOutLabel(
     // does not fit.
     const cut = widthPx !== undefined && (widest > widthPx + 0.01 || lines.some((l) => l.hyphenated && !l.hardHyphen));
     return { lines, fonts, widest, sizePx, cut };
-  };
+  });
   let scale = 1;
   if (widthPx !== undefined) {
     // The widest word sets the first guess.
     const font = fontsAt(look.fontPx)[0];
     const tracking = look.letterSpacing * look.fontPx;
-    const word = plain.split(/\s+/).reduce((m, w) => Math.max(m, measureTextWidth(w, font) + tracking * [...w].length), 0);
+    const word = inMode(() => unbreakablePieces(plain).reduce((m, w) => Math.max(m, flowTextWidth(w, font) + tracking * [...w].length), 0));
     if (word > widthPx) scale = Math.max(look.minScale, (widthPx / word) * 0.999);
   }
   let set = measure(scale);
@@ -276,7 +300,11 @@ export function layOutLabel(
   });
   const box: BoundingBox = { x: left, y: top, width: boxW, height: boxH };
   const pad = look.paddingPx;
-  const rotate = place.rotate !== undefined && Number.isFinite(place.rotate) && Math.abs(place.rotate % 360) > 1e-9 ? place.rotate % 360 : undefined;
+  // A vertical label's frame is the flow frame of a vertical page: turned
+  // a quarter turn clockwise on the picture, and further by `rotate`.
+  const turn = (place.rotate !== undefined && Number.isFinite(place.rotate) ? place.rotate : 0) + (vertical ? 90 : 0);
+  const rotate = Math.abs(turn % 360) > 1e-9 ? turn % 360 : undefined;
+  const verticalText: VDTVerticalText | undefined = vertical ? verticalTextOf(set.lines, set.fonts, region, ctx) : undefined;
   return {
     x: place.x,
     y: place.y,
@@ -294,7 +322,27 @@ export function layOutLabel(
     ...(set.cut ? { overflow: true as const } : {}),
     ...(look.styleId !== undefined ? { styleId: look.styleId } : {}),
     ...(rtl ? { direction: 'rtl' as const } : {}),
+    ...(verticalText ? { vertical: verticalText } : {}),
   };
+}
+
+/** How a vertical label is painted: the document's region and upright
+ *  digits, and the central axis of each family it is set in. */
+function verticalTextOf(lines: readonly VDTLine[], fonts: readonly string[], region: VDTVerticalText['region'], ctx: FigureLabelContext): VDTVerticalText {
+  const centralBaselines: Record<string, number> = {};
+  const add = (font: string | undefined): void => {
+    if (!font) return;
+    const family = fontFamilyOf(font);
+    if (family && !(family in centralBaselines)) centralBaselines[family] = measureCentralBaseline(family);
+  };
+  for (const font of fonts) add(font);
+  for (const line of lines) {
+    for (const seg of line.segments ?? []) {
+      add(seg.fontString);
+      for (const run of seg.chip?.runs ?? []) add(run.fontString);
+    }
+  }
+  return { region, uprightDigits: ctx.resolved.cjk.uprightDigits, centralBaselines };
 }
 
 /**
@@ -313,6 +361,7 @@ export function layOutFigureLabels(
   if (rb.kind !== 'bitmap' && rb.kind !== 'svg') return [...labels];
   if (!(rb.bodyRect.width > 0) || !(rb.bodyRect.height > 0)) return [...labels];
   const pictureW = pictureWidthPx(rb);
+  const pictureH = pictureHeightPx(rb);
   return labels.map((label, i) => {
     const place = labelPlace(label, rb.resource);
     if (!place) return label;
@@ -320,10 +369,14 @@ export function layOutFigureLabels(
     const at = pictureToBody(rb, place.x, place.y);
     const look = resolveLabelLook(label.style ?? anchor?.style, ctx.resolved);
     const spans = parsed?.[i]?.spans ?? [{ text: label.text, bold: false, italic: false }];
+    // The anchor's writing mode wins over the style's; a vertical label's
+    // measure is a share of the picture's height.
+    const vertical = anchor?.writingMode !== undefined ? anchor.writingMode === 'vertical-rl' : look.vertical === true;
     const layout = layOutLabel(spans, look, {
       x: at.x,
       y: at.y,
-      ...(anchor?.width !== undefined && anchor.width > 0 ? { widthPx: anchor.width * pictureW } : {}),
+      vertical,
+      ...(anchor?.width !== undefined && anchor.width > 0 ? { widthPx: anchor.width * (vertical ? pictureH : pictureW) } : {}),
       ...(anchor?.align ? { align: anchor.align } : {}),
       ...(anchor?.verticalAlign ? { verticalAlign: anchor.verticalAlign } : {}),
       ...(anchor?.rotate !== undefined ? { rotate: anchor.rotate } : {}),

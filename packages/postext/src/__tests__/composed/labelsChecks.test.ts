@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { formatWarning } from '../../pipeline/contentWarnings';
-import { overlappingLabels, polygonPenetration } from '../../composed/labels';
+import { figureLabelBounds, overlappingLabels, polygonPenetration } from '../../composed/labels';
 import { contrastDocument, contrastPairs } from '../../contrast';
+import { renderPageToCanvas } from '../../index';
+import { renderToHtmlIndexed } from '../../html-backend';
 import { preflightDocument } from '../../preflight';
 import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index';
 
@@ -202,5 +204,106 @@ describe('label colours in the contrast check and the preflight (#902)', () => {
   it('counts a small label in a process colour as small multi-ink text', () => {
     const found = preflightDocument(doc).filter((i) => i.kind === 'smallProcessText');
     expect(found.some((i) => i.kind === 'smallProcessText' && i.color === '#336699')).toBe(true);
+  });
+});
+
+describe('vertical labels (#902)', () => {
+  const V: Resource = {
+    ...MAP,
+    id: 'tate',
+    anchors: [
+      { id: 'v', x: 0.5, y: 0.3, writingMode: 'vertical-rl', style: 'small' },
+      { id: 'vs', x: 0.2, y: 0.3, writingMode: 'vertical-rl', align: 'start', verticalAlign: 'top', style: 'small' },
+      { id: 'vw', x: 0.8, y: 0.1, writingMode: 'vertical-rl', width: 0.1, style: 'tight' },
+      { id: 'vn', x: 0.9, y: 0.1, writingMode: 'vertical-rl', width: 0.04, style: 'tight' },
+      { id: 'h', x: 0.5, y: 0.8 },
+      { id: 'styled', x: 0.1, y: 0.9, style: 'cols' },
+    ],
+  };
+  const cfg: PostextConfig = { ...PAGE, labelStyles: [...PAGE.labelStyles!, { id: 'cols', fontSize: px(10), writingMode: 'vertical-rl' }] };
+  const run = (markdown: string): VDTDocument => buildDocument({ markdown, resources: [V] }, cfg, createMeasurementCache());
+  const fig = (...l: string[]) => [':::figure{resource="tate"}', ...l, ':::', ''].join('\n');
+  const labelsOf = (doc: VDTDocument) => [...doc.blocks, ...doc.pages.flatMap((p) => p.floats ?? [])].find((b) => b.resourceBlock?.resource.id === 'tate')!.resourceBlock!.labels!;
+
+  it('sets the label in a frame turned a quarter turn, its columns running down', () => {
+    const [v, h] = labelsOf(run(fig('::label[東京都]{at="v"}', '::label[Tokyo]{at="h"}')));
+    expect(v!.layout!.rotate).toBe(90);
+    expect(v!.layout!.vertical).toMatchObject({ region: 'mainland', uprightDigits: 2 });
+    expect(Object.keys(v!.layout!.vertical!.centralBaselines).length).toBeGreaterThan(0);
+    // Three characters, a cell each, down the column: 3 × 10 px long (the
+    // stub measures half an em a character, the cell is a whole one).
+    expect(v!.layout!.box.width).toBeCloseTo(30, 3);
+    expect(h!.layout!.rotate).toBeUndefined();
+    expect(h!.layout!.vertical).toBeUndefined();
+  });
+
+  it('turns by the anchor’s rotate on top of the quarter turn', () => {
+    const doc = run(fig('::label[東京]{at="v"}'));
+    const label = labelsOf(doc)[0]!;
+    expect(label.layout!.rotate).toBe(90);
+    const rb = [...doc.blocks, ...doc.pages.flatMap((p) => p.floats ?? [])].find((b) => b.resourceBlock?.resource.id === 'tate')!.resourceBlock!;
+    // The label box on the body: 10 px wide (one column) and 20 px tall.
+    const r = figureLabelBounds(label.layout!, 0, 0);
+    expect(r.height).toBeCloseTo(20, 3);
+    expect(r.width).toBeCloseTo(label.layout!.box.height, 3);
+    expect(rb.labels).toHaveLength(1);
+  });
+
+  it('takes the writing mode from the label style, the anchor’s winning', () => {
+    const [styled] = labelsOf(run(fig('::label[東京]{at="styled"}')));
+    expect(styled!.layout!.vertical).toBeDefined();
+    expect(styled!.layout!.rotate).toBe(90);
+  });
+
+  it('puts the start of the column at the anchor point', () => {
+    const [start] = labelsOf(run(fig('::label[東京都]{at="vs"}')));
+    const x = start!.layout!.x;
+    const y = start!.layout!.y;
+    const r = figureLabelBounds(start!.layout!, 0, 0);
+    // `align: start` is the top of the column, `verticalAlign: top` its first
+    // (rightmost) column: the box hangs down and to the left of the point.
+    expect(r.y).toBeCloseTo(y, 3);
+    expect(r.x + r.width).toBeCloseTo(x, 3);
+  });
+
+  it('measures a vertical label’s width along the picture’s height: CJK wraps into columns, a long sideways word overflows', () => {
+    // 0.1 × 300 px = 30 px of column: three cells of 10 px. Eight characters
+    // go into three columns, going leftward.
+    const wrapped = labelsOf(run(fig('::label[東京都大阪府京都]{at="vw"}')))[0]!.layout!;
+    expect(wrapped.lines).toHaveLength(3);
+    expect(wrapped.overflow).toBeUndefined();
+    expect(wrapped.box.width).toBeLessThanOrEqual(30 + 1e-6);
+    // A Latin word set sideways keeps its horizontal width (45 px at 10 px):
+    // 12 px of column is too little even at half the size.
+    const word = run(fig('::label[Gibraltar]{at="vn"}'));
+    expect(labelsOf(word)[0]!.layout!.overflow).toBe(true);
+    expect(labelsOf(word)[0]!.layout!.scale).toBe(0.5);
+    expect(kinds(word, 'labelOverflow')).toHaveLength(1);
+  });
+
+  it('paints the characters of a vertical label one by one, upright, and writes it down the column in the HTML', () => {
+    const doc = run(fig('::label[東京]{at="v"}', '::label[大阪]{at="vs"}', '::label[Oslo]{at="h"}'));
+    const ops: { op: string; text?: string }[] = [];
+    const ctx: Record<string | symbol, unknown> = new Proxy({}, {
+      get(target: Record<string | symbol, unknown>, key) {
+        if (key === 'measureText') return (t: string) => ({ width: t.length * 5 });
+        if (key === 'fillText') return (t: string) => { ops.push({ op: 'fillText', text: t }); };
+        if (key in target) return target[key];
+        return () => undefined;
+      },
+      set(target, key, value) { target[key] = value; return true; },
+    });
+    const canvas = { width: 0, height: 0, getContext: () => ctx } as unknown as HTMLCanvasElement;
+    renderPageToCanvas(doc.pages[0]!, doc, canvas);
+    const shown = ops.map((o) => o.text);
+    // Horizontal text is one show; a vertical label's cells are shown apart.
+    expect(shown).toContain('Oslo');
+    expect(shown).toContain('東');
+    expect(shown).toContain('京');
+    expect(shown).not.toContain('東京');
+    const html = renderToHtmlIndexed(doc, { resourceImageUrl: (id) => `https://example.org/${id}` }).pages[0]!.innerHtml;
+    // The label’s frame is turned a quarter turn; its line is set vertically.
+    expect(html).toMatch(/class="pt-figure-label"[^>]*transform:matrix\(0,1,-1,0,/);
+    expect(html).toContain('東');
   });
 });

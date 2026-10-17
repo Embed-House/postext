@@ -113,7 +113,7 @@ function addBlockFonts(block: VDTBlock, out: FontText, vertical?: VerticalSettin
     // A figure's labels drawn on its picture (#860).
     for (const label of rb.labels ?? []) {
       const l = label.layout;
-      if (l) addLinesFonts(l.lines, { normal: l.fontString, bold: l.boldFontString, italic: l.italicFontString, boldItalic: l.boldItalicFontString }, out);
+      if (l) addLinesFonts(l.lines, { normal: l.fontString, bold: l.boldFontString, italic: l.italicFontString, boldItalic: l.boldItalicFontString }, out, l.vertical ? { region: l.vertical.region, uprightDigits: l.vertical.uprightDigits } : undefined);
     }
     const t = rb.table;
     if (t) {

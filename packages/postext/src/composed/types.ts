@@ -247,6 +247,9 @@ export interface LabelStyle {
   padding?: Dimension;
   /** Smallest scale when a label does not fit its width. Default 0.85. */
   minScale?: number;
+  /** `'vertical-rl'` sets the label in vertical writing (#902), unless its
+   *  anchor says otherwise. Default `'horizontal-tb'`. */
+  writingMode?: 'horizontal-tb' | 'vertical-rl';
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)

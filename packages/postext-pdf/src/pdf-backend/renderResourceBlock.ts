@@ -1093,6 +1093,12 @@ function paintFigureLabels(
     const layout = label.layout!;
     const m = figureLabelMatrix(layout, bx, by);
     pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
+    // A vertical label (#902): the matrix turned its frame a quarter turn,
+    // and the vertical painter stands each character upright in its cell.
+    const outerVertical = ctx.vertical;
+    if (layout.vertical) {
+      ctx.vertical = { region: layout.vertical.region, uprightDigits: layout.vertical.uprightDigits, axes: layout.vertical.centralBaselines };
+    } else delete ctx.vertical;
     try {
       const fonts: PaintFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
       if (layout.background) {
@@ -1118,6 +1124,8 @@ function paintFigureLabels(
       for (const line of layout.lines) paintLine(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, refTarget, color, elem);
     } finally {
       popFrame(ctx);
+      if (outerVertical) ctx.vertical = outerVertical;
+      else delete ctx.vertical;
     }
   }
 }

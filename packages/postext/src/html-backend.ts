@@ -2795,9 +2795,22 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       const r = layout.background.rect;
       inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;background:${layout.background.color};"></div>`);
     }
-    layout.lines.forEach((line, i) => {
-      inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
-    });
+    if (layout.vertical) {
+      // A vertical label (#902): its frame is turned a quarter turn by the
+      // matrix, as a vertical page's flow is, and each line is set down the
+      // column like a body line, from a block that stands for the label.
+      const vt = layout.vertical;
+      const v: VerticalHtml = { region: vt.region, uprightDigits: vt.uprightDigits, axes: vt.centralBaselines };
+      const host = {
+        id: label.id ?? '', fontString: layout.fontString, boldFontString: layout.boldFontString, italicFontString: layout.italicFontString,
+        boldItalicFontString: layout.boldItalicFontString, color: layout.color, textAlign: 'left', bbox: layout.box,
+      } as unknown as VDTBlock;
+      layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1])));
+    } else {
+      layout.lines.forEach((line, i) => {
+        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
+      });
+    }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
     const id = label.id ? ` data-label="${esc(label.id)}"` : '';
     parts.push(

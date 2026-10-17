@@ -525,6 +525,15 @@ export interface ResourceAnchor {
   rotate?: number;
   /** A `labelStyles` id. */
   style?: string;
+  /** `'vertical-rl'` sets the label in vertical writing (#902): its
+   *  characters stand upright in cells one under another, columns going
+   *  from right to left, as a CJK map or a spine is lettered. Over the
+   *  style's `writingMode`. In a vertical label `width` is a fraction of
+   *  the picture's height (the column's length), `align` runs along the
+   *  column (`start` is its top) and `verticalAlign` across the columns
+   *  (`top` is the first, rightmost one); `rotate` turns it on top of the
+   *  quarter turn. Default `'horizontal-tb'`. */
+  writingMode?: 'horizontal-tb' | 'vertical-rl';
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
