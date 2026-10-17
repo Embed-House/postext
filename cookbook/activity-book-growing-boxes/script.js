@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 159 · Activity book with boxes that grow ══════════════
 // https://postext.dev/en/cookbook/activity-book-growing-boxes
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Andika, Baloo 2, Lexend (SIL OFL 1.1) · Needs postext ≥ 1.38.0
+// Fonts: Andika, Baloo 2, Lexend (SIL OFL 1.1) · Needs postext ≥ 1.39.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -284,9 +284,10 @@ const ALT = {
   estados: t({ es: 'Un cubito de hielo que se derrite, un vaso de agua y una taza que echa vapor',
     en: 'An ice cube melting, a glass of water and a steaming cup',
     fr: 'Un glaçon qui fond, un verre d’eau et une tasse qui fume' }),
-  pluviometro: t({ es: 'Una botella cortada con una regla pegada, piedras y un embudo bajo la lluvia: '
-      + 'el pluviómetro',
-    en: 'A cut bottle with a ruler taped on, stones and a funnel in the rain: the rain gauge',
+  pluviometro: t({ es: 'Una botella cortada con una regla pegada, piedras y un embudo bajo '
+      + 'la lluvia: el pluviómetro',
+    en: 'A cut bottle with a ruler taped on, stones and a funnel in the rain: '
+      + 'the rain gauge',
     fr: 'Une bouteille coupée avec une règle collée, des cailloux et un entonnoir sous la pluie : '
       + 'le pluviomètre' }),
 };
