@@ -271,14 +271,58 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     const known = memo.get(key);
     if (known) return known;
     runs++;
-    const leaving = new Set([...travelling(tpl, fit).values()].flat());
-    const collapsed = leaving.size > 0 ? new Set([...collapsedHere, ...leaving]) : collapsedHere;
-    const c = composePage(input, collapseFrames(patchTemplate(tpl, fit.patches), leaving), fit, collapsed);
+    const travel = travelling(tpl, fit);
+    const lay = (leaving: ReadonlySet<string>, whole: ReadonlySet<string> = new Set()): Composition =>
+      composePage(input, collapseFrames(patchTemplate(tpl, fit.patches), leaving, whole), fit, leaving.size > 0 ? new Set([...collapsedHere, ...leaving]) : collapsedHere);
+    const all = new Map(travel);
+    let c = lay(new Set([...travel.values()].flat()));
+    // The empty frames go with the rest only when there is a rest: a frame
+    // that holds all of it once they leave keeps them after it…
+    const staying = [...travel.keys()].filter((f) => !c.spills.has(f));
+    if (staying.length > 0) {
+      for (const f of staying) travel.delete(f);
+      c = lay(new Set([...travel.values()].flat()));
+      // …unless they then do not fit under it at their size: the whole box
+      // goes on with them, and takes no room here.
+      const whole = staying.filter((f) => squeezes(c, f));
+      if (whole.length > 0) {
+        for (const f of whole) travel.set(f, all.get(f)!);
+        c = lay(new Set([...whole, ...[...travel.values()].flat()]), new Set(whole));
+      }
+    }
+    // A box none of whose content fits goes on whole and takes no room
+    // here either.
+    const empty = [...fit.goOn].filter((f) => { const sp = c.spills.get(f); return sp !== undefined && !sp.advanced && sp.pieces === 0 && !frameIn(c, f)?.collapsed; });
+    if (empty.length > 0) {
+      for (const f of empty) if (all.has(f)) travel.set(f, all.get(f)!);
+      c = lay(new Set([...empty, ...[...travel.values()].flat()]), new Set(empty));
+    }
     memo.set(key, c);
     return c;
   };
   const frameIn = (c: Composition, name: string): VDTFrame | undefined => c.frames.find((f) => f.name === name);
   const overflows = (c: Composition, name: string): boolean => (frameIn(c, name)?.overflowPx ?? 0) > 0.5;
+  /** A frame that can go on to another page squeezes the frames after it
+   *  in its stack below their declared size (#912): the stack reached the
+   *  foot of its area and the last frames were cut to fit, an answer space
+   *  under the box lost its lines. The ladder treats it as content that
+   *  does not fit, so the box goes on and they keep their size. */
+  const squeezes = (c: Composition, name: string): boolean => {
+    const frame = byName.get(name);
+    if (!frame || !continuesOffPage(frame.overflow.continueIn)) return false;
+    const g = groupOf.get(name);
+    if (!g || g.kind !== 'stack') return false;
+    for (const other of g.frames.slice(g.frames.indexOf(name) + 1)) {
+      const f = byName.get(other);
+      const v = frameIn(c, other);
+      if (!f || !v || v.collapsed) continue;
+      const min = f.minHeight ? dimensionToPx(f.minHeight, dpi, input.emPx) : fixedHeight(f) ? dimensionToPx(fixedHeight(f)!, dpi, input.emPx) : 0;
+      if (v.rect.height < min - 0.5) return true;
+    }
+    return false;
+  };
+  /** The frame's content does not fit, or it squeezes the frames after it. */
+  const short = (c: Composition, name: string): boolean => overflows(c, name) || squeezes(c, name);
   /** The ladder's last step (#859): the frame is cut at its foot and the
    *  rest goes on on another page, its text and pictures back at full
    *  size (they go on anyway). */
@@ -305,7 +349,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   const attempt = (next: FitState, name: string): boolean => {
     fit = next;
     cur = compose(fit);
-    return !overflows(cur, name);
+    return !short(cur, name);
   };
   /** The largest scale among `steps` (descending) at which `name` fits,
    *  checked at the lowest first, then by bisection; adopted. */
@@ -316,7 +360,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     let hi = steps.length - 1; // fits at hi
     while (lo < hi && runs < COMPOSE_BUDGET) {
       const mid = Math.floor((lo + hi) / 2);
-      if (!overflows(compose(make(steps[mid]!)), name)) hi = mid;
+      if (!short(compose(make(steps[mid]!)), name)) hi = mid;
       else lo = mid + 1;
     }
     fit = make(steps[hi]!);
@@ -369,7 +413,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
 
   for (const frame of template.frames) {
     const name = frame.name;
-    if (!overflows(cur, name) || runs >= COMPOSE_BUDGET) continue;
+    if (!short(cur, name) || runs >= COMPOSE_BUDGET) continue;
     const steps: FrameFitStep[] = [];
     tried.set(name, steps);
     // 1. Free space: a fixed height grows to its maximum ('auto' heights
@@ -491,7 +535,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   };
   // What goes on on other pages (#859), in template order.
   const continuations: ComposedContinuation[] = [];
-  const trailing = travelling(template, fit);
+  const trailing = new Map([...travelling(template, fit)].filter(([f, names]) => cur.spills.has(f) && names.every((n) => frameIn(cur, n)?.collapsed)));
   for (const frame of template.frames) {
     const spill = cur.spills.get(frame.name);
     const story = spill ? input.stories.get(spill.head) : undefined;
@@ -935,13 +979,6 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
             fixedHeight: !auto && !fill,
             need: natural,
           };
-          if (fit.goOn.has(f.name) && mode === 'final' && !f.pin) {
-            // A frame cut for another page (#859) gives the room first,
-            // down to its minimum: the frames after it in the group keep
-            // their size (#912), and its rest goes on.
-            item.shrink = Math.max(f.shrink, 1);
-            item.priority = Number.NEGATIVE_INFINITY;
-          }
           if (yieldAll && mode === 'final' && !f.pin) {
             // Down to its minimum, never under what its content needs, never
             // over the height it has.
@@ -950,6 +987,14 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
             // (A row's frames give width, each down to the narrowest width
             // its content still fits: their heights stay the row's.)
             if (group.kind === 'stack') item.min = Math.min(height, Math.max(minH, natural(box.width)));
+          }
+          if (fit.goOn.has(f.name) && mode === 'final' && !f.pin) {
+            // A frame cut for another page (#859) gives the room first,
+            // down to its minimum: the frames after it in the group keep
+            // their size (#912), and its rest goes on.
+            item.shrink = Math.max(f.shrink, 1);
+            item.priority = Number.NEGATIVE_INFINITY;
+            item.min = minH;
           }
           return item;
         });

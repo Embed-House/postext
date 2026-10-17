@@ -265,6 +265,25 @@ describe('an activity sheet whose last box goes on (#912)', () => {
     expect(hit?.id).toMatch(/^cp0:decoration:tema(@|$)/);
   });
 
+  it('the answer lines keep their size on whichever page they land: the box goes on rather than squeeze them', () => {
+    let wholeMoves = 0;
+    for (let first = 560; first <= 900; first += 10) {
+      const doc = build(sheet(first, 150), [FICHA]);
+      const pages = composedPages(doc);
+      const lines = pages.map((p) => frameOn(p, 'lineas-3')).filter((f) => !f.collapsed);
+      expect(lines, `first ${first}`).toHaveLength(1);
+      expect(lines[0]!.rect.height, `first ${first}`).toBeCloseTo(16 * MM, 3);
+      // A box with no room for its lines under it goes on whole with them.
+      if (pages.length > 1 && frameOn(pages[0]!, 'act-3').blockIds.length === 0) {
+        wholeMoves++;
+        // With its lines, it takes no room here.
+        if (frameOn(pages[0]!, 'lineas-3').collapsed) expect(frameOn(pages[0]!, 'act-3').rect.height).toBe(0);
+        expect(overlayOf(blocksOf(pages[1]!, frameOn(pages[1]!, 'act-3'))[0])).toContain('3 · Dibuja');
+      }
+    }
+    expect(wholeMoves).toBeGreaterThan(0);
+  });
+
   it('a box none of whose text fits on the page goes on whole: no tab and mark over an empty piece', () => {
     // A first box long enough to push the last one to the foot.
     let checked = 0;
@@ -335,6 +354,12 @@ describe('a story that jumps to a later page (#917)', () => {
     expect(warningsOf(doc, 'frameOverflow', 'continueTargetMissing')).toEqual([]);
     // The pieces are one box.
     expect(blocksOf(jumpPage, to)[0]!.containerId).toBe(blocksOf(first, from)[0]!.containerId);
+  });
+
+  it('the frame a story jumps to is not reported empty; another empty frame is', () => {
+    const strict: PageTemplate = { ...SALTO, frames: SALTO.frames!.map((f) => (f.name === 'vacio' ? { ...f, optional: false } : f)) };
+    const doc = build(book('p-salto'), [ARTICULO, OTRA, strict]);
+    expect(warningsOf(doc, 'slotEmpty').map((w) => (w as { frame: string }).frame)).toEqual(['vacio']);
   });
 
   it('marks say where the story goes on and where it comes from, with the printed page numbers', () => {

@@ -199,11 +199,12 @@ export function trailingFrames(template: Pick<ResolvedPageTemplate, 'frames' | '
   return out;
 }
 
-/** `template` with `names` taking no room: `'auto'` with no min/max and
+/** `template` with `names` taking no room: `'auto'` (`empty`: no height
+ *  at all, for a frame whose content goes on whole) with no min/max and
  *  out of their groups (#859, #912). A group's frames that stay start
  *  where its first frame did when that one leaves and they have no
  *  placement of their own. */
-export function collapseFrames(template: ResolvedPageTemplate, names: ReadonlySet<string>): ResolvedPageTemplate {
+export function collapseFrames(template: ResolvedPageTemplate, names: ReadonlySet<string>, empty: ReadonlySet<string> = new Set()): ResolvedPageTemplate {
   if (names.size === 0) return template;
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   /** A frame that stays and opens its group takes the placement of the
@@ -219,7 +220,9 @@ export function collapseFrames(template: ResolvedPageTemplate, names: ReadonlySe
   const frames = template.frames.map((f): ResolvedFrame => {
     if (inherit.has(f.name)) return { ...f, placement: inherit.get(f.name) };
     if (!names.has(f.name)) return f;
-    const out: ResolvedFrame = { ...f, height: 'auto', grow: 0 };
+    // A frame whose content goes on whole (#912) is laid with no height,
+    // so it keeps none of it.
+    const out: ResolvedFrame = { ...f, height: empty.has(f.name) ? { value: 0, unit: 'mm' } : 'auto', grow: 0 };
     delete out.minHeight;
     delete out.maxHeight;
     return out;

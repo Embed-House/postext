@@ -784,8 +784,13 @@ Recorded where the implementation settles a point the sections above leave open,
   `VDTFrame.collapsed`, and decoration anchored to it (directly or through other elements) is not
   drawn. On a template laid again, a group whose first frame collapses starts its remaining frames
   where that frame was placed (`collapseFrames`), so the rest of a box does not land on the
-  page's kicker. A frame none of whose content fits draws nothing: the whole box goes on (its tab
-  with it), never a tab and a mark over an empty piece.
+  page's kicker. A frame none of whose content fits draws nothing and takes no room (it is laid with
+  no height): the whole box goes on (its tab with it), never a tab and a mark over an empty piece.
+  The empty frames go with the rest only when there is a rest: a frame that holds all its content
+  once they leave keeps them after it, unless they then cannot keep their size under it, in which
+  case the whole box goes on with them. A frame that can go on and squeezes the frames after it in
+  its stack below their declared size (the stack reached the foot and its last frames were cut) is
+  treated by the ladder as content that does not fit (`squeezes`).
 - **Marks.** The frame cut for another page is laid in its style with `continuesMarkerEnabled` (the
   callout layouter's marker under a fragment that goes on): `overflow.mark` string, `false` (none),
   unset = the style's `continuesMarker`, resolved from `defaultTableContinuationStrings(locale)`
