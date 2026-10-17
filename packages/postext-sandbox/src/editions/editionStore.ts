@@ -8,12 +8,13 @@
  * The Sandbox holds one edition at a time. Another one is read the way
  * opening it would read it: its draft when the reader edited it, else the
  * bundle's text in that language. Its fonts are the book's (the editions
- * of a bundle share their families); its pictures are stored and decoded
- * for the side-by-side view.
+ * of a bundle share their families); a custom family only its own
+ * configuration declares is served for its layout (`declareEditionFonts`,
+ * #968); its pictures are stored and decoded for the side-by-side view.
  */
 
 import type { LayoutService } from '../worker/LayoutService';
-import { ensureConfigFontsLoaded } from '../controls/fontLoader';
+import { declareEditionFonts, ensureConfigFontsLoaded } from '../controls/fontLoader';
 import { ensureResourceImages } from '../controls/resourceImages';
 import { getBlob, putBlobsAt } from '../storage/blobStore';
 import { getPresetDraft, type PresetDraftSummary } from '../storage/presetDrafts';
@@ -136,6 +137,9 @@ export async function layOutLoadedEdition(
 ): Promise<EditionLayout> {
   const { source, blobs } = loaded;
   if (options.other) {
+    // The edition's own custom families, which the book on screen may not
+    // declare, are served as the book's are (#968).
+    declareEditionFonts(source.config.customFonts);
     await ensureConfigFontsLoaded(source.config, source.chapters.map((c) => c.markdown)).catch(() => undefined);
     await storeEditionPictures(source, blobs ?? []).catch(() => undefined);
   }

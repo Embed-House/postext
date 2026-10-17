@@ -36,6 +36,13 @@ export interface ProjectThumbnail {
  *  locale tag, and swap places with it when the reader switches. */
 export type ProjectEditionContent = ProjectContent;
 
+/** The title an edition has in a bundle (`localized.<lang>.name` and
+ *  `description`), kept beside the editions (#968). */
+export interface ProjectEditionTitle {
+  name: string;
+  description?: string;
+}
+
 export interface ProjectRecord extends ProjectContent {
   /** Record shape; legacy records (single `markdown`) are migrated on read. */
   version: typeof PROJECT_RECORD_VERSION;
@@ -68,6 +75,15 @@ export interface ProjectRecord extends ProjectContent {
    *  the checks and the side-by-side view lay an edition out again when it
    *  moves, not at every autosave. */
   editionsRev?: number;
+  /** The title of each edition, by locale tag, as the bundle names them
+   *  (#968): the project's name and description follow the edition on
+   *  screen, until the reader renames the project (`titleEdited`). Present
+   *  with `editions`, for the editions whose title is known. */
+  editionTitles?: Record<string, ProjectEditionTitle>;
+  /** The reader renamed the project, or changed its description: that
+   *  title is the project's in every edition, and a bundle written from it
+   *  gives its editions no title of their own. */
+  titleEdited?: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -114,8 +130,11 @@ export function withActiveEdition(record: ProjectRecord, locale: string): Projec
     resources: record.resources,
   };
   const nextEditions = record.locale !== undefined ? { ...rest, [record.locale]: aside } : rest;
+  // The title follows the edition on screen, unless the reader chose one.
+  const title = record.titleEdited ? undefined : editionTitleOf(record, key);
   const next: ProjectRecord = {
     ...record,
+    ...(title ? { name: title.name } : {}),
     chapters: target.chapters,
     activeChapterId: target.activeChapterId,
     config: target.config,
@@ -128,7 +147,36 @@ export function withActiveEdition(record: ProjectRecord, locale: string): Projec
   else delete next.canvasScope;
   if (target.start) next.start = target.start;
   else delete next.start;
+  if (title) {
+    if (title.description !== undefined) next.description = title.description;
+    else delete next.description;
+  }
   return next;
+}
+
+/** The changes renaming a project makes (#968): its name, its description
+ *  when one is given (empty clears it), and, on a book in several languages
+ *  whose title actually changed, `titleEdited`: the reader's title is then
+ *  the book's in every edition. */
+export function renamePatch(
+  existing: Pick<ProjectRecord, 'name' | 'description' | 'editions'>,
+  name: string,
+  description?: string,
+): Pick<ProjectRecord, 'name' | 'description'> & { titleEdited?: true } {
+  const patch: Pick<ProjectRecord, 'name' | 'description'> & { titleEdited?: true } = { name, description: existing.description };
+  if (description !== undefined) patch.description = description.trim() || undefined;
+  const changed = name !== existing.name || patch.description !== existing.description;
+  if (existing.editions && changed) patch.titleEdited = true;
+  return patch;
+}
+
+/** The title the bundle gave the edition `locale` (any case of its tag),
+ *  when it is known. */
+export function editionTitleOf(record: Pick<ProjectRecord, 'editionTitles'>, locale: string): ProjectEditionTitle | undefined {
+  const titles = record.editionTitles;
+  if (!titles) return undefined;
+  const key = Object.keys(titles).find((k) => sameTag(k, locale));
+  return key === undefined ? undefined : titles[key];
 }
 
 /** The content of an edition of a record: its own when `locale` is the

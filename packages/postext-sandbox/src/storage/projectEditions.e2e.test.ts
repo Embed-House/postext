@@ -15,9 +15,15 @@ import { bundleContentLocales } from '../presets/locale';
 import type { LoadedPreset } from '../presets';
 import { newChapter } from '../book/chapterOps';
 import type { Chapter } from '../book/types';
-import { contentOfLoaded, projectEditionFields } from './projectEditions';
+import { contentOfLoaded, editionTitlesOf, projectEditionFields } from './projectEditions';
 import { migrateProjectRecord, PROJECT_RECORD_VERSION } from './projectMigration';
-import { allEditionChapters, editionContentOf, toSummary, withActiveEdition, type ProjectRecord } from './projects';
+import { allEditionChapters, editionContentOf, editionTitleOf, renamePatch, toSummary, withActiveEdition, type ProjectRecord } from './projects';
+import { chapterLayoutFromDoc, createBookPlanner } from '../book/pagination';
+import { composeBookMemo } from '../book/compose';
+import { LAYOUTS_FILE, localeLayoutsFile, type BundleLayoutsFile } from '../presets/bundle';
+import type { ChapterLayout } from '../book/types';
+import type { PostextConfig, Resource } from 'postext';
+import type { PostextContent } from 'postext';
 
 class StubCtx {
   font = '';
@@ -169,5 +175,146 @@ describe('a project imported from a bundle in three languages (#903)', () => {
       'en:slotEmpty:0:1:ahorro',
       'es:slotUnknown:0:1:texto',
     ]);
+  }, 120_000);
+});
+
+// #968: each edition of an exported book has its own title and its own
+// pagination.
+describe('the title and the pagination of each edition (#968)', () => {
+  const NAMES = { es: 'Tres ediciones', en: 'Three editions', ca: 'Tres edicions' } as const;
+
+  /** An edition paginated the way the Sandbox keeps it: one layout record
+   *  per chapter, from the planner. */
+  async function paginate(chapters: Chapter[], config: PostextConfig, resources: Resource[]): Promise<Record<string, ChapterLayout>> {
+    const planner = createBookPlanner();
+    const layouts: Record<string, ChapterLayout> = {};
+    for (let round = 0; round < chapters.length * 6 + 4; round++) {
+      const plan = planner.plan(chapters, config, resources, layouts, undefined);
+      const id = plan.pendingChapterId;
+      if (id === null) break;
+      const chapterPlan = plan.byId[id]!;
+      const book = composeBookMemo(chapters, id);
+      const content: PostextContent = { markdown: book.markdown, metadata: book.metadata, resources, continuation: chapterPlan.continuation };
+      const doc = buildDocument(content, config);
+      const target = chapters.find((c) => c.id === id)!;
+      const layout = chapterLayoutFromDoc(doc, chapterPlan, { markdown: target.markdown, config, resources });
+      if (!layout) break;
+      layouts[id] = layout;
+    }
+    return layouts;
+  }
+
+  const readBlob = async () => PNG.buffer.slice(0) as ArrayBuffer;
+
+  it('writes the title of each edition and reads it back per edition', async () => {
+    const es = threeEditionsBook('es');
+    const built = await buildBundleFiles(
+      { id: 'tres', name: NAMES.es, locale: 'es' },
+      {
+        chapters: chaptersOf('es'),
+        config: es.config,
+        resources: es.resources,
+        localized: Object.fromEntries((['en', 'ca'] as const).map((l) => {
+          const book = threeEditionsBook(l);
+          return [l, { chapters: chaptersOf(l), config: book.config, resources: book.resources, name: NAMES[l], description: `About ${l}` }];
+        })),
+      },
+      { readBlob, readFont: async () => null },
+    );
+    const opened = openBundleZip(zipBundle(built.files));
+    const titles = editionTitlesOf(opened.manifest, ['es', 'en', 'ca'])!;
+    expect(titles.es).toEqual({ name: NAMES.es });
+    expect(titles.en).toEqual({ name: NAMES.en, description: 'About en' });
+    expect(titles.ca).toEqual({ name: NAMES.ca, description: 'About ca' });
+    expect(editionTitlesOf({ not: 'a manifest' }, ['es'])).toBeUndefined();
+  });
+
+  it('follows the edition on screen until the reader renames the project', () => {
+    const titled: ProjectRecord = {
+      ...record,
+      name: NAMES.es,
+      editionTitles: { es: { name: NAMES.es }, en: { name: NAMES.en, description: 'About en' }, ca: { name: NAMES.ca } },
+    };
+    const en = withActiveEdition(titled, 'en');
+    expect(en.name).toBe(NAMES.en);
+    expect(en.description).toBe('About en');
+    const ca = withActiveEdition(en, 'ca');
+    expect(ca.name).toBe(NAMES.ca);
+    expect(ca.description).toBeUndefined();
+    expect(toSummary(ca).name).toBe(NAMES.ca);
+    expect(withActiveEdition(ca, 'es').name).toBe(NAMES.es);
+    // The reader's name wins in every edition.
+    const renamed: ProjectRecord = { ...titled, name: 'Mi libro', titleEdited: true };
+    for (const locale of ['en', 'ca', 'es']) expect(withActiveEdition(renamed, locale).name).toBe('Mi libro');
+    expect(editionTitleOf(titled, 'EN')?.name).toBe(NAMES.en);
+    // A project that never had titles keeps its name across a switch.
+    expect(withActiveEdition(record, 'en').name).toBe(record.name);
+    // Stored and read back.
+    const back = migrateProjectRecord(JSON.parse(JSON.stringify(renamed)) as unknown, { ids: () => 'x', untitled: (n) => `Chapter ${n}` })!;
+    expect(back.titleEdited).toBe(true);
+    expect(back.editionTitles?.en).toEqual({ name: NAMES.en, description: 'About en' });
+  });
+
+  it('marks the title as the reader\'s only when a book in several languages changes it', () => {
+    const titled = { name: NAMES.es, description: 'About es', editions: record.editions };
+    expect(renamePatch(titled, 'Mi libro')).toEqual({ name: 'Mi libro', description: 'About es', titleEdited: true });
+    expect(renamePatch(titled, NAMES.es, 'Otra descripción')).toMatchObject({ description: 'Otra descripción', titleEdited: true });
+    expect(renamePatch(titled, NAMES.es, '  ')).toMatchObject({ description: undefined, titleEdited: true });
+    // The same title again changes nothing.
+    expect(renamePatch(titled, NAMES.es, 'About es')).toEqual({ name: NAMES.es, description: 'About es' });
+    expect(renamePatch(titled, NAMES.es)).not.toHaveProperty('titleEdited');
+    // A book in one language has nothing to follow.
+    expect(renamePatch({ name: 'A', description: undefined }, 'B')).toEqual({ name: 'B', description: undefined });
+  });
+
+  it('carries one pagination per edition, each valid for its own configuration', async () => {
+    // The editions as the Sandbox holds them: read from a bundle.
+    const own = editionContentOf(record, 'es')!;
+    const esLayouts = await paginate(own.chapters, own.config, own.resources);
+    const localized: NonNullable<Parameters<typeof buildBundleFiles>[1]['localized']> = {};
+    for (const l of ['en', 'ca'] as const) {
+      const e = editionContentOf(record, l)!;
+      localized[l] = { chapters: e.chapters, config: e.config, resources: e.resources, layouts: await paginate(e.chapters, e.config, e.resources) };
+    }
+    const built = await buildBundleFiles(
+      { id: 'tres', name: NAMES.es, locale: 'es' },
+      { chapters: own.chapters, config: own.config, resources: own.resources, layouts: esLayouts, localized },
+      { readBlob, readFont: async () => null },
+    );
+    expect(Object.keys(built.files).filter((f) => f.startsWith('layouts.')).sort()).toEqual([LAYOUTS_FILE, localeLayoutsFile('ca'), localeLayoutsFile('en')].sort());
+    const file = (name: string) => JSON.parse(new TextDecoder().decode(built.files[name]!)) as BundleLayoutsFile;
+    // Each file is keyed by the chapter files of its edition.
+    expect(Object.keys(file(LAYOUTS_FILE).chapters)).toEqual(Object.keys(file(LAYOUTS_FILE).chapters).filter((p) => p.includes('/es/')));
+    expect(Object.keys(file(localeLayoutsFile('ca')).chapters).every((p) => p.includes('/ca/'))).toBe(true);
+    expect(file(localeLayoutsFile('en')).configKey).not.toBe(file(localeLayoutsFile('ca')).configKey);
+
+    // Read back, every edition opens paginated.
+    const opened = openBundleZip(zipBundle(built.files));
+    for (const locale of ['es', 'en', 'ca']) {
+      const loaded = await parseBundle(opened.manifest, opened.readFile, {
+        locale,
+        summary: { id: 'tres', name: 'tres', source: 'private', available: true },
+        ids: { blob: (f) => `b:${f}`, font: (f) => `f:${f}` },
+        chapterIds: () => `r${locale}${++counter}`,
+        untitledChapter: (n) => `Chapter ${n}`,
+      });
+      expect(loaded.layouts, locale).toBeDefined();
+      expect(Object.keys(loaded.layouts!), locale).toHaveLength(loaded.chapters.length);
+    }
+  }, 120_000);
+
+  it('leaves out the pagination of an edition edited since', async () => {
+    const book = threeEditionsBook('ca');
+    const chapters = chaptersOf('ca');
+    const layouts = await paginate(chapters, book.config, book.resources);
+    const edited = chapters.map((c, i) => (i === 0 ? { ...c, markdown: `${c.markdown}\nMore.` } : c));
+    const built = await buildBundleFiles(
+      { id: 'tres', name: NAMES.es, locale: 'es' },
+      { chapters: chaptersOf('es'), config: threeEditionsBook('es').config, resources: threeEditionsBook('es').resources, localized: { ca: { chapters: edited, config: book.config, resources: book.resources, layouts } } },
+      { readBlob, readFont: async () => null },
+    );
+    const ca = JSON.parse(new TextDecoder().decode(built.files[localeLayoutsFile('ca')]!)) as BundleLayoutsFile;
+    // The first chapter changed, so its record is not carried; the second may be.
+    expect(Object.keys(ca.chapters).some((p) => p.includes('01-'))).toBe(false);
   }, 120_000);
 });

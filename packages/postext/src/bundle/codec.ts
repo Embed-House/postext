@@ -448,6 +448,11 @@ export interface BundlePlan {
   /** Chapter file path → text, in book order (index-aligned with the
    *  content's chapters). */
   chapterFiles: { path: string; markdown: string }[];
+  /** The paths of the chapters a locale has of its own (`localized[…]` with
+   *  `chapters`), in book order, by locale: what a host that writes a
+   *  pagination file per language (`layouts.<locale>.json`) keys it by.
+   *  Absent for a locale that reads the primary chapters. */
+  localeChapterFiles?: Record<string, string[]>;
   warnings: string[];
 }
 
@@ -655,11 +660,15 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
   };
   const perLocale = localized !== undefined && Object.values(localized).some((l) => l.chapters && l.chapters.length > 0);
   let chapterSpecs: BundleManifestV2['chapters'];
+  const localeChapterFiles: Record<string, string[]> = {};
   if (localized && perLocale && meta.locale) {
     const primary = writeChapters(content.chapters, localeFolder(meta.locale));
     const map: Record<string, BundleChapterSpec[]> = { [meta.locale]: primary };
     for (const [locale, entry] of Object.entries(localized)) {
-      map[locale] = entry.chapters && entry.chapters.length > 0 ? writeChapters(entry.chapters, localeFolder(locale)) : primary;
+      if (entry.chapters && entry.chapters.length > 0) {
+        map[locale] = writeChapters(entry.chapters, localeFolder(locale));
+        localeChapterFiles[locale] = map[locale].map((c) => c.file);
+      } else map[locale] = primary;
     }
     chapterSpecs = map;
   } else {
@@ -749,7 +758,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     ...(fonts.length > 0 ? { fonts } : {}),
     ...(localized ? { localized: localizedSpecs } : {}),
   };
-  return { manifest, files, chapterFiles, warnings };
+  return { manifest, files, chapterFiles, ...(Object.keys(localeChapterFiles).length > 0 ? { localeChapterFiles } : {}), warnings };
 }
 
 /** Resource fields a locale may word differently. */

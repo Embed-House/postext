@@ -6,7 +6,7 @@ import type { PostextConfig, Resource } from 'postext';
 import { CONFIG_VERSION, migrateConfig as migrateEngineConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats , bundleStart } from 'postext/bundle';
 import { deriveChapterTitle, newChapter } from '../book/chapterOps';
 import type { BookContent, Chapter } from '../book/types';
-import type { ProjectEditionContent, ProjectThumbnail } from './projects';
+import type { ProjectEditionContent, ProjectEditionTitle, ProjectThumbnail } from './projects';
 
 /** Record shape: the engine's `CONFIG_VERSION` (`postext/bundle`) itself,
  *  so records, the working copy and `postext-config.json` exports are
@@ -137,6 +137,18 @@ export function normalizeBookContent(raw: unknown, deps: MigrationDeps): BookCon
  *  `pinLegacyOpenerHeadFloats` in `postext/bundle`). */
 export { pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats };
 
+/** The titles of a record's editions (#968): a name for each tag, with a
+ *  description when it has one. */
+function readEditionTitles(raw: Record<string, unknown>): Record<string, ProjectEditionTitle> | undefined {
+  if (!isRecord(raw.editionTitles)) return undefined;
+  const out: Record<string, ProjectEditionTitle> = {};
+  for (const [locale, value] of Object.entries(raw.editionTitles)) {
+    if (!isRecord(value) || typeof value.name !== 'string' || !value.name) continue;
+    out[locale] = { name: value.name, ...(typeof value.description === 'string' ? { description: value.description } : {}) };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 /** The other editions of a project imported from a bundle in several
  *  languages (#903), each read as a record's own content is: a book slice
  *  with its configuration (migrated) and resources. Editions that cannot
@@ -169,6 +181,8 @@ export interface MigratedProjectRecord extends BookContent {
   editions?: Record<string, ProjectEditionContent>;
   editionLocales?: string[];
   editionsRev?: number;
+  editionTitles?: Record<string, ProjectEditionTitle>;
+  titleEdited?: boolean;
   createdAt: number;
   updatedAt: number;
   config: PostextConfig;
@@ -223,6 +237,8 @@ export function migrateProjectRecord(raw: unknown, deps: MigrationDeps): Migrate
     ...(isThumbnail(raw.thumbnail) ? { thumbnail: raw.thumbnail } : {}),
     ...(typeof raw.origin === 'string' && raw.origin ? { origin: raw.origin } : {}),
     ...(editions && listed ? { editions, editionLocales: listed, ...(typeof raw.editionsRev === 'number' ? { editionsRev: raw.editionsRev } : {}) } : {}),
+    ...(editions && readEditionTitles(raw) ? { editionTitles: readEditionTitles(raw)! } : {}),
+    ...(editions && raw.titleEdited === true ? { titleEdited: true } : {}),
     createdAt: typeof raw.createdAt === 'number' ? raw.createdAt : now,
     updatedAt: typeof raw.updatedAt === 'number' ? raw.updatedAt : now,
     config: isRecord(raw.config) ? migrateConfig(raw.config as PostextConfig, raw.version, book.chapters.map((c) => c.markdown)) : {},
