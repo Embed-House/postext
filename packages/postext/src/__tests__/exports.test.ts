@@ -659,6 +659,7 @@ describe("package exports", () => {
       "pictureToBody",
       "resolveLabelLook",
       "undrawnLabels",
+      "unmirrorLabelLayout",
       "comicFramePaintOrder",
       "comicPaintsUnderText",
       "composedFrameBlockIds",

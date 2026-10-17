@@ -39,7 +39,7 @@ import type {
   VDTPage,
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
-import { altWithLabels, figureLabelMatrix, undrawnLabels, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
+import { altWithLabels, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
 import { roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
@@ -1090,7 +1090,17 @@ function paintFigureLabels(
   if (drawn.length === 0) return;
   const group = structure ? structure.figureLabelsElem(block) : undefined;
   for (const label of drawn) {
-    const layout = label.layout!;
+    let layout = label.layout!;
+    // A vertical label on a mirrored page (#955) is painted from its
+    // unmirrored layout, in the frame reflected back about the body: the
+    // page's mirror then puts it where its anchor says, its cells running
+    // down the column and standing upright.
+    const unmirror = layout.mirrored === true && ctx.mirror === true && !rb.rotation;
+    if (unmirror) {
+      layout = unmirrorLabelLayout(layout, rb.bodyRect.width);
+      pushFrame(ctx, sheetMatrixToPdf([-1, 0, 0, 1, 2 * bx + rb.bodyRect.width, 0], ctx.scale, ctx.pageHeightPt));
+      ctx.mirror = false;
+    }
     const m = figureLabelMatrix(layout, bx, by);
     pushFrame(ctx, sheetMatrixToPdf(m, ctx.scale, ctx.pageHeightPt));
     // A vertical label (#902): the matrix turned its frame a quarter turn,
@@ -1124,6 +1134,10 @@ function paintFigureLabels(
       for (const line of layout.lines) paintLine(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, refTarget, color, elem);
     } finally {
       popFrame(ctx);
+      if (unmirror) {
+        popFrame(ctx);
+        ctx.mirror = true;
+      }
       if (outerVertical) ctx.vertical = outerVertical;
       else delete ctx.vertical;
     }

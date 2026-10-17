@@ -54,7 +54,7 @@ import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
-import { figureLabelMatrix, undrawnLabels } from './composed/labels';
+import { figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
 import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
@@ -2783,8 +2783,13 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
   const n2 = (v: number): string => String(+v.toFixed(4));
   const parts: string[] = [];
   for (const label of rb.labels ?? []) {
-    const layout = label.layout;
+    let layout = label.layout;
     if (!layout) continue;
+    // A vertical label on a mirrored page (#955): set from its unmirrored
+    // layout in a wrapper that reflects the flow's mirror back about the
+    // body, so its runs and cells read as they do on any page.
+    const unmirrored = layout.mirrored === true && !rb.rotation;
+    if (unmirrored) layout = unmirrorLabelLayout(layout, rb.bodyRect.width);
     const m = figureLabelMatrix(layout, bx, by);
     const fonts: ResourceLineFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
     const halo = layout.halo && layout.halo.widthPx > 0
@@ -2813,10 +2818,12 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
     }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
     const id = label.id ? ` data-label="${esc(label.id)}"` : '';
-    parts.push(
+    const box =
       `<div class="pt-figure-label"${id}${dir} style="position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;` +
-      `transform:matrix(${m.map(n2).join(',')});${halo}">` + inner.join('') + '</div>',
-    );
+      `transform:matrix(${m.map(n2).join(',')});${halo}">` + inner.join('') + '</div>';
+    parts.push(unmirrored
+      ? `<div class="pt-unmirrored" style="position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;transform:matrix(-1,0,0,1,${n2(2 * bx + rb.bodyRect.width)},0);">${box}</div>`
+      : box);
   }
   return parts.join('');
 }
@@ -3547,7 +3554,11 @@ function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, opti
  *  stretched dash, a turned design picture) keeps it and stays mirrored. */
 const MIRRORED_FLOW_STYLE =
   '<style>.pt-flow-mirrored [style*="white-space:pre"],.pt-flow-mirrored img,' +
-  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}</style>';
+  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
+  // A box reflected back about its body (a vertical label, #955): what is
+  // in it is not mirrored, so nothing is turned back.
+  '.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"],.pt-flow-mirrored .pt-unmirrored img,' +
+  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid){transform:none;}</style>';
 
 /** The character grid (稿纸) as one SVG path over the page, under the
  *  text (see `cjkGridCells`). */

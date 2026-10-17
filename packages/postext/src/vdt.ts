@@ -1617,6 +1617,14 @@ export interface VDTFigureLabelLayout {
    *  turned a quarter turn clockwise (`rotate` includes it), and painted
    *  with the vertical glyph painter, characters upright in their cells. */
   vertical?: VDTVerticalText;
+  /** Set on the layout of a vertical label in the flow of a mirrored
+   *  (right-to-left) page (#955): its geometry is the reflection of the
+   *  label's about the body's vertical axis, as every label's is there, but
+   *  its lines are kept as they were set (cells in text order, no run
+   *  order turned), so a painter reflects the frame back about the body,
+   *  paints the layout as {@link unmirrorLabelLayout} gives it back and
+   *  the label reads down its columns as on any page. */
+  mirrored?: true;
 }
 
 /**

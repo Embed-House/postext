@@ -635,6 +635,7 @@ export {
   pictureToBody,
   resolveLabelLook,
   undrawnLabels,
+  unmirrorLabelLayout,
   type LabelLook,
   type LabelMatrix,
 } from './composed/labels';

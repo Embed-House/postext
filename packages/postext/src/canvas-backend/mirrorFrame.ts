@@ -107,6 +107,34 @@ function sourceWidth(image: CanvasImageSource): number {
 }
 
 /**
+ * Paint, with `paint`, content that must land on the sheet as a
+ * left-to-right page would put it, inside a mirrored frame (#955): the
+ * frame is reflected back about the vertical axis of the box
+ * `[left, left + width]` (so the box keeps its place on the sheet while
+ * what stands in it reads from its other side) and the text and pictures
+ * are no longer turned back, since nothing is mirrored any more. A vertical
+ * label does it: its cells cannot be turned back run by run, as the line of
+ * a horizontal label's. Outside a mirrored frame it just paints.
+ */
+export function paintUnmirrored(ctx: CanvasRenderingContext2D, left: number, width: number, paint: () => void): void {
+  if (!mirroredPaintActive()) {
+    paint();
+    return;
+  }
+  saveContext(ctx);
+  ctx.transform(-1, 0, 0, 1, 2 * left + width, 0);
+  active--;
+  whole++;
+  try {
+    paint();
+  } finally {
+    whole--;
+    active++;
+    restoreContext(ctx);
+  }
+}
+
+/**
  * Begin painting the flow of a page mirrored about `originX` (its
  * `flow.mirror.originX`): saves the context, applies the frame and turns
  * text runs and images back (see the module comment). Returns the
