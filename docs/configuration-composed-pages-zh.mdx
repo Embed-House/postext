@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框所锚定的那条边为止剩下的空间）。未设置时，框读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。文本框需要行宽，所以<code>'auto'</code>宽度只对只放一张图片的框有意义（图片在框高度下的宽度）。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
+      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框所锚定的那条边为止剩下的空间）。未设置时，框读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。自 postext 1.42 起，宽度为<code>'auto'</code>时，框的宽度等于最长一行加内边距，不超过锚点留出的空间和<code>maxWidth</code>（放不下的文字在此处换行），也不小于<code>minWidth</code>。文字按左对齐测量，所以居中的标题宽度就是其文字的宽度。框从锚点所指的那条边开始，锚定在它上面的框随之移动。适合需要在每种语言中都贴合标题的标签或框。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>

@@ -96,9 +96,8 @@ Position, in order of precedence: `grid` cell, then `placement`. `placement.anch
 whole `area`.
 
 Size: a `Dimension` is fixed. `'auto'` height (the default) is the content's height, clamped to
-`minHeight`/`maxHeight`; `'auto'` width is not allowed for text frames (a text frame needs a
-measure) and means "the picture's width at the frame's height" for a frame holding a single
-resource. `'fill'` takes what is left up to the anchor's edge (as in design slots).
+`minHeight`/`maxHeight`; `'auto'` width (#982, §5.18) is the width of the content's longest line plus
+the padding, up to the room the anchor leaves and `maxWidth`. `'fill'` takes what is left up to the anchor's edge (as in design slots).
 
 `takes` exists so the page title of a textbook topic is just `# Title` at the top of the page
 fence: no slot attribute needed.
@@ -1168,6 +1167,15 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   first and a variant after the chain, as `remove: true` does for frames and groups. A removal naming nothing is
   silent (no warning kind); a new element of the same `id` may follow it. The Sandbox lists the inherited elements
   with a switch each and writes the removal in the scope being edited.
+- **`width: 'auto'` on a frame (#982).** `placeBox` takes a `naturalWidth(room)` next to `natural(width)`; an `'auto'`
+  width asks it (the grid cell's width, the area's, or the room from the anchor to the area's edge, less
+  `maxWidth`) and clamps to `minWidth`/`maxWidth`. `naturalWidthOf` (`composedLayout.ts`) lays the frame's story
+  out flush left at eight times the room, so that nothing wraps, and takes the right edge of the longest line
+  (a picture by its box) plus what the box keeps to its right (`callout.innerRect`: padding, a right stripe), a
+  quarter pixel over, capped at the room: text that does not fit wraps at the cap. The box starts at the edge its
+  anchor names (`pinX`), so frames anchored to it follow, and a group member is placed the same way. Not for a
+  frame in its own writing mode, nor for a frame with nothing to lay (width 0 up to `minWidth`). The Sandbox
+  already offered *Its content* for width.
 
 ## 6. Source map contract
 

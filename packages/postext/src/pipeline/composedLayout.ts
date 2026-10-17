@@ -1153,6 +1153,44 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         return h;
       };
     };
+    /** The width an `'auto'`-width frame (#982) needs when it may take up
+     *  to `room`: the right edge of its longest line (a picture counting
+     *  by its own box), and what the box keeps to the right of its text
+     *  (padding, a stripe). The text is set flush left whatever its
+     *  alignment, so a centred title is as wide as its words, and not set
+     *  to a measure it would fill. Undefined for a frame of fixed or
+     *  `'fill'` width, or one in its own writing mode. */
+    const naturalWidthOf = (p: Prep): ((room: number) => number) | undefined => {
+      if (p.frame.width !== 'auto' || ownMode(p.frame)) return undefined;
+      const memo = new Map<number, number>();
+      return (room: number): number => {
+        if (!p.holds) return 0;
+        const key = Math.round(room * 1000);
+        const known = memo.get(key);
+        if (known !== undefined) return known;
+        const s = textScale(p.frame);
+        const style = styleOf(p.frame);
+        const flush = { ...style, body: { ...style.body, textAlign: 'left' as const } };
+        const L = makeCalloutLayouter(pass, p.st!.story.startIdx, p.st!.story.plan, flush);
+        // Set at a measure far wider than the room, so that nothing wraps:
+        // the frame is then as wide as its words, and the room caps it
+        // (text that does not fit wraps at the room, as in a shrink-wrapped
+        // box).
+        const r = L.layoutRange(p.st!.cut, L.end, (room * 8) / s, p.blockId, p.continuation, input.mirrored);
+        let right = 0;
+        for (const b of r.children) {
+          if (b.type === 'callout' || b.hidden) continue;
+          if (b.type === 'resource' || b.lines.length === 0) right = Math.max(right, b.bbox.x + b.bbox.width);
+          for (const l of b.lines) if (l.text.length > 0) right = Math.max(right, l.bbox.x + l.bbox.width);
+        }
+        const inner = r.frame.callout?.innerRect;
+        const keep = inner ? Math.max(0, r.width - (inner.x + inner.width)) : 0;
+        // A quarter of a pixel over: a line is never set to its exact width.
+        const w = Math.min(room, (right + keep + 0.25) * s);
+        memo.set(key, w);
+        return w;
+      };
+    };
     /** The height a frame set in its own writing mode (#944) needs at
      *  `width`: its lines run down the box, so the least height whose
      *  lines, following each other across, fit `width`; the area's height
@@ -1186,8 +1224,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
      *  off a spread's spine band, #861), its `'auto'` height measured at the
      *  width it is left with. Declared and final boxes alike: the band is
      *  the template's, not a reflow. */
-    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number): Rect => {
-      const r = placeBox(placeable, template, ctx, refs, nat);
+    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number, natW?: (room: number) => number): Rect => {
+      const r = placeBox(placeable, template, ctx, refs, nat, natW);
       if (!input.fitBox) return r;
       const keep = (placed: Rect): Rect => {
         const kept = input.fitBox!(frame, placed);
@@ -1197,7 +1235,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       };
       const first = keep(r);
       if (Math.abs(first.width - r.width) < 0.01) return first;
-      return keep(placeBox(placeable, template, ctx, refs, () => nat(first.width)));
+      return keep(placeBox(placeable, template, ctx, refs, () => nat(first.width), natW));
     };
     /** A frame's height as its template declares it: its `minHeight` where
      *  the height follows the content, else the content's (`natural`). */
@@ -1211,15 +1249,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const frame = p.frame;
       const placeable = framePlaceable(frame);
       const natural = naturalOf(p);
+      const natW = naturalWidthOf(p);
       const at = (refs: (n: string) => Rect | undefined) => {
-        const r0 = placeFitted(frame, placeable, input, refs, natural);
+        const r0 = placeFitted(frame, placeable, input, refs, natural, natW);
         if (!p.holds || !exclusionsFor(frame, r0, true)) return { rect: r0, natural };
         const round = naturalOf(p, r0);
-        return { rect: placeFitted(frame, placeable, input, refs, round), natural: round };
+        return { rect: placeFitted(frame, placeable, input, refs, round, natW), natural: round };
       };
       const decl = frame.pin ? at(declaredRefOf) : undefined;
       const fin = decl ?? at(refOf);
-      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural));
+      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural), natW);
       const rect = frame.pin ? declRect : fin.rect;
       declared.set(frame.name, declRect);
       rects.set(frame.name, rect);
@@ -1236,6 +1275,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const mmPx = dpi / MM_PER_IN;
       const yieldAll = fit.yieldAll.has(group.name);
       const preps = members.map(prepare);
+      const natWs = preps.map(naturalWidthOf);
       const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect; items: GroupItem[] } => {
         const refs = mode === 'final' ? refOf : declaredRefOf;
         const ownBox = own ? placeBox(own, template, input, refs, () => 0) : undefined;
@@ -1248,7 +1288,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const placeable = framePlaceable(f);
           // On a spread the member's own box keeps off the spine band, and
           // the negotiation starts from it (#861).
-          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural));
+          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural), natWs[k]);
           ownRects.set(f.name, box);
           const auto = f.height === 'auto' && !(f.grid && !placeable.heightSet);
           const fill = f.height === 'fill';

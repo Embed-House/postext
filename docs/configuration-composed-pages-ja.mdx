@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（枠を固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。テキストの枠には行長が要るので、幅の<code>'auto'</code>が意味を持つのは画像を1枚だけ入れる枠です（枠の高さに合わせたときの画像の幅になります）。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
+      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（枠を固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。postext 1.42 から、幅を<code>'auto'</code>にすると、枠の幅は最も長い行にパディングを足した幅になります。アンカーが空けている幅と<code>maxWidth</code>を超えず（収まらない文は、そこで折り返します）、<code>minWidth</code>を下回りません。文字は左揃えで測るので、中央揃えの見出しでも幅は文字の分だけです。枠はアンカーが指す辺から始まり、その枠にアンカーした枠は一緒に動きます。どの言語でも見出しに合わせたいタブや囲みに使います。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>

@@ -167,6 +167,10 @@ export function placeBox(
   ctx: FrameGeometryContext,
   resolveRef: (name: string) => Rect | undefined,
   natural: (width: number) => number,
+  /** For an `'auto'` width (#982): the width the content needs when it may
+   *  take up to `room` px, as wide as its longest line. Left out, an
+   *  `'auto'` width reads as `'fill'`. */
+  naturalWidth?: (room: number) => number,
 ): Rect {
   const { area } = ctx.areas;
   const minW = px(item.minWidth, ctx);
@@ -175,7 +179,8 @@ export function placeBox(
   const maxH = px(item.maxHeight, ctx);
   if (item.grid && template.grid) {
     const cell = gridCellRect(template, item.grid, area, ctx);
-    const width = clampSize(fixedSize(item.width, area.width, ctx) ?? cell.width, minW, maxW);
+    const fitted = item.width === 'auto' && naturalWidth ? Math.min(naturalWidth(cell.width), cell.width) : undefined;
+    const width = clampSize(fixedSize(item.width, area.width, ctx) ?? fitted ?? cell.width, minW, maxW);
     let height = cell.height;
     if (item.heightSet) {
       const fixed = fixedSize(item.height, area.height, ctx);
@@ -186,7 +191,8 @@ export function placeBox(
   if (!item.placement) {
     // The area's top-left, as wide as the area; the height as the frame's
     // rule says (`'auto'`, the default, never past the area's foot).
-    const width = clampSize(fixedSize(item.width, area.width, ctx) ?? area.width, minW, maxW);
+    const fitted = item.width === 'auto' && naturalWidth ? Math.min(naturalWidth(maxW !== undefined ? Math.min(area.width, maxW) : area.width), area.width) : undefined;
+    const width = clampSize(fixedSize(item.width, area.width, ctx) ?? fitted ?? area.width, minW, maxW);
     const fixed = fixedSize(item.height, area.height, ctx);
     const height = fixed ?? (item.height === 'fill' ? area.height : Math.min(natural(width), area.height));
     return { x: area.x, y: area.y, width, height: clampSize(height, minH, maxH) };
@@ -204,11 +210,11 @@ export function placeBox(
   const oy = px(placement.offset?.y, ctx) ?? 0;
   const ax = a.x + ox;
   const ay = a.y + oy;
-  const width = clampSize(
-    fixedSize(item.width, area.width, ctx) ?? fillRoom(a.pinX, ax, bounds.x, bounds.x + bounds.width),
-    minW,
-    maxW,
-  );
+  const roomX = fillRoom(a.pinX, ax, bounds.x, bounds.x + bounds.width);
+  // An `'auto'` width (#982) is the content's, up to the room the anchor
+  // leaves (and `maxWidth`); the box then starts at its anchor's edge.
+  const fitted = item.width === 'auto' && naturalWidth ? Math.min(naturalWidth(maxW !== undefined ? Math.min(roomX, maxW) : roomX), roomX) : undefined;
+  const width = clampSize(fixedSize(item.width, area.width, ctx) ?? fitted ?? roomX, minW, maxW);
   const fixedH = fixedSize(item.height, area.height, ctx);
   const room = fillRoom(a.pinY, ay, bounds.y, bounds.y + bounds.height);
   // An `'auto'` height never runs past the edge the frame grows towards:
