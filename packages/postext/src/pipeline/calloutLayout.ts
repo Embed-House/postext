@@ -75,6 +75,7 @@ import { raggedLooseLines } from './raggedLines';
 import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
 import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
 import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock';
+import { measureBlockMemo, type MeasureMemo } from './measureMemo';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { headingIsHidden, headingStyleOf } from './headingStyles';
 import { directDesignTextBlock } from '../design/bidiText';
@@ -333,6 +334,10 @@ export interface CalloutLayoutInput {
    *  relative to its box, or undefined to leave it out. Without it strips
    *  are left out, as other directives are. */
   stripBlock?: (raw: ContentBlock, blockIdx: number, width: number) => VDTBlock | undefined;
+  /** The measurements of the layout this box is part of (a composed
+   *  page's, #953): a child measured at a width already measured is
+   *  not measured again. */
+  measureMemo?: MeasureMemo;
   /** A frame of a composed page (#855): the block's exact height (its tab
    *  included). The box is drawn this tall; content shorter than it sits
    *  as `verticalAlign` says, content taller runs past the box's foot
@@ -1059,7 +1064,9 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       : undefined;
     let measuredBlock = acrossGroup
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
-      ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
+      ?? (input.measureMemo
+        ? measureBlockMemo(input.measureMemo, ctx, style, derivedCtx, raw, blockIdx, width, styleOverride)
+        : measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride }));
     if (!measuredBlock) return undefined;
     // A picture the reflow ladder scales (#858): set again at that share of
     // its width.
@@ -1380,6 +1387,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       mirrored: input.mirrored,
       nestPath: [...(nestPath ?? []), open.containerId],
       ...(input.headingDesign ? { headingDesign: input.headingDesign } : {}),
+      ...(input.measureMemo ? { measureMemo: input.measureMemo } : {}),
     });
     // Spacing above: as a paragraph's (margin collapsing, none at the top
     // of the box beyond the title gap).

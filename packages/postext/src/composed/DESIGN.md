@@ -879,6 +879,17 @@ Recorded where the implementation settles a point the sections above leave open,
   `FrameLayoutPass` whose `measureCtxFor` reads the first story's index), then runs
   `layoutComposedPage` with its ladder. Proposed only when no frame overflows, every story is laid
   and nothing continues; never on a page continuation added.
+- **Trial passes and the measurement memo (#953).** `trialPass` (`composedLayout.ts`) builds the
+  pass a trial lays: appended story blocks copy the page's (`originOf`), and everything keyed by
+  content index follows the copy: `paragraphContainers.byBlock` (`:::paragraphs` groups), heading
+  prefixes and numbers, list metrics, the `contentBlocks` the drop cap and indent rules read, comic
+  strips and heading designs; each story's box takes the measure context of the story it replaces
+  and the trial keeps its own `dropCapNotes` / `joiningLetterSpacing`. `layoutComposedPage` gives
+  every run a `MeasureMemo` (`pipeline/measureMemo.ts`) on its pass: `layoutCallout` asks it before
+  `measureContentBlock` for a child at a width (key: context, style `body`/`lists`, block, width,
+  paragraph-group style, writing mode and language state), replays the drop cap note and the
+  joining-script mark of the first measure, and never keeps a figure or table. Dropped with the
+  run, since `leftFlow` and the numbers are fixed only for it.
 - **Box styles based on another (#905).** `CalloutStyleConfig.extends` (`defaults/calloutStyles.ts`:
   `inheritCalloutStyles` before resolving, objects merged key by key, colours and lengths whole,
   `id`/`name` never; `calloutStyleChain`; warnings `calloutStyleExtendsUnknown` /

@@ -13,6 +13,7 @@ import type { ResolvedCalloutStyleConfig } from '../types';
 import type { ResolvedConfig, VDTBlock } from '../vdt';
 import type { BlockMeasureContext } from './measureContentBlock';
 import type { ParagraphContainerPlan } from './paragraphContainers';
+import type { MeasureMemo } from './measureMemo';
 import { isMarkerBlock } from './buildHelpers';
 import {
   isDesignedBoxHeading,
@@ -56,6 +57,9 @@ export interface FrameLayoutPass {
   /** The room a heading's own design takes in a box (#906; see
    *  `CalloutLayoutInput.headingDesign`). */
   headingDesign?: BoxHeadingDesign;
+  /** The measurements of one layout of a composed page (#953), dropped
+   *  with it. */
+  measureMemo?: MeasureMemo;
 }
 
 /** A position inside a box's children where a fragment starts or ends:
@@ -179,6 +183,7 @@ export const makeCalloutLayouter = (
       mirrored,
       stripBlock: pass.stripBlock,
       ...(pass.headingDesign ? { headingDesign: pass.headingDesign } : {}),
+      ...(pass.measureMemo ? { measureMemo: pass.measureMemo } : {}),
       ...frame,
     });
   };

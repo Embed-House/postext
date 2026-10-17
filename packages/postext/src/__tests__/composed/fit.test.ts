@@ -279,6 +279,87 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
     expect(overflowsOf(applied).length).toBeGreaterThan(0);
   });
 
+  it('the useTemplate trial sets a merged story\'s paragraph groups as the build does (#953)', () => {
+    // A template whose flow frame takes every slot of the page: the
+    // `:::paragraphs` group in `ahorro` goes to `texto` after the text
+    // there. Set in the group's style (30 pt) the page overflows; set in
+    // the body style it fits, which is what the trial used to measure.
+    const roomy: PageTemplate = {
+      id: 'tema-amplio',
+      frames: [
+        { name: 'titulo', takes: 'h1' },
+        { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' } } },
+        { name: 'dinero', height: 'auto', placement: { anchor: { to: '#texto', edge: 'below' } } },
+      ],
+    };
+    const group = `:::paragraphs{style="gran"}\n${'Palabras de relleno que ocupan sitio. '.repeat(50)}\n\n${'Otro párrafo de relleno que ocupa sitio. '.repeat(40)}\n:::\n\n`;
+    const run = (fontSize: number) => {
+      const f = standIn({
+        frames: { dinero: { height: mm(14), minHeight: undefined } },
+        more: [roomy],
+        markdown: (md) => md.replace(/::resource\{[^}]*\}\n/g, '').replace(/(:::frame\{slot="ahorro"[^\n]*\n)/, `$1${group}`),
+      });
+      const config: PostextConfig = { ...f.config, paragraphStyles: [{ id: 'gran', fontSize: { value: fontSize, unit: 'pt' }, lineHeight: { value: fontSize * 1.15, unit: 'pt' } }] };
+      const w = overflowsOf(build({ ...f, config }))[0]!;
+      const applied = build({ ...f, config, markdown: f.markdown.replace('template="tema-cajas"', 'template="tema-amplio"') });
+      return { proposed: proposal(w, 'useTemplate'), appliedOverflows: overflowsOf(applied).length };
+    };
+    // Control: the group at the body's size fits once set with the template.
+    const small = run(12);
+    expect(small.appliedOverflows).toBe(0);
+    expect(small.proposed).toMatchObject({ kind: 'useTemplate', value: 'tema-amplio' });
+    // Set in its own style the page overflows, and the template is not proposed.
+    const big = run(30);
+    expect(big.appliedOverflows).toBeGreaterThan(0);
+    expect(big.proposed).toBeUndefined();
+  });
+
+  describe('the useTemplate trial of a regrouped page reads what is keyed by content index (#953)', () => {
+    // Only titulo, texto (flow) and dinero: every other slot of the page
+    // goes to texto, as appended boxes past the page's blocks.
+    const flowing: PageTemplate = {
+      id: 'tema-amplio',
+      frames: [
+        { name: 'titulo', takes: 'h1' },
+        { name: 'texto', flow: true, placement: { anchor: { to: '#titulo', edge: 'below' } } },
+        { name: 'dinero', height: 'auto', placement: { anchor: { to: '#texto', edge: 'below' } } },
+      ],
+    };
+    const page = (patch: (c: PostextConfig) => PostextConfig) => {
+      const f = standIn({
+        frames: { dinero: { height: mm(14), minHeight: undefined } },
+        more: [flowing],
+        markdown: (md) => md.replace(/::resource\{[^}]*\}\n/g, ''),
+      });
+      const config = patch(f.config);
+      const w = overflowsOf(build({ ...f, config }))[0]!;
+      const applied = build({ ...f, config, markdown: f.markdown.replace('template="tema-cajas"', 'template="tema-amplio"') });
+      return { proposed: proposal2(w, 'useTemplate'), appliedOverflows: overflowsOf(applied).length };
+    };
+    const proposal2 = (w: Overflow | undefined, kind: FrameOverflowProposal['kind']) => w?.proposals.find((p) => p.kind === kind);
+    const dropCap = (lines: number) => (c: PostextConfig): PostextConfig => ({
+      ...c,
+      headings: { ...c.headings, levels: [c.headings!.levels![0]!, { ...c.headings!.levels![1]!, dropCap: { lines } }] } as never,
+    });
+
+    it('a heading level\'s drop cap opens the merged story\'s paragraph as it opens it in the build', () => {
+      // Control: a small initial leaves room.
+      const small = page(dropCap(6));
+      expect(small.appliedOverflows).toBe(0);
+      expect(small.proposed).toMatchObject({ kind: 'useTemplate', value: 'tema-amplio' });
+      // A 26-line initial reserves lines the page does not have.
+      const tall = page(dropCap(26));
+      expect(tall.appliedOverflows).toBeGreaterThan(0);
+      expect(tall.proposed).toBeUndefined();
+    });
+
+    it('a paragraph after a heading is set flush where indentAfterHeading is off, and the trial runs', () => {
+      const r = page((c) => ({ ...c, bodyText: { ...c.bodyText, indentAfterHeading: false, firstLineIndent: mm(6) } as never }));
+      expect(r.appliedOverflows).toBe(0);
+      expect(r.proposed).toMatchObject({ kind: 'useTemplate', value: 'tema-amplio' });
+    });
+  });
+
   it('shortenText: about the characters of the lines that do not fit; cutting them makes it fit', () => {
     const f = standIn(tooLong);
     const w = overflowsOf(build(f))[0]!;
