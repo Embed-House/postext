@@ -18,7 +18,7 @@ import { drawPickedMark } from '../selection/pickedOverlay';
 import { editModeNow, onEditModeChange } from '../editing/editMode';
 import { labelsOnPage } from './composed/labelAnchorGeometry';
 import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks';
-import { onPageSelectionChange } from '../selection/selectionStore';
+import { carriedPosition, onPageSelectionChange } from '../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
 
 /** A filled rectangle of a page's overlay, in the page's own pixels, with
@@ -204,7 +204,7 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
         dispatch: () => dispatchRef.current,
         activePanel: () => activePanelRef.current,
         sourceOfPage: (i) => (pageSourceRef.current ? pageSourceRef.current(i) : sourceRef.current),
-      }, chapterPages);
+      }, chapterPages, stitched ? carriedPosition(activeChapterId) : undefined);
     }
     const picked = selectionOn(doc, chapterOfPages((i) => (pageSourceRef.current ? pageSourceRef.current(i) : sourceRef.current)));
 

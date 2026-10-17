@@ -21,7 +21,7 @@ import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/
 import { onFrameJumpChange } from '../../editions/frameJump';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { drawPickedMark } from '../../selection/pickedOverlay';
-import { onPageSelectionChange } from '../../selection/selectionStore';
+import { carriedPosition, onPageSelectionChange } from '../../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
 import { syncComicEditors } from '../comics/comicEditing';
 import { syncFrameEditors } from '../composed/frameEditor';
@@ -61,6 +61,7 @@ const BITMAP_SHRINK_REPAINT = 0.5;
 const MIN_PAINTED_PAGES = 6;
 import { buildPagesDom } from './pageDom';
 import { usePageNavigator } from '../usePageNavigator';
+import { planContent } from '../../book/jumps';
 
 interface CanvasPreviewProps {
   zoom: number;
@@ -590,7 +591,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       md: source.markdown.length,
     });
     layoutWorker.build(
-      { markdown: source.markdown, metadata: source.metadata, resources: deferredResources, continuation: deferredSource.continuation, outline: deferredSource.plan.outline, ...(deferredSource.plan.citations ? { citations: deferredSource.plan.citations } : {}) },
+      { markdown: source.markdown, metadata: source.metadata, resources: deferredResources, continuation: deferredSource.continuation, ...planContent(deferredSource.plan) },
       deferredConfig,
       {
         cacheKey: layoutCacheKey({
@@ -956,7 +957,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         dispatch: () => dispatchRef.current,
         activePanel: () => activePanelRef.current,
         sourceOfPage: (i) => (pageSourceRef.current ? pageSourceRef.current(i) : builtSourceRef.current),
-      }, chapterPages);
+      }, chapterPages, stitched ? carriedPosition(activeChapterId) : undefined);
     }
     const picked = selectionOn(doc, chapterOfPages((i) => (pageSourceRef.current ? pageSourceRef.current(i) : builtSourceRef.current)));
 
@@ -976,7 +977,9 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       if (chapterPages && (pageIndex < chapterPages.from || pageIndex >= chapterPages.to) && pageIndex !== resourcePage) {
         if (drawn.delete(pageIndex)) clearOverlay(overlay);
         if (page.composed) clearFrameMarks(overlay);
-        drawPickedMark(overlay, doc, pageIndex, null);
+        // The text a story carried here from the chapter being edited
+        // (#943) is picked on this page.
+        drawPickedMark(overlay, doc, pageIndex, picked && picked.pageIndex === pageIndex && picked.chain.some((e) => e.chapter !== undefined || (e.source.kind === 'markdown' && e.source.chapter !== undefined)) ? picked : null);
         // A frame that does not fit is marked on every page (#867).
         if (page.composed) {
           drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);

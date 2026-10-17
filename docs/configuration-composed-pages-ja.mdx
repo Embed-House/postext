@@ -273,7 +273,7 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかの枠で、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じ枠）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前の枠、なければ<code>flow</code>の枠）、<code>'page:&lt;id&gt;'</code>（後ろのページフェンス<code>::::page&#123;id=…&#125;</code>の枠で、<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>で指定したもの、なければそのページ自身の中身が空のまま残すもの。<code>&lt;id&gt;</code>は<code>&#123;attr.name&#125;</code>でもよく、ページフェンスから読まれます。<a href="/ja/docs/composed-pages#後ろのページへ飛ぶ">テンプレートページ › 後ろのページへ飛ぶ</a>を参照）のいずれかです。追加ページの枠に自分の規則がなければ、内容を運んできた規則（飛んだ後は<code>'next-page'</code>）で続け、追加ページは16ページまでです。</td>
+      <td>入りきらない中身の続く先です。<code>'#frame'</code>（ページのほかの枠で、<code>next</code>と同じ）、<code>'next-page'</code>（このページの後に<code>overflowTemplate</code>で加えるページの同じ枠）、<code>'template:&lt;id&gt;'</code>（そのテンプレートのページで、同じ名前の枠、なければ<code>flow</code>の枠）、<code>'page:&lt;id&gt;'</code>（後ろのページフェンス<code>::::page&#123;id=…&#125;</code>の枠で、<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>で指定したもの、なければそのページ自身の中身が空のまま残すもの。<code>&lt;id&gt;</code>は<code>&#123;attr.name&#125;</code>でもよく、ページフェンスから読まれます。<a href="/ja/docs/composed-pages#後ろのページへ飛ぶ">テンプレートページ › 後ろのページへ飛ぶ</a>を参照）のいずれかです。追加ページの枠に自分の規則がなければ、内容を運んできた規則（飛んだ後は<code>'next-page'</code>）で続け、追加ページは16ページまでです。ページは本の後ろの章ファイルにあってもかまいません（postext 1.41以降）。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>

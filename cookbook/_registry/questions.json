@@ -5182,5 +5182,33 @@
       "it": "Articoli di rivista, concatenati di cornice in cornice"
     },
     "theme": "publications"
+  },
+  "Q186": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set a textbook unit in three languages from the same page templates, when each language's text has a different length?",
+      "es": "¿Cómo compongo una unidad de libro de texto en tres idiomas con las mismas plantillas de página, si el texto de cada idioma tiene una longitud distinta?",
+      "ca": "Com composo una unitat de llibre de text en tres idiomes amb les mateixes plantilles de pàgina, si el text de cada idioma té una longitud diferent?",
+      "zh": "同一套页面模板要排三种语言的教科书单元，而各语言的文字长短不一，该怎么做？",
+      "ar": "كيف أنضّد وحدة من كتاب مدرسي بثلاث لغات بقوالب الصفحة نفسها، وطول النص يختلف من لغة إلى أخرى؟",
+      "ja": "言語ごとに文章の長さが違うとき、同じページテンプレートで3言語の教科書の単元を組むには？",
+      "pt": "Como componho uma unidade de livro didático em três idiomas com os mesmos modelos de página, se o texto de cada idioma tem um comprimento diferente?",
+      "fr": "Comment composer une unité de manuel scolaire en trois langues avec les mêmes maquettes de page, quand le texte de chaque langue n’a pas la même longueur ?",
+      "de": "Wie setze ich eine Schulbuch-Einheit in drei Sprachen mit denselben Seitenvorlagen, wenn der Text jeder Sprache anders lang ist?",
+      "it": "Come compongo un'unità di libro di testo in tre lingue con gli stessi modelli di pagina, se il testo di ogni lingua ha una lunghezza diversa?"
+    },
+    "index": {
+      "en": "Textbook units, one template for three languages",
+      "es": "Unidades de libro de texto, una plantilla para tres idiomas",
+      "ca": "Unitats de llibre de text, una plantilla per a tres idiomes",
+      "zh": "教科书单元，三种语言共用一套模板",
+      "ar": "وحدات الكتب المدرسية، قالب واحد لثلاث لغات",
+      "ja": "教科書の単元、3言語で1つのテンプレート",
+      "pt": "Unidades de livro didático, um modelo para três idiomas",
+      "fr": "Unités de manuel scolaire, une maquette pour trois langues",
+      "de": "Schulbuch-Einheiten, eine Vorlage für drei Sprachen",
+      "it": "Unità di libro di testo, un modello per tre lingue"
+    },
+    "theme": "publications"
   }
 }

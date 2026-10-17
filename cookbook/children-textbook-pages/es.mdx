@@ -1,0 +1,72 @@
+---
+title: "Una unidad de libro de texto infantil en tres idiomas"
+summary: "Nueve páginas de una unidad de 3.º en español, catalán e inglés: dobles páginas sobre fondos de color, recuadros con pestaña que crecen y un mapa rotulado."
+plain: "Una unidad de libro de texto sobre un río, de nueve páginas. Cada tema es una doble página sobre un fondo de color, con pestaña de título, texto, imágenes y recuadros. El mapa no lleva ninguna palabra pintada: sus nombres salen del texto."
+description: "Una unidad de libro de texto infantil en Postext: plantillas que heredan de una base, estilos de recuadro encadenados y un mapa rotulado desde el Markdown."
+question: "¿Cómo compongo una unidad de libro de texto en tres idiomas con las mismas plantillas?"
+aliases: ["libro de texto", "libro escolar", "primaria", "unidad didáctica", "doble página", "página de tema", "fondo de página", "pestaña de título", "mapa rotulado", "índice por partes", "herencia de plantillas", "español catalán inglés", "textbook"]
+pageNotes: {"1": "La apertura de la unidad: una pintura de un valle con su río, de las montañas nevadas al mar, ocupa la parte de arriba, con dos niños sentados en la hierba en una esquina. Debajo, una pestaña azul con el título Nuestro río, un párrafo y un recuadro azul claro, Vas a aprender.", "2": "El índice: una pestaña azul de título, dos filas de parte (A y B) con sus temas y apartados, puntos guía y números de página, y el mapa como imagen pequeña al pie.", "4": "Tema 1, Dónde nace un río, sobre un fondo azul claro: pestaña de título con su número, dos columnas de texto, una tira de tres pinturas con pie, un recuadro Pruébalo; en la página derecha, tres recuadros con pestaña.", "6": "Tema 2, De la montaña al mar, sobre un fondo verde claro: un solo mapa pintado a doble página con los nombres puestos encima y tres recuadros de curso bajo la página derecha.", "8": "Tema 3, Las personas y el río, sobre un fondo arena: texto y dos recuadros en la página izquierda, tres recuadros con una pintura cada uno en la derecha."}
+---
+
+## Lo que vas a componer
+
+Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias sociales de 3.º, en una página de 210 × 280 mm, en español, catalán e inglés. Un valle pintado abre la unidad, una página de índice lista dos partes y siguen tres temas a doble página, cada uno sobre su fondo: azul agua, verde campo, arena sol. Cada tema lleva una pestaña con su número y su título, texto a dos columnas y recuadros con pestaña que crecen con su texto. El segundo tema es un único mapa pintado a doble página, con el río, los pueblos y los tres cursos nombrados desde el Markdown. Los tres textos difieren en un quinto o más y caben en las mismas plantillas: un recuadro toma la altura que piden sus palabras y empuja al siguiente, y el mapa se reduce un poco antes que cualquier texto.
+
+## Elaboración
+
+### 1 · Construye los recuadros con `extends`
+
+<Excerpt region="boxes" />
+
+Un estilo de recuadro se hace en tres pasos. `caja` guarda la forma, la tipografía y la geometría de la pestaña; `caja-agua`, `caja-campo` y `caja-sol` ponen el color de una familia en la pestaña y las viñetas; `dato-`, `palabras-` y `actividad-` fijan el tipo: recuadro con fondo, con borde o con franja. Una familia nueva son tres colores en `FAMILIES` y ningún estilo se escribe dos veces.
+
+### 2 · Haz que cada tema herede de una plantilla base
+
+<Excerpt region="answer" />
+
+La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), cambia los colores de tres elementos de decoración por su `id` y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma, y el número queda a la izquierda del marco, donde nada lo tapa.
+
+### 3 · Deja que los grupos se repartan el sitio
+
+Cada tema tiene dos grupos. La página izquierda es una pila: título, texto y luego la tira de imágenes o el mapa. La derecha es otra pila de recuadros, o una fila de tres recuadros que se reparten su anchura. Un marco es tan alto como sus palabras y nunca menos que su `minHeight`, así que el texto en español empuja todo lo que tiene debajo y ninguna posición de la plantilla cambia. Cuando a una página le falta sitio, la [escalera de ajuste](/es/docs/composed-pages#cuando-aun-así-no-cabe) recupera espacio, reduce el mapa y las imágenes y deja el texto para el final, hasta el 90 %. `pnpm cookbook bench` vuelve a componer las tres ediciones con el texto un 30 % más largo.
+
+### 4 · Pon los nombres del mapa desde el texto
+
+<Excerpt region="art-labels" />
+
+El mapa es una pintura sin una sola letra. Cada lugar es un ancla de la imagen, un punto en fracciones de su ancho y alto con un estilo de rótulo, y cada edición escribe sus propias líneas `::label` en esas anclas. *Penalta Reservoir*, *Pantà de Penyalta* y *Embalse de Peñalta* quedan en el mismo sitio, y un nombre más largo se parte dentro del `width` del ancla.
+
+### 5 · Mantén unida cada parte del índice
+
+<Excerpt region="contents" />
+
+`:::toc{keep="part" levels="1-2"}` lista los temas y sus apartados y mantiene cada fila de parte con sus entradas. Una valla `:::part` con `parts.page: false` es solo una fila del índice y una sección para las cabeceras: no añade portadilla. El índice es una página de texto corrido y no un marco, porque un `:::toc` dentro de un marco pierde sus filas de parte.
+
+## Variantes
+
+### Añade una cuarta familia
+
+Un tema sobre el mar es una cuarta entrada de `FAMILIES` y una plantilla hecha con `topic('tema-mar', 'mar', { frames })`. El bucle sobre `FAMILIES` escribe sus estilos, `caja-mar`, `dato-mar` y los demás.
+
+```diff
+-  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  mar: { main: '#0f5a6b', tint: '#dcf0f2', ground: '#cbe6ea' },
+```
+
+### Deja el texto en su tamaño
+
+Un marco que no debe reducir su texto lleva `fit: { shrinkText: false }`. Un texto más largo empuja entonces con más fuerza a los marcos de alrededor y la escalera llega antes a las imágenes.
+
+```diff
+-  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
+-    fit: { minScale: 0.9 } }],
++  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
++    fit: { shrinkText: false } }],
+```
+
+## Errores frecuentes
+
+- Un nombre pintado dentro de una imagen no podría cambiar con el idioma: el mapa no lleva ninguna palabra y cada nombre es un rótulo.
+- Un elemento de decoración que queda bajo un marco no se puede pulsar en el Sandbox, por eso el número de cada tema está a la izquierda del marco del título y no dentro.
+- Dos figuras que fijan el mismo recurso toman las palabras de la primera: el mapa pequeño del índice es el mismo archivo bajo otro recurso, `rio`, sin anclas.

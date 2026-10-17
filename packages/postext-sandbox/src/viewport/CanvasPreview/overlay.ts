@@ -448,6 +448,9 @@ export function drawOverlay(
   const blocks = doc.blocks.filter((b) => b.pageIndex === pageIndex && !hiddenUnderBand(b));
   for (const block of blocks) {
     if (block.sourceStart === undefined || block.sourceEnd === undefined) continue;
+    // Text a story carried in from another chapter (#943) is in that
+    // chapter's file: this selection is not in it.
+    if (block.sourceChapter !== undefined) continue;
     if (block.sourceEnd <= from) continue;
     if (block.sourceStart > to) continue;
 

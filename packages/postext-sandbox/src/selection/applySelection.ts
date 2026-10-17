@@ -18,7 +18,7 @@ import { showPageTemplatesSection } from '../templates/showSection';
 import { templateEditor } from '../templates/editorStore';
 import { headingInChapters, selectionTarget, type SelectionTarget } from './selectionTargets';
 import type { PageSelection } from './pageSelection';
-import { selectionTemplates, type SelectionApply } from './selectionStore';
+import { selectionChapters, selectionTemplates, type SelectionApply } from './selectionStore';
 
 export interface SelectionApplyDeps {
   dispatch: () => Dispatch<SandboxAction>;
@@ -43,8 +43,17 @@ export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VD
   switch (target.kind) {
     case 'caret':
     case 'markdown': {
-      const book = deps.sourceOfPage(sel.pageIndex);
       const [anchor, head] = target.kind === 'caret' ? [target.offset, target.offset] : [target.start, target.end];
+      // Text a story carried in from another chapter (#943): its offsets
+      // are that chapter's file's, whatever page it is laid on.
+      if (target.chapter !== undefined) {
+        const owner = (deps.chapters?.() ?? selectionChapters())[target.chapter];
+        if (!owner) return false;
+        openPanel(deps, 'markdown');
+        dispatch({ type: 'SET_PENDING_EDITOR_FOCUS', payload: { chapterId: owner.id, anchor, head, selectWord: false, fromViewer: true } });
+        return true;
+      }
+      const book = deps.sourceOfPage(sel.pageIndex);
       openPanel(deps, 'markdown');
       dispatch({ type: 'SET_PENDING_EDITOR_FOCUS', payload: { ...toChapterFocus(book, anchor, head, false), fromViewer: true } });
       return true;

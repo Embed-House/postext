@@ -4,12 +4,14 @@
  * the last build when nothing it depends on changed. The documents are
  * stitched into one by the caller (`stitchDocuments`).
  */
-import type { LayoutContinuation, NumeralStyle, PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
+import { resolveJumpMarks } from 'postext';
+import type { LayoutContinuation, NumeralStyle, PostextConfig, PostextContent, Resource, StoryJump, VDTDocument } from 'postext';
 import { composeBookMemo } from './compose';
 import { layoutCacheKey, stableStringify } from './layoutKeys';
 import { chapterLayoutFromDoc } from './pagination';
 import type { StitchedChapter } from './stitch';
 import type { BookPlan, Chapter, ChapterLayout, ComposedBook } from './types';
+import { jumpsKeyOf, planContent, routeJumps } from './jumps';
 
 /** One chapter's document as last built, with the key of everything it
  *  was built from (a hit spares the worker). */
@@ -52,6 +54,9 @@ export async function buildBookChapters({ chapters, plan, config, rawConfig, res
   const firstPlan = chapters[0] ? plan.byId[chapters[0].id] : undefined;
   let offset = firstPlan?.index === 0 ? firstPlan.continuation?.pageIndexOffset ?? 0 : 0;
   let nextNumbering: { format: NumeralStyle; startAt: number } | null = null;
+  // The stories the chapters laid out so far send to a page of a later one
+  // (#943), from the documents built, as the pages are.
+  const jumpsIn = new Map<number, StoryJump[]>();
   for (const chapter of chapters) {
     const chapterPlan = plan.byId[chapter.id];
     if (!chapterPlan) return null;
@@ -59,11 +64,15 @@ export async function buildBookChapters({ chapters, plan, config, rawConfig, res
     // The first chapter inherits the book's start, if it has one, and the
     // book's page count; the page fields of a plan not yet paginated are
     // provisional.
-    const { pageNumbering: planNumbering, ...inherited } = chapterPlan.continuation ?? {};
+    const { pageNumbering: planNumbering, jumps: planJumps, ...inherited } = chapterPlan.continuation ?? {};
     const numbering = nextNumbering ?? (chapterPlan.paginated ? planNumbering : undefined);
+    const incoming = jumpsIn.get(chapterPlan.index);
     const continuation: LayoutContinuation | undefined = chapterPlan.index === 0
       ? chapterPlan.continuation
-      : { ...inherited, pageIndexOffset: offset, ...(numbering ? { pageNumbering: numbering } : {}) };
+      : { ...inherited, pageIndexOffset: offset, ...(numbering ? { pageNumbering: numbering } : {}), ...(incoming ? { jumps: incoming } : {}) };
+    // The plan's key stands for the build when the stories it was made
+    // with are the ones the documents sent.
+    const sameJumps = jumpsKeyOf(planJumps) === jumpsKeyOf(incoming);
     const keyInput = { markdown: source.markdown, metadata: source.metadata, config, resources, continuation, outlineKey: chapterPlan.outlineKey };
     // What the chapter was built from, whatever the records say: the
     // counters and pages it actually continues.
@@ -74,15 +83,16 @@ export async function buildBookChapters({ chapters, plan, config, rawConfig, res
       doc = hit.doc;
     } else {
       doc = await build(
-        { markdown: source.markdown, metadata: source.metadata, resources, continuation, outline: chapterPlan.outline, ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}) },
+        { markdown: source.markdown, metadata: source.metadata, resources, continuation, ...planContent(chapterPlan) },
         config,
         // Under the key the paginator and the PDF tab use, when the plan's
         // page chain agrees with the actual one, so the worker's cache is
         // shared.
-        { cacheKey: layoutCacheKey({ ...keyInput, continuationKey: chapterPlan.paginated ? chapterPlan.continuationKey : `stitched:${stableStringify(continuation ?? null)}` }) },
+        { cacheKey: layoutCacheKey({ ...keyInput, continuationKey: chapterPlan.paginated && sameJumps ? chapterPlan.continuationKey : `stitched:${stableStringify(continuation ?? null)}` }) },
       );
       if (cancelled()) return null;
     }
+    routeJumps(chapterPlan.index, doc.pendingJumps, chapterPlan.laterPageIds, jumpsIn);
     next.set(chapter.id, { key, doc, source });
     built.push({ chapterId: chapter.id, doc });
     if (chapterPlan.paginated && (chapterPlan.continuation?.pageIndexOffset ?? 0) === offset) {
@@ -93,5 +103,8 @@ export async function buildBookChapters({ chapters, plan, config, rawConfig, res
     const last = doc.pages[doc.pages.length - 1];
     if (last) nextNumbering = { format: last.pageNumberFormat, startAt: last.pageNumberValue + 1 };
   }
+  // The marks of the stories that jump from one chapter to another name
+  // the page it printed (#943).
+  if (jumpsIn.size > 0) resolveJumpMarks(built.map((b) => b.doc));
   return cancelled() ? null : { held: next, built, records };
 }

@@ -6,7 +6,7 @@ reading order (references/composed-pages.md, round 2).
 
   pdf_regions.py extract SOURCE.pdf --pages 4-28 --out DIR [--lang es]
         [--fonts DIR] [--font-map map.json] [--dpi 300] [--ground-dpi 150]
-        [--highlights mark|chip] [--fit 0.9] [--chapter pages] [--json]
+        [--highlights mark|chip] [--fit 0.9] [--wrap-slack 3] [--chapter pages] [--json]
   pdf_regions.py manifest DIR [--fonts DIR] [--id ID] [--name NAME]
         Writes DIR/preset.json, a draft project that opens and builds as it
         is (page size from the PDF, the library, the chapters, the
@@ -166,7 +166,7 @@ def weight_italic_of(style: str) -> tuple[int, bool, list[str]]:
 def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
     """PostScript name -> (family, weight, style, file) for the faces in
     fonts_dir. A width the family name does not say (`-BoldCn`) is added to
-    the family ('Frutiger LT Std Cn'), so two faces never share a family,
+    the family ('Humanist Sans Cn'), so two faces never share a family,
     weight and style."""
     import preset_kit as kit
 
@@ -1168,7 +1168,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         if f.kind in ("picture", "figure"):
             pic_n += 1
             rid = f"{rid_base}-{f.name}"
-            f.resource = cut_picture(pdf_path, doc, pno, f, origin, rid, opts, renders)
+            f.resource = cut_picture(pdf_path, doc, pno, f, origin, rid, opts, renders, cards)
             res.append(f.resource)
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
@@ -1362,17 +1362,48 @@ def text_style(lines: list[Line], centred: bool) -> dict:
             "padding": {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}, "body": body_of(look)}
 
 
+def give_slack(right: float, inner: float, ctx: dict) -> float:
+    """The right padding of a box or tab with the measure's slack taken off
+    (down to nothing): per cent of the text's width, at most 4 mm
+    (`--wrap-slack`)."""
+    take = min(4.0, ctx.get("wrap_slack", 0.0) / 100.0 * inner)
+    return max(min(right, 0.0), right - take)
+
+
 def tab_style(s: Shape, lines: list[Line], ctx: dict) -> dict:
     st: dict[str, Any] = {"id": "tab", "backgroundEnabled": True, "background": colour(s.fill),
                           "border": {"enabled": False}, "borderRadius": mmv(s.radius())}
     if s.stroke:
         st["border"] = {"enabled": True, "color": colour(s.stroke), "width": ptv(s.width)}
     pad = max(0.0, min(lines[0].x0 - s.box[0], 8.0)) if lines else 2.0
-    st["padding"] = {"top": mmv(0), "right": mmv(pad), "bottom": mmv(0), "left": mmv(pad)}
+    # the left inset holds the tab's icon (a ring before the words): the
+    # right one is the room after the words, else the words wrap in the frame
+    right = max(0.5, min(s.box[2] - max(l.x1 for l in lines), pad)) if lines else pad
+    left = pad
+    if lines:
+        inner = s.box[2] - s.box[0] - pad - right
+        before = right
+        right = give_slack(right, inner, ctx)
+        if abs(pad - before) < 1.5 and pad < 6.0:
+            # a tab whose words sit between equal insets (centred over its
+            # picture): the slack comes off both sides, the words stay centred
+            take = before - right
+            left = max(0.5, pad - take)
+            right = max(0.5, before - take) if take else right
+    centred = bool(lines) and len(lines) == 1 and lines[0].size < ctx["heading_min"] and \
+        abs((lines[0].x0 + lines[0].x1) / 2 - (s.box[0] + s.box[2]) / 2) <= 1.0 and pad < (s.box[2] - s.box[0]) / 4
+    if centred:
+        # a pill whose word sits in the middle (the names over a diagram's pictures): the word is
+        # centred in the pill and the insets are a margin, so another edition's longer word stays
+        # in the middle and gets the whole width (measured insets would be half the room it leaves)
+        left = right = min(1.5, pad)
+    st["padding"] = {"top": mmv(0), "right": mmv(right), "bottom": mmv(0), "left": mmv(left)}
     if lines:
         look = dominant(lines)
         look["lead"] = round(lines[0].size_mm * 1.15, 3)
         st["body"] = body_of(look)
+        if centred:
+            st["body"]["textAlign"] = "center"
     return st
 
 
@@ -1389,7 +1420,17 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
     if f.lines:
         lefts = [min(l.x0, text_x0(l)) for l in f.lines]
         left = max(0.0, min(lefts) - bx0)
-        right = max(0.0, min(left, bx1 - max(l.x1 for l in f.lines)))
+        gap = bx1 - max(l.x1 for l in f.lines)
+        # ragged lines stop short of the edge by chance: the padding is the left
+        # one; a gap over 10 mm wider than that is the room of a picture laid
+        # over the box. The longest line ends exactly where it ends on the
+        # source, and the source's own tracking (InDesign squeezes a line by
+        # a few per cent to fit it) is not in the new face's widths: a line
+        # that just fits breaks one word earlier and the box grows a line.
+        # The measure gets `wrap_slack` per cent more than the source's (at
+        # most 4 mm), taken from the right padding
+        right = max(0.0, gap if gap > left + 10.0 else min(left, gap))
+        right = give_slack(right, max(0.0, bx1 - bx0 - left - right), ctx)
         lead = look["lead"]
         first = min(f.lines, key=lambda l: l.base)
         last = max(f.lines, key=lambda l: l.base)
@@ -1434,7 +1475,7 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
 
 
 def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: tuple, rid: str,
-                opts: argparse.Namespace, renders: Renders) -> dict:
+                opts: argparse.Namespace, renders: Renders, cards: list | None = None) -> dict:
     p = f.picture
     out_dir = Path(opts.out) / "resources"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1466,6 +1507,17 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 im.save(file, optimize=True)
                 alpha = True
     if file is None:
+        # A picture cut from the page (no transparency to cut out) lies on its card and is cut no
+        # further than the card. A map whose overflow is masked by white rectangles at the card's
+        # edge, and the folio's icons a millimetre from them, made a cluster that reached past the
+        # card; the cut carried a strip of the page's own colour, which covered the ground when
+        # another edition's shorter text moved the picture up. A cut-out with an alpha channel
+        # (a photo standing over the card's edge) keeps its overhang.
+        if cards and f.zone >= 0:
+            cb = cards[f.zone].box
+            clipped = (max(f.box[0], cb[0]), max(f.box[1], cb[1]), min(f.box[2], cb[2]), min(f.box[3], cb[3]))
+            if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
+                f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
         page.add_redact_annot(page.rect, fill=False)
@@ -1518,8 +1570,79 @@ def cut_ground(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: list[Fr
     out_dir.mkdir(parents=True, exist_ok=True)
     pm = page.get_pixmap(dpi=opts.ground_dpi, clip=to_pt((0, 0, origin[2], origin[3]), origin), alpha=False)
     file = out_dir / f"{rid}.jpg"
-    pm.save(str(file), jpg_quality=85)
+    img = erase_survivors(pm, sh, opts.ground_dpi)
+    img.save(str(file), quality=85)
     return {"file": f"resources/{file.name}", "width": pm.width, "height": pm.height}
+
+
+def erase_survivors(pm: fitz.Pixmap, sh: dict, dpi: int):
+    """Paint out the bands, tabs and box fills that the redaction left.
+
+    MuPDF removes line art only when one redaction rectangle covers the
+    whole path, and it misses some of them (on a real textbook, the yellow
+    highlight strokes of a line, `14 w` strokes under a `cm`, stayed in the
+    ground and were printed twice, once by the ground and once by the
+    `:mark`). So the render is checked: inside each shape's box, the pixels
+    of the shape's own colour are painted with the colour round the box,
+    largest shape first (a band on a tinted box ends on the card's colour).
+    Pixels of other colours (an icon in a box) stay."""
+    import numpy as np
+    from PIL import Image
+    a = np.frombuffer(pm.samples, dtype=np.uint8).reshape(pm.height, pm.width, pm.n)[:, :, :3].copy()
+    px = dpi / 25.4
+    items = []
+    for b in sh["bands"]:
+        items.append((b["box"], b["color"], 0.0))
+    for s in sh["boxes"] + sh["tabs"]:
+        if s.fill:
+            items.append((s.box, s.fill, 0.0))
+        if s.stroke:
+            items.append((s.box, s.stroke, max(s.width * 0.3528, 0.3)))
+    items.sort(key=lambda it: -area(it[0]))
+    h, w = a.shape[:2]
+    for box, col, ring in items:
+        if whiteish(col):
+            # a white box lies on the white card (or masks part of a picture,
+            # another page): painting it with the colour round it paints the picture's
+            # lines over the card
+            continue
+        want = np.array([round(v * 255) for v in td.hex_rgb(col)], dtype=int)
+        pad = 0.6 + ring
+        x0, y0 = max(int((box[0] - pad) * px), 0), max(int((box[1] - pad) * px), 0)
+        x1, y1 = min(int(math.ceil((box[2] + pad) * px)), w), min(int(math.ceil((box[3] + pad) * px)), h)
+        if x1 - x0 < 2 or y1 - y0 < 2:
+            continue
+        win = a[y0:y1, x0:x1].astype(int)
+        mask = np.abs(win - want).sum(axis=2) <= 45
+        if ring:   # a stroked outline: only its edges
+            inner = np.zeros_like(mask)
+            r = int(math.ceil((2 * pad) * px))
+            inner[r:-r or None, r:-r or None] = True
+            mask &= ~inner
+        if mask.sum() < 4:
+            continue
+        o = 3
+        ox0, oy0, ox1, oy1 = max(x0 - o, 0), max(y0 - o, 0), min(x1 + o, w), min(y1 + o, h)
+        outer = a[oy0:oy1, ox0:ox1].reshape(-1, 3).astype(int)
+        ring_px = np.concatenate([a[oy0:y0, ox0:ox1].reshape(-1, 3), a[y1:oy1, ox0:ox1].reshape(-1, 3),
+                                  a[y0:y1, ox0:x0].reshape(-1, 3), a[y0:y1, x1:ox1].reshape(-1, 3)]).astype(int)
+        ring_px = ring_px[np.abs(ring_px - want).sum(axis=1) > 45] if len(ring_px) else ring_px
+        if not len(ring_px):
+            ring_px = outer[np.abs(outer - want).sum(axis=1) > 45]
+        if not len(ring_px):
+            continue
+        under = np.median(ring_px, axis=0).astype(np.uint8)
+        # the anti-aliased edge of the shape goes too: one pixel round the mask
+        grown = mask.copy()
+        grown[1:, :] |= mask[:-1, :]
+        grown[:-1, :] |= mask[1:, :]
+        grown[:, 1:] |= mask[:, :-1]
+        grown[:, :-1] |= mask[:, 1:]
+        edge = grown & ~mask & (np.abs(win - under.astype(int)).sum(axis=2) > 24) \
+            & (np.abs(win - want).sum(axis=2) < np.abs(win - under.astype(int)).sum(axis=2) + 90)
+        sel = mask | edge
+        a[y0:y1, x0:x1][sel] = under
+    return Image.fromarray(a)
 
 
 # ---------------------------------------------------------------------------
@@ -1533,6 +1656,10 @@ def placement_abs(box: tuple) -> dict:
 
 def placement_rel(target: str, edge: str, dx: float, dy: float) -> dict:
     return {"anchor": {"to": f"#{target}", "edge": edge}, "offset": {"x": mmv(dx), "y": mmv(dy)}}
+
+
+def f_style(f: Frame) -> dict | None:
+    return getattr(f, "style", None)
 
 
 def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tuple, opts: argparse.Namespace,
@@ -1663,6 +1790,45 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
             c["fit"] = {"minScale": opts.fit}
         configs[f.name] = c
         out_frames.append(c)
+    # a tab (a pill, a title) lies over the picture it touches (a diagram's connectors are one
+    # picture under the pills): layer 2, else a picture listed after it paints over it
+    for f in frames:
+        if f.kind != "tab" or "layer" in configs[f.name]:
+            continue
+        if any(g.kind in ("picture", "figure") and g.parent is not f and inter(f.box, g.box) > 0.05 * area(f.box)
+               for g in frames):
+            configs[f.name]["layer"] = 2
+    # Pictures laid on the foot of a box, under all its text (a row of photos under
+    # the paragraph): anchored to the box's bottom edge, with the room they take as the
+    # box's bottom padding. A longer text then makes the box taller and the photos
+    # follow it; anchored to the top, the photos stay and the longer text runs under them.
+    for p in frames:
+        kids = [f for f in frames if f.parent is p and f.kind in ("picture", "figure")]
+        if p.kind != "box" or not kids or not p.lines or p.rotate:
+            continue
+        inner = [f for f in frames if f.parent is p]
+        own = [l for l in p.lines if not any(inside_mm(l.box, g.box, 1.0) for g in inner)]
+        if not own:
+            continue
+        text_foot = max(l.box[3] for l in own)
+        low = [k for k in kids if k.box[1] >= text_foot - 0.5]
+        if not low or len(low) != len(kids):
+            continue
+        for k in low:
+            c = configs[k.name]
+            c["placement"] = placement_rel(p.name, "bottom-left", k.box[0] - p.box[0], k.box[3] - p.box[3])
+        # what lies on such a picture (a label, a tab on a drawing) moves with the picture
+        for g in inner:
+            host = next((k for k in low if g not in low and inside_mm(g.box, k.box, 0.5)), None)
+            if host is not None and "placement" in configs[g.name]:
+                configs[g.name]["placement"] = placement_rel(host.name, "top-left", g.box[0] - host.box[0], g.box[1] - host.box[1])
+        room = p.box[3] - min(k.box[1] for k in low)
+        pad = dict(configs[p.name].get("padding") or {})
+        # the frame of a box with a tab is as tall as the box plus the tab's rise: the room the pictures
+        # take is what is left under that, a hair less (a box that needs more than its drawn height grows)
+        rise = ((f_style(p) or {}).get("label") or {}).get("offset", {}).get("value", 0.0)
+        pad["bottom"] = mmv(round(max(0.0, room - rise - 1.0), 2))
+        configs[p.name]["padding"] = pad
     # the last frame on a card may grow to the card's foot, no further
     for f in top:
         if below.get(f.name) or f.zone < 0 or f.kind not in ("box", "text"):
@@ -1866,7 +2032,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
                 return i + 1
         return min(3, len(head_sizes)) or 1
 
-    ctx: dict[str, Any] = {"heading_min": heading_min, "level_of": level_of, "mark_ids": {}, "label_groups": []}
+    ctx: dict[str, Any] = {"heading_min": heading_min, "level_of": level_of, "mark_ids": {}, "label_groups": [],
+                           "wrap_slack": args.wrap_slack}
     # highlight colours -> mark (or chip) styles
     band_cols: dict[str, list] = {}
     built = []
@@ -2111,6 +2278,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--link-gap", type=float, default=25.0, help="a frame anchors below the frame above when they are this close (mm, default 25)")
     p.add_argument("--margin-band", type=float, default=15.0, help="on a page without cards, text this close to the top or foot is a running head (mm)")
     p.add_argument("--fit", type=float, help="give text frames and boxes fit.minScale (0.9: the ladder may set the text down to 90 %%)")
+    p.add_argument("--wrap-slack", type=float, default=3.0,
+                   help="per cent a box's text measure gets beyond its longest source line, at most 4 mm, so that a "
+                        "face a little wider than the source's tracked text does not break the lines one word "
+                        "earlier (default 3; 0 keeps the source's measure)")
     p.add_argument("--no-merge-labels", action="store_true", help="one label per line on pictures")
     p.add_argument("--json", action="store_true")
     m = sub.add_parser("manifest", help="a draft preset.json from an extract folder")

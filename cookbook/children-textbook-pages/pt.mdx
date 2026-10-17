@@ -1,0 +1,72 @@
+---
+title: "Uma unidade de livro didático infantil em três idiomas"
+summary: "Nove páginas de uma unidade do 3.º ano em espanhol, catalão e inglês: páginas duplas sobre fundos coloridos, caixas com aba que crescem e um mapa rotulado."
+plain: "Uma unidade de livro didático sobre um rio, com nove páginas. Cada tema é uma página dupla sobre um fundo colorido, com aba de título, texto, imagens e caixas. O mapa não tem nenhuma palavra pintada: os nomes vêm do texto."
+description: "Uma unidade de livro didático infantil no Postext: modelos que estendem uma base, estilos de caixa encadeados e um mapa pintado rotulado a partir do Markdown."
+question: "Como componho uma unidade de livro didático em três idiomas com os mesmos modelos de página?"
+aliases: ["livro didático", "livro escolar", "ensino fundamental", "unidade", "página dupla", "página de tema", "fundo de página", "aba de título", "mapa rotulado", "sumário por partes", "herança de modelos", "espanhol catalão inglês", "textbook"]
+pageNotes: {"1": "A abertura da unidade: uma pintura de um vale com seu rio, das montanhas nevadas ao mar, ocupa a parte de cima, com duas crianças sentadas na grama num canto. Abaixo, uma aba azul com o título Nosso rio, um parágrafo e uma caixa azul-clara, Você vai aprender.", "2": "O sumário: uma aba azul de título, duas linhas de parte (A e B) com seus temas e seções, pontilhados e números de página, e o mapa como imagem pequena no pé.", "4": "Tema 1, Onde nasce um rio, sobre fundo azul-claro: aba de título numerada, duas colunas de texto, uma tira de três pinturas com legenda, uma caixa Experimente; na página direita, três caixas com aba.", "6": "Tema 2, Da montanha ao mar, sobre fundo verde-claro: um único mapa pintado em página dupla com os nomes postos por cima e três caixas de curso sob a página direita.", "8": "Tema 3, As pessoas e o rio, sobre fundo areia: texto e duas caixas na página esquerda, três caixas com uma pintura cada na direita."}
+---
+
+## O que você vai compor
+
+Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Sociais do 3.º ano, numa página de 210 × 280 mm, em espanhol, catalão e inglês. Um vale pintado abre a unidade, uma página de sumário lista duas partes e seguem três temas em página dupla, cada um sobre o seu fundo: azul-água, verde-campo, areia-sol. Cada tema tem uma aba com o número e o título, texto em duas colunas e caixas com aba que crescem com o texto. O segundo tema é um único mapa pintado em página dupla, com o rio, as aldeias e os três cursos nomeados a partir do Markdown. Os três textos diferem em um quinto ou mais e cabem nos mesmos modelos: uma caixa toma a altura que as suas palavras pedem e empurra a seguinte, e o mapa é reduzido um pouco antes de qualquer texto.
+
+## Preparo
+
+### 1 · Construa as caixas com `extends`
+
+<Excerpt region="boxes" />
+
+Um estilo de caixa se faz em três passos. `caja` guarda a forma, a tipografia e a geometria da aba; `caja-agua`, `caja-campo` e `caja-sol` põem a cor de uma família na aba e nos marcadores; `dato-`, `palabras-` e `actividad-` fixam o tipo: caixa com fundo, com borda ou com faixa. Uma família nova são três cores em `FAMILIES` e nenhum estilo se escreve duas vezes.
+
+### 2 · Faça cada tema herdar de um modelo base
+
+<Excerpt region="answer" />
+
+A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), muda as cores de três elementos de decoração pelo seu `id` e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede, e o número fica à esquerda do bloco, onde nada o cobre.
+
+### 3 · Deixe os grupos dividirem o espaço
+
+Cada tema tem dois grupos. A página esquerda é uma pilha: título, texto e depois a tira de imagens ou o mapa. A direita é outra pilha de caixas, ou uma fileira de três caixas que dividem a largura. Um bloco é tão alto quanto as suas palavras e nunca menos que o seu `minHeight`: o texto em espanhol empurra tudo o que tem embaixo e nenhuma posição do modelo muda. Quando falta espaço a uma página, a [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço, reduz o mapa e as imagens e deixa o texto por último, até 90 %. O `pnpm cookbook bench` recompõe as três edições com o texto 30 % mais longo.
+
+### 4 · Ponha os nomes do mapa a partir do texto
+
+<Excerpt region="art-labels" />
+
+O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um ponto em frações da largura e da altura com um estilo de rótulo, e cada edição escreve as suas próprias linhas `::label` nessas âncoras. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* ficam no mesmo lugar, e um nome mais longo se quebra dentro do `width` da âncora.
+
+### 5 · Mantenha cada parte do sumário unida
+
+<Excerpt region="contents" />
+
+`:::toc{keep="part" levels="1-2"}` lista os temas e as suas seções e mantém cada linha de parte com as suas entradas. Uma cerca `:::part` com `parts.page: false` é só uma linha do sumário e uma seção para os cabeçalhos: não acrescenta página de abertura. O sumário é uma página de texto corrido e não um bloco, porque um `:::toc` dentro de um bloco perde as linhas de parte.
+
+## Variações
+
+### Acrescente uma quarta família
+
+Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `topic('tema-mar', 'mar', { frames })`. O laço sobre `FAMILIES` escreve os seus estilos, `caja-mar`, `dato-mar` e os demais.
+
+```diff
+-  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
++  mar: { main: '#0f5a6b', tint: '#dcf0f2', ground: '#cbe6ea' },
+```
+
+### Deixe o texto no seu tamanho
+
+Um bloco que não deve reduzir o texto leva `fit: { shrinkText: false }`. Um texto mais longo empurra então com mais força os blocos em volta e a escada chega antes às imagens.
+
+```diff
+-  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
+-    fit: { minScale: 0.9 } }],
++  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
++    fit: { shrinkText: false } }],
+```
+
+## Erros comuns
+
+- Um nome pintado dentro de uma imagem não poderia mudar com o idioma: o mapa não leva nenhuma palavra e cada nome é um rótulo.
+- Um elemento de decoração que fica sob um bloco não pode ser clicado no Sandbox; por isso o número de cada tema está à esquerda do bloco do título e não dentro.
+- Duas figuras que definem o mesmo recurso tomam as palavras da primeira: o mapa pequeno do sumário é o mesmo arquivo sob outro recurso, `rio`, sem âncoras.

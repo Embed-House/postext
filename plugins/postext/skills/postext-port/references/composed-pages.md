@@ -252,6 +252,60 @@ What the extraction decides, so you know what to check:
   face the book does not ship, to the nearest face it does). The report
   lists every match.
 
+Also decided by the drafting, checked on a real textbook in three languages:
+
+- **Measure slack** (`--wrap-slack`, default 3 %, at most 4 mm). A box's
+  text measure is the width of its longest source line, and the source's own
+  tracking (InDesign squeezes a line by a few per cent to fit it) is not in
+  another face's widths: a line that just fits breaks one word earlier and
+  the box grows a line. The right padding gives up that much, down to nothing.
+  A source line squeezed by more than that (measure the source's tracked
+  width against the face's advance widths) is a size, not a padding: give
+  that box `fit: { minScale: 0.9 }` and its drawn height as `maxHeight`.
+- **Pills** (a name over a picture: one line, its word in the middle of the
+  tinted tab) are centred in the frame with 1.5 mm insets, so a longer word in
+  another edition keeps the middle and has the whole width; the frame keeps
+  the pill's height and the ladder sets the word smaller (`fit.minScale`
+  0.8) rather than wrapping inside it. A tab that touches a picture lies
+  over it (`layer: 2`).
+- **Pictures at the foot of a box** (photos under its paragraph) hang from the
+  box's bottom edge (`bottom-left`, a negative offset) with their room as the
+  box's bottom padding (less the tab's rise: the frame of a box with a tab is
+  as tall as the box plus the tab's `offset`, so a box that needs more than
+  its drawn height grows, and everything under it moves), and what lies on them (a label, a tab on a drawing)
+  hangs from the picture; a longer text makes the box taller and the
+  pictures follow. Anchored to the top they stay put and the text runs under
+  them.
+- **Pictures cut from the page are cut no further than their card.** A map
+  whose overflow is masked by white rectangles at the card's edge, next to
+  the folio's icons, made a cluster that reached past the card; the cut
+  carried a strip of the page's colour, which covered the ground when a
+  shorter translation moved the picture up. A cut-out with an alpha channel
+  (a photo standing over the card's edge) keeps its overhang.
+- **The ground is checked against the render**: a band or box fill the
+  redaction left (MuPDF removes line art only when a rectangle covers the
+  whole path, and misses wide strokes under a transform) is painted out with
+  the colour round it, so highlights are not printed twice.
+- **Faces.** `preset_kit.font_families` reads the width and the slant a
+  foundry writes only in the PostScript name (`-BoldCn`, `-It`): a condensed
+  face is its own family, an `-It` file is italic.
+- **Merging alike grounds** compares 512-pixel thumbnails and refuses two
+  pages that differ in place by a thin rule (a diagram's connectors), not
+  only by mean difference (a page of mostly white paper has a small one).
+
+What the draft still gets wrong on such a book, and the curation that fixes
+it (each is a template change plus Markdown frames, never text in the
+config): captions set in columns under the pictures of one box are read as
+one text running across the pictures (one `:::frame{slot="pie-N"}` under each
+`::resource`, centred paragraphs); a box that holds only a tab and a picture
+draws no tab when empty (the tab is a frame of its own); two sentences side
+by side with a connector between them are one frame each; arrows typed in a
+worked example need a face that has the glyph (a `chipStyles` entry in the
+face that does, not a picture); a tab's ring icon is not drawn
+(`label.icon` takes a picture); the draft's `box-N` stacks anchor to the
+frame above, so a translation that shortens a text moves everything under
+it up (anchor a picture to the card's foot when the source fixes it there).
+
 Curate after it: name the templates by role (`tema-cajas`), give pictures
 their `altText`, read the notes in `report.json` (a centred tab set at
 `top-left`, a tab's icon not drawn, paragraph spacing inside boxes), and
@@ -299,6 +353,20 @@ The library is the set of looks the book uses, each written once:
   tracking / 1000 = the em value). It is measured into the lines. Do not
   set such a title as a hidden heading in a `takes: "h1"` frame just to
   keep the tracking. Arabic-script words stay untracked.
+- **Tints are thin styles.** A frame may override its padding and size but
+  not its fill or its tab's colour, so the topic colours of a book (the same
+  box in yellow, pink, blue, green, grey) are one full style per kind of box
+  and a thin `extends` style per tint that writes only the colours
+  (`{ "id": "caja-rosa", "extends": "caja", "background": … }`; for a box
+  with a tab also `label.background` and the border colour). Group the draft's
+  styles by kind (fill or not, border or not, tab or not, face, pill or box)
+  first, then by tint: the 28-page textbook's 86 draft styles came to 17
+  full styles and 44 thin ones. A tab's `offset`, `inset` and `paddingX` are
+  style fields too (a frame overrides none of them), so boxes whose tabs stand
+  at different heights are thin styles as well; never merge them away: the
+  box would draw lower and its text with it. The Sandbox's Frame styles library still
+  proposes to merge tints that differ in one or two fields: do not take
+  those merges, they drop a colour of the book.
 - **No per-page duplicates.** Before adding a component, compare it with
   the ones you have (fill, border, radius, type, tab colour, within a
   rounding step); reuse the existing one. Names say the role

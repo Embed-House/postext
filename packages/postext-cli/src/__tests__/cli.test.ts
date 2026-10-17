@@ -353,4 +353,36 @@ describe('postext cli', () => {
     expect(w.message).toContain('to fit: ');
     expect(r.stderr).toMatch(/frameOverflow.*Frame "a" of template "small" \(en\) is [\d.]+ mm short of its content after free space, text down to 90 %/);
   }, 60_000);
+
+  // #943: a magazine kept as one chapter file per article. A story jumps from
+  // its file into a page fence of a later file; the CLI lays the book out
+  // chapter by chapter and hands the rest to the chapter that has the page.
+  it('lays out a story that jumps into a page of a later chapter file', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const mm = (value: number) => ({ value, unit: 'mm' });
+    const top = { anchor: { to: 'container', edge: 'top-left' } };
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      locale: 'en',
+      pageTemplates: [
+        { id: 'article', frames: [{ name: 'body', flow: true, width: mm(120), height: mm(60), placement: top, overflow: { continueIn: 'page:{attr.next}', mark: 'Continued on page {page}' }, fit: { shrinkText: false } }] },
+        { id: 'jump', frames: [{ name: 'head', flow: true, width: mm(120), height: mm(30), placement: top }, { name: 'rest', width: mm(120), placement: { anchor: { to: '#head', edge: 'below' }, offset: { y: mm(10) } } }] },
+      ],
+    }));
+    const text = 'Money lets us swap our work for the things we need, because everybody accepts what it is worth. '.repeat(40);
+    writeFileSync(join(dir, 'ch', '01.md'), `::::page{template="article" next="p9"}\n${text}\n::::\n`);
+    writeFileSync(join(dir, 'ch', '02.md'), 'A chapter between.\n');
+    writeFileSync(join(dir, 'ch', '03.md'), '::::page{template="jump" id="p9"}\nThe page the story goes on in.\n::::\n');
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    expect(r.code).toBe(0);
+    const report = JSON.parse(r.stdout) as { pages: number; warnings: { kind: string }[] };
+    expect(report.warnings.filter((w) => w.kind === 'continueTargetMissing' || w.kind === 'frameOverflow')).toEqual([]);
+    // One page for the article, one between, one for the page with the rest.
+    expect(report.pages).toBe(3);
+    // A name no later file has warns, and the rest goes on the next page.
+    writeFileSync(join(dir, 'ch', '01.md'), `::::page{template="article" next="nowhere"}\n${text}\n::::\n`);
+    const lost = JSON.parse(run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir).stdout) as { pages: number; warnings: { kind: string; data?: { target: string } }[] };
+    expect(lost.warnings.find((w) => w.kind === 'continueTargetMissing')!.data!.target).toBe('nowhere');
+    expect(lost.pages).toBeGreaterThan(3);
+  }, 60_000);
 });

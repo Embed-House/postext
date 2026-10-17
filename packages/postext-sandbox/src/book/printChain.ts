@@ -8,6 +8,7 @@ import { layOutBookChain } from './chain';
 import { composeBookMemo } from './compose';
 import { layoutCacheKey } from './layoutKeys';
 import type { BookPlan, Chapter } from './types';
+import { jumpsKeyOf, planContent } from './jumps';
 
 export interface BookPrintChainInput {
   plan: BookPlan;
@@ -38,7 +39,7 @@ export function layOutBookPrint({ plan, chapters, resources, config, build, onCh
       onChapter?.(chapterPlan.index, count, pagesBefore);
       const book = composeBookMemo(chapters, chapter.id);
       return build(
-        { markdown: book.markdown, metadata: book.metadata, resources, continuation, outline: chapterPlan.outline, ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}) },
+        { markdown: book.markdown, metadata: book.metadata, resources, continuation, ...planContent(chapterPlan) },
         config,
         {
           cacheKey: layoutCacheKey({
@@ -47,7 +48,9 @@ export function layOutBookPrint({ plan, chapters, resources, config, build, onCh
             config,
             resources,
             continuation,
-            continuationKey: chapterPlan.continuationKey,
+            // The stories the documents sent are the ones the plan was
+            // made with, or the key says what they are.
+            continuationKey: jumpsKeyOf(continuation?.jumps) === jumpsKeyOf(chapterPlan.continuation?.jumps) ? chapterPlan.continuationKey : `${chapterPlan.continuationKey}|sent:${jumpsKeyOf(continuation?.jumps)}`,
             outlineKey: chapterPlan.outlineKey,
           }),
         },

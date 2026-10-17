@@ -55,6 +55,7 @@ import type {
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
+import type { StoryJump } from './composed/carryTypes';
 
 // ---------------------------------------------------------------------------
 // Bounding box — all values in px, relative to page origin
@@ -1733,6 +1734,12 @@ export interface VDTBlock {
    *  of the block that first cites or embeds it, which is where a tagged
    *  PDF reads it. */
   contentIndex?: number;
+  /** The block's text comes from another chapter of the book (#943): the
+   *  position of that chapter. Its source offsets (`sourceStart`,
+   *  `sourceEnd`, the lines' maps) are offsets in that chapter's file, not
+   *  this document's. Set on the blocks of a story that jumped in from an
+   *  earlier chapter. */
+  sourceChapter?: number;
   /** Set on the paragraph a footnote is set as (at a column foot, or after
    *  the chapter's last block): the note's id. */
   footnoteNote?: string;
@@ -2616,6 +2623,10 @@ export interface ReflowEvent {
    *  goes on on, and the frame there (`VDTFrame.id`, `cp<n>:<slot>~<k>`). */
   toPage?: number;
   toFrame?: string;
+  /** `continued` to a page of a later chapter (#943): that chapter's
+   *  position in the book. `toPage` and `toFrame` are there once the host
+   *  has both chapters. */
+  toChapter?: number;
 }
 
 /** One frame of a composed page, in sheet coordinates. Its box and its
@@ -2666,6 +2677,22 @@ export interface VDTFrame {
    *  after it). */
   continuedFrom?: string;
   continuesTo?: string;
+  /** The rest goes on in a page of a later chapter (#943): that chapter's
+   *  position in the book; `continuesTo` is then the frame's id there,
+   *  once the host has both chapters (`resolveJumpMarks`). */
+  continuesToChapter?: number;
+  /** The content comes from a page of an earlier chapter (#943): its
+   *  position in the book; `continuedFrom` is the frame's id on its pages. */
+  continuedFromChapter?: number;
+  /** The frame holds text carried in from another chapter (#943): that
+   *  chapter's position; `sourceStart` and `sourceEnd` are offsets in its
+   *  file. */
+  sourceChapter?: number;
+  /** Where a tagged PDF reads a frame that holds carried text (#943) among
+   *  the content of its chapter: just after the page it stands on (the
+   *  content index of the page fence's closing marker, plus a half),
+   *  instead of after the whole chapter. */
+  readIndex?: number;
   /** The frame takes no room on this page (#912): on a page added by
    *  continuation that lays its template again for what goes on, a frame
    *  that receives nothing; on the page content goes on from, an empty
@@ -3276,6 +3303,10 @@ export type ContentWarning = ContentWarningBase & (
     fenceIndex: number;
     target: string;
     before?: true;
+    /** The story comes from the chapter at this position of the book and
+     *  this chapter has no composed page with that `id` (#943): the rest is
+     *  not set; `fenceIndex` is -1. */
+    fromChapter?: number;
     configPath: string;
   }
   /** A composed page's fence and its template disagree about spreads
@@ -3764,6 +3795,11 @@ export interface VDTDocument {
    *  the document (a restart, a poem's `lineStart`): it does not depend on
    *  the number the document inherited. */
   lineNumberRestarted?: true;
+  /** Stories of this chapter that jump to a page fence of a later chapter
+   *  (#943, `PostextContent.laterPageIds`): the rest of each, for the host
+   *  to hand to that chapter (`LayoutContinuation.jumps`, with `chapter`
+   *  set to this chapter's place in the book). Absent when none does. */
+  pendingJumps?: StoryJump[];
 }
 
 // ---------------------------------------------------------------------------

@@ -273,7 +273,7 @@ const config: PostextConfig = {
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框，按<code>overflowTemplate</code>来排）、<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框，没有则进入它的<code>flow</code>框）或<code>'page:&lt;id&gt;'</code>（后面的页面围栏<code>::::page&#123;id=…&#125;</code>中的一个框：<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>指定的那个，没有指定则是那一页自身内容留空的一个；<code>&lt;id&gt;</code>可以是<code>&#123;attr.name&#125;</code>，从页面围栏读取；见<a href="/zh/docs/composed-pages#跳转到后面的页面">组合页面 › 跳转到后面的页面</a>）。追加页上的框自己没有设规则时，沿用把内容带来的那条规则（跳转之后为<code>'next-page'</code>），最多追加16页。</td>
+      <td>放不下的内容在哪里续排：<code>'#frame'</code>（本页的另一个框，与<code>next</code>相同）、<code>'next-page'</code>（在这一页之后添加的页面上的同一个框，按<code>overflowTemplate</code>来排）、<code>'template:&lt;id&gt;'</code>（该模板的一页：进入其中同名的框，没有则进入它的<code>flow</code>框）或<code>'page:&lt;id&gt;'</code>（后面的页面围栏<code>::::page&#123;id=…&#125;</code>中的一个框：<code>'page:&lt;id&gt;#&lt;frame&gt;'</code>指定的那个，没有指定则是那一页自身内容留空的一个；<code>&lt;id&gt;</code>可以是<code>&#123;attr.name&#125;</code>，从页面围栏读取；见<a href="/zh/docs/composed-pages#跳转到后面的页面">组合页面 › 跳转到后面的页面</a>）。追加页上的框自己没有设规则时，沿用把内容带来的那条规则（跳转之后为<code>'next-page'</code>），最多追加16页。该页可以在书中靠后的章节文件里（自postext 1.41起）。</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>

@@ -3,7 +3,7 @@
 // vocabulary shared by state, storage records and preset bundles.
 
 import type { CitationContext } from 'postext';
-import type { DocumentMetadata, LayoutContinuation, NumeralStyle, OutlineEntry } from 'postext';
+import type { DocumentMetadata, LayoutContinuation, NumeralStyle, OutlineEntry, StoryJump } from 'postext';
 import type { BundleStart } from 'postext/bundle';
 
 /** Where a book starts when it is part of a longer one (#695): what its
@@ -150,6 +150,12 @@ export interface ChapterLayout {
    *  the session so the chapters after it can be numbered meanwhile, never
    *  stored nor put in a bundle, and dropped when the faces arrive. */
   withoutFaces?: true;
+  /** The stories of the chapter that jump into a page of a later chapter
+   *  (#943, `VDTDocument.pendingJumps`), and a fingerprint of them: the
+   *  chapter that has the page is laid out with them, and goes stale when
+   *  they change. Absent when none does. */
+  jumps?: StoryJump[];
+  jumpsKey?: string;
   /** Where each entry of the chapter's outline (its headings and parts, in
    *  the order `contentOutline` gives them from the text) landed; null for
    *  an entry that reached no page. The book's table of contents is
@@ -200,6 +206,11 @@ export interface ChapterPlan {
    *  its own text, config and resources: the counters it inherits, the
    *  parity of its first page and the page-number format it starts with. */
   continuationKey: string;
+  /** The `id` of every page fence of the chapters after this one, with the
+   *  position of the chapter that has it (`content.laterPageIds`, #943):
+   *  only for a chapter with composed pages in a book whose configuration
+   *  sends a story to a page by its id. */
+  laterPageIds?: Record<string, number>;
   /** The book's outline, handed to the engine as `content.outline` — only
    *  for a chapter printing the contents (`:::toc`), which depends on the
    *  headings and pages of every chapter, or the index (`:::index`), which

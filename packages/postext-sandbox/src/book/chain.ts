@@ -3,7 +3,9 @@
 // tab renders the book scope. The plan says what every chapter inherits;
 // the chain supplies the pages.
 
-import type { LayoutContinuation, NumeralStyle, VDTDocument } from 'postext';
+import type { LayoutContinuation, NumeralStyle, StoryJump, VDTDocument } from 'postext';
+import { resolveJumpMarks } from 'postext';
+import { routeJumps } from './jumps';
 import type { ChapterPlan } from './types';
 
 /** Lays out `plans` in order with `build`, chaining the page offset and the
@@ -20,31 +22,44 @@ export async function layOutBookChain(
   build: (plan: ChapterPlan, continuation: LayoutContinuation | undefined, pagesBefore: number) => Promise<VDTDocument | null>,
   usesBookTotal: boolean,
 ): Promise<VDTDocument[]> {
-  const pass = async (bookPageCount: number | undefined): Promise<{ docs: VDTDocument[]; pages: number }> => {
+  const pass = async (bookPageCount: number | undefined): Promise<{ docs: VDTDocument[]; byChapter: VDTDocument[]; pages: number }> => {
     const docs: VDTDocument[] = [];
+    /** The documents by the position of their chapter in the book (holes
+     *  where a chapter was left out). */
+    const byChapter: VDTDocument[] = [];
     // The pages before the book, when it says where it starts (#695).
     let offset = plans[0]?.index === 0 ? plans[0].continuation?.pageIndexOffset ?? 0 : 0;
     let nextNumbering: { format: NumeralStyle; startAt: number } | null = null;
+    // The stories the documents built so far send to a page of a later
+    // chapter (#943).
+    const jumpsIn = new Map<number, StoryJump[]>();
     const total = bookPageCount !== undefined ? { bookPageCount } : {};
     for (const plan of plans) {
       // The first chapter inherits the book's start, if it has one, and
       // the book's page count. The page fields of a plan not yet paginated
       // are provisional: the chain has the real ones.
-      const { pageNumbering: planNumbering, ...inherited } = plan.continuation ?? {};
+      const { pageNumbering: planNumbering, jumps: _planJumps, ...inherited } = plan.continuation ?? {};
+      void _planJumps;
       const numbering = nextNumbering ?? (plan.paginated ? planNumbering : undefined);
+      const incoming = jumpsIn.get(plan.index);
       const continuation: LayoutContinuation | undefined = plan.index === 0
         ? (bookPageCount !== undefined ? { ...plan.continuation, ...total } : plan.continuation)
-        : { ...inherited, pageIndexOffset: offset, ...(numbering ? { pageNumbering: numbering } : {}), ...total };
+        : { ...inherited, pageIndexOffset: offset, ...(numbering ? { pageNumbering: numbering } : {}), ...(incoming ? { jumps: incoming } : {}), ...total };
       const doc = await build(plan, continuation, offset);
       if (!doc) continue;
+      routeJumps(plan.index, doc.pendingJumps, plan.laterPageIds, jumpsIn);
       docs.push(doc);
+      byChapter[plan.index] = doc;
       offset += doc.pages.length;
       const last = doc.pages[doc.pages.length - 1];
       if (last) nextNumbering = { format: last.pageNumberFormat, startAt: last.pageNumberValue + 1 };
     }
-    return { docs, pages: offset };
+    return { docs, byChapter, pages: offset };
   };
   const first = await pass(undefined);
-  if (!usesBookTotal || first.docs.every((d) => d.bookPageCount === first.pages)) return first.docs;
-  return (await pass(first.pages)).docs;
+  const settled = !usesBookTotal || first.docs.every((d) => d.bookPageCount === first.pages) ? first : await pass(first.pages);
+  // The marks of the stories that jump from one chapter to another name
+  // the page it printed (#943).
+  if (settled.docs.some((d) => d.pendingJumps)) resolveJumpMarks(settled.byChapter);
+  return settled.docs;
 }

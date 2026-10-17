@@ -11,6 +11,7 @@ import { chapterPageLabels } from '../book/pagination';
 import { withHyphenationLocale } from '../controls/hyphenation';
 import type { LayoutService } from '../worker/LayoutService';
 import { ToolError } from './modelContext';
+import { planContent } from '../book/jumps';
 
 export interface SandboxToolHost {
   store: SandboxStore;
@@ -141,8 +142,7 @@ export async function layOutChapter(host: SandboxToolHost, chapterId: string, si
         metadata: book.metadata,
         resources: state.resources,
         continuation: chapterPlan.continuation,
-        outline: chapterPlan.outline,
-        ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}),
+        ...planContent(chapterPlan),
       },
       config,
       cacheKey: layoutCacheKey({

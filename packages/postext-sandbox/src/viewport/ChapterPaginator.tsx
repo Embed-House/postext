@@ -9,6 +9,7 @@ import { withHyphenationLocale } from '../controls/hyphenation';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
 import { fontsPending, onFontsPending, onLateFonts } from '../worker/LayoutService';
+import { planContent } from '../book/jumps';
 
 /** Pause before a preceding chapter is laid out in the background (ms). */
 const PAGINATION_DEBOUNCE_MS = 300;
@@ -126,7 +127,7 @@ export function ChapterPaginator() {
     const book = composeBookMemo(currentChapters, id);
     const effectiveConfig = withHyphenationLocale(currentConfig, currentLocale);
     layoutWorker.build(
-      { markdown: book.markdown, metadata: book.metadata, resources: currentResources, continuation: chapterPlan.continuation, outline: chapterPlan.outline, ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}) },
+      { markdown: book.markdown, metadata: book.metadata, resources: currentResources, continuation: chapterPlan.continuation, ...planContent(chapterPlan) },
       effectiveConfig,
       {
         cacheKey: layoutCacheKey({
@@ -187,7 +188,7 @@ export function ChapterPaginator() {
         warmedRef.current.add(key);
         layoutWorker
           .warm(
-            { markdown: book.markdown, metadata: book.metadata, resources, continuation: chapterPlan.continuation, outline: chapterPlan.outline, ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}) },
+            { markdown: book.markdown, metadata: book.metadata, resources, continuation: chapterPlan.continuation, ...planContent(chapterPlan) },
             effectiveConfig,
             key,
           )

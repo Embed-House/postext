@@ -31,9 +31,9 @@ import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElem
  *  the chapter file (front matter counted), as every `sourceStart` of the
  *  VDT; `file` is the host's name for that file, when it gave one. */
 export type SourceRef =
-  | { kind: 'markdown'; start: number; end: number; file?: string }
+  | { kind: 'markdown'; start: number; end: number; file?: string; chapter?: number }
   | { kind: 'config'; path: string }
-  | { kind: 'attr'; name: string; start: number; end: number; file?: string }
+  | { kind: 'attr'; name: string; start: number; end: number; file?: string; chapter?: number }
   | { kind: 'resource'; resourceId: string; anchor?: string };
 
 /** The selection level of a {@link SourceElement}, innermost first:
@@ -56,6 +56,11 @@ export interface SourceElement {
   /** The Markdown the element holds, when that is not its `source`: a
    *  frame's slot content, a composed page's fence, a box's fence. */
   content?: { start: number; end: number };
+  /** Set when the Markdown of `source` and `content` is another chapter's
+   *  (#943): text a story carried in from an earlier chapter, laid on this
+   *  document's pages. The position of that chapter in the book; absent:
+   *  this document's own file. */
+  chapter?: number;
   /** The element's box on the page (px): upright, before its frame's turn
    *  (`rotate`). In the page's flow frame when {@link flow} is set, as the
    *  VDT has it. */
@@ -84,16 +89,53 @@ export interface SourceMapOptions {
   /** The file each page's Markdown offsets belong to: the chapter's name,
    *  or one per page for a document stitched from several chapters. */
   file?: string | ((pageIndex: number) => string | undefined);
+  /** The file of the chapter at a position of the book, for text a story
+   *  carried in from another chapter (#943; `SourceElement.chapter`). */
+  chapterFile?: (chapter: number) => string | undefined;
+  /** `elementsForSource`: the chapter the offsets given are in (its
+   *  position in the book), and the position of the chapter `doc` is. By
+   *  default the offsets are `doc`'s own: text carried in from another
+   *  chapter is not found by them. */
+  chapter?: number;
+  ownChapter?: number;
 }
+
+/** The file a source reference names: its name and, for text of another
+ *  chapter, which one. */
+interface FileRef {
+  file?: string;
+  chapter?: number;
+}
+
+/** The `chapterFile` each file reference was made with. */
+const chapterFiles = new WeakMap<FileRef, SourceMapOptions['chapterFile']>();
+
+/** `file`, for the text of `block`: another chapter's file when the block
+ *  was carried in from it (#943). */
+function ofBlock(file: FileRef, block: { sourceChapter?: number }): FileRef {
+  if (block.sourceChapter === undefined) return file;
+  const chapterFile = chapterFiles.get(file);
+  const name = chapterFile?.(block.sourceChapter);
+  const out: FileRef = { ...(name !== undefined ? { file: name } : {}), chapter: block.sourceChapter };
+  chapterFiles.set(out, chapterFile);
+  return out;
+}
+
+/** Whether Markdown of the chapter `c` (undefined: this document's) is
+ *  what `options` asks about. */
+const inQueriedChapter = (options: SourceMapOptions | undefined, c: number | undefined): boolean =>
+  options?.chapter === undefined ? c === undefined : (c ?? options.ownChapter) === options.chapter;
 
 type Point = { x: number; y: number };
 
 const inside = (r: BoundingBox | { x: number; y: number; width: number; height: number }, p: Point, slop = 0): boolean =>
   p.x >= r.x - slop && p.x <= r.x + r.width + slop && p.y >= r.y - slop && p.y <= r.y + r.height + slop;
 
-const fileOf = (options: SourceMapOptions | undefined, pageIndex: number): { file?: string } => {
+const fileOf = (options: SourceMapOptions | undefined, pageIndex: number): FileRef => {
   const f = typeof options?.file === 'function' ? options.file(pageIndex) : options?.file;
-  return f !== undefined ? { file: f } : {};
+  const out: FileRef = f !== undefined ? { file: f } : {};
+  if (options?.chapterFile) chapterFiles.set(out, options.chapterFile);
+  return out;
 };
 
 /** The flag of an element whose box is in `page`'s flow frame (#929). */
@@ -269,8 +311,9 @@ function lineRange(block: VDTBlock, line: VDTLine): { start: number; end: number
 // Elements
 // ---------------------------------------------------------------------------
 
-const blockElement = (block: VDTBlock, file: { file?: string }): SourceElement | undefined => {
+const blockElement = (block: VDTBlock, fileIn: FileRef): SourceElement | undefined => {
   if (block.sourceStart === undefined || block.sourceEnd === undefined) return undefined;
+  const file = ofBlock(fileIn, block);
   return {
     level: block.type === 'callout' ? 'box' : 'block',
     id: block.id,
@@ -282,8 +325,9 @@ const blockElement = (block: VDTBlock, file: { file?: string }): SourceElement |
 
 /** What a text block of the body shows at `p` (flow frame): the glyph, the
  *  line and the block, innermost first. */
-function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceElement[] {
+function textChain(block: VDTBlock, p: Point, fileIn: FileRef): SourceElement[] {
   const out: SourceElement[] = [];
+  const file = ofBlock(fileIn, block);
   if (block.resourceBlock) {
     const resourceId = block.resourceBlock.resource.id;
     // A label laid on the picture (#860): its glyph, then the label.
@@ -306,7 +350,7 @@ function textChain(block: VDTBlock, p: Point, file: { file?: string }): SourceEl
 
 /** A figure label's glyph at `p` (its text spread over its rect) and the
  *  label itself, its source the resource at its anchor. */
-function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: { file?: string }, block?: VDTBlock): SourceElement[] {
+function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, p: Point, file: FileRef, block?: VDTBlock): SourceElement[] {
   const id = label.id ?? `${blockId}:label:${'anchor' in label.at ? label.at.anchor : label.sourceStart}`;
   const anchor = label.anchorRef ? label.anchorRef.slice(label.anchorRef.indexOf('#') + 1) : undefined;
   const out: SourceElement[] = [];
@@ -330,7 +374,7 @@ function labelChain(label: VDTFigureLabel, resourceId: string, blockId: string, 
 }
 
 /** The boxes enclosing `block` among `boxes` (innermost first). */
-function enclosingBoxes(block: VDTBlock, boxes: readonly VDTBlock[], file: { file?: string }): SourceElement[] {
+function enclosingBoxes(block: VDTBlock, boxes: readonly VDTBlock[], file: FileRef): SourceElement[] {
   const out: SourceElement[] = [];
   let id = block.id;
   for (let guard = 0; guard < 32; guard++) {
@@ -379,7 +423,8 @@ function designTextSource(b: VDTDesignTextBlock, p: Point): { start: number; end
 /** What a heading's own design shows at `p` (#906): the glyph of the
  *  title it prints (`{titleText}`, or an attribute), then the heading. The
  *  heading's lines are not painted: its design is what the page shows. */
-function headingDesignChain(block: VDTBlock, p: Point, file: { file?: string }): SourceElement[] | undefined {
+function headingDesignChain(block: VDTBlock, p: Point, fileIn: FileRef): SourceElement[] | undefined {
+  const file = ofBlock(fileIn, block);
   const overlay = block.designOverlay;
   if (block.type !== 'heading' || !overlay || block.hidden) return undefined;
   for (let i = overlay.blocks.length - 1; i >= 0; i--) {
@@ -402,7 +447,7 @@ function designChain(
   p: Point,
   idOf: (element: string) => string,
   composed: VDTComposedPage | undefined,
-  file: { file?: string },
+  file: FileRef,
 ): SourceElement[] | undefined {
   if (!inside(b.bbox, p)) return undefined;
   const out: SourceElement[] = [];
@@ -457,6 +502,7 @@ function frameAncestors(doc: VDTDocument, page: VDTPage, frame: VDTFrame): Sourc
     id: frame.id,
     source: { kind: 'config', path: frame.configPath },
     ...(frame.sourceStart !== undefined && frame.sourceEnd !== undefined ? { content: { start: frame.sourceStart, end: frame.sourceEnd } } : {}),
+    ...(frame.sourceChapter !== undefined ? { chapter: frame.sourceChapter } : {}),
     rect: { ...frame.rect },
     ...(frame.rotate ? { rotate: frame.rotate } : {}),
   }];
@@ -508,7 +554,7 @@ function uprightChain(frame: VDTFrame, chain: SourceElement[]): SourceElement[] 
 }
 
 /** What a frame shows at `p` (page px), innermost first. */
-function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }, facing = false): SourceElement[] | undefined {
+function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: FileRef, facing = false): SourceElement[] | undefined {
   const raw = frameChainOf(doc, page, frame, blocks, pagePoint, file);
   const chain = raw && uprightChain(frame, raw);
   // The half of a spread frame read on the facing page (#861): the ids of
@@ -519,7 +565,7 @@ function frameChain(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: re
 /** The id of the block a facing copy (`…-facing`) shows. */
 const unfacing = (id: string): string => id.replace(/-facing(?=$|[:@])/, '');
 
-function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: { file?: string }): SourceElement[] | undefined {
+function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: readonly VDTBlock[], pagePoint: Point, file: FileRef): SourceElement[] | undefined {
   const p = intoFrame(frame, pagePoint);
   const box = blocks.find((b) => b.type === 'callout' && (b.id === frame.blockIds[0] || frame.blockIds.length === 0)) ;
   const boxId = box?.id;
@@ -531,7 +577,8 @@ function frameChainOf(doc: VDTDocument, page: VDTPage, frame: VDTFrame, blocks: 
       if (b.kind !== 'text' || !inside(b.bbox, p)) continue;
       const src = designTextSource(b, p);
       if (!src) continue;
-      const source: SourceRef = b.attr !== undefined ? { kind: 'attr', name: b.attr, ...src, ...file } : { kind: 'markdown', ...src, ...file };
+      const own = box ? ofBlock(file, box) : file;
+      const source: SourceRef = b.attr !== undefined ? { kind: 'attr', name: b.attr, ...src, ...own } : { kind: 'markdown', ...src, ...own };
       return [{ level: 'text', id: `${frame.id}:${b.attr ?? 'title'}@${src.start}`, source }, ...frameAncestors(doc, page, frame)];
     }
   }
@@ -677,10 +724,11 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     const composed = page.composed;
     if (!composed) continue;
     const file = fileOf(options, page.index);
-    if (meets({ start: composed.sourceStart, end: composed.sourceEnd }, start, end)) out.push({ pageIndex: page.index, element: templateElement(composed) });
+    if (inQueriedChapter(options, undefined) && meets({ start: composed.sourceStart, end: composed.sourceEnd }, start, end)) out.push({ pageIndex: page.index, element: templateElement(composed) });
     for (const frame of composed.frames) {
       for (const id of frame.blockIds) blockFrame.set(id, { frame, page });
       if (frame.sourceStart === undefined || frame.sourceEnd === undefined) continue;
+      if (!inQueriedChapter(options, frame.sourceChapter)) continue;
       if (!meets({ start: frame.sourceStart, end: frame.sourceEnd }, start, end)) continue;
       const el = frameAncestors(doc, page, frame)[0]!;
       // On a spread, the part of the frame this page paints (#877): a band
@@ -692,7 +740,7 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
     for (const [name, slot] of [['decoration', composed.decoration], ['header', page.header], ['footer', page.footer]] as const) {
       slot?.blocks.forEach((b, i) => {
         if (b.kind !== 'text' || b.sourceStart === undefined || b.sourceEnd === undefined) return;
-        if (!meets({ start: b.sourceStart, end: b.sourceEnd }, start, end)) return;
+        if (!inQueriedChapter(options, undefined) || !meets({ start: b.sourceStart, end: b.sourceEnd }, start, end)) return;
         out.push({
           pageIndex: page.index,
           element: {
@@ -708,8 +756,9 @@ export function elementsForSource(doc: VDTDocument, start: number, end: number, 
   /** The lines, block and labels of `block` the range touches. */
   const blockMatches = (block: VDTBlock, pageIndex: number, held: { frame: VDTFrame } | undefined, facing: boolean): void => {
     if (block.sourceStart === undefined || block.sourceEnd === undefined || block.type === 'callout') return;
+    if (!inQueriedChapter(options, block.sourceChapter)) return;
     if (!meets({ start: block.sourceStart, end: block.sourceEnd }, start, end)) return;
-    const file = fileOf(options, pageIndex);
+    const file = ofBlock(fileOf(options, pageIndex), block);
     // The frame's foot in its blocks' own coordinates (larger when the
     // frame's text is scaled, #858).
     const foot = held ? frameContentRect(held.frame).y + frameContentRect(held.frame).height : Infinity;
