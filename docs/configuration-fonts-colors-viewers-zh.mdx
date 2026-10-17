@@ -1347,7 +1347,7 @@ debug: {
 - **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
-- **页面模板和注记样式** — `pageTemplates`或`labelStyles`中的问题：id或名称重复，`extends`、锚定或框架接续成环，样式、框架或模板不存在，最小值大于最大值，锚点的注记样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
+- **页面模板和注记样式** — `pageTemplates`或`labelStyles`中的问题：id或名称重复，`extends`、锚定或框接续成环，样式、框或模板不存在，最小值大于最大值，锚点的注记样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
 - **设计中的正文** — 设计文字元素在占位符之外的文字超过一个简短标签的长度：也就是存放在配置中的书的正文。每个设置（一个标题样式、页眉、部分设计）一条警告，附每条文字的路径（`contentInConfig`；见[正文检查](#正文检查配置)）。与其他警告不同，它可以关闭：`checks.contentInConfig.enabled: false`。
 
 沙盒在**检查**面板中列出这些警告，并附上设置的路径。在代码中，`buildDocument`把它们作为`configWarnings`放在文档上（配置没有问题时不存在该字段），`collectConfigWarnings(config)`则不做排版直接返回它们：

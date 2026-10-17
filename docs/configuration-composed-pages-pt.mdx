@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuração: páginas compostas',
   sidebarTitle: 'Ajustes de páginas compostas',
-  description: 'Modelos de página para as páginas compostas: quadros, grupos, decoração, herança e variantes de recto e verso, os estilos de rótulo das âncoras de uma imagem e os avisos que um modelo pode dar',
+  description: 'Modelos de página para as páginas compostas: blocos, grupos, decoração, herança e variantes de recto e verso, os estilos de rótulo das âncoras de uma imagem e os avisos que um modelo pode dar',
   lang: 'pt',
   lastUpdated: '2026-10-16',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
-  plainSummary: "Esta página trata dos modelos de página. Um modelo é uma página desenhada nos ajustes: caixas com nome, chamadas quadros, com o lugar de cada uma, o tamanho até o qual podem crescer e a aparência. O Markdown de uma página composta depois preenche esses quadros pelo nome, então o texto nunca guarda posições e os ajustes nunca guardam texto. Um modelo pode partir de outro e mudar só alguns quadros, e pode ser diferente nas páginas pares e nas ímpares. A página também traz os estilos de rótulo para as palavras colocadas sobre uma imagem, e cada aviso que um modelo pode dar com o jeito de corrigi-lo.",
+  plainSummary: "Esta página trata dos modelos de página. Um modelo é uma página desenhada nos ajustes: caixas com nome, chamadas blocos, com o lugar de cada uma, o tamanho até o qual podem crescer e a aparência. O Markdown de uma página composta depois preenche esses blocos pelo nome, então o texto nunca guarda posições e os ajustes nunca guardam texto. Um modelo pode partir de outro e mudar só alguns blocos, e pode ser diferente nas páginas pares e nas ímpares. A página também traz os estilos de rótulo para as palavras colocadas sobre uma imagem, e cada aviso que um modelo pode dar com o jeito de corrigi-lo.",
 };
 
 # Configuração: páginas compostas
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Modelos de página
 
-Uma página composta é uma página que tira a forma de um **modelo de página** da configuração e o conteúdo do Markdown de um bloco `::::page{template="…"}`. O modelo dá nome a retângulos, chamados **quadros**; o Markdown manda cada parte do conteúdo para um quadro pelo nome (o seu encaixe). A geometria nunca aparece no Markdown, e o texto do conteúdo nunca aparece no modelo. A propriedade `pageTemplates` guarda os modelos do livro:
+Uma página composta é uma página que tira a forma de um **modelo de página** da configuração e o conteúdo do Markdown de uma cerca `::::page{template="…"}`. O modelo dá nome a retângulos, chamados **blocos**; o Markdown manda cada parte do conteúdo para um bloco pelo nome (o seu encaixe). A geometria nunca aparece no Markdown, e o texto do conteúdo nunca aparece no modelo. A propriedade `pageTemplates` guarda os modelos do livro:
 
 ```ts
 const config: PostextConfig = {
@@ -46,7 +46,7 @@ const config: PostextConfig = {
 };
 ```
 
-Um modelo que define só o seu `id` e um quadro é uma página inteira com esse quadro ocupando a área de texto. Todos os outros campos são opcionais:
+Um modelo que define só o seu `id` e um bloco é uma página inteira com esse bloco ocupando a área de texto. Todos os outros campos são opcionais:
 
 <table>
   <thead>
@@ -62,7 +62,7 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obrigatório</td>
-      <td>O nome que um bloco de página pede (<code>template="tema-cajas"</code>). Único entre os modelos: um segundo com o mesmo id é ignorado.</td>
+      <td>O nome que uma cerca de página pede (<code>template="tema-cajas"</code>). Único entre os modelos: um segundo com o mesmo id é ignorado.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -80,31 +80,31 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>area</code></td>
       <td><code>'content' | 'trim' | 'bleed'</code></td>
       <td><code>'content'</code></td>
-      <td>O retângulo ao qual as posições dos quadros se referem. <code>'content'</code> é a área de texto da página, espelhada nas pares e ímpares como o texto corrido; <code>'trim'</code> é a página refilada; <code>'bleed'</code>, a página com a sangria.</td>
+      <td>O retângulo ao qual as posições dos blocos se referem. <code>'content'</code> é a área de texto da página, espelhada nas pares e ímpares como o texto corrido; <code>'trim'</code> é a página refilada; <code>'bleed'</code>, a página com a sangria.</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
       <td><code>&#123; columns, rows, columnGap?, rowGap? &#125;</code></td>
       <td>nenhuma</td>
-      <td>Divide a área em células, de modo que um quadro ou um grupo pode ser posicionado por célula (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, contando a partir de 1) em vez de por <code>placement</code>. Os espaços valem <code>0</code> por padrão.</td>
+      <td>Divide a área em células, de modo que um bloco ou um grupo pode ser posicionado por célula (<code>grid: &#123; col: 2, row: 1, cols: 2 &#125;</code>, contando a partir de 1) em vez de por <code>placement</code>. Os espaços valem <code>0</code> por padrão.</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Os quadros, na ordem do modelo: a ordem em que são medidos e a que desempata. Veja <a href="#quadros">Quadros</a>.</td>
+      <td>Os blocos, na ordem do modelo: a ordem em que são medidos e a que desempata. Veja <a href="#blocos">Blocos</a>.</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
       <td><code>FrameGroupConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Pilhas e fileiras de quadros que dividem o espaço. Veja <a href="#grupos">Grupos</a>.</td>
+      <td>Pilhas e fileiras de blocos que dividem o espaço. Veja <a href="#grupos">Grupos</a>.</td>
     </tr>
     <tr>
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>nenhuma</td>
-      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeços-e-rodapés">cabeços e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo do bloco de página). Um elemento pode se ancorar a um quadro ou a um grupo (<code>'#dinero'</code>) e então se move com ele. A decoração é posicionada depois dos quadros e nunca empurra o texto.</td>
+      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeços-e-rodapés">cabeços e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo da cerca de página). Um elemento pode se ancorar a um bloco ou a um grupo (<code>'#dinero'</code>) e então se move com ele. A decoração é posicionada depois dos blocos e nunca empurra o texto.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -122,7 +122,7 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Em uma página dupla, uma faixa dessa largura centrada na lombada que os quadros evitam, a menos que tenham <code>crossGutter: true</code>: um quadro que a atravessa é cortado na borda dela, do lado do seu centro, e um que começa dentro dela sai. Com <code>0</code>, a faixa é a própria lombada.</td>
+      <td>Em uma página dupla, uma faixa dessa largura centrada na lombada que os blocos evitam, a menos que tenham <code>crossGutter: true</code>: um bloco que a atravessa é cortado na borda dela, do lado do seu centro, e um que começa dentro dela sai. Com <code>0</code>, a faixa é a própria lombada.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -134,7 +134,7 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>este modelo</td>
-      <td>O modelo das páginas acrescentadas quando um quadro continua na página seguinte (<code>overflow.continueIn: 'next-page'</code>). Sem valor, a página acrescentada é este modelo diagramado de novo com apenas os quadros que continuam preenchidos; os outros não ocupam espaço. Uma página dupla aqui faz da continuação uma página dupla. Veja <a href="/pt/docs/composed-pages#quando-o-texto-continua">Páginas compostas › Quando o texto continua</a>.</td>
+      <td>O modelo das páginas acrescentadas quando um bloco continua na página seguinte (<code>overflow.continueIn: 'next-page'</code>). Sem valor, a página acrescentada é este modelo diagramado de novo com apenas os blocos que continuam preenchidos; os outros não ocupam espaço. Uma página dupla aqui faz da continuação uma página dupla. Veja <a href="/pt/docs/composed-pages#quando-o-texto-continua">Páginas compostas › Quando o texto continua</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
@@ -157,11 +157,11 @@ Um modelo que define só o seu `id` e um quadro é uma página inteira com esse 
   </tbody>
 </table>
 
-### Quadros
+### Blocos
 
-Um quadro é um retângulo com nome que recebe conteúdo diagramado. O seu `name` é o encaixe que o Markdown pede, e é único no seu modelo (um grupo também não pode ter o nome de um quadro, já que as âncoras nomeiam os dois do mesmo jeito).
+Um bloco é um retângulo com nome que recebe conteúdo diagramado. O seu `name` é o encaixe que o Markdown pede, e é único no seu modelo (um grupo também não pode ter o nome de um bloco, já que as âncoras nomeiam os dois do mesmo jeito).
 
-Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e, senão, pelo seu `placement`, que funciona como o de um elemento de design: uma âncora (`'container'` é a área, `'page'`, `'bleed'`, ou `'#name'` para outro quadro ou grupo), uma borda, um deslocamento e um tamanho. Um quadro ancorado a outro se move com ele. Sem nenhum dos dois, o quadro começa no canto superior esquerdo da área, com a largura da área inteira e a altura que a sua regra de altura indicar. Como o conteúdo é distribuído pelos quadros, encadeado e cortado está descrito em [Páginas compostas › Como a página é composta](/pt/docs/composed-pages#como-a-página-é-composta).
+Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, senão, pelo seu `placement`, que funciona como o de um elemento de design: uma âncora (`'container'` é a área, `'page'`, `'bleed'`, ou `'#name'` para outro bloco ou grupo), uma borda, um deslocamento e um tamanho. Um bloco ancorado a outro se move com ele. Sem nenhum dos dois, o bloco começa no canto superior esquerdo da área, com a largura da área inteira e a altura que a sua regra de altura indicar. Como o conteúdo é distribuído pelos blocos, encadeado e cortado está descrito em [Páginas compostas › Como a página é composta](/pt/docs/composed-pages#como-a-página-é-composta).
 
 <table>
   <thead>
@@ -183,7 +183,7 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>a área inteira</td>
-      <td>Âncora, borda, deslocamento e tamanho, como no <a href="/pt/docs/configuration-headers-footers#posicionamento-de-elementos">posicionamento de elementos</a>. Ignorado quando uma célula da grade posiciona o quadro.</td>
+      <td>Âncora, borda, deslocamento e tamanho, como no <a href="/pt/docs/configuration-headers-footers#posicionamento-de-elementos">posicionamento de elementos</a>. Ignorado quando uma célula da grade posiciona o bloco.</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -195,7 +195,7 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Um comprimento fixo, uma porcentagem da área (de 0 a 100), <code>'auto'</code> (o tamanho próprio do conteúdo) ou <code>'fill'</code> (o que sobra até a borda à qual o quadro está ancorado). Sem valor, o quadro lê <code>placement.size</code> e depois o padrão: a largura inteira e a altura do seu conteúdo. Um quadro de texto precisa de uma medida, então uma largura <code>'auto'</code> só faz sentido num quadro que contém uma única imagem (a largura da imagem na altura do quadro). Um valor que o motor não consegue usar (um comprimento negativo, uma unidade desconhecida) é lido como o padrão.</td>
+      <td>Um comprimento fixo, uma porcentagem da área (de 0 a 100), <code>'auto'</code> (o tamanho próprio do conteúdo) ou <code>'fill'</code> (o que sobra até a borda à qual o bloco está ancorado). Sem valor, o bloco lê <code>placement.size</code> e depois o padrão: a largura inteira e a altura do seu conteúdo. Um bloco com texto precisa de uma medida, então uma largura <code>'auto'</code> só faz sentido num bloco que contém uma única imagem (a largura da imagem na altura do bloco). Um valor que o motor não consegue usar (um comprimento negativo, uma unidade desconhecida) é lido como o padrão.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -207,7 +207,7 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>sem caixa</td>
-      <td>O id de um <a href="/pt/docs/configuration-callouts#estilos-de-boxe">estilo de boxe</a>: os quadros são desenhados com estilos de boxe (fundo, borda, preenchimento, faixa, ícone, aba de rótulo, título). As palavras de uma aba vêm do Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Os ajustes de boxe sobre onde uma caixa vai no texto corrido (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) não se aplicam a um quadro.</td>
+      <td>O id de um <a href="/pt/docs/configuration-callouts#estilos-de-boxe">estilo de boxe</a>: os blocos são desenhados com estilos de boxe (fundo, borda, preenchimento, faixa, ícone, aba de rótulo, título). As palavras de uma aba vêm do Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Os ajustes de boxe sobre onde uma caixa vai no texto corrido (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) não se aplicam a um bloco.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -231,55 +231,55 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
       <td><code>'top'</code></td>
-      <td>Onde o conteúdo fica num quadro mais alto que ele.</td>
+      <td>Onde o conteúdo fica num bloco mais alto que ele.</td>
     </tr>
     <tr>
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, o do estilo</td>
-      <td>Colunas dentro do quadro.</td>
+      <td>Colunas dentro do bloco.</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
       <td><code>'none' | 'push'</code></td>
       <td><code>'none'</code></td>
-      <td><code>'push'</code>: o texto dos outros quadros contorna o retângulo deste.</td>
+      <td><code>'push'</code>: o texto dos outros blocos contorna o retângulo deste.</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>'box' | 'contour'</code></td>
       <td><code>'box'</code></td>
-      <td>Com <code>exclude: 'push'</code>: o que o texto dos outros quadros contorna. <code>'contour'</code> é a forma das imagens que o quadro contém (o polígono ou o canal alfa delas, veja <a href="/pt/docs/document-format-resources#contorno-pela-forma">Contorno pela forma</a>); um quadro girado, ou um cujas imagens não têm forma conhecida, afasta o texto com a sua caixa.</td>
+      <td>Com <code>exclude: 'push'</code>: o que o texto dos outros blocos contorna. <code>'contour'</code> é a forma das imagens que o bloco contém (o polígono ou o canal alfa delas, veja <a href="/pt/docs/document-format-resources#contorno-pela-forma">Contorno pela forma</a>); um bloco girado, ou um cujas imagens não têm forma conhecida, afasta o texto com a sua caixa.</td>
     </tr>
     <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>O quadro recebe o conteúdo que não nomeia nenhum encaixe.</td>
+      <td>O bloco recebe o conteúdo que não nomeia nenhum encaixe.</td>
     </tr>
     <tr>
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code></td>
       <td>nenhum</td>
-      <td>O quadro recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo do bloco.</td>
+      <td>O bloco recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo da cerca.</td>
     </tr>
     <tr>
       <td><code>next</code></td>
       <td><code>string</code></td>
       <td>nenhum</td>
-      <td>Uma cadeia: o conteúdo que não cabe continua no quadro com esse nome, na mesma página.</td>
+      <td>Uma cadeia: o conteúdo que não cabe continua no bloco com esse nome, na mesma página.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nenhum</td>
-      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro quadro da página, como <code>next</code>), <code>'next-page'</code> (o mesmo quadro numa página acrescentada depois desta, a partir de <code>overflowTemplate</code>) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo: o quadro de mesmo nome ou, se não houver, o quadro de fluxo dele). Um quadro de uma página acrescentada sem regra própria continua com a regra que trouxe o conteúdo, até 16 páginas acrescentadas.</td>
+      <td>Onde continua o conteúdo que não cabe: <code>'#frame'</code> (outro bloco da página, como <code>next</code>), <code>'next-page'</code> (o mesmo bloco numa página acrescentada depois desta, a partir de <code>overflowTemplate</code>) ou <code>'template:&lt;id&gt;'</code> (uma página desse modelo: o bloco de mesmo nome ou, se não houver, o bloco de fluxo dele). Um bloco de uma página acrescentada sem regra própria continua com a regra que trouxe o conteúdo, até 16 páginas acrescentadas.</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>a do idioma</td>
-      <td>A marca no fim de um trecho cortado para outra página. Sem valor, o <code>continuesMarker</code> do estilo do quadro, que segue o idioma do documento (“Continued”, “Continúa”, “À suivre”…, as palavras das tabelas divididas); uma string põe essas palavras; <code>false</code> não põe nenhuma. Um quadro encadeado com <code>next</code> na mesma página não leva marca.</td>
+      <td>A marca no fim de um trecho cortado para outra página. Sem valor, o <code>continuesMarker</code> do estilo do bloco, que segue o idioma do documento (“Continued”, “Continúa”, “À suivre”…, as palavras das tabelas divididas); uma string põe essas palavras; <code>false</code> não põe nenhuma. Um bloco encadeado com <code>next</code> na mesma página não leva marca.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -297,31 +297,31 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
       <td><code>boolean</code>, <code>number</code></td>
       <td><code>true</code>, <code>0.8</code></td>
-      <td>Se as imagens do quadro e dos outros quadros do grupo podem ser diagramadas menores quando o conteúdo deste quadro não cabe, e até que escala.</td>
+      <td>Se as imagens do bloco e dos outros blocos do grupo podem ser diagramadas menores quando o conteúdo deste bloco não cabe, e até que escala.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>O quadro nunca se move nem muda de tamanho, para uma caixa que precisa ficar alinhada com a arte. Um grupo se arranja em volta dele.</td>
+      <td>O bloco nunca se move nem muda de tamanho, para uma caixa que precisa ficar alinhada com a arte. Um grupo se arranja em volta dele.</td>
     </tr>
     <tr>
       <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Como o quadro divide o espaço do seu grupo: <code>grow</code> fica com uma parte do espaço que sobra, <code>shrink</code> deixa o quadro devolver espaço, e os quadros com <code>priority</code> mais baixa cedem primeiro.</td>
+      <td>Como o bloco divide o espaço do seu grupo: <code>grow</code> fica com uma parte do espaço que sobra, <code>shrink</code> deixa o bloco devolver espaço, e os blocos com <code>priority</code> mais baixa cedem primeiro.</td>
     </tr>
     <tr>
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Nenhum aviso quando o Markdown não manda nada para o quadro.</td>
+      <td>Nenhum aviso quando o Markdown não manda nada para o bloco.</td>
     </tr>
     <tr>
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Em uma página dupla, o quadro pode atravessar a faixa da lombada. O texto dele é lido na página que contém o seu centro; a página em frente pinta a metade dele.</td>
+      <td>Em uma página dupla, o bloco pode atravessar a faixa da lombada. O texto dele é lido na página que contém o seu centro; a página em frente pinta a metade dele.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -333,14 +333,14 @@ Um quadro é posicionado pela sua célula de `grid` quando o modelo tem grade e,
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Num modelo que estende outro, ou numa variante: remove o quadro herdado com esse nome.</td>
+      <td>Num modelo que estende outro, ou numa variante: remove o bloco herdado com esse nome.</td>
     </tr>
   </tbody>
 </table>
 
 ### Grupos
 
-Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de quadros que dividem o espaço e se movem juntos. Dentro de um grupo, a posição própria dos quadros na direção do grupo é ignorada: o grupo os arranja em ordem, com `gap` entre eles. Quando o texto de um quadro cresce, os quadros que vêm depois se deslocam. Um grupo é uma caixa à qual quadros e decoração podem se ancorar (`'#pagina'`).
+Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de blocos que dividem o espaço e se movem juntos. Dentro de um grupo, a posição própria dos blocos na direção do grupo é ignorada: o grupo os arranja em ordem, com `gap` entre eles. Quando o texto de um bloco cresce, os blocos que vêm depois se deslocam. Um grupo é uma caixa à qual blocos e decoração podem se ancorar (`'#pagina'`).
 
 <table>
   <thead>
@@ -356,7 +356,7 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td>obrigatório</td>
-      <td>Único entre os quadros e grupos do modelo.</td>
+      <td>Único entre os blocos e grupos do modelo.</td>
     </tr>
     <tr>
       <td><code>kind</code></td>
@@ -368,25 +368,25 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Os quadros do grupo, na sua ordem na página. Um quadro pertence a um grupo no máximo; um nome que não é nenhum quadro do modelo, ou um quadro já listado, é pulado.</td>
+      <td>Os blocos do grupo, na sua ordem na página. Um bloco pertence a um grupo no máximo; um nome que não é nenhum bloco do modelo, ou um bloco já listado, é pulado.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>O espaço entre dois quadros do grupo.</td>
+      <td>O espaço entre dois blocos do grupo.</td>
     </tr>
     <tr>
       <td><code>placement</code>, <code>grid</code></td>
-      <td>como nos quadros</td>
-      <td>a caixa dos seus quadros</td>
-      <td>A caixa própria do grupo. Sem valor, o grupo começa onde está posicionado o seu primeiro quadro e vai até onde os seus quadros precisarem.</td>
+      <td>como nos blocos</td>
+      <td>a caixa dos seus blocos</td>
+      <td>A caixa própria do grupo. Sem valor, o grupo começa onde está posicionado o seu primeiro bloco e vai até onde os seus blocos precisarem.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
       <td><code>'start' | 'center' | 'end' | 'space-between'</code></td>
       <td><code>'start'</code></td>
-      <td>Para onde vai o espaço que sobra quando nenhum quadro do grupo cresce.</td>
+      <td>Para onde vai o espaço que sobra quando nenhum bloco do grupo cresce.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -399,20 +399,20 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
 
 ### Como os grupos dividem o espaço
 
-Um quadro declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que ele contém, mantida entre `minHeight` e `maxHeight`. Num modelo tirado de uma página impressa, dê a cada caixa como `minHeight` a altura que ela tem na página: com um texto curto a caixa fica como está desenhada, e um texto mais longo a deixa mais alta. A página é diagramada duas vezes na mesma passada, uma como o modelo a declara e outra como o conteúdo precisa, e o que muda de uma para a outra forma o [registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+Um bloco declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que ele contém, mantida entre `minHeight` e `maxHeight`. Num modelo tirado de uma página impressa, dê a cada caixa como `minHeight` a altura que ela tem na página: com um texto curto a caixa fica como está desenhada, e um texto mais longo a deixa mais alta. A página é diagramada duas vezes na mesma passada, uma como o modelo a declara e outra como o conteúdo precisa, e o que muda de uma para a outra forma o [registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
 
-**Pilha.** Os quadros de uma pilha ficam um embaixo do outro, cada um na sua altura, com `gap` entre eles. Cada um mantém a sua posição horizontal e a sua largura; a posição vertical própria é ignorada.
+**Pilha.** Os blocos de uma pilha ficam um embaixo do outro, cada um na sua altura, com `gap` entre eles. Cada um mantém a sua posição horizontal e a sua largura; a posição vertical própria é ignorada.
 
-- Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro quadro o coloca e desce o quanto os quadros precisarem, até o pé da área do modelo. Quando um quadro cresce, os quadros que vêm depois dele descem o mesmo tanto.
-- Um grupo com caixa própria arranja os seus quadros dentro dela. Quando eles precisam de mais do que ela comporta, os quadros com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; quadros da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os quadros com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os quadros (`'end'` no pé, `'center'`, `'space-between'`). Um quadro do grupo sem posicionamento próprio usa a caixa do grupo como área.
-- Quando nada mais pode ceder, nenhum quadro passa do pé do grupo: o quadro cujo conteúdo não cabe percorre a escada de ajuste (veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)), e o que ainda assim não cabe é cortado ali e aparece como `frameOverflow`.
-- Um quadro com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
+- Um grupo sem `placement` nem `grid` próprios começa onde o posicionamento do seu primeiro bloco o coloca e desce o quanto os blocos precisarem, até o pé da área do modelo. Quando um bloco cresce, os blocos que vêm depois dele descem o mesmo tanto.
+- Um grupo com caixa própria arranja os seus blocos dentro dela. Quando eles precisam de mais do que ela comporta, os blocos com `shrink` acima de 0 devolvem espaço, primeiro os de `priority` mais baixa; blocos da mesma prioridade cedem na proporção do seu `shrink`, e nenhum fica abaixo do seu `minHeight`. O espaço que sobra vai para os blocos com `grow` acima de 0, na proporção desse valor, até o `maxHeight` de cada um; se não houver nenhum, `align` posiciona os blocos (`'end'` no pé, `'center'`, `'space-between'`). Um bloco do grupo sem posicionamento próprio usa a caixa do grupo como área.
+- Quando nada mais pode ceder, nenhum bloco passa do pé do grupo: o bloco cujo conteúdo não cabe percorre a escada de ajuste (veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)), e o que ainda assim não cabe é cortado ali e aparece como `frameOverflow`.
+- Um bloco com `height: 'fill'` pede o seu `minHeight` e fica com o espaço que sobra como se tivesse `grow: 1`.
 
-**Fileira.** Os quadros de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um quadro de altura fixa mantém a sua). Quando o texto de um quadro passa da altura da fileira, o quadro ganha largura: primeiro a que sobra na fileira, depois a dos outros quadros com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o quadro não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os quadros com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
+**Fileira.** Os blocos de uma fileira ficam lado a lado nas larguras declaradas, todos com a altura da fileira: a da caixa do grupo ou, se o grupo não tiver caixa própria, a maior altura declarada entre eles (um bloco de altura fixa mantém a sua). Quando o texto de um bloco passa da altura da fileira, o bloco ganha largura: primeiro a que sobra na fileira, depois a dos outros blocos com `shrink` acima de 0, primeiro os de `priority` mais baixa, sem que nenhum fique mais estreito que a largura em que o seu próprio texto ainda cabe. A largura tomada é o menor número de milímetros inteiros com que o texto cabe; se nem todo o espaço disponível bastar, o bloco não toma nada, e uma fileira sem caixa própria fica mais alta. A largura que sobra vai para os blocos com `grow` acima de 0 e depois para `align`. As fileiras vão da esquerda para a direita.
 
-**Quadros fixos.** Um quadro com `pin: true` mantém a caixa que o modelo declara para ele, mesmo quando o quadro ao qual está ancorado cresce ou se move: uma caixa desenhada para coincidir com a arte continua sobre ela. Num grupo, um quadro fixo não sai do lugar e os outros quadros passam por ele, com o `gap` mantido dos dois lados; um quadro fixo fora do grupo faz o mesmo com os quadros do grupo que ele encobriria.
+**Blocos fixos.** Um bloco com `pin: true` mantém a caixa que o modelo declara para ele, mesmo quando o bloco ao qual está ancorado cresce ou se move: uma caixa desenhada para coincidir com a arte continua sobre ela. Num grupo, um bloco fixo não sai do lugar e os outros blocos passam por ele, com o `gap` mantido dos dois lados; um bloco fixo fora do grupo faz o mesmo com os blocos do grupo que ele encobriria.
 
-**Decoração.** Um elemento de decoração ancorado a um quadro (`anchor: { to: '#dinero' }`) acompanha o quadro quando ele cresce ou se move. Um elemento com `pin: true` fica onde o modelo desenha aquele quadro.
+**Decoração.** Um elemento de decoração ancorado a um bloco (`anchor: { to: '#dinero' }`) acompanha o bloco quando ele cresce ou se move. Um elemento com `pin: true` fica onde o modelo desenha aquele bloco.
 
 <table>
   <thead>
@@ -428,7 +428,7 @@ Um quadro declara o seu tamanho: um `height` fixo, ou `'auto'`, a altura do que 
       <td><code>pin</code> (elemento de decoração)</td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Na decoração de uma página composta: um elemento ancorado a um quadro fica onde o modelo coloca esse quadro, não importa o que façam o conteúdo do quadro ou o seu grupo. Ignorado nos cabeços, nos rodapés e nos estilos de título.</td>
+      <td>Na decoração de uma página composta: um elemento ancorado a um bloco fica onde o modelo coloca esse bloco, não importa o que façam o conteúdo do bloco ou o seu grupo. Ignorado nos cabeços, nos rodapés e nos estilos de título.</td>
     </tr>
   </tbody>
 </table>
@@ -451,15 +451,15 @@ O resultado depende só do conteúdo da página, do modelo e da tipografia: a me
 
 ### Quando o conteúdo não cabe
 
-Quando o conteúdo de um quadro é mais alto que o espaço que o grupo lhe dá, a diagramação tenta, em ordem, os passos da [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) e para no primeiro que faz o conteúdo caber: espaço livre até `maxHeight`, o grupo empurrando e cedendo, imagens menores, os outros quadros do grupo até o mínimo, texto menor, continuação em outra página. Estas configurações do quadro decidem até onde cada passo pode ir:
+Quando o conteúdo de um bloco é mais alto que o espaço que o grupo lhe dá, a diagramação tenta, em ordem, os passos da [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) e para no primeiro que faz o conteúdo caber: espaço livre até `maxHeight`, o grupo empurrando e cedendo, imagens menores, os outros blocos do grupo até o mínimo, texto menor, continuação em outra página. Estas configurações do bloco decidem até onde cada passo pode ir:
 
-- `maxHeight` num quadro com `height` fixo: o quadro pode crescer até esse valor antes que algo seja reduzido.
-- `minHeight` nos outros quadros do grupo: até onde eles devolvem espaço; um quadro nunca fica abaixo do que o próprio conteúdo precisa.
-- `fit.scaleImages` e `fit.imageMinScale`: se as imagens do quadro e do grupo podem ser diagramadas menores, e até que escala (80 % por padrão).
-- `fit.shrinkText` e `fit.minScale`: se o texto do quadro pode ser diagramado menor, e até que escala (90 % por padrão). A escala é a mesma para o corpo, a entrelinha e o espaçamento; o quadro mantém o seu tamanho.
-- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta: em outro quadro ou numa página acrescentada depois desta (`'next-page'`, `'template:<id>'`), onde o texto segue no tamanho integral depois da `overflow.mark` do trecho.
+- `maxHeight` num bloco com `height` fixo: o bloco pode crescer até esse valor antes que algo seja reduzido.
+- `minHeight` nos outros blocos do grupo: até onde eles devolvem espaço; um bloco nunca fica abaixo do que o próprio conteúdo precisa.
+- `fit.scaleImages` e `fit.imageMinScale`: se as imagens do bloco e do grupo podem ser diagramadas menores, e até que escala (80 % por padrão).
+- `fit.shrinkText` e `fit.minScale`: se o texto do bloco pode ser diagramado menor, e até que escala (90 % por padrão). A escala é a mesma para o corpo, a entrelinha e o espaçamento; o bloco mantém o seu tamanho.
+- `overflow.continueIn`: onde o conteúdo continua quando nada disso basta: em outro bloco ou numa página acrescentada depois desta (`'next-page'`, `'template:<id>'`), onde o texto segue no tamanho integral depois da `overflow.mark` do trecho.
 
-As escalas vão em passos de 2,5 % e a diagramação usa a maior com que o conteúdo cabe, então um texto que passa uma linha do limite fica em 97,5 %, não no mínimo. Uma caixa que precisa manter o corpo do texto usa `fit: { shrinkText: false }`; numa página cujas imagens precisam manter o tamanho, os quadros do grupo usam `fit: { scaleImages: false }`:
+As escalas vão em passos de 2,5 % e a diagramação usa a maior com que o conteúdo cabe, então um texto que passa uma linha do limite fica em 97,5 %, não no mínimo. Uma caixa que precisa manter o corpo do texto usa `fit: { shrinkText: false }`; numa página cujas imagens precisam manter o tamanho, os blocos do grupo usam `fit: { scaleImages: false }`:
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
@@ -668,7 +668,7 @@ As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam 
 
 No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro nomeia o modelo que o escreveu. Um aviso que nomeia um id ou um nome inexistente também sugere o existente mais parecido.
 
-Uma chave digitada errado de um modelo, quadro, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o seu padrão. Um modelo sem `id`, ou um quadro ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o seu padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
 
 <table>
   <thead>
@@ -696,42 +696,42 @@ Uma chave digitada errado de um modelo, quadro, grupo, grade, `fit`, `overflow`,
     </tr>
     <tr>
       <td><code>frameDuplicate</code></td>
-      <td>Dois quadros, ou dois grupos, de uma mesma lista têm o mesmo <code>name</code>, ou um grupo tem o nome de um quadro. A entrada posterior é ignorada; uma âncora para esse nome lê o quadro.</td>
-      <td>Dê a cada quadro e a cada grupo um nome próprio. Para mudar um quadro herdado, escreva uma única entrada com o nome dele.</td>
+      <td>Dois blocos, ou dois grupos, de uma mesma lista têm o mesmo <code>name</code>, ou um grupo tem o nome de um bloco. A entrada posterior é ignorada; uma âncora para esse nome lê o bloco.</td>
+      <td>Dê a cada bloco e a cada grupo um nome próprio. Para mudar um bloco herdado, escreva uma única entrada com o nome dele.</td>
     </tr>
     <tr>
       <td><code>frameStyleUnknown</code></td>
-      <td>O <code>style</code> de um quadro não nomeia nenhum estilo de boxe. O quadro é desenhado sem caixa.</td>
+      <td>O <code>style</code> de um bloco não nomeia nenhum estilo de boxe. O bloco é desenhado sem caixa.</td>
       <td>Corrija o id, ou acrescente o estilo a <code>calloutStyles</code>.</td>
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Um quadro, um grupo ou um elemento de decoração está ancorado a <code>'#name'</code> e o modelo não tem nenhum quadro, grupo ou elemento com esse nome; ou quadros e grupos estão ancorados uns nos outros num ciclo (também através de um grupo sem âncora própria, cuja caixa é a dos seus quadros). A âncora é lida como <code>'container'</code>, a área.</td>
-      <td>Ancore a um quadro ou grupo que exista, ou quebre o ciclo ancorando um deles à área.</td>
+      <td>Um bloco, um grupo ou um elemento de decoração está ancorado a <code>'#name'</code> e o modelo não tem nenhum bloco, grupo ou elemento com esse nome; ou blocos e grupos estão ancorados uns nos outros num ciclo (também através de um grupo sem âncora própria, cuja caixa é a dos seus blocos). A âncora é lida como <code>'container'</code>, a área.</td>
+      <td>Ancore a um bloco ou grupo que exista, ou quebre o ciclo ancorando um deles à área.</td>
     </tr>
     <tr>
       <td><code>frameMinMax</code></td>
-      <td>Um mínimo é maior que o seu máximo (<code>minHeight 40mm &gt; maxHeight 30mm</code>), ou um <code>width</code> ou <code>height</code> fixo fica fora deles. O mínimo prevalece, um tamanho fixo é trazido para dentro dos limites e <code>used</code> diz o que o quadro ocupa. Comprimentos em unidades diferentes são comparados na resolução da página, e os ems no corpo do texto principal.</td>
+      <td>Um mínimo é maior que o seu máximo (<code>minHeight 40mm &gt; maxHeight 30mm</code>), ou um <code>width</code> ou <code>height</code> fixo fica fora deles. O mínimo prevalece, um tamanho fixo é trazido para dentro dos limites e <code>used</code> diz o que o bloco ocupa. Comprimentos em unidades diferentes são comparados na resolução da página, e os ems no corpo do texto principal.</td>
       <td>Faça o mínimo não passar do máximo, ou tire o limite que o tamanho fixo contradiz.</td>
     </tr>
     <tr>
       <td><code>groupFrameUnknown</code></td>
-      <td>Os <code>frames</code> de um grupo listam um nome que não é nenhum quadro do modelo (talvez removido por um modelo filho ou por uma variante). O grupo o pula.</td>
+      <td>Os <code>frames</code> de um grupo listam um nome que não é nenhum bloco do modelo (talvez removido por um modelo filho ou por uma variante). O grupo o pula.</td>
       <td>Corrija o nome, ou tire-o da lista.</td>
     </tr>
     <tr>
       <td><code>groupFrameTwice</code></td>
-      <td>Um quadro aparece em dois grupos, ou duas vezes no mesmo. Um quadro pertence a um só grupo: a aparição posterior é pulada.</td>
-      <td>Deixe o quadro no grupo com o qual ele se move.</td>
+      <td>Um bloco aparece em dois grupos, ou duas vezes no mesmo. Um bloco pertence a um só grupo: a aparição posterior é pulada.</td>
+      <td>Deixe o bloco no grupo com o qual ele se move.</td>
     </tr>
     <tr>
       <td><code>frameChainLoop</code></td>
-      <td>Quadros continuam uns nos outros num ciclo através de <code>next</code> ou de <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). O elo que fecha o ciclo é descartado, então a cadeia termina no quadro anterior a ele.</td>
-      <td>Termine a cadeia no seu último quadro: remova o <code>next</code> dele, ou faça-o continuar na página seguinte.</td>
+      <td>Blocos continuam uns nos outros num ciclo através de <code>next</code> ou de <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). O elo que fecha o ciclo é descartado, então a cadeia termina no bloco anterior a ele.</td>
+      <td>Termine a cadeia no seu último bloco: remova o <code>next</code> dele, ou faça-o continuar na página seguinte.</td>
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Um <code>next</code> não nomeia nenhum quadro do modelo; um <code>overflow.continueIn</code> não nomeia nenhum quadro (<code>'#x'</code>) nem nenhum modelo (<code>'template:x'</code>), ou não está em nenhuma das formas <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; ou <code>overflowTemplate</code> não nomeia nenhum modelo. O conteúdo que não cabe não continua ali.</td>
+      <td>Um <code>next</code> não nomeia nenhum bloco do modelo; um <code>overflow.continueIn</code> não nomeia nenhum bloco (<code>'#x'</code>) nem nenhum modelo (<code>'template:x'</code>), ou não está em nenhuma das formas <code>'#frame'</code>, <code>'next-page'</code> e <code>'template:&lt;id&gt;'</code>; ou <code>overflowTemplate</code> não nomeia nenhum modelo. O conteúdo que não cabe não continua ali.</td>
       <td>Corrija o nome ou o id, ou escreva uma das três formas.</td>
     </tr>
     <tr>

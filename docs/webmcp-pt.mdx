@@ -316,10 +316,10 @@ encontra famílias no catálogo aberto, e escrever o nome em um ajuste
 `fontFamily` a carrega.
 
 Os estilos de boxe têm uma biblioteca própria: `sandbox_frame_styles` dá cada
-estilo com os lugares onde o livro o usa (quadros de modelo, páginas compostas,
+estilo com os lugares onde o livro o usa (blocos de modelo, páginas compostas,
 boxes `:::callout` por capítulo) e as fusões de estilos quase iguais que sugere,
-como Design › Boxes › Estilos de quadro. `sandbox_merge_styles` recebe `groups`
-(`{ keep, merge }`) ou `all: true` e reescreve cada quadro e cada bloco que
+como Design › Boxes › Estilos de bloco. `sandbox_merge_styles` recebe `groups`
+(`{ keep, merge }`) ou `all: true` e reescreve cada bloco de modelo e cada cerca que
 nomeava um estilo fundido; com `lookOnly: true`, compara também estilos cujos
 boxes ficam em lugares diferentes, que então mudam de lugar.
 A resposta traz `undoSteps`: um passo por capítulo reescrito e outro para os estilos, que `sandbox_undo` desfaz começando pelos estilos.
@@ -603,7 +603,7 @@ evite que esse texto seja tomado por instruções.
 - **Trabalho longo leva tempo.** Uma ferramenta espera a diagramação antes de
   responder; `wait: false` responde na hora. O PDF ou o EPUB de um livro longo
   leva minutos.
-- **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, as configurações alteradas com `sandbox_set_config` ou no painel Design, os quadros arrastados. `redo: true` refaz. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
+- **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, as configurações alteradas com `sandbox_set_config` ou no painel Design, os blocos arrastados. `redo: true` refaz. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
 - **O livro na tela.** As ferramentas trabalham sobre o livro aberto. Só
   `sandbox_export` de um arquivo `.postext`, `sandbox_save_book` com
   `duplicate` e `sandbox_reset_to_original` com `sample` alcançam outro livro
