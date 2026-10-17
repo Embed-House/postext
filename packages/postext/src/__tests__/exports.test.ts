@@ -663,6 +663,7 @@ describe("package exports", () => {
       "composedPaintOrder",
       "composedReadingOrder",
       "composedSheetClip",
+      "composedSheetClipOnSheet",
       "frameMatrix",
       "frameClips",
       "frameBounds",
