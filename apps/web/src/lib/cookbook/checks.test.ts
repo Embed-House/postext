@@ -141,6 +141,58 @@ describe("C24: loose lines", () => {
   });
 });
 
+describe("C20: the weight of a book of paintings (#985)", () => {
+  const MB = 1024 * 1024;
+  const nine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const withExpect = (expect: NonNullable<RecipeMeta["capture"]["expect"]>) => meta({ capture: { hero: 1, card: "page", expect } });
+  const c20 = (overrides: Partial<CheckInput>) => of("C20", runChecks(input(overrides)));
+
+  it("keeps the default budget for a recipe that states nothing", () => {
+    expect(c20({ published: nine, bytes: 0.8 * MB })).toEqual([]);
+    expect(c20({ published: nine, bytes: 1.3 * MB })).toEqual([{
+      check: "C20", severity: "warn",
+      detail: "the edition's images weigh 1.30 MB (warning at 0.9 MB for 9 pages; capture.expect.imageMb states the figure of a book of paintings)",
+    }]);
+    expect(c20({ published: nine, bytes: 1.5 * MB })[0]).toMatchObject({ severity: "fail" });
+    // The warning grows with the pages published.
+    expect(c20({ published: Array.from({ length: 12 }, (_, i) => i + 1), bytes: 1.1 * MB })).toEqual([]);
+  });
+
+  it("takes the figure a recipe states: silent up to it, a failure past it", () => {
+    const m = withExpect({ imageMb: 1.35 });
+    expect(c20({ meta: m, published: nine, bytes: 1.3 * MB })).toEqual([]);
+    expect(c20({ meta: m, published: nine, bytes: 1.34 * MB })).toEqual([]);
+    const over = c20({ meta: m, published: nine, bytes: 1.4 * MB });
+    expect(over).toHaveLength(1);
+    expect(over[0]).toMatchObject({ severity: "fail" });
+    expect(over[0]!.detail).toMatch(/past the 1\.35 MB that capture\.expect\.imageMb states/);
+    // The 1.4 MB failure of the default budget does not bind a stated figure.
+    expect(c20({ meta: withExpect({ imageMb: 1.8 }), published: nine, bytes: 1.7 * MB })).toEqual([]);
+  });
+
+  it("says when the stated figure is not needed or is too generous", () => {
+    const inside = c20({ meta: withExpect({ imageMb: 1.2 }), published: nine, bytes: 0.6 * MB });
+    expect(inside).toHaveLength(1);
+    expect(inside[0]).toMatchObject({ severity: "info" });
+    expect(inside[0]!.detail).toMatch(/inside the default budget of 0\.9 MB: leave it out/);
+    const loose = c20({ meta: withExpect({ imageMb: 1.9 }), published: nine, bytes: 1.3 * MB });
+    expect(loose[0]).toMatchObject({ severity: "info" });
+    expect(loose[0]!.detail).toBe("capture.expect.imageMb states 1.9 MB, and the edition weighs 1.30 MB: state 1.3 MB");
+  });
+
+  it("holds the card files to the aim, or to the figure a painted card states", () => {
+    const painted = { card: 104_758, card480: 35_670, og: 59_354 };
+    expect(c20({ cardBytes: painted }).map((f) => f.detail)).toEqual([
+      "card.webp weighs 102 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)",
+    ]);
+    expect(c20({ meta: withExpect({ cardKb: { card: 110 } }), cardBytes: painted })).toEqual([]);
+    const past = c20({ meta: withExpect({ cardKb: { card: 100 } }), cardBytes: painted });
+    expect(past).toEqual([{ check: "C20", severity: "fail", detail: "card.webp weighs 102 KB, past the 100 KB that capture.expect.cardKb states" }]);
+    const spare = c20({ meta: withExpect({ cardKb: { og: 120 } }), cardBytes: { card: 40_000, card480: 12_000, og: 40_000 } });
+    expect(spare).toEqual([{ check: "C20", severity: "info", detail: "capture.expect.cardKb states 120 KB for og.jpg, which weighs 39 KB, inside its aim of 90 KB: leave it out" }]);
+  });
+});
+
 describe("C25: characters the PDF cannot set", () => {
   it("reports what postext-pdf drew with no glyph", () => {
     const console = [

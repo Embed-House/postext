@@ -96,6 +96,14 @@ export const REQUIRED_AUTHORED_SECTIONS: readonly SectionId[] = ["build", "metho
  *  the faces of those scripts). */
 export type KitBlock = "core" | "fonts" | "viewer" | "pdf" | "images" | "cjk" | "arabic" | "book" | "comics";
 export const KIT_ORDER: readonly KitBlock[] = ["core", "fonts", "viewer", "pdf", "images", "cjk", "arabic", "book", "comics"];
+
+/** What check C20 holds the files of an edition to (MB and KB): the warning
+ *  starts at `warnMb` (or 0.1 MB for each published page past nine), the
+ *  failure at `failMb`; a card file warns past its aim. A recipe whose pages
+ *  are paintings states its own figures in `capture.expect.imageMb` and
+ *  `capture.expect.cardKb`. */
+export const IMAGE_BUDGET = { warnMb: 0.9, perPageMb: 0.1, failMb: 1.4, maxStatedMb: 2 } as const;
+export const CARD_AIM_KB = { card: 90, card480: 35, og: 90 } as const;
 export const REQUIRED_KIT: readonly KitBlock[] = ["core", "fonts", "viewer"];
 
 export type CardMode = "spread" | "page" | "loupe" | "crop" | "screenshot";
@@ -278,6 +286,18 @@ export interface RecipeMeta {
        *  recipe's write-up says so (check C36): the engine's own task box
        *  ☐, which no text face holds. Each is written once. */
       systemFont?: string;
+      /** The megabytes of page images the edition means to publish (check
+       *  C20). A book of painted pages weighs more than the default budget
+       *  (warning at 0.9 MB for nine pages and 0.1 MB for each past that,
+       *  failure at 1.4 MB) however the assets are cut, because the pages
+       *  are the rendered webp. With the figure stated there is no warning
+       *  up to it and a failure past it. Above 0.9 and at most 2. */
+      imageMb?: number;
+      /** The kilobytes a card file means to weigh where it passes its aim
+       *  (card.webp 90, card.480.webp 35, og.jpg 90): a map spread painted
+       *  edge to edge. The warning moves to the figure; a figure at or
+       *  under the aim is refused. */
+      cardKb?: { card?: number; card480?: number; og?: number };
       /** Accepted console-error substrings (e.g. the `?bundle` noise). */
       console?: string[];
       /** Only for a recipe about the defaults themselves. */

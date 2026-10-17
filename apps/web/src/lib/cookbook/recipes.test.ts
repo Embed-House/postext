@@ -118,6 +118,25 @@ describe("validateRecipeMeta (fixture)", () => {
     expect(validate(sa)).toEqual([]);
   });
 
+  it("takes the figures of a book of paintings in capture.expect (#985)", () => {
+    const ok = fixtureMeta();
+    ok.capture.expect = { imageMb: 1.35, cardKb: { card: 110, og: 100 } };
+    expect(validate(ok)).toEqual([]);
+    for (const [stated, message] of [
+      [{ imageMb: 0.9 }, "capture.expect.imageMb: the default warning starts at 0.9 MB; state a figure above it or leave it out"],
+      [{ imageMb: 2.5 }, "capture.expect.imageMb: must be ≤ 2"],
+      [{ imageMb: "1.4" }, "capture.expect.imageMb: must be of type number"],
+      [{ cardKb: { card: 90 } }, "capture.expect.cardKb.card: the aim is already 90 KB; state a figure above it or leave it out"],
+      [{ cardKb: { card480: 30 } }, "capture.expect.cardKb.card480: the aim is already 35 KB; state a figure above it or leave it out"],
+      [{ cardKb: {} }, "capture.expect.cardKb: omit it rather than leave it empty"],
+      [{ cardKb: { poster: 200 } }, "capture.expect.cardKb.poster: is not a known property"],
+    ] as const) {
+      const meta = fixtureMeta() as unknown as { capture: { expect: unknown } };
+      meta.capture.expect = stated;
+      expect(validate(meta), JSON.stringify(stated)).toContain(message);
+    }
+  });
+
   it("takes one recorded build or several for capture.doc", () => {
     for (const doc of ["first", "last", 2, ["first", "last"], [0, 1, 3]] as const) {
       const meta = fixtureMeta();

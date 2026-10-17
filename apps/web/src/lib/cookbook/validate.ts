@@ -9,6 +9,7 @@
  *
  * Pure and isomorphic: no I/O.
  */
+import { CARD_AIM_KB, IMAGE_BUDGET } from "./types.ts";
 import type { GapId, Gotcha, GotchaId, Locale, RecipeMeta, Registry } from "./types.ts";
 import {
   CHAPTER_IDS,
@@ -324,6 +325,17 @@ export const RECIPE_SCHEMA: JsonSchema = {
             nearEmptyPages: { type: "array", items: ref("page"), uniqueItems: true },
             raggedLines: { type: "integer", minimum: 0, description: "Justified lines the edition may set ragged (check C34)." },
             systemFont: { type: "string", minLength: 1, maxLength: 8, description: "Characters the pages take from a font of the system, named in the write-up (check C36)." },
+            imageMb: { type: "number", minimum: IMAGE_BUDGET.warnMb, maximum: IMAGE_BUDGET.maxStatedMb, description: "Megabytes of page images the edition means to publish (check C20)." },
+            cardKb: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                card: { type: "integer", minimum: 1, maximum: 250 },
+                card480: { type: "integer", minimum: 1, maximum: 100 },
+                og: { type: "integer", minimum: 1, maximum: 250 },
+              },
+              description: "Kilobytes a card file means to weigh where it passes its aim (check C20).",
+            },
             console: { type: "array", items: { type: "string", minLength: 1 } },
             defaultSkin: {
               type: "array",
@@ -819,6 +831,16 @@ export function validateRecipeMeta(
     const listed = [...expect.systemFont];
     if (listed.some((ch) => /[\s\p{L}\p{Nd}]/u.test(ch))) errors.push(`capture.expect.systemFont: marks only (☐), never a letter, a digit or a space: a face of the recipe sets those`);
     if (new Set(listed).size !== listed.length) errors.push(`capture.expect.systemFont: each character once`);
+  }
+  if (typeof expect.imageMb === "number" && expect.imageMb <= IMAGE_BUDGET.warnMb) {
+    errors.push(`capture.expect.imageMb: the default warning starts at ${IMAGE_BUDGET.warnMb} MB; state a figure above it or leave it out`);
+  }
+  if (isObject(expect.cardKb)) {
+    for (const [key, aim] of [["card", CARD_AIM_KB.card], ["card480", CARD_AIM_KB.card480], ["og", CARD_AIM_KB.og]] as const) {
+      const figure = (expect.cardKb as Record<string, unknown>)[key];
+      if (typeof figure === "number" && figure <= aim) errors.push(`capture.expect.cardKb.${key}: the aim is already ${aim} KB; state a figure above it or leave it out`);
+    }
+    if (Object.keys(expect.cardKb).length === 0) errors.push(`capture.expect.cardKb: omit it rather than leave it empty`);
   }
   if (expect.defaultSkin !== undefined && asArray(expect.defaultSkin).length === 0) {
     errors.push(`capture.expect.defaultSkin: omit it rather than leave it empty`);
