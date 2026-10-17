@@ -473,8 +473,13 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dic
 
 
 def run_cli(cmd: list[str], *args: str) -> subprocess.CompletedProcess:
+    # stdout goes to a file: the command line tool run under Bun can exit
+    # before a pipe has taken more than 64 KiB, cutting a long JSON report
     try:
-        return subprocess.run([*cmd, *args], capture_output=True, text=True, timeout=1800)
+        with tempfile.TemporaryFile("w+", encoding="utf-8") as out:
+            r = subprocess.run([*cmd, *args], stdout=out, stderr=subprocess.PIPE, text=True, timeout=1800)
+            out.seek(0)
+            return subprocess.CompletedProcess(r.args, r.returncode, out.read(), r.stderr)
     except OSError as e:
         raise SystemExit(f"cannot run {' '.join(cmd)}: {e}") from e
 
