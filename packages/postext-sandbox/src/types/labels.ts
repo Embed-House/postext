@@ -1733,6 +1733,8 @@ export interface SandboxLabels {
   composedChecksChecking: string;
   composedChecksChecked: string;
   composedChecksOneEdition: string;
+  composedChecksOnDemand: string;
+  composedChecksOnDemandAction: string;
   composedChecksEditionError: string;
   composedChecksEmpty: string;
   composedChecksJump: string;
@@ -2651,6 +2653,12 @@ export interface SandboxLabels {
   resourceMarksSummary: string;
   resourceMarksEditLettering: string;
   resourceMarksModeAria: string;
+  resourceMarksZoomAria: string;
+  resourceMarksZoomHint: string;
+  resourceMarksZoomOut: string;
+  resourceMarksZoomIn: string;
+  resourceMarksZoomFit: string;
+  resourceMarksZoomHand: string;
   resourceMarksModeSpeakers: string;
   resourceMarksModeAvoid: string;
   resourceMarksUndo: string;
@@ -4448,6 +4456,11 @@ export interface SandboxLabels {
   wordOptionPageBreaksKeep: string;
   wordOptionImages: string;
   wordOptionTables: string;
+  wordOptionTracking: string;
+  wordTrackingEntry: string;
+  wordTrackingApplied: string;
+  wordTrackingSkipped: string;
+  wordTrackingCalloutTitle: string;
   wordDestinationHeading: string;
   wordDestinationChapter: string;
   wordDestinationChapterHelp: string;

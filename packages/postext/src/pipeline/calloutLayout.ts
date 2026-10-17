@@ -75,6 +75,7 @@ import { raggedLooseLines } from './raggedLines';
 import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
 import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
 import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock';
+import { measureBlockMemo, type MeasureMemo } from './measureMemo';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { headingIsHidden, headingStyleOf } from './headingStyles';
 import { directDesignTextBlock } from '../design/bidiText';
@@ -333,6 +334,10 @@ export interface CalloutLayoutInput {
    *  relative to its box, or undefined to leave it out. Without it strips
    *  are left out, as other directives are. */
   stripBlock?: (raw: ContentBlock, blockIdx: number, width: number) => VDTBlock | undefined;
+  /** The measurements of the layout this box is part of (a composed
+   *  page's, #953): a child measured at a width already measured is
+   *  not measured again. */
+  measureMemo?: MeasureMemo;
   /** A frame of a composed page (#855): the block's exact height (its tab
    *  included). The box is drawn this tall; content shorter than it sits
    *  as `verticalAlign` says, content taller runs past the box's foot
@@ -354,6 +359,12 @@ export interface CalloutLayoutInput {
    *  the children is set at this share of the width it would take, below
    *  1. */
   pictureScale?: number;
+  /** A frame set in a vertical mode on a horizontal page (#960), which
+   *  the page turns a quarter turn: its pictures are laid out upright in
+   *  a frame counter-rotated against it (`ResourceLayoutInput.upright`),
+   *  at most this wide on the page (the frame's extent across its lines),
+   *  so that they and their captions read as on any page. */
+  uprightMaxLength?: number;
   /** The room a heading's own design takes in the box (#906): the
    *  `advancedDesign` of its level or heading style, laid out against the
    *  heading's box `width` wide, as in a page column. Answers the height
@@ -560,6 +571,13 @@ export function resolveCalloutAttrs(
 
 /** Shift a resolved resource block's caption/table geometry by `(ox, oy)`. */
 function offsetResourceBlock(rb: ResolvedResourceBlock, ox: number, oy: number): void {
+  // A block set upright in a turned frame (#960) keeps its geometry in its
+  // own frame; only that frame's origin moves.
+  if (rb.rotation) {
+    rb.rotation.originX += ox;
+    rb.rotation.originY += oy;
+    return;
+  }
   for (const ln of rb.captionLines) { ln.bbox.x += ox; ln.bbox.y += oy; ln.baseline += oy; }
   for (const ln of rb.noteLines) { ln.bbox.x += ox; ln.bbox.y += oy; ln.baseline += oy; }
   for (const ln of rb.continuesLines) { ln.bbox.x += ox; ln.bbox.y += oy; ln.baseline += oy; }
@@ -1059,7 +1077,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       : undefined;
     let measuredBlock = acrossGroup
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
-      ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
+      ?? (input.uprightMaxLength !== undefined && raw.type === 'resourceBlock'
+        // A turned frame's picture takes room across the page along the
+        // box's stacking axis: what the box has left, the gaps kept. A
+        // resource block is never kept in the measure memo.
+        ? measureContentBlock(raw, blockIdx, width, derivedCtx, {
+          styleOverride,
+          uprightMaxLength: Math.max(1, input.uprightMaxLength - (st.cursorY - innerTop) - Math.max(st.prevMarginBottom, resourceGapPx) - (resourceGapBelow ? resourceGapPx : 0)),
+        })
+        : input.measureMemo
+          ? measureBlockMemo(input.measureMemo, ctx, style, derivedCtx, raw, blockIdx, width, styleOverride)
+          : measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride }));
     if (!measuredBlock) return undefined;
     // A picture the reflow ladder scales (#858): set again at that share of
     // its width.
@@ -1380,6 +1408,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       mirrored: input.mirrored,
       nestPath: [...(nestPath ?? []), open.containerId],
       ...(input.headingDesign ? { headingDesign: input.headingDesign } : {}),
+      ...(input.measureMemo ? { measureMemo: input.measureMemo } : {}),
     });
     // Spacing above: as a paragraph's (margin collapsing, none at the top
     // of the box beyond the title gap).

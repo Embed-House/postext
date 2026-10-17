@@ -879,6 +879,17 @@ Recorded where the implementation settles a point the sections above leave open,
   `FrameLayoutPass` whose `measureCtxFor` reads the first story's index), then runs
   `layoutComposedPage` with its ladder. Proposed only when no frame overflows, every story is laid
   and nothing continues; never on a page continuation added.
+- **Trial passes and the measurement memo (#953).** `trialPass` (`composedLayout.ts`) builds the
+  pass a trial lays: appended story blocks copy the page's (`originOf`), and everything keyed by
+  content index follows the copy: `paragraphContainers.byBlock` (`:::paragraphs` groups), heading
+  prefixes and numbers, list metrics, the `contentBlocks` the drop cap and indent rules read, comic
+  strips and heading designs; each story's box takes the measure context of the story it replaces
+  and the trial keeps its own `dropCapNotes` / `joiningLetterSpacing`. `layoutComposedPage` gives
+  every run a `MeasureMemo` (`pipeline/measureMemo.ts`) on its pass: `layoutCallout` asks it before
+  `measureContentBlock` for a child at a width (key: context, style `body`/`lists`, block, width,
+  paragraph-group style, writing mode and language state), replays the drop cap note and the
+  joining-script mark of the first measure, and never keeps a figure or table. Dropped with the
+  run, since `leftFlow` and the numbers are fixed only for it.
 - **Box styles based on another (#905).** `CalloutStyleConfig.extends` (`defaults/calloutStyles.ts`:
   `inheritCalloutStyles` before resolving, objects merged key by key, colours and lengths whole,
   `id`/`name` never; `calloutStyleChain`; warnings `calloutStyleExtendsUnknown` /
@@ -917,7 +928,7 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Frames in their own writing mode and direction (#944).** `direction`: `wrapComposedPages` stamps the
   chain head's direction on the story box and on every block of the story that no `{dir}` of its own (or of a
   box round it) sets, so the box typesetter sets it against the page as a `{dir}` box. `writingMode` other
-  than the page's flow (`composedLayout.ts` `ownMode`; not on a mirrored page): the frame's box as placed is
+  than the page's flow (`composedLayout.ts` `ownMode`): the frame's box as placed is
   turned a quarter turn about its centre (`quarterTurnedRect`) and the story laid out in it under
   `withMeasureWritingMode`; `VDTFrame.writingMode`, `rotate` ± 90 on top of the frame's own
   (`frameModeTurn`), `rect` the turned box (`framePageRect` turns it back: decoration anchors, the template
@@ -926,8 +937,7 @@ Recorded where the implementation settles a point the sections above leave open,
   `stampCentralBaselines` stamps `centralBaselines` / `dashAdvances` on a vertical frame. Canvas
   (`setVerticalPaint` per frame), PDF (`ctx.vertical` per frame, fonts collected with the frame's mode) and
   HTML (`vertical` paint options per frame) paint its text as a page of that mode does; the source map and
-  the Sandbox's clicks read it through `frameMatrix`. Not done: a picture in such a frame turns with it; the
-  reflowable EPUB sets its text in the book's mode.
+  the Sandbox's clicks read it through `frameMatrix`. (Round H, #960: see below.)
 - **Comic text panels (#909).** On a vertical or right-to-left page a text panel is set in its frame
   (`comicTextPanelsSupported` is true for every document): `layoutComicTextFrames` maps the text area
   into the page's flow frame (`pageRectToFlow`), where the story is laid (set vertically on a vertical
@@ -940,6 +950,46 @@ Recorded where the implementation settles a point the sections above leave open,
   `::panel{text shrink}` lowers the frame's `fit.minScale` (`shrinkScale`: 0.5, or the value given,
   0.25–1). Tagged PDF: `comicStructure` makes a `Div` in the comic's `Div` at the text panel's place
   (`ComicTags.texts`); `StructureFlow.readInto` moves the frame's elements into it.
+### 5.16 Findings round H (#882)
+
+- **Comic text panels on strips and spreads, valign in slanted cells (#959).** Strips: the stories are done
+  for the main loop from the start (`composedLaid`), and `placeStripTexts` lays them at the end of the pass
+  (after `centrePageText`), where each strip block stands: `layoutStripTextFrames` moves the block's comic
+  onto the sheet (`flowRectToPage` + `translateComicPage`, the panel sources copied with
+  `copyComicPanelSources`), runs `layoutComicTextFrames` there, and writes the frames' results (`blockIds`,
+  `overflowPx`, `scale`, warnings) back on the block's comic, whose `frames` array is replaced
+  (`comicBlockOnSheet`'s memo checks it). A page-wide strip set where it stands is boxed by
+  `wrapPageSpanEmbeds`, so `planComicTextPanels` hops the box's closing marker. Spreads: each half lays
+  the text panels that have most of their width on it (`only`), off the 8 mm about the spine
+  (`comicSpreadGutter` → `avoid`, a rectangular exclusion). Painting: `comicFramePaintOrder(page, comic)`
+  and `composedFrameBlockIds` read the strips too; canvas and PDF paint a strip's panels, the flow
+  frame's text frames, then its lettering in the strip loop after the flow (`comicHoldsText`); the HTML
+  keys the over-panel markup by comic. `comicTextAncestors` and `sourceAt` answer for a strip's words
+  before the strip block. Slanted cells: text set to the middle or the foot is laid with the slant moved
+  by the room the alignment leaves above it (bisection on that shift, at most ten layouts, a layout kept
+  only when every line lies inside the outline and none is empty); not settled → `innerBox`. Frames
+  of a half are found by the panel's `index` (`comicPanelOfFrame`), not its place in `panels`.
+- **Vertical frame on a right-to-left page (#960).** `ownMode` no longer excludes a mirrored page. The frame is
+  laid out as on a left-to-right page (`mirroredIn(frame)` is false for its lines) and `VDTFrame.unmirrorX`
+  holds the flow's mirror origin: `frameMatrix` then returns `mirror · matrix-of-the-box-mirrored-to-the-sheet ·
+  move`, which, inside the page's mirrored flow, is a plain placement of the frame at the box the page shows
+  (its first line at that box's right edge, running down). The backends paint such a frame without the flow's
+  counter-flip (canvas `withoutMirroredPaint`, PDF `ctx.mirror` off for the frame, HTML class `pt-unmirrored` whose
+  rules cancel `.pt-flow-mirrored`'s `scaleX(-1)` on runs and pictures); `orientLinesToFrames` leaves its blocks
+  alone. Hit tests and the source map go through `frameMatrix` and need no change.
+- **Pictures in a vertical frame of a horizontal page (#960).** The callout layouter takes `uprightMaxLength` (the
+  frame's extent across its lines less padding, `uprightIn` in `composedLayout.ts`) and lays each resource child
+  out upright (`ResourceLayoutInput.upright`, as a vertical page's flow does): counter-rotated against the frame's
+  quarter turn, at most what is left of the box along the stacking axis (`uprightMaxLength` less the cursor and the
+  gaps); `offsetResourceBlock` moves a rotated block's frame origin. A horizontal card on a vertical page already
+  stands upright (the frame's −90° cancels the flow's turn); a frame in the page's own mode is unchanged. Pictures
+  in the frames of a vertical page's own mode still turn with the flow (not touched).
+- **Reflowable EPUB.** A frame with its own writing mode is a `div.pt-frame-vertical` / `pt-frame-horizontal` with
+  `writing-mode` in the stylesheet and the length its lines run along (the page box's height or width) in em of
+  the body text as `height` / `width` (`CalloutNode.frameMode`).
+- **Chains of frames of different modes** work as they are: each piece is cut and laid out in its frame's mode
+  (`frameModesChain.test.ts`). `framePageRect` is exported; the Cookbook probe reports the page's box of such a
+  frame.
 
 ## 6. Source map contract
 
@@ -1045,8 +1095,8 @@ Cookbook comics recipe must render unchanged before and after.
   `valign` → `verticalAlign`; ids are renamed `cp<n>:` → `cm<n>:`; the blocks go to `page.floats`
   and `doc.blocks`, the frame record gets `blockIds`, `overflowPx`, `scale`. A `::resource` in a
   story does not float (the float plan treats the text plans as composed pages). Not wrapped, so
-  set in the flow after the comic: strips, spreads, documents whose flow is vertical or mirrored
-  (`comicTextPanelsSupported`), comics inside a container.
+  set in the flow after the comic: comics inside a container (strips and spreads since #959, vertical and
+  mirrored documents since #909; `comicTextPanelsSupported` is true for every document).
 - **Paint order** (`comicPaintsUnderText`, `comicFramePaintOrder` in `composed/paint.ts`): on a
   comic page holding text frames the panels are painted before the flow, the text frames after
   the floats (their ids are in `composedFrameBlockIds`), the lettering after the flow; elsewhere
@@ -1056,8 +1106,8 @@ Cookbook comics recipe must render unchanged before and after.
 - **Box styles.** `::panel{box=<calloutStyle>}` maps the style's background, border colour and
   width and radius onto the panel (its own `border`/`bg` win); on a text panel the frame draws the
   box (frame style = that callout style) and the panel draws none. `VDTFrame.styleId` names it.
-- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout), `strip`,
-  `spread`, `flow`; `panel` = source index).
+- **Warning** `comicPanelFrame` (`reason`: `unknownBox`, `textOverflow` (layout); `strip`, `spread` and
+  `flow` were raised up to 1.39 and stay in the type for old reports; `panel` = source index).
 - **Source map** (`comics/sourceMap.ts`, called from `sourceAt`, `elementsForSource`,
   `findElement`): balloon glyph (`text`) → balloon (`box`) → frame → comic (`template`); picture
   (`resource`) → frame → comic; a text panel's words answer through the flow path with the frame
@@ -1065,9 +1115,9 @@ Cookbook comics recipe must render unchanged before and after.
   `frameTools` (Content mode: click off words → caret at the text, double click → in-place
   edit), `panelArtAt` ignores a text panel's words. The template editor never sees comic frames
   (they are not in `page.composed`).
-- **Not done:** text panels on strips and spreads; the comic frames in the template editor's
-  views. (Vertical and right-to-left pages, lines following a slanted edge, `shrink` and the tagged
-  PDF's reading order: round G, §5.15.)
+- **Not done:** the comic frames in the template editor's views. (Vertical and right-to-left pages, lines
+  following a slanted edge, `shrink` and the tagged PDF's reading order: round G, §5.15; strips, spreads and
+  text set to the middle or the foot of a slanted cell: #959.)
 
 ## 8. HTML and EPUB
 

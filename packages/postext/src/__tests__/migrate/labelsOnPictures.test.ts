@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, collectConfigWarnings, moveTextToMarkdown } from '../../index';
+import { buildDocument, collectConfigWarnings, composedPaintOrder, moveTextToMarkdown } from '../../index';
 import { createMeasurementCache } from '../../measure';
 import type { PostextConfig, Resource, VDTDocument } from '../../index';
 import { PORT_CHAPTERS, PORT_CONFIG } from './fixtures/textbookPort';
@@ -83,6 +83,59 @@ describe('labels on pictures (#918)', () => {
     expect(label!.body.x * mmPerPx).toBeCloseTo(0, 1);
     expect(label!.body.y * mmPerPx).toBeCloseTo(0, 1);
     expect(label!.body.width * mmPerPx).toBeCloseTo(230, 0);
+  });
+});
+
+describe('decoration painted over the picture (#957)', () => {
+  const mmv = (value: number) => ({ value, unit: 'mm' as const });
+  const at = (x: number, y: number, w: number, h: number) => ({ anchor: { to: 'page' as const, edge: 'top-left' as const }, offset: { x: mmv(x), y: mmv(y) }, size: { width: mmv(w), height: mmv(h) } });
+  const tag = (id: string, x: number, y: number, w: number, h: number) => ({ kind: 'box', id, placement: at(x, y, w, h), style: { backgroundColor: { hex: '#2468c0', model: 'hex' as const } } }) as never;
+  /** The p2 design with its elements replaced by those `change` makes. */
+  const withElements = (change: (elements: readonly never[]) => never[]): PostextConfig => ({
+    ...CONFIG,
+    headingStyles: CONFIG.headingStyles!.map((st) => (st.id !== 'topic--p2' ? st : { ...st, header: { elements: change(st.header!.elements as never[]) } })),
+  });
+  const migrate = (config: PostextConfig) => moveTextToMarkdown({ config, chapters: PORT_CHAPTERS, metadata, resources: RESOURCES }, { labelsOnPictures: true });
+  const pictureFrame = (config: PostextConfig) => config.pageTemplates!.flatMap((t) => t.frames ?? []).find((f) => f.name.startsWith('picture-'));
+  /** The design: the page picture, a tag over it at the top, the label. */
+  const tagged = (extra: never[] = [], before: never[] = []) => withElements((els) => [
+    ...before,
+    els.find((e) => (e as { id: string }).id === 'page')!,
+    tag('tag', 0, 0, 90, 14),
+    ...extra,
+    els.find((e) => (e as { id: string }).id === 'label-p2')!,
+    ...els.filter((e) => /^(kicker|title|body)-p2/.test((e as { id: string }).id)),
+  ]);
+
+  it('goes below the decoration when nothing lies under the picture, so the tag stays over it', () => {
+    const { config, chapters, resources } = migrate(tagged());
+    const frame = pictureFrame(config)!;
+    expect(frame.layer).toBe(-1);
+    const markdown = chapters.find((c) => c.id === 'ch1')!.markdown;
+    const doc = buildDocument({ markdown, resources: resources! }, config, createMeasurementCache());
+    const page = doc.pages.find((p) => p.composed?.frames.some((f) => f.name === frame.name))!;
+    const order = composedPaintOrder(page).map((i) => (i.kind === 'decoration' ? 'decoration' : i.frame.name));
+    // The picture is painted before the decoration, which holds the tag.
+    expect(order.indexOf(frame.name)).toBeLessThan(order.indexOf('decoration'));
+    expect(page.composed!.decoration?.blocks.length).toBeGreaterThan(0);
+  });
+
+  it('is reported when the design also painted decoration under the picture', () => {
+    const { config, report } = migrate(tagged([], [tag('floor', 10, 10, 60, 60)]));
+    expect(pictureFrame(config)!.layer).toBe(0);
+    expect(JSON.stringify(report.pages)).toContain('overPicture');
+  });
+
+  it('is reported, at layer 0, when the decoration over the picture would cover a label', () => {
+    const { config, report } = migrate(tagged([tag('cover', 140, 140, 60, 30)]));
+    expect(pictureFrame(config)!.layer).toBe(0);
+    expect(JSON.stringify(report.pages)).toContain('overPicture');
+  });
+
+  it('keeps layer 0 where nothing was painted over the picture', () => {
+    const { config, report } = migrate(withElements((els) => els.filter((e) => !/^(card|hl)-p2$/.test((e as { id: string }).id))));
+    expect(pictureFrame(config)!.layer).toBe(0);
+    expect(JSON.stringify(report.pages)).not.toContain('overPicture');
   });
 });
 

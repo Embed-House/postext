@@ -382,7 +382,11 @@ class Writer {
         // A frame of a composed page (#862): a block of the page's section
         // (the page's own text, not an aside), with its style's box.
         if (node.frame !== undefined) {
-          return `<div${this.classAttr(['pt-frame', idOf('pt-frame-', node.frame), node.styleId && 'pt-callout', node.styleId && idOf('pt-callout-', node.styleId)])}>\n${title}${this.nodes(node.children)}\n</div>`;
+          // A frame of another writing mode than the book's (#960) sets its
+          // lines along the length it has on the page.
+          const mode = node.frameMode;
+          const modeAttr = mode ? ` style="${mode.mode === 'vertical-rl' ? 'height' : 'width'}:${mode.em}em"` : '';
+          return `<div${this.classAttr(['pt-frame', idOf('pt-frame-', node.frame), mode && (mode.mode === 'vertical-rl' ? 'pt-frame-vertical' : 'pt-frame-horizontal'), node.styleId && 'pt-callout', node.styleId && idOf('pt-callout-', node.styleId)])}${modeAttr}>\n${title}${this.nodes(node.children)}\n</div>`;
         }
         // A pull quote keeps its box on the page; one that repeats the
         // text is hidden from assistive technology (`doc-pullquote`, a
@@ -590,10 +594,16 @@ class Writer {
     // the figure, in label order, out of sight (the picture this book shows
     // does not carry them) and read once, where it stands.
     const labels = node.labels ? `\n<ul class="pt-figure-labels pt-hidden">${node.labels.map((l) => `<li>${xmlText(l)}</li>`).join('')}</ul>` : '';
+    // The words the print draws on the picture are drawn on it here, over
+    // the image in a box that is as wide as the image (#955).
+    const picture = (src: string): string => {
+      const img = `<img src="${xmlAttr(src)}" alt="${xmlAttr(node.alt)}"/>`;
+      return node.labelsSvg ? `<span class="pt-labelled">${img}${node.labelsSvg}</span>` : img;
+    };
     const body = (node.video
       ? this.videoBody(node.video, href ? relativeHref(this.file.href, href) : undefined, node.alt)
       : href
-        ? `<img src="${xmlAttr(relativeHref(this.file.href, href))}" alt="${xmlAttr(node.alt)}"/>`
+        ? picture(relativeHref(this.file.href, href))
         : `<div class="pt-missing" role="img" aria-label="${xmlAttr(node.alt || '?')}">${xmlText(node.alt)}</div>`) + labels;
     const pre = this.inline(node.pre);
     const note = node.note.length > 0 ? this.inline(node.note) : '';

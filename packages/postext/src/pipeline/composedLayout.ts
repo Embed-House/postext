@@ -50,6 +50,8 @@ import { frameElementId } from '../composed/ids';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
+import type { BlockMeasureContext } from './measureContentBlock';
+import { createMeasureMemo } from './measureMemo';
 import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
@@ -234,7 +236,10 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // A page added by continuation (#859) lays its template with the
   // continuation's rules (and, for the template laid again, its other
   // frames collapsed).
-  const input: ComposedPageInput = given.continuing ? { ...given, template: continuationTemplate(given.template, given.continuing) } : given;
+  // The ladder lays the page again at each step: the measurements of one
+  // step answer the next (#953).
+  const memoed: ComposedPageInput = { ...given, pass: { ...given.pass, measureMemo: createMeasureMemo() } };
+  const input: ComposedPageInput = given.continuing ? { ...memoed, template: continuationTemplate(given.template, given.continuing) } : memoed;
   const { template, fence, dpi } = input;
   const fi = fence.fenceIndex;
   const mmPx = dpi / MM_PER_IN;
@@ -569,14 +574,63 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
 }
 
+/** The pass of a trial layout (#953): `base` with `extra` blocks appended to
+ *  its content, each a copy of the block at `originOf[k]`, and every lookup
+ *  the box typesetter keys by content index answered for the appended
+ *  blocks as for the blocks they copy. The paragraph groups
+ *  (`paragraphContainers.byBlock`), the heading and list numbers, the drop
+ *  cap and indent rules (which read the neighbours of a block in
+ *  `contentBlocks`), the comic strips and heading designs follow the
+ *  copies, so a trial sets a merged story as the build sets the story
+ *  itself. The trial also keeps its own notes (`dropCapNotes`,
+ *  `joiningLetterSpacing`), which the build reports for the page it lays. */
+function trialPass(base: FrameLayoutPass, extra: readonly ContentBlock[], originOf: readonly number[], measureOrigin: ReadonlyMap<number, number>): FrameLayoutPass {
+  const n = base.contentBlocks.length;
+  const at = (idx: number): number => (idx < n ? idx : originOf[idx - n] ?? idx);
+  const extend = <T,>(arr: T[] | undefined): T[] | undefined => (arr && extra.length > 0 ? [...arr, ...originOf.map((o) => arr[o]!)] : arr);
+  const contentBlocks = extra.length > 0 ? [...base.contentBlocks, ...extra] : base.contentBlocks;
+  const contexts = new Map<BlockMeasureContext, BlockMeasureContext>();
+  const trialCtx = (ctx: BlockMeasureContext): BlockMeasureContext => {
+    const known = contexts.get(ctx);
+    if (known) return known;
+    const perBlock = new Map(ctx.orderedMetrics.perBlock);
+    originOf.forEach((o, k) => {
+      const m = ctx.orderedMetrics.perBlock.get(o);
+      if (m) perBlock.set(n + k, m);
+    });
+    const out: BlockMeasureContext = {
+      ...ctx,
+      contentBlocks,
+      headingPrefixes: extend(ctx.headingPrefixes)!,
+      ...(ctx.headingNumbers ? { headingNumbers: extend(ctx.headingNumbers)! } : {}),
+      orderedMetrics: { ...ctx.orderedMetrics, perBlock },
+      dropCapNotes: new Map(),
+      joiningLetterSpacing: new Set(),
+    };
+    contexts.set(ctx, out);
+    return out;
+  };
+  const byBlock = base.paragraphContainers.byBlock;
+  return {
+    ...base,
+    contentBlocks,
+    paragraphContainers: extra.length > 0 ? { byId: base.paragraphContainers.byId, byBlock: [...byBlock, ...originOf.map((o) => byBlock[o])] } : base.paragraphContainers,
+    // A merged story's box is set in the context of the story whose box
+    // it replaces.
+    measureCtxFor: (startIdx, style) => trialCtx(base.measureCtxFor(measureOrigin.get(startIdx) ?? startIdx, style)),
+    stripBlock: (raw, idx, width) => base.stripBlock(raw, at(idx), width),
+    ...(base.headingDesign ? { headingDesign: (raw, blockIdx, heading, width) => base.headingDesign!(raw, at(blockIdx), heading, width) } : {}),
+  };
+}
+
 /** The page's stories as `wrapComposedPages` would group them for template
  *  `alt` (#937): a story whose head names a frame of `alt` stays the story
  *  of that frame's chain, one a `takes` frame took goes to `alt`'s frame
  *  that takes the same level, and the rest go to `alt`'s flow frame, after
  *  its own content, in Markdown order. Merged stories are boxes appended
- *  past the pass's content blocks (a pass of their own), so the page can
- *  be laid with them. `undefined` when some content would leave the page
- *  (no frame of `alt` takes it). */
+ *  past the pass's content blocks (`trialPass`), so the page can be laid
+ *  with them. `undefined` when some content would leave the page (no frame
+ *  of `alt` takes it). */
 function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { pass: FrameLayoutPass; stories: Map<string, ComposedStory> } | undefined {
   const names = new Set(alt.frames.map((f) => f.name));
   const flow = alt.frames.find((f) => f.flow);
@@ -594,9 +648,12 @@ function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { 
     if (to === undefined) return undefined;
     groups.set(to, [...(groups.get(to) ?? []), [head, story]]);
   }
-  if ([...groups].every(([to, list]) => list.length === 1 && list[0]![0] === to)) return { pass: input.pass, stories: new Map(input.stories) };
+  // Every story stays its frame's own: the page as it is.
+  if ([...groups].every(([to, list]) => list.length === 1 && list[0]![0] === to)) return { pass: trialPass(input.pass, [], [], new Map()), stories: new Map(input.stories) };
   const base = input.pass.contentBlocks;
   const extra: ContentBlock[] = [];
+  /** The block of the page each appended block copies. */
+  const originOf: number[] = [];
   /** Where each appended box's blocks come from: the first story's box. */
   const origin = new Map<number, number>();
   let nextId = base.reduce((m, b) => Math.max(m, b.containerId ?? 0), 0) + 1;
@@ -612,18 +669,18 @@ function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { 
     const startIdx = base.length + extra.length;
     const attrs = { ...own.plan.attrs, [FRAME_ATTR]: to };
     extra.push({ ...open, containerAttrs: attrs, containerId: id });
-    for (const [, s] of list) extra.push(...base.slice(s.startIdx + 1, s.plan.endIdx));
-    const close = base[list[list.length - 1]![1].plan.endIdx]!;
-    extra.push({ ...close, containerId: id });
+    originOf.push(own.startIdx);
+    for (const [, s] of list) {
+      extra.push(...base.slice(s.startIdx + 1, s.plan.endIdx));
+      for (let i = s.startIdx + 1; i < s.plan.endIdx; i++) originOf.push(i);
+    }
+    const last = list[list.length - 1]![1];
+    extra.push({ ...base[last.plan.endIdx]!, containerId: id });
+    originOf.push(last.plan.endIdx);
     origin.set(startIdx, own.startIdx);
     stories.set(to, { startIdx, plan: { endIdx: base.length + extra.length - 1, attrs, containerId: id } });
   }
-  const pass: FrameLayoutPass = {
-    ...input.pass,
-    contentBlocks: [...base, ...extra],
-    measureCtxFor: (startIdx, style) => input.pass.measureCtxFor(origin.get(startIdx) ?? startIdx, style),
-  };
-  return { pass, stories };
+  return { pass: trialPass(input.pass, extra, originOf, origin), stories };
 }
 
 /** The page fits when set with template `alt` (#937): its stories regrouped
@@ -844,10 +901,30 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
    *  mode, else undefined. Its content is laid out in that mode, its lines
    *  along the box's height and following each other across its width. */
   const pageMode = pageIsVertical(input.page) ? 'vertical-rl' : 'horizontal-tb';
-  // Not on a right-to-left page, whose mirrored flow would set a vertical
-  // frame's lines from left to right: there it keeps the page's mode.
   const ownMode = (frame: ResolvedFrame): 'horizontal-tb' | 'vertical-rl' | undefined =>
-    frame.writingMode !== undefined && frame.writingMode !== pageMode && !pageIsMirrored(input.page) ? frame.writingMode : undefined;
+    frame.writingMode !== undefined && frame.writingMode !== pageMode ? frame.writingMode : undefined;
+  /** A vertical frame of a right-to-left page (#960): the page's flow is
+   *  painted mirrored, which would set its lines from left to right, so the
+   *  frame is laid out as on a left-to-right page and painted unmirrored
+   *  (`VDTFrame.unmirrorX`). The mirror's origin, else undefined. */
+  const unmirroredAt = (frame: ResolvedFrame): number | undefined => {
+    const flow = input.page.flow;
+    return ownMode(frame) && flow?.writingMode === 'horizontal-tb' ? flow.mirror.originX : undefined;
+  };
+  /** Whether a frame's lines are set as on a mirrored page: those of the
+   *  page's own mode, not an unmirrored frame's. */
+  const mirroredIn = (frame: ResolvedFrame): boolean => input.mirrored && unmirroredAt(frame) === undefined;
+  /** The widest a picture's upright frame may be in a vertical frame of a
+   *  horizontal page (#960): the frame's extent across its lines, less the
+   *  box's padding. The page turns such a frame a quarter turn, so its
+   *  pictures are laid out counter-rotated to stand upright; none of that
+   *  in a frame of the page's own mode. */
+  const uprightIn = (frame: ResolvedFrame, across: number): Pick<FrameBoxOptions, 'uprightMaxLength'> => {
+    if (ownMode(frame) !== 'vertical-rl') return {};
+    const pad = styleOf(frame).padding;
+    const room = across - lengthPx(pad.top, dpi, input.emPx) - lengthPx(pad.bottom, dpi, input.emPx);
+    return { uprightMaxLength: Math.max(1, room) };
+  };
   /** `fn` measured in the frame's own writing mode. */
   const inMode = <T>(frame: ResolvedFrame, fn: () => T): T => {
     const mode = ownMode(frame);
@@ -1013,9 +1090,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const key = Math.round(width * 1000);
       const known = memo.get(key);
       if (known !== undefined) return known;
-      const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+      const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, width / s) };
       const across = (measure: number): number => inMode(p.frame, () =>
-        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
+        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
       const most = Math.max(input.areas.area.height, input.emPx);
       let h = most;
       if (across(most) <= width + 0.5) {
@@ -1220,9 +1297,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // Text running round the frames that push it runs along the page's
         // lines: a frame set across them keeps its whole box.
         const exclusions = turned ? undefined : unscale(exclusionsFor(frame, rect, false), s);
-        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(frame, laidH) };
         const opts: FrameBoxOptions = { boxHeight: laidH, verticalAlign: frame.verticalAlign, ...extra };
-        const whole = inMode(frame, () => st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts));
+        const whole = inMode(frame, () => st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, mirroredIn(frame), opts));
         const nextName = nextFrameOf(frame);
         const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
         const chained = nextFrame !== undefined && !vdtByName.has(nextFrame.name);
@@ -1234,11 +1311,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const minLines = Math.max(1, style.splitMinLines);
           // A heading stays with what follows it, a list keeps two items
           // on each side of the cut (#913).
-          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined ? extra : undefined, cutRules));
+          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, mirroredIn(frame), extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined || extra.uprightMaxLength !== undefined ? extra : undefined, cutRules));
           const to = frag?.to ?? from;
           // A frame none of whose content fits draws nothing: the whole box
           // goes on (#912), not a tab and a mark over an empty piece.
-          result = frag ? inMode(frame, () => st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)) : undefined;
+          result = frag ? inMode(frame, () => st!.L.layoutRange(from, to, laidW, blockId, continuation, mirroredIn(frame), opts)) : undefined;
           st!.cut = to;
         } else {
           goesOn = false;
@@ -1248,7 +1325,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         }
       } else if (st && frame.style) {
         // A styled frame with nothing (left) to hold still draws its box.
-        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH }));
+        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, mirroredIn(frame), { boxHeight: laidH }));
       }
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).
@@ -1276,6 +1353,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         rect: { ...rect },
         rotate: frame.rotate + (turned ? frameModeTurn({ writingMode: turned }) : 0),
         ...(turned ? { writingMode: turned } : {}),
+        ...(unmirroredAt(frame) !== undefined ? { unmirrorX: unmirroredAt(frame)! } : {}),
         layer: frame.layer,
         ...(frame.style ? { styleId: frame.style } : {}),
         scale: s,

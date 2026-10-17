@@ -11,16 +11,20 @@ import { putBlob } from '../storage/blobStore';
 import { generateId } from '../storage/ids';
 import { isValidSvg, svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
 import {
+  applyStyleTracking,
   characterTargetOf,
+  displayStyleName,
   lookup,
   paragraphTargetOf,
   parseTemplate,
   pictureResolution,
+  wordStyleTracking,
   wordToPostext,
   type FindingId,
   type ImportResult,
   type ParagraphTarget,
   type QualityReport,
+  type StyleTracking,
   type WordDocument,
   type WordTemplate,
 } from 'postext/word';
@@ -95,19 +99,74 @@ export function materializedTemplate(doc: WordDocument, template: WordTemplate, 
   return { ...template, paragraphs, characters };
 }
 
+/** What the character spacing of the Word styles (#932) would do to the
+ *  book's styles: `applied` goes on styles that set none, `skipped` is left
+ *  as the book has it, and `patch` holds the settings of the configuration
+ *  that change (`paragraphStyles`, `headingStyles`, `headings`,
+ *  `calloutStyles`), empty when nothing does. */
+export interface WordTrackingPlan {
+  applied: StyleTracking[];
+  skipped: StyleTracking[];
+  patch: Partial<PostextConfig>;
+}
+
+const TRACKED_SETTINGS = ['paragraphStyles', 'headingStyles', 'headings', 'calloutStyles'] as const;
+
+export function wordTrackingPlan(doc: WordDocument, template: WordTemplate, config: PostextConfig): WordTrackingPlan {
+  const tracking = wordStyleTracking(doc, template, config);
+  if (tracking.length === 0) return { applied: [], skipped: [], patch: {} };
+  const { config: next, applied, skipped } = applyStyleTracking(config, tracking);
+  const patch: Partial<PostextConfig> = {};
+  for (const key of TRACKED_SETTINGS) {
+    if (next[key] !== config[key]) Object.assign(patch, { [key]: next[key] });
+  }
+  return { applied, skipped, patch };
+}
+
+/** The Postext style a tracking goes to, in the panel's words. */
+export function trackingTargetName(t: StyleTracking, config: PostextConfig, labels: SandboxLabels): string {
+  const target = t.target;
+  if (target.kind === 'paragraphs') {
+    const style = config.paragraphStyles?.find((s) => s.id === target.style);
+    return style?.name ?? target.style;
+  }
+  if (target.kind === 'heading') {
+    if (target.style) {
+      const style = config.headingStyles?.find((s) => s.id === target.style);
+      return style?.name ?? target.style;
+    }
+    return `${labels.wordTargetHeading} ${labels.wordHeadingLevel.replace('__n__', String(target.level))}`;
+  }
+  const style = config.calloutStyles?.find((s) => s.id === target.type);
+  return labels.wordTrackingCalloutTitle.replace('__name__', style?.name ?? target.type);
+}
+
+/** `tracking` as a list in running text: «Heading 1 → Heading Level 1: 0.02 em, …». */
+export function trackingText(tracking: readonly StyleTracking[], config: PostextConfig, labels: SandboxLabels): string {
+  return tracking
+    .map((t) => labels.wordTrackingEntry
+      .replace('__style__', () => `\u2068${displayStyleName(t.style)}\u2069`)
+      .replace('__target__', () => `\u2068${trackingTargetName(t, config, labels)}\u2069`)
+      .replace('__value__', String(t.letterSpacing.value)))
+    .join(labels.frameStylesListSeparator);
+}
+
 /** The changes that put an import's chapters into the book: the open
  *  chapter's text replaced, new chapters after it (the first one shown),
- *  or the whole book replaced. */
+ *  or the whole book replaced. `tracking` (a plan's `patch`), when it has
+ *  anything, is put on the book's styles first. */
 export function wordImportActions(
   result: Pick<ImportResult, 'chapters'>,
   destination: WordDestination,
   book: { chapters: readonly Chapter[]; activeChapterId: string },
+  tracking: Partial<PostextConfig> = {},
 ): SandboxAction[] {
-  if (destination === 'chapter') return [{ type: 'SET_MARKDOWN', payload: result.chapters[0]?.markdown ?? '' }];
+  const styles: SandboxAction[] = Object.keys(tracking).length > 0 ? [{ type: 'UPDATE_CONFIG', payload: tracking }] : [];
+  if (destination === 'chapter') return [...styles, { type: 'SET_MARKDOWN', payload: result.chapters[0]?.markdown ?? '' }];
   const made = result.chapters.map((c) => newChapter(generateId('chapter'), c.title, c.markdown));
-  if (destination === 'book') return [{ type: 'SET_BOOK', payload: { chapters: made, activeChapterId: made[0]!.id } }];
+  if (destination === 'book') return [...styles, { type: 'SET_BOOK', payload: { chapters: made, activeChapterId: made[0]!.id } }];
   const at = Math.max(0, book.chapters.findIndex((c) => c.id === book.activeChapterId)) + 1;
-  return made.map((chapter, k) => ({ type: 'ADD_CHAPTER', payload: { chapter, index: at + k, activate: k === 0 } }));
+  return [...styles, ...made.map((chapter, k): SandboxAction => ({ type: 'ADD_CHAPTER', payload: { chapter, index: at + k, activate: k === 0 } }))];
 }
 
 const BITMAP_FORMATS: Record<string, 'png' | 'jpeg' | 'webp' | 'gif'> = {

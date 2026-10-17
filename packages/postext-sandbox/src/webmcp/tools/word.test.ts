@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { emptyTemplate, postextToDocx } from 'postext/word';
 import { resetViewerEdits } from '../../editor/viewerEdits';
 import { runTool, type WebMcpTool } from '../modelContext';
-import { harness } from './testHarness';
+import { harness, state } from './testHarness';
 import { wordTools } from './word';
 
 /** The browser storage the templates are kept in. */
@@ -198,5 +198,42 @@ describe('sandbox_word_templates', () => {
     const after = await word('sandbox_word_templates', { action: 'list' });
     expect(after.templates.map((t: { name: string }) => t.name)).toEqual(['House 2']);
     expect(after).not.toHaveProperty('lastUsed');
+  });
+});
+
+describe('sandbox_import_word and the character spacing of the Word styles (#951)', () => {
+  const em = (value: number) => ({ value, unit: 'em' as const });
+  const tracked = { headingStyles: [{ id: 'portada', name: 'Portada', letterSpacing: em(0.1) }] };
+  const md = '# One\n\n# The lantern {style="portada"}\n\nText.\n';
+  const bytes = postextToDocx([{ title: 'One', markdown: md }], { template: emptyTemplate(), config: tracked, book: false, title: 'Lantern' });
+  const file = { base64: base64(bytes), fileName: 'lantern.docx' };
+  const bare = { headingStyles: [{ id: 'portada', name: 'Portada' }] };
+
+  it('says on a dry run which styles get spacing and which stay', async () => {
+    const { word, get } = tools({ config: { ...state().config, ...bare } });
+    const dry = await word('sandbox_import_word', { file, dryRun: true });
+    expect(dry.characterSpacing).toEqual({ taken: true, setOn: [{ style: 'Portada', goesTo: 'Portada', em: 0.1 }] });
+    expect(get().config.headingStyles).toEqual(bare.headingStyles);
+    const off = await word('sandbox_import_word', { file, dryRun: true, characterSpacing: false });
+    expect(off.characterSpacing).toMatchObject({ taken: false });
+    const own = tools({ config: { ...state().config, headingStyles: [{ id: 'portada', name: 'Portada', letterSpacing: em(0.3) }] } });
+    expect((await own.word('sandbox_import_word', { file, dryRun: true })).characterSpacing).toEqual({ taken: false, leftAsTheBookHasIt: [{ style: 'Portada', goesTo: 'Portada', em: 0.1 }] });
+  });
+
+  it('puts the spacing on the book\'s styles with the text, and leaves it with characterSpacing false', async () => {
+    const withIt = tools({ config: { ...state().config, ...bare } });
+    const done = await withIt.word('sandbox_import_word', { file, wait: false });
+    expect(done.characterSpacing.setOn).toEqual([{ style: 'Portada', goesTo: 'Portada', em: 0.1 }]);
+    expect(withIt.get().config.headingStyles).toEqual([{ id: 'portada', name: 'Portada', letterSpacing: em(0.1) }]);
+    expect(withIt.get().chapters[0]!.markdown).toMatch(/^# One\n/);
+    for (const destination of ['append', 'book'] as const) {
+      const other = tools({ config: { ...state().config, ...bare } });
+      await other.word('sandbox_import_word', { file, destination, wait: false });
+      expect(other.get().config.headingStyles).toEqual([{ id: 'portada', name: 'Portada', letterSpacing: em(0.1) }]);
+    }
+    const without = tools({ config: { ...state().config, ...bare } });
+    const kept = await without.word('sandbox_import_word', { file, characterSpacing: false, wait: false });
+    expect(kept).not.toHaveProperty('characterSpacing');
+    expect(without.get().config.headingStyles).toEqual(bare.headingStyles);
   });
 });

@@ -8,6 +8,7 @@ import { frameMatrix } from '../../composed/paint';
 import { figureLabelBounds, figureLabelMatrix, labelPlace, pictureToBody, resolveLabelLook } from '../../composed/labels';
 import { formatWarning } from '../../pipeline/contentWarnings';
 import { resolveAllConfig } from '../../pipeline/config';
+import { stripLabelStylesDefaults } from '../../composed/templates';
 import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel } from '../../index';
 
 // #860: the words of a map in the Markdown, their places in the resource.
@@ -108,6 +109,27 @@ describe('label looks (#860)', () => {
       labelStyles: [{ id: 'l', paragraphStyle: 'leyenda', fontWeight: 600 }],
     });
     expect(resolveLabelLook('l', resolved)).toMatchObject({ fontFamily: 'Open Sans', fontPx: 12, italic: true, weight: 600 });
+  });
+
+  it('switches off a borrowed paragraph style’s slant and capitals when it says normal / none (#955)', () => {
+    const para = { id: 'leyenda', name: 'Leyenda', italic: true, textTransform: 'uppercase' } as never;
+    const look = (labelStyle: Record<string, unknown>) =>
+      resolveLabelLook('l', resolveAllConfig({ ...PAGE, paragraphStyles: [para], labelStyles: [{ id: 'l', paragraphStyle: 'leyenda', ...labelStyle }] }));
+    // Not said: the paragraph style holds.
+    expect(look({})).toMatchObject({ italic: true, uppercase: true });
+    // Said: the label style wins, off or on.
+    expect(look({ fontStyle: 'normal', textTransform: 'none' })).toMatchObject({ italic: false, uppercase: false });
+    expect(look({ fontStyle: 'normal' })).toMatchObject({ italic: false, uppercase: true });
+    expect(look({ textTransform: 'none' })).toMatchObject({ italic: true, uppercase: false });
+    // Without a paragraph style, normal and none are the defaults.
+    const bare = resolveLabelLook('l', resolveAllConfig({ ...PAGE, labelStyles: [{ id: 'l', fontStyle: 'normal', textTransform: 'none' }] }));
+    expect(bare).toMatchObject({ italic: false, uppercase: false });
+  });
+
+  it('keeps normal / none in the stored styles only where they turn something off (#955)', () => {
+    expect(stripLabelStylesDefaults([{ id: 'a', fontStyle: 'normal', textTransform: 'none' }])).toEqual([{ id: 'a' }]);
+    expect(stripLabelStylesDefaults([{ id: 'b', paragraphStyle: 'p', fontStyle: 'normal', textTransform: 'none' }]))
+      .toEqual([{ id: 'b', paragraphStyle: 'p', fontStyle: 'normal', textTransform: 'none' }]);
   });
 
   it('carries the halo, the plate and its padding', () => {

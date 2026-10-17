@@ -10,16 +10,16 @@
  * in its panel's frame with the composed pages' frame layout
  * (`layoutComposedPage`, one frame filling the panel's text area), so a
  * text panel has real paragraphs: selectable, searchable, read in order by
- * tagged PDF and EPUB. Where a frame cannot take the text (a strip, a
- * spread, a page whose flow is turned or mirrored), the blocks stay
- * unwrapped and are set in the flow after the comic, never lost
- * (`comicPanelFrame`).
+ * tagged PDF and EPUB. A strip's text frames are laid once the strip has
+ * its place on the page ({@link layoutStripTextFrames}), a spread's on its
+ * two pages; a comic inside a container keeps its text in the flow after
+ * the comic, never lost.
  */
 
 import type { ContentBlock } from '../parse/types';
 import type { CalloutPaddingConfig, Dimension, ResolvedCalloutStyleConfig } from '../types';
-import type { ContentWarning, ResolvedConfig, VDTBlock, VDTComicPage, VDTPage } from '../vdt';
-import { pageRectToFlow, pageToFlow, type VDTContourSpan } from '../vdt';
+import type { ContentWarning, ResolvedConfig, VDTBlock, VDTComicPage, VDTFrame, VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type BoundingBox, type VDTContourSpan } from '../vdt';
 import { FRAME_ATTR, FRAME_STYLE_ID } from '../composed/wrap';
 import { normalizeFrame } from '../composed/templates';
 import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types';
@@ -27,11 +27,12 @@ import type { BoxExclusion, PlannedCallout } from '../pipeline/calloutLayout';
 import type { FrameLayoutPass } from '../pipeline/frameLayout';
 import { composedStories, layoutComposedPage, type ComposedStory, type PlannedComposedPage } from '../pipeline/composedLayout';
 import { resolvedDirection } from '../pipeline/config';
+import { SPAN_EMBED_STYLE_ID } from '../pipeline/spanEmbeds';
 import { dimensionToPx } from '../units';
 import { resolvedComics } from '../defaults/comics';
-import { isComicSpread } from './spread';
 import { comicBoxStyle, isComicTextPanel } from './frames';
-import { comicPanelSources, setComicLayoutWarnings, comicPageLayoutWarnings } from './layoutPage';
+import { translateComicPage } from './transform';
+import { comicPanelSources, copyComicPanelSources, setComicLayoutWarnings, comicPageLayoutWarnings } from './layoutPage';
 import type { ComicPageSource, ComicPanelSource } from './types';
 
 /** `containerAttrs` key of a text panel's story box: the panel's index in
@@ -56,13 +57,13 @@ export function comicTextPanelsSupported(resolved?: Pick<ResolvedConfig, 'layout
 }
 
 /** Why a text panel's Markdown is set in the flow instead of its frame:
- *  the comic is a strip or a spread, or the document's flow is turned or
- *  mirrored. Undefined when its frame takes it. */
+ *  never since postext 1.40 (#959: strips and spreads take their text in
+ *  the frames too); `'flow'` only for a caller that passes `supported`
+ *  false. Undefined when its frame takes it. Kept for the callers that
+ *  ask; `source` is read no more. */
 export function comicTextPanelFallback(source: Pick<ComicPageSource, 'kind' | 'attrs'>, supported: boolean): 'strip' | 'spread' | 'flow' | undefined {
-  if (source.kind === 'strip') return 'strip';
-  if (isComicSpread(source)) return 'spread';
-  if (!supported) return 'flow';
-  return undefined;
+  void source;
+  return supported ? undefined : 'flow';
 }
 
 /**
@@ -127,8 +128,14 @@ export function planComicTextPanels(blocks: readonly ContentBlock[], plans: Read
     const b = blocks[i]!;
     if (b.type !== 'directive' || !b.comic) continue;
     let end = i;
+    // A page-wide strip set where it stands is boxed (`wrapPageSpanEmbeds`):
+    // its stories follow the box's closing marker.
+    const prev = blocks[i - 1];
+    const next = blocks[i + 1];
+    if (prev?.type === 'containerStart' && prev.containerAttrs?.type === SPAN_EMBED_STYLE_ID && next?.type === 'containerEnd' && next.containerId === prev.containerId) end = i + 1;
+    const lead = end;
     for (let plan = plans.get(end + 1); plan && plan.attrs[COMIC_PANEL_ATTR] !== undefined; plan = plans.get(end + 1)) end = plan.endIdx;
-    if (end === i) continue;
+    if (end === lead) continue;
     const stories = composedStories(i, end + 1, plans);
     const list = [...stories.values()];
     out.set(i, {
@@ -158,6 +165,12 @@ export interface ComicTextFramesInput {
   mirrored: boolean;
   pushGapPx: number;
   locale?: string;
+  /** Only the text panels with these source indexes are laid (a spread
+   *  gives each panel to one of its two pages); all when unset. */
+  only?: ReadonlySet<number>;
+  /** Boxes on the sheet the text keeps off (a spread's gutter), each set
+   *  short where it crosses a line. */
+  avoid?: readonly BoundingBox[];
 }
 
 export interface ComicTextFramesLayout {
@@ -169,6 +182,13 @@ export interface ComicTextFramesLayout {
 
 const px = (v: number): Dimension => ({ value: v, unit: 'px' });
 
+/** The first block of a laid story that sets text: where its text starts,
+ *  which moves with the frame's vertical alignment. */
+function firstTextY(blocks: readonly VDTBlock[]): number | undefined {
+  for (const b of blocks) if (b.type !== 'callout' && !b.hidden && b.lines.length > 0) return b.bbox.y;
+  return undefined;
+}
+
 /**
  * Set the text panels of a laid-out comic page in their frames: each text
  * frame of `comic.frames` gets the blocks its story was set in
@@ -177,6 +197,9 @@ const px = (v: number): Dimension => ({ value: v, unit: 'px' });
  * area is the panel's box inside its border and the lettering's inset;
  * with a `box` style, the panel's box (the style's padding keeps the text
  * off its edges).
+ *
+ * `comic` is on the sheet of `page`: a comic page, a half of a spread, or
+ * a strip moved there ({@link layoutStripTextFrames}).
  */
 export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFramesLayout {
   const { comic, page, plan, resolved, dpi } = input;
@@ -187,82 +210,153 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
   const insetPx = dimensionToPx(resolvedComics(resolved).lettering.inset, dpi);
   const warnings: ContentWarning[] = [];
   const fence = Number(/^cm(\d+)$/.exec(comic.id ?? '')?.[1] ?? 0);
+  // The sheet's boxes to keep off, in the page's flow frame.
+  const avoid: BoxExclusion[] = (input.avoid ?? []).map((r) => {
+    const f = page.flow ? pageRectToFlow(page, r) : r;
+    return { x: f.x, y: f.y, width: f.width, height: f.height };
+  });
   comic.frames.forEach((frame, fi) => {
     const panelIndex = frame.panel ?? fi;
     const src: ComicPanelSource | undefined = sources[panelIndex];
     if (!src || !isComicTextPanel(src)) return;
+    if (input.only && !input.only.has(src.index)) return;
     const key = comicTextStoryKey(src.index);
     const story: ComposedStory | undefined = plan.stories.get(key);
     if (!story) return;
-    const panel = comic.panels[panelIndex]!;
+    const panel = comic.panels.find((q) => q.index === panelIndex) ?? comic.panels[panelIndex];
+    if (!panel) return;
     const box = comicBoxStyle(resolved, src.attrs.box);
     const edge = box ? 0 : panel.border.width + insetPx;
     const valign = src.attrs.valign?.trim().toLowerCase();
+    const aligned = valign === 'middle' || valign === 'bottom';
     // A slanted cell: frameless text set from the top takes the whole cell,
-    // each line set short where a slant crosses it (#909); a box drawn round
-    // the text, or text set to the middle or the foot, keeps to the widest
-    // box with straight sides inside the outline.
-    const follows = !!frame.polygon && !box && valign !== 'middle' && valign !== 'bottom';
-    const r = frame.polygon && !follows ? innerBox(frame.polygon, panel.bbox) : panel.bbox;
-    const onSheet = { x: r.x + edge, y: r.y + edge, width: Math.max(1, r.width - 2 * edge), height: Math.max(1, r.height - 2 * edge) };
-    // The comic stands on the sheet; the text is set in the page's flow
-    // frame (#909), mirrored on a right-to-left page and turned on a
-    // vertical one (where it is set vertically).
-    const area = page.flow ? pageRectToFlow(page, onSheet) : onSheet;
+    // each line set short where a slant crosses it (#909). Text set to the
+    // middle or the foot follows the slant too, laid again with the slant
+    // moved by the room above it (#959); a box drawn round the text keeps
+    // to the widest box with straight sides inside the outline.
+    const follows = !!frame.polygon && !box;
     const outline = follows ? (page.flow ? frame.polygon!.map((q) => pageToFlow(page, q.x, q.y)) : frame.polygon!) : undefined;
-    const slants = outline ? slantExclusions(outline, area, edge) : [];
+    const areaOf = (r: BoundingBox): BoundingBox => {
+      const onSheet = { x: r.x + edge, y: r.y + edge, width: Math.max(1, r.width - 2 * edge), height: Math.max(1, r.height - 2 * edge) };
+      // The comic stands on the sheet; the text is set in the page's flow
+      // frame (#909), mirrored on a right-to-left page and turned on a
+      // vertical one (where it is set vertically).
+      return page.flow ? pageRectToFlow(page, onSheet) : onSheet;
+    };
     // `shrink` (#909): the text set smaller until it fits, down to half
     // its size or the `shrink=` given; else the frames' least, 90 %.
     const minScale = shrinkScale(src.attrs.shrink);
     const padding: CalloutPaddingConfig | undefined = box ? undefined : { top: px(0), right: px(0), bottom: px(0), left: px(0) };
-    const resolvedFrame = normalizeFrame({
-      name: frame.name,
-      width: 'fill',
-      height: 'fill',
-      ...(box ? { style: box.id } : {}),
-      ...(valign === 'middle' || valign === 'bottom' ? { verticalAlign: valign } : {}),
-      ...(padding ? { padding } : {}),
-      ...(minScale !== undefined ? { fit: { shrinkText: true, minScale } } : {}),
-    });
-    const template: ResolvedPageTemplate = {
-      id: comic.id ?? 'comic',
-      area: 'content',
-      frames: [resolvedFrame],
-      groups: [],
-      decoration: { elements: [] },
-      decorationPaths: [],
-      spread: false,
-      gutter: px(0),
-      role: 'comic',
-      chain: [comic.id ?? 'comic'],
-      configPath: '',
+    const lay = (area: BoundingBox, shapes: readonly BoxExclusion[], verticalAlign: 'top' | 'middle' | 'bottom' | undefined) => {
+      const resolvedFrame = normalizeFrame({
+        name: frame.name,
+        width: 'fill',
+        height: 'fill',
+        ...(box ? { style: box.id } : {}),
+        ...(verticalAlign && verticalAlign !== 'top' ? { verticalAlign } : {}),
+        ...(padding ? { padding } : {}),
+        ...(minScale !== undefined ? { fit: { shrinkText: true, minScale } } : {}),
+      });
+      const template: ResolvedPageTemplate = {
+        id: comic.id ?? 'comic',
+        area: 'content',
+        frames: [resolvedFrame],
+        groups: [],
+        decoration: { elements: [] },
+        decorationPaths: [],
+        spread: false,
+        gutter: px(0),
+        role: 'comic',
+        chain: [comic.id ?? 'comic'],
+        configPath: '',
+      };
+      const around = [...avoid, ...shapes];
+      return layoutComposedPage({
+        pass: input.pass,
+        page,
+        template,
+        fence: { template: template.id, spread: false, attrs: {}, attrSources: {}, fenceIndex: fence, colons: 4 },
+        startIdx: plan.startIdx,
+        endIdx: plan.endIdx,
+        stories: new Map([[frame.name, story]]),
+        styleOf: input.styleOf,
+        areas: { area, page: area, bleed: area },
+        dpi,
+        emPx: input.emPx,
+        bodyOffset: input.bodyOffset,
+        mirrored: input.mirrored,
+        pushGapPx: input.pushGapPx,
+        ...(around.length > 0 ? { frameExclusions: new Map([[frame.name, around]]) } : {}),
+        ...(input.locale ? { locale: input.locale } : {}),
+      });
     };
-    const out = layoutComposedPage({
-      pass: input.pass,
-      page,
-      template,
-      fence: { template: template.id, spread: false, attrs: {}, attrSources: {}, fenceIndex: fence, colons: 4 },
-      startIdx: plan.startIdx,
-      endIdx: plan.endIdx,
-      stories: new Map([[frame.name, story]]),
-      styleOf: input.styleOf,
-      areas: { area, page: area, bleed: area },
-      dpi,
-      emPx: input.emPx,
-      bodyOffset: input.bodyOffset,
-      mirrored: input.mirrored,
-      pushGapPx: input.pushGapPx,
-      ...(slants.length > 0 ? { frameExclusions: new Map([[frame.name, slants]]) } : {}),
-      ...(input.locale ? { locale: input.locale } : {}),
-    });
-    const set = out.composed.frames[0];
-    if (!set || !out.laid.has(frame.name)) return;
+    let area: BoundingBox;
+    let out: ReturnType<typeof lay>;
+    const wholeCell = (): boolean => {
+      area = areaOf(panel.bbox);
+      if (!aligned) {
+        out = lay(area, slantExclusions(outline!, area, edge), undefined);
+        return true;
+      }
+      // The alignment depends on how many lines the slant leaves and the
+      // slant on where the text stands: the room the lines have at a height
+      // is the outline's there, so the slant is laid as if the text stood
+      // `shift` lower, and the shift is sought where the text lands (the
+      // lower the text stands, the narrower a slanted foot leaves it, the
+      // taller it is: bisection). A layout is kept only when every line lies
+      // inside the outline; none does: the straight box inside the cell.
+      const base = slantExclusions(outline!, area, edge);
+      const top = firstTextY(lay(area, base, undefined).blocks);
+      if (top === undefined) {
+        out = lay(area, base, valign as 'middle' | 'bottom');
+        return true;
+      }
+      const align = valign as 'middle' | 'bottom';
+      const attempt = (shift: number) => {
+        const moved = outline!.map((q) => ({ x: q.x, y: q.y - shift }));
+        const result = lay(area, slantExclusions(moved, area, edge), align);
+        const at = firstTextY(result.blocks);
+        return { result, landed: at === undefined ? shift : at - top };
+      };
+      let bestResult: ReturnType<typeof lay> | undefined;
+      let bestGap = Infinity;
+      const consider = (shift: number, t: ReturnType<typeof attempt>): void => {
+        const gap = Math.abs(t.landed - shift);
+        if (gap < bestGap && linesInsideOutline(t.result.blocks, outline!, edge)) {
+          bestResult = t.result;
+          bestGap = gap;
+        }
+      };
+      const first = attempt(0);
+      consider(0, first);
+      if (first.landed > 1) {
+        let lo = 0;
+        let hi = area.height;
+        for (let round = 0; round < 9 && bestGap > 1; round++) {
+          const mid = (lo + hi) / 2;
+          const t = attempt(mid);
+          consider(mid, t);
+          if (t.landed > mid) lo = mid;
+          else hi = mid;
+        }
+      }
+      if (!bestResult || bestGap > 3 * input.emPx) return false;
+      out = bestResult;
+      return true;
+    };
+    if (!follows || !wholeCell()) {
+      const r = frame.polygon ? innerBox(frame.polygon, panel.bbox) : panel.bbox;
+      area = areaOf(r);
+      out = lay(area, [], aligned ? (valign as 'middle' | 'bottom') : undefined);
+    }
+    const set = out!.composed.frames[0];
+    if (!set || !out!.laid.has(frame.name)) return;
     laid.add(key);
     // The composed pages' ids (`cp<n>:…`) as the comic's (`cm<n>:…`).
     const from = `cp${fence}:`;
     const to = `cm${fence}:`;
     const rename = (id: string): string => (id.startsWith(from) ? to + id.slice(from.length) : id);
-    for (const b of out.blocks) {
+    for (const b of out!.blocks) {
       b.id = rename(b.id);
       if (b.callout) b.callout.childIds = b.callout.childIds.map(rename);
       blocks.push(b);
@@ -289,6 +383,61 @@ export function layoutComicTextFrames(input: ComicTextFramesInput): ComicTextFra
   });
   if (warnings.length > 0) setComicLayoutWarnings(comic, [...comicPageLayoutWarnings(comic), ...warnings]);
   return { blocks, laid };
+}
+
+/** Whether every line of the text blocks lies inside a convex outline,
+ *  `edge` in from it (the lines of a text laid in a slanted cell). */
+function linesInsideOutline(blocks: readonly VDTBlock[], outline: readonly { x: number; y: number }[], edge: number): boolean {
+  for (const b of blocks) {
+    if (b.type === 'callout' || b.hidden) continue;
+    for (const l of b.lines) {
+      const span = l.measure ?? { x: l.bbox.x, width: l.bbox.width };
+      // A line the room cannot take at all: the text did not settle.
+      if (span.width < 1) return false;
+      for (const y of [l.bbox.y + 0.5, l.bbox.y + l.bbox.height - 0.5]) {
+        const c = crossing(outline, 'y', y);
+        if (!c) return false;
+        if (span.x < c[0] + edge - 1 || span.x + span.width > c[1] - edge + 1) return false;
+      }
+    }
+  }
+  return true;
+}
+
+/**
+ * The text panels of a strip (`:::strip`, #959), laid once the strip's block
+ * has its place on the page: the strip's comic stands relative to its block
+ * (`VDTBlock.comic`), so it is moved onto the sheet where the block sits
+ * ({@link flowRectToPage}), its text set there in the page's flow frame, and
+ * what the frames came to (blocks, overflow, scale, warnings) written back
+ * on the block's comic, which keeps moving with the block. `input.comic` is
+ * ignored; `block` is the strip.
+ */
+export function layoutStripTextFrames(input: Omit<ComicTextFramesInput, 'comic'> & { block: Pick<VDTBlock, 'bbox' | 'comic'> }): ComicTextFramesLayout {
+  const own = input.block.comic;
+  if (!own?.frames) return { blocks: [], laid: new Set() };
+  const at = flowRectToPage(input.page, input.block.bbox);
+  const onSheet = translateComicPage(own, at.x, at.y);
+  copyComicPanelSources(own, onSheet);
+  const out = layoutComicTextFrames({ ...input, comic: onSheet });
+  if (out.laid.size === 0) return out;
+  // The frames' results are position-free: they go back to the block's
+  // comic as they are.
+  own.frames = own.frames.map((f, i) => {
+    const laidFrame: VDTFrame | undefined = onSheet.frames?.[i];
+    if (!laidFrame || laidFrame.blockIds.length === 0) return f;
+    return {
+      ...f,
+      blockIds: [...laidFrame.blockIds],
+      overflowPx: laidFrame.overflowPx,
+      scale: laidFrame.scale,
+      ...(laidFrame.imageScale !== undefined ? { imageScale: laidFrame.imageScale } : {}),
+      ...(laidFrame.styleId !== undefined ? { styleId: laidFrame.styleId } : {}),
+    };
+  });
+  const added = comicPageLayoutWarnings(onSheet);
+  if (added.length > 0) setComicLayoutWarnings(own, [...comicPageLayoutWarnings(own), ...added]);
+  return out;
 }
 
 /** The least scale a text panel's `shrink` attribute lets its text take
@@ -326,7 +475,12 @@ export function slantExclusions(poly: readonly { x: number; y: number }[], area:
       lo = Math.max(lo, c[0] + edge);
       hi = Math.min(hi, c[1] - edge);
     }
-    if (!Number.isFinite(lo) || !Number.isFinite(hi)) continue;
+    // A band the outline does not reach (text laid as if it stood lower,
+    // past the cell's foot): no room at all.
+    if (!Number.isFinite(lo) || !Number.isFinite(hi)) {
+      left.push({ y, height: h, left: x0, right: x1 });
+      continue;
+    }
     if (lo > x0 + 0.5) left.push({ y, height: h, left: x0, right: Math.min(x1, lo) });
     if (hi < x1 - 0.5) right.push({ y, height: h, left: Math.max(x0, hi), right: x1 });
   }

@@ -23,7 +23,7 @@ import { labelGlyphAt } from './labels';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
-import { composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock } from './paint';
+import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
 import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
 
@@ -631,8 +631,13 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
     const chain = headingDesignChain(b, fp, file);
     if (chain) return flowed([...chain, ...enclosingBoxes(b, boxes, file)]);
   }
+  // The words of a strip's text panel (#959) lie over the strip's block: they
+  // answer before it does.
+  const stripText = composedFrameBlockIds(page);
+  const onStripText = stripText.size > 0 && floats.some((f) => f.type !== 'callout' && stripText.has(f.id) && inside(f.bbox, fp));
   for (const b of all) {
     if (b.type === 'callout' || b.hidden || b.designOverlay) continue;
+    if (onStripText && b.comic) continue;
     if (!inside(b.bbox, fp)) continue;
     return [...flowed([...textChain(b, fp, file), ...enclosingBoxes(b, boxes, file)]), ...comicTextAncestors(page, b.id, file)];
   }

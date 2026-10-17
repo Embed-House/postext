@@ -27,6 +27,9 @@ export interface StylesheetOptions {
   dropCaps?: readonly string[];
   /** A figure or a box text wraps round (#627): the float rules. */
   wraps?: boolean;
+  /** A picture carries its labels drawn over it (#955): the box and the
+   *  layer they are drawn in. */
+  labelLayers?: boolean;
   /** Classes of emphasis marks the text uses beyond `pt-dots` (the
    *  filled dot on the default side): their rules are written only then
    *  (`inline.ts` `dotsClasses`, #428). */
@@ -297,6 +300,12 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   const capPx = px(cap.fontSize);
   out.push(rule('figure', ['margin: 1em 0', 'text-align: center', 'page-break-inside: avoid', 'break-inside: avoid']));
   out.push(rule('figure img', ['max-width: 100%', 'height: auto']));
+  // The labels drawn over a picture (#955): a box as wide as the image,
+  // the SVG laid over all of it.
+  if (options.labelLayers) {
+    out.push(rule('.pt-labelled', ['display: inline-block', 'position: relative', 'max-width: 100%', 'line-height: 0']));
+    out.push(rule('.pt-label-layer', ['position: absolute', 'left: 0', 'top: 0', 'width: 100%', 'height: 100%', 'pointer-events: none']));
+  }
   out.push(rule('figure video', ['width: 100%', 'height: auto', 'background-color: #000']));
   // Comic pages (#565): each panel's picture as wide as the text at most,
   // its lettering under it as plain lines.
@@ -452,6 +461,10 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   if (options.composed) {
     out.push(rule('section.pt-composed', ['margin-block: 1em']));
     out.push(rule('div.pt-frame', ['margin: 0 0 1em']));
+    // A frame set in a writing mode of its own (#960): its lines run along
+    // the length written on the box (`height` for a vertical frame).
+    out.push(rule('div.pt-frame-vertical', ['writing-mode: vertical-rl', '-epub-writing-mode: vertical-rl', '-webkit-writing-mode: vertical-rl']));
+    out.push(rule('div.pt-frame-horizontal', ['writing-mode: horizontal-tb', '-epub-writing-mode: horizontal-tb', '-webkit-writing-mode: horizontal-tb']));
     out.push(rule('div.pt-frame.pt-callout', ['padding: 0.75em 1em', 'page-break-inside: avoid']));
   }
   const frameStyles = new Set(options.composed?.frameStyles ?? []);

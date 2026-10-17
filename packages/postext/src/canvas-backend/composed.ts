@@ -5,10 +5,11 @@
  * decoration at layer 0 (`composedPaintOrder`). On a page of a spread
  * (#861) all of it is clipped to the page's share of the sheet.
  */
-import type { VDTBlock, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
+import type { VDTBlock, VDTComicPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
 import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { setVerticalPaint } from './verticalText';
+import { withoutMirroredPaint } from './mirrorFrame';
 import type { CjkRegion } from '../types';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
@@ -58,6 +59,13 @@ export function renderComposedFrames(
  *  comic panel cut by a slanted line, #885) is clipped to it. */
 function renderFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks: readonly VDTBlock[], inkHex: string | null, cjk?: FrameCjkPaint): void {
   if (blocks.length === 0) return;
+  // A vertical frame of a right-to-left page (#960) is placed by a matrix
+  // that includes the page's mirror: its text is not turned back again.
+  if (frame.unmirrorX !== undefined) withoutMirroredPaint(() => renderFrameInMode(ctx, frame, blocks, inkHex, cjk));
+  else renderFrameInMode(ctx, frame, blocks, inkHex, cjk);
+}
+
+function renderFrameInMode(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks: readonly VDTBlock[], inkHex: string | null, cjk?: FrameCjkPaint): void {
   // A frame set in its own writing mode (#944): its text is painted as a
   // page of that mode paints its flow, the vertical painter on (or off).
   if (frame.writingMode) {
@@ -105,8 +113,8 @@ function paintFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks
 
 /** The text frames of a comic page (`::panel{text}`, #885), over its
  *  panels (`comicFramePaintOrder`). */
-export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null): void {
-  for (const item of comicFramePaintOrder(page)) if (item.kind === 'frame') renderFrameBlocks(ctx, item.frame, item.blocks, inkHex);
+export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null, comic: VDTComicPage | undefined = page.comic): void {
+  for (const item of comicFramePaintOrder(page, comic)) if (item.kind === 'frame') renderFrameBlocks(ctx, item.frame, item.blocks, inkHex);
 }
 
 /** A composed page's decoration painted on the sheet (a page painted

@@ -138,8 +138,8 @@ import {
 import { chooseParagraphSplit } from './orphanWidow';
 import { layoutComicPage, comicPageLayoutWarnings } from '../comics/layoutPage';
 import { comicStripExtent, comicStripOffset, comicStripPlacement, comicStripWidth, layoutComicStrip } from '../comics/strip';
-import { isComicSpread, layoutComicSpread } from '../comics/spread';
-import { comicTextPanelsSupported, layoutComicTextFrames, planComicTextPanels, wrapComicTextPanels } from '../comics/textPanels';
+import { comicSpreadGutter, isComicSpread, layoutComicSpread } from '../comics/spread';
+import { comicTextPanelsSupported, layoutComicTextFrames, layoutStripTextFrames, planComicTextPanels, wrapComicTextPanels, type ComicTextFramesInput, type ComicTextFramesLayout } from '../comics/textPanels';
 import type { ComicPageSource } from '../comics/types';
 import {
   applyStyleAttrs,
@@ -6037,7 +6037,7 @@ function placeDocumentPass(
    * needed; the verso and the recto after it get one half each
    * (`layoutComicSpread`). The cursor is left on the recto.
    */
-  const placeComicSpread = (source: ComicPageSource): void => {
+  const placeComicSpread = (source: ComicPageSource, textPlan?: PlannedComposedPage): void => {
     breakToEvenPage();
     const verso = doc.pages[cursor.pageIndex]!;
     verso.columns = [createVDTColumn(0, verso.contentArea)];
@@ -6063,6 +6063,17 @@ function placeDocumentPass(
     });
     verso.comic = versoIsLeft ? left : right;
     recto.comic = versoIsLeft ? right : left;
+    // The text panels (#959): each on the page that holds most of its
+    // panel, off the gutter.
+    if (textPlan) {
+      const sides: Array<[VDTPage, VDTComicPage, VDTComicPage]> = [[verso, verso.comic, recto.comic], [recto, recto.comic, verso.comic]];
+      for (const [page, own, other] of sides) {
+        const width = (c: VDTComicPage, index: number): number => c.panels.find((q) => q.index === index)?.bbox.width ?? 0;
+        const mine = new Set(own.panels.filter((q) => width(own, q.index) > width(other, q.index) || (width(own, q.index) === width(other, q.index) && page === (versoIsLeft ? verso : recto))).map((q) => q.index));
+        const gutter = comicSpreadGutter(own, dpi, page.height);
+        placeComicText(page, own, textPlan, { only: mine, ...(gutter ? { avoid: [gutter] } : {}) });
+      }
+    }
   };
 
   /**
@@ -6588,13 +6599,12 @@ function placeDocumentPass(
    * frame (`layoutComicTextFrames`), its blocks floats of the page; the
    * stories laid are done for the main loop.
    */
-  const placeComicText = (page: VDTPage, comic: VDTComicPage, plan: PlannedComposedPage): void => {
+  const comicTextBase = (page: VDTPage, plan: PlannedComposedPage): Omit<ComicTextFramesInput, 'comic'> => {
     const frameless = calloutStyles.find((st) => st.id === FRAME_STYLE_ID)!;
-    const out = layoutComicTextFrames({
+    return {
       pass: framePass,
       resolved,
       page,
-      comic,
       plan,
       styleOf: (frame) => frameStyleOf((frame.style ? resolved.calloutStyles.find((st) => st.id === frame.style) : undefined) ?? frameless, frame),
       dpi,
@@ -6603,15 +6613,51 @@ function placeDocumentPass(
       mirrored: mirroredOf(page),
       pushGapPx: wrapGapPx(resolved.layout.wrap?.gap, dpi, bodyStyle.fontSizePx, floatGapPx),
       locale: resolvedLocale(resolved),
-    });
+    };
+  };
+  /** The blocks a comic's text frames set, floats of the page. */
+  const addComicTextBlocks = (page: VDTPage, blocks: readonly VDTBlock[]): void => {
     const floats = (page.floats ??= []);
-    for (const b of out.blocks) {
+    for (const b of blocks) {
       floats.push(b);
       doc.blocks.push(b);
     }
+  };
+  /** The stories of a plan are done for the main loop. */
+  const markComicStoriesLaid = (plan: PlannedComposedPage, laid?: ReadonlySet<string>): void => {
     for (const [key, story] of plan.stories) {
-      if (!out.laid.has(key)) continue;
+      if (laid && !laid.has(key)) continue;
       for (let i = story.startIdx; i <= story.plan.endIdx; i++) composedLaid.add(i);
+    }
+  };
+  // The text panels of a strip are laid where the strip ends up
+  // (`placeStripTexts`): the blocks that follow it are done from the start.
+  for (const [idx, plan] of comicTextPlans) if (contentBlocks[idx]?.directiveName === 'strip') markComicStoriesLaid(plan);
+  const placeComicText = (page: VDTPage, comic: VDTComicPage, plan: PlannedComposedPage, extra?: Pick<ComicTextFramesInput, 'only' | 'avoid'>): ComicTextFramesLayout => {
+    const out = layoutComicTextFrames({ ...extra, ...comicTextBase(page, plan), comic });
+    addComicTextBlocks(page, out.blocks);
+    markComicStoriesLaid(plan, out.laid);
+    return out;
+  };
+  /**
+   * The text panels of the strips on the pages (#959), laid where the strips
+   * stand once the pass has placed everything (a strip moves with its
+   * column, its band and the pages' final adjustments): each strip's comic
+   * moved onto the sheet, its stories set in the page's flow frame, the
+   * result written back on the strip.
+   */
+  const placeStripTexts = (): void => {
+    if (comicTextPlans.size === 0) return;
+    for (const page of doc.pages) {
+      const strips = new Set<VDTBlock>();
+      for (const col of page.columns) for (const b of col.blocks) if (b.comic && !b.hidden) strips.add(b);
+      for (const b of page.floats ?? []) if (b.comic && !b.hidden) strips.add(b);
+      for (const block of strips) {
+        const plan = block.contentIndex !== undefined && block.contentIndex >= 0 ? comicTextPlans.get(block.contentIndex) : undefined;
+        if (!plan) continue;
+        const out = layoutStripTextFrames({ ...comicTextBase(page, plan), block });
+        addComicTextBlocks(page, out.blocks);
+      }
     }
   };
 
@@ -6875,7 +6921,7 @@ function placeDocumentPass(
         closeFlowSegment(blockIdx);
         leaveCurrentPage();
         cursor.columnIndex = 0;
-        if (isComicSpread(rawBlock.comic)) placeComicSpread(rawBlock.comic);
+        if (isComicSpread(rawBlock.comic)) placeComicSpread(rawBlock.comic, comicTextPlans.get(blockIdx));
         else {
           const page = doc.pages[cursor.pageIndex]!;
           page.columns = [createVDTColumn(0, page.contentArea)];
@@ -8780,6 +8826,8 @@ function placeDocumentPass(
     const page = doc.pages[index];
     if (page) centrePageText(page, reservedOf);
   }
+  // The text panels of the strips, where the strips stand now (#959).
+  placeStripTexts();
 
   // A band that is still cut at the end of the pass (a trailing cap: the
   // closing band of a chapter or of the document) must hold what it took,

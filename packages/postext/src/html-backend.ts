@@ -54,7 +54,7 @@ import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
-import { figureLabelMatrix, undrawnLabels } from './composed/labels';
+import { figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
 import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
@@ -2783,8 +2783,13 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
   const n2 = (v: number): string => String(+v.toFixed(4));
   const parts: string[] = [];
   for (const label of rb.labels ?? []) {
-    const layout = label.layout;
+    let layout = label.layout;
     if (!layout) continue;
+    // A vertical label on a mirrored page (#955): set from its unmirrored
+    // layout in a wrapper that reflects the flow's mirror back about the
+    // body, so its runs and cells read as they do on any page.
+    const unmirrored = layout.mirrored === true && !rb.rotation;
+    if (unmirrored) layout = unmirrorLabelLayout(layout, rb.bodyRect.width);
     const m = figureLabelMatrix(layout, bx, by);
     const fonts: ResourceLineFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
     const halo = layout.halo && layout.halo.widthPx > 0
@@ -2813,10 +2818,12 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
     }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
     const id = label.id ? ` data-label="${esc(label.id)}"` : '';
-    parts.push(
+    const box =
       `<div class="pt-figure-label"${id}${dir} style="position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;` +
-      `transform:matrix(${m.map(n2).join(',')});${halo}">` + inner.join('') + '</div>',
-    );
+      `transform:matrix(${m.map(n2).join(',')});${halo}">` + inner.join('') + '</div>';
+    parts.push(unmirrored
+      ? `<div class="pt-unmirrored" style="position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;transform:matrix(-1,0,0,1,${n2(2 * bx + rb.bodyRect.width)},0);">${box}</div>`
+      : box);
   }
   return parts.join('');
 }
@@ -3330,7 +3337,8 @@ function renderPageDetailed(
   const plainFlow = !vflow && page.flow?.writingMode !== 'horizontal-tb';
   // A comic page's text panels (#885): each frame's blocks laid over its
   // panel, before the panel's lettering, inside the comic's markup.
-  const comicText = new Map<number, string>();
+  // Those of a strip (#959) likewise, inside the strip's markup.
+  const comicText = new Map<VDTComicPage, Map<number, string>>();
   const comicTextBlocks: Array<{ id: string; html: string }> = [];
   // On a vertical or right-to-left page the text is set in the page's flow
   // frame (#909): each frame is written in a box that turns or mirrors it
@@ -3340,15 +3348,22 @@ function renderPageDetailed(
     : page.flow?.writingMode === 'horizontal-tb'
       ? `<div class="pt-flow pt-flow-mirrored" style="position:absolute;left:0;top:0;width:${page.width}px;height:${page.height}px;transform:scaleX(-1);transform-origin:${page.flow.mirror.originX / 2}px 0;">${MIRRORED_FLOW_STYLE}`
       : '';
-  for (const item of comicFramePaintOrder(page)) {
-    if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
-    const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
-    comicTextBlocks.push(...parts);
-    const frameHtml = composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>';
-    comicText.set(item.frame.panel, flowBox ? `${flowBox}${frameHtml}</div>` : frameHtml);
+  for (const comic of comics) {
+    for (const item of comicFramePaintOrder(page, comic)) {
+      if (item.kind !== 'frame' || item.frame.panel === undefined) continue;
+      const parts = item.blocks.map((b) => ({ id: b.id, html: renderBlock(b, options) }));
+      comicTextBlocks.push(...parts);
+      const frameHtml = composedFrameOpen(item.frame, 'auto') + parts.map((b) => b.html).join('') + '</div>';
+      const byPanel = comicText.get(comic) ?? new Map<number, string>();
+      byPanel.set(item.frame.panel, flowBox ? `${flowBox}${frameHtml}</div>` : frameHtml);
+      comicText.set(comic, byPanel);
+    }
   }
-  const comicMarkup = (comic: VDTComicPage): string => renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
-    comic === page.comic && comicText.size > 0 ? (panel) => comicText.get(panel.index) ?? '' : undefined);
+  const comicMarkup = (comic: VDTComicPage): string => {
+    const text = comicText.get(comic);
+    return renderComicPageHtml(page, comic, comics.indexOf(comic), options.vertical ? { ...options, vertical: undefined } : options,
+      text ? (panel) => text.get(panel.index) ?? '' : undefined);
+  };
   const stripInBlock = (block: VDTBlock): string =>
     plainFlow && block.comic && !block.hidden ? comicMarkup(comicBlockOnSheet(page, block)!) : '';
   const blocks: Array<{ id: string; html: string }> = [];
@@ -3518,7 +3533,7 @@ function composedFrameOpen(frame: VDTFrame, z: number | 'auto', facing = false):
     const [l, t, r, b] = [x, y, x + width, y + height].map(frameNum);
     decls.push(`clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px)`);
   }
-  return `<div class="pt-frame" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}"${facing ? ' data-facing="true" aria-hidden="true"' : ''} style="${decls.join(';')};">`;
+  return `<div class="pt-frame${frame.unmirrorX !== undefined ? ' pt-unmirrored' : ''}" data-frame-id="${esc(frame.id)}" data-layer="${frame.layer}"${facing ? ' data-facing="true" aria-hidden="true"' : ''} style="${decls.join(';')};">`;
 }
 
 /** The markup of a comic on a page (its comic page, a half of a spread or
@@ -3547,7 +3562,12 @@ function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, opti
  *  stretched dash, a turned design picture) keeps it and stays mirrored. */
 const MIRRORED_FLOW_STYLE =
   '<style>.pt-flow-mirrored [style*="white-space:pre"],.pt-flow-mirrored img,' +
-  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}</style>';
+  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
+  // A box reflected back about its body (a vertical label, #955) or a
+  // vertical frame of the page placed by a matrix that includes the mirror
+  // (#960): what is in it is not mirrored, so nothing is turned back.
+  '.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"],.pt-flow-mirrored .pt-unmirrored img,' +
+  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
 
 /** The character grid (稿纸) as one SVG path over the page, under the
  *  text (see `cjkGridCells`). */

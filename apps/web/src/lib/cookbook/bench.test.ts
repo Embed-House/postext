@@ -307,6 +307,17 @@ describe("C38: the stress test", () => {
     expect(out.pages[0]!.frames.map((f) => f.pushedOutMm)).toEqual([5, undefined, undefined]);
   });
 
+  it("reports the page's box of a frame set in its own writing mode, not the turned one it is laid out in (#960)", () => {
+    // 254 dpi: 10 px a mm. A frame 200 x 100 on the page, laid out turned: 100 x 200.
+    const turned = { x: 50, y: -50, width: 100, height: 200 };
+    const frame = { name: "side", rect: turned, declaredRect: turned, writingMode: "vertical-rl", overflowPx: 0, scale: 1, blockIds: [] };
+    const doc = { config: { page: { dpi: 254 } }, contentWarnings: [], pages: [{ index: 0, width: 1000, height: 1400, contentArea: { x: 0, y: 0, width: 1000, height: 1400 }, composed: { template: "t", fenceIndex: 0, log: [], frames: [frame] } }] };
+    const out = composedFacts(engine, [doc]) as ComposedFacts;
+    expect(out.pages[0]!.frames[0]!.heightMm).toBe(10);
+    expect(out.pages[0]!.frames[0]!.box).toEqual([0, 0, 20, 10]);
+    expect(out.pages[0]!.frames[0]!.pushedOutMm).toBeUndefined();
+  });
+
   describe("frames pushed off the edges (#948)", () => {
     // 254 dpi: 10 px a mm. Area 100..900 x 100..1300 on a 1000 x 1400 sheet.
     const rect = (x: number, y: number, width = 200, height = 100) => ({ x, y, width, height });

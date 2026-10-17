@@ -41,6 +41,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.37.0</td><td>continuation on added pages (<code>overflow.continueIn: "next-page" | "template:&lt;id&gt;"</code>, <code>overflowTemplate</code>, <code>frameContinuationLimit</code>); <code>::label</code> words drawn at a picture's anchors (<code>labelAnchorUnknown</code>, <code>anchorUnlabelled</code>); <code>moveTextToMarkdown</code>; headings keep their design in frames and boxes; <code>paragraphStyles[].letterSpacing</code>; the contrast check reads frame text on its box or the decoration under it; <code>pictureBelowPrintSize</code>; Sandbox: frame-style library, one undo history, a click on the page selects the Markdown or the setting behind it (<code>sandbox_inspect_point</code> answers with <code>elements</code>)</td><td>2</td></tr>
 <tr><td>1.38.0</td><td>a frame that can go on to another page does so before it shrinks (<code>fit.preferContinue</code>); a threaded story goes on in the frame its chain starts in; cuts keep a heading with its text and two list items on each side; the answer space under a box goes on with it; <code>continueIn: "page:&lt;id&gt;"</code> jumps to a later page, <code>{page}</code> in <code>overflow.mark</code>, <code>overflow.fromMark</code>, <code>continueTargetMissing</code>; stacks keep their empty frames, rows of <code>auto</code> cards share width without a box; ruled frames (<code>rules</code>); <code>{ to, edge }</code> sizes and <code>fit: "cover"</code> + <code>focus</code> for design images; drop caps in frames; spreads on vertical books; comic <code>::panel{text}</code> and <code>box</code>; <code>moveTextToMarkdown</code> with <code>labelsOnPictures</code>; resource types written in part take the defaults; Sandbox: Canvas &rsaquo; Reflow, anchors placed by a click, <code>sandbox_apply_proposal</code></td><td>2</td></tr>
 <tr><td>1.39.0</td><td>checks that read the labels of every edition (<code>labelOverlap</code>, <code>labelOverflow</code>) and vertical labels (<code>writingMode</code> on an anchor or a label style); a figure's own <code>alt</code>, <code>caption</code> and <code>note</code> in the Markdown, per edition; callout styles based on another (<code>extends</code>); a frame's own <code>writingMode</code> and <code>direction</code>; <code>start</code>/<code>end</code> placement edges; widow and orphan rules in <code>:::columns</code> groups and frame columns; drop caps that follow the flow's rules across frame cuts, and the initial a <code>takes</code> title frame gives; comic text panels on vertical and right-to-left pages (<code>shrink</code>); <code>fit: "cover"</code> on upright pictures; <code>sourceAt</code> on mirrored and vertical composed pages (<code>flow</code>); the Sandbox keeps every edition of an imported bundle, lists <code>page:&lt;id&gt;</code> jump targets and edits <code>{ to, edge }</code> sizes, cover focus and dense anchors</td><td>2</td></tr>
+<tr><td>1.40.0</td><td>a label style can switch off the italics and capitals of the paragraph style it borrows (<code>fontStyle: "normal"</code>, <code>textTransform: "none"</code>); vertical labels on right-to-left pages; the reflowable EPUB draws plain figure labels over the picture; <code>moveTextToMarkdown</code> puts a picture's frame under decoration the design painted over it; comic text panels on <code>:::strip</code> and <code>:::page{spread}</code> (<code>comicPanelFrame</code> no longer raises <code>strip</code> / <code>spread</code>) and <code>valign</code> that follows a slanted cell; a frame's own <code>writingMode</code> on right-to-left pages, pictures upright in a vertical frame, reflowable EPUB frames with their own <code>writing-mode</code>; <code>useTemplate</code> proposals tried as the build lays the page; Sandbox: <code>sandbox_get_composed_checks</code> (every edition), <em>Check every edition</em> on big books, zoom and pan in the anchors dialog, label anchors dragged in the HTML viewer, the template editor's spreads on right-to-left and vertical books, the Word import's character spacing</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -55,7 +56,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
   the rest of the text typed into a second page fence); without labels, the
   round-1 live-text SVG (playbooks J4) for maps and diagrams only. The
   recipes in section 6 say what each gap costs in a sentence that starts
-  with "Before 1.37", "Before 1.38" or "Before 1.39".
+  with "Before 1.37", "Before 1.38", "Before 1.39" or "Before 1.40".
 - **Say which.** The port's report names the round, the engine version and
   every feature it worked around.
 - **The layout question.** Round 1 made the user choose between an
@@ -356,8 +357,8 @@ The library is the set of looks the book uses, each written once:
   computed in the generator.
 - **Writing mode and direction of a frame** (1.39): a frame may set its
   own `writingMode` and `direction`. A vertical box on a horizontal page:
-  `writingMode: "vertical-rl"` (not on a right-to-left page, whose frames
-  keep the page's mode). A horizontal card on a vertical page (a timeline
+  `writingMode: "vertical-rl"` (on a right-to-left page too from 1.40: the
+  first line stands at the box's right edge, glyphs upright). A horizontal card on a vertical page (a timeline
   card in a vertical book's spread): `writingMode: "horizontal-tb"`.
   `direction: "rtl" | "ltr"` sets the frame's story in that direction
   (a block with its own `{dir}` keeps it), so a right-to-left quotation in
@@ -365,8 +366,15 @@ The library is the set of looks the book uses, each written once:
   written and its content is laid in that box turned a quarter turn (lines
   along its height); an `auto` height is the least that holds the lines in
   its width, so give a frame of long text a fixed height. Up to 1.38 both
-  keys were read and checked, not applied. A `next` chain whose frames
-  differ in writing mode is not supported (one measure cuts the story).
+  keys were read and checked, not applied; in 1.39 a frame on a
+  right-to-left page kept the page's mode. A picture in a frame of the
+  other mode (1.40) stands upright with its caption, inside the box, counter-turned against the
+  frame's quarter turn (before, it turned with the frame: keep pictures
+  out of such frames for 1.39). A `next` chain across frames of different
+  modes works: each piece is cut for its frame's mode and goes on in the
+  next frame's. The reflowable EPUB (1.40) writes such a frame as a box of
+  its own `writing-mode` (`pt-frame-vertical` / `pt-frame-horizontal`, its line
+  length in em of the body text, fixed at layout time).
 - **Sizes.** `width` defaults to `fill`; `height` to `auto` (the content's
   height, between `minHeight` and `maxHeight`, never past the area's foot).
   Give a box its drawn height as `minHeight`, so the template draws the
@@ -668,6 +676,12 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
   river or a range, `width` for a two-line name); keep `style=` on a
   `::label` for exceptions. A translation is then new label lines and
   nothing else; `anchorUnlabelled` lists the anchors an edition forgot.
+- A label style that borrows a paragraph style (`paragraphStyle`) takes its
+  italics and capitals. From 1.40 write `fontStyle: "normal"` and
+  `textTransform: "none"` on the label style to turn them off; left out,
+  the paragraph style's hold (before 1.40 a borrowed italic or capital
+  could not be switched off, so a map name needed a paragraph style of its
+  own).
 - Label styles per script: Arabic gets no italic and `letterSpacing: 0`
   (letter-spaced Arabic is a `joiningScriptLetterSpacing` failure) and
   usually about 15 % more size. On right-to-left composed pages the frames
@@ -713,7 +727,10 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
   the picture's height; `align` runs down the column (`start` = top) and
   `verticalAlign` across the columns (`top` = the first, right-hand one).
   Do not use `rotate: 90` for it: the glyphs would lie on their side.
-  Vertical labels on mirrored right-to-left pages are not exercised.
+  On the mirrored page of a right-to-left book (1.40) a vertical label
+  reads as on the left-to-right page: same cells, forms and offsets from
+  the anchor. Before 1.40 those cells ran bottom to top; give such an
+  edition's names horizontally and name the gap.
 - A full-page map goes in a frame of the page's width; in the running text
   a figure may be capped smaller.
 - Give the picture `altText` too: the labels are added to it in HTML and
@@ -1135,8 +1152,9 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   C38 does, and since 1.39 it also fails a frame pushed past any edge of the
   type area (foot, head, left, right) or of the bleed, and on a spread
   measures the sheet of both pages (a band across the spine is judged
-  against the sheet's outer edges). Run it on the book's recipe when the
-  Cookbook is at hand.
+  against the sheet's outer edges). From 1.40 it measures a vertical frame
+  by its box on the page (`framePageRect`), not the turned box it is laid
+  out in. Run it on the book's recipe when the Cookbook is at hand.
 
 Then:
 
@@ -1158,7 +1176,11 @@ Then:
   them as `Div`s in the same order. Figure labels are accessible text (a
   hidden list after the picture in the reflowable EPUB; `Alt (Label, Label)`
   appended to the alt text in HTML, fixed EPUB and tagged PDF): give the
-  picture its own `altText` too. A fixed-layout EPUB that lacks a face the
+  picture its own `altText` too. From 1.40 the reflowable EPUB also draws
+  plain labels over the picture (one inline SVG layer: bold, italic, own
+  font, halo and plate as in print). Formulas, chips, marks, vertical
+  labels and every label of a right-to-left book stay in the hidden list
+  only, so a map of those reads as a list in a reflowable EPUB. A fixed-layout EPUB that lacks a face the
   decoration uses warns `missingFont`.
 - **Source map** (1.36): every frame's text maps back to the Markdown
   (`sourceAt`, `elementsForSource`; the Sandbox's `sandbox_inspect_point`
@@ -1196,7 +1218,11 @@ Then:
   page set with that template: prefer `raiseMax` / `continueNextPage` on a
   template used once, and check the other pages after `allowShrink`.
   `useTemplate` can be wrong when the other template lacks some of the
-  page's slots: read `fits` in the answer. `shortenText` only selects the
+  page's slots: read `fits` in the answer. From 1.40 the trial sets the
+  merged stories as the build does (`:::paragraphs` groups and their styles, heading
+  levels' drop caps, `indentAfterHeading`), so a proposal that `fits` does
+  fit once applied; before, a trial with those could answer wrongly or
+  throw. `shortenText` only selects the
   text.
 - **Frame styles**: run the merges of section 4 after the port.
 - **Anchors**: for a map whose geometry is unknown, write the `::label`
@@ -1211,7 +1237,25 @@ Then:
   screen (1.39). Anchors mode on a dense map (24 or more points) shows a
   point's name only when picked, hovered or ticked; tick anchors (checkbox,
   Shift-click, *Select shown* after a filter) to set style, alignment and
-  writing of many at once.
+  writing of many at once. In the anchors dialog (1.40) the picture zooms
+  100 to 800 % (buttons, `+` `-` `0`, Ctrl/Meta-scroll or a pinch about the
+  point under the pointer) and pans by scrolling, the hand tool, Space or the middle
+  button; a dense map names every point from 300 %. In the HTML viewer's
+  Design mode (1.40) a drag of a label's point writes the anchor (or the
+  `at` percentages) as one history step, a click opens the picture and a
+  double click the anchor editor.
+- **Every edition at once** (1.40): `sandbox_get_composed_checks`
+  (WebMCP, `language` keeps one edition) lists the composed checks of every
+  edition of the open book by language, chapter, page and frame, so the
+  template that fits in Spanish and overflows in Catalan shows after
+  `composed_check.py` of the first edition. `sandbox_get_warnings` still
+  checks one chapter of the language on screen. A book with more than 48
+  chapter layouts (chapters times editions) shows the chapter on screen
+  and a **Check every edition** button in the Checks panel instead of
+  laying the other languages out unasked.
+- **Spreads in the template editor**: on right-to-left and vertical books
+  the editor draws the sheet and the spine band as the engine laid them
+  (1.40; before, as if left to right).
 
 ## 8. One bundle for every edition
 
@@ -1270,7 +1314,12 @@ Then:
   that sets it at that width. Longer or bigger texts on the picture stay
   frames; the report's `labels` counts them. After turning it on, look at
   the pages the dialog marks «Looks different»: decoration that was painted
-  over a picture (`overPicture`) now lies under the picture's frame.
+  over a picture (`overPicture`) lay under the picture's frame. From 1.40
+  the picture's frame goes under the decoration (`layer: -1`) when the design
+  painted decoration over the picture and none under it (and over none of its
+  labels or another labelled picture); otherwise the frame stays on layer 0
+  and the page is still reported, because a template's decoration is one
+  slot and cannot keep both orders.
 - **A round-1 port** (#848: fixed callouts, grounds in a page-span opener
   design, live-text SVG labels) has no text in the config, so nothing
   migrates it by itself. Move it page kind by page kind: each page's
@@ -1289,25 +1338,24 @@ Then:
 - Tabs are square and stand at a top corner, start or end; no centred tab.
 - Rows run left to right in every writing direction; a template's
   `bodyStyle`/`palette` is read but not applied yet. A frame's own
-  `writingMode` is not applied on a right-to-left page, a picture in a
-  frame of the other mode turns with the frame, the reflowable EPUB sets
-  the frame's text in the book's mode, and a `next` chain across frames of
-  different modes is not supported.
+  `writingMode` and `direction` on frames work on every page from 1.40;
+  the pictures of a vertical page's own flow still turn with it, and the
+  reflowable EPUB's frame box has its length at layout time, not re-flowed.
 - `'auto'` width reads as `'fill'`.
 - A continuation goes on right after its page, or, with `page:<id>`, on a
   later page fence of the same chapter file; a jump never goes back or to
   another chapter file. Before 1.38 a mark took no page number.
 - Text on both sides of a contour in the middle of a measure is not set.
 - Text panels of comics are set in their frames on single comic pages of
-  any writing mode (1.39; horizontal left-to-right only before). On strips
-  and spreads the words still fall into the flow after the comic: letter
-  them as captions (comics.md).
+  any writing mode (1.39; horizontal left-to-right only before), and on
+  strips and spreads from 1.40 (a panel across the spine keeps its text on
+  one page, 8 mm clear of the spine; comics.md).
 - A caption set in a `:::figure` is not source-mapped per character (a
-  click answers the figure), and `:ref` does not print it. The template
-  editor draws spreads of right-to-left and vertical pages as if they were
-  left to right.
+  click answers the figure), and `:ref` does not print it.
 - Before 1.37 headings in frames were plain; before 1.38 spreads were not
   laid on vertical books and frames set no drop caps; before 1.39 frames
   ignored their `writingMode` and `direction`, column cuts could strand one
-  line, and labels were unchecked: name the gap when the installed version
-  is older.
+  line, and labels were unchecked; before 1.40 a vertical frame on a
+  right-to-left page kept the page's mode, pictures turned with a vertical
+  frame, a borrowed italic stayed on and strips took no text panels: name
+  the gap when the installed version is older.

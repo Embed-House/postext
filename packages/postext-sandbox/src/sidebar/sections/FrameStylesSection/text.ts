@@ -18,7 +18,8 @@ const GROUP_LABELS: Record<string, keyof SandboxLabels> = {
   icon: 'calloutStyleIconGroup',
   'label': 'calloutStyleLabelGroup',
   marker: 'calloutStyleMarkerGroup',
-  title: 'calloutStyleTitleGroup',
+  // `title` is the text a box shows when it has none of its own.
+  title: 'calloutStyleTitle',
   titleStyle: 'calloutStyleTitleGroup',
   body: 'calloutStyleBodyGroup',
   lists: 'calloutStyleListsGroup',

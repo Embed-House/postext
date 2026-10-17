@@ -18,8 +18,10 @@ import {
   materializedTemplate,
   paragraphTargetByName,
   saveLastTemplateId,
+  trackingText,
   useWordTemplates,
   wordImportActions,
+  wordTrackingPlan,
   type WordDestination,
 } from './sandboxImport';
 import {
@@ -191,6 +193,14 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
   };
 
   const report = useMemo(() => analyzeDocx(doc, working, config), [doc, working, config]);
+  // The character spacing of the Word styles (#932) goes on the book's
+  // styles that set none; on by default when there is something to put.
+  const trackingPlan = useMemo(() => wordTrackingPlan(doc, working, config), [doc, working, config]);
+  const [trackingChoice, setTrackingChoice] = useState<boolean | null>(null);
+  const takeTracking = trackingChoice ?? trackingPlan.applied.length > 0;
+  const trackingApplied = takeTracking && trackingPlan.applied.length > 0
+    ? labels.wordTrackingApplied.replace('__list__', () => trackingText(trackingPlan.applied, config, labels))
+    : null;
   const activeChapter = chapters.find((c) => c.id === activeChapterId);
   const existingIds = useMemo(() => new Set(resources.map((r) => r.id)), [resources]);
   const result = useMemo(
@@ -421,7 +431,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
       const types = config.resourceTypes ?? defaultResourceTypes(locale);
       const created = await importedResources(result, types);
       for (const r of created) dispatch({ type: 'UPSERT_RESOURCE', payload: r });
-      for (const action of wordImportActions(result, destination, { chapters, activeChapterId })) dispatch(action);
+      for (const action of wordImportActions(result, destination, { chapters, activeChapterId }, takeTracking ? trackingPlan.patch : {})) dispatch(action);
       if (destination === 'chapter') announce(labels.wordImportDoneChapter.replace('__file__', isolate(file.name)));
       else announce(counted(labels, 'wordImportDoneChapters', result.chapters.length).replace('__file__', isolate(file.name)));
       if (created.length) announce(counted(labels, 'wordImportResources', created.length));
@@ -559,6 +569,13 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
             ))}
             {optionRow(labels.wordOptionImages, <Switch checked={working.options.images} onCheckedChange={(v) => setOption('images', v)} ariaLabel={labels.wordOptionImages} />)}
             {optionRow(labels.wordOptionTables, <Switch checked={working.options.tables} onCheckedChange={(v) => setOption('tables', v)} ariaLabel={labels.wordOptionTables} />)}
+            {trackingPlan.applied.length > 0 && optionRow(labels.wordOptionTracking, <Switch checked={takeTracking} onCheckedChange={setTrackingChoice} ariaLabel={labels.wordOptionTracking} />)}
+            {trackingApplied && <p className="m-0 text-xs text-(--slate)" style={{ overflowWrap: 'anywhere' }}>{trackingApplied}</p>}
+            {trackingPlan.skipped.length > 0 && (
+              <p className="m-0 text-xs text-(--slate)" style={{ overflowWrap: 'anywhere' }}>
+                {labels.wordTrackingSkipped.replace('__list__', () => trackingText(trackingPlan.skipped, config, labels))}
+              </p>
+            )}
           </Section>
 
           <Section title={labels.wordPreviewHeading} defaultOpen={false}>
@@ -567,6 +584,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
                 {labels.wordPreviewChapters.replace('__count__', String(result.chapters.length)).replace('__titles__', result.chapters.map((c) => c.title).join(' · '))}
               </p>
             )}
+            {trackingApplied && <p className="m-0 text-xs text-(--slate)" style={{ overflowWrap: 'anywhere' }}>{trackingApplied}</p>}
             <pre
               tabIndex={0}
               aria-label={labels.wordPreviewHeading}

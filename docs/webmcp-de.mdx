@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: ein Agent bei der Arbeit in der Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Was ein KI-Agent im Browser mit den 40 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
+  description: 'Was ein KI-Agent im Browser mit den 41 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
@@ -24,7 +24,7 @@ Oberfläche: Er liest das Buch, fordert ein Bild von Seite 12 an, setzt
 gewachsen ist, und nimmt die Änderung zurück. Er tut, was Sie mit dem Auge tun,
 und er tut es mit Ihrem Buch, in Ihrem Browser.
 
-Es gibt 40 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
+Es gibt 41 Werkzeuge, deren Namen mit `sandbox_` beginnen und die registriert
 sind, solange die Sandbox auf dem Bildschirm ist, und 8 Werkzeuge der Website,
 `site_*`, auf jeder Seite von postext.dev. Diese Seite ordnet sie nach dem, was
 Sie einen Agenten tun lassen würden, und zeigt für jedes den Aufruf.
@@ -41,7 +41,7 @@ Postext muss nichts installiert oder eingerichtet werden.
 WebMCP ist noch ein Entwurf. Chrome bietet es als Origin Trial an und hinter
 dem Flag `chrome://flags/#enable-webmcp-testing`. Die Werkzeuge folgen der
 Seite: Auf der Startseite oder in der Dokumentation hat der Agent die
-Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 40
+Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 41
 Werkzeuge `sandbox_*` hinzu.
 
 ### In jedem anderen Browser: `window.postextWebMcp`
@@ -489,6 +489,8 @@ sich die Seite ansehen und den Text oder die Einstellung ändern. `category`
 grenzt die Liste ein; bei einem langen Buch setzt `scope: "book"` jedes Kapitel
 und braucht eine Weile.
 
+Ein Buch mit mehreren Ausgaben (das Paket eines Beispiels oder ein daraus importiertes Projekt) hat die Prüfungen seiner zusammengesetzten Seiten auch in jeder Sprache: `sandbox_get_composed_checks` setzt jede Ausgabe und listet die Prüfungen nach Sprache, Kapitel, Seite und Rahmen auf, wie das Feld unter *Zusammengesetzte Seiten*; mit `language` bleibt es bei einer (seit postext 1.40). `sandbox_get_warnings` prüft weiterhin ein Kapitel in der Sprache auf dem Bildschirm.
+
 ### Ihnen etwas zeigen
 
 Was der Agent ändert, sehen Sie. Um Sie auf etwas hinzuweisen:
@@ -562,6 +564,12 @@ ihrem Panel herausragt. Das Format beschreibt [Comics](/de/docs/comics).
     "saveTemplateAs": "My publisher"
   }
   ```
+
+  Mit `characterSpacing` (standardmäßig an, wenn es etwas zu übernehmen gibt; seit
+  postext 1.40) wird der Zeichenabstand der verwendeten Word-Formatvorlagen in em
+  auf die Absatzstile, Überschriftenstile, Überschriftenebenen und Kastentitel des
+  Buchs übertragen, denen sie zugeordnet sind, soweit das Buch keinen setzt. Der
+  Probelauf listet ihn unter `characterSpacing` auf.
 
   `sandbox_word_templates` listet die gespeicherten Zuordnungen auf, liest,
   speichert und löscht sie; auch der Word-Export verwendet sie.
@@ -675,7 +683,7 @@ und das Schema jedes Werkzeugs liefert `postextWebMcp.listTools()`.
   `sandbox_export`.
 - **Word**: `sandbox_import_word`, `sandbox_word_templates`.
 - **Rückfragen**: `sandbox_answer`.
-- **Die Prüfungen**: `sandbox_get_warnings`, `sandbox_apply_proposal`.
+- **Die Prüfungen**: `sandbox_get_warnings`, `sandbox_get_composed_checks`, `sandbox_apply_proposal`.
 
 ## Wenn Sie die Sandbox einbetten
 

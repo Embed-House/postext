@@ -118,11 +118,19 @@ describe('a composed page in the reflowable EPUB (#862)', () => {
   });
 
   for (const locale of ['es', 'en'] as const) {
-    it(`reads a figure's labels as a list after its picture, in label order, out of sight (${locale})`, () => {
-      const { xhtml } = books.get(locale)!;
+    it(`draws a figure's labels over its picture and reads them as a list after it, out of sight (${locale})`, () => {
+      const { xhtml, css } = books.get(locale)!;
       const figure = /<figure id="res-foto-gasto">([\s\S]*?)<\/figure>/.exec(xhtml)?.[1] ?? '';
       const items = PAGE8_LABELS[locale].map((l) => `<li>${l}</li>`).join('');
-      expect(figure).toMatch(new RegExp(`^<img src="\\.\\./images/foto-gasto\\.png" alt="[^"]+"/>\\n<ul class="pt-figure-labels pt-hidden">${items}</ul>$`));
+      // The picture and its labels in a box as wide as the image (#955),
+      // then the list, which stays for the reading order.
+      expect(figure).toMatch(new RegExp(`^<span class="pt-labelled"><img src="\\.\\./images/foto-gasto\\.png" alt="[^"]+"/><svg class="pt-label-layer"[^>]* aria-hidden="true"[^>]*>.*</svg></span>\\n<ul class="pt-figure-labels pt-hidden">${items}</ul>$`));
+      const words = [...figure.matchAll(/<tspan [^>]*>([^<]*)<\/tspan>/g)].map((m) => m[1]);
+      expect(words).toEqual(PAGE8_LABELS[locale]);
+      // The layer is in the picture's coordinates: its viewBox is the body.
+      expect(figure).toMatch(/viewBox="0 0 [\d.]+ [\d.]+"/);
+      expect(css).toContain('.pt-labelled {');
+      expect(css).toContain('.pt-label-layer {');
       // Only the figure with labels has a list.
       expect(xhtml.split('pt-figure-labels').length - 1).toBe(1);
     });

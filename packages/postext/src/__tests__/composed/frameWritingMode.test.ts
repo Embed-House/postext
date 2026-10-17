@@ -4,6 +4,7 @@ import { createMeasurementCache } from '../../measure';
 import type { PageTemplate } from '../../composed/types';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { framePageRect, frameMatrix } from '../../composed/paint';
+import { flowRectToPage } from '../../vdt';
 import { sourceAt } from '../../composed/sourceMap';
 import { installSizedStub, stubCharWidth } from '../vertical/stub';
 import { renderPageToCanvas } from '../../index';
@@ -107,9 +108,86 @@ describe('a frame set in its own writing mode (#944)', () => {
     expect(frameOf(page, 'side').overflowPx).toBe(0);
   });
 
-  it('on a right-to-left page a vertical frame keeps the page’s mode', () => {
-    const page = composedPage(build('vertical-rl', { direction: 'rtl' }));
-    expect(frameOf(page, 'side').writingMode).toBeUndefined();
+  describe('a vertical frame on a right-to-left page (#960)', () => {
+    const RTL: Partial<PostextConfig> = { direction: 'rtl' };
+    it('is laid out vertically, as on a left-to-right page, and says it is painted unmirrored', () => {
+      const doc = build('vertical-rl', RTL, 200);
+      const page = composedPage(doc);
+      const side = frameOf(page, 'side');
+      expect(page.flow?.writingMode).toBe('horizontal-tb');
+      expect(side.writingMode).toBe('vertical-rl');
+      expect(side.rotate).toBe(90);
+      expect(side.unmirrorX).toBe((page.flow as { mirror: { originX: number } }).mirror.originX);
+      const box = framePageRect(side);
+      expect(box.width).toBeCloseTo(60);
+      expect(box.height).toBeCloseTo(200);
+      // The digit stands upright in its own cell down the line.
+      const [para] = textBlocks(page, 'side');
+      expect(digitWidth(para!)).toBeCloseTo(10);
+      // The page's own frame keeps its mode and its mirrored line order.
+      expect(frameOf(page, 'main').writingMode).toBeUndefined();
+      expect(frameOf(page, 'main').unmirrorX).toBeUndefined();
+    });
+
+    it('lands, through the mirror, in the box the page shows, its first line at that box\'s right edge running down', () => {
+      const doc = build('vertical-rl', RTL, 200);
+      const page = composedPage(doc);
+      const side = frameOf(page, 'side');
+      const origin = side.unmirrorX!;
+      const m = frameMatrix(side)!;
+      const [para] = textBlocks(page, 'side');
+      const line = para!.lines[0]!.bbox;
+      // The matrix puts the block in the flow frame; the page's mirror puts the flow on the sheet.
+      const onSheet = (x: number, y: number) => ({ x: origin - (m[0] * x + m[2] * y + m[4]), y: m[1] * x + m[3] * y + m[5] });
+      const start = onSheet(line.x, line.y);
+      const end = onSheet(line.x + line.width, line.y);
+      const box = flowRectToPage(page, framePageRect(side));
+      // The box is where the mirrored flow puts the frame (top-right of the flow: the sheet's top left).
+      expect(box.x).toBeCloseTo(page.width - (page.contentArea.x + page.contentArea.width), 0);
+      expect(start.x).toBeGreaterThan(box.x + box.width / 2);
+      expect(start.x).toBeLessThanOrEqual(box.x + box.width + 0.01);
+      expect(end.y).toBeGreaterThan(start.y);
+      expect(start.y).toBeGreaterThanOrEqual(box.y - 0.01);
+    });
+
+    it('does not turn the lines of the frame back: they keep the measurer\'s order', () => {
+      const doc = build('vertical-rl', RTL, 200);
+      const page = composedPage(doc);
+      for (const b of textBlocks(page, 'side')) for (const l of b.lines) expect(l.order).toBeUndefined();
+    });
+
+    it('the canvas paints its characters upright, one under the other down one column, inside the box', () => {
+      const doc = build('vertical-rl', RTL, 200);
+      const page = composedPage(doc);
+      const painted = paint(page, doc).filter((p) => /[第回]/.test(p.text));
+      expect(painted.length).toBe(2);
+      for (const p of painted) expect([p.ax, p.ay]).toEqual([1, 0]);
+      expect(painted[0]!.x).toBeCloseTo(painted[1]!.x, 3);
+      expect(painted[1]!.y).toBeGreaterThan(painted[0]!.y);
+      const box = flowRectToPage(page, framePageRect(frameOf(page, 'side')));
+      for (const p of painted) {
+        expect(p.x).toBeGreaterThanOrEqual(box.x - 0.01);
+        expect(p.x).toBeLessThanOrEqual(box.x + box.width + 0.01);
+      }
+    });
+
+    it('a click on its character on the sheet finds it in the Markdown', () => {
+      const doc = build('vertical-rl', RTL, 200);
+      const page = composedPage(doc);
+      const painted = paint(page, doc).find((p) => p.text === '回')!;
+      // A point inside that character's cell on the sheet (its origin is the cell's top-left, the cell 10 pt).
+      const chain = sourceAt(doc, page.index, painted.x + 4, painted.y - 4);
+      const glyph = chain.find((e) => e.level === 'text')!;
+      expect(md.slice((glyph.source as { start: number }).start, (glyph.source as { end: number }).end)).toBe('回');
+      expect(chain.find((e) => e.level === 'frame')?.id).toBe('cp0:side');
+    });
+
+    it('the HTML marks the frame, so that nothing in it is turned back by the mirrored flow', () => {
+      const html = renderToHtml(build('vertical-rl', RTL, 200));
+      expect(html).toContain('class="pt-frame pt-unmirrored" data-frame-id="cp0:side"');
+      expect(html).toContain('.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"]');
+      expect(html).not.toContain('class="pt-frame pt-unmirrored" data-frame-id="cp0:main"');
+    });
   });
 
   it('a click on a vertical frame’s character on the page finds it in the Markdown', () => {

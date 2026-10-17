@@ -36,6 +36,25 @@ export function mirroredPaintActive(): boolean {
   return active > 0;
 }
 
+/**
+ * Run `paint` as on a left-to-right page, inside the mirrored flow: the
+ * counter-flip is off while it runs (#960). A frame set in its own writing
+ * mode on a right-to-left page is placed by a matrix that already
+ * includes the mirror (`VDTFrame.unmirrorX`), so what it paints reads as
+ * written without being turned back.
+ */
+export function withoutMirroredPaint<T>(paint: () => T): T {
+  const outer = { active, whole };
+  active = 0;
+  whole = 0;
+  try {
+    return paint();
+  } finally {
+    active = outer.active;
+    whole = outer.whole;
+  }
+}
+
 /** Whether a run painted in several calls is being painted (see
  *  {@link paintAsOneRun}): the frame turned the whole of it back, so the
  *  calls inside paint as on a left-to-right page. */
@@ -104,6 +123,34 @@ function sourceWidth(image: CanvasImageSource): number {
   if (typeof s.naturalWidth === 'number' && s.naturalWidth > 0) return s.naturalWidth;
   if (typeof s.width === 'number') return s.width;
   return s.width?.baseVal?.value ?? 0;
+}
+
+/**
+ * Paint, with `paint`, content that must land on the sheet as a
+ * left-to-right page would put it, inside a mirrored frame (#955): the
+ * frame is reflected back about the vertical axis of the box
+ * `[left, left + width]` (so the box keeps its place on the sheet while
+ * what stands in it reads from its other side) and the text and pictures
+ * are no longer turned back, since nothing is mirrored any more. A vertical
+ * label does it: its cells cannot be turned back run by run, as the line of
+ * a horizontal label's. Outside a mirrored frame it just paints.
+ */
+export function paintUnmirrored(ctx: CanvasRenderingContext2D, left: number, width: number, paint: () => void): void {
+  if (!mirroredPaintActive()) {
+    paint();
+    return;
+  }
+  saveContext(ctx);
+  ctx.transform(-1, 0, 0, 1, 2 * left + width, 0);
+  active--;
+  whole++;
+  try {
+    paint();
+  } finally {
+    whole--;
+    active++;
+    restoreContext(ctx);
+  }
 }
 
 /**

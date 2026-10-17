@@ -228,6 +228,15 @@ export function comicPanelSources(comic: VDTComicPage): readonly (ComicPanelSour
   return panelSourcesOf.get(comic) ?? [];
 }
 
+/** The panel sources of a comic laid out whole, given to a part of it (a
+ *  half of a spread) or a copy moved elsewhere (a strip on the sheet): the
+ *  sources stay indexed by the panels' `index`. Internal to the comics
+ *  modules. */
+export function copyComicPanelSources(from: VDTComicPage, to: VDTComicPage): void {
+  const sources = panelSourcesOf.get(from);
+  if (sources) panelSourcesOf.set(to, sources);
+}
+
 /** Set the layout warnings of a comic laid out in parts (each page of a
  *  spread gets those of its panels). Internal to the comics modules. */
 export function setComicLayoutWarnings(comic: VDTComicPage, warnings: readonly ContentWarning[]): void {

@@ -14,7 +14,7 @@
 import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPoint } from '../vdt';
 import type { Resource } from '../types';
 import { clipPolygon, polygonBBox } from './geometry';
-import { comicPageFrame, comicPageLayoutWarnings, comicViewerLeaf, layoutComicFrame, setComicLayoutWarnings, type ComicPageContext } from './layoutPage';
+import { comicPageFrame, comicPageLayoutWarnings, comicViewerLeaf, copyComicPanelSources, layoutComicFrame, setComicLayoutWarnings, type ComicPageContext } from './layoutPage';
 import { resolvedComics } from '../defaults/comics';
 import { translateComicBalloon, translateComicPanel, translateComicSplitter } from './transform';
 import { comicFramesFor } from './frames';
@@ -39,6 +39,19 @@ export interface ComicSpreadContext {
   /** The left page and the right page of the open book. */
   left: ComicSpreadPage;
   right: ComicSpreadPage;
+}
+
+/** The band about the spine that lettering and text keep out of, on a
+ *  half of a spread laid out by {@link layoutComicSpread} (the half of a
+ *  gutter 8 mm wide that lies on its sheet, sheet px); undefined for
+ *  anything else. */
+export function comicSpreadGutter(comic: Pick<VDTComicPage, 'spread' | 'frame'>, dpi: number, sheetHeight: number): BoundingBox | undefined {
+  if (!comic.spread) return undefined;
+  const half = (4 / 25.4) * dpi;
+  const reach = half + 2 * SPINE_OVERRUN;
+  return comic.spread === 'left'
+    ? { x: comic.frame.x + comic.frame.width - half, y: 0, width: reach, height: sheetHeight }
+    : { x: comic.frame.x - 2 * SPINE_OVERRUN, y: 0, width: reach, height: sheetHeight };
 }
 
 /** Past the sheet's edge at the spine: a panel crossing the spine is cut
@@ -177,6 +190,7 @@ export function layoutComicSpread(source: ComicPageSource, given: ComicSpreadCon
       balloons,
       ...(whole.id ? { id: whole.id } : {}),
     };
+    copyComicPanelSources(whole, comic);
     // The frames of the panels the page shows, cut and moved as they are.
     const frames = comicFramesFor(whole, panels);
     if (frames) comic.frames = frames;

@@ -7,7 +7,7 @@
  * Design mode). Pure: sheet px, no DOM.
  */
 
-import { flowRectToPage, frameClips, frameContentRect, frameMatrix, frameOfBlock, pageToFlow, pointInPolygon, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
+import { flowRectToPage, frameClips, frameContentRect, frameMatrix, frameOfBlock, pageComics, pageToFlow, pointInPolygon, type VDTComicPage, type VDTComposedPage, type VDTFrame, type VDTPage } from 'postext';
 
 /** Anything that may carry a composed page (a `VDTPage`, or a stand-in in a
  *  test). */
@@ -102,8 +102,9 @@ export function flowBoxOnSheet(
   return { rect: flowRectToPage(page, rect), rotate: rotate && mirrored ? -rotate : rotate };
 }
 
-/** Anything that may carry a comic page (a `VDTPage`, or a stand-in). */
-export type ComicPageLike = Pick<VDTPage, 'comic'>;
+/** Anything that may carry a comic page or strips (a `VDTPage`, or a
+ *  stand-in with only its `comic`). */
+export type ComicPageLike = Pick<VDTPage, 'comic'> & Partial<Pick<VDTPage, 'columns' | 'floats' | 'flow'>>;
 
 /** Whether a sheet point lies in a frame a comic's split generated
  *  (#885): in its outline when a slanted line cut it, else in its box. */
@@ -113,14 +114,25 @@ export function pointInComicFrame(frame: Pick<VDTFrame, 'rect' | 'polygon'>, x: 
   return frame.polygon && frame.polygon.length >= 3 ? pointInPolygon(frame.polygon, { x, y }) : true;
 }
 
-/** The text frame of a comic page (`::panel{text}`, #885) under the sheet
- *  point, the one on top first; null off them or off a comic page. The
- *  frames of a comic's picture panels are the comic tools' (`comicHit`). */
-export function comicTextFrameAt(page: ComicPageLike | null | undefined, x: number, y: number): VDTFrame | null {
-  const frames = (page?.comic?.frames ?? []).map((f, i) => ({ f, i })).filter(({ f }) => f.blockIds.length > 0);
-  frames.sort((a, b) => b.f.layer - a.f.layer || b.i - a.i);
-  for (const { f } of frames) if (pointInComicFrame(f, x, y)) return f;
+/** The text frame of a comic (`::panel{text}`, #885) under the sheet point
+ *  with its comic, the one on top first: the page's comic page or a strip
+ *  it holds (#959); null off them. The frames of a comic's picture panels
+ *  are the comic tools' (`comicHit`). */
+export function comicTextHitAt(page: ComicPageLike | null | undefined, x: number, y: number): { comic: VDTComicPage; frame: VDTFrame } | null {
+  if (!page) return null;
+  const comics = pageComics({ comic: page.comic, columns: page.columns ?? [], ...(page.floats ? { floats: page.floats } : {}), ...(page.flow ? { flow: page.flow } : {}) });
+  for (let k = comics.length - 1; k >= 0; k--) {
+    const comic = comics[k]!;
+    const frames = (comic.frames ?? []).map((f, i) => ({ f, i })).filter(({ f }) => f.blockIds.length > 0);
+    frames.sort((a, b) => b.f.layer - a.f.layer || b.i - a.i);
+    for (const { f } of frames) if (pointInComicFrame(f, x, y)) return { comic, frame: f };
+  }
   return null;
+}
+
+/** The text frame under the sheet point ({@link comicTextHitAt}). */
+export function comicTextFrameAt(page: ComicPageLike | null | undefined, x: number, y: number): VDTFrame | null {
+  return comicTextHitAt(page, x, y)?.frame ?? null;
 }
 
 /** The frame with this id (`cp<fence>:<name>`) on the page. */

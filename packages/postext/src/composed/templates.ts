@@ -787,8 +787,11 @@ export function resolveLabelStyles(styles: readonly LabelStyle[] | undefined): R
   if (!Array.isArray(styles)) return [];
   return styles.filter((s) => isRecord(s) && typeof s.id === 'string').map((s) => ({
     ...s,
-    fontStyle: oneOf(LABEL_FONT_STYLES, s.fontStyle) ? s.fontStyle : DEFAULT_LABEL_STYLE.fontStyle,
-    textTransform: oneOf(LABEL_TEXT_TRANSFORMS, s.textTransform) ? s.textTransform : DEFAULT_LABEL_STYLE.textTransform,
+    // Left unset when the style does not say (or says something unknown):
+    // "normal" written is a choice that overrides a borrowed paragraph
+    // style's italics, not the same thing as nothing (#955).
+    fontStyle: oneOf(LABEL_FONT_STYLES, s.fontStyle) ? s.fontStyle : undefined,
+    textTransform: oneOf(LABEL_TEXT_TRANSFORMS, s.textTransform) ? s.textTransform : undefined,
     minScale: scale(s.minScale, DEFAULT_LABEL_STYLE.minScale),
   }));
 }
@@ -825,8 +828,10 @@ export function stripLabelStylesDefaults(styles: readonly LabelStyle[] | undefin
   return styles.map((s) => {
     const out = withoutUndefined({ ...s }) as LabelStyle & Record<string, unknown>;
     if (out.name === out.id) delete out.name;
-    if (out.fontStyle === DEFAULT_LABEL_STYLE.fontStyle) delete out.fontStyle;
-    if (out.textTransform === DEFAULT_LABEL_STYLE.textTransform) delete out.textTransform;
+    // With a paragraph style to borrow from, `'normal'` / `'none'` turn its
+    // slant and capitals off: they are not a restated default (#955).
+    if (!out.paragraphStyle && out.fontStyle === DEFAULT_LABEL_STYLE.fontStyle) delete out.fontStyle;
+    if (!out.paragraphStyle && out.textTransform === DEFAULT_LABEL_STYLE.textTransform) delete out.textTransform;
     if (out.minScale === DEFAULT_LABEL_STYLE.minScale) delete out.minScale;
     return out;
   });

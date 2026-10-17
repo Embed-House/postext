@@ -127,7 +127,11 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   vertical, a figure's alt text, caption and note live in the Markdown,
   callout styles can be based on one another (`extends`), a frame has its
   own `writingMode` and `direction`, a template's kicker is `top-start`
-  for every script, and columns are cut by the widow and orphan rules. Follow
+  for every script, and columns are cut by the widow and orphan rules; from
+  1.40 a label style can switch off a borrowed italic, comic text panels
+  work on strips and spreads, frames keep their own writing mode on
+  right-to-left pages, and `sandbox_get_composed_checks` checks every
+  edition at once. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead.
 - **Round 1, older engines: the ladder** of playbooks J (fixed callouts, page

@@ -254,7 +254,7 @@ function comicStructure(ctx: PageCtx, structure: StructureFlow, comic: VDTComicP
   };
   const known = new Set<number>();
   const texts: ComicTags['texts'] = [];
-  const holdsText = new Set((comic.frames ?? []).filter((f) => f.blockIds.length > 0 && f.panel !== undefined).map((f) => comic.panels[f.panel!]?.index));
+  const holdsText = new Set((comic.frames ?? []).filter((f) => f.blockIds.length > 0 && f.panel !== undefined).map((f) => comic.panels.find((q) => q.index === f.panel)?.index));
   for (const panel of comic.panels) {
     known.add(panel.index);
     const { x, y, width, height } = panel.bbox;

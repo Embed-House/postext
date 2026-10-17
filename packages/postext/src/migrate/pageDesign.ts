@@ -69,8 +69,13 @@ export interface PlannedPicture {
   height: number;
   /** The short texts on it, in their order in the design. */
   labels: TextPiece[];
+  /** The frame's layer when it is not the default 0: -1 puts it below the
+   *  decoration, for a design that paints decoration over the picture and
+   *  none under it (#957). */
+  layer?: number;
   /** Where the page may look different: `overPicture` (decoration painted
-   *  over the picture now lies under its frame). */
+   *  over the picture lies under its frame, with decoration under the
+   *  picture too, or over a label, so the frame cannot go below it). */
   notes: string[];
 }
 
@@ -396,14 +401,30 @@ export function planDesign(input: DesignInput): PlannedDesign {
   if (labelled.size > 0) {
     for (let i = pieces.length - 1; i >= 0; i--) if (labelled.has(pieces[i]!)) pieces.splice(i, 1);
     for (const pic of pictures) {
-      // Decoration painted over the picture now lies under its frame.
+      // Decoration painted over the picture would lie under its frame
+      // (the decoration is one slot, at layer 0, like the frame). When
+      // nothing of the decoration lies under the picture, the frame goes
+      // one layer down, below the decoration, and the page keeps its
+      // order (#957); otherwise the page may look different.
       const at = elements.indexOf(pic.element);
-      const over = elements.slice(at + 1).some((e) => {
-        if (movedIds.has(e.id) || e.kind === 'text') return false;
-        const r = rectOf(e);
-        return !!r && r.w !== undefined && r.h !== undefined && r.x < pic.x + pic.width && r.x + r.w > pic.x && r.y < pic.y + pic.height && r.y + r.h > pic.y;
-      });
-      if (over) pic.notes.push('overPicture');
+      const meets = (r: { x: number; y: number; w?: number; h?: number } | undefined, box: { x: number; y: number; width: number; height: number }): boolean =>
+        !!r && r.w !== undefined && r.h !== undefined && r.x < box.x + box.width && r.x + r.w > box.x && r.y < box.y + box.height && r.y + r.h > box.y;
+      const stays = (e: DesignElement): boolean => !movedIds.has(e.id) && e.kind !== 'text' && !pictureIds.has(e.id);
+      const over = elements.slice(at + 1).filter((e) => stays(e) && meets(rectOf(e), pic));
+      if (over.length > 0) {
+        // What is under the picture would cover it from the layer below
+        // the decoration; so would anything whose place is not known.
+        const underOrUnknown = elements.slice(0, at).some((e) => {
+          if (!stays(e)) return false;
+          const r = rectOf(e);
+          return !r || r.w === undefined || r.h === undefined || meets(r, pic);
+        });
+        const onLabel = over.some((e) => pic.labels.some((l) => l.x !== undefined && l.y !== undefined && l.width !== undefined && l.height !== undefined
+          && meets(rectOf(e), { x: l.x, y: l.y, width: l.width, height: l.height })));
+        const onPicture = pictures.some((other) => other !== pic && other.x < pic.x + pic.width && other.x + other.width > pic.x && other.y < pic.y + pic.height && other.y + other.height > pic.y);
+        if (underOrUnknown || onLabel || onPicture) pic.notes.push('overPicture');
+        else pic.layer = -1;
+      }
       for (const l of pic.labels) l.lines = l.lines.map((line) => escapeText(line, l.element.inlineMarks === true));
     }
   }
@@ -523,7 +544,7 @@ export function planDesign(input: DesignInput): PlannedDesign {
       lookKey: 'picture',
       gap: 0,
       width: pic.width,
-      key: ['picture', side ?? '', round(pic.x), round(pic.y), round(pic.width), round(pic.height)].join('|'),
+      key: ['picture', side ?? '', round(pic.x), round(pic.y), round(pic.width), round(pic.height), pic.layer ?? 0].join('|'),
     });
     notes.push(...pic.notes.map((n) => `${pic.element.id}:${n}`));
   }

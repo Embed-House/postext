@@ -43,6 +43,8 @@ import {
   mmToPx,
   pageAreas,
   rectBetween,
+  spreadFlowSide,
+  spreadGutterBand,
   spreadPageAreas,
   snapLines,
   snapRect,
@@ -171,6 +173,11 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       : [-1, 0, 0, 1, flow.mirror.originX, 0];
     return `matrix(${m.join(' ')})`;
   };
+  /** The axis a spread's pages follow each other along in the flow frame. */
+  const spreadAxis = (): 'x' | 'y' => (page()?.flow?.writingMode === 'vertical-rl' ? 'y' : 'x');
+  /** Which half of its sheet a spread page is in the flow frame (#961): on
+   *  a mirrored or turned flow the first page is the right one. */
+  const side = (c: VDTComposedPage): 0 | 1 => spreadFlowSide(c.spread === 'right' ? 'right' : 'left', !!page()?.flow);
   const dpi = (): number => refs.docRef.current?.config.page.dpi ?? 96;
 
   const selectedHere = (): VDTFrame | undefined => {
@@ -197,7 +204,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     // pages, which this page shows one half of.
     const facing = c.spread && c.facingPage !== undefined ? doc.pages[c.facingPage] : undefined;
     const sized = { ...flowSize(), contentArea: p.contentArea };
-    const areas = facing ? spreadPageAreas(sized, facing, doc.trimOffset, c.spread === 'left' ? 0 : 1) : pageAreas(sized, doc.trimOffset);
+    const areas = facing ? spreadPageAreas(sized, facing, doc.trimOffset, side(c), spreadAxis()) : pageAreas(sized, doc.trimOffset);
     const area = templateAreaRect(template.area, areas);
     const grid = template.grid ? gridGeometry(template.grid, area, dpi()) : undefined;
     return { p, c, host, config, template, areas, area, grid };
@@ -233,8 +240,8 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       // The spine of a spread page: its gutter band on the inner edge.
       if (c.spread && g.template.spread) {
         const gutterPx = mmToPx(dimensionToMm(g.template.gutter), dpi()) / 2;
-        const x = c.spread === 'left' ? g.areas.trim.x + g.areas.trim.width - gutterPx : g.areas.trim.x;
-        root.appendChild(svgEl('rect', { x, y: 0, width: Math.max(gutterPx, 2 * k), height: flowH, fill: COLORS.gutter }));
+        const band = spreadGutterBand({ width: flowW, height: flowH }, refs.docRef.current?.trimOffset ?? 0, side(c), gutterPx, 2 * k, spreadAxis());
+        root.appendChild(svgEl('rect', { ...band, fill: COLORS.gutter }));
       }
     }
     const selected = selectedHere();

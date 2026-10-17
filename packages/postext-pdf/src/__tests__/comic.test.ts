@@ -562,4 +562,38 @@ describe('strips and spreads in the PDF', () => {
     // The page reads Before, the comic, After.
     expect(root.kids.map((k) => k.type)).toEqual(['P', 'Div', 'P']);
   }, 60_000);
+
+  it('paints a strip\'s text panel over its ground and reads its words in the strip\'s Div (#959)', async () => {
+    const md = 'Before.\n\n:::strip{split="50 | *" aspect=2.5}\n::panel{text bg="#ffeecc"}\nWords set in the strip panel.\n::panel{art=land}\n:::\n\nAfter.';
+    const d = buildDocument({ markdown: md, resources }, config);
+    const page = d.pages.find((p) => p.columns.some((c) => c.blocks.some((b) => b.comic)))!;
+    const strip = page.columns.flatMap((c) => c.blocks).find((b) => b.comic)!;
+    expect(strip.comic!.frames![0]!.blockIds.length).toBeGreaterThan(1);
+    const out = await PDFDocument.load(await renderToPdf(d, { fontProvider, resourceBytes: (id) => files[id] }));
+    const ops = contentOps(out, page.index);
+    const ground = ops.indexOf('1 0.9333333333333333 0.8 rg');
+    expect(ground).toBeGreaterThan(-1);
+    // The strip's words are drawn after the ground it is painted on.
+    expect(ops.slice(ground).search(/T[jJ]/)).toBeGreaterThan(-1);
+    // The strip is read in its place, its words in the panel's place.
+    const root = structRoot(out);
+    const stripDiv = root.kids.find((k) => k.type === 'Div' && k.kids.some((c) => c.type === 'Figure'))!;
+    expect(stripDiv.kids.map((k) => k.type)).toEqual(['Div', 'Figure']);
+    const types = (e: { type: string; kids: { type: string; kids: unknown[] }[] }): string[] => [e.type, ...e.kids.flatMap((k) => types(k as never))];
+    expect(types(stripDiv.kids[0]! as never)).toContain('P');
+    expect(root.kids.map((k) => k.type)).toEqual(['P', 'Div', 'P']);
+  }, 60_000);
+
+  it('paints the text panels of a spread on their pages (#959)', async () => {
+    const md = ':::page{spread split="* | *"}\n::panel{text bg="#ffeecc"}\nWords on the left page.\n::panel{text bg="#ccddff"}\nWords on the right page.\n:::\n';
+    const d = buildDocument({ markdown: md, resources }, config);
+    const halves = d.pages.filter((p) => p.comic);
+    expect(halves).toHaveLength(2);
+    const out = await PDFDocument.load(await renderToPdf(d, { fontProvider, resourceBytes: (id) => files[id] }));
+    for (const half of halves) {
+      expect(half.comic!.frames!.some((f) => f.blockIds.length > 0)).toBe(true);
+      const ops = contentOps(out, half.index);
+      expect(ops.search(/T[jJ]/)).toBeGreaterThan(-1);
+    }
+  }, 60_000);
 });

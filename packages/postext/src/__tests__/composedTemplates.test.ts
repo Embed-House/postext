@@ -328,7 +328,10 @@ describe('validatePageTemplates', () => {
 
 describe('label styles', () => {
   it('fill and strip their defaults', () => {
-    expect(resolveLabelStyles([{ id: 'mar', fontStyle: 'italic' }])).toEqual([{ id: 'mar', fontStyle: 'italic', textTransform: 'none', minScale: 0.85 }]);
+    // The slant and the capitals are left unset when not written: a written
+    // 'normal' / 'none' turns off a borrowed paragraph style's (#955).
+    expect(resolveLabelStyles([{ id: 'mar', fontStyle: 'italic' }])).toEqual([{ id: 'mar', fontStyle: 'italic', minScale: 0.85 }]);
+    expect(resolveLabelStyles([{ id: 'mar', fontStyle: 'normal', textTransform: 'none' }])).toEqual([{ id: 'mar', fontStyle: 'normal', textTransform: 'none', minScale: 0.85 }]);
     expect(stripLabelStylesDefaults([{ id: 'mar', name: 'mar', fontStyle: 'normal', textTransform: 'uppercase', minScale: 0.85 }])).toEqual([{ id: 'mar', textTransform: 'uppercase' }]);
     expect(stripLabelStylesDefaults([])).toBeUndefined();
   });
@@ -345,7 +348,7 @@ describe('the config sections', () => {
     const r = resolveAllConfig(c);
     expect(r.pageTemplates).toEqual(c.pageTemplates);
     expect(r.pageTemplates).not.toBe(c.pageTemplates);
-    expect(r.labelStyles).toEqual([{ id: 'mar', halo: { color: { hex: '#ffffff', model: 'hex' }, width: mm(0.5) }, fontStyle: 'normal', textTransform: 'none', minScale: 0.85 }]);
+    expect(r.labelStyles).toEqual([{ id: 'mar', halo: { color: { hex: '#ffffff', model: 'hex' }, width: mm(0.5) }, minScale: 0.85 }]);
     // The resolved configuration resolves its templates too.
     expect(resolvePageTemplate(r, 'hijo')!.frames.map((f) => f.name)).toEqual(['titulo', 'texto', 'dinero', 'dinero-fotos']);
     expect(configFingerprint(resolveAllConfig({ locale: 'es' }))).toBe(configFingerprint(resolveAllConfig({ locale: 'es', pageTemplates: [] })));

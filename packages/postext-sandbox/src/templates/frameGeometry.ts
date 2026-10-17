@@ -70,30 +70,70 @@ const unionOf = (a: Rect, b: Rect): Rect => {
   return { x, y, width: Math.max(a.x + a.width, b.x + b.width) - x, height: Math.max(a.y + a.height, b.y + b.height) - y };
 };
 
+/** The axis the second page of a spread follows the first along, in the
+ *  pages' flow frame: `'x'`, or `'y'` on vertical pages (#926). */
+export type SpreadAxis = 'x' | 'y';
+
 /**
- * The areas of a page of a spread (#861), in this page's px: the sheet is
- * the two pages side by side, the trims meeting at the spine, so the
- * facing page's boxes sit one trim width (`shift`) away, to the right of
- * the first page (`side` 0) or to the left of the second (`side` 1).
- * `content` is the union of both content areas; trim and bleed run outer
- * edge to outer edge, as the engine lays the sheet (`spreadSheet`).
+ * Which half of the sheet a page of a spread is, in its own flow frame:
+ * 0 for the first page along the flow, 1 for the second. `spread` is the
+ * page's physical side of the open book (`VDTComposedPage.spread`). On a
+ * left-to-right page the first is the left page; where the flow is mirrored
+ * (right to left) or turned (vertical) it is the right one
+ * (`layoutComposedSpread`'s `firstSide`), and `flowed` says the page has a
+ * flow frame of that kind (`VDTPage.flow`).
+ */
+export function spreadFlowSide(spread: 'left' | 'right', flowed: boolean): 0 | 1 {
+  return (spread === 'left') !== flowed ? 0 : 1;
+}
+
+/**
+ * The areas of a page of a spread (#861), in this page's flow-frame px:
+ * the sheet is the two pages side by side, the trims meeting at the spine,
+ * so the facing page's boxes sit one trim width (`shift`) away along the
+ * axis, after the first page (`side` 0) or before the second (`side` 1;
+ * see {@link spreadFlowSide}). `content` is the union of both content
+ * areas; trim and bleed run outer edge to outer edge, as the engine lays
+ * the sheet (`spreadSheet`). On `axis: 'y'` (vertical pages, #926) the
+ * pages follow each other down the flow and the shift is the trim's height.
  */
 export function spreadPageAreas(
   page: { width: number; height: number; contentArea: Rect },
   facing: { contentArea: Rect },
   trimOffset: number,
   side: 0 | 1,
+  axis: SpreadAxis = 'x',
 ): PageAreas & { shift: number } {
   const own = pageAreas(page, trimOffset);
-  const shift = own.trim.width;
-  const dx = side === 0 ? shift : -shift;
-  const moved = (r: Rect): Rect => ({ ...r, x: r.x + dx });
+  const shift = axis === 'x' ? own.trim.width : own.trim.height;
+  const d = side === 0 ? shift : -shift;
+  const moved = (r: Rect): Rect => (axis === 'x' ? { ...r, x: r.x + d } : { ...r, y: r.y + d });
   return {
     content: unionOf(own.content, moved(facing.contentArea)),
     trim: unionOf(own.trim, moved(own.trim)),
     bleed: unionOf(own.bleed, moved(own.bleed)),
     shift,
   };
+}
+
+/**
+ * The half of the spine's gutter band that lies on a page of a spread, in
+ * its flow frame: along the axis, on the page's inner edge (the end of the
+ * first page, the start of the second), `gutterPx` thick (`minPx` at
+ * least) and across the whole page.
+ */
+export function spreadGutterBand(
+  page: { width: number; height: number },
+  trimOffset: number,
+  side: 0 | 1,
+  gutterPx: number,
+  minPx: number,
+  axis: SpreadAxis = 'x',
+): Rect {
+  const own = pageAreas({ ...page, contentArea: { x: 0, y: 0, width: 0, height: 0 } }, trimOffset).trim;
+  const thick = Math.max(gutterPx, minPx);
+  if (axis === 'x') return { x: side === 0 ? own.x + own.width - thick : own.x, y: 0, width: thick, height: page.height };
+  return { x: 0, y: side === 0 ? own.y + own.height - thick : own.y, width: page.width, height: thick };
 }
 
 /** The template's `area` on the page. */

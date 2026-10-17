@@ -296,8 +296,9 @@ those lines, or run the script.
   real finding when `resolution` came from the source's print size.
 - `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
   used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
-  (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (text panel where
-  frames take no text: its words are set after the comic; `flow`, a right-to-left or vertical edition, only before 1.39).
+  (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (raised
+  only before 1.40: a text panel where frames took no text, its words set after the comic) and `flow` (only before
+  1.39: a right-to-left or vertical edition).
 - Contrast (postext ≥ 1.37): on a composed page the check follows the paint order: frame text stands on its
   frame's own box, else on the template `decoration` box under it, else on the paper; text over a decoration
   picture is skipped. White tab lettering in a frameless frame over a coloured decoration box is measured
@@ -422,7 +423,7 @@ is kept whole by the new book from postext 1.39 (each edition named by `localize
 #891, else by the manifest `name`; switch from the Books row or the edition bar; permalink `#project=ID&lang=L`).
 Before 1.39 the import asked which one to keep and held that edition only: import each edition to check it, or open
 the bundle as a preset or bundle instead. The Checks panel's Composed pages section lists every composed-page
-warning per edition with its locale, page and frame, and «Side by side» aligns two editions (composed-pages.md §7).
+warning per edition with its locale, page and frame, and «Side by side» aligns two editions (composed-pages.md §7). From 1.40 the WebMCP tool `sandbox_get_composed_checks` lists the same checks of every edition (`language` keeps one), and a book with more than 48 chapter layouts shows the chapter on screen with a **Check every edition** button instead of laying every language out unasked.
 Check the canvas, the HTML viewer, the Folio
 tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading

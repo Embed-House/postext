@@ -4,6 +4,7 @@ import { bookTools } from './book';
 import { checkTools } from './checks';
 import { comicTools } from './comics';
 import { configTools } from './config';
+import { editionCheckTools } from './editionChecks';
 import { historyTools } from './history';
 import { frameStyleTools } from './frameStyles';
 import { answerTools, libraryTools } from './library';
@@ -33,5 +34,6 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...wordTools(host),
     ...answerTools(host),
     ...checkTools(host),
+    ...editionCheckTools(host),
   ];
 }

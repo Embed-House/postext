@@ -12,7 +12,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChevronRight, LayoutTemplate, Loader2, MapPin } from 'lucide-react';
 import { useSandboxChapterDocsRef, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector } from '../context/SandboxContext';
-import { Collapsible, IconButton, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui';
+import { Button, Collapsible, IconButton, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui';
 import type { SandboxLabels } from '../types';
 import type { Warning } from '../warnings/types';
 import {
@@ -32,7 +32,8 @@ const ALL = '*';
  *  own warnings, its document), the rest from the editions laid out
  *  behind the reader. */
 export function useComposedChecks(liveWarnings: readonly Warning[], enabled: boolean): { editions: BookEditions; checks: ComposedCheck[] } {
-  const editions = useBookEditions(enabled);
+  // A big book in several editions waits until the reader asks (#952).
+  const editions = useBookEditions(enabled, undefined, { onDemand: true });
   const chapters = useSandboxSelector((s) => s.chapters);
   const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
   const docVersion = useSandboxSelector((s) => s.docVersion);
@@ -90,6 +91,7 @@ export interface ComposedChecksSectionProps {
 
 export function ComposedChecksSection({ checks, editions, labels, title, detail, onAnchor }: ComposedChecksSectionProps) {
   const uiLocale = useSandboxSelector((s) => s.locale);
+  const chapterCount = useSandboxSelector((s) => s.chapters.length);
   const [open, setOpen] = useState(true);
   const [by, setBy] = useState<ComposedGroupBy>('page');
   const [locale, setLocale] = useState<string>(ALL);
@@ -186,14 +188,23 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
               options={[{ value: ALL, label: `${labels.composedChecksFilterFrame}: ${labels.composedChecksAll}` }, ...frameOptions]}
             />
           </div>
-          <p className="m-0 flex items-center gap-1.5 text-[0.66rem] text-(--slate)" aria-live="polite">
-            {loading.length > 0 && <Loader2 size={12} aria-hidden="true" className="shrink-0 animate-spin" />}
-            {loading.length > 0
-              ? labels.composedChecksChecking.replace('__locale__', loading.map((s) => name(s.locale)).join(', '))
-              : locales.length > 1
-                ? labels.composedChecksChecked.replace('__locales__', locales.map(name).join(', '))
-                : labels.composedChecksOneEdition}
-          </p>
+          {editions.waiting ? (
+            <div className="flex flex-col items-start gap-1.5">
+              <p className="m-0 text-[0.66rem] text-(--slate)">
+                {labels.composedChecksOnDemand.replace('__chapters__', String(chapterCount)).replace('__editions__', String(locales.length))}
+              </p>
+              <Button variant="outline" size="sm" onClick={editions.layOutNow}>{labels.composedChecksOnDemandAction}</Button>
+            </div>
+          ) : (
+            <p className="m-0 flex items-center gap-1.5 text-[0.66rem] text-(--slate)" aria-live="polite">
+              {loading.length > 0 && <Loader2 size={12} aria-hidden="true" className="shrink-0 animate-spin" />}
+              {loading.length > 0
+                ? labels.composedChecksChecking.replace('__locale__', loading.map((s) => name(s.locale)).join(', '))
+                : locales.length > 1
+                  ? labels.composedChecksChecked.replace('__locales__', locales.map(name).join(', '))
+                  : labels.composedChecksOneEdition}
+            </p>
+          )}
           {failed.map((s) => (
             <p key={s.locale} className="m-0 text-[0.66rem] text-(--destructive)">
               {labels.composedChecksEditionError.replace('__locale__', name(s.locale)).replace('__error__', s.entry?.error ?? '')}
@@ -201,7 +212,8 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
           ))}
         </div>
         {filtered.length === 0 ? (
-          <p className="m-0 px-3 pb-2 text-[0.7rem] text-(--slate)">{labels.composedChecksEmpty}</p>
+          // Nothing is said of editions that were not checked.
+          editions.waiting ? null : <p className="m-0 px-3 pb-2 text-[0.7rem] text-(--slate)">{labels.composedChecksEmpty}</p>
         ) : groups.map((g) => (
           <div key={g.key} className="pb-1">
             <h4 className="m-0 px-3 pt-1 text-[0.64rem] font-semibold uppercase tracking-[0.04em] text-(--slate)">

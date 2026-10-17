@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
@@ -21,8 +21,14 @@ export type ComposedPaintItem =
 export function composedFrameBlockIds(page: VDTPage): Set<string> {
   const ids = new Set<string>();
   for (const f of page.composed?.frames ?? []) for (const id of f.blockIds) ids.add(id);
-  // A comic page's text panels (#885) are painted with their frames too.
+  // A comic page's text panels (#885) are painted with their frames too,
+  // and those of the strips it holds (#959).
   for (const f of page.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  const strip = (b: VDTBlock): void => {
+    for (const f of b.comic?.frames ?? []) for (const id of f.blockIds) ids.add(id);
+  };
+  for (const col of page.columns) for (const b of col.blocks) strip(b);
+  for (const b of page.floats ?? []) strip(b);
   return ids;
 }
 
@@ -32,11 +38,13 @@ export function composedFrameBlockIds(page: VDTPage): Set<string> {
  *  the sheet). */
 export type ComposedPaintPart = 'below' | 'above';
 
-/** The frames of a comic page that hold text (`::panel{text}`, #885), with
+/** The frames of a comic that hold text (`::panel{text}`, #885), with
  *  their blocks, in panel order: painted over the panels and under the
- *  lettering ({@link comicPaintsUnderText}). Empty on any other page. */
-export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
-  const frames = page.comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
+ *  lettering ({@link comicPaintsUnderText}). `comic` (on the sheet) is the
+ *  page's comic page by default; pass a strip's (`pageComics`, #959) for
+ *  its frames. Empty when the comic holds none. */
+export function comicFramePaintOrder(page: VDTPage, comic: Pick<VDTComicPage, 'frames'> | undefined = page.comic): ComposedPaintItem[] {
+  const frames = comic?.frames?.filter((f) => f.blockIds.length > 0) ?? [];
   if (frames.length === 0) return [];
   const byId = new Map<string, VDTBlock>();
   for (const b of page.floats ?? []) byId.set(b.id, b);
@@ -54,7 +62,12 @@ export function comicFramePaintOrder(page: VDTPage): ComposedPaintItem[] {
  *  its lettering last, so the text lies over its panel's ground and under
  *  the balloons. */
 export function comicPaintsUnderText(page: VDTPage): boolean {
-  return page.comic?.frames?.some((f) => f.blockIds.length > 0) === true;
+  return comicHoldsText(page.comic);
+}
+
+/** Whether a comic (on the sheet) holds a text frame with text in it. */
+export function comicHoldsText(comic: Pick<VDTComicPage, 'frames'> | undefined): boolean {
+  return comic?.frames?.some((f) => f.blockIds.length > 0) === true;
 }
 
 /** The paint order of a composed page: frames of a layer below 0, the
@@ -163,12 +176,26 @@ const scaleOf = (frame: Partial<Pick<VDTFrame, 'scale'>>): number => {
 };
 
 /** The affine matrix `[a, b, c, d, e, f]` (canvas `transform` order,
- *  y down) that puts a frame's blocks on the sheet: scaled by the frame's
+ *  y down) that puts a frame's blocks on the sheet (in the page's flow frame, #929): scaled by the frame's
  *  text `scale` about the top-left of its box (#858; the blocks are laid
  *  out `1 / scale` as large), then turned `rotate` degrees clockwise about
  *  the centre of its box. Undefined for an upright frame at full size. */
-export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale'>>): Affine | undefined {
+export function frameMatrix(frame: Pick<VDTFrame, 'rect' | 'rotate'> & Partial<Pick<VDTFrame, 'scale' | 'unmirrorX'>>): Affine | undefined {
   const s = scaleOf(frame);
+  const unmirrorX = frame.unmirrorX;
+  if (unmirrorX !== undefined) {
+    // A frame of a right-to-left page painted through the mirrored flow,
+    // as it stands on a left-to-right sheet (#960): the matrix of the
+    // frame's box mirrored to where the sheet shows it, preceded by the
+    // move of the content there and followed by the page's mirror, which
+    // turns the whole back into a plain placement.
+    const r = frame.rect;
+    const shown = { x: unmirrorX - (r.x + r.width), y: r.y, width: r.width, height: r.height };
+    const there = frameMatrix({ rect: shown, rotate: frame.rotate, scale: s });
+    const move: Affine = [1, 0, 0, 1, shown.x - r.x, 0];
+    const mirror: Affine = [-1, 0, 0, 1, unmirrorX, 0];
+    return multiply(mirror, there ? multiply(there, move) : move);
+  }
   const scaled: Affine | undefined = s === 1 ? undefined : [s, 0, 0, s, frame.rect.x * (1 - s), frame.rect.y * (1 - s)];
   const deg = frame.rotate % 360;
   if (!Number.isFinite(deg) || Math.abs(deg) < 1e-9) return scaled;

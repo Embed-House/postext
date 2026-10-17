@@ -113,10 +113,11 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     weight: style?.fontWeight ?? para?.fontWeight ?? body.fontWeight,
     boldWeight: Math.max(para?.boldFontWeight ?? body.boldFontWeight, style?.fontWeight ?? 0),
     // A borrowed paragraph style's slant and capitals hold unless the
-    // label style turns them on itself.
-    italic: style?.fontStyle === 'italic' || para?.italic === true,
+    // label style says otherwise: 'italic' / 'uppercase' turn them on,
+    // 'normal' / 'none' written turn them off (#955).
+    italic: style?.fontStyle !== undefined ? style.fontStyle === 'italic' : para?.italic === true,
     color: hexOf(style?.color ?? para?.color, resolved, body.color),
-    uppercase: style?.textTransform === 'uppercase' || para?.textTransform === 'uppercase',
+    uppercase: style?.textTransform !== undefined ? style.textTransform === 'uppercase' : para?.textTransform === 'uppercase',
     letterSpacing: typeof style?.letterSpacing === 'number' && Number.isFinite(style.letterSpacing) ? style.letterSpacing : 0,
     lineHeight,
     ...(style?.halo && haloWidth !== undefined && haloWidth > 0
@@ -538,12 +539,15 @@ const mirrored = new WeakSet<VDTFigureLabelLayout>();
 export function mirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: number, orient: (line: VDTLine) => VDTLine): VDTFigureLabelLayout {
   if (mirrored.has(layout)) return layout;
   const flipBox = (r: BoundingBox): BoundingBox => ({ ...r, x: -(r.x + r.width) });
+  // The lines of a vertical label keep the order they were set in: its
+  // cells are painted from the frame turned back (`unmirrorLabelLayout`),
+  // where the text runs down the column as on any page (#955).
   const out: VDTFigureLabelLayout = {
     ...layout,
     x: bodyWidth - layout.x,
     ...(layout.rotate !== undefined ? { rotate: -layout.rotate } : {}),
     lines: layout.lines.map((line) => {
-      const o = orient(line);
+      const o = layout.vertical ? line : orient(line);
       return {
         ...o,
         bbox: { ...o.bbox, x: -(o.bbox.x + o.bbox.width) },
@@ -552,9 +556,37 @@ export function mirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: numbe
     }),
     box: flipBox(layout.box),
     ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
+    ...(layout.vertical ? { mirrored: true as const } : {}),
   };
   mirrored.add(out);
   return out;
+}
+
+/**
+ * The layout of a vertical label (`mirrored`) as it was set, before
+ * {@link mirrorLabelLayout} reflected it for the flow of a mirrored page:
+ * the geometry reflected back about the body's axis. The painters of such
+ * a flow reflect their frame back about the body, so this layout lands on
+ * the sheet where the label's anchor says, its cells running down the
+ * column and standing upright, whatever the page's direction.
+ */
+export function unmirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: number): VDTFigureLabelLayout {
+  if (!layout.mirrored) return layout;
+  const flipBox = (r: BoundingBox): BoundingBox => ({ ...r, x: -(r.x + r.width) });
+  const { mirrored: _mirrored, ...rest } = layout;
+  void _mirrored;
+  return {
+    ...rest,
+    x: bodyWidth - layout.x,
+    ...(layout.rotate !== undefined ? { rotate: -layout.rotate } : {}),
+    lines: layout.lines.map((line) => ({
+      ...line,
+      bbox: { ...line.bbox, x: -(line.bbox.x + line.bbox.width) },
+      ...(line.measure ? { measure: { ...line.measure, x: -(line.measure.x + line.measure.width) } } : {}),
+    })),
+    box: flipBox(layout.box),
+    ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
+  };
 }
 
 // ---------------------------------------------------------------------------

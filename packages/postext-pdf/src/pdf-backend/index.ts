@@ -6,12 +6,12 @@ import {
 } from 'pdf-lib';
 import type { ResourceImageMap, SvgRasterizer } from './renderResourceBlock';
 import fontkit from '@pdf-lib/fontkit';
-import type { HyphenationLocale, PdfColorSpace, PrintConfig, RenderWarning, VDTBlock, VDTDocument, VDTPage } from 'postext';
+import type { HyphenationLocale, PdfColorSpace, PrintConfig, RenderWarning, VDTBlock, VDTComicPage, VDTDocument, VDTPage } from 'postext';
 import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfile, resolvePrintConfig, type CmykPercent, type ResolvedPrintConfig } from 'postext';
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -686,7 +686,16 @@ function paintPage(
   if (comicUnder) renderComicLetteringPdf(ctx, comicUnder, fontCache, comicTags);
   else if (vdtPage.comic) renderComicPage(ctx, vdtPage.comic, fontCache, resourceCtx.images, structure);
   for (const strip of strips) {
-    renderComicPage(ctx, comicBlockOnSheet(vdtPage, strip.block)!, fontCache, resourceCtx.images, structure, strip.div);
+    const sheetComic = comicBlockOnSheet(vdtPage, strip.block)!;
+    if (comicHoldsText(sheetComic)) {
+      // A strip with text panels (#959): its panels, the text in the flow
+      // frame over them (read in the panel's place), then its lettering.
+      const tags = renderComicPanelsPdf(ctx, sheetComic, resourceCtx.images, structure, strip.div);
+      enterFlow();
+      paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx, tags, sheetComic);
+      leaveFlow();
+      renderComicLetteringPdf(ctx, sheetComic, fontCache, tags);
+    } else renderComicPage(ctx, sheetComic, fontCache, resourceCtx.images, structure, strip.div);
     // A caption set under the strip is read after its panels.
     if (strip.div && strip.caption && strip.block.stripCaption?.position !== 'above') {
       const kids = strip.div.kids;
@@ -775,11 +784,11 @@ function paintComposedItems(
 
 /** The text frames of a comic page (`::panel{text}`, #885), over its
  *  panels: each read as one float, as a composed page's frame is. */
-function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext, tags: ComicPanelTags): void {
-  for (const item of comicFramePaintOrder(vdtPage)) {
+function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCache, resourceCtx: ResourceRenderContext, tags: ComicPanelTags, comic: VDTComicPage | undefined = vdtPage.comic): void {
+  for (const item of comicFramePaintOrder(vdtPage, comic)) {
     if (item.kind !== 'frame') continue;
     // Read in the comic's `Div`, in its panel's place (#909).
-    const panel = item.frame.panel !== undefined ? vdtPage.comic?.panels[item.frame.panel]?.index : undefined;
+    const panel = item.frame.panel !== undefined ? comic?.panels.find((q) => q.index === item.frame.panel)?.index : undefined;
     const into = panel !== undefined ? tags?.texts[panel] : undefined;
     paintFrameItem(ctx, item, fontCache, resourceCtx, resourceCtx.structure, into);
   }
@@ -789,6 +798,28 @@ function paintComicTextFrames(ctx: PageCtx, vdtPage: VDTPage, fontCache: FontCac
  *  matrix, clipped to its box when its content overflows and to its
  *  outline when it has one (a comic panel cut by a slanted line, #885). */
 function paintFrameItem(
+  ctx: PageCtx,
+  item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  structure: ResourceRenderContext['structure'],
+  into?: StructElem,
+): void {
+  // A vertical frame of a right-to-left page (#960) is placed by a matrix
+  // that includes the page's mirror: its text is not turned back again.
+  if (item.frame.unmirrorX === undefined || !ctx.mirror) {
+    paintFrameItemIn(ctx, item, fontCache, resourceCtx, structure, into);
+    return;
+  }
+  delete ctx.mirror;
+  try {
+    paintFrameItemIn(ctx, item, fontCache, resourceCtx, structure, into);
+  } finally {
+    ctx.mirror = true;
+  }
+}
+
+function paintFrameItemIn(
   ctx: PageCtx,
   item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
   fontCache: FontCache,

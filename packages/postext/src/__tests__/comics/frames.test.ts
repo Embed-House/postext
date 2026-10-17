@@ -219,15 +219,6 @@ describe('text panels', () => {
     expect(w).toMatchObject({ reason: 'textOverflow', panel: 0, pageIndex: page.index });
   });
 
-  it('sets the text in the flow after a strip or a spread', () => {
-    const strip = 'Before.\n\n:::strip{split="* | *"}\n::panel{text}\nStrip words.\n::panel\n:::\n';
-    const sdoc = buildDocument({ markdown: strip, resources: [] }, {});
-    expect(sdoc.blocks.some((b) => b.lines.some((l) => l.text.includes('Strip words.')))).toBe(true);
-    expect(collectContentWarnings(strip, {}).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'strip' });
-    const spread = ':::page{spread split="* | *"}\n::panel{text}\nSpread words.\n::panel\n:::\n';
-    expect(collectContentWarnings(spread, {}).find((x) => x.kind === 'comicPanelFrame')).toMatchObject({ reason: 'spread' });
-  });
-
   for (const [name, config] of [
     ['right-to-left', { direction: 'rtl', locale: 'ar' }],
     ['vertical', { locale: 'ja', layout: { writingMode: 'vertical-rl', layoutType: 'single' } }],
