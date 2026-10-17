@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>How small a label may be set when it does not fit its width.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
       <td><code>string</code></td>
       <td>none</td>
       <td>A <code>labelStyles</code> id. A label that names its own style overrides it.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> sets the label vertically, as a Chinese or Japanese map or a spine is lettered. Its <code>width</code> is then a fraction of the picture's height, <code>align</code> runs along the column (<code>start</code> is the top) and <code>verticalAlign</code> across the columns (<code>top</code> is the first, right-hand one).</td>
     </tr>
   </tbody>
 </table>

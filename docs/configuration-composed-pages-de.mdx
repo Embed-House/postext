@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Wie klein eine Beschriftung gesetzt werden darf, wenn sie nicht in ihre Breite passt.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Vertikale Schreibrichtung für die Beschriftungen dieses Stils: aufrechte Zeichen in Zellen untereinander, Spalten von rechts nach links, wie eine chinesische oder japanische Karte beschriftet wird. Das eigene <code>writingMode</code> eines Ankers hat Vorrang.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
       <td><code>string</code></td>
       <td>keiner</td>
       <td>Eine ID aus <code>labelStyles</code>. Eine Beschriftung, die ihren eigenen Stil nennt, überschreibt ihn.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> setzt die Beschriftung senkrecht, wie eine chinesische oder japanische Karte oder ein Buchrücken beschriftet wird. Ihre <code>width</code> ist dann ein Bruchteil der Bildhöhe, <code>align</code> läuft entlang der Spalte (<code>start</code> ist oben) und <code>verticalAlign</code> quer zu den Spalten (<code>top</code> ist die erste, rechte).</td>
     </tr>
   </tbody>
 </table>

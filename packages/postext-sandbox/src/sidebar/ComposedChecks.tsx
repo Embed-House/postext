@@ -24,6 +24,7 @@ import { requestFrameJump } from '../editions/frameJump';
 import { localeDisplayName, localeShortTag } from '../presets/localeNames';
 import { sameLocaleTag } from '../presets/locale';
 import { ProposalActions } from '../warnings/ProposalButtons';
+import { warningAnchor } from '../warnings/anchorTarget';
 
 const ALL = '*';
 
@@ -230,9 +231,9 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
                           {c.frame && <span className="text-[10px] font-medium text-(--slate)">{c.frame}</span>}
                         </span>
                       )}
-                      actions={onAnchor && (c.warning.payload.kind === 'labelAnchorUnknown' || c.warning.payload.kind === 'anchorUnlabelled') ? (
+                      actions={onAnchor && warningAnchor(c.warning.payload) ? (
                         <IconButton
-                          label={(c.warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', c.warning.payload.anchor)}
+                          label={(warningAnchor(c.warning.payload)!.place ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warningAnchor(c.warning.payload)!.anchor)}
                           icon={<MapPin size={14} aria-hidden="true" />}
                           onClick={() => onAnchor(c.warning)}
                         />

@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Fins a quina mida es pot reduir un rètol quan no cap en la seva amplada.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Escriptura vertical per als rètols d'aquest estil: caràcters drets en cel·les una sota l'altra, columnes de dreta a esquerra, com es retola un mapa xinès o japonès. El <code>writingMode</code> propi d'una àncora mana.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Els ancoratges d'una imatge (`Resource.anchors`, els punts que fan servir els c�
       <td><code>string</code></td>
       <td>cap</td>
       <td>Un id de <code>labelStyles</code>. Un rètol que anomena el seu propi estil el substitueix.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compon el rètol en vertical, com es retola un mapa xinès o japonès o un llom. Aleshores el seu <code>width</code> és una fracció de l'alçada de la imatge, <code>align</code> va al llarg de la columna (<code>start</code> és l'extrem superior) i <code>verticalAlign</code> a través de les columnes (<code>top</code> és la primera, la de la dreta).</td>
     </tr>
   </tbody>
 </table>

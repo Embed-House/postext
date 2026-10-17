@@ -259,6 +259,21 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'labelOverflow' || w.kind === 'labelOverlap') {
+      // Words on a picture that do not fit or that meet (#902), by their
+      // book page.
+      const page = (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0);
+      out.push({
+        id: `layout-${w.kind}-${w.resourceId}-${w.anchor ?? w.text}-${w.sourceStart ?? 'x'}-${i}`,
+        payload: w.kind === 'labelOverflow'
+          ? { kind: 'labelOverflow', resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), widthPct: w.widthPct, scale: w.scale, page, ...(w.locale ? { locale: w.locale } : {}) }
+          : { kind: 'labelOverlap', resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), with: w.with, ...(w.withAnchor !== undefined ? { withAnchor: w.withAnchor } : {}), count: w.count, page, ...(w.locale ? { locale: w.locale } : {}) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'fontFallback') {
       // A face the layout measured with a fallback (#629): one per face,
       // whatever chapter found it; no place in the text.

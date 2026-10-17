@@ -314,6 +314,11 @@ export interface SandboxLabels {
   warningsLabelAnchorUnknownDetail: string;
   warningsAnchorUnlabelledTitle: string;
   warningsAnchorUnlabelledDetail: string;
+  warningsLabelOverflowTitle: string;
+  warningsLabelOverflowDetail: string;
+  warningsLabelOverlapTitle: string;
+  warningsLabelOverlapDetail: string;
+  warningsLabelOverlapDetailMany: string;
   warningsFrameOverflowTried: string;
   warningsFrameOverflowFixes: string;
   warningsFitStepFree: string;

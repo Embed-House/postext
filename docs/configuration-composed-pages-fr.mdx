@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>La taille minimale à laquelle une étiquette peut être réduite quand elle ne tient pas dans sa largeur.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Écriture verticale pour les étiquettes de ce style : caractères droits dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
       <td><code>string</code></td>
       <td>aucun</td>
       <td>Un id de <code>labelStyles</code>. Une étiquette qui nomme son propre style le remplace.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compose l’étiquette à la verticale, comme on inscrit une carte chinoise ou japonaise ou un dos de livre. Sa <code>width</code> est alors une fraction de la hauteur de l’image, <code>align</code> court le long de la colonne (<code>start</code> en est le haut) et <code>verticalAlign</code> en travers des colonnes (<code>top</code> est la première, celle de droite).</td>
     </tr>
   </tbody>
 </table>

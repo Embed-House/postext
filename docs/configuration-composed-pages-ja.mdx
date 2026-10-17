@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>ラベルが幅に収まらないとき、どこまで小さく組んでよいかです。</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>このスタイルのラベルを縦書きにします。文字は正立のまま1文字ずつ上から下へ、列は右から左へ並びます。中国語や日本語の地図の注記と同じ組み方です。アンカー自身の<code>writingMode</code>が優先されます。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ labelStyles: [
       <td><code>string</code></td>
       <td>なし</td>
       <td><code>labelStyles</code>のidです。ラベルが自分のスタイルを指定していれば、そちらが優先されます。</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code>でラベルを縦書きにします。中国語や日本語の地図、本の背の文字と同じ組み方です。このとき<code>width</code>は絵の高さに対する割合になり、<code>align</code>は列に沿った向き（<code>start</code>が上端）、<code>verticalAlign</code>は列をまたぐ向き（<code>top</code>が最初の列、つまり右端の列）です。</td>
     </tr>
   </tbody>
 </table>

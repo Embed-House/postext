@@ -114,6 +114,22 @@ Hors d’une page composée, un `slot` est lu et ne change rien.
 
 Une figure fonctionne dans le texte courant comme dans un bloc. Ses étiquettes sont dessinées sur l’image comme du texte et suivent la figure partout : une colonne, un flottant, un bloc tourné ou dont le contenu est réduit pour tenir, une double page. Une ligne qui, dans une figure, n’est ni une étiquette ni une ligne vide termine une figure à laquelle manque le `:::` de fermeture, et elle est signalée comme conteneur non fermé.
 
+### Les mots propres d’une figure
+
+La ressource garde une image, ses ancres et un seul jeu de mots, mais chaque édition d’un livre dit les siens. Une figure peut donner elle-même son `alt`, sa `caption` et sa `note`, dans la clôture ou dans des lignes à part, et ils remplacent ceux de la ressource pour les pages de ce fichier :
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- En attributs de la clôture, `alt`, `caption` et `note` prennent un texte court entre guillemets. Les lignes `::alt[…]`, `::caption[…]` et `::note[…]` prennent le texte entre crochets, qui peut contenir du Markdown en ligne et `\\` pour un saut de ligne, comme la légende et la note d’une ressource. Une ligne l’emporte sur l’attribut du même nom ; les lignes se placent parmi les étiquettes, avec des lignes vides si l’on veut.
+- Ce que la figure ne dit pas reste celui de la ressource. Un mot vide ne dit rien : `caption=""` supprime la légende, `alt=""` marque l’image comme décorative.
+- Les mots remplacent ceux de la ressource dans le chapitre qui les dit : la composition, le texte alternatif de toutes les sorties et le PDF balisé les lisent, et la ressource elle-même ne change pas. Une ressource posée par deux figures d’un même fichier prend les mots de la première. À la différence d’une étiquette, la légende n’est pas associée au Markdown caractère par caractère ; `sourceAt` répond à un clic sur elle comme sur la légende d’une ressource.
+
 ### Comment une étiquette est composée
 
 - **Où.** Une étiquette se place au point de son ancre, une fraction de l’image entière : si l’image est recadrée sur sa zone sûre ou composée plus petite, l’étiquette se déplace avec le dessin. L’`align` de l’ancre indique quel côté de l’étiquette se trouve au point, et `verticalAlign` quel bord se trouve à sa hauteur. `start` et `end` suivent la direction de l’étiquette elle-même : en arabe, `start` est son bord droit. `rotate` fait tourner l’étiquette autour du point, dans le sens des aiguilles d’une montre et sous n’importe quel angle : un fleuve le long de son cours, une chaîne de collines en biais.
@@ -121,6 +137,8 @@ Une figure fonctionne dans le texte courant comme dans un bloc. Ses étiquettes 
 - **Ajustement.** Si son ancre a une `width`, l’étiquette se coupe entre les mots dans cette justification, jamais au milieu d’un mot. Quand un mot est plus large que la justification, toute l’étiquette est composée plus petite, jusqu’au `minScale` de son style ; une étiquette encore trop large à cette taille est dessinée avec son mot le plus large coupé. Sans `width`, l’étiquette tient sur une ligne, sauf là où elle est coupée par `\\`, comme dans une légende.
 - **Texte.** Le texte entre crochets est du Markdown en ligne, composé comme une légende : gras, italique, puces, marques de surlignage, renvois, formules en ligne. Un nom de plusieurs mots forme une seule étiquette, quel que soit l’ordre de ses mots dans chaque langue : `::label[OCÉAN ATLANTIQUE]` et `::label[ATLANTIC OCEAN]` se placent à la même ancre. Les étiquettes de droite à gauche sont composées de droite à gauche ; les étiquettes chinoises et japonaises se coupent entre les caractères.
 - **Sorties.** Le canevas, le PDF, la visionneuse HTML, l’EPUB à mise en page fixe et Folio dessinent les étiquettes. Sur une page de droite à gauche, l’étiquette reste là où l’image la montre.
+- **Vertical.** Avec `writingMode: 'vertical-rl'` sur l’ancre (ou sur son style d’étiquette), l’étiquette est composée comme une page verticale : les caractères droits, dans des cellules l’une sous l’autre, les colonnes allant de droite à gauche, les mots latins et les longs nombres tournés de côté, les nombres courts dans une seule cellule. `width` est alors une part de la hauteur de l’image, la longueur d’une colonne, et une étiquette chinoise ou japonaise se répartit sur plus de colonnes. `align` court le long de la colonne (`start` en est le haut), `verticalAlign` en travers des colonnes (`top` est la première, celle de droite), et `rotate` fait encore tourner l’étiquette.
+- **Contrôles.** Une étiquette encore plus large que sa justification au `minScale` de son style donne `labelOverflow` ; deux étiquettes dont les lignes se touchent donnent `labelOverlap` sur la seconde. Les deux sont contrôlées dans chaque édition : une traduction aux mots plus longs montre où il lui faut de la place. La palette d’une partie (`:::part{palette="…"}`) recolore les étiquettes de ses pages comme elle le fait des légendes. Le contrôle de contraste lit une étiquette sur sa plaque, à défaut dans son halo ; une étiquette nue sur l’image est ignorée, son fond étant l’image. Le contrôle de préimpression compte le petit corps de l’étiquette en couleurs de quadrichromie, ses encres et sa distance au rognage.
 
 ### labelAnchorUnknown
 
@@ -133,6 +151,14 @@ Dans le panneau Vérifications du Sandbox, l’avertissement mène à l’étiqu
 Une ancre de la ressource de la figure porte un style d’étiquette et aucune `::label` de la figure ne s’y trouve dans cette langue : la carte a de la place pour un mot que cette édition omet. C’est une note ; `postext check` la donne comme `info`. Les ancres sans style, comme celles d’un personnage de BD, ne sont pas signalées. L’avertissement porte la ressource, l’ancre, son style, la langue, la page et la plage de la figure dans la source. Écrivez l’étiquette dans le Markdown de cette langue, ou retirez le style de l’ancre.
 
 Dans le panneau Vérifications, il mène à la figure dans le panneau Texte, et son bouton à l’épingle ouvre les ancres de l’image sur cette ancre.
+
+### labelOverflow
+
+Une étiquette reste plus large que la `width` de son ancre à la plus petite échelle que permet son style d’étiquette (`minScale`) : elle est dessinée à cette échelle et dépasse sa justification. L’avertissement porte la ressource, le texte de l’étiquette, son ancre (aucune pour une étiquette placée en pourcentages), la largeur qui lui était donnée, l’échelle atteinte, la langue, la page et la plage du texte de l’étiquette dans la source. Il est contrôlé dans chaque édition : une langue aux mots plus longs déborde là où une autre ne le fait pas. Élargissez la `width` de l’ancre, raccourcissez le mot dans le Markdown de cette édition ou abaissez le `minScale` du style d’étiquette. Une étiquette chinoise ou japonaise se coupe entre les caractères et ne déborde pas ainsi.
+
+### labelOverlap
+
+Les lignes de deux étiquettes d’une même figure se touchent ; une étiquette à plaque compte comme sa plaque. L’avertissement porte sur l’étiquette postérieure, dans l’ordre d’écriture, avec le texte de la première étiquette antérieure qu’elle touche et le nombre d’étiquettes antérieures qu’elle touche en tout. Le test utilise la boîte propre de chaque ligne, tournée avec l’étiquette : une ligne courte à côté d’une longue laisse libre son côté, et deux lignes peuvent empiéter l’une sur l’autre d’un huitième de la hauteur d’une ligne. Le contrôle se fait dans chaque édition. Déplacez l’une des ancres, réduisez la `width` d’une étiquette pour qu’elle passe à la ligne, ou raccourcissez les mots dans le Markdown de cette édition. Dans le panneau des contrôles du Sandbox, le bouton d’épingle ouvre les ancres de l’image à l’ancre de l’étiquette.
 
 ## Exemple
 

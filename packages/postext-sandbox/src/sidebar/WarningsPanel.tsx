@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, File
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
+import { warningAnchor } from '../warnings/anchorTarget';
 import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
 import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
@@ -100,6 +101,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
+    case 'labelOverflow':
+    case 'labelOverlap':
     case 'unknownCalloutType':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -298,6 +301,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsLabelAnchorUnknownTitle;
     case 'anchorUnlabelled':
       return labels.warningsAnchorUnlabelledTitle;
+    case 'labelOverflow':
+      return labels.warningsLabelOverflowTitle;
+    case 'labelOverlap':
+      return labels.warningsLabelOverlapTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -649,6 +656,17 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
         .replace('__resource__', payload.resourceId)
         .replace('__page__', String(payload.page))
         .replace('__style__', payload.style)}`;
+    case 'labelOverflow':
+      return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${labels.warningsLabelOverflowDetail
+        .replace('__text__', payload.text)
+        .replace('__page__', String(payload.page))
+        .replace('__scale__', String(Math.round(payload.scale * 100)))}`;
+    case 'labelOverlap':
+      return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${(payload.count > 1 ? labels.warningsLabelOverlapDetailMany : labels.warningsLabelOverlapDetail)
+        .replace('__text__', payload.text)
+        .replace('__with__', payload.with)
+        .replace('__more__', String(payload.count - 1))
+        .replace('__page__', String(payload.page))}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':
@@ -984,9 +1002,9 @@ function WarningItem({
           {lineTag}
         </span>
       ) : undefined}
-      actions={onAnchor && (warning.payload.kind === 'labelAnchorUnknown' || warning.payload.kind === 'anchorUnlabelled') ? (
+      actions={onAnchor && warningAnchor(warning.payload) ? (
         <IconButton
-          label={(warning.payload.kind === 'labelAnchorUnknown' ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warning.payload.anchor)}
+          label={(warningAnchor(warning.payload)!.place ? labels.warningsPlaceAnchor : labels.warningsShowAnchor).replace('__id__', warningAnchor(warning.payload)!.anchor)}
           icon={<MapPin size={14} aria-hidden="true" />}
           onClick={() => onAnchor(warning)}
         />
@@ -1040,8 +1058,10 @@ export function WarningsPanel() {
   // A figure label's warning (#866): a name to place on the picture, or
   // the anchor left without a label, in the picture's anchor editor.
   const handleAnchor = (w: Warning) => {
-    if (w.payload.kind === 'labelAnchorUnknown') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, place: w.payload.anchor });
-    else if (w.payload.kind === 'anchorUnlabelled') requestAnchorEditor(dispatch, { resourceId: w.payload.resourceId, anchor: w.payload.anchor });
+    const target = warningAnchor(w.payload);
+    const resourceId = 'resourceId' in w.payload ? w.payload.resourceId : undefined;
+    if (!target || !resourceId) return;
+    requestAnchorEditor(dispatch, target.place ? { resourceId, place: target.anchor } : { resourceId, anchor: target.anchor });
   };
 
   const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;

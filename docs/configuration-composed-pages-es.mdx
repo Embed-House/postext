@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Hasta qué tamaño se puede reducir un rótulo cuando no cabe en su ancho.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Escritura vertical para los rótulos de este estilo: caracteres derechos en celdas una bajo otra, columnas de derecha a izquierda, como se rotula un mapa chino o japonés. El <code>writingMode</code> propio de un ancla manda.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Los anclajes de una imagen (`Resource.anchors`, los puntos que usan los cómics 
       <td><code>string</code></td>
       <td>ninguno</td>
       <td>Un id de <code>labelStyles</code>. Un rótulo que nombra su propio estilo lo sustituye.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compone el rótulo en vertical, como se rotula un mapa chino o japonés o un lomo. Entonces su <code>width</code> es una fracción de la altura de la imagen, <code>align</code> corre a lo largo de la columna (<code>start</code> es el extremo superior) y <code>verticalAlign</code> a lo ancho de las columnas (<code>top</code> es la primera, la de la derecha).</td>
     </tr>
   </tbody>
 </table>

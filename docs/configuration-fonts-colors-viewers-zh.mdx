@@ -662,7 +662,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`，声明的像素多于文件实有的像素时为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。
+`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`，声明的像素多于文件实有的像素时为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。图中的标注在`smallProcessText`、`inkLimit`和`safeZone`中按文字计算。
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -783,7 +783,7 @@ Postext排出的同一批页面既供屏幕显示，也供印刷机印刷，而�
 
 ### 检查哪些内容
 
-检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。
+检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。图中标注的文字会在其底板上读取，没有底板就在光晕内读取；直接放在图片上的标注和其他压在图片上的文字一样被跳过。
 
 在组合页面上，检查按页面的绘制顺序进行：各框架按图层排列，模板的 `decoration` 位于第 0 层。框架文字先看框架自身样式绘制的底框；没有底框时，看它下面的装饰方框（下面是装饰图片时跳过，与其他图片上的文字相同）；再没有，就看页面颜色。所以装饰中彩色页签上的白字，是拿那个页签的颜色来衡量的。旋转或缩放过的框架先换算到版面上再读取底色，装饰本身的文字也按同样方式检查。自 postext 1.37 起。
 

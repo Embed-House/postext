@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Até que tamanho um rótulo pode ser reduzido quando não cabe na sua largura.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Escrita vertical para os rótulos deste estilo: caracteres em pé em células uma sob a outra, colunas da direita para a esquerda, como se rotula um mapa chinês ou japonês. O <code>writingMode</code> próprio de uma âncora prevalece.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam 
       <td><code>string</code></td>
       <td>nenhum</td>
       <td>Um id de <code>labelStyles</code>. Um rótulo que nomeia o seu próprio estilo o substitui.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compõe o rótulo na vertical, como se rotula um mapa chinês ou japonês ou uma lombada. Então a sua <code>width</code> é uma fração da altura da imagem, <code>align</code> corre ao longo da coluna (<code>start</code> é o alto) e <code>verticalAlign</code> através das colunas (<code>top</code> é a primeira, a da direita).</td>
     </tr>
   </tbody>
 </table>

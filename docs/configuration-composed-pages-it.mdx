@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Quanto si può rimpicciolire un’etichetta che non entra nella sua larghezza.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>Scrittura verticale per le etichette di questo stile: caratteri dritti in celle una sotto l’altra, colonne da destra a sinistra, come si scrive una mappa cinese o giapponese. Il <code>writingMode</code> proprio di un’ancora prevale.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano 
       <td><code>string</code></td>
       <td>nessuno</td>
       <td>Un id di <code>labelStyles</code>. Un’etichetta che indica il proprio stile lo sostituisce.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> compone l’etichetta in verticale, come si scrive una mappa cinese o giapponese o un dorso. La sua <code>width</code> è allora una frazione dell’altezza dell’immagine, <code>align</code> corre lungo la colonna (<code>start</code> è l’alto) e <code>verticalAlign</code> attraverso le colonne (<code>top</code> è la prima, quella di destra).</td>
     </tr>
   </tbody>
 </table>

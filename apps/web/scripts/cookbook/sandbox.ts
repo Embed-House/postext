@@ -156,6 +156,8 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   continueTargetMissing: "1.38.0",
   calloutStyleExtendsUnknown: "1.39.0",
   calloutStyleExtendsCycle: "1.39.0",
+  labelOverflow: "1.39.0",
+  labelOverlap: "1.39.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

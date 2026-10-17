@@ -648,6 +648,12 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>أصغر ما يجوز أن تُنضَّد به التسمية حين لا تتسع لعرضها.</td>
     </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td>كتابة عمودية لتسميات هذا النمط: حروف قائمة في خانات بعضها تحت بعض، وأعمدة من اليمين إلى اليسار، كما تُكتب أسماء الخرائط الصينية واليابانية. ويتقدّم <code>writingMode</code> الخاص بالمرساة.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -696,6 +702,12 @@ labelStyles: [
       <td><code>string</code></td>
       <td>لا شيء</td>
       <td>معرّف من <code>labelStyles</code>. والتسمية التي تسمّي نمطها الخاص تتجاوزه.</td>
+    </tr>
+      <tr>
+      <td><code>writingMode</code></td>
+      <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
+      <td><code>'horizontal-tb'</code></td>
+      <td><code>'vertical-rl'</code> يضع التسمية عموديًّا، كما تُكتب الخرائط الصينية واليابانية وظهر الكتاب. ويصبح <code>width</code> جزءًا من ارتفاع الصورة، ويمتد <code>align</code> على طول العمود (<code>start</code> هو الأعلى) و<code>verticalAlign</code> عبر الأعمدة (<code>top</code> هو العمود الأول، الأيمن).</td>
     </tr>
   </tbody>
 </table>

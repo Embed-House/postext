@@ -7622,5 +7622,113 @@
         "it": "anchorUnlabelled"
       }
     }
+  },
+  "labelOverflow": {
+    "source": "engine",
+    "label": {
+      "en": "Label wider than its measure",
+      "es": "Rótulo más ancho que su medida",
+      "ca": "Rètol més ample que la seva mesura",
+      "zh": "标注超出了它的宽度",
+      "ar": "تسمية أعرض من قياسها",
+      "ja": "ラベルが幅に収まっていません",
+      "pt": "Rótulo mais largo que a sua medida",
+      "fr": "Étiquette plus large que sa mesure",
+      "de": "Beschriftung breiter als ihr Maß",
+      "it": "Etichetta più larga della sua misura"
+    },
+    "cause": {
+      "en": "A ::label is still wider than the width of its anchor at the smallest scale its label style allows (minScale). It is drawn at that scale and runs past its measure. Checked in each edition: a language with longer words overflows where another does not.",
+      "es": "Un ::label sigue siendo más ancho que el ancho de su ancla en la escala más pequeña que permite su estilo de rótulo (minScale). Se dibuja a esa escala y sobrepasa su medida. Se comprueba en cada edición: un idioma de palabras más largas se desborda donde otro no.",
+      "ca": "Un ::label continua sent més ample que l'amplada de la seva àncora a l'escala més petita que permet el seu estil de rètol (minScale). Es dibuixa a aquesta escala i sobrepassa la seva mesura. Es comprova a cada edició: una llengua de paraules més llargues es desborda on una altra no.",
+      "zh": "某个 ::label 即使缩小到标注样式允许的最小比例（minScale），仍然比锚点设定的宽度更宽。它按这个比例绘制，并超出自己的宽度。每个版本分别检查：词更长的语言会在别的语言不超出的地方超出。",
+      "ar": "تظل التسمية ‎::label‎ أعرض من عرض مرساتها عند أصغر مقياس يسمح به نمط التسمية (minScale). تُرسم بهذا المقياس وتتجاوز قياسها. يُفحص ذلك في كل طبعة: فاللغة ذات الكلمات الأطول تفيض حيث لا تفيض لغة أخرى.",
+      "ja": "::label が、ラベルスタイルが許す最小の倍率（minScale）に縮めてもアンカーの幅より広いままです。その倍率で描かれ、幅からはみ出します。版ごとに調べます。語の長い言語では、別の言語ではあふれない場所であふれます。",
+      "pt": "Um ::label continua mais largo do que a largura da sua âncora na menor escala que o seu estilo de rótulo permite (minScale). É desenhado nessa escala e ultrapassa a sua medida. A verificação é feita em cada edição: um idioma de palavras mais longas transborda onde outro não.",
+      "fr": "Une ::label reste plus large que la largeur de son ancre à la plus petite échelle que permet son style d'étiquette (minScale). Elle est dessinée à cette échelle et dépasse sa mesure. Le contrôle se fait dans chaque édition : une langue aux mots plus longs déborde là où une autre ne le fait pas.",
+      "de": "Ein ::label ist auch bei der kleinsten Skalierung, die sein Beschriftungsstil erlaubt (minScale), noch breiter als der Anker. Es wird in dieser Skalierung gezeichnet und ragt über sein Maß hinaus. Geprüft wird in jeder Ausgabe: Eine Sprache mit längeren Wörtern läuft dort über, wo eine andere es nicht tut.",
+      "it": "Una ::label resta più larga della larghezza della sua ancora alla scala minima che il suo stile di etichetta consente (minScale). Viene disegnata a quella scala e supera la sua misura. Il controllo si fa in ogni edizione: una lingua dalle parole più lunghe trabocca dove un'altra no."
+    },
+    "fix": {
+      "en": "Widen the anchor's width, shorten the word in this edition's Markdown, or lower the label style's minScale.",
+      "es": "Ensancha el ancho del ancla, acorta la palabra en el Markdown de esta edición o baja el minScale del estilo de rótulo.",
+      "ca": "Eixampla l'amplada de l'àncora, escurça la paraula al Markdown d'aquesta edició o abaixa el minScale de l'estil de rètol.",
+      "zh": "加宽锚点的宽度，在这一版本的 Markdown 中缩短该词，或调低标注样式的 minScale。",
+      "ar": "وسّع عرض المرساة، أو اختصر الكلمة في Markdown هذه الطبعة، أو اخفض minScale في نمط التسمية.",
+      "ja": "アンカーの幅を広げるか、この版の Markdown でその語を短くするか、ラベルスタイルの minScale を下げてください。",
+      "pt": "Alargue a largura da âncora, encurte a palavra no Markdown desta edição ou baixe o minScale do estilo de rótulo.",
+      "fr": "Élargissez l'ancre, raccourcissez le mot dans le Markdown de cette édition ou abaissez le minScale du style d'étiquette.",
+      "de": "Machen Sie den Anker breiter, kürzen Sie das Wort im Markdown dieser Ausgabe oder senken Sie den minScale des Beschriftungsstils.",
+      "it": "Allarga l'ancora, accorcia la parola nel Markdown di questa edizione o abbassa il minScale dello stile di etichetta."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "labelOverflow",
+        "es": "labelOverflow",
+        "ca": "labelOverflow",
+        "zh": "labelOverflow",
+        "ar": "labelOverflow",
+        "ja": "labelOverflow",
+        "pt": "labelOverflow",
+        "fr": "labelOverflow",
+        "de": "labelOverflow",
+        "it": "labelOverflow"
+      }
+    }
+  },
+  "labelOverlap": {
+    "source": "engine",
+    "label": {
+      "en": "Labels run into each other",
+      "es": "Rótulos que se pisan",
+      "ca": "Rètols que es trepitgen",
+      "zh": "标注相互重叠",
+      "ar": "تسميات تتداخل",
+      "ja": "ラベル同士が重なっています",
+      "pt": "Rótulos que se sobrepõem",
+      "fr": "Étiquettes qui se chevauchent",
+      "de": "Beschriftungen überdecken sich",
+      "it": "Etichette che si sovrappongono"
+    },
+    "cause": {
+      "en": "The lines of two labels of the same figure meet, or the text of one runs over the plate of another. The later label, in the order written, carries the warning. Checked in each edition: a translation with longer words can meet a neighbour that the original does not.",
+      "es": "Las líneas de dos rótulos de la misma figura se tocan, o el texto de uno pasa por encima del fondo de otro. El aviso lo lleva el rótulo posterior, en el orden en que están escritos. Se comprueba en cada edición: una traducción de palabras más largas puede tocar a un vecino que el original no toca.",
+      "ca": "Les línies de dos rètols de la mateixa figura es toquen, o el text d'un passa per damunt del fons d'un altre. L'avís el porta el rètol posterior, en l'ordre en què estan escrits. Es comprova a cada edició: una traducció de paraules més llargues pot tocar un veí que l'original no toca.",
+      "zh": "同一幅图的两个标注，文字行相互碰到，或者一个标注的文字压在另一个的底板上。警告出现在按书写顺序靠后的那个标注上。每个版本分别检查：词更长的译文可能碰到原文不会碰到的相邻标注。",
+      "ar": "يلتقي سطرا تسميتين من الشكل نفسه، أو يمتد نص إحداهما فوق خلفية الأخرى. يظهر التحذير على التسمية اللاحقة بحسب ترتيب الكتابة. يُفحص ذلك في كل طبعة: فقد تلامس ترجمةٌ ذات كلمات أطول جارةً لا يلامسها الأصل.",
+      "ja": "同じ図の二つのラベルの行がぶつかっているか、一方の文字が他方の下地の上に乗っています。警告は、書かれた順で後のほうのラベルに付きます。版ごとに調べます。語の長い訳文では、原文ではぶつからない隣のラベルにぶつかることがあります。",
+      "pt": "As linhas de dois rótulos da mesma figura se tocam, ou o texto de um passa por cima do fundo de outro. O aviso fica no rótulo posterior, na ordem em que foram escritos. A verificação é feita em cada edição: uma tradução de palavras mais longas pode tocar um vizinho que o original não toca.",
+      "fr": "Les lignes de deux étiquettes d'une même figure se touchent, ou le texte de l'une passe sur le fond d'une autre. L'avertissement porte sur l'étiquette postérieure, dans l'ordre d'écriture. Le contrôle se fait dans chaque édition : une traduction aux mots plus longs peut toucher une voisine que l'original ne touche pas.",
+      "de": "Die Zeilen zweier Beschriftungen derselben Abbildung berühren sich, oder der Text der einen läuft über die Unterlage einer anderen. Die Warnung trägt die in der Schreibreihenfolge spätere Beschriftung. Geprüft wird in jeder Ausgabe: Eine Übersetzung mit längeren Wörtern kann einen Nachbarn berühren, den das Original nicht berührt.",
+      "it": "Le righe di due etichette della stessa figura si toccano, oppure il testo di una passa sopra il fondo di un'altra. L'avviso è sull'etichetta successiva, nell'ordine in cui sono scritte. Il controllo si fa in ogni edizione: una traduzione dalle parole più lunghe può toccare una vicina che l'originale non tocca."
+    },
+    "fix": {
+      "en": "Move one of the anchors, narrow the label's width so it wraps, or shorten the words in this edition's Markdown.",
+      "es": "Mueve una de las anclas, estrecha el ancho del rótulo para que se parta en líneas o acorta las palabras en el Markdown de esta edición.",
+      "ca": "Mou una de les àncores, estreny l'amplada del rètol perquè es parteixi en línies o escurça les paraules al Markdown d'aquesta edició.",
+      "zh": "移动其中一个锚点，减小标注的宽度让它换行，或在这一版本的 Markdown 中缩短文字。",
+      "ar": "حرّك إحدى المرساتين، أو قلّل عرض التسمية لتنقسم إلى سطور، أو اختصر الكلمات في Markdown هذه الطبعة.",
+      "ja": "アンカーの一方を動かすか、ラベルの幅を狭めて折り返させるか、この版の Markdown で語を短くしてください。",
+      "pt": "Mova uma das âncoras, estreite a largura do rótulo para que ele quebre em linhas ou encurte as palavras no Markdown desta edição.",
+      "fr": "Déplacez l'une des ancres, réduisez la largeur de l'étiquette pour qu'elle passe à la ligne, ou raccourcissez les mots dans le Markdown de cette édition.",
+      "de": "Verschieben Sie einen der Anker, verringern Sie die Breite der Beschriftung, damit sie umbricht, oder kürzen Sie die Wörter im Markdown dieser Ausgabe.",
+      "it": "Sposta una delle ancore, riduci la larghezza dell'etichetta perché vada a capo, oppure accorcia le parole nel Markdown di questa edizione."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "labelOverlap",
+        "es": "labelOverlap",
+        "ca": "labelOverlap",
+        "zh": "labelOverlap",
+        "ar": "labelOverlap",
+        "ja": "labelOverlap",
+        "pt": "labelOverlap",
+        "fr": "labelOverlap",
+        "de": "labelOverlap",
+        "it": "labelOverlap"
+      }
+    }
   }
 }

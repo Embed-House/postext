@@ -114,6 +114,22 @@ Außerhalb einer zusammengesetzten Seite wird ein `slot` gelesen und ändert nic
 
 Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Beschriftungen werden als Text auf das Bild gezeichnet und gehen überallhin mit, wo die Abbildung steht: in eine Spalte, einen Float, einen gedrehten Rahmen oder einen, dessen Inhalt zum Einpassen verkleinert wird, auf eine Doppelseite. Eine Zeile in einer Abbildung, die weder Beschriftung noch leer ist, beendet eine Abbildung ohne schließendes `:::` und wird als nicht geschlossener Container gemeldet.
 
+### Die eigenen Worte einer Abbildung
+
+Die Ressource hält ein Bild, seine Anker und einen einzigen Satz Wörter, aber jede Ausgabe eines Buchs sagt ihre eigenen. Eine Abbildung kann `alt`, `caption` und `note` selbst angeben, im Zaun oder in eigenen Zeilen, und sie ersetzen die der Ressource auf den Seiten dieser Datei:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Als Attribute des Zauns nehmen `alt`, `caption` und `note` einen kurzen Text in Anführungszeichen. Die Zeilen `::alt[…]`, `::caption[…]` und `::note[…]` nehmen den Text in eckigen Klammern, der Inline-Markdown und `\\` für einen Zeilenumbruch enthalten darf, wie die Bildunterschrift und die Anmerkung einer Ressource. Eine Zeile geht dem gleichnamigen Attribut vor; die Zeilen stehen zwischen den Beschriftungen, Leerzeilen sind erlaubt.
+- Was die Abbildung nicht angibt, bleibt das der Ressource. Ein leerer Wert sagt nichts: `caption=""` entfernt die Bildunterschrift, `alt=""` kennzeichnet das Bild als dekorativ.
+- Die Worte ersetzen die der Ressource in dem Kapitel, das sie nennt: Satz, Alternativtext jeder Ausgabe und getaggtes PDF lesen sie, die Ressource selbst bleibt unverändert. Eine Ressource, die zwei Abbildungen einer Datei setzen, übernimmt die Worte der ersten. Anders als eine Beschriftung wird eine Bildunterschrift nicht Zeichen für Zeichen auf das Markdown abgebildet; `sourceAt` antwortet auf einen Klick darauf wie bei der Bildunterschrift einer Ressource.
+
 ### Wie eine Beschriftung gesetzt wird
 
 - **Wo.** Eine Beschriftung steht am Punkt ihres Ankers, einem Bruchteil des ganzen Bildes. Wird das Bild auf seine sichere Zone beschnitten oder kleiner gesetzt, wandert die Beschriftung mit der Zeichnung. `align` am Anker legt fest, welche Seite der Beschriftung am Punkt steht, `verticalAlign`, welche Kante auf seiner Höhe. `start` und `end` folgen der Richtung der Beschriftung selbst: im Arabischen ist `start` ihre rechte Kante. `rotate` dreht die Beschriftung im Uhrzeigersinn um den Punkt, in jedem Winkel: ein Fluss entlang seines Laufs, Hügel schräg gestellt.
@@ -121,6 +137,8 @@ Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Besch
 - **Einpassen.** Hat ihr Anker eine `width`, bricht die Beschriftung innerhalb dieser Satzbreite zwischen den Wörtern um, nie innerhalb eines Worts. Ist ein Wort breiter als die Satzbreite, wird die ganze Beschriftung kleiner gesetzt, bis zum `minScale` ihres Stils; passt sie auch dann nicht, wird sie mit geteiltem breitestem Wort gezeichnet. Ohne `width` bleibt die Beschriftung einzeilig, außer wo sie mit `\\` umbricht, wie in einer Bildunterschrift.
 - **Text.** Der Text in eckigen Klammern ist Inline-Markdown und wird wie eine Bildunterschrift gesetzt: fett, kursiv, Chips, Hervorhebungen, Verweise, Formeln im Text. Ein Name aus mehreren Wörtern ist eine einzige Beschriftung, gleich in welcher Reihenfolge die Wörter in einer Sprache stehen: `::label[ATLANTISCHER OZEAN]` und `::label[OCÉANO ATLÁNTICO]` stehen am selben Anker. Beschriftungen von rechts nach links werden von rechts nach links gesetzt; chinesische und japanische brechen zwischen den Zeichen um.
 - **Ausgaben.** Canvas, PDF, HTML-Viewer, das EPUB mit festem Layout und Folio zeichnen die Beschriftungen. Auf einer Seite von rechts nach links bleibt eine Beschriftung dort, wo das Bild sie zeigt.
+- **Vertikal.** Mit `writingMode: 'vertical-rl'` am Anker (oder an seinem Beschriftungsstil) wird die Beschriftung wie eine vertikale Seite gesetzt: die Zeichen aufrecht in Zellen untereinander, die Spalten von rechts nach links, lateinische Wörter und lange Zahlen seitwärts gedreht, kurze Zahlen in einer Zelle. `width` ist dann ein Anteil der Bildhöhe, die Länge einer Spalte, und eine chinesische oder japanische Beschriftung bricht in weitere Spalten um. `align` läuft entlang der Spalte (`start` ist ihr oberes Ende), `verticalAlign` quer zu den Spalten (`top` ist die erste, rechte), und `rotate` dreht die Beschriftung weiter.
+- **Prüfungen.** Eine Beschriftung, die mit dem `minScale` ihres Stils noch breiter als ihre Satzbreite ist, löst `labelOverflow` aus; zwei Beschriftungen, deren Zeilen sich berühren, lösen `labelOverlap` an der späteren aus. Beide werden in jeder Ausgabe geprüft, eine Übersetzung mit längeren Wörtern zeigt also, wo sie Platz braucht. Die Palette eines Teils (`:::part{palette="…"}`) färbt die Beschriftungen seiner Seiten um, wie sie es bei Bildunterschriften tut. Die Kontrastprüfung liest eine Beschriftung auf ihrer Platte, sonst innerhalb ihres Halos; eine Beschriftung direkt auf dem Bild wird übergangen, weil ihr Grund das Bild ist. Der Druck-Preflight zählt die kleine Schrift einer Beschriftung in Prozessfarben, ihre Farben und ihren Abstand zum Beschnitt.
 
 ### labelAnchorUnknown
 
@@ -133,6 +151,14 @@ Im Panel Prüfungen der Sandbox führt die Warnung zur Beschriftung im Panel Tex
 Ein Anker der Ressource der Abbildung nennt einen Beschriftungsstil, und in dieser Sprache steht dort kein `::label` der Abbildung: Die Karte hat Platz für ein Wort, das diese Ausgabe weglässt. Es ist ein Hinweis; `postext check` führt ihn als `info`. Anker ohne Stil, etwa der einer Comicfigur, werden nicht gemeldet. Die Warnung enthält die Ressource, den Anker, seinen Stil, die Sprache, die Seite und den Quellbereich der Abbildung. Schreiben Sie die Beschriftung in das Markdown dieser Sprache, oder nehmen Sie dem Anker den Stil.
 
 Im Panel Prüfungen führt sie zur Abbildung im Panel Text, und ihre Schaltfläche mit der Stecknadel öffnet die Anker des Bildes bei diesem Anker.
+
+### labelOverflow
+
+Eine Beschriftung ist auch bei der kleinsten Skalierung, die ihr Beschriftungsstil erlaubt (`minScale`), noch breiter als die `width` ihres Ankers: Sie wird in dieser Skalierung gezeichnet und ragt über ihre Satzbreite hinaus. Die Warnung nennt die Ressource, den Text der Beschriftung, ihren Anker (keinen bei einer Beschriftung mit Prozentangaben), die vorgegebene Breite, die erreichte Skalierung, die Sprache, die Seite und den Quellbereich des Beschriftungstexts. Sie wird in jeder Ausgabe geprüft, eine Sprache mit längeren Wörtern läuft also dort über, wo eine andere es nicht tut. Machen Sie die `width` des Ankers größer, kürzen Sie das Wort im Markdown dieser Ausgabe oder senken Sie das `minScale` des Beschriftungsstils. Eine chinesische oder japanische Beschriftung bricht zwischen den Zeichen um und läuft so nicht über.
+
+### labelOverlap
+
+Die Zeilen zweier Beschriftungen derselben Abbildung berühren sich; eine Beschriftung mit Platte zählt als ihre Platte. Die in der Schreibreihenfolge spätere Beschriftung trägt die Warnung, mit dem Text der ersten früheren Beschriftung, die sie berührt, und der Zahl der früheren Beschriftungen, die sie insgesamt berührt. Die Prüfung nimmt den eigenen Kasten jeder Zeile, mit der Beschriftung gedreht: Eine kurze Zeile neben einer langen lässt ihre Seite frei, und zwei Zeilen dürfen einander um bis zu ein Achtel einer Zeilenhöhe überlappen. Sie läuft in jeder Ausgabe. Verschieben Sie einen der Anker, verringern Sie die `width` einer Beschriftung, damit sie umbricht, oder kürzen Sie die Wörter im Markdown dieser Ausgabe. Im Prüfungsbereich des Sandbox öffnet die Stecknadel die Anker des Bildes am Anker der Beschriftung.
 
 ## Beispiel
 

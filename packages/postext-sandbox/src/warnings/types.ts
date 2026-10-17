@@ -48,6 +48,8 @@ export type WarningKind =
   | 'spreadMismatch'
   | 'labelAnchorUnknown'
   | 'anchorUnlabelled'
+  | 'labelOverflow'
+  | 'labelOverlap'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -285,6 +287,12 @@ export type WarningPayload =
   /** An anchor of a figure's resource names a label style and no label of
    *  the figure stands at it in this locale (#860): a note. */
   | { kind: 'anchorUnlabelled'; resourceId: string; anchor: string; style: string; page: number; locale?: string }
+  /** A figure label still wider than its measure at its style's
+   *  `minScale` (#902): drawn at `scale` and running past it. */
+  | { kind: 'labelOverflow'; resourceId: string; text: string; anchor?: string; widthPct: number; scale: number; page: number; locale?: string }
+  /** A label whose lines meet an earlier label's (#902): `count` earlier
+   *  labels in all, `with` the first of them. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; page: number; locale?: string }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */
