@@ -212,7 +212,8 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
           ))}
         </div>
         {filtered.length === 0 ? (
-          <p className="m-0 px-3 pb-2 text-[0.7rem] text-(--slate)">{labels.composedChecksEmpty}</p>
+          // Nothing is said of editions that were not checked.
+          editions.waiting ? null : <p className="m-0 px-3 pb-2 text-[0.7rem] text-(--slate)">{labels.composedChecksEmpty}</p>
         ) : groups.map((g) => (
           <div key={g.key} className="pb-1">
             <h4 className="m-0 px-3 pt-1 text-[0.64rem] font-semibold uppercase tracking-[0.04em] text-(--slate)">
