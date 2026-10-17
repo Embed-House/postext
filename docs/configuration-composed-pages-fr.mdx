@@ -259,9 +259,9 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>aucun</td>
-      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture.</td>
+      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture. Avec <code>'toc'</code>, il reçoit le <code>:::toc</code> de la page qui ne nomme aucun emplacement et le compose selon les règles de la table des matières (depuis postext 1.42 ; voir <a href="/fr/docs/composed-pages">Pages composées</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
+
+**Tenir des blocs au pied d’une carte (depuis postext 1.42).** Un bloc ancré sous le texte qui le surmonte suit ce texte : dans une édition où le texte compte une ligne de moins ou de plus, les blocs situés dessous montent ou descendent, tandis que ce que dessine le modèle (une carte, un bandeau, le pied) reste en place. Pour que des blocs restent au pied d’une carte, là où le modèle les met, réunissez les blocs de la carte en une pile dotée d’une boîte de la hauteur de la carte. Les blocs placés au-dessus de ceux qu’on retient prennent l’espace en trop (`grow: 1`) et le rendent (`shrink: 1`) ; les blocs retenus écrivent un `minHeight`. Un texte plus court laisse les blocs retenus où ils étaient. Un texte plus long est comprimé au-dessus d’eux : ils gardent leur `minHeight`, le texte du dessus est réduit et, si cela ne suffit pas, la mise en page signale `frameOverflow` et le journal de recomposition note `textScaled` et `overflow` pour le bloc du dessus. Un bloc ancré au pied du conteneur (`bottom-left`) garde aussi sa place, mais rien ne le lie aux blocs qui le surmontent : un texte plus long le recouvre, rien n’est comprimé pour lui et le chevauchement n’est pas signalé.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+Le bloc qui grandit est aussi haut que la place disponible, quoi qu’il contienne ; un style à fond visible le peindrait donc tout entier : peignez la carte dans la décoration du modèle et laissez le bloc de texte sans style.
 
 ### Quand le contenu ne tient pas
 

@@ -513,6 +513,8 @@ Um elemento ancorado num elemento que não reserva espaço continua contando, a 
 # Letter from the chair
 ```
 
+Uma página de sumário composta no texto corrido, com o título num desenho de título, mostra o mesmo: uma caixa ancorada à sangria que desce até o corte reserva a coluna inteira, e a primeira entrada do sumário vai para a página seguinte, deixando a página vazia. Marque a caixa com `reserve: false`. Se o sumário precisa de um fundo sob a folha inteira, componha-o de preferência num bloco de uma [página composta](/pt/docs/composed-pages): a decoração do modelo é pintada sob o texto, em cada página que o sumário ocupa.
+
 #### Em caixas e blocos
 
 Um título dentro de uma caixa (`:::callout`) ou de um bloco de uma [página composta](/pt/docs/composed-pages) também é desenhado pelo seu design: o `advancedDesign` do seu nível ou do seu estilo de título põe a aba, a faixa, os fios e `{titleText}` no lugar das suas linhas, como numa coluna da página. O design é composto sobre a própria caixa do título, tão larga quanto o texto da caixa, e a caixa reserva o espaço que o design ocupa: o mais alto entre o texto do título, o pé do conteúdo do design e `minHeight` ([Altura reservada](#altura-reservada)). Uma caixa não tem grade de linhas de base, então esse espaço não é arredondado para uma linha; depois vem o `marginBottom` do título, como depois de qualquer título da caixa. Um elemento ancorado ao contêiner com um deslocamento negativo sai da caixa do título, por cima do preenchimento ou da aba da caixa; a caixa não o corta, a não ser que o conteúdo de um bloco passe do pé dele (um bloco que transborda recorta tudo o que contém). Os elementos ancorados a `'page'` ou `'bleed'` continuam referidos à página.

@@ -259,9 +259,9 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>none</td>
-      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence.</td>
+      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence. With <code>'toc'</code> it receives the <code>:::toc</code> of the page that names no slot and sets it by the rules of the contents (since postext 1.42; see <a href="/en/docs/composed-pages">Composed pages</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 The result depends only on the page's content, the template and the typography: the same input gives the same page, measured in the same order with the same steps. The negotiation never reads another page, so a change on one composed page leaves every other page as it was, as long as the content stays on its page.
+
+**Holding frames at the foot of a card (since postext 1.42).** A frame anchored below the text above it follows that text: in an edition where the text is a line shorter or longer, the frames under it move up or down, while what the template draws (a card, a band, the foot) stays where it is. To keep frames at the foot of a card, where the template puts them, make the card's frames one stack with a box of the card's height. The frames above the held ones take the spare space (`grow: 1`) and give it back (`shrink: 1`); the held ones write a `minHeight`. A shorter text leaves the held frames where they were. A longer one is squeezed above them: they keep their `minHeight`, the text above is scaled down and, if it still does not fit, the layout reports `frameOverflow` and the reflow log lists `textScaled` and `overflow` for the frame above. A frame anchored to the container's foot (`bottom-left`) holds its place too, but nothing links it to the frames above it: a longer text runs over it, nothing is squeezed for it and the overlap is not reported.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+The frame that grows is as tall as the room, whatever it holds, so a style with a visible background would paint all of it: paint the card in the template's decoration and leave the text frame without a style.
 
 ### When content does not fit
 

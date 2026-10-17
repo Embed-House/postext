@@ -259,9 +259,9 @@ Un marc es col·loca per la seva cel·la de `grid` quan la plantilla té retícu
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>cap</td>
-      <td>El marc rep el primer encapçalament d'aquest nivell que no anomena cap buit, de manera que el títol d'una pàgina és només un <code># Títol</code> al principi del bloc.</td>
+      <td>El marc rep el primer encapçalament d'aquest nivell que no anomena cap buit, de manera que el títol d'una pàgina és només un <code># Títol</code> al principi del bloc. Amb <code>'toc'</code> rep el <code>:::toc</code> de la pàgina que no anomena cap buit i el compon amb les regles de l'índex (des de postext 1.42; vegeu <a href="/ca/docs/composed-pages">Pàgines compostes</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 El resultat només depèn del contingut de la pàgina, de la plantilla i de la tipografia: la mateixa entrada dona la mateixa pàgina, mesurada en el mateix ordre i amb els mateixos passos. La negociació mai no llegeix cap altra pàgina, de manera que un canvi en una pàgina composta deixa totes les altres com estaven, sempre que el contingut no surti de la seva pàgina.
+
+**Mantenir marcs al peu d'una targeta (des de postext 1.42).** Un marc ancorat sota el text que té a sobre segueix aquest text: en una edició on el text és una línia més curt o més llarg, els marcs de sota pugen o baixen, mentre que el que dibuixa la plantilla (una targeta, una franja, el peu) es queda on és. Perquè els marcs es mantinguin al peu d'una targeta, on la plantilla els posa, reuneix els marcs de la targeta en una pila amb una caixa de l'alçada de la targeta. Els marcs que van damunt dels retinguts prenen l'espai sobrant (`grow: 1`) i el retornen (`shrink: 1`); els retinguts escriuen un `minHeight`. Un text més curt deixa els marcs retinguts on eren. Un de més llarg s'estreny per damunt d'ells: conserven el seu `minHeight`, el text de dalt es redueix i, si tot i així no hi cap, la maquetació avisa amb `frameOverflow` i el registre de reajustament anota `textScaled` i `overflow` per al marc de dalt. Un marc ancorat al peu del contenidor (`bottom-left`) també conserva el seu lloc, però res no l'uneix als marcs de damunt: un text més llarg hi passa per sobre, res no s'estreny per ell i la superposició no s'avisa.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+El marc que creix fa tant com l'espai lliure, contingui el que contingui, així que un estil amb fons visible el pintaria sencer: pinta la targeta a la decoració de la plantilla i deixa el marc de text sense estil.
 
 ### Quan el contingut no hi cap
 

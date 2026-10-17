@@ -259,9 +259,9 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>无</td>
-      <td>框接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。</td>
+      <td>框接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。取<code>'toc'</code>时，框接收页面中没有指定槽位的<code>:::toc</code>，并按目录自己的规则排版（自 postext 1.42 起；见<a href="/zh/docs/composed-pages">模板页</a>）。</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 结果只取决于页面的内容、模板和排版设置：同样的输入得到同样的页面，测量的顺序和步骤也都相同。这种协调从不读取别的页面，所以只要内容还留在自己的页上，修改一个组合页面不会改变其他任何页面。
+
+**把框固定在卡片底部（自 postext 1.42 起）。** 锚在上方文字之下的框会跟着那段文字走：在文字少一行或多一行的版本里，它下面的框随之上移或下移，而模板画出的东西（卡片、色带、页脚）留在原处。要让框留在卡片底部、模板放置它们的位置，就把卡片的各个框放进同一个纵向组（`stack`），组的方框与卡片等高。被固定的框上方的框吸收多出来的空间（`grow: 1`），也让出空间（`shrink: 1`）；被固定的框写一个`minHeight`。文字变短时，被固定的框原地不动。文字变长时，挤压发生在它们上方：它们保持`minHeight`，上方的文字被缩小，仍放不下时，排版给出`frameOverflow`，重排记录里上方那个框会记下`textScaled`和`overflow`。锚在容器底部（`bottom-left`）的框同样守住自己的位置，但没有任何东西把它和上方的框联系起来：较长的文字会盖到它上面，不会为它挤压任何东西，重叠也不会报告。
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+增长的那个框和可用空间一样高，不论里面放了什么，所以带可见背景的样式会把整块都涂满：请把卡片画在模板的装饰里，文字框不设样式。
 
 ### 内容放不下时
 

@@ -92,6 +92,7 @@ So wird der Inhalt verteilt:
 - Mehrere Stücke mit demselben Slot werden in der Reihenfolge des Markdowns aneinandergefügt.
 - Inhalt ohne Slot kommt in den **Flussrahmen** der Vorlage (den mit `flow` markierten Rahmen).
 - Eine Überschrift ohne Slot kommt zuerst in den Rahmen, der ihre Ebene übernimmt (`takes: "h1"`), sofern die Vorlage einen solchen hat; der Titel eines Schulbuchthemas ist also einfach `# Titel` oben auf der Seite.
+- Ein `:::toc` ohne Slot kommt in den Rahmen mit `takes: "toc"`, sofern die Vorlage einen hat (siehe *Das Inhaltsverzeichnis in einem Rahmen*, weiter unten).
 - Inhalt, der einen Slot nennt, den die Vorlage nicht kennt, kommt in den Flussrahmen und wird gemeldet (`slotUnknown`).
 
 Außerhalb einer zusammengesetzten Seite wird ein `slot` gelesen und ändert nichts.
@@ -213,6 +214,22 @@ Seine Höhe ist fest (eine Länge oder ein Prozentwert), `fill` (bis an den Rand
 Inhalt, der keinen Slot nennt, kommt in den mit `flow` markierten Rahmen; die erste Überschrift einer Ebene kommt in den Rahmen, der sie mit `takes` übernimmt. Die Rahmen einer Seite werden in der Reihenfolge gelesen, in der ihr Inhalt zum ersten Mal im Markdown auftaucht, jeder als Ganzes: Ein Screenreader, das getaggte PDF und die Ausgaben mit fließendem Layout lesen einen Kasten nach dem Text, mit dem die Seite beginnt, nicht mitten darin.
 
 Eine Überschrift in einem Rahmen behält die Gestaltung ihrer Ebene oder Überschriftenvorlage (einen Reiter, ein Band, `{titleText}` von der Gestaltung gesetzt), in der Breite des Rahmens gesetzt wie in einer Spalte der Seite, und der Rahmen hält den Platz frei, den sie braucht; ein Rahmen mit verkleinertem Text verkleinert die Gestaltung mit, ein gedrehter Rahmen dreht sie mit. Siehe [In Kästen und Rahmen](/de/docs/configuration-headings#in-kästen-und-rahmen). Bis postext 1.36 wurde eine solche Überschrift ohne Gestaltung gesetzt.
+
+### Das Inhaltsverzeichnis in einem Rahmen
+
+Ein Rahmen kann das Inhaltsverzeichnis setzen (seit postext 1.42). Geben Sie der Vorlage einen Rahmen mit `takes: "toc"` und schreiben Sie `:::toc` in die Seitenbegrenzung, oder schreiben Sie es in den `:::frame`, der den Slot nennt:
+
+```md
+::::page{template="contents"}
+# In dieser Einheit {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+Der Rahmen setzt die Zeilen nach den Regeln des Inhaltsverzeichnisses, wie es der Fließtext tut. Ein Teil hat seine Zeile, gezeichnet aus `toc.parts.design`; ein Eintrag behält seine Nummer, seine Füllpunkte und das Seitenlabel und verweist auf die Seite, die er aufführt; der Rahmen fügt zwischen den Einträgen keinen Absatzabstand hinzu. `keep` wirkt im Rahmen: Mit `overflow.continueIn: "next-page"` geht ein Block des Verzeichnisses, den ein ganzer Rahmen aufnehmen kann, ungeteilt auf die hinzugefügte Seite, und ein Block, der höher ist als der Rahmen, wird nach seinem Kopf und `toc.groups.minEntriesAfterHead` Einträgen geteilt; die hinzugefügte Seite beginnt mit dem wiederholten Kopf (`toc.groups.continuation`). Die Marke am Schnitt (`overflow.mark`) und die Worte am Anfang der hinzugefügten Seite (`overflow.fromMark`) sind die jedes Rahmens.
+
+Der Titel über der Liste ist eine gewöhnliche Überschrift, und das Verzeichnis führt ihn auf, wenn sein Überschriftenstil nicht `toc: false` sagt oder die Überschrift nicht `{toc="false"}` trägt, wie im Fließtext. Der Grund der Seite, eine Farbe oder ein Bild unter dem ganzen Bogen, ist die Dekoration der Vorlage: Sie wird unter den Rahmen gemalt und wiederholt sich auf jeder Seite, die das Verzeichnis hinzufügt. Ein Seitenumbruch zwischen den Teilen (`toc.parts.breakBefore`) wirkt in einem Rahmen nicht.
 
 ### Rahmen verketten
 

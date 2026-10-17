@@ -92,6 +92,7 @@ Com es reparteix el contingut:
 - Diversos trossos amb el mateix slot s'ajunten en l'ordre del Markdown.
 - El contingut sense slot va al **marc de flux** de la plantilla (el que porta `flow`).
 - Un encapçalament sense slot va primer al marc que pren el seu nivell (`takes: "h1"`), si la plantilla en té cap, així que el títol d'un tema d'un llibre de text és un simple `# Títol` al capdamunt de la pàgina.
+- Un `:::toc` sense slot va al marc que `takes: "toc"`, si la plantilla en té cap (vegeu *L'índex en un marc*, més avall).
 - El contingut que anomena un slot que la plantilla no té va al marc de flux i s'assenyala (`slotUnknown`).
 
 Un `slot` fora d'una pàgina composta es llegeix i no canvia res.
@@ -213,6 +214,22 @@ La seva alçada és fixa (una longitud o un percentatge), `fill` (fins a la vora
 El contingut que no anomena cap slot va al marc marcat amb `flow`; el primer encapçalament d'un nivell va al marc que el pren amb `takes`. Els marcs d'una pàgina es llegeixen en l'ordre en què el seu contingut apareix per primer cop al Markdown, cadascun sencer: un lector de pantalla, el PDF etiquetat i les sortides de maquetació fluida llegeixen una caixa després del text que obre la pàgina, no pas al mig.
 
 Un encapçalament posat en un marc conserva el disseny del seu nivell o del seu estil d'encapçalament (una pestanya, una banda, `{titleText}` compost pel disseny), compost a l'amplada del marc com en una columna de la pàgina, i el marc guarda el lloc que el disseny ocupa; si el text del marc es redueix, el disseny es redueix amb ell, i si el marc està girat, gira amb ell. Vegeu [En caixes i marcs](/ca/docs/configuration-headings#en-caixes-i-marcs). Fins a postext 1.36 aquest encapçalament es componia sense disseny.
+
+### L'índex en un marc
+
+Un marc pot compondre l'índex (des de postext 1.42). Dona a la plantilla un marc amb `takes: "toc"` i escriu `:::toc` a la tanca de pàgina, o escriu-lo dins del `:::frame` que anomena el slot:
+
+```md
+::::page{template="contents"}
+# En aquesta unitat {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+El marc compon les files amb les regles de l'índex, igual que el text corregut. Una part té la seva fila, dibuixada des de `toc.parts.design`; una entrada conserva el seu número, els seus punts guia i l'etiqueta de la seva pàgina, i enllaça amb la pàgina que llista; el marc no afegeix espaiat de paràgraf entre les entrades. `keep` funciona al marc: amb `overflow.continueIn: "next-page"`, un bloc de l'índex que cap sencer en un marc passa sencer a la pàgina afegida, i un de més alt que el marc es talla després del seu cap i de `toc.groups.minEntriesAfterHead` entrades, i la pàgina afegida comença amb el cap repetit (`toc.groups.continuation`). La marca del tall (`overflow.mark`) i les paraules a l'inici de la pàgina afegida (`overflow.fromMark`) són les de qualsevol marc.
+
+El títol que va sobre la llista és un encapçalament corrent, i l'índex el llista llevat que el seu estil d'encapçalament digui `toc: false` o l'encapçalament dugui `{toc="false"}`, com al text corregut. El fons de la pàgina, un color o una imatge sota tot el full, és la decoració de la plantilla: es pinta sota els marcs i es repeteix a cada pàgina que afegeix l'índex. Un salt de pàgina entre parts (`toc.parts.breakBefore`) no té cap efecte dins d'un marc.
 
 ### Encadenar marcs
 

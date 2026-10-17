@@ -92,6 +92,7 @@ Il contenuto si distribuisce così:
 - Più pezzi con lo stesso slot vengono uniti nell’ordine del Markdown.
 - Il contenuto senza slot va nella **cornice di flusso** del modello (la cornice marcata `flow`).
 - Un titolo senza slot va per prima cosa nella cornice che prende il suo livello (`takes: "h1"`), se il modello ne ha una; così il titolo di un argomento del libro di scuola è semplicemente `# Titolo` in cima alla pagina.
+- Un `:::toc` senza slot va alla cornice con `takes: "toc"`, se il modello ne ha una (vedi *L’indice in una cornice*, più sotto).
 - Il contenuto che indica uno slot che il modello non ha va nella cornice di flusso e viene segnalato (`slotUnknown`).
 
 Fuori da una pagina composta, uno `slot` viene letto e non cambia nulla.
@@ -213,6 +214,22 @@ La sua altezza è fissa (una lunghezza o una percentuale), `fill` (fino al bordo
 Il contenuto che non indica nessuno slot va nella cornice marcata `flow`; il primo titolo di un livello va nella cornice che lo prende con `takes`. Le cornici di una pagina si leggono nell’ordine in cui il loro contenuto compare per la prima volta nel Markdown, ciascuna per intero: un lettore di schermo, il PDF con tag e le uscite a layout fluido leggono un riquadro dopo il testo che apre la pagina, non nel mezzo.
 
 Un titolo messo in una cornice conserva il progetto grafico del suo livello o del suo stile di titolo (una linguetta, una fascia, `{titleText}` composto dal progetto), composto alla larghezza della cornice come in una colonna della pagina, e la cornice tiene lo spazio che il progetto occupa; una cornice con il testo ridotto riduce il progetto con sé, una cornice ruotata lo ruota. Vedi [Nei riquadri e nelle cornici](/it/docs/configuration-headings#nei-riquadri-e-nelle-cornici). Fino a postext 1.36 un titolo così si componeva senza progetto.
+
+### L’indice in una cornice
+
+Una cornice può comporre l’indice (da postext 1.42). Dai al modello una cornice con `takes: "toc"` e scrivi `:::toc` nel recinto della pagina, oppure scrivilo dentro il `:::frame` che indica lo slot:
+
+```md
+::::page{template="contents"}
+# In questa unità {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+La cornice compone le righe con le regole dell’indice, come il testo corrente. Una parte ha la sua riga, disegnata da `toc.parts.design`; una voce mantiene il suo numero, i suoi puntini di guida e l’etichetta della sua pagina, e rimanda alla pagina che elenca; la cornice non aggiunge spaziatura di paragrafo fra le voci. `keep` funziona nella cornice: con `overflow.continueIn: "next-page"`, un blocco dell’indice che una cornice intera può contenere passa intero alla pagina aggiunta, e un blocco più alto della cornice viene tagliato dopo la sua testa e `toc.groups.minEntriesAfterHead` voci, con la pagina aggiunta che si apre con la testa ripetuta (`toc.groups.continuation`). Il segno del taglio (`overflow.mark`) e le parole in testa alla pagina aggiunta (`overflow.fromMark`) sono quelli di qualunque cornice.
+
+Il titolo sopra l’elenco è un titolo ordinario, e l’indice lo elenca a meno che il suo stile di titolo dica `toc: false` o il titolo porti `{toc="false"}`, come nel testo corrente. Lo sfondo della pagina, un colore o un’immagine sotto tutto il foglio, è la decorazione del modello: si dipinge sotto le cornici e si ripete su ogni pagina che l’indice aggiunge. Un’interruzione di pagina fra le parti (`toc.parts.breakBefore`) non ha effetto dentro una cornice.
 
 ### Concatenare le cornici
 

@@ -576,6 +576,8 @@ The plain text of the poem keeps the hemistichs and bayts apart (a tab and a lin
 
 `:::toc` prints the table of contents where it stands. It expands into ordinary blocks — one per heading of the levels `toc.levels` lists (level 1 by default) and one per `:::part` — so the contents flow through columns and pages like any other text and a click on an entry lands on the directive line. An entry shows the heading's number (its `numberingTemplate` output, else the chapter ordinal), its title, a dotted leader and the label of the page it starts on, and, when `toc.subtitle` is enabled, a second line with a heading attribute such as the chapter's `{author="…"}`. A part gets a row of its own, designed by `toc.parts.design` and coloured with the part's own `palette`. Headings whose style has `numbered: false` are listed without a number; `{toc="false"}` on a heading keeps it out (the contents' own heading, typically).
 
+In a composed page, a frame with `takes: "toc"`, or a `:::frame` that holds the directive, sets the contents with their part rows, leaders and `keep` (see [Composed pages](/en/docs/composed-pages)).
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

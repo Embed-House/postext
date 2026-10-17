@@ -576,6 +576,8 @@ Le texte brut du poème garde les hémistiches et les bayts séparés (une tabul
 
 `:::toc` imprime la table des matières là où il se trouve. Il se développe en blocs ordinaires (un par titre des niveaux que liste `toc.levels`, le niveau 1 par défaut, et un par `:::part`), si bien que la table des matières coule à travers les colonnes et les pages comme n’importe quel autre texte, et qu’un clic sur une entrée mène à la ligne de la directive. Une entrée affiche le numéro du titre (la sortie de son `numberingTemplate`, à défaut le rang du chapitre), son titre, des points de conduite et le numéro de la page où il commence, et, quand `toc.subtitle` est activé, une deuxième ligne avec un attribut du titre, comme le `{author="…"}` du chapitre. Une partie a sa propre ligne, dessinée par `toc.parts.design` et colorée avec la `palette` propre à la partie. Les titres dont le style indique `numbered: false` sont listés sans numéro ; `{toc="false"}` sur un titre l’exclut (typiquement le titre de la table des matières elle-même).
 
+Dans une page composée, un bloc avec `takes: "toc"`, ou un `:::frame` qui contient la directive, compose la table avec ses lignes de partie, ses points de conduite et `keep` (voir [Pages composées](/fr/docs/composed-pages)).
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

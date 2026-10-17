@@ -92,6 +92,7 @@ How the content is shared out:
 - Several pieces with the same slot are joined in Markdown order.
 - Content with no slot goes to the template's **flow frame** (the frame marked `flow`).
 - A heading with no slot goes first to the frame that `takes` its level (`takes: "h1"`), if the template has one, so the title of a textbook topic is just `# Title` at the top of the page.
+- A `:::toc` with no slot goes to the frame that `takes: "toc"`, if the template has one (see *The contents in a frame*, below).
 - Content that names a slot the template does not have goes to the flow frame and is reported (`slotUnknown`).
 
 A `slot` outside a composed page is read and changes nothing.
@@ -213,6 +214,22 @@ Its height is fixed (a length or a percentage), `fill` (down to the edge of the 
 Content that names no slot goes to the frame marked `flow`; the first heading of a level goes to the frame that `takes` it. The frames of a page are read in the order their content first appears in the Markdown, each one whole: a screen reader, the tagged PDF and the reflowable outputs read a box after the text that opens the page, not in the middle of it.
 
 A heading set in a frame keeps the design of its level or heading style (a tab, a band, `{titleText}` set by the design), laid out at the frame's width as in a page column, and the frame keeps the room the design takes; a frame whose text is scaled scales the design with it, a turned frame turns it. See [In boxes and frames](/en/docs/configuration-headings#in-boxes-and-frames). Up to postext 1.36 such a heading was set plain.
+
+### The contents in a frame
+
+A frame can set the table of contents (since postext 1.42). Give the template a frame with `takes: "toc"` and write `:::toc` in the page fence, or write it inside the `:::frame` that names the slot:
+
+```md
+::::page{template="contents"}
+# In this unit {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+The frame sets the rows by the rules of the contents, as the running text does. A part has its row, drawn from `toc.parts.design`; an entry keeps its number, its leader and its page label, and links to the page it lists; the frame adds no paragraph spacing between entries. `keep` works in the frame: with `overflow.continueIn: "next-page"`, a block of the contents that a whole frame can hold goes whole to the added page, and a block taller than the frame is cut after its head and `toc.groups.minEntriesAfterHead` entries, the added page opening with the head repeated (`toc.groups.continuation`). The mark at the cut (`overflow.mark`) and the words at the head of the added page (`overflow.fromMark`) are those of any frame.
+
+The title above the list is an ordinary heading, and the contents list it unless its heading style says `toc: false` or the heading says `{toc="false"}`, as in the running text. The ground of the page, a colour or a picture under the whole sheet, is the template's decoration: it paints under the frames and repeats on every page the contents add. A page break between parts (`toc.parts.breakBefore`) has no effect inside a frame.
 
 ### Chaining frames
 

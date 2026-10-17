@@ -92,6 +92,7 @@ Le contenu se répartit ainsi :
 - Plusieurs morceaux qui portent le même slot sont réunis dans l’ordre du Markdown.
 - Le contenu sans slot va dans le **bloc de flux** du modèle (le bloc marqué `flow`).
 - Un titre sans slot va d’abord au bloc qui prend son niveau (`takes: "h1"`), si le modèle en a un : le titre d’un thème de manuel s’écrit donc simplement `# Titre` en haut de la page.
+- Un `:::toc` sans slot va au bloc qui a `takes: "toc"`, si le modèle en a un (voir *La table des matières dans un bloc*, plus bas).
 - Le contenu qui nomme un slot absent du modèle va dans le bloc de flux et est signalé (`slotUnknown`).
 
 Hors d’une page composée, un `slot` est lu et ne change rien.
@@ -213,6 +214,22 @@ Sa hauteur est fixe (une longueur ou un pourcentage), `fill` (jusqu’au bord de
 Le contenu qui ne nomme aucun slot va dans le bloc marqué `flow` ; le premier titre d’un niveau va au bloc qui le prend avec `takes`. Les blocs d’une page se lisent dans l’ordre où leur contenu apparaît pour la première fois dans le Markdown, chacun en entier : un lecteur d’écran, le PDF balisé et les sorties recomposables lisent un encadré après le texte qui ouvre la page, et non au milieu.
 
 Un titre placé dans un bloc garde la maquette de son niveau ou de son style de titre (un onglet, un bandeau, `{titleText}` composé par la maquette), composée à la largeur du bloc comme dans une colonne de la page, et le bloc garde la place qu’elle prend ; un bloc dont le texte est réduit réduit la maquette avec lui, un bloc pivoté la fait pivoter. Voir [Dans les encadrés et les blocs](/fr/docs/configuration-headings#dans-les-encadrés-et-les-blocs). Jusqu’à postext 1.36, un tel titre était composé sans maquette.
+
+### La table des matières dans un bloc
+
+Un bloc peut composer la table des matières (depuis postext 1.42). Donnez au modèle un bloc avec `takes: "toc"` et écrivez `:::toc` dans le délimiteur de page, ou écrivez-le dans le `:::frame` qui nomme le slot :
+
+```md
+::::page{template="contents"}
+# Dans cette unité {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+Le bloc compose les lignes selon les règles de la table des matières, comme le texte courant. Une partie a sa ligne, dessinée d’après `toc.parts.design` ; une entrée garde son numéro, ses points de conduite et l’étiquette de sa page, et renvoie à la page qu’elle liste ; le bloc n’ajoute aucun espacement de paragraphe entre les entrées. `keep` fonctionne dans le bloc : avec `overflow.continueIn: "next-page"`, un ensemble de la table qu’un bloc entier peut contenir passe tout entier sur la page ajoutée, et un ensemble plus haut que le bloc est coupé après sa tête et `toc.groups.minEntriesAfterHead` entrées, la page ajoutée s’ouvrant sur la tête répétée (`toc.groups.continuation`). La marque de la coupure (`overflow.mark`) et les mots en tête de la page ajoutée (`overflow.fromMark`) sont ceux de n’importe quel bloc.
+
+Le titre qui surmonte la liste est un titre ordinaire, et la table le liste sauf si son style de titre porte `toc: false` ou si le titre porte `{toc="false"}`, comme dans le texte courant. Le fond de la page, une couleur ou une image sous toute la feuille, est la décoration du modèle : il se peint sous les blocs et se répète sur chaque page que la table ajoute. Un saut de page entre les parties (`toc.parts.breakBefore`) est sans effet dans un bloc.
 
 ### Chaîner des blocs
 

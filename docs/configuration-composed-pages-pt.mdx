@@ -259,9 +259,9 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>nenhum</td>
-      <td>O bloco recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo da cerca.</td>
+      <td>O bloco recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo da cerca. Com <code>'toc'</code>, recebe o <code>:::toc</code> da página que não nomeia encaixe e o compõe pelas regras do sumário (desde o postext 1.42; veja <a href="/pt/docs/composed-pages">Páginas compostas</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 O resultado depende só do conteúdo da página, do modelo e da tipografia: a mesma entrada dá a mesma página, medida na mesma ordem e com os mesmos passos. A negociação nunca lê outra página, então uma mudança numa página composta deixa todas as outras como estavam, desde que o conteúdo continue na sua página.
+
+**Manter blocos no pé de um cartão (desde o postext 1.42).** Um bloco ancorado abaixo do texto que tem acima segue esse texto: numa edição em que o texto tem uma linha a menos ou a mais, os blocos de baixo sobem ou descem, enquanto o que o modelo desenha (um cartão, uma faixa, o pé) fica onde está. Para que os blocos fiquem no pé de um cartão, onde o modelo os põe, reúna os blocos do cartão numa pilha com uma caixa da altura do cartão. Os blocos acima dos retidos tomam o espaço que sobra (`grow: 1`) e o devolvem (`shrink: 1`); os retidos escrevem um `minHeight`. Um texto mais curto deixa os blocos retidos onde estavam. Um mais longo é apertado acima deles: eles mantêm o `minHeight`, o texto de cima é reduzido e, se ainda assim não couber, a diagramação avisa com `frameOverflow` e o registro de reajustes anota `textScaled` e `overflow` para o bloco de cima. Um bloco ancorado no pé do contêiner (`bottom-left`) também mantém o seu lugar, mas nada o liga aos blocos de cima: um texto mais longo passa por cima dele, nada é apertado por causa dele e a sobreposição não é avisada.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+O bloco que cresce tem a altura do espaço livre, qualquer que seja o conteúdo, e por isso um estilo com fundo visível o pintaria inteiro: pinte o cartão na decoração do modelo e deixe o bloco de texto sem estilo.
 
 ### Quando o conteúdo não cabe
 

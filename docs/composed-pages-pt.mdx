@@ -92,6 +92,7 @@ Como o conteúdo é distribuído:
 - Vários trechos com o mesmo slot são juntados na ordem do Markdown.
 - O conteúdo sem slot vai para o **bloco de fluxo** do modelo (o que está marcado com `flow`).
 - Um título sem slot vai primeiro para o bloco que recebe o seu nível (`takes: "h1"`), se o modelo tiver um, então o título de um tema de livro didático é só um `# Título` no alto da página.
+- Um `:::toc` sem slot vai para o bloco com `takes: "toc"`, se o modelo tiver um (veja *O sumário em um bloco*, mais abaixo).
 - O conteúdo que nomeia um slot que o modelo não tem vai para o bloco de fluxo e é assinalado (`slotUnknown`).
 
 Um `slot` fora de uma página composta é lido e não muda nada.
@@ -213,6 +214,22 @@ A sua altura é fixa (um comprimento ou uma porcentagem), `fill` (até a borda d
 O conteúdo que não nomeia nenhum slot vai para o bloco marcado com `flow`; o primeiro título de um nível vai para o bloco que o recebe com `takes`. Os blocos de uma página são lidos na ordem em que o seu conteúdo aparece pela primeira vez no Markdown, cada um inteiro: um leitor de tela, o PDF etiquetado e as saídas de layout fluido leem um boxe depois do texto que abre a página, e não no meio dele.
 
 Um título posto num bloco mantém o design do seu nível ou do seu estilo de título (uma aba, uma faixa, `{titleText}` composto pelo design), composto na largura do bloco como numa coluna da página, e o bloco reserva o espaço que o design ocupa; um bloco com o texto reduzido reduz o design junto, um bloco girado o gira. Veja [Em caixas e blocos](/pt/docs/configuration-headings#em-caixas-e-blocos). Até o postext 1.36 esse título era composto sem design.
+
+### O sumário em um bloco
+
+Um bloco pode compor o sumário (desde o postext 1.42). Dê ao modelo um bloco com `takes: "toc"` e escreva `:::toc` na cerca de página, ou escreva-o dentro do `:::frame` que nomeia o slot:
+
+```md
+::::page{template="contents"}
+# Nesta unidade {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+O bloco compõe as linhas pelas regras do sumário, como o texto corrido. Uma parte tem a sua linha, desenhada a partir de `toc.parts.design`; uma entrada mantém o número, o pontilhado e o rótulo da sua página, e leva à página que lista; o bloco não acrescenta espaçamento de parágrafo entre as entradas. `keep` funciona no bloco: com `overflow.continueIn: "next-page"`, um conjunto do sumário que um bloco inteiro comporta passa inteiro para a página acrescentada, e um conjunto mais alto que o bloco é cortado depois da sua cabeça e de `toc.groups.minEntriesAfterHead` entradas, e a página acrescentada abre com a cabeça repetida (`toc.groups.continuation`). A marca do corte (`overflow.mark`) e as palavras no começo da página acrescentada (`overflow.fromMark`) são as de qualquer bloco.
+
+O título acima da lista é um título comum, e o sumário o lista, a menos que o estilo do título diga `toc: false` ou o título leve `{toc="false"}`, como no texto corrido. O fundo da página, uma cor ou uma imagem sob a folha inteira, é a decoração do modelo: é pintado sob os blocos e se repete em cada página que o sumário acrescenta. Uma quebra de página entre partes (`toc.parts.breakBefore`) não tem efeito dentro de um bloco.
 
 ### Encadear blocos
 

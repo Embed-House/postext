@@ -511,6 +511,8 @@ An element anchored to a non-reserving one still counts unless it is marked too 
 # Letter from the chair
 ```
 
+A contents page set in the running text, with the title in a heading design, shows the same thing: a box anchored to the bleed that runs down to the trim reserves the whole column, and the first entry of the contents moves to the next page, leaving the page empty. Mark the box `reserve: false`. Where the contents want a ground under the whole sheet, set them in a frame of a [composed page](/en/docs/composed-pages) instead: the template's decoration paints under the text, on every page the contents take.
+
 #### In boxes and frames
 
 A heading inside a callout, or inside a frame of a [composed page](/en/docs/composed-pages), is drawn by its design too: the `advancedDesign` of its level or of its heading style puts its tab, band, rules and `{titleText}` in place of its lines, as in a page column. The design is laid out against the heading's own box, as wide as the text of the box, and the box keeps the room the design takes: the tallest of the heading's text, the design content bottom and `minHeight` ([Reserved height](#reserved-height)). A box has no baseline grid, so that room is not rounded up to a grid line; the heading's `marginBottom` follows as after any heading in the box. An element anchored to the container with a negative offset reaches out of the heading's box, over the padding or the tab of the box; the box does not cut it, unless a frame's content runs past the frame's foot (a frame that overflows clips everything it holds). Elements anchored to `'page'` or `'bleed'` keep to the page.

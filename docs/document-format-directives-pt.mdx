@@ -576,6 +576,8 @@ O texto simples do poema mantém os hemistíquios e os bayts separados (uma tabu
 
 `:::toc` imprime o sumário onde está. Ele se expande em blocos comuns (um por título dos níveis que `toc.levels` lista, o nível 1 por padrão, e um por `:::part`), então o sumário flui por colunas e páginas como qualquer outro texto, e um clique em uma entrada leva à linha da diretiva. Uma entrada mostra o número do título (o resultado do seu `numberingTemplate` ou, na falta dele, o ordinal do capítulo), o título, uma linha de pontos e o rótulo da página em que ele começa e, quando `toc.subtitle` está ativado, uma segunda linha com um atributo de título, como o `{author="…"}` do capítulo. Uma parte ganha uma linha própria, desenhada por `toc.parts.design` e colorida com a `palette` da própria parte. Os títulos cujo estilo tem `numbered: false` aparecem sem número; `{toc="false"}` em um título o deixa de fora (tipicamente, o título do próprio sumário).
 
+Numa página composta, um bloco com `takes: "toc"`, ou um `:::frame` que contém a diretiva, compõe o sumário com as linhas de parte, o pontilhado e o `keep` (veja [Páginas compostas](/pt/docs/composed-pages)).
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

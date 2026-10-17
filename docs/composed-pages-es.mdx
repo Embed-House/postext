@@ -92,6 +92,7 @@ Cómo se reparte el contenido:
 - Varios trozos con el mismo slot se juntan en el orden del Markdown.
 - El contenido sin slot va al **marco de flujo** de la plantilla (el que lleva `flow`).
 - Un encabezado sin slot va primero al marco que toma su nivel (`takes: "h1"`), si la plantilla tiene alguno, así que el título de un tema de un libro de texto es un simple `# Título` al principio de la página.
+- Un `:::toc` sin slot va al marco que `takes: "toc"`, si la plantilla tiene alguno (véase *El índice en un marco*, más abajo).
 - El contenido que nombra un slot que la plantilla no tiene va al marco de flujo y se señala (`slotUnknown`).
 
 Un `slot` fuera de una página compuesta se lee y no cambia nada.
@@ -213,6 +214,22 @@ Su altura es fija (una longitud o un porcentaje), `fill` (hasta el borde del ár
 El contenido que no nombra ningún slot va al marco marcado con `flow`; el primer encabezado de un nivel va al marco que lo toma con `takes`. Los marcos de una página se leen en el orden en que su contenido aparece por primera vez en el Markdown, cada uno entero: un lector de pantalla, el PDF etiquetado y las salidas de maquetación fluida leen una caja después del texto que abre la página, no en medio de él.
 
 Un encabezado puesto en un marco conserva el diseño de su nivel o de su estilo de encabezado (una pestaña, una banda, `{titleText}` compuesto por el diseño), compuesto al ancho del marco como en una columna de la página, y el marco guarda el sitio que el diseño ocupa; si el texto del marco se reduce, el diseño se reduce con él, y si el marco está girado, gira con él. Véase [En cajas y marcos](/es/docs/configuration-headings#en-cajas-y-marcos). Hasta postext 1.36 ese encabezado se componía sin diseño.
+
+### El índice en un marco
+
+Un marco puede componer el índice (desde postext 1.42). Da a la plantilla un marco con `takes: "toc"` y escribe `:::toc` en la valla de página, o escríbelo dentro del `:::frame` que nombra el slot:
+
+```md
+::::page{template="contents"}
+# En esta unidad {toc="false"}
+
+:::toc{keep="part" levels="1-2"}
+::::
+```
+
+El marco compone las filas con las reglas del índice, igual que el texto corrido. Una parte tiene su fila, dibujada desde `toc.parts.design`; una entrada conserva su número, sus puntos guía y la etiqueta de su página, y enlaza con la página que lista; el marco no añade espaciado de párrafo entre las entradas. `keep` funciona en el marco: con `overflow.continueIn: "next-page"`, un bloque del índice que cabe entero en un marco pasa entero a la página añadida, y uno más alto que el marco se corta después de su cabeza y de `toc.groups.minEntriesAfterHead` entradas, y la página añadida empieza con la cabeza repetida (`toc.groups.continuation`). La marca del corte (`overflow.mark`) y las palabras al comienzo de la página añadida (`overflow.fromMark`) son las de cualquier marco.
+
+El título que va sobre la lista es un encabezado corriente, y el índice lo lista salvo que su estilo de encabezado diga `toc: false` o el encabezado lleve `{toc="false"}`, como en el texto corrido. El fondo de la página, un color o una imagen bajo toda la hoja, es la decoración de la plantilla: se pinta bajo los marcos y se repite en cada página que añade el índice. Un salto de página entre partes (`toc.parts.breakBefore`) no tiene efecto dentro de un marco.
 
 ### Encadenar marcos
 

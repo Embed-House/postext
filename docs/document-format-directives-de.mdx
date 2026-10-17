@@ -576,6 +576,8 @@ Der reine Text des Gedichts hält Halbverse und Bayts auseinander (ein Tabulator
 
 `:::toc` setzt das Inhaltsverzeichnis an der Stelle, an der es steht. Es entfaltet sich zu gewöhnlichen Blöcken – einem je Überschrift der Ebenen, die `toc.levels` aufführt (standardmäßig Ebene 1), und einem je `:::part` –, sodass das Verzeichnis wie jeder andere Text durch Spalten und Seiten fließt und ein Klick auf einen Eintrag zur Zeile der Direktive führt. Ein Eintrag zeigt die Nummer der Überschrift (die Ausgabe ihres `numberingTemplate`, sonst die Ordnungszahl des Kapitels), ihren Titel, eine Punktlinie und die Bezeichnung der Seite, auf der sie beginnt, und, wenn `toc.subtitle` eingeschaltet ist, eine zweite Zeile mit einem Attribut der Überschrift wie dem `{author="…"}` des Kapitels. Ein Teil erhält eine eigene Zeile, gestaltet von `toc.parts.design` und eingefärbt mit der eigenen `palette` des Teils. Überschriften, deren Format `numbered: false` hat, werden ohne Nummer aufgeführt; `{toc="false"}` an einer Überschrift hält sie heraus (typischerweise die Überschrift des Verzeichnisses selbst).
 
+In einer zusammengesetzten Seite setzt ein Rahmen mit `takes: "toc"`, oder ein `:::frame`, der die Direktive enthält, das Verzeichnis mit seinen Teilzeilen, Füllpunkten und `keep` (siehe [Zusammengesetzte Seiten](/de/docs/composed-pages)).
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

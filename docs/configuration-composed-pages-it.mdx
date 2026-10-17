@@ -259,9 +259,9 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>nessuno</td>
-      <td>La cornice riceve il primo titolo di quel livello che non indica nessuno slot, quindi il titolo di una pagina è solo <code># Title</code> in cima al blocco.</td>
+      <td>La cornice riceve il primo titolo di quel livello che non indica nessuno slot, quindi il titolo di una pagina è solo <code># Title</code> in cima al blocco. Con <code>'toc'</code> riceve il <code>:::toc</code> della pagina che non indica nessuno slot e lo compone con le regole dell’indice (da postext 1.42; vedi <a href="/it/docs/composed-pages">Pagine composte</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipografia: a parità di dati si ottiene la stessa pagina, misurata nello stesso ordine e con gli stessi passi. Mentre divide lo spazio, l’impaginazione non legge mai un’altra pagina, quindi una modifica su una pagina composta lascia invariate tutte le altre, purché il contenuto resti sulla sua pagina.
+
+**Tenere le cornici al piede di una scheda (da postext 1.42).** Una cornice ancorata sotto il testo che ha sopra segue quel testo: in un’edizione in cui il testo è una riga più corto o più lungo, le cornici sotto salgono o scendono, mentre ciò che il modello disegna (una scheda, una fascia, il piede) resta dov’è. Per tenere le cornici al piede di una scheda, dove il modello le mette, riunisci le cornici della scheda in una pila con una scatola alta quanto la scheda. Le cornici sopra quelle trattenute prendono lo spazio che avanza (`grow: 1`) e lo restituiscono (`shrink: 1`); quelle trattenute scrivono un `minHeight`. Un testo più corto lascia le cornici trattenute dove erano. Uno più lungo viene stretto sopra di esse: mantengono il loro `minHeight`, il testo sopra si riduce e, se ancora non entra, l’impaginazione segnala `frameOverflow` e il registro di reimpaginazione annota `textScaled` e `overflow` per la cornice sopra. Anche una cornice ancorata al piede del contenitore (`bottom-left`) mantiene il suo posto, ma nulla la lega alle cornici sopra: un testo più lungo la ricopre, nulla viene stretto per lei e la sovrapposizione non viene segnalata.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+La cornice che cresce è alta quanto lo spazio libero, qualunque cosa contenga, quindi uno stile con sfondo visibile la dipingerebbe tutta: dipingi la scheda nella decorazione del modello e lascia la cornice di testo senza stile.
 
 ### Quando il contenuto non entra
 

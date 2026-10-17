@@ -576,6 +576,8 @@ El texto plano del poema separa hemistiquios y bayts (un tabulador y un salto de
 
 `:::toc` imprime el índice de contenidos en el punto donde está. Se expande en bloques ordinarios — uno por encabezado de los niveles que enumera `toc.levels` (el nivel 1 por defecto) y uno por `:::part` — de modo que el índice fluye por columnas y páginas como cualquier otro texto, y un clic sobre una entrada lleva a la línea de la directiva. Cada entrada muestra el número del encabezado (el resultado de su `numberingTemplate` o, en su defecto, el ordinal de capítulo), su título, una línea de puntos y la etiqueta de la página en que empieza y, si `toc.subtitle` está activado, una segunda línea con un atributo del encabezado, como los autores del capítulo (`{author="…"}`). Cada parte recibe una fila propia, diseñada por `toc.parts.design` y coloreada con la `palette` de la parte. Los encabezados cuyo estilo declara `numbered: false` aparecen sin número; `{toc="false"}` en un encabezado lo deja fuera (el propio encabezado del índice, normalmente).
 
+En una página compuesta, un marco con `takes: "toc"`, o un `:::frame` que contiene la directiva, compone el índice con sus filas de parte, sus puntos guía y `keep` (véase [Páginas compuestas](/es/docs/composed-pages)).
+
 ```md
 # Índice {style="preliminar" toc="false"}
 

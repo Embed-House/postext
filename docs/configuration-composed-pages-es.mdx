@@ -259,9 +259,9 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>ninguno</td>
-      <td>El marco recibe el primer encabezado de ese nivel que no nombra ningún hueco, así que el título de una página es solo un <code># Título</code> al principio del bloque.</td>
+      <td>El marco recibe el primer encabezado de ese nivel que no nombra ningún hueco, así que el título de una página es solo un <code># Título</code> al principio del bloque. Con <code>'toc'</code> recibe el <code>:::toc</code> de la página que no nombra hueco y lo compone con las reglas del índice (desde postext 1.42; véase <a href="/es/docs/composed-pages">Páginas compuestas</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 El resultado depende solo del contenido de la página, de la plantilla y de la tipografía: la misma entrada da la misma página, medida en el mismo orden y con los mismos pasos. El reparto nunca lee otra página, así que un cambio en una página compuesta deja todas las demás como estaban, mientras su contenido no salga de ella.
+
+**Mantener marcos al pie de una tarjeta (desde postext 1.42).** Un marco anclado debajo del texto que tiene encima sigue a ese texto: en una edición donde el texto es una línea más corto o más largo, los marcos de debajo suben o bajan, mientras que lo que dibuja la plantilla (una tarjeta, una franja, el pie) se queda donde está. Para que los marcos se mantengan al pie de una tarjeta, donde la plantilla los pone, reúne los marcos de la tarjeta en una pila con una caja de la altura de la tarjeta. Los marcos que van encima de los retenidos toman el espacio sobrante (`grow: 1`) y lo devuelven (`shrink: 1`); los retenidos escriben un `minHeight`. Un texto más corto deja los marcos retenidos donde estaban. Uno más largo se aprieta por encima de ellos: conservan su `minHeight`, el texto de arriba se reduce y, si aun así no cabe, la maquetación avisa con `frameOverflow` y el registro de recomposición anota `textScaled` y `overflow` para el marco de arriba. Un marco anclado al pie del contenedor (`bottom-left`) también conserva su sitio, pero nada lo une a los marcos de encima: un texto más largo pasa por encima, nada se aprieta por él y el solapamiento no se avisa.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+El marco que crece mide lo que mide el espacio libre, contenga lo que contenga, así que un estilo con fondo visible lo pintaría entero: pinta la tarjeta en la decoración de la plantilla y deja el marco de texto sin estilo.
 
 ### Cuando el contenido no cabe
 

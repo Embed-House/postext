@@ -576,6 +576,8 @@ Two lines lower still.
 
 `:::toc`在所在位置输出目录。它展开为普通的块：`toc.levels`所列级别（默认为1级）的每个标题一个，每个`:::part`一个，所以目录像其他文字一样跨栏跨页排版，点击条目会跳到指令所在行。条目显示标题的编号（`numberingTemplate`的输出，没有时为章的序号）、标题、点线前导符和它起始页的页码；启用`toc.subtitle`时，还有第二行，显示某个标题属性，如本章的`{author="…"}`。篇有单独的一行，由`toc.parts.design`设计，用该篇自己的`palette`着色。样式为`numbered: false`的标题列出时不带编号；标题上的`{toc="false"}`会把它排除在外（通常是目录本身的标题）。
 
+在模板页里，设置了`takes: "toc"`的框，或包含该指令的`:::frame`，会连同篇名行、点状前导符和`keep`一起排出目录（见[模板页](/zh/docs/composed-pages)）。
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

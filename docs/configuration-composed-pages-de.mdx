@@ -259,9 +259,9 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>keins</td>
-      <td>Der Rahmen nimmt die erste Überschrift dieser Ebene auf, die keinen Slot nennt; ein Seitentitel ist also einfach <code># Title</code> am Anfang des Blocks.</td>
+      <td>Der Rahmen nimmt die erste Überschrift dieser Ebene auf, die keinen Slot nennt; ein Seitentitel ist also einfach <code># Title</code> am Anfang des Blocks. Mit <code>'toc'</code> nimmt er das <code>:::toc</code> der Seite auf, das keinen Slot nennt, und setzt es nach den Regeln des Inhaltsverzeichnisses (seit postext 1.42; siehe <a href="/de/docs/composed-pages">Zusammengesetzte Seiten</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -484,6 +484,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 ```
 
 Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei dieser Aufteilung liest der Umbruch nie eine andere Seite. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
+
+**Rahmen am Fuß einer Karte halten (seit postext 1.42).** Ein Rahmen, der unter dem Text über ihm verankert ist, folgt diesem Text: In einer Ausgabe, in der der Text eine Zeile kürzer oder länger ist, rücken die Rahmen darunter nach oben oder unten, während das, was die Vorlage zeichnet (eine Karte, ein Band, der Fuß), stehen bleibt. Damit Rahmen am Fuß einer Karte bleiben, dort, wo die Vorlage sie hinsetzt, fassen Sie die Rahmen der Karte zu einem Stapel mit einer Box in der Höhe der Karte zusammen. Die Rahmen über den gehaltenen nehmen den übrigen Platz (`grow: 1`) und geben ihn zurück (`shrink: 1`); die gehaltenen schreiben ein `minHeight`. Ein kürzerer Text lässt die gehaltenen Rahmen, wo sie waren. Ein längerer wird über ihnen zusammengedrückt: Sie behalten ihr `minHeight`, der Text darüber wird verkleinert, und passt er dann immer noch nicht, meldet der Umbruch `frameOverflow` und das Umbruchprotokoll führt `textScaled` und `overflow` für den Rahmen darüber. Ein am Fuß des Containers verankerter Rahmen (`bottom-left`) behält zwar auch seinen Platz, aber nichts verbindet ihn mit den Rahmen darüber: Ein längerer Text läuft über ihn, seinetwegen wird nichts zusammengedrückt, und die Überlagerung wird nicht gemeldet.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+Der wachsende Rahmen ist so hoch wie der freie Platz, was auch immer er enthält; ein Stil mit sichtbarem Hintergrund würde ihn ganz ausfüllen. Zeichnen Sie die Karte daher in der Dekoration der Vorlage und lassen Sie den Textrahmen ohne Stil.
 
 ### Wenn der Inhalt nicht passt
 

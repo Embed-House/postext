@@ -576,6 +576,8 @@ El text pla del poema separa hemistiquis i bayts (un tabulador i un salt de lín
 
 `:::toc` imprimeix l'índex de continguts al punt on és. S'expandeix en blocs ordinaris — un per encapçalament dels nivells que enumera `toc.levels` (el nivell 1 per defecte) i un per `:::part` — de manera que l'índex flueix per columnes i pàgines com qualsevol altre text, i un clic sobre una entrada porta a la línia de la directiva. Cada entrada mostra el número de l'encapçalament (el resultat del seu `numberingTemplate` o, si no n'hi ha, l'ordinal de capítol), el títol, una línia de punts i l'etiqueta de la pàgina on comença i, si `toc.subtitle` està activat, una segona línia amb un atribut de l'encapçalament, com els autors del capítol (`{author="…"}`). Cada part rep una fila pròpia, dissenyada per `toc.parts.design` i acolorida amb la `palette` de la part. Els encapçalaments l'estil dels quals declara `numbered: false` apareixen sense número; `{toc="false"}` en un encapçalament el deixa fora (normalment, el mateix encapçalament de l'índex).
 
+En una pàgina composta, un marc amb `takes: "toc"`, o un `:::frame` que conté la directiva, compon l'índex amb les seves files de part, els seus punts guia i `keep` (vegeu [Pàgines compostes](/ca/docs/composed-pages)).
+
 ```md
 # Índex {style="preliminar" toc="false"}
 
