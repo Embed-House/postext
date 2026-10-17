@@ -18,13 +18,13 @@ Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze soci
 
 <Excerpt region="boxes" />
 
-Uno stile di riquadro si fa in tre passi. `caja` tiene la forma, il carattere e la geometria della linguetta; `caja-agua`, `caja-campo` e `caja-sol` mettono il colore di una famiglia su linguetta ed elenchi; `dato-`, `palabras-` e `actividad-` fissano il genere: riquadro con fondo, con bordo o con filetto. Una famiglia nuova sono tre colori in `FAMILIES` e nessuno stile si scrive due volte.
+Uno stile di riquadro si fa in tre passi. `caja` tiene la forma, il carattere e la geometria della linguetta; `caja-tema` mette il colore dell'argomento su linguetta ed elenchi; `dato`, `palabras` e `actividad` fissano il genere: riquadro con fondo, con bordo o con filetto. I loro colori sono voci della tavolozza (`tema`, `tema-tint`): ogni stile si scrive una volta e il modello di un argomento lo tinge.
 
 ### 2 · Fai ereditare a ogni argomento un modello di base
 
 <Excerpt region="answer" />
 
-La base è una doppia pagina: un fondo fino all'abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), cambia i colori di tre elementi di decorazione tramite il loro `id` e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede, e il numero sta a sinistra della cornice, dove nulla lo copre.
+La base è una doppia pagina: un fondo fino all'abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), fissa la sua `palette` (le tre voci `tema` prendono i colori della famiglia, e fondo, linguetta, numero e tutti i riquadri cambiano insieme) e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede. Il numero è `{headingNumber}`, il contatore del titolo che la cornice ha preso, dipinto sul margine interno sinistro della cornice: nessuna recinzione di pagina lo ripete, e un clic su di esso raggiunge il numero, non la cornice.
 
 ### 3 · Lascia che i gruppi si dividano lo spazio
 
@@ -46,7 +46,7 @@ La mappa è un dipinto senza una lettera. Ogni luogo è un'àncora dell'immagine
 
 ### Aggiungi una quarta famiglia
 
-Un argomento sul mare è una quarta voce di `FAMILIES` e un modello fatto con `topic('tema-mar', 'mar', { frames })`. Il ciclo su `FAMILIES` ne scrive gli stili, `caja-mar`, `dato-mar` e gli altri.
+Un argomento sul mare è una quarta voce di `FAMILIES` e un modello fatto con `topic('tema-mar', 'mar', { frames })`. `swap('mar')` ne scrive la tavolozza, e riquadri e fondo la seguono.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Una cornice che non deve ridurre il testo prende `fit: { shrinkText: false }`. U
 ## Errori frequenti
 
 - Un nome dipinto dentro un'immagine non potrebbe cambiare con la lingua: la mappa non porta parole e ogni nome è un'etichetta.
-- Un elemento di decorazione sotto una cornice non si può cliccare nel Sandbox; per questo il numero di ogni argomento sta a sinistra della cornice del titolo e non dentro.
+La tavolozza di un argomento cambia solo le voci `tema`. I numeri di pagina e l'indice usano `agua`, che ha lo stesso azzurro: restano azzurri sulle pagine verdi e sabbia; collegali a `tema` e seguiranno l'argomento.
 - Due figure che impostano la stessa risorsa prendono le parole della prima: la piccola mappa dell'indice è lo stesso file sotto un'altra risorsa, `rio`, senza àncore.

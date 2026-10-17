@@ -199,16 +199,6 @@
   "downloads": {
     "pdf": true
   },
-  "workarounds": [
-    {
-      "package": "postext",
-      "note": "the three topic spreads extend one base template and the callout styles extend each other, so a topic's colours are the only thing its template and its box styles say"
-    },
-    {
-      "package": "postext",
-      "note": "the title's tab and number are decoration anchored to the title frame, with the number left of the frame: a decoration element under a frame cannot be clicked, so the number stands where no frame covers it (check C40)"
-    }
-  ],
   "related": [
     "school-atlas-labelled-maps",
     "activity-book-growing-boxes",

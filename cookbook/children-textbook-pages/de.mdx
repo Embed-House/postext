@@ -18,13 +18,13 @@ Neun Seiten von *Unser Fluss*, Einheit 4 eines erfundenen Sachkundebuchs für di
 
 <Excerpt region="boxes" />
 
-Ein Kastenstil entsteht in drei Schritten. `caja` hält Form, Schrift und die Geometrie des Reiters; `caja-agua`, `caja-campo` und `caja-sol` legen die Farbe einer Familie auf Reiter und Aufzählungszeichen; `dato-`, `palabras-` und `actividad-` bestimmen die Art: getönter Kasten, umrandeter oder mit Streifen. Eine neue Familie sind drei Farben in `FAMILIES`, und kein Stil wird zweimal geschrieben.
+Ein Kastenstil entsteht in drei Schritten. `caja` hält Form, Schrift und die Geometrie des Reiters; `caja-tema` legt die Farbe des Themas auf Reiter und Aufzählungszeichen; `dato`, `palabras` und `actividad` bestimmen die Art: getönter Kasten, umrandeter oder mit Streifen. Ihre Farben sind Einträge der Palette (`tema`, `tema-tint`): Jeder Stil wird einmal geschrieben, und die Vorlage eines Themas färbt ihn ein.
 
 ### 2 · Jedes Thema eine Basisvorlage erweitern lassen
 
 <Excerpt region="answer" />
 
-Die Basis ist eine Doppelseite: ein Grund bis zum Anschnitt, ein Titelreiter mit Nummer und ein Text in zwei Spalten. Ein Thema erweitert sie (`extends: 'tema'`), ändert die Farben dreier Dekorationselemente über ihre `id` und fügt eigene Rahmen hinzu. Reiter und Nummer sind am Titelrahmen verankerte Dekoration: Der Reiter ist so hoch wie der Titel, den die Sprache braucht, und die Nummer steht links vom Rahmen, wo nichts sie verdeckt.
+Die Basis ist eine Doppelseite: ein Grund bis zum Anschnitt, ein Titelreiter mit Nummer und ein Text in zwei Spalten. Ein Thema erweitert sie (`extends: 'tema'`), setzt seine `palette` (die drei `tema`-Einträge nehmen die Farben der Familie an, und Grund, Reiter, Nummer und alle Kästen wechseln gemeinsam) und fügt eigene Rahmen hinzu. Reiter und Nummer sind am Titelrahmen verankerte Dekoration: Der Reiter ist so hoch wie der Titel, den die Sprache braucht. Die Nummer ist `{headingNumber}`, der Zähler der Überschrift, die der Rahmen übernommen hat, gemalt über den linken Innenabstand des Rahmens: Kein Seitenzaun wiederholt sie, und ein Klick darauf trifft die Nummer, nicht den Rahmen.
 
 ### 3 · Die Gruppen den Platz teilen lassen
 
@@ -46,7 +46,7 @@ Die Karte ist ein Gemälde ohne einen Buchstaben. Jeder Ort ist ein Anker des Bi
 
 ### Eine vierte Familie hinzufügen
 
-Ein Thema über das Meer ist ein vierter Eintrag in `FAMILIES` und eine Vorlage aus `topic('tema-mar', 'mar', { frames })`. Die Schleife über `FAMILIES` schreibt die Stile dazu, `caja-mar`, `dato-mar` und die übrigen.
+Ein Thema über das Meer ist ein vierter Eintrag in `FAMILIES` und eine Vorlage aus `topic('tema-mar', 'mar', { frames })`. `swap('mar')` schreibt seine Palette, und Kästen und Grund folgen ihr.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Ein Rahmen, der seinen Text nicht verkleinern darf, bekommt `fit: { shrinkText: 
 ## Häufige Fehler
 
 - Ein ins Bild gemalter Name könnte sich nicht mit der Sprache ändern: Die Karte trägt kein Wort, und jeder Name ist eine Beschriftung.
-- Ein Dekorationselement unter einem Rahmen lässt sich im Sandbox nicht anklicken; darum steht die Nummer jedes Themas links vom Titelrahmen und nicht darin.
+Die Palette eines Themas ändert nur die `tema`-Einträge. Die Seitenzahlen und das Inhaltsverzeichnis nutzen `agua`, das dasselbe Blau hat; sie bleiben auf den grünen und sandfarbenen Seiten blau. Verknüpfe sie mit `tema`, dann folgen sie dem Thema.
 - Zwei Abbildungen, die dieselbe Ressource belegen, übernehmen die Worte der ersten: Die kleine Karte auf der Inhaltsseite ist dieselbe Datei unter einer eigenen Ressource, `rio`, ohne Anker.

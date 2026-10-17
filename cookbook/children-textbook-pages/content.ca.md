@@ -51,7 +51,7 @@ Quins animals i plantes viuen en un riu o al seu costat?
 :::part{number="A" title="Un riu de la muntanya al mar"}
 :::
 
-::::page{template="tema-agua" spread numero="1"}
+::::page{template="tema-agua" spread}
 # On neix un riu
 
 A les muntanyes plou i neva. Una part de l’aigua baixa pels vessants i una altra s’embeu a la terra. Sota terra avança a poc a poc, fins que topa amb una roca que no pot travessar. Llavors surt a l’aire lliure. El lloc on l’aigua brolla de la terra es diu **font**.
@@ -100,7 +100,7 @@ Al seu naixement, l’Aldara és un fil d’aigua que es pot saltar. Després de
 :::
 ::::
 
-::::page{template="tema-campo" spread numero="2"}
+::::page{template="tema-campo" spread}
 # De la muntanya al mar
 
 El riu Aldara fa 94 quilòmetres de llarg. Neix a la Serra Blanca, creua una vall i una plana i arriba al mar a Aldamar. Els geògrafs divideixen un riu en tres parts. Cada part s’anomena **curs** i cada una té un aspecte diferent.
@@ -140,7 +140,7 @@ La terra és gairebé plana. El riu és ample i lent, i dibuixa grans meandres. 
 :::part{number="B" title="Les persones i el riu"}
 :::
 
-::::page{template="tema-sol" spread numero="3"}
+::::page{template="tema-sol" spread}
 # Les persones i el riu
 
 Les persones sempre s’han instal·lat a prop dels rius. Necessiten aigua per beure, per rentar-se i per conrear aliments. Un riu també dona peixos, un camí per a les barques i la força que fa girar una roda.

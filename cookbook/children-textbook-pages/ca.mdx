@@ -18,13 +18,13 @@ Nou pàgines d’*El nostre riu*, unitat 4 d’un llibre inventat de Ciències s
 
 <Excerpt region="boxes" />
 
-Un estil de requadre es fa en tres passos. `caja` guarda la forma, la tipografia i la geometria de la solapa; `caja-agua`, `caja-campo` i `caja-sol` posen el color d’una família a la solapa i a les vinyetes; `dato-`, `palabras-` i `actividad-` fixen el tipus: requadre amb fons, amb vora o amb franja. Una família nova són tres colors a `FAMILIES` i cap estil s’escriu dues vegades.
+Un estil de requadre es fa en tres passos. `caja` guarda la forma, la tipografia i la geometria de la solapa; `caja-tema` posa el color del tema a la solapa i a les vinyetes; `dato`, `palabras` i `actividad` fixen el tipus: requadre amb fons, amb vora o amb franja. Els seus colors són entrades de la paleta (`tema`, `tema-tint`), de manera que cada estil s’escriu una vegada i la plantilla d’un tema el tenyeix.
 
 ### 2 · Fes que cada tema hereti d’una plantilla base
 
 <Excerpt region="answer" />
 
-La base és una doble pàgina: un fons fins al sagnat, una solapa de títol amb el número i un text a dues columnes. Un tema l’estén (`extends: 'tema'`), canvia els colors de tres elements de decoració pel seu `id` i hi afegeix els seus marcs. La solapa i el número són decoració ancorada al marc del títol, de manera que la solapa és tan alta com el títol que demani l’idioma, i el número queda a l’esquerra del marc, on res no el tapa.
+La base és una doble pàgina: un fons fins al sagnat, una solapa de títol amb el seu número i un text a dues columnes. Un tema l’estén (`extends: 'tema'`), fixa la seva `palette` (les tres entrades `tema` prenen els colors de la família, i el fons, la solapa, el número i tots els requadres canvien alhora) i hi afegeix els seus marcs. La solapa i el número són decoració ancorada al marc del títol, de manera que la solapa és tan alta com el títol que demani l’idioma. El número és `{headingNumber}`, el comptador del títol que ha pres el marc, pintat sobre el farciment esquerre del marc: cap tanca de pàgina el repeteix, i un clic sobre ell arriba al número, no al marc.
 
 ### 3 · Deixa que els grups es repartin el lloc
 
@@ -46,7 +46,7 @@ El mapa és una pintura sense una sola lletra. Cada lloc és una àncora de la i
 
 ### Afegeix una quarta família
 
-Un tema sobre el mar és una quarta entrada de `FAMILIES` i una plantilla feta amb `topic('tema-mar', 'mar', { frames })`. El bucle sobre `FAMILIES` n’escriu els estils, `caja-mar`, `dato-mar` i els altres.
+Un tema sobre el mar és una quarta entrada de `FAMILIES` i una plantilla feta amb `topic('tema-mar', 'mar', { frames })`. `swap('mar')` n’escriu la paleta, i els requadres i el fons la segueixen.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Un marc que no ha de reduir el text porta `fit: { shrinkText: false }`. Un text 
 ## Errors freqüents
 
 - Un nom pintat dins d’una imatge no podria canviar amb l’idioma: el mapa no porta cap paraula i cada nom és un rètol.
-- Un element de decoració que queda sota un marc no es pot prémer al Sandbox, per això el número de cada tema és a l’esquerra del marc del títol i no a dins.
+La paleta d’un tema canvia només les entrades `tema`. Els folis i l’índex fan servir `agua`, que té el mateix blau, de manera que continuen blaus a les pàgines verdes i sorra; enllaça’ls amb `tema` i seguiran el tema.
 - Dues figures que fixen el mateix recurs prenen les paraules de la primera: el mapa petit de l’índex és el mateix arxiu sota un altre recurs, `rio`, sense àncores.

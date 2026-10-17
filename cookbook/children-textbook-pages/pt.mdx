@@ -18,13 +18,13 @@ Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Socia
 
 <Excerpt region="boxes" />
 
-Um estilo de caixa se faz em três passos. `caja` guarda a forma, a tipografia e a geometria da aba; `caja-agua`, `caja-campo` e `caja-sol` põem a cor de uma família na aba e nos marcadores; `dato-`, `palabras-` e `actividad-` fixam o tipo: caixa com fundo, com borda ou com faixa. Uma família nova são três cores em `FAMILIES` e nenhum estilo se escreve duas vezes.
+Um estilo de caixa se faz em três passos. `caja` guarda a forma, a tipografia e a geometria da aba; `caja-tema` põe a cor do tema na aba e nos marcadores; `dato`, `palabras` e `actividad` fixam o tipo: caixa com fundo, com borda ou com faixa. Suas cores são entradas da paleta (`tema`, `tema-tint`): cada estilo se escreve uma vez e o modelo de um tema o tinge.
 
 ### 2 · Faça cada tema herdar de um modelo base
 
 <Excerpt region="answer" />
 
-A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), muda as cores de três elementos de decoração pelo seu `id` e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede, e o número fica à esquerda do bloco, onde nada o cobre.
+A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), fixa sua `palette` (as três entradas `tema` tomam as cores da família, e o fundo, a aba, o número e todas as caixas mudam juntos) e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede. O número é `{headingNumber}`, o contador do título que o bloco tomou, pintado sobre o preenchimento esquerdo do bloco: nenhuma cerca de página o repete, e um clique nele chega ao número, não ao bloco.
 
 ### 3 · Deixe os grupos dividirem o espaço
 
@@ -46,7 +46,7 @@ O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um pon
 
 ### Acrescente uma quarta família
 
-Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `topic('tema-mar', 'mar', { frames })`. O laço sobre `FAMILIES` escreve os seus estilos, `caja-mar`, `dato-mar` e os demais.
+Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `topic('tema-mar', 'mar', { frames })`. `swap('mar')` escreve a sua paleta, e as caixas e o fundo a seguem.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Um bloco que não deve reduzir o texto leva `fit: { shrinkText: false }`. Um tex
 ## Erros comuns
 
 - Um nome pintado dentro de uma imagem não poderia mudar com o idioma: o mapa não leva nenhuma palavra e cada nome é um rótulo.
-- Um elemento de decoração que fica sob um bloco não pode ser clicado no Sandbox; por isso o número de cada tema está à esquerda do bloco do título e não dentro.
+A paleta de um tema muda só as entradas `tema`. Os folios e o sumário usam `agua`, que tem o mesmo azul: continuam azuis nas páginas verdes e areia; ligue-os a `tema` e eles seguirão o tema.
 - Duas figuras que definem o mesmo recurso tomam as palavras da primeira: o mapa pequeno do sumário é o mesmo arquivo sob outro recurso, `rio`, sem âncoras.

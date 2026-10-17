@@ -51,7 +51,7 @@ Which animals and plants live in or beside a river?
 :::part{number="A" title="A river from the mountains to the sea"}
 :::
 
-::::page{template="tema-agua" spread numero="1"}
+::::page{template="tema-agua" spread}
 # Where a river is born
 
 Rain and snow fall on the mountains. Some of the water runs down the slopes and some soaks into the ground. Underground it moves slowly, until it meets rock it cannot cross. Then it comes out into the open. A place where water comes out of the ground is called a **spring**.
@@ -100,7 +100,7 @@ At its spring, the Aldara is a trickle you could step over. After 94 kilometres 
 :::
 ::::
 
-::::page{template="tema-campo" spread numero="2"}
+::::page{template="tema-campo" spread}
 # From the mountains to the sea
 
 The River Aldara is 94 kilometres long. It starts in the White Range, crosses a valley and a plain, and reaches the sea at Aldamar. Geographers split a river into three parts. Each part is called a **course**, and each one looks different.
@@ -140,7 +140,7 @@ The land is almost flat. The river is wide and slow, and it bends in great loops
 :::part{number="B" title="People and the river"}
 :::
 
-::::page{template="tema-sol" spread numero="3"}
+::::page{template="tema-sol" spread}
 # People and the river
 
 People have always settled near rivers. They need water to drink, to wash and to grow food. A river also gives fish, a road for boats and the push that turns a wheel.

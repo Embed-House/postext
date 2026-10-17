@@ -18,13 +18,13 @@ Neuf pages de *Notre fleuve*, unité 4 d’un manuel inventé de sciences social
 
 <Excerpt region="boxes" />
 
-Un style d’encadré se fait en trois temps. `caja` garde la forme, la typographie et la géométrie de l’onglet ; `caja-agua`, `caja-campo` et `caja-sol` mettent la couleur d’une famille sur l’onglet et les puces ; `dato-`, `palabras-` et `actividad-` fixent le genre : encadré teinté, cerné ou à liseré. Une nouvelle famille, ce sont trois couleurs dans `FAMILIES`, et aucun style n’est écrit deux fois.
+Un style d’encadré se fait en trois temps. `caja` garde la forme, la typographie et la géométrie de l’onglet ; `caja-tema` met la couleur du thème sur l’onglet et les puces ; `dato`, `palabras` et `actividad` fixent le genre : encadré teinté, cerné ou à liseré. Leurs couleurs sont des entrées de la palette (`tema`, `tema-tint`) : chaque style s’écrit une fois et la maquette d’un thème le teinte.
 
 ### 2 · Faites hériter chaque thème d’une maquette de base
 
 <Excerpt region="answer" />
 
-La base est une double page : un fond jusqu’au fond perdu, un onglet de titre avec son numéro et un texte sur deux colonnes. Un thème l’étend (`extends: 'tema'`), change les couleurs de trois éléments de décor par leur `id` et ajoute ses blocs. L’onglet et le numéro sont du décor ancré au bloc du titre : l’onglet est donc aussi haut que le titre que la langue demande, et le numéro se tient à gauche du bloc, là où rien ne le couvre.
+La base est une double page : un fond jusqu’au fond perdu, un onglet de titre avec son numéro et un texte sur deux colonnes. Un thème l’étend (`extends: 'tema'`), fixe sa `palette` (les trois entrées `tema` prennent les couleurs de la famille, et le fond, l’onglet, le numéro et tous les encadrés changent ensemble) et ajoute ses blocs. L’onglet et le numéro sont du décor ancré au bloc du titre : l’onglet est donc aussi haut que le titre que la langue demande. Le numéro est `{headingNumber}`, le compteur du titre que le bloc a pris, peint sur la marge intérieure gauche du bloc : aucune clôture de page ne le répète, et un clic dessus atteint le numéro, pas le bloc.
 
 ### 3 · Laissez les groupes se partager la place
 
@@ -46,7 +46,7 @@ La carte est une peinture sans une lettre. Chaque lieu est une ancre de l’imag
 
 ### Ajouter une quatrième famille
 
-Un thème sur la mer est une quatrième entrée de `FAMILIES` et une maquette faite avec `topic('tema-mar', 'mar', { frames })`. La boucle sur `FAMILIES` en écrit les styles, `caja-mar`, `dato-mar` et les autres.
+Un thème sur la mer est une quatrième entrée de `FAMILIES` et une maquette faite avec `topic('tema-mar', 'mar', { frames })`. `swap('mar')` en écrit la palette, et les encadrés et le fond la suivent.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },
@@ -68,5 +68,5 @@ Un bloc qui ne doit pas réduire son texte prend `fit: { shrinkText: false }`. U
 ## Erreurs fréquentes
 
 - Un nom peint dans une image ne pourrait pas changer avec la langue : la carte ne porte aucun mot et chaque nom est une étiquette.
-- Un élément de décor placé sous un bloc ne peut pas être cliqué dans le Sandbox ; c’est pourquoi le numéro de chaque thème est à gauche du bloc du titre et non dedans.
+La palette d’un thème ne change que les entrées `tema`. Les folios et la table des matières utilisent `agua`, qui a le même bleu : ils restent bleus sur les pages vertes et sable ; liez-les à `tema` et ils suivront le thème.
 - Deux figures qui posent la même ressource prennent les mots de la première : la petite carte du sommaire est le même fichier sous une autre ressource, `rio`, sans ancres.
