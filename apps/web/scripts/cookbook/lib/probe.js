@@ -824,11 +824,16 @@ export function composedFacts(engine, docs, { nOf = (_doc, i) => i + 1, markdown
       if (!c) continue;
       pages.push({
         n: pageOf(page.index),
+        ...(docs.length > 1 ? { doc: d } : {}),
         template: c.template,
         fenceIndex: c.fenceIndex,
         frames: (c.frames ?? []).map((f) => ({
           name: f.name,
+          ...(f.id ? { id: f.id } : {}),
           heightMm: mmOf(f.rect.height, dpi),
+          // Its box in mm (x, y, width, height): C38 compares it with the
+          // run on the text as written (#925).
+          box: [mmOf(f.rect.x, dpi), mmOf(f.rect.y, dpi), mmOf(f.rect.width, dpi), mmOf(f.rect.height, dpi)],
           ...(f.overflowPx > 0 ? { overflowMm: mmOf(f.overflowPx, dpi) } : {}),
           ...(f.scale !== undefined && f.scale !== 1 ? { scale: round(f.scale, 0.001) } : {}),
           ...(f.imageScale !== undefined ? { imageScale: round(f.imageScale, 0.001) } : {}),

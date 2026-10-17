@@ -6,7 +6,7 @@ import type { PostextConfig } from "postext";
 import { PAGE8_CONFIG, PAGE8_RESOURCES } from "../../../../../packages/postext/src/__tests__/composed/fixtures/page8";
 import { stressFactor, UsageError } from "../../../scripts/cookbook/args.ts";
 import {
-  compareFindings, composedFindings, configSizeFindings, roundTripFindings, runChecks, stressFindings, usefulProposal,
+  changesAgainstBase, compareFindings, composedFindings, configSizeFindings, roundTripFindings, runChecks, stressFindings, usefulProposal,
 } from "../../../scripts/cookbook/checks.ts";
 import type { CheckInput, ComposedFacts, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
 import { COMPOSED_FENCE as PROBE_FENCE, composedFacts, composedRoundTrip } from "../../../scripts/cookbook/lib/probe.js";
@@ -303,6 +303,33 @@ describe("C38: the stress test", () => {
     const out = stressFindings({ ...base, base: facts(declared), facts: facts({ ...declared, pages: [going] }, { pages: [...facts(declared).pages!, { ...facts(declared).pages![0]!, n: 2 }] }) });
     expect(out.map((f) => f.detail)).toContain("p. 1 (t) goes on: continues a → cp0:b");
     expect(out.at(-1)!.detail).toBe("2 pages, 1 as written");
+  });
+
+  it("says what moved against the text as written when the log is silent (#925)", () => {
+    // A standfirst whose height follows its text (no minHeight) declares no
+    // height: it grows and the columns anchored below it move, and the
+    // reflow log says nothing.
+    const frames = (standfirst: number) => [
+      { name: "entradilla", heightMm: standfirst, box: [10, 10, 190, standfirst] as [number, number, number, number] },
+      { name: "col-1", heightMm: 200 - standfirst, box: [10, 17 + standfirst, 92, 200 - standfirst] as [number, number, number, number] },
+      { name: "titulo", heightMm: 20, box: [10, 250, 150, 20] as [number, number, number, number] },
+    ];
+    const asWritten = { n: 1, template: "apertura", fenceIndex: 0, frames: frames(24), events: [] };
+    const stretched = { ...asWritten, frames: frames(30.2) };
+    const out = stressFindings({ ...base, base: facts({ ...declared, pages: [asWritten] }), facts: facts({ ...declared, pages: [stretched] }) });
+    expect(out[1]!.detail).toBe("p. 1 (apertura) rearranged: entradilla 6.2 mm taller than as written; col-1 6.2 mm shorter than as written; col-1 moved down 6.2 mm from where it was as written");
+    // Without the run as written, as before.
+    expect(stressFindings({ ...base, facts: facts({ ...declared, pages: [stretched] }) })[1]!.detail).toBe("p. 1 (apertura) fits as it was");
+    // What the log says already is not said twice.
+    const logged = { ...stretched, events: [{ frame: "entradilla", kind: "grew", fromMm: 24, toMm: 30.2, text: "entradilla grew 6.2 mm" }] };
+    expect(changesAgainstBase(logged, asWritten)).toEqual(["col-1 6.2 mm shorter than as written", "col-1 moved down 6.2 mm from where it was as written"]);
+  });
+
+  it("names the frame a story goes on in by its name, template and page (#925)", () => {
+    const going = { ...page, events: [], frames: [{ name: "col-2", id: "cp0:col-2", heightMm: 30, continuesTo: "cp0:col-1~2" }] };
+    const after = { n: 2, template: "seguido-par", fenceIndex: 0, frames: [{ name: "col-1", id: "cp0:col-1~2", heightMm: 200, continuedFrom: "cp0:col-2" }], events: [] };
+    const out = stressFindings({ ...base, facts: facts({ ...declared, pages: [going, after] }) });
+    expect(out.map((f) => f.detail)).toContain("p. 1 (t) goes on: continues col-2 → col-1 of seguido-par on p. 2 (cp0:col-1~2)");
   });
 });
 
