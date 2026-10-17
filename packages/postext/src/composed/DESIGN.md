@@ -754,7 +754,10 @@ Recorded where the implementation settles a point the sections above leave open,
   fresh page after the last one laid (a spread target opens on the next verso, `breakToEvenPage`),
   laid with `layoutComposedPage` and `ComposedPageInput.continuing` (no memo).
 - **Receivers** (`composed/continuation.ts`, `assignReceivers`): the frame of the same name, else
-  the flow frame, else the first frame free; a continuation that finds none waits for another page
+  the flow frame, else the first frame free; a story threaded through a chain (the sending frame
+  has a frame before it, `ComposedContinuation.head`) goes on where its chain starts: the frame of
+  the chain head's name, else the flow frame, else the sending frame's name (#919), so a body
+  template of three threaded columns that goes on into itself fills all three on every added page; a continuation that finds none waits for another page
   of the same target. A receiver starts its chain on the added page (`chainPrev` ignores links into
   it) and its story starts at the cut. `continuationTemplate` patches the added page's template:
   the last frame of each receiver's chain goes on with the rule that brought the content unless it

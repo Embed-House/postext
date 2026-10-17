@@ -43,6 +43,10 @@ export interface ComposedContinuation {
    *  id (`VDTFrame.id`). */
   frame: string;
   fromFrameId: string;
+  /** The first frame of the sending frame's chain on its page (the frame
+   *  itself when no frame comes before it): a story threaded through
+   *  frames goes on in the frame its chain starts in (#919). */
+  head: string;
   /** Where it goes on: `'next-page'` or `'template:<id>'`. */
   rule: string;
   /** The template of the page it comes from (`'next-page'` reads its
@@ -101,8 +105,10 @@ export function continuationTarget(
 /**
  * The frames of `template` that take `list`, in order: each goes on in
  * the frame of its name, else the flow frame, else the first frame no
- * other continuation took. Those that find no free frame are `left` for
- * another page.
+ * other continuation took. A story threaded through a chain of frames
+ * goes on where its chain starts (#919): in the frame of the chain head's
+ * name, else the flow frame, else the frame of the sending frame's name.
+ * Those that find no free frame are `left` for another page.
  */
 export function assignReceivers(
   template: Pick<ResolvedPageTemplate, 'frames'>,
@@ -113,7 +119,8 @@ export function assignReceivers(
   const names = new Set(template.frames.map((f) => f.name));
   const flow = template.frames.find((f) => f.flow)?.name;
   for (const c of list) {
-    const take = [c.frame, flow, ...template.frames.map((f) => f.name)].find((n) => n !== undefined && names.has(n) && !receivers.has(n));
+    const first = c.head !== undefined && c.head !== c.frame ? [c.head, flow, c.frame] : [c.frame, flow];
+    const take = [...first, ...template.frames.map((f) => f.name)].find((n) => n !== undefined && names.has(n) && !receivers.has(n));
     if (take === undefined) left.push(c);
     else receivers.set(take, c);
   }

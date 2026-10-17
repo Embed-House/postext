@@ -480,6 +480,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     continuations.push({
       frame: frame.name,
       fromFrameId: spill.frameId,
+      head: spill.head,
       rule: frame.overflow.continueIn!,
       template: template.id,
       collapsed: input.continuing?.collapse ?? false,

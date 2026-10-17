@@ -89,3 +89,51 @@ describe('the ladder goes on before it shrinks a frame that can continue (#920)'
     expect(ws[0]!.stepsTried).toEqual(['free', 'continue', 'shrinkText']);
   });
 });
+
+describe('a threaded story goes on where its chain starts (#919)', () => {
+  /** Three columns threaded a → b → c; c goes on as `rule`. */
+  const columns = (id: string, prefix: string, rule: string): PageTemplate => ({
+    id,
+    header: false,
+    frames: (['1', '2', '3'] as const).map((k, i) => ({
+      name: `${prefix}-${k}`,
+      width: mm(56),
+      height: 'fill' as const,
+      placement: { anchor: { to: 'container' as const, edge: 'top-left' as const }, offset: { x: mm(i * 62) } },
+      ...(k === '1' ? { flow: true } : {}),
+      ...(k !== '3' ? { next: `${prefix}-${Number(k) + 1}` } : { overflow: { continueIn: rule } }),
+      fit: { shrinkText: false, scaleImages: false },
+    })),
+  });
+  const story = ['::::page{template="cuerpo"}', ...Array.from({ length: 70 }, (_, i) => [para(`p${i}w`, 110), '']).flat(), '::::', ''].join('\n');
+
+  for (const rule of ['template:cuerpo', 'next-page']) {
+    it(`a template that goes on into itself fills every column of every added page (${rule})`, () => {
+      const doc = build(story, [columns('cuerpo', 'col', rule)]);
+      const pages = composedPages(doc);
+      expect(pages.length).toBeGreaterThanOrEqual(4);
+      // Every page but the last fills its three columns.
+      for (const p of pages.slice(0, -1)) {
+        for (const k of ['1', '2', '3']) expect(frameOn(p, `col-${k}`).blockIds.length, `p. ${p.index} col-${k}`).toBeGreaterThan(0);
+      }
+      expect(pages[pages.length - 1]!.composed!.frames.find((f) => f.name === 'col-1')!.blockIds.length).toBeGreaterThan(0);
+      // The chain goes on from c to the next page's a.
+      for (let k = 1; k < pages.length; k++) {
+        expect(frameOn(pages[k]!, 'col-1').continuedFrom).toBe(frameOn(pages[k - 1]!, 'col-3').id);
+      }
+      expect(warningsOf(doc, 'frameOverflow', 'frameContinuationLimit')).toEqual([]);
+      // Every word once.
+      const all = pages.flatMap((p) => ['1', '2', '3'].map((k) => textOf(blocksOf(p, frameOn(p, `col-${k}`))))).join(' ');
+      for (const i of [0, 17, 39, 69]) expect(count(all, `p${i}w5 `)).toBe(1);
+    });
+  }
+
+  it('goes on in the flow frame of another template whose frames have other names', () => {
+    const doc = build(story.replace('template="cuerpo"', 'template="primera"'), [columns('primera', 'col', 'template:seguido'), columns('seguido', 'sig', 'template:seguido')]);
+    const pages = composedPages(doc);
+    expect(pages.length).toBeGreaterThanOrEqual(3);
+    for (const p of pages.slice(1, -1)) {
+      for (const k of ['1', '2', '3']) expect(frameOn(p, `sig-${k}`).blockIds.length).toBeGreaterThan(0);
+    }
+  });
+});
