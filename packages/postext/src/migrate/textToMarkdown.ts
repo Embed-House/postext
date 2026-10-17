@@ -652,15 +652,16 @@ function writePage(
 /** A frame of the template, from a planned one. */
 function frameConfig(f: PlannedFrame): FrameConfig {
   if (f.picture) {
-    // The picture's box, over the decoration and under the text frames;
-    // the picture keeps its size.
+    // The picture's box, over the decoration (below it when the design
+    // painted decoration over the picture, #957) and under the text
+    // frames; the picture keeps its size.
     const pic = f.picture;
     return {
       name: f.name!,
       placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: { value: round3(pic.x), unit: 'mm' }, y: { value: round3(pic.y), unit: 'mm' } } },
       width: { value: round3(pic.width), unit: 'mm' },
       height: { value: round3(pic.height), unit: 'mm' },
-      layer: 0,
+      layer: pic.layer ?? 0,
       fit: { scaleImages: false },
     };
   }
