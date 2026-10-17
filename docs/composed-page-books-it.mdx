@@ -1,0 +1,184 @@
+{/* docs/composed-page-books-it.mdx */}
+
+export const metadata = {
+  title: 'Libri di pagine composte',
+  sidebarTitle: 'Libri di pagine composte',
+  description: 'Un percorso guidato nel Sandbox con un libro di testo scolastico fatto di pagine composte: costruire un modello di pagina, riempirlo dal Markdown, etichettare una mappa, tradurre la pagina, sistemare ciò che non entra e selezionare sulla pagina e nel testo',
+  lang: 'it',
+  lastUpdated: '2026-10-17',
+  readingTime: '12 min',
+  order: 42,
+  plainSummary: "Questa pagina insegna, passo dopo passo, a fare nel Sandbox una pagina di un libro di testo scolastico, con una fascia per il titolo, un testo e dei riquadri colorati. Si parte da un libro d’esempio già finito e gli si aggiunge una pagina. Prima si disegna la pagina come modello, poi vi si versa il testo dal Markdown, poi si dà un nome ai luoghi di una mappa e si traduce la pagina in un’altra lingua. Alla fine si vede che cosa fare quando un testo è troppo lungo per il suo riquadro e come passare dalla pagina al suo testo e viceversa.",
+};
+
+# Libri di pagine composte
+
+**Costruisci una pagina di un libro di testo a partire da un modello, la riempi con il testo del Markdown, etichetti una mappa, traduci la pagina e sistemi ciò che non entra.**
+
+La pagina di un libro di testo scolastico è un insieme di riquadri: una fascia per il titolo, un testo, un riquadro per una definizione, uno per un’attività, una mappa. Postext la impagina a partire da un **modello di pagina** che contiene i riquadri (le sue cornici), e il Markdown dice soltanto quali parole vanno in quale cornice. Questa pagina percorre tutto il lavoro nel Sandbox, su un libro che esiste già, e vi aggiunge una pagina. Le pagine di riferimento spiegano che cosa fa ogni campo e ogni riga di Markdown; qui fai ogni cosa una volta, in ordine, e vedi che cosa cambia: [Pagine composte](/it/docs/composed-pages) per il Markdown, [Configurazione › Pagine composte](/it/docs/configuration-composed-pages) per il modello, [Sandbox: le pagine composte](/it/docs/sandbox-composed-pages) per le schermate.
+
+Ti servono un browser e nient’altro. Ogni passo si fa nel Sandbox, e ciò che modifichi resta nel tuo browser.
+
+## 1. Aprire il libro
+
+Il libro è *Our river*, un’unità di un libro di testo per la terza elementare che il [Ricettario](/it/cookbook/children-textbook-pages) pubblica come ricetta Nº 156. Il fiume, i paesi e le immagini sono inventati per l’occasione. Ha nove pagine, con una mappa dipinta che si stende su due pagine affiancate, ed esiste in spagnolo, catalano e inglese.
+
+[Aprilo nel Sandbox](/it/sandbox#recipe=children-textbook-pages&lang=en). La prima volta viene aggiunto a **Libri** come un tuo libro, quindi puoi modificarlo liberamente; con `lang=es` o `lang=ca` nel link ottieni le altre edizioni. Se torni più tardi allo stesso link, il Sandbox chiede se aprire la tua copia o sostituirla con quella pubblicata.
+
+Due cose da sapere prima di toccare qualcosa:
+
+- La barra sopra l’anteprima ha un selettore con **Contenuto** e **Grafica**. In modalità Contenuto modifichi le parole, nel pannello **Testo** o sulla pagina. In modalità Grafica modifichi i modelli di pagina e gli stili, e il testo è in sola lettura. **Alt+Maiusc+M** (**⌥⇧M** su un Mac) passa dall’una all’altra.
+- Il pannello **Testo** mostra un capitolo di Markdown. Ogni pagina composta è un blocco che comincia con `::::page{template="…"}` e finisce con quattro due punti. Fai clic su alcune parole di una pagina nell’anteprima e il cursore va a quelle parole nel Markdown.
+
+## 2. Fare un modello di pagina
+
+La pagina nuova sarà una pagina di ripasso: una fascia per il titolo, un testo breve sotto e due riquadri, uno per ricordare ciò che si è imparato e uno per provare. Serve un modello con quattro cornici.
+
+1. Passa a **Grafica** e apri il pannello **Grafica** a sinistra. Scegli **Pagina e colonne**, poi **Modelli di pagina**. L’elenco mostra ogni modello del libro con un disegno delle sue cornici.
+2. Premi **Nuovo**. Si apre un modello chiamato *Nuovo modello*. Dagli l’**ID** `review` (il nome che userà il Markdown) e il **Nome** `Review page` (il nome che mostra questo pannello). L’ID accetta lettere minuscole, cifre e trattini.
+3. Il modello comincia con una cornice, `text`, che **Riceve il testo libero della pagina**. Trasformala nella fascia del titolo: **Nome (slot)**: `title`; **Stile del riquadro**: `portada`, la fascia blu che il libro usa già per i suoi titoli; disattiva **Riceve il testo libero della pagina**; **Riceve il primo titolo**: *Livello 1*, così questa cornice riceve il primo titolo `#` della pagina.
+4. Premi **Aggiungi cornice**. La cornice nuova si apre sotto l’elenco delle cornici. **Nome (slot)**: `text`, e attiva **Riceve il testo libero della pagina**: ciò che la pagina scrive fuori da una cornice va qui.
+5. Aggiungi una cornice. **Nome (slot)**: `remember`. **Stile del riquadro**: `dato-campo`, un riquadro verde con una linguetta. **Altezza minima**: 30 mm, perché il riquadro mantenga una buona misura anche quando il suo testo è breve.
+6. Aggiungi un’ultima cornice. **Nome (slot)**: `try`. **Stile del riquadro**: `actividad-sol`. **Altezza minima**: 30 mm.
+7. In `text`, `remember` e `try` imposta **Larghezza** su *Fino al bordo* e **Altezza** su *Il suo contenuto*: così occupano tutta la larghezza della pagina e sono alte quanto il loro testo.
+8. Sotto **Gruppi** premi **Aggiungi gruppo**. Chiamalo `column`, lascialo *Impilate* e imposta **Spazio tra le cornici** su 6 mm. Sotto **Cornici del gruppo, nell’ordine della pagina** seleziona le quattro cornici. Il gruppo le tiene nell’ordine dell’elenco delle cornici, quindi il titolo è il primo. Un gruppo dispone le sue cornici una sotto l’altra e sposta quelle in basso quando una cornice cresce: un testo più lungo nel primo riquadro spinge giù il secondo invece di finirgli sopra.
+
+<Screenshot src="/docs-shots/it/template.webp" alt="Il pannello Grafica su Modelli di pagina con il modello Review page: le sue quattro cornici e il suo gruppo, e le stesse cornici disegnate con contorni tratteggiati sulla pagina." caption="Il modello: quattro cornici e un gruppo. Sulla pagina, i riquadri tratteggiati sono le cornici e le etichette verdi dicono come è dimensionata ciascuna." />
+
+Il modello non contiene parole. Nulla di ciò che hai impostato dice qual è il titolo o che cosa contengono i riquadri: lo stile del riquadro dà alla cornice il suo aspetto, il gruppo il suo ordine. Allo stesso modello si arriva anche in altri modi. In modalità Grafica puoi disegnare con il mouse una cornice in un punto vuoto di una pagina composta e spostare o ridimensionare quelle che hai (vedi [Sandbox: le pagine composte](/it/docs/sandbox-composed-pages#modelli-di-pagina)); **Duplica** copia un modello per modificarlo; **Salva l’impaginazione come modello** trasforma in un modello nuovo una pagina composta che ti piace.
+
+## 3. Riempire la pagina dal Markdown
+
+1. Passa a **Contenuto**, apri il pannello **Testo** e premi **Ctrl+Fine** (**Cmd+↓** su un Mac) per andare in fondo al capitolo.
+2. Premi **Pagina composta** nella barra degli strumenti del pannello Testo. Un selettore elenca i modelli di pagina del libro, ciascuno disegnato con le sue cornici vuote. Scegli *Review page*.
+3. Il Sandbox scrive la pagina per te, con una cornice vuota per ogni slot, e seleziona la parola `title` del titolo. Scrivi il titolo al suo posto.
+
+```md
+::::page{template="review"}
+# Check what you have learned
+
+A river changes as it runs from the mountains to the sea. Read the boxes, then answer them in your own words.
+
+:::frame{slot="remember" label="Remember"}
+A spring gives a trickle, streams join into a river, and the river widens as it nears the sea.
+:::
+
+:::frame{slot="try" label="Try it"}
+Draw a river from its spring to the sea. Write the names of the three courses on your drawing.
+:::
+::::
+```
+
+Il titolo va alla cornice che riceve il livello 1, il paragrafo che lo segue alla cornice che riceve il testo libero, e ogni `:::frame` alla cornice del suo `slot`. Il `label` sono le parole sulla linguetta di un riquadro. Sul canvas la pagina è la numero 10, dopo le nove dell’unità: una pagina composta comincia sempre una pagina nuova.
+
+<Screenshot src="/docs-shots/it/fill.webp" alt="Il pannello Testo con il Markdown della pagina nuova e, accanto, la pagina finita con un titolo blu, un paragrafo e due riquadri con linguette." caption="La pagina nel Markdown e sul canvas." />
+
+Nota ciò che il Markdown non dice: nessuna posizione, nessuna misura, nessun colore. Appartengono al modello, e lo stesso Markdown impaginato con un altro modello avrebbe un altro aspetto.
+
+## 4. Etichettare la mappa
+
+Le pagine 6 e 7 contengono una mappa dipinta che si stende su tutta la doppia pagina. Le sue parole non fanno parte dell’immagine. Ogni nome è una riga del Markdown, dentro il `:::figure` della mappa:
+
+```md
+:::figure{resource="mapa" slot="mapa"}
+::label[Spring]{at="nacimiento"}
+::label[Molinar]{at="molinar"}
+::label[Lower course]{at="bajo"}
+:::
+```
+
+`at` indica un’**ancora**: un punto dell’immagine, definito una sola volta nella risorsa dell’immagine e condiviso da tutte le lingue. Per aggiungere il ponte di pietra di Molinar:
+
+1. Nel pannello Testo vai alla figura della mappa (cerca `at="bajo"`) e aggiungi una riga sotto l’ultima etichetta: `::label[Stone bridge]{at="bridge"}`.
+2. Apri **Verifiche**. L’elenco ha una voce *Etichetta su un'ancora inesistente* per la pagina 6: l’immagine non ha nessuna ancora chiamata `bridge`. Premi il pulsante con la puntina sulla voce, *Colloca l’ancora bridge sull’immagine*.
+3. Una finestra mostra la mappa con le ancore che ha. Il nome `bridge` è scelto sotto *Etichette senza ancora (1)*. Fai clic sull’immagine nel punto in cui si trova il ponte.
+4. Imposta lo **Stile dell’etichetta** della nuova ancora su `pueblo`, lo stile dei paesi, e premi **Salva**.
+
+<Screenshot src="/docs-shots/it/anchor.webp" alt="La finestra Ancore: la mappa con i suoi punti, la nuova ancora chiamata bridge scelta e il suo campo per lo stile dell’etichetta." caption="La nuova ancora è un clic sull’immagine; il suo stile dell’etichetta la fa somigliare ai nomi dei paesi." />
+
+<Screenshot src="/docs-shots/it/map.webp" alt="La mappa sulle pagine 6 e 7 con la nuova etichetta Stone bridge sul ponte, accanto alle etichette dei paesi." caption="L’etichetta è posata nel punto in cui hai fatto clic, con i font del libro." />
+
+La parola *Stone bridge* è Markdown; il punto fa parte dell’immagine. Quando traduci la pagina, la stessa ancora riceve un’altra parola.
+
+## 5. Tradurre la pagina
+
+Una traduzione è lo stesso modello con altre parole. Il Sandbox ha due modi per tenerla. Un libro può contenere più lingue insieme, come file `.postext` con un’edizione per ciascuna, e allora la barra sopra il canvas passa dall’una all’altra e il pannello Verifiche le legge tutte (vedi [Edizioni di un libro](/it/docs/sandbox-previews#edizioni-di-un-libro)). Il modo più semplice, che non richiede alcun file, è una copia del libro nell’altra lingua:
+
+1. Apri **Libri**, premi **⋯** sul tuo libro e scegli **Duplica**, oppure premi **Nuovo** e scegli **Copia del libro aperto**. Apri la copia. Ha lo stesso nome dell’originale: cambialo con **Rinomina…** nello stesso menu.
+2. Nel pannello **Grafica** apri **Sistema di scrittura** e, sotto **Lingua e direzione**, imposta la **Lingua del documento**. La sillabazione, le virgolette e le parole che il motore scrive da sé (come *Continued* al taglio di un riquadro) la seguono.
+3. Nel pannello **Testo** traduci le parole e lascia il resto.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '50%' }}>Traduci</th>
+      <th>Lascia com’è</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Il testo di titoli, paragrafi ed elenchi</td>
+      <td>I quattro due punti, la parola <code>page</code> e il <code>template="…"</code> del recinto</td>
+    </tr>
+    <tr>
+      <td>Il <code>label="…"</code> di una cornice</td>
+      <td>Lo <code>slot="…"</code> di una cornice</td>
+    </tr>
+    <tr>
+      <td>Il testo tra parentesi quadre di <code>::label[…]</code>, <code>::alt[…]</code> e <code>::caption[…]</code></td>
+      <td>L’<code>at="…"</code> di un’etichetta e il <code>resource="…"</code> di una figura</td>
+    </tr>
+  </tbody>
+</table>
+
+Le immagini, le ancore, i riquadri e i loro colori passano con la copia e non richiedono lavoro. Una copia della pagina di ripasso in spagnolo si presenta così:
+
+```md
+::::page{template="review"}
+# Repasa lo aprendido
+
+Un río cambia mientras baja de las montañas al mar. Lee los recuadros y respóndelos con tus propias palabras.
+
+:::frame{slot="remember" label="Recuerda"}
+Un manantial da un hilo de agua, los arroyos se unen en un río y el río se ensancha al acercarse al mar.
+:::
+
+:::frame{slot="try" label="Inténtalo"}
+Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre de los tres cursos.
+:::
+::::
+```
+
+<Screenshot src="/docs-shots/it/translate.webp" alt="La copia del libro nell’altra lingua: il pannello Testo con la pagina tradotta e la pagina sul canvas con il titolo, il testo e le linguette tradotti." caption="La pagina tradotta: il modello è lo stesso, le parole no." />
+
+## 6. Sistemare ciò che non entra
+
+Le parole hanno una lunghezza diversa da una lingua all’altra, e un riquadro che conteneva il testo inglese può non contenere quello spagnolo. Il pannello Verifiche trova quelle cornici. Per vederne una, incolla tre o quattro paragrafi in più di un testo qualsiasi nella cornice `remember` della pagina tradotta, in modo che contenga più di quanto la pagina può ospitare.
+
+Ora la pagina mostra la cornice contornata di rosso, con una fascia sotto il piede che dice quanto manca (*mancano 26 mm*). In **Verifiche**, sotto *Pagine composte*, la voce *Il testo non entra nella cornice* dice che cosa ha provato l’impaginazione prima di arrendersi (più spazio dalle cornici attorno, poi un testo più piccolo) ed elenca le vie d’uscita come pulsanti:
+
+- *lascia scendere il testo al 82,5 % (fit.minScale)* permette al testo di questa cornice di ridursi fino a quella misura. Va bene se le righe di troppo sono poche.
+- *fallo proseguire nella pagina seguente (overflow.continueIn)* manda ciò che non entra in una pagina aggiunta dopo questa. Va bene per un testo più lungo.
+- *taglia circa 495 caratteri* non cambia nulla. Seleziona il testo della cornice e ti dice quanto tagliare.
+
+Un pulsante che modifica il modello (quindi ogni pagina impaginata con esso) chiede prima conferma, nominando l’impostazione. Premi **Cambia**. La pagina viene impaginata di nuovo, il riquadro finisce con la parola del taglio (*Continúa*) e il resto prosegue in cima a una pagina aggiunta. **Cmd/Ctrl+Z** annulla la modifica. **Spostamenti**, nella barra sopra il canvas, apre *Che cosa si è spostato e perché*: le cornici di cui l’impaginazione ha cambiato la misura o il posto per far entrare il contenuto, con il motivo a parole.
+
+<Screenshot src="/docs-shots/it/checks.webp" alt="Il pannello Verifiche con la voce Il testo non entra nella cornice e tre pulsanti con le vie d’uscita, e la pagina con il primo riquadro contornato di rosso e una fascia che dice mancano 26 mm." caption="Una cornice che non ci sta e le correzioni che l’impaginazione ha calcolato per lei." />
+
+## 7. Selezionare sulla pagina e nel testo
+
+La pagina e il suo Markdown si seguono a vicenda.
+
+- **Dalla pagina al testo.** Fai clic sulle parole di una cornice: il cursore va a quel paragrafo nel pannello Testo, e un percorso sotto l’anteprima dice dove ti trovi (*Pagina 10 › column › try › paragrafo 1*). In modalità Grafica lo stesso clic sceglie invece la cornice per l’editor dei modelli.
+- **Dal testo alla pagina.** Metti il cursore in un paragrafo e sulla pagina vengono contornati la cornice che lo contiene e il paragrafo stesso, e lo stesso percorso dice dove si trovano.
+- **Da una verifica.** Fai clic su una voce del pannello Verifiche e il Sandbox ti porta alla pagina, sceglie la cornice e mette il cursore sul suo testo. In un libro con più edizioni passa all’edizione che ha il problema.
+- **Sulla linguetta di un riquadro.** Fai doppio clic: sopra di essa si apre un campo per il `label`. **Invio** conserva la modifica, **Esc** la abbandona.
+
+<Screenshot src="/docs-shots/it/select.webp" alt="La pagina con il secondo riquadro contornato di arancione e il pannello Testo che mostra la cornice selezionata nel suo Markdown." caption="Un clic sulla pagina porta il cursore nel suo Markdown, e il percorso sotto l’anteprima dice di quale cornice si tratta." />
+
+## Dove andare dopo
+
+- [Spostare un libro nelle pagine composte](/it/docs/migrating-to-composed-pages): un libro che tiene il testo delle sue pagine negli stili può averlo spostato nel Markdown.
+- [Pagine composte](/it/docs/composed-pages): ogni attributo del recinto di pagina, della figura e delle righe di etichetta, come viene composta una pagina e ogni avviso con la sua correzione.
+- [Configurazione › Pagine composte](/it/docs/configuration-composed-pages): ogni campo di un modello, di una cornice e di un gruppo, l’ereditarietà e le doppie pagine.
+- [Sandbox: le pagine composte](/it/docs/sandbox-composed-pages): le schermate per i modelli, gli stili delle cornici, le verifiche in ogni edizione e le correzioni.

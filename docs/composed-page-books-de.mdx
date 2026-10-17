@@ -1,0 +1,184 @@
+{/* docs/composed-page-books-de.mdx */}
+
+export const metadata = {
+  title: 'Bücher aus zusammengesetzten Seiten',
+  sidebarTitle: 'Bücher aus zusammengesetzten Seiten',
+  description: 'Ein Rundgang durch die Sandbox mit einem Schulbuch aus zusammengesetzten Seiten: eine Seitenvorlage anlegen, sie aus dem Markdown füllen, eine Karte beschriften, die Seite übersetzen, beheben, was nicht passt, und auf der Seite und im Text auswählen',
+  lang: 'de',
+  lastUpdated: '2026-10-17',
+  readingTime: '12 min',
+  order: 42,
+  plainSummary: "Diese Seite zeigt Schritt für Schritt, wie Sie in der Sandbox eine Schulbuchseite mit Titelband, Text und farbigen Kästen bauen. Sie beginnen mit einem fertigen Beispielbuch und fügen ihm eine Seite hinzu. Zuerst zeichnen Sie die Seite als Vorlage, dann füllen Sie sie aus dem Markdown mit Text. Danach benennen Sie die Orte auf einer Karte und übersetzen die Seite in eine andere Sprache. Am Ende sehen Sie, was zu tun ist, wenn ein Text für seinen Kasten zu lang ist, und wie Sie zwischen der Seite und ihrem Text hin- und herspringen.",
+};
+
+# Bücher aus zusammengesetzten Seiten
+
+**Sie bauen eine Schulbuchseite aus einer Vorlage, füllen sie mit Text aus dem Markdown, beschriften eine Karte, übersetzen die Seite und beheben, was nicht passt.**
+
+Eine Schulbuchseite besteht aus Kästen: einem Titelband, einem Text, einem Kasten für eine Definition, einem für eine Aufgabe und einer Karte. Postext setzt eine solche Seite nach einer **Seitenvorlage**, die die Kästen (ihre Rahmen) enthält, und das Markdown sagt nur, welche Wörter in welchen Rahmen kommen. Diese Seite führt die ganze Arbeit in der Sandbox vor, an einem Buch, das es schon gibt, und fügt ihm eine Seite hinzu. Die Referenzseiten erklären, was jedes Feld und jede Markdown-Zeile bewirkt; hier machen Sie jedes einmal, der Reihe nach, und sehen, was sich ändert: [Zusammengesetzte Seiten](/de/docs/composed-pages) für das Markdown, [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages) für die Vorlage, [Sandbox: zusammengesetzte Seiten](/de/docs/sandbox-composed-pages) für die Bildschirme.
+
+Sie brauchen nur einen Browser. Alles geschieht in der Sandbox, und was Sie ändern, bleibt in Ihrem Browser.
+
+## 1. Das Buch öffnen
+
+Das Buch heißt *Our river* und ist eine Einheit aus einem Schulbuch für das dritte Schuljahr, die das [Rezeptbuch](/de/cookbook/children-textbook-pages) als Rezept Nº 156 veröffentlicht. Der Fluss, die Orte und die Bilder sind dafür erfunden. Es hat neun Seiten, darunter eine gemalte Karte über zwei gegenüberliegende Seiten, und es liegt auf Spanisch, Katalanisch und Englisch vor.
+
+[Öffnen Sie es in der Sandbox](/de/sandbox#recipe=children-textbook-pages&lang=en). Beim ersten Besuch kommt es als eines Ihrer eigenen Bücher unter **Bücher**, sodass Sie es frei ändern dürfen; mit `lang=es` oder `lang=ca` im Link erhalten Sie die anderen Ausgaben. Rufen Sie später denselben Link noch einmal auf, fragt die Sandbox, ob sie Ihre Kopie öffnen oder durch die veröffentlichte ersetzen soll.
+
+Zwei Dinge vorab, bevor Sie etwas anfassen:
+
+- Die Leiste über der Vorschau hat einen Umschalter mit **Inhalt** und **Gestaltung**. Im Modus Inhalt bearbeiten Sie Wörter, im Bereich **Text** oder auf der Seite. Im Modus Gestaltung bearbeiten Sie Seitenvorlagen und Stile, und der Text ist schreibgeschützt. **Alt+Umschalt+M** (**⌥⇧M** auf dem Mac) wechselt zwischen beiden.
+- Der Bereich **Text** zeigt ein Kapitel Markdown. Jede zusammengesetzte Seite ist ein Block, der mit `::::page{template="…"}` beginnt und mit vier Doppelpunkten endet. Klicken Sie in der Vorschau auf Wörter einer Seite, springt die Einfügemarke im Markdown zu ihnen.
+
+## 2. Eine Seitenvorlage anlegen
+
+Die neue Seite wird eine Wiederholungsseite: ein Titelband, darunter ein kurzer Text und zwei Kästen, einer zum Erinnern an das Gelernte und einer zum Ausprobieren. Dafür braucht sie eine Vorlage mit vier Rahmen.
+
+1. Wechseln Sie zu **Gestaltung** und öffnen Sie links das Bedienfeld **Gestaltung**. Wählen Sie **Seite und Spalten**, dann **Seitenvorlagen**. Die Liste zeigt jede Vorlage des Buchs mit einer Zeichnung ihrer Rahmen.
+2. Klicken Sie auf **Neu**. Eine Vorlage namens *Neue Vorlage* öffnet sich. Geben Sie ihr die **ID** `review` (das ist der Name, den das Markdown verwendet) und den **Namen** `Review page` (so zeigt ihn dieses Bedienfeld). Die ID nimmt Kleinbuchstaben, Ziffern und Bindestriche.
+3. Die Vorlage beginnt mit einem Rahmen, `text`, der **Nimmt den freien Text der Seite auf**. Machen Sie ihn zum Titelband: **Name (Platz)**: `title`; **Kastenstil**: `portada`, das blaue Band, das das Buch schon für seine Titel verwendet; schalten Sie **Nimmt den freien Text der Seite auf** aus; **Nimmt die erste Überschrift auf**: *Ebene 1*, damit dieser Rahmen die erste `#`-Überschrift der Seite erhält.
+4. Klicken Sie auf **Rahmen hinzufügen**. Der neue Rahmen öffnet sich unter der Liste der Rahmen. **Name (Platz)**: `text`, und schalten Sie **Nimmt den freien Text der Seite auf** ein: Alles, was die Seite außerhalb eines Rahmens schreibt, kommt hierher.
+5. Fügen Sie einen Rahmen hinzu. **Name (Platz)**: `remember`. **Kastenstil**: `dato-campo`, ein grüner Kasten mit Reiter. **Kleinste Höhe**: 30 mm, damit der Kasten eine gute Größe behält, auch wenn sein Text kurz ist.
+6. Fügen Sie einen letzten Rahmen hinzu. **Name (Platz)**: `try`. **Kastenstil**: `actividad-sol`. **Kleinste Höhe**: 30 mm.
+7. Stellen Sie bei `text`, `remember` und `try` die **Breite** auf *Bis zum Rand* und die **Höhe** auf *Sein Inhalt*. Dann füllen die Rahmen die Breite der Seite und sind so hoch wie ihr Text.
+8. Klicken Sie unter **Gruppen** auf **Gruppe hinzufügen**. Nennen Sie sie `column`, lassen Sie sie *Gestapelt* und setzen Sie den **Abstand zwischen Rahmen** auf 6 mm. Haken Sie unter **Rahmen der Gruppe, in Seitenreihenfolge** die vier Rahmen an. Die Gruppe behält sie in der Reihenfolge der Rahmenliste, der Titel steht also oben. Eine Gruppe legt ihre Rahmen untereinander und schiebt die unteren weiter, wenn ein Rahmen wächst: Ein längerer Text im ersten Kasten drückt den zweiten nach unten, statt ihn zu überdecken.
+
+<Screenshot src="/docs-shots/de/template.webp" alt="Das Bedienfeld Gestaltung bei Seitenvorlagen mit der Vorlage Review page: ihre vier Rahmen und ihre Gruppe, und dieselben Rahmen mit gestrichelten Konturen auf der Seite." caption="Die Vorlage: vier Rahmen und eine Gruppe. Auf der Seite sind die gestrichelten Kästen die Rahmen, und die grünen Marken sagen, wie jeder bemessen ist." />
+
+In der Vorlage steht kein Wort Text. Nichts, was Sie eingestellt haben, sagt, wie der Titel lautet oder was in den Kästen steht: Der Kastenstil gibt einem Rahmen sein Aussehen, die Gruppe seine Reihenfolge. Zur selben Vorlage führen noch andere Wege. Im Modus Gestaltung können Sie mit der Maus einen Rahmen an einer leeren Stelle einer zusammengesetzten Seite aufziehen und die vorhandenen Rahmen verschieben oder in der Größe ändern (siehe [Sandbox: zusammengesetzte Seiten](/de/docs/sandbox-composed-pages#seitenvorlagen)); **Duplizieren** kopiert eine Vorlage, damit Sie sie abwandeln; **Layout als Vorlage speichern** macht aus einer zusammengesetzten Seite, die Ihnen gefällt, eine neue Vorlage.
+
+## 3. Die Seite aus dem Markdown füllen
+
+1. Wechseln Sie zu **Inhalt**, öffnen Sie das Bedienfeld **Text** und drücken Sie **Strg+Ende** (**Cmd+↓** auf dem Mac), um ans Ende des Kapitels zu springen.
+2. Klicken Sie in der Werkzeugleiste des Bereichs Text auf **Zusammengesetzte Seite**. Eine Auswahl listet die Seitenvorlagen des Buchs, jede als ihre leeren Rahmen gezeichnet. Wählen Sie *Review page*.
+3. Die Sandbox schreibt die Seite für Sie, einen leeren Rahmen je Platz, und markiert das Wort `title` der Überschrift. Tippen Sie den Titel darüber.
+
+```md
+::::page{template="review"}
+# Check what you have learned
+
+A river changes as it runs from the mountains to the sea. Read the boxes, then answer them in your own words.
+
+:::frame{slot="remember" label="Remember"}
+A spring gives a trickle, streams join into a river, and the river widens as it nears the sea.
+:::
+
+:::frame{slot="try" label="Try it"}
+Draw a river from its spring to the sea. Write the names of the three courses on your drawing.
+:::
+::::
+```
+
+Die Überschrift geht in den Rahmen, der Ebene 1 aufnimmt, der Absatz danach in den Rahmen, der den freien Text aufnimmt, und jedes `:::frame` in den Rahmen seines `slot`. Das `label` sind die Wörter auf dem Reiter eines Kastens. Auf der Leinwand steht die Seite als Seite 10 hinter den neun der Einheit: Eine zusammengesetzte Seite beginnt immer eine neue Seite.
+
+<Screenshot src="/docs-shots/de/fill.webp" alt="Der Bereich Text mit dem Markdown der neuen Seite und daneben die fertige Seite mit blauem Titel, einem Absatz und zwei Kästen mit Reitern." caption="Die Seite im Markdown und auf der Leinwand." />
+
+Beachten Sie, was das Markdown nicht sagt: keine Position, keine Größe, keine Farbe. Das gehört zur Vorlage, und dasselbe Markdown sähe mit einer anderen Vorlage anders aus.
+
+## 4. Die Karte beschriften
+
+Die Seiten 6 und 7 zeigen eine gemalte Karte über die Doppelseite. Ihre Wörter sind nicht Teil des Bilds. Jeder Name darauf ist eine Zeile Markdown innerhalb der `:::figure` der Karte:
+
+```md
+:::figure{resource="mapa" slot="mapa"}
+::label[Spring]{at="nacimiento"}
+::label[Molinar]{at="molinar"}
+::label[Lower course]{at="bajo"}
+:::
+```
+
+`at` nennt einen **Anker**: einen Punkt des Bilds, der einmal in der Ressource des Bilds festgelegt wird und für alle Sprachen gilt. So fügen Sie die Steinbrücke von Molinar hinzu:
+
+1. Gehen Sie im Bereich Text zur Abbildung der Karte (suchen Sie nach `at="bajo"`) und fügen Sie unter der letzten Beschriftung eine Zeile ein: `::label[Stone bridge]{at="bridge"}`.
+2. Öffnen Sie **Prüfungen**. Die Liste hat für Seite 6 einen Eintrag *Beschriftung an einem unbekannten Anker*: Das Bild hat keinen Anker namens `bridge`. Klicken Sie beim Eintrag auf die Pin-Schaltfläche *Anker bridge im Bild setzen*.
+3. Ein Dialog zeigt die Karte mit den Ankern, die sie hat. Der Name `bridge` ist unter *Beschriftungen ohne Anker (1)* ausgewählt. Klicken Sie auf das Bild, dort, wo die Brücke steht.
+4. Stellen Sie den **Beschriftungsstil** des neuen Ankers auf `pueblo`, den Stil der Orte, und klicken Sie auf **Speichern**.
+
+<Screenshot src="/docs-shots/de/anchor.webp" alt="Der Dialog Anker: die Karte mit ihren Punkten, der neue Anker bridge ausgewählt und sein Feld Beschriftungsstil." caption="Der neue Anker ist ein Klick auf das Bild; sein Beschriftungsstil lässt ihn aussehen wie die Namen der Orte." />
+
+<Screenshot src="/docs-shots/de/map.webp" alt="Die Karte über den Seiten 6 und 7 mit der neuen Beschriftung Stone bridge auf der Brücke, neben den Beschriftungen der Orte." caption="Die Beschriftung steht an dem Punkt, den Sie angeklickt haben, in den eigenen Schriften des Buchs." />
+
+Das Wort *Stone bridge* ist Markdown, der Punkt gehört zum Bild. Übersetzen Sie die Seite, bekommt derselbe Anker ein anderes Wort.
+
+## 5. Die Seite übersetzen
+
+Eine Übersetzung ist dieselbe Vorlage mit anderen Wörtern. Die Sandbox kennt zwei Wege, sie zu halten. Ein Buch kann mehrere Sprachen zugleich enthalten, als `.postext`-Datei mit je einer Ausgabe; dann wechselt die Leiste über der Leinwand zwischen ihnen, und das Bedienfeld Prüfungen liest alle (siehe [Ausgaben eines Buchs](/de/docs/sandbox-previews#ausgaben-eines-buchs)). Der einfachere Weg, der keine Datei braucht, ist eine Kopie des Buchs in der anderen Sprache:
+
+1. Öffnen Sie **Bücher**, klicken Sie bei Ihrem Buch auf **⋯** und wählen Sie **Duplizieren**, oder klicken Sie auf **Neu** und wählen Sie **Kopie des geöffneten Buchs**. Öffnen Sie die Kopie. Sie trägt denselben Namen wie das Original: Ändern Sie ihn mit **Umbenennen …** im selben Menü.
+2. Öffnen Sie im Bedienfeld **Gestaltung** den Abschnitt **Schriftsystem** und stellen Sie unter **Sprache und Richtung** die **Dokumentsprache** ein. Silbentrennung, Anführungszeichen und die Wörter, die die Engine selbst schreibt (etwa *Fortsetzung* am Schnitt eines Kastens), richten sich danach.
+3. Übersetzen Sie im Bereich **Text** die Wörter und lassen Sie den Rest.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '50%' }}>Sie übersetzen</th>
+      <th>Sie lassen unverändert</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Den Text von Überschriften, Absätzen und Listen</td>
+      <td>Die vier Doppelpunkte, das Wort <code>page</code> und das <code>template="…"</code> der Begrenzung</td>
+    </tr>
+    <tr>
+      <td>Das <code>label="…"</code> eines Rahmens</td>
+      <td>Das <code>slot="…"</code> eines Rahmens</td>
+    </tr>
+    <tr>
+      <td>Den Text in den eckigen Klammern von <code>::label[…]</code>, <code>::alt[…]</code> und <code>::caption[…]</code></td>
+      <td>Das <code>at="…"</code> einer Beschriftung und das <code>resource="…"</code> einer Abbildung</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Bilder, die Anker, die Kästen und ihre Farben kommen mit der Kopie mit und brauchen keine Arbeit. Die Wiederholungsseite sieht in der spanischen Kopie so aus:
+
+```md
+::::page{template="review"}
+# Repasa lo aprendido
+
+Un río cambia mientras baja de las montañas al mar. Lee los recuadros y respóndelos con tus propias palabras.
+
+:::frame{slot="remember" label="Recuerda"}
+Un manantial da un hilo de agua, los arroyos se unen en un río y el río se ensancha al acercarse al mar.
+:::
+
+:::frame{slot="try" label="Inténtalo"}
+Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre de los tres cursos.
+:::
+::::
+```
+
+<Screenshot src="/docs-shots/de/translate.webp" alt="Die Kopie des Buchs in der anderen Sprache: der Bereich Text mit der übersetzten Seite und die Seite auf der Leinwand mit übersetztem Titel, Text und Reitern." caption="Die übersetzte Seite: Die Vorlage ist dieselbe, die Wörter sind es nicht." />
+
+## 6. Prüfen, was nicht passt
+
+Wörter sind von Sprache zu Sprache unterschiedlich lang, und ein Kasten, der den englischen Text fasste, fasst den spanischen vielleicht nicht. Das Bedienfeld Prüfungen findet solche Rahmen. Um einen zu sehen, fügen Sie in den Rahmen `remember` der übersetzten Seite drei oder vier weitere Absätze beliebigen Texts ein, sodass er mehr enthält, als die Seite Platz hat.
+
+Die Seite zeigt den Rahmen jetzt rot umrandet, mit einem Band unter seinem Fuß, das sagt, wie viel fehlt (*26 mm zu kurz*). Unter **Prüfungen**, bei *Zusammengesetzte Seiten*, sagt der Eintrag *Text passt nicht in seinen Rahmen*, was der Satz versucht hat, bevor er aufgab (mehr Platz von den Rahmen ringsum, dann kleinerer Text), und führt die Auswege als Schaltflächen auf:
+
+- *den Text auf 82,5 % verkleinern lassen (fit.minScale)* lässt den Text dieses Rahmens bis zu dieser Größe schrumpfen. Das passt, wenn nur wenige Zeilen zu viel sind.
+- *auf der nächsten Seite fortsetzen (overflow.continueIn)* schickt, was nicht passt, auf eine Seite, die hinter dieser eingefügt wird. Das passt bei einem längeren Text.
+- *etwa 495 Zeichen kürzen* ändert nichts. Es wählt den Text des Rahmens aus und sagt, wie viel Sie kürzen müssen.
+
+Eine Schaltfläche, die die Vorlage ändert (und damit jede Seite, die nach ihr gesetzt ist), fragt zuerst und nennt die Einstellung. Klicken Sie auf **Ändern**. Die Seite wird neu gesetzt, der Kasten endet mit dem Wort des Schnitts (*Continúa*), und der Rest läuft am Kopf einer eingefügten Seite weiter. **Cmd/Strg+Z** nimmt die Änderung zurück. **Verschiebungen** in der Leiste über der Leinwand öffnet *Was sich bewegt hat und warum*: die Rahmen, deren Größe oder Ort der Satz geändert hat, damit sie ihren Inhalt aufnehmen, mit dem Grund in Worten.
+
+<Screenshot src="/docs-shots/de/checks.webp" alt="Das Bedienfeld Prüfungen mit dem Eintrag Text passt nicht in seinen Rahmen und drei Schaltflächen mit Auswegen, und die Seite mit ihrem ersten Kasten rot umrandet und einem Band, das 26 mm zu kurz sagt." caption="Ein Rahmen, der nicht passt, und die Lösungen, die der Satz für ihn errechnet hat." />
+
+## 7. Auf der Seite und im Text auswählen
+
+Die Seite und ihr Markdown folgen einander.
+
+- **Von der Seite zum Text.** Klicken Sie auf die Wörter eines Rahmens: Die Einfügemarke springt zu diesem Absatz im Bereich Text, und ein Pfad unter der Vorschau nennt, wo Sie sind (*Seite 10 › column › try › Absatz 1*). Im Modus Gestaltung wählt derselbe Klick stattdessen den Rahmen für den Vorlageneditor aus.
+- **Vom Text zur Seite.** Setzen Sie die Einfügemarke in einen Absatz, und der Rahmen, der ihn enthält, und der Absatz selbst sind auf der Seite umrandet; derselbe Pfad sagt, wo sie liegen.
+- **Von einer Prüfung aus.** Klicken Sie auf einen Eintrag im Bedienfeld Prüfungen, und die Sandbox führt Sie zur Seite, wählt den Rahmen aus und setzt die Einfügemarke an seinen Text. In einem Buch mit mehreren Ausgaben wechselt sie zu der Ausgabe, die das Problem hat.
+- **Auf dem Reiter eines Kastens.** Doppelklicken Sie darauf, und darüber öffnet sich ein Feld für das `label`. Die Eingabetaste behält die Änderung, Esc verwirft sie.
+
+<Screenshot src="/docs-shots/de/select.webp" alt="Die Seite mit dem zweiten Kasten orange umrandet und der Bereich Text, der den ausgewählten Rahmen in seinem Markdown zeigt." caption="Ein Klick auf die Seite setzt die Einfügemarke in ihr Markdown, und der Pfad unter der Vorschau sagt, welcher Rahmen es ist." />
+
+## Wie es weitergeht
+
+- [Ein Buch auf zusammengesetzte Seiten umstellen](/de/docs/migrating-to-composed-pages): Ein Buch, das den Text seiner Seiten in seinen Stilen hält, kann ihn ins Markdown verschieben lassen.
+- [Zusammengesetzte Seiten](/de/docs/composed-pages): jedes Attribut der Seitenbegrenzung, die Zeilen für Abbildung und Beschriftung, wie eine Seite gesetzt wird und jede Warnung mit ihrer Lösung.
+- [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages): jedes Feld einer Vorlage, eines Rahmens und einer Gruppe, Vererbung und Doppelseiten.
+- [Sandbox: zusammengesetzte Seiten](/de/docs/sandbox-composed-pages): die Bildschirme für Vorlagen, Rahmenstile, Prüfungen in jeder Ausgabe und Lösungen.

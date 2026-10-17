@@ -1,0 +1,79 @@
+{/* docs/migrating-to-composed-pages-de.mdx */}
+
+export const metadata = {
+  title: 'Ein Buch auf zusammengesetzte Seiten umstellen',
+  sidebarTitle: 'Auf zusammengesetzte Seiten umstellen',
+  description: 'Wie Sie ein Buch, dessen Seiten ihren Text in Überschriftenstilen halten, in Seitenvorlagen und Markdown überführen: mit dem Assistenten Text ins Markdown verschieben der Sandbox oder von Hand, und was Sie danach prüfen',
+  lang: 'de',
+  lastUpdated: '2026-10-17',
+  readingTime: '8 min',
+  order: 43,
+  plainSummary: "Manche Bücher, die vor den zusammengesetzten Seiten mit Postext entstanden sind, halten die Wörter jeder Seite in den Gestaltungseinstellungen statt im Text. Das macht sie schwer zu bearbeiten und unmöglich zu übersetzen. Diese Seite zeigt, wie Sie diese Wörter ins Markdown verschieben, wo jede Seite zu einem Block mit eigener Vorlage wird. Die Sandbox erledigt das meiste mit einer Schaltfläche, und Sie prüfen das Ergebnis Seite für Seite. Die Seite beschreibt auch, wie Sie dasselbe für eine einzelne Seite von Hand tun.",
+};
+
+# Ein Buch auf zusammengesetzte Seiten umstellen
+
+**Ein Buch, das den Text seiner Seiten in seinen Stilen hält, kann ihn ins Markdown verschieben lassen, wo er sich bearbeiten und übersetzen lässt.**
+
+Vor den zusammengesetzten Seiten hielt ein Schulbuch, das nach Postext übertragen wurde, jede Seite oft als verborgene Überschrift, deren Kolumnentitel Text, Kästen und Bilder dorthin setzte, wo die gedruckte Seite sie hatte. Die Seiten sahen richtig aus, aber die Wörter lagen in der Konfiguration: Für einen Tippfehler musste man einen Stil öffnen, und für eine Übersetzung musste man den Stil kopieren. Eine zusammengesetzte Seite leistet dasselbe, mit der Form in einer **Seitenvorlage** und den Wörtern im Markdown, wie [Bücher aus zusammengesetzten Seiten](/de/docs/composed-page-books) zeigt. Diese Seite überführt ein altes Buch in diese Form.
+
+Sie erkennen ein Buch in der alten Form daran, dass das Bedienfeld **Prüfungen** *Text in der Konfiguration* (`contentInConfig`) aufführt, einen Eintrag für jeden Überschriftenstil, der Sätze enthält, und oben in der Liste **Text ins Markdown verschieben** anbietet.
+
+## Das Buch zum Mitmachen
+
+Die folgenden Schritte verwenden ein kleines Buch, das für diese Seite gemacht wurde: *Our World, before composed pages*. Es hat drei Seiten eines Schulbuchs für das dritte Schuljahr, jede ein Überschriftenstil mit einem Kolumnentitel, der ein Bild, eine Karte, einen Titel und drei Textblöcke setzt, mit einem gelben Band unter einem Wort. Die Wörter und die Bilder sind erfunden. [Laden Sie das Buch herunter](/docs-examples/our-world-before.postext), öffnen Sie in der Sandbox **Bücher**, klicken Sie auf **Neu** und wählen Sie **Eine .postext-Datei öffnen …**.
+
+## Mit dem Assistenten
+
+Importieren Sie ein Buch mit Text in seinen Stilen, öffnet sich der Dialog **Text ins Markdown verschieben** von selbst. Haben Sie ihn geschlossen oder stand das Buch schon in Ihrer Liste, öffnen Sie **Prüfungen** und klicken Sie auf die Schaltfläche oben in der Liste. Nichts ändert sich, bevor Sie auf **Text verschieben** klicken.
+
+1. Lesen Sie **Was sich ändert**. Für das Beispielbuch steht dort: 16 Texte (567 Buchstaben) werden verschoben, 3 zusammengesetzte Seiten geschrieben, aus den 3 Überschriftenstilen wird 1, aus 3 Markierungskästen werden Chips, und die Warnungen *Text in der Konfiguration* gehen von 3 auf 0 zurück.
+2. Sehen Sie sich die Optionen an. **Seiten mit Rahmen an denselben Stellen teilen sich eine Vorlage** gibt Seiten, die gleich gestaltet sind, eine gemeinsame Basisvorlage, die die anderen erweitern. **Ein Markierungskasten unter fetten Wörtern wird zum Chip** macht aus einem farbigen Kasten unter fetten Wörtern einen Chip im Chip-Stil des Buchs. **Wörter auf Bildern werden zu deren Beschriftungen** erscheint, wenn die alte Gestaltung kurze Wörter auf ein Bild gesetzt hat, etwa die Namen auf einer Karte: Sie werden zu `::label`-Zeilen an Ankern des Bilds. Die Option ist aus, bis Sie sie einschalten, weil sich diese Seiten am stärksten ändern.
+3. Unter **Vorher und nachher** setzt die Sandbox jedes Kapitel zweimal und zeichnet jede Seite, die sich ändert, die alte neben der neuen. Die Liste sagt, welche Seiten anders aussehen und warum, wenn sie es weiß. **Geändertes rot markieren** malt die Pixel, die abweichen. Im Beispielbuch tragen alle drei Seiten die Marke *Sieht gleich aus*.
+4. Klicken Sie auf **Text verschieben**.
+
+<Screenshot src="/docs-shots/de/move.webp" alt="Der Dialog Text ins Markdown verschieben mit der Liste dessen, was sich ändert, und den drei Optionen." caption="Der Dialog listet auf, was er tun wird, bevor er etwas tut." />
+
+<Screenshot src="/docs-shots/de/move-before-after.webp" alt="Das Ende des Dialogs: die Liste der Seiten mit der Marke Sieht gleich aus und, nebeneinander, eine Seite vor und nach dem Verschieben." caption="Jede Seite wird mit der alten und mit der neuen Gestaltung gesetzt, nebeneinander." />
+
+Das Verschieben ist ein Schritt im Verlauf des Buchs: ein Schritt für jedes umgeschriebene Kapitel und einer für die Gestaltung. **Rückgängig** im Dialog nimmt alles zurück, solange sich sonst nichts geändert hat, und **Cmd/Strg+Z** nimmt es Schritt für Schritt zurück. Das Buch, wie es vorher war, bleibt außerdem gespeichert, bis Sie im Bedienfeld Prüfungen auf **Änderung behalten** klicken; bis dahin schreibt **Buch wiederherstellen** die alte Gestaltung und den alten Text zurück.
+
+## Was Sie danach prüfen
+
+Öffnen Sie das Bedienfeld **Text**. Das Kapitel enthält jetzt einen Block je Seite:
+
+```md
+::::page{template="page-base" background="art-p1"}
+# Rivers and seas {style="topic" id="t-rivers"}
+
+:::frame{slot="shared-2"}
+:::paragraphs{style="fredoka-30-center-ffffff"}
+Rivers and seas
+:::
+:::
+...
+::::
+```
+
+Gehen Sie das Ergebnis in dieser Reihenfolge durch.
+
+- **Die Seiten, die anders aussehen.** Die Liste im Dialog nannte die Gründe, die sie kannte: der eigene Kasten, die Kontur oder die Initiale eines Textes, eine Seite, deren Seite im Bogen nicht bekannt war, Fließtext, der jetzt im Flussrahmen der Vorlage steht. Vergleichen Sie diese Seiten auf der Leinwand.
+- **Die Vorlagen.** **Gestaltung › Seite und Spalten › Seitenvorlagen** führt eine Vorlage je Seitendesign auf und `page-base` für die Rahmen, die sich Seiten teilen. Eine Seite, die nichts hinzufügt, nimmt die Basis, wie sie ist; die anderen erweitern sie. Die Namen sind aus den alten gebildet: Geben Sie einer Vorlage einen Namen, den Sie wiedererkennen (beim Umbenennen wird sie in jeder Seite umbenannt, die sie nennt).
+- **Die Absatzstile.** Schrift, Grad, Stärke, Farbe, Ausrichtung und Zeilenabstand jedes Textes sind zu einem Absatzstil geworden: zu einem eigenen des Buchs, wenn einer genau passte, sonst zu einem neuen, benannt nach Schrift und Grad (`nunito-11`). Sehen Sie sich **Gestaltung › Text** an und benennen Sie die neuen um oder legen Sie sie zusammen.
+- **Die Überschriften.** Überschriftenstile, die gleich herauskamen, wurden zusammengelegt, und die Überschriften wurden umbenannt; die verborgenen Überschriften, die nur den Kolumnentitel wechselten, sind weg. Prüfen Sie das Inhaltsverzeichnis, wenn das Buch eines hat.
+- **Was in der Konfiguration bleibt.** Die Liste *Bleibt in der Konfiguration* im Dialog nennt einen Text, der Wörter mit Platzhaltern mischt (`Seite {pageNumber}`), einen Text, der an einem anderen Element hängt, und den Text eines Überschriftendesigns. Das ist kein Inhalt einer Seite, und die Warnungen *Text in der Konfiguration*, die übrig bleiben, betreffen sie.
+- **Die Beschriftungen.** Haben Sie *Wörter auf Bildern werden zu deren Beschriftungen* eingeschaltet, sehen Sie sich jede Karte und jedes Diagramm an: Die Beschriftungen sind neu in den Schriften des Buchs gesetzt, ihre Größe und ihr Ort können sich von den alten Seiten unterscheiden.
+- **Das Bedienfeld Prüfungen.** Rahmen, deren Text nicht mehr passt, erscheinen als *Text passt nicht in seinen Rahmen*, mit den Lösungen aus [Bücher aus zusammengesetzten Seiten](/de/docs/composed-page-books#6-prüfen-was-nicht-passt). Ein Buch nach einer gedruckten Seite ist knapp bemessen, und die ersten Wörter, die etwas länger ausfallen, brauchen eine Lösung.
+
+Sind Sie zufrieden, klicken Sie auf **Änderung behalten**. Das Buch lässt sich nun wie jedes Buch aus zusammengesetzten Seiten übersetzen.
+
+## Von Hand
+
+Ein Buch mit wenigen Seiten lässt sich ohne den Assistenten umstellen, eine Seite nach der anderen.
+
+1. Legen Sie im Modus **Gestaltung** die Seitenvorlage an. Ziehen Sie für jeden Text auf einer zusammengesetzten Seite des Buchs einen Rahmen auf, oder folgen Sie den Schritten aus [Bücher aus zusammengesetzten Seiten](/de/docs/composed-page-books#2-eine-seitenvorlage-anlegen). Geben Sie jedem Rahmen den Kastenstil, der sein Aussehen zeichnet, und als **Kleinste Höhe** die Höhe, die der alte Text hatte.
+2. Schreiben Sie im Modus **Inhalt** die Seite als Block `::::page{template="…"}` und verschieben Sie jeden Text des alten Kolumnentitels in ein `:::frame{slot="…"}` des neuen Blocks. Behalten Sie Fett und Kursiv, und behalten Sie die Zeilenumbrüche des alten Textes mit einem Backslash am Zeilenende.
+3. Löschen Sie die Textelemente aus dem Überschriftenstil, oder den Überschriftenstil selbst, wenn ihn sonst nichts braucht. Die Warnung *Text in der Konfiguration* für diesen Stil verschwindet.
+4. Vergleichen Sie die Seite mit der alten und öffnen Sie **Prüfungen**.
+
+Dieselbe Umstellung gibt es im Code als `moveTextToMarkdown`; sie liefert die neue Konfiguration, die Kapitel und den Bericht, den der Dialog zeigt. Siehe [Zusammengesetzte Seiten › Ein Buch mit Text in seinen Stilen umstellen](/de/docs/composed-pages#ein-buch-mit-text-in-seinen-stilen-umstellen). Alles, was der Dialog tut, steht unter [Sandbox: zusammengesetzte Seiten › Text ins Markdown verschieben](/de/docs/sandbox-composed-pages#text-ins-markdown-verschieben).
