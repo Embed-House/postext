@@ -32,11 +32,12 @@
  */
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
 import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
-import { pageIsMirrored, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
+import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
 import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
 import { frameContour } from '../composed/contour';
 import { dimensionToPx } from '../units';
-import { frameBounds } from '../composed/paint';
+import { frameBounds, frameModeTurn, quarterTurnedRect } from '../composed/paint';
+import { withMeasureWritingMode } from '../measure/vertical';
 import { chainHead, FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
@@ -836,6 +837,19 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   };
   /** The scale of a frame's pictures (#858), below 1, or undefined. */
   const pictureScale = (frame: ResolvedFrame): number | undefined => fit.pictures.get(headOf(frame.name))?.scale;
+  /** A frame set in a writing mode other than the page's flow (#944): its
+   *  mode, else undefined. Its content is laid out in that mode, its lines
+   *  along the box's height and following each other across its width. */
+  const pageMode = pageIsVertical(input.page) ? 'vertical-rl' : 'horizontal-tb';
+  // Not on a right-to-left page, whose mirrored flow would set a vertical
+  // frame's lines from left to right: there it keeps the page's mode.
+  const ownMode = (frame: ResolvedFrame): 'horizontal-tb' | 'vertical-rl' | undefined =>
+    frame.writingMode !== undefined && frame.writingMode !== pageMode && !pageIsMirrored(input.page) ? frame.writingMode : undefined;
+  /** `fn` measured in the frame's own writing mode. */
+  const inMode = <T>(frame: ResolvedFrame, fn: () => T): T => {
+    const mode = ownMode(frame);
+    return mode ? withMeasureWritingMode(mode, fn) : fn();
+  };
   /** Rectangles in a frame's box coordinates, in its laid-out (scaled)
    *  coordinates. */
   const unscale = (rs: FrameBoxOptions['exclusions'], s: number): FrameBoxOptions['exclusions'] =>
@@ -969,6 +983,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const memo = new Map<number, number>();
       const s = textScale(p.frame);
       const pic = pictureScale(p.frame);
+      if (ownMode(p.frame)) return turnedNaturalOf(p, memo, s, pic);
       return (width: number): number => {
         if (!p.holds) return 0;
         const key = Math.round(width * 1000);
@@ -981,6 +996,35 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         memo.set(key, h);
         return h;
       };
+    };
+    /** The height a frame set in its own writing mode (#944) needs at
+     *  `width`: its lines run down the box, so the least height whose
+     *  lines, following each other across, fit `width`; the area's height
+     *  when even that is not enough (the frame then overflows). */
+    const turnedNaturalOf = (p: Prep, memo: Map<number, number>, s: number, pic: number | undefined) => (width: number): number => {
+      if (!p.holds) return 0;
+      const key = Math.round(width * 1000);
+      const known = memo.get(key);
+      if (known !== undefined) return known;
+      const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+      const across = (measure: number): number => inMode(p.frame, () =>
+        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
+      const most = Math.max(input.areas.area.height, input.emPx);
+      let h = most;
+      if (across(most) <= width + 0.5) {
+        let lo = Math.min(input.emPx, most);
+        let hi = most;
+        if (across(lo) <= width + 0.5) hi = lo;
+        // Whole px are enough: a line is never set that finely.
+        while (hi - lo > 1) {
+          const mid = (lo + hi) / 2;
+          if (across(mid) <= width + 0.5) hi = mid;
+          else lo = mid;
+        }
+        h = hi;
+      }
+      memo.set(key, h);
+      return h;
     };
     /** `placeBox`, then the box the page lets the frame take (`fitBox`:
      *  off a spread's spine band, #861), its `'auto'` height measured at the
@@ -1143,11 +1187,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     /** Pour a frame's content into its box and record the frame. A frame
      *  whose text the ladder scales (#858) is laid out in a box `1 / scale`
      *  as large, painted at `scale` (`frameMatrix`). */
-    const fill = (p: Prep, rect: Rect): void => {
+    const fill = (p: Prep, placed: Rect): void => {
       const { frame, st, holds, continuation, blockId, before } = p;
       const style = styleOf(frame);
       const s = textScale(frame);
       const pic = pictureScale(frame);
+      // A frame in its own writing mode (#944) is laid out in its box
+      // turned a quarter turn, its lines along the box's height; painted
+      // turned back (`VDTFrame.writingMode`).
+      const turned = ownMode(frame);
+      const rect = turned ? quarterTurnedRect(placed) : placed;
       const laidW = rect.width / s;
       const laidH = rect.height / s;
       let result: CalloutLayoutResult | undefined;
@@ -1157,14 +1206,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       if (holds) {
         // What its content needs at its width, measured only when a
         // proposal asks (`lowerMin`), from where the frame starts.
-        const width = rect.width;
+        const width = placed.width;
         const startAt: Prep = { ...p, st: { ...st!, cut: from } };
         let known: number | undefined;
         needs.set(frame.name, () => (known ??= naturalOf(startAt)(width)));
-        const exclusions = unscale(exclusionsFor(frame, rect, false), s);
+        // Text running round the frames that push it runs along the page's
+        // lines: a frame set across them keeps its whole box.
+        const exclusions = turned ? undefined : unscale(exclusionsFor(frame, rect, false), s);
         const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
         const opts: FrameBoxOptions = { boxHeight: laidH, verticalAlign: frame.verticalAlign, ...extra };
-        const whole = st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts);
+        const whole = inMode(frame, () => st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts));
         const nextName = nextFrameOf(frame);
         const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
         const chained = nextFrame !== undefined && !vdtByName.has(nextFrame.name);
@@ -1176,11 +1227,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const minLines = Math.max(1, style.splitMinLines);
           // A heading stays with what follows it, a list keeps two items
           // on each side of the cut (#913).
-          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined ? extra : undefined, cutRules);
+          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined ? extra : undefined, cutRules));
           const to = frag?.to ?? from;
           // A frame none of whose content fits draws nothing: the whole box
           // goes on (#912), not a tab and a mark over an empty piece.
-          result = frag ? st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts) : undefined;
+          result = frag ? inMode(frame, () => st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)) : undefined;
           st!.cut = to;
         } else {
           goesOn = false;
@@ -1190,7 +1241,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         }
       } else if (st && frame.style) {
         // A styled frame with nothing (left) to hold still draws its box.
-        result = st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH });
+        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH }));
       }
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).
@@ -1207,14 +1258,17 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const p = style.padding;
           const inner = { x: rect.x + pad(p.left), y: rect.y + pad(p.top), width: rect.width - pad(p.left) - pad(p.right), height: rect.height - pad(p.top) - pad(p.bottom) };
           const blocks = frameRuleBlocks(frame.rules, inner, linePx, 1, dpi, input.emPx);
-          if (blocks.length > 0) emptyRules = blocks;
+          // On the page, a frame in its own writing mode turns its rules
+          // with it (#944): across its lines, as the page shows them.
+          if (blocks.length > 0) emptyRules = turned ? blocks.map((b) => ({ ...b, bbox: turnRectAbout(b.bbox, rect, frameModeTurn({ writingMode: turned })) })) : blocks;
         }
       }
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
         name: frame.name,
         rect: { ...rect },
-        rotate: frame.rotate,
+        rotate: frame.rotate + (turned ? frameModeTurn({ writingMode: turned }) : 0),
+        ...(turned ? { writingMode: turned } : {}),
         layer: frame.layer,
         ...(frame.style ? { styleId: frame.style } : {}),
         scale: s,
@@ -1226,7 +1280,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         ...(collapsed.has(frame.name) ? { collapsed: true as const } : {}),
         ...(emptyRules ? { rules: emptyRules } : {}),
       };
-      const decl = declared.get(frame.name);
+      const declPlaced = declared.get(frame.name);
+      const decl = declPlaced && turned ? quarterTurnedRect(declPlaced) : declPlaced;
       if (decl && !sameRect(decl, rect)) vdt.declaredRect = { ...decl };
       if (before && vdtByName.has(before) && st && st.lastFrameId) {
         vdt.continuedFrom = st.lastFrameId;
@@ -1265,11 +1320,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         overflowLog.push({ frame: frame.name, kind: 'overflow', toMm: overflowMm });
       }
       if (frame.exclude === 'push') {
-        const box = frameBounds({ rect, rotate: frame.rotate });
+        const box = frameBounds({ rect: placed, rotate: frame.rotate });
         pushRects.set(frame.name, box);
         // `wrap: 'contour'` (#883): the shape of the pictures it holds; a
         // turned frame pushes with its box.
-        const shape = frame.wrap === 'contour' && frame.rotate === 0 && result
+        const shape = frame.wrap === 'contour' && frame.rotate === 0 && !turned && result
           ? frameContour(result.children, { gapPx: input.pushGapPx, dpi, emPx: input.emPx, mirrored: pageIsMirrored(input.page), pageIndex: input.page.index })
           : undefined;
         if (shape) notes.push(...shape.notes);
@@ -1301,6 +1356,18 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   const first = run();
   const { frames, blocks, log, laid, needs, fitted, notes, spills } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
   return { frames, blocks, log, laid, needs, template, fitted, spills, ...(notes.length > 0 ? { notes } : {}) };
+}
+
+/** `r` turned `deg` (±90) about the centre of `about`: an axis-aligned
+ *  box again, its width and height swapped. */
+function turnRectAbout(r: Rect, about: Rect, deg: number): Rect {
+  const cx = about.x + about.width / 2;
+  const cy = about.y + about.height / 2;
+  const turn = (x: number, y: number): { x: number; y: number } =>
+    deg > 0 ? { x: cx - (y - cy), y: cy + (x - cx) } : { x: cx + (y - cy), y: cy - (x - cx) };
+  const a = turn(r.x, r.y);
+  const b = turn(r.x + r.width, r.y + r.height);
+  return { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), width: Math.abs(b.x - a.x), height: Math.abs(b.y - a.y) };
 }
 
 const sameRect = (a: Rect, b: Rect): boolean =>

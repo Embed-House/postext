@@ -221,6 +221,22 @@ function regroupPage(
     const first = blocks[s.indices[0]!]!;
     const last = blocks[s.indices[s.indices.length - 1]!]!;
     const capHeading = capHeadingOf(s.indices, s.head);
+    // A frame's own `direction` (#944): its story is set in it, as a box
+    // fenced `{dir=…}` is; a block or a box inside that writes its own
+    // `dir` keeps it.
+    const frameDir = names.has(s.head) ? frameChain(template, s.head)[0]?.direction : undefined;
+    // Boxes inside the story that write their own `dir` are open while
+    // their blocks pass: those keep the direction they were given.
+    const owning: boolean[] = [];
+    const directed = (b: ContentBlock): ContentBlock => {
+      if (b.type === 'containerEnd') {
+        owning.pop();
+        return b;
+      }
+      const kept = owning.includes(true) || ownsDirection(b);
+      if (b.type === 'containerStart') owning.push(ownsDirection(b));
+      return frameDir && !kept ? { ...b, direction: frameDir } : b;
+    };
     out.push({
       type: 'containerStart',
       text: '',
@@ -233,7 +249,7 @@ function regroupPage(
       sourceStart: first.sourceStart,
       sourceEnd: first.sourceStart,
       sourceMap: [],
-      ...(first.direction ? { direction: first.direction } : {}),
+      ...(frameDir ? { direction: frameDir } : first.direction ? { direction: first.direction } : {}),
     });
     // A frame set in columns (`columns`), alone in its story: its content
     // is a `:::columns` group of the box (a chain's frames may differ in
@@ -244,12 +260,22 @@ function regroupPage(
       const gap: Record<string, string> = cols.columnGap ? { gap: `${cols.columnGap.value}${cols.columnGap.unit}` } : {};
       out.push({ type: 'containerStart', text: '', spans: [], containerName: 'columns', containerAttrs: { count: String(cols.columns), ...gap }, containerId: id + COLUMNS_ID_OFFSET, sourceStart: first.sourceStart, sourceEnd: first.sourceStart, sourceMap: [] });
     }
-    for (const i of s.indices) out.push(blocks[i]!);
+    for (const i of s.indices) out.push(directed(blocks[i]!));
     if (cols) out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'columns', containerId: id + COLUMNS_ID_OFFSET, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
     out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'callout', containerId: id, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
   }
   for (const i of loose.sort((a, b) => a - b)) out.push(blocks[i]!);
   return out;
+}
+
+/** Whether a block sets its own direction in the Markdown (a heading's or
+ *  a box's `{dir=…}`), which a frame's `direction` leaves as written. */
+function ownsDirection(b: ContentBlock): boolean {
+  const own = (attrs: Record<string, string> | undefined): boolean => {
+    const v = attrs?.dir?.trim().toLowerCase();
+    return v === 'ltr' || v === 'rtl';
+  };
+  return own(b.type === 'heading' ? b.attrs : undefined) || own(b.containerAttrs) || own(b.verse?.attrs);
 }
 
 const ZERO = { value: 0, unit: 'pt' as const };

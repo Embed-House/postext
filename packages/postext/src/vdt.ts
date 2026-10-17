@@ -2700,6 +2700,21 @@ export interface VDTFrame {
    *  template's decoration paints them. A frame with a box carries them on
    *  the box's `designOverlay`. */
   rules?: VDTDesignRuleBlock[];
+  /** Set on a frame set in a writing mode other than its page's flow
+   *  (`FrameConfig.writingMode`, #944): a vertical box on a horizontal
+   *  page, a horizontal card on a vertical one. Its content is laid out in
+   *  that mode in `rect`, the box the page gives it turned a quarter turn
+   *  (its width and height swapped about the same centre), and `rotate`
+   *  holds that quarter turn (90 for a vertical frame, −90 for a
+   *  horizontal one on a vertical page) on top of the frame's own; so
+   *  {@link frameMatrix} puts it on the page, and backends paint its text
+   *  as a page of that mode is painted. `framePageRect` gives the box on
+   *  the page. */
+  writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** For a `'vertical-rl'` frame: what its vertical lines need, as a
+   *  vertical page's flow has it (`VDTVerticalFlowFrame`). */
+  centralBaselines?: Record<string, number>;
+  dashAdvances?: Record<string, Record<string, number>>;
 }
 
 /** A composed page (`::::page{template}`, #846): the template it was set

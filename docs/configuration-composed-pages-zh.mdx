@@ -345,7 +345,7 @@ const config: PostextConfig = {
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>页面的值</td>
-      <td>横排页面上的竖排方框，或者反过来。</td>
+      <td>以自身书写方向或文字方向排的框：横排页面上的竖排方框、竖排页面上的横排卡片、从左到右的书里一段从右到左的引文。另一种书写方向的框在转了四分之一圈的方框里排：各行沿方框的高度排列，在宽度方向上依次排开；高度为<code>'auto'</code>时取能在该宽度里容下这些行的最小高度。它的文字按该书写方向的页面绘制。<code>direction</code>让框里的内容按该方向排，与用<code>&#123;dir=…&#125;</code>标注的方框相同；自己写了<code>dir</code>的段落或方框保持原样。自 postext 1.39 起。从右到左页面上的竖排框沿用页面的书写方向；另一书写方向框里的图片随框一起旋转；可重排 EPUB 按全书的书写方向排框里的文字。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -529,7 +529,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。框的`writingMode`和`direction`，以及模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。框的`writingMode`和`direction`自 postext 1.39 起生效。宽度`'auto'`按`'fill'`处理。
 
 ### 跨页
 
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
 
-竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.38 起。
+竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自 postext 1.38 起。要在纸面上横着读的卡片设`writingMode: 'horizontal-tb'`：它按横排排版，在竖排页面上正立（自 postext 1.39 起）。
 
 ## 注记样式
 

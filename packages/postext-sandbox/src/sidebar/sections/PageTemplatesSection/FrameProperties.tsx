@@ -285,6 +285,33 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         />
         <NumberInput label={labels.pageTemplatesFrameLayer} value={frame.layer} min={-10} max={10} onChange={(n) => set({ layer: n })} tooltip={labels.pageTemplatesFrameLayerTooltip} isDefault={!has('layer')} onReset={reset('layer')} />
         <NumberInput label={labels.pageTemplatesFrameRotate} value={frame.rotate} min={-180} max={180} suffix="°" onChange={(n) => set({ rotate: n })} tooltip={labels.pageTemplatesFrameRotateTooltip} isDefault={!has('rotate')} onReset={reset('rotate')} />
+        {/* The frame's own writing mode and direction (#944). */}
+        <SelectInput
+          label={labels.writingMode}
+          value={frame.writingMode ?? ''}
+          options={[
+            { value: '', label: labels.pageTemplatesFrameAsPage },
+            { value: 'horizontal-tb', label: labels.writingModeHorizontal },
+            { value: 'vertical-rl', label: labels.writingModeVerticalShort },
+          ]}
+          onChange={(v) => set({ writingMode: v || undefined })}
+          tooltip={labels.pageTemplatesFrameWritingModeTooltip}
+          isDefault={!has('writingMode')}
+          onReset={reset('writingMode')}
+        />
+        <SelectInput
+          label={labels.headerFooterElementDirection}
+          value={frame.direction ?? ''}
+          options={[
+            { value: '', label: labels.pageTemplatesFrameAsPage },
+            { value: 'ltr', label: labels.documentDirectionLtr },
+            { value: 'rtl', label: labels.documentDirectionRtl },
+          ]}
+          onChange={(v) => set({ direction: v || undefined })}
+          tooltip={labels.pageTemplatesFrameDirectionTooltip}
+          isDefault={!has('direction')}
+          onReset={reset('direction')}
+        />
         <SelectInput
           label={labels.pageTemplatesFrameVerticalAlign}
           value={frame.verticalAlign}

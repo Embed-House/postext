@@ -3733,6 +3733,9 @@ export interface SandboxLabels {
   pageTemplatesFrameLayerTooltip: string;
   pageTemplatesFrameRotate: string;
   pageTemplatesFrameRotateTooltip: string;
+  pageTemplatesFrameAsPage: string;
+  pageTemplatesFrameWritingModeTooltip: string;
+  pageTemplatesFrameDirectionTooltip: string;
   pageTemplatesFrameVerticalAlign: string;
   pageTemplatesFrameVerticalAlignTooltip: string;
   pageTemplatesAlignTop: string;

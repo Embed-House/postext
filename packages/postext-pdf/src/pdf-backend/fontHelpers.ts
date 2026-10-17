@@ -73,7 +73,14 @@ export function collectFontText(doc: VDTDocument, into: FontText = new Map()): F
       for (const block of col.blocks) addBlockFonts(block, out, vertical);
     }
     // Floated resources live on their page's float band, not in a column.
-    for (const block of page.floats ?? []) addBlockFonts(block, out, vertical);
+    // A composed page's frame set in its own writing mode (#944) paints its
+    // text in that mode.
+    const setting = { region: doc.config.cjk?.region ?? 'mainland', uprightDigits: doc.config.cjk?.uprightDigits ?? 2 };
+    const ownMode = new Map<string, VerticalSetting | undefined>();
+    for (const f of page.composed?.frames ?? []) {
+      if (f.writingMode) for (const id of f.blockIds) ownMode.set(id, f.writingMode === 'vertical-rl' ? setting : undefined);
+    }
+    for (const block of page.floats ?? []) addBlockFonts(block, out, ownMode.has(block.id) ? ownMode.get(block.id) : vertical);
     for (const slot of [page.header, page.footer, page.openerBand, page.lineNumbers]) addSlotFonts(slot, out);
     // A composed page's decoration (#855); its frames are floats.
     addSlotFonts(page.composed?.decoration, out);

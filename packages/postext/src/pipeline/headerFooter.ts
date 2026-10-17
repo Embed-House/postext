@@ -33,7 +33,7 @@ import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
 import { resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
-import { frameOfBlock } from '../composed/paint';
+import { frameOfBlock, framePageRect } from '../composed/paint';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -1642,8 +1642,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
           if (f.facingBlocks) continue;
-          const r = flowRectToPage(p, f.rect);
-          const d = flowRectToPage(p, f.declaredRect ?? f.rect);
+          // A frame in its own writing mode (#944) is anchored to by the box
+          // the page gives it, not the turned box its content is laid in.
+          const r = flowRectToPage(p, framePageRect(f));
+          const d = flowRectToPage(p, framePageRect({ rect: f.declaredRect ?? f.rect, writingMode: f.writingMode }));
           named[f.name] = { ...r, x: r.x + dx };
           declared[f.name] = { ...d, x: d.x + dx };
           for (const rule of f.rules ?? []) {

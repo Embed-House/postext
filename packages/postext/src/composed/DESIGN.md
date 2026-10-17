@@ -83,7 +83,7 @@ interface FrameConfig {
   fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
           preferContinue?: boolean }   // continue before 3 and 5 of the ladder (§5.4), default true
   overflow?: { continueIn?: string, mark?: string | false }
-  writingMode?, direction?      // as the page; for a vertical box on a horizontal page
+  writingMode?, direction?      // as the page; for a vertical box on a horizontal page (#944, §5.15)
   optional?: boolean            // no slotEmpty warning
   crossGutter?: boolean         // on a spread: may cross the spine band
   remove?: boolean              // in a patch: drop the inherited frame
@@ -914,6 +914,20 @@ Recorded where the implementation settles a point the sections above leave open,
   uncropped size in an `overflow:hidden` box) and PDF (clip inside the quarter turn) paint it; preflight
   reads an upright picture's printed width as its box's height. Sandbox: the image editor's Focus point
   (`focusPoint.ts`: a click or the arrow keys; the window the crop keeps outlined, `comicArtCrop`).
+- **Frames in their own writing mode and direction (#944).** `direction`: `wrapComposedPages` stamps the
+  chain head's direction on the story box and on every block of the story that no `{dir}` of its own (or of a
+  box round it) sets, so the box typesetter sets it against the page as a `{dir}` box. `writingMode` other
+  than the page's flow (`composedLayout.ts` `ownMode`; not on a mirrored page): the frame's box as placed is
+  turned a quarter turn about its centre (`quarterTurnedRect`) and the story laid out in it under
+  `withMeasureWritingMode`; `VDTFrame.writingMode`, `rotate` ± 90 on top of the frame's own
+  (`frameModeTurn`), `rect` the turned box (`framePageRect` turns it back: decoration anchors, the template
+  editor). An `'auto'` height is the least whose lines fit the box's width across (`turnedNaturalOf`,
+  bisection to a px). Pushing frames do not wrap its text; empty frames' rules turn with it.
+  `stampCentralBaselines` stamps `centralBaselines` / `dashAdvances` on a vertical frame. Canvas
+  (`setVerticalPaint` per frame), PDF (`ctx.vertical` per frame, fonts collected with the frame's mode) and
+  HTML (`vertical` paint options per frame) paint its text as a page of that mode does; the source map and
+  the Sandbox's clicks read it through `frameMatrix`. Not done: a picture in such a frame turns with it; the
+  reflowable EPUB sets its text in the book's mode.
 
 ## 6. Source map contract
 

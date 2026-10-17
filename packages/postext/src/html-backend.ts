@@ -3398,8 +3398,14 @@ function renderPageDetailed(
       const open = composedFrameOpen(item.frame, z, item.facing);
       composedShape.push(open);
       composedParts.push(open);
+      // A frame set in its own writing mode (#944) writes its lines as a
+      // page of that mode does: set vertically, or across.
+      const f = item.frame;
+      const frameOptions: HtmlPaint = f.writingMode === 'vertical-rl'
+        ? { ...options, vertical: { region: verticalRegion ?? 'mainland', uprightDigits: verticalDigits ?? 2, ...(f.centralBaselines ? { axes: f.centralBaselines } : {}), ...(f.dashAdvances ? { dashes: f.dashAdvances } : {}) } }
+        : f.writingMode === 'horizontal-tb' ? { ...options, vertical: undefined } : options;
       for (const b of item.blocks) {
-        const html = renderBlock(b, options, stripInBlock(b));
+        const html = renderBlock(b, frameOptions, stripInBlock(b));
         // The facing page's half of a frame across a spread's spine is
         // painted only: no block of the page's to patch or select.
         if (item.facing) composedShape.push(html);

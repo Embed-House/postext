@@ -345,7 +345,7 @@ const config: PostextConfig = {
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>ページの値</td>
-      <td>横組みのページに置く縦組みのボックス、またはその逆です。</td>
+      <td>独自の書字方向や文字方向で組むフレームです。横組みのページの縦組みのボックス、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向のフレームは、四分の一回転したボックスの中で組まれます。行はボックスの高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>はフレームの内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けたボックスと同じで、自分で<code>dir</code>を書いた段落やボックスはそれを保ちます。postext 1.39 から。右から左へ進むページの縦組みフレームはページの書字方向のままです。もう一方の書字方向のフレーム内の画像はフレームと一緒に回転します。リフロー型 EPUB では、フレームの文字は本の書字方向で組まれます。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -529,7 +529,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、フレームの`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。フレームの`writingMode`と`direction`、テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各フレームの配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、フレームの`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。フレームの`writingMode`と`direction`は postext 1.39 から反映されます。幅の`'auto'`は`'fill'`として扱います。
 
 ### 見開き
 
@@ -558,7 +558,7 @@ pageTemplates: [{
 
 列の間隔を`gutter`より広くしておけば、左右対称のグリッドのカードはのどにかからず、どれも動きません。2本目の帯と絵の帯は`crossGutter`でのどをまたぎ、それぞれ中心のあるページで読まれ、両方のページに描かれます。タブに書く時代の名前も含め、ページの言葉はすべてMarkdownに置きます。
 
-縦組み（`vertical-rl`）の本では、見開きのテンプレートも1ページのテンプレートページと同じく、ページの文章の流れの座標で割り付けます。ページの「上」は紙の右端で、行は下へ進むので、テンプレートの`x`は紙を下へ、`y`は紙の右端から左へ進みます。見開きは`y`に沿って右ページ、次に左ページと並び、ノドはテンプレートを横切る線になり、`gutter`、`crossGutter`、ページ間の切り分けはこの軸で読みます。装飾は従来どおり実際の紙の上に置かれ、ノドで切られます。横組みの本のために描いた横長の年表は、縦組みの本では回転して出ます。縦組みの本のテンプレートは、文章の流れの座標で書いてください。postext 1.38 から。
+縦組み（`vertical-rl`）の本では、見開きのテンプレートも1ページのテンプレートページと同じく、ページの文章の流れの座標で割り付けます。ページの「上」は紙の右端で、行は下へ進むので、テンプレートの`x`は紙を下へ、`y`は紙の右端から左へ進みます。見開きは`y`に沿って右ページ、次に左ページと並び、ノドはテンプレートを横切る線になり、`gutter`、`crossGutter`、ページ間の切り分けはこの軸で読みます。装飾は従来どおり実際の紙の上に置かれ、ノドで切られます。横組みの本のために描いた横長の年表は、縦組みの本では回転して出ます。縦組みの本のテンプレートは、文章の流れの座標で書いてください。postext 1.38 から。紙面を横に読ませたいカードには`writingMode: 'horizontal-tb'`を指定します。横組みで組まれ、縦組みのページの上で正立します（postext 1.39 から）。
 
 ## ラベルスタイル
 

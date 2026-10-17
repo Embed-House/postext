@@ -424,7 +424,10 @@ function paintPage(
     page.setTrimBox(trimPt, trimPt, pageWidthPt - 2 * trimPt, pageHeightPt - 2 * trimPt);
     page.setBleedBox(bleedPt, bleedPt, pageWidthPt - 2 * bleedPt, pageHeightPt - 2 * bleedPt);
   }
-  const ctx: PageCtx = { page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}) };
+  const ctx: PageCtx = {
+    page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}),
+    frameCjk: { region: doc.config.cjk?.region ?? 'mainland', uprightDigits: doc.config.cjk?.uprightDigits ?? 2 },
+  };
   const structure = resourceCtx.structure;
 
   // Background: full page white first (cut-mark area stays white), then the
@@ -790,6 +793,33 @@ function paintFrameItem(
 ): void {
   const { frame, blocks } = item;
   if (blocks.length === 0) return;
+  // A frame set in its own writing mode (#944): its text is painted as a
+  // page of that mode paints its flow, set vertically (or not).
+  if (frame.writingMode) {
+    const outer = ctx.vertical;
+    if (frame.writingMode === 'vertical-rl') {
+      const cjk = ctx.frameCjk ?? { region: 'mainland' as const, uprightDigits: 2 };
+      ctx.vertical = { region: cjk.region, uprightDigits: cjk.uprightDigits, ...(frame.centralBaselines ? { axes: frame.centralBaselines } : {}) };
+    } else delete ctx.vertical;
+    try {
+      paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure);
+    } finally {
+      if (outer) ctx.vertical = outer;
+      else delete ctx.vertical;
+    }
+    return;
+  }
+  paintFrameBlocks(ctx, item, fontCache, resourceCtx, structure);
+}
+
+function paintFrameBlocks(
+  ctx: PageCtx,
+  item: Extract<ReturnType<typeof composedPaintOrder>[number], { kind: 'frame' }>,
+  fontCache: FontCache,
+  resourceCtx: ResourceRenderContext,
+  structure: ResourceRenderContext['structure'],
+): void {
+  const { frame, blocks } = item;
   let readAt: number | undefined;
   for (const b of blocks) if (b.contentIndex !== undefined && (readAt === undefined || b.contentIndex < readAt)) readAt = b.contentIndex;
   const m = frameMatrix(frame);

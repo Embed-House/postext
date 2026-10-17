@@ -8870,7 +8870,7 @@ function placeDocumentPass(
   if (codeBoxes.wrapped) buildCodeLineNumbers(doc);
 
   // Vertical pages: the axis each font's upright characters turn about.
-  if (doc.pages.some((p) => pageIsVertical(p))) stampCentralBaselines(doc);
+  if (doc.pages.some((p) => pageIsVertical(p) || p.composed?.frames.some((f) => f.writingMode === 'vertical-rl'))) stampCentralBaselines(doc);
   // Right-to-left pages: lines advance through the mirrored flow in the
   // reverse of their visual order.
   if (doc.pages.some((p) => pageIsMirrored(p))) orientLinesToFrames(doc);

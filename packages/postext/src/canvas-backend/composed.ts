@@ -8,6 +8,8 @@
 import type { VDTBlock, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
 import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
+import { setVerticalPaint } from './verticalText';
+import type { CjkRegion } from '../types';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { restoreContext, saveContext } from './contextState';
 
@@ -19,12 +21,20 @@ import { restoreContext, saveContext } from './contextState';
  * paints the frames under it (`part: 'below'`) and over it (`'above'`)
  * in two calls.
  */
+/** What a vertical frame's text is painted with (#944): the document's
+ *  `cjk.region` and `cjk.uprightDigits`. */
+export interface FrameCjkPaint {
+  region: CjkRegion;
+  uprightDigits: number;
+}
+
 export function renderComposedFrames(
   ctx: CanvasRenderingContext2D,
   page: VDTPage,
   inkHex: string | null,
   decoration: VDTDesignSlot | undefined,
   part?: ComposedPaintPart,
+  cjk: FrameCjkPaint = { region: 'mainland', uprightDigits: 2 },
 ): void {
   const sheet = composedSheetClip(page);
   if (sheet) {
@@ -38,7 +48,7 @@ export function renderComposedFrames(
       if (decoration) renderHeaderFooterSlot(ctx, decoration, inkHex);
       continue;
     }
-    renderFrameBlocks(ctx, item.frame, item.blocks, inkHex);
+    renderFrameBlocks(ctx, item.frame, item.blocks, inkHex, cjk);
   }
   if (sheet) restoreContext(ctx);
 }
@@ -46,8 +56,25 @@ export function renderComposedFrames(
 /** A frame's blocks, turned (and scaled) by its matrix and clipped to its
  *  box when its content overflows; a frame with an outline of its own (a
  *  comic panel cut by a slanted line, #885) is clipped to it. */
-function renderFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks: readonly VDTBlock[], inkHex: string | null): void {
+function renderFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks: readonly VDTBlock[], inkHex: string | null, cjk?: FrameCjkPaint): void {
   if (blocks.length === 0) return;
+  // A frame set in its own writing mode (#944): its text is painted as a
+  // page of that mode paints its flow, the vertical painter on (or off).
+  if (frame.writingMode) {
+    const outer = setVerticalPaint(frame.writingMode === 'vertical-rl'
+      ? { region: cjk?.region ?? 'mainland', uprightDigits: cjk?.uprightDigits ?? 2, ...(frame.centralBaselines ? { axes: frame.centralBaselines } : {}) }
+      : null);
+    try {
+      paintFrameBlocks(ctx, frame, blocks, inkHex);
+    } finally {
+      setVerticalPaint(outer);
+    }
+    return;
+  }
+  paintFrameBlocks(ctx, frame, blocks, inkHex);
+}
+
+function paintFrameBlocks(ctx: CanvasRenderingContext2D, frame: VDTFrame, blocks: readonly VDTBlock[], inkHex: string | null): void {
   const m = frameMatrix(frame);
   const clips = frameClips(frame);
   const outline = frame.polygon && frame.polygon.length >= 3 ? frame.polygon : undefined;
