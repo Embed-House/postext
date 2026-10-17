@@ -1016,7 +1016,9 @@ function placeLabels(designs: readonly Design[], resources: readonly Resource[],
         const side = a === 'center' ? 'center' : a === 'right' || (a === 'end' && !rtl) || (a === 'start' && rtl) ? 'right' : 'left';
         const px = side === 'center' ? l.x! + width / 2 : side === 'right' ? l.x! + width : l.x!;
         // The design text's first baseline, where the label's goes.
-        const boxH = toMm(typeof el.placement?.size?.height === 'object' ? el.placement.size.height : undefined);
+        const h = el.placement?.size?.height;
+        // A height sized to another box's edge (#928) states no length here.
+        const boxH = toMm(typeof h === 'object' && 'value' in h ? h : undefined);
         const textH = l.lines.length * l.lineMm;
         const va = (el as { verticalAlign?: string }).verticalAlign;
         const top = l.y! + (boxH !== undefined && boxH > textH ? (va === 'middle' ? (boxH - textH) / 2 : va === 'bottom' ? boxH - textH : 0) : 0);
