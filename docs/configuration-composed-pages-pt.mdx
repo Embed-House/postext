@@ -339,7 +339,7 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Linhas pautadas de lado a lado da caixa de conteúdo do quadro: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do quadro) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Quadros pautados, mais abaixo. Desde postext 1.37.</td>
+      <td>Linhas pautadas de lado a lado da caixa de conteúdo do bloco: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do bloco) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Blocos pautados, mais abaixo. Desde postext 1.37.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -356,7 +356,7 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
   </tbody>
 </table>
 
-**Quadros pautados.** Um espaço de resposta num caderno de atividades é um quadro com `rules`: as linhas seguem a altura dele, então é o Markdown que decide quantas são. Um quadro vazio de altura fixa recebe as linhas que cabem nele; um quadro `'auto'` que recebe `:::space{lines=4}` recebe quatro, e um quadro que cresce com o seu texto recebe mais. As linhas são desenhadas sobre o fundo do quadro e sob o seu texto, no canvas, no HTML, no PDF e no EPUB de layout fixo; o inspetor de quadros do Sandbox as liga em Aparência.
+**Blocos pautados.** Um espaço de resposta num caderno de atividades é um bloco com `rules`: as linhas seguem a altura dele, então é o Markdown que decide quantas são. Um bloco vazio de altura fixa recebe as linhas que cabem nele; um bloco `'auto'` que recebe `:::space{lines=4}` recebe quatro, e um bloco que cresce com o seu texto recebe mais. As linhas são desenhadas sobre o fundo do bloco e sob o seu texto, no canvas, no HTML, no PDF e no EPUB de layout fixo; o inspetor de blocos do Sandbox as liga em Aparência.
 
 ```ts
 frames: [

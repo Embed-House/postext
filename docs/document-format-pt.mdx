@@ -161,7 +161,7 @@ The lamp of the first entry opens with an initial.
 
 Na linha de um título, `dropcap=false` deixa o parágrafo depois desse título sem a capitular que o seu nível ou estilo define, `dropcap=N` a compõe sobre `N` linhas, e um `dropcap` sozinho dá uma a esse parágrafo (três linhas, a fonte do parágrafo) onde o nível não define nenhuma. Na abertura de um `:::paragraphs`, o atributo faz o mesmo com o primeiro parágrafo do grupo, ou com todos os parágrafos quando o estilo diz `each: true`. O parágrafo depois de um título é procurado passando por aberturas e fechos de contêiner, diretivas, boxes que saíram do fluxo e figuras flutuantes; um parágrafo dentro de um boxe, de um item de lista, de uma citação ou de um poema nunca leva capitular. Desde o postext 1.23.
 
-Numa página composta os quadros são texto corrido: `:::paragraphs{style="abertura" dropcap}` num quadro abre o seu primeiro parágrafo com a capitular. Dentro de um quadro de destaque `:::callout` os parágrafos não levam nenhuma, e pedir uma ali gera um aviso `dropCap`.
+Numa página composta os blocos são texto corrido: `:::paragraphs{style="abertura" dropcap}` num bloco abre o seu primeiro parágrafo com a capitular. Dentro de um quadro de destaque `:::callout` os parágrafos não levam nenhuma, e pedir uma ali gera um aviso `dropCap`.
 
 ### Blocos de código
 

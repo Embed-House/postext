@@ -339,7 +339,7 @@ const config: PostextConfig = {
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>在框架的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框架文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框架”。自 postext 1.37 起。</td>
+      <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.37 起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -356,7 +356,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-**画横线的框架。** 练习册里的答题区就是带`rules`的框架：横线随框架的高度而定，所以画几条由Markdown决定。固定高度的空框架得到它容得下的横线；收到`:::space{lines=4}`的`'auto'`框架得到四条，随文字增高的框架得到更多。横线画在框架背景之上、文字之下，画布、HTML、PDF和固定版式EPUB都会绘制；在Sandbox的框架检查器中，可在“外观”里打开。
+**画横线的框。** 练习册里的答题区就是带`rules`的框：横线随框的高度而定，所以画几条由Markdown决定。固定高度的空框得到它容得下的横线；收到`:::space{lines=4}`的`'auto'`框得到四条，随文字增高的框得到更多。横线画在框背景之上、文字之下，画布、HTML、PDF和固定版式EPUB都会绘制；在Sandbox的框检查器中，可在“外观”里打开。
 
 ```ts
 frames: [

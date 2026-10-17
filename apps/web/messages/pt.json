@@ -2519,7 +2519,7 @@
     "warningsDropCapJoining": "“__text__”: a primeira letra se liga à seguinte, por isso não é separada como capitular.",
     "warningsDropCapVertical": "“__text__”: as capitulares só são compostas em texto horizontal; o parágrafo fica sem ela.",
     "warningsDropCapNoLetter": "“__text__”: o parágrafo não começa por uma letra que se possa pôr em destaque (uma referência, uma fórmula, uma chamada de nota), por isso fica sem capitular.",
-    "warningsDropCapInBox": "“__text__”: um parágrafo dentro de um quadro de destaque não leva capitular, então fica sem ela. Coloque os parágrafos fora do :::callout, ou em um quadro de uma página composta.",
+    "warningsDropCapInBox": "“__text__”: um parágrafo dentro de um quadro de destaque não leva capitular, então fica sem ela. Coloque os parágrafos fora do :::callout, ou em um bloco de uma página composta.",
     "warningsCodeOverflowTitle": "Linha de código mais larga que a sua caixa",
     "warningsCodeOverflowWrap": "__lines__ linha(s) da listagem são mais largas que a sua caixa e foram partidas. Encurte-as ou reduza o código.",
     "warningsCodeOverflowShrink": "A listagem é composta a __scale__ % do seu tamanho para caber a sua linha mais larga; o que ainda assim não cabe é partido.",
@@ -4919,7 +4919,7 @@
     "pageTemplatesFromMark": "Palavras onde continua",
     "pageTemplatesFromMarkTooltip": "No início do trecho, na página onde continua. '{'page'}' é o número da página de onde vem: “Continuação da página '{'page'}'”. Vazio: nenhuma.",
     "pageTemplatesFrameRules": "Pautas",
-    "pageTemplatesFrameRulesTooltip": "Linhas de lado a lado do quadro a um passo fixo, quantas couberem na altura dele: um espaço de resposta que cresce com o quadro.",
+    "pageTemplatesFrameRulesTooltip": "Linhas de lado a lado do bloco a um passo fixo, quantas couberem na altura dele: um espaço de resposta que cresce com o bloco.",
     "pageTemplatesFrameRulesPitch": "Passo das linhas",
     "pageTemplatesFrameRulesPitchLine": "Linha de texto",
     "pageTemplatesFrameRulesPitchLength": "Medida"
