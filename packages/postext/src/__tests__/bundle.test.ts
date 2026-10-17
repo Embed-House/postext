@@ -445,6 +445,28 @@ describe('openBundle', () => {
     expect(new Uint8Array(bundle.fonts[0]!.bytes)).toEqual(FONT);
   });
 
+  it('opens a bundle that leaves licensed font files out, with a warning and the family dropped (#904)', async () => {
+    const { files } = await sample();
+    const manifest = JSON.parse(new TextDecoder().decode(files['preset.json'])) as BundleManifestV2;
+    manifest.fonts = [
+      { name: 'House Serif', variants: [{ weight: 400, style: 'normal', file: 'fonts/houseserif-regular.ttf' }, { weight: 700, style: 'normal', file: 'fonts/houseserif-bold.ttf' }] },
+      { name: 'Frutiger Serif', variants: [{ weight: 400, style: 'normal', file: 'fonts/frutiger-regular.otf' }], redistributable: false },
+    ];
+    const packed: Record<string, Uint8Array> = { ...files, 'preset.json': enc.encode(JSON.stringify(manifest)) };
+    const bundle = await openBundle(zipSync(packed));
+    // The faces that are there come in; the ones left out are warned about.
+    expect(bundle.config.customFonts?.map((f) => [f.name, f.variants.map((v) => v.weight)])).toEqual([['House Serif', [400]]]);
+    expect(bundle.fonts.map((f) => f.file)).toEqual(['fonts/houseserif-regular.ttf']);
+    expect(bundle.warnings).toEqual([
+      'House Serif: font file "fonts/houseserif-bold.ttf" is not in the bundle, the face is left out',
+      'Frutiger Serif: font file "fonts/frutiger-regular.otf" is not in the bundle, the face is left out',
+      'Frutiger Serif: none of its font files are in the bundle, it is left out',
+    ]);
+    // Anything else missing still refuses: a chapter is not a font.
+    delete packed['chapters/01-dusk.md'];
+    await expect(openBundle(zipSync(packed))).rejects.toThrow('Missing bundle file');
+  });
+
   it('accepts a Blob and a bundle zipped with its top-level folder', async () => {
     const { files } = await sample();
     const nested: Record<string, Uint8Array> = { '__MACOSX/._preset.json': new Uint8Array([1]) };
