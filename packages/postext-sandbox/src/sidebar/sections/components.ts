@@ -25,6 +25,7 @@ import { CaptionStyleSection } from './CaptionStyleSection';
 import { ParagraphStylesSection } from './ParagraphStylesSection';
 import { CalloutStylesSection } from './CalloutStylesSection';
 import { ChipStylesSection } from './ChipStylesSection';
+import { LabelStylesSection } from './LabelStylesSection';
 import { MarkStylesSection } from './MarkStylesSection';
 import { CodeStyleSection } from './CodeStyleSection';
 import { DiagramStyleSection } from './DiagramStyleSection';
@@ -79,6 +80,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'frameStyles': FrameStylesSection,
   'chipStyles': ChipStylesSection,
   'markStyles': MarkStylesSection,
+  'labelStyles': LabelStylesSection,
   'codeStyle': CodeStyleSection,
   'comicsPanels': ComicsPanelsSection,
   'comicsPanelStyles': ComicsPanelStylesSection,

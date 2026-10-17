@@ -76,6 +76,20 @@ function books(): Book[] {
     { name: 'default', config: createDefaultConfig('en'), resources: [] },
     { name: 'guide', config: createPostextGuideConfig('en'), resources: [] },
   ];
+  // Label styles (#969) are not built in: a book that stores some, with
+  // every field written, shows every row of their cards.
+  out.push({
+    name: 'label styles',
+    config: {
+      ...createDefaultConfig('en'),
+      paragraphStyles: [{ id: 'town-names', name: 'Town names' }],
+      labelStyles: [
+        { id: 'town', name: 'Towns', paragraphStyle: 'town-names', fontFamily: 'Lora', fontSize: { value: 8, unit: 'pt' }, fontWeight: 600, fontStyle: 'italic', color: { hex: '#1f3a5f', model: 'hex' }, textTransform: 'uppercase', letterSpacing: 0.05, halo: { color: { hex: '#ffffff', model: 'hex' }, width: { value: 2, unit: 'px' } }, background: { hex: '#f4f0e6', model: 'hex' }, padding: { value: 3, unit: 'px' }, minScale: 0.7, writingMode: 'vertical-rl', overlap: 'allow' },
+        { id: 'sea' },
+      ],
+    },
+    resources: [],
+  });
   for (const { dir, preset } of presets) {
     if (preset.config) out.push({ name: dir, config: preset.config, resources: preset.resources ?? [] });
   }

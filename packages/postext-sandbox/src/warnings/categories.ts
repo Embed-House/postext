@@ -24,6 +24,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'cffEmbeddedWhole':
       return 'fonts';
     case 'unknownResourceId':
+    case 'figureWordsShared':
     case 'duplicateResourceId':
     case 'danglingTypeRef':
     case 'bitmapTooSmall':

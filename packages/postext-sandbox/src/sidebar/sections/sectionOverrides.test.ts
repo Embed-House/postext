@@ -24,6 +24,11 @@ describe('sectionHasOverrides', () => {
     expect(sectionHasOverrides({ ...base, headingStyles: [{ id: 'preface' }] }, 'headingStyles')).toBe(true);
     expect(sectionHasOverrides({ ...base, toc: { leader: { enabled: false } } }, 'toc')).toBe(true);
   });
+  it('counts the label styles by presence, an empty list as none (#969)', () => {
+    expect(sectionHasOverrides(base, 'labelStyles')).toBe(false);
+    expect(sectionHasOverrides({ ...base, labelStyles: [] }, 'labelStyles')).toBe(false);
+    expect(sectionHasOverrides({ ...base, labelStyles: [{ id: 'town' }] }, 'labelStyles')).toBe(true);
+  });
   it('counts the language, the writing mode and the binding under Writing system', () => {
     expect(sectionHasOverrides(base, 'writing')).toBe(false);
     expect(sectionHasOverrides({ ...base, locale: 'es' }, 'writing')).toBe(true);

@@ -60,6 +60,17 @@ describe('the writing mode of an anchor is kept (#902)', () => {
     expect(() => withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, writingMode: 'diagonal' as never }] })).toThrow(/writingMode/);
   });
 
+  it('the overlap choice of an anchor is kept, dropped at its default and checked (#977)', () => {
+    const resource = { id: 'mapa', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'm.png', format: 'png', width: 400, height: 300 } } as never;
+    const allowed = withLabelFields(marks, 0, { overlap: 'allow' });
+    expect(allowed.anchors[0]!.overlap).toBe('allow');
+    expect(normalizeMarks(allowed).anchors[0]!.overlap).toBe('allow');
+    expect(withLabelFields(allowed, 0, { overlap: 'check' }).anchors[0]!.overlap).toBeUndefined();
+    expect(withTickedFields(marks, [0, 1], { overlap: 'allow' }).anchors.map((a) => a.overlap)).toEqual(['allow', 'allow', undefined, undefined]);
+    expect(withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, overlap: 'allow' }] }).resource.anchors![0]!.overlap).toBe('allow');
+    expect(() => withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, overlap: 'permit' as never }] })).toThrow(/overlap/);
+  });
+
   it('a map is dense from more than a couple of dozen anchors', () => {
     expect(DENSE_ANCHORS).toBe(24);
   });

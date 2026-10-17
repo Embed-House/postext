@@ -267,7 +267,7 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
         id: `layout-${w.kind}-${w.resourceId}-${w.anchor ?? w.text}-${w.sourceStart ?? 'x'}-${i}`,
         payload: w.kind === 'labelOverflow'
           ? { kind: 'labelOverflow', resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), widthPct: w.widthPct, scale: w.scale, page, ...(w.locale ? { locale: w.locale } : {}) }
-          : { kind: 'labelOverlap', resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), with: w.with, ...(w.withAnchor !== undefined ? { withAnchor: w.withAnchor } : {}), count: w.count, page, ...(w.locale ? { locale: w.locale } : {}) },
+          : { kind: 'labelOverlap', resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), with: w.with, ...(w.withAnchor !== undefined ? { withAnchor: w.withAnchor } : {}), ...(w.withSymbol !== undefined ? { withSymbol: w.withSymbol } : {}), count: w.count, page, ...(w.locale ? { locale: w.locale } : {}) },
         sourceStart: w.sourceStart,
         sourceEnd: w.sourceEnd,
         line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
