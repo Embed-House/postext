@@ -233,7 +233,9 @@ describe("the bench's fixture recipe (es, en, ca)", () => {
     const c37 = composedFindings(meta(), facts(composed));
     expect(c37.length).toBeGreaterThan(0);
     expect(c37.every((f) => f.check === "C37" && f.severity === "fail")).toBe(true);
-    expect(c37[0]!.detail).toMatch(/^frameOverflow: frame "ahorro" of template "tema-cajas" on page 1 is [\d.]+ mm short of its content after .*; to fit: /);
+    // The last box keeps its minimum; the first, which grew, gives way
+    // (#911).
+    expect(c37[0]!.detail).toMatch(/^frameOverflow: frame "dinero" of template "tema-cajas" on page 1 is [\d.]+ mm short of its content after .*; to fit: /);
   });
 });
 
