@@ -18,6 +18,8 @@ import { drawPickedMark } from '../selection/pickedOverlay';
 import { editModeNow, onEditModeChange } from '../editing/editMode';
 import { labelsOnPage } from './composed/labelAnchorGeometry';
 import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks';
+import type { LabelSurface } from './composed/labelAnchorEditor';
+import { useTemplateEditorHost } from '../templates/useTemplateEditorHost';
 import { carriedPosition, onPageSelectionChange } from '../selection/selectionStore';
 import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
 
@@ -93,6 +95,9 @@ interface Options {
  */
 export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsRef, sourceRef, interactionRef, docKey }: Options) {
   const dispatch = useSandboxDispatch();
+  // The label editor writes the anchor it drops on the resource through the
+  // book's state, which the canvas lends it while it is mounted (#970).
+  useTemplateEditorHost();
   const { chapterId: activeChapterId } = useLayoutSource();
   const editorSelection = useSandboxSelector((s) => s.selection);
   const editorFocused = useSandboxSelector((s) => s.editorFocused);
@@ -135,12 +140,15 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
    *  their text. */
   const labelMarksRef = useRef<Map<number, MarkShape[]>>(new Map());
   const labelKeysRef = useRef<Map<number, string>>(new Map());
+  /** The marks of the page a label is being dragged on or hovered over
+   *  (#970), which the label editor paints in place of the page's own. */
+  const labelEditRef = useRef<Map<number, MarkShape[]>>(new Map());
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   const decorate = useCallback((index: number, ctx: CanvasRenderingContext2D): boolean => {
     const rects = marksRef.current.get(index);
     const comic = comicMarksRef.current.get(index);
-    const labelMarks = labelMarksRef.current.get(index);
+    const labelMarks = labelEditRef.current.get(index) ?? labelMarksRef.current.get(index);
     if (comic) {
       ctx.save();
       drawMarksCanvas(ctx, comic.marks, comic.cssToSheet);
@@ -283,12 +291,17 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
   refreshRef.current = refresh;
   useEffect(() => onPageSelectionChange(() => refreshRef.current()), []);
   // The marks of the labels belong to Design mode.
-  useEffect(() => onEditModeChange(() => refreshRef.current()), []);
+  useEffect(() => onEditModeChange(() => {
+    refreshRef.current();
+    interactionHandleRef.current?.labels?.sync();
+  }), []);
   useEffect(() => {
     refresh();
   }, [refresh, docKey]);
   useEffect(() => {
     interactionHandleRef.current?.comic?.sync();
+    // The label editor reads the labels of the new document again.
+    interactionHandleRef.current?.labels?.sync();
   }, [docKey]);
   useEffect(() => () => window.clearTimeout(followTimerRef.current), []);
 
@@ -341,6 +354,22 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
       },
       sheetPxPerCssPx: cssToSheet,
     };
+    // The label editor of Design mode (#970): its marks (hover, the label
+    // in hand with its ghost) are painted into the page's texture, in place
+    // of the page's own while the pointer is on a label.
+    interactionHandleRef.current?.labels?.dispose();
+    labelEditRef.current = new Map();
+    const labelSurface: LabelSurface = {
+      paint: (pageIndex, shapes) => {
+        const had = labelEditRef.current.has(pageIndex);
+        if (shapes) labelEditRef.current.set(pageIndex, shapes);
+        else labelEditRef.current.delete(pageIndex);
+        if (shapes || had) viewer.redecorate([pageIndex]);
+      },
+      sheetPxPerCssPx: cssToSheet,
+      // As the page's own marks are drawn: a book page has no fixed zoom.
+      markScale: (pageIndex) => (docRef.current?.pages[pageIndex]?.width ?? 600) / 600,
+    };
     interactionHandleRef.current = attachPageInteraction(el, {
       locate: (ev) => {
         const doc = docRef.current;
@@ -370,7 +399,14 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
       comicSurface,
       labelsRef,
       comicEnabled: () => interactionRef.current === 'select',
+      // The labels' points are dragged in select mode only, as the comic
+      // tools are: a press on one is not a page flip (#970).
+      labelSurface,
+      labelsEnabled: () => interactionRef.current === 'select',
     });
+    // The marks of the pages the viewer opens on: nothing else asks for
+    // them until the book turns (the first refresh found no viewer).
+    queueMicrotask(() => refreshRef.current());
   }, [docRef, sourceRef, interactionRef, navigateRef]);
 
   /** The book came to rest on (or was sent to) another spread: mark the
@@ -378,6 +414,7 @@ export function useFolioSelection({ viewerRef, docRef, stitchedRef, chapterDocsR
   const onSpread = useCallback(() => {
     refreshRef.current();
     interactionHandleRef.current?.comic?.sync();
+    interactionHandleRef.current?.labels?.sync();
   }, []);
 
   return { decorate, attach, onSpread };

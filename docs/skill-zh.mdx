@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'zh',
   lastUpdated: '2026-10-17',
   readingTime: '7分钟',
-  order: 42,
+  order: 44,
   plainSummary: "本页写给已经有一本书或一份文档的人，比如PDF、Word或InDesign文件，想把它转成Postext。AI助手（也叫AI代理）可以完成大部分工作，只要你给它装上一个叫skill的小插件。这个skill教代理怎样复制文字，并按原样重建原书的设计。本页说明怎样安装它、该怎样提要求，以及怎样检查结果。一段大约五分钟的视频演示了每一步。",
 };
 
@@ -71,7 +71,7 @@ YouTube上也有：[在那里观看](https://www.youtube.com/watch?v=MQrBUB7QbL0
     <tr><td><code>measure_layout.py</code></td><td>PDF的页边距、栏、栏间距和行距（即基线网格）</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → 按<em>字体角色</em>（字体/字号/颜色）生成的章节草稿：阅读顺序、段落、去除断词连字符、粗体/斜体、上标/下标、列表、题注</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>从PDF中裁出图：原始分辨率的照片、SVG预览图、矢量PDF印刷原稿</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>把 PDF 的固定版面（课本、练习册、杂志）转成组合页：以毫米为单位的框组成的页面模板，盒子、标签和高亮的样式，不含文字的页面底图，去掉文字后裁出的图片，以及按阅读顺序每页一个页面围栏、每个盒子一个槽位的 Markdown；压在其他图形下面看不见的文字会被剔除。<code>template_dedupe.py</code> 把同类页面的模板和样式合并成一套样式库，<code>anchors.py</code> 把地图上的文字变成资源锚点和各版本的 <code>::label</code> 行</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>把 PDF 的固定版面（课本、练习册、杂志）转成组合页：以毫米为单位的框组成的页面模板，盒子、标签和高亮的样式，不含文字的页面底图，去掉文字后裁出的图片，以及按阅读顺序每页一个页面围栏、每个盒子一个槽位的 Markdown；压在其他图形下面看不见的文字会被剔除。<code>template_dedupe.py</code> 把同类页面的模板和样式合并成一套样式库，并按角色（<code>box-light-blue</code>、<code>caption-of-picture</code>）而不是按种类和顺序给框命名，页面围栏随之改写，<code>anchors.py</code> 把地图上的文字变成资源锚点和各版本的 <code>::label</code> 行</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDF表格 → Postext的<code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX、PPTX、ODT、EPUB、HTML、LaTeX、Markdown、JATS、DocBook → 章节草稿，Word样式映射为标注框和段落样式</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesign IDML → 按段落样式生成的章节草稿、表和锚定图片；注音、纵中横、着重号和割注转换为<code>:ruby</code>、<code>:tcy</code>、<code>:dots</code>和<code>:warichu</code>，并报告竖排文章和从右到左的装订</td></tr>

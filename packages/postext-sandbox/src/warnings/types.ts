@@ -50,6 +50,7 @@ export type WarningKind =
   | 'anchorUnlabelled'
   | 'labelOverflow'
   | 'labelOverlap'
+  | 'figureWordsShared'
   | 'unknownChipStyle'
   | 'unknownMarkStyle'
   | 'duplicateAnchor'
@@ -291,8 +292,13 @@ export type WarningPayload =
    *  `minScale` (#902): drawn at `scale` and running past it. */
   | { kind: 'labelOverflow'; resourceId: string; text: string; anchor?: string; widthPct: number; scale: number; page: number; locale?: string }
   /** A label whose lines meet an earlier label's (#902): `count` earlier
-   *  labels in all, `with` the first of them. */
-  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; page: number; locale?: string }
+   *  labels in all, `with` the first of them. With `withSymbol` (1-based) it
+   *  runs onto a symbol of the picture, one of its avoid zones (#969). */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; withSymbol?: number; count: number; page: number; locale?: string }
+  /** A `:::figure` gives words (`words`: alt, caption, note) to a resource
+   *  an earlier figure of the chapter already worded (#986): the pages show
+   *  the first figure's. */
+  | { kind: 'figureWordsShared'; resourceId: string; words: ('alt' | 'caption' | 'note')[] }
   /** A `:chip[…]{style="…"}` names a style that is not in
    *  `config.chipStyles`; the chip takes the first style. `inResource`
    *  names the resource whose caption, note or cell holds the chip. */

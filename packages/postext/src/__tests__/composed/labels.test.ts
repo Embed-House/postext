@@ -132,6 +132,10 @@ describe('label looks (#860)', () => {
       .toEqual([{ id: 'b', paragraphStyle: 'p', fontStyle: 'normal', textTransform: 'none' }]);
   });
 
+  it('stores overlap: allow and drops the default check (#977)', () => {
+    expect(stripLabelStylesDefaults([{ id: 'a', overlap: 'check' }, { id: 'b', overlap: 'allow' }])).toEqual([{ id: 'a' }, { id: 'b', overlap: 'allow' }]);
+  });
+
   it('carries the halo, the plate and its padding', () => {
     const layout = labels(build(figure('::label[Madrid]{at="madrid"}')))[0]!.layout!;
     expect(layout.halo).toEqual({ color: '#ffffff', widthPx: 1 });

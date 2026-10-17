@@ -18,6 +18,15 @@ print masters.
       --redact-text removes the text inside the region first (labels you will
       re-set as live text, or a caption that sits inside the box).
 
+  pdf_figures.py symbols book.pdf --page 12 --box 20,40,120,110 [--unit mm]
+      [--min 0.6] [--max 4] [--pad 0.3] [--out avoid.json]
+      The dots and small icons of a map (filled marks and small images between
+      --min and --max mm across) as the picture's `avoid` rectangles, fractions
+      of the box: {"x", "y", "width", "height"} (postext >= 1.42: the label of a
+      city is checked against its own dot, `labelOverlap` carries `withSymbol`).
+      Paste the list into the resource's `avoid`; a label meant to touch its
+      dot gets `overlap: "allow"`. The box is the one the picture is cut from.
+
   pdf_figures.py image book.pdf --xref 123 --out photo.jpg
       Extract an embedded image at its native size, converted to sRGB (CMYK and
       Adobe CMYK JPEGs render badly in browsers and in pdf-lib).
@@ -190,6 +199,49 @@ def save_image(doc, xref: int, out: Path) -> dict:
     return {"width": pix.width, "height": pix.height}
 
 
+def symbol_zones(rects: list[tuple[float, float, float, float]], box: tuple[float, float, float, float],
+                 lo: float = 0.6, hi: float = 4.0, pad: float = 0.3) -> list[dict]:
+    """`avoid` rectangles (fractions of `box`) for the small marks among `rects`
+    (all in the same unit, a mark being `lo` to `hi` across both ways). The
+    zone is the mark grown by `pad`; marks drawn twice (a fill and its
+    outline) are one, and a mark inside a bigger one's zone is dropped."""
+    bx0, by0, bx1, by1 = box
+    bw, bh = max(bx1 - bx0, 1e-9), max(by1 - by0, 1e-9)
+    zones: list[tuple[float, float, float, float]] = []
+    for x0, y0, x1, y1 in sorted(rects, key=lambda r: (r[1], r[0], r[2], r[3])):
+        w, h = x1 - x0, y1 - y0
+        if not (lo <= w <= hi and lo <= h <= hi):
+            continue
+        if x0 < bx0 or y0 < by0 or x1 > bx1 or y1 > by1:
+            continue
+        z = (max(x0 - pad, bx0), max(y0 - pad, by0), min(x1 + pad, bx1), min(y1 + pad, by1))
+        if any(o[0] <= z[0] + 1e-6 and o[1] <= z[1] + 1e-6 and o[2] >= z[2] - 1e-6 and o[3] >= z[3] - 1e-6 for o in zones):
+            continue
+        zones = [o for o in zones if not (z[0] <= o[0] + 1e-6 and z[1] <= o[1] + 1e-6 and z[2] >= o[2] - 1e-6 and z[3] >= o[3] - 1e-6)]
+        zones.append(z)
+    return [{"x": round((z[0] - bx0) / bw, 4), "y": round((z[1] - by0) / bh, 4),
+             "width": round((z[2] - z[0]) / bw, 4), "height": round((z[3] - z[1]) / bh, 4)}
+            for z in sorted(zones, key=lambda z: (z[1], z[0]))]
+
+
+def cmd_symbols(args) -> None:
+    doc = fitz.open(args.pdf)
+    page = doc[args.page - 1]
+    vals = [float(v) for v in args.box.split(",")]
+    scale = MM if args.unit == "mm" else 1.0
+    box = tuple(v * scale for v in vals)
+    rects = [(r.x0, r.y0, r.x1, r.y1) for d in page.get_drawings() if (r := d.get("rect")) and not r.is_empty]
+    for img in page.get_images(full=True):
+        rects += [(r.x0, r.y0, r.x1, r.y1) for r in page.get_image_rects(img[0])]
+    zones = symbol_zones(rects, box, args.min * MM, args.max * MM, args.pad * MM)
+    text = json.dumps(zones, indent=1)
+    if args.out:
+        Path(args.out).write_text(text + "\n", encoding="utf-8")
+        print(f"{len(zones)} avoid zone(s) -> {args.out}")
+    else:
+        print(text)
+
+
 def cmd_image(args) -> None:
     doc = fitz.open(args.pdf)
     size = save_image(doc, args.xref, Path(args.out))
@@ -282,6 +334,15 @@ def main() -> None:
     p.add_argument("--dpi", type=int, default=300)
     p.add_argument("--redact-text", action="store_true")
     p.add_argument("--live-text", action="store_true")
+    p = sub.add_parser("symbols")
+    p.add_argument("pdf")
+    p.add_argument("--page", type=int, required=True, help="1-based page number in the PDF")
+    p.add_argument("--box", required=True, help="x0,y0,x1,y1 from the page's top-left corner")
+    p.add_argument("--unit", choices=["pt", "mm"], default="mm")
+    p.add_argument("--min", type=float, default=0.6, help="smallest mark, mm across (default 0.6)")
+    p.add_argument("--max", type=float, default=4.0, help="largest mark, mm across (default 4)")
+    p.add_argument("--pad", type=float, default=0.3, help="room round each mark, mm (default 0.3)")
+    p.add_argument("--out")
     p = sub.add_parser("image")
     p.add_argument("pdf")
     p.add_argument("--xref", type=int, required=True)
@@ -295,7 +356,7 @@ def main() -> None:
     p.add_argument("--dpi", type=int, default=300)
     p.add_argument("--redact-text", action="store_true")
     args = ap.parse_args()
-    {"list": cmd_list, "crop": cmd_crop, "image": cmd_image, "stubs": cmd_stubs}[args.cmd](args)
+    {"list": cmd_list, "crop": cmd_crop, "symbols": cmd_symbols, "image": cmd_image, "stubs": cmd_stubs}[args.cmd](args)
 
 
 if __name__ == "__main__":

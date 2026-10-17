@@ -1,0 +1,184 @@
+{/* docs/composed-page-books-zh.mdx */}
+
+export const metadata = {
+  title: '模板页做的书',
+  sidebarTitle: '模板页做的书',
+  description: '在沙盒里用一本由模板页组成的小学课本走一遍全过程：做页面模板，用 Markdown 填入文字，给地图加标注，翻译这一页，修正放不下的地方，以及在页面和正文之间互相选中',
+  lang: 'zh',
+  lastUpdated: '2026-10-17',
+  readingTime: '10分钟',
+  order: 42,
+  plainSummary: "本页一步一步教你在沙盒里做课本的一页：顶上一条标题色带，下面一段课文，再加几个彩色方框。你从一本做好的示例书出发，给它再加一页。先把这一页画成模板，再用 Markdown 把文字灌进去，然后在地图上给地点命名，并把这一页翻译成另一种语言。最后讲文字太长、框放不下时怎么办，以及怎样在页面和它的文字之间来回跳转。",
+};
+
+# 模板页做的书
+
+**你要用模板做出课本的一页，用 Markdown 填入文字，给地图加标注，翻译这一页，再修正放不下的地方。**
+
+小学课本的一页是一组方框：标题色带、一段课文、定义框、活动框、一幅地图。Postext按**页面模板**排这样的页面，模板里存放各个框，Markdown只说明哪些文字放进哪个框。本页在沙盒里把整个流程走一遍：在一本现成的书上增加一页。参考页面讲每个字段和每一行 Markdown 的作用；这里每件事只做一次，按顺序做，看它改变什么。Markdown 的写法见[模板页](/zh/docs/composed-pages)，模板见[配置：组合页面](/zh/docs/configuration-composed-pages)，各个界面见[沙盒：模板页](/zh/docs/sandbox-composed-pages)。
+
+你只需要一个浏览器。每一步都在沙盒里完成，你的修改只保存在你的浏览器中。
+
+## 1. 打开这本书
+
+这本书是《Our river》（意为“我们的河”），是三年级课本中的一个单元，作为第156号食谱发表在[排版食谱](/zh/cookbook/children-textbook-pages)中。河、城镇和图片都是为它虚构的。全书九页，其中相邻的两页上铺着一幅手绘地图，有西班牙语、加泰罗尼亚语和英语三个版本。
+
+[在沙盒中打开](/zh/sandbox#recipe=children-textbook-pages&lang=en)。第一次打开时，它会作为你自己的书加入**书库**，可以随意修改；把链接里的`lang=en`换成`lang=es`或`lang=ca`，就得到另外两个版本。以后再用同一个链接打开，沙盒会问你是打开自己的那一份，还是用发布的版本替换它。
+
+动手之前先了解两件事：
+
+- 预览上方的栏里有一个开关，分为**内容**和**版面设计**。在内容模式下改文字，可以在**正文**面板里改，也可以直接在页面上改。在版面设计模式下改页面模板和样式，文字只读。**Alt+Shift+M**（Mac 上为 **⌥⇧M**）在两种模式之间切换。
+- **正文**面板显示一章的 Markdown。每个模板页是一个块，以`::::page{template="…"}`开头，以四个冒号结尾。在预览里点一下页面上的文字，光标就会跳到 Markdown 里对应的文字上。
+
+## 2. 做一个页面模板
+
+新的一页是复习页：一条标题色带，下面一小段文字，再加两个方框，一个用来回顾所学，一个用来动手试一试。它需要一个有四个框的模板。
+
+1. 切换到**版面设计**，打开左侧的**版面设计**面板。选择**页面与分栏**，再选**页面模板**。列表里是书中的每个模板，旁边画着它的各个框。
+2. 点**新建**，会打开一个名为*新模板*的模板。把**ID**填成`review`（Markdown 里用它来指定模板），把**名称**填成`Review page`（这个面板里显示的名字）。ID 只能用小写字母、数字和短横线。
+3. 模板一开始有一个框`text`，它**接收页面上的自由正文**。把它改成标题色带：<strong>名称（插槽）</strong>填`title`；**框样式**选`portada`，这是书里标题已经在用的蓝色色带；关掉**接收页面上的自由正文**；**接收第一个标题**选*1 级*，这样这个框就会接收页面上的第一个`#`标题。
+4. 点**添加框**。新框会在框列表下面展开。<strong>名称（插槽）</strong>填`text`，并打开**接收页面上的自由正文**：页面里写在框外的文字都进这里。
+5. 再添加一个框。<strong>名称（插槽）</strong>填`remember`。**框样式**选`dato-campo`，这是带标签页的绿色方框。**最小高度**设为30毫米，这样文字很短时，方框也能保持合适的大小。
+6. 最后再添加一个框。<strong>名称（插槽）</strong>填`try`。**框样式**选`actividad-sol`。**最小高度**设为30毫米。
+7. 在`text`、`remember`和`try`里，把**宽度**设为*延伸到边缘*，把**高度**设为*随内容*：这样它们占满页面的宽度，高度随文字而定。
+8. 在**分组**下点**添加分组**。把它命名为`column`，保持*上下堆叠*，把**框间距**设为6毫米。在<strong>组内的框（按页面顺序）</strong>下勾选这四个框。分组按框列表的顺序排列它们，所以标题在最前面。分组把框一个接一个地往下排，某个框变高时，会把下面的框推下去；因此第一个方框里的文字变长，第二个方框会被推到下面，不会被盖住。
+
+<Screenshot src="/docs-shots/zh/template.webp" alt="版面设计面板停在页面模板上，显示 Review page 模板：它的四个框和一个分组，页面上用虚线框画出同样的几个框。" caption="模板：四个框，一个分组。页面上的虚线框就是这些框，绿色的小标签说明每个框的大小是怎么定的。" />
+
+模板里没有文字。你设置的任何内容都没有说标题是什么、方框里放什么：框样式决定框的外观，分组决定框的顺序。做同一个模板还有别的办法。在版面设计模式下，可以用鼠标在模板页的空白处画一个框，也可以移动框、调整框的大小（见[沙盒：模板页](/zh/docs/sandbox-composed-pages#页面模板)）；**复制**会复制一个模板供你修改；**将版面存为模板**把你满意的一个模板页变成新模板。
+
+## 3. 用 Markdown 填入页面
+
+1. 切换到**内容**，打开**正文**面板，按 **Ctrl+End**（Mac 上按 **Cmd+↓**）跳到本章末尾。
+2. 点**正文**面板工具栏里的**模板页**。弹出的选择器列出书中的页面模板，每个都画成空框的样子。选*Review page*。
+3. 沙盒替你写出这一页，每个槽位一个空框，并选中标题里的`title`一词。直接输入标题，覆盖它。
+
+```md
+::::page{template="review"}
+# Check what you have learned
+
+A river changes as it runs from the mountains to the sea. Read the boxes, then answer them in your own words.
+
+:::frame{slot="remember" label="Remember"}
+A spring gives a trickle, streams join into a river, and the river widens as it nears the sea.
+:::
+
+:::frame{slot="try" label="Try it"}
+Draw a river from its spring to the sea. Write the names of the three courses on your drawing.
+:::
+::::
+```
+
+标题进入接收 1 级标题的框，紧跟其后的段落进入接收自由正文的框，每个`:::frame`进入`slot`所指的框。`label`是方框标签页上的文字。这一页在画布上是第10页，排在本单元原有的九页之后：模板页总是另起一页。
+
+<Screenshot src="/docs-shots/zh/fill.webp" alt="正文面板里是新页面的 Markdown，旁边是排好的页面：蓝色的标题、一段文字和两个带标签页的方框。" caption="页面的 Markdown 和它在画布上的样子。" />
+
+注意 Markdown 没有写什么：没有位置，没有尺寸，没有颜色。这些都属于模板；同样的 Markdown 换一个模板来排，样子就会不同。
+
+## 4. 给地图加标注
+
+第6页和第7页上有一幅铺在对页上的手绘地图。图上的文字不是图片的一部分。地图上的每个名称都是 Markdown 里的一行，写在地图的`:::figure`里面：
+
+```md
+:::figure{resource="mapa" slot="mapa"}
+::label[Spring]{at="nacimiento"}
+::label[Molinar]{at="molinar"}
+::label[Lower course]{at="bajo"}
+:::
+```
+
+`at`指定一个**锚点**：图上的一个点，在图的资源里定义一次，各种语言共用。要加上Molinar的石桥：
+
+1. 在**正文**面板里找到地图的图（搜索`at="bajo"`），在最后一个标注下面加一行：`::label[Stone bridge]{at="bridge"}`。
+2. 打开**检查**。列表里第6页有一条*标注指向不存在的锚点*：图上没有叫`bridge`的锚点。点这一条上的图钉按钮*在图上放置锚点 bridge*。
+3. 弹出的对话框在**锚点**标签页里显示地图和图上已有的锚点。名称`bridge`已经选在<em>缺少锚点的标注（1）</em>下。在桥所在的位置点一下图片。
+4. 把新锚点的**标注样式**设为`pueblo`，也就是城镇名称用的样式，然后点**保存**。
+
+<Screenshot src="/docs-shots/zh/anchor.webp" alt="锚点对话框：地图和图上的各个点，新锚点 bridge 已选中，旁边是它的标注样式字段。" caption="新锚点就是在图上点一下；它的标注样式让它看起来和城镇的名称一样。" />
+
+<Screenshot src="/docs-shots/zh/map.webp" alt="横跨第6页和第7页的地图，桥上多了新标注 Stone bridge，旁边是各个城镇的标注。" caption="标注落在你点的位置上，用的是本书自己的字体。" />
+
+*Stone bridge*这个词在 Markdown 里，点则属于图片。翻译这一页时，同一个锚点会配上另一种语言的词。
+
+## 5. 翻译这一页
+
+译文就是同一个模板配上另一种语言的文字。沙盒有两种方式保存译文。一本书可以同时带多种语言：把它存成`.postext`文件，每种语言一个版本，这样画布上方的栏可以在各版本之间切换，检查面板也会检查所有版本（见[书的各个版本](/zh/docs/sandbox-previews#书的各个版本)）。更简单、不需要文件的方式，是复制一本另一种语言的书：
+
+1. 打开**书库**，点你这本书上的 **⋯**，选**复制**；或者点**新建**，选**复制当前的书**。打开复制出来的那本。它和原书同名，用同一个菜单里的<strong>重命名…</strong>改个名字。
+2. 在**版面设计**面板里打开**书写系统**，在**语言与方向**下设置**文档语言**。断词、引号，以及引擎自己写出的字词（例如框被截断处的*Continued*），都会跟着它变。
+3. 在**正文**面板里翻译文字，其余的不动。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '50%' }}>需要翻译的</th>
+      <th>保持原样的</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>标题、段落和列表中的文字</td>
+      <td>围栏的四个冒号、<code>page</code>一词和围栏里的<code>template="…"</code></td>
+    </tr>
+    <tr>
+      <td>框的<code>label="…"</code></td>
+      <td>框的<code>slot="…"</code></td>
+    </tr>
+    <tr>
+      <td><code>::label[…]</code>、<code>::alt[…]</code>和<code>::caption[…]</code>方括号里的文字</td>
+      <td>标注的<code>at="…"</code>和图的<code>resource="…"</code></td>
+    </tr>
+  </tbody>
+</table>
+
+图片、锚点、方框和它们的颜色都随副本一起带过来，不用再做。下面是这一页复习页的西班牙语副本：
+
+```md
+::::page{template="review"}
+# Repasa lo aprendido
+
+Un río cambia mientras baja de las montañas al mar. Lee los recuadros y respóndelos con tus propias palabras.
+
+:::frame{slot="remember" label="Recuerda"}
+Un manantial da un hilo de agua, los arroyos se unen en un río y el río se ensancha al acercarse al mar.
+:::
+
+:::frame{slot="try" label="Inténtalo"}
+Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre de los tres cursos.
+:::
+::::
+```
+
+<Screenshot src="/docs-shots/zh/translate.webp" alt="另一种语言的书副本：正文面板里是翻译好的页面，画布上是译好的标题、文字和标签页。" caption="翻译后的页面：模板不变，文字换了。" />
+
+## 6. 修正放不下的地方
+
+各种语言的词长短不一，英语文字放得下的框，西班牙语文字不一定放得下。检查面板能找出这样的框。要看到一个，就在翻译好的页面的`remember`框里再粘贴三四段随便什么文字，让它装的内容超出页面能给的空间。
+
+页面上这个框现在被红线框起，脚下有一条色带，写着差多少（*差 26 毫米*）。在**检查**里的*模板页*下，条目*框内放不下文字*说明排版在放弃之前试过什么（先向周围的框要更多空间，再缩小文字），并把解决办法列成按钮：
+
+- <em>允许文字缩到82.5 %（fit.minScale）</em>让这个框的文字最多缩到这个大小。适合多出几行的情况。
+- <em>在下一页接续（overflow.continueIn）</em>把放不下的部分送到加在这一页后面的一页上。适合文字更长的情况。
+- *删去约495个字符*不改任何东西。它选中这个框里的文字，并告诉你要删掉多少。
+
+修改模板的按钮（用这个模板的每一页都会变）会先询问，并写明要改的设置。点**修改**。页面重新排版：方框的末尾出现截断处的字样（*Continúa*），剩下的文字接在加出来的一页的开头。**Cmd/Ctrl+Z**可以撤销这次修改。画布上方栏里的**重排**会打开*移动了什么，为什么*：列出排版为了容纳内容而改变过大小或位置的框，并用文字写明原因。
+
+<Screenshot src="/docs-shots/zh/checks.webp" alt="检查面板里有条目“框内放不下文字”和三个解决办法的按钮；页面上第一个方框被红线框起，旁边一条色带写着差 26 毫米。" caption="一个放不下的框，以及排版为它算出的修正办法。" />
+
+## 7. 在页面和正文里选择
+
+页面和它的 Markdown 互相跟随。
+
+- **从页面到正文**。点页面上某个框里的文字：光标就跳到**正文**面板里那一段，预览下方的路径写出你的位置（*第 10 页 › column › try › 第 1 段*）。在版面设计模式下，同样的点击改为为模板编辑器选中这个框。
+- **从正文到页面**。把光标放进一段文字，页面上装着这一段的框和这一段本身就会被框出，同一条路径写出它们的位置。
+- **从检查项出发**。点检查面板里的一条，沙盒就带你到那一页，选中那个框，并把光标放到它的文字上。书有多个版本时，会切换到有问题的那个版本。
+- **在方框的标签页上**。双击它，上面会打开一个输入框，用来改`label`。按 Enter 保留修改，按 Esc 放弃。
+
+<Screenshot src="/docs-shots/zh/select.webp" alt="页面上第二个方框被橙色线框起，正文面板里显示选中的框对应的 Markdown。" caption="在页面上点一下，光标就落在它的 Markdown 里，预览下方的路径说明这是哪个框。" />
+
+## 接下来读什么
+
+- [把书迁移到模板页](/zh/docs/migrating-to-composed-pages)：文字放在样式里的书，可以把文字移进 Markdown。
+- [模板页](/zh/docs/composed-pages)：页面围栏、图和标注行的每个属性，页面如何排出，以及每条警告和它的修正办法。
+- [配置：组合页面](/zh/docs/configuration-composed-pages)：模板、框和分组的每个字段，继承与跨页。
+- [沙盒：模板页](/zh/docs/sandbox-composed-pages)：编辑模板和框样式的界面，所有版本的检查，以及修正办法。

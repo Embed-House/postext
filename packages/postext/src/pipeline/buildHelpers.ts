@@ -250,6 +250,12 @@ export function widthLessEndIndent(blk: VDTBlock, width: number): number {
   return end === undefined ? width : Math.max(1, width - end);
 }
 
+/** Give `to`, a copy of `from`, the end indent `from` was set with. */
+export function copyBlockEndIndent(from: VDTBlock, to: VDTBlock): void {
+  const end = blockEndIndents.get(from);
+  if (end !== undefined) blockEndIndents.set(to, end);
+}
+
 export function applyStyleAttrs(blk: VDTBlock, style: BlockStyle): void {
   if (style.endIndentPx !== undefined && style.endIndentPx > 0) blockEndIndents.set(blk, style.endIndentPx);
   if (style.boldFontString) blk.boldFontString = style.boldFontString;

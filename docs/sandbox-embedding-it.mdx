@@ -252,6 +252,7 @@ Appendice. Una sorgente di preset è una directory (servita via HTTP) la cui rad
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Note:
 - L’editor della sorgente SVG ti lascia scrivere solo dentro i nodi di testo (evidenziati), così una figura non si può rompere per sbaglio; il pulsante con il lucchetto nella sua intestazione apre l’intera sorgente (coordinate, colori, struttura), e richiuderlo analizza di nuovo i nodi di testo.
 - `table.model` è un `TableModel` di Postext: `rows` è un array di celle per righe (`content`, e facoltativamente `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` il numero di righe d’intestazione iniziali, e `columnWidths` un array facoltativo di pesi relativi delle colonne. `table.styleId` indica facoltativamente uno dei `tableStyles` della configurazione.
 - I file dei font sono conservati in IndexedDB con id ricavati dall’id del preset e dal percorso del file, e le famiglie vengono aggiunte a `config.customFonts` quando si applica il preset; un `index.json` mancante o malformato non produce preset invece di un errore.
+- Una famiglia che il pacchetto non può cedere si elenca con `"redistributable": false` e `variants` vuoto; aggiungi `"fallback"` con il nome di una famiglia libera di larghezza simile e la Sandbox, la riga di comando e gli host del motore ne compongono i tagli con essa (da postext 1.42). Senza, il libro ripiega sul font predefinito e le sue righe si spezzano altrove.
 - `<preset-dir>/fingerprint.json` è facoltativo e, nella route di sviluppo, **virtuale**: quando il file non esiste, `GET` risponde `{ "fingerprint": "<sha1 hex>", "files": <n> }` calcolato dai metadati dei file della directory (percorso relativo, data di modifica e dimensione di ogni file fino a quattro livelli di profondità, saltando i file nascosti e `node_modules`), mai dal loro contenuto, con `Cache-Control: no-store`. La Sandbox lo interroga periodicamente per seguire le modifiche al pacchetto (vedi [Pannello Libri](/it/docs/sandbox#pannello-libri)). Un host statico può servire un vero `fingerprint.json` con la stessa forma, o nessuno, e in quel caso i suoi preset non vengono seguiti.

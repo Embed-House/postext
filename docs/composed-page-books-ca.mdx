@@ -1,0 +1,184 @@
+{/* docs/composed-page-books-ca.mdx */}
+
+export const metadata = {
+  title: 'Llibres de pàgines compostes',
+  sidebarTitle: 'Llibres de pàgines compostes',
+  description: 'Un recorregut pel Sandbox amb un llibre de text escolar fet de pàgines compostes: fer una plantilla de pàgina, omplir-la des del Markdown, retolar un mapa, traduir la pàgina, arreglar el que no hi cap i seleccionar a la pàgina i al text',
+  lang: 'ca',
+  lastUpdated: '2026-10-17',
+  readingTime: '12 min',
+  order: 42,
+  plainSummary: "Aquesta pàgina ensenya, pas a pas, com es fa al Sandbox una pàgina d'un llibre de text escolar, d'aquelles que tenen una banda de títol, un text i caixes de colors. Parteixes d'un llibre d'exemple ja acabat i li afegeixes una pàgina més. Primer dibuixes la pàgina com a plantilla, després hi aboques el text des del Markdown, i després poses nom als llocs d'un mapa i tradueixes la pàgina a una altra llengua. Al final veus què fer quan un text és massa llarg per a la seva caixa i com saltar entre la pàgina i el seu text.",
+};
+
+# Llibres de pàgines compostes
+
+**Fas una pàgina d'un llibre de text a partir d'una plantilla, l'omples amb text del Markdown, retoles un mapa, tradueixes la pàgina i arregles el que no hi cap.**
+
+La pàgina d'un llibre de text escolar és un conjunt de caixes: una banda de títol, un text, una caixa per a una definició, una altra per a una activitat, un mapa. Postext maqueta una pàgina així a partir d'una **plantilla de pàgina** que té les caixes (els seus marcs), i el Markdown només diu quines paraules van a cada marc. Aquesta pàgina fa tota la feina al Sandbox, sobre un llibre que ja existeix, i hi afegeix una pàgina. Les pàgines de referència diuen què fa cada camp i cada línia de Markdown; aquí fas cada cosa una vegada, per ordre, i veus què canvia: [Pàgines compostes](/ca/docs/composed-pages) per al Markdown, [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages) per a la plantilla i [Sandbox: les pàgines compostes](/ca/docs/sandbox-composed-pages) per a les pantalles.
+
+Només necessites un navegador. Tots els passos es fan al Sandbox, i el que canvies es queda al teu navegador.
+
+## 1. Obre el llibre
+
+El llibre és *El nostre riu*, una unitat d'un llibre de text de 3r de primària que el [Receptari](/ca/cookbook/children-textbook-pages) publica com la recepta Nº 156. El riu, els pobles i les imatges són inventats. Té nou pàgines, amb un mapa pintat que ocupa dues pàgines enfrontades, i es presenta en castellà, català i anglès.
+
+[Obre'l al Sandbox](/ca/sandbox#recipe=children-textbook-pages&lang=ca). A la primera visita el Sandbox l'afegeix a **Llibres** com un llibre teu, i el pots canviar lliurement; amb `lang=es` o `lang=en` a l'enllaç obtens les altres edicions. Si més endavant tornes a obrir el mateix enllaç, el Sandbox et pregunta si vols obrir la teva còpia o substituir-la per la publicada.
+
+Dues coses que cal saber abans de tocar res:
+
+- La barra de sobre de la previsualització té un commutador amb **Contingut** i **Disseny**. En mode Contingut edites paraules, al tauler **Text** o a la pàgina. En mode Disseny edites plantilles de pàgina i estils, i el text és només de lectura. **Alt+Maj+M** (**⌥⇧M** en un Mac) canvia de mode.
+- El tauler **Text** mostra un capítol de Markdown. Cada pàgina composta és un bloc que comença amb `::::page{template="…"}` i acaba amb quatre dos punts. Si cliques unes paraules d'una pàgina de la previsualització, el cursor va a aquestes paraules al Markdown.
+
+## 2. Fes una plantilla de pàgina
+
+La pàgina nova serà una pàgina de repàs: una banda de títol, un text breu a sota i dues caixes, una per recordar el que s'ha après i una altra per provar-ho. Necessita una plantilla amb quatre marcs.
+
+1. Passa a **Disseny** i obre el tauler **Disseny** de l'esquerra. Tria **Pàgina i columnes** i després **Plantilles de pàgina**. La llista mostra cada plantilla del llibre amb un dibuix dels seus marcs.
+2. Prem **Nova**. S'obre una plantilla nova. Dona-li l'**ID** `review` (el que anomenarà el Markdown) i el **Nom** `Pàgina de repàs` (el que mostra aquest tauler). L'ID admet lletres minúscules, xifres i guions.
+3. La plantilla comença amb un marc, `text`, que **Rep el text solt de la pàgina**. Converteix-lo en la banda de títol: **Nom (ranura)**: `title`; **Estil de caixa**: `portada`, la banda blava que el llibre ja fa servir per als seus títols; desactiva **Rep el text solt de la pàgina**; **Rep el primer títol**: *Nivell 1*, perquè aquest marc rebi el primer títol `#` de la pàgina.
+4. Prem **Afegir un marc**. El marc nou s'obre sota la llista de marcs. **Nom (ranura)**: `text`, i activa **Rep el text solt de la pàgina**: tot el que la pàgina escrigui fora d'un marc va aquí.
+5. Afegeix un marc. **Nom (ranura)**: `remember`. **Estil de caixa**: `dato-campo`, una caixa verda amb solapa. **Alçada mínima**: 30 mm, perquè la caixa conservi una bona mida quan el seu text és curt.
+6. Afegeix un últim marc. **Nom (ranura)**: `try`. **Estil de caixa**: `actividad-sol`. **Alçada mínima**: 30 mm.
+7. A `text`, `remember` i `try` posa **Amplada** a *Fins a la vora* i **Alçada** a *El contingut*: així ocupen tota l'amplada de la pàgina i fan l'alçada del seu text.
+8. A **Grups** prem **Afegir un grup**. Posa-li de **Nom** `column`, deixa'l *Apilats* i fixa **Espai entre marcs** en 6 mm. A **Marcs del grup, en l'ordre de la pàgina** marca els quatre marcs. El grup els manté en l'ordre de la llista de marcs, de manera que el títol va primer. Un grup col·loca els seus marcs l'un sota l'altre i mou els de sota quan un marc creix, així que un text més llarg a la primera caixa empeny la segona cap avall en lloc de passar-li per sobre.
+
+<Screenshot src="/docs-shots/ca/template.webp" alt="El tauler Disseny a Plantilles de pàgina amb la plantilla Pàgina de repàs: els seus quatre marcs i el seu grup, i els mateixos marcs dibuixats amb contorns de ratlles damunt la pàgina." caption="La plantilla: quatre marcs i un grup. A la pàgina, les caixes de ratlles són els marcs i les etiquetes verdes diuen com es dimensiona cadascun." />
+
+La plantilla no té cap paraula. Res del que has fixat diu quin és el títol ni què contenen les caixes: l'estil de caixa dona l'aspecte a un marc, i el grup, l'ordre. Hi ha altres maneres d'arribar a la mateixa plantilla. En mode Disseny pots dibuixar amb el ratolí un marc en un espai buit d'una pàgina composta i moure o redimensionar els que ja tens (vegeu [Sandbox: les pàgines compostes](/ca/docs/sandbox-composed-pages#plantilles-de-pàgina)); **Duplicar** copia una plantilla perquè la canviïs; **Desar la maqueta com a plantilla** converteix en plantilla nova una pàgina composta que t'agrada.
+
+## 3. Omple la pàgina des del Markdown
+
+1. Passa a **Contingut**, obre el tauler **Text** i prem **Ctrl+End** (**Cmd+↓** en un Mac) per anar al final del capítol.
+2. Prem **Pàgina composta** a la barra d'eines del tauler Text. Un selector llista les plantilles de pàgina del llibre, cadascuna dibuixada amb els seus marcs buits. Tria *Pàgina de repàs*.
+3. El Sandbox t'escriu la pàgina, amb un marc buit per a cada slot, i selecciona la paraula `title` del títol. Escriu-hi el títol al damunt.
+
+```md
+::::page{template="review"}
+# Repassa el que has après
+
+Un riu canvia mentre baixa de les muntanyes al mar. Llegeix els requadres i respon-los amb les teves paraules.
+
+:::frame{slot="remember" label="Recorda"}
+Una font dona un fil d'aigua, els rierols s'ajunten en un riu i el riu s'eixampla quan s'acosta al mar.
+:::
+
+:::frame{slot="try" label="Prova-ho"}
+Dibuixa un riu des de la font fins al mar. Escriu al dibuix els noms dels tres cursos.
+:::
+::::
+```
+
+El títol va al marc que rep el nivell 1, el paràgraf que el segueix al marc que rep el text solt, i cada `:::frame` al marc del seu `slot`. El `label` són les paraules de la solapa d'una caixa. La pàgina és al llenç com a pàgina 10, després de les nou de la unitat: una pàgina composta sempre comença una pàgina nova.
+
+<Screenshot src="/docs-shots/ca/fill.webp" alt="El tauler Text amb el Markdown de la pàgina nova, i al costat la pàgina acabada amb un títol blau, un paràgraf i dues caixes amb solapa." caption="La pàgina al Markdown i al llenç." />
+
+Fixa't en el que el Markdown no diu: cap posició, cap mida, cap color. Tot això és de la plantilla, i el mateix Markdown maquetat amb una altra plantilla tindria un altre aspecte.
+
+## 4. Retola el mapa
+
+Les pàgines 6 i 7 tenen un mapa pintat que ocupa tot el plec. Les seves paraules no formen part de la imatge. Cada nom és una línia del Markdown, dins del `:::figure` del mapa:
+
+```md
+:::figure{resource="mapa" slot="mapa"}
+::label[Naixement]{at="nacimiento"}
+::label[Molinar]{at="molinar"}
+::label[Curs baix]{at="bajo"}
+:::
+```
+
+`at` anomena una **àncora**: un punt de la imatge, definit una sola vegada al recurs de la imatge i compartit per totes les llengües. Per afegir el pont de pedra del Molinar:
+
+1. Al tauler Text ves a la figura del mapa (busca `at="bajo"`) i afegeix una línia sota l'últim rètol: `::label[Pont de pedra]{at="bridge"}`.
+2. Obre **Revisió**. La llista té una entrada *Rètol en una àncora que no existeix* per a la pàgina 6: la imatge no té cap àncora que es digui `bridge`. Prem el botó de la xinxeta de l'entrada, *Col·loca l’àncora bridge a la imatge*.
+3. Un diàleg mostra el mapa amb les àncores que té. El nom `bridge` és triat a *Rètols sense àncora (1)*. Clica la imatge on és el pont.
+4. Posa a l'àncora nova l'**Estil de rètol** `pueblo`, l'estil dels pobles, i prem **Desar**.
+
+<Screenshot src="/docs-shots/ca/anchor.webp" alt="El diàleg Àncores: el mapa amb els seus punts, l'àncora nova anomenada bridge seleccionada i el seu camp d'estil de rètol." caption="L'àncora nova és un clic a la imatge; el seu estil de rètol fa que s'assembli als noms dels pobles." />
+
+<Screenshot src="/docs-shots/ca/map.webp" alt="El mapa a les pàgines 6 i 7 amb el rètol nou Pont de pedra sobre el pont, al costat dels rètols dels pobles." caption="El rètol es col·loca al punt on has clicat, amb les fonts del mateix llibre." />
+
+Les paraules *Pont de pedra* són Markdown; el punt és part de la imatge. Quan tradueixes la pàgina, la mateixa àncora rep una altra paraula.
+
+## 5. Tradueix la pàgina
+
+Una traducció és la mateixa plantilla amb altres paraules. El Sandbox té dues maneres de guardar-la. Un llibre pot portar diverses llengües alhora, com un fitxer `.postext` amb una edició per a cadascuna, i aleshores la barra de sobre del llenç canvia d'una a l'altra i el tauler Revisió les llegeix totes (vegeu [Edicions d'un llibre](/ca/docs/sandbox-previews#edicions-dun-llibre)). La manera més senzilla, que no necessita cap fitxer, és una còpia del llibre en l'altra llengua:
+
+1. Obre **Llibres**, prem **⋯** al teu llibre i tria **Duplicar**, o prem **Nou** i tria **Còpia del llibre obert**. Obre la còpia. Porta el mateix nom que l'original: canvia'l amb **Canviar el nom…** al mateix menú.
+2. Al tauler **Disseny** obre **Escriptura** i, a **Llengua i direcció**, fixa la **Llengua del document**. La partició de paraules, les cometes i les paraules que escriu el motor per compte seu (com *Continúa* al tall d'una caixa) la segueixen.
+3. Al tauler **Text** tradueix les paraules i deixa la resta.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '50%' }}>Tradueixes</th>
+      <th>Ho deixes tal com és</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>El text dels títols, dels paràgrafs i de les llistes</td>
+      <td>Els quatre dos punts, la paraula <code>page</code> i el <code>template="…"</code> de la tanca</td>
+    </tr>
+    <tr>
+      <td>El <code>label="…"</code> d'un marc</td>
+      <td>El <code>slot="…"</code> d'un marc</td>
+    </tr>
+    <tr>
+      <td>El text entre claudàtors de <code>::label[…]</code>, <code>::alt[…]</code> i <code>::caption[…]</code></td>
+      <td>L'<code>at="…"</code> d'un rètol i el <code>resource="…"</code> d'una figura</td>
+    </tr>
+  </tbody>
+</table>
+
+Les imatges, les àncores, les caixes i els seus colors vénen amb la còpia i no cal tocar-los. Una còpia de la pàgina de repàs en castellà és així:
+
+```md
+::::page{template="review"}
+# Repasa lo aprendido
+
+Un río cambia mientras baja de las montañas al mar. Lee los recuadros y respóndelos con tus propias palabras.
+
+:::frame{slot="remember" label="Recuerda"}
+Un manantial da un hilo de agua, los arroyos se unen en un río y el río se ensancha al acercarse al mar.
+:::
+
+:::frame{slot="try" label="Inténtalo"}
+Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre de los tres cursos.
+:::
+::::
+```
+
+<Screenshot src="/docs-shots/ca/translate.webp" alt="La còpia del llibre en l'altra llengua: el tauler Text amb la pàgina traduïda i la pàgina al llenç amb el títol, el text i les solapes traduïts." caption="La pàgina traduïda: la plantilla és la mateixa, les paraules no." />
+
+## 6. Revisa el que no hi cap
+
+Les paraules no fan la mateixa llargada d'una llengua a l'altra, i una caixa on cabia el text en anglès pot no tenir prou lloc per al castellà. El tauler Revisió troba aquests marcs. Per veure'n un, enganxa tres o quatre paràgrafs més de qualsevol text al marc `remember` de la pàgina traduïda, de manera que tingui més text del que la pàgina pot contenir.
+
+Ara la pàgina mostra el marc emmarcat en vermell, amb una banda sota el seu peu que diu quant falta (*falten 26 mm*). A **Revisió**, sota *Pàgines compostes*, l'entrada *El text no cap al seu marc* explica què ha provat la maquetació abans de rendir-se (més lloc dels marcs del voltant, després un text més petit) i llista les sortides com a botons:
+
+- *deixa que el text baixi al 82,5 % (fit.minScale)* deixa que el text d'aquest marc baixi fins a aquesta mida. Va bé quan sobren unes poques línies.
+- *fes que continuï a la pàgina següent (overflow.continueIn)* envia el que no hi cap a una pàgina afegida després d'aquesta. Va bé amb un text més llarg.
+- *retalla uns 495 caràcters* no canvia res. Selecciona el text del marc i t'indica quant n'has de treure.
+
+Un botó que canvia la plantilla (totes les pàgines que la fan servir) abans pregunta, i anomena l'ajust. Prem **Canvia-ho**. La pàgina es maqueta de nou, la caixa acaba amb la paraula del tall (*Continúa*) i la resta continua al capdamunt d'una pàgina afegida. **Cmd/Ctrl+Z** desfà el canvi. **Reajustament**, a la barra de sobre del llenç, obre *Què s'ha mogut i per què*: els marcs que la maquetació ha canviat de mida o de lloc perquè hi càpiga el contingut, amb el motiu escrit.
+
+<Screenshot src="/docs-shots/ca/checks.webp" alt="El tauler Revisió amb l'entrada El text no cap al seu marc i tres botons amb sortides, i la pàgina amb la primera caixa emmarcada en vermell i una banda que diu falten 26 mm." caption="Un marc on no hi cap el text, i els arranjaments que la maquetació li ha preparat." />
+
+## 7. Selecciona a la pàgina i al text
+
+La pàgina i el seu Markdown es segueixen l'una a l'altre.
+
+- **De la pàgina al text.** Clica les paraules d'un marc: el cursor va a aquell paràgraf al tauler Text, i una ruta sota la previsualització diu on ets (*Pàgina 10 › column › try › paràgraf 1*). En mode Disseny el mateix clic tria el marc per a l'editor de plantilles.
+- **Del text a la pàgina.** Posa el cursor en un paràgraf i el marc que el conté i el paràgraf mateix queden emmarcats a la pàgina, i la mateixa ruta diu on són.
+- **D'una revisió.** Clica una entrada del tauler Revisió i el Sandbox et porta a la pàgina, tria el marc i posa el cursor al seu text. En un llibre amb diverses edicions passa a l'edició que té el problema.
+- **A la solapa d'una caixa.** Fes-hi doble clic i s'hi obre al damunt un camp per al `label`. Retorn conserva el canvi i Escape el deixa.
+
+<Screenshot src="/docs-shots/ca/select.webp" alt="La pàgina amb la segona caixa emmarcada en taronja, i el tauler Text amb el marc seleccionat al seu Markdown." caption="Un clic a la pàgina posa el cursor al seu Markdown, i la ruta sota la previsualització diu quin marc és." />
+
+## On anar després
+
+- [Passar un llibre a pàgines compostes](/ca/docs/migrating-to-composed-pages): un llibre que té el text de les seves pàgines als estils es pot passar al Markdown.
+- [Pàgines compostes](/ca/docs/composed-pages): tots els atributs de la tanca de pàgina, la figura i les línies de rètol, com es compon una pàgina i cada avís amb el seu arranjament.
+- [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages): tots els camps d'una plantilla, un marc i un grup, l'herència i les dobles pàgines.
+- [Sandbox: les pàgines compostes](/ca/docs/sandbox-composed-pages): les pantalles per a plantilles, estils de marc, revisions a totes les edicions i arranjaments.

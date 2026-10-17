@@ -78,6 +78,7 @@ import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlock
 import { measureBlockMemo, type MeasureMemo } from './measureMemo';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { headingIsHidden, headingStyleOf } from './headingStyles';
+import { tocBlockStamps } from './toc';
 import { directDesignTextBlock } from '../design/bidiText';
 import { arabicNumbersOf } from './config';
 import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
@@ -191,6 +192,7 @@ export function deriveCalloutResolvedConfig(
       boldFontWeight: body.boldFontWeight,
       ...(body.italic ? { italic: true } : {}),
       ...(body.smallCaps ? { smallCaps: true } : {}),
+      ...(body.letterSpacing ? { letterSpacing: body.letterSpacing } : {}),
       textAlign: body.textAlign,
       hyphenation: { ...resolved.bodyText.hyphenation, enabled: body.hyphenation },
       paragraphSpacing: body.paragraphSpacing,
@@ -399,6 +401,10 @@ const designedBoxHeadings = new WeakSet<VDTBlock>();
 /** Whether `block` is a heading of a box set with its own design (see
  *  `CalloutLayoutInput.headingDesign`). */
 export const isDesignedBoxHeading = (block: VDTBlock): boolean => designedBoxHeadings.has(block);
+/** Mark `to`, a copy of `from`, as a designed heading when `from` is one. */
+export const copyDesignedBoxHeading = (from: VDTBlock, to: VDTBlock): void => {
+  if (designedBoxHeadings.has(from)) designedBoxHeadings.add(to);
+};
 
 /** The measures of `layoutCallout`'s first child across widths (see
  *  `CalloutLayoutInput.lineWidths`), per resolved configuration and
@@ -1046,6 +1052,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     lineCut?: { from: number; to?: number; widths?: readonly CalloutLineWidth[] },
   ): VDTBlock | undefined => {
     if (isStripChild(raw)) return placeStripChild(raw, k, width, x, st, into, unitsInto);
+    // The repeat of a contents block's head row (#850): set where the
+    // fragment goes on in a cut block, skipped everywhere else (#983), as
+    // the running text sets it only at the head of a fresh column.
+    if (raw.toc?.group?.role === 'continuation' && !isFirstRealOf(k)) return undefined;
     const blockIdx = childStartIdx + k;
     // Inside a `:::paragraphs` container: its style, and for the block that
     // closes it the tail style, which carries the container's bottom margin.
@@ -1151,6 +1161,9 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; }
     if (headingNumber !== undefined) blk.headingNumber = headingNumber;
     if (hiddenHeading) blk.hidden = true;
+    // A row of the contents (#983): the page it links to, or the values of
+    // its part row's design.
+    if (raw.toc) Object.assign(blk, tocBlockStamps(raw));
     blk.sourceMap = absoluteSourceMap;
     blk.plainPrefixLen = prefixLen;
 
@@ -1944,7 +1957,23 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const rise = px(lb.offset);
     const inset = px(lb.inset);
     const textW = flowTextWidth(labelText, lbFont);
-    const tabW = textW + 2 * padX;
+    // A picture inside the tab (#981) sits at its start, before the words:
+    // the tab is as wide as the picture, the gap, the words and the padding.
+    const iconResource = lb.icon.resourceId ? ctx.resourceById.get(lb.icon.resourceId) : undefined;
+    const iconFileId = iconResource?.bitmap?.fileId ?? iconResource?.svg?.fileId;
+    const inside = lb.icon.placement === 'inside' && !!iconFileId;
+    let iconFit = { w: 0, h: 0 };
+    if (iconFileId) {
+      const dims = iconResource?.bitmap ?? iconResource?.svg;
+      const boxW = px(lb.icon.width);
+      iconFit = { w: boxW, h: tabH };
+      if (dims?.width && dims?.height) {
+        const k = Math.min(boxW / dims.width, tabH / dims.height);
+        iconFit = { w: dims.width * k, h: dims.height * k };
+      }
+    }
+    const iconRoom = inside ? iconFit.w + px(lb.icon.gap) : 0;
+    const tabW = textW + iconRoom + 2 * padX;
     const tabSide = lb.position === 'top-start' ? boxSide('start')
       : lb.position === 'top-end' ? boxSide('end')
         : lb.position === 'top-right' ? 'right' : 'left';
@@ -1957,32 +1986,27 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       bbox: createBoundingBox(tabX, tabY, tabW, tabH),
       box: { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
     });
+    // The words follow the picture: to its right in a left-to-right box,
+    // to its left in a right-to-left one (the box's start side).
+    const iconAtRight = inside && boxSide('start') === 'right';
     overlayBlocks.push(directText({
       kind: 'text',
       bbox: createBoundingBox(tabX, tabY, tabW, tabH),
       fontString: lbFont,
       color: lb.color.hex,
-      lines: [{ text: labelText, xOffset: padX, baselineY: tabY + tabH / 2 + lbFontPx * 0.36, width: textW }],
+      lines: [{ text: labelText, xOffset: padX + (inside && !iconAtRight ? iconRoom : 0), baselineY: tabY + tabH / 2 + lbFontPx * 0.36, width: textW }],
       clip: false,
     }));
     let edgeX = onRight ? tabX : tabX + tabW;
-    if (lb.icon.resourceId) {
+    if (inside) {
+      const ix = iconAtRight ? tabX + tabW - padX - iconFit.w : tabX + padX;
+      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(ix, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId!, ...pictureTraits(iconResource, iconFileId!) });
+    } else if (iconFileId) {
       const iconW = px(lb.icon.width);
       const gap = px(lb.icon.gap);
       const iconX = onRight ? tabX - gap - iconW : tabX + tabW + gap;
-      const resource = ctx.resourceById.get(lb.icon.resourceId);
-      const fileId = resource?.bitmap?.fileId ?? resource?.svg?.fileId;
-      if (fileId) {
-        const dims = resource?.bitmap ?? resource?.svg;
-        let w = iconW;
-        let h = tabH;
-        if (dims?.width && dims?.height) {
-          const k = Math.min(iconW / dims.width, tabH / dims.height);
-          w = dims.width * k; h = dims.height * k;
-        }
-        overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(onRight ? iconX + iconW - w : iconX, tabY + (tabH - h) / 2, w, h), fileId, ...pictureTraits(resource, fileId) });
-        edgeX = onRight ? iconX + iconW - w : iconX + w;
-      }
+      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(onRight ? iconX + iconW - iconFit.w : iconX, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId, ...pictureTraits(iconResource, iconFileId) });
+      edgeX = onRight ? iconX + iconW - iconFit.w : iconX + iconFit.w;
     }
     if (lb.rule.enabled) {
       const ruleW = px(lb.rule.width);

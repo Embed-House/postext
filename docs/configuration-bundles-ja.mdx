@@ -66,7 +66,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
   </tbody>
 </table>
 
-**データ本体の`fileId`は、バンドル内でのそのパスです**。`resource.svg.fileId`、`resource.bitmap.fileId`、`customFonts`の各バリアントの`fileId`は、そのまま`bundle.files`で引けます。`openBundle`は、バイト列がzipでない場合、有効な`preset.json`が（ルートにも、トップレベルの1つのフォルダーの下にも）ない場合、マニフェストが指定する章や画像のファイルが欠けている場合に例外を投げます。マニフェストが指定していてもバンドルに入っていないフォントファイル（ライセンスのある書体を外して作ったバンドルなど）は、読み込みを止めません。その書体は警告つきで省かれ、書体が1つも残らないファミリーは`customFonts`から外れ、本は欠けているフォントと同じく代替フォントで組まれます。
+**データ本体の`fileId`は、バンドル内でのそのパスです**。`resource.svg.fileId`、`resource.bitmap.fileId`、`customFonts`の各バリアントの`fileId`は、そのまま`bundle.files`で引けます。`openBundle`は、バイト列がzipでない場合、有効な`preset.json`が（ルートにも、トップレベルの1つのフォルダーの下にも）ない場合、マニフェストが指定する章や画像のファイルが欠けている場合に例外を投げます。マニフェストが指定していてもバンドルに入っていないフォントファイル（ライセンスのある書体を外して作ったバンドルなど）は、読み込みを止めません。その書体は警告つきで省かれ、書体が1つも残らないファミリーは`customFonts`から外れ、本は欠けているフォントと同じく代替フォントで組まれます。マニフェストの`fonts`項目には`fallback`ファミリーも書けます。バンドルに入っていない書体の代わりに使う、幅の近いオープンなフォントです（postext 1.42以降）。そのファミリーは、ファイルがあればそれと`fallback`を持ったまま、一つもなくても`customFonts`に残り、それらの書体は`fallback`で組まれるという警告が1件出ます。
 
 #### postext 1.4以前で書き出したバンドル
 
@@ -131,10 +131,10 @@ migrateConfig(config, CONFIG_VERSION); // today's rules: `config` itself
 
 開いたバンドルをエンジンとバックエンドにつなぐヘルパーは4つあります。
 
-- **`loadBundleFonts(bundle)`**：バンドルのフェイスを`document.fonts`に登録し、SVGの画像のために、そのバイト列をエンジンのフォントレジストリにも登録します（`registerFontBytes`）。レイアウトはブラウザーが持つフォントでテキストを計測するので、組む前にその完了を待ってください。バンドルが指定していても収めていないファミリー（Google Fonts）は、ほかの文書と同じく自分で読み込む必要があります。
+- **`loadBundleFonts(bundle)`**：バンドルのフェイスを`document.fonts`に登録し、SVGの画像のために、そのバイト列をエンジンのフォントレジストリにも登録します（`registerFontBytes`）。レイアウトはブラウザーが持つフォントでテキストを計測するので、組む前にその完了を待ってください。バンドルが指定していても収めていないファミリー（Google Fonts）は、ほかの文書と同じく自分で読み込む必要があります。`loadBundleFonts(bundle, fontSet, { fallback })`は、`fallback`を名指しているファミリー（postext 1.42以降）に対し、ファイルのない傾きのレギュラー、ボールドとそのイタリックを、そのファミリー自身の名前で登録します。バンドルにある`fallback`の書体を使い、なければ`fallback(family, weight, style)`が返すその書体のバイト列（なければnull）を使います。
 - **`registerBundleImages(bundle)`**：canvasバックエンド（`renderPage`、`renderToCanvas`）のために画像をデコードします。動画のポスターも含みます。`renderToHtml`のリゾルバーは2つあり、**`bundleImageUrl(bundle)`**（`resourceImageUrl`）は画像を、**`bundleVideoUrl(bundle)`**（`resourceVideoUrl`）はバンドルが収める動画ファイルを解決します。どちらも`diagramStyle.singleInk`が有効な場合はSVGの図を一度だけ色替えします。マークアップを色替えし、画像に印を付けて、どのバックエンドも重ねて色を付けないようにします（[キャンバスとHTMLでの単色刷り](/ja/docs/configuration-resources#キャンバスとhtmlでの単色刷り)を参照）。どちらも、各SVGに文字が指定するフェイスを、まずバンドル自身のフォントから、次にエンジンに登録されたフェイスから埋め込みます（[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）。`registerBundleImages(bundle, { onWarning })`と`bundleImageUrl(bundle, { onWarning })`は、フェイスのないファミリーを報告します。
 - **`buildBundle(bundle)`**：章を順に組み、章ごとに1つの`VDTDocument`を返します。各章は前の章を引き継ぎます。見出しとリソースのカウンター、開いている部、ページの奇偶、ノンブルです。目次（`:::toc`）や索引（`:::index`）を印字する章は、本全体のアウトラインを受け取ります。`buildDocument`と同じオプションに加えて、バンドルの設定を上書きする`config`、計測キャッシュを共有する`cache`、`metadata`（後述）を受け付けます。後ろの章ファイルのページへ飛ぶ記事（`overflow.continueIn: 'page:<id>'`、[テンプレートページ › 後ろのページへ飛ぶ](/ja/docs/composed-pages#後ろのページへ飛ぶ)を参照）は、その章に渡されます。各章は、自分より後ろの章のページid（`laterPageIds`）を知った上で組まれ、送り出す記事は自分のドキュメントに返り（`pendingJumps`）、そのページのある章がそれを受け取り（`continuation.jumps`）、別の章のページを指すマークには`resolveJumpMarks`がページ番号を書き込みます（postext 1.41以降）。章を1つずつ組むホストは、`pageFenceIds`と`laterPageIdsOf`で同じことをします。
-- **`bundleResourceBytes(bundle)`**、**`bundleFontProvider(bundle, { decodeWoff2, fallback })`**：`postext-pdf`の`renderToPdf`の`resourceBytes`オプションと`fontProvider`オプションです。フォントプロバイダーは、求められたスタイルのうち最も近いウェイトをバンドルから選びます。`.woff2`のフェイスには`decompressWoff2`が必要です。バンドルが収めていないファミリーについては、`request`を含むレンダラーの引数で`fallback`を呼び、その戻り値をそのまま渡します。ファミリーの`latin`ファイルだけを取得するフォールバックでは、バンドルが埋め込んでいない中国語のファミリーが空の四角として印字されます。[中国語・日本語・韓国語のフォント](/ja/docs/configuration-pdf-output#中国語日本語韓国語のフォント)の`sliceFontProvider`のようにスライスで応えるフォールバックなら、すべて印字されます。
+- **`bundleResourceBytes(bundle)`**、**`bundleFontProvider(bundle, { decodeWoff2, fallback })`**：`postext-pdf`の`renderToPdf`の`resourceBytes`オプションと`fontProvider`オプションです。フォントプロバイダーは、求められたスタイルのうち最も近いウェイトをバンドルから選びます。`.woff2`のフェイスには`decompressWoff2`が必要です。バンドルが収めていないファミリーについては、`request`を含むレンダラーの引数で`fallback`を呼び、その戻り値をそのまま渡します。ファミリーの`latin`ファイルだけを取得するフォールバックでは、バンドルが埋め込んでいない中国語のファミリーが空の四角として印字されます。[中国語・日本語・韓国語のフォント](/ja/docs/configuration-pdf-output#中国語日本語韓国語のフォント)の`sliceFontProvider`のようにスライスで応えるフォールバックなら、すべて印字されます。`fallback`を名指しているファミリー（postext 1.42以降）は、ファイルのない傾きの書体を、バンドルにある`fallback`の書体から、なければ`fallback`の名前で呼び出した`fallback`から受け取ります。そのためPDFには、ライセンス付きの書体の代わりにオープンな書体が埋め込まれます。
 
 ```ts
 import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
@@ -230,7 +230,7 @@ const { bytes, manifest, warnings } = await createBundle({
 戻り値は、アーカイブの`bytes`、`preset.json`として書き出した`manifest`、すべてのファイルを収めた`files`（パス → バイト列）、`warnings`のリストです。ファイル名はリソースのid（`resources/lantern.svg`）またはフォントのファイル名（`fonts/…`）から、章のファイル名は順番とタイトル（`chapters/01-dusk.md`）から付けます。フォントはマニフェストの`fonts`で宣言し、`config.customFonts`の中には決して書きません。次のものは、それぞれ警告を出して除外します。
 - データ本体が`files`にないリソースやフォントのフェイス
 - `.woff`のフェイス（PDFバックエンドが埋め込めないため）
-- `redistributable: false`が付いたファミリー
+- `redistributable: false`が付いたファミリー（`fallback`を名指している場合、その`fonts`項目は、その名前だけでファイルなしのまま残ります。postext 1.42以降）
 
 ブラウザーでは、`bytes`をダウンロードリンクに渡します：`URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`。Nodeでは`fs.writeFile`で書き込みます。`createBundle`と`openBundle`にDOMは不要です。配布物のモジュールパスには拡張子がないので、バンドラーを使わない素のNodeではresolveフックが必要です。リポジトリーの`docs/examples/open-bundle/build-sample.mjs`に、数行で書いた例があります。
 

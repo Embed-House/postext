@@ -77,7 +77,7 @@ interface FrameConfig {
   exclude?: 'none' | 'push'     // 'push': other frames' text wraps around this frame
   flow?: boolean                // receives content with no slot
   next?: string                 // chain: overflow continues in this frame
-  takes?: 'h1'|'h2'|…|'h6'      // receives the first heading of that level with no slot
+  takes?: 'h1'|'h2'|…|'h6'|'toc' // receives the first heading of that level with no slot, or the page's :::toc (#983)
   pin?: boolean                 // never moves or resizes (aligned with artwork)
   grow?: number, shrink?: number, priority?: number   // group negotiation (§5)
   fit?: { shrinkText?: boolean, minScale?: number, scaleImages?: boolean, imageMinScale?: number,
@@ -96,9 +96,8 @@ Position, in order of precedence: `grid` cell, then `placement`. `placement.anch
 whole `area`.
 
 Size: a `Dimension` is fixed. `'auto'` height (the default) is the content's height, clamped to
-`minHeight`/`maxHeight`; `'auto'` width is not allowed for text frames (a text frame needs a
-measure) and means "the picture's width at the frame's height" for a frame holding a single
-resource. `'fill'` takes what is left up to the anchor's edge (as in design slots).
+`minHeight`/`maxHeight`; `'auto'` width (#982, §5.18) is the width of the content's longest line plus
+the padding, up to the room the anchor leaves and `maxWidth`. `'fill'` takes what is left up to the anchor's edge (as in design slots).
 
 `takes` exists so the page title of a textbook topic is just `# Title` at the top of the page
 fence: no slot attribute needed.
@@ -1030,10 +1029,232 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   in a book whose templates name a `page:` target) and on the jumps it receives (they are in its continuation);
   `ChapterRecord.jumps` keeps what a chapter sent past a dropped document. The Sandbox planner adds `|j<hash>` /
   `|l<hash>` to the continuation key under the same conditions, so keys of other books are what they were.
-- **Left out.** Index marks and anchors written in the rest are located by the sending chapter and listed on the
-  page where its story starts; the sender's styled section or part typography does not reach the rest; the
-  Sandbox does not paint the editor selection of the sending chapter on the later page (the picked path follows
-  the caret).
+- **Left out.** The sender's styled section or part typography does not reach the rest. (Index marks, anchors
+  and headings written in the rest, and the editor selection over it, were left out here and are built in
+  §5.18.)
+
+### 5.18 Findings round I (#882)
+
+- **Frame names by role (#979).** A drafted page names its frames by kind and order, a different box in the next
+  template. `template_dedupe.py` renames them after the merge (`name_frames`): the callout style id for a box or a
+  tab (the tab a style draws is already in the id, `box-light-blue-tab-white`), `picture`, `figure`,
+  `caption-of-<picture>` for a text or box set `below` one, `<role>-in-<parent>` for a frame laid inside another,
+  `rotated-text`, the flow `text` and the heading `title`. Content (a tab's `label` words) never enters a name. Names
+  are the same in every template that has the role, a second one is numbered from 2, a child keeps the names of
+  the template it extends, and a name that is not the positional `kind-N` form is left alone, so the pass is
+  idempotent. The anchors, groups and the `slot="…"` of every page fence under `chapters/` follow. The Sandbox
+  frame rename (`renameFrame`) now reaches the same family (`frameFamily`: the template that defines the frame and
+  everything that extends it, siblings included) and rewrites the fences of every chapter on screen
+  (`renameSlotChanges`) and of the other editions of a local project (`renameFrameInEdition`,
+  `ProjectActions.renameFrameInEditions`, one `updateProject` transaction). A sample's bundle keeps its other
+  editions read-only: only the edition open is renamed.
+- **Image budget of a painted book (#985).** C20 stays at 0.9 MB for nine pages (+0.1 MB a page), failing at 1.4 MB.
+  A recipe whose pages are paintings states the weight it means to publish in `capture.expect.imageMb` (above 0.9,
+  at most 2): silent up to it, a failure past it, an info when it is not needed or 15 % too high; the card files take
+  `capture.expect.cardKb` the same way. A budget that counted the painted area was rejected: the bytes of the
+  rendered page, not the area, say what it weighs.
+- **The contents in a frame (#983, #987).** `FrameConfig.takes` accepts `'toc'` besides `h1`…`h6`: the frame receives the
+  rows of the page's `:::toc` that name no slot (`ParsedComposedPage.tocRows`, the directive before the contents are
+  expanded, every row and the breaks between parts after; `takenBlocks` answers for both kinds of `takes` in `wrap.ts` and
+  `slotChecks.ts`). A `:::toc` inside a `:::frame` needs no `takes`. The rows are children of the frame's story box, so the
+  box typesetter lays them with `measureTocBlock` and stamps what the flow stamps (`tocBlockStamps`: `tocEntry` with the
+  page it links to, `tocPart`), which was the whole of the defect: `buildHeadersAndFooters` drew the part rows of
+  `page.columns` only, so a frame's part rows were empty lines, and the repeats of a block's head row (`toc.groups.continuation`),
+  which the flow sets only at the head of a column that a cut block goes on in, were all set, one before every entry. Now
+  (a) `placeChild` skips a continuation row unless it is the first row of the fragment, (b) `overlayTocPart` runs for the
+  part rows of `page.floats` and of a spread's `facingBlocks` with the frame's page frames, (c) a cut between the rows of one
+  block of the contents (`:::toc{keep}`) is offered only after its head (or the repeat of it) and `minEntriesAfterHead`
+  entries, and ranks `soft` (taken when no other cut fits) when the whole block is no taller than the room, so a block that a
+  frame holds goes whole to the added page, as the flow moves it to the next column; an entry is never cut inside its lines.
+  The title of the contents is not listed because its heading style says `toc: false`, as in the flow. A page break between
+  parts (`toc.parts.breakBefore`) goes with the rows and is ignored in a box, as every directive is. Memoisation: a page with
+  contents rows is never memoised (`pageMemo` already says so for any `toc` block).
+- **A ground under the contents (#987).** The ground is the template's decoration, which paints under the frames of the
+  page and on every page the frame adds; no heading design is asked to paint across the sheet. A design element anchored to
+  the bleed that runs down to the trim claims the column (the reserved height of a heading design counts every element
+  without `reserve: false`); a document with such a design says so only in the docs: a warning would also fire on every
+  cover whose design claims its page on purpose (`headingDesignCuts.ts` makes the same call), so the answer is the note in
+  the reserved-height section and the `reserve` rows of the design tables.
+- **Frames held at the foot of a card (#980).** No new key. A stack group with a box of the card's height, `grow: 1` (and
+  `shrink`) on the frames above the held ones and a `minHeight` on the held ones is the held foot: spare space goes to the
+  frames that grow, so a shorter text moves nothing below it; a longer one is squeezed by the ladder (`redistribute`, then
+  `shrinkText`) with the held frames at their `minHeight`, and `frameOverflow` and the reflow log (`textScaled`,
+  `overflow`) say what did not fit. A frame anchored to the container's foot instead cannot do this: nothing relates it to
+  the frames above it, so the ladder never squeezes them for it and an overlap is not reported. `footHold.test.ts` pins both
+  directions.
+
+- **Label styles in the Sandbox (#969).** A Design section, `labelStyles` in the Figures & tables group
+  (`LabelStylesSection`, registry id `labelStyles`, counted by `sectionHasOverrides` when the list is not
+  empty), modelled on Mark styles: id (renamed on blur, never to a colliding one), name, then three
+  sub-sections: type (borrowed paragraph style, face, size, weight, slant, colour, letter case, tracking), halo
+  and plate, fit and layout (`minScale`, `writingMode`, `overlap`). No label style is built in, so the list
+  starts empty and `Add label style` writes `{ id, name }`. A field left unset shows what it inherits (the
+  borrowed paragraph style, else the body text); `fontStyle` and `textTransform` are three-way selects whose
+  *Inherited* is "not written", which keeps `resolveLabelLook`'s rule (#955: `'normal'` / `'none'` written turn
+  a borrowed style's slant or capitals off). Renaming an id does not rewrite the anchors and labels that name
+  it, as for chip and mark styles: the Checks panel flags them (`labelStyleUnknown`) until corrected. The
+  config tools needed no change: `labelStyles` was already a section of `sandbox_get_config` /
+  `sandbox_set_config`, items named by `[id=…]`, and the "every setting" tests walk it.
+- **`overlap: 'allow'` (#977).** `ResourceAnchor.overlap` and `LabelStyle.overlap` (`'check' | 'allow'`,
+  default `'check'`). `figureLabelWarnings` passes `overlappingLabels` a flag per label (anchor's value over
+  its style's, where the style is the label's own `style` else its anchor's); a pair is skipped when either of
+  its labels is allowed, since the overlap is as much the other's as that label's. The label style's value is
+  checked (`unknownConfigValue`) and `stripLabelStylesDefaults` drops `'check'`. The anchor editor has a
+  Check / Allow control (one anchor and the ticked ones), and the WebMCP marks schema takes the field. What the
+  issue asks of the extraction scripts (merge labels of the same text within 0.5 mm into one anchor) is the
+  porting skill's: its notes say so.
+- **Words per figure (#986): a warning, not a second model.** A resource is the unit of numbering, of `:ref`
+  and of the list of figures, so two figures cannot carry different words for one resource without becoming
+  two figures. The deliberate answer is the existing one (a second resource for the same file) plus
+  `figureWordsShared`, raised by `collectContentWarnings` from `figureWordConflicts` (figureWords.ts): for a
+  resource already worded by a figure of the chapter, a later figure whose `alt`, `caption` or `note` differs
+  from the first's, or that the first left unsaid (and so is not shown either). A figure that repeats the
+  first's words, or gives none, is quiet. The range is the first of the dropped words; the Sandbox files it
+  under Figures.
+- **Pictures in the frames of a vertical page (#971).** `uprightIn` (`composedLayout.ts`) hands the box
+  typesetter `uprightMaxLength` for every frame whose effective mode is vertical: its own `writingMode`, else
+  the page's. A frame in the page's own mode on a vertical page lies in the flow frame, which is turned the
+  same quarter turn as a vertical frame on a horizontal page, so the same counter-rotation applies with the
+  frame's extent across its lines (`laidH`) less padding. `naturalOf` (the height a frame needs, for placement
+  and proposals) passes the flow's whole height as the room, since the frame's height is what it settles. A
+  horizontal frame on a vertical page is turned against the flow and already stood upright; horizontal pages
+  are unchanged. The VDT of a vertical composed page that holds a figure in a frame changes (the picture and
+  caption no longer turn with the flow); no public preset or bundle chapter does, parity 0 diffs.
+- **The reflow ladder reuses a frame's whole layout (#972).** Each step of the ladder composes the page again,
+  and most frames come out of it as they went in. `pass.layoutMemo` (`pipeline/layoutMemo.ts`, made with the
+  measurement memo in `layoutComposedPage` and dropped with it) answers `makeCalloutLayouter`'s `layoutRange`
+  for a range laid out before: key = pass, measure context, story and its end, the box style by content (the
+  ladder resolves the style again every composition: two equal styles are one key), the cut, width, frame id,
+  continuation, mirroring, the frame's options (`boxHeight`, exclusions, picture scale, marks, upright length)
+  and the measuring state (`measureStateKey`, shared with the measurement memo). A caller that moves the
+  result (`fill`: `commitFrame` shifts it to the page) gets a private deep copy; the memo keeps a copy made
+  before the first caller moved it. A caller that only reads (`peekRange`: the split probes, the natural height
+  of a frame) gets the stored layout, which nobody changes. The copy preserves shared structure (units and
+  children point at the same blocks) and what the layout keeps by identity, a block's end indent and a
+  designed heading (`copyBlockEndIndent`, `copyDesignedBoxHeading`; a new layout-time registry keyed by VDT
+  object must add a copier); a layout holding a comic page or an object that is not plain data is never kept.
+  The writes a layout makes to the measure context (drop cap notes, joining-script marks) are recorded with the
+  entry and replayed on a hit. `layoutMemoSwitch` turns it off for the test that lays a page both ways. Parity
+  0 diffs; the heaviest composed chapter of the Cookbook (a magazine of threaded frames) lays out about 45 %
+  faster.
+- **Marks, anchors and headings written in the rest of a story that went to another chapter (#988).** The
+  receiving chapter locates them (`locateCarriedOutline`, called from `withIndexMarks` once the pages are
+  final): per carried story, the lines it laid for that story (offsets in the sender's file) answer, an index
+  mark, an inline anchor or a heading is its own when a line holds the character or it lies inside the span the
+  lines cover (what lies before is the sender's, laid by it). They go on `VDTDocument.carriedOutline`
+  (`chapter`, `kind`, `sourceStart` in the sender's body, page), the anchors also as destinations on
+  `doc.anchors` (`VDTAnchor.chapter`). The sending chapter's own location leaves out the lines of carried
+  blocks (`sourceChapter`, they are another file's offsets), its anchors skip the marks of a sent story that
+  none of its lines hold, and `outlineFromDoc` takes the heading blocks of a carried story out of the
+  order its entries are matched with (the sent headings are matched by their source). `mergeCarriedOutline`
+  puts the pages into the sender's entries by `(chapter, kind, sourceStart)`: `buildBundle` keeps
+  `ChapterRecord.carried` (`carriedPlaces`) and merges before it assembles the book outline; the Sandbox
+  planner keeps `ChapterLayout.carriedOutline` (and writes it in `layouts.json`) and merges in its
+  `bookOutline`. Index, contents and references then read the page of the words. The Sandbox canvas paints the
+  selection and the caret of the chapter being edited over the carried words on the later chapter's page
+  (`drawOverlay` with `CarriedSelection`).
+
+### 5.18 Findings round I (#882)
+
+- **Tracking in a box's body (#974).** `CalloutBodyStyleConfig.letterSpacing` (em of the body size, negative
+  tightens; absent when zero) rides on the derived `bodyText` of a box (`deriveCalloutResolvedConfig`), so
+  `resolveBodyStyle` gives the body style a `letterSpacingPx` and paragraphs and list items are measured, stamped
+  (`VDTBlock.letterSpacing`) and painted as a paragraph style's tracking is (#907). A paragraph in a
+  `:::paragraphs` fence keeps its own style's tracking, code listings none. A frame takes it through its callout
+  style; a frame's own override of it is the `look` of #976.
+- **Removing an inherited decoration element (#975).** `decoration.elements` of a patch may hold
+  `{ id, remove: true }` (`DecorationRemoval`): `mergePatch` drops the element of that `id` merged so far, parents
+  first and a variant after the chain, as `remove: true` does for frames and groups. A removal naming nothing is
+  silent (no warning kind); a new element of the same `id` may follow it. The Sandbox lists the inherited elements
+  with a switch each and writes the removal in the scope being edited.
+- **`width: 'auto'` on a frame (#982).** `placeBox` takes a `naturalWidth(room)` next to `natural(width)`; an `'auto'`
+  width asks it (the grid cell's width, the area's, or the room from the anchor to the area's edge, less
+  `maxWidth`) and clamps to `minWidth`/`maxWidth`. `naturalWidthOf` (`composedLayout.ts`) lays the frame's story
+  out flush left at eight times the room, so that nothing wraps, and takes the right edge of the longest line
+  (a picture by its box) plus what the box keeps to its right (`callout.innerRect`: padding, a right stripe), a
+  quarter pixel over, capped at the room: text that does not fit wraps at the cap. The box starts at the edge its
+  anchor names (`pinX`), so frames anchored to it follow, and a group member is placed the same way. Not for a
+  frame in its own writing mode, nor for a frame with nothing to lay (width 0 up to `minWidth`). The Sandbox
+  already offered *Its content* for width.
+- **A decoration text over a frame, and the heading's number (#984).** `sourceAt` keeps the paint order (frames of
+  layer 0 and up over the decoration) but a frame hit that has nothing of its own at the point (the chain is the
+  frame alone: its box, its padding, an empty frame) is held back: a *text* element of the decoration under it
+  answers instead (whether its words come from the Markdown, a page attribute or the configuration), and the
+  held frame answers when none does. Rules, boxes and pictures of the decoration do not win over a frame. A
+  `layer` on decoration elements, to paint them over the frames, was not added: it would make the decoration two
+  paint items in every backend (canvas, HTML, PDF, tagged PDF, preflight, contrast, the source map); a frame
+  with a negative `layer` already goes under the decoration. `{headingNumber}` and `{headingNumber.<frame>}`
+  (`headingNumberPlaceholder`, `design/placeholders.ts`; allowed in the `'composed'` context only, so the running
+  heads of other pages do not list them) print the `headingNumber` counter of the first heading block each
+  frame holds, in the document's digits; `headerFooter.ts` gathers them while it names the page's frames and
+  hands them to the placeholder context. Empty when no frame holds a numbered heading.
+- **A picture inside a label tab (#981).** `CalloutLabelConfig.icon.placement` (`'beside'` | `'inside'`): inside, the
+  tab is `paddingX + picture + gap + words + paddingX` wide, the picture (fitted into `icon.width` × the tab's
+  height) at the tab's start, the words after it, a tab at the right corner growing leftwards; with no picture the
+  tab is the plain one. The overlay is the same box, image and text blocks, so no backend changes. The picture
+  keeps its colours; a tint from the tab's text colour would need a colour on `VDTDesignImageBlock` and the same
+  in canvas, HTML and PDF, and is left (SP followup).
+- **A frame's own colours, the page's palette, and the kinds of box (#976).** Decision: one callout style per *shape*,
+  the tint elsewhere. Three levers, from the narrowest:
+  (1) `FrameConfig.look` (`FrameLook`): colours named and nested as in the callout style (fill, border, stripe,
+  icon, marker and its rule, title, body text, the tab's colours and rule) and `body.letterSpacing` (#974's
+  frame override). `normalizeFrame` keeps what the engine can use (`LOOK_TREE`: a colour has a `hex`, tracking
+  is a length that may be negative), a patch merges it key by key at every level (`mergeLook`), and
+  `frameStyleOf` writes it over the resolved style (`styleWithLook`, memoised per style and look, so the `body`
+  and `lists` objects a measurement is keyed by keep their identity). A fill colour turns the fill on; tab colours
+  apply only to a style that has a tab. `validatePageTemplates` reports unknown keys at any depth. A `look` colour
+  with a `paletteId` follows the palette like every colour of the config.
+  (2) The template's `palette` and the page fence's `palette="id=#hex"`, which the engine read and ignored:
+  `buildHeadersAndFooters` stacks them on the part's and section's overrides for a composed page, so the
+  palette-linked colours of its frames (boxes recoloured by value, `partPalette.ts`) and decoration take the
+  page's value. One style with a fill linked to a palette entry then serves every tint, each page fence naming
+  its own.
+  (3) Sandbox library: `styleKinds` groups a style with those that extend it or differ from it only in colours
+  (`onlyColours`: every differing field a colour on both sides), and `mergeSuggestions` no longer proposes such
+  a pair; a pair that also differs in a length, a switch or a word still is. The Frame styles section lists the
+  kinds. What stays: a book whose boxes differ in colours *and* shape still has one style per shape.
+
+### 5.18 Findings round I (#882)
+
+**Sandbox, editions and bundles (#968, #970, #978).**
+
+- **A licensed family names an open one (#978).** `CustomFontFamily.fallback` and the manifest's `fonts[].fallback` name a
+  family of about the same width for the faces the book has no file of. The configuration keeps naming the licensed
+  family (the book is still set "in" it; `fontFamily` fields are never rewritten): hosts load the fallback's cuts and
+  register them *under the licensed name*, so measuring, painting and the PDF need no other change. The rule is one
+  sentence, `hasOwnStyle`: a family with no file at all is set wholly in the fallback; a family with files keeps them
+  and takes from the fallback only a slant it has none of (an italic). Weights between its own files stay with CSS
+  matching, as for any family. It is not a general font-substitution map: `fontFallbackOf` reads only
+  `config.customFonts`, so a Google or system family cannot be aliased this way (a family nobody has is still
+  `missingFont`). Where it is done: the bundle reader keeps a family with a fallback and no file and warns once
+  instead of once per file; the bundle writer writes a family it may not hand on as `{ name, variants: [], fallback,
+  redistributable: false }`; `bundleFontProvider` and `loadBundleFonts` take the fallback's faces from the bundle or from
+  the host; the CLI's `resolveFonts` looks the fallback up like any family (and asks no catalogue for the licensed
+  name); the Sandbox's font loader declares the fallback's faces under the licensed name for the page, the layout
+  worker and the PDF provider, and the Fonts panel has a Stand-in family field. A fallback that is itself a custom
+  family (bundled open face) works too. Limits: a fallback with no static cuts (a Google family served only by its
+  style sheet) is not aliased in the Sandbox; EPUB and HTML keep leaving the licensed family's reference to the reader.
+  No new warning kind: the stand-in is announced by the import warning and shown in the Fonts panel; the PDF embeds
+  the open face, which the docs say.
+- **Editions (#968).** *Title:* `ProjectRecord.editionTitles` keeps `localized.<lang>.name` and `description` of every
+  edition; the record's name follows the edition on screen (`withActiveEdition`) until the reader renames the
+  project (`renamePatch` sets `titleEdited` on a book with editions when the title changed); then that title stands in
+  every edition and an export gives no edition a title of its own. A copy's "… copy" name is the reader's. *Pagination:*
+  the Sandbox writes `layouts.<locale>.json` for every edition (the records kept under its chapter ids, current for
+  the edition's text, configuration and resources, keyed by the chapter files `BundlePlan.localeChapterFiles` reports);
+  the reader already read it before `layouts.json`. *Fonts:* the families an edition laid out behind the reader declares
+  and the book on screen lacks are served as the book's (`declareEditionFonts`, a second registry the book's own
+  `setCustomFonts` overrides and `newBook` empties); two editions that give one name different files are not told apart.
+  The Activity-bar badge still counts the edition on screen (#903); not wired.
+- **The label editor of a surface (#970).** The hit test, hover, drag with its ghost, drop, click and double click are
+  `createLabelEditor`, which knows nothing of the page: a `LabelSurface` paints its marks (`paint(page, shapes | null)`)
+  and says how big a CSS pixel is there. The Canvas and the HTML preview adapt it per page element
+  (`attachLabelAnchorEditor`, same capture-phase listeners as before); the Folio gives `attachPageInteraction` a
+  surface that paints into the page texture (`viewer.redecorate`) in place of the page's own marks while a label is
+  hovered or dragged, and enables it in select mode only (a drag never starts a page flip: flipping is hand mode's).
+  The drop is `dropLabel` (anchor on the resource, or the `at` percentages in the Markdown), one history step, through
+  the template editor host, which the Folio now lends too. The anchors dialog takes two fingers (move and pinch).
+
 
 ## 6. Source map contract
 

@@ -104,7 +104,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>aucun</td>
-      <td>Des images, des filets et des boîtes peints avec la page, dans le langage d’éléments des <a href="/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page">en-têtes et pieds de page</a>. Les éléments de texte ne contiennent que des variables (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> pour un attribut de la clôture de page). Un élément peut s’ancrer à un bloc ou à un groupe (<code>'#dinero'</code>) et se déplace alors avec lui. Le décor est posé après les blocs et ne repousse jamais le texte.</td>
+      <td>Des images, des filets et des boîtes peints avec la page, dans le langage d’éléments des <a href="/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page">en-têtes et pieds de page</a>. Les éléments de texte ne contiennent que des variables (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> pour un attribut de la clôture de page). Un élément peut s’ancrer à un bloc ou à un groupe (<code>'#dinero'</code>) et se déplace alors avec lui. Le décor est posé après les blocs et ne repousse jamais le texte. Depuis postext 1.42, <code>&#123;headingNumber&#125;</code> écrit le compteur du premier titre numéroté que contiennent les blocs de la page (un bloc avec <code>takes</code>) et <code>&#123;headingNumber.titulo&#125;</code> celui du bloc <code>titulo</code>, avec les chiffres du document : une pastille portant le numéro d’un thème le lit dans le titre, sans que la clôture de page ait à le répéter. Le décor est peint sous les blocs ; un clic sur un texte du décor posé sur un bloc, à un endroit où le bloc n’a pas de texte propre, atteint le texte et non le bloc. Un bloc de <code>layer</code> négatif est peint sous le décor.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -146,7 +146,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>aucune</td>
-      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties.</td>
+      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties : des paires <code>entrée=#hex</code> séparées par des virgules (<code>teinte=#f6c3d0</code>). Toute couleur des blocs et du décor de la page liée à cette entrée de la palette (ou égale à sa valeur) la prend, et l’attribut <code>palette</code> de la clôture de page passe par-dessus. Depuis postext 1.42 la valeur est appliquée ; auparavant elle était lue puis ignorée.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -195,7 +195,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Une longueur fixe, un pourcentage de la zone (de 0 à 100), <code>'auto'</code> (la taille propre du contenu) ou <code>'fill'</code> (ce qui reste jusqu’au bord auquel le bloc est ancré). Non défini, le bloc lit <code>placement.size</code>, puis la valeur par défaut : toute la largeur, aussi haut que son contenu. Un bloc de texte a besoin d’une justification, donc une largeur <code>'auto'</code> n’a de sens que pour un bloc qui contient une seule image (la largeur de l’image à la hauteur du bloc). Une valeur que le moteur ne peut pas utiliser (une longueur négative, une unité inconnue) est lue comme la valeur par défaut.</td>
+      <td>Une longueur fixe, un pourcentage de la zone (de 0 à 100), <code>'auto'</code> (la taille propre du contenu) ou <code>'fill'</code> (ce qui reste jusqu’au bord auquel le bloc est ancré). Non défini, le bloc lit <code>placement.size</code>, puis la valeur par défaut : toute la largeur, aussi haut que son contenu. Depuis postext 1.42, une largeur <code>'auto'</code> donne au bloc la largeur de sa ligne la plus longue plus ses marges intérieures, sans dépasser la place que laisse l’ancre ni <code>maxWidth</code> (le texte qui n’y tient pas y passe à la ligne) et sans descendre sous <code>minWidth</code>. Le texte est mesuré composé au fer à gauche : un titre centré occupe la largeur de ses mots. Le bloc part du bord que désigne son ancre, et les blocs ancrés à lui le suivent. Utile pour un onglet ou un encadré qui doit épouser son titre dans toutes les langues. Une valeur que le moteur ne peut pas utiliser (une longueur négative, une unité inconnue) est lue comme la valeur par défaut.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -259,9 +259,9 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>aucun</td>
-      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture.</td>
+      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture. Avec <code>'toc'</code>, il reçoit le <code>:::toc</code> de la page qui ne nomme aucun emplacement et le compose selon les règles de la table des matières (depuis postext 1.42 ; voir <a href="/fr/docs/composed-pages">Pages composées</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -342,10 +342,16 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
     </tr>
     <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un modèle enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>ceux de la page</td>
-      <td>Un bloc composé dans son propre mode d’écriture ou sa propre direction : une boîte verticale sur une page horizontale, une fiche horizontale sur une page verticale, une citation de droite à gauche dans un livre de gauche à droite. Un bloc de l’autre mode d’écriture est composé dans sa boîte tournée d’un quart de tour : ses lignes suivent la hauteur de la boîte et se succèdent dans sa largeur, et une hauteur <code>'auto'</code> est la plus petite qui les tient dans cette largeur. Son texte est peint comme une page de ce mode peint le sien. <code>direction</code> compose l’histoire du bloc dans cette direction, comme une boîte marquée <code>&#123;dir=…&#125;</code> ; un bloc de texte ou une boîte qui écrit son propre <code>dir</code> le garde. Depuis postext 1.39. Depuis postext 1.40, un bloc vertical fonctionne aussi sur une page de droite à gauche : il est composé comme sur une page de gauche à droite et placé là où le flux en miroir le met, son texte peint sans miroir ; une image dans un bloc vertical d’une page horizontale reste droite, avec sa légende, et prend la place que la boîte lui laisse en travers de la page ; l’EPUB recomposable écrit un bloc d’un autre mode d’écriture comme une boîte avec ce mode et la longueur le long de laquelle courent ses lignes (en em du texte courant).</td>
+      <td>Un bloc composé dans son propre mode d’écriture ou sa propre direction : une boîte verticale sur une page horizontale, une fiche horizontale sur une page verticale, une citation de droite à gauche dans un livre de gauche à droite. Un bloc de l’autre mode d’écriture est composé dans sa boîte tournée d’un quart de tour : ses lignes suivent la hauteur de la boîte et se succèdent dans sa largeur, et une hauteur <code>'auto'</code> est la plus petite qui les tient dans cette largeur. Son texte est peint comme une page de ce mode peint le sien. <code>direction</code> compose l’histoire du bloc dans cette direction, comme une boîte marquée <code>&#123;dir=…&#125;</code> ; un bloc de texte ou une boîte qui écrit son propre <code>dir</code> le garde. Depuis postext 1.39. Depuis postext 1.40, un bloc vertical fonctionne aussi sur une page de droite à gauche : il est composé comme sur une page de gauche à droite et placé là où le flux en miroir le met, son texte peint sans miroir ; une image dans un bloc vertical d’une page horizontale reste droite, avec sa légende, et prend la place que la boîte lui laisse en travers de la page ; l’EPUB recomposable écrit un bloc d’un autre mode d’écriture comme une boîte avec ce mode et la longueur le long de laquelle courent ses lignes (en em du texte courant). Depuis postext 1.42, une image dans un bloc d’une page verticale qui suit le mode de la page reste droite elle aussi, avec sa légende.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -485,6 +491,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
 
+**Tenir des blocs au pied d’une carte (depuis postext 1.42).** Un bloc ancré sous le texte qui le surmonte suit ce texte : dans une édition où le texte compte une ligne de moins ou de plus, les blocs situés dessous montent ou descendent, tandis que ce que dessine le modèle (une carte, un bandeau, le pied) reste en place. Pour que des blocs restent au pied d’une carte, là où le modèle les met, réunissez les blocs de la carte en une pile dotée d’une boîte de la hauteur de la carte. Les blocs placés au-dessus de ceux qu’on retient prennent l’espace en trop (`grow: 1`) et le rendent (`shrink: 1`) ; les blocs retenus écrivent un `minHeight`. Un texte plus court laisse les blocs retenus où ils étaient. Un texte plus long est comprimé au-dessus d’eux : ils gardent leur `minHeight`, le texte du dessus est réduit et, si cela ne suffit pas, la mise en page signale `frameOverflow` et le journal de recomposition note `textScaled` et `overflow` pour le bloc du dessus. Un bloc ancré au pied du conteneur (`bottom-left`) garde aussi sa place, mais rien ne le lie aux blocs qui le surmontent : un texte plus long le recouvre, rien n’est comprimé pour lui et le chevauchement n’est pas signalé.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+Le bloc qui grandit est aussi haut que la place disponible, quoi qu’il contienne ; un style à fond visible le peindrait donc tout entier : peignez la carte dans la décoration du modèle et laissez le bloc de texte sans style.
+
 ### Quand le contenu ne tient pas
 
 Quand le contenu d’un bloc est plus haut que la place que lui donne son groupe, la mise en page essaie dans l’ordre les étapes de la [cascade de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) et s’arrête à la première qui le fait tenir : l’espace libre jusqu’à `maxHeight`, le groupe qui pousse et qui cède, des images plus petites, les autres blocs du groupe ramenés à leur minimum, un texte plus petit, la suite sur une autre page. Ces réglages du bloc fixent jusqu’où chaque étape peut aller :
@@ -510,7 +536,7 @@ Un gabarit doté d’`extends` part du gabarit qu’il nomme (qui peut lui-même
 
 - Un champ comme `area`, `header` ou `overflowTemplate` remplace celui du parent. `grid` se fusionne clé par clé. `spread`, `gutter` et `role` sont hérités aussi ; `id`, `name` et `extends` sont propres au gabarit.
 - `frames` et `groups` se fusionnent **par nom** : une entrée qui porte le nom d’une entrée héritée change les champs qu’elle écrit et garde les autres (`fit`, `overflow` et `padding` se fusionnent clé par clé ; `placement` est remplacé en entier) ; `remove: true` la supprime ; un nom nouveau s’ajoute après les entrées héritées.
-- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute.
+- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute. Depuis postext 1.42, `{ id: 'tete-paire', remove: true }` dans `decoration.elements` d’un gabarit enfant ou d’une variante retire l’élément hérité portant cet `id`, comme `remove: true` le fait pour un bloc ; un `id` que le gabarit n’hérite pas ne change rien. Un nouvel élément du même `id` peut suivre le retrait dans la même liste.
 
 `variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
 
@@ -562,7 +588,7 @@ Dans un livre vertical (`vertical-rl`), la double page se compose dans le repèr
 
 ## Styles d’étiquette
 
-La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette.
+La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42).
 
 ```ts
 labelStyles: [
@@ -653,6 +679,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Écriture verticale pour les étiquettes de ce style : caractères droits dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> dit que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas levé pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> écarte les étiquettes de ce style du contrôle <code>labelOverlap</code>, pour une carte dont les noms se touchent dans la source. L’<code>overlap</code> propre à une ancre l’emporte. Depuis postext 1.42.</td>
     </tr>
   </tbody>
 </table>

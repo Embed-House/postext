@@ -1,0 +1,79 @@
+{/* docs/migrating-to-composed-pages-it.mdx */}
+
+export const metadata = {
+  title: 'Spostare un libro nelle pagine composte',
+  sidebarTitle: 'Passare alle pagine composte',
+  description: 'Come spostare in modelli di pagina e in Markdown un libro le cui pagine tengono il testo negli stili dei titoli: con l’assistente del Sandbox Spostare il testo nel Markdown o a mano, e che cosa controllare dopo',
+  lang: 'it',
+  lastUpdated: '2026-10-17',
+  readingTime: '8 min',
+  order: 43,
+  plainSummary: "Alcuni libri fatti con Postext prima delle pagine composte tengono le parole di ogni pagina dentro le impostazioni di grafica invece che nel testo. Per questo sono difficili da correggere e impossibili da tradurre. Questa pagina mostra come spostare quelle parole nel Markdown, dove ogni pagina diventa un blocco con il suo modello. Il Sandbox fa quasi tutto il lavoro con un solo pulsante, e tu controlli il risultato pagina per pagina. Spiega anche come fare lo stesso a mano per una pagina sola.",
+};
+
+# Spostare un libro nelle pagine composte
+
+**Un libro che tiene il testo delle sue pagine negli stili può averlo spostato nel Markdown, dove si può modificare e tradurre.**
+
+Prima delle pagine composte, un libro di testo portato in Postext teneva spesso ogni pagina come un titolo nascosto la cui testatina collocava il testo, i riquadri e le immagini della pagina dove li aveva la pagina stampata. Le pagine avevano l’aspetto giusto, ma le parole stavano nella configurazione: per correggere un refuso bisognava aprire uno stile, e per tradurre bisognava copiare lo stile. Una pagina composta fa lo stesso lavoro con la forma in un **modello di pagina** e le parole nel Markdown, come mostra [Libri di pagine composte](/it/docs/composed-page-books). Questa pagina porta un libro vecchio a quella forma.
+
+Capisci che un libro è nella forma vecchia quando il pannello **Verifiche** elenca *Testo tenuto nella configurazione* (`contentInConfig`), una voce per ogni stile di titolo che contiene frasi, e offre **Spostare il testo nel Markdown** in cima all’elenco.
+
+## Il libro da seguire
+
+I passi che seguono usano un piccolo libro fatto per questa pagina, *Our World, before composed pages*: tre pagine di un libro di testo per la terza elementare, ciascuna uno stile di titolo con una testatina che colloca un’immagine, una scheda, un titolo e tre blocchi di testo, con una banda gialla sotto una parola. Le parole e le immagini sono inventate. [Scarica il libro](/docs-examples/our-world-before.postext) e, nel Sandbox, apri **Libri**, premi **Nuovo** e scegli **Apri un file .postext…**.
+
+## Con l’assistente
+
+Importare un libro con il testo negli stili apre da sé la finestra **Spostare il testo nel Markdown**. Se l’hai chiusa, o se il libro era già nella tua lista, apri **Verifiche** e premi il pulsante in cima all’elenco. Non cambia nulla finché non premi **Spostare il testo**.
+
+1. Leggi **Che cosa cambia**. Per il libro d’esempio dice che si sposteranno 16 testi (567 lettere), che verranno scritte 3 pagine composte, che i 3 stili di titolo diventano 1, che 3 caselle di evidenziazione diventano chip e che gli avvisi *Testo tenuto nella configurazione* passano da 3 a 0.
+2. Guarda le opzioni. **Le pagine con cornici negli stessi punti condividono un modello** dà alle pagine impaginate allo stesso modo un modello di base, che le altre estendono. **Una casella di evidenziazione sotto parole in grassetto diventa un chip** trasforma un riquadro colorato disegnato sotto parole in grassetto in un chip dello stile di chip del libro. **Le parole sulle immagini diventano le loro etichette** viene offerta quando il vecchio design metteva parole brevi su un’immagine, come i nomi su una mappa: diventano righe `::label` su ancore dell’immagine. È disattivata finché non la attivi, perché sono le pagine che cambiano di più.
+3. Sotto **Prima e dopo** il Sandbox impagina ogni capitolo due volte e disegna ogni pagina che cambia, la vecchia accanto alla nuova. L’elenco dice quali pagine hanno un aspetto diverso e perché, quando lo sa. **Segnare in rosso ciò che cambia** colora i pixel che differiscono. Nel libro d’esempio tutte e tre le pagine sono segnate *Appare uguale*.
+4. Premi **Spostare il testo**.
+
+<Screenshot src="/docs-shots/it/move.webp" alt="La finestra Spostare il testo nel Markdown con l’elenco di ciò che cambia e le tre opzioni." caption="La finestra elenca ciò che farà prima di fare qualsiasi cosa." />
+
+<Screenshot src="/docs-shots/it/move-before-after.webp" alt="La parte finale della finestra: l’elenco delle pagine segnate Appare uguale e, affiancate, una pagina prima e dopo lo spostamento." caption="Ogni pagina è impaginata con il vecchio design e con il nuovo, una accanto all’altra." />
+
+Lo spostamento è un passo della cronologia del libro: un passo per ogni capitolo riscritto e uno per la grafica. **Annulla lo spostamento**, nella finestra, riporta tutto indietro finché non è cambiato altro, e **Cmd/Ctrl+Z** lo annulla un passo alla volta. Il libro com’era resta anche memorizzato finché non premi **Tenere lo spostamento** nel pannello Verifiche; fino ad allora **Rimettere il libro com’era** riscrive la vecchia grafica e il vecchio testo.
+
+## Che cosa controllare dopo
+
+Apri il pannello **Testo**. Il capitolo ora contiene un blocco per ogni pagina:
+
+```md
+::::page{template="page-base" background="art-p1"}
+# Rivers and seas {style="topic" id="t-rivers"}
+
+:::frame{slot="shared-2"}
+:::paragraphs{style="fredoka-30-center-ffffff"}
+Rivers and seas
+:::
+:::
+...
+::::
+```
+
+Passa in rassegna il risultato in quest’ordine.
+
+- **Le pagine che hanno un aspetto diverso.** L’elenco nella finestra ha dato i motivi che conosceva: il riquadro, il contorno o il capolettera propri di un testo, una pagina di cui non si conosceva il lato, il testo corrente ora composto nella cornice di flusso del modello. Confronta quelle pagine sul canvas.
+- **I modelli.** **Grafica › Pagina e colonne › Modelli di pagina** elenca un modello per ogni design di pagina, e `page-base` per le cornici che le pagine condividono. Una pagina che non aggiunge nulla usa la base così com’è; le altre la estendono. I nomi sono costruiti su quelli vecchi: rinomina un modello con un nome che riconoscerai (rinominandolo lo rinomini in ogni pagina che lo nomina).
+- **Gli stili di paragrafo.** Il carattere, la dimensione, il peso, il colore, l’allineamento e l’interlinea di ogni testo sono diventati uno stile di paragrafo: uno di quelli del libro quando ne corrispondeva uno esatto, altrimenti uno nuovo che prende il nome dal carattere e dalla dimensione (`nunito-11`). Guarda **Grafica › Testo** e rinomina o unisci quelli nuovi.
+- **I titoli.** Gli stili di titolo risultati uguali sono stati uniti e i titoli rinominati; i titoli nascosti che servivano solo a cambiare la testatina sono scomparsi. Controlla l’indice, se il libro ne ha uno.
+- **Ciò che resta nella configurazione.** L’elenco *Resta nella configurazione* nella finestra nomina un testo che mescola parole e segnaposto (`Page {pageNumber}`), un testo appeso a un altro elemento e il testo del design di un titolo. Non sono contenuto di una pagina, e gli avvisi *Testo tenuto nella configurazione* che restano riguardano loro.
+- **Le etichette.** Se hai attivato l’opzione *Le parole sulle immagini diventano le loro etichette*, guarda ogni mappa o diagramma: le etichette sono composte di nuovo con i font del libro, quindi la loro dimensione e il loro posto possono differire dalle vecchie pagine.
+- **Il pannello Verifiche.** Le cornici il cui testo non entra più compaiono come *Il testo non entra nella cornice*, con le correzioni descritte in [Libri di pagine composte](/it/docs/composed-page-books#6-sistemare-ciò-che-non-entra). Un libro nato da una pagina stampata è stretto, e le prime parole un po’ più lunghe hanno bisogno di una correzione.
+
+Quando sei soddisfatto, premi **Tenere lo spostamento**. Ora il libro si può tradurre come qualsiasi libro di pagine composte.
+
+## A mano
+
+Un libro di poche pagine si può spostare senza l’assistente, una pagina alla volta.
+
+1. In modalità **Grafica** fai il modello di pagina. Disegna una cornice per ogni testo su una pagina composta del libro, oppure segui i passi di [Libri di pagine composte](/it/docs/composed-page-books#2-fare-un-modello-di-pagina). Dai a ogni cornice lo stile del riquadro che ne disegna l’aspetto, e come **Altezza minima** l’altezza che aveva il vecchio testo.
+2. In modalità **Contenuto** scrivi la pagina come un blocco `::::page{template="…"}` e sposta ogni testo della vecchia testatina in un `:::frame{slot="…"}` del blocco nuovo. Conserva il grassetto e il corsivo, e conserva le andate a capo del vecchio testo con una barra rovesciata a fine riga.
+3. Elimina gli elementi di testo dallo stile del titolo, o lo stile stesso quando nient’altro ne ha bisogno. L’avviso *Testo tenuto nella configurazione* per quello stile scompare.
+4. Confronta la pagina con la vecchia e apri **Verifiche**.
+
+Lo stesso spostamento è disponibile dal codice come `moveTextToMarkdown`, che restituisce la nuova configurazione, i capitoli e il resoconto che mostra la finestra; vedi [Pagine composte › Migrare un libro con il testo negli stili](/it/docs/composed-pages#migrare-un-libro-con-il-testo-negli-stili). Tutto ciò che fa la finestra è descritto in [Sandbox: le pagine composte › Spostare il testo nel Markdown](/it/docs/sandbox-composed-pages#spostare-il-testo-nel-markdown).

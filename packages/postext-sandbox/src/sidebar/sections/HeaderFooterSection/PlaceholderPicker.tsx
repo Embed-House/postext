@@ -45,6 +45,7 @@ export function PlaceholderPicker({ onInsert, slotKind = 'header', extra = [] }:
     numberOrdinalWords: labels.headerFooterPlaceholderNumberOrdinalWords,
     numberOrdinalWordsLower: labels.headerFooterPlaceholderNumberOrdinalWordsLower,
     numberHan: labels.headerFooterPlaceholderNumberHan,
+    headingNumber: labels.headerFooterPlaceholderFrameHeadingNumber,
     leader: labels.headerFooterPlaceholderLeader,
   };
 

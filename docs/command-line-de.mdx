@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'de',
   lastUpdated: '2026-10-17',
   readingTime: '12 min',
-  order: 43,
+  order: 45,
   plainSummary: "Diese Seite richtet sich an alle, die Bücher mit Postext im Terminal statt auf der Website machen wollen. Sie laden eine einzige Datei für Ihren Computer herunter und führen sie aus, ohne etwas zu installieren. Sie geben ihr Ihr Buch oder ein paar Textdateien, und sie erzeugt ein PDF, eine Webseite, ein E-Book, Bilder der Seiten oder ein Word-Dokument. Sie kann ein Buch auch auf Probleme prüfen und seine Dateien zu einer einzigen packen. Auch Programme und KI-Assistenten können sie nutzen, denn sie kann in einem Format antworten, das diese leicht lesen.",
 };
 
@@ -377,6 +377,8 @@ Der Cache liegt in `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` unter Wind
 Eine nirgends gefundene Familie wird unter ihrem eigenen Namen in EB Garamond gesetzt, sodass Layout
 und PDF weiterhin übereinstimmen, und eine Warnung `missingFont` nennt sie. `postext info`
 zeigt, woher jede Familie stammt.
+
+Ein Bündel, das die Dateien einer lizenzierten Familie weglässt, kann dafür eine freie Familie ähnlicher Breite nennen (`fallback` in den `fonts` des Manifests, seit postext 1.42). `postext` sucht diese Familie dann nach den obigen Schritten und setzt die Schnitte, die das Buch nicht mitbringt, in deren Schnitten gleicher Stärke und Neigung unter dem Namen der lizenzierten Familie; das Layout kommt dem mit den Dateien nahe, und `postext check` meldet dafür kein `missingFont`. Eine Familie, die das Buch nur teilweise mitbringt, nimmt vom `fallback` nur die Neigung, von der sie keine Datei hat. Das PDF bettet die freie Schrift ein.
 
 ## Für Skripte und Agenten
 

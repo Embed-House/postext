@@ -1137,6 +1137,18 @@ export function CalloutStyleCard({
                   isDefault={labelIconUnset('width')}
                   onReset={() => resetLabelIconField('width')}
                 />
+                <SelectInput
+                  label={labels.calloutStyleLabelIconPlacement}
+                  value={resolved.label.icon.placement}
+                  options={[
+                    { value: 'beside', label: labels.calloutStyleLabelIconBeside },
+                    { value: 'inside', label: labels.calloutStyleLabelIconInside },
+                  ]}
+                  onChange={(v) => updateLabelIcon({ placement: v as 'beside' | 'inside' })}
+                  tooltip={labels.calloutStyleLabelIconPlacementTooltip}
+                  isDefault={labelIconUnset('placement')}
+                  onReset={() => resetLabelIconField('placement')}
+                />
                 <DimensionInput
                   label={labels.calloutStyleLabelIconGap}
                   value={resolved.label.icon.gap}
@@ -1460,6 +1472,17 @@ export function CalloutStyleCard({
           tooltip={labels.textStyleSmallCapsTooltip}
           isDefault={groupUnset('body', 'smallCaps')}
           onReset={() => resetGroupField('body', 'smallCaps')}
+        />
+        <DimensionInput
+          label={labels.calloutStyleBodyLetterSpacing}
+          value={resolved.body.letterSpacing ?? { value: 0, unit: 'em' }}
+          onChange={(v) => body({ letterSpacing: v })}
+          min={-1}
+          step={0.005}
+          units={TRACKING_UNITS}
+          tooltip={labels.calloutStyleBodyLetterSpacingTooltip}
+          isDefault={groupUnset('body', 'letterSpacing')}
+          onReset={() => resetGroupField('body', 'letterSpacing')}
         />
         <SelectInput
           label={labels.alignmentLabel} tooltip={labels.alignmentHelp}

@@ -19,6 +19,7 @@ import { resourceTextAtPixel, type ResourceTextHit } from './resourceHit';
 import type { SandboxLabels } from '../../types/labels';
 import { createComicEditor, slotComicSurface, type BalloonTextPress, type ComicEditor, type ComicSurface } from '../comics/comicEditing';
 import { createFrameTools, type FrameTools } from '../composed/frameTools';
+import { createLabelEditor, type LabelEditor, type LabelSurface } from '../composed/labelAnchorEditor';
 import { editModeNow } from '../../editing/editMode';
 import { pickAt, type PageSelection } from '../../selection/pageSelection';
 import { clearPageSelection, pageSelectionNow, selectionChapters, setPageSelection } from '../../selection/selectionStore';
@@ -189,10 +190,17 @@ export interface PageInteractionOptions {
   /** The composed-page tools (#864): a click on a frame goes to its slot,
    *  a double click edits its text on the page. On unless false. */
   frameTools?: boolean;
+  /** Where the label editor of Design mode paints (#970): with it, the
+   *  marks of the figures' labels are dragged on these pages, with
+   *  `labelsRef` for their words. The Canvas and the HTML previews have
+   *  their own listeners per page (`attachLabelAnchorEditor`). */
+  labelSurface?: LabelSurface;
+  /** Whether the label editor is on now; `on` when left out. */
+  labelsEnabled?: () => boolean;
 }
 
 /** The cursors the page interaction sets. */
-export type PageCursor = 'text' | 'pointer' | 'default' | 'row-resize' | 'col-resize' | 'move' | 'crosshair';
+export type PageCursor = 'text' | 'pointer' | 'default' | 'row-resize' | 'col-resize' | 'move' | 'crosshair' | 'grab';
 
 /** What the page interaction hands back to its viewer. */
 export interface PageInteraction {
@@ -200,6 +208,8 @@ export interface PageInteraction {
   comic: ComicEditor | null;
   /** The composed-page tools (#864). */
   frames: FrameTools | null;
+  /** The label editor, when the viewer has a surface for it (#970). */
+  labels: LabelEditor | null;
 }
 
 /**
@@ -241,6 +251,31 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   // A press that went to the comic tools: its click and the mouse events
   // that follow it are not the text's.
   let comicPress = false;
+
+  // The labels of figures in Design mode (#970): their point is dragged
+  // where the comic tools and the text would take the press.
+  const labels = opts.labelSurface
+    ? createLabelEditor({
+        surface: opts.labelSurface,
+        docRef,
+        dispatchRef,
+        ...(opts.labelsRef ? { labelsRef: opts.labelsRef } : {}),
+        sourceOfPage: (page) => sourceOfPage(page),
+        enabled: () => (opts.labelsEnabled ?? on)(),
+        onDragEnd: (pointerId) => {
+          window.removeEventListener('keydown', onLabelEscape, true);
+          try { target.releasePointerCapture(pointerId); } catch { /* not captured */ }
+        },
+      })
+    : null;
+  const onLabelEscape = (ev: KeyboardEvent): void => {
+    if (ev.key !== 'Escape' || !labels?.dragging()) return;
+    ev.stopPropagation();
+    ev.preventDefault();
+    labels.cancel();
+  };
+  // A press that went to the label editor: its click is not the text's.
+  let labelPress = false;
 
   // The frames of composed pages (#864).
   const frames = opts.frameTools === false ? null : createFrameTools({
@@ -485,6 +520,14 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       return;
     }
     comicPress = false;
+    labelPress = false;
+    if (labels?.pointerDown(ev, at)) {
+      labelPress = true;
+      ev.preventDefault();
+      try { target.setPointerCapture(ev.pointerId); } catch { /* ignore */ }
+      window.addEventListener('keydown', onLabelEscape, true);
+      return;
+    }
     if (designFrameAt(at)) return;
     // A balloon's words select text as the body text does (#595): the
     // comic tools left the press alone.
@@ -504,6 +547,11 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   });
 
   target.addEventListener('pointermove', (ev) => {
+    if (labels?.dragging()) {
+      ev.preventDefault();
+      labels.dragMove(ev, locate(ev));
+      return;
+    }
     if (comic?.dragging()) {
       comic.dragMove(ev, locate(ev));
       return;
@@ -516,6 +564,10 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
         return;
       }
       const over = locate(ev);
+      if (labels && ev.pointerType !== 'touch' && labels.hover(over)) {
+        opts.setCursor('grab');
+        return;
+      }
       if (over && designFrameAt(over)) {
         opts.setCursor('pointer');
         return;
@@ -560,6 +612,10 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   });
 
   const endDrag = (ev: PointerEvent): void => {
+    if (labels?.dragging()) {
+      labels.pointerUp(ev, ev.type === 'pointercancel');
+      return;
+    }
     if (comic?.dragging()) {
       // A balloon pressed and let go where it was: the click is the
       // text's (the caret goes to its line).
@@ -584,15 +640,22 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
 
   target.addEventListener('pointerup', endDrag);
   target.addEventListener('pointercancel', endDrag);
-  if (comic) {
-    target.addEventListener('pointerleave', () => comic.leave());
+  if (comic) target.addEventListener('pointerleave', () => comic.leave());
+  if (labels) target.addEventListener('pointerleave', () => labels.leave());
+  if (comic || labels) {
     // Text selection starts on the mouse press a pointer press turns into.
     target.addEventListener('mousedown', (ev) => {
-      if (comicPress) ev.preventDefault();
+      if (comicPress || labelPress) ev.preventDefault();
     });
   }
 
   target.addEventListener('click', (ev) => {
+    if (labelPress) {
+      labelPress = false;
+      ev.preventDefault();
+      ev.stopPropagation();
+      return;
+    }
     if (comicPress) {
       comicPress = false;
       ev.preventDefault();
@@ -700,6 +763,11 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       return;
     }
     pageIndex = at.pageIndex;
+    // A figure's label: its anchor opens in the anchor editor (#970).
+    if (labels?.dblclick(at)) {
+      ev.preventDefault();
+      return;
+    }
     // A frame's label tab or paragraph is edited on the page (#864).
     if (frames?.dblclick(at.pageIndex, at.x, at.y)) {
       ev.preventDefault();
@@ -737,5 +805,5 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     focusEditor(offset, offset, true, offsetChapter);
   });
 
-  return { comic, frames };
+  return { comic, frames, labels };
 }

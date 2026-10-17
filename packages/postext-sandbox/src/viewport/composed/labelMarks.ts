@@ -3,8 +3,9 @@
  * of every drawn label (red when it still overflows its width), the
  * anchor point it can be moved by, and a tag on the label in hand. They are
  * computed once, as plain shapes in sheet px, and painted three ways: in
- * the canvas page's marks layer (with the drag), in the overlay of an HTML
- * page, and into the texture of a Folio page — the last two read only.
+ * the canvas page's marks layer, in the overlay of an HTML page and into
+ * the texture of a Folio page. The label editor (`labelAnchorEditor.ts`)
+ * drags them on the first two and, since #970, on the Folio's too.
  */
 
 import type { VDTDocument } from 'postext';

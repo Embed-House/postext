@@ -34,7 +34,7 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
   const list: WebMcpTool = {
     name: 'sandbox_frame_styles',
     title: 'Sandbox: the box styles, where they are used, merges',
-    description: 'The callout styles of the book (they also dress the frames of page templates) with where each is used: the template frames that name it, the composed pages laid with those templates and the :::callout fences of each chapter (by chapter position, 1-based). Also the merges the Frame styles section suggests for near-identical styles: lengths within 0.5 mm and colours within ΔE 2 are equal, at most maxFields settings may differ. Merge with sandbox_merge_styles.',
+    description: 'The callout styles of the book (they also dress the frames of page templates) with where each is used: the template frames that name it, the composed pages laid with those templates and the :::callout fences of each chapter (by chapter position, 1-based). Also the merges the Frame styles section suggests for near-identical styles: lengths within 0.5 mm and colours within ΔE 2 are equal, at most maxFields settings may differ. A style that differs from another only in colours is a variant, not a duplicate: it is left out of the suggestions and listed in kinds with the style that extends or most resembles it. Merge with sandbox_merge_styles.',
     inputSchema: { type: 'object', properties: { ...COMPARE_PROPERTIES }, additionalProperties: false },
     annotations: { readOnlyHint: true },
     execute: (args) => {
@@ -55,6 +55,7 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
           };
         }),
         suggestions: lib.suggestions,
+        kinds: lib.kinds.map((k) => ({ base: k.base, variants: k.variants.map((v) => ({ id: v.id, extendsBase: v.extendsBase, differsIn: v.groups })) })),
         stylesAfterMerging: stylesAfterMerging(lib.styles.length, lib.suggestions),
       };
     },

@@ -66,7 +66,7 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
   </tbody>
 </table>
 
-数据文件的<strong>`fileId`就是它在文件包内的路径</strong>。`resource.svg.fileId`、`resource.bitmap.fileId`以及每个`customFonts`变体的`fileId`都可以直接在`bundle.files`中查到。以下情况`openBundle`会抛出异常：字节不是zip；找不到有效的`preset.json`（在根目录或某个顶层文件夹下）；清单中列出的某个章节或图片文件缺失。清单中列出、但文件包里没有的字体文件不会中断打开：该字体带着一条警告被略去，一个字体族若一个字体都没剩下，就从`customFonts`中去掉，书会像遇到任何缺失字体那样改用备用字体。
+数据文件的<strong>`fileId`就是它在文件包内的路径</strong>。`resource.svg.fileId`、`resource.bitmap.fileId`以及每个`customFonts`变体的`fileId`都可以直接在`bundle.files`中查到。以下情况`openBundle`会抛出异常：字节不是zip；找不到有效的`preset.json`（在根目录或某个顶层文件夹下）；清单中列出的某个章节或图片文件缺失。清单中列出、但文件包里没有的字体文件不会中断打开：该字体带着一条警告被略去，一个字体族若一个字体都没剩下，就从`customFonts`中去掉，书会像遇到任何缺失字体那样改用备用字体。清单中的`fonts`条目还可以写一个`fallback`字体家族，即宽度相近的开放字体，用来替代文件包没有带上的字形（自postext 1.42起）。这样的家族会连同现有的文件和它的`fallback`留在`customFonts`里，哪怕一个文件也没有，并且会有一条警告说明这些字形改用`fallback`排版。
 
 #### postext 1.4及更早版本写出的文件包
 
@@ -131,10 +131,10 @@ migrateConfig(config, CONFIG_VERSION); // 现行规则：返回`config`本身
 
 有四个辅助函数把打开的文件包接到引擎和各个后端上：
 
-- <strong>`loadBundleFonts(bundle)`</strong>把文件包的字面注册到`document.fonts`，并把它们的字节注册到引擎的字体注册表，供SVG图片使用（`registerFontBytes`）。排版前要等它完成，因为排版时是用浏览器已有的字体测量文字的。文件包中提到但没有携带的字体家族（Google Fonts）仍需你自己加载，和其他文档一样。
+- <strong>`loadBundleFonts(bundle)`</strong>把文件包的字面注册到`document.fonts`，并把它们的字节注册到引擎的字体注册表，供SVG图片使用（`registerFontBytes`）。排版前要等它完成，因为排版时是用浏览器已有的字体测量文字的。文件包中提到但没有携带的字体家族（Google Fonts）仍需你自己加载，和其他文档一样。`loadBundleFonts(bundle, fontSet, { fallback })`还会给写了`fallback`的字体家族补上它没有文件的那种倾斜的常规体、粗体和对应的斜体（自postext 1.42起），以它自己的名称注册：先用文件包里带的`fallback`字形，没有则调用`fallback(family, weight, style)`，它返回该字形的字节，没有就返回null。
 - <strong>`registerBundleImages(bundle)`</strong>为Canvas后端（`renderPage`、`renderToCanvas`）解码图片，包括视频封面。<strong>`bundleImageUrl(bundle)`</strong>是`renderToHtml`的`resourceImageUrl`解析器，<strong>`bundleVideoUrl(bundle)`</strong>则是它的`resourceVideoUrl`解析器，用于文件包携带的视频文件。开启`diagramStyle.singleInk`时，两者都会对SVG图重新着色一次：它们改写标记本身并给图片打上标记，任何后端都不会再次着色（见[Canvas与HTML中的单色墨](/zh/docs/configuration-resources#canvas与html中的单色模式)）。两者还会在每个SVG中嵌入其文字指定的字面，先取文件包自己的字体，再取向引擎注册的字体（见[SVG文字中的字体](/zh/docs/configuration-resources#svg文字中的字体)）；`registerBundleImages(bundle, { onWarning })`和`bundleImageUrl(bundle, { onWarning })`会报告没有字面可用的字体族。
 - <strong>`buildBundle(bundle)`</strong>按顺序排版各章，每章返回一个`VDTDocument`。每一章都接续前一章：标题和资源的计数器、当前所在的篇、页的奇偶和页码。印出目录（`:::toc`）或索引（`:::index`）的章会拿到整本书的大纲。它接受与`buildDocument`相同的选项，另加用来覆盖文件包配置的`config`、共享测量缓存的`cache`，以及`metadata`（见下文）。跳到靠后章节文件里某一页的文章（`overflow.continueIn: 'page:<id>'`，见[组合页面 › 跳转到后面的页面](/zh/docs/composed-pages#跳转到后面的页面)）会交给那个章节：每个章节排版时都知道它后面各章的页面id（`laterPageIds`），它送出的文章回到它的文档上（`pendingJumps`），有该页的章节接收它们（`continuation.jumps`），`resolveJumpMarks`再把页码写进指向另一章页面的标记（自postext 1.41起）。逐章排版的宿主用`pageFenceIds`和`laterPageIdsOf`做同样的事。
-- <strong>`bundleResourceBytes(bundle)`</strong>和<strong>`bundleFontProvider(bundle, { decodeWoff2, fallback })`</strong>分别对应`postext-pdf`的`renderToPdf`的`resourceBytes`和`fontProvider`选项。字体提供器从文件包中为所请求的样式挑选最接近的字重。对`.woff2`字面，它需要`decompressWoff2`；对文件包没有携带的字体家族，它以渲染器传来的参数（包括`request`）调用`fallback`，并原样转交其返回值。如果后备函数只获取某个家族的`latin`文件，文件包没有嵌入的中文字体就会印成空方框；如果它按分片应答，例如[中文、日文和韩文字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)中的`sliceFontProvider`，就能完整印出。
+- <strong>`bundleResourceBytes(bundle)`</strong>和<strong>`bundleFontProvider(bundle, { decodeWoff2, fallback })`</strong>分别对应`postext-pdf`的`renderToPdf`的`resourceBytes`和`fontProvider`选项。字体提供器从文件包中为所请求的样式挑选最接近的字重。对`.woff2`字面，它需要`decompressWoff2`；对文件包没有携带的字体家族，它以渲染器传来的参数（包括`request`）调用`fallback`，并原样转交其返回值。如果后备函数只获取某个家族的`latin`文件，文件包没有嵌入的中文字体就会印成空方框；如果它按分片应答，例如[中文、日文和韩文字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)中的`sliceFontProvider`，就能完整印出。写了`fallback`的字体家族（自postext 1.42起），没有文件的那种倾斜的字形取自文件包里带的`fallback`字形，没有则用`fallback`的名称去调用`fallback`，所以PDF嵌入的是开放字体，而不是授权字体。
 
 ```ts
 import { openBundle, loadBundleFonts, registerBundleImages, buildBundle, renderPage,
@@ -230,7 +230,7 @@ const { bytes, manifest, warnings } = await createBundle({
 它返回压缩包的`bytes`、写成`preset.json`的`manifest`、以`files`给出的所有文件（路径 → 字节），以及一个`warnings`列表。文件按资源id（`resources/lantern.svg`）或字体文件名（`fonts/…`）命名，章节按顺序和标题命名（`chapters/01-dusk.md`）。字体声明在清单的`fonts`中，从不放在`config.customFonts`里。以下内容会被略去，并各给出一条警告：
 - 数据文件不在`files`中的资源或字面
 - `.woff`字面（PDF后端无法嵌入）
-- 标记为`redistributable: false`的字体家族
+- 标记为`redistributable: false`的字体家族（写了`fallback`时，它的`fonts`条目保留，带着这个名称而不带文件；自postext 1.42起）
 
 在浏览器中，把`bytes`交给下载链接：`URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))`。在Node中，用`fs.writeFile`写出。`createBundle`和`openBundle`不需要DOM。发布包中的模块路径不带扩展名，所以在不用打包工具的纯Node环境下需要一个解析钩子。仓库中的`docs/examples/open-bundle/build-sample.mjs`用几行代码展示了一个。
 

@@ -1,0 +1,79 @@
+{/* docs/migrating-to-composed-pages-en.mdx */}
+
+export const metadata = {
+  title: 'Moving a book to composed pages',
+  sidebarTitle: 'Moving to composed pages',
+  description: 'How to move a book whose pages keep their text in heading styles into page templates and Markdown: with the Sandbox assistant Move the text to the Markdown or by hand, and what to check afterwards',
+  lang: 'en',
+  lastUpdated: '2026-10-17',
+  readingTime: '8 min',
+  order: 43,
+  plainSummary: "Some books made with Postext before composed pages keep the words of every page inside the design settings instead of in the text. That makes them hard to edit and impossible to translate. This page shows how to move those words into the Markdown, where each page becomes a block with its own template. The Sandbox does most of the work with one button, and you check the result page by page. It also explains how to do the same by hand for a single page.",
+};
+
+# Moving a book to composed pages
+
+**A book that keeps the text of its pages in its styles can have it moved into the Markdown, where it can be edited and translated.**
+
+Before composed pages, a textbook ported to Postext often kept every page as a hidden heading whose running head placed the page's text, boxes and pictures where the printed page had them. The pages looked right, but the words lived in the configuration, so a typo meant opening a style and a translation meant copying the style. A composed page does the same job with the form in a **page template** and the words in the Markdown, as [Composed-page books](/en/docs/composed-page-books) shows. This page moves an old book to that form.
+
+You know a book is in the old form when the **Checks** panel lists *Text held in the configuration* (`contentInConfig`), one entry for each heading style that holds sentences, and offers **Move the text to the Markdown** at the head of the list.
+
+## The book to follow
+
+The steps below use a small book made for this page, *Our World, before composed pages*: three pages of a Year 3 textbook, each a heading style with a running head that places a picture, a card, a title and three blocks of text, with a yellow band under one word. The words and the pictures are invented. [Download the book](/docs-examples/our-world-before.postext) and, in the Sandbox, open **Books**, press **New** and choose **Open a .postext file…**.
+
+## With the assistant
+
+Importing a book with text in its styles opens the dialog **Move the text to the Markdown** by itself. If you closed it, or the book was already in your list, open **Checks** and press the button at the head of the list. Nothing changes until you press **Move the text**.
+
+1. Read **What changes**. For the sample book it says that 16 texts (567 letters) will move, that 3 composed pages will be written, that the 3 heading styles become 1, that 3 highlight boxes become chips and that the *Text held in the configuration* warnings go from 3 to 0.
+2. Look at the options. **Pages with frames in the same places share a template** gives pages that are laid out alike one base template, which the others extend. **A highlight box under bold words becomes a chip** turns a coloured box drawn under bold words into a chip of the book's chip style. **Words on pictures become their labels** is offered when the old design set short words on a picture, such as the names on a map: they become `::label` lines at anchors of the picture. It is off until you turn it on, because those pages change the most.
+3. Under **Before and after** the Sandbox lays each chapter out twice and draws every page that changes, the old one beside the new one. The list says which pages look different and why, when it knows. **Mark in red what changed** paints the pixels that differ. In the sample book all three pages are marked *Looks the same*.
+4. Press **Move the text**.
+
+<Screenshot src="/docs-shots/en/move.webp" alt="The dialog Move the text to the Markdown with the list of what changes and the three options." caption="The dialog lists what it will do before it does anything." />
+
+<Screenshot src="/docs-shots/en/move-before-after.webp" alt="The end of the dialog: the list of pages marked Looks the same and, side by side, a page before and after the move." caption="Each page is laid out with the old design and with the new one, side by side." />
+
+The move is one step of the history of the book: a step for each chapter rewritten and one for the design. **Undo** in the dialog takes it all back while nothing else has changed, and **Cmd/Ctrl+Z** takes it back a step at a time. The book as it was also stays stored until you press **Keep the move** in the Checks panel; until then **Put the book back as it was** writes the old design and text back.
+
+## What to check afterwards
+
+Open the **Text** panel. The chapter now holds one block for each page:
+
+```md
+::::page{template="page-base" background="art-p1"}
+# Rivers and seas {style="topic" id="t-rivers"}
+
+:::frame{slot="shared-2"}
+:::paragraphs{style="fredoka-30-center-ffffff"}
+Rivers and seas
+:::
+:::
+...
+::::
+```
+
+Go through the result in this order.
+
+- **The pages that look different.** The list in the dialog gave the reasons it knew: a text's own box, outline or drop cap, a page whose side was not known, running text now set in the template's flow frame. Compare those pages in the canvas.
+- **The templates.** **Design › Page & columns › Page templates** lists one template per page design, and `page-base` for the frames that pages share. A page that adds nothing uses the base as it is; the others extend it. The names are built from the old ones: rename a template to something you will recognise (renaming it renames it in every page that names it).
+- **The paragraph styles.** The face, size, weight, colour, alignment and leading of each text became a paragraph style: one of the book's own when one matched exactly, otherwise a new one named after the face and the size (`nunito-11`). Look at **Design › Text** and rename or merge the new ones.
+- **The headings.** Heading styles that came out the same were merged and the headings were renamed; the hidden headings that only switched the running head are gone. Check the contents page if the book has one.
+- **What stays in the configuration.** The *Left in the configuration* list in the dialog names a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from another element and the text of a heading design. They are not content of a page, and the *Text held in the configuration* warnings that remain are about them.
+- **The labels.** If you turned on *Words on pictures become their labels*, look at each map or diagram: the labels are set again in the book's fonts, so their size and place may differ from the old pages.
+- **The Checks panel.** Frames whose text no longer fits show as *Text does not fit its frame*, with the fixes described in [Composed-page books](/en/docs/composed-page-books#6-review-what-does-not-fit). A book made from a printed page is tight, and the first words that run a little longer need a fix.
+
+When you are satisfied, press **Keep the move**. The book can now be translated like any composed-page book.
+
+## By hand
+
+A book with a few pages can be moved without the assistant, one page at a time.
+
+1. In **Design** mode make the page template. Draw a frame for each text on a composed page of the book, or follow the steps of [Composed-page books](/en/docs/composed-page-books#2-make-a-page-template). Give each frame the box style that draws its look, and the height the old text had as **Smallest height**.
+2. In **Content** mode write the page as a block `::::page{template="…"}` and move each text of the old running head into a `:::frame{slot="…"}` of the new block. Keep bold and italics, and keep the line breaks of the old text with a backslash at the end of the line.
+3. Delete the text elements from the heading style, or the heading style itself when nothing else needs it. The warning *Text held in the configuration* for that style goes away.
+4. Compare the page with the old one and open **Checks**.
+
+The same migration is available from code as `moveTextToMarkdown`, which returns the new configuration, the chapters and the report the dialog shows; see [Composed pages › Migrating a book with text in its styles](/en/docs/composed-pages#migrating-a-book-with-text-in-its-styles). Everything the dialog does is described in [Sandbox: composed pages › Moving the text to the Markdown](/en/docs/sandbox-composed-pages#moving-the-text-to-the-markdown).

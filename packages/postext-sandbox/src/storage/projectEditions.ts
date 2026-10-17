@@ -2,10 +2,11 @@
 // languages (#903). Pure: `projectActions.ts` reads and stores, this decides
 // what the record holds.
 
+import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import type { LoadedPreset } from '../presets';
 import { sameLocaleTag } from '../presets/locale';
 import type { BookContent } from '../book/types';
-import type { ProjectContent } from './projects';
+import type { ProjectContent, ProjectEditionTitle } from './projects';
 
 /** What a loaded edition gives a record: its chapters (the first active),
  *  canvas scope and start, configuration and resources. */
@@ -41,4 +42,17 @@ export function projectEditionFields(
   const listed = tags.map((t) => all.find((l) => sameLocaleTag(l, t)) ?? t);
   const editionLocales = [...new Set([...listed, ...all])];
   return { editions, editionLocales };
+}
+
+/** What a bundle's manifest calls each of its editions (`localized.<lang>.name`
+ *  and `description`, else the manifest's own, #968), by tag. Undefined for
+ *  a manifest that is not valid. */
+export function editionTitlesOf(manifest: unknown, tags: readonly string[]): Record<string, ProjectEditionTitle> | undefined {
+  if (!isBundleManifest(manifest)) return undefined;
+  const out: Record<string, ProjectEditionTitle> = {};
+  for (const tag of tags) {
+    const meta = pickBundleMeta(manifest, tag);
+    if (meta.name) out[tag] = { name: meta.name, ...(meta.description !== undefined ? { description: meta.description } : {}) };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
 }

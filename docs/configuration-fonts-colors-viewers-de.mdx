@@ -99,6 +99,8 @@ interface CustomFontVariant {
 interface CustomFontFamily {
   name: string;             // used anywhere a Google Font family name fits
   variants: CustomFontVariant[];
+  redistributable?: boolean; // false: wird hier verwendet, nie aus dem Buch kopiert
+  fallback?: string;        // freie Schrift ähnlicher Breite für Schnitte ohne Datei (seit postext 1.42)
 }
 
 interface PostextConfig {
@@ -119,6 +121,10 @@ Die Binärdatei jeder Variante ist **nicht** in die Konfiguration selbst eingebe
 4. **Variante löschen** oder **Familie löschen** – entfernt den Eintrag aus der Konfiguration *und* die gespeicherten Bytes aus IndexedDB.
 
 Sobald eine Familie deklariert ist, führt jeder Schriftwähler sie in der Gruppe **Eigene** über der Liste von Google Fonts. Wenn Sie sie auswählen, wird die Familie in jedes Feld für Schriftfamilien eingetragen, auf das Sie sie anwenden.
+
+### Eine Ersatzschrift für eine lizenzierte Familie
+
+Ein Buch kann in einer Schrift gesetzt sein, die ihr Inhaber nicht weitergeben darf. Markieren Sie die Familie mit `redistributable: false`, und eine `.postext`-Datei lässt ihre Dateien weg. Nennen Sie in `fallback` eine freie Familie ähnlicher Breite, bricht die Datei, die ohne sie geöffnet wird, ihre Zeilen ungefähr dort um, wo es die echte Schrift tut, statt mit einer breiteren Ersatzschrift ihre Rahmen zu überfüllen. Schnitte, von denen die Familie keine Datei hat, werden unter dem Namen der lizenzierten Familie in den Schnitten des `fallback` mit gleicher Stärke und Neigung gesetzt, in den Vorschauen, im Layout-Worker, im PDF und auf der Kommandozeile. Eine Familie mit Dateien behält sie; vom `fallback` nimmt sie nur die Neigung, von der sie keine Datei hat, etwa eine Kursive, und die Stärken zwischen ihren eigenen Dateien werden wie bei jeder Familie gewählt. Im Bedienfeld Schriften nimmt **Ersatzschrift** (in der Familie, über ihren Dateien) den Namen auf; ein leeres Feld lässt die Familie, wie sie war. Das PDF eines so gesetzten Buches bettet die freie Schrift ein, das endgültige PDF entsteht also mit den lizenzierten Dateien. Seit postext 1.42.
 
 ### Verhalten bei der Darstellung
 

@@ -5,12 +5,15 @@
 //
 // Only what an SVG `<text>` says as well as the print does is drawn: a
 // horizontal label of plain words, in bold or italic, with the halo and the
-// plate of its style. A label with a formula, a chip, a mark, a script, a
-// line the bidi algorithm reordered or a vertical column stays in the list
-// of labels that follows the picture, out of sight, as before.
+// plate of its style. Every word stands at the x the print measured, so a
+// line the bidi algorithm reordered is drawn in its sheet order, and a word
+// of a right-to-left script is its own right-to-left text anchored at its
+// right edge (#969). A label with a formula, a chip, a mark, a script or a
+// vertical column stays in the list of labels that follows the picture, out
+// of sight, as before.
 
 import type { ResolvedResourceBlock, VDTFigureLabelLayout, VDTLine, VDTLineSegment } from 'postext';
-import { figureLabelMatrix, parseFontString, uncroppedPictureBox } from 'postext';
+import { figureLabelMatrix, labelLayoutOnSheet, parseFontString, uncroppedPictureBox } from 'postext';
 import { familyStack } from './css';
 import { fontPx, xmlAttr, xmlText } from './inline';
 
@@ -21,12 +24,12 @@ function plain(seg: VDTLineSegment): boolean {
   return (seg.kind === 'text' || seg.kind === 'space')
     && !seg.script && !seg.baselineShift && !seg.stacked && !seg.cjkMarks && !seg.ruby && !seg.kunten
     && !seg.warichu && !seg.sideMarker && !seg.mark && !seg.chip && !seg.mathRender && !seg.swatch && !seg.footnoteId
-    && !seg.tab && !seg.leader && !seg.labelTab && !seg.tcy && seg.orientation === undefined && !seg.rtl;
+    && !seg.tab && !seg.leader && !seg.labelTab && !seg.tcy && seg.orientation === undefined;
 }
 
 function drawable(layout: VDTFigureLabelLayout): boolean {
-  if (layout.vertical || layout.mirrored || layout.direction === 'rtl') return false;
-  return layout.lines.every((line) => !line.order && !line.highlights?.length && (line.segments ?? []).every(plain));
+  if (layout.vertical || layout.mirrored) return false;
+  return layout.lines.every((line) => !line.highlights?.length && (line.segments ?? []).every(plain));
 }
 
 /** The font of one segment: the label's face for its weight and slant,
@@ -50,25 +53,38 @@ function fontAttrs(font: string): string {
   return parts.join(' ');
 }
 
-/** One line as a `<text>`: a `<tspan>` per word run at the x the layout
- *  measured, so a face with other metrics cannot push the words together. */
+/** One line as `<text>` elements: a `<tspan>` per word run at the x the
+ *  layout measured, so a face with other metrics cannot push the words
+ *  together. The runs stand in the order they have on the sheet; a word of
+ *  a right-to-left script is its own right-to-left `<text>`, anchored at
+ *  its right edge, so the browser joins its letters and puts its marks and
+ *  stops on the right side. */
 function lineText(layout: VDTFigureLabelLayout, line: VDTLine, extra: string): string {
   const y = n(line.baseline);
   const segments = line.segments ?? [];
   if (segments.length === 0) {
     if (line.text.trim() === '') return '';
+    if (layout.direction === 'rtl') {
+      return `<text direction="rtl" y="${y}"${extra}><tspan x="${n(line.bbox.x + line.bbox.width)}" ${fontAttrs(layout.fontString)}>${xmlText(line.text)}</tspan></text>`;
+    }
     return `<text x="${n(line.bbox.x)}" y="${y}" ${fontAttrs(layout.fontString)}${extra}>${xmlText(line.text)}</text>`;
   }
   let x = line.bbox.x;
   const runs: string[] = [];
-  for (const seg of segments) {
+  const words: string[] = [];
+  for (const i of line.order ?? segments.map((_, k) => k)) {
+    const seg = segments[i]!;
     if (seg.kind === 'text' && seg.text.trim() !== '') {
-      const tracking = seg.tracking ? ` letter-spacing="${n(seg.tracking)}"` : '';
-      runs.push(`<tspan x="${n(x)}" ${fontAttrs(faceOf(layout, seg))}${tracking}>${xmlText(seg.text)}</tspan>`);
+      if (seg.rtl) {
+        words.push(`<text direction="rtl" y="${y}"${extra}><tspan x="${n(x + seg.width)}" ${fontAttrs(faceOf(layout, seg))}>${xmlText(seg.text)}</tspan></text>`);
+      } else {
+        const tracking = seg.tracking ? ` letter-spacing="${n(seg.tracking)}"` : '';
+        runs.push(`<tspan x="${n(x)}" ${fontAttrs(faceOf(layout, seg))}${tracking}>${xmlText(seg.text)}</tspan>`);
+      }
     }
     x += seg.width;
   }
-  return runs.length === 0 ? '' : `<text y="${y}"${extra}>${runs.join('')}</text>`;
+  return (runs.length === 0 ? '' : `<text y="${y}"${extra}>${runs.join('')}</text>`) + words.join('');
 }
 
 function labelGroup(layout: VDTFigureLabelLayout): string {
@@ -92,13 +108,16 @@ function labelGroup(layout: VDTFigureLabelLayout): string {
  * The SVG laid over the picture of a figure with labels, or undefined when
  * no label can be drawn that way. Its viewBox is the picture's box in the
  * body's coordinates (the whole picture, past the safe area the print
- * crops to), so the labels land where the print puts them. Right-to-left
- * pages are laid out mirrored: the caller leaves them to the list.
+ * crops to), so the labels land where the print puts them. The pages of a
+ * right-to-left book are laid out mirrored: the caller says so with
+ * `mirrored`, and the labels are drawn as they stand on the sheet.
  */
-export function figureLabelsOverlay(rb: ResolvedResourceBlock): string | undefined {
+export function figureLabelsOverlay(rb: ResolvedResourceBlock, options: { mirrored?: boolean } = {}): string | undefined {
   if (rb.kind !== 'bitmap' && rb.kind !== 'svg') return undefined;
+  // The labels of a mirrored page are given back as they stand on the sheet.
+  const onSheet = (layout: VDTFigureLabelLayout): VDTFigureLabelLayout => (options.mirrored ? labelLayoutOnSheet(layout, rb.bodyRect.width) : layout);
   const groups = (rb.labels ?? [])
-    .map((l) => (l.layout && drawable(l.layout) ? labelGroup(l.layout) : ''))
+    .map((l) => (l.layout && drawable(l.layout) ? labelGroup(onSheet(l.layout)) : ''))
     .filter(Boolean);
   if (groups.length === 0) return undefined;
   const { width, height } = rb.bodyRect;

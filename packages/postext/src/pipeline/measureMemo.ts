@@ -37,7 +37,13 @@ export function createMeasureMemo(): MeasureMemo {
   return { ids: new WeakMap(), next: 1, entries: new Map() };
 }
 
-const idOf = (memo: MeasureMemo, o: object | undefined): number => {
+/** What the measuring code reads of the module state besides its
+ *  arguments: writing mode, region, upright digits, direction, Arabic
+ *  numerals and language. */
+export const measureStateKey = (): string =>
+  `${getMeasureWritingMode()}${getMeasureRegion()}${getMeasureUprightDigits()}${getMeasureDirection()}${getMeasureArabicNumbers() ? 'a' : ''}${measureLanguageKey()}`;
+
+export const idOf = (memo: { readonly ids: WeakMap<object, number>; next: number }, o: object | undefined): number => {
   if (!o) return 0;
   let id = memo.ids.get(o);
   if (id === undefined) memo.ids.set(o, (id = memo.next++));
@@ -61,7 +67,7 @@ export function measureBlockMemo(
   width: number,
   styleOverride: MeasureContentBlockOptions['styleOverride'],
 ): MeasuredContentBlock | null {
-  const key = `${idOf(memo, ctx)}|${style.id}|${idOf(memo, style.body)}|${idOf(memo, style.lists)}|${blockIdx}|${width}|${idOf(memo, styleOverride)}|${getMeasureWritingMode()}${getMeasureRegion()}${getMeasureUprightDigits()}${getMeasureDirection()}${getMeasureArabicNumbers() ? 'a' : ''}${measureLanguageKey()}`;
+  const key = `${idOf(memo, ctx)}|${style.id}|${idOf(memo, style.body)}|${idOf(memo, style.lists)}|${blockIdx}|${width}|${idOf(memo, styleOverride)}|${measureStateKey()}`;
   const notes = derived.dropCapNotes;
   const known = memo.entries.get(key);
   if (known) {

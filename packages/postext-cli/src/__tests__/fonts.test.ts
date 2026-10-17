@@ -242,3 +242,63 @@ describe('restyleFace (#688)', () => {
     expect(ink('italic 700 80px "One Weight Probe"')).toBe(own);
   });
 });
+
+// #978: a bundle that leaves a licensed family's files out names an open
+// family of about the same width for it.
+describe('the fallback a book names for a family it has no file of (#978)', () => {
+  const open = (weight: number, style: 'normal' | 'italic') => readEmbedded(EMBEDDED_FACES.find((f) => f.family === 'Open Sans' && f.weight === weight && f.style === style)!.path);
+  const messages: string[] = [];
+  const warnings: string[] = [];
+  const reporter = {
+    info: (m: string) => messages.push(m),
+    warn: (w: { kind: string }) => warnings.push(w.kind),
+    time: async <T>(_name: string, run: () => T | Promise<T>) => run(),
+  } as unknown as Reporter;
+  const bookOf = (family: string, fallback: string | undefined, fonts: Book['fonts'] = []) => ({
+    kind: 'folder', name: 'probe', id: 'probe', locale: 'en', resources: [], files: new Map(), watchPaths: [],
+    config: { bodyText: { fontFamily: family }, customFonts: [{ name: family, variants: [], redistributable: false, ...(fallback ? { fallback } : {}) }] },
+    chapters: [{ title: 'One', markdown: 'Text and *italic* and **bold**.' }],
+    fonts,
+  } as unknown as Book);
+
+  it('sets every face of a family with no file in the fallback, under the family name', async () => {
+    messages.length = 0;
+    warnings.length = 0;
+    const fonts = await resolveFonts(bookOf('Licensed Serif One', 'Open Sans'), { fontDirs: [], offline: true }, reporter);
+    expect(warnings).toEqual([]);
+    expect(messages.some((m) => m.includes('set in Open Sans'))).toBe(true);
+    for (const [weight, style] of [[400, 'normal'], [700, 'normal'], [400, 'italic'], [700, 'italic']] as const) {
+      const face = fonts.pick('Licensed Serif One', weight, style)!;
+      expect(face.standsInFor).toBe('Open Sans');
+      expect(face.weight).toBe(weight);
+      expect(face.style).toBe(style);
+    }
+    // The canvas measures the family as the fallback.
+    const ctx = createCanvas(10, 10).getContext('2d');
+    ctx.font = '40px "Licensed Serif One"';
+    const stood = ctx.measureText('Hamburgefonstiv').width;
+    GlobalFonts.register(Buffer.from(open(400, 'normal')), 'Ref Open 978');
+    ctx.font = '40px "Ref Open 978"';
+    expect(stood).toBe(ctx.measureText('Hamburgefonstiv').width);
+  });
+
+  it('reports a missing font and uses the generic fallback when the book names none', async () => {
+    warnings.length = 0;
+    const fonts = await resolveFonts(bookOf('Licensed Serif Two', undefined), { fontDirs: [], offline: true }, reporter);
+    expect(warnings).toEqual(['missingFont']);
+    expect(fonts.pick('Licensed Serif Two', 400, 'normal')!.standsInFor).toBe('EB Garamond');
+  });
+
+  it('keeps the files the book carries and sets only the slant it has none of in the fallback', async () => {
+    const family = 'Licensed Serif Three';
+    const carried = [
+      { family, weight: 400, style: 'normal', file: 'R.otf', bytes: open(400, 'normal') },
+      { family, weight: 700, style: 'normal', file: 'B.otf', bytes: open(700, 'normal') },
+    ] as unknown as Book['fonts'];
+    const fonts = await resolveFonts(bookOf(family, 'Open Sans', carried), { fontDirs: [], offline: true }, reporter);
+    expect(fonts.pick(family, 400, 'normal')!.standsInFor).toBeUndefined();
+    expect(fonts.pick(family, 700, 'normal')!.standsInFor).toBeUndefined();
+    expect(fonts.pick(family, 400, 'italic')!.standsInFor).toBe('Open Sans');
+    expect(fonts.pick(family, 400, 'italic')!.style).toBe('italic');
+  });
+});

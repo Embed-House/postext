@@ -10,6 +10,7 @@ import type {
   FrameFitConfig,
   FrameGridCell,
   FrameGroupConfig,
+  FrameLook,
   FrameOverflowConfig,
   FrameRulesConfig,
   LabelStyle,
@@ -31,6 +32,8 @@ import {
   FRAME_WRITING_MODES,
   LABEL_FONT_STYLES,
   LABEL_TEXT_TRANSFORMS,
+  LABEL_OVERLAPS,
+  LOOK_TREE,
   TEMPLATE_AREAS,
   DEFAULT_FRAME,
   DEFAULT_FRAME_GROUP,
@@ -59,8 +62,9 @@ const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
   exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
-  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, remove: true,
+  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
+const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
 const RULES_KEYS = { every: true, color: true, width: true, inset: true } satisfies Record<keyof FrameRulesConfig, true>;
 const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true, preferContinue: true } satisfies Record<keyof FrameFitConfig, true>;
 const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies Record<keyof FrameOverflowConfig, true>;
@@ -71,7 +75,7 @@ const GROUP_KEYS = {
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
-  writingMode: true,
+  writingMode: true, overlap: true,
 } satisfies Record<keyof LabelStyle, true>;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -163,12 +167,27 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   unknownKeys(frame.overflow, OVERFLOW_KEYS, `${path}/overflow`, push);
   unknownKeys(frame.padding, PADDING_KEYS, `${path}/padding`, push);
   unknownKeys(frame.rules, RULES_KEYS, `${path}/rules`, push);
+  unknownKeys(frame.look, LOOK_KEYS, `${path}/look`, push);
+  checkLook(frame.look, LOOK_TREE, `${path}/look`, push);
   choice(frame, 'verticalAlign', FRAME_VERTICAL_ALIGNS, DEFAULT_FRAME.verticalAlign, path, push);
   choice(frame, 'exclude', FRAME_EXCLUDES, DEFAULT_FRAME.exclude, path, push);
   choice(frame, 'wrap', FRAME_WRAPS, 'box', path, push);
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);
+}
+
+/** The nested keys of a frame's `look` (#976), against the tree of the
+ *  fields it may set. */
+function checkLook(node: unknown, tree: { readonly [key: string]: unknown }, path: string, push: Push): void {
+  if (!isRecord(node)) return;
+  for (const [key, kind] of Object.entries(tree)) {
+    if (isRecord(kind)) {
+      const inner = node[key];
+      unknownKeys(inner, Object.fromEntries(Object.keys(kind).map((k) => [k, true as const])), `${path}/${key}`, push);
+      checkLook(inner, kind, `${path}/${key}`, push);
+    }
+  }
 }
 
 function checkGroupEntry(group: unknown, path: string, push: Push): void {
@@ -312,6 +331,7 @@ function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {
     choice(s, 'fontStyle', LABEL_FONT_STYLES, DEFAULT_LABEL_STYLE.fontStyle, path, push);
     choice(s, 'textTransform', LABEL_TEXT_TRANSFORMS, DEFAULT_LABEL_STYLE.textTransform, path, push);
     choice(s, 'writingMode', FRAME_WRITING_MODES, 'horizontal-tb', path, push);
+    choice(s, 'overlap', LABEL_OVERLAPS, 'check', path, push);
   });
 }
 

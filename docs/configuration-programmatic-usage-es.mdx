@@ -161,8 +161,13 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Las líneas de dos rótulos de una misma figura se tocan (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>count</code>, <code>locale</code>). Lo lleva el rótulo posterior, en el orden en que están escritos.</td>
+      <td>Las líneas de dos rótulos de una misma figura se tocan (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). Lo lleva el rótulo posterior, en el orden en que están escritos.</td>
       <td>Los dos rótulos se dibujan donde están.</td>
+    </tr>
+    <tr>
+      <td><code>figureWordsShared</code></td>
+      <td>Una <code>:::figure</code> da palabras (<code>alt</code>, <code>caption</code>, <code>note</code>) a un recurso al que una figura anterior del capítulo ya dio las suyas, y son distintas (<code>resourceId</code>, <code>words</code>).</td>
+      <td>Las páginas muestran las palabras de la primera figura; las de la posterior se omiten.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

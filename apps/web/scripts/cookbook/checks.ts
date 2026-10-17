@@ -8,6 +8,7 @@
  */
 import zlib from "node:zlib";
 import { markdownConstructs, usedApis } from "../../src/lib/cookbook/detect.ts";
+import { CARD_AIM_KB, IMAGE_BUDGET } from "../../src/lib/cookbook/types.ts";
 import type { CaptureVariant, ComposedPen, Level, Registry, RecipeMeta } from "../../src/lib/cookbook/types.ts";
 
 export type Severity = "fail" | "warn" | "info";
@@ -929,17 +930,41 @@ function collect(input: CheckInput): Finding[] {
     }
   }
 
-  // C20: budget. The warning grows with the pages published (0.1 MB each,
-  // 0.9 MB at least): a dense text page weighs about 100 KB whatever it shows.
-  const warnMb = Math.max(0.9, 0.1 * input.published.length);
-  if (input.bytes > 1.4 * MB) add("C20", "fail", `the edition's images weigh ${(input.bytes / MB).toFixed(2)} MB (limit 1.4 MB)`);
-  else if (input.bytes > warnMb * MB) add("C20", "warn", `the edition's images weigh ${(input.bytes / MB).toFixed(2)} MB (warning at ${warnMb.toFixed(1)} MB for ${input.published.length} pages)`);
+  // C20: budget. The warning grows with the pages published (0.1 MB each
+  // past nine, 0.9 MB at least): a dense text page weighs about 100 KB
+  // whatever it shows. Pages that are paintings weigh more however the
+  // assets are cut (the pages are the rendered webp), so a recipe states the
+  // figure it means to publish (`capture.expect.imageMb`): no warning up to
+  // it, a failure past it. The card files work the same way (`cardKb`).
+  const warnMb = Math.max(IMAGE_BUDGET.warnMb, IMAGE_BUDGET.perPageMb * input.published.length);
+  const stated = meta.capture.expect?.imageMb;
+  const weight = `${(input.bytes / MB).toFixed(2)} MB`;
+  if (stated !== undefined) {
+    if (input.bytes > stated * MB) {
+      add("C20", "fail", `the edition's images weigh ${weight}, past the ${stated} MB that capture.expect.imageMb states: lighten the pages or state the figure the recipe means to publish`);
+    } else if (input.bytes <= warnMb * MB) {
+      add("C20", "info", `capture.expect.imageMb states ${stated} MB, and the edition weighs ${weight}, inside the default budget of ${warnMb.toFixed(1)} MB: leave it out`);
+    } else if (stated * MB > input.bytes * 1.15) {
+      add("C20", "info", `capture.expect.imageMb states ${stated} MB, and the edition weighs ${weight}: state ${(Math.ceil(input.bytes / MB * 20) / 20).toFixed(2).replace(/0$/, "")} MB`);
+    }
+  } else if (input.bytes > IMAGE_BUDGET.failMb * MB) {
+    add("C20", "fail", `the edition's images weigh ${weight} (limit ${IMAGE_BUDGET.failMb} MB; capture.expect.imageMb states the figure of a book of paintings)`);
+  } else if (input.bytes > warnMb * MB) {
+    add("C20", "warn", `the edition's images weigh ${weight} (warning at ${warnMb.toFixed(1)} MB for ${input.published.length} pages; capture.expect.imageMb states the figure of a book of paintings)`);
+  }
 
-  const cardLimits = { card: 90, card480: 35, og: 90 } as const;
   const cardNames = { card: "card.webp", card480: "card.480.webp", og: "og.jpg" } as const;
   for (const key of ["card", "card480", "og"] as const) {
     const size = input.cardBytes?.[key] ?? 0;
-    if (size > cardLimits[key] * 1024) add("C20", "warn", `${cardNames[key]} weighs ${Math.round(size / 1024)} KB (aim for ≤ ${cardLimits[key]} KB)`);
+    const aim = CARD_AIM_KB[key];
+    const figure = meta.capture.expect?.cardKb?.[key];
+    if (figure === undefined) {
+      if (size > aim * 1024) add("C20", "warn", `${cardNames[key]} weighs ${Math.round(size / 1024)} KB (aim for ≤ ${aim} KB; capture.expect.cardKb states the figure of a painted card)`);
+    } else if (size > figure * 1024) {
+      add("C20", "fail", `${cardNames[key]} weighs ${Math.round(size / 1024)} KB, past the ${figure} KB that capture.expect.cardKb states`);
+    } else if (input.cardBytes && size <= aim * 1024) {
+      add("C20", "info", `capture.expect.cardKb states ${figure} KB for ${cardNames[key]}, which weighs ${Math.round(size / 1024)} KB, inside its aim of ${aim} KB: leave it out`);
+    }
   }
 
   // C21: performance, of each build that is the result.

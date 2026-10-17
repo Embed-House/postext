@@ -5,6 +5,7 @@ import { compileDocsMdx } from "@/lib/mdx";
 import * as illustrations from "./illustrations";
 import { CodePenExample } from "./CodePenExample";
 import { TutorialVideo } from "./TutorialVideo";
+import { Screenshot } from "./Screenshot";
 import { TableFit } from "./TableFit";
 import { literalStringExpressions } from "@/lib/mdxStrings";
 import { NewTabNote } from "@/components/ui/NewTabNote";
@@ -66,6 +67,7 @@ const components = {
   ...illustrations,
   CodePenExample,
   TutorialVideo,
+  Screenshot,
 };
 
 function wrapScrollableElements(source: string): string {

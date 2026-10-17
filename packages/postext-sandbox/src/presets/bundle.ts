@@ -190,6 +190,13 @@ export interface BundleEdition {
   config: PostextConfig;
   resources: Resource[];
   start?: BookStart;
+  /** The edition's own title and description, written as
+   *  `localized[…].name` and `description` (#968). */
+  name?: string;
+  description?: string;
+  /** Current layout records by chapter id of the edition's chapters,
+   *  carried as `layouts.<locale>.json` (#968). */
+  layouts?: Record<string, ChapterLayout>;
 }
 
 /** `layouts.json`: the pagination of the bundle's chapters, keyed by
@@ -216,6 +223,10 @@ export interface BundlePlan {
   chapterFiles: { path: string; markdown: string }[];
   /** The pagination file, when any chapter has a current record. */
   layouts?: BundleLayoutsFile;
+  /** The pagination of the other editions, by locale, each written as
+   *  `layouts.<locale>.json` (#968): one for every edition with a record
+   *  that still applies to it. */
+  localeLayouts?: Record<string, BundleLayoutsFile>;
   warnings: string[];
 }
 
@@ -239,17 +250,47 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
           config: e.config,
           resources: e.resources,
           ...(e.start ? { start: e.start } : {}),
+          ...(e.name ? { name: e.name } : {}),
+          ...(e.description ? { description: e.description } : {}),
         }])) }
       : {}),
   });
 
+  const layouts = layoutsFileOf(content.chapters, plan.chapterFiles.map((f) => f.path), content.layouts, content.config, content.resources);
+  // Each edition's own pagination, keyed by the paths its chapters were
+  // written under, valid for its configuration and resources.
+  const localeLayouts: Record<string, BundleLayoutsFile> = {};
+  for (const [locale, edition] of Object.entries(content.localized ?? {})) {
+    const paths = plan.localeChapterFiles?.[locale];
+    if (!paths || !edition.layouts) continue;
+    const file = layoutsFileOf(edition.chapters, paths, edition.layouts, edition.config, edition.resources);
+    if (file) localeLayouts[locale] = file;
+  }
+  return { ...plan, ...(layouts ? { layouts } : {}), ...(Object.keys(localeLayouts).length > 0 ? { localeLayouts } : {}) };
+}
+
+/** The pagination file of a set of chapters written under `paths`: the
+ *  records that are current for their text, the engine, the configuration
+ *  and the resources. Whatever records are current: the reader takes them
+ *  in book order and lays out afresh from the first chapter without one, so
+ *  a pagination that stops short still spares the chapters before the gap. */
+function layoutsFileOf(
+  chapters: readonly Chapter[],
+  paths: readonly string[],
+  layouts: Record<string, ChapterLayout> | undefined,
+  config: PostextConfig,
+  resources: Resource[],
+): BundleLayoutsFile | undefined {
+  if (!layouts) return undefined;
+  const configKey = configKeyOf(config);
+  const resourcesKey = resourcesKeyOf(resources);
   const layoutChapters: BundleLayoutsFile['chapters'] = {};
-  content.chapters.forEach((c, i) => {
-    const path = plan.chapterFiles[i]!.path;
-    const layout = content.layouts?.[c.id];
+  chapters.forEach((c, i) => {
+    const path = paths[i];
+    const layout = layouts[c.id];
     // Not a layout made without a face it asked for (#757).
-    if (layout && !layout.withoutFaces && layout.markdown === c.markdown && layout.engine === ENGINE_KEY
-      && layout.configKey === configKeyOf(content.config) && layout.resourcesKey === resourcesKeyOf(content.resources)) {
+    if (path && layout && !layout.withoutFaces && layout.markdown === c.markdown && layout.engine === ENGINE_KEY
+      && layout.configKey === configKey && layout.resourcesKey === resourcesKey) {
       layoutChapters[path] = {
         continuationKey: layout.continuationKey,
         pageCount: layout.pageCount,
@@ -259,20 +300,16 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
         lastPageNumber: layout.lastPageNumber,
         lastPageFormat: layout.lastPageFormat,
         outlinePages: layout.outlinePages,
+        ...(layout.carriedOutline ? { carriedOutline: layout.carriedOutline } : {}),
         outlineKey: layout.outlineKey,
         // The stories the chapter sends to a page of a later one (#943).
         ...(layout.jumps ? { jumps: layout.jumps, jumpsKey: layout.jumpsKey } : {}),
       };
     }
   });
-  // Whatever records are current: the reader takes them in book order and
-  // lays out afresh from the first chapter without one, so a pagination
-  // that stops short still spares the chapters before the gap.
-  const layouts: BundleLayoutsFile | undefined = Object.keys(layoutChapters).length > 0
-    ? { version: 1, engine: ENGINE_KEY, configKey: configKeyOf(content.config), resourcesKey: resourcesKeyOf(content.resources), chapters: layoutChapters }
+  return Object.keys(layoutChapters).length > 0
+    ? { version: 1, engine: ENGINE_KEY, configKey, resourcesKey, chapters: layoutChapters }
     : undefined;
-
-  return { ...plan, ...(layouts ? { layouts } : {}) };
 }
 
 export interface BundleByteSources {
@@ -297,6 +334,11 @@ export async function buildBundleFiles(
   const plan = planBundle(meta, content);
   const resolved = await resolveBundleFiles(plan, sources as CoreByteSources);
   const files = resolved.files;
-  if (plan.layouts && resolved.missing.length === 0) files[LAYOUTS_FILE] = new TextEncoder().encode(JSON.stringify(plan.layouts));
+  if (resolved.missing.length === 0) {
+    if (plan.layouts) files[LAYOUTS_FILE] = new TextEncoder().encode(JSON.stringify(plan.layouts));
+    for (const [locale, layouts] of Object.entries(plan.localeLayouts ?? {})) {
+      files[localeLayoutsFile(locale)] = new TextEncoder().encode(JSON.stringify(layouts));
+    }
+  }
   return { files, manifest: resolved.manifest, warnings: resolved.warnings };
 }

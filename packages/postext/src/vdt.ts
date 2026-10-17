@@ -692,6 +692,10 @@ export interface VDTAnchor {
   /** Source offset of an inline anchor's mark in the markdown body (front
    *  matter excluded). */
   sourceStart?: number;
+  /** Set on an anchor written in a story that came in from another chapter
+   *  (#988): that chapter's place in the book, whose body `sourceStart` is
+   *  an offset in. */
+  chapter?: number;
 }
 
 export interface VDTLine {
@@ -3338,8 +3342,11 @@ export type ContentWarning = ContentWarningBase & (
    *  order written, names the first earlier label it meets (`with`, and
    *  `withAnchor`) and how many earlier labels it meets in all (`count`,
    *  at least 1). Checked per edition, so a language whose words run
-   *  longer shows it. The source range is the later label's. */
-  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; count: number; locale?: string; labelId?: string }
+   *  longer shows it. The source range is the later label's. With
+   *  `withSymbol` (1-based), the label runs onto a symbol of the picture
+   *  instead (#969): one of its `avoid` zones, `count` of them in all;
+   *  `with` reads `symbol <n>`. */
+  | { kind: 'labelOverlap'; resourceId: string; text: string; anchor?: string; with: string; withAnchor?: string; withSymbol?: number; count: number; locale?: string; labelId?: string }
   /** A `:::paper{…}` attribute the engine cannot read: an unknown key, a
    *  stock, finish or texture it does not know, a number out of range, a
    *  shade that is neither a hex colour nor a palette id, a `showThrough`
@@ -3353,6 +3360,13 @@ export type ContentWarning = ContentWarningBase & (
    *  first one. `inResource` names the resource whose caption, note or
    *  cell holds it. */
   | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
+  /** A `:::figure` gives words (`alt`, `caption`, `note`) to a resource
+   *  that an earlier figure of the chapter already gave words to, and
+   *  they differ (#986): a resource has one set of words in a chapter, the
+   *  first figure's, so `words` of this figure are not shown. Give the
+   *  figure a resource of its own (a second entry for the same file). The
+   *  source range is the first of those words. */
+  | { kind: 'figureWordsShared'; resourceId: string; words: ('alt' | 'caption' | 'note')[] }
   /** A footnote marker `[^id]` with no `[^id]: …` definition in the
    *  document: the number prints, the note is empty. Points at the first
    *  such marker. */
@@ -3800,6 +3814,26 @@ export interface VDTDocument {
    *  to hand to that chapter (`LayoutContinuation.jumps`, with `chapter`
    *  set to this chapter's place in the book). Absent when none does. */
   pendingJumps?: StoryJump[];
+  /** Where the index marks, anchors and headings written in a story that
+   *  came in from another chapter landed here (#988): `chapter` is the
+   *  chapter whose file they are in, `sourceStart` their offset in that
+   *  chapter's body (the key of the entry the book's outline has for them)
+   *  and `pageIndex` the page of this document. A host merges them into
+   *  the sender's outline entries (`mergeCarriedOutline`). Absent when no
+   *  story came in or it holds none. */
+  carriedOutline?: VDTCarriedOutlineEntry[];
+}
+
+/** One index mark, anchor or heading of a carried story, located by the
+ *  chapter that laid it (`VDTDocument.carriedOutline`). */
+export interface VDTCarriedOutlineEntry {
+  chapter: number;
+  kind: 'indexMark' | 'anchor' | 'heading';
+  sourceStart: number;
+  pageIndex: number;
+  /** An inline anchor: its identifier and where its line stands on the
+   *  page (as `VDTAnchor`). */
+  anchor?: { id: string; x: number; y: number };
 }
 
 // ---------------------------------------------------------------------------

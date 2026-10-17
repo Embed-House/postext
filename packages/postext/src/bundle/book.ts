@@ -11,7 +11,7 @@ import { bookCitationContexts, citationSourceOf, needsCitationContext } from '..
 import type { CitationContext } from '../citations/context';
 import type { DocumentMetadata, LayoutContinuation, OutlineEntry, PostextConfig, Resource } from '../types';
 import type { VDTDocument } from '../vdt';
-import { buildDocument, resolveJumpMarks, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds } from '../pipeline';
+import { buildDocument, resolveJumpMarks, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds, carriedPlaces, mergeCarriedOutline } from '../pipeline';
 import type { StoryJump } from '../composed/carry';
 import type { BuildDocumentOptions } from '../pipeline';
 import { createMeasurementCache } from '../measure';
@@ -243,6 +243,7 @@ export function buildBundle(
           pageCount: doc.pages.length,
           ...(last ? { next: { startAt: last.pageNumberValue + 1, format: last.pageNumberFormat } } : {}),
           outline: outlineFromDoc(doc, contentOutline({ markdown }, config, continuation).outline),
+          ...(doc.carriedOutline ? { carried: carriedPlaces(doc) } : {}),
           ...(firstContent ? { firstContent } : {}),
         };
       });
@@ -266,8 +267,12 @@ export function buildBundle(
     // one printed is not the one laid out (at most one more).
     let outlineMoved = false;
     if (anyToc) {
+      // The index marks, anchors and headings written in the part of a story
+      // that went on in a page of a later chapter are listed where they
+      // stand (#988).
+      const outlines = laterIds ? mergeCarriedOutline(records.map((r) => r.outline), records.map((r) => r.carried)) : records.map((r) => r.outline);
       const bookOutline = records.flatMap((record, index) => {
-        const entries = record.outline;
+        const entries = outlines[index] as OutlineEntry[];
         // A part that reached no page of its chapter — set without a
         // divider page (`parts.page: false`) by a fence closing the
         // chapter — starts with the next chapter's content, as its running

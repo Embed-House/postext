@@ -1142,8 +1142,12 @@ All em values = the callout body font size.
            a left-corner title starts past its inner half)
   label = unset (no tab). If set: { fontFamily=headings, fontSize=body size, fontWeight=700,
            color=#fff, background=main, position='top-right'|'top-left', height=1.4em, paddingX=0.6em,
-           offset=0, inset=0, icon:{resourceId,width=1em,gap=0.3em}, rule:{enabled=false,color=main,width=0.5pt} }
-           prints the fence `label` attribute ("RECUADRO 1-1")
+           offset=0, inset=0, icon:{resourceId,width=1em,gap=0.3em, placement='beside'|'inside' (≥ 1.42)},
+           rule:{enabled=false,color=main,width=0.5pt} }
+           prints the fence `label` attribute ("RECUADRO 1-1"). icon.placement 'inside' (≥ 1.42) fits the picture
+           into icon.width × the tab's height, widens the tab by it and `gap`, and stands it before the words
+           (at the start of the tab); 'beside' (default) keeps it past the tab's edge. The picture keeps its
+           colours (no tint from the tab's text); with no picture to draw the tab is the plain one
   marker = { kind='none', glyph, resourceId, fontFamily, fontWeight=400, size=1.5em, color=main,
              align='center', gap=0.5em, rule:{enabled=false, color=main, width=0.5pt, length=0} }
              icon + vertical rule OUTSIDE the box on its left
@@ -1152,7 +1156,9 @@ All em values = the callout body font size.
                  lineHeight=1.2em (em = title size; set the body leading to keep boxes a whole number of lines) }
   body = { fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight,
            textAlign: 'left'|'justify', hyphenation: boolean, paragraphSpacing, firstLineIndent,
-           tabStops, tabInterval (≥ 1.23, §4a: replace the body's inside the box) }   → inherit bodyText
+           tabStops, tabInterval (≥ 1.23, §4a: replace the body's inside the box),
+           letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
+           list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
   lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight? }  → inherit unorderedLists
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
@@ -1881,7 +1887,14 @@ says it for the installed one):
 1.40.0  label style fontStyle/textTransform unset (a borrowed paragraph style's italics and capitals
         hold; 'normal' / 'none' turn them off); vertical labels on right-to-left pages; frame writingMode
         on right-to-left pages, pictures upright in a vertical frame; comic text panels on strips and spreads
-not yet template bodyStyle/palette; 'auto' width reads as 'fill'
+1.41.0  a story jumps into a page fence of a later chapter file (continueIn 'page:<id>')
+1.42.0  calloutStyles[].body.letterSpacing; decoration elements removed in a child template or variant
+        ({ id, remove: true }); Frame.look, PageTemplate.palette and the page fence's palette applied;
+        Frame width 'auto' = longest line + padding; label.icon.placement 'inside'; {headingNumber} in
+        decoration text; Frame.takes 'toc'; overlap 'allow' on anchors and label styles, avoid zones as map
+        symbols, figureWordsShared; CustomFontFamily.fallback; pictures upright in the frames of a vertical
+        page's own flow
+not yet template bodyStyle
 ```
 
 Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates (14 and
@@ -1897,21 +1910,31 @@ PageTemplate
 ├─ groups?      Group[]          a group name must not equal a frame name
 ├─ decoration?  DesignSlot       placeholders only, like every design text (§7)
 ├─ header? / footer?  DesignSlot | false
-├─ spread?, gutter?, overflowTemplate?, bodyStyle?, palette?, role?
+├─ spread?, gutter?, overflowTemplate?, bodyStyle? (read, not applied), role?
+├─ palette?     Record<paletteId, '#hex'> (applied from 1.42; the page fence's `palette="id=#hex, …"` wins over it):
+│               recolours the palette-linked fills, borders and tabs of the boxes, the decoration and the
+│               page ground of that page, as a part's palette does the flow
 └─ variants?    { recto?, verso? } partial templates applied per side (a spread takes none)
 
 Frame
 ├─ name                         what `:::frame{slot="name"}` and `slot=` name
 ├─ placement? | grid?: { col, row, cols?, rows? }
-├─ width?/height?  Dimension | { percent } | 'auto' | 'fill'   default 'fill' / 'auto'; unset → placement.size
+├─ width?/height?  Dimension | { percent } | 'auto' | 'fill'   default 'fill' / 'auto'; unset → placement.size;
+│                 width 'auto' (≥ 1.42) = the longest line + padding, up to maxWidth and the room the anchor
+│                 leaves (before, it read as 'fill'); not applied to a frame in its own writing mode
 ├─ minWidth?/maxWidth?/minHeight?/maxHeight?
 ├─ style?       a calloutStyles id (tab, title, fill, border come from it)
+├─ look?        (≥ 1.42) the style's colours for this frame only: { background (turns the fill on), border:{color},
+│               stripe:{color}, icon:{color}, marker:{color, rule:{color}}, titleStyle:{color}, body:{color,
+│               boldColor, italicColor, letterSpacing}, label:{color, background, rule:{color}} }; a child
+│               template or variant merges it key by key; an unknown key is `unknownConfigKey`
 ├─ layer? (1), rotate?, verticalAlign?, columns?, columnGap?, padding?
 ├─ exclude?     'none'|'push'
 ├─ wrap?        'box'|'contour' (1.36; with exclude:'push': the shape of the pictures it holds)
 ├─ rules?       { every? ('line'|Dimension), color?, width? (0.5pt), inset? } (1.38) ruled lines across the content box
 ├─ flow?, next?                 the flow frame; `next` chains frames
-├─ takes?       'h1'…'h6'       a heading of that level with no slot goes here
+├─ takes?       'h1'…'h6'|'toc'  a heading of that level with no slot goes here; 'toc' (≥ 1.42) takes the
+│               `:::toc` of the page (or write `:::toc` inside the frame): part rows, leaders, links and `keep`
 ├─ pin?, grow?, shrink?, priority?
 ├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8), preferContinue (true, 1.38) }
 ├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>'|'page:<id>' (1.38; <id> may be {attr.x}),
@@ -1919,16 +1942,20 @@ Frame
 └─ optional?, crossGutter?, remove?
    writingMode?  'horizontal-tb'|'vertical-rl' (applied from 1.39; before, read only): the frame's content is laid
                  in its box turned a quarter turn (right-to-left pages too from 1.40; a picture in it stands
-                 upright); an 'auto' height is the least that
+                 upright, in a frame of a vertical page's own flow too from 1.42); an 'auto' height is the least that
                  holds the lines in the width, so give long vertical text a fixed height
    direction?    'ltr'|'rtl' (applied from 1.39): the frame's story, blocks with their own {dir} keep theirs
+
+Decoration text (≥ 1.42): `{headingNumber}` = the counter of the first numbered heading the page's frames hold
+(the document's digits; empty when none), `{headingNumber.<frame>}` the one a named frame holds; allowed in
+composed pages' decoration only. A text over a frame answers a click where the frame has no text of its own.
 
 Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
          align?: 'start'|'center'|'end'|'space-between', remove? }
 
 LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle?,
               color?, textTransform?, letterSpacing?, halo?: { color, width }, background?,
-              padding?, minScale? (0.85), writingMode? ('vertical-rl', ≥ 1.39) }
+              padding?, minScale? (0.85), writingMode? ('vertical-rl', ≥ 1.39), overlap? ('check'|'allow', ≥ 1.42) }
 ```
 
 - **Label styles and a borrowed paragraph style** (≥ 1.40): `fontStyle` and `textTransform` stay unset
@@ -1951,6 +1978,12 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   `label`, title, `body`); `placement`, `fixed`, `span`, `columns`, `width` and margins are ignored
   on a frame, so one style serves every box of its kind; position and measure go in the frame. A
   style may be based on another with `extends` (§12).
+- **One style per box shape, the tint on the frame** (≥ 1.42): `look` on the frame, `palette` on the template
+  or the page fence, or a palette-linked fill (`paletteId`) tinted by the page's `palette="tint=#f6c3d0"`
+  (composed-pages.md §4). No callout style per tint.
+- **Frames held at the foot of a card** (≥ 1.42): one `stack` group with a box of the card's height,
+  `grow: 1` + `shrink: 1` on the frames above and `minHeight` on the held ones (composed-pages.md §5); never an
+  anchor to the container's foot.
 - **Sizes that follow the text**: `height` `'auto'` (default) with the drawn height as `minHeight`
   and the room the page leaves as `maxHeight`; boxes one under another in a `stack` group (the
   first frame's placement starts it), side by side in a `row`; pictures beside a box are frames
@@ -1986,10 +2019,17 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   `start` = top, `verticalAlign` across the columns with `top` = the first, right-hand one); comics ignore
   them. Anchors live on the resource, so every locale shares them. From 1.39 `postext check` reports
   `labelOverlap` (a label runs into an earlier one by more than 12 % of the smaller line height) and
-  `labelOverflow` (wider than `width` at `minScale`) per edition.
+  `labelOverflow` (wider than `width` at `minScale`) per edition. From 1.42 an anchor (or a label style)
+  may say `overlap: 'allow'` (default `'check'`): that label, and every pair it is in, is left out of the check
+  (names the source prints touching); a label placed by `at="x% y%"` takes its style's value. A picture's
+  `avoid` zones (rectangles in fractions of the picture) count as the map's symbols: a label that runs onto one
+  raises `labelOverlap` with `withSymbol` (1-based) and `with: "symbol N"`. Editable under Design › Figures &
+  tables › Label styles in the Sandbox.
 - **Figure words** (1.39): `:::figure{resource alt caption note}`, or `::alt[…]`, `::caption[…]`,
   `::note[…]` lines beside the `::label` lines, give the edition's alt text, caption and note for the
-  picture (document-format.md §12.2); the stored resource is untouched.
+  picture (document-format.md §12.2); the stored resource is untouched. A resource has one set of words per
+  chapter, the first `:::figure`'s: a later figure of it with other words (or words the first left unsaid) is not
+  shown them and raises `figureWordsShared` (≥ 1.42); declare a second resource on the same `fileId` for it.
 - Scripts: `resolvePageTemplate(config, id, { parity: 'recto'|'verso' })` returns the merged
   template with defaults (`configPath`, per-field `fieldPaths`); `validatePageTemplates(config,
   { resources })` returns the warnings (verification.md, "Composed pages").
@@ -2022,7 +2062,12 @@ default is used). Never raise the limits to quiet a port: move the text into the
 
 ## 20. Fonts — `customFonts` and what goes in preset.json
 
-`CustomFontFamily = { name, variants: [{ weight 100–900, style 'normal'|'italic', fileId, format 'woff2'|'woff'|'ttf'|'otf', fileName? }], redistributable?: boolean (default true) }`.
+`CustomFontFamily = { name, variants: [{ weight 100–900, style 'normal'|'italic', fileId, format 'woff2'|'woff'|'ttf'|'otf', fileName? }], redistributable?: boolean (default true), fallback?: string (≥ 1.42) }`.
+- `fallback` is the open family every host sets this family's faces in where it has no file of them (a
+  licensed family the pack left out): the configuration keeps naming the licensed family, the fallback's
+  cuts of the same weight and slant load under its name. A family with files keeps them and takes only a slant
+  it lacks from the fallback. Not a general substitution table: Google and system families stay `missingFont`.
+  Manifest: `fonts[].fallback` (project-format.md §4).
 - Any `fontFamily` string resolves against customFonts first, then Google Fonts, then Fontsource
   for a family Google Fonts does not have (Commit Mono, FiraGO). The Sandbox and the `postext`
   command line fetch them; `render.mjs` does not, and measures an unbundled family with a stand-in face.
@@ -2052,7 +2097,7 @@ default is used). Never raise the limits to quiet a port: move the text into the
   chapters: [{title, file}] | { "<locale>": [{title, file}] },
   config: PostextConfig,                          // WITHOUT customFonts
   resources: [ Resource minus createdAt/updatedAt/bitmap/svg, plus file?, pdfFile?, inlineFonts?, width?, height?, resolution?, fileResolution?, note? ],
-  fonts: [ { name, variants: [{ weight, style, file: "fonts/X.woff2" }], redistributable? } ],
+  fonts: [ { name, variants: [{ weight, style, file: "fonts/X.woff2" }], redistributable?, fallback? (≥ 1.42) } ],
   localized?: { "<locale>": { config?: Partial<PostextConfig> (top-level keys REPLACED wholesale),
                               resources?: [{ id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height? }],
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)

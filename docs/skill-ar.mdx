@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ar',
   lastUpdated: '2026-10-17',
   readingTime: '10 دقائق',
-  order: 42,
+  order: 44,
   plainSummary: "هذه الصفحة لمن لديه كتاب أو مستند بصيغة أخرى، مثل PDF أو Word أو InDesign، ويريد نقله إلى Postext. يستطيع مساعد ذكي، يُسمّى وكيلًا، أن يقوم بمعظم العمل إن أعطيته إضافة صغيرة تُسمّى مهارة. تعلّم المهارةُ الوكيلَ كيف ينسخ النص ويعيد بناء تصميم الأصل. تشرح الصفحة كيف تثبّتها، وماذا تطلب، وكيف تتحقق من النتيجة. ويعرض مقطع فيديو مدته نحو خمس دقائق كل خطوة.",
 };
 
@@ -71,7 +71,7 @@ export const metadata = {
     <tr><td><code>measure_layout.py</code></td><td>الهوامش والأعمدة والفاصل بين الأعمدة وتباعد الأسطر (شبكة خطوط الأساس) في ملف PDF</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF ← مسودات فصول حسب <em>دور الحرف</em> (الخط/الحجم/اللون): ترتيب القراءة، والفقرات، وإزالة الواصلات، والعريض/المائل، والأحرف المرتفعة/المنخفضة، والقوائم، والتعليقات</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>يقصّ الأشكال من ملف PDF: الصور الفوتوغرافية بدقتها الأصلية، ومعاينات SVG، وأصول PDF متجهية للطباعة</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>الصفحات الثابتة في ملف PDF (الكتب المدرسية وكراسات التمارين والمجلات) صفحاتٍ مركّبة: قوالب صفحات بإطارات مقيسة بالمليمتر، وأنماط للصناديق والألسنة والتظليل، وأرضية صفحة بلا نص، والصور مقصوصة من دون نصوصها، وMarkdown فيه سياج لكل صفحة وخانة لكل صندوق بترتيب القراءة؛ ويُستبعد النص المختبئ تحت رسم آخر. يجمع <code>template_dedupe.py</code> قوالب الصفحات المتشابهة وأنماطها في مكتبة واحدة، ويحوّل <code>anchors.py</code> أسماء الخريطة إلى مراسٍ في المورد وأسطر <code>::label</code> لكل طبعة</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>الصفحات الثابتة في ملف PDF (الكتب المدرسية وكراسات التمارين والمجلات) صفحاتٍ مركّبة: قوالب صفحات بإطارات مقيسة بالمليمتر، وأنماط للصناديق والألسنة والتظليل، وأرضية صفحة بلا نص، والصور مقصوصة من دون نصوصها، وMarkdown فيه سياج لكل صفحة وخانة لكل صندوق بترتيب القراءة؛ ويُستبعد النص المختبئ تحت رسم آخر. يجمع <code>template_dedupe.py</code> قوالب الصفحات المتشابهة وأنماطها في مكتبة واحدة، ويسمّي الإطارات بحسب دورها (<code>box-light-blue</code> و<code>caption-of-picture</code>) لا بحسب نوعها وترتيبها، وتتبعه أسيجة الصفحات، ويحوّل <code>anchors.py</code> أسماء الخريطة إلى مراسٍ في المورد وأسطر <code>::label</code> لكل طبعة</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>جداول PDF ← <code>TableModel</code> في Postext</td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX وPPTX وODT وEPUB وHTML وLaTeX وMarkdown وJATS وDocBook ← مسودات فصول، مع ربط أنماط Word بالإطارات وأنماط الفقرات</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>IDML من InDesign ← مسودات فصول حسب نمط الفقرة، والجداول، والصور المثبّتة؛ وتصبح ruby وtate-chu-yoko وعلامات التوكيد وwarichu <code>:ruby</code> و<code>:tcy</code> و<code>:dots</code> و<code>:warichu</code>، ويُبلَّغ عن النصوص العمودية وعن التجليد من اليمين إلى اليسار</td></tr>

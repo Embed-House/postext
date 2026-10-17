@@ -131,3 +131,81 @@ export function renameTemplateChanges(markdown: string, from: string, to: string
     .filter((f) => !f.missing && f.template === from)
     .map((f) => ({ from: f.valueFrom, to: f.valueTo, insert: to, expect: from }));
 }
+
+// ---------------------------------------------------------------------------
+// Slot names (#979)
+// ---------------------------------------------------------------------------
+
+const PAGE_OPEN_RE = /^(\s{0,3})(:{4,})\s*page\s*(?:\{[^}]*\})?\s*$/;
+const PAGE_CLOSE_RE = /^\s{0,3}(:{4,})\s*$/;
+const SLOT_LINE_RE = /^\s*(?::{2,}[A-Za-z][\w-]*\s*\{|#{1,6}\s)/;
+const ATTR_PAIR_RE = /([A-Za-z_][\w-]*)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s"'}]+)/y;
+
+/** The `slot` attribute of a line that opens a container, a leaf or a
+ *  heading, with the range of its value (inside the quotes). Attributes are
+ *  read one after the other, so `slot="x"` inside another value (a `label`)
+ *  is never taken for the attribute. */
+function slotOf(line: string): { value: string; from: number; to: number } | null {
+  if (!SLOT_LINE_RE.test(line)) return null;
+  const heading = /^\s*#{1,6}\s/.test(line);
+  let at = heading ? line.lastIndexOf(' {') + 1 : line.indexOf('{');
+  if (at <= 0 || (heading && !line.trimEnd().endsWith('}'))) return null;
+  at += 1;
+  for (;;) {
+    while (at < line.length && /\s/.test(line[at]!)) at++;
+    ATTR_PAIR_RE.lastIndex = at;
+    const m = ATTR_PAIR_RE.exec(line);
+    if (!m) return null;
+    if (m[1] === 'slot') {
+      const raw = m[2]!;
+      const quoted = raw[0] === '"' || raw[0] === "'";
+      const from = at + m[0].length - raw.length + (quoted ? 1 : 0);
+      const value = quoted ? raw.slice(1, -1) : raw;
+      return { value, from, to: from + value.length };
+    }
+    at += m[0].length;
+  }
+}
+
+/** The changes that rename slot `from` to `to` in the pages of `markdown`
+ *  whose fence names one of `templates` (a frame shared by several
+ *  templates, `frameFamily`): the `slot` of a `:::frame`, a `::resource`, a
+ *  `:::figure` or a heading, outside code blocks. */
+export function renameSlotChanges(markdown: string, templates: ReadonlySet<string>, from: string, to: string): TextChange[] {
+  const out: TextChange[] = [];
+  let offset = 0;
+  let code: string | null = null;
+  let colons = 0;
+  let open = false;
+  for (const line of markdown.split('\n')) {
+    const start = offset;
+    offset += line.length + 1;
+    const fence = CODE_FENCE_RE.exec(line);
+    if (fence) {
+      const mark = fence[1]!;
+      if (code === null) code = mark[0]!.repeat(mark.length);
+      else if (mark[0] === code[0] && mark.length >= code.length) code = null;
+      continue;
+    }
+    if (code !== null) continue;
+    const page = PAGE_OPEN_RE.exec(line);
+    if (page) {
+      const blob = line.includes('{') ? line.slice(line.indexOf('{') + 1) : '';
+      const t = TEMPLATE_ATTR_RE.exec(blob);
+      const id = t ? (t[2] ?? t[3] ?? t[4] ?? '') : '';
+      open = templates.has(id);
+      colons = page[2]!.length;
+      continue;
+    }
+    if (open) {
+      const close = PAGE_CLOSE_RE.exec(line);
+      if (close && close[1]!.length >= colons) {
+        open = false;
+        continue;
+      }
+      const slot = slotOf(line);
+      if (slot && slot.value === from) out.push({ from: start + slot.from, to: start + slot.to, insert: to, expect: from });
+    }
+  }
+  return out;
+}

@@ -8,7 +8,7 @@ export type { BuildBundleOptions } from './book';
 export { createBundleLayoutCache } from './layoutCache';
 export type { BundleLayoutCache, BundleLayoutStats } from './layoutCache';
 export { loadBundleFonts, registerBundleImages, bundleImageUrl, bundleVideoUrl, bundleResourceBytes, bundleFontProvider, bundleSvgFontProvider, svgInlinesFonts, diagramInkHex } from './adapters';
-export type { BundleSource, BundleFontProviderOptions, BundleFontRequest, BundleImageOptions } from './adapters';
+export type { BundleSource, BundleFontProviderOptions, BundleFontRequest, LoadBundleFontsOptions, BundleImageOptions } from './adapters';
 
 // Low-level codec, for hosts that store or serve bundles their own way.
 export { readBundle, planBundle, resolveBundleFiles, bundleBaseConfig, traceBundleContours, EXPORTABLE_FONT_FORMATS } from './codec';

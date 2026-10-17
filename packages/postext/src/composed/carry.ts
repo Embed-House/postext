@@ -90,6 +90,8 @@ export interface ImportedJumps {
   stories: Map<number, { jump: StoryJump; chapter: number; numbers: ReadonlyMap<number, CarriedNumber>; startIdx: number; endIdx: number }>;
   /** The notes the stories cite, under the ids they have here. */
   footnotes: (CarriedNote & { chapter: number })[];
+  /** The position of `blocks[0]` among the chapter's content blocks. */
+  baseLength: number;
 }
 
 /**
@@ -150,5 +152,5 @@ export function importJumps(jumps: readonly StoryJump[], baseLength: number, bod
     byTarget.set(jump.target, list);
     stories.set(startIdx, { jump, chapter, numbers: new Map((jump.numbers ?? []).map((n) => [startIdx + n.at, n])), startIdx, endIdx: startIdx + own.length - 1 });
   }
-  return { blocks, byTarget, stories, footnotes };
+  return { blocks, byTarget, stories, footnotes, baseLength };
 }

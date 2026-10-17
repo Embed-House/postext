@@ -251,6 +251,7 @@ Apèndix. Una font de presets és un directori (servit per HTTP) l'arrel del qua
   "fonts": [
     {
       "name": "Some Family",           // nom de família que fa servir la configuració
+      "fallback": "Source Serif 4",    // opcional: família oberta d'amplada semblant per a les cares que el paquet deixa fora
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -275,4 +276,5 @@ Notes:
 - L'editor de codi de l'SVG només permet escriure dins dels nodes de text (ressaltats) perquè una figura no es trenqui per accident; el botó de cadenat de la seva capçalera obre tot el codi — coordenades, colors, estructura — i, en tornar a bloquejar-lo, es tornen a detectar els nodes de text.
 - `table.model` és un `TableModel` de Postext: `rows` és un array de cel·les per files (`content` i, opcionalment, `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` el nombre de files de capçalera inicials i `columnWidths` un array opcional de pesos relatius de columna. `table.styleId` anomena, opcionalment, un dels `tableStyles` de la configuració.
 - Els fitxers de font es desen a IndexedDB amb ids derivats de l'id del preset i la ruta del fitxer, i les famílies s'afegeixen a `config.customFonts` en aplicar el preset; un `index.json` absent o mal format no produeix cap preset en lloc d'un error.
+- Una família que el paquet no pot lliurar es llista amb `"redistributable": false` i `variants` buit; afegeix `"fallback"` amb el nom d'una família oberta d'amplada semblant i el Sandbox, la línia d'ordres i els amfitrions del motor en componen les cares amb ella (des de postext 1.42). Sense ell, el llibre cau a la font per defecte i les seves línies es tallen en un altre lloc.
 - `<directorio-del-preset>/fingerprint.json` és opcional i, a la ruta de desenvolupament, **virtual**: quan no existeix aquest fitxer, `GET` respon `{ "fingerprint": "<sha1 hex>", "files": <n> }` calculat a partir de les metadades dels fitxers del directori (ruta relativa, data de modificació i mida de cada fitxer fins a quatre nivells de profunditat, ometent els fitxers ocults i `node_modules`), mai a partir del seu contingut, amb `Cache-Control: no-store`. El sandbox el consulta per seguir les edicions del paquet (consulta [Tauler de llibres](/ca/docs/sandbox#tauler-de-llibres)). Un servidor estàtic pot servir un `fingerprint.json` real amb la mateixa forma, o cap, i en aquest cas els seus presets no se segueixen.

@@ -104,7 +104,7 @@ Um modelo que define só o seu `id` e um bloco é uma página inteira com esse b
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>nenhuma</td>
-      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeços-e-rodapés">cabeços e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo da cerca de página). Um elemento pode se ancorar a um bloco ou a um grupo (<code>'#dinero'</code>) e então se move com ele. A decoração é posicionada depois dos blocos e nunca empurra o texto.</td>
+      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeços-e-rodapés">cabeços e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo da cerca de página). Um elemento pode se ancorar a um bloco ou a um grupo (<code>'#dinero'</code>) e então se move com ele. A decoração é posicionada depois dos blocos e nunca empurra o texto. Desde o postext 1.42, <code>&#123;headingNumber&#125;</code> escreve o contador do primeiro título numerado que os blocos da página contêm (um bloco com <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> o do bloco <code>titulo</code>, com os dígitos do documento: um selo com o número de um tema o lê do título, e a cerca de página não precisa repeti-lo. A decoração é pintada sob os blocos; um clique num elemento de texto que está sobre um bloco, num ponto em que o bloco não tem texto próprio, chega ao elemento e não ao bloco. Um bloco com <code>layer</code> negativo é pintado sob a decoração.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -146,7 +146,7 @@ Um modelo que define só o seu `id` e um bloco é uma página inteira com esse b
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>nenhuma</td>
-      <td>Uma paleta própria para a página, como os estilos de título e as partes têm.</td>
+      <td>Uma paleta própria para a página, como os estilos de título e as partes têm: pares <code>entrada=#hex</code> separados por vírgulas (<code>tom=#f6c3d0</code>). Toda cor dos blocos e da decoração da página ligada a essa entrada da paleta (ou igual ao seu valor) a recebe, e o atributo <code>palette</code> da cerca de página vale por cima. Desde o postext 1.42 o valor é aplicado; antes era lido e ignorado.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -195,7 +195,7 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Um comprimento fixo, uma porcentagem da área (de 0 a 100), <code>'auto'</code> (o tamanho próprio do conteúdo) ou <code>'fill'</code> (o que sobra até a borda à qual o bloco está ancorado). Sem valor, o bloco lê <code>placement.size</code> e depois o padrão: a largura inteira e a altura do seu conteúdo. Um bloco com texto precisa de uma medida, então uma largura <code>'auto'</code> só faz sentido num bloco que contém uma única imagem (a largura da imagem na altura do bloco). Um valor que o motor não consegue usar (um comprimento negativo, uma unidade desconhecida) é lido como o padrão.</td>
+      <td>Um comprimento fixo, uma porcentagem da área (de 0 a 100), <code>'auto'</code> (o tamanho próprio do conteúdo) ou <code>'fill'</code> (o que sobra até a borda à qual o bloco está ancorado). Sem valor, o bloco lê <code>placement.size</code> e depois o padrão: a largura inteira e a altura do seu conteúdo. Desde o postext 1.42, uma largura <code>'auto'</code> deixa o bloco tão largo quanto a sua linha mais longa mais o preenchimento, sem passar do espaço que a âncora deixa nem de <code>maxWidth</code> (o texto que não cabe quebra ali) e sem ficar abaixo de <code>minWidth</code>. O texto é medido composto à esquerda, então um título centralizado ocupa o que as suas palavras ocupam. O bloco parte da borda que a âncora indica, e os blocos ancorados a ele o acompanham. Serve para uma aba ou uma caixa que precisa ajustar-se ao título em todos os idiomas. Um valor que o motor não consegue usar (um comprimento negativo, uma unidade desconhecida) é lido como o padrão.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -259,9 +259,9 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>nenhum</td>
-      <td>O bloco recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo da cerca.</td>
+      <td>O bloco recebe o primeiro título desse nível que não nomeia nenhum encaixe, então o título de uma página é só um <code># Título</code> no começo da cerca. Com <code>'toc'</code>, recebe o <code>:::toc</code> da página que não nomeia encaixe e o compõe pelas regras do sumário (desde o postext 1.42; veja <a href="/pt/docs/composed-pages">Páginas compostas</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -342,10 +342,16 @@ Um bloco é posicionado pela sua célula de `grid` quando o modelo tem grade e, 
       <td>Linhas pautadas de lado a lado da caixa de conteúdo do bloco: uma no pé de cada linha, quantas couberem na altura dele. <code>every</code> é o passo, <code>'line'</code> (padrão: a entrelinha do texto do bloco) ou uma medida; <code>color</code> é um cinza médio por padrão, <code>width</code> a espessura (0,5 pt), <code>inset</code> a margem deixada em cada ponta da linha, ou <code>&#123; left, right &#125;</code>. Veja Blocos pautados, mais abaixo. Desde postext 1.38.</td>
     </tr>
     <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>O que este bloco muda do aspecto do seu estilo de caixa, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Desde o postext 1.42.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>os da página</td>
-      <td>Um bloco no seu próprio modo de escrita ou direção: uma caixa vertical numa página horizontal, um cartão horizontal numa página vertical, uma citação da direita para a esquerda num livro da esquerda para a direita. Um bloco do outro modo de escrita é composto na sua caixa girada um quarto de volta: as linhas percorrem a altura da caixa e se sucedem na largura, e uma altura <code>'auto'</code> é a menor que as contém nessa largura. O texto é pintado como uma página desse modo pinta o seu. <code>direction</code> compõe a história do bloco nessa direção, como uma caixa com <code>&#123;dir=…&#125;</code>; um bloco de texto ou uma caixa que escreve o seu próprio <code>dir</code> o mantém. Desde o postext 1.39. Desde o postext 1.40, um bloco vertical também funciona numa página da direita para a esquerda: é composto como numa da esquerda para a direita e colocado onde o fluxo espelhado o põe, com o texto pintado sem espelho; uma imagem num bloco vertical de uma página horizontal fica em pé, com a sua legenda, e ocupa o espaço que a caixa lhe deixa na largura da página; o EPUB refluível escreve um bloco de outro modo de escrita como uma caixa com esse modo e o comprimento ao longo do qual correm as suas linhas (em em do texto base).</td>
+      <td>Um bloco no seu próprio modo de escrita ou direção: uma caixa vertical numa página horizontal, um cartão horizontal numa página vertical, uma citação da direita para a esquerda num livro da esquerda para a direita. Um bloco do outro modo de escrita é composto na sua caixa girada um quarto de volta: as linhas percorrem a altura da caixa e se sucedem na largura, e uma altura <code>'auto'</code> é a menor que as contém nessa largura. O texto é pintado como uma página desse modo pinta o seu. <code>direction</code> compõe a história do bloco nessa direção, como uma caixa com <code>&#123;dir=…&#125;</code>; um bloco de texto ou uma caixa que escreve o seu próprio <code>dir</code> o mantém. Desde o postext 1.39. Desde o postext 1.40, um bloco vertical também funciona numa página da direita para a esquerda: é composto como numa da esquerda para a direita e colocado onde o fluxo espelhado o põe, com o texto pintado sem espelho; uma imagem num bloco vertical de uma página horizontal fica em pé, com a sua legenda, e ocupa o espaço que a caixa lhe deixa na largura da página; o EPUB refluível escreve um bloco de outro modo de escrita como uma caixa com esse modo e o comprimento ao longo do qual correm as suas linhas (em em do texto base). Desde o postext 1.42, uma imagem num bloco de uma página vertical que segue o modo da própria página também fica em pé, com a sua legenda.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -485,6 +491,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 O resultado depende só do conteúdo da página, do modelo e da tipografia: a mesma entrada dá a mesma página, medida na mesma ordem e com os mesmos passos. A negociação nunca lê outra página, então uma mudança numa página composta deixa todas as outras como estavam, desde que o conteúdo continue na sua página.
 
+**Manter blocos no pé de um cartão (desde o postext 1.42).** Um bloco ancorado abaixo do texto que tem acima segue esse texto: numa edição em que o texto tem uma linha a menos ou a mais, os blocos de baixo sobem ou descem, enquanto o que o modelo desenha (um cartão, uma faixa, o pé) fica onde está. Para que os blocos fiquem no pé de um cartão, onde o modelo os põe, reúna os blocos do cartão numa pilha com uma caixa da altura do cartão. Os blocos acima dos retidos tomam o espaço que sobra (`grow: 1`) e o devolvem (`shrink: 1`); os retidos escrevem um `minHeight`. Um texto mais curto deixa os blocos retidos onde estavam. Um mais longo é apertado acima deles: eles mantêm o `minHeight`, o texto de cima é reduzido e, se ainda assim não couber, a diagramação avisa com `frameOverflow` e o registro de reajustes anota `textScaled` e `overflow` para o bloco de cima. Um bloco ancorado no pé do contêiner (`bottom-left`) também mantém o seu lugar, mas nada o liga aos blocos de cima: um texto mais longo passa por cima dele, nada é apertado por causa dele e a sobreposição não é avisada.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+O bloco que cresce tem a altura do espaço livre, qualquer que seja o conteúdo, e por isso um estilo com fundo visível o pintaria inteiro: pinte o cartão na decoração do modelo e deixe o bloco de texto sem estilo.
+
 ### Quando o conteúdo não cabe
 
 Quando o conteúdo de um bloco é mais alto que o espaço que o grupo lhe dá, a diagramação tenta, em ordem, os passos da [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) e para no primeiro que faz o conteúdo caber: espaço livre até `maxHeight`, o grupo empurrando e cedendo, imagens menores, os outros blocos do grupo até o mínimo, texto menor, continuação em outra página. Estas configurações do bloco decidem até onde cada passo pode ir:
@@ -510,7 +536,7 @@ Um modelo com `extends` parte do modelo que nomeia (que por sua vez pode estende
 
 - Um campo como `area`, `header` ou `overflowTemplate` substitui o do pai. `grid` é mesclado chave a chave. `spread`, `gutter` e `role` também são herdados; `id`, `name` e `extends` são do próprio modelo.
 - `frames` e `groups` são mesclados **pelo nome**: uma entrada com o nome de uma herdada muda os campos que escreve e mantém o resto (`fit`, `overflow` e `padding` são mesclados chave a chave; `placement` é substituído inteiro); `remove: true` a remove; um nome novo é acrescentado depois dos herdados.
-- Os elementos de decoração são mesclados por `id` do mesmo jeito; um elemento com um id novo, ou sem id, é acrescentado.
+- Os elementos de decoração são mesclados por `id` do mesmo jeito; um elemento com um id novo, ou sem id, é acrescentado. Desde o postext 1.42, `{ id: 'cabecalho-par', remove: true }` em `decoration.elements` de um modelo filho ou de uma variante tira o elemento herdado com esse `id`, como `remove: true` faz com um bloco; um `id` que o modelo não herda não muda nada. Um elemento novo com o mesmo `id` pode seguir a remoção na mesma lista.
 
 `variants.recto` e `variants.verso` são escritos como um modelo e mesclados do mesmo jeito, numa página ímpar ou numa par. Eles se aplicam depois de toda a cadeia de `extends`, primeiro a variante da raiz. Uma página dupla tem os dois lados, então nenhuma variante se aplica a ela.
 
@@ -562,7 +588,7 @@ Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do
 
 ## Estilos de rótulo
 
-A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como os falantes de quadrinhos) e usa o estilo que a âncora ou o rótulo nomeia.
+A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como os falantes de quadrinhos) e usa o estilo que a âncora ou o rótulo nomeia. No Sandbox eles são editados em **Design › Figuras e tabelas › Estilos de rótulo** (desde o postext 1.42).
 
 ```ts
 labelStyles: [
@@ -653,6 +679,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escrita vertical para os rótulos deste estilo: caracteres em pé em células uma sob a outra, colunas da direita para a esquerda, como se rotula um mapa chinês ou japonês. O <code>writingMode</code> próprio de uma âncora prevalece.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> diz que o rótulo posto nesta âncora pode tocar os vizinhos, como o original o imprime: <code>labelOverlap</code> não é gerado para um par de que ele faça parte. Prevalece sobre o <code>overlap</code> do estilo. Desde o postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deixa os rótulos deste estilo fora da verificação <code>labelOverlap</code>, para um mapa cujos nomes se tocam no original. O <code>overlap</code> próprio de uma âncora prevalece. Desde o postext 1.42.</td>
     </tr>
   </tbody>
 </table>

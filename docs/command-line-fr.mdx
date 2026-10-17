@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'fr',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 43,
+  order: 45,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
 };
 
@@ -396,6 +396,8 @@ le téléchargement. Une famille introuvable est composée en EB Garamond sous s
 propre nom, pour que la mise en page et le PDF restent d’accord, et un
 avertissement `missingFont` la nomme. `postext info` indique d’où vient chaque
 famille.
+
+Un paquet qui laisse de côté les fichiers d’une famille sous licence peut lui nommer une famille libre de chasse proche (`fallback` dans les `fonts` du manifeste, depuis postext 1.42). `postext` cherche alors cette famille par les étapes ci-dessus et compose les faces que le livre n’embarque pas dans ses coupes de même graisse et de même inclinaison, sous le nom de la famille sous licence : la mise en page ressemble à celle obtenue avec les fichiers et `postext check` ne signale aucun `missingFont` pour elle. Une famille que le livre n’embarque qu’en partie ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier. Le PDF embarque la face libre.
 
 ## Pour les scripts et les agents
 

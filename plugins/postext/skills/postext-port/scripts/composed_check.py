@@ -20,13 +20,17 @@ the round-2 checks of a ported book, edition by edition.
           pageFenceLength, spreadMismatch, unclosedContainer), the page
           templates' config warnings, labelAnchorUnknown, labelOverflow
           (1.39: a label wider than its anchor at the style's minScale) and
-          calloutStyleExtendsUnknown / calloutStyleExtendsCycle (1.39);
+          calloutStyleExtendsUnknown / calloutStyleExtendsCycle (1.39),
+          figureWordsShared (1.42: a figure's words dropped for the first
+          figure's) and a labelOverlap that runs onto a symbol of the picture
+          (1.42: the label meets one of its `avoid` zones);
         - a composed page whose frames the HTML writes in another order than
           the Markdown sends content to them (reading order = source order);
       warns when two editions read the frames of one page fence in different
       orders, lists the reflow log (text or pictures the ladder scaled) and
       the notes to read edition by edition (slotEmpty, anchorUnlabelled,
-      labelOverlap: two labels that run into each other, 1.39).
+      labelOverlap: two labels that run into each other, 1.39; allow the
+      ones the source prints touching with `overlap: "allow"`, 1.42).
       --stress 1.3 lays every edition out again with each paragraph, heading
       and list item 30 % longer (its own words repeated, markup untouched),
       as the Cookbook bench does (C38): a warning the longer text raises
@@ -165,6 +169,47 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "check each edition by switching to it; read `fits` of every useTemplate proposal"),
     ((1, 40, 0), "wordTrackingSandbox", "the Sandbox's Word import takes the character spacing of the "
      "Word styles (sandbox_import_word characterSpacing)", "run postext import-docx or set the tracking by hand"),
+    ((1, 41, 0), "jumpsAcrossChapters", "continueIn 'page:<id>' reaches a page fence of a later chapter file "
+     "(one chapter file per article)", "keep an article and its jump page in one chapter file"),
+    ((1, 42, 0), "boxTracking", "calloutStyles[].body.letterSpacing tracks the paragraphs and list items of a box",
+     "wrap the box's paragraphs in a :::paragraphs{style} fence of a tracked paragraph style"),
+    ((1, 42, 0), "decorationRemove", "a child template or variant takes a base decoration element out with "
+     "{ id, remove: true }", "split the base so the element lives in the templates that have it"),
+    ((1, 42, 0), "slotRename", "the Sandbox renames a frame together with the slot of the page fences that "
+     "fill it (and in the other editions of a local project)", "rename the slot in every edition's Markdown by hand"),
+    ((1, 42, 0), "frameLook", "a frame's own colours (look) and the page palette (palette on a template or the "
+     "page fence): one callout style per box shape serves every tint",
+     "one thin `extends` style per tint that writes only the colours"),
+    ((1, 42, 0), "autoWidth", "width 'auto' on a frame is its longest line plus padding (up to maxWidth): a "
+     "title tab or a box as wide as its title in every edition",
+     "give every edition the width of its longest title and set the text smaller with fit.minScale"),
+    ((1, 42, 0), "labelIconInside", "label.icon.placement 'inside' puts the picture of a tab inside it, "
+     "before the words", "the picture stands beside the tab (placement 'beside'): draw the ring in the tab's own "
+     "art or accept the beside look and name the gap"),
+    ((1, 42, 0), "headingNumber", "{headingNumber} / {headingNumber.<frame>} in a decoration text, and a click "
+     "on decoration text over a frame", "the number as a page-fence attribute ({attr.n}) copied by hand"),
+    ((1, 42, 0), "tocFrame", "takes 'toc' (or :::toc inside a :::frame): the contents laid in a frame, with its "
+     "part rows, leaders and keep, over the page ground of the template",
+     "a flow page with a heading design for the contents, its ground in the design"),
+    ((1, 42, 0), "labelSymbols", "overlap 'allow' on an anchor or a label style; the picture's avoid zones "
+     "count as map symbols (labelOverlap carries withSymbol)",
+     "labelOverlap lists every touching name the source prints: read it as a note and name the count"),
+    ((1, 42, 0), "figureWordsShared", "figureWordsShared warns when a later figure of a resource says other "
+     "words than the first", "read the figures of one resource by eye: only the first figure's words show"),
+    ((1, 42, 0), "labelsEpubRtl", "the reflowable EPUB draws plain figure labels of a right-to-left book",
+     "those labels go to the hidden list of the reflowable EPUB; say so"),
+    ((1, 42, 0), "fontFallback", "fonts[].fallback: an open family stands in for a licensed one the bundle "
+     "leaves out", "the plain bundle is set in the generic face, wider than the real one: check the bundle "
+     "that carries the faces, not the plain one"),
+    ((1, 42, 0), "editionExport", "the Sandbox exports each edition's title and a pagination file "
+     "(layouts.<lang>.json) per edition", "set localized.<lang>.name by hand; only the primary edition opens paginated"),
+    ((1, 42, 0), "uprightVertical", "pictures upright in the frames of a vertical page's own flow",
+     "keep pictures out of the frames of a vertical page's flow"),
+    ((1, 42, 0), "carriedOutline", "index marks, anchors and headings in the part of a story that went on in "
+     "a later chapter's page are listed where that chapter sets them",
+     "put marks and anchors in the part that stays on the first page"),
+    ((1, 42, 0), "labelEditorSandbox", "Design > Figures & tables > Label styles, and label dragging on the "
+     "Folio's pages", "edit labelStyles through sandbox_set_config or the manifest"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)
@@ -523,10 +568,18 @@ FAIL_KINDS = {
     "templateDuplicate", "templateExtendsCycle", "templateExtendsUnknown", "frameDuplicate",
     "frameStyleUnknown", "frameAnchorUnknown", "frameMinMax", "groupFrameUnknown", "groupFrameTwice",
     "frameChainLoop", "overflowTargetUnknown", "labelStyleUnknown", "labelAnchorUnknown",
-    "labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle",
+    "labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle", "figureWordsShared",
 }
-# labelOverlap is a note: whether two labels that meet are wrong is the reader's call
+# labelOverlap between two labels is a note: whether two labels that meet are wrong is the reader's
+# call. A label that runs onto one of the picture's `avoid` zones (a symbol; 1.42, data.withSymbol) is a
+# finding: the symbol is a point the source keeps clear.
 NOTE_KINDS = {"slotEmpty", "anchorUnlabelled", "labelOverlap"}
+
+
+def _with_symbol(w: dict) -> bool:
+    """A labelOverlap (1.42) whose label meets a symbol of the picture."""
+    data = w.get("data") or {}
+    return bool(data.get("withSymbol")) or str(data.get("with", "")).startswith("symbol")
 
 
 def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dict:
@@ -540,7 +593,9 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dic
     for w in report.get("warnings") or []:
         kind = w.get("kind", "")
         entry = {"kind": kind, "message": w.get("message", ""), "at": w.get("at"), "page": w.get("page")}
-        if kind in NOTE_KINDS or w.get("severity") == "info":
+        if kind == "labelOverlap" and _with_symbol(w):
+            fails.append(entry)
+        elif kind in NOTE_KINDS or w.get("severity") == "info":
             notes.append(entry)
         elif kind == "frameOverflow" and stressed:
             props = ((w.get("data") or {}).get("proposals") or [])

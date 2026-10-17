@@ -306,6 +306,10 @@ export async function readBundle(
   // that left the licensed faces out, #904) is not an error: the face is
   // dropped with a warning, and the families the book sets in it fall back
   // as any missing font does (the Sandbox's font checks report them).
+  // A family that names a `fallback` (#978) is kept even with no file of
+  // its own: hosts set its missing faces in the fallback, and one warning
+  // says so in place of one per file.
+  const fallbackOf = new Map(fontSet.families.flatMap((f) => (f.fallback ? [[f.name, f.fallback] as const] : [])));
   const notPacked = new Set<string>();
   const read = await Promise.all(
     fontSet.files.map(async (f): Promise<BundleFontFile | null> => {
@@ -313,7 +317,7 @@ export async function readBundle(
         return { ...f, bytes: await readFile(f.file) };
       } catch {
         notPacked.add(f.fileId);
-        onWarning?.(`${f.family}: font file "${f.file}" is not in the bundle, the face is left out`);
+        if (!fallbackOf.has(f.family)) onWarning?.(`${f.family}: font file "${f.file}" is not in the bundle, the face is left out`);
         return null;
       }
     }),
@@ -322,7 +326,13 @@ export async function readBundle(
   const families: CustomFontFamily[] = [];
   for (const family of fontSet.families) {
     const variants = family.variants.filter((v) => !notPacked.has(v.fileId));
-    if (variants.length > 0) families.push(variants.length === family.variants.length ? family : { ...family, variants });
+    const fallback = fallbackOf.get(family.name);
+    if (fallback) {
+      if (variants.length < family.variants.length || family.variants.length === 0) {
+        onWarning?.(`${family.name}: ${variants.length === 0 ? 'none of its font files are' : 'some of its font files are not'} in the bundle, those faces are set in ${fallback}`);
+      }
+      families.push(variants.length === family.variants.length ? family : { ...family, variants });
+    } else if (variants.length > 0) families.push(variants.length === family.variants.length ? family : { ...family, variants });
     else onWarning?.(`${family.name}: none of its font files are in the bundle, it is left out`);
   }
 
@@ -438,6 +448,11 @@ export interface BundlePlan {
   /** Chapter file path → text, in book order (index-aligned with the
    *  content's chapters). */
   chapterFiles: { path: string; markdown: string }[];
+  /** The paths of the chapters a locale has of its own (`localized[…]` with
+   *  `chapters`), in book order, by locale: what a host that writes a
+   *  pagination file per language (`layouts.<locale>.json`) keys it by.
+   *  Absent for a locale that reads the primary chapters. */
+  localeChapterFiles?: Record<string, string[]>;
   warnings: string[];
 }
 
@@ -587,7 +602,14 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     // and no `fonts[]` entry names it, so the bundle opens with the
     // reader's own fallback for that family.
     if (family.redistributable === false) {
-      warnings.push(`${family.name}: font files left out of the export (the family is not redistributable)`);
+      // A family with a `fallback` (#978) is still named, with no file, so
+      // the book that opens without its faces sets them in the fallback.
+      if (family.fallback) {
+        warnings.push(`${family.name}: font files left out of the export (the family is not redistributable); the bundle names ${family.fallback} to set it in`);
+        fonts.push({ name: family.name, variants: [], redistributable: false, fallback: family.fallback });
+      } else {
+        warnings.push(`${family.name}: font files left out of the export (the family is not redistributable)`);
+      }
       continue;
     }
     const variants: BundleFontFamilySpec['variants'] = [];
@@ -603,7 +625,9 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
       files.push({ path, fileId: v.fileId, kind: 'font', owner: family.name });
       variants.push({ weight: v.weight, style: v.style, file: path });
     }
-    if (variants.length > 0) fonts.push({ name: family.name, variants });
+    if (variants.length > 0 || family.fallback) {
+      fonts.push({ name: family.name, variants, ...(family.fallback ? { fallback: family.fallback } : {}) });
+    }
   }
 
   const thumbExt = content.thumbnail ? extensionForImageMime(content.thumbnail.mime) : null;
@@ -636,11 +660,15 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
   };
   const perLocale = localized !== undefined && Object.values(localized).some((l) => l.chapters && l.chapters.length > 0);
   let chapterSpecs: BundleManifestV2['chapters'];
+  const localeChapterFiles: Record<string, string[]> = {};
   if (localized && perLocale && meta.locale) {
     const primary = writeChapters(content.chapters, localeFolder(meta.locale));
     const map: Record<string, BundleChapterSpec[]> = { [meta.locale]: primary };
     for (const [locale, entry] of Object.entries(localized)) {
-      map[locale] = entry.chapters && entry.chapters.length > 0 ? writeChapters(entry.chapters, localeFolder(locale)) : primary;
+      if (entry.chapters && entry.chapters.length > 0) {
+        map[locale] = writeChapters(entry.chapters, localeFolder(locale));
+        localeChapterFiles[locale] = map[locale].map((c) => c.file);
+      } else map[locale] = primary;
     }
     chapterSpecs = map;
   } else {
@@ -730,7 +758,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     ...(fonts.length > 0 ? { fonts } : {}),
     ...(localized ? { localized: localizedSpecs } : {}),
   };
-  return { manifest, files, chapterFiles, warnings };
+  return { manifest, files, chapterFiles, ...(Object.keys(localeChapterFiles).length > 0 ? { localeChapterFiles } : {}), warnings };
 }
 
 /** Resource fields a locale may word differently. */

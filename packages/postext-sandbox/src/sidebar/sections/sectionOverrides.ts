@@ -41,6 +41,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
       return config.chipStyles !== undefined;
     case 'markStyles':
       return config.markStyles !== undefined;
+    case 'labelStyles':
+      return (config.labelStyles ?? []).length > 0;
     case 'comicsPanels': {
       const c = config.comics;
       return c !== undefined && (

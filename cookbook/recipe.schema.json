@@ -492,6 +492,34 @@
               "maxLength": 8,
               "description": "Characters the pages take from a font of the system, named in the write-up (check C36)."
             },
+            "imageMb": {
+              "type": "number",
+              "minimum": 0.9,
+              "maximum": 2,
+              "description": "Megabytes of page images the edition means to publish (check C20)."
+            },
+            "cardKb": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "card": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 250
+                },
+                "card480": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "og": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 250
+                }
+              },
+              "description": "Kilobytes a card file means to weigh where it passes its aim (check C20)."
+            },
             "console": {
               "type": "array",
               "items": {

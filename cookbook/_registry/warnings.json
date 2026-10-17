@@ -7730,5 +7730,59 @@
         "it": "labelOverlap"
       }
     }
+  },
+  "figureWordsShared": {
+    "source": "engine",
+    "label": {
+      "en": "Figure words not shown",
+      "es": "Palabras de figura que no se muestran",
+      "ca": "Paraules de figura que no es mostren",
+      "zh": "图的文字未显示",
+      "ar": "كلمات شكل لا تظهر",
+      "ja": "表示されない図の文言",
+      "pt": "Palavras de figura que não aparecem",
+      "fr": "Mots de figure non affichés",
+      "de": "Nicht angezeigte Worte einer Abbildung",
+      "it": "Parole di figura non mostrate"
+    },
+    "cause": {
+      "en": "A figure gives alt text, a caption or a note to a resource that an earlier figure of the same chapter already worded, and they differ. A resource has one set of words in a chapter, so the pages show the first figure's and leave the later figure's out.",
+      "es": "Una figura da texto alternativo, un pie o una nota a un recurso al que una figura anterior del mismo capítulo ya dio los suyos, y son distintos. Un recurso tiene un solo juego de palabras en un capítulo, así que las páginas muestran las de la primera figura y omiten las de la posterior.",
+      "ca": "Una figura dona text alternatiu, un peu o una nota a un recurs al qual una figura anterior del mateix capítol ja va donar els seus, i són diferents. Un recurs té un sol joc de paraules en un capítol, de manera que les pàgines mostren les de la primera figura i ometen les de la posterior.",
+      "zh": "某幅图为一个资源写了替代文字、题注或注释，而同一章中前面的图已经给过这个资源文字，两者又不同。一个资源在一章里只有一套文字，所以页面显示第一幅图的，略去后面那幅图的。",
+      "ar": "يعطي شكلٌ موردًا نصًا بديلًا أو تعليقًا أو ملاحظة سبق أن أعطاه شكلٌ سابق في الفصل نفسه ما يخصه، والنصان مختلفان. وللمورد في الفصل مجموعة كلمات واحدة، فتعرض الصفحات كلمات الشكل الأول وتُسقط كلمات الشكل اللاحق.",
+      "ja": "ある図が、同じ章の前の図がすでに文言を与えたリソースに、異なる代替テキスト、キャプション、注記を与えています。リソースの文言は一つの章では一組だけなので、ページには最初の図のものが表示され、後の図のものは省かれます。",
+      "pt": "Uma figura dá texto alternativo, legenda ou nota a um recurso a que uma figura anterior do mesmo capítulo já deu os seus, e eles diferem. Um recurso tem um só conjunto de palavras em um capítulo, então as páginas mostram as da primeira figura e omitem as da posterior.",
+      "fr": "Une figure donne un texte alternatif, une légende ou une note à une ressource à laquelle une figure antérieure du même chapitre a déjà donné les siens, et ils diffèrent. Une ressource n'a qu'un jeu de mots dans un chapitre : les pages affichent ceux de la première figure et omettent ceux de la figure postérieure.",
+      "de": "Eine Abbildung gibt einer Ressource Alternativtext, Bildunterschrift oder Anmerkung, der eine frühere Abbildung desselben Kapitels schon ihre gegeben hat, und sie unterscheiden sich. Eine Ressource hat in einem Kapitel nur einen Satz Worte, deshalb zeigen die Seiten die der ersten Abbildung und lassen die der späteren aus.",
+      "it": "Una figura dà testo alternativo, didascalia o nota a una risorsa a cui una figura precedente dello stesso capitolo ha già dato i suoi, e sono diversi. Una risorsa ha un solo insieme di parole in un capitolo, quindi le pagine mostrano quelle della prima figura e omettono quelle della successiva."
+    },
+    "fix": {
+      "en": "Give the later figure a resource of its own: a second resource that points at the same picture file, with its own caption and number.",
+      "es": "Dale a la figura posterior un recurso propio: un segundo recurso que apunte al mismo archivo de imagen, con su propio pie y su número.",
+      "ca": "Doneu a la figura posterior un recurs propi: un segon recurs que apunti al mateix fitxer d'imatge, amb el seu propi peu i número.",
+      "zh": "给后面那幅图单独建一个资源：另一个指向同一图片文件的资源，带有自己的题注和编号。",
+      "ar": "امنح الشكل اللاحق موردًا خاصًا به: موردًا ثانيًا يشير إلى ملف الصورة نفسه، بتعليقه ورقمه.",
+      "ja": "後の図に専用のリソースを割り当ててください。同じ画像ファイルを指す二つ目のリソースを作り、専用のキャプションと番号を持たせます。",
+      "pt": "Dê à figura posterior um recurso próprio: um segundo recurso que aponte para o mesmo arquivo de imagem, com legenda e número próprios.",
+      "fr": "Donnez à la figure postérieure sa propre ressource : une seconde ressource qui pointe vers le même fichier d'image, avec sa légende et son numéro.",
+      "de": "Geben Sie der späteren Abbildung eine eigene Ressource: eine zweite Ressource, die auf dieselbe Bilddatei zeigt, mit eigener Bildunterschrift und Nummer.",
+      "it": "Dai alla figura successiva una risorsa propria: una seconda risorsa che punti allo stesso file d'immagine, con la sua didascalia e il suo numero."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "figureWordsShared",
+        "es": "figureWordsShared",
+        "ca": "figureWordsShared",
+        "zh": "figureWordsShared",
+        "ar": "figureWordsShared",
+        "ja": "figureWordsShared",
+        "pt": "figureWordsShared",
+        "fr": "figureWordsShared",
+        "de": "figureWordsShared",
+        "it": "figureWordsShared"
+      }
+    }
   }
 }

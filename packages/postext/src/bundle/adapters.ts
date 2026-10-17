@@ -11,9 +11,12 @@ import { chainSvgFontProviders, inlineSvgFontsDetailedSync, type SvgFontProvider
 import { registerFontBytes, registeredFontProvider, registeredFontSyncProvider } from '../svg/fontRegistry';
 import { decodeSvgImage, prepareSvgMarkup, svgPictureFontWarning } from '../svg/image';
 import type { PostextBundle } from './api';
+import type { BundleFontFile } from './types';
 import { mimeForFile } from './manifest';
 import { videoMimeType } from '../video/url';
 import { evictFontFamilies } from '../measure/font';
+import { fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from '../fonts/fallback';
+import { STANDARD_FONT_VARIANTS } from '../fonts/usage';
 import { syncFontSet } from '../fonts/fontSet';
 import type { FontFaceSetLike } from '../fonts/faces';
 
@@ -112,20 +115,35 @@ function pictureBlob(bundle: BundleSource, r: Resource, inkHex: string | null, o
   return new Blob([bytes.slice()], { type: mimeForFile(fileId) });
 }
 
+/** What {@link loadBundleFonts} takes besides the font set. */
+export interface LoadBundleFontsOptions {
+  /** The bytes of a face of the family a missing face is set in (#978),
+   *  for a family of `bundle.config.customFonts` that names a `fallback`
+   *  the bundle does not carry. Answers null for a face it has not. */
+  fallback?: (family: string, weight: number, style: 'normal' | 'italic') => Promise<ArrayBuffer | Uint8Array | null | undefined> | ArrayBuffer | Uint8Array | null | undefined;
+}
+
 /** Register the bundle's fonts with the browser (`document.fonts` by
  *  default) so layout measures text with them, and drop what was measured
  *  in their families before. Call it — and await it — before
- *  `buildDocument`. Resolves to the faces added. */
+ *  `buildDocument`. Resolves to the faces added. A family that names a
+ *  `fallback` (#978) gets the regular, the bold and their italics of the
+ *  slants it has no file of from that family, added under its own name: the
+ *  bundle's faces of the fallback, else `options.fallback`'s. */
 export async function loadBundleFonts(
-  bundle: Pick<PostextBundle, 'fonts'>,
+  bundle: Pick<PostextBundle, 'fonts'> & Partial<Pick<PostextBundle, 'config'>>,
   fontSet: FontFaceSet | undefined = typeof document !== 'undefined' ? document.fonts : undefined,
+  options: LoadBundleFontsOptions = {},
 ): Promise<FontFace[]> {
   // SVG pictures embed the same faces (#630): an image cannot see
   // `document.fonts`, and a FontFace keeps no bytes.
   for (const f of bundle.fonts) registerFontBytes(f.family, f.weight, f.style, bytesOfFace(f.bytes));
+  const stand = await standInFaces(bundle, options);
+  for (const f of stand) registerFontBytes(f.family, f.weight, f.style, f.bytes);
   if (!fontSet || typeof FontFace === 'undefined') return [];
-  const faces = await Promise.all(bundle.fonts.map(async (f) => {
-    const face = new FontFace(f.family, f.bytes, { weight: String(f.weight), style: f.style });
+  const own = bundle.fonts.map((f) => ({ family: f.family, weight: f.weight, style: f.style, bytes: f.bytes as ArrayBuffer | Uint8Array }));
+  const faces = await Promise.all([...own, ...stand].map(async (f) => {
+    const face = new FontFace(f.family, f.bytes as BufferSource, { weight: String(f.weight), style: f.style });
     await face.load();
     return face;
   }));
@@ -133,10 +151,33 @@ export async function loadBundleFonts(
   // was measured in these families before they arrived is dropped (#629).
   for (const face of faces) fontSet.add(face);
   if (faces.length > 0) {
-    evictFontFamilies(new Set(bundle.fonts.map((f) => f.family)));
+    evictFontFamilies(new Set([...bundle.fonts.map((f) => f.family), ...stand.map((f) => f.family)]));
     syncFontSet(fontSet as unknown as FontFaceSetLike, { evict: false });
   }
   return faces;
+}
+
+/** The faces a family with a `fallback` has no file for, as its fallback's
+ *  bytes (the bundle's own, else the host's), named for the family. */
+async function standInFaces(
+  bundle: Pick<PostextBundle, 'fonts'> & Partial<Pick<PostextBundle, 'config'>>,
+  options: LoadBundleFontsOptions,
+): Promise<{ family: string; weight: number; style: 'normal' | 'italic'; bytes: Uint8Array }[]> {
+  const out: { family: string; weight: number; style: 'normal' | 'italic'; bytes: Uint8Array }[] = [];
+  for (const { family, fallback, variants } of fontFallbackFamilies(bundle.config?.customFonts)) {
+    const carried = bundle.fonts.filter((f) => f.family.toLowerCase() === fallback.toLowerCase());
+    const own = [...variants, ...bundle.fonts.filter((f) => f.family.toLowerCase() === family.toLowerCase())];
+    for (const use of STANDARD_FONT_VARIANTS) {
+      if (hasOwnStyle(own, use.style)) continue;
+      const sameStyle = carried.filter((f) => f.style === use.style);
+      const pool = sameStyle.length > 0 ? sameStyle : carried;
+      const best = pool.length > 0 ? pool.reduce((a, f) => (Math.abs(f.weight - use.weight) < Math.abs(a.weight - use.weight) ? f : a), pool[0]!) : undefined;
+      const answer = best ? best.bytes : await options.fallback?.(fallback, use.weight, use.style);
+      if (!answer) continue;
+      out.push({ family, weight: use.weight, style: use.style, bytes: answer instanceof ArrayBuffer ? new Uint8Array(answer) : answer });
+    }
+  }
+  return out;
 }
 
 /** Decode the bundle's pictures and register them with the canvas backend
@@ -267,23 +308,39 @@ export interface BundleFontProviderOptions<Fallback extends Uint8Array | Uint8Ar
 
 /** A `fontProvider` for `postext-pdf`'s `renderToPdf`: the bundle's own
  *  faces (nearest weight, same style first), else `fallback`, which gets
- *  the renderer's `request` (see {@link BundleFontProviderOptions}). */
+ *  the renderer's `request` (see {@link BundleFontProviderOptions}). A
+ *  family of `bundle.config.customFonts` that names a `fallback` family
+ *  (#978) has the faces it has no file of (all of them, or the slant it has
+ *  none of) taken from that family: the bundle's own faces of it, else
+ *  `options.fallback` asked for it. */
 export function bundleFontProvider<Fallback extends Uint8Array | Uint8Array[] = Uint8Array>(
-  bundle: Pick<PostextBundle, 'fonts'>,
+  bundle: Pick<PostextBundle, 'fonts'> & Partial<Pick<PostextBundle, 'config'>>,
   options: BundleFontProviderOptions<Fallback> = {},
 ): (family: string, weight: number, style: 'normal' | 'italic', request?: BundleFontRequest) => Promise<Uint8Array | Fallback> {
-  return async (family, weight, style, request) => {
-    const faces = bundle.fonts.filter((f) => f.family.toLowerCase() === family.toLowerCase());
-    if (faces.length === 0) {
-      if (options.fallback) return options.fallback(family, weight, style, request);
-      throw new Error(`Font family "${family}" is not in the bundle and no fallback was given`);
-    }
+  const nearest = (faces: BundleFontFile[], weight: number, style: 'normal' | 'italic'): BundleFontFile => {
     const sameStyle = faces.filter((f) => f.style === style);
     const pool = sameStyle.length > 0 ? sameStyle : faces;
-    const face = pool.reduce((best, f) => (Math.abs(f.weight - weight) < Math.abs(best.weight - weight) ? f : best), pool[0]!);
+    return pool.reduce((best, f) => (Math.abs(f.weight - weight) < Math.abs(best.weight - weight) ? f : best), pool[0]!);
+  };
+  const bytesOf = async (face: BundleFontFile): Promise<Uint8Array> => {
     const bytes = new Uint8Array(face.bytes);
     if (face.format !== 'woff2') return bytes;
     if (!options.decodeWoff2) throw new Error(`"${face.file}" is WOFF2: pass decodeWoff2 (postext-pdf's decompressWoff2)`);
     return options.decodeWoff2(bytes);
+  };
+  const facesOf = (family: string): BundleFontFile[] => bundle.fonts.filter((f) => f.family.toLowerCase() === family.toLowerCase());
+  return async (family, weight, style, request) => {
+    const faces = facesOf(family);
+    const stands = fontFallbackOf(bundle.config?.customFonts, family);
+    if (stands && !faces.some((f) => f.style === style)) {
+      const standFaces = facesOf(stands);
+      if (standFaces.length > 0) return bytesOf(nearest(standFaces, weight, style));
+      if (options.fallback) return options.fallback(stands, weight, style, request);
+    }
+    if (faces.length === 0) {
+      if (options.fallback) return options.fallback(family, weight, style, request);
+      throw new Error(`Font family "${family}" is not in the bundle and no fallback was given`);
+    }
+    return bytesOf(nearest(faces, weight, style));
   };
 }

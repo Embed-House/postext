@@ -252,6 +252,7 @@ Apéndice. Una fuente de presets es un directorio (servido por HTTP) cuya raíz 
   "fonts": [
     {
       "name": "Some Family",           // nombre de familia usado por la configuración
+      "fallback": "Source Serif 4",    // opcional: familia abierta de ancho parecido para las caras que el paquete deja fuera
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Notas:
 - El editor de código del SVG solo permite escribir dentro de los nodos de texto (resaltados) para que una figura no se rompa por accidente; el botón de candado de su cabecera abre todo el código — coordenadas, colores, estructura — y al volver a bloquear se vuelven a detectar los nodos de texto.
 - `table.model` es un `TableModel` de Postext: `rows` es un array de celdas por filas (`content` y, opcionalmente, `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` el número de filas de cabecera iniciales y `columnWidths` un array opcional de pesos relativos de columna. `table.styleId` nombra, opcionalmente, uno de los `tableStyles` de la configuración.
 - Los archivos de fuente se guardan en IndexedDB con ids derivados del id del preset y la ruta del archivo, y las familias se añaden a `config.customFonts` al aplicar el preset; un `index.json` ausente o mal formado no produce ningún preset en lugar de un error.
+- Una familia que el paquete no puede entregar se lista con `"redistributable": false` y `variants` vacío; añade `"fallback"` con el nombre de una familia abierta de ancho parecido y el Sandbox, la línea de comandos y los anfitriones del motor componen sus caras con ella (desde postext 1.42). Sin él, el libro cae en la fuente por defecto y sus líneas se cortan en otro sitio.
 - `<directorio-del-preset>/fingerprint.json` es opcional y, en la ruta de desarrollo, **virtual**: cuando no existe tal archivo, `GET` responde `{ "fingerprint": "<sha1 hex>", "files": <n> }` calculado a partir de los metadatos de los archivos del directorio (ruta relativa, fecha de modificación y tamaño de cada archivo hasta cuatro niveles de profundidad, omitiendo los archivos ocultos y `node_modules`), nunca a partir de su contenido, con `Cache-Control: no-store`. El sandbox lo consulta para seguir las ediciones del paquete (consulta [Panel de libros](/es/docs/sandbox#panel-de-libros)). Un servidor estático puede servir un `fingerprint.json` real con la misma forma, o ninguno, en cuyo caso sus presets no se siguen.

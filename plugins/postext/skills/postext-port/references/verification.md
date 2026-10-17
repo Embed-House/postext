@@ -266,7 +266,7 @@ those lines, or run the script.
   `::::page{id="<id>"}` comes after the page the story is on (misspelt id, the `{attr.sigue}` attribute
   missing from the fence, or the fence comes before). `--json` `data`: `template`, `frame`, `target`,
   `configPath`, `before`. The rest went on on the next page. Fix: give the later fence that id, or correct the
-  name; jumps go forward within one chapter file only.
+  name; jumps go forward, within the chapter file or (≥ 1.41) into a later one.
 - `WARN labelAnchorUnknown` (postext ≥ 1.37): a `::label` names an anchor its figure's resource lacks; it
   is not drawn (`known` lists the anchors). `NOTE anchorUnlabelled`: an anchor with a label style has no
   word in this edition (a missing translation, or take the style off).
@@ -278,9 +278,20 @@ those lines, or run the script.
   edition's Markdown. `WARN labelOverflow` (≥ 1.39): a label is still wider than its anchor's `width` at the
   style's `minScale` (`text`, `anchor`, `widthPct`, `scale`). Fix: widen `width`, shorten the word, or lower
   `minScale`. Run `postext check --json` for every language of a map; `composed_check.py` fails on
-  `labelOverflow` and lists `labelOverlap` as a note. The contrast check skips a label bare on the picture
+  `labelOverflow` and lists `labelOverlap` between two labels as a note. From 1.42 an anchor or a label style
+  with `overlap: "allow"` is left out of the check (names the source prints touching), and a label that runs
+  onto one of the picture's `avoid` zones (the map's dots and icons) carries `withSymbol` (1-based) and
+  `with: "symbol N"` (`count` = zones met): `composed_check.py` fails on that one, since the symbol is a point
+  the source keeps clear (move the anchor, or `overlap: "allow"` when the label is meant to touch its dot).
+  The contrast check skips a label bare on the picture
   (give a busy ground a halo or a plate); part palettes, the contrast check and the print preflight read
   label colours.
+- `WARN figureWordsShared` (postext ≥ 1.42): a later `:::figure` of a resource says other `alt`, `caption` or
+  `note` than the resource's first figure of the chapter (or words the first left unsaid), and a resource has one
+  set of words per chapter, so the later words are not shown (`resourceId`, `words`; source range on the dropped
+  `::caption[...]` or attribute). Fix: declare a second resource on the same `fileId` (new id, its own anchors if
+  it has labels) and give that figure the second resource; it takes its own number in the type's sequence.
+  `lint_project.py` raises it before the build and `composed_check.py` fails on it.
 - `WARN calloutStyleExtendsUnknown` / `calloutStyleExtendsCycle` (postext ≥ 1.39): `calloutStyles[i].extends`
   names no style, or the chain loops (`a → b → a`); the style stands alone, without the parent's fields.
   `lint_project.py` reports both before the engine does.
@@ -476,6 +487,7 @@ the page images instead of claiming the port is visually verified.
 | Empty boxes in the PDF | `missingGlyph`: the face lacks the character; rebuild the subset from the final text (playbooks E6) |
 | Bold Chinese headings print regular | a variable font: cut a static 700 instance (`variableFontDefaultInstance`) |
 | Vertical brackets turned instead of vertical forms | the face lost `vert` in subsetting: use `fonts.py subset`, which keeps it |
+| The plain bundle (licensed faces left out) overflows every twentieth frame and fills the report with `missingFont` | the family has no file and no stand-in: set `fonts[].fallback` to an open family of about the same width (postext ≥ 1.42; `fonts.py width`, `preset_kit.py pack --fallback`), and check the bundle that carries the faces for the final PDF |
 | A vertical book's spreads read left to right in the PDF viewer | Chrome's viewer ignores `/Direction /R2L`; Acrobat and Foxit follow it |
 | Comic picture shown whole with bands (`comicPanelLetterbox`) | the cell's shape leaves the safe area: change the split, shrink the safe area, or `fit=contain` + `bg` on purpose |
 | Balloon on a face, or below its speaker | mark the face (`anchors[].face`) or an `avoid` zone; give the panel's top more room; pin with `at=` |

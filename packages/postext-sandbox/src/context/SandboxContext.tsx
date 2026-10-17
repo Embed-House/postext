@@ -1050,6 +1050,13 @@ export function useSandboxBookActions(): {
   };
 }
 
+/** The operations on the other editions a local project keeps, without
+ *  subscribing to any state (#979). */
+export function useSandboxEditionActions(): { renameFrameInEditions: ProjectActions['renameFrameInEditions'] } {
+  const store = useStore();
+  return { renameFrameInEditions: store.projectActions.renameFrameInEditions };
+}
+
 /** The provider of a preset, read on demand (see
  *  `SandboxStore.presetProvider`). */
 export function useSandboxPresetProvider(): SandboxStore['presetProvider'] {

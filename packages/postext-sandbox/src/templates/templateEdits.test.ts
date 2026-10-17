@@ -6,11 +6,15 @@ import {
   createTemplate,
   duplicateTemplate,
   frameInherited,
+  inheritedDecoration,
+  joinDecoration,
   removeFrame,
   removeTemplate,
   renameFrame,
   renameTemplate,
+  setInheritedElementHidden,
   slugify,
+  splitDecoration,
   templateFromLayout,
   uniqueName,
   updateFrame,
@@ -167,5 +171,51 @@ describe('from a page', () => {
       flow: true,
     });
     expect(t.frames![0]!.takes).toBe('h1');
+  });
+});
+
+describe('inherited decoration (#975)', () => {
+  const text = (id: string) => ({ kind: 'text', id, content: id, placement: { anchor: { to: 'container', edge: 'top-left' } } }) as never;
+  const T: PageTemplate[] = [
+    { id: 'base', decoration: { elements: [text('head'), text('head-even'), text('folio')] } },
+    { id: 'child', extends: 'base', decoration: { elements: [text('badge')] } },
+  ];
+
+  it('lists what the template takes from its parents, not what it draws itself', () => {
+    expect(inheritedDecoration(T, 'child', 'base').elements.map((e) => e.id)).toEqual(['head', 'head-even', 'folio']);
+    expect(inheritedDecoration(T, 'base', 'base').elements).toEqual([]);
+    // A variant inherits its base's elements too.
+    expect(inheritedDecoration(T, 'child', 'verso').elements.map((e) => e.id)).toEqual(['head', 'head-even', 'folio', 'badge']);
+  });
+
+  it('hides and shows an inherited element with a removal entry in the scope', () => {
+    const hidden = setInheritedElementHidden(T, 'child', 'base', 'head-even', true);
+    expect(hidden[1]!.decoration!.elements).toEqual([text('badge'), { id: 'head-even', remove: true }]);
+    expect(resolvePageTemplate({ pageTemplates: hidden }, 'child')!.decoration.elements.map((e) => e.id)).toEqual(['head', 'folio', 'badge']);
+    // Still listed, to be switched on again.
+    expect(inheritedDecoration(hidden, 'child', 'base').hidden).toEqual(['head-even']);
+    expect(hidden[0]).toBe(T[0]);
+    const shown = setInheritedElementHidden(hidden, 'child', 'base', 'head-even', false);
+    expect(shown[1]!.decoration).toEqual({ elements: [text('badge')] });
+    // The last removal takes the decoration key off a scope that has nothing else.
+    const lone = setInheritedElementHidden([T[0]!, { id: 'x', extends: 'base' }], 'x', 'verso', 'head', true);
+    expect(lone[1]!.variants!.verso!.decoration).toEqual({ elements: [{ id: 'head', remove: true }] });
+    expect(setInheritedElementHidden(lone, 'x', 'verso', 'head', false)[1]!.variants).toBeUndefined();
+  });
+
+  it('splits a decoration into its elements and removals and joins them back', () => {
+    const d = { elements: [text('a'), { id: 'b', remove: true as const }, text('c')] };
+    const { slot, hidden } = splitDecoration(d);
+    expect(slot.elements.map((e) => e.id)).toEqual(['a', 'c']);
+    expect(hidden).toEqual(['b']);
+    expect(joinDecoration(slot, hidden)!.elements.map((e) => e.id)).toEqual(['a', 'c', 'b']);
+    expect(joinDecoration({ elements: [] }, [])).toBeUndefined();
+  });
+
+  it('removing a template merges its parent’s removals into the child', () => {
+    const hidden = setInheritedElementHidden(T, 'child', 'base', 'folio', true);
+    const merged = removeTemplate(hidden, 'base');
+    expect(merged).toHaveLength(1);
+    expect(merged[0]!.decoration!.elements.map((e) => e.id)).toEqual(['head', 'head-even', 'badge']);
   });
 });

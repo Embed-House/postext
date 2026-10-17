@@ -6,6 +6,7 @@ import { metadataText } from '../frontmatter';
 import {
   resolvePlaceholders as legacyResolvePlaceholders,
   attrPlaceholderKey,
+  headingNumberPlaceholder,
   markPlaceholder,
   PLACEHOLDER_NAME_RE,
   type PageMarks,
@@ -106,6 +107,11 @@ export interface DesignPlaceholderContext {
   marksFor?: (key: string) => PageMarks | undefined;
   /** Only present in heading and part contexts. */
   heading?: HeadingPlaceholderInfo;
+  /** On a composed page (#984): the counter of the first numbered heading
+   *  its frames hold (`{headingNumber}`), and of the one each frame holds
+   *  (`{headingNumber.<frame>}`), in the document's digits. */
+  headingNumber?: string;
+  headingNumberByFrame?: Record<string, string>;
   /** A composed page's fence attributes (`::::page{template fondo=…}`),
    *  for `{attr.<key>}` in its template's decoration and running heads
    *  (#855). They win over the chapter heading's. */
@@ -127,6 +133,10 @@ const HEADER_FOOTER_PLACEHOLDERS = new Set([
   'partTitle',
   'partNumber',
 ]);
+
+/** What the decoration of a composed page reads (#984): the running head's
+ *  names and the counter of the heading its frames take. */
+const COMPOSED_PLACEHOLDERS = new Set([...HEADER_FOOTER_PLACEHOLDERS, 'headingNumber']);
 
 const HEADING_PLACEHOLDERS = new Set([
   'pageNumber',
@@ -155,7 +165,7 @@ const HEADING_PLACEHOLDERS = new Set([
 ]);
 
 export function allowedPlaceholdersFor(kind: DesignContextKind): Set<string> {
-  return kind === 'heading' || kind === 'part' ? HEADING_PLACEHOLDERS : HEADER_FOOTER_PLACEHOLDERS;
+  return kind === 'heading' || kind === 'part' ? HEADING_PLACEHOLDERS : kind === 'composed' ? COMPOSED_PLACEHOLDERS : HEADER_FOOTER_PLACEHOLDERS;
 }
 
 /** Whether `name` is a valid placeholder in a slot of the given kind. Covers
@@ -164,6 +174,7 @@ export function allowedPlaceholdersFor(kind: DesignContextKind): Set<string> {
  *  `lastMark.<key>` marks. */
 export function isAllowedPlaceholder(name: string, kind: DesignContextKind): boolean {
   if (allowedPlaceholdersFor(kind).has(name) || attrPlaceholderKey(name) !== undefined) return true;
+  if (kind === 'composed' && headingNumberPlaceholder(name) !== undefined) return true;
   // `{leader}`: the contents part rows' (#889), a part context.
   if (name === 'leader') return kind === 'part';
   return (kind === 'header' || kind === 'footer') && markPlaceholder(name) !== undefined;
@@ -269,6 +280,8 @@ export function resolveDesignPlaceholders(
       bookTotalPages: ctx.bookTotalPages,
       marksFor: ctx.marksFor,
       numerals: ctx.numerals,
+      ...(ctx.headingNumber !== undefined ? { headingNumber: ctx.headingNumber } : {}),
+      ...(ctx.headingNumberByFrame ? { headingNumberByFrame: ctx.headingNumberByFrame } : {}),
     };
     return legacyResolvePlaceholders(template, legacy, options);
   }

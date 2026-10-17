@@ -9,6 +9,7 @@
 import type {
   CalloutPaddingConfig,
   ColorValue,
+  DesignElement,
   DesignSlot,
   Dimension,
   ElementPlacement,
@@ -132,8 +133,10 @@ export interface FrameConfig {
   flow?: boolean;
   /** Chain: content that does not fit continues in this frame. */
   next?: string;
-  /** Receives the first heading of this level that names no slot. */
-  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  /** Receives the first heading of this level that names no slot, or
+   *  (`'toc'`, #983) the rows of the page's `:::toc` that name no slot,
+   *  laid by the contents' own rules (part rows, leaders, `keep`). */
+  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc';
   /** Never moves or resizes. */
   pin?: boolean;
   /** Share of a group's spare space this frame takes. Default 0. */
@@ -152,8 +155,30 @@ export interface FrameConfig {
   direction?: 'ltr' | 'rtl';
   /** Ruled lines across the frame at a pitch (#914). */
   rules?: FrameRulesConfig;
+  /** What this frame changes of its callout style's look (#976): colours,
+   *  and the tracking of the body. A book with one box in a dozen tints
+   *  keeps one style and writes the tint here. Merged key by key over the
+   *  parent's in a patch. */
+  look?: FrameLook;
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
+}
+
+/** The fields of a callout style a frame may set for itself (#976), named
+ *  and nested as in {@link CalloutStyleConfig}. A `background` also turns
+ *  the style's fill on. */
+export interface FrameLook {
+  background?: ColorValue;
+  border?: { color?: ColorValue };
+  stripe?: { color?: ColorValue };
+  icon?: { color?: ColorValue };
+  marker?: { color?: ColorValue; rule?: { color?: ColorValue } };
+  titleStyle?: { color?: ColorValue };
+  /** Colours of the box's text, and its tracking (see
+   *  `CalloutBodyStyleConfig.letterSpacing`, #974). */
+  body?: { color?: ColorValue; boldColor?: ColorValue; italicColor?: ColorValue; letterSpacing?: Dimension };
+  /** The label tab's colours; only on a style that has a tab. */
+  label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
 export interface FrameGroupConfig {
@@ -184,6 +209,21 @@ export interface PageTemplateGrid {
   rowGap?: Dimension;
 }
 
+/** In a template patch (`extends`, `variants`): takes the decoration
+ *  element `id` of the template it inherits out (#975), as `remove: true`
+ *  does for a frame or a group. An id the patch inherits no element under
+ *  changes nothing. */
+export interface DecorationRemoval {
+  id: string;
+  remove: true;
+}
+
+/** The decoration of a template or of a patch: elements, and in a patch
+ *  the removals of inherited ones. */
+export interface TemplateDecoration {
+  elements: (DesignElement | DecorationRemoval)[];
+}
+
 /** The fields a variant or a child template may override. */
 export interface PageTemplatePatch {
   /** The rectangle frame coordinates refer to. Default `'content'` (the
@@ -196,8 +236,8 @@ export interface PageTemplatePatch {
   /** Merged by `name` over the parent's (`remove: true` drops one). */
   groups?: FrameGroupConfig[];
   /** Elements merged by `id` over the parent's; elements with no id are
-   *  added. */
-  decoration?: DesignSlot;
+   *  added; `{ id, remove: true }` takes an inherited one out (#975). */
+  decoration?: TemplateDecoration;
   /** `false` hides; unset inherits the running section's. */
   header?: DesignSlot | false;
   footer?: DesignSlot | false;
@@ -253,6 +293,10 @@ export interface LabelStyle {
   /** `'vertical-rl'` sets the label in vertical writing (#902), unless its
    *  anchor says otherwise. Default `'horizontal-tb'`. */
   writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** `'allow'` leaves the labels set in this style out of the
+   *  `labelOverlap` check: a map whose names touch in the source (#977).
+   *  An anchor's `overlap` wins. Default `'check'`. */
+  overlap?: 'check' | 'allow';
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)
@@ -310,7 +354,7 @@ export interface ResolvedFrame {
   wrap?: 'contour';
   flow: boolean;
   next?: string;
-  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  takes?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc';
   pin: boolean;
   grow: number;
   shrink: number;
@@ -323,6 +367,9 @@ export interface ResolvedFrame {
   direction?: 'ltr' | 'rtl';
   /** Ruled lines across the frame (#914), as written (lengths checked). */
   rules?: FrameRulesConfig;
+  /** What the frame changes of its style's look (#976), colours and
+   *  lengths checked. */
+  look?: FrameLook;
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;

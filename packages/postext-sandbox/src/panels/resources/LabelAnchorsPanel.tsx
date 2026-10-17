@@ -388,6 +388,20 @@ function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, p
           ]}
         />
       </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span id={`${uid}-overlap`} className="w-24 shrink-0 text-(--slate)">{labels.resourceLabelAnchorsOverlap}</span>
+        <SegmentedControl<'check' | 'allow'>
+          size="sm"
+          value={a.overlap ?? 'check'}
+          onValueChange={(v) => set({ overlap: v })}
+          ariaLabel={labels.resourceLabelAnchorsOverlap}
+          ariaLabelledBy={`${uid}-overlap`}
+          options={[
+            { value: 'check', label: labels.resourceLabelAnchorsOverlapCheck },
+            { value: 'allow', label: labels.resourceLabelAnchorsOverlapAllow },
+          ]}
+        />
+      </div>
       {/* Typing a number is one step of Undo, recorded at its first change. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" onFocusCapture={() => beginEdit(i)}>
         <span className="inline-flex items-center gap-2">
@@ -483,6 +497,7 @@ function TickedFields({ marks, ticked, styleOptions, commit }: TickedFieldsProps
   const align = sharedField(marks.anchors, ticked, 'align', 'center');
   const vertical = sharedField(marks.anchors, ticked, 'verticalAlign', 'middle');
   const writing = sharedField(marks.anchors, ticked, 'writingMode', 'horizontal-tb');
+  const overlap = sharedField(marks.anchors, ticked, 'overlap', 'check');
   const options = style?.mixed ? [{ value: MIXED, label: labels.resourceLabelAnchorsMixed }, ...styleOptions] : styleOptions;
   return (
     <section aria-labelledby={`${uid}-title`} className="flex flex-col gap-1.5 rounded-md border p-2 text-xs" style={{ borderColor: 'var(--brand)' }}>
@@ -528,6 +543,16 @@ function TickedFields({ marks, ticked, styleOptions, commit }: TickedFieldsProps
         options={[
           { value: 'horizontal-tb', label: labels.resourceLabelAnchorsWritingHorizontal },
           { value: 'vertical-rl', label: labels.resourceLabelAnchorsWritingVertical },
+        ]}
+      />
+      <BulkChoice<'check' | 'allow'>
+        labelId={`${uid}-overlap`}
+        label={labels.resourceLabelAnchorsOverlap}
+        current={overlap?.mixed ? undefined : (overlap?.value as 'check' | 'allow' | undefined)}
+        onPick={(v) => set({ overlap: v })}
+        options={[
+          { value: 'check', label: labels.resourceLabelAnchorsOverlapCheck },
+          { value: 'allow', label: labels.resourceLabelAnchorsOverlapAllow },
         ]}
       />
     </section>

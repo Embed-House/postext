@@ -66,6 +66,8 @@ const DOC_PAGES: Record<string, string> = {
   "sandbox-previews": "Sandbox-Previews",
   "sandbox-books-saving": "Sandbox-Books-Word-and-Saving",
   "sandbox-embedding": "Sandbox-Agents-Embedding-and-Presets",
+  "composed-page-books": "Composed-Page-Books",
+  "migrating-to-composed-pages": "Moving-to-Composed-Pages",
   skill: "Agent-Skill",
   "command-line": "Command-Line",
   webmcp: "WebMCP",

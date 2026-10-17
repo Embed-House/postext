@@ -1047,3 +1047,25 @@ describe('box styles based on another (#905)', () => {
     expect(warningCategory('calloutStyleExtendsCycle')).toBe('design');
   });
 });
+
+describe('figure labels and words (#969, #986)', () => {
+  it('carries the symbol a label runs onto into the Checks panel, on the book page', () => {
+    const doc = {
+      pages: [], blocks: [], warnings: [], pageIndexOffset: 4, config: { page: { dpi: 72 } },
+      contentWarnings: [{ kind: 'labelOverlap', resourceId: 'mapa', text: 'Madrid', anchor: 'a', with: 'symbol 2', withSymbol: 2, count: 3, pageIndex: 1, sourceStart: 0, sourceEnd: 6 }],
+    } as unknown as VDTDocument;
+    const found = computeWarnings({ markdown: 'Madrid', config: {}, doc, resources: [] }).filter((w) => w.payload.kind === 'labelOverlap');
+    expect(found).toHaveLength(1);
+    expect(found[0]!.payload).toEqual({ kind: 'labelOverlap', resourceId: 'mapa', text: 'Madrid', anchor: 'a', with: 'symbol 2', withSymbol: 2, count: 3, page: 6 });
+  });
+
+  it('lists two figures that word one resource differently, in the Figures group', () => {
+    const relief = { id: 'relief', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, caption: 'Relief' } as Resource;
+    const md = ':::figure{resource="relief" caption="First"}\n:::\n\n:::figure{resource="relief" caption="Second"}\n:::\n';
+    const found = computeWarnings({ markdown: md, config: {}, doc: null, resources: [relief] }).filter((w) => w.payload.kind === 'figureWordsShared');
+    expect(found).toHaveLength(1);
+    expect(found[0]!.payload).toEqual({ kind: 'figureWordsShared', resourceId: 'relief', words: ['caption'] });
+    expect(md.slice(found[0]!.sourceStart, found[0]!.sourceEnd)).toBe('Second');
+    expect(warningCategory('figureWordsShared')).toBe('figures');
+  });
+});

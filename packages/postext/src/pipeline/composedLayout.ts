@@ -44,13 +44,14 @@ import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../co
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
 import { anchorTarget, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
+import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
+import { createLayoutMemo, layoutMemoSwitch } from './layoutMemo';
 import { createMeasureMemo } from './measureMemo';
 import { computeOrderedListRunMetrics } from './lists';
 import { planParagraphContainers } from './paragraphContainers';
@@ -241,7 +242,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // frames collapsed).
   // The ladder lays the page again at each step: the measurements of one
   // step answer the next (#953).
-  const memoed: ComposedPageInput = { ...given, pass: { ...given.pass, measureMemo: createMeasureMemo() } };
+  const memoed: ComposedPageInput = { ...given, pass: { ...given.pass, measureMemo: createMeasureMemo(), ...(layoutMemoSwitch.enabled ? { layoutMemo: createLayoutMemo() } : {}) } };
   const input: ComposedPageInput = given.continuing ? { ...memoed, template: continuationTemplate(given.template, given.continuing) } : memoed;
   const { template, fence, dpi } = input;
   const fi = fence.fenceIndex;
@@ -980,13 +981,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   /** Whether a frame's lines are set as on a mirrored page: those of the
    *  page's own mode, not an unmirrored frame's. */
   const mirroredIn = (frame: ResolvedFrame): boolean => input.mirrored && unmirroredAt(frame) === undefined;
-  /** The widest a picture's upright frame may be in a vertical frame of a
-   *  horizontal page (#960): the frame's extent across its lines, less the
-   *  box's padding. The page turns such a frame a quarter turn, so its
-   *  pictures are laid out counter-rotated to stand upright; none of that
-   *  in a frame of the page's own mode. */
+  /** The widest a picture's upright frame may be in a frame whose lines run
+   *  down the page (#960, #971): the frame's extent across its lines, less
+   *  the box's padding. A vertical frame of a horizontal page is turned a
+   *  quarter turn on the page, a frame of a vertical page's own mode lies in
+   *  the flow, which is turned the same way; either way its pictures are
+   *  laid out counter-rotated to stand upright. A horizontal frame of a
+   *  vertical page is turned against the flow and already stands upright;
+   *  none of that on a horizontal page's own mode. */
   const uprightIn = (frame: ResolvedFrame, across: number): Pick<FrameBoxOptions, 'uprightMaxLength'> => {
-    if (ownMode(frame) !== 'vertical-rl') return {};
+    if ((frame.writingMode ?? pageMode) !== 'vertical-rl') return {};
     const pad = styleOf(frame).padding;
     const room = across - lengthPx(pad.top, dpi, input.emPx) - lengthPx(pad.bottom, dpi, input.emPx);
     return { uprightMaxLength: Math.max(1, room) };
@@ -1140,11 +1144,51 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const known = memo.get(key);
         if (known !== undefined) return known;
         const exclusions = at ? unscale(exclusionsFor(p.frame, { ...at, width }, true), s) : undefined;
-        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
-        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, opts.exclusions || opts.pictureScale !== undefined || opts.continuedMark !== undefined ? opts : undefined);
+        // The room a vertical page's upright picture may take down the page
+        // is the flow's whole extent: the frame's height is what it settles.
+        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, input.areas.area.height / s) };
+        const r = p.st!.L.peekRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
         const h = r.totalHeight * s;
         memo.set(key, h);
         return h;
+      };
+    };
+    /** The width an `'auto'`-width frame (#982) needs when it may take up
+     *  to `room`: the right edge of its longest line (a picture counting
+     *  by its own box), and what the box keeps to the right of its text
+     *  (padding, a stripe). The text is set flush left whatever its
+     *  alignment, so a centred title is as wide as its words, and not set
+     *  to a measure it would fill. Undefined for a frame of fixed or
+     *  `'fill'` width, or one in its own writing mode. */
+    const naturalWidthOf = (p: Prep): ((room: number) => number) | undefined => {
+      if (p.frame.width !== 'auto' || ownMode(p.frame)) return undefined;
+      const memo = new Map<number, number>();
+      return (room: number): number => {
+        if (!p.holds) return 0;
+        const key = Math.round(room * 1000);
+        const known = memo.get(key);
+        if (known !== undefined) return known;
+        const s = textScale(p.frame);
+        const style = styleOf(p.frame);
+        const flush = { ...style, body: { ...style.body, textAlign: 'left' as const } };
+        const L = makeCalloutLayouter(pass, p.st!.story.startIdx, p.st!.story.plan, flush);
+        // Set at a measure far wider than the room, so that nothing wraps:
+        // the frame is then as wide as its words, and the room caps it
+        // (text that does not fit wraps at the room, as in a shrink-wrapped
+        // box).
+        const r = L.layoutRange(p.st!.cut, L.end, (room * 8) / s, p.blockId, p.continuation, input.mirrored);
+        let right = 0;
+        for (const b of r.children) {
+          if (b.type === 'callout' || b.hidden) continue;
+          if (b.type === 'resource' || b.lines.length === 0) right = Math.max(right, b.bbox.x + b.bbox.width);
+          for (const l of b.lines) if (l.text.length > 0) right = Math.max(right, l.bbox.x + l.bbox.width);
+        }
+        const inner = r.frame.callout?.innerRect;
+        const keep = inner ? Math.max(0, r.width - (inner.x + inner.width)) : 0;
+        // A quarter of a pixel over: a line is never set to its exact width.
+        const w = Math.min(room, (right + keep + 0.25) * s);
+        memo.set(key, w);
+        return w;
       };
     };
     /** The height a frame set in its own writing mode (#944) needs at
@@ -1158,7 +1202,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       if (known !== undefined) return known;
       const opts: FrameBoxOptions = { ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, width / s) };
       const across = (measure: number): number => inMode(p.frame, () =>
-        p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
+        p.st!.L.peekRange(p.st!.cut, p.st!.L.end, measure / s, p.blockId, p.continuation, mirroredIn(p.frame), Object.keys(opts).length > 0 ? opts : undefined).totalHeight * s);
       const most = Math.max(input.areas.area.height, input.emPx);
       let h = most;
       if (across(most) <= width + 0.5) {
@@ -1180,8 +1224,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
      *  off a spread's spine band, #861), its `'auto'` height measured at the
      *  width it is left with. Declared and final boxes alike: the band is
      *  the template's, not a reflow. */
-    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number): Rect => {
-      const r = placeBox(placeable, template, ctx, refs, nat);
+    const placeFitted = (frame: ResolvedFrame, placeable: ReturnType<typeof framePlaceable>, ctx: Parameters<typeof placeBox>[2], refs: (n: string) => Rect | undefined, nat: (width: number) => number, natW?: (room: number) => number): Rect => {
+      const r = placeBox(placeable, template, ctx, refs, nat, natW);
       if (!input.fitBox) return r;
       const keep = (placed: Rect): Rect => {
         const kept = input.fitBox!(frame, placed);
@@ -1191,7 +1235,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       };
       const first = keep(r);
       if (Math.abs(first.width - r.width) < 0.01) return first;
-      return keep(placeBox(placeable, template, ctx, refs, () => nat(first.width)));
+      return keep(placeBox(placeable, template, ctx, refs, () => nat(first.width), natW));
     };
     /** A frame's height as its template declares it: its `minHeight` where
      *  the height follows the content, else the content's (`natural`). */
@@ -1205,15 +1249,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const frame = p.frame;
       const placeable = framePlaceable(frame);
       const natural = naturalOf(p);
+      const natW = naturalWidthOf(p);
       const at = (refs: (n: string) => Rect | undefined) => {
-        const r0 = placeFitted(frame, placeable, input, refs, natural);
+        const r0 = placeFitted(frame, placeable, input, refs, natural, natW);
         if (!p.holds || !exclusionsFor(frame, r0, true)) return { rect: r0, natural };
         const round = naturalOf(p, r0);
-        return { rect: placeFitted(frame, placeable, input, refs, round), natural: round };
+        return { rect: placeFitted(frame, placeable, input, refs, round, natW), natural: round };
       };
       const decl = frame.pin ? at(declaredRefOf) : undefined;
       const fin = decl ?? at(refOf);
-      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural));
+      const declRect = placeFitted(frame, placeable, input, declaredRefOf, declaredNatural(frame, fin.natural), natW);
       const rect = frame.pin ? declRect : fin.rect;
       declared.set(frame.name, declRect);
       rects.set(frame.name, rect);
@@ -1230,6 +1275,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const mmPx = dpi / MM_PER_IN;
       const yieldAll = fit.yieldAll.has(group.name);
       const preps = members.map(prepare);
+      const natWs = preps.map(naturalWidthOf);
       const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect; items: GroupItem[] } => {
         const refs = mode === 'final' ? refOf : declaredRefOf;
         const ownBox = own ? placeBox(own, template, input, refs, () => 0) : undefined;
@@ -1242,7 +1288,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const placeable = framePlaceable(f);
           // On a spread the member's own box keeps off the spine band, and
           // the negotiation starts from it (#861).
-          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural));
+          const box = placeFitted(f, placeable, ctx, memberRefs, declaredNatural(f, natural), natWs[k]);
           ownRects.set(f.name, box);
           const auto = f.height === 'auto' && !(f.grid && !placeable.heightSet);
           const fill = f.height === 'fill';
@@ -1643,7 +1689,7 @@ function stampFrameAttrText(
 export function frameStyleOf(base: ResolvedCalloutStyleConfig, frame: ResolvedFrame): ResolvedCalloutStyleConfig {
   const padding = frame.padding ? { ...base.padding, ...frame.padding } : base.padding;
   return {
-    ...base,
+    ...(frame.look ? styleWithLook(base, frame.look) : base),
     padding,
     width: 'fill',
     placement: 'here',
@@ -1651,6 +1697,57 @@ export function frameStyleOf(base: ResolvedCalloutStyleConfig, frame: ResolvedFr
     marginTop: { value: 0, unit: 'px' },
     marginBottom: { value: 0, unit: 'px' },
   };
+}
+
+const lookedStyles = new WeakMap<object, WeakMap<object, ResolvedCalloutStyleConfig>>();
+
+/** `base` with what a frame's `look` sets (#976) written over it: colours
+ *  of the fill, border, stripe, icon, marker, title, text and label tab,
+ *  and the tracking of the body. A fill colour turns the fill on. A part
+ *  the style does not have (a label tab it lacks) is left out. Kept per
+ *  style and look, so the pieces a measurement is keyed by (`body`,
+ *  `lists`) keep their identity from one call to the next. */
+export function styleWithLook(base: ResolvedCalloutStyleConfig, look: FrameLook): ResolvedCalloutStyleConfig {
+  let byLook = lookedStyles.get(base);
+  if (!byLook) lookedStyles.set(base, (byLook = new WeakMap()));
+  const known = byLook.get(look);
+  if (known) return known;
+  const out: ResolvedCalloutStyleConfig = { ...base };
+  if (look.background) {
+    out.background = look.background;
+    out.backgroundEnabled = true;
+  }
+  if (look.border?.color) out.border = { ...base.border, color: look.border.color };
+  if (look.stripe?.color) out.stripe = { ...base.stripe, color: look.stripe.color };
+  if (look.icon?.color) out.icon = { ...base.icon, color: look.icon.color };
+  if (look.marker?.color || look.marker?.rule?.color) {
+    out.marker = {
+      ...base.marker,
+      ...(look.marker.color ? { color: look.marker.color } : {}),
+      ...(look.marker.rule?.color ? { rule: { ...base.marker.rule, color: look.marker.rule.color } } : {}),
+    };
+  }
+  if (look.titleStyle?.color) out.titleStyle = { ...base.titleStyle, color: look.titleStyle.color };
+  if (look.body) {
+    const b = look.body;
+    out.body = {
+      ...base.body,
+      ...(b.color ? { color: b.color } : {}),
+      ...(b.boldColor ? { boldColor: b.boldColor } : {}),
+      ...(b.italicColor ? { italicColor: b.italicColor } : {}),
+      ...(b.letterSpacing ? (b.letterSpacing.value !== 0 ? { letterSpacing: b.letterSpacing } : { letterSpacing: undefined }) : {}),
+    };
+  }
+  if (look.label && base.label) {
+    out.label = {
+      ...base.label,
+      ...(look.label.color ? { color: look.label.color } : {}),
+      ...(look.label.background ? { background: look.label.background } : {}),
+      ...(look.label.rule?.color ? { rule: { ...base.label.rule, color: look.label.rule.color } } : {}),
+    };
+  }
+  byLook.set(look, out);
+  return out;
 }
 
 /** The story heads of a composed page's stories, by the head frame's

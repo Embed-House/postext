@@ -252,6 +252,7 @@ Apêndice. Uma fonte de predefinições é um diretório (servido por HTTP) cuja
   "fonts": [
     {
       "name": "Some Family",           // nome da família usado pela configuração
+      "fallback": "Source Serif 4",    // opcional: família aberta de largura parecida para as faces que o pacote deixa de fora
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Notas:
 - O editor do código-fonte SVG só deixa você digitar dentro dos nós de texto (destacados com cor), para que uma figura não seja quebrada por acidente; o botão de cadeado no seu cabeçalho abre o código-fonte inteiro (coordenadas, cores, estrutura), e trancar de novo volta a mapear os nós de texto.
 - `table.model` é um `TableModel` do Postext: `rows` é um array de células por linha (`content` e, opcionalmente, `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` é o número de linhas de cabeçalho iniciais, e `columnWidths` é um array opcional de pesos relativos das colunas. `table.styleId` pode nomear um dos `tableStyles` da configuração.
 - Os arquivos de fonte são guardados no IndexedDB com ids derivados do id da predefinição e do caminho do arquivo, e as famílias são acrescentadas a `config.customFonts` quando a predefinição é aplicada; um `index.json` ausente ou malformado não produz nenhuma predefinição, em vez de um erro.
+- Uma família que o pacote não pode repassar é listada com `"redistributable": false` e `variants` vazio; acrescente `"fallback"` com o nome de uma família aberta de largura parecida e o Sandbox, a linha de comando e os hospedeiros do motor compõem as faces dela com essa (desde o postext 1.42). Sem ele, o livro cai na fonte padrão e as linhas dele quebram em outro lugar.
 - `<preset-dir>/fingerprint.json` é opcional e, na rota de desenvolvimento, **virtual**: quando esse arquivo não existe, `GET` responde `{ "fingerprint": "<sha1 hex>", "files": <n> }`, calculado a partir dos metadados dos arquivos do diretório (caminho relativo, data de modificação e tamanho de cada arquivo até quatro níveis de profundidade, pulando arquivos ocultos e `node_modules`), nunca do conteúdo dos arquivos, com `Cache-Control: no-store`. O Sandbox o consulta periodicamente para acompanhar as edições do pacote (veja [Painel Livros](/pt/docs/sandbox#painel-livros)). Um host estático pode servir um `fingerprint.json` real com a mesma forma, ou nenhum, e nesse caso as suas predefinições não são acompanhadas.

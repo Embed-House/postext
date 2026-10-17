@@ -7,6 +7,7 @@ import type {
   FrameConfig,
   FrameGridCell,
   FrameGroupConfig,
+  FrameLook,
   FrameOverflowConfig,
   FrameRulesConfig,
   FrameSize,
@@ -77,7 +78,7 @@ export const DEFAULT_LABEL_STYLE = {
 export const FRAME_VERTICAL_ALIGNS = ['top', 'middle', 'bottom', 'justify'] as const;
 export const FRAME_EXCLUDES = ['none', 'push'] as const;
 export const FRAME_WRAPS = ['box', 'contour'] as const;
-export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'toc'] as const;
 export const FRAME_GROUP_KINDS = ['stack', 'row'] as const;
 export const FRAME_GROUP_ALIGNS = ['start', 'center', 'end', 'space-between'] as const;
 export const TEMPLATE_AREAS = ['content', 'trim', 'bleed'] as const;
@@ -85,6 +86,22 @@ export const FRAME_WRITING_MODES = ['horizontal-tb', 'vertical-rl'] as const;
 export const FRAME_DIRECTIONS = ['ltr', 'rtl'] as const;
 export const LABEL_FONT_STYLES = ['normal', 'italic'] as const;
 export const LABEL_TEXT_TRANSFORMS = ['none', 'uppercase'] as const;
+export const LABEL_OVERLAPS = ['check', 'allow'] as const;
+
+/** The shape of a frame's `look` (#976): which keys it has and what each
+ *  holds, a colour or a length. */
+export const LOOK_TREE = {
+  background: 'color',
+  border: { color: 'color' },
+  stripe: { color: 'color' },
+  icon: { color: 'color' },
+  marker: { color: 'color', rule: { color: 'color' } },
+  titleStyle: { color: 'color' },
+  body: { color: 'color', boldColor: 'color', italicColor: 'color', letterSpacing: 'tracking' },
+  label: { color: 'color', background: 'color', rule: { color: 'color' } },
+} as const;
+type LookTree = { readonly [key: string]: 'color' | 'tracking' | LookTree };
+
 const DIMENSION_UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'];
 
 // ---------------------------------------------------------------------------
@@ -253,6 +270,11 @@ function mergeNamed<T extends { name?: unknown; remove?: unknown }>(
     for (const [key, value] of Object.entries(raw)) {
       if (key === 'name' || key === 'remove' || value === undefined) continue;
       const target = entry.value as Record<string, unknown>;
+      if (key === 'look' && isRecord(value)) {
+        target.look = mergeLook(target.look, value);
+        entry.fieldPaths.look = `${path}/look`;
+        continue;
+      }
       if (MERGED_OBJECT_KEYS.has(key) && isRecord(value)) {
         const before = target[key];
         const merged: Record<string, unknown> = isRecord(before) ? { ...before } : {};
@@ -297,6 +319,12 @@ function mergePatch(target: Merged, patch: PageTemplatePatch, path: string, issu
       const elementPath = `${path}/decoration/elements/${j}`;
       const id = typeof el.id === 'string' && el.id !== '' ? el.id : undefined;
       const at = id === undefined ? -1 : target.elements.findIndex((e) => e.value.id === id);
+      // `remove: true` takes the inherited element out (#975); a removal
+      // naming nothing inherited changes nothing.
+      if (el.remove === true) {
+        if (at >= 0) target.elements.splice(at, 1);
+        return;
+      }
       if (at >= 0) {
         const merged = { ...target.elements[at]!.value } as Record<string, unknown>;
         for (const [k, v] of Object.entries(el)) if (v !== undefined) merged[k] = v;
@@ -414,6 +442,40 @@ export function normalizeFrame(
   if (oneOf(FRAME_DIRECTIONS, f.direction)) out.direction = f.direction;
   const rules = normalizeRules(f.rules);
   if (rules) out.rules = rules;
+  const look = normalizeLook(f.look, LOOK_TREE);
+  if (look) out.look = look as FrameLook;
+  return out;
+}
+
+/** A frame's `look` (#976) with what the engine cannot use left out: a
+ *  key that is not in the tree, a colour with no `hex`, a bad length. */
+function normalizeLook(raw: unknown, tree: LookTree): Record<string, unknown> | undefined {
+  if (!isRecord(raw)) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [key, kind] of Object.entries(tree)) {
+    const value = raw[key];
+    if (kind === 'color') {
+      if (isRecord(value) && typeof value.hex === 'string') out[key] = value;
+    } else if (kind === 'tracking') {
+      // A length that may be negative.
+      if (isRecord(value) && finite(value.value) && typeof value.unit === 'string' && DIMENSION_UNITS.includes(value.unit)) out[key] = { value: value.value, unit: value.unit };
+    } else {
+      const inner = normalizeLook(value, kind);
+      if (inner) out[key] = inner;
+    }
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** `look` over `below`, key by key at every level (colours and lengths
+ *  replaced whole). */
+function mergeLook(below: unknown, look: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = isRecord(below) ? { ...below } : {};
+  for (const [key, value] of Object.entries(look)) {
+    if (value === undefined) continue;
+    const here = out[key];
+    out[key] = isRecord(value) && !('hex' in value) && !('unit' in value) && isRecord(here) ? mergeLook(here, value) : value;
+  }
   return out;
 }
 
@@ -833,6 +895,7 @@ export function stripLabelStylesDefaults(styles: readonly LabelStyle[] | undefin
     if (!out.paragraphStyle && out.fontStyle === DEFAULT_LABEL_STYLE.fontStyle) delete out.fontStyle;
     if (!out.paragraphStyle && out.textTransform === DEFAULT_LABEL_STYLE.textTransform) delete out.textTransform;
     if (out.minScale === DEFAULT_LABEL_STYLE.minScale) delete out.minScale;
+    if (out.overlap === 'check') delete out.overlap;
     return out;
   });
 }

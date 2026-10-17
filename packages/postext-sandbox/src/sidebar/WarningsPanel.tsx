@@ -104,6 +104,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'labelOverflow':
     case 'labelOverlap':
     case 'unknownCalloutType':
+    case 'figureWordsShared':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
     case 'duplicateAnchor':
@@ -305,6 +306,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsLabelOverflowTitle;
     case 'labelOverlap':
       return labels.warningsLabelOverlapTitle;
+    case 'figureWordsShared':
+      return labels.warningsFigureWordsSharedTitle;
     case 'unknownChipStyle':
       return labels.warningsUnknownChipStyleTitle;
     case 'unknownMarkStyle':
@@ -662,11 +665,22 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
         .replace('__page__', String(payload.page))
         .replace('__scale__', String(Math.round(payload.scale * 100)))}`;
     case 'labelOverlap':
+      if (payload.withSymbol !== undefined) {
+        return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${(payload.count > 1 ? labels.warningsLabelOverlapSymbolDetailMany : labels.warningsLabelOverlapSymbolDetail)
+          .replace('__text__', payload.text)
+          .replace('__symbol__', String(payload.withSymbol))
+          .replace('__more__', String(payload.count - 1))
+          .replace('__page__', String(payload.page))}`;
+      }
       return `${payload.anchor ?? `“${payload.text}”`}${payload.locale ? ` (${payload.locale})` : ''} — ${(payload.count > 1 ? labels.warningsLabelOverlapDetailMany : labels.warningsLabelOverlapDetail)
         .replace('__text__', payload.text)
         .replace('__with__', payload.with)
         .replace('__more__', String(payload.count - 1))
         .replace('__page__', String(payload.page))}`;
+    case 'figureWordsShared':
+      return `${payload.resourceId} — ${labels.warningsFigureWordsSharedDetail
+        .replace('__resource__', payload.resourceId)
+        .replace('__words__', payload.words.map((k) => (k === 'alt' ? labels.warningsFigureWordsSharedAlt : k === 'caption' ? labels.warningsFigureWordsSharedCaption : labels.warningsFigureWordsSharedNote)).join(', '))}`;
     case 'unknownChipStyle':
       return `${inResource(payload.inResource)}:chip[…]{style="${payload.style}"} — ${labels.warningsUnknownChipStyleDetail}`;
     case 'unknownMarkStyle':

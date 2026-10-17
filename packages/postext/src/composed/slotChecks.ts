@@ -6,7 +6,7 @@
  * configuration, before any layout.
  */
 import type { ContentWarning } from '../vdt';
-import type { ParsedComposedPage } from './document';
+import { takenBlocks, type ParsedComposedPage } from './document';
 import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate } from './types';
 import { continueInPage, resolveContinueIn } from './templates';
 
@@ -94,13 +94,12 @@ export function checkComposedSlots(
     const known = new Set(frames.map((x) => x.name));
     const taken = new Set<number>();
     for (const x of frames) {
-      const idx = x.takes ? page.firstHeadings[x.takes] : undefined;
-      if (idx !== undefined) taken.add(idx);
+      for (const idx of takenBlocks(page, x.takes)) taken.add(idx);
     }
     const stray = Object.keys(page.slots).some((slot) => !known.has(slot));
     const flowContent = stray || page.unassigned.some((i) => !taken.has(i));
     return page.slots[f.name] !== undefined
-      || (f.takes !== undefined && page.firstHeadings[f.takes] !== undefined)
+      || takenBlocks(page, f.takes).length > 0
       || (f.flow === true && flowContent);
   };
   // The frames later pages take jumping stories in (#917), by page: as
@@ -159,8 +158,7 @@ export function checkComposedSlots(
     // Headings a `takes` frame receives leave the flow frame's share.
     const taken = new Set<number>();
     for (const f of frames) {
-      const idx = f.takes ? page.firstHeadings[f.takes] : undefined;
-      if (idx !== undefined) taken.add(idx);
+      for (const idx of takenBlocks(page, f.takes)) taken.add(idx);
     }
     const flowContent = strayContent || page.unassigned.some((i) => !taken.has(i));
     const continued = new Set<string>();
@@ -172,7 +170,7 @@ export function checkComposedSlots(
     for (const f of frames) {
       if (f.optional || continued.has(f.name) || jumpedInto.get(page.fenceIndex)?.has(f.name)) continue;
       const filled = page.slots[f.name] !== undefined
-        || (f.takes !== undefined && page.firstHeadings[f.takes] !== undefined)
+        || takenBlocks(page, f.takes).length > 0
         || (f.flow === true && flowContent);
       if (filled) continue;
       out.push({ kind: 'slotEmpty', template: template.id, frame: f.name, fenceIndex: page.fenceIndex, sourceStart: page.fence.sourceStart, sourceEnd: page.fence.sourceEnd });

@@ -710,7 +710,9 @@ export function locateIndexMarks(
   if (marks.length === 0) return undefined;
   const lines: { start: number; end: number; page: number }[] = [];
   const add = (b: VDTBlock): void => {
-    if (b.pageIndex < 0 || b.hidden) return;
+    // The lines of a story that came from another chapter are offsets in
+    // that chapter's file (#988): its marks are located by `carriedOutline`.
+    if (b.pageIndex < 0 || b.hidden || b.sourceChapter !== undefined) return;
     for (const l of b.lines) {
       if (l.sourceStart !== undefined && l.sourceEnd !== undefined) lines.push({ start: l.sourceStart, end: l.sourceEnd, page: b.pageIndex });
     }

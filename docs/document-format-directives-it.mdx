@@ -576,6 +576,8 @@ Il testo semplice della poesia tiene separati emistichi e bayt (una tabulazione 
 
 `:::toc` stampa l’indice nel punto in cui si trova. Si espande in blocchi ordinari (uno per ogni titolo dei livelli elencati da `toc.levels`, il livello 1 per impostazione predefinita, e uno per ogni `:::part`), così l’indice scorre tra colonne e pagine come qualsiasi altro testo e un clic su una voce porta alla riga della direttiva. Una voce mostra il numero del titolo (l’output del suo `numberingTemplate`, altrimenti l’ordinale del capitolo), il suo titolo, una linea di puntini di guida e l’etichetta della pagina in cui comincia e, quando `toc.subtitle` è attivo, una seconda riga con un attributo del titolo come l’`{author="…"}` del capitolo. Una parte ha una riga propria, disegnata da `toc.parts.design` e colorata con la `palette` della parte stessa. I titoli il cui stile ha `numbered: false` vengono elencati senza numero; `{toc="false"}` su un titolo lo esclude (di solito il titolo dell’indice stesso).
 
+In una pagina composta, una cornice con `takes: "toc"`, o un `:::frame` che contiene la direttiva, compone l’indice con le sue righe di parte, i puntini di guida e `keep` (vedi [Pagine composte](/it/docs/composed-pages)).
+
 ```md
 # Contents {style="front-matter" toc="false"}
 

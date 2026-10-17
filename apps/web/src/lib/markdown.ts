@@ -1058,7 +1058,7 @@ function jsxAttrs(tag: string): Record<string, string> {
 }
 
 /** Block components that stand alone on their lines (`<Excerpt … />`). */
-const BLOCK_TAGS = ["Illustration", "CodePenExample", "TutorialVideo", "Excerpt", "PageShot", "Gotcha"] as const;
+const BLOCK_TAGS = ["Illustration", "CodePenExample", "TutorialVideo", "Screenshot", "Excerpt", "PageShot", "Gotcha"] as const;
 type CookbookBlockTag = "Excerpt" | "PageShot" | "Gotcha";
 /** Inline components (`<Feature id="x">text</Feature>`, or self-closing). */
 const INLINE_TAGS = ["Feature", "RecipeLink", "PageRef"] as const;
@@ -1144,6 +1144,14 @@ export function mdxToMarkdown(
       // the player has no Markdown form: name the video (the page links it)
       else if (name === "TutorialVideo") {
         out.push(`> *${messagesFor(locale).Tutorial.title}* · ${messagesFor(locale).Tutorial.watch}`, "", transcriptMarkdown("tutorial", locale));
+      }
+      // a capture of the Sandbox: the picture at its address on the site, then its caption
+      else if (name === "Screenshot") {
+        const attrs = jsxAttrs(trimmed);
+        if (attrs.src && attrs.alt) {
+          const image = `![${attrs.alt.replace(/[[\]]/g, "")}](${new URL(attrs.src, SITE_URL).href})`;
+          out.push(attrs.caption ? `${image}\n\n*${attrs.caption}*` : image);
+        }
       }
       else if (name === "Excerpt" || name === "PageShot" || name === "Gotcha") {
         const attrs = jsxAttrs(trimmed);

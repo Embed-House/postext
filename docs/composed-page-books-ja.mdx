@@ -1,0 +1,184 @@
+{/* docs/composed-page-books-ja.mdx */}
+
+export const metadata = {
+  title: 'テンプレートページで作る本',
+  sidebarTitle: 'テンプレートページで作る本',
+  description: 'Sandboxで、テンプレートページでできた小学校の教科書を作る手順：ページテンプレートを作り、Markdownから内容を流し込み、地図にラベルを付け、ページを翻訳し、収まらない枠を直し、ページとテキストの両方で選択する',
+  lang: 'ja',
+  lastUpdated: '2026-10-17',
+  readingTime: '12分',
+  order: 42,
+  plainSummary: "このページでは、Sandboxで小学校の教科書の1ページを作る手順を、順を追って説明します。作るのは、見出しの帯と本文と色付きの囲みを持つページです。出来上がっている例の本を開き、そこへ1ページ足していきます。最初にページをテンプレートとして描き、次にMarkdownから文章を流し込み、そのあと地図の地名に名前を付けてページを別の言語に翻訳します。最後に、文章が囲みに入りきらないときの直し方と、ページとテキストのあいだを行き来する方法を確かめます。",
+};
+
+# テンプレートページで作る本
+
+<strong>教科書の1ページをテンプレートから作り、Markdownで中身を入れ、地図にラベルを付け、ページを翻訳し、収まらない枠を直します。</strong>
+
+小学校の教科書のページは、いくつかの箱の集まりです。見出しの帯、本文、定義の箱、活動の箱、地図などです。Postextは、こうしたページを、箱（枠）を持つ<strong>ページテンプレート</strong>から組みます。Markdownには、どの言葉をどの枠に入れるかだけを書きます。このページでは、すでにある本を使って、1ページを足すまでの作業をSandboxで通して行います。各フィールドやMarkdownの各行が何をするかは、リファレンスのページにあります。ここでは一つずつ順に実行して、何が変わるかを見ていきます。Markdownについては[テンプレートページ](/ja/docs/composed-pages)、テンプレートについては[設定：テンプレートページ](/ja/docs/configuration-composed-pages)、画面については[Sandbox：テンプレートページ](/ja/docs/sandbox-composed-pages)を参照してください。
+
+必要なものはブラウザだけです。作業はすべてSandboxの中で行い、変更はお使いのブラウザに残ります。
+
+## 1. 本を開く
+
+使う本は*Our river*です。Year 3 向けの教科書の1単元で、[レシピ集](/ja/cookbook/children-textbook-pages)にレシピ Nº 156 として載っています。川も町も絵も、この本のために作った架空のものです。全部で9ページあり、向かい合う2ページにまたがる地図が入っています。スペイン語、カタルーニャ語、英語の三つの版があります。
+
+[Sandboxで開く](/ja/sandbox#recipe=children-textbook-pages&lang=en)。最初に開くと、<strong>本</strong>に自分の本として追加されるので、自由に変更できます。リンクの `lang=es` や `lang=ca` に変えると、ほかの版が開きます。あとで同じリンクをもう一度開くと、自分のコピーを開くか、公開されている本に置き換えるかをSandboxが尋ねます。
+
+触る前に、二つのことを知っておいてください。
+
+- プレビューの上のバーに、<strong>内容</strong>と<strong>デザイン</strong>のスイッチがあります。内容モードでは、<strong>本文</strong>パネルかページの上で言葉を編集します。デザインモードでは、ページテンプレートとスタイルを編集し、本文は読み取り専用になります。<strong>Alt+Shift+M</strong>（Macでは<strong>⌥⇧M</strong>）で切り替えられます。
+- <strong>本文</strong>パネルには、1章分のMarkdownが出ます。テンプレートページは、`::::page{template="…"}` で始まり、コロン4つで終わるブロックです。プレビューのページで言葉をクリックすると、Markdownのその位置にカーソルが移ります。
+
+## 2. ページテンプレートを作る
+
+新しいページは復習のページにします。見出しの帯、その下の短い文章、そして学んだことを思い出す箱と試してみる箱の二つです。必要なのは、四つの枠を持つテンプレートです。
+
+1. プレビュー上のスイッチを<strong>デザイン</strong>にして、左の<strong>デザイン</strong>パネルを開きます。<strong>ページと段組み</strong>から<strong>ページテンプレート</strong>を選びます。一覧には、この本のテンプレートが、枠の図とともに並びます。
+2. <strong>新規</strong>を押します。新しいテンプレートが開くので、<strong>ID</strong>を `review`（Markdownがこの名前で指定します）、<strong>名前</strong>を `Review page`（このパネルに表示される名前です）にします。IDには、小文字、数字、ハイフンが使えます。
+3. テンプレートには、<strong>ページの本文を受け取る</strong>枠 `text` が最初から一つあります。これを見出しの帯にします。<strong>名前（スロット）</strong>を `title`、<strong>囲みのスタイル</strong>を `portada`（この本が見出しに使っている青い帯）にし、<strong>ページの本文を受け取る</strong>をオフにして、<strong>最初の見出しを受け取る</strong>を*レベル 1*にします。この枠が、ページの最初の `#` 見出しを受け取ります。
+4. <strong>枠を追加</strong>を押します。新しい枠が、枠の一覧の下に開きます。<strong>名前（スロット）</strong>を `text` にして、<strong>ページの本文を受け取る</strong>をオンにします。ページの中で枠の外に書いたものは、ここに入ります。
+5. 枠をもう一つ追加します。<strong>名前（スロット）</strong>は `remember`、<strong>囲みのスタイル</strong>は `dato-campo`（タブの付いた緑の箱）にします。<strong>最小の高さ</strong>は30 mmにします。文章が短くても、箱が十分な大きさを保ちます。
+6. 最後の枠を追加します。<strong>名前（スロット）</strong>は `try`、<strong>囲みのスタイル</strong>は `actividad-sol`、<strong>最小の高さ</strong>は30 mmにします。
+7. `text`、`remember`、`try` の三つで、<strong>幅</strong>を*端まで*、<strong>高さ</strong>を*内容に合わせる*にします。これで、枠はページの幅いっぱいに広がり、高さは中の文章に合わせて決まります。
+8. <strong>グループ</strong>の下の<strong>グループを追加</strong>を押します。名前を `column` とし、<em>縦に積む</em>のままにして、<strong>枠の間隔</strong>を6 mmにします。<strong>グループの枠（ページ順）</strong>で四つの枠すべてにチェックを入れます。グループは、枠の一覧の順に枠を並べるので、見出しが先頭になります。グループは枠を上から下へ並べ、枠が大きくなると下の枠を押し下げます。そのため、最初の箱の文章が長くなっても、二つ目の箱に重なることはありません。
+
+<Screenshot src="/docs-shots/ja/template.webp" alt="デザインパネルのページテンプレートに表示された Review page テンプレート。四つの枠とグループの設定があり、ページ上には同じ枠が破線の輪郭で描かれている。" caption="テンプレートは四つの枠と一つのグループでできています。ページ上の破線の箱が枠で、緑のラベルが各枠の大きさの決まり方を示します。" />
+
+テンプレートには、言葉が一つも入っていません。見出しが何か、箱に何を入れるかは、どの設定にも書かれていません。箱のスタイルが枠の見た目を決め、グループが順序を決めます。同じテンプレートは、ほかの方法でも作れます。デザインモードでは、テンプレートページの何もない所をマウスでドラッグして枠を描いたり、既存の枠を動かしたりサイズを変えたりできます（[Sandbox：テンプレートページ](/ja/docs/sandbox-composed-pages#ページテンプレート)を参照）。<strong>複製</strong>は、テンプレートをコピーして手を入れるときに使い、<strong>レイアウトをテンプレートとして保存</strong>は、気に入ったテンプレートページを新しいテンプレートにします。
+
+## 3. Markdownからページを埋める
+
+1. プレビュー上のスイッチを<strong>内容</strong>にして、<strong>本文</strong>パネルを開き、<strong>Ctrl+End</strong>（Macでは<strong>Cmd+↓</strong>）で章の末尾へ移ります。
+2. <strong>本文</strong>パネルのツールバーで<strong>テンプレートページ</strong>を押します。<strong>ページテンプレートを選択</strong>の一覧に、この本のページテンプレートが、空の枠の図とともに並びます。<em>Review page</em>を選びます。
+3. Sandboxが、スロットごとに空の枠を一つずつ置いたページを書き、見出しの `title` という語を選択状態にします。その上から見出しを入力します。
+
+```md
+::::page{template="review"}
+# Check what you have learned
+
+A river changes as it runs from the mountains to the sea. Read the boxes, then answer them in your own words.
+
+:::frame{slot="remember" label="Remember"}
+A spring gives a trickle, streams join into a river, and the river widens as it nears the sea.
+:::
+
+:::frame{slot="try" label="Try it"}
+Draw a river from its spring to the sea. Write the names of the three courses on your drawing.
+:::
+::::
+```
+
+見出しはレベル1を受け取る枠に、続く段落はページの本文を受け取る枠に入ります。`:::frame` は、それぞれ `slot` が同じ枠に入ります。`label` は、箱のタブに書かれる言葉です。ページはキャンバスの10ページ目に出ます。単元の9ページの次です。テンプレートページは、必ず新しいページから始まります。
+
+<Screenshot src="/docs-shots/ja/fill.webp" alt="本文パネルに新しいページのMarkdownがあり、その隣に、青い見出しと段落とタブ付きの箱二つを持つ出来上がったページが表示されている。" caption="Markdownとキャンバスに表示されたページ。" />
+
+Markdownに書かれていないものに注目してください。位置も、大きさも、色もありません。それらはテンプレートが持っていて、同じMarkdownでも別のテンプレートで組めば見た目が変わります。
+
+## 4. 地図にラベルを付ける
+
+6ページと7ページには、見開きにまたがる地図の絵があります。地図の上の言葉は、絵の一部ではありません。それぞれの名前は、地図の `:::figure` の中にあるMarkdownの1行です。
+
+```md
+:::figure{resource="mapa" slot="mapa"}
+::label[Spring]{at="nacimiento"}
+::label[Molinar]{at="molinar"}
+::label[Lower course]{at="bajo"}
+:::
+```
+
+`at` は<strong>アンカー</strong>を指定します。アンカーは絵の上の1点で、絵のリソースに一度だけ定義し、すべての言語で共有します。Molinarの石橋を足してみます。
+
+1. <strong>本文</strong>パネルで地図の図へ移り（`at="bajo"` で検索できます）、最後のラベルの下に次の行を足します。`::label[Stone bridge]{at="bridge"}`
+2. <strong>検査</strong>を開きます。6ページについて*存在しないアンカーのラベル*というエントリが出ています。絵に `bridge` というアンカーがないためです。エントリのピンのボタン（<em>アンカー bridge を画像に配置</em>）を押します。
+3. ダイアログに、アンカーが付いた地図が出ます。<em>アンカーのないラベル</em>の下で、`bridge` という名前が選ばれています。絵の上の橋がある場所をクリックします。
+4. 新しいアンカーの<strong>ラベルスタイル</strong>を、町の名前に使っているスタイルの `pueblo` にして、<strong>保存</strong>を押します。
+
+<Screenshot src="/docs-shots/ja/anchor.webp" alt="アンカーのダイアログ。点の付いた地図と、選択された新しいアンカー bridge、そのラベルスタイルの欄が表示されている。" caption="新しいアンカーは、絵の上のクリック1回で付きます。ラベルスタイルを選ぶと、町の名前と同じ見た目になります。" />
+
+<Screenshot src="/docs-shots/ja/map.webp" alt="6ページと7ページにまたがる地図。橋の位置に新しいラベル Stone bridge があり、そばに町の名前のラベルが並んでいる。" caption="ラベルは、クリックした位置に、この本のフォントで置かれます。" />
+
+<em>Stone bridge</em>という語はMarkdownにあり、点は絵に属します。ページを翻訳するときは、同じアンカーに別の言葉を付けます。
+
+## 5. ページを翻訳する
+
+翻訳は、同じテンプレートに別の言葉を入れることです。Sandboxには、それを持つ方法が二つあります。一つは、複数の言語を同時に持つ本にすることです。`.postext` ファイルに版を一つずつ入れておくと、キャンバスの上のバーで版を切り替えられ、検査パネルはすべての版を読みます（[本の版](/ja/docs/sandbox-previews#本の版)を参照）。ファイルが要らない簡単な方法は、本を別の言語でコピーすることです。
+
+1. <strong>本</strong>を開き、自分の本の<strong>⋯</strong>を押して<strong>複製</strong>を選びます。または<strong>新規</strong>を押して<strong>開いている本の複製</strong>を選びます。コピーを開きます。コピーは元の本と同じ名前なので、同じメニューの<strong>名前を変更…</strong>で別の名前にします。
+2. <strong>デザイン</strong>パネルで<strong>表記体系</strong>を開き、<strong>言語と書字方向</strong>の<strong>文書の言語</strong>を設定します。ハイフネーション、引用符、エンジンが自分で書く語（囲みの切れ目に出る*Continued*など）は、この設定に従います。
+3. <strong>本文</strong>パネルで言葉を翻訳し、それ以外はそのままにします。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '50%' }}>翻訳するもの</th>
+      <th>そのままにするもの</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>見出し、段落、リストの文章</td>
+      <td>コロン4つ、<code>page</code> という語、フェンスの <code>template="…"</code></td>
+    </tr>
+    <tr>
+      <td>枠の <code>label="…"</code></td>
+      <td>枠の <code>slot="…"</code></td>
+    </tr>
+    <tr>
+      <td><code>::label[…]</code>、<code>::alt[…]</code>、<code>::caption[…]</code> のかっこの中の文章</td>
+      <td>ラベルの <code>at="…"</code> と図の <code>resource="…"</code></td>
+    </tr>
+  </tbody>
+</table>
+
+絵、アンカー、箱、箱の色はコピーに付いてくるので、作業は要りません。復習のページをスペイン語にしたコピーは、次のようになります。
+
+```md
+::::page{template="review"}
+# Repasa lo aprendido
+
+Un río cambia mientras baja de las montañas al mar. Lee los recuadros y respóndelos con tus propias palabras.
+
+:::frame{slot="remember" label="Recuerda"}
+Un manantial da un hilo de agua, los arroyos se unen en un río y el río se ensancha al acercarse al mar.
+:::
+
+:::frame{slot="try" label="Inténtalo"}
+Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre de los tres cursos.
+:::
+::::
+```
+
+<Screenshot src="/docs-shots/ja/translate.webp" alt="別の言語にした本のコピー。翻訳したページを表示した本文パネルと、翻訳した見出し、本文、タブが付いたキャンバス上のページ。" caption="翻訳したページです。テンプレートは同じで、言葉だけが違います。" />
+
+## 6. 収まらないものを直す
+
+言葉の長さは言語によって違い、英語の文章が入っていた箱にスペイン語の文章が入らないことがあります。そうした枠は、検査パネルが見つけてくれます。確かめるには、翻訳したページの `remember` 枠に、適当な文章を3、4段落貼り付けて、ページに入る量より多くします。
+
+ページには、赤く囲まれた枠と、その下端の下に不足量を示す帯（<em>26 mm 不足</em>）が出ます。<strong>検査</strong>の*テンプレートページ*の下に、<em>枠に収まらないテキスト</em>というエントリが出ます。ここには、レイアウトが諦める前に試したこと（周りの枠から場所をもらう、文字を小さくする）と、打てる手がボタンで並びます。
+
+- <em>文字を82.5 %まで縮められるようにする（fit.minScale）</em>は、この枠の文字をその大きさまで小さくできるようにします。数行あふれるだけのときに向いています。
+- <em>次のページへ続ける（overflow.continueIn）</em>は、収まらない分を、このページの後ろに足したページへ送ります。もっと長い文章に向いています。
+- <em>約495文字削る</em>は、何も変えません。枠の文章を選択し、削る量を教えてくれます。
+
+テンプレート（それで組んだすべてのページ）を変えるボタンは、先に設定の名前を挙げて確認を求めます。<strong>変更する</strong>を押します。ページが組み直され、箱は切れ目の語（<em>Continúa</em>）で終わり、残りは足されたページの先頭に続きます。変更は<strong>Cmd/Ctrl+Z</strong>で元に戻せます。キャンバスの上のバーにある<strong>再配置</strong>を押すと、<em>動いたものとその理由</em>が開きます。内容に合わせて大きさや位置が変わった枠が、理由とともに言葉で示されます。
+
+<Screenshot src="/docs-shots/ja/checks.webp" alt="検査パネルに「枠に収まらないテキスト」のエントリと、三つの対処のボタン。ページでは最初の箱が赤く囲まれ、26 mm 不足と書かれた帯が付いている。" caption="収まらない枠と、レイアウトが用意した対処です。" />
+
+## 7. ページとテキストで選択する
+
+ページとMarkdownは、互いに連動します。
+
+- <strong>ページからテキストへ。</strong> 枠の言葉をクリックすると、<strong>本文</strong>パネルのその段落にカーソルが移り、プレビューの下のパスに今いる場所が出ます（<em>10ページ › column › try › 段落 1</em>）。デザインモードでは、同じクリックでテンプレートエディタ用にその枠が選ばれます。
+- <strong>テキストからページへ。</strong> 段落にカーソルを置くと、それを収めた枠と段落そのものがページ上で囲まれ、同じパスに位置が出ます。
+- <strong>検査から。</strong> 検査パネルのエントリをクリックすると、Sandboxがそのページへ移り、枠を選んで、その文章にカーソルを置きます。複数の版がある本では、問題のある版に切り替わります。
+- <strong>箱のタブで。</strong> ダブルクリックすると、タブの上に `label` の入力欄が開きます。Enterで変更を確定し、Escで閉じます。
+
+<Screenshot src="/docs-shots/ja/select.webp" alt="二つ目の箱がオレンジで囲まれたページと、選択された枠のMarkdownを示す本文パネル。" caption="ページをクリックすると、そのMarkdownにカーソルが移り、プレビューの下のパスがどの枠かを示します。" />
+
+## 次に読むもの
+
+- [本をテンプレートページへ移す](/ja/docs/migrating-to-composed-pages)：ページのテキストをスタイルの中に持っている本は、そのテキストをMarkdownへ移せます。
+- [テンプレートページ](/ja/docs/composed-pages)：ページフェンスのすべての属性、図とラベルの行、ページの組み方、すべての警告とその直し方。
+- [設定：テンプレートページ](/ja/docs/configuration-composed-pages)：テンプレート、枠、グループのすべてのフィールド、継承、見開き。
+- [Sandbox：テンプレートページ](/ja/docs/sandbox-composed-pages)：テンプレート、枠のスタイル、すべての版での検査、修正の画面。

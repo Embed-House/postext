@@ -80,3 +80,35 @@ describe('the labels drawn over a picture in the reflowable EPUB (#955)', () => 
     expect(overlay(figure())).toBeUndefined();
   });
 });
+
+describe('labels on the pages of a right-to-left book (#969)', () => {
+  const arabic: PostextConfig = { ...config, locale: 'ar' };
+  const arOverlay = (md: string, res = resource()): string | undefined => {
+    const rb = block(layOut(md, arabic, [res])).resourceBlock!;
+    return figureLabelsOverlay(rb, { mirrored: true });
+  };
+  const groups = (svg: string): string[] => [...svg.matchAll(/<g transform="matrix\(([^)]*)\)">/g)].map((m) => m[1]!);
+
+  it('puts a label of Latin words where the print puts it, as on a left-to-right page', () => {
+    const ltr = overlay(figure('::label[Atlantic]{at="f"}', '::label[Sea]{at="a"}'))!;
+    const rtl = arOverlay(figure('::label[Atlantic]{at="f"}', '::label[Sea]{at="a"}'))!;
+    expect(groups(rtl)).toEqual(groups(ltr));
+    expect(rtl).toContain('>Atlantic</tspan>');
+    expect(rtl).toContain('>Sea</tspan>');
+    expect(rtl).not.toContain('direction="rtl"');
+  });
+
+  it('sets the words of an Arabic label one by one, right to left, each as right-to-left text anchored at its right edge', () => {
+    const svg = arOverlay(figure('::label[المحيط الأطلسي]{at="f"}'))!;
+    expect(svg).toBeDefined();
+    const words = [...svg.matchAll(/<text direction="rtl" y="[\d.-]+" fill="#[0-9a-f]{6}"><tspan x="(-?[\d.]+)"[^>]*>([^<]+)<\/tspan>/g)].map((m) => [Number(m[1]), m[2]!] as const);
+    expect(words).toHaveLength(2);
+    // Read from the right, the words come in their logical order.
+    const reading = [...words].sort((a, b) => b[0] - a[0]).map((w) => w[1]);
+    expect(reading).toEqual(['المحيط', 'الأطلسي']);
+  });
+
+  it('keeps a vertical label, or one with a mark, in the list', () => {
+    expect(arOverlay(figure('::label[縦書き]{at="v"}'))).toBeUndefined();
+  });
+});

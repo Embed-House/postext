@@ -431,7 +431,9 @@ in every edition.
   the figure under it when another route exists. Use `faces` for a face
   and `avoid` for anything else (a pose, a building, a sign): an avoid
   zone is covered in silence when the panel has no other room, a face
-  never. An anchor no line speaks from protects its `face` too, but it is
+  never. (On a map with `::label` words, from postext 1.42 the same zones
+  are the map's symbols: a label that runs onto one raises `labelOverlap`
+  with `withSymbol`; composed-pages.md §6.4.) An anchor no line speaks from protects its `face` too, but it is
   a speaker in every other way (its mouth is kept clear, the safe-area
   check applies), so do not invent an id for a bystander.
 - **Safe area**: what every crop keeps. A panel cell can show the safe area

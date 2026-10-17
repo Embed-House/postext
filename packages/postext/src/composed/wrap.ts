@@ -22,7 +22,7 @@
  */
 import type { ContentBlock } from '../parse/types';
 import type { CalloutStyleConfig } from '../types';
-import { composedPages, type ParsedComposedPage } from './document';
+import { composedPages, takenBlocks, type ParsedComposedPage } from './document';
 import { resolvePageTemplate, type PageTemplateSource } from './templates';
 import { nextFrameOf } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
@@ -167,8 +167,7 @@ function regroupPage(
   const flow = template.frames.find((f) => f.flow)?.name;
   const taken = new Map<number, string>();
   for (const f of template.frames) {
-    const idx = f.takes ? page.firstHeadings[f.takes] : undefined;
-    if (idx !== undefined && !taken.has(idx)) taken.set(idx, f.name);
+    for (const idx of takenBlocks(page, f.takes)) if (!taken.has(idx)) taken.set(idx, f.name);
   }
   for (const [slot, indices] of Object.entries(page.slots)) {
     put(names.has(slot) || variantNames.has(slot) ? slot : flow, indices);

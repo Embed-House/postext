@@ -361,8 +361,14 @@ describe('the sample and the merge card of styles based on another (#964)', () =
   });
 
   it('a style that overrides a setting of the parent differs from the base in that setting only', () => {
+    const lib = frameStyleLibrary({ calloutStyles: [note, { ...top, borderRadius: mm(2) }] }, boxes(['note', 'note-top']), { ignorePosition: true });
+    expect(lib.suggestions[0]).toMatchObject({ groups: ['borderRadius'] });
+  });
+
+  it('a style that overrides only colours is a variant of its base, not a duplicate (#976)', () => {
     const lib = frameStyleLibrary({ calloutStyles: [note, { ...top, background: colour('#ffeecc') }] }, boxes(['note', 'note-top']), { ignorePosition: true });
-    expect(lib.suggestions[0]).toMatchObject({ groups: ['background'] });
+    expect(lib.suggestions).toEqual([]);
+    expect(lib.kinds).toEqual([{ base: 'note', variants: [expect.objectContaining({ id: 'note-top', extendsBase: true, groups: ['background'] })] }]);
   });
 
   it('merging a base into the style that is based on it leaves no loop and no look changed', () => {
@@ -398,5 +404,33 @@ describe('the sample and the merge card of styles based on another (#964)', () =
     expect(resolved[0]!.padding.left.value).toBe(2);
     expect(resolved[0]!.title).toBe('B');
     expect(resolved[0]!.background.hex).toBe('#112233');
+  });
+});
+
+describe('kinds of box: one shape in several tints (#976)', () => {
+  const colour = (hex: string) => ({ hex, model: 'hex' as const });
+  const shape = { border: { enabled: true, color: colour('#222222'), width: { value: 1, unit: 'pt' as const } }, padding: pad(4), borderRadius: mm(2) };
+  const tints: CalloutStyleConfig[] = [
+    { id: 'caja-amarilla', ...shape, background: colour('#fff3b0') },
+    { id: 'caja-rosa', ...shape, background: colour('#f6c3d0'), border: { ...shape.border, color: colour('#aa3355') } },
+    { id: 'caja-azul', ...shape, background: colour('#c3e0f6') },
+    { id: 'caja-ancha', ...shape, background: colour('#fff3b0'), padding: pad(8) },
+  ];
+  const chapters = [{ id: 'c', markdown: [':::callout{type="caja-amarilla"}\nx\n:::', ':::callout{type="caja-amarilla"}\nx\n:::', ':::callout{type="caja-rosa"}\nx\n:::'].join('\n\n') }];
+
+  it('groups the tints under the most used and leaves them out of the merge suggestions', () => {
+    const lib = frameStyleLibrary({ calloutStyles: tints }, chapters);
+    expect(lib.kinds).toHaveLength(1);
+    expect(lib.kinds[0]!.base).toBe('caja-amarilla');
+    expect(lib.kinds[0]!.variants.map((v) => [v.id, v.extendsBase, v.groups])).toEqual([
+      ['caja-rosa', false, ['background', 'border']],
+      ['caja-azul', false, ['background']],
+    ]);
+    // The wider box is a different shape: still a merge candidate.
+    expect(lib.suggestions.flatMap((s) => [s.keep, ...s.merge])).toEqual(['caja-amarilla', 'caja-ancha']);
+  });
+
+  it('a book with no stored styles has no kinds', () => {
+    expect(frameStyleLibrary({}, []).kinds).toEqual([]);
   });
 });

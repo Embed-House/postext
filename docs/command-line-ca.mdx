@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 43,
+  order: 45,
   plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir-ne tots els fitxers en un de sol. Els programes i els assistents d'intel·ligència artificial també el poden fer servir, perquè pot respondre en un format que llegeixen sense dificultat.",
 };
 
@@ -393,6 +393,8 @@ s'estalvia la baixada. Una família que no es troba enlloc es compon en EB
 Garamond amb el seu propi nom, de manera que la maquetació i el PDF continuen
 coincidint, i un avís `missingFont` l'anomena. `postext info` mostra d'on ha
 sortit cada família.
+
+Un paquet que deixa fora els fitxers d'una família llicenciada pot anomenar-hi una família oberta d'amplada semblant (`fallback` a les `fonts` del manifest, des de postext 1.42). `postext` busca llavors aquesta família pels passos anteriors i composa les cares que el llibre no porta amb els seus talls del mateix pes i inclinació, amb el nom de la llicenciada, de manera que la maquetació s'assembla a la que s'obté amb els fitxers i `postext check` no avisa d'un `missingFont` per a ella. Una família que el llibre porta només en part pren del `fallback` únicament la inclinació de què no en té cap. El PDF incrusta la cara oberta.
 
 ## Per a scripts i agents
 

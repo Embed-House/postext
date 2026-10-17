@@ -104,7 +104,7 @@ const config: PostextConfig = {
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>なし</td>
-      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページのフェンスの属性を表す<code>&#123;attr.x&#125;</code>）。要素は枠やグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾は枠の後に置かれ、本文を押しのけることはありません。</td>
+      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページのフェンスの属性を表す<code>&#123;attr.x&#125;</code>）。要素は枠やグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾は枠の後に置かれ、本文を押しのけることはありません。postext 1.42 から、<code>&#123;headingNumber&#125;</code>はページの枠が持つ最初の番号付き見出し（<code>takes</code>を持つ枠）のカウンターを、<code>&#123;headingNumber.titulo&#125;</code>は枠<code>titulo</code>が持つ見出しのカウンターを、文書の数字で出力します。テーマの番号を載せるバッジは見出しから番号を読むので、ページフェンスに同じ番号を書き直す必要はありません。装飾は枠の下に描かれます。枠の上にある文字要素をクリックしたとき、その位置に枠自身の文字がなければ、枠ではなくその要素が選ばれます。<code>layer</code>が負の枠は装飾の下に描かれます。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -146,7 +146,7 @@ const config: PostextConfig = {
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>ページのパレットの上書きで、見出しスタイルや部にあるものと同じです。</td>
+      <td>ページのパレットの上書きで、見出しスタイルや部にあるものと同じです。<code>エントリ=#hex</code>の組をカンマで区切って書きます（<code>tint=#f6c3d0</code>）。ページの枠と装飾のうち、そのパレットエントリにリンクした（または同じ値の）色はすべてこれに従い、ページフェンスの<code>palette</code>属性が優先されます。postext 1.42 から値が反映されます。それまでは読み込まれても無視されていました。</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（枠を固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。テキストの枠には行長が要るので、幅の<code>'auto'</code>が意味を持つのは画像を1枚だけ入れる枠です（枠の高さに合わせたときの画像の幅になります）。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
+      <td>固定の長さ、領域に対する割合（0から100）、<code>'auto'</code>（中身そのものの大きさ）、<code>'fill'</code>（枠を固定した辺までの残り）のいずれかです。未設定なら<code>placement.size</code>を読み、それもなければ既定値（全幅、高さは中身に合わせる）になります。postext 1.42 から、幅を<code>'auto'</code>にすると、枠の幅は最も長い行にパディングを足した幅になります。アンカーが空けている幅と<code>maxWidth</code>を超えず（収まらない文は、そこで折り返します）、<code>minWidth</code>を下回りません。文字は左揃えで測るので、中央揃えの見出しでも幅は文字の分だけです。枠はアンカーが指す辺から始まり、その枠にアンカーした枠は一緒に動きます。どの言語でも見出しに合わせたいタブや囲みに使います。エンジンが使えない値（負の長さ、不明な単位）は既定値として扱います。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
@@ -259,9 +259,9 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>なし</td>
-      <td>スロットを指定していないそのレベルの最初の見出しを、この枠が受け取ります。そのため、ページのタイトルはフェンスの先頭に<code># Title</code>と書くだけです。</td>
+      <td>スロットを指定していないそのレベルの最初の見出しを、この枠が受け取ります。そのため、ページのタイトルはフェンスの先頭に<code># Title</code>と書くだけです。<code>'toc'</code>を指定すると、スロットを指定していないページの<code>:::toc</code>を受け取り、目次自身の規則で組みます（postext 1.42以降。<a href="/ja/docs/composed-pages">テンプレートページ</a>を参照）。</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -342,10 +342,16 @@ const config: PostextConfig = {
       <td>枠の内容領域に罫を引きます。各行の下端に1本ずつ、高さに収まるだけ引きます。<code>every</code>は間隔で、<code>'line'</code>（既定値。枠の文章の行送り）か長さです。<code>color</code>の既定値は中間の灰色、<code>width</code>は罫の太さ（0.5 pt）、<code>inset</code>は罫の両端に残す余白で、<code>&#123; left, right &#125;</code>とも書けます。下の「罫線付き枠」を参照。postext 1.38 から。</td>
     </tr>
     <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>この枠が、囲みスタイルの見た目のうち変えるものです。名前と入れ子はスタイルのものと同じで、色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>と<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）と、文字の字間（<code>body.letterSpacing</code>）を指定できます。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブを持つスタイルにだけ働きます。子テンプレートでは、上書きする枠とキーごとに統合されます。同じ形の囲みを何色も使う本では、スタイルは1つにしてここに色合いを書くか、<code>palette</code>でパレットにリンクした塗りの色を替えます。postext 1.42 から。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>ページの値</td>
-      <td>独自の書字方向や文字方向で組む枠です。横組みのページの縦組みのボックス、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向の枠は、四分の一回転したボックスの中で組まれます。行はボックスの高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>は枠の内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けたボックスと同じで、自分で<code>dir</code>を書いた段落やボックスはそれを保ちます。postext 1.39 から。postext 1.40 から、縦組みの枠は右から左へ進むページでも使えます。左から右のページと同じように組み、鏡映したフローが置く位置に据え、文字は鏡映せずに描きます。横組みページの縦組み枠にある画像は、キャプションとともに直立し、枠がページの幅方向に残している余地を使います。リフロー型 EPUB は、別の書字方向の枠を、その書字方向と、行が延びる向きの長さ（本文の em 単位）をもつボックスとして書きます。</td>
+      <td>独自の書字方向や文字方向で組む枠です。横組みのページの縦組みのボックス、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向の枠は、四分の一回転したボックスの中で組まれます。行はボックスの高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>は枠の内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けたボックスと同じで、自分で<code>dir</code>を書いた段落やボックスはそれを保ちます。postext 1.39 から。postext 1.40 から、縦組みの枠は右から左へ進むページでも使えます。左から右のページと同じように組み、鏡映したフローが置く位置に据え、文字は鏡映せずに描きます。横組みページの縦組み枠にある画像は、キャプションとともに直立し、枠がページの幅方向に残している余地を使います。リフロー型 EPUB は、別の書字方向の枠を、その書字方向と、行が延びる向きの長さ（本文の em 単位）をもつボックスとして書きます。postext 1.42 から、縦組みページでページと同じ書字方向の枠にある画像も、キャプションとともに直立します。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -485,6 +491,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 結果を決めるのは、ページの中身、テンプレート、組版の設定だけです。同じ入力からは同じページができ、測る順序も手順も変わりません。この調整はほかのページを読まないので、中身が自分のページに収まっているかぎり、あるテンプレートページを変えてもほかのページは元のままです。
 
+**枠をカードの下端に留める（postext 1.42以降）。** 上の文章の下にアンカーした枠は、その文章に従って動きます。文章が1行短い版や長い版では、その下の枠が上がったり下がったりし、テンプレートが描くもの（カード、帯、下端）はそのまま残ります。枠をテンプレートが置いたとおりカードの下端に留めるには、カードの枠を、カードと同じ高さの枠を持つ積み重ね（`stack`）にまとめます。留める枠より上の枠は、余った空間を受け取り（`grow: 1`）、返します（`shrink: 1`）。留める枠には`minHeight`を書きます。文章が短ければ、留めた枠は元の位置のままです。長ければ、押し縮められるのはその上です。留めた枠は`minHeight`を保ち、上の文章が縮小され、それでも収まらなければ、組版は`frameOverflow`を報告し、リフローの記録には上の枠の`textScaled`と`overflow`が載ります。コンテナの下端（`bottom-left`）にアンカーした枠も位置を保ちますが、上の枠とは何もつながっていません。長い文章はその枠に重なり、その枠のために何かが押し縮められることはなく、重なりも報告されません。
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+大きくなるほうの枠は、中身にかかわらず空き領域と同じ高さになります。そのため背景の見えるスタイルを付けると全体が塗られてしまいます。カードはテンプレートの装飾に描き、テキストの枠にはスタイルを付けないでください。
+
 ### 内容が収まらないとき
 
 枠の中身がグループの与える場所より高いとき、割り付けは[収めるための手順](/ja/docs/composed-pages#それでも収まらないとき)を順に試し、最初に中身が収まったところで止まります。`maxHeight`までの空き場所、グループの押し下げと譲り合い、画像の縮小、グループのほかの枠を最小まで縮めること、テキストの縮小、別のページへの続き、の順です。各手順をどこまで進めてよいかは、次の枠の設定で決まります。
@@ -510,7 +536,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 - `area`、`header`、`overflowTemplate`などの項目は親の値を置き換えます。`grid`はキーごとに統合します。`spread`、`gutter`、`role`も継承しますが、`id`、`name`、`extends`はテンプレート自身のものです。
 - `frames`と`groups`は**名前で**統合します。継承した項目と同じ名前の項目は、書いたフィールドだけを変えて残りを保ちます（`fit`、`overflow`、`padding`はキーごとに統合し、`placement`は丸ごと置き換えます）。`remove: true`はその項目を取り除き、新しい名前は継承した項目の後に加わります。
-- 装飾の要素も同じように`id`で統合します。新しいidの要素やidのない要素は加わります。
+- 装飾の要素も同じように`id`で統合します。新しいidの要素やidのない要素は加わります。postext 1.42 から、子テンプレートやバリアントの`decoration.elements`に`{ id: 'head-even', remove: true }`と書くと、継承した同じ`id`の要素を外せます。枠の`remove: true`と同じ働きです。継承していない`id`を指定しても何も起きません。同じリストの中で、削除のあとに同じ`id`の新しい要素を続けて書くこともできます。
 
 `variants.recto`と`variants.verso`はテンプレートと同じように書き、同じように統合して、右ページと左ページに適用します。適用は`extends`の連鎖全体の後で、根のテンプレートのバリアントが先です。見開きは両方の側を持つので、どちらのバリアントも適用しません。
 
@@ -562,7 +588,7 @@ pageTemplates: [{
 
 ## ラベルスタイル
 
-`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話し手と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。
+`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話し手と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。 Sandboxでは、**デザイン › 図と表 › ラベルのスタイル**で編集します（postext 1.42から）。
 
 ```ts
 labelStyles: [
@@ -653,6 +679,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>このスタイルのラベルを縦書きにします。文字は正立のまま1文字ずつ上から下へ、列は右から左へ並びます。中国語や日本語の地図の注記と同じ組み方です。アンカー自身の<code>writingMode</code>が優先されます。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>は、このアンカーに置いたラベルが、原稿の印刷どおりに隣のラベルへ接してよいことを表します。それを含む組には<code>labelOverlap</code>が出ません。スタイルの<code>overlap</code>より優先されます。postext 1.42から。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>にすると、このスタイルのラベルは<code>labelOverlap</code>の検査から外れます。原稿で名前が接している地図向けです。アンカー自身の<code>overlap</code>が優先されます。postext 1.42から。</td>
     </tr>
   </tbody>
 </table>

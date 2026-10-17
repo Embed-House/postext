@@ -20,7 +20,7 @@ import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../pa
 import { suffixJoiner } from '../parse/inlineFormatting';
 import { parseTocGroupHead } from '../defaults/toc';
 import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types';
-import type { VDTLine, VDTLineSegment } from '../vdt';
+import type { VDTBlock, VDTLine, VDTLineSegment } from '../vdt';
 import { dimensionToPx } from '../units';
 import { buildFontString, measureRichBlock } from '../measure';
 import type { ResolvedConfig } from '../vdt';
@@ -60,6 +60,30 @@ export function expandTocDirectives(
     out.push(...tocBlocksFor(b, outline, resolved, groupIds));
   }
   return out;
+}
+
+/** What a placed block of the contents carries for the backends and the
+ *  design pass: the page its entry links to, or its part row's values
+ *  (the row's design is laid out from `toc.parts.design`). The flow
+ *  (`build.ts`) and a frame that holds the contents (`calloutLayout.ts`,
+ *  #983) stamp the same fields. */
+export function tocBlockStamps(raw: ContentBlock): Pick<VDTBlock, 'tocEntry' | 'tocPart'> {
+  const info = raw.toc;
+  if (!info) return {};
+  const continued = info.group?.role === 'continuation' ? { continued: true as const } : {};
+  if (info.kind === 'entry') {
+    return { tocEntry: { ...(info.pageIndex !== undefined ? { pageIndex: info.pageIndex } : {}), ...(info.headingSource !== undefined ? { headingSource: info.headingSource } : {}), ...continued } };
+  }
+  return {
+    tocPart: {
+      ...continued,
+      number: info.number,
+      title: info.title ?? '',
+      pageLabel: info.pageLabel ?? '',
+      ...(info.palette ? { palette: info.palette } : {}),
+      ...(info.pageIndex !== undefined ? { pageIndex: info.pageIndex } : {}),
+    },
+  };
 }
 
 /** The heading levels a `:::toc{levels="…"}` lists (#850): a range

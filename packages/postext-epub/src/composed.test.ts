@@ -217,7 +217,7 @@ describe('a composed page in the fixed-layout EPUB (#862)', () => {
   it('reports the decoration face it has no file for, as the Sandbox collects it to embed', async () => {
     const config = structuredClone(doc.config.pageTemplates) as unknown as NonNullable<PostextConfig['pageTemplates']>;
     const { markdown } = await page8Book('en');
-    const decorated = config.map((t) => ({ ...t, decoration: { ...t.decoration, elements: (t.decoration?.elements ?? []).map((e) => (e.kind === 'text' ? { ...e, fontFamily: 'Decofont' } : e)) } }));
+    const decorated = config.map((t) => ({ ...t, decoration: { ...t.decoration, elements: (t.decoration?.elements ?? []).map((e) => ('kind' in e && e.kind === 'text' ? { ...e, fontFamily: 'Decofont' } : e)) } }));
     const found: EpubWarning[] = [];
     const d = buildDocument({ markdown }, { ...(doc.config as unknown as PostextConfig), pageTemplates: decorated } as PostextConfig);
     expect(documentFontFaces(d).some((f) => f.family === 'Decofont')).toBe(true);

@@ -182,7 +182,7 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
         ? { data: { resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), widthPct: w.widthPct, scale: w.scale, ...(w.locale ? { locale: w.locale } : {}) } }
         : {}),
       ...(w.kind === 'labelOverlap'
-        ? { data: { resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), with: w.with, ...(w.withAnchor !== undefined ? { withAnchor: w.withAnchor } : {}), count: w.count, ...(w.locale ? { locale: w.locale } : {}) } }
+        ? { data: { resourceId: w.resourceId, text: w.text, ...(w.anchor !== undefined ? { anchor: w.anchor } : {}), with: w.with, ...(w.withAnchor !== undefined ? { withAnchor: w.withAnchor } : {}), ...(w.withSymbol !== undefined ? { withSymbol: w.withSymbol } : {}), count: w.count, ...(w.locale ? { locale: w.locale } : {}) } }
         : {}),
     });
   }

@@ -104,7 +104,7 @@ const config: PostextConfig = {
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>无</td>
-      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面围栏某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框或组（<code>'#dinero'</code>），并随之移动。装饰在框之后排放，从不推开文字。</td>
+      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面围栏某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框或组（<code>'#dinero'</code>），并随之移动。装饰在框之后排放，从不推开文字。自 postext 1.42 起，<code>&#123;headingNumber&#125;</code>输出页面各框中第一个带编号的标题的计数（带<code>takes</code>的框），<code>&#123;headingNumber.titulo&#125;</code>输出框<code>titulo</code>中那个标题的计数，数字采用文档的数字系统；因此带有主题编号的徽章可以直接从标题读取，页面围栏不必重复写一遍。装饰绘制在框的下方；点击覆盖在某个框上的文字元素时，如果该点处框没有自己的文字，选中的是这个元素，而不是框。<code>layer</code>为负数的框绘制在装饰下方。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -146,7 +146,7 @@ const config: PostextConfig = {
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>页面的调色板覆盖，用法与标题样式和篇中的相同。</td>
+      <td>页面的调色板覆盖，用法与标题样式和篇中的相同：以逗号分隔的<code>条目=#hex</code>对（<code>tint=#f6c3d0</code>）。页面的框和装饰中，凡与该调色板条目关联（或颜色值相同）的颜色都会采用它，页面围栏的<code>palette</code>属性优先。自 postext 1.42 起该值才会生效；此前它会被读取但被忽略。</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -195,7 +195,7 @@ const config: PostextConfig = {
       <td><code>width</code>、<code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>、<code>'auto'</code></td>
-      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框所锚定的那条边为止剩下的空间）。未设置时，框读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。文本框需要行宽，所以<code>'auto'</code>宽度只对只放一张图片的框有意义（图片在框高度下的宽度）。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
+      <td>固定长度、区域的百分比（0到100）、<code>'auto'</code>（内容本身的尺寸）或<code>'fill'</code>（到框所锚定的那条边为止剩下的空间）。未设置时，框读取<code>placement.size</code>，再取默认值：全宽，高度与内容相同。自 postext 1.42 起，宽度为<code>'auto'</code>时，框的宽度等于最长一行加内边距，不超过锚点留出的空间和<code>maxWidth</code>（放不下的文字在此处换行），也不小于<code>minWidth</code>。文字按左对齐测量，所以居中的标题宽度就是其文字的宽度。框从锚点所指的那条边开始，锚定在它上面的框随之移动。适合需要在每种语言中都贴合标题的标签或框。引擎无法使用的值（负长度、未知单位）按默认值处理。</td>
     </tr>
     <tr>
       <td><code>minWidth</code>、<code>maxWidth</code>、<code>minHeight</code>、<code>maxHeight</code></td>
@@ -259,9 +259,9 @@ const config: PostextConfig = {
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>无</td>
-      <td>框接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。</td>
+      <td>框接收该级别中第一个没有指定槽位的标题，所以页面标题只需在围栏顶部写<code># Title</code>。取<code>'toc'</code>时，框接收页面中没有指定槽位的<code>:::toc</code>，并按目录自己的规则排版（自 postext 1.42 起；见<a href="/zh/docs/composed-pages">模板页</a>）。</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -342,10 +342,16 @@ const config: PostextConfig = {
       <td>在框的内容区内画横线：每一行底部一条，高度容得下几条就画几条。<code>every</code>是间距，取<code>'line'</code>（默认：框文字的行距）或一个长度；<code>color</code>默认为中灰，<code>width</code>是线的粗细（0.5 pt），<code>inset</code>是每条线两端留出的距离，也可写成<code>&#123; left, right &#125;</code>。见下文“画横线的框”。自 postext 1.38 起。</td>
     </tr>
     <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。自 postext 1.42 起。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>、<code>'ltr' | 'rtl'</code></td>
       <td>页面的值</td>
-      <td>以自身书写方向或文字方向排的框：横排页面上的竖排方框、竖排页面上的横排卡片、从左到右的书里一段从右到左的引文。另一种书写方向的框在转了四分之一圈的方框里排：各行沿方框的高度排列，在宽度方向上依次排开；高度为<code>'auto'</code>时取能在该宽度里容下这些行的最小高度。它的文字按该书写方向的页面绘制。<code>direction</code>让框里的内容按该方向排，与用<code>&#123;dir=…&#125;</code>标注的方框相同；自己写了<code>dir</code>的段落或方框保持原样。自 postext 1.39 起。自 postext 1.40 起，竖排框也可用于从右到左的页面：按从左到右页面的方式排好，再放到镜像文流所在的位置，文字不镜像绘制；横排页面上竖排框里的图片连同图注保持直立，占用框在页面横向上剩下的空间；可重排 EPUB 把另一书写方向的框写成带该书写方向的盒子，并给出文字行延伸方向的长度（以正文的 em 计）。</td>
+      <td>以自身书写方向或文字方向排的框：横排页面上的竖排方框、竖排页面上的横排卡片、从左到右的书里一段从右到左的引文。另一种书写方向的框在转了四分之一圈的方框里排：各行沿方框的高度排列，在宽度方向上依次排开；高度为<code>'auto'</code>时取能在该宽度里容下这些行的最小高度。它的文字按该书写方向的页面绘制。<code>direction</code>让框里的内容按该方向排，与用<code>&#123;dir=…&#125;</code>标注的方框相同；自己写了<code>dir</code>的段落或方框保持原样。自 postext 1.39 起。自 postext 1.40 起，竖排框也可用于从右到左的页面：按从左到右页面的方式排好，再放到镜像文流所在的位置，文字不镜像绘制；横排页面上竖排框里的图片连同图注保持直立，占用框在页面横向上剩下的空间；可重排 EPUB 把另一书写方向的框写成带该书写方向的盒子，并给出文字行延伸方向的长度（以正文的 em 计）。自 postext 1.42 起，竖排页面上沿用页面书写方向的框里的图片，同样连同图注保持直立。</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -485,6 +491,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 结果只取决于页面的内容、模板和排版设置：同样的输入得到同样的页面，测量的顺序和步骤也都相同。这种协调从不读取别的页面，所以只要内容还留在自己的页上，修改一个组合页面不会改变其他任何页面。
 
+**把框固定在卡片底部（自 postext 1.42 起）。** 锚在上方文字之下的框会跟着那段文字走：在文字少一行或多一行的版本里，它下面的框随之上移或下移，而模板画出的东西（卡片、色带、页脚）留在原处。要让框留在卡片底部、模板放置它们的位置，就把卡片的各个框放进同一个纵向组（`stack`），组的方框与卡片等高。被固定的框上方的框吸收多出来的空间（`grow: 1`），也让出空间（`shrink: 1`）；被固定的框写一个`minHeight`。文字变短时，被固定的框原地不动。文字变长时，挤压发生在它们上方：它们保持`minHeight`，上方的文字被缩小，仍放不下时，排版给出`frameOverflow`，重排记录里上方那个框会记下`textScaled`和`overflow`。锚在容器底部（`bottom-left`）的框同样守住自己的位置，但没有任何东西把它和上方的框联系起来：较长的文字会盖到它上面，不会为它挤压任何东西，重叠也不会报告。
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+增长的那个框和可用空间一样高，不论里面放了什么，所以带可见背景的样式会把整块都涂满：请把卡片画在模板的装饰里，文字框不设样式。
+
 ### 内容放不下时
 
 框的内容比组给它的空间高时，排版按顺序尝试[逐级重排](/zh/docs/composed-pages#仍然放不下时)的各个步骤，到第一个能让内容放下的为止：先占用空闲空间（最多到`maxHeight`），再由组推挤和让位，然后缩小图片，把组中其他框压到最小高度，缩小文字，最后到另一页续排。下面这些框的设置决定每一步能走多远：
@@ -510,7 +536,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 - `area`、`header`或`overflowTemplate`这类字段替换父模板的值。`grid`逐键合并。`spread`、`gutter`和`role`也会继承；`id`、`name`和`extends`属于模板自己。
 - `frames`和`groups`**按名称**合并：与继承项同名的条目改动它写出的字段，其余保留（`fit`、`overflow`和`padding`逐键合并；`placement`整体替换）；`remove: true`去掉该项；新名称追加在继承项之后。
-- 装饰元素以同样的方式按`id`合并；id是新的或没有id的元素会被追加。
+- 装饰元素以同样的方式按`id`合并；id是新的或没有id的元素会被追加。自 postext 1.42 起，在子模板或变体的`decoration.elements`中写`{ id: 'head-even', remove: true }`，会去掉所继承的、`id`相同的元素，作用与框的`remove: true`相同；模板并未继承的`id`则不起作用。同一列表中，删除之后可以紧跟一个同`id`的新元素。
 
 `variants.recto`和`variants.verso`的写法与模板相同，合并方式也相同，分别作用于右页和左页。它们在整条`extends`链之后应用，根模板的变体最先应用。跨页同时有两面，所以不应用任何变体。
 
@@ -562,7 +588,7 @@ pageTemplates: [{
 
 ## 注记样式
 
-`labelStyles`属性为写在图片上的注记命名各种外观：地图上的海洋和城镇，示意图的各个部分。注记位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或注记所指定的样式。
+`labelStyles`属性为写在图片上的注记命名各种外观：地图上的海洋和城镇，示意图的各个部分。注记位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或注记所指定的样式。 在Sandbox中，它们在**版面设计 › 图与表 › 标注样式**里编辑（自postext 1.42起）。
 
 ```ts
 labelStyles: [
@@ -653,6 +679,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>这种样式的标注竖排：字符直立，一格一格自上而下，各列从右向左，如同中文或日文地图上的注记。锚点自己的<code>writingMode</code>优先。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>表示放在这个锚点上的标注可以挨着邻近的标注，就像原稿印的那样：包含它的一对不会给出<code>labelOverlap</code>。优先于样式的<code>overlap</code>。自postext 1.42起。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>让这个样式的标注不再参与<code>labelOverlap</code>检查，适用于原稿里名称本来就相互贴着的地图。锚点自己的<code>overlap</code>优先。自postext 1.42起。</td>
     </tr>
   </tbody>
 </table>

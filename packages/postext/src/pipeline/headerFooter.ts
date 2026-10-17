@@ -24,7 +24,7 @@ import {
   type VDTPage,
 } from '../vdt';
 import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
-import { parsePartNumber, partMarkPages } from './parts';
+import { parsePartNumber, parsePartPalette, partMarkPages } from './parts';
 import { computePageMetrics, sheetRectToFlow } from './buildHelpers';
 import { arabicNumbersOf, resolvedLocale } from './config';
 import { classifyPages } from './pageRoles';
@@ -49,6 +49,7 @@ import {
 } from '../design/layout';
 import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
 import { plainDesignText } from '../design/richText';
+import { withDigits } from '../arabicNumerals';
 
 /** Slots live in the page margin area between the body edge and the trim
  *  edge. Header slot container: from the trim top down to body top.
@@ -1188,9 +1189,30 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // the document's on their pages, and their palette overrides stack on the
   // part's.
   const sectionByPage = computeSectionStyles(doc.blocks, doc.pages.length, doc.pages, resolved);
+  // A composed page (#976) stacks its template's `palette` and the page
+  // fence's `palette="id=#hex"` on top of those: the palette-linked fills
+  // of its frames and decoration take the page's value.
+  const composedPalettes = new Map<string, Record<string, string>>();
+  const composedPaletteOf = (page: VDTPage | undefined): Record<string, string> | undefined => {
+    const composed = page?.composed;
+    if (!page || !composed) return undefined;
+    const parity = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
+    const key = `${composed.template}|${parity}`;
+    let fromTemplate = composedPalettes.get(key);
+    if (!fromTemplate) {
+      const template = resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, composed.template, { parity });
+      fromTemplate = parsePartPalette(template?.palette);
+      composedPalettes.set(key, fromTemplate);
+    }
+    const fromFence = parsePartPalette(composed.attrs.palette);
+    const merged = { ...fromTemplate, ...fromFence };
+    return Object.keys(merged).length > 0 ? merged : undefined;
+  };
   const partPaletteByPageIndex = partValues.partPaletteByPageIndex.map((palette, i) => {
     const section = sectionByPage[i];
-    return section && Object.keys(section.palette).length > 0 ? { ...palette, ...section.palette } : palette;
+    const base = section && Object.keys(section.palette).length > 0 ? { ...palette, ...section.palette } : palette;
+    const own = composedPaletteOf(doc.pages[i]);
+    return own ? { ...base, ...own } : base;
   });
   // The same overrides recolour the palette-linked colours of the flow,
   // and of the line numbers (#621).
@@ -1521,51 +1543,57 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       );
       if (overlay) block.designOverlay = overlay;
     };
+    // A part row of the contents: its design laid out in the block's box
+    // with the part's own number, title, page label and palette. `boxFrames`:
+    // the page frames in the coordinates of the frame the row is set in, for
+    // the contents a frame of a composed page holds (#983).
+    const overlayTocPart = (block: VDTBlock, boxFrames?: DesignFrames): void => {
+      if (!block.tocPart) return;
+      const tp = block.tocPart;
+      const slot = resolved.toc.parts.design.elements.length > 0
+        ? resolved.toc.parts.design
+        : synthesiseDefaultTocPartSlot(resolved, tp.number.length > 0);
+      const rowPage = { ...page, pageLabel: tp.pageLabel } as VDTPage;
+      const palette = { ...(partPaletteByPageIndex[page.index] ?? {}), ...(tp.palette ?? {}) };
+      const placeholders: DesignPlaceholderContext = {
+        kind: 'part',
+        // `{leader}` fills the row with the contents' leader (#889).
+        leader: { enabled: resolved.toc.leader.enabled, char: resolved.toc.leader.char, gap: resolved.toc.leader.gap },
+        page: rowPage,
+        allPages: doc.pages,
+        metadata: doc.metadata,
+        chapterTitleByPageIndex,
+        chapterNumberByPageIndex,
+        chapterAttrsByPageIndex,
+        bookTotalPages,
+        numerals,
+        marksFor,
+        partTitleByPageIndex,
+        partNumberByPageIndex,
+        partPaletteByPageIndex: doc.pages.map((_, i) => (i === page.index ? palette : partPaletteByPageIndex[i] ?? {})),
+        heading: {
+          titleText: tp.title,
+          formattedNumber: tp.number,
+          numericValue: parsePartNumber(tp.number),
+          locale,
+          chapterNumber: chapterNumberOf(block, page.index),
+        },
+      };
+      const overlay = layoutSlotToVdt(
+        slot,
+        { x: block.bbox.x, y: block.bbox.y, width: block.bbox.width, height: block.bbox.height },
+        page.index + pageIndexOffset,
+        placeholders,
+        dpi,
+        { ...extras, ...(boxFrames ? { frames: boxFrames } : {}), slot: 'tocRow' },
+      );
+      if (overlay) block.designOverlay = overlay;
+    };
     for (const col of page.columns) {
       for (const block of col.blocks) {
         if (block.hidden) continue;
-        // A part row of the contents: its design laid out in the block's box
-        // with the part's own number, title, page label and palette.
         if (block.tocPart) {
-          const tp = block.tocPart;
-          const slot = resolved.toc.parts.design.elements.length > 0
-            ? resolved.toc.parts.design
-            : synthesiseDefaultTocPartSlot(resolved, tp.number.length > 0);
-          const rowPage = { ...page, pageLabel: tp.pageLabel } as VDTPage;
-          const palette = { ...(partPaletteByPageIndex[page.index] ?? {}), ...(tp.palette ?? {}) };
-          const placeholders: DesignPlaceholderContext = {
-            kind: 'part',
-            // `{leader}` fills the row with the contents' leader (#889).
-            leader: { enabled: resolved.toc.leader.enabled, char: resolved.toc.leader.char, gap: resolved.toc.leader.gap },
-            page: rowPage,
-            allPages: doc.pages,
-            metadata: doc.metadata,
-            chapterTitleByPageIndex,
-            chapterNumberByPageIndex,
-            chapterAttrsByPageIndex,
-            bookTotalPages,
-            numerals,
-            marksFor,
-            partTitleByPageIndex,
-            partNumberByPageIndex,
-            partPaletteByPageIndex: doc.pages.map((_, i) => (i === page.index ? palette : partPaletteByPageIndex[i] ?? {})),
-            heading: {
-              titleText: tp.title,
-              formattedNumber: tp.number,
-              numericValue: parsePartNumber(tp.number),
-              locale,
-              chapterNumber: chapterNumberOf(block, page.index),
-            },
-          };
-          const overlay = layoutSlotToVdt(
-            slot,
-            { x: block.bbox.x, y: block.bbox.y, width: block.bbox.width, height: block.bbox.height },
-            page.index + pageIndexOffset,
-            placeholders,
-            dpi,
-            { ...extras, slot: 'tocRow' },
-          );
-          if (overlay) block.designOverlay = overlay;
+          overlayTocPart(block);
           continue;
         }
         overlayHeading(block, col);
@@ -1576,14 +1604,16 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // a spread's frames shown on this page.
     const composed = page.composed;
     for (const block of page.floats ?? []) {
-      if (block.type !== 'heading' || block.hidden || block.containerId === undefined) continue;
+      if (block.hidden || block.containerId === undefined) continue;
       const frame = composed ? frameOfBlock(composed, block.id) : undefined;
-      overlayHeading(block, undefined, frame ? framesInFrame(extras.frames, frame) : undefined);
+      if (block.tocPart) overlayTocPart(block, frame ? framesInFrame(extras.frames, frame) : undefined);
+      else if (block.type === 'heading') overlayHeading(block, undefined, frame ? framesInFrame(extras.frames, frame) : undefined);
     }
     for (const frame of composed?.frames ?? []) {
       for (const block of frame.facingBlocks ?? []) {
-        if (block.type !== 'heading' || block.hidden || block.containerId === undefined) continue;
-        overlayHeading(block, undefined, framesInFrame(extras.frames, frame));
+        if (block.hidden || block.containerId === undefined) continue;
+        if (block.tocPart) overlayTocPart(block, framesInFrame(extras.frames, frame));
+        else if (block.type === 'heading') overlayHeading(block, undefined, framesInFrame(extras.frames, frame));
       }
     }
     if (furniture && footerSlot.elements.length > 0) {
@@ -1638,9 +1668,24 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const collapsed = new Set<string>();
       /** Empty frames' ruled lines (#914), on the sheet. */
       const rules: VDTDesignRuleBlock[] = [];
+      /** The counter of the first numbered heading each frame holds
+       *  (#984), in the document's digits, and the first of the page. */
+      const headingNumberByFrame: Record<string, string> = {};
+      let headingNumber: string | undefined;
+      const floatById = new Map<string, VDTBlock>();
       const nameFrames = (p: VDTPage, dx: number) => {
+        for (const b of p.floats ?? []) floatById.set(b.id, b);
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
+          if (!f.facingBlocks) {
+            for (const id of f.blockIds) {
+              const n = floatById.get(id)?.headingNumber;
+              if (n === undefined) continue;
+              const text = withDigits(String(n), numerals);
+              headingNumberByFrame[f.name] ??= text;
+              headingNumber ??= text;
+            }
+          }
           if (f.facingBlocks) continue;
           // A frame in its own writing mode (#944) is anchored to by the box
           // the page gives it, not the turned box its content is laid in.
@@ -1692,6 +1737,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partTitleByPageIndex,
         partNumberByPageIndex,
         partPaletteByPageIndex,
+        ...(headingNumber !== undefined ? { headingNumber } : {}),
+        ...(Object.keys(headingNumberByFrame).length > 0 ? { headingNumberByFrame } : {}),
       };
       const slot = resolveDesignSlot(template.decoration, 'header');
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(

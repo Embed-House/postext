@@ -104,7 +104,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>none</td>
-      <td>Images, rules and boxes painted with the page, in the element language of <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text.</td>
+      <td>Images, rules and boxes painted with the page, in the element language of <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text. Since postext 1.42, <code>&#123;headingNumber&#125;</code> prints the counter of the first numbered heading the page's frames hold (a frame with <code>takes</code>) and <code>&#123;headingNumber.titulo&#125;</code> that of the frame <code>titulo</code>, in the document's digits, so a badge with a topic's number reads it from the heading and the page fence need not repeat it. Decoration is painted under the frames; a click on a text element that lies over a frame, at a point where the frame has no text of its own, reaches the element, not the frame. A frame with a negative <code>layer</code> is painted under the decoration.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -146,7 +146,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>A palette override for the page, as heading styles and parts have.</td>
+      <td>A palette override for the page, as heading styles and parts have: pairs <code>entry=#hex</code> separated by commas (<code>tint=#f6c3d0</code>). Every colour of the page's frames and decoration that is linked to that palette entry (or equals its value) takes it, and the page fence's <code>palette</code> attribute goes on top. Since postext 1.42 the value is applied; before, it was read and ignored.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -195,7 +195,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>A fixed length, a percentage of the area (0 to 100), <code>'auto'</code> (the content's own size) or <code>'fill'</code> (what is left up to the edge the frame is anchored to). Unset, the frame reads <code>placement.size</code>, then the default: full width, as tall as its content. A text frame needs a measure, so <code>'auto'</code> width only makes sense for a frame that holds one picture (the picture's width at the frame's height). A value the engine cannot use (a negative length, an unknown unit) reads as the default.</td>
+      <td>A fixed length, a percentage of the area (0 to 100), <code>'auto'</code> (the content's own size) or <code>'fill'</code> (what is left up to the edge the frame is anchored to). Unset, the frame reads <code>placement.size</code>, then the default: full width, as tall as its content. Since postext 1.42, an <code>'auto'</code> width makes the frame as wide as its longest line plus its padding, no wider than the room its anchor leaves and <code>maxWidth</code> (text that does not fit wraps there), no narrower than <code>minWidth</code>. The text is measured set flush left, so a centred title is as wide as its words. The frame starts at the edge its anchor names, and frames anchored to it follow. Use it for a tab or a box that has to match its title in every language. A value the engine cannot use (a negative length, an unknown unit) reads as the default.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -259,9 +259,9 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
     </tr>
     <tr>
       <td><code>takes</code></td>
-      <td><code>'h1'</code> … <code>'h6'</code></td>
+      <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>none</td>
-      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence.</td>
+      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence. With <code>'toc'</code> it receives the <code>:::toc</code> of the page that names no slot and sets it by the rules of the contents (since postext 1.42; see <a href="/en/docs/composed-pages">Composed pages</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -342,10 +342,16 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td>Ruled lines across the frame's content box: one at the foot of each line slot, as many as its height holds. <code>every</code> is the pitch, <code>'line'</code> (the default: the leading of the frame's text) or a length; <code>color</code> is a mid grey by default, <code>width</code> the thickness (0.5 pt), <code>inset</code> the room left at both ends of each rule, or <code>&#123; left, right &#125;</code>. See Ruled frames below. Since postext 1.38.</td>
     </tr>
     <tr>
+      <td><code>look</code></td>
+      <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
+      <td>—</td>
+      <td>What this frame changes of its callout style's look, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. Since postext 1.42.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>the page's</td>
-      <td>A frame set in its own writing mode or direction: a vertical box on a horizontal page, a horizontal card on a vertical one, a right-to-left quotation in a left-to-right book. A frame of the other writing mode is laid out in its box turned a quarter turn: its lines run along the box's height and follow each other across its width, and an <code>'auto'</code> height is the least that holds them in that width. Its text is painted as a page of that mode paints its own. <code>direction</code> sets the frame's story in that direction, as a box fenced <code>&#123;dir=…&#125;</code> is; a block or box that writes its own <code>dir</code> keeps it. Since postext 1.39. Since postext 1.40 a vertical frame also works on a right-to-left page, laid out as on a left-to-right one and placed where the mirrored flow puts it, its text painted unmirrored; a picture in a vertical frame of a horizontal page stands upright with its caption and takes the room the box has left across the page; the reflowable EPUB writes a frame of another writing mode as a box with that mode and the length its lines run along (in ems of the body text).</td>
+      <td>A frame set in its own writing mode or direction: a vertical box on a horizontal page, a horizontal card on a vertical one, a right-to-left quotation in a left-to-right book. A frame of the other writing mode is laid out in its box turned a quarter turn: its lines run along the box's height and follow each other across its width, and an <code>'auto'</code> height is the least that holds them in that width. Its text is painted as a page of that mode paints its own. <code>direction</code> sets the frame's story in that direction, as a box fenced <code>&#123;dir=…&#125;</code> is; a block or box that writes its own <code>dir</code> keeps it. Since postext 1.39. Since postext 1.40 a vertical frame also works on a right-to-left page, laid out as on a left-to-right one and placed where the mirrored flow puts it, its text painted unmirrored; a picture in a vertical frame of a horizontal page stands upright with its caption and takes the room the box has left across the page; the reflowable EPUB writes a frame of another writing mode as a box with that mode and the length its lines run along (in ems of the body text). Since postext 1.42 a picture in a frame of a vertical page that follows the page's own mode stands upright with its caption in the same way.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -485,6 +491,26 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 The result depends only on the page's content, the template and the typography: the same input gives the same page, measured in the same order with the same steps. The negotiation never reads another page, so a change on one composed page leaves every other page as it was, as long as the content stays on its page.
 
+**Holding frames at the foot of a card (since postext 1.42).** A frame anchored below the text above it follows that text: in an edition where the text is a line shorter or longer, the frames under it move up or down, while what the template draws (a card, a band, the foot) stays where it is. To keep frames at the foot of a card, where the template puts them, make the card's frames one stack with a box of the card's height. The frames above the held ones take the spare space (`grow: 1`) and give it back (`shrink: 1`); the held ones write a `minHeight`. A shorter text leaves the held frames where they were. A longer one is squeezed above them: they keep their `minHeight`, the text above is scaled down and, if it still does not fit, the layout reports `frameOverflow` and the reflow log lists `textScaled` and `overflow` for the frame above. A frame anchored to the container's foot (`bottom-left`) holds its place too, but nothing links it to the frames above it: a longer text runs over it, nothing is squeezed for it and the overlap is not reported.
+
+```json
+{
+  "frames": [
+    { "name": "texto", "grow": 1, "shrink": 1 },
+    { "name": "mapa", "minHeight": { "value": 60, "unit": "mm" } }
+  ],
+  "groups": [{
+    "name": "tarjeta", "frames": ["texto", "mapa"], "gap": { "value": 4, "unit": "mm" },
+    "placement": {
+      "anchor": { "to": "container", "edge": "top-left" },
+      "size": { "width": "fill", "height": { "value": 140, "unit": "mm" } }
+    }
+  }]
+}
+```
+
+The frame that grows is as tall as the room, whatever it holds, so a style with a visible background would paint all of it: paint the card in the template's decoration and leave the text frame without a style.
+
 ### When content does not fit
 
 When a frame's content is taller than the room its group gives it, the layout tries, in order, the steps of the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) and stops at the first that makes it fit: free space up to `maxHeight`, the group pushing and yielding, smaller pictures, the other frames of the group down to their minimum, smaller text, continuation on another page. These frame settings decide how far each step may go:
@@ -510,7 +536,7 @@ A template with `extends` starts from the template it names (which may itself ex
 
 - A field such as `area`, `header` or `overflowTemplate` replaces the parent's. `grid` merges key by key. `spread`, `gutter` and `role` are inherited too; `id`, `name` and `extends` are the template's own.
 - `frames` and `groups` merge **by name**: an entry with the name of an inherited one changes the fields it writes and keeps the rest (`fit`, `overflow` and `padding` merge key by key; `placement` is replaced whole); `remove: true` drops it; a new name is added after the inherited ones.
-- Decoration elements merge by `id` the same way; an element with a new id, or none, is added.
+- Decoration elements merge by `id` the same way; an element with a new id, or none, is added. Since postext 1.42, `{ id: 'head-even', remove: true }` in a child template's or variant's `decoration.elements` takes the inherited element of that `id` out, as `remove: true` does for a frame; an `id` the template does not inherit changes nothing. A new element with the same `id` can follow the removal in the same list.
 
 `variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it.
 
@@ -562,7 +588,7 @@ On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as
 
 ## Label styles
 
-The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names.
+The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42).
 
 ```ts
 labelStyles: [
@@ -653,6 +679,18 @@ labelStyles: [
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. Over the style's <code>overlap</code>. Since postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> leaves the labels of this style out of the <code>labelOverlap</code> check, for a map whose names touch in the source. An anchor's own <code>overlap</code> wins. Since postext 1.42.</td>
     </tr>
   </tbody>
 </table>

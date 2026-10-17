@@ -252,6 +252,7 @@ Annexe. Une source de préréglages est un répertoire (servi en HTTP) dont la r
   "fonts": [
     {
       "name": "Some Family",           // family name used by the config
+      "fallback": "Source Serif 4",    // optional: an open family of similar width for faces the bundle leaves out
       "variants": [
         { "weight": 400, "style": "normal", "file": "fonts/SomeFamily-Regular.otf" },
         { "weight": 400, "style": "italic", "file": "fonts/SomeFamily-Italic.otf" },
@@ -276,4 +277,5 @@ Remarques :
 - L’éditeur de source SVG ne laisse taper qu’à l’intérieur des nœuds de texte (teintés), pour qu’une figure ne puisse pas être cassée par accident ; le bouton de verrou de son en-tête ouvre toute la source (coordonnées, couleurs, structure), et verrouiller de nouveau relance l’analyse des nœuds de texte.
 - `table.model` est un `TableModel` Postext : `rows` est un tableau de cellules rangé par rangées (`content`, et facultativement `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`), `headerRowCount` le nombre de rangées d’en-tête initiales, et `columnWidths` un tableau facultatif de poids relatifs des colonnes. `table.styleId` nomme facultativement l’un des `tableStyles` de la configuration.
 - Les fichiers de polices sont stockés dans IndexedDB sous des identifiants dérivés de l’identifiant du préréglage et du chemin du fichier, et les familles sont ajoutées à `config.customFonts` quand le préréglage est appliqué ; un `index.json` absent ou mal formé ne produit aucun préréglage plutôt qu’une erreur.
+- Une famille que le paquet ne peut pas transmettre figure avec `"redistributable": false` et un `variants` vide ; ajoutez `"fallback"` avec le nom d’une famille libre de chasse proche : le Sandbox, la ligne de commande et les hôtes du moteur composent ses faces avec elle (depuis postext 1.42). Sans lui, le livre retombe sur la police par défaut et ses lignes se coupent ailleurs.
 - `<preset-dir>/fingerprint.json` est facultatif et, sur la route de développement, **virtuel** : quand ce fichier n’existe pas, `GET` répond `{ "fingerprint": "<sha1 hex>", "files": <n> }`, calculé à partir des métadonnées des fichiers du répertoire (chemin relatif, date de modification et taille de chaque fichier jusqu’à quatre niveaux de profondeur, en ignorant les fichiers cachés et `node_modules`), jamais à partir de leur contenu, avec `Cache-Control: no-store`. Le Sandbox l’interroge régulièrement pour suivre les modifications du paquet (voir [panneau Livres](/fr/docs/sandbox#panneau-livres)). Un hébergement statique peut servir un vrai `fingerprint.json` de même forme, ou n’en servir aucun, auquel cas ses préréglages ne sont pas suivis.

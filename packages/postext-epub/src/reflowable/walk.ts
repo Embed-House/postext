@@ -1323,9 +1323,9 @@ class DocWalker {
     };
     // The labels the print draws as text, drawn over the picture (#955).
     // The pages of a right-to-left book are laid out mirrored: their
-    // labels stay in the list.
-    if (this.dir !== 'rtl' && !rb.rotation) {
-      const labelsSvg = figureLabelsOverlay(rb);
+    // labels are given back as they stand on the sheet (#969).
+    if (!rb.rotation) {
+      const labelsSvg = figureLabelsOverlay(rb, { mirrored: this.dir === 'rtl' });
       if (labelsSvg) {
         node.labelsSvg = labelsSvg;
         this.book.labelLayers = true;

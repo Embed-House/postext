@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { groupsText, listText, suggestionText, usageText } from './text';
+import { groupsText, kindText, listText, suggestionText, usageText } from './text';
 
 describe('the words of the frame-style library', () => {
   it('names the settings a suggestion differs in as the panel names them', () => {
@@ -22,5 +22,12 @@ describe('the words of the frame-style library', () => {
     expect(usageText(undefined, DEFAULT_LABELS)).toBe('Not used');
     expect(usageText({ id: 'a', fences: [], fenceCount: 3, frames: [{ templateId: 't', frame: 'f', scope: 'base' }], templates: ['t'], pages: [], pageCount: 2 }, DEFAULT_LABELS))
       .toBe('1 template frame · 2 composed pages · 3 boxes in the text');
+  });
+
+  it('says how many variants a kind of box has and what they differ in (#976)', () => {
+    const variant = (id: string, groups: string[]) => ({ id, extendsBase: false, fields: groups, groups });
+    expect(kindText({ base: 'caja', variants: [variant('a', ['background']), variant('b', ['background', 'border'])] }, 'Box', DEFAULT_LABELS))
+      .toBe('Box and 2 variants: differ in background and border');
+    expect(kindText({ base: 'caja', variants: [variant('a', ['background'])] }, 'Box', DEFAULT_LABELS)).toBe('Box and 1 variant: differs in background');
   });
 });

@@ -4,7 +4,7 @@
  */
 
 import type { SandboxLabels } from '../../../types/labels';
-import type { MergeSuggestion } from '../../../frameStyles/styleCompare';
+import type { MergeSuggestion, StyleKind } from '../../../frameStyles/styleCompare';
 import type { StyleUsage } from '../../../frameStyles/styleUsage';
 
 /** The panel's name for each top-level setting of a callout style. */
@@ -70,6 +70,14 @@ export function suggestionText(s: MergeSuggestion, labels: SandboxLabels, uiLoca
   const count = String(s.merge.length + 1);
   if (s.groups.length === 0) return labels.frameStylesSuggestionSame.replace('__count__', count);
   return labels.frameStylesSuggestionOnly.replace('__count__', count).replace('__fields__', groupsText(s.groups, labels, uiLocale));
+}
+
+/** «The box and 6 variants: differ in fill and border» (#976). */
+export function kindText(kind: StyleKind, name: string, labels: SandboxLabels, uiLocale?: string): string {
+  const groups = [...new Set(kind.variants.flatMap((v) => v.groups))].sort();
+  const fields = groupsText(groups, labels, uiLocale);
+  const template = kind.variants.length === 1 ? labels.frameStylesKindOne : labels.frameStylesKindMany;
+  return template.replace('__name__', name).replace('__count__', String(kind.variants.length)).replace('__fields__', fields);
 }
 
 function countText(n: number, one: string, many: string): string {

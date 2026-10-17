@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyTextChanges } from '../book/textChanges';
-import { countTemplatePages, fenceTemplateChange, pageFenceIds, renameTemplateChanges, templateFences } from './templateUsage';
+import { countTemplatePages, fenceTemplateChange, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
 
 const BOOK = [
   '# One',
@@ -70,5 +70,52 @@ describe('pageFenceIds (#943)', () => {
     ]);
     expect(templateFences(two)[0]!.id).toBe('p47');
     expect(templateFences(two)[2]!.id).toBeUndefined();
+  });
+});
+
+describe('renameSlotChanges (#979)', () => {
+  const md = [
+    '::::page{template="tema"}',
+    '',
+    '# Title {slot="titulo"}',
+    '',
+    ':::frame{slot="caja-1" label="Tip slot=\\"caja-1\\""}',
+    'The slot="caja-1" is quoted prose',
+    ':::',
+    '',
+    '::resource{id="r1" slot=\'caja-1\'}',
+    '',
+    ':::figure{resource="r2" slot=caja-1}',
+    ':::',
+    '',
+    '```',
+    ':::frame{slot="caja-1"}',
+    '```',
+    '::::',
+    '',
+    '::::page{template="otra"}',
+    ':::frame{slot="caja-1"}',
+    ':::',
+    '::::',
+    '',
+    ':::frame{slot="caja-1"}',
+    '',
+  ].join('\n');
+
+  it('renames the slot of the pages whose template shares the frame, and only that attribute', () => {
+    const out = applyTextChanges(md, renameSlotChanges(md, new Set(['tema']), 'caja-1', 'caja-azul'));
+    expect(out).toContain(':::frame{slot="caja-azul" label="Tip slot=\\"caja-1\\""}');
+    expect(out).toContain("::resource{id=\"r1\" slot='caja-azul'}");
+    expect(out).toContain(':::figure{resource="r2" slot=caja-azul}');
+    expect(out).toContain('The slot="caja-1" is quoted prose');
+    expect(out).toContain('```\n:::frame{slot="caja-1"}\n```');
+    // The other template's page, and a fence outside any page, are left alone.
+    expect(out).toContain('::::page{template="otra"}\n:::frame{slot="caja-1"}');
+    expect(out.endsWith(':::frame{slot="caja-1"}\n')).toBe(true);
+    expect(out).toContain('# Title {slot="titulo"}');
+  });
+
+  it('names nothing when no page uses the templates', () => {
+    expect(renameSlotChanges(md, new Set(['nope']), 'caja-1', 'x')).toEqual([]);
   });
 });

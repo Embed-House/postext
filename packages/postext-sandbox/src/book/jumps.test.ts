@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildDocument, createMeasurementCache } from 'postext';
+import { buildDocument, createMeasurementCache, resolveDebugConfig } from 'postext';
 import type { PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
 import { layOutBookChain } from './chain';
 import { newChapter } from './chapterOps';
@@ -11,7 +11,8 @@ import { applyTarget } from '../selection/applySelection';
 import { pickAt, selectionAtSource } from '../selection/pageSelection';
 import { selectionTarget } from '../selection/selectionTargets';
 import { setSelectionChapters } from '../selection/selectionStore';
-import { findCaretBlockIdx } from '../viewport/CanvasPreview/caret';
+import { findCaretBlockIdx, findCarriedCaretBlockIdx } from '../viewport/CanvasPreview/caret';
+import { drawOverlay } from '../viewport/CanvasPreview/overlay';
 import type { BookPlan, Chapter, ChapterLayout, ChapterPlan } from './types';
 
 // #943: a story that jumps from one chapter file into a page of a later
@@ -144,6 +145,26 @@ describe('a story that jumps to a later chapter, in the book plan (#943)', () =>
     expect(paginate(book()).plan.byId.c!.outline).toBeUndefined();
   });
 
+  it('the index and the contents list what is written in the rest where the rest is laid (#988)', () => {
+    const marked = [
+      newChapter('a', 'Artículo', `::::page{template="articulo" sigue="p-salto"}\n${para('art', 5)} :index[Temprano] ${para('mid', 880)} :index[Tardío] :anchor{#tardia}\n\n# Tarde {#tarde}\n\n${para('fin', 30)}\n::::\n`, 1),
+      ...book().slice(1),
+      newChapter('d', 'Índice', '# Indice\n\n:::index\n\n# Contenido\n\n:::toc\n\nVer :ref{#tardia}.\n', 1),
+    ];
+    const { plan, docs } = paginate(marked);
+    const c = plan.byId.c!.layout!;
+    // The chapter that has the page records where the carried marks landed.
+    expect(c.carriedOutline?.map((e) => [e.chapter, e.kind, e.page.index]).sort()).toEqual([[0, 'anchor', 0], [0, 'heading', 0], [0, 'indexMark', 0]]);
+    expect(plan.byId.a!.layout!.carriedOutline).toBeUndefined();
+    const outline = plan.byId.d!.outline!;
+    const label = (title: string): string | undefined => outline.find((e) => e.title === title)?.pageLabel;
+    // The page of the chapter with the story's rest: the third chapter.
+    const rest = docs.get('c')!.pages[0]!.pageLabel;
+    expect(label('Tardío')).toBe(rest);
+    expect(label('Tarde')).toBe(rest);
+    expect(label('Temprano')).toBe('1');
+  });
+
   it('a book without such stories keeps the keys it had', () => {
     const plain = [newChapter('a', 'A', '# A\n\ntexto\n', 1), newChapter('b', 'B', '# B\n\ntexto\n', 1)];
     const planner = createBookPlanner();
@@ -247,5 +268,78 @@ describe('the text carried to a page of a later chapter belongs to its own chapt
     expect(found?.pageIndex).toBe(page.index);
     // And the later chapter's own caret does not take it.
     expect(findCaretBlockIdx(doc, at)).not.toBe(doc.blocks.indexOf(doc.blocks.find((b) => b.id === block.id)!));
+  });
+});
+
+describe('the editor selection of the sending chapter over the carried words (#988)', () => {
+  // A stand-in for the SVG overlay: the groups, and the rects put in them.
+  class FakeEl {
+    attrs = new Map<string, string>();
+    children: FakeEl[] = [];
+    style: Record<string, string> = {};
+    firstElementChild: FakeEl | null = null;
+    constructor(public tag: string) {}
+    setAttribute(k: string, v: string): void { this.attrs.set(k, v); }
+    removeAttribute(k: string): void { this.attrs.delete(k); }
+    appendChild(c: FakeEl): FakeEl { this.children.push(c); this.firstElementChild ??= c; return c; }
+    removeChild(c: FakeEl): void { this.children = this.children.filter((x) => x !== c); this.firstElementChild = this.children[0] ?? null; }
+    get firstChild(): FakeEl | null { return this.children[0] ?? null; }
+  }
+  const overlay = (): { svg: SVGSVGElement; selection: FakeEl; cursor: FakeEl } => {
+    const selection = new FakeEl('g');
+    const cursor = new FakeEl('g');
+    const caret = new FakeEl('rect');
+    cursor.appendChild(caret);
+    const loose = new FakeEl('g');
+    const svg = { querySelector: (q: string) => (q.includes('selection') ? selection : q.includes('cursor') ? cursor : q.includes('looseLines') ? loose : null) };
+    return { svg: svg as unknown as SVGSVGElement, selection, cursor };
+  };
+  const debug = resolveDebugConfig(undefined);
+  let doc: VDTDocument;
+  let page: VDTDocument['pages'][number];
+  let carriedBlock: VDTDocument['blocks'][number];
+  let range: { from: number; to: number; head: number };
+  beforeAll(() => {
+    const docs = buildBundle({ chapters: book(), config, resources }, { cache: createMeasurementCache() });
+    doc = docs[2]!;
+    page = doc.pages.find((p) => p.composed?.template === 'salto')!;
+    carriedBlock = doc.blocks.find((b) => b.pageIndex === page.index && b.sourceChapter === 0 && b.lines.length > 0)!;
+    range = { from: carriedBlock.sourceStart!, to: carriedBlock.sourceStart! + 9, head: carriedBlock.sourceStart! + 9 };
+  });
+
+  it('paints the words of the story that the sending chapter\'s selection covers', () => {
+    (globalThis as unknown as { document: unknown }).document = { createElementNS: (_ns: string, tag: string) => new FakeEl(tag) };
+    try {
+      const { svg, selection } = overlay();
+      drawOverlay(svg, doc, page.index, range, debug, true, -1, null, { chapter: 0, only: true });
+      expect(selection.children.length).toBeGreaterThan(0);
+      for (const r of selection.children) expect(Number(r.attrs.get('width'))).toBeGreaterThan(0);
+      // Another chapter's selection, and a selection with no chapter to claim the
+      // words, leave them alone.
+      const other = overlay();
+      drawOverlay(other.svg, doc, page.index, range, debug, true, -1, null, { chapter: 1, only: true });
+      expect(other.selection.children).toHaveLength(0);
+      const own = overlay();
+      drawOverlay(own.svg, doc, page.index, range, debug, true, -1, null);
+      expect(own.selection.children).toHaveLength(0);
+    } finally {
+      delete (globalThis as unknown as { document?: unknown }).document;
+    }
+  });
+
+  it('puts the caret on the carried block that holds it', () => {
+    (globalThis as unknown as { document: unknown }).document = { createElementNS: (_ns: string, tag: string) => new FakeEl(tag) };
+    try {
+      const at = carriedBlock.sourceStart! + 2;
+      const idx = findCarriedCaretBlockIdx(doc, at, 0, page.index);
+      expect(doc.blocks[idx]!.id).toBe(carriedBlock.id);
+      expect(findCarriedCaretBlockIdx(doc, at, 1, page.index)).toBe(-1);
+      const { svg, cursor } = overlay();
+      const rect = drawOverlay(svg, doc, page.index, { from: at, to: at, head: at }, debug, true, idx, null, { chapter: 0, only: true });
+      expect(rect).not.toBeNull();
+      expect(cursor.firstElementChild!.style.visibility).toBe('');
+    } finally {
+      delete (globalThis as unknown as { document?: unknown }).document;
+    }
   });
 });

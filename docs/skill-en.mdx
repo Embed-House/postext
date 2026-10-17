@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'en',
   lastUpdated: '2026-10-17',
   readingTime: '9 min',
-  order: 42,
+  order: 44,
   plainSummary: "This page is for people who already have a book or document in another format, such as PDF, Word or InDesign, and want to move it into Postext. An AI helper, called an agent, can do most of the work if you give it a small add-on called a skill. The skill teaches the agent how to copy the text and rebuild the design of the original. The page explains how to install it, what to ask for and how to check the result. A video of about five minutes shows every step.",
 };
 
@@ -111,7 +111,7 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     <tr><td><code>measure_layout.py</code></td><td>Margins, columns, gutter and leading (the baseline grid) of a PDF</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → draft chapters by <em>type role</em> (font/size/colour): reading order, paragraphs, de-hyphenation, bold/italic, super/subscripts, lists, captions</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>Cuts figures out of a PDF: photos at native resolution, SVG previews, vector PDF print masters</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Fixed pages of a PDF (textbooks, workbooks, magazines) as composed pages: page templates with frames in mm, box, tab and highlight styles, a text-free page ground, the pictures cut without their text and Markdown with one page fence and a slot per box in reading order; text hidden under other paint is left out. <code>template_dedupe.py</code> folds the templates and styles of pages of one kind into one library, <code>anchors.py</code> turns the words of a map into resource anchors and <code>::label</code> lines for every edition</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Fixed pages of a PDF (textbooks, workbooks, magazines) as composed pages: page templates with frames in mm, box, tab and highlight styles, a text-free page ground, the pictures cut without their text and Markdown with one page fence and a slot per box in reading order; text hidden under other paint is left out. <code>template_dedupe.py</code> folds the templates and styles of pages of one kind into one library and names the frames by role (<code>box-light-blue</code>, <code>caption-of-picture</code>) instead of by kind and order, with the page fences following, <code>anchors.py</code> turns the words of a map into resource anchors and <code>::label</code> lines for every edition</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDF tables → Postext <code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX, PPTX, ODT, EPUB, HTML, LaTeX, Markdown, JATS, DocBook → draft chapters, with Word styles mapped to callouts and paragraph styles</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesign IDML → draft chapters by paragraph style, tables and anchored images; ruby, tate-chu-yoko, emphasis marks and warichu become <code>:ruby</code>, <code>:tcy</code>, <code>:dots</code> and <code>:warichu</code>, and vertical stories and a right-to-left binding are reported</td></tr>

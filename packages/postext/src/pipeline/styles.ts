@@ -161,7 +161,9 @@ export function resolveBodyStyle(resolved: ResolvedConfig): BlockStyle {
   const firstLineIndentPx = dimensionToPx(body.firstLineIndent, dpi, fontSizePx);
   const hangingIndent = body.hangingIndent;
   const marginBottomPx = body.paragraphSpacing ? lineHeightPx : 0;
-  return { ...faces, fontSizePx, lineHeightPx, color: body.color.hex, boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex, ...(body.emphasis ? emphasisFields(body.emphasis, { boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex }) : {}), referenceColor: body.referenceColor.hex, referenceBold: body.referenceBold, referenceItalic: body.referenceItalic, textAlign, ...hyphenation, marginTopPx: 0, marginBottomPx, firstLineIndentPx, hangingIndent, ...(body.smallCaps ? { smallCaps: true } : {}), ...tabFields(body.tabStops, body.tabInterval) };
+  // Tracking (#974): only a callout's derived config carries one.
+  const trackingPx = body.letterSpacing ? dimensionToPx(body.letterSpacing, dpi, fontSizePx) : 0;
+  return { ...faces, fontSizePx, lineHeightPx, color: body.color.hex, boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex, ...(body.emphasis ? emphasisFields(body.emphasis, { boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex }) : {}), referenceColor: body.referenceColor.hex, referenceBold: body.referenceBold, referenceItalic: body.referenceItalic, textAlign, ...hyphenation, marginTopPx: 0, marginBottomPx, firstLineIndentPx, hangingIndent, ...(body.smallCaps ? { smallCaps: true } : {}), ...(Number.isFinite(trackingPx) && trackingPx !== 0 ? { letterSpacingPx: trackingPx } : {}), ...tabFields(body.tabStops, body.tabInterval) };
 }
 
 export function resolveHeadingStyle(

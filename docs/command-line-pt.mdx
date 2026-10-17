@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'pt',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
-  order: 43,
+  order: 45,
   plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o seu livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
 };
 
@@ -386,6 +386,8 @@ pula o download. Uma família que não se encontra em lugar nenhum é composta e
 EB Garamond com o seu próprio nome, para que a diagramação e o PDF continuem
 de acordo, e um aviso `missingFont` a nomeia. `postext info` mostra de onde
 veio cada família.
+
+Um pacote que deixa de fora os arquivos de uma família licenciada pode nomear para ela uma família aberta de largura parecida (`fallback` nas `fonts` do manifesto, desde o postext 1.42). O `postext` procura então essa família pelos passos acima e compõe as faces que o livro não traz nos cortes dela de mesmo peso e mesma inclinação, com o nome da licenciada, de modo que a diagramação fica próxima da obtida com os arquivos e o `postext check` não avisa um `missingFont` para ela. Uma família que o livro traz só em parte toma do `fallback` apenas a inclinação de que não tem nenhum arquivo. O PDF embute a face aberta.
 
 ## Para scripts e agentes
 

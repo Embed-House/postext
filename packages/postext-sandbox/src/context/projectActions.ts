@@ -35,15 +35,17 @@ import { cloneBook, singleChapterBook } from '../book/chapterOps';
 import type { BookContent, BookStart, Chapter } from '../book/types';
 import { createBookPlanner } from '../book/pagination';
 import { cloneContentForProject, cloneEditionsForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
-import { projectEditionFields } from '../storage/projectEditions';
+import { editionTitlesOf, projectEditionFields } from '../storage/projectEditions';
 import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
 import {
   allEditionChapters,
   deleteProject,
+  editionTitleOf,
   generateChapterId,
   generateProjectId,
   getProject,
   putProject,
+  renamePatch,
   toSummary,
   updateProject,
   withActiveEdition,
@@ -51,6 +53,7 @@ import {
   type ProjectRecord,
   type ProjectThumbnail,
 } from '../storage/projects';
+import { renameFrameInEdition } from '../templates/slotRename';
 import { createBlankBookConfig, withDefaultResourceTypes } from './defaultConfig';
 import type { SandboxAction, SandboxState } from './SandboxContext';
 import type { ChapterLayout } from '../book/types';
@@ -123,6 +126,11 @@ export interface ProjectActions {
   /** Give a project without a cover the picture taken from its first page
    *  (never replaces one; no busy state). Resolves to whether it was set. */
   adoptGeneratedThumbnail: (id: string, bytes: ArrayBuffer, mime: string) => Promise<boolean>;
+  /** Rename a frame of a page template in the editions a local project
+   *  keeps aside (#979): the templates and the page fences of each one
+   *  that has the frame (the edition on screen is the caller's). Resolves
+   *  to the number of editions changed. */
+  renameFrameInEditions: (id: string, templateId: string, from: string, to: string) => Promise<number>;
   /** Reset the active project (or parts of it) to the preset it came from. */
   resetToSource: (parts: PresetApplyParts) => Promise<void>;
 }
@@ -260,17 +268,37 @@ function ownEditions(editions: Record<string, ProjectContent> | undefined): Reco
 }
 
 /** `record` with the other editions of the project it is copied from. */
-function withEditionsOf(record: ProjectRecord, from: Pick<ProjectRecord, 'editionLocales'> | undefined, editions: Record<string, ProjectContent> | undefined): ProjectRecord {
+function withEditionsOf(record: ProjectRecord, from: Pick<ProjectRecord, 'editionLocales' | 'editionTitles' | 'titleEdited'> | undefined, editions: Record<string, ProjectContent> | undefined): ProjectRecord {
   if (!editions) return record;
-  return { ...record, editions, ...(from?.editionLocales ? { editionLocales: from.editionLocales } : {}), editionsRev: Date.now() };
+  return {
+    ...record,
+    editions,
+    ...(from?.editionLocales ? { editionLocales: from.editionLocales } : {}),
+    // The copy's own name ("… copy") is a name the reader chose for every
+    // edition (#968); the titles the bundle gave them stay for the export.
+    ...(from?.editionTitles ? { editionTitles: from.editionTitles, titleEdited: true } : from?.titleEdited ? { titleEdited: true } : {}),
+    editionsRev: Date.now(),
+  };
 }
 
-/** The other editions of a project as a bundle writes them (#903). */
-function localizedOf(record: ProjectRecord): BundleContent['localized'] | undefined {
+/** The other editions of a project as a bundle writes them (#903): their
+ *  content, each with the title the bundle gave it unless the reader named
+ *  the project (#968), and the pagination kept for its chapters, which the
+ *  bundle then carries as `layouts.<locale>.json`. */
+async function localizedOf(record: ProjectRecord): Promise<BundleContent['localized'] | undefined> {
   if (!record.locale || !record.editions) return undefined;
   const out: NonNullable<BundleContent['localized']> = {};
   for (const [locale, e] of Object.entries(record.editions)) {
-    out[locale] = { chapters: e.chapters, config: withDefaultResourceTypes(e.config, locale), resources: e.resources, ...(e.start ? { start: e.start } : {}) };
+    const title = record.titleEdited ? undefined : editionTitleOf(record, locale);
+    const layouts = await getChapterLayouts(e.chapters.map((c) => c.id)).catch((): Record<string, ChapterLayout> => ({}));
+    out[locale] = {
+      chapters: e.chapters,
+      config: withDefaultResourceTypes(e.config, locale),
+      resources: e.resources,
+      ...(e.start ? { start: e.start } : {}),
+      ...(title ? { name: title.name, ...(title.description !== undefined ? { description: title.description } : {}) } : {}),
+      ...(Object.keys(layouts).length > 0 ? { layouts } : {}),
+    };
   }
   return Object.keys(out).length > 0 ? out : undefined;
 }
@@ -454,9 +482,10 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
   const rename: ProjectActions['rename'] = async (id, name, description) => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    const patch: Partial<Pick<ProjectRecord, 'name' | 'description'>> = { name: trimmed };
-    if (description !== undefined) patch.description = description.trim() || undefined;
-    const updated = await updateProject(id, patch);
+    // On a book in several languages the name the reader gives is the
+    // book's in every edition (#968): from then on switching the edition
+    // leaves it, and an export gives no edition a title of its own.
+    const updated = await updateProject(id, (existing) => renamePatch(existing, trimmed, description));
     if (updated) dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });
   };
 
@@ -552,6 +581,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         record.editions = edition.editions;
         record.editionLocales = edition.editionLocales;
         record.editionsRev = Date.now();
+        // What the bundle calls each edition (#968).
+        const titles = editionTitlesOf(opened.manifest, edition.editionLocales);
+        if (titles) record.editionTitles = titles;
       }
       const projectId = await persistNew(record);
       // The bundle's pagination, when it still applies: the book opens
@@ -622,7 +654,8 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // the records written then still fingerprint the same.
         const config = withDefaultResourceTypes(record.config, s.locale);
         const layouts = await storedCurrentLayouts(record.chapters, config, record.resources, {}, record.start);
-        content = { ...record, config, layouts, ...(localizedOf(record) ? { localized: localizedOf(record)! } : {}) };
+        const localized = await localizedOf(record);
+        content = { ...record, config, layouts, ...(localized ? { localized } : {}) };
       } else {
         await deps.flushWorkingSave();
         const cur = deps.getState();
@@ -648,7 +681,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         }
         // The other editions of a project in several languages go along.
         const record = active ? await getProject(active.id).catch(() => null) : null;
-        const localized = record ? localizedOf(record) : undefined;
+        const localized = record ? await localizedOf(record) : undefined;
         if (localized && meta.locale === undefined) meta = { ...meta, locale: record!.locale };
         content = {
           ...bookOfState(cur),
@@ -701,6 +734,25 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       return true;
     }).catch(() => false);
 
+  const renameFrameInEditions: ProjectActions['renameFrameInEditions'] = async (id, templateId, from, to) => {
+    let count = 0;
+    // One transaction: the autosave of the edition on screen may write the
+    // same record, and neither may drop what the other wrote.
+    const updated = await updateProject(id, (existing) => {
+      const editions = existing.editions;
+      if (!editions) return null;
+      const next: Record<string, ProjectContent> = {};
+      for (const [locale, content] of Object.entries(editions)) {
+        const renamed = renameFrameInEdition(content, templateId, from, to);
+        if (renamed) count++;
+        next[locale] = renamed ?? content;
+      }
+      return count > 0 ? { editions: next, editionsRev: Date.now() } : null;
+    }).catch(() => null);
+    if (updated && count > 0) dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });
+    return updated ? count : 0;
+  };
+
   const resetToSource: ProjectActions['resetToSource'] = (parts) =>
     run(async () => {
       const s = deps.getState();
@@ -727,5 +779,5 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       applyRecord({ ...merged, config }, parts);
     });
 
-  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, resetToSource };
+  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, renameFrameInEditions, resetToSource };
 }

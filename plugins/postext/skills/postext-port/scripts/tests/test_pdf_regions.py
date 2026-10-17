@@ -497,6 +497,126 @@ class DedupeTest(unittest.TestCase):
         self.assertIn('template="kind-a" ground="g1"', out)
         self.assertIn(':mark[word]{style="mark-yellow"}', out)
 
+    # -- frame names by role (#979) ---------------------------------------
+
+    def rel(self, to, edge, x=0, y=0):
+        return {"anchor": {"to": to, "edge": edge}, "offset": {"x": {"value": x, "unit": "mm"}, "y": {"value": y, "unit": "mm"}}}
+
+    def role_templates(self):
+        mm = lambda v: {"value": v, "unit": "mm"}  # noqa: E731
+        blue = "box-light-blue-tab-white"
+        t1 = {"id": "p01", "frames": [
+            {"name": "title", "placement": self.rel("container", "top-left", 10, 10), "width": mm(100)},
+            {"name": "text", "flow": True, "placement": self.rel("#title", "below", 0, 4), "width": mm(100)},
+            {"name": "picture-1", "placement": self.rel("container", "top-left", 120, 10), "width": mm(60)},
+            {"name": "text-2", "placement": self.rel("#picture-1", "below", 0, 2), "width": mm(60)},
+            {"name": "box-1", "style": blue, "placement": self.rel("container", "top-left", 10, 150), "width": mm(100), "minHeight": mm(30)},
+            {"name": "tab-1", "style": "tab-white", "placement": self.rel("#box-1", "top-left", 5, 2), "layer": 2, "width": mm(20)},
+            {"name": "picture-2", "placement": self.rel("#box-1", "top-left", 60, 5), "layer": 2, "width": mm(30)},
+        ], "groups": [{"name": "stack-1", "kind": "stack", "frames": ["title", "text"], "gap": mm(4)}]}
+        t2 = {"id": "p02", "frames": [
+            {"name": "title", "placement": self.rel("container", "top-left", 10, 10), "width": mm(100)},
+            {"name": "box-1", "style": "box-green", "placement": self.rel("container", "top-left", 10, 80), "width": mm(80), "minHeight": mm(40)},
+            {"name": "box-2", "style": blue, "placement": self.rel("#box-1", "below", 0, 5), "width": mm(80), "minHeight": mm(40)},
+        ]}
+        return [t1, t2]
+
+    def test_frames_are_named_by_role_and_shared(self):
+        t1, t2 = self.role_templates()
+        styles = [{"id": "box-light-blue-tab-white"}, {"id": "box-green"}, {"id": "tab-white"}]
+        out, maps, report = td.name_frames([t1, t2], styles)
+        names = lambda t: [f["name"] for f in t["frames"]]  # noqa: E731
+        self.assertEqual(names(out[0]), ["title", "text", "picture", "caption-of-picture", "box-light-blue-tab-white",
+                                         "tab-white-in-box-light-blue-tab-white", "picture-in-box-light-blue-tab-white"])
+        # the same role is the same name in the other template
+        self.assertEqual(names(out[1]), ["title", "box-green", "box-light-blue-tab-white"])
+        # anchors and groups follow; the inputs are left as they were
+        self.assertEqual(out[0]["frames"][5]["placement"]["anchor"]["to"], "#box-light-blue-tab-white")
+        self.assertEqual(out[0]["frames"][3]["placement"]["anchor"]["to"], "#picture")
+        self.assertEqual(out[0]["groups"][0]["frames"], ["title", "text"])
+        self.assertEqual(out[1]["frames"][2]["placement"]["anchor"]["to"], "#box-green")
+        self.assertEqual(t1["frames"][3]["name"], "text-2")
+        self.assertEqual(maps["p01"]["box-1"], "box-light-blue-tab-white")
+        self.assertEqual(maps["p02"]["box-2"], "box-light-blue-tab-white")
+        self.assertEqual({r["id"] for r in report}, {"p01", "p02"})
+
+    def test_two_of_a_role_are_numbered_in_order_and_names_given_by_hand_stay(self):
+        mm = lambda v: {"value": v, "unit": "mm"}  # noqa: E731
+        t = {"id": "a", "frames": [
+            {"name": "picture-1", "placement": self.rel("container", "top-left", 0, 0), "width": mm(30)},
+            {"name": "mapa", "placement": self.rel("container", "top-left", 40, 0), "width": mm(30)},
+            {"name": "picture-2", "placement": self.rel("container", "top-left", 80, 0), "width": mm(30)},
+            {"name": "box-1", "placement": self.rel("container", "top-left", 0, 50), "width": mm(30)},
+            {"name": "box-2", "placement": self.rel("container", "top-left", 40, 50), "width": mm(30)},
+        ]}
+        out, maps, _ = td.name_frames([t], [])
+        self.assertEqual([f["name"] for f in out[0]["frames"]], ["picture", "mapa", "picture-2", "box", "box-2"])
+        # a second pass changes nothing
+        again, _, report = td.name_frames(out, [])
+        self.assertEqual(again, out)
+        self.assertEqual(report, [])
+
+    def test_a_child_keeps_the_names_of_the_template_it_extends(self):
+        mm = lambda v: {"value": v, "unit": "mm"}  # noqa: E731
+        base = {"id": "base", "frames": [
+            {"name": "title", "placement": self.rel("container", "top-left", 0, 0), "width": mm(30)},
+            {"name": "box-1", "style": "box-green", "placement": self.rel("container", "top-left", 0, 50), "width": mm(30)}]}
+        child = {"id": "kid", "extends": "base", "frames": [
+            {"name": "box-1", "placement": self.rel("container", "top-left", 0, 60)},
+            {"name": "box-3", "style": "box-green", "placement": self.rel("#box-1", "below", 0, 5), "width": mm(30)},
+            {"name": "picture-4", "placement": self.rel("#box-3", "top-left", 5, 5), "layer": 2, "width": mm(10)}]}
+        out, maps, _ = td.name_frames([base, child], [])
+        self.assertEqual([f["name"] for f in out[1]["frames"]], ["box-green", "box-green-2", "picture-in-box-green-2"])
+        self.assertEqual(out[1]["frames"][1]["placement"]["anchor"]["to"], "#box-green")
+        self.assertEqual(maps["kid"], {"title": "title", "box-1": "box-green", "box-3": "box-green-2", "picture-4": "picture-in-box-green-2"})
+
+    def test_slots_follow_in_every_page_fence_of_every_language(self):
+        md = "\n".join([
+            '::::page{template="p01" ground="g"}', '', '# Heading {slot="title"}', '',
+            ':::frame{slot="box-1" label="Look slot=\\"box-1\\""}', 'slot="box-1" is quoted text', ':::', '',
+            '::resource{id="r1" slot="picture-1"}', '', '```', ':::frame{slot="box-1"}', '```', '::::', '',
+            '# Outside {slot="box-1"}', ''])
+        out = td.rewrite_markdown(md, {}, {}, {}, {"p01": {"box-1": "box-green", "picture-1": "picture", "title": "title"}})
+        self.assertIn(':::frame{slot="box-green" label=', out)
+        self.assertIn('::resource{id="r1" slot="picture"}', out)
+        self.assertIn('slot="box-1" is quoted text', out)          # prose, not an attribute line
+        self.assertIn("```\n:::frame{slot=\"box-1\"}\n```", out)       # inside a code block
+        self.assertIn('# Outside {slot="box-1"}', out)               # after the page closed
+
+    def test_dedupe_dir_renames_frames_and_their_fences(self):
+        mm = lambda v: {"value": v, "unit": "mm"}  # noqa: E731
+        lib = {"pageTemplates": [
+            {"id": "p01", "frames": [
+                {"name": "title", "placement": self.rel("container", "top-left", 10, 10), "width": mm(100)},
+                {"name": "box-1", "style": "box-1", "placement": self.rel("container", "top-left", 10, 40), "width": mm(100), "minHeight": mm(30)}]},
+            {"name": "x", "id": "p02", "frames": [
+                {"name": "title", "placement": self.rel("container", "top-left", 10, 10), "width": mm(100)},
+                {"name": "box-1", "style": "box-1", "placement": self.rel("container", "top-left", 10, 40), "width": mm(100), "minHeight": mm(30)}]}],
+            "calloutStyles": [self.style("box-1", "#d4e8f7")]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "library.json").write_text(json.dumps(lib))
+            for lang in ("en", "es"):
+                (root / "chapters" / lang).mkdir(parents=True)
+                (root / "chapters" / lang / "01.md").write_text(
+                    '::::page{template="p01"}\n\n:::frame{slot="box-1"}\nA\n:::\n\n::::\n\n::::page{template="p02"}\n\n:::frame{slot="box-1"}\nB\n:::\n\n::::\n')
+            dry = td.dedupe_dir(root, self.TOL, 2, 2.0, dry_run=True)
+            self.assertIn("box-1", (root / "chapters/es/01.md").read_text())
+            self.assertTrue(dry["frames"])
+            td.dedupe_dir(root, self.TOL, 2, 2.0)
+            for lang in ("en", "es"):
+                text = (root / "chapters" / lang / "01.md").read_text()
+                self.assertEqual(text.count('slot="box-light-blue"'), 2, text)
+                self.assertNotIn("box-1", text)
+            lib2 = json.loads((root / "library.json").read_text())
+            self.assertEqual([f["name"] for f in lib2["pageTemplates"][0]["frames"]], ["title", "box-light-blue"])
+            # the old way stays available
+            (root / "library.json").write_text(json.dumps(lib))
+            for lang in ("en", "es"):
+                (root / "chapters" / lang / "01.md").write_text('::::page{template="p01"}\n\n:::frame{slot="box-1"}\nA\n:::\n\n::::\n')
+            td.dedupe_dir(root, self.TOL, 2, 2.0, name_frames_by_role=False)
+            self.assertIn('slot="box-1"', (root / "chapters/en/01.md").read_text())
+
 
 if __name__ == "__main__":
     unittest.main()

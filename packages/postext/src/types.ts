@@ -4,8 +4,8 @@ import type { StoryJump } from './composed/carryTypes';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
-  PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig,
+  PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
 } from './composed/types';
@@ -535,6 +535,11 @@ export interface ResourceAnchor {
    *  (`top` is the first, rightmost one); `rotate` turns it on top of the
    *  quarter turn. Default `'horizontal-tb'`. */
   writingMode?: 'horizontal-tb' | 'vertical-rl';
+  /** `'allow'` says the label set here may touch the labels beside it: the
+   *  source prints it that way (a dense map, two grids of degree figures
+   *  printed over each other), so `labelOverlap` is not raised for a pair
+   *  it belongs to (#977). Over the style's `overlap`. Default `'check'`. */
+  overlap?: 'check' | 'allow';
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -2402,6 +2407,9 @@ export interface ResolvedBodyTextConfig {
    *  document is always upright, in lowercase. */
   italic?: boolean;
   smallCaps?: boolean;
+  /** Set only in the derived config of a callout whose `body.letterSpacing`
+   *  is not zero (#974). */
+  letterSpacing?: Dimension;
 }
 
 // ---------------------------------------------------------------------------
@@ -3265,6 +3273,10 @@ export interface CalloutIconConfig {
  *  `offset` is half its height), hugs the corner `position` names, and can
  *  carry an `icon` resource on its outer side and a `rule` along the top
  *  edge from the opposite corner up to it. */
+/** Where the picture of a label tab stands (#981): beside the tab, past
+ *  its edge, or inside it before the words. */
+export type CalloutLabelIconPlacement = 'beside' | 'inside';
+
 export interface CalloutLabelConfig {
   /** Defaults to the headings font family. */
   fontFamily?: string;
@@ -3284,9 +3296,15 @@ export interface CalloutLabelConfig {
   offset?: Dimension;
   /** Inset of the tab from the box's side edge. Default `0`. */
   inset?: Dimension;
-  /** A picture set beside the tab (on the side away from the corner):
-   *  `width` is its width, `gap` the space to the tab. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension };
+  /** A picture on the tab. `'beside'` (default) sets it past the tab's
+   *  edge, on the side away from the corner: `width` is its width, `gap`
+   *  the space to the tab. `'inside'` (#981) sets it in the tab, at its
+   *  start before the words (the right end in a right-to-left box),
+   *  `gap` away from them: the tab is as wide as the picture, the gap, the
+   *  words and the padding, the picture as tall as the tab at most. The
+   *  picture keeps the colours it has, so a white ring on a coloured tab
+   *  and a coloured ring on a white one are two resources, one to a style. */
+  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement };
   /** A rule along the box's top edge from the far corner to the tab (or
    *  its icon). */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
@@ -3366,6 +3384,15 @@ export interface CalloutBodyStyleConfig {
   /** Set the box's paragraphs and list items in small capitals (see
    *  `ParagraphStyleConfig.smallCaps`). Default `false`. */
   smallCaps?: boolean;
+  /** Tracking after every glyph of the box's paragraphs and list items
+   *  (#974); negative tightens. An `em` value is relative to the body's
+   *  `fontSize`. Measured into the lines (a tracked box breaks where its
+   *  wider or narrower words put it) and painted the same by canvas, HTML,
+   *  PDF and EPUB, as {@link ParagraphStyleConfig.letterSpacing} does. A
+   *  paragraph set in a `:::paragraphs{style}` keeps its style's own
+   *  tracking; words of a joining script stay untracked. A frame with this
+   *  style takes it too. Default `0`. */
+  letterSpacing?: Dimension;
   /** `'start'` is `'left'` (see {@link TextAlignKeyword}). */
   textAlign?: 'left' | 'justify' | 'start';
   /** Hyphenate when justified — and, when `bodyText.hyphenation.ragged` is
@@ -3639,7 +3666,7 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension };
+    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
   };
   columnGap: Dimension;
@@ -3678,6 +3705,8 @@ export interface ResolvedCalloutStyleConfig {
     boldFontWeight: number;
     italic: boolean;
     smallCaps: boolean;
+    /** Absent unless the style sets a non-zero one (#974). */
+    letterSpacing?: Dimension;
     textAlign: 'left' | 'justify';
     hyphenation: boolean;
     paragraphSpacing: boolean;
@@ -6159,6 +6188,14 @@ export interface CustomFontFamily {
    *  export drops the family's files and its `fonts[]` entry). Defaults to
    *  true. */
   redistributable?: boolean;
+  /** An open family of about the same width that stands in for the faces
+   *  this one has no file for (#978): a bundle that leaves a licensed
+   *  family's files out names it, and every host sets the missing faces in
+   *  it (its cut of the same weight and slant) under this family's name, so
+   *  the lines break near where the real face breaks them. The family's own
+   *  files win where it has them. The configuration keeps naming this
+   *  family: only the font files change. */
+  fallback?: string;
 }
 
 export type PageParity = 'all' | 'odd' | 'even';
