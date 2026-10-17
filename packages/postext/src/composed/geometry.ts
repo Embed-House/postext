@@ -16,6 +16,7 @@
  *   the frame its chain comes from (`next`), and frames that push text
  *   (`exclude: 'push'`) before the others; ties keep template order.
  */
+import { physicalEdge } from '../design/logicalEdges';
 import type { AnchorEdge, Dimension, ElementPlacement } from '../types';
 import { dimensionToPx } from '../units';
 import { anchorTarget, continueInFrame } from './templates';
@@ -54,13 +55,16 @@ interface Anchor {
   pinY: Pin;
 }
 
-const ELEMENT_EDGES: ReadonlySet<string> = new Set(['right-of', 'left-of', 'below', 'above', 'align-top', 'align-bottom', 'align-left', 'align-right']);
+const ELEMENT_EDGES: ReadonlySet<string> = new Set(['right-of', 'left-of', 'below', 'above', 'align-top', 'align-bottom', 'align-left', 'align-right', 'align-start', 'align-end']);
 
 /** The anchor of `edge` on `ref`: the nine-point grid of a container, or an
  *  element-to-element edge when `element` (an anchor to `'#name'`). An
  *  element edge on a container, or a container edge on an element, reads
  *  as `top-left` / `align-top`, as design slots do. */
-export function anchorOn(edge: AnchorEdge, ref: Rect, element: boolean): Anchor {
+export function anchorOn(given: AnchorEdge, ref: Rect, element: boolean): Anchor {
+  // Frames are laid in the page's flow frame, mirrored or turned already:
+  // the start is its left (#936).
+  const edge = physicalEdge(given, false);
   if (element) {
     switch (edge) {
       case 'right-of': return { x: ref.x + ref.width, y: ref.y, pinX: 'start', pinY: 'start' };

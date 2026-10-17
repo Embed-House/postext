@@ -2276,6 +2276,12 @@ export interface SandboxLabels {
   headerFooterFrameEdgeBottomLeft: string;
   headerFooterFrameEdgeBottom: string;
   headerFooterFrameEdgeBottomRight: string;
+  headerFooterFrameEdgeTopStart: string;
+  headerFooterFrameEdgeStart: string;
+  headerFooterFrameEdgeBottomStart: string;
+  headerFooterFrameEdgeTopEnd: string;
+  headerFooterFrameEdgeEnd: string;
+  headerFooterFrameEdgeBottomEnd: string;
   headerFooterPlaceholdersLabel: string;
   headerFooterPlaceholderPageNumber: string;
   headerFooterPlaceholderTotalPages: string;
@@ -2300,6 +2306,8 @@ export interface SandboxLabels {
   headerFooterElementEdgeAlignBottom: string;
   headerFooterElementEdgeAlignLeft: string;
   headerFooterElementEdgeAlignRight: string;
+  headerFooterElementEdgeAlignStart: string;
+  headerFooterElementEdgeAlignEnd: string;
   headerFooterElementOffsetX: string;
   headerFooterElementOffsetY: string;
   headerFooterElementAnchorToTooltip: string;

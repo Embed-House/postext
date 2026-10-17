@@ -240,7 +240,7 @@ Si necesitas o quieres comprar algo muy caro…
 
 ### 装饰、书眉与层
 
-模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走。装饰中的文字读取本页自己的属性：页面围栏上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。
+模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走。装饰中的文字读取本页自己的属性：页面围栏上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。在从右到左或竖排的页面上，框随镜像或旋转后的版流排布，装饰则留在纸面上：用起始边或结束边定位的元素（`top-start`，见[元素定位](/zh/docs/configuration-headers-footers#元素定位)）在每个版本里都会留在它的框旁边。
 
 各框按`layer`的顺序绘制：装饰在第0层，框默认在第1层，层号高的画在层号低的上面，负数层画在装饰下面。`rotate`让框连同其内容绕框的中心旋转任意角度，在画布、PDF、HTML查看器和固定版式EPUB中都是如此。
 

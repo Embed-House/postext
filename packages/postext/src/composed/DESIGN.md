@@ -900,6 +900,14 @@ Recorded where the implementation settles a point the sections above leave open,
   mode marks, the picked mark (flow matrix after the frame's turn), the selection's relocation
   and the template editor (pointer read in the flow, marks drawn through the flow's matrix) use
   them. The Cookbook's C40 probe clicks flagged boxes on the sheet.
+- **Start and end edges (#936).** `AnchorEdge` gains `top-start`, `start`, `bottom-start`,
+  `top-end`, `end`, `bottom-end`, `align-start`, `align-end` (`design/logicalEdges.ts`:
+  `physicalEdge`, `physicalPlacement`). `LayoutContext.startRight` (set for slots laid on the
+  sheet of a right-to-left or vertical page: running heads and a template's decoration, through
+  `sheetExtras`) reads the start on the right and reverses the offset's `x`; frames (`anchorOn`),
+  fixed boxes (`anchorBox`) and heading designs are laid in the flow, where the start is the left.
+  So one decoration element follows the frames to the right of an Arabic page. Sandbox: the slot
+  editor's Alignment list has Start / End and its edge lists the start and end sides.
 
 ## 6. Source map contract
 

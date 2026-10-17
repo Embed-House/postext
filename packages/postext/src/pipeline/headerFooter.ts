@@ -415,6 +415,8 @@ export interface SlotLayoutExtras {
    *  flow of a mirrored page (see `LayoutContext`). */
   direction?: 'ltr' | 'rtl';
   mirrored?: boolean;
+  /** Start and end edges read the start on the right (`LayoutContext`). */
+  startRight?: boolean;
   /** See `LayoutContext.arabicNumbers` (#665). */
   arabicNumbers?: boolean;
   pageRole?: PageRole;
@@ -541,6 +543,7 @@ export function layoutSlotToVdt(
       container, dpi, placeholders, frames: extras?.frames, pageRole: extras?.pageRole, resourceById: extras?.resourceById,
       ...(extras?.direction ? { direction: extras.direction } : {}),
       ...(extras?.mirrored ? { mirrored: true } : {}),
+      ...(extras?.startRight ? { startRight: true } : {}),
       ...(extras?.arabicNumbers ? { arabicNumbers: true } : {}),
     },
     pageIndex,
@@ -1231,7 +1234,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     const outer = outerRight
       ? { x: sheetArea.x + sheetArea.width, y: sheetArea.y, width: Math.max(0, trim.x + trim.width - (sheetArea.x + sheetArea.width)), height: sheetArea.height }
       : { x: trim.x, y: sheetArea.y, width: Math.max(0, sheetArea.x - trim.x), height: sheetArea.height };
-    const sheetExtras: SlotLayoutExtras = { ...extras, frames: { ...physicalFrames, outer }, mirrored: false };
+    // On the sheet, the start of a right-to-left page, and of a vertical one
+    // (its lines follow each other leftwards), is its right (#936).
+    const startRight = resolved.direction === 'rtl' || pageIsVertical(page);
+    const sheetExtras: SlotLayoutExtras = { ...extras, frames: { ...physicalFrames, outer }, mirrored: false, ...(startRight ? { startRight: true } : {}) };
     const section = sectionByPage[page.index];
     // A composed page (#855) takes its template's running heads: a slot of
     // its own, `false` for none, unset for the section's.

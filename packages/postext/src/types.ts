@@ -6183,9 +6183,17 @@ export type AnchorEdge =
   | 'top-left' | 'top' | 'top-right'
   | 'left' | 'center' | 'right'
   | 'bottom-left' | 'bottom' | 'bottom-right'
+  // The side the page's lines start from (#936): the left of a
+  // left-to-right page; on the sheet of a right-to-left or vertical page
+  // (running heads, a template's decoration) the right. A frame is laid in
+  // the page's flow, where the start is always its left. With these edges
+  // the offset's `x` runs from the start side to the end side.
+  | 'top-start' | 'start' | 'bottom-start'
+  | 'top-end' | 'end' | 'bottom-end'
   // Element-to-element (requires anchor.to = '#elementId')
   | 'right-of' | 'left-of' | 'below' | 'above'
-  | 'align-top' | 'align-bottom' | 'align-left' | 'align-right';
+  | 'align-top' | 'align-bottom' | 'align-left' | 'align-right'
+  | 'align-start' | 'align-end';
 
 export interface ElementAnchor {
   /** `'container'` (the slot's own container), `'page'` (the trim box),

@@ -1,4 +1,5 @@
 import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
+import { isLogicalEdge, physicalEdge, physicalPlacement } from './logicalEdges';
 import { bitmapLayoutSize } from '../bitmapResolution';
 import { comicArtCrop } from '../comics/art';
 import type {
@@ -298,6 +299,11 @@ export interface LayoutContext {
   /** The document's base direction (`ResolvedConfig.direction`), the
    *  default of every text element's. Absent: left to right. */
   direction?: 'ltr' | 'rtl';
+  /** Start and end edges (`top-start`, `align-end`…, #936) read the start
+   *  on the right: a slot laid on the sheet of a right-to-left or vertical
+   *  page. Absent: on the left (a left-to-right page, or a slot laid in a
+   *  page's flow, which is mirrored or turned already). */
+  startRight?: boolean;
   /** The slot is painted in the flow of a mirrored (right-to-left) page:
    *  its x axis runs from the sheet's right edge, so the runs of a line go
    *  in the reverse of their visual order (see `design/bidiText.ts`). */
@@ -1053,7 +1059,8 @@ export function anchorBox(
   height: number,
   offset: { x: number; y: number },
 ): BoundingBox {
-  const a = resolveContainerAnchor(edge, ref);
+  // A fixed box is laid in the page's flow, where the start is the left.
+  const a = resolveContainerAnchor(physicalEdge(edge, false), ref);
   return createBoundingBox(
     edgeXFromPin(a.anchorX, a.pinX, width) + offset.x,
     edgeYFromPin(a.anchorY, a.pinY, height) + offset.y,
@@ -1133,7 +1140,9 @@ export function layoutDesignSlot(
   const overrides = context.placeholders.partPaletteByPageIndex?.[context.placeholders.page.index];
   const candidates = slot.elements
     .filter((el) => pageMatchesParity(pageIndex, el.parity) && pageMatchesRole(el.pages, context.pageRole))
-    .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el));
+    .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el))
+    // Start and end edges read as the physical ones of this page (#936).
+    .map((el) => (isLogicalEdge(el.placement.anchor.edge) ? { ...el, placement: physicalPlacement(el.placement, context.startRight === true) } : el));
 
   // Topologically sort (dependencies first) to resolve geometry; paint
   // order is still the array order (first = back), restored below.

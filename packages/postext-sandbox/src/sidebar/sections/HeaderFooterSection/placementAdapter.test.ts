@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import type { ElementPlacement } from 'postext';
+import type { AnchorEdge, ElementPlacement } from 'postext';
 import {
+  alignFromPlacement,
   anchorTargetId,
   applyAlign,
+  applyMarginFromEdge,
   applyAnchorTarget,
   isContainerAnchor,
   isElementAnchor,
@@ -54,5 +56,23 @@ describe('placementAdapter anchor targets', () => {
     const page = applyAnchorTarget(inContainer, 'heading', 'page');
     const aligned = applyAlign(page, 'heading', 'right');
     expect(aligned.anchor).toEqual({ to: 'page', edge: 'top-right' });
+  });
+});
+
+describe('start and end sides (#936)', () => {
+  const at = (edge: AnchorEdge, x = 0): ElementPlacement => ({ anchor: { to: 'container', edge }, offset: { x: { value: x, unit: 'mm' }, y: { value: 0, unit: 'mm' } } });
+  it('reads a start or end edge as that side', () => {
+    expect(alignFromPlacement(at('top-start'))).toBe('start');
+    expect(alignFromPlacement(at('bottom-end'))).toBe('end');
+    expect(alignFromPlacement(at('end'))).toBe('end');
+  });
+  it('writes the slot’s edge on that side, the margin measured from it', () => {
+    const start = applyAlign(at('top-left', 6), 'footer', 'start');
+    expect(start.anchor.edge).toBe('top-start');
+    expect(start.offset?.x?.value).toBe(6);
+    const end = applyAlign(at('top-left', 6), 'header', 'end');
+    expect(end.anchor.edge).toBe('bottom-end');
+    expect(end.offset?.x?.value).toBe(-6);
+    expect(applyMarginFromEdge(end, { value: 9, unit: 'mm' }).offset?.x?.value).toBe(-9);
   });
 });

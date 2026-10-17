@@ -6,10 +6,13 @@ import { DimensionInput, SelectInput } from '../../../controls';
 import {
   type SlotKind,
   CONTAINER_EDGES,
+  LOGICAL_CONTAINER_EDGES,
+  LOGICAL_ELEMENT_EDGES,
   alignForElementEdge,
   alignFromPlacement,
   anchorTargetId,
   applyAlign,
+  type PlacementAlign,
   applyAnchorTarget,
   applyElementEdge,
   applyOffsetX,
@@ -71,6 +74,8 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
     { value: 'align-bottom', label: labels.headerFooterElementEdgeAlignBottom },
     { value: 'align-left', label: labels.headerFooterElementEdgeAlignLeft },
     { value: 'align-right', label: labels.headerFooterElementEdgeAlignRight },
+    // The page's start and end sides (#936).
+    ...LOGICAL_ELEMENT_EDGES.map((edge) => ({ value: edge, label: edge === 'align-start' ? labels.headerFooterElementEdgeAlignStart : labels.headerFooterElementEdgeAlignEnd })),
   ];
 
   const FRAME_EDGE_LABELS: Record<string, string> = {
@@ -83,8 +88,14 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
     'bottom-left': labels.headerFooterFrameEdgeBottomLeft,
     bottom: labels.headerFooterFrameEdgeBottom,
     'bottom-right': labels.headerFooterFrameEdgeBottomRight,
+    'top-start': labels.headerFooterFrameEdgeTopStart,
+    start: labels.headerFooterFrameEdgeStart,
+    'bottom-start': labels.headerFooterFrameEdgeBottomStart,
+    'top-end': labels.headerFooterFrameEdgeTopEnd,
+    end: labels.headerFooterFrameEdgeEnd,
+    'bottom-end': labels.headerFooterFrameEdgeBottomEnd,
   };
-  const FRAME_EDGE_OPTIONS = CONTAINER_EDGES.map((edge) => ({
+  const FRAME_EDGE_OPTIONS = [...CONTAINER_EDGES, ...LOGICAL_CONTAINER_EDGES].map((edge) => ({
     value: edge,
     label: FRAME_EDGE_LABELS[edge] ?? edge,
   }));
@@ -93,6 +104,10 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
     { value: 'left', label: labels.headerFooterElementAlignLeft },
     { value: 'center', label: labels.headerFooterElementAlignCenter },
     { value: 'right', label: labels.headerFooterElementAlignRight },
+    // The page's start and end sides: the right and the left of a
+    // right-to-left page (#936).
+    { value: 'start', label: labels.headerFooterElementAlignStart },
+    { value: 'end', label: labels.headerFooterElementAlignEnd },
   ];
 
   const offsetFields = (
@@ -158,7 +173,7 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
           label={labels.headerFooterElementAlign}
           value={alignFromPlacement(placement)}
           options={ALIGN_OPTIONS}
-          onChange={(v) => onChange(applyAlign(placement, slotKind, v as HAlign))}
+          onChange={(v) => onChange(applyAlign(placement, slotKind, v as PlacementAlign))}
           tooltip={labels.headerFooterElementAlignTooltip}
         />
       )}
