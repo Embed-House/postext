@@ -317,6 +317,8 @@ titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
 déplacez ce texte dans le Markdown, ou ajoutez le titre ou le nom de l’éditeur
 à `checks.contentInConfig.allow`.
 
+Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes essayées par l’échelle de recomposition et les changements qui le feraient tenir), une histoire qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`) et les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
+
 ### build et --watch
 
 ```bash

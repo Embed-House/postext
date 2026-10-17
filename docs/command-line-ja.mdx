@@ -211,6 +211,8 @@ postext check chapters/ --strict --json
 
 また、プレースホルダーではなく本の本文を抱える設定内のデザインのテキスト（`contentInConfig`）を、見出しスタイル、柱、部扉のデザインごとに1回、各テキストのパスを添えて報告します。その文章をMarkdownに移すか、書名や出版社名を`checks.contentInConfig.allow`に加えてください。
 
+ページテンプレートのある本では、`check`は次も報告します。フレームに収まらないテキスト（`frameOverflow`。リフローの段階が試した手順と、収めるための変更を添えます）、フレームが追加できるページ数を超えた続き（`frameContinuationLimit`）、後に続かないページへのジャンプ（`continueTargetMissing`）、描けない図のラベルや重なる図のラベル（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）です。警告のあと、出来事のある構成ページごとに`reflow`の行を1行出力し、`--json`では手順、修正案、リフローの記録がデータとして付きます。[構成ページ›警告](/ja/docs/composed-pages#警告)と[リフローの記録](/ja/docs/composed-pages#リフローの記録)を参照してください。
+
 ### buildと--watch
 
 ```bash

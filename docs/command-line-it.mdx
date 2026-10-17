@@ -304,6 +304,8 @@ titolo, titolo corrente o design di parte, con il percorso di ogni testo:
 sposta quel testo nel Markdown, oppure aggiungi il titolo o il nome
 dell’editore a `checks.contentInConfig.allow`.
 
+In un libro con modelli di pagina, `check` segnala anche il testo che non entra nella sua cornice (`frameOverflow`, con i passi provati dalla scala di reimpaginazione e le modifiche che lo farebbero entrare), una storia che supera le pagine che una cornice può aggiungere (`frameContinuationLimit`), un salto a una pagina che non segue (`continueTargetMissing`) e le etichette di figura che non si possono disegnare o che si urtano (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Dopo gli avvisi stampa una riga `reflow` per ogni pagina composta con eventi, e `--json` porta i passi, le proposte e il registro di reimpaginazione come dati. Vedi [Pagine composte › Avvisi](/it/docs/composed-pages#avvisi) e [Registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
+
 ### build e --watch
 
 ```bash

@@ -285,6 +285,8 @@ postext check chapters/ --strict --json
 مسار كل نص: انقل ذلك النص إلى Markdown، أو أضف العنوان أو اسم الناشر إلى
 `checks.contentInConfig.allow`.
 
+في كتاب له قوالب صفحات، يُبلغ `check` أيضًا عن النص الذي لا يتسع لإطاره (`frameOverflow`، مع الخطوات التي جرّبها سلّم إعادة الترتيب والتغييرات التي تُدخله)، وعن قصة تتجاوز الصفحات التي يجوز للإطار إضافتها (`frameContinuationLimit`)، وعن قفزة إلى صفحة لا تأتي بعدها (`continueTargetMissing`)، وعن تسميات الأشكال التي لا يمكن رسمها أو التي تتصادم (`labelAnchorUnknown` و`anchorUnlabelled` و`labelOverflow` و`labelOverlap`). وبعد التحذيرات يطبع سطر `reflow` لكل صفحة مركّبة فيها أحداث، ويحمل `--json` الخطوات والمقترحات وسجل إعادة الترتيب بوصفها بيانات. انظر [الصفحات المركّبة › التحذيرات](/ar/docs/composed-pages#التحذيرات) و[سجل إعادة الترتيب](/ar/docs/composed-pages#سجل-إعادة-الترتيب).
+
 ### build و--watch
 
 ```bash

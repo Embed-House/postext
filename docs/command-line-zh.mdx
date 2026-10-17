@@ -211,6 +211,8 @@ postext check chapters/ --strict --json
 
 它还会报告配置中存放书的正文而不是占位符的设计文字（`contentInConfig`），每个标题样式、页眉或部分设计报告一次，并附每条文字的路径：把这些文字移到 Markdown 中，或把书名、出版社名称加入`checks.contentInConfig.allow`。
 
+对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、超出框可添加页数的连排内容（`frameContinuationLimit`）、跳向并不在后面的页的跳转（`continueTargetMissing`），以及画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）。警告之后，每个有事件的组合页打印一行`reflow`，`--json`把步骤、建议和重排记录作为数据带上。见[组合页›警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
+
 ### build和--watch
 
 ```bash

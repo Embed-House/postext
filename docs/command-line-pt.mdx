@@ -310,6 +310,8 @@ ou design de parte, com o caminho de cada texto: leve esse texto para o
 Markdown, ou acrescente o título ou o nome da editora a
 `checks.contentInConfig.allow`.
 
+Em um livro com modelos de página, o `check` informa também o texto que não cabe no seu bloco (`frameOverflow`, com os passos que a escada de reajuste tentou e as mudanças que o fariam caber), uma história que passa das páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não segue (`continueTargetMissing`) e os rótulos de figura que não podem ser desenhados ou que se chocam (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+
 ### build e --watch
 
 ```bash

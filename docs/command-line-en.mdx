@@ -303,6 +303,8 @@ instead of placeholders (`contentInConfig`), once per heading style, running
 head or part design, with the path of each text: move that text into the
 Markdown, or list a title or a publisher's name in `checks.contentInConfig.allow`.
 
+For a book with page templates, `check` also reports text that does not fit its frame (`frameOverflow`, with the steps the reflow ladder tried and the changes that would fix it), a story that runs past the pages a frame may add (`frameContinuationLimit`), a jump to a page that does not follow (`continueTargetMissing`) and figure labels that cannot be drawn or that collide (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). After the warnings it prints one `reflow` line per composed page that has events, and `--json` carries the steps, the proposals and the reflow log as data. See [Composed pages › Warnings](/en/docs/composed-pages#warnings) and [Reflow log](/en/docs/composed-pages#reflow-log).
+
 ### build and --watch
 
 ```bash

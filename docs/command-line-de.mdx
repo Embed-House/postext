@@ -304,6 +304,8 @@ Buches statt Platzhaltern enthalten (`contentInConfig`), einmal je
 Textes: Verschieben Sie diesen Text ins Markdown oder tragen Sie Titel oder
 Verlagsnamen in `checks.contentInConfig.allow` ein.
 
+Bei einem Buch mit Seitenvorlagen meldet `check` außerdem Text, der nicht in seinen Rahmen passt (`frameOverflow`, mit den Schritten, die die Umbruchleiter versucht hat, und den Änderungen, die ihn passen ließen), eine Geschichte, die über die Seiten hinausläuft, die ein Rahmen anfügen darf (`frameContinuationLimit`), einen Sprung auf eine Seite, die nicht folgt (`continueTargetMissing`), und Abbildungsbeschriftungen, die sich nicht zeichnen lassen oder aufeinanderstoßen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Nach den Warnungen gibt es pro zusammengesetzter Seite mit Ereignissen eine `reflow`-Zeile aus, und `--json` liefert die Schritte, die Vorschläge und das Umbruchprotokoll als Daten. Siehe [Zusammengesetzte Seiten › Warnungen](/de/docs/composed-pages#warnungen) und [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll).
+
 ### build und --watch
 
 ```bash

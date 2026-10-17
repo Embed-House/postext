@@ -316,6 +316,8 @@ título, titulillo o diseño de parte, con la ruta de cada texto: lleva ese text
 al Markdown, o añade el título o el nombre de la editorial a
 `checks.contentInConfig.allow`.
 
+En un libro con plantillas de página, `check` informa además del texto que no cabe en su marco (`frameOverflow`, con los pasos que probó la escalera de recomposición y los cambios que lo arreglarían), de una historia que pasa de las páginas que un marco puede añadir (`frameContinuationLimit`), de un salto a una página que no sigue (`continueTargetMissing`) y de los rótulos de figura que no se pueden dibujar o que chocan (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Tras los avisos imprime una línea `reflow` por cada página compuesta con eventos, y `--json` lleva los pasos, las propuestas y el registro de recomposición como datos. Véanse [Páginas compuestas › Avisos](/es/docs/composed-pages#avisos) y [Registro de recomposición](/es/docs/composed-pages#registro-de-recomposición).
+
 ### build y --watch
 
 ```bash
