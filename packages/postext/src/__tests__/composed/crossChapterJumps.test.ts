@@ -303,4 +303,13 @@ describe('the source of the carried text is its own chapter (#943)', () => {
     expect(lines(elementsForSource(docs[2]!, own.sourceStart!, own.sourceStart! + 3, { chapter: 2, ownChapter: 2 }))).toBeGreaterThan(0);
     expect(lines(elementsForSource(docs[2]!, own.sourceStart!, own.sourceStart! + 3, { chapter: 0, ownChapter: 2 }))).toBe(0);
   });
+
+  it('references to anchors of the book in the rest are resolved by the chapter that sets it', () => {
+    const body = [para('uno', 800), '', 'Ver [el ancla]{#anc} y :ref{id="anc"} más.'].join('\n');
+    const docs = bundle([fence('articulo', body, ' sigue="p-salto"'), '# Otro capítulo\n\ntexto\n', jumpPage()]);
+    const page = composedPages(docs[2]!).find((p) => p.composed!.template === 'salto')!;
+    const text = textOf(blocksOf(page, frameOn(page, 'resto')));
+    expect(text).toContain('Ver el ancla y');
+    expect(text).not.toContain('?');
+  });
 });

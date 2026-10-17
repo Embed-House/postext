@@ -82,6 +82,10 @@ export interface StoryJump {
   /** The notes the story cites, as the sender numbered them and with
    *  their definitions: the receiver sets them where the markers land. */
   footnotes?: CarriedNote[];
+  /** The story refers to an anchor of the book (`:ref`, #262): the chapter
+   *  that sets it needs the book's outline, as a chapter with such a
+   *  reference of its own does. */
+  outline?: true;
 }
 
 /** A note cited by a carried story. */

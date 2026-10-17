@@ -212,7 +212,8 @@ export function buildBundle(
       const continuation: LayoutContinuation | undefined = index === 0
         ? (start || bookPageCount !== undefined ? { ...start, ...total } : undefined)
         : { ...counters, pageIndexOffset: physical, ...(next ? { pageNumbering: next } : {}), ...(incoming.has(index) ? { jumps: incoming.get(index)! } : {}), ...total };
-      const printsOutline = hasToc[index] && outline !== undefined;
+      // A story that came in refers to anchors of the book (#943).
+      const printsOutline = (hasToc[index] || (incoming.get(index) ?? []).some((j) => j.outline)) && outline !== undefined;
       const laterOf = laterIdsOf(index);
       const key = printsOutline && outlineText === undefined ? undefined : chapterKey(markdown, continuation, printsOutline ? outlineText! : '', citations?.[index], laterOf);
       const record = build.chapter(key, () => {

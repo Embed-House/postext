@@ -840,7 +840,9 @@ function placeDocumentPass(
   const anchorRefs = hasAnchorRefs(parsedBlocks, resourceIds);
   const outline = content.outline
     ?? (hasTocDirective(parsedBlocks) || hasIndexDirective(parsedBlocks) || anchorRefs ? computeOutline(parsedBlocks, resolved, headingStart, continuation?.statementCounters) : undefined);
-  const anchorRefContext: AnchorRefContext | undefined = anchorRefs
+  // A story carried in from another chapter (#943) may refer to anchors too.
+  const carriedRefs = continuation?.jumps?.some((j) => j.outline) === true;
+  const anchorRefContext: AnchorRefContext | undefined = anchorRefs || carriedRefs
     ? { targets: anchorTargetsOf(outline), strings: resolved.crossRefs }
     : undefined;
   const indexExpanded = expandIndexDirectives(expandTocDirectives(parsedBlocks, outline, resolved), outline, resolved);
@@ -6379,6 +6381,7 @@ function placeDocumentPass(
       ...(numbers.length > 0 ? { numbers } : {}),
       orderedLevelIndentsPx: again?.jump.orderedLevelIndentsPx ?? orderedLevelIndentsPx,
       ...(notes.length > 0 ? { footnotes: notes } : {}),
+      ...(hasAnchorRefs(blocks, new Set((content.resources ?? []).map((r) => r.id))) ? { outline: true as const } : {}),
     };
   };
   for (const [id, list] of carried?.byTarget ?? []) {

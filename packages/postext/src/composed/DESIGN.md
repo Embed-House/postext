@@ -991,6 +991,50 @@ Recorded where the implementation settles a point the sections above leave open,
   (`frameModesChain.test.ts`). `framePageRect` is exported; the Cookbook probe reports the page's box of such a
   frame.
 
+### 5.17 A story that jumps into a page of a later chapter file (#943)
+
+A magazine kept as one chapter file per article jumps with `overflow.continueIn: 'page:<id>'` into the page
+fence of a later file. One `buildDocument` call is one chapter, so the rest of the story crosses the call.
+
+- **Forward ids.** `PostextContent.laterPageIds` (`id → chapter position`) comes from the host (`pageFenceIds`,
+  `laterPageIdsOf`: the ids of the page fences whose template exists, of the chapters after each chapter). `route`
+  (`build.ts`) sends a `page:<id>` that no fence of the chapter answers but `laterPageIds` has to
+  `VDTDocument.pendingJumps` instead of `continueTargetMissing` and adds no `'next-page'` pages; the sending
+  frame gets `continuesToChapter` and a `continued` event with `toChapter`. A host that passes nothing keeps
+  every `page:<id>` inside the chapter, as before.
+- **Carrying.** A `StoryJump` (`composed/carry.ts`) holds the story's box and children as the sender had them ready
+  to lay (post-transform `ContentBlock`s, offsets of the sender's body), the `CalloutCut`, the continuation's
+  fields, the heading numbers by position, the sender's ordered-list indents, the notes the story cites with their
+  numbers and definitions, and `outline` when it refers to anchors. The host sets `chapter` (whose file the text is
+  in; kept when a chapter hands a story on again) and `fromChapter` (who sent it) and gives it to the chapter with
+  the page as `LayoutContinuation.jumps` (`buildBundle`: `incoming`; the Sandbox: the chapter layout record
+  `ChapterLayout.jumps`, the planner, the chain and the canvas build from the documents).
+- **Receiving.** `importJumps` copies the blocks past the chapter's own (`contentBlocks`), moves every source offset
+  so that `offset + bodyOffset` is the offset in the sender's file, gives the containers ids of their own
+  (`1_900_000_000+`), renames the notes (`~k~id`) and registers them in the chapter's note maps. `carriedPass`
+  answers the lookups the box typesetter keys by content index for them: heading prefixes and numbers from the
+  sender, ordered-list metrics and paragraph groups worked out again from the carried blocks alone, the
+  context of the text (never a styled section's or a part's). The pre-passes of the chapter (numbering, floats,
+  warnings, the main loop) never see them. The continuations wait in `jumps` for their fence exactly as an
+  in-chapter jump's do (`assignJumpReceivers`, the page never memoised); the receiving chain goes on as `'next-page'`.
+  A story whose page the chapter does not have raises `continueTargetMissing` with `fromChapter` and is not set.
+- **Marks.** `resolveJumpMarks(docs)` (after the book is numbered) gives the sending frame `continuesTo`, fills the
+  `continued` event's `toPage` / `toFrame` and writes the printed label of the page in the other chapter into the
+  `{page}` marks (`pageMark`) of both frames, measuring the lines again as `fillPageMarks` does; idempotent. A
+  chapter laid out on its own keeps the guessed number. `buildBundle` runs it; so do the Sandbox's chains.
+- **Source.** `VDTBlock.sourceChapter` (and `VDTFrame.sourceChapter`) says whose file the offsets are in; the source
+  map's `SourceRef.chapter` / `SourceElement.chapter` and the `chapterFile` / `chapter` / `ownChapter` options
+  follow it. `VDTFrame.readIndex` makes a tagged PDF read a carried frame at its page. The reflowable EPUB and the
+  HTML reading order read it in the chapter that has the page (its container ids are that chapter's own).
+- **Book layout.** `buildBundle` keys a chapter on its `laterPageIds` (only for a chapter with a composed page,
+  in a book whose templates name a `page:` target) and on the jumps it receives (they are in its continuation);
+  `ChapterRecord.jumps` keeps what a chapter sent past a dropped document. The Sandbox planner adds `|j<hash>` /
+  `|l<hash>` to the continuation key under the same conditions, so keys of other books are what they were.
+- **Left out.** Index marks and anchors written in the rest are located by the sending chapter and listed on the
+  page where its story starts; the sender's styled section or part typography does not reach the rest; the
+  Sandbox does not paint the editor selection of the sending chapter on the later page (the picked path follows
+  the caret).
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
