@@ -1030,10 +1030,9 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   in a book whose templates name a `page:` target) and on the jumps it receives (they are in its continuation);
   `ChapterRecord.jumps` keeps what a chapter sent past a dropped document. The Sandbox planner adds `|j<hash>` /
   `|l<hash>` to the continuation key under the same conditions, so keys of other books are what they were.
-- **Left out.** Index marks and anchors written in the rest are located by the sending chapter and listed on the
-  page where its story starts; the sender's styled section or part typography does not reach the rest; the
-  Sandbox does not paint the editor selection of the sending chapter on the later page (the picked path follows
-  the caret).
+- **Left out.** The sender's styled section or part typography does not reach the rest. (Index marks, anchors
+  and headings written in the rest, and the editor selection over it, were left out here and are built in
+  §5.18.)
 
 ### 5.18 Findings round I (#882)
 
@@ -1122,6 +1121,39 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   horizontal frame on a vertical page is turned against the flow and already stood upright; horizontal pages
   are unchanged. The VDT of a vertical composed page that holds a figure in a frame changes (the picture and
   caption no longer turn with the flow); no public preset or bundle chapter does, parity 0 diffs.
+- **The reflow ladder reuses a frame's whole layout (#972).** Each step of the ladder composes the page again,
+  and most frames come out of it as they went in. `pass.layoutMemo` (`pipeline/layoutMemo.ts`, made with the
+  measurement memo in `layoutComposedPage` and dropped with it) answers `makeCalloutLayouter`'s `layoutRange`
+  for a range laid out before: key = pass, measure context, story and its end, the box style by content (the
+  ladder resolves the style again every composition: two equal styles are one key), the cut, width, frame id,
+  continuation, mirroring, the frame's options (`boxHeight`, exclusions, picture scale, marks, upright length)
+  and the measuring state (`measureStateKey`, shared with the measurement memo). A caller that moves the
+  result (`fill`: `commitFrame` shifts it to the page) gets a private deep copy; the memo keeps a copy made
+  before the first caller moved it. A caller that only reads (`peekRange`: the split probes, the natural height
+  of a frame) gets the stored layout, which nobody changes. The copy preserves shared structure (units and
+  children point at the same blocks) and what the layout keeps by identity, a block's end indent and a
+  designed heading (`copyBlockEndIndent`, `copyDesignedBoxHeading`; a new layout-time registry keyed by VDT
+  object must add a copier); a layout holding a comic page or an object that is not plain data is never kept.
+  The writes a layout makes to the measure context (drop cap notes, joining-script marks) are recorded with the
+  entry and replayed on a hit. `layoutMemoSwitch` turns it off for the test that lays a page both ways. Parity
+  0 diffs; the heaviest composed chapter of the Cookbook (a magazine of threaded frames) lays out about 40 %
+  faster.
+- **Marks, anchors and headings written in the rest of a story that went to another chapter (#988).** The
+  receiving chapter locates them (`locateCarriedOutline`, called from `withIndexMarks` once the pages are
+  final): per carried story, the lines it laid for that story (offsets in the sender's file) answer, an index
+  mark, an inline anchor or a heading is its own when a line holds the character or it lies inside the span the
+  lines cover (what lies before is the sender's, laid by it). They go on `VDTDocument.carriedOutline`
+  (`chapter`, `kind`, `sourceStart` in the sender's body, page), the anchors also as destinations on
+  `doc.anchors` (`VDTAnchor.chapter`). The sending chapter's own location leaves out the lines of carried
+  blocks (`sourceChapter`, they are another file's offsets), its anchors skip the marks of a sent story that
+  none of its lines hold, and `outlineFromDoc` takes the heading blocks of a carried story out of the
+  order its entries are matched with (the sent headings are matched by their source). `mergeCarriedOutline`
+  puts the pages into the sender's entries by `(chapter, kind, sourceStart)`: `buildBundle` keeps
+  `ChapterRecord.carried` (`carriedPlaces`) and merges before it assembles the book outline; the Sandbox
+  planner keeps `ChapterLayout.carriedOutline` (and writes it in `layouts.json`) and merges in its
+  `bookOutline`. Index, contents and references then read the page of the words. The Sandbox canvas paints the
+  selection and the caret of the chapter being edited over the carried words on the later chapter's page
+  (`drawOverlay` with `CarriedSelection`).
 
 ## 6. Source map contract
 
