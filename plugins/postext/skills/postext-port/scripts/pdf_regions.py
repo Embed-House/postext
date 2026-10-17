@@ -1661,6 +1661,10 @@ def placement_rel(target: str, edge: str, dx: float, dy: float) -> dict:
     return {"anchor": {"to": f"#{target}", "edge": edge}, "offset": {"x": mmv(dx), "y": mmv(dy)}}
 
 
+def f_style(f: Frame) -> dict | None:
+    return getattr(f, "style", None)
+
+
 def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tuple, opts: argparse.Namespace,
                   report: dict) -> dict:
     W, H = origin[2], origin[3]
@@ -1823,7 +1827,10 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
                 configs[g.name]["placement"] = placement_rel(host.name, "top-left", g.box[0] - host.box[0], g.box[1] - host.box[1])
         room = p.box[3] - min(k.box[1] for k in low)
         pad = dict(configs[p.name].get("padding") or {})
-        pad["bottom"] = mmv(round(room + 1.0, 2))
+        # the frame of a box with a tab is as tall as the box plus the tab's rise: the room the pictures
+        # take is what is left under that, a hair less (a box that needs more than its drawn height grows)
+        rise = ((f_style(p) or {}).get("label") or {}).get("offset", {}).get("value", 0.0)
+        pad["bottom"] = mmv(round(max(0.0, room - rise - 1.0), 2))
         configs[p.name]["padding"] = pad
     # the last frame on a card may grow to the card's foot, no further
     for f in top:

@@ -270,7 +270,9 @@ Also decided by the drafting, checked on a real textbook in three languages:
   over it (`layer: 2`).
 - **Pictures at the foot of a box** (photos under its paragraph) hang from the
   box's bottom edge (`bottom-left`, a negative offset) with their room as the
-  box's bottom padding, and what lies on them (a label, a tab on a drawing)
+  box's bottom padding (less the tab's rise: the frame of a box with a tab is
+  as tall as the box plus the tab's `offset`, so a box that needs more than
+  its drawn height grows, and everything under it moves), and what lies on them (a label, a tab on a drawing)
   hangs from the picture; a longer text makes the box taller and the
   pictures follow. Anchored to the top they stay put and the text runs under
   them.
@@ -358,7 +360,10 @@ The library is the set of looks the book uses, each written once:
   with a tab also `label.background` and the border colour). Group the draft's
   styles by kind (fill or not, border or not, tab or not, face, pill or box)
   first, then by tint: the 28-page textbook's 86 draft styles came to 17
-  full styles and 43 thin ones. The Sandbox's Frame styles library still
+  full styles and 43 thin ones. A tab's `offset`, `inset` and `paddingX` are
+  style fields too (a frame overrides none of them), so boxes whose tabs stand
+  at different heights are thin styles as well; never merge them away: the
+  box would draw lower and its text with it. The Sandbox's Frame styles library still
   proposes to merge tints that differ in one or two fields: do not take
   those merges, they drop a colour of the book.
 - **No per-page duplicates.** Before adding a component, compare it with
