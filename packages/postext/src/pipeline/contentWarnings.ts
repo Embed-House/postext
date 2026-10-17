@@ -927,6 +927,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'frameContinuationLimit':
       text = `Frame "${w.frame}" of template "${w.template}" went on to ${w.pages} added pages, the most a composed page may add, and is still ${w.overflowMm} mm short — the rest is cut at the frame's foot; give the frame there more room, or shorten the text`;
       break;
+    case 'continueTargetMissing':
+      text = w.before
+        ? `Frame "${w.frame}" of template "${w.template}" jumps to page "${w.target}", which comes before it — the rest goes on on the next page; move the ::::page{id="${w.target}"} fence after this page, or name a later one`
+        : `Frame "${w.frame}" of template "${w.template}" jumps to page "${w.target}", and no ::::page{id="${w.target}"} fence follows — the rest goes on on the next page; give a later page fence that id, or fix the name`;
+      break;
     case 'spreadMismatch':
       text = w.templateSpread
         ? `Template "${w.template}" is a spread — the page is laid over two facing pages; write ::::page{template="${w.template}" spread}`

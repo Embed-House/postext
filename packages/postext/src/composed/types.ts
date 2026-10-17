@@ -53,12 +53,21 @@ export interface FrameFitConfig {
 export interface FrameOverflowConfig {
   /** Where content that does not fit goes on: `'#frame'` (another frame of
    *  the same page, as `next`), `'next-page'` (the same frame on a page
-   *  added after this one) or `'template:<id>'` (a page of that template).
-   *  Unset: nowhere; the frame runs the reflow ladder and warns. */
+   *  added after this one), `'template:<id>'` (a page of that template)
+   *  or `'page:<id>'` (#917: a frame of the later page fence
+   *  `::::page{id=…}`, the one it leaves empty, or the one named by
+   *  `'page:<id>#<frame>'`; `<id>` may be `{attr.name}`, read from the
+   *  fence). Unset: nowhere; the frame runs the reflow ladder and warns. */
   continueIn?: string;
   /** Continuation mark at the end of a cut piece; unset = the localized
-   *  default; `false` = none. */
+   *  default; `false` = none. `{page}` is the number of the page the rest
+   *  goes on on (#917). */
   mark?: string | false;
+  /** Words at the head of the piece that goes on on another page, `{page}`
+   *  being the number of the page it comes from (#917): "Continued from
+   *  page {page}". The receiving frame's own, else the sending frame's.
+   *  Unset: none. */
+  fromMark?: string;
 }
 
 export interface FrameConfig {

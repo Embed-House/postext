@@ -153,6 +153,7 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   anchorUnlabelled: "1.37.0",
   pictureBelowPrintSize: "1.37.0",
   comicPanelFrame: "1.37.0",
+  continueTargetMissing: "1.37.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

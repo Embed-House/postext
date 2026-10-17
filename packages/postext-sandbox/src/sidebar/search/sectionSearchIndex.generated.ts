@@ -5726,6 +5726,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'pageTemplatesFrameWrap',
       'pageTemplatesFrameWrapBox',
       'pageTemplatesFrameWrapTooltip',
+      'pageTemplatesFromMark',
+      'pageTemplatesFromMarkTooltip',
       'pageTemplatesGridColumn',
       'pageTemplatesGridColumnGap',
       'pageTemplatesGridColumnSpan',

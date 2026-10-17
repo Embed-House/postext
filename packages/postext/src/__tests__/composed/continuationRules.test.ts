@@ -289,3 +289,94 @@ describe('an activity sheet whose last box goes on (#912)', () => {
     expect(checked).toBeGreaterThan(0);
   });
 });
+
+describe('a story that jumps to a later page (#917)', () => {
+  const top = { anchor: { to: 'container' as const, edge: 'top-left' as const } };
+  const ARTICULO: PageTemplate = {
+    id: 'articulo',
+    header: false,
+    frames: [{ name: 'cuerpo', style: 'caja-azul', flow: true, width: mm(186), height: mm(90), placement: top, overflow: { continueIn: 'page:{attr.sigue}', mark: 'Sigue en la página {page}', fromMark: 'Viene de la página {page}' }, fit: { shrinkText: false } }],
+  };
+  const OTRA: PageTemplate = { id: 'otra', header: false, frames: [{ name: 'texto', flow: true, width: mm(186), placement: top }] };
+  const SALTO: PageTemplate = {
+    id: 'salto',
+    header: false,
+    frames: [
+      { name: 'breve', flow: true, width: mm(186), height: mm(40), placement: top },
+      { name: 'resto', style: 'caja-azul', width: mm(186), placement: { anchor: { to: '#breve', edge: 'below' }, offset: { y: mm(10) } } },
+      { name: 'vacio', optional: true, width: mm(40), height: mm(20), placement: { anchor: { to: 'container', edge: 'bottom-left' } } },
+    ],
+  };
+  const TEMPLATES = [ARTICULO, OTRA, SALTO];
+  const book = (sigue: string, order: 'after' | 'before' = 'after'): string => {
+    const art = ['::::page{template="articulo" sigue="' + sigue + '"}', para('art', 900), '::::', ''];
+    const other = ['::::page{template="otra"}', para('otra', 200), '::::', ''];
+    const jump = ['::::page{template="salto" id="p-salto"}', para('breve', 60), '::::', ''];
+    return (order === 'after' ? [...art, ...other, ...jump] : [...jump, ...art, ...other]).join('\n');
+  };
+
+  it('goes on in the frame the later page leaves empty, past the pages between', () => {
+    const doc = build(book('p-salto'), TEMPLATES);
+    const pages = composedPages(doc);
+    expect(pages.map((p) => p.composed!.template)).toEqual(['articulo', 'otra', 'salto']);
+    const [first, , jumpPage] = pages as [VDTPage, VDTPage, VDTPage];
+    const from = frameOn(first, 'cuerpo');
+    const to = frameOn(jumpPage, 'resto');
+    expect(to.id).toBe('cp2:resto');
+    expect(from.continuesTo).toBe('cp2:resto');
+    expect(to.continuedFrom).toBe('cp0:cuerpo');
+    expect(first.composed!.log).toContainEqual({ frame: 'cuerpo', kind: 'continued', toPage: jumpPage.index, toFrame: 'cp2:resto' });
+    // The page's own content stays where it was.
+    expect(textOf(blocksOf(jumpPage, frameOn(jumpPage, 'breve')))).toMatch(/^breve0 /);
+    expect(frameOn(jumpPage, 'vacio').blockIds).toEqual([]);
+    // Every word of the article once, across the two pages.
+    const all = `${textOf(blocksOf(first, from))} ${textOf(blocksOf(jumpPage, to))}`;
+    for (const w of ['art0 ', 'art450 ', 'art899']) expect(count(all, w)).toBe(1);
+    expect(warningsOf(doc, 'frameOverflow', 'continueTargetMissing')).toEqual([]);
+    // The pieces are one box.
+    expect(blocksOf(jumpPage, to)[0]!.containerId).toBe(blocksOf(first, from)[0]!.containerId);
+  });
+
+  it('marks say where the story goes on and where it comes from, with the printed page numbers', () => {
+    const doc = build(book('p-salto'), TEMPLATES);
+    const [first, , jumpPage] = composedPages(doc) as [VDTPage, VDTPage, VDTPage];
+    const sent = overlayOf(blocksOf(first, frameOn(first, 'cuerpo'))[0]);
+    expect(sent).toContain(`Sigue en la página ${jumpPage.pageLabel}`);
+    const got = overlayOf(blocksOf(jumpPage, frameOn(jumpPage, 'resto'))[0]);
+    expect(got).toContain(`Viene de la página ${first.pageLabel}`);
+  });
+
+  it("'page:<id>#<frame>' names the frame that takes it", () => {
+    const named: PageTemplate = { ...ARTICULO, frames: [{ ...ARTICULO.frames![0]!, overflow: { continueIn: 'page:{attr.sigue}#vacio' } }] };
+    const doc = build(book('p-salto'), [named, OTRA, SALTO]);
+    const jumpPage = composedPages(doc)[2]!;
+    expect(frameOn(jumpPage, 'vacio').continuedFrom).toBe('cp0:cuerpo');
+    expect(frameOn(jumpPage, 'resto').blockIds).toEqual([]);
+  });
+
+  it('what the frame there cannot hold goes on on a page added after it', () => {
+    const small: PageTemplate = { ...SALTO, frames: SALTO.frames!.map((f) => (f.name === 'resto' ? { ...f, height: mm(60) } : f)) };
+    const doc = buildDocument({ markdown: book('p-salto').replace(para('art', 900), para('art', 2400)), resources: [] }, { ...BASE, pageTemplates: [ARTICULO, OTRA, small] }, createMeasurementCache());
+    const pages = composedPages(doc);
+    expect(pages.map((p) => p.composed!.template).slice(0, 3)).toEqual(['articulo', 'otra', 'salto']);
+    expect(pages.length).toBeGreaterThanOrEqual(4);
+    const added = pages[3]!;
+    expect(added.composed!.continuationOf).toBe(pages[2]!.index);
+    expect(frameOn(pages[2]!, 'resto').continuesTo).toBe(frameOn(added, 'resto').id);
+    expect(frameOn(added, 'resto').id).toBe('cp2:resto~1');
+    const all = pages.flatMap((p) => p.composed!.frames.filter((f) => f.name === 'cuerpo' || f.name === 'resto').map((f) => textOf(blocksOf(p, f)))).join(' ');
+    for (const w of ['art0 ', 'art1200 ', 'art2399']) expect(count(all, w)).toBe(1);
+  });
+
+  it('a page id no later fence has: the rest goes on on the next page, and a warning says so', () => {
+    for (const [sigue, order, before] of [['nada', 'after', false], ['p-salto', 'before', true]] as const) {
+      const doc = build(book(sigue, order), TEMPLATES);
+      const ws = warningsOf(doc, 'continueTargetMissing');
+      expect(ws, `${sigue} ${order}`).toHaveLength(1);
+      expect(ws[0]).toMatchObject({ kind: 'continueTargetMissing', template: 'articulo', frame: 'cuerpo', target: sigue, ...(before ? { before: true } : {}) });
+      const pages = composedPages(doc);
+      const at = pages.findIndex((p) => p.composed!.template === 'articulo');
+      expect(pages[at + 1]!.composed!.continuationOf).toBe(pages[at]!.index);
+    }
+  });
+});

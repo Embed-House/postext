@@ -171,6 +171,7 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),
       ...(w.kind === 'frameOverflow' ? { data: frameOverflowData(w) } : {}),
       // How far a frame's content went on (#859).
+      ...(w.kind === 'continueTargetMissing' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, target: w.target, ...(w.before ? { before: true } : {}), configPath: w.configPath } } : {}),
       ...(w.kind === 'frameContinuationLimit' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, configPath: w.configPath } } : {}),
       // A figure's label and its anchor (#860): where, in which locale.
       ...(w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled'

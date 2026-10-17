@@ -486,7 +486,11 @@ panel (U8): «dinero grew 8 mm; gasto moved down 8 mm; the photo is at 92 %».
 
 `overflow.continueIn`: `'#frame'` (another frame of the same page; equivalent to `next`),
 `'next-page'` (the same frame on a following page built from `overflowTemplate`, or from the same
-template with only that frame filled), or `'template:<id>'`. The remaining content resumes from
+template with only that frame filled), `'template:<id>'`, or `'page:<id>'` (a jump, #917: a frame
+of the later page fence `::::page{id="<id>"}`, past the pages between; `'page:<id>#<frame>'` names
+the frame, and `<id>` may be `{attr.name}`, read from the sending fence, so one article template
+serves every article: `continueIn: 'page:{attr.sigue}'` with `::::page{template="articulo"
+sigue="p47"}`). The remaining content resumes from
 the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the running text is (#913,
 `frameCutRules`, for `next` chains and continuation alike): a heading never ends a piece
 (`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
@@ -800,6 +804,38 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Reflowable / tagged.** The EPUB walk opens no section for a page with `continuationOf`: its
   blocks go on in the open stories (by container id), so the box is one frame and a cut paragraph
   one paragraph with the page break inside. Tagged PDF already joins by container id (one `Div`).
+
+### 5.13 What the findings round E1 built (#912, #913, #917, #919, #920)
+
+- **Ladder order (#920).** `fit.preferContinue` (default true): for a frame that can go on to
+  another page the ladder runs free, push, redistribute, continue, then scaleImages and shrinkText
+  (§5.4). The Sandbox template editor has the toggle.
+- **Receivers (#919).** `ComposedContinuation.head`: a threaded story goes on where its chain
+  starts (§5.12).
+- **Cuts (#913).** `frameCutRules` in `splitCalloutFragment` for frames (§5.6).
+- **What the pages keep (#912).** Yield-first, `trailingFrames`, `collapseFrames`,
+  `VDTFrame.collapsed`, whole-box moves (§5.12).
+- **Jumps (#917).** `continueInPage` / `resolveContinueIn` (`templates.ts`) read the target;
+  `continuesOffPage` counts it, so it is the ladder's continue step. `build.ts`
+  (`placeComposedPage`): `fenceById` maps the chapter's planned fences by their `id`; `route` keeps
+  a jumping continuation in `jumps` until that fence is placed, or, when no fence of that id comes
+  after the sending page, raises `continueTargetMissing` (WARNING_SINCE 1.37.0; `before` when the
+  fence is earlier) and sends it on as `'next-page'`. The receiving fence is laid with its own
+  stories plus the jumping ones (`assignJumpReceivers`: the frame `#<frame>` names, else the frame
+  of the sending chain head's name, else the first frame its own content leaves empty) and
+  `ComposedContinuationInput.jump`: its frames keep the fence's ids (`cp<n>:<name>`, no `~k`), the
+  receiving chain's end goes on as `'next-page'` (pages added after it, numbered from it), and a
+  story that finds no free frame goes on there too. Such a page is never memoised. The sending
+  frame gets `continuesTo`, its page's log a `continued` event with the jump page; the EPUB walk
+  and tagged PDF already join the pieces by container id.
+- **Page numbers in marks (#917, #925, #915).** `overflow.mark` may hold `{page}` (the page the
+  rest goes on on), and `overflow.fromMark` (new; the receiving frame's, else the sending frame's)
+  sets words at the head of the first piece a frame lays of a story that came from another page,
+  `{page}` being the page it comes from (`CalloutLayoutInput.continuedMark`, laid as the
+  continuation marker is, pagination furniture). Both are laid out with a guessed number of the
+  right width and tagged `VDTDesignTextBlock.pageMark`; once the pages are numbered `fillPageMarks`
+  (`build.ts`) writes the printed label of the page `continuesTo` / `continuedFrom` points to and
+  measures the lines again, keeping their alignment.
 
 ## 6. Source map contract
 

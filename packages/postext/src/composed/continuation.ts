@@ -23,7 +23,7 @@
 import type { CalloutCut } from '../pipeline/frameLayout';
 import type { PlannedCallout } from '../pipeline/calloutLayout';
 import { nextFrameOf } from './geometry';
-import { continueInTemplate } from './templates';
+import { continueInPage, continueInTemplate } from './templates';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
 
 /** How many pages, one after another, the content of one composed page may
@@ -47,7 +47,8 @@ export interface ComposedContinuation {
    *  itself when no frame comes before it): a story threaded through
    *  frames goes on in the frame its chain starts in (#919). */
   head: string;
-  /** Where it goes on: `'next-page'` or `'template:<id>'`. */
+  /** Where it goes on: `'next-page'`, `'template:<id>'` or `'page:<id>'`
+   *  (its `{attr.x}` read from the fence). */
   rule: string;
   /** The template of the page it comes from (`'next-page'` reads its
    *  `overflowTemplate`). */
@@ -69,6 +70,8 @@ export interface ComposedContinuation {
    *  the rest to the added page (#912): on a template laid again for what
    *  goes on, they keep their size after the frame that takes it. */
   trailing?: readonly string[];
+  /** The sending frame's `overflow.fromMark` (#917). */
+  fromMark?: string;
 }
 
 /** What a page added by continuation receives. */
@@ -85,11 +88,15 @@ export interface ComposedContinuationInput {
   /** The last page continuation may add: what still does not fit stays
    *  here, cut at the frame's foot. */
   last: boolean;
+  /** A later page fence a story jumps to (#917, `'page:<id>'`): the page
+   *  is the fence's own, with its own content and frame ids; the frames
+   *  that take the story go on to pages added after it (`'next-page'`). */
+  jump?: true;
 }
 
 /** `continueIn` sends content to another page. */
 export function continuesOffPage(continueIn: string | undefined): boolean {
-  return continueIn === 'next-page' || continueInTemplate(continueIn) !== undefined;
+  return continueIn === 'next-page' || continueInTemplate(continueIn) !== undefined || continueInPage(continueIn) !== undefined;
 }
 
 /** The page an added page is built from for `c`: its template id, and
@@ -139,6 +146,30 @@ export function assignReceivers(
  * takes no room and leaves its group, but the empty frames that came
  * along with the content (`trailing`, #912).
  */
+/**
+ * The frames of a later page fence that take the stories jumping to it
+ * (#917), in order: the frame `'page:<id>#<frame>'` names, else the frame
+ * of the sending chain's head name, else the first frame of the page its
+ * own content leaves empty (`holds`: the frame's chain holds a story of
+ * the fence). Those that find none are `left`: they go on after it.
+ */
+export function assignJumpReceivers(
+  template: Pick<ResolvedPageTemplate, 'frames'>,
+  list: readonly ComposedContinuation[],
+  holds: (name: string) => boolean,
+): { receivers: Map<string, ComposedContinuation>; left: ComposedContinuation[] } {
+  const receivers = new Map<string, ComposedContinuation>();
+  const left: ComposedContinuation[] = [];
+  const free = template.frames.map((f) => f.name).filter((n) => !holds(n));
+  for (const c of list) {
+    const named = continueInPage(c.rule)?.frame;
+    const take = [named, c.head, c.frame, ...free].find((n) => n !== undefined && free.includes(n) && !receivers.has(n));
+    if (take === undefined) left.push(c);
+    else receivers.set(take, c);
+  }
+  return { receivers, left };
+}
+
 /** Whether content `frame` sends on lands on the same template laid again
  *  with its other frames collapsed (`'next-page'` with no other
  *  `overflowTemplate`), as {@link continuationTarget} decides. */
@@ -231,8 +262,10 @@ export function continuationTemplate(template: ResolvedPageTemplate, input: Comp
         return { ...f, overflow };
       }
       // The last frame of the chain goes on as the content came, unless
-      // it says where itself.
-      if (!input.last && nextFrameOf(f) === undefined && !continuesOffPage(own)) return { ...f, overflow: { ...f.overflow, continueIn: rule } };
+      // it says where itself; after a jump (#917), on the pages added
+      // after the one it jumped to.
+      const inherited = continueInPage(rule) !== undefined ? 'next-page' : rule;
+      if (!input.last && nextFrameOf(f) === undefined && !continuesOffPage(own)) return { ...f, overflow: { ...f.overflow, continueIn: inherited } };
       return f;
     }
     return f;

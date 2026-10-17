@@ -4190,7 +4190,7 @@
     "pageTemplatesContinueNextPage": "Uma página acrescentada depois desta",
     "pageTemplatesContinueTemplate": "Uma página de __name__",
     "pageTemplatesMark": "Marca no corte",
-    "pageTemplatesMarkTooltip": "As palavras no fim de um trecho que continua em outro lugar.",
+    "pageTemplatesMarkTooltip": "As palavras no fim de um trecho que continua em outro lugar. '{'page'}' é o número da página onde continua.",
     "pageTemplatesMarkDefault": "A do idioma",
     "pageTemplatesMarkNone": "Nenhuma",
     "pageTemplatesMarkCustom": "Palavras minhas",
@@ -4907,7 +4907,13 @@
     "textMigrationRestore": "Deixar o livro como estava",
     "textMigrationRestoreHint": "O texto foi levado para o Markdown em __date__. O livro de antes fica guardado até você ficar com a mudança.",
     "textMigrationKeep": "Ficar com a mudança",
-    "textMigrationMarkDifferences": "Marcar em vermelho o que muda"
+    "textMigrationMarkDifferences": "Marcar em vermelho o que muda",
+    "warningsContinueTargetMissingTitle": "Uma matéria salta para uma página que não vem depois",
+    "warningsContinueTargetMissingDetail": "página __page__ · este quadro do modelo __template__ continua na página “__target__”, e nenhuma página posterior tem esse id: o resto foi para a página seguinte. Dê id=\"__target__\" a um ::::page posterior ou corrija o nome.",
+    "warningsContinueTargetBeforeDetail": "página __page__ · este quadro do modelo __template__ continua na página “__target__”, que vem antes: o resto foi para a página seguinte. Leve o ::::page com id=\"__target__\" para depois desta página ou indique uma posterior.",
+    "pageTemplatesFromMark": "Palavras onde continua",
+    "pageTemplatesFromMarkTooltip": "No início do trecho, na página onde continua. '{'page'}' é o número da página de onde vem: “Continuação da página '{'page'}'”. Vazio: nenhuma.",
+    "textMigrationDiffLetterSpacing": "o espaçamento entre letras se perde (estilos de parágrafo não têm)"
   },
   "PlainLanguage": {
     "heading": "Em poucas palavras",

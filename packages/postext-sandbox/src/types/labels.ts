@@ -304,6 +304,9 @@ export interface SandboxLabels {
   warningsFrameOverflowDetail: string;
   warningsFrameContinuationLimitTitle: string;
   warningsFrameContinuationLimitDetail: string;
+  warningsContinueTargetMissingTitle: string;
+  warningsContinueTargetMissingDetail: string;
+  warningsContinueTargetBeforeDetail: string;
   warningsSpreadMismatchTitle: string;
   warningsSpreadMismatchSpreadDetail: string;
   warningsSpreadMismatchSingleDetail: string;
@@ -3733,6 +3736,8 @@ export interface SandboxLabels {
   pageTemplatesMarkNone: string;
   pageTemplatesMarkCustom: string;
   pageTemplatesMarkText: string;
+  pageTemplatesFromMark: string;
+  pageTemplatesFromMarkTooltip: string;
   pageTemplatesFrameDelete: string;
   pageTemplatesFrameDeleteConfirm: string;
   pageTemplatesGroupsEmpty: string;

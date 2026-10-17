@@ -95,6 +95,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'pageFenceLength':
     case 'frameOverflow':
     case 'frameContinuationLimit':
+    case 'continueTargetMissing':
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
@@ -286,6 +287,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameOverflowTitle;
     case 'frameContinuationLimit':
       return labels.warningsFrameContinuationLimitTitle;
+    case 'continueTargetMissing':
+      return labels.warningsContinueTargetMissingTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'labelAnchorUnknown':
@@ -616,6 +619,11 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels)}`;
+    case 'continueTargetMissing':
+      return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
+        .replace('__page__', String(payload.page))
+        .replace(/__target__/g, payload.target)
+        .replace('__template__', payload.template)}`;
     case 'frameContinuationLimit':
       return `${payload.frame} — ${labels.warningsFrameContinuationLimitDetail
         .replace('__page__', String(payload.page))

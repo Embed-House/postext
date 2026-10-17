@@ -30,13 +30,20 @@ const w = (id: string, payload: Warning['payload']): Warning => ({ id, payload }
 
 describe('composed checks of the label and continuation warnings', () => {
   it('counts them as composed checks', () => {
-    for (const kind of ['frameContinuationLimit', 'labelAnchorUnknown', 'anchorUnlabelled'] as const) expect(isComposedCheckKind(kind)).toBe(true);
+    for (const kind of ['frameContinuationLimit', 'continueTargetMissing', 'labelAnchorUnknown', 'anchorUnlabelled'] as const) expect(isComposedCheckKind(kind)).toBe(true);
     expect(isComposedCheckKind('looseLine')).toBe(false);
   });
 
   it('places a continuation past its limit on its page and frame', () => {
     const [c] = composedChecksOf('ca', [{ index: 2, doc, warnings: [
       w('x', { kind: 'frameContinuationLimit', template: 'tema', frame: 'texto', fenceIndex: 0, pages: 3, overflowMm: 4, page: 2, configPath: '/pageTemplates/0/frames/0' }),
+    ] }]);
+    expect(c).toMatchObject({ locale: 'ca', chapterIndex: 2, page: 8, pageIndex: 1, fenceIndex: 0, frame: 'texto', frameId: 'cp0:texto' });
+  });
+
+  it('places a story that jumps to a missing page on its page and frame (#917)', () => {
+    const [c] = composedChecksOf('ca', [{ index: 2, doc, warnings: [
+      w('x', { kind: 'continueTargetMissing', template: 'tema', frame: 'texto', fenceIndex: 0, target: 'p47', before: false, page: 2, configPath: '/pageTemplates/0/frames/0' }),
     ] }]);
     expect(c).toMatchObject({ locale: 'ca', chapterIndex: 2, page: 8, pageIndex: 1, fenceIndex: 0, frame: 'texto', frameId: 'cp0:texto' });
   });

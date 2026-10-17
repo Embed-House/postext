@@ -221,6 +221,17 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'continueTargetMissing') {
+      // A story that jumps to a page fence no later page has (#917).
+      out.push({
+        id: `layout-continueTargetMissing-${w.fenceIndex}-${w.frame}-${i}`,
+        payload: { kind: 'continueTargetMissing', template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, target: w.target, before: w.before === true, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), configPath: w.configPath },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'frameContinuationLimit') {
       // A frame's content that went on to the most pages a composed page
       // may add and still does not fit (#859), by its book page.

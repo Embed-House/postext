@@ -383,6 +383,9 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
             <TextControl value={typeof overflow.mark === 'string' ? overflow.mark : ''} onChange={(v) => setIn('overflow', 'mark', v)} ariaLabel={labels.pageTemplatesMarkText} widthCh={14} />
           </FieldRow>
         )}
+        <FieldRow label={labels.pageTemplatesFromMark} tooltip={labels.pageTemplatesFromMarkTooltip}>
+          <TextControl value={overflow.fromMark ?? ''} onChange={(v) => setIn('overflow', 'fromMark', v.trim() === '' ? undefined : v)} ariaLabel={labels.pageTemplatesFromMark} widthCh={14} />
+        </FieldRow>
       </FieldGroup>
 
       <ConfirmPopover message={labels.pageTemplatesFrameDeleteConfirm.replace('__name__', name)} onConfirm={() => { write(removeFrame(templates, templateId, scope, name)); onRemoved(); }}>

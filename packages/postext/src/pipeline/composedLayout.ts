@@ -41,7 +41,7 @@ import { FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget } from '../composed/templates';
+import { anchorTarget, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
@@ -409,7 +409,10 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       if (!continuesOffPage(frame.overflow.continueIn)) return false;
       steps.push('continue');
       const before = { fit, cur };
-      if (attempt(goingOn(fit, frame), name) && (!input.continuing || cur.spills.get(name)?.advanced !== false)) return true;
+      // (Only for a story that came from another page: a page's own story
+      // may go on whole.)
+      const received = input.continuing?.receivers.has(headOf(name)) ?? false;
+      if (attempt(goingOn(fit, frame), name) && (!received || cur.spills.get(name)?.advanced !== false)) return true;
       ({ fit, cur } = before);
       return false;
     };
@@ -498,15 +501,18 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       frame: frame.name,
       fromFrameId: spill.frameId,
       head: spill.head,
-      rule: frame.overflow.continueIn!,
+      // `{attr.x}` read from the fence (#917).
+      rule: resolveContinueIn(frame.overflow.continueIn!, fence.attrs),
       template: template.id,
       collapsed: input.continuing?.collapse ?? false,
       story,
       cut: spill.cut,
       pieces: spill.pieces,
       headBlockId: spill.headBlockId,
-      slot: came?.slot ?? frame.name,
+      // A story that jumped here (#917) goes on named by this page's frame.
+      slot: (input.continuing?.jump ? undefined : came?.slot) ?? frame.name,
       ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : {}),
+      ...(frame.overflow.fromMark !== undefined ? { fromMark: frame.overflow.fromMark } : {}),
     });
   }
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
@@ -658,7 +664,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   /** A frame's id: `cp<fence>:<name>`; on a page added by continuation
    *  (#859) `~<k>`, a frame that receives content named by the frame of
    *  the fence's page that first sent it on. */
-  const frameIdOf = (name: string): string => (cont ? frameElementId(fi, cont.receivers.get(name)?.slot ?? name, cont.generation) : frameElementId(fi, name));
+  const frameIdOf = (name: string): string => (cont && !cont.jump ? frameElementId(fi, cont.receivers.get(name)?.slot ?? name, cont.generation) : frameElementId(fi, name));
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   const prev = chainPrev(template, cont?.receivers);
   /** The head of the chain a frame belongs to. */
@@ -673,6 +679,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   };
   /** The text scale of a frame's story (#858). */
   const textScale = (frame: ResolvedFrame): number => fit.text.get(headOf(frame.name)) ?? 1;
+  /** A page number a mark's `{page}` is laid out with (#917): a guess of
+   *  the right width, the build writing the true one once pages are
+   *  numbered (`VDTDesignTextBlock.pageMark`). */
+  const toGuess = String(input.page.index + 2);
+  const fromGuess = String(Math.max(1, input.page.index));
   /** The style a frame is laid out in: its box as drawn at any text scale. */
   const styleOf = (frame: ResolvedFrame): ResolvedCalloutStyleConfig => {
     const style = keepChromeAt(input.styleOf(frame), textScale(frame));
@@ -680,7 +691,15 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     // A frame cut for another page (#859) ends with its mark: its own
     // words, none (`false`), or its style's localized ones.
     const mark = frame.overflow.mark;
-    return { ...style, continuesMarkerEnabled: mark !== false, continuesMarker: typeof mark === 'string' ? mark : style.continuesMarker };
+    return { ...style, continuesMarkerEnabled: mark !== false, continuesMarker: typeof mark === 'string' ? withPage(mark, toGuess) : style.continuesMarker };
+  };
+  /** The mark of a frame that receives a story from another page (#917):
+   *  its own `overflow.fromMark`, else the sending frame's, set at the
+   *  head of the first piece it lays here. */
+  const fromMarkOf = (frame: ResolvedFrame): string | undefined => {
+    const came = cont?.receivers.get(headOf(frame.name));
+    const words = frame.overflow.fromMark ?? came?.fromMark;
+    return came && words !== undefined ? withPage(words, fromGuess) : undefined;
   };
   /** The scale of a frame's pictures (#858), below 1, or undefined. */
   const pictureScale = (frame: ResolvedFrame): number | undefined => fit.pictures.get(headOf(frame.name))?.scale;
@@ -786,6 +805,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       holds: boolean;
       continuation: boolean;
       blockId: string;
+      /** "Continued from page …" at its head (#917). */
+      fromMark?: string;
     }
     const prepare = (frame: ResolvedFrame): Prep => {
       const st = stateOf(frame);
@@ -800,7 +821,10 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const holds = reached && !atEnd(st!);
       const continuation = st !== undefined && st.pieces > 0;
       const blockId = st && st.pieces > 0 ? `${st.headBlockId}-cont-${st.pieces}` : frameIdOf(frame.name);
-      return { frame, st, before, holds, continuation, blockId };
+      // The first piece here of a story that came from another page.
+      const came = cont?.receivers.get(headOf(frame.name));
+      const fromMark = st && came && continuation && st.pieces === came.pieces ? fromMarkOf(frame) : undefined;
+      return { frame, st, before, holds, continuation, blockId, ...(fromMark !== undefined ? { fromMark } : {}) };
     };
     /** The content's height at `width`, running round the pushing frames
      *  below the top of `at` (the frame's box as first placed). A frame
@@ -816,8 +840,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const known = memo.get(key);
         if (known !== undefined) return known;
         const exclusions = at ? unscale(exclusionsFor(p.frame, { ...at, width }, true), s) : undefined;
-        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}) };
-        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, opts.exclusions || opts.pictureScale !== undefined ? opts : undefined);
+        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
+        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, opts.exclusions || opts.pictureScale !== undefined || opts.continuedMark !== undefined ? opts : undefined);
         const h = r.totalHeight * s;
         memo.set(key, h);
         return h;
@@ -990,7 +1014,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         let known: number | undefined;
         needs.set(frame.name, () => (known ??= naturalOf(startAt)(width)));
         const exclusions = unscale(exclusionsFor(frame, rect, false), s);
-        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}) };
+        const extra: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
         const opts: FrameBoxOptions = { boxHeight: laidH, verticalAlign: frame.verticalAlign, ...extra };
         const whole = st!.L.layoutRange(from, st!.L.end, laidW, blockId, continuation, input.mirrored, opts);
         const nextName = nextFrameOf(frame);
@@ -1004,7 +1028,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           const minLines = Math.max(1, style.splitMinLines);
           // A heading stays with what follows it, a list keeps two items
           // on each side of the cut (#913).
-          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined ? extra : undefined, cutRules);
+          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined ? extra : undefined, cutRules);
           const to = frag?.to ?? from;
           // A frame none of whose content fits draws nothing: the whole box
           // goes on (#912), not a tab and a mark over an empty piece.
@@ -1045,6 +1069,12 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // Content from the page before (#859).
         vdt.continuedFrom = cont.receivers.get(frame.name)!.fromFrameId;
       }
+      if (result) {
+        // The marks whose `{page}` the build fills in (#917).
+        if (goesOn && typeof frame.overflow.mark === 'string' && frame.overflow.mark.includes('{page}')) tagPageMark(result.frame, withPage(frame.overflow.mark, toGuess), frame.overflow.mark, 'to');
+        const fromWords = frame.overflow.fromMark ?? cont?.receivers.get(headOf(frame.name))?.fromMark;
+        if (p.fromMark !== undefined && fromWords?.includes('{page}')) tagPageMark(result.frame, p.fromMark, fromWords, 'from');
+      }
       if (result && st) {
         const range = fragmentRange(st.L, from, st.cut);
         commitFrame(result, rect, st.story, range, input, vdt, blocks);
@@ -1059,6 +1089,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         if (s !== 1 && holds) fitLog.push({ frame: frame.name, kind: 'textScaled', scale: s });
       }
       if (goesOn && st) {
+        // Laid here even when none of it fits: the rest goes on (#912).
+        laid.add(headOf(frame.name));
         spills.set(frame.name, { head: headOf(frame.name), cut: st.cut, advanced: !sameCut(from, st.cut), pieces: st.pieces, headBlockId: st.headBlockId, frameId: vdt.id });
       }
       if (overflowPx > 0.5) {
@@ -1299,4 +1331,19 @@ export function planComposedPages(
 export function composedPageAt(pages: ReadonlyMap<number, PlannedComposedPage>, idx: number): PlannedComposedPage | undefined {
   for (const p of pages.values()) if (idx > p.startIdx && idx < p.endIdx) return p;
   return undefined;
+}
+
+/** `words` with `{page}` as `page` (#917). */
+const withPage = (words: string, page: string): string => words.split('{page}').join(page);
+
+/** Mark the design text of `box` that sets `shown` as a continuation mark
+ *  whose `{page}` the build fills in once pages are numbered (#917). */
+function tagPageMark(box: VDTBlock, shown: string, text: string, page: 'to' | 'from'): void {
+  const want = shown.trim();
+  for (const b of box.designOverlay?.blocks ?? []) {
+    if (b.kind !== 'text' || !b.artifact || b.pageMark) continue;
+    if (b.lines.map((l) => l.text).join(' ').trim() !== want && b.lines.map((l) => l.text).join('').trim() !== want) continue;
+    b.pageMark = { text: text.trim(), page };
+    return;
+  }
 }

@@ -6543,6 +6543,60 @@
       }
     }
   },
+  "continueTargetMissing": {
+    "source": "engine",
+    "label": {
+      "en": "A story jumps to a page that does not follow",
+      "es": "Una historia salta a una página que no viene después",
+      "ca": "Una història salta a una pàgina que no ve després",
+      "zh": "文章转到的页面不在其后",
+      "ar": "نص يُحال إلى صفحة لا تأتي بعده",
+      "ja": "記事の続き先のページが後ろにありません",
+      "pt": "Uma matéria salta para uma página que não vem depois",
+      "fr": "Un article renvoie à une page qui ne suit pas",
+      "de": "Ein Text springt auf eine Seite, die nicht folgt",
+      "it": "Un articolo rimanda a una pagina che non segue"
+    },
+    "cause": {
+      "en": "A frame's overflow.continueIn is 'page:<id>' (or 'page:{attr.name}', read from the page fence): what it cannot hold should go on in a frame of the page fence ::::page{id=\"<id>\"}, past the pages between. No fence with that id comes after the page the story is on: the id is misspelt, the fence lacks it, the attribute the template reads is missing, or the fence comes before. The rest goes on on a page added right after, as with 'next-page'.",
+      "es": "Un marco tiene overflow.continueIn 'page:<id>' (o 'page:{attr.nombre}', leído de la página): lo que no le cabe debería seguir en un marco de la página ::::page{id=\"<id>\"}, saltando las páginas intermedias. Ninguna página con ese id viene después de la página de la historia: el id está mal escrito, la página no lo tiene, falta el atributo que lee la plantilla o la página está antes. El resto sigue en una página añadida justo después, como con 'next-page'.",
+      "ca": "Un marc té overflow.continueIn 'page:<id>' (o 'page:{attr.nom}', llegit de la pàgina): el que no hi cap hauria de continuar en un marc de la pàgina ::::page{id=\"<id>\"}, saltant les pàgines del mig. Cap pàgina amb aquest id no ve després de la pàgina de la història: l'id està mal escrit, la pàgina no el té, falta l'atribut que llegeix la plantilla o la pàgina és abans. La resta continua en una pàgina afegida just després, com amb 'next-page'.",
+      "zh": "某个框的overflow.continueIn为'page:<id>'（或从页面围栏读取的'page:{attr.name}'）：放不下的内容应跳过中间的页面，转到::::page{id=\"<id>\"}那一页的某个框里。可是文章所在页之后没有带这个id的页面：id拼错了，页面没写id，模板读取的属性缺失，或者那一页在前面。其余内容像'next-page'一样，排到紧接着追加的一页上。",
+      "ar": "قيمة overflow.continueIn في إطار هي 'page:<id>' (أو 'page:{attr.name}' تُقرأ من سياج الصفحة): ما لا يتّسع له ينبغي أن يكمل في إطار من الصفحة ::::page{id=\"<id>\"} متخطّيًا الصفحات التي بينهما. لكن لا سياج بهذا المعرّف يأتي بعد الصفحة التي فيها النص: المعرّف مكتوب خطأ، أو لا تحمله الصفحة، أو تنقص السمة التي يقرؤها القالب، أو الصفحة قبله. يكمل الباقي في صفحة تُضاف بعده مباشرة، كما مع 'next-page'.",
+      "ja": "枠のoverflow.continueInが'page:<id>'（またはページ囲みから読む'page:{attr.name}'）です。収まらない分は、間のページを飛ばして::::page{id=\"<id>\"}のページの枠に続くはずですが、記事のあるページより後ろにその id のページがありません。id の書き間違い、ページに id がない、テンプレートが読む属性がない、またはそのページが前にある、のいずれかです。残りは'next-page'と同じく、すぐ後ろに追加したページに続きます。",
+      "pt": "Um quadro tem overflow.continueIn 'page:<id>' (ou 'page:{attr.nome}', lido da página): o que não cabe deveria continuar num quadro da página ::::page{id=\"<id>\"}, pulando as páginas do meio. Nenhuma página com esse id vem depois da página da matéria: o id está escrito errado, a página não o tem, falta o atributo que o modelo lê ou a página vem antes. O resto continua numa página acrescentada logo depois, como com 'next-page'.",
+      "fr": "Un bloc a overflow.continueIn 'page:<id>' (ou 'page:{attr.nom}', lu sur la page) : ce qu’il ne peut contenir devrait continuer dans un bloc de la page ::::page{id=\"<id>\"}, par-dessus les pages intermédiaires. Aucune page portant cet id ne suit la page de l’article : l’id est mal écrit, la page ne l’a pas, l’attribut que lit le gabarit manque, ou la page vient avant. La suite va sur une page ajoutée juste après, comme avec 'next-page'.",
+      "de": "Ein Rahmen hat overflow.continueIn 'page:<id>' (oder 'page:{attr.name}', aus dem Seitenzaun gelesen): Was er nicht fasst, soll in einem Rahmen der Seite ::::page{id=\"<id>\"} weitergehen, über die Seiten dazwischen hinweg. Keine Seite mit dieser id folgt auf die Seite des Textes: Die id ist falsch geschrieben, die Seite hat keine, das Attribut, das die Vorlage liest, fehlt, oder die Seite steht davor. Der Rest geht auf einer gleich danach angefügten Seite weiter, wie bei 'next-page'.",
+      "it": "Una cornice ha overflow.continueIn 'page:<id>' (o 'page:{attr.nome}', letto dalla pagina): ciò che non contiene dovrebbe continuare in una cornice della pagina ::::page{id=\"<id>\"}, saltando le pagine intermedie. Nessuna pagina con quell'id segue la pagina dell'articolo: l'id è scritto male, la pagina non ce l'ha, manca l'attributo che il modello legge o la pagina viene prima. Il resto continua su una pagina aggiunta subito dopo, come con 'next-page'."
+    },
+    "fix": {
+      "en": "Give the later page fence the id the frame names (::::page{template=\"…\" id=\"p47\"}), or fix the name in continueIn or in the fence attribute it reads. A fence that comes before the story cannot take it: move it after, or name a later page.",
+      "es": "Pon a la página posterior el id que nombra el marco (::::page{template=\"…\" id=\"p47\"}) o corrige el nombre en continueIn o en el atributo de la página que lee. Una página que va antes de la historia no puede recibirla: muévela detrás o nombra una posterior.",
+      "ca": "Posa a la pàgina posterior l'id que anomena el marc (::::page{template=\"…\" id=\"p47\"}) o corregeix el nom a continueIn o a l'atribut de la pàgina que llegeix. Una pàgina que va abans de la història no la pot rebre: mou-la darrere o anomena'n una de posterior.",
+      "zh": "给后面的页面围栏加上框所指的id（::::page{template=\"…\" id=\"p47\"}），或者改正continueIn里、或它所读取的围栏属性里的名称。文章前面的页面接不了它：把那一页移到后面，或者改指后面的页面。",
+      "ar": "أعطِ سياج الصفحة اللاحقة المعرّف الذي يسمّيه الإطار (::::page{template=\"…\" id=\"p47\"})، أو صحّح الاسم في continueIn أو في سمة السياج التي يقرؤها. السياج الذي يأتي قبل النص لا يمكنه استقباله: انقله إلى ما بعده أو سمِّ صفحة لاحقة.",
+      "ja": "後ろのページ囲みに枠が指す id を付ける（::::page{template=\"…\" id=\"p47\"}）か、continueIn または読み取る属性の名前を直してください。記事より前のページは続きを受けられません。後ろへ移すか、後ろのページを指定してください。",
+      "pt": "Dê à página posterior o id que o quadro indica (::::page{template=\"…\" id=\"p47\"}) ou corrija o nome em continueIn ou no atributo da página que ele lê. Uma página que vem antes da matéria não pode recebê-la: mova-a para depois ou indique uma posterior.",
+      "fr": "Donnez à la page placée plus loin l’id que nomme le bloc (::::page{template=\"…\" id=\"p47\"}), ou corrigez le nom dans continueIn ou dans l’attribut de page qu’il lit. Une page qui précède l’article ne peut pas le recevoir : déplacez-la après, ou nommez-en une plus loin.",
+      "de": "Geben Sie dem späteren Seitenzaun die id, die der Rahmen nennt (::::page{template=\"…\" id=\"p47\"}), oder korrigieren Sie den Namen in continueIn oder im gelesenen Attribut. Eine Seite vor dem Text kann ihn nicht aufnehmen: Setzen Sie sie dahinter oder nennen Sie eine spätere.",
+      "it": "Dai alla pagina successiva l'id che la cornice indica (::::page{template=\"…\" id=\"p47\"}) o correggi il nome in continueIn o nell'attributo della pagina che legge. Una pagina che viene prima dell'articolo non può riceverlo: spostala dopo o indicane una successiva."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "continueTargetMissing",
+        "es": "continueTargetMissing",
+        "ca": "continueTargetMissing",
+        "zh": "continueTargetMissing",
+        "ar": "continueTargetMissing",
+        "ja": "continueTargetMissing",
+        "pt": "continueTargetMissing",
+        "fr": "continueTargetMissing",
+        "de": "continueTargetMissing",
+        "it": "continueTargetMissing"
+      }
+    }
+  },
   "spreadMismatch": {
     "source": "engine",
     "label": {

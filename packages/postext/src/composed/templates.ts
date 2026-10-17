@@ -126,6 +126,25 @@ export function continueInTemplate(continueIn: unknown): string | undefined {
   return typeof continueIn === 'string' && continueIn.startsWith('template:') && continueIn.length > 9 ? continueIn.slice(9) : undefined;
 }
 
+/** The later page fence `'page:<id>'` names, and the frame of it
+ *  `'page:<id>#<frame>'` names (#917): a story that jumps there. `<id>`
+ *  may be `{attr.name}`, the fence's attribute (`resolveContinueIn`). */
+export function continueInPage(continueIn: unknown): { page: string; frame?: string } | undefined {
+  if (typeof continueIn !== 'string' || !continueIn.startsWith('page:')) return undefined;
+  const rest = continueIn.slice(5);
+  const hash = rest.indexOf('#');
+  const page = (hash >= 0 ? rest.slice(0, hash) : rest).trim();
+  const frame = hash >= 0 ? rest.slice(hash + 1).trim() : '';
+  return page.length > 0 ? { page, ...(frame.length > 0 ? { frame } : {}) } : undefined;
+}
+
+/** `continueIn` with each `{attr.name}` read from the page fence's
+ *  attributes (#917): `'page:{attr.sigue}'` with `sigue="p47"` is
+ *  `'page:p47'`. An attribute the fence lacks reads as nothing. */
+export function resolveContinueIn(continueIn: string, attrs: Readonly<Record<string, string>>): string {
+  return continueIn.includes('{attr.') ? continueIn.replace(/\{attr\.([A-Za-z0-9_-]+)\}/g, (_, k: string) => attrs[k] ?? '') : continueIn;
+}
+
 // ---------------------------------------------------------------------------
 // The template table: which template each id means
 // ---------------------------------------------------------------------------
@@ -333,6 +352,7 @@ function normalizeOverflow(raw: unknown): FrameOverflowConfig {
   const out: FrameOverflowConfig = {};
   if (typeof raw.continueIn === 'string' && raw.continueIn !== '') out.continueIn = raw.continueIn;
   if (typeof raw.mark === 'string' || raw.mark === false) out.mark = raw.mark;
+  if (typeof raw.fromMark === 'string' && raw.fromMark.trim() !== '') out.fromMark = raw.fromMark;
   return out;
 }
 
@@ -558,12 +578,13 @@ function settleReferences(
       const frameTarget = continueInFrame(continueIn);
       const templateTarget = continueInTemplate(continueIn);
       const ok = continueIn === 'next-page'
+        || continueInPage(continueIn) !== undefined
         || (frameTarget !== undefined && frameSet.has(frameTarget))
         || (templateTarget !== undefined && context.templateIds.has(templateTarget));
       if (!ok) {
         const known = frameTarget !== undefined ? frameNames.map((n) => `#${n}`)
           : templateTarget !== undefined ? [...context.templateIds].map((id) => `template:${id}`)
-            : ['next-page'];
+            : ['next-page', 'page:<id>'];
         issues.push({ kind: 'overflowTargetUnknown', path: f.fieldPaths['overflow/continueIn'] ?? `${f.configPath}/overflow/continueIn`, value: continueIn, used: '', known });
         f.overflow = { ...f.overflow };
         delete f.overflow.continueIn;

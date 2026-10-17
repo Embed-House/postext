@@ -44,6 +44,7 @@ export type WarningKind =
   | 'pageFenceLength'
   | 'frameOverflow'
   | 'frameContinuationLimit'
+  | 'continueTargetMissing'
   | 'spreadMismatch'
   | 'labelAnchorUnknown'
   | 'anchorUnlabelled'
@@ -267,6 +268,10 @@ export type WarningPayload =
   /** A frame's content went on to as many added pages as a composed page
    *  may add (#859) and still does not fit there. */
   | { kind: 'frameContinuationLimit'; template: string; frame: string; fenceIndex: number; pages: number; overflowMm: number; page: number; configPath: string }
+  /** A frame's `overflow.continueIn: 'page:<id>'` names no later page
+   *  fence (#917; `before`: that fence comes before it): the rest went on
+   *  on the next page. */
+  | { kind: 'continueTargetMissing'; template: string; frame: string; fenceIndex: number; target: string; before: boolean; page: number; configPath: string }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */

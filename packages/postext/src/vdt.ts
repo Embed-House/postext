@@ -2290,6 +2290,12 @@ export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
    *  PDF marks it an artifact and the HTML hides it from assistive
    *  technology, so the text is read once. */
   artifact?: boolean;
+  /** A continuation mark of a composed page's frame with a page number
+   *  (#917): its words as written, `{page}` the number of the page the
+   *  rest goes on on (`'to'`, `VDTFrame.continuesTo`) or comes from
+   *  (`'from'`, `VDTFrame.continuedFrom`). The build sets `lines` from it
+   *  once the pages are numbered. */
+  pageMark?: { text: string; page: 'to' | 'from' };
   /** The base direction of the block's text (`DesignTextElement.direction`,
    *  by default the document's) when it is right to left: its lines'
    *  runs were ordered at that paragraph level, and an HTML line takes
@@ -3199,6 +3205,19 @@ export type ContentWarning = ContentWarningBase & (
     fenceIndex: number;
     pages: number;
     overflowMm: number;
+    configPath: string;
+  }
+  /** A frame's `overflow.continueIn: 'page:<id>'` (#917) names no page
+   *  fence `::::page{id=…}` after the fence the story is on (`target`, its
+   *  `{attr.x}` read; `before`: the fence is there, but before or at this
+   *  page): the rest goes on on the next page instead. */
+  | {
+    kind: 'continueTargetMissing';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    target: string;
+    before?: true;
     configPath: string;
   }
   /** A composed page's fence and its template disagree about spreads
