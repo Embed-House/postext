@@ -55,7 +55,7 @@ import type {
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
-import type { StoryJump } from './composed/carry';
+import type { StoryJump } from './composed/carryTypes';
 
 // ---------------------------------------------------------------------------
 // Bounding box — all values in px, relative to page origin

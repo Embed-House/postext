@@ -660,7 +660,7 @@ export type { SourceRef, SourceLevel, SourceElement, SourceMapOptions, SourceMat
 export { composedPageElementId, frameElementId, groupElementId, labelElementId, designElementId } from './composed/ids';
 export { composedPagePaintKey } from './composed/pageMemo';
 // A story that jumps into a page of a later chapter (#943).
-export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carry';
+export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carryTypes';
 export type {
   FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameConfig, FrameGroupConfig,
   PageTemplateGrid, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,

@@ -27,6 +27,8 @@ import {
   type PlannedCallout,
 } from './calloutLayout';
 import { fillGalley, galleyBreaks } from './columnsGroup';
+import type { CalloutCut } from './cutTypes';
+export type { CalloutCut } from './cutTypes';
 
 /** What a frame of a composed page (#855) adds to a box's layout: its exact
  *  height, where content shorter than it sits, the rectangles its text
@@ -62,23 +64,6 @@ export interface FrameLayoutPass {
   measureMemo?: MeasureMemo;
 }
 
-/** A position inside a box's children where a fragment starts or ends:
- *  before child `child` (a position in `children`), past its first
- *  `line` text lines. `line: 0` is the child's head; a cut with
- *  `line > 0` falls inside that child, between two of its lines. */
-export interface CalloutCut {
-  child: number;
-  line: number;
-  /** For a cut inside a child (`line > 0`): the box widths that child's
-   *  lines up to `line` were counted at, from line `fromLine` on (see
-   *  `CalloutLayoutInput.lineWidths`). A box that goes on in a column of
-   *  another width breaks the child again from them. */
-  widths?: readonly CalloutLineWidth[];
-  /** A cut inside the `:::columns` group whose opening marker is at
-   *  position `open` (#634): where each of its streams stands (one for a
-   *  snake group). `child` is then the earliest of them, `line` 0. */
-  group?: { open: number; pos: readonly GroupPos[] };
-}
 /** The widths a child's lines are counted at in a fragment `width` wide
  *  that opens `from` (see `CalloutCut.widths`). */
 export const cutWidths = (from: CalloutCut, width: number): readonly CalloutLineWidth[] => {

@@ -1,6 +1,6 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
 import type { LabelStyle, PageTemplate } from './composed/types';
-import type { StoryJump } from './composed/carry';
+import type { StoryJump } from './composed/carryTypes';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {

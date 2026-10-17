@@ -89,6 +89,8 @@ import { isFlowColumnsStyle } from './flowColumns';
 import { FRAME_STYLE_ID } from '../composed/wrap';
 import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './columnsGroup';
 import type { LineInsetStep } from '../measure/types';
+import type { CalloutLineWidth, GroupPos } from './cutTypes';
+export type { CalloutLineWidth, GroupPos } from './cutTypes';
 
 // ---------------------------------------------------------------------------
 // Pre-pass: callout ranges keyed by the start marker's content-block index.
@@ -407,12 +409,6 @@ onTextWidthCacheClear(() => {
   acrossWidthsMemo = new WeakMap();
 });
 
-/** A box width the first child of a continuation was counted at (see
- *  `CalloutLayoutInput.lineWidths`). */
-export interface CalloutLineWidth {
-  fromLine: number;
-  width: number;
-}
 
 /** An enclosing nested fence a fragment opens inside (see `openNested`). */
 export interface OpenNestedCallout {
@@ -466,17 +462,6 @@ export interface CalloutLayoutResult {
   groups?: CalloutGroupLayout[];
 }
 
-/** A position in a `:::columns` group's galley (#634): before child
- *  `child` (a position in the box's children), past its first `line`
- *  lines. A stream that is done sits at the next stream's first child (or
- *  the group's closing marker). */
-export interface GroupPos {
-  child: number;
-  line: number;
-  /** For a cut inside a paragraph: the sub-column widths its lines up to
-   *  `line` were set at, from line `fromLine` on. */
-  widths?: readonly CalloutLineWidth[];
-}
 
 /** A `:::columns` group as a box laid it out (see
  *  `CalloutLayoutResult.groups`). */
