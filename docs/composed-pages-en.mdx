@@ -504,11 +504,11 @@ A magazine story that outruns its pages jumps to a page further on, past other s
   </tbody>
 </table>
 
-A mark may hold `{page}`: the printed number of the page the rest goes on on, as a magazine writes it (`mark: "Continued on page {page}"`). It works on an added page (`'next-page'`, `'template:<id>'`) and on a later page fence the story jumps to (`'page:<id>'`). `overflow.fromMark` sets the words at the head of the piece on that page, `{page}` being the page it comes from (`fromMark: "Continued from page {page}"`); the receiving frame's own `fromMark` wins over the sending frame's, and without one the piece opens with no words. The numbers are filled in once the pages are numbered.
+A mark may hold `{page}`: the printed number of the page the rest goes on on, as a magazine writes it (`mark: "Continued on page {page}"`). It works on an added page (`'next-page'`, `'template:<id>'`) and on a later page fence the story jumps to (`'page:<id>'`). The numbers are filled in once the pages are numbered.
 
 The mark is set under the piece's last line, in the box's body face, aligned and slanted as the style's `continuesMarkerAlign` and `continuesMarkerItalic` say (right and italic by default). It is pagination furniture: the reflowable EPUB leaves it out, the tagged PDF marks it as an artifact. A frame chained with `next` on the same page carries no mark.
 
-The piece on the other page opens without the frame's tab and title, as the later parts of a split box do. `overflow.fromMark` sets words at its head, `{page}` being the number of the page it comes from: `"Continued from page {page}"`. The receiving frame's own `fromMark` wins over the sending frame's; unset, there is none. A style with `repeatTitle: true` repeats its title there with its `continuedSuffix` («(cont.)»). Both marks are set in the box's body face, aligned and slanted as the end mark is, and are pagination furniture.
+The piece on the other page opens without the frame's tab and title, as the later parts of a split box do. `overflow.fromMark` sets words at its head, `{page}` being the number of the page it comes from: `"Continued from page {page}"`. The receiving frame's own `fromMark` wins over the sending frame's; with neither set, the piece opens with no words. A style with `repeatTitle: true` repeats its title there with its `continuedSuffix` («(cont.)»). Both marks are set in the box's body face, aligned and slanted as the end mark is, and are pagination furniture.
 
 ## Reflow log
 

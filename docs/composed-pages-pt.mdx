@@ -504,11 +504,11 @@ Uma matéria de revista que passa das suas páginas salta para uma página mais 
   </tbody>
 </table>
 
-Uma marca pode conter `{page}`: o número impresso da página em que o resto continua, como uma revista escreve (`mark: "Continua na página {page}"`). Vale para uma página acrescentada (`'next-page'`, `'template:<id>'`) e para uma cerca de página posterior para a qual a matéria salta (`'page:<id>'`). `overflow.fromMark` põe palavras no início do pedaço nessa página, sendo `{page}` a página de onde ele vem (`fromMark: "Continuação da página {page}"`); o `fromMark` do bloco que recebe vale mais que o do bloco que envia, e sem nenhum o pedaço começa sem palavras. Os números são preenchidos depois que as páginas são numeradas.
+Uma marca pode conter `{page}`: o número impresso da página em que o resto continua, como uma revista escreve (`mark: "Continua na página {page}"`). Vale para uma página acrescentada (`'next-page'`, `'template:<id>'`) e para uma cerca de página posterior para a qual a matéria salta (`'page:<id>'`). Os números são preenchidos depois que as páginas são numeradas.
 
 A marca é composta abaixo da última linha do pedaço, na fonte do texto do boxe, alinhada e inclinada conforme `continuesMarkerAlign` e `continuesMarkerItalic` do estilo (à direita e em itálico por padrão). É um elemento da paginação: o EPUB de layout fluido a deixa de fora e o PDF marcado a marca como artefato. Um bloco encadeado com `next` na mesma página não leva marca.
 
-O pedaço da outra página abre sem a aba e o título do bloco, como as partes seguintes de um boxe dividido. `overflow.fromMark` define palavras no alto dele, sendo `{page}` o número da página de onde ele vem: `"Continuação da página {page}"`. O `fromMark` do próprio bloco que recebe vale mais que o do bloco que envia; sem definir, não há nenhuma. Um estilo com `repeatTitle: true` repete ali o seu título seguido do seu `continuedSuffix` (“(cont.)”). As duas marcas são compostas na fonte do texto do boxe, alinhadas e inclinadas como a marca final, e são elementos da paginação.
+O pedaço da outra página abre sem a aba e o título do bloco, como as partes seguintes de um boxe dividido. `overflow.fromMark` define palavras no alto dele, sendo `{page}` o número da página de onde ele vem: `"Continuação da página {page}"`. O `fromMark` do próprio bloco que recebe vale mais que o do bloco que envia; se nenhum dos dois estiver definido, o pedaço abre sem palavras. Um estilo com `repeatTitle: true` repete ali o seu título seguido do seu `continuedSuffix` (“(cont.)”). As duas marcas são compostas na fonte do texto do boxe, alinhadas e inclinadas como a marca final, e são elementos da paginação.
 
 ## Registro de reajustes
 

@@ -504,11 +504,11 @@ Una història de revista que no cap a les seves pàgines salta a una pàgina mé
   </tbody>
 </table>
 
-Una marca pot portar `{page}`: el número imprès de la pàgina on continua la resta, com ho escriu una revista (`mark: "Continua a la pàgina {page}"`). Serveix en una pàgina afegida (`'next-page'`, `'template:<id>'`) i en una tanca de pàgina posterior a la qual salta la història (`'page:<id>'`). `overflow.fromMark` posa les paraules al començament del tros en aquella pàgina, on `{page}` és la pàgina d'on ve (`fromMark: "Ve de la pàgina {page}"`); el `fromMark` del marc que rep guanya al del marc que envia, i sense cap el tros comença sense paraules. Els números s'omplen quan les pàgines ja estan numerades.
+Una marca pot portar `{page}`: el número imprès de la pàgina on continua la resta, com ho escriu una revista (`mark: "Continua a la pàgina {page}"`). Serveix en una pàgina afegida (`'next-page'`, `'template:<id>'`) i en una tanca de pàgina posterior a la qual salta la història (`'page:<id>'`). Els números s'omplen quan les pàgines ja estan numerades.
 
 La marca es compon sota l'última línia del tros, amb la lletra del cos de la caixa, alineada i inclinada segons `continuesMarkerAlign` i `continuesMarkerItalic` de l'estil (a la dreta i en cursiva per defecte). És un element de la paginació: l'EPUB de maquetació fluida la deixa fora i el PDF etiquetat la marca com a artefacte. Un marc encadenat amb `next` a la mateixa pàgina no porta marca.
 
-El tros de l'altra pàgina comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. `overflow.fromMark` hi fixa unes paraules al capdamunt, on `{page}` és el número de la pàgina d'on ve: `"Ve de la pàgina {page}"`. El `fromMark` del marc que rep passa per davant del del marc que envia; sense fixar, no n'hi ha cap. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»). Totes dues marques es componen amb la lletra del cos de la caixa, alineades i inclinades com la marca final, i són elements de la paginació.
+El tros de l'altra pàgina comença sense la pestanya ni el títol del marc, com les parts següents d'una caixa partida. `overflow.fromMark` hi fixa unes paraules al capdamunt, on `{page}` és el número de la pàgina d'on ve: `"Ve de la pàgina {page}"`. El `fromMark` del marc que rep passa per davant del del marc que envia; si cap dels dos no està fixat, el tros comença sense paraules. Un estil amb `repeatTitle: true` hi repeteix el títol seguit del seu `continuedSuffix` («(cont.)»). Totes dues marques es componen amb la lletra del cos de la caixa, alineades i inclinades com la marca final, i són elements de la paginació.
 
 ## Registre de reajustament
 
