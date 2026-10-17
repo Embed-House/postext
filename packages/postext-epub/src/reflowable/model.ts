@@ -185,6 +185,9 @@ export interface FigureNode {
    *  written: read as a list after the picture, out of sight (the
    *  picture this book shows does not carry them). */
   labels?: string[];
+  /** An SVG over the picture that draws those labels the print sets as
+   *  text (#955), in the picture's coordinates. */
+  labelsSvg?: string;
 }
 
 export interface TableCellNode {

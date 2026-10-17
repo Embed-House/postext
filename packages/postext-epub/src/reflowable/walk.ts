@@ -46,6 +46,7 @@ import type {
   VerseNode,
   WrapFloat,
 } from './model';
+import { figureLabelsOverlay } from './labels';
 import { appendLine, appendLines, fontPx, idOf, mathSvg, plainText, xmlText, type InlineContext, type TextSink } from './inline';
 
 /** Where an id landed: its content document and element id. */
@@ -82,6 +83,8 @@ export interface BookModel {
   code?: boolean;
   /** Whether a figure or a box text wraps round was read (#627). */
   wraps?: boolean;
+  /** Whether a picture with its labels drawn over it was read (#955). */
+  labelLayers?: boolean;
   /** Whether a composed page was read (#862), and the callout styles its
    *  frames are set in: the stylesheet styles a frame's block with them. */
   composed?: boolean;
@@ -1311,6 +1314,16 @@ class DocWalker {
       // A `:::figure`'s labels (#862): the picture's text, in label order.
       ...(rb.labels?.some((l) => l.text.trim()) ? { labels: rb.labels.map((l) => l.text.trim()).filter(Boolean) } : {}),
     };
+    // The labels the print draws as text, drawn over the picture (#955).
+    // The pages of a right-to-left book are laid out mirrored: their
+    // labels stay in the list.
+    if (this.dir !== 'rtl' && !rb.rotation) {
+      const labelsSvg = figureLabelsOverlay(rb);
+      if (labelsSvg) {
+        node.labelsSvg = labelsSvg;
+        this.book.labelLayers = true;
+      }
+    }
     if (node.wrap) this.book.wraps = true;
     if (rb.fileId) this.book.images.add(rb.fileId);
     if (alt) this.book.altText = true;
