@@ -87,7 +87,7 @@ jobs:
         if: always()
         env:
           COOKBOOK_CHROME: /usr/bin/google-chrome
-        run: pnpm cookbook bench --engine local --no-pixels --report "$RUNNER_TEMP/cookbook-bench.json"
+        run: pnpm cookbook bench --engine local --no-pixels --hash-warn --report "$RUNNER_TEMP/cookbook-bench.json"
 
       # The bench on its own fixture recipe (es, en, ca), which no site page
       # publishes: the checks above run end to end on every pull request,
@@ -98,7 +98,7 @@ jobs:
           COOKBOOK_CHROME: /usr/bin/google-chrome
           COOKBOOK_RECIPES_DIR: ${{ github.workspace }}/apps/web/src/lib/cookbook/fixtures/recipes
           COOKBOOK_CAPTURE_DIR: ${{ runner.temp }}/cookbook-bench-fixture
-        run: pnpm cookbook bench --engine local --no-pixels --report "$RUNNER_TEMP/cookbook-bench-fixture.json"
+        run: pnpm cookbook bench --engine local --no-pixels --hash-warn --report "$RUNNER_TEMP/cookbook-bench-fixture.json"
 
       # Kept when the check fails too, and only when this run fetched a
       # file the cache did not hold: the next run starts from it.

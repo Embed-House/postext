@@ -124,7 +124,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture <slug> --stress 1.3 --check` | The stress test (C38, §11): each edition runs as written and once more with every text 30 % longer, and the second run reports what each page did. Implies `--check`. |
 | `pnpm cookbook capture <slug> --stress 1.3 --stress-out <dir>` (or `bench … --stress-out <dir>`) | Also writes the stretched edition to `<dir>/<slug>/<lang>/`: every page as `p01.png`…, the Markdown it was laid out from (`<lang>.stretched.md`) and `stress.json` with the C38 findings. `--preview-dir` writes the pages as written. |
 | `pnpm cookbook capture <slug> --check --compare [--max-diff 12] [--no-pixels] [--strict]` | Compares the layout and every published page with the approved capture of the same sources (C39, §11). |
-| `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
+| `pnpm cookbook bench [slug…] [--engine local] [--stress 1.3] [--no-pixels] [--hash-warn]` | The composed-page bench (§11): with no slug, every recipe whose Markdown declares composed pages, stale or not; each edition checked as a capture checks it, plus C37–C41, the stress test and the comparison with the approved pages. Writes nothing. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
@@ -1105,7 +1105,7 @@ edition, before it is published:
   half of a spread and turned frames are passed over. On an engine without it, a note: the
   check starts when the pinned engine has it.
 - **C41, the configuration.** Under 1 MB of JSON, for every recipe: it is what the Sandbox
-  loads and what a reader copies.
+  loads and what a reader copies. `--hash-warn` turns a layout hash that differs into a warning: CI runs the bench on Linux, whose Chrome measures text by fractions of a pixel differently from the machine the captures are made on, so only the capture machine fails on it.
 
 `pnpm cookbook bench` runs all of it: with no slug, every recipe whose Markdown declares
 composed pages; each edition run and checked as a capture checks it (C1–C36), then C37, C40,

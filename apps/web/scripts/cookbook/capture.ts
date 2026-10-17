@@ -89,6 +89,9 @@ export interface CaptureOptions {
   /** C39 compares the layout hash only (`--no-pixels`): pages painted on
    *  another system than the approved ones differ at every glyph edge. */
   pixels?: boolean;
+  /** C39 warns, not fails, on a layout hash that differs (`--hash-warn`):
+   *  a run on another system than the capture's. */
+  hashWarn?: boolean;
   /** C39 fails on any engine, not only the one the capture records. */
   strict?: boolean;
   /** With no slugs: every recipe whose Markdown declares composed pages
@@ -854,7 +857,7 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
                   approved: committed ? { vdtHash: task.previous?.variants?.[variant]?.vdtHash, engine: task.previous?.engine?.postext } : null,
                   run: { vdtHash: run.facts?.vdt ? sha1(run.facts.vdt) : "", engine: engine.postext },
                   changes: run.pageChanges, pages: run.pages.length, maxDiff: opts.maxDiff ?? PAGE_MAX_DIFF,
-                  pixels: opts.pixels !== false, strict: !!opts.strict,
+                  pixels: opts.pixels !== false, strict: !!opts.strict, hashWarn: !!opts.hashWarn,
                 })
               : []),
             ...(opts.stress ? await stressRun(task, variant, run, hb, opts) : []),

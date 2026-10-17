@@ -1355,6 +1355,11 @@ export function compareFindings(input: {
   maxDiff: number;
   pixels: boolean;
   strict?: boolean;
+  /** A layout hash that differs is a warning, not a failure: the run
+   *  measures text on another system than the approved capture (CI's
+   *  Linux Chrome against the capture machine), where widths differ by
+   *  fractions of a pixel. */
+  hashWarn?: boolean;
 }): Finding[] {
   const add = (severity: Severity, detail: string): Finding => ({ check: "C39", severity, detail });
   const approved = input.approved;
@@ -1364,7 +1369,8 @@ export function compareFindings(input: {
   const on = same ? `on postext ${input.run.engine}, the engine it was approved on` : `on postext ${input.run.engine}; approved on ${approved.engine ?? "?"}`;
   const out: Finding[] = [];
   if (approved.vdtHash && input.run.vdtHash && approved.vdtHash !== input.run.vdtHash) {
-    out.push(add(severity, `the layout is not the approved one (layout hash ${input.run.vdtHash.slice(0, 8)}, approved ${approved.vdtHash.slice(0, 8)}) ${on}`));
+    const hashSeverity: Severity = input.hashWarn && !input.strict ? "warn" : severity;
+    out.push(add(hashSeverity, `the layout is not the approved one (layout hash ${input.run.vdtHash.slice(0, 8)}, approved ${approved.vdtHash.slice(0, 8)}) ${on}${input.hashWarn ? " (measured on another system: check the pages there)" : ""}`));
   }
   if (input.pixels) {
     if (!input.changes) out.push(add("info", "the pages were not compared with their images"));
