@@ -2045,27 +2045,33 @@ function layoutImageElement(
   else { boxW = natW; boxH = natH; }
   const boxX = edgeXFromPin(pin.anchorX, pin.pinX, boxW);
   const boxY = edgeYFromPin(pin.anchorY, pin.pinY, boxH);
-  if (el.fit === 'cover' && fixedW !== undefined && fixedH !== undefined && !upright && boxW > 0 && boxH > 0) {
+  if (el.fit === 'cover' && fixedW !== undefined && fixedH !== undefined && boxW > 0 && boxH > 0) {
     // Cover (#923): the box filled, the picture cropped, its safe area
-    // kept (the comic panel's rule, `comics/art.ts`).
-    const cell = { x: boxX, y: boxY, width: boxW, height: boxH };
+    // kept (the comic panel's rule, `comics/art.ts`). An upright picture
+    // of a vertical flow (#946) is cropped as the sheet shows it: in its
+    // own upright frame, where the box is `boxH` wide and `boxW` tall.
+    const cell = upright ? { x: 0, y: 0, width: boxH, height: boxW } : { x: boxX, y: boxY, width: boxW, height: boxH };
     const cut = comicArtCrop({ width: picW, height: picH, cell, fit: 'cover', ...(resource?.safeArea ? { safeArea: resource.safeArea } : {}), ...(el.focus ? { focus: el.focus } : {}) });
     const x0 = Math.max(cell.x, cut.box.x);
     const y0 = Math.max(cell.y, cut.box.y);
     const x1 = Math.min(cell.x + cell.width, cut.box.x + cut.box.width);
     const y1 = Math.min(cell.y + cell.height, cut.box.y + cut.box.height);
     const whole = cut.source.width >= 1 - 1e-6 && cut.source.height >= 1 - 1e-6;
+    // The visible part back in the flow: the upright frame's x runs up the
+    // flow's y from the box's foot, its y along the flow's x (the quarter
+    // turn the backends paint an upright picture with).
+    const shown = upright
+      ? { x: boxX + y0, y: boxY + boxH - x1, width: Math.max(0, y1 - y0), height: Math.max(0, x1 - x0) }
+      : { x: x0, y: y0, width: Math.max(0, x1 - x0), height: Math.max(0, y1 - y0) };
     return {
       kind: 'image',
       id: el.id,
-      x: x0,
-      y: y0,
-      width: Math.max(0, x1 - x0),
-      height: Math.max(0, y1 - y0),
+      ...shown,
       fileId,
       ...(resource?.bitmap?.format ? { format: resource.bitmap.format } : {}),
       ...pictureTraits(resource, fileId),
       ...(whole ? {} : { crop: { ...cut.source } }),
+      ...(upright ? { upright: true as const } : {}),
       ...altTextOf(el, resource),
     };
   }

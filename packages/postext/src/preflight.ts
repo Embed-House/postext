@@ -321,7 +321,12 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           }
         } else if (b.kind === 'image') {
           // A cover crop (#923) shows a share of the picture in its box.
-          if (b.imageKind !== 'svg') checkImage(b.fileId, b.bbox.width, b.bbox.height, b.crop?.width ?? 1, b.crop?.height ?? 1, pageIndex, b.bbox);
+          // An upright picture of a vertical flow stands turned in its box:
+          // its width is the box's height (#946).
+          if (b.imageKind !== 'svg') {
+            const [w, h] = b.upright ? [b.bbox.height, b.bbox.width] : [b.bbox.width, b.bbox.height];
+            checkImage(b.fileId, w, h, b.crop?.width ?? 1, b.crop?.height ?? 1, pageIndex, b.bbox);
+          }
           checkNearTrim(b.bbox);
         } else if (b.kind === 'text') {
           // What the block shows (a placeholder that resolved to nothing

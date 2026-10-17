@@ -3143,12 +3143,15 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
       // `height` across it (sized for that when `upright`, else fitted
       // keeping its proportions, as the canvas draws it).
       const k = block.upright ? 1 : Math.min(height / width, width / height);
-      const dw = block.upright ? height : width * k;
-      const dh = block.upright ? width : height * k;
-      const ox = block.upright ? 0 : (height - dw) / 2;
-      const oy = block.upright ? 0 : (width - dh) / 2;
+      // A cover crop (#946): the whole picture over its uncropped box in
+      // the upright frame, the box clipping it.
+      const c = block.upright ? block.crop : undefined;
+      const dw = c ? height / c.width : block.upright ? height : width * k;
+      const dh = c ? width / c.height : block.upright ? width : height * k;
+      const ox = c ? -c.x * dw : block.upright ? 0 : (height - dw) / 2;
+      const oy = c ? -c.y * dh : block.upright ? 0 : (width - dh) / 2;
       return (
-        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;">` +
+        `<div style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;${c ? 'overflow:hidden;' : ''}">` +
         `<img src="${esc(url)}" ${alt} style="position:absolute;left:0;top:0;width:${dw}px;height:${dh}px;` +
         `transform:translate(0,${height}px) rotate(-90deg) translate(${ox}px,${oy}px);transform-origin:0 0;${filter}" /></div>`
       );

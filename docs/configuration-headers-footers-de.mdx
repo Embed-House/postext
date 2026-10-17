@@ -637,13 +637,13 @@ Ein Element `image` zeichnet eine Bitmap- oder SVG-Ressource des Dokuments – d
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Mit gesetzter <code>width</code> und <code>height</code>: <code>'contain'</code> passt das ganze Bild zentriert in den Kasten ein; <code>'cover'</code> füllt den Kasten und beschneidet, was übersteht, wie ein randabfallendes Foto. Der Zuschnitt von <code>'cover'</code> lässt den sicheren Bereich der Ressource ganz (siehe <a href="/de/docs/document-format-resources">Ressourcen</a>); kann die Form des Kastens ihn nicht fassen, wird das kleinste Fenster gezeigt, das ihn fasst, und der Kasten bleibt in einer Richtung ungefüllt. Wird ignoriert, wenn eine Seite <code>'auto'</code> ist. Seit postext 1.38.</td>
+      <td>Mit gesetzter <code>width</code> und <code>height</code>: <code>'contain'</code> passt das ganze Bild zentriert in den Kasten ein; <code>'cover'</code> füllt den Kasten und beschneidet, was übersteht, wie ein randabfallendes Foto. Der Zuschnitt von <code>'cover'</code> lässt den sicheren Bereich der Ressource ganz (siehe <a href="/de/docs/document-format-resources">Ressourcen</a>); kann die Form des Kastens ihn nicht fassen, wird das kleinste Fenster gezeigt, das ihn fasst, und der Kasten bleibt in einer Richtung ungefüllt. Wird ignoriert, wenn eine Seite <code>'auto'</code> ist. Seit postext 1.38. Ein Bild, das im Fluss einer vertikalen Seite aufrecht steht (das Design einer Überschrift in einem vertikalen Buch), wird beschnitten, wie der Bogen es zeigt, seit postext 1.39; bis 1.38 wurde es ganz eingepasst.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Der Punkt des Bildes, auf den der <code>'cover'</code>-Zuschnitt zentriert, in Bruchteilen des Bildes: <code>&#123; x: 0.5, y: 0.3 &#125;</code> für ein Gesicht im oberen Drittel. Der sichere Bereich bleibt dabei sichtbar. Ohne ihn werden die Ränder um den sicheren Bereich im Verhältnis ihrer Größe beschnitten, sonst wird das Bild zentriert.</td>
+      <td>Der Punkt des Bildes, auf den der <code>'cover'</code>-Zuschnitt zentriert, in Bruchteilen des Bildes: <code>&#123; x: 0.5, y: 0.3 &#125;</code> für ein Gesicht im oberen Drittel. Der sichere Bereich bleibt dabei sichtbar. Ohne ihn werden die Ränder um den sicheren Bereich im Verhältnis ihrer Größe beschnitten, sonst wird das Bild zentriert. Im Sandbox zeigt der <strong>Fokuspunkt</strong> des Bild-Editors das Bild mit dem Teil, den der Beschnitt behält, umrandet; ein Klick darauf oder die Pfeiltasten setzen den Punkt (seit postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

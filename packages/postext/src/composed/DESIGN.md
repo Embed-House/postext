@@ -908,6 +908,12 @@ Recorded where the implementation settles a point the sections above leave open,
   fixed boxes (`anchorBox`) and heading designs are laid in the flow, where the start is the left.
   So one decoration element follows the frames to the right of an Arabic page. Sandbox: the slot
   editor's Alignment list has Start / End and its edge lists the start and end sides.
+- **Cover in vertical flows (#946).** `layoutImageElement` crops an upright picture (`DesignFrames.upright`)
+  in its own upright frame (the box `boxH` × `boxW`) and maps the visible part back into the flow; the
+  primitive keeps `upright` and `crop`. Canvas (`drawUprightInBox` + clip), HTML (the turned `<img>` at its
+  uncropped size in an `overflow:hidden` box) and PDF (clip inside the quarter turn) paint it; preflight
+  reads an upright picture's printed width as its box's height. Sandbox: the image editor's Focus point
+  (`focusPoint.ts`: a click or the arrow keys; the window the crop keeps outlined, `comicArtCrop`).
 
 ## 6. Source map contract
 

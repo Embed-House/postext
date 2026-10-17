@@ -3,6 +3,8 @@ import { buildDocument, renderPageToCanvas } from '../../index';
 import type { PostextConfig, Dimension } from '../../types';
 import { installSizedStub, stubCharWidth } from './stub';
 import { registerVerticalAlternates, unregisterVerticalAlternates, drawUprightInBox, setVerticalPaint } from '../../canvas-backend/verticalText';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
+import { renderToHtml } from '../../html-backend';
 import type { Resource } from '../../types';
 import type { VDTDocument } from '../../vdt';
 
@@ -251,5 +253,84 @@ describe('canvas: design pictures in a vertical flow', () => {
     // A box sized as if horizontal (a callout icon) keeps its proportions
     // (1 : 2), fitted inside and centred.
     expect(calls[1]).toEqual([75, 0, 50, 100]);
+  });
+});
+
+describe('cover fit for an upright picture in a vertical flow (#946)', () => {
+  // A landscape picture, twice as wide as tall, in a box 100 px down the column
+  // and 100 px across: a square on the sheet, so cover crops its sides.
+  const picture: Resource = {
+    id: 'art', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+    bitmap: { fileId: 'art.png', format: 'png', width: 400, height: 200 },
+  };
+  const withCover = (extra: Record<string, unknown>): PostextConfig => ({
+    ...config('zh-Hant'),
+    headings: { levels: [{ level: 1, breakBefore: { enabled: false } }] },
+    headingStyles: [{
+      id: 'opener',
+      advancedDesign: {
+        enabled: true,
+        slot: { elements: [{ kind: 'image', id: 'art', resourceId: 'art', placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: pt(100), height: pt(100) } }, fit: 'cover', ...extra }] },
+      },
+    }],
+  } as PostextConfig);
+  const artOf = (doc: VDTDocument) => doc.blocks.flatMap((b) => b.designOverlay?.blocks ?? []).find((d) => d.kind === 'image')!;
+  const build = (extra: Record<string, unknown> = {}) => buildDocument({ markdown: '# 第一回 {style="opener"}\n\n正文。', resources: [picture] }, withCover(extra));
+
+  it('crops the picture as the sheet shows it: its sides, centred, the box filled', () => {
+    const art = artOf(build());
+    if (art.kind !== 'image') throw new Error('no picture');
+    expect(art.upright).toBe(true);
+    expect(art.bbox.width).toBeCloseTo(100);
+    expect(art.bbox.height).toBeCloseTo(100);
+    expect(art.crop!.width).toBeCloseTo(0.5, 6);
+    expect(art.crop!.height).toBeCloseTo(1, 6);
+    expect(art.crop!.x).toBeCloseTo(0.25, 6);
+  });
+
+  it('moves the window to the focus, along the picture’s own width', () => {
+    const art = artOf(build({ focus: { x: 0.9, y: 0.5 } }));
+    if (art.kind !== 'image') throw new Error('no picture');
+    expect(art.crop!.x).toBeCloseTo(0.5, 6);
+  });
+
+  it('a box the picture’s safe area cannot fill is left short down the sheet', () => {
+    // A safe area 0.8 of the picture's width: the window that holds it, of
+    // the box's ratio, shows the whole height and leaves the 100 px box
+    // 62.5 px tall on the sheet, its width in the flow.
+    const art = buildDocument({ markdown: '# 第一回 {style="opener"}\n\n正文。', resources: [{ ...picture, safeArea: { x: 0.1, y: 0, width: 0.8, height: 1 } }] }, withCover({}));
+    const b = artOf(art);
+    if (b.kind !== 'image') throw new Error('no picture');
+    expect(b.crop!.width).toBeCloseTo(0.8, 6);
+    expect(b.bbox.height).toBeCloseTo(100);
+    expect(b.bbox.width).toBeCloseTo(62.5);
+  });
+
+  it('the HTML turns the whole picture back upright inside a box that clips it', () => {
+    const html = renderToHtml(build(), { resourceImageUrl: () => 'art.png' } as never);
+    // The picture 200 × 100 px upright (the box 100 px across the sheet
+    // shows half its width), a quarter of it left of the box.
+    expect(html).toMatch(/overflow:hidden;"><img src="art\.png"[^>]*width:200px;height:100px;transform:translate\(0,100px\) rotate\(-90deg\) translate\(-50px,0px\)/);
+  });
+
+  it('the canvas turns the box back upright and clips the whole picture there', () => {
+    const doc = build();
+    const art = artOf(doc);
+    if (art.kind !== 'image') throw new Error('no picture');
+    const calls: string[] = [];
+    const ctx = new Proxy({}, {
+      get: (_t, key) => (...args: number[]) => { calls.push(`${String(key)}(${args.map((a) => (typeof a === 'number' ? +a.toFixed(3) : a)).join(',')})`); },
+    }) as unknown as CanvasRenderingContext2D;
+    const previous = setVerticalPaint({ region: 'taiwan' });
+    try {
+      renderHeaderFooterSlot(ctx, { bbox: { ...art.bbox }, blocks: [art] });
+    } finally {
+      setVerticalPaint(previous);
+    }
+    const at = (name: string) => calls.findIndex((c) => c.startsWith(`${name}(`));
+    expect(calls).toContain(`rotate(${+(-Math.PI / 2).toFixed(3)})`);
+    // The clip is the box turned back: 100 across the sheet, 100 down.
+    expect(calls).toContain('rect(0,0,100,100)');
+    expect(at('rect')).toBeGreaterThan(at('rotate'));
   });
 });

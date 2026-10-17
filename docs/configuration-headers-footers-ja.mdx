@@ -637,13 +637,13 @@ VDTでは、縦組みのブロックは`vertical`を持ちます（`VDTDesignTex
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td><code>width</code>と<code>height</code>の両方を指定したとき、<code>'contain'</code>は画像全体を枠の中央に収め、<code>'cover'</code>は裁ち落としの写真のように枠を埋めて、はみ出す部分を切り落とします。<code>'cover'</code>の切り抜きはリソースのセーフエリアをすべて残します（<a href="/ja/docs/document-format-resources">リソース</a>を参照）。枠の形にセーフエリアが収まらないときは、それが収まる最小の範囲を見せ、枠は一方向で埋まりません。どちらかの辺が<code>'auto'</code>のときは無視されます。postext 1.38 から。</td>
+      <td><code>width</code>と<code>height</code>の両方を指定したとき、<code>'contain'</code>は画像全体を枠の中央に収め、<code>'cover'</code>は裁ち落としの写真のように枠を埋めて、はみ出す部分を切り落とします。<code>'cover'</code>の切り抜きはリソースのセーフエリアをすべて残します（<a href="/ja/docs/document-format-resources">リソース</a>を参照）。枠の形にセーフエリアが収まらないときは、それが収まる最小の範囲を見せ、枠は一方向で埋まりません。どちらかの辺が<code>'auto'</code>のときは無視されます。postext 1.38 から。縦組みのページの流れの中で正立する画像（縦組みの本の見出しのデザイン）は、紙面に見える向きでトリミングされます。postext 1.39 から。1.38 までは全体が収まるように縮小されていました。</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td><code>'cover'</code>の切り抜きで中心に置く画像上の点を、画像に対する割合で指定します。顔が上から3分の1にあるなら<code>&#123; x: 0.5, y: 0.3 &#125;</code>です。それでもセーフエリアは見える範囲に残ります。指定しなければ、セーフエリアの周りの余白をその大きさに比例して切り落とし、セーフエリアがなければ画像を中央に置きます。</td>
+      <td><code>'cover'</code>の切り抜きで中心に置く画像上の点を、画像に対する割合で指定します。顔が上から3分の1にあるなら<code>&#123; x: 0.5, y: 0.3 &#125;</code>です。それでもセーフエリアは見える範囲に残ります。指定しなければ、セーフエリアの周りの余白をその大きさに比例して切り落とし、セーフエリアがなければ画像を中央に置きます。Sandbox では、画像エディターの<strong>焦点</strong>に画像が表示され、トリミングで残る部分が枠で示されます。画像をクリックするか矢印キーで点を決めます（postext 1.39 から）。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

@@ -637,13 +637,13 @@ Un élément `image` dessine une ressource bitmap ou SVG du document : le logo 
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.38.</td>
+      <td>Avec <code>width</code> et <code>height</code> fixées : <code>'contain'</code> loge l’image entière dans la boîte, centrée ; <code>'cover'</code> remplit la boîte et rogne ce qui dépasse, comme une photographie à fond perdu. Le recadrage de <code>'cover'</code> garde entière la zone sûre de la ressource (voir <a href="/fr/docs/document-format-resources">Ressources</a>) ; si la forme de la boîte ne peut pas la contenir, la plus petite fenêtre qui la contient est montrée et la boîte n’est pas remplie dans un sens. Ignoré si un côté est <code>'auto'</code>. Depuis postext 1.38. Une image qui reste droite dans le flux d’une page verticale (le dessin d’un titre dans un livre vertical) est recadrée telle que la feuille la montre, depuis postext 1.39 ; jusqu’à la 1.38, elle était ajustée entière.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Le point de l’image que centre le recadrage <code>'cover'</code>, en fractions de l’image : <code>&#123; x: 0.5, y: 0.3 &#125;</code> pour un visage dans le tiers supérieur. Le recadrage garde toujours la zone sûre visible. Sans lui, les marges autour de la zone sûre sont rognées en proportion de leur taille, ou l’image est centrée.</td>
+      <td>Le point de l’image que centre le recadrage <code>'cover'</code>, en fractions de l’image : <code>&#123; x: 0.5, y: 0.3 &#125;</code> pour un visage dans le tiers supérieur. Le recadrage garde toujours la zone sûre visible. Sans lui, les marges autour de la zone sûre sont rognées en proportion de leur taille, ou l’image est centrée. Dans le Sandbox, le <strong>Point d’intérêt</strong> de l’éditeur d’image montre l’image avec la partie que garde le recadrage encadrée ; un clic dessus, ou les flèches, fixent le point (depuis postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

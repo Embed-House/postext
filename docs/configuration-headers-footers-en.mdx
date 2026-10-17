@@ -637,13 +637,13 @@ An `image` element draws a bitmap or SVG resource of the document — a publishe
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.38.</td>
+      <td>With both <code>width</code> and <code>height</code> set: <code>'contain'</code> fits the whole picture inside the box, centred; <code>'cover'</code> fills the box and crops what runs past it, as a full-bleed photograph does. A cover crop keeps the resource's safe area whole (see <a href="/en/docs/document-format-resources">Resources</a>); where the box's shape cannot hold it, the smallest window that does is shown and the box is left unfilled across one side. Ignored when a side is <code>'auto'</code>. Since postext 1.38. A picture that stands upright in a vertical page's flow (a heading's design in a vertical book) is cropped as the sheet shows it, since postext 1.39; up to 1.38 it was fitted whole.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>The point of the picture a cover crop centres, in fractions of the picture: <code>&#123; x: 0.5, y: 0.3 &#125;</code> for a face in the upper third. The crop still keeps the safe area in view. Without it the margins round the safe area are cropped in proportion to their sizes, or the picture is centred.</td>
+      <td>The point of the picture a cover crop centres, in fractions of the picture: <code>&#123; x: 0.5, y: 0.3 &#125;</code> for a face in the upper third. The crop still keeps the safe area in view. Without it the margins round the safe area are cropped in proportion to their sizes, or the picture is centred. In the Sandbox the image editor's <strong>Focus point</strong> shows the picture with the part the crop keeps outlined; a click on it, or the arrow keys, set the point (since postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

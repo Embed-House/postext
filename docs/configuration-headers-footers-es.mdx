@@ -637,13 +637,13 @@ Un elemento `image` dibuja un recurso de mapa de bits o SVG del documento — el
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.38.</td>
+      <td>Con <code>width</code> y <code>height</code> fijados: <code>'contain'</code> encaja la imagen entera dentro de la caja, centrada; <code>'cover'</code> llena la caja y recorta lo que sobra, como una fotografía a sangre. El recorte de <code>'cover'</code> conserva entera la zona segura del recurso (véase <a href="/es/docs/document-format-resources">Recursos</a>); si la forma de la caja no puede contenerla, se muestra la ventana más pequeña que la contiene y la caja queda sin llenar en un sentido. No se aplica si un lado es <code>'auto'</code>. Desde postext 1.38. Una imagen que se mantiene derecha en el flujo de una página vertical (el diseño de un encabezado en un libro vertical) se recorta tal como la muestra el pliego, desde postext 1.39; hasta la 1.38 se encajaba entera.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>El punto de la imagen que centra el recorte de <code>'cover'</code>, en fracciones de la imagen: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para una cara en el tercio superior. El recorte sigue dejando a la vista la zona segura. Sin él, los márgenes alrededor de la zona segura se recortan en proporción a su tamaño, o la imagen se centra.</td>
+      <td>El punto de la imagen que centra el recorte de <code>'cover'</code>, en fracciones de la imagen: <code>&#123; x: 0.5, y: 0.3 &#125;</code> para una cara en el tercio superior. El recorte sigue dejando a la vista la zona segura. Sin él, los márgenes alrededor de la zona segura se recortan en proporción a su tamaño, o la imagen se centra. En el Sandbox, el <strong>Punto de interés</strong> del editor de imagen muestra la imagen con la parte que conserva el recorte recuadrada; un clic en ella, o las flechas, fijan el punto (desde postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

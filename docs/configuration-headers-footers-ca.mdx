@@ -635,13 +635,13 @@ Un element `image` dibuixa un recurs de mapa de bits o SVG del document — el l
       <td><code>fit</code></td>
       <td><code>'contain' | 'cover'</code></td>
       <td><code>'contain'</code></td>
-      <td>Amb <code>width</code> i <code>height</code> fixades: <code>'contain'</code> encabeix la imatge sencera dins la caixa, centrada; <code>'cover'</code> omple la caixa i retalla el que sobra, com una fotografia a sang. El retall de <code>'cover'</code> conserva sencera la zona segura del recurs (vegeu <a href="/ca/docs/document-format-resources">Recursos</a>); si la forma de la caixa no la pot contenir, es mostra la finestra més petita que la conté i la caixa queda sense omplir en un sentit. No s'aplica si un costat és <code>'auto'</code>. Des de postext 1.38.</td>
+      <td>Amb <code>width</code> i <code>height</code> fixades: <code>'contain'</code> encabeix la imatge sencera dins la caixa, centrada; <code>'cover'</code> omple la caixa i retalla el que sobra, com una fotografia a sang. El retall de <code>'cover'</code> conserva sencera la zona segura del recurs (vegeu <a href="/ca/docs/document-format-resources">Recursos</a>); si la forma de la caixa no la pot contenir, es mostra la finestra més petita que la conté i la caixa queda sense omplir en un sentit. No s'aplica si un costat és <code>'auto'</code>. Des de postext 1.38. Una imatge que es manté dreta en el flux d'una pàgina vertical (el disseny d'un encapçalament en un llibre vertical) es retalla tal com la mostra el plec, des de postext 1.39; fins a la 1.38 s'encaixava sencera.</td>
     </tr>
     <tr>
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>El punt de la imatge que centra el retall de <code>'cover'</code>, en fraccions de la imatge: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per a una cara al terç superior. El retall continua deixant a la vista la zona segura. Sense ell, els marges al voltant de la zona segura es retallen en proporció a la seva mida, o la imatge se centra.</td>
+      <td>El punt de la imatge que centra el retall de <code>'cover'</code>, en fraccions de la imatge: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per a una cara al terç superior. El retall continua deixant a la vista la zona segura. Sense ell, els marges al voltant de la zona segura es retallen en proporció a la seva mida, o la imatge se centra. Al Sandbox, el <strong>Punt d'interès</strong> de l'editor d'imatge mostra la imatge amb la part que conserva el retall emmarcada; un clic a sobre, o les fletxes, en fixen el punt (des de postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
