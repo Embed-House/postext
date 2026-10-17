@@ -349,6 +349,24 @@ describe("C40: the source map round trip (#857)", () => {
     expect(out).toEqual([{ check: "C40", severity: "fail", detail: expect.stringMatching(/^p\. 1: a click inside frame cp0:dinero “The money in the box/) }]);
   });
 
+  it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("probes a frame whose text was scaled at the rect the source map gives (#921)", () => {
+    // `dinero` at a fixed 56 mm with no maximum: one more paragraph makes
+    // the ladder scale its text (to 0.9). elementsForSource gives the lines
+    // upright on the sheet already; mapping them through frameMatrix again
+    // looked a line off at the frame's foot (4 misses here, 139 on Nº 160).
+    const tpl = PAGE8_CONFIG.pageTemplates![0]!;
+    const frames = tpl.frames!.map((f) => (f.name === "dinero" ? { ...f, height: { value: 56, unit: "mm" as const }, minHeight: undefined, maxHeight: undefined } : f));
+    const config = { ...PAGE8_CONFIG, pageTemplates: [{ ...tpl, frames }, ...PAGE8_CONFIG.pageTemplates!.slice(1)] } as PostextConfig;
+    const more = "More money 0 ".repeat(24).trim();
+    const markdown = content("en").replace(/(:::frame\{slot="dinero"[^\n]*\n)/, `$1${more}\n\n`);
+    const { doc, composed } = layOut(markdown, "en", config);
+    const dinero = doc.pages.find((p) => p.composed)!.composed!.frames.find((f) => f.name === "dinero")!;
+    expect(dinero.scale).toBeLessThan(0.95);
+    expect(dinero.overflowPx ?? 0).toBe(0);
+    expect(composed.roundTrip?.misses).toEqual([]);
+    expect(composed.roundTrip?.levels.line?.checked).toBeGreaterThan(0);
+  });
+
   it.runIf(typeof (engine as Record<string, unknown>).sourceAt === "function")("brings every element of the fixture back on an engine with the source map", () => {
     for (const lang of LOCALES) {
       const { composed } = layOut(content(lang), lang);

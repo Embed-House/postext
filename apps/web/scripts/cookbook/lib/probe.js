@@ -716,12 +716,6 @@ function probePoints(r) {
   return [at(0.5, 0.5), at(0.25, 0.5), at(0.75, 0.5), at(0.5, 0.25), at(0.5, 0.75), at(0.15, 0.5), at(0.85, 0.5)];
 }
 
-/** A point of a frame's own coordinates on the sheet, through `frameMatrix`. */
-function onSheet(engine, frame, [x, y]) {
-  const m = frame && typeof engine.frameMatrix === 'function' ? engine.frameMatrix(frame) : undefined;
-  return m ? [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]] : [x, y];
-}
-
 /** The Markdown range an element of the source map holds or comes from. */
 function rangeOf(el) {
   const s = el?.source;
@@ -757,20 +751,15 @@ export function composedRoundTrip(engine, doc, { pageOf = (i) => i + 1, markdown
       misses.push({ page: pageOf(page.index), level: 'template', id: `cp${composed.fenceIndex}`, text: `elementsForSource threw: ${error?.message ?? error}` });
       continue;
     }
-    const frameOfBlock = new Map();
-    for (const f of composed.frames ?? []) for (const id of f.blockIds ?? []) frameOfBlock.set(id, f);
     for (const { element: el } of matches) {
       const r = el.rect;
       if (!r || el.clipped || el.facing || el.rotate || r.width < 1 || r.height < 1) continue;
       const stat = (levels[el.level] ??= { checked: 0, missed: 0 });
       stat.checked++;
-      // A frame and a page are on the sheet already; what a frame holds is
-      // in the frame's own coordinates when its text was scaled.
-      const inner = !['frame', 'group', 'template', 'slot', 'design'].includes(el.level);
-      const frame = inner ? frameOfBlock.get(String(el.id).replace(/:(l\d+|label:.*)$/, '')) : undefined;
+      // Every rect is upright on the sheet, a scaled frame's lines too (the
+      // source map scales them back, #921), and sourceAt takes sheet points.
       const want = rangeOf(el);
-      const found = probePoints(r).some((point) => {
-        const [x, y] = onSheet(engine, frame, point);
+      const found = probePoints(r).some(([x, y]) => {
         let chain = [];
         try {
           chain = engine.sourceAt(doc, page.index, x, y) ?? [];
