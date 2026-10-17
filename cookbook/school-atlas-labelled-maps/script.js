@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 157 · A school atlas labelled from the Markdown ═══════
 // https://postext.dev/en/cookbook/school-atlas-labelled-maps
 // Code: MIT · Text: original (CC BY 4.0) · Maps: drawn in code from seed 2026 (CC BY 4.0)
-// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.37.0
+// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.38.0
 //
 // Three pages of a school atlas of Varenia, an invented country: a locator map, the relief map
 // across a double page and a section through the mountains. The maps are drawn without a letter.

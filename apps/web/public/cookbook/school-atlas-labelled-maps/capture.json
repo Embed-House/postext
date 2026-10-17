@@ -1,0 +1,1079 @@
+{
+  "schemaVersion": 1,
+  "slug": "school-atlas-labelled-maps",
+  "sourceHash": "2a13817d195f3cd69a691130e633dde9ee2303a514d4ac867a7f974c4d2a872a",
+  "engine": {
+    "postext": "1.38.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-17T10:25:01.070Z",
+  "variants": {
+    "en": {
+      "hash8": "940ae4a7",
+      "vdtHash": "b2aebc53c029f32795ff267602a2361fe950bb66",
+      "timings": {
+        "importMs": 2632,
+        "fontsMs": 638,
+        "buildMs": 115,
+        "totalMs": 4978,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Source Sans 3",
+          "sizePt": 10,
+          "leadingPt": 14
+        },
+        "families": [
+          "Source Sans 3",
+          "Source Serif 4"
+        ],
+        "pages": 4,
+        "ownLines": 249
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 50922,
+          "alt": "Page 1: Varenia on the map."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 62802,
+          "alt": "Page 2: The relief and rivers of Varenia."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 44724,
+          "alt": "Page 3."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 61826,
+          "alt": "Page 4: A section through the Albar Range."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "school-atlas-labelled-maps.postext",
+        "bytes": 214004,
+        "folio": "a6af2fd7",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "624ac483d6ef2225",
+            "lines": "9b992376a6736088"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "labelStyles",
+          "labelStyles[].color",
+          "labelStyles[].fontFamily",
+          "labelStyles[].fontSize",
+          "labelStyles[].fontStyle",
+          "labelStyles[].fontWeight",
+          "labelStyles[].halo",
+          "labelStyles[].halo.color",
+          "labelStyles[].halo.width",
+          "labelStyles[].id",
+          "labelStyles[].letterSpacing",
+          "labelStyles[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].columnGap",
+          "pageTemplates[].frames[].columns",
+          "pageTemplates[].frames[].crossGutter",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].groups",
+          "pageTemplates[].groups[].frames",
+          "pageTemplates[].groups[].gap",
+          "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].name",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "labelStyles",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 426,
+        "designElements": 8,
+        "directives": [
+          "::::page",
+          ":::figure",
+          ":::frame",
+          ":::paragraphs"
+        ],
+        "inline": [
+          ":swatch"
+        ],
+        "resources": {
+          "svg": 3,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Source Sans 3",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Source Sans 3",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "composed-pages",
+          "composed-spreads",
+          "figure-labels",
+          "frame-decoration",
+          "frame-groups",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "swatches"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 66 line, 3 text"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "57d56a3f",
+      "vdtHash": "6c7ebe84168351bbaf37764b6e3b7cdf9d5a1686",
+      "timings": {
+        "importMs": 2631,
+        "fontsMs": 613,
+        "buildMs": 112,
+        "totalMs": 4969,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Source Sans 3",
+          "sizePt": 10,
+          "leadingPt": 14
+        },
+        "families": [
+          "Source Sans 3",
+          "Source Serif 4"
+        ],
+        "pages": 4,
+        "ownLines": 249
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 50840,
+          "alt": "Página 1: Varenia en el mapa."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 62038,
+          "alt": "Página 2: El relieve y los ríos de Varenia."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 44608,
+          "alt": "Página 3."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 61718,
+          "alt": "Página 4: Un corte de la sierra Albar."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "school-atlas-labelled-maps.postext",
+        "bytes": 213847,
+        "folio": "a6af2fd7",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "0a684c79a9e2bd09",
+            "lines": "78d2ce0bbf1aed59"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "labelStyles",
+          "labelStyles[].color",
+          "labelStyles[].fontFamily",
+          "labelStyles[].fontSize",
+          "labelStyles[].fontStyle",
+          "labelStyles[].fontWeight",
+          "labelStyles[].halo",
+          "labelStyles[].halo.color",
+          "labelStyles[].halo.width",
+          "labelStyles[].id",
+          "labelStyles[].letterSpacing",
+          "labelStyles[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].columnGap",
+          "pageTemplates[].frames[].columns",
+          "pageTemplates[].frames[].crossGutter",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].groups",
+          "pageTemplates[].groups[].frames",
+          "pageTemplates[].groups[].gap",
+          "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].name",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "labelStyles",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 426,
+        "designElements": 8,
+        "directives": [
+          "::::page",
+          ":::figure",
+          ":::frame",
+          ":::paragraphs"
+        ],
+        "inline": [
+          ":swatch"
+        ],
+        "resources": {
+          "svg": 3,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Source Sans 3",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Source Sans 3",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "composed-pages",
+          "composed-spreads",
+          "figure-labels",
+          "frame-decoration",
+          "frame-groups",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "swatches"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 66 line, 3 text"
+          }
+        ]
+      }
+    },
+    "ar": {
+      "hash8": "70d5a205",
+      "vdtHash": "4b3d742c82ebe90c05eb91d7e519fb113d2a4eea",
+      "timings": {
+        "importMs": 2645,
+        "fontsMs": 635,
+        "buildMs": 120,
+        "totalMs": 4969,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Naskh Arabic",
+          "sizePt": 12,
+          "leadingPt": 20
+        },
+        "families": [
+          "Noto Kufi Arabic",
+          "Noto Naskh Arabic"
+        ],
+        "pages": 4,
+        "ownLines": 249
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "١",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 51382,
+          "alt": "الصفحة ١: فارينيا على الخريطة."
+        },
+        {
+          "n": 2,
+          "label": "٢",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 60254,
+          "alt": "الصفحة ٢: تضاريس فارينيا وأنهارها."
+        },
+        {
+          "n": 3,
+          "label": "٣",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 43892,
+          "alt": "الصفحة ٣."
+        },
+        {
+          "n": 4,
+          "label": "٤",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 58570,
+          "alt": "الصفحة ٤: مقطع في سلسلة ألبار."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          null
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "school-atlas-labelled-maps.postext",
+        "bytes": 215239,
+        "folio": "a6af2fd7",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "a41a6a791ca78b7f",
+            "lines": "0bdd38332c87d83d"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "labelStyles",
+          "labelStyles[].color",
+          "labelStyles[].fontFamily",
+          "labelStyles[].fontSize",
+          "labelStyles[].fontStyle",
+          "labelStyles[].fontWeight",
+          "labelStyles[].halo",
+          "labelStyles[].halo.color",
+          "labelStyles[].halo.width",
+          "labelStyles[].id",
+          "labelStyles[].letterSpacing",
+          "labelStyles[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].columnGap",
+          "pageTemplates[].frames[].columns",
+          "pageTemplates[].frames[].crossGutter",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].groups",
+          "pageTemplates[].groups[].frames",
+          "pageTemplates[].groups[].gap",
+          "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].name",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].spread",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "labelStyles",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "pageTemplates",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 421,
+        "designElements": 8,
+        "directives": [
+          "::::page",
+          ":::figure",
+          ":::frame",
+          ":::paragraphs"
+        ],
+        "inline": [
+          ":swatch"
+        ],
+        "resources": {
+          "svg": 3,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Noto Kufi Arabic",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Kufi Arabic",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "composed-pages",
+          "composed-spreads",
+          "document-digits",
+          "figure-labels",
+          "frame-decoration",
+          "frame-groups",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "right-binding",
+          "swatches",
+          "text-direction"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.37
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
+            "detail": "every element came back to its source: 29 block, 16 frame, 27 label, 64 line, 3 text"
+          }
+        ]
+      }
+    }
+  }
+}
