@@ -208,8 +208,14 @@ function layoutRow(input: GroupLayoutInput): Map<string, Rect> {
   const obstacles = [...(input.obstacles ?? []), ...pins];
   const widths = flow.map((i) => clamp(i.own.width, i.minWidth, i.maxWidth));
   const declaredH = flow.map((i) => clamp(i.fixedHeight ? i.own.height : i.want, i.min, i.max));
-  /** The row's height: its box's, or the tallest frame's. */
-  const rowH = input.elastic ? Math.max(0, ...declaredH) : box.height;
+  /** The heights the template writes: a fixed height, else `minHeight`
+   *  (an `'auto'` frame declares no more). */
+  const writtenH = flow.map((i) => (i.fixedHeight ? declaredH[flow.indexOf(i)]! : Math.min(i.min, i.max)));
+  /** The row's height: its box's; with none, the tallest height its frames
+   *  write (#927: `'auto'` cards with a `minHeight` negotiate widths at it
+   *  before the row grows), or, when they write none, the tallest
+   *  content's. */
+  const rowH = !input.elastic ? box.height : Math.max(0, ...writtenH) > EPS ? Math.max(0, ...writtenH) : Math.max(0, ...declaredH);
   /** The height a frame has in the row: a fixed one its own, the others
    *  the row's. */
   const heightIn = (k: number, h: number): number => (flow[k]!.fixedHeight ? Math.min(declaredH[k]!, h) : clamp(h, flow[k]!.min, flow[k]!.max));

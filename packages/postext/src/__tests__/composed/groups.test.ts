@@ -191,6 +191,27 @@ describe('row groups (#856)', () => {
     expect(elastic.get('b')).toMatchObject({ x: 330, height: 250 });
   });
 
+  it('an elastic row of auto cards negotiates widths at their minHeight before it grows (#927)', () => {
+    // a's text needs 250 at its 300 width, more than the 200 the cards
+    // write; b's needs 120 and gives width. Before #927 the row took a's
+    // content height (250) and nobody shared.
+    const r = row([
+      item('a', 250, w(300, { min: 200, need: text(300 * 250) })),
+      item('b', 120, w(300, { min: 200, shrink: 1, need: text(300 * 120) })),
+    ], { elastic: true, box: { x: 0, y: 0, width: 0, height: 0 } });
+    expect(r.get('a')!.width).toBeGreaterThan(300);
+    expect(text(300 * 250)(r.get('a')!.width)).toBeLessThanOrEqual(200 + 1e-6);
+    expect(r.get('b')!.width).toBeLessThan(300);
+    expect(r.get('a')!.height).toBe(200);
+    expect(r.get('b')!.height).toBe(200);
+    // When widths cannot help, the row still grows to the tallest content.
+    const grows = row([item('a', 300, w(300, { min: 200, need: text(300 * 300) })), item('b', 120, w(300, { min: 200, need: text(300 * 120) }))], { elastic: true, box: { x: 0, y: 0, width: 0, height: 0 } });
+    expect(grows.get('a')).toMatchObject({ width: 300, height: 300 });
+    // Cards that write no height keep the old rule: the tallest content.
+    const bare = row([item('a', 300, w(300, { need: text(300 * 300) })), item('b', 120, w(300, { shrink: 1, need: text(300 * 120) }))], { elastic: true, box: { x: 0, y: 0, width: 0, height: 0 } });
+    expect(bare.get('a')).toMatchObject({ width: 300, height: 300 });
+  });
+
   it('a pinned frame keeps its place; the others go past it', () => {
     const r = row([item('a', 0, w(300)), item('pin', 0, { pin: true, own: { x: 330, y: 0, width: 100, height: 400 } }), item('b', 0, w(200))]);
     expect(r.get('pin')).toEqual({ x: 330, y: 0, width: 100, height: 400 });
