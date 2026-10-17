@@ -127,3 +127,66 @@ describe('a picture in a frame turned by its writing mode (#960)', () => {
     expect(c.y).toBeGreaterThanOrEqual(box.y - 0.5);
   });
 });
+
+describe('a picture in a frame of a vertical page\'s own mode (#971)', () => {
+  const VERTICAL = { layout: { writingMode: 'vertical-rl', layoutType: 'single' } } as unknown as Partial<PostextConfig>;
+  const inPageMode = (extra: Partial<PostextConfig> = {}): VDTDocument =>
+    buildDocument({ markdown: md, resources: [RELIEF] }, {
+      ...PAGE, ...VERTICAL, ...extra,
+      pageTemplates: [{ id: 'sheet', frames: [
+        { name: 'main', flow: true, width: pt(100), height: pt(100), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+        { name: 'side', width: pt(150), height: pt(300), placement: { anchor: { to: 'container', edge: 'top-right' } } },
+      ] }],
+    } as PostextConfig, createMeasurementCache());
+
+  it('stands upright, inside its box, with room left for the text', () => {
+    const page = composedPage(inPageMode());
+    const side = frameOf(page, 'side');
+    const rb = picture(page, 'side').resourceBlock!;
+    expect(rb.rotation?.direction).toBe('ccw');
+    const box = frameContentRect(side);
+    const corners = [[0, 0], [rb.rotation!.width, 0], [0, rb.rotation!.height], [rb.rotation!.width, rb.rotation!.height]]
+      .map(([x, y]) => resourceBlockToPage(rb, x!, y!));
+    for (const c of corners) {
+      expect(c.x).toBeGreaterThanOrEqual(box.x - 0.5);
+      expect(c.x).toBeLessThanOrEqual(box.x + box.width + 0.5);
+      expect(c.y).toBeGreaterThanOrEqual(box.y - 0.5);
+      expect(c.y).toBeLessThanOrEqual(box.y + box.height + 0.5);
+    }
+  });
+
+  it('shrinks to a narrow box and takes the room it needs when the frame has no height of its own', () => {
+    const narrow = composedPage(buildDocument({ markdown: md, resources: [RELIEF] }, {
+      ...PAGE, ...VERTICAL,
+      pageTemplates: [{ id: 'sheet', frames: [
+        { name: 'main', flow: true, width: pt(100), height: pt(100), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+        { name: 'side', width: pt(70), placement: { anchor: { to: 'container', edge: 'top-right' } } },
+      ] }],
+    } as PostextConfig, createMeasurementCache()));
+    const side = frameOf(narrow, 'side');
+    const rb = picture(narrow, 'side').resourceBlock!;
+    expect(rb.rotation?.direction).toBe('ccw');
+    const box = frameContentRect(side);
+    // Page width of the upright picture (the stacking axis) stays inside the box.
+    const corners = [[0, 0], [rb.rotation!.width, rb.rotation!.height]].map(([x, y]) => resourceBlockToPage(rb, x!, y!));
+    for (const c of corners) {
+      expect(c.x).toBeGreaterThanOrEqual(box.x - 0.5);
+      expect(c.x).toBeLessThanOrEqual(box.x + box.width + 0.5);
+      expect(c.y).toBeGreaterThanOrEqual(box.y - 0.5);
+      expect(c.y).toBeLessThanOrEqual(box.y + box.height + 0.5);
+    }
+  });
+
+  it('a frame that says the page\'s mode itself is the same', () => {
+    const page = composedPage(inPageMode());
+    const same = composedPage(buildDocument({ markdown: md, resources: [RELIEF] }, {
+      ...PAGE, ...VERTICAL,
+      pageTemplates: [{ id: 'sheet', frames: [
+        { name: 'main', flow: true, width: pt(100), height: pt(100), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+        { name: 'side', writingMode: 'vertical-rl', width: pt(150), height: pt(300), placement: { anchor: { to: 'container', edge: 'top-right' } } },
+      ] }],
+    } as PostextConfig, createMeasurementCache()));
+    expect(picture(same, 'side').resourceBlock!.rotation?.direction).toBe(picture(page, 'side').resourceBlock!.rotation?.direction);
+    expect(picture(same, 'side').bbox).toEqual(picture(page, 'side').bbox);
+  });
+});

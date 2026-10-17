@@ -980,13 +980,16 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   /** Whether a frame's lines are set as on a mirrored page: those of the
    *  page's own mode, not an unmirrored frame's. */
   const mirroredIn = (frame: ResolvedFrame): boolean => input.mirrored && unmirroredAt(frame) === undefined;
-  /** The widest a picture's upright frame may be in a vertical frame of a
-   *  horizontal page (#960): the frame's extent across its lines, less the
-   *  box's padding. The page turns such a frame a quarter turn, so its
-   *  pictures are laid out counter-rotated to stand upright; none of that
-   *  in a frame of the page's own mode. */
+  /** The widest a picture's upright frame may be in a frame whose lines run
+   *  down the page (#960, #971): the frame's extent across its lines, less
+   *  the box's padding. A vertical frame of a horizontal page is turned a
+   *  quarter turn on the page, a frame of a vertical page's own mode lies in
+   *  the flow, which is turned the same way; either way its pictures are
+   *  laid out counter-rotated to stand upright. A horizontal frame of a
+   *  vertical page is turned against the flow and already stands upright;
+   *  none of that on a horizontal page's own mode. */
   const uprightIn = (frame: ResolvedFrame, across: number): Pick<FrameBoxOptions, 'uprightMaxLength'> => {
-    if (ownMode(frame) !== 'vertical-rl') return {};
+    if ((frame.writingMode ?? pageMode) !== 'vertical-rl') return {};
     const pad = styleOf(frame).padding;
     const room = across - lengthPx(pad.top, dpi, input.emPx) - lengthPx(pad.bottom, dpi, input.emPx);
     return { uprightMaxLength: Math.max(1, room) };
@@ -1140,8 +1143,10 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const known = memo.get(key);
         if (known !== undefined) return known;
         const exclusions = at ? unscale(exclusionsFor(p.frame, { ...at, width }, true), s) : undefined;
-        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}) };
-        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, opts.exclusions || opts.pictureScale !== undefined || opts.continuedMark !== undefined ? opts : undefined);
+        // The room a vertical page's upright picture may take down the page
+        // is the flow's whole extent: the frame's height is what it settles.
+        const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, input.areas.area.height / s) };
+        const r = p.st!.L.layoutRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
         const h = r.totalHeight * s;
         memo.set(key, h);
         return h;
