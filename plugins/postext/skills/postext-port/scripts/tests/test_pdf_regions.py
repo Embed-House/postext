@@ -318,11 +318,11 @@ class HelpersTest(unittest.TestCase):
             os.unlink(fh.name)
 
     def test_wrap_slack(self):
-        # the right padding of a box gives up per cent of the measure (at most 2.5 mm), never below 0.5 mm
+        # the right padding of a box gives up per cent of the measure (at most 4 mm), never below nothing
         self.assertAlmostEqual(pr.give_slack(3.0, 80.0, {"wrap_slack": 2.5}), 1.0)
-        self.assertAlmostEqual(pr.give_slack(3.0, 200.0, {"wrap_slack": 2.5}), 0.5)
+        self.assertAlmostEqual(pr.give_slack(6.0, 200.0, {"wrap_slack": 3.0}), 2.0)
         self.assertAlmostEqual(pr.give_slack(3.0, 80.0, {"wrap_slack": 0.0}), 3.0)
-        self.assertAlmostEqual(pr.give_slack(0.2, 80.0, {"wrap_slack": 2.5}), 0.2)
+        self.assertAlmostEqual(pr.give_slack(0.2, 80.0, {"wrap_slack": 2.5}), 0.0)
 
     def test_xy_order(self):
         F = pr.Frame

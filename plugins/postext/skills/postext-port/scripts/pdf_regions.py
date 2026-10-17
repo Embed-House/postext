@@ -6,7 +6,7 @@ reading order (references/composed-pages.md, round 2).
 
   pdf_regions.py extract SOURCE.pdf --pages 4-28 --out DIR [--lang es]
         [--fonts DIR] [--font-map map.json] [--dpi 300] [--ground-dpi 150]
-        [--highlights mark|chip] [--fit 0.9] [--wrap-slack 2.5] [--chapter pages] [--json]
+        [--highlights mark|chip] [--fit 0.9] [--wrap-slack 3] [--chapter pages] [--json]
   pdf_regions.py manifest DIR [--fonts DIR] [--id ID] [--name NAME]
         Writes DIR/preset.json, a draft project that opens and builds as it
         is (page size from the PDF, the library, the chapters, the
@@ -1378,10 +1378,10 @@ def text_style(lines: list[Line], centred: bool) -> dict:
 
 def give_slack(right: float, inner: float, ctx: dict) -> float:
     """The right padding of a box or tab with the measure's slack taken off
-    (down to 0.5 mm, or to the padding itself when that is smaller): per
-    cent of the text's width, at most 2.5 mm (`--wrap-slack`)."""
-    take = min(2.5, ctx.get("wrap_slack", 0.0) / 100.0 * inner)
-    return max(min(right, 0.5), right - take)
+    (down to nothing): per cent of the text's width, at most 4 mm
+    (`--wrap-slack`)."""
+    take = min(4.0, ctx.get("wrap_slack", 0.0) / 100.0 * inner)
+    return max(min(right, 0.0), right - take)
 
 
 def tab_style(s: Shape, lines: list[Line], ctx: dict) -> dict:
@@ -1442,7 +1442,7 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
         # a few per cent to fit it) is not in the new face's widths: a line
         # that just fits breaks one word earlier and the box grows a line.
         # The measure gets `wrap_slack` per cent more than the source's (at
-        # most 2.5 mm), taken from the right padding down to 0.5 mm
+        # most 4 mm), taken from the right padding
         right = max(0.0, gap if gap > left + 10.0 else min(left, gap))
         right = give_slack(right, max(0.0, bx1 - bx0 - left - right), ctx)
         lead = look["lead"]
@@ -2274,10 +2274,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--link-gap", type=float, default=25.0, help="a frame anchors below the frame above when they are this close (mm, default 25)")
     p.add_argument("--margin-band", type=float, default=15.0, help="on a page without cards, text this close to the top or foot is a running head (mm)")
     p.add_argument("--fit", type=float, help="give text frames and boxes fit.minScale (0.9: the ladder may set the text down to 90 %%)")
-    p.add_argument("--wrap-slack", type=float, default=2.5,
-                   help="per cent a box's text measure gets beyond its longest source line, at most 2.5 mm, so that a "
+    p.add_argument("--wrap-slack", type=float, default=3.0,
+                   help="per cent a box's text measure gets beyond its longest source line, at most 4 mm, so that a "
                         "face a little wider than the source's tracked text does not break the lines one word "
-                        "earlier (default 2.5; 0 keeps the source's measure)")
+                        "earlier (default 3; 0 keeps the source's measure)")
     p.add_argument("--no-merge-labels", action="store_true", help="one label per line on pictures")
     p.add_argument("--json", action="store_true")
     m = sub.add_parser("manifest", help="a draft preset.json from an extract folder")

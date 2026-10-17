@@ -254,11 +254,11 @@ What the extraction decides, so you know what to check:
 
 Also decided by the drafting, checked on a real textbook in three languages:
 
-- **Measure slack** (`--wrap-slack`, default 2.5 %, at most 2.5 mm). A box's
+- **Measure slack** (`--wrap-slack`, default 3 %, at most 4 mm). A box's
   text measure is the width of its longest source line, and the source's own
   tracking (InDesign squeezes a line by a few per cent to fit it) is not in
   another face's widths: a line that just fits breaks one word earlier and
-  the box grows a line. The right padding gives up that much, down to 0.5 mm.
+  the box grows a line. The right padding gives up that much, down to nothing.
   A source line squeezed by more than that (measure the source's tracked
   width against the face's advance widths) is a size, not a padding: give
   that box `fit: { minScale: 0.9 }` and its drawn height as `maxHeight`.
