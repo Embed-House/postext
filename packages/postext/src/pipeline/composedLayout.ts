@@ -42,7 +42,7 @@ import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type 
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
 import { anchorTarget } from '../composed/templates';
-import { continuationTemplate, continuesOffPage, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
+import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
@@ -252,12 +252,28 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   let runs = 0;
   const keyOf = (tpl: ResolvedPageTemplate, fit: FitState): string =>
     JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll], [...fit.goOn]]);
+  /** Frames a page added by continuation lays with no room (#859). */
+  const collapsedHere = input.continuing ? collapsedOnAddedPage(given.template, input.continuing) : new Set<string>();
+  const holdsStory = (name: string): boolean => input.stories.has(headOf(name));
+  /** The empty frames that go with the rest of a frame cut for a page
+   *  laid from this template again (#912), by that frame. */
+  const travelling = (tpl: ResolvedPageTemplate, fit: FitState): Map<string, string[]> => {
+    const out = new Map<string, string[]>();
+    for (const f of tpl.frames) {
+      if (!fit.goOn.has(f.name) || !continuesCollapsed(tpl, f, input.continuing?.collapse ?? false)) continue;
+      const t = trailingFrames(tpl, f.name, holdsStory);
+      if (t.length > 0) out.set(f.name, t);
+    }
+    return out;
+  };
   const compose = (fit: FitState, tpl: ResolvedPageTemplate = template): Composition => {
     const key = keyOf(tpl, fit);
     const known = memo.get(key);
     if (known) return known;
     runs++;
-    const c = composePage(input, patchTemplate(tpl, fit.patches), fit);
+    const leaving = new Set([...travelling(tpl, fit).values()].flat());
+    const collapsed = leaving.size > 0 ? new Set([...collapsedHere, ...leaving]) : collapsedHere;
+    const c = composePage(input, collapseFrames(patchTemplate(tpl, fit.patches), leaving), fit, collapsed);
     memo.set(key, c);
     return c;
   };
@@ -472,6 +488,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   };
   // What goes on on other pages (#859), in template order.
   const continuations: ComposedContinuation[] = [];
+  const trailing = travelling(template, fit);
   for (const frame of template.frames) {
     const spill = cur.spills.get(frame.name);
     const story = spill ? input.stories.get(spill.head) : undefined;
@@ -489,6 +506,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       pieces: spill.pieces,
       headBlockId: spill.headBlockId,
       slot: came?.slot ?? frame.name,
+      ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : {}),
     });
   }
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
@@ -632,7 +650,7 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
 }
 
 /** Lay out every frame of the page once, with the reflow ladder's `fit`. */
-function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState): Composition {
+function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
   const { pass, fence, dpi } = input;
   const fi = fence.fenceIndex;
   const cont = input.continuing;
@@ -893,6 +911,13 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
             fixedHeight: !auto && !fill,
             need: natural,
           };
+          if (fit.goOn.has(f.name) && mode === 'final' && !f.pin) {
+            // A frame cut for another page (#859) gives the room first,
+            // down to its minimum: the frames after it in the group keep
+            // their size (#912), and its rest goes on.
+            item.shrink = Math.max(f.shrink, 1);
+            item.priority = Number.NEGATIVE_INFINITY;
+          }
           if (yieldAll && mode === 'final' && !f.pin) {
             // Down to its minimum, never under what its content needs, never
             // over the height it has.
@@ -981,11 +1006,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           // on each side of the cut (#913).
           const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined ? extra : undefined, cutRules);
           const to = frag?.to ?? from;
-          result = frag
-            ? st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)
-            // A styled frame none of whose content fits still draws its box
-            // (and its mark) when the content goes on elsewhere.
-            : goesOn && frame.style ? st!.L.layoutRange(from, from, laidW, blockId, continuation, input.mirrored, { boxHeight: laidH }) : undefined;
+          // A frame none of whose content fits draws nothing: the whole box
+          // goes on (#912), not a tab and a mark over an empty piece.
+          result = frag ? st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts) : undefined;
           st!.cut = to;
         } else {
           goesOn = false;
@@ -1010,6 +1033,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         blockIds: [],
         configPath: frame.configPath,
         ...(frame.exclude === 'push' ? { push: true as const } : {}),
+        ...(collapsed.has(frame.name) ? { collapsed: true as const } : {}),
       };
       const decl = declared.get(frame.name);
       if (decl && !sameRect(decl, rect)) vdt.declaredRect = { ...decl };

@@ -1624,8 +1624,12 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       /** And the box its template gave it, before groups moved it
        *  (`declaredRect`: what a `pin`ned element keeps to). */
       const declared: Record<string, { x: number; y: number; width: number; height: number }> = {};
+      /** Frames that take no room on the page (#912): what anchors to
+       *  them is not drawn. */
+      const collapsed = new Set<string>();
       const nameFrames = (p: VDTPage, dx: number) => {
         for (const f of p.composed?.frames ?? []) {
+          if (f.collapsed) collapsed.add(f.name);
           if (f.facingBlocks) continue;
           const r = flowRectToPage(p, f.rect);
           const d = flowRectToPage(p, f.declaredRect ?? f.rect);
@@ -1671,8 +1675,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partNumberByPageIndex,
         partPaletteByPageIndex,
       };
+      const slot = resolveDesignSlot(template.decoration, 'header');
       const decoration = withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
-        resolveDesignSlot(template.decoration, 'header'),
+        collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,
         container,
         page.index + pageIndexOffset,
         placeholders,
@@ -1692,6 +1697,27 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       } else if (decoration) page.composed.decoration = decoration;
     }
   }
+}
+
+/** `slot` without the elements anchored to one of `frames` (`'#name'`),
+ *  directly or through other elements: the decoration of frames that take
+ *  no room on a page added by continuation (#912). */
+function withoutAnchoredTo(slot: ResolvedDesignSlot, frames: ReadonlySet<string>): ResolvedDesignSlot {
+  const dropped = new Set<string>();
+  const target = (el: ResolvedDesignSlot['elements'][number]): string | undefined => {
+    const to = el.placement.anchor.to;
+    return to.startsWith('#') ? to.slice(1) : undefined;
+  };
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const el of slot.elements) {
+      const t = target(el);
+      if (dropped.has(el.id) || t === undefined || (!frames.has(t) && !dropped.has(t))) continue;
+      dropped.add(el.id);
+      changed = true;
+    }
+  }
+  return dropped.size > 0 ? { ...slot, elements: slot.elements.filter((el) => !dropped.has(el.id)) } : slot;
 }
 
 /** Set `page.background` on the pages whose palette overrides (part and

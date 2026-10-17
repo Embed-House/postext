@@ -4,6 +4,7 @@ import { createMeasurementCache } from '../../measure';
 import type { FrameConfig, PageTemplate } from '../../composed/types';
 import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { page8Fixture } from './fixtures/page8';
+import { sourceAt } from '../../composed/sourceMap';
 
 // Findings of the composed-pages recipes (#882) on content that goes on to
 // other pages: the ladder's order (#920), the frame that takes the content
@@ -195,5 +196,96 @@ describe('a frame is cut as the running text is (#913)', () => {
       // Whole on one side, or cut inside one item.
       expect(a === 0 || b === 0 || a + b === 4).toBe(true);
     }
+  });
+});
+
+describe('an activity sheet whose last box goes on (#912)', () => {
+  const at = (to: string, edge: string, y = 0) => ({ anchor: { to, edge }, offset: { y: mm(y) } }) as never;
+  const ruled = (frame: string, lines: number) => Array.from({ length: lines }, (_, i) => ({ kind: 'rule', id: `${frame}-${i + 1}`, direction: 'horizontal', thickness: { value: 0.75, unit: 'pt' }, placement: { ...(at(`#${frame}`, 'top-left', 8 * (i + 1) - 1) as object), size: { width: mm(180) } } }));
+  /** The sheet: a kicker, the running text, three boxes in a stack with
+   *  answer lines under the first and the last. */
+  const FICHA: PageTemplate = {
+    id: 'ficha',
+    header: false,
+    decoration: { elements: [{ kind: 'text', id: 'tema', content: '{attr.tema}', fontSize: { value: 9, unit: 'pt' }, placement: at('container', 'top-left') }, ...ruled('lineas-1', 3), ...ruled('lineas-3', 2)] } as never,
+    frames: [
+      { name: 'texto', flow: true, width: mm(180), placement: at('container', 'top-left', 6) },
+      { name: 'act-1', style: 'caja-azul', width: mm(180), minHeight: mm(22), placement: at('#texto', 'below', 6) },
+      { name: 'lineas-1', optional: true, width: mm(180), height: mm(24), minHeight: mm(24) },
+      { name: 'act-2', style: 'caja-azul', width: mm(180), minHeight: mm(22) },
+      { name: 'act-3', style: 'caja-azul', width: mm(180), minHeight: mm(22), overflow: { continueIn: 'next-page' } },
+      { name: 'lineas-3', optional: true, width: mm(180), height: mm(16), minHeight: mm(16) },
+    ],
+    groups: [{ name: 'actividades', kind: 'stack', gap: mm(4.5), frames: ['act-1', 'lineas-1', 'act-2', 'act-3', 'lineas-3'] }],
+  };
+  const sheet = (first: number, last: number): string => [
+    '::::page{template="ficha" tema="Unidad 3 · Ficha 1"}',
+    para('texto', 120), '',
+    ':::frame{slot="act-1" label="1 · Lee"}', para('uno', first), ':::', '',
+    ':::frame{slot="act-2" label="2 · Completa"}', para('dos', 60), ':::', '',
+    ':::frame{slot="act-3" label="3 · Dibuja"}', para('tres', last), ':::', '',
+    '::::', ''].join('\n');
+  const decoBoxes = (p: VDTPage) => p.composed!.decoration?.blocks ?? [];
+
+  it('the answer lines go with the end of the box to the added page, and keep their size there', () => {
+    const doc = build(sheet(900, 700), [FICHA]);
+    const [first, added] = composedPages(doc) as [VDTPage, VDTPage];
+    expect(added).toBeDefined();
+    expect(frameOn(first, 'act-3').continuesTo).toBe('cp0:act-3~1');
+    // On the first page the box runs to the foot of the area, the lines left with the rest.
+    expect(frameOn(first, 'lineas-3').collapsed).toBe(true);
+    expect(frameOn(first, 'lineas-1').collapsed).toBeUndefined();
+    // On the added page, under the rest of the box, at their size.
+    const lines = frameOn(added, 'lineas-3');
+    const rest = frameOn(added, 'act-3');
+    expect(lines.collapsed).toBeUndefined();
+    expect(lines.rect.height).toBeCloseTo(16 * MM, 3);
+    expect(lines.rect.y).toBeGreaterThan(rest.rect.y + rest.rect.height);
+    // Their rules are drawn on the added page only; the first sheet's
+    // answer lines stay where they were, and not on the added page.
+    const rulesOn = (p: VDTPage) => decoBoxes(p).filter((b) => b.kind === 'rule').length;
+    expect(rulesOn(first)).toBe(3);
+    expect(rulesOn(added)).toBe(2);
+    for (const b of decoBoxes(added).filter((d) => d.kind === 'rule')) expect(b.bbox.y).toBeGreaterThan(lines.rect.y);
+    expect(warningsOf(doc, 'frameOverflow')).toEqual([]);
+  });
+
+  it('the rest of the box starts where its group starts, clear of the kicker', () => {
+    const doc = build(sheet(900, 700), [FICHA]);
+    const added = composedPages(doc)[1]!;
+    const kicker = decoBoxes(added).find((b) => b.kind === 'text')!;
+    expect(kicker).toBeDefined();
+    const rest = frameOn(added, 'act-3');
+    expect(rest.rect.y).toBeGreaterThanOrEqual(kicker.bbox.y + kicker.bbox.height);
+    // Where the template puts its group: under the running text's place.
+    expect(rest.rect.y).toBeCloseTo(frameOn(added, 'texto').rect.y + 6 * MM, 3);
+    // A click on the kicker comes back to it.
+    const line = (kicker as { lines: { xOffset: number; baselineY: number; width: number }[] }).lines[0]!;
+    const hit = sourceAt(doc, added.index, kicker.bbox.x + line.xOffset + line.width / 2, kicker.bbox.y + kicker.bbox.height / 2)[0];
+    expect(hit?.id).toMatch(/^cp0:decoration:tema(@|$)/);
+  });
+
+  it('a box none of whose text fits on the page goes on whole: no tab and mark over an empty piece', () => {
+    // A first box long enough to push the last one to the foot.
+    let checked = 0;
+    for (const n of [1250, 1300, 1350, 1400, 1450]) {
+      const doc = build(sheet(n, 300), [FICHA]);
+      const [first, added] = composedPages(doc) as [VDTPage, VDTPage | undefined];
+      if (!added) continue;
+      const piece = frameOn(first, 'act-3');
+      const blocks = blocksOf(first, piece);
+      if (blocks.length > 0) {
+        // A piece holds text.
+        expect(textOf(blocks).length).toBeGreaterThan(0);
+        continue;
+      }
+      checked++;
+      expect(piece.continuesTo).toBe('cp0:act-3~1');
+      // The whole box, with its tab, on the added page.
+      const whole = blocksOf(added, frameOn(added, 'act-3'));
+      expect(overlayOf(whole[0])).toContain('3 · Dibuja');
+      expect(textOf(whole)).toMatch(/^tres0 /);
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });

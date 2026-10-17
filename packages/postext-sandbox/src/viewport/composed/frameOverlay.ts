@@ -65,8 +65,9 @@ export function frameMarksFor(doc: Pick<VDTDocument, 'config'>, page: VDTPage, o
       continue;
     }
     // A page added by continuation (#859) holds what its fence's page sent
-    // on: its other frames are not places to write.
-    if (empty && composed.continuationOf === undefined) {
+    // on: its other frames are not places to write. A frame that takes no
+    // room (an answer space gone on with the rest, #912) is not either.
+    if (empty && composed.continuationOf === undefined && !frame.collapsed) {
       out.push({ frame, kind: 'empty', text: [frame.name, head !== frame.name ? opts.continues.replace('__frame__', head) : opts.writeHere] });
     }
   }

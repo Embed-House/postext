@@ -65,6 +65,10 @@ export interface ComposedContinuation {
   /** The frame of the fence's own page that first sent it on: the pieces
    *  on later pages are `cp<fence>:<slot>~<k>`. */
   slot: string;
+  /** Empty frames that follow the sending frame in its stack and go with
+   *  the rest to the added page (#912): on a template laid again for what
+   *  goes on, they keep their size after the frame that takes it. */
+  trailing?: readonly string[];
 }
 
 /** What a page added by continuation receives. */
@@ -132,8 +136,80 @@ export function assignReceivers(
  * their chains go on in on that page) continue as the rule that brought
  * the content, unless they send content off the page themselves; on the
  * last page allowed nothing goes on; with `collapse`, every other frame
- * takes no room and leaves its group.
+ * takes no room and leaves its group, but the empty frames that came
+ * along with the content (`trailing`, #912).
  */
+/** Whether content `frame` sends on lands on the same template laid again
+ *  with its other frames collapsed (`'next-page'` with no other
+ *  `overflowTemplate`), as {@link continuationTarget} decides. */
+export function continuesCollapsed(template: Pick<ResolvedPageTemplate, 'id' | 'overflowTemplate'>, frame: Pick<ResolvedFrame, 'overflow'>, collapsed: boolean): boolean {
+  if (frame.overflow.continueIn !== 'next-page') return false;
+  const over = template.overflowTemplate;
+  return over === undefined || (over === template.id && collapsed);
+}
+
+/**
+ * The empty frames that go with the rest of `frame` to the page it goes
+ * on to (#912): those right after it in its stack that hold no story
+ * (`holds` says which do) and are not pinned, up to the first that holds
+ * one. An answer space under an activity box follows the end of its text.
+ */
+export function trailingFrames(template: Pick<ResolvedPageTemplate, 'frames' | 'groups'>, frame: string, holds: (name: string) => boolean): string[] {
+  const g = template.groups.find((gr) => gr.kind === 'stack' && gr.frames.includes(frame));
+  if (!g) return [];
+  const byName = new Map(template.frames.map((f) => [f.name, f]));
+  const out: string[] = [];
+  for (const name of g.frames.slice(g.frames.indexOf(frame) + 1)) {
+    const f = byName.get(name);
+    if (!f) continue;
+    if (f.pin || holds(name)) break;
+    out.push(name);
+  }
+  return out;
+}
+
+/** `template` with `names` taking no room: `'auto'` with no min/max and
+ *  out of their groups (#859, #912). A group's frames that stay start
+ *  where its first frame did when that one leaves and they have no
+ *  placement of their own. */
+export function collapseFrames(template: ResolvedPageTemplate, names: ReadonlySet<string>): ResolvedPageTemplate {
+  if (names.size === 0) return template;
+  const byName = new Map(template.frames.map((f) => [f.name, f]));
+  /** A frame that stays and opens its group takes the placement of the
+   *  group's first frame. */
+  const inherit = new Map<string, ResolvedFrame['placement']>();
+  const groups = template.groups.map((g) => {
+    const frames = g.frames.filter((n) => !names.has(n));
+    const lead = byName.get(g.frames[0] ?? '');
+    const first = byName.get(frames[0] ?? '');
+    if (lead && first && lead !== first && names.has(lead.name) && lead.placement && !first.placement && !first.grid) inherit.set(first.name, lead.placement);
+    return frames.length === g.frames.length ? g : { ...g, frames };
+  });
+  const frames = template.frames.map((f): ResolvedFrame => {
+    if (inherit.has(f.name)) return { ...f, placement: inherit.get(f.name) };
+    if (!names.has(f.name)) return f;
+    const out: ResolvedFrame = { ...f, height: 'auto', grow: 0 };
+    delete out.minHeight;
+    delete out.maxHeight;
+    return out;
+  });
+  return { ...template, frames, groups };
+}
+
+/** The frames a page added by continuation lays with no room: with
+ *  `collapse`, every frame that neither receives content (nor is in the
+ *  chain it goes on in) nor came along with it (`trailing`, #912). */
+export function collapsedOnAddedPage(template: Pick<ResolvedPageTemplate, 'frames'>, input: ComposedContinuationInput): Set<string> {
+  if (!input.collapse) return new Set();
+  const byName = new Map(template.frames.map((f) => [f.name, f]));
+  const kept = new Set<string>();
+  for (const [name, c] of input.receivers) {
+    for (let n: string | undefined = name; n !== undefined && byName.has(n) && !kept.has(n); n = nextFrameOf(byName.get(n)!)) kept.add(n);
+    for (const t of c.trailing ?? []) kept.add(t);
+  }
+  return new Set(template.frames.map((f) => f.name).filter((n) => !kept.has(n)));
+}
+
 export function continuationTemplate(template: ResolvedPageTemplate, input: ComposedContinuationInput): ResolvedPageTemplate {
   const byName = new Map(template.frames.map((f) => [f.name, f]));
   /** Frames the received content fills, with the rule it came by. */
@@ -159,12 +235,7 @@ export function continuationTemplate(template: ResolvedPageTemplate, input: Comp
       if (!input.last && nextFrameOf(f) === undefined && !continuesOffPage(own)) return { ...f, overflow: { ...f.overflow, continueIn: rule } };
       return f;
     }
-    if (!input.collapse) return f;
-    const out: ResolvedFrame = { ...f, height: 'auto', grow: 0 };
-    delete out.minHeight;
-    delete out.maxHeight;
-    return out;
+    return f;
   });
-  const groups = input.collapse ? template.groups.map((g) => ({ ...g, frames: g.frames.filter((n) => filled.has(n)) })) : template.groups;
-  return { ...template, frames, groups };
+  return collapseFrames({ ...template, frames }, collapsedOnAddedPage(template, input));
 }

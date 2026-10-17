@@ -2638,6 +2638,13 @@ export interface VDTFrame {
    *  after it). */
   continuedFrom?: string;
   continuesTo?: string;
+  /** The frame takes no room on this page (#912): on a page added by
+   *  continuation that lays its template again for what goes on, a frame
+   *  that receives nothing; on the page content goes on from, an empty
+   *  frame that follows the frame cut in its stack (an answer space) and
+   *  goes with the rest to the added page. Decoration anchored to it is
+   *  not drawn. */
+  collapsed?: true;
   /** Ids of the blocks set in this frame (its box first), in
    *  `page.floats` and `doc.blocks`. */
   blockIds: string[];

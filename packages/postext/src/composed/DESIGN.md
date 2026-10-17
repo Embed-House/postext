@@ -771,6 +771,17 @@ Recorded where the implementation settles a point the sections above leave open,
   (`MAX_CONTINUATION_PAGES`, 16) nothing goes on and a remaining overflow is reported as
   `frameContinuationLimit` instead of `frameOverflow`. A receiver that takes none of its content
   (the cut does not move) does not go on: the step is reverted and `frameOverflow` lists `continue`.
+- **What the pages keep (#912).** A frame cut for another page gives its group's room first
+  (it yields down to its minimum before any other frame), so the frames after it keep their size.
+  Empty frames right after it in its stack (no story, not pinned: an answer space under an
+  activity box, `trailingFrames`) go with the rest when it lands on the same template laid again:
+  on the sending page they take no room, and on the added page they keep their size after the
+  frame that takes the content (`ComposedContinuation.trailing`). A frame that takes no room is
+  `VDTFrame.collapsed`, and decoration anchored to it (directly or through other elements) is not
+  drawn. On a template laid again, a group whose first frame collapses starts its remaining frames
+  where that frame was placed (`collapseFrames`), so the rest of a box does not land on the
+  page's kicker. A frame none of whose content fits draws nothing: the whole box goes on (its tab
+  with it), never a tab and a mark over an empty piece.
 - **Marks.** The frame cut for another page is laid in its style with `continuesMarkerEnabled` (the
   callout layouter's marker under a fragment that goes on): `overflow.mark` string, `false` (none),
   unset = the style's `continuesMarker`, resolved from `defaultTableContinuationStrings(locale)`
