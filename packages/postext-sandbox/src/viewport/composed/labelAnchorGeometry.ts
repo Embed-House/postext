@@ -8,7 +8,7 @@
  * `(x, y)` px from the top-left of the picture's body as drawn (the crop
  * applied). The block's frame reaches the sheet through, innermost first,
  * the quarter turn of a turned picture, then the frame of the composed
- * page it stands in (`frameMatrix`: scaled text, a turned frame) or the
+ * page it stands in (`blockFrameMatrix`, #910: scaled text, a turned frame) or the
  * page's flow frame (a vertical page, a right-to-left page, where the
  * label's layout is mirrored about the body). Every step is affine, so the
  * whole is one matrix and its inverse.
@@ -17,12 +17,12 @@
 import {
   figureLabelMatrix,
   flowToPage,
-  frameMatrix,
   frameOfBlock,
   pageIsMirrored,
   type VDTDocument,
   type VDTFigureLabel,
 } from 'postext';
+import { blockFrameMatrix } from './frameHit';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTPage = VDTDocument['pages'][number];
@@ -118,8 +118,10 @@ export function labelsOnPage(doc: VDTDocument, pageIndex: number): PageLabel[] {
   const out: PageLabel[] = [];
   for (const block of labelledBlocks(doc, pageIndex)) {
     const rb = block.resourceBlock!;
-    const frame = frameOfBlock(page.composed, block.id);
-    const outer = frame ? (frameMatrix(frame) as Affine | undefined) ?? IDENTITY : flowAffine(page);
+    // In a frame of a composed page: its matrix (none for an upright frame
+    // at full size); else the page's flow frame.
+    const inFrame = frameOfBlock(page.composed, block.id) !== undefined;
+    const outer: Affine = inFrame ? blockFrameMatrix(page, block.id) ?? IDENTITY : flowAffine(page);
     const { bx, by, turn } = bodyFrame(block);
     const matrix = composeAffine(outer, turn);
     const mirrored = pageIsMirrored(page);
