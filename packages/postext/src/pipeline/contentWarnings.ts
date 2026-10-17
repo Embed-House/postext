@@ -1039,6 +1039,8 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
             ? `"${w.text}": its first letter joins the next — the drop cap is not set`
             : w.reason === 'verticalText'
               ? `"${w.text}": drop caps are set in horizontal text only — the paragraph is set without one`
+              : w.reason === 'inBox'
+                ? `"${w.text}": a paragraph inside a box takes no drop cap — it is set without one; set the paragraphs outside the :::callout, or in a frame of a composed page`
               : `"${w.text}": the paragraph opens with no letter to set as a drop cap — it is set without one`;
       break;
     case 'codeOverflow': {

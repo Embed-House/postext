@@ -3442,9 +3442,12 @@ export type ContentWarning = ContentWarningBase & (
    *  too short for it; `'joiningScript'`, its first letter joins the next
    *  (Arabic, Syriac, N'Ko) and is not set apart; `'verticalText'`, drop
    *  caps are set in horizontal text only; `'noLetter'`, it opens with no
-   *  letter or digit to set large (a reference, a formula, a note mark).
+   *  letter or digit to set large (a reference, a formula, a note mark);
+   *  `'inBox'` (#922), a `:::paragraphs{dropcap}` group or a paragraph
+   *  style with a drop cap inside a `:::callout` box, where none is set
+   *  (a composed page's frames take them).
    *  `text` is the paragraph's first line. Found by the layout. */
-  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
+  | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** `codeOverflow` (#624): a code listing has lines wider than its box,
    *  fitted as `codeStyle.overflow` says: turned over (`'wrap'`), set
    *  smaller (`'shrink'`, at `scale` of its size; past `minFontScale` its

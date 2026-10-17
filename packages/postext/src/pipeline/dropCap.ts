@@ -33,6 +33,10 @@ import { dimensionToPx } from '../units';
 import { isMarkerBlock } from './buildHelpers';
 import { uppercasePreservingLength } from './buildBlockKind';
 
+/** `containerAttrs` key of a composed page's story box (`FRAME_ATTR` of
+ *  `composed/wrap.ts`). */
+const STORY_ATTR = '__frame';
+
 /** The share of a letter's size its capitals take when a face gives no
  *  ink metrics (the design text's `CAP_HEIGHT_RATIO`, EF-127). */
 export const FALLBACK_CAP_HEIGHT_RATIO = 0.72;
@@ -65,11 +69,13 @@ function placesOf(blocks: readonly ContentBlock[]): (ParagraphPlace | undefined)
   const hit = placesMemo.get(blocks);
   if (hit) return hit;
   const out = new Array<ParagraphPlace | undefined>(blocks.length);
-  const open: { name: string | undefined; start: number; seen: boolean }[] = [];
+  const open: { name: string | undefined; start: number; seen: boolean; story: boolean }[] = [];
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i]!;
     if (b.type === 'containerStart') {
-      open.push({ name: b.containerName, start: i, seen: false });
+      // The box of a composed page's story (`composed/wrap.ts`) is a frame
+      // of running text, not a box (#922).
+      open.push({ name: b.containerName, start: i, seen: false, story: b.containerAttrs?.[STORY_ATTR] !== undefined });
       continue;
     }
     if (b.type === 'containerEnd') {
@@ -82,7 +88,7 @@ function placesOf(blocks: readonly ContentBlock[]): (ParagraphPlace | undefined)
     out[i] = {
       ...(group ? { group: group.start } : {}),
       first: group ? !group.seen : false,
-      inBox: open.some((c) => c.name === 'callout'),
+      inBox: open.some((c) => c.name === 'callout' && !c.story),
     };
     if (group) group.seen = true;
   }
@@ -128,6 +134,20 @@ function headingBefore(idx: number, ctx: DropCapContext): number | undefined {
     i--;
   }
   return undefined;
+}
+
+/** Whether the paragraph `raw` asks for a drop cap that is not set
+ *  because it sits in a box (#922): a `:::paragraphs{dropcap}` group or a
+ *  paragraph style with one, inside a `:::callout`. A heading level's drop
+ *  cap does not reach into a box and asks nothing. */
+export function dropCapRefusedInBox(raw: ContentBlock, idx: number, style: BlockStyle, ctx: DropCapContext): boolean {
+  const blocks = ctx.contentBlocks;
+  if (blocks[idx] !== raw || !isRunningParagraph(raw)) return false;
+  const place = placesOf(blocks)[idx];
+  if (!place || !place.inBox || place.group === undefined) return false;
+  const attr = dropCapAttr(blocks[place.group]!.containerAttrs);
+  if (attr === 'off') return false;
+  return (style.dropCap !== undefined || attr !== undefined) && (place.first || style.dropCap?.each === true);
 }
 
 /** The drop cap the paragraph `raw` (content index `idx`, set in `style`)
