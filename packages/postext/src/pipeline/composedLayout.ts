@@ -615,9 +615,12 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
     });
   }
 
+  // A frame that holds content (an empty one is short of its own box, #911:
+  // more height, text or pages do not help it).
+  const holds = cur.needs.has(name);
   // A higher maximum: the frame's height plus the shortfall, in whole mm.
   const fixed = fixedHeight(frame);
-  if (frame.maxHeight || fixed) {
+  if (holds && (frame.maxHeight || fixed)) {
     const want = Math.ceil((vdt.rect.height + vdt.overflowPx) / mmPx - 1e-6);
     const patch: Partial<ResolvedFrame> = { maxHeight: mmDim(want), ...(fixed ? { height: 'auto' as const, minHeight: fixed } : {}) };
     if (fits(c.patched(fit, name, patch))) out.push({ kind: 'raiseMax', path: path('maxHeight'), value: mmDim(want) });
@@ -630,7 +633,9 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
   if (g) {
     for (const other of g.frames) {
       const f = c.byName.get(other);
-      if (!f || other === name || f.pin || !f.minHeight) continue;
+      // An empty frame's minimum is the room it stands for (an answer
+      // space, a picture slot), not room to take (#911).
+      if (!f || other === name || f.pin || !f.minHeight || !cur.needs.has(other)) continue;
       const box = cur.frames.find((x) => x.name === other);
       if (!box) continue;
       const minPx = dimensionToPx(f.minHeight, c.dpi, c.emPx);
@@ -644,8 +649,17 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
     }
   }
 
+  // An empty frame cut short by its group: a lower minimum of its own, the
+  // height it was left (#911).
+  if (!holds && g && frame.minHeight) {
+    const lowered = Math.floor(vdt.rect.height / mmPx + 1e-6);
+    if (lowered * mmPx < dimensionToPx(frame.minHeight, c.dpi, c.emPx) - 0.5 && fits(c.patched(fit, name, { minHeight: mmDim(lowered) }))) {
+      out.push({ kind: 'lowerMin', path: path('minHeight'), value: mmDim(lowered), frame: name });
+    }
+  }
+
   // Continue on the next page (#859 lays it out).
-  if (!frame.overflow.continueIn) out.push({ kind: 'continueNextPage', path: path('overflow/continueIn'), value: 'next-page' });
+  if (holds && !frame.overflow.continueIn) out.push({ kind: 'continueNextPage', path: path('overflow/continueIn'), value: 'next-page' });
 
   // Another template of the book with a frame of this name, where the
   // content fits as it is.
@@ -805,6 +819,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const declaredRefOf = (name: string): Rect | undefined => declared.get(name) ?? groupRect(name, declared, groupDeclared, declaredRefOf);
     /** Pinned frames laid so far: a group's frames flow round them. */
     const pinned: { name: string; rect: Rect }[] = [];
+    /** How far a stack cut each frame below its least height (#911). */
+    const boxShort = new Map<string, number>();
 
     const frames: VDTFrame[] = [];
     const vdtByName = new Map<string, VDTFrame>();
@@ -945,7 +961,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       const mmPx = dpi / MM_PER_IN;
       const yieldAll = fit.yieldAll.has(group.name);
       const preps = members.map(prepare);
-      const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect } => {
+      const solve = (mode: 'final' | 'declared', naturals: ((w: number) => number)[]): { rects: Map<string, Rect>; box: Rect; items: GroupItem[] } => {
         const refs = mode === 'final' ? refOf : declaredRefOf;
         const ownBox = own ? placeBox(own, template, input, refs, () => 0) : undefined;
         const ownRects = new Map<string, Rect>();
@@ -978,6 +994,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
             pin: f.pin,
             fixedHeight: !auto && !fill,
             need: natural,
+            floor: minH,
           };
           if (yieldAll && mode === 'final' && !f.pin) {
             // Down to its minimum, never under what its content needs, never
@@ -1015,7 +1032,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         });
         // A pinned frame of the group stands where the template puts it.
         for (const it of items) if (it.pin) out.set(it.name, it.own);
-        return { rects: out, box: ownBox ?? unionRect([...out.values()]) ?? box };
+        return { rects: out, box: ownBox ?? unionRect([...out.values()]) ?? box, items };
       };
       let naturals = preps.map((p) => naturalOf(p));
       let fin = solve('final', naturals);
@@ -1027,6 +1044,17 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         fin = solve('final', naturals);
       }
       const decl = solve('declared', naturals);
+      // A frame the stack cut below the least it may have (its
+      // `minHeight`, a fixed height its own) is short of its box, content
+      // or none (#911): an empty answer space or picture slot overflows
+      // too.
+      for (const it of fin.items) {
+        if (it.pin || group.kind !== 'stack') continue;
+        const least = it.fixedHeight && (it.floor ?? 0) <= 0.5 ? it.own.height : it.floor ?? 0;
+        const got = fin.rects.get(it.name)!.height;
+        if (least - got > 0.5) boxShort.set(it.name, least - got);
+        else boxShort.delete(it.name);
+      }
       for (const m of members) {
         rects.set(m.name, fin.rects.get(m.name)!);
         declared.set(m.name, decl.rects.get(m.name)!);
@@ -1089,6 +1117,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // A styled frame with nothing (left) to hold still draws its box.
         result = st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, input.mirrored, { boxHeight: laidH });
       }
+      // A frame cut below its least height overflows by the cut, holding
+      // content or not (#911).
+      overflowPx = Math.max(overflowPx, boxShort.get(frame.name) ?? 0);
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
         name: frame.name,

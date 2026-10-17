@@ -38,6 +38,9 @@ export interface GroupItem {
   fixedHeight: boolean;
   /** The content's height at a width (rows negotiate widths with it). */
   need?: (width: number) => number;
+  /** The least height a stack cuts the frame to when nothing more yields
+   *  (#911): its `minHeight`. Default `min`. */
+  floor?: number;
 }
 
 export interface GroupLayoutInput {
@@ -151,8 +154,30 @@ function layoutStack(input: GroupLayoutInput): Map<string, Rect> {
     rects = place(heights);
   }
   if (bottomOf(rects) - foot > EPS) {
-    // Nothing more yields: no frame runs past the group's foot.
-    rects = rects.map((r) => ({ ...r, height: Math.max(0, Math.min(r.height, foot - r.y)) }));
+    // Nothing more yields: the frames nearest the foot give way first, each
+    // down to the least it may have (its `minHeight`; a fixed height its
+    // own: an answer space, a picture slot), their content running past
+    // their foot; so a box that grew does not push an empty frame under it
+    // off the page (#911).
+    for (let k = flow.length - 1; k >= 0; k--) {
+      const excess = bottomOf(rects) - foot;
+      if (excess <= EPS) break;
+      const it = flow[k]!;
+      const floor = it.floor ?? it.min;
+      const least = it.fixedHeight && floor <= EPS ? heights[k]! : Math.min(heights[k]!, floor);
+      const give = Math.min(excess, heights[k]! - least);
+      if (give <= EPS) continue;
+      heights[k] = heights[k]! - give;
+      rects = place(heights);
+    }
+  }
+  if (bottomOf(rects) - foot > EPS) {
+    // Still too tall with every frame at its least: no frame runs past the
+    // group's foot (what is cut shows as the frame's overflow).
+    rects = rects.map((r) => {
+      const y = Math.min(r.y, foot);
+      return { ...r, y, height: Math.max(0, Math.min(r.height, foot - y)) };
+    });
     return named(flow, rects, input.items);
   }
   if (input.elastic) return named(flow, rects, input.items);
