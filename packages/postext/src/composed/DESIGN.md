@@ -487,7 +487,12 @@ panel (U8): «dinero grew 8 mm; gasto moved down 8 mm; the photo is at 92 %».
 `overflow.continueIn`: `'#frame'` (another frame of the same page; equivalent to `next`),
 `'next-page'` (the same frame on a following page built from `overflowTemplate`, or from the same
 template with only that frame filled), or `'template:<id>'`. The remaining content resumes from
-the `CalloutCut` cursor, re-broken at the new width. Marks: `overflow.mark` text (string, or the
+the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the running text is (#913,
+`frameCutRules`, for `next` chains and continuation alike): a heading never ends a piece
+(`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
+(`bodyText.avoidOrphansInLists` / `avoidWidowsInLists`; one when off), and a list of up to
+`bodyText.shortListMaxItems` items under `shortListSplit: 'avoid'` is not cut between items. When
+no cut allows it the piece ends before the heading or the list, or inside one of its items. Marks: `overflow.mark` text (string, or the
 localized default from the engine's continuation words, as tables' `continuesLines` uses: es
 «sigue», en «continued», …; `false` for none), set at the end of the cut piece. Added pages keep
 page numbering, running heads and parity rules (they are ordinary pages with `role:

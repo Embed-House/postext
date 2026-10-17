@@ -48,7 +48,7 @@ import { resolvePageTemplate, type PageTemplateSource } from '../composed/templa
 import { frameElementId } from '../composed/ids';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
-import { CUT_START, fragmentRange, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
+import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
  *  content, by the name of the chain's first frame. */
@@ -636,6 +636,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
   const { pass, fence, dpi } = input;
   const fi = fence.fenceIndex;
   const cont = input.continuing;
+  const cutRules = frameCutRules(pass.resolved);
   /** A frame's id: `cp<fence>:<name>`; on a page added by continuation
    *  (#859) `~<k>`, a frame that receives content named by the frame of
    *  the fence's page that first sent it on. */
@@ -976,7 +977,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           // The rest goes on in the next frame of the chain, or on another
           // page.
           const minLines = Math.max(1, style.splitMinLines);
-          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined ? extra : undefined);
+          // A heading stays with what follows it, a list keeps two items
+          // on each side of the cut (#913).
+          const frag = splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, input.mirrored, extra.exclusions || extra.pictureScale !== undefined ? extra : undefined, cutRules);
           const to = frag?.to ?? from;
           result = frag
             ? st!.L.layoutRange(from, to, laidW, blockId, continuation, input.mirrored, opts)

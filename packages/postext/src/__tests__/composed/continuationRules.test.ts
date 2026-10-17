@@ -137,3 +137,63 @@ describe('a threaded story goes on where its chain starts (#919)', () => {
     }
   });
 });
+
+describe('a frame is cut as the running text is (#913)', () => {
+  const steps = (lead: number, items = 5): string => [
+    '::::page{template="hoja"}',
+    ':::frame{slot="caja" label="Pasos"}',
+    para('intro', lead),
+    '',
+    '### Mi registro de la semana',
+    '',
+    ...Array.from({ length: items }, (_, i) => `- ${para(`item${i}w`, 12)}`),
+    ':::',
+    '::::',
+    '',
+  ].join('\n');
+  /** The first piece of each length of introduction, and the second. */
+  const cuts = (items: number) => Array.from({ length: 60 }, (_, k) => 40 + k * 6).map((lead) => {
+    const doc = build(steps(lead, items), oneBox({ height: mm(70), overflow: { continueIn: 'next-page' } }));
+    const pages = composedPages(doc);
+    const piece = (p: VDTPage | undefined) => (p ? blocksOf(p, frameOn(p, 'caja')).filter((b) => b.type !== 'callout') : []);
+    return { lead, first: piece(pages[0]), rest: piece(pages[1]), doc };
+  });
+
+  it('never leaves a heading at the foot of a piece', () => {
+    let seen = 0;
+    for (const { first, rest } of cuts(5)) {
+      if (rest.length === 0) continue;
+      seen++;
+      expect(first[first.length - 1]!.type).not.toBe('heading');
+    }
+    expect(seen).toBeGreaterThan(10);
+  });
+
+  it('leaves at least two items of a list on each side of a cut between items', () => {
+    let between = 0;
+    for (const { first, rest } of cuts(5)) {
+      const before = first.filter((b) => b.type === 'listItem').length;
+      const after = rest.filter((b) => b.type === 'listItem').length;
+      // A cut inside an item counts it on both sides.
+      const split = before > 0 && after > 0 && before + after > 5;
+      if (before === 0 || after === 0 || split) continue;
+      between++;
+      expect(before).toBeGreaterThanOrEqual(2);
+      expect(after).toBeGreaterThanOrEqual(2);
+    }
+    expect(between).toBeGreaterThan(0);
+  });
+
+  it("a short list under shortListSplit: 'avoid' moves whole", () => {
+    for (const lead of Array.from({ length: 40 }, (_, k) => 40 + k * 8)) {
+      const doc = build(steps(lead, 3), oneBox({ height: mm(70), overflow: { continueIn: 'next-page' } }), { bodyText: { ...BASE.bodyText, shortListSplit: 'avoid' } as never });
+      const pages = composedPages(doc);
+      if (pages.length < 2) continue;
+      const items = (p: VDTPage) => blocksOf(p, frameOn(p, 'caja')).filter((b) => b.type === 'listItem').length;
+      const a = items(pages[0]!);
+      const b = items(pages[1]!);
+      // Whole on one side, or cut inside one item.
+      expect(a === 0 || b === 0 || a + b === 4).toBe(true);
+    }
+  });
+});
