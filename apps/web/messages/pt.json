@@ -4912,8 +4912,7 @@
     "warningsContinueTargetMissingDetail": "página __page__ · este bloco do modelo __template__ continua na página “__target__”, e nenhuma página posterior tem esse id: o resto foi para a página seguinte. Dê id=\"__target__\" a um ::::page posterior ou corrija o nome.",
     "warningsContinueTargetBeforeDetail": "página __page__ · este bloco do modelo __template__ continua na página “__target__”, que vem antes: o resto foi para a página seguinte. Leve o ::::page com id=\"__target__\" para depois desta página ou indique uma posterior.",
     "pageTemplatesFromMark": "Palavras onde continua",
-    "pageTemplatesFromMarkTooltip": "No início do trecho, na página onde continua. '{'page'}' é o número da página de onde vem: “Continuação da página '{'page'}'”. Vazio: nenhuma.",
-    "textMigrationDiffLetterSpacing": "o espaçamento entre letras se perde (estilos de parágrafo não têm)"
+    "pageTemplatesFromMarkTooltip": "No início do trecho, na página onde continua. '{'page'}' é o número da página de onde vem: “Continuação da página '{'page'}'”. Vazio: nenhuma."
   },
   "PlainLanguage": {
     "heading": "Em poucas palavras",
