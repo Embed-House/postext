@@ -36,6 +36,8 @@ Eine Werkzeugleiste oben im Canvas-Ansichtsbereich bietet:
 
 Seiten werden verzögert über `IntersectionObserver` gerendert – nur sichtbare Seiten (plus ein Rand von 200 px) werden auf das Canvas gezeichnet, was den GPU-Speicherbedarf bei langen Dokumenten niedrig hält.
 
+**Abstand zwischen den Seiten.** Im Canvas liegen die beiden Seiten eines Paars 24 px auseinander, und jede Seitenreihe liegt 24 px von der nächsten. **Gestaltung › Export › Canvas (Seitenabstand)** stellt beide ein (`canvasViewer.pageGap` und `canvasViewer.rowGap`, seit postext 1.43). Bei 0 berühren sich die Seiten eines Paars, und das Canvas zeichnet an der Naht weder Schatten noch abgerundete Ecken; ein Bild über die Doppelseite zeigt keine Fuge. Die Zahlen sind Bildschirmpixel bei jedem Zoom. Sie ändern, wie das Canvas gezeichnet wird, nie die Seiten; das Buch wird also nicht neu umbrochen. Beim Export behält das Buch die Werte.
+
 #### Zusammengesetzte Seiten auf der Leinwand
 
 Auf einer zusammengesetzten Seite (`::::page{template="…"}`) verbindet die Leinwand jeden Rahmen mit der Stelle im Markdown, die ihn füllt:

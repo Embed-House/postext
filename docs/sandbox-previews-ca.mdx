@@ -36,6 +36,8 @@ Una barra d'eines a la part superior del viewport de canvas proporciona:
 
 Les pàgines es renderitzen de manera mandrosa mitjançant `IntersectionObserver` — només les pàgines visibles (més un marge de 200 px) es dibuixen al canvas, cosa que manté baix l'ús de memòria de GPU per a documents llargs.
 
+**Espai entre pàgines.** Al Canvas les dues pàgines d'un parell estan a 24 px l'una de l'altra, i cada fila de pàgines a 24 px de la següent. **Disseny › Exportació › Canvas (espai entre pàgines)** fixa les dues distàncies (`canvasViewer.pageGap` i `canvasViewer.rowGap`, des de postext 1.43). Amb una separació de 0 les pàgines del parell es toquen i el Canvas no dibuixa ombra ni cantonades arrodonides a la unió, de manera que una imatge a doble pàgina es veu sense tall. Els números són píxels de pantalla a qualsevol zoom. Canvien com es dibuixa el Canvas i mai les pàgines, així que el llibre no es torna a compondre; en exportar-lo, el llibre conserva els valors.
+
 #### Pàgines compostes al llenç
 
 En una pàgina composta (`::::page{template="…"}`) el llenç uneix cada marc amb el lloc del Markdown que l'omple:

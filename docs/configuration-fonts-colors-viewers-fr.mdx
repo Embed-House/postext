@@ -316,6 +316,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 Voir [Intégrer la visionneuse HTML](/fr/docs/configuration-html-folio-epub#intégrer-la-visionneuse-html) plus bas pour un exemple complet.
 
 
+
+## Visionneuse Canvas
+
+La propriété `canvasViewer` règle l’espace entre les pages dans l’onglet Canvas du Sandbox (depuis postext 1.43). Elle appartient à la visionneuse, pas au livre : les valeurs sont des pixels d’écran à tout zoom, et les changer déplace les pages à l’écran sans recomposer le livre ; la pagination, les compositions enregistrées et le PDF restent ce qu’ils étaient. Le PDF, la visionneuse HTML et les autres sorties l’ignorent. Un livre dont les images courent sur la double page fixe `pageGap: 0`.
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espace, en pixels d’écran, entre la page de gauche et la page de droite d’une paire en vue double page. Un entier de 0 à 200. À <code>0</code>, les deux pages se touchent et le Canvas ne dessine ni ombre ni coins arrondis à la jonction : une image ou une composition sur la double page se lit d’un seul tenant. La vue page seule n’a pas de paires.</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espace, en pixels d’écran, entre une rangée de pages et la suivante, dans les deux vues. Un entier de 0 à 200.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // Une image traverse la double page : on montre les deux pages jointes.
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+Une valeur qui n’est pas un entier de 0 à 200 est lue comme l’entier le plus proche de cet intervalle, ou comme `24` si ce n’est pas un nombre, et signalée comme valeur de réglage inconnue (`canvasViewer.pageGap`). Le Sandbox a les deux champs dans **Maquette › Export › Canvas (espacement des pages)**.
+
+
 ## Génération PDF (configuration)
 
 La propriété `pdfGeneration` règle la façon dont le moteur PDF produit le document final. Ces réglages sont lus par le paquet `postext-pdf` au moment de l’export ; les visionneuses canvas et HTML les ignorent.
@@ -1349,7 +1410,7 @@ Ces erreurs de la configuration elle-même ne passent jamais sous silence, et au
 - **Nombre de colonnes hors limites** : un `columnCount` de mise en page `'multiple'` (celui du document, ou la `layout` propre d’un style de titre) qui n’est pas un nombre entier de 3 à 8. La page est découpée selon le nombre valide le plus proche (3 pour une valeur qui n’est pas un nombre), et `used` le nomme (`columnCountClamped` ; voir la [mise en page `'multiple'`](/fr/docs/configuration-page-layout#types-de-mise-en-page)).
 - **Grille de caractères trop grande** : un `cjk.grid` avec plus de caractères par ligne ou de lignes par page que les marges ne le permettent. La grille est réglée sur le maximum qui tient, et `used` nomme ce nombre (`cjkGridClamped` ; voir [Grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
 - **Réglage de titre inconnu** : une clé que n’ont pas `headings`, `headings.balancing`, un niveau de titre, un style de titre ou un style de paragraphe : un `letterSpacng` mal orthographié, un `tracking` emprunté à un autre outil, un `level` sur un style de titre, un `fontStyle: 'italic'` sur un style de paragraphe (qui attend `italic: true`). Une tabulation est vérifiée de la même façon (un `leaders` au lieu de `leader`). Le moteur l’ignore (jusqu’à postext 1.4, il le faisait sans rien dire). `value` est la clé, `used` est vide, et `suggestion` nomme le réglage le plus proche, quand il n’en diffère que d’une ou deux lettres ou seulement par la casse (`unknownConfigKey`).
-- **Valeur de réglage inconnue** : un réglage qui accepte un mot parmi quelques-uns et qui en contient un autre, comme `direction: 'right'` (il accepte `auto`, `ltr` ou `rtl`). Le moteur lit la valeur par défaut à la place, et `used` nomme ce qu’elle donne : pour `direction`, le sens de la langue du document (`unknownConfigValue`). Un `align` de tabulation qui n’est aucun de ses quatre mots est lu comme `'start'`, et une `position` qui n’est ni une longueur, ni `'end'`, ni un pourcentage fait ignorer la tabulation (`used` vaut `'none'`). Les mots des réglages de bande dessinée sont vérifiés aussi ([Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)) : `used` est la valeur à laquelle le réglage s’est résolu (la valeur par défaut propre d’un style de bulle, pour un style intégré), et `suggestion` nomme le mot le plus proche de la valeur, quand il y en a un. Le `level` et le `mode` du contrôle du contraste sont vérifiés de la même façon : `used` vaut `'AA'` ou `'auto'`.
+- **Valeur de réglage inconnue** : un réglage qui accepte un mot parmi quelques-uns et qui en contient un autre, comme `direction: 'right'` (il accepte `auto`, `ltr` ou `rtl`). Le moteur lit la valeur par défaut à la place, et `used` nomme ce qu’elle donne : pour `direction`, le sens de la langue du document (`unknownConfigValue`). Un `align` de tabulation qui n’est aucun de ses quatre mots est lu comme `'start'`, et une `position` qui n’est ni une longueur, ni `'end'`, ni un pourcentage fait ignorer la tabulation (`used` vaut `'none'`). Les mots des réglages de bande dessinée sont vérifiés aussi ([Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)) : `used` est la valeur à laquelle le réglage s’est résolu (la valeur par défaut propre d’un style de bulle, pour un style intégré), et `suggestion` nomme le mot le plus proche de la valeur, quand il y en a un. Le `level` et le `mode` du contrôle du contraste sont vérifiés de la même façon : `used` vaut `'AA'` ou `'auto'`. `canvasViewer.pageGap` et `canvasViewer.rowGap` sont vérifiés de la même façon : `used` est l’entier de 0 à 200 en lequel la valeur a été lue (depuis postext 1.43).
 - **Numéros de ligne en texte vertical** : `lineNumbers.enabled: true` dans un document composé verticalement (`layout.writingMode: 'vertical-rl'`). Les pages verticales n’ont pas de numéros de ligne, et `used` vaut `false` (`lineNumbersUnsupported` ; voir [Numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne)).
 - **Habillage en texte vertical** : le `defaultPlacement.wrap` d’un type de ressource dans un document composé verticalement. Les pages verticales ne composent pas de texte à côté d’une figure, et `used` vaut `none` (`wrapUnsupported` ; voir [Format du document › Habillage](/fr/docs/document-format-resources#habillage-du-texte)). Un `wrap` qui ne nomme aucun côté est une valeur de réglage inconnue.
 - **Style d’encadré basé sur un autre** : un style d’encadré dont l’`extends` ne nomme aucun style de `calloutStyles` (`calloutStyleExtendsUnknown`, avec l’identifiant le plus proche dans `suggestion`), ou dont la chaîne d’`extends` revient à lui (`calloutStyleExtendsCycle`, `value` la boucle `a → b → a`). Le style reste seul, avec les valeurs par défaut pour ce qu’il laisse vide (voir [Styles basés sur un autre](/fr/docs/configuration-callouts#styles-basés-sur-un-autre)).

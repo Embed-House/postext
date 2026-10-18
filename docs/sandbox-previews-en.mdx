@@ -36,6 +36,8 @@ A toolbar at the top of the canvas viewport provides:
 
 Pages render lazily via `IntersectionObserver` — only visible pages (plus a 200px margin) are drawn to canvas, keeping GPU memory usage low for long documents.
 
+**Space between pages.** In the Canvas the two pages of a pair sit 24 px apart, and one row of pages 24 px from the next. **Design › Export › Canvas (page spacing)** sets both (`canvasViewer.pageGap` and `canvasViewer.rowGap`, since postext 1.43). With a gap of 0 the pages of a pair touch and the Canvas draws no shadow or rounded corner at the joint, so a picture across the spread shows no seam. The numbers are screen pixels at any zoom. They change how the Canvas is drawn, never the pages, so the book is not laid out again; the book keeps them when it is exported.
+
 #### Composed pages on the canvas
 
 On a composed page (`::::page{template="…"}`) the canvas links each frame to the place in the Markdown that fills it:

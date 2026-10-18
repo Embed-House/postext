@@ -36,6 +36,8 @@ Une barre d’outils en haut de la zone d’aperçu du canvas offre :
 
 Les pages sont dessinées à la demande via `IntersectionObserver` : seules les pages visibles (plus une marge de 200 px) sont dessinées sur le canvas, ce qui limite l’usage de la mémoire GPU pour les longs documents.
 
+**Espace entre les pages.** Dans le Canvas, les deux pages d’une paire sont à 24 px l’une de l’autre et chaque rangée de pages à 24 px de la suivante. **Maquette › Export › Canvas (espacement des pages)** règle les deux (`canvasViewer.pageGap` et `canvasViewer.rowGap`, depuis postext 1.43). À 0, les pages d’une paire se touchent et le Canvas ne dessine ni ombre ni coins arrondis à la jonction : une image sur la double page se voit sans coupure. Les nombres sont des pixels d’écran, quel que soit le zoom. Ils changent le dessin du Canvas, jamais les pages, et le livre n’est donc pas recomposé ; il les garde à l’export.
+
 #### Pages composées sur le canevas
 
 Sur une page composée (`::::page{template="…"}`), le canevas relie chaque bloc à l’endroit du Markdown qui le remplit :

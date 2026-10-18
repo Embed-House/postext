@@ -316,6 +316,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 Ein vollständiges Beispiel finden Sie unter [Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden).
 
 
+
+## Canvas-Ansicht
+
+Die Eigenschaft `canvasViewer` legt den Abstand zwischen den Seiten im Canvas-Tab der Sandbox fest (seit postext 1.43). Sie gehört zur Ansicht, nicht zum Buch: Die Werte sind Bildschirmpixel bei jedem Zoom, und eine Änderung verschiebt die Seiten auf dem Bildschirm, ohne das Buch neu zu umbrechen. Seitenzahl, gespeicherte Umbrüche und PDF bleiben, wie sie waren. PDF, HTML-Betrachter und die anderen Ausgaben ignorieren sie. Ein Buch, dessen Bilder über die Doppelseite laufen, setzt `pageGap: 0`.
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Abstand in Bildschirmpixeln zwischen linker und rechter Seite eines Paars in der Doppelseitenansicht. Eine ganze Zahl von 0 bis 200. Bei <code>0</code> berühren sich die beiden Seiten, und das Canvas zeichnet an der Naht weder Schatten noch abgerundete Ecken; ein Bild oder eine Gestaltung über die Doppelseite wirkt als Einheit. Die Einzelseitenansicht kennt keine Paare.</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Abstand in Bildschirmpixeln zwischen einer Seitenreihe und der nächsten, in beiden Ansichten. Eine ganze Zahl von 0 bis 200.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // Ein Bild läuft über die Doppelseite: Die beiden Seiten werden aneinandergesetzt gezeigt.
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+Ein Wert, der keine ganze Zahl von 0 bis 200 ist, wird als nächstgelegene Zahl dieses Bereichs gelesen, ein Wert, der keine Zahl ist, als `24`, und als unbekannter Einstellungswert gemeldet (`canvasViewer.pageGap`). Die Sandbox hat beide Felder unter **Gestaltung › Export › Canvas (Seitenabstand)**.
+
+
 ## PDF-Erzeugung (Konfiguration)
 
 Die Eigenschaft `pdfGeneration` steuert, wie das PDF-Backend das fertige Dokument ausgibt. Diese Einstellungen liest das Paket `postext-pdf` beim Export; Canvas- und HTML-Betrachter ignorieren sie.
@@ -1349,7 +1410,7 @@ Diese Fehler in der Konfiguration selbst bleiben nie stumm, und kein Schalter bl
 - **Spaltenzahl außerhalb des Bereichs** – ein `columnCount` eines Layouts `'multiple'` (des Dokuments oder im eigenen `layout` eines Überschriftenformats), das keine ganze Zahl von 3 bis 8 ist. Die Seite wird in die nächstgelegene gültige Anzahl geteilt (3 für einen Wert, der keine Zahl ist), und `used` nennt sie (`columnCountClamped`; siehe das [Layout `'multiple'`](/de/docs/configuration-page-layout#layout-typen)).
 - **Zeichenraster zu groß** – ein `cjk.grid` mit mehr Zeichen pro Zeile oder Zeilen pro Seite, als die Ränder Platz lassen. Das Raster wird mit dem Höchstwert gesetzt, der passt, und `used` nennt die Zahl (`cjkGridClamped`; siehe [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster)).
 - **Unbekannte Überschrifteneinstellung** – ein Schlüssel, den `headings`, `headings.balancing`, eine Überschriftenebene, ein Überschriftenformat oder ein Absatzformat nicht kennt: ein falsch geschriebenes `letterSpacng`, ein aus einem anderen Werkzeug entlehntes `tracking`, ein `level` in einem Überschriftenformat, ein `fontStyle: 'italic'` in einem Absatzformat (das `italic: true` erwartet). Ein Tabulator wird genauso geprüft (ein `leaders` statt `leader`). Die Engine ignoriert ihn (bis postext 1.4 tat sie das wortlos). `value` ist der Schlüssel, `used` ist leer, und `suggestion` nennt die Einstellung, der er am nächsten kommt, wenn eine nur ein oder zwei Buchstaben entfernt ist oder sich nur in Groß- und Kleinschreibung unterscheidet (`unknownConfigKey`).
-- **Unbekannter Einstellungswert** – eine Einstellung, die eines von wenigen Wörtern annimmt, aber ein anderes enthält, etwa `direction: 'right'` (sie nimmt `auto`, `ltr` oder `rtl`). Die Engine liest stattdessen den Standardwert, und `used` nennt, was daraus wurde: bei `direction` die Schreibrichtung der Dokumentsprache (`unknownConfigValue`). Ein `align` eines Tabulators, das keines seiner vier Wörter ist, wird als `'start'` gelesen, und eine `position`, die weder Länge noch `'end'` noch Prozentwert ist, lässt den Tabulator weg (`used` ist `'none'`). Auch die Wörter der Comic-Einstellungen werden geprüft ([Comics › Comic-Warnungen](/de/docs/comics#comic-warnungen)): `used` ist der Wert, zu dem die Einstellung aufgelöst wurde (bei einem eingebauten Format der eigene Standardwert des Sprechblasenformats), und `suggestion` nennt das Wort, dem der Wert am nächsten kommt, wenn eines nahe liegt. `level` und `mode` der Kontrastprüfung werden genauso geprüft: `used` ist `'AA'` oder `'auto'`.
+- **Unbekannter Einstellungswert** – eine Einstellung, die eines von wenigen Wörtern annimmt, aber ein anderes enthält, etwa `direction: 'right'` (sie nimmt `auto`, `ltr` oder `rtl`). Die Engine liest stattdessen den Standardwert, und `used` nennt, was daraus wurde: bei `direction` die Schreibrichtung der Dokumentsprache (`unknownConfigValue`). Ein `align` eines Tabulators, das keines seiner vier Wörter ist, wird als `'start'` gelesen, und eine `position`, die weder Länge noch `'end'` noch Prozentwert ist, lässt den Tabulator weg (`used` ist `'none'`). Auch die Wörter der Comic-Einstellungen werden geprüft ([Comics › Comic-Warnungen](/de/docs/comics#comic-warnungen)): `used` ist der Wert, zu dem die Einstellung aufgelöst wurde (bei einem eingebauten Format der eigene Standardwert des Sprechblasenformats), und `suggestion` nennt das Wort, dem der Wert am nächsten kommt, wenn eines nahe liegt. `level` und `mode` der Kontrastprüfung werden genauso geprüft: `used` ist `'AA'` oder `'auto'`. `canvasViewer.pageGap` und `canvasViewer.rowGap` werden ebenso geprüft: `used` ist die ganze Zahl von 0 bis 200, als die der Wert gelesen wurde (seit postext 1.43).
 - **Zeilennummern im vertikalen Text** – `lineNumbers.enabled: true` in einem vertikal gesetzten Dokument (`layout.writingMode: 'vertical-rl'`). Vertikale Seiten erhalten keine Zeilennummern, und `used` ist `false` (`lineNumbersUnsupported`; siehe [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)).
 - **Umfließen in vertikalem Text** – ein `defaultPlacement.wrap` eines Ressourcentyps in einem vertikal gesetzten Dokument. Vertikale Seiten setzen keinen Text neben eine Abbildung, und `used` ist `none` (`wrapUnsupported`; siehe [Dokumentformat › Textumfluss](/de/docs/document-format-resources#textumfluss)). Ein `wrap`, das keine Seite nennt, ist ein unbekannter Einstellungswert.
 - **Kastenstil auf Basis eines anderen** – ein Kastenstil, dessen `extends` keinen Stil aus `calloutStyles` nennt (`calloutStyleExtendsUnknown`, mit der nächstliegenden ID als `suggestion`), oder dessen `extends`-Kette zu ihm zurückkehrt (`calloutStyleExtendsCycle`, `value` der Kreis `a → b → a`). Der Stil steht für sich, mit den eingebauten Werten für alles, was er offenlässt (siehe [Stile, die auf einem anderen basieren](/de/docs/configuration-callouts#stile-die-auf-einem-anderen-basieren)).
