@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "handwriting-workbook",
-  "sourceHash": "e22f60df22ba73776917b9658a3926c58ec4bd76ba409120886144b00029587a",
+  "sourceHash": "52308a4bcfc0570b8d6fa2f3ca8158bdcbd6d24f534daac6a804a74366d4947c",
   "engine": {
-    "postext": "1.42.1",
-    "postextPdf": "1.42.1",
+    "postext": "1.45.0",
+    "postextPdf": "1.45.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T11:13:39.508Z",
-  "verified": {
-    "postext": "1.43.0",
-    "postextPdf": "1.43.0",
-    "chrome": "155.0.8059.82",
-    "at": "2026-10-18T11:14:45.030Z"
-  },
+  "capturedAt": "2026-10-18T22:35:30.836Z",
   "variants": {
     "en": {
-      "hash8": "85f2cf29",
-      "vdtHash": "2366bb5e9f557d9428c5c7e25d84936d5cf059ae",
+      "hash8": "533ddb53",
+      "vdtHash": "d3b134ca0b550c4b5655a406359cae33571be7b3",
       "timings": {
-        "importMs": 665,
-        "fontsMs": 126,
-        "buildMs": 78,
-        "totalMs": 1563,
+        "importMs": 27640,
+        "fontsMs": 876,
+        "buildMs": 100,
+        "totalMs": 31400,
         "builds": 1
       },
       "specimen": {
@@ -45,7 +39,7 @@
           "Playwrite GB J"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -67,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65220,
+          "bytes": 65876,
           "alt": "Opening page 2: Warm up."
         },
         {
@@ -78,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62644,
+          "bytes": 63594,
           "alt": "Opening page 3: Round letters."
         },
         {
@@ -89,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 64558,
+          "bytes": 65332,
           "alt": "Opening page 4: Sh, ch and th."
         },
         {
@@ -100,7 +94,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 58940,
+          "bytes": 59150,
           "alt": "Opening page 5: Ck and ng."
         },
         {
@@ -111,7 +105,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 62110,
+          "bytes": 62418,
           "alt": "Opening page 6: Magic e."
         },
         {
@@ -122,7 +116,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 59326,
+          "bytes": 59880,
           "alt": "Opening page 7: Ee, ai and oa."
         },
         {
@@ -133,7 +127,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 62308,
+          "bytes": 62356,
           "alt": "Opening page 8: Tricky words."
         },
         {
@@ -144,7 +138,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 64294,
+          "bytes": 64500,
           "alt": "Opening page 9: Capital letters."
         },
         {
@@ -166,7 +160,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 54558,
+          "bytes": 54896,
           "alt": "Opening page 11: Copy a sentence."
         },
         {
@@ -225,17 +219,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1113999,
+        "bytes": 1113502,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 932524,
+        "bytes": 932672,
         "chapters": [
           {
             "pages": 12,
-            "hash": "3225c9eb2c7a1d53",
-            "lines": "212652ba6d26a782"
+            "hash": "786315f97d6215eb",
+            "lines": "03e751848d7c5520"
           }
         ]
       },
@@ -268,6 +262,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -277,12 +272,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -293,7 +295,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -337,6 +341,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -386,8 +391,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -437,6 +442,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -457,17 +463,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 31.4 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d8493b96",
-      "vdtHash": "b8ae485c1598b516677445317ce80c81471086dc",
+      "hash8": "bea5e3cc",
+      "vdtHash": "6d2257e4a9ac02bc1448d58f9af565c177d43081",
       "timings": {
-        "importMs": 668,
-        "fontsMs": 175,
-        "buildMs": 90,
-        "totalMs": 1715,
+        "importMs": 27509,
+        "fontsMs": 1332,
+        "buildMs": 102,
+        "totalMs": 32425,
         "builds": 1
       },
       "specimen": {
@@ -489,7 +506,7 @@
           "Playwrite ES"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -511,7 +528,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 64046,
+          "bytes": 64744,
           "alt": "Página de apertura 2: Antes de empezar."
         },
         {
@@ -522,7 +539,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 59548,
+          "bytes": 59410,
           "alt": "Página de apertura 3: Las vocales."
         },
         {
@@ -533,7 +550,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61350,
+          "bytes": 60440,
           "alt": "Página de apertura 4: La m y la p."
         },
         {
@@ -544,7 +561,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 57644,
+          "bytes": 57520,
           "alt": "Página de apertura 5: La eñe."
         },
         {
@@ -555,7 +572,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 61426,
+          "bytes": 60884,
           "alt": "Página de apertura 6: La ll y la rr."
         },
         {
@@ -566,7 +583,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 61556,
+          "bytes": 60856,
           "alt": "Página de apertura 7: La c, la qu y la z."
         },
         {
@@ -577,7 +594,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 67788,
+          "bytes": 67434,
           "alt": "Página de apertura 8: La g, la gu y la gü."
         },
         {
@@ -588,7 +605,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66046,
+          "bytes": 66646,
           "alt": "Página de apertura 9: La h y la tilde."
         },
         {
@@ -610,7 +627,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 46360,
+          "bytes": 46772,
           "alt": "Página de apertura 11: Copio frases."
         },
         {
@@ -669,17 +686,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1144987,
+        "bytes": 1144471,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 958065,
+        "bytes": 958232,
         "chapters": [
           {
             "pages": 12,
-            "hash": "810a72f678457a3c",
-            "lines": "893ab66398df2485"
+            "hash": "cd10f42024c33026",
+            "lines": "5892ced4f8d42996"
           }
         ]
       },
@@ -712,6 +729,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -721,12 +739,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -737,7 +762,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -781,6 +808,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -830,8 +858,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -881,6 +909,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -901,17 +930,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 32.4 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "ac3993f0",
-      "vdtHash": "620852ab0edda021977f8c16cd443604a63af080",
+      "hash8": "474e7094",
+      "vdtHash": "63447abde6251b92bef521e8880122d00a6e965a",
       "timings": {
-        "importMs": 670,
-        "fontsMs": 137,
-        "buildMs": 79,
-        "totalMs": 1571,
+        "importMs": 27504,
+        "fontsMs": 592,
+        "buildMs": 130,
+        "totalMs": 31349,
         "builds": 1
       },
       "specimen": {
@@ -933,7 +973,7 @@
           "Playwrite ES"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -955,7 +995,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62874,
+          "bytes": 63674,
           "alt": "Pàgina d'obertura 2: Abans de començar."
         },
         {
@@ -966,7 +1006,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 66054,
+          "bytes": 65980,
           "alt": "Pàgina d'obertura 3: Les vocals i els accents."
         },
         {
@@ -977,7 +1017,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 54530,
+          "bytes": 55278,
           "alt": "Pàgina d'obertura 4: La m i la p."
         },
         {
@@ -988,7 +1028,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 63036,
+          "bytes": 62948,
           "alt": "Pàgina d'obertura 5: La ny i la ll."
         },
         {
@@ -999,7 +1039,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 74114,
+          "bytes": 73622,
           "alt": "Pàgina d'obertura 6: La ela geminada."
         },
         {
@@ -1010,7 +1050,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 59210,
+          "bytes": 58724,
           "alt": "Pàgina d'obertura 7: La ç i la qu."
         },
         {
@@ -1021,7 +1061,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 70302,
+          "bytes": 69418,
           "alt": "Pàgina d'obertura 8: La g, la gu i la gü."
         },
         {
@@ -1032,7 +1072,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 70286,
+          "bytes": 69692,
           "alt": "Pàgina d'obertura 9: L’apòstrof i la dièresi."
         },
         {
@@ -1054,7 +1094,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 46510,
+          "bytes": 47136,
           "alt": "Pàgina d'obertura 11: Copio frases."
         },
         {
@@ -1113,17 +1153,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1152669,
+        "bytes": 1152175,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 954927,
+        "bytes": 955124,
         "chapters": [
           {
             "pages": 12,
-            "hash": "53cd9b8086b9a91a",
-            "lines": "a237b4ef0d22bcb5"
+            "hash": "eb058c50843306de",
+            "lines": "1bdd2ebcc594ee0e"
           }
         ]
       },
@@ -1156,6 +1196,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -1165,12 +1206,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -1181,7 +1229,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -1225,6 +1275,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -1274,8 +1325,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -1325,6 +1376,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -1345,17 +1397,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 31.3 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "28053dae",
-      "vdtHash": "71ab27761ec8f00ae988d9aa0c08fd7a0c17ddd9",
+      "hash8": "852f19ee",
+      "vdtHash": "36599b3f63f98d33721a4df5579939ac3c04cbde",
       "timings": {
-        "importMs": 622,
-        "fontsMs": 655,
-        "buildMs": 93,
-        "totalMs": 2003,
+        "importMs": 5370,
+        "fontsMs": 5368,
+        "buildMs": 113,
+        "totalMs": 14766,
         "builds": 1
       },
       "specimen": {
@@ -1378,7 +1441,7 @@
           "Noto Serif SC"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -1400,7 +1463,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 53832,
+          "bytes": 53140,
           "alt": "章首页，第 2 页：写字以前。"
         },
         {
@@ -1411,7 +1474,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 54246,
+          "bytes": 53226,
           "alt": "章首页，第 3 页：一二三。"
         },
         {
@@ -1422,7 +1485,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 59412,
+          "bytes": 58920,
           "alt": "章首页，第 4 页：日月山水。"
         },
         {
@@ -1433,7 +1496,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 64304,
+          "bytes": 63816,
           "alt": "章首页，第 5 页：木林森。"
         },
         {
@@ -1444,7 +1507,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 41382,
+          "bytes": 41290,
           "alt": "章首页，第 6 页：拼音 b p m f。"
         },
         {
@@ -1455,7 +1518,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 47314,
+          "bytes": 47290,
           "alt": "章首页，第 7 页：四个声调。"
         },
         {
@@ -1466,7 +1529,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 66646,
+          "bytes": 67042,
           "alt": "章首页，第 8 页：我和你。"
         },
         {
@@ -1477,7 +1540,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 63968,
+          "bytes": 62540,
           "alt": "章首页，第 9 页：小动物。"
         },
         {
@@ -1499,7 +1562,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 61780,
+          "bytes": 60920,
           "alt": "章首页，第 11 页：抄写句子。"
         },
         {
@@ -1558,17 +1621,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 996087,
+        "bytes": 995736,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 811716,
+        "bytes": 811693,
         "chapters": [
           {
             "pages": 12,
-            "hash": "62f0223f959082f1",
-            "lines": "9b0f67d4418b9d24"
+            "hash": "4d8a0da00249e78e",
+            "lines": "1a02622839a7aa6c"
           }
         ]
       },
@@ -1601,6 +1664,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -1610,12 +1674,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -1626,6 +1697,8 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
+          "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
           "chipStyles[].borderColor",
@@ -1666,6 +1739,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -1715,8 +1789,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 852,
-        "designElements": 56,
+        "configLeaves": 870,
+        "designElements": 53,
         "directives": [
           ":::callout"
         ],
@@ -1765,6 +1839,7 @@
           "cjk-line-breaking",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -1790,17 +1865,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "3f3b43c3",
-      "vdtHash": "dd517173160c92af6e3a153cb1d707ce17aa1da6",
+      "hash8": "e56e60b3",
+      "vdtHash": "4f688aeb88f893cfeec37c38eb055819dedb49ca",
       "timings": {
-        "importMs": 353,
-        "fontsMs": 158,
-        "buildMs": 101,
-        "totalMs": 1225,
+        "importMs": 5063,
+        "fontsMs": 606,
+        "buildMs": 113,
+        "totalMs": 7421,
         "builds": 1
       },
       "specimen": {
@@ -1822,7 +1903,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -1844,7 +1925,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 56888,
+          "bytes": 57864,
           "alt": "صفحة الافتتاح ٢: قَبْلَ أَنْ نَبْدَأَ."
         },
         {
@@ -1855,7 +1936,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 47782,
+          "bytes": 47960,
           "alt": "صفحة الافتتاح ٣: أَشْكَالُ الحَرْفِ."
         },
         {
@@ -1866,7 +1947,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 47608,
+          "bytes": 47656,
           "alt": "صفحة الافتتاح ٤: النِّقَاطُ."
         },
         {
@@ -1877,7 +1958,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 49606,
+          "bytes": 49158,
           "alt": "صفحة الافتتاح ٥: حُرُوفٌ لَا تَتَّصِلُ بِمَا بَعْدَهَا."
         },
         {
@@ -1888,7 +1969,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 46822,
+          "bytes": 47206,
           "alt": "صفحة الافتتاح ٦: الحَرَكَاتُ."
         },
         {
@@ -1899,7 +1980,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 44840,
+          "bytes": 45496,
           "alt": "صفحة الافتتاح ٧: المُدُودُ."
         },
         {
@@ -1910,7 +1991,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 52476,
+          "bytes": 52348,
           "alt": "صفحة الافتتاح ٨: الشَّدَّةُ وَالتَّنْوِينُ."
         },
         {
@@ -1921,7 +2002,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 52396,
+          "bytes": 52828,
           "alt": "صفحة الافتتاح ٩: الشَّمْسُ وَالقَمَرُ."
         },
         {
@@ -1943,7 +2024,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 40276,
+          "bytes": 39844,
           "alt": "صفحة الافتتاح ١١: أَنْسَخُ جُمَلًا."
         },
         {
@@ -2003,17 +2084,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1066573,
+        "bytes": 1065973,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 870101,
+        "bytes": 870356,
         "chapters": [
           {
             "pages": 12,
-            "hash": "42e4ae04a9e0fef4",
-            "lines": "6a6fb9679a4791b1"
+            "hash": "f8a0a7d3c2ae8901",
+            "lines": "9eec6d3ee3dae24a"
           }
         ]
       },
@@ -2046,6 +2127,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -2055,12 +2137,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -2071,6 +2160,8 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
+          "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
           "chipStyles[].borderColor",
@@ -2111,6 +2202,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -2160,8 +2252,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 651,
-        "designElements": 43,
+        "configLeaves": 696,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -2210,6 +2302,7 @@
           "document-digits",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -2232,17 +2325,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "44990abe",
-      "vdtHash": "5b641a4aef7f08227031008532219c9b64881394",
+      "hash8": "ef3fa224",
+      "vdtHash": "3dec642d767e314ff20b3d66a9fdb10979a29069",
       "timings": {
-        "importMs": 778,
-        "fontsMs": 386,
-        "buildMs": 74,
-        "totalMs": 1848,
+        "importMs": 6800,
+        "fontsMs": 2760,
+        "buildMs": 90,
+        "totalMs": 11801,
         "builds": 1
       },
       "specimen": {
@@ -2263,7 +2362,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -2285,7 +2384,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 42356,
+          "bytes": 42812,
           "alt": "章扉、2ページ：かく まえに。"
         },
         {
@@ -2296,7 +2395,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 46516,
+          "bytes": 46014,
           "alt": "章扉、3ページ：あいうえお。"
         },
         {
@@ -2307,7 +2406,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 50016,
+          "bytes": 49886,
           "alt": "章扉、4ページ：てんてんと まる。"
         },
         {
@@ -2318,7 +2417,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 47406,
+          "bytes": 47134,
           "alt": "章扉、5ページ：ちいさい ゃゅょ。"
         },
         {
@@ -2329,7 +2428,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 47842,
+          "bytes": 46966,
           "alt": "章扉、6ページ：つまる おと のばす おと。"
         },
         {
@@ -2340,7 +2439,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 50840,
+          "bytes": 50544,
           "alt": "章扉、7ページ：「は」「を」「へ」。"
         },
         {
@@ -2351,7 +2450,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 45752,
+          "bytes": 45282,
           "alt": "章扉、8ページ：カタカナ。"
         },
         {
@@ -2362,7 +2461,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 46082,
+          "bytes": 45650,
           "alt": "章扉、9ページ：はじめての かんじ。"
         },
         {
@@ -2384,7 +2483,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 49760,
+          "bytes": 48888,
           "alt": "章扉、11ページ：ぶんを かこう。"
         },
         {
@@ -2443,17 +2542,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1055234,
+        "bytes": 1054914,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 987028,
+        "bytes": 986999,
         "chapters": [
           {
             "pages": 12,
-            "hash": "dd9520bbaa0b5d81",
-            "lines": "dc8f823226532194"
+            "hash": "4c8623914d26ad2d",
+            "lines": "6a2b97159fb3d34d"
           }
         ]
       },
@@ -2486,6 +2585,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -2495,12 +2595,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -2511,6 +2618,8 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
+          "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
           "chipStyles[].borderColor",
@@ -2551,6 +2660,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -2600,8 +2710,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 769,
-        "designElements": 50,
+        "configLeaves": 787,
+        "designElements": 48,
         "directives": [
           ":::callout"
         ],
@@ -2635,6 +2745,7 @@
           "cjk-line-breaking",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -2660,17 +2771,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "580a451b",
-      "vdtHash": "2336155f7ea62f98ad72911cb2a4238f78e998b6",
+      "hash8": "b800b617",
+      "vdtHash": "9b8da1262560d671ba1c97e602ef0eb9f573ccc5",
       "timings": {
-        "importMs": 618,
-        "fontsMs": 373,
-        "buildMs": 77,
-        "totalMs": 1808,
+        "importMs": 5951,
+        "fontsMs": 3296,
+        "buildMs": 90,
+        "totalMs": 12946,
         "builds": 1
       },
       "specimen": {
@@ -2692,7 +2809,7 @@
           "Playwrite BR"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -2714,7 +2831,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 63864,
+          "bytes": 62442,
           "alt": "Página de abertura 2: Antes de começar."
         },
         {
@@ -2725,7 +2842,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62136,
+          "bytes": 62074,
           "alt": "Página de abertura 3: As vogais."
         },
         {
@@ -2736,7 +2853,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 60572,
+          "bytes": 61894,
           "alt": "Página de abertura 4: Sílabas simples."
         },
         {
@@ -2747,7 +2864,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 53978,
+          "bytes": 55286,
           "alt": "Página de abertura 5: O til."
         },
         {
@@ -2758,7 +2875,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 56598,
+          "bytes": 57820,
           "alt": "Página de abertura 6: A cedilha."
         },
         {
@@ -2769,7 +2886,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 59862,
+          "bytes": 60618,
           "alt": "Página de abertura 7: O nh e o lh."
         },
         {
@@ -2780,7 +2897,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 56398,
+          "bytes": 56464,
           "alt": "Página de abertura 8: O ch e o x."
         },
         {
@@ -2791,7 +2908,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 61848,
+          "bytes": 61832,
           "alt": "Página de abertura 9: O rr, o ss e os acentos."
         },
         {
@@ -2813,7 +2930,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 48544,
+          "bytes": 48882,
           "alt": "Página de abertura 11: Copio frases."
         },
         {
@@ -2872,17 +2989,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1200819,
+        "bytes": 1200367,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 991434,
+        "bytes": 991605,
         "chapters": [
           {
             "pages": 12,
-            "hash": "d5b883dca3b1ad1a",
-            "lines": "f389120abb5305e8"
+            "hash": "3fa6e1cfda882fe5",
+            "lines": "cd299dde42f72284"
           }
         ]
       },
@@ -2915,6 +3032,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -2924,12 +3042,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -2940,7 +3065,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -2984,6 +3111,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -3033,8 +3161,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -3084,6 +3212,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -3104,17 +3233,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "fr": {
-      "hash8": "a64f0e43",
-      "vdtHash": "9409da454e4fd1ab2523e8e45ca9cf489a816fea",
+      "hash8": "59c2297e",
+      "vdtHash": "ede6ababf8655265c7dd6b53492726495e3728ce",
       "timings": {
-        "importMs": 618,
-        "fontsMs": 344,
-        "buildMs": 85,
-        "totalMs": 1781,
+        "importMs": 4689,
+        "fontsMs": 2969,
+        "buildMs": 87,
+        "totalMs": 11110,
         "builds": 1
       },
       "specimen": {
@@ -3136,7 +3271,7 @@
           "Playwrite FR Trad"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -3158,7 +3293,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65310,
+          "bytes": 65034,
           "alt": "Page d’ouverture 2 : Avant d’écrire."
         },
         {
@@ -3169,7 +3304,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67416,
+          "bytes": 67138,
           "alt": "Page d’ouverture 3 : Les accents."
         },
         {
@@ -3180,7 +3315,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 63238,
+          "bytes": 62988,
           "alt": "Page d’ouverture 4 : Ou, on et an."
         },
         {
@@ -3191,7 +3326,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 70110,
+          "bytes": 69220,
           "alt": "Page d’ouverture 5 : Les sons ch et gn."
         },
         {
@@ -3202,7 +3337,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 66530,
+          "bytes": 67266,
           "alt": "Page d’ouverture 6 : Le c, le ç et le ge."
         },
         {
@@ -3213,7 +3348,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 60354,
+          "bytes": 60204,
           "alt": "Page d’ouverture 7 : Au et eau."
         },
         {
@@ -3224,7 +3359,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 60760,
+          "bytes": 61834,
           "alt": "Page d’ouverture 8 : Le s et le ss."
         },
         {
@@ -3235,7 +3370,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66234,
+          "bytes": 66282,
           "alt": "Page d’ouverture 9 : Lettres muettes."
         },
         {
@@ -3257,7 +3392,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 50378,
+          "bytes": 50624,
           "alt": "Page d’ouverture 11 : Les phrases."
         },
         {
@@ -3316,17 +3451,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1142157,
+        "bytes": 1141644,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 910630,
+        "bytes": 910815,
         "chapters": [
           {
             "pages": 12,
-            "hash": "eaa6925061858c3e",
-            "lines": "8787314980d585c1"
+            "hash": "ee63b6d4603e3b0a",
+            "lines": "1c37861ddf734f75"
           }
         ]
       },
@@ -3359,6 +3494,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -3368,12 +3504,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -3384,7 +3527,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -3428,6 +3573,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -3477,8 +3623,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -3528,6 +3674,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -3548,17 +3695,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "de": {
-      "hash8": "4d40d5a6",
-      "vdtHash": "971ccd73560a9dbb135363f7c6a53217b2328a13",
+      "hash8": "f13a09b6",
+      "vdtHash": "27b192f487eebcce3f2628c6d686e1e2f040e583",
       "timings": {
-        "importMs": 745,
-        "fontsMs": 200,
-        "buildMs": 88,
-        "totalMs": 1738,
+        "importMs": 5426,
+        "fontsMs": 2946,
+        "buildMs": 80,
+        "totalMs": 10014,
         "builds": 1
       },
       "specimen": {
@@ -3580,7 +3733,7 @@
           "Playwrite DE VA"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -3602,7 +3755,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 69202,
+          "bytes": 69352,
           "alt": "Kapitelauftakt, Seite 2: Schwungübungen."
         },
         {
@@ -3613,7 +3766,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67534,
+          "bytes": 67868,
           "alt": "Kapitelauftakt, Seite 3: Die Selbstlaute."
         },
         {
@@ -3624,7 +3777,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 65256,
+          "bytes": 65666,
           "alt": "Kapitelauftakt, Seite 4: Die Umlaute."
         },
         {
@@ -3635,7 +3788,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 70050,
+          "bytes": 70308,
           "alt": "Kapitelauftakt, Seite 5: sch und ch."
         },
         {
@@ -3646,7 +3799,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 59428,
+          "bytes": 59992,
           "alt": "Kapitelauftakt, Seite 6: ie und ei."
         },
         {
@@ -3657,7 +3810,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 64236,
+          "bytes": 64728,
           "alt": "Kapitelauftakt, Seite 7: eu und äu."
         },
         {
@@ -3668,7 +3821,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 70808,
+          "bytes": 70420,
           "alt": "Kapitelauftakt, Seite 8: ß und ss."
         },
         {
@@ -3679,7 +3832,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 67888,
+          "bytes": 68302,
           "alt": "Kapitelauftakt, Seite 9: ck und tz."
         },
         {
@@ -3701,7 +3854,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 61948,
+          "bytes": 62494,
           "alt": "Kapitelauftakt, Seite 11: Nomen schreibt man groß."
         },
         {
@@ -3760,17 +3913,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1104734,
+        "bytes": 1104199,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 903480,
+        "bytes": 903672,
         "chapters": [
           {
             "pages": 12,
-            "hash": "207502b23e408002",
-            "lines": "4f97adc0ba535cc6"
+            "hash": "cf207b15f11b8b83",
+            "lines": "4ada3fe1c474605d"
           }
         ]
       },
@@ -3803,6 +3956,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -3812,12 +3966,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -3828,7 +3989,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -3872,6 +4035,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -3921,8 +4085,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -3972,6 +4136,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -3992,17 +4157,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "it": {
-      "hash8": "00cfc78b",
-      "vdtHash": "f7077d7ff9819b1788c842b77c45015a3b0fa4a4",
+      "hash8": "b04072bc",
+      "vdtHash": "e766a9ce8c01389f9d4cb1e00d61f815f54a2cb3",
       "timings": {
-        "importMs": 791,
-        "fontsMs": 157,
-        "buildMs": 84,
-        "totalMs": 1700,
+        "importMs": 5876,
+        "fontsMs": 905,
+        "buildMs": 81,
+        "totalMs": 9532,
         "builds": 1
       },
       "specimen": {
@@ -4024,7 +4195,7 @@
           "Playwrite IT Trad"
         ],
         "pages": 12,
-        "ownLines": 295
+        "ownLines": 300
       },
       "pages": [
         {
@@ -4046,7 +4217,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65036,
+          "bytes": 65762,
           "alt": "Pagina d’apertura 2: Prima di cominciare."
         },
         {
@@ -4057,7 +4228,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63660,
+          "bytes": 63358,
           "alt": "Pagina d’apertura 3: Le vocali."
         },
         {
@@ -4068,7 +4239,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 67842,
+          "bytes": 67476,
           "alt": "Pagina d’apertura 4: Le doppie."
         },
         {
@@ -4079,7 +4250,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66882,
+          "bytes": 66110,
           "alt": "Pagina d’apertura 5: Gn e gl."
         },
         {
@@ -4090,7 +4261,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 58694,
+          "bytes": 58980,
           "alt": "Pagina d’apertura 6: Ce e ci, che e chi."
         },
         {
@@ -4101,7 +4272,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 64622,
+          "bytes": 64958,
           "alt": "Pagina d’apertura 7: Ge e gi, ghe e ghi."
         },
         {
@@ -4112,7 +4283,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 62206,
+          "bytes": 63502,
           "alt": "Pagina d’apertura 8: Sc, sce e sci."
         },
         {
@@ -4123,7 +4294,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 62924,
+          "bytes": 62274,
           "alt": "Pagina d’apertura 9: L'acca e l'accento."
         },
         {
@@ -4145,7 +4316,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 46644,
+          "bytes": 46822,
           "alt": "Pagina d’apertura 11: Copio le frasi."
         },
         {
@@ -4204,17 +4375,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1103860,
+        "bytes": 1103326,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 906452,
+        "bytes": 906606,
         "chapters": [
           {
             "pages": 12,
-            "hash": "d0ca279dc57ad48d",
-            "lines": "e6838e69a7861e47"
+            "hash": "c41ffaa68a0852a8",
+            "lines": "5c35622d1cce4a5b"
           }
         ]
       },
@@ -4247,6 +4418,7 @@
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
           "calloutStyles[].body",
           "calloutStyles[].body.boldColor",
           "calloutStyles[].body.color",
@@ -4256,12 +4428,19 @@
           "calloutStyles[].body.italicColor",
           "calloutStyles[].body.lineHeight",
           "calloutStyles[].borderRadius",
+          "calloutStyles[].design",
+          "calloutStyles[].design.minHeight",
+          "calloutStyles[].design.setsContent",
+          "calloutStyles[].design.slot",
           "calloutStyles[].id",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
           "calloutStyles[].padding",
           "calloutStyles[].padding.bottom",
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].snapToGrid",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.color",
           "calloutStyles[].stripe.enabled",
@@ -4272,7 +4451,9 @@
           "calloutStyles[].titleStyle.fontFamily",
           "calloutStyles[].titleStyle.fontSize",
           "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.lineHeight",
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
@@ -4316,6 +4497,7 @@
           "headingStyles[].header",
           "headingStyles[].header.elements",
           "headingStyles[].id",
+          "headingStyles[].sectionEnd",
           "headings",
           "headings.color",
           "headings.fontFamily",
@@ -4365,8 +4547,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 665,
-        "designElements": 43,
+        "configLeaves": 714,
+        "designElements": 42,
         "directives": [
           ":::callout"
         ],
@@ -4416,6 +4598,7 @@
           "chips",
           "heading-attributes",
           "heading-styles",
+          "off-grid-spacing",
           "opener-design",
           "pdf-export",
           "pdf-fonts",
@@ -4436,7 +4619,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

@@ -17,15 +17,15 @@
   "features": {
     "primary": [
       "opener-design",
-      "heading-attributes",
+      "callout-styles",
       "design-images"
     ],
     "also": [
+      "heading-attributes",
       "heading-styles",
       "covers",
       "design-elements",
       "chips",
-      "callout-styles",
       "color-palette",
       "hyphenation-languages",
       "page-role-filters",
@@ -45,8 +45,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.42.1",
-    "postextPdf": "1.42.1"
+    "postext": "1.45.0",
+    "postextPdf": "1.45.0"
   },
   "kit": [
     "core",

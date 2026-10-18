@@ -24,7 +24,7 @@ Doze páginas de um caderno de caligrafia do 1.º ano em A4, em dez edições qu
 
 <Excerpt region="answer" />
 
-Um bloco de treino é um título de nível 3 cujo design desenha uma imagem, a pauta com as cópias pontilhadas, e compõe o modelo por cima como texto na letra escolar. A linha de base de um texto de design cai a 0,8 da sua entrelinha abaixo do topo da caixa, então a caixa do modelo começa 0,8 da entrelinha acima da linha de base da linha de treino, e as letras pousam na linha que a pauta desenha. A entrelinha mede dez alturas de x para que o recorte da caixa caia 2 u abaixo da linha de base, com espaço para a perna do g. O texto do título, *Cubra e escreva*, vira o rótulo do bloco; `w` dá nome à imagem e `model`, à palavra.
+Uma linha de treino é um boxe, e a palavra a treinar é o seu conteúdo: `:::callout{type="palabra" title="Cubra e escreva"}`, depois `pipa` numa linha própria, depois `:::`. Todas as linhas de um mesmo formato compartilham um estilo de boxe e só mudam nas palavras. O `design` do estilo desenha uma imagem, a pauta com as cópias pontilhadas, e compõe a palavra por cima como texto na letra escolar por meio de `{boxText}`; `setsContent` impede que o boxe componha o conteúdo uma segunda vez sob o desenho. A imagem leva o nome da palavra (`trazo-{boxText}`), e o pen desenha uma para cada palavra que encontra nos boxes. A linha de base de um texto de design cai a 0,8 da sua entrelinha abaixo do topo da caixa, então a caixa do modelo começa 0,8 da entrelinha acima da linha de base da linha de treino, e as letras pousam na linha que a pauta desenha. A entrelinha mede dez alturas de x para que o recorte da caixa caia 2 u abaixo da linha de base, com espaço para a perna do g. O título do boxe vira o rótulo da linha. Os títulos de seção ficam para a estrutura do livro: a capa tem o único título de nível 1, cada lição um de nível 2, e `sectionEnd: 'heading'` no estilo da capa encerra seus cabeços em branco na primeira lição.
 
 ### 3 · Desenhe os pontos com os contornos da própria fonte
 
@@ -34,11 +34,11 @@ O Postext compõe uma letra em cor, contornada ou clara, mas não a desenha como
 
 <Excerpt region="squares" />
 
-Um caractere chinês ou um kana tem um quadratim de largura, então um espaçamento entre caracteres igual ao quadrado menos o quadratim põe um caractere em cada quadrado, como num 字帖. O primeiro quadrado da linha traz o caractere em tinta, os três seguintes o mesmo caractere no vermelho-claro do 描红 (cinza na edição japonesa) e o resto fica vazio. Uma frase (`####`) ocupa três linhas: escrita, coberta e vazia, com a pontuação num quadrado só seu. As linhas de pinyin da edição chinesa usam a pauta de quatro linhas das edições latinas com a Andika, cujo a e cujo g de um só bojo são os que as crianças aprendem.
+Um caractere chinês ou um kana tem um quadratim de largura, então um espaçamento entre caracteres igual ao quadrado menos o quadratim põe um caractere em cada quadrado, como num 字帖. O primeiro quadrado da linha traz o caractere em tinta, os três seguintes o mesmo caractere no vermelho-claro do 描红 (cinza na edição japonesa) e o resto fica vazio. Um boxe de linha lista seus quatro caracteres como itens de lista, que o design lê um a um com `{boxText.1}` a `{boxText.4}`. Uma frase (um boxe `frase`) ocupa três linhas: escrita, coberta e vazia, com a pontuação num quadrado só seu. As linhas de pinyin da edição chinesa usam a pauta de quatro linhas das edições latinas com a Andika, cujo a e cujo g de um só bojo são os que as crianças aprendem.
 
 ### 5 · Não espelhe nada para o árabe
 
-A edição árabe compartilha todos os designs com as outras. O motor espelha um design de título posto no fluxo de uma página da direita para a esquerda, então o disco das letras, o modelo e a primeira imagem do dicionário passam sozinhos para a direita. Só as cópias pontilhadas, desenhadas dentro de uma imagem, são postas a partir da borda direita no código, e as ondas do aquecimento correm da direita para a esquerda. `locale: 'ar'` encaderna o livro pela direita.
+A edição árabe compartilha todos os designs com as outras. O motor espelha um design posto no fluxo de uma página da direita para a esquerda, seja o de um título ou o de um boxe, então o disco das letras, o modelo e a primeira imagem do dicionário passam sozinhos para a direita. Só as cópias pontilhadas, desenhadas dentro de uma imagem, são postas a partir da borda direita no código, e as ondas do aquecimento correm da direita para a esquerda. `locale: 'ar'` encaderna o livro pela direita.
 
 ## Variações
 
