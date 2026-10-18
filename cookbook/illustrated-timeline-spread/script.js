@@ -133,6 +133,7 @@ const folio = (id, parity, edge, x) => ({ kind: 'text', id, content: '{pageNumbe
   placement: at('page', edge, x, -10) });
 
 const config = {
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   locale: t({ es: 'es', en: 'en-gb', ja: 'ja' }),
   resourceTypes: [{ id: 'picture', name: t({ es: 'Ilustración', en: 'Illustration',
     ja: 'イラスト' }), shortLabel: '', numberingTemplate: '', resetOn: 'never',

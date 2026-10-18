@@ -134,6 +134,7 @@ const footer = { elements: [{ kind: 'text', id: 'drop-folio', content: '{pageNum
 // #endregion
 
 const config = () => ({
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   locale: 'en-us', // American English hyphenation
   colorPalette, resourceTypes: [photoType],
   page: { width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,

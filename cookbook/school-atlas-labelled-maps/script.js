@@ -135,6 +135,7 @@ const foot = (parity) => {
 const footer = { elements: [...foot('even'), ...foot('odd')] };
 
 const config = {
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   locale: t({ es: 'es', en: 'en-gb', ar: 'ar' }), // written out: Arabic sets the page right to left
   colorPalette, labelStyles, calloutStyles, footer,
   header: { elements: [] },

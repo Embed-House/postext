@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "1ca6c3221bfb57fb1037796c107725a8b1f7bc101d6d44d5ceff50144670d063",
+  "sourceHash": "b950033723746b4d6b0cb4787ae04c1ef3d47844bb9ff3e0b93c296e638aaac4",
   "engine": {
-    "postext": "1.42.0",
-    "postextPdf": "1.42.0",
+    "postext": "1.42.1",
+    "postextPdf": "1.42.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T21:03:59.441Z",
+  "capturedAt": "2026-10-18T09:23:27.291Z",
   "variants": {
     "en": {
-      "hash8": "8ebf9f95",
+      "hash8": "0dbfd973",
       "vdtHash": "31ce1776c1ac1e5206c97118c137a2d42670b81d",
       "timings": {
-        "importMs": 534,
-        "fontsMs": 100,
-        "buildMs": 109,
-        "totalMs": 1460,
+        "importMs": 582,
+        "fontsMs": 86,
+        "buildMs": 123,
+        "totalMs": 1695,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 276
+        "ownLines": 277
       },
       "pages": [
         {
@@ -182,7 +182,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100224,
+        "bytes": 2100251,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -264,6 +264,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.descriptionItalic",
@@ -433,6 +435,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "captionStyle",
           "colorPalette",
           "footer",
@@ -450,7 +453,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 760,
+        "configLeaves": 761,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -545,23 +548,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “The valley is wider and the river slows down. Fa…”, p. 7 −10‰ “The land is almost flat. The river is wide and s…”, p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b6ecd287",
+      "hash8": "c884625f",
       "vdtHash": "f47e204624c2f8ff2e079b2968e90ed1058c5082",
       "timings": {
-        "importMs": 520,
-        "fontsMs": 86,
-        "buildMs": 112,
-        "totalMs": 1492,
+        "importMs": 521,
+        "fontsMs": 99,
+        "buildMs": 121,
+        "totalMs": 1733,
         "builds": 1
       },
       "specimen": {
@@ -582,7 +580,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 276
+        "ownLines": 277
       },
       "pages": [
         {
@@ -726,7 +724,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100056,
+        "bytes": 2100083,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -808,6 +806,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.descriptionItalic",
@@ -977,6 +977,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "captionStyle",
           "colorPalette",
           "footer",
@@ -994,7 +995,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 760,
+        "configLeaves": 761,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1089,23 +1090,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "6 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El valle es más ancho y el río va más despacio. …”, p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "35a4175d",
+      "hash8": "c004aa46",
       "vdtHash": "e13eeaf3d5e0e3718998812e4cfe832dd3fbc524",
       "timings": {
-        "importMs": 534,
-        "fontsMs": 119,
-        "buildMs": 111,
-        "totalMs": 1494,
+        "importMs": 582,
+        "fontsMs": 66,
+        "buildMs": 118,
+        "totalMs": 1670,
         "builds": 1
       },
       "specimen": {
@@ -1126,7 +1122,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 276
+        "ownLines": 277
       },
       "pages": [
         {
@@ -1270,7 +1266,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100129,
+        "bytes": 2100152,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1352,6 +1348,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.descriptionItalic",
@@ -1521,6 +1519,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "captionStyle",
           "colorPalette",
           "footer",
@@ -1538,7 +1537,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 760,
+        "configLeaves": 761,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1633,11 +1632,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El pendent és fort. L’aigua és freda, clara i rà…”, p. 7 −5‰ “La vall és més ampla i el riu va més a poc a poc…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

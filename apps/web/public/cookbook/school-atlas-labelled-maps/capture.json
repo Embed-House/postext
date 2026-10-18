@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "school-atlas-labelled-maps",
-  "sourceHash": "b61eaed057bc6a37f555565046e60c4207c04d81ea9a95d49dc0dd046aaaee97",
+  "sourceHash": "aa0ef19ab17333e5574c10595a044dc3dce81f0d4e0db353a1bb323354a9dc94",
   "engine": {
-    "postext": "1.39.0",
+    "postext": "1.42.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T13:10:24.567Z",
+  "capturedAt": "2026-10-18T09:23:27.281Z",
   "variants": {
     "en": {
-      "hash8": "d082d69c",
+      "hash8": "7ac2057e",
       "vdtHash": "e12cf6ef75e722005563fb44e2b7c70647afe28c",
       "timings": {
-        "importMs": 465,
-        "fontsMs": 121,
-        "buildMs": 84,
-        "totalMs": 1327,
+        "importMs": 422,
+        "fontsMs": 769,
+        "buildMs": 93,
+        "totalMs": 1932,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 234
+        "ownLines": 235
       },
       "pages": [
         {
@@ -113,7 +113,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 610726,
+        "bytes": 610749,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -180,6 +180,8 @@
           "calloutStyles[].titleStyle.fontWeight",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -284,6 +286,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -297,7 +300,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 425,
+        "configLeaves": 426,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -359,23 +362,18 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "fca55ed3",
+      "hash8": "37a79f43",
       "vdtHash": "41c601af07a6e6d1af7aeee330511d38d0f9d44f",
       "timings": {
-        "importMs": 465,
-        "fontsMs": 122,
-        "buildMs": 85,
-        "totalMs": 1321,
+        "importMs": 429,
+        "fontsMs": 763,
+        "buildMs": 91,
+        "totalMs": 1930,
         "builds": 1
       },
       "specimen": {
@@ -396,7 +394,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 234
+        "ownLines": 235
       },
       "pages": [
         {
@@ -472,7 +470,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 610538,
+        "bytes": 610563,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -539,6 +537,8 @@
           "calloutStyles[].titleStyle.fontWeight",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -643,6 +643,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -656,7 +657,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 425,
+        "configLeaves": 426,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -718,23 +719,18 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "918034a4",
+      "hash8": "5a01e8c4",
       "vdtHash": "f52cb4e21b1c634b1a7e23bfcf6c6639789c38b6",
       "timings": {
-        "importMs": 480,
-        "fontsMs": 107,
-        "buildMs": 88,
-        "totalMs": 1344,
+        "importMs": 436,
+        "fontsMs": 755,
+        "buildMs": 86,
+        "totalMs": 1935,
         "builds": 1
       },
       "specimen": {
@@ -755,7 +751,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 4,
-        "ownLines": 234
+        "ownLines": 235
       },
       "pages": [
         {
@@ -832,7 +828,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611783,
+        "bytes": 611808,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -894,6 +890,8 @@
           "calloutStyles[].titleStyle.fontWeight",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -998,6 +996,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -1011,7 +1010,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 420,
+        "configLeaves": 421,
         "designElements": 8,
         "directives": [
           "::::page",
@@ -1081,11 +1080,6 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 29 block, 16 frame, 27 label, 65 line, 3 text"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

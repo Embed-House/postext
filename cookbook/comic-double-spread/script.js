@@ -92,6 +92,7 @@ const foot = (id, content, y, extra) => ({ kind: 'text', id, content, fontFamily
   placement: { anchor: { to: 'page', edge: 'bottom' }, offset: { y: mm(y) } }, ...extra });
 
 const config = () => ({
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   locale: LOCALE,
   colorPalette,
   page: {

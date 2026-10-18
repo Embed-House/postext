@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "illustrated-timeline-spread",
-  "sourceHash": "960db86abdef7f9678bd2cfb613f5f319d5e6973b5d350f89f200ddacc350539",
+  "sourceHash": "8f37078b34e0285846a19eab4ea62c9878033de65a673d5e37223d88755bc8f3",
   "engine": {
-    "postext": "1.38.0",
-    "postextPdf": "1.38.0",
+    "postext": "1.42.1",
+    "postextPdf": "1.42.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T10:24:32.418Z",
+  "capturedAt": "2026-10-18T09:21:29.202Z",
   "variants": {
     "en": {
-      "hash8": "17fb78fe",
+      "hash8": "9a71c194",
       "vdtHash": "fb3a73b64e2b429f88af05d004d869bbe1ac483a",
       "timings": {
-        "importMs": 3793,
-        "fontsMs": 510,
-        "buildMs": 95,
-        "totalMs": 5885,
+        "importMs": 1155,
+        "fontsMs": 618,
+        "buildMs": 80,
+        "totalMs": 2538,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Literata"
         ],
         "pages": 2,
-        "ownLines": 195
+        "ownLines": 196
       },
       "pages": [
         {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977887,
+        "bytes": 977909,
         "folio": "c666e036",
         "chapters": [
           {
@@ -170,6 +170,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -275,6 +277,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -286,7 +289,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 515,
+        "configLeaves": 516,
         "designElements": 17,
         "directives": [
           "::::page",
@@ -376,13 +379,13 @@
       }
     },
     "es": {
-      "hash8": "f06f9b63",
+      "hash8": "90503bcb",
       "vdtHash": "834a27fa2582bfd511301f56ade476d44326f435",
       "timings": {
-        "importMs": 3799,
-        "fontsMs": 507,
-        "buildMs": 101,
-        "totalMs": 5945,
+        "importMs": 1153,
+        "fontsMs": 619,
+        "buildMs": 83,
+        "totalMs": 2535,
         "builds": 1
       },
       "specimen": {
@@ -403,7 +406,7 @@
           "Literata"
         ],
         "pages": 2,
-        "ownLines": 195
+        "ownLines": 196
       },
       "pages": [
         {
@@ -454,7 +457,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 978142,
+        "bytes": 978162,
         "folio": "c666e036",
         "chapters": [
           {
@@ -535,6 +538,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -640,6 +645,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -651,7 +657,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 515,
+        "configLeaves": 516,
         "designElements": 17,
         "directives": [
           "::::page",
@@ -751,13 +757,13 @@
       }
     },
     "ja": {
-      "hash8": "958e81c3",
+      "hash8": "2840ae2f",
       "vdtHash": "2b526de5c932e9bb3be6e0094343b851233d308f",
       "timings": {
-        "importMs": 3760,
-        "fontsMs": 1880,
-        "buildMs": 86,
-        "totalMs": 7152,
+        "importMs": 1153,
+        "fontsMs": 1178,
+        "buildMs": 72,
+        "totalMs": 3058,
         "builds": 1
       },
       "specimen": {
@@ -778,7 +784,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 195
+        "ownLines": 196
       },
       "pages": [
         {
@@ -829,7 +835,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 976317,
+        "bytes": 976340,
         "folio": "c666e036",
         "chapters": [
           {
@@ -910,6 +916,8 @@
           "calloutStyles[].stripe.enabled",
           "calloutStyles[].stripe.side",
           "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "colorPalette",
           "colorPalette[].id",
           "colorPalette[].name",
@@ -1015,6 +1023,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "colorPalette",
           "footer",
           "header",
@@ -1026,7 +1035,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 515,
+        "configLeaves": 516,
         "designElements": 17,
         "directives": [
           "::::page",
