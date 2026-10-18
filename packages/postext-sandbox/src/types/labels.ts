@@ -2741,6 +2741,9 @@ export interface SandboxLabels {
   resourceLabelAnchorsOverlap: string;
   resourceLabelAnchorsOverlapCheck: string;
   resourceLabelAnchorsOverlapAllow: string;
+  resourceLabelAnchorsGutter: string;
+  resourceLabelAnchorsGutterKeep: string;
+  resourceLabelAnchorsGutterCross: string;
   resourceLabelAnchorsSelectShown: string;
   resourceLabelAnchorsSelectClear: string;
   resourceLabelAnchorsSelectRow: string;

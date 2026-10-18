@@ -540,6 +540,11 @@ export interface ResourceAnchor {
    *  printed over each other), so `labelOverlap` is not raised for a pair
    *  it belongs to (#977). Over the style's `overlap`. Default `'check'`. */
   overlap?: 'check' | 'allow';
+  /** On a figure across the spine of a spread (#990): `'keep'` slides the
+   *  label off the binding band, to the side its point lies on, so the fold
+   *  does not cut it; `'cross'` leaves it where the point puts it, a title
+   *  set across both pages. Default `'keep'`. */
+  gutter?: 'keep' | 'cross';
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
