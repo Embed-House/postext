@@ -9,6 +9,7 @@
  */
 
 import type {
+  CanvasViewerConfig,
   ColumnBalancingConfig,
   HeadingLevelConfig,
   HeadingsConfig,
@@ -49,6 +50,7 @@ import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/b
 import { parseFootnoteNumberFormat } from './defaults/footnotes';
 import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics';
 import { resolvePrintConfig } from './defaults/print';
+import { CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig } from './defaults/canvasViewer';
 import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
 import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { resolveContentInConfigCheck } from './defaults/checks';
@@ -220,6 +222,7 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   out.push(...collectComicChoiceWarnings(config));
   out.push(...collectPrintChoiceWarnings(config));
   out.push(...collectContrastChoiceWarnings(config));
+  out.push(...collectCanvasViewerWarnings(config));
   out.push(...collectChecksValueWarnings(config));
   out.push(...collectLineNumbersWarnings(config));
   out.push(...collectWrapWarnings(config));
@@ -409,6 +412,24 @@ function collectPrintChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
+/** The Canvas's gaps (#1002): a whole number of pixels from 0 to 200. One
+ *  written otherwise reads as the nearest such number (or the default, when
+ *  it is no number), and `used` says which. */
+function collectCanvasViewerWarnings(config: PostextConfig): ConfigWarning[] {
+  const c = config.canvasViewer as unknown;
+  if (!c || typeof c !== 'object' || Array.isArray(c)) return [];
+  const raw = c as Record<string, unknown>;
+  const read = resolveCanvasViewerConfig(c as PostextConfig['canvasViewer']);
+  const out: ConfigWarning[] = [];
+  for (const key of ['pageGap', 'rowGap'] as const) {
+    const value = raw[key];
+    if (value === undefined) continue;
+    const ok = typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= CANVAS_VIEWER_MAX_GAP;
+    if (!ok) out.push({ kind: 'unknownConfigValue', path: `canvasViewer.${key}`, value: String(value), used: String(read[key]) });
+  }
+  return out;
+}
+
 /** The contrast check's level and mode (#748): one written otherwise
  *  reads as the default. */
 function collectContrastChoiceWarnings(config: PostextConfig): ConfigWarning[] {
@@ -539,6 +560,9 @@ const TAB_STOP_KEYS = {
   position: true, align: true, leader: true, leaderGap: true, decimalChar: true,
 } satisfies Record<keyof TabStop, true>;
 
+// The Canvas's gaps (#1002).
+const CANVAS_VIEWER_KEYS = { pageGap: true, rowGap: true } satisfies Record<keyof CanvasViewerConfig, true>;
+
 // The checks of the configuration (#849).
 const CHECKS_KEYS = { contentInConfig: true } satisfies Record<keyof ChecksConfig, true>;
 const CONTENT_IN_CONFIG_KEYS = { enabled: true, allow: true, maxWords: true, maxChars: true } satisfies Record<keyof ContentInConfigCheckConfig, true>;
@@ -634,6 +658,7 @@ function collectUnknownKeyWarnings(config: PostextConfig): ConfigWarning[] {
     check(cap.leadIn, DROP_CAP_LEAD_IN_KEYS, `${path}.leadIn`);
   }
   check(config.lineNumbers, LINE_NUMBERS_KEYS, 'lineNumbers');
+  check(config.canvasViewer, CANVAS_VIEWER_KEYS, 'canvasViewer');
   // The checks of the configuration (#849).
   check(config.checks, CHECKS_KEYS, 'checks');
   check(config.checks?.contentInConfig, CONTENT_IN_CONFIG_KEYS, 'checks.contentInConfig');

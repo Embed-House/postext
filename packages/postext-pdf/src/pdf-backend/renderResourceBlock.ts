@@ -27,7 +27,7 @@
  * become clickable link annotations targeting the resource embed's destination.
  */
 
-import { PDFHexString, type Color, type PDFImage, type PDFDocument, type PDFEmbeddedPage, type PDFFont } from 'pdf-lib';
+import { PDFHexString, popGraphicsState, pushGraphicsState, setFillingColor, type Color, type PDFImage, type PDFDocument, type PDFEmbeddedPage, type PDFFont } from 'pdf-lib';
 import type {
   VDTBlock,
   VDTLine,
@@ -97,13 +97,14 @@ import { wordSegments } from './wordPieces';
 import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
 import type { PrintColorMode } from '../print/colorMode';
 import { embedDeviceRaster, embedPrintRaster } from '../print/images';
+import { alphaStencil, tintedDrawing, type AlphaStencil } from './tint';
 
 /** Raw bytes of a resource binary, keyed by `fileId`. */
 export type ResourceBytesProvider = (fileId: string) => Uint8Array | undefined;
 
 /** One embedded resource payload, ready to draw on any page. */
 export type EmbeddedResource =
-  | { kind: 'image'; image: PDFImage }
+  | { kind: 'image'; image: PDFImage; stencil?: AlphaStencil }
   | { kind: 'page'; page: PDFEmbeddedPage }
   | { kind: 'vector'; drawing: VectorDrawing };
 
@@ -407,6 +408,20 @@ export async function preloadResourceImages(
     if (page.floats) blocks.push(...page.floats);
   }
   const placements = largestPlacements(doc, blocks);
+  // Pictures painted in a colour of their own (`VDTDesignImageBlock.tint`,
+  // #995): a bitmap among them also gets the stencil of its alpha.
+  const tintedIds = new Set<string>();
+  for (const block of blocks) for (const b of block.designOverlay?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
+  for (const page of doc.pages) {
+    for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
+      for (const b of slot?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
+    }
+  }
+  /** A raster embedded as `fileId`, with its stencil when the picture is tinted. */
+  const setImage = async (fileId: string, image: PDFImage, data: Uint8Array, format: 'png' | 'jpeg'): Promise<void> => {
+    const stencil = tintedIds.has(fileId) ? await alphaStencil(pdfDoc, data, format) : null;
+    out.set(fileId, { kind: 'image', image, ...(stencil ? { stencil } : {}) });
+  };
   const ds = doc.config.diagramStyle;
   const inkHex = ds?.singleInk
     ? resolveColorValue(ds.inkColor, doc.config.colorPalette, ds.inkColor).hex
@@ -509,20 +524,26 @@ export async function preloadResourceImages(
           ? await inlineSvgFontsForRaster(svgText, wanted, fontProvider)
           : svgText;
         const png = await rasterizeSvg(rasterSvg, (size.w / 72) * RASTER_DPI, (size.h / 72) * RASTER_DPI);
-        if (png) out.set(fileId, { kind: 'image', image: await embedRaster(png, 'png') });
+        if (png) await setImage(fileId, await embedRaster(png, 'png'), png, 'png');
         return;
       }
       let image: PDFImage | null = null;
+      let data = bytes;
+      let dataFormat: 'png' | 'jpeg' = 'png';
       if (fmt === 'jpeg') {
         image = await embedRaster(bytes, 'jpeg');
+        dataFormat = 'jpeg';
       } else if (fmt === 'webp') {
         const png = await webpToPng(bytes);
-        if (png) image = await embedRaster(png, 'png');
+        if (png) {
+          image = await embedRaster(png, 'png');
+          data = png;
+        }
       } else {
         // png / gif-first-frame / unknown all go through embedPng.
         image = await embedRaster(bytes, 'png');
       }
-      if (image) out.set(fileId, { kind: 'image', image });
+      if (image) await setImage(fileId, image, data, dataFormat);
     } catch (err) {
       // Undecodable — leave absent; renderer falls back to a placeholder.
       if (typeof process !== 'undefined' && process.env?.POSTEXT_SVG_DEBUG) console.warn('embed failed:', fileId, (err as Error).message);
@@ -569,6 +590,11 @@ export function drawEmbeddedResource(
   yPx: number,
   wPx: number,
   hPx: number,
+  /** Paint the picture's silhouette in this colour (`#rrggbb`, #995): a
+   *  vector drawing is recoloured, a bitmap goes through the stencil of
+   *  its alpha. A print master (an embedded PDF page) cannot be
+   *  recoloured and is drawn as it is. */
+  tint?: string,
 ): void {
   const { scale, pageHeightPt } = ctx;
   const box = {
@@ -579,9 +605,14 @@ export function drawEmbeddedResource(
   };
   // A picture on a mirrored page reads unmirrored in its box.
   counterFlipPx(ctx, xPx, wPx, () => {
-    if (res.kind === 'image') ctx.page.drawImage(res.image, box);
-    else if (res.kind === 'page') ctx.page.drawPage(res.page, box);
-    else drawVectorDrawing(ctx, res.drawing, xPx, yPx, wPx, hPx);
+    if (res.kind === 'image') {
+      if (tint && res.stencil) {
+        ctx.page.pushOperators(pushGraphicsState(), setFillingColor(colorFromHex(tint, ctx.colorSpace)));
+        ctx.page.drawImage(res.stencil.image, box);
+        ctx.page.pushOperators(popGraphicsState());
+      } else ctx.page.drawImage(res.image, box);
+    } else if (res.kind === 'page') ctx.page.drawPage(res.page, box);
+    else drawVectorDrawing(ctx, tint ? tintedDrawing(res.drawing, tint) : res.drawing, xPx, yPx, wPx, hPx);
   });
 }
 

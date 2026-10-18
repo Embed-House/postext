@@ -1,13 +1,40 @@
 export const SVG_NS = 'http://www.w3.org/2000/svg';
 
+const PAGE_SHADOW = '0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08)';
+const PAGE_RADIUS = '2px';
+/** Room the clip leaves around the shadow on the sides that keep it. */
+const SHADOW_ROOM = '24px';
+
+/** Which page of a pair a canvas is: the one on the left of the joint, the
+ *  one on the right, or a page on its own. */
+export type PairSide = 'left' | 'right' | 'alone';
+
+/** Draw a canvas as one of two pages that touch (`canvasViewer.pageGap` 0):
+ *  the edge at the joint keeps no shadow and no rounded corners, so a picture
+ *  across the spread shows no seam; the other edges keep both. `'alone'`
+ *  gives the page back its shadow and corners all round. */
+export function setPairSide(canvas: HTMLCanvasElement, side: PairSide): void {
+  if (side === 'alone') {
+    canvas.style.borderRadius = PAGE_RADIUS;
+    canvas.style.clipPath = '';
+    return;
+  }
+  const room = SHADOW_ROOM;
+  // inset(top right bottom left): a negative inset leaves the shadow room.
+  canvas.style.clipPath = side === 'left'
+    ? `inset(-${room} 0 -${room} -${room})`
+    : `inset(-${room} -${room} -${room} 0)`;
+  canvas.style.borderRadius = side === 'left' ? `${PAGE_RADIUS} 0 0 ${PAGE_RADIUS}` : `0 ${PAGE_RADIUS} ${PAGE_RADIUS} 0`;
+}
+
 export function createPageCanvas(displayWidth: number, displayHeight: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.width = 1;
   canvas.height = 1;
   canvas.style.width = `${displayWidth}px`;
   canvas.style.height = `${displayHeight}px`;
-  canvas.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08)';
-  canvas.style.borderRadius = '2px';
+  canvas.style.boxShadow = PAGE_SHADOW;
+  canvas.style.borderRadius = PAGE_RADIUS;
   canvas.style.backgroundColor = '#ffffff';
   return canvas;
 }

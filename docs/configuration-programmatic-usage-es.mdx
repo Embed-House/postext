@@ -280,6 +280,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>El flotante queda en la página de apertura; <code>'avoid'</code> lo lleva al primer hueco después de ella.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>Un título de columna (<code>span: 'column'</code>) cuyo diseño reserva toda su columna, de modo que el texto que sigue empieza en la columna o la página siguiente (<code>level</code>, <code>element</code>: el elemento del diseño que llega más abajo, ausente cuando <code>minHeight</code> fija la altura). Uno por título; señala el título, con su página. Una apertura de página completa, un título en una página de una sola columna y un título seguido de un salto explícito no se avisan. Desde postext 1.43.</td>
+      <td>El texto que sigue al título empieza en la columna o la página siguiente. Lo resuelven <code>reserve: false</code> en el elemento, un <code>minHeight</code> menor o <code>span: 'page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Una cara con la que se compuso el texto (<code>family</code>, <code>weight</code>, <code>style</code>) que el conjunto de fuentes no podía dar cuando se ejecutó el build: <code>reason: 'missing'</code>, no había cargada ni instalada ninguna cara de la familia, o la que responde a ese peso y esa inclinación aún no se había cargado; <code>'synthesized'</code>, la familia no tiene cara de ese peso o esa inclinación y el navegador la saca de otra, tal cual o engrosada o inclinada (una 600 compuesta con la 700, una cursiva 700 pedida a una familia que solo tiene una redonda 400). Se comprueba donde hay un conjunto de fuentes (<code>document.fonts</code>, el <code>self.fonts</code> de un worker o <code>BuildDocumentOptions.fontSet</code>), bajo <code>debug.warnings.missingFont</code>. No lleva página ni rango de origen.</td>
       <td>El texto se mide y se dibuja con la fuente de reserva, o con otra cara de la familia, tal cual o engrosada o inclinada; sus cortes de línea cambian cuando llega la cara. Ver <a href="#cargar-las-fuentes-antes-de-componer">Cargar las fuentes antes de componer</a>.</td>

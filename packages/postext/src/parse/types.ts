@@ -690,6 +690,11 @@ export interface TocBlockInfo {
   /** A part row's title and palette overrides. */
   title?: string;
   palette?: Record<string, string>;
+  /** A part row that opens a page of the contents of its own
+   *  (`toc.parts.breakBefore`, every part but the first, #996). The running
+   *  text takes the break from the `:::pagebreak` row before it; a box,
+   *  which ignores directives, cuts there when it can go on. */
+  breakBefore?: true;
   /** The block of the contents this row belongs to, when the contents
    *  keeps its blocks together (`toc.groups`, `:::toc{keep}`, #850). */
   group?: TocGroupInfo;

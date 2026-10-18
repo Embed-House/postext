@@ -323,6 +323,21 @@ embeds them with `::resource{id="…"}` (placement `here`).
   deliver both bundles with the warning that only the one with its faces is
   checked. `preset_kit.py pack --fallback "Adobe Garamond Pro=EB Garamond"`
   writes the entry; record the choice and the measured ratio in the port notes.
+- The stand-in travels in exports (postext ≥ 1.43). A family with
+  `"redistributable": false` and a `fallback` is no longer left to the reading
+  system in an EPUB or HTML export: the Sandbox and `postext epub` /
+  `postext html` embed the fallback's faces (the weights and slants the book
+  uses) under the licensed family's name, and so do the SVG pictures whose text
+  is set in that family. The family's own files never leave the book. A
+  family without a `fallback`, or whose fallback has no file, is named without
+  files as before. A fallback that is itself a family the bundle carries is
+  used from the bundle's own files first; one that only Google's style sheet
+  serves (not Fontsource) works in the Sandbox PDF and in SVG pictures too.
+  Because the fallback now travels, it must be open (OFL, Apache or similar):
+  `lint_project.py` errors when it names a family of the same manifest marked
+  `redistributable: false`, and `pack` should offer one by measured width
+  (above), never by name. EPUBCheck sees the stand-in faces as ordinary font
+  items named after the licensed family.
 - `redistributable: false`: rendering and PDF embedding work, but a `.postext`
   export leaves the files out (licensed faces). Subset them (`fonts.py subset`). A bundle that names
   font files it does not carry imports into the Sandbox with the family reported as unknown (postext

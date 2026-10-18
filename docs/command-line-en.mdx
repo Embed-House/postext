@@ -193,7 +193,7 @@ holds the pictures, the fonts and self-hosted videos. `--assets embed|folder`
 chooses either way for any path. The pages are the print layout, shown at
 screen size: side by side (`--mode multi`, the default) or one under another
 (`--mode single`). Fonts marked `redistributable: false` are named but not
-copied.
+copied. When the family names a `fallback`, the faces of that open family are written instead, under the family's name (since postext 1.43).
 
 ### epub
 
@@ -207,7 +207,7 @@ text; `--layout reflowable` lets the reading system set the text again for its
 screen (see [EPUB books](/en/docs/configuration-html-folio-epub#epub-books-postext-epub)). The
 cover is the book's thumbnail unless `--cover` gives a picture. The package
 metadata (title, authors, language, identifier) comes from the first chapter's
-front matter, as in the Sandbox.
+front matter, as in the Sandbox. Fonts marked `redistributable: false` are not copied; a family that names a `fallback` is embedded in that open family's faces under its own name (since postext 1.43).
 
 ### image and images
 

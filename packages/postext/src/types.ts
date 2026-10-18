@@ -540,6 +540,11 @@ export interface ResourceAnchor {
    *  printed over each other), so `labelOverlap` is not raised for a pair
    *  it belongs to (#977). Over the style's `overlap`. Default `'check'`. */
   overlap?: 'check' | 'allow';
+  /** On a figure across the spine of a spread (#990): `'keep'` slides the
+   *  label off the binding band, to the side its point lies on, so the fold
+   *  does not cut it; `'cross'` leaves it where the point puts it, a title
+   *  set across both pages. Default `'keep'`. */
+  gutter?: 'keep' | 'cross';
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -3303,8 +3308,11 @@ export interface CalloutLabelConfig {
    *  `gap` away from them: the tab is as wide as the picture, the gap, the
    *  words and the padding, the picture as tall as the tab at most. The
    *  picture keeps the colours it has, so a white ring on a coloured tab
-   *  and a coloured ring on a white one are two resources, one to a style. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement };
+   *  and a coloured ring on a white one are two resources, one to a style;
+   *  with `tint` (#995) it is painted in the label's `color` instead (its
+   *  silhouette, in the colour of the words), so one ring serves every
+   *  tint of a book. */
+  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement; tint?: boolean };
   /** A rule along the box's top edge from the far corner to the tab (or
    *  its icon). */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
@@ -3666,7 +3674,7 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement };
+    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement; tint: boolean };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
   };
   columnGap: Dimension;
@@ -4767,6 +4775,24 @@ export interface ResolvedHtmlViewerConfig {
   optimalLineBreaking: boolean;
   /** Carried through unchanged; absent when the config sets none. */
   overrides?: HtmlViewerOverrides;
+}
+
+/** How the Sandbox's Canvas lays the pages out on screen (#1002). Screen
+ *  pixels at any zoom: the frame around the pages belongs to the viewer, not
+ *  to the book, so changing it never lays the book out again. */
+export interface CanvasViewerConfig {
+  /** Space between the left and right page of a pair, in screen pixels
+   *  (a whole number from 0 to 200). With 0 the two pages touch, so a
+   *  picture or a design across a spread reads as one. Default 24. */
+  pageGap?: number;
+  /** Space between one row of pages and the next, in screen pixels (a
+   *  whole number from 0 to 200). Default 24. */
+  rowGap?: number;
+}
+
+export interface ResolvedCanvasViewerConfig {
+  pageGap: number;
+  rowGap: number;
 }
 
 /** A paper stock as the trade sells it (see {@link FolioPaperConfig.type}). */
@@ -7720,6 +7746,11 @@ export interface PostextConfig {
   debug?: DebugConfig;
 
   htmlViewer?: HtmlViewerConfig;
+
+  /** The space between the pages in the Sandbox's Canvas (#1002): between
+   *  the two pages of a pair, and between one row and the next. A viewer
+   *  setting, like {@link htmlViewer}: it never changes a page. */
+  canvasViewer?: CanvasViewerConfig;
 
   /** The 3D book viewer (`postext-folio`): paper, binding, surface, light. */
   folio?: FolioConfig;

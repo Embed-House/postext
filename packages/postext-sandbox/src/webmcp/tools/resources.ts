@@ -36,6 +36,7 @@ import { FILE_PARAM, readFileInput, type FileInput } from '../fileInput';
 import { dispatchAndWait, type SandboxToolHost } from '../host';
 import { ToolError, type JsonSchema, type WebMcpTool } from '../modelContext';
 import { MARKS_SCHEMA, withMarks, type MarksInput } from '../resourceMarks';
+import { addZones, readSvgSymbols } from '../../panels/resources/svgSymbols';
 import { configPathsNaming, renameResourceInResources, renameResourceInText } from '../resourceRefs';
 import { TABLE_SCHEMA, buildTable, hasTableContent, type TableInput } from '../resourceTable';
 import { VIDEO_SCHEMA, withVideoEdits, type VideoInput } from '../resourceVideo';
@@ -382,7 +383,23 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
       }
 
       if (args.marks !== undefined) {
-        const marked = withMarks(base, args.marks as MarksInput, (s.config.labelStyles ?? []).map((l) => l.id));
+        const input = args.marks as MarksInput;
+        if (input.svgSymbols !== undefined) {
+          // The drawing's own symbols become avoid zones, added to those the
+          // call gives or the picture has (#994).
+          const symbols = input.svgSymbols;
+          if (base.kind !== 'svg' || !base.svg) throw new ToolError(`svgSymbols is an SVG's; ${JSON.stringify(base.id)} is a ${base.kind}.`);
+          if (!symbols.idPrefix?.trim() && !symbols.className?.trim()) throw new ToolError('svgSymbols names the symbols by idPrefix or className.');
+          const record = await getBlob(base.svg.fileId).catch(() => null);
+          const found = record ? readSvgSymbols(new TextDecoder().decode(record.bytes), { idPrefix: symbols.idPrefix?.trim(), className: symbols.className?.trim() }) : undefined;
+          if (!found) throw new ToolError('The drawing could not be measured here (it is not an SVG with a size, or this page has no document).');
+          const merged = addZones(input.avoid ?? base.avoid ?? [], found);
+          notes.push(merged.added > 0 ? `${merged.added} avoid zone${merged.added === 1 ? '' : 's'} added over the drawing's symbols.` : 'No element of the drawing matched that is not covered by a zone already.');
+          input.avoid = merged.zones;
+        }
+        const { svgSymbols: _symbols, ...marksInput } = input;
+        void _symbols;
+        const marked = withMarks(base, marksInput, (s.config.labelStyles ?? []).map((l) => l.id));
         base = marked.resource;
         notes.push(...marked.notes);
       }

@@ -123,7 +123,7 @@ Un cop declarada la família, cada selector de font l'agrupa sota **Custom**, pe
 
 ### Una família de substitució per a una de llicenciada
 
-Un llibre pot composar-se en una lletra que el seu propietari no pot lliurar. Marca la família amb `redistributable: false` i un fitxer `.postext` en deixa fora els fitxers. Si a `fallback` anomenes una família oberta d'amplada semblant, el fitxer que s'obre sense ells talla les línies a prop d'on les talla la lletra real, en lloc de desbordar els marcs amb una font de reserva més ampla. Les cares de les quals la família no té fitxer es componen amb els talls del `fallback` del mateix pes i inclinació, amb el nom de la llicenciada, a les vistes prèvies, al worker de maquetació, al PDF i a la línia d'ordres. Una família amb fitxers els conserva i només pren del `fallback` la inclinació de què no en té cap, una cursiva per exemple; els pesos intermedis entre els seus fitxers s'escullen com en qualsevol família. Al tauler Fonts, **Família de substitució** (dins de la família, sobre els seus fitxers) rep el nom; buit, la família queda com estava. El PDF d'un llibre compost així incrusta la cara oberta, de manera que el PDF final es fa amb els fitxers llicenciats. Des de postext 1.42.
+Un llibre pot composar-se en una lletra que el seu propietari no pot lliurar. Marca la família amb `redistributable: false` i un fitxer `.postext` en deixa fora els fitxers. Si a `fallback` anomenes una família oberta d'amplada semblant, el fitxer que s'obre sense ells talla les línies a prop d'on les talla la lletra real, en lloc de desbordar els marcs amb una font de reserva més ampla. Les cares de les quals la família no té fitxer es componen amb els talls del `fallback` del mateix pes i inclinació, amb el nom de la llicenciada, a les vistes prèvies, al worker de maquetació, al PDF i a la línia d'ordres. Una família amb fitxers els conserva i només pren del `fallback` la inclinació de què no en té cap, una cursiva per exemple; els pesos intermedis entre els seus fitxers s'escullen com en qualsevol família. Al tauler Fonts, **Família de substitució** (dins de la família, sobre els seus fitxers) rep el nom; buit, la família queda com estava. El PDF d'un llibre compost així incrusta la cara oberta, de manera que el PDF final es fa amb els fitxers llicenciats. Des de postext 1.42. Des de postext 1.43 la família oberta també va allà on la llicenciada no pot: un EPUB o una exportació HTML, des del Sandbox o des de `postext`, porta les cares de la substituta amb el nom de la família llicenciada, igual que les imatges SVG el text de les quals és en aquella família, de manera que el lector compon el llibre amb una cara de l'amplada per a la qual es van tallar les línies. Els fitxers propis de la família no surten mai del llibre. Una família sense `fallback`, o amb una substituta que no té fitxer, es nomena sense fitxers com abans; la pestanya EPUB del Sandbox llista les famílies compostes amb una substituta.
 
 ### Comportament de renderització
 
@@ -313,6 +313,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 ```
 
 Consulta [Integrar el visor HTML](/ca/docs/configuration-html-folio-epub#integrar-el-visor-html) més avall per veure'n un exemple complet.
+
+
+
+## Visor Canvas
+
+La propietat `canvasViewer` fixa l'espai entre les pàgines a la pestanya Canvas del Sandbox (des de postext 1.43). Pertany al visor, no al llibre: els valors són píxels de pantalla a qualsevol zoom, i canviar-los mou les pàgines en pantalla sense tornar a compondre el llibre, de manera que la paginació, les composicions desades i el PDF no canvien. El PDF, el visor HTML i les altres sortides l'ignoren. Un llibre amb imatges a doble pàgina usa `pageGap: 0`.
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espai, en píxels de pantalla, entre la pàgina esquerra i la dreta d'un parell a la vista de doble pàgina. Un enter de 0 a 200. Amb <code>0</code> les dues pàgines es toquen i el Canvas no dibuixa ombra ni cantonades arrodonides a la unió, de manera que una imatge o un disseny a doble pàgina es llegeix com un de sol. La vista de pàgina única no té parells.</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espai, en píxels de pantalla, entre una fila de pàgines i la següent, a les dues vistes. Un enter de 0 a 200.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // Una imatge travessa la doble pàgina: es mostren les dues pàgines unides.
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+Un valor que no sigui un enter de 0 a 200 es llegeix com l'enter més proper d'aquest rang, o com `24` si no és un número, i s'avisa com a valor d'ajust desconegut (`canvasViewer.pageGap`). El Sandbox té els dos camps a **Disseny › Exportació › Canvas (espai entre pàgines)**.
 
 
 ## Generació de PDF (configuració)
@@ -1348,7 +1409,7 @@ Aquests errors de la configuració mateixa no passen mai en silenci, i cap inter
 - **Nombre de columnes fora de rang**: un `columnCount` d'una disposició `'multiple'` (la del document, o el `layout` propi d'un estil d'encapçalament) que no és un nombre enter de 3 a 8. La pàgina es divideix en el nombre vàlid més proper (3 si el valor no és un nombre), i `used` l'indica (`columnCountClamped`; vegeu la [disposició `'multiple'`](/ca/docs/configuration-page-layout#tipus-de-disposició)).
 - **Retícula de caràcters massa gran**: un `cjk.grid` amb més caràcters per línia o més línies per pàgina dels que caben entre els marges. La retícula es compon amb els que hi caben, i `used` n'indica el nombre (`cjkGridClamped`; vegeu [Retícula de caràcters](/ca/docs/configuration-east-asian#retícula-de-caràcters)).
 - **Ajust d'encapçalament desconegut**: una clau que no existeix a `headings`, `headings.balancing`, un nivell d'encapçalament, un estil d'encapçalament o un estil de paràgraf: un `letterSpacng` mal escrit, un `tracking` pres d'una altra eina, un `level` en un estil d'encapçalament, un `fontStyle: 'italic'` en un estil de paràgraf (que porta `italic: true`). Una tabulació es comprova igual (un `leaders` per `leader`). El motor la ignora (fins a postext 1.4 ho feia sense dir res). `value` és la clau, `used` va buit i `suggestion` anomena l'ajust al qual s'assembla més, quan en dista una o dues lletres o només canvia en majúscules (`unknownConfigKey`).
-- **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`.
+- **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`. `canvasViewer.pageGap` i `canvasViewer.rowGap` es comproven igual: `used` és l'enter de 0 a 200 amb què es va llegir el valor (des de postext 1.43).
 - **Números de línia en text vertical**: `lineNumbers.enabled: true` en un document compost en vertical (`layout.writingMode: 'vertical-rl'`). Les pàgines verticals no porten números de línia, i `used` és `false` (`lineNumbersUnsupported`; vegeu [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
 - **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format-resources#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
 - **Estil de requadre basat en un altre** — un estil d'avís l'`extends` del qual no anomena cap estil de `calloutStyles` (`calloutStyleExtendsUnknown`, amb l'id més semblant a `suggestion`), o la cadena d'`extends` del qual hi torna (`calloutStyleExtendsCycle`, `value` el bucle `a → b → a`). L'estil queda sol, amb els valors de sèrie en el que no fixa (vegeu [Estils basats en un altre](/ca/docs/configuration-callouts#estils-basats-en-un-altre)).

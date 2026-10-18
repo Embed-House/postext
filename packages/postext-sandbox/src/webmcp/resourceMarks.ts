@@ -23,6 +23,8 @@ export interface MarksInput {
   anchors?: ResourceAnchor[] | null;
   avoid?: ResourceSafeArea[] | null;
   faces?: ResourceSafeArea[] | null;
+  /** An SVG's own symbols (#994): the elements named by an id prefix or a class get an avoid zone each, added to the zones the picture has. */
+  svgSymbols?: { idPrefix?: string; className?: string };
 }
 
 const RECT_SCHEMA: JsonSchema = {
@@ -61,12 +63,19 @@ export const MARKS_SCHEMA: JsonSchema = {
           width: { type: 'number', description: 'The label\'s measure as a fraction of the picture\'s width (0 to 1; of its height for a vertical label); the label wraps within it. Unset: its natural width.' },
           writingMode: { type: 'string', enum: ['horizontal-tb', 'vertical-rl'], description: 'vertical-rl sets the label in vertical writing, characters upright in columns from right to left (default horizontal-tb).' },
           overlap: { type: 'string', enum: ['check', 'allow'], description: 'allow leaves the label set here out of the labelOverlap check: the source prints it touching its neighbours (a dense map). Default check.' },
+          gutter: { type: 'string', enum: ['keep', 'cross'], description: 'On a figure across the spine of a spread: keep slides the label off the binding band, to the side its point lies on (default); cross leaves it where the point puts it, a title set across both pages.' },
         },
         required: ['id', 'x', 'y'],
         additionalProperties: false,
       },
     },
     avoid: { type: ['array', 'null'], description: 'Zones of a comic panel\'s picture the balloons keep clear of (a hand, a key object).', items: RECT_SCHEMA },
+    svgSymbols: {
+      type: 'object',
+      description: 'For an SVG map: add an avoid zone over each element of the drawing named by idPrefix (its id starts with it) or className (its class list holds it) — the dots and icons labels should keep clear of. The zones already there stay; ones that cover an old zone are not added twice. Measured in the browser, as the marks dialog does.',
+      properties: { idPrefix: { type: 'string' }, className: { type: 'string' } },
+      additionalProperties: false,
+    },
     faces: { type: ['array', 'null'], description: 'The faces of people in a comic panel\'s picture who do not speak: no balloon covers them.', items: RECT_SCHEMA },
   },
   additionalProperties: false,
@@ -76,6 +85,7 @@ const ALIGNS = new Set(['start', 'center', 'end']);
 const VERTICAL_ALIGNS = new Set(['top', 'middle', 'bottom']);
 const WRITING_MODES = new Set(['horizontal-tb', 'vertical-rl']);
 const OVERLAPS = new Set(['check', 'allow']);
+const GUTTERS = new Set(['keep', 'cross']);
 
 /** Why the label fields of `a` cannot be stored, if they cannot. */
 function labelFieldProblem(a: ResourceAnchor): string | undefined {
@@ -84,6 +94,7 @@ function labelFieldProblem(a: ResourceAnchor): string | undefined {
   if (a.rotate !== undefined && !Number.isFinite(a.rotate)) return 'rotate is a number of degrees';
   if (a.writingMode !== undefined && !WRITING_MODES.has(a.writingMode)) return 'writingMode is horizontal-tb or vertical-rl';
   if (a.overlap !== undefined && !OVERLAPS.has(a.overlap)) return 'overlap is check or allow';
+  if (a.gutter !== undefined && !GUTTERS.has(a.gutter)) return 'gutter is keep or cross';
   if (a.width !== undefined && !(Number.isFinite(a.width) && a.width > 0 && a.width <= 1)) return 'width is a fraction of the picture\'s width, above 0 and up to 1';
   if (a.style !== undefined && (typeof a.style !== 'string' || !a.style.trim())) return 'style is a label style id';
   return undefined;

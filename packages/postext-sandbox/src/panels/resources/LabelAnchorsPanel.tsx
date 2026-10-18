@@ -402,6 +402,20 @@ function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, p
           ]}
         />
       </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span id={`${uid}-gutter`} className="w-24 shrink-0 text-(--slate)">{labels.resourceLabelAnchorsGutter}</span>
+        <SegmentedControl<'keep' | 'cross'>
+          size="sm"
+          value={a.gutter ?? 'keep'}
+          onValueChange={(v) => set({ gutter: v })}
+          ariaLabel={labels.resourceLabelAnchorsGutter}
+          ariaLabelledBy={`${uid}-gutter`}
+          options={[
+            { value: 'keep', label: labels.resourceLabelAnchorsGutterKeep },
+            { value: 'cross', label: labels.resourceLabelAnchorsGutterCross },
+          ]}
+        />
+      </div>
       {/* Typing a number is one step of Undo, recorded at its first change. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" onFocusCapture={() => beginEdit(i)}>
         <span className="inline-flex items-center gap-2">
@@ -498,6 +512,7 @@ function TickedFields({ marks, ticked, styleOptions, commit }: TickedFieldsProps
   const vertical = sharedField(marks.anchors, ticked, 'verticalAlign', 'middle');
   const writing = sharedField(marks.anchors, ticked, 'writingMode', 'horizontal-tb');
   const overlap = sharedField(marks.anchors, ticked, 'overlap', 'check');
+  const gutter = sharedField(marks.anchors, ticked, 'gutter', 'keep');
   const options = style?.mixed ? [{ value: MIXED, label: labels.resourceLabelAnchorsMixed }, ...styleOptions] : styleOptions;
   return (
     <section aria-labelledby={`${uid}-title`} className="flex flex-col gap-1.5 rounded-md border p-2 text-xs" style={{ borderColor: 'var(--brand)' }}>
@@ -553,6 +568,16 @@ function TickedFields({ marks, ticked, styleOptions, commit }: TickedFieldsProps
         options={[
           { value: 'check', label: labels.resourceLabelAnchorsOverlapCheck },
           { value: 'allow', label: labels.resourceLabelAnchorsOverlapAllow },
+        ]}
+      />
+      <BulkChoice<'keep' | 'cross'>
+        labelId={`${uid}-gutter`}
+        label={labels.resourceLabelAnchorsGutter}
+        current={gutter?.mixed ? undefined : (gutter?.value as 'keep' | 'cross' | undefined)}
+        onPick={(v) => set({ gutter: v })}
+        options={[
+          { value: 'keep', label: labels.resourceLabelAnchorsGutterKeep },
+          { value: 'cross', label: labels.resourceLabelAnchorsGutterCross },
         ]}
       />
     </section>

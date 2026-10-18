@@ -6,7 +6,8 @@ reading order (references/composed-pages.md, round 2).
 
   pdf_regions.py extract SOURCE.pdf --pages 4-28 --out DIR [--lang es]
         [--fonts DIR] [--font-map map.json] [--dpi 300] [--ground-dpi 150]
-        [--highlights mark|chip] [--fit 0.9] [--wrap-slack 3] [--chapter pages] [--json]
+        [--highlights mark|chip] [--fit 0.9] [--wrap-slack 3] [--chapter pages]
+        [--name-frames auto|always|never] [--json]
   pdf_regions.py manifest DIR [--fonts DIR] [--id ID] [--name NAME]
         Writes DIR/preset.json, a draft project that opens and builds as it
         is (page size from the PDF, the library, the chapters, the
@@ -50,6 +51,12 @@ What it writes in DIR:
 - `chapters/<lang>/01-<chapter>.md`: the page fences in page order;
 - `figures.json`: every figure's labels, for `anchors.py relabel` to
   write other editions' `::label` lines from a strings file;
+- Frame names: by kind and order on the page (`box-4`, `picture-7`), which
+  `template_dedupe.py` compares across pages and then renames by role. A run
+  of one page has nothing to merge, so `--name-frames auto` names it by role
+  here (`picture-in-box`, `caption-of-picture`; a box is `box`, `box-2` until
+  the callout styles are merged); `always` does it for several pages,
+  `never` keeps the positions.
 - `regions.json`: what was measured on every page (frames, boxes, tabs,
   pictures, labels, hidden text) and `report.json`.
 
@@ -2001,6 +2008,37 @@ def parse_pages(spec: str, n: int) -> list[int]:
     return [p for p in out if 1 <= p <= n]
 
 
+def name_frames_by_role(args: argparse.Namespace, doc: fitz.Document, built: list[dict], library: dict,
+                        figures: list[dict]) -> list[dict]:
+    """Rename every frame of the draft from its position on its page
+    (`box-4`) to its role (#998), with `template_dedupe.name_frames`: in the
+    templates, the page Markdown, the figure list, the regions and the
+    overlays. The callout styles are still the positional `box-1` here, so a
+    box says only `box` and its order; dedupe, which merges them, names it
+    after its style. Returns the rename report."""
+    new_templates, maps, report = td.name_frames(library["pageTemplates"], library.get("calloutStyles") or [])
+    library["pageTemplates"] = new_templates
+    slots: dict[str, str] = {}
+    for page in built:
+        names = maps.get(page["template"]["id"], {})
+        for f in page["frames"]:
+            if f.kind == "figure" and f.resource:
+                slots[f.resource["id"]] = names.get(f.name, f.name)
+            f.name = names.get(f.name, f.name)
+        page["md"] = td.rewrite_markdown(page["md"], {}, {}, {}, {page["template"]["id"]: names})
+        for fr in page["regions"]["frames"]:
+            fr["name"] = names.get(fr["name"], fr["name"])
+            if fr["parent"]:
+                fr["parent"] = names.get(fr["parent"], fr["parent"])
+        if args.overlay:
+            pno = page["regions"]["page"] - 1
+            write_overlay(args.source, pno, trim_origin(doc[pno]), page["frames"],
+                          Path(args.out) / "overlay" / f"p{pno + 1:02d}.png")
+    for fig in figures:
+        fig["slot"] = slots.get(fig["resource"], fig["slot"])
+    return report
+
+
 def cmd_extract(args: argparse.Namespace) -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -2117,6 +2155,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
         library["markStyles" if args.highlights == "mark" else "chipStyles"] = ms
     library["suggested"] = suggested_config(caches, pages, body, head_sizes, level_of, doc)
     library = {k: v for k, v in library.items() if v}
+    # frame names by role: by request, and for a run of one page, which dedupe has nothing to merge in
+    frame_names: list[dict] = []
+    if args.name_frames == "always" or (args.name_frames == "auto" and len(built) == 1):
+        frame_names = name_frames_by_role(args, doc, built, library, figures)
 
     (out / "library.json").write_text(json.dumps(library, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (out / "resources.json").write_text(json.dumps(resources, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -2139,6 +2181,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
         "bodySize": body, "headingSizes": head_sizes,
+        "frameNames": frame_names,
     }
     (out / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if args.json:
@@ -2287,6 +2330,10 @@ def main(argv: list[str] | None = None) -> int:
                    help="per cent a box's text measure gets beyond its longest source line, at most 4 mm, so that a "
                         "face a little wider than the source's tracked text does not break the lines one word "
                         "earlier (default 3; 0 keeps the source's measure)")
+    p.add_argument("--name-frames", choices=("auto", "always", "never"), default="auto",
+                   help="name the frames by role (`picture-in-box`) instead of by position (`picture-1`): auto does it "
+                        "for a run of one page, which template_dedupe.py has nothing to merge in; several pages keep "
+                        "the positions that dedupe compares and names them itself")
     p.add_argument("--no-merge-labels", action="store_true", help="one label per line on pictures")
     p.add_argument("--check-overlap", action="store_true",
                    help="leave labelOverlap on for names the source prints touching (default: overlap \"allow\" on their anchors)")

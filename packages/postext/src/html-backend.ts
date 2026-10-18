@@ -248,6 +248,9 @@ export interface RenderHtmlOptions {
     fonts?: SvgFontSyncProvider;
     maxBytes?: number;
     withhold?: (family: string) => boolean;
+    /** The open family set under the name of a family `withhold` names
+     *  (#993): see `InlineSvgFontsOptions.standIn`. */
+    standIn?: (family: string) => string | undefined;
   };
 }
 
@@ -264,6 +267,10 @@ interface InkFilter {
  *  emitted as placeholders on the page in progress. */
 interface HtmlPaint extends RenderHtmlOptions {
   ink?: InkFilter;
+  /** The pictures of the page in progress painted in a colour of their own
+   *  (`VDTDesignImageBlock.tint`, #995): colour → the id of the `<filter>`
+   *  the page defines for it, filled in as they are rendered. */
+  tints?: { page: number; filters: Map<string, string> };
   missingImage?: (fileId: string, resourceId?: string) => void;
   /** The URL as served, SVG data URIs with their fonts inlined
    *  ({@link RenderHtmlOptions.inlineSvgFonts}). */
@@ -645,13 +652,38 @@ function inkFilterDecl(paint: HtmlPaint, svg: boolean | undefined, url: string):
   return `filter:url(#${ink.id});`;
 }
 
-/** The page's `<filter>` definition: a zero-size inline SVG, first in the
- *  page so every `url(#…)` on it resolves. */
-function inkFilterDefs(ink: InkFilter): string {
-  const values = ink.matrix.map((v) => +v.toFixed(6)).join(' ');
+/** The `filter` declaration painting an image's silhouette in `tint` (#995):
+ *  a flood of the colour kept where the picture has alpha, defined once per
+ *  page and colour (see {@link tintFilterDefs}). A reading system without
+ *  CSS filters shows the picture in its own colours. Empty when the colour
+ *  is not a `#rrggbb` one. */
+function tintFilterDecl(paint: HtmlPaint, tint: string | undefined): string {
+  if (!tint || !paint.tints || !/^#[0-9a-f]{6}$/i.test(tint)) return '';
+  const hex = tint.toLowerCase();
+  let id = paint.tints.filters.get(hex);
+  if (!id) {
+    id = `pt-tint-${hex.slice(1)}-${paint.tints.page}`;
+    paint.tints.filters.set(hex, id);
+  }
+  return `filter:url(#${id});`;
+}
+
+/** The page's `<filter>` definitions (single ink, then the tints of its
+ *  pictures): a zero-size inline SVG, first in the page so every `url(#…)`
+ *  on it resolves. Empty when there is none. */
+function inkFilterDefs(ink: InkFilter | undefined, tints?: ReadonlyMap<string, string>): string {
+  const filters: string[] = [];
+  if (ink) {
+    const values = ink.matrix.map((v) => +v.toFixed(6)).join(' ');
+    filters.push(`<filter id="${ink.id}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${values}"/></filter>`);
+  }
+  for (const [hex, id] of tints ?? []) {
+    filters.push(`<filter id="${id}" color-interpolation-filters="sRGB"><feFlood flood-color="${hex}"/><feComposite in2="SourceAlpha" operator="in"/></filter>`);
+  }
+  if (filters.length === 0) return '';
   return (
     `<svg aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;">` +
-    `<filter id="${ink.id}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${values}"/></filter>` +
+    filters.join('') +
     `</svg>`
   );
 }
@@ -710,6 +742,7 @@ function svgFontInliner(doc: VDTDocument, options: RenderHtmlOptions): HtmlPaint
       const result = inlineSvgFontsDetailedSync(text, provider, {
         ...(settings.maxBytes !== undefined ? { maxBytes: settings.maxBytes } : {}),
         ...(settings.withhold ? { withhold: settings.withhold } : {}),
+        ...(settings.standIn ? { standIn: settings.standIn } : {}),
         onWarning: (w) => {
           const key = `${fileId}|${w.kind}|${w.kind === 'svgFontUnavailable' ? `${w.family}|${w.weight}|${w.style}` : ''}`;
           if (reported.has(key)) return;
@@ -3142,7 +3175,8 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
   const url = imageUrl(options, block.fileId);
   if (url) {
     const svg = block.imageKind === undefined ? undefined : block.imageKind === 'svg';
-    const filter = options ? inkFilterDecl(options, svg, url) : '';
+    const tinted = options ? tintFilterDecl(options, block.tint) : '';
+    const filter = tinted || (options ? inkFilterDecl(options, svg, url) : '');
     const alt = block.altText ? `alt="${esc(block.altText)}"` : 'alt="" role="presentation"';
     if (options?.vertical) {
       // A picture of a vertical page's flow stands upright on the sheet:
@@ -3320,9 +3354,12 @@ function renderPageDetailed(
   // A filter id local to the page and its ink, so every page is
   // self-contained (a patcher may replace pages one by one) and two
   // documents on one page never share a filter.
-  const inked: HtmlPaint = ink
-    ? { ...pageOptions, ink: { id: `pt-ink-${ink.hex.replace(/[^0-9a-z]/gi, '')}-${page.index}`, matrix: ink.matrix } }
-    : pageOptions;
+  const inked: HtmlPaint = {
+    ...pageOptions,
+    ...(ink ? { ink: { id: `pt-ink-${ink.hex.replace(/[^0-9a-z]/gi, '')}-${page.index}`, matrix: ink.matrix } } : {}),
+    // The filters of the pictures painted in a colour, defined on the page.
+    tints: { page: page.index, filters: new Map<string, string>() },
+  };
   // A vertical page's flow sets its text down the column.
   const vflow = verticalFlowOf(page);
   const options: HtmlPaint = vflow
@@ -3461,7 +3498,7 @@ function renderPageDetailed(
   if (page.footer) slotParts.push(renderDesignSlot(page.footer, sheetOptions));
   // Whether or not a picture on the page uses it: a host patching blocks
   // one by one may bring in an SVG image the first render did not have.
-  const defsHtml = options.ink ? inkFilterDefs(options.ink) : '';
+  const defsHtml = inkFilterDefs(options.ink, options.tints?.filters);
   // The separators above the footnotes of the columns.
   const footnoteRulesHtml = footnoteRuleSegments(page).map((r) =>
     `<div class="pt-footnote-rule" style="position:absolute;left:${r.x}px;top:${r.y - r.lineWidthPx / 2}px;width:${r.width}px;height:${r.lineWidthPx}px;background:${r.color};"></div>`,

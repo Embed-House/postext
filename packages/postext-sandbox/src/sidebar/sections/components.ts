@@ -32,6 +32,7 @@ import { DiagramStyleSection } from './DiagramStyleSection';
 import { VideoStyleSection } from './VideoStyleSection';
 import { ResourceTypesSection } from './ResourceTypesSection';
 import { HtmlViewerSection } from './HtmlViewerSection';
+import { CanvasViewerSection } from './CanvasViewerSection';
 import { PdfGenerationSection } from './PdfGenerationSection';
 import { PrintSection } from './PrintSection';
 import { ContrastSection } from './ContrastSection';
@@ -89,6 +90,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'comicsCast': ComicsCastSection,
   'pageTemplates': PageTemplatesSection,
   'htmlViewer': HtmlViewerSection,
+  'canvasViewer': CanvasViewerSection,
   'folio': FolioSection,
   'pdfGeneration': PdfGenerationSection,
   'print': PrintSection,

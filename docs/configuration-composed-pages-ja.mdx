@@ -687,6 +687,12 @@ labelStyles: [
       <td><code>'allow'</code>は、このアンカーに置いたラベルが、原稿の印刷どおりに隣のラベルへ接してよいことを表します。それを含む組には<code>labelOverlap</code>が出ません。スタイルの<code>overlap</code>より優先されます。postext 1.42から。</td>
     </tr>
     <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>見開きののどをまたぐ図で、<code>'keep'</code>はラベルをのどの帯から外し、点のある側へ寄せます。<code>'cross'</code>は点が決めた位置に置いたままにします。両ページにまたがる見出しに必要です。postext 1.43 から。</td>
+    </tr>
+    <tr>
       <td><code>overlap</code></td>
       <td><code>'check' | 'allow'</code></td>
       <td><code>'check'</code></td>

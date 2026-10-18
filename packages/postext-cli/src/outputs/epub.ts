@@ -55,12 +55,24 @@ export async function writeEpub(book: Book, layout: Layout, fonts: FontSet, opts
   const layoutKind = opts.choice('layout', ['fixed', 'reflowable'] as const) ?? 'fixed';
   const withheld = new Set((book.config.customFonts ?? []).filter((f) => f.redistributable === false).map((f) => f.name.toLowerCase()));
   const epubFonts: EpubFontFile[] = [];
+  const told = new Set<string>();
   for (const f of fonts.usedFaces()) {
-    if (withheld.has(f.family.toLowerCase())) {
-      reporter.warn({ kind: 'fontWithheld', severity: 'info', message: `"${f.family}" may not be copied out of the book: the EPUB names it without its file` });
+    const key = f.family.toLowerCase();
+    if (!withheld.has(key)) {
+      epubFonts.push({ family: f.family, weight: f.weight, style: f.style, bytes: f.bytes, format: f.format });
       continue;
     }
-    epubFonts.push({ family: f.family, weight: f.weight, style: f.style, bytes: f.bytes, format: f.format });
+    // A family the book may not hand on: its own files stay out, and the
+    // open family it names as its fallback goes in under its name (#993).
+    if (told.has(key)) continue;
+    told.add(key);
+    const stand = await fonts.exportStandIn(f.family);
+    if (stand.length > 0) {
+      reporter.warn({ kind: 'fontStoodIn', severity: 'info', message: `"${f.family}" may not be copied out of the book: the EPUB sets it in ${stand[0]!.standsInFor}, under the same name` });
+      for (const s of stand) epubFonts.push({ family: s.family, weight: s.weight, style: s.style, bytes: s.bytes, format: s.format });
+    } else {
+      reporter.warn({ kind: 'fontWithheld', severity: 'info', message: `"${f.family}" may not be copied out of the book: the EPUB names it without its file` });
+    }
   }
   const inkHex = diagramInkHex(book.config);
   const svgOf = new Set(book.resources.filter((r) => r.kind === 'svg').map((r) => r.svg?.fileId));

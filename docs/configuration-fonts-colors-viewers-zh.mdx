@@ -124,7 +124,7 @@ interface PostextConfig {
 
 ### 授权字体的替代字体
 
-一本书可能用了所有者无权外传的字体。把这个字体家族标为`redistributable: false`，`.postext`文件就不带它的文件。在`fallback`里写一个宽度相近的开放字体家族，缺少这些文件而打开的文件，换行位置就接近真实字体，不会因为备用字体更宽而让框溢出。家族没有文件的字形，会以授权字体的名称，用`fallback`中粗细和倾斜相同的字形排版，预览、排版worker、PDF和命令行都是如此。家族有文件的部分保持不变；它只从`fallback`取自己一个文件也没有的那种倾斜，比如斜体，介于它自己文件之间的字重照常按任何字体家族的方式选取。在字体面板里，**替代字体**（在字体家族内、文件上方）填写名称；留空则与原来一样。这样排版的书，PDF嵌入的是开放字体，所以最终的PDF要用授权字体的文件来生成。自postext 1.42起。
+一本书可能用了所有者无权外传的字体。把这个字体家族标为`redistributable: false`，`.postext`文件就不带它的文件。在`fallback`里写一个宽度相近的开放字体家族，缺少这些文件而打开的文件，换行位置就接近真实字体，不会因为备用字体更宽而让框溢出。家族没有文件的字形，会以授权字体的名称，用`fallback`中粗细和倾斜相同的字形排版，预览、排版worker、PDF和命令行都是如此。家族有文件的部分保持不变；它只从`fallback`取自己一个文件也没有的那种倾斜，比如斜体，介于它自己文件之间的字重照常按任何字体家族的方式选取。在字体面板里，**替代字体**（在字体家族内、文件上方）填写名称；留空则与原来一样。这样排版的书，PDF嵌入的是开放字体，所以最终的PDF要用授权字体的文件来生成。自postext 1.42起。自 postext 1.43 起，开放字体也会去到授权字体不能去的地方：从沙盒或 `postext` 导出的 EPUB 或 HTML，会以授权字体的名称带上替代字体的各个字面，文字用该字体排印的 SVG 图片也一样，这样阅读系统排版时用的字体，宽度与断行时所依据的一致。该字体自己的文件始终不会离开书。没有 `fallback`，或替代字体没有文件的字体，仍像以前那样只列名称、不带文件；沙盒的 EPUB 标签页会列出改用替代字体排印的字体。
 
 ### 渲染行为
 
@@ -314,6 +314,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 ```
 
 完整示例见下文的[集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)。
+
+
+
+## Canvas查看器
+
+`canvasViewer` 属性设置 Sandbox 的 Canvas 标签页中页面之间的间距（自 postext 1.43 起）。它属于查看器，不属于书：数值是屏幕像素，不随缩放变化，修改它只会移动屏幕上的页面，不会重新排版，所以页码、已保存的排版结果和 PDF 都保持原样。PDF、HTML 查看器和其他输出都会忽略它。图片横跨两页的书应设置 `pageGap: 0`。
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>双页视图中一对页面的左页与右页之间的间距，单位为屏幕像素。0 到 200 的整数。设为 <code>0</code> 时两页相接，Canvas 在接缝处不画阴影和圆角，横跨两页的图片或设计看起来是一个整体。单页视图没有页面对。</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>两种视图中，一行页面与下一行页面之间的间距，单位为屏幕像素。0 到 200 的整数。</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // 一张图片横跨两页：把两页并在一起显示。
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+不是 0 到 200 的整数的值，会按该范围内最接近的整数读取；如果根本不是数字，则按 `24` 读取，并作为未知设置值给出警告（`canvasViewer.pageGap`）。Sandbox 在 **版面设计 › 导出 › Canvas（页面间距）** 中提供这两个字段。
 
 
 ## PDF生成（配置）
@@ -1350,7 +1411,7 @@ debug: {
 - **栏数超出范围**：`'multiple'`版式的`columnCount`（文档的，或标题样式自己的`layout`中的）不是3到8之间的整数。页面按最接近的有效栏数分栏（不是数字时为3），`used`给出这个数（`columnCountClamped`；见[`'multiple'`版式](/zh/docs/configuration-page-layout#版式类型)）。
 - **字符网格过大**：`cjk.grid`的每行字数或每页行数超出了页边距内能容纳的数量。网格按能容纳的最大数量排，`used`给出这个数（`cjkGridClamped`；见[字符网格](/zh/docs/configuration-east-asian#字格)）。
 - **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`）。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
-- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。
+- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。`canvasViewer.pageGap` 和 `canvasViewer.rowGap` 的检查方式相同：`used` 是该值被读作的 0 到 200 的整数（自 postext 1.43 起）。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
 - **基于其他样式的标注框样式** — 标注框样式的`extends`指向`calloutStyles`中不存在的样式（`calloutStyleExtendsUnknown`，`suggestion`给出最接近的id），或沿`extends`追溯会回到它自己（`calloutStyleExtendsCycle`，`value`为环`a → b → a`）。该样式单独成立，未设置的项使用内置默认值（见[基于其他样式的样式](/zh/docs/configuration-callouts#基于其他样式的样式)）。

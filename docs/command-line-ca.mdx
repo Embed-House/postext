@@ -199,7 +199,7 @@ llibre. `--assets embed|folder` tria una de les dues formes per a qualsevol
 ruta. Les pàgines són la maquetació impresa, mostrada a mida de pantalla:
 l'una al costat de l'altra (`--mode multi`, per defecte) o l'una sota l'altra
 (`--mode single`). Les fonts marcades `redistributable: false` s'anomenen però
-no es copien.
+no es copien. Si la família nomena un `fallback`, s'escriuen en el seu lloc les cares d'aquesta família oberta amb el nom de la família (des de postext 1.43).
 
 ### epub
 
@@ -214,7 +214,7 @@ compondre el text per a la seva pantalla (vegeu
 [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub)). La coberta
 és la miniatura del llibre tret que `--cover` en doni una imatge. Les metadades
 del paquet (títol, autors, llengua, identificador) surten del frontmatter del
-primer capítol, com al Sandbox.
+primer capítol, com al Sandbox. Les fonts marcades `redistributable: false` no es copien; una família que nomena un `fallback` s'incrusta amb les cares d'aquesta família oberta sota el seu propi nom (des de postext 1.43).
 
 ### image i images
 

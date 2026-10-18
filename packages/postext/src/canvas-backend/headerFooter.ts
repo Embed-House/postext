@@ -242,14 +242,14 @@ function renderImageBlock(ctx: CanvasRenderingContext2D, block: VDTDesignImageBl
       ctx.beginPath();
       ctx.rect(bx, by, bw, bh);
       ctx.clip();
-      drawResourceImage(ctx, block.fileId, bx - c.x * w, by - c.y * h, w, h, { inkHex, svg });
+      drawResourceImage(ctx, block.fileId, bx - c.x * w, by - c.y * h, w, h, { inkHex, svg, ...(block.tint ? { tint: block.tint } : {}) });
     }, block.upright === true);
     restoreContext(ctx);
     return;
   }
   // In a vertical flow the picture stands upright in its box.
   drawUprightInBox(ctx, x, y, width, height, (bx, by, bw, bh) => {
-    if (!drawResourceImage(ctx, block.fileId, bx, by, bw, bh, { inkHex, svg })) {
+    if (!drawResourceImage(ctx, block.fileId, bx, by, bw, bh, { inkHex, svg, ...(block.tint ? { tint: block.tint } : {}) })) {
       ctx.fillStyle = 'rgba(160,160,160,0.12)';
       ctx.fillRect(bx, by, bw, bh);
       ctx.strokeStyle = 'rgba(160,160,160,0.5)';

@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>フロートは開始ページに置かれたままです。<code>'avoid'</code>にすると、そのページより後の最初の空き位置に移ります。</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>段内の見出し（<code>span: 'column'</code>）のデザインが段全体の高さを確保し、見出しのあとの本文が次の段か次のページから始まる場合です（<code>level</code>、<code>element</code>：最も下まで届くデザイン要素。高さを <code>minHeight</code> が決めているときはありません）。見出しごとに一件で、見出しとそのページを指します。ページ幅の章扉、段が一つのページの見出し、明示的な区切りが続く見出しは対象外です。postext 1.43 から。</td>
+      <td>見出しのあとの本文は次の段か次のページから始まります。要素に <code>reserve: false</code> を指定する、<code>minHeight</code> を下げる、または <code>span: 'page'</code> を指定すると解消します。</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>テキストを組んだフェイス（<code>family</code>、<code>weight</code>、<code>style</code>）を、ビルドの時点でフォントセットが用意できなかったこと。<code>reason: 'missing'</code>は、そのファミリーのフェイスが1つも読み込まれておらず、インストールもされていない場合、またはそのウェイトと傾きに対応するフェイスがまだ読み込まれていなかった場合。<code>'synthesized'</code>は、ファミリーにそのウェイトや傾きのフェイスがなく、ブラウザーが別のフェイスをそのまま、あるいは太くしたり傾けたりして使っている場合です（600を700のフェイスで組んだとき、400のレギュラーしかないファミリーに700のイタリックを求めたときなど）。フォントセットがある環境（<code>document.fonts</code>、ワーカーの<code>self.fonts</code>、<code>BuildDocumentOptions.fontSet</code>）で検査し、<code>debug.warnings.missingFont</code>で切り替えます。ページもソースの範囲も持ちません。</td>
       <td>テキストは代替フォントで、またはファミリーの別のフェイス（そのまま、あるいはブラウザーが太くしたり傾けたりしたもの）で計測・描画されます。そのフェイスが届くと改行が変わります。<a href="#レイアウトの前にフォントを読み込む">レイアウトの前にフォントを読み込む</a>を参照してください。</td>

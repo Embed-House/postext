@@ -147,7 +147,7 @@ postext html book.postext -o book.html
 postext html book.postext -o site/ --mode single
 ```
 
-以`.html`结尾的路径得到一个文件，图片和字体都在里面，便于发送。其他路径都是文件夹：`index.html`旁边有`assets/`，存放图片、字体和自托管的视频。`--assets embed|folder`可以对任何路径选择其中一种方式。页面就是印刷版面，按屏幕尺寸显示：并排显示（`--mode multi`，默认），或上下排列（`--mode single`）。标记为`redistributable: false`的字体只写出名称，不复制文件。
+以`.html`结尾的路径得到一个文件，图片和字体都在里面，便于发送。其他路径都是文件夹：`index.html`旁边有`assets/`，存放图片、字体和自托管的视频。`--assets embed|folder`可以对任何路径选择其中一种方式。页面就是印刷版面，按屏幕尺寸显示：并排显示（`--mode multi`，默认），或上下排列（`--mode single`）。标记为`redistributable: false`的字体只写出名称，不复制文件。如果字体指定了 `fallback`，写出的是这个开放字体的各个字面，名称沿用原字体（自 postext 1.43 起）。
 
 ### epub
 
@@ -156,7 +156,7 @@ postext epub book.postext -o book.epub
 postext epub book.postext --layout reflowable --cover cover.jpg
 ```
 
-`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重新排列文字（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。
+`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重新排列文字（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。标记为 `redistributable: false` 的字体不会被复制；指定了 `fallback` 的字体，会以自己的名称嵌入该开放字体的字面（自 postext 1.43 起）。
 
 ### image和images
 

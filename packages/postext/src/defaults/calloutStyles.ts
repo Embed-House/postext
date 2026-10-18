@@ -69,7 +69,7 @@ export const DEFAULT_CALLOUT_STYLE_STATIC = {
     paddingX: EM(0.6),
     offset: PT0,
     inset: PT0,
-    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const },
+    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const, tint: false },
     rule: { enabled: false, color: { ...DEFAULT_MAIN_COLOR } as ColorValue, width: { value: 0.5, unit: 'pt' } as Dimension },
   },
   columnGap: EM(1.5),
@@ -192,6 +192,7 @@ function resolveCalloutStyleConfig(
               width: partial.label.icon?.width ?? d.label.icon.width,
               gap: partial.label.icon?.gap ?? d.label.icon.gap,
               placement: partial.label.icon?.placement === 'inside' ? 'inside' : d.label.icon.placement,
+              tint: partial.label.icon?.tint === true ? true : d.label.icon.tint,
             },
             rule: {
               enabled: partial.label.rule?.enabled ?? d.label.rule.enabled,

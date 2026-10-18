@@ -13,7 +13,39 @@ export interface GeomSnapshot {
 }
 
 export const PAGE_PADDING = 32;
-export const PAGE_GAP = 24;
+
+/** The space around the pages on screen, in pixels (`canvasViewer`, #1002):
+ *  between the two pages of a row, and between one row and the next. */
+export interface PageGaps {
+  pageGap: number;
+  rowGap: number;
+}
+
+/** The gaps a book gets when it sets none. */
+export const DEFAULT_PAGE_GAPS: PageGaps = { pageGap: 24, rowGap: 24 };
+
+/** Width of the column holding the rows: the pages of a row, the gap
+ *  between them and the padding at both sides. */
+export function innerRowWidth(displayWidth: number, pagesPerRow: number, pageGap: number): number {
+  return displayWidth * pagesPerRow + pageGap * (pagesPerRow - 1) + PAGE_PADDING * 2;
+}
+
+/** Padding above and below row `rowIdx` of `totalRows`. The first row
+ *  starts at the frame's padding and the last ends at it; between two rows
+ *  the gap is split, the lower half on the bottom of the upper row, so the
+ *  rows keep whole pixels and the space between them is exactly `rowGap`. */
+export function rowPadding(rowIdx: number, totalRows: number, rowGap: number): { top: number; bottom: number } {
+  return {
+    top: rowIdx === 0 ? PAGE_PADDING : Math.floor(rowGap / 2),
+    bottom: rowIdx === totalRows - 1 ? PAGE_PADDING : Math.ceil(rowGap / 2),
+  };
+}
+
+/** Width of one page when the window is filled by a row of `pagesPerRow`
+ *  pages (the frame's padding and the gap between the pages left out). */
+export function fitRowPageWidth(containerW: number, pagesPerRow: number, pageGap: number): number {
+  return (containerW - PAGE_PADDING * 2 - pageGap * (pagesPerRow - 1)) / pagesPerRow;
+}
 
 /**
  * Groups pages into rows for display.

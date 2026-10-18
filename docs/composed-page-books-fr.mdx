@@ -41,7 +41,7 @@ La nouvelle page sera une page de révision : un bandeau de titre, un court tex
 5. Ajoutez un bloc. **Nom (emplacement)** : `remember`. **Style de boîte** : `dato-campo`, une boîte verte avec un onglet. **Hauteur minimale** : 30 mm, pour que la boîte garde une bonne taille quand son texte est court.
 6. Ajoutez un dernier bloc. **Nom (emplacement)** : `try`. **Style de boîte** : `actividad-sol`. **Hauteur minimale** : 30 mm.
 7. Dans `text`, `remember` et `try`, réglez **Largeur** sur *Jusqu’au bord* et **Hauteur** sur *Son contenu* : ils occupent alors toute la largeur de la page et ont la hauteur de leur texte.
-8. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `column`, laissez-le *Empilés* et réglez **Espace entre les blocs** sur 6 mm. Sous **Blocs du groupe, dans l’ordre de la page**, cochez les quatre blocs. Le groupe les garde dans l’ordre de la liste des blocs, donc le titre vient en premier. Un groupe place ses blocs les uns sous les autres et fait descendre ceux du dessous quand un bloc grandit : un texte plus long dans la première boîte pousse la deuxième boîte vers le bas au lieu de la recouvrir.
+8. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `column`, laissez-le *Empilés* et réglez **Espace entre les blocs** sur 6 mm. Sous **Blocs du groupe, dans l’ordre de la page**, cochez les quatre blocs. Cochez-les dans l’ordre voulu, le titre d’abord : la liste numérote les membres et les flèches en montent ou en descendent un. Un groupe place ses blocs les uns sous les autres et fait descendre ceux du dessous quand un bloc grandit : un texte plus long dans la première boîte pousse la deuxième boîte vers le bas au lieu de la recouvrir.
 
 <Screenshot src="/docs-shots/fr/template.webp" alt="Le panneau Maquette sur Gabarits de page avec le gabarit Review page : ses quatre blocs et son groupe, et les mêmes blocs tracés en pointillés sur la page." caption="Le gabarit : quatre blocs et un groupe. Sur la page, les boîtes en pointillés sont les blocs et les étiquettes vertes disent comment chacun est dimensionné." />
 
@@ -102,11 +102,10 @@ Le mot *Stone bridge* est du Markdown ; le point fait partie de l’image. Quan
 
 ## 5. Traduire la page
 
-Une traduction est le même gabarit avec d’autres mots. Le Sandbox propose deux façons de la garder. Un livre peut porter plusieurs langues à la fois, sous la forme d’un fichier `.postext` avec une édition pour chacune : la barre au-dessus du canevas passe alors de l’une à l’autre et le panneau Vérifications les lit toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). La façon la plus simple, qui n’exige aucun fichier, est une copie du livre dans l’autre langue :
+Une traduction est le même gabarit avec d’autres mots. Le Sandbox la garde comme une autre édition du même livre : la barre au-dessus du canevas passe d’une édition à l’autre et le panneau Vérifications les lit toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). Pour en créer une :
 
-1. Ouvrez **Livres**, appuyez sur **⋯** à côté de votre livre et choisissez **Dupliquer**, ou appuyez sur **Nouveau** et choisissez **Copie du livre ouvert**. Ouvrez la copie. Elle porte le même nom que l’original : changez-le avec **Renommer…**, dans le même menu.
-2. Dans le panneau **Maquette**, ouvrez **Système d’écriture** et, sous **Langue et sens d’écriture**, réglez la **Langue du document**. La coupure des mots, les guillemets et les mots que le moteur écrit lui-même (comme *Continued* à la coupure d’une boîte) la suivent.
-3. Dans le panneau **Texte**, traduisez les mots et laissez le reste.
+1. Ouvrez **Livres**, appuyez sur **⋯** à côté de votre livre et choisissez **Ajouter une langue…**. Prenez la langue et appuyez sur **Ajouter et ouvrir**. Le Sandbox copie l’édition à l’écran dans une nouvelle, règle sa **Langue du document** sur la langue choisie et l’ouvre. La coupure des mots, les guillemets et les mots que le moteur écrit lui-même (comme *Continued* à la coupure d’une boîte) suivent cette langue. Le texte est encore celui de l’original.
+2. Dans le panneau **Texte**, traduisez les mots et laissez le reste.
 
 <table>
   <thead>

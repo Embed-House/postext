@@ -23,6 +23,9 @@
  *   painted, never read. Each page clips its frames and its decoration to
  *   its bleed box (`VDTComposedPage.sheetClip`), so a band across the spine
  *   shows its own half on each side.
+ * - A figure label whose box meets the band is slid along the sheet to the
+ *   band's edge, on the side its anchor point lies on, so the fold does not
+ *   cut it (#990); an anchor with `gutter: 'cross'` stays put.
  * - Decoration is laid once, over the physical sheet of two pages, then
  *   cut the same way ({@link splitSpreadDecoration}).
  * - A vertical (`vertical-rl`) book (#926) lays its frames in the pages'
@@ -37,6 +40,7 @@ import type { BoundingBox, ContentWarning, ReflowEvent, VDTBlock, VDTComposedPag
 import { offsetBlock, offsetDesignBlock } from '../pipeline/calloutLayout';
 import { layoutComposedPage, lengthPx, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout';
 import { frameBounds } from './paint';
+import { keepLabelsOffGutter, type SpineBand } from './labels';
 import type { FrameAreas, Rect } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
 import type { ComposedContinuation } from './continuation';
@@ -203,7 +207,9 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
     else resized.set(name, { frame: name, kind: 'moved', fromMm: mm(p.at), toMm: mm(k.at), cause: 'gutter' });
   }
   const pages = [first, second] as const;
-  const byId = new Map(out.blocks.map((b) => [b.id, b]));
+  // A label the fold would cut stands at the band's edge instead (#990).
+  const band: SpineBand = { lo: sheet.spine - gutterPx / 2, hi: sheet.spine + gutterPx / 2, spine: sheet.spine, axis };
+  const byId = new Map(out.blocks.map((b) => [b.id, keepLabelsOffGutter(b, band)]));
   const sideFrames: [VDTFrame[], VDTFrame[]] = [[], []];
   const sideBlocks: [VDTBlock[], VDTBlock[]] = [[], []];
   const sideOf = new Map<string, 0 | 1>();

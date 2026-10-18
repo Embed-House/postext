@@ -25,7 +25,7 @@ import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
-import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, fontFallbackOf, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
+import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, exportStandInOf, fontFallbackOf, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
@@ -62,7 +62,20 @@ export class FontSet {
     readonly faces: Face[],
     readonly families: ReadonlySet<string>,
     readonly shipped: ReadonlyMap<string, readonly FontVariantUse[]> = new Map(),
+    /** The faces a file that leaves the book is set in for a family the
+     *  book may not hand on (#993); see {@link FontSet.exportStandIn}. */
+    private readonly standIns: (family: string) => Promise<Face[]> = async () => [],
   ) {}
+
+  /** The open faces that take the place of a family the book may not hand
+   *  on (`redistributable: false`) in an EPUB or an HTML file: the book's
+   *  `fallback` for it, in every weight and slant the pages ask, named for
+   *  the family and marked `standsInFor`. Empty for any other family, and
+   *  for one whose fallback is nowhere. The family's own files, if the
+   *  book carries them, stay out of the file. */
+  exportStandIn(family: string): Promise<Face[]> {
+    return this.standIns(family);
+  }
 
   /** The faces of the families the book sets text in. */
   usedFaces(): Face[] {
@@ -657,7 +670,28 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
     if (carried.has(family.toLowerCase())) continue;
     registerStandIns(family, faces.filter((f) => f.family.toLowerCase() === family.toLowerCase()), variants);
   }
-  return new FontSet(faces, new Set([...wanted.keys(), ...book.fonts.map((f) => f.family)]), shipped);
+  // What a file that leaves the book is set in for a family it may not hand
+  // on (#993), looked up when a writer asks.
+  const stands = new Map<string, Promise<Face[]>>();
+  const standIns = (family: string): Promise<Face[]> => {
+    const key = family.toLowerCase();
+    const named = exportStandInOf(book.config.customFonts, family);
+    if (!named) return Promise.resolve([]);
+    let found = stands.get(key);
+    if (!found) {
+      const variants = [...wanted].find(([name]) => name.toLowerCase() === key)?.[1] ?? [];
+      // The book's own files of the fallback first (an open face it carries
+      // under that name), else wherever a family is looked for.
+      const carried = faces.filter((f) => f.family.toLowerCase() === named.toLowerCase() && f.source === 'book');
+      const own = carried.length > 0
+        ? [...new Set(variants.flatMap((v) => matchedFace(carried, v.weight, v.style) ?? []))]
+        : [];
+      found = (own.length > 0 ? Promise.resolve(own) : lookup(named, variants)).then((list) => list.map((f) => ({ ...f, family, standsInFor: named })));
+      stands.set(key, found);
+    }
+    return found;
+  };
+  return new FontSet(faces, new Set([...wanted.keys(), ...book.fonts.map((f) => f.family)]), shipped, standIns);
 }
 
 /**

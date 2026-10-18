@@ -1,8 +1,9 @@
 'use client';
 
-import { Check, ChevronDown, ChevronRight, Copy, Download, Eye, EyeOff, FilePlus, Files, ImagePlus, Pencil, Plus, RotateCcw, Trash2, Upload, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, Copy, Download, Eye, EyeOff, FilePlus, Files, ImagePlus, Languages, Pencil, Plus, RotateCcw, Trash2, Upload, X } from 'lucide-react';
 import { useRef, useState, type ReactNode } from 'react';
 import { pickBundleMeta } from 'postext/bundle';
+import { sameContentLocale } from 'postext';
 import {
   useSandboxDispatch,
   useSandboxLabels,
@@ -11,7 +12,8 @@ import {
   useSandboxSelector,
   type ProjectSummary,
 } from '../context/SandboxContext';
-import { Button, Collapsible, ConfirmPopover, EmptyState, IconButton, ListRow, Menu, MenuItem, MenuSeparator, PanelBody, PanelHeader, RowTag } from '../ui';
+import { Button, Collapsible, ConfirmPopover, EmptyState, IconButton, ListRow, Menu, MenuItem, MenuSeparator, PanelBody, PanelHeader, RowTag, Select } from '../ui';
+import { DOCUMENT_LOCALE_OPTIONS } from './sections/BodyTextSection/constants';
 import { isPresetHideable, partitionPresets } from '../presets/hidden';
 import { activeLocaleTag, bundleContentLocales, choosePresetOpen, presetLocales, sameLocaleTag } from '../presets/locale';
 import { readBundleZipManifest } from '../presets/zip';
@@ -57,6 +59,7 @@ export function ProjectsPanel() {
     remove,
     importBundleBytes,
     switchEdition,
+    addEdition,
     exportProject,
     setThumbnail,
   } = projectsValue;
@@ -74,6 +77,17 @@ export function ProjectsPanel() {
   const [importError, setImportError] = useState<string | null>(null);
   const [hiddenOpen, setHiddenOpen] = useState(false);
   const [pendingImport, setPendingImport] = useState<{ bytes: Uint8Array; fileName: string; locales: string[]; own: string } | null>(null);
+  // The book a language is being added to (#989), with the languages it has.
+  const [adding, setAdding] = useState<{ id: string; name: string; taken: string[]; value: string } | null>(null);
+  const languagesLeft = (taken: readonly string[]) => DOCUMENT_LOCALE_OPTIONS.filter((o) => !taken.some((t) => sameContentLocale(t, o.value)));
+  // A book that names no language is read as the interface's (as the action does).
+  const takenOf = (project: ProjectSummary): string[] => project.locales ?? [project.locale || viewerLocale];
+  const startAddLanguage = (project: ProjectSummary) => {
+    const taken = takenOf(project);
+    const left = languagesLeft(taken);
+    const preferred = left.find((o) => sameContentLocale(o.value, viewerLocale)) ?? left[0];
+    if (preferred) setAdding({ id: project.id, name: project.name, taken, value: preferred.value });
+  };
 
   const presetLoading = status === 'loading';
   const busy = presetLoading || projectStatus === 'busy';
@@ -258,6 +272,44 @@ export function ProjectsPanel() {
             </div>
           </div>
         )}
+        {adding && (
+          <div
+            role="group"
+            aria-labelledby="postext-add-language"
+            className="mb-2 rounded border px-2 py-1.5 text-xs"
+            style={{ borderColor: 'var(--rule)', color: 'var(--foreground)' }}
+          >
+            <p id="postext-add-language" className="mb-1 break-words font-medium">
+              {labels.projectAddLanguageTitle.replace('__name__', adding.name)}
+            </p>
+            <p className="mb-1.5 break-words" style={{ color: 'var(--slate)' }}>{labels.projectAddLanguageHint}</p>
+            <div className="flex flex-wrap items-center gap-1">
+              <Select
+                size="sm"
+                ariaLabel={labels.projectAddLanguagePick}
+                value={adding.value}
+                onValueChange={(value) => setAdding({ ...adding, value })}
+                options={languagesLeft(adding.taken)}
+                className="min-w-40"
+              />
+              <Button
+                variant="primary"
+                size="xs"
+                disabled={busy}
+                onClick={() => {
+                  const { id, value } = adding;
+                  setAdding(null);
+                  void addEdition(id, value).catch(() => undefined);
+                }}
+              >
+                {labels.projectAddLanguageConfirm}
+              </Button>
+              <Button variant="ghost" size="xs" onClick={() => setAdding(null)}>
+                {labels.cancel}
+              </Button>
+            </div>
+          </div>
+        )}
         {notice && (
           <div
             role="status"
@@ -293,7 +345,9 @@ export function ProjectsPanel() {
                 onActivateEdition={(locale) => openThenShow(() => switchEdition(project.id, locale))}
                 uiLocale={viewerLocale}
                 onShowChapters={showChapters}
-                onRename={(name, description) => { void rename(project.id, name, description); }}
+                onRename={(name, description, opts) => { void rename(project.id, name, description, opts); }}
+                onAddLanguage={() => startAddLanguage(project)}
+                canAddLanguage={languagesLeft(takenOf(project)).length > 0}
                 onDuplicate={() => { void duplicate({ kind: 'project', id: project.id }); }}
                 onExport={() => { void exportProject({ kind: 'project', id: project.id }); }}
                 onSetThumbnail={(file) => { void setThumbnail(project.id, file); }}
@@ -337,7 +391,11 @@ interface ProjectRowProps {
   uiLocale: string;
   /** A click on the open book: the Chapters panel. */
   onShowChapters: () => void;
-  onRename: (name: string, description: string) => void;
+  /** `opts.edition`: the title is the language on screen's only (#999). */
+  onRename: (name: string, description: string, opts?: { edition?: boolean }) => void;
+  /** Add a language to the book (#989). */
+  onAddLanguage: () => void;
+  canAddLanguage: boolean;
   onDuplicate: () => void;
   onExport: () => void;
   /** Set the cover picture from a file, or drop it with null. */
@@ -354,6 +412,8 @@ function ProjectRow({
   uiLocale,
   onShowChapters,
   onRename,
+  onAddLanguage,
+  canAddLanguage,
   onDuplicate,
   onExport,
   onSetThumbnail,
@@ -365,6 +425,9 @@ function ProjectRow({
   const [descriptionDraft, setDescriptionDraft] = useState(project.description ?? '');
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
+  const editionRef = useRef<HTMLInputElement>(null);
+  // A book in several languages: the title may be the one language's (#999).
+  const [editionOnly, setEditionOnly] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const coverUrl = useBlobObjectUrl(project.thumbnail?.fileId);
   // Set once the edit is committed or cancelled, so the blur of the field
@@ -374,6 +437,7 @@ function ProjectRow({
   const startRename = () => {
     setDraft(project.name);
     setDescriptionDraft(project.description ?? '');
+    setEditionOnly(false);
     settledRef.current = false;
     setEditing(true);
   };
@@ -389,7 +453,7 @@ function ProjectRow({
     setEditing(false);
     const name = draft.trim() || project.name;
     const description = descriptionDraft.trim();
-    if (name !== project.name || description !== (project.description ?? '')) onRename(name, description);
+    if (name !== project.name || description !== (project.description ?? '')) onRename(name, description, editionOnly && project.locales ? { edition: true } : undefined);
   };
   const fieldProps = {
     onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -397,7 +461,7 @@ function ProjectRow({
       else if (e.key === 'Escape') { e.preventDefault(); cancelRename(); }
     },
     onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-      if (e.relatedTarget === nameRef.current || e.relatedTarget === descriptionRef.current) return;
+      if (e.relatedTarget === nameRef.current || e.relatedTarget === descriptionRef.current || e.relatedTarget === editionRef.current) return;
       commitRename();
     },
     style: { borderColor: 'var(--rule)', color: 'var(--foreground)' },
@@ -419,17 +483,33 @@ function ProjectRow({
     project.name
   );
   const subtitle = editing ? (
-    <input
-      dir="auto"
-      ref={descriptionRef}
-      type="text"
-      value={descriptionDraft}
-      onChange={(e) => setDescriptionDraft(e.target.value)}
-      aria-label={labels.projectDescriptionLabel}
-      placeholder={labels.projectDescriptionLabel}
-      className="min-w-0 w-full rounded border bg-transparent px-1.5 py-0.5 text-[11px] font-normal"
-      {...fieldProps}
-    />
+    <>
+      <input
+        dir="auto"
+        ref={descriptionRef}
+        type="text"
+        value={descriptionDraft}
+        onChange={(e) => setDescriptionDraft(e.target.value)}
+        aria-label={labels.projectDescriptionLabel}
+        placeholder={labels.projectDescriptionLabel}
+        className="min-w-0 w-full rounded border bg-transparent px-1.5 py-0.5 text-[11px] font-normal"
+        {...fieldProps}
+      />
+      {project.locales && project.locale && (
+        // A press must not take the focus out of the fields: the row would commit before the box is ticked.
+        <label className="mt-1 flex min-h-6 items-center gap-1.5 text-[11px] font-normal" onMouseDown={(e) => e.preventDefault()}>
+          <input
+            ref={editionRef}
+            type="checkbox"
+            checked={editionOnly}
+            onChange={(e) => setEditionOnly(e.target.checked)}
+            onKeyDown={fieldProps.onKeyDown}
+            onBlur={fieldProps.onBlur}
+          />
+          {labels.projectRenameEditionOnly.replace('__language__', localeDisplayName(project.locale, uiLocale))}
+        </label>
+      )}
+    </>
   ) : (
     project.description
   );
@@ -551,6 +631,7 @@ function ProjectRow({
           {(askDelete) => (
             <>
               <MenuItem icon={<Pencil size={13} />} disabled={editing} onClick={startRename}>{labels.projectRename}</MenuItem>
+              <MenuItem icon={<Languages size={13} />} disabled={!canAddLanguage} onClick={onAddLanguage}>{labels.projectAddLanguage}</MenuItem>
               <MenuItem icon={<Copy size={13} />} onClick={onDuplicate}>{labels.projectDuplicate}</MenuItem>
               <MenuItem icon={<Download size={13} />} onClick={onExport}>{labels.projectExport}</MenuItem>
               <MenuSeparator />

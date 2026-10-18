@@ -75,6 +75,7 @@ export type WarningKind =
   | 'alphaPdfOverflow'
   | 'calloutOverflow'
   | 'headingDesignCut'
+  | 'headingClaimsColumn'
   | 'sideColumnPercentClamped'
   | 'columnCountClamped'
   | 'cjkGridClamped'
@@ -349,6 +350,11 @@ export type WarningPayload =
    *  The heading claims the rest of its page or column (the text after it
    *  starts on the next one), but that part of the design is cut off. */
   | { kind: 'headingDesignCut'; level: number; page: number; overflowMm: number }
+  /** An in-column heading whose design reserves the whole of its column
+   *  (#997): the text after it starts in the next column or page. `element`
+   *  is the design element that sets that height; absent, the design's
+   *  `minHeight` does. */
+  | { kind: 'headingClaimsColumn'; level: number; page: number; element?: string }
   /** A one-and-a-half layout's side column that leaves a column with no
    *  width (`collectConfigWarnings`): `path` names the setting, `used`
    *  the percentage the engine cuts the columns at instead. */

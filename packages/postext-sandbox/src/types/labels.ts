@@ -94,6 +94,7 @@ export interface SandboxLabels {
   epubWarningMissingFont: string;
   epubWarningMissingFace: string;
   epubWarningFontWithheld: string;
+  epubWarningFontStoodIn: string;
   epubWarningUnsupported: string;
   epubWarningSvgFontUnavailable: string;
   epubWarningSvgFontsTooLarge: string;
@@ -273,6 +274,9 @@ export interface SandboxLabels {
   warningsCalloutOverflowDetail: string;
   warningsHeadingDesignCutTitle: string;
   warningsHeadingDesignCutDetail: string;
+  warningsHeadingClaimsColumnTitle: string;
+  warningsHeadingClaimsColumnElementDetail: string;
+  warningsHeadingClaimsColumnMinHeightDetail: string;
   /** A one-and-a-half layout's `sideColumnPercent` that leaves a column
    *  with no width (or is not a number); the engine cuts the columns at
    *  another value. `__used__` is that value, in percent. */
@@ -1591,6 +1595,11 @@ export interface SandboxLabels {
   htmlViewerColumnGapTooltip: string;
   htmlViewerOptimalLineBreaking: string;
   htmlViewerOptimalLineBreakingTooltip: string;
+  canvasViewerSection: string;
+  canvasViewerPageGap: string;
+  canvasViewerPageGapTooltip: string;
+  canvasViewerRowGap: string;
+  canvasViewerRowGapTooltip: string;
   folioSection: string;
   folioGroupView: string;
   folioGroupPaper: string;
@@ -1965,6 +1974,14 @@ export interface SandboxLabels {
   presetUnhide: string;
   presetsHidden: string;
   projectCopySuffix: string;
+  projectAddLanguage: string;
+  projectAddLanguageTitle: string;
+  projectAddLanguageHint: string;
+  projectAddLanguagePick: string;
+  projectAddLanguageConfirm: string;
+  projectLanguageAdded: string;
+  projectLanguageDefaults: string;
+  projectRenameEditionOnly: string;
   projectExport: string;
   projectActivate: string;
   projectRename: string;
@@ -2695,6 +2712,14 @@ export interface SandboxLabels {
   resourceAvoidAdd: string;
   resourceAvoidZoneAria: string;
   resourceAvoidZoneDelete: string;
+  resourceSymbolsTitle: string;
+  resourceSymbolsHelp: string;
+  resourceSymbolsPrefix: string;
+  resourceSymbolsClass: string;
+  resourceSymbolsRead: string;
+  resourceSymbolsAdded: string;
+  resourceSymbolsNone: string;
+  resourceSymbolsUnreadable: string;
   resourceBystanderAdd: string;
   resourceBystanderFaceAria: string;
   resourceBystanderFaceDelete: string;
@@ -2730,6 +2755,9 @@ export interface SandboxLabels {
   resourceLabelAnchorsOverlap: string;
   resourceLabelAnchorsOverlapCheck: string;
   resourceLabelAnchorsOverlapAllow: string;
+  resourceLabelAnchorsGutter: string;
+  resourceLabelAnchorsGutterKeep: string;
+  resourceLabelAnchorsGutterCross: string;
   resourceLabelAnchorsSelectShown: string;
   resourceLabelAnchorsSelectClear: string;
   resourceLabelAnchorsSelectRow: string;
@@ -3054,6 +3082,8 @@ export interface SandboxLabels {
   labelStyleIdAria: string;
   labelStyleNameAria: string;
   labelStyleUsageHint: string;
+  labelStyleUsageCount: string;
+  labelStyleRenamed: string;
   labelStyleTypeGroup: string;
   labelStyleBackdropGroup: string;
   labelStyleFitGroup: string;
@@ -3225,6 +3255,8 @@ export interface SandboxLabels {
   calloutStyleLabelIconPlacementTooltip: string;
   calloutStyleLabelIconBeside: string;
   calloutStyleLabelIconInside: string;
+  calloutStyleLabelIconTint: string;
+  calloutStyleLabelIconTintTooltip: string;
   calloutStyleLabelRule: string;
   calloutStyleLabelRuleTooltip: string;
   calloutStyleLabelRuleColor: string;
@@ -3911,6 +3943,9 @@ export interface SandboxLabels {
   pageTemplatesGroupAlignBetween: string;
   pageTemplatesGroupAlignTooltip: string;
   pageTemplatesGroupMembers: string;
+  pageTemplatesGroupMembersHint: string;
+  pageTemplatesGroupMemberUp: string;
+  pageTemplatesGroupMemberDown: string;
   pageTemplatesMoveQuestion: string;
   pageTemplatesMoveChangeTemplate: string;
   pageTemplatesMoveThisPage: string;
@@ -4004,6 +4039,7 @@ export interface SandboxLabels {
   navDesignHint: string;
   navWarnings: string;
   navWarningsHint: string;
+  navWarningsEdition: string;
   bodyTightenRunts: string;
   bodyTightenRuntsTooltip: string;
   bodyMaxRuntTracking: string;

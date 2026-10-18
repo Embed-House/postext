@@ -753,9 +753,6 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Fallback.** A contour wrap with no known shape runs round the box with a `textWrap` warning,
   reason `noContour` (once per resource per pass). Without contours the VDT is unchanged (preset
   parity harness, 583 chapters, 0 diffs).
-
-### 5.12 What P15 built (#859)
-
 - **Where.** The ladder's step 6 (`layoutComposedPage`): a frame whose `overflow.continueIn` is
   `'next-page'` or `'template:<id>'` (`continuesOffPage`) and that still overflows after
   `shrinkText` is composed again with the frame in `FitState.goOn`: it is cut at its foot with
@@ -1067,14 +1064,16 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   entries, and ranks `soft` (taken when no other cut fits) when the whole block is no taller than the room, so a block that a
   frame holds goes whole to the added page, as the flow moves it to the next column; an entry is never cut inside its lines.
   The title of the contents is not listed because its heading style says `toc: false`, as in the flow. A page break between
-  parts (`toc.parts.breakBefore`) goes with the rows and is ignored in a box, as every directive is. Memoisation: a page with
+  parts (`toc.parts.breakBefore`) goes with the rows; a box ignores the `:::pagebreak` row as every directive, and the
+  part row carries the break itself since §5.19 (#996). Memoisation: a page with
   contents rows is never memoised (`pageMemo` already says so for any `toc` block).
 - **A ground under the contents (#987).** The ground is the template's decoration, which paints under the frames of the
   page and on every page the frame adds; no heading design is asked to paint across the sheet. A design element anchored to
   the bleed that runs down to the trim claims the column (the reserved height of a heading design counts every element
   without `reserve: false`); a document with such a design says so only in the docs: a warning would also fire on every
   cover whose design claims its page on purpose (`headingDesignCuts.ts` makes the same call), so the answer is the note in
-  the reserved-height section and the `reserve` rows of the design tables.
+  the reserved-height section and the `reserve` rows of the design tables. #997 later told the two apart: an in-column
+  heading is named (§5.19), a page-span opener never.
 - **Frames held at the foot of a card (#980).** No new key. A stack group with a box of the card's height, `grow: 1` (and
   `shrink`) on the frames above the held ones and a `minHeight` on the held ones is the held foot: spare space goes to the
   frames that grow, so a shorter text moves nothing below it; a longer one is squeezed by the ladder (`redistribute`, then
@@ -1153,9 +1152,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   `bookOutline`. Index, contents and references then read the page of the words. The Sandbox canvas paints the
   selection and the caret of the chapter being edited over the carried words on the later chapter's page
   (`drawOverlay` with `CarriedSelection`).
-
-### 5.18 Findings round I (#882)
-
 - **Tracking in a box's body (#974).** `CalloutBodyStyleConfig.letterSpacing` (em of the body size, negative
   tightens; absent when zero) rides on the derived `bodyText` of a box (`deriveCalloutResolvedConfig`), so
   `resolveBodyStyle` gives the body style a `letterSpacingPx` and paragraphs and list items are measured, stamped
@@ -1213,9 +1209,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   (`onlyColours`: every differing field a colour on both sides), and `mergeSuggestions` no longer proposes such
   a pair; a pair that also differs in a length, a switch or a word still is. The Frame styles section lists the
   kinds. What stays: a book whose boxes differ in colours *and* shape still has one style per shape.
-
-### 5.18 Findings round I (#882)
-
 **Sandbox, editions and bundles (#968, #970, #978).**
 
 - **A licensed family names an open one (#978).** `CustomFontFamily.fallback` and the manifest's `fonts[].fallback` name a
@@ -1232,8 +1225,8 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the host; the CLI's `resolveFonts` looks the fallback up like any family (and asks no catalogue for the licensed
   name); the Sandbox's font loader declares the fallback's faces under the licensed name for the page, the layout
   worker and the PDF provider, and the Fonts panel has a Stand-in family field. A fallback that is itself a custom
-  family (bundled open face) works too. Limits: a fallback with no static cuts (a Google family served only by its
-  style sheet) is not aliased in the Sandbox; EPUB and HTML keep leaving the licensed family's reference to the reader.
+  family (bundled open face) works too. The limits this round named (a fallback served only by Google's style sheet;
+  EPUB and HTML leaving the licensed family to the reader) are lifted in §5.19.
   No new warning kind: the stand-in is announced by the import warning and shown in the Fonts panel; the PDF embeds
   the open face, which the docs say.
 - **Editions (#968).** *Title:* `ProjectRecord.editionTitles` keeps `localized.<lang>.name` and `description` of every
@@ -1245,7 +1238,7 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the reader already read it before `layouts.json`. *Fonts:* the families an edition laid out behind the reader declares
   and the book on screen lacks are served as the book's (`declareEditionFonts`, a second registry the book's own
   `setCustomFonts` overrides and `newBook` empties); two editions that give one name different files are not told apart.
-  The Activity-bar badge still counts the edition on screen (#903); not wired.
+  The Activity-bar badge counts the edition on screen (#903), by decision (§5.19).
 - **The label editor of a surface (#970).** The hit test, hover, drag with its ghost, drop, click and double click are
   `createLabelEditor`, which knows nothing of the page: a `LabelSurface` paints its marks (`paint(page, shapes | null)`)
   and says how big a CSS pixel is there. The Canvas and the HTML preview adapt it per page element
@@ -1255,6 +1248,163 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   The drop is `dropLabel` (anchor on the resource, or the `at` percentages in the Markdown), one history step, through
   the template editor host, which the Folio now lends too. The anchors dialog takes two fingers (move and pinch).
 
+### 5.19 Findings round J (#846)
+
+- **A page break between the parts of a contents in a frame (#996).** `TocBlockInfo.breakBefore` marks the part row
+  that `toc.parts.breakBefore` puts after a `:::pagebreak` (every part but the first; the repeat of a head row drops it).
+  `partBreakCut(pass, L, from)` in `frameLayout.ts` answers the cut at the first such row after something real in the
+  fragment. Three places use it. (a) `splitCalloutFragment` takes a `partBreaks` argument (only the frame typesetter
+  passes it, so a `:::toc` in a flow callout is cut as before): a top-level cut before a flagged part row is a candidate
+  that skips `splitMinLines` and the list rules (the break is the author's), and no cut runs past the first such row;
+  the deepest cut that fits wins as always, so a part taller than the room is cut by the room and the next part still
+  opens a page. (b) `fill` in `composedLayout.ts` cuts even when the whole box would fit, when the frame can go on:
+  chained (`next`) or `fit.goOn`. (c) A frame that could go on but is not in `fit.goOn` is reported by the composition
+  (`Composition.wantsOn`); the ladder takes it as its first step (`goingOn`), before the pictures and text shrink, so
+  nothing is scaled for a break. A frame with no `overflow.continueIn` and no chain ignores the break (documented, no
+  warning: the option is the contents' and the template is the author's). `naturalOf` measures an auto-height frame up
+  to the cut it will take. Rejected: handling the break in `layoutCallout` (it has no way to end a fragment); a new
+  `FrameConfig` key (the option already says it).
+- **A heading design that fills its column (#997).** `headingClaimsColumn` (`level`, `element?`; WARNING_SINCE 1.43.0),
+  a content warning of the layout beside `tocGroupSplit`. `measureHeadingDesign` returns what sets the reserved height
+  (`claimedBy`: the id of the element that reaches lowest, or `byMinHeight`); the build keeps it for an in-column heading
+  (`span` not `'page'`) whose design is taller than its lines (`headingClaims`), and at the end of the pass reports the
+  heading when it is the last block of its column, the column has no room for a line, and the next block of the flow is in
+  another column. The two cases the issue wanted told apart: a page-span opener is never noted, and a heading followed by
+  an explicit break is silent (the page is in `forcedBreakPages`, or the column in `forcedBreak`). On a page of one text column the column is the page, so a design that fills it is a cover and is silent too: one public recipe (a vertical title page) set exactly so, which the first version of the check named by mistake. Elements that follow
+  the band (a box filling it) do not set the height, so they are never named. It is not part of `headingDesignCut`
+  (`collectHeadingDesignCuts` stays a pure check on the finished layout, for design text lost past the foot): the claim
+  needs what only the build knows (which element reserved the height). The Sandbox lists it in the design group of the
+  Checks panel and the docs say what to do (`reserve: false` on the element, a lower `minHeight`, or `span: 'page'`).
+**Sandbox editions and the template editor (#989, #991, #999).**
+
+- **Add a language (#989).** `ProjectActions.addEdition(id, locale)` (Books panel row menu, `sandbox_save_book`
+  `add_language`): `withNewEdition` (storage/projectEditions.ts) copies the edition the record opens with into
+  `editions[locale]` (chapters under new ids, configuration cloned, resources cloned but pointing at the same files, which
+  the sweep already counts across editions), sets `config.locale`, follows built-in figure/table names to the new language
+  (`relocalizedResourceTypes`) and drops an explicit hyphenation language (it was the old language's). The record's own
+  `locale` is filled when absent (configuration, then the interface language) because `withActiveEdition` keys on it;
+  the action then opens the new edition with it. A language the record has (tag compared without case) is refused.
+  An Arabic, Chinese or Japanese edition gets the defaults of its language (`withLanguageDefaults`: the Design panel's
+  `arabicDefaults`, `chineseDefaults`, `japaneseDefaults` on the new edition's configuration, as a new book in that
+  language gets them). Those lists already tell a setting the book chose for itself (`customised`) from one it left at
+  the engine's or the other script's default: with no `include` they apply the rest and the rows that are part of the
+  language (an explicit left-to-right direction goes back to Auto for Arabic), so the book's own typefaces, margins and
+  the like are not overwritten. The writing mode the book has is kept (a vertical book gives a vertical Japanese
+  edition, a horizontal one a horizontal edition). The notice says how many settings moved. Going from such a
+  language to another one undoes nothing: direction, binding and writing mode stay as the first edition has them.
+- **Copy names (#989).** Duplicating a project and "Copy of the open book" already added "copy"; the copy of a *sample*
+  kept the sample's name. It now takes the same suffix (`projectCopySuffix`).
+- **A title per language (#999).** The rule of #968 stays the default (a rename is the book's in every edition,
+  `titleEdited`). `renameEditionPatch` is the other choice, offered by a box in the rename fields of a book in several
+  languages (`sandbox_save_book` `rename` with `thisLanguageOnly`): the edition on screen gets its own entry in
+  `editionTitles`, every other edition is given the title it shows now (so nothing moves under the reader's eyes, also
+  when `titleEdited` was on) and `titleEdited` goes off, which is what an export reads to write `localized.<lang>.name`.
+- **The badge (#999).** Decision: the Checks badge keeps counting the chapter and edition on screen. Other editions are
+  laid out behind the reader only while the Checks panel is open (`useBookEditions`), so a badge reading their entries
+  with the panel shut would show numbers that an edit has outdated, and keeping them current means laying every edition
+  out after every edit. What changes is the accessible name: for a book in several languages it says which language the
+  count is of (`navWarningsEdition`); the panel is where every language is listed.
+- **Template editor (#991).** `newFrameFor`: a frame added to a template whose groups have members is sized like the last
+  member of the last such group; with a stack and no member it is `fill` x `auto`; otherwise the old 60 x 40 mm box.
+  Group members are an ordered list (`GroupsEditor`): a ticked frame joins at the end, `moveMember` and two arrow buttons
+  reorder, and the engine already honours the order of `group.frames`; the old behaviour (always the template's order)
+  was the UI's, not the engine's. "New" picks its first frame.
+- **A label near the spine (#990).** On a spread the figure across the spine is one block painted twice, each page
+  clipped to its sheet, so a label whose box reached into the gutter band was cut by the fold and read on neither page.
+  `keepLabelsOffGutter(block, band)` (`composed/labels.ts`) runs in `layoutComposedSpread` on every block of the laid
+  sheet, before the blocks are cut and the facing copies made: a label whose box (`labelRectInBlock`, the same box
+  `stampFigureLabelRects` stamps, through a quarter-turned block's turn) meets the band `[spine - gutter / 2, spine +
+  gutter / 2]` slides along the sheet's axis to the band's edge, on the side of its anchor point (ties, the point on the
+  spine itself: the first page, as a frame is), and keeps its other coordinate. The design answers the issue's first
+  option (draw the label on the side where its anchor lies) rather than the second (warn in the anchor dialog): the
+  fold is a fact of the sheet, not an authoring mistake, so nothing is raised and the Sandbox needs no warning. A label
+  set across both pages on purpose (a title over a map) keeps its place with `ResourceAnchor.gutter: 'cross'`
+  (`'keep'` is the default and is not written); the anchor editor has a Keep off / Cross control, one anchor or the
+  ticked ones, and the WebMCP marks schema takes the field. The move replaces the label object (the labels of a
+  measured block may be shared with a cache), works in the flow frame (so a right-to-left sheet moves the same way
+  before the page is mirrored) and on the transposed axis of a vertical sheet. The gutter band is the template's
+  `gutter`; with a gutter of 0 the band is the spine line itself. The outer edges
+  of the sheet are left alone, and documented so: a label past the trim is cut as the picture is.
+- **Label styles (#994).** Renaming a label style in the Design panel now rewrites what names it, as a frame style
+  rename does: `labelStyles/labelRefs.ts` reads the `style` of each `::label` line (outside code fences, quoted or
+  bare) and of each anchor; `applyLabelStyleRename` writes one history step per chapter changed (the chapter in the
+  editor through its editor), one per picture changed, then the design, so Undo takes them back one at a time; the card
+  says how many anchors and lines it rewrote. Each card counts the anchors and label lines that name its style
+  (`useLabelStyleUsage`, a chapter read again only when its text changed). The Avoid zones mode of the picture marks
+  is worded for maps as well as comics (symbols a label keeps clear of). The EPUB limits stay deliberate and are
+  documented: the reflowable book lists the labels its SVG layer cannot draw in a hidden list, and tracking is not drawn
+  on Arabic words (a joining script is not tracked in print either).
+- **An SVG's own shapes as symbols (#994).** Decision: measure once, store as `avoid` zones, read nothing at layout. The
+  engine never holds a picture's markup (the file lives in the Sandbox's blob store or the bundle), and zones already
+  mean "symbol" to `labelOverlap`, so no format and no engine path changed. `panels/resources/svgSymbols.ts`
+  measures an SVG in a browser (`measureSvgNodes`: the drawing laid at its view box with `preserveAspectRatio` none, one
+  `getBoundingClientRect` per element, so transforms, `use` and nested groups are exact) and `symbolZones` picks the
+  elements by id prefix or class: the outermost match of a branch (a group named as a symbol is one zone), never one in a
+  definition (`defs`, `symbol`, `clipPath`, ...), a point widened to the smallest zone the marks allow (0.6 % of the
+  picture). `addZones` adds only zones that do not cover an old one by nine tenths, so reading the drawing again adds just
+  what is new and never touches a hand-drawn zone. The Avoid zones mode of the marks dialog has the row (SVG pictures
+  only); `sandbox_save_resource` takes `marks.svgSymbols { idPrefix, className }` and merges the zones into the call's
+  or the picture's own. Known limit, documented: the zones are a snapshot, so a changed drawing has to be read again; a
+  stroke's width is not part of an element's box.
+**Outputs (#993, #995).**
+
+- **A stand-in travels where the licensed face may not (#993).** A family marked `redistributable: false` that names a
+  `fallback` is set, in a file that leaves the app, in the fallback's faces of the same weight and slant under the
+  licensed name. Decision: the fallback is open by definition (it is what the licensed family's bundle ships in its
+  place), so embedding it under the licensed name is a naming matter only, and the family's own files never go. The rule
+  is `exportStandInOf(customFonts, family)`: only a withheld family has an export stand-in (a family the book may hand
+  on keeps its files; `hasOwnStyle` is the layout's rule, this is the export's). Text fonts: the host gives the stand-in
+  faces as ordinary `EpubFontFile`s under the licensed name (Sandbox `collectEpubFonts`, which asks the loader for the
+  fallback's faces of every weight and slant the book uses and returns `stoodIn`; CLI `FontSet.exportStandIn`, which
+  looks the fallback up like any family, the book's own files of it first). SVG pictures: `inlineSvgFonts*` takes
+  `standIn(family)`; for a family `withhold` names, the provider is asked for the *stand-in's* face and the file is
+  embedded under the withheld name, so the licensed files can never be answered by a provider that has them; a family
+  whose stand-in lacks any face the SVG asks is left out whole (`fontWithheld` as before). `standIn` is passed by the
+  host (`ResolvedConfig` carries no `customFonts`): `EpubSvgFontOptions.standIn`, `renderToHtml`'s
+  `inlineSvgFonts.standIn`. No new engine warning kind: the Sandbox's EPUB tab gets a notice (`fontStoodIn`) and the CLI an
+  info line. A stand-in with several licensed families in one fallback is embedded once per family (buffers copied).
+  Third bullet of the issue: a fallback served only by Google's style sheet was already declared and sent to the layout
+  worker (tests added); what failed was the PDF and SVG provider, which looked for Fontsource files only; it now ends with
+  `sheetFaceFiles` (the sheet's faces for the cut CSS font matching settles on). The port kit's pack step is the skill's
+  (skill-notes/993.md). Limits: a family with some own files and a fallback for one slant is, in an export, set wholly
+  in the fallback (its own files are withheld, so no weight can be a mix); the lines were measured with the real files
+  in the owner's Sandbox, with the stand-in in a plain bundle's.
+- **A picture painted in the label's colour (#995).** `label.icon.tint` (boolean, default off) paints the picture's
+  *silhouette* in `label.color`. Decision: one semantic for every backend, "the colour fills what the picture covers, in
+  proportion to its opacity" (canvas `source-in`, HTML `feFlood` + `SourceAlpha`, PDF recoloured paths / alpha stencil),
+  not SVG `currentColor` (it would work for some pictures and not for bitmaps or for SVGs with fixed colours). The block
+  carries `VDTDesignImageBlock.tint` (`#rrggbb`), so any design image can use it later; only the label sets it. Tint wins
+  over `diagramStyle.singleInk`. A picture with no transparency becomes a rectangle. PDF: a vector drawing is recoloured
+  into its own Form XObject per colour (`tintedDrawing`); a bitmap (or an SVG that took the raster fallback) is painted
+  through a 1-bit `ImageMask` of its alpha (cut at half transparency; no transparency, so PDF/X-1a stays valid, and the
+  colour goes through the render's colour space); a print master (an embedded PDF page) cannot be recoloured, so a tinted
+  SVG drops `pdfFileId`. HTML: the page defines one filter per colour (`pt-tint-<hex>-<page>`) beside the single-ink
+  filter; a reader without CSS filters shows the picture in its own colours (the fixed-layout EPUB goes through it). The
+  contrast check and preflight need nothing: the picture's colour is the label's, which they read for the words over
+  the same tab. The reflowable EPUB does not draw label tabs, so it has no picture to tint.
+- **A finger on a label (#992).** The label editor of the Canvas and the HTML viewer took its presses in capture
+  listeners and its marks were an SVG that takes no pointer, so a touch on a label reached the browser as a plain
+  page touch: after a few px it became a scroll, `pointercancel` ended the drag and nothing was written. The browser
+  reads `touch-action` at the first touch, from what is under the finger, so the fix is something under it: a
+  `touchPads` list (one box per label outline, a 44 px square round every point), laid over the page as `div`s with
+  `touch-action: none`, only where the screen is `(hover: none) and (pointer: coarse)` (a screen that also has a mouse
+  would have them intercept the presses the editor leaves alone). A finger that lands on bare paper still scrolls the
+  canvas. The editor takes a finger or a pen within 22 CSS px of a point (a mouse 9) and lets it wander 8 px before a
+  press is a drag (a mouse 3). Decision: not `touch-action: none` on the whole page in Design mode, which would stop
+  the canvas scrolling wherever a page is under the finger. The Folio needed nothing (`.is-select` is
+  `touch-action: none` already and a press on a mark never turns a page); the anchors dialog's stage is
+  `touch-none`, and the browser's own page pinch does not start there. Checked with the browser's touch emulation
+  and real touch events (Chrome DevTools protocol) on a tablet and a phone screen, not on a physical device.
+  `drawLabelMarksOverlay`, unused since the HTML viewer takes the editor's marks, is gone.
+- **Frame names in a draft that dedupe never sees (#998).** `pdf_regions.py extract` names frames by position
+  (`box-4`) because `template_dedupe.py` compares the frames of two templates by name and the positions line up
+  across the pages of a kind. A run of one page has nothing to merge, so `extract --name-frames auto` runs
+  `name_frames` itself: templates, page Markdown, `figures.json`, `regions.json`, overlays and `report.json` follow.
+  `always` does it for several pages, `never` keeps the positions. The callout styles are still `box-1` when
+  `extract` runs, so a box says `box` and its order; dedupe, run later on such a draft, names it after its merged
+  style (the role names match its positional pattern and are derived again). The Sandbox rename of a frame of a
+  sample reaching only the open edition is a documented limit: the other editions of a bundle are read each time and
+  have no store to write to.
 
 ## 6. Source map contract
 

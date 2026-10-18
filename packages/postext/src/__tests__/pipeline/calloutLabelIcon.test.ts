@@ -120,3 +120,55 @@ describe('label.icon.placement (#981)', () => {
     expect(words(blocks).lines[0]!.xOffset).toBeCloseTo(6, 3);
   });
 });
+
+// #995: the picture painted in the colour of the words.
+describe('label.icon.tint (#995)', () => {
+  const MASTERED: Resource = { ...RING, svg: { ...RING.svg!, pdfFileId: 'ring.pdf' } };
+  const buildWith = (tint: boolean | undefined, placement: 'beside' | 'inside', resources: Resource[] = [RING]): VDTDocument => buildDocument(
+    { markdown: ':::callout{type="tab" label="Money"}\nBody.\n:::', resources },
+    config(placement, { color: { hex: '#123456', source: 'custom' }, icon: { resourceId: 'ring', width: pt(8), gap: pt(3), placement, ...(tint === undefined ? {} : { tint }) } }),
+  );
+
+  it('resolves to false, keeps true and ignores anything else', () => {
+    const body = resolveBodyTextConfig();
+    const [a, b, c] = resolveCalloutStylesConfig(
+      [
+        { id: 'a', label: {} },
+        { id: 'b', label: { icon: { tint: true } } },
+        { id: 'c', label: { icon: { tint: 'yes' as never } } },
+      ],
+      body, resolveHeadingsConfig({}), resolveUnorderedListsConfig(undefined, body),
+    );
+    expect(a!.label!.icon.tint).toBe(false);
+    expect(b!.label!.icon.tint).toBe(true);
+    expect(c!.label!.icon.tint).toBe(false);
+  });
+
+  it('sets the picture\'s colour to the label\'s, inside the tab and beside it', () => {
+    for (const placement of ['inside', 'beside'] as const) {
+      expect(icon(overlay(buildWith(true, placement))).tint).toBe('#123456');
+    }
+  });
+
+  it('leaves the picture in its own colours by default', () => {
+    for (const tint of [undefined, false]) {
+      expect(icon(overlay(buildWith(tint, 'inside'))).tint).toBeUndefined();
+    }
+  });
+
+  it('moves nothing: the geometry is the one without the tint', () => {
+    for (const placement of ['inside', 'beside'] as const) {
+      const a = overlay(buildWith(true, placement));
+      const b = overlay(buildWith(false, placement));
+      expect(icon(a).bbox).toEqual(icon(b).bbox);
+      expect(tab(a).bbox).toEqual(tab(b).bbox);
+    }
+  });
+
+  it('drops the print master of an SVG, which cannot be recoloured', () => {
+    expect(icon(overlay(buildWith(false, 'inside', [MASTERED]))).pdfFileId).toBe('ring.pdf');
+    const tinted = icon(overlay(buildWith(true, 'inside', [MASTERED])));
+    expect(tinted.pdfFileId).toBeUndefined();
+    expect(tinted.imageKind).toBe('svg');
+  });
+});

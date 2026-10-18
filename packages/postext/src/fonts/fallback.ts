@@ -51,3 +51,21 @@ export function hasOwnStyle(
 ): boolean {
   return variants.some((v) => v.style === style);
 }
+
+/** The open family that stands in for `family` in a file that leaves the
+ *  app (an EPUB, an HTML export, an SVG picture inside one; #993), or
+ *  undefined. The family is one the book may not hand on
+ *  (`redistributable: false`) and names a `fallback`: its files stay out of
+ *  the file, and the fallback's faces of the same weight and slant go in
+ *  under its name, so the reading system sets the text in a face of about
+ *  the same width instead of in whatever it has. A fallback is open by
+ *  definition (it is what the licensed family's bundle ships in its place),
+ *  which is what lets it travel. */
+export function exportStandInOf(
+  customFonts: readonly Pick<CustomFontFamily, 'name' | 'fallback' | 'redistributable'>[] | undefined,
+  family: string,
+): string | undefined {
+  const key = primaryFontFamily(family).trim().toLowerCase();
+  const found = (customFonts ?? []).find((f) => f.name.trim().toLowerCase() === key);
+  return found && found.redistributable === false ? fontFallbackOf([found], found.name) : undefined;
+}

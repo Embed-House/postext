@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Le flottant reste sur la page d’ouverture ; <code>'avoid'</code> le déplace vers le premier emplacement qui la suit.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>Un titre de colonne (<code>span: 'column'</code>) dont la maquette réserve toute sa colonne, si bien que le texte qui suit commence dans la colonne ou la page suivante (<code>level</code>, <code>element</code> : l’élément de la maquette qui descend le plus bas, absent quand <code>minHeight</code> fixe la hauteur). Un par titre ; il pointe le titre, avec sa page. Une ouverture pleine page, un titre sur une page d’une seule colonne et un titre suivi d’une coupure explicite ne sont pas signalés. Depuis postext 1.43.</td>
+      <td>Le texte après le titre commence dans la colonne ou la page suivante. <code>reserve: false</code> sur l’élément, un <code>minHeight</code> plus petit ou <code>span: 'page'</code> règlent le cas.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Une police dans laquelle le texte a été composé (<code>family</code>, <code>weight</code>, <code>style</code>) et que le jeu de polices ne pouvait pas fournir au moment de la construction : <code>reason: 'missing'</code>, aucune police de la famille n’était chargée ni installée, ou celle qui répond pour cette graisse et cette inclinaison n’était pas encore chargée ; <code>'synthesized'</code>, la famille n’a pas de police de cette graisse ou de cette inclinaison et le navigateur la tire d’une autre, telle quelle ou dessinée plus grasse ou penchée (un 600 tiré du 700, un 700 italique demandé à une famille qui n’a qu’un 400 romain). Vérifié là où il existe un jeu de polices (<code>document.fonts</code>, le <code>self.fonts</code> d’un worker, ou <code>BuildDocumentOptions.fontSet</code>), derrière <code>debug.warnings.missingFont</code>. Ni page ni plage source.</td>
       <td>Le texte est mesuré et dessiné avec la police de repli, ou avec une autre police de la famille, telle quelle ou rendue plus grasse ou penchée ; ses coupures de ligne changent quand la police arrive. Voir <a href="#charger-les-polices-avant-la-mise-en-page">Charger les polices avant la mise en page</a>.</td>

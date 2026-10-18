@@ -2411,6 +2411,16 @@ export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
    *  picture over `uncroppedPictureBox(bbox, crop)` clipped to `bbox`.
    *  Absent: the whole picture fills `bbox`. */
   crop?: { x: number; y: number; width: number; height: number };
+  /** Paint the picture in this colour (`#rrggbb`): its silhouette, the
+   *  opaque and translucent parts of the picture as stored, in one colour
+   *  (#995). A label tab's picture takes the label's text colour
+   *  (`label.icon.tint`). Every backend paints it: the canvas composites
+   *  the decoded picture with `source-in`, the HTML filters it
+   *  (`feFlood` in `SourceAlpha`), the PDF recolours a vector picture's
+   *  paths and gives a bitmap a solid colour through its own alpha. A
+   *  picture without transparency becomes a plain rectangle, as in a
+   *  browser. Wins over `diagramStyle.singleInk`. */
+  tint?: string;
 }
 
 export type VDTDesignBlock =
@@ -3360,6 +3370,14 @@ export type ContentWarning = ContentWarningBase & (
    *  first one. `inResource` names the resource whose caption, note or
    *  cell holds it. */
   | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
+  /** An in-column heading whose design reserves the whole of its column
+   *  (#997): the text after it starts in the next column or page. `element`
+   *  is the id of the design element that reaches lowest and sets that
+   *  height (give it `reserve: false` if it is decoration), absent when
+   *  the design's own `minHeight` is what fills the column. A page-span
+   *  opener claims its page on purpose and is not reported. The source
+   *  range is the heading's. */
+  | { kind: 'headingClaimsColumn'; level: number; element?: string }
   /** A `:::figure` gives words (`alt`, `caption`, `note`) to a resource
    *  that an earlier figure of the chapter already gave words to, and
    *  they differ (#986): a resource has one set of words in a chapter, the

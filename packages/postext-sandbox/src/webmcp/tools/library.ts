@@ -3,6 +3,7 @@
 
 import { emptyTemplate, postextToDocx } from 'postext/word';
 import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
+import { canonicalLocaleTag } from 'postext';
 import type { DuplicateSource, SandboxState } from '../../context/SandboxContext';
 import { slugify } from '../../panels/resources/slugify';
 import { isDocumentUntouched } from '../../presets';
@@ -154,14 +155,15 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const saveBook: WebMcpTool = {
     name: 'sandbox_save_book',
     title: 'Sandbox: make, copy or rename a book',
-    description: "Make a project — the reader's own book, kept in this browser — or tend the list of books: new_blank starts an empty book; copy_current keeps the book on screen as a new project (how a sample becomes the reader's own); duplicate copies a sample or a project without opening the original (a sample the reader edited is copied with their edits, unless from says original); rename changes a project's name or description; set_cover gives a project a cover picture and remove_cover takes it away; hide_sample and show_sample take a sample off the list and put it back. A new book is opened at once.",
+    description: "Make a project — the reader's own book, kept in this browser — or tend the list of books: new_blank starts an empty book; copy_current keeps the book on screen as a new project (how a sample becomes the reader's own); duplicate copies a sample or a project without opening the original (a sample the reader edited is copied with their edits, unless from says original); rename changes a project's name or description (on a book in several languages the name is the book's in every language, unless thisLanguageOnly); add_language adds a language to a project: the edition on screen is copied into a new edition whose document language is the one in the language field, and that edition is opened, still in the old language's words until translated; set_cover gives a project a cover picture and remove_cover takes it away; hide_sample and show_sample take a sample off the list and put it back. A new book is opened at once.",
     inputSchema: {
       type: 'object',
       properties: {
-        action: { type: 'string', enum: ['new_blank', 'copy_current', 'duplicate', 'rename', 'set_cover', 'remove_cover', 'hide_sample', 'show_sample'] },
+        action: { type: 'string', enum: ['new_blank', 'copy_current', 'duplicate', 'rename', 'add_language', 'set_cover', 'remove_cover', 'hide_sample', 'show_sample'] },
         kind: { type: 'string', enum: ['sample', 'project'], description: 'duplicate: what the id names.' },
-        id: { type: 'string', description: 'duplicate, rename, hide_sample, show_sample: the book. set_cover, remove_cover: the project (the one on screen when left out).' },
-        language: { type: 'string', description: 'duplicate a sample: the language to copy. Left out, the one a click on the sample would open: the one on screen, else the interface language, else the language the reader last edited.' },
+        id: { type: 'string', description: 'duplicate, rename, hide_sample, show_sample: the book. add_language, set_cover, remove_cover: the project (the one on screen when left out).' },
+        thisLanguageOnly: { type: 'boolean', description: 'rename a project in several languages: give the name and description to the language on screen only; the others keep the title they show.' },
+        language: { type: 'string', description: 'add_language: the tag of the new language (en, es, fr, zh-Hant, ar…), one the book does not have. duplicate a sample: the language to copy. Left out, the one a click on the sample would open: the one on screen, else the interface language, else the language the reader last edited.' },
         from: { type: 'string', enum: ['edited', 'original'], description: 'duplicate a sample: copy the reader\'s edited version in that language (edited; refused when there is none) or the sample as it ships (original). Left out, the edited version when there is one, as the Books panel does.' },
         name: { type: 'string', description: 'new_blank, copy_current, rename: the name.' },
         description: { type: 'string', description: 'rename: the description (empty clears it).' },
@@ -233,8 +235,29 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           const id = (args.id as string | undefined) ?? s.activeProjectId;
           if (!id || !s.projects.some((p) => p.id === id)) throw new ToolError('rename works on a project: give its id, or open one (a sample becomes a project with copy_current).');
           const current = s.projects.find((p) => p.id === id)!;
-          await projects.rename(id, name ?? current.name, args.description as string | undefined);
-          return { project: id, name: name ?? current.name };
+          await projects.rename(id, name ?? current.name, args.description as string | undefined, args.thisLanguageOnly === true ? { edition: true } : undefined);
+          return { project: id, name: name ?? current.name, ...(args.thisLanguageOnly === true && current.locales ? { language: current.locale } : {}) };
+        }
+        case 'add_language': {
+          const id = (args.id as string | undefined) ?? s.activeProjectId;
+          const project = id ? s.projects.find((p) => p.id === id) : undefined;
+          if (!project) {
+            throw new ToolError(args.id !== undefined
+              ? `No project with id ${JSON.stringify(args.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`
+              : 'add_language works on a project: give its id, or open one (a sample becomes a project with copy_current).');
+          }
+          const language = (args.language as string | undefined)?.trim();
+          if (!language || !canonicalLocaleTag(language)) throw new ToolError('add_language needs "language": the tag of the new language, such as "fr", "zh-Hant" or "ar".');
+          let added: boolean;
+          try {
+            added = await projects.addEdition(project.id, language);
+          } catch (err) {
+            throw new ToolError(`The language could not be added: ${messageOf(err)}`);
+          }
+          if (!added) throw new ToolError(`The book already has an edition in ${language}${project.locales ? ` (${project.locales.join(', ')})` : ''}.`);
+          await sleep(50);
+          const laidOut = await whenSettled(host, { signal });
+          return { project: project.id, language, opened: bookIdentity(host), laidOut };
         }
         case 'set_cover':
         case 'remove_cover': {

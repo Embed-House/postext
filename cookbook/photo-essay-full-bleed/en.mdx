@@ -42,7 +42,7 @@ The plate before a text fills its page, so the text starts the next page with no
 
 <Excerpt region="plates" />
 
-A design’s image element draws a declared resource, so all six pictures are in `resources`: JPEGs in the recipe’s `assets/`, each cut to the shape of the page or spread it fills and declared at its pixel size, which is all the layout reads. `loadImage()` registers each file before the build. Plate IV is the only one cited with `:ref`, and so the only one that floats. It takes the first free slot after the citation, on the page of its text, one line under the last paragraph. A numbered type would caption it *Plate 1*, since it is the only resource of its type that floats. `lamina` has an empty `numberingTemplate` instead, and the caption itself begins with IV. In the sentence, `:ref`’s `text` names the plate, because a bare `:ref` prints only the word *plate*.
+A design’s image element draws a declared resource, so all six pictures are in `resources`: JPEGs in the recipe’s `assets/`, each cut to the shape of the page or spread it fills and declared at its pixel size, which is all the layout reads. `loadImage()` registers each file before the build. Plate IV is the only one cited with `:ref`, and so the only one that floats. It takes the first free slot after the citation, on the page of its text, one line under the last paragraph. A numbered type would caption it *Plate 1*, since it is the only resource of its type that floats. `lamina` has an empty `numberingTemplate` and an empty `captionPrefix` instead, so no *Plate.* is printed, and the caption itself begins with IV. In the sentence, `:ref`’s `text` names the plate, because a bare `:ref` prints only the word *plate*.
 
 ## Variations
 

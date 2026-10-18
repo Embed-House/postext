@@ -162,7 +162,7 @@ export function separatePixels(px: RgbaPixels, mode: PrintColorMode): { cmyk: Ui
  *  placeholder, #800), so the image is made on its prototype: the page's
  *  `drawImage` accepts it, and with no embedder there is nothing left to
  *  embed when the document is saved. */
-function imageOf(pdfDoc: PDFDocument, ref: PDFRef, width: number, height: number): PDFImage {
+export function imageOf(pdfDoc: PDFDocument, ref: PDFRef, width: number, height: number): PDFImage {
   const image = Object.create(PDFImage.prototype) as PDFImage;
   Object.assign(image, { ref, doc: pdfDoc, width, height, embedder: undefined });
   return image;

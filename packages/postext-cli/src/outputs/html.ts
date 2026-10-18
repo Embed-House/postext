@@ -55,11 +55,26 @@ export async function writeHtml(book: Book, layout: Layout, fonts: FontSet, opts
 
   // Fonts, as @font-face rules.
   const withheld = withheldFamilies(book);
-  const faces: Face[] = fonts.usedFaces().filter((f) => {
-    if (!withheld.has(f.family.toLowerCase())) return true;
-    reporter.warn({ kind: 'fontWithheld', severity: 'info', message: `"${f.family}" may not be copied out of the book: the HTML names it without its file` });
-    return false;
-  });
+  const faces: Face[] = [];
+  const told = new Set<string>();
+  for (const f of fonts.usedFaces()) {
+    const key = f.family.toLowerCase();
+    if (!withheld.has(key)) {
+      faces.push(f);
+      continue;
+    }
+    // A family the book may not hand on: its own files stay out, and the
+    // open family it names as its fallback goes in under its name (#993).
+    if (told.has(key)) continue;
+    told.add(key);
+    const stand = await fonts.exportStandIn(f.family);
+    if (stand.length > 0) {
+      reporter.warn({ kind: 'fontStoodIn', severity: 'info', message: `"${f.family}" may not be copied out of the book: the HTML sets it in ${stand[0]!.standsInFor}, under the same name` });
+      faces.push(...stand);
+    } else {
+      reporter.warn({ kind: 'fontWithheld', severity: 'info', message: `"${f.family}" may not be copied out of the book: the HTML names it without its file` });
+    }
+  }
   const fontFaces = faces.map((f) => {
     const file = `fonts/${safeName(`${f.family}-${f.weight}${f.style === 'italic' ? 'i' : ''}.${f.format}`)}`;
     const url = asset(file, f.format === 'otf' ? 'font/otf' : 'font/ttf', f.bytes);

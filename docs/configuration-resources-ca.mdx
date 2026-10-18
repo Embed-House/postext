@@ -889,7 +889,7 @@ const canvas = renderPage(doc.pages[0], doc);
 On passa:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` recoloreix (`inkHex`), incrusta les fonts (`fonts`, un proveïdor; `inlineFonts: false` ho omet), descodifica i registra la imatge com a font vectorial, i es resol amb el que ha passat amb cada variant. `registerBundleImages(bundle)` fa el mateix amb els SVG d'un paquet, primer amb les variants del mateix paquet. `prepareSvgMarkup(svgText, options)` retorna el marcatge preparat per a un amfitrió que descodifica pel seu compte.
-- **HTML.** `bundleImageUrl(bundle)` serveix el marcatge SVG amb les variants del paquet incrustades. `renderToHtml(doc, { inlineSvgFonts: true })` incrusta als data URI SVG que retorna `resourceImageUrl` les variants que el registre té a la memòria (o `inlineSvgFonts: { fonts, maxBytes, withhold }`). Una URL d'objecte no es pot llegir de manera síncrona, així que un amfitrió que serveix URL blob incrusta abans de crear-les.
+- **HTML.** `bundleImageUrl(bundle)` serveix el marcatge SVG amb les variants del paquet incrustades. `renderToHtml(doc, { inlineSvgFonts: true })` incrusta als data URI SVG que retorna `resourceImageUrl` les variants que el registre té a la memòria (o `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). Una URL d'objecte no es pot llegir de manera síncrona, així que un amfitrió que serveix URL blob incrusta abans de crear-les.
 - **EPUB.** `postext-epub` incrusta des de les `fonts` del llibre, i després des de `svgFonts.provider`, abans d'escriure un SVG (consulta [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub)).
 - **PDF.** El text SVG es compon com a text real amb les fonts incrustades. Un `<style>` que només conté regles `@font-face` (variants que va incrustar l'autor) ja no fa que la figura passi a ràster. Quan una figura sí que passa a ràster (un filtre, un degradat), el seu ràster es fa amb les variants incrustades des del `fontProvider` del PDF.
 
@@ -924,6 +924,12 @@ També s'exporten les funcions de nivell més baix: `svgFontRequests(svgText)` e
       <td>Famílies que es deixen fora d'un fitxer que surt de l'aplicació (no redistribuïbles). La seva referència es manté i el lector fa servir una font de reserva; <code>onWithheld(family)</code> rep avís de cadascuna.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>cap</td>
+      <td>La família oberta la cara de la qual s'incrusta amb el nom d'una família que <code>withhold</code> nomena (des de postext 1.43): al proveïdor se li demana la substituta, i la imatge conserva la referència i les amplades. Una família sense substituta, o amb una substituta de la qual el proveïdor no té alguna cara que demana l'SVG, queda fora sencera.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>cap</td>
@@ -934,7 +940,7 @@ També s'exporten les funcions de nivell més baix: `svgFontRequests(svgText)` e
 
 **Desactivar-ho.** `diagramStyle.inlineFonts: false` deixa tots els SVG tal com estan desats; `svg.inlineFonts: false` en un recurs deixa aquell SVG byte a byte com és, per a un SVG que porta les seves pròpies variants o que no ha de canviar. Un paquet escriu l'exclusió del recurs com a `"inlineFonts": false` al seu `preset.json`.
 
-**Llicències.** Incrustar posa fitxers de font dins d'imatges que poden sortir de l'aplicació (una exportació HTML, un EPUB). Passa quan una imatge es mostra o s'exporta, mai als bytes desats del recurs, i `withhold` deixa fora les famílies que una llicència no et permet cedir: l'escriptor d'EPUB reté les variants marcades amb `redistributable: false`, i el Sandbox, les famílies personalitzades marcades així.
+**Llicències.** Incrustar posa fitxers de font dins d'imatges que poden sortir de l'aplicació (una exportació HTML, un EPUB). Passa quan una imatge es mostra o s'exporta, mai als bytes desats del recurs, i `withhold` deixa fora les famílies que una llicència no et permet cedir: l'escriptor d'EPUB reté les variants marcades amb `redistributable: false`, i el Sandbox, les famílies personalitzades marcades així. Des de postext 1.43 una família que `withhold` nomena pot tenir substituta (`standIn`): la cara oberta s'incrusta amb el seu nom i el text de la imatge conserva l'amplada amb què es va compondre.
 
 
 ## Estil de vídeo

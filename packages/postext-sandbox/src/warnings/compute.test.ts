@@ -1069,3 +1069,23 @@ describe('figure labels and words (#969, #986)', () => {
     expect(warningCategory('figureWordsShared')).toBe('figures');
   });
 });
+
+describe('a heading design that fills its column (#997)', () => {
+  const note = (extra: Record<string, unknown>): VDTDocument => ({
+    pages: [], blocks: [], warnings: [], pageIndexOffset: 2, config: { page: { dpi: 72 } },
+    contentWarnings: [{ kind: 'headingClaimsColumn', level: 2, pageIndex: 1, sourceStart: 3, sourceEnd: 11, ...extra }],
+  } as unknown as VDTDocument);
+  const hits = (doc: VDTDocument) => computeWarnings({ markdown: 'x\n\n## Rain\n', config: {}, doc }).filter((w) => w.payload.kind === 'headingClaimsColumn');
+
+  it('lists the heading with the element that claims the column, on the book page', () => {
+    const found = hits(note({ element: 'seal' }));
+    expect(found).toHaveLength(1);
+    expect(found[0]!.payload).toEqual({ kind: 'headingClaimsColumn', level: 2, page: 4, element: 'seal' });
+    expect(found[0]!.sourceStart).toBe(3);
+    expect(warningCategory('headingClaimsColumn')).toBe('design');
+  });
+
+  it('lists a heading whose minHeight fills the column without an element', () => {
+    expect(hits(note({}))[0]!.payload).toEqual({ kind: 'headingClaimsColumn', level: 2, page: 4 });
+  });
+});

@@ -687,6 +687,12 @@ labelStyles: [
       <td><code>'allow'</code>表示放在这个锚点上的标注可以挨着邻近的标注，就像原稿印的那样：包含它的一对不会给出<code>labelOverlap</code>。优先于样式的<code>overlap</code>。自postext 1.42起。</td>
     </tr>
     <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>在跨过跨页书脊的插图上，<code>'keep'</code>把标注从订口带移开，移向其点所在的一侧；<code>'cross'</code>让标注留在点所定的位置，横跨两页的标题需要这样。自 postext 1.43 起。</td>
+    </tr>
+    <tr>
       <td><code>overlap</code></td>
       <td><code>'check' | 'allow'</code></td>
       <td><code>'check'</code></td>

@@ -201,7 +201,7 @@ auto-hébergées. `--assets embed|folder` choisit l’une ou l’autre forme pou
 n’importe quel chemin. Les pages sont la mise en page imprimée, montrée à la
 taille de l’écran : côte à côte (`--mode multi`, par défaut) ou l’une sous
 l’autre (`--mode single`). Les polices marquées `redistributable: false` sont
-nommées mais pas copiées.
+nommées mais pas copiées. Quand la famille nomme un `fallback`, ce sont les fontes de cette famille libre qui sont écrites à sa place, sous le nom de la famille (depuis postext 1.43).
 
 ### epub
 
@@ -215,7 +215,7 @@ texte sélectionnable ; `--layout reflowable` laisse le système de lecture
 recomposer le texte pour son écran (voir [Livres EPUB](/fr/docs/configuration-html-folio-epub#livres-epub-postext-epub)). La
 couverture est la vignette du livre, sauf si `--cover` donne une image. Les
 métadonnées du paquet EPUB (titre, auteurs, langue, identifiant) viennent du
-front matter du premier chapitre, comme dans le Sandbox.
+front matter du premier chapitre, comme dans le Sandbox. Les polices marquées `redistributable: false` ne sont pas copiées ; une famille qui nomme un `fallback` est intégrée avec les fontes de cette famille libre, sous son propre nom (depuis postext 1.43).
 
 ### image et images
 

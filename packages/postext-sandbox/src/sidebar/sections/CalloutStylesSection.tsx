@@ -1149,6 +1149,14 @@ export function CalloutStyleCard({
                   isDefault={labelIconUnset('placement')}
                   onReset={() => resetLabelIconField('placement')}
                 />
+                <ToggleSwitch
+                  label={labels.calloutStyleLabelIconTint}
+                  checked={resolved.label.icon.tint}
+                  onChange={(v) => updateLabelIcon({ tint: v })}
+                  tooltip={labels.calloutStyleLabelIconTintTooltip}
+                  isDefault={labelIconUnset('tint')}
+                  onReset={() => resetLabelIconField('tint')}
+                />
                 <DimensionInput
                   label={labels.calloutStyleLabelIconGap}
                   value={resolved.label.icon.gap}

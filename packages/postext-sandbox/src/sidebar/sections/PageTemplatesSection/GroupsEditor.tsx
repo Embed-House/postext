@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import type { AnchorEdge, Dimension, ElementPlacement, FrameGroupConfig } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
 import { DimensionInput, FieldRow, SelectInput, TextControl } from '../../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../../ui';
-import { addGroup, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
+import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
@@ -82,11 +82,12 @@ function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, o
   useEffect(() => setDraft(group.name), [group.name]);
   const has = (k: keyof FrameGroupConfig) => entry?.[k] !== undefined;
   const members = group.frames;
+  // A frame ticked joins at the end; the order is the one listed, and the
+  // arrows change it (#991).
   const toggle = (name: string, on: boolean) => {
-    // Members keep the order the frames have in the template.
-    const next = on ? frames.filter((f) => f === name || members.includes(f)) : members.filter((m) => m !== name);
-    onChange({ frames: next });
+    onChange({ frames: on ? [...members, name] : members.filter((m) => m !== name) });
   };
+  const listed = [...members.filter((m) => frames.includes(m)), ...frames.filter((f) => !members.includes(f))];
   return (
     <div className="mb-2 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
       <div className="mb-1 flex items-center justify-between gap-1">
@@ -139,14 +140,27 @@ function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, o
       <GroupBoxFields placement={group.placement} targets={targets} isSet={has('placement')} onChange={(p) => onChange({ placement: p })} />
       <fieldset className="m-0 mt-1 border-0 p-0">
         <legend className="mb-1 p-0 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupMembers}</legend>
-        <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {frames.map((f) => (
-            <label key={f} className="flex min-h-6 items-center gap-1 text-xs" style={{ opacity: taken.has(f) ? 0.5 : 1 }}>
-              <input type="checkbox" checked={members.includes(f)} disabled={taken.has(f)} onChange={(e) => toggle(f, e.target.checked)} />
-              {f}
-            </label>
-          ))}
-        </div>
+        <p className="mb-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupMembersHint}</p>
+        <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+          {listed.map((f) => {
+            const at = members.indexOf(f);
+            return (
+              <li key={f} className="flex min-h-6 items-center gap-1 text-xs" style={{ opacity: taken.has(f) ? 0.5 : 1 }}>
+                <label className="flex min-w-0 flex-1 items-center gap-1.5">
+                  <input type="checkbox" checked={at >= 0} disabled={taken.has(f)} onChange={(e) => toggle(f, e.target.checked)} />
+                  <span className="w-4 shrink-0 text-end tabular-nums" aria-hidden="true" style={{ color: 'var(--slate)' }}>{at >= 0 ? at + 1 : ''}</span>
+                  <span className="truncate" dir="ltr">{f}</span>
+                </label>
+                {at >= 0 && (
+                  <>
+                    <IconButton size={24} label={labels.pageTemplatesGroupMemberUp.replace('__name__', f)} icon={<ArrowUp size={12} aria-hidden="true" />} disabled={at === 0} onClick={() => onChange({ frames: moveMember(members, f, -1) })} />
+                    <IconButton size={24} label={labels.pageTemplatesGroupMemberDown.replace('__name__', f)} icon={<ArrowDown size={12} aria-hidden="true" />} disabled={at === members.length - 1} onClick={() => onChange({ frames: moveMember(members, f, 1) })} />
+                  </>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </fieldset>
     </div>
   );

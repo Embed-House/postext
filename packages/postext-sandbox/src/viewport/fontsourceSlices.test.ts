@@ -11,6 +11,7 @@ vi.mock('../controls/fontLoader', () => ({
   // family's stylesheet itself, as it did for every family before. What it
   // embeds when the loader has them is in controls/fontCuts.test.ts.
   staticFaceFiles: async () => null,
+  sheetFaceFiles: async () => null,
   // No version read from a style sheet's answer (#766): the range stands.
   fontsourcePackageVersion: () => null,
   facesForCodePoints: <T,>(faces: readonly T[]) => [...faces],

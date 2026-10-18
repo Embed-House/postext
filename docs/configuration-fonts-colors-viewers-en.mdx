@@ -124,7 +124,7 @@ Once a family is declared, every font picker groups it under **Custom**, above t
 
 ### A stand-in for a licensed family
 
-A book can be set in a face its owner may not hand on. Mark the family `redistributable: false` and a `.postext` file leaves its files out. Name an open family of about the same width in `fallback` and the file that opens without them breaks its lines near where the real face does, instead of overflowing its frames in a wider fallback font. Faces the family has no file of are set in the cuts of the fallback with the same weight and slant, under the licensed name, in the previews, the layout worker, the PDF and the command line. A family with files keeps them; it takes from the fallback only a slant it has none of, an italic for example, and the weights between its own files are chosen as for any family. In the Fonts panel, **Stand-in family** (inside the family, above its files) takes the name, and an empty field leaves the family as it was. The PDF of a book set this way embeds the open face, so the final PDF is made with the licensed files. Since postext 1.42.
+A book can be set in a face its owner may not hand on. Mark the family `redistributable: false` and a `.postext` file leaves its files out. Name an open family of about the same width in `fallback` and the file that opens without them breaks its lines near where the real face does, instead of overflowing its frames in a wider fallback font. Faces the family has no file of are set in the cuts of the fallback with the same weight and slant, under the licensed name, in the previews, the layout worker, the PDF and the command line. A family with files keeps them; it takes from the fallback only a slant it has none of, an italic for example, and the weights between its own files are chosen as for any family. In the Fonts panel, **Stand-in family** (inside the family, above its files) takes the name, and an empty field leaves the family as it was. The PDF of a book set this way embeds the open face, so the final PDF is made with the licensed files. Since postext 1.42. Since postext 1.43 the open face also goes where the licensed one may not: an EPUB or an HTML export, from the Sandbox or from `postext`, carries the fallback's faces under the licensed name, and so do the SVG pictures whose text is set in that family, so a reading system sets the book in a face of the width its lines were broken for. The family's own files never leave the book. A family without a `fallback`, or one whose fallback has no file, is named without files as before; the Sandbox's EPUB tab lists the families set in a stand-in.
 
 ### Rendering behaviour
 
@@ -314,6 +314,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 ```
 
 See [Integrating the HTML viewer](/en/docs/configuration-html-folio-epub#integrating-the-html-viewer) below for an end-to-end example.
+
+
+
+## Canvas viewer
+
+The `canvasViewer` property sets the space between the pages in the Sandbox's Canvas tab (since postext 1.43). It belongs to the viewer, not to the book: the values are screen pixels at any zoom, and changing them moves the pages on screen without laying the book out again, so the pagination, the saved layouts and the PDF stay as they were. The PDF, the HTML viewer and the other outputs ignore it. A book whose pictures run across a spread sets `pageGap: 0`.
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Space, in screen pixels, between the left and right page of a pair in the double-page view. A whole number from 0 to 200. With <code>0</code> the two pages touch and the Canvas draws no shadow or rounded corner at the joint, so a picture or a design across the spread reads as one. The single-page view has no pairs.</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Space, in screen pixels, between one row of pages and the next, in both views. A whole number from 0 to 200.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // A picture runs across the spread: show the two pages joined.
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+A value that is not a whole number from 0 to 200 is read as the nearest such number, or as `24` when it is not a number, and reported as an unknown setting value (`canvasViewer.pageGap`). The Sandbox has both fields in **Design › Export › Canvas (page spacing)**.
 
 
 ## PDF generation (config)
@@ -1350,7 +1411,7 @@ These mistakes in the configuration itself are never silent, and no toggle hides
 - **Column count out of range** — a `'multiple'` layout's `columnCount` (the document's, or a heading style's own `layout`) that is not a whole number from 3 to 8. The page is cut into the nearest count that is (3 for a value that is not a number), and `used` names it (`columnCountClamped`; see the [`'multiple'` layout](/en/docs/configuration-page-layout#layout-types)).
 - **Character grid too large** — a `cjk.grid` with more characters per line or lines per page than the margins leave room for. The grid is set with the most that fit, and `used` names the number (`cjkGridClamped`; see [Character grid](/en/docs/configuration-east-asian#character-grid)).
 - **Unknown heading setting** — a key that `headings`, `headings.balancing`, a heading level, a heading style or a paragraph style does not have: a misspelt `letterSpacng`, a `tracking` borrowed from another tool, a `level` on a heading style, a `fontStyle: 'italic'` on a paragraph style (which takes `italic: true`). A tab stop is checked the same way (a `leaders` for `leader`). The engine ignores it (up to postext 1.4 it did so without a word). `value` is the key, `used` is empty, and `suggestion` names the setting it is closest to, when one is a letter or two away or differs only in case (`unknownConfigKey`).
-- **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`.
+- **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`. `canvasViewer.pageGap` and `canvasViewer.rowGap` are checked the same way: `used` is the whole number from 0 to 200 the value was read as (since postext 1.43).
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
 - **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format-resources#text-wrap)). A `wrap` that names no side is an unknown setting value.
 - **Box style based on another** — a callout style whose `extends` names no style of `calloutStyles` (`calloutStyleExtendsUnknown`, with the closest id as `suggestion`), or whose `extends` chain comes back to it (`calloutStyleExtendsCycle`, `value` the loop `a → b → a`). The style stands alone, with the built-in values for what it leaves unset (see [Styles based on another](/en/docs/configuration-callouts#styles-based-on-another)).

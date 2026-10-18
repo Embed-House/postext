@@ -166,6 +166,70 @@ describe('the contents in a frame (#983)', () => {
     expect([...first, ...second].filter((b) => b.tocPart?.continued)).toHaveLength(1);
   });
 
+  describe('a page break between the parts (#996)', () => {
+    const names = (page: VDTPage) => rows(page, 'list').map((b) => (b.tocPart ? `part:${b.tocPart.title}` : text(b).replace(/ \d+$/, '')));
+    const broken: PostextConfig = { toc: { parts: { enabled: true, breakBefore: true } } as never };
+    const goOn = { overflow: { continueIn: 'next-page' } } as never;
+
+    it('cuts the frame before every part but the first, though all of it would fit', () => {
+      const doc = build(book(TAKING, 3, 2), [template(goOn)], broken);
+      const pages = composed(doc);
+      expect(pages).toHaveLength(3);
+      expect(names(pages[0]!)).toEqual(['part:Part 1', 'Chapter 0-0', 'Chapter 0-1']);
+      expect(names(pages[1]!)).toEqual(['part:Part 2', 'Chapter 1-0', 'Chapter 1-1']);
+      expect(names(pages[2]!)).toEqual(['part:Part 3', 'Chapter 2-0', 'Chapter 2-1']);
+      // The title heads the first page only.
+      expect(frameOf(pages[0]!, 'title')).toBeDefined();
+      for (const page of pages) expect(frameOf(page, 'list').overflowPx).toBe(0);
+    });
+
+    it('does the same with the blocks kept together by part, and with none', () => {
+      for (const keep of ['part', 'none']) {
+        const md = TAKING.replace('keep="part"', `keep="${keep}"`);
+        const pages = composed(build(book(md, 3, 2), [template(goOn)], broken));
+        expect(pages.map((p) => names(p)[0])).toEqual(['part:Part 1', 'part:Part 2', 'part:Part 3']);
+      }
+    });
+
+    it('leaves the parts together when the option is off', () => {
+      const pages = composed(build(book(TAKING, 3, 2), [template(goOn)]));
+      expect(pages).toHaveLength(1);
+      expect(names(pages[0]!).filter((n) => n.startsWith('part:'))).toHaveLength(3);
+    });
+
+    it('is ignored by a frame that cannot go on', () => {
+      const pages = composed(build(book(TAKING, 3, 2), [template()], broken));
+      expect(pages).toHaveLength(1);
+      expect(names(pages[0]!).filter((n) => n.startsWith('part:'))).toHaveLength(3);
+    });
+
+    it('cuts a part that overflows by the room, and the next part still opens a page', () => {
+      const t = template({ overflow: { continueIn: 'next-page' } }, mm(42));
+      const pages = composed(build(book(TAKING, 2, 12), [t], broken));
+      const parts = pages.map((p) => names(p).filter((n) => n.startsWith('part:')));
+      // Part 1 spreads over pages, its repeat marked as such; Part 2 starts a page after Part 1 ends.
+      const firstOfPart2 = pages.findIndex((p) => names(p)[0] === 'part:Part 2');
+      expect(firstOfPart2).toBeGreaterThan(1);
+      expect(parts.slice(0, firstOfPart2).flat().every((n) => n.startsWith('part:Part 1'))).toBe(true);
+      const all = pages.flatMap((p) => rows(p, 'list')).filter((b) => b.tocEntry && !b.tocEntry.continued).map((b) => text(b).replace(/ \d+$/, ''));
+      expect(all).toHaveLength(24);
+    });
+
+    it('moves on into the next frame of a chain', () => {
+      const chain: PageTemplate = {
+        id: 'contents',
+        frames: [
+          { name: 'title', takes: 'h1', height: mm(20), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+          { name: 'left', takes: 'toc', width: mm(80), height: mm(200), next: 'right', placement: { anchor: { to: '#title', edge: 'below' } } },
+          { name: 'right', width: mm(80), height: mm(200), placement: { anchor: { to: '#left', edge: 'right' }, offset: { x: mm(4) } } },
+        ] as never,
+      };
+      const page = composed(build(book(TAKING, 2, 2), [chain], broken))[0]!;
+      expect(rows(page, 'left').map((b) => b.tocPart?.title).filter(Boolean)).toEqual(['Part 1']);
+      expect(rows(page, 'right').map((b) => b.tocPart?.title).filter(Boolean)).toEqual(['Part 2']);
+    });
+  });
+
   it('the slot checks count the contents as what the frame receives', () => {
     const pagesOf = (md: string) => composedPages(parseMarkdown(md));
     const config = { pageTemplates: [template()] };

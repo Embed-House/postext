@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>The float stands on the opener page; <code>'avoid'</code> moves it to the first slot after it.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>An in-column heading (<code>span: 'column'</code>) whose design reserves the whole of its column, so the text after it starts in the next column or page (<code>level</code>, <code>element</code>: the design element that reaches lowest, absent when <code>minHeight</code> sets the height). One per heading; points at the heading, with its page. A page-span opener, a heading on a page of one column and a heading followed by an explicit break are not reported. Since postext 1.43.</td>
+      <td>The text after the heading starts in the next column or page. <code>reserve: false</code> on the element, a lower <code>minHeight</code> or <code>span: 'page'</code> clears it.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>A face the text was set in (<code>family</code>, <code>weight</code>, <code>style</code>) that the font set could not give when the build ran: <code>reason: 'missing'</code>, no face of the family was loaded nor installed, or the one that answers for that weight and slant had not loaded yet; <code>'synthesized'</code>, the family has no face of that weight or slant and the browser takes it from another one, as it is or drawn bolder or slanted (a 600 set from the 700, a 700 italic asked of a family with only a 400 regular). Checked where there is a font set (<code>document.fonts</code>, a worker's <code>self.fonts</code>, or <code>BuildDocumentOptions.fontSet</code>), behind <code>debug.warnings.missingFont</code>. No page and no source range.</td>
       <td>The text is measured and drawn with the fallback face, or with another face of the family, as it is or made bolder or slanted; its line breaks change once the face arrives. See <a href="#loading-fonts-before-layout">Loading fonts before layout</a>.</td>

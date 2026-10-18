@@ -7,7 +7,7 @@ import { chapterLayoutFromDoc, leadingBlankPageCount } from '../../book/paginati
 import { stitchDocuments, type StitchedBook } from '../../book/stitch';
 import type { ComposedBook } from '../../book/types';
 import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook';
-import { renderPageToCanvas, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
+import { renderPageToCanvas, resolveCanvasViewerConfig, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
 import type { PrintPreview } from 'postext';
 import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSetup';
 import { usePrintPreview } from '../../print/printPreviewToggle';
@@ -37,10 +37,13 @@ import { layoutCacheKey } from '../../book/layoutKeys';
 import { perfSpan, type PerfSpan } from '../../perf/marks';
 import {
   defaultDocumentLocale,
-  PAGE_GAP,
   PAGE_PADDING,
+  fitRowPageWidth,
+  innerRowWidth,
+  rowPadding,
   type FitMode,
   type GeomSnapshot,
+  type PageGaps,
   type ViewMode,
 } from './layoutUtils';
 import { findCaretBlockIdx, findCarriedCaretBlockIdx } from './caret';
@@ -59,7 +62,7 @@ const BITMAP_GROW_REPAINT = 1.15;
 const BITMAP_SHRINK_REPAINT = 0.5;
 /** Never trim below this many pages, whatever their size. */
 const MIN_PAINTED_PAGES = 6;
-import { buildPagesDom } from './pageDom';
+import { buildPagesDom, joinPagesOfRow } from './pageDom';
 import { usePageNavigator } from '../usePageNavigator';
 import { planContent } from '../../book/jumps';
 
@@ -274,11 +277,27 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
 
   // Stable (only touches refs and DOM), so effects can depend on it without
   // re-running every render.
-  const applyDisplaySize = useCallback((displayWidth: number, displayHeight: number) => {
+  // The space between the pages (`canvasViewer`, #1002), a viewer setting:
+  // changing it moves the pages on screen and relays nothing out. Mirrored
+  // in a ref the imperative geometry code reads.
+  const rawCanvasViewer = config.canvasViewer;
+  const gaps = useMemo((): PageGaps => {
+    const g = resolveCanvasViewerConfig(rawCanvasViewer);
+    return { pageGap: g.pageGap, rowGap: g.rowGap };
+    // The two numbers decide it, not the object that holds them.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawCanvasViewer?.pageGap, rawCanvasViewer?.rowGap]);
+  const gapsRef = useRef<PageGaps>(gaps);
+  gapsRef.current = gaps;
+
+  // `force` redoes the geometry at an unchanged size: the gaps between the
+  // pages changed (`canvasViewer`, #1002).
+  const applyDisplaySize = useCallback((displayWidth: number, displayHeight: number, force = false) => {
     const container = containerRef.current;
     if (!container) return;
     const prev = lastGeomRef.current;
-    if (prev && prev.displayWidth === displayWidth && prev.displayHeight === displayHeight) return;
+    if (!force && prev && prev.displayWidth === displayWidth && prev.displayHeight === displayHeight) return;
+    const gap = gapsRef.current;
     const pagesPerRow = prev?.viewMode === 'spread' ? 2 : 1;
     for (const [, canvas] of canvasMapRef.current) {
       canvas.style.width = `${displayWidth}px`;
@@ -297,13 +316,16 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     const rows = container.querySelectorAll<HTMLDivElement>('[data-page-row="1"]');
     const totalRows = rows.length;
     rows.forEach((rowDiv, rowIdx) => {
-      const paddingTop = rowIdx === 0 ? PAGE_PADDING : PAGE_GAP / 2;
-      const paddingBottom = rowIdx === totalRows - 1 ? PAGE_PADDING : PAGE_GAP / 2;
+      const { top: paddingTop, bottom: paddingBottom } = rowPadding(rowIdx, totalRows, gap.rowGap);
+      rowDiv.style.padding = `${paddingTop}px ${PAGE_PADDING}px ${paddingBottom}px`;
+      rowDiv.style.gap = `${gap.pageGap}px`;
       rowDiv.style.minHeight = `${displayHeight + paddingTop + paddingBottom}px`;
+      // Pages that touch lose the shadow and the corners at the joint.
+      if (pagesPerRow === 2) joinPagesOfRow(rowDiv, gap.pageGap);
     });
     const innerDiv = container.firstChild as HTMLDivElement | null;
     if (innerDiv) {
-      innerDiv.style.width = `${displayWidth * pagesPerRow + PAGE_GAP * (pagesPerRow - 1) + PAGE_PADDING * 2}px`;
+      innerDiv.style.width = `${innerRowWidth(displayWidth, pagesPerRow, gap.pageGap)}px`;
     }
     if (prev) {
       prev.displayWidth = displayWidth;
@@ -333,19 +355,18 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
 
   const computeDisplaySize = (containerW: number, containerH: number) => {
     const isSpread = viewMode === 'spread';
+    const pageGap = gapsRef.current.pageGap;
     const doc = docRef.current;
     const firstPage = doc?.pages[0];
     const aspectRatio = firstPage ? firstPage.height / firstPage.width : 1;
     let displayWidth: number;
     if (fitMode === 'width') {
-      displayWidth = isSpread
-        ? (containerW - PAGE_PADDING * 2 - PAGE_GAP) / 2
-        : containerW - PAGE_PADDING * 2;
+      displayWidth = fitRowPageWidth(containerW, isSpread ? 2 : 1, pageGap);
     } else if (fitMode === 'height') {
       const containerInnerH = containerH - PAGE_PADDING * 2;
       displayWidth = containerInnerH / aspectRatio;
       if (isSpread) {
-        const maxPerPage = (containerW - PAGE_PADDING * 2 - PAGE_GAP) / 2;
+        const maxPerPage = fitRowPageWidth(containerW, 2, pageGap);
         displayWidth = Math.min(displayWidth, maxPerPage);
       }
     } else {
@@ -409,6 +430,18 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     const { displayWidth, displayHeight } = computeDisplaySizeRef.current(width, height);
     applyDisplaySize(displayWidth, displayHeight);
   }, [zoom, fitMode, applyDisplaySize]);
+
+  // The gaps changed: move the rows and pages in place (and refit, when the
+  // pages fill the window), without a rebuild or a repaint.
+  const lastGapsRef = useRef(gaps);
+  useEffect(() => {
+    if (lastGapsRef.current.pageGap === gaps.pageGap && lastGapsRef.current.rowGap === gaps.rowGap) return;
+    lastGapsRef.current = gaps;
+    const { width, height } = containerSizeRef.current;
+    if (width === 0) return;
+    const { displayWidth, displayHeight } = computeDisplaySizeRef.current(width, height);
+    applyDisplaySize(displayWidth, displayHeight, true);
+  }, [gaps, applyDisplaySize]);
 
   // Rebuild when faces arrive after the initial layout. document.fonts.ready
   // only waits for *currently pending* faces; a face requested later (or one
@@ -808,6 +841,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         .replace('__n__', String(pageIndex + 1))
         .replace('__total__', String(count)),
       labelsRef,
+      gapsRef.current,
     );
     drawnOverlaysRef.current = new Set();
 

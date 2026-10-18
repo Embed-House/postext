@@ -56,7 +56,7 @@ import { createMeasureMemo } from './measureMemo';
 import { computeOrderedListRunMetrics } from './lists';
 import { planParagraphContainers } from './paragraphContainers';
 import type { CarriedNumber, ImportedJumps } from '../composed/carry';
-import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
+import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, partBreakCut, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
  *  content, by the name of the chain's first frame. */
@@ -187,6 +187,10 @@ interface Composition {
   notes?: ContentWarning[];
   /** Frames cut for another page, and where they left their story. */
   spills: Map<string, Spill>;
+  /** Frames whose contents ask for a page of their own further down (a
+   *  part of the contents under `toc.parts.breakBefore`, #996) that are
+   *  not allowed to go on yet: the ladder lets them. */
+  wantsOn: Set<string>;
 }
 
 /** Step of the text and picture scales the ladder tries (DESIGN §5.4). */
@@ -350,6 +354,14 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // The ladder, frame by frame in template order (ties break there).
   let fit = NO_FIT;
   let cur = compose(fit);
+  // A frame whose contents ask for a page of their own further down (a part
+  // of the contents under `toc.parts.breakBefore`, #996) goes on whether or
+  // not they would fit: the break is the author's.
+  for (const frame of template.frames) {
+    if (!cur.wantsOn.has(frame.name) || fit.goOn.has(frame.name) || runs >= COMPOSE_BUDGET) continue;
+    fit = goingOn(fit, frame);
+    cur = compose(fit);
+  }
   const tried = new Map<string, FrameFitStep[]>();
   const patched = (f: FitState, name: string, patch: Partial<ResolvedFrame>): FitState => ({ ...f, patches: new Map([...f.patches, [name, { ...f.patches.get(name), ...patch }]]) });
   const withText = (f: FitState, head: string, s: number): FitState => ({ ...f, text: new Map([...f.text, [head, s]]) });
@@ -1071,6 +1083,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const fitted = new Map<string, { placed: Rect; kept: Rect }>();
     const laid = new Set<string>();
     const spills = new Map<string, Spill>();
+    const wantsOn = new Set<string>();
     const pushed: { name: string; box: Rect; contour?: VDTExclusionContour }[] = seed
       ? [...seed].map(([name, box]) => ({ name, box, ...(seedShapes?.get(name) ? { contour: seedShapes.get(name)! } : {}) }))
       : [];
@@ -1133,6 +1146,15 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
      *  below the top of `at` (the frame's box as first placed). A frame
      *  whose text the ladder scales (#858) is laid out `1 / scale` as
      *  wide and is `scale` as tall as that. */
+    /** Where the frame's content ends for its height: at a part of the
+     *  contents that opens a page of its own (#996) when the frame can go
+     *  on, else at the end of the story. */
+    const naturalEnd = (p: Prep): CalloutCut => {
+      const nextName = nextFrameOf(p.frame);
+      const nextFrame = nextName !== undefined ? byName.get(nextName) : undefined;
+      const goes = (nextFrame !== undefined && !vdtByName.has(nextFrame.name)) || continuesOffPage(p.frame.overflow.continueIn);
+      return (goes ? partBreakCut(pass, p.st!.L, p.st!.cut) : undefined) ?? p.st!.L.end;
+    };
     const naturalOf = (p: Prep, at?: Rect) => {
       const memo = new Map<number, number>();
       const s = textScale(p.frame);
@@ -1147,7 +1169,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         // The room a vertical page's upright picture may take down the page
         // is the flow's whole extent: the frame's height is what it settles.
         const opts: FrameBoxOptions = { ...(exclusions ? { exclusions } : {}), ...(pic !== undefined ? { pictureScale: pic } : {}), ...(p.fromMark !== undefined ? { continuedMark: p.fromMark } : {}), ...uprightIn(p.frame, input.areas.area.height / s) };
-        const r = p.st!.L.peekRange(p.st!.cut, p.st!.L.end, width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
+        const r = p.st!.L.peekRange(p.st!.cut, naturalEnd(p), width / s, p.blockId, p.continuation, input.mirrored, Object.keys(opts).length > 0 ? opts : undefined);
         const h = r.totalHeight * s;
         memo.set(key, h);
         return h;
@@ -1417,13 +1439,18 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const chained = nextFrame !== undefined && !vdtByName.has(nextFrame.name);
         // Cut for another page (#859) when the chain ends here.
         goesOn = !chained && fit.goOn.has(frame.name);
-        if ((whole.overflowPx ?? 0) > 0.5 && (chained || goesOn)) {
+        // A part of the contents that opens a page of its own further down
+        // (`toc.parts.breakBefore`, #996): the frame is cut there when it
+        // can go on, though what it holds would fit.
+        const partBreak = partBreakCut(pass, st!.L, from) !== undefined;
+        if (partBreak && !chained && !goesOn && continuesOffPage(frame.overflow.continueIn)) wantsOn.add(frame.name);
+        if (((whole.overflowPx ?? 0) > 0.5 || partBreak) && (chained || goesOn)) {
           // The rest goes on in the next frame of the chain, or on another
           // page.
           const minLines = Math.max(1, style.splitMinLines);
           // A heading stays with what follows it, a list keeps two items
           // on each side of the cut (#913).
-          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, mirroredIn(frame), extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined || extra.uprightMaxLength !== undefined ? extra : undefined, cutRules));
+          const frag = inMode(frame, () => splitCalloutFragment(pass, st!.L, from, laidW, laidH, blockId, continuation, minLines, mirroredIn(frame), extra.exclusions || extra.pictureScale !== undefined || extra.continuedMark !== undefined || extra.uprightMaxLength !== undefined ? extra : undefined, cutRules, true));
           const to = frag?.to ?? from;
           // A frame none of whose content fits draws nothing: the whole box
           // goes on (#912), not a tab and a mark over an empty piece.
@@ -1551,11 +1578,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills };
+    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs, fitted, notes, spills } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
-  return { frames, blocks, log, laid, needs, template, fitted, spills, ...(notes.length > 0 ? { notes } : {}) };
+  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
+  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, ...(notes.length > 0 ? { notes } : {}) };
 }
 
 /** `r` turned `deg` (±90) about the centre of `about`: an axis-aligned

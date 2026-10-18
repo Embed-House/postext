@@ -443,6 +443,20 @@ function bodyFrame(block: Pick<VDTBlock, 'bbox' | 'resourceBlock'>): { bx: numbe
   return { bx: rb.bodyRect.x, by: rb.bodyRect.y, turn };
 }
 
+/** The upright box a drawn label covers in its block's frame, through a
+ *  quarter-turned block's turn. */
+function labelRectInBlock(block: Pick<VDTBlock, 'bbox' | 'resourceBlock'>, layout: VDTFigureLabelLayout): BoundingBox {
+  const { bx, by, turn } = bodyFrame(block);
+  const r = figureLabelBounds(layout, bx, by);
+  if (!turn) return r;
+  const pts = [apply(turn, r.x, r.y), apply(turn, r.x + r.width, r.y), apply(turn, r.x, r.y + r.height), apply(turn, r.x + r.width, r.y + r.height)];
+  const xs = pts.map((p) => p[0]);
+  const ys = pts.map((p) => p[1]);
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
+}
+
 /**
  * Stamp `rect` on every drawn label of the document (#860): the upright
  * box it covers in its block's frame, through a quarter-turned block's
@@ -455,22 +469,12 @@ export function stampFigureLabelRects(doc: VDTDocument): void {
     seen.add(block);
     const labels = block.resourceBlock?.labels;
     if (!labels || labels.length === 0) return;
-    const { bx, by, turn } = bodyFrame(block);
     for (const label of labels) {
       if (!label.layout) {
         delete label.rect;
         continue;
       }
-      let r = figureLabelBounds(label.layout, bx, by);
-      if (turn) {
-        const pts = [apply(turn, r.x, r.y), apply(turn, r.x + r.width, r.y), apply(turn, r.x, r.y + r.height), apply(turn, r.x + r.width, r.y + r.height)];
-        const xs = pts.map((p) => p[0]);
-        const ys = pts.map((p) => p[1]);
-        const x = Math.min(...xs);
-        const y = Math.min(...ys);
-        r = { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
-      }
-      label.rect = r;
+      label.rect = labelRectInBlock(block, label.layout);
     }
   };
   for (const block of doc.blocks) visit(block);
@@ -482,6 +486,59 @@ export function stampFigureLabelRects(doc: VDTDocument): void {
     // there, so the facing page answers for the labels it shows.
     for (const frame of page.composed?.frames ?? []) for (const block of frame.facingBlocks ?? []) visit(block);
   }
+}
+
+/** The spine of a spread sheet and the band the binding takes. */
+export interface SpineBand {
+  /** The band along the spread's axis: `lo` to `hi`, centred on the spine. */
+  lo: number;
+  hi: number;
+  spine: number;
+  /** `'x'` on horizontal pages; `'y'` where the sheet runs down the flow (#926). */
+  axis: 'x' | 'y';
+}
+
+/** Below this a label touches the band without entering it (px). */
+const BAND_EPS = 0.5;
+
+/**
+ * `block` with every label that reaches into the binding band moved off it
+ * (#990). A figure across the spine of a spread paints its half on each
+ * page, so a label whose box meets the band is cut by the fold and read
+ * on neither page. Each such label slides along the spread to the side its
+ * anchor point lies on (ties: the first page, as a frame's are) until its
+ * box stands at the band's edge; an anchor that says `gutter: 'cross'`
+ * keeps its place. The block comes back unchanged (the same object) when
+ * no label moves, and a changed one is a copy: the labels of a measured
+ * block may be shared with a cache.
+ */
+export function keepLabelsOffGutter(block: VDTBlock, band: SpineBand): VDTBlock {
+  const rb = block.resourceBlock;
+  if (!rb?.labels || rb.labels.length === 0) return block;
+  const { bx, by, turn } = bodyFrame(block);
+  const along = (p: { x: number; y: number }): number => (band.axis === 'x' ? p.x : p.y);
+  let moved = false;
+  const labels = rb.labels.map((label) => {
+    const layout = label.layout;
+    if (!layout) return label;
+    const place = labelPlace(label, rb.resource);
+    if (place?.anchor?.gutter === 'cross') return label;
+    const r = labelRectInBlock(block, layout);
+    const lo = band.axis === 'x' ? r.x : r.y;
+    const hi = lo + (band.axis === 'x' ? r.width : r.height);
+    if (hi <= band.lo + BAND_EPS || lo >= band.hi - BAND_EPS) return label;
+    // The side of the anchor point, in the block's frame.
+    const [px, py] = turn ? apply(turn, bx + layout.x, by + layout.y) : [bx + layout.x, by + layout.y];
+    const pt = { x: px, y: py };
+    const first = along(pt) <= band.spine + BAND_EPS;
+    const delta = first ? band.lo - hi : band.hi - lo;
+    const d = band.axis === 'x' ? { x: delta, y: 0 } : { x: 0, y: delta };
+    // The move in the body's own frame: the transpose of a turn undoes it.
+    const own = turn ? { x: turn[0] * d.x + turn[1] * d.y, y: turn[2] * d.x + turn[3] * d.y } : d;
+    moved = true;
+    return { ...label, layout: { ...layout, x: layout.x + own.x, y: layout.y + own.y } };
+  });
+  return moved ? { ...block, resourceBlock: { ...rb, labels } } : block;
 }
 
 /**

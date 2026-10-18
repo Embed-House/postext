@@ -124,7 +124,7 @@ Depois que uma família é declarada, todo seletor de fonte a agrupa em **Person
 
 ### Uma família substituta para uma família licenciada
 
-Um livro pode ser composto numa tipografia que o seu titular não pode repassar. Marque a família com `redistributable: false` e um arquivo `.postext` deixa os arquivos dela de fora. Se você nomear em `fallback` uma família aberta de largura parecida, o arquivo que abre sem eles quebra as linhas perto de onde as quebra a tipografia real, em vez de estourar os blocos com uma fonte reserva mais larga. As faces de que a família não tem arquivo são compostas nos cortes do `fallback` de mesmo peso e mesma inclinação, com o nome da licenciada, nas prévias, no worker de diagramação, no PDF e na linha de comando. Uma família com arquivos fica com eles; do `fallback` ela só toma a inclinação de que não tem nenhum arquivo, um itálico por exemplo, e os pesos intermediários entre os arquivos dela são escolhidos como em qualquer família. No painel Fontes, **Família substituta** (dentro da família, acima dos arquivos) recebe o nome; vazio, a família fica como estava. O PDF de um livro composto assim embute a face aberta, de modo que o PDF final é feito com os arquivos licenciados. Desde o postext 1.42.
+Um livro pode ser composto numa tipografia que o seu titular não pode repassar. Marque a família com `redistributable: false` e um arquivo `.postext` deixa os arquivos dela de fora. Se você nomear em `fallback` uma família aberta de largura parecida, o arquivo que abre sem eles quebra as linhas perto de onde as quebra a tipografia real, em vez de estourar os blocos com uma fonte reserva mais larga. As faces de que a família não tem arquivo são compostas nos cortes do `fallback` de mesmo peso e mesma inclinação, com o nome da licenciada, nas prévias, no worker de diagramação, no PDF e na linha de comando. Uma família com arquivos fica com eles; do `fallback` ela só toma a inclinação de que não tem nenhum arquivo, um itálico por exemplo, e os pesos intermediários entre os arquivos dela são escolhidos como em qualquer família. No painel Fontes, **Família substituta** (dentro da família, acima dos arquivos) recebe o nome; vazio, a família fica como estava. O PDF de um livro composto assim embute a face aberta, de modo que o PDF final é feito com os arquivos licenciados. Desde o postext 1.42. Desde o postext 1.43 a família aberta também vai onde a licenciada não pode: um EPUB ou uma exportação HTML, a partir do Sandbox ou do `postext`, leva as faces da substituta com o nome da família licenciada, assim como as imagens SVG cujo texto está nessa família, de modo que o sistema de leitura compõe o livro numa face da largura para a qual as linhas foram quebradas. Os arquivos próprios da família nunca saem do livro. Uma família sem `fallback`, ou cuja substituta não tem arquivo, é nomeada sem arquivos como antes; a aba EPUB do Sandbox lista as famílias compostas numa substituta.
 
 ### Comportamento na renderização
 
@@ -314,6 +314,67 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 ```
 
 Veja [Como integrar o visualizador HTML](/pt/docs/configuration-html-folio-epub#integração-do-visualizador-html) abaixo para um exemplo completo.
+
+
+
+## Visualizador Canvas
+
+A propriedade `canvasViewer` define o espaço entre as páginas na aba Canvas do Sandbox (desde o postext 1.43). Ela pertence ao visualizador, não ao livro: os valores são pixels de tela em qualquer zoom, e alterá-los move as páginas na tela sem diagramar o livro de novo, de modo que a paginação, os layouts salvos e o PDF continuam como estavam. O PDF, o visualizador HTML e as outras saídas a ignoram. Um livro com imagens em página dupla define `pageGap: 0`.
+
+```ts
+interface CanvasViewerConfig {
+  pageGap?: number; // Space between the two pages of a pair (px).
+  rowGap?: number;  // Space between one row of pages and the next (px).
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pageGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espaço, em pixels de tela, entre a página esquerda e a direita de um par na vista de página dupla. Um inteiro de 0 a 200. Com <code>0</code>, as duas páginas se tocam e o Canvas não desenha sombra nem cantos arredondados na junção, de modo que uma imagem ou um desenho em página dupla se lê como um só. A vista de página única não tem pares.</td>
+    </tr>
+    <tr>
+      <td><code>rowGap</code></td>
+      <td><code>number</code></td>
+      <td><code>24</code></td>
+      <td>Espaço, em pixels de tela, entre uma fileira de páginas e a seguinte, nas duas vistas. Um inteiro de 0 a 200.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+const config: PostextConfig = {
+  // Uma imagem atravessa a página dupla: as duas páginas aparecem unidas.
+  canvasViewer: { pageGap: 0 },
+};
+```
+
+```ts
+import {
+  DEFAULT_CANVAS_VIEWER_CONFIG,
+  resolveCanvasViewerConfig,
+  stripCanvasViewerDefaults,
+} from 'postext';
+
+resolveCanvasViewerConfig(config.canvasViewer);
+// => { pageGap: 0, rowGap: 24 }
+
+stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
+// => undefined when everything matches the defaults
+```
+
+Um valor que não seja um inteiro de 0 a 200 é lido como o inteiro mais próximo desse intervalo, ou como `24` se não for um número, e avisado como valor de configuração desconhecido (`canvasViewer.pageGap`). O Sandbox tem os dois campos em **Design › Exportação › Canvas (espaço entre páginas)**.
 
 
 ## Geração de PDF (configuração)
@@ -1350,7 +1411,7 @@ Estes erros na própria configuração nunca passam em silêncio, e nenhuma opç
 - **Número de colunas fora do intervalo**: um `columnCount` de um layout `'multiple'` (o do documento, ou o do `layout` próprio de um estilo de título) que não é um número inteiro de 3 a 8. A página é dividida no número válido mais próximo (3 para um valor que não é número), e `used` informa qual é (`columnCountClamped`; veja o [layout `'multiple'`](/pt/docs/configuration-page-layout#tipos-de-layout)).
 - **Grade de caracteres grande demais**: uma `cjk.grid` com mais caracteres por linha ou linhas por página do que as margens permitem. A grade é montada com o máximo que cabe, e `used` informa esse número (`cjkGridClamped`; veja [Grade de caracteres](/pt/docs/configuration-east-asian#grade-de-caracteres)).
 - **Configuração de título desconhecida**: uma chave que `headings`, `headings.balancing`, um nível de título, um estilo de título ou um estilo de parágrafo não tem: um `letterSpacng` com erro de digitação, um `tracking` emprestado de outra ferramenta, um `level` em um estilo de título, um `fontStyle: 'italic'` em um estilo de parágrafo (que usa `italic: true`). Uma parada de tabulação é verificada da mesma forma (um `leaders` em vez de `leader`). O motor a ignora (até o postext 1.4, fazia isso sem dizer nada). `value` é a chave, `used` fica vazio e `suggestion` indica a configuração mais próxima, quando há uma a uma ou duas letras de distância ou que difere só em maiúsculas e minúsculas (`unknownConfigKey`).
-- **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima. O `level` e o `mode` da verificação de contraste são verificados da mesma forma: `used` é `'AA'` ou `'auto'`.
+- **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima. O `level` e o `mode` da verificação de contraste são verificados da mesma forma: `used` é `'AA'` ou `'auto'`. `canvasViewer.pageGap` e `canvasViewer.rowGap` são verificados do mesmo modo: `used` é o inteiro de 0 a 200 em que o valor foi lido (desde o postext 1.43).
 - **Números de linha em texto vertical**: `lineNumbers.enabled: true` num documento composto na vertical (`layout.writingMode: 'vertical-rl'`). Páginas verticais não recebem números de linha, e `used` é `false` (`lineNumbersUnsupported`; veja [Numeração de linhas](/pt/docs/configuration-notes-references#numeração-de-linhas)).
 - **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
 - **Estilo de boxe baseado em outro** — um estilo de boxe cujo `extends` não nomeia nenhum estilo de `calloutStyles` (`calloutStyleExtendsUnknown`, com o id mais próximo em `suggestion`), ou cuja cadeia de `extends` volta a ele (`calloutStyleExtendsCycle`, `value` o círculo `a → b → a`). O estilo fica sozinho, com os valores padrão no que deixa sem valor (veja [Estilos baseados em outro](/pt/docs/configuration-callouts#estilos-baseados-em-outro)).

@@ -808,7 +808,12 @@ faces is then set in a face of about the same width, so the checks of a
 composed book mean something on it. Pick it by measurement
 (`fonts.py width LICENSED.ttf CANDIDATE.ttf… --text-from chapters/<lang>/`,
 within about 2 % in regular, bold and italic) and pack with
-`preset_kit.py pack --fallback "Family=Open family"`.
+`preset_kit.py pack --fallback "Family=Open family"`. From postext 1.43 the
+fallback's faces are also embedded in the EPUB, HTML and SVG exports under the
+licensed name, so it must be an open face (OFL, Apache or similar); write the
+choice and the measured ratio in the port notes, and when none is within 5 %
+say so and deliver both bundles, warning that only the one with its faces is
+checked.
 
 ### E3. Faces missing weights or glyphs
 - Semibold used as bold: add a 600 face plus `boldFontWeight: 600`.

@@ -266,6 +266,7 @@ const ANCHORS = [
 // #endregion
 
 const config = {
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   locale: t({ es: 'es', en: 'en-gb', ca: 'ca' }),
   resourceTypes: [{ id: 'dibujo', name: t({ es: 'Dibujo', en: 'Picture', ca: 'Dibuix' }),
     shortLabel: '', numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal',

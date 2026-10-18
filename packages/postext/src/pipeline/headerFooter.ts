@@ -335,6 +335,12 @@ export interface HeadingDesignMeasure {
    *  rides on it to start at or below the heading's top; 0 when none
    *  does. */
   textFloor: number;
+  /** What sets `height`, for a host that explains a heading which claims
+   *  its column (#997): the id of the element that reaches lowest, unless
+   *  the design's own `minHeight` is taller than every element
+   *  (`byMinHeight`). Both absent for a design that reserves nothing. */
+  claimedBy?: string;
+  byMinHeight?: true;
 }
 
 /** {@link measureHeadingAdvancedDesignHeight}, with the floor that texts
@@ -384,6 +390,7 @@ export function measureHeadingDesign(
     : result;
   const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
   let bottom = 0;
+  let claimedBy: string | undefined;
   let textFloor = 0;
   result.primitives.forEach((prim, i) => {
     if (excluded.has(result.elementIds[i]!)) return;
@@ -404,9 +411,14 @@ export function measureHeadingDesign(
       }
       return;
     }
-    bottom = Math.max(bottom, reservedBottom(prim, result.primitives[i - 1]));
+    const reaches = reservedBottom(prim, result.primitives[i - 1]);
+    if (reaches > bottom) {
+      bottom = reaches;
+      claimedBy = result.elementIds[i];
+    }
   });
-  return { height: Math.max(bottom, minHeightPx), textFloor };
+  const byMinHeight = minHeightPx > bottom;
+  return { height: Math.max(bottom, minHeightPx), textFloor, ...(byMinHeight ? { byMinHeight: true as const } : claimedBy !== undefined ? { claimedBy } : {}) };
 }
 
 /** Optional page-level inputs for `layoutSlotToVdt`. */

@@ -1142,7 +1142,7 @@ All em values = the callout body font size.
            a left-corner title starts past its inner half)
   label = unset (no tab). If set: { fontFamily=headings, fontSize=body size, fontWeight=700,
            color=#fff, background=main, position='top-right'|'top-left', height=1.4em, paddingX=0.6em,
-           offset=0, inset=0, icon:{resourceId,width=1em,gap=0.3em, placement='beside'|'inside' (≥ 1.42)},
+           offset=0, inset=0, icon:{resourceId,width=1em,gap=0.3em, placement='beside'|'inside' (≥ 1.42), tint (≥ 1.43: paint the picture in label.color)},
            rule:{enabled=false,color=main,width=0.5pt} }
            prints the fence `label` attribute ("RECUADRO 1-1"). icon.placement 'inside' (≥ 1.42) fits the picture
            into icon.width × the tab's height, widens the tab by it and `gap`, and stands it before the words
@@ -2023,8 +2023,14 @@ LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, f
   may say `overlap: 'allow'` (default `'check'`): that label, and every pair it is in, is left out of the check
   (names the source prints touching); a label placed by `at="x% y%"` takes its style's value. A picture's
   `avoid` zones (rectangles in fractions of the picture) count as the map's symbols: a label that runs onto one
-  raises `labelOverlap` with `withSymbol` (1-based) and `with: "symbol N"`. Editable under Design › Figures &
-  tables › Label styles in the Sandbox.
+  raises `labelOverlap` with `withSymbol` (1-based) and `with: "symbol N"`. For an SVG map the dots and icons can be read from the drawing (1.43):
+  Sandbox Avoid zones mode › Symbols of the drawing takes an id prefix or a class and adds a zone over each
+  element (one per group named as a symbol); over WebMCP `sandbox_save_resource` with
+  `marks: { svgSymbols: { idPrefix, className } }`. Reading again adds only what is new. From 1.43 an anchor's `gutter?: 'keep' | 'cross'` (default
+  `'keep'`, not written) says whether a label of a figure across the spine of a spread slides off the gutter band
+  (`'keep'`) or may run across both pages (`'cross'`, a title over the map). Editable under Design › Figures &
+  tables › Label styles in the Sandbox; renaming a label style there (1.43) rewrites the `style` of the anchors and
+  of the `::label` lines that name it.
 - **Figure words** (1.39): `:::figure{resource alt caption note}`, or `::alt[…]`, `::caption[…]`,
   `::note[…]` lines beside the `::label` lines, give the edition's alt text, caption and note for the
   picture (document-format.md §12.2); the stored resource is untouched. A resource has one set of words per
@@ -2067,7 +2073,8 @@ default is used). Never raise the limits to quiet a port: move the text into the
   licensed family the pack left out): the configuration keeps naming the licensed family, the fallback's
   cuts of the same weight and slant load under its name. A family with files keeps them and takes only a slant
   it lacks from the fallback. Not a general substitution table: Google and system families stay `missingFont`.
-  Manifest: `fonts[].fallback` (project-format.md §4).
+  Manifest: `fonts[].fallback` (project-format.md §4). From 1.43 the fallback's faces are
+  embedded in EPUB and HTML exports and in SVG pictures set in the family, under its name.
 - Any `fontFamily` string resolves against customFonts first, then Google Fonts, then Fontsource
   for a family Google Fonts does not have (Commit Mono, FiraGO). The Sandbox and the `postext`
   command line fetch them; `render.mjs` does not, and measures an unbundled family with a stand-in face.

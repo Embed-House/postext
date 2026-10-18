@@ -71,6 +71,17 @@ describe('the writing mode of an anchor is kept (#902)', () => {
     expect(() => withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, overlap: 'permit' as never }] })).toThrow(/overlap/);
   });
 
+  it('the gutter choice of an anchor is kept, dropped at its default and checked (#990)', () => {
+    const resource = { id: 'mapa', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'm.png', format: 'png', width: 400, height: 300 } } as never;
+    const crossed = withLabelFields(marks, 0, { gutter: 'cross' });
+    expect(crossed.anchors[0]!.gutter).toBe('cross');
+    expect(normalizeMarks(crossed).anchors[0]!.gutter).toBe('cross');
+    expect(withLabelFields(crossed, 0, { gutter: 'keep' }).anchors[0]!.gutter).toBeUndefined();
+    expect(withTickedFields(marks, [0, 1], { gutter: 'cross' }).anchors.map((a) => a.gutter)).toEqual(['cross', 'cross', undefined, undefined]);
+    expect(withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, gutter: 'cross' }] }).resource.anchors![0]!.gutter).toBe('cross');
+    expect(() => withMarks(resource, { anchors: [{ id: 'a', x: 0.1, y: 0.1, gutter: 'over' as never }] })).toThrow(/gutter/);
+  });
+
   it('a map is dense from more than a couple of dozen anchors', () => {
     expect(DENSE_ANCHORS).toBe(24);
   });

@@ -197,7 +197,7 @@ vídeos hospedados no próprio livro. `--assets embed|folder` escolhe uma das
 duas formas para qualquer caminho. As páginas são a diagramação de impressão,
 mostrada no tamanho da tela: lado a lado (`--mode multi`, o padrão) ou uma
 embaixo da outra (`--mode single`). As fontes marcadas com
-`redistributable: false` são nomeadas, mas não copiadas.
+`redistributable: false` são nomeadas, mas não copiadas. Quando a família nomeia um `fallback`, as faces dessa família aberta são escritas em seu lugar, com o nome da família (desde o postext 1.43).
 
 ### epub
 
@@ -211,7 +211,7 @@ selecionável; `--layout reflowable` deixa o sistema de leitura recompor o
 texto para a sua tela (veja [Livros EPUB](/pt/docs/configuration-html-folio-epub#livros-epub-postext-epub)).
 A capa é a miniatura do livro, a menos que `--cover` indique uma imagem. Os
 metadados do pacote EPUB (título, autores, idioma, identificador) vêm do front
-matter do primeiro capítulo, como no Sandbox.
+matter do primeiro capítulo, como no Sandbox. As fontes marcadas `redistributable: false` não são copiadas; uma família que nomeia um `fallback` é incorporada com as faces dessa família aberta sob o próprio nome (desde o postext 1.43).
 
 ### image e images
 

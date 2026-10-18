@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "photo-essay-full-bleed",
-  "sourceHash": "ba42bc95a957ecb1f47428c7fa15755b3ddf9c421eae9839c5de5ab80ef6c4ba",
+  "sourceHash": "2fc90011c2bb991ab9083956c9dd85d4e8afbda678495067b5687afb7edee999",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.42.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:18.104Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-18T09:34:59.055Z",
   "variants": {
     "en": {
-      "hash8": "6f8f9ad6",
+      "hash8": "ac2e4611",
       "vdtHash": "c6712977784d27cff846c42380ed434c25df20b1",
       "timings": {
-        "importMs": 304,
-        "fontsMs": 89,
-        "buildMs": 72,
-        "totalMs": 1276,
+        "importMs": 960,
+        "fontsMs": 111,
+        "buildMs": 63,
+        "totalMs": 1991,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Syne Mono"
         ],
         "pages": 9,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -177,7 +177,7 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718483,
+        "bytes": 1718510,
         "folio": "fb4fa41a",
         "chapters": [
           {
@@ -207,6 +207,8 @@
           "bodyText.minWordSpacing",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.fontFamily",
@@ -260,6 +262,7 @@
           "page.margins.top",
           "page.width",
           "resourceTypes",
+          "resourceTypes[].captionPrefix",
           "resourceTypes[].counterFormat",
           "resourceTypes[].id",
           "resourceTypes[].name",
@@ -269,6 +272,7 @@
         ],
         "configSections": [
           "bodyText",
+          "canvasViewer",
           "captionStyle",
           "colorPalette",
           "footer",
@@ -280,7 +284,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 316,
+        "configLeaves": 318,
         "designElements": 21,
         "directives": [],
         "inline": [
@@ -339,21 +343,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "28c2bb44",
+      "hash8": "ed24492d",
       "vdtHash": "c81a63e9d456f3ea95dd9c3af1cd9ba05190a294",
       "timings": {
-        "importMs": 453,
-        "fontsMs": 116,
-        "buildMs": 69,
-        "totalMs": 1440,
+        "importMs": 892,
+        "fontsMs": 130,
+        "buildMs": 56,
+        "totalMs": 1917,
         "builds": 1
       },
       "specimen": {
@@ -375,7 +379,7 @@
           "Syne Mono"
         ],
         "pages": 9,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -514,7 +518,7 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718652,
+        "bytes": 1718680,
         "folio": "fb4fa41a",
         "chapters": [
           {
@@ -544,6 +548,8 @@
           "bodyText.minWordSpacing",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.fontFamily",
@@ -597,6 +603,7 @@
           "page.margins.top",
           "page.width",
           "resourceTypes",
+          "resourceTypes[].captionPrefix",
           "resourceTypes[].counterFormat",
           "resourceTypes[].id",
           "resourceTypes[].name",
@@ -606,6 +613,7 @@
         ],
         "configSections": [
           "bodyText",
+          "canvasViewer",
           "captionStyle",
           "colorPalette",
           "footer",
@@ -617,7 +625,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 316,
+        "configLeaves": 318,
         "designElements": 21,
         "directives": [],
         "inline": [
@@ -676,9 +684,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

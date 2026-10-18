@@ -41,7 +41,7 @@ A página nova será uma página de revisão: uma faixa de título, um texto cur
 5. Adicione um bloco. **Nome (vaga)**: `remember`. **Estilo de caixa**: `dato-campo`, uma caixa verde com uma aba. **Altura mínima**: 30 mm, para que a caixa mantenha um bom tamanho quando o texto for curto.
 6. Adicione um último bloco. **Nome (vaga)**: `try`. **Estilo de caixa**: `actividad-sol`. **Altura mínima**: 30 mm.
 7. Em `text`, `remember` e `try`, ajuste **Largura** para *Até a borda* e **Altura** para *O conteúdo*: assim eles ocupam toda a largura da página e têm a altura do próprio texto.
-8. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `column`, deixe-o *Empilhados* e ajuste **Espaço entre blocos** para 6 mm. Em **Blocos do grupo, na ordem da página**, marque os quatro blocos. O grupo os mantém na ordem da lista de blocos, então o título vem primeiro. Um grupo põe seus blocos um embaixo do outro e desloca os de baixo quando um bloco cresce; por isso um texto mais longo na primeira caixa empurra a segunda para baixo em vez de passar por cima dela.
+8. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `column`, deixe-o *Empilhados* e ajuste **Espaço entre blocos** para 6 mm. Em **Blocos do grupo, na ordem da página**, marque os quatro blocos. Marque-os na ordem em que vão, com o título primeiro: a lista numera os membros e as setas sobem ou descem um deles. Um grupo põe seus blocos um embaixo do outro e desloca os de baixo quando um bloco cresce; por isso um texto mais longo na primeira caixa empurra a segunda para baixo em vez de passar por cima dela.
 
 <Screenshot src="/docs-shots/pt/template.webp" alt="O painel Design em Modelos de página com o modelo Página de revisão: seus quatro blocos e seu grupo, e os mesmos blocos desenhados com contornos tracejados na página." caption="O modelo: quatro blocos e um grupo. Na página, as caixas tracejadas são os blocos, e as etiquetas verdes dizem como cada um é dimensionado." />
 
@@ -102,11 +102,10 @@ A expressão *Stone bridge* é Markdown; o ponto faz parte da imagem. Quando voc
 
 ## 5. Traduzir a página
 
-Uma tradução é o mesmo modelo com outras palavras. O Sandbox tem duas maneiras de guardá-la. Um livro pode trazer vários idiomas ao mesmo tempo, como um arquivo `.postext` com uma edição para cada um; então a barra acima do canvas alterna entre eles e o painel Verificações lê todos (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). A maneira mais simples, que não pede arquivo, é uma cópia do livro no outro idioma:
+Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como outra edição do mesmo livro: a barra acima do canvas alterna entre as edições e o painel Verificações lê todas (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). Para criar uma:
 
-1. Abra **Livros**, clique em **⋯** no seu livro e escolha **Duplicar**, ou clique em **Novo** e escolha **Cópia do livro aberto**. Abra a cópia. Ela tem o mesmo nome do original: mude-o com **Renomear…**, no mesmo menu.
-2. No painel **Design**, abra **Sistema de escrita** e, em **Idioma e direção**, ajuste o **Idioma do documento**. A hifenização, as aspas e as palavras que o motor escreve por conta própria (como o *Continua* no corte de uma caixa) seguem esse idioma.
-3. No painel **Texto**, traduza as palavras e deixe o resto.
+1. Abra **Livros**, clique em **⋯** no seu livro e escolha **Adicionar um idioma…**. Selecione o idioma e clique em **Adicionar e abrir**. O Sandbox copia a edição em tela para uma nova, define o **Idioma do documento** dela como o idioma escolhido e a abre. A hifenização, as aspas e as palavras que o motor escreve por conta própria (como o *Continua* no corte de uma caixa) seguem esse idioma. O texto ainda é o do original.
+2. No painel **Texto**, traduza as palavras e deixe o resto.
 
 <table>
   <thead>

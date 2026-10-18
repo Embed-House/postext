@@ -260,6 +260,97 @@ class ExtractTest(unittest.TestCase):
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class FrameNamesTest(unittest.TestCase):
+    """#998: a draft that dedupe never sees is named by role by `extract`."""
+
+    POSITIONAL = r"^(?:title|text|box|tab|picture|figure)-\d+$"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.root = Path(cls.tmp.name)
+        cls.one = cls.root / "one.pdf"
+        make_pdf(cls.one, pages=1)
+        cls.two = cls.root / "two.pdf"
+        make_pdf(cls.two, pages=2)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def run_extract(self, pdf: Path, name: str, *more: str) -> Path:
+        import contextlib
+
+        out = self.root / name
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            extract(pdf, out, *more)
+        return out
+
+    def read(self, out: Path):
+        lib = json.loads((out / "library.json").read_text(encoding="utf-8"))
+        md = (out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        regions = json.loads((out / "regions.json").read_text(encoding="utf-8"))
+        figures = json.loads((out / "figures.json").read_text(encoding="utf-8"))["figures"]
+        return lib, md, regions, figures
+
+    def names(self, lib: dict, i: int = 0) -> list[str]:
+        return [f["name"] for f in lib["pageTemplates"][i]["frames"]]
+
+    def test_a_one_page_run_is_named_by_role(self):
+        out = self.run_extract(self.one, "a")
+        lib, md, regions, figures = self.read(out)
+        names = self.names(lib)
+        self.assertEqual(names, ["tab", "text", "box", "picture-in-box", "picture", "figure"])
+        for n in names:
+            self.assertNotRegex(n, self.POSITIONAL)
+        # the Markdown, the regions and the figure list say the same names
+        for n in ("box", "picture-in-box", "picture", "figure"):
+            self.assertIn(f'slot="{n}"', md)
+        self.assertNotRegex(md, r'slot="(?:title|text|box|tab|picture|figure)-\d+"')
+        self.assertEqual([f["name"] for f in regions[0]["frames"]], names)
+        self.assertEqual({f["name"]: f["parent"] for f in regions[0]["frames"]}["picture-in-box"], "box")
+        self.assertEqual([f["slot"] for f in figures], ["figure"])
+        # the anchor of the picture on the box follows the new name
+        tpl = lib["pageTemplates"][0]
+        inside = next(f for f in tpl["frames"] if f["name"] == "picture-in-box")
+        self.assertEqual(inside["placement"]["anchor"]["to"], "#box")
+        report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+        self.assertTrue(report["frameNames"])
+
+    def test_the_overlay_shows_the_new_names(self):
+        out = self.run_extract(self.one, "ov", "--overlay")
+        self.assertTrue((out / "overlay" / "p01.png").exists())
+        # the overlay is drawn after the names are given: compare with a run that keeps the positions
+        keep = self.run_extract(self.one, "ov2", "--overlay", "--name-frames", "never")
+        self.assertNotEqual((out / "overlay" / "p01.png").read_bytes(), (keep / "overlay" / "p01.png").read_bytes())
+
+    def test_several_pages_keep_the_positions_for_dedupe_unless_asked(self):
+        out = self.run_extract(self.two, "b")
+        lib, md, _, _ = self.read(out)
+        self.assertEqual(self.names(lib), ["tab-1", "text", "box-1", "picture-1", "picture-2", "figure-1"])
+        self.assertIn('slot="box-1"', md)
+        asked = self.run_extract(self.two, "c", "--name-frames", "always")
+        lib2, md2, _, _ = self.read(asked)
+        self.assertEqual(self.names(lib2, 0), ["tab", "text", "box", "picture-in-box", "picture", "figure"])
+        self.assertEqual(self.names(lib2, 1), self.names(lib2, 0))
+        self.assertNotIn('slot="box-1"', md2)
+        # a draft that is one page can still keep the positions
+        keep = self.run_extract(self.one, "d", "--name-frames", "never")
+        self.assertEqual(self.names(self.read(keep)[0])[2], "box-1")
+
+    def test_dedupe_goes_on_from_named_frames(self):
+        out = self.run_extract(self.two, "e", "--name-frames", "always")
+        rep = td.dedupe_dir(out, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0)
+        lib = json.loads((out / "library.json").read_text(encoding="utf-8"))
+        self.assertEqual(rep["after"]["pageTemplates"], 1)
+        md = (out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        # the box takes its style's name, as it does on a draft with positions
+        box = next(f["name"] for f in lib["pageTemplates"][0]["frames"] if f["name"].startswith("box"))
+        self.assertIn(f'slot="{box}"', md)
+        self.assertEqual(md.count('slot="picture"'), 2)
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
 class CardClipTest(unittest.TestCase):
     def test_picture_is_cut_no_further_than_its_card(self):
         import contextlib

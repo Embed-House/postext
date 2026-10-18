@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-three-column-feature",
-  "sourceHash": "8352f28c6e2b483d9592b0240f2b1b62df2bedc5ef471efd5cc1cde6ce88810b",
+  "sourceHash": "fe7eeb6ff7b338db6e155af0c83105c0bb3546aec2c8c14cf71cb88af85c6119",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.42.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.652Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-18T09:23:27.316Z",
   "variants": {
     "en": {
-      "hash8": "793be530",
+      "hash8": "6e36ea26",
       "vdtHash": "e99bed70a03a36125954ecc3d8d6aa2a9057ca83",
       "timings": {
-        "importMs": 879,
-        "fontsMs": 155,
-        "buildMs": 99,
-        "totalMs": 1910,
+        "importMs": 472,
+        "fontsMs": 80,
+        "buildMs": 83,
+        "totalMs": 1660,
         "builds": 1
       },
       "specimen": {
@@ -31,7 +31,7 @@
         "mirror": true,
         "body": {
           "family": "Source Serif 4",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 14
         },
         "families": [
@@ -40,7 +40,7 @@
           "Source Serif 4"
         ],
         "pages": 6,
-        "ownLines": 209
+        "ownLines": 210
       },
       "pages": [
         {
@@ -138,7 +138,7 @@
       },
       "sandbox": {
         "file": "magazine-three-column-feature.postext",
-        "bytes": 1847636,
+        "bytes": 1847655,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -206,6 +206,8 @@
           "calloutStyles[].titleStyle.gap",
           "calloutStyles[].titleStyle.letterSpacing",
           "calloutStyles[].titleStyle.textTransform",
+          "canvasViewer",
+          "canvasViewer.pageGap",
           "captionStyle",
           "captionStyle.color",
           "captionStyle.fontFamily",
@@ -313,6 +315,7 @@
         "configSections": [
           "bodyText",
           "calloutStyles",
+          "canvasViewer",
           "captionStyle",
           "chipStyles",
           "colorPalette",
@@ -326,7 +329,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 335,
+        "configLeaves": 336,
         "designElements": 13,
         "directives": [
           "::resource",
@@ -417,12 +420,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.23 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.23 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -39,9 +39,23 @@ function stubFetch(): void {
         if (url === fontsourceCssUrl(SERIF, weight, style as 'normal' | 'italic')) return { ok: true, status: 200, headers, json: async () => ({}), text: async () => packageCss(weight, style) };
       }
     }
+    // A family Fontsource does not know and Google's style sheet serves (#993).
+    if (url.startsWith('https://fonts.googleapis.com/css2?family=Sheet%20Serif')) return { ok: true, status: 200, headers, json: async () => ({}), text: async () => SHEET_CSS };
     return { ok: false, status: 404, headers, json: async () => ({}), text: async () => '' };
   });
 }
+
+const SHEET = 'Sheet Serif';
+const sheetFace = (weight: number, style: string) => `/* latin */
+@font-face {
+  font-family: '${SHEET}';
+  font-style: ${style};
+  font-weight: ${weight};
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/sheetserif/v1/sheet-${weight}-${style}.woff2) format('woff2');
+  unicode-range: ${LATIN};
+}`;
+const SHEET_CSS = [[400, 'normal'], [700, 'normal'], [400, 'italic'], [700, 'italic']].map(([w, st]) => sheetFace(w as number, st as string)).join('\n');
 
 class FakeFace implements FontFaceLike {
   status = 'unloaded';
@@ -132,6 +146,35 @@ describe('a custom family with a fallback (#978)', () => {
     // The fallback's own name is never declared: the book names the licensed one.
     expect(fonts.declared(SERIF)).toEqual([]);
     expect(fonts.faces.filter((f) => f.family === 'Licensed Serif').some((f) => f.status === 'loaded')).toBe(true);
+  });
+
+  // #993: a fallback Google serves only as a style sheet (no static cuts
+  // at Fontsource) is set under the licensed name too.
+  it('declares the faces of a fallback served only by Google\'s style sheet under the family\'s name', async () => {
+    loader.setCustomFonts([{ name: 'Licensed Serif', variants: [], redistributable: false, fallback: SHEET }]);
+    await loader.loadFont('Licensed Serif', [upright(400), italic(400)]);
+    expect(new Set(fonts.declared('Licensed Serif'))).toEqual(new Set([
+      '400 normal sheet-400-normal.woff2',
+      '700 normal sheet-700-normal.woff2',
+      '400 italic sheet-400-italic.woff2',
+      '700 italic sheet-700-italic.woff2',
+    ]));
+    expect(fonts.declared(SHEET)).toEqual([]);
+    const payloads = await loader.collectFontPayloadsForFaces([{ family: 'Licensed Serif', weight: 400, style: 'normal' }]);
+    expect(payloads.length).toBeGreaterThan(0);
+    expect(payloads.every((p) => p.family === 'Licensed Serif')).toBe(true);
+    expect(new TextDecoder().decode(payloads.find((p) => p.weight === '400' && p.style === 'normal')!.buffer)).toContain('sheet-400-normal.woff2');
+  });
+
+  it('sheetFaceFiles answers the sheet\'s files of a face, and nothing for a family served as static cuts', async () => {
+    const urlOf = (faces: { url: string }[] | null) => (faces ?? []).map((f) => f.url.slice(f.url.lastIndexOf('/') + 1));
+    expect(urlOf(await loader.sheetFaceFiles(SHEET, 700, 'normal'))).toEqual(['sheet-700-normal.woff2']);
+    expect(urlOf(await loader.sheetFaceFiles(SHEET, 400, 'italic'))).toEqual(['sheet-400-italic.woff2']);
+    // A weight between two cuts is the one CSS font matching settles on.
+    expect(urlOf(await loader.sheetFaceFiles(SHEET, 600, 'normal'))).toEqual(['sheet-700-normal.woff2']);
+    expect(await loader.sheetFaceFiles(SERIF, 400, 'normal')).toBeNull();
+    loader.setCustomFonts([{ name: 'Mine', variants: [] }]);
+    expect(await loader.sheetFaceFiles('Mine', 400, 'normal')).toBeNull();
   });
 
   it('asks for the licensed family nowhere on the network', async () => {

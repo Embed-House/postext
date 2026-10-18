@@ -7,8 +7,9 @@ import type { ComposedBook } from '../../book/types';
 import { resetEditMode, setEditMode } from '../../editing/editMode';
 import { setTemplateEditorHost } from '../../templates/editorStore';
 import { resetViewerEdits } from '../../editor/viewerEdits';
-import { labelsOnPage, sheetToPicture } from './labelAnchorGeometry';
-import { createLabelEditor, type LabelEditor, type LabelSurface } from './labelAnchorEditor';
+import { insideCorners, labelsOnPage, sheetToPicture } from './labelAnchorGeometry';
+import { createLabelEditor, touchPads, type LabelEditor, type LabelSurface } from './labelAnchorEditor';
+import { labelMarkShapes } from './labelMarks';
 import type { MarkShape } from './labelMarks';
 
 // #970: the label editor knows nothing of the page it sits on, so the Folio
@@ -65,7 +66,7 @@ function editor(extra: Partial<Parameters<typeof createLabelEditor>[0]> = {}): L
   });
 }
 const at = (x: number, y: number, pageIndex = PAGE) => ({ pageIndex, x, y });
-const ptr = (id: number, x: number, y: number) => ({ pointerId: id, clientX: x, clientY: y });
+const ptr = (id: number, x: number, y: number, pointerType?: string) => ({ pointerId: id, clientX: x, clientY: y, ...(pointerType ? { pointerType } : {}) });
 
 beforeEach(() => {
   painted = new Map();
@@ -186,5 +187,60 @@ describe('the label editor of a surface (#970)', () => {
     e.sync();
     expect(painted.get(PAGE)).toBeNull();
     e.dispose();
+  });
+
+  // #992: a finger is not a mouse. It lands about 22 CSS px from where it
+  // aims, and it wanders a few px between the press and the lift.
+  it('takes a touch press a finger-width from a point, and a mouse press only a few px', () => {
+    const e = editor();
+    const free = [0, 1, 2, 3, 4, 5, 6, 7]
+      .map((i) => ({ x: anchored.point.x + 30 * Math.cos((i * Math.PI) / 4), y: anchored.point.y + 30 * Math.sin((i * Math.PI) / 4) }))
+      .find((q) => labels.every((l) => !insideCorners(l.corners, q.x, q.y)))!;
+    expect(free).toBeDefined();
+    // 30 sheet px is 15 CSS px here.
+    expect(e.pointerDown(ptr(1, 0, 0, 'mouse'), at(free.x, free.y))).toBe(false);
+    expect(e.pointerDown(ptr(2, 0, 0, 'touch'), at(free.x, free.y))).toBe(true);
+    e.cancel();
+    expect(e.pointerDown(ptr(3, 0, 0, 'pen'), at(free.x, free.y))).toBe(true);
+    e.cancel();
+    // A touch farther than a fingertip takes nothing.
+    const far = { x: anchored.point.x + 80, y: anchored.point.y + 80 };
+    if (labels.every((l) => !insideCorners(l.corners, far.x, far.y))) expect(e.pointerDown(ptr(4, 0, 0, 'touch'), at(far.x, far.y))).toBe(false);
+  });
+
+  it('lets a touch wander a few px before the press becomes a drag', () => {
+    const e = editor();
+    e.pointerDown(ptr(1, 100, 100, 'touch'), at(anchored.point.x, anchored.point.y));
+    // 6 CSS px: a drag for a mouse, a tremor for a finger.
+    e.dragMove(ptr(1, 106, 100, 'touch'), at(anchored.point.x + 12, anchored.point.y));
+    expect(painted.get(PAGE)!.some((s) => s.kind === 'polygon' && s.fill)).toBe(false);
+    e.dragMove(ptr(1, 112, 100, 'touch'), at(anchored.point.x + 24, anchored.point.y));
+    expect(painted.get(PAGE)!.some((s) => s.kind === 'polygon' && s.fill)).toBe(true);
+    e.cancel();
+    e.pointerDown(ptr(2, 100, 100, 'mouse'), at(anchored.point.x, anchored.point.y));
+    e.dragMove(ptr(2, 106, 100, 'mouse'), at(anchored.point.x + 12, anchored.point.y));
+    expect(painted.get(PAGE)!.some((s) => s.kind === 'polygon' && s.fill)).toBe(true);
+    e.cancel();
+  });
+
+  it('gives a touch screen a pad under every label, which the browser leaves to the page', () => {
+    const shapes = labelMarkShapes(labels, 2);
+    const pads = touchPads(shapes, 400, 500);
+    // One for each label's box and one for each point to grab.
+    const boxes = shapes.filter((s) => s.kind === 'polygon').length;
+    const points = shapes.filter((s) => s.kind === 'circle').length;
+    expect(pads).toHaveLength(boxes + points);
+    const point = pads.find((p) => p.minCssPx === 44)!;
+    expect(point).toBeDefined();
+    const c = shapes.find((s) => s.kind === 'circle') as Extract<MarkShape, { kind: 'circle' }>;
+    expect(point.centerX).toBeCloseTo(c.cx / 400, 6);
+    expect(point.centerY).toBeCloseTo(c.cy / 500, 6);
+    for (const p of pads) {
+      expect(p.width).toBeGreaterThanOrEqual(0);
+      expect(p.centerX).toBeGreaterThanOrEqual(0);
+    }
+    // The ghost of a drag is not a pad: the finger is already down.
+    const dragged = labelMarkShapes(labels, 2, { drag: { key: (anchored.label.id ?? `${anchored.block.id}:${anchored.label.sourceStart}`), dx: 10, dy: 10 } });
+    expect(touchPads(dragged, 400, 500)).toHaveLength(pads.length);
   });
 });

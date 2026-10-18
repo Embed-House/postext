@@ -423,7 +423,7 @@ no livro. `sandbox_list_resources` lista os recursos e, com um `id`, mostra um
 deles por inteiro (as células de uma tabela com a sua formatação, o código de
 um SVG).
 
-As `marks` de uma imagem levam também as suas âncoras. Num mapa ou num esquema são os pontos em que ficam as suas linhas `::label`: um `id`, `x` e `y` (frações da imagem inteira) e os campos de rótulo que um rótulo colocado ali herda (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). A resposta avisa de um estilo de rótulo que o design não tem, e marcas novas num recurso são um passo do histórico (`sandbox_undo` responde `kind: "resource"`).
+As `marks` de uma imagem levam também as suas âncoras. Num mapa ou num esquema são os pontos em que ficam as suas linhas `::label`: um `id`, `x` e `y` (frações da imagem inteira) e os campos de rótulo que um rótulo colocado ali herda (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). A resposta avisa de um estilo de rótulo que o design não tem, e marcas novas num recurso são um passo do histórico (`sandbox_undo` responde `kind: "resource"`). Num SVG, `marks.svgSymbols` (`idPrefix`, `className`) acrescenta uma zona a evitar sobre cada elemento do desenho que nomeia, às zonas dadas pela chamada ou que a imagem já tem (desde o postext 1.43).
 
 ```jsonc
 // duas âncoras de um mapa, com seus estilos de rótulo

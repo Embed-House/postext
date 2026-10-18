@@ -302,3 +302,48 @@ describe('the fallback a book names for a family it has no file of (#978)', () =
     expect(fonts.pick(family, 400, 'italic')!.style).toBe('italic');
   });
 });
+
+// #993: a file that leaves the book (an EPUB, an HTML export) carries the
+// fallback's faces under the name of a family the book may not hand on.
+describe('the faces an export sets a family it may not hand on in (#993)', () => {
+  const open = (weight: number, style: 'normal' | 'italic') => readEmbedded(EMBEDDED_FACES.find((f) => f.family === 'Open Sans' && f.weight === weight && f.style === style)!.path);
+  const reporter = {
+    info: () => {},
+    warn: () => {},
+    time: async <T>(_name: string, run: () => T | Promise<T>) => run(),
+  } as unknown as Reporter;
+  const bookOf = (family: string, fallback: string | undefined, fonts: Book['fonts'] = []) => ({
+    kind: 'folder', name: 'probe', id: 'probe', locale: 'en', resources: [], files: new Map(), watchPaths: [],
+    config: { bodyText: { fontFamily: family }, customFonts: [{ name: family, variants: [], redistributable: false, ...(fallback ? { fallback } : {}) }] },
+    chapters: [{ title: 'One', markdown: 'Text and *italic* and **bold**.' }],
+    fonts,
+  } as unknown as Book);
+
+  it('are the fallback\'s every weight and slant asked, named for the family', async () => {
+    const fonts = await resolveFonts(bookOf('Export Serif One', 'Open Sans'), { fontDirs: [], offline: true }, reporter);
+    const stand = await fonts.exportStandIn('Export Serif One');
+    expect(stand.map((f) => `${f.weight}${f.style}`)).toEqual(expect.arrayContaining(['400italic', '400normal', '700italic', '700normal']));
+    expect(stand.every((f) => f.family === 'Export Serif One' && f.standsInFor === 'Open Sans')).toBe(true);
+    expect(Buffer.from(stand.find((f) => f.weight === 700 && f.style === 'normal')!.bytes).equals(Buffer.from(open(700, 'normal')))).toBe(true);
+  });
+
+  it('are all of them even for a family whose own files the book carries, which stay out', async () => {
+    const family = 'Export Serif Two';
+    const carried = [{ family, weight: 400, style: 'normal', file: 'R.otf', bytes: open(400, 'italic') }] as unknown as Book['fonts'];
+    const fonts = await resolveFonts(bookOf(family, 'Open Sans', carried), { fontDirs: [], offline: true }, reporter);
+    const stand = await fonts.exportStandIn(family);
+    expect(stand.map((f) => `${f.weight}${f.style}`)).toEqual(expect.arrayContaining(['400italic', '400normal', '700italic', '700normal']));
+    // The regular is the fallback's, not the file the book carries.
+    const regular = stand.find((f) => f.weight === 400 && f.style === 'normal')!;
+    expect(Buffer.from(regular.bytes).equals(Buffer.from(open(400, 'normal')))).toBe(true);
+  });
+
+  it('are none for a family without a fallback, or one the book may hand on', async () => {
+    const bare = await resolveFonts(bookOf('Export Serif Three', undefined), { fontDirs: [], offline: true }, reporter);
+    expect(await bare.exportStandIn('Export Serif Three')).toEqual([]);
+    const free = { ...bookOf('Export Serif Four', 'Open Sans'), config: { bodyText: { fontFamily: 'Export Serif Four' }, customFonts: [{ name: 'Export Serif Four', variants: [], fallback: 'Open Sans' }] } } as unknown as Book;
+    const fonts = await resolveFonts(free, { fontDirs: [], offline: true }, reporter);
+    expect(await fonts.exportStandIn('Export Serif Four')).toEqual([]);
+  });
+});
+

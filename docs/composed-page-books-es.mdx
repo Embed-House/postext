@@ -41,7 +41,7 @@ La página nueva será una página de repaso: una banda de título, un texto cor
 5. Añade otro marco. **Nombre (ranura)**: `remember`. **Estilo de caja**: `dato-campo`, una caja verde con pestaña. **Alto mínimo**: 30 mm, para que la caja no se quede pequeña cuando su texto sea corto.
 6. Añade un último marco. **Nombre (ranura)**: `try`. **Estilo de caja**: `actividad-sol`. **Alto mínimo**: 30 mm.
 7. En `text`, `remember` y `try` pon **Ancho** en *Hasta el borde* y **Alto** en *Su contenido*: así ocupan todo el ancho de la página y tienen la altura de su texto.
-8. En **Grupos** pulsa **Añadir grupo**. Llámalo `column`, déjalo en *Apilados* y pon **Espacio entre marcos** en 6 mm. En **Marcos del grupo, en el orden de la página** marca los cuatro marcos. El grupo los conserva en el orden de la lista de marcos, así que el título va primero. Un grupo coloca sus marcos uno debajo de otro y empuja los de abajo cuando un marco crece; por eso un texto más largo en la primera caja baja la segunda en lugar de pisarla.
+8. En **Grupos** pulsa **Añadir grupo**. Llámalo `column`, déjalo en *Apilados* y pon **Espacio entre marcos** en 6 mm. En **Marcos del grupo, en el orden de la página** marca los cuatro marcos. Márcalos en el orden en que van, con el título primero: la lista numera los miembros y las flechas suben o bajan uno. Un grupo coloca sus marcos uno debajo de otro y empuja los de abajo cuando un marco crece; por eso un texto más largo en la primera caja baja la segunda en lugar de pisarla.
 
 <Screenshot src="/docs-shots/es/template.webp" alt="El panel Diseño en Plantillas de página con la plantilla Página de repaso: sus cuatro marcos y su grupo, y los mismos marcos dibujados con contorno discontinuo sobre la página." caption="La plantilla: cuatro marcos y un grupo. En la página, las cajas discontinuas son los marcos y las etiquetas verdes dicen cómo se dimensiona cada uno." />
 
@@ -102,11 +102,10 @@ Las palabras *Puente de piedra* son Markdown; el punto es parte de la imagen. Cu
 
 ## 5. Traduce la página
 
-Una traducción es la misma plantilla con otras palabras. El Sandbox admite dos maneras de guardarla. Un libro puede llevar varios idiomas a la vez, como un archivo `.postext` con una edición para cada uno; entonces la barra que hay sobre el lienzo cambia entre ellos y el panel Revisión los lee todos (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). La manera más sencilla, que no necesita ningún archivo, es una copia del libro en el otro idioma:
+Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda como otra edición del mismo libro: la barra que hay sobre el lienzo cambia entre las ediciones y el panel Revisión las lee todas (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). Para crearla:
 
-1. Abre **Libros**, pulsa **⋯** en tu libro y elige **Duplicar**, o pulsa **Nuevo** y elige **Copia del libro abierto**. Abre la copia. Lleva el mismo nombre que el original: cámbialo con **Cambiar nombre…** en el mismo menú.
-2. En el panel **Diseño** abre **Escritura** y, en **Idioma y dirección**, elige el **Idioma del documento**: inglés. La separación en sílabas, las comillas y las palabras que escribe el propio motor (como *Continued* en el corte de una caja) siguen ese idioma.
-3. En el panel **Texto** traduce las palabras y deja lo demás.
+1. Abre **Libros**, pulsa **⋯** en tu libro y elige **Añadir un idioma…**. Elige el idioma y pulsa **Añadir y abrir**. El Sandbox copia la edición en pantalla en una nueva, pone su **Idioma del documento** en el idioma elegido y la abre. La separación en sílabas, las comillas y las palabras que escribe el propio motor (como *Continued* en el corte de una caja) siguen ese idioma. El texto sigue siendo el del original.
+2. En el panel **Texto** traduce las palabras y deja lo demás.
 
 <table>
   <thead>

@@ -41,7 +41,7 @@ La pàgina nova serà una pàgina de repàs: una banda de títol, un text breu a
 5. Afegeix un marc. **Nom (ranura)**: `remember`. **Estil de caixa**: `dato-campo`, una caixa verda amb solapa. **Alçada mínima**: 30 mm, perquè la caixa conservi una bona mida quan el seu text és curt.
 6. Afegeix un últim marc. **Nom (ranura)**: `try`. **Estil de caixa**: `actividad-sol`. **Alçada mínima**: 30 mm.
 7. A `text`, `remember` i `try` posa **Amplada** a *Fins a la vora* i **Alçada** a *El contingut*: així ocupen tota l'amplada de la pàgina i fan l'alçada del seu text.
-8. A **Grups** prem **Afegir un grup**. Posa-li de **Nom** `column`, deixa'l *Apilats* i fixa **Espai entre marcs** en 6 mm. A **Marcs del grup, en l'ordre de la pàgina** marca els quatre marcs. El grup els manté en l'ordre de la llista de marcs, de manera que el títol va primer. Un grup col·loca els seus marcs l'un sota l'altre i mou els de sota quan un marc creix, així que un text més llarg a la primera caixa empeny la segona cap avall en lloc de passar-li per sobre.
+8. A **Grups** prem **Afegir un grup**. Posa-li de **Nom** `column`, deixa'l *Apilats* i fixa **Espai entre marcs** en 6 mm. A **Marcs del grup, en l'ordre de la pàgina** marca els quatre marcs. Marca'ls en l'ordre en què van, amb el títol primer: la llista numera els membres i les fletxes en pugen o en baixen un. Un grup col·loca els seus marcs l'un sota l'altre i mou els de sota quan un marc creix, així que un text més llarg a la primera caixa empeny la segona cap avall en lloc de passar-li per sobre.
 
 <Screenshot src="/docs-shots/ca/template.webp" alt="El tauler Disseny a Plantilles de pàgina amb la plantilla Pàgina de repàs: els seus quatre marcs i el seu grup, i els mateixos marcs dibuixats amb contorns de ratlles damunt la pàgina." caption="La plantilla: quatre marcs i un grup. A la pàgina, les caixes de ratlles són els marcs i les etiquetes verdes diuen com es dimensiona cadascun." />
 
@@ -102,11 +102,10 @@ Les paraules *Pont de pedra* són Markdown; el punt és part de la imatge. Quan 
 
 ## 5. Tradueix la pàgina
 
-Una traducció és la mateixa plantilla amb altres paraules. El Sandbox té dues maneres de guardar-la. Un llibre pot portar diverses llengües alhora, com un fitxer `.postext` amb una edició per a cadascuna, i aleshores la barra de sobre del llenç canvia d'una a l'altra i el tauler Revisió les llegeix totes (vegeu [Edicions d'un llibre](/ca/docs/sandbox-previews#edicions-dun-llibre)). La manera més senzilla, que no necessita cap fitxer, és una còpia del llibre en l'altra llengua:
+Una traducció és la mateixa plantilla amb altres paraules. El Sandbox la guarda com una altra edició del mateix llibre: la barra de sobre del llenç canvia entre les edicions i el tauler Revisió les llegeix totes (vegeu [Edicions d'un llibre](/ca/docs/sandbox-previews#edicions-dun-llibre)). Per crear-la:
 
-1. Obre **Llibres**, prem **⋯** al teu llibre i tria **Duplicar**, o prem **Nou** i tria **Còpia del llibre obert**. Obre la còpia. Porta el mateix nom que l'original: canvia'l amb **Canviar el nom…** al mateix menú.
-2. Al tauler **Disseny** obre **Escriptura** i, a **Llengua i direcció**, fixa la **Llengua del document**. La partició de paraules, les cometes i les paraules que escriu el motor per compte seu (com *Continúa* al tall d'una caixa) la segueixen.
-3. Al tauler **Text** tradueix les paraules i deixa la resta.
+1. Obre **Llibres**, prem **⋯** al teu llibre i tria **Afegir una llengua…**. Tria la llengua i prem **Afegir i obrir**. El Sandbox copia l'edició en pantalla en una de nova, posa la seva **Llengua del document** en la llengua triada i l'obre. La partició de paraules, les cometes i les paraules que escriu el motor per compte seu (com *Continúa* al tall d'una caixa) segueixen aquesta llengua. El text continua sent el de l'original.
+2. Al tauler **Text** tradueix les paraules i deixa la resta.
 
 <table>
   <thead>

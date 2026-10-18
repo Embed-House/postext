@@ -890,7 +890,7 @@ const canvas = renderPage(doc.pages[0], doc);
 Where it happens:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` recolours (`inkHex`), inlines (`fonts`, a provider; `inlineFonts: false` skips it), decodes and registers the picture as a vector source, and resolves to what became of each face. `registerBundleImages(bundle)` does the same for a bundle's SVGs, from the bundle's own faces first. `prepareSvgMarkup(svgText, options)` returns the prepared markup for a host that decodes on its own.
-- **HTML.** `bundleImageUrl(bundle)` serves SVG markup with the bundle's faces inlined. `renderToHtml(doc, { inlineSvgFonts: true })` inlines into the SVG `data:` URIs `resourceImageUrl` returns, from the faces the registry holds in memory (or `inlineSvgFonts: { fonts, maxBytes, withhold }`). An object URL cannot be read synchronously, so a host that serves blob URLs inlines before it makes them.
+- **HTML.** `bundleImageUrl(bundle)` serves SVG markup with the bundle's faces inlined. `renderToHtml(doc, { inlineSvgFonts: true })` inlines into the SVG `data:` URIs `resourceImageUrl` returns, from the faces the registry holds in memory (or `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). An object URL cannot be read synchronously, so a host that serves blob URLs inlines before it makes them.
 - **EPUB.** `postext-epub` inlines from the book's `fonts`, then `svgFonts.provider`, before it writes an SVG (see [EPUB books](/en/docs/configuration-html-folio-epub#epub-books-postext-epub)).
 - **PDF.** SVG text is set as real text in the embedded fonts. A `<style>` that holds only `@font-face` rules (faces an author embedded) no longer makes the figure fall back to a raster. When a figure does fall back (a filter, a gradient), its raster is made with the faces inlined from the PDF's `fontProvider`.
 
@@ -925,6 +925,12 @@ The lower-level functions are exported too: `svgFontRequests(svgText)` lists eac
       <td>Families to leave out of a file that leaves the app (not redistributable). Their reference stays and the reader falls back; <code>onWithheld(family)</code> is told of each.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>none</td>
+      <td>The open family whose face is embedded under the name of a family <code>withhold</code> names (since postext 1.43): the provider is asked for the stand-in, and the picture keeps its reference and its widths. A family without one, or whose stand-in the provider has no face of for some face the SVG asks, stays out whole.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>none</td>
@@ -935,7 +941,7 @@ The lower-level functions are exported too: `svgFontRequests(svgText)` lists eac
 
 **Opting out.** `diagramStyle.inlineFonts: false` leaves every SVG as stored; `svg.inlineFonts: false` on a resource leaves that one byte for byte as it is, for an SVG that carries its own faces or must not change. A bundle writes the resource's opt-out as `"inlineFonts": false` in its `preset.json`.
 
-**Licences.** Inlining puts font files inside pictures that can leave the app (an HTML export, an EPUB). It happens when a picture is shown or exported, never in the stored resource bytes, and `withhold` keeps out the families a licence does not let you hand on: the EPUB writer withholds the faces marked `redistributable: false`, and the Sandbox the custom families marked so.
+**Licences.** Inlining puts font files inside pictures that can leave the app (an HTML export, an EPUB). It happens when a picture is shown or exported, never in the stored resource bytes, and `withhold` keeps out the families a licence does not let you hand on: the EPUB writer withholds the faces marked `redistributable: false`, and the Sandbox the custom families marked so. Since postext 1.43 a family `withhold` names can have a stand-in (`standIn`): the open face is embedded under its name, so the picture's text keeps the width it was laid out with.
 
 
 ## Video style

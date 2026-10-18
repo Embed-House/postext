@@ -5,14 +5,20 @@ import type { PdfFontAnswer } from 'postext-pdf';
 // bundle names for it, as the previews do.
 
 const CUT = [{ family: 'Source Serif 4', weight: '400', style: 'normal', unicodeRange: 'U+0000-00FF', url: 'https://fonts.test/serif-latin.woff2' }];
+const SHEET = [
+  { family: 'Sheet Serif', weight: '400', style: 'normal', unicodeRange: 'U+0000-00FF', url: 'https://fonts.test/sheet-400.woff2' },
+  { family: 'Sheet Serif', weight: '700', style: 'normal', unicodeRange: 'U+0000-00FF', url: 'https://fonts.test/sheet-700.woff2' },
+];
 const FAMILIES: Record<string, { name: string; variants: { weight: number; style: 'normal' | 'italic'; fileId: string; format: 'ttf' }[]; fallback?: string }> = {
   'Licensed Serif': { name: 'Licensed Serif', variants: [], fallback: 'Source Serif 4' },
+  'Sheet Licensed': { name: 'Sheet Licensed', variants: [], fallback: 'Sheet Serif' },
   'Half Licensed': { name: 'Half Licensed', variants: [{ weight: 400, style: 'normal', fileId: 'own', format: 'ttf' }], fallback: 'Source Serif 4' },
 };
 
 vi.mock('../controls/fontLoader', () => ({
   getCustomFontFamily: (name: string) => FAMILIES[name],
-  fontFamilyWeights: async () => [400],
+  fontFamilyWeights: async () => null,
+  sheetFaceFiles: async (family: string, weight: number) => (family === 'Sheet Serif' ? SHEET.filter((f) => f.weight === String(weight >= 600 ? 700 : 400)) : null),
   isUncataloguedFontFamily: () => false,
   staticFaceFiles: async (family: string) => (family === 'Source Serif 4' ? CUT : null),
   fontsourcePackageVersion: () => null,
@@ -34,6 +40,15 @@ describe('createPdfFontProvider: a family with a fallback (#978)', () => {
     const provider = createPdfFontProvider();
     expect(filesOf(await provider('Licensed Serif', 400, 'normal')).map(name)).toEqual(['serif-latin.woff2']);
     expect(filesOf(await provider('Licensed Serif', 700, 'italic')).map(name)).toEqual(['serif-latin.woff2']);
+  });
+
+  // #993: a fallback only Google's style sheet serves (no static cuts, none
+  // at Fontsource) gives the files the previews declare.
+  it('embeds the style sheet\'s files for a fallback that has no static cut and is not at Fontsource', async () => {
+    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const provider = createPdfFontProvider();
+    expect(filesOf(await provider('Sheet Licensed', 400, 'normal')).map(name)).toEqual(['sheet-400.woff2']);
+    expect(filesOf(await provider('Sheet Licensed', 700, 'normal')).map(name)).toEqual(['sheet-700.woff2']);
   });
 
   it('keeps the family\'s own file for the slant it has, the fallback\'s for the one it lacks', async () => {

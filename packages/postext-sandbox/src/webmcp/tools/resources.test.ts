@@ -105,6 +105,16 @@ describe('the resource tools', () => {
     expect('safeArea' in cleared.resource).toBe(false);
     expect(cleared.resource.anchors).toHaveLength(1);
     expect((await call('sandbox_save_resource', { id: 'map', marks: { anchors: [{ id: 'sfx', x: 0, y: 0 }] } })).error).toMatch(/marks\.anchors\[0\]\.id "sfx" is a key the script keeps for itself/);
+    // The drawing's own symbols (#994) are an SVG's, and named.
+    expect((await call('sandbox_save_resource', { id: 'map', marks: { svgSymbols: { idPrefix: 'sym-' } } })).error).toMatch(/svgSymbols is an SVG's/);
+  });
+
+  it('read the symbols of an SVG as avoid zones only where a document can measure it (#994)', async () => {
+    const { call } = harness();
+    await call('sandbox_save_resource', { id: 'Diagram One', svg: SVG, wait: false });
+    expect((await call('sandbox_save_resource', { id: 'diagram-one', marks: { svgSymbols: {} } })).error).toMatch(/names the symbols by idPrefix or className/);
+    // This suite runs without a document: the measuring says so instead of adding nothing.
+    expect((await call('sandbox_save_resource', { id: 'diagram-one', marks: { svgSymbols: { idPrefix: 'sym-' } } })).error).toMatch(/could not be measured here/);
   });
 
   it('keep an SVG, its print master and its font opt-out through a new file, and detach the master from an edited source', async () => {

@@ -89,6 +89,9 @@ export interface SvgFontFaceReport {
   weight: number;
   style: SvgFontStyle;
   status: SvgFontStatus;
+  /** The family whose face was embedded under `family`'s name
+   *  ({@link InlineSvgFontsOptions.standIn}). */
+  standIn?: string;
   /** Bytes of the files found for it (inlined or too large). */
   bytes?: number;
   /** Number of files (slices) found for it. */
@@ -115,6 +118,14 @@ export interface InlineSvgFontsOptions {
    *  file that leaves the app: their reference stays and the reader falls
    *  back, as for the book's own font files. */
   withhold?: (family: string) => boolean;
+  /** The open family whose faces take the place of a family `withhold`
+   *  names (#993): the provider is asked for the stand-in's face of the
+   *  same weight and slant and it is embedded under the withheld family's
+   *  name, so the picture's text keeps its width and its reference. A
+   *  family without a stand-in, or whose stand-in the provider has no face
+   *  of, stays withheld. The stand-in is open by definition (see
+   *  `exportStandInOf`). */
+  standIn?: (family: string) => string | undefined;
   /** Told of each family left out by `withhold` (once per SVG). */
   onWithheld?: (family: string) => void;
   /** Told of a family with no face and of a size cap hit. */
@@ -578,6 +589,7 @@ function finishInlining(
   files: Map<string, { bytes: Uint8Array; format: SvgFontFormat }[]>,
   withheldFamilies: Set<string>,
   options: InlineSvgFontsOptions | undefined,
+  standIns: ReadonlyMap<string, string> = new Map(),
 ): SvgFontInlining {
   const maxBytes = options?.maxBytes ?? DEFAULT_SVG_FONT_MAX_BYTES;
   const faces: SvgFontFaceReport[] = [];
@@ -610,7 +622,8 @@ function finishInlining(
       if (!chosenKeys.has(key)) {
         chosenKeys.add(key);
         chosen.push({ family, weight: req.weight, style: req.style, files: found });
-        report({ family, weight: req.weight, style: req.style, status: 'inlined' });
+        const stands = standIns.get(family.toLowerCase());
+        report({ family, weight: req.weight, style: req.style, status: 'inlined', ...(stands ? { standIn: stands } : {}) });
       }
       resolved = true;
       break;
@@ -661,16 +674,52 @@ function finishInlining(
   return { svg: injectSvgStyle(svgText, css), faces, bytes: total };
 }
 
-function withheldOf(jobs: Map<string, FaceJob>, options: InlineSvgFontsOptions | undefined): Set<string> {
-  const out = new Set<string>();
-  if (!options?.withhold) return out;
+/** The families `withhold` names that have no stand-in (told to
+ *  `onWithheld`), and those that have one, by lower-case name, with the
+ *  family that stands in for them (#993). */
+function withheldOf(jobs: Map<string, FaceJob>, options: InlineSvgFontsOptions | undefined): { withheld: Set<string>; standIns: Map<string, string> } {
+  const withheld = new Set<string>();
+  const standIns = new Map<string, string>();
+  if (!options?.withhold) return { withheld, standIns };
   for (const job of jobs.values()) {
     const lower = job.family.toLowerCase();
-    if (out.has(lower) || !options.withhold(job.family)) continue;
-    out.add(lower);
+    if (withheld.has(lower) || standIns.has(lower) || !options.withhold(job.family)) continue;
+    const stands = options.standIn?.(job.family)?.trim();
+    if (stands && stands.toLowerCase() !== lower) {
+      standIns.set(lower, stands);
+      continue;
+    }
+    withheld.add(lower);
     options.onWithheld?.(job.family);
   }
-  return out;
+  return { withheld, standIns };
+}
+
+/** The name a face is looked up under: its stand-in's for a family left to
+ *  one. */
+function askedFamily(job: FaceJob, standIns: ReadonlyMap<string, string>): string {
+  return standIns.get(job.family.toLowerCase()) ?? job.family;
+}
+
+/** A family whose stand-in the provider has no face of, for some of the
+ *  faces the SVG asks, is left out whole (as if it had none): a picture
+ *  set half in the open face and half in the reader's is worse than either.
+ *  Told to `onWithheld` like any family left out. */
+function settleStandIns(
+  jobs: Map<string, FaceJob>,
+  files: Map<string, { bytes: Uint8Array; format: SvgFontFormat }[]>,
+  standIns: Map<string, string>,
+  withheld: Set<string>,
+  options: InlineSvgFontsOptions | undefined,
+): void {
+  for (const lower of [...standIns.keys()]) {
+    const mine = [...jobs].filter(([, job]) => job.family.toLowerCase() === lower);
+    if (mine.every(([key]) => (files.get(key)?.length ?? 0) > 0)) continue;
+    for (const [key] of mine) files.delete(key);
+    standIns.delete(lower);
+    withheld.add(lower);
+    options?.onWithheld?.(mine[0]![1].family);
+  }
 }
 
 /**
@@ -687,15 +736,16 @@ export async function inlineSvgFontsDetailed(
 ): Promise<SvgFontInlining> {
   const plan = planInlining(svgText);
   if (plan.scan.requests.length === 0) return { svg: svgText, faces: [], bytes: 0 };
-  const withheld = withheldOf(plan.jobs, options);
+  const { withheld, standIns } = withheldOf(plan.jobs, options);
   const formats = options?.formats ?? ALL_FORMATS;
   const files = new Map<string, { bytes: Uint8Array; format: SvgFontFormat }[]>();
   await Promise.all([...plan.jobs].map(async ([key, job]) => {
     if (withheld.has(job.family.toLowerCase())) return;
-    const answer = await provider(job.family, job.weight, job.style, { codePoints: job.codePoints }).catch(() => null);
+    const answer = await provider(askedFamily(job, standIns), job.weight, job.style, { codePoints: job.codePoints }).catch(() => null);
     files.set(key, asFiles(answer, formats));
   }));
-  return finishInlining(svgText, plan, files, withheld, options);
+  settleStandIns(plan.jobs, files, standIns, withheld, options);
+  return finishInlining(svgText, plan, files, withheld, options, standIns);
 }
 
 /** {@link inlineSvgFontsDetailed} from a provider that answers from
@@ -708,20 +758,21 @@ export function inlineSvgFontsDetailedSync(
 ): SvgFontInlining {
   const plan = planInlining(svgText);
   if (plan.scan.requests.length === 0) return { svg: svgText, faces: [], bytes: 0 };
-  const withheld = withheldOf(plan.jobs, options);
+  const { withheld, standIns } = withheldOf(plan.jobs, options);
   const formats = options?.formats ?? ALL_FORMATS;
   const files = new Map<string, { bytes: Uint8Array; format: SvgFontFormat }[]>();
   for (const [key, job] of plan.jobs) {
     if (withheld.has(job.family.toLowerCase())) continue;
     let answer: Uint8Array | Uint8Array[] | null | undefined = null;
     try {
-      answer = provider(job.family, job.weight, job.style, { codePoints: job.codePoints });
+      answer = provider(askedFamily(job, standIns), job.weight, job.style, { codePoints: job.codePoints });
     } catch {
       answer = null;
     }
     files.set(key, asFiles(answer, formats));
   }
-  return finishInlining(svgText, plan, files, withheld, options);
+  settleStandIns(plan.jobs, files, standIns, withheld, options);
+  return finishInlining(svgText, plan, files, withheld, options, standIns);
 }
 
 /** Embed the faces an SVG's text asks for as `@font-face` data URIs and

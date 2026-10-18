@@ -193,7 +193,7 @@ contiene le immagini, i font e i video ospitati in proprio. `--assets embed|fold
 sceglie l’una o l’altra modalità per qualsiasi percorso. Le pagine sono l’impaginazione di stampa, mostrata a
 dimensione schermo: affiancate (`--mode multi`, il valore predefinito) o una sotto l’altra
 (`--mode single`). I font marcati `redistributable: false` vengono nominati ma non
-copiati.
+copiati. Se la famiglia nomina un `fallback`, al suo posto sono scritti gli stili di quella famiglia libera con il nome della famiglia (da postext 1.43).
 
 ### epub
 
@@ -207,7 +207,7 @@ selezionabile; `--layout reflowable` lascia che il sistema di lettura ricomponga
 schermo (vedi [Libri EPUB](/it/docs/configuration-html-folio-epub#libri-epub-postext-epub)). La
 copertina è la miniatura del libro, a meno che `--cover` non indichi un’immagine. I metadati del
 pacchetto (titolo, autori, lingua, identificatore) vengono dal front matter del primo capitolo,
-come nella Sandbox.
+come nella Sandbox. I font marcati `redistributable: false` non vengono copiati; una famiglia che nomina un `fallback` è incorporata con gli stili di quella famiglia libera sotto il proprio nome (da postext 1.43).
 
 ### image e images
 
