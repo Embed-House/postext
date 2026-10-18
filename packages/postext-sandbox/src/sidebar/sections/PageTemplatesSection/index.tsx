@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Copy, LayoutTemplate, Plus, Trash2 } from 'lucide-react';
-import { resolveDesignSlot, resolveHeaderFooterConfig, resolvePageTemplate, type DesignSlot, type Dimension, type PageTemplate, type VDTDocument } from 'postext';
+import { resolveDesignSlot, resolveHeaderFooterConfig, resolvePageTemplate, type DesignSlot, type PageTemplate, type VDTDocument } from 'postext';
 import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { CollapsibleSection, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover, SegmentedControl } from '../../../ui';
@@ -17,6 +17,7 @@ import {
   inheritedDecoration,
   joinDecoration,
   namesInUse,
+  newFrameFor,
   removeTemplate,
   renameTemplate,
   setInheritedElementHidden,
@@ -36,8 +37,6 @@ import { FrameProperties } from './FrameProperties';
 import { GroupsEditor } from './GroupsEditor';
 import { TemplateSheetSvg } from './TemplateSheetSvg';
 import { laidHeights, resolveAt, usePageTemplates } from './model';
-
-const MM0: Dimension = { value: 0, unit: 'mm' };
 
 /** The composed page «Save layout as template» reads: the one a frame was
  *  picked on, else the first of the document. */
@@ -74,7 +73,8 @@ export const PageTemplatesSection = memo(function PageTemplatesSection() {
   const onNew = () => {
     const out = createTemplate(templates, labels.pageTemplatesNewName);
     write(out.templates);
-    select(out.id);
+    // Its text frame is picked, so the fields of the frame are in view.
+    select(out.id, { frame: out.templates.find((t) => t.id === out.id)?.frames?.[0]?.name ?? null });
   };
   const onDuplicate = () => {
     if (!selectedId) return;
@@ -251,7 +251,8 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
   const inherited = inheritedDecoration(templates, id, effScope).elements;
   const addNewFrame = () => {
     const name = uniqueName(namesInUse(templates, id), 'frame');
-    write(addFrame(templates, id, effScope, { name, width: { value: 60, unit: 'mm' }, height: { value: 40, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: MM0, y: MM0 } } }));
+    // Sized like the frames of the group it will join (#991).
+    write(addFrame(templates, id, effScope, newFrameFor(name, resolved)));
     onFrame(name);
   };
 

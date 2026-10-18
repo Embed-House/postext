@@ -8,6 +8,8 @@ import {
   frameInherited,
   inheritedDecoration,
   joinDecoration,
+  moveMember,
+  newFrameFor,
   removeFrame,
   removeTemplate,
   renameFrame,
@@ -217,5 +219,55 @@ describe('inherited decoration (#975)', () => {
     const merged = removeTemplate(hidden, 'base');
     expect(merged).toHaveLength(1);
     expect(merged[0]!.decoration!.elements.map((e) => e.id)).toEqual(['head', 'head-even', 'badge']);
+  });
+});
+
+describe('a new frame (#991)', () => {
+  const resolve = (templates: PageTemplate[], id: string) => resolvePageTemplate({ pageTemplates: templates }, id)!;
+
+  it('is a 60 x 40 mm box at the top left in a template with no group', () => {
+    const t: PageTemplate[] = [{ id: 'a', frames: [{ name: 'text', flow: true }] }];
+    expect(newFrameFor('frame', resolve(t, 'a'))).toEqual({
+      name: 'frame',
+      width: mm(60),
+      height: mm(40),
+      placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(0), y: mm(0) } },
+    });
+  });
+
+  it('is sized like the last member of the last group that has one', () => {
+    const t: PageTemplate[] = [{
+      id: 'a',
+      frames: [
+        { name: 'title', width: 'fill', height: 'auto' },
+        { name: 'text', width: 'fill', height: mm(80), flow: true },
+        { name: 'note', width: mm(50) },
+      ],
+      groups: [{ name: 'column', kind: 'stack', frames: ['title', 'text'] }],
+    }];
+    const frame = newFrameFor('extra', resolve(t, 'a'));
+    expect(frame).toEqual({ name: 'extra', width: 'fill', height: mm(80) });
+    // Not the same object as the frame it copies.
+    expect(frame.height).not.toBe(resolve(t, 'a').frames[1]!.height);
+  });
+
+  it('takes the sizes of a stack that has no member yet: up to the edge, as tall as its content', () => {
+    const t: PageTemplate[] = [{ id: 'a', frames: [{ name: 'text', flow: true }], groups: [{ name: 'column', kind: 'stack', frames: [] }] }];
+    expect(newFrameFor('title', resolve(t, 'a'))).toEqual({ name: 'title', width: 'fill', height: 'auto' });
+  });
+
+  it('keeps the 60 x 40 box when the only group is a row without members', () => {
+    const t: PageTemplate[] = [{ id: 'a', frames: [{ name: 'text', flow: true }], groups: [{ name: 'strip', kind: 'row', frames: [] }] }];
+    expect(newFrameFor('x', resolve(t, 'a')).width).toEqual(mm(60));
+  });
+});
+
+describe('moving a member of a group (#991)', () => {
+  it('moves one place at a time and stops at the ends', () => {
+    expect(moveMember(['a', 'b', 'c'], 'c', -1)).toEqual(['a', 'c', 'b']);
+    expect(moveMember(['a', 'b', 'c'], 'a', 1)).toEqual(['b', 'a', 'c']);
+    expect(moveMember(['a', 'b', 'c'], 'a', -1)).toEqual(['a', 'b', 'c']);
+    expect(moveMember(['a', 'b', 'c'], 'c', 1)).toEqual(['a', 'b', 'c']);
+    expect(moveMember(['a', 'b'], 'zz', 1)).toEqual(['a', 'b']);
   });
 });

@@ -360,6 +360,43 @@ export function updateFrame(templates: Templates, id: string, scope: TemplateSco
   );
 }
 
+/** The frame «Add frame» makes (#991). In a template whose groups already
+ *  have members it is sized like the last member of the last such group
+ *  (its width and height, as the template resolves them), so a frame added
+ *  to a stack comes out as wide and as tall as the ones it joins instead
+ *  of a 60 × 40 mm box that has to be changed field by field. A template
+ *  with a stack but no member yet gives it the stack's sizes: up to the
+ *  edge, as tall as its content. Without a group it is a box of 60 × 40 mm
+ *  at the top left of the area. */
+export function newFrameFor(name: string, resolved: Pick<ResolvedPageTemplate, 'frames' | 'groups'>): FrameConfig {
+  const byName = new Map(resolved.frames.map((f) => [f.name, f]));
+  for (const group of [...resolved.groups].reverse()) {
+    const members = group.frames.flatMap((m) => byName.get(m) ?? []);
+    const like = members[members.length - 1];
+    if (like) return { name, width: clone(like.width), height: clone(like.height) };
+  }
+  if (resolved.groups.some((g) => g.kind === 'stack')) return { name, width: 'fill', height: 'auto' };
+  const mm0 = mmDim(0);
+  return {
+    name,
+    width: { value: 60, unit: 'mm' },
+    height: { value: 40, unit: 'mm' },
+    placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm0, y: mm0 } },
+  };
+}
+
+/** The list `members` with `name` moved `by` places (negative: earlier),
+ *  stopping at the ends; the same list when `name` is not in it. */
+export function moveMember(members: readonly string[], name: string, by: number): string[] {
+  const from = members.indexOf(name);
+  if (from < 0) return [...members];
+  const to = Math.max(0, Math.min(members.length - 1, from + by));
+  const out = [...members];
+  out.splice(from, 1);
+  out.splice(to, 0, name);
+  return out;
+}
+
 /** A new frame at a scope. */
 export function addFrame(templates: Templates, id: string, scope: TemplateScope, frame: FrameConfig): PageTemplate[] {
   return replaceTemplate(templates, id, (t) => withScope(t, scope, (p) => withFrames(p, (frames) => [...frames.filter((f) => f.name !== frame.name), frame])));
