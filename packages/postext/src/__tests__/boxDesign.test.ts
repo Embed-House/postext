@@ -73,7 +73,7 @@ describe('calloutStyles[].design (#1014)', () => {
         text('model', '{boxText}', 0), text('second', '{boxText.2}', 20), text('pic', '[{attr.pic}]', 40),
       ] } },
     };
-    const doc = buildDocument({ markdown: ':::callout{style="row" pic="cat"}\nmamá\n\npapá\n:::\n\nAfter.\n' }, config(style));
+    const doc = buildDocument({ markdown: ':::callout{type="row" pic="cat"}\nmamá\n\npapá\n:::\n\nAfter.\n' }, config(style));
     const [frame] = frames(doc);
     expect(frame).toBeDefined();
     // {boxText} prints every paragraph, one per line.
@@ -86,7 +86,7 @@ describe('calloutStyles[].design (#1014)', () => {
 
   it('sets the content under the band when the design does not set it', () => {
     const style: CalloutStyleConfig = { id: 'card', design: { minHeight: pt(40), slot: { elements: [text('k', '{attr.kicker}', 0)] } } };
-    const doc = buildDocument({ markdown: ':::callout{style="card" kicker="Note"}\nBody text.\n:::\n' }, config(style));
+    const doc = buildDocument({ markdown: ':::callout{type="card" kicker="Note"}\nBody text.\n:::\n' }, config(style));
     const [frame] = frames(doc);
     expect(texts(frame!)).toEqual(['Note']);
     const [body] = paragraphs(doc);
@@ -96,7 +96,7 @@ describe('calloutStyles[].design (#1014)', () => {
   });
 
   it('draws nothing without a design, as before', () => {
-    const doc = buildDocument({ markdown: ':::callout{style="plain"}\nBody text.\n:::\n' }, config({ id: 'plain' }));
+    const doc = buildDocument({ markdown: ':::callout{type="plain"}\nBody text.\n:::\n' }, config({ id: 'plain' }));
     expect(paragraphs(doc)).toHaveLength(1);
     expect(texts(frames(doc)[0]!)).toEqual([]);
   });

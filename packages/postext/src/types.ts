@@ -3584,7 +3584,7 @@ export interface CalloutStyleConfig {
    *  across the box's inner width; the box's own content follows the band.
    *  Texts read `{titleText}` (the box title), `{boxText}` and
    *  `{boxText.<n>}` (the box's content, see `setsContent`), `{attr.<key>}`
-   *  (the fence's attributes: `:::callout{style="row" picture="cat"}`) and
+   *  (the fence's attributes: `:::callout{type="row" picture="cat"}`) and
    *  the document placeholders (`{title}`, `{author}`…); a picture's
    *  `resourceId` may read them too. The band is as tall as the
    *  elements reach, or `minHeight`. A box split across columns or pages
@@ -3610,7 +3610,7 @@ export interface CalloutDesignConfig {
    *  `{boxText.<n>}` (the `n`-th, from 1), and the content is not laid out
    *  again under the band. One style then serves every box of the same
    *  shape, each with its own words: a handwriting row whose word is the
-   *  box's content, `:::callout{style="practice"}` / `cat` / `:::`. A
+   *  box's content, `:::callout{type="practice"}` / `cat` / `:::`. A
    *  picture's `resourceId` may read them too (`trace-{boxText}`). The box
    *  then never splits. Default `false`: the design reads `{boxText}` all
    *  the same, and the content follows the band. */
