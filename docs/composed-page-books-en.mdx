@@ -41,7 +41,7 @@ The new page will be a review page: a title band, a short text under it and two 
 5. Add a frame. **Name (slot)**: `remember`. **Box style**: `dato-campo`, a green box with a tab. **Smallest height**: 30 mm, so that the box keeps a good size when its text is short.
 6. Add a last frame. **Name (slot)**: `try`. **Box style**: `actividad-sol`. **Smallest height**: 30 mm.
 7. In `text`, `remember` and `try` set **Width** to *Up to the edge* and **Height** to *Its content*: they then fill the width of the page and are as tall as their text.
-8. Under **Groups** press **Add group**. Name it `column`, leave it *Stacked* and set **Space between frames** to 6 mm. Under **Members, in page order** tick the four frames. The group keeps them in the order of the list of frames, so the title is first. A group lays its frames one under the other and moves the ones below when a frame grows, so a longer text in the first box pushes the second box down instead of running over it.
+8. Under **Groups** press **Add group**. Name it `column`, leave it *Stacked* and set **Space between frames** to 6 mm. Under **Members, in page order** tick the four frames. Tick them in the order they go, the title first: the list numbers the members and the arrows move one up or down. A group lays its frames one under the other and moves the ones below when a frame grows, so a longer text in the first box pushes the second box down instead of running over it.
 
 <Screenshot src="/docs-shots/en/template.webp" alt="The Design panel on Page templates with the Review page template: its four frames and its group, and the same frames drawn with dashed outlines on the page." caption="The template: four frames and one group. On the page, the dashed boxes are the frames and the green labels say how each one is sized." />
 
@@ -102,11 +102,10 @@ The word *Stone bridge* is Markdown; the point is part of the picture. When you 
 
 ## 5. Translate the page
 
-A translation is the same template with other words. The Sandbox has two ways to hold it. A book can carry several languages at once, as a `.postext` file with an edition for each, and then the bar above the canvas switches between them and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). The simpler way, which needs no file, is a copy of the book in the other language:
+A translation is the same template with other words. The Sandbox holds it as another edition of the same book: the bar above the canvas switches between the editions and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). To make one:
 
-1. Open **Books**, press **⋯** on your book and choose **Duplicate**, or press **New** and choose **Copy of the open book**. Open the copy. It has the same name as the original: give it another one with **Rename…** in the same menu.
-2. In the **Design** panel open **Writing system** and, under **Language and direction**, set the **Document language**. Hyphenation, quotation marks and the words the engine writes itself (such as *Continued* at the cut of a box) follow it.
-3. In the **Text** panel translate the words and leave the rest.
+1. Open **Books**, press **⋯** on your book and choose **Add a language…**. Pick the language and press **Add and open**. The Sandbox copies the edition on screen into a new one, sets its **Document language** to the language you picked and opens it. Hyphenation, quotation marks and the words the engine writes itself (such as *Continued* at the cut of a box) follow that language. The text is still the original's.
+2. In the **Text** panel translate the words and leave the rest.
 
 <table>
   <thead>

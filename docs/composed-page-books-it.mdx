@@ -41,7 +41,7 @@ La pagina nuova sarà una pagina di ripasso: una fascia per il titolo, un testo 
 5. Aggiungi una cornice. **Nome (slot)**: `remember`. **Stile del riquadro**: `dato-campo`, un riquadro verde con una linguetta. **Altezza minima**: 30 mm, perché il riquadro mantenga una buona misura anche quando il suo testo è breve.
 6. Aggiungi un’ultima cornice. **Nome (slot)**: `try`. **Stile del riquadro**: `actividad-sol`. **Altezza minima**: 30 mm.
 7. In `text`, `remember` e `try` imposta **Larghezza** su *Fino al bordo* e **Altezza** su *Il suo contenuto*: così occupano tutta la larghezza della pagina e sono alte quanto il loro testo.
-8. Sotto **Gruppi** premi **Aggiungi gruppo**. Chiamalo `column`, lascialo *Impilate* e imposta **Spazio tra le cornici** su 6 mm. Sotto **Cornici del gruppo, nell’ordine della pagina** seleziona le quattro cornici. Il gruppo le tiene nell’ordine dell’elenco delle cornici, quindi il titolo è il primo. Un gruppo dispone le sue cornici una sotto l’altra e sposta quelle in basso quando una cornice cresce: un testo più lungo nel primo riquadro spinge giù il secondo invece di finirgli sopra.
+8. Sotto **Gruppi** premi **Aggiungi gruppo**. Chiamalo `column`, lascialo *Impilate* e imposta **Spazio tra le cornici** su 6 mm. Sotto **Cornici del gruppo, nell’ordine della pagina** seleziona le quattro cornici. Selezionale nell’ordine in cui vanno, il titolo per primo: l’elenco numera i membri e le frecce ne spostano uno in alto o in basso. Un gruppo dispone le sue cornici una sotto l’altra e sposta quelle in basso quando una cornice cresce: un testo più lungo nel primo riquadro spinge giù il secondo invece di finirgli sopra.
 
 <Screenshot src="/docs-shots/it/template.webp" alt="Il pannello Grafica su Modelli di pagina con il modello Review page: le sue quattro cornici e il suo gruppo, e le stesse cornici disegnate con contorni tratteggiati sulla pagina." caption="Il modello: quattro cornici e un gruppo. Sulla pagina, i riquadri tratteggiati sono le cornici e le etichette verdi dicono come è dimensionata ciascuna." />
 
@@ -102,11 +102,10 @@ La parola *Stone bridge* è Markdown; il punto fa parte dell’immagine. Quando 
 
 ## 5. Tradurre la pagina
 
-Una traduzione è lo stesso modello con altre parole. Il Sandbox ha due modi per tenerla. Un libro può contenere più lingue insieme, come file `.postext` con un’edizione per ciascuna, e allora la barra sopra il canvas passa dall’una all’altra e il pannello Verifiche le legge tutte (vedi [Edizioni di un libro](/it/docs/sandbox-previews#edizioni-di-un-libro)). Il modo più semplice, che non richiede alcun file, è una copia del libro nell’altra lingua:
+Una traduzione è lo stesso modello con altre parole. Il Sandbox la tiene come un’altra edizione dello stesso libro: la barra sopra il canvas passa da un’edizione all’altra e il pannello Verifiche le legge tutte (vedi [Edizioni di un libro](/it/docs/sandbox-previews#edizioni-di-un-libro)). Per crearne una:
 
-1. Apri **Libri**, premi **⋯** sul tuo libro e scegli **Duplica**, oppure premi **Nuovo** e scegli **Copia del libro aperto**. Apri la copia. Ha lo stesso nome dell’originale: cambialo con **Rinomina…** nello stesso menu.
-2. Nel pannello **Grafica** apri **Sistema di scrittura** e, sotto **Lingua e direzione**, imposta la **Lingua del documento**. La sillabazione, le virgolette e le parole che il motore scrive da sé (come *Continued* al taglio di un riquadro) la seguono.
-3. Nel pannello **Testo** traduci le parole e lascia il resto.
+1. Apri **Libri**, premi **⋯** sul tuo libro e scegli **Aggiungi una lingua…**. Scegli la lingua e premi **Aggiungi e apri**. Il Sandbox copia l’edizione sullo schermo in una nuova, imposta la sua **Lingua del documento** sulla lingua scelta e la apre. La sillabazione, le virgolette e le parole che il motore scrive da sé (come *Continued* al taglio di un riquadro) seguono quella lingua. Il testo è ancora quello dell’originale.
+2. Nel pannello **Testo** traduci le parole e lascia il resto.
 
 <table>
   <thead>

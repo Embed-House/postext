@@ -41,7 +41,7 @@ Die neue Seite wird eine Wiederholungsseite: ein Titelband, darunter ein kurzer 
 5. Fügen Sie einen Rahmen hinzu. **Name (Platz)**: `remember`. **Kastenstil**: `dato-campo`, ein grüner Kasten mit Reiter. **Kleinste Höhe**: 30 mm, damit der Kasten eine gute Größe behält, auch wenn sein Text kurz ist.
 6. Fügen Sie einen letzten Rahmen hinzu. **Name (Platz)**: `try`. **Kastenstil**: `actividad-sol`. **Kleinste Höhe**: 30 mm.
 7. Stellen Sie bei `text`, `remember` und `try` die **Breite** auf *Bis zum Rand* und die **Höhe** auf *Sein Inhalt*. Dann füllen die Rahmen die Breite der Seite und sind so hoch wie ihr Text.
-8. Klicken Sie unter **Gruppen** auf **Gruppe hinzufügen**. Nennen Sie sie `column`, lassen Sie sie *Gestapelt* und setzen Sie den **Abstand zwischen Rahmen** auf 6 mm. Haken Sie unter **Rahmen der Gruppe, in Seitenreihenfolge** die vier Rahmen an. Die Gruppe behält sie in der Reihenfolge der Rahmenliste, der Titel steht also oben. Eine Gruppe legt ihre Rahmen untereinander und schiebt die unteren weiter, wenn ein Rahmen wächst: Ein längerer Text im ersten Kasten drückt den zweiten nach unten, statt ihn zu überdecken.
+8. Klicken Sie unter **Gruppen** auf **Gruppe hinzufügen**. Nennen Sie sie `column`, lassen Sie sie *Gestapelt* und setzen Sie den **Abstand zwischen Rahmen** auf 6 mm. Haken Sie unter **Rahmen der Gruppe, in Seitenreihenfolge** die vier Rahmen an. Haken Sie sie in der gewünschten Reihenfolge an, den Titel zuerst: Die Liste nummeriert die Mitglieder, und mit den Pfeilen verschieben Sie einen nach oben oder unten. Eine Gruppe legt ihre Rahmen untereinander und schiebt die unteren weiter, wenn ein Rahmen wächst: Ein längerer Text im ersten Kasten drückt den zweiten nach unten, statt ihn zu überdecken.
 
 <Screenshot src="/docs-shots/de/template.webp" alt="Das Bedienfeld Gestaltung bei Seitenvorlagen mit der Vorlage Review page: ihre vier Rahmen und ihre Gruppe, und dieselben Rahmen mit gestrichelten Konturen auf der Seite." caption="Die Vorlage: vier Rahmen und eine Gruppe. Auf der Seite sind die gestrichelten Kästen die Rahmen, und die grünen Marken sagen, wie jeder bemessen ist." />
 
@@ -102,11 +102,10 @@ Das Wort *Stone bridge* ist Markdown, der Punkt gehört zum Bild. Übersetzen Si
 
 ## 5. Die Seite übersetzen
 
-Eine Übersetzung ist dieselbe Vorlage mit anderen Wörtern. Die Sandbox kennt zwei Wege, sie zu halten. Ein Buch kann mehrere Sprachen zugleich enthalten, als `.postext`-Datei mit je einer Ausgabe; dann wechselt die Leiste über der Leinwand zwischen ihnen, und das Bedienfeld Prüfungen liest alle (siehe [Ausgaben eines Buchs](/de/docs/sandbox-previews#ausgaben-eines-buchs)). Der einfachere Weg, der keine Datei braucht, ist eine Kopie des Buchs in der anderen Sprache:
+Eine Übersetzung ist dieselbe Vorlage mit anderen Wörtern. Die Sandbox hält sie als weitere Ausgabe desselben Buchs: Die Leiste über der Leinwand wechselt zwischen den Ausgaben, und das Bedienfeld Prüfungen liest alle (siehe [Ausgaben eines Buchs](/de/docs/sandbox-previews#ausgaben-eines-buchs)). So legen Sie eine an:
 
-1. Öffnen Sie **Bücher**, klicken Sie bei Ihrem Buch auf **⋯** und wählen Sie **Duplizieren**, oder klicken Sie auf **Neu** und wählen Sie **Kopie des geöffneten Buchs**. Öffnen Sie die Kopie. Sie trägt denselben Namen wie das Original: Ändern Sie ihn mit **Umbenennen …** im selben Menü.
-2. Öffnen Sie im Bedienfeld **Gestaltung** den Abschnitt **Schriftsystem** und stellen Sie unter **Sprache und Richtung** die **Dokumentsprache** ein. Silbentrennung, Anführungszeichen und die Wörter, die die Engine selbst schreibt (etwa *Fortsetzung* am Schnitt eines Kastens), richten sich danach.
-3. Übersetzen Sie im Bereich **Text** die Wörter und lassen Sie den Rest.
+1. Öffnen Sie **Bücher**, klicken Sie bei Ihrem Buch auf **⋯** und wählen Sie **Sprache hinzufügen …**. Wählen Sie die Sprache und klicken Sie auf **Hinzufügen und öffnen**. Die Sandbox kopiert die Ausgabe auf dem Bildschirm in eine neue, stellt deren **Dokumentsprache** auf die gewählte Sprache und öffnet sie. Silbentrennung, Anführungszeichen und die Wörter, die die Engine selbst schreibt (etwa *Fortsetzung* am Schnitt eines Kastens), richten sich nach dieser Sprache. Der Text ist noch der des Originals.
+2. Übersetzen Sie im Bereich **Text** die Wörter und lassen Sie den Rest.
 
 <table>
   <thead>
