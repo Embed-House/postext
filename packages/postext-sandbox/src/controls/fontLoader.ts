@@ -733,6 +733,33 @@ export async function staticFaceFiles(family: string, weight: number, style: 'no
   return faces && faces.length > 0 ? faces : null;
 }
 
+/**
+ * The files a PDF or an SVG picture embeds for a face of a family the
+ * previews took from Google's style sheet because it has no static cuts
+ * (#993): the sheet's faces of the cut CSS font matching settles on for the
+ * weight (an exact one, a range that holds it, else the nearest), in the
+ * slant asked, else the upright, in the order they are declared. Null for a
+ * custom or generic family, one served as static cuts (`staticFaceFiles`)
+ * and one whose sheet could not be had.
+ */
+export async function sheetFaceFiles(family: string, weight: number, style: 'normal' | 'italic'): Promise<FamilyFace[] | null> {
+  if (getCustomFontFamily(family) || isGenericFontFamily(family)) return null;
+  const { faces, cuts } = await familyFiles(family);
+  if (cuts || faces.length === 0) return null;
+  const ofSlant = (italic: boolean) => faces.filter((f) => isSlanted(f.style) === italic);
+  const pool = ofSlant(style === 'italic').length > 0 ? ofSlant(style === 'italic') : ofSlant(style !== 'italic');
+  if (pool.length === 0) return null;
+  const spans = pool.map((f) => f.weight);
+  const held = pool.filter((f) => {
+    const [lo, hi] = weightSpan(f.weight);
+    return weight >= lo && weight <= hi;
+  });
+  if (held.length > 0) return held;
+  const matched = matchWeight(spans, weight);
+  const picked = matched === undefined ? [] : pool.filter((f) => f.weight === matched);
+  return picked.length > 0 ? picked : null;
+}
+
 /** Each unicode-range seen, as ranges from low to high that do not overlap. */
 const parsedRanges = new Map<string, Array<[number, number]>>();
 

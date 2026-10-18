@@ -147,7 +147,7 @@ postext html book.postext -o book.html
 postext html book.postext -o site/ --mode single
 ```
 
-`.html`で終わるパスには、画像とフォントを中に収めた1つのファイルを書き出します。送るのに便利です。それ以外のパスはフォルダーになり、`index.html`の横に`assets/`を置きます。`assets/`には画像、フォント、自前でホストする動画が入ります。`--assets embed|folder`を使うと、どのパスでもどちらかを選べます。ページは印刷用のレイアウトを画面の大きさで表示したもので、横に並べるか（`--mode multi`、既定）、縦に重ねるか（`--mode single`）を選べます。`redistributable: false`と指定したフォントは、名前は記されますがコピーはされません。
+`.html`で終わるパスには、画像とフォントを中に収めた1つのファイルを書き出します。送るのに便利です。それ以外のパスはフォルダーになり、`index.html`の横に`assets/`を置きます。`assets/`には画像、フォント、自前でホストする動画が入ります。`--assets embed|folder`を使うと、どのパスでもどちらかを選べます。ページは印刷用のレイアウトを画面の大きさで表示したもので、横に並べるか（`--mode multi`、既定）、縦に重ねるか（`--mode single`）を選べます。`redistributable: false`と指定したフォントは、名前は記されますがコピーはされません。フォントが`fallback`を指定している場合は、代わりにそのオープンフォントのフェイスがフォント名で書き出されます（postext 1.43 から）。
 
 ### epub
 
@@ -156,7 +156,7 @@ postext epub book.postext -o book.epub
 postext epub book.postext --layout reflowable --cover cover.jpg
 ```
 
-`--layout fixed`（既定）は、すべてのページを印刷したとおりに保ち、テキストは選択できます。`--layout reflowable`は、読書システムがその画面に合わせてテキストを組み直せるようにします（[EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)を参照）。表紙は、`--cover`で画像を指定しない限り本のサムネイルです。パッケージのメタデータ（タイトル、著者、言語、識別子）は、Sandboxと同じく最初の章のフロントマターから取ります。
+`--layout fixed`（既定）は、すべてのページを印刷したとおりに保ち、テキストは選択できます。`--layout reflowable`は、読書システムがその画面に合わせてテキストを組み直せるようにします（[EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)を参照）。表紙は、`--cover`で画像を指定しない限り本のサムネイルです。パッケージのメタデータ（タイトル、著者、言語、識別子）は、Sandboxと同じく最初の章のフロントマターから取ります。`redistributable: false`のフォントはコピーされません。`fallback`を指定したフォントは、そのオープンフォントのフェイスが自身の名前で埋め込まれます（postext 1.43 から）。
 
 ### imageとimages
 

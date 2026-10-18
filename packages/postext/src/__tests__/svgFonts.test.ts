@@ -145,6 +145,52 @@ describe('inlineSvgFonts', () => {
     expect(result.faces[0]!.status).toBe('withheld');
   });
 
+  // #993: a withheld family with a stand-in is set in the stand-in's face,
+  // embedded under the withheld family's name.
+  it('embeds the stand-in\'s face of a withheld family under the family\'s name, asking the provider for the stand-in', async () => {
+    const withheld: string[] = [];
+    const asked: string[] = [];
+    const ink = fontBytes('woff2', 24, 7);
+    const result = await inlineSvgFontsDetailed(markup, async (family, weight) => {
+      asked.push(`${family} ${weight}`);
+      return ink;
+    }, { withhold: (f) => f === 'IBM Plex Sans', standIn: (f) => (f === 'IBM Plex Sans' ? 'Open Sans' : undefined), onWithheld: (f) => withheld.push(f) });
+    expect(asked).toEqual(['Open Sans 700']);
+    expect(withheld).toEqual([]);
+    expect(faces(result.svg)).toEqual(['IBM Plex Sans 700 normal']);
+    expect(result.svg).not.toContain('Open Sans');
+    expect(result.faces).toEqual([{ family: 'IBM Plex Sans', weight: 700, style: 'normal', status: 'inlined', standIn: 'Open Sans', bytes: 24, files: 1 }]);
+  });
+
+  it('leaves the family out whole when its stand-in lacks a face the SVG asks', async () => {
+    const withheld: string[] = [];
+    const two = svg('<text font-family="IBM Plex Sans">a</text><text font-family="IBM Plex Sans" font-weight="700">b</text>');
+    const result = await inlineSvgFontsDetailed(two, async (family, weight) => {
+      if (family !== 'Open Sans' || weight !== 400) throw new Error('no');
+      return fontBytes('woff2');
+    }, { withhold: () => true, standIn: () => 'Open Sans', onWithheld: (f) => withheld.push(f) });
+    expect(result.svg).toBe(two);
+    expect(withheld).toEqual(['IBM Plex Sans']);
+    expect(result.faces.map((f) => `${f.family} ${f.weight}:${f.status}`)).toEqual(['IBM Plex Sans 400:withheld', 'IBM Plex Sans 700:withheld']);
+  });
+
+  it('never asks for the withheld family itself, and a family that is no stand-in\'s own is still withheld', async () => {
+    const asked: string[] = [];
+    const mixed = svg('<text font-family="Licensed">a</text><text font-family="Secret">b</text>');
+    const withheld: string[] = [];
+    await inlineSvgFontsDetailed(mixed, async (family) => {
+      asked.push(family);
+      return fontBytes('ttf');
+    }, { withhold: () => true, standIn: (f) => (f === 'Licensed' ? 'Open Face' : undefined), onWithheld: (f) => withheld.push(f) });
+    expect(asked).toEqual(['Open Face']);
+    expect(withheld).toEqual(['Secret']);
+  });
+
+  it('does the same from a provider that answers from memory', () => {
+    const out = inlineSvgFontsSync(markup, (family) => (family === 'Open Sans' ? fontBytes('ttf') : null), { withhold: () => true, standIn: () => 'Open Sans' });
+    expect(faces(out)).toEqual(['IBM Plex Sans 700 normal']);
+  });
+
   it('embeds nothing over maxBytes and reports svgFontsTooLarge', async () => {
     const warnings: SvgFontWarning[] = [];
     const result = await inlineSvgFontsDetailed(markup, async () => fontBytes('woff2', 4096), { maxBytes: 1000, onWarning: (w) => warnings.push(w) });
@@ -331,6 +377,22 @@ describe('renderToHtml inlineSvgFonts', () => {
     expect(faces(decodeURIComponent(inlined.replace(/^data:[^,]*,/, '')))).toEqual(['IBM Plex Sans 700 normal']);
     const off = buildDocument({ markdown: 'Text.\n\n::resource{id="fig"}', resources: [figure] }, config(false));
     expect(srcOf(renderToHtml(off, { resourceImageUrl: () => dataUri, inlineSvgFonts: true }))).toBe(dataUri);
+  });
+
+  // #993: the HTML an export writes sets a withheld family in its stand-in.
+  it('hands a stand-in to the inliner: a withheld family is set in the open face under its own name', () => {
+    const doc = buildDocument({ markdown: 'Text.\n\n::resource{id="fig"}', resources: [figure] }, config());
+    const asked: string[] = [];
+    const fonts = (family: string) => {
+      asked.push(family);
+      return family === 'Open Sans' ? fontBytes('woff2') : null;
+    };
+    const left = srcOf(renderToHtml(doc, { resourceImageUrl: () => dataUri, inlineSvgFonts: { fonts, withhold: (f) => f === 'IBM Plex Sans' } }));
+    expect(left).toBe(dataUri);
+    expect(asked).toEqual([]);
+    const stood = srcOf(renderToHtml(doc, { resourceImageUrl: () => dataUri, inlineSvgFonts: { fonts, withhold: (f) => f === 'IBM Plex Sans', standIn: (f) => (f === 'IBM Plex Sans' ? 'Open Sans' : undefined) } }));
+    expect(asked).toEqual(['Open Sans']);
+    expect(faces(decodeURIComponent(stood.replace(/^data:[^,]*,/, '')))).toEqual(['IBM Plex Sans 700 normal']);
   });
 
   it('reports a family with no face once', () => {

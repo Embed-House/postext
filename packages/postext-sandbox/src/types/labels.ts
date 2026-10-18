@@ -94,6 +94,7 @@ export interface SandboxLabels {
   epubWarningMissingFont: string;
   epubWarningMissingFace: string;
   epubWarningFontWithheld: string;
+  epubWarningFontStoodIn: string;
   epubWarningUnsupported: string;
   epubWarningSvgFontUnavailable: string;
   epubWarningSvgFontsTooLarge: string;

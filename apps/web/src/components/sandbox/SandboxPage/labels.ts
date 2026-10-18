@@ -81,6 +81,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     epubWarningMissingFont: t("epubWarningMissingFont"),
     epubWarningMissingFace: t("epubWarningMissingFace"),
     epubWarningFontWithheld: t("epubWarningFontWithheld"),
+    epubWarningFontStoodIn: t("epubWarningFontStoodIn"),
     epubWarningUnsupported: t("epubWarningUnsupported"),
     epubWarningSvgFontUnavailable: t("epubWarningSvgFontUnavailable"),
     epubWarningSvgFontsTooLarge: t("epubWarningSvgFontsTooLarge"),

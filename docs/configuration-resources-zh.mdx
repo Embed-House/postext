@@ -890,7 +890,7 @@ const canvas = renderPage(doc.pages[0], doc);
 在哪里进行：
 
 - **Canvas**。`registerSvgImage(fileId, svgText, options)`对图片重新着色（`inkHex`）、嵌入字体（`fonts`，一个提供函数；`inlineFonts: false`跳过这一步）、解码，并把它注册为矢量源，返回的Promise给出每种字体的处理结果。`registerBundleImages(bundle)`对文件包中的SVG做同样的事，优先使用文件包自己的字体。`prepareSvgMarkup(svgText, options)`返回处理好的标记，供自行解码的宿主使用。
-- **HTML**。`bundleImageUrl(bundle)`提供已嵌入文件包字体的SVG标记。`renderToHtml(doc, { inlineSvgFonts: true })`把注册表在内存中持有的字体嵌入`resourceImageUrl`返回的SVG `data:` URI（也可写成`inlineSvgFonts: { fonts, maxBytes, withhold }`）。对象URL无法同步读取，所以提供blob URL的宿主要在生成URL之前嵌入。
+- **HTML**。`bundleImageUrl(bundle)`提供已嵌入文件包字体的SVG标记。`renderToHtml(doc, { inlineSvgFonts: true })`把注册表在内存中持有的字体嵌入`resourceImageUrl`返回的SVG `data:` URI（也可写成`inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`）。对象URL无法同步读取，所以提供blob URL的宿主要在生成URL之前嵌入。
 - **EPUB**。`postext-epub`在写出SVG之前，先从书的`fonts`、再从`svgFonts.provider`取字体嵌入（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。
 - **PDF**。SVG文字作为真正的文字，用嵌入的字体排出。只含`@font-face`规则的`<style>`（作者嵌入的字体）不再使图退回栅格。图确实退回栅格时（滤镜、渐变），其栅格图用从PDF的`fontProvider`取来的字体嵌入后生成。
 
@@ -925,6 +925,12 @@ const canvas = renderPage(doc.pages[0], doc);
       <td>文件要离开应用时不写入其中的字体族（不可再分发）。对它们的引用保留，阅读端退回其他字体；每扣下一个，都会通知<code>onWithheld(family)</code>。</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>无</td>
+      <td>字面以被 <code>withhold</code> 指定的字体的名称嵌入的开放字体（自 postext 1.43 起）：向提供者索取的是替代字体，图片保留其引用和字宽。没有替代字体，或提供者缺少 SVG 所需的某个字面的，整个字体都留在外面。</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>无</td>
@@ -935,7 +941,7 @@ const canvas = renderPage(doc.pages[0], doc);
 
 **退出**。`diagramStyle.inlineFonts: false`让每个SVG保持存储时的样子；资源上的`svg.inlineFonts: false`让这一个SVG逐字节保持原样，适用于自带字体或不得改动的SVG。文件包把资源的退出写在`preset.json`中，即`"inlineFonts": false`。
 
-**许可证**。嵌入会把字体文件放进可能离开应用的图片中（HTML导出、EPUB）。它只在图片显示或导出时进行，从不写入存储的资源字节；`withhold`则把许可证不允许转交的字体族挡在外面：EPUB写出器扣下标记为`redistributable: false`的字体，沙盒扣下标记为不可再分发的自定义字体族。
+**许可证**。嵌入会把字体文件放进可能离开应用的图片中（HTML导出、EPUB）。它只在图片显示或导出时进行，从不写入存储的资源字节；`withhold`则把许可证不允许转交的字体族挡在外面：EPUB写出器扣下标记为`redistributable: false`的字体，沙盒扣下标记为不可再分发的自定义字体族。自 postext 1.43 起，被 `withhold` 指定的字体可以有替代字体（`standIn`）：开放字体的字面以它的名称嵌入，图片中的文字保持排版时的宽度。
 
 
 ## 视频样式

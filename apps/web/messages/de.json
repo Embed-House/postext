@@ -709,6 +709,7 @@
     "epubWarningMissingFont": "__family__ ist nicht eingebettet: Lesesysteme setzen den Text in einer eigenen Schrift.",
     "epubWarningMissingFace": "__family__ __face__ ist nicht eingebettet: Lesesysteme ahmen den Schnitt mit den eingebetteten Schnitten nach.",
     "epubWarningFontWithheld": "__family__ bleibt draußen: Die Familie ist als nicht weitergebbar gekennzeichnet.",
+    "epubWarningFontStoodIn": "__family__ wird nicht weitergegeben: Das EPUB setzt sie in __standIn__ unter demselben Namen.",
     "epubWarningUnsupported": "Nicht ins EPUB übernommen: __detail__",
     "epubWarningSvgFontUnavailable": "Das SVG __file__ nennt __family__, für die es keine einbettbare Schriftdatei gibt: Reader setzen den Text in einer Ersatzschrift.",
     "epubWarningSvgFontsTooLarge": "Die Schriften des SVG __file__ umfassen __size__ KB und überschreiten die Größengrenze: Keine wird eingebettet.",

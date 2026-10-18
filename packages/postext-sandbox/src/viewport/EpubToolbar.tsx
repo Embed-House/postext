@@ -53,6 +53,7 @@ export function noticeText(n: EpubNotice, labels: SandboxLabels): string {
         ? labels.epubWarningMissingFont.replace('__family__', n.family)
         : labels.epubWarningMissingFace.replace('__family__', n.family).replace('__face__', `${n.weight}${n.style === 'italic' ? ' italic' : ''}`);
     case 'fontWithheld': return labels.epubWarningFontWithheld.replace('__family__', n.family);
+    case 'fontStoodIn': return labels.epubWarningFontStoodIn.replace('__family__', n.family).replace('__standIn__', n.standIn);
     case 'svgFontUnavailable':
       return labels.epubWarningSvgFontUnavailable.replace('__file__', n.fileId).replace('__family__', n.family);
     case 'svgFontsTooLarge':

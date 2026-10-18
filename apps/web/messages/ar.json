@@ -708,6 +708,7 @@
     "epubWarningMissingFont": "الخط __family__ غير مضمَّن: تنضّد أنظمة القراءة نصه بخط من عندها.",
     "epubWarningMissingFace": "الشكل __face__ من الخط __family__ غير مضمَّن: تحاكيه أنظمة القراءة بالأشكال المضمَّنة.",
     "epubWarningFontWithheld": "استُبعد الخط __family__: هذه العائلة موسومة بأنها غير قابلة لإعادة التوزيع.",
+    "epubWarningFontStoodIn": "لا يُسلَّم الخط __family__: يُنضِّد ملف EPUB النص بالخط __standIn__ تحت الاسم نفسه.",
     "epubWarningUnsupported": "لم يُنقل إلى ملف EPUB: __detail__",
     "epubWarningSvgFontUnavailable": "يسمّي SVG __file__ الخط __family__، ولا ملف خط له لتضمينه: تصفّ برامج القراءة نصه بخط بديل.",
     "epubWarningSvgFontsTooLarge": "تبلغ خطوط SVG __file__ ما مقداره __size__ KB، فوق الحد: لم يُضمَّن أي منها.",

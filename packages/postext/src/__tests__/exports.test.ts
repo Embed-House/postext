@@ -752,6 +752,7 @@ describe("package exports", () => {
       "defaultFontSet",
       "cssWeightOrder",
       "cssWeightOrderOf",
+      "exportStandInOf",
       "fontFallbackOf",
       "fontFallbackFamilies",
       "hasOwnStyle",

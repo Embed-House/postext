@@ -186,7 +186,7 @@ postext html book.postext -o site/ --mode single
 المستضافة ذاتيًا. ويختار `--assets embed|folder` أحد الطريقين لأي مسار. والصفحات
 هي إخراج الطباعة معروضًا بحجم الشاشة: جنبًا إلى جنب (`--mode multi`، وهو الافتراضي)
 أو واحدة تحت الأخرى (`--mode single`). والخطوط المعلَّمة بـ`redistributable: false`
-تُذكر أسماؤها ولا تُنسخ.
+تُذكر أسماؤها ولا تُنسخ. وإذا سمّى الخط `fallback` كُتبت أشكال هذا الخط المفتوح مكانه تحت اسم الخط (منذ postext 1.43).
 
 ### epub
 
@@ -199,7 +199,7 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 و`--layout reflowable` يترك لنظام القراءة أن يصفّ النص من جديد لشاشته (انظر
 [كتب EPUB](/ar/docs/configuration-html-folio-epub#كتب-epub-postext-epub)). والغلاف هو الصورة
 المصغّرة للكتاب ما لم يعطِ `--cover` صورة. وتأتي البيانات الوصفية للحزمة (العنوان،
-والمؤلفون، واللغة، والمعرّف) من البيانات التمهيدية للفصل الأول، كما في Sandbox.
+والمؤلفون، واللغة، والمعرّف) من البيانات التمهيدية للفصل الأول، كما في Sandbox. الخطوط الموسومة `redistributable: false` لا تُنسخ؛ أما الخط الذي يسمّي `fallback` فتُضمَّن فيه أشكال هذا الخط المفتوح تحت اسمه (منذ postext 1.43).
 
 ### image وimages
 

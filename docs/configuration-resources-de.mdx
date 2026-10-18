@@ -889,7 +889,7 @@ const canvas = renderPage(doc.pages[0], doc);
 Wo es geschieht:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` färbt um (`inkHex`), bettet ein (`fonts`, ein Provider; `inlineFonts: false` überspringt das), dekodiert und registriert das Bild als Vektorquelle und liefert, was aus jedem Schnitt geworden ist. `registerBundleImages(bundle)` tut dasselbe für die SVGs eines Pakets, zuerst aus den eigenen Schnitten des Pakets. `prepareSvgMarkup(svgText, options)` liefert das vorbereitete Markup für einen Host, der selbst dekodiert.
-- **HTML.** `bundleImageUrl(bundle)` liefert SVG-Markup mit eingebetteten Schnitten des Pakets. `renderToHtml(doc, { inlineSvgFonts: true })` bettet in die SVG-`data:`-URIs ein, die `resourceImageUrl` liefert, und zwar aus den Schnitten, die das Register im Speicher hält (oder `inlineSvgFonts: { fonts, maxBytes, withhold }`). Eine Objekt-URL lässt sich nicht synchron lesen; ein Host, der Blob-URLs ausliefert, bettet daher ein, bevor er sie erzeugt.
+- **HTML.** `bundleImageUrl(bundle)` liefert SVG-Markup mit eingebetteten Schnitten des Pakets. `renderToHtml(doc, { inlineSvgFonts: true })` bettet in die SVG-`data:`-URIs ein, die `resourceImageUrl` liefert, und zwar aus den Schnitten, die das Register im Speicher hält (oder `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). Eine Objekt-URL lässt sich nicht synchron lesen; ein Host, der Blob-URLs ausliefert, bettet daher ein, bevor er sie erzeugt.
 - **EPUB.** `postext-epub` bettet aus den `fonts` des Buchs ein, dann aus `svgFonts.provider`, bevor es ein SVG schreibt (siehe [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub)).
 - **PDF.** SVG-Text wird als echter Text in den eingebetteten Schriften gesetzt. Ein `<style>`, das nur `@font-face`-Regeln enthält (von einem Autor eingebettete Schnitte), lässt die Abbildung nicht mehr auf ein Raster zurückfallen. Fällt eine Abbildung doch zurück (ein Filter, ein Verlauf), wird ihr Raster mit den aus dem `fontProvider` des PDF eingebetteten Schnitten erzeugt.
 
@@ -924,6 +924,12 @@ Auch die Funktionen der unteren Ebene werden exportiert: `svgFontRequests(svgTex
       <td>Familien, die aus einer Datei herausgehalten werden, die die App verlässt (nicht weitergebbar). Ihr Verweis bleibt, und der Leser fällt auf eine Ersatzschrift zurück; <code>onWithheld(family)</code> wird über jede informiert.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>keine</td>
+      <td>Die freie Schrift, deren Schnitt unter dem Namen einer von <code>withhold</code> genannten Schrift eingebettet wird (seit postext 1.43): Der Provider wird nach dem Ersatz gefragt, und das Bild behält Verweis und Breiten. Eine Schrift ohne Ersatz, oder deren Ersatz der Provider für einen vom SVG verlangten Schnitt nicht hat, bleibt ganz draußen.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>keine</td>
@@ -934,7 +940,7 @@ Auch die Funktionen der unteren Ebene werden exportiert: `svgFontRequests(svgTex
 
 **Verzichten.** `diagramStyle.inlineFonts: false` lässt jedes SVG so, wie es gespeichert ist; `svg.inlineFonts: false` an einer Ressource lässt diese Byte für Byte unverändert, für ein SVG, das seine eigenen Schnitte mitbringt oder sich nicht ändern darf. Ein Paket schreibt den Verzicht der Ressource als `"inlineFonts": false` in seine `preset.json`.
 
-**Lizenzen.** Das Einbetten legt Schriftdateien in Bilder, die die App verlassen können (ein HTML-Export, ein EPUB). Es geschieht, wenn ein Bild gezeigt oder exportiert wird, nie in den gespeicherten Ressourcen-Bytes, und `withhold` hält die Familien heraus, deren Lizenz die Weitergabe nicht erlaubt: Der EPUB-Writer hält die mit `redistributable: false` markierten Schnitte zurück, die Sandbox die so markierten eigenen Familien.
+**Lizenzen.** Das Einbetten legt Schriftdateien in Bilder, die die App verlassen können (ein HTML-Export, ein EPUB). Es geschieht, wenn ein Bild gezeigt oder exportiert wird, nie in den gespeicherten Ressourcen-Bytes, und `withhold` hält die Familien heraus, deren Lizenz die Weitergabe nicht erlaubt: Der EPUB-Writer hält die mit `redistributable: false` markierten Schnitte zurück, die Sandbox die so markierten eigenen Familien. Seit postext 1.43 kann eine von `withhold` genannte Schrift einen Ersatz haben (`standIn`): Der freie Schnitt wird unter ihrem Namen eingebettet, und der Text im Bild behält die Breite, mit der er gesetzt wurde.
 
 
 ## Videostil

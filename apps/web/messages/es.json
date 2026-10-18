@@ -1612,6 +1612,7 @@
     "epubWarningMissingFont": "__family__ no va incrustada: los lectores ponen su texto en otra letra.",
     "epubWarningMissingFace": "__family__ __face__ no va incrustada: los lectores la imitan con las variantes que sí van.",
     "epubWarningFontWithheld": "__family__ se queda fuera: la familia está marcada como no redistribuible.",
+    "epubWarningFontStoodIn": "__family__ no se entrega: el EPUB la compone en __standIn__ con el mismo nombre.",
     "epubWarningUnsupported": "No pasa al EPUB: __detail__",
     "epubWarningSvgFontUnavailable": "El SVG __file__ nombra __family__, que no tiene archivo de fuente que incrustar: los lectores componen su texto con una fuente de sustitución.",
     "epubWarningSvgFontsTooLarge": "Las fuentes del SVG __file__ suman __size__ KB, más del límite: no se incrusta ninguna.",

@@ -889,7 +889,7 @@ const canvas = renderPage(doc.pages[0], doc);
 Où cela se passe :
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` recolore (`inkHex`), intègre les polices (`fonts`, un fournisseur ; `inlineFonts: false` saute cette étape), décode et enregistre l’image comme source vectorielle, puis se résout avec le sort de chaque police. `registerBundleImages(bundle)` fait de même pour les SVG d’un paquet, en partant des polices du paquet lui-même. `prepareSvgMarkup(svgText, options)` renvoie le balisage préparé, pour un hôte qui décode de son côté.
-- **HTML.** `bundleImageUrl(bundle)` sert le balisage SVG avec les polices du paquet intégrées. `renderToHtml(doc, { inlineSvgFonts: true })` les intègre dans les URI `data:` SVG que renvoie `resourceImageUrl`, à partir des polices que le registre garde en mémoire (ou `inlineSvgFonts: { fonts, maxBytes, withhold }`). Une URL d’objet ne peut pas être lue de façon synchrone : un hôte qui sert des URL blob intègre donc les polices avant de les créer.
+- **HTML.** `bundleImageUrl(bundle)` sert le balisage SVG avec les polices du paquet intégrées. `renderToHtml(doc, { inlineSvgFonts: true })` les intègre dans les URI `data:` SVG que renvoie `resourceImageUrl`, à partir des polices que le registre garde en mémoire (ou `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). Une URL d’objet ne peut pas être lue de façon synchrone : un hôte qui sert des URL blob intègre donc les polices avant de les créer.
 - **EPUB.** `postext-epub` intègre les polices à partir des `fonts` du livre, puis de `svgFonts.provider`, avant d’écrire un SVG (voir [Livres EPUB](/fr/docs/configuration-html-folio-epub#livres-epub-postext-epub)).
 - **PDF.** Le texte SVG est composé comme du vrai texte dans les polices incorporées. Un `<style>` qui ne contient que des règles `@font-face` (des polices qu’un auteur a incorporées) ne fait plus se rabattre la figure sur une image matricielle. Quand une figure se rabat malgré tout (un filtre, un dégradé), son image matricielle est produite avec les polices intégrées depuis le `fontProvider` du PDF.
 
@@ -924,6 +924,12 @@ Les fonctions de plus bas niveau sont exportées aussi : `svgFontRequests(svgTe
       <td>Familles à exclure d’un fichier qui sort de l’application (non redistribuables). Leur référence reste et le lecteur se rabat sur une autre police ; <code>onWithheld(family)</code> est informé de chacune.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>aucun</td>
+      <td>La famille libre dont la fonte est intégrée sous le nom d'une famille que <code>withhold</code> désigne (depuis postext 1.43) : on demande la famille de remplacement au fournisseur, et l'image garde sa référence et ses largeurs. Une famille sans remplacement, ou dont le fournisseur n'a pas une des fontes que demande le SVG, reste dehors tout entière.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>aucun</td>
@@ -934,7 +940,7 @@ Les fonctions de plus bas niveau sont exportées aussi : `svgFontRequests(svgTe
 
 **Désactivation.** `diagramStyle.inlineFonts: false` laisse chaque SVG tel qu’il est enregistré ; `svg.inlineFonts: false` sur une ressource laisse celle-ci intacte octet pour octet, pour un SVG qui porte ses propres polices ou ne doit pas changer. Un paquet écrit l’exclusion d’une ressource sous la forme `"inlineFonts": false` dans son `preset.json`.
 
-**Licences.** L’intégration place des fichiers de police dans des images qui peuvent sortir de l’application (un export HTML, un EPUB). Elle a lieu quand une image est affichée ou exportée, jamais dans les octets enregistrés de la ressource, et `withhold` écarte les familles qu’une licence ne vous permet pas de transmettre : le générateur EPUB retient les polices marquées `redistributable: false`, et le Sandbox les familles personnalisées marquées ainsi.
+**Licences.** L’intégration place des fichiers de police dans des images qui peuvent sortir de l’application (un export HTML, un EPUB). Elle a lieu quand une image est affichée ou exportée, jamais dans les octets enregistrés de la ressource, et `withhold` écarte les familles qu’une licence ne vous permet pas de transmettre : le générateur EPUB retient les polices marquées `redistributable: false`, et le Sandbox les familles personnalisées marquées ainsi. Depuis postext 1.43, une famille que `withhold` désigne peut avoir un remplacement (`standIn`) : la fonte libre est intégrée sous son nom, et le texte de l'image garde la largeur avec laquelle il a été composé.
 
 
 ## Style des vidéos

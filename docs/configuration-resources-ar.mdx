@@ -890,7 +890,7 @@ const canvas = renderPage(doc.pages[0], doc);
 أين يحدث ذلك:
 
 - **اللوحة (Canvas).** تعيد `registerSvgImage(fileId, svgText, options)` تلوين الصورة (`inkHex`)، وتضمّن خطوطها (`fonts`، وهو مزوّد؛ و`inlineFonts: false` تتخطى ذلك)، وتفكّ ترميزها وتسجّلها مصدرًا متجهيًا، وتُحَلّ بما آل إليه كل وجه. وتفعل `registerBundleImages(bundle)` الشيء نفسه بملفات SVG في الحزمة، بدءًا بأوجه الحزمة نفسها. وتعيد `prepareSvgMarkup(svgText, options)` الشيفرة المُعدّة للمضيف الذي يفكّ الترميز بنفسه.
-- **HTML.** تقدّم `bundleImageUrl(bundle)` شيفرة SVG وقد ضُمّنت فيها أوجه الحزمة. وتضمّن `renderToHtml(doc, { inlineSvgFonts: true })` الخطوط في عناوين SVG من نوع `data:` التي تعيدها `resourceImageUrl`، من الأوجه التي يحفظها السجل في الذاكرة (أو `inlineSvgFonts: { fonts, maxBytes, withhold }`). ولا يمكن قراءة عنوان الكائن (object URL) بطريقة متزامنة، فالمضيف الذي يقدّم عناوين blob يضمّن الخطوط قبل أن ينشئها.
+- **HTML.** تقدّم `bundleImageUrl(bundle)` شيفرة SVG وقد ضُمّنت فيها أوجه الحزمة. وتضمّن `renderToHtml(doc, { inlineSvgFonts: true })` الخطوط في عناوين SVG من نوع `data:` التي تعيدها `resourceImageUrl`، من الأوجه التي يحفظها السجل في الذاكرة (أو `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). ولا يمكن قراءة عنوان الكائن (object URL) بطريقة متزامنة، فالمضيف الذي يقدّم عناوين blob يضمّن الخطوط قبل أن ينشئها.
 - **EPUB.** تضمّن `postext-epub` الخطوط من `fonts` الخاصة بالكتاب، ثم من `svgFonts.provider`، قبل أن تكتب ملف SVG (انظر [كتب EPUB](/ar/docs/configuration-html-folio-epub#كتب-epub-postext-epub)).
 - **PDF.** يُنضَّد نص SVG نصًا حقيقيًا بالخطوط المضمَّنة. ولم يعد `<style>` لا يحوي إلا قواعد `@font-face` (أوجهًا ضمّنها المؤلف) يجعل الشكل يلجأ إلى صورة نقطية. وحين يلجأ الشكل إليها فعلًا (بسبب مرشّح أو تدرّج)، تُصنع صورته النقطية والأوجه مضمَّنة فيها من `fontProvider` الخاص بملف PDF.
 
@@ -925,6 +925,12 @@ const canvas = renderPage(doc.pages[0], doc);
       <td>العائلات التي تُستبعد من ملف يغادر التطبيق (لا يجوز إعادة توزيعها). تبقى الإشارة إليها ويلجأ القارئ إلى خط بديل؛ ويُبلَّغ <code>onWithheld(family)</code> بكل واحدة منها.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>لا شيء</td>
+      <td>الخط المفتوح الذي يُضمَّن شكله تحت اسم خط يذكره <code>withhold</code> (منذ postext 1.43): يُطلب من المزوِّد البديل، وتحتفظ الصورة بمرجعها وعروضها. والخط بلا بديل، أو الذي ينقص المزوِّد شكلٌ من بديله يطلبه SVG، يبقى خارجها كله.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>لا شيء</td>
@@ -935,7 +941,7 @@ const canvas = renderPage(doc.pages[0], doc);
 
 **الاستثناء.** يترك `diagramStyle.inlineFonts: false` كل ملفات SVG كما خُزّنت؛ ويترك `svg.inlineFonts: false` على مورد ذلك المورد كما هو بايتًا ببايت، لملف SVG يحمل أوجهه بنفسه أو يجب ألا يتغيّر. وتكتب الحزمة استثناء المورد `"inlineFonts": false` في ملف `preset.json` الخاص بها.
 
-**التراخيص.** يضع التضمين ملفات خطوط داخل صور قد تغادر التطبيق (تصدير HTML، ملف EPUB). ويحدث ذلك حين تُعرض الصورة أو تُصدَّر، لا في بايتات المورد المخزَّنة أبدًا، ويُبقي `withhold` خارج الملف العائلات التي لا يسمح ترخيصها بتمريرها إلى غيرك: يحجب كاتب EPUB الأوجه المعلَّمة بـ `redistributable: false`، ويحجب Sandbox العائلات المخصّصة المعلَّمة كذلك.
+**التراخيص.** يضع التضمين ملفات خطوط داخل صور قد تغادر التطبيق (تصدير HTML، ملف EPUB). ويحدث ذلك حين تُعرض الصورة أو تُصدَّر، لا في بايتات المورد المخزَّنة أبدًا، ويُبقي `withhold` خارج الملف العائلات التي لا يسمح ترخيصها بتمريرها إلى غيرك: يحجب كاتب EPUB الأوجه المعلَّمة بـ `redistributable: false`، ويحجب Sandbox العائلات المخصّصة المعلَّمة كذلك. منذ postext 1.43 يمكن أن يكون لخط يذكره `withhold` بديل (`standIn`): يُضمَّن الشكل المفتوح تحت اسمه، ويحتفظ نص الصورة بالعرض الذي نُضِّد به.
 
 
 ## نمط الفيديو

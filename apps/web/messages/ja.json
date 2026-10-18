@@ -708,6 +708,7 @@
     "epubWarningMissingFont": "__family__は埋め込まれていません。リーディングシステムは、その文字を独自の書体で表示します。",
     "epubWarningMissingFace": "__family__ __face__は埋め込まれていません。リーディングシステムは、埋め込まれているほかのスタイルをもとに擬似的に表示します。",
     "epubWarningFontWithheld": "__family__は含めていません。このファミリーは再配布不可と指定されています。",
+    "epubWarningFontStoodIn": "__family__は同梱しません。EPUBでは同じ名前で__standIn__を使って組みます。",
     "epubWarningUnsupported": "EPUBに引き継がれない要素：__detail__",
     "epubWarningSvgFontUnavailable": "SVG __file__ は __family__ を指定していますが、埋め込めるフォントファイルがありません。リーダーでは代替フォントで組まれます。",
     "epubWarningSvgFontsTooLarge": "SVG __file__ のフォントは合計 __size__ KB で上限を超えています。どれも埋め込まれません。",

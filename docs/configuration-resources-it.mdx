@@ -889,7 +889,7 @@ const canvas = renderPage(doc.pages[0], doc);
 Dove avviene:
 
 - **Canvas.** `registerSvgImage(fileId, svgText, options)` ricolora (`inkHex`), incorpora i font (`fonts`, un provider; `inlineFonts: false` salta il passaggio), decodifica e registra l’immagine come sorgente vettoriale, e restituisce che cosa è stato di ogni carattere. `registerBundleImages(bundle)` fa lo stesso per gli SVG di un pacchetto, cominciando dai caratteri del pacchetto stesso. `prepareSvgMarkup(svgText, options)` restituisce il markup preparato per un host che decodifica per conto proprio.
-- **HTML.** `bundleImageUrl(bundle)` serve il markup SVG con i caratteri del pacchetto incorporati. `renderToHtml(doc, { inlineSvgFonts: true })` incorpora i font nei data URI `data:` SVG che `resourceImageUrl` restituisce, a partire dai caratteri che il registro tiene in memoria (oppure `inlineSvgFonts: { fonts, maxBytes, withhold }`). Un object URL non si può leggere in modo sincrono, quindi un host che serve URL blob incorpora i font prima di crearli.
+- **HTML.** `bundleImageUrl(bundle)` serve il markup SVG con i caratteri del pacchetto incorporati. `renderToHtml(doc, { inlineSvgFonts: true })` incorpora i font nei data URI `data:` SVG che `resourceImageUrl` restituisce, a partire dai caratteri che il registro tiene in memoria (oppure `inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`). Un object URL non si può leggere in modo sincrono, quindi un host che serve URL blob incorpora i font prima di crearli.
 - **EPUB.** `postext-epub` incorpora i font dai `fonts` del libro, poi da `svgFonts.provider`, prima di scrivere un SVG (vedi [Libri EPUB](/it/docs/configuration-html-folio-epub#libri-epub-postext-epub)).
 - **PDF.** Il testo SVG viene composto come testo vero nei font incorporati. Uno `<style>` che contiene solo regole `@font-face` (caratteri incorporati dall’autore) non fa più ripiegare la figura su un raster. Quando una figura ripiega comunque (un filtro, un gradiente), il suo raster viene creato con i caratteri incorporati dal `fontProvider` del PDF.
 
@@ -924,6 +924,12 @@ Sono esportate anche le funzioni di livello più basso: `svgFontRequests(svgText
       <td>Famiglie da escludere da un file che esce dall’app (non ridistribuibili). Il loro riferimento resta e il lettore ripiega; <code>onWithheld(family)</code> viene informato di ciascuna.</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>nessuno</td>
+      <td>La famiglia libera il cui stile viene incorporato con il nome di una famiglia che <code>withhold</code> indica (da postext 1.43): al provider si chiede la sostitutiva, e l'immagine conserva il riferimento e le larghezze. Una famiglia senza sostitutiva, o la cui sostitutiva il provider non ha per uno stile richiesto dall'SVG, resta fuori per intero.</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>nessuno</td>
@@ -934,7 +940,7 @@ Sono esportate anche le funzioni di livello più basso: `svgFontRequests(svgText
 
 **Rinunciare.** `diagramStyle.inlineFonts: false` lascia ogni SVG come è salvato; `svg.inlineFonts: false` su una risorsa la lascia identica byte per byte, per un SVG che porta i propri caratteri o che non deve cambiare. Un pacchetto scrive la rinuncia della risorsa come `"inlineFonts": false` nel suo `preset.json`.
 
-**Licenze.** Incorporare i font mette file di font dentro immagini che possono uscire dall’app (un’esportazione HTML, un EPUB). Avviene quando un’immagine viene mostrata o esportata, mai nei byte salvati della risorsa, e `withhold` esclude le famiglie che una licenza non ti permette di cedere: chi scrive l’EPUB trattiene i caratteri marcati `redistributable: false`, e la Sandbox le famiglie personalizzate marcate allo stesso modo.
+**Licenze.** Incorporare i font mette file di font dentro immagini che possono uscire dall’app (un’esportazione HTML, un EPUB). Avviene quando un’immagine viene mostrata o esportata, mai nei byte salvati della risorsa, e `withhold` esclude le famiglie che una licenza non ti permette di cedere: chi scrive l’EPUB trattiene i caratteri marcati `redistributable: false`, e la Sandbox le famiglie personalizzate marcate allo stesso modo. Da postext 1.43 una famiglia indicata da `withhold` può avere una sostitutiva (`standIn`): lo stile libero è incorporato con il suo nome e il testo dell'immagine conserva la larghezza con cui è stato composto.
 
 
 ## Stile dei video

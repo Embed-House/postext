@@ -229,7 +229,7 @@ export function createEpubWorker(options?: CreateEpubWorkerOptions): EpubWorkerH
       // A font provider or `withhold` cannot travel: the host embeds the
       // SVGs' fonts itself and tells the worker not to (#630).
       const svgFonts = renderOptions.svgFonts;
-      const onHost = !!(svgFonts?.provider || svgFonts?.withhold) && svgFonts?.inline !== false;
+      const onHost = !!(svgFonts?.provider || svgFonts?.withhold || svgFonts?.standIn) && svgFonts?.inline !== false;
       const resourceBytes = onHost ? await inlineSvgsOnHost(docs, gathered, renderOptions) : gathered;
       const svgSettings = onHost
         ? { inline: false }

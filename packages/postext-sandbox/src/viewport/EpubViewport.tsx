@@ -30,7 +30,11 @@ import { useViewerControls } from './viewerControls';
 
 /** A warning of the last generation: the writer's, or a family the
  *  Sandbox left out of the file. */
-export type EpubNotice = EpubWarning | { kind: 'fontWithheld'; family: string };
+export type EpubNotice = EpubWarning
+  | { kind: 'fontWithheld'; family: string }
+  /** A family the book may not hand on is set in its `fallback` under the
+   *  same name (#993). */
+  | { kind: 'fontStoodIn'; family: string; standIn: string };
 
 const noticeKey = (n: EpubNotice): string =>
   n.kind === 'missingImage' ? `img:${n.fileId}`
@@ -38,7 +42,8 @@ const noticeKey = (n: EpubNotice): string =>
       : n.kind === 'missingFont' ? `font:${n.family}:${n.weight ?? ''}:${n.style ?? ''}`
         : n.kind === 'svgFontUnavailable' ? `svgfont:${n.fileId}:${n.family}:${n.weight}:${n.style}`
           : n.kind === 'svgFontsTooLarge' ? `svgsize:${n.fileId}`
-            : `withheld:${n.family}`;
+            : n.kind === 'fontStoodIn' ? `stood:${n.family}`
+              : `withheld:${n.family}`;
 
 /** The generated file and what it was made from. */
 interface Generated {
@@ -152,11 +157,12 @@ export function EpubViewport() {
         note({ kind: 'fontWithheld', family });
         withheldFamilies.add(family);
       };
-      const [{ fonts, withheld }, cover] = await Promise.all([
+      const [{ fonts, withheld, stoodIn }, cover] = await Promise.all([
         collectEpubFonts(snapshot.config, docs, snapshot.chapters.map((c) => c.markdown)),
         epubCoverOf(docs[0]!, snapshot, metadata.title, { projectThumbnail: project?.thumbnail, presetThumbnailUrl: preset?.thumbnailUrl }),
       ]);
       for (const family of withheld) onWithheld(family);
+      for (const stood of stoodIn) note({ kind: 'fontStoodIn', ...stood });
       signal.throwIfAborted();
 
       const options: RenderToEpubOptions = {

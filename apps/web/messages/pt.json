@@ -708,6 +708,7 @@
     "epubWarningMissingFont": "__family__ não está incorporada: os leitores compõem o texto dela com uma fonte própria.",
     "epubWarningMissingFace": "__family__ __face__ não está incorporada: os leitores a imitam com as variantes incorporadas.",
     "epubWarningFontWithheld": "__family__ ficou de fora: a família está marcada como não redistribuível.",
+    "epubWarningFontStoodIn": "__family__ não é entregue: o EPUB a compõe em __standIn__ com o mesmo nome.",
     "epubWarningUnsupported": "Não levado para o EPUB: __detail__",
     "epubWarningSvgFontUnavailable": "O SVG __file__ nomeia __family__, que não tem arquivo de fonte para incorporar: os leitores compõem o texto numa fonte substituta.",
     "epubWarningSvgFontsTooLarge": "As fontes do SVG __file__ somam __size__ KB, acima do limite: nenhuma é incorporada.",

@@ -3,48 +3,79 @@
 // pictures and a cover. Gathered in the browser from the Sandbox's own
 // stores.
 
-import { documentFontFaces, type PostextConfig, type VDTDocument } from 'postext';
+import { documentFontFaces, exportStandInOf, type PostextConfig, type VDTDocument } from 'postext';
 import type { EpubCover, EpubFontFile, EpubResourceBytes, EpubSvgFontOptions } from 'postext-epub';
-import { collectFontPayloadsForFaces, configFontUses, getConfigFontFamilies, getCustomFontFamily } from '../controls/fontLoader';
+import { collectFontPayloadsForFaces, configFontUses, getConfigFontFamilies, getCustomFontFamily, listCustomFontFamilies } from '../controls/fontLoader';
 import { sandboxSvgFontProvider, withholdNonRedistributable } from '../controls/svgFontProvider';
 import { getBlob } from '../storage/blobStore';
 import { documentCodePoints, facesForText, fontFormatOf } from './fontSubsets';
+
+/** The open family that is set under the name of `family` in a file that
+ *  leaves the app (#993): the `fallback` of a custom family marked as not
+ *  redistributable. Undefined for any other family. */
+export function exportStandIn(family: string): string | undefined {
+  return exportStandInOf(listCustomFontFamilies(), family);
+}
 
 /** The fonts the EPUB embeds: for every family the configuration names,
  *  the weights and slants it asks for and the ones the pages are set in,
  *  each in the files that hold the text's characters (a catalogue family
  *  is a file per weight, style and subset, #757); every file of a custom
- *  family, except those that may not be handed on — named in `withheld`. */
+ *  family, except those that may not be handed on. A family that may not
+ *  be handed on and names a `fallback` is embedded in the fallback's faces
+ *  of the same weights and slants, under its own name (`stoodIn`, #993);
+ *  one without, or whose fallback gave no file, is `withheld` and left to
+ *  the reading system. */
 export async function collectEpubFonts(
   config: PostextConfig,
   docs: readonly VDTDocument[],
   /** The book's text: it names faces too (comic lettering, a comic
    *  line's own `font=`, #696). */
   markdown?: readonly string[],
-): Promise<{ fonts: EpubFontFile[]; withheld: string[] }> {
+): Promise<{ fonts: EpubFontFile[]; withheld: string[]; stoodIn: { family: string; standIn: string }[] }> {
   const families = getConfigFontFamilies(config, markdown);
-  const withheld = families.filter((f) => getCustomFontFamily(f)?.redistributable === false);
+  const notHanded = families.filter((f) => getCustomFontFamily(f)?.redistributable === false);
   const codePoints = documentCodePoints(docs);
-  const asked = [
-    ...[...configFontUses(config, markdown)].flatMap(([family, uses]) => uses.map((use) => ({ family, ...use }))),
+  const uses = [
+    ...[...configFontUses(config, markdown)].flatMap(([family, list]) => list.map((use) => ({ family, ...use }))),
     ...docs.flatMap((doc) => documentFontFaces(doc)),
-  ].filter((face) => !withheld.includes(face.family));
-  const payloads = await collectFontPayloadsForFaces(asked, codePoints);
-  const faces = facesForText(payloads, codePoints);
-  const fonts = faces
-    .filter((p) => p.buffer.byteLength > 0)
-    .map((p): EpubFontFile => {
-      const bytes = new Uint8Array(p.buffer);
-      return {
-        family: p.family,
-        weight: p.weight,
-        style: p.style === 'italic' || p.style === 'oblique' ? 'italic' : 'normal',
-        bytes,
-        format: fontFormatOf(bytes),
-        ...(p.unicodeRange ? { unicodeRange: p.unicodeRange } : {}),
-      };
-    });
-  return { fonts, withheld };
+  ];
+  const asked = uses.filter((face) => !notHanded.includes(face.family));
+  // The faces of the families left out, asked of their stand-ins.
+  const standOf = new Map(notHanded.flatMap((family): [string, string][] => {
+    const standIn = exportStandIn(family);
+    return standIn ? [[family, standIn]] : [];
+  }));
+  const standAsked = uses.filter((face) => standOf.has(face.family)).map((face) => ({ family: standOf.get(face.family)!, weight: face.weight, style: face.style }));
+  const [payloads, standPayloads] = await Promise.all([
+    collectFontPayloadsForFaces(asked, codePoints),
+    standAsked.length > 0 ? collectFontPayloadsForFaces(standAsked, codePoints) : Promise.resolve([]),
+  ]);
+  const toFile = (p: (typeof payloads)[number], family: string): EpubFontFile => {
+    const bytes = new Uint8Array(p.buffer);
+    return {
+      family,
+      weight: p.weight,
+      style: p.style === 'italic' || p.style === 'oblique' ? 'italic' : 'normal',
+      bytes,
+      format: fontFormatOf(bytes),
+      ...(p.unicodeRange ? { unicodeRange: p.unicodeRange } : {}),
+    };
+  };
+  const fonts = facesForText(payloads, codePoints).filter((p) => p.buffer.byteLength > 0).map((p) => toFile(p, p.family));
+  const stoodIn: { family: string; standIn: string }[] = [];
+  const withheld = notHanded.filter((family) => !standOf.has(family));
+  for (const [family, standIn] of standOf) {
+    // The stand-in's files, set under the licensed family's name.
+    const mine = standPayloads.filter((p) => p.family === standIn);
+    const files = facesForText(mine, codePoints).filter((p) => p.buffer.byteLength > 0).map((p) => toFile({ ...p, buffer: p.buffer.slice(0) }, family));
+    if (files.length === 0) withheld.push(family);
+    else {
+      fonts.push(...files);
+      stoodIn.push({ family, standIn });
+    }
+  }
+  return { fonts, withheld, stoodIn };
 }
 
 /** The pictures' bytes from the blob store, as stored: the EPUB writer
@@ -61,9 +92,10 @@ export function epubResourceBytes(): EpubResourceBytes {
 
 /** How the EPUB writer embeds fonts in the SVG pictures (#630): from the
  *  book's fonts, then the Sandbox's provider (custom families, then
- *  Google), never a family marked as not redistributable. */
+ *  Google), never a family marked as not redistributable: that one's text
+ *  is set in its `fallback` when it names one (#993). */
 export function epubSvgFonts(): EpubSvgFontOptions {
-  return { provider: sandboxSvgFontProvider(), withhold: withholdNonRedistributable };
+  return { provider: sandboxSvgFontProvider(), withhold: withholdNonRedistributable, standIn: exportStandIn };
 }
 
 /** Narrowest cover picture taken as the book's cover: the Books panel's

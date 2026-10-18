@@ -890,7 +890,7 @@ const canvas = renderPage(doc.pages[0], doc);
 処理が行われる場所は次のとおりです。
 
 - **キャンバス**：`registerSvgImage(fileId, svgText, options)`は、画像を色変換し（`inkHex`）、フォントを埋め込み（`fonts`はプロバイダー。`inlineFonts: false`で省略）、デコードしてベクターのソースとして登録し、各フェイスがどう扱われたかを返します。`registerBundleImages(bundle)`はバンドルのSVGに同じことを行い、まずバンドル自身のフェイスを使います。自分でデコードするホストには、`prepareSvgMarkup(svgText, options)`が処理済みのマークアップを返します。
-- **HTML**：`bundleImageUrl(bundle)`は、バンドルのフェイスを埋め込んだSVGマークアップを返します。`renderToHtml(doc, { inlineSvgFonts: true })`は、`resourceImageUrl`が返すSVGの`data:` URIに、レジストリがメモリに持つフェイスを埋め込みます（`inlineSvgFonts: { fonts, maxBytes, withhold }`の形でも指定できます）。オブジェクトURLは同期的に読めないので、blob URLを渡すホストはURLを作る前に埋め込んでください。
+- **HTML**：`bundleImageUrl(bundle)`は、バンドルのフェイスを埋め込んだSVGマークアップを返します。`renderToHtml(doc, { inlineSvgFonts: true })`は、`resourceImageUrl`が返すSVGの`data:` URIに、レジストリがメモリに持つフェイスを埋め込みます（`inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`の形でも指定できます）。オブジェクトURLは同期的に読めないので、blob URLを渡すホストはURLを作る前に埋め込んでください。
 - **EPUB**：`postext-epub`は、SVGを書き出す前に、本の`fonts`から、次に`svgFonts.provider`からフェイスを埋め込みます（[EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)を参照）。
 - **PDF**：SVGの文字は、埋め込んだフォントで実際のテキストとして組まれます。`@font-face`規則だけを含む`<style>`（作者が埋め込んだフェイス）があっても、図はもうラスターに切り替わりません。図がラスターになる場合（フィルターやグラデーション）は、PDFの`fontProvider`から得たフェイスを埋め込んでからラスターを作ります。
 
@@ -925,6 +925,12 @@ const canvas = renderPage(doc.pages[0], doc);
       <td>アプリの外に出るファイルから除くファミリーです（再配布できないもの）。参照は残り、読む側では別のフォントに置き換わります。除いたファミリーは1つずつ<code>onWithheld(family)</code>に通知されます。</td>
     </tr>
     <tr>
+      <td><code>standIn</code></td>
+      <td><code>(family) =&gt; string | undefined</code></td>
+      <td>なし</td>
+      <td><code>withhold</code>が指すフォントの名前で、フェイスを埋め込むオープンフォント（postext 1.43 から）。プロバイダーには代替フォントを尋ね、画像は参照と幅をそのまま保ちます。代替がない場合や、SVGが求めるフェイスの一部をプロバイダーが持たない場合は、そのフォント全体が外に残ります。</td>
+    </tr>
+    <tr>
       <td><code>onWarning</code></td>
       <td><code>(warning) =&gt; void</code></td>
       <td>なし</td>
@@ -935,7 +941,7 @@ const canvas = renderPage(doc.pages[0], doc);
 
 **無効にする**：`diagramStyle.inlineFonts: false`にすると、すべてのSVGが保存されたままになります。リソースに`svg.inlineFonts: false`を指定すると、そのSVGだけがバイト単位でそのまま残ります。自前のフェイスを持つSVGや、変更してはならないSVGに使います。バンドルは、リソースのこの指定を`preset.json`に`"inlineFonts": false`として書き込みます。
 
-**ライセンス**：埋め込みを行うと、アプリの外に出ることのある画像（HTMLの書き出し、EPUB）の中にフォントファイルが入ります。埋め込むのは画像を表示するときか書き出すときだけで、保存されたリソースのバイト列には書き込みません。また`withhold`は、ライセンス上ほかに渡せないファミリーを除きます。EPUBのライターは`redistributable: false`と指定されたフェイスを、Sandboxは再配布不可と指定されたカスタムファミリーを除きます。
+**ライセンス**：埋め込みを行うと、アプリの外に出ることのある画像（HTMLの書き出し、EPUB）の中にフォントファイルが入ります。埋め込むのは画像を表示するときか書き出すときだけで、保存されたリソースのバイト列には書き込みません。また`withhold`は、ライセンス上ほかに渡せないファミリーを除きます。EPUBのライターは`redistributable: false`と指定されたフェイスを、Sandboxは再配布不可と指定されたカスタムファミリーを除きます。postext 1.43 から、`withhold`が指すフォントに代替（`standIn`）を持たせられます。オープンなフェイスがそのフォントの名前で埋め込まれ、画像内のテキストは組んだときの幅のままです。
 
 
 ## 動画スタイル

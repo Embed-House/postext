@@ -708,6 +708,7 @@
     "epubWarningMissingFont": "__family__ 未嵌入：阅读器会改用自己的字体显示这些文字。",
     "epubWarningMissingFace": "__family__ __face__ 未嵌入：阅读器会用已嵌入的字形模拟。",
     "epubWarningFontWithheld": "__family__ 未收入：该字体标记为不可再分发。",
+    "epubWarningFontStoodIn": "__family__ 不随书提供：EPUB 以 __standIn__ 排印，字体名称不变。",
     "epubWarningUnsupported": "未能写入 EPUB：__detail__",
     "epubWarningSvgFontUnavailable": "SVG __file__ 指定了 __family__，但没有可嵌入的字体文件：阅读器会以替代字体排出其文字。",
     "epubWarningSvgFontsTooLarge": "SVG __file__ 的字体共 __size__ KB，超过上限：一个也不嵌入。",

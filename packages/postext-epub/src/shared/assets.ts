@@ -248,7 +248,8 @@ export interface SvgAssetPreparer {
 /** The SVG preparer of a book (#630): single ink (`diagramStyle.singleInk`)
  *  first, then the faces the text names from `fonts` and
  *  `svgFonts.provider`, families marked not redistributable left out and
- *  reported once each as `fontWithheld`. */
+ *  reported once each as `fontWithheld`, unless `svgFonts.standIn` names
+ *  an open family whose face takes their place (#993). */
 export function svgAssetPreparer(
   docs: readonly VDTDocument[],
   fonts: readonly EpubFontFile[] | undefined,
@@ -272,6 +273,7 @@ export function svgAssetPreparer(
     if (!keep || keep.has(fileId)) return svg;
     svg = (await inlineSvgFontsDetailed(svg, provider, {
       withhold,
+      ...(svgFonts?.standIn ? { standIn: svgFonts.standIn } : {}),
       ...(svgFonts?.maxBytes !== undefined ? { maxBytes: svgFonts.maxBytes } : {}),
       onWithheld: (family) => {
         if (toldWithheld.has(family.toLowerCase())) return;

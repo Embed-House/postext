@@ -73,6 +73,15 @@ export interface EpubSvgFontOptions {
   /** Families to leave out, besides those of `fonts` marked
    *  `redistributable: false`. */
   withhold?: (family: string) => boolean;
+  /** The open family set under the name of a family that is left out (one
+   *  `withhold` names, or a face of `fonts` marked `redistributable:
+   *  false`; #993): `provider` is asked for its face of the same weight and
+   *  slant, which goes into the picture under the withheld family's name,
+   *  so the text keeps its width and its reference. Without one, or when
+   *  the stand-in has no face, the family is left out and reported as
+   *  `fontWithheld`. `exportStandInOf(config.customFonts, family)` reads it
+   *  from the book's `fallback`. */
+  standIn?: (family: string) => string | undefined;
   /** Most font bytes embedded in one SVG. Default 2 MiB. */
   maxBytes?: number;
 }

@@ -1225,8 +1225,8 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the host; the CLI's `resolveFonts` looks the fallback up like any family (and asks no catalogue for the licensed
   name); the Sandbox's font loader declares the fallback's faces under the licensed name for the page, the layout
   worker and the PDF provider, and the Fonts panel has a Stand-in family field. A fallback that is itself a custom
-  family (bundled open face) works too. Limits: a fallback with no static cuts (a Google family served only by its
-  style sheet) is not aliased in the Sandbox; EPUB and HTML keep leaving the licensed family's reference to the reader.
+  family (bundled open face) works too. The limits this round named (a fallback served only by Google's style sheet;
+  EPUB and HTML leaving the licensed family to the reader) are lifted in §5.19.
   No new warning kind: the stand-in is announced by the import warning and shown in the Fonts panel; the PDF embeds
   the open face, which the docs say.
 - **Editions (#968).** *Title:* `ProjectRecord.editionTitles` keeps `localized.<lang>.name` and `description` of every
@@ -1346,6 +1346,45 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   only); `sandbox_save_resource` takes `marks.svgSymbols { idPrefix, className }` and merges the zones into the call's
   or the picture's own. Known limit, documented: the zones are a snapshot, so a changed drawing has to be read again; a
   stroke's width is not part of an element's box.
+
+### 5.19 Later work of the programme, round J
+
+**Outputs (#993, #995).**
+
+- **A stand-in travels where the licensed face may not (#993).** A family marked `redistributable: false` that names a
+  `fallback` is set, in a file that leaves the app, in the fallback's faces of the same weight and slant under the
+  licensed name. Decision: the fallback is open by definition (it is what the licensed family's bundle ships in its
+  place), so embedding it under the licensed name is a naming matter only, and the family's own files never go. The rule
+  is `exportStandInOf(customFonts, family)`: only a withheld family has an export stand-in (a family the book may hand
+  on keeps its files; `hasOwnStyle` is the layout's rule, this is the export's). Text fonts: the host gives the stand-in
+  faces as ordinary `EpubFontFile`s under the licensed name (Sandbox `collectEpubFonts`, which asks the loader for the
+  fallback's faces of every weight and slant the book uses and returns `stoodIn`; CLI `FontSet.exportStandIn`, which
+  looks the fallback up like any family, the book's own files of it first). SVG pictures: `inlineSvgFonts*` takes
+  `standIn(family)`; for a family `withhold` names, the provider is asked for the *stand-in's* face and the file is
+  embedded under the withheld name, so the licensed files can never be answered by a provider that has them; a family
+  whose stand-in lacks any face the SVG asks is left out whole (`fontWithheld` as before). `standIn` is passed by the
+  host (`ResolvedConfig` carries no `customFonts`): `EpubSvgFontOptions.standIn`, `renderToHtml`'s
+  `inlineSvgFonts.standIn`. No new engine warning kind: the Sandbox's EPUB tab gets a notice (`fontStoodIn`) and the CLI an
+  info line. A stand-in with several licensed families in one fallback is embedded once per family (buffers copied).
+  Third bullet of the issue: a fallback served only by Google's style sheet was already declared and sent to the layout
+  worker (tests added); what failed was the PDF and SVG provider, which looked for Fontsource files only; it now ends with
+  `sheetFaceFiles` (the sheet's faces for the cut CSS font matching settles on). The port kit's pack step is the skill's
+  (skill-notes/993.md). Limits: a family with some own files and a fallback for one slant is, in an export, set wholly
+  in the fallback (its own files are withheld, so no weight can be a mix); the lines were measured with the real files
+  in the owner's Sandbox, with the stand-in in a plain bundle's.
+- **A picture painted in the label's colour (#995).** `label.icon.tint` (boolean, default off) paints the picture's
+  *silhouette* in `label.color`. Decision: one semantic for every backend, "the colour fills what the picture covers, in
+  proportion to its opacity" (canvas `source-in`, HTML `feFlood` + `SourceAlpha`, PDF recoloured paths / alpha stencil),
+  not SVG `currentColor` (it would work for some pictures and not for bitmaps or for SVGs with fixed colours). The block
+  carries `VDTDesignImageBlock.tint` (`#rrggbb`), so any design image can use it later; only the label sets it. Tint wins
+  over `diagramStyle.singleInk`. A picture with no transparency becomes a rectangle. PDF: a vector drawing is recoloured
+  into its own Form XObject per colour (`tintedDrawing`); a bitmap (or an SVG that took the raster fallback) is painted
+  through a 1-bit `ImageMask` of its alpha (cut at half transparency; no transparency, so PDF/X-1a stays valid, and the
+  colour goes through the render's colour space); a print master (an embedded PDF page) cannot be recoloured, so a tinted
+  SVG drops `pdfFileId`. HTML: the page defines one filter per colour (`pt-tint-<hex>-<page>`) beside the single-ink
+  filter; a reader without CSS filters shows the picture in its own colours (the fixed-layout EPUB goes through it). The
+  contrast check and preflight need nothing: the picture's colour is the label's, which they read for the words over
+  the same tab. The reflowable EPUB does not draw label tabs, so it has no picture to tint.
 
 ## 6. Source map contract
 

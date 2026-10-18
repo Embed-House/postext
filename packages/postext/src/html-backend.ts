@@ -248,6 +248,9 @@ export interface RenderHtmlOptions {
     fonts?: SvgFontSyncProvider;
     maxBytes?: number;
     withhold?: (family: string) => boolean;
+    /** The open family set under the name of a family `withhold` names
+     *  (#993): see `InlineSvgFontsOptions.standIn`. */
+    standIn?: (family: string) => string | undefined;
   };
 }
 
@@ -739,6 +742,7 @@ function svgFontInliner(doc: VDTDocument, options: RenderHtmlOptions): HtmlPaint
       const result = inlineSvgFontsDetailedSync(text, provider, {
         ...(settings.maxBytes !== undefined ? { maxBytes: settings.maxBytes } : {}),
         ...(settings.withhold ? { withhold: settings.withhold } : {}),
+        ...(settings.standIn ? { standIn: settings.standIn } : {}),
         onWarning: (w) => {
           const key = `${fileId}|${w.kind}|${w.kind === 'svgFontUnavailable' ? `${w.family}|${w.weight}|${w.style}` : ''}`;
           if (reported.has(key)) return;

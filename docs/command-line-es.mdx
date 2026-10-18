@@ -199,7 +199,7 @@ vídeos alojados en el propio libro. `--assets embed|folder` elige una u otra
 forma para cualquier ruta. Las páginas son las de la maquetación impresa,
 mostradas a tamaño de pantalla: una al lado de otra (`--mode multi`, el valor
 por defecto) o una debajo de otra (`--mode single`). Las fuentes marcadas
-`redistributable: false` se nombran pero no se copian.
+`redistributable: false` se nombran pero no se copian. Si la familia nombra un `fallback`, se escriben en su lugar las caras de esa familia abierta con el nombre de la familia (desde postext 1.43).
 
 ### epub
 
@@ -214,7 +214,7 @@ de lectura vuelva a componer el texto para su pantalla (consulta
 [Libros EPUB](/es/docs/configuration-html-folio-epub#libros-epub-postext-epub)). La cubierta es
 la miniatura del libro, salvo que `--cover` indique una imagen. Los metadatos
 del paquete (título, autores, idioma, identificador) salen del front matter
-del primer capítulo, como en el Sandbox.
+del primer capítulo, como en el Sandbox. Las fuentes marcadas `redistributable: false` no se copian; una familia que nombra un `fallback` se incrusta con las caras de esa familia abierta bajo su propio nombre (desde postext 1.43).
 
 ### image e images
 

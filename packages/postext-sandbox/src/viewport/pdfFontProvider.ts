@@ -2,7 +2,7 @@ import type { PdfFontFile, PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { fontFallbackOf, hasOwnStyle } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
-import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
+import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, sheetFaceFiles, staticFaceFiles } from '../controls/fontLoader';
 import { getFontFile } from '../storage/fontStorage';
 import { fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
 
@@ -260,6 +260,11 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
       // `pickSlices` answers the last rule of the sheet first.
       return fetchFaceFiles(declaredFiles(pickSlices(slices, request?.codePoints), slices), raw);
     }
+
+    // Nothing at Fontsource: the faces of Google's style sheet the previews
+    // declare for it (#993), the files of a fallback that only Google serves.
+    const sheet = await sheetFaceFiles(family, weight, style);
+    if (sheet) return fetchFaceFiles(declaredFiles(facesForCodePoints(sheet, request?.codePoints), sheet).reverse(), raw);
 
     try {
       return await fetchAndDecompress(fontsourceWoff2Url(family, targetWeight, style), raw);

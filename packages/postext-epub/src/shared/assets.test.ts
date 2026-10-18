@@ -146,6 +146,38 @@ describe('imageAssets: fonts in SVG pictures', () => {
     expect(a.items[0]!.data as string).toContain('font-family:"Nowhere"');
   });
 
+  // #993: the open family a withheld one names is embedded under its name.
+  it('sets a withheld family in its stand-in, asking the provider for the stand-in', async () => {
+    const warnings: EpubWarning[] = [];
+    const asked: string[] = [];
+    const a = await imageAssets([docOf()], () => bytes(), (w) => warnings.push(w), {
+      fonts,
+      svgFonts: {
+        provider: async (family) => {
+          asked.push(family);
+          if (family !== 'Open Serif') throw new Error('no');
+          return WOFF2;
+        },
+        standIn: (family) => (family === 'Licensed Serif' ? 'Open Serif' : undefined),
+      },
+    });
+    const data = a.items[0]!.data as string;
+    expect(data).toMatch(/@font-face\{font-family:"Licensed Serif";font-weight:400;font-style:normal;src:url\(data:font\/woff2;base64,/);
+    expect(data).not.toContain('Open Serif');
+    expect(asked).not.toContain('Licensed Serif');
+    expect(warnings.map((w) => w.kind)).not.toContain('fontWithheld');
+  });
+
+  it('keeps a withheld family out when its stand-in has no face', async () => {
+    const warnings: EpubWarning[] = [];
+    const a = await imageAssets([docOf()], () => bytes(), (w) => warnings.push(w), {
+      fonts,
+      svgFonts: { provider: async () => { throw new Error('no'); }, standIn: () => 'Open Serif' },
+    });
+    expect(a.items[0]!.data as string).not.toContain('Licensed Serif";');
+    expect(warnings).toContainEqual({ kind: 'fontWithheld', family: 'Licensed Serif', fileId: 'chart.svg' });
+  });
+
   it('keeps the bytes as given with svg.inlineFonts: false or diagramStyle.inlineFonts: false', async () => {
     const off = await imageAssets([docOf({ inlineFonts: false })], () => bytes(), undefined, { fonts });
     expect(off.items[0]!.data).toBeInstanceOf(Uint8Array);

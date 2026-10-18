@@ -708,6 +708,7 @@
     "epubWarningMissingFont": "__family__ n’est pas incorporée : les systèmes de lecture composent son texte dans une police de leur choix.",
     "epubWarningMissingFace": "__family__ __face__ n’est pas incorporée : les systèmes de lecture l’imitent à partir des styles incorporés.",
     "epubWarningFontWithheld": "__family__ est omise : la famille est marquée comme non redistribuable.",
+    "epubWarningFontStoodIn": "__family__ n’est pas transmise : l’EPUB la compose en __standIn__ sous le même nom.",
     "epubWarningUnsupported": "Non repris dans l’EPUB : __detail__",
     "epubWarningSvgFontUnavailable": "Le SVG __file__ fait appel à __family__, qui n’a aucun fichier de police à incorporer : les liseuses composent son texte dans une police de substitution.",
     "epubWarningSvgFontsTooLarge": "Les polices du SVG __file__ pèsent __size__ Ko, au-delà de la taille maximale : aucune n’est incorporée.",

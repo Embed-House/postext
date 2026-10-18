@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { zipSync } from 'fflate';
 import { bundleFontProvider, createBundle, isBundleManifest, openBundle } from '../bundle';
 import type { BundleManifestV2 } from '../bundle';
-import { fontFallbackFamilies, fontFallbackOf, hasOwnStyle } from '../fonts/fallback';
+import { exportStandInOf, fontFallbackFamilies, fontFallbackOf, hasOwnStyle } from '../fonts/fallback';
 import type { PostextConfig } from '../types';
 
 const enc = new TextEncoder();
@@ -135,5 +135,30 @@ describe('font fallback in a bundle (#978)', () => {
     expect(asked[1]).toBe('Other 400 normal');
     // Its own files win where it has them.
     expect(await provider('Open Wide', 400, 'normal')).toEqual(OPEN);
+  });
+});
+
+// #993: a file that leaves the app (an EPUB, an HTML export) sets a family it
+// may not hand on in its fallback, under the family's name.
+describe('exportStandInOf (#993)', () => {
+  const list = [
+    { name: 'Licensed', redistributable: false, fallback: 'Open One' },
+    { name: 'Bare', redistributable: false },
+    { name: 'Open', fallback: 'Open Two' },
+    { name: 'Self', redistributable: false, fallback: 'self' },
+  ];
+
+  it('names the fallback of a family marked not redistributable, whatever the case and the stack', () => {
+    expect(exportStandInOf(list, 'Licensed')).toBe('Open One');
+    expect(exportStandInOf(list, 'licensed')).toBe('Open One');
+    expect(exportStandInOf(list, '"Licensed", serif')).toBe('Open One');
+  });
+
+  it('names none for a family without a fallback, one that may be handed on, a stand-in for itself, or an unknown one', () => {
+    expect(exportStandInOf(list, 'Bare')).toBeUndefined();
+    expect(exportStandInOf(list, 'Open')).toBeUndefined();
+    expect(exportStandInOf(list, 'Self')).toBeUndefined();
+    expect(exportStandInOf(list, 'Nobody')).toBeUndefined();
+    expect(exportStandInOf(undefined, 'Licensed')).toBeUndefined();
   });
 });

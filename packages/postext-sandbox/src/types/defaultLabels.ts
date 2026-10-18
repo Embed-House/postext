@@ -77,6 +77,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   epubWarningMissingFont: '__family__ is not embedded: reading systems set its text in a face of their own.',
   epubWarningMissingFace: '__family__ __face__ is not embedded: reading systems imitate it with the faces that are.',
   epubWarningFontWithheld: '__family__ is left out: the family is marked as not redistributable.',
+  epubWarningFontStoodIn: "__family__ is not handed on: the EPUB sets it in __standIn__ under the same name.",
   epubWarningUnsupported: 'Not carried into the EPUB: __detail__',
   epubWarningSvgFontUnavailable: "The SVG __file__ names __family__, which has no font file to embed: readers set its text in a fallback face.",
   epubWarningSvgFontsTooLarge: "The fonts of the SVG __file__ come to __size__ KB, over the size cap: none is embedded.",

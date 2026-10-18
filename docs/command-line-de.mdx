@@ -193,7 +193,7 @@ die Bilder, die Schriften und selbst gehostete Videos enthält. `--assets embed|
 wählt für jeden Pfad die eine oder andere Variante. Die Seiten sind das Drucklayout, in
 Bildschirmgröße gezeigt: nebeneinander (`--mode multi`, Standard) oder untereinander
 (`--mode single`). Schriften mit der Markierung `redistributable: false` werden genannt, aber nicht
-kopiert.
+kopiert. Nennt die Schrift einen `fallback`, werden stattdessen die Schnitte dieser freien Schrift unter dem Namen der Schrift geschrieben (seit postext 1.43).
 
 ### epub
 
@@ -207,7 +207,7 @@ Text; `--layout reflowable` lässt das Lesesystem den Text für seinen Bildschir
 neu setzen (siehe [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub)). Das
 Cover ist das Vorschaubild des Buchs, es sei denn, `--cover` gibt ein Bild an. Die
 Metadaten des Pakets (Titel, Autoren, Sprache, Kennung) kommen aus der Front Matter
-des ersten Kapitels, wie in der Sandbox.
+des ersten Kapitels, wie in der Sandbox. Schriften mit `redistributable: false` werden nicht kopiert; eine Schrift mit `fallback` wird mit den Schnitten dieser freien Schrift unter ihrem eigenen Namen eingebettet (seit postext 1.43).
 
 ### image und images
 
