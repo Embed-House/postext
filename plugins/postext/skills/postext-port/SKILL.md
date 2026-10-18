@@ -67,8 +67,30 @@ in the config, and its bundle broke the Sandbox's import.
   Write the book title as `{title}` (front matter), not typed. Literal text
   in one element that keeps more than 2 words or more than 24 letters and
   digits (a Chinese, Japanese, Korean or Thai character counts 3, so about 8
-  of them pass) is content: put it in the Markdown, as a heading, a box, a
-  paragraph or a heading attribute the design prints with `{attr.key}`.
+  of them pass) is content: put it in the Markdown, as a heading, a
+  paragraph or a box whose content its style's design prints (`{boxText}`,
+  below). A heading attribute (`{attr.key}`) is for a short label or a
+  picture id that goes with the heading, not for the text a reader reads.
+- **Styles describe a shape, the Markdown says what fills it.** Elements of
+  the same shape share one style whatever their words: every practice row,
+  card, exercise, badge or fact panel of one look is one `calloutStyles`
+  entry, and each instance is a `:::callout{type="id"}` whose content is its
+  text. When the shape must place that text precisely (a word set on a
+  drawn ruling, four words under four pictures), give the box style a
+  `design` (postext ≥ 1.45) whose texts print the box content with
+  `{boxText}` (all of it) and `{boxText.<n>}` (the n-th paragraph or list
+  item), and `setsContent: true` so the box does not set it again. A
+  picture that belongs to each instance can be named after the content
+  (`resourceId: "trace-{boxText}"`) or by a fence attribute. Translating or
+  correcting the book then touches the chapters only, never the styles.
+- **Headings are the outline, not design slots.** Use heading levels for
+  the book's real structure, one level after another (a single `#` for the
+  book or each chapter, `##` for its sections…), never a deeper level just
+  to reach another design, and never one heading style or level per kind
+  of exercise. The Checks panel reports every skipped level. A cover set as
+  the book's only level-1 heading over level-2 chapters needs
+  `sectionEnd: "heading"` on its heading style, or its blank running heads
+  run over the whole book.
 - **Longer literals that are form** (a journal's name in the running head,
   an imprint line, the licence line) go in
   `config.checks.contentInConfig.allow`, a list of strings. The `title`,

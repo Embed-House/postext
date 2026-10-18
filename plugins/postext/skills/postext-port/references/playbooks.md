@@ -638,6 +638,43 @@ and marker. Boxes taller than a column split anyway. Set `snapToGrid: false` for
 A `:::callout` inside a callout is its own box, at the parent's inner width.
 Use it for a video box inside a feature, or an answer inside an exercise.
 
+### C6. Worksheets: exercises of one shape, words in the Markdown
+Workbooks repeat a few shapes (a word to trace on a ruling, a sentence to
+copy, four pictures with their words, a row of squares) with different
+words. One box style per shape; each exercise is a fence whose content is
+its words, and the style's `design` (postext ≥ 1.45) sets them:
+
+```md
+## The vowels {kicker="Lesson 1" letters="a e i o u" pic="bee"}
+
+:::callout{type="word" title="Trace and write"}
+owl
+:::
+
+:::callout{type="dictionary" p1="sun" p2="moon" p3="cat" p4="fish"}
+- sun
+- moon
+- cat
+- fish
+:::
+```
+
+```js
+{ id: 'word', backgroundEnabled: false, padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) },
+  titleStyle: { fontSize: pt(9), lineHeight: mm(5), gap: mm(2) }, snapToGrid: false,
+  design: { setsContent: true, minHeight: mm(40), slot: { elements: [
+    { kind: 'image', id: 'ruling', resourceId: 'trace-{boxText}', decorative: true, placement: {…} },
+    { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite GB J', placement: {…} },
+  ] } } }
+// dictionary: texts '{boxText.1}'…'{boxText.4}', images '{attr.p1}'…'{attr.p4}'
+```
+
+The lesson stays a heading (`##` under the book's `#`), the exercise is not
+one: never use `###`/`####` with attributes such as `{w="owl" model="owl"}`
+as design slots. The text a reader reads (the word, the box title) lives in
+the chapter; attributes carry only ids (pictures, patterns). Recipe Nº 161
+(handwriting workbook) is the worked example.
+
 ---
 
 ## D. Figures and tables
