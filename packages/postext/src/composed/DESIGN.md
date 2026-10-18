@@ -1295,9 +1295,15 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the sweep already counts across editions), sets `config.locale`, follows built-in figure/table names to the new language
   (`relocalizedResourceTypes`) and drops an explicit hyphenation language (it was the old language's). The record's own
   `locale` is filled when absent (configuration, then the interface language) because `withActiveEdition` keys on it;
-  the action then opens the new edition with it. A language the record has (tag compared without case) is refused. What
-  is not done for the reader: direction, numerals, binding and the CJK or Arabic defaults stay as the first edition has
-  them; the Design panel's actions for those languages are the way to set them.
+  the action then opens the new edition with it. A language the record has (tag compared without case) is refused.
+  An Arabic, Chinese or Japanese edition gets the defaults of its language (`withLanguageDefaults`: the Design panel's
+  `arabicDefaults`, `chineseDefaults`, `japaneseDefaults` on the new edition's configuration, as a new book in that
+  language gets them). Those lists already tell a setting the book chose for itself (`customised`) from one it left at
+  the engine's or the other script's default: with no `include` they apply the rest and the rows that are part of the
+  language (an explicit left-to-right direction goes back to Auto for Arabic), so the book's own typefaces, margins and
+  the like are not overwritten. The writing mode the book has is kept (a vertical book gives a vertical Japanese
+  edition, a horizontal one a horizontal edition). The notice says how many settings moved. Going from such a
+  language to another one undoes nothing: direction, binding and writing mode stay as the first edition has them.
 - **Copy names (#989).** Duplicating a project and "Copy of the open book" already added "copy"; the copy of a *sample*
   kept the sample's name. It now takes the same suffix (`projectCopySuffix`).
 - **A title per language (#999).** The rule of #968 stays the default (a rename is the book's in every edition,
