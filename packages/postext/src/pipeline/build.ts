@@ -232,7 +232,7 @@ import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines';
 import { pickTableStyle } from '../defaults/tableStyle';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout';
 import { buildLineNumbers, lineNumberWarnings } from './lineNumbers';
-import { buildHeadersAndFooters, defaultOpenerTitle, headingDesignBoxes, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
+import { buildHeadersAndFooters, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
 import { flowColorValues } from './partPalette';
 import { chapterNumberCounter, leadingBoldText } from './placeholders';
 import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing';
@@ -4383,6 +4383,16 @@ function placeDocumentPass(
     stripBlock: calloutStripBlock,
     columnHeight: () => contentArea.height,
     headingDesign: (raw, blockIdx, heading, width) => boxHeadingDesign(raw, blockIdx, heading.lines, heading.numberPrefix, heading.headingNumber, width),
+    // A box style's design (#1014), laid out with the box.
+    boxDesign: {
+      measure: (design, info, width) => measureBoxDesign(design, info, width, resolved.page.dpi, doc.metadata, resourceById),
+      layout: (design, info, band, flow) => layoutBoxDesign(design, info, band, resolved.page.dpi, doc.metadata, {
+        resourceById,
+        ...(flow.rtl ? { direction: 'rtl' as const } : {}),
+        ...(flow.mirrored ? { mirrored: true } : {}),
+        ...(arabicNumbersOf(resolved) ? { arabicNumbers: true } : {}),
+      }),
+    },
   };
   const makeCalloutLayouter = (startIdx: number, plan: PlannedCallout, style: ResolvedCalloutStyleConfig): CalloutLayouter =>
     makeCalloutLayouterIn(framePass, startIdx, plan, style);

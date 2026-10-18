@@ -26,16 +26,18 @@ export type HeaderFooterSlotKind = 'header' | 'footer';
 /** Where a design slot is painted (#628): a running head or folio
  *  (`'header'`, `'footer'`, a heading style's own included), a heading
  *  design (`'heading'`: `advancedDesign.slot`, an opener or an in-column
- *  title), a part page and its verso (`'part'`), or a part row of the
- *  contents (`'tocRow'`). It sets the default `overflow` of the slot's text
- *  elements ({@link defaultTextOverflow}). */
-export type DesignSlotKind = HeaderFooterSlotKind | 'heading' | 'part' | 'tocRow';
+ *  title), a part page and its verso (`'part'`), a part row of the
+ *  contents (`'tocRow'`) or a box style's design (`'box'`, #1014). It sets
+ *  the default `overflow` of the slot's text elements
+ *  ({@link defaultTextOverflow}). */
+export type DesignSlotKind = HeaderFooterSlotKind | 'heading' | 'part' | 'tocRow' | 'box';
 
 /** The `overflow` of a text element of a `kind` slot that sets none: a
- *  heading or part title wraps onto more lines, a running head, a folio
- *  and a contents part row (whose height is fixed) end in `…`. */
+ *  heading or part title and a box design's text wrap onto more lines, a
+ *  running head, a folio and a contents part row (whose height is fixed)
+ *  end in `…`. */
 export function defaultTextOverflow(kind: DesignSlotKind): TextOverflow {
-  return kind === 'heading' || kind === 'part' ? 'wrap' : 'ellipsis-end';
+  return kind === 'heading' || kind === 'part' || kind === 'box' ? 'wrap' : 'ellipsis-end';
 }
 
 /** The running-head side a legacy (pre-placement) slot of `kind` is

@@ -3,9 +3,10 @@ import type { DesignSlot, PostextConfig } from '../types';
 /** What a design slot of the configuration draws: a running head
  *  (`header`, `footer`, a heading style's own, a page template's own), a
  *  heading design, a part page (`parts.design`, `parts.versoDesign`), a
- *  contents part row (`toc.parts.design`) or a page template's decoration
- *  (`pageTemplates[i].decoration`, and its variants'). */
-export type ConfigDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow' | 'decoration';
+ *  contents part row (`toc.parts.design`), a page template's decoration
+ *  (`pageTemplates[i].decoration`, and its variants') or a box style's
+ *  design (`calloutStyles[i].design.slot`, #1014). */
+export type ConfigDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow' | 'decoration' | 'box';
 
 export interface ConfigDesignSlot {
   /** Where the slot sits: `header`, `headingStyles[2].advancedDesign.slot`,
@@ -31,7 +32,8 @@ function isSlot(value: unknown): value is DesignSlot {
  * and footer, each heading level's and heading style's design (and a
  * style's running heads), each page template's decoration and running
  * heads (its variants' after its own), the part page and its verso, the
- * contents part rows — then the same in `htmlViewer.overrides`. Only the slots the config
+ * contents part rows, each box style's design — then the same in
+ * `htmlViewer.overrides`. Only the slots the config
  * writes: the defaults are not listed. Pure.
  */
 export function configDesignSlots(config: PostextConfig | undefined): ConfigDesignSlot[] {
@@ -83,6 +85,13 @@ export function configDesignSlots(config: PostextConfig | undefined): ConfigDesi
     add(c.parts?.design, `${prefix}parts.design`, 'part');
     add(c.parts?.versoDesign, `${prefix}parts.versoDesign`, 'part');
     add(c.toc?.parts?.design, `${prefix}toc.parts.design`, 'tocRow');
+    if (Array.isArray(c.calloutStyles)) {
+      c.calloutStyles.forEach((s, i) => {
+        if (!s || typeof s !== 'object') return;
+        const owner = `${prefix}calloutStyles[${i}]`;
+        add(s.design?.slot, `${owner}.design.slot`, 'box', owner, typeof s.id === 'string' ? s.id : undefined);
+      });
+    }
   };
   from(config, '');
   from(config?.htmlViewer?.overrides, 'htmlViewer.overrides.');

@@ -97,8 +97,18 @@ const PLACEHOLDER_NAMES = new Set([
 const METADATA_PLACEHOLDERS = new Set(['title', 'subtitle', 'author', 'publishDate']);
 
 /** Placeholder grammar: `name` or `name.key` — the dotted form is reserved
- *  for namespaced lookups such as `{attr.author}` (heading attributes). */
-export const PLACEHOLDER_NAME_RE = /^[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z_][a-zA-Z0-9_-]*)?$/;
+ *  for namespaced lookups such as `{attr.author}` (heading attributes) and
+ *  `{boxText.2}` (the second item of a box's content, #1014). */
+export const PLACEHOLDER_NAME_RE = /^[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_][a-zA-Z0-9_-]*)?$/;
+
+/** `{boxText}` and `{boxText.<n>}` (#1014): in a box style's design, the
+ *  box's content, whole (`0`) or its `n`-th paragraph or list item (from
+ *  1). Undefined for any other name. */
+export function boxTextPlaceholderIndex(name: string): number | undefined {
+  if (name === 'boxText') return 0;
+  const m = /^boxText\.([1-9][0-9]*)$/.exec(name);
+  return m ? Number(m[1]) : undefined;
+}
 
 /** Namespace of the heading-attribute placeholders (`{attr.<key>}`). */
 export const ATTR_PLACEHOLDER_PREFIX = 'attr.';

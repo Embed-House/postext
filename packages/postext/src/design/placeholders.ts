@@ -9,6 +9,7 @@ import {
   headingNumberPlaceholder,
   markPlaceholder,
   PLACEHOLDER_NAME_RE,
+  boxTextPlaceholderIndex,
   type PageMarks,
   type PlaceholderContext as LegacyPlaceholderContext,
   type PlaceholderResolveOptions,
@@ -49,6 +50,10 @@ export interface HeadingPlaceholderInfo {
   chapterTitle?: string;
   /** Heading attributes (`# Title {key="value"}`), for `{attr.<key>}`. */
   attrs?: Record<string, string>;
+  /** In a box style's design (#1014): the box's content as plain text, one
+   *  entry per paragraph or list item, for `{boxText}` (all of them, one
+   *  per line) and `{boxText.<n>}`. */
+  boxText?: readonly string[];
 }
 
 /** What `{leader}` prints in place: a private-use character the layout
@@ -174,6 +179,8 @@ export function allowedPlaceholdersFor(kind: DesignContextKind): Set<string> {
  *  `lastMark.<key>` marks. */
 export function isAllowedPlaceholder(name: string, kind: DesignContextKind): boolean {
   if (allowedPlaceholdersFor(kind).has(name) || attrPlaceholderKey(name) !== undefined) return true;
+  // A box style's content (#1014): laid out with the heading placeholders.
+  if (kind === 'heading' && boxTextPlaceholderIndex(name) !== undefined) return true;
   if (kind === 'composed' && headingNumberPlaceholder(name) !== undefined) return true;
   // `{leader}`: the contents part rows' (#889), a part context.
   if (name === 'leader') return kind === 'part';
@@ -307,6 +314,14 @@ export function resolveDesignPlaceholders(
       if (attrKey !== undefined) {
         const value = resolveAttrPlaceholder(attrKey, ctx);
         out += options?.attrValue ? options.attrValue(value) : value;
+        i = end + 1;
+        continue;
+      }
+      const boxItem = boxTextPlaceholderIndex(name);
+      if (boxItem !== undefined) {
+        // A box's own content (#1014); nothing outside a box design.
+        const items = ctx.heading?.boxText ?? [];
+        out += boxItem === 0 ? items.join('\n') : items[boxItem - 1] ?? '';
         i = end + 1;
         continue;
       }

@@ -32,6 +32,7 @@ function resolveHeadingStyleConfig(
     numbered: partial.numbered ?? true,
     toc: partial.toc ?? true,
     runningChapter: partial.runningChapter ?? true,
+    sectionEnd: partial.sectionEnd === 'heading' ? 'heading' : 'level',
     overrides,
     palette: { ...(partial.palette ?? {}) },
   };
@@ -106,7 +107,7 @@ export function resolveHeadingStylesConfig(
 }
 
 /** Drop unset fields and the static defaults (`numbered: true`, `toc:
- *  true`, `runningChapter: true`, `name` equal to `id`, an empty
+ *  true`, `runningChapter: true`, `sectionEnd: 'level'`, `name` equal to `id`, an empty
  *  `palette`). Everything else a style sets is kept, since a style's
  *  default is what it inherits and not a value of its own (#694): level
  *  overrides, and the section fields even when they are empty. An empty
@@ -129,6 +130,7 @@ export function stripHeadingStylesDefaults(
       if (k === 'numbered' && v === true) continue;
       if (k === 'toc' && v === true) continue;
       if (k === 'runningChapter' && v === true) continue;
+      if (k === 'sectionEnd' && v === 'level') continue;
       if (k === 'header' || k === 'footer') {
         out[k] = migrateDesignSlot(v as HeadingStyleConfig['header'], k) ?? v;
         continue;

@@ -49,6 +49,7 @@ import type {
   CalloutPlacement,
   CalloutSpan,
   Dimension,
+  ResolvedCalloutDesignConfig,
   ResolvedCalloutStyleConfig,
 } from '../types';
 import { dimensionToPx } from '../units';
@@ -383,6 +384,50 @@ export interface CalloutLayoutInput {
    *  head, in the box's body face as the continuation marker is, before
    *  the first child ("Continued from page 47"). */
   continuedMark?: string;
+  /** The style's design (#1014, `ResolvedCalloutStyleConfig.design`),
+   *  measured and laid out in a band under the title. Absent: a style's
+   *  design draws nothing. */
+  boxDesign?: BoxDesign;
+  /** The whole box's content as its design reads it (`boxTextOf`), when
+   *  `children` is not all of it. Absent: read from `children`. */
+  boxText?: readonly string[];
+}
+
+/** What a box's design reads (see `CalloutLayoutInput.boxDesign`): the
+ *  title the box prints and the fence's attributes. */
+export interface BoxDesignInfo {
+  titleText: string;
+  attrs: Readonly<Record<string, string>>;
+  /** The box's content as plain text, a paragraph or list item each. */
+  boxText: readonly string[];
+}
+
+/** The box's own content as a box design reads it (`{boxText}`, #1014):
+ *  the plain text of each paragraph and list item, in order, a nested
+ *  box's included; blank ones left out. */
+export function boxTextOf(children: readonly ContentBlock[]): string[] {
+  const out: string[] = [];
+  for (const c of children) {
+    if (c.type !== 'paragraph' && c.type !== 'listItem') continue;
+    const text = c.text.trim();
+    if (text.length > 0) out.push(text);
+  }
+  return out;
+}
+
+/** Measures and lays out a box style's design (#1014): `measure` answers
+ *  the height of the band the design takes `width` wide (its `minHeight`
+ *  included), `layout` its blocks laid out against `band`, box-relative.
+ *  `rtl` / `mirrored`: the box's text is right-to-left, painted in a
+ *  mirrored flow (as the box's own title is). */
+export interface BoxDesign {
+  measure(design: ResolvedCalloutDesignConfig, info: BoxDesignInfo, width: number): number;
+  layout(
+    design: ResolvedCalloutDesignConfig,
+    info: BoxDesignInfo,
+    band: { x: number; y: number; width: number; height: number },
+    flow: { rtl: boolean; mirrored: boolean },
+  ): VDTDesignBlock[];
 }
 
 /** See `CalloutLayoutInput.headingDesign`. `lines` are the heading's
@@ -658,7 +703,12 @@ function logicalSides(direction: 'ltr' | 'rtl' | undefined): <T extends string>(
  * {@link offsetCalloutToAbsolute}.
  */
 export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
-  const { style, attrs, children, childStartIdx, ctx, containerId, frameId } = input;
+  const { style, attrs, childStartIdx, ctx, containerId, frameId } = input;
+  // A design that sets the box's content (#1014) prints it in its band:
+  // the children are not laid out again.
+  const designSetsContent = !!input.boxDesign && !!style.design?.enabled && style.design.setsContent
+    && style.design.slot.elements.length > 0;
+  const children = designSetsContent ? [] : input.children;
   const dpi = input.resolved.page.dpi;
   const derivedCtx = deriveCalloutMeasureContext(ctx, style);
   const bodyStyle = derivedCtx.bodyStyle;
@@ -865,6 +915,31 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         artifact: true,
       });
       cursorY += lines.length * lh;
+    }
+  }
+
+  // --- Design band (#1014) ---------------------------------------------------
+  // The style's design takes a band across the inner width under the
+  // title (the title's gap between them), on the box's first fragment
+  // only; the children follow it, the gap again before the first.
+  const design = !input.continuation && input.boxDesign && style.design?.enabled && style.design.slot.elements.length > 0
+    ? style.design
+    : undefined;
+  let designBlocks: VDTDesignBlock[] = [];
+  let banded = false;
+  if (design) {
+    const info: BoxDesignInfo = { titleText: shownTitle, attrs, boxText: input.boxText ?? boxTextOf(input.children) };
+    const bandH = input.boxDesign!.measure(design, info, innerWidth);
+    if (bandH > 0) {
+      const top = cursorY + (hasTitle ? gapPx : 0);
+      designBlocks = input.boxDesign!.layout(
+        design,
+        info,
+        { x: innerX, y: top, width: innerWidth, height: bandH },
+        { rtl: rtlDocument, mirrored: mirroredFlow },
+      );
+      cursorY = top + bandH;
+      banded = true;
     }
   }
 
@@ -1406,6 +1481,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       mirrored: input.mirrored,
       nestPath: [...(nestPath ?? []), open.containerId],
       ...(input.headingDesign ? { headingDesign: input.headingDesign } : {}),
+      ...(input.boxDesign ? { boxDesign: input.boxDesign } : {}),
       ...(input.measureMemo ? { measureMemo: input.measureMemo } : {}),
     });
     // Spacing above: as a paragraph's (margin collapsing, none at the top
@@ -1726,7 +1802,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const holdsContent = children.some((c) => (c.type !== 'directive' || isStripChild(c)) && !isMarkerBlock(c));
   const st: Stack = {
     cursorY,
-    prevMarginBottom: hasTitle ? gapPx : 0,
+    prevMarginBottom: hasTitle || banded ? gapPx : 0,
     pull: false,
     prevWasListItem: false,
     first: true,
@@ -1831,6 +1907,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const extra = iconSize - contentH;
     if (style.icon.align === 'center') {
       if (titleBlock) offsetDesignBlock(titleBlock, 0, extra / 2);
+      for (const b of designBlocks) offsetDesignBlock(b, 0, extra / 2);
       if (fromBlock) offsetDesignBlock(fromBlock, 0, extra / 2);
       if (continuesBlock) offsetDesignBlock(continuesBlock, 0, extra / 2);
       for (const blk of childBlocks) offsetBlock(blk, 0, extra / 2);
@@ -1940,6 +2017,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     }
   }
   overlayBlocks.push(...groupRules);
+  overlayBlocks.push(...designBlocks);
   if (titleBlock) overlayBlocks.push(titleBlock);
   if (fromBlock) overlayBlocks.push(fromBlock);
   if (continuesBlock) overlayBlocks.push(continuesBlock);

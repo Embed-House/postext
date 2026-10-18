@@ -3683,8 +3683,9 @@ export type ContentWarning = ContentWarningBase & (
 
 /** Where a design slot is painted: a running head (`'header'`), a folio
  *  (`'footer'`), a heading design (`'heading'`), a part page or its verso
- *  (`'part'`), a part row of the contents (`'tocRow'`). */
-export type VDTDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow';
+ *  (`'part'`), a part row of the contents (`'tocRow'`), a box style's
+ *  design (`'box'`, #1014). */
+export type VDTDesignSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'tocRow' | 'box';
 
 /** What a build reports in `VDTDocument.warnings`: a construct the layout
  *  had to force ({@link CalloutOverflowWarning}), with the shape it has had
