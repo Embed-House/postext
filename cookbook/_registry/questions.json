@@ -5210,5 +5210,33 @@
       "it": "Unità di libro di testo, un modello per tre lingue"
     },
     "theme": "publications"
+  },
+  "Q187": {
+    "kind": "how",
+    "text": {
+      "en": "How do I make a handwriting workbook: a model, dotted letters to trace and empty lines, on each country's school ruling?",
+      "es": "¿Cómo hago un cuaderno de caligrafía: un modelo, letras punteadas para repasar y renglones vacíos, sobre la pauta escolar de cada país?",
+      "ca": "Com faig un quadern de cal·ligrafia: un model, lletres puntejades per repassar i línies buides, sobre la pauta escolar de cada país?",
+      "zh": "怎样做一本写字练习册：先有范字，再描点或描红，最后留空格，用各国学校的格线？",
+      "ar": "كيف أصنع كرّاسة خط: نموذج، ثم حروف منقّطة للتتبّع، ثم أسطر فارغة، على تسطير المدرسة في كل بلد؟",
+      "ja": "お手本、なぞり書きの点線文字、空欄の行を、各国の学校の罫線に並べた書き方練習帳を作るには？",
+      "pt": "Como faço um caderno de caligrafia: um modelo, letras pontilhadas para cobrir e linhas vazias, na pauta escolar de cada país?",
+      "fr": "Comment faire un cahier d’écriture : un modèle, des lettres en pointillés à repasser et des lignes vides, sur la réglure scolaire de chaque pays ?",
+      "de": "Wie mache ich ein Schreibheft: eine Vorlage, gepunktete Buchstaben zum Nachspuren und leere Zeilen, auf der Schullineatur jedes Landes?",
+      "it": "Come faccio un quaderno di scrittura: un modello, lettere tratteggiate da ripassare e righe vuote, sulla rigatura scolastica di ogni paese?"
+    },
+    "index": {
+      "en": "Handwriting workbooks, tracing rows and school rulings",
+      "es": "Cuadernos de caligrafía, renglones para repasar y pautas escolares",
+      "ca": "Quaderns de cal·ligrafia, línies per repassar i pautes escolars",
+      "zh": "写字练习册、描红行与学校格线",
+      "ar": "كراسات الخط، أسطر التتبع وتسطير المدارس",
+      "ja": "書き方練習帳、なぞり書きの行と学校の罫線",
+      "pt": "Cadernos de caligrafia, linhas para cobrir e pautas escolares",
+      "fr": "Cahiers d’écriture, lignes à repasser et réglures scolaires",
+      "de": "Schreibhefte, Spurzeilen und Schullineaturen",
+      "it": "Quaderni di scrittura, righe da ripassare e rigature scolastiche"
+    },
+    "theme": "publications"
   }
 }

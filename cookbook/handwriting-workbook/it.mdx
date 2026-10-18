@@ -1,0 +1,66 @@
+---
+title: "Quaderno di scrittura in dieci grafie scolastiche"
+summary: "Un primo quaderno di scrittura in ogni lingua del sito: la grafia scolastica di ogni paese sulla sua rigatura, un modello, lettere da ripassare e righe vuote."
+plain: "Un quaderno di scrittura per bambini fatto dieci volte, una per lingua. Ogni lezione mostra una parola scritta, poi a puntini da ripassare, poi righe vuote, nel corsivo e sulla carta delle scuole di ogni paese."
+description: "Un quaderno di scrittura in Postext: grafie scolastiche sulla rigatura di ogni paese, righe a puntini, quadretti cinesi e giapponesi ed edizione araba."
+question: "Come faccio un quaderno di scrittura con modello, puntini e righe vuote sulla rigatura di ogni paese?"
+aliases: ["quaderno di scrittura", "quaderno di corsivo", "corsivo", "corsivo scolastico", "lettere tratteggiate", "lettere a puntini", "ripassare le lettere", "rigatura", "quaderno a righe", "Seyès", "pauta", "Lineatur", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "La copertina: un dipinto di due bambini che scrivono sui quaderni a un tavolo di scuola, con un gatto rosso addormentato su una sedia, arriva ai bordi in alto e ai lati e sfuma nella carta; sotto, la riga della collana, il titolo Imparo a scrivere e una riga per il nome del bambino.", "3": "Una pagina di lezione: una fascia crema con le lettere a e i o u in una pillola bianca, il titolo Le vocali e un’ape dipinta; un breve testo; due blocchi di esercizio di quattro righe ciascuno sulla rigatura a quattro linee, con il modello in inchiostro scuro seguito da copie a puntini, una riga di puntini, il modello con una copia e una riga vuota; una riga con spazi da completare e un riquadro Ricorda con una striscia gialla." }
+---
+
+## Che cosa comporrai
+
+Dodici pagine di un quaderno di scrittura di prima elementare in A4, in dieci edizioni che sono dieci quaderni diversi. Ogni lingua ha il corsivo che insegnano le sue scuole, preso dalle famiglie Playwrite di Google (GB J, ES, FR Trad, DE VA, IT Trad, BR) o da Playpen Sans Arabic, sulla carta su cui scrivono i suoi bambini: la *pauta* spagnola, i quadretti Seyès francesi con il margine rosso, la *Lineatur* tedesca con la fascia centrale gialla, le righe di *caligrafia* brasiliane. L’edizione cinese scrive nei quadretti 田字格, dove i bambini ripassano caratteri rosso pallido (描红), con il pinyin su quattro linee; quella giapponese nei quadretti マス con una croce a puntini, dove si ripassa in grigio (なぞり書き). Le lezioni seguono l’ortografia di ogni lingua: le doppie, gn e gli in italiano, la ñ e la h muta in spagnolo, la l·l in catalano, la ß e i sostantivi con la maiuscola in tedesco, le particelle は, を e へ in giapponese, le quattro forme di una lettera e le lettere che non si legano in arabo. Ogni riga va dal modello ai puntini e dai puntini al vuoto. I ventinove dipinti, generati con un modello di diffusione, servono a tutte le edizioni.
+
+## Preparazione
+
+### 1 · Dai a ogni edizione la sua grafia scolastica e la sua carta
+
+<Excerpt region="editions" />
+
+`u` è l’altezza della x in millimetri, l’unità in cui si disegna ogni rigatura: 3,6 mm nella maggior parte delle edizioni, 3 mm in quella francese, le cui linee Seyès distano un’altezza della x l’una dall’altra. Tutte le Playwrite disegnano l’altezza della x a metà dell’em, quindi il modello misura `u / 0.5` e le linee della rigatura cadono dove le proporzioni del font mettono ascendenti e discendenti. Il testo cinese è composto in Song (Noto Serif SC): LXGW WenKai TC centra le virgole come si stampano a Hong Kong e a Taiwan, per cui il font Kai compone solo i titoli e i quadretti.
+
+### 2 · Metti il modello sulla rigatura, come testo vivo
+
+<Excerpt region="answer" />
+
+Un blocco di esercizio è un titolo di livello 3 il cui design disegna una sola immagine, la rigatura con le copie a puntini, e sopra compone il modello come testo nel corsivo scolastico. La linea di base di un elemento di testo del design cade a 0,8 della sua interlinea sotto il bordo superiore della sua area. L’area del modello parte quindi 0,8 interlinee sopra la linea di base della riga, e le lettere poggiano sulla linea che disegna la rigatura. L’interlinea misura dieci altezze della x perché il ritaglio dell’area cada 2 u sotto la linea di base, abbastanza in basso per la coda della g. Il testo del titolo, *Ripassa e scrivi*, diventa l’etichetta del blocco; `w` dà il nome all’immagine e `model` alla parola.
+
+### 3 · Ricava i puntini dai contorni del font
+
+Postext compone una lettera a colori, solo nel contorno o in tinta pallida, ma non può disegnarla come una fila di puntini lungo il tratto. I puntini si disegnano quindi prima di comporre il quaderno, dai contorni del peso Thin di ogni famiglia Playwrite: un punto ogni 0,2 altezze della x lungo ogni contorno, tenuto solo se nessun altro cade entro 0,8 di quel passo, così i due bordi di un tratto sottile danno una sola fila. Il puntino della i e gli accenti restano piccole forme piene. I puntini di ogni edizione, con gli avanzamenti della copia e del modello, sono in `traces-<lang>.json`, e il pen distribuisce le copie sulle righe: dopo il modello, su una riga intera, una sola dopo il modello e, per ultima, una riga vuota.
+
+### 4 · Ripassa i caratteri nei loro quadretti
+
+<Excerpt region="squares" />
+
+Un carattere cinese o un kana è largo un em, quindi una spaziatura pari al quadretto meno l’em mette un carattere in ogni quadretto, come in un 字帖. Il primo quadretto della riga porta il carattere a inchiostro, i tre seguenti lo stesso carattere nel rosso pallido del 描红 (grigio nell’edizione giapponese) e gli altri restano vuoti. Una frase (`####`) occupa tre righe: scritta, ripassata e vuota, con la punteggiatura in un quadretto tutto suo. Le righe di pinyin usano la rigatura a quattro linee delle edizioni latine con Andika, che ha la a e la g a un solo occhiello, quelle che imparano i bambini.
+
+### 5 · Non specchiare niente per l’arabo
+
+L’edizione araba condivide tutti i design con le altre. Il motore specchia un design di titolo composto nel flusso di una pagina da destra a sinistra, così il disco delle lettere, il modello e la prima immagine del dizionario passano da soli a destra. Solo le copie a puntini, disegnate dentro un’immagine, vengono collocate dal bordo destro nel codice, e le onde del riscaldamento corrono da destra a sinistra. `locale: 'ar'` rilega il libro a destra.
+
+## Varianti
+
+### Usa il corsivo americano
+
+Playwrite ha una famiglia per molti modelli scolastici. Per il corsivo degli Stati Uniti cambia il font inglese e rigenera i suoi puntini.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Scrivi su una linea spessa Seyès ogni due
+
+All’inizio della scuola i bambini scrivono spesso su una linea spessa ogni due. Dai alle righe francesi un passo di otto linee.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Errori frequenti
+
+- Un elemento di testo del design viene tagliato al bordo della sua area. Un’area alta una sola riga taglia le discendenti della g e della p del modello: dalle un’interlinea alta e collocala a partire dalla linea di base.
+- `loadCjkFonts` carica ogni font per tutto il campione: un font cinese a cui manca un carattere usato in qualunque punto del testo fa fallire il caricamento. Nel colophon scrivi i nomi dei font in lettere latine.

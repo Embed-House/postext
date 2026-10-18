@@ -1,0 +1,507 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 161,
+  "status": "published",
+  "chapter": "publications",
+  "order": 120,
+  "level": 2,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "opener-design",
+      "heading-attributes",
+      "design-images"
+    ],
+    "also": [
+      "heading-styles",
+      "covers",
+      "design-elements",
+      "chips",
+      "callout-styles",
+      "color-palette",
+      "hyphenation-languages",
+      "page-role-filters",
+      "mirrored-margins",
+      "arabic-fonts",
+      "cjk-fonts",
+      "right-binding",
+      "text-direction",
+      "kana-scripts",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q187",
+    "Q80"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.42.1",
+    "postextPdf": "1.42.1"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images",
+    "cjk",
+    "arabic"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es",
+      "ca",
+      "fr",
+      "de",
+      "it",
+      "pt",
+      "zh",
+      "ja",
+      "ar"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "pages": "all",
+    "expect": {
+      "pages": [
+        12,
+        12
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "Two children writing in notebooks at a school table, a cat asleep on a chair beside them.",
+          "es": "Dos niños escriben en sus cuadernos en una mesa de clase, con un gato dormido en una silla."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "cover-1600.jpg"
+      },
+      {
+        "what": {
+          "en": "A smiling sun.",
+          "es": "Un sol sonriente."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "sun-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A crescent moon with three stars.",
+          "es": "Una luna creciente con tres estrellas."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "moon-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A ginger cat sitting.",
+          "es": "Un gato pelirrojo sentado."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "cat-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A brown and white puppy.",
+          "es": "Un cachorro marrón y blanco."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "dog-480.jpg"
+      },
+      {
+        "what": {
+          "en": "An orange fish with blue stripes.",
+          "es": "Un pez naranja con rayas azules."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "fish-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A honey bee flying.",
+          "es": "Una abeja volando."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "bee-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A little black spider on a thread.",
+          "es": "Una arañita negra colgada de un hilo."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "spider-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A red apple.",
+          "es": "Una manzana roja."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "apple-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A golden key.",
+          "es": "Una llave dorada."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "key-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A red child's shoe.",
+          "es": "Una zapatilla roja de niño."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "shoe-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A small house with a red roof.",
+          "es": "Una casita con el tejado rojo."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "house-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A small sailing boat.",
+          "es": "Un barquito de vela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "boat-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A yellow duckling.",
+          "es": "Un patito amarillo."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "duck-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A colourful kite.",
+          "es": "Una cometa de colores."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "kite-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A birthday cake with three candles.",
+          "es": "Una tarta de cumpleaños con tres velas."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "cake-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A penguin.",
+          "es": "Un pingüino."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "penguin-480.jpg"
+      },
+      {
+        "what": {
+          "en": "An owl on a branch.",
+          "es": "Un búho en una rama."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "owl-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A red umbrella in the rain.",
+          "es": "Un paraguas rojo bajo la lluvia."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "umbrella-480.jpg"
+      },
+      {
+        "what": {
+          "en": "An ice-cream cone with two scoops.",
+          "es": "Un cucurucho de helado con dos bolas."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "icecream-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A blue and orange butterfly.",
+          "es": "Una mariposa azul y naranja."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "butterfly-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A leafy tree.",
+          "es": "Un árbol frondoso."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "tree-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A snowy mountain.",
+          "es": "Una montaña nevada."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mountain-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A daisy.",
+          "es": "Una margarita."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "flower-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A small blue bird on a twig.",
+          "es": "Un pajarito azul en una ramita."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "bird-480.jpg"
+      },
+      {
+        "what": {
+          "en": "Splashing water.",
+          "es": "Agua que salpica."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "water-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A small campfire.",
+          "es": "Una pequeña hoguera."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "fire-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A child's hand holding a pencil with the tripod grip.",
+          "es": "La mano de un niño que coge el lápiz con tres dedos."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "grip-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A golden star medal with coloured pencils.",
+          "es": "Una medalla de estrella dorada con lápices de colores."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "medal-480.jpg"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the en edition, traced along the outlines of Playwrite GB J Thin.",
+          "es": "Las letras punteadas de la edición en, trazadas sobre los contornos de Playwrite GB J Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-en.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the es edition, traced along the outlines of Playwrite ES Thin.",
+          "es": "Las letras punteadas de la edición es, trazadas sobre los contornos de Playwrite ES Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-es.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the ca edition, traced along the outlines of Playwrite ES Thin.",
+          "es": "Las letras punteadas de la edición ca, trazadas sobre los contornos de Playwrite ES Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-ca.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the fr edition, traced along the outlines of Playwrite FR Trad Thin.",
+          "es": "Las letras punteadas de la edición fr, trazadas sobre los contornos de Playwrite FR Trad Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-fr.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the de edition, traced along the outlines of Playwrite DE VA Thin.",
+          "es": "Las letras punteadas de la edición de, trazadas sobre los contornos de Playwrite DE VA Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-de.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the it edition, traced along the outlines of Playwrite IT Trad Thin.",
+          "es": "Las letras punteadas de la edición it, trazadas sobre los contornos de Playwrite IT Trad Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-it.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the pt edition, traced along the outlines of Playwrite BR Thin.",
+          "es": "Las letras punteadas de la edición pt, trazadas sobre los contornos de Playwrite BR Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-pt.json"
+      },
+      {
+        "what": {
+          "en": "The dotted letters of the ar edition, traced along the outlines of Playpen Sans Arabic Thin.",
+          "es": "Las letras punteadas de la edición ar, trazadas sobre los contornos de Playpen Sans Arabic Thin."
+        },
+        "who": "Ignacio Ferro",
+        "license": "original",
+        "file": "traces-ar.json"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Andika",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Lexend",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite GB J",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite ES",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite FR Trad",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite DE VA",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite IT Trad",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playwrite BR",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "LXGW WenKai TC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Serif SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Sans SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Klee One",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Zen Maru Gothic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Playpen Sans Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Naskh Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo Bhaijaan 2",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-18",
+  "updated": "2026-10-18",
+  "downloads": {
+    "pdf": true
+  },
+  "gaps": [
+    "tracing-letters"
+  ]
+}

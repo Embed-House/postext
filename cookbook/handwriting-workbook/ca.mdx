@@ -1,0 +1,66 @@
+---
+title: "Quadern de cal·ligrafia en deu escriptures"
+summary: "Un primer quadern de cal·ligrafia en cada llengua del web: la lletra escolar de cada país sobre la seva pauta, un model, lletres puntejades i ratlles buides."
+plain: "Un quadern de cal·ligrafia per a infants fet deu vegades, una per llengua. Cada lliçó mostra una paraula escrita, després de punts per repassar-la i després ratlles buides, amb la lletra i el paper de les escoles de cada país."
+description: "Un quadern de cal·ligrafia a Postext: lletres escolars sobre la pauta de cada país, ratlles puntejades, quadrícules xinesa i japonesa i una edició àrab."
+question: "Com faig un quadern de cal·ligrafia amb model, lletres puntejades i ratlles buides a la pauta de cada país?"
+aliases: ["quadern de cal·ligrafia", "cal·ligrafia", "lletres puntejades", "repassar lletres", "lletra lligada", "lletra cursiva", "quadern de ratlles", "pauta", "quadrícula", "Seyès", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "La coberta: una pintura de dos infants que escriuen als seus quaderns en una taula de classe, amb un gat rogenc adormit en una cadira, arriba a les vores de dalt i dels costats i es fon amb el paper; a sota, la línia de la col·lecció, el títol Aprenc a escriure i una línia per al nom.", "6": "Una lliçó: una banda crema amb la l·l en una píndola blanca, el títol La ela geminada i una papallona pintada; un text breu; dos blocs de pràctica de quatre ratlles sobre pauta, amb el model en tinta fosca seguit de còpies puntejades, una ratlla de punts, el model amb una còpia i una ratlla buida; una línia amb buits per completar i un requadre Recorda amb una franja groga." }
+---
+
+## Què compondràs
+
+Dotze pàgines d’un quadern de cal·ligrafia de primer en A4, en deu edicions que són deu quaderns diferents. Cada llengua té la lletra lligada que ensenyen les seves escoles, de les famílies Playwrite de Google (GB J, ES, FR Trad, DE VA, IT Trad, BR) o de Playpen Sans Arabic, sobre el paper on escriuen els seus infants: la pauta de les escoles d’aquí, els quadres Seyès francesos amb el marge vermell, la *Lineatur* alemanya amb la banda central groga, les línies de cal·ligrafia brasileres. L’edició xinesa escriu en quadrícules 田字格, on els infants repassen caràcters en vermell pàl·lid (描红), amb el pinyin en quatre línies; la japonesa, en quadres マス amb una creu de punts i el repàs en gris (なぞり書き). Les lliçons segueixen l’ortografia de cada llengua: la ñ i la h muda en castellà, la l·l en català, la ß i els substantius amb majúscula en alemany, les partícules は, を i へ en japonès, les quatre formes d’una lletra i les lletres que no s’uneixen en àrab. Cada ratlla va del model als punts i dels punts a res. Les vint-i-nou pintures, generades amb un model de difusió, són comunes a totes les edicions.
+
+## Elaboració
+
+### 1 · Dona a cada edició la seva lletra escolar i el seu paper
+
+<Excerpt region="editions" />
+
+`u` és l’alçada de la x en mil·límetres, la unitat amb què es dibuixa cada pauta: 3,6 mm a gairebé totes les edicions, 3,2 mm a la brasilera i 3 mm a la francesa, on les línies Seyès són a una alçada de x les unes de les altres. Totes les Playwrite dibuixen l’alçada de la x a la meitat del cos, així que el model fa `u / 0,5` i les línies cauen on les proporcions de la mateixa lletra posen els traços ascendents i descendents. El text xinès va en Song (Noto Serif SC): LXGW WenKai TC centra les comes com s’imprimeixen a Hong Kong i Taiwan, així que la Kai només compon els títols i les quadrícules.
+
+### 2 · Posa el model sobre la pauta, en text viu
+
+<Excerpt region="answer" />
+
+Un bloc de pràctica és un títol de nivell 3 amb un disseny que dibuixa una imatge, la pauta amb les còpies puntejades, i hi compon a sobre el model com a text en la lletra escolar. La línia de base d’un text de disseny cau a 0,8 del seu interlineat sota la vora superior de la caixa, així que la caixa del model comença 0,8 del seu interlineat per sobre de la línia de base de la ratlla, i les lletres s’aguanten sobre la línia que dibuixa la pauta. L’interlineat fa deu alçades de x perquè el retall de la caixa caigui 2 u sota la línia de base, amb lloc per a la cua de la g. El text del títol, *Repassa i escriu*, és l’etiqueta del bloc; `w` anomena la imatge i `model`, la paraula.
+
+### 3 · Dibuixa els punts amb els contorns de la mateixa lletra
+
+Postext compon una lletra en color, perfilada o pàl·lida, però no la dibuixa com una filera de punts al llarg del traç. Els punts es dibuixen abans de compondre el quadern, amb els contorns del tall Thin de cada Playwrite: un punt cada 0,2 alçades de x al llarg de cada contorn, i només es conserva si no n’hi ha cap altre a menys de 0,8 d’aquest pas, de manera que els dos costats d’un traç prim donen una sola filera. El punt de la i i els accents queden com a petites formes plenes. Els punts de cada edició, amb l’avanç de la còpia i el del model, són a `traces-<lang>.json`, i el pen reparteix les còpies per les ratlles: a la primera, després del model; a la segona, de punta a punta; a la tercera, una sola després del model; la quarta queda buida.
+
+### 4 · Repassa els caràcters a la seva quadrícula
+
+<Excerpt region="squares" />
+
+Un caràcter xinès o un kana fa un quadratí d’amplada, així que un espaiat de quadre menys quadratí posa un caràcter a cada quadre, com en un 字帖. El primer quadre de la ratlla porta el caràcter en tinta, els tres següents el mateix caràcter en el vermell pàl·lid del 描红 (gris a l’edició japonesa) i la resta queda buida. Una frase (`####`) ocupa tres ratlles: escrita, repassada i buida, amb la puntuació en un quadre propi. Les ratlles de pinyin fan servir la pauta de quatre línies de les edicions llatines amb Andika, que té la a i la g d’un sol ull que aprenen els infants.
+
+### 5 · No reflecteixis res per a l’àrab
+
+L’edició àrab comparteix tots els dissenys amb les altres. El motor reflecteix un disseny de títol que es compon en el flux d’una pàgina de dreta a esquerra, així que el disc de lletres, el model i la primera imatge del diccionari passen sols a la dreta. Només les còpies puntejades, dibuixades dins d’una imatge, es col·loquen des de la vora dreta al codi, i les ones de l’escalfament corren de dreta a esquerra. `locale: 'ar'` enquaderna el llibre per la dreta.
+
+## Variants
+
+### Fes servir la cursiva dels Estats Units
+
+Playwrite té una família per a molts models escolars. Per a la cursiva nord-americana, canvia la lletra anglesa i torna a generar-ne els punts.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Escriu en una de cada dues línies Seyès
+
+Quan comencen l’escola, els infants solen escriure en una de cada dues línies gruixudes. Dona a les ratlles franceses un pas de vuit línies.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Errors freqüents
+
+- Un text de disseny es retalla a la seva caixa. Una caixa d’una sola línia talla les cues de la g i la p del model: dona-li un interlineat alt i col·loca-la des de la línia de base.
+- `loadCjkFonts` carrega cada font per a tota la mostra: si a una font xinesa li falta un caràcter que el text fa servir en qualsevol lloc, la càrrega falla. Escriu els noms de les fonts en caràcters llatins al colofó.

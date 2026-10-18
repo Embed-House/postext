@@ -1,0 +1,66 @@
+---
+title: "Handwriting workbook in ten scripts"
+summary: "A first handwriting book in every site language: each country's school script on its own ruling, a model, dotted letters to trace and empty rows."
+plain: "A children's handwriting book made ten times, once per language. Each lesson shows a word written out, then in dots to go over, then empty lines, in the joined letters and lined paper of that country's schools."
+description: "A handwriting workbook in Postext: school scripts on each country's ruling, dotted tracing rows, Chinese and Japanese squares, and an Arabic edition."
+question: "How do I make a handwriting workbook: a model, dotted letters and empty rows on each country's school ruling?"
+aliases: ["handwriting workbook", "copybook", "tracing letters", "dotted letters", "cursive practice", "joined handwriting", "Seyès", "pauta", "Lineatur", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "The cover: a painting of two children writing in notebooks at a school table, with a ginger cat asleep on a chair, runs to the top and side edges and fades into the paper; below it the series line, the title I can write in joined handwriting and a line for the child's name.", "3": "A lesson page: a cream band with the letters c a d in a white pill, the lesson title and a painted duckling; a short text; two practice blocks of four rows each on four-line handwriting paper, the model in dark ink followed by dotted copies, a row of dots, the model with one copy, and an empty row; a line with blanks to fill in and a Remember box with a yellow stripe." }
+---
+
+## What you'll build
+
+Twelve pages of a first-year handwriting book on A4, in ten editions that are ten different books. Each language gets the joined script its schools teach, from Google's Playwrite families (GB J, ES, FR Trad, DE VA, IT Trad, BR) or Playpen Sans Arabic, on the paper its children write on: the Spanish *pauta*, French Seyès squares with a red margin, the German *Lineatur* with its yellow middle band, Brazilian *caligrafia* lines. The Chinese edition writes in 田字格 squares, where children trace pale red characters (描红), with pinyin on four lines; the Japanese one in マス squares with a dotted cross, tracing in grey (なぞり書き). The lessons follow each spelling: ñ and the silent h in Spanish, l·l in Catalan, ß and capital nouns in German, the particles は, を and へ in Japanese, the four forms of a letter and the letters that do not join in Arabic. Every row goes from a model to dots to nothing. Twenty-nine paintings, generated with a diffusion model, are shared by all editions.
+
+## Method
+
+### 1 · Give each edition its school script and its paper
+
+<Excerpt region="editions" />
+
+`u` is the x-height in millimetres, the unit every ruling is drawn in: 3.6 mm for most editions, 3 mm for French, whose Seyès lines are one x-height apart. The Playwrite faces all draw their x-height at half the em, so the model's size is `u / 0.5`, and the ruling's lines fall where the face's own proportions put its ascenders and descenders. The Chinese text is set in Song (Noto Serif SC): LXGW WenKai TC centres its commas the way Hong Kong and Taiwan print them, so the Kai face sets only the titles and the squares.
+
+### 2 · Set the model on the ruling, live
+
+<Excerpt region="answer" />
+
+A practice block is a level-3 heading whose design draws one picture, the ruling with the dotted copies, and sets the model on it as text in the school face. A design text's baseline falls at 0.8 of its line height below the top of its box, so the model's box is placed at the row's baseline minus 0.8 of its line, and the letters stand on the line the ruling draws. The line is ten x-heights tall so that the box's clip falls 2 u below the baseline, deep enough for the tail of a g. The heading's text, *Trace and write*, becomes the block's label; `w` names the picture and `model` the word.
+
+### 3 · Draw the dots from the face's own outlines
+
+Postext sets a letter in colour, outlined or pale, but it cannot draw it as a row of dots along its stroke. The dots are drawn before the book is set, from the outlines of each Playwrite family's Thin cut: points every 0.2 x-height along each contour, a point kept only when no other lies within 0.8 of that pitch, so the two sides of a thin stroke give a single row. The dot of an i or an accent stays a small filled shape. Each edition's dots, with the copy's and the model's advances, are in `traces-<lang>.json`, and the pen lays the copies along the rows: after the model, across a whole row, one after the model, and an empty row last.
+
+### 4 · Trace characters in their squares
+
+<Excerpt region="squares" />
+
+A Han character or a kana is one em wide, so tracking of the square minus the em sets one character per square, as in a 字帖. The first square of a row holds the character in ink, the next three the same character in the pale red of 描红 (grey in the Japanese edition), and the rest stay empty. A sentence (`####`) takes three rows: written out, traced, then empty, with the punctuation in a square of its own. The Chinese pinyin rows use the four-line ruling of the Latin editions with Andika, whose single-storey a and g are the ones children learn.
+
+### 5 · Mirror nothing for Arabic
+
+The Arabic edition shares every design with the others. A heading design laid in the flow of a right-to-left page is mirrored by the engine, so the letter disc, the model and the dictionary's first picture move to the right by themselves; only the dotted copies, drawn inside a picture, are laid from the right edge in code, and the warm-up waves run from right to left. `locale: 'ar'` binds the book on the right.
+
+## Variations
+
+### Use the US cursive
+
+Playwrite has a family for many school models. For American cursive, change the English face and generate its dots again.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Write on every second Seyès line
+
+Children starting school often write on every other heavy line. Give the French rows a pitch of eight lines.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Pitfalls
+
+- A design text clips at its box. A box as tall as one line cuts the descenders of the model's g and p: give it a tall line and place it from the baseline.
+- `loadCjkFonts` loads every face for the whole sample: a Chinese face that lacks a character the text uses anywhere fails the load. Name fonts in Latin letters in a colophon.

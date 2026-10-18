@@ -3407,5 +3407,98 @@
         "it": "Impaginazione"
       }
     }
+  },
+  "tracing-letters": {
+    "label": {
+      "en": "Dotted letters for tracing",
+      "es": "Letras punteadas para repasar",
+      "ca": "Lletres puntejades per repassar",
+      "zh": "描点用的虚线字",
+      "ar": "حروف منقّطة للتتبّع",
+      "ja": "なぞり書き用の点線文字",
+      "pt": "Letras pontilhadas para cobrir",
+      "fr": "Lettres en pointillés à repasser",
+      "de": "Gepunktete Buchstaben zum Nachspuren",
+      "it": "Lettere tratteggiate da ripassare"
+    },
+    "aliases": {
+      "en": [
+        "tracing letters",
+        "dotted font",
+        "dot letters",
+        "trace font",
+        "handwriting practice"
+      ],
+      "es": [
+        "letras punteadas",
+        "letra de puntos",
+        "repasar letras",
+        "caligrafía punteada"
+      ],
+      "ca": [
+        "lletres puntejades",
+        "repassar lletres"
+      ],
+      "zh": [
+        "描红",
+        "虚线字",
+        "描点字"
+      ],
+      "ar": [
+        "حروف منقطة",
+        "تتبع الحروف"
+      ],
+      "ja": [
+        "なぞり書き",
+        "点線文字"
+      ],
+      "pt": [
+        "letras pontilhadas",
+        "cobrir letras",
+        "pontilhado"
+      ],
+      "fr": [
+        "lettres en pointillés",
+        "écriture en pointillés",
+        "repasser les lettres"
+      ],
+      "de": [
+        "Punktschrift",
+        "Nachspurschrift",
+        "gepunktete Buchstaben"
+      ],
+      "it": [
+        "lettere tratteggiate",
+        "lettere puntinate",
+        "ripassare le lettere"
+      ]
+    },
+    "explanation": {
+      "en": "Postext sets a text in colour, outlined (a design text's stroke) or pale, but it cannot draw a letter as a row of dots along its stroke. A workbook draws the dots from the outlines of the school face's thin cut, outside the engine, as a picture under the live model: Nº 161 does it for eight scripts. Chinese and Japanese practice traces pale characters (描红, なぞり書き), which the engine sets itself.",
+      "es": "Postext compone un texto en color, perfilado (el trazo de un texto de diseño) o pálido, pero no dibuja una letra como una fila de puntos a lo largo de su trazo. Un cuaderno dibuja los puntos con los contornos del corte fino de la letra escolar, fuera del motor, como una imagen bajo el modelo vivo: el Nº 161 lo hace en ocho escrituras. En chino y en japonés se repasan caracteres pálidos (描红, なぞり書き), que el motor compone por sí mismo.",
+      "ca": "Postext compon un text en color, perfilat (el traç d'un text de disseny) o pàl·lid, però no dibuixa una lletra com una filera de punts al llarg del seu traç. Un quadern dibuixa els punts amb els contorns del tall fi de la lletra escolar, fora del motor, com una imatge sota el model viu: el Nº 161 ho fa en vuit escriptures. En xinès i en japonès es repassen caràcters pàl·lids (描红, なぞり書き), que el motor compon tot sol.",
+      "zh": "Postext可以把文字排成彩色、空心（设计文字的描边）或浅色，但不能把一个字画成沿笔画排列的一串点。练习册在引擎之外，用学校字体细体的轮廓画出这些点，作为图片放在实时排出的范字下面：第161号食谱用这种方法做了八种文字。中文和日文的练习是描浅色的字（描红、なぞり書き），引擎自己就能排。",
+      "ar": "يُنضّد Postext النص ملوّنًا أو مفرَّغًا (حدّ نص التصميم) أو باهتًا، لكنه لا يرسم الحرف صفًّا من النقاط على امتداد خطّه. ترسم الكرّاسة النقاط من حدود القطع الرفيع لخط المدرسة، خارج المحرك، صورةً تحت النموذج الحيّ: تفعل ذلك الوصفة رقم 161 لثماني كتابات. أما الصينية واليابانية فتُتتبَّع فيهما حروف باهتة (描红، なぞり書き) يُنضّدها المحرك بنفسه.",
+      "ja": "Postextは文字を色付き、袋文字（デザインテキストの線）、淡色で組めますが、字を筆画に沿った点の列として描くことはできません。練習帳では、学校書体の細いウェイトの輪郭から点をエンジンの外で描き、ライブのお手本の下に画像として置きます。No.161は8つの文字体系でこれを行います。中国語と日本語の練習は淡色の字をなぞる方式（描红、なぞり書き）で、これはエンジンが自分で組めます。",
+      "pt": "O Postext compõe um texto em cor, com contorno (o traço de um texto de design) ou claro, mas não desenha uma letra como uma fileira de pontos ao longo do traço. Um caderno desenha os pontos a partir dos contornos do corte fino da letra escolar, fora do motor, como uma imagem sob o modelo vivo: o Nº 161 faz isso em oito escritas. Em chinês e japonês cobrem-se caracteres claros (描红, なぞり書き), que o próprio motor compõe.",
+      "fr": "Postext compose un texte en couleur, détouré (le contour d’un texte de maquette) ou pâle, mais il ne dessine pas une lettre comme une rangée de points le long de son tracé. Un cahier dessine les points d’après les contours de la graisse fine de l’écriture scolaire, hors du moteur, en image sous le modèle vivant : le Nº 161 le fait pour huit écritures. En chinois et en japonais, on repasse des caractères pâles (描红, なぞり書き), que le moteur compose lui-même.",
+      "de": "Postext setzt einen Text farbig, als Kontur (der Strich eines Designtexts) oder blass, aber es zeichnet keinen Buchstaben als Punktreihe entlang seines Strichs. Ein Schreibheft zeichnet die Punkte außerhalb der Engine aus den Umrissen des dünnen Schnitts der Schulschrift, als Bild unter der lebenden Vorlage: Nr. 161 macht das für acht Schriften. Im Chinesischen und Japanischen spurt man blasse Zeichen nach (描红, なぞり書き), die die Engine selbst setzt.",
+      "it": "Postext compone un testo a colori, contornato (il tratto di un testo di grafica) o chiaro, ma non disegna una lettera come una fila di puntini lungo il suo tratto. Un quaderno disegna i puntini dai contorni del taglio sottile della scrittura scolastica, fuori dal motore, come immagine sotto il modello vivo: il Nº 161 lo fa per otto scritture. In cinese e in giapponese si ripassano caratteri chiari (描红, なぞり書き), che il motore compone da sé."
+    },
+    "docs": {
+      "slug": "configuration-headers-footers",
+      "heading": {
+        "en": "Text elements",
+        "es": "Elementos de texto",
+        "ca": "Elements de text",
+        "zh": "文本元素",
+        "ar": "عناصر النص",
+        "ja": "テキスト要素",
+        "pt": "Elementos de texto",
+        "fr": "Éléments de texte",
+        "de": "Textelemente",
+        "it": "Elementi di testo"
+      }
+    }
   }
 }
