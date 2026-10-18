@@ -1046,7 +1046,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Stili dei titoli
 
-La proprietà `headingStyles` dichiara stili con nome che un documento applica a un titolo con `# Title {style="<id>"}`. Uno stile fa due cose. Sostituisce la tipografia, il progetto grafico e la numerazione del livello del titolo (ogni campo di una voce di livello tranne `level`: font, dimensione, colore, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) e governa la **sezione** che il titolo apre: le sue pagine, fino al titolo successivo di livello uguale o superiore, prendono le testatine, la geometria della pagina, la tipografia del corpo e la palette dello stile. È così che le pagine preliminari di un libro (una prefazione in un’unica colonna larga con folio romani e bande blu) trovano posto in un manuale a due colonne con numerazione decimale senza una seconda configurazione.
+La proprietà `headingStyles` dichiara stili con nome che un documento applica a un titolo con `# Title {style="<id>"}`. Uno stile fa due cose. Sostituisce la tipografia, il progetto grafico e la numerazione del livello del titolo (ogni campo di una voce di livello tranne `level`: font, dimensione, colore, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) e governa la **sezione** che il titolo apre: le sue pagine, fino al titolo successivo di livello uguale o superiore (di qualsiasi livello con `sectionEnd: 'heading'`), prendono le testatine, la geometria della pagina, la tipografia del corpo e la palette dello stile. È così che le pagine preliminari di un libro (una prefazione in un’unica colonna larga con folio romani e bande blu) trovano posto in un manuale a due colonne con numerazione decimale senza una seconda configurazione.
 
 ```ts
 const config: PostextConfig = {
@@ -1112,6 +1112,12 @@ const config: PostextConfig = {
       <td>Se un titolo di livello 1 con questo stile diventa il capitolo corrente: quello che <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> e le loro forme <code>…AtTop</code> nominano nella sua pagina e in quelle successive. <code>false</code> per una tavola, una carta geografica o una copertina composta come H1 dentro un capitolo: le testatine la scavalcano, anche nella sua stessa pagina, e continuano a nominare il capitolo che interrompe; non imposta nemmeno una parola guida <code>h1</code>. Il titolo viene comunque contato quando <code>numbered</code> (il suo progetto grafico legge il proprio <code>{'{chapterNumber}'}</code>) e resta elencato da <code>:::toc</code> quando <code>toc</code>. Con anche <code>toc: false</code> non riceve un segnalibro PDF: la tavola di un capitolo nella pagina che precede l’apertura lascia i segnalibri ai capitoli. I titoli degli altri livelli lo ignorano. Con il valore predefinito, le pagine dopo una tavola stampano il titolo della tavola. Una prefazione o un prologo con <code>numbered: false</code> resta un capitolo a sé e mantiene il valore predefinito. L’opzione cambia solo il capitolo che i segnaposto nominano: lo stile apre comunque una sezione propria, come ogni stile di titolo, quindi fino al titolo di livello 1 successivo le pagine prendono gli slot delle testatine, i margini, le colonne, lo stile del corpo e la palette dello stile della tavola (quelli del documento dove lo stile non li imposta), non quelli di una sezione con stile aperta dal capitolo interrotto. In un libro impaginato capitolo per capitolo, le testatine non passano da un file di capitolo al successivo, quindi una tavola che apre un file mostra segnaposto di capitolo vuoti fino al primo titolo di capitolo del file.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Dove finisce la sezione che lo stile apre. <code>'level'</code>: al titolo successivo di livello uguale o superiore. <code>'heading'</code>: al titolo successivo di qualsiasi livello. Una copertina o un frontespizio composto come unico titolo di livello 1 del libro, con i capitoli al livello 2, prende <code>'heading'</code>: le sue testatine (spesso vuote), i margini, le colonne, lo stile del corpo e la palette si fermano al primo capitolo invece di estendersi a tutto il libro. Il progetto grafico, la numerazione e il capitolo corrente del titolo stesso non cambiano. Vedi l’esempio sotto questa tabella. Da postext 1.45.</td>
+    </tr>
+    <tr>
       <td>campi del livello</td>
       <td>come in <code>headings.levels[]</code></td>
       <td>i valori del livello</td>
@@ -1156,7 +1162,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Una sezione si chiude al titolo successivo di livello uguale o superiore: un `#` senza stile dopo uno con stile torna alle testatine e alla geometria del documento; uno con stile apre una sezione propria. Le pagine che la sezione ha lasciato bianche per la parità le appartengono, come accade per i titoli di capitolo.
+Una sezione si chiude al titolo successivo di livello uguale o superiore: un `#` senza stile dopo uno con stile torna alle testatine e alla geometria del documento; uno con stile apre una sezione propria. Le pagine che la sezione ha lasciato bianche per la parità le appartengono, come accade per i titoli di capitolo. Con `sectionEnd: 'heading'` la sezione si chiude al titolo successivo di qualsiasi livello, come serve a una copertina composta come unico titolo di livello 1 del libro:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# Il guardiano del faro {style="cover"}
+
+## La stanza della lanterna
+
+…
+```
+
+La pagina della copertina non stampa testatine, e da *La stanza della lanterna* in poi le pagine riprendono l’intestazione e il piè di pagina del documento. Con il valore predefinito, `'level'`, la sezione della copertina durerebbe fino al titolo di livello 1 successivo, che questo libro non ha, e nessuna delle sue pagine porterebbe una testatina.
 
 **Un’interruzione di pagina non sostituisce l’interruzione propria del titolo.** Uno stile eredita il `breakBefore` del suo livello (il valore predefinito del livello 1 è `{ enabled: true, parity: 'always-odd' }`), e un titolo lo applica ovunque si trovi, anche subito dopo un `:::pagebreak`. L’interruzione di pagina apre una pagina nuova, e il titolo chiede comunque il suo lato della doppia pagina. Con `parity: 'odd'`, un’interruzione che cade su un verso è seguita da una pagina bianca, così il titolo si apre sul recto successivo. Con `'always-odd'` arriva anche la pagina bianca di separazione, e l’interruzione di pagina non cambia nulla, perché il titolo avrebbe aperto quella pagina comunque. Uno stile pensato per cominciare nella pagina aperta da un’interruzione manuale, come una pagina di indice dopo il frontespizio, disattiva la propria interruzione:
 

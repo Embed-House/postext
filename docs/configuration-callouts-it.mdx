@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>Un segno allineato a destra alla fine dell’ultima riga del riquadro, come una dimostrazione termina con <code>'∎'</code> o <code>'□'</code>: sull’ultima riga quando ci sta dopo uno spazio, altrimenti su una riga propria. Un riquadro che termina con una formula in evidenza senza numero lo prende come etichetta della formula. Con le formule attive, i quadrati (∎ □ ■ ▪ ◻ ▫) si disegnano dai glifi propri di TeX, quindi un carattere che non li ha (i file latini di Fontsource) li stampa comunque; con le formule disattivate si compongono nel carattere del testo del riquadro.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>non impostato</td>
+      <td>Un progetto grafico in una banda sotto il titolo del riquadro, su tutta la larghezza interna: gli elementi del progetto grafico di un titolo (testi, immagini, filetti, cornici), che possono stampare il contenuto del riquadro stesso. Vedi <a href="#progetti-grafici-nei-riquadri">Progetti grafici nei riquadri</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 La parte che chiude la pagina termina con «(MORE)», e la pagina successiva si apre con «HAMLET (CONT'D)». Entrambi sono elementi di servizio dell’impaginazione: in un PDF accessibile sono artefatti e nell’HTML sono nascosti alle tecnologie assistive, così il titolo si legge una sola volta. Nel VDT sono blocchi di testo `designOverlay` contrassegnati `artifact: true`.
+
+### Progetti grafici nei riquadri
+
+`design` dispone gli elementi del progetto grafico di un titolo (testi, immagini, filetti, cornici; vedi [Estensione e progetto grafico avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)) in una banda sotto il titolo del riquadro, su tutta la sua larghezza interna. Il contenuto del riquadro segue la banda, con la distanza del titolo tra le due. Un riquadro diviso tra colonne o pagine disegna la banda solo sulla prima parte. Da postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un progetto grafico è attivo appena impostato; <code>false</code> lo tiene nello stile senza disegnare la banda.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Gli elementi, disposti rispetto alla banda: <code>anchor.to: 'container'</code> è la banda, da sotto il titolo e su tutta la larghezza interna. Gli ancoraggi <code>'page'</code> e <code>'bleed'</code> non si leggono in un riquadro.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>non impostato</td>
+      <td>L’altezza minima della banda. Senza, la banda è alta quanto arrivano i suoi elementi; quelli con <code>reserve: false</code> e quelli ancorati al centro o al piede della banda non contano.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Il progetto grafico stampa il contenuto del riquadro (<code>&#123;boxText&#125;</code>) e il riquadro non lo compone una seconda volta sotto la banda. Un riquadro il cui progetto grafico stampa il contenuto non si divide mai: passa intero alla colonna o alla pagina successiva.</td>
+    </tr>
+  </tbody>
+</table>
+
+I testi del progetto grafico leggono questi segnaposto:
+
+- `{titleText}`: il titolo che il riquadro stampa, il `title` del recinto o, in sua assenza, quello dello stile.
+- `{boxText}`: il contenuto del riquadro come testo semplice, un paragrafo o una voce di elenco per riga. Quelli vuoti si saltano.
+- `{boxText.<n>}`: il paragrafo o la voce di elenco numero `n`, contando da 1; vuoto se il riquadro ne ha meno.
+- `{attr.<key>}`: un attributo scritto sul recinto. Va bene qualsiasi nome, oltre a quelli che il recinto legge da sé: `:::callout{type="card" kicker="Nota"}` dà a `{attr.kicker}` il valore `Nota`. Un attributo mancante non stampa nulla.
+- i segnaposto del documento `{title}`, `{subtitle}`, `{author}` e `{publishDate}`.
+
+Il `resourceId` di un’immagine accetta gli stessi segnaposto, così ogni riquadro può disegnare una risorsa propria. Solo il progetto grafico di un riquadro legge `{boxText}`; quello di un titolo non stampa nulla al suo posto.
+
+Con `setsContent: true` un solo stile serve tutti i riquadri della stessa forma, ognuno con le sue parole. In un quaderno di scrittura ogni riga di esercizio è un riquadro il cui contenuto è la parola da ricopiare: il progetto grafico stampa la parola in una grafia scolastica e disegna la risorsa tratteggiata che porta il suo nome.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite IT Moderna', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+gatto
+:::
+
+:::callout{type="practice"}
+luna
+:::
+```
+
+La prima riga stampa *gatto* e disegna la risorsa `trace-gatto`, la seconda stampa *luna* e disegna `trace-luna`, e nessuna delle due parole si compone di nuovo sotto la sua banda. Con `setsContent` lasciato a `false` il progetto grafico legge `{boxText}` allo stesso modo, e il contenuto si compone sotto la banda.
+
+Nel VDT gli elementi della banda sono blocchi di progetto grafico nel `designOverlay` della cornice, accanto al titolo.

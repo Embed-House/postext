@@ -1046,7 +1046,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Überschriftenstile
 
-Die Eigenschaft `headingStyles` deklariert benannte Stile, die ein Dokument mit `# Title {style="<id>"}` auf eine Überschrift anwendet. Ein Stil leistet zweierlei. Er überschreibt Typografie, Gestaltung und Nummerierung der Überschriftenebene – jedes Feld eines Ebeneneintrags außer `level` (Schrift, Größe, Farbe, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate` …) –, und er bestimmt den **Abschnitt**, den die Überschrift eröffnet: Dessen Seiten, bis zur nächsten Überschrift derselben oder einer höheren Ebene, übernehmen Kolumnentitel, Seitengeometrie, Texttypografie und Palette des Stils. So steht die Titelei eines Buchs (ein Vorwort in einer einzigen breiten Spalte mit römischen Seitenzahlen und blauen Bändern) in einem zweispaltigen, dezimal nummerierten Handbuch, ohne dass es eine zweite Konfiguration braucht.
+Die Eigenschaft `headingStyles` deklariert benannte Stile, die ein Dokument mit `# Title {style="<id>"}` auf eine Überschrift anwendet. Ein Stil leistet zweierlei. Er überschreibt Typografie, Gestaltung und Nummerierung der Überschriftenebene – jedes Feld eines Ebeneneintrags außer `level` (Schrift, Größe, Farbe, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate` …) –, und er bestimmt den **Abschnitt**, den die Überschrift eröffnet: Dessen Seiten, bis zur nächsten Überschrift derselben oder einer höheren Ebene (jeder Ebene mit `sectionEnd: 'heading'`), übernehmen Kolumnentitel, Seitengeometrie, Texttypografie und Palette des Stils. So steht die Titelei eines Buchs (ein Vorwort in einer einzigen breiten Spalte mit römischen Seitenzahlen und blauen Bändern) in einem zweispaltigen, dezimal nummerierten Handbuch, ohne dass es eine zweite Konfiguration braucht.
 
 ```ts
 const config: PostextConfig = {
@@ -1112,6 +1112,12 @@ const config: PostextConfig = {
       <td>Ob eine Überschrift der Ebene 1 in diesem Stil zum laufenden Kapitel wird: dem Kapitel, das <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> und ihre Formen <code>…AtTop</code> auf ihrer Seite und den folgenden nennen. <code>false</code> für eine Tafel, eine Karte oder einen Umschlag, die als H1 in einem Kapitel gesetzt sind: Die Kolumnentitel übergehen sie, auch auf ihrer eigenen Seite, und nennen weiter das Kapitel, das sie unterbricht; sie setzt auch kein Leitwort <code>h1</code>. Die Überschrift zählt weiterhin, wenn <code>numbered</code> gilt (ihre eigene Gestaltung liest ihr eigenes <code>{'{chapterNumber}'}</code>), und wird weiterhin von <code>:::toc</code> aufgeführt, wenn <code>toc</code> gilt. Mit zusätzlich <code>toc: false</code> erhält sie kein PDF-Lesezeichen: Die Tafel eines Kapitels auf der Seite vor dessen Auftakt überlässt die Lesezeichen den Kapiteln. Überschriften anderer Ebenen ignorieren die Option. Mit dem Standard drucken die Seiten nach einer Tafel deren Titel. Ein Vorwort oder ein Prolog mit <code>numbered: false</code> ist weiterhin ein eigenes Kapitel und behält den Standard. Die Option ändert nur, welches Kapitel die Platzhalter nennen: Der Stil eröffnet weiterhin einen eigenen Abschnitt, wie jeder Überschriftenstil, sodass die Seiten bis zur nächsten Überschrift der Ebene 1 die Kolumnentitel-Plätze, Ränder, Spalten, den Textstil und die Palette des Tafelstils übernehmen (die des Dokuments, wo der Stil keine setzt), nicht die eines gestalteten Abschnitts, den das unterbrochene Kapitel eröffnet hat. In einem Buch, das Kapitel für Kapitel umbrochen wird, gehen die Kolumnentitel nicht von einer Kapiteldatei in die nächste über, sodass eine Tafel, die eine Datei eröffnet, bis zur ersten Kapitelüberschrift der Datei leere Kapitelplatzhalter zeigt.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Wo der Abschnitt endet, den der Stil eröffnet. <code>'level'</code>: an der nächsten Überschrift derselben oder einer höheren Ebene. <code>'heading'</code>: an der nächsten Überschrift jeder Ebene. Ein Umschlag oder eine Titelseite, die als einzige Überschrift der Ebene 1 im Buch gesetzt ist, mit den Kapiteln auf Ebene 2, nimmt <code>'heading'</code>: Ihre Kolumnentitel (oft leer), Ränder, Spalten, ihr Textstil und ihre Palette enden am ersten Kapitel, statt über das ganze Buch zu laufen. Gestaltung, Nummerierung und laufendes Kapitel der Überschrift selbst ändern sich nicht. Siehe das Beispiel unter dieser Tabelle. Seit postext 1.45.</td>
+    </tr>
+    <tr>
       <td>Ebenenfelder</td>
       <td>wie in <code>headings.levels[]</code></td>
       <td>die Werte der Ebene</td>
@@ -1156,7 +1162,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Ein Abschnitt endet an der nächsten Überschrift derselben oder einer höheren Ebene: Ein ungestaltetes `#` nach einem gestalteten kehrt zu Kolumnentiteln und Geometrie des Dokuments zurück; ein gestaltetes eröffnet seinen eigenen Abschnitt. Seiten, die der Abschnitt für die Parität leer gelassen hat, gehören zu ihm, wie es bei Kapiteltiteln der Fall ist.
+Ein Abschnitt endet an der nächsten Überschrift derselben oder einer höheren Ebene: Ein ungestaltetes `#` nach einem gestalteten kehrt zu Kolumnentiteln und Geometrie des Dokuments zurück; ein gestaltetes eröffnet seinen eigenen Abschnitt. Seiten, die der Abschnitt für die Parität leer gelassen hat, gehören zu ihm, wie es bei Kapiteltiteln der Fall ist. Mit `sectionEnd: 'heading'` endet der Abschnitt an der nächsten Überschrift jeder Ebene, wie es ein Umschlag braucht, der als einzige Überschrift der Ebene 1 im Buch gesetzt ist:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# Der Leuchtturmwärter {style="cover"}
+
+## Die Laternenstube
+
+…
+```
+
+Die Seite des Umschlags druckt keine Kolumnentitel, und ab *Die Laternenstube* übernehmen die Seiten wieder Kopf- und Fußzeile des Dokuments. Mit dem Standardwert `'level'` dauerte der Abschnitt des Umschlags bis zur nächsten Überschrift der Ebene 1, die dieses Buch nicht hat, und keine seiner Seiten trüge einen Kolumnentitel.
 
 **Ein Seitenumbruch ersetzt nicht den eigenen Umbruch der Überschrift.** Ein Stil erbt das `breakBefore` seiner Ebene (der Standard für Ebene 1 ist `{ enabled: true, parity: 'always-odd' }`), und eine Überschrift wendet es an, wo immer sie steht, auch direkt nach einem `:::pagebreak`. Der Seitenumbruch eröffnet eine neue Seite, und die Überschrift verlangt dann trotzdem ihre Seite der Doppelseite. Mit `parity: 'odd'` folgt auf einen Umbruch, der auf einer linken Seite landet, eine Vakatseite, sodass die Überschrift auf der nächsten rechten Seite beginnt. Mit `'always-odd'` kommt auch die trennende Vakatseite hinzu, und der Seitenumbruch ändert nichts, da die Überschrift diese Seite ohnehin eröffnet hätte. Ein Stil, der auf der Seite beginnen soll, die ein manueller Umbruch eröffnet, etwa eine Inhaltsseite nach der Titelseite, schaltet seinen eigenen Umbruch aus:
 

@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>囲みの最終行の末尾に右端そろえで置く記号です。証明を<code>'∎'</code>や<code>'□'</code>で終えるときに使います。スペースを空けて収まれば最終行に、収まらなければ独立した行に置きます。番号のない別行立て数式で終わる囲みでは、その数式のタグとして置きます。数式が有効なときは、四角（∎ □ ■ ▪ ◻ ▫）をTeXのグリフで描くため、書体にその字形がなくても（Fontsourceのlatinファイルなど）印字されます。数式が無効なときは囲みの本文の書体で組まれます。</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>未設定</td>
+      <td>囲みのタイトルの下に内側の幅いっぱいに置く帯のデザイン。見出しのデザインと同じ要素（テキスト、画像、罫線、ボックス）で組み、囲み自身の内容を印字することもできます。<a href="#囲みのデザイン">囲みのデザイン</a>を参照。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 ページを締めくくる部分は「(MORE)」で終わり、次のページは「HAMLET (CONT'D)」で始まります。どちらもページ割りのための補助的な表示です。アクセシブルなPDFではアーティファクトになり、HTMLでは支援技術から隠されるので、タイトルは1度だけ読み上げられます。VDTでは、`artifact: true`の付いた`designOverlay`のテキストブロックです。
+
+### 囲みのデザイン
+
+`design`は、見出しのデザインの要素（テキスト、画像、罫線、ボックス。[幅と詳細デザイン](/ja/docs/configuration-headings#幅と詳細デザイン)を参照）を、囲みのタイトルの下の帯に、囲みの内側の幅いっぱいに組みます。囲みの内容は帯の後に続き、両者の間はタイトルと同じアキになります。段やページをまたいで分割された囲みは、最初の部分にだけ帯を描きます。postext 1.45 から。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>デザインは設定した時点で有効になります。<code>false</code>にすると、スタイルに残したまま帯を描きません。</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>帯に対して配置する要素。<code>anchor.to: 'container'</code>が帯で、タイトルの下から内側の幅いっぱいに広がります。囲みの中では<code>'page'</code>と<code>'bleed'</code>のアンカーは読まれません。</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>未設定</td>
+      <td>帯の最小の高さ。指定しなければ、帯は要素が届くところまでの高さになります。<code>reserve: false</code>の要素と、帯の中央や下端にアンカーした要素は数えません。</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>デザインが囲みの内容（<code>&#123;boxText&#125;</code>）を印字し、囲みは帯の下にその内容をもう一度組みません。デザインが内容を印字する囲みは分割されず、丸ごと次の段か次のページに移ります。</td>
+    </tr>
+  </tbody>
+</table>
+
+デザインのテキストは次のプレースホルダーを読みます。
+
+- `{titleText}`：囲みが印字するタイトル。フェンスの`title`、なければスタイルのタイトルです。
+- `{boxText}`：囲みの内容をプレーンテキストにしたもの。段落またはリスト項目を1行に1つずつ並べ、空のものは省きます。
+- `{boxText.<n>}`：`n`番目（1から数える）の段落またはリスト項目。囲みにそれだけの数がなければ空になります。
+- `{attr.<key>}`：フェンスに書いた属性。フェンス自身が読む属性のほかに、どんな名前でも使えます。`:::callout{type="card" kicker="メモ"}`なら`{attr.kicker}`は`メモ`になります。存在しない属性は何も印字しません。
+- 文書のプレースホルダー`{title}`、`{subtitle}`、`{author}`、`{publishDate}`。
+
+画像の`resourceId`にも同じプレースホルダーが使えるため、囲みごとに別のリソースを描けます。`{boxText}`を読むのは囲みのデザインだけで、見出しのデザインでは何も印字されません。
+
+`setsContent: true`にすると、同じ形の囲みすべてに1つのスタイルを使い、それぞれに別の言葉を入れられます。書き方練習帳では、練習の1行ごとに、なぞる言葉を内容とする囲みを置きます。デザインはその言葉を手本の書体で印字し、同じ名前の点線のリソースを描きます。
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Klee One', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+ねこ
+:::
+
+:::callout{type="practice"}
+つき
+:::
+```
+
+1行目は「ねこ」を印字してリソース`trace-ねこ`を描き、2行目は「つき」を印字して`trace-つき`を描きます。どちらの言葉も帯の下にもう一度組まれることはありません。`setsContent`が`false`のままでも、デザインは同じように`{boxText}`を読み、内容は帯の下に組まれます。
+
+VDTでは、帯の要素はタイトルと並んで、枠の`designOverlay`のデザインブロックになります。

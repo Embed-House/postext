@@ -1,5 +1,6 @@
 import { floatColumnCount } from './shared';
 import type {
+  CalloutDesignConfig,
   CalloutFixedConfig,
   CalloutNumberingConfig,
   CalloutStyleConfig,
@@ -7,6 +8,7 @@ import type {
   Dimension,
   ElementAnchor,
   ResolvedBodyTextConfig,
+  ResolvedCalloutDesignConfig,
   ResolvedCalloutNumberingConfig,
   ResolvedCalloutStyleConfig,
   ResolvedHeadingsConfig,
@@ -15,6 +17,7 @@ import type {
 import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
 import { defaultTableContinuationStrings } from './tableStyle';
 import { presentTag } from '../locale';
+import { resolveDesignSlot } from './headerFooter';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 const PT0: Dimension = { value: 0, unit: 'pt' };
@@ -280,6 +283,18 @@ function resolveCalloutStyleConfig(
     continuesMarkerItalic: partial.continuesMarkerItalic ?? d.continuesMarkerItalic,
     ...(partial.numbering ? { numbering: resolveCalloutNumbering(partial.numbering, partial.id) } : {}),
     endMark: partial.endMark ?? '',
+    ...(partial.design ? { design: resolveCalloutDesign(partial.design) } : {}),
+  };
+}
+
+/** A box style's design (#1014): on once set unless it says otherwise, its
+ *  text elements wrapping as a heading design's do. */
+function resolveCalloutDesign(raw: CalloutDesignConfig): ResolvedCalloutDesignConfig {
+  return {
+    enabled: raw.enabled ?? true,
+    slot: resolveDesignSlot(raw.slot ?? { elements: [] }, 'box'),
+    ...(raw.minHeight ? { minHeight: raw.minHeight } : {}),
+    setsContent: raw.setsContent === true,
   };
 }
 
@@ -566,6 +581,8 @@ export function stripCalloutStylesDefaults(
     }
     if (s.numbering) r.numbering = s.numbering;
     if (s.endMark) r.endMark = s.endMark;
+    // A design has no default to compare with: kept as written.
+    if (s.design) r.design = s.design;
     return r;
   });
   // The built-in default (a single bare `note` style) needs no persisting.

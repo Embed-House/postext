@@ -34,6 +34,8 @@ function goToBookPage(page: number): void {
 function slotWhere(payload: { slot: string; level?: number; styleId?: string; configPath?: string }): string {
   const { slot, level, styleId, configPath } = payload;
   if (configPath !== undefined) return configPath;
+  // A box style's design (#1014): the fence that picks the style.
+  if (slot === 'box') return styleId !== undefined ? `:::callout{type="${styleId}"} · calloutStyles[].design` : 'calloutStyles[].design';
   if (styleId !== undefined) return slot === 'heading' ? `{style="${styleId}"}` : `{style="${styleId}"} ${slot}`;
   return slot === 'heading' ? `H${level ?? ''}` : slot;
 }
@@ -761,7 +763,7 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `${where} · #${payload.elementId} — ${labels.warningsDesignTextClipAlwaysTruncatesDetail}`;
     }
     case 'designTextTruncated': {
-      const where = payload.slot === 'tocRow' ? 'toc.parts.design' : payload.slot;
+      const where = payload.slot === 'tocRow' ? 'toc.parts.design' : payload.slot === 'box' ? 'calloutStyles[].design' : payload.slot;
       const detail = payload.mode === 'clip' ? labels.warningsDesignTextTruncatedClipDetail : labels.warningsDesignTextTruncatedDetail;
       return `${where} · #${payload.elementId} — ${detail.replace('__text__', payload.text)}`;
     }

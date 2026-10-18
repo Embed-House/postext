@@ -763,6 +763,36 @@ function collectDesignWarnings(config: PostextConfig): Warning[] {
     }
   }
 
+  // Box styles' designs (#1014), drawn like a heading style's.
+  for (const s of boxStyleSlots(config)) {
+    const { cyclic, dangling } = detectAnchorIssues(s.elements);
+    const tag = `box-style-${s.styleId}`;
+    for (const id of cyclic) {
+      out.push({
+        id: `design-cyclic-${tag}-${id}`,
+        payload: { kind: 'designCyclicAnchor', slot: 'box', styleId: s.styleId, elementId: id },
+      });
+    }
+    for (const d of dangling) {
+      out.push({
+        id: `design-dangling-${tag}-${d.id}-${d.target}`,
+        payload: { kind: 'designDanglingAnchor', slot: 'box', styleId: s.styleId, elementId: d.id, referencedId: d.target },
+      });
+    }
+  }
+
+  return out;
+}
+
+/** The designs of the box styles (`calloutStyles[].design`, #1014) that are
+ *  drawn: set, not switched off, as the engine resolves them. A style that
+ *  inherits its design (`extends`) is checked once, in its parent. */
+function boxStyleSlots(config: PostextConfig): Array<{ styleId: string; elements: ResolvedDesignSlot['elements'] }> {
+  const out: ReturnType<typeof boxStyleSlots> = [];
+  for (const style of config.calloutStyles ?? []) {
+    if (!style || typeof style.id !== 'string' || !style.design || style.design.enabled === false) continue;
+    out.push({ styleId: style.id, elements: resolveDesignSlot(style.design.slot ?? { elements: [] }, 'box').elements });
+  }
   return out;
 }
 
@@ -1604,7 +1634,8 @@ function collectHeaderFooterWarnings(
     elements.forEach((el, elementIndex) => {
       if (el.kind !== 'text') return;
       for (const name of collectPlaceholderNames(el.content)) {
-        if (!isAllowedPlaceholder(name, slot)) {
+        // A box design reads the heading set plus its content (#1014).
+        if (!isAllowedPlaceholder(name, slot === 'box' ? 'heading' : slot)) {
           out.push({
             id: `hf-unknown-${tag}-${elementIndex}-${name}`,
             payload: { kind: 'headerFooterUnknownPlaceholder', slot, level, ...owner, elementIndex, name },
@@ -1626,6 +1657,7 @@ function collectHeaderFooterWarnings(
   check('part', resolveDesignSlot(config.parts?.design, 'part').elements);
   for (const s of partRowSlots(config)) check('part', s.elements, { configPath: s.configPath, tag: s.tag });
   for (const s of headingStyleSlots(config)) check(s.slot, s.elements, { styleId: s.styleId });
+  for (const s of boxStyleSlots(config)) check('box', s.elements, { styleId: s.styleId, tag: `box-style-${s.styleId}` });
 
   return out;
 }

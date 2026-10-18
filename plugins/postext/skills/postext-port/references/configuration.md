@@ -717,6 +717,9 @@ running heads, margins, layout, body typography, palette.
                                  it interrupts ({chapterTitle}, {chapterNumber}, {attr.*}, h1 marks);
                                  for a plate or a map set as an H1 inside a chapter; the style still
                                  opens its own section (slots, margins, palette) until the next H1
+  sectionEnd?: 'level' | 'heading' = 'level'   (postext ≥ 1.45) 'heading': the section ends at the next
+                                 heading of ANY level. A cover that is the book's only H1 over H2
+                                 chapters needs it, or its empty header/footer run over the whole book
   numberingTemplate?: string     replaces the level's template ('Appendix {1:A}'); counter stays the
                                  level's, so restart it with {startAt=1} on the first heading;
                                  '' prints no number anywhere (no H1 ordinal in the contents or
@@ -1180,7 +1183,15 @@ All em values = the callout body font size.
                                      placement = 'runIn' ("Theorem 2 (title)." opens the first paragraph) | 'title',
                                      bold = true, italic = false (absolute, whatever body.italic), suffix = '.' }
                                      a fence {#id} becomes a target printing "Theorem 2" (\ref → "2")
-  endMark = ''                       (postext ≥ 1.19) e.g. '□' / '∎' set flush right at the end of the box's last line (a proof) }
+  endMark = ''                       (postext ≥ 1.19) e.g. '□' / '∎' set flush right at the end of the box's last line (a proof)
+  design?                            (postext ≥ 1.45) { enabled = true, slot: DesignSlot (the elements of a heading design),
+                                     minHeight?, setsContent = false } — laid out in a band under the box title, across the
+                                     inner width (anchor.to: 'container' = the band); the box's content follows the band.
+                                     Texts read {titleText} (the box title), {boxText} (the content: each paragraph / list
+                                     item on a line), {boxText.<n>} (the n-th, from 1), {attr.key} (fence attributes) and
+                                     {title}/{author}…; image resourceId may use them ('trace-{boxText}'). setsContent: the
+                                     design prints the content and the box does not set it again (and never splits): one
+                                     style per shape, the words in each fence. First fragment only. }
 ```
 Gotchas: `body.textAlign` only `'left'|'justify'`. Callout body inherits body text colours,
 so boxes with coloured bold need `body.boldColor`. `span:'page'` in a multi-column layout cuts
@@ -1189,6 +1200,9 @@ span/placement/floatBarrier/snapToGrid. Ordered-list numbers inside a box come f
 `orderedLists` (callout `lists` has bullet fields only); `:::columns` groups share the box body. A box
 that splits cuts inside a group too (≥ 1.25, `layout.flowColumns`): snake groups fill their columns in
 turn, parallel ones (`breaks`) go on stream by stream; a nested box in a group stays whole.
+A box style with a `design` replaces "one heading level per exercise kind": write each exercise as
+`:::callout{type="row" title="Trace and write"}` / `cat` / `:::` and print `{boxText}` from the design
+(`setsContent: true`); the fence `title` stays in the Markdown, the style holds the shape only.
 
 ---------------------------------------------------------------------------------
 

@@ -179,7 +179,8 @@ export interface HeadingSectionPlan {
 
 /** Resolve the styled section of every content block: a styled heading
  *  opens one that runs until the next heading of the same or a higher
- *  level (which opens its own section, or none) or the next part divider —
+ *  level — of any level with `sectionEnd: 'heading'` (#1014) — (which
+ *  opens its own section, or none) or the next part divider —
  *  a part sits above every heading level, so front matter styled as a
  *  section never runs on into the parts that follow it. */
 export function planHeadingSections(
@@ -194,7 +195,7 @@ export function planHeadingSections(
     if (b.type === 'heading' && b.level) {
       const style = headingStyleOf(b, resolved);
       if (style) open = { style, level: b.level };
-      else if (open && b.level <= open.level) open = undefined;
+      else if (open && (b.level <= open.level || open.style.sectionEnd === 'heading')) open = undefined;
     } else if (b.type === 'containerStart' && b.containerName === 'part') {
       open = undefined;
     }
@@ -206,7 +207,7 @@ export function planHeadingSections(
 
 /** Per page, the styled section in effect: the most recent styled heading
  *  whose section has not been closed by a heading of the same or a higher
- *  level or by a part divider. Blank parity pages before a section's heading belong to it, like
+ *  level (any level with `sectionEnd: 'heading'`) or by a part divider. Blank parity pages before a section's heading belong to it, like
  *  chapter titles do (`computeChapterTitles`). */
 export function computeSectionStyles(
   blocks: readonly VDTBlock[],
@@ -231,7 +232,7 @@ export function computeSectionStyles(
       const style = b.headingStyleId ? resolved.headingStyles.find((s) => s.id === b.headingStyleId) : undefined;
       let changed = false;
       if (style) { current = { style, level: b.headingLevel }; changed = true; }
-      else if (current && b.headingLevel <= current.level) { current = undefined; changed = true; }
+      else if (current && (b.headingLevel <= current.level || current.style.sectionEnd === 'heading')) { current = undefined; changed = true; }
       if (changed) {
         byPage.set(b.pageIndex, current?.style);
         starts.push({ pageIndex: b.pageIndex, value: current?.style });

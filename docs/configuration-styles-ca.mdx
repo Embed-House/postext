@@ -1045,7 +1045,7 @@ const minimal = stripPartsDefaults(config.parts);
 ```
 ## Estils d'encapçalament
 
-La propietat `headingStyles` declara estils amb nom que un document aplica a un encapçalament amb `# Título {style="<id>"}`. Un estil fa dues coses. Sobreescriu la tipografia, el disseny i la numeració del nivell de l'encapçalament — qualsevol camp d'una entrada de nivell excepte `level` (font, cos, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — i governa la **secció** que obre l'encapçalament: les seves pàgines, fins al següent encapçalament del mateix nivell o superior, prenen les capçaleres, la geometria de pàgina, la tipografia de cos i la paleta de l'estil. Així els preliminars d'un llibre (un pròleg a una sola columna ampla, amb folis en romans i bandes blaves) conviuen en un manual a dues columnes i numeració decimal sense una segona configuració.
+La propietat `headingStyles` declara estils amb nom que un document aplica a un encapçalament amb `# Título {style="<id>"}`. Un estil fa dues coses. Sobreescriu la tipografia, el disseny i la numeració del nivell de l'encapçalament — qualsevol camp d'una entrada de nivell excepte `level` (font, cos, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — i governa la **secció** que obre l'encapçalament: les seves pàgines, fins al següent encapçalament del mateix nivell o superior (de qualsevol nivell amb `sectionEnd: 'heading'`), prenen les capçaleres, la geometria de pàgina, la tipografia de cos i la paleta de l'estil. Així els preliminars d'un llibre (un pròleg a una sola columna ampla, amb folis en romans i bandes blaves) conviuen en un manual a dues columnes i numeració decimal sense una segona configuració.
 
 ```ts
 const config: PostextConfig = {
@@ -1111,6 +1111,12 @@ const config: PostextConfig = {
       <td>Si un encapçalament de nivell 1 amb aquest estil passa a ser el capítol en curs: el que anomenen <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> i les seves formes <code>…AtTop</code> a la seva pàgina i a les següents. <code>false</code> per a una làmina, un mapa o una portadella que es compon com a H1 dins d'un capítol: les capçaleres se'l salten, també a la seva pròpia pàgina, i continuen anomenant el capítol que interromp; tampoc no posa paraula guia <code>h1</code>. L'encapçalament continua comptant si és <code>numbered</code> (el seu propi disseny llegeix el seu propi <code>{'{chapterNumber}'}</code>) i <code>:::toc</code> el continua llistant si és <code>toc</code>. Si a més porta <code>toc: false</code>, no té marcador al PDF: la làmina d'un capítol, a la pàgina que precedeix la seva obertura, deixa els marcadors del PDF als capítols. Els encapçalaments d'altres nivells no el llegeixen. Amb el valor per defecte, les pàgines que segueixen una làmina imprimeixen el títol de la làmina. Un prefaci o un pròleg amb <code>numbered: false</code> continua sent un capítol per si mateix i conserva el valor per defecte. L'opció només canvia el capítol que anomenen els marcadors: l'estil continua obrint una secció pròpia, com qualsevol estil d'encapçalament, de manera que fins al següent encapçalament de nivell 1 les pàgines prenen les ranures de capçalera, els marges, les columnes, l'estil del cos i la paleta de l'estil de la làmina (els del document on l'estil no fixa res), no els d'una secció amb estil que hagués obert el capítol interromput. En un llibre compost capítol a capítol, les capçaleres no passen d'un fitxer de capítol al següent, així que una làmina que obre un fitxer deixa buits els marcadors de capítol fins al primer encapçalament de capítol del fitxer.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>On acaba la secció que obre l'estil. <code>'level'</code>: al següent encapçalament del mateix nivell o superior. <code>'heading'</code>: al següent encapçalament de qualsevol nivell. Una portada composta com a únic encapçalament de nivell 1 del llibre, amb els capítols al nivell 2, porta <code>'heading'</code>: les seves capçaleres (sovint buides), marges, columnes, estil del cos i paleta s'aturen al primer capítol en lloc d'estendre's a tot el llibre. El disseny, la numeració i el capítol en curs del mateix encapçalament no canvien. Vegeu l'exemple sota aquesta taula. Des de postext 1.45.</td>
+    </tr>
+    <tr>
       <td>camps de nivell</td>
       <td>com a <code>headings.levels[]</code></td>
       <td>els valors del nivell</td>
@@ -1155,7 +1161,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Una secció es tanca al següent encapçalament del mateix nivell o superior: un `#` sense estil després d'un amb estil torna a les capçaleres i la geometria del document; un amb estil obre la seva pròpia secció. Les pàgines que la secció deixa en blanc per paritat li pertanyen, com passa amb els títols de capítol.
+Una secció es tanca al següent encapçalament del mateix nivell o superior: un `#` sense estil després d'un amb estil torna a les capçaleres i la geometria del document; un amb estil obre la seva pròpia secció. Les pàgines que la secció deixa en blanc per paritat li pertanyen, com passa amb els títols de capítol. Amb `sectionEnd: 'heading'` la secció es tanca al següent encapçalament de qualsevol nivell, que és el que necessita una portada composta com a únic encapçalament de nivell 1 del llibre:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# El faroner {style="cover"}
+
+## La sala del llum
+
+…
+```
+
+La pàgina de la portada no imprimeix capçaleres, i des de *La sala del llum* les pàgines tornen a prendre la capçalera i el peu del document. Amb el valor per defecte, `'level'`, la secció de la portada duraria fins al següent encapçalament de nivell 1, que aquest llibre no té, i cap de les seves pàgines no portaria capçalera.
 
 **Un salt de pàgina no substitueix el salt del mateix encapçalament.** Un estil hereta el `breakBefore` del seu nivell (el del nivell 1 és, per defecte, `{ enabled: true, parity: 'always-odd' }`), i l'encapçalament l'aplica sigui on sigui, també just després d'un `:::pagebreak`. El salt de pàgina obre una pàgina nova, i l'encapçalament demana després, igualment, el seu costat del plec. Amb `parity: 'odd'`, un salt que cau en una pàgina parella va seguit d'una pàgina en blanc, de manera que l'encapçalament obre a la següent senar. Amb `'always-odd'` s'hi afegeix a més la pàgina separadora, i el salt de pàgina no canvia res, perquè l'encapçalament hauria obert aquesta pàgina de totes maneres. Un estil que ha de començar a la pàgina que obre un salt manual, com un índex darrere de la portada, desactiva el seu propi salt:
 

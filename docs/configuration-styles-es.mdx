@@ -1047,7 +1047,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Estilos de encabezado
 
-La propiedad `headingStyles` declara estilos con nombre que un documento aplica a un encabezado con `# Título {style="<id>"}`. Un estilo hace dos cosas. Sobrescribe la tipografía, el diseño y la numeración del nivel del encabezado — cualquier campo de una entrada de nivel salvo `level` (fuente, cuerpo, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — y gobierna la **sección** que el encabezado abre: sus páginas, hasta el siguiente encabezado del mismo nivel o superior, toman las cabeceras, la geometría de página, la tipografía de cuerpo y la paleta del estilo. Así los preliminares de un libro (un prólogo a una sola columna ancha, con folios en romanos y bandas azules) conviven en un manual a dos columnas y numeración decimal sin una segunda configuración.
+La propiedad `headingStyles` declara estilos con nombre que un documento aplica a un encabezado con `# Título {style="<id>"}`. Un estilo hace dos cosas. Sobrescribe la tipografía, el diseño y la numeración del nivel del encabezado — cualquier campo de una entrada de nivel salvo `level` (fuente, cuerpo, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — y gobierna la **sección** que el encabezado abre: sus páginas, hasta el siguiente encabezado del mismo nivel o superior (de cualquier nivel con `sectionEnd: 'heading'`), toman las cabeceras, la geometría de página, la tipografía de cuerpo y la paleta del estilo. Así los preliminares de un libro (un prólogo a una sola columna ancha, con folios en romanos y bandas azules) conviven en un manual a dos columnas y numeración decimal sin una segunda configuración.
 
 ```ts
 const config: PostextConfig = {
@@ -1113,6 +1113,12 @@ const config: PostextConfig = {
       <td>Si un encabezado de nivel 1 con este estilo pasa a ser el capítulo en curso: el que nombran <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> y sus formas <code>…AtTop</code> en su página y en las siguientes. <code>false</code> para una lámina, un mapa o una portadilla que se compone como H1 dentro de un capítulo: las cabeceras se lo saltan, también en su propia página, y siguen nombrando el capítulo que interrumpe; tampoco pone palabra guía <code>h1</code>. El encabezado sigue contando si es <code>numbered</code> (su propio diseño lee su propio <code>{'{chapterNumber}'}</code>) y <code>:::toc</code> lo sigue listando si es <code>toc</code>. Si además lleva <code>toc: false</code>, no tiene marcador en el PDF: la lámina de un capítulo, en la página que precede a su apertura, deja los marcadores del PDF a los capítulos. Los encabezados de otros niveles no lo leen. Con el valor por defecto, las páginas que siguen a una lámina imprimen el título de la lámina. Un prefacio o un prólogo con <code>numbered: false</code> sigue siendo un capítulo por sí mismo y conserva el valor por defecto. La opción solo cambia el capítulo que nombran los marcadores: el estilo sigue abriendo una sección propia, como cualquier estilo de encabezado, así que hasta el siguiente encabezado de nivel 1 las páginas toman las ranuras de cabecera, los márgenes, las columnas, el estilo del cuerpo y la paleta del estilo de la lámina (los del documento donde el estilo no fija nada), no los de una sección con estilo que hubiera abierto el capítulo interrumpido. En un libro compuesto capítulo a capítulo, las cabeceras no pasan de un archivo de capítulo al siguiente, así que una lámina que abre un archivo deja vacíos los marcadores de capítulo hasta el primer encabezado de capítulo del archivo.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Dónde termina la sección que abre el estilo. <code>'level'</code>: en el siguiente encabezado del mismo nivel o superior. <code>'heading'</code>: en el siguiente encabezado de cualquier nivel. Una portada compuesta como único encabezado de nivel 1 del libro, con los capítulos en el nivel 2, lleva <code>'heading'</code>: sus cabeceras (a menudo vacías), márgenes, columnas, estilo del cuerpo y paleta se detienen en el primer capítulo en lugar de extenderse a todo el libro. El diseño, la numeración y el capítulo en curso del propio encabezado no cambian. Véase el ejemplo bajo esta tabla. Desde postext 1.45.</td>
+    </tr>
+    <tr>
       <td>campos de nivel</td>
       <td>como en <code>headings.levels[]</code></td>
       <td>los valores del nivel</td>
@@ -1157,7 +1163,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Una sección se cierra en el siguiente encabezado del mismo nivel o superior: un `#` sin estilo tras uno con estilo vuelve a las cabeceras y la geometría del documento; uno con estilo abre su propia sección. Las páginas que la sección deja en blanco por paridad le pertenecen, como ocurre con los títulos de capítulo.
+Una sección se cierra en el siguiente encabezado del mismo nivel o superior: un `#` sin estilo tras uno con estilo vuelve a las cabeceras y la geometría del documento; uno con estilo abre su propia sección. Las páginas que la sección deja en blanco por paridad le pertenecen, como ocurre con los títulos de capítulo. Con `sectionEnd: 'heading'` la sección se cierra en el siguiente encabezado de cualquier nivel, que es lo que necesita una portada compuesta como único encabezado de nivel 1 del libro:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# El farero {style="cover"}
+
+## La sala de la lámpara
+
+…
+```
+
+La página de la portada no imprime cabeceras, y desde *La sala de la lámpara* las páginas vuelven a tomar la cabecera y el pie del documento. Con el valor por defecto, `'level'`, la sección de la portada duraría hasta el siguiente encabezado de nivel 1, que este libro no tiene, y ninguna de sus páginas llevaría cabecera.
 
 **Un salto de página no sustituye al salto del propio encabezado.** Un estilo hereda el `breakBefore` de su nivel (el del nivel 1 es, por defecto, `{ enabled: true, parity: 'always-odd' }`), y el encabezado lo aplica esté donde esté, también justo después de un `:::pagebreak`. El salto de página abre una página nueva, y el encabezado pide después, igualmente, su lado del pliego. Con `parity: 'odd'`, un salto que cae en una página par va seguido de una página en blanco, de modo que el encabezado abre en la siguiente impar. Con `'always-odd'` se añade además la página separadora, y el salto de página no cambia nada, porque el encabezado habría abierto esa página de todos modos. Un estilo que debe empezar en la página que abre un salto manual, como un índice detrás de la portada, desactiva su propio salto:
 

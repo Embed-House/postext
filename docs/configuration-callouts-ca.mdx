@@ -278,6 +278,12 @@ El vidre continua calent una hora després d'apagar la flama.
       <td><code>''</code></td>
       <td>Una marca alineada a la dreta al final de l'última línia de la caixa, com el <code>'∎'</code> o el <code>'□'</code> amb què acaba una demostració: en aquesta línia si hi cap després d'un espai i, si no, en una línia pròpia. Una caixa que acaba en una fórmula en bloc sense número la hi posa com a etiqueta de la fórmula. Amb les matemàtiques actives, els quadrats (∎ □ ■ ▪ ◻ ▫) es dibuixen amb els glifs de TeX, de manera que surten encara que la font no els tingui (els fitxers latin de Fontsource); amb les matemàtiques desactivades es componen en la font del cos del requadre.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>sense definir</td>
+      <td>Un disseny en una banda sota el títol del requadre, a tota l'amplada interior: els elements d'un disseny d'encapçalament (textos, imatges, filets, caixes), que poden imprimir el contingut del mateix requadre. Vegeu <a href="#dissenys-de-requadre">Dissenys de requadre</a>.</td>
+    </tr>
   </tbody>
 </table>
 ### Estils basats en un altre
@@ -435,3 +441,89 @@ Un parlament prou llarg per passar del peu de la pàgina…
 ```
 
 La part que tanca la pàgina acaba amb «(SEGUEIX)» i la pàgina següent comença amb «HAMLET (CONT.)». Totes dues són elements de paginació: en un PDF accessible són artefactes i a l'HTML s'amaguen a les tecnologies de suport, de manera que el títol es llegeix una sola vegada. Al VDT són blocs de text de `designOverlay` marcats amb `artifact: true`.
+
+### Dissenys de requadre
+
+`design` col·loca els elements d'un disseny d'encapçalament (textos, imatges, filets, caixes; vegeu [Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)) en una banda sota el títol del requadre, a tota la seva amplada interior. El contingut del requadre segueix la banda, amb la separació del títol entre tots dos. Un requadre partit entre columnes o pàgines dibuixa la banda només a la primera part. Des de postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un disseny s'activa tan bon punt es fixa; <code>false</code> el desa a l'estil sense dibuixar la banda.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Els elements, col·locats respecte a la banda: <code>anchor.to: 'container'</code> és la banda, des de sota el títol i a tota l'amplada interior. Els ancoratges <code>'page'</code> i <code>'bleed'</code> no es llegeixen en un requadre.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>sense definir</td>
+      <td>L'alçada mínima de la banda. Sense aquest valor, la banda fa el que abasten els seus elements; els que porten <code>reserve: false</code> i els ancorats al centre o al peu de la banda no compten.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El disseny imprimeix el contingut del requadre (<code>&#123;boxText&#125;</code>) i el requadre no el torna a compondre sota la banda. Un requadre el disseny del qual fixa el contingut no es parteix mai: passa sencer a la columna o la pàgina següent.</td>
+    </tr>
+  </tbody>
+</table>
+
+Els textos del disseny llegeixen aquests marcadors:
+
+- `{titleText}`: el títol que imprimeix el requadre, el `title` de la tanca o, si no n'hi ha, el de l'estil.
+- `{boxText}`: el contingut del requadre com a text pla, un paràgraf o element de llista per línia. Els buits s'ometen.
+- `{boxText.<n>}`: el paràgraf o element de llista número `n`, comptant des d'1; buit si el requadre en té menys.
+- `{attr.<clave>}`: un atribut escrit a la tanca. Serveix qualsevol nom, a més dels que llegeix la mateixa tanca: `:::callout{type="card" kicker="Nota"}` dona a `{attr.kicker}` el valor `Nota`. Un atribut absent no imprimeix res.
+- els marcadors del document `{title}`, `{subtitle}`, `{author}` i `{publishDate}`.
+
+El `resourceId` d'una imatge admet els mateixos marcadors, de manera que cada requadre pot dibuixar un recurs propi. Només un disseny de requadre llegeix `{boxText}`; un disseny d'encapçalament no hi imprimeix res.
+
+Amb `setsContent: true` un sol estil serveix per a tots els requadres de la mateixa forma, cadascun amb les seves paraules. En un quadern de cal·ligrafia cada ratlla de pràctica és un requadre el contingut del qual és la paraula que cal copiar: el disseny imprimeix la paraula en una lletra escolar i dibuixa el recurs puntejat que porta el seu nom.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite ES', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+sol
+:::
+
+:::callout{type="practice"}
+pa
+:::
+```
+
+La primera ratlla imprimeix *sol* i dibuixa el recurs `trace-sol`; la segona imprimeix *pa* i dibuixa `trace-pa`, i cap de les dues paraules no es torna a compondre sota la seva banda. Amb `setsContent` a `false` el disseny llegeix `{boxText}` igualment, i el contingut es compon sota la banda.
+
+Al VDT els elements de la banda són blocs de disseny al `designOverlay` del marc, al costat del títol.

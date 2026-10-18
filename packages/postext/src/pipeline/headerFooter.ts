@@ -4,7 +4,7 @@ import type { PartPageInfo } from './placeholders';
 import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
 import { recolorLineNumbers } from './lineNumbers';
 import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
-import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, DocumentMetadata, Resource, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
+import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
 import {
   createBoundingBox,
   flowRectToPage,
@@ -363,11 +363,27 @@ export function measureHeadingDesign(
   origin?: { x: number; y: number },
   resourceById?: ReadonlyMap<string, Resource>,
 ): HeadingDesignMeasure {
-  if (!level.advancedDesign.enabled) return { height: 0, textFloor: 0 };
-  const minHeightPx = level.advancedDesign.minHeight
-    ? dimensionToPx(level.advancedDesign.minHeight, dpi)
+  return measureDesignBand(level.advancedDesign, heading, width, dpi, metadata, pageIndex, frames, origin, resourceById);
+}
+
+/** {@link measureHeadingDesign} for any design laid out in a band: a
+ *  heading's, or a box style's (#1014). */
+function measureDesignBand(
+  design: { enabled: boolean; slot: ResolvedDesignSlot; minHeight?: Dimension },
+  heading: HeadingPlaceholderInfo,
+  width: number,
+  dpi: number,
+  metadata: DocumentMetadata,
+  pageIndex: number,
+  frames?: DesignFrames,
+  origin?: { x: number; y: number },
+  resourceById?: ReadonlyMap<string, Resource>,
+): HeadingDesignMeasure {
+  if (!design.enabled) return { height: 0, textFloor: 0 };
+  const minHeightPx = design.minHeight
+    ? dimensionToPx(design.minHeight, dpi)
     : 0;
-  if (level.advancedDesign.slot.elements.length === 0) return { height: minHeightPx, textFloor: 0 };
+  if (design.slot.elements.length === 0) return { height: minHeightPx, textFloor: 0 };
   const placeholders = headingPlaceholders(heading, metadata, pageIndex);
   let stubFrames: DesignFrames | undefined;
   if (frames) {
@@ -377,7 +393,7 @@ export function measureHeadingDesign(
     stubFrames = { page: shift(frames.page), bleed: shift(frames.bleed), ...(frames.upright ? { upright: true } : {}) };
   }
   const layoutAt = (height: number) => layoutDesignSlot(
-    level.advancedDesign.slot,
+    design.slot,
     { container: { x: 0, y: 0, width, height }, dpi, placeholders, frames: stubFrames, resourceById },
     pageIndex,
   );
@@ -388,7 +404,7 @@ export function measureHeadingDesign(
   const taller = result.primitives.some((p) => p.y + p.height > MEASURE_CONTAINER_HEIGHT / 4)
     ? layoutAt(2 * MEASURE_CONTAINER_HEIGHT)
     : result;
-  const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
+  const excluded = new Set(design.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
   let bottom = 0;
   let claimedBy: string | undefined;
   let textFloor = 0;
@@ -419,6 +435,45 @@ export function measureHeadingDesign(
   });
   const byMinHeight = minHeightPx > bottom;
   return { height: Math.max(bottom, minHeightPx), textFloor, ...(byMinHeight ? { byMinHeight: true as const } : claimedBy !== undefined ? { claimedBy } : {}) };
+}
+
+/** The band a box style's design (#1014) takes `width` wide: as tall as
+ *  its elements reach, or its `minHeight` (see {@link measureHeadingDesign};
+ *  a text riding on the band's foot keeps it as tall as it needs). `info`
+ *  is the box's title and the fence's attributes. */
+export function measureBoxDesign(
+  design: ResolvedCalloutDesignConfig,
+  info: { titleText: string; attrs: Readonly<Record<string, string>>; boxText: readonly string[] },
+  width: number,
+  dpi: number,
+  metadata: DocumentMetadata,
+  resourceById?: ReadonlyMap<string, Resource>,
+): number {
+  const heading: HeadingPlaceholderInfo = { titleText: info.titleText, formattedNumber: '', attrs: { ...info.attrs }, boxText: info.boxText };
+  const m = measureDesignBand(design, heading, width, dpi, metadata, 0, undefined, undefined, resourceById);
+  return Math.max(m.height, m.textFloor);
+}
+
+/** A box style's design (#1014) laid out against its band, in the box's
+ *  coordinates: `{titleText}` is the box title, `{attr.<key>}` the fence's
+ *  attributes. Its texts are cut to fit as a heading design's are, flagged
+ *  as a box's (`slot: 'box'`). */
+export function layoutBoxDesign(
+  design: ResolvedCalloutDesignConfig,
+  info: { titleText: string; attrs: Readonly<Record<string, string>>; boxText: readonly string[] },
+  band: { x: number; y: number; width: number; height: number },
+  dpi: number,
+  metadata: DocumentMetadata,
+  extras: Pick<SlotLayoutExtras, 'resourceById' | 'direction' | 'mirrored' | 'arabicNumbers'>,
+): VDTDesignBlock[] {
+  const heading: HeadingPlaceholderInfo = { titleText: info.titleText, formattedNumber: '', attrs: { ...info.attrs }, boxText: info.boxText };
+  const slot = layoutSlotToVdt(design.slot, band, 0, headingPlaceholders(heading, metadata, 0), dpi, {
+    ...extras,
+    attrs: { ...info.attrs },
+    metadata: metadata as Record<string, unknown>,
+    slot: 'box',
+  });
+  return slot?.blocks ?? [];
 }
 
 /** Optional page-level inputs for `layoutSlotToVdt`. */

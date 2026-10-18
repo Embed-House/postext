@@ -231,7 +231,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : null}
-              {slotKey === 'heading' && (
+              {(slotKey === 'heading' || slotKey === 'box') && (
                 <ToggleSwitch
                   label={labels.headerFooterElementReserve}
                   checked={rawEl.reserve !== false}

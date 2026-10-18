@@ -3579,6 +3579,49 @@ export interface CalloutStyleConfig {
    *  line when there is room for it after a space, else on a line of its
    *  own. Default `''` (none). */
   endMark?: string;
+  /** A design laid out in the box (#1014): the elements of a heading
+   *  design (texts, pictures, rules, boxes) in a band under the box title,
+   *  across the box's inner width; the box's own content follows the band.
+   *  Texts read `{titleText}` (the box title), `{boxText}` and
+   *  `{boxText.<n>}` (the box's content, see `setsContent`), `{attr.<key>}`
+   *  (the fence's attributes: `:::callout{type="row" picture="cat"}`) and
+   *  the document placeholders (`{title}`, `{author}`…); a picture's
+   *  `resourceId` may read them too. The band is as tall as the
+   *  elements reach, or `minHeight`. A box split across columns or pages
+   *  draws it on its first fragment only. Unset or `enabled: false`: no
+   *  band. */
+  design?: CalloutDesignConfig;
+}
+
+/** See {@link CalloutStyleConfig.design}. */
+export interface CalloutDesignConfig {
+  /** Default `true` once a design is set. */
+  enabled?: boolean;
+  /** The elements, laid out against the band: `anchor.to: 'container'` is
+   *  the band (the box's inner width, from under the title), `'page'` and
+   *  `'bleed'` are not read in a box. */
+  slot: DesignSlot;
+  /** Least height of the band. It is as tall as its elements reach
+   *  otherwise; elements with `reserve: false`, and those anchored to the
+   *  band's middle or foot, do not count. */
+  minHeight?: Dimension;
+  /** The design sets the box's content itself: its texts print it with
+   *  `{boxText}` (all of it, one paragraph or list item per line) and
+   *  `{boxText.<n>}` (the `n`-th, from 1), and the content is not laid out
+   *  again under the band. One style then serves every box of the same
+   *  shape, each with its own words: a handwriting row whose word is the
+   *  box's content, `:::callout{type="practice"}` / `cat` / `:::`. A
+   *  picture's `resourceId` may read them too (`trace-{boxText}`). The box
+   *  then never splits. Default `false`: the design reads `{boxText}` all
+   *  the same, and the content follows the band. */
+  setsContent?: boolean;
+}
+
+export interface ResolvedCalloutDesignConfig {
+  enabled: boolean;
+  slot: ResolvedDesignSlot;
+  minHeight?: Dimension;
+  setsContent: boolean;
 }
 
 /** How the boxes of a callout style are counted (#530): the counter they
@@ -3753,6 +3796,8 @@ export interface ResolvedCalloutStyleConfig {
   /** Absent when the style counts nothing. */
   numbering?: ResolvedCalloutNumberingConfig;
   endMark: string;
+  /** See {@link CalloutStyleConfig.design}; absent without one. */
+  design?: ResolvedCalloutDesignConfig;
 }
 
 /**
@@ -6817,6 +6862,9 @@ export interface ResolvedPartsConfig {
 export type SectionBodyStyleConfig = PartsBodyStyleConfig;
 export type ResolvedSectionBodyStyleConfig = ResolvedPartsBodyStyleConfig;
 
+/** See {@link HeadingStyleConfig.sectionEnd}. */
+export type HeadingStyleSectionEnd = 'level' | 'heading';
+
 export interface HeadingStyleConfig extends Omit<HeadingLevelConfig, 'level' | 'numberingTemplate'> {
   /** Identifier referenced from `{style="…"}` on a heading line. */
   id: string;
@@ -6847,6 +6895,14 @@ export interface HeadingStyleConfig extends Omit<HeadingLevelConfig, 'level' | '
    *  and palette, or the document's where it sets none), as every heading
    *  style does. No effect on headings of other levels. Default `true`. */
   runningChapter?: boolean;
+  /** Where the section the style opens ends (#1014): `'level'` at the
+   *  next heading of the same or a higher level, `'heading'` at the next
+   *  heading of any level. A cover or a title page set as the book's only
+   *  level-1 heading, with its chapters at level 2, takes `'heading'`: its
+   *  empty running heads, margins and palette stop at the first chapter
+   *  instead of running over the whole book. The heading's own design,
+   *  numbering and running chapter are not affected. Default `'level'`. */
+  sectionEnd?: HeadingStyleSectionEnd;
   /** Running heads of the section's pages, replacing the document's
    *  `header` / `footer` there (element `pages` / `parity` filters still
    *  apply). Unset = the document's own. */
@@ -6910,6 +6966,8 @@ export interface ResolvedHeadingStyleConfig {
   toc: boolean;
   /** See {@link HeadingStyleConfig.runningChapter}. */
   runningChapter: boolean;
+  /** See {@link HeadingStyleConfig.sectionEnd}. */
+  sectionEnd: HeadingStyleSectionEnd;
   /** Level fields the style sets; merged over the heading's level config. */
   overrides: ResolvedHeadingStyleOverrides;
   /** The `breakBefore` fields the style sets, as written: merged field by

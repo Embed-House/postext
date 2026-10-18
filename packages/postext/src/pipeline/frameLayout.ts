@@ -19,6 +19,8 @@ import { isMarkerBlock } from './buildHelpers';
 import {
   isDesignedBoxHeading,
   layoutCallout,
+  boxTextOf,
+  type BoxDesign,
   type BoxHeadingDesign,
   type CalloutLayoutInput,
   type CalloutLayoutResult,
@@ -60,6 +62,8 @@ export interface FrameLayoutPass {
   /** The room a heading's own design takes in a box (#906; see
    *  `CalloutLayoutInput.headingDesign`). */
   headingDesign?: BoxHeadingDesign;
+  /** A box style's design (#1014; see `CalloutLayoutInput.boxDesign`). */
+  boxDesign?: BoxDesign;
   /** The measurements of one layout of a composed page (#953), dropped
    *  with it. */
   measureMemo?: MeasureMemo;
@@ -109,7 +113,13 @@ export const makeCalloutLayouter = (
   style: ResolvedCalloutStyleConfig,
 ): CalloutLayouter => {
   const contentBlocks = pass.contentBlocks;
-  const children = contentBlocks.slice(startIdx + 1, plan.endIdx);
+  const inside = contentBlocks.slice(startIdx + 1, plan.endIdx);
+  // A box whose design sets its content (#1014) has nothing to lay out or
+  // cut: its design prints the content, read whole here.
+  const setsContent = !!pass.boxDesign && !!style.design?.enabled && style.design.setsContent
+    && style.design.slot.elements.length > 0;
+  const children = setsContent ? [] : inside;
+  const boxText = boxTextOf(inside);
   const realAt: number[] = [];
   children.forEach((c, k) => {
     if ((c.type !== 'directive' || (c.directiveName === 'strip' && c.comic)) && !isMarkerBlock(c)) realAt.push(k);
@@ -176,6 +186,7 @@ export const makeCalloutLayouter = (
       mirrored,
       stripBlock: pass.stripBlock,
       ...(pass.headingDesign ? { headingDesign: pass.headingDesign } : {}),
+      ...(pass.boxDesign ? { boxDesign: pass.boxDesign, boxText } : {}),
       ...(pass.measureMemo ? { measureMemo: pass.measureMemo } : {}),
       ...frame,
     });

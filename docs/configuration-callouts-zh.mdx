@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>在框最后一行末尾右对齐排出的记号，就像证明以<code>'∎'</code>或<code>'□'</code>结束：空一格后放得下时排在最后一行上，否则单独占一行。以不带编号的独立公式结束的框，把它作为该公式的标签排出。启用数学公式时，方块（∎ □ ■ ▪ ◻ ▫）用TeX自带的字形绘制，因此即使字体中没有这些字符（如Fontsource的latin文件）也能印出；关闭数学公式时，则用框正文的字体排出。</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>未设置</td>
+      <td>框标题下方横跨整个内宽的一条带中的设计：由标题设计的元素（文本、图片、线条、方框）组成，可以印出框本身的内容。见<a href="#框的设计">框的设计</a>。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 结束这一页的部分以“(MORE)”收尾，下一页以“HAMLET (CONT'D)”开始。两者都是分页附属物：在无障碍PDF中它们是artifact，在HTML中对辅助技术隐藏，所以标题只被朗读一次。在VDT中，它们是标记为`artifact: true`的`designOverlay`文本块。
+
+### 框的设计
+
+`design`把标题设计的元素（文本、图片、线条、方框；见[通栏与高级设计](/zh/docs/configuration-headings#通栏与高级设计)）排在框标题下方的一条带中，横跨框的整个内宽。框的内容接在带之后，两者之间留出标题的间距。跨栏或跨页拆分的框只在第一部分画出这条带。自 postext 1.45 起。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>设计一经设置即生效；<code>false</code>把它留在样式中，但不画出这条带。</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>相对于带排布的元素：<code>anchor.to: 'container'</code>就是这条带，从标题下方开始，横跨整个内宽。框内不读取<code>'page'</code>和<code>'bleed'</code>锚点。</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>未设置</td>
+      <td>带的最小高度。不设时，带的高度取其元素所及之处；<code>reserve: false</code>的元素，以及锚定在带中部或底部的元素，不计在内。</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>由设计印出框的内容（<code>&#123;boxText&#125;</code>），框不在带下方再排一次。设计印出内容的框从不拆分：整框移到下一栏或下一页。</td>
+    </tr>
+  </tbody>
+</table>
+
+设计中的文本读取以下占位符：
+
+- `{titleText}`：框所印的标题，即围栏的`title`，没有时取样式的标题。
+- `{boxText}`：框内容的纯文本，每个段落或列表项占一行，空的略去。
+- `{boxText.<n>}`：第`n`个段落或列表项，从1数起；框中不足此数时为空。
+- `{attr.<key>}`：写在围栏上的属性。除了围栏本身读取的属性，任何名称都可以：`:::callout{type="card" kicker="提示"}`使`{attr.kicker}`的值为`提示`。缺少的属性不印任何内容。
+- 文档的占位符`{title}`、`{subtitle}`、`{author}`和`{publishDate}`。
+
+图片的`resourceId`接受同样的占位符，因此每个框可以画出各自的资源。只有框的设计读取`{boxText}`；标题设计在此处不印任何内容。
+
+设`setsContent: true`后，一个样式就能用于所有同样形状的框，每个框带着自己的字词。在习字册中，每一行练习都是一个框，框的内容就是要描写的字：设计用习字字体印出这个字，并画出以它命名的虚线资源。
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'LXGW WenKai', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+猫
+:::
+
+:::callout{type="practice"}
+月
+:::
+```
+
+第一行印出“猫”并画出资源`trace-猫`，第二行印出“月”并画出`trace-月`，两个字都不会在带下方再排一次。`setsContent`保持`false`时，设计照样读取`{boxText}`，内容排在带下方。
+
+在VDT中，带的元素是框架`designOverlay`上的设计块，与标题并列。

@@ -1046,7 +1046,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## 标题样式
 
-`headingStyles`属性声明具名样式，文档用`# Title {style="<id>"}`把它应用到标题上。样式做两件事。一是覆盖标题所在级别的字体样式、设计和编号，即级别条目中除`level`之外的所有字段（字体、字号、颜色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）；二是管理标题开启的**区段**：从这个标题到下一个同级或更高级标题之间的页面，采用该样式的书眉、页面几何、正文字体样式和调色板。一本书的前置部分（序言排成一个宽栏，罗马数字页码，蓝色色带）就是这样放进一本双栏、十进制编号的手册里，而无须第二套配置。
+`headingStyles`属性声明具名样式，文档用`# Title {style="<id>"}`把它应用到标题上。样式做两件事。一是覆盖标题所在级别的字体样式、设计和编号，即级别条目中除`level`之外的所有字段（字体、字号、颜色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）；二是管理标题开启的**区段**：从这个标题到下一个同级或更高级标题（设了`sectionEnd: 'heading'`时为下一个任意级别的标题）之间的页面，采用该样式的书眉、页面几何、正文字体样式和调色板。一本书的前置部分（序言排成一个宽栏，罗马数字页码，蓝色色带）就是这样放进一本双栏、十进制编号的手册里，而无须第二套配置。
 
 ```ts
 const config: PostextConfig = {
@@ -1112,6 +1112,12 @@ const config: PostextConfig = {
       <td>这种样式的一级标题是否成为当前章，即在它所在页及之后各页上，<code>{'{chapterTitle}'}</code>、<code>{'{chapterNumber}'}</code>、<code>{'{attr.<key>}'}</code>及其<code>…AtTop</code>形式所指的那一章。章内以一级标题排的图版、地图或封面设为<code>false</code>：书眉会越过它，连它自己那一页也是，继续显示被它打断的那一章；它也不设置<code>h1</code>检索词。<code>numbered</code>时它仍然计数（它自己的设计读取它自己的<code>{'{chapterNumber}'}</code>），<code>toc</code>时仍然列入<code>:::toc</code>。若同时设了<code>toc: false</code>，它不生成PDF书签：章首页前一页的图版把书签留给各章。其他级别的标题忽略此项。保持默认时，图版之后各页印的是图版的标题。<code>numbered: false</code>的序言或引子仍然自成一章，保持默认即可。这个选项只改变占位符所指的章：样式照样像所有标题样式那样开启自己的区段，所以直到下一个一级标题为止，各页采用图版样式的书眉槽位、页边距、栏、正文样式和调色板（样式未设置的项取文档的），而不是被打断的那一章所开启的样式区段的设置。在逐章排版的书中，书眉不会从一个章文件带到下一个，所以开启某个文件的图版，在该文件第一个章标题之前显示的章占位符都是空的。</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>样式开启的区段在何处结束。<code>'level'</code>：在下一个同级或更高级标题处。<code>'heading'</code>：在下一个任意级别的标题处。封面或书名页作为全书唯一的一级标题，各章为二级标题时，用<code>'heading'</code>：它的书眉（通常为空）、页边距、分栏、正文样式和调色板在第一章处停止，而不是延续到全书。标题本身的设计、编号和当前章不受影响。见此表下方的示例。自 postext 1.45 起。</td>
+    </tr>
+    <tr>
       <td>级别字段</td>
       <td>同<code>headings.levels[]</code></td>
       <td>该级别的值</td>
@@ -1156,7 +1162,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-区段在下一个同级或更高级标题处结束：带样式的标题之后出现不带样式的`#`，就回到文档的书眉和页面几何；带样式的标题则开启它自己的区段。区段为凑奇偶留下的空白页属于该区段，这一点与章标题相同。
+区段在下一个同级或更高级标题处结束：带样式的标题之后出现不带样式的`#`，就回到文档的书眉和页面几何；带样式的标题则开启它自己的区段。区段为凑奇偶留下的空白页属于该区段，这一点与章标题相同。设了`sectionEnd: 'heading'`后，区段在下一个任意级别的标题处结束，作为全书唯一一级标题的封面正需要这样：
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# 守灯人 {style="cover"}
+
+## 灯室
+
+…
+```
+
+封面页不印书眉，从“灯室”起，各页重新采用文档的页眉和页脚。若取默认值`'level'`，封面的区段会延续到下一个一级标题，而这本书没有下一个一级标题，于是全书没有一页带书眉。
 
 **分页符不能代替标题自身的断页**。样式继承所在级别的`breakBefore`（一级的默认值是`{ enabled: true, parity: 'always-odd' }`），标题无论出现在哪里都会执行它，紧跟在`:::pagebreak`之后也一样。分页符开启新页，标题随后仍然要求落在跨页中它那一侧。使用`parity: 'odd'`时，如果分页落在左页，后面会跟一张空白页，标题从下一个右页开始。使用`'always-odd'`时还会多出分隔空白页，而分页符不起任何作用，因为标题本来就会开启那一页。如果一个样式要从手动分页开启的那一页开始，比如扉页之后的目录页，就关掉它自己的断页：
 
