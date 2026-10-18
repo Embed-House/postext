@@ -1,7 +1,8 @@
 import type { ContrastIssue, FrameFitStep, FrameOverflowProposal, PageTemplateWarningKind, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
- *  the part opener is a single slot. */
-export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
+ *  the part opener is a single slot; `'box'` is a box style's design
+ *  (`calloutStyles[].design`, #1014), tagged by its `styleId`. */
+export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part' | 'box';
 
 export type WarningKind =
   | 'preflight'
@@ -194,8 +195,9 @@ export type WarningPayload =
       kind: 'headerFooterUnknownPlaceholder';
       slot: WarningSlotKind;
       level?: number;
-      /** Set when the slot belongs to a heading style: its design
-       *  (`slot: 'heading'`) or its section's running heads. */
+      /** Set when the slot belongs to a heading style (its design,
+       *  `slot: 'heading'`, or its section's running heads) or is a box
+       *  style's design (`slot: 'box'`). */
       styleId?: string;
       /** Set for a part slot other than the opener: the blank verso after
        *  a part page, or the part rows of the contents. */
@@ -398,7 +400,7 @@ export type WarningPayload =
    *  first cut on (a running head once a chapter), `text` the whole text. */
   | {
       kind: 'designTextTruncated';
-      slot: 'header' | 'footer' | 'heading' | 'part' | 'tocRow';
+      slot: 'header' | 'footer' | 'heading' | 'part' | 'tocRow' | 'box';
       elementId: string;
       text: string;
       mode: 'ellipsis-start' | 'ellipsis-end' | 'ellipsis-middle' | 'clip';

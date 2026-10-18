@@ -43,6 +43,19 @@ describe('PlaceholderPicker', () => {
     }
   }
 
+  // #1014: a box style's design reads the heading set and the box's own
+  // content.
+  it('lists the box content in a box design, labelled', () => {
+    for (const [, labels] of locales) {
+      const shown = buttonLabels('box', labels);
+      expect([...shown.keys()].sort()).toEqual([...allowedPlaceholdersFor('heading'), 'boxText', 'boxText.1'].sort());
+      expect(shown.get('titleText')).toBe(labels.headerFooterPlaceholderHeadingTitle);
+      expect(shown.get('boxText')).toBe(labels.headerFooterPlaceholderBoxText);
+      expect(shown.get('boxText.1')).toBe(labels.headerFooterPlaceholderBoxTextItem);
+      expect(buttonLabels('heading', labels).has('boxText')).toBe(false);
+    }
+  });
+
   it('names the spelled-out heading counters', () => {
     const shown = buttonLabels('heading', DEFAULT_LABELS);
     expect(shown.get('numberWords')).toBe(DEFAULT_LABELS.headerFooterPlaceholderNumberWords);

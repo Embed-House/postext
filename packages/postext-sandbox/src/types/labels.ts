@@ -3287,6 +3287,14 @@ export interface SandboxLabels {
   calloutStyleBodyBoldColor: string;
   calloutStyleBodyBoldColorTooltip: string;
   calloutStyleListsGroup: string;
+  calloutStyleDesignGroup: string;
+  calloutStyleDesign: string;
+  calloutStyleDesignTooltip: string;
+  calloutStyleDesignInfo: string;
+  calloutStyleDesignMinHeight: string;
+  calloutStyleDesignMinHeightTooltip: string;
+  calloutStyleDesignSetsContent: string;
+  calloutStyleDesignSetsContentTooltip: string;
   calloutStyleListsHint: string;
   calloutStyleListsBulletSize: string;
   calloutStyleListsBulletWeight: string;
@@ -3353,6 +3361,10 @@ export interface SandboxLabels {
   /** `{leader}` in a contents part row (#889). */
   headerFooterPlaceholderLeader: string;
   headerFooterPlaceholderAttrHint: string;
+  headerFooterPlaceholderBoxText: string;
+  headerFooterPlaceholderBoxTextItem: string;
+  headerFooterPlaceholderBoxTextHint: string;
+  headerFooterPlaceholderBoxAttrHint: string;
   headerFooterPlaceholderBookTotalPages: string;
   headerFooterPlaceholderMarkHint: string;
   balanceMaxLinesAfterList: string;
@@ -3460,6 +3472,10 @@ export interface SandboxLabels {
   headingStyleTocTooltip: string;
   headingStyleRunningChapter: string;
   headingStyleRunningChapterTooltip: string;
+  headingStyleSectionEnd: string;
+  headingStyleSectionEndTooltip: string;
+  headingStyleSectionEndLevel: string;
+  headingStyleSectionEndHeading: string;
   headingStyleNumberingTemplateTooltip: string;
   headingStyleHeading: string;
   headingStyleHeadingInfo: string;

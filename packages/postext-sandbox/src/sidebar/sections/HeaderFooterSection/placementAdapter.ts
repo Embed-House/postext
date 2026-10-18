@@ -6,8 +6,10 @@ import type {
 } from 'postext';
 
 /** Mirrors the engine's `DesignContextKind`: which placeholder set and
- *  anchor conventions a slot editor works with. */
-export type SlotKind = 'header' | 'footer' | 'heading' | 'part';
+ *  anchor conventions a slot editor works with. `'box'` is a box style's
+ *  design (#1014): laid out as a heading design, with the box's content
+ *  besides (`{boxText}`). */
+export type SlotKind = 'header' | 'footer' | 'heading' | 'part' | 'box';
 
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 

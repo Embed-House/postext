@@ -6,6 +6,7 @@ import type {
   AnchorEdge,
   CalloutBodyStyleConfig,
   CalloutBorderConfig,
+  CalloutDesignConfig,
   CalloutFixedConfig,
   CalloutIconAlign,
   CalloutIconConfig,
@@ -27,6 +28,7 @@ import type {
   CalloutTextTransform,
   CalloutTitleStyleConfig,
   CalloutWidth,
+  DesignSlot,
   Dimension,
   DimensionUnit,
   ElementAnchor,
@@ -39,6 +41,7 @@ import {
   inheritCalloutStyles,
   resolveBodyTextConfig,
   resolveCalloutStylesConfig,
+  resolveDesignSlot,
   resolveHeadingsConfig,
   resolveUnorderedListsConfig,
 } from 'postext';
@@ -53,6 +56,7 @@ import {
   ColorPicker,
   DimensionInput,
   FontPicker,
+  NestedGroup,
   NumberInput,
   SelectInput,
   TextInput,
@@ -62,6 +66,7 @@ import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
 import { CONTAINER_EDGES } from './HeaderFooterSection/placementAdapter';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor';
 import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
 import { hasSeveralColumns } from '../settings/multiColumnBook';
 import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns';
@@ -76,6 +81,8 @@ const SPACING_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const STROKE_UNITS: DimensionUnit[] = ['pt', 'px', 'mm'];
 const OFFSET_UNITS: DimensionUnit[] = ['mm', 'pt', 'px', 'em'];
 const TRACKING_UNITS: DimensionUnit[] = ['pt', 'em', 'px'];
+const MIN_HEIGHT_UNITS: DimensionUnit[] = ['pt', 'mm', 'cm', 'in', 'em', 'px'];
+const ZERO_PT: Dimension = { value: 0, unit: 'pt' };
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-1.5 py-1 text-xs';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)' } as const;
@@ -459,6 +466,22 @@ export function CalloutStyleCard({
   const title = (partial: Partial<CalloutTitleStyleConfig>) => updateGroup('titleStyle', partial);
   const body = (partial: Partial<CalloutBodyStyleConfig>) => updateGroup('body', partial);
   const lists = (partial: Partial<CalloutListStyleConfig>) => updateGroup('lists', partial);
+  /** The style's design (#1014). The resolved one shows what a style
+   *  based on another inherits; an edit writes the whole design, its
+   *  elements included, so a field the edit leaves out keeps its value. */
+  const rawDesign = style.design;
+  const shownDesign = resolved.design;
+  const designOn = shownDesign?.enabled ?? false;
+  const updateDesign = (partial: Partial<CalloutDesignConfig>) => {
+    const next: CalloutDesignConfig = {
+      ...rawDesign,
+      slot: rawDesign?.slot ?? ((shownDesign?.slot ?? { elements: [] }) as DesignSlot),
+      ...partial,
+    };
+    if ('minHeight' in partial && partial.minHeight === undefined) delete next.minHeight;
+    if ('setsContent' in partial && partial.setsContent === undefined) delete next.setsContent;
+    onChange({ design: next });
+  };
 
   const spanOptions = [
     { value: 'column', label: labels.calloutStyleSpanColumn },
@@ -1377,6 +1400,53 @@ export function CalloutStyleCard({
           isDefault={groupUnset('titleStyle', 'lineHeight')}
           onReset={() => resetGroupField('titleStyle', 'lineHeight')}
         />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={labels.calloutStyleDesignGroup}
+        sectionId={`${sectionId}.design`}
+        variant="subsection"
+      >
+        <ToggleSwitch
+          label={labels.calloutStyleDesign}
+          checked={designOn}
+          onChange={(v) => updateDesign({ enabled: v })}
+          tooltip={labels.calloutStyleDesignTooltip}
+          isDefault={unset('design')}
+          onReset={() => onResetField('design')}
+        />
+        {designOn && (
+          <NestedGroup>
+            <p className="px-2 py-1 text-xs" style={{ color: 'var(--slate)' }}>
+              {labels.calloutStyleDesignInfo}
+            </p>
+            <DimensionInput
+              label={labels.calloutStyleDesignMinHeight}
+              value={shownDesign?.minHeight ?? ZERO_PT}
+              onChange={(dim) => updateDesign({ minHeight: dim })}
+              min={0}
+              step={1}
+              tooltip={labels.calloutStyleDesignMinHeightTooltip}
+              isDefault={rawDesign?.minHeight === undefined}
+              onReset={() => updateDesign({ minHeight: undefined })}
+              units={MIN_HEIGHT_UNITS}
+            />
+            <ToggleSwitch
+              label={labels.calloutStyleDesignSetsContent}
+              checked={shownDesign?.setsContent ?? false}
+              onChange={(v) => updateDesign({ setsContent: v })}
+              tooltip={labels.calloutStyleDesignSetsContentTooltip}
+              isDefault={rawDesign?.setsContent === undefined}
+              onReset={() => updateDesign({ setsContent: undefined })}
+            />
+            <SlotEditor
+              slotKey="box"
+              raw={rawDesign?.slot}
+              resolved={shownDesign?.slot ?? resolveDesignSlot(undefined, 'box')}
+              onUpdate={(slot: DesignSlot | undefined) => updateDesign({ enabled: true, slot: slot ?? { elements: [] } })}
+            />
+          </NestedGroup>
+        )}
       </CollapsibleSection>
 
       <CollapsibleSection

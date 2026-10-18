@@ -5,6 +5,10 @@ import type { DesignContextKind } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
 import type { SlotKind } from './placementAdapter';
 
+/** What a box design reads beyond the heading set: the box's content,
+ *  whole or its first paragraph (any `{boxText.<n>}` works). */
+const BOX_PLACEHOLDERS = ['boxText', 'boxText.1'] as const;
+
 interface Props {
   onInsert: (placeholderName: string) => void;
   slotKind?: SlotKind;
@@ -47,10 +51,15 @@ export function PlaceholderPicker({ onInsert, slotKind = 'header', extra = [] }:
     numberHan: labels.headerFooterPlaceholderNumberHan,
     headingNumber: labels.headerFooterPlaceholderFrameHeadingNumber,
     leader: labels.headerFooterPlaceholderLeader,
+    boxText: labels.headerFooterPlaceholderBoxText,
+    'boxText.1': labels.headerFooterPlaceholderBoxTextItem,
   };
 
-  const kind: DesignContextKind = slotKind;
-  const items = [...allowedPlaceholdersFor(kind), ...extra].map((name) => ({
+  // A box style's design (#1014) is laid out with the heading set, and
+  // reads the box's own content besides.
+  const kind: DesignContextKind = slotKind === 'box' ? 'heading' : slotKind;
+  const own = slotKind === 'box' ? BOX_PLACEHOLDERS : [];
+  const items = [...allowedPlaceholdersFor(kind), ...own, ...extra].map((name) => ({
     name,
     label: LABELS[name] ?? name,
   }));
@@ -84,8 +93,15 @@ export function PlaceholderPicker({ onInsert, slotKind = 'header', extra = [] }:
       <div className="mt-1 text-xs" style={{ color: 'var(--slate)' }}>
         <code>{'{attr.key}'}</code>
         {' — '}
-        {labels.headerFooterPlaceholderAttrHint}
+        {slotKind === 'box' ? labels.headerFooterPlaceholderBoxAttrHint : labels.headerFooterPlaceholderAttrHint}
       </div>
+      {slotKind === 'box' && (
+        <div className="mt-1 text-xs" style={{ color: 'var(--slate)' }}>
+          <code>{'{boxText.n}'}</code>
+          {' — '}
+          {labels.headerFooterPlaceholderBoxTextHint}
+        </div>
+      )}
       {(slotKind === 'header' || slotKind === 'footer') && (
         <div className="mt-1 text-xs" style={{ color: 'var(--slate)' }}>
           <code>{'{firstMark.h2}'}</code>

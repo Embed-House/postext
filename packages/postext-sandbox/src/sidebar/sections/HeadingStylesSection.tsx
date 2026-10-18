@@ -13,6 +13,7 @@ import type {
   HeadingBreakParity,
   HeadingSpan,
   HeadingStyleConfig,
+  HeadingStyleSectionEnd,
   HeadingTextTransform,
   LayoutConfig,
   OrderedListsConfig,
@@ -401,6 +402,18 @@ function HeadingStyleCard({ style, otherIds, base, onChange, onRename, onRemove 
         tooltip={labels.headingStyleRunningChapterTooltip}
         isDefault={unset('runningChapter')}
         onReset={() => set('runningChapter', undefined)}
+      />
+      <SelectInput
+        label={labels.headingStyleSectionEnd}
+        value={style.sectionEnd ?? 'level'}
+        options={[
+          { value: 'level', label: labels.headingStyleSectionEndLevel },
+          { value: 'heading', label: labels.headingStyleSectionEndHeading },
+        ]}
+        onChange={(v) => set('sectionEnd', v as HeadingStyleSectionEnd)}
+        tooltip={labels.headingStyleSectionEndTooltip}
+        isDefault={unset('sectionEnd')}
+        onReset={() => set('sectionEnd', undefined)}
       />
 
       <CollapsibleSection

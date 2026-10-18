@@ -385,6 +385,37 @@ describe('design slot placeholder warnings', () => {
     });
   });
 
+  // #1014: a box style's design is checked as a heading style's is.
+  describe('box style designs (#1014)', () => {
+    const at = (id: string, to: string, content = '{titleText}') => ({ ...text(content), id, placement: { anchor: { to: `#${to}` as const, edge: 'below' as const } } });
+    const config: PostextConfig = {
+      calloutStyles: [
+        { id: 'practice', design: { setsContent: true, slot: { elements: [at('a', 'b', '{boxText}'), at('b', 'a', '{boxText.2} {attr.picture}'), at('c', 'ghost', '{nope}')] } } },
+        // A design switched off is not drawn: nothing to check.
+        { id: 'off', design: { enabled: false, slot: { elements: [at('x', 'y', '{bogus}')] } } },
+      ],
+    };
+
+    it('lists their cyclic and dangling anchors', () => {
+      const cyclic = find('', 'designCyclicAnchor', config);
+      expect(cyclic.map((w) => [w.payload.slot, w.payload.styleId, w.payload.elementId]).sort()).toEqual([
+        ['box', 'practice', 'a'],
+        ['box', 'practice', 'b'],
+      ]);
+      const dangling = find('', 'designDanglingAnchor', config);
+      expect(dangling.map((w) => [w.payload.slot, w.payload.styleId, w.payload.elementId, w.payload.referencedId])).toEqual([
+        ['box', 'practice', 'c', 'ghost'],
+      ]);
+      const ids = [...cyclic, ...dangling].map((w) => w.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    it('accepts the box content and the heading set in their texts', () => {
+      const found = find('', 'headerFooterUnknownPlaceholder', config);
+      expect(found.map((w) => [w.payload.slot, w.payload.styleId, w.payload.name])).toEqual([['box', 'practice', 'nope']]);
+    });
+  });
+
   // The other slots set with a part's placeholders: the blank verso after a
   // part page and the part rows of the contents.
   describe('part verso and contents part rows', () => {
