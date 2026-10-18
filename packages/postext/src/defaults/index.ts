@@ -16,6 +16,7 @@ import { stripOrderedListsDefaults } from './orderedLists';
 import { stripMathDefaults } from './math';
 import { stripDebugDefaults } from './debug';
 import { stripHtmlViewerDefaults } from './htmlViewer';
+import { stripCanvasViewerDefaults } from './canvasViewer';
 import { stripPdfGenerationDefaults } from './pdfGeneration';
 import { stripPrintDefaults } from './print';
 import { stripContrastDefaults } from './contrast';
@@ -54,6 +55,7 @@ export { DEFAULT_UNORDERED_LISTS_STATIC, resolveUnorderedListsConfig, stripUnord
 export { DEFAULT_ORDERED_LISTS_STATIC, resolveOrderedListsConfig, stripOrderedListsDefaults } from './orderedLists';
 export { DEFAULT_MATH_CONFIG, resolveMathConfig, stripMathDefaults } from './math';
 export { DEFAULT_DEBUG_CONFIG, resolveDebugConfig, stripDebugDefaults } from './debug';
+export { DEFAULT_CANVAS_VIEWER_CONFIG, CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig, stripCanvasViewerDefaults } from './canvasViewer';
 export { DEFAULT_HTML_VIEWER_CONFIG, resolveHtmlViewerConfig, stripHtmlViewerDefaults, mergeConfigOverrides, applyHtmlViewerOverrides } from './htmlViewer';
 export { DEFAULT_PDF_GENERATION_CONFIG, resolvePdfGenerationConfig, stripPdfGenerationDefaults } from './pdfGeneration';
 export { DEFAULT_PRINT_CONFIG, DEFAULT_PRINT_BLACK_CONFIG, DEFAULT_PRINT_PREFLIGHT_CONFIG, DEFAULT_RICH_BLACK, resolvePrintConfig, resolvePrintBlackConfig, resolvePrintPreflightConfig, stripPrintDefaults, profileInkLimit } from './print';
@@ -206,6 +208,12 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.htmlViewer = strippedHtmlViewer;
   } else {
     delete result.htmlViewer;
+  }
+  const strippedCanvasViewer = stripCanvasViewerDefaults(config.canvasViewer);
+  if (strippedCanvasViewer) {
+    result.canvasViewer = strippedCanvasViewer;
+  } else {
+    delete result.canvasViewer;
   }
   const strippedPdfGeneration = stripPdfGenerationDefaults(config.pdfGeneration);
   if (strippedPdfGeneration) {

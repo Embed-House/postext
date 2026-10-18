@@ -4777,6 +4777,24 @@ export interface ResolvedHtmlViewerConfig {
   overrides?: HtmlViewerOverrides;
 }
 
+/** How the Sandbox's Canvas lays the pages out on screen (#1002). Screen
+ *  pixels at any zoom: the frame around the pages belongs to the viewer, not
+ *  to the book, so changing it never lays the book out again. */
+export interface CanvasViewerConfig {
+  /** Space between the left and right page of a pair, in screen pixels
+   *  (a whole number from 0 to 200). With 0 the two pages touch, so a
+   *  picture or a design across a spread reads as one. Default 24. */
+  pageGap?: number;
+  /** Space between one row of pages and the next, in screen pixels (a
+   *  whole number from 0 to 200). Default 24. */
+  rowGap?: number;
+}
+
+export interface ResolvedCanvasViewerConfig {
+  pageGap: number;
+  rowGap: number;
+}
+
 /** A paper stock as the trade sells it (see {@link FolioPaperConfig.type}). */
 export type FolioPaperType =
   | 'uncoated'
@@ -7728,6 +7746,11 @@ export interface PostextConfig {
   debug?: DebugConfig;
 
   htmlViewer?: HtmlViewerConfig;
+
+  /** The space between the pages in the Sandbox's Canvas (#1002): between
+   *  the two pages of a pair, and between one row and the next. A viewer
+   *  setting, like {@link htmlViewer}: it never changes a page. */
+  canvasViewer?: CanvasViewerConfig;
 
   /** The 3D book viewer (`postext-folio`): paper, binding, surface, light. */
   folio?: FolioConfig;
