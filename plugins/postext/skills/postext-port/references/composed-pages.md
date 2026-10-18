@@ -165,7 +165,8 @@ geometry constants, with helpers of your own (`frame(name, …)`,
   that box, so a page can change template without its Markdown changing.
   A draft names its frames by kind and order (`box-4`, `picture-7`), which
   is a different box in the next template; `template_dedupe.py` renames them
-  by role (§3.7). Rename a frame later in the Sandbox's Design › Page
+  by role (§3.7), and `pdf_regions.py extract` does it itself for a run of
+  one page (§3.7). Rename a frame later in the Sandbox's Design › Page
   templates (the name field of the frame): the `slot="…"` of its page fences
   follows, in the chapters on screen and in the other editions a local
   project keeps.
@@ -254,7 +255,16 @@ that has it, a second one of a role is numbered in reading order
 and a frame you named yourself is left alone. The anchors, the groups and the
 `slot="…"` of every page fence, in every language under `chapters/`, follow;
 `dedupe-report.json` (key `frames`) and the printed report list each rename,
-and `--keep-frame-names` turns it off. The names come from the callout
+and `--keep-frame-names` turns it off. A draft that dedupe never sees (one
+page read, so nothing to merge) is named by `extract` itself with the same
+`name_frames`: the templates, the page Markdown, `figures.json`,
+`regions.json` and the overlay images carry the role names, and `report.json`
+lists them (`frameNames`). The callout styles are still `box-1` there, so a
+box says `box`, `box-2` in reading order and dedupe, run later, gives it its
+style's name. `--name-frames always` does it for several pages too (dedupe
+compares frames by name, and the positions line up from page to page: leave
+the default when the pages will be merged), `never` keeps the positions of a
+one-page run. The names come from the callout
 styles, so merge the styles first (the script does) and give those a real
 name (`box-light-blue` to `tip`) before the pages are translated: rename a
 style and the frames named after it keep their names, rename the frames in
