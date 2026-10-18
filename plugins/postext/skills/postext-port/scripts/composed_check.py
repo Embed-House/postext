@@ -22,7 +22,8 @@ the round-2 checks of a ported book, edition by edition.
           (1.39: a label wider than its anchor at the style's minScale) and
           calloutStyleExtendsUnknown / calloutStyleExtendsCycle (1.39),
           figureWordsShared (1.42: a figure's words dropped for the first
-          figure's) and a labelOverlap that runs onto a symbol of the picture
+          figure's), headingClaimsColumn (1.43: an in-column heading whose
+          design reserves the whole column) and a labelOverlap that runs onto a symbol of the picture
           (1.42: the label meets one of its `avoid` zones);
         - a composed page whose frames the HTML writes in another order than
           the Markdown sends content to them (reading order = source order);
@@ -210,6 +211,23 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
      "put marks and anchors in the part that stays on the first page"),
     ((1, 42, 0), "labelEditorSandbox", "Design > Figures & tables > Label styles, and label dragging on the "
      "Folio's pages", "edit labelStyles through sandbox_set_config or the manifest"),
+    ((1, 43, 0), "labelsOffFold", "labels of a figure across the spine slide off the gutter band, on the side "
+     "of their anchor; gutter 'cross' on an anchor keeps a name across both pages; renaming a label style in the "
+     "Sandbox rewrites its anchors and ::label lines", "look at the spread's labels near the fold in the "
+     "rendered pages and rename a label style in every file by hand"),
+    ((1, 43, 0), "svgSymbols", "the Sandbox reads an SVG's own dots and icons as avoid zones (Avoid zones mode, "
+     "svgSymbols)", "write the avoid rectangles by hand, in fractions of the picture"),
+    ((1, 43, 0), "standInExports", "the faces of a family's fallback are embedded in the EPUB, the HTML and the "
+     "SVG pictures set in a licensed family", "the reading system picks a face for the licensed family: name the gap"),
+    ((1, 43, 0), "labelIconTint", "label.icon.tint paints a tab's picture in label.color",
+     "one picture per tab colour"),
+    ((1, 43, 0), "tocPartBreak", "toc.parts.breakBefore cuts a contents frame that can go on before every "
+     "part but the first", "one contents frame per part, chained by next"),
+    ((1, 43, 0), "headingClaimsColumn", "headingClaimsColumn: an in-column heading whose design reserves the "
+     "whole column", "look at multi-column pages for text that starts in the next column"),
+    ((1, 43, 0), "sandboxEditions", "Sandbox: Add a language... (sandbox_save_book add_language), rename one "
+     "language only, group order of the template editor", "copy the chapters of an edition and set "
+     "config.locale by hand"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)
@@ -569,6 +587,7 @@ FAIL_KINDS = {
     "frameStyleUnknown", "frameAnchorUnknown", "frameMinMax", "groupFrameUnknown", "groupFrameTwice",
     "frameChainLoop", "overflowTargetUnknown", "labelStyleUnknown", "labelAnchorUnknown",
     "labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle", "figureWordsShared",
+    "headingClaimsColumn",
 }
 # labelOverlap between two labels is a note: whether two labels that meet are wrong is the reader's
 # call. A label that runs onto one of the picture's `avoid` zones (a symbol; 1.42, data.withSymbol) is a

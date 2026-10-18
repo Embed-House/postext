@@ -788,7 +788,7 @@ def font_coverage(root: Path, fonts: list[dict]) -> dict[str, list[tuple[str, se
     return out
 
 
-def check_font_fallback(f: dict, rep: Report) -> None:
+def check_font_fallback(f: dict, rep: Report, licensed: set[str] | None = None) -> None:
     """`fonts[].fallback` (postext >= 1.42): the open family a licensed family
     the pack left out is set in. A name, not the family's own; a family with
     no file and no fallback is set in the generic face, wider than the real
@@ -801,6 +801,10 @@ def check_font_fallback(f: dict, rep: Report) -> None:
         return
     if isinstance(fb, str) and fb.strip() == name:
         rep.error(where, "fallback names the family itself: name the open family that stands in for it (EB Garamond)")
+    elif isinstance(fb, str) and fb.strip() in (licensed or set()):
+        rep.error(where, f"fallback {fb.strip()!r} is a family of this book marked redistributable: false: from postext 1.43 "
+                         "the fallback's faces travel in the EPUB, the HTML and the SVG pictures of an export, so it must be an open "
+                         "family (OFL, Apache or similar)")
     elif isinstance(fb, str) and f.get("variants"):
         rep.info(where, f"fallback {fb!r}: the family's own files are used; only a slant it lacks is taken from the fallback")
     elif not f.get("variants") and not fb:
@@ -2644,8 +2648,9 @@ def main() -> None:
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")
     fonts = {f.get("name") for f in m.get("fonts", [])}
+    licensed = {f.get("name") for f in m.get("fonts", []) if f.get("redistributable") is False}
     for f in m.get("fonts", []):
-        check_font_fallback(f, rep)
+        check_font_fallback(f, rep, licensed)
         for v in f.get("variants", []):
             p = root / v.get("file", "")
             if not p.exists():

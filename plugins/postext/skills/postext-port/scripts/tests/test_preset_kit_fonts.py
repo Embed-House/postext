@@ -172,6 +172,31 @@ class WidthTest(unittest.TestCase):
             self.assertEqual(fonts.width_verdict(1.04), "near (within 5 %)")
             self.assertEqual(fonts.width_verdict(w["far"] / w["lic"]), "too far")
 
+class FallbackTravelsInExports(unittest.TestCase):
+    """#993 (postext 1.43): the fallback's faces are embedded in the EPUB, the
+    HTML and the SVG pictures of an export, so it must be an open family."""
+
+    def check(self, fonts: list[dict]) -> list[tuple[str, str, str]]:
+        import lint_project as lp
+
+        rep = lp.Report()
+        licensed = {f["name"] for f in fonts if f.get("redistributable") is False}
+        for f in fonts:
+            lp.check_font_fallback(f, rep, licensed)
+        return rep.items
+
+    def test_a_licensed_family_as_the_fallback_of_another_is_an_error(self):
+        items = self.check([
+            {"name": "Adobe Garamond Pro", "redistributable": False, "variants": [], "fallback": "Minion Pro"},
+            {"name": "Minion Pro", "redistributable": False, "variants": []}])
+        errors = [m for lvl, _, m in items if lvl == "ERROR"]
+        self.assertEqual(len(errors), 1)
+        self.assertIn("redistributable: false", errors[0])
+
+    def test_an_open_fallback_is_fine(self):
+        items = self.check([{"name": "Adobe Garamond Pro", "redistributable": False, "variants": [], "fallback": "EB Garamond"}])
+        self.assertEqual([lvl for lvl, _, _ in items if lvl == "ERROR"], [])
+
 
 if __name__ == "__main__":
     unittest.main()

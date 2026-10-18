@@ -141,7 +141,13 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   `{headingNumber}`, a map's touching names are `overlap: "allow"` and its
   dots are `avoid` zones, a licensed font the bundle leaves out has an open
   stand-in (`fonts[].fallback`), and a second figure with other words needs a
-  second resource (`figureWordsShared`). Follow
+  second resource (`figureWordsShared`); from 1.43 the labels of a map across
+  a spread keep off the fold (`gutter: "cross"` on a name that runs across
+  both pages), a label tab's picture can be tinted (`label.icon.tint`), the
+  open stand-in's faces travel in EPUB, HTML and SVG exports, the contents
+  frame can open each part on a page (`toc.parts.breakBefore`), a heading
+  that reserves the whole column is reported (`headingClaimsColumn`), and the
+  Sandbox adds a language to a book (Books › ⋯ › Add a language…). Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead. To a person
   who has not made a composed page, point to the two docs pages rather than
@@ -637,7 +643,8 @@ Pick the path per [sources.md](references/sources.md):
   From a PDF, draft it with the scripts, then curate (composed-pages.md §3.7):
   `scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions --lang es --fonts my-book/fonts --overlay`
   (frames, styles, ground, pictures cut without their text, labels, page
-  fences), `scripts/template_dedupe.py work/regions` (one template per kind
+  fences; a one-page run names its frames by role itself, `--name-frames`),
+  `scripts/template_dedupe.py work/regions` (one template per kind
   of page, `extends` children, merged styles and grounds, frames named by
   role with their `slot="…"` rewritten in every language), and
   `scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts` to lay
@@ -704,7 +711,8 @@ list deliberate deviations.
   `fonts[].fallback`) chosen by measurement: `fonts.py width LICENSED.ttf
   CANDIDATE.ttf… --text-from chapters/<lang>/` for regular, bold and italic
   (within about 2 %), then `preset_kit.py pack --fallback "Family=Open family"`
-  (project-format.md §4, playbooks E2).
+  (project-format.md §4, playbooks E2). From 1.43 that family's faces are
+  embedded in EPUB, HTML and SVG exports, so choose an open one.
 - Chinese faces: subset a TrueType build to the book's text first
   (`fonts.py subset NotoSerifTC[wght].ttf --out work/ --text-from chapters/ --ranges latin,punct,cjk-punct`),
   then cut static weights (`fonts.py instance`). Layout features (`vert`)

@@ -56,6 +56,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.40.0</td><td>a label style can switch off the italics and capitals of the paragraph style it borrows (<code>fontStyle: "normal"</code>, <code>textTransform: "none"</code>); vertical labels on right-to-left pages; the reflowable EPUB draws plain figure labels over the picture; <code>moveTextToMarkdown</code> puts a picture's frame under decoration the design painted over it; comic text panels on <code>:::strip</code> and <code>:::page{spread}</code> (<code>comicPanelFrame</code> no longer raises <code>strip</code> / <code>spread</code>) and <code>valign</code> that follows a slanted cell; a frame's own <code>writingMode</code> on right-to-left pages, pictures upright in a vertical frame, reflowable EPUB frames with their own <code>writing-mode</code>; <code>useTemplate</code> proposals tried as the build lays the page; Sandbox: <code>sandbox_get_composed_checks</code> (every edition), <em>Check every edition</em> on big books, zoom and pan in the anchors dialog, label anchors dragged in the HTML viewer, the template editor's spreads on right-to-left and vertical books, the Word import's character spacing</td><td>2</td></tr>
 <tr><td>1.41.0</td><td>a story jumps into a page fence of a later chapter file (<code>continueIn: "page:&lt;id&gt;"</code>, one chapter file per article); Sandbox: the template editor's spread sheet on right-to-left and vertical books, box styles that extend another drawn with the look they inherit</td><td>2</td></tr>
 <tr><td>1.42.0</td><td><code>calloutStyles[].body.letterSpacing</code>; <code>{ "id": …, "remove": true }</code> takes a decoration element of the base template out in a child or variant; a frame's own colours (<code>look</code>) and <code>palette</code> on a template or a page fence, so one box style serves every tint; <code>width: "auto"</code> on a frame is its longest line plus padding; <code>label.icon.placement: "inside"</code>; <code>{headingNumber}</code> in decoration text and a click on decoration text over a frame; <code>takes: "toc"</code> (or <code>:::toc</code> in a frame) lays the contents on a composed page; <code>overlap: "allow"</code> on anchors and label styles, the picture's <code>avoid</code> zones as map symbols (<code>labelOverlap</code> with <code>withSymbol</code>); <code>figureWordsShared</code>; labels of right-to-left books in the reflowable EPUB; <code>fonts[].fallback</code> (an open family for a licensed one the bundle leaves out); pictures upright in the frames of a vertical page's own flow; index marks, anchors and headings of a story that went on in a later chapter listed where that chapter sets them; layout memo (a page whose boxes overflow lays faster); Sandbox: renaming a frame renames the <code>slot</code> of the page fences that fill it (every chapter, the other editions of a local project), Design &rsaquo; Figures &amp; tables &rsaquo; Label styles, label dragging on the Folio's pages, each edition's title and pagination (<code>layouts.&lt;lang&gt;.json</code>) on export</td><td>2</td></tr>
+<tr><td>1.43.0</td><td>labels of a figure across the spine slide off the gutter band (<code>gutter: "cross"</code> on an anchor keeps a name across both pages); renaming a label style in the Sandbox rewrites its users; the picture's <code>avoid</code> zones read from an SVG's own symbols; <code>label.icon.tint</code>; the faces of a licensed family's <code>fallback</code> are embedded in EPUB, HTML and SVG exports; <code>toc.parts.breakBefore</code> in a contents frame; <code>headingClaimsColumn</code>; Sandbox: Add a language, rename one language only, group order in the template editor</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -617,7 +618,14 @@ The library is the set of looks the book uses, each written once:
   `takes: "toc"` frame needs no other trick. The heading that titles the
   contents needs `toc: false` in its heading style, or `{toc="false"}`, as
   in the flow, or it lists itself. A page break between parts is ignored
-  in a frame; a block of the contents that a frame cannot hold goes whole to
+  in a frame, but from 1.43 `toc.parts.breakBefore` works there: the frame is cut
+  before every part but the first even when all of it fits, so each part opens
+  the added page (or the next frame of the chain). The frame must be able to go
+  on (`overflow.continueIn: "next-page"` or `template:<id>`, or a `next`
+  chain), or the setting is ignored, silently; the continuation mark at each cut
+  is the frame's own (`overflow.mark`, `false` turns it off). For a book whose
+  contents run one part per page, set it in the contents template, not with a
+  `:::pagebreak` between rows (rows of a contents are not authored); a block of the contents that a frame cannot hold goes whole to
   the added page (its head row repeated once if it must be cut, entries are
   never cut inside their lines). `slotEmpty` is raised for a `takes: "toc"`
   frame on a page with no `:::toc`. Before 1.42 the rows of a `:::toc` in a
@@ -727,9 +735,20 @@ Es el instrumento utilizado como medio de pago…
   `label.icon.gap`, stands it at the start of the tab (its right end in a
   box set against the document's direction) and begins the words after it;
   `"beside"` (the default) keeps the old look, the picture past the tab's
-  edge. The picture keeps its own colours, so a white ring and a coloured
-  one are two resources and a style per tab colour; the engine has no tint
-  from the tab's text colour. With no picture to draw (the resource is
+  edge. Before 1.43 the picture keeps its own colours, so a white ring and
+  a coloured one are two resources and a style per tab colour. From 1.43
+  `label.icon.tint: true` paints the picture in `label.color` (the colour of
+  the words) whatever its own colours: its silhouette, opaque and translucent
+  parts as stored. One transparent black or white ring then serves every tint
+  of a book: when a source prints the same icon in different colours per box
+  kind, take one picture and set `tint`. It works with `"inside"` and
+  `"beside"`. A picture with no transparency (a JPEG, a filled square) becomes
+  a plain rectangle, so draw rings and marks on transparency. In the PDF an SVG
+  keeps its edges and a bitmap is cut where it is half transparent (1 bit); the
+  `pdfFileId` print master of a tinted SVG is ignored (a PDF page cannot be
+  recoloured). `tint` wins over `diagramStyle.singleInk`, and a reading system
+  without CSS filters shows the picture in its own colours in the fixed-layout
+  EPUB. With no picture to draw (the resource is
   missing or has none) the tab is the plain one. A tab centred over a card
   has no setting: put it at `top-left` with `inset` and say so in the report.
   A title tab as wide as its title in every edition is `width: "auto"` with
@@ -862,8 +881,16 @@ Con relojes mecánicos
   moves or widens it. Declare `bitmap.resolution` on pictures inside cards
   so the natural width is the narrowest card's measure; a picture is never
   enlarged, so a wider card gives its room to the text.
-- A map across the fold: ONE resource in a `crossGutter` frame, labels a
-  few mm off the spine.
+- A map across the fold: ONE resource in a `crossGutter` frame. From 1.43 a
+  label whose box would reach into the spine band is slid along the sheet to
+  the band's edge, on the side of its anchor: place the anchors where the
+  names stand in the source and let the engine keep them off the fold, never
+  shift anchors by hand. A name meant to run across both pages (a title over
+  the map) takes `gutter: "cross"` on its anchor (`"keep"` is the default and
+  is not written). Read the spread's labels near the spine in the rendered
+  pages: a label that moved is still on its anchor's side, so a name that
+  straddled the fold in the source ends up beside it. Before 1.43, keep the
+  labels a few mm off the spine yourself.
 - On a vertical (`vertical-rl`) book (1.38) the spread is laid in the
   pages' flow frame: the template's `x` runs down the sheet and its `y`
   from the sheet's right edge leftwards, the right page first; `gutter`,
@@ -1012,9 +1039,12 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
 - **Label styles in the Sandbox** (1.42): Design › Figures & tables › Label
   styles lists `labelStyles` (id, type, halo and plate, fit and layout,
   slant and letter case as three-way choices: unset, `normal`/`none`,
-  `italic`/`uppercase`; overlap `check` or `allow`). Renaming an id does not
-  rewrite the anchors and labels that name it: the Checks panel flags them
-  until corrected. In the Folio's pages a label's point is dragged in select
+  `italic`/`uppercase`; overlap `check` or `allow`). Renaming an id in the Sandbox (1.43) rewrites
+  `Resource.anchors[].style` and the `style` of the `::label` lines of every
+  chapter (one history step per chapter and picture, one for the design);
+  before 1.43, and when editing the bundle's JSON by hand, rename the same id
+  in the anchors and in the `::label{style=…}` lines too, or the Checks panel
+  raises `labelStyleUnknown`. In the Folio's pages a label's point is dragged in select
   mode (the drop writes the anchor, or the `at` percentages in the
   Markdown, in one history step; a double click opens the anchors).
 - Right-to-left books: the reflowable EPUB draws plain figure labels over
@@ -1490,6 +1520,15 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   because only the reader can say whether two labels that meet are wrong;
   a `labelOverlap` that carries `withSymbol` (the label runs onto an
   `avoid` zone of the picture, 1.42) fails, as does `figureWordsShared`.
+  `headingClaimsColumn` (1.43, `level`, `element?`) is a finding too: an
+  in-column heading of a multi-column page whose design reserves the whole
+  column, so the body text starts in the next column or page. `element` is the
+  id of the design element that reaches lowest; absent means `minHeight` is
+  what fills it. Fix in this order: `reserve: false` on an element that is
+  decoration (a seal, a side band, a ground), a lower `minHeight`, or
+  `span: 'page'` when the heading is meant to own the page. A page-span
+  opener, a heading on a one-column page and a heading followed by an explicit
+  break are not reported.
   `slotEmpty` (a frame given nothing) and `anchorUnlabelled` (an anchor this
   edition gives no word) are notes: read each, mark deliberate empties
   `optional: true`.
@@ -1610,6 +1649,11 @@ Then:
   chapter layouts (chapters times editions) shows the chapter on screen
   and a **Check every edition** button in the Checks panel instead of
   laying the other languages out unasked.
+- **Template editor, 1.43** (Design › Page & columns › Page templates): a frame
+  added to a template that has a group is sized like the group's last member;
+  `groups[].frames` is an ordered list and its order is the order on the page
+  (the engine honours it), with arrows in the editor; New picks the first
+  frame. Nothing in the file formats changed.
 - **Spreads in the template editor**: on right-to-left and vertical books
   the editor draws the sheet and the spine band as the engine laid them
   (1.40; before, as if left to right).
@@ -1635,6 +1679,18 @@ Then:
   the primary edition's); these are engine-written caches, never written by
   hand, and a stale one is ignored. Do not pack them with `pack` (it leaves
   `layouts*.json` out); the Sandbox's export writes them.
+- Adding an edition in the Sandbox (1.43): Books › ⋯ › Add a language… (WebMCP
+  `sandbox_save_book` `{ action: "add_language", id?, language }`). The new
+  edition starts as a copy of the open one with `config.locale` set to the new
+  language (an Arabic, Chinese or Japanese edition also gets that language's
+  defaults, keeping the settings the book chose itself); its Markdown still
+  has to be translated. A bundle made with `localized` (one `chapters` and
+  `config` per language) is the same thing on disk: to port a book to several
+  languages, build one edition first and add the others the same way (copy the
+  chapters, set the document language, translate). `sandbox_save_book` `rename`
+  takes `thisLanguageOnly: true` to title one language of a book in several
+  (otherwise a rename is the book's in every language); copying a sample names
+  the copy "<name> copy" (localized).
 - Labels' words are in each edition's Markdown; anchors on the shared
   resource. Pictures with lettering per language (avoid them) go through
   `localized.<lang>.resources`.
@@ -1717,7 +1773,14 @@ Then:
   page palette. A box whose shape differs as well as its tint is a style per
   shape. The Sandbox draws an `auto`-width frame at full width in the
   template thumbnails until a page is laid.
-- Picture shapes of an SVG are not map symbols (only the `avoid` zones); a
+- Picture shapes of an SVG are map symbols only once they are `avoid` zones:
+  from 1.43 the Sandbox reads them from the drawing (Avoid zones mode ›
+  Symbols of the drawing: an id prefix or a class, `sandbox_save_resource`
+  `marks: { svgSymbols: { idPrefix, className } }`; give the SVG's symbols a
+  shared prefix such as `sym-` or a class when drawing or converting it, read
+  them once, and read again when the SVG changes: the zones are stored with
+  the picture); without a browser, or before 1.43, write the rectangles in
+  fractions of the picture (`pdf_figures.py symbols` lists them from a PDF); a
   label with a formula, chip, mark or a script the SVG cannot set stays in
   the reflowable EPUB's hidden list. The tab's text colour does not tint
   its picture (`label.icon.placement: "inside"`).
@@ -1739,4 +1802,7 @@ Then:
   a frame had no part rows or links, the frames of a vertical page's own
   flow turned their pictures, a decoration text over a frame was not found by
   a click, the label tab's picture stood past its edge and `labelOverlap`
-  knew no symbols: name the gap when the installed version is older.
+  knew no symbols; before 1.43 a label could stand on the fold of a spread, a
+  tab's picture could not be tinted, a contents frame had no part breaks and the
+  stand-in faces of a licensed family stayed out of EPUB and HTML exports: name
+  the gap when the installed version is older.
