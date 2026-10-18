@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "b950033723746b4d6b0cb4787ae04c1ef3d47844bb9ff3e0b93c296e638aaac4",
+  "sourceHash": "e9a09026587afa2ab30f9047500c8cd82d4297965b5101bf577f9528ee6f5adc",
   "engine": {
-    "postext": "1.42.1",
-    "postextPdf": "1.42.1",
+    "postext": "1.43.0",
+    "postextPdf": "1.43.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T09:23:27.291Z",
+  "capturedAt": "2026-10-18T10:43:13.396Z",
   "variants": {
     "en": {
-      "hash8": "0dbfd973",
+      "hash8": "d31b0a14",
       "vdtHash": "31ce1776c1ac1e5206c97118c137a2d42670b81d",
       "timings": {
-        "importMs": 582,
-        "fontsMs": 86,
-        "buildMs": 123,
-        "totalMs": 1695,
+        "importMs": 662,
+        "fontsMs": 132,
+        "buildMs": 119,
+        "totalMs": 1668,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208726,
+          "bytes": 208530,
           "alt": "Page 6: From the mountains to the sea."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 163482,
+          "bytes": 163716,
           "alt": "Page 7."
         },
         {
@@ -177,12 +177,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1730978,
+        "bytes": 1730979,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100251,
+        "bytes": 2100225,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -542,7 +542,7 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 103 line, 1 text"
+            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 103 line, 1 text"
           },
           {
             "check": "C35",
@@ -553,13 +553,13 @@
       }
     },
     "es": {
-      "hash8": "c884625f",
+      "hash8": "b1f0f39c",
       "vdtHash": "f47e204624c2f8ff2e079b2968e90ed1058c5082",
       "timings": {
-        "importMs": 521,
-        "fontsMs": 99,
-        "buildMs": 121,
-        "totalMs": 1733,
+        "importMs": 646,
+        "fontsMs": 100,
+        "buildMs": 124,
+        "totalMs": 1683,
         "builds": 1
       },
       "specimen": {
@@ -646,7 +646,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 207230,
+          "bytes": 206916,
           "alt": "Página 6: De la montaña al mar."
         },
         {
@@ -657,7 +657,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 162942,
+          "bytes": 163110,
           "alt": "Página 7."
         },
         {
@@ -719,7 +719,7 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732044,
+        "bytes": 1732046,
         "pages": 9
       },
       "sandbox": {
@@ -1084,7 +1084,7 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 106 line, 1 text"
+            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 106 line, 1 text"
           },
           {
             "check": "C35",
@@ -1095,13 +1095,13 @@
       }
     },
     "ca": {
-      "hash8": "c004aa46",
+      "hash8": "f8478a18",
       "vdtHash": "e13eeaf3d5e0e3718998812e4cfe832dd3fbc524",
       "timings": {
-        "importMs": 582,
-        "fontsMs": 66,
-        "buildMs": 118,
-        "totalMs": 1670,
+        "importMs": 656,
+        "fontsMs": 114,
+        "buildMs": 121,
+        "totalMs": 1690,
         "builds": 1
       },
       "specimen": {
@@ -1188,7 +1188,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206946,
+          "bytes": 206298,
           "alt": "Pàgina 6: De la muntanya al mar."
         },
         {
@@ -1199,7 +1199,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 161968,
+          "bytes": 162278,
           "alt": "Pàgina 7."
         },
         {
@@ -1266,7 +1266,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100152,
+        "bytes": 2100166,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1626,7 +1626,7 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 7 label, 104 line, 1 text"
+            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 104 line, 1 text"
           },
           {
             "check": "C35",

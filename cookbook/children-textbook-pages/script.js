@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 156 · A children's textbook unit in three languages ═══
 // https://postext.dev/en/cookbook/children-textbook-pages
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Nunito, Fredoka (SIL OFL 1.1) · Needs postext ≥ 1.42.0
+// Fonts: Nunito, Fredoka (SIL OFL 1.1) · Needs postext ≥ 1.43.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
