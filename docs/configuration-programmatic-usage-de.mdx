@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Das Gleitobjekt steht auf der Auftaktseite; <code>'avoid'</code> verschiebt es auf den ersten Platz danach.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>Eine Überschrift in der Spalte (<code>span: 'column'</code>), deren Gestaltung die ganze Spalte reserviert, sodass der Text danach in der nächsten Spalte oder Seite beginnt (<code>level</code>, <code>element</code>: das am tiefsten reichende Gestaltungselement, nicht vorhanden, wenn <code>minHeight</code> die Höhe bestimmt). Eine je Überschrift; sie zeigt auf die Überschrift, mit ihrer Seite. Ein seitenbreiter Auftakt, eine Überschrift auf einer einspaltigen Seite und eine Überschrift mit ausdrücklichem Umbruch danach werden nicht gemeldet. Seit postext 1.43.</td>
+      <td>Der Text nach der Überschrift beginnt in der nächsten Spalte oder Seite. <code>reserve: false</code> auf dem Element, ein kleineres <code>minHeight</code> oder <code>span: 'page'</code> beheben es.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Ein Schnitt, in dem der Text gesetzt wurde (<code>family</code>, <code>weight</code>, <code>style</code>) und den das Font-Set beim Build nicht liefern konnte: <code>reason: 'missing'</code>, kein Schnitt der Familie war geladen oder installiert, oder derjenige, der für diese Stärke und Neigung einsteht, war noch nicht geladen; <code>'synthesized'</code>, die Familie hat keinen Schnitt dieser Stärke oder Neigung, und der Browser nimmt einen anderen, unverändert oder fetter bzw. schräg gezeichnet (eine 600 aus der 700, eine 700 kursiv von einer Familie, die nur eine 400 normal hat). Geprüft, wo es ein Font-Set gibt (<code>document.fonts</code>, das <code>self.fonts</code> eines Workers oder <code>BuildDocumentOptions.fontSet</code>), hinter <code>debug.warnings.missingFont</code>. Keine Seite und kein Quellbereich.</td>
       <td>Der Text wird mit dem Ersatzschnitt oder mit einem anderen Schnitt der Familie gemessen und gezeichnet, unverändert oder fetter bzw. schräg gemacht; seine Zeilenumbrüche ändern sich, sobald der Schnitt eintrifft. Siehe <a href="#schriften-vor-dem-layout-laden">Schriften vor dem Layout laden</a>.</td>

@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’elemento flottante resta sulla pagina d’apertura; <code>'avoid'</code> lo sposta nel primo spazio successivo.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>Un titolo di colonna (<code>span: 'column'</code>) la cui grafica riserva tutta la colonna, così che il testo che segue comincia nella colonna o nella pagina successiva (<code>level</code>, <code>element</code>: l’elemento della grafica che scende più in basso, assente quando è <code>minHeight</code> a fissare l’altezza). Uno per titolo; punta al titolo, con la sua pagina. Un’apertura a tutta pagina, un titolo su una pagina a una sola colonna e un titolo seguito da un’interruzione esplicita non vengono segnalati. Da postext 1.43.</td>
+      <td>Il testo dopo il titolo comincia nella colonna o nella pagina successiva. Lo risolvono <code>reserve: false</code> sull’elemento, un <code>minHeight</code> minore o <code>span: 'page'</code>.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Un carattere con cui è stato composto il testo (<code>family</code>, <code>weight</code>, <code>style</code>) che l’insieme dei font non poteva fornire al momento della generazione: <code>reason: 'missing'</code>, nessun carattere della famiglia era caricato né installato, oppure quello che risponde per quel peso e quell’inclinazione non era ancora caricato; <code>'synthesized'</code>, la famiglia non ha un carattere di quel peso o di quell’inclinazione e il browser lo prende da un altro, così com’è o disegnato più nero o inclinato (un 600 ricavato dal 700, un 700 corsivo chiesto a una famiglia che ha solo un 400 tondo). Viene controllato dove c’è un insieme di font (<code>document.fonts</code>, il <code>self.fonts</code> di un worker, o <code>BuildDocumentOptions.fontSet</code>), dietro <code>debug.warnings.missingFont</code>. Nessuna pagina e nessun intervallo di sorgente.</td>
       <td>Il testo viene misurato e disegnato con il carattere di ripiego, o con un altro carattere della famiglia, così com’è o reso più nero o inclinato; i suoi a capo cambiano quando arriva il carattere. Vedi <a href="#caricare-i-font-prima-dellimpaginazione">Caricare i font prima dell’impaginazione</a>.</td>

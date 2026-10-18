@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>O flutuante fica na página de abertura; <code>'avoid'</code> o leva para o primeiro espaço depois dela.</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>Um título dentro da coluna (<code>span: 'column'</code>) cujo design reserva a coluna inteira, de modo que o texto seguinte começa na coluna ou na página seguinte (<code>level</code>, <code>element</code>: o elemento do design que desce mais, ausente quando <code>minHeight</code> fixa a altura). Um por título; aponta o título, com a sua página. Uma abertura de página inteira, um título numa página de uma só coluna e um título seguido de uma quebra explícita não são avisados. Desde o postext 1.43.</td>
+      <td>O texto depois do título começa na coluna ou na página seguinte. <code>reserve: false</code> no elemento, um <code>minHeight</code> menor ou <code>span: 'page'</code> resolvem.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Uma face em que o texto foi composto (<code>family</code>, <code>weight</code>, <code>style</code>) e que o conjunto de fontes não pôde fornecer quando a compilação rodou: <code>reason: 'missing'</code>, nenhuma face da família estava carregada nem instalada, ou a que responde por esse peso e essa inclinação ainda não tinha carregado; <code>'synthesized'</code>, a família não tem face desse peso ou dessa inclinação e o navegador a tira de outra, como ela é ou engrossada ou inclinada (um 600 composto com o 700, um itálico 700 pedido a uma família que só tem o regular 400). É verificado onde há um conjunto de fontes (<code>document.fonts</code>, o <code>self.fonts</code> de um worker ou <code>BuildDocumentOptions.fontSet</code>), sob <code>debug.warnings.missingFont</code>. Sem página e sem trecho do código-fonte.</td>
       <td>O texto é medido e desenhado com a fonte alternativa, ou com outra face da família, como ela é ou engrossada ou inclinada; suas quebras de linha mudam quando a face chega. Veja <a href="#carregar-as-fontes-antes-do-layout">Carregar as fontes antes do layout</a>.</td>

@@ -280,6 +280,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>浮动体留在章首页上；<code>'avoid'</code>会把它移到该页之后的第一个空位。</td>
     </tr>
     <tr>
+      <td><code>headingClaimsColumn</code></td>
+      <td>栏内标题（<code>span: 'column'</code>）的设计保留了整栏的高度，致使标题之后的正文从下一栏或下一页开始（<code>level</code>、<code>element</code>：延伸得最低的设计元素，高度由 <code>minHeight</code> 决定时没有该字段）。每个标题一条，指向该标题及其所在页。整页的章扉、只有一栏的页面上的标题，以及后面紧跟明确断开的标题，不会被提示。自 postext 1.43 起。</td>
+      <td>标题之后的正文从下一栏或下一页开始。给元素设置 <code>reserve: false</code>、调低 <code>minHeight</code> 或设置 <code>span: 'page'</code> 即可消除。</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>文字排版所用的某个字体（<code>family</code>、<code>weight</code>、<code>style</code>），在构建时字体集给不出来：<code>reason: 'missing'</code>表示该字体族没有任何字体已加载，系统中也没有安装，或者对应这个字重和倾斜的字体当时还没有加载完；<code>'synthesized'</code>表示该字体族没有这个字重或倾斜的字体，浏览器取用族内的另一个字体，原样使用，或加粗、倾斜（用700的字体排600；向只有400常规体的字体族要700斜体）。在有字体集的地方检查（<code>document.fonts</code>、工作线程的<code>self.fonts</code>，或<code>BuildDocumentOptions.fontSet</code>），由<code>debug.warnings.missingFont</code>控制。没有页码，也没有源文本范围。</td>
       <td>文字用回退字体测量和绘制，或用族内的另一个字体（原样使用，或经浏览器加粗、倾斜）；该字体到达后，断行会随之改变。见<a href="#排版前加载字体">排版前加载字体</a>。</td>
