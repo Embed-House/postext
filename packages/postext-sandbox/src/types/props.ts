@@ -18,6 +18,11 @@ export type EpubLayout = 'fixed' | 'reflowable';
  *  to null when the id is not one the host serves. */
 export type HashBundleResolver = (id: string, lang: string | null) => string | readonly string[] | null;
 
+/** The languages a linked book (`hashBundles`) is published in, each a
+ *  bundle of its own that the same link opens with `lang=`; null when
+ *  unknown. */
+export type HashBundleEditions = (id: string) => readonly string[] | null | Promise<readonly string[] | null>;
+
 export interface PostextSandboxProps {
   initialMarkdown?: string;
   initialConfig?: PostextConfig;
@@ -37,6 +42,11 @@ export interface PostextSandboxProps {
    *  link open that project, edits included. The fragment is then
    *  rewritten to `#project=<id>`. */
   hashBundles?: Record<string, HashBundleResolver>;
+  /** The languages each kind of linked book is published in, by the same
+   *  keys as `hashBundles`: a book opened by such a link shows them in the
+   *  Canvas's language switcher and side by side (#1011), e.g. a Cookbook
+   *  recipe captured in several languages. */
+  hashBundleEditions?: Record<string, HashBundleEditions>;
   onConfigChange?: (config: PostextConfig) => void;
   onMarkdownChange?: (markdown: string) => void;
   /** Hand an agent in the browser the Sandbox's own tools through WebMCP

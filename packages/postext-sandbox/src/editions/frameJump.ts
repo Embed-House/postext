@@ -10,7 +10,8 @@
  * picks the frame and puts the editor's caret in its slot.
  */
 
-import { readViewHash, viewHashFragment } from '../storage/viewHash';
+import { hashBundleFragment, hashBundleOrigin, readViewHash, viewHashFragment, type HashBundleRef } from '../storage/viewHash';
+import { openLinkQuietly } from '../context/hashBundle';
 import type { FrameJump } from '../warnings/composedChecks';
 
 export interface PendingFrameJump extends FrameJump {
@@ -18,6 +19,9 @@ export interface PendingFrameJump extends FrameJump {
   presetId: string | null;
   /** The local project it is for, when that is the book (#903). */
   projectId?: string | null;
+  /** Another language of a book a host links to (#1011): the link, which
+   *  opens `locale` as a project of its own. */
+  linked?: HashBundleRef | null;
   /** Leave the editor where it is (the edition switcher). */
   keepEditor?: boolean;
   /** When it was asked for: a jump the book never reaches is dropped. */
@@ -70,7 +74,10 @@ export function setJumpFlash(next: JumpFlash | null): void {
 
 /** The fragment a jump writes: the edition (for a preset), the canvas, the
  *  chapter and the page. Pure (tests). */
-export function frameJumpFragment(current: ReturnType<typeof readViewHash>, jump: Pick<PendingFrameJump, 'presetId' | 'projectId' | 'locale' | 'chapterIndex' | 'page'>): string {
+export function frameJumpFragment(current: ReturnType<typeof readViewHash>, jump: Pick<PendingFrameJump, 'presetId' | 'projectId' | 'linked' | 'locale' | 'chapterIndex' | 'page'>): string {
+  if (jump.linked && jump.locale !== '') {
+    return hashBundleFragment({ ...jump.linked, lang: jump.locale }, { view: 'canvas', chapter: jump.chapterIndex ?? current.chapter, page: jump.page ?? null });
+  }
   const otherEdition = (jump.presetId !== null || (jump.projectId ?? null) !== null) && jump.locale !== '';
   return viewHashFragment({
     ...current,
@@ -91,6 +98,8 @@ export function requestFrameJump(jump: Omit<PendingFrameJump, 'at'>): void {
   pending = { ...jump, at: Date.now() };
   emit();
   if (typeof window === 'undefined') return;
+  // The reader's copy of that language opens as it is (#1011).
+  if (jump.linked && jump.locale !== '') openLinkQuietly(hashBundleOrigin({ ...jump.linked, lang: jump.locale }));
   const next = frameJumpFragment(readViewHash(), jump);
   // Assigned so `hashchange` fires (the chapter, page and book syncs).
   if (window.location.hash !== next) window.location.hash = next;

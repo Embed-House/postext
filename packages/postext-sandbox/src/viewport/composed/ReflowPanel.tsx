@@ -16,43 +16,18 @@ import { useMemo } from 'react';
 import { MoveDiagonal, X } from 'lucide-react';
 import type { VDTDocument } from 'postext';
 import { useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxWarnings } from '../../context/SandboxContext';
-import { IconButton, cn } from '../../ui';
+import { IconButton } from '../../ui';
 import { fill } from '../../print/fillTokens';
 import { ProposalActions } from '../../warnings/ProposalButtons';
 import type { Warning } from '../../warnings/types';
 import { documentReflow } from './reflowText';
 import { setReflowFocus, useReflowShown } from './reflowView';
 
-const BUTTON = 'flex h-6 min-w-6 cursor-pointer items-center justify-center gap-1 rounded px-1.5 text-[0.66rem] font-semibold transition-colors pt-large:h-11 pt-large:min-w-11 focus-visible:outline-2 focus-visible:outline-offset-1 outline-(--brand)';
 
-/** Whether the document on screen has composed pages (the switch shows
- *  only then). */
-function hasComposed(doc: VDTDocument | null): boolean {
+/** Whether the document on screen has composed pages (the switch, in the
+ *  editions rail, shows only then). */
+export function hasComposedPages(doc: VDTDocument | null): boolean {
   return !!doc?.pages.some((p) => p.composed);
-}
-
-/** The switch, in the bar over the canvas. */
-export function ReflowToggle() {
-  const labels = useSandboxLabels();
-  const docRef = useSandboxDocRef();
-  useSandboxSelector((s) => s.docVersion);
-  const [shown, setShown] = useReflowShown();
-  if (!hasComposed(docRef.current)) return null;
-  return (
-    <div className="flex items-center rounded-md border px-0.5 py-0.5 shadow-sm" style={{ borderColor: 'var(--rule)', background: 'var(--background)' }}>
-      <button
-        type="button"
-        aria-pressed={shown}
-        title={labels.reflowToggleHint}
-        onClick={() => setShown(!shown)}
-        className={cn(BUTTON, shown ? 'bg-(--brand) text-(--background)' : 'bg-transparent text-(--slate) hover:text-(--foreground)')}
-        data-reflow-toggle=""
-      >
-        <MoveDiagonal size={13} aria-hidden="true" />
-        <span>{labels.reflowToggle}</span>
-      </button>
-    </div>
-  );
 }
 
 /** The `frameOverflow` check of a frame on a page of `doc`, from the
@@ -76,7 +51,7 @@ export function ReflowPanel({ currentPage, onJumpToPage }: { currentPage: number
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the doc ref is read again on each new document (`docVersion`)
     [doc, docVersion, labels, uiLocale],
   );
-  if (!shown || !doc || !hasComposed(doc)) return null;
+  if (!shown || !doc || !hasComposedPages(doc)) return null;
 
   const go = (pageIndex: number, frame?: string) => {
     onJumpToPage(pageIndex);

@@ -364,6 +364,7 @@ export function PostextSandbox({
   presetSources,
   outputProfileBaseUrl,
   hashBundles,
+  hashBundleEditions,
   onConfigChange,
   onMarkdownChange,
   themeToggle,
@@ -392,6 +393,7 @@ export function PostextSandbox({
         locale={locale}
         presetSources={presetSources}
         hashBundles={hashBundles}
+        hashBundleEditions={hashBundleEditions}
         onConfigChange={onConfigChange}
         onMarkdownChange={onMarkdownChange}
       >

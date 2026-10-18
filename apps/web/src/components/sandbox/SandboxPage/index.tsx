@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CompactLanguageSwitcher } from "@/components/sandbox/CompactLanguageSwitcher";
 import { LogoMark } from "@/components/brand/Logo";
 import { htmlLang, siteLocale, type SiteLocale } from "@/i18n/locales";
-import { recipeBundleCandidates } from "@/lib/cookbook/sandboxBundles";
+import { recipeBundleCandidates, recipeBundleEditions } from "@/lib/cookbook/sandboxBundles";
 import { buildSandboxLabels } from "./labels";
 
 // Private preset bundles are served by /api/private-presets only in local dev
@@ -39,6 +39,9 @@ const GUIDE_MARKDOWN: Record<SiteLocale, string> = {
 /** `#recipe=<slug>&lang=<tag>` opens a Cookbook recipe's bundle: the edition
  *  the link names, then the ones most recipes have (lib/cookbook/sandboxBundles). */
 const HASH_BUNDLES = { recipe: recipeBundleCandidates };
+/** The languages a recipe was captured in, for the Canvas's language
+ *  switcher and the side-by-side view (#1011). */
+const HASH_BUNDLE_EDITIONS = { recipe: recipeBundleEditions };
 
 export function SandboxPage() {
   const t = useTranslations("Sandbox");
@@ -58,6 +61,7 @@ export function SandboxPage() {
       presetSources={PRESET_SOURCES}
       outputProfileBaseUrl="/icc/"
       hashBundles={HASH_BUNDLES}
+      hashBundleEditions={HASH_BUNDLE_EDITIONS}
       themeToggle={<ThemeToggle compact />}
       languageSwitcher={<CompactLanguageSwitcher />}
       homeLink={

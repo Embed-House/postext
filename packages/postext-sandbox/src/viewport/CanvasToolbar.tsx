@@ -50,9 +50,12 @@ const TOOLBAR_SCROLL = {
   scrollbarWidth: 'none' as const,
 };
 
-export function toolbarHiddenStyle(hidden: boolean, rtl = false): React.CSSProperties {
+/** The slide off the toolbar's edge: the end edge (right, left in a
+ *  right-to-left interface) or the start edge (#1009). */
+export function toolbarHiddenStyle(hidden: boolean, rtl = false, edge: 'start' | 'end' = 'end'): React.CSSProperties {
+  const left = rtl !== (edge === 'start');
   return hidden
-    ? { transform: rtl ? 'translateX(calc(-100% - 24px))' : 'translateX(calc(100% + 24px))' }
+    ? { transform: left ? 'translateX(calc(-100% - 24px))' : 'translateX(calc(100% + 24px))' }
     : { transform: 'translateX(0)' };
 }
 
@@ -154,6 +157,7 @@ export function ToolbarButton({
   disabled,
   spinning,
   accent,
+  tooltipSide = 'inline-start',
 }: {
   icon: ReactNode;
   label: string;
@@ -164,6 +168,9 @@ export function ToolbarButton({
   // When true, tint the icon with the accent color (gold/yellow). Used to
   // make the spinning recalculate button more attention-grabbing.
   accent?: boolean;
+  /** Where the tooltip opens: towards the page, away from the toolbar's
+   *  edge (the start edge's rail opens it at its end side). */
+  tooltipSide?: 'inline-start' | 'inline-end';
 }) {
   // Disabled buttons are rendered as a ghosted trace rather than the usual
   // dimmed-clickable look. User asked for them to blend in instead of
@@ -173,7 +180,7 @@ export function ToolbarButton({
   // 44×44 with large targets on (WCAG 2.5.5, Target Size Enhanced).
   const size = large ? 44 : compact ? 32 : 28;
   return (
-    <Tooltip content={label} side={compact ? 'top' : 'inline-start'}>
+    <Tooltip content={label} side={compact ? 'top' : tooltipSide}>
       <button
         type="button"
         onClick={onClick}

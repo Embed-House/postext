@@ -85,6 +85,14 @@ export interface FloatingToolbarShell {
   };
 }
 
+export interface FloatingToolbarShellOptions {
+  /** The edge the toolbar and its hover strip sit on: the end (the right,
+   *  the default) or the start (the Canvas's editions rail, #1009). */
+  edge?: 'start' | 'end';
+  /** Pinned until the reader says otherwise (the default). */
+  defaultPinned?: boolean;
+}
+
 /**
  * Shared visibility behavior for the floating right-edge toolbars in the
  * Canvas/HTML/PDF viewports. When unpinned, the toolbar slides off-screen to
@@ -96,9 +104,10 @@ export interface FloatingToolbarShell {
 export function useFloatingToolbarShell(
   storageId: string,
   forceVisible: boolean,
+  options: FloatingToolbarShellOptions = {},
 ): FloatingToolbarShell {
   const compact = useCompactLayout();
-  const [pinned, setPinned] = useState(true);
+  const [pinned, setPinned] = useState(options.defaultPinned ?? true);
   const [hovered, setHovered] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
   const hydratedRef = useRef(false);
@@ -186,7 +195,7 @@ export function useFloatingToolbarShell(
       style: {
         position: 'absolute',
         top: 0,
-        insetInlineEnd: 0,
+        ...(options.edge === 'start' ? { insetInlineStart: 0 } : { insetInlineEnd: 0 }),
         bottom: 0,
         width: HOVER_STRIP_WIDTH_PX,
         zIndex: 9,
