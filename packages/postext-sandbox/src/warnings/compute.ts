@@ -177,6 +177,18 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'headingClaimsColumn') {
+      // An in-column heading whose design fills its column (#997), by its
+      // book page.
+      out.push({
+        id: `layout-headingClaimsColumn-${w.sourceStart ?? 'x'}-${i}`,
+        payload: { kind: 'headingClaimsColumn', level: w.level, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), ...(w.element !== undefined ? { element: w.element } : {}) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'shortListSplit' || w.kind === 'openerFloat' || w.kind === 'tocGroupSplit') {
       // The composition rules (#749): a short list cut between columns, a
       // float on an opener page, a contents block cut (#850), each by its

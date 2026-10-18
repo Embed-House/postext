@@ -279,6 +279,13 @@ const CAPPED_OVERFLOW_PX = 0.5;
  *  room left in its column (`layout.fitFiguresToPage`). */
 const MIN_INLINE_FIGURE_SCALE = 0.5;
 
+/** What sets the reservation of an in-column heading's design when it is
+ *  taller than the heading's lines (#997): the id of the element that
+ *  reaches lowest, or nothing when the design's `minHeight` does. */
+interface HeadingClaim {
+  element?: string;
+}
+
 export interface BuildDocumentOptions {
   /**
    * Cooperative cancellation hook. Called once per top-level content block
@@ -3758,6 +3765,13 @@ function placeDocumentPass(
    * A page-spanning opener needs none of this: its band is reserved in
    * every column, the side column included (`reserveOpenerBand`).
    */
+  /** The in-column headings whose design may reserve their whole column,
+   *  with what sets the reservation (#997); `headingClaimWarnings` keeps
+   *  those that did and sent the text on. */
+  const headingClaims = new Map<VDTBlock, HeadingClaim>();
+  const noteHeadingClaim = (blk: VDTBlock, design: { claim?: HeadingClaim }): void => {
+    if (design.claim) headingClaims.set(blk, design.claim);
+  };
   const markSideObstacles = (blk: VDTBlock, design: { lvl: ResolvedHeadingLevelConfig; info: HeadingPlaceholderInfo }): void => {
     if (design.lvl.span === 'page') return;
     const page = doc.pages[cursor.pageIndex]!;
@@ -6218,6 +6232,49 @@ function placeDocumentPass(
     advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
     return true;
   };
+  /** A `headingClaimsColumn` warning (#997) for each in-column heading
+   *  whose design left its column no room for a line and that the text
+   *  after it did not follow: the next block opens a later column or page,
+   *  and nothing explicit (`:::pagebreak`, a `breakBefore`, a column break)
+   *  sent it there. A page-span opener claims its page on purpose and is
+   *  not noted, nor is a heading on a page of one text column (there the
+   *  column is the page: a cover). */
+  const headingClaimWarnings = (): ContentWarning[] => {
+    if (headingClaims.size === 0) return [];
+    const order: { blk: VDTBlock; page: number; col: VDTColumn }[] = [];
+    for (const page of doc.pages) {
+      for (const col of page.columns) {
+        if (col.kind === 'side') continue;
+        for (const blk of col.blocks) order.push({ blk, page: page.index, col });
+      }
+    }
+    const out: ContentWarning[] = [];
+    order.forEach((at, i) => {
+      const claim = headingClaims.get(at.blk);
+      if (!claim || at.col.blocks[at.col.blocks.length - 1] !== at.blk) return;
+      // On a page with one column of text the column is the page: a design
+      // that fills it is a cover, as a page-span opener is.
+      if (doc.pages[at.page]!.columns.filter((c) => c.kind === undefined || c.kind === 'text').length <= 1) return;
+      // The design left room for a line: the column was not claimed.
+      if (at.col.availableHeight >= bodyStyle.lineHeightPx - 0.01) return;
+      if (at.col.forcedBreak) return;
+      const next = order[i + 1];
+      if (!next || next.col === at.col) return;
+      // The page closed by an explicit break (a pagebreak, a heading that
+      // opens its own page): the text did not move on because of the design.
+      if (next.page !== at.page && forcedBreakPages.has(at.page)) return;
+      out.push({
+        kind: 'headingClaimsColumn',
+        level: at.blk.headingLevel ?? 1,
+        ...(claim.element !== undefined ? { element: claim.element } : {}),
+        ...(at.blk.sourceStart !== undefined ? { sourceStart: at.blk.sourceStart } : {}),
+        ...(at.blk.sourceEnd !== undefined ? { sourceEnd: at.blk.sourceEnd } : {}),
+        pageIndex: at.page,
+      });
+    });
+    return out;
+  };
+
   /** A `tocGroupSplit` warning for each contents block set in more than
    *  one column, with its head's title and the page it is cut on. */
   const tocGroupWarnings = (): ContentWarning[] => {
@@ -7994,7 +8051,7 @@ function placeDocumentPass(
       }
       /** The heading's design and the values it is laid out with, kept for
        *  the side-column obstacles once the block is placed (EF-78). */
-      let headingDesign: { lvl: ResolvedHeadingLevelConfig; info: HeadingPlaceholderInfo } | undefined;
+      let headingDesign: { lvl: ResolvedHeadingLevelConfig; info: HeadingPlaceholderInfo; claim?: HeadingClaim } | undefined;
       if (vdtType === 'heading' && headingLevel !== undefined && partIndex === 0 && !hiddenHeading) {
         const lvl = headingLevels.forBlock(rawBlock);
         if (lvl) {
@@ -8045,7 +8102,12 @@ function placeDocumentPass(
             );
             if (painted > effectiveRemainHeight) effectiveRemainHeight = painted;
           }
-          headingDesign = { lvl, info };
+          // What sets the design's reservation, for `headingClaimsColumn`
+          // (#997): only a design taller than the heading's own lines.
+          const claim: HeadingClaim | undefined = lvl.span !== 'page' && design.height > totalRemainHeight
+            ? (design.byMinHeight ? {} : design.claimedBy !== undefined ? { element: design.claimedBy } : undefined)
+            : undefined;
+          headingDesign = { lvl, info, ...(claim ? { claim } : {}) };
         }
       }
 
@@ -8518,7 +8580,7 @@ function placeDocumentPass(
           }
         }
         // Its design's elements in the side column hold the side stack off.
-        if (headingDesign) markSideObstacles(blk, headingDesign);
+        if (headingDesign) { markSideObstacles(blk, headingDesign); noteHeadingClaim(blk, headingDesign); }
         // For snapped headings/list-tails the margin is baked into the snap;
         // for unsnapped ones (consecutive) track it for collapsing
         if (vdtType === 'listItem' && nextIsListItem) {
@@ -8886,7 +8948,7 @@ function placeDocumentPass(
         curCol.availableHeight = 0;
         if (headingLevels.forBlock(rawBlock)?.span === 'page') reserveOpenerBand(curCol, effectiveRemainHeight, blk, style.marginBottomPx);
       }
-      if (headingDesign) markSideObstacles(blk, headingDesign);
+      if (headingDesign) { markSideObstacles(blk, headingDesign); noteHeadingClaim(blk, headingDesign); }
       if (vdtType === 'listItem') {
         pendingSpacing = nextIsListItem ? itemGapPx(listBullet!) : style.marginBottomPx;
       } else {
@@ -9053,7 +9115,7 @@ function placeDocumentPass(
     carriedByDoc.set(doc, { carried, bodyOffset });
   }
   // The composition rules (#749): short lists cut, floats on opener pages.
-  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings()];
+  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes, ...tocGroupWarnings(), ...headingClaimWarnings()];
   if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
 
   const { proposals: citingPageProposals, refused: citingPageRefused } = settleCitingPageFloats();

@@ -1067,14 +1067,16 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   entries, and ranks `soft` (taken when no other cut fits) when the whole block is no taller than the room, so a block that a
   frame holds goes whole to the added page, as the flow moves it to the next column; an entry is never cut inside its lines.
   The title of the contents is not listed because its heading style says `toc: false`, as in the flow. A page break between
-  parts (`toc.parts.breakBefore`) goes with the rows and is ignored in a box, as every directive is. Memoisation: a page with
+  parts (`toc.parts.breakBefore`) goes with the rows; a box ignores the `:::pagebreak` row as every directive, and the
+  part row carries the break itself since §5.19 (#996). Memoisation: a page with
   contents rows is never memoised (`pageMemo` already says so for any `toc` block).
 - **A ground under the contents (#987).** The ground is the template's decoration, which paints under the frames of the
   page and on every page the frame adds; no heading design is asked to paint across the sheet. A design element anchored to
   the bleed that runs down to the trim claims the column (the reserved height of a heading design counts every element
   without `reserve: false`); a document with such a design says so only in the docs: a warning would also fire on every
   cover whose design claims its page on purpose (`headingDesignCuts.ts` makes the same call), so the answer is the note in
-  the reserved-height section and the `reserve` rows of the design tables.
+  the reserved-height section and the `reserve` rows of the design tables. #997 later told the two apart: an in-column
+  heading is named (§5.19), a page-span opener never.
 - **Frames held at the foot of a card (#980).** No new key. A stack group with a box of the card's height, `grow: 1` (and
   `shrink`) on the frames above the held ones and a `minHeight` on the held ones is the held foot: spare space goes to the
   frames that grow, so a shorter text moves nothing below it; a longer one is squeezed by the ladder (`redistribute`, then
@@ -1255,6 +1257,33 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   The drop is `dropLabel` (anchor on the resource, or the `at` percentages in the Markdown), one history step, through
   the template editor host, which the Folio now lends too. The anchors dialog takes two fingers (move and pinch).
 
+### 5.19 Findings round J (#846)
+
+- **A page break between the parts of a contents in a frame (#996).** `TocBlockInfo.breakBefore` marks the part row
+  that `toc.parts.breakBefore` puts after a `:::pagebreak` (every part but the first; the repeat of a head row drops it).
+  `partBreakCut(pass, L, from)` in `frameLayout.ts` answers the cut at the first such row after something real in the
+  fragment. Three places use it. (a) `splitCalloutFragment` takes a `partBreaks` argument (only the frame typesetter
+  passes it, so a `:::toc` in a flow callout is cut as before): a top-level cut before a flagged part row is a candidate
+  that skips `splitMinLines` and the list rules (the break is the author's), and no cut runs past the first such row;
+  the deepest cut that fits wins as always, so a part taller than the room is cut by the room and the next part still
+  opens a page. (b) `fill` in `composedLayout.ts` cuts even when the whole box would fit, when the frame can go on:
+  chained (`next`) or `fit.goOn`. (c) A frame that could go on but is not in `fit.goOn` is reported by the composition
+  (`Composition.wantsOn`); the ladder takes it as its first step (`goingOn`), before the pictures and text shrink, so
+  nothing is scaled for a break. A frame with no `overflow.continueIn` and no chain ignores the break (documented, no
+  warning: the option is the contents' and the template is the author's). `naturalOf` measures an auto-height frame up
+  to the cut it will take. Rejected: handling the break in `layoutCallout` (it has no way to end a fragment); a new
+  `FrameConfig` key (the option already says it).
+- **A heading design that fills its column (#997).** `headingClaimsColumn` (`level`, `element?`; WARNING_SINCE 1.43.0),
+  a content warning of the layout beside `tocGroupSplit`. `measureHeadingDesign` returns what sets the reserved height
+  (`claimedBy`: the id of the element that reaches lowest, or `byMinHeight`); the build keeps it for an in-column heading
+  (`span` not `'page'`) whose design is taller than its lines (`headingClaims`), and at the end of the pass reports the
+  heading when it is the last block of its column, the column has no room for a line, and the next block of the flow is in
+  another column. The two cases the issue wanted told apart: a page-span opener is never noted, and a heading followed by
+  an explicit break is silent (the page is in `forcedBreakPages`, or the column in `forcedBreak`). On a page of one text column the column is the page, so a design that fills it is a cover and is silent too: one public recipe (a vertical title page) set exactly so, which the first version of the check named by mistake. Elements that follow
+  the band (a box filling it) do not set the height, so they are never named. It is not part of `headingDesignCut`
+  (`collectHeadingDesignCuts` stays a pure check on the finished layout, for design text lost past the foot): the claim
+  needs what only the build knows (which element reserved the height). The Sandbox lists it in the design group of the
+  Checks panel and the docs say what to do (`reserve: false` on the element, a lower `minHeight`, or `span: 'page'`).
 
 ## 6. Source map contract
 

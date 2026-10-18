@@ -7784,5 +7784,59 @@
         "it": "figureWordsShared"
       }
     }
+  },
+  "headingClaimsColumn": {
+    "source": "engine",
+    "label": {
+      "en": "Heading design fills its column",
+      "es": "El diseño del título llena su columna",
+      "ca": "El disseny del títol omple la seva columna",
+      "zh": "标题设计占满了整栏",
+      "ar": "تصميم العنوان يملأ عموده",
+      "ja": "見出しのデザインが段全体を占めている",
+      "pt": "O design do título preenche a coluna",
+      "fr": "La maquette du titre remplit sa colonne",
+      "de": "Die Gestaltung der Überschrift füllt ihre Spalte",
+      "it": "La grafica del titolo riempie la sua colonna"
+    },
+    "cause": {
+      "en": "An in-column heading has a design whose reserved height reaches the foot of its column, because an element reaches that far or its `minHeight` is as tall as the column. The text after the heading starts in the next column or page. A heading that opens a page by design (`span: 'page'`) is not reported.",
+      "es": "Un título de columna tiene un diseño cuya altura reservada llega al pie de su columna, porque un elemento llega hasta allí o su `minHeight` es tan alto como la columna. El texto que sigue empieza en la columna o la página siguiente. Un título que abre página por diseño (`span: 'page'`) no se avisa.",
+      "ca": "Un títol de columna té un disseny l'alçada reservada del qual arriba al peu de la seva columna, perquè un element hi arriba o el seu `minHeight` és tan alt com la columna. El text que segueix comença a la columna o la pàgina següent. Un títol que obre pàgina per disseny (`span: 'page'`) no s'avisa.",
+      "zh": "某个栏内标题的设计所保留的高度一直到该栏的底部，原因是有个元素延伸到那里，或是它的`minHeight`与整栏一样高。标题之后的正文从下一栏或下一页开始。按设计占一整页的标题（`span: 'page'`）不会被提示。",
+      "ar": "لعنوان داخل العمود تصميم يبلغ ارتفاعه المحجوز أسفل عموده، لأن عنصرًا يمتد إلى هناك أو لأن `minHeight` يساوي ارتفاع العمود. فيبدأ النص الذي يلي العنوان في العمود التالي أو الصفحة التالية. أما العنوان الذي يفتح صفحة بحكم تصميمه (`span: 'page'`) فلا يُنبَّه إليه.",
+      "ja": "段内の見出しのデザインが確保する高さが段の下端に届いています。ある要素がそこまで伸びているか、`minHeight`が段と同じ高さだからです。見出しのあとの本文は次の段か次のページから始まります。設計どおりにページを開く見出し（`span: 'page'`）は対象になりません。",
+      "pt": "Um título dentro da coluna tem um design cuja altura reservada chega ao pé da coluna, porque um elemento vai até lá ou o seu `minHeight` é tão alto quanto a coluna. O texto seguinte começa na coluna ou na página seguinte. Um título que abre página por design (`span: 'page'`) não é avisado.",
+      "fr": "Un titre de colonne a une maquette dont la hauteur réservée atteint le pied de sa colonne, parce qu'un élément va jusque-là ou que son `minHeight` est aussi haut que la colonne. Le texte qui suit commence dans la colonne ou la page suivante. Un titre qui ouvre une page par construction (`span: 'page'`) n'est pas signalé.",
+      "de": "Eine Überschrift in der Spalte hat eine Gestaltung, deren reservierte Höhe bis zum Fuß der Spalte reicht, weil ein Element so weit reicht oder ihr `minHeight` so hoch ist wie die Spalte. Der Text nach der Überschrift beginnt in der nächsten Spalte oder Seite. Eine Überschrift, die gestaltungsgemäß eine Seite eröffnet (`span: 'page'`), wird nicht gemeldet.",
+      "it": "Un titolo di colonna ha una grafica la cui altezza riservata arriva al piede della colonna, perché un elemento arriva fin lì o il suo `minHeight` è alto quanto la colonna. Il testo che segue comincia nella colonna o nella pagina successiva. Un titolo che apre una pagina per progetto (`span: 'page'`) non viene segnalato."
+    },
+    "fix": {
+      "en": "If the element is decoration, give it `reserve: false`; the heading then reserves room for its other elements only. Lower `minHeight` if that is what fills the column. If the heading is meant to have the page to itself, set `span: 'page'` on its level.",
+      "es": "Si el elemento es adorno, ponle `reserve: false`; el título reserva entonces sitio solo para sus demás elementos. Baja `minHeight` si es eso lo que llena la columna. Si el título debe tener la página para él solo, pon `span: 'page'` en su nivel.",
+      "ca": "Si l'element és ornament, posa-li `reserve: false`; el títol reserva aleshores lloc només per als altres elements. Baixa `minHeight` si és això el que omple la columna. Si el títol ha de tenir la pàgina per a ell sol, posa `span: 'page'` al seu nivell.",
+      "zh": "如果该元素只是装饰，给它设置`reserve: false`，标题就只为它的其他元素保留空间。如果占满整栏的是`minHeight`，就把它调低。如果标题本就要独占整页，在它的级别上设置`span: 'page'`。",
+      "ar": "إن كان العنصر زينة فاضبط عليه `reserve: false`، فيحجز العنوان مكانًا لعناصره الأخرى فقط. اخفض `minHeight` إن كان هو ما يملأ العمود. وإن كان العنوان مقصودًا أن يستأثر بالصفحة فاضبط `span: 'page'` على مستواه.",
+      "ja": "その要素が飾りなら`reserve: false`を指定すると、見出しはほかの要素の分だけ高さを確保します。段を埋めているのが`minHeight`なら下げてください。見出しにページ全体を使わせる意図なら、そのレベルに`span: 'page'`を指定します。",
+      "pt": "Se o elemento é só enfeite, ponha `reserve: false` nele; o título passa a reservar espaço apenas para os outros elementos. Reduza `minHeight` se é ele que preenche a coluna. Se o título deve ter a página só para si, ponha `span: 'page'` no nível.",
+      "fr": "Si l'élément n'est qu'un décor, mettez-lui `reserve: false` : le titre ne réserve alors de place que pour ses autres éléments. Réduisez `minHeight` si c'est lui qui remplit la colonne. Si le titre doit avoir la page pour lui seul, mettez `span: 'page'` sur son niveau.",
+      "de": "Ist das Element Zierde, setzen Sie `reserve: false` darauf; die Überschrift reserviert dann nur noch für ihre übrigen Elemente Platz. Verringern Sie `minHeight`, wenn es die Spalte füllt. Soll die Überschrift die Seite für sich haben, setzen Sie `span: 'page'` auf ihrer Ebene.",
+      "it": "Se l'elemento è un ornamento, imposta `reserve: false`; il titolo riserva allora spazio solo per gli altri elementi. Riduci `minHeight` se è lui a riempire la colonna. Se il titolo deve avere la pagina tutta per sé, imposta `span: 'page'` sul suo livello."
+    },
+    "docs": {
+      "slug": "configuration-headings",
+      "heading": {
+        "en": "Span and advanced design",
+        "es": "Span y diseño avanzado",
+        "ca": "Span i disseny avançat",
+        "zh": "通栏与高级设计",
+        "ar": "الامتداد والتصميم المتقدم",
+        "ja": "幅と詳細デザイン",
+        "pt": "Largura e design avançado",
+        "fr": "Étendue et maquette avancée",
+        "de": "Seitenbreite und erweiterte Gestaltung",
+        "it": "Estensione e progetto grafico avanzato"
+      }
+    }
   }
 }

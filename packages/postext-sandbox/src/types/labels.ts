@@ -273,6 +273,9 @@ export interface SandboxLabels {
   warningsCalloutOverflowDetail: string;
   warningsHeadingDesignCutTitle: string;
   warningsHeadingDesignCutDetail: string;
+  warningsHeadingClaimsColumnTitle: string;
+  warningsHeadingClaimsColumnElementDetail: string;
+  warningsHeadingClaimsColumnMinHeightDetail: string;
   /** A one-and-a-half layout's `sideColumnPercent` that leaves a column
    *  with no width (or is not a number); the engine cuts the columns at
    *  another value. `__used__` is that value, in percent. */

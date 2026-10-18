@@ -977,6 +977,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'paperAttributeInvalid':
       text = `:::paper ${w.key}="${w.value}" is not a value it reads — dropped, the pages keep the document's paper for it`;
       break;
+    case 'headingClaimsColumn':
+      text = w.element !== undefined
+        ? `The design of an H${w.level} reserves its whole column: the element "${w.element}" reaches the foot of it, so the text after the heading starts in the next column — set reserve: false on the element if it is decoration, or span: 'page' on the level if the page is meant to be the heading's`
+        : `The design of an H${w.level} reserves its whole column: its minHeight is as tall as the column, so the text after the heading starts in the next column — lower minHeight, or set span: 'page' on the level if the page is meant to be the heading's`;
+      break;
     case 'figureWordsShared':
       text = `Figure of "${w.resourceId}" gives its ${w.words.map((k) => (k === 'alt' ? 'alt text' : k)).join(' and ')} to a resource an earlier figure of this chapter already worded — the pages show the first figure's words and drop these; give this figure a resource of its own (a second entry for the same file) to keep both`;
       break;

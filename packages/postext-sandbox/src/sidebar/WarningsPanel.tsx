@@ -140,6 +140,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'headingAdvancedWithoutTitleText':
     case 'unknownHeadingStyle':
     case 'headingDesignCut':
+    case 'headingClaimsColumn':
       return Heading;
     case 'unknownResourceId':
     case 'duplicateResourceId':
@@ -355,6 +356,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsCalloutOverflowTitle;
     case 'headingDesignCut':
       return labels.warningsHeadingDesignCutTitle;
+    case 'headingClaimsColumn':
+      return labels.warningsHeadingClaimsColumnTitle;
     case 'sideColumnPercentClamped':
       return labels.warningsSideColumnPercentClampedTitle;
     case 'columnCountClamped':
@@ -735,6 +738,10 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `H${payload.level} — ${labels.warningsHeadingDesignCutDetail
         .replace('__page__', String(payload.page))
         .replace('__mm__', payload.overflowMm.toFixed(1))}`;
+    case 'headingClaimsColumn':
+      return `H${payload.level} — ${(payload.element !== undefined ? labels.warningsHeadingClaimsColumnElementDetail : labels.warningsHeadingClaimsColumnMinHeightDetail)
+        .replace('__page__', String(payload.page))
+        .replace('__element__', payload.element ?? '')}`;
     case 'sideColumnPercentClamped':
       return `${payload.path}: ${payload.value} — ${labels.warningsSideColumnPercentClampedDetail.replace('__used__', payload.used)}`;
     case 'columnCountClamped':
@@ -989,7 +996,7 @@ function WarningItem({
   const Icon = iconFor(warning.payload.kind);
   // A preflight or contrast finding, a design text cut on a page (#628)
   // or a contents block cut (#850) names its book page.
-  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' || warning.payload.kind === 'tocGroupSplit' ? warning.payload.page : undefined;
+  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' || warning.payload.kind === 'tocGroupSplit' || warning.payload.kind === 'headingClaimsColumn' ? warning.payload.page : undefined;
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
@@ -1049,7 +1056,7 @@ export function WarningsPanel() {
     if (w.payload.kind === 'designTextTruncated') goToBookPage(w.payload.page);
     // A contents block cut between columns (#850) opens the contents page
     // and selects the `:::toc` line.
-    if (w.payload.kind === 'tocGroupSplit') goToBookPage(w.payload.page);
+    if (w.payload.kind === 'tocGroupSplit' || w.payload.kind === 'headingClaimsColumn') goToBookPage(w.payload.page);
     // A contrast finding opens the page of its first occurrence, and
     // selects its text when it has a place in the source.
     if (w.payload.kind === 'contrast' && w.payload.page !== undefined) goToBookPage(w.payload.page);

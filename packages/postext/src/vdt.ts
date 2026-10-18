@@ -3360,6 +3360,14 @@ export type ContentWarning = ContentWarningBase & (
    *  first one. `inResource` names the resource whose caption, note or
    *  cell holds it. */
   | { kind: 'unknownMarkStyle'; style: string; inResource?: string }
+  /** An in-column heading whose design reserves the whole of its column
+   *  (#997): the text after it starts in the next column or page. `element`
+   *  is the id of the design element that reaches lowest and sets that
+   *  height (give it `reserve: false` if it is decoration), absent when
+   *  the design's own `minHeight` is what fills the column. A page-span
+   *  opener claims its page on purpose and is not reported. The source
+   *  range is the heading's. */
+  | { kind: 'headingClaimsColumn'; level: number; element?: string }
   /** A `:::figure` gives words (`alt`, `caption`, `note`) to a resource
    *  that an earlier figure of the chapter already gave words to, and
    *  they differ (#986): a resource has one set of words in a chapter, the

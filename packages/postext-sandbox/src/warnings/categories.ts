@@ -76,6 +76,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'labelStyleUnknown':
     case 'contentInConfig':
     case 'headingDesignCut':
+    case 'headingClaimsColumn':
       return 'design';
     case 'looseLine':
     case 'cjkLooseLine':
