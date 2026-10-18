@@ -437,6 +437,9 @@ export function createPostextGuideConfig(locale = 'en'): PostextConfig {
     // On screen the book reads as one scroll: no section dividers (the parts
     // still colour their chapters).
     htmlViewer: { overrides: { parts: { page: false } } },
+    // The two pages of a part divider are one sheet in the part's colour: the
+    // Canvas shows a spread with its pages joined.
+    canvasViewer: { pageGap: 0 },
     folio: GUIDE_FOLIO,
     header: runningHeads(lang),
     footer: openerFooter(),
