@@ -46,8 +46,13 @@ const ACTIVE_EDITION_DEBOUNCE_MS = 1500;
  *  reader (the Checks panel, the side-by-side view). `only` limits the
  *  layouts to some locales. With `onDemand`, a book too big to lay out
  *  unasked (see `editionsOnDemand`) waits until `layOutNow` is called, once
- *  per book for the session. */
-export function useBookEditions(enabledAsked: boolean, only?: readonly string[], options: { onDemand?: boolean } = {}): BookEditions {
+ *  per book for the session. `chapters` (by index) are laid out besides the
+ *  ones with composed checks (the side-by-side view's, #1007). */
+export function useBookEditions(
+  enabledAsked: boolean,
+  only?: readonly string[],
+  options: { onDemand?: boolean; chapters?: readonly number[] } = {},
+): BookEditions {
   const activeProjectId = useSandboxSelector((s) => s.activeProjectId);
   const activePresetId = useSandboxSelector((s) => s.activePresetId);
   const appliedLocale = useSandboxSelector((s) => (s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null));
@@ -77,6 +82,8 @@ export function useBookEditions(enabledAsked: boolean, only?: readonly string[],
   const layOutNow = useCallback(() => askEditions(bookKey), [bookKey]);
   const editionsRev = project?.editionsRev;
   const onlyKey = only?.join('|') ?? '';
+  const chaptersKey = options.chapters?.join('|') ?? '';
+  const chapterIndices = useMemo(() => (chaptersKey === '' ? [] : chaptersKey.split('|').map(Number)), [chaptersKey]);
   // Faces that land after a layout measured it without them: the editions
   // are laid out again, as the previews are.
   const [fontsEpoch, setFontsEpoch] = useState(0);
@@ -103,6 +110,7 @@ export function useBookEditions(enabledAsked: boolean, only?: readonly string[],
         identity: [chapters, config, resources, chapterLayouts, bookStart, fontsEpoch],
         other: false,
         service,
+        chapters: chapterIndices,
         load: async () => ({
           source: {
             locale: activeLocale,
@@ -117,7 +125,7 @@ export function useBookEditions(enabledAsked: boolean, only?: readonly string[],
     }, ACTIVE_EDITION_DEBOUNCE_MS);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
-  }, [enabled, bookKey, activeLocale, chapters, config, resources, chapterLayouts, bookStart, service, onlyKey, fontsEpoch]);
+  }, [enabled, bookKey, activeLocale, chapters, config, resources, chapterLayouts, bookStart, service, onlyKey, chapterIndices, fontsEpoch]);
 
   // The other editions of a local project: the content its record keeps
   // aside for them (#903).
@@ -135,13 +143,14 @@ export function useBookEditions(enabledAsked: boolean, only?: readonly string[],
           identity: [editionsRev ?? 'original', fontsEpoch],
           other: true,
           service,
+          chapters: chapterIndices,
           load: () => loadProjectEdition(activeProjectId, locale),
         });
       }
     }, fontsEpoch === 0 ? 0 : ACTIVE_EDITION_DEBOUNCE_MS);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
-  }, [enabled, presetId, activeProjectId, bookKey, locales, activeLocale, editionsRev, service, onlyKey, fontsEpoch]);
+  }, [enabled, presetId, activeProjectId, bookKey, locales, activeLocale, editionsRev, service, onlyKey, chapterIndices, fontsEpoch]);
 
   // The other editions of a preset: their draft, else the bundle's text.
   useEffect(() => {
@@ -160,13 +169,14 @@ export function useBookEditions(enabledAsked: boolean, only?: readonly string[],
           identity: [draft?.updatedAt ?? 'original', fontsEpoch],
           other: true,
           service,
+          chapters: chapterIndices,
           load: () => loadPresetEdition(provider, locale, drafts),
         });
       }
     }, fontsEpoch === 0 ? 0 : ACTIVE_EDITION_DEBOUNCE_MS);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
-  }, [enabled, presetId, bookKey, locales, activeLocale, drafts, presetProvider, service, onlyKey, fontsEpoch]);
+  }, [enabled, presetId, bookKey, locales, activeLocale, drafts, presetProvider, service, onlyKey, chapterIndices, fontsEpoch]);
 
   const entries = useMemo(() => {
     const out: Record<string, EditionEntry | undefined> = {};

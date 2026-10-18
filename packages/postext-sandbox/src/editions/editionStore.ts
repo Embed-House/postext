@@ -23,7 +23,7 @@ import { editionContentOf, getProject } from '../storage/projects';
 import { withDefaultResourceTypes } from '../context/defaultConfig';
 import { sameLocaleTag } from '../presets/locale';
 import type { LoadedPresetBlob, PresetProvider } from '../presets/types';
-import { layOutEdition, type EditionLayout, type EditionSource } from './editionLayout';
+import { chapterHasComposedChecks, layOutEdition, type EditionLayout, type EditionSource, type LayOutEditionOptions } from './editionLayout';
 
 export type EditionStatus = 'loading' | 'ready' | 'error';
 
@@ -35,10 +35,16 @@ export interface EditionEntry {
   error?: string;
   /** What the layout was read from (compared by identity). */
   identity: readonly unknown[];
+  /** The chapters (by index) laid out besides the checked ones. */
+  chapters: ReadonlySet<number>;
 }
 
 const entries = new Map<string, EditionEntry>();
 const running = new Map<string, AbortController>();
+/** The chapters (by index) some view asked to see of each edition besides
+ *  the checked ones (the side-by-side view's), kept for the session so the
+ *  Checks panel does not lay the edition out again without them. */
+const askedChapters = new Map<string, Set<number>>();
 const listeners = new Set<() => void>();
 let version = 0;
 
@@ -95,6 +101,9 @@ export interface EnsureEditionOptions {
   /** Another edition than the one on screen: its faces and pictures are
    *  loaded first. */
   other: boolean;
+  /** Chapters (by index) to lay out besides the ones with composed checks:
+   *  the side-by-side view shows any chapter (#1007). */
+  chapters?: readonly number[];
 }
 
 /** Lay an edition out unless its entry already holds (or is building) the
@@ -102,23 +111,32 @@ export interface EnsureEditionOptions {
 export function ensureEdition(opts: EnsureEditionOptions): void {
   const key = editionKey(opts.bookKey, opts.locale);
   const entry = entries.get(key);
-  if (entry && sameIdentity(entry.identity, opts.identity) && entry.status !== 'error') return;
+  let asked = askedChapters.get(key);
+  if (!asked) askedChapters.set(key, (asked = new Set()));
+  for (const i of opts.chapters ?? []) asked.add(i);
+  const chapters: ReadonlySet<number> = new Set(asked);
+  const covered = entry !== undefined && [...chapters].every((i) => entry.chapters.has(i));
+  if (entry && covered && sameIdentity(entry.identity, opts.identity) && entry.status !== 'error') return;
   running.get(key)?.abort();
   const controller = new AbortController();
   running.set(key, controller);
-  entries.set(key, { locale: opts.locale, status: 'loading', layout: entry?.layout ?? null, identity: opts.identity });
+  entries.set(key, { locale: opts.locale, status: 'loading', layout: entry?.layout ?? null, identity: opts.identity, chapters });
   emit();
   const clientId = `edition:${key}`;
   void (async () => {
     const loaded = await opts.load();
     if (controller.signal.aborted) return;
-    const layout = await layOutLoadedEdition(opts.service, clientId, loaded, { other: opts.other, signal: controller.signal });
+    const layout = await layOutLoadedEdition(opts.service, clientId, loaded, {
+      other: opts.other,
+      signal: controller.signal,
+      wanted: (c, i) => chapterHasComposedChecks(c.markdown) || chapters.has(i),
+    });
     if (controller.signal.aborted) return;
-    entries.set(key, { locale: opts.locale, status: 'ready', layout, identity: opts.identity });
+    entries.set(key, { locale: opts.locale, status: 'ready', layout, identity: opts.identity, chapters });
     emit();
   })().catch((err: unknown) => {
     if (controller.signal.aborted || (err instanceof DOMException && err.name === 'AbortError')) return;
-    entries.set(key, { locale: opts.locale, status: 'error', layout: entries.get(key)?.layout ?? null, identity: opts.identity, error: err instanceof Error ? err.message : String(err) });
+    entries.set(key, { locale: opts.locale, status: 'error', layout: entries.get(key)?.layout ?? null, identity: opts.identity, error: err instanceof Error ? err.message : String(err), chapters });
     emit();
   }).finally(() => {
     if (running.get(key) === controller) running.delete(key);
@@ -133,7 +151,7 @@ export async function layOutLoadedEdition(
   service: LayoutService,
   clientId: string,
   loaded: { source: EditionSource; blobs?: readonly LoadedPresetBlob[] },
-  options: { other: boolean; signal?: AbortSignal },
+  options: { other: boolean; signal?: AbortSignal; wanted?: LayOutEditionOptions['wanted'] },
 ): Promise<EditionLayout> {
   const { source, blobs } = loaded;
   if (options.other) {
@@ -145,7 +163,7 @@ export async function layOutLoadedEdition(
   }
   return layOutEdition(source, (content, config, cacheKey) => service.build({
     clientId, priority: 'background', content, config, cacheKey,
-  }), { signal: options.signal });
+  }), { signal: options.signal, ...(options.wanted ? { wanted: options.wanted } : {}) });
 }
 
 /** Stop the layouts of a book (it left the screen). */
@@ -235,6 +253,7 @@ export function resetEditions(): void {
   for (const c of running.values()) c.abort();
   running.clear();
   entries.clear();
+  askedChapters.clear();
   askedBooks.clear();
   emit();
 }

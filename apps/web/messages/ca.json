@@ -2331,6 +2331,7 @@
     "editionCompareClose": "Tancar la vista en paral·lel",
     "editionCompareSync": "Desplaçar alhora",
     "editionCompareLoading": "Component l'edició en __locale__…",
+    "editionCompareNoChapter": "L'edició en __locale__ no té aquest capítol",
     "composedFrameEdit": "Text del marc __frame__",
     "composedFrameEditHint": "Retorn desa el canvi, Maj+Retorn comença una altra línia i Esc deixa el text com era.",
     "selectionPath": "Selecció a la pàgina",
