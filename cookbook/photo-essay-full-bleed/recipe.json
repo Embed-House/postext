@@ -60,7 +60,7 @@
     }
   ],
   "engine": {
-    "postext": "1.25.0"
+    "postext": "1.42.1"
   },
   "kit": [
     "core",

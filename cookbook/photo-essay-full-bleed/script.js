@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 068 · Photo essay with full-bleed plates ═══════════════
 // https://postext.dev/en/cookbook/photo-essay-full-bleed
 // Code: MIT · Text: original (CC BY 4.0) · Plates: diffusion models
-// Fonts: Andada Pro, Syne, Syne Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Andada Pro, Syne, Syne Mono (SIL OFL 1.1) · Needs postext ≥ 1.42.1
 // Sierra, a landscape photobook: one day in a mountain range in six plates, each on a page of
 // its own and one across the gutter of a spread, with three short texts between them.
 import {
@@ -115,6 +115,7 @@ const footer = { elements: [
 // #endregion
 
 const config = () => ({
+  canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
   // The English sample is British English: every English tag hyphenates with the US patterns.
   locale: t({ en: 'en-us', es: 'es' }),
   colorPalette,
@@ -152,7 +153,7 @@ const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookboo
 // The text names the plate with :ref's text, since a bare :ref prints 'lámina' and nothing else.
 const lamina = { id: 'lamina', name: t({ en: 'Plate', es: 'Lámina' }),
   shortLabel: t({ en: 'plate', es: 'lámina' }), numberingTemplate: '',
-  resetOn: 'never', counterFormat: 'decimal' };
+  resetOn: 'never', counterFormat: 'decimal', captionPrefix: '' };
 // JPEGs in assets/, cut to the page's shape: 1600 × 1200 px for 280 × 210 mm (145 dpi).
 const picture = (id, [w, h], alt, extra = {}) => ({ id, typeId: 'lamina', kind: 'bitmap',
   bitmap: { fileId: `${id}-${w}.jpg`, format: 'jpeg', width: w, height: h },
