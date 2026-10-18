@@ -5,10 +5,14 @@
 import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import type { LoadedPreset } from '../presets';
 import { sameLocaleTag } from '../presets/locale';
+import { chineseScriptOf, isJapaneseLanguage } from 'postext';
 import type { PostextConfig } from 'postext';
 import type { BookContent } from '../book/types';
 import { cloneBook } from '../book/chapterOps';
 import { relocalizedResourceTypes } from '../context/defaultConfig';
+import { arabicDefaults, isArabicScriptLanguage } from '../context/arabicDefaults';
+import { chineseDefaults } from '../context/chineseDefaults';
+import { japaneseDefaults } from '../context/japaneseDefaults';
 import type { ProjectContent, ProjectEditionTitle, ProjectRecord } from './projects';
 
 /** What a loaded edition gives a record: its chapters (the first active),
@@ -86,17 +90,59 @@ export interface NewEditionDeps {
   fallbackLocale: string;
 }
 
+/** The defaults of a language a new edition was given (#989). */
+export interface LanguageDefaultsApplied {
+  /** The script family whose defaults were applied. */
+  script: 'arabic' | 'chinese' | 'japanese';
+  /** How many settings moved. */
+  count: number;
+}
+
+/**
+ * The settings a new book in `locale` gets, applied to `config`, an
+ * edition's configuration whose document language is already `locale`:
+ * the Arabic, Chinese or Japanese defaults of the Design panel, with the
+ * rows the book set to a value of its own left out (the lists mark them
+ * `customised`, and apply only the rest and the rows that are part of the
+ * language). The writing mode the book has is kept (a horizontal book
+ * stays horizontal). Any other language has no defaults: the configuration
+ * comes back as it is.
+ */
+export function withLanguageDefaults(config: PostextConfig, locale: string, fallbackLocale: string): { config: PostextConfig; applied: LanguageDefaultsApplied | null } {
+  let result: { config: PostextConfig; changes: readonly { applied: boolean }[] } | null = null;
+  let script: LanguageDefaultsApplied['script'] | null = null;
+  if (isArabicScriptLanguage(locale)) {
+    script = 'arabic';
+    result = arabicDefaults(config, { locale });
+  } else if (chineseScriptOf(locale) !== undefined) {
+    script = 'chinese';
+    result = chineseDefaults(config, { locale, fallbackLocale });
+  } else if (isJapaneseLanguage(locale)) {
+    script = 'japanese';
+    result = japaneseDefaults(config, { book: config.layout?.writingMode === 'vertical-rl' ? 'vertical' : 'horizontal', fallbackLocale });
+  }
+  if (!result || !script) return { config, applied: null };
+  return { config: result.config, applied: { script, count: result.changes.filter((c) => c.applied).length } };
+}
+
 /** What a new edition in `locale` starts from: the chapters, the
  *  configuration and the resources of `source`, an edition in `from`. The
  *  chapters take ids of their own; the pictures and faces stay the same
  *  files (every edition of a record may point at one, the sweep counts
  *  them all). The document language is `locale`; the built-in figure and
- *  table names that were still those of the old language follow it, and an
+ *  table names that were still those of the old language follow it, an
  *  explicit hyphenation language, which was the old one's, is dropped so
- *  hyphenation follows the document. */
-export function contentForNewEdition(source: ProjectContent, from: string, locale: string, ids: () => string): ProjectContent {
+ *  hyphenation follows the document, and an Arabic, Chinese or Japanese
+ *  edition gets the defaults of its language (`withLanguageDefaults`). */
+export function contentForNewEdition(
+  source: ProjectContent,
+  from: string,
+  locale: string,
+  ids: () => string,
+  fallbackLocale = from,
+): { content: ProjectContent; applied: LanguageDefaultsApplied | null } {
   const book = cloneBook(source, ids);
-  const config: PostextConfig = structuredClone(source.config);
+  let config: PostextConfig = structuredClone(source.config);
   config.locale = locale;
   const types = relocalizedResourceTypes(config.resourceTypes, [from, source.config.locale ?? from], locale);
   if (types) config.resourceTypes = types;
@@ -106,27 +152,35 @@ export function contentForNewEdition(source: ProjectContent, from: string, local
     void _old;
     config.bodyText = { ...config.bodyText, hyphenation: rest };
   }
+  const defaults = withLanguageDefaults(config, locale, fallbackLocale);
+  config = defaults.config;
   return {
-    ...book,
-    ...(source.canvasScope ? { canvasScope: source.canvasScope } : {}),
-    config,
-    resources: structuredClone(source.resources),
+    content: {
+      ...book,
+      ...(source.canvasScope ? { canvasScope: source.canvasScope } : {}),
+      config,
+      resources: structuredClone(source.resources),
+    },
+    applied: defaults.applied,
   };
 }
 
 /** The record with an edition in `locale` added, made from the edition on
- *  screen (copy the chapters, set the document language), and left on
- *  screen as it was: `withActiveEdition` opens the new one. Null when the
- *  record already has that language. */
-export function withNewEdition(record: ProjectRecord, locale: string, deps: NewEditionDeps): ProjectRecord | null {
+ *  screen (copy the chapters, set the document language and the
+ *  language's defaults), and left on screen as it was: `withActiveEdition`
+ *  opens the new one. Null when the record already has that language. */
+export function withNewEdition(record: ProjectRecord, locale: string, deps: NewEditionDeps): { record: ProjectRecord; applied: LanguageDefaultsApplied | null } | null {
   if (recordHasEdition(record, locale, deps.fallbackLocale)) return null;
   const own = recordLocaleOf(record, deps.fallbackLocale);
-  const edition = contentForNewEdition(record, own, locale, deps.ids);
+  const { content, applied } = contentForNewEdition(record, own, locale, deps.ids, deps.fallbackLocale);
   return {
-    ...record,
-    locale: own,
-    editions: { ...(record.editions ?? {}), [locale]: edition },
-    editionLocales: [...recordEditionTags(record, deps.fallbackLocale), locale],
-    editionsRev: Date.now(),
+    record: {
+      ...record,
+      locale: own,
+      editions: { ...(record.editions ?? {}), [locale]: content },
+      editionLocales: [...recordEditionTags(record, deps.fallbackLocale), locale],
+      editionsRev: Date.now(),
+    },
+    applied,
   };
 }

@@ -2474,6 +2474,7 @@
     "projectAddLanguagePick": "لغة النسخة الجديدة",
     "projectAddLanguageConfirm": "أضف وافتح",
     "projectLanguageAdded": "أُضيفت نسخة __language__ من «__name__». ما زال نصها نسخة من نسخة __from__، فترجِمه هنا.",
+    "projectLanguageDefaults": "طُبّقت الإعدادات الافتراضية للغة __language__ (__count__ إعدادًا)، وبقيت كما هي الإعدادات التي اخترتها بنفسك.",
     "projectRenameEditionOnly": "لنسخة __language__ فقط",
     "projectExport": "تنزيل (⁦.postext⁩)",
     "projectActivate": "افتح المشروع",

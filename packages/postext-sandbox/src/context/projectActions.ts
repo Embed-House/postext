@@ -631,8 +631,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       if (s.activeProjectId === id) await deps.flushWorkingSave();
       const record = await getProject(id);
       if (!record) throw new Error('Project not found');
-      const added = withNewEdition(record, locale, { ids: generateChapterId, fallbackLocale: s.locale });
-      if (!added) return false;
+      const made = withNewEdition(record, locale, { ids: generateChapterId, fallbackLocale: s.locale });
+      if (!made) return false;
+      const { record: added, applied } = made;
       // The new edition takes the screen; the one it was copied from goes
       // aside as it is.
       const next = withActiveEdition(added, locale);
@@ -646,7 +647,8 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         payload: deps.labels().projectLanguageAdded
           .replace('__language__', localeDisplayName(locale, ui))
           .replace('__name__', next.name)
-          .replace('__from__', localeDisplayName(recordLocaleOf(record, ui), ui)),
+          .replace('__from__', localeDisplayName(recordLocaleOf(record, ui), ui))
+        + (applied ? ` ${deps.labels().projectLanguageDefaults.replace('__language__', localeDisplayName(locale, ui)).replace('__count__', String(applied.count))}` : ''),
       });
       return true;
     });

@@ -1974,6 +1974,7 @@ export interface SandboxLabels {
   projectAddLanguagePick: string;
   projectAddLanguageConfirm: string;
   projectLanguageAdded: string;
+  projectLanguageDefaults: string;
   projectRenameEditionOnly: string;
   projectExport: string;
   projectActivate: string;

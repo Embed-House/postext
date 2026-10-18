@@ -2474,6 +2474,7 @@
     "projectAddLanguagePick": "新しい版の言語",
     "projectAddLanguageConfirm": "追加して開く",
     "projectLanguageAdded": "「__name__」の__language__版を追加しました。本文はまだ__from__版の複製です。ここで翻訳してください。",
+    "projectLanguageDefaults": "__language__の既定の設定を適用しました（__count__項目）。自分で選んだ設定はそのままです。",
     "projectRenameEditionOnly": "__language__版だけに適用",
     "projectExport": "ダウンロード（.postext）",
     "projectActivate": "プロジェクトを開く",

@@ -3363,6 +3363,7 @@
     "projectAddLanguagePick": "Idioma de la nueva edición",
     "projectAddLanguageConfirm": "Añadir y abrir",
     "projectLanguageAdded": "Se añadió la edición en __language__ de «__name__». Su texto sigue siendo una copia de la edición en __from__: tradúcelo aquí.",
+    "projectLanguageDefaults": "Se aplicaron los valores por defecto de __language__ (__count__ ajustes); los que habías elegido tú se dejaron como estaban.",
     "projectRenameEditionOnly": "Solo para la edición en __language__",
     "projectExport": "Descargar (.postext)",
     "projectActivate": "Abrir proyecto",

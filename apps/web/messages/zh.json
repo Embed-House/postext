@@ -2474,6 +2474,7 @@
     "projectAddLanguagePick": "新版本的语言",
     "projectAddLanguageConfirm": "添加并打开",
     "projectLanguageAdded": "已添加“__name__”的__language__版本。它的文字仍是__from__版本的副本，请在这里翻译。",
+    "projectLanguageDefaults": "已应用__language__的默认设置（共__count__项）；你自己设定过的项保持原样。",
     "projectRenameEditionOnly": "仅用于__language__版本",
     "projectExport": "下载（.postext）",
     "projectActivate": "打开项目",

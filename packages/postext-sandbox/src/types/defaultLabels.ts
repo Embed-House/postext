@@ -1873,6 +1873,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   projectAddLanguagePick: "Language of the new edition",
   projectAddLanguageConfirm: "Add and open",
   projectLanguageAdded: "Added the __language__ edition of “__name__”. Its text is still a copy of the __from__ one: translate it here.",
+  projectLanguageDefaults: "The defaults for __language__ were applied (__count__ settings); settings you had chosen yourself were left as they were.",
   projectRenameEditionOnly: "Only for the __language__ edition",
   projectExport: 'Download (.postext)',
   projectActivate: 'Open project',

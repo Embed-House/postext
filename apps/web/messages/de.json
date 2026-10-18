@@ -2475,6 +2475,7 @@
     "projectAddLanguagePick": "Sprache der neuen Ausgabe",
     "projectAddLanguageConfirm": "Hinzufügen und öffnen",
     "projectLanguageAdded": "Die Ausgabe __language__ von „__name__“ ist angelegt. Ihr Text ist noch eine Kopie der Ausgabe __from__: Übersetzen Sie ihn hier.",
+    "projectLanguageDefaults": "Die Standardeinstellungen für __language__ wurden angewendet (__count__ Einstellungen); was Sie selbst gewählt hatten, blieb unverändert.",
     "projectRenameEditionOnly": "Nur für die Ausgabe __language__",
     "projectExport": "Herunterladen (.postext)",
     "projectActivate": "Projekt öffnen",

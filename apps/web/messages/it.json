@@ -2475,6 +2475,7 @@
     "projectAddLanguagePick": "Lingua della nuova edizione",
     "projectAddLanguageConfirm": "Aggiungi e apri",
     "projectLanguageAdded": "Aggiunta l’edizione in __language__ di «__name__». Il testo è ancora una copia dell’edizione in __from__: traducilo qui.",
+    "projectLanguageDefaults": "Sono state applicate le impostazioni predefinite per __language__ (__count__ impostazioni); quelle che avevi scelto tu sono rimaste come erano.",
     "projectRenameEditionOnly": "Solo per l’edizione in __language__",
     "projectExport": "Scarica (.postext)",
     "projectActivate": "Apri progetto",

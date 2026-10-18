@@ -2474,6 +2474,7 @@
     "projectAddLanguagePick": "Llengua de la nova edició",
     "projectAddLanguageConfirm": "Afegir i obrir",
     "projectLanguageAdded": "S'ha afegit l'edició en __language__ de «__name__». El text encara és una còpia de l'edició en __from__: tradueix-lo aquí.",
+    "projectLanguageDefaults": "S'han aplicat els valors per defecte de __language__ (__count__ ajustos); els que havies triat tu s'han deixat com estaven.",
     "projectRenameEditionOnly": "Només per a l'edició en __language__",
     "projectExport": "Baixar (.postext)",
     "projectActivate": "Obrir el projecte",

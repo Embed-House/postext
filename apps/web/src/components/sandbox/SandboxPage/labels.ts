@@ -1856,6 +1856,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     projectAddLanguagePick: t("projectAddLanguagePick"),
     projectAddLanguageConfirm: t("projectAddLanguageConfirm"),
     projectLanguageAdded: t("projectLanguageAdded"),
+    projectLanguageDefaults: t("projectLanguageDefaults"),
     projectRenameEditionOnly: t("projectRenameEditionOnly"),
     projectExport: t("projectExport"),
     projectActivate: t("projectActivate"),

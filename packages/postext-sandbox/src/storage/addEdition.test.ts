@@ -32,11 +32,12 @@ function record(patch: Partial<ProjectRecord> = {}): ProjectRecord {
 
 let n = 0;
 const deps = { ids: () => `new-${++n}`, fallbackLocale: 'en' };
+const addTo = (r: ProjectRecord, locale: string) => withNewEdition(r, locale, deps)?.record ?? null;
 
 describe('withNewEdition (#989)', () => {
   it('makes an edition from the open one: same text, its own chapter ids, the new document language', () => {
     const base = record();
-    const next = withNewEdition(base, 'en-us', deps)!;
+    const next = addTo(base, 'en-us')!;
     const added = next.editions!['en-us']!;
     expect(added.chapters.map((c) => c.markdown)).toEqual(base.chapters.map((c) => c.markdown));
     expect(added.chapters.map((c) => c.id)).not.toContain('c1');
@@ -59,7 +60,7 @@ describe('withNewEdition (#989)', () => {
   it('keeps renamed resource types and the pictures', () => {
     const types = [{ ...defaultResourceTypes('es')[0]!, name: 'Lámina' }, ...defaultResourceTypes('es').slice(1)];
     const base = record({ config: { locale: 'es', resourceTypes: types } });
-    const added = withNewEdition(base, 'fr', deps)!.editions!.fr!;
+    const added = addTo(base, 'fr')!.editions!.fr!;
     expect(added.config.resourceTypes).toEqual(types);
     expect(added.resources[0]).toMatchObject({ id: 'fig', bitmap: { fileId: 'blob-1' } });
     // A copy, not the same objects: editing one edition never edits the other.
@@ -75,9 +76,9 @@ describe('withNewEdition (#989)', () => {
     expect(recordEditionTags(base, 'en')).toEqual(['es', 'ca']);
     expect(recordHasEdition(base, 'CA', 'en')).toBe(true);
     expect(recordHasEdition(base, 'es', 'en')).toBe(true);
-    expect(withNewEdition(base, 'ca', deps)).toBeNull();
-    expect(withNewEdition(base, 'es', deps)).toBeNull();
-    const next = withNewEdition(base, 'de', deps)!;
+    expect(addTo(base, 'ca')).toBeNull();
+    expect(addTo(base, 'es')).toBeNull();
+    const next = addTo(base, 'de')!;
     expect(next.editionLocales).toEqual(['es', 'ca', 'de']);
     expect(Object.keys(next.editions!)).toEqual(['ca', 'de']);
     expect(toSummary(next).locales).toEqual(['es', 'ca', 'de']);
@@ -86,13 +87,13 @@ describe('withNewEdition (#989)', () => {
   it('reads a record that names no language from its configuration, else the interface', () => {
     expect(recordLocaleOf({ locale: undefined, config: { locale: 'fr' } }, 'en')).toBe('fr');
     expect(recordLocaleOf({ locale: undefined, config: {} }, 'ja')).toBe('ja');
-    const next = withNewEdition(record({ locale: undefined, config: { locale: 'fr' } }), 'it', deps)!;
+    const next = addTo(record({ locale: undefined, config: { locale: 'fr' } }), 'it')!;
     expect(next.locale).toBe('fr');
     expect(next.editionLocales).toEqual(['fr', 'it']);
   });
 
   it('opens the new edition with withActiveEdition and leaves the first aside, keeping the name', () => {
-    const next = withNewEdition(record(), 'en-us', deps)!;
+    const next = addTo(record(), 'en-us')!;
     const shown = withActiveEdition(next, 'en-us');
     expect(shown.locale).toBe('en-us');
     expect(shown.name).toBe('Mi libro');
@@ -104,7 +105,7 @@ describe('withNewEdition (#989)', () => {
 });
 
 describe('renameEditionPatch (#999)', () => {
-  const two = (patch: Partial<ProjectRecord> = {}): ProjectRecord => ({ ...withNewEdition(record(), 'en-us', deps)!, ...patch });
+  const two = (patch: Partial<ProjectRecord> = {}): ProjectRecord => ({ ...addTo(record(), 'en-us')!, ...patch });
 
   it('gives the edition on screen a title of its own and the others the one they show', () => {
     const base = two({ description: 'Descripción' });
@@ -143,5 +144,50 @@ describe('renameEditionPatch (#999)', () => {
   it('renames a book in one language as a whole, like the project rename', () => {
     const base = record();
     expect(renameEditionPatch(base, 'Nuevo')).toEqual(renamePatch(base, 'Nuevo'));
+  });
+});
+
+describe('the defaults of the language an edition is added in (#989)', () => {
+  const add = (patch: Partial<ProjectRecord>, locale: string) => withNewEdition(record(patch), locale, deps)!;
+
+  it('gives an Arabic edition the Arabic defaults: typefaces, captions, a right-to-left reading', () => {
+    const { record: next, applied } = add({ config: { locale: 'en', resourceTypes: defaultResourceTypes('en') } }, 'ar');
+    const config = next.editions!.ar!.config;
+    expect(applied).toMatchObject({ script: 'arabic' });
+    expect(applied!.count).toBeGreaterThan(3);
+    expect(config.locale).toBe('ar');
+    expect(config.bodyText?.fontFamily).toBe('Amiri');
+    expect(config.resourceTypes).toEqual(defaultResourceTypes('ar'));
+    // The edition it was copied from keeps its settings.
+    expect(next.config.bodyText?.fontFamily).toBeUndefined();
+  });
+
+  it('returns a left-to-right book to Auto for an Arabic edition, and keeps a typeface the book chose', () => {
+    const { record: next } = add({ config: { locale: 'en', direction: 'ltr', bodyText: { fontFamily: 'Lora' } } }, 'ar');
+    const config = next.editions!.ar!.config;
+    expect(config.direction).toBeUndefined();
+    expect(config.bodyText?.fontFamily).toBe('Lora');
+  });
+
+  it('gives a Japanese edition the defaults of a horizontal book unless the book is vertical', () => {
+    const horizontal = add({ config: { locale: 'en' } }, 'ja');
+    expect(horizontal.applied).toMatchObject({ script: 'japanese' });
+    expect(horizontal.record.editions!.ja!.config.layout?.writingMode).toBeUndefined();
+    expect(horizontal.record.editions!.ja!.config.bodyText?.fontFamily).toBe('Noto Serif JP');
+    const vertical = add({ config: { locale: 'en', layout: { writingMode: 'vertical-rl' } } }, 'ja');
+    expect(vertical.record.editions!.ja!.config.layout?.writingMode).toBe('vertical-rl');
+  });
+
+  it('gives a Chinese edition its script, typefaces and captions', () => {
+    const { record: next, applied } = add({ config: { locale: 'en' } }, 'zh-Hant');
+    expect(applied).toMatchObject({ script: 'chinese' });
+    const config = next.editions!['zh-Hant']!.config;
+    expect(config.locale).toBe('zh-Hant');
+    expect(config.bodyText?.fontFamily).toMatch(/Noto (Serif|Sans) (TC|HK)/);
+  });
+
+  it('applies nothing to a language without defaults', () => {
+    const made = add({}, 'fr');
+    expect(made.applied).toBeNull();
   });
 });
