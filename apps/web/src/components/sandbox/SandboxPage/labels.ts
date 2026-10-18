@@ -1713,6 +1713,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     editionCompareClose: t("editionCompareClose"),
     editionCompareSync: t("editionCompareSync"),
     editionCompareLoading: t("editionCompareLoading"),
+    editionCompareNoChapter: t("editionCompareNoChapter"),
     composedFrameEdit: t("composedFrameEdit"),
     composedFrameEditHint: t("composedFrameEditHint"),
     selectionPath: t("selectionPath"),

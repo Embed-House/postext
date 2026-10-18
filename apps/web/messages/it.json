@@ -2332,6 +2332,7 @@
     "editionCompareClose": "Chiudi la vista affiancata",
     "editionCompareSync": "Scorri insieme",
     "editionCompareLoading": "Impaginazione dell’edizione __locale__…",
+    "editionCompareNoChapter": "L’edizione __locale__ non ha questo capitolo",
     "composedFrameEdit": "Testo della cornice __frame__",
     "composedFrameEditHint": "Invio conserva la modifica, Maiusc+Invio va a capo, Esc lascia il testo com’era.",
     "selectionPath": "Selezione sulla pagina",

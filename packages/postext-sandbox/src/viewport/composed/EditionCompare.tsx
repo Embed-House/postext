@@ -150,10 +150,12 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
   const others = base.locales.filter((l) => !sameLocaleTag(l, base.activeLocale));
   const [chosen, setChosen] = useState<string | null>(null);
   const other = chosen && others.includes(chosen) ? chosen : others[0] ?? '';
-  const editions = useBookEditions(other !== '', other ? [other] : []);
+  const activeIndex = chapters.findIndex((c) => c.id === activeChapterId);
+  // The chapter on screen is laid out in the other edition even when the
+  // checks would skip it (no composed page, #1007).
+  const editions = useBookEditions(other !== '', other ? [other] : [], { chapters: activeIndex >= 0 ? [activeIndex] : [] });
   const [sync, setSync] = useState(true);
 
-  const activeIndex = chapters.findIndex((c) => c.id === activeChapterId);
   const leftDoc = useMemo(() => {
     const held = chapterDocsRef.current.get(activeChapterId);
     if (held) return held.doc;
@@ -163,6 +165,9 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
   }, [activeChapterId, docVersion]);
   const entry = other ? editions.entries[other] : undefined;
   const rightDoc = entry?.layout?.chapters[activeIndex]?.doc ?? null;
+  // Laid out, and still without the chapter: the edition has none there.
+  const rightMissing = !rightDoc && entry?.status === 'ready' && entry.chapters.has(activeIndex);
+  const rightLoading = other !== '' && !rightDoc && !rightMissing && entry?.status !== 'error';
 
   const left = useRef<ColumnHandle>({ el: null, doc: null, tops: [], heights: [] });
   const right = useRef<ColumnHandle>({ el: null, doc: null, tops: [], heights: [] });
@@ -203,9 +208,11 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
     ? labels.composedChecksOneEdition
     : entry?.status === 'error'
       ? labels.composedChecksEditionError.replace('__locale__', name(other)).replace('__error__', entry.error ?? '')
-      : !rightDoc
-        ? labels.editionCompareLoading.replace('__locale__', name(other))
-        : null;
+      : rightMissing
+        ? labels.editionCompareNoChapter.replace('__locale__', name(other))
+        : !rightDoc
+          ? labels.editionCompareLoading.replace('__locale__', name(other))
+          : null;
 
   const openOther = (pageIndex: number) => {
     const page = rightDoc?.pages[pageIndex];
@@ -235,7 +242,7 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
           ) : (
             <span className="truncate text-xs font-semibold text-(--foreground)">{other ? name(other) : ''}</span>
           )}
-          {other && !rightDoc && entry?.status !== 'error' && <Loader2 size={12} aria-hidden="true" className="shrink-0 animate-spin text-(--slate)" />}
+          {rightLoading && <Loader2 size={12} aria-hidden="true" className="shrink-0 animate-spin text-(--slate)" />}
         </span>
         <span className="flex shrink-0 items-center gap-1 text-[0.66rem] text-(--slate)">
           <Switch checked={sync} onCheckedChange={setSync} ariaLabelledBy="postext-compare-sync" />
