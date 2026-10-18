@@ -1595,6 +1595,11 @@ export interface SandboxLabels {
   htmlViewerColumnGapTooltip: string;
   htmlViewerOptimalLineBreaking: string;
   htmlViewerOptimalLineBreakingTooltip: string;
+  canvasViewerSection: string;
+  canvasViewerPageGap: string;
+  canvasViewerPageGapTooltip: string;
+  canvasViewerRowGap: string;
+  canvasViewerRowGapTooltip: string;
   folioSection: string;
   folioGroupView: string;
   folioGroupPaper: string;

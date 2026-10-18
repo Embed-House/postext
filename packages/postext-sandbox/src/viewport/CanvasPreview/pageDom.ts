@@ -4,20 +4,47 @@ import type { SandboxAction } from '../../context/SandboxContext';
 import type { PanelId } from '../../types';
 import type { SandboxLabels } from '../../types/labels';
 import type { ComposedBook } from '../../book/types';
-import { createPageCanvas, createOverlaySvg } from './dom';
+import { createPageCanvas, createOverlaySvg, setPairSide } from './dom';
 import { attachSlotClickHandler, type PageNavigator } from './interaction';
 import { attachFrameEditor } from '../composed/frameEditor';
 import { attachLabelAnchorEditor } from '../composed/labelAnchorEditor';
 import {
-  PAGE_GAP,
+  DEFAULT_PAGE_GAPS,
   PAGE_PADDING,
+  type PageGaps,
   type ViewMode,
   groupPagesIntoRows,
+  innerRowWidth,
+  rowPadding,
 } from './layoutUtils';
 
 export interface BuildPagesDomResult {
   innerDiv: HTMLDivElement;
   allSlots: HTMLDivElement[];
+}
+
+/** Lay out the two pages of a row as a pair that touches (gap 0), or give
+ *  each its own edges back. A right-bound book reads its spreads right to
+ *  left, so the first page of a row is on the right of the joint. Rows with
+ *  one page (a lone recto or verso beside its spacer) are left alone. */
+export function joinPagesOfRow(rowDiv: HTMLElement, pageGap: number): void {
+  const slots = Array.from(rowDiv.children).filter(
+    (el): el is HTMLElement => el instanceof HTMLElement && el.dataset.pageIndex !== undefined,
+  );
+  const canvases = slots.map((slot) => slot.querySelector('canvas')).filter((c): c is HTMLCanvasElement => c !== null);
+  if (canvases.length !== 2) {
+    for (const canvas of canvases) setPairSide(canvas, 'alone');
+    return;
+  }
+  const reversed = rowDiv.style.flexDirection === 'row-reverse';
+  const [first, second] = canvases as [HTMLCanvasElement, HTMLCanvasElement];
+  if (pageGap > 0) {
+    setPairSide(first, 'alone');
+    setPairSide(second, 'alone');
+  } else {
+    setPairSide(first, reversed ? 'right' : 'left');
+    setPairSide(second, reversed ? 'left' : 'right');
+  }
 }
 
 export function buildPagesDom(
@@ -41,11 +68,12 @@ export function buildPagesDom(
   pageLabel?: (pageIndex: number, pageCount: number) => string,
   /** The interface strings (the comic page tools, #568). */
   labelsRef?: MutableRefObject<SandboxLabels>,
+  /** The space between the pages of a row and between rows (#1002). */
+  gaps: PageGaps = DEFAULT_PAGE_GAPS,
 ): BuildPagesDomResult {
   const isSpread = viewMode === 'spread';
   const pagesPerRow = isSpread ? 2 : 1;
-  const innerWidth =
-    displayWidth * pagesPerRow + PAGE_GAP * (pagesPerRow - 1) + PAGE_PADDING * 2;
+  const innerWidth = innerRowWidth(displayWidth, pagesPerRow, gaps.pageGap);
   const innerDiv = document.createElement('div');
   innerDiv.style.width = `${innerWidth}px`;
   innerDiv.style.margin = '0 auto';
@@ -101,10 +129,9 @@ export function buildPagesDom(
     rowDiv.style.display = 'flex';
     rowDiv.style.justifyContent = 'center';
     rowDiv.style.alignItems = 'flex-start';
-    const paddingTop = rowIdx === 0 ? PAGE_PADDING : PAGE_GAP / 2;
-    const paddingBottom = rowIdx === rows.length - 1 ? PAGE_PADDING : PAGE_GAP / 2;
+    const { top: paddingTop, bottom: paddingBottom } = rowPadding(rowIdx, rows.length, gaps.rowGap);
     rowDiv.style.padding = `${paddingTop}px ${PAGE_PADDING}px ${paddingBottom}px`;
-    rowDiv.style.gap = `${PAGE_GAP}px`;
+    rowDiv.style.gap = `${gaps.pageGap}px`;
     rowDiv.style.boxSizing = 'border-box';
     rowDiv.style.minHeight = `${displayHeight + paddingTop + paddingBottom}px`;
     rowDiv.dataset.pageRow = '1';
@@ -126,6 +153,7 @@ export function buildPagesDom(
       }
     }
 
+    if (isSpread && gaps.pageGap === 0) joinPagesOfRow(rowDiv, gaps.pageGap);
     innerDiv.appendChild(rowDiv);
   }
 

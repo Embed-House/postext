@@ -63,6 +63,7 @@ export type SettingsSectionId =
   | 'comicsCast'
   | 'pageTemplates'
   | 'htmlViewer'
+  | 'canvasViewer'
   | 'folio'
   | 'pdfGeneration'
   | 'print'
@@ -158,6 +159,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'print', group: 'output', labelKey: 'printSection', configKeys: ['print', 'page'] },
   { id: 'pdfGeneration', group: 'output', labelKey: 'pdfGenerationSection', configKeys: ['pdfGeneration'] },
   { id: 'htmlViewer', group: 'output', labelKey: 'htmlViewer', configKeys: ['htmlViewer'] },
+  // The space between the pages in the Canvas (#1002).
+  { id: 'canvasViewer', group: 'output', labelKey: 'canvasViewerSection', configKeys: ['canvasViewer'] },
   { id: 'folio', group: 'folio', labelKey: 'folioSection', configKeys: ['folio'] },
   { id: 'debug', group: 'advanced', labelKey: 'debug', configKeys: ['debug', 'page'] },
   { id: 'warnings', group: 'advanced', labelKey: 'warnings', configKeys: ['debug'] },

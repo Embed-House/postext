@@ -6162,6 +6162,19 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resetSectionConfirm',
     ],
   },
+  'canvasViewer': {
+    sources: [],
+    literals: ["px"],
+    keys: [
+      'canvasViewerPageGap',
+      'canvasViewerPageGapTooltip',
+      'canvasViewerRowGap',
+      'canvasViewerRowGapTooltip',
+      'canvasViewerSection',
+      'reset',
+      'resetSectionConfirm',
+    ],
+  },
   'folio': {
     sources: ['color', 'resources'],
     literals: ["cm³/g", "g/m²"],

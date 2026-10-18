@@ -1522,6 +1522,11 @@ export const DEFAULT_LABELS: SandboxLabels = {
   htmlViewerOptimalLineBreaking: 'Optimal line breaking',
   htmlViewerOptimalLineBreakingTooltip:
     'Use Knuth-Plass optimal line breaking in the HTML viewer. Off by default for performance — the global body-text setting is overridden here only for HTML rendering',
+  canvasViewerSection: 'Canvas (page spacing)',
+  canvasViewerPageGap: 'Gap between the pages of a pair',
+  canvasViewerPageGapTooltip: 'Space between the left and right page of a spread in the Canvas, in pixels. With 0 the two pages touch, so a picture across the spread shows no gap. It only changes how the Canvas is drawn, never the pages.',
+  canvasViewerRowGap: 'Gap between one pair and the next',
+  canvasViewerRowGapTooltip: 'Space between one row of pages and the next in the Canvas, in pixels. It only changes how the Canvas is drawn, never the pages.',
   folioSection: 'Folio viewer (3D)',
   folioGroupView: 'View',
   folioGroupPaper: 'Paper',

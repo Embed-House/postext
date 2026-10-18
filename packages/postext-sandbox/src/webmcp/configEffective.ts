@@ -13,6 +13,7 @@ import {
   resolveContrastConfig,
   resolveDebugConfig,
   resolveFolioConfig,
+  resolveCanvasViewerConfig,
   resolveHtmlViewerConfig,
   resolveLineNumbersConfig,
   resolvePdfGenerationConfig,
@@ -50,6 +51,7 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
     comics: resolved.comics ?? resolveComicsConfig(config.comics, documentLocale),
     debug: resolveDebugConfig(config.debug),
     htmlViewer: resolveHtmlViewerConfig(config.htmlViewer),
+    canvasViewer: resolveCanvasViewerConfig(config.canvasViewer),
     resourceTypes: effectiveResourceTypes(config, resources),
     // Composed pages (#853): lists the engine resolves only when set.
     pageTemplates: resolved.pageTemplates ?? [],
