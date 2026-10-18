@@ -6,6 +6,8 @@ import { useRef, useLayoutEffect, useEffect, useCallback, useState, type ReactNo
 import { useSandboxDispatch, useSandboxLabels, useSandboxPresetStale, useSandboxSelector, useSandboxWarnings } from '../context/SandboxContext';
 import type { PanelId } from '../types';
 import { Tooltip, cn } from '../ui';
+import { bookEditionsOf } from '../editions/bookLocales';
+import { localeDisplayName } from '../presets/localeNames';
 
 interface ActivityBarProps {
   themeToggle?: ReactNode;
@@ -30,6 +32,20 @@ const PANEL_ICONS: { id: PanelId; Icon: typeof FileCode; labelKey: NavLabelKey; 
   { id: 'warnings', Icon: AlertTriangle, labelKey: 'navWarnings', hintKey: 'navWarningsHint' },
 ];
 
+/** The accessible name of the Checks entry: the count is that of the
+ *  edition on screen (#903, #999), which a book in several languages says. */
+function useChecksName(label: string, count: number): string | null {
+  const labels = useSandboxLabels();
+  const uiLocale = useSandboxSelector((s) => s.locale);
+  const edition = useSandboxSelector((s) => {
+    const e = bookEditionsOf(s);
+    return e.locales.length > 1 && e.activeLocale !== '' ? e.activeLocale : null;
+  });
+  if (count === 0) return null;
+  if (edition === null) return `${label} (${count})`;
+  return labels.navWarningsEdition.replace('__label__', label).replace('__count__', String(count)).replace('__language__', localeDisplayName(edition, uiLocale));
+}
+
 function PanelNav() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
@@ -41,6 +57,7 @@ function PanelNav() {
   const hasAnimated = useRef(false);
 
   const warningCount = useSandboxWarnings().length;
+  const checksName = useChecksName(labels.navWarnings, warningCount);
 
   const updateIndicator = useCallback(() => {
     if (activePanel === null) {
@@ -111,7 +128,7 @@ function PanelNav() {
         // edits keep it from being re-applied automatically.
         const showDot = id === 'projects' && presetStale;
         const ariaLabel = showBadge
-          ? `${label} (${warningCount})`
+          ? checksName ?? `${label} (${warningCount})`
           : showDot
             ? `${label} (${labels.presetStaleBanner})`
             : label;
@@ -237,6 +254,7 @@ export function MobileNavBar() {
   const activePanel = useSandboxSelector((s) => s.activePanel);
   const presetStale = useSandboxPresetStale();
   const warningCount = useSandboxWarnings().length;
+  const checksName = useChecksName(labels.navWarnings, warningCount);
   const items: { id: PanelId | null; Icon: typeof FileCode; label: string; hint: string }[] = [
     { id: null, Icon: Eye, label: labels.navPreview, hint: labels.navPreviewHint },
     ...PANEL_ICONS.map(({ id, Icon, labelKey, hintKey }) => ({ id, Icon, label: labels[labelKey], hint: labels[hintKey] })),
@@ -259,7 +277,7 @@ export function MobileNavBar() {
         const showBadge = id === 'warnings' && warningCount > 0;
         const showDot = id === 'projects' && presetStale;
         const ariaLabel = showBadge
-          ? `${label} (${warningCount})`
+          ? checksName ?? `${label} (${warningCount})`
           : showDot
             ? `${label} (${labels.presetStaleBanner})`
             : label;

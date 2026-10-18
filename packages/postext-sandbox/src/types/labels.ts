@@ -1968,6 +1968,13 @@ export interface SandboxLabels {
   presetUnhide: string;
   presetsHidden: string;
   projectCopySuffix: string;
+  projectAddLanguage: string;
+  projectAddLanguageTitle: string;
+  projectAddLanguageHint: string;
+  projectAddLanguagePick: string;
+  projectAddLanguageConfirm: string;
+  projectLanguageAdded: string;
+  projectRenameEditionOnly: string;
   projectExport: string;
   projectActivate: string;
   projectRename: string;
@@ -3914,6 +3921,9 @@ export interface SandboxLabels {
   pageTemplatesGroupAlignBetween: string;
   pageTemplatesGroupAlignTooltip: string;
   pageTemplatesGroupMembers: string;
+  pageTemplatesGroupMembersHint: string;
+  pageTemplatesGroupMemberUp: string;
+  pageTemplatesGroupMemberDown: string;
   pageTemplatesMoveQuestion: string;
   pageTemplatesMoveChangeTemplate: string;
   pageTemplatesMoveThisPage: string;
@@ -4007,6 +4017,7 @@ export interface SandboxLabels {
   navDesignHint: string;
   navWarnings: string;
   navWarningsHint: string;
+  navWarningsEdition: string;
   bodyTightenRunts: string;
   bodyTightenRuntsTooltip: string;
   bodyMaxRuntTracking: string;

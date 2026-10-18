@@ -35,7 +35,8 @@ import { cloneBook, singleChapterBook } from '../book/chapterOps';
 import type { BookContent, BookStart, Chapter } from '../book/types';
 import { createBookPlanner } from '../book/pagination';
 import { cloneContentForProject, cloneEditionsForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
-import { editionTitlesOf, projectEditionFields } from '../storage/projectEditions';
+import { editionTitlesOf, projectEditionFields, recordLocaleOf, withNewEdition } from '../storage/projectEditions';
+import { localeDisplayName } from '../presets/localeNames';
 import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
 import {
   allEditionChapters,
@@ -45,6 +46,7 @@ import {
   generateProjectId,
   getProject,
   putProject,
+  renameEditionPatch,
   renamePatch,
   toSummary,
   updateProject,
@@ -105,8 +107,10 @@ export interface ProjectActions {
   create: (opts: { from: 'current' | 'blank'; name?: string }) => Promise<string>;
   duplicate: (source: DuplicateSource) => Promise<string>;
   /** Rename a project; `description` replaces its description when given
-   *  (blank clears it). */
-  rename: (id: string, name: string, description?: string) => Promise<void>;
+   *  (blank clears it). On a book in several languages the title is the
+   *  book's in every one, unless `edition` limits it to the language on
+   *  screen (#999). */
+  rename: (id: string, name: string, description?: string, opts?: { edition?: boolean }) => Promise<void>;
   /** Delete a project. `offScreen`: the caller has just opened another
    *  book, so the screen is left alone even if the state read here still
    *  names `id` as the active project (it lags a render). */
@@ -120,6 +124,12 @@ export interface ProjectActions {
    *  on screen going aside. Opens the project too when it is not the one
    *  on screen. */
   switchEdition: (id: string, locale: string) => Promise<void>;
+  /** Add a language to a project (#989): a new edition made from the one
+   *  on screen (its chapters copied, its document language set to
+   *  `locale`), opened at once. Opens the project too when it is not the
+   *  one on screen. Resolves to false, changing nothing, when the project
+   *  already has that language. */
+  addEdition: (id: string, locale: string) => Promise<boolean>;
   exportProject: (target?: DuplicateSource) => Promise<void>;
   /** Replace a project's cover picture with `file`, or drop it with null. */
   setThumbnail: (id: string, file: File | null) => Promise<void>;
@@ -421,7 +431,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         ? await copyThumbnail(active.thumbnail, id)
         : preset ? await adoptPresetThumbnail(preset, id, cur.presetApplied?.presetId === preset.id ? cur.presetApplied.locale : undefined) : undefined;
       return persistNew(withEditionsOf(newRecord(content, {
-        name: name ?? (active ? copyName(active.name) : preset?.name ?? deps.labels().projectUntitled),
+        name: name ?? (active ? copyName(active.name) : preset ? copyName(preset.name) : deps.labels().projectUntitled),
         description: active?.description ?? preset?.description,
         locale: active?.locale ?? preset?.locale ?? cur.locale,
         bundleId: active?.bundleId ?? (cur.activeProjectId ? undefined : cur.activePresetId),
@@ -441,7 +451,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           await deps.flushWorkingSave();
           const { content } = await cloneContentForProject(ownContent(draft), id);
           return persistNew(newRecord(content, {
-            name: summary?.name ?? source.id,
+            name: copyName(summary?.name ?? source.id),
             description: summary?.description,
             locale: draft.locale || summary?.locale,
             bundleId: source.id,
@@ -469,7 +479,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       const loaded = await provider.load(source.locale ?? s.locale);
       const content = await adoptLoadedPreset(loaded, id);
       return persistNew(newRecord(content, {
-        name: loaded.summary.name,
+        name: copyName(loaded.summary.name),
         description: loaded.summary.description,
         locale: loaded.summary.locale,
         bundleId: loaded.summary.id,
@@ -479,13 +489,14 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       }, id));
     });
 
-  const rename: ProjectActions['rename'] = async (id, name, description) => {
+  const rename: ProjectActions['rename'] = async (id, name, description, opts = {}) => {
     const trimmed = name.trim();
     if (!trimmed) return;
     // On a book in several languages the name the reader gives is the
     // book's in every edition (#968): from then on switching the edition
-    // leaves it, and an export gives no edition a title of its own.
-    const updated = await updateProject(id, (existing) => renamePatch(existing, trimmed, description));
+    // leaves it, and an export gives no edition a title of its own. Asked
+    // for the language on screen only (#999), the title is that edition's.
+    const updated = await updateProject(id, (existing) => (opts.edition ? renameEditionPatch(existing, trimmed, description) : renamePatch(existing, trimmed, description)));
     if (updated) dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });
   };
 
@@ -611,6 +622,33 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       await putProject({ ...next, updatedAt: Date.now() });
       dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(next) });
       await activateRecord(next);
+    });
+
+  const addEdition: ProjectActions['addEdition'] = (id, locale) =>
+    run(async () => {
+      const s = deps.getState();
+      // The edition on screen is copied as the reader left it.
+      if (s.activeProjectId === id) await deps.flushWorkingSave();
+      const record = await getProject(id);
+      if (!record) throw new Error('Project not found');
+      const added = withNewEdition(record, locale, { ids: generateChapterId, fallbackLocale: s.locale });
+      if (!added) return false;
+      // The new edition takes the screen; the one it was copied from goes
+      // aside as it is.
+      const next = withActiveEdition(added, locale);
+      await putProject({ ...next, updatedAt: Date.now() });
+      dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(next) });
+      await activateRecord(next);
+      // The copy is not a translation yet: say so where the Books panel shows it.
+      const ui = s.locale;
+      dispatch({
+        type: 'SET_PROJECT_NOTICE',
+        payload: deps.labels().projectLanguageAdded
+          .replace('__language__', localeDisplayName(locale, ui))
+          .replace('__name__', next.name)
+          .replace('__from__', localeDisplayName(recordLocaleOf(record, ui), ui)),
+      });
+      return true;
     });
 
   const exportProject: ProjectActions['exportProject'] = (target) =>
@@ -779,5 +817,5 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       applyRecord({ ...merged, config }, parts);
     });
 
-  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, renameFrameInEditions, resetToSource };
+  return { activate, create, duplicate, rename, remove, importBundle, importBundleBytes, switchEdition, addEdition, exportProject, setThumbnail, adoptGeneratedThumbnail, renameFrameInEditions, resetToSource };
 }

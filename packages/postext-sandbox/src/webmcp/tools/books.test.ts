@@ -200,6 +200,28 @@ describe('the books', () => {
     expect(sources).toEqual([{ from: 'current' }]);
   });
 
+  it('add a language to a project, and rename it for one language only (#989, #999)', async () => {
+    const added: [string, string][] = [];
+    const renamed: unknown[][] = [];
+    const h = harness({ projects: [project({ locales: ['es', 'en'], locale: 'es' }), project({ id: 'p2', name: 'Other' })], activeProjectId: 'p1' }, {
+      projectActions: {
+        addEdition: async (id: string, locale: string) => { added.push([id, locale]); return locale !== 'es'; },
+        rename: async (...args: unknown[]) => { renamed.push(args); },
+      } as unknown as ProjectActions,
+    });
+    expect(await h.call('sandbox_save_book', { action: 'add_language', language: 'fr' })).toMatchObject({ ok: true, project: 'p1', language: 'fr' });
+    expect(await h.call('sandbox_save_book', { action: 'add_language', id: 'p2', language: 'zh-Hant' })).toMatchObject({ ok: true, project: 'p2' });
+    expect(added).toEqual([['p1', 'fr'], ['p2', 'zh-Hant']]);
+    expect((await h.call('sandbox_save_book', { action: 'add_language', language: 'es' })).error).toMatch(/already has an edition in es \(es, en\)/);
+    expect((await h.call('sandbox_save_book', { action: 'add_language' })).error).toMatch(/needs "language"/);
+    expect((await h.call('sandbox_save_book', { action: 'add_language', language: '!!' })).error).toMatch(/needs "language"/);
+    expect((await h.call('sandbox_save_book', { action: 'add_language', id: 'nope', language: 'fr' })).error).toMatch(/No project with id "nope"/);
+    expect((await harness().call('sandbox_save_book', { action: 'add_language', language: 'fr' })).error).toMatch(/works on a project/);
+    expect(await h.call('sandbox_save_book', { action: 'rename', name: 'My book', thisLanguageOnly: true })).toMatchObject({ ok: true, name: 'My book', language: 'es' });
+    await h.call('sandbox_save_book', { action: 'rename', id: 'p2', name: 'Renamed' });
+    expect(renamed).toEqual([['p1', 'My book', undefined, { edition: true }], ['p2', 'Renamed', undefined, undefined]]);
+  });
+
   it('export a book that is not on screen', async () => {
     const targets: (DuplicateSource | undefined)[] = [];
     const { call } = harness({

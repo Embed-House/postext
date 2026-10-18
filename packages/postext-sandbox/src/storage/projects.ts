@@ -170,6 +170,32 @@ export function renamePatch(
   return patch;
 }
 
+/** The changes renaming only the edition on screen makes (#999): the
+ *  title becomes that edition's own (`editionTitles`), the other editions
+ *  keep the title they show now, and the project is no longer renamed for
+ *  every language (`titleEdited` off), so each edition is exported with its
+ *  title. A book in one language is renamed as a whole. */
+export function renameEditionPatch(
+  existing: Pick<ProjectRecord, 'name' | 'description' | 'locale' | 'editions' | 'editionLocales' | 'editionTitles' | 'titleEdited'>,
+  name: string,
+  description?: string,
+): Pick<ProjectRecord, 'name' | 'description'> & { editionTitles?: Record<string, ProjectEditionTitle>; titleEdited?: boolean } {
+  const nextDescription = description !== undefined ? description.trim() || undefined : existing.description;
+  const here = existing.locale;
+  if (!existing.editions || here === undefined) return renamePatch(existing, name, description);
+  const tags = [...new Set([here, ...(existing.editionLocales ?? []), ...Object.keys(existing.editions)])];
+  const titles: Record<string, ProjectEditionTitle> = {};
+  const keyOf = (tag: string): string => Object.keys(existing.editionTitles ?? {}).find((k) => sameTag(k, tag)) ?? tag;
+  for (const tag of tags) {
+    // What an edition shows now: the reader's title for every language
+    // when the project was renamed, else the title it has (none: the name).
+    const own = existing.titleEdited ? undefined : editionTitleOf(existing, tag);
+    const shown: ProjectEditionTitle = own ?? { name: existing.name, ...(existing.description !== undefined ? { description: existing.description } : {}) };
+    titles[keyOf(tag)] = sameTag(tag, here) ? { name, ...(nextDescription !== undefined ? { description: nextDescription } : {}) } : shown;
+  }
+  return { name, description: nextDescription, editionTitles: titles, titleEdited: false };
+}
+
 /** The title the bundle gave the edition `locale` (any case of its tag),
  *  when it is known. */
 export function editionTitleOf(record: Pick<ProjectRecord, 'editionTitles'>, locale: string): ProjectEditionTitle | undefined {
