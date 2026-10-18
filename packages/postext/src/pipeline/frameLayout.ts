@@ -190,6 +190,21 @@ export const makeCalloutLayouter = (
   return { children, childBase: startIdx + 1, realAt, end: { child: children.length, line: 0 }, layoutRange: through(false), peekRange: through(true), groups };
 };
 
+/** The cut a page break between the parts of a contents puts in a box
+ *  (`toc.parts.breakBefore`, #996): the head of the first part row after
+ *  `from` that opens a page of its own, when something stands before it in
+ *  the fragment. A box ignores the `:::pagebreak` rows; the rows carry the
+ *  break (`TocBlockInfo.breakBefore`). Undefined when there is none. */
+export const partBreakCut = (pass: FrameLayoutPass, L: CalloutLayouter, from: CalloutCut): CalloutCut | undefined => {
+  let real = false;
+  for (let k = from.child; k < L.children.length; k++) {
+    const toc = pass.contentBlocks[L.childBase + k]?.toc;
+    if (real && k > from.child && toc?.kind === 'part' && toc.breakBefore && toc.group?.role !== 'continuation') return { child: k, line: 0 };
+    if (L.realAt.includes(k) && !(toc?.group?.role === 'continuation' && k !== from.child)) real = true;
+  }
+  return undefined;
+};
+
 /** What a cut of a composed page's frame keeps together besides
  *  `splitMinLines` (#913), as the running text does: a heading with what
  *  follows it, and the items of a list, at least `listOrphans` before the
@@ -246,6 +261,9 @@ export const splitCalloutFragment = (
   mirrored = false,
   frame?: FrameBoxOptions,
   rules?: FrameCutRules,
+  /** Cut where a part of a contents opens a page of its own, when that
+   *  cut fits (#996). */
+  partBreaks = false,
 ): CalloutFragment | null => {
   const full = L.peekRange(from, L.end, width, frameId, continuation, mirrored, frame);
   /** Figures, tables and display formulas: never cut, not text lines. */
@@ -269,12 +287,12 @@ export const splitCalloutFragment = (
    *  (#947): as in the flow, the paragraph moves on whole, and is cut
    *  there only when nothing else fits (a frame too short for those
    *  lines; `dropCapWarnings` reports it, reason `split`). */
-  const candidates: { cut: CalloutCut; bottom: number; soft?: true; capSplit?: true }[] = [];
+  const candidates: { cut: CalloutCut; bottom: number; soft?: true; capSplit?: true; partBreak?: true }[] = [];
   /** Collect the cuts among `units` (one box's items; `below` = the tails
    *  of the nested boxes around them), each side of a cut holding enough
    *  by the box's `min` lines: a block counts as one line, a nested box
    *  as one indivisible block. */
-  const collect = (units: readonly CalloutUnit[], minLines: number, below: number): void => {
+  const collect = (units: readonly CalloutUnit[], minLines: number, below: number, top = false): void => {
     const min = Math.max(1, minLines);
     const lineCount = (u: CalloutUnit): number => (u.kind === 'block' ? Math.max(1, u.block.lines.length) : 1);
     const isBlock = (u: CalloutUnit): boolean => u.kind === 'box' || indivisible(u.block);
@@ -342,6 +360,11 @@ export const splitCalloutFragment = (
         else tocSpan.set(group.id, { first: i, last: i });
       });
     }
+    /** The unit is a part row that opens a page of the contents (#996). */
+    const opensPage = (u: CalloutUnit | undefined): boolean => {
+      const toc = tocOf(u);
+      return toc?.kind === 'part' && toc.breakBefore === true && toc.group?.role !== 'continuation';
+    };
     /** The block of the contents a cut after unit `i` falls inside. */
     const tocInside = (i: number): { id: number; minEntries: number } | undefined => {
       const a = tocCut[i]?.group;
@@ -409,15 +432,18 @@ export const splitCalloutFragment = (
       }
       linesBefore += lineCount(u);
       if (isBlock(u)) blocksBefore++;
-      if (i < units.length - 1 && next !== undefined && bothHold(linesBefore, blocksBefore, true) && ruled(i)) {
+      // A part that opens a page of its own is cut before whatever the
+      // minimum of lines says: the break is the author's (#996).
+      const breaks = partBreaks && top && i < units.length - 1 && opensPage(units[i + 1]);
+      if (i < units.length - 1 && next !== undefined && (breaks || (bothHold(linesBefore, blocksBefore, true) && ruled(i)))) {
         const inside = tocInside(i);
         const span = inside ? tocSpan.get(inside.id) : undefined;
         const whole = span ? unitBottom(units[span.last]!) - unitTop(units[span.first]!) : Infinity;
-        candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below, ...(inside && whole <= roomPx ? { soft: true as const } : {}) });
+        candidates.push({ cut: { child: next, line: 0 }, bottom: unitBottom(u) + below, ...(inside && whole <= roomPx ? { soft: true as const } : {}), ...(breaks ? { partBreak: true as const } : {}) });
       }
     });
   };
-  collect(full.units, minLines, 0);
+  collect(full.units, minLines, 0, true);
   // Inside a `:::columns` group of the box (#634): the cut the group
   // offers for the room, where each of its sub-columns (each stream, in
   // a parallel group) ends when the galley fills them in turn; at least
@@ -476,8 +502,11 @@ export const splitCalloutFragment = (
   }
   const insideGroup = (cut: CalloutCut): boolean =>
     !cut.group && L.groups.some(([gs, ge]) => (cut.line === 0 ? gs < cut.child && cut.child <= ge : gs < cut.child && cut.child < ge));
+  // A part that opens a page of its own ends the fragment there: no cut
+  // runs past the first such break (#996).
+  const breakAt = Math.min(Infinity, ...candidates.filter((c) => c.partBreak).map((c) => c.bottom));
   const viable = candidates
-    .filter((c) => !insideGroup(c.cut))
+    .filter((c) => !insideGroup(c.cut) && c.bottom <= breakAt + 0.01)
     .sort((a, b) => b.bottom - a.bottom);
   // A wrapped code line stays with its continuations when a cut
   // elsewhere fits (#624), and a drop cap's paragraph with its sink line

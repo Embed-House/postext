@@ -234,7 +234,7 @@ Si necesitas o quieres comprar algo muy caro…
 
 框按目录自己的规则排各行，和正文里的目录一样。每个篇有自己的一行，由`toc.parts.design`绘制；条目保留自己的编号、点状前导符和页码标签，并链接到它所列的页面；框不会在条目之间加段间距。`keep`在框里同样有效：设置`overflow.continueIn: "next-page"`时，一个整框放得下的目录块会整块移到新增的页面，比框还高的目录块则在它的块首和`toc.groups.minEntriesAfterHead`个条目之后截断，新增的页面以重复的块首开头（`toc.groups.continuation`）。截断处的标记（`overflow.mark`）和新增页面开头的文字（`overflow.fromMark`）与任何框一样。
 
-列表上方的标题是普通标题，目录会把它列进去，除非它的标题样式写了`toc: false`，或标题带有`{toc="false"}`，与正文里的做法相同。页面的底色，即整张纸之下的一种颜色或一幅图，属于模板的装饰：它画在各框之下，并在目录新增的每一页上重复。篇与篇之间的分页（`toc.parts.breakBefore`）在框里不起作用。
+列表上方的标题是普通标题，目录会把它列进去，除非它的标题样式写了`toc: false`，或标题带有`{toc="false"}`，与正文里的做法相同。页面的底色，即整张纸之下的一种颜色或一幅图，属于模板的装饰：它画在各框之下，并在目录新增的每一页上重复。篇与篇之间的分页（`toc.parts.breakBefore`）在能够续排的框里起作用（`overflow.continueIn: "next-page"`，或带`next`的框）：即使内容全放得下，框也在除第一篇以外的每一篇之前截断，每一篇都从新增的一页或下一个框开始。不能续排的框会忽略这个分页。自 postext 1.43 起。
 
 ### 串接框
 

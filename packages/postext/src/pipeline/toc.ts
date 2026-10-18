@@ -152,7 +152,8 @@ function tocBlocksFor(
     if (entry.kind === 'part') {
       if (!toc.parts.enabled) continue;
       // Every part but the first opens a fresh page of the contents.
-      if (toc.parts.breakBefore && partRows > 0) {
+      const breaks = toc.parts.breakBefore && partRows > 0;
+      if (breaks) {
         rows.push({ block: { ...base, type: 'directive', text: '', spans: [], sourceMap: [], directiveName: 'pagebreak', directiveAttrs: {} } });
       }
       partRows++;
@@ -161,6 +162,7 @@ function tocBlocksFor(
         ...(entry.pageLabel !== undefined ? { pageLabel: entry.pageLabel } : {}),
         ...(entry.pageIndex !== undefined ? { pageIndex: entry.pageIndex } : {}),
         ...(entry.palette ? { palette: entry.palette } : {}),
+        ...(breaks ? { breakBefore: true as const } : {}),
       };
       rows.push({ block: { ...base, type: 'paragraph', text: '', spans: [], sourceMap: [], toc: info }, rank: 0 });
       continue;
@@ -256,6 +258,7 @@ function continuationRow(head: ContentBlock, mark: string, group: TocGroupInfo):
   const rest: TocBlockInfo = { ...info };
   delete rest.pageLabel;
   delete rest.subtitle;
+  delete rest.breakBefore;
   if (info.kind === 'part') {
     const title = info.title ?? '';
     const joined = mark.length === 0 ? title : `${title}${title.length > 0 ? suffixJoiner(mark) : ''}${mark}`;
