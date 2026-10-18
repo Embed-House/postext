@@ -3308,8 +3308,11 @@ export interface CalloutLabelConfig {
    *  `gap` away from them: the tab is as wide as the picture, the gap, the
    *  words and the padding, the picture as tall as the tab at most. The
    *  picture keeps the colours it has, so a white ring on a coloured tab
-   *  and a coloured ring on a white one are two resources, one to a style. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement };
+   *  and a coloured ring on a white one are two resources, one to a style;
+   *  with `tint` (#995) it is painted in the label's `color` instead (its
+   *  silhouette, in the colour of the words), so one ring serves every
+   *  tint of a book. */
+  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement; tint?: boolean };
   /** A rule along the box's top edge from the far corner to the tab (or
    *  its icon). */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
@@ -3671,7 +3674,7 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement };
+    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement; tint: boolean };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
   };
   columnGap: Dimension;

@@ -1489,6 +1489,8 @@
     "calloutStyleLabelIconPlacementTooltip": "Junto a la pestaña, más allá de su borde, o dentro de ella, al principio y antes de las palabras (la pestaña crece entonces lo que miden la imagen y el espacio). Dentro, la imagen conserva sus colores: use una imagen para un anillo blanco y otra para uno de color.",
     "calloutStyleLabelIconBeside": "Junto a la pestaña",
     "calloutStyleLabelIconInside": "Dentro de la pestaña",
+    "calloutStyleLabelIconTint": "Imagen en el color del texto",
+    "calloutStyleLabelIconTintTooltip": "Pinta la silueta de la imagen con el color de las palabras de la pestaña, y un mismo anillo sirve para todos los tintes de un libro. Desactivado, la imagen conserva sus colores.",
     "calloutStyleLabelRule": "Filete del borde superior",
     "calloutStyleLabelRuleTooltip": "Un filete a lo largo del borde superior de la caja desde la esquina opuesta hasta la pestaña (o su icono)",
     "calloutStyleLabelRuleColor": "Color del filete",

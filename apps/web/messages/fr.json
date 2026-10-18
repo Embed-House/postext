@@ -3656,6 +3656,8 @@
     "calloutStyleLabelIconPlacementTooltip": "À côté de l’onglet, au-delà de son bord, ou à l’intérieur, au début et avant les mots (l’onglet s’élargit alors de l’image et de l’espace). À l’intérieur, l’image garde ses couleurs : une image pour un anneau blanc, une autre pour un anneau de couleur.",
     "calloutStyleLabelIconBeside": "À côté de l’onglet",
     "calloutStyleLabelIconInside": "Dans l’onglet",
+    "calloutStyleLabelIconTint": "Image dans la couleur du texte",
+    "calloutStyleLabelIconTintTooltip": "Peint la silhouette de l’image dans la couleur des mots de l’onglet : un seul anneau sert à toutes les teintes d’un livre. Désactivé, l’image garde ses couleurs.",
     "calloutStyleLabelRule": "Filet du bord supérieur",
     "calloutStyleLabelRuleTooltip": "Un filet le long du bord supérieur de la boîte, du coin opposé jusqu’à l’onglet (ou son icône)",
     "calloutStyleLabelRuleColor": "Couleur du filet",

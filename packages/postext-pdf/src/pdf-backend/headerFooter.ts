@@ -293,7 +293,7 @@ function renderImageBlock(
   const embedded = images?.get(block.fileId);
   const draw = (bx: number, by: number, bw: number, bh: number): void => {
     if (embedded) {
-      drawEmbeddedResource(ctx, embedded, bx, by, bw, bh);
+      drawEmbeddedResource(ctx, embedded, bx, by, bw, bh, block.tint);
     } else {
       ctx.onMissingImage?.(block.fileId);
       fillRectPx(ctx, bx, by, bw, bh, colorFromHex('#e8e8e8', ctx.colorSpace));

@@ -3657,6 +3657,8 @@
     "calloutStyleLabelIconPlacementTooltip": "Neben dem Reiter, über seinen Rand hinaus, oder in ihm, am Anfang vor den Wörtern (der Reiter wird dann um Bild und Abstand breiter). Innen behält das Bild seine Farben: ein Bild für einen weißen Ring, ein anderes für einen farbigen.",
     "calloutStyleLabelIconBeside": "Neben dem Reiter",
     "calloutStyleLabelIconInside": "Im Reiter",
+    "calloutStyleLabelIconTint": "Bild in der Textfarbe",
+    "calloutStyleLabelIconTintTooltip": "Malt die Silhouette des Bildes in der Farbe der Etikett-Wörter, sodass ein Ring für jede Farbe eines Buches reicht. Aus: Das Bild behält seine Farben.",
     "calloutStyleLabelRule": "Linie an der Oberkante",
     "calloutStyleLabelRuleTooltip": "Eine Linie entlang der Oberkante des Kastens von der gegenüberliegenden Ecke bis zum Etikett (oder seinem Icon)",
     "calloutStyleLabelRuleColor": "Linienfarbe",

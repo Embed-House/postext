@@ -3047,6 +3047,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     calloutStyleLabelIconPlacementTooltip: t("calloutStyleLabelIconPlacementTooltip"),
     calloutStyleLabelIconBeside: t("calloutStyleLabelIconBeside"),
     calloutStyleLabelIconInside: t("calloutStyleLabelIconInside"),
+    calloutStyleLabelIconTint: t("calloutStyleLabelIconTint"),
+    calloutStyleLabelIconTintTooltip: t("calloutStyleLabelIconTintTooltip"),
     calloutStyleLabelRule: t("calloutStyleLabelRule"),
     calloutStyleLabelRuleTooltip: t("calloutStyleLabelRuleTooltip"),
     calloutStyleLabelRuleColor: t("calloutStyleLabelRuleColor"),

@@ -1972,6 +1972,14 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         iconFit = { w: dims.width * k, h: dims.height * k };
       }
     }
+    // The picture painted in the colour of the words (#995): a print master
+    // (a PDF page) cannot be recoloured, so the PDF draws the SVG itself.
+    const tintOf = lb.icon.tint ? { tint: lb.color.hex } : {};
+    const traitsOf = (resource: Parameters<typeof pictureTraits>[0], fileId: string) => {
+      const traits = pictureTraits(resource, fileId);
+      if (lb.icon.tint) delete traits.pdfFileId;
+      return traits;
+    };
     const iconRoom = inside ? iconFit.w + px(lb.icon.gap) : 0;
     const tabW = textW + iconRoom + 2 * padX;
     const tabSide = lb.position === 'top-start' ? boxSide('start')
@@ -2000,12 +2008,12 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     let edgeX = onRight ? tabX : tabX + tabW;
     if (inside) {
       const ix = iconAtRight ? tabX + tabW - padX - iconFit.w : tabX + padX;
-      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(ix, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId!, ...pictureTraits(iconResource, iconFileId!) });
+      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(ix, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId!, ...traitsOf(iconResource, iconFileId!), ...tintOf });
     } else if (iconFileId) {
       const iconW = px(lb.icon.width);
       const gap = px(lb.icon.gap);
       const iconX = onRight ? tabX - gap - iconW : tabX + tabW + gap;
-      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(onRight ? iconX + iconW - iconFit.w : iconX, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId, ...pictureTraits(iconResource, iconFileId) });
+      overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(onRight ? iconX + iconW - iconFit.w : iconX, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId, ...traitsOf(iconResource, iconFileId), ...tintOf });
       edgeX = onRight ? iconX + iconW - iconFit.w : iconX + iconFit.w;
     }
     if (lb.rule.enabled) {

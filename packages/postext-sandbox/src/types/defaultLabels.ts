@@ -3068,6 +3068,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   calloutStyleLabelIconPlacementTooltip: "Beside the tab, past its edge, or inside it, at its start before the words (the tab then grows by the picture and the gap). Inside, the picture keeps its own colours: use one picture for a white ring and another for a coloured one.",
   calloutStyleLabelIconBeside: "Beside the tab",
   calloutStyleLabelIconInside: "Inside the tab",
+  calloutStyleLabelIconTint: "Picture in the text color",
+  calloutStyleLabelIconTintTooltip: "Paints the picture's shape in the color of the tab's words, so one ring serves every tint of a book. Off, the picture keeps its own colors.",
   calloutStyleLabelRule: "Top-edge rule",
   calloutStyleLabelRuleTooltip: "A rule along the top edge of the box from the far corner up to the tab (or its icon)",
   calloutStyleLabelRuleColor: "Rule color",

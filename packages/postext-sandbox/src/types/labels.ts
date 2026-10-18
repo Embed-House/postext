@@ -3249,6 +3249,8 @@ export interface SandboxLabels {
   calloutStyleLabelIconPlacementTooltip: string;
   calloutStyleLabelIconBeside: string;
   calloutStyleLabelIconInside: string;
+  calloutStyleLabelIconTint: string;
+  calloutStyleLabelIconTintTooltip: string;
   calloutStyleLabelRule: string;
   calloutStyleLabelRuleTooltip: string;
   calloutStyleLabelRuleColor: string;

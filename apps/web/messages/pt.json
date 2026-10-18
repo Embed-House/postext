@@ -3653,6 +3653,8 @@
     "calloutStyleLabelIconPlacementTooltip": "Ao lado da aba, além da sua borda, ou dentro dela, no início e antes das palavras (a aba cresce então o que medem a imagem e o espaço). Dentro, a imagem mantém as suas cores: use uma imagem para um anel branco e outra para um colorido.",
     "calloutStyleLabelIconBeside": "Ao lado da aba",
     "calloutStyleLabelIconInside": "Dentro da aba",
+    "calloutStyleLabelIconTint": "Imagem na cor do texto",
+    "calloutStyleLabelIconTintTooltip": "Pinta a silhueta da imagem com a cor das palavras da aba, e um mesmo anel serve a todas as cores de um livro. Desligado, a imagem mantém as suas cores.",
     "calloutStyleLabelRule": "Fio da borda superior",
     "calloutStyleLabelRuleTooltip": "Um fio ao longo da borda superior do boxe, do canto oposto até a aba (ou o ícone dela)",
     "calloutStyleLabelRuleColor": "Cor do fio",

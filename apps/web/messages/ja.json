@@ -3656,6 +3656,8 @@
     "calloutStyleLabelIconPlacementTooltip": "タブの外側（縁の先）か、タブの内側の先頭（文字の前）に置きます。内側にするとタブは画像と間隔の分だけ広がります。内側の画像は元の色のままなので、白い輪と色付きの輪は別々の画像を使ってください。",
     "calloutStyleLabelIconBeside": "タブの外側",
     "calloutStyleLabelIconInside": "タブの内側",
+    "calloutStyleLabelIconTint": "画像を文字色で描く",
+    "calloutStyleLabelIconTintTooltip": "画像のシルエットをタブの文字色で塗ります。1つの輪で本のすべての色調をまかなえます。オフのときは画像本来の色のままです。",
     "calloutStyleLabelRule": "上辺の罫線",
     "calloutStyleLabelRuleTooltip": "囲みの上辺に沿って、反対側の角からタブ（またはそのアイコン）まで引く罫線です。",
     "calloutStyleLabelRuleColor": "罫線の色",

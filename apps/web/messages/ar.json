@@ -3656,6 +3656,8 @@
     "calloutStyleLabelIconPlacementTooltip": "بجانب اللسان بعد حافته، أو داخله في بدايته قبل الكلمات (فيتسع اللسان بمقدار الصورة والمسافة). داخل اللسان تحتفظ الصورة بألوانها: استعمل صورة للحلقة البيضاء وأخرى للحلقة الملوّنة.",
     "calloutStyleLabelIconBeside": "بجانب اللسان",
     "calloutStyleLabelIconInside": "داخل اللسان",
+    "calloutStyleLabelIconTint": "الصورة بلون النص",
+    "calloutStyleLabelIconTintTooltip": "يُلوَّن شكل الصورة بلون كلمات اللسان، فتكفي حلقة واحدة لكل ألوان الكتاب. وعند الإيقاف تحتفظ الصورة بألوانها.",
     "calloutStyleLabelRule": "خط الحافة العلوية",
     "calloutStyleLabelRuleTooltip": "خط على امتداد الحافة العلوية للإطار من الزاوية البعيدة حتى اللسان (أو أيقونته)",
     "calloutStyleLabelRuleColor": "لون الخط",

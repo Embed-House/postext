@@ -3657,6 +3657,8 @@
     "calloutStyleLabelIconPlacementTooltip": "Accanto alla linguetta, oltre il suo bordo, o dentro, all’inizio e prima delle parole (la linguetta si allarga allora di immagine e spazio). Dentro, l’immagine conserva i suoi colori: un’immagine per un anello bianco e un’altra per uno colorato.",
     "calloutStyleLabelIconBeside": "Accanto alla linguetta",
     "calloutStyleLabelIconInside": "Dentro la linguetta",
+    "calloutStyleLabelIconTint": "Immagine nel colore del testo",
+    "calloutStyleLabelIconTintTooltip": "Dipinge la sagoma dell’immagine nel colore delle parole della linguetta: un solo anello serve a tutte le tinte di un libro. Disattivato, l’immagine conserva i suoi colori.",
     "calloutStyleLabelRule": "Filetto sul bordo superiore",
     "calloutStyleLabelRuleTooltip": "Un filetto lungo il bordo superiore del riquadro, dall’angolo opposto fino alla linguetta (o alla sua icona)",
     "calloutStyleLabelRuleColor": "Colore del filetto",

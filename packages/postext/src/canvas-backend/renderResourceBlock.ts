@@ -220,9 +220,9 @@ function evictRastersTo(budget: number): void {
  *  null when no offscreen canvas can be made, the size is out of range or
  *  the pixels cannot be read back (a tainted cross-origin image), in which
  *  case the caller draws the source directly. */
-function getVectorRaster(fileId: string, image: ResourceImageSource, w: number, h: number, inkHex: string | null = null): RasterCanvas | null {
+function getVectorRaster(fileId: string, image: ResourceImageSource, w: number, h: number, inkHex: string | null = null, tintHex: string | null = null): RasterCanvas | null {
   if (w <= 0 || h <= 0 || w > RASTER_MAX_SIDE || h > RASTER_MAX_SIDE) return null;
-  const key = inkHex ? `${fileId}|${w}x${h}|${inkHex}` : `${fileId}|${w}x${h}`;
+  const key = tintHex ? `${fileId}|${w}x${h}|tint:${tintHex}` : inkHex ? `${fileId}|${w}x${h}|${inkHex}` : `${fileId}|${w}x${h}`;
   const hit = rasterCache.get(key);
   if (hit) {
     rasterCache.delete(key);
@@ -237,7 +237,15 @@ function getVectorRaster(fileId: string, image: ResourceImageSource, w: number, 
   if (!ctx) return null;
   try {
     ctx.drawImage(image, 0, 0, w, h);
-    if (inkHex) {
+    if (tintHex) {
+      // The silhouette in one colour (#995): the colour fills what the
+      // picture covers, in proportion to its opacity. No pixels are read,
+      // so a picture the canvas will not hand back still takes it.
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.fillStyle = tintHex;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+    } else if (inkHex) {
       const pixels = ctx.getImageData(0, 0, w, h);
       if (!applySingleInkToPixels(pixels.data, inkHex)) return null;
       ctx.putImageData(pixels, 0, 0);
@@ -296,6 +304,9 @@ function vectorRasterSize(
 export interface ImageInk {
   inkHex: string | null;
   svg?: boolean;
+  /** Paint the picture's silhouette in this colour (`VDTDesignImageBlock.tint`,
+   *  #995), whatever the picture and the document's ink. */
+  tint?: string;
 }
 
 /** Whether a registered picture takes the ink: never a bitmap, never one
@@ -331,13 +342,14 @@ export function drawResourceImage(
     missingImageSink?.(fileId, resourceId);
     return false;
   }
-  const inkHex = takesInk(entry, ink) ? ink.inkHex : null;
-  if (entry.vector || inkHex) {
+  const tintHex = ink?.tint ?? null;
+  const inkHex = tintHex === null && takesInk(entry, ink) ? ink.inkHex : null;
+  if (entry.vector || inkHex || tintHex) {
     // A vector source takes the size the box shows at on the device; a
     // bitmap tinted here has no more pixels to give than its own, and keeps
     // the box in page pixels.
     const size = entry.vector ? vectorRasterSize(ctx, w, h, inkHex !== null) : [Math.round(w), Math.round(h)] as const;
-    const raster = size ? getVectorRaster(fileId, entry.image, size[0], size[1], inkHex) : null;
+    const raster = size ? getVectorRaster(fileId, entry.image, size[0], size[1], inkHex, tintHex) : null;
     if (raster) {
       ctx.drawImage(raster, x, y, w, h);
       return true;
