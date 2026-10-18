@@ -1155,9 +1155,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   `bookOutline`. Index, contents and references then read the page of the words. The Sandbox canvas paints the
   selection and the caret of the chapter being edited over the carried words on the later chapter's page
   (`drawOverlay` with `CarriedSelection`).
-
-### 5.18 Findings round I (#882)
-
 - **Tracking in a box's body (#974).** `CalloutBodyStyleConfig.letterSpacing` (em of the body size, negative
   tightens; absent when zero) rides on the derived `bodyText` of a box (`deriveCalloutResolvedConfig`), so
   `resolveBodyStyle` gives the body style a `letterSpacingPx` and paragraphs and list items are measured, stamped
@@ -1215,9 +1212,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   (`onlyColours`: every differing field a colour on both sides), and `mergeSuggestions` no longer proposes such
   a pair; a pair that also differs in a length, a switch or a word still is. The Frame styles section lists the
   kinds. What stays: a book whose boxes differ in colours *and* shape still has one style per shape.
-
-### 5.18 Findings round I (#882)
-
 **Sandbox, editions and bundles (#968, #970, #978).**
 
 - **A licensed family names an open one (#978).** `CustomFontFamily.fallback` and the manifest's `fonts[].fallback` name a
@@ -1284,9 +1278,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   (`collectHeadingDesignCuts` stays a pure check on the finished layout, for design text lost past the foot): the claim
   needs what only the build knows (which element reserved the height). The Sandbox lists it in the design group of the
   Checks panel and the docs say what to do (`reserve: false` on the element, a lower `minHeight`, or `span: 'page'`).
-
-### 5.19 Later work of the programme, round J (#846)
-
 **Sandbox editions and the template editor (#989, #991, #999).**
 
 - **Add a language (#989).** `ProjectActions.addEdition(id, locale)` (Books panel row menu, `sandbox_save_book`
