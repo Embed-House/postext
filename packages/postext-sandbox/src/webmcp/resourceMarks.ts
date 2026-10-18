@@ -23,6 +23,8 @@ export interface MarksInput {
   anchors?: ResourceAnchor[] | null;
   avoid?: ResourceSafeArea[] | null;
   faces?: ResourceSafeArea[] | null;
+  /** An SVG's own symbols (#994): the elements named by an id prefix or a class get an avoid zone each, added to the zones the picture has. */
+  svgSymbols?: { idPrefix?: string; className?: string };
 }
 
 const RECT_SCHEMA: JsonSchema = {
@@ -68,6 +70,12 @@ export const MARKS_SCHEMA: JsonSchema = {
       },
     },
     avoid: { type: ['array', 'null'], description: 'Zones of a comic panel\'s picture the balloons keep clear of (a hand, a key object).', items: RECT_SCHEMA },
+    svgSymbols: {
+      type: 'object',
+      description: 'For an SVG map: add an avoid zone over each element of the drawing named by idPrefix (its id starts with it) or className (its class list holds it) — the dots and icons labels should keep clear of. The zones already there stay; ones that cover an old zone are not added twice. Measured in the browser, as the marks dialog does.',
+      properties: { idPrefix: { type: 'string' }, className: { type: 'string' } },
+      additionalProperties: false,
+    },
     faces: { type: ['array', 'null'], description: 'The faces of people in a comic panel\'s picture who do not speak: no balloon covers them.', items: RECT_SCHEMA },
   },
   additionalProperties: false,

@@ -422,7 +422,7 @@ que en fa el llibre. `sandbox_list_resources` els llista i, amb un `id`, en
 dona un de complet (les cel·les d'una taula amb el seu format, el codi font
 d'un SVG).
 
-Les `marks` d'una imatge porten també les àncores. En un mapa o un esquema són els punts on es col·loquen les seves línies `::label`: un `id`, `x` i `y` (fraccions de la imatge sencera) i els camps de rètol que pren un rètol col·locat allà (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La resposta avisa d'un estil de rètol que el disseny no té, i les marques noves d'un recurs són un pas de l'historial (`sandbox_undo` respon `kind: "resource"`).
+Les `marks` d'una imatge porten també les àncores. En un mapa o un esquema són els punts on es col·loquen les seves línies `::label`: un `id`, `x` i `y` (fraccions de la imatge sencera) i els camps de rètol que pren un rètol col·locat allà (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La resposta avisa d'un estil de rètol que el disseny no té, i les marques noves d'un recurs són un pas de l'historial (`sandbox_undo` respon `kind: "resource"`). En un SVG, `marks.svgSymbols` (`idPrefix`, `className`) afegeix una zona lliure sobre cada element del dibuix que anomena, a les zones que dona la crida o que ja té la imatge (des de postext 1.43).
 
 ```jsonc
 // dues àncores d'un mapa, amb els seus estils de rètol

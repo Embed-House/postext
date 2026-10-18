@@ -11,6 +11,8 @@ import { FieldRow } from '../../controls/FieldRow';
 import { Button, IconButton, SegmentedControl, Switch, usePortalContainer } from '../../ui';
 import { POPUP_SURFACE, POPUP_Z_INDEX } from '../../ui/surface';
 import { useBlobObjectUrl } from './ResourcePreview';
+import { SvgSymbolsReader } from './SvgSymbolsReader';
+import { addZones } from './svgSymbols';
 import {
   HANDLES, INITIAL_SAFE_AREA, MIN_SIDE,
   addAnchor, addBystanderFace, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
@@ -1262,6 +1264,16 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                       {labels.resourceBystanderAdd}
                     </Button>
                   </div>
+                  {resource.kind === 'svg' && (
+                    <SvgSymbolsReader
+                      fileId={resource.svg?.fileId}
+                      onAdd={(found) => {
+                        const { zones, added } = addZones(marksRef.current.avoid, found);
+                        if (added > 0) commit({ ...marksRef.current, avoid: zones });
+                        return added;
+                      }}
+                    />
+                  )}
                 </>
               )}
             </div>

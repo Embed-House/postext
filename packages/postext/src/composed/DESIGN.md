@@ -1323,19 +1323,29 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   ticked ones, and the WebMCP marks schema takes the field. The move replaces the label object (the labels of a
   measured block may be shared with a cache), works in the flow frame (so a right-to-left sheet moves the same way
   before the page is mirrored) and on the transposed axis of a vertical sheet. The gutter band is the template's
-  `gutter`; with a gutter of 0 the band is the spine line itself. Not done: a label
-  clipped by the outer edge of the trim (a picture bleeding off the page) is not moved; that is the picture's crop.
+  `gutter`; with a gutter of 0 the band is the spine line itself. The outer edges
+  of the sheet are left alone, and documented so: a label past the trim is cut as the picture is.
 - **Label styles (#994).** Renaming a label style in the Design panel now rewrites what names it, as a frame style
   rename does: `labelStyles/labelRefs.ts` reads the `style` of each `::label` line (outside code fences, quoted or
   bare) and of each anchor; `applyLabelStyleRename` writes one history step per chapter changed (the chapter in the
   editor through its editor), one per picture changed, then the design, so Undo takes them back one at a time; the card
   says how many anchors and lines it rewrote. Each card counts the anchors and label lines that name its style
   (`useLabelStyleUsage`, a chapter read again only when its text changed). The Avoid zones mode of the picture marks
-  is worded for maps as well as comics (symbols a label keeps clear of). The three items that are deliberate limits
-  stay so: the hidden list of the reflowable EPUB for labels the SVG layer cannot draw, and tracking on Arabic
-  (a joining script is not tracked in print either). The symbols drawn into an SVG itself (reading each element's
-  outline, and a way to say which elements are symbols) are left to a later round: the contour machinery of #883 reads
-  one contour per picture, and a per-element read needs the drawing's tree in the engine.
+  is worded for maps as well as comics (symbols a label keeps clear of). The EPUB limits stay deliberate and are
+  documented: the reflowable book lists the labels its SVG layer cannot draw in a hidden list, and tracking is not drawn
+  on Arabic words (a joining script is not tracked in print either).
+- **An SVG's own shapes as symbols (#994).** Decision: measure once, store as `avoid` zones, read nothing at layout. The
+  engine never holds a picture's markup (the file lives in the Sandbox's blob store or the bundle), and zones already
+  mean "symbol" to `labelOverlap`, so no format and no engine path changed. `panels/resources/svgSymbols.ts`
+  measures an SVG in a browser (`measureSvgNodes`: the drawing laid at its view box with `preserveAspectRatio` none, one
+  `getBoundingClientRect` per element, so transforms, `use` and nested groups are exact) and `symbolZones` picks the
+  elements by id prefix or class: the outermost match of a branch (a group named as a symbol is one zone), never one in a
+  definition (`defs`, `symbol`, `clipPath`, ...), a point widened to the smallest zone the marks allow (0.6 % of the
+  picture). `addZones` adds only zones that do not cover an old one by nine tenths, so reading the drawing again adds just
+  what is new and never touches a hand-drawn zone. The Avoid zones mode of the marks dialog has the row (SVG pictures
+  only); `sandbox_save_resource` takes `marks.svgSymbols { idPrefix, className }` and merges the zones into the call's
+  or the picture's own. Known limit, documented: the zones are a snapshot, so a changed drawing has to be read again; a
+  stroke's width is not part of an element's box.
 
 ## 6. Source map contract
 

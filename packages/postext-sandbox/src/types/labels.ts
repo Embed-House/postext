@@ -2706,6 +2706,14 @@ export interface SandboxLabels {
   resourceAvoidAdd: string;
   resourceAvoidZoneAria: string;
   resourceAvoidZoneDelete: string;
+  resourceSymbolsTitle: string;
+  resourceSymbolsHelp: string;
+  resourceSymbolsPrefix: string;
+  resourceSymbolsClass: string;
+  resourceSymbolsRead: string;
+  resourceSymbolsAdded: string;
+  resourceSymbolsNone: string;
+  resourceSymbolsUnreadable: string;
   resourceBystanderAdd: string;
   resourceBystanderFaceAria: string;
   resourceBystanderFaceDelete: string;
