@@ -1,7 +1,9 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { sandboxLink } from "./images.ts";
 import { getAllRecipes } from "./recipes.ts";
-import { recipeBundleCandidates } from "./sandboxBundles.ts";
+import { captureVariants, recipeBundleCandidates } from "./sandboxBundles.ts";
 import { LOCALES } from "./types.ts";
 
 // Open in Sandbox opens the edition the recipe page shows (#737). The host's
@@ -67,5 +69,26 @@ describe("the recipe page and the Sandbox agree on the file (#737)", () => {
     expect(links).toBeGreaterThan(300);
     // Editions beyond English, Spanish and Portuguese are opened at last.
     for (const locale of ["ca", "zh", "ja", "ar"]) expect(own[locale], locale).toBeGreaterThan(0);
+  });
+});
+
+describe("captureVariants (#1011)", () => {
+  it("lists the languages a capture wrote a bundle in, in the Cookbook's order", () => {
+    expect(captureVariants({ variants: { es: {}, en: {}, ca: {} } })).toEqual(["en", "es", "ca"]);
+    expect(captureVariants({ variants: {} })).toEqual([]);
+    expect(captureVariants(null)).toEqual([]);
+  });
+
+  it("names a bundle the site has for every language of every capture", () => {
+    const root = join(process.cwd(), "public", "cookbook");
+    let multi = 0;
+    for (const slug of readdirSync(root)) {
+      const file = join(root, slug, "capture.json");
+      if (!existsSync(file)) continue;
+      const variants = captureVariants(JSON.parse(readFileSync(file, "utf8")));
+      if (variants.length > 1) multi++;
+      for (const v of variants) expect(existsSync(join(root, slug, v, `${slug}.postext`)), `${slug}/${v}`).toBe(true);
+    }
+    expect(multi).toBeGreaterThan(0);
   });
 });

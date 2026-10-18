@@ -136,7 +136,9 @@ export function ComposedChecksSection({ checks, editions, labels, title, detail,
   const name = (l: string) => (l ? localeDisplayName(l, uiLocale) : '?');
 
   const jump = (c: ComposedCheck) => {
-    requestFrameJump({ ...jumpFor(c), presetId: editions.presetId, projectId: editions.projectId });
+    // Another language of a linked book is opened by its link (#1011).
+    const linked = editions.linked && !sameLocaleTag(c.locale, editions.activeLocale) ? editions.linked : null;
+    requestFrameJump({ ...jumpFor(c), presetId: editions.presetId, projectId: editions.projectId, linked });
   };
 
   return (

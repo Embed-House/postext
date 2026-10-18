@@ -9,6 +9,10 @@
  * (`fitMarks.ts`). The other edition is laid out behind the reader from
  * its draft or its bundle (`editions/editionStore.ts`); it is read only
  * here: a click on one of its pages opens that edition at that page.
+ *
+ * With the canvas on the whole book (`canvasScope: 'book'`, #1010), both
+ * columns hold the whole book, every chapter stitched after the one
+ * before it, and the columns meet chapter by chapter, on the text.
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -19,6 +23,7 @@ import {
 } from '../../context/SandboxContext';
 import { requestFrameJump } from '../../editions/frameJump';
 import { useBookEditions } from '../../editions/useBookEditions';
+import { stitchDocuments } from '../../book/stitch';
 import { sameLocaleTag } from '../../presets/locale';
 import { localeDisplayName } from '../../presets/localeNames';
 import { readViewHash } from '../../storage/viewHash';
@@ -33,14 +38,37 @@ const PAD = 16;
 interface ColumnHandle {
   el: HTMLDivElement | null;
   doc: VDTDocument | null;
+  /** The chapter of every page, in the whole book. */
+  chapters?: readonly number[];
   tops: number[];
   heights: number[];
 }
 
+/** A column's document: one chapter's, or the whole book's with the
+ *  chapter of every page. */
+interface ColumnDoc {
+  doc: VDTDocument;
+  chapters?: number[];
+  /** The first content page of every chapter, by chapter position. */
+  chapterFirstPages?: number[];
+}
+
+/** The chapters laid out, in book order, stitched into one document;
+ *  null until every one of `expected` has its document. */
+function stitchBook(parts: readonly { index: number; chapterId: string; doc: VDTDocument | null }[], expected: number): ColumnDoc | null {
+  const present = parts.filter((p): p is { index: number; chapterId: string; doc: VDTDocument } => p.doc !== null);
+  if (present.length === 0 || present.length < expected) return null;
+  const stitched = stitchDocuments(present.map((p) => ({ chapterId: p.chapterId, doc: p.doc })));
+  if (!stitched) return null;
+  const chapterFirstPages: number[] = [];
+  present.forEach((p, k) => { chapterFirstPages[p.index] = stitched.chapterFirstPages[k] ?? -1; });
+  return { doc: stitched.doc, chapters: stitched.pageChapters.map((k) => present[k]!.index), chapterFirstPages };
+}
+
 function PageColumn({
-  doc, handle, onScroll, onPageClick, uiLocale, labels, emptyText,
+  column, handle, onScroll, onPageClick, uiLocale, labels, emptyText,
 }: {
-  doc: VDTDocument | null;
+  column: ColumnDoc | null;
   handle: React.MutableRefObject<ColumnHandle>;
   onScroll: () => void;
   onPageClick?: (pageIndex: number) => void;
@@ -49,6 +77,8 @@ function PageColumn({
   emptyText: string | null;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const doc = column?.doc ?? null;
+  const pageChapters = column?.chapters;
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -70,8 +100,8 @@ function PageColumn({
       tops.push(y);
       y += s.h + GAP;
     }
-    handle.current = { el: ref.current, doc, tops, heights: sizes.map((s) => s.h) };
-  }, [doc, sizes, handle]);
+    handle.current = { el: ref.current, doc, ...(pageChapters ? { chapters: pageChapters } : {}), tops, heights: sizes.map((s) => s.h) };
+  }, [doc, pageChapters, sizes, handle]);
 
   // Paint the pages near the view; again when the document changes.
   useEffect(() => {
@@ -137,7 +167,11 @@ function PageColumn({
   );
 }
 
-export function EditionCompare({ onClose }: { onClose: () => void }) {
+/** `pageIndex` is the page the canvas shows as the view opens: its document
+ *  is the left column's (the chapter's, or the same chapters stitched in
+ *  the same order). */
+export function EditionCompare({ onClose, pageIndex }: { onClose: () => void; pageIndex?: number }) {
+  const openedAt = useRef(pageIndex ?? null);
   const labels = useSandboxLabels();
   const uiLocale = useSandboxSelector((s) => s.locale);
   const chapters = useSandboxSelector((s) => s.chapters);
@@ -146,27 +180,50 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
   const docRef = useSandboxDocRef();
   const docSourceRef = useSandboxDocSourceRef();
   const chapterDocsRef = useSandboxChapterDocsRef();
+  const wholeBook = useSandboxSelector((s) => s.canvasScope === 'book');
   const base = useBookEditions(false);
   const others = base.locales.filter((l) => !sameLocaleTag(l, base.activeLocale));
   const [chosen, setChosen] = useState<string | null>(null);
   const other = chosen && others.includes(chosen) ? chosen : others[0] ?? '';
   const activeIndex = chapters.findIndex((c) => c.id === activeChapterId);
   // The chapter on screen is laid out in the other edition even when the
-  // checks would skip it (no composed page, #1007).
-  const editions = useBookEditions(other !== '', other ? [other] : [], { chapters: activeIndex >= 0 ? [activeIndex] : [] });
+  // checks would skip it (no composed page, #1007); every chapter in the
+  // whole book (#1010).
+  const asked = wholeBook ? chapters.map((_, i) => i) : activeIndex >= 0 ? [activeIndex] : [];
+  const editions = useBookEditions(other !== '', other ? [other] : [], { chapters: asked });
   const [sync, setSync] = useState(true);
 
-  const leftDoc = useMemo(() => {
+  const leftColumn = useMemo((): ColumnDoc | null => {
+    if (wholeBook) {
+      const parts = chapters.map((c, index) => ({ index, chapterId: c.id, doc: chapterDocsRef.current.get(c.id)?.doc ?? null }));
+      return stitchBook(parts, chapters.length);
+    }
+    const doc = chapterDoc();
+    return doc ? { doc } : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the refs hold the documents of `docVersion`
+  }, [wholeBook, chapters, activeChapterId, docVersion]);
+  const leftDoc = leftColumn?.doc ?? null;
+  function chapterDoc(): VDTDocument | null {
     const held = chapterDocsRef.current.get(activeChapterId);
     if (held) return held.doc;
     const src = docSourceRef.current;
     return src && src.scope !== 'book' && src.scope.only === activeChapterId ? docRef.current : null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the refs hold the document of `docVersion`
-  }, [activeChapterId, docVersion]);
+  }
   const entry = other ? editions.entries[other] : undefined;
-  const rightDoc = entry?.layout?.chapters[activeIndex]?.doc ?? null;
+  const rightLayout = entry?.layout;
+  const rightColumn = useMemo((): ColumnDoc | null => {
+    if (!rightLayout) return null;
+    if (wholeBook) {
+      // Every chapter while the layout is under way (an older one lacks
+      // most); once it is done, the chapters it has.
+      return stitchBook(rightLayout.chapters, entry?.status === 'ready' ? 1 : rightLayout.chapters.length);
+    }
+    const doc = rightLayout.chapters[activeIndex]?.doc ?? null;
+    return doc ? { doc } : null;
+  }, [rightLayout, wholeBook, activeIndex, entry]);
+  const rightDoc = rightColumn?.doc ?? null;
   // Laid out, and still without the chapter: the edition has none there.
-  const rightMissing = !rightDoc && entry?.status === 'ready' && entry.chapters.has(activeIndex);
+  const rightMissing = !rightDoc && entry?.status === 'ready' && (wholeBook || entry.chapters.has(activeIndex));
   const rightLoading = other !== '' && !rightDoc && !rightMissing && entry?.status !== 'error';
 
   const left = useRef<ColumnHandle>({ el: null, doc: null, tops: [], heights: [] });
@@ -180,7 +237,10 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
       muted.current = null;
       return;
     }
-    const top = syncedScrollTop({ doc: from.doc, tops: from.tops, heights: from.heights, scrollTop: from.el.scrollTop + PAD }, { doc: to.doc, tops: to.tops, heights: to.heights });
+    const top = syncedScrollTop(
+      { doc: from.doc, ...(from.chapters ? { chapters: from.chapters } : {}), tops: from.tops, heights: from.heights, scrollTop: from.el.scrollTop + PAD },
+      { doc: to.doc, ...(to.chapters ? { chapters: to.chapters } : {}), tops: to.tops, heights: to.heights },
+    );
     if (top === null) return;
     // Both columns read at the same line: a page gap under their top.
     const next = Math.max(0, top - PAD);
@@ -194,11 +254,21 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
   useLayoutEffect(() => {
     const l = left.current;
     if (!leftDoc || !l.el) return;
-    const key = `${activeChapterId}|${other}|${rightDoc ? 1 : 0}`;
+    const key = `${wholeBook ? 'book' : activeChapterId}|${other}|${rightDoc ? 1 : 0}`;
     if (placedRef.current === key) return;
     placedRef.current = key;
-    const wanted = readViewHash().page;
-    const i = wanted !== null ? leftDoc.pages.findIndex((p) => p.pageNumberValue === wanted) : -1;
+    // The page the canvas showed; else the fragment's page number, in the
+    // whole book in the chapter on screen (its first content page when the
+    // fragment names none).
+    const shown = openedAt.current;
+    let i = shown !== null && shown < leftDoc.pages.length ? shown : -1;
+    if (i < 0) {
+      const wanted = readViewHash().page;
+      const pageChapters = leftColumn?.chapters;
+      const inChapter = (k: number) => !pageChapters || pageChapters[k] === activeIndex;
+      i = wanted !== null ? leftDoc.pages.findIndex((p, k) => inChapter(k) && p.pageNumberValue === wanted) : -1;
+      if (i < 0 && pageChapters) i = leftColumn?.chapterFirstPages?.[activeIndex] ?? -1;
+    }
     if (i >= 0 && l.tops[i] !== undefined) l.el.scrollTop = l.tops[i]! - PAD;
     follow(l, right.current);
   });
@@ -217,11 +287,13 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
   const openOther = (pageIndex: number) => {
     const page = rightDoc?.pages[pageIndex];
     if (!page || !other) return;
+    const chapterIndex = rightColumn?.chapters ? rightColumn.chapters[pageIndex] ?? -1 : activeIndex;
     requestFrameJump({
       presetId: base.presetId,
       projectId: base.projectId,
+      linked: base.linked,
       locale: other,
-      chapterIndex: activeIndex >= 0 ? activeIndex : null,
+      chapterIndex: chapterIndex >= 0 ? chapterIndex : null,
       page: page.pageNumberValue,
       fenceIndex: page.composed?.fenceIndex ?? null,
       frame: null,
@@ -251,8 +323,8 @@ export function EditionCompare({ onClose }: { onClose: () => void }) {
         <IconButton label={labels.editionCompareClose} onClick={onClose} icon={<X size={14} aria-hidden="true" />} />
       </div>
       <div className="flex min-h-0 flex-1 gap-px" style={{ background: 'var(--rule)' }}>
-        <PageColumn doc={leftDoc} handle={left} onScroll={() => follow(left.current, right.current)} uiLocale={uiLocale} labels={labels} emptyText={leftDoc ? null : labels.editionCompareLoading.replace('__locale__', name(base.activeLocale))} />
-        <PageColumn doc={rightDoc} handle={right} onScroll={() => follow(right.current, left.current)} onPageClick={openOther} uiLocale={uiLocale} labels={labels} emptyText={status} />
+        <PageColumn column={leftColumn} handle={left} onScroll={() => follow(left.current, right.current)} uiLocale={uiLocale} labels={labels} emptyText={leftDoc ? null : labels.editionCompareLoading.replace('__locale__', name(base.activeLocale))} />
+        <PageColumn column={rightColumn} handle={right} onScroll={() => follow(right.current, left.current)} onPageClick={openOther} uiLocale={uiLocale} labels={labels} emptyText={status} />
       </div>
     </div>
   );

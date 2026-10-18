@@ -6,6 +6,7 @@ export type { PresetSourceSpec, PresetManifest, PresetIndex } from './presets';
 export type {
   PostextSandboxProps,
   HashBundleResolver,
+  HashBundleEditions,
   SandboxLabels,
   PanelId,
   ViewportTab,

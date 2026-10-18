@@ -59,6 +59,21 @@ export function isSameOriginUrl(url: string, pageOrigin: string): boolean {
 
 const inFlight = new Map<string, Promise<OpenedHashBundle>>();
 
+/** Links the language switcher opens (#1011): the reader's copy opens as
+ *  it is, without asking whether to take the published book afresh. */
+const quiet = new Set<string>();
+
+/** Open the link of `origin` (`hashBundleOrigin`) without asking, once. */
+export function openLinkQuietly(origin: string): void {
+  quiet.add(origin);
+}
+
+/** Whether the link of `origin` is to be opened without asking (and
+ *  forget it). */
+export function takeQuietLink(origin: string): boolean {
+  return quiet.delete(origin);
+}
+
 /** Open the book `ref` links to (see the module comment). Concurrent calls
  *  for the same link share one import. */
 export function openHashBundle(ref: HashBundleRef, deps: OpenHashBundleDeps): Promise<OpenedHashBundle> {

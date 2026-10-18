@@ -215,6 +215,24 @@ export function hashBundleOrigin(ref: HashBundleRef): string {
   return `${ref.key}:${ref.id}:${ref.lang?.toLowerCase() ?? ''}`;
 }
 
+/** The link a project imported from a hash bundle was recorded with
+ *  (`hashBundleOrigin`), read back; null for any other origin. */
+export function parseHashBundleOrigin(origin: string | undefined): HashBundleRef | null {
+  if (!origin) return null;
+  const m = /^([a-z][a-z0-9-]{0,31}):(.+):([^:]*)$/.exec(origin);
+  if (!m || RESERVED_KEYS.has(m[1]!)) return null;
+  return { key: m[1]!, id: m[2]!, lang: m[3] ? m[3] : null };
+}
+
+/** The fragment of a hash bundle link (`#recipe=ID&lang=L`), with the
+ *  view, chapter and page it opens on (#1011). */
+export function hashBundleFragment(ref: HashBundleRef, view: Pick<Partial<ViewHash>, 'view' | 'chapter' | 'page'> = {}): string {
+  const parts = [`${ref.key}=${encodeURIComponent(ref.id)}`];
+  if (ref.lang) parts.push(`lang=${encodeURIComponent(ref.lang)}`);
+  const rest = viewHashFragment(view).replace(/^#/, '');
+  return `#${parts.join('&')}${rest ? `&${rest}` : ''}`;
+}
+
 /** The book last open, as storage remembers it. */
 export interface StoredBook {
   projectId: string | null;

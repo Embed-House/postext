@@ -34,3 +34,30 @@ export function recipeBundleCandidates(slug: string, lang: string | null): strin
   const variants = edition ? [edition, ...rest.filter((variant) => variant !== edition)] : rest;
   return variants.map((variant) => recipeBundleUrl(slug, variant));
 }
+
+/** The languages a recipe was captured in, in the Cookbook's order: the
+ *  variants its `capture.json` lists (the capture writes one bundle per
+ *  variant). Pure. */
+export function captureVariants(capture: unknown): SampleLocale[] {
+  const variants = (capture as { variants?: unknown } | null)?.variants;
+  if (!variants || typeof variants !== "object") return [];
+  return SAMPLE_LOCALES.filter((locale) => locale in variants);
+}
+
+/**
+ * The editions of a recipe for the Sandbox's language switcher (#1011): the
+ * languages its capture wrote a bundle in, read from
+ * `public/cookbook/<slug>/capture.json`. Null for a slug that is not a
+ * recipe's, or a capture the site does not have.
+ */
+export async function recipeBundleEditions(slug: string): Promise<string[] | null> {
+  if (!RECIPE_SLUG.test(slug)) return null;
+  try {
+    const res = await fetch(`/cookbook/${slug}/capture.json`, { cache: "no-cache" });
+    if (!res.ok) return null;
+    const variants = captureVariants(await res.json());
+    return variants.length > 0 ? variants : null;
+  } catch {
+    return null;
+  }
+}

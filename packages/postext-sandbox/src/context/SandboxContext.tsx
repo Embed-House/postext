@@ -16,13 +16,14 @@ import type { PostextConfig, VDTDocument, Resource, LayoutContinuation } from 'p
 import { clearMeasurementCache, stripConfigDefaults } from 'postext';
 import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
 import type { EpubLayout, PanelId, ViewportTab, SandboxLabels } from '../types';
-import type { HashBundleResolver } from '../types/props';
+import type { HashBundleEditions, HashBundleResolver } from '../types/props';
 import { DEFAULT_LABELS } from '../types';
 import {
   EMPTY_VIEW_HASH,
   hashAsksRestore,
   hashNamesOtherBook,
   parseHashBundle,
+  hashBundleOrigin,
   isViewportTab,
   readViewHash,
   writeViewHash,
@@ -54,7 +55,7 @@ import { createSaveScheduler, type SaveScheduler } from '../storage/saveSchedule
 import { getBlob, putBlobAt } from '../storage/blobStore';
 import { effectiveCanvasScope, wholeBookAllowed } from '../book/scope';
 import { choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetReaderLocale } from '../presets/locale';
-import { fetchBundleBytes, openHashBundle } from './hashBundle';
+import { fetchBundleBytes, openHashBundle, takeQuietLink } from './hashBundle';
 import { getChapterLayouts, pruneChapterLayoutStore, putChapterLayouts } from '../storage/layouts';
 import type { ProjectSummary } from '../storage/projects';
 import type { BookContent, BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPlan, ComposedBook, LayoutScope } from '../book/types';
@@ -792,6 +793,12 @@ export interface SandboxStore {
   openHashBundle: (ref: HashBundleRef) => Promise<boolean>;
   /** The fragment keys the host resolves to bundles. */
   hashBundleKeys: readonly string[];
+  /** The URLs a linked book's edition is fetched from (see `hashBundles`). */
+  hashBundleResolver: (key: string) => HashBundleResolver | undefined;
+  /** The languages a linked book is published in (`hashBundleEditions`,
+   *  #1011), asked once per book for the session; null when the host does
+   *  not say. */
+  linkedBundleEditions: (key: string, id: string) => Promise<string[] | null>;
   /** Answer `bundleReplacePrompt`: true replaces the reader's copy with
    *  the linked book, false opens the copy as it is. */
   answerBundleReplace: (replace: boolean) => void;
@@ -1050,6 +1057,18 @@ export function useSandboxBookActions(): {
   };
 }
 
+/** The books linked by a host fragment key (`hashBundles`): the URLs of
+ *  their editions and the languages they are published in (#1011),
+ *  without subscribing to any state. */
+export function useSandboxLinkedBundles(): {
+  resolver: SandboxStore['hashBundleResolver'];
+  editions: SandboxStore['linkedBundleEditions'];
+} {
+  const store = useStore();
+  // One object per store: hooks keep it among their dependencies.
+  return useMemo(() => ({ resolver: store.hashBundleResolver, editions: store.linkedBundleEditions }), [store]);
+}
+
 /** The operations on the other editions a local project keeps, without
  *  subscribing to any state (#979). */
 export function useSandboxEditionActions(): { renameFrameInEditions: ProjectActions['renameFrameInEditions'] } {
@@ -1187,6 +1206,8 @@ interface SandboxProviderProps {
   presetSources?: PresetSourceSpec[];
   /** Books linked by a host fragment key (see `PostextSandboxProps`). */
   hashBundles?: Record<string, HashBundleResolver>;
+  /** The languages of those books (see `PostextSandboxProps`). */
+  hashBundleEditions?: Record<string, HashBundleEditions>;
   onConfigChange?: (config: PostextConfig) => void;
   onMarkdownChange?: (markdown: string) => void;
 }
@@ -1215,6 +1236,7 @@ export function SandboxProvider({
   locale,
   presetSources = NO_SOURCES,
   hashBundles,
+  hashBundleEditions,
   onConfigChange,
   onMarkdownChange,
 }: SandboxProviderProps) {
@@ -1263,6 +1285,9 @@ export function SandboxProvider({
   const hashBundlesRef = useRef(hashBundles);
   hashBundlesRef.current = hashBundles;
   const hashBundleKeys = useMemo(() => Object.keys(hashBundles ?? {}), [hashBundles]);
+  const hashBundleEditionsRef = useRef(hashBundleEditions);
+  hashBundleEditionsRef.current = hashBundleEditions;
+  const linkedEditionsRef = useRef(new Map<string, Promise<string[] | null>>());
   const initialBundleRef = useRef<HashBundleRef | null | undefined>(undefined);
   if (initialBundleRef.current === undefined) {
     initialBundleRef.current = typeof window === 'undefined' ? null : parseHashBundle(window.location.hash, hashBundleKeys);
@@ -1617,11 +1642,11 @@ export function SandboxProvider({
         activate: (id) => (id === keep ? Promise.resolve() : projectActions.activate(id)),
         // The published book may have been corrected since the reader
         // imported it: they choose between their copy and a fresh one.
-        confirmReplace: (id) => askBundleReplace({
+        confirmReplace: (id) => (takeQuietLink(hashBundleOrigin(ref)) ? Promise.resolve(false) : askBundleReplace({
           kind: 'bundle',
           id,
           name: list.find((p) => p.id === id)?.name ?? stateRef.current.projects.find((p) => p.id === id)?.name ?? id,
-        }),
+        })),
         removeProject: (id) => projectActions.remove(id, { offScreen: true }),
         fetchBytes: fetchBundleBytes,
         importBytes: (bytes, name, origin) => projectActions.importBundleBytes(bytes, name, { origin }),
@@ -2399,6 +2424,19 @@ export function SandboxProvider({
     restorePresetOriginal: (presetId) => restorePresetOriginalRef.current(presetId),
     openHashBundle: (ref) => switchBookRef.current(async () => (await openLinkedBundleRef.current(ref)) !== null),
     hashBundleKeys,
+    hashBundleResolver: (key) => hashBundlesRef.current?.[key],
+    linkedBundleEditions: (key, id) => {
+      const cacheKey = `${key}:${id}`;
+      let asked = linkedEditionsRef.current.get(cacheKey);
+      if (!asked) {
+        const editions = hashBundleEditionsRef.current?.[key];
+        asked = editions
+          ? Promise.resolve(editions(id)).then((list) => (list && list.length > 0 ? [...list] : null), () => null)
+          : Promise.resolve(null);
+        linkedEditionsRef.current.set(cacheKey, asked);
+      }
+      return asked;
+    },
     answerBundleReplace: (replace) => {
       const answer = bundleReplaceAnswerRef.current;
       bundleReplaceAnswerRef.current = null;

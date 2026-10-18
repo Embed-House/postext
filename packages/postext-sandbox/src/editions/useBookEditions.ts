@@ -4,12 +4,16 @@
  * The editions of the book on screen (#867): the locales a preset's bundle
  * carries, the one open, and their layouts behind the reader (see
  * `editionStore.ts`). A local project keeps every edition of the bundle
- * it was imported from (#903).
+ * it was imported from (#903); a book a host links to in one language of
+ * several (a Cookbook recipe) lists the others the host names, each read
+ * from its own bundle (#1011, `linkedEditions.ts`).
  */
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { onFontsChanged } from 'postext';
-import { useSandboxPresetProvider, useSandboxSelector } from '../context/SandboxContext';
+import { useSandboxLinkedBundles, useSandboxPresetProvider, useSandboxSelector } from '../context/SandboxContext';
+import { parseHashBundleOrigin, type HashBundleRef } from '../storage/viewHash';
+import { linkedEditionLocales, loadLinkedEdition } from './linkedEditions';
 import { sameLocaleTag } from '../presets/locale';
 import { activeEditionLocale, bookEditionLocales } from './bookLocales';
 import { editionsOnDemand } from './onDemand';
@@ -24,6 +28,10 @@ export interface BookEditions {
   presetId: string | null;
   /** The local project on screen, null for a preset. */
   projectId: string | null;
+  /** The host link the project on screen was opened from, when the host
+   *  publishes it in several languages (#1011): another edition is that
+   *  link in its language. */
+  linked: HashBundleRef | null;
   /** Every edition, in the bundle's order (a project keeps the ones it was
    *  imported with, #903). */
   locales: string[];
@@ -72,9 +80,29 @@ export function useBookEditions(
   const bookKey = presetId !== null ? `preset:${presetId}` : `project:${activeProjectId}`;
   const activeLocale = activeEditionLocale({ presetId, appliedLocale, projectLocale: project?.locale, configLocale: config.locale });
   const projectLocales = project?.locales;
+  // A project in one language opened from a host link: the languages the
+  // host publishes it in.
+  const linkedBundles = useSandboxLinkedBundles();
+  const origin = project && !projectLocales ? project.origin : undefined;
+  const linkRef = useMemo(() => parseHashBundleOrigin(origin), [origin]);
+  const [published, setPublished] = useState<{ origin: string; locales: string[] | null } | null>(null);
+  useEffect(() => {
+    if (!linkRef || !origin) return;
+    let cancelled = false;
+    void linkedBundles.editions(linkRef.key, linkRef.id).then((list) => {
+      if (cancelled) return;
+      setPublished((prev) => (prev && prev.origin === origin && prev.locales === list ? prev : { origin, locales: list }));
+    });
+    return () => { cancelled = true; };
+  }, [linkRef, origin, linkedBundles]);
+  const linkedLocales = useMemo(
+    () => (linkRef && published && published.origin === origin ? linkedEditionLocales(published.locales, activeLocale) : null),
+    [linkRef, published, origin, activeLocale],
+  );
+  const linked = linkedLocales ? linkRef : null;
   const locales = useMemo(
-    () => bookEditionLocales({ presetId, summary, projectLocales, activeLocale }),
-    [presetId, summary, projectLocales, activeLocale],
+    () => linkedLocales ?? bookEditionLocales({ presetId, summary, projectLocales, activeLocale }),
+    [linkedLocales, presetId, summary, projectLocales, activeLocale],
   );
   const waiting = enabledAsked && options.onDemand === true && editionsOnDemand(chapters.length, locales.length) && !editionsAsked(bookKey);
   // A book waiting for the reader's word lays nothing out.
@@ -130,7 +158,7 @@ export function useBookEditions(
   // The other editions of a local project: the content its record keeps
   // aside for them (#903).
   useEffect(() => {
-    if (!enabled || presetId !== null || activeProjectId === null || locales.length < 2) return;
+    if (!enabled || presetId !== null || activeProjectId === null || linked !== null || locales.length < 2) return;
     const timer = setTimeout(() => {
       for (const locale of locales) {
         if (sameLocaleTag(locale, activeLocale)) continue;
@@ -150,7 +178,32 @@ export function useBookEditions(
     }, fontsEpoch === 0 ? 0 : ACTIVE_EDITION_DEBOUNCE_MS);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
-  }, [enabled, presetId, activeProjectId, bookKey, locales, activeLocale, editionsRev, service, onlyKey, chapterIndices, fontsEpoch]);
+  }, [enabled, presetId, activeProjectId, linked, bookKey, locales, activeLocale, editionsRev, service, onlyKey, chapterIndices, fontsEpoch]);
+
+  // The other editions of a linked book: each from its own bundle (#1011).
+  useEffect(() => {
+    if (!enabled || linked === null) return;
+    const resolve = linkedBundles.resolver(linked.key);
+    if (!resolve || typeof window === 'undefined') return;
+    const pageOrigin = window.location.origin;
+    const timer = setTimeout(() => {
+      for (const locale of locales) {
+        if (sameLocaleTag(locale, activeLocale)) continue;
+        if (only && !only.some((l) => sameLocaleTag(l, locale))) continue;
+        ensureEdition({
+          bookKey,
+          locale,
+          identity: [linked.key, linked.id, fontsEpoch],
+          other: true,
+          service,
+          chapters: chapterIndices,
+          load: () => loadLinkedEdition(linked, locale, resolve, pageOrigin),
+        });
+      }
+    }, fontsEpoch === 0 ? 0 : ACTIVE_EDITION_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `only` is read through its key
+  }, [enabled, linked, linkedBundles, bookKey, locales, activeLocale, service, onlyKey, chapterIndices, fontsEpoch]);
 
   // The other editions of a preset: their draft, else the bundle's text.
   useEffect(() => {
@@ -185,5 +238,5 @@ export function useBookEditions(
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `version` changes with every entry
   }, [bookKey, locales, version]);
 
-  return { bookKey, presetId, projectId: activeProjectId, locales, activeLocale, entries, waiting, layOutNow };
+  return { bookKey, presetId, projectId: activeProjectId, linked, locales, activeLocale, entries, waiting, layOutNow };
 }

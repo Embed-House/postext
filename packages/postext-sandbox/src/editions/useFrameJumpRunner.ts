@@ -19,7 +19,7 @@ import { selectFrame } from '../editing/editMode';
 import { climbable, elementRectOnSheet } from '../selection/pageSelection';
 import { setPageSelection } from '../selection/selectionStore';
 import { sameLocaleTag } from '../presets/locale';
-import { readViewHash, viewHashFragment } from '../storage/viewHash';
+import { hashBundleOrigin, readViewHash, viewHashFragment } from '../storage/viewHash';
 import { resolveJump } from '../warnings/composedChecks';
 import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type PendingFrameJump } from './frameJump';
 
@@ -67,6 +67,7 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
   const chapterDocsRef = useSandboxChapterDocsRef();
   const activeProjectId = useSandboxSelector((s) => s.activeProjectId);
   const projectLocale = useSandboxSelector((s) => (s.activeProjectId === null ? null : s.projects.find((p) => p.id === s.activeProjectId)?.locale ?? null));
+  const projectOrigin = useSandboxSelector((s) => (s.activeProjectId === null ? null : s.projects.find((p) => p.id === s.activeProjectId)?.origin ?? null));
   const activePresetId = useSandboxSelector((s) => s.activePresetId);
   const appliedLocale = useSandboxSelector((s) => (s.presetApplied?.presetId === s.activePresetId ? s.presetApplied.locale ?? null : null));
   const presetStatus = useSandboxSelector((s) => s.presetStatus);
@@ -81,7 +82,10 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     const jump = pending;
     if (!jump) return;
     // The edition first: the fragment is opening it.
-    if (jump.presetId !== null) {
+    if (jump.linked) {
+      // Another language of a linked book: the project its link opens.
+      if (projectOrigin !== hashBundleOrigin({ ...jump.linked, lang: jump.locale })) return;
+    } else if (jump.presetId !== null) {
       if (activeProjectId !== null || activePresetId !== jump.presetId || presetStatus === 'loading') return;
       if (jump.locale !== '' && (appliedLocale === null || !sameLocaleTag(appliedLocale, jump.locale))) return;
     } else if (jump.projectId) {
@@ -161,5 +165,5 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     if (anchor === undefined) return;
     dispatch({ type: 'SET_PANEL', payload: 'markdown' });
     dispatch({ type: 'SET_PENDING_EDITOR_FOCUS', payload: { chapterId: chapter.id, anchor, head: anchor, selectWord: false, fromViewer: true } });
-  }, [pending, activeProjectId, projectLocale, activePresetId, appliedLocale, presetStatus, chapters, activeChapterId, docVersion, dispatch, docRef, docSourceRef, chapterDocsRef]);
+  }, [pending, activeProjectId, projectLocale, projectOrigin, activePresetId, appliedLocale, presetStatus, chapters, activeChapterId, docVersion, dispatch, docRef, docSourceRef, chapterDocsRef]);
 }
