@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 161 · Handwriting workbook in ten scripts ═══════════════
 // https://postext.dev/en/cookbook/handwriting-workbook
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Playwrite, Playpen Sans Arabic, Klee One and others (SIL OFL) · Needs postext ≥ 1.42.1
+// Fonts: Playwrite, Playpen Sans Arabic, Klee One and others (SIL OFL) · Needs postext ≥ 1.45.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -68,62 +68,63 @@ const text = (id, content, fontFamily, size, placement, extra = {}) => ({ kind: 
   ...extra });
 const image = (id, resourceId, placement) => ({ kind: 'image', id, resourceId, placement,
   decorative: true });
-const label = (id) => text(id, '{titleText}', LABEL, 9, at('container', 'top-left'),
-  { fontWeight: LW, color: col('accent'), ...caps(1.2) });
 
-// #region answer: a practice block: the model in the school face, then dots, then nothing
-// ### Repasa y escribe {w="nina" model="niña"} draws four rows on the edition's ruling: the
-// model and dotted copies, a row of dots, the model and one copy, and an empty row. The
-// ruling and the dots are one picture per block ('trazo-' + w, drawn under #region art); the
-// models are live text set on its baselines. A design text's baseline falls 0.8 of its line
-// below the box top, so a box of line L set at baseline − 0.8 L puts the letters on the line.
+// #region answer: a practice box: the model in the school face, then dots, then nothing
+// The word is the box's content, and boxes of one shape share a style: :::callout{type=
+// "palabra" title="Repasa y escribe"} / niña / ::: draws four rows on the ruling: the model
+// and dotted copies, a row of dots, the model and one copy, an empty row. The design sets the
+// content ({boxText}, setsContent): ruling and dots are one picture per word ('trazo-' + the
+// word, #region art), the models live text on its baselines. A design text's baseline falls
+// 0.8 of its line below its top, so a box of line L set at baseline − 0.8 L sits on the line.
 const G = CJK ? null : geometry(ED.ruling, ED.u); // rows, baselines and the face's size
-const LABEL_H = 7; // mm: the block's label above its ruling
-const model = (id, row, extra = {}) => text(id, '{attr.model}', HAND, G.size / 0.3528,
-  at('container', 'top-left', 0, LABEL_H + G.base[row] - 0.8 * G.line,
-    { width: mm(W) }), { lineHeight: mm(G.line), overflow: 'clip', ...extra });
-const wordBlock = (rows, again = true) => ({ enabled: true,
-  minHeight: mm(LABEL_H + G.height(rows)), slot: { elements: [label('label'),
-    image('trazo', 'trazo-{attr.w}', at('container', 'top-left', 0, LABEL_H,
-      box(W, G.height(rows)))),
-    model('model-1', 0),
-    ...(again ? [model('model-3', 2)] : []), // a sentence is written out once
-  ] } });
+const LABEL_H = 7; // mm: the box's title above its ruling
+const model = (id, row) => text(id, '{boxText}', HAND, G.size / 0.3528,
+  at('container', 'top-left', 0, G.base[row] - 0.8 * G.line, { width: mm(W) }),
+  { lineHeight: mm(G.line), overflow: 'clip' });
+// rows: of ruling; picture: its resource; models: the rows the word is written out on.
+const ruled = (rows, picture, models) => ({ setsContent: true, minHeight: mm(G.height(rows)),
+  slot: { elements: [image('trazo', picture, at('container', 'top-left', 0, 0,
+    box(W, G.height(rows)))), ...models.map((n) => model(`model-${n + 1}`, n))] } });
+// Every practice box: no frame, its title in the label face LABEL_H above the drawing.
+const practice = (id, design, gap = mm(4)) => ({ id, design, backgroundEnabled: false,
+  padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) }, titleStyle: {
+    fontFamily: LABEL, fontSize: pt(9), fontWeight: LW, color: col('accent'), lineHeight: mm(5),
+    gap: mm(LABEL_H - 5), ...caps(1.2) }, marginTop: gap, marginBottom: mm(5), snapToGrid: false });
 // #endregion
 
-// #region squares: the Chinese and Japanese blocks, a character to a square
-// ### 写一写 {c1="日" c2="月"}: each character in the first square of its row, three copies to
-// trace in the pale red (描红) or grey (なぞり書き) of the next squares, then empty ones. A
-// Han or kana character is one em wide, so tracking of (square − em) sets one per square.
+// #region squares: the Chinese and Japanese boxes, a character to a square
+// :::callout{type="caracteres" title="写一写"} with one character per list item: each in the
+// first square of its row, three copies to trace in the pale red (描红) or grey (なぞり書き) of
+// the next squares, then empty ones. A Han or kana character is one em wide, so tracking of
+// (square − em) sets one per square.
 const [CELL, EM] = [ED.cell ?? 16, (ED.cell ?? 16) * 0.72]; // mm: the square, its character
 const SQUARES = Math.floor(W / CELL);
 const row = (n, y, content, x, color) => text(`r${n}-${x}`, content, HAND, EM / 0.3528,
   at('container', 'top-left', x * CELL + (CELL - EM) / 2, y + (CELL - EM) / 2 + EM * 0.06,
     box(W - x * CELL, EM)),
   { lineHeight: mm(EM), letterSpacing: mm(CELL - EM), overflow: 'clip', color: col(color) });
-// A sentence (####) takes three rows: written out, traced, and a row to write it alone.
-const squareBlock = (rows, sentence) => ({ enabled: true, minHeight: mm(LABEL_H + rows * CELL),
-  slot: { elements: [label('label'), image('grid', `squares-${rows}`,
-    at('container', 'top-left', 0, LABEL_H, box(SQUARES * CELL, rows * CELL))),
-  ...(sentence ? [row(0, LABEL_H, '{attr.model}', 0, 'ink'),
-    row(1, LABEL_H + CELL, '{attr.model}', 0, 'trace')] : Array.from({ length: rows }, (_, n) => [
-    row(n, LABEL_H + n * CELL, `{attr.c${n + 1}}`, 0, 'ink'),
-    row(n, LABEL_H + n * CELL, `{attr.c${n + 1}}{attr.c${n + 1}}{attr.c${n + 1}}`, 1, 'trace'),
-  ]).flat()),
+// A sentence (type="frase") takes three rows: written out, traced, and a row to write it alone.
+const squareBlock = (rows, sentence) => ({ setsContent: true, minHeight: mm(rows * CELL),
+  slot: { elements: [image('grid', `squares-${rows}`,
+    at('container', 'top-left', 0, 0, box(SQUARES * CELL, rows * CELL))),
+  ...(sentence ? [row(0, 0, '{boxText}', 0, 'ink'), row(1, CELL, '{boxText}', 0, 'trace')]
+    : Array.from({ length: rows }, (_, n) => [
+      row(n, n * CELL, `{boxText.${n + 1}}`, 0, 'ink'),
+      row(n, n * CELL, `{boxText.${n + 1}}`.repeat(3), 1, 'trace'),
+    ]).flat()),
   ] } });
-// Pinyin on four lines and three spaces (四线三格), ##### {model="bā"}: the syllable, copies
-// to trace in the pale red, the syllable again and room after it.
+// Pinyin on four lines and three spaces (四线三格), :::callout{type="pinyin"} / bā / ::: —
+// the syllable, copies to trace in the pale red, the syllable again and room after it.
 const P = ED.pinyin ? geometry('sixian', 3.6) : null;
 const pinyin = (id, n, x, content, color) => text(id, content, ED.pinyin, P.size / 0.3528,
-  at('container', 'top-left', x, LABEL_H + P.base[n] - 0.8 * P.line, { width: mm(W - x) }),
+  at('container', 'top-left', x, P.base[n] - 0.8 * P.line, { width: mm(W - x) }),
   { lineHeight: mm(P.line), overflow: 'clip', color: col(color) });
-const copies = Array(5).fill('{attr.model}').join('\u00a0\u00a0\u00a0\u00a0');
-const pinyinBlock = P && { enabled: true, minHeight: mm(LABEL_H + P.height(3)),
-  slot: { elements: [label('label'),
-    image('lines', 'sixian', at('container', 'top-left', 0, LABEL_H,
-      box(W, P.height(3)))),
-    pinyin('p1', 0, 0, '{attr.model}', 'ink'), pinyin('p1-copies', 0, 36, copies, 'trace'),
-    pinyin('p2', 1, 0, copies, 'trace'), pinyin('p3', 2, 0, '{attr.model}', 'ink'),
+const copies = Array(5).fill('{boxText}').join('\u00a0\u00a0\u00a0\u00a0');
+const pinyinBlock = P && { setsContent: true, minHeight: mm(P.height(3)),
+  slot: { elements: [
+    image('lines', 'sixian', at('container', 'top-left', 0, 0, box(W, P.height(3)))),
+    pinyin('p1', 0, 0, '{boxText}', 'ink'), pinyin('p1-copies', 0, 36, copies, 'trace'),
+    pinyin('p2', 1, 0, copies, 'trace'), pinyin('p3', 2, 0, '{boxText}', 'ink'),
   ] } };
 // #endregion
 
@@ -150,6 +151,7 @@ const opener = { enabled: true, minHeight: mm(BAND + 7), slot: { elements: [
 // The cover: a painted scene to the bleed, the title in the school face, a line for a name.
 const COVER = 178; // mm from the top edge: the foot of the painting
 const cover = { id: 'portada', header: { elements: [] }, footer: { elements: [] },
+  sectionEnd: 'heading', // the book's only h1: its blank running heads end at the first h2
   advancedDesign: { enabled: true, slot: { elements: [
     image('scene', 'cover', at('page', 'top-left', 0, 0, { width: 'fill', height: mm(COVER) })),
     text('kicker', '{attr.kicker}', LABEL, 11, at('page', 'top', 0, COVER + 10),
@@ -180,14 +182,15 @@ const diploma = { id: 'diploma', header: { elements: [] }, footer: { elements: [
       thickness: pt(1), color: col('rule'),
       placement: at('container', 'top-left', 28, 192 + n * 22, { width: mm(W - 56) }) })),
   ] } } };
-// The picture dictionary, ## {p1="cat" w1="gato" …}: four pictures to a row, each word under
-// its picture in the school face, and a line to copy it on.
+// The picture dictionary, :::callout{type="diccionario" p1="cat" …} with the four words as a
+// list: four pictures to a row, each word under its picture in the school face, and a line to
+// copy it on.
 const SLOT = W / 4;
-const dictionary = { enabled: true, minHeight: mm(58),
+const dictionary = { setsContent: true, minHeight: mm(58),
   slot: { elements: [0, 1, 2, 3].flatMap((n) => [
     image(`p${n}`, `{attr.p${n + 1}}`, at('container', 'top-left', n * SLOT + (SLOT - 34) / 2,
       0, box(34, 34))),
-    text(`w${n}`, `{attr.w${n + 1}}`, HAND, CJK ? 20 : 17, at('container', 'top-left',
+    text(`w${n}`, `{boxText.${n + 1}}`, HAND, CJK ? 20 : 17, at('container', 'top-left',
       n * SLOT, 36, box(SLOT, 10)), { align: 'center', overflow: 'clip' }),
     { kind: 'rule', id: `l${n}`, direction: 'horizontal', thickness: pt(0.75),
       color: col('rule'), placement: at('container', 'top-left', n * SLOT + 4, 54,
@@ -226,16 +229,11 @@ const config = {
   },
   headings: {
     fontFamily: HAND, color: col('ink'), fontWeight: 400,
-    levels: [
+    levels: [ // h1 is the book (the cover style draws it), h2 each section; exercises are boxes
       { level: 1, breakBefore: { enabled: true, parity: 'any' }, marginTop: pt(0),
+        marginBottom: mm(3) },
+      { level: 2, breakBefore: { enabled: true, parity: 'any' }, marginTop: pt(0),
         marginBottom: mm(3), advancedDesign: opener },
-      { level: 2, marginTop: mm(3), marginBottom: mm(3), advancedDesign: dictionary },
-      { level: 3, marginTop: mm(4), marginBottom: mm(2),
-        advancedDesign: CJK ? squareBlock(4) : wordBlock(4) },
-      { level: 4, marginTop: mm(4), marginBottom: mm(2),
-        advancedDesign: CJK ? squareBlock(3, true) : wordBlock(3, false) },
-      ...(P ? [{ level: 5, marginTop: mm(4), marginBottom: mm(2), advancedDesign: pinyinBlock }]
-        : []),
     ],
   },
   headingStyles: [cover, diploma],
@@ -251,7 +249,14 @@ const config = {
       ...caps(1.2) },
     body: { fontFamily: TEXT, fontSize: pt(12), lineHeight: pt(RTL ? 21 : 17),
       color: col('ink'), boldColor: col('ink'), italicColor: col('ink'),
-      firstLineIndent: pt(0) } }],
+      firstLineIndent: pt(0) } },
+    // One style per shape of exercise, whatever its words (the box's content).
+    ...(CJK ? [practice('caracteres', squareBlock(4)), practice('frase', squareBlock(3, true))] : [
+      practice('trazos', ruled(4, 'trazo-{attr.pattern}', [])),
+      practice('palabra', ruled(4, 'trazo-{boxText}', [0, 2])),
+      practice('frase', ruled(3, 'trazo-{boxText}', [0]))]), // a sentence is written out once
+    ...(P ? [practice('pinyin', pinyinBlock)] : []),
+    { ...practice('diccionario', dictionary, mm(3)), marginBottom: mm(3) }],
   header: { elements: [] },
   footer: { elements: [...foot('even', 'bottom-left', 1), ...foot('odd', 'bottom-right', -1)] },
 };
@@ -338,10 +343,10 @@ function pattern(name, x0, x1, base, u) {
   return `<path d="${pts.join('')}" stroke="${palette.dots}" stroke-width="${TRACES.dot}" `
     + 'stroke-linecap="round" fill="none"/>';
 }
-// One block's picture: the ruling, then the dotted copies laid out from the start side. A word
-// (###): copies after the model, a row of copies, one copy after the model, an empty row. A
-// sentence (####): one copy under the model, then an empty row. A warm-up pattern: two rows
-// of it and the start of a third.
+// One box's picture: the ruling, then the dotted copies laid out from the start side. A word
+// (palabra): copies after the model, a row of copies, one copy after the model, an empty row.
+// A sentence (frase): one copy under the model, then an empty row. A warm-up pattern (trazos):
+// two rows of it and the start of a third.
 function traceSvg(g, w, word, sentence) {
   const rows = sentence ? 3 : 4; const gap = 3 * g.u; const parts = [ruling(g, rows)];
   const copies = (row, from, count = 99) => {
@@ -361,15 +366,21 @@ function traceSvg(g, w, word, sentence) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W * 10}" height="${n2(h * 10)}" `
     + `viewBox="0 0 ${W} ${n2(h)}">${parts.join('')}</svg>`;
 }
-// The pictures the practice blocks name: one per block, read off the headings that ask for one,
-// or the edition's squares and its pinyin lines.
+// The pictures the practice boxes name: one per word or pattern, read off the boxes, named as
+// the style's design asks for it ('trazo-' + the box's content, or + its pattern), or the
+// edition's squares and its pinyin lines.
 async function practicePictures(add) {
   const svg = (w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${W * 10}" `
     + `height="${n2(h * 10)}" viewBox="0 0 ${w} ${n2(h)}">${body}</svg>`;
-  const blocks = CJK ? [] : markdown.matchAll(/^(#{3,4}) .*?w="([^"]+)"(?: model="([^"]+)")?/gm);
-  for (const [, level, w, word] of blocks) {
-    await loadSvg(`trazo-${w}.svg`, traceSvg(G, w, word ?? '', level === '####'));
-    add(`trazo-${w}`, `trazo-${w}.svg`, 'svg', W * 10, G.height(level === '####' ? 3 : 4) * 10);
+  const boxes = CJK ? []
+    : markdown.matchAll(/^:::callout\{type="(palabra|frase|trazos)"([^}]*)\}\n(.*?)\n?^:::$/gms);
+  const done = new Set();
+  for (const [, type, attrs, body] of boxes) {
+    const key = type === 'trazos' ? /pattern="([^"]+)"/.exec(attrs)[1] : body.trim();
+    if (done.has(key) || !done.add(key)) continue;
+    const file = `trazo-${done.size}.svg`;
+    await loadSvg(file, traceSvg(G, key, body.trim(), type === 'frase'));
+    add(`trazo-${key}`, file, 'svg', W * 10, G.height(type === 'frase' ? 3 : 4) * 10);
   }
   if (P) {
     await loadSvg('sixian.svg', svg(W, P.height(3), ruling(P, 3)));

@@ -24,7 +24,7 @@ Twelve pages of a first-year handwriting book on A4, in ten editions that are te
 
 <Excerpt region="answer" />
 
-A practice block is a level-3 heading whose design draws one picture, the ruling with the dotted copies, and sets the model on it as text in the school face. A design text's baseline falls at 0.8 of its line height below the top of its box, so the model's box is placed at the row's baseline minus 0.8 of its line, and the letters stand on the line the ruling draws. The line is ten x-heights tall so that the box's clip falls 2 u below the baseline, deep enough for the tail of a g. The heading's text, *Trace and write*, becomes the block's label; `w` names the picture and `model` the word.
+A practice row is a box, and the word to practise is its content: `:::callout{type="palabra" title="Trace and write"}`, then `owl` on a line of its own, then `:::`. All the rows of one shape share a box style and differ only in their words. The style's `design` draws one picture, the ruling with the dotted copies, and sets the word on it as text in the school face through `{boxText}`; `setsContent` keeps the box from setting its content a second time under the drawing. The picture is named after the word (`trazo-{boxText}`), and the pen draws one for each word it finds in the boxes. A design text's baseline falls at 0.8 of its line height below the top of its box, so the model's box is placed at the row's baseline minus 0.8 of its line, and the letters stand on the line the ruling draws. The line is ten x-heights tall so that the box's clip falls 2 u below the baseline, deep enough for the tail of a g. The box's title is the row's label. The headings are left to the book's outline: the cover is its only level-1 heading, each lesson a level-2 one, and the cover style's `sectionEnd: 'heading'` stops its blank running heads at the first lesson.
 
 ### 3 · Draw the dots from the face's own outlines
 
@@ -34,11 +34,11 @@ Postext sets a letter in colour, outlined or pale, but it cannot draw it as a ro
 
 <Excerpt region="squares" />
 
-A Han character or a kana is one em wide, so tracking of the square minus the em sets one character per square, as in a 字帖. The first square of a row holds the character in ink, the next three the same character in the pale red of 描红 (grey in the Japanese edition), and the rest stay empty. A sentence (`####`) takes three rows: written out, traced, then empty, with the punctuation in a square of its own. The Chinese pinyin rows use the four-line ruling of the Latin editions with Andika, whose single-storey a and g are the ones children learn.
+A Han character or a kana is one em wide, so tracking of the square minus the em sets one character per square, as in a 字帖. The first square of a row holds the character in ink, the next three the same character in the pale red of 描红 (grey in the Japanese edition), and the rest stay empty. A row box lists its four characters as list items, which the design reads one by one with `{boxText.1}` to `{boxText.4}`. A sentence (a `frase` box) takes three rows: written out, traced, then empty, with the punctuation in a square of its own. The Chinese pinyin rows use the four-line ruling of the Latin editions with Andika, whose single-storey a and g are the ones children learn.
 
 ### 5 · Mirror nothing for Arabic
 
-The Arabic edition shares every design with the others. A heading design laid in the flow of a right-to-left page is mirrored by the engine, so the letter disc, the model and the dictionary's first picture move to the right by themselves; only the dotted copies, drawn inside a picture, are laid from the right edge in code, and the warm-up waves run from right to left. `locale: 'ar'` binds the book on the right.
+The Arabic edition shares every design with the others. A design laid in the flow of a right-to-left page, a heading's or a box's, is mirrored by the engine, so the letter disc, the model and the dictionary's first picture move to the right by themselves; only the dotted copies, drawn inside a picture, are laid from the right edge in code, and the warm-up waves run from right to left. `locale: 'ar'` binds the book on the right.
 
 ## Variations
 
