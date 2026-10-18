@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>Une marque placée au fer à droite à la fin de la dernière ligne de l’encadré, comme une démonstration se termine par <code>'∎'</code> ou <code>'□'</code> : sur la dernière ligne quand elle tient après une espace, sinon sur une ligne à part. Un encadré qui se termine par une formule centrée sans numéro la prend comme étiquette de la formule. Avec les mathématiques activées, les carrés (∎ □ ■ ▪ ◻ ▫) sont dessinés à partir des glyphes de TeX, si bien qu’un caractère qui ne les a pas (les fichiers latin de Fontsource) les imprime quand même ; avec les mathématiques désactivées, ils sont composés dans le caractère du texte de l’encadré.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>non défini</td>
+      <td>Une maquette dans un bandeau sous le titre de l’encadré, sur toute la largeur intérieure : les éléments d’une maquette de titre (textes, images, filets, cadres), qui peuvent imprimer le contenu de l’encadré lui-même. Voir <a href="#maquettes-dencadré">Maquettes d’encadré</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 La partie qui clôt la page se termine par « (MORE) », et la page suivante s’ouvre sur « HAMLET (CONT'D) ». Les deux relèvent de l’habillage de pagination : dans un PDF accessible, ce sont des artefacts, et dans le HTML elles sont masquées aux technologies d’assistance, si bien que le titre n’est lu qu’une fois. Dans le VDT, ce sont des blocs de texte `designOverlay` marqués `artifact: true`.
+
+### Maquettes d’encadré
+
+`design` dispose les éléments d’une maquette de titre (textes, images, filets, cadres ; voir [Étendue et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)) dans un bandeau sous le titre de l’encadré, sur toute sa largeur intérieure. Le contenu de l’encadré suit le bandeau, séparé de lui par l’écart du titre. Un encadré coupé entre colonnes ou pages ne dessine le bandeau que sur sa première partie. Depuis postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Champ</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Une maquette est active dès qu’elle est définie ; <code>false</code> la garde dans le style sans dessiner le bandeau.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Les éléments, disposés par rapport au bandeau : <code>anchor.to: 'container'</code> est le bandeau, depuis le dessous du titre et sur toute la largeur intérieure. Les ancrages <code>'page'</code> et <code>'bleed'</code> ne sont pas lus dans un encadré.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>non défini</td>
+      <td>La hauteur minimale du bandeau. Sans elle, le bandeau est aussi haut que ses éléments le demandent ; les éléments en <code>reserve: false</code> et ceux ancrés au milieu ou au pied du bandeau ne comptent pas.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>La maquette imprime le contenu de l’encadré (<code>&#123;boxText&#125;</code>) et l’encadré ne le compose pas une seconde fois sous le bandeau. Un encadré dont la maquette imprime le contenu ne se coupe jamais : il passe entier à la colonne ou à la page suivante.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les textes de la maquette lisent ces espaces réservés :
+
+- `{titleText}` : le titre que l’encadré imprime, le `title` de la clôture ou, à défaut, celui du style.
+- `{boxText}` : le contenu de l’encadré en texte brut, un paragraphe ou un élément de liste par ligne. Les vides sont omis.
+- `{boxText.<n>}` : le paragraphe ou l’élément de liste de rang `n`, compté à partir de 1 ; vide si l’encadré en a moins.
+- `{attr.<key>}` : un attribut écrit sur la clôture. N’importe quel nom convient, en plus de ceux que la clôture lit elle-même : `:::callout{type="card" kicker="Note"}` donne à `{attr.kicker}` la valeur `Note`. Un attribut absent n’imprime rien.
+- les espaces réservés du document `{title}`, `{subtitle}`, `{author}` et `{publishDate}`.
+
+Le `resourceId` d’une image accepte les mêmes espaces réservés, si bien que chaque encadré peut dessiner sa propre ressource. Seule une maquette d’encadré lit `{boxText}` ; une maquette de titre n’imprime rien à sa place.
+
+Avec `setsContent: true`, un seul style sert à tous les encadrés de même forme, chacun avec ses propres mots. Dans un cahier d’écriture, chaque ligne d’exercice est un encadré dont le contenu est le mot à recopier : la maquette imprime le mot dans une écriture scolaire et dessine la ressource en pointillés qui porte son nom.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite FR Moderne', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+chat
+:::
+
+:::callout{type="practice"}
+lune
+:::
+```
+
+La première ligne imprime *chat* et dessine la ressource `trace-chat`, la seconde imprime *lune* et dessine `trace-lune`, et aucun des deux mots n’est composé une seconde fois sous son bandeau. Avec `setsContent` laissé à `false`, la maquette lit `{boxText}` de la même façon, et le contenu est composé sous le bandeau.
+
+Dans le VDT, les éléments du bandeau sont des blocs de maquette sur le `designOverlay` du cadre, à côté du titre.

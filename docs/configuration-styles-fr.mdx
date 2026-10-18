@@ -1046,7 +1046,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Styles de titre
 
-La propriété `headingStyles` déclare des styles nommés qu’un document applique à un titre avec `# Title {style="<id>"}`. Un style fait deux choses. Il remplace la typographie, la maquette et la numérotation du niveau du titre (tous les champs d’une entrée de niveau sauf `level` : police, taille, couleur, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) et il régit la **section** que le titre ouvre : ses pages, jusqu’au titre suivant de même niveau ou de niveau supérieur, prennent les titres courants, la géométrie de page, la typographie du texte et la palette du style. C’est ainsi que les pages liminaires d’un livre (une préface sur une seule colonne large, avec des folios en chiffres romains et des bandeaux bleus) prennent place dans un manuel à deux colonnes numéroté en chiffres arabes, sans seconde configuration.
+La propriété `headingStyles` déclare des styles nommés qu’un document applique à un titre avec `# Title {style="<id>"}`. Un style fait deux choses. Il remplace la typographie, la maquette et la numérotation du niveau du titre (tous les champs d’une entrée de niveau sauf `level` : police, taille, couleur, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) et il régit la **section** que le titre ouvre : ses pages, jusqu’au titre suivant de même niveau ou de niveau supérieur (de n’importe quel niveau avec `sectionEnd: 'heading'`), prennent les titres courants, la géométrie de page, la typographie du texte et la palette du style. C’est ainsi que les pages liminaires d’un livre (une préface sur une seule colonne large, avec des folios en chiffres romains et des bandeaux bleus) prennent place dans un manuel à deux colonnes numéroté en chiffres arabes, sans seconde configuration.
 
 ```ts
 const config: PostextConfig = {
@@ -1112,6 +1112,12 @@ const config: PostextConfig = {
       <td>Indique si un titre de niveau 1 de ce style devient le chapitre courant : le chapitre que nomment <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> et leurs formes <code>…AtTop</code> sur sa page et les pages suivantes. <code>false</code> pour une planche, une carte ou une couverture composée comme un H1 à l’intérieur d’un chapitre : les titres courants l’ignorent, sur sa propre page aussi, et continuent de nommer le chapitre qu’elle interrompt ; elle ne fixe pas non plus de mot-repère <code>h1</code>. Le titre compte toujours quand <code>numbered</code> est actif (sa propre maquette lit son propre <code>{'{chapterNumber}'}</code>) et reste listé par <code>:::toc</code> quand <code>toc</code> l’est. Avec <code>toc: false</code> en plus, il n’a pas de signet PDF : la planche d’un chapitre, sur la page qui précède son ouverture, laisse les signets aux chapitres. Les titres des autres niveaux l’ignorent. Avec la valeur par défaut, les pages qui suivent une planche impriment le titre de la planche. Une préface ou un prologue avec <code>numbered: false</code> reste un chapitre à part entière et garde la valeur par défaut. L’option ne change que le chapitre que nomment les variables : le style ouvre toujours sa propre section, comme tout style de titre, si bien que jusqu’au titre de niveau 1 suivant les pages prennent les emplacements de titres courants, les marges, les colonnes, le style de texte et la palette du style de la planche (ceux du document quand le style n’en fixe pas), et non ceux d’une section stylée qu’aurait ouverte le chapitre interrompu. Dans un livre mis en page chapitre par chapitre, les titres courants ne passent pas d’un fichier de chapitre au suivant : une planche qui ouvre un fichier affiche des variables de chapitre vides jusqu’au premier titre de chapitre du fichier.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Où se termine la section que le style ouvre. <code>'level'</code> : au titre suivant de même niveau ou de niveau supérieur. <code>'heading'</code> : au titre suivant de n’importe quel niveau. Une couverture ou une page de titre composée comme le seul titre de niveau 1 du livre, avec les chapitres au niveau 2, prend <code>'heading'</code> : ses titres courants (souvent vides), ses marges, ses colonnes, son style de texte et sa palette s’arrêtent au premier chapitre au lieu de couvrir tout le livre. La maquette, la numérotation et le chapitre courant du titre lui-même ne changent pas. Voir l’exemple sous ce tableau. Depuis postext 1.45.</td>
+    </tr>
+    <tr>
       <td>champs de niveau</td>
       <td>comme dans <code>headings.levels[]</code></td>
       <td>les valeurs du niveau</td>
@@ -1156,7 +1162,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Une section se ferme au titre suivant de même niveau ou de niveau supérieur : un `#` sans style après un titre stylé revient aux titres courants et à la géométrie du document ; un titre stylé ouvre sa propre section. Les pages que la section a laissées blanches pour la parité lui appartiennent, comme pour les titres de chapitre.
+Une section se ferme au titre suivant de même niveau ou de niveau supérieur : un `#` sans style après un titre stylé revient aux titres courants et à la géométrie du document ; un titre stylé ouvre sa propre section. Les pages que la section a laissées blanches pour la parité lui appartiennent, comme pour les titres de chapitre. Avec `sectionEnd: 'heading'`, la section se ferme au titre suivant de n’importe quel niveau, ce dont a besoin une couverture composée comme le seul titre de niveau 1 du livre :
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# Le Gardien du phare {style="cover"}
+
+## La chambre de la lanterne
+
+…
+```
+
+La page de la couverture n’imprime aucun titre courant, et à partir de *La chambre de la lanterne* les pages reprennent l’en-tête et le pied de page du document. Avec la valeur par défaut, `'level'`, la section de la couverture durerait jusqu’au titre de niveau 1 suivant, que ce livre n’a pas, et aucune de ses pages ne porterait de titre courant.
 
 **Un saut de page ne remplace pas le saut propre au titre.** Un style hérite du `breakBefore` de son niveau (la valeur par défaut du niveau 1 est `{ enabled: true, parity: 'always-odd' }`), et un titre l’applique où qu’il se trouve, juste après un `:::pagebreak` aussi. Le saut de page ouvre une nouvelle page, puis le titre demande encore son côté de la double page. Avec `parity: 'odd'`, un saut qui tombe sur un verso est suivi d’une page blanche, si bien que le titre s’ouvre sur le recto suivant. Avec `'always-odd'`, la page blanche de séparation s’ajoute aussi, et le saut de page ne change rien, puisque le titre aurait de toute façon ouvert cette page. Un style destiné à commencer sur la page qu’ouvre un saut manuel, comme une page de table des matières après la page de titre, désactive son propre saut :
 

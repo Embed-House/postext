@@ -443,6 +443,7 @@ headings: {
 - `{numberHan}`：用中文数字书写的同一计数，字形按文档`locale`的书写系统：用`第{numberHan}回`设置的章首，在第十二章输出第十二回，而目录列出的是`12`。
 - `{chapterNumber}`、`{chapterTitle}`、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`、`{title}`、`{subtitle}`、`{author}`、`{publishDate}`：通用的元数据占位符。
 - `{attr.<key>}`：写在标题行上的属性（`# Title {author="I. Zango Martín"}`），缺省时取当前章H1的同名属性。缺少的属性解析为空字符串，不给出警告。
+- `{boxText}`、`{boxText.<n>}`：框的内容，只有框样式的设计读取（见[标注框 › 框的设计](/zh/docs/configuration-callouts#框的设计)）；标题设计在此处不印任何内容。
 
 `{chapterNumber}`输出的是书眉为该章输出的内容：H1的级别（或样式）有`numberingTemplate`时输出H1的编号，否则输出章的序号（`1`、`2`……接着本章之前已排的各章继续计数）；不编号的章或模板为`''`的样式则什么也不输出。标题设计读取其标题所属的章：一级标题读取自己，更低级别的标题读取它之前的最后一个一级标题。两章在同一页相遇时也是如此，而该页的书眉输出的是后一章。章首保留的高度也按同一个值测量。postext 1.4及以前，高度按标题的编号前缀测量（没有模板时为空），所以高度取决于`{chapterNumber}`的设计可能绘制得比所占空间更高；而且设计输出的是该页的章，所以共用一页的两章中，前一章显示的是后一章的编号。
 

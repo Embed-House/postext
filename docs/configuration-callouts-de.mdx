@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>Ein Zeichen, rechtsbündig ans Ende der letzten Zeile des Kastens gesetzt, wie ein Beweis mit <code>'∎'</code> oder <code>'□'</code> endet: auf der letzten Zeile, wenn es nach einem Leerzeichen passt, sonst auf einer eigenen Zeile. Ein Kasten, der mit einer abgesetzten Formel ohne Nummer endet, nimmt es als Kennzeichen der Formel. Mit eingeschalteter Mathematik werden die Quadrate (∎ □ ■ ▪ ◻ ▫) aus den eigenen Glyphen von TeX gezeichnet, sodass eine Schrift ohne sie (die latin-Dateien von Fontsource) sie trotzdem druckt; mit ausgeschalteter Mathematik werden sie in der Schrift des Kastentexts gesetzt.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>nicht gesetzt</td>
+      <td>Eine Gestaltung in einem Band unter dem Titel des Kastens, über die ganze Innenbreite: die Elemente einer Überschriftengestaltung (Texte, Bilder, Linien, Rahmen), die auch den Inhalt des Kastens selbst drucken können. Siehe <a href="#gestaltung-im-kasten">Gestaltung im Kasten</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 Der Teil, der die Seite abschließt, endet mit „(MORE)“, und die nächste Seite beginnt mit „HAMLET (CONT'D)“. Beides gehört zum Paginierungszubehör: In einem barrierefreien PDF sind es Artefakte, und im HTML sind sie vor assistiven Technologien verborgen, sodass der Titel nur einmal vorgelesen wird. Im VDT sind es Textblöcke in `designOverlay` mit dem Flag `artifact: true`.
+
+### Gestaltung im Kasten
+
+`design` setzt die Elemente einer Überschriftengestaltung (Texte, Bilder, Linien, Rahmen; siehe [Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)) in ein Band unter dem Titel des Kastens, über seine ganze Innenbreite. Der Inhalt des Kastens folgt dem Band, mit dem Abstand des Titels dazwischen. Ein Kasten, der sich über Spalten oder Seiten teilt, zeichnet das Band nur auf seinem ersten Teil. Seit postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Feld</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Eine Gestaltung gilt, sobald sie gesetzt ist; <code>false</code> behält sie im Stil, ohne das Band zu zeichnen.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Die Elemente, am Band ausgerichtet: <code>anchor.to: 'container'</code> ist das Band, von unter dem Titel über die ganze Innenbreite. Die Anker <code>'page'</code> und <code>'bleed'</code> werden in einem Kasten nicht gelesen.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>nicht gesetzt</td>
+      <td>Die Mindesthöhe des Bands. Ohne sie ist das Band so hoch, wie seine Elemente reichen; Elemente mit <code>reserve: false</code> und solche, die an der Mitte oder am Fuß des Bands verankert sind, zählen nicht.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Gestaltung druckt den Inhalt des Kastens (<code>&#123;boxText&#125;</code>), und der Kasten setzt ihn unter dem Band nicht noch einmal. Ein Kasten, dessen Gestaltung seinen Inhalt druckt, teilt sich nie: Er geht ganz in die nächste Spalte oder auf die nächste Seite.</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Texte der Gestaltung lesen diese Platzhalter:
+
+- `{titleText}`: der Titel, den der Kasten druckt, also das `title` der Einfassung oder sonst das des Stils.
+- `{boxText}`: der Inhalt des Kastens als reiner Text, ein Absatz oder Listenpunkt pro Zeile. Leere werden ausgelassen.
+- `{boxText.<n>}`: der `n`-te Absatz oder Listenpunkt, ab 1 gezählt; leer, wenn der Kasten weniger hat.
+- `{attr.<key>}`: ein Attribut, das auf der Einfassung steht. Jeder Name ist möglich, neben denen, die die Einfassung selbst liest: `:::callout{type="card" kicker="Hinweis"}` gibt `{attr.kicker}` den Wert `Hinweis`. Ein fehlendes Attribut druckt nichts.
+- die Platzhalter des Dokuments `{title}`, `{subtitle}`, `{author}` und `{publishDate}`.
+
+Das `resourceId` eines Bilds nimmt dieselben Platzhalter an, sodass jeder Kasten eine eigene Ressource zeichnen kann. Nur eine Kastengestaltung liest `{boxText}`; eine Überschriftengestaltung druckt dafür nichts.
+
+Mit `setsContent: true` dient ein einziger Stil allen Kästen derselben Form, jedem mit seinen eigenen Wörtern. In einem Schreibheft ist jede Übungszeile ein Kasten, dessen Inhalt das abzuschreibende Wort ist: Die Gestaltung druckt das Wort in einer Schulschrift und zeichnet die gepunktete Ressource, die seinen Namen trägt.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite DE Grundschrift', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+Haus
+:::
+
+:::callout{type="practice"}
+Mond
+:::
+```
+
+Die erste Zeile druckt *Haus* und zeichnet die Ressource `trace-Haus`, die zweite druckt *Mond* und zeichnet `trace-Mond`, und keines der beiden Wörter wird unter seinem Band noch einmal gesetzt. Bleibt `setsContent` auf `false`, liest die Gestaltung `{boxText}` ebenso, und der Inhalt wird unter dem Band gesetzt.
+
+Im VDT sind die Elemente des Bands Gestaltungsblöcke im `designOverlay` des Rahmens, neben dem Titel.

@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>علامة تُصفّ محاذاةً إلى اليمين في آخر السطر الأخير من الإطار، كما يُختم البرهان بـ<code>'∎'</code> أو <code>'□'</code>: على السطر الأخير إن اتسعت له بعد مسافة، وإلا ففي سطر مستقل. والإطار الذي ينتهي بصيغة منفصلة لا رقم لها يجعل العلامة وسمًا للصيغة. عند تفعيل الرياضيات تُرسم المربعات (∎ □ ■ ▪ ◻ ▫) بحروف TeX نفسها، فتظهر حتى لو خلا منها الخط (ملفات latin في Fontsource)؛ وعند تعطيلها تُنضَّد بخط متن الإطار.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>غير مُعيَّن</td>
+      <td>تصميم في نطاق تحت عنوان الإطار، على العرض الداخلي كله: عناصر تصميم العنوان (نصوص وصور وخطوط ومربعات)، ويمكنها أن تطبع محتوى الإطار نفسه. انظر <a href="#تصميم-الإطار">تصميم الإطار</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 ينتهي الجزء الذي يختم الصفحة بـ«(MORE)»، وتبدأ الصفحة التالية بـ«HAMLET (CONT'D)». وكلاهما من لوازم ترقيم الصفحات: في ملف PDF الميسَّر هما عنصران زخرفيان (artifacts)، وفي HTML يُخفيان عن التقنيات المساعدة، فيُقرأ العنوان مرة واحدة. وفي VDT هما كتلتا نص في `designOverlay` تحملان العلامة `artifact: true`.
+
+### تصميم الإطار
+
+يضع `design` عناصر تصميم العنوان (نصوص وصور وخطوط ومربعات؛ انظر [الامتداد والتصميم المتقدم](/ar/docs/configuration-headings#الامتداد-والتصميم-المتقدم)) في نطاق تحت عنوان الإطار، على عرضه الداخلي كله. ويأتي محتوى الإطار بعد النطاق، وبينهما فسحة العنوان. والإطار المقسوم عبر الأعمدة أو الصفحات يرسم النطاق في جزئه الأول وحده. منذ postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>يعمل التصميم بمجرد تعيينه؛ و<code>false</code> يبقيه في النمط دون رسم النطاق.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>العناصر، مرصوفة بالنسبة إلى النطاق: <code>anchor.to: 'container'</code> هو النطاق، من تحت العنوان وعلى العرض الداخلي كله. ولا تُقرأ المرساتان <code>'page'</code> و<code>'bleed'</code> داخل الإطار.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>غير مُعيَّن</td>
+      <td>أدنى ارتفاع للنطاق. ودونه يكون النطاق بارتفاع ما تبلغه عناصره؛ ولا تُحتسب العناصر ذات <code>reserve: false</code> ولا العناصر المثبّتة بمرساة إلى وسط النطاق أو أسفله.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يطبع التصميم محتوى الإطار (<code>&#123;boxText&#125;</code>)، ولا يعيد الإطار تنضيده تحت النطاق. والإطار الذي يطبع تصميمُه محتواه لا ينقسم أبدًا: ينتقل كاملًا إلى العمود أو الصفحة التالية.</td>
+    </tr>
+  </tbody>
+</table>
+
+تقرأ نصوص التصميم هذه العناصر النائبة:
+
+- `{titleText}` — العنوان الذي يطبعه الإطار: `title` السياج، وإلا فعنوان النمط.
+- `{boxText}` — محتوى الإطار نصًا عاديًا، فقرة أو بند قائمة في كل سطر. وتُسقط الفارغة.
+- `{boxText.<n>}` — الفقرة أو بند القائمة رقم `n`، بدءًا من 1؛ فارغ إذا كان في الإطار أقل من ذلك.
+- `{attr.<key>}` — سمة مكتوبة على السياج. أي اسم يصلح، إلى جانب السمات التي يقرؤها السياج نفسه: يعطي `:::callout{type="card" kicker="ملاحظة"}` العنصرَ `{attr.kicker}` القيمة `ملاحظة`. والسمة المفقودة لا تطبع شيئًا.
+- عناصر المستند النائبة `{title}` و`{subtitle}` و`{author}` و`{publishDate}`.
+
+ويقبل `resourceId` في الصورة العناصر النائبة نفسها، فيرسم كل إطار موردًا خاصًا به. ولا يقرأ `{boxText}` إلا تصميم الإطار؛ أما تصميم العنوان فلا يطبع مكانه شيئًا.
+
+مع `setsContent: true` يخدم نمط واحد كل الإطارات ذات الشكل الواحد، ولكل منها كلماته. في كرّاسة الخط يكون كل سطر تمرين إطارًا محتواه الكلمة المطلوب نسخها: يطبع التصميم الكلمة بخط مدرسي ويرسم المورد المنقّط الذي يحمل اسمها.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Aref Ruqaa', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+قط
+:::
+
+:::callout{type="practice"}
+شمس
+:::
+```
+
+يطبع السطر الأول *قط* ويرسم المورد `trace-قط`، ويطبع الثاني *شمس* ويرسم `trace-شمس`، ولا تُنضَّد أي من الكلمتين مرة أخرى تحت نطاقها. وإذا بقي `setsContent` على `false` قرأ التصميم `{boxText}` كذلك، ونُضِّد المحتوى تحت النطاق.
+
+في VDT تكون عناصر النطاق كتل تصميم على `designOverlay` الخاص بالإطار، بجانب العنوان.

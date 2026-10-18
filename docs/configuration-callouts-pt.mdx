@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>Uma marca alinhada à direita no fim da última linha do boxe, como uma demonstração termina com <code>'∎'</code> ou <code>'□'</code>: na última linha quando cabe depois de um espaço, senão em uma linha própria. Um boxe que termina em uma fórmula em destaque sem número a recebe como etiqueta da fórmula. Com a matemática ativada, os quadrados (∎ □ ■ ▪ ◻ ▫) são desenhados com os glifos do próprio TeX, de modo que uma fonte que não os tenha (os arquivos latin da Fontsource) também os imprime; com a matemática desativada, são compostos na fonte do corpo do boxe.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>não definido</td>
+      <td>Um design numa faixa sob o título do boxe, em toda a largura interna: os elementos do design de um título (textos, imagens, fios, caixas), que podem imprimir o conteúdo do próprio boxe. Veja <a href="#designs-de-boxe">Designs de boxe</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 A parte que fecha a página termina com “(MORE)”, e a página seguinte começa com “HAMLET (CONT'D)”. As duas são elementos de paginação: em um PDF acessível são artefatos e no HTML ficam ocultas para as tecnologias assistivas, de modo que o título é lido uma só vez. No VDT são blocos de texto de `designOverlay` marcados com `artifact: true`.
+
+### Designs de boxe
+
+`design` dispõe os elementos do design de um título (textos, imagens, fios, caixas; veja [Largura e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)) numa faixa sob o título do boxe, em toda a sua largura interna. O conteúdo do boxe vem depois da faixa, com o espaço do título entre os dois. Um boxe dividido entre colunas ou páginas desenha a faixa só na primeira parte. Desde o postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Um design fica ativo assim que é definido; <code>false</code> o mantém no estilo sem desenhar a faixa.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Os elementos, dispostos em relação à faixa: <code>anchor.to: 'container'</code> é a faixa, de baixo do título e em toda a largura interna. As âncoras <code>'page'</code> e <code>'bleed'</code> não são lidas num boxe.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>não definido</td>
+      <td>A altura mínima da faixa. Sem ela, a faixa tem a altura que os seus elementos alcançam; os que têm <code>reserve: false</code> e os ancorados no meio ou no pé da faixa não contam.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>O design imprime o conteúdo do boxe (<code>&#123;boxText&#125;</code>) e o boxe não o compõe de novo sob a faixa. Um boxe cujo design imprime o conteúdo nunca se divide: passa inteiro para a coluna ou a página seguinte.</td>
+    </tr>
+  </tbody>
+</table>
+
+Os textos do design leem estes marcadores:
+
+- `{titleText}`: o título que o boxe imprime, o `title` do delimitador ou, na falta dele, o do estilo.
+- `{boxText}`: o conteúdo do boxe como texto simples, um parágrafo ou item de lista por linha. Os vazios ficam de fora.
+- `{boxText.<n>}`: o parágrafo ou item de lista de número `n`, contado a partir de 1; vazio quando o boxe tem menos.
+- `{attr.<key>}`: um atributo escrito no delimitador. Qualquer nome serve, além dos que o próprio delimitador lê: `:::callout{type="card" kicker="Nota"}` dá a `{attr.kicker}` o valor `Nota`. Um atributo ausente não imprime nada.
+- os marcadores do documento `{title}`, `{subtitle}`, `{author}` e `{publishDate}`.
+
+O `resourceId` de uma imagem aceita os mesmos marcadores, de modo que cada boxe pode desenhar um recurso próprio. Só o design de um boxe lê `{boxText}`; o design de um título não imprime nada no lugar dele.
+
+Com `setsContent: true` um único estilo serve a todos os boxes da mesma forma, cada um com as suas palavras. Num caderno de caligrafia cada linha de exercício é um boxe cujo conteúdo é a palavra a copiar: o design imprime a palavra numa letra escolar e desenha o recurso pontilhado que leva o nome dela.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite BR', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+gato
+:::
+
+:::callout{type="practice"}
+lua
+:::
+```
+
+A primeira linha imprime *gato* e desenha o recurso `trace-gato`, a segunda imprime *lua* e desenha `trace-lua`, e nenhuma das duas palavras é composta de novo sob a sua faixa. Com `setsContent` em `false` o design lê `{boxText}` do mesmo jeito, e o conteúdo é composto sob a faixa.
+
+No VDT os elementos da faixa são blocos de design no `designOverlay` do quadro, ao lado do título.

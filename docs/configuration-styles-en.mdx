@@ -1047,7 +1047,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Heading styles
 
-The `headingStyles` property declares named styles a document applies to a heading with `# Title {style="<id>"}`. A style does two things. It overrides the heading's level typography, design and numbering — every field of a level entry except `level` (font, size, colour, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — and it governs the **section** the heading opens: its pages, up to the next heading of the same or a higher level, take the style's running heads, page geometry, body typography and palette. That is how a book's front matter (a preface in a single wide column with roman folios and blue bands) sits in a two-column, decimal-numbered manual without a second configuration.
+The `headingStyles` property declares named styles a document applies to a heading with `# Title {style="<id>"}`. A style does two things. It overrides the heading's level typography, design and numbering — every field of a level entry except `level` (font, size, colour, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — and it governs the **section** the heading opens: its pages, up to the next heading of the same or a higher level (of any level with `sectionEnd: 'heading'`), take the style's running heads, page geometry, body typography and palette. That is how a book's front matter (a preface in a single wide column with roman folios and blue bands) sits in a two-column, decimal-numbered manual without a second configuration.
 
 ```ts
 const config: PostextConfig = {
@@ -1113,6 +1113,12 @@ const config: PostextConfig = {
       <td>Whether a level-1 heading of this style becomes the running chapter: the chapter that <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> and their <code>…AtTop</code> forms name on its page and the pages after it. <code>false</code> for a plate, a map or a cover set as an H1 inside a chapter: the running heads pass over it, on its own page too, and keep naming the chapter it interrupts; it sets no <code>h1</code> guide word either. The heading still counts when <code>numbered</code> (its own design reads its own <code>{'{chapterNumber}'}</code>) and is still listed by <code>:::toc</code> when <code>toc</code>. With <code>toc: false</code> as well it gets no PDF bookmark: a chapter's plate on the page before its opener leaves the bookmarks to the chapters. Headings of other levels ignore it. With the default, the pages after a plate print the plate's title. A preface or a prologue with <code>numbered: false</code> is still a chapter of its own and keeps the default. The option changes only which chapter the placeholders name: the style still opens a section of its own, as every heading style does, so up to the next level-1 heading the pages take the plate style's running-head slots, margins, columns, body style and palette (the document's where the style sets none), not those of a styled section the interrupted chapter opened. In a book laid out chapter by chapter, the running heads do not carry over from one chapter file to the next, so a plate that opens a file shows empty chapter placeholders until the file's first chapter heading.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Where the section the style opens ends. <code>'level'</code>: at the next heading of the same or a higher level. <code>'heading'</code>: at the next heading of any level. A cover or a title page set as the book's only level-1 heading, with the chapters at level 2, takes <code>'heading'</code>: its running heads (often empty), margins, columns, body style and palette stop at the first chapter instead of running over the whole book. The heading's own design, numbering and running chapter do not change. See the example below this table. Since postext 1.45.</td>
+    </tr>
+    <tr>
       <td>level fields</td>
       <td>as in <code>headings.levels[]</code></td>
       <td>the level's values</td>
@@ -1157,7 +1163,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-A section closes at the next heading of the same or a higher level: an unstyled `#` after a styled one returns to the document's running heads and geometry; a styled one opens its own section. Pages the section left blank for parity belong to it, like chapter titles do.
+A section closes at the next heading of the same or a higher level: an unstyled `#` after a styled one returns to the document's running heads and geometry; a styled one opens its own section. Pages the section left blank for parity belong to it, like chapter titles do. With `sectionEnd: 'heading'` the section closes at the next heading of any level, as a cover set as the book's only level-1 heading needs:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# The Lighthouse Keeper {style="cover"}
+
+## The lamp room
+
+…
+```
+
+The cover's page prints no running heads, and from *The lamp room* on the pages take the document's header and footer again. With the default `'level'` the cover's section would last until the next level-1 heading, which this book does not have, and no page of it would carry a running head.
 
 **A page break does not stand in for the heading's own break.** A style inherits its level's `breakBefore` (the level-1 default is `{ enabled: true, parity: 'always-odd' }`), and a heading applies it wherever it stands, right after a `:::pagebreak` too. The page break opens a new page, and the heading then still asks for its side of the spread. With `parity: 'odd'`, a break that lands on a verso is followed by a blank page, so the heading opens on the next recto. With `'always-odd'` the separator blank comes too, and the page break changes nothing, since the heading would have opened that page anyway. A style meant to start on the page a manual break opens, such as a contents page after the title page, turns its own break off:
 

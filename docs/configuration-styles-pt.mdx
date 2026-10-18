@@ -1047,7 +1047,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## Estilos de título
 
-A propriedade `headingStyles` declara estilos nomeados que um documento aplica a um título com `# Title {style="<id>"}`. Um estilo faz duas coisas. Substitui a tipografia, o design e a numeração do nível do título (qualquer campo de uma entrada de nível exceto `level`: fonte, corpo, cor, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) e rege a **seção** que o título abre: as páginas dela, até o próximo título do mesmo nível ou de um nível superior, usam os cabeços, a geometria de página, a tipografia do corpo e a paleta do estilo. É assim que os elementos pré-textuais de um livro (um prefácio numa única coluna larga, com fólios em algarismos romanos e faixas azuis) convivem com um manual em duas colunas e numeração decimal sem uma segunda configuração.
+A propriedade `headingStyles` declara estilos nomeados que um documento aplica a um título com `# Title {style="<id>"}`. Um estilo faz duas coisas. Substitui a tipografia, o design e a numeração do nível do título (qualquer campo de uma entrada de nível exceto `level`: fonte, corpo, cor, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) e rege a **seção** que o título abre: as páginas dela, até o próximo título do mesmo nível ou de um nível superior (de qualquer nível com `sectionEnd: 'heading'`), usam os cabeços, a geometria de página, a tipografia do corpo e a paleta do estilo. É assim que os elementos pré-textuais de um livro (um prefácio numa única coluna larga, com fólios em algarismos romanos e faixas azuis) convivem com um manual em duas colunas e numeração decimal sem uma segunda configuração.
 
 ```ts
 const config: PostextConfig = {
@@ -1113,6 +1113,12 @@ const config: PostextConfig = {
       <td>Se um título de nível 1 deste estilo passa a ser o capítulo corrente: o capítulo que <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> e as suas formas <code>…AtTop</code> nomeiam na página dele e nas seguintes. <code>false</code> para uma prancha, um mapa ou uma capa composta como H1 dentro de um capítulo: os cabeços passam por cima dele, inclusive na sua própria página, e continuam nomeando o capítulo que ele interrompe; ele também não define nenhuma palavra-guia <code>h1</code>. O título continua contando quando <code>numbered</code> (o seu próprio design lê o seu próprio <code>{'{chapterNumber}'}</code>) e continua listado por <code>:::toc</code> quando <code>toc</code>. Com <code>toc: false</code> também, não recebe marcador no PDF: a prancha de um capítulo na página antes da abertura deixa os marcadores para os capítulos. Títulos de outros níveis ignoram esta opção. Com o padrão, as páginas depois de uma prancha imprimem o título da prancha. Um prefácio ou um prólogo com <code>numbered: false</code> continua sendo um capítulo próprio e mantém o padrão. A opção muda apenas qual capítulo os marcadores nomeiam: o estilo continua abrindo uma seção própria, como todo estilo de título, então até o próximo título de nível 1 as páginas usam os slots de cabeço, as margens, as colunas, o estilo do corpo e a paleta do estilo da prancha (os do documento quando o estilo não define nenhum), e não os de uma seção com estilo aberta pelo capítulo interrompido. Num livro diagramado capítulo a capítulo, os cabeços não passam de um arquivo de capítulo para o seguinte, então uma prancha que abre um arquivo mostra os marcadores de capítulo vazios até o primeiro título de capítulo do arquivo.</td>
     </tr>
     <tr>
+      <td><code>sectionEnd</code></td>
+      <td><code>'level' | 'heading'</code></td>
+      <td><code>'level'</code></td>
+      <td>Onde termina a seção que o estilo abre. <code>'level'</code>: no próximo título do mesmo nível ou de um nível superior. <code>'heading'</code>: no próximo título de qualquer nível. Uma capa ou uma folha de rosto composta como o único título de nível 1 do livro, com os capítulos no nível 2, usa <code>'heading'</code>: os seus cabeços (muitas vezes vazios), margens, colunas, estilo do corpo e paleta param no primeiro capítulo em vez de cobrir o livro inteiro. O design, a numeração e o capítulo corrente do próprio título não mudam. Veja o exemplo abaixo desta tabela. Desde o postext 1.45.</td>
+    </tr>
+    <tr>
       <td>campos do nível</td>
       <td>como em <code>headings.levels[]</code></td>
       <td>os valores do nível</td>
@@ -1157,7 +1163,23 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-A seção fecha no próximo título do mesmo nível ou de um nível superior: um `#` sem estilo depois de um com estilo volta aos cabeços e à geometria do documento; um com estilo abre a sua própria seção. As páginas que a seção deixou em branco por paridade pertencem a ela, como acontece com os títulos de capítulo.
+A seção fecha no próximo título do mesmo nível ou de um nível superior: um `#` sem estilo depois de um com estilo volta aos cabeços e à geometria do documento; um com estilo abre a sua própria seção. As páginas que a seção deixou em branco por paridade pertencem a ela, como acontece com os títulos de capítulo. Com `sectionEnd: 'heading'` a seção fecha no próximo título de qualquer nível, e é disso que precisa uma capa composta como o único título de nível 1 do livro:
+
+```ts
+headingStyles: [
+  { id: 'cover', numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] }, sectionEnd: 'heading' },
+],
+```
+
+```md
+# O faroleiro {style="cover"}
+
+## A sala da lanterna
+
+…
+```
+
+A página da capa não imprime cabeços, e a partir de *A sala da lanterna* as páginas voltam a usar o cabeçalho e o rodapé do documento. Com o valor padrão, `'level'`, a seção da capa duraria até o próximo título de nível 1, que este livro não tem, e nenhuma das suas páginas teria cabeço.
 
 **Uma quebra de página não substitui a quebra do próprio título.** Um estilo herda o `breakBefore` do seu nível (o padrão do nível 1 é `{ enabled: true, parity: 'always-odd' }`), e um título o aplica onde quer que esteja, inclusive logo depois de um `:::pagebreak`. A quebra de página abre uma página nova, e o título ainda pede o seu lado da página dupla. Com `parity: 'odd'`, uma quebra que cai num verso é seguida de uma página em branco, e o título abre na próxima página ímpar. Com `'always-odd'` vem também a página em branco separadora, e a quebra de página não muda nada, já que o título abriria essa página de qualquer jeito. Um estilo que deve começar na página aberta por uma quebra manual, como uma página de sumário depois da folha de rosto, desliga a sua própria quebra:
 

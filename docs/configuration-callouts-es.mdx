@@ -278,6 +278,12 @@ El cristal sigue caliente una hora después de apagar la llama.
       <td><code>''</code></td>
       <td>Una marca alineada a la derecha al final de la última línea de la caja, como el <code>'∎'</code> o el <code>'□'</code> con que termina una demostración: en esa línea si cabe tras un espacio y, si no, en una línea propia. Una caja que termina en una fórmula en bloque sin número la pone como etiqueta de la fórmula. Con las matemáticas activas, los cuadrados (∎ □ ■ ▪ ◻ ▫) se dibujan con los glifos de TeX, así que salen aunque la fuente no los tenga (los archivos latin de Fontsource); con las matemáticas desactivadas se componen en la fuente del cuerpo del recuadro.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>sin definir</td>
+      <td>Un diseño en una banda bajo el título del recuadro, a todo el ancho interior: los elementos de un diseño de encabezado (textos, imágenes, filetes, cajas), que pueden imprimir el contenido del propio recuadro. Véase <a href="#diseños-de-recuadro">Diseños de recuadro</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ Un parlamento lo bastante largo para pasar del pie de la página…
 ```
 
 La parte que cierra la página termina con «(SIGUE)» y la página siguiente empieza con «HAMLET (CONT.)». Las dos son elementos de paginación: en un PDF accesible son artefactos y en el HTML se ocultan a las tecnologías de apoyo, de modo que el título se lee una sola vez. En el VDT son bloques de texto de `designOverlay` marcados con `artifact: true`.
+
+### Diseños de recuadro
+
+`design` coloca los elementos de un diseño de encabezado (textos, imágenes, filetes, cajas; véase [Span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)) en una banda bajo el título del recuadro, a todo su ancho interior. El contenido del recuadro sigue a la banda, con la separación del título entre ambos. Un recuadro partido entre columnas o páginas dibuja la banda solo en su primera parte. Desde postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un diseño se activa en cuanto se fija; <code>false</code> lo guarda en el estilo sin dibujar la banda.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>Los elementos, colocados respecto a la banda: <code>anchor.to: 'container'</code> es la banda, desde debajo del título y a todo el ancho interior. Los anclajes <code>'page'</code> y <code>'bleed'</code> no se leen en un recuadro.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>sin definir</td>
+      <td>La altura mínima de la banda. Sin ella, la banda mide lo que alcanzan sus elementos; los que llevan <code>reserve: false</code> y los anclados al centro o al pie de la banda no cuentan.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El diseño imprime el contenido del recuadro (<code>&#123;boxText&#125;</code>) y el recuadro no lo vuelve a componer bajo la banda. Un recuadro cuyo diseño fija su contenido nunca se parte: pasa entero a la columna o la página siguiente.</td>
+    </tr>
+  </tbody>
+</table>
+
+Los textos del diseño leen estos marcadores:
+
+- `{titleText}`: el título que imprime el recuadro, el `title` de la valla o, si no lo hay, el del estilo.
+- `{boxText}`: el contenido del recuadro como texto plano, un párrafo o elemento de lista por línea. Los vacíos se omiten.
+- `{boxText.<n>}`: el párrafo o elemento de lista número `n`, contando desde 1; vacío si el recuadro tiene menos.
+- `{attr.<clave>}`: un atributo escrito en la valla. Sirve cualquier nombre, además de los que lee la propia valla: `:::callout{type="card" kicker="Nota"}` da a `{attr.kicker}` el valor `Nota`. Un atributo ausente no imprime nada.
+- los marcadores del documento `{title}`, `{subtitle}`, `{author}` y `{publishDate}`.
+
+El `resourceId` de una imagen admite los mismos marcadores, así que cada recuadro puede dibujar un recurso propio. Solo un diseño de recuadro lee `{boxText}`; un diseño de encabezado no imprime nada en su lugar.
+
+Con `setsContent: true` un solo estilo sirve para todos los recuadros de la misma forma, cada uno con sus palabras. En un cuaderno de caligrafía cada renglón de práctica es un recuadro cuyo contenido es la palabra que hay que copiar: el diseño imprime la palabra en una letra escolar y dibuja el recurso punteado que lleva su nombre.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite ES', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+sol
+:::
+
+:::callout{type="practice"}
+pan
+:::
+```
+
+El primer renglón imprime *sol* y dibuja el recurso `trace-sol`; el segundo imprime *pan* y dibuja `trace-pan`, y ninguna de las dos palabras se vuelve a componer bajo su banda. Con `setsContent` en `false` el diseño lee `{boxText}` igualmente, y el contenido se compone bajo la banda.
+
+En el VDT los elementos de la banda son bloques de diseño en el `designOverlay` del marco, junto al título.

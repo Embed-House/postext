@@ -278,6 +278,12 @@ The glass stays hot for an hour after the flame is out.
       <td><code>''</code></td>
       <td>A mark set flush right at the end of the box's last line, as a proof ends with <code>'∎'</code> or <code>'□'</code>: on the last line when it fits after a space, else on a line of its own. A box that ends in a display formula with no number takes it as the formula's tag. With maths on, the squares (∎ □ ■ ▪ ◻ ▫) are drawn from TeX's own glyphs, so a face without them (Fontsource's latin files) still prints them; with maths off they are set in the box's body face.</td>
     </tr>
+    <tr>
+      <td><code>design</code></td>
+      <td><code>&#123; enabled, slot, minHeight, setsContent &#125;</code></td>
+      <td>unset</td>
+      <td>A design in a band under the box title, across the inner width: the elements of a heading design (texts, pictures, rules, boxes), which can print the box's own content. See <a href="#box-designs">Box designs</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -436,3 +442,89 @@ A speech long enough to run over the foot of the page…
 ```
 
 The part that closes the page ends with "(MORE)", and the next page opens with "HAMLET (CONT'D)". Both are pagination furniture: in an accessible PDF they are artifacts and in the HTML they are hidden from assistive technology, so the title is read once. In the VDT they are `designOverlay` text blocks flagged `artifact: true`.
+
+### Box designs
+
+`design` lays out the elements of a heading design (texts, pictures, rules, boxes; see [Span and advanced design](/en/docs/configuration-headings#span-and-advanced-design)) in a band under the box title, across the box's inner width. The box's content follows the band, with the title's gap between them. A box split across columns or pages draws the band on its first part only. Since postext 1.45.
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>A design is on once set; <code>false</code> keeps it in the style without drawing the band.</td>
+    </tr>
+    <tr>
+      <td><code>slot</code></td>
+      <td><code>DesignSlot</code></td>
+      <td>—</td>
+      <td>The elements, laid out against the band: <code>anchor.to: 'container'</code> is the band, from under the title across the inner width. The <code>'page'</code> and <code>'bleed'</code> anchors are not read in a box.</td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>Dimension</code></td>
+      <td>unset</td>
+      <td>The least height of the band. Without it the band is as tall as its elements reach; elements with <code>reserve: false</code>, and those anchored to the middle or the foot of the band, do not count.</td>
+    </tr>
+    <tr>
+      <td><code>setsContent</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>The design prints the box's content (<code>&#123;boxText&#125;</code>), and the box does not set it again under the band. A box whose design sets its content never splits: it moves whole to the next column or page.</td>
+    </tr>
+  </tbody>
+</table>
+
+The texts of the design read these placeholders:
+
+- `{titleText}`: the title the box prints, the fence's `title` or else the style's.
+- `{boxText}`: the box's content as plain text, one paragraph or list item per line. Blank ones are left out.
+- `{boxText.<n>}`: the `n`-th paragraph or list item, counted from 1; empty when the box has fewer.
+- `{attr.<key>}`: an attribute written on the fence. Any name serves, besides the ones the fence reads itself: `:::callout{type="card" kicker="Note"}` gives `{attr.kicker}` the value `Note`. A missing attribute prints nothing.
+- the document's `{title}`, `{subtitle}`, `{author}` and `{publishDate}`.
+
+A picture's `resourceId` takes the same placeholders, so each box can draw a resource of its own. Only a box design reads `{boxText}`; a heading design prints nothing for it.
+
+With `setsContent: true` one style serves every box of the same shape, each with its own words. In a handwriting workbook each practice row is a box whose content is the word to copy: the design prints the word in a school face and draws the dotted resource named after it.
+
+```ts
+calloutStyles: [{
+  id: 'practice',
+  backgroundEnabled: false,
+  border: { enabled: true, color: { hex: '#9aa6b2', model: 'hex' }, width: { value: 0.5, unit: 'pt' } },
+  design: {
+    setsContent: true,
+    minHeight: { value: 16, unit: 'mm' },
+    slot: { elements: [
+      { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite GB S', fontSize: { value: 26, unit: 'pt' },
+        placement: { anchor: { to: 'container', edge: 'top-left' } } },
+      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
+        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
+          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+    ] },
+  },
+}],
+```
+
+```md
+:::callout{type="practice"}
+cat
+:::
+
+:::callout{type="practice"}
+sun
+:::
+```
+
+The first row prints *cat* and draws the resource `trace-cat`, the second prints *sun* and draws `trace-sun`, and neither word is set again under its band. With `setsContent` left `false` the design reads `{boxText}` all the same, and the content is set under the band.
+
+In the VDT the band's elements are design blocks on the frame's `designOverlay`, beside the title.
