@@ -1247,7 +1247,7 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   the reader already read it before `layouts.json`. *Fonts:* the families an edition laid out behind the reader declares
   and the book on screen lacks are served as the book's (`declareEditionFonts`, a second registry the book's own
   `setCustomFonts` overrides and `newBook` empties); two editions that give one name different files are not told apart.
-  The Activity-bar badge still counts the edition on screen (#903); not wired.
+  The Activity-bar badge counts the edition on screen (#903), by decision (§5.19).
 - **The label editor of a surface (#970).** The hit test, hover, drag with its ghost, drop, click and double click are
   `createLabelEditor`, which knows nothing of the page: a `LabelSurface` paints its marks (`paint(page, shapes | null)`)
   and says how big a CSS pixel is there. The Canvas and the HTML preview adapt it per page element
@@ -1284,6 +1284,37 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   (`collectHeadingDesignCuts` stays a pure check on the finished layout, for design text lost past the foot): the claim
   needs what only the build knows (which element reserved the height). The Sandbox lists it in the design group of the
   Checks panel and the docs say what to do (`reserve: false` on the element, a lower `minHeight`, or `span: 'page'`).
+
+### 5.19 Later work of the programme, round J (#846)
+
+**Sandbox editions and the template editor (#989, #991, #999).**
+
+- **Add a language (#989).** `ProjectActions.addEdition(id, locale)` (Books panel row menu, `sandbox_save_book`
+  `add_language`): `withNewEdition` (storage/projectEditions.ts) copies the edition the record opens with into
+  `editions[locale]` (chapters under new ids, configuration cloned, resources cloned but pointing at the same files, which
+  the sweep already counts across editions), sets `config.locale`, follows built-in figure/table names to the new language
+  (`relocalizedResourceTypes`) and drops an explicit hyphenation language (it was the old language's). The record's own
+  `locale` is filled when absent (configuration, then the interface language) because `withActiveEdition` keys on it;
+  the action then opens the new edition with it. A language the record has (tag compared without case) is refused. What
+  is not done for the reader: direction, numerals, binding and the CJK or Arabic defaults stay as the first edition has
+  them; the Design panel's actions for those languages are the way to set them.
+- **Copy names (#989).** Duplicating a project and "Copy of the open book" already added "copy"; the copy of a *sample*
+  kept the sample's name. It now takes the same suffix (`projectCopySuffix`).
+- **A title per language (#999).** The rule of #968 stays the default (a rename is the book's in every edition,
+  `titleEdited`). `renameEditionPatch` is the other choice, offered by a box in the rename fields of a book in several
+  languages (`sandbox_save_book` `rename` with `thisLanguageOnly`): the edition on screen gets its own entry in
+  `editionTitles`, every other edition is given the title it shows now (so nothing moves under the reader's eyes, also
+  when `titleEdited` was on) and `titleEdited` goes off, which is what an export reads to write `localized.<lang>.name`.
+- **The badge (#999).** Decision: the Checks badge keeps counting the chapter and edition on screen. Other editions are
+  laid out behind the reader only while the Checks panel is open (`useBookEditions`), so a badge reading their entries
+  with the panel shut would show numbers that an edit has outdated, and keeping them current means laying every edition
+  out after every edit. What changes is the accessible name: for a book in several languages it says which language the
+  count is of (`navWarningsEdition`); the panel is where every language is listed.
+- **Template editor (#991).** `newFrameFor`: a frame added to a template whose groups have members is sized like the last
+  member of the last such group; with a stack and no member it is `fill` x `auto`; otherwise the old 60 x 40 mm box.
+  Group members are an ordered list (`GroupsEditor`): a ticked frame joins at the end, `moveMember` and two arrow buttons
+  reorder, and the engine already honours the order of `group.frames`; the old behaviour (always the template's order)
+  was the UI's, not the engine's. "New" picks its first frame.
 
 ## 6. Source map contract
 
