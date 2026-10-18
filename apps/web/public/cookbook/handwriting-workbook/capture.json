@@ -1,0 +1,4443 @@
+{
+  "schemaVersion": 1,
+  "slug": "handwriting-workbook",
+  "sourceHash": "e22f60df22ba73776917b9658a3926c58ec4bd76ba409120886144b00029587a",
+  "engine": {
+    "postext": "1.42.1",
+    "postextPdf": "1.42.1",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-18T11:13:39.508Z",
+  "verified": {
+    "postext": "1.43.0",
+    "postextPdf": "1.43.0",
+    "chrome": "155.0.8059.82",
+    "at": "2026-10-18T11:14:45.030Z"
+  },
+  "variants": {
+    "en": {
+      "hash8": "85f2cf29",
+      "vdtHash": "2366bb5e9f557d9428c5c7e25d84936d5cf059ae",
+      "timings": {
+        "importMs": 665,
+        "fontsMs": 126,
+        "buildMs": 78,
+        "totalMs": 1563,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite GB J"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 112704,
+          "alt": "Opening page 1: I can write."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 65220,
+          "alt": "Opening page 2: Warm up."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 62644,
+          "alt": "Opening page 3: Round letters."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 64558,
+          "alt": "Opening page 4: Sh, ch and th."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 58940,
+          "alt": "Opening page 5: Ck and ng."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 62110,
+          "alt": "Opening page 6: Magic e."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 59326,
+          "alt": "Opening page 7: Ee, ai and oa."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 62308,
+          "alt": "Opening page 8: Tricky words."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 64294,
+          "alt": "Opening page 9: Capital letters."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 72582,
+          "alt": "Opening page 10: My first words."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 54558,
+          "alt": "Opening page 11: Copy a sentence."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 34046,
+          "alt": "Opening page 12: I can write!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1113999,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 932524,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "3225c9eb2c7a1d53",
+            "lines": "212652ba6d26a782"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 19,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite GB J",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "es": {
+      "hash8": "d8493b96",
+      "vdtHash": "b8ae485c1598b516677445317ce80c81471086dc",
+      "timings": {
+        "importMs": 668,
+        "fontsMs": 175,
+        "buildMs": 90,
+        "totalMs": 1715,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite ES"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 117528,
+          "alt": "Página de apertura 1: Aprendo a escribir."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 64046,
+          "alt": "Página de apertura 2: Antes de empezar."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 59548,
+          "alt": "Página de apertura 3: Las vocales."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 61350,
+          "alt": "Página de apertura 4: La m y la p."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 57644,
+          "alt": "Página de apertura 5: La eñe."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 61426,
+          "alt": "Página de apertura 6: La ll y la rr."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 61556,
+          "alt": "Página de apertura 7: La c, la qu y la z."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 67788,
+          "alt": "Página de apertura 8: La g, la gu y la gü."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 66046,
+          "alt": "Página de apertura 9: La h y la tilde."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 75026,
+          "alt": "Página de apertura 10: Mis primeras palabras."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 46360,
+          "alt": "Página de apertura 11: Copio frases."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 33872,
+          "alt": "Página de apertura 12: ¡Ya sé escribir!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1144987,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 958065,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "810a72f678457a3c",
+            "lines": "893ab66398df2485"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 21,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite ES",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "ca": {
+      "hash8": "ac3993f0",
+      "vdtHash": "620852ab0edda021977f8c16cd443604a63af080",
+      "timings": {
+        "importMs": 670,
+        "fontsMs": 137,
+        "buildMs": 79,
+        "totalMs": 1571,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite ES"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 116640,
+          "alt": "Pàgina d'obertura 1: Aprenc a escriure."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 62874,
+          "alt": "Pàgina d'obertura 2: Abans de començar."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 66054,
+          "alt": "Pàgina d'obertura 3: Les vocals i els accents."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 54530,
+          "alt": "Pàgina d'obertura 4: La m i la p."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 63036,
+          "alt": "Pàgina d'obertura 5: La ny i la ll."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 74114,
+          "alt": "Pàgina d'obertura 6: La ela geminada."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 59210,
+          "alt": "Pàgina d'obertura 7: La ç i la qu."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 70302,
+          "alt": "Pàgina d'obertura 8: La g, la gu i la gü."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 70286,
+          "alt": "Pàgina d'obertura 9: L’apòstrof i la dièresi."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 73864,
+          "alt": "Pàgina d'obertura 10: Les meves paraules."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 46510,
+          "alt": "Pàgina d'obertura 11: Copio frases."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 34702,
+          "alt": "Pàgina d'obertura 12: Ja sé escriure!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1152669,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 954927,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "53cd9b8086b9a91a",
+            "lines": "a237b4ef0d22bcb5"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 20,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite ES",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "zh": {
+      "hash8": "28053dae",
+      "vdtHash": "71ab27761ec8f00ae988d9aa0c08fd7a0c17ddd9",
+      "timings": {
+        "importMs": 622,
+        "fontsMs": 655,
+        "buildMs": 93,
+        "totalMs": 2003,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Serif SC",
+          "sizePt": 13.5,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "LXGW WenKai TC",
+          "Noto Sans SC",
+          "Noto Serif SC"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 111306,
+          "alt": "章首页，第 1 页：我会写字。"
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 53832,
+          "alt": "章首页，第 2 页：写字以前。"
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 54246,
+          "alt": "章首页，第 3 页：一二三。"
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 59412,
+          "alt": "章首页，第 4 页：日月山水。"
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 64304,
+          "alt": "章首页，第 5 页：木林森。"
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 41382,
+          "alt": "章首页，第 6 页：拼音 b p m f。"
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 47314,
+          "alt": "章首页，第 7 页：四个声调。"
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 66646,
+          "alt": "章首页，第 8 页：我和你。"
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 63968,
+          "alt": "章首页，第 9 页：小动物。"
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 68912,
+          "alt": "章首页，第 10 页：我的第一本字典。"
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 61780,
+          "alt": "章首页，第 11 页：抄写句子。"
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 31208,
+          "alt": "章首页，第 12 页：我会写字了！"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 996087,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 811716,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "62f0223f959082f1",
+            "lines": "9b0f67d4418b9d24"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 852,
+        "designElements": 56,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 3,
+          "bitmap": 17,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "LXGW WenKai TC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Sans SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Sans SC",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif SC",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "cjk-line-breaking",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "cjkLooseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0.03
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "ar": {
+      "hash8": "3f3b43c3",
+      "vdtHash": "dd517173160c92af6e3a153cb1d707ce17aa1da6",
+      "timings": {
+        "importMs": 353,
+        "fontsMs": 158,
+        "buildMs": 101,
+        "totalMs": 1225,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Naskh Arabic",
+          "sizePt": 14,
+          "leadingPt": 25
+        },
+        "families": [
+          "Baloo Bhaijaan 2",
+          "Noto Naskh Arabic",
+          "Playpen Sans Arabic"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "١",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 111870,
+          "alt": "صفحة الافتتاح ١: أَتَعَلَّمُ الكِتَابَةَ."
+        },
+        {
+          "n": 2,
+          "label": "٢",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 56888,
+          "alt": "صفحة الافتتاح ٢: قَبْلَ أَنْ نَبْدَأَ."
+        },
+        {
+          "n": 3,
+          "label": "٣",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 47782,
+          "alt": "صفحة الافتتاح ٣: أَشْكَالُ الحَرْفِ."
+        },
+        {
+          "n": 4,
+          "label": "٤",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 47608,
+          "alt": "صفحة الافتتاح ٤: النِّقَاطُ."
+        },
+        {
+          "n": 5,
+          "label": "٥",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 49606,
+          "alt": "صفحة الافتتاح ٥: حُرُوفٌ لَا تَتَّصِلُ بِمَا بَعْدَهَا."
+        },
+        {
+          "n": 6,
+          "label": "٦",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 46822,
+          "alt": "صفحة الافتتاح ٦: الحَرَكَاتُ."
+        },
+        {
+          "n": 7,
+          "label": "٧",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 44840,
+          "alt": "صفحة الافتتاح ٧: المُدُودُ."
+        },
+        {
+          "n": 8,
+          "label": "٨",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 52476,
+          "alt": "صفحة الافتتاح ٨: الشَّدَّةُ وَالتَّنْوِينُ."
+        },
+        {
+          "n": 9,
+          "label": "٩",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 52396,
+          "alt": "صفحة الافتتاح ٩: الشَّمْسُ وَالقَمَرُ."
+        },
+        {
+          "n": 10,
+          "label": "١٠",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 67498,
+          "alt": "صفحة الافتتاح ١٠: كَلِمَاتِي الأُولَى."
+        },
+        {
+          "n": 11,
+          "label": "١١",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 40276,
+          "alt": "صفحة الافتتاح ١١: أَنْسَخُ جُمَلًا."
+        },
+        {
+          "n": 12,
+          "label": "١٢",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 29648,
+          "alt": "صفحة الافتتاح ١٢: أَنَا أَكْتُبُ!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1066573,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 870101,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "42e4ae04a9e0fef4",
+            "lines": "6a6fb9679a4791b1"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 651,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 18,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playpen Sans Arabic",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "document-digits",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "right-binding",
+          "section-running-heads",
+          "text-direction"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.32
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "ja": {
+      "hash8": "44990abe",
+      "vdtHash": "5b641a4aef7f08227031008532219c9b64881394",
+      "timings": {
+        "importMs": 778,
+        "fontsMs": 386,
+        "buildMs": 74,
+        "totalMs": 1848,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Klee One",
+          "sizePt": 13.5,
+          "leadingPt": 20
+        },
+        "families": [
+          "Klee One",
+          "Zen Maru Gothic"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 109332,
+          "alt": "章扉、1ページ：じを かこう。"
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 42356,
+          "alt": "章扉、2ページ：かく まえに。"
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 46516,
+          "alt": "章扉、3ページ：あいうえお。"
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 50016,
+          "alt": "章扉、4ページ：てんてんと まる。"
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 47406,
+          "alt": "章扉、5ページ：ちいさい ゃゅょ。"
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 47842,
+          "alt": "章扉、6ページ：つまる おと のばす おと。"
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 50840,
+          "alt": "章扉、7ページ：「は」「を」「へ」。"
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 45752,
+          "alt": "章扉、8ページ：カタカナ。"
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 46082,
+          "alt": "章扉、9ページ：はじめての かんじ。"
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 65358,
+          "alt": "章扉、10ページ：ことばの えじてん。"
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 49760,
+          "alt": "章扉、11ページ：ぶんを かこう。"
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 29890,
+          "alt": "章扉、12ページ：よく できました。"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1055234,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 987028,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "dd9520bbaa0b5d81",
+            "lines": "dc8f823226532194"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 769,
+        "designElements": 50,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 2,
+          "bitmap": 22,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Klee One",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Zen Maru Gothic",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Zen Maru Gothic",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "cjk-line-breaking",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "cjkLooseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0.02
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "pt": {
+      "hash8": "580a451b",
+      "vdtHash": "2336155f7ea62f98ad72911cb2a4238f78e998b6",
+      "timings": {
+        "importMs": 618,
+        "fontsMs": 373,
+        "buildMs": 77,
+        "totalMs": 1808,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite BR"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 118330,
+          "alt": "Página de abertura 1: Aprendo a escrever."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 63864,
+          "alt": "Página de abertura 2: Antes de começar."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 62136,
+          "alt": "Página de abertura 3: As vogais."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 60572,
+          "alt": "Página de abertura 4: Sílabas simples."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 53978,
+          "alt": "Página de abertura 5: O til."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 56598,
+          "alt": "Página de abertura 6: A cedilha."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 59862,
+          "alt": "Página de abertura 7: O nh e o lh."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 56398,
+          "alt": "Página de abertura 8: O ch e o x."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 61848,
+          "alt": "Página de abertura 9: O rr, o ss e os acentos."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 75110,
+          "alt": "Página de abertura 10: Minhas palavras."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 48544,
+          "alt": "Página de abertura 11: Copio frases."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 36806,
+          "alt": "Página de abertura 12: Já sei escrever!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1200819,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 991434,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "d5b883dca3b1ad1a",
+            "lines": "f389120abb5305e8"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 21,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite BR",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "fr": {
+      "hash8": "a64f0e43",
+      "vdtHash": "9409da454e4fd1ab2523e8e45ca9cf489a816fea",
+      "timings": {
+        "importMs": 618,
+        "fontsMs": 344,
+        "buildMs": 85,
+        "totalMs": 1781,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite FR Trad"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 118408,
+          "alt": "Page d’ouverture 1 : J’apprends à écrire."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 65310,
+          "alt": "Page d’ouverture 2 : Avant d’écrire."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 67416,
+          "alt": "Page d’ouverture 3 : Les accents."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 63238,
+          "alt": "Page d’ouverture 4 : Ou, on et an."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 70110,
+          "alt": "Page d’ouverture 5 : Les sons ch et gn."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 66530,
+          "alt": "Page d’ouverture 6 : Le c, le ç et le ge."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 60354,
+          "alt": "Page d’ouverture 7 : Au et eau."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 60760,
+          "alt": "Page d’ouverture 8 : Le s et le ss."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 66234,
+          "alt": "Page d’ouverture 9 : Lettres muettes."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 75992,
+          "alt": "Page d’ouverture 10 : Mon imagier."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 50378,
+          "alt": "Page d’ouverture 11 : Les phrases."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 37030,
+          "alt": "Page d’ouverture 12 : Je sais écrire !"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1142157,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 910630,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "eaa6925061858c3e",
+            "lines": "8787314980d585c1"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 19,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite FR Trad",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "de": {
+      "hash8": "4d40d5a6",
+      "vdtHash": "971ccd73560a9dbb135363f7c6a53217b2328a13",
+      "timings": {
+        "importMs": 745,
+        "fontsMs": 200,
+        "buildMs": 88,
+        "totalMs": 1738,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite DE VA"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 118970,
+          "alt": "Kapitelauftakt, Seite 1: Ich lerne schreiben."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 69202,
+          "alt": "Kapitelauftakt, Seite 2: Schwungübungen."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 67534,
+          "alt": "Kapitelauftakt, Seite 3: Die Selbstlaute."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 65256,
+          "alt": "Kapitelauftakt, Seite 4: Die Umlaute."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 70050,
+          "alt": "Kapitelauftakt, Seite 5: sch und ch."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 59428,
+          "alt": "Kapitelauftakt, Seite 6: ie und ei."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 64236,
+          "alt": "Kapitelauftakt, Seite 7: eu und äu."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 70808,
+          "alt": "Kapitelauftakt, Seite 8: ß und ss."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 67888,
+          "alt": "Kapitelauftakt, Seite 9: ck und tz."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 77994,
+          "alt": "Kapitelauftakt, Seite 10: Meine ersten Wörter."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 61948,
+          "alt": "Kapitelauftakt, Seite 11: Nomen schreibt man groß."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 39194,
+          "alt": "Kapitelauftakt, Seite 12: Ich kann schreiben!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1104734,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 903480,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "207502b23e408002",
+            "lines": "4f97adc0ba535cc6"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 18,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite DE VA",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "it": {
+      "hash8": "00cfc78b",
+      "vdtHash": "f7077d7ff9819b1788c842b77c45015a3b0fa4a4",
+      "timings": {
+        "importMs": 791,
+        "fontsMs": 157,
+        "buildMs": 84,
+        "totalMs": 1700,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Andika",
+          "sizePt": 14,
+          "leadingPt": 20
+        },
+        "families": [
+          "Andika",
+          "Lexend",
+          "Playwrite IT Trad"
+        ],
+        "pages": 12,
+        "ownLines": 295
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 116706,
+          "alt": "Pagina d’apertura 1: Imparo a scrivere."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 65036,
+          "alt": "Pagina d’apertura 2: Prima di cominciare."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 63660,
+          "alt": "Pagina d’apertura 3: Le vocali."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 67842,
+          "alt": "Pagina d’apertura 4: Le doppie."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 66882,
+          "alt": "Pagina d’apertura 5: Gn e gl."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 58694,
+          "alt": "Pagina d’apertura 6: Ce e ci, che e chi."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 64622,
+          "alt": "Pagina d’apertura 7: Ge e gi, ghe e ghi."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 62206,
+          "alt": "Pagina d’apertura 8: Sc, sce e sci."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 62924,
+          "alt": "Pagina d’apertura 9: L'acca e l'accento."
+        },
+        {
+          "n": 10,
+          "label": "10",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p10.webp",
+          "strip": "p10.s.webp",
+          "bytes": 74764,
+          "alt": "Pagina d’apertura 10: Le mie prime parole."
+        },
+        {
+          "n": 11,
+          "label": "11",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p11.webp",
+          "strip": "p11.s.webp",
+          "bytes": 46644,
+          "alt": "Pagina d’apertura 11: Copio le frasi."
+        },
+        {
+          "n": 12,
+          "label": "12",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p12.webp",
+          "strip": "p12.s.webp",
+          "bytes": 33936,
+          "alt": "Pagina d’apertura 12: So scrivere!"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          11,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "handwriting-workbook.pdf",
+        "bytes": 1103860,
+        "pages": 12
+      },
+      "sandbox": {
+        "file": "handwriting-workbook.postext",
+        "bytes": 906452,
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "d0ca279dc57ad48d",
+            "lines": "e6838e69a7861e47"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderRadius",
+          "chipStyles[].borderWidth",
+          "chipStyles[].fontFamily",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "resourceTypes"
+        ],
+        "configLeaves": 665,
+        "designElements": 43,
+        "directives": [
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 19,
+          "bitmap": 19,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Lexend",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playwrite IT Trad",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "opener-design",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "section-running-heads"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    }
+  }
+}

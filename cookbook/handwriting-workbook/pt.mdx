@@ -1,0 +1,66 @@
+---
+title: "Caderno de caligrafia em dez escritas"
+summary: "Um primeiro caderno de caligrafia em cada idioma do site: a letra escolar de cada país na sua pauta, um modelo, letras pontilhadas para cobrir e linhas vazias."
+plain: "Um caderno de caligrafia infantil feito dez vezes, uma por idioma. Cada lição mostra uma palavra escrita, depois em pontinhos para cobrir e depois linhas vazias, com a letra e o papel das escolas de cada país."
+description: "Um caderno de caligrafia no Postext: letras escolares na pauta de cada país, linhas pontilhadas para cobrir, quadrículas chinesas e japonesas e edição árabe."
+question: "Como faço um caderno de caligrafia com modelo, letras pontilhadas e linhas vazias na pauta de cada país?"
+aliases: ["caderno de caligrafia", "caligrafia", "letras pontilhadas", "cobrir o pontilhado", "letra cursiva", "letra de mão", "pauta", "quadriculado", "Seyès", "Lineatur", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "A capa: uma pintura de duas crianças escrevendo em cadernos numa mesa da sala de aula, com um gato ruivo dormindo numa cadeira, vai até as bordas de cima e dos lados e se dissolve no papel; embaixo, a linha da coleção, o título Aprendo a escrever e uma linha para o nome da criança.", "5": "Uma lição: uma faixa creme com as letras ã õ numa pílula branca, o título O til e um cachorro pintado; um texto curto; dois blocos de treino de quatro linhas cada em papel de caligrafia com a faixa do meio azul-clara, o modelo em tinta escura seguido de cópias pontilhadas, uma linha de pontos, o modelo com uma cópia e uma linha vazia; uma linha com lacunas para completar e um boxe Lembre-se com uma faixa amarela." }
+---
+
+## O que você vai compor
+
+Doze páginas de um caderno de caligrafia do 1.º ano em A4, em dez edições que são dez cadernos diferentes. Cada idioma recebe a letra cursiva que as suas escolas ensinam, das famílias Playwrite do Google (GB J, ES, FR Trad, DE VA, IT Trad, BR) ou da Playpen Sans Arabic, no papel em que as suas crianças escrevem: a *pauta* espanhola, o quadriculado Seyès francês com margem vermelha, a *Lineatur* alemã com a faixa do meio amarela, as linhas de caligrafia brasileiras. A edição chinesa escreve em quadrículas 田字格, onde as crianças cobrem caracteres em vermelho-claro (描红), com o pinyin em quatro linhas; a japonesa, em quadrados マス com uma cruz pontilhada e o traçado em cinza (なぞり書き). As lições seguem a ortografia de cada língua: o ñ e o h mudo em espanhol, o l·l em catalão, o ß e os substantivos com maiúscula em alemão, as partículas は, を e へ em japonês, as quatro formas de uma letra e as letras que não se ligam em árabe. Cada linha vai do modelo aos pontos e dos pontos ao vazio. As vinte e nove pinturas, geradas com um modelo de difusão, são as mesmas em todas as edições.
+
+## Preparo
+
+### 1 · Dê a cada edição a sua letra escolar e o seu papel
+
+<Excerpt region="editions" />
+
+`u` é a altura de x em milímetros, a unidade em que cada pauta é desenhada: 3,6 mm na maioria das edições, 3,2 mm na brasileira e 3 mm na francesa, cujas linhas Seyès ficam a uma altura de x umas das outras. Todas as Playwrite desenham a altura de x na metade do corpo, então o modelo mede `u / 0,5`, e as linhas da pauta caem onde as proporções da própria fonte põem as ascendentes e as descendentes. O texto chinês é composto em Song (Noto Serif SC): a LXGW WenKai TC centraliza as vírgulas como se imprime em Hong Kong e Taiwan, então a Kai compõe só os títulos e as quadrículas.
+
+### 2 · Ponha o modelo na pauta, em texto vivo
+
+<Excerpt region="answer" />
+
+Um bloco de treino é um título de nível 3 cujo design desenha uma imagem, a pauta com as cópias pontilhadas, e compõe o modelo por cima como texto na letra escolar. A linha de base de um texto de design cai a 0,8 da sua entrelinha abaixo do topo da caixa, então a caixa do modelo começa 0,8 da entrelinha acima da linha de base da linha de treino, e as letras pousam na linha que a pauta desenha. A entrelinha mede dez alturas de x para que o recorte da caixa caia 2 u abaixo da linha de base, com espaço para a perna do g. O texto do título, *Cubra e escreva*, vira o rótulo do bloco; `w` dá nome à imagem e `model`, à palavra.
+
+### 3 · Desenhe os pontos com os contornos da própria fonte
+
+O Postext compõe uma letra em cor, contornada ou clara, mas não a desenha como uma fileira de pontos ao longo do traço. Os pontos são desenhados antes de compor o caderno, a partir dos contornos do corte Thin de cada família Playwrite: um ponto a cada 0,2 altura de x ao longo de cada contorno, e um ponto só fica se nenhum outro estiver a menos de 0,8 desse passo, de modo que os dois lados de um traço fino dão uma só fileira. O pingo do i e os acentos ficam como pequenas formas cheias. Os pontos de cada edição, com o avanço da cópia e o do modelo, estão em `traces-<lang>.json`, e o pen distribui as cópias pelas linhas: na primeira, depois do modelo; na segunda, a linha inteira; na terceira, uma só depois do modelo; a quarta fica vazia.
+
+### 4 · Cubra os caracteres nas suas quadrículas
+
+<Excerpt region="squares" />
+
+Um caractere chinês ou um kana tem um quadratim de largura, então um espaçamento entre caracteres igual ao quadrado menos o quadratim põe um caractere em cada quadrado, como num 字帖. O primeiro quadrado da linha traz o caractere em tinta, os três seguintes o mesmo caractere no vermelho-claro do 描红 (cinza na edição japonesa) e o resto fica vazio. Uma frase (`####`) ocupa três linhas: escrita, coberta e vazia, com a pontuação num quadrado só seu. As linhas de pinyin da edição chinesa usam a pauta de quatro linhas das edições latinas com a Andika, cujo a e cujo g de um só bojo são os que as crianças aprendem.
+
+### 5 · Não espelhe nada para o árabe
+
+A edição árabe compartilha todos os designs com as outras. O motor espelha um design de título posto no fluxo de uma página da direita para a esquerda, então o disco das letras, o modelo e a primeira imagem do dicionário passam sozinhos para a direita. Só as cópias pontilhadas, desenhadas dentro de uma imagem, são postas a partir da borda direita no código, e as ondas do aquecimento correm da direita para a esquerda. `locale: 'ar'` encaderna o livro pela direita.
+
+## Variações
+
+### Use a cursiva americana
+
+A Playwrite tem uma família para muitos modelos escolares. Para a cursiva dos Estados Unidos, troque a fonte inglesa e gere os pontos de novo.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Escreva em linhas grossas alternadas do Seyès
+
+Quem está começando a escola costuma escrever numa linha grossa sim, outra não. Dê às linhas francesas um passo de oito linhas.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Erros comuns
+
+- Um texto de design é recortado na sua caixa. Uma caixa da altura de uma linha corta as pernas do g e do p do modelo: dê a ela uma entrelinha alta e posicione-a a partir da linha de base.
+- `loadCjkFonts` carrega cada fonte para a amostra inteira: se uma fonte chinesa não tem um caractere que o texto usa em qualquer lugar, o carregamento falha. Escreva os nomes das fontes em letras latinas no colofão.

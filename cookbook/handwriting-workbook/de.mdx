@@ -1,0 +1,66 @@
+---
+title: "Schreiblernheft in zehn Schulschriften"
+summary: "Ein erstes Schreibheft in jeder Sprache der Website: die Schulschrift jedes Landes auf seiner Lineatur, eine Vorlage, Punkte zum Nachspuren und leere Zeilen."
+plain: "Ein Schreibheft für Kinder, zehnmal gemacht, einmal pro Sprache. Jede Lektion zeigt ein Wort vorgeschrieben, dann gepunktet zum Nachspuren, dann leere Zeilen, in der Schreibschrift und auf dem Linienpapier der Schulen des jeweiligen Landes."
+description: "Ein Schreibheft in Postext: Schulschriften auf der Lineatur jedes Landes, gepunktete Spurzeilen, chinesische und japanische Kästchen, eine arabische Ausgabe."
+question: "Wie setze ich ein Schreibheft mit Vorlage, Punktbuchstaben und leeren Zeilen auf der Lineatur jedes Landes?"
+aliases: ["Schreiblernheft", "Schreibheft", "Schönschreibheft", "Nachspuren", "Spurbuchstaben", "gepunktete Buchstaben", "Schreibschrift", "verbundene Schrift", "Vereinfachte Ausgangsschrift", "Schreiblineatur", "Seyès", "pauta", "Lineatur", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "Der Umschlag: Ein Gemälde zweier Kinder, die an einem Schultisch in ihre Hefte schreiben, daneben schläft eine rot getigerte Katze auf einem Stuhl; es reicht bis an den oberen und die seitlichen Ränder und läuft ins Papier aus. Darunter die Reihenzeile, der Titel Ich lerne schreiben und eine Linie für den Namen des Kindes.", "3": "Eine Lektionsseite: ein cremefarbenes Band mit den Buchstaben a e i o u in einem weißen Feld mit runden Enden, dem Lektionstitel Die Selbstlaute und einem gemalten Apfel; ein kurzer Text; zwei Übungsblöcke mit je vier Zeilen auf der Lineatur mit gelbem Mittelband, zuerst die Vorlage in dunkler Tinte mit gepunkteten Abschriften, dann eine Zeile Punkte, die Vorlage mit einer Abschrift und eine leere Zeile; eine Zeile mit Lücken zum Ausfüllen und ein Kasten Merke mit gelbem Streifen." }
+---
+
+## Was Sie setzen
+
+Zwölf Seiten eines Schreiblernhefts für die erste Klasse in A4, in zehn Ausgaben, die zehn verschiedene Hefte sind. Jede Sprache bekommt die verbundene Schrift, die ihre Schulen lehren, aus Googles Playwrite-Familien (GB J, ES, FR Trad, DE VA, IT Trad, BR) oder aus Playpen Sans Arabic, und das Papier, auf dem ihre Kinder schreiben: die spanische *pauta*, das französische Seyès-Karo mit rotem Rand, die deutsche Lineatur mit dem gelben Mittelband, die brasilianischen *caligrafia*-Linien. Die chinesische Ausgabe schreibt in 田字格-Kästchen, in denen die Kinder blassrote Zeichen nachspuren (描红), mit Pinyin auf vier Linien; die japanische in マス-Kästchen mit gepunktetem Kreuz, nachgespurt wird dort in Grau (なぞり書き). Die Lektionen folgen der Rechtschreibung der Sprache: ñ und das stumme h im Spanischen, l·l im Katalanischen, ß und großgeschriebene Nomen im Deutschen, die Partikeln は, を und へ im Japanischen, die vier Formen eines Buchstabens und die nicht verbundenen Buchstaben im Arabischen. Jede Zeile führt von der Vorlage über die Punkte zur leeren Linie. Die neunundzwanzig Gemälde, mit einem Diffusionsmodell erzeugt, teilen sich alle Ausgaben.
+
+## Zubereitung
+
+### 1 · Jeder Ausgabe ihre Schulschrift und ihr Papier geben
+
+<Excerpt region="editions" />
+
+`u` ist die x-Höhe in Millimetern, die Einheit, in der jede Lineatur gezeichnet wird: 3,6 mm in den meisten Ausgaben, 3 mm in der französischen, deren Seyès-Linien eine x-Höhe auseinanderliegen. Alle Playwrite-Schriften zeichnen ihre x-Höhe auf der Hälfte des Gevierts, deshalb ist die Vorlage `u / 0.5` groß, und die Linien liegen dort, wo die Proportionen der Schrift selbst Ober- und Unterlängen hinsetzen. Der chinesische Text steht in einer Song (Noto Serif SC): LXGW WenKai TC setzt die Kommas mittig, wie man in Hongkong und Taiwan druckt, deshalb setzt die Kai nur die Titel und die Kästchen.
+
+### 2 · Die Vorlage als lebenden Text auf die Lineatur setzen
+
+<Excerpt region="answer" />
+
+Ein Übungsblock ist eine Überschrift der Ebene 3, deren Gestaltung ein einziges Bild zeichnet, die Lineatur mit den gepunkteten Abschriften, und darauf die Vorlage als Text in der Schulschrift setzt. Die Grundlinie eines Gestaltungstexts liegt 0,8 seiner Zeilenhöhe unter der Oberkante seines Kastens. Der Kasten der Vorlage sitzt deshalb 0,8 Zeilenhöhen über der Grundlinie der Schreibzeile, und die Buchstaben stehen auf der Linie, die die Lineatur zeichnet. Die Zeilenhöhe beträgt zehn x-Höhen, damit der Kasten erst 2 u unter der Grundlinie abschneidet, tief genug für die Unterlänge eines g. Der Text der Überschrift, *Spur nach und schreib*, wird zur Beschriftung des Blocks; `w` benennt das Bild und `model` das Wort.
+
+### 3 · Die Punkte aus den Umrissen der Schrift selbst zeichnen
+
+Postext setzt einen Buchstaben farbig, als Kontur oder blass, aber nicht als Punktreihe entlang seines Strichs. Die Punkte entstehen deshalb vor dem Satz, aus den Umrissen des Thin-Schnitts jeder Playwrite-Familie: alle 0,2 x-Höhen ein Punkt entlang jeder Kontur, und ein Punkt bleibt nur stehen, wenn kein anderer näher als 0,8 dieses Abstands liegt, sodass die beiden Seiten eines dünnen Strichs eine einzige Reihe ergeben. Der i-Punkt und die Akzente bleiben kleine gefüllte Formen. Die Punkte jeder Ausgabe liegen mit den Dickten von Abschrift und Vorlage in `traces-<lang>.json`, und der Pen verteilt die Abschriften auf die Zeilen: hinter der Vorlage, über eine ganze Zeile, eine einzige hinter der Vorlage und zuletzt eine leere Zeile.
+
+### 4 · Zeichen in ihren Kästchen nachspuren
+
+<Excerpt region="squares" />
+
+Ein Han-Zeichen oder ein Kana ist ein Geviert breit, also setzt eine Sperrung von Kästchenbreite minus Geviert ein Zeichen pro Kästchen, wie in einem 字帖. Das erste Kästchen einer Zeile trägt das Zeichen in Tinte, die nächsten drei dasselbe Zeichen im Blassrot des 描红 (in der japanischen Ausgabe in Grau), der Rest bleibt leer. Ein Satz (`####`) belegt drei Zeilen: vorgeschrieben, nachgespurt und leer, jedes Satzzeichen in einem eigenen Kästchen. Die chinesischen Pinyin-Zeilen nutzen die Vierlinien-Lineatur der lateinischen Ausgaben mit Andika, deren einstöckiges a und g die Formen sind, die Kinder lernen.
+
+### 5 · Für das Arabische nichts spiegeln
+
+Die arabische Ausgabe teilt jede Gestaltung mit den anderen. Eine Überschriftengestaltung im Fluss einer Seite von rechts nach links spiegelt die Engine, also wandern die Buchstabenscheibe, die Vorlage und das erste Bild des Wörterbuchs von selbst nach rechts. Nur die gepunkteten Abschriften, die in einem Bild gezeichnet sind, legt der Code vom rechten Rand aus an, und die Wellen der Schwungübungen laufen von rechts nach links. `locale: 'ar'` bindet das Buch rechts.
+
+## Varianten
+
+### Die amerikanische Schreibschrift nehmen
+
+Playwrite hat für viele Schulschriften eine eigene Familie. Für die amerikanische Schreibschrift tauschen Sie die englische Schrift aus und erzeugen ihre Punkte neu.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Auf jeder zweiten Seyès-Linie schreiben
+
+Schulanfänger schreiben oft nur auf jeder zweiten dicken Linie. Geben Sie den französischen Zeilen einen Abstand von acht Linien.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Häufige Fehler
+
+- Ein Gestaltungstext wird an seinem Kasten abgeschnitten. Ist der Kasten nur eine Zeile hoch, verliert die Vorlage die Unterlängen von g und p: Geben Sie ihm eine hohe Zeile und setzen Sie ihn von der Grundlinie aus.
+- `loadCjkFonts` lädt jede Schrift für die ganze Probe: Fehlt einer chinesischen Schrift ein Zeichen, das der Text irgendwo verwendet, schlägt das Laden fehl. Schreiben Sie die Schriftnamen im Impressum in lateinischen Buchstaben.

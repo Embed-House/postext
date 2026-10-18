@@ -1,0 +1,66 @@
+---
+title: "Cahier d’écriture en dix modèles scolaires"
+summary: "Un premier cahier d’écriture dans chaque langue du site : l’écriture scolaire de chaque pays sur sa réglure, un modèle, des pointillés et des lignes vides."
+plain: "Un cahier d’écriture pour enfants fait dix fois, une par langue. Chaque leçon montre un mot écrit, puis en pointillés à repasser, puis des lignes vides, avec l’écriture attachée et le papier des écoles de chaque pays."
+description: "Un cahier d’écriture dans Postext : écritures scolaires sur la réglure de chaque pays, lignes en pointillés, cases chinoises et japonaises, édition arabe."
+question: "Comment faire un cahier d’écriture avec modèle, pointillés et lignes vides sur la réglure de chaque pays ?"
+aliases: ["cahier d’écriture", "cahier d’écriture cursive", "écriture cursive", "écriture attachée", "lettres en pointillés", "repasser les lettres", "réglure Seyès", "grands carreaux", "Seyès", "pauta", "Lineatur", "田字格", "描红", "なぞり書き", "Playwrite"]
+pageNotes: { "1": "La couverture : une peinture de deux enfants qui écrivent dans leurs cahiers à une table d’école, avec un chat roux endormi sur une chaise, va jusqu’aux bords du haut et des côtés et se fond dans le papier ; dessous, la ligne de la collection, le titre J’apprends à écrire et une ligne pour le prénom de l’enfant.", "3": "Une page de leçon : un bandeau crème avec les lettres é è ê dans une pastille blanche, le titre Les accents et une abeille peinte ; un court texte ; deux blocs d’exercice de quatre lignes chacun sur réglure Seyès, avec le modèle à l’encre foncée suivi de copies en pointillés, une ligne de pointillés, le modèle avec une copie et une ligne vide ; une ligne à trous à compléter et un encadré Retiens avec une bande jaune." }
+---
+
+## Ce que vous allez composer
+
+Douze pages d’un cahier d’écriture de CP au format A4, en dix éditions qui sont dix cahiers différents. Chaque langue reçoit l’écriture attachée qu’enseignent ses écoles, tirée des familles Playwrite de Google (GB J, ES, FR Trad, DE VA, IT Trad, BR) ou de Playpen Sans Arabic, sur le papier où écrivent ses enfants : la *pauta* espagnole, les carreaux Seyès avec leur marge rouge, la *Lineatur* allemande et sa bande médiane jaune, les lignes de *caligrafia* brésiliennes. L’édition chinoise écrit dans des cases 田字格, où l’enfant repasse des caractères rouge pâle (描红), avec le pinyin sur quatre lignes ; la japonaise dans des cases マス barrées d’une croix pointillée, où l’on repasse en gris (なぞり書き). Les leçons suivent l’orthographe de chaque langue : les accents et la cédille en français, le ñ et le h muet en espagnol, le l·l en catalan, le ß et les noms à majuscule en allemand, les particules は, を et へ en japonais, les quatre formes d’une lettre et les lettres qui ne s’attachent pas en arabe. Chaque ligne va du modèle aux pointillés, puis à rien. Les vingt-neuf peintures, générées avec un modèle de diffusion, servent à toutes les éditions.
+
+## Préparation
+
+### 1 · Donner à chaque édition son écriture scolaire et son papier
+
+<Excerpt region="editions" />
+
+`u` est la hauteur d’x en millimètres, l’unité dans laquelle chaque réglure est tracée : 3,6 mm pour la plupart des éditions, 3 mm pour la française, dont les lignes Seyès sont espacées d’une hauteur d’x. Toutes les Playwrite dessinent leur hauteur d’x à la moitié du cadratin. Le modèle mesure donc `u / 0.5`, et les lignes de la réglure tombent là où les proportions de la police placent ses hampes et ses jambages. Le texte chinois est composé en Song (Noto Serif SC) : LXGW WenKai TC centre ses virgules comme on les imprime à Hong Kong et à Taïwan, si bien que la police Kai ne compose que les titres et les cases.
+
+### 2 · Poser le modèle sur la réglure, en texte vivant
+
+<Excerpt region="answer" />
+
+Un bloc d’exercice est un titre de niveau 3 dont la maquette dessine une seule image, la réglure avec les copies en pointillés, et compose par-dessus le modèle en texte, dans l’écriture scolaire. La ligne de base d’un texte de maquette tombe à 0,8 de son interlignage sous le haut de sa boîte. La boîte du modèle commence donc 0,8 interlignage au-dessus de la ligne de base de sa ligne d’écriture, et les lettres reposent sur le trait que dessine la réglure. L’interlignage vaut dix hauteurs d’x pour que la découpe de la boîte tombe 2 u sous la ligne de base, assez bas pour la boucle du g. Le texte du titre, *Repasse et écris*, devient l’étiquette du bloc ; `w` nomme l’image et `model` le mot.
+
+### 3 · Tirer les pointillés des contours de la police
+
+Postext compose une lettre en couleur, en contour ou en teinte pâle, mais ne peut pas la dessiner comme une suite de points le long de son tracé. Les points sont donc dessinés avant la composition du cahier, à partir des contours de la graisse Thin de chaque famille Playwrite : un point tous les 0,2 hauteur d’x le long de chaque contour, gardé seulement si aucun autre ne se trouve à moins de 0,8 de ce pas, de sorte que les deux bords d’un trait fin donnent une seule rangée de points. Le point du i et les accents restent de petites formes pleines. Les points de chaque édition, avec les chasses de la copie et du modèle, sont dans `traces-<lang>.json`, et le pen répartit les copies sur les lignes : après le modèle, sur toute une ligne, une seule après le modèle, puis une ligne vide pour finir.
+
+### 4 · Repasser les caractères dans leurs cases
+
+<Excerpt region="squares" />
+
+Un sinogramme ou un kana occupe un cadratin : une approche égale à la case moins le cadratin place donc un caractère par case, comme dans un 字帖. La première case de la ligne porte le caractère à l’encre, les trois suivantes le même caractère dans le rouge pâle du 描红 (gris dans l’édition japonaise), et les autres restent vides. Une phrase (`####`) prend trois lignes : écrite, repassée, puis vide, avec chaque signe de ponctuation dans sa propre case. Les lignes de pinyin reprennent la réglure à quatre lignes des éditions latines, avec Andika, dont le a et le g à un seul étage sont ceux qu’apprennent les enfants.
+
+### 5 · Ne rien mettre en miroir pour l’arabe
+
+L’édition arabe partage toutes ses maquettes avec les autres. Le moteur met en miroir une maquette de titre posée dans le flux d’une page de droite à gauche : le disque des lettres, le modèle et la première image de l’imagier passent d’eux-mêmes à droite. Seules les copies en pointillés, dessinées à l’intérieur d’une image, sont placées depuis le bord droit dans le code, et les vagues de l’échauffement vont de droite à gauche. `locale: 'ar'` relie le livre à droite.
+
+## Variantes
+
+### Prendre la cursive américaine
+
+Playwrite propose une famille pour de nombreux modèles scolaires. Pour la cursive des États-Unis, changez la police anglaise et générez de nouveau ses pointillés.
+
+```diff
+-  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },
++  en: { hand: 'Playwrite US Trad', ruling: 'gb', u: 3.6 },
+```
+
+### Écrire sur une grosse ligne Seyès sur deux
+
+En début d’année, les enfants écrivent souvent sur une grosse ligne sur deux. Donnez aux lignes d’écriture françaises un pas de huit lignes de réglure.
+
+```diff
+-    seyes: { above: 4, below: 2, gap: -2, seyes: true }, // a row on every heavy line
++    seyes: { above: 4, below: 2, gap: 2, seyes: true },
+```
+
+## Erreurs fréquentes
+
+- Un texte de maquette est coupé au bord de sa boîte. Une boîte haute d’une seule ligne coupe les jambages du g et du p du modèle : donnez-lui un grand interlignage et placez-la depuis la ligne de base.
+- `loadCjkFonts` charge chaque police pour tout l’échantillon : une police chinoise à laquelle il manque un caractère employé n’importe où dans le texte fait échouer le chargement. Dans un colophon, écrivez les noms des polices en lettres latines.
