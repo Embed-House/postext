@@ -1346,9 +1346,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   only); `sandbox_save_resource` takes `marks.svgSymbols { idPrefix, className }` and merges the zones into the call's
   or the picture's own. Known limit, documented: the zones are a snapshot, so a changed drawing has to be read again; a
   stroke's width is not part of an element's box.
-
-### 5.19 Later work of the programme, round J
-
 **Outputs (#993, #995).**
 
 - **A stand-in travels where the licensed face may not (#993).** A family marked `redistributable: false` that names a
@@ -1385,9 +1382,6 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   filter; a reader without CSS filters shows the picture in its own colours (the fixed-layout EPUB goes through it). The
   contrast check and preflight need nothing: the picture's colour is the label's, which they read for the words over
   the same tab. The reflowable EPUB does not draw label tabs, so it has no picture to tint.
-
-### 5.19 Touch and the skill's frame names (#992, #998)
-
 - **A finger on a label (#992).** The label editor of the Canvas and the HTML viewer took its presses in capture
   listeners and its marks were an SVG that takes no pointer, so a touch on a label reached the browser as a plain
   page touch: after a few px it became a scroll, `pointercancel` ended the drag and nothing was written. The browser
