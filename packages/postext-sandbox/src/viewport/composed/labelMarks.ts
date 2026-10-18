@@ -8,9 +8,8 @@
  * drags them on the first two and, since #970, on the Folio's too.
  */
 
-import type { VDTDocument } from 'postext';
 import { SVG_NS } from '../CanvasPreview/dom';
-import { cornersBounds, isMovable, labelsOnPage, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
+import { cornersBounds, isMovable, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
 
 export const MARK_COLORS = {
   box: 'rgba(15, 118, 110, 0.75)',
@@ -166,30 +165,4 @@ export function paintShapesCanvas(ctx: CanvasRenderingContext2D, shapes: readonl
     }
     ctx.restore();
   }
-}
-
-/**
- * The marks of page `pageIndex` in the overlay of an HTML page (read
- * only): replaced on each call, removed when `show` is off or the page has
- * no label. `k` is the sheet px of one CSS px on screen.
- */
-export function drawLabelMarksOverlay(svg: SVGSVGElement, doc: VDTDocument, pageIndex: number, show: boolean, words?: MarkWords): void {
-  let g = svg.querySelector<SVGGElement>('g[data-role="labelMarks"]');
-  const labels = show ? labelsOnPage(doc, pageIndex) : [];
-  if (labels.length === 0) {
-    g?.remove();
-    return;
-  }
-  if (!g) {
-    g = document.createElementNS(SVG_NS, 'g');
-    g.dataset.role = 'labelMarks';
-    g.setAttribute('aria-hidden', 'true');
-    // Over the selection's boxes: the marks of Design mode are the page's.
-    svg.appendChild(g);
-  }
-  while (g.firstChild) g.removeChild(g.firstChild);
-  const width = svg.getBoundingClientRect().width;
-  const vb = svg.viewBox.baseVal;
-  const k = width > 0 && vb.width > 0 ? vb.width / width : 1;
-  paintShapesSvg(g, labelMarkShapes(labels, k, {}, words));
 }

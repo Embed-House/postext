@@ -43,6 +43,52 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const DRAG_START_CSS_PX = 3;
 /** CSS px round an anchor point that grab it. */
 const POINT_CSS_PX = 9;
+/** The same for a finger or a pen (#992): a fingertip lands on a spot about
+ *  as wide as the 44 px target the interface sets everywhere else, and
+ *  wanders a few px between the press and the lift. */
+const POINT_TOUCH_CSS_PX = 22;
+const DRAG_START_TOUCH_CSS_PX = 8;
+
+/** Whether a pointer is a finger or a pen rather than a mouse. */
+const isFinger = (pointerType: string | undefined): boolean => pointerType === 'touch' || pointerType === 'pen';
+/** CSS px round a point that a pointer of this kind grabs. */
+export const pointGrabCssPx = (pointerType?: string): number => (isFinger(pointerType) ? POINT_TOUCH_CSS_PX : POINT_CSS_PX);
+/** CSS px a pointer of this kind travels before a press is a drag. */
+export const dragStartCssPx = (pointerType?: string): number => (isFinger(pointerType) ? DRAG_START_TOUCH_CSS_PX : DRAG_START_CSS_PX);
+
+/** A box laid over a mark for a touch screen (#992), as fractions of the
+ *  page: the browser decides at the first touch whether a finger scrolls the
+ *  page or is the page's own, from the `touch-action` of what is under it,
+ *  and the marks are drawn in an SVG that takes no pointer. A pad is that
+ *  something: `touch-action: none` under every label's box and point, so a
+ *  finger that lands on a label drags it and one that lands on bare paper
+ *  scrolls the canvas. `minCssPx` is the least a side measures on screen. */
+export interface TouchPad {
+  centerX: number;
+  centerY: number;
+  width: number;
+  height: number;
+  minCssPx: number;
+}
+
+/** The pads of a page's `shapes` (sheet px, a page `pageWidthPx` by
+ *  `pageHeightPx`): a box for each label's outline and a finger's width
+ *  round each point. The ghost of a drag has none, the finger is down. */
+export function touchPads(shapes: readonly MarkShape[], pageWidthPx: number, pageHeightPx: number): TouchPad[] {
+  const pads: TouchPad[] = [];
+  for (const s of shapes) {
+    if (s.kind === 'circle') {
+      pads.push({ centerX: s.cx / pageWidthPx, centerY: s.cy / pageHeightPx, width: 0, height: 0, minCssPx: 2 * POINT_TOUCH_CSS_PX });
+    } else if (s.kind === 'polygon' && !s.fill && s.points.length > 0) {
+      const xs = s.points.map((p) => p.x);
+      const ys = s.points.map((p) => p.y);
+      const x0 = Math.min(...xs);
+      const y0 = Math.min(...ys);
+      pads.push({ centerX: (x0 + Math.max(...xs)) / 2 / pageWidthPx, centerY: (y0 + Math.max(...ys)) / 2 / pageHeightPx, width: (Math.max(...xs) - x0) / pageWidthPx, height: (Math.max(...ys) - y0) / pageHeightPx, minCssPx: 0 });
+    }
+  }
+  return pads;
+}
 
 export interface LabelAnchorEditorRefs {
   docRef: MutableRefObject<VDTDocument | null>;
@@ -99,6 +145,8 @@ export interface LabelEditorOptions {
 /** What the editor needs of a pointer event. */
 export interface LabelPointer {
   pointerId: number;
+  /** `mouse`, `touch` or `pen`; a mouse when left out. */
+  pointerType?: string;
   clientX: number;
   clientY: number;
 }
@@ -129,6 +177,7 @@ export interface LabelEditor {
 
 interface Drag {
   pointerId: number;
+  pointerType: string | undefined;
   label: PageLabel;
   pageIndex: number;
   startX: number;
@@ -245,7 +294,7 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
     return labels;
   };
   const active = (pageIndex: number): boolean => editModeNow() === 'design' && (opts.enabled?.() ?? true) && labelsOn(pageIndex).length > 0;
-  const tolerance = (pageIndex: number): number => POINT_CSS_PX * surface.sheetPxPerCssPx(pageIndex);
+  const tolerance = (pageIndex: number, pointerType?: string): number => pointGrabCssPx(pointerType) * surface.sheetPxPerCssPx(pageIndex);
 
   /** The pages with a label of the editor's in hand. */
   const engagedPages = (): Set<number> => {
@@ -291,10 +340,10 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
   const editor: LabelEditor = {
     pointerDown(ev, at) {
       if (!active(at.pageIndex)) return false;
-      const hit = labelAt(labelsOn(at.pageIndex), at.x, at.y, tolerance(at.pageIndex));
+      const hit = labelAt(labelsOn(at.pageIndex), at.x, at.y, tolerance(at.pageIndex, ev.pointerType));
       if (!hit) return false;
       activeKey = keyOf(hit);
-      drag = { pointerId: ev.pointerId, label: hit, pageIndex: at.pageIndex, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, dx: 0, dy: 0 };
+      drag = { pointerId: ev.pointerId, pointerType: ev.pointerType, label: hit, pageIndex: at.pageIndex, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, dx: 0, dy: 0 };
       repaintLabelEditors();
       return true;
     },
@@ -322,7 +371,8 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
       if (!d.started) {
         const dx = ev.clientX - d.startClientX;
         const dy = ev.clientY - d.startClientY;
-        if (dx * dx + dy * dy < DRAG_START_CSS_PX * DRAG_START_CSS_PX) return;
+        const start = dragStartCssPx(d.pointerType);
+        if (dx * dx + dy * dy < start * start) return;
         d.started = true;
       }
       d.dx = at.x - d.startX;
@@ -399,6 +449,35 @@ export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pa
   Object.assign(svg.style, { position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: '7', overflow: 'visible' } satisfies Partial<CSSStyleDeclaration>);
   let handledPress = false;
 
+  // The pads of a touch screen (#992): see `TouchPad`. A mouse needs none,
+  // and on a screen that also has one they would only get in its way.
+  const pads = document.createElement('div');
+  pads.dataset.role = 'labelPads';
+  pads.setAttribute('aria-hidden', 'true');
+  Object.assign(pads.style, { position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: '8' } satisfies Partial<CSSStyleDeclaration>);
+  const touchOnly = (): boolean => typeof matchMedia === 'function' && matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const syncPads = (shapes: MarkShape[] | null): void => {
+    const list = shapes && touchOnly() ? touchPads(shapes, pageWidthPx, pageHeightPx) : [];
+    if (list.length === 0) {
+      if (pads.parentNode) pads.remove();
+      return;
+    }
+    if (pads.parentNode !== slot) slot.appendChild(pads);
+    while (pads.children.length > list.length) pads.lastChild?.remove();
+    list.forEach((pad, i) => {
+      let el = pads.children[i] as HTMLElement | undefined;
+      if (!el) {
+        el = document.createElement('div');
+        Object.assign(el.style, { position: 'absolute', transform: 'translate(-50%, -50%)', touchAction: 'none', pointerEvents: 'auto' } satisfies Partial<CSSStyleDeclaration>);
+        pads.appendChild(el);
+      }
+      el.style.left = `${pad.centerX * 100}%`;
+      el.style.top = `${pad.centerY * 100}%`;
+      el.style.width = `max(${pad.width * 100}%, ${pad.minCssPx}px)`;
+      el.style.height = `max(${pad.height * 100}%, ${pad.minCssPx}px)`;
+    });
+  };
+
   const sheetPerCss = (): number => {
     const w = slot.getBoundingClientRect().width;
     return w > 0 ? pageWidthPx / w : 1;
@@ -419,6 +498,7 @@ export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pa
     surface: {
       paint: (_page, shapes) => {
         while (svg.firstChild) svg.removeChild(svg.firstChild);
+        syncPads(shapes);
         if (!shapes) {
           if (svg.parentNode) svg.remove();
           return;

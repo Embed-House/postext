@@ -1386,6 +1386,32 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   contrast check and preflight need nothing: the picture's colour is the label's, which they read for the words over
   the same tab. The reflowable EPUB does not draw label tabs, so it has no picture to tint.
 
+### 5.19 Touch and the skill's frame names (#992, #998)
+
+- **A finger on a label (#992).** The label editor of the Canvas and the HTML viewer took its presses in capture
+  listeners and its marks were an SVG that takes no pointer, so a touch on a label reached the browser as a plain
+  page touch: after a few px it became a scroll, `pointercancel` ended the drag and nothing was written. The browser
+  reads `touch-action` at the first touch, from what is under the finger, so the fix is something under it: a
+  `touchPads` list (one box per label outline, a 44 px square round every point), laid over the page as `div`s with
+  `touch-action: none`, only where the screen is `(hover: none) and (pointer: coarse)` (a screen that also has a mouse
+  would have them intercept the presses the editor leaves alone). A finger that lands on bare paper still scrolls the
+  canvas. The editor takes a finger or a pen within 22 CSS px of a point (a mouse 9) and lets it wander 8 px before a
+  press is a drag (a mouse 3). Decision: not `touch-action: none` on the whole page in Design mode, which would stop
+  the canvas scrolling wherever a page is under the finger. The Folio needed nothing (`.is-select` is
+  `touch-action: none` already and a press on a mark never turns a page); the anchors dialog's stage is
+  `touch-none`, and the browser's own page pinch does not start there. Checked with the browser's touch emulation
+  and real touch events (Chrome DevTools protocol) on a tablet and a phone screen, not on a physical device.
+  `drawLabelMarksOverlay`, unused since the HTML viewer takes the editor's marks, is gone.
+- **Frame names in a draft that dedupe never sees (#998).** `pdf_regions.py extract` names frames by position
+  (`box-4`) because `template_dedupe.py` compares the frames of two templates by name and the positions line up
+  across the pages of a kind. A run of one page has nothing to merge, so `extract --name-frames auto` runs
+  `name_frames` itself: templates, page Markdown, `figures.json`, `regions.json`, overlays and `report.json` follow.
+  `always` does it for several pages, `never` keeps the positions. The callout styles are still `box-1` when
+  `extract` runs, so a box says `box` and its order; dedupe, run later on such a draft, names it after its merged
+  style (the role names match its positional pattern and are derived again). The Sandbox rename of a frame of a
+  sample reaching only the open edition is a documented limit: the other editions of a bundle are read each time and
+  have no store to write to.
+
 ## 6. Source map contract
 
 Every painted thing knows its origin:
