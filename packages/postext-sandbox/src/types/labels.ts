@@ -3068,6 +3068,8 @@ export interface SandboxLabels {
   labelStyleIdAria: string;
   labelStyleNameAria: string;
   labelStyleUsageHint: string;
+  labelStyleUsageCount: string;
+  labelStyleRenamed: string;
   labelStyleTypeGroup: string;
   labelStyleBackdropGroup: string;
   labelStyleFitGroup: string;

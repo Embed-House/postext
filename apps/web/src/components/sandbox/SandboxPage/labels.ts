@@ -2866,6 +2866,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     labelStyleIdAria: t("labelStyleIdAria"),
     labelStyleNameAria: t("labelStyleNameAria"),
     labelStyleUsageHint: t("labelStyleUsageHint"),
+    labelStyleUsageCount: t("labelStyleUsageCount"),
+    labelStyleRenamed: t("labelStyleRenamed"),
     labelStyleTypeGroup: t("labelStyleTypeGroup"),
     labelStyleBackdropGroup: t("labelStyleBackdropGroup"),
     labelStyleFitGroup: t("labelStyleFitGroup"),

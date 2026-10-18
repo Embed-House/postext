@@ -753,9 +753,6 @@ Recorded where the implementation settles a point the sections above leave open,
 - **Fallback.** A contour wrap with no known shape runs round the box with a `textWrap` warning,
   reason `noContour` (once per resource per pass). Without contours the VDT is unchanged (preset
   parity harness, 583 chapters, 0 diffs).
-
-### 5.12 What P15 built (#859)
-
 - **Where.** The ladder's step 6 (`layoutComposedPage`): a frame whose `overflow.continueIn` is
   `'next-page'` or `'template:<id>'` (`continuesOffPage`) and that still overflows after
   `shrinkText` is composed again with the frame in `FitState.goOn`: it is cut at its foot with
@@ -1312,6 +1309,33 @@ fence of a later file. One `buildDocument` call is one chapter, so the rest of t
   Group members are an ordered list (`GroupsEditor`): a ticked frame joins at the end, `moveMember` and two arrow buttons
   reorder, and the engine already honours the order of `group.frames`; the old behaviour (always the template's order)
   was the UI's, not the engine's. "New" picks its first frame.
+- **A label near the spine (#990).** On a spread the figure across the spine is one block painted twice, each page
+  clipped to its sheet, so a label whose box reached into the gutter band was cut by the fold and read on neither page.
+  `keepLabelsOffGutter(block, band)` (`composed/labels.ts`) runs in `layoutComposedSpread` on every block of the laid
+  sheet, before the blocks are cut and the facing copies made: a label whose box (`labelRectInBlock`, the same box
+  `stampFigureLabelRects` stamps, through a quarter-turned block's turn) meets the band `[spine - gutter / 2, spine +
+  gutter / 2]` slides along the sheet's axis to the band's edge, on the side of its anchor point (ties, the point on the
+  spine itself: the first page, as a frame is), and keeps its other coordinate. The design answers the issue's first
+  option (draw the label on the side where its anchor lies) rather than the second (warn in the anchor dialog): the
+  fold is a fact of the sheet, not an authoring mistake, so nothing is raised and the Sandbox needs no warning. A label
+  set across both pages on purpose (a title over a map) keeps its place with `ResourceAnchor.gutter: 'cross'`
+  (`'keep'` is the default and is not written); the anchor editor has a Keep off / Cross control, one anchor or the
+  ticked ones, and the WebMCP marks schema takes the field. The move replaces the label object (the labels of a
+  measured block may be shared with a cache), works in the flow frame (so a right-to-left sheet moves the same way
+  before the page is mirrored) and on the transposed axis of a vertical sheet. The gutter band is the template's
+  `gutter`; with a gutter of 0 the band is the spine line itself. Not done: a label
+  clipped by the outer edge of the trim (a picture bleeding off the page) is not moved; that is the picture's crop.
+- **Label styles (#994).** Renaming a label style in the Design panel now rewrites what names it, as a frame style
+  rename does: `labelStyles/labelRefs.ts` reads the `style` of each `::label` line (outside code fences, quoted or
+  bare) and of each anchor; `applyLabelStyleRename` writes one history step per chapter changed (the chapter in the
+  editor through its editor), one per picture changed, then the design, so Undo takes them back one at a time; the card
+  says how many anchors and lines it rewrote. Each card counts the anchors and label lines that name its style
+  (`useLabelStyleUsage`, a chapter read again only when its text changed). The Avoid zones mode of the picture marks
+  is worded for maps as well as comics (symbols a label keeps clear of). The three items that are deliberate limits
+  stay so: the hidden list of the reflowable EPUB for labels the SVG layer cannot draw, and tracking on Arabic
+  (a joining script is not tracked in print either). The symbols drawn into an SVG itself (reading each element's
+  outline, and a way to say which elements are symbols) are left to a later round: the contour machinery of #883 reads
+  one contour per picture, and a per-element read needs the drawing's tree in the engine.
 
 ## 6. Source map contract
 

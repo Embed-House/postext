@@ -9,6 +9,10 @@ import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, NumberInpu
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
+import { applyLabelStyleRename } from '../../labelStyles/applyRename';
+import { useLabelStyleUsage } from '../../labelStyles/useLabelStyleUsage';
+import { useBookTexts } from '../../frameStyles/useBookTexts';
+import type { LabelStyleUse } from '../../labelStyles/labelRefs';
 
 const SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'mm', 'cm', 'in', 'em'];
 const HALO_UNITS: DimensionUnit[] = ['px', 'pt', 'em'];
@@ -50,6 +54,10 @@ interface LabelStyleCardProps {
   bodyWeight: number;
   bodyColor: ColorValue;
   otherIds: Set<string>;
+  /** What names this style in the book (#994). */
+  usage: LabelStyleUse | undefined;
+  /** What the latest rename of this style rewrote, said once. */
+  renamed: string | null;
   onChange: (partial: Partial<LabelStyle>) => void;
   onResetField: (field: keyof LabelStyle) => void;
   onRename: (nextId: string) => void;
@@ -61,7 +69,7 @@ interface LabelStyleCardProps {
  *  face, size, weight, slant, colour, capitals, tracking), the halo and
  *  plate behind the letters, and how a label is fitted (smallest scale,
  *  writing mode, overlap). Unset fields show what they inherit. */
-function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyColor, otherIds, onChange, onResetField, onRename, onRemove }: LabelStyleCardProps) {
+function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyColor, otherIds, usage, renamed, onChange, onResetField, onRename, onRemove }: LabelStyleCardProps) {
   const labels = useSandboxLabels();
   const [idDraft, setIdDraft] = useState(style.id);
   const draftSlug = slugifyStyleId(idDraft);
@@ -127,7 +135,12 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
         <FieldRow
           stacked
           label={labels.idLabel} tooltip={labels.styleIdHelp}
-          hint={idTaken ? labels.chipStyleIdHintDuplicate : labels.labelStyleUsageHint.replace('__id__', style.id)}
+          hint={idTaken ? labels.chipStyleIdHintDuplicate : (
+            <>
+              <span className="block">{labels.labelStyleUsageHint.replace('__id__', style.id)}</span>
+              <span className="block">{labels.labelStyleUsageCount.replace('__anchors__', String(usage?.anchors ?? 0)).replace('__lines__', String(usage?.lines ?? 0))}</span>
+            </>
+          )}
           className="mb-0"
         >
           <input
@@ -146,6 +159,7 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
             className={inputClass}
             style={{ ...inputStyle, borderColor: idEmpty || idTaken ? 'var(--destructive)' : 'var(--rule)' }}
           />
+          {renamed && <p role="status" className="m-0 mt-1 text-xs" style={{ color: 'var(--slate)' }}>{renamed}</p>}
         </FieldRow>
         <FieldRow stacked label={labels.chipStyleNameLabel} tooltip={labels.styleNameHelp} className="mb-0">
           <input
@@ -347,6 +361,11 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const bodyText = resolveBodyTextConfig(bodyTextRaw);
   const styles: LabelStyle[] = raw ?? [];
+  const usage = useLabelStyleUsage();
+  const chapters = useBookTexts();
+  const resources = useSandboxSelector((s) => s.resources);
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
+  const [renamedNote, setRenamedNote] = useState<{ id: string; text: string } | null>(null);
 
   const write = (next: LabelStyle[]) => {
     dispatch({ type: 'UPDATE_CONFIG', payload: { labelStyles: next.length > 0 ? next : undefined } });
@@ -369,7 +388,13 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
-    write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
+    // The anchors and label lines that name the old id follow it (#994).
+    const done = applyLabelStyleRename(dispatch, styles, id, nextId, { chapters, resources: resources ?? [], activeChapterId });
+    setRenamedNote(
+      done.anchors + done.lines > 0
+        ? { id: nextId, text: labels.labelStyleRenamed.replace('__anchors__', String(done.anchors)).replace('__lines__', String(done.lines)) }
+        : null,
+    );
   };
 
   const removeStyle = (id: string) => {
@@ -399,6 +424,8 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
           bodyWeight={bodyText.fontWeight}
           bodyColor={bodyText.color}
           otherIds={new Set(styles.filter((s) => s.id !== style.id).map((s) => s.id))}
+          usage={usage.get(style.id)}
+          renamed={renamedNote?.id === style.id ? renamedNote.text : null}
           onChange={(partial) => updateStyle(style.id, partial)}
           onResetField={(field) => resetStyleField(style.id, field)}
           onRename={(nextId) => renameStyle(style.id, nextId)}
